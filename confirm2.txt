@@ -1,0 +1,90 @@
+Cards modeled from Scryfall text or cards_dsl.json (check the abilities below):
+   Niv-Mizzet, Parun [scryfall+dsl] C UUURRR :: leg wizard pow=5 bomb=5 fly unc
+      ability: static uncounterable -> 
+      ability: triggered draw -> damage
+      ability: triggered cast -> draw
+Swaps: Eris, Roar of the Storm -> Niv-Mizzet, Parun; Dualcaster Mage -> Kessig Flamebreather; Gandalf, Friend of the Shire -> Imperial Recruiter
+AI: adaptive (temperature x1.0)
+
+=== veyran: baseline vs variant ===
+[conservative] veyran win   8.0% ->   9.3%  (delta +1.3 pts, noise ±0.8)   n=10000
+               others: seph  49.4%-> 48.4%  sauron  14.8%-> 13.8%  najeela  27.8%-> 28.4%
+               veyran (variant) eliminated by: seph  41.2%  sauron  19.0%  najeela  29.2%
+[loose       ] veyran win   8.2% ->   9.8%  (delta +1.6 pts, noise ±0.8)   n=10000
+               others: seph  50.7%-> 49.7%  sauron  14.1%-> 13.9%  najeela  27.0%-> 26.7%
+               veyran (variant) eliminated by: seph  42.5%  sauron  19.3%  najeela  27.3%
+VERDICT: BETTER under both profiles
+
+--- What changed, by strength axis (veyran) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for veyran: Veyran + a magecraft payoff on the battlefield
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                           8.0% ->   9.3%  +1.3pt   ±0.8*     8.2% ->   9.8%  +1.6pt   ±0.8*
+    Rounds survived (or game length)                  13.04 ->  12.94   -0.10  ±0.09*    13.12 ->  13.00   -0.12  ±0.09*
+
+  Mana & consistency
+    Extra mulligans per game                           0.14 ->   0.13   -0.00  ±0.02      0.14 ->   0.13   -0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.66 ->   0.66   -0.01  ±0.02      0.66 ->   0.66   -0.01  ±0.02 
+    Mana available on your turn 4                      4.00 ->   4.00   -0.00  ±0.03      4.00 ->   4.00   -0.01  ±0.03 
+    Mana available on your turn 6                      5.58 ->   5.55   -0.02  ±0.04      5.56 ->   5.54   -0.02  ±0.04 
+
+  Speed
+    Games where the game plan came online             69.9% ->  73.5%  +3.6pt   ±1.3*    69.2% ->  73.3%  +4.0pt   ±1.3*
+    Turn the game plan came online                     7.52 ->   7.26   -0.26  ±0.11*     7.58 ->   7.31   -0.27  ±0.11*
+
+  Card flow
+    Cards drawn per game (incl. draw step)            21.45 ->  21.76   +0.30  ±0.27*    21.69 ->  21.79   +0.10  ±0.27 
+    Tutors resolved per game                           0.94 ->   1.18   +0.24  ±0.03*     0.95 ->   1.20   +0.25  ±0.03*
+    Spells cast per game                              18.88 ->  19.12   +0.24  ±0.23*    19.11 ->  19.26   +0.15  ±0.23 
+
+  Interaction
+    Counterspells cast                                 1.06 ->   1.05   -0.02  ±0.03      1.16 ->   1.14   -0.01  ±0.03 
+    Spot removal cast                                  1.96 ->   1.94   -0.02  ±0.04      2.06 ->   2.03   -0.03  ±0.04 
+    Board wipes cast                                   0.47 ->   0.45   -0.02  ±0.02*     0.47 ->   0.44   -0.03  ±0.02*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.01   -0.00  ±0.00      0.01 ->   0.01   -0.00  ±0.00 
+    Your key permanents removed by opponents           1.04 ->   1.05   +0.01  ±0.03      1.07 ->   1.06   -0.01  ±0.03 
+    Your spells countered                              0.17 ->   0.17   -0.00  ±0.01      0.21 ->   0.20   -0.00  ±0.01 
+
+  Threat & pressure
+    Damage dealt to opponents per game                20.64 ->  23.45   +2.81  ±0.86*    21.25 ->  23.36   +2.10  ±0.88*
+      ...of which combat damage                        6.88 ->   6.37   -0.51  ±0.58      6.96 ->   6.24   -0.72  ±0.58*
+      ...of which magecraft / burn                    10.96 ->  13.24   +2.27  ±0.49*    11.11 ->  13.20   +2.09  ±0.49*
+      ...of which Aetherflux shots                     2.79 ->   3.10   +0.31  ±0.37      3.18 ->   3.15   -0.04  ±0.39 
+      ...of which other triggers                       0.00 ->   0.73   +0.73  ±0.08*     0.00 ->   0.77   +0.77  ±0.08*
+
+  Speed
+    Games with a combo attempt                         0.4% ->   0.7%  +0.4pt   ±0.2*     0.4% ->   0.8%  +0.4pt   ±0.2*
+
+  Threat & pressure
+    Aetherflux shots per game                          0.06 ->   0.06   +0.01  ±0.01      0.06 ->   0.06   -0.00  ±0.01 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+    worse  - Rounds survived (or game length) (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    better - Games where the game plan came online (both profiles)
+    better - Turn the game plan came online (both profiles)
+    better - Games with a combo attempt (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (conservative profile only)
+    better - Tutors resolved per game (both profiles)
+    better - Spells cast per game (conservative profile only)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Board wipes cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    worse  -   ...of which combat damage (loose profile only)
+    better -   ...of which magecraft / burn (both profiles)
+    better -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(146s total)
