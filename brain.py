@@ -547,6 +547,7 @@ E.DAMAGE_HOOK = note_damage
 
 # ------------------------------------------------------------------ end-of-turn window
 def end_of_turn_window(g, p):
+    A.erebos_draw(g, p)
     """At the end of the turn before yours, spend mana you held up but didn't need:
     instant-speed draw, removal and token spells.  Mana untaps next, so holding has no value."""
     for _ in range(6):

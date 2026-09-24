@@ -192,7 +192,7 @@ Conqueror's Flail|A|2|flail
 Crumbling Necropolis|L|-|c=UBR t
 Deepglow Skate|C|4U|skate pow=3
 Drowned Catacomb|L|-|c=UB ck
-Erebos, God of the Dead|E|3B|eng=1 erebos
+Erebos, God of the Dead|E|3B|erebos
 Feed the Swarm|S|1B|rem=destroy tgt=ce losemv
 Flux Channeler|C|2U|prolif pow=2 noatk
 Foreboding Ruins|L|-|c=BR ck

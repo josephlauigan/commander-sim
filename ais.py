@@ -871,6 +871,7 @@ def sauron_prio(g, p, c):
     if t.get('tut'): return 60
     if 'draw' in t and (c.instant or c.sorcery): return 40
     if 'flail' in t: return 56
+    if 'erebos' in t: return 48
     if 'ozolith' in t: return 45
     if 'animist' in t: return 44
     if 'unearth' in t: return 35 if any(x.creature and x.cmc <= 3 for x in p.gy) else 0
@@ -1312,7 +1313,6 @@ def upkeep(g, p):
             if n == 'Phyrexian Arena': lose_life(g, p, 1, p)
             if n == 'Sylvan Library': lose_life(g, p, 4, p)
             if n == 'Call of the Ring': lose_life(g, p, 2, p)
-            if 'erebos' in t: lose_life(g, p, 2, p)
             if 'upkprolif' in t:
                 army = army_of(p)
                 if army: army.plus += 1
@@ -1341,8 +1341,19 @@ def upkeep(g, p):
     check_state(g)
 
 
+def erebos_draw(g, p):
+    """Erebos: {1}{B}, pay 2 life: draw a card. Only with spare mana and a comfortable life total."""
+    if not has(p, 'erebos') or blocked(g, p, 'Erebos, God of the Dead'): return False
+    if p.life < 16 or getattr(p, 'erebos_t', None) == (g.round, g.active and g.active.key): return False
+    if not can_pay(g, p, 1, 'B'): return False
+    pay(g, p, 1, 'B'); lose_life(g, p, 2, p); draw(g, p, 1)
+    p.erebos_t = (g.round, g.active and g.active.key); p.stats['erebos_draws'] += 1
+    return True
+
+
 def end_step(g, p):
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
+    erebos_draw(g, p)                             # leftover mana at your own end step
     for m in [m for m in p.perms if m.temp]: leave(g, m)
     if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
         for m in p.perms:
