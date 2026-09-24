@@ -86,6 +86,7 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Swords to Plowshares | Modeled | tags: `rem=exile tgt=c rgain` |
 | Talisman of Hierarchy | Approximate | the 1 damage for coloured mana is ignored |
 | Temple Garden | Modeled | tags: `c=GW` |
+| The One Ring | Approximate | swap candidate, defined in cards_dsl.json. Burden tap/draw, upkeep life loss and indestructible are modeled. The cast trigger's "protection from everything" prevents damage from opponents' sources until your next turn (life loss still applies) and steers opposing attacks and Aetherflux elsewhere; its targeting and blocking parts are ignored. The AI taps it every turn |
 | Tortured Existence | Approximate | used to put a bomb in the graveyard; regrowth picks a small creature |
 | Toxic Deluge | Approximate | pays X equal to the biggest opposing toughness (max 10) |
 | Treno, Dark City | Modeled | tags: `c=UB t` |
@@ -388,3 +389,44 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Insatiable Avarice | Modeled | tags: `avarice` |
 | Grim Tutor | Modeled | tags: `tut=any lose=3` |
 | Aura Shards | Modeled | tags: `shards` |
+
+## Game Changer candidates (not in any current list)
+
+AI priorities for these are in `veyran_prio` and, for the Sauron tests, `gc_prio_sauron`; Najeela and Sephiroth have none yet.
+Engine-wide limits still apply: there's no attacking of planeswalkers, and triggers resolve immediately.
+
+| Card | Status | Notes |
+|---|---|---|
+| Ancient Tomb | Modeled | `amt=2 tomb`; 2 damage each time it's tapped for mana; the payment planner taps it last |
+| Chrome Mox | Modeled | imprints your least valuable coloured nonartifact, nonland card; taps only for that card's colours (none if nothing imprinted) |
+| Consecrated Sphinx | Modeled | draws two whenever an opponent draws; the "may" is declined at 12 or fewer cards in library |
+| Field of the Dead | Modeled | enters tapped; a 2/2 black Zombie whenever a land enters while you control 7+ lands with different names |
+| Fierce Guardianship | Modeled | noncreature counter, cast free while your commander is on the battlefield |
+| Gifts Ungiven | Modeled | four different cards; the opponent sends the two you'd most want in hand to the graveyard (flashback cards keep value there); you choose the pile that is best against that |
+| Glacial Chasm | Modeled | sacrifice a land on entry; your creatures can't attack; all damage to you is prevented; cumulative upkeep of 2 life per age counter, paid while under pressure and above 10 life, otherwise it's let go. Played only when threatened with 4+ lands |
+| Grim Monolith | Modeled | taps for {C}{C}{C}, doesn't untap; the {4} untap is used at the end of the turn before yours, with mana that would otherwise go unused |
+| Gamble | Modeled | tutors any card, then discards a card at random (possibly the tutored one) |
+| Intuition | Modeled | three cards; the opponent picks the one you keep, the rest go to the graveyard |
+| Jeska's Will | Modeled | both modes with your commander out, otherwise the better one: {R} per card in the fullest opponent hand; exile the top three and play them this turn (unplayed ones stay exiled at end of turn) |
+| Lion's Eye Diamond | Modeled | discard your hand and sacrifice for three mana of one colour; used only with no nonland cards in hand and something to cast (commander, flashback, escape) |
+| Mana Vault | Modeled | taps for {C}{C}{C}, doesn't untap, 1 damage at your draw step while tapped; the {4} upkeep untap is always declined (it loses mana) |
+| Mishra's Workshop | Modeled | {C}{C}{C} only for artifact spells |
+| Mox Diamond | Modeled | cast only with a spare land in hand; discards a land or goes to the graveyard |
+| Narset, Parter of Veils | Approximate | opponents can't draw more than one card each turn; −2 digs four for a noncreature, nonland card. Opponents can't attack her (engine limit) |
+| Panoptic Mirror | Modeled | {X},{T}: imprint an instant or sorcery with mana value X; each upkeep casts a copy free (a real cast that can be countered and triggers magecraft) |
+| Rhystic Study | Modeled | existing `rhystic` tag (opponents pay the {1} about 55% of the time) |
+| The Tabernacle at Pendrell Vale | Modeled | every creature's controller pays {1} per creature at upkeep or it's destroyed; Veyran plays it only when an opponent has 3+ more creatures |
+| Thassa's Oracle | Modeled | looks at the top X (devotion to blue), keeps the best on top; wins if X ≥ cards in library |
+| The One Ring | Approximate | see the Sephiroth entry |
+| Ad Nauseam | Modeled | reveal the top card, put it in hand, lose life equal to its mana value; repeats while life stays above about 25 (cast at the end of an opponent's turn when possible) |
+| Bolas's Citadel | Modeled | play lands and cast spells from the top of the library, paying life equal to mana value (not below 15 life); {T}, sacrifice ten nonland permanents: each opponent loses 10 (used when it kills someone) |
+| Braids, Cabal Minion | Modeled | at each player's upkeep that player sacrifices their least valuable artifact, creature or land |
+| Demonic Tutor | Modeled | tags: `tut=any` |
+| Force of Will | Modeled | tags: `ctr=any free` (pitch a blue card and 1 life) |
+| Imperial Seal | Modeled | tutored card on top of the library, lose 2 life |
+| Mystical Tutor | Modeled | tags: `tut=is` (to hand rather than top, as in the existing tag) |
+| Necropotence | Modeled | skips your draw step; at your end step pays life for cards (keeps 20 life, up to eight in hand); your discards are exiled |
+| Opposition Agent | Modeled | while it's out, cards an opponent finds with any search (tutors, land ramp, Entomb, Gifts) are exiled and yours to play with mana of any type. Held in hand; they go to your graveyard, not the owner's, if they are discarded |
+| Tergrid, God of Fright // Tergrid's Lantern | Approximate | whenever an opponent sacrifices a nontoken permanent or discards a permanent card, it enters under your control. Menace and the Lantern back face aren't modeled |
+| Vampiric Tutor | Modeled | instant: tutored card on top of the library, lose 2 life |
+| Underworld Breach | Modeled | nonland cards in your graveyard can be cast with escape (mana cost + exile three others) and go back to the graveyard; sacrificed at your end step. Counterspells and wipes aren't escaped by the AI |

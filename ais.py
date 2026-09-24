@@ -273,6 +273,11 @@ def note_bomb(p, cd, was_removed=False):
 
 def seph_fill_resolve(g, p, kind, ctx):
     lib_bombs = sorted([c for c in p.library if c.creature and c.bomb >= 5], key=lambda c: -seph_bval(g, p, c))
+    a = agent_for(g, p) if kind in ('entomb', 'buried', 'unmarked') else None
+    if a is not None:                             # Opposition Agent takes what they search for
+        take = lib_bombs[:3] if kind == 'buried' else ([c for c in lib_bombs if 'leg' not in c.tags or kind == 'entomb'][:1])
+        for c in take: p.library.remove(c); agent_take(g, a, p, c)
+        g.rng.shuffle(p.library); return
     if kind == 'entomb' and lib_bombs:
         p.library.remove(lib_bombs[0]); p.gy.append(lib_bombs[0])
     elif kind == 'buried':
@@ -320,7 +325,7 @@ def seph_tortured(g, p):
     bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
     if not bombs or not can_pay(g, p, 0, 'B') or not has_rean_access(g, p): return False
     pay(g, p, 0, 'B'); b = max(bombs, key=lambda c: seph_bval(g, p, c))
-    p.hand.remove(b); p.gy.append(b); p.te_used = p.turns
+    discard_cards(g, p, [b]); p.te_used = p.turns
     small = [c for c in p.gy if c.creature and not c.bomb]
     if small: p.gy.remove(small[0]); p.hand.append(small[0])
     return True
@@ -383,7 +388,10 @@ def seph_avarice(g, p):
     if g.over or not p.alive: return True
     if mode in ('both', 'tutor'):
         hit = next((x for x in p.library if x.name == want), None)
-        if hit:
+        a = agent_for(g, p)
+        if hit and a is not None:
+            p.library.remove(hit); agent_take(g, a, p, hit); g.rng.shuffle(p.library)
+        elif hit:
             p.library.remove(hit); g.rng.shuffle(p.library); p.library.append(hit); p.stats['tutored'] += 1
     if mode in ('both', 'draw'):
         draw(g, p, 3); lose_life(g, p, 3, p)
@@ -473,6 +481,7 @@ def seph_boots(g, p):
 def seph_prio(g, p, c):
     t = c.tags
     if 'shards' in t: return 68
+    if 'onering' in t: return 62
     if c is p.cmd: return 0
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
     if 'tithe' in t: return 72
@@ -562,8 +571,13 @@ def generic_cast(g, p, prio, reserve=(0, '')):
     for pr, _, c in cands:
         cg, cp = cost_of(p, c)
         rg, rp = reserve if pr < 90 else (0, '')
-        if can_pay(g, p, cg + rg, cp + rp):
-            pay(g, p, cg, cp)
+        E.PAY_FOR = c
+        try:
+            ok = can_pay(g, p, cg + rg, cp + rp)
+            if ok: pay(g, p, cg, cp)
+        finally:
+            E.PAY_FOR = None
+        if ok:
             zone = 'cmd' if (c is p.cmd and c not in p.hand) else 'hand'
             cast_card(g, p, c, zone, {})
             return True
@@ -691,7 +705,7 @@ def consider_wipe(g, p):
 def veyran_prio(g, p, c):
     t = c.tags
     if c is p.cmd: return 70
-    if 'rock' in t: return 80 if p.turns <= 5 else 40
+    if 'rock' in t or 'fastmana' in t: return 80 if p.turns <= 5 else 40
     if 'vkitten' in t or 'vfire' in t: return 74
     if 'recruit' in t: return 73
     if 'kiln' in t: return 70
@@ -702,6 +716,25 @@ def veyran_prio(g, p, c):
     if 'aether' in t: return 66
     if 'dragoncaller' in t: return 60
     if 'spelldraw' in t or 'mystic' in t: return 58
+    if 'onering' in t: return 58
+    if 'rhystic' in t: return 62
+    if 'sphinx' in t: return 60
+    if 'narset' in t: return 52
+    if 'chromemox' in t:                         # needs a coloured nonland card to spare
+        spare = [x for x in p.hand if not x.land and 'A' not in x.types and set(x.pips) & set(p.ident)]
+        return (80 if p.turns <= 5 else 30) if len(spare) >= 2 else 0
+    if 'moxd' in t:                              # needs a land card to discard (keep one for the land drop)
+        n = sum(1 for x in p.hand if x.land)
+        return (80 if p.turns <= 5 else 30) if n >= 2 or (n >= 1 and p.land_turn == p.turns) else 0
+    if 'led' in t: return 20
+    if 'breach' in t:
+        k = len(breach_candidates(g, p, need_mana=False))
+        return 56 if k >= 2 and total_mana(g, p) >= 5 else 0
+    if 'panoptic' in t: return 44 if mirror_candidates(g, p) else 12
+    if 'gifts' in t: return 50
+    if 'intuition' in t: return 48
+    if 'jeska' in t: return 52
+    if t.get('tut') == 'any': return 45
     if 'thor' in t: return 50
     if t.get('tut') == 'art': return 55
     if t.get('tut') == 'is': return 30
@@ -824,7 +857,7 @@ def veyran_boots(g, p):
 
 def aether_check(g, p):
     if not has(p, 'aether') or p.life < 51 or blocked(g, p, 'Aetherflux Reservoir'): return False
-    opps = g.opps(p)
+    opps = [q for q in g.opps(p) if not shielded(q)]          # the damage would be prevented
     if not opps: return False
     lose_life(g, p, 50, p)
     if tide_response(g, p, 'aether', 9): return True
@@ -842,6 +875,8 @@ def veyran_main(g, p, post):
         if aether_check(g, p): continue
         if veyran_fair(g, p): continue
         if veyran_boots(g, p): continue
+        gc = sorted(breach_gc_options(g, p), key=lambda o: -o[0])
+        if gc and gc[0][0] > 2 and gc[0][2](): continue
         if use_removal(g, p, 6): continue
         if consider_wipe(g, p): continue
         res = interaction_reserve(g, p, lambda c: 'ctr' in c.tags) if p.turns >= 3 else (0, '')
@@ -869,6 +904,9 @@ def sauron_prio(g, p, c):
     if 'archivist' in t: return 50 if has(p, 'bowmasters') else 20
     if 'warmachine' in t: return 45
     if t.get('tut'): return 60
+    if 'onering' in t: return 60
+    gc = gc_prio_sauron(g, p, c)
+    if gc is not None: return gc
     if 'draw' in t and (c.instant or c.sorcery): return 40
     if 'flail' in t: return 56
     if 'erebos' in t: return 48
@@ -906,7 +944,7 @@ def sauron_archivist(g, p):
     pay(g, p, 0, 'U'); ar[0].tapped = True; p.arch_t = p.turns
     n = max(len(q.hand) for q in g.players if q.alive)
     for q in g.players:
-        if q.alive: q.gy.extend(q.hand); q.hand = []
+        if q.alive: discard_cards(g, q, list(q.hand))
     for q in g.players:
         if q.alive: draw(g, q, n)
     check_state(g)
@@ -1045,9 +1083,265 @@ def tutor_pick(g, p, kind):
     return best.name
 
 
+# ======================================================== Game Changer plays (Veyran's candidate cards)
+def deck_prio(g, p, c):
+    return {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'najeela': najeela_prio}[p.key](g, p, c)
+
+
+def breach_candidates(g, p, need_mana=True):
+    """Underworld Breach: nonland cards in your graveyard castable with escape (mana cost + exile three others)"""
+    if len(p.gy) < 4: return []
+    out = []
+    for c in p.gy:
+        if c.land or 'ctr' in c.tags or 'wipe' in c.tags or 'breach' in c.tags: continue
+        if any(k in c.tags for k in ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'x')) and not c.dsl: continue
+        if c.sorcery and not (g.active is p): continue
+        if need_mana and not can_pay(g, p, *cost_of(p, c)): continue
+        v = card_worth(g, p, c)
+        if 'rem' in c.tags:
+            tg = legal_targets(g, p, c.tags['rem'], c.tags.get('tgt', 'c'), 'mv4' in c.tags, spell=c)
+            if not tg: continue
+            v = max(v, 10 * (max(pval(g, m) for m in tg) - 2))
+        if v > 15: out.append((v, c))
+    return out
+
+
+def breach_escape(g, p, c):
+    if c not in p.gy or len(p.gy) < 4 or not has(p, 'breach'): return False
+    cg, cp = cost_of(p, c)
+    if not can_pay(g, p, cg, cp): return False
+    pay(g, p, cg, cp)
+    others = sorted([x for x in p.gy if x is not c], key=lambda x: card_worth(g, p, x, True) + 0.01 * card_worth(g, p, x))
+    for x in others[:3]: p.gy.remove(x); p.exile.append(x)
+    ctx = {}
+    if 'rem' in c.tags:
+        tg = legal_targets(g, p, c.tags['rem'], c.tags.get('tgt', 'c'), 'mv4' in c.tags, spell=c)
+        if tg: ctx['target'] = max(tg, key=lambda m: pval(g, m))
+    log(f'  {NAME(p)} escapes {c.name} with Underworld Breach', g)
+    p.stats['breach_escapes'] += 1
+    cast_card(g, p, c, 'escape', ctx)
+    return True
+
+
+def mirror_candidates(g, p):
+    """instants/sorceries in hand worth imprinting on Panoptic Mirror (copied free every upkeep)"""
+    out = []
+    for c in p.hand:
+        if not (c.instant or c.sorcery) or 'ctr' in c.tags or 'x' in c.tags or 'tokx' in c.tags: continue
+        if any(k in c.tags for k in ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'fbgrant')): continue
+        v = card_worth(g, p, c)
+        if 'rem' in c.tags: v = max(v, 40)
+        if 'wipe' in c.tags: v = max(v, 30)
+        if v >= 25: out.append((v, c))
+    return out
+
+
+def mirror_imprint_options(g, p):
+    out = []
+    for m in find(p, 'panoptic'):
+        if m.tapped or blocked(g, p, m.cd.name): continue
+        for v, c in mirror_candidates(g, p):
+            if not can_pay(g, p, c.cmc, ''): continue
+
+            def go(m=m, c=c):
+                if m.tapped or m not in p.perms or c not in p.hand or not can_pay(g, p, c.cmc, ''): return False
+                pay(g, p, c.cmc, ''); m.tapped = True
+                p.hand.remove(c); p.exile.append(c)
+                g.imprint = getattr(g, 'imprint', {}); g.imprint.setdefault(id(m), []).append(c)
+                log(f'  {NAME(p)} imprints {c.name} on Panoptic Mirror', g); p.stats['mirror_imprints'] += 1
+                return True
+            out.append((1.5 + v / 12.0, f'Panoptic Mirror imprints {c.name}', go))
+    return out
+
+
+def mirror_upkeep(g, p):
+    """At the beginning of your upkeep, you may copy a card exiled with Panoptic Mirror and cast the copy free"""
+    imp = getattr(g, 'imprint', {})
+    for m in find(p, 'panoptic'):
+        cs = [c for c in imp.get(id(m), []) if c in p.exile]
+        if not cs or m.phased: continue
+        best, bv, bctx = None, 0, None
+        for c in cs:
+            ctx = {}
+            v = card_worth(g, p, c)
+            if 'rem' in c.tags:
+                tg = legal_targets(g, p, c.tags['rem'], c.tags.get('tgt', 'c'), 'mv4' in c.tags, spell=c)
+                if not tg: continue
+                ctx['target'] = max(tg, key=lambda x: pval(g, x)); v = 10 * pval(g, ctx['target'])
+                if pval(g, ctx['target']) < 2: continue
+            if 'wipe' in c.tags:
+                ol, ml, victim = wipe_eval(g, p, c.tags['wipe'])
+                if ol - 1.2 * ml < 6: continue
+                v = 10 * (ol - 1.2 * ml); ctx['victim'] = victim
+            if v > bv: best, bv, bctx = c, v, ctx
+        if best is not None:
+            p.stats['mirror_copies'] += 1
+            cast_spell_copy(g, p, best, bctx)
+            if g.over: return
+
+
+def led_options(g, p):
+    """Lion's Eye Diamond: discard your hand, sacrifice: three mana of one colour. Only worth it with an empty hand
+    and something to spend the mana on (commander, flashback, escape)."""
+    out = []
+    leds = [m for m in find(p, 'led') if not blocked(g, p, m.cd.name)]
+    if not leds or any(not c.land for c in p.hand): return out
+    avail = total_mana(g, p) + 3
+    uses = []
+    if p.cmd_in_zone:
+        cg, cp = cost_of(p, p.cmd)
+        if cg + len(cp) > total_mana(g, p) and cg + len(cp) <= avail: uses.append(8)
+    for c in p.gy:
+        if 'fb' in c.tags:
+            fg, fp = parse_cost(c.tags['fb'])
+            if fg + len(fp) > total_mana(g, p) and fg + len(fp) <= avail: uses.append(3)
+    if has(p, 'breach') and len(p.gy) >= 4: uses.append(4)
+    if not uses: return out
+    col = 'U' if p.cmd_in_zone and 'U' in p.cmd.pips and total_mana(g, p) < 3 else 'R'
+
+    def go(m=leds[0], col=col):
+        if m not in p.perms or any(not c.land for c in p.hand): return False
+        discard_cards(g, p, list(p.hand))
+        leave(g, m); p.gy.append(m.cd)
+        if col == 'R': p.floatR += 3
+        else: p.floatU += 3
+        log(f"  {NAME(p)} cracks Lion's Eye Diamond for {col * 3}", g); p.stats['led_used'] += 1
+        return True
+    out.append((max(uses) - 1.0, "Lion's Eye Diamond", go))
+    return out
+
+
+def monolith_untap_options(g, p):
+    """Grim Monolith {4}: untap -- worth it with mana that would otherwise go unused (the end step before your turn)"""
+    out = []
+    for m in find(p, 'grim'):
+        if not m.tapped or blocked(g, p, m.cd.name) or not can_pay(g, p, 4, ''): continue
+
+        def go(m=m):
+            if not m.tapped or m not in p.perms or not can_pay(g, p, 4, ''): return False
+            pay(g, p, 4, ''); m.tapped = False; log(f'  {NAME(p)} untaps Grim Monolith', g); return True
+        out.append((3.0, 'untap Grim Monolith', go))
+    return out
+
+
+def breach_gc_options(g, p):
+    """Breach escapes, Mirror imprints and LED as (utility, label, fn) plays"""
+    out = []
+    if has(p, 'breach'):
+        for v, c in breach_candidates(g, p):
+            out.append((v / 10.0 - 0.5, f'escape {c.name}', lambda c=c: breach_escape(g, p, c)))
+    return out + mirror_imprint_options(g, p) + led_options(g, p) + citadel_options(g, p)
+
+
+def gc_prio_sauron(g, p, c):
+    """Sauron's priorities for Game Changer candidates (None: not one of them)"""
+    t = c.tags
+    if 'sphinx' in t: return 62
+    if 'necro' in t: return 70 if p.life >= 25 else 30
+    if 'citadel' in t: return 58 if p.life >= 25 else 20
+    if 'tergrid' in t: return 55
+    if 'agent' in t: return 50
+    if 'braids' in t: return 40
+    if 'seal' in t: return 58
+    if 'adnaus' in t: return 55 if p.life >= 30 else 0
+    if 'narset' in t: return 50
+    if 'breach' in t:
+        k = len(breach_candidates(g, p, need_mana=False))
+        return 56 if k >= 2 and total_mana(g, p) >= 5 else 0
+    if 'gifts' in t: return 50
+    if 'intuition' in t: return 48
+    if 'jeska' in t: return 50
+    return None
+
+
+def necro_pay(g, p, floor=20):
+    """Necropotence: pay 1 life per card (exiled face down, to hand at this end step); keep life at the floor and
+    don't overshoot the hand size (extra discards are exiled)"""
+    if blocked(g, p, 'Necropotence'): return
+    n = max(0, min(p.life - floor, 8 - len(p.hand), len(p.library)))
+    if not n: return
+    lose_life(g, p, n, p)
+    for _ in range(n):
+        c = p.library.pop(); p.hand.append(c); p.seen_names.add(c.name)
+    p.stats['necro_cards'] += n
+    log(f'  {NAME(p)} pays {n} life to Necropotence', g)
+
+
+def braids_sacrifice(g, p):
+    """Braids, Cabal Minion: at the beginning of each player's upkeep, that player sacrifices an artifact,
+    creature, or land"""
+    opts = []
+    for m in p.perms:
+        if m.phased: continue
+        if m.creature: opts.append((pval(g, m), m))
+        elif m.cd is not None and 'A' in m.cd.types: opts.append((2.5 if 'rock' in m.cd.tags else max(1.0, pval(g, m)), m))
+    for L in p.lands: opts.append((3.0 if len(p.lands) >= 6 else 6.0, L))
+    if not opts: return
+    v, x = min(opts, key=lambda o: o[0])
+    if isinstance(x, Land):
+        p.lands.remove(x); p.gy.append(x.cd); tergrid_steal(g, p, x.cd, p)
+        log(f'    Braids: {NAME(p)} sacrifices {x.cd.name}', g)
+    else:
+        log(f'    Braids: {NAME(p)} sacrifices {x.name}', g); die(g, x, 'sac')
+    p.stats['braids_sacs'] += 1
+
+
+def citadel_options(g, p):
+    """Bolas's Citadel: play lands and cast spells from the top of your library, paying life equal to mana value;
+    {T}, sacrifice ten nonland permanents: each opponent loses 10 life"""
+    out = []
+    cits = [m for m in find(p, 'citadel') if not m.phased]
+    if not cits or not p.library: return out
+    top = p.library[-1]
+    if top.land:
+        if p.land_turn != p.turns:
+            def land():
+                if not p.library or p.library[-1] is not top: return False
+                p.library.pop(); p.lands.append(Land(top, land_enters_tapped(p, top))); p.land_turn = p.turns
+                log(f'  {NAME(p)} plays {top.name} from the top (Citadel)', g); landfall(g, p); return True
+            out.append((3.0, f'Citadel: play {top.name}', land))
+    elif (p.life - top.cmc >= 15 and 'ctr' not in top.tags and 'x' not in top.tags and 'tokx' not in top.tags
+          and not (any(k in top.tags for k in ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle')) and not top.dsl)):
+        import brain
+        u = brain.card_utility(g, p, brain.Situation(g, p), top)
+        if 'rem' in top.tags:
+            tg = legal_targets(g, p, top.tags['rem'], top.tags.get('tgt', 'c'), 'mv4' in top.tags, spell=top)
+            u = (max(pval(g, m) for m in tg) - 3.0) if tg else None
+        if u is not None:
+            def cast():
+                if not p.library or p.library[-1] is not top or p.life - top.cmc < 15: return False
+                ctx = {}
+                if 'rem' in top.tags:
+                    tg = legal_targets(g, p, top.tags['rem'], top.tags.get('tgt', 'c'), 'mv4' in top.tags, spell=top)
+                    if not tg: return False
+                    ctx['target'] = max(tg, key=lambda m: pval(g, m))
+                if 'wipe' in top.tags: ctx['victim'] = wipe_eval(g, p, top.tags['wipe'])[2]
+                p.library.pop(); lose_life(g, p, top.cmc, p); p.stats['citadel_casts'] += 1
+                log(f'  {NAME(p)} casts {top.name} from the top for {top.cmc} life (Citadel)', g)
+                cast_card(g, p, top, 'lib', ctx); return True
+            out.append((u + 0.6, f'Citadel: cast {top.name}', cast))
+    fodder = [m for m in p.perms if not m.phased]
+    cit = cits[0]
+    if not cit.tapped and len(fodder) >= 10 and not blocked(g, p, cit.cd.name):
+        kills = sum(1 for q in g.opps(p) if q.life <= 10)
+        def boom():
+            fod = sorted([m for m in p.perms if not m.phased], key=lambda m: pval(g, m))[:10]
+            if len(fod) < 10 or cit not in p.perms: return False
+            cit.tapped = True
+            for m in fod: die(g, m, 'sac')
+            for q in g.opps(p): lose_life(g, q, 10, p)
+            log(f"  {NAME(p)} sacrifices ten permanents to Bolas's Citadel", g); check_state(g); return True
+        out.append((6.0 * kills + (1.0 if kills else -2.0), "Citadel: sacrifice ten", boom))
+    return out
+
+
+def chasm_threatened(g, p):
+    return sum(board_power(g, q) for q in g.opps(p)) >= p.life * 0.5 or p.life <= 15
+
+
 # ======================================================== combat
 def choose_defender(g, p):
-    opps = g.opps(p)
+    opps = [q for q in g.opps(p) if not shielded(q)] or g.opps(p)     # combat damage to a protected player is prevented
     my = sum(epow(g, m) for m in p.perms if m.creature and not m.tapped and not m.noatk and not m.sick)
     lethal = [q for q in opps if q.life <= my * 0.6]
     if lethal: return min(lethal, key=lambda q: q.life)
@@ -1114,7 +1408,7 @@ def attack_triggers(g, p, atk, d):
 
 def archon_attack(g, p, d):
     edict(g, d)
-    if d.hand: d.gy.append(d.hand.pop(g.rng.randrange(len(d.hand))))
+    if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
     lose_life(g, d, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
 
 
@@ -1141,6 +1435,8 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             trade = [b for b in cands if epow(g, b) >= at or b.dt]
             if trade and pval(g, a) >= min(pval(g, x) for x in trade):
                 b = min(trade, key=lambda x: pval(g, x))
+            elif shielded(d):                     # the damage is prevented anyway: no chump blocks
+                continue
             elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < __import__('brain').chump_prob(g, d, incoming)) \
                     or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
                 b = min(cands, key=lambda x: pval(g, x))
@@ -1162,6 +1458,10 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             dmg = max(0, ap - bt) if tr else 0
             if b_dies: die(g, b, 'destroy')
             if a_dies: die(g, a, 'destroy')
+        if dmg > 0 and prevents_damage(g, d, p):  # protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
+            d.stats['dmg_prevented'] += dmg
+            log(f'    {dmg} combat damage from {a.name} to {NAME(d)} is prevented', g)
+            dmg = 0
         if dmg > 0:
             lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
             if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
@@ -1171,9 +1471,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if a.life or p.najeela_boost: gain(p, dmg)
             if a.is_cmd: d.cmd_dmg[p.key] += dmg
             if a.army and len(p.hand) <= 3:
-                p.gy.extend(p.hand); p.hand = []; draw(g, p, 4)
+                discard_cards(g, p, list(p.hand)); draw(g, p, 4)
             if equipped(a, 'sword'):
-                if d.hand: d.gy.append(d.hand.pop(g.rng.randrange(len(d.hand))))
+                if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
                 for L in p.lands: L.tapped = False
     if conn and has(p, 'facebreaker'): p.treasures += len(find(p, 'facebreaker'))   # Professional Face-Breaker
     check_state(g)
@@ -1205,6 +1505,7 @@ def combat(g, p):
         if adaptive: import brain
         atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased and (not m.sick or p.haste_all)
                and not m.noatk and epow(g, m) > 0]
+        if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
         if not atk: break
         d = brain.choose_defender(g, p) if adaptive else choose_defender(g, p)
         if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
@@ -1281,16 +1582,29 @@ def land_enters_tapped(p, cd):
 
 def play_land(g, p):
     lands = [c for c in p.hand if c.land]
+    if any(c.tags.get('chasm') for c in lands) and not (len(p.lands) >= 4 and chasm_threatened(g, p) and not chasm(p)):
+        lands = [c for c in lands if not c.tags.get('chasm')]     # hold Glacial Chasm until it's needed
     if not lands: return
     have = set(''.join(land_cols(p, L, False) for L in p.lands))
 
     def score(c):
         cols = p.ident if c.tags.get('c') == 'A' else c.tags.get('c', '')
         s = len(set(cols) - have) * 2 + (0 if land_enters_tapped(p, c) else 3)
+        if c.tags.get('chasm'): s += 10
+        if c.tags.get('workshop'): s -= 2        # its mana only casts artifacts
+        if c.tags.get('tabernacle'):             # taxes every creature, yours too
+            mine = sum(1 for m in p.perms if m.creature)
+            theirs = max((sum(1 for m in q.perms if m.creature) for q in g.opps(p)), default=0)
+            s += 4 if theirs >= mine + 3 else -6
         return s + g.rng.random() * 0.1
     c = max(lands, key=score)
-    p.hand.remove(c); p.lands.append(Land(c, land_enters_tapped(p, c)))
+    p.hand.remove(c); p.lands.append(Land(c, land_enters_tapped(p, c))); p.land_turn = p.turns
     log(f'  {NAME(p)} plays {c.name}', g)
+    if c.tags.get('chasm'):                      # Glacial Chasm: when it enters, sacrifice a land
+        p.chasm_age = 0
+        others = [L for L in p.lands if L.cd is not c]
+        L = min(others, key=lambda L: (not L.tapped, len(land_cols(p, L, False)))) if others else p.lands[-1]
+        p.lands.remove(L); p.gy.append(L.cd); log(f'    sacrifices {L.cd.name}', g)
     if 'bounceland' in c.tags:                  # Izzet Boilerworks returns another land
         others = [L for L in p.lands if L.cd is not c and 'bounceland' not in L.cd.tags]
         if others:
@@ -1299,6 +1613,23 @@ def play_land(g, p):
 
 
 def upkeep(g, p):
+    if p.ring_prot:                               # The One Ring's protection ends as its controller's turn starts
+        p.ring_prot = False; log(f'  {NAME(p)} no longer has protection from everything', g)
+    if any(L.cd.tags.get('tabernacle') for q in g.players if q.alive for L in q.lands):
+        # The Tabernacle at Pendrell Vale: each creature is destroyed unless its controller pays {1}
+        for m in sorted([m for m in p.perms if m.creature and not m.phased], key=lambda m: -pval(g, m)):
+            if pval(g, m) >= 0.5 and can_pay(g, p, 1, ''): pay(g, p, 1, '')
+            else: die(g, m, 'destroy'); p.stats['tabernacle_lost'] += 1
+    if chasm(p):                                 # Glacial Chasm: cumulative upkeep -- pay 2 life per age counter
+        p.chasm_age += 1; cost = 2 * p.chasm_age
+        if p.life - cost >= 10 and chasm_threatened(g, p):
+            lose_life(g, p, cost, p); log(f'  {NAME(p)} pays {cost} life for Glacial Chasm', g)
+        else:
+            L = next(L for L in p.lands if L.cd.tags.get('chasm')); p.lands.remove(L); p.gy.append(L.cd)
+            p.chasm_age = 0; log(f'  {NAME(p)} lets Glacial Chasm go', g)
+    if find(p, 'panoptic'): mirror_upkeep(g, p)
+    if any(has(q, 'braids') for q in g.players if q.alive): braids_sacrifice(g, p)
+    if g.over or not p.alive: return
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'upkeep', player=p)
     for m in list(p.perms):
         if m.cd is None or m.phased or m not in p.perms: continue
@@ -1323,10 +1654,10 @@ def upkeep(g, p):
         if 'bolas' in t and m.age <= 5:            # +1 each turn: draw; each opponent loses a card
             draw(g, p, 1)
             for q in g.opps(p):
-                if q.hand: q.gy.append(q.hand.pop(g.rng.randrange(len(q.hand))))
+                if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
         if 'pwdiscard' in t and m.age <= 3:        # Ral Zarek -1: each opponent discards
             for q in g.opps(p):
-                if q.hand: q.gy.append(q.hand.pop(g.rng.randrange(len(q.hand))))
+                if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
         if 'mycoloth' in t and m.plus > 0: make_tokens(g, p, m.plus, 1, color='G')
         if 'tokup' in t: make_tokens(g, p, int(t['tokup']), 1, warrior='warrior' in t)
         if 'sheoW' in t:
@@ -1353,6 +1684,12 @@ def erebos_draw(g, p):
 
 def end_step(g, p):
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
+    for m in find(p, 'breach'):                   # Underworld Breach: sacrifice it at the beginning of the end step
+        die(g, m, 'sac')
+    for c in p.impulse:                           # Jeska's Will: unplayed exiled cards stay in exile
+        if c in p.hand: p.hand.remove(c); p.exile.append(c)
+    p.impulse = []
+    if has(p, 'necro'): necro_pay(g, p)
     erebos_draw(g, p)                             # leftover mana at your own end step
     for m in [m for m in p.perms if m.temp]: leave(g, m)
     if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
@@ -1362,10 +1699,10 @@ def end_step(g, p):
         if p.key == 'seph':
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
             if bombs:
-                c = max(bombs, key=lambda c: c.bomb); p.hand.remove(c); p.gy.append(c); continue
+                c = max(bombs, key=lambda c: c.bomb); discard_cards(g, p, [c]); continue
         lands = [c for c in p.hand if c.land]
         c = lands[0] if len(lands) >= 2 else max(p.hand, key=lambda c: c.cmc)
-        p.hand.remove(c); p.gy.append(c)
+        discard_cards(g, p, [c])
     if p.key == 'seph':
         if bomb_on_bf(p): p.milestone.setdefault('bomb_by', p.turns)
         held = [c for c in p.hand if 'ctr' in c.tags or c.tags.get('prot') == 'hi' or 'tide' in c.tags]
@@ -1392,15 +1729,20 @@ def take_turn(g, p):
     p.turns += 1
     for q in g.players: q.floatR = 0          # floating mana empties between turns
     for L in p.lands: L.tapped = False
+    for q in g.players: q.floatU = 0
     for m in list(p.perms):
-        m.tapped = False; m.sick = False; m.phased = False; m.age += 1
+        if not (m.cd is not None and 'nountap' in m.cd.tags): m.tapped = False   # Grim Monolith, Mana Vault
+        m.sick = False; m.phased = False; m.age += 1
     p.spells_this_turn = 0; p.yawg = False
     p.pump = 0; p.pumpadd = 0; p.trample = False; p.combo_tried = False
     p.haste_all = False; p.najeela_boost = False
     log(f'--- {NAME(p)} turn {p.turns}: life {p.life}, {len(p.hand)} cards in hand, {len(p.lands)} lands', g)
     upkeep(g, p)
     if g.over or not p.alive: return
-    if not (p.key == 'seph' and seph_dredge(g, p)):
+    for m in find(p, 'vaultping'):                # Mana Vault: at the beginning of your draw step, 1 damage if tapped
+        if m.tapped: lose_life(g, p, 1, p, damage=True)
+    if has(p, 'necro'): pass                     # Necropotence: skip your draw step
+    elif not (p.key == 'seph' and seph_dredge(g, p)):
         draw(g, p, 1, step=True)
     check_state(g)
     if g.over or not p.alive: return

@@ -5,6 +5,7 @@
 **Updated 2026-09-20.** No list changes this round — the 100 is unchanged. Regenerated with an explicit tutor-by-board-state guide, and with one card-conflict correction: **Steam Vents and Shivan Reef are now shared with the Sauron deck**, so the earlier "not shared with the other three decks" line no longer holds. Deck stays at 100, 34 lands, three Game Changers (the Bracket 3 cap).
 **Updated 2026-09-21.** One swap: **Terminal Moraine → Spirebluff Canal.** This takes the deck's own "weakest slot" flag off the board — a colorless sac-land becomes an Izzet fast land that enters untapped early and makes both colours. Red ticks up to 19, the colorless-only count drops to one (Scavenger Grounds), and the land count is unchanged at 34. Not a Game Changer, so the deck stays at 100 and three GCs (Bracket 3, at the cap).
 **Updated 2026-09-22.** One swap: **Scavenger Grounds → Stormcarved Coast.** This clears the deck's last flagged weak slot: a colorless land whose graveyard exile fought Eris, Mizzix's Mastery, and Plunder the Trollshaws becomes an Izzet slow land (enters untapped once you control two other lands) that makes both colours. Blue goes to 24 sources, red to 20, and the deck now has no colorless-only lands. The card-conflict section is also rebuilt against the other three decks' current lists. Not a Game Changer, so the deck stays at 100, 34 lands, and three GCs (Bracket 3, at the cap).
+**Updated 2026-09-24.** No list changes. Card-conflict correction only: Najeela swapped Terramorphic Expanse for Karplusan Forest, so **Terramorphic Expanse is now Veyran-only**.
 
 ## Strategy
 
@@ -12,7 +13,7 @@ Chain cheap instants and sorceries, let Veyran make every cast-trigger fire twic
 
 Veyran ({1}{U}{R}, 2/2) reads: magecraft gives it +1/+1 until end of turn, and *if you casting or copying an instant or sorcery causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time*.
 
-The scope matters. Veyran doubles magecraft and "whenever you cast an instant or sorcery" abilities. It does **not** double attack triggers, combat-damage triggers, or ETB triggers — so Kylox's attack ability, the Emeritus attack triggers, and Lightning's damage trigger all fire once.
+The scope matters. Veyran doubles magecraft and "whenever you cast an instant or sorcery" abilities. It does **not** double attack triggers, combat-damage triggers, or ETB triggers — so the Emeritus attack triggers, and Lightning's damage trigger all fire once.
 
 | Payoff | Per spell | With Veyran | Wizard/Shaman (Harmonic Prodigy too) |
 | --- | --- | --- | --- |
@@ -24,7 +25,7 @@ The scope matters. Veyran doubles magecraft and "whenever you cast an instant or
 | Murmuring Mystic | one 1/1 flying Bird | 2 Birds | 3 Birds |
 | Rite of the Dragoncaller | one 5/5 flying Dragon | 2 Dragons | no |
 | Eris, Roar of the Storm | one 4/4 flying prowess Dragon on your 2nd spell | 2 Dragons | no |
-| Burning Prophet | +1/+1 and scry 1 | twice | three times |
+| Niv-Mizzet, the Firemind | 1 damage to any target whenever you draw (it also taps to draw) | pings on every extra draw | no |
 | Displacer Kitten | blink one of your permanents | 2 blinks | no |
 
 Thor, Asgard's Avenger adds 1 to every instance of damage from another source you control. With Veyran it turns each Guttersnipe trigger into 3 and each Thunderdrum trigger into 2, so a three-spell turn kills a 40-life table faster than the raw numbers suggest.
@@ -55,7 +56,7 @@ Red is still the tighter color, but 20 red lands is healthier than the old 18 fo
 
 **Spell density.** 36 instants and sorceries, plus four prepare cards whose backs are castable spells: Emeritus of Ideation // Ancestral Recall, Emeritus of Conflict // Lightning Bolt, Blazing Firesinger // Seething Song, Sanar // Wild Idea. Each copy is a separate cast, so each triggers magecraft again.
 
-**Finding cards.** Three repeatable draw bodies (Archmage Emeritus, Muse Seeker, Hydro-Channeler) and a deep cantrip suite: Sleight of Hand, Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up. Plunder the Trollshaws is the best of them here, since flashback turns one card into two casts. Old Fat Spider Can't See Me gives Veyran hexproof on chapter I, then two cards on III and IV.
+**Finding cards.** Repeatable draw bodies (Archmage Emeritus, Hydro-Channeler, and Niv-Mizzet, Parun, which draws whenever anyone casts an instant or sorcery) and a deep cantrip suite: Sleight of Hand, Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up. Plunder the Trollshaws is the best of them here, since flashback turns one card into two casts. Old Fat Spider Can't See Me gives Veyran hexproof on chapter I, then two cards on III and IV.
 
 **Interaction.** Eight ways to answer a spell (Counterspell, Force of Will, Spell Pierce, An Offer You Can't Refuse, Disdainful Stroke, Mystic Confluence, Return the Favor, Venser), nine pieces of spot removal, and three resets in Blasphemous Act, River's Rebuke, and Cyclonic Rift. Every one is also a magecraft trigger, which is why holding up interaction costs this deck no tempo. Force of Will is the free one — it protects your commander or your combo turn even fully tapped out, and it's live whether or not Veyran is on the board.
 
@@ -69,9 +70,9 @@ Red is still the tighter color, but 20 red lands is healthier than the old 18 fo
 
 With Guttersnipe or Thunderdrum Soloist out, that loop is lethal. With Rite of the Dragoncaller it makes arbitrarily many 5/5 fliers. With Archmage Emeritus it draws your deck, so stop while cards remain. **With Aetherflux Reservoir it gains infinite life, so pay 50 and deal 50 to each opponent in turn — the cleanest kill the deck has.** Assembly costs seven mana across two turns, plus three mana free to start the loop.
 
-**Kylox is the other big turn.** Attack, sacrifice your Birds and Dragons, exile that much off the top, and cast every instant and sorcery among them for free. Each free cast is a doubled magecraft trigger — and each also pings with Ral and gains with Aetherflux. Kylox's own attack trigger is not doubled.
+**Niv-Mizzet is the other big finisher.** Every instant or sorcery you cast draws a card (twice with Veyran), and every card you draw deals 1 damage to any target, so a spell turn becomes a stream of pings. It can't be countered.
 
-**Mizzix's Mastery** on River's Rebuke or a large Crackle with Power is the single-card blowout. Dualcaster Mage is value here rather than a combo piece, since Twinflame is no longer in the list.
+**Mizzix's Mastery** on River's Rebuke or a large Crackle with Power is the single-card blowout. 
 
 **Sequencing.** Deploy pingers and token engines before Veyran, not after. Veyran costs three, dies to anything, and only doubles what is already on the board. Ral, Storm Conduit and Aetherflux Reservoir both want to be down before the spell-dense turn. Emeritus of Ideation wants to exile eight cards from your graveyard on attack, which competes with Eris and Mizzix's Mastery for the same yard, so feed it lands and spent cantrips.
 
@@ -96,7 +97,7 @@ Disclose before the game:
 - **Displacer Kitten plus Blazing Firesinger** is a two-card infinite. It needs seven mana of setup, so it's not an early combo, but it is a combo and pods should hear about it.
 - **Aetherflux Reservoir plus that loop is a combo kill** — infinite casts becomes infinite life, then pay 50 and burn each opponent. Aetherflux also snipes off a big non-infinite turn once you pass 50 life, so mention it as a wincon in its own right.
 - **Cyclonic Rift**, **Force of Will** (a free counterspell — worth flagging as a Game Changer), and **Jin-Gitaxias, Progress Tyrant**, which taxes or answers the first spell each opponent casts.
-- **Kylox** turns, which can convert a board of tokens into a long free-spell chain.
+- **Niv-Mizzet** turns, where every spell draws and every draw pings.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
@@ -106,7 +107,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (1).** Ral, Storm Conduit
 
-**Creatures (20).** Archmage Emeritus, Blazing Firesinger // Seething Song, Burning Prophet, Displacer Kitten, Dualcaster Mage, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Gandalf Friend of the Shire, Guttersnipe, Harmonic Prodigy, Hydro-Channeler, Jin-Gitaxias Progress Tyrant, Kylox Visionary Inventor, Murmuring Mystic, Muse Seeker, Sanar Unfinished Genius // Wild Idea, Thor Asgard's Avenger, Thunderdrum Soloist, Venser Shaper Savant
+**Creatures (20).** Archmage Emeritus, Blazing Firesinger // Seething Song, Displacer Kitten, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Gandalf Friend of the Shire, Guttersnipe, Harmonic Prodigy, Hydro-Channeler, Imperial Recruiter, Jin-Gitaxias Progress Tyrant, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Sanar Unfinished Genius // Wild Idea, Thor Asgard's Avenger, Thunderdrum Soloist, Venser Shaper Savant
 
 **Artifacts (6).** Aetherflux Reservoir, Arcane Signet, Disruptor Flute, Fellwar Stone, Sol Ring, Thought Vessel
 
@@ -130,7 +131,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Banishing Betrayal
 1 Blasphemous Act
 1 Blazing Firesinger // Seething Song
-1 Burning Prophet
+1 Niv-Mizzet, the Firemind
 1 Burst Lightning
 1 Chaos Warp
 1 Coastal Peak
@@ -144,7 +145,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Displacer Kitten
 1 Disruptor Flute
 1 Dreams of Laguna
-1 Dualcaster Mage
+1 Kessig Flamebreather
 1 Emeritus of Conflict // Lightning Bolt
 1 Emeritus of Ideation // Ancestral Recall
 1 Eris, Roar of the Storm
@@ -161,13 +162,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Harmonic Prodigy
 1 Hydro-Channeler
 1 Jin-Gitaxias, Progress Tyrant
-1 Kylox, Visionary Inventor
+1 Niv-Mizzet, Parun
 1 Light Up the Stage
 1 Lightning Bolt
 1 Mistrise Village
 1 Mizzix's Mastery
 1 Murmuring Mystic
-1 Muse Seeker
+1 Imperial Recruiter
 1 Mystic Confluence
 1 Mystic Sanctuary
 1 Mystical Tutor
@@ -214,7 +215,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **The 09-21 swap — 1 out, 1 in (both lands).** Terminal Moraine → Spirebluff Canal. This is the "Terminal Moraine for a third untapped dual" upgrade the old notes flagged, now taken: a colorless land that entered slow and sacked for a basic becomes an Izzet fast land that enters untapped through the early turns and taps for both colours. Red moves to 19, colorless-only lands drop to one, land count holds at 34. Not a Game Changer.
 
-**Weakest remaining slot**, if you want to keep tuning: with Scavenger Grounds gone, the mana base has no obvious weak land left. On the spell side, Disruptor Flute and Dualcaster Mage (value-only since Twinflame left) are the softest.
+**Weakest remaining slot**, if you want to keep tuning: with Scavenger Grounds gone, the mana base has no obvious weak land left. On the spell side, Disruptor Flute is the softest.
 
 **Game Changers — at the cap.** Three: Mystical Tutor, Cyclonic Rift, Force of Will. A fourth moves the deck to Bracket 4. Force of Will earns the slot over Fierce Guardianship (free only while you control your commander — shaky on a 2/2 that dies constantly) and Rhystic Study (generic flow that doesn't touch the magecraft engine); Force of Will is free unconditionally and doesn't need Veyran alive.
 
@@ -227,10 +228,16 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 **Card conflicts with your other decks.**
 - Displacer Kitten stays here — it's half the infinite loop, so the physical copy lives in Veyran.
 - Shared with **Sauron**: Blasphemous Act, Counterspell, Cyclonic Rift, Shivan Reef, Steam Vents, Sulfur Falls. (Scavenger Grounds is now Sauron-only.)
-- Shared with **Najeela**: Fellwar Stone, Temple of Epiphany, Terramorphic Expanse.
+- Shared with **Najeela**: Fellwar Stone, Temple of Epiphany. (Terramorphic Expanse is now Veyran-only — Najeela cut it on 09-24.)
 - Shared with **Najeela and Sauron**: Chaos Warp, Path of Ancestry.
 - Shared with **Sephiroth and Najeela**: Ash Barrens, Evolving Wilds.
 - Staples in all four decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **Stormcarved Coast** is a new single, not shared with any other deck.
 
 **If you want red to be more reliable,** Spirebluff Canal and Stormcarved Coast have bumped it to 20. The next step is bringing back Izzet Signet as a two-mana rock that also fixes red.
+
+## Change log
+
+**Sep 2026 (sim-tested).** Kylox, Visionary Inventor → Niv-Mizzet, Parun; Dualcaster Mage → Kessig Flamebreather; Muse Seeker → Imperial Recruiter. In the 4-player pod simulation (10,000 games per profile) Veyran's win rate went 8.0% → 9.6% (conservative) and 8.2% → 9.8% (loose), better under both. The engine (Veyran + a payoff) came online in ~3.5 points more games and about a quarter turn sooner; damage per game rose ~2.5, mostly spell-triggered burn and Niv-Mizzet pings. Imperial Recruiter finds Displacer Kitten, Blazing Firesinger, Kessig Flamebreather or Guttersnipe. None of the three is a Game Changer.
+
+**Sep 2026 (sim-tested, second pass).** Burning Prophet → Niv-Mizzet, the Firemind. Every card you draw — draw step, cantrips, Archmage Emeritus, Niv-Mizzet, Parun — pings any target, and it taps to draw a card itself. In the pod simulation (10,000 games per profile) Veyran's win rate went 8.2% → 9.2% (conservative) and 8.2% → 9.1% (loose), better under both; damage per game rose ~1.3. Cutting Disruptor Flute instead gave a similar but smaller result (+0.8 both), so the Flute stays. Not a Game Changer.

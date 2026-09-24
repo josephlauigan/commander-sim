@@ -179,7 +179,9 @@ def run(g, p, e, src, ctx, spell, depth):
     d = e['do']; opps = g.opps(p)
     kind = 'burn' if spell is not None else 'triggers'
     if d == 'draw':
-        for q in players(g, p, e.get('who', 'you'), ctx): draw(g, q, num(g, p, e.get('n'), ctx, src))
+        for q in players(g, p, e.get('who', 'you'), ctx):
+            if e.get('optional') and len(q.library) <= 12: continue       # "you may draw": don't deck yourself
+            draw(g, q, num(g, p, e.get('n'), ctx, src))
     elif d == 'damage':
         n = num(g, p, e.get('n'), ctx, src) + (1 if has(p, 'thor') else 0); to = e.get('to', {})
         if to.get('sel') == 'any_target':
@@ -271,10 +273,13 @@ def run(g, p, e, src, ctx, spell, depth):
     elif d == 'discard':
         for q in players(g, p, e.get('who', 'each_opponent'), ctx):
             n = num(g, p, e.get('n'), ctx, src)
-            if q is p: discard_worst(g, q, n)
+            if q is p and e.get('random'):          # "discard a card at random" (Gamble)
+                for _ in range(n):
+                    if q.hand: E.discard_index(g, q, g.rng.randrange(len(q.hand)))
+            elif q is p: discard_worst(g, q, n)
             else:
                 for _ in range(n):
-                    if q.hand: q.gy.append(q.hand.pop(g.rng.randrange(len(q.hand))))
+                    if q.hand: E.discard_index(g, q, g.rng.randrange(len(q.hand)))
     elif d == 'mill':
         for q in players(g, p, e.get('who', 'you'), ctx): mill(g, q, num(g, p, e.get('n'), ctx, src))
     elif d == 'sacrifice':
@@ -329,7 +334,7 @@ def run(g, p, e, src, ctx, spell, depth):
     elif d == 'wheel':
         qs = players(g, p, e.get('who', 'each_player'), ctx)
         n = max([len(q.hand) for q in qs] + [0])
-        for q in qs: q.gy.extend(q.hand); q.hand = []
+        for q in qs: E.discard_cards(g, q, list(q.hand))
         for q in qs: draw(g, q, n)
     elif d == 'modal':
         modes = e.get('modes', [])
@@ -338,6 +343,23 @@ def run(g, p, e, src, ctx, spell, depth):
         for ms in best: execute(g, p, ms, src, ctx, spell, depth + 1)
     elif d == 'counter_spell':
         pass                                      # counterspells are cast through the engine's response window
+    elif d == 'oracle':                          # Thassa's Oracle
+        x = sum(m.cd.pips.count('U') for m in p.perms if m.cd is not None and m.cd.perm and not m.phased)
+        if x >= len(p.library):
+            import ais; ais.win(g, p, 'combo'); return
+        top = [p.library.pop() for _ in range(min(x, len(p.library)))]
+        if top:
+            best = max(top, key=lambda c: E.card_worth(g, p, c)); top.remove(best)
+            g.rng.shuffle(top); p.library[:0] = top; p.library.append(best)
+    elif d == 'narset_dig':                      # Narset -2: top four, take a noncreature nonland card, rest on the bottom
+        top = [p.library.pop() for _ in range(min(4, len(p.library)))]
+        ok = [c for c in top if not c.creature and not c.land]
+        if ok:
+            c = max(ok, key=lambda c: E.card_worth(g, p, c)); top.remove(c); p.hand.append(c); p.seen_names.add(c.name)
+        g.rng.shuffle(top); p.library[:0] = top
+    elif d == 'ring_protection':                  # The One Ring: protection from everything until your next turn
+        p.ring_prot = True
+        log(f'    {NAME(p)} gains protection from everything until their next turn', g)
 
 
 def search(g, p, e, ctx):
@@ -356,6 +378,8 @@ def search(g, p, e, ctx):
         else:
             c = max(cands, key=lambda c: (card_value(g, p, c), c.cmc))
         p.library.remove(c)
+        a = E.agent_for(g, p)
+        if a is not None: E.agent_take(g, a, p, c); continue      # Opposition Agent
         if to == 'battlefield':
             if c.land: p.lands.append(E.Land(c, e.get('tapped', False)))
             else: enter(g, p, c)
@@ -422,6 +446,7 @@ def trigger_matches(g, q, src, a, kw):
         m = kw.get('perm'); owner = kw.get('owner', m.owner if m is not None else None)
         if m is None: return
         if s == 'self':
+            if a.get('if_cast') and not kw.get('was_cast'): return          # "when ~ enters, if you cast it"
             if m is src or (ev == 'dies' and kw.get('card') is src.cd and m is src): yield dict(base, event_perm=m)
             return
         if not m.creature: return
@@ -506,6 +531,7 @@ def has_kw(g, m, kw):
         for a in m.cd.dsl:
             if a.get('static') == 'unblockable' and kw == 'unblockable': return True
             if a.get('static') == 'cant_block' and kw == 'cant_block': return True
+            if a.get('static') == 'self_keyword' and a.get('keyword') == kw: return True   # e.g. an indestructible artifact
     for q, src, a in statics(g, 'keyword'):
         if a.get('keyword') == kw and m.creature and matches(g, q, m, a.get('filter'), src): return True
     for q, src, a in statics(g, 'equip_keyword'):
@@ -569,7 +595,7 @@ def no_lifegain(g, p):
 
 
 # ------------------------------------------------------------------ AI: values and ability use
-EFF_VALUE = {'draw': 1.3, 'treasure': 0.8, 'clue': 0.6, 'gain_life': 0.15, 'amass': 0.7, 'proliferate': 1.0,
+EFF_VALUE = {'narset_dig': 1.3, 'draw': 1.3, 'treasure': 0.8, 'clue': 0.6, 'gain_life': 0.15, 'amass': 0.7, 'proliferate': 1.0,
              'extra_combat': 3.0, 'add_mana': 0.5, 'mill': 0.1}
 
 
@@ -664,6 +690,7 @@ def ability_options(g, p, sorcery_ok=True):
                 cost_v = 0.25 * sum(int(x) if x.isdigit() else 1 for x in a.get('cost', {}).get('mana', ''))
                 cost_v += 1.5 if a.get('cost', {}).get('sac') == 'self' else 0
                 u = value_of(g, p, a['effects']) - cost_v
+                if 'ai_min' in a: u = max(u, a['ai_min'])                   # card data can insist the AI uses it
 
                 def go(src=src, a=a, key=key, stamp=stamp):
                     if src not in p.perms or not _pay_ability_cost(g, p, src, a.get('cost', {}), False): return False

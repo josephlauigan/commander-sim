@@ -322,4 +322,28 @@ Firebrand Archer|C|1R|pow=2 tgh=1 noatk ping=1
 Insatiable Avarice|S|B|avarice
 Grim Tutor|S|1BB|tut=any lose=3
 Aura Shards|E|1GW|shards
+Ancient Tomb|L|-|c=C amt=2 tomb
+Mishra's Workshop|L|-|c=C amt=3 workshop
+Glacial Chasm|L|-|c=C chasm
+The Tabernacle at Pendrell Vale|L|-|c=C leg tabernacle
+Field of the Dead|L|-|c=C t fotd
+Mana Vault|A|1|rock=3:C nountap vaultping
+Grim Monolith|A|2|rock=3:C nountap grim
+Chrome Mox|A|0|chromemox
+Mox Diamond|A|0|rock=1:A moxd
+Lion's Eye Diamond|A|0|led
+Fierce Guardianship|I|2U|ctr=nc fierce
+Gifts Ungiven|I|3U|gifts
+Intuition|I|2U|intuition
+Jeska's Will|S|2R|jeska
+Underworld Breach|E|1R|breach
+Panoptic Mirror|A|5|panoptic
+Ad Nauseam|I|3BB|adnaus
+Bolas's Citadel|A|3BBB|leg citadel
+Braids, Cabal Minion|C|2BB|pow=2 leg braids
+Imperial Seal|S|B|seal
+Vampiric Tutor|I|B|seal
+Necropotence|E|BBB|necro
+Opposition Agent|C|2B|pow=3 tgh=2 flash agent
+Tergrid, God of Fright // Tergrid's Lantern|C|3BB|pow=4 tgh=5 leg tergrid
 """

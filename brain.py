@@ -209,8 +209,12 @@ def do_cast(g, p, c, zone=None):
         cg, cp = parse_cost(c.tags['fb'])
     else:
         cg, cp = cost_of(p, c)
-    if not can_pay(g, p, cg, cp, cv): return False
-    pay(g, p, cg, cp, cv)
+    E.PAY_FOR = c
+    try:
+        if not can_pay(g, p, cg, cp, cv): return False
+        pay(g, p, cg, cp, cv)
+    finally:
+        E.PAY_FOR = None
     if zone is None: zone = 'cmd' if (c is p.cmd and c not in p.hand) else 'hand'
     ctx = {}
     if 'tokx' in c.tags:
@@ -465,7 +469,8 @@ def main(g, p, post):
             u = card_utility(g, p, s, c)
             if u is None: continue
             cg, cp = cost_of(p, c)
-            if not can_pay(g, p, cg, cp, 'convoke' in c.tags): continue
+            E.PAY_FOR = c; ok = can_pay(g, p, cg, cp, 'convoke' in c.tags); E.PAY_FOR = None
+            if not ok: continue
             u -= reserve_penalty(g, p, s, c, hold_card, hold_v)
             if naj_hold and not can_pay(g, p, cg, cp + 'WUBRG'): u -= 4.0
             opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
@@ -473,6 +478,7 @@ def main(g, p, post):
         opts += wipe_options(g, p, s)
         opts += special_options(g, p, s, post)
         opts += extra_options(g, p, s, post, sorcery_ok=True)
+        opts += A.breach_gc_options(g, p)
         if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, True)
         stop_u = (hold_v if hold_card is not None else -3.0) + (1.5 if naj_hold else 0.0)
         opts.append((stop_u, 'stop (hold mana)' if hold_card is not None else 'stop', None))
@@ -497,7 +503,7 @@ def wants_counter(g, q, val, thr, ncounters):
 
 
 def choose_defender(g, p):
-    opps = g.opps(p)
+    opps = [q for q in g.opps(p) if not shielded(q)] or g.opps(p)     # combat damage to a protected player is prevented
     my = sum(epow(g, m) for m in p.perms if m.creature and not m.tapped and not m.noatk and not m.sick)
     aggr = STYLE[p.key]['aggression']
     items = []
@@ -568,13 +574,15 @@ def end_of_turn_window(g, p):
                 continue
             cv = 'convoke' in c.tags
             if not can_pay(g, p, c.generic, c.pips, cv): continue
-            if 'draw' in c.tags or 'tokx' in c.tags or 'treas' in c.tags or c.sorcery:
+            if 'draw' in c.tags or 'tokx' in c.tags or 'treas' in c.tags or c.sorcery or 'gifts' in c.tags or 'intuition' in c.tags \
+                    or 'seal' in c.tags or 'adnaus' in c.tags:
                 u = card_utility(g, p, s, c)
                 if u is None: u = 3.0
                 if 'tokx' in c.tags: u = 3.0 + total_mana(g, p, cv) / 2.0
                 opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
         opts += [x for x in extra_options(g, p, s, True, sorcery_ok=gand) if 'Rhys' not in x[1] and 'Lidless' not in x[1]]
         if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, False)
+        opts += A.monolith_untap_options(g, p)
         for u, lbl, fn in removal_options(g, p, s):
             if lbl.split(' -> ')[0] in [c.name for c in p.hand if c.instant]:
                 opts.append((u + 1.2 * STYLE[p.key]['caution'], lbl, fn))

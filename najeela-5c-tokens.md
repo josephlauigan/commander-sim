@@ -5,6 +5,7 @@
 **Updated 2026-09-21.** Cloud's Limit Break → Sterling Grove (enchantment protection and a third enchantment tutor).
 **Updated 2026-09-22.** Two swaps: **Smothering Tithe → Coalition Relic** (Tithe moved to Sephiroth) and **Duskana, the Rage Mother → Cryptolith Rite.**
 **Updated 2026-09-22 (second pass).** **Cryptolith Rite → Talisman of Dominance**, a straight trade with the Sephiroth deck. Cryptolith Rite completed the Najeela infinite (attacking creatures untapped by her activation tap for WUBRG to activate her again), and the deck is meant to stay non-combo, so the Rite moved to Sephiroth and its Talisman of Dominance came here. Net for the day: Duskana and Smothering Tithe out, Coalition Relic and Talisman of Dominance in. **Zero Game Changers, no two-card infinite.** Deck stays at 100 and 37 lands.
+**Updated 2026-09-24.** One land swap: **Terramorphic Expanse → Karplusan Forest.** A tapped basic-fetch becomes an untapped R/G painland, so one more land comes in untapped and both of Najeela's own colours (red for her casting cost, green for the ramp suite) get an extra immediate source. Land count and nonbasic count unchanged (37 total, 26 nonbasic). Still zero Game Changers.
 
 ## Strategy
 
@@ -32,6 +33,7 @@ The list is exactly 100 cards with 37 lands: 26 nonbasic plus 3 Forest, 2 Plains
 | --- | --- |
 | Any colour, untapped | Command Tower, Exotic Orchard, Gemstone Mine, Spire of Industry, Aether Hub, Spectator Seating, The World Tree |
 | Any colour, tapped or slow | Path of Ancestry, Vivid Creek, Vivid Grove, Vivid Marsh |
+| Two-colour, untapped | Karplusan Forest (R/G; colourless free, coloured costs 1 life) |
 | Tri-lands (all tapped) | Arcane Sanctum, Crumbling Necropolis, Jungle Shrine, Savage Lands, Seaside Citadel |
 | Rocks / dorks | Sol Ring, Arcane Signet, Chromatic Lantern, Coalition Relic, Fellwar Stone, Relic of Legends, Talisman of Dominance, Birds of Paradise |
 | Land ramp | Nature's Lore, Cultivate, Skyshroud Claim, Wargate |
@@ -114,7 +116,7 @@ With three open Game Changer slots, Rhystic Study or a replacement board reset (
 
 **Instants (12).** Anguished Unmaking, Chaos Warp, Clever Concealment, Dispatch, Duty Beyond Death, Ephemerate, Generous Gift, March of the Multitudes, Secure the Wastes, Swords to Plowshares, Ultimate Magic: Holy, Unbreakable Formation
 
-**Lands (37).** Aether Hub, Arcane Sanctum, Ash Barrens, Bonders' Enclave, Command Tower, Crumbling Necropolis, Evolving Wilds, Exotic Orchard, Fabled Passage, Gemstone Mine, Jungle Shrine, Path of Ancestry, Prairie Stream, Savage Lands, Seaside Citadel, Spectator Seating, Spire of Industry, Temple of Epiphany, Temple of Malice, Temple of Silence, Terramorphic Expanse, The World Tree, Treno Dark City, Vivid Creek, Vivid Grove, Vivid Marsh, 3 Forest, 2 Plains, 2 Mountain, 2 Island, 2 Swamp
+**Lands (37).** Aether Hub, Arcane Sanctum, Ash Barrens, Bonders' Enclave, Command Tower, Crumbling Necropolis, Evolving Wilds, Exotic Orchard, Fabled Passage, Gemstone Mine, Jungle Shrine, Karplusan Forest, Path of Ancestry, Prairie Stream, Savage Lands, Seaside Citadel, Spectator Seating, Spire of Industry, Temple of Epiphany, Temple of Malice, Temple of Silence, The World Tree, Treno Dark City, Vivid Creek, Vivid Grove, Vivid Marsh, 3 Forest, 2 Plains, 2 Mountain, 2 Island, 2 Swamp
 
 ## Import list (100)
 
@@ -157,6 +159,7 @@ With three open Game Changer slots, Rhystic Study or a replacement board reset (
 1 Hornet Queen
 1 Jinnie Fay, Jetmir's Second
 1 Jungle Shrine
+1 Karplusan Forest
 1 Legion's Landing // Adanto, the First Fort
 1 Lightning Greaves
 1 March of the Multitudes
@@ -192,7 +195,6 @@ With three open Game Changer slots, Rhystic Study or a replacement board reset (
 1 Temple of Epiphany
 1 Temple of Malice
 1 Temple of Silence
-1 Terramorphic Expanse
 1 The Dawning Archaic
 1 The World Tree
 1 Treno, Dark City
@@ -217,6 +219,8 @@ With three open Game Changer slots, Rhystic Study or a replacement board reset (
 
 ## Flags and tuning levers
 
+**The 09-24 change — Terramorphic Expanse → Karplusan Forest.** A pure mana-base upgrade: the Expanse cost a turn of tempo and only found a basic, while the painland taps immediately for red or green. The honest cost is life — each coloured tap is 1 damage — which Najeela's lifelink swings and Warleader's Call usually cover. It also gives up a little deck-thinning and Landfall-free shuffle, neither of which this deck uses.
+
 **The 09-22 changes — net 2 out, 2 in.**
 - **Smothering Tithe → Coalition Relic.** Tithe moved to Sephiroth. You lose the deck's only Game Changer and its best long-game mana engine; you gain a reliable any-colour rock with a charge-counter burst.
 - **Duskana, the Rage Mother → Talisman of Dominance** (via Cryptolith Rite, which was in the list briefly and then traded to Sephiroth for the Talisman to keep this deck non-combo). The Talisman is a cheap blue/black source for Najeela's two splash colours.
@@ -238,13 +242,13 @@ With three open Game Changer slots, Rhystic Study or a replacement board reset (
 - Atraxa, Grand Unifier is the Sephiroth commander — one card in two decks.
 - Shared with **Sephiroth**: Anguished Unmaking, Birds of Paradise, Cultivate, Fabled Passage, Swords to Plowshares.
 - Shared with **Sauron**: Crumbling Necropolis, Lightning Greaves.
-- Shared with **Veyran**: Fellwar Stone, Temple of Epiphany, Terramorphic Expanse.
+- Shared with **Veyran**: Fellwar Stone, Temple of Epiphany. (Terramorphic Expanse left this deck on 09-24 and is now Veyran-only.)
 - Shared with **Sephiroth and Sauron**: Chromatic Lantern, Treno Dark City.
 - Shared with **Sephiroth and Veyran**: Ash Barrens, Evolving Wilds.
 - Shared with **Sauron and Veyran**: Chaos Warp, Path of Ancestry.
 - Staples in all four decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **Talisman of Dominance moved here from Sephiroth; Cryptolith Rite moved from here to Sephiroth.** Both are single copies.
-- Singles to this deck: Coalition Relic, Relic of Legends, Sterling Grove, Talisman of Dominance, Temple of Silence.
+- Singles to this deck: Coalition Relic, Karplusan Forest, Relic of Legends, Sterling Grove, Talisman of Dominance, Temple of Silence.
 - **To the binder**: Duskana, the Rage Mother.
 
 **Marginal slots.** Nicol Bolas, Dragon-God is now the softest playable, and the first cut for Vorinclex, more pump, or a board reset.

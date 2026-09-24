@@ -99,6 +99,13 @@ class Player:
         s.pump = 0; s.pumpadd = 0; s.trample = False; s.combo_tried = False
         s.removed_bombs = set(); s.first_bomb = None
         s.milestone = {}
+        s.ring_prot = False   # The One Ring: protection from everything until this player's next turn
+        s.floatU = 0          # blue mana (Lion's Eye Diamond), lasts until end of turn
+        s.draw_st = None; s.draw_n = 0      # cards drawn this turn (Narset, Parter of Veils)
+        s.chasm_age = 0       # Glacial Chasm age counters (cumulative upkeep)
+        s.impulse = []        # cards exiled with "you may play them this turn" (Jeska's Will), held in hand
+        s.land_turn = -1      # turn of this player's last land drop
+        s.agent_ids = set()   # cards taken with Opposition Agent (castable with mana of any type)
 
 
 class Game:
@@ -203,6 +210,10 @@ def etgh(g, m):
     return v
 
 
+def indestructible(g, m):
+    return DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible')
+
+
 def untargetable(g, m):
     if m.phased: return True
     if DSLMOD is not None and (DSLMOD.has_kw(g, m, 'hexproof') or DSLMOD.has_kw(g, m, 'shroud')): return True
@@ -258,8 +269,18 @@ def once_per_turn(g, p, key):
     return True
 
 
-def lose_life(g, p, n, src, kind='other'):
+# lose_life kinds that are damage (prevented by protection); 'drain' and 'other' are life loss.
+# 'triggers' is mostly damage (Orcish Bowmasters, Kaervek, DSL damage abilities); Undermine passes damage=False.
+DAMAGE_KINDS = ('combat', 'burn', 'aether', 'triggers')
+
+
+def lose_life(g, p, n, src, kind='other', damage=None):
     if n <= 0 or not p.alive: return
+    if damage is None: damage = kind in DAMAGE_KINDS
+    if damage and prevents_damage(g, p, src):
+        p.stats['dmg_prevented'] += n
+        log(f'    {n} damage to {NAME(p)} is prevented', g)
+        return
     p.life -= n
     if src is not None and src is not p:
         p.last_src = src; p.last_kind = kind
@@ -268,6 +289,21 @@ def lose_life(g, p, n, src, kind='other'):
     elif src is None:
         p.last_src = src
     if DAMAGE_HOOK is not None: DAMAGE_HOOK(p, src, n)
+
+
+def chasm(p):
+    return any(L.cd.tags.get('chasm') for L in p.lands)
+
+
+def prevents_damage(g, p, src):
+    """Glacial Chasm prevents all damage to you; The One Ring's protection prevents damage from opponents' sources"""
+    if chasm(p): return True
+    return p.ring_prot and src is not None and src is not p
+
+
+def shielded(p):
+    """damage to p from an opponent would be prevented (attack and burn AIs look elsewhere)"""
+    return p.ring_prot or chasm(p)
 
 
 def gain(p, n):
@@ -313,8 +349,10 @@ def land_cols(p, L, anyc):
 def mana_units(g, p, convoke=False):
     U = []
     anyc = has(p, 'lantern') or (any(L.cd.tags.get('worldtree') for L in p.lands) and len(p.lands) >= 6)
+    art = PAY_FOR is not None and 'A' in PAY_FOR.types
     for L in p.lands:
         if not L.tapped:
+            if L.cd.tags.get('workshop') and not art: continue          # Mishra's Workshop: artifact spells only
             U.append([L, land_cols(p, L, anyc), int(L.cd.tags.get('amt', 1))])
     rite = has(p, 'rite')
     for m in p.perms:
@@ -323,6 +361,9 @@ def mana_units(g, p, convoke=False):
             if rite and not m.sick: U.append([m, p.ident, 1])
             continue
         t = m.cd.tags
+        if 'chromemox' in t:                      # Chrome Mox: one mana of the imprinted card's colours (none if nothing imprinted)
+            if m.colors: U.append([m, m.colors, 1])
+            continue
         if 'rock' in t:
             a, c = t['rock'].split(':')
             U.append([m, p.ident if c == 'A' else ('' if c == 'C' else c), int(a)])
@@ -336,6 +377,8 @@ def mana_units(g, p, convoke=False):
         U.append(['F', 'R', 1])
     for _ in range(p.floatA):
         U.append(['G', p.ident, 1])
+    for _ in range(p.floatU):
+        U.append(['FU', 'U', 1])
     if convoke:                                   # each untapped creature pays for {1} or one coloured pip
         seen = {id(u[0]) for u in U}
         for m in p.perms:
@@ -360,7 +403,8 @@ def plan_pay(U, generic, pips):
         for i, u in enumerate(U):
             if rem[i] <= 0: continue
             waste = 0 if used[i] else max(0, rem[i] - need)
-            k = (u[0] == 'T', waste, len(u[1]))
+            pain = isinstance(u[0], Land) and bool(u[0].cd.tags.get('tomb'))     # Ancient Tomb last: it deals damage
+            k = (u[0] == 'T', pain, waste, len(u[1]))
             if bk is None or k < bk: bk, best = k, i
         if best is None: return None
         take = min(rem[best], need); rem[best] -= take; used[best] += take; need -= take
@@ -380,7 +424,11 @@ def pay(g, p, generic, pips, convoke=False):
             if u[0] == 'T': p.treasures -= 1
             elif u[0] == 'F': p.floatR -= 1
             elif u[0] == 'G': p.floatA -= 1
-            else: u[0].tapped = True
+            elif u[0] == 'FU': p.floatU -= 1
+            else:
+                u[0].tapped = True
+                if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
+                    lose_life(g, p, 2, p, damage=True)
     return True
 
 
@@ -406,15 +454,26 @@ def cost_of(p, c):
         if DSLMOD is not None: gen = max(0, gen + DSLMOD.cost_delta(g, p, c))
     if g is not None and stopped(g, c.name): gen += 3                 # Disruptor Flute tax
     if c is p.cmd: gen += p.tax
+    if id(c) in p.agent_ids:                      # Opposition Agent: spend mana as though it were mana of any type
+        off = [x for x in pips if x not in p.ident]
+        if off: gen += len(off); pips = ''.join(x for x in pips if x in p.ident)
     return gen, pips
+
+
+PAY_FOR = None           # the card currently being paid for (Mishra's Workshop mana is for artifact spells only)
 
 
 # ---------------------------------------------------------------- zones
 def draw(g, p, n=1, step=False):
     for k in range(n):
         if not p.alive: return
+        st = (g.round, g.active.key if getattr(g, 'active', None) else None)
+        if p.draw_st != st: p.draw_st, p.draw_n = st, 0
+        if p.draw_n >= 1 and any(has(q, 'narset') for q in g.opps(p)):      # Narset: opponents draw at most one card each turn
+            p.stats['narset_denied'] += n - k; return
         if not p.library:
             p.decked = True; return
+        p.draw_n += 1
         p.hand.append(p.library.pop())
         p.seen_names.add(p.hand[-1].name)
         p.stats['cards_drawn'] += 1
@@ -455,6 +514,9 @@ def amass(g, p, n):
     a.plus += n + bonus
 
 
+TOKEN_CAP = 250          # creature tokens per player; beyond this the board is lethal many times over and games crawl
+
+
 TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'veyran': 'R'}     # default colour of a deck's tokens
 
 
@@ -462,6 +524,8 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
                 color=None):
     out = []
     if DSLMOD is not None: n *= DSLMOD.token_mult(g, p)
+    have = sum(1 for m in p.perms if m.token)
+    n = min(n, max(0, TOKEN_CAP - have))          # runaway token growth (e.g. Najeela in a long game) is already lethal
     if n <= 0: return out
     blank = opp_has(g, p, 'mother')
     if has(p, 'jinnie') and pw < 2 and not attacking:     # Jinnie Fay: make 2/2 Cats with haste instead
@@ -480,8 +544,8 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
         if has(p, 'crusade'):
             for x in p.perms:
                 if x.creature: x.plus = min(x.plus + k, 60)
-        if has(p, 'warleader'):
-            for q in g.opps(p): lose_life(g, q, k, p, kind='drain')
+        if has(p, 'warleader'):                            # Warleader's Call deals damage
+            for q in g.opps(p): lose_life(g, q, k, p, kind='drain', damage=True)
         if has(p, 'wisp') and pw <= 2:                     # Wispdrinker Vampire
             for q in g.opps(p): lose_life(g, q, k, p, kind='drain')
             gain(p, k * len(g.opps(p)))
@@ -498,7 +562,7 @@ def shards_trigger(g, p, k):
     for _ in range(reps):
         tg = [m for q in g.opps(p) for m in q.perms
               if m.cd is not None and not m.creature and ('A' in m.cd.types or 'E' in m.cd.types)
-              and not untargetable(g, m)]
+              and not untargetable(g, m) and not indestructible(g, m)]
         if not tg: return
         best = max(tg, key=lambda m: pval(g, m))
         if pval(g, best) < 1: return
@@ -514,8 +578,8 @@ def creature_entered(g, p, m):
         if has(p, 'crusade'):
             for x in p.perms:
                 if x.creature: x.plus = min(x.plus + 1, 60)
-        if has(p, 'warleader'):
-            for q in g.opps(p): lose_life(g, q, 1, p, kind='drain')
+        if has(p, 'warleader'):                            # Warleader's Call deals damage
+            for q in g.opps(p): lose_life(g, q, 1, p, kind='drain', damage=True)
         if has(p, 'wisp') and epow(g, m) <= 2 and not (m.cd is not None and 'wisp' in m.cd.tags):
             for q in g.opps(p): lose_life(g, q, 1, p, kind='drain')
             gain(p, len(g.opps(p)))
@@ -555,7 +619,7 @@ def to_zone_card(g, m, zone):
 def die(g, m, cause='destroy'):
     p = m.owner
     if m not in p.perms: return
-    if cause == 'destroy' and DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible'): return
+    if cause == 'destroy' and indestructible(g, m): return
     leave(g, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
     # death triggers
@@ -584,6 +648,7 @@ def die(g, m, cause='destroy'):
         p.stats['undying'] += 1
         return
     to_zone_card(g, m, 'gy')
+    if cause == 'sac': tergrid_steal(g, p, m.phys or m.cd, m.orig)
 
 
 def exile_perm(g, m):
@@ -630,6 +695,10 @@ def pval(g, m):
     if 'normgc' in t and any(q.key == 'najeela' for q in g.opps(p)): v += 2
     if 'mikaeus' in t: v = 5
     if 'eng' in t: v = max(v, 2)
+    if 'onering' in t: v = max(v, 5)
+    if 'sphinx' in t: v = max(v, 6)
+    if 'narset' in t: v = max(v, 4)
+    if 'panoptic' in t: v = max(v, 2 + 2 * len(getattr(g, 'imprint', {}).get(id(m), [])))
     if m.is_cmd: v += 1
     return v
 
@@ -722,7 +791,7 @@ def discard_worst(g, p, n):
         nonl = [x for x in p.hand if not x.land]
         if len(lands) > 2 or not nonl: x = lands[0]
         else: x = max(nonl, key=lambda c: c.cmc)
-        p.hand.remove(x); p.gy.append(x)
+        discard_cards(g, p, [x])
 
 
 def cast_copy(g, p, effect=None):
@@ -766,7 +835,8 @@ def spell_imp(g, p, c, ctx):
     if 'skate' in t:
         a = army_of(p); return (7 if a and a.plus >= 6 else 3), aff
     for k, v in (('aether', 6), ('crusade', 6), ('rhystic', 5), ('tithe', 5), ('mirror', 5),
-                 ('witchking', 5), ('dragoncaller', 5), ('normgc', 7), ('mother', 7)):
+                 ('witchking', 5), ('dragoncaller', 5), ('normgc', 7), ('mother', 7), ('onering', 6),
+                 ('sphinx', 6), ('breach', 5), ('panoptic', 5)):
         if k in t: return v, aff
     if 'tokx' in t and ctx.get('x', 0) >= 4: return 5, aff
     return 0, aff
@@ -805,6 +875,7 @@ def pick_counter(g, q, c):
     best = None
     for ctr in q.hand:
         if 'ctr' not in ctr.tags or not counter_ok(ctr, c): continue
+        if 'fierce' in ctr.tags and commander_out(q): return ctr        # Fierce Guardianship: free with your commander out
         if 'free' in ctr.tags:
             if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, ctr.generic, ctr.pips):
                 if best is None: best = ctr
@@ -814,8 +885,14 @@ def pick_counter(g, q, c):
     return best
 
 
+def commander_out(p):
+    return any(m.is_cmd and not m.phased for m in p.perms)
+
+
 def cast_counter(g, q, ctr):
-    if 'free' in ctr.tags and not can_pay(g, q, ctr.generic, ctr.pips):
+    if 'fierce' in ctr.tags and commander_out(q):
+        pass                                     # cast without paying its mana cost
+    elif 'free' in ctr.tags and not can_pay(g, q, ctr.generic, ctr.pips):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
         if not blues: return False
         q.hand.remove(blues[0]); q.exile.append(blues[0]); lose_life(g, q, 1, q)
@@ -873,7 +950,7 @@ def counter_side_effects(g, q, p, ctr):
     t = ctr.tags
     if 'offer' in t: p.treasures += 2                          # An Offer You Can't Refuse
     if 'denial' in t: draw(g, p, 2); draw(g, q, 1)             # Arcane Denial
-    if 'undermine' in t: lose_life(g, p, 3, q, kind='triggers')
+    if 'undermine' in t: lose_life(g, p, 3, q, kind='triggers', damage=False)   # life loss, not damage
     if 'swan' in t: make_tokens(g, p, 1, 2, fly=True)          # Swan Song gives the caster a Bird
 
 
@@ -883,6 +960,8 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     if zone == 'hand': p.hand.remove(c)
     elif zone == 'gy': p.gy.remove(c)
     elif zone == 'cmd': p.cmd_in_zone = False; p.tax += 2
+    elif zone == 'escape': p.gy.remove(c)
+    elif zone == 'lib': pass                      # Bolas's Citadel: already taken off the top of the library       # Underworld Breach: cast from the graveyard, resolves back to it
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
     p.cast_names.add(c.name)
     tgt = ctx.get('target')
@@ -926,7 +1005,12 @@ def resolve(g, p, c, ctx, zone):
         else: p.gy.append(c)
         return
     if c.perm:
-        m = enter(g, p, c)
+        if 'moxd' in t:                          # Mox Diamond: discard a land card instead, or it goes to the graveyard
+            lands = [x for x in p.hand if x.land]
+            if not lands:
+                p.gy.append(c); log('    Mox Diamond goes to the graveyard (no land to discard)', g); return
+            x = min(lands, key=lambda L: (len(L.tags.get('c', '')), -('t' in L.tags))); p.hand.remove(x); p.gy.append(x)
+        m = enter(g, p, c, was_cast=True)
         if c is p.cmd: m.is_cmd = True
         if 'lr' in t: land_ramp(g, p, int(t['lr']), 'lrt' in t)
         return
@@ -936,6 +1020,11 @@ def resolve(g, p, c, ctx, zone):
         land_ramp(g, p, int(t['lr']), 'lrt' in t)
         if 'lh' in t: land_to_hand(g, p)
     if 'tut' in t: tutor(g, p, t['tut'])
+    if 'gifts' in t: pile_tutor(g, p, 4, 2)     # Gifts Ungiven: four cards, opponent puts two in the graveyard
+    if 'intuition' in t: pile_tutor(g, p, 3, 1) # Intuition: three cards, opponent picks the one you keep
+    if 'jeska' in t: jeskas_will(g, p)
+    if 'seal' in t: tutor_to_top(g, p)          # Imperial Seal / Vampiric Tutor: card on top, lose 2 life
+    if 'adnaus' in t: ad_nauseam(g, p)
     if 'lose' in t: lose_life(g, p, int(t['lose']), p)
     if 'selfdmg' in t: lose_life(g, p, int(t['selfdmg']), p)
     if 'discard1' in t: discard_worst(g, p, 1)
@@ -979,7 +1068,7 @@ def resolve(g, p, c, ctx, zone):
             x = max(cs, key=lambda c: (('bowmasters' in c.tags) * 5 + c.pow)); p.gy.remove(x); enter(g, p, x)
     if 'fbgrant' in t: flashback_grant(g, p)
     if zone == 'gy' and 'fbnib' in t:           # Nibelheim Aflame from graveyard: discard hand, draw four
-        p.gy.extend(p.hand); p.hand = []; draw(g, p, 4)
+        discard_cards(g, p, list(p.hand)); draw(g, p, 4)
     if 'yawg' in t: p.yawg = True
     if 'mastery' in t and ctx.get('overload'):
         # Mizzix's Mastery overloaded: cast a copy of every instant/sorcery in the graveyard
@@ -998,7 +1087,7 @@ def resolve(g, p, c, ctx, zone):
     else: p.gy.append(c)
 
 
-def enter(g, p, cd, orig=None, sick=True):
+def enter(g, p, cd, orig=None, sick=True, was_cast=False):
     phys = None
     if 'clone' in cd.tags:                      # Phyrexian Metamorph: copy the best creature or artifact on the battlefield
         cands = [x for q in g.players if q.alive for x in q.perms if x.cd is not None and x.cd is not q.cmd
@@ -1012,7 +1101,7 @@ def enter(g, p, cd, orig=None, sick=True):
     p.perms.append(m)
     if cd.creature: creature_entered(g, p, m)
     if m in p.perms: do_etb(g, p, m)
-    if DSLMOD is not None and g.dsl_on and m in p.perms: DSLMOD.fire(g, 'etb', perm=m, owner=p)
+    if DSLMOD is not None and g.dsl_on and m in p.perms: DSLMOD.fire(g, 'etb', perm=m, owner=p, was_cast=was_cast)
     return m
 
 
@@ -1027,6 +1116,7 @@ def do_etb(g, p, m):
 
 def etb_once(g, p, m):
     t = m.cd.tags
+    if 'chromemox' in t: chrome_imprint(g, p, m)
     if 'flute' in t:                             # Disruptor Flute: choose a card name
         import ais
         name, score = ais.flute_pick(g, p)
@@ -1114,7 +1204,7 @@ def archon_trig(g, p):
     opps = g.opps(p)
     q = max(opps, key=lambda o: threat(g, p, o))
     edict(g, q)
-    if q.hand: q.gy.append(q.hand.pop(g.rng.randrange(len(q.hand))))
+    if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
     lose_life(g, q, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
 
 
@@ -1127,19 +1217,28 @@ def land_ramp(g, p, n, tapped):
     for _ in range(n):
         basics = [c for c in p.library if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
         if not basics: return
-        c = g.rng.choice(basics); p.library.remove(c); p.lands.append(Land(c, tapped))
+        c = g.rng.choice(basics); p.library.remove(c)
+        a = agent_for(g, p)
+        if a is not None: agent_take(g, a, p, c); continue
+        p.lands.append(Land(c, tapped))
         landfall(g, p)
 
 
 def landfall(g, p):
     for _ in find(p, 'landfall2'): make_tokens(g, p, 1, 2)      # Felidar Retreat: 2/2 Cat per land
+    fields = [L for L in p.lands if L.cd.tags.get('fotd')]
+    if fields and len({L.cd.name for L in p.lands}) >= 7:         # Field of the Dead: 7+ lands with different names
+        for _ in fields: make_tokens(g, p, 1, 2, color='B')
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'landfall', player=p)
 
 
 def land_to_hand(g, p):
     basics = [c for c in p.library if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
     if basics:
-        c = g.rng.choice(basics); p.library.remove(c); p.hand.append(c)
+        c = g.rng.choice(basics); p.library.remove(c)
+        a = agent_for(g, p)
+        if a is not None: agent_take(g, a, p, c)
+        else: p.hand.append(c)
 
 
 def tutor(g, p, kind):
@@ -1148,6 +1247,9 @@ def tutor(g, p, kind):
     if name is None: return
     for c in p.library:
         if c.name == name:
+            a = agent_for(g, p)
+            if a is not None:
+                p.library.remove(c); agent_take(g, a, p, c); g.rng.shuffle(p.library); return
             p.library.remove(c); p.hand.append(c); p.stats['tutored'] += 1
             p.seen_names.add(c.name)
             log(f'    {NAME(p)} tutors {c.name}')
@@ -1173,6 +1275,7 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             if spell is not None and protected_from(g, m, spell.pips): continue
             if kind.startswith('dmg'):
                 if not is_c or etgh(g, m) > int(kind[3:]): continue
+            if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m): continue
             res.append(m)
     return res
 
@@ -1180,6 +1283,8 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
 def apply_removal(g, actor, m, kind, spell=None):
     owner = m.owner
     if m not in owner.perms or untargetable(g, m): return
+    if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m):
+        log(f'    {m.name} ({NAME(owner)}) is indestructible', g); return
     import ais
     if ais.protect_response(g, owner, m, kind, actor):
         log(f'    {NAME(owner)} protects {m.name}', g); return
@@ -1285,3 +1390,176 @@ def apply_wipe(g, p, kind, ctx):
             elif kind == 'nib':
                 if m is not biggest and etgh(g, m) <= x_dmg: die(g, m, 'destroy')
     check_state(g)
+
+# ---------------------------------------------------------------- Game Changer mechanics
+def card_worth(g, p, c, in_gy=False):
+    """how much p's AI wants card c in hand (or, in_gy, in the graveyard: flashback cards keep most of their value)"""
+    import ais
+    v = ais.deck_prio(g, p, c)
+    if v <= 0 and c.dsl and DSLMOD is not None: v = DSLMOD.card_value(g, p, c) * 10
+    if v <= 0:                                   # held interaction has no cast priority but is worth keeping
+        t = c.tags
+        v = (60 if t.get('wipe') == 'rift' else 55 if 'ctr' in t else 50 if ('mastery' in t or 'crackle' in t)
+             else 45 if ('rem' in t or 'wipe' in t) else 40 if (t.get('prot') or 'x' in t) else 0)
+    if c.land: v = 25 if len(p.lands) + sum(1 for x in p.hand if x.land) < 7 else 5
+    if in_gy: return v * 0.8 if ('fb' in c.tags or 'fbnib' in c.tags) else 0.0
+    return v
+
+
+def pile_tutor(g, p, n, keep):
+    """search for n cards with different names; an opponent chooses which `keep` of them go to your hand, the rest
+    go to your graveyard (Gifts Ungiven, Intuition). You pick the pile that is best against their choice."""
+    from itertools import combinations
+    opp = max(g.opps(p), key=lambda q: threat(g, p, q)) if g.opps(p) else None
+    uniq = {}
+    for c in p.library: uniq.setdefault(c.name, c)
+    cs = list(uniq.values())
+    if not cs: return
+    hv = {c.name: card_worth(g, p, c) for c in cs}; gv = {c.name: card_worth(g, p, c, True) for c in cs}
+    pool = sorted(cs, key=lambda c: -hv[c.name])[:8] + sorted(cs, key=lambda c: -gv[c.name])[:3]
+    pool = list({c.name: c for c in pool}.values())
+    k = min(n, len(pool))
+
+    def result(pile):              # the opponent's choice: the split that leaves you the least value
+        best = None
+        for hand in combinations(pile, min(keep, len(pile))):
+            v = sum(hv[c.name] for c in hand) + sum(gv[c.name] for c in pile if c not in hand)
+            if best is None or v < best[0]: best = (v, hand)
+        return best
+    best = None
+    for pl in combinations(pool, k):
+        r = result(pl)
+        if best is None or r[0] > best[0]: best = (r[0], pl, r[1])
+    _, pile, hand = best
+    a = agent_for(g, p)
+    if a is not None:
+        for c in pile: p.library.remove(c); agent_take(g, a, p, c)
+        g.rng.shuffle(p.library); return
+    for c in pile:
+        p.library.remove(c)
+        if c in hand: p.hand.append(c); p.seen_names.add(c.name)
+        else: p.gy.append(c)
+    p.stats['tutored'] += 1
+    g.rng.shuffle(p.library)
+    log(f'    {NAME(p)} gets {", ".join(c.name for c in hand)}'
+        + (f'; {NAME(opp)} bins {", ".join(c.name for c in pile if c not in hand)}' if opp else ''), g)
+
+
+def jeskas_will(g, p):
+    """Choose one (both if you control your commander): add {R} for each card in target opponent's hand;
+    exile the top three cards of your library, you may play them this turn."""
+    opps = g.opps(p)
+    most = max((len(q.hand) for q in opps), default=0)
+    both = commander_out(p)
+    need = sum(x.cmc for x in p.hand if not x.land) - total_mana(g, p)
+    mana = both or (most >= 4 and need >= 3)
+    if mana:
+        p.floatR += most; log(f'    Jeska\'s Will adds {most} red mana', g)
+    if both or not mana:
+        top = [p.library.pop() for _ in range(min(3, len(p.library)))]
+        for c in top: p.hand.append(c); p.seen_names.add(c.name)
+        p.impulse += top
+        log(f'    Jeska\'s Will exiles {", ".join(c.name for c in top)} (playable this turn)', g)
+        lands = [c for c in top if c.land]
+        if lands and p.land_turn != p.turns:
+            L = lands[0]; p.hand.remove(L); p.impulse.remove(L); p.land_turn = p.turns
+            import ais
+            p.lands.append(Land(L, ais.land_enters_tapped(p, L))); landfall(g, p)
+
+
+def chrome_imprint(g, p, m):
+    """Chrome Mox: you may exile a nonartifact, nonland card from your hand; it taps for that card's colours"""
+    cs = [c for c in p.hand if not c.land and 'A' not in c.types and set(c.pips) & set(p.ident)]
+    if not cs: return
+    c = min(cs, key=lambda c: card_worth(g, p, c))
+    p.hand.remove(c); p.exile.append(c)
+    m.colors = ''.join(sorted(set(c.pips) & set(p.ident)))
+    log(f'    Chrome Mox imprints {c.name}', g)
+
+
+def cast_spell_copy(g, p, c, ctx=None):
+    """cast a copy of instant/sorcery card c (Panoptic Mirror): a real cast that can be countered; no card moves"""
+    ctx = dict(ctx or {})
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1
+    log(f'  {NAME(p)} casts a copy of {c.name}', g)
+    on_cast(g, p, c)
+    if g.over or not p.alive: return False
+    imp, aff = spell_imp(g, p, c, ctx)
+    if (imp > 0 or aff) and not counter_window(g, p, c, imp, aff): return False
+    n_gy, n_ex = len(p.gy), len(p.exile)
+    resolve(g, p, c, ctx, 'hand')
+    for zone, n0 in ((p.gy, n_gy), (p.exile, n_ex)):          # the copy ceases to exist instead of going to a zone
+        for i in range(len(zone) - 1, n0 - 1, -1):
+            if zone[i] is c: del zone[i]; break
+    check_state(g)
+    return True
+
+
+def discard_cards(g, q, cards):
+    """q discards these cards from hand: to the graveyard (exiled instead under Necropotence), then Tergrid"""
+    necro = has(q, 'necro')
+    for c in cards:
+        q.hand.remove(c)
+        (q.exile if necro else q.gy).append(c)
+    if not necro:
+        for c in cards: tergrid_steal(g, q, c, q)
+
+
+def discard_index(g, q, i):
+    """q discards the card at position i in hand (random discards)"""
+    c = q.hand.pop(i)
+    if has(q, 'necro'): q.exile.append(c); return
+    q.gy.append(c); tergrid_steal(g, q, c, q)
+
+
+def tergrid_steal(g, loser, c, gy_owner):
+    """Tergrid, God of Fright: whenever an opponent sacrifices a nontoken permanent or discards a permanent card,
+    you may put that card from a graveyard onto the battlefield under your control"""
+    if c is None or not (c.perm or c.land) or c not in gy_owner.gy: return
+    for t in g.players:
+        if not t.alive or t is loser or not has(t, 'tergrid'): continue
+        gy_owner.gy.remove(c)
+        if c.land:
+            t.lands.append(Land(c, False))
+        else:
+            enter(g, t, c, orig=gy_owner)
+        t.stats['tergrid_steals'] += 1
+        log(f'    Tergrid puts {c.name} onto the battlefield under {NAME(t)}\'s control', g)
+        return
+
+
+def agent_for(g, p):
+    """the opponent controlling Opposition Agent while p searches, if any"""
+    for q in g.opps(p):
+        if any(m.cd is not None and 'agent' in m.cd.tags and not m.phased for m in q.perms): return q
+    return None
+
+
+def agent_take(g, a, p, c):
+    """Opposition Agent: the searching player exiles the card; a may play it (held in a's hand here)"""
+    a.hand.append(c); a.agent_ids.add(id(c)); a.stats['agent_takes'] += 1
+    log(f'    Opposition Agent: {NAME(a)} takes {c.name} from {NAME(p)}\'s search', g)
+
+
+def tutor_to_top(g, p):
+    import ais
+    name = ais.tutor_pick(g, p, 'any')
+    lose_life(g, p, 2, p)
+    if name is None: return
+    c = next((x for x in p.library if x.name == name), None)
+    if c is None: return
+    p.library.remove(c)
+    a = agent_for(g, p)
+    if a is not None: agent_take(g, a, p, c); g.rng.shuffle(p.library); return
+    g.rng.shuffle(p.library); p.library.append(c); p.stats['tutored'] += 1
+    log(f'    {NAME(p)} puts {c.name} on top of their library', g)
+
+
+def ad_nauseam(g, p, floor=18):
+    """reveal the top card, put it in hand, lose life equal to its mana value; repeat while it is safe"""
+    n = 0
+    while p.library and p.alive and p.life - 7 > floor and n < 15:
+        c = p.library.pop(); p.hand.append(c); p.seen_names.add(c.name); n += 1
+        lose_life(g, p, c.cmc, p)
+    p.stats['adnaus_cards'] += n
+    log(f'    Ad Nauseam: {n} cards, life now {p.life}', g)
