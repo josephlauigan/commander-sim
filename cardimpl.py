@@ -192,6 +192,9 @@ def turn_start(g, p):
     """start of p's turn: animated lands revert, land upkeep triggers, rebound spells, Pact of Negation payments"""
     import impl_lands
     if getattr(g, 'animated', None): impl_lands.revert_animated(g)
+    for q in g.players:                               # Baubles: draw at the beginning of the next upkeep
+        n = getattr(q, 'delayed_draws', 0)
+        if n and q.alive: q.delayed_draws = 0; E.draw(g, q, n)
     impl_lands.land_upkeep(g, p)
     n = getattr(p, 'pacts', 0)
     while n > 0:
@@ -221,6 +224,8 @@ def adjust_mana(g, p, U):
             if isinstance(u[0], E.Perm) or u[0] == 'T': u[2] += bonus
     for src, fn in hooked(g, 'extra_mana'):
         if src.owner is p: U += fn(g, src, p, U)
+    if E.POOL_RULES and any(c.name == 'Elvish Spirit Guide' for c in p.hand):
+        import impl_partials; U += impl_partials.hand_mana(g, p)
     return U
 
 
@@ -237,7 +242,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    import impl_common, impl_t1, impl_t2, impl_t3, impl_t4, impl_t5, impl_combos, impl_topdeck, impl_fixes, impl_lands  # noqa: F401
+    import impl_common, impl_t1, impl_t2, impl_t3, impl_t4, impl_t5, impl_combos, impl_topdeck, impl_fixes, impl_lands, impl_partials  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]

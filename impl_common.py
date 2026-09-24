@@ -69,6 +69,10 @@ def attached_bonus(g, m):
             x, y = fn(g, m); dp += x; dt += y
     if getattr(g, 'selfpt', None) and m.cd is not None and m.cd.name in SELF_PT and m.owner.alive:
         x, y = SELF_PT[m.cd.name](g, m.owner, m); dp += x; dt += y
+    if getattr(g, 'selfpt', None) and m.creature:
+        import impl_partials as IP
+        b = IP.coat_bonus(g, m) + IP.lineage_bonus(g, m) + IP.bestow_bonus(g, m)
+        dp += b; dt += b
     return dp, dt
 
 
@@ -838,7 +842,7 @@ def _grove(g, src, p, s, post):
     def go():
         if src not in p.perms or not can_pay(g, p, 1, ''): return False
         pay(g, p, 1, ''); die(g, src, 'sac')
-        cs = [c for c in p.library if 'E' in c.types]
+        cs = [c for c in searchable(g, p) if 'E' in c.types]
         c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); p.library.append(c)
         return True
     return [(0.5 if len(p.hand) > 2 else 2.0, 'Sterling Grove tutor', go)]
@@ -868,6 +872,16 @@ note('Spore Frog', 'Full', 'sacrificed to fog a big attack')
 WALKERS = {}
 
 
+def _uses(g, p, src):
+    u = src.loyalty_used
+    if not u or u[:2] != (g.round, p.key): return 0
+    return u[2] if len(u) > 2 else 1
+
+
+def _allowed(p):
+    return 2 if any(m.cd is not None and m.cd.name == 'Oath of Teferi' and not m.phased for m in p.perms) else 1
+
+
 def walker(name, abilities, status=('Approximate', ''), tags='', static=None):
     """abilities: [(loyalty change, label, value(g, p, src) -> utility or None if not usable now, effect(g, p, src))]
     The AI uses one ability per turn at sorcery speed, the most valuable one it can afford."""
@@ -879,7 +893,7 @@ def walker(name, abilities, status=('Approximate', ''), tags='', static=None):
     def _opts(g, src, p, s, post):
         if post is None or src.owner is not p: return []
         if src.loyalty is None: src.loyalty = int(src.cd.start_loyalty or 3)
-        if src.loyalty_used == (g.round, p.key): return []
+        if _uses(g, p, src) >= _allowed(p): return []
         out = []
         for delta, label, val, eff in WALKERS[name]:
             if src.loyalty + delta < 0: continue
@@ -887,8 +901,8 @@ def walker(name, abilities, status=('Approximate', ''), tags='', static=None):
             if u is None: continue
 
             def go(delta=delta, eff=eff, label=label):
-                if src not in p.perms or src.loyalty_used == (g.round, p.key) or src.loyalty + delta < 0: return False
-                src.loyalty_used = (g.round, p.key)
+                if src not in p.perms or _uses(g, p, src) >= _allowed(p) or src.loyalty + delta < 0: return False
+                src.loyalty_used = (g.round, p.key, _uses(g, p, src) + 1)
                 src.loyalty += delta * (2 if delta > 0 and _doubler(g, p) else 1)
                 log(f'  {NAME(p)} uses {name} ({delta:+d}): {label}', g)
                 eff(g, p, src)
@@ -1300,7 +1314,7 @@ def saga_step(g, p):
             for t in make_tokens(g, p, 1, 0, 0, color='', types=('construct',)): t.data = {'construct': True, 'artifact': True}
             g.selfpt = True
         if lore >= 3:
-            cs = [c for c in p.library if 'A' in c.types and c.cmc <= 1 and not c.land]
+            cs = [c for c in searchable(g, p) if 'A' in c.types and c.cmc <= 1 and not c.land]
             if cs:
                 c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); enter(g, p, c)
             p.lands.remove(L); p.gy.append(L.cd); p.sagas.remove(s_)

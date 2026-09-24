@@ -277,7 +277,7 @@ CI.SPELL_PRIO['Craterhoof Behemoth'] = hoof_prio
 
 
 def _put_creature(g, p, pred, prefer_hoof=True):
-    cs = [c for c in p.library if c.creature and pred(c)]
+    cs = [c for c in searchable(g, p) if c.creature and pred(c)]
     if not cs: return None
     import pool_ai
     wish = [c for c in cs if c.name in pool_ai.wish_list(g, p)]

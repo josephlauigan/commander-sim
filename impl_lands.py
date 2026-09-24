@@ -470,7 +470,7 @@ def _tolaria(g, c, p, s, post):
     if post is not False or not can_pay(g, p, 1, 'UU'): return []
     import pool_ai
     wish = pool_ai.wish_list(g, p)
-    zero = [x for x in p.library if x.cmc == 0]
+    zero = [x for x in searchable(g, p) if x.cmc == 0]
     if not zero: return []
     t = next((x for x in zero if x.name in wish), None) or max(zero, key=lambda x: (x.name in KEY_LANDS, card_worth(g, p, x)))
     if t.name not in wish and not (t.land and t.name in KEY_LANDS) and card_worth(g, p, t) < 45: return []

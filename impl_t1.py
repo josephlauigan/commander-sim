@@ -689,7 +689,7 @@ def tutor_named(g, p, pred, k=1, to='hand'):
         return f is not None and c.name not in have and any(f(x) for x in lib)
     rank = lambda c: (c.name in wish and c.name not in have, chain(c), -wish.index(c.name) if c.name in wish else 0,
                       c.name not in have, card_worth(g, p, c))
-    cands = sorted({c.name: c for c in p.library if pred(c)}.values(), key=rank, reverse=True)[:k]
+    cands = sorted({c.name: c for c in searchable(g, p) if pred(c)}.values(), key=rank, reverse=True)[:k]
     for c in cands:
         p.library.remove(c)
         a = agent_for(g, p)

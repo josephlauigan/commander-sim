@@ -261,7 +261,7 @@ def _reshape(g, p, c, ctx):
     if not arts: return
     die(g, min(arts, key=lambda m: pval(g, m)), 'sac')
     x = ctx.get('x', 0)
-    cs = [y for y in p.library if 'A' in y.types and y.cmc <= x]
+    cs = [y for y in searchable(g, p) if 'A' in y.types and y.cmc <= x]
     if cs:
         import impl_t5
         y = max(cs, key=lambda y: (y.name in impl_t5.IC_COMBO_ART, card_worth(g, p, y), y.cmc))

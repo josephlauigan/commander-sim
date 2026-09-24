@@ -80,7 +80,7 @@ walker('Karn, the Great Creator', [
 
 def _tezz_minus(g, p, src):
     x = src.loyalty
-    cs = [c for c in p.library if 'A' in c.types and c.cmc <= x]
+    cs = [c for c in searchable(g, p) if 'A' in c.types and c.cmc <= x]
     if cs:
         c = max(cs, key=lambda c: (c.name in ('Isochron Scepter', 'Power Artifact', 'Basalt Monolith', 'Grim Monolith',
                                               'Mycosynth Lattice'), card_worth(g, p, c), c.cmc))
@@ -125,7 +125,7 @@ note('Cursed Totem', 'Approximate', 'creatures\' mana abilities are off for ever
           status=('Approximate', 'X = spare mana; the best artifact onto the battlefield (improvise not used)'))
 def _whir(g, p, c, ctx):
     x = ctx.get('x', 0)
-    cs = [y for y in p.library if 'A' in y.types and y.cmc <= x]
+    cs = [y for y in searchable(g, p) if 'A' in y.types and y.cmc <= x]
     if cs:
         y = max(cs, key=lambda y: (y.name in IC_COMBO_ART, card_worth(g, p, y), y.cmc))
         p.library.remove(y); g.rng.shuffle(p.library); enter(g, p, y)
@@ -192,7 +192,7 @@ note('Seedborn Muse', 'Full', 'untaps your permanents in each other player\'s un
 
 @IC.spell('Worldly Tutor', prio=40, types='I')
 def _worldly(g, p, c, ctx):
-    cs = [x for x in p.library if x.creature]
+    cs = [x for x in searchable(g, p) if x.creature]
     if cs:
         x = max(cs, key=lambda x: card_worth(g, p, x)); p.library.remove(x); g.rng.shuffle(p.library); p.library.append(x)
 
@@ -298,7 +298,7 @@ ZUR_PREF = ('Necropotence', 'Ethereal Armor', 'Empyrial Armor', 'Ghostly Prison'
 def _zur(g, src, p, atk, d):
     if src not in atk: return
     have = {m.cd.name for m in p.perms if m.cd is not None}
-    cs = [c for c in p.library if 'E' in c.types and c.cmc <= 3 and c.name not in have]
+    cs = [c for c in searchable(g, p) if 'E' in c.types and c.cmc <= 3 and c.name not in have]
     if not cs: return
     c = min(cs, key=lambda c: (ZUR_PREF.index(c.name) if c.name in ZUR_PREF else 99, -card_worth(g, p, c)))
     p.library.remove(c); g.rng.shuffle(p.library)

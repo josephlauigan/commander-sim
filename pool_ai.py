@@ -132,7 +132,7 @@ def tutor_pick(g, p, kind, ok):
     if not wish:
         import impl_combos
         wish = impl_combos.missing_pieces
-    names = {c.name for c in p.library if ok(c)}
+    names = {c.name for c in E.searchable(g, p) if ok(c)}
     have = {m.cd.name for m in p.perms if m.cd is not None} | {c.name for c in p.hand}
     for w in (wish(g, p) if callable(wish) else wish):
         if w in names and w not in have: return w
@@ -140,6 +140,10 @@ def tutor_pick(g, p, kind, ok):
 
 
 EQUIP_COST = {'Lightning Greaves': 0, 'Swiftfoot Boots': 1, 'Whispersilk Cloak': 2}
+
+
+def can_pay_any(g, p, c):
+    return E.can_pay(g, p, *E.cost_of(p, c)) and E.castable(g, p, c)
 
 
 def special_options(g, p, s, post):
@@ -151,7 +155,15 @@ def special_options(g, p, s, post):
     o += impl_t2.evoke_options(g, p, s, post)
     o += impl_common.aristocrat_options(g, p, s, post)
     o += impl_common.food_options(g, p, s, post)
-    if post is None: return o                                    # end-of-turn window: nothing here is instant speed
+    import impl_partials as IP
+    o += IP.miracle_options(g, p, s, post) + IP.incubator_options(g, p, s, post)
+    if post is None:
+        if IP.aid_active(p):                                     # Sigarda's Aid: Auras at instant speed
+            import brain
+            for c in p.hand:
+                if 'aura' in c.subtypes and can_pay_any(g, p, c) and any(m.creature for m in p.perms):
+                    o.append((2.0, f'{c.name} (flash)', lambda c=c: brain.do_cast(g, p, c)))
+        return o                                    # end-of-turn window: nothing here is instant speed
     for e in p.perms:
         if e.cd is None or e.phased or e.cd.name not in EQUIP_COST: continue
         if e.attached is not None and e.attached in p.perms and not e.attached.phased: continue
@@ -305,6 +317,7 @@ def wipe_response(g, q, kind, caster):
     """a board wipe is about to hit q: 'all' (everything saved), 'indes' (indestructible), or None"""
     loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
     if loss < 6: return None
+    if kind == 'destroy' and __import__('impl_partials').regen_wipe(g, q): return 'indes'
     for name, where, cost, src in sorted(_options(q, None), key=lambda o: o[1] != 'bf_sac'):
         how, scope = PROTECTORS[name][2], PROTECTORS[name][3]
         if scope in ('one', 'self') or not _saves(how, kind, None, None, False): continue

@@ -85,7 +85,7 @@ class Perm:
 
     @property
     def creature(s):
-        return s.token or s.cd.creature
+        return s.token or s.cd.creature or (s.data is not None and s.data.get('anim', False))
 
     def tag(s, k):
         return s.cd is not None and k in s.cd.tags
@@ -495,9 +495,12 @@ def pay(g, p, generic, pips, convoke=False):
             elif u[0] == 'F': p.floatR -= 1
             elif u[0] == 'G': p.floatA -= 1
             elif u[0] == 'FU': p.floatU -= 1
+            elif isinstance(u[0], str):
+                __import__('impl_partials').special_unit_paid(g, p, u)
             else:
                 u[0].tapped = True
                 if CI is not None and getattr(u[0], 'cd', None) is not None and u[0].cd.name in CI.ON_TAP: CI.ON_TAP[u[0].cd.name](g, p, u[0], used[i])
+                if g.hooks and isinstance(u[0], Perm) and POOL_RULES: CI.fire(g, 'mana_tapped', p, u[0], used[i])
                 if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
                     lose_life(g, p, 2, p, damage=True)
     return True
@@ -505,6 +508,9 @@ def pay(g, p, generic, pips, convoke=False):
 
 def total_mana(g, p, convoke=False):
     return sum(u[2] for u in mana_units(g, p, convoke))
+
+
+SELF_COST = {}      # pool cards whose own cost changes (Draco's domain, delve): name -> fn(g, p, c) -> generic delta
 
 
 def cost_of(p, c):
@@ -527,6 +533,7 @@ def cost_of(p, c):
             gen = max(0, gen + CI.total(g, 'cost', p, c))
             floor = max([0] + [fn(g, src, p, c) or 0 for src, fn in CI.hooked(g, 'min_cost')])   # Trinisphere
             gen = max(gen, floor - len(pips))
+        if POOL_RULES and c.name in SELF_COST: gen = max(0, gen + SELF_COST[c.name](g, p, c))
     if g is not None and stopped(g, c.name): gen += 3                 # Disruptor Flute tax
     if c is p.cmd: gen += p.tax
     if id(c) in p.agent_ids:                      # Opposition Agent: spend mana as though it were mana of any type
@@ -554,6 +561,7 @@ def draw(g, p, n=1, step=False):
             p.decked = True; return
         p.draw_n += 1
         p.hand.append(p.library.pop())
+        if POOL_RULES and p.draw_n == 1: p.miracle = (turn_stamp(g), p.hand[-1])
         p.seen_names.add(p.hand[-1].name)
         p.stats['cards_drawn'] += 1
         if has(p, 'ironman'):
@@ -681,6 +689,7 @@ def leave(g, m):
     if g is not None: g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     detach(m)
     if getattr(g, 'auras', None): CI.aura_fall(g, m)
+    if POOL_RULES and m.data and m.data.get('bestow'): __import__('impl_partials').bestow_fall(g, m)
     if g.hooks and m in g.hooks:
         g.hooks.remove(m); g.hook_cache = None
         fn = CI.HOOKS[m.cd.name].get('leaves')
@@ -710,7 +719,13 @@ def die(g, m, cause='destroy'):
     if cause == 'destroy' and getattr(g, 'auras', None) and CI.umbra_save(g, m): return
     if POOL_RULES and cause in ('destroy', 'combat') and m.creature and not m.token and CI is not None \
             and __import__('impl_lands').try_regenerate(g, m): return
+    if POOL_RULES and cause == 'destroy' and m.creature and getattr(p, 'regen_turn', None) == turn_stamp(g):
+        m.tapped = True; log(f'    {m.name} regenerates', g); return
     selfdies = CI is not None and m.cd is not None and CI.live(m.cd.name) and CI.HOOKS[m.cd.name].get('self_dies')
+    if POOL_RULES and m.creature and CI is not None and __import__('impl_partials').hushed(g):
+        leave(g, m)
+        if not m.token: to_zone_card(g, m, 'gy')
+        return
     leave(g, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
     if g.hooks:
@@ -892,6 +907,11 @@ def additional_cost(g, p, c, dry=False):
 
 def castable(g, p, c, zone='hand'):
     """can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)"""
+    if POOL_RULES and not c.creature and not c.land:
+        hl = getattr(p, 'hope_lock', None)
+        if hl is not None and hl[0].alive and hl[0].turns == hl[1]: return False
+        s = getattr(g, 'silence', None)
+        if s is not None and s[0] == turn_stamp(g) and s[1] is not p: return False
     return not g.hooks or CI.allowed(g, p, c, zone)
 
 
@@ -1075,6 +1095,9 @@ def counter_ok(ctr, c):
 def pick_counter(g, q, c):
     best = None
     for ctr in q.hand:
+        if POOL_RULES and ctr.name == 'Venser, Shaper Savant' and q.key not in CTHRESH and 'ctr' not in ctr.tags:
+            if can_pay(g, q, ctr.generic, ctr.pips) and castable(g, q, ctr) and (best is None or ctr.cmc < best.cmc): best = ctr
+            continue
         if 'ctr' not in ctr.tags or not counter_ok(ctr, c): continue
         if g.hooks and not castable(g, q, ctr): continue
         if 'fierce' in ctr.tags and commander_out(q): return ctr        # Fierce Guardianship: free with your commander out
@@ -1112,7 +1135,10 @@ def cast_counter(g, q, ctr):
     elif not pay(g, q, ctr.generic, ctr.pips):
         return False
     q.hand.remove(ctr)
-    if ctr.creature and POOL_RULES: enter(g, q, ctr, was_cast=True)      # Mystic Snake: the counter is a creature
+    if ctr.creature and POOL_RULES:                 # Mystic Snake / Venser: the counter is a creature
+        g.skip_etb = ctr.name == 'Venser, Shaper Savant'
+        try: enter(g, q, ctr, was_cast=True)
+        finally: g.skip_etb = False
     else: q.gy.append(ctr)
     q.spells_this_turn += 1
     on_cast(g, q, ctr)
@@ -1197,6 +1223,7 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         if c is p.cmd: p.cmd_in_zone = True
         elif zone in ('gy',) or ctx.get('exile_after'): p.exile.append(c)
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)
+        elif LAST_COUNTER is not None and LAST_COUNTER.name == 'Venser, Shaper Savant' and POOL_RULES: p.hand.append(c)
         elif not c.land: p.gy.append(c)
         return False
     resolve(g, p, c, ctx, zone)
@@ -1335,6 +1362,15 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0)
     p.perms.append(m)
     g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     if CI is not None and CI.live(cd.name): g.hooks.append(m); g.hook_cache = None
+    quiet = False
+    if POOL_RULES and CI is not None:
+        import impl_partials as IP
+        g.entered = [x for x in getattr(g, 'entered', []) if x[0] == turn_stamp(g)] + [(turn_stamp(g), m)]
+        quiet = getattr(g, 'skip_etb', False) or (cd.creature and (IP.hushed(g) or IP.tidebinder_response(g, p, m)))
+    if quiet:
+        if g.hooks and m in p.perms and cd.name in CI.HOOKS and 'etb' in CI.HOOKS[cd.name] and 'E' in cd.types and not cd.creature:
+            CI.HOOKS[cd.name]['etb'](g, m, p, m)
+        return m
     if cd.creature: creature_entered(g, p, m)
     if m in p.perms: do_etb(g, p, m)
     if DSLMOD is not None and g.dsl_on and m in p.perms: DSLMOD.fire(g, 'etb', perm=m, owner=p, was_cast=was_cast)
@@ -1464,7 +1500,7 @@ def edict(g, q):
 
 def land_ramp(g, p, n, tapped):
     for _ in range(n):
-        basics = [c for c in p.library if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
+        basics = [c for c in searchable(g, p) if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
         if not basics: return
         c = g.rng.choice(basics); p.library.remove(c)
         a = agent_for(g, p)
@@ -1491,7 +1527,7 @@ def _landfall_once(g, p):
 
 
 def land_to_hand(g, p):
-    basics = [c for c in p.library if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
+    basics = [c for c in searchable(g, p) if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
     if basics:
         c = g.rng.choice(basics); p.library.remove(c)
         a = agent_for(g, p)
@@ -1499,11 +1535,18 @@ def land_to_hand(g, p):
         else: p.hand.append(c)
 
 
+def searchable(g, p):
+    """the cards p can find when searching its library (Aven Mindcensor: only the top four)"""
+    if not POOL_RULES or g is None or not g.hooks: return p.library
+    lim = [n for src, fn in CI.hooked(g, 'search_limit') if (n := fn(g, src, p))]
+    return p.library[-min(lim):] if lim else p.library
+
+
 def tutor(g, p, kind):
     import ais
     name = ais.tutor_pick(g, p, kind)
     if name is None: return
-    for c in p.library:
+    for c in searchable(g, p):
         if c.name == name:
             a = agent_for(g, p)
             if a is not None:
@@ -1553,7 +1596,10 @@ def apply_removal(g, actor, m, kind, spell=None):
         if not can_pay(g, actor, m.cd.ward, ''):
             log(f'    ward counters the removal on {m.name}', g); return
         pay(g, actor, m.cd.ward, '')
+    if POOL_RULES and kind.startswith('dmg') and CI is not None and __import__('impl_partials').tajic_protects(g, m):
+        log(f'    damage to {m.name} is prevented (Tajic)', g); return
     log(f'    {m.name} ({NAME(owner)}) is removed: {kind}', g)
+    if POOL_RULES: g.last_removed = (m.cd, owner, kind, actor)
     owner.lost_names[m.name] += 1
     owner.stats['threats_lost'] += 1 if pval(g, m) >= 5 else 0
     if owner.key == 'seph' and m.cd is not None and m.cd.bomb:
@@ -1816,7 +1862,7 @@ def tutor_to_top(g, p):
         p.to_top = False
     lose_life(g, p, 2, p)
     if name is None: return
-    c = next((x for x in p.library if x.name == name), None)
+    c = next((x for x in searchable(g, p) if x.name == name), None)
     if c is None: return
     p.library.remove(c)
     a = agent_for(g, p)

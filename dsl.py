@@ -388,7 +388,7 @@ def search(g, p, e, ctx):
             land_ramp(g, p, 1, e.get('tapped', False)); continue
         if f.get('type') == 'land':
             E.land_to_hand(g, p); continue
-        cands = [c for c in p.library if card_matches(c, f)]
+        cands = [c for c in E.searchable(g, p) if card_matches(c, f)]
         if not cands: return
         if not f or f.get('type') in (None, 'any'):
             import ais

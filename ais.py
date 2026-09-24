@@ -1042,7 +1042,7 @@ def _tutor_pick_named(g, p, kind):
         if kind == 'cre': return c.creature
         if kind == 'ench': return 'E' in c.types
         return True
-    okn = {c.name for c in p.library if ok(c)}
+    okn = {c.name for c in E.searchable(g, p) if ok(c)}
 
     def first(ns):
         for n in ns:
@@ -1093,7 +1093,7 @@ def tutor_pick(g, p, kind):
         n = pool_ai.tutor_pick(g, p, kind, ok)
         if n: return n
         prio = lambda g, p, c: deck_prio(g, p, c) or (E.DSLMOD.card_value(g, p, c) * 10 if c.dsl and E.DSLMOD else 0)
-    cands = [c for c in p.library if ok(c) and not c.land]
+    cands = [c for c in E.searchable(g, p) if ok(c) and not c.land]
     if not cands: return None
     best = max(cands, key=lambda c: (prio(g, p, c), c.bomb, c.cmc))
     return best.name
@@ -1538,6 +1538,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
             if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
             if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
+            if E.POOL_RULES and getattr(p, 'insight', None): __import__('impl_partials').insight_draw(g, p, a, dmg)
             if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
             if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
                 for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
@@ -1761,9 +1762,9 @@ def crack_fetch(g, p, L):
     kinds = TRUE_FETCH.get(name)
     basics = ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain', 'Wastes')
     if kinds and kinds != 'basic':
-        cands = [c for c in p.library if c.land and set(kinds.split()) & set(c.subtypes)]
+        cands = [c for c in E.searchable(g, p) if c.land and set(kinds.split()) & set(c.subtypes)]
     else:
-        cands = [c for c in p.library if c.land and c.name in basics]
+        cands = [c for c in E.searchable(g, p) if c.land and c.name in basics]
     if not cands: return
     have = set(''.join(land_cols(p, x, False) for x in p.lands if x is not L))
     c = max(cands, key=lambda c: (len(set(land_cols(p, Land(c, False), False)) - have), len(c.tags.get('c', '')), g.rng.random()))
@@ -1915,7 +1916,8 @@ def end_step(g, p):
     if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
         for m in p.perms:
             if m.plus > 0: m.plus += 1
-    while len(p.hand) > 7 and not has(p, 'nomax') and not (E.POOL_RULES and any('nomax' in L.cd.tags for L in p.lands)):
+    while len(p.hand) > 7 and not has(p, 'nomax') and not (E.POOL_RULES and (any('nomax' in L.cd.tags for L in p.lands)
+                                                                          or getattr(p, 'nomax_turn', None) == p.turns)):
         if p.key == 'seph':
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
             if bombs:

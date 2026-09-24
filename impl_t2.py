@@ -544,7 +544,7 @@ note('Nekrataal', 'Approximate', 'ETB destroy; the nonblack restriction is ignor
 def _survival(g, src, p, s, post):
     if post is None or not can_pay(g, p, 0, 'G'): return []
     disc = [c for c in p.hand if c.creature]
-    lib = [c for c in p.library if c.creature]
+    lib = [c for c in searchable(g, p) if c.creature]
     if not disc or not lib: return []
     d = min(disc, key=lambda c: card_worth(g, p, c))
     reanim = any(m.cd is not None and m.cd.name in ('Meren of Clan Nel Toth',) for m in p.perms)
@@ -567,7 +567,7 @@ def _pod(g, src, p, s, post):
     fod = [m for m in p.perms if m.creature and not m.token and m.cd is not None and not m.is_cmd]
     best = None
     for m in fod:
-        up = [c for c in p.library if c.creature and c.cmc == m.cd.cmc + 1]
+        up = [c for c in searchable(g, p) if c.creature and c.cmc == m.cd.cmc + 1]
         if up:
             c = max(up, key=lambda c: card_worth(g, p, c))
             gain_ = card_worth(g, p, c) / 10.0 - pval(g, m) + 1.0
