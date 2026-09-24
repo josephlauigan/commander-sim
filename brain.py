@@ -32,8 +32,12 @@ STYLE = {
 TEMP_SCALE = 1.0     # global multiplier, set from --temp
 
 
+def style(p):
+    return STYLE[p.key] if p.key in STYLE else __import__('pool_ai').style(p)
+
+
 def T(p):
-    return max(0.05, STYLE[p.key]['temp'] * TEMP_SCALE)
+    return max(0.05, style(p)['temp'] * TEMP_SCALE)
 
 
 def sig(x):
@@ -155,7 +159,7 @@ def hold_value(g, p, s):
     held = [c for c in p.hand if HELD(c) and can_pay(g, p, c.generic, c.pips)]
     if not held: return None, 0.0
     c = min(held, key=lambda c: c.cmc)
-    caution = STYLE[p.key]['caution']
+    caution = style(p)['caution']
     v = 1.0 + 3.0 * caution * min(1.0, s.max_threat / 20.0) + 2.5 * s.combo_near
     if p.key == 'seph' and A.bomb_on_bf(p): v += 2.0 * removal_risk(g, p) + 1.0
     if s.turn <= 2: v -= 2.0
@@ -174,7 +178,7 @@ PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, '
 
 
 def card_utility(g, p, s, c):
-    base = PRIO[p.key](g, p, c)
+    base = PRIO[p.key](g, p, c) if p.key in PRIO else A.deck_prio(g, p, c)
     if base <= 0 and c.dsl and E.DSLMOD is not None: base = E.DSLMOD.card_value(g, p, c) * 10
     if base <= 0: return None
     u = base / 10.0                                   # deck knowledge as a prior (0-9)
@@ -239,7 +243,7 @@ def removal_options(g, p, s):
         if best.owner is s.leader: v *= 1.25
         if s.combo_near and pval(g, best) >= 8: v += 2.0
         u = v - 3.5
-        if c.instant: u -= 1.2 * STYLE[p.key]['caution'] * E.INSTANT_EXTRA / 2.0   # instants are worth holding (profile-dependent)
+        if c.instant: u -= 1.2 * style(p)['caution'] * E.INSTANT_EXTRA / 2.0   # instants are worth holding (profile-dependent)
         if 'needsac' in t and not [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]: continue
         out.append((u, f'{c.name} -> {best.name}', lambda c=c, tg=tg: cast_removal(g, p, c, tg)))
     return out
@@ -505,7 +509,7 @@ def wants_counter(g, q, val, thr, ncounters):
 def choose_defender(g, p):
     opps = [q for q in g.opps(p) if not shielded(q)] or g.opps(p)     # combat damage to a protected player is prevented
     my = sum(epow(g, m) for m in p.perms if m.creature and not m.tapped and not m.noatk and not m.sick)
-    aggr = STYLE[p.key]['aggression']
+    aggr = style(p)['aggression']
     items = []
     grudge = getattr(p, 'grudge', {})
     for q in opps:
@@ -523,7 +527,7 @@ def choose_defender(g, p):
 def filter_attackers(g, p, atk):
     """Keep some ground creatures home when the table threatens a lot of damage."""
     s = Situation(g, p)
-    caution = STYLE[p.key]['caution']; aggr = STYLE[p.key]['aggression']
+    caution = style(p)['caution']; aggr = style(p)['aggression']
     if s.danger < 0.25: return atk
     keep_p = sig((s.danger * caution - 0.35 * aggr - 0.15) / 0.12)
     out = []
@@ -585,7 +589,7 @@ def end_of_turn_window(g, p):
         opts += A.monolith_untap_options(g, p)
         for u, lbl, fn in removal_options(g, p, s):
             if lbl.split(' -> ')[0] in [c.name for c in p.hand if c.instant]:
-                opts.append((u + 1.2 * STYLE[p.key]['caution'], lbl, fn))
+                opts.append((u + 1.2 * style(p)['caution'], lbl, fn))
         if not opts: return
         opts.append((-1.5, 'pass', None))
         order = gumbel_order(g.rng, [(u, (u, lbl, fn)) for u, lbl, fn in opts], T(p))

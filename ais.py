@@ -1076,7 +1076,12 @@ def tutor_pick(g, p, kind):
           'perm': lambda c: c.perm, 'ubr': lambda c: not c.land and any(x in c.pips for x in 'UBR'),
           'cre2': lambda c: c.creature and c.pow <= 2, 'cre': lambda c: c.creature,
           'ench': lambda c: 'E' in c.types}.get(kind, lambda c: True)
-    prio = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'najeela': najeela_prio}[p.key]
+    prio = deck_prio
+    if p.key not in MAIN:                        # outside deck: its wish list, then priority or interpreter value
+        import pool_ai
+        n = pool_ai.tutor_pick(g, p, kind, ok)
+        if n: return n
+        prio = lambda g, p, c: deck_prio(g, p, c) or (E.DSLMOD.card_value(g, p, c) * 10 if c.dsl and E.DSLMOD else 0)
     cands = [c for c in p.library if ok(c) and not c.land]
     if not cands: return None
     best = max(cands, key=lambda c: (prio(g, p, c), c.bomb, c.cmc))
@@ -1085,7 +1090,10 @@ def tutor_pick(g, p, kind):
 
 # ======================================================== Game Changer plays (Veyran's candidate cards)
 def deck_prio(g, p, c):
-    return {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'najeela': najeela_prio}[p.key](g, p, c)
+    f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'najeela': najeela_prio}.get(p.key)
+    if f is None:
+        import pool_ai; f = pool_ai.generic_prio
+    return f(g, p, c)
 
 
 def breach_candidates(g, p, need_mana=True):
@@ -1711,6 +1719,16 @@ def end_step(g, p):
         p.milestone.setdefault('int_held', {})[p.turns] = bool(held)
 
 
+def generic_main(g, p, post):
+    """rigid AI for outside decks: removal, wipes, then the best-priority castable card"""
+    for _ in range(16):
+        if g.over or not p.alive: return
+        if use_removal(g, p, 5): continue
+        if consider_wipe(g, p): continue
+        if generic_cast(g, p, deck_prio): continue
+        break
+
+
 MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'najeela': najeela_main}
 
 
@@ -1718,7 +1736,7 @@ def main_fn(p):
     if E.AI_MODE == 'adaptive':
         import brain
         return brain.main
-    return MAIN[p.key]
+    return MAIN.get(p.key, generic_main)
 
 
 def take_turn(g, p):
@@ -1766,9 +1784,11 @@ def take_turn(g, p):
     check_state(g)
 
 
-def mulligan(g, p):
+def mulligan(g, p, rng=None):
+    rng = rng or g.rng
+
     def draw7():
-        p.library.extend(p.hand); p.hand = []; g.rng.shuffle(p.library)
+        p.library.extend(p.hand); p.hand = []; rng.shuffle(p.library)
         for _ in range(7): p.hand.append(p.library.pop())
 
     def ok():
@@ -1818,6 +1838,47 @@ def play_game(seed, decks, max_rounds=20, trace=False):
         alive = [p for p in players if p.alive]
         g.winner = max(alive, key=lambda p: p.life + board_power(g, p) * 2) if alive else None
         g.wintype = 'timeout'
+    return g
+
+
+def _run_rounds(g, players, max_rounds):
+    for r in range(1, max_rounds + 1):
+        g.round = r
+        for p in players:
+            if p.alive and not g.over:
+                if E.AI_MODE == 'adaptive' and r > 1:
+                    import brain
+                    brain.end_of_turn_window(g, p)
+                if p.alive and not g.over:
+                    take_turn(g, p)
+        if g.over: break
+    if not g.over:
+        alive = [p for p in players if p.alive]
+        g.winner = max(alive, key=lambda p: p.life + board_power(g, p) * 2) if alive else None
+        g.wintype = 'timeout'
+    return g
+
+
+def play_pool_game(seed, seats, max_rounds=20, trace=False):
+    """A game with an explicit seat order. seats: [(key, cards, commander name), ...] in turn order.
+    Random streams are split so paired runs stay paired: each seat shuffles and mulligans from its own
+    generator (seeded by game seed + deck key), and play decisions use a separate one. Changing one
+    deck's list leaves every other seat's opening library and hand identical."""
+    g = setup_pool_game(seed, seats, trace)
+    return _run_rounds(g, g.players, max_rounds)
+
+
+def setup_pool_game(seed, seats, trace=False):
+    """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one"""
+    players = [Player(k, cards, cmd) for k, cards, cmd in seats]
+    g = Game(players, random.Random(f'play:{seed}'))
+    E.CUR_G = g
+    if trace:
+        g.log = ['Seat order: ' + ', '.join(NAME(p) for p in players)]
+    for p in players:
+        r = random.Random(f'lib:{seed}:{p.key}')
+        r.shuffle(p.library); mulligan(g, p, r)
+        p.seen_names.update(c.name for c in p.hand)
     return g
 
 

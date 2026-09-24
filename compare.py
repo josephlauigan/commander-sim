@@ -322,36 +322,45 @@ def _analyze_chunk(deck, cards, profile, seeds, ai='adaptive', temp=1.0):
     engine.set_profile(profile); set_ai(ai, temp)
     import cards as _cards; _cards.ensure_cards(cards, verbose=False)
     decks = dict(DECKS); decks[deck] = cards
-    R = {'n': 0, 'win': 0, 'wintype': Counter(), 'kills': Counter(), 'death': Counter(), 'death_round': 0,
-         'survived': 0, 'plan': Counter(), 'plan_n': 0, 'combo': 0, 'aether': 0,
-         'seen': Counter(), 'cast': Counter(), 'win_seen': Counter(), 'win_cast': Counter(), 'lost': Counter(),
-         'dmg': Counter()}
+    R = analysis_record()
     errs = Counter()
     for s in seeds:
         g = _safe_game(s, decks, errs)
         if g is None: continue
-        me = next(p for p in g.players if p.key == deck)
-        won = g.winner is me
-        R['n'] += 1; R['win'] += won
-        if won: R['wintype'][g.wintype or 'damage'] += 1
-        for k in KINDS: R['kills'][k] += me.stats['kills_' + k]
-        for k in ('combat', 'burn', 'drain', 'aether', 'triggers'): R['dmg'][k] += me.stats['dmgk_' + k]
-        if not me.alive:
-            R['death'][(me.killer.key if me.killer is not None else 'self', getattr(me, 'death_kind', 'other'))] += 1
-            R['death_round'] += me.stats.get('elim_round', g.round)
-        R['survived'] += me.stats.get('elim_round', g.round)
-        t = plan_turn(me, deck)
-        if t: R['plan'][t] += 1
-        R['combo'] += 1 if me.stats['combo_attempt'] else 0
-        R['aether'] += 1 if me.stats['aether_shots'] else 0
-        seen = me.seen_names | me.cast_names
-        for nme in seen:
-            R['seen'][nme] += 1; R['win_seen'][nme] += won
-        for nme in me.cast_names:
-            R['cast'][nme] += 1; R['win_cast'][nme] += won
-        for nme, k in me.lost_names.items(): R['lost'][nme] += k
+        analysis_add(R, g, deck)
     R['errs'] = errs
     return R
+
+
+def analysis_record():
+    return {'n': 0, 'win': 0, 'wintype': Counter(), 'kills': Counter(), 'death': Counter(), 'death_round': 0,
+            'survived': 0, 'plan': Counter(), 'plan_n': 0, 'combo': 0, 'aether': 0,
+            'seen': Counter(), 'cast': Counter(), 'win_seen': Counter(), 'win_cast': Counter(), 'lost': Counter(),
+            'dmg': Counter()}
+
+
+def analysis_add(R, g, deck):
+    """add one finished game to an --analyze record, from `deck`'s point of view"""
+    me = next(p for p in g.players if p.key == deck)
+    won = g.winner is me
+    R['n'] += 1; R['win'] += won
+    if won: R['wintype'][g.wintype or 'damage'] += 1
+    for k in KINDS: R['kills'][k] += me.stats['kills_' + k]
+    for k in ('combat', 'burn', 'drain', 'aether', 'triggers'): R['dmg'][k] += me.stats['dmgk_' + k]
+    if not me.alive:
+        R['death'][(me.killer.key if me.killer is not None else 'self', getattr(me, 'death_kind', 'other'))] += 1
+        R['death_round'] += me.stats.get('elim_round', g.round)
+    R['survived'] += me.stats.get('elim_round', g.round)
+    t = plan_turn(me, deck)
+    if t: R['plan'][t] += 1
+    R['combo'] += 1 if me.stats['combo_attempt'] else 0
+    R['aether'] += 1 if me.stats['aether_shots'] else 0
+    seen = me.seen_names | me.cast_names
+    for nme in seen:
+        R['seen'][nme] += 1; R['win_seen'][nme] += won
+    for nme in me.cast_names:
+        R['cast'][nme] += 1; R['win_cast'][nme] += won
+    for nme, k in me.lost_names.items(): R['lost'][nme] += k
 
 
 def analyze(deck, cards, profile, n, seed0=500000):
@@ -392,6 +401,7 @@ def print_analysis(deck, cards, R, profile):
     if nd:
         print(f'  Eliminated in {100*nd/N:.1f}% of games, on average in round {R["death_round"]/nd:.1f}')
         for (who, how), v in R['death'].most_common(8):
+            if who not in KEYS and who != 'self': who = engine.SEATS.get(who, {}).get('name', who)   # pool deck
             print(f'    by {who:8s} via {how:17s} {100*v/N:5.1f}% of games')
 
     print('\n-- Game plan timing --')
@@ -507,6 +517,12 @@ def main():
     ap.add_argument('--temp', type=float, default=1.0, help='adaptive AI randomness multiplier (lower = sharper play)')
     ap.add_argument('--quiet', action='store_true', help='no progress bar')
     ap.add_argument('--jobs', type=int, default=1, help='parallel worker processes (e.g. number of CPU cores)')
+    ap.add_argument('--pool', choices=('t1', 't2', 't3', 't4', 't5', 'all'),
+                    help='pool mode: play --deck against three outside decks drawn from this tier (see opponents/)')
+    ap.add_argument('--all-decks', action='store_true', help='pool mode: run each of the four decks (deck x tier matrix)')
+    ap.add_argument('--calibrate', choices=('within', 'ordering', 'all'), help='pool balance checks (no --deck needed)')
+    ap.add_argument('--games', type=int, help='pool mode: games per run (same as --n)')
+    ap.add_argument('--seed', type=int, default=500000, help='pool mode: first seed (games use seed .. seed+n-1)')
     a = ap.parse_args()
     global JOBS, VERBOSE
     JOBS = max(1, a.jobs); VERBOSE = not a.brief
@@ -520,6 +536,24 @@ def main():
         byp = {}
         for r in rs: byp.setdefault(r['profile'], {})[r['part']] = r
         report(deck, [(d['baseline'], d['variant']) for d in byp.values() if len(d) == 2])
+        return
+
+    if a.pool or a.calibrate or a.all_decks:
+        import poolmode
+        poolmode.C = sys.modules[__name__]      # this module's settings (--jobs, --brief, --ai), even when run as __main__
+        if a.all_decks and not a.pool: a.pool = 'all'
+        swaps, base, var = [], None, None
+        if a.deck and not a.all_decks:
+            swaps, auto = parse_swaps(a.swap)
+            check_identity(a.deck, swaps)
+            show_auto(auto)
+            apply_swaps(a.deck, swaps)                                    # validates the swaps
+            base, var = DECKS[a.deck], poolmode.swap_in_place(DECKS[a.deck], swaps)
+        elif not a.calibrate and not a.all_decks:
+            sys.exit('--deck is required (or use --all-decks)')
+        if a.trace is not None:
+            poolmode.trace(a, var if swaps else base); return
+        poolmode.main(a, swaps, base, var)
         return
 
     if not a.deck: sys.exit('--deck is required')

@@ -5,6 +5,13 @@ from collections import defaultdict
 from carddb import DB_TEXT
 
 IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'najeela': 'WUBRG'}
+# Outside decks (opponent pools) register here: key -> {'ident': 'WU', 'name': 'Brago'}. The four main decks
+# keep their hard-wired entries in IDENT / NAME / the AI tables; anything else falls back to generic defaults.
+SEATS = {}
+
+
+def register_seat(key, ident, name):
+    SEATS[key] = {'ident': ident, 'name': name}
 
 
 class CD:
@@ -81,7 +88,7 @@ class Perm:
 
 class Player:
     def __init__(s, key, cards, cmdname):
-        s.key = key; s.ident = IDENT[key]
+        s.key = key; s.ident = IDENT[key] if key in IDENT else SEATS[key]['ident']
         s.cmd = DB[cmdname]
         lib = list(cards); lib.remove(cmdname)
         s.library = [DB[n] for n in lib]
@@ -134,7 +141,8 @@ DAMAGE_HOOK = None
 
 
 def NAME(p):
-    return {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'najeela': 'Najeela'}[p.key]
+    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'najeela': 'Najeela'}.get(p.key)
+    return n if n is not None else SEATS[p.key]['name']
 
 
 def log(msg, g=None):
@@ -826,7 +834,7 @@ def spell_imp(g, p, c, ctx):
             aff[q] = 0.8 * sum(pval(g, m) for m in q.perms if m.creature or t['wipe'] in ('rift', 'rebuke'))
         return 0, aff
     if 'rean_target' in ctx: return ctx['rean_value'], aff
-    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'najeela': 6}[p.key], aff
+    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'najeela': 6}.get(p.key, CMD_IMP), aff
     if c.bomb and p.key == 'seph': return c.bomb, aff
     if 'vkitten' in t: return (9 if has(p, 'vfire') else 4), aff
     if 'vfire' in t: return (9 if has(p, 'vkitten') else 4), aff
@@ -843,20 +851,23 @@ def spell_imp(g, p, c, ctx):
 
 
 CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'najeela': 99}
+CMD_IMP = 6              # importance of an outside deck's commander spell (counter decisions)
 
 # Interaction profiles for the AI opponents.
 #   conservative: counter only big threats (importance >= 7), hold instant removal for emergencies
 #   loose:        counter at importance >= 6, use instant removal as freely as sorcery removal
 PROFILES = {
-    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'najeela': 99}, 'instant_extra': 2},
-    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'najeela': 99}, 'instant_extra': 0},
+    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
+    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
 }
 INSTANT_EXTRA = 2
+CTHRESH_DEFAULT = 7      # outside decks: counter threshold under the current profile
 
 
 def set_profile(name):
-    global INSTANT_EXTRA
+    global INSTANT_EXTRA, CTHRESH_DEFAULT
     prof = PROFILES[name]
+    CTHRESH_DEFAULT = prof['default']
     CTHRESH.clear(); CTHRESH.update(prof['cthresh'])
     INSTANT_EXTRA = prof['instant_extra']
 
@@ -919,9 +930,9 @@ def counter_window(g, p, c, imp, aff):
             import brain
             nc = sum(1 for x in q.hand if 'ctr' in x.tags)
             if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
-            if not nc or g.rng.random() > brain.wants_counter(g, q, val, CTHRESH[q.key], nc): continue
+            if not nc or g.rng.random() > brain.wants_counter(g, q, val, CTHRESH.get(q.key, CTHRESH_DEFAULT), nc): continue
         else:
-            if val < CTHRESH[q.key]: continue
+            if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): continue
             if g.rng.random() > 0.9: continue
         ctr = pick_counter(g, q, c)
         if ctr is None: continue

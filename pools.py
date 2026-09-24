@@ -6,7 +6,7 @@ The commander comes from the '**Commander:**' line.
     python3 pools.py                 # list the pools
     python3 pools.py --validate      # structure, card names, colour identity, bans, Game Changers per tier
 """
-import collections, glob, os, re, sys
+import collections, glob, os, random, re, sys
 from decks import load, P
 
 POOL_DIR = os.path.join(P, 'opponents')
@@ -38,13 +38,53 @@ class PoolDeck:
         return f'PoolDeck({s.tier}/{s.key})'
 
 
+_CACHE = {}
+
+
 def load_pool(tier=None):
     """All pool decks, or one tier's ('t1'..'t5'), sorted by tier then file name."""
-    out = []
-    for f in sorted(glob.glob(os.path.join(POOL_DIR, 't*', '*.md'))):
-        d = PoolDeck(f)
-        if tier is None or d.tier == tier: out.append(d)
-    return out
+    if 'all' not in _CACHE:
+        _CACHE['all'] = [PoolDeck(f) for f in sorted(glob.glob(os.path.join(POOL_DIR, 't*', '*.md')))]
+    return [d for d in _CACHE['all'] if tier is None or d.tier == tier]
+
+
+def by_key():
+    return {d.key: d for d in load_pool()}
+
+
+def short_name(d):
+    return d.commander.split(' // ')[0].split(',')[0]
+
+
+_REGISTERED = set()
+
+
+def register(decks=None, verbose=False):
+    """Make pool decks playable: card data in engine.DB, a seat entry (colour identity, display name) and the
+    deck's AI configuration. Idempotent, and cheap after the first call (worker processes call it too)."""
+    import engine, cards, scryfall, pool_ai, pool_decks
+    decks = load_pool() if decks is None else decks
+    todo = [d for d in decks if d.key not in _REGISTERED]
+    if not todo: return
+    added, missing = cards.ensure_cards(sorted({n for d in todo for n in d.cards}), verbose=verbose)
+    if missing: raise SystemExit('Pool cards not found on Scryfall: ' + ', '.join(missing))
+    recs = scryfall.fetch([d.commander for d in todo], verbose=False)
+    for d in todo:
+        ident = ''.join(c for c in 'WUBRG' if c in (recs[d.commander].get('color_identity') or []))
+        engine.register_seat(d.key, ident, short_name(d))
+        pool_ai.CONFIG[d.key] = pool_decks.CONFIG.get(d.key, {})
+        _REGISTERED.add(d.key)
+
+
+# ------------------------------------------------------------------ seating
+def draw_seats(seed, pool_keys, me=None, k=3):
+    """Seat order for one game: k opponents drawn without replacement from pool_keys, plus `me` (if given),
+    in a random order. Depends only on the seed, the pool and me's key -- never on anyone's card list --
+    so two versions of a deck see exactly the same opponents in the same seats."""
+    r = random.Random(f'pool:{seed}')
+    seats = r.sample(sorted(pool_keys), k) + ([me] if me is not None else [])
+    r.shuffle(seats)
+    return seats
 
 
 def structural_problems(cards, commander, size=100):
