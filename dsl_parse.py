@@ -540,7 +540,10 @@ def parse_cost(s):
         elif x == '{t}': cost['tap'] = True
         elif x.startswith('sacrifice ~') or x.startswith('sacrifice this'): cost['sac'] = 'self'
         elif x.startswith('sacrifice'): cost['sac'] = filt(x).get('type', 'permanent')
-        elif x.startswith('pay') and 'life' in x: cost['life'] = n_(re.search(r'pay (\w+) life', x).group(1))
+        elif x.startswith('pay') and 'life' in x:
+            m = re.search(r'pay (\w+) life', x)
+            if m is None: return None                  # variable life cost (War Room): leave the line unmodeled
+            cost['life'] = n_(m.group(1))
         elif x.startswith('discard'): cost['discard'] = n_(x.split()[1])
         elif x.startswith('exile ~ from your graveyard') or x.startswith('remove'): cost['other'] = x
         elif x.startswith('tap an untapped') or x.startswith('tap '): cost['tap_other'] = x
