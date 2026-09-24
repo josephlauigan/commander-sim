@@ -1,0 +1,79 @@
+Cards modeled from Scryfall text or cards_dsl.json (check the abilities below):
+   Sword of Hearth and Home [scryfall+dsl] A 3 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_protection -> 
+      ability: triggered combat_damage -> blink, search
+      ability: static equip_cost -> 
+Swaps: Erebos, God of the Dead -> Sword of Hearth and Home
+AI: adaptive (temperature x1.0)
+
+=== sauron: baseline vs variant ===
+[conservative] sauron win  15.2% ->  17.3%  (delta +2.1 pts, noise ±1.0)   n=10000
+               others: seph  49.2%-> 48.1%  veyran   8.2%->  8.5%  najeela  27.4%-> 26.1%
+               sauron (variant) eliminated by: seph  36.5%  veyran  16.9%  najeela  29.0%
+[loose       ] sauron win  14.4% ->  17.9%  (delta +3.5 pts, noise ±1.0)   n=10000
+               others: seph  50.8%-> 49.4%  veyran   8.2%->  7.6%  najeela  26.6%-> 25.1%
+               sauron (variant) eliminated by: seph  37.9%  veyran  16.2%  najeela  27.6%
+VERDICT: BETTER under both profiles
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: Sword + Assault combo attempted
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          15.2% ->  17.3%  +2.1pt   ±1.0*    14.4% ->  17.9%  +3.5pt   ±1.0*
+    Rounds survived (or game length)                  12.03 ->  12.13   +0.10  ±0.08*    12.07 ->  12.19   +0.12  ±0.08*
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   -0.00  ±0.01      0.09 ->   0.09   -0.00  ±0.01 
+    Missed land drops, turns 1-5                       0.57 ->   0.58   +0.00  ±0.02      0.57 ->   0.58   +0.01  ±0.02 
+    Mana available on your turn 4                      4.17 ->   4.17   +0.00  ±0.03      4.17 ->   4.17   +0.00  ±0.03 
+    Mana available on your turn 6                      5.84 ->   5.83   -0.01  ±0.04      5.83 ->   5.83   -0.00  ±0.04 
+
+  Speed
+    Games where the game plan came online              1.3% ->   1.7%  +0.4pt   ±0.3*     1.2% ->   1.6%  +0.3pt   ±0.3*
+    Turn the game plan came online                    12.34 ->  12.51   +0.17  ±0.65     12.28 ->  12.33   +0.05  ±0.65 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            24.50 ->  24.42   -0.09  ±0.34     24.48 ->  24.62   +0.14  ±0.34 
+    Tutors resolved per game                           0.49 ->   0.51   +0.01  ±0.02      0.50 ->   0.52   +0.02  ±0.02 
+    Spells cast per game                              14.95 ->  15.08   +0.13  ±0.20     15.01 ->  15.30   +0.29  ±0.20*
+
+  Interaction
+    Counterspells cast                                 0.54 ->   0.55   +0.01  ±0.02      0.62 ->   0.63   +0.01  ±0.02 
+    Spot removal cast                                  2.20 ->   2.19   -0.01  ±0.04      2.28 ->   2.28   +0.00  ±0.04 
+    Board wipes cast                                   0.55 ->   0.53   -0.01  ±0.02      0.54 ->   0.53   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.01   -0.00  ±0.00      0.01 ->   0.01   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.32 ->   0.32   +0.00  ±0.02      0.33 ->   0.32   -0.00  ±0.02 
+    Your spells countered                              0.32 ->   0.32   -0.00  ±0.02      0.37 ->   0.37   +0.01  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                41.38 ->  44.10   +2.72  ±1.40*    40.85 ->  44.77   +3.92  ±1.41*
+      ...of which combat damage                       37.15 ->  39.90   +2.75  ±1.33*    36.56 ->  40.46   +3.90  ±1.34*
+      ...of which other triggers                       4.22 ->   4.19   -0.03  ±0.27      4.29 ->   4.31   +0.02  ±0.28 
+
+  Speed
+    Games with a combo attempt                         1.3% ->   1.7%  +0.4pt   ±0.3*     1.2% ->   1.6%  +0.3pt   ±0.3*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+    better - Rounds survived (or game length) (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    better - Games where the game plan came online (both profiles)
+    better - Games with a combo attempt (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Spells cast per game (loose profile only)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(156s total)

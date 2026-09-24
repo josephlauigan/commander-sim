@@ -1,0 +1,79 @@
+Swaps: Orzhov Signet -> Aura Shards
+AI: adaptive (temperature x1.0)
+
+=== seph: baseline vs variant ===
+[conservative] seph win  49.4% ->  50.2%  (delta +0.8 pts, noise ±1.4)   n=10000
+               others: veyran   8.0%->  7.5%  sauron  14.8%-> 14.5%  najeela  27.8%-> 27.8%
+               seph (variant) eliminated by: veyran   8.2%  sauron  18.1%  najeela  22.9%
+[loose       ] seph win  50.7% ->  51.1%  (delta +0.4 pts, noise ±1.4)   n=10000
+               others: veyran   8.2%->  7.5%  sauron  14.1%-> 14.1%  najeela  27.0%-> 27.3%
+               seph (variant) eliminated by: veyran   8.0%  sauron  17.8%  najeela  22.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          49.4% ->  50.2%  +0.8pt   ±1.4     50.7% ->  51.1%  +0.4pt   ±1.4 
+    Rounds survived (or game length)                  13.47 ->  13.59   +0.12  ±0.09*    13.55 ->  13.64   +0.09  ±0.09*
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.09   +0.01  ±0.01      0.08 ->   0.09   +0.01  ±0.01 
+    Missed land drops, turns 1-5                       0.53 ->   0.54   +0.01  ±0.02      0.53 ->   0.54   +0.01  ±0.02 
+    Mana available on your turn 4                      4.58 ->   4.45   -0.13  ±0.03*     4.57 ->   4.44   -0.13  ±0.03*
+    Mana available on your turn 6                      6.45 ->   6.30   -0.15  ±0.05*     6.44 ->   6.29   -0.15  ±0.05*
+
+  Speed
+    Games where the game plan came online             97.0% ->  96.2%  -0.8pt   ±0.5*    97.2% ->  96.4%  -0.8pt   ±0.5*
+    Turn the game plan came online                     5.95 ->   6.09   +0.14  ±0.06*     5.95 ->   6.08   +0.13  ±0.06*
+
+  Card flow
+    Cards drawn per game (incl. draw step)            26.75 ->  26.59   -0.16  ±0.32     27.00 ->  26.87   -0.14  ±0.32 
+    Tutors resolved per game                           0.79 ->   0.79   +0.00  ±0.02      0.79 ->   0.79   -0.00  ±0.02 
+    Spells cast per game                              17.99 ->  17.85   -0.14  ±0.22     18.10 ->  17.96   -0.14  ±0.22 
+
+  Interaction
+    Counterspells cast                                 0.47 ->   0.46   -0.02  ±0.02      0.48 ->   0.45   -0.03  ±0.02*
+    Spot removal cast                                  1.43 ->   1.44   +0.01  ±0.03      1.45 ->   1.47   +0.02  ±0.03 
+    Board wipes cast                                   0.58 ->   0.59   +0.00  ±0.02      0.58 ->   0.59   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.51 ->   0.48   -0.03  ±0.02*     0.50 ->   0.48   -0.01  ±0.02 
+    Your key permanents removed by opponents           1.44 ->   1.39   -0.05  ±0.04*     1.45 ->   1.41   -0.03  ±0.04 
+    Your spells countered                              0.80 ->   0.81   +0.02  ±0.03      0.78 ->   0.78   -0.00  ±0.02 
+    Removed bombs brought back                         0.76 ->   0.74   -0.02  ±0.03      0.79 ->   0.76   -0.03  ±0.03 
+
+  Threat & pressure
+    Bombs put on the battlefield                       5.35 ->   5.21   -0.14  ±0.09*     5.41 ->   5.30   -0.11  ±0.09*
+    Damage dealt to opponents per game                56.61 ->  56.33   -0.28  ±1.41     57.97 ->  57.40   -0.58  ±1.42 
+      ...of which combat damage                       37.99 ->  37.50   -0.49  ±1.13     39.17 ->  38.66   -0.51  ±1.15 
+      ...of which magecraft / burn                     0.01 ->   0.01   +0.00  ±0.01      0.00 ->   0.02   +0.01  ±0.01*
+      ...of which drain triggers                      18.45 ->  18.64   +0.19  ±0.61     18.62 ->  18.54   -0.08  ±0.60 
+      ...of which other triggers                       0.16 ->   0.18   +0.02  ±0.07      0.18 ->   0.18   +0.01  ±0.07 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Rounds survived (or game length) (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 4 (both profiles)
+    worse  - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Games where the game plan came online (both profiles)
+    worse  - Turn the game plan came online (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (loose profile only)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Protection used (HI/sac/Tidebinder/counter-war) (conservative profile only)
+    better - Your key permanents removed by opponents (conservative profile only)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Bombs put on the battlefield (both profiles)
+    better -   ...of which magecraft / burn (loose profile only)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(152s total)
