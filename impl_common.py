@@ -64,12 +64,16 @@ def attached_bonus(g, m):
             if spec['bonus']:
                 x, y = spec['bonus'](g, a.owner, a, m); dp += x; dt += y
     if m.creature and getattr(m.owner, 'elspeth_emblem', False): dp += 2; dt += 2
+    if m.cd is None and m.data:
+        for fn in TOKEN_PT:
+            x, y = fn(g, m); dp += x; dt += y
     if getattr(g, 'selfpt', None) and m.cd is not None and m.cd.name in SELF_PT and m.owner.alive:
         x, y = SELF_PT[m.cd.name](g, m.owner, m); dp += x; dt += y
     return dp, dt
 
 
 SELF_PT = {}         # creature name -> fn(g, p, m) -> (dp, dt): characteristic-defining bonuses (Kor Spiritdancer ...)
+TOKEN_PT = []        # fn(g, token) -> (dp, dt) for tokens with data (Urza's Construct)
 
 
 def attached_kw(g, m, kw):
@@ -1059,3 +1063,183 @@ def _ouphe(g, src, p): return 1
 card('Collector Ouphe', 'pow=2', dsl=[])
 note('Collector Ouphe', 'Approximate', 'artifact mana (rocks, Treasures) is off for everyone; other artifact abilities '
      'still work')
+
+
+# ======================================================== stax: cost increases, spell limits, locks
+def _tax_spell(name, amount, pred=lambda c: True, who='opponents', status=('Full', ''), tags=None, types=None, during=None):
+    """spells cost more: who='opponents' / 'everyone'; during='own_turn' (Tithe Taker)"""
+    @CI.on(name, 'cost')
+    def _c(g, src, caster, c):
+        if who == 'opponents' and caster is src.owner: return 0
+        if during == 'own_turn' and g.active is not src.owner: return 0
+        return amount if pred(c) else 0
+    if tags is not None or types is not None: card(name, tags or '', types=types, dsl=[])
+    note(name, *status)
+
+
+noncre = lambda c: not c.creature and not c.land
+_tax_spell('Thalia, Guardian of Thraben', 1, noncre, who='everyone', tags='human pow=2 tgh=1', types='C',
+           status=('Full', 'first strike; noncreature spells cost {1} more (yours too)'))
+_tax_spell('Sphere of Resistance', 1, who='everyone', types='A', tags='')
+_tax_spell('Thorn of Amethyst', 1, noncre, who='everyone', types='A', tags='')
+_tax_spell('Glowrider', 1, noncre, who='everyone', types='C', tags='pow=2 tgh=1')
+_tax_spell('Vryn Wingmare', 1, noncre, who='everyone', types='C', tags='pow=2 tgh=1 fly')
+_tax_spell('Tithe Taker', 1, lambda c: True, during='own_turn', types='C', tags='human pow=2 tgh=1',
+           status=('Approximate', 'spells cost {1} more on your turn (abilities and afterlife not modeled)'))
+_tax_spell('Aura of Silence', 2, lambda c: 'A' in c.types or 'E' in c.types, types='E', tags='',
+           status=('Approximate', 'opponents\' artifacts and enchantments cost {2} more; the sacrifice ability is not used'))
+_tax_spell('Dovin, Hand of Control', 1, lambda c: 'A' in c.types or c.instant or c.sorcery,
+           status=('Approximate', 'opponents\' artifact, instant and sorcery spells cost {1} more; loyalty abilities unused'))
+card('Thalia, Guardian of Thraben', 'human pow=2 tgh=1', dsl=[], kws={'first strike'})
+IC_WALKER_STUBS = ('Dovin, Hand of Control',)
+
+
+@CI.on('Trinisphere', 'min_cost')
+def _trini(g, src, caster, c): return 3 if not c.land else 0
+card('Trinisphere', '', types='A', dsl=[])
+note('Trinisphere', 'Full', 'every spell costs at least three')
+
+
+@CI.on('Grand Arbiter Augustin IV', 'cost')
+def _gaa(g, src, caster, c):
+    if caster is src.owner: return -(('W' in c.pips) + ('U' in c.pips))
+    return 1
+card('Grand Arbiter Augustin IV', 'leg human pow=2 tgh=3', dsl=[])
+note('Grand Arbiter Augustin IV', 'Full', 'your white and blue spells cost {1} less each; opponents\' spells cost {1} more')
+
+
+def _limit(name, n, pred=lambda c: True, status=('Full', ''), tags=None, types=None, opp_only=False):
+    """each player can't cast more than n spells matching pred each turn"""
+    @CI.on(name, 'can_cast')
+    def _l(g, src, caster, c, zone):
+        if opp_only and caster is src.owner: return True
+        if not pred(c): return True
+        return casts_this_turn(g, caster, pred) < n
+    if tags is not None or types is not None: card(name, tags or '', types=types, dsl=[])
+    note(name, *status)
+
+
+_limit('Rule of Law', 1, types='E', tags='')
+_limit('Deafening Silence', 1, noncre, types='E', tags='')
+_limit('Ethersworn Canonist', 1, lambda c: 'A' not in c.types, types='AC', tags='pow=2 tgh=2')
+_limit('Archon of Emeria', 1, types='C', tags='pow=2 tgh=3 fly',
+       status=('Approximate', 'one spell per turn; opponents\' nonbasic lands entering tapped is ignored'))
+
+
+@CI.on('Drannith Magistrate', 'can_cast')
+def _drannith(g, src, caster, c, zone):
+    return caster is src.owner or zone == 'hand'
+card('Drannith Magistrate', 'human pow=1 tgh=3', dsl=[])
+note('Drannith Magistrate', 'Full', 'opponents can\'t cast from anywhere but their hand: commanders, flashback, '
+     'escape and graveyard casting are off')
+
+
+@CI.on('Grand Abolisher', 'can_cast')
+def _abolisher(g, src, caster, c, zone):
+    return caster is src.owner or g.active is not src.owner
+card('Grand Abolisher', 'human pow=2', dsl=[])
+note('Grand Abolisher', 'Approximate', 'opponents can\'t cast spells on your turn (their counterspells and instant '
+     'removal are off); activated abilities are not restricted')
+
+
+@CI.on('Lavinia, Azorius Renegade', 'can_cast')
+def _lavinia(g, src, caster, c, zone):
+    if caster is src.owner or c.creature: return True
+    return c.cmc <= len(caster.lands) and not ('free' in c.tags and not can_pay(g, caster, c.generic, c.pips))
+card('Lavinia, Azorius Renegade', 'leg human pow=2 tgh=2', dsl=[])
+note('Lavinia, Azorius Renegade', 'Approximate', 'opponents can\'t cast noncreature spells above their land count; '
+     'free spells (Force of Will) are off')
+
+
+@CI.on('Spirit of the Labyrinth', 'etb')
+def _spirit_lab(g, src, p, m): pass
+card('Spirit of the Labyrinth', 'pow=3 tgh=1 narset', dsl=[])
+note('Spirit of the Labyrinth', 'Approximate', 'opponents draw at most one card a turn (its own controller is not '
+     'limited, unlike the card)')
+
+
+HUSH = ('Hushbringer',)
+
+
+@CI.on('Hushbringer', 'etb')
+def _hush(g, src, p, m): pass
+card('Hushbringer', 'pow=1 tgh=2 fly lifelink', dsl=[])
+note('Hushbringer', 'Partial', 'body only: stopping ETB and dies triggers is not modeled')
+
+
+@CI.on('Aven Mindcensor', 'etb')
+def _mindcensor(g, src, p, m): pass
+card('Aven Mindcensor', 'pow=2 tgh=1 fly flash', dsl=[])
+note('Aven Mindcensor', 'Partial', 'body only: search restriction not modeled')
+
+
+@CI.on('Thalia, Heretic Cathar', 'etb')
+def _thalia_hc_self(g, src, p, m):
+    if m is not src and m.owner is not src.owner and m.creature: m.tapped = True
+card('Thalia, Heretic Cathar', 'leg human pow=3 tgh=2', dsl=[], kws={'first strike'})
+note('Thalia, Heretic Cathar', 'Approximate', 'opponents\' creatures enter tapped (nonbasic lands are not tapped)')
+
+
+# ======================================================== staples: Walking Ballista, Spellseeker, Recruiter, Solitude ...
+@CI.on('Walking Ballista', 'etb')
+def _ballista(g, src, p, m):
+    if m is src:
+        x = (getattr(g, 'last_x', 0) or 0)
+        src.plus += x // 2                              # {X}{X}: two mana per counter
+        g.last_x = 0
+
+
+@CI.on('Walking Ballista', 'options')
+def _ballista_ping(g, src, p, s, post):
+    if src.plus <= 0 or post is None: return []
+    opps = g.opps(p)
+    lethal = [q for q in opps if q.life <= src.plus]
+    tg = [m for q in opps for m in q.perms if m.creature and etgh(g, m) <= 1 and pval(g, m) >= 2.5 and not untargetable(g, m)]
+    if not lethal and not tg: return []
+
+    def go():
+        if src.plus <= 0: return False
+        src.plus -= 1
+        if lethal: lose_life(g, lethal[0], 1, p, kind='triggers')
+        elif tg and tg[0] in tg[0].owner.perms: apply_removal(g, p, tg[0], 'dmg1')
+        if etgh(g, src) <= 0: die(g, src, 'sba')
+        return True
+    return [(8.0 if lethal else 2.0, 'Walking Ballista ping', go)]
+card('Walking Ballista', 'pow=0 tgh=0 xtutor', types='AC', dsl=[])
+note('Walking Ballista', 'Approximate', 'cast with X = spare mana; pings X/1 creatures or lethal players (infinite-mana '
+     'kills are in the combo framework)')
+CI.SPELL_PRIO['Walking Ballista'] = lambda g, p, c: 45 if total_mana(g, p) >= 4 else 0
+
+
+def _tutor_etb(name, pred, tags, status=('Full', '')):
+    @CI.on(name, 'etb')
+    def _t(g, src, p, m):
+        if m is src:
+            import impl_t1; impl_t1.tutor_named(g, src.owner, pred)
+    card(name, tags, dsl=[])
+    note(name, *status)
+
+
+_tutor_etb('Spellseeker', lambda c: (c.instant or c.sorcery) and c.cmc <= 2, 'wizard pow=1')
+_tutor_etb('Recruiter of the Guard', lambda c: c.creature and c.tgh <= 2, 'human pow=1')
+_tutor_etb('Goblin Matron', lambda c: 'goblin' in c.subtypes, 'pow=1')
+
+
+@CI.on('Solitude', 'etb')
+def _solitude(g, src, p, m):
+    if m is src:
+        t = best_opp_creature(g, src.owner)
+        if t is not None and pval(g, t) >= 2: apply_removal(g, src.owner, t, 'exile', src.cd)
+card('Solitude', 'pow=3 lifelink flash', dsl=[])
+note('Solitude', 'Approximate', 'exiles the best opposing creature on entry; the free evoke is used as protection-less '
+     'removal only through normal casting')
+
+
+@CI.on('Magus of the Moon', 'blood_moon')
+def _magus(g, src): return True
+card('Magus of the Moon', 'pow=2 tgh=2', dsl=[])
+note('Magus of the Moon', 'Full', 'nonbasic lands tap for R only (engine mana check)')
+
+
+def blood_moon_active(g):
+    return any(m.cd is not None and m.cd.name == 'Magus of the Moon' and not m.phased for q in g.players if q.alive for m in q.perms)

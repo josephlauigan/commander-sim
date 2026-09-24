@@ -1494,6 +1494,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     to_walker = walker_attacks(g, p, atk, d, assign) if E.POOL_RULES else {}
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
+        if E.POOL_RULES and p.key not in MAIN: __import__('impl_t4').ninjutsu(g, p, atk, d, assign)
     conn = set()
     for a in atk:
         if a not in p.perms or not d.alive: continue
@@ -1882,10 +1883,21 @@ def erebos_draw(g, p):
 
 def end_step(g, p):
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
+    for m in getattr(p, 'borrowed', None) or []:          # Zealous Conscripts: control returns
+        if m in p.perms and m.orig.alive:
+            p.perms.remove(m); m.owner = m.orig; m.orig.perms.append(m); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+    p.borrowed = []
     if E.CI is not None and getattr(g, 'monarch', None) is p: draw(g, p, 1)          # the monarch draws
     if g.hooks: E.CI.fire(g, 'end_step', p)
     for m in find(p, 'breach'):                   # Underworld Breach: sacrifice it at the beginning of the end step
         die(g, m, 'sac')
+    il = getattr(p, 'impulse_long', None)
+    if il:                                         # Prosper / Reckless Impulse: until the end of your next turn
+        keep = []
+        for c, t in il:
+            if c in p.hand and t <= p.turns: p.hand.remove(c); p.exile.append(c)
+            elif c in p.hand: keep.append((c, t))
+        p.impulse_long = keep
     for c in p.impulse:                           # Jeska's Will: unplayed exiled cards stay in exile
         if c in p.hand: p.hand.remove(c); p.exile.append(c)
     p.impulse = []
@@ -1953,6 +1965,7 @@ def take_turn(g, p):
         if m.tapped: lose_life(g, p, 1, p, damage=True)
     if has(p, 'necro'): pass                     # Necropotence: skip your draw step
     elif E.POOL_RULES and loam_dredge(g, p): pass
+    elif g.hooks and E.CI.total(g, 'skip_draw', p): pass     # Solitary Confinement
     elif not (p.key == 'seph' and seph_dredge(g, p)):
         draw(g, p, 1, step=True)
     check_state(g)
@@ -2070,6 +2083,7 @@ def setup_pool_game(seed, seats, trace=False):
     E.POOL_RULES = True
     players = [Player(k, cards, cmd) for k, cards, cmd in seats]
     g = Game(players, random.Random(f'play:{seed}'))
+    g.combo_decks = {p.key for p in players if p.key not in MAIN}
     E.CUR_G = g
     if trace:
         g.log = ['Seat order: ' + ', '.join(NAME(p) for p in players)]

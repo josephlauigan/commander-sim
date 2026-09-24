@@ -88,7 +88,9 @@ def generic_prio(g, p, c):
 def tutor_pick(g, p, kind, ok):
     """a deck's wish list first (combo pieces it is missing), else None (caller falls back to priority)"""
     wish = config(p).get('wish')
-    if not wish: return None
+    if not wish:
+        import impl_combos
+        wish = impl_combos.missing_pieces
     names = {c.name for c in p.library if ok(c)}
     have = {m.cd.name for m in p.perms if m.cd is not None} | {c.name for c in p.hand}
     for w in (wish(g, p) if callable(wish) else wish):

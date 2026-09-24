@@ -216,6 +216,7 @@ SPECIAL = ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'tokx_specia
 def do_cast(g, p, c, zone=None):
     if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE): return False
     if c.dsl and not additional_cost(g, p, c, dry=True): return False
+    if zone in (None, 'hand') and c not in p.hand and not (c is p.cmd and p.cmd_in_zone): return False
     if g.hooks and not castable(g, p, c, zone or ('cmd' if (c is p.cmd and c not in p.hand) else 'hand')): return False
     cv = 'convoke' in c.tags
     if zone == 'gy':
@@ -233,7 +234,7 @@ def do_cast(g, p, c, zone=None):
     if 'tokx' in c.tags:
         x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x
     elif 'xtutor' in c.tags:                         # X spells of outside decks: X = all spare mana
-        x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x
+        x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x; g.last_x = x
     if c.dsl: additional_cost(g, p, c)
     ok = cast_card(g, p, c, zone, ctx)
     if p.key == 'seph' and ok and (c is p.cmd or c.bomb >= 4): A.note_bomb(p, c)
@@ -246,7 +247,9 @@ def removal_options(g, p, s):
         t = c.tags
         if 'rem' not in t or c.creature: continue
         extra = 4 if ('sacor4' in t and not [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]) else 0
-        if not can_pay(g, p, c.generic + extra, c.pips, 'convoke' in t): continue
+        free = ('freecmd' in t and commander_out(p)) or ('snuff' in t and p.life > 12 and any(
+            'swamp' in L.cd.subtypes or L.cd.name == 'Swamp' for L in p.lands))
+        if not free and not can_pay(g, p, c.generic + extra, c.pips, 'convoke' in t): continue
         if 'needart3' in t and sum(1 for m in p.perms if m.cd is not None and 'A' in m.cd.types) < 3: continue
         tg = legal_targets(g, p, t['rem'], t.get('tgt', 'c'), 'mv4' in t, spell=c)
         if not tg: continue
@@ -265,7 +268,9 @@ def cast_removal(g, p, c, tg):
     cv = 'convoke' in c.tags
     fods = [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]
     extra = 4 if ('sacor4' in c.tags and not fods) else 0
-    if c not in p.hand or not can_pay(g, p, c.generic + extra, c.pips, cv): return False
+    free = ('freecmd' in c.tags and commander_out(p)) or ('snuff' in c.tags and p.life > 12 and any(
+        'swamp' in L.cd.subtypes or L.cd.name == 'Swamp' for L in p.lands))
+    if c not in p.hand or (not free and not can_pay(g, p, c.generic + extra, c.pips, cv)): return False
     if g.hooks and not castable(g, p, c): return False
     live = [m for m in tg if m in m.owner.perms and not untargetable(g, m)]
     if not live: return False
@@ -274,7 +279,8 @@ def cast_removal(g, p, c, tg):
     if 'needsac' in c.tags or ('sacor4' in c.tags and fods):
         if not fods: return False
         fod = min(fods, key=lambda x: pval(g, x))
-    pay(g, p, c.generic + extra, c.pips, cv)
+    if free and 'snuff' in c.tags and not ('freecmd' in c.tags and commander_out(p)): lose_life(g, p, 4, p)
+    elif not free: pay(g, p, c.generic + extra, c.pips, cv)
     if fod: die(g, fod, 'sac')
     cast_card(g, p, c, 'hand', {'target': target})
     p.stats['removal_cast'] += 1
@@ -525,6 +531,7 @@ def hook_options(g, p, s, post):
     for c, fn in E.CI.gy_cards(p, 'gy_options'): o += fn(g, c, p, s, post) or []
     for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
     if p.key not in STYLE: o += __import__('pool_ai').special_options(g, p, s, post)
+    if E.CI.combo_options is not None: o += E.CI.combo_options(g, p, s, post)
     return o
 
 

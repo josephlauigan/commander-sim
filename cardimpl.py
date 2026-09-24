@@ -125,6 +125,8 @@ def gy_cards(p, event):
 
 
 PVAL = {}             # card name -> fixed threat value (how much opponents want it gone)
+combo_options = None  # set by impl_combos
+combo_imp = None
 LOCK_EVENTS = ('cost', 'can_cast', 'min_cost', 'uncounterable', 'no_lifegain', 'no_graveyard')
 ENGINE_EVENTS = ('options', 'cast', 'dies', 'etb', 'attack', 'upkeep', 'end_step', 'landfall', 'draw', 'sacrifice',
                  'combat_damage', 'trigger_copies', 'extra_lands', 'land_mana', 'grant_kw', 'discard', 'land_gy')
@@ -134,6 +136,13 @@ _TV = {}
 
 
 def threat_value(g, m):
+    return _cached_threat(g, m) + (piece_threat(g, m) if piece_threat is not None else 0)
+
+
+piece_threat = None
+
+
+def _cached_threat(g, m):
     """pool games: what a permanent is worth removing (beyond the engine's tag-based value); fixed per card name"""
     cd = m.cd
     if cd is None: return 0
@@ -159,12 +168,38 @@ def _threat_value(cd):
 
 
 def turn_start(g, p):
-    """start of p's turn: rebound spells"""
+    """start of p's turn: rebound spells, Pact of Negation payments"""
+    n = getattr(p, 'pacts', 0)
+    while n > 0:
+        n -= 1
+        if E.can_pay(g, p, 3, 'UU'): E.pay(g, p, 3, 'UU')
+        else:
+            E.log(f'  {E.NAME(p)} can\'t pay for Pact of Negation and loses', g)
+            p.life = 0; p.last_src = None; E.check_state(g); break
+    p.pacts = 0
     reb = getattr(p, 'rebound', None)
     if reb:
         p.rebound = []
         for c in reb:
             if c in p.exile and 'rebound' in HOOKS.get(c.name, {}): HOOKS[c.name]['rebound'](g, p, c)
+
+
+def adjust_mana(g, p, U):
+    """mana locks and bonuses (Karn + Lattice, Collector Ouphe, Cursed Totem, Kinnan, Urza)"""
+    if total(g, 'mana_lock', p): return []
+    if total(g, 'no_creature_mana', p):
+        U = [u for u in U if not (isinstance(u[0], E.Perm) and u[0].creature)]
+    bonus = total(g, 'nonland_mana_bonus', p)
+    if bonus:
+        for u in U:
+            if isinstance(u[0], E.Perm) or u[0] == 'T': u[2] += bonus
+    for src, fn in hooked(g, 'extra_mana'):
+        if src.owner is p: U += fn(g, src, p, U)
+    return U
+
+
+def blood_moon(g):
+    return bool(list(hooked(g, 'blood_moon')))
 
 
 def become_monarch(g, p):
@@ -176,7 +211,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    import impl_common, impl_t1, impl_t2, impl_t3  # noqa: F401
+    import impl_common, impl_t1, impl_t2, impl_t3, impl_t4, impl_t5, impl_combos  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]

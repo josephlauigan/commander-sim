@@ -341,6 +341,7 @@ def chasm(p):
 def prevents_damage(g, p, src):
     """Glacial Chasm prevents all damage to you; The One Ring's protection prevents damage from opponents' sources"""
     if chasm(p): return True
+    if g is not None and g.hooks and src is not p and CI.total(g, 'prevent_damage', p): return True   # Solitary Confinement
     return p.ring_prot and src is not None and src is not p
 
 
@@ -387,7 +388,13 @@ def eliminate(g, p):
 
 
 # ---------------------------------------------------------------- mana
+BASIC_NAMES = ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes', 'Snow-Covered Plains', 'Snow-Covered Island',
+               'Snow-Covered Swamp', 'Snow-Covered Mountain', 'Snow-Covered Forest')
+
+
 def land_cols(p, L, anyc):
+    g = CUR_G
+    if g is not None and g.hooks and L.cd.name not in BASIC_NAMES and CI.blood_moon(g): return 'R'
     if anyc: return p.ident
     c = L.cd.tags.get('c', 'C')
     if c == 'A': return p.ident
@@ -428,6 +435,7 @@ def mana_units(g, p, convoke=False):
     tre = p.treasures if not (g.hooks and CI.total(g, 'no_artifact_mana', p)) else 0
     for _ in range(tre):
         U.append(['T', p.ident, 1 + (CI.total(g, 'treasure_bonus', p) if g.hooks else 0)])
+    if g.hooks: U = CI.adjust_mana(g, p, U)
     for _ in range(p.floatR):
         U.append(['F', 'R', 1])
     for _ in range(p.floatA):
@@ -533,6 +541,10 @@ def draw(g, p, n=1, step=False):
         if p.draw_st != st: p.draw_st, p.draw_n = st, 0
         if p.draw_n >= 1 and any(has(q, 'narset') for q in g.opps(p)):      # Narset: opponents draw at most one card each turn
             p.stats['narset_denied'] += n - k; return
+        if g.hooks and not (step and k == 0):             # Notion Thief: an opponent's extra draws are stolen
+            thief = next((src for src, fn in CI.hooked(g, 'steal_draw') if fn(g, src, p)), None)
+            if thief is not None:
+                draw(g, thief.owner, 1); continue
         if not p.library:
             p.decked = True; return
         p.draw_n += 1
@@ -742,6 +754,9 @@ def _die_rest(g, m, p, cause, selfdies):
             return
     to_zone_card(g, m, 'gy')
     if cause == 'sac': tergrid_steal(g, p, m.phys or m.cd, m.orig)
+    if CI is not None and m.creature:
+        for c, fn in CI.gy_cards(m.orig, 'gy_dies'):
+            if c is not m.cd: fn(g, c, m.orig, m)
 
 
 def exile_perm(g, m):
@@ -1007,6 +1022,9 @@ def spell_imp(g, p, c, ctx):
                  ('sphinx', 6), ('breach', 5), ('panoptic', 5)):
         if k in t: return v, aff
     if 'tokx' in t and ctx.get('x', 0) >= 4: return 5, aff
+    if POOL_RULES and CI is not None and CI.combo_imp is not None:
+        ci = CI.combo_imp(g, p, c)
+        if ci: return ci, aff
     return 0, aff
 
 
@@ -1039,6 +1057,9 @@ def counter_ok(ctr, c):
     if s == 'ise': return c.instant or c.sorcery or ('E' in c.types and not c.creature)
     if s == 'mv4': return c.cmc >= 4
     if s == 'cre': return c.creature
+    if s == 'mv1': return c.cmc == 1                                  # Mental Misstep
+    if s == 'cre2': return c.creature and (c.pow <= 2 or c.tgh <= 2)  # Stern Scolding
+    if s == 'blue': return 'U' in c.pips                              # Pyroblast / Red Elemental Blast
     return False
 
 
@@ -1048,6 +1069,10 @@ def pick_counter(g, q, c):
         if 'ctr' not in ctr.tags or not counter_ok(ctr, c): continue
         if g.hooks and not castable(g, q, ctr): continue
         if 'fierce' in ctr.tags and commander_out(q): return ctr        # Fierce Guardianship: free with your commander out
+        if 'pact' in ctr.tags and len(q.lands) >= 5: return ctr         # Pact of Negation: free now, {3}{U}{U} next upkeep
+        if 'misstep' in ctr.tags and q.life > 10: return ctr            # Mental Misstep: 2 life
+        if 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
+            return ctr                                                   # Force of Negation: free on others' turns
         if 'free' in ctr.tags:
             if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, ctr.generic, ctr.pips):
                 if best is None: best = ctr
@@ -1064,6 +1089,13 @@ def commander_out(p):
 def cast_counter(g, q, ctr):
     if 'fierce' in ctr.tags and commander_out(q):
         pass                                     # cast without paying its mana cost
+    elif 'pact' in ctr.tags:
+        q.pacts = getattr(q, 'pacts', 0) + 1     # pay {3}{U}{U} at the next upkeep or lose
+    elif 'misstep' in ctr.tags and q.life > 10:
+        lose_life(g, q, 2, q)
+    elif 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
+        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
+        x = min(blues, key=lambda c: card_worth(g, q, c)); q.hand.remove(x); q.exile.append(x)
     elif 'free' in ctr.tags and not can_pay(g, q, ctr.generic, ctr.pips):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
         if not blues: return False
@@ -1481,7 +1513,8 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             ty = cd.types if cd else 'C'
             ok = {'c': is_c, 'cp': is_c or 'P' in ty, 'cap': is_c or 'A' in ty or 'P' in ty,
                   'ce': is_c or 'E' in ty, 'nl': True, 'p': True, 'a': 'A' in ty,
-                  'cna': is_c and 'A' not in ty, 'ae': 'A' in ty or 'E' in ty}.get(tgt, is_c)
+                  'cna': is_c and 'A' not in ty, 'ae': 'A' in ty or 'E' in ty, 'blue': True}.get(tgt, is_c)
+            if tgt == 'blue' and not (cd is not None and 'U' in cd.pips): continue
             if spell is not None and 'alsoart' in spell.tags and 'A' in ty and not is_c:
                 res.append(m); continue                  # Abrade: destroy target artifact mode
             if not ok: continue
