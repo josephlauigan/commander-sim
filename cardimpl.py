@@ -27,6 +27,16 @@ so the original four-deck mode is unchanged.
 import engine as E
 
 HOOKS = {}            # card name -> {event: fn}
+SPELL_PRIO = {}       # card name -> number or fn(g, p, c): cast priority 0-90 for outside decks (0 = not now)
+LAND_ETB = {}         # land name -> fn(g, p, land) when it enters as a land drop (Bojuka Bog ...)
+
+
+def gy_response(g, reanimator, value, src_player=None):
+    """an opponent answers a reanimation spell by exiling the graveyard (Tormod's Crypt, Soul-Guide Lantern ...)"""
+    if value < 5: return False
+    for src, fn in list(hooked(g, 'gy_hate')):
+        if src.owner is not reanimator and fn(g, src, reanimator, src_player or reanimator): return True
+    return False
 DYN_MANA = {}         # card name -> fn(g, p, perm) -> amount of mana its tap ability makes (Priest of Titania ...)
 ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tapped for mana (Heritage Druid ...)
 
@@ -66,12 +76,15 @@ def live(name):
 
 def hooked(g, event):
     """(src permanent, fn) for every permanent on the battlefield with a hook for event"""
-    hs = getattr(g, 'hooks', None)
-    if not hs: return
-    for m in list(hs):
-        if m.phased or m.cd is None or m not in m.owner.perms or not m.owner.alive: continue
-        fn = HOOKS.get(m.cd.name, {}).get(event)
-        if fn is not None and not m.neutered: yield m, fn
+    if not g.hooks: return
+    cache = g.hook_cache
+    if cache is None: cache = g.hook_cache = {}
+    lst = cache.get(event)
+    if lst is None:
+        lst = cache[event] = [(m, HOOKS[m.cd.name][event]) for m in g.hooks if event in HOOKS.get(m.cd.name, {})]
+    for m, fn in lst:
+        if m.phased or m.neutered or not m.owner.alive or m not in m.owner.perms: continue
+        yield m, fn
 
 
 def fire(g, event, *args):
@@ -111,9 +124,59 @@ def gy_cards(p, event):
     return [(c, HOOKS[c.name][event]) for c in list(p.gy) if c.name in HOOKS and event in HOOKS[c.name] and live(c.name)]
 
 
+PVAL = {}             # card name -> fixed threat value (how much opponents want it gone)
+LOCK_EVENTS = ('cost', 'can_cast', 'min_cost', 'uncounterable', 'no_lifegain', 'no_graveyard')
+ENGINE_EVENTS = ('options', 'cast', 'dies', 'etb', 'attack', 'upkeep', 'end_step', 'landfall', 'draw', 'sacrifice',
+                 'combat_damage', 'trigger_copies', 'extra_lands', 'land_mana', 'grant_kw', 'discard', 'land_gy')
+
+
+_TV = {}
+
+
+def threat_value(g, m):
+    """pool games: what a permanent is worth removing (beyond the engine's tag-based value); fixed per card name"""
+    cd = m.cd
+    if cd is None: return 0
+    v = _TV.get(cd.name)
+    if v is None:
+        v = _TV[cd.name] = _threat_value(cd)
+    return v
+
+
+def _threat_value(cd):
+    if cd.name in PVAL: return PVAL[cd.name]
+    v = 0.0
+    h = HOOKS.get(cd.name) if live(cd.name) else None
+    if h:
+        if 'attack_tax' in h or 'attack_cap' in h: v = max(v, 4.5)
+        if any(e in h for e in LOCK_EVENTS): v = max(v, 5.0)
+        if any(e in h for e in ENGINE_EVENTS): v = max(v, 3.0)
+    if cd.dsl and not cd.creature:
+        n = sum(1.5 if a.get('type') in ('triggered', 'static', 'replacement') else 1.0 if a.get('type') == 'activated' else 0
+                for a in cd.dsl if a.get('static') != 'note')
+        v = max(v, min(6.0, 1.0 + n))
+    return v
+
+
+def turn_start(g, p):
+    """start of p's turn: rebound spells"""
+    reb = getattr(p, 'rebound', None)
+    if reb:
+        p.rebound = []
+        for c in reb:
+            if c in p.exile and 'rebound' in HOOKS.get(c.name, {}): HOOKS[c.name]['rebound'](g, p, c)
+
+
+def become_monarch(g, p):
+    if getattr(g, 'monarch', None) is p or not p.alive: return
+    g.monarch = p
+    E.log(f'    {E.NAME(p)} becomes the monarch', g)
+    if g.hooks: fire(g, 'monarch', p)
+
+
 def load():
     """import the implementation modules (they register themselves)"""
-    import impl_common, impl_t1  # noqa: F401
+    import impl_common, impl_t1, impl_t2  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]

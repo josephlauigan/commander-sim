@@ -148,8 +148,10 @@ def choose_target(g, p, sel, harmful, ctx, src=None, spell=None):
             if m.owner is not p and E.protected_from(g, m, srccol): continue
             cands.append(m)
     if harmful:
-        cands = [m for m in cands if m.owner is not p] or ([] if f.get('controller') != 'you' else cands)
-        return max(cands, key=lambda m: pval(g, m)) if cands else None
+        opp = [m for m in cands if m.owner is not p]
+        if opp: return max(opp, key=lambda m: pval(g, m))
+        if f.get('controller') != 'you': return None
+        return min(cands, key=lambda m: pval(g, m)) if cands else None     # a cost on your own: the least valuable
     mine = [m for m in cands if m.owner is p]
     return max(mine, key=lambda m: pval(g, m)) if mine else (max(cands, key=lambda m: pval(g, m)) if cands else None)
 
@@ -513,20 +515,29 @@ def trigger_matches(g, q, src, a, kw):
 
 # ------------------------------------------------------------------ static abilities
 def statics(g, kind):
-    for q in g.players:
-        if not q.alive: continue
-        for src in q.perms:
-            if src.cd is None or not getattr(src.cd, 'dsl', None) or src.phased: continue
-            for a in src.cd.dsl:
-                if a.get('type') in ('static', 'replacement') and (a.get('static') == kind or a.get('replace') == kind):
-                    yield q, src, a
+    """(controller, source, ability) for every static / replacement ability of this kind on the battlefield.
+    The index is rebuilt when the set of permanents changes (a pure cache)."""
+    sig = getattr(g, 'bf_ver', 0)                 # bumped whenever a card permanent enters, leaves or changes control
+    idx = getattr(g, 'static_idx', None)
+    if idx is None or idx[0] != sig:
+        by = {}
+        for q in g.players:
+            for src in q.perms:
+                if src.cd is None or not getattr(src.cd, 'dsl', None): continue
+                for a in src.cd.dsl:
+                    if a.get('type') in ('static', 'replacement'):
+                        k = a.get('static') or a.get('replace')
+                        by.setdefault(k, []).append((q, src, a))
+        idx = g.static_idx = (sig, by)
+    for q, src, a in idx[1].get(kind, ()):
+        if q.alive and not src.phased and src.owner is q and src in q.perms: yield q, src, a
 
 
 def pt(g, m):
     dp = dt = 0
     e = getattr(g, 'eot_pt', {}).get(id(m))
     if e: dp += e[0]; dt += e[1]
-    if getattr(g, 'auras', None) or getattr(g, 'selfpt', None):
+    if getattr(g, 'auras', None) or getattr(g, 'selfpt', None) or getattr(m.owner, 'elspeth_emblem', False):
         a, b = E.CI.attached_bonus(g, m); dp += a; dt += b
     if not active(g): return dp, dt
     for q, src, a in statics(g, 'anthem'):
@@ -634,7 +645,9 @@ def value_of(g, p, effects, spell=None):
                 v += 0.6 * n * (len(g.opps(p)) if sel.get('who') == 'each_opponent' else 1)
             else:
                 t = choose_target(g, p, sel, True, {}, None, spell)
-                v += (pval(g, t) - 1.5) if t is not None else -1
+                if t is None: v -= 1
+                elif t.owner is p: v -= pval(g, t) + 0.5          # it would hit your own permanent
+                else: v += pval(g, t) - 1.5
         elif d == 'token':
             v += 0.7 * n * (e.get('pow', 1) + 0.5 * len(e.get('keywords', [])))
         elif d in ('counters', 'pump'):

@@ -823,7 +823,7 @@ def _roil(g, src, p):
     if not cands: return
     m = max(cands, key=lambda m: pval(g, m))
     if pval(g, m) < 2: return
-    q = m.owner; q.perms.remove(m); m.owner = p; m.attached = None; p.perms.append(m)
+    q = m.owner; q.perms.remove(m); m.owner = p; m.attached = None; p.perms.append(m); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     if src.data is None: src.data = {}
     src.data.setdefault('stolen', []).append(m)
     log(f'    Roil Elemental steals {m.name}', g)
@@ -833,7 +833,7 @@ def _roil(g, src, p):
 def _roil_leaves(g, src):
     for m in (src.data or {}).get('stolen', []):
         if m in src.owner.perms:
-            src.owner.perms.remove(m); m.owner = m.orig; m.orig.perms.append(m)
+            src.owner.perms.remove(m); m.owner = m.orig; m.orig.perms.append(m); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
 card('Roil Elemental', 'pow=3 tgh=2 fly', dsl=[])
 note('Roil Elemental', 'Full', 'landfall: steal the best opposing creature while it stays')
 

@@ -8,6 +8,8 @@
 Decks without an entry use pool_ai.DEFAULT_STYLE and the generic priority.
 """
 CONFIG = {
+    'kaalia-mardu-creature-cheat': {'prio_fn': lambda g, p, c: __import__('impl_t2').kaalia_prio(g, p, c),
+                                    'cmd_prio': 88, 'style': {'temp': 1.0, 'aggression': 0.8, 'caution': 0.4}},
     'light-paws-aura-voltron': {'aura_host': 'commander', 'aura_prio': 70, 'cmd_prio': 88, 'cmd_turn': 1,
                                 'style': {'temp': 1.0, 'aggression': 0.8, 'caution': 0.4}},
 }

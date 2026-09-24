@@ -45,6 +45,7 @@ def apply(verbose=False):
         for a in ('identity', 'kws', 'protfrom', 'ward', 'game_changer', 'start_loyalty', 'subtypes'):
             if hasattr(base, a): setattr(cd, a, getattr(base, a))
         if 'kws' in spec: cd.kws = frozenset(spec['kws'])
+        if 'ward' in spec: cd.ward = spec['ward']
         cd.source = 'pool'
         cd.pool_override = True
         engine.DB[name] = cd

@@ -25,6 +25,13 @@ def generic_prio(g, p, c):
     cfg = config(p)
     kc = cfg.get('key_cards', {})
     if c.name in kc: return kc[c.name]
+    fn = cfg.get('prio_fn')
+    if fn is not None:
+        r = fn(g, p, c)
+        if r is not None: return r
+    if E.CI is not None and c.name in E.CI.SPELL_PRIO:
+        v = E.CI.SPELL_PRIO[c.name]
+        return v(g, p, c) if callable(v) else v
     if c is p.cmd: return cfg.get('cmd_prio', 75) if p.turns >= cfg.get('cmd_turn', 2) else 0
     if 'rock' in t or 'dork' in t or 'lr' in t or 'fastmana' in t: return 85 if p.turns <= 5 else 38
     if 'chromemox' in t:
@@ -33,8 +40,13 @@ def generic_prio(g, p, c):
     if 'moxd' in t:
         n = sum(1 for x in p.hand if x.land)
         return (82 if p.turns <= 5 else 30) if n >= 2 or (n >= 1 and p.land_turn == p.turns) else 0
+    if t.get('prot') == 'boots' or 'cloak' in t: return 45 if any(m.creature for m in p.perms) else 25
+    if 'rem' in t and 'etb' in t and c.perm:                     # creature / enchantment with an ETB removal
+        tg = E.legal_targets(E.CUR_G, p, t['rem'], t.get('tgt', 'c'), 'mv4' in t, spell=c)
+        best = max((pval(E.CUR_G, m) for m in tg), default=0)
+        return 45 + min(30, 6 * best) if best >= 2 else (35 if c.creature else 0)
     if 'ctr' in t or 'rem' in t or 'wipe' in t or t.get('prot') or 'tide' in t: return 0   # held / cast by the response logic
-    if any(k in t for k in ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle')) and not c.dsl: return 0
+    if any(k in t for k in ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle')) and not c.dsl and not c.creature: return 0
     if 'tokx' in t: return 50 if total_mana(E.CUR_G, p) >= 5 else 0
     if 'rhystic' in t or 'tithe' in t or 'eng' in t or 'necro' in t: return 64
     if 'seal' in t: return 56 if p.life >= 15 else 20            # Vampiric Tutor / Imperial Seal
@@ -88,6 +100,9 @@ def special_options(g, p, s, post):
     """generic activated plays for outside decks: equip Boots / Greaves / Cloak, Skullclamp, special spells"""
     o = spell_options(g, p, s, post)
     import impl_common
+    o += impl_common.adventure_options(g, p, s, post)
+    import impl_t2
+    o += impl_t2.evoke_options(g, p, s, post)
     o += impl_common.aristocrat_options(g, p, s, post)
     if post is None: return o                                    # end-of-turn window: nothing here is instant speed
     for e in p.perms:
@@ -147,6 +162,7 @@ PROTECTORS = {
     'Selfless Spirit':         ('bf_sac', None, 'indes', 'creatures', False),
     'Mother of Runes':         ('bf_tap', None, 'color', 'one', False),
     'Giver of Runes':          ('bf_tap', None, 'all_targeted', 'one', False),      # colorless or a colour
+    'Dream Trawler':           ('bf_self_discard', None, 'all_targeted', 'self', False),
     'Benevolent Bodyguard':    ('bf_sac', None, 'color', 'one', False),
     "Alseid of Life's Bounty": ('bf_sac', (1, ''), 'color', 'one', False),
 }
@@ -178,15 +194,20 @@ def _use(g, p, name, where, cost, src, target_m):
             gen, pips = cost
             if not E.can_pay(g, p, gen, pips): return False
             E.pay(g, p, gen, pips)
-        p.hand.remove(c); p.gy.append(c); p.spells_this_turn += 1; p.stats['spells_cast'] += 1
+        p.hand.remove(c); p.spells_this_turn += 1; p.stats['spells_cast'] += 1
+        if name == 'Ephemerate':
+            p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
+        elif name != 'Restoration Angel': p.gy.append(c)
         p.cast_names.add(c.name); E.on_cast(g, p, c)
-        if name == 'Restoration Angel':
-            p.gy.remove(c); E.enter(g, p, c)
+        if name == 'Restoration Angel': E.enter(g, p, c)
     else:
         if src is None or src not in p.perms: return False
         if where == 'bf_tap':
             if src.tapped or src.sick: return False
             src.tapped = True
+        elif where == 'bf_self_discard':
+            if not p.hand: return False
+            E.discard_worst(g, p, 1); src.tapped = True
         elif where == 'bf_sac':
             if cost and not E.can_pay(g, p, *cost): return False
             if cost: E.pay(g, p, *cost)
@@ -204,6 +225,7 @@ def _options(p, m):
     for x in p.perms:
         if x.cd is not None and x.cd.name in PROTECTORS and PROTECTORS[x.cd.name][0] != 'hand' and not x.phased:
             if x.cd.name == 'Giver of Runes' and x is m: continue          # "another target creature"
+            if PROTECTORS[x.cd.name][3] == 'self' and x is not m: continue
             out.append((x.cd.name, PROTECTORS[x.cd.name][0], PROTECTORS[x.cd.name][1], x))
     return out
 
@@ -219,7 +241,7 @@ def protect(g, owner, m, kind, actor, spell=None):
         if scope in ('one', 'creatures') and not m.creature and how not in ('hexproof_indes', 'phase', 'all_targeted'): continue
         if not _saves(how, kind, m, spell, True): continue
         # cheapest first: permanents that tap, then one-shot cards; save the board-wide ones for wipes
-        rank = {'bf_tap': 0, 'bf_sac': 2, 'hand': 1}[where] + (3 if scope != 'one' else 0)
+        rank = {'bf_tap': 0, 'bf_sac': 2, 'hand': 1, 'bf_self_discard': 0}[where] + (3 if scope not in ('one', 'self') else 0)
         cands.append((rank, name, where, cost, src))
     for _, name, where, cost, src in sorted(cands, key=lambda x: x[0]):
         if _use(g, owner, name, where, cost, src, m):
@@ -239,7 +261,7 @@ def wipe_response(g, q, kind, caster):
     if loss < 6: return None
     for name, where, cost, src in sorted(_options(q, None), key=lambda o: o[1] != 'bf_sac'):
         how, scope = PROTECTORS[name][2], PROTECTORS[name][3]
-        if scope == 'one' or not _saves(how, kind, None, None, False): continue
+        if scope in ('one', 'self') or not _saves(how, kind, None, None, False): continue
         if _use(g, q, name, where, cost, src, None):
             if how == 'phase':
                 for m in q.perms: m.phased = True
@@ -256,6 +278,12 @@ def spell_options(g, p, s, post):
     if post is None: return o
     for c in p.hand:
         t = c.tags
+        if t.get('fill') == 'grisly' and E.castable(g, p, c) and E.can_pay(g, p, c.generic, c.pips) and \
+                (len(p.lands) < 6 or any(m.cd is not None and m.cd.name == 'Meren of Clan Nel Toth' for m in p.perms)):
+            def grisly(c=c):
+                if c not in p.hand or not E.can_pay(g, p, c.generic, c.pips): return False
+                E.pay(g, p, c.generic, c.pips); E.cast_card(g, p, c, 'hand', {}); return True
+            o.append((2.5, c.name, grisly))
         if t.get('fill') == 'dispute' and E.castable(g, p, c) and E.can_pay(g, p, c.generic, c.pips):
             fod = E.sac_fodder(g, p, 'artifact or creature')
             if fod is None or (fod != 'Treasure' and pval(g, fod) >= 3): continue
@@ -279,6 +307,8 @@ def spell_options(g, p, s, post):
             def rean(c=c, cd=cd, src=src):
                 if c not in p.hand or cd not in src.gy or not E.can_pay(g, p, c.generic, c.pips): return False
                 E.pay(g, p, c.generic, c.pips)
+                if g.hooks and E.CI.gy_response(g, p, v, src):
+                    p.hand.remove(c); p.gy.append(c); return True
                 E.cast_card(g, p, c, 'hand', {'rean_target': cd, 'rean_src': src, 'rean_value': v}); return True
             o.append((v * 0.9 * (1 - 0.35 * s.ctr_risk), f'{c.name} -> {cd.name}', rean))
         if 'krasis' in t and E.castable(g, p, c) and post is not None:                    # Hydroid Krasis: X = spare mana

@@ -130,6 +130,7 @@ class Game:
         s.elim = []
         s.log = None          # list of strings when tracing a game
         s.hooks = []          # permanents with hand-written implementations (cardimpl), in entry order
+        s.hook_cache = None   # event -> [(permanent, fn)], rebuilt when s.hooks changes
 
     def opps(s, p):
         return [q for q in s.players if q.alive and q is not p]
@@ -183,7 +184,9 @@ def army_of(p):
 
 
 def equipped(m, tag):
-    return any(e.attached is m and tag in e.cd.tags for e in m.owner.perms if e.cd)
+    for e in m.owner.perms:
+        if e.attached is m and e.cd is not None and tag in e.cd.tags: return True
+    return False
 
 
 def norn_vs(g, p):
@@ -319,6 +322,9 @@ def lose_life(g, p, n, src, kind='other', damage=None):
         log(f'    {n} damage to {NAME(p)} is prevented', g)
         return
     p.life -= n
+    if CUR_G is not None and CUR_G.hooks:                 # life lost this turn (Archfiend of Despair)
+        st = turn_stamp(CUR_G); lt = getattr(p, 'lost_turn', None)
+        p.lost_turn = (st, (lt[1] if lt and lt[0] == st else 0) + n)
     if src is not None and src is not p:
         p.last_src = src; p.last_kind = kind
         src.stats['dmg_dealt'] += n; src.stats['dmgk_' + kind] += n
@@ -347,11 +353,16 @@ def gain(p, n):
     if not p.alive: return
     if CUR_G is not None and any(has(q, 'erebos') for q in CUR_G.opps(p)): return   # Erebos: opponents can't gain life
     if CUR_G is not None and DSLMOD is not None and DSLMOD.no_lifegain(CUR_G, p): return
+    if CUR_G is not None and CUR_G.hooks and CI.total(CUR_G, 'no_lifegain', p): return
     p.life += n
+    if CUR_G is not None and CUR_G.hooks:
+        st = turn_stamp(CUR_G); gt = getattr(p, 'gained_turn', None)
+        p.gained_turn = (st, (gt[1] if gt and gt[0] == st else 0) + n)
 
 
 def check_state(g):
     if g.over: return
+    if g.hooks: CI.fire(g, 'sba')
     for p in g.players:
         if p.alive and (p.life <= 0 or p.decked or (p.cmd_dmg and max(p.cmd_dmg.values()) >= 21)):
             eliminate(g, p)
@@ -372,6 +383,7 @@ def eliminate(g, p):
     log(f'*** {NAME(p)} is eliminated (life {p.life}) by {NAME(p.killer) if p.killer else "?"}', g)
     for m in list(p.perms):
         p.perms.remove(m)
+    g.bf_ver = getattr(g, 'bf_ver', 0) + 1
 
 
 # ---------------------------------------------------------------- mana
@@ -647,10 +659,11 @@ def leave(g, m):
     if m.creature and m.plus > 0 and m in p.perms and has(p, 'ozolith'):
         p.ozolith_counters = getattr(p, 'ozolith_counters', 0) + m.plus       # The Ozolith keeps the counters
     if m in p.perms: p.perms.remove(m)
+    if g is not None: g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     detach(m)
     if getattr(g, 'auras', None): CI.aura_fall(g, m)
     if g.hooks and m in g.hooks:
-        g.hooks.remove(m)
+        g.hooks.remove(m); g.hook_cache = None
         fn = CI.HOOKS[m.cd.name].get('leaves')
         if fn is not None: fn(g, m)
 
@@ -723,8 +736,7 @@ def _die_rest(g, m, p, cause, selfdies):
         if 'undying' in k and m.plus <= 0:                     # undying: back with a +1/+1 counter
             enter(g, p, m.cd, undying=True); p.stats['undying'] += 1; return
         if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter
-            n = enter(g, p, m.cd); n.plus = -1; p.stats['persist'] += 1
-            if etgh(g, n) <= 0: die(g, n, 'sba')
+            enter(g, p, m.cd, plus=-1); p.stats['persist'] += 1
             return
     to_zone_card(g, m, 'gy')
     if cause == 'sac': tergrid_steal(g, p, m.phys or m.cd, m.orig)
@@ -780,6 +792,8 @@ def pval(g, m):
     if 'panoptic' in t: v = max(v, 2 + 2 * len(getattr(g, 'imprint', {}).get(id(m), [])))
     if m.is_cmd: v += 1
     if getattr(g, 'auras', None) and cd.creature: v += 1.5 * len(CI.auras_on(g, m))     # removing it takes the Auras too
+    if POOL_RULES and 'P' in cd.types: v = max(v, 3 + 0.4 * (m.loyalty or 0) + (2 if m.is_cmd else 0))
+    if POOL_RULES and CI is not None: v = max(v, CI.threat_value(g, m))
     return v
 
 
@@ -1068,6 +1082,7 @@ LAST_COUNTER = None
 def counter_window(g, p, c, imp, aff):
     global LAST_COUNTER
     if 'unc' in c.tags: return True
+    if g.hooks and CI.total(g, 'uncounterable', p, c): return True
     for q in g.after(p):
         if not q.alive or g.over or silenced(g, q): continue
         val = aff.get(q, imp)
@@ -1155,6 +1170,10 @@ def flashback_grant(g, p):
 
 def resolve(g, p, c, ctx, zone):
     t = c.tags
+    if CI is not None and not c.perm and c.name in CI.HOOKS and 'resolve' in CI.HOOKS[c.name] and CI.live(c.name):
+        dest = CI.HOOKS[c.name]['resolve'](g, p, c, ctx)            # hand-written spell (returns where it goes)
+        if dest != 'handled': (p.exile if zone == 'gy' or ctx.get('exile_after') or dest == 'exile' else p.gy).append(c)
+        return
     if c.dsl and not c.perm:                     # interpreter-driven instant / sorcery
         if DSLMOD is not None: DSLMOD.resolve_spell(g, p, c, ctx)
         if zone == 'gy' or ctx.get('exile_after'): p.exile.append(c)
@@ -1254,7 +1273,7 @@ def resolve(g, p, c, ctx, zone):
     else: p.gy.append(c)
 
 
-def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False):
+def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0):
     phys = None
     if 'clone' in cd.tags:                      # Phyrexian Metamorph: copy the best creature or artifact on the battlefield
         cands = [x for q in g.players if q.alive for x in q.perms if x.cd is not None and x.cd is not q.cmd
@@ -1266,8 +1285,10 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False):
     if cd.dsl: g.dsl_on = True
     if cd.start_loyalty: m.loyalty = int(cd.start_loyalty)
     if undying: m.plus = 1; m.undying = True       # returns with its +1/+1 counter (so it survives -X/-X effects)
+    if plus: m.plus = plus                        # enters with counters (persist: -1)
     p.perms.append(m)
-    if CI is not None and CI.live(cd.name): g.hooks.append(m)
+    g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+    if CI is not None and CI.live(cd.name): g.hooks.append(m); g.hook_cache = None
     if cd.creature: creature_entered(g, p, m)
     if m in p.perms: do_etb(g, p, m)
     if DSLMOD is not None and g.dsl_on and m in p.perms: DSLMOD.fire(g, 'etb', perm=m, owner=p, was_cast=was_cast)

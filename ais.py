@@ -244,7 +244,7 @@ def seph_reanimate(g, p):
         dest = p.gy if zone == 'hand' else p.exile
         if not counter_window(g, p, c, val, {}):
             dest.append(c); return True
-        if sauron_grounds_response(g, p, val):
+        if sauron_grounds_response(g, p, val) or (g.hooks and E.CI.gy_response(g, p, val, src)):
             dest.append(c); return True
         seph_rean_resolve(g, p, c, {'rean_target': cd, 'rean_src': src})
         dest.append(c)
@@ -1369,6 +1369,8 @@ def choose_defender(g, p):
 
 def can_block(g, b, a):
     if b.cd is not None and 'noblock' in b.cd.tags: return False
+    if E.POOL_RULES and ((a.cd is not None and 'unblockable_shadow' in a.cd.kws) or
+                         (b.cd is not None and 'unblockable_shadow' in b.cd.kws)): return False      # shadow
     if E.DSLMOD is not None and g.dsl_on:
         D = E.DSLMOD
         if D.has_kw(g, b, 'cant_block') or D.has_kw(g, a, 'unblockable'): return False
@@ -1489,6 +1491,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             rest = [x for x in cands if x is not b]
             if rest: used.add(min(rest, key=lambda x: pval(g, x)))
     if g.hooks: E.CI.fire(g, 'blocks', p, atk, d, assign)
+    to_walker = walker_attacks(g, p, atk, d, assign) if E.POOL_RULES else {}
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
     conn = set()
@@ -1510,6 +1513,15 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             dmg = max(0, ap - bt) if tr else 0
             if b_dies: die(g, b, 'destroy')
             if a_dies: die(g, a, 'destroy')
+        if dmg > 0 and getattr(g, 'fog', None) == turn_stamp(g):     # Spore Frog and other fogs
+            dmg = 0
+        w = to_walker.get(a)
+        if dmg > 0 and w is not None and w in d.perms:                  # this attacker went after a planeswalker
+            w.loyalty -= dmg; tot_dmg[0] += dmg
+            log(f'    {a.name} deals {dmg} to {w.name} (loyalty {w.loyalty})', g)
+            if w.loyalty <= 0:
+                leave(g, w); to_zone_card(g, w, 'gy'); d.lost_names[w.name] += 1
+            dmg = 0
         if dmg > 0 and prevents_damage(g, d, p):  # protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
             d.stats['dmg_prevented'] += dmg
             log(f'    {dmg} combat damage from {a.name} to {NAME(d)} is prevented', g)
@@ -1518,9 +1530,10 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
             if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
             if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
+            if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
             if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
                 for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
-                    d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x)
+                    d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
             if a.life or p.najeela_boost or (E.POOL_RULES and kw(a, 'lifelink')): gain(p, dmg)
             if a.is_cmd: d.cmd_dmg[p.key] += dmg
             if a.army and len(p.hand) <= 3:
@@ -1562,6 +1575,22 @@ def attack_limits(g, p, d, atk):
             log(f'  {NAME(p)} pays {tax * len(atk)} to attack {NAME(d)} with {len(atk)}', g)
             p.stats['attack_tax_paid'] += tax * len(atk)
     return atk
+
+
+def walker_attacks(g, p, atk, d, assign):
+    """pool games: send unblocked attackers at d's most valuable planeswalker when that's worth more than the
+    face damage (enough to kill it, or it's near its ultimate)"""
+    ws = [m for m in d.perms if m.cd is not None and 'P' in m.cd.types and m.loyalty and not m.phased]
+    if not ws: return {}
+    w = max(ws, key=lambda m: pval(g, m))
+    free = sorted([a for a in atk if a not in assign and a in p.perms], key=lambda a: epow(g, a))
+    if not free or pval(g, w) < 4: return {}
+    out, need = {}, w.loyalty
+    for a in free:
+        if need <= 0: break
+        out[a] = w; need -= epow(g, a) * (2 if double_strike(p, a) else 1)
+    if need > 0 and d.life <= sum(epow(g, a) for a in free) * 1.2: return {}   # lethal on the player instead
+    return out
 
 
 def ozolith_move(g, p):
@@ -1692,6 +1721,7 @@ def play_land(g, p):
 def play_land_card(g, p, c, how='plays'):
     """put land card c (already taken from its zone) onto the battlefield as p's land drop"""
     p.lands.append(Land(c, land_enters_tapped(p, c))); p.land_turn = p.turns
+    if E.CI is not None and c.name in E.CI.LAND_ETB and E.CI.live(c.name): E.CI.LAND_ETB[c.name](g, p, p.lands[-1])
     p.lands_played = getattr(p, 'lands_played', 0) + 1
     log(f'  {NAME(p)} {how} {c.name}', g)
     if c.tags.get('chasm'):                      # Glacial Chasm: when it enters, sacrifice a land
@@ -1727,14 +1757,17 @@ def crack_fetch(g, p, L):
     have = set(''.join(land_cols(p, x, False) for x in p.lands if x is not L))
     c = max(cands, key=lambda c: (len(set(land_cols(p, Land(c, False), False)) - have), len(c.tags.get('c', '')), g.rng.random()))
     p.lands.remove(L); p.gy.append(L.cd)
-    if g.hooks: E.CI.fire(g, 'land_gy', p, L.cd)
     p.library.remove(c); g.rng.shuffle(p.library)
     a = agent_for(g, p)
-    if a is not None: agent_take(g, a, p, c); return
+    if a is not None:
+        agent_take(g, a, p, c)
+        if g.hooks: E.CI.fire(g, 'land_gy', p, L.cd)
+        return
     tapped = not kinds and not (name == 'Fabled Passage' and len(p.lands) >= 4)
     if kinds: lose_life(g, p, 1, p)
     p.lands.append(Land(c, tapped or ('t' in c.tags)))
     log(f'    cracks {name} for {c.name}', g)
+    if g.hooks: E.CI.fire(g, 'land_gy', p, L.cd)
     landfall(g, p)
 
 
@@ -1771,11 +1804,10 @@ def more_lands(g, p):
             c = max([c for c in p.gy if c.land], key=lambda c: ('f' in c.tags, len(c.tags.get('c', ''))))
             p.gy.remove(c); play_land_card(g, p, c, 'plays from the graveyard')
         else: break
-        landfall(g, p)
-        if E.POOL_RULES and 'f' in c.tags and p.lands and p.lands[-1].cd is c: crack_fetch(g, p, p.lands[-1])
 
 
 def upkeep(g, p):
+    if E.CI is not None: E.CI.turn_start(g, p)
     if p.ring_prot:                               # The One Ring's protection ends as its controller's turn starts
         p.ring_prot = False; log(f'  {NAME(p)} no longer has protection from everything', g)
     if any(L.cd.tags.get('tabernacle') for q in g.players if q.alive for L in q.lands):
@@ -1848,6 +1880,7 @@ def erebos_draw(g, p):
 
 def end_step(g, p):
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
+    if E.CI is not None and getattr(g, 'monarch', None) is p: draw(g, p, 1)          # the monarch draws
     if g.hooks: E.CI.fire(g, 'end_step', p)
     for m in find(p, 'breach'):                   # Underworld Breach: sacrifice it at the beginning of the end step
         die(g, m, 'sac')

@@ -3,6 +3,7 @@ from engine import *
 import engine as E
 from cardimpl import on
 import cardimpl as CI
+from cardimpl import _eot
 from pool_cards import card, note
 
 
@@ -62,6 +63,7 @@ def attached_bonus(g, m):
             dp += spec['pow']; dt += spec['tgh']
             if spec['bonus']:
                 x, y = spec['bonus'](g, a.owner, a, m); dp += x; dt += y
+    if m.creature and getattr(m.owner, 'elspeth_emblem', False): dp += 2; dt += 2
     if getattr(g, 'selfpt', None) and m.cd is not None and m.cd.name in SELF_PT and m.owner.alive:
         x, y = SELF_PT[m.cd.name](g, m.owner, m); dp += x; dt += y
     return dp, dt
@@ -452,3 +454,512 @@ def _priest(g, src, p, s, post):
     return [(3.5 + 0.5 * len(g.opps(p)), 'Priest of Forgotten Gods', go)]
 card('Priest of Forgotten Gods', 'human pow=1 tgh=2', dsl=[])
 note('Priest of Forgotten Gods', 'Full', 'sacrifices two spare creatures: each opponent loses 2 and sacrifices, BB, draw')
+
+
+# ======================================================== staples shared by many decks
+def spell(name, prio=None, status=('Full', ''), tags=None, types=None):
+    """register a hand-written instant / sorcery: @spell(name)(resolve_fn)"""
+    def deco(fn):
+        CI.HOOKS.setdefault(name, {})['resolve'] = fn
+        if prio is not None: CI.SPELL_PRIO[name] = prio
+        if tags is not None or types is not None: card(name, tags or '', types=types, dsl=[])
+        note(name, *status)
+        return fn
+    return deco
+
+
+@spell('Brainstorm', prio=lambda g, p, c: 40 if len(p.library) > 10 else 0, tags='', types='I',
+       status=('Approximate', 'draw three, put back the two least useful cards'))
+def _brainstorm(g, p, c, ctx):
+    draw(g, p, 3)
+    for _ in range(2):
+        rest = [x for x in p.hand if x is not c]
+        if not rest: break
+        lands = sum(1 for x in rest if x.land)
+        x = min(rest, key=lambda x: (card_worth(g, p, x) if not x.land else (25 if lands <= 2 and len(p.lands) < 6 else 4)))
+        p.hand.remove(x); p.library.append(x)
+
+
+@spell('Fact or Fiction', prio=45, tags='draw=2', types='I',
+       status=('Approximate', 'the opponent\'s split is modeled as: you keep the best two of five'))
+def _fof(g, p, c, ctx):
+    top = [p.library.pop() for _ in range(min(5, len(p.library)))]
+    top.sort(key=lambda x: -card_worth(g, p, x))
+    for x in top[:2]: p.hand.append(x); p.seen_names.add(x.name)
+    p.gy.extend(top[2:])
+
+
+@spell("Council's Judgment", tags='rem=exile tgt=nl', types='S',
+       status=('Approximate', 'exiles the best opposing nonland permanent (it doesn\'t target: hexproof ignored); '
+                              'the vote is not modeled'))
+def _judgment(g, p, c, ctx):
+    cands = [m for q in g.opps(p) for m in q.perms if not m.phased]
+    if cands:
+        m = max(cands, key=lambda m: pval(g, m))
+        owner = m.owner; log(f'    {m.name} ({NAME(owner)}) is exiled by vote', g)
+        owner.lost_names[m.name] += 1; exile_perm(g, m); check_state(g)
+
+
+@spell('Sign in Blood', prio=45, tags='draw=2 lose=2', types='S', status=('Full', 'you draw two and lose 2'))
+def _sib(g, p, c, ctx):
+    draw(g, p, 2); lose_life(g, p, 2, p)
+
+
+# ---- Mind Stone: {1}, {T}, sacrifice: draw
+@CI.on('Mind Stone', 'options')
+def _mind_stone(g, src, p, s, post):
+    if post is not True or src.tapped or len(p.lands) < 6 or not can_pay(g, p, 1, ''): return []
+
+    def go():
+        if src.tapped or src not in p.perms: return False
+        src.tapped = True
+        if not can_pay(g, p, 1, ''): src.tapped = False; return False
+        pay(g, p, 1, ''); die(g, src, 'sac'); draw(g, p, 1); return True
+    return [(1.0, 'crack Mind Stone', go)]
+note('Mind Stone', 'Full', 'taps for {C}; cracked for a card late (six or more lands)')
+
+
+# ---- Otawara, Soaring City: channel {3}{U} (less per legendary creature), discard: bounce
+@CI.on('Otawara, Soaring City', 'hand_options')
+def _otawara(g, c, p, s, post):
+    n = max(0, 3 - sum(1 for m in p.perms if m.creature and m.cd is not None and 'leg' in m.cd.tags))
+    if not can_pay(g, p, n, 'U'): return []
+    cands = [m for q in g.opps(p) for m in q.perms if not untargetable(g, m) and not m.phased and
+             (m.creature or (m.cd is not None and any(x in m.cd.types for x in 'AEP')))]
+    if not cands: return []
+    t = max(cands, key=lambda m: pval(g, m))
+    if pval(g, t) < 4: return []
+
+    def go():
+        if c not in p.hand or t not in t.owner.perms or not can_pay(g, p, n, 'U'): return False
+        pay(g, p, n, 'U'); p.hand.remove(c); p.gy.append(c)
+        log(f'  {NAME(p)} channels Otawara', g); apply_removal(g, p, t, 'bounce'); return True
+    return [(pval(g, t) - 4.0, f'Otawara -> {t.name}', go)]
+note('Otawara, Soaring City', 'Full', 'land; channelled from hand to bounce a real threat')
+
+
+# ---- adventures: cast the spell half, then the creature later
+ADVENTURE = {}
+
+
+def adventure(name, spell_cost, kind, tgt, status):
+    """kind/tgt: removal type of the adventure half; the creature half is the card's normal cast"""
+    ADVENTURE[name] = (spell_cost, kind, tgt)
+    note(name, *status)
+
+
+adventure('Brazen Borrower', (1, 'U'), 'bounce', 'nl', ('Approximate', 'Petty Theft bounces a threat, then the '
+                                                                       'Faerie is castable (as from exile)'))
+
+
+def adventure_options(g, p, s, post):
+    o = []
+    for c in p.hand:
+        if c.name not in ADVENTURE or id(c) in getattr(p, 'adv_done', set()): continue
+        (gen, pips), kind, tgt = ADVENTURE[c.name]
+        if not can_pay(g, p, gen, pips) or not castable(g, p, c): continue
+        tg = legal_targets(g, p, kind, tgt)
+        if not tg: continue
+        t = max(tg, key=lambda m: pval(g, m))
+        if pval(g, t) < 4: continue
+
+        def go(c=c, t=t, gen=gen, pips=pips, kind=kind):
+            if c not in p.hand or t not in t.owner.perms or not can_pay(g, p, gen, pips): return False
+            pay(g, p, gen, pips)
+            p.spells_this_turn += 1; p.stats['spells_cast'] += 1; on_cast(g, p, c)
+            log(f'  {NAME(p)} casts the adventure of {c.name} -> {t.name}', g)
+            apply_removal(g, p, t, kind)
+            if not hasattr(p, 'adv_done'): p.adv_done = set()
+            p.adv_done.add(id(c)); return True
+        o.append((pval(g, t) - 3.5, f'{c.name} adventure -> {t.name}', go))
+    return o
+
+
+# ---- Reflector Mage: bounce and the owner can't recast it until your next turn
+@CI.on('Reflector Mage', 'etb')
+def _reflector(g, src, p, m):
+    if m is not src: return
+    cands = [x for q in g.opps(src.owner) for x in q.perms if x.creature and not untargetable(g, x)]
+    if not cands: return
+    t = max(cands, key=lambda x: pval(g, x))
+    owner, name = t.owner, t.name
+    apply_removal(g, src.owner, t, 'bounce', src.cd)
+    if t not in owner.perms: owner.locked_name = (name, src.owner.turns + 1, src.owner)
+
+
+@CI.on('Reflector Mage', 'can_cast')
+def _reflector_lock(g, src, caster, c, zone):
+    ln = getattr(caster, 'locked_name', None)
+    if ln and ln[0] == c.name and ln[2].turns < ln[1]: return False
+    return True
+card('Reflector Mage', 'human wizard pow=2 tgh=3', dsl=[])
+note('Reflector Mage', 'Full', '')
+
+
+@CI.on('Spark Double', 'etb')
+def _spark(g, src, p, m):
+    if m is not src or (src.data or {}).get('copied'): return
+    o = src.owner
+    cands = [x for x in o.perms if x is not src and x.cd is not None and (x.creature or 'P' in x.cd.types) and not x.token]
+    if not cands: return
+    best = max(cands, key=lambda x: pval(g, x))
+    leave(g, src)
+    n = enter(g, o, best.cd); n.data = {'copied': True}; n.phys = src.cd
+    if n.creature: n.plus += 1
+    if n.loyalty is not None: n.loyalty += 1
+    log(f'    Spark Double copies {best.cd.name}', g)
+card('Spark Double', 'pow=0 tgh=0', dsl=[])
+note('Spark Double', 'Approximate', 'enters as a copy of your best creature or planeswalker (+1 counter); goes to '
+     'the graveyard as Spark Double')
+
+
+@CI.on('Frost Titan', 'etb')
+def _frost(g, src, p, m):
+    if m is src: _frost_tap(g, src)
+
+
+@CI.on('Frost Titan', 'attack')
+def _frost_atk(g, src, p, atk, d):
+    if src in atk: _frost_tap(g, src)
+
+
+def _frost_tap(g, src):
+    cands = [x for q in g.opps(src.owner) for x in q.perms if x.creature and not x.phased and not untargetable(g, x)]
+    if cands:
+        t = max(cands, key=lambda x: pval(g, x)); t.tapped = True
+        if t.cd is not None: t.data = dict(t.data or {}, frozen=t.owner.turns + 1)
+card('Frost Titan', 'pow=6 bomb=6', dsl=[], ward=2)
+note('Frost Titan', 'Approximate', 'taps the best opposing creature on entry and attack (the no-untap is not '
+     'enforced); the targeting tax is ward {2}')
+
+
+@CI.on('Dream Trawler', 'attack')
+def _trawler(g, src, p, atk, d):
+    if src in atk: draw(g, p, 1)
+
+
+@CI.on('Dream Trawler', 'draw')
+def _trawler_draw(g, src, p):
+    if p is src.owner: _eot(g, src, 1, 0)
+card('Dream Trawler', 'pow=3 tgh=5 fly lifelink bomb=5', dsl=[])
+note('Dream Trawler', 'Approximate', 'draws on attack, +1/+0 per draw; the discard-for-hexproof is used by the '
+     'protection AI')
+
+
+# ---- rebound (Ephemerate)
+def _ephemerate_rebound(g, p, c):
+    import impl_t2
+    cands = [m for m in p.perms if m.creature and impl_t2.blink_value(g, p, m) > 0]
+    if cands: impl_t2.blink(g, p, max(cands, key=lambda m: impl_t2.blink_value(g, p, m)))
+    p.exile.remove(c); p.gy.append(c)
+
+
+CI.HOOKS.setdefault('Ephemerate', {})['rebound'] = _ephemerate_rebound
+
+
+# ======================================================== graveyard hate
+def gy_worth(g, owner, q):
+    """how much it's worth to owner to exile q's graveyard (reanimation targets, flashback, escape, recursion)"""
+    if q is owner: return -1
+    v = 0.0
+    for c in q.gy:
+        if c.creature: v += max(0, (c.bomb or c.pow) - 3) * 1.2
+        if 'fb' in c.tags or c.name in ('Uro, Titan of Nature\'s Wrath', 'Life from the Loam', 'Bloodghast', 'Gravecrawler'): v += 2
+    if any(m.cd is not None and m.cd.name in ('Meren of Clan Nel Toth', 'Sheoldred, Whispering One', 'Syr Konrad, the Grim')
+           for m in q.perms): v += 3
+    if q.key == 'seph': v += 3
+    if any('rean' in c.tags for c in q.hand) or any(x.tags.get('rean') for x in q.gy): v += 3
+    return v
+
+
+def exile_gy(g, q, by=None):
+    if not q.gy: return
+    q.exile.extend(q.gy); q.gy = []
+    log(f'    {NAME(q)}\'s graveyard is exiled' + (f' by {by}' if by else ''), g)
+
+
+def _bog(g, p, L):
+    q = max(g.opps(p), key=lambda q: gy_worth(g, p, q), default=None)
+    if q is not None and gy_worth(g, p, q) > 0: exile_gy(g, q, 'Bojuka Bog')
+
+
+CI.LAND_ETB['Bojuka Bog'] = _bog
+note('Bojuka Bog', 'Full', 'enters tapped; exiles the most dangerous graveyard')
+
+
+@CI.on('Rest in Peace', 'etb')
+def _rip(g, src, p, m):
+    if m is src:
+        for q in g.players:
+            if q.alive: exile_gy(g, q, 'Rest in Peace')
+
+
+@CI.on('Rest in Peace', 'sba')
+def _rip_sweep(g, src):
+    for q in g.players:
+        if q.alive and q.gy: q.exile.extend(q.gy); q.gy = []
+
+
+@CI.on('Rest in Peace', 'no_graveyard')
+def _rip_nogy(g, src, p): return 1
+
+
+card('Rest in Peace', '', types='E', dsl=[])
+note('Rest in Peace', 'Approximate', 'graveyards are exiled on entry and then kept empty (cards are exiled as soon as '
+     'state-based checks run; dies triggers still happen); undying/persist stop')
+
+
+@CI.on('Dauthi Voidwalker', 'sba')
+def _dauthi_sweep(g, src):
+    o = src.owner
+    for q in g.opps(o):
+        if q.gy:
+            src.data = src.data or {}
+            src.data.setdefault('void', []).extend((c, q) for c in q.gy)
+            q.exile.extend(q.gy); q.gy = []
+
+
+@CI.on('Dauthi Voidwalker', 'options')
+def _dauthi_play(g, src, p, s, post):
+    if post is None or src.tapped or src.sick: return []
+    void = [(c, q) for c, q in (src.data or {}).get('void', []) if c in q.exile and not c.land]
+    if not void: return []
+    c, q = max(void, key=lambda x: card_worth(g, p, x[0]) + x[0].cmc * 5)
+    if c.cmc < 4: return []
+
+    def go():
+        if src not in p.perms or c not in q.exile: return False
+        die(g, src, 'sac')
+        if c not in q.exile: return True
+        q.exile.remove(c)
+        log(f'  Dauthi Voidwalker: {NAME(p)} plays {c.name} free', g)
+        if c.perm: enter(g, p, c, orig=q)
+        else: p.hand.append(c); cast_card(g, p, c, 'hand', {})
+        return True
+    return [(2.0 + c.cmc * 0.6, f'Dauthi Voidwalker plays {c.name}', go)]
+card('Dauthi Voidwalker', 'pow=3 tgh=2', dsl=[], kws={'unblockable_shadow'})
+note('Dauthi Voidwalker', 'Approximate', 'shadow read as unblockable and unable to block; opponents\' cards going to '
+     'the graveyard are exiled with void counters; sacrifice to play the best one free')
+
+
+def _gy_hate_card(name, cost, when_used, status):
+    """cost: (generic, pips) to activate; exiles the reanimator's graveyard in response"""
+    @CI.on(name, 'gy_hate')
+    def _h(g, src, reanimator, gy_owner):
+        if src.tapped or not can_pay(g, src.owner, *cost): return False
+        pay(g, src.owner, *cost)
+        if when_used == 'sac': die(g, src, 'sac')
+        else: src.tapped = True
+        exile_gy(g, gy_owner, name); return True
+
+    @CI.on(name, 'options')
+    def _proactive(g, src, p, s, post):
+        if src.tapped or not can_pay(g, p, *cost): return []
+        q = max(g.opps(p), key=lambda q: gy_worth(g, p, q), default=None)
+        if q is None or gy_worth(g, p, q) < 8: return []
+
+        def go():
+            if src not in p.perms or not can_pay(g, p, *cost): return False
+            pay(g, p, *cost)
+            if when_used == 'sac': die(g, src, 'sac')
+            else: src.tapped = True
+            exile_gy(g, q, name); return True
+        return [(1.0 + gy_worth(g, p, q) / 4.0, f'{name} on {NAME(q)}', go)]
+    note(name, *status)
+
+
+_gy_hate_card("Tormod's Crypt", (0, ''), 'sac', ('Full', 'exiles a graveyard in response to reanimation, or '
+                                                           'proactively when it holds real threats'))
+_gy_hate_card('Soul-Guide Lantern', (0, ''), 'sac', ('Approximate', 'exiles a graveyard (in response or proactively); '
+                                                                    'the entry exile and draw modes are not used'))
+card("Tormod's Crypt", '', types='A', dsl=[])
+card('Soul-Guide Lantern', '', types='A', dsl=[])
+
+
+# ======================================================== pillowfort: attack taxes and caps
+def _tax(name, amount, status=('Full', ''), types=None, tags=None):
+    @CI.on(name, 'attack_tax')
+    def _t(g, src, attacker, d):
+        if d is not src.owner or attacker is src.owner: return 0
+        return amount(g, src) if callable(amount) else amount
+    if types is not None: card(name, tags or '', types=types, dsl=[])
+    note(name, *status)
+
+
+_tax('Ghostly Prison', 2, types='E')
+_tax('Propaganda', 2, types='E')
+_tax('Windborn Muse', 2, tags='pow=2 tgh=3 fly', types='C')
+_tax('Baird, Steward of Argive', 1, tags='leg human pow=2 tgh=4 vig', types='C')
+_tax('Sphere of Safety', lambda g, src: sum(1 for m in src.owner.perms if m.cd is not None and 'E' in m.cd.types), types='E')
+_tax("Norn's Annex", 1, types='A', status=('Approximate', '{W/P} per attacker read as {1}'))
+_tax('Archangel of Tithes', lambda g, src: 0 if src.tapped else 1, tags='pow=3 tgh=5 fly', types='C',
+     status=('Approximate', 'attack tax while untapped; the blocking tax while it attacks is ignored'))
+_tax('Elephant Grass', 2, types='E', status=('Approximate', 'attack tax 2 (black creatures pay it too); its '
+                                                            'cumulative upkeep is paid while it matters'))
+
+
+@CI.on('Crawlspace', 'attack_cap')
+def _crawl(g, src, attacker, d):
+    return 2 if d is src.owner else None
+card('Crawlspace', '', types='A', dsl=[])
+note('Crawlspace', 'Full', '')
+
+
+@CI.on('Silent Arbiter', 'attack_cap')
+def _arbiter(g, src, attacker, d): return 1
+card('Silent Arbiter', 'pow=1 tgh=5', dsl=[])
+note('Silent Arbiter', 'Approximate', 'one attacker per combat; the one-blocker limit is not modeled')
+
+
+@CI.on('Elephant Grass', 'upkeep')
+def _grass(g, src, p):
+    if p is not src.owner: return
+    src.data = src.data or {}; age = src.data.get('age', 0) + 1; src.data['age'] = age
+    if age <= 3 and can_pay(g, p, age, ''): pay(g, p, age, '')
+    else: die(g, src, 'sac')
+
+
+# ======================================================== shroud / hexproof grants, uncounterable spells
+def _grant(name, pred, kw, status=('Full', '')):
+    @CI.on(name, 'grant_kw')
+    def _g(g, src, m, k):
+        return k == kw and m.owner is src.owner and m is not src and pred(g, src, m)
+    note(name, *status)
+
+
+_grant('Greater Auramancy', lambda g, s, m: m.cd is not None and 'E' in m.cd.types or bool(IC_auras(g, m)), 'shroud')
+_grant('Sterling Grove', lambda g, s, m: m.cd is not None and 'E' in m.cd.types, 'shroud')
+_grant('Privileged Position', lambda g, s, m: True, 'hexproof')
+card('Greater Auramancy', '', types='E', dsl=[])
+card('Privileged Position', '', types='E', dsl=[])
+
+
+def IC_auras(g, m):
+    return auras_on(g, m) if getattr(g, 'auras', None) else []
+
+
+@CI.on('Sterling Grove', 'options')
+def _grove(g, src, p, s, post):
+    if post is not True or not can_pay(g, p, 1, ''): return []
+    if not any(c for c in p.library if 'E' in c.types): return []
+
+    def go():
+        if src not in p.perms or not can_pay(g, p, 1, ''): return False
+        pay(g, p, 1, ''); die(g, src, 'sac')
+        cs = [c for c in p.library if 'E' in c.types]
+        c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); p.library.append(c)
+        return True
+    return [(0.5 if len(p.hand) > 2 else 2.0, 'Sterling Grove tutor', go)]
+card('Sterling Grove', '', types='E', dsl=[])
+note('Sterling Grove', 'Full', 'other enchantments have shroud; sacrificed late to put an enchantment on top')
+
+
+for _n, _pred in (('Destiny Spinner', lambda c: c.creature or 'E' in c.types), ('Allosaurus Shepherd', lambda c: 'G' in c.pips)):
+    CI.on(_n, 'uncounterable')(lambda g, src, caster, c, _pred=_pred: 1 if caster is src.owner and _pred(c) else 0)
+note('Destiny Spinner', 'Approximate', 'creature and enchantment spells can\'t be countered; the land animation is not used')
+card('Destiny Spinner', 'pow=2 tgh=3', dsl=[])
+
+
+# ======================================================== fog (Spore Frog)
+@CI.on('Spore Frog', 'blocks')
+def _spore_frog(g, src, p, atk, d, assign):
+    if d is not src.owner or getattr(g, 'fog', None) == turn_stamp(g): return
+    incoming = sum(epow(g, a) for a in atk if a not in assign)
+    if incoming >= max(6, d.life * 0.35):
+        die(g, src, 'sac'); g.fog = turn_stamp(g)
+        log(f'    Spore Frog prevents all combat damage this turn', g)
+card('Spore Frog', 'pow=1', dsl=[])
+note('Spore Frog', 'Full', 'sacrificed to fog a big attack')
+
+
+# ======================================================== planeswalkers
+WALKERS = {}
+
+
+def walker(name, abilities, status=('Approximate', ''), tags='', static=None):
+    """abilities: [(loyalty change, label, value(g, p, src) -> utility or None if not usable now, effect(g, p, src))]
+    The AI uses one ability per turn at sorcery speed, the most valuable one it can afford."""
+    WALKERS[name] = abilities
+    card(name, tags or 'leg', dsl=[])
+    note(name, *status)
+
+    @CI.on(name, 'options')
+    def _opts(g, src, p, s, post):
+        if post is None or src.owner is not p: return []
+        if src.loyalty is None: src.loyalty = int(src.cd.start_loyalty or 3)
+        if src.loyalty_used == (g.round, p.key): return []
+        out = []
+        for delta, label, val, eff in WALKERS[name]:
+            if src.loyalty + delta < 0: continue
+            u = val(g, p, src)
+            if u is None: continue
+
+            def go(delta=delta, eff=eff, label=label):
+                if src not in p.perms or src.loyalty_used == (g.round, p.key) or src.loyalty + delta < 0: return False
+                src.loyalty_used = (g.round, p.key)
+                src.loyalty += delta * (2 if delta > 0 and _doubler(g, p) else 1)
+                log(f'  {NAME(p)} uses {name} ({delta:+d}): {label}', g)
+                eff(g, p, src)
+                if src in p.perms and src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy')
+                return True
+            out.append((u + 0.15 * delta, f'{name} {delta:+d}', go))
+        return out
+
+
+def _doubler(g, p):
+    return any(m.cd is not None and m.cd.name == 'Doubling Season' for m in p.perms)
+
+
+def always(x): return lambda g, p, src: x
+
+
+def best_opp_creature(g, p, pred=lambda m: True):
+    cs = [m for q in g.opps(p) for m in q.perms if m.creature and not m.phased and not untargetable(g, m) and pred(m)]
+    return max(cs, key=lambda m: pval(g, m)) if cs else None
+
+
+def best_opp_nonland(g, p, pred=lambda m: True):
+    cs = [m for q in g.opps(p) for m in q.perms if not m.phased and not untargetable(g, m) and pred(m)]
+    return max(cs, key=lambda m: pval(g, m)) if cs else None
+
+
+# Elspeth, Sun's Champion
+walker("Elspeth, Sun's Champion", [
+    (1, 'three Soldiers', always(3.0), lambda g, p, src: make_tokens(g, p, 3, 1, color='W', types=('soldier',))),
+    (-3, 'destroy power 4+', lambda g, p, src: (lambda o, m: o - m - 3 if o - m >= 6 else None)(
+        sum(pval(g, m) for q in g.opps(p) for m in q.perms if m.creature and epow(g, m) >= 4),
+        sum(pval(g, m) for m in p.perms if m.creature and epow(g, m) >= 4)),
+     lambda g, p, src: [die(g, m, 'destroy') for q in g.players for m in list(q.perms) if m.creature and epow(g, m) >= 4]),
+    (-7, 'emblem', always(9.0), lambda g, p, src: setattr(p, 'elspeth_emblem', True)),
+], ('Approximate', 'tokens, the power-4 sweep when it pays, the emblem (+2/+2 flying) as a lasting anthem'))
+
+
+# Teferi, Hero of Dominaria
+def _teferi_minus(g, p, src):
+    t = best_opp_nonland(g, p)
+    if t is not None: apply_removal(g, p, t, 'tuck')
+
+
+walker('Teferi, Hero of Dominaria', [
+    (1, 'draw, untap two lands', always(3.0), lambda g, p, src: (draw(g, p, 1), [setattr(L, 'tapped', False) for L in p.lands[:2]])),
+    (-3, 'tuck a threat', lambda g, p, src: (lambda t: pval(g, t) - 2.5 if t is not None and pval(g, t) >= 5 else None)(best_opp_nonland(g, p)),
+     _teferi_minus),
+], ('Approximate', '+1 draws and untaps two lands; -3 tucks a threat; the emblem is not modeled'))
+
+
+# Liliana, Death's Majesty
+def _lili_minus(g, p, src):
+    cs = [c for c in p.gy if c.creature]
+    if cs:
+        c = max(cs, key=lambda c: (c.bomb, c.pow, c.cmc)); p.gy.remove(c); n = enter(g, p, c)
+        n.ttypes = frozenset(('zombie',))
+
+
+walker("Liliana, Death's Majesty", [
+    (1, 'Zombie, mill two', always(2.5), lambda g, p, src: (make_tokens(g, p, 1, 2, color='B', types=('zombie',)), mill(g, p, 2))),
+    (-3, 'reanimate', lambda g, p, src: (max((c.bomb or c.pow) for c in p.gy if c.creature) - 1.0) if any(
+        c.creature and (c.bomb or c.pow) >= 4 for c in p.gy) else None, _lili_minus),
+    (-7, 'destroy non-Zombies', lambda g, p, src: 8.0 if sum(1 for q in g.opps(p) for m in q.perms if m.creature) >= 4 else None,
+     lambda g, p, src: [die(g, m, 'destroy') for q in g.players for m in list(q.perms) if m.creature and not has_type(m, 'zombie')]),
+], ('Full', ''))
+
