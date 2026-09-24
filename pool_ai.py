@@ -54,7 +54,16 @@ def generic_prio(g, p, c):
     if 'draw' in t and (c.instant or c.sorcery): return 46
     if 'draw' in t: return 52
     if 'treas' in t or 'mktok' in t or 'drainetb' in t or 'edictetb' in t: return 50
+    if 'aura' in t:                                            # an Aura needs a creature to go on
+        if not any(m.creature and not m.phased for m in p.perms): return 0
+        return cfg.get('aura_prio', 55)
+    if 'threedreams' in t: return 60
+    if 'explore' in t: return 50 if any(x.land for x in p.hand if x is not c) else 30
+    if 'loam' in t: return 45 if sum(1 for x in p.gy if x.land) >= 2 else 0
+    if 'rishkar' in t: return 55 if max((E.epow(g, m) for m in p.perms if m.creature), default=0) >= 4 else 0
+    if 'krasis' in t: return 0                                     # cast by special_options with X
     if c.creature: return 42 + min(16, 2 * c.pow) + (4 if 'fly' in t else 0)
+    if c.perm and E.CI is not None and c.name in E.CI.HOOKS: return cfg.get('hooked_prio', 55)
     if t.get('prot') == 'boots' or 'sac' in t: return 40
     if c.dsl: return 0                       # interpreter value decides
     if 'pumpall' in t: return 0              # combat trick: no proactive value
@@ -78,6 +87,8 @@ EQUIP_COST = {'Lightning Greaves': 0, 'Swiftfoot Boots': 1, 'Whispersilk Cloak':
 def special_options(g, p, s, post):
     """generic activated plays for outside decks: equip Boots / Greaves / Cloak, Skullclamp, special spells"""
     o = spell_options(g, p, s, post)
+    import impl_common
+    o += impl_common.aristocrat_options(g, p, s, post)
     if post is None: return o                                    # end-of-turn window: nothing here is instant speed
     for e in p.perms:
         if e.cd is None or e.phased or e.cd.name not in EQUIP_COST: continue
@@ -199,7 +210,9 @@ def _options(p, m):
 
 def protect(g, owner, m, kind, actor, spell=None):
     """targeted removal is aimed at owner's permanent m: respond if it's worth it"""
-    if not worth_protecting(g, owner, m): return False
+    if not worth_protecting(g, owner, m):
+        import impl_common
+        return impl_common.sac_in_response(g, owner, m, kind)
     cands = []
     for name, where, cost, src in _options(owner, m):
         how, scope = PROTECTORS[name][2], PROTECTORS[name][3]
@@ -216,7 +229,8 @@ def protect(g, owner, m, kind, actor, spell=None):
             elif how == 'blink' and m in owner.perms:
                 cd = m.cd; E.leave(g, m); n = E.enter(g, owner, cd, orig=m.orig); n.is_cmd = m.is_cmd
             return True
-    return False
+    import impl_common
+    return impl_common.sac_in_response(g, owner, m, kind)
 
 
 def wipe_response(g, q, kind, caster):
@@ -267,4 +281,36 @@ def spell_options(g, p, s, post):
                 E.pay(g, p, c.generic, c.pips)
                 E.cast_card(g, p, c, 'hand', {'rean_target': cd, 'rean_src': src, 'rean_value': v}); return True
             o.append((v * 0.9 * (1 - 0.35 * s.ctr_risk), f'{c.name} -> {cd.name}', rean))
+        if 'krasis' in t and E.castable(g, p, c) and post is not None:                    # Hydroid Krasis: X = spare mana
+            x = E.total_mana(g, p) - 2
+            if x >= 4:
+                def krasis(c=c):
+                    x = E.total_mana(g, p) - 2
+                    while x >= 1 and not E.can_pay(g, p, x, 'GU'): x -= 1
+                    if c not in p.hand or x < 1: return False
+                    E.pay(g, p, x, 'GU')
+                    p.hand.remove(c); p.cast_names.add(c.name); p.spells_this_turn += 1; E.on_cast(g, p, c)
+                    E.gain(p, x // 2); E.draw(g, p, x // 2)
+                    m = E.enter(g, p, c, was_cast=True); m.plus += x; return True
+                o.append((1.0 + 0.6 * x, f'Hydroid Krasis X={x}', krasis))
+        if 'rotw' in t and E.castable(g, p, c) and E.can_pay(g, p, c.generic, c.pips):      # Return of the Wildspeaker
+            nh = [m for m in p.perms if m.creature and not m.phased and not E.has_type(m, 'human')]
+            if not nh: continue
+            draw_n = max(E.epow(g, m) for m in nh)
+            atk = [m for m in nh if not m.sick and not m.tapped and not m.noatk]
+            if post is False and len(atk) >= 3:
+                def pump(c=c):
+                    if c not in p.hand or not E.can_pay(g, p, c.generic, c.pips): return False
+                    E.pay(g, p, c.generic, c.pips); p.hand.remove(c); p.gy.append(c); E.on_cast(g, p, c)
+                    for m in p.perms:
+                        if m.creature and not E.has_type(m, 'human'):
+                            a0, b0 = g.eot_pt.get(id(m), (0, 0)); g.eot_pt[id(m)] = (a0 + 3, b0 + 3)
+                    return True
+                o.append((1.0 + 1.0 * len(atk), f'{c.name} (+3/+3)', pump))
+            elif draw_n >= 3:
+                def rdraw(c=c, n=draw_n):
+                    if c not in p.hand or not E.can_pay(g, p, c.generic, c.pips): return False
+                    E.pay(g, p, c.generic, c.pips); p.hand.remove(c); p.gy.append(c); E.on_cast(g, p, c)
+                    E.draw(g, p, n); return True
+                o.append((1.0 + 0.8 * draw_n, f'{c.name} (draw {draw_n})', rdraw))
     return o

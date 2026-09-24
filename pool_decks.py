@@ -7,4 +7,7 @@
   cmd_prio   commander cast priority (default 75), cmd_turn: earliest turn to cast it (default 2)
 Decks without an entry use pool_ai.DEFAULT_STYLE and the generic priority.
 """
-CONFIG = {}
+CONFIG = {
+    'light-paws-aura-voltron': {'aura_host': 'commander', 'aura_prio': 70, 'cmd_prio': 88, 'cmd_turn': 1,
+                                'style': {'temp': 1.0, 'aggression': 0.8, 'caution': 0.4}},
+}

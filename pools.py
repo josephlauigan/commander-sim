@@ -62,13 +62,14 @@ _REGISTERED = set()
 def register(decks=None, verbose=False):
     """Make pool decks playable: card data in engine.DB, a seat entry (colour identity, display name) and the
     deck's AI configuration. Idempotent, and cheap after the first call (worker processes call it too)."""
-    import engine, cards, scryfall, pool_ai, pool_decks, cardimpl
+    import engine, cards, scryfall, pool_ai, pool_decks, cardimpl, pool_cards
     cardimpl.load()
     decks = load_pool() if decks is None else decks
     todo = [d for d in decks if d.key not in _REGISTERED]
     if not todo: return
     added, missing = cards.ensure_cards(sorted({n for d in todo for n in d.cards}), verbose=verbose)
     if missing: raise SystemExit('Pool cards not found on Scryfall: ' + ', '.join(missing))
+    pool_cards.apply()
     recs = scryfall.fetch([d.commander for d in todo], verbose=False)
     for d in todo:
         ident = ''.join(c for c in 'WUBRG' if c in (recs[d.commander].get('color_identity') or []))

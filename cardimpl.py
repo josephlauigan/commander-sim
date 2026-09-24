@@ -27,6 +27,18 @@ so the original four-deck mode is unchanged.
 import engine as E
 
 HOOKS = {}            # card name -> {event: fn}
+DYN_MANA = {}         # card name -> fn(g, p, perm) -> amount of mana its tap ability makes (Priest of Titania ...)
+ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tapped for mana (Heritage Druid ...)
+
+
+def dyn_mana(g, p, m):
+    return DYN_MANA[m.cd.name](g, p, m) if live(m.cd.name) else 1
+
+
+def count_type(g, p, t, everyone=False):
+    """permanents of subtype t controlled by p (or by anyone)"""
+    ps = [q for q in g.players if q.alive] if everyone else [p]
+    return sum(1 for q in ps for m in q.perms if not m.phased and E.has_type(m, t))
 
 
 def on(name, *events):
@@ -65,10 +77,20 @@ def hooked(g, event):
 def fire(g, event, *args):
     out = []
     for src, fn in hooked(g, event):
-        r = fn(g, src, *args)
-        if r: out.append(r)
+        reps = 1 + total(g, 'trigger_copies', src.owner, 'dies', args[0]) if event == 'dies' else 1   # Teysa
+        for _ in range(reps):
+            r = fn(g, src, *args)
+            if r: out.append(r)
+            if g.over: break
         if g.over: break
     return out
+
+
+def granted_kw(g, m, kw):
+    """static keyword grants from hooked permanents (Teysa: tokens have vigilance and lifelink)"""
+    for src, fn in hooked(g, 'grant_kw'):
+        if fn(g, src, m, kw): return True
+    return False
 
 
 def total(g, event, *args):
@@ -91,7 +113,35 @@ def gy_cards(p, event):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    import impl_common  # noqa: F401
+    import impl_common, impl_t1  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]
+
+
+# ------------------------------------------------------------------ attack keywords (compiled cards)
+def keyword_attack(g, p, atk, d):
+    """battle cry, mentor, dethrone, exalted, myriad-free subset; returns new attacking creatures"""
+    new = []
+    if not any(m.cd is not None and m.cd.kws for m in atk) and not any(
+            m.cd is not None and 'exalted' in m.cd.kws for m in p.perms):
+        return new
+    for m in list(atk):
+        if m.cd is None or m not in p.perms: continue
+        k = m.cd.kws
+        if 'battle cry' in k:
+            for x in atk:
+                if x is not m: _eot(g, x, 1, 0)
+        if 'mentor' in k:
+            lesser = [x for x in atk if x is not m and x in p.perms and E.epow(g, x) < E.epow(g, m)]
+            if lesser: max(lesser, key=lambda x: E.epow(g, x)).plus += 1
+        if 'dethrone' in k and d.life >= max(q.life for q in g.players if q.alive):
+            m.plus += 1
+    if len(atk) == 1:
+        n = sum(1 for x in p.perms if x.cd is not None and 'exalted' in x.cd.kws and not x.phased)
+        if n: _eot(g, atk[0], n, n)
+    return new
+
+
+def _eot(g, m, dp, dt):
+    a, b = g.eot_pt.get(id(m), (0, 0)); g.eot_pt[id(m)] = (a + dp, b + dt)

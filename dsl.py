@@ -49,6 +49,10 @@ def num(g, p, n, ctx=None, src=None):
     if n == 'event_spell_mv': return ctx.get('spell').cmc if ctx.get('spell') is not None else 2
     if n == 'source_power': return epow(g, src) if src is not None and hasattr(src, 'owner') else 2
     if n == 'counters_on_self': return max(0, src.plus) if src is not None and hasattr(src, 'plus') else 0
+    if n.startswith('type_you:') or n.startswith('type_all:'):
+        t = n.split(':', 1)[1]
+        qs = [p] if n.startswith('type_you') else [q for q in g.players if q.alive]
+        return sum(1 for q in qs for m in q.perms if not m.phased and E.has_type(m, t))
     return 2
 
 
@@ -86,7 +90,9 @@ def matches(g, p, m, f, src=None):
     if f.get('legendary') and not (cd is not None and 'leg' in cd.tags): return False
     if f.get('subtype') and f['subtype'] not in ('', None):
         st = f['subtype']
-        if st == 'warrior' and not m.warrior: return False
+        if st == 'warrior':
+            if not m.warrior and not E.has_type(m, 'warrior'): return False
+        elif not E.has_type(m, st): return False
     return True
 
 
@@ -226,7 +232,8 @@ def run(g, p, e, src, ctx, spell, depth):
         n = num(g, p, e.get('n'), ctx, src); kws = e.get('keywords', [])
         made = make_tokens(g, p, n, int(e.get('pow', 1)), int(e.get('tgh', e.get('pow', 1))), fly='flying' in kws,
                            dt='deathtouch' in kws, lifelink='lifelink' in kws, warrior=e.get('warrior', False),
-                           attacking=e.get('attacking', False), sick=not ('haste' in kws or e.get('attacking')))
+                           attacking=e.get('attacking', False), sick=not ('haste' in kws or e.get('attacking')),
+                           types=e.get('types'))
         if e.get('attacking') and 'new_attackers' in ctx: ctx['new_attackers'] += made
     elif d == 'treasure': p.treasures += num(g, p, e.get('n'), ctx, src)
     elif d == 'clue': p.clues += num(g, p, e.get('n'), ctx, src)
@@ -357,6 +364,13 @@ def run(g, p, e, src, ctx, spell, depth):
         if ok:
             c = max(ok, key=lambda c: E.card_worth(g, p, c)); top.remove(c); p.hand.append(c); p.seen_names.add(c.name)
         g.rng.shuffle(top); p.library[:0] = top
+    elif d == 'put_land':                        # put a land card from your hand onto the battlefield
+        ls = [c for c in p.hand if c.land]
+        if ls:
+            import ais
+            c = max(ls, key=lambda c: (len(c.tags.get('c', '')), 'f' in c.tags)); p.hand.remove(c)
+            p.lands.append(E.Land(c, ais.land_enters_tapped(p, c))); E.landfall(g, p)
+            if E.POOL_RULES and 'f' in c.tags and p.lands and p.lands[-1].cd is c: ais.crack_fetch(g, p, p.lands[-1])
     elif d == 'ring_protection':                  # The One Ring: protection from everything until your next turn
         p.ring_prot = True
         log(f'    {NAME(p)} gains protection from everything until their next turn', g)
@@ -435,6 +449,7 @@ def trigger_copies(g, q, src, event, kw):
     t = src.cd.tags if src.cd is not None else {}
     if ('shaman' in t or 'wizard' in t) and 'prodigy' not in t and has(q, 'prodigy'):
         n += 1
+    if event == 'dies' and g.hooks: n += E.CI.total(g, 'trigger_copies', q, 'dies', kw.get('perm'))     # Teysa
     return n
 
 
@@ -511,11 +526,15 @@ def pt(g, m):
     dp = dt = 0
     e = getattr(g, 'eot_pt', {}).get(id(m))
     if e: dp += e[0]; dt += e[1]
+    if getattr(g, 'auras', None) or getattr(g, 'selfpt', None):
+        a, b = E.CI.attached_bonus(g, m); dp += a; dt += b
     if not active(g): return dp, dt
     for q, src, a in statics(g, 'anthem'):
         if m.creature and matches(g, q, m, a.get('filter'), src): dp += a.get('pow', 0); dt += a.get('tgh', 0)
     for q, src, a in statics(g, 'equip_bonus'):
         if src.attached is m: dp += a.get('pow', 0); dt += a.get('tgh', 0)
+    for q, src, a in statics(g, 'bma_anthem'):                  # Beastmaster Ascension with 7+ quest counters
+        if src.plus >= 7 and m.creature and m.owner is q: dp += 5; dt += 5
     if m.cd is not None and getattr(m.cd, 'dsl', None):
         for a in m.cd.dsl:
             if a.get('static') == 'self_scaling':
@@ -527,6 +546,8 @@ def pt(g, m):
 def has_kw(g, m, kw):
     if kw in getattr(g, 'eot_kw', {}).get(id(m), ()): return True
     if m.cd is not None and kw in m.cd.kws and not m.neutered: return True
+    if getattr(g, 'auras', None) and E.CI.attached_kw(g, m, kw): return True
+    if g.hooks and E.CI.granted_kw(g, m, kw): return True
     if not active(g): return False
     if m.cd is not None and getattr(m.cd, 'dsl', None):
         for a in m.cd.dsl:

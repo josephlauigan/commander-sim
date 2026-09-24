@@ -41,6 +41,7 @@ class CD:
         s.source = 'manual'; s.unparsed = []; s.game_changer = None
         s.dsl = None; s.start_loyalty = None
         s.kws = frozenset()      # Scryfall keywords (lower case) for cards built from Scryfall data
+        s.subtypes = frozenset() # creature / other subtypes, lower case (Scryfall-built cards)
         s.protfrom = ''          # colours it has protection from (printed)
         s.ward = 0               # ward {N}
 
@@ -64,7 +65,7 @@ class Land:
 class Perm:
     __slots__ = ('cd', 'owner', 'orig', 'token', 'tapped', 'sick', 'pow', 'tgh', 'fly', 'dt', 'vig',
                  'life', 'plus', 'undying', 'army', 'warrior', 'noatk', 'name', 'phased', 'attached',
-                 'age', 'neutered', 'is_cmd', 'phys', 'temp', 'loyalty', 'loyalty_used', 'colors')
+                 'age', 'neutered', 'is_cmd', 'phys', 'temp', 'loyalty', 'loyalty_used', 'colors', 'ttypes', 'data')
 
     def __init__(s, owner, cd=None, pw=1, tg=None, fly=False, warrior=False, name='Token'):
         s.cd, s.owner, s.orig = cd, owner, owner
@@ -72,6 +73,7 @@ class Perm:
         s.tapped = False; s.sick = True; s.plus = 0; s.undying = False; s.army = False
         s.phased = False; s.attached = None; s.age = 0; s.neutered = False; s.is_cmd = False
         s.phys = None; s.temp = False; s.loyalty = None; s.loyalty_used = None; s.colors = ''
+        s.ttypes = frozenset(); s.data = None
         if cd:
             t = cd.tags
             s.name = cd.name; s.pow = cd.pow; s.tgh = cd.tgh
@@ -224,6 +226,25 @@ def etgh(g, m):
     return v
 
 
+def subtypes(m):
+    """a permanent's subtypes (lower case): printed for Scryfall-built cards, set on tokens by their maker"""
+    if m.cd is None: return m.ttypes
+    s = m.cd.subtypes
+    if 'changeling' in m.cd.kws: return s | ALL_TYPES
+    if not s:
+        t = m.cd.tags
+        s = frozenset(k for k in ('human', 'warrior', 'shaman', 'wizard') if k in t)
+    return s | m.ttypes
+
+
+ALL_TYPES = frozenset(('human', 'warrior', 'shaman', 'wizard', 'elf', 'goblin', 'ninja', 'rogue', 'zombie', 'angel',
+                       'demon', 'dragon', 'soldier', 'knight', 'cleric', 'faerie', 'elemental', 'druid', 'spirit'))
+
+
+def has_type(m, t):
+    return t in subtypes(m)
+
+
 def indestructible(g, m):
     return DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible')
 
@@ -251,6 +272,7 @@ def prot_colors(g, m):
     if equipped(m, 'sword'): s |= {'B', 'G'}
     if DSLMOD is not None: s |= set(DSLMOD.protection(g, m))
     if m.cd is not None and m.cd.protfrom: s |= set(m.cd.protfrom)
+    if getattr(g, 'auras', None): s |= set(CI.attached_prot(g, m))
     return s
 
 
@@ -368,7 +390,10 @@ def mana_units(g, p, convoke=False):
     for L in p.lands:
         if not L.tapped:
             if L.cd.tags.get('workshop') and not art: continue          # Mishra's Workshop: artifact spells only
-            U.append([L, land_cols(p, L, anyc), int(L.cd.tags.get('amt', 1))])
+            amt = int(L.cd.tags.get('amt', 1))
+            if CI is not None and L.cd.name in CI.DYN_MANA: amt = CI.dyn_mana(g, p, L)
+            if g.hooks: amt += CI.total(g, 'land_mana', p, L)
+            U.append([L, land_cols(p, L, anyc), amt])
     rite = has(p, 'rite')
     for m in p.perms:
         if m.tapped or m.phased: continue
@@ -383,7 +408,8 @@ def mana_units(g, p, convoke=False):
             a, c = t['rock'].split(':')
             U.append([m, p.ident if c == 'A' else ('' if c == 'C' else c), int(a)])
         elif 'dork' in t and not m.sick:
-            c = t['dork']; U.append([m, p.ident if c == 'A' else c, 1])
+            c = t['dork']
+            U.append([m, p.ident if c == 'A' else c, CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else 1])
         elif rite and m.cd.creature and not m.sick and m.noatk:
             U.append([m, p.ident, 1])
     for _ in range(p.treasures):
@@ -444,6 +470,7 @@ def pay(g, p, generic, pips, convoke=False):
             elif u[0] == 'FU': p.floatU -= 1
             else:
                 u[0].tapped = True
+                if CI is not None and getattr(u[0], 'cd', None) is not None and u[0].cd.name in CI.ON_TAP: CI.ON_TAP[u[0].cd.name](g, p, u[0], used[i])
                 if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
                     lose_life(g, p, 2, p, damage=True)
     return True
@@ -543,7 +570,7 @@ TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'veyran': 'R'}     # 
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
-                color=None):
+                color=None, types=None):
     out = []
     if DSLMOD is not None: n *= DSLMOD.token_mult(g, p)
     have = sum(1 for m in p.perms if m.token)
@@ -556,6 +583,7 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
         m = Perm(p, None, pw=pw, tg=tg, fly=fly, warrior=warrior)
         m.life = lifelink; m.sick = sick; m.dt = dt
         m.colors = TOKEN_COLOR.get(p.key, '') if color is None else color
+        if types: m.ttypes = frozenset(types)
         if attacking: m.tapped = True
         p.perms.append(m)
         if etgh(g, m) <= 0:
@@ -620,6 +648,7 @@ def leave(g, m):
         p.ozolith_counters = getattr(p, 'ozolith_counters', 0) + m.plus       # The Ozolith keeps the counters
     if m in p.perms: p.perms.remove(m)
     detach(m)
+    if getattr(g, 'auras', None): CI.aura_fall(g, m)
     if g.hooks and m in g.hooks:
         g.hooks.remove(m)
         fn = CI.HOOKS[m.cd.name].get('leaves')
@@ -646,24 +675,35 @@ def die(g, m, cause='destroy'):
     p = m.owner
     if m not in p.perms: return
     if cause == 'destroy' and indestructible(g, m): return
+    if cause == 'destroy' and getattr(g, 'auras', None) and CI.umbra_save(g, m): return
     selfdies = CI is not None and m.cd is not None and CI.live(m.cd.name) and CI.HOOKS[m.cd.name].get('self_dies')
     leave(g, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
     if g.hooks:
         CI.fire(g, 'dies', m, cause)
         if cause == 'sac': CI.fire(g, 'sacrifice', p, m)
-    if selfdies: selfdies(g, m, cause)
+    if selfdies:
+        for _ in range(1 + (CI.total(g, 'trigger_copies', p, 'dies', m) if g.hooks else 0)): selfdies(g, m, cause)
     # death triggers
     for q in g.players:
         if not q.alive: continue
-        if has(q, 'bartist'):
-            opps = g.opps(q)
-            if opps:
-                t = max(opps, key=lambda o: threat(g, q, o)); lose_life(g, t, 1, q, kind='drain'); gain(q, 1)
-        if q is p and has(q, 'drain') and m.creature:
-            for o in g.opps(q): lose_life(g, o, 1, q, kind='drain')
-            gain(q, 1)
+        for _ in range(1 + (CI.total(g, 'trigger_copies', q, 'dies', m) if g.hooks else 0)):
+            _hand_tag_death(g, q, p, m)
     if m.cd is not None and m.cd.tags.get('fill') == 'stitcher': mill(g, p, 3)
+    _die_rest(g, m, p, cause, selfdies)
+
+
+def _hand_tag_death(g, q, p, m):
+    if has(q, 'bartist'):
+        opps = g.opps(q)
+        if opps:
+            t = max(opps, key=lambda o: threat(g, q, o)); lose_life(g, t, 1, q, kind='drain'); gain(q, 1)
+    if q is p and has(q, 'drain') and m.creature:
+        for o in g.opps(q): lose_life(g, o, 1, q, kind='drain')
+        gain(q, 1)
+
+
+def _die_rest(g, m, p, cause, selfdies):
     if m.creature:
         for q in g.opps(p):
             if has(q, 'wurmdrain'): lose_life(g, p, 2, q, kind='drain')      # Massacre Wurm
@@ -678,6 +718,14 @@ def die(g, m, cause='destroy'):
         n = enter(g, p, m.cd, undying=True); n.plus = 1; n.undying = True
         p.stats['undying'] += 1
         return
+    k = m.cd.kws
+    if k and m.orig is p and m.cd is not p.cmd and not (g.hooks and CI.total(g, 'no_graveyard', p)):
+        if 'undying' in k and m.plus <= 0:                     # undying: back with a +1/+1 counter
+            enter(g, p, m.cd, undying=True); p.stats['undying'] += 1; return
+        if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter
+            n = enter(g, p, m.cd); n.plus = -1; p.stats['persist'] += 1
+            if etgh(g, n) <= 0: die(g, n, 'sba')
+            return
     to_zone_card(g, m, 'gy')
     if cause == 'sac': tergrid_steal(g, p, m.phys or m.cd, m.orig)
 
@@ -731,6 +779,7 @@ def pval(g, m):
     if 'narset' in t: v = max(v, 4)
     if 'panoptic' in t: v = max(v, 2 + 2 * len(getattr(g, 'imprint', {}).get(id(m), [])))
     if m.is_cmd: v += 1
+    if getattr(g, 'auras', None) and cd.creature: v += 1.5 * len(CI.auras_on(g, m))     # removing it takes the Auras too
     return v
 
 
@@ -1130,6 +1179,17 @@ def resolve(g, p, c, ctx, zone):
     if 'gifts' in t: pile_tutor(g, p, 4, 2)     # Gifts Ungiven: four cards, opponent puts two in the graveyard
     if 'intuition' in t: pile_tutor(g, p, 3, 1) # Intuition: three cards, opponent picks the one you keep
     if 'jeska' in t: jeskas_will(g, p)
+    if 'explore' in t: p.extra_land_now = getattr(p, 'extra_land_now', 0) + 1
+    if 'loam' in t:
+        for x in sorted([x for x in p.gy if x.land], key=lambda x: -len(x.tags.get('c', '')))[:3]: p.gy.remove(x); p.hand.append(x)
+    if 'rishkar' in t:
+        cr = [m for m in p.perms if m.creature and not m.phased]
+        draw(g, p, max((epow(g, m) for m in cr), default=0))
+        free = [x for x in p.hand if not x.land and x.cmc <= 5 and not any(k in x.tags for k in ('ctr', 'rem', 'wipe'))]
+        if free:
+            x = max(free, key=lambda x: (x.cmc, card_worth(g, p, x))); cast_card(g, p, x, 'hand', {})
+    if 'threedreams' in t and CI is not None:
+        import impl_t1; impl_t1.tutor_named(g, p, lambda x: 'aura' in x.subtypes, k=3)
     if 'seal' in t: tutor_to_top(g, p)          # Imperial Seal / Vampiric Tutor: card on top, lose 2 life
     if 'adnaus' in t: ad_nauseam(g, p)
     if 'lose' in t: lose_life(g, p, int(t['lose']), p)
@@ -1211,7 +1271,19 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False):
     if cd.creature: creature_entered(g, p, m)
     if m in p.perms: do_etb(g, p, m)
     if DSLMOD is not None and g.dsl_on and m in p.perms: DSLMOD.fire(g, 'etb', perm=m, owner=p, was_cast=was_cast)
-    if g.hooks and m in p.perms: CI.fire(g, 'etb', p, m)
+    if g.hooks and m in p.perms:
+        g.last_cast_etb = was_cast
+        CI.fire(g, 'etb', p, m)
+        g.last_cast_etb = False
+    return m
+
+
+def enter_token_copy(g, p, cd):
+    """a token that's a copy of card cd (Scute Swarm, Kiki-Jiki, Helm of the Host ...)"""
+    have = sum(1 for m in p.perms if m.token)
+    if have >= TOKEN_CAP: return None
+    m = enter(g, p, cd)
+    m.token = True
     return m
 
 
@@ -1335,6 +1407,12 @@ def land_ramp(g, p, n, tapped):
 
 
 def landfall(g, p):
+    copies = 1 + (CI.total(g, 'trigger_copies', p, 'landfall', None) if g.hooks else 0)     # Ancient Greenwarden
+    for _ in range(copies):
+        _landfall_once(g, p)
+
+
+def _landfall_once(g, p):
     for _ in find(p, 'landfall2'): make_tokens(g, p, 1, 2)      # Felidar Retreat: 2/2 Cat per land
     fields = [L for L in p.lands if L.cd.tags.get('fotd')]
     if fields and len({L.cd.name for L in p.lands}) >= 7:         # Field of the Dead: 7+ lands with different names
@@ -1378,11 +1456,12 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             ty = cd.types if cd else 'C'
             ok = {'c': is_c, 'cp': is_c or 'P' in ty, 'cap': is_c or 'A' in ty or 'P' in ty,
                   'ce': is_c or 'E' in ty, 'nl': True, 'p': True, 'a': 'A' in ty,
-                  'cna': is_c and 'A' not in ty}.get(tgt, is_c)
+                  'cna': is_c and 'A' not in ty, 'ae': 'A' in ty or 'E' in ty}.get(tgt, is_c)
             if spell is not None and 'alsoart' in spell.tags and 'A' in ty and not is_c:
                 res.append(m); continue                  # Abrade: destroy target artifact mode
             if not ok: continue
             if mv4 and cd is not None and cd.cmc > 4: continue
+            if cd is not None and cd.ward and spell is not None and not can_pay(g, p, spell.generic + cd.ward, spell.pips): continue
             if spell is not None and protected_from(g, m, spell.pips): continue
             if kind.startswith('dmg'):
                 if not is_c or etgh(g, m) > int(kind[3:]): continue
@@ -1400,6 +1479,10 @@ def apply_removal(g, actor, m, kind, spell=None):
     if ais.protect_response(g, owner, m, kind, actor, spell):
         log(f'    {NAME(owner)} protects {m.name}', g); return
     if m not in owner.perms: return
+    if m.cd is not None and m.cd.ward and actor is not owner and spell is not None:     # ward {N}: pay or it's countered
+        if not can_pay(g, actor, m.cd.ward, ''):
+            log(f'    ward counters the removal on {m.name}', g); return
+        pay(g, actor, m.cd.ward, '')
     log(f'    {m.name} ({NAME(owner)}) is removed: {kind}', g)
     owner.lost_names[m.name] += 1
     owner.stats['threats_lost'] += 1 if pval(g, m) >= 5 else 0
@@ -1612,6 +1695,7 @@ def discard_cards(g, q, cards):
     for c in cards:
         q.hand.remove(c)
         (q.exile if necro else q.gy).append(c)
+        if g.hooks: CI.fire(g, 'discard', q, c)
     if not necro:
         for c in cards: tergrid_steal(g, q, c, q)
 
@@ -1619,6 +1703,7 @@ def discard_cards(g, q, cards):
 def discard_index(g, q, i):
     """q discards the card at position i in hand (random discards)"""
     c = q.hand.pop(i)
+    if g.hooks: CI.fire(g, 'discard', q, c)
     if has(q, 'necro'): q.exile.append(c); return
     q.gy.append(c); tergrid_steal(g, q, c, q)
 

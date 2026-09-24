@@ -177,8 +177,15 @@ def reserve_penalty(g, p, s, c, hold_card, hold_v):
 PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'najeela': A.najeela_prio}
 
 
+def draws_cards(c):
+    if 'draw' in c.tags: return True
+    return any(e.get('do') == 'draw' and e.get('who', 'you') == 'you'
+               for a in (c.dsl or ()) if a.get('type') in ('spell', 'triggered') for e in a.get('effects', ()))
+
+
 def card_utility(g, p, s, c):
     base = PRIO[p.key](g, p, c) if p.key in PRIO else A.deck_prio(g, p, c)
+    if p.key not in PRIO and len(p.library) < 8 and draws_cards(c): return None    # don't draw yourself out
     if base <= 0 and c.dsl and E.DSLMOD is not None: base = E.DSLMOD.card_value(g, p, c) * 10
     if base <= 0: return None
     u = base / 10.0                                   # deck knowledge as a prior (0-9)
@@ -245,7 +252,7 @@ def removal_options(g, p, s):
         v = pval(g, best)
         if best.owner is s.leader: v *= 1.25
         if s.combo_near and pval(g, best) >= 8: v += 2.0
-        u = v - 3.5
+        u = v - (3.5 if p.key in STYLE else style(p).get('removal_bar', 4.5))    # outside decks save removal for threats
         if c.instant: u -= 1.2 * style(p)['caution'] * E.INSTANT_EXTRA / 2.0   # instants are worth holding (profile-dependent)
         if 'needsac' in t and not [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]: continue
         out.append((u, f'{c.name} -> {best.name}', lambda c=c, tg=tg: cast_removal(g, p, c, tg)))

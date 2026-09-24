@@ -1440,6 +1440,8 @@ def _attack_triggers_once(g, p, atk, d):
     if rab: make_tokens(g, p, rab * len(atk), 1)                       # Rabble Rousing: one Citizen per attacker
     if E.DSLMOD is not None and g.dsl_on:
         E.DSLMOD.fire(g, 'attack', attackers=list(atk), defender=d, player=p, new=new)
+    if E.CI is not None:
+        new += E.CI.keyword_attack(g, p, atk, d)
     if g.hooks:
         for r in E.CI.fire(g, 'attack', p, atk, d): new += r
     return new
@@ -1503,7 +1505,8 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             fa, fb = first_strike(a), first_strike(b)
             if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
             elif fb and not fa and a_dies: b_dies = False
-            tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags)
+            tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or \
+                (E.POOL_RULES and kw(a, 'trample'))
             dmg = max(0, ap - bt) if tr else 0
             if b_dies: die(g, b, 'destroy')
             if a_dies: die(g, a, 'destroy')
@@ -1518,7 +1521,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
                 for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
                     d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x)
-            if a.life or p.najeela_boost: gain(p, dmg)
+            if a.life or p.najeela_boost or (E.POOL_RULES and kw(a, 'lifelink')): gain(p, dmg)
             if a.is_cmd: d.cmd_dmg[p.key] += dmg
             if a.army and len(p.hand) <= 3:
                 discard_cards(g, p, list(p.hand)); draw(g, p, 4)
@@ -1581,6 +1584,7 @@ def combat(g, p):
     ncomb = 0
     while ncomb < 4 and not g.over and p.alive:
         ncomb += 1
+        p.combat_no = ncomb
         if not g.opps(p): return
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: import brain
@@ -1604,7 +1608,7 @@ def combat(g, p):
                 if can_pay(g, p, 4, ''): pay(g, p, 4, ''); unbl.add(a)
                 else: ps[0].tapped = False
         for m in atk:
-            if not m.vig: m.tapped = True
+            if not (m.vig or (E.POOL_RULES and kw(m, 'vigilance'))): m.tapped = True
         atk += attack_triggers(g, p, atk, d)
         if g.over or not d.alive: continue
         conn = resolve_combat(g, p, atk, d, unbl)
@@ -1681,8 +1685,15 @@ def play_land(g, p):
             s += 4 if theirs >= mine + 3 else -6
         return s + g.rng.random() * 0.1
     c = max(lands, key=score)
-    p.hand.remove(c); p.lands.append(Land(c, land_enters_tapped(p, c))); p.land_turn = p.turns
-    log(f'  {NAME(p)} plays {c.name}', g)
+    p.hand.remove(c)
+    play_land_card(g, p, c)
+
+
+def play_land_card(g, p, c, how='plays'):
+    """put land card c (already taken from its zone) onto the battlefield as p's land drop"""
+    p.lands.append(Land(c, land_enters_tapped(p, c))); p.land_turn = p.turns
+    p.lands_played = getattr(p, 'lands_played', 0) + 1
+    log(f'  {NAME(p)} {how} {c.name}', g)
     if c.tags.get('chasm'):                      # Glacial Chasm: when it enters, sacrifice a land
         p.chasm_age = 0
         others = [L for L in p.lands if L.cd is not c]
@@ -1693,6 +1704,75 @@ def play_land(g, p):
         if others:
             L = min(others, key=lambda L: len(land_cols(p, L, False))); p.lands.remove(L); p.hand.append(L.cd)
     landfall(g, p)
+    if E.POOL_RULES and 'f' in c.tags and p.lands and p.lands[-1].cd is c: crack_fetch(g, p, p.lands[-1])
+    if g.hooks: E.CI.fire(g, 'land_play', p, c)
+
+
+TRUE_FETCH = {'Polluted Delta': 'island swamp', 'Flooded Strand': 'plains island', 'Bloodstained Mire': 'swamp mountain',
+              'Wooded Foothills': 'mountain forest', 'Windswept Heath': 'forest plains', 'Marsh Flats': 'plains swamp',
+              'Scalding Tarn': 'island mountain', 'Verdant Catacombs': 'swamp forest', 'Arid Mesa': 'mountain plains',
+              'Misty Rainforest': 'forest island', 'Prismatic Vista': 'basic'}
+
+
+def crack_fetch(g, p, L):
+    """pool games: a fetch land is sacrificed at once for a land (a second landfall, a land in the graveyard)"""
+    name = L.cd.name
+    kinds = TRUE_FETCH.get(name)
+    basics = ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain', 'Wastes')
+    if kinds and kinds != 'basic':
+        cands = [c for c in p.library if c.land and set(kinds.split()) & set(c.subtypes)]
+    else:
+        cands = [c for c in p.library if c.land and c.name in basics]
+    if not cands: return
+    have = set(''.join(land_cols(p, x, False) for x in p.lands if x is not L))
+    c = max(cands, key=lambda c: (len(set(land_cols(p, Land(c, False), False)) - have), len(c.tags.get('c', '')), g.rng.random()))
+    p.lands.remove(L); p.gy.append(L.cd)
+    if g.hooks: E.CI.fire(g, 'land_gy', p, L.cd)
+    p.library.remove(c); g.rng.shuffle(p.library)
+    a = agent_for(g, p)
+    if a is not None: agent_take(g, a, p, c); return
+    tapped = not kinds and not (name == 'Fabled Passage' and len(p.lands) >= 4)
+    if kinds: lose_life(g, p, 1, p)
+    p.lands.append(Land(c, tapped or ('t' in c.tags)))
+    log(f'    cracks {name} for {c.name}', g)
+    landfall(g, p)
+
+
+def loam_dredge(g, p):
+    """Life from the Loam (dredge 3): mill three and return it instead of drawing, when lands are short"""
+    c = next((x for x in p.gy if 'loam' in x.tags), None)
+    if c is None or len(p.library) < 25 or sum(1 for x in p.hand if x.land) >= 2: return False
+    mill(g, p, 3); p.gy.remove(c); p.hand.append(c)
+    log(f'  {NAME(p)} dredges Life from the Loam', g)
+    return True
+
+
+def landfall_draws(g, p):
+    """cards p draws per land entering (Tatyova, Aesi ...), counting landfall copies"""
+    n = sum(1 for m in p.perms if m.cd is not None and m.cd.name in ('Tatyova, Benthic Druid', 'Aesi, Tyrant of Gyre Strait'))
+    return n * (1 + E.CI.total(g, 'trigger_copies', p, 'landfall', None)) if n else 0
+
+
+def more_lands(g, p):
+    """additional land drops (Exploration, Azusa ...) from hand, the top of the library (Oracle of Mul Daya)
+    or the graveyard (Crucible of Worlds, Ramunap Excavator)"""
+    allowed = 1 + E.CI.total(g, 'extra_lands', p) + getattr(p, 'extra_land_now', 0)
+    top_ok = E.CI.total(g, 'lands_from_top', p) > 0
+    gy_ok = E.CI.total(g, 'lands_from_gy', p) > 0
+    safe = 12 + 4 * landfall_draws(g, p)                 # optional land drops stop before they deck you
+    while getattr(p, 'lands_played', 0) < allowed and not g.over and len(p.library) > safe:
+        if top_ok and p.library and p.library[-1].land:
+            c = p.library.pop(); play_land_card(g, p, c, 'plays from the top')
+        elif any(c.land for c in p.hand):
+            n = getattr(p, 'lands_played', 0); play_land(g, p)
+            if getattr(p, 'lands_played', 0) == n: break
+            continue
+        elif gy_ok and any(c.land for c in p.gy):
+            c = max([c for c in p.gy if c.land], key=lambda c: ('f' in c.tags, len(c.tags.get('c', ''))))
+            p.gy.remove(c); play_land_card(g, p, c, 'plays from the graveyard')
+        else: break
+        landfall(g, p)
+        if E.POOL_RULES and 'f' in c.tags and p.lands and p.lands[-1].cd is c: crack_fetch(g, p, p.lands[-1])
 
 
 def upkeep(g, p):
@@ -1837,16 +1917,20 @@ def take_turn(g, p):
     for m in find(p, 'vaultping'):                # Mana Vault: at the beginning of your draw step, 1 damage if tapped
         if m.tapped: lose_life(g, p, 1, p, damage=True)
     if has(p, 'necro'): pass                     # Necropotence: skip your draw step
+    elif E.POOL_RULES and loam_dredge(g, p): pass
     elif not (p.key == 'seph' and seph_dredge(g, p)):
         draw(g, p, 1, step=True)
     check_state(g)
     if g.over or not p.alive: return
     nl = len(p.lands)
+    p.lands_played = 0; p.extra_land_now = 0
     play_land(g, p)
+    if g.hooks: more_lands(g, p)
     if len(p.lands) == nl and p.turns <= 5: p.stats['land_miss'] += 1
     if p.turns in (4, 6): p.stats[f'mana_T{p.turns}'] = total_mana(g, p); p.stats[f'had_T{p.turns}'] = 1
     main_fn(p)(g, p, False)
     if g.over or not p.alive: return
+    if g.hooks: more_lands(g, p)
     if E.AI_MODE != 'adaptive' and E.DSLMOD is not None and g.dsl_on: E.DSLMOD.rigid_abilities(g, p)
     if p.key == 'najeela' and has(p, 'mirror') and not g.goldfish:
         x = total_mana(g, p) - 5

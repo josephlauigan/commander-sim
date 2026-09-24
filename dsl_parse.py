@@ -112,6 +112,9 @@ def num_expr(s):
     s = s.strip().lower()
     if s in NUMW or s.isdigit(): return n_(s)
     if 'creature' in s and 'you control' in s: return 'creatures_you_control'
+    tm = re.match(r'^(?:the number of )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|vampires|spirits|faeries)'
+                  r' (you control|on the battlefield)$', s)
+    if tm: return ('type_you:' if tm.group(2) == 'you control' else 'type_all:') + singular(tm.group(1))
     if 'card' in s and 'hand' in s: return 'cards_in_hand'
     if 'devotion to black' in s: return 'devotion_B'
     if 'opponent' in s: return 'opponents'
@@ -208,9 +211,11 @@ def _search(m):
 @rule(r"^create (a|an|one|two|three|four|five|x|that many|\d+) (\d+|x)/(\d+|x) ([^.]*?)creature tokens?(?: with ([a-z, ]+?))?(?: that'?s? tapped and attacking[^.]*| named [^.]*)?(?:\. they gain [a-z]+ until end of turn)?$")
 def _token(m):
     kws = [k for k in KW if k in (m.group(4) + ' ' + (m.group(5) or ''))]
+    types = [w for w in m.group(4).split() if w not in ('white', 'blue', 'black', 'red', 'green', 'colorless', 'and',
+                                                        'artifact', 'enchantment', 'legendary', 'snow')]
     return [{'do': 'token', 'n': n_(m.group(1)), 'pow': 1 if m.group(2) == 'x' else int(m.group(2)),
              'tgh': 1 if m.group(3) == 'x' else int(m.group(3)), 'keywords': kws,
-             'attacking': 'attacking' in m.group(0), 'warrior': 'warrior' in m.group(4)}]
+             'attacking': 'attacking' in m.group(0), 'warrior': 'warrior' in m.group(4), 'types': types}]
 
 
 @rule(r"^create (a|an|one|two|three|x|that many|\d+) (treasure|clue|food|blood) tokens?$")
@@ -410,6 +415,10 @@ def _impulse(m): return [{'do': 'draw', 'n': {'card': 1, 'two cards': 2, 'three 
 def _impulse2(m): return [{'do': 'noop'}]
 
 
+@rule(r"^(?:you may )?put (?:a|up to one) land card from your hand onto the battlefield(?: tapped)?$")
+def _putland(m): return [{'do': 'put_land'}]
+
+
 @rule(r"^if you don't, ~ deals (\d+) damage to each opponent$")
 def _ifnot(m): return [{'do': 'noop'}]
 
@@ -557,6 +566,14 @@ STATICS = [
                 **({'subtype': m.group(2).strip()} if m.group(2).strip() else {})), 'pow': int(m.group(3)), 'tgh': int(m.group(4))}] +
      [{'type': 'static', 'static': 'keyword', 'keyword': k, 'filter': {'type': 'creature', 'controller': 'you'}}
       for k in KW if m.group(5) and k in m.group(5)]),
+    (r"^(other )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|angels|demons|dragons|merfolk|vampires|spirits|faeries) you control get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$",
+     lambda m: [{'type': 'static', 'static': 'anthem', 'filter': {'type': 'creature', 'controller': 'you', 'other': bool(m.group(1)),
+                'subtype': singular(m.group(2))}, 'pow': int(m.group(3)), 'tgh': int(m.group(4))}] +
+     [{'type': 'static', 'static': 'keyword', 'keyword': k, 'filter': {'type': 'creature', 'controller': 'you', 'subtype': singular(m.group(2))}}
+      for k in KW if m.group(5) and k in m.group(5)]),
+    (r"^other (elf|goblin|zombie|human|ninja|soldier|warrior|knight|angel|demon|dragon|vampire|spirit|faerie) creatures get \+(\d+)/\+(\d+)(?: and have [a-z ]+)?$",
+     lambda m: [{'type': 'static', 'static': 'anthem', 'filter': {'type': 'creature', 'other': True, 'subtype': m.group(1)},
+                 'pow': int(m.group(2)), 'tgh': int(m.group(3))}]),
     (r"^creatures your opponents control get -(\d+)/-(\d+)$",
      lambda m: [{'type': 'static', 'static': 'anthem', 'filter': {'type': 'creature', 'controller': 'opp'},
                  'pow': -int(m.group(1)), 'tgh': -int(m.group(2))}]),
@@ -593,6 +610,13 @@ STATICS = [(re.compile(a), b) for a, b in STATICS]
 def prot_colors(text):
     return ''.join(c for w, c in (('white', 'W'), ('blue', 'U'), ('black', 'B'), ('red', 'R'), ('green', 'G'))
                    if w in text.split('protection from', 1)[1])
+
+
+SINGULAR = {'elves': 'elf', 'dwarves': 'dwarf', 'merfolk': 'merfolk', 'faeries': 'faerie'}
+
+
+def singular(w):
+    return SINGULAR.get(w, w[:-1] if w.endswith('s') else w)
 
 
 def strip_name(text, name):

@@ -36,6 +36,9 @@ def keyword_data(cd, rec, oracle):
     """keywords the engine reads from card data: Scryfall's keyword list, protection colours, ward cost"""
     import re
     cd.kws = frozenset(k.lower() for k in rec.get('keywords') or [])
+    face = rec['card_faces'][0] if rec.get('card_faces') and rec.get('layout') not in ('split',) else rec
+    tl = face.get('type_line') or rec.get('type_line') or ''
+    cd.subtypes = frozenset(w.lower() for w in tl.split('—')[1].split()) if '—' in tl else frozenset()
     low = (oracle or '').lower()
     own = ' '.join(l for l in low.split('\n') if re.match(r'^(?:[a-z ]+, )*protection from', l.strip()))   # its own keyword line
     cd.protfrom = ''.join(c for w, c in COLOR_WORDS if re.search(r'protection from (?:[a-z]+ and from )?' + w, own))
@@ -54,7 +57,7 @@ def _from_override(name, ov, base):
     cd.dsl = ab or None; cd.source = 'cards_dsl.json'; cd.start_loyalty = ov.get('loyalty')
     if base is not None:
         cd.identity = getattr(base, 'identity', None)
-        cd.kws, cd.protfrom, cd.ward = base.kws, base.protfrom, base.ward
+        cd.kws, cd.protfrom, cd.ward, cd.subtypes = base.kws, base.protfrom, base.ward, base.subtypes
         cd.game_changer = base.game_changer
     return cd
 

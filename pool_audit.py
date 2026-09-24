@@ -19,25 +19,31 @@ from collections import Counter
 # Scryfall keyword names (lower case). A card whose keyword is listed here is at best Partial unless a
 # CARD_NOTES entry says otherwise. Remove a keyword from this set when the engine implements it.
 UNSUPPORTED_KW = {
-    'hexproof', 'indestructible', 'shroud', 'menace', 'first strike', 'double strike', 'ward', 'protection',
-    'undying', 'persist', 'exalted', 'cascade', 'storm', 'affinity', 'delve', 'improvise', 'dredge', 'madness',
-    'evoke', 'escape', 'buyback', 'rebound', 'devour', 'mentor', 'toxic', 'infect', 'prowess', 'ninjutsu',
-    'commander ninjutsu', 'bestow', 'dethrone', 'myriad', 'annihilator', 'backup', 'blitz', 'dash', 'unearth',
-    'battle cry', 'training', 'riot', 'afterlife', 'fabricate', 'embalm', 'eternalize', 'encore', 'extort',
+    'cascade', 'storm', 'affinity', 'delve', 'improvise', 'dredge', 'madness',
+    'evoke', 'escape', 'buyback', 'rebound', 'devour', 'toxic', 'infect', 'prowess', 'ninjutsu',
+    'commander ninjutsu', 'bestow', 'myriad', 'annihilator', 'backup', 'blitz', 'dash', 'unearth',
+    'training', 'riot', 'afterlife', 'fabricate', 'embalm', 'eternalize', 'encore', 'extort',
     'modular', 'crew', 'living weapon', 'reconfigure', 'split second', 'suspend', 'foretell', 'kicker',
     'multikicker', 'entwine', 'overload', 'spectacle', 'surge', 'emerge', 'casualty', 'transmute', 'splice',
-    'sunburst', 'totem armor', 'umbra armor', 'shadow', 'horsemanship', 'fear', 'intimidate', 'flanking',
+    'sunburst', 'shadow', 'horsemanship', 'fear', 'intimidate', 'flanking',
     'bushido', 'provoke', 'rampage', 'soulbond', 'haunt', 'graft', 'bloodthirst', 'amplify', 'exploit',
     'craft', 'disturb', 'daybound', 'nightbound', 'cleave', 'prototype', 'squad', 'offspring', 'gift',
-    'forestwalk', 'swampwalk', 'islandwalk', 'mountainwalk', 'plainswalk', 'landwalk', 'changeling',
+    'forestwalk', 'swampwalk', 'islandwalk', 'mountainwalk', 'plainswalk', 'landwalk',
     'adapt', 'monstrosity', 'channel', 'cycling', 'basic landcycling', 'landcycling', 'forage', 'plot',
 }
 STAT_TAGS = {'pow', 'tgh', 'fly', 'dt', 'vig', 'lifelink', 'haste', 'trample', 'reach', 'flash', 'convoke', 'leg',
              'human', 'warrior', 'shaman', 'wizard', 'bomb', 'noatk', 'c', 't', 'ck', 'f', 'amt'}
 # hand tags whose behaviour lives in the four main decks' AI code: an outside deck holding the card never
 # uses it unless the engine's generic path handles the tag (then remove it from this set)
-DECK_ONLY_TAGS = {'prot', 'clamp', 'fill', 'rean', 'tide', 'yawg', 'avarice', 'mastery', 'crackle', 'x',
-                  'skate', 'rabble', 'seal', 'jeska', 'intuition', 'adnaus', 'citadel', 'stampede', 'drawcre'}
+DECK_ONLY_TAGS = {'tide', 'yawg', 'avarice', 'mastery', 'crackle', 'x'}
+POOL_OK = {'fill': ('dispute', 'stitcher', 'wayfinder'), 'rean': ('animate', 'reanimate', 'evil'),
+           'prot': ('hi', 'phase', 'indes', 'blink', 'boots')}
+
+
+def deck_only(cd):
+    bad = [k for k in cd.tags if k in DECK_ONLY_TAGS]
+    bad += [f'{k}={cd.tags[k]}' for k, ok in POOL_OK.items() if k in cd.tags and cd.tags[k] not in ok]
+    return bad
 
 # ------------------------------------------------------------------ hand-verified pool cards
 # name -> (status, note). Wins over every automatic rule. Add an entry when a card is implemented or checked.
@@ -47,10 +53,10 @@ CARD_NOTES = {}
 # key -> (status, note). Update as mechanics are implemented.
 MECH = {
     'commander_damage':  ('Full', '21 combat damage from one commander eliminates'),
-    'extra_combat':      ('Partial', 'extra combat phases exist (max 4 per turn); most granting cards not compiled'),
-    'attack_triggers':   ('Partial', 'interpreter fires attack triggers; many texts not compiled'),
-    'isshin_doubling':   ('Unmodeled', 'attack-trigger doubling'),
-    'teysa_doubling':    ('Unmodeled', 'death-trigger doubling'),
+    'extra_combat': ('Full', 'extra combat phases (max 4 per turn); Aurelia, Karlach, Scourge implemented'),
+    'attack_triggers': ('Approximate', 'attack triggers: hooks for the key cards, compiled text for the rest'),
+    'isshin_doubling': ('Full', 'attack-caused triggers fire twice (hand tags, compiled triggers, hooks)'),
+    'teysa_doubling': ('Full', 'death-caused triggers of your permanents fire twice'),
     'ninjutsu':          ('Unmodeled', ''),
     'yuriko_reveal':     ('Unmodeled', ''),
     'cost_taxes':        ('Partial', "only 'spells your opponents cast cost {N} more' compiles"),
@@ -58,13 +64,13 @@ MECH = {
     'drannith_lock':     ('Unmodeled', ''),
     'attack_taxes':      ('Unmodeled', 'Ghostly Prison, Propaganda, Sphere of Safety, Norn\'s Annex, Windborn Muse'),
     'attacker_caps':     ('Unmodeled', 'Crawlspace, Silent Arbiter'),
-    'undying_persist':   ('Unmodeled', 'only Mikaeus-granted undying (hand tag) exists'),
+    'undying_persist': ('Full', 'undying / persist keywords; Mikaeus-granted undying'),
     'minus_counters':    ('Unmodeled', '-1/-1 counters and cancellation with +1/+1'),
     'planeswalkers':     ('Partial', 'loyalty abilities work; nobody attacks planeswalkers'),
     'proliferate':       ('Partial', 'only +1/+1 counters, not loyalty'),
     'counter_doubling':  ('Partial', 'token doubling compiles; counter doubling only for +1/+1 wording'),
     'treasure':          ('Full', ''),
-    'food':              ('Unmodeled', ''),
+    'food': ('Unmodeled', ''),
     'clue':              ('Full', ''),
     'discard':           ('Approximate', 'opponents discard at random'),
     'edicts':            ('Approximate', 'the victim sacrifices its lowest-value creature'),
@@ -76,9 +82,9 @@ MECH = {
     'thoracle_combo':    ('Unmodeled', "Thassa's Oracle + Demonic Consultation / Tainted Pact"),
     'helm_of_the_host':  ('Unmodeled', ''),
     'kiki_combo':        ('Unmodeled', 'Kiki-Jiki / Reflection + Zealous Conscripts / Felidar Guardian / Resto'),
-    'auras':             ('Unmodeled', 'Auras attaching to creatures ("enchanted creature gets/has")'),
-    'totem_armor':       ('Unmodeled', ''),
-    'enchantress_draw':  ('Partial', "compiles as a cast trigger where the wording matches"),
+    'auras': ('Approximate', 'Auras attach to the best creature (the commander in voltron decks); bonuses, keywords, protection; hostile Auras modeled as exile'),
+    'totem_armor': ('Full', 'umbra armor destroys the Aura instead'),
+    'enchantress_draw': ('Full', 'cast triggers (compiled or hooked)'),
     'put_attacking':     ('Unmodeled', 'Kaalia / Winota put a creature onto the battlefield attacking'),
     'korvold_sac':       ('Unmodeled', ''),
     'blood_moon':        ('Unmodeled', 'Magus of the Moon'),
@@ -86,11 +92,11 @@ MECH = {
     'monarch':           ('Unmodeled', ''),
     'flicker':           ('Partial', 'blink effect exists; Brago / Closet / Deadeye / Soulherder not compiled'),
     'meren':             ('Unmodeled', ''),
-    'recursion_ai':      ('Unmodeled', 'reanimation / graveyard filling only used by the main decks\' AI'),
-    'landfall':          ('Approximate', 'landfall triggers fire on every land drop'),
-    'extra_land_drops':  ('Unmodeled', 'Exploration, Burgeoning, Azusa, Dryad, Oracle of Mul Daya'),
-    'land_recursion':    ('Unmodeled', 'Crucible, Ramunap, Life from the Loam, Greenwarden'),
-    'elf_mana':          ('Unmodeled', 'mana scaling with Elf count (Priest of Titania, Archdruid, Cradle)'),
+    'recursion_ai': ('Approximate', 'reanimation spells and Deadly Dispute usable by outside decks'),
+    'landfall': ('Full', 'landfall triggers, fetch lands crack for a second trigger (pool games)'),
+    'extra_land_drops': ('Full', 'Exploration, Azusa, Dryad, Oracle of Mul Daya, Aesi, Druid Class, Explore'),
+    'land_recursion': ('Approximate', 'Crucible / Ramunap / Greenwarden land drops from the graveyard; Loam dredge when short on lands'),
+    'elf_mana': ('Full', 'Priest of Titania, Archdruid, Channeler, Heritage Druid, Tribe, Tactician scale'),
     'craterhoof':        ('Unmodeled', ''),
     'creature_tutors':   ('Approximate', 'tutors pick by priority; no combo-aware wish lists yet'),
     'krenko':            ('Approximate', 'X in Krenko\'s activation is a fixed 3'),
@@ -109,9 +115,9 @@ MECH = {
     'gravecrawler_loop': ('Unmodeled', ''),
     'zur':               ('Unmodeled', 'regex reads Zur as an ETB tutor'),
     'survival_pod':      ('Unmodeled', 'Survival of the Fittest, Birthing Pod'),
-    'skullclamp':        ('Unmodeled', 'Skullclamp is only activated by Sephiroth\'s AI'),
-    'protection_ai':     ('Unmodeled', 'Heroic Intervention, Teferi\'s Protection, Boots equips: main decks only'),
-    'light_paws':        ('Unmodeled', 'regex reads Light-Paws as a tutor to hand'),
+    'skullclamp': ('Full', 'equip to an X/1 for two cards (outside decks too)'),
+    'protection_ai': ('Approximate', 'outside decks answer targeted removal and wipes with their protection cards; redirect (Deflecting Swat) read as protection'),
+    'light_paws': ('Full', 'Aura cast -> Aura from library onto Light-Paws'),
     'urza':              ('Unmodeled', ''),
     'artifact_mana':     ('Approximate', 'rocks tap for mana; untap loops not modeled'),
     'karn_lattice':      ('Unmodeled', ''),
@@ -119,17 +125,17 @@ MECH = {
     'winota':            ('Unmodeled', ''),
     'kaalia':            ('Unmodeled', ''),
     'windgrace':         ('Partial', 'loyalty abilities partly compiled'),
-    'lathril':           ('Partial', 'token-on-damage compiled; tap-ten drain cost not payable'),
-    'teysa':             ('Unmodeled', ''),
-    'isshin':            ('Unmodeled', ''),
-    'tatyova':           ('Full-auto', 'landfall: gain 1 life and draw'),
+    'lathril': ('Full', 'Elf tokens equal to combat damage'),
+    'teysa': ('Full', 'tokens have vigilance and lifelink'),
+    'isshin': ('Full', ''),
+    'tatyova': ('Full', 'landfall: 1 life and a card'),
     'marwyn':            ('Partial', 'taps for G only, no counters'),
-    'aurelia':           ('Unmodeled', ''),
+    'aurelia': ('Full', ''),
     'atraxa_pv':         ('Approximate', 'hand tag: proliferates +1/+1 counters at end step'),
     'gaa':               ('Partial', 'opponent tax compiled; own cost reduction missing'),
     'sythis':            ('Full-auto', 'enchantment cast: gain 1, draw'),
     'brago':             ('Unmodeled', ''),
-    'lathril_tap10':     ('Unmodeled', ''),
+    'lathril_tap10': ('Full', 'tap ten Elves: drain 10'),
     'kinnan':            ('Unmodeled', ''),
 }
 
@@ -362,6 +368,8 @@ def card_status(name):
     global _AUDIT
     import engine, scryfall, autotag
     if name in CARD_NOTES: return CARD_NOTES[name]
+    import pool_cards
+    if name in pool_cards.NOTES: return pool_cards.NOTES[name]
     if _AUDIT is None: _AUDIT = _main_audit()
     cd = engine.DB[name]
     if name in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes'): return 'Full', 'basic land'
@@ -369,7 +377,7 @@ def card_status(name):
     kws = {k.lower() for k in rec.get('keywords') or []} & UNSUPPORTED_KW
     kwnote = ('keywords not modeled: ' + ', '.join(sorted(kws))) if kws else ''
     if cd.source == 'manual':
-        bad = sorted(k for k in cd.tags if k in DECK_ONLY_TAGS)
+        bad = deck_only(cd)
         if bad:
             return 'Unmodeled', f"hand tags ({', '.join(bad)}) are only acted on by the main decks' AI"
         s, note = _AUDIT.get(name, ('Modeled', 'hand-tagged'))
