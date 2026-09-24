@@ -22,6 +22,15 @@ def best_target_any(g, p, n):
 def blink(g, p, m):
     """exile m and return it under its owner's control (ETBs again, untapped, summoning sick)"""
     if m.token or m.cd is None or m not in m.owner.perms: return None
+    if getattr(g, 'blink_depth', 0) >= 3: return None                      # blink chains are combos, not loops here
+    g.blink_depth = getattr(g, 'blink_depth', 0) + 1
+    try:
+        return _blink(g, p, m)
+    finally:
+        g.blink_depth -= 1
+
+
+def _blink(g, p, m):
     cd, owner, cmd = m.cd, m.orig, m.is_cmd
     leave(g, m)
     n = enter(g, owner, cd, orig=owner)

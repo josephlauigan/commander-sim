@@ -152,6 +152,27 @@ def _cached_threat(g, m):
     return v
 
 
+def spell_importance(g, p, c):
+    """pool games: how much opponents want to counter spell c (0-9); 6-7 is the usual counter threshold"""
+    if c.name in SPELL_IMP:
+        v = SPELL_IMP[c.name]
+        return v(g, p, c) if callable(v) else v
+    v = 0.0
+    if c.perm:
+        v = max(float(c.bomb), _threat_value(c) + 1.0)
+        if c.creature: v = max(v, 0.9 * c.pow + (1.0 if 'fly' in c.tags else 0) - 0.5)
+        if c is p.cmd: v = max(v + 1.0, 6.0)
+    else:
+        t = c.tags
+        if t.get('tut') or 'seal' in t: v = 5.0
+        if 'draw' in t: v = max(v, 1.5 * int(t['draw']) if str(t['draw']).isdigit() else 3.0)
+        if c.name in HOOKS and 'resolve' in HOOKS[c.name]: v = max(v, 4.0)
+    return min(9.0, v)
+
+
+SPELL_IMP = {}        # card name -> fixed spell importance (or fn(g, p, c))
+
+
 def _threat_value(cd):
     if cd.name in PVAL: return PVAL[cd.name]
     v = 0.0
@@ -177,6 +198,8 @@ def turn_start(g, p):
             E.log(f'  {E.NAME(p)} can\'t pay for Pact of Negation and loses', g)
             p.life = 0; p.last_src = None; E.check_state(g); break
     p.pacts = 0
+    if getattr(p, 'sagas', None):
+        import impl_common; impl_common.saga_step(g, p)
     reb = getattr(p, 'rebound', None)
     if reb:
         p.rebound = []

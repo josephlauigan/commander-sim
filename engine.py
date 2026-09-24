@@ -322,6 +322,8 @@ def lose_life(g, p, n, src, kind='other', damage=None):
         log(f'    {n} damage to {NAME(p)} is prevented', g)
         return
     p.life -= n
+    if CUR_G is not None and CUR_G.hooks and n > 0:
+        CI.fire(CUR_G, 'lose_life', p, n)
     if CUR_G is not None and CUR_G.hooks:                 # life lost this turn (Archfiend of Despair)
         st = turn_stamp(CUR_G); lt = getattr(p, 'lost_turn', None)
         p.lost_turn = (st, (lt[1] if lt and lt[0] == st else 0) + n)
@@ -357,6 +359,7 @@ def gain(p, n):
     if CUR_G is not None and CUR_G.hooks and CI.total(CUR_G, 'no_lifegain', p): return
     p.life += n
     if CUR_G is not None and CUR_G.hooks:
+        CI.fire(CUR_G, 'gain_life', p, n)
         st = turn_stamp(CUR_G); gt = getattr(p, 'gained_turn', None)
         p.gained_turn = (st, (gt[1] if gt and gt[0] == st else 0) + n)
 
@@ -810,7 +813,9 @@ def pval(g, m):
     if m.is_cmd: v += 1
     if getattr(g, 'auras', None) and cd.creature: v += 1.5 * len(CI.auras_on(g, m))     # removing it takes the Auras too
     if POOL_RULES and 'P' in cd.types: v = max(v, 3 + 0.4 * (m.loyalty or 0) + (2 if m.is_cmd else 0))
-    if POOL_RULES and CI is not None: v = max(v, CI.threat_value(g, m))
+    if POOL_RULES and CI is not None:
+        v = max(v, CI.threat_value(g, m))
+        if m.is_cmd: v += 1                                # commanders matter more at a real table
     return v
 
 
@@ -1022,9 +1027,9 @@ def spell_imp(g, p, c, ctx):
                  ('sphinx', 6), ('breach', 5), ('panoptic', 5)):
         if k in t: return v, aff
     if 'tokx' in t and ctx.get('x', 0) >= 4: return 5, aff
-    if POOL_RULES and CI is not None and CI.combo_imp is not None:
-        ci = CI.combo_imp(g, p, c)
-        if ci: return ci, aff
+    if POOL_RULES and CI is not None:
+        ci = CI.combo_imp(g, p, c) if CI.combo_imp is not None else 0
+        return max(ci, CI.spell_importance(g, p, c)), aff
     return 0, aff
 
 

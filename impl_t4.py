@@ -234,7 +234,8 @@ def _krenko(g, src, p, s, post):
 
     def go():
         if src.tapped: return False
-        src.tapped = True; goblins(g, p, count_type(g, p, 'goblin')); return True
+        src.tapped = True; n = count_type(g, p, 'goblin'); goblins(g, p, n)
+        log(f'  Krenko makes {n} Goblins', g); return True
     return [(3.0 + 0.4 * n, f'Krenko: {n} Goblins', go)]
 
 
@@ -649,3 +650,27 @@ card('Isochron Scepter', '', types='A', dsl=[])
 card('Dramatic Reversal', '', types='I', dsl=[])
 CI.SPELL_PRIO['Isochron Scepter'] = lambda g, p, c: 60 if any(x.name == 'Dramatic Reversal' for x in p.hand) else 30
 CI.SPELL_PRIO['Dramatic Reversal'] = 0
+
+
+@on('Sanguine Bond', 'gain_life')
+def _bond(g, src, p, n):
+    if p is src.owner and g.opps(p) and getattr(g, 'bond_depth', 0) < 3:
+        g.bond_depth = getattr(g, 'bond_depth', 0) + 1
+        try:
+            lose_life(g, max(g.opps(p), key=lambda q: threat(g, p, q)), n, p, kind='drain')
+        finally:
+            g.bond_depth -= 1
+
+
+@on('Exquisite Blood', 'lose_life')
+def _blood(g, src, p, n):
+    if p is not src.owner and getattr(g, 'bond_depth', 0) < 3:
+        g.bond_depth = getattr(g, 'bond_depth', 0) + 1
+        try:
+            gain(src.owner, n)
+        finally:
+            g.bond_depth -= 1
+card('Sanguine Bond', '', types='E', dsl=[])
+card('Exquisite Blood', '', types='E', dsl=[])
+note('Sanguine Bond', 'Full', 'your life gain drains the most threatening opponent; with Exquisite Blood a combo')
+note('Exquisite Blood', 'Full', 'opponents\' life loss gains you life; with Sanguine Bond a combo')

@@ -149,17 +149,24 @@ def combo_options(g, p, s, post):
 
 
 def missing_pieces(g, p):
-    """for tutors: pieces of this player's closest combo that it doesn't have"""
+    """for tutors: pieces of this player's closest combo that it doesn't have (any combo whose pieces are in
+    its deck; a combo with some pieces already in hand or play first)"""
     best = None
+    deck = {c.name for c in full_deck_names(p)}
     for cmb in COMBOS:
+        if not all(any(n in deck for n in grp) for grp in cmb.groups): continue
         have = [grp for grp in cmb.groups if any(on_bf(p, n) or in_hand(p, n) for n in grp)]
         miss = [grp for grp in cmb.groups if grp not in have]
-        if not have or not miss: continue
+        if not miss: continue
         lib = {c.name for c in p.library}
         want = [n for grp in miss for n in grp if n in lib]
         if not want: continue
         if best is None or len(miss) < best[0]: best = (len(miss), want)
     return best[1] if best else []
+
+
+def full_deck_names(p):
+    return list(p.library) + list(p.hand) + list(p.gy) + [m.cd for m in p.perms if m.cd is not None]
 
 
 def piece_threat(g, m):
@@ -305,18 +312,33 @@ def _gravecrawler(g, p):
     return True, [on_bf(p, 'Phyrexian Altar'), drain_payoff(p)], []
 
 
+def _yawg_finish(g, p):
+    """the loop with a death payoff wins; without one it kills every opposing creature and draws ten"""
+    if drain_payoff(p) is not None:
+        import ais; ais.win(g, p, 'combo'); return
+    for q in g.opps(p):
+        for m in list(q.perms):
+            if m.creature and not untargetable(g, m): m.plus -= 99; die(g, m, 'sba')
+    draw(g, p, min(10, max(0, len(p.library) - 5)))
+    lose_life(g, p, 5, p)
+    p.yawg_loop = p.turns
+    log(f'    Yawgmoth loop: opposing creatures die, {NAME(p)} draws', g)
+
+
 @combo('Yawgmoth + undying loop + a death payoff',
        [('Yawgmoth, Thran Physician',), ('Mikaeus, the Unhallowed', "Geralf's Messenger", 'Butcher Ghoul', 'Young Wolf',
                                         'Nether Traitor')],
-       text='sacrifice / -1/-1 counter loop: draws and drains')
+       text='sacrifice / -1/-1 counter loop: draws and drains (without a payoff: wipes their creatures, draws ten)',
+       finish=_yawg_finish)
 def _yawg(g, p):
     y = on_bf(p, 'Yawgmoth, Thran Physician')
-    if y is None or p.life < 8: return False, [], []
+    if y is None or p.life < 12 or getattr(p, 'yawg_loop', None) == p.turns: return False, [], []
     und = [m for m in p.perms if m.creature and m.cd is not None and 'undying' in m.cd.kws and m is not y]
     mik = on_bf(p, 'Mikaeus, the Unhallowed')
     fodder = [m for m in p.perms if m.creature and m is not y and m is not mik and not has_type(m, 'human')]
     loop = len(und) >= 2 or (mik is not None and len(fodder) >= 1)
-    if not loop or drain_payoff(p) is None: return False, [], []
+    if not loop: return False, [], []
+    if drain_payoff(p) is None and not any(m.creature for q in g.opps(p) for m in q.perms): return False, [], []
     return True, [y] + ([mik] if mik else []), []
 
 

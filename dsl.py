@@ -392,7 +392,9 @@ def search(g, p, e, ctx):
             nm = ais.tutor_pick(g, p, 'any')
             c = next((x for x in cands if x.name == nm), None) or max(cands, key=lambda c: card_value(g, p, c))
         else:
-            c = max(cands, key=lambda c: (card_value(g, p, c), c.cmc))
+            wish = __import__('pool_ai').wish_list(g, p) if p.key not in E.IDENT else []
+            want = [c for c in cands if c.name in wish]
+            c = min(want, key=lambda c: wish.index(c.name)) if want else max(cands, key=lambda c: (card_value(g, p, c), c.cmc))
         p.library.remove(c)
         a = E.agent_for(g, p)
         if a is not None: E.agent_take(g, a, p, c); continue      # Opposition Agent
@@ -716,6 +718,8 @@ def ability_options(g, p, sorcery_ok=True):
             t = a.get('type')
             if t == 'activated':
                 if a.get('sorcery') and not sorcery_ok: continue
+                if E.POOL_RULES and all(e.get('do') == 'add_mana' for e in a['effects']) and a.get('cost', {}).get('sac'):
+                    continue                       # sacrificing for mana nobody is waiting to spend: never proactive
                 key = f'act{id(src)}{i}'
                 uses = p.flag_turn.get(key + 'n', (None, 0))
                 stamp = (g.round, p.key)

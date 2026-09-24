@@ -257,7 +257,8 @@ def removal_options(g, p, s):
         v = pval(g, best)
         if best.owner is s.leader: v *= 1.25
         if s.combo_near and pval(g, best) >= 8: v += 2.0
-        u = v - (3.5 if p.key in STYLE else style(p).get('removal_bar', 4.5))    # outside decks save removal for threats
+        if p.key not in STYLE and v < 2.5: continue                          # outside decks: no removal on trivial targets
+        u = v - 3.5
         if c.instant: u -= 1.2 * style(p)['caution'] * E.INSTANT_EXTRA / 2.0   # instants are worth holding (profile-dependent)
         if 'needsac' in t and not [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]: continue
         out.append((u, f'{c.name} -> {best.name}', lambda c=c, tg=tg: cast_removal(g, p, c, tg)))
@@ -498,6 +499,9 @@ def main(g, p, post):
             E.PAY_FOR = c; ok = can_pay(g, p, cg, cp, 'convoke' in c.tags); E.PAY_FOR = None
             if not ok: continue
             u -= reserve_penalty(g, p, s, c, hold_card, hold_v)
+            if p.key not in STYLE and not post:                     # outside decks: mana kept for combat (ninjutsu)
+                rsv = __import__('pool_ai').combat_reserve(g, p)
+                if rsv and not can_pay(g, p, cg + rsv[0], cp + rsv[1]): u -= 3.0
             if naj_hold and not can_pay(g, p, cg, cp + 'WUBRG'): u -= 4.0
             opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
         opts += removal_options(g, p, s)

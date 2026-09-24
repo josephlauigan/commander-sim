@@ -1625,6 +1625,7 @@ def combat(g, p):
         if not atk: break
         d = brain.choose_defender(g, p) if adaptive else choose_defender(g, p)
         if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
+        if E.POOL_RULES and p.key not in MAIN: atk = __import__('pool_ai').attack_filter(g, p, atk, d)
         if g.hooks: atk = attack_limits(g, p, d, atk)
         if g.hooks and atk:                                   # beginning of combat (Helm of the Host)
             for r in E.CI.fire(g, 'combat_start', p): atk += [m for m in r if m not in atk]
@@ -1948,6 +1949,7 @@ def take_turn(g, p):
     g.eot_pt = {}; g.eot_kw = {}
     for q in g.players: q.floatA = 0
     p.extra_combats = 0
+    p.combat_no = 0
     p.turns += 1
     for q in g.players: q.floatR = 0          # floating mana empties between turns
     for L in p.lands: L.tapped = False

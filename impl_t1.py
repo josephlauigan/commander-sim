@@ -679,8 +679,11 @@ note('Heliod\'s Pilgrim', 'Full', '')
 
 def tutor_named(g, p, pred, k=1, to='hand'):
     have = {c.name for c in p.hand} | {m.cd.name for m in p.perms if m.cd is not None}
-    cands = sorted({c.name: c for c in p.library if pred(c)}.values(),
-                   key=lambda c: (c.name not in have, card_worth(g, p, c)), reverse=True)[:k]
+    import pool_ai
+    wish = pool_ai.wish_list(g, p)
+    rank = lambda c: (c.name in wish and c.name not in have, -wish.index(c.name) if c.name in wish else 0,
+                      c.name not in have, card_worth(g, p, c))
+    cands = sorted({c.name: c for c in p.library if pred(c)}.values(), key=rank, reverse=True)[:k]
     for c in cands:
         p.library.remove(c)
         a = agent_for(g, p)

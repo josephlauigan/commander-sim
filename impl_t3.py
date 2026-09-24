@@ -281,6 +281,10 @@ CI.SPELL_PRIO['Craterhoof Behemoth'] = hoof_prio
 def _put_creature(g, p, pred, prefer_hoof=True):
     cs = [c for c in p.library if c.creature and pred(c)]
     if not cs: return None
+    import pool_ai
+    wish = [c for c in cs if c.name in pool_ai.wish_list(g, p)]
+    if wish:
+        c = wish[0]; p.library.remove(c); g.rng.shuffle(p.library); p.stats['tutored'] += 1; enter(g, p, c); return c
     hoof = next((c for c in cs if c.name == 'Craterhoof Behemoth'), None)
     n = sum(1 for m in p.perms if m.creature and not m.phased)
     c = hoof if (hoof is not None and prefer_hoof and n >= 5) else max(cs, key=lambda c: (card_worth(g, p, c), c.cmc))

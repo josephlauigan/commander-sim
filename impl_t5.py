@@ -251,7 +251,8 @@ note('Kiki-Jiki, Mirror Breaker', 'Full', 'hasty copy of your best nonlegendary 
 @on('Felidar Guardian', 'etb')
 def _felidar(g, src, p, m):
     if m is not src: return
-    cands = [x for x in src.owner.perms if x is not src and not x.token and x.cd is not None and blink_value(g, src.owner, x) > 0]
+    cands = [x for x in src.owner.perms if x is not src and not x.token and x.cd is not None and blink_value(g, src.owner, x) > 0
+             and x.cd.name not in ('Felidar Guardian', 'Restoration Angel')]      # the loop is a combo, not a value blink
     if cands: blink(g, src.owner, max(cands, key=lambda x: blink_value(g, src.owner, x)))
 card('Felidar Guardian', 'pow=1 tgh=4', dsl=[])
 note('Felidar Guardian', 'Full', 'blinks your best ETB permanent (Kiki loop is a combo)')

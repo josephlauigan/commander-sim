@@ -79,10 +79,31 @@ def generic_prio(g, p, c):
     if 'fable' in t: return 58
     if c.creature: return 42 + min(16, 2 * c.pow) + (4 if 'fly' in t else 0)
     if c.perm and E.CI is not None and c.name in E.CI.HOOKS: return cfg.get('hooked_prio', 55)
+    if c.perm and _is_outlet(c.name): return 50                     # sacrifice outlets (Goblin Bombardment ...)
+    if E.CI is not None and E.CI.combo_imp is not None and c.perm:
+        ci = E.CI.combo_imp(E.CUR_G, p, c)                          # a combo piece: 9 = completes it, 7 = one short
+        if ci: return 50 + 4 * ci
+        import impl_combos
+        if c.name in impl_combos.PIECES: return 48
     if t.get('prot') == 'boots' or 'sac' in t: return 40
     if c.dsl: return 0                       # interpreter value decides
     if 'pumpall' in t: return 0              # combat trick: no proactive value
     return 0
+
+
+def _is_outlet(name):
+    import impl_common
+    return name in impl_common.SAC_OUTLET
+
+
+def wish_list(g, p):
+    """what this deck's tutors want most: its configured list, else the pieces of its closest combo"""
+    if p.key in E.IDENT: return []
+    wish = config(p).get('wish')
+    if wish is None:
+        import impl_combos
+        wish = impl_combos.missing_pieces
+    return list(wish(g, p) if callable(wish) else wish)
 
 
 def tutor_pick(g, p, kind, ok):
@@ -196,11 +217,10 @@ def _use(g, p, name, where, cost, src, target_m):
         c = next((x for x in p.hand if x.name == name), None)
         if c is None or not E.castable(g, p, c): return False
         free = PROTECTORS[name][4] and E.commander_out(p)
-        if not free:
-            gen, pips = cost
-            if not E.can_pay(g, p, gen, pips): return False
-            E.pay(g, p, gen, pips)
-        p.hand.remove(c); p.spells_this_turn += 1; p.stats['spells_cast'] += 1
+        if not free and not E.can_pay(g, p, *cost): return False
+        p.hand.remove(c)                       # off the hand before paying: a Treasure payment can trigger responses
+        if not free: E.pay(g, p, *cost)
+        p.spells_this_turn += 1; p.stats['spells_cast'] += 1
         if name == 'Ephemerate':
             p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
         elif name != 'Restoration Angel': p.gy.append(c)
@@ -368,3 +388,41 @@ def spell_options(g, p, s, post):
                     E.draw(g, p, n); return True
                 o.append((1.0 + 0.8 * draw_n, f'{c.name} (draw {draw_n})', rdraw))
     return o
+
+
+# ------------------------------------------------------------------ attacking (outside decks)
+def attack_filter(g, p, atk, d):
+    """keep home attackers that would just die to a good block: a blocker that kills it and survives.
+    Evasive creatures, lethal swings and attacks with more attackers than good blockers go ahead."""
+    import ais as A
+    if not atk: return atk
+    total = sum(E.epow(g, m) for m in atk)
+    if total >= d.life: return atk                                  # lethal-ish: everyone goes
+    blockers = [b for b in d.perms if b.creature and not b.tapped and not b.phased]
+    if not blockers: return atk
+    keep, risky = [], []
+    for a in atk:
+        good = [b for b in blockers if A.can_block(g, b, a) and
+                (E.epow(g, b) >= E.etgh(g, a) or b.dt) and not (E.epow(g, a) >= E.etgh(g, b) or a.dt)]
+        (risky if good else keep).append((a, len(good)))
+    if not risky: return atk
+    n_good_blockers = len({id(b) for b in blockers if any(A.can_block(g, b, a) for a, _ in risky)})
+    if len(risky) > n_good_blockers + 1: return atk                  # they can't block everything
+    out = [a for a, _ in keep]
+    for a, _ in risky:                                               # a cheap token can still attack to push damage
+        if a.token and E.epow(g, a) <= 1 and len(out) >= 3: out.append(a)
+    if len(out) < len(atk): E.log(f'      [{E.NAME(p)} holds back {len(atk) - len(out)} attacker(s) that would die to blocks]', g)
+    return out
+
+
+def combat_reserve(g, p):
+    """mana to keep for the combat step: ninjutsu (Yuriko from the command zone, Ninjas in hand) when an evasive or
+    likely-unblocked attacker is ready. Returns (generic, pips) or None."""
+    import impl_t4
+    if p.cmd.name != "Yuriko, the Tiger's Shadow" and not any(c.name in impl_t4.NINJUTSU for c in p.hand): return None
+    ready = [m for m in p.perms if m.creature and not m.sick and not m.tapped and not m.noatk and
+             (E.DSLMOD.has_kw(g, m, 'unblockable') or m.fly or E.DSLMOD.has_kw(g, m, 'flying'))]
+    if not ready: return None
+    if p.cmd.name == "Yuriko, the Tiger's Shadow" and p.cmd_in_zone: return (0, 'UB')
+    costs = [impl_t4.ninjutsu_cost(g, p, c.name) for c in p.hand if c.name in impl_t4.NINJUTSU]
+    return min(costs, key=lambda x: x[0] + len(x[1])) if costs else None

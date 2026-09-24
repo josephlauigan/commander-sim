@@ -1243,3 +1243,129 @@ note('Magus of the Moon', 'Full', 'nonbasic lands tap for R only (engine mana ch
 
 def blood_moon_active(g):
     return any(m.cd is not None and m.cd.name == 'Magus of the Moon' and not m.phased for q in g.players if q.alive for m in q.perms)
+
+
+# ======================================================== audit notes for cards handled by shared AI code
+for _n, _t in (('Mother of Runes', 'protection from a colour in response to targeted removal (protection AI)'),
+               ('Giver of Runes', 'protection in response to targeted removal of another creature (protection AI)'),
+               ('Deflecting Swat', 'free with your commander: redirects targeted removal away (read as protection)'),
+               ('Flawless Maneuver', 'free with your commander: indestructible against destroy effects (protection AI)'),
+               ("Teferi's Protection", 'phases out everything against removal and wipes (protection AI)'),
+               ('Heroic Intervention', 'hexproof and indestructible in response (protection AI)'),
+               ('Boros Charm', 'indestructible mode used as protection; the damage mode as removal'),
+               ('Gods Willing', 'protection from a colour in response to targeted removal'),
+               ('Valorous Stance', 'indestructible in response, or destroy toughness 4+'),
+               ('Benevolent Bodyguard', 'sacrificed for protection from a colour'),
+               ("Alseid of Life's Bounty", 'sacrificed for protection from a colour'),
+               ('Selfless Spirit', 'sacrificed for indestructible against destroy effects'),
+               ('Swiftfoot Boots', 'equipped to the commander / best creature: hexproof and haste (pool games)'),
+               ('Lightning Greaves', 'equipped to the commander / best creature: shroud and haste (pool games)'),
+               ('Whispersilk Cloak', 'equipped for shroud and unblockable'),
+               ('Liliana\'s Triumph', 'edict; the Liliana discard rider is ignored'),
+               ('Plaguecrafter', 'each player sacrifices; the discard fallback is ignored'),
+               ('Flusterstorm', 'soft counter for instants and sorceries; storm copies ignored'),
+               ('Shadowspear', 'equipment bonus; the anti-hexproof activation is not used')):
+    note(_n, 'Approximate', _t)
+
+
+@CI.on('Hero of Bladehold', 'attack')
+def _hero(g, src, p, atk, d):
+    if src in atk: return make_tokens(g, p, 2, 1, color='W', types=('soldier',), attacking=True, sick=False)
+card('Hero of Bladehold', 'human pow=3 tgh=4', dsl=[])
+note('Hero of Bladehold', 'Full', 'battle cry; two Soldiers tapped and attacking')
+
+
+@CI.on('Ophiomancer', 'upkeep')
+def _ophio(g, src, p):
+    o = src.owner
+    if not any(has_type(m, 'snake') for m in o.perms): make_tokens(g, o, 1, 1, dt=True, color='B', types=('snake',))
+card('Ophiomancer', 'human shaman pow=2', dsl=[])
+note('Ophiomancer', 'Full', 'a deathtouch Snake each upkeep when you have none')
+
+
+@CI.on("Ajani's Chosen", 'etb')
+def _ajani_chosen(g, src, p, m):
+    if m.owner is src.owner and m.cd is not None and 'E' in m.cd.types:
+        make_tokens(g, src.owner, 1, 2, color='W', types=('cat',))
+card("Ajani's Chosen", 'pow=3 tgh=3', dsl=[])
+note("Ajani's Chosen", 'Approximate', 'a 2/2 Cat per enchantment entering; the Aura move is not used')
+
+
+# Urza's Saga (land): chapter II makes Constructs, chapter III fetches a 0/1-cost artifact, then it's sacrificed
+def _saga_etb(g, p, L):
+    p.sagas = getattr(p, 'sagas', []) + [[L, 1]]
+
+
+CI.LAND_ETB["Urza's Saga"] = _saga_etb
+
+
+def saga_step(g, p):
+    for s_ in list(getattr(p, 'sagas', [])):
+        L, lore = s_
+        if L not in p.lands: p.sagas.remove(s_); continue
+        s_[1] = lore = lore + 1
+        if lore == 2 and can_pay(g, p, 2, ''):
+            pay(g, p, 2, '')
+            for t in make_tokens(g, p, 1, 0, 0, color='', types=('construct',)): t.data = {'construct': True, 'artifact': True}
+            g.selfpt = True
+        if lore >= 3:
+            cs = [c for c in p.library if 'A' in c.types and c.cmc <= 1 and not c.land]
+            if cs:
+                c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); enter(g, p, c)
+            p.lands.remove(L); p.gy.append(L.cd); p.sagas.remove(s_)
+
+
+note("Urza's Saga", 'Approximate', 'taps for C; chapter II a Construct (paying {2}), chapter III a 0/1-cost artifact, '
+     'then sacrificed')
+
+
+def _top_sort(g, p, n=3):
+    top = [p.library.pop() for _ in range(min(n, len(p.library)))]
+    import pool_ai
+    if pool_ai.config(p).get('top_pref') == 'mv': top.sort(key=lambda c: c.cmc)          # Yuriko: biggest reveal on top
+    else: top.sort(key=lambda c: card_worth(g, p, c) if not (c.land and len(p.lands) >= 6) else 1)
+    p.library.extend(top)
+
+
+@CI.on("Sensei's Divining Top", 'upkeep')
+def _top(g, src, p):
+    if p is src.owner and can_pay(g, p, 1, ''): pay(g, p, 1, ''); _top_sort(g, p, 3)
+card("Sensei's Divining Top", '', types='A', dsl=[])
+note("Sensei's Divining Top", 'Approximate', 'each upkeep pays {1} to put the best of the top three on top')
+
+
+@CI.on('Scroll Rack', 'upkeep')
+def _rack(g, src, p):
+    if p is not src.owner or not can_pay(g, p, 1, '') or not p.hand or not p.library: return
+    pay(g, p, 1, '')
+    worst = sorted(p.hand, key=lambda c: card_worth(g, p, c))[:2]
+    for c in worst:
+        top = p.library.pop(); p.hand.remove(c); p.hand.append(top); p.library.append(c)
+    _top_sort(g, p, 3)
+card('Scroll Rack', '', types='A', dsl=[])
+note('Scroll Rack', 'Approximate', 'each upkeep swaps the two worst cards in hand for the top two, then orders the top')
+
+
+# ======================================================== threat values for key engines (how badly opponents want them gone)
+for _n, _v in (('Aurelia, the Warleader', 7), ('Isshin, Two Heavens as One', 6), ('Winota, Joiner of Forces', 8),
+               ('Kaalia of the Vast', 7), ('Krenko, Mob Boss', 7), ('Yuriko, the Tiger\'s Shadow', 6),
+               ('Marwyn, the Nurturer', 5), ('Lathril, Blade of the Elves', 5), ('Korvold, Fae-Cursed King', 7),
+               ('Teysa Karlov', 6), ('Meren of Clan Nel Toth', 6), ('Kinnan, Bonder Prodigy', 8),
+               ('Urza, Lord High Artificer', 8), ('Yawgmoth, Thran Physician', 8), ('Zur the Enchanter', 7),
+               ('Chulane, Teller of Tales', 7), ('Grand Arbiter Augustin IV', 7), ('Light-Paws, Emperor\'s Voice', 5),
+               ('Sythis, Harvest\'s Hand', 5), ('Brago, King Eternal', 6), ('Tatyova, Benthic Druid', 5),
+               ("Atraxa, Praetors' Voice", 7), ('Tergrid, God of Fright // Tergrid\'s Lantern', 7), ('Prosper, Tome-Bound', 6),
+               ('Craterhoof Behemoth', 8), ('Helm of the Host', 6), ('Aluren', 7), ('Necropotence', 6), ('Doubling Season', 6),
+               ('Grave Pact', 6), ('Dictate of Erebos', 6), ('Impact Tremors', 5), ('Purphoros, God of the Forge', 5),
+               ('Sanguine Bond', 6), ('Exquisite Blood', 6), ('Isochron Scepter', 5), ('Kiki-Jiki, Mirror Breaker', 7),
+               ('Zealous Conscripts', 5), ('Felidar Guardian', 5), ('Phyrexian Altar', 5), ('Thornbite Staff', 4),
+               ('Walking Ballista', 4), ('Consecrated Sphinx', 7), ('Hullbreaker Horror', 7), ('Seedborn Muse', 5),
+               ('Combat Celebrant', 5), ('Hellrider', 5), ('Brutal Hordechief', 5), ('Hero of Bladehold', 6),
+               ('Terror of the Peaks', 7), ('Scourge of Valkas', 5), ('Drakuseth, Maw of Flames', 7),
+               ('Avenger of Zendikar', 6), ('Scute Swarm', 5), ('Omnath, Locus of Rage', 6), ('Titania, Protector of Argoth', 5),
+               ('Rule of Law', 6), ('Deafening Silence', 5), ('Drannith Magistrate', 6), ('Grand Abolisher', 5),
+               ('Trinisphere', 6), ('Solitary Confinement', 6), ('Notion Thief', 5), ('Mayhem Devil', 5),
+               ('Rhystic Study', 5), ('Smothering Tithe', 5), ('Esper Sentinel', 3), ('Mystic Remora', 4),
+               ('Sylvan Library', 4), ('Phyrexian Arena', 4), ('Bolas\'s Citadel', 6), ('The One Ring', 6),
+               ('Gaea\'s Cradle', 0), ('Beastmaster Ascension', 5), ('Elesh Norn, Grand Cenobite', 8)):
+    CI.PVAL[_n] = _v

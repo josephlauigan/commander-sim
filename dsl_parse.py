@@ -624,7 +624,7 @@ def strip_name(text, name):
     front = name.split(' // ')[0]
     for nm in (front, front.split(',')[0]):
         if len(nm) > 3: t = t.replace(nm, '~')
-    t = re.sub(r'\bthis (creature|spell|artifact|enchantment|land|permanent|card|planeswalker)\b', '~', t, flags=re.I)
+    t = re.sub(r'\bthis (creature|spell|artifact|enchantment|land|permanent|card|planeswalker|equipment|aura)\b', '~', t, flags=re.I)
     return t
 
 
