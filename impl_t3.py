@@ -59,8 +59,6 @@ card('Mayhem Devil', 'pow=3', dsl=[])
 note('Mayhem Devil', 'Full', 'any player\'s sacrifice (Treasures included): 1 damage')
 
 
-@on('Academy Manufactor', 'etb')
-def _manufactor(g, src, p, m): pass
 card('Academy Manufactor', 'pow=1 tgh=3', types='AC', dsl=[])
 note('Academy Manufactor', 'Approximate', 'hooked token makers create one of each; engine-tagged Treasure makers are '
      'not multiplied')
@@ -409,8 +407,6 @@ walker('Nissa, Who Shakes the World', [
 ], ('Approximate', 'Forests tap for an extra G; +1 makes a 3/3 haste (as a token, not a land); the ultimate is not used'))
 
 
-@on("Hunter's Insight", 'etb')
-def _insight_none(g, src, p, m): pass
 
 
 # ======================================================== Aurelia (extra combats)
@@ -479,10 +475,6 @@ def _embercleave(g, src, p, m):
     if m is not src: return
     cr = [x for x in src.owner.perms if x.creature and not x.noatk]
     if cr: src.attached = max(cr, key=lambda x: (not x.sick, epow(g, x)))
-
-
-def _ember_cost(g, src, caster, c):
-    return 0
 
 
 CI.SPELL_PRIO['Embercleave'] = lambda g, p, c: 70 if any(m.creature and not m.sick for m in p.perms) else 0
@@ -939,8 +931,9 @@ card('Gix, Yawgmoth Praetor', 'leg pow=3 tgh=3', dsl=[])
 note('Gix, Yawgmoth Praetor', 'Partial', 'draw for combat damage; the discard-to-play ability is not used')
 
 
-def _tergrid_note(): pass
-
-
 note('Tergrid, God of Fright // Tergrid\'s Lantern', 'Full', 'steals permanents opponents sacrifice or discard '
      '(hand-coded); the Lantern back face is not used')
+
+
+CI.SPELL_PRIO['Academy Manufactor'] = 50
+note("Hunter's Insight", 'Unmodeled', 'the combat-damage draw is not modeled; never cast')

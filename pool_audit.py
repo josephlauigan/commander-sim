@@ -442,11 +442,12 @@ def audit(decks=None):
 
 
 def markdown(rows):
-    L = ['| Tier | Deck | ' + ' | '.join(STATUSES) + ' | Engines at Full/Full-auto |', '|' + '---|' * (len(STATUSES) + 3)]
+    L = ['| Tier | Deck | ' + ' | '.join(STATUSES) + ' | Engines: full / approx. / partial / unmodeled |',
+         '|' + '---|' * (len(STATUSES) + 3)]
     for d, per, cnt, eng, _ in rows:
-        ok = sum(1 for _, s, _ in eng if RANK[s] >= RANK['Full-auto'])
+        e = Counter('full' if RANK[s] >= RANK['Full-auto'] else s.lower() for _, s, _ in eng)
         L.append(f'| {d.tier[1]} | {__import__("pools").short_name(d)} | ' + ' | '.join(str(cnt.get(s, 0)) for s in STATUSES)
-                 + f' | {ok}/{len(eng)} |')
+                 + f" | {e['full']} / {e['approximate']} / {e['partial']} / {e['unmodeled']} |")
     L.append('')
     for d, per, cnt, eng, _ in rows:
         L.append(f'**{d.title}** (Tier {d.tier[1]})')

@@ -30,6 +30,38 @@ baseline -> variant under each profile, with * marking changes larger than the n
 The baseline is the list in the deck's .md file in this folder (the "## Import list" block).
 Keep the .md files next to the scripts, or point SIM_DECKS at another folder.
 
+## Using the opponent pools
+`opponents/` holds 25 outside decks in five power tiers (see `opponents/README.md`). Pool mode seats your
+deck against three of them, drawn without replacement from one tier and re-drawn every game, in a random
+seat order. Opponent draws, seats and every seat's opening shuffle depend only on the seed and the deck
+keys, so a --swap comparison faces identical opponents and draws (paired runs).
+
+    python3 compare.py --deck seph --pool t3 --games 10000 --jobs 24          # one deck vs one tier
+    python3 compare.py --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"  # paired A/B vs that tier
+    python3 compare.py --deck seph --pool all --games 10000                   # all five tiers
+    python3 compare.py --all-decks --pool all --games 10000 --jobs 24         # deck x tier matrix
+    python3 compare.py --deck seph --pool t4 --analyze                         # how it wins / loses there
+    python3 compare.py --deck seph --pool t2 --trace 7                         # play-by-play of pool game 7
+    python3 compare.py --calibrate within|ordering|all --games 2000 --jobs 24   # pool balance checks
+    python3 pools.py --validate                                                # decklist checks
+    python3 pool_audit.py [--deck yuriko] [--md FILE]                          # card coverage per deck
+
+- `--pool` t1..t5 or all; `--games` (same as --n); `--seed` first seed (default 500000);
+  `--profile conservative|loose` to run one profile (default both).
+- Each run reports your win rate against the 25% even share with a 95% interval, the average turn of your
+  wins and losses, how often your plan came online, and for each opponent how often it was seated, how
+  often it won, and how often it eliminated you. A/B runs report a paired noise band (per-seed pairs).
+- Pool games play by a few extra rules the four-deck mode doesn't have (so old-mode results never change):
+  haste from Boots/Greaves and granted haste, fetch lands cracking, attacking planeswalkers, keyword grants
+  from compiled cards. Your decks keep their own AI; only outside decks use the pool AI.
+- Results and calibration: `opponents/pool-results.md`. Card coverage and what is approximated: run
+  `python3 pool_audit.py`, or read the tables in `pool-results.md`.
+- How outside cards are modeled: `pool_cards.py` (tag and ability overrides, audit notes), `cardimpl.py`
+  (hook events) with the implementations in `impl_common.py`, `impl_t1.py` .. `impl_t5.py`, and combos in
+  `impl_combos.py`. The generic AI for outside decks is `pool_ai.py`; per-deck settings in `pool_decks.py`.
+- Tests: `python3 -m unittest discover -s tests -t .` (validator, pool sampling and pairing, and an exact
+  old-mode regression guard).
+
 ## How the adaptive AI decides (brain.py)
 Each decision: read the board (mana, hand, incoming damage, who leads, combos close to going off,
 and what opponents probably hold, estimated from public information), score every legal play,

@@ -183,13 +183,6 @@ def _tfs(g, src, p, m):
             if t is not None: t.tapped = True
 
 
-IC.SELF_PT['Silver-Fur Master'] = lambda g, p, m: (0, 0)
-
-
-@on('Silver-Fur Master', 'grant_kw')
-def _sfm_none(g, src, m, kw): return False
-
-
 card('Silver-Fur Master', 'pow=2', dsl=[{'type': 'static', 'static': 'anthem', 'filter': {'type': 'creature', 'controller': 'you',
                                                                                           'other': True, 'subtype': 'ninja'}, 'pow': 1, 'tgh': 1}])
 for _n in ('Mistblade Shinobi', 'Moon-Circuit Hacker', 'Prosperous Thief', 'Mist-Syndicate Naga', 'Ink-Eyes, Servant of Oni',
@@ -305,7 +298,6 @@ card('Purphoros, God of the Forge', 'leg', types='E', dsl=[])
 note('Purphoros, God of the Forge', 'Approximate', '2 damage per creature entering; never a creature (devotion ignored); pump unused')
 
 
-SAC_GOBLIN_DMG = {'Siege-Gang Commander': (1, 'R', 2)}
 IC.SAC_OUTLET['Skirk Prospector'] = lambda g, p, src, m: setattr(p, 'floatA', p.floatA + 1)
 note('Skirk Prospector', 'Approximate', 'free sacrifice outlet (Goblins) adding one mana')
 
@@ -405,8 +397,6 @@ note('Coat of Arms', 'Unmodeled', 'the shared-type anthem is not modeled (too co
 def _hymn(g, p, c, ctx): p.floatA += sum(1 for m in p.perms if m.creature)
 
 
-@on('Conspicuous Snoop', 'etb')
-def _snoop(g, src, p, m): pass
 card('Conspicuous Snoop', 'pow=2 rogue', dsl=[])
 note('Conspicuous Snoop', 'Partial', 'body only')
 
@@ -528,8 +518,6 @@ card('Hullbreaker Horror', 'pow=7 tgh=8 flash unc bomb=7', dsl=[])
 note('Hullbreaker Horror', 'Approximate', 'uncounterable; each of your spells bounces the best opposing nonland permanent')
 
 
-@on('Temur Sabertooth', 'etb')
-def _sabertooth(g, src, p, m): pass
 card('Temur Sabertooth', 'pow=4 tgh=3', dsl=[])
 note('Temur Sabertooth', 'Partial', 'body only (re-buying ETB creatures is not used)')
 
@@ -644,8 +632,6 @@ walker('Ob Nixilis, the Adversary', [
 
 
 # ======================================================== GAA and control staples
-@on('Isochron Scepter', 'etb')
-def _scepter(g, src, p, m): pass
 card('Isochron Scepter', '', types='A', dsl=[])
 card('Dramatic Reversal', '', types='I', dsl=[])
 CI.SPELL_PRIO['Isochron Scepter'] = lambda g, p, c: 60 if any(x.name == 'Dramatic Reversal' for x in p.hand) else 30
@@ -674,3 +660,6 @@ card('Sanguine Bond', '', types='E', dsl=[])
 card('Exquisite Blood', '', types='E', dsl=[])
 note('Sanguine Bond', 'Full', 'your life gain drains the most threatening opponent; with Exquisite Blood a combo')
 note('Exquisite Blood', 'Full', 'opponents\' life loss gains you life; with Sanguine Bond a combo')
+
+
+note('Temur Sabertooth', 'Partial', 'body only (re-buying ETB creatures is not used)')

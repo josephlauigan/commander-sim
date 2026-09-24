@@ -292,7 +292,7 @@ def _altar(g, p, src, m): p.floatA += 1
 # free sacrifice outlets: name -> effect when used (None: nothing but the death itself)
 SAC_OUTLET = {'Viscera Seer': None, 'Carrion Feeder': _feeder, 'Woe Strider': None, 'Cartel Aristocrat': None,
               "Ashnod's Altar": _ashnod, 'Phyrexian Altar': _altar, 'Goblin Bombardment': _bombard,
-              'Yahenni, Undying Partisan': None, 'Spawning Pit': None, 'Carrion Feeder ': None}
+              'Yahenni, Undying Partisan': None, 'Spawning Pit': None}
 # death payoffs: name -> value per creature death of yours (drains count once per opponent)
 DEATH_DRAIN = {'Blood Artist': 1, 'Zulaport Cutthroat': 1, 'Cruel Celebrant': 1, 'Bastion of Remembrance': 1,
                'Falkenrath Noble': 1, 'Vindictive Vampire': 1, 'Syr Konrad, the Grim': 1, 'Poison-Tip Archer': 1,
@@ -1091,7 +1091,6 @@ _tax_spell('Aura of Silence', 2, lambda c: 'A' in c.types or 'E' in c.types, typ
 _tax_spell('Dovin, Hand of Control', 1, lambda c: 'A' in c.types or c.instant or c.sorcery,
            status=('Approximate', 'opponents\' artifact, instant and sorcery spells cost {1} more; loyalty abilities unused'))
 card('Thalia, Guardian of Thraben', 'human pow=2 tgh=1', dsl=[], kws={'first strike'})
-IC_WALKER_STUBS = ('Dovin, Hand of Control',)
 
 
 @CI.on('Trinisphere', 'min_cost')
@@ -1151,24 +1150,15 @@ note('Lavinia, Azorius Renegade', 'Approximate', 'opponents can\'t cast noncreat
      'free spells (Force of Will) are off')
 
 
-@CI.on('Spirit of the Labyrinth', 'etb')
-def _spirit_lab(g, src, p, m): pass
 card('Spirit of the Labyrinth', 'pow=3 tgh=1 narset', dsl=[])
 note('Spirit of the Labyrinth', 'Approximate', 'opponents draw at most one card a turn (its own controller is not '
      'limited, unlike the card)')
 
 
-HUSH = ('Hushbringer',)
-
-
-@CI.on('Hushbringer', 'etb')
-def _hush(g, src, p, m): pass
 card('Hushbringer', 'pow=1 tgh=2 fly lifelink', dsl=[])
 note('Hushbringer', 'Partial', 'body only: stopping ETB and dies triggers is not modeled')
 
 
-@CI.on('Aven Mindcensor', 'etb')
-def _mindcensor(g, src, p, m): pass
 card('Aven Mindcensor', 'pow=2 tgh=1 fly flash', dsl=[])
 note('Aven Mindcensor', 'Partial', 'body only: search restriction not modeled')
 

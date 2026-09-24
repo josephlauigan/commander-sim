@@ -64,9 +64,6 @@ def _jailer_lose(g, src, p):
     if src.data: src.data['oring'] = []
 
 
-def _jailer_leaves(g, src): pass
-
-
 card('Palace Jailer', 'human pow=2', dsl=[])
 note('Palace Jailer', 'Full', 'monarch (end-step draw, taken by combat damage); exiles a creature until an opponent '
      'becomes the monarch')
