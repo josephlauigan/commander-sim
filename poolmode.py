@@ -273,6 +273,10 @@ def matrix(decks, tiers, profiles, n, seed0, out=None):
                 C.PROG.label = f'{d} {tier} / {prof}'
                 R = run(d, None, pool_keys(tier), prof, n, seed0)
                 cells[(prof, d, tier)] = R
+                if C.PROG.on:
+                    lo, hi = wilson(R['win'], R['n'])
+                    print(f"  cell {d} vs {tier} [{prof}]: {100*R['win']/R['n']:5.1f}% ({100*lo:.1f}-{100*hi:.1f})",
+                          file=sys.stderr, flush=True)
     for prof in profiles:
         print(f'\n=== Win rate by deck and tier [{prof} profile, {C.AI} AI, n={n} per cell; even share 25%] ===')
         print(f"  {'deck':10s} " + ' '.join(f'{t:>18s}' for t in tiers))

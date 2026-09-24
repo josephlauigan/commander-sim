@@ -488,10 +488,11 @@ note('Embercleave', 'Approximate', 'cast in the main phase onto the best attacke
 @on('Helm of the Host', 'combat_start')
 def _helm(g, src, p):
     if src.owner is not p or src.attached is None or src.attached not in p.perms or src.attached.cd is None: return
+    name = src.attached.name       # the copy can make the legend rule remove the equipped original
     t = enter_token_copy(g, p, src.attached.cd)
     if t is None: return
     t.sick = False
-    log(f'    Helm of the Host copies {src.attached.name}', g)
+    log(f'    Helm of the Host copies {name}', g)
     return [t]
 card('Helm of the Host', 'leg', types='A', dsl=[{'type': 'static', 'static': 'equip_cost', 'mana': 5}])
 note('Helm of the Host', 'Full', 'a hasty token copy of the equipped creature at the start of each combat')
