@@ -1376,6 +1376,8 @@ def can_block(g, b, a):
         if D.has_kw(g, b, 'cant_block') or D.has_kw(g, a, 'unblockable'): return False
         if D.has_kw(g, a, 'flying') and not (b.fly or D.has_kw(g, b, 'flying') or D.has_kw(g, b, 'reach')
                                              or (b.cd is not None and 'reach' in b.cd.tags)): return False
+    if E.POOL_RULES and E.CI is not None and E.CI.granted_kw(g, a, 'forestwalk') and any(
+            L.cd.name == 'Forest' or 'forest' in getattr(L.cd, 'subtypes', ()) for L in b.owner.lands): return False
     if a.cd is not None and 'swampwalk' in a.cd.tags and any(
             L.cd.name in ('Swamp', 'Watery Grave', 'Blood Crypt', 'Overgrown Tomb') for L in b.owner.lands):
         return False                                 # Sheoldred, Whispering One: swampwalk
@@ -1494,6 +1496,11 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     to_walker = walker_attacks(g, p, atk, d, assign) if E.POOL_RULES else {}
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
+        if E.POOL_RULES and d.key not in MAIN:
+            for c, fn in E.CI.hand_cards(d, 'hand_defend'): fn(g, c, d, p, atk, assign)
+            for L in list(d.lands):
+                h = E.CI.HOOKS.get(L.cd.name)
+                if h and 'land_defend' in h: h['land_defend'](g, L, d, p, atk, assign)
         if E.POOL_RULES and p.key not in MAIN: __import__('impl_t4').ninjutsu(g, p, atk, d, assign)
     conn = set()
     for a in atk:
@@ -1908,7 +1915,7 @@ def end_step(g, p):
     if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
         for m in p.perms:
             if m.plus > 0: m.plus += 1
-    while len(p.hand) > 7 and not has(p, 'nomax'):
+    while len(p.hand) > 7 and not has(p, 'nomax') and not (E.POOL_RULES and any('nomax' in L.cd.tags for L in p.lands)):
         if p.key == 'seph':
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
             if bombs:
@@ -1967,6 +1974,7 @@ def take_turn(g, p):
         if m.tapped: lose_life(g, p, 1, p, damage=True)
     if has(p, 'necro'): pass                     # Necropotence: skip your draw step
     elif E.POOL_RULES and loam_dredge(g, p): pass
+    elif E.POOL_RULES and __import__('impl_lands').dakmor_dredge(g, p): pass
     elif g.hooks and E.CI.total(g, 'skip_draw', p): pass     # Solitary Confinement
     elif not (p.key == 'seph' and seph_dredge(g, p)):
         draw(g, p, 1, step=True)

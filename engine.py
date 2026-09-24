@@ -96,6 +96,7 @@ class Player:
         s.key = key; s.ident = IDENT[key] if key in IDENT else SEATS[key]['ident']
         s.cmd = DB[cmdname]
         lib = list(cards); lib.remove(cmdname)
+        s.deck_names = tuple(cards)
         s.library = [DB[n] for n in lib]
         s.hand, s.gy, s.exile, s.lands, s.perms = [], [], [], [], []
         s.floatR = 0          # red mana from Birgi, lasts until end of turn
@@ -432,7 +433,8 @@ def mana_units(g, p, convoke=False):
             U.append([m, p.ident if c == 'A' else ('' if c == 'C' else c), int(a)])
         elif 'dork' in t and not m.sick:
             c = t['dork']
-            U.append([m, p.ident if c == 'A' else c, CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else 1])
+            amt = CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else 1
+            if amt > 0: U.append([m, p.ident if c == 'A' else c, amt])
         elif rite and m.cd.creature and not m.sick and m.noatk:
             U.append([m, p.ident, 1])
     tre = p.treasures if not (g.hooks and CI.total(g, 'no_artifact_mana', p)) else 0
@@ -706,6 +708,8 @@ def die(g, m, cause='destroy'):
     if m not in p.perms: return
     if cause == 'destroy' and indestructible(g, m): return
     if cause == 'destroy' and getattr(g, 'auras', None) and CI.umbra_save(g, m): return
+    if POOL_RULES and cause in ('destroy', 'combat') and m.creature and not m.token and CI is not None \
+            and __import__('impl_lands').try_regenerate(g, m): return
     selfdies = CI is not None and m.cd is not None and CI.live(m.cd.name) and CI.HOOKS[m.cd.name].get('self_dies')
     leave(g, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
@@ -1107,7 +1111,9 @@ def cast_counter(g, q, ctr):
         q.hand.remove(blues[0]); q.exile.append(blues[0]); lose_life(g, q, 1, q)
     elif not pay(g, q, ctr.generic, ctr.pips):
         return False
-    q.hand.remove(ctr); q.gy.append(ctr)
+    q.hand.remove(ctr)
+    if ctr.creature and POOL_RULES: enter(g, q, ctr, was_cast=True)      # Mystic Snake: the counter is a creature
+    else: q.gy.append(ctr)
     q.spells_this_turn += 1
     on_cast(g, q, ctr)
     q.stats['counters_cast'] += 1
@@ -1129,7 +1135,8 @@ def counter_window(g, p, c, imp, aff):
             import brain
             nc = sum(1 for x in q.hand if 'ctr' in x.tags)
             if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
-            if not nc or g.rng.random() > brain.wants_counter(g, q, val, CTHRESH.get(q.key, CTHRESH_DEFAULT), nc): continue
+            thr = CTHRESH[q.key] if q.key in CTHRESH else __import__('pool_ai').counter_threshold(q, CTHRESH_DEFAULT)
+            if not nc or g.rng.random() > brain.wants_counter(g, q, val, thr, nc): continue
         else:
             if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): continue
             if g.rng.random() > 0.9: continue
@@ -1802,7 +1809,11 @@ def agent_take(g, a, p, c):
 
 def tutor_to_top(g, p):
     import ais
-    name = ais.tutor_pick(g, p, 'any')
+    p.to_top = True
+    try:
+        name = ais.tutor_pick(g, p, 'any')
+    finally:
+        p.to_top = False
     lose_life(g, p, 2, p)
     if name is None: return
     c = next((x for x in p.library if x.name == name), None)

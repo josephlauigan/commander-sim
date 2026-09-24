@@ -472,18 +472,6 @@ def spell(name, prio=None, status=('Full', ''), tags=None, types=None):
     return deco
 
 
-@spell('Brainstorm', prio=lambda g, p, c: 40 if len(p.library) > 10 else 0, tags='', types='I',
-       status=('Approximate', 'draw three, put back the two least useful cards'))
-def _brainstorm(g, p, c, ctx):
-    draw(g, p, 3)
-    for _ in range(2):
-        rest = [x for x in p.hand if x is not c]
-        if not rest: break
-        lands = sum(1 for x in rest if x.land)
-        x = min(rest, key=lambda x: (card_worth(g, p, x) if not x.land else (25 if lands <= 2 and len(p.lands) < 6 else 4)))
-        p.hand.remove(x); p.library.append(x)
-
-
 @spell('Fact or Fiction', prio=45, tags='draw=2', types='I',
        status=('Approximate', 'the opponent\'s split is modeled as: you keep the best two of five'))
 def _fof(g, p, c, ctx):
@@ -1198,10 +1186,23 @@ def _ballista_ping(g, src, p, s, post):
 card('Walking Ballista', 'pow=0 tgh=0 xtutor', types='AC', dsl=[])
 note('Walking Ballista', 'Approximate', 'cast with X = spare mana; pings X/1 creatures or lethal players (infinite-mana '
      'kills are in the combo framework)')
-CI.SPELL_PRIO['Walking Ballista'] = lambda g, p, c: 45 if total_mana(g, p) >= 4 else 0
+def _ballista_prio(g, p, c):
+    """cast for value with four or more mana; a deck with the Scepter / Power Artifact combo keeps it as the kill"""
+    if total_mana(g, p) < 4: return 0
+    names = {x.name for x in p.library} | {x.name for x in p.hand} | {m.cd.name for m in p.perms if m.cd is not None}
+    if names & {'Isochron Scepter', 'Power Artifact', 'Rings of Brighthearth'} and total_mana(g, p) < 8: return 0
+    return 45
+
+
+CI.SPELL_PRIO['Walking Ballista'] = _ballista_prio
+
+
+TUTOR_PRED = {}      # creature tutors: name -> what they can find (tutors follow chains: Recruiter -> Spellseeker -> Reversal)
 
 
 def _tutor_etb(name, pred, tags, status=('Full', '')):
+    TUTOR_PRED[name] = pred
+
     @CI.on(name, 'etb')
     def _t(g, src, p, m):
         if m is src:
@@ -1309,33 +1310,6 @@ note("Urza's Saga", 'Approximate', 'taps for C; chapter II a Construct (paying {
      'then sacrificed')
 
 
-def _top_sort(g, p, n=3):
-    top = [p.library.pop() for _ in range(min(n, len(p.library)))]
-    import pool_ai
-    if pool_ai.config(p).get('top_pref') == 'mv': top.sort(key=lambda c: c.cmc)          # Yuriko: biggest reveal on top
-    else: top.sort(key=lambda c: card_worth(g, p, c) if not (c.land and len(p.lands) >= 6) else 1)
-    p.library.extend(top)
-
-
-@CI.on("Sensei's Divining Top", 'upkeep')
-def _top(g, src, p):
-    if p is src.owner and can_pay(g, p, 1, ''): pay(g, p, 1, ''); _top_sort(g, p, 3)
-card("Sensei's Divining Top", '', types='A', dsl=[])
-note("Sensei's Divining Top", 'Approximate', 'each upkeep pays {1} to put the best of the top three on top')
-
-
-@CI.on('Scroll Rack', 'upkeep')
-def _rack(g, src, p):
-    if p is not src.owner or not can_pay(g, p, 1, '') or not p.hand or not p.library: return
-    pay(g, p, 1, '')
-    worst = sorted(p.hand, key=lambda c: card_worth(g, p, c))[:2]
-    for c in worst:
-        top = p.library.pop(); p.hand.remove(c); p.hand.append(top); p.library.append(c)
-    _top_sort(g, p, 3)
-card('Scroll Rack', '', types='A', dsl=[])
-note('Scroll Rack', 'Approximate', 'each upkeep swaps the two worst cards in hand for the top two, then orders the top')
-
-
 # ======================================================== threat values for key engines (how badly opponents want them gone)
 for _n, _v in (('Aurelia, the Warleader', 7), ('Isshin, Two Heavens as One', 6), ('Winota, Joiner of Forces', 8),
                ('Kaalia of the Vast', 7), ('Krenko, Mob Boss', 7), ('Yuriko, the Tiger\'s Shadow', 6),
@@ -1359,3 +1333,42 @@ for _n, _v in (('Aurelia, the Warleader', 7), ('Isshin, Two Heavens as One', 6),
                ('Sylvan Library', 4), ('Phyrexian Arena', 4), ('Bolas\'s Citadel', 6), ('The One Ring', 6),
                ('Gaea\'s Cradle', 0), ('Beastmaster Ascension', 5), ('Elesh Norn, Grand Cenobite', 8)):
     CI.PVAL[_n] = _v
+
+
+# ======================================================== Pernicious Deed
+@CI.on('Pernicious Deed', 'options')
+def _deed(g, src, p, s, post):
+    """{X}, sacrifice: destroy each artifact, creature and enchantment with mana value X or less (everyone's).
+    Used at the X where opponents lose clearly more than you do."""
+    if p is not src.owner or post is None: return []
+    avail = total_mana(g, p)
+    best = None
+    for x in range(0, avail + 1):
+        hit = lambda m: (not m.phased and m is not src and (m.cd is None or
+                         (m.creature or 'A' in m.cd.types or 'E' in m.cd.types)) and (0 if m.cd is None else m.cd.cmc) <= x)
+        theirs = sum(pval(g, m) for q in g.opps(p) for m in q.perms if hit(m))
+        mine = sum(pval(g, m) for m in p.perms if hit(m))
+        net = theirs - 1.3 * mine
+        if best is None or net > best[0]: best = (net, x)
+    if best is None or best[0] < 8: return []
+    net, x = best
+
+    def go(x=x):
+        if src not in p.perms or not can_pay(g, p, x, ''): return False
+        pay(g, p, x, '')
+        log(f'  {NAME(p)} sacrifices Pernicious Deed (X={x})', g)
+        die(g, src, 'sac')
+        for q in [q for q in g.players if q.alive]:
+            for m in list(q.perms):
+                if m.phased: continue
+                if (m.cd is None or m.creature or 'A' in m.cd.types or 'E' in m.cd.types) and \
+                        (0 if m.cd is None else m.cd.cmc) <= x and m in q.perms:
+                    die(g, m, 'destroy')
+        check_state(g)
+        return True
+    return [(net / 3.0, f'Pernicious Deed (X={x})', go)]
+
+
+card('Pernicious Deed', '', types='E', dsl=[])
+note('Pernicious Deed', 'Full', '{X}, sacrifice: destroys every artifact, creature and enchantment with mana value X or '
+     'less; used when opponents lose clearly more')

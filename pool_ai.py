@@ -18,6 +18,18 @@ def style(p):
     return config(p).get('style', DEFAULT_STYLE)
 
 
+_NCTR = {}
+
+
+def counter_threshold(q, base):
+    """importance a spell needs before q counters it: the profile's base, lowered for decks built around
+    counterspells (a control deck with ten counters answers engines and commanders, not only bombs)"""
+    n = _NCTR.get(q.key)
+    if n is None:
+        n = _NCTR[q.key] = sum(1 for x in q.deck_names if x in E.DB and 'ctr' in E.DB[x].tags)
+    return base - min(2.5, 0.3 * n)
+
+
 def generic_prio(g, p, c):
     """0-90 cast priority from what the card is tagged to do. 0 = not cast proactively (held interaction,
     or no tags: the adaptive AI then falls back to the ability interpreter's value estimate)."""
@@ -32,7 +44,7 @@ def generic_prio(g, p, c):
     if E.CI is not None and c.name in E.CI.SPELL_PRIO:
         v = E.CI.SPELL_PRIO[c.name]
         return v(g, p, c) if callable(v) else v
-    if c is p.cmd: return cfg.get('cmd_prio', 75) if p.turns >= cfg.get('cmd_turn', 2) else 0
+    if c is p.cmd: return max(40, cfg.get('cmd_prio', 75) - 3 * p.tax) if p.turns >= cfg.get('cmd_turn', 2) else 0
     if 'rock' in t or 'dork' in t or 'lr' in t or 'fastmana' in t: return 85 if p.turns <= 5 else 38
     if 'chromemox' in t:
         spare = [x for x in p.hand if not x.land and 'A' not in x.types and set(x.pips) & set(p.ident)]
@@ -78,7 +90,15 @@ def generic_prio(g, p, c):
     if 'combatspell' in t: return 0                                # SPELL_PRIO decides
     if 'fable' in t: return 58
     if c.creature: return 42 + min(16, 2 * c.pow) + (4 if 'fly' in t else 0)
-    if c.perm and E.CI is not None and c.name in E.CI.HOOKS: return cfg.get('hooked_prio', 55)
+    if c.perm and E.CI is not None and c.name in E.CI.HOOKS:
+        h = E.CI.HOOKS[c.name]
+        if 'attack_tax' in h or 'attack_cap' in h:               # pillowfort: worth what it keeps off you
+            g = E.CUR_G
+            power = sum(E.epow(g, m) for q in g.opps(p) for m in q.perms if m.creature and not m.phased)
+            return 45 + min(25, int(1.5 * power / max(1, len(g.opps(p)))))
+        if ('cost' in h or 'can_cast' in h or 'min_cost' in h) and not c.creature:   # stax: best early
+            return 68 if p.turns <= 5 else 52
+        return cfg.get('hooked_prio', 55)
     if c.perm and _is_outlet(c.name): return 50                     # sacrifice outlets (Goblin Bombardment ...)
     if E.CI is not None and E.CI.combo_imp is not None and c.perm:
         ci = E.CI.combo_imp(E.CUR_G, p, c)                          # a combo piece: 9 = completes it, 7 = one short

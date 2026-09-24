@@ -286,6 +286,8 @@ def _misc(m):
     t = m.group(0)
     if t == 'investigate': return [{'do': 'clue', 'n': 1}]
     if t == 'proliferate': return [{'do': 'proliferate'}]
+    if t.startswith(('scry', 'surveil')) and m.group(1) and m.group(1) != 'x':
+        return [{'do': t.split()[0], 'n': int(m.group(1))}]
     return [{'do': 'noop'}]
 
 

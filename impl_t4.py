@@ -106,6 +106,29 @@ note('Yuriko, the Tiger\'s Shadow', 'Full', 'commander ninjutsu; each Ninja hit 
      'opponent loses its mana value')
 
 
+YURIKO_BIG = ['Draco', 'Enter the Infinite', 'Dig Through Time', 'Treasure Cruise']
+EVASIVE_ONE = ('Ornithopter', 'Changeling Outcast', 'Gudul Lurker', 'Slither Blade', 'Faerie Seer', 'Spectral Sailor',
+               'Triton Shorestalker', 'Siren Stormtamer', 'Hope of Ghirapur', 'Moon-Circuit Hacker', 'Ingenious Infiltrator')
+
+
+def yuriko_wish(g, p):
+    """tutors: a big card for the reveal only when it ends up on top (Vampiric Tutor, or a way to put it back);
+    otherwise card advantage and Yuriko's enablers"""
+    yuri = any(m.is_cmd for m in p.perms) or p.cmd_in_zone
+    putback = (getattr(p, 'to_top', False) or any(c.name == 'Brainstorm' for c in p.hand)
+               or any(m.cd is not None and m.cd.name in ('Scroll Rack', "Sensei's Divining Top") for m in p.perms))
+    if yuri and putback: return YURIKO_BIG
+    return ['Rhystic Study', 'Scroll Rack', "Sensei's Divining Top", 'Mystic Remora']
+
+
+def yuriko_prio(g, p, c):
+    """evasive one-drops first: they carry Yuriko in on turn two"""
+    if c.name in EVASIVE_ONE or (c.creature and c.cmc <= 2 and ('fly' in c.tags or c.name in ('Invisible Stalker',))):
+        have = sum(1 for m in p.perms if m.creature and not m.phased)
+        return 80 if have < 2 else 58
+    return None
+
+
 for _n, (_g, _p) in NINJUTSU.items():
     note(_n, 'Full', f'ninjutsu {_g}{_p}') if _n not in ('Yuriko, the Tiger\'s Shadow',) else None
 
@@ -632,9 +655,63 @@ walker('Ob Nixilis, the Adversary', [
 
 
 # ======================================================== GAA and control staples
+def _imprintable(c):
+    return c.instant and c.cmc <= 2 and 'ctr' not in c.tags
+
+
+@on('Isochron Scepter', 'etb')
+def _scepter_etb(g, src, p, m):
+    """imprint: Dramatic Reversal if in hand, else the best removal / card-draw instant with mana value 2 or less"""
+    if m is not src: return
+    o = src.owner
+    cs = [c for c in o.hand if _imprintable(c)]
+    if not cs: return
+    c = max(cs, key=lambda c: (c.name == 'Dramatic Reversal', 'rem' in c.tags, card_worth(g, o, c)))
+    o.hand.remove(c); o.exile.append(c)
+    if src.data is None: src.data = {}
+    src.data['imprint'] = c.name
+    log(f'    Isochron Scepter imprints {c.name}', g)
+
+
+@on('Isochron Scepter', 'options')
+def _scepter_use(g, src, p, s, post):
+    """{2}, {T}: cast a copy of the imprinted card (the Reversal loop itself is in the combo framework)"""
+    if p is not src.owner or src.tapped or not src.data or not can_pay(g, p, 2, ''): return []
+    name = src.data.get('imprint')
+    if name is None or name == 'Dramatic Reversal': return []
+    c = DB[name]
+    if 'rem' in c.tags:
+        tg = legal_targets(g, p, c.tags['rem'], c.tags.get('tgt', 'c'), 'mv4' in c.tags, spell=c)
+        if not tg: return []
+        t = max(tg, key=lambda m: pval(g, m))
+        if pval(g, t) < 3: return []
+        u, ctx = 2.0 + pval(g, t), {'target': t}
+    else:
+        u, ctx = 1.5 + card_worth(g, p, c) / 10.0, {}
+
+    def go():
+        if src.tapped or not can_pay(g, p, 2, ''): return False
+        pay(g, p, 2, ''); src.tapped = True
+        log(f'  {NAME(p)} casts a copy of {name} with Isochron Scepter', g)
+        n = len(p.gy)
+        cast_card(g, p, c, 'lib', dict(ctx))
+        if len(p.gy) > n and p.gy[-1] is c: p.gy.pop()             # the copy ceases to exist
+        elif c in p.exile[-1:]: p.exile.pop()
+        return True
+    return [(u, f'Isochron Scepter ({name})', go)]
+
+
+def _scepter_prio(g, p, c):
+    if any(x.name == 'Dramatic Reversal' for x in p.hand): return 62
+    if any(x.name == 'Dramatic Reversal' for x in p.library): return 0          # wait for the Reversal
+    return 30 if any(_imprintable(x) and 'rem' in x.tags for x in p.hand) else 0
+
+
 card('Isochron Scepter', '', types='A', dsl=[])
+note('Isochron Scepter', 'Full', 'imprints Dramatic Reversal (combo) or the best removal / draw instant, and casts copies; '
+     'held until the Reversal is in hand')
 card('Dramatic Reversal', '', types='I', dsl=[])
-CI.SPELL_PRIO['Isochron Scepter'] = lambda g, p, c: 60 if any(x.name == 'Dramatic Reversal' for x in p.hand) else 30
+CI.SPELL_PRIO['Isochron Scepter'] = _scepter_prio
 CI.SPELL_PRIO['Dramatic Reversal'] = 0
 
 

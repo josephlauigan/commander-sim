@@ -534,7 +534,9 @@ def hook_options(g, p, s, post):
             if src.owner is p: o += fn(g, src, p, s, post) or []
     for c, fn in E.CI.gy_cards(p, 'gy_options'): o += fn(g, c, p, s, post) or []
     for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
-    if p.key not in STYLE: o += __import__('pool_ai').special_options(g, p, s, post)
+    if p.key not in STYLE:
+        o += __import__('pool_ai').special_options(g, p, s, post)
+        o += __import__('impl_lands').land_options(g, p, s, post)
     if E.CI.combo_options is not None: o += E.CI.combo_options(g, p, s, post)
     return o
 

@@ -217,22 +217,60 @@ def _kiki(g, p):
     return False, [], []
 
 
-@combo('Isochron Scepter + Dramatic Reversal', [('Isochron Scepter',), ('Dramatic Reversal',)],
+MANA_SINKS = ('Walking Ballista', 'Urza, Lord High Artificer', 'Kinnan, Bonder Prodigy', "Thassa's Oracle")
+
+
+@combo('Isochron Scepter + Dramatic Reversal', [('Isochron Scepter',), ('Dramatic Reversal',), MANA_SINKS],
        text='infinite mana with 3+ mana from nonland permanents; wins with a mana sink (Walking Ballista, Urza, Kinnan, '
             'Thassa\'s Oracle in hand ...)')
 def _scepter(g, p):
     sc = on_bf(p, 'Isochron Scepter')
-    rv = in_hand(p, 'Dramatic Reversal')
-    if sc is None or rv is None: return False, [], []
-    rocks = sum(u[2] for u in mana_units(g, p) if isinstance(u[0], Perm))
-    if rocks < 3: return False, [], []
-    sink = any_bf(p, ('Walking Ballista', 'Urza, Lord High Artificer', 'Kinnan, Bonder Prodigy', 'Grand Arbiter Augustin IV')) \
-        or in_hand(p, 'Walking Ballista') or in_hand(p, "Thassa's Oracle")
-    if sink is None: return False, [], []
-    return True, [sc], []
+    casts = []
+    if sc is not None:
+        if getattr(sc, 'data', None) is None or sc.data.get('imprint') != 'Dramatic Reversal': return False, [], []
+    else:                                   # cast the Scepter now and imprint the Reversal from hand
+        c, rv = in_hand(p, 'Isochron Scepter'), in_hand(p, 'Dramatic Reversal')
+        if c is None or rv is None: return False, [], []
+        casts = [c]
+    if nonland_mana(g, p) < 3 or not can_pay(g, p, 2 + sum(c.generic for c in casts), 'U'): return False, [], []
+    if not mana_sink(p): return False, [], []
+    return True, [sc], casts
 
 
-@combo('Power Artifact / Rings of Brighthearth + Monolith', [('Power Artifact', 'Rings of Brighthearth'), ('Basalt Monolith', 'Grim Monolith')],
+def nonland_mana(g, p):
+    """mana p's nonland permanents make, tapped or not (Dramatic Reversal untaps them all)"""
+    if g.hooks and CI.total(g, 'mana_lock', p): return 0
+    n = 0
+    for m in p.perms:
+        if m.phased or m.cd is None: continue
+        t = m.cd.tags
+        if 'rock' in t:
+            if g.hooks and CI.total(g, 'no_artifact_mana', p): continue
+            n += int(t['rock'].split(':')[0])
+        elif 'dork' in t and not m.sick and not (g.hooks and CI.total(g, 'no_creature_mana', p)):
+            n += CI.dyn_mana(g, p, m) if m.cd.name in CI.DYN_MANA else 1
+    return n
+
+
+SINK_TUTORS = {'Recruiter of the Guard': 'Walking Ballista', 'Enlightened Tutor': 'Walking Ballista',
+               'Demonic Tutor': None, 'Diabolic Intent': None, 'Mystical Tutor': None, 'Spellseeker': None}
+
+
+def mana_sink(p):
+    """infinite mana wins: a sink on the battlefield or in hand, or a tutor in hand that finds one (with infinite
+    mana, Recruiter of the Guard or Enlightened Tutor fetches Walking Ballista and casts it for any X)"""
+    if any_bf(p, ('Walking Ballista', 'Urza, Lord High Artificer', 'Kinnan, Bonder Prodigy')): return True
+    if in_hand(p, 'Walking Ballista') or in_hand(p, "Thassa's Oracle"): return True
+    lib = {c.name for c in p.library}
+    for c in p.hand:
+        if c.name in SINK_TUTORS:
+            t = SINK_TUTORS[c.name]
+            if (t in lib) if t else any(n in lib for n in ('Walking Ballista', "Thassa's Oracle")): return True
+    return False
+
+
+@combo('Power Artifact / Rings of Brighthearth + Monolith', [('Power Artifact', 'Rings of Brighthearth'), ('Basalt Monolith', 'Grim Monolith'),
+                                                             MANA_SINKS],
        text='infinite colourless mana; wins with Urza / Kinnan / Walking Ballista')
 def _power_artifact(g, p):
     pa = any_bf(p, ('Power Artifact', 'Rings of Brighthearth'))
@@ -342,7 +380,8 @@ def _yawg(g, p):
     return True, [y] + ([mik] if mik else []), []
 
 
-@combo('Krenko + Thornbite Staff + a sacrifice outlet', [('Krenko, Mob Boss',), ('Thornbite Staff',)],
+@combo('Krenko + Thornbite Staff + a sacrifice outlet', [('Krenko, Mob Boss',), ('Thornbite Staff',),
+                                                         ('Skirk Prospector', 'Goblin Bombardment', 'Ashnod\'s Altar', 'Phyrexian Altar')],
        text='each Goblin sacrificed untaps Krenko: infinite Goblins')
 def _staff(g, p):
     k = on_bf(p, 'Krenko, Mob Boss', untapped=True, unsick=True); st = on_bf(p, 'Thornbite Staff')

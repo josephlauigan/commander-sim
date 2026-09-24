@@ -189,7 +189,10 @@ def _threat_value(cd):
 
 
 def turn_start(g, p):
-    """start of p's turn: rebound spells, Pact of Negation payments"""
+    """start of p's turn: animated lands revert, land upkeep triggers, rebound spells, Pact of Negation payments"""
+    import impl_lands
+    if getattr(g, 'animated', None): impl_lands.revert_animated(g)
+    impl_lands.land_upkeep(g, p)
     n = getattr(p, 'pacts', 0)
     while n > 0:
         n -= 1
@@ -234,7 +237,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    import impl_common, impl_t1, impl_t2, impl_t3, impl_t4, impl_t5, impl_combos  # noqa: F401
+    import impl_common, impl_t1, impl_t2, impl_t3, impl_t4, impl_t5, impl_combos, impl_topdeck, impl_fixes, impl_lands  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]
@@ -244,6 +247,11 @@ E.CI = __import__('sys').modules[__name__]
 def keyword_attack(g, p, atk, d):
     """battle cry, mentor, dethrone, exalted, myriad-free subset; returns new attacking creatures"""
     new = []
+    for m in atk:                                   # creature lands: Raging Ravine grows, Hive exiles a card
+        if m.token and m.data and 'land' in m.data:
+            if m.name == 'Raging Ravine': m.plus += 1
+            elif m.name == 'Hive of the Eye Tyrant' and d.gy:
+                x = max(d.gy, key=lambda c: (c.creature, c.cmc)); d.gy.remove(x); d.exile.append(x)
     if not any(m.cd is not None and m.cd.kws for m in atk) and not any(
             m.cd is not None and 'exalted' in m.cd.kws for m in p.perms):
         return new

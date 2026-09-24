@@ -186,7 +186,10 @@ def execute(g, p, effects, src=None, ctx=None, spell=None, depth=0):
 def run(g, p, e, src, ctx, spell, depth):
     d = e['do']; opps = g.opps(p)
     kind = 'burn' if spell is not None else 'triggers'
-    if d == 'draw':
+    if d in ('scry', 'surveil'):
+        if E.POOL_RULES:
+            import impl_topdeck; impl_topdeck.scry(g, p, e.get('n', 1), 'gy' if d == 'surveil' else 'bottom')
+    elif d == 'draw':
         for q in players(g, p, e.get('who', 'you'), ctx):
             if e.get('optional') and len(q.library) <= 12: continue       # "you may draw": don't deck yourself
             draw(g, q, num(g, p, e.get('n'), ctx, src))
