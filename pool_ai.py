@@ -66,6 +66,7 @@ def generic_prio(g, p, c):
     if 'draw' in t and (c.instant or c.sorcery): return 46
     if 'draw' in t: return 52
     if 'treas' in t or 'mktok' in t or 'drainetb' in t or 'edictetb' in t: return 50
+    if 'xtutor' in t: return 0                                     # SPELL_PRIO decides (X spells)
     if 'aura' in t:                                            # an Aura needs a creature to go on
         if not any(m.creature and not m.phased for m in p.perms): return 0
         return cfg.get('aura_prio', 55)
@@ -74,6 +75,8 @@ def generic_prio(g, p, c):
     if 'loam' in t: return 45 if sum(1 for x in p.gy if x.land) >= 2 else 0
     if 'rishkar' in t: return 55 if max((E.epow(g, m) for m in p.perms if m.creature), default=0) >= 4 else 0
     if 'krasis' in t: return 0                                     # cast by special_options with X
+    if 'combatspell' in t: return 0                                # SPELL_PRIO decides
+    if 'fable' in t: return 58
     if c.creature: return 42 + min(16, 2 * c.pow) + (4 if 'fly' in t else 0)
     if c.perm and E.CI is not None and c.name in E.CI.HOOKS: return cfg.get('hooked_prio', 55)
     if t.get('prot') == 'boots' or 'sac' in t: return 40
@@ -104,6 +107,7 @@ def special_options(g, p, s, post):
     import impl_t2
     o += impl_t2.evoke_options(g, p, s, post)
     o += impl_common.aristocrat_options(g, p, s, post)
+    o += impl_common.food_options(g, p, s, post)
     if post is None: return o                                    # end-of-turn window: nothing here is instant speed
     for e in p.perms:
         if e.cd is None or e.phased or e.cd.name not in EQUIP_COST: continue
@@ -323,6 +327,24 @@ def spell_options(g, p, s, post):
                     E.gain(p, x // 2); E.draw(g, p, x // 2)
                     m = E.enter(g, p, c, was_cast=True); m.plus += x; return True
                 o.append((1.0 + 0.6 * x, f'Hydroid Krasis X={x}', krasis))
+        if 'primalmight' in t and E.castable(g, p, c) and post is not None:                # Primal Might: pump + fight
+            mine = [m for m in p.perms if m.creature and not m.phased]
+            x = E.total_mana(g, p) - 1
+            if mine and x >= 1:
+                me = max(mine, key=lambda m: E.epow(g, m))
+                tg = [m for q in g.opps(p) for m in q.perms if m.creature and not E.untargetable(g, m) and
+                      E.etgh(g, m) <= E.epow(g, me) + x]
+                if tg:
+                    foe = max(tg, key=lambda m: pval(g, m))
+                    if pval(g, foe) >= 3:
+                        def might(c=c, me=me, foe=foe):
+                            x = E.total_mana(g, p) - 1
+                            if c not in p.hand or x < 0 or not E.can_pay(g, p, x, 'G'): return False
+                            E.pay(g, p, x, 'G'); p.hand.remove(c); p.gy.append(c); E.on_cast(g, p, c)
+                            import cardimpl; cardimpl._eot(g, me, x, x)
+                            if foe in foe.owner.perms and me in p.perms: E.apply_removal(g, p, foe, f'dmg{E.epow(g, me)}', c)
+                            return True
+                        o.append((pval(g, foe) - 2.5, f'Primal Might -> {foe.name}', might))
         if 'rotw' in t and E.castable(g, p, c) and E.can_pay(g, p, c.generic, c.pips):      # Return of the Wildspeaker
             nh = [m for m in p.perms if m.creature and not m.phased and not E.has_type(m, 'human')]
             if not nh: continue

@@ -176,7 +176,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    import impl_common, impl_t1, impl_t2  # noqa: F401
+    import impl_common, impl_t1, impl_t2, impl_t3  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]

@@ -1619,12 +1619,14 @@ def combat(g, p):
         if adaptive: import brain
         atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
                and (not m.sick or p.haste_all or (E.POOL_RULES and has_haste(g, m)))
-               and not m.noatk and epow(g, m) > 0]
+               and (not m.noatk or (E.POOL_RULES and epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
         if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
         if not atk: break
         d = brain.choose_defender(g, p) if adaptive else choose_defender(g, p)
         if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
         if g.hooks: atk = attack_limits(g, p, d, atk)
+        if g.hooks and atk:                                   # beginning of combat (Helm of the Host)
+            for r in E.CI.fire(g, 'combat_start', p): atk += [m for m in r if m not in atk]
         if not atk: break
         unbl = set()
         a = army_of(p)

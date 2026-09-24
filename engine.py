@@ -417,6 +417,7 @@ def mana_units(g, p, convoke=False):
             if m.colors: U.append([m, m.colors, 1])
             continue
         if 'rock' in t:
+            if g.hooks and 'A' in m.cd.types and CI.total(g, 'no_artifact_mana', p): continue
             a, c = t['rock'].split(':')
             U.append([m, p.ident if c == 'A' else ('' if c == 'C' else c), int(a)])
         elif 'dork' in t and not m.sick:
@@ -424,8 +425,9 @@ def mana_units(g, p, convoke=False):
             U.append([m, p.ident if c == 'A' else c, CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else 1])
         elif rite and m.cd.creature and not m.sick and m.noatk:
             U.append([m, p.ident, 1])
-    for _ in range(p.treasures):
-        U.append(['T', p.ident, 1])
+    tre = p.treasures if not (g.hooks and CI.total(g, 'no_artifact_mana', p)) else 0
+    for _ in range(tre):
+        U.append(['T', p.ident, 1 + (CI.total(g, 'treasure_bonus', p) if g.hooks else 0)])
     for _ in range(p.floatR):
         U.append(['F', 'R', 1])
     for _ in range(p.floatA):
@@ -1440,6 +1442,8 @@ def _landfall_once(g, p):
         for _ in fields: make_tokens(g, p, 1, 2, color='B')
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'landfall', player=p)
     if g.hooks: CI.fire(g, 'landfall', p)
+    if CI is not None:
+        for c, fn in CI.gy_cards(p, 'gy_landfall'): fn(g, c, p)
 
 
 def land_to_hand(g, p):
@@ -1716,7 +1720,7 @@ def discard_cards(g, q, cards):
     for c in cards:
         q.hand.remove(c)
         (q.exile if necro else q.gy).append(c)
-        if g.hooks: CI.fire(g, 'discard', q, c)
+        if g.hooks: CI.fire(g, 'discard', q, c); q.discarded_turn = turn_stamp(g)
     if not necro:
         for c in cards: tergrid_steal(g, q, c, q)
 
@@ -1724,7 +1728,7 @@ def discard_cards(g, q, cards):
 def discard_index(g, q, i):
     """q discards the card at position i in hand (random discards)"""
     c = q.hand.pop(i)
-    if g.hooks: CI.fire(g, 'discard', q, c)
+    if g.hooks: CI.fire(g, 'discard', q, c); q.discarded_turn = turn_stamp(g)
     if has(q, 'necro'): q.exile.append(c); return
     q.gy.append(c); tergrid_steal(g, q, c, q)
 

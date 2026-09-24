@@ -232,6 +232,8 @@ def do_cast(g, p, c, zone=None):
     ctx = {}
     if 'tokx' in c.tags:
         x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x
+    elif 'xtutor' in c.tags:                         # X spells of outside decks: X = all spare mana
+        x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x
     if c.dsl: additional_cost(g, p, c)
     ok = cast_card(g, p, c, zone, ctx)
     if p.key == 'seph' and ok and (c is p.cmd or c.bomb >= 4): A.note_bomb(p, c)
@@ -444,7 +446,9 @@ def extra_options(g, p, s, post, sorcery_ok):
     if p.clues and can_pay(g, p, 2, ''):
         def crack():
             if not p.clues or not can_pay(g, p, 2, ''): return False
-            pay(g, p, 2, ''); p.clues -= 1; draw(g, p, 1); return True
+            pay(g, p, 2, ''); p.clues -= 1; draw(g, p, 1)
+            if g.hooks: E.CI.fire(g, 'sacrifice', p, 'Clue')
+            return True
         o.append((1.5 if not post else 2.5, 'crack a Clue', crack))
     if p.key == 'najeela' and not post:
         # Rhys the Redeemed: copy every creature token

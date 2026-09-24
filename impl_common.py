@@ -963,3 +963,99 @@ walker("Liliana, Death's Majesty", [
      lambda g, p, src: [die(g, m, 'destroy') for q in g.players for m in list(q.perms) if m.creature and not has_type(m, 'zombie')]),
 ], ('Full', ''))
 
+
+
+# ======================================================== artifact tokens (Treasure / Food / Clue) with replacements
+def make_artifact_tokens(g, p, kind, n=1):
+    """create n Treasure / Food / Clue tokens, applying Academy Manufactor, Chatterfang and token doubling"""
+    if n <= 0: return
+    mult = E.DSLMOD.token_mult(g, p) if E.DSLMOD is not None else 1
+    n *= mult
+    kinds = [kind]
+    if any(m.cd is not None and m.cd.name == 'Academy Manufactor' for m in p.perms if not m.phased):
+        kinds = ['Treasure', 'Food', 'Clue']
+    for k in kinds:
+        if k == 'Treasure': p.treasures += n
+        elif k == 'Food': p.foods = getattr(p, 'foods', 0) + n
+        else: p.clues += n
+    if g.hooks: CI.fire(g, 'token_created', p, kinds, n * len(kinds))
+
+
+def sac_food(g, p, n=1):
+    if getattr(p, 'foods', 0) < n: return False
+    p.foods -= n
+    for _ in range(n):
+        if g.hooks: CI.fire(g, 'sacrifice', p, 'Food')
+    return True
+
+
+def food_options(g, p, s, post):
+    """{2}, {T}, sacrifice a Food: gain 3 life (only when life matters)"""
+    if getattr(p, 'foods', 0) < 1 or not can_pay(g, p, 2, '') or p.life > 15 or post is False: return []
+
+    def go():
+        if getattr(p, 'foods', 0) < 1 or not can_pay(g, p, 2, ''): return False
+        pay(g, p, 2, ''); sac_food(g, p); gain(p, 3); return True
+    return [(2.0, 'eat a Food', go)]
+
+
+# ======================================================== proliferate
+def proliferate(g, p, times=1):
+    """each permanent / player with counters gets one more of each kind it has (you choose: your +1/+1 and loyalty,
+    opponents' -1/-1). Orc Armies are left to their hand tag in the four main decks."""
+    times *= 1 + (CI.total(g, 'proliferate_extra', p) if g.hooks else 0)            # Tekuthal
+    dbl = 2 if any(m.cd is not None and m.cd.name == 'Doubling Season' for m in p.perms) else 1
+    for _ in range(times):
+        for m in p.perms:
+            if m.army or m.phased: continue
+            if m.plus > 0: m.plus += dbl
+            if m.loyalty is not None and m.cd is not None and 'P' in m.cd.types: m.loyalty += dbl
+            if m.data and m.data.get('counters'):
+                for k in m.data['counters']: m.data['counters'][k] += dbl
+        for q in g.opps(p):
+            for m in list(q.perms):
+                if m.creature and m.plus < 0:
+                    m.plus -= 1
+                    if etgh(g, m) <= 0: die(g, m, 'sba')
+        if g.hooks: CI.fire(g, 'proliferated', p)
+
+
+CI.proliferate = proliferate
+
+
+# ======================================================== mana: Cradle, Nykthos, Coffers, Crypt Ghast, Circle of Dreams
+def devotion(p, col):
+    return sum(m.cd.pips.count(col) for m in p.perms if m.cd is not None and m.cd.perm and not m.phased)
+
+
+CI.DYN_MANA["Gaea's Cradle"] = lambda g, p, L: sum(1 for m in p.perms if m.creature and not m.phased)
+CI.DYN_MANA['Nykthos, Shrine to Nyx'] = lambda g, p, L: max(1, max(devotion(p, c) for c in 'WUBRG') - 2)
+CI.DYN_MANA['Circle of Dreams Druid'] = lambda g, p, m: sum(1 for x in p.perms if x.creature and not x.phased)
+CI.DYN_MANA['Cabal Coffers'] = lambda g, p, L: max(1, sum(1 for x in p.lands if 'swamp' in x.cd.subtypes or x.cd.name == 'Swamp'
+                                                        or _urborg(g)) - 2)
+CI.DYN_MANA['Marwyn, the Nurturer'] = lambda g, p, m: max(1, epow(g, m))
+note("Gaea's Cradle", 'Full', 'G for each creature you control')
+note('Nykthos, Shrine to Nyx', 'Approximate', 'taps for devotion minus the {2} activation')
+note('Circle of Dreams Druid', 'Full', 'G for each creature you control')
+note('Cabal Coffers', 'Approximate', 'B per Swamp minus the {2} activation (Urborg makes every land a Swamp)')
+
+
+def _urborg(g):
+    return any(L.cd.name == 'Urborg, Tomb of Yawgmoth' for q in g.players if q.alive for L in q.lands)
+
+
+note('Urborg, Tomb of Yawgmoth', 'Approximate', 'every land counts as a Swamp for Cabal Coffers and Crypt Ghast')
+
+
+@CI.on('Crypt Ghast', 'land_mana')
+def _ghast(g, src, p, L):
+    return 1 if p is src.owner and ('swamp' in L.cd.subtypes or L.cd.name == 'Swamp' or _urborg(g)) else 0
+card('Crypt Ghast', 'pow=2', dsl=[])
+note('Crypt Ghast', 'Partial', 'Swamps tap for an extra B; extort not modeled')
+
+
+@CI.on('Collector Ouphe', 'no_artifact_mana')
+def _ouphe(g, src, p): return 1
+card('Collector Ouphe', 'pow=2', dsl=[])
+note('Collector Ouphe', 'Approximate', 'artifact mana (rocks, Treasures) is off for everyone; other artifact abilities '
+     'still work')
