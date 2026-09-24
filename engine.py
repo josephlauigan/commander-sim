@@ -644,7 +644,7 @@ def die(g, m, cause='destroy'):
     # undying from Mikaeus
     if (has(p, 'mikaeus') and m.cd.creature and 'human' not in m.cd.tags and 'mikaeus' not in m.cd.tags
             and not m.undying and m.plus <= 0 and m.orig is p and m.cd is not p.cmd):
-        n = enter(g, p, m.cd); n.plus = 1; n.undying = True
+        n = enter(g, p, m.cd, undying=True); n.plus = 1; n.undying = True
         p.stats['undying'] += 1
         return
     to_zone_card(g, m, 'gy')
@@ -1087,7 +1087,7 @@ def resolve(g, p, c, ctx, zone):
     else: p.gy.append(c)
 
 
-def enter(g, p, cd, orig=None, sick=True, was_cast=False):
+def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False):
     phys = None
     if 'clone' in cd.tags:                      # Phyrexian Metamorph: copy the best creature or artifact on the battlefield
         cands = [x for q in g.players if q.alive for x in q.perms if x.cd is not None and x.cd is not q.cmd
@@ -1098,6 +1098,7 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False):
     if 'haste' in cd.tags: m.sick = False
     if cd.dsl: g.dsl_on = True
     if cd.start_loyalty: m.loyalty = int(cd.start_loyalty)
+    if undying: m.plus = 1; m.undying = True       # returns with its +1/+1 counter (so it survives -X/-X effects)
     p.perms.append(m)
     if cd.creature: creature_entered(g, p, m)
     if m in p.perms: do_etb(g, p, m)
