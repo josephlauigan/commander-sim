@@ -25,7 +25,22 @@ def _from_record(name, rec):
         cd.source = 'scryfall'; cd.unparsed = r['unparsed'] + ['note: ' + x for x in r['notes']]
     cd.game_changer = r['game_changer']
     cd.identity = ''.join(rec.get('color_identity') or [])
+    keyword_data(cd, rec, oracle)
     return cd
+
+
+COLOR_WORDS = (('white', 'W'), ('blue', 'U'), ('black', 'B'), ('red', 'R'), ('green', 'G'))
+
+
+def keyword_data(cd, rec, oracle):
+    """keywords the engine reads from card data: Scryfall's keyword list, protection colours, ward cost"""
+    import re
+    cd.kws = frozenset(k.lower() for k in rec.get('keywords') or [])
+    low = (oracle or '').lower()
+    own = ' '.join(l for l in low.split('\n') if re.match(r'^(?:[a-z ]+, )*protection from', l.strip()))   # its own keyword line
+    cd.protfrom = ''.join(c for w, c in COLOR_WORDS if re.search(r'protection from (?:[a-z]+ and from )?' + w, own))
+    m = re.search(r'\bward \{(\d+)\}', low)
+    cd.ward = int(m.group(1)) if m else 0
 
 
 def _from_override(name, ov, base):
@@ -37,7 +52,10 @@ def _from_override(name, ov, base):
     tags.update(dsl.hints(ab, types))
     cd = engine.CD(name, types, cost or '0', ' '.join(k if v is True else f'{k}={v}' for k, v in tags.items()))
     cd.dsl = ab or None; cd.source = 'cards_dsl.json'; cd.start_loyalty = ov.get('loyalty')
-    if base is not None: cd.identity = getattr(base, 'identity', None)
+    if base is not None:
+        cd.identity = getattr(base, 'identity', None)
+        cd.kws, cd.protfrom, cd.ward = base.kws, base.protfrom, base.ward
+        cd.game_changer = base.game_changer
     return cd
 
 

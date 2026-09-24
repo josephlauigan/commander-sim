@@ -385,13 +385,23 @@ def card_status(name):
     oracle = (rec.get('oracle_text') or '') or ' '.join(f.get('oracle_text') or '' for f in rec.get('card_faces') or [])
     if not abil and not functional:
         if cd.creature:
-            if not oracle.strip() or not unparsed and not kws: return 'Full', 'vanilla creature'
-            return 'Partial', 'body only: ' + '; '.join(u[:70] for u in unparsed[:3]) + (('; ' + kwnote) if kwnote else '')
+            if not rules_text(oracle): return 'Full', 'vanilla creature (keywords only)'
+            return 'Partial', 'body only, abilities not modeled: ' + ('; '.join(u[:70] for u in unparsed[:3]) or rules_text(oracle)[:120]) + (('; ' + kwnote) if kwnote else '')
         return 'Unmodeled', '; '.join(u[:70] for u in unparsed[:3]) or 'no effect recognised'
     notes = [u[:80] for u in unparsed[:3]] + ([kwnote] if kwnote else [])
     if unparsed or kws: return 'Partial', '; '.join(notes)
     if cd.source == 'scryfall+dsl': return 'Full-auto', 'compiled from Oracle text'
     return 'Approximate', 'regex tags: ' + ' '.join(sorted(functional))
+
+
+SIMPLE_KW = ('flying', 'deathtouch', 'vigilance', 'lifelink', 'haste', 'trample', 'reach', 'flash')
+
+
+def rules_text(oracle):
+    """Oracle text minus reminder text and lines made only of keywords the engine models"""
+    t = re.sub(r'\([^)]*\)', '', oracle or '')
+    keep = [l for l in t.split('\n') if l.strip() and not all(w.strip().lower() in SIMPLE_KW for w in l.split(','))]
+    return ' / '.join(keep)
 
 
 def engine_status(deck, cards, mechs):

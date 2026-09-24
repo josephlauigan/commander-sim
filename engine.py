@@ -40,6 +40,9 @@ class CD:
         s.bomb = int(s.tags.get('bomb', 0))
         s.source = 'manual'; s.unparsed = []; s.game_changer = None
         s.dsl = None; s.start_loyalty = None
+        s.kws = frozenset()      # Scryfall keywords (lower case) for cards built from Scryfall data
+        s.protfrom = ''          # colours it has protection from (printed)
+        s.ward = 0               # ward {N}
 
     def __repr__(s):
         return s.name
@@ -124,6 +127,7 @@ class Game:
         s.flutes = []          # (Disruptor Flute permanent, chosen card name)
         s.elim = []
         s.log = None          # list of strings when tracing a game
+        s.hooks = []          # permanents with hand-written implementations (cardimpl), in entry order
 
     def opps(s, p):
         return [q for q in s.players if q.alive and q is not p]
@@ -135,6 +139,8 @@ class Game:
 
 # ---------------------------------------------------------------- trace log
 CUR_G = None
+CI = None                # hand-written card implementations (cardimpl.py) register themselves here
+POOL_RULES = False       # pool games: rules fixes that would change the original four-deck results
 DSLMOD = None             # the card-ability interpreter (dsl.py) registers itself here
 AI_MODE = 'adaptive'     # 'adaptive' (probabilistic, board-reading) or 'rigid' (fixed priorities)
 DAMAGE_HOOK = None
@@ -244,6 +250,7 @@ def prot_colors(g, m):
     s = set()
     if equipped(m, 'sword'): s |= {'B', 'G'}
     if DSLMOD is not None: s |= set(DSLMOD.protection(g, m))
+    if m.cd is not None and m.cd.protfrom: s |= set(m.cd.protfrom)
     return s
 
 
@@ -429,7 +436,9 @@ def pay(g, p, generic, pips, convoke=False):
     if used is None: return False
     for i, u in enumerate(U):
         if used[i]:
-            if u[0] == 'T': p.treasures -= 1
+            if u[0] == 'T':
+                p.treasures -= 1
+                if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
             elif u[0] == 'F': p.floatR -= 1
             elif u[0] == 'G': p.floatA -= 1
             elif u[0] == 'FU': p.floatU -= 1
@@ -460,6 +469,10 @@ def cost_of(p, c):
         if 'spectacle' in t and p.hit_turn == p.turns:
             gen, pips = 0, 'R'
         if DSLMOD is not None: gen = max(0, gen + DSLMOD.cost_delta(g, p, c))
+        if g.hooks:
+            gen = max(0, gen + CI.total(g, 'cost', p, c))
+            floor = max([0] + [fn(g, src, p, c) or 0 for src, fn in CI.hooked(g, 'min_cost')])   # Trinisphere
+            gen = max(gen, floor - len(pips))
     if g is not None and stopped(g, c.name): gen += 3                 # Disruptor Flute tax
     if c is p.cmd: gen += p.tax
     if id(c) in p.agent_ids:                      # Opposition Agent: spend mana as though it were mana of any type
@@ -490,6 +503,7 @@ def draw(g, p, n=1, step=False):
             if a is not None: a.plus += 1
         extra = not (step and k == 0)
         if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'draw', player=p, extra=extra)
+        if g.hooks: CI.fire(g, 'draw', p)
         for q in g.opps(p):
             if has(q, 'sheoA'):
                 lose_life(g, p, 2, q, kind='drain'); gain(q, 2)
@@ -606,6 +620,10 @@ def leave(g, m):
         p.ozolith_counters = getattr(p, 'ozolith_counters', 0) + m.plus       # The Ozolith keeps the counters
     if m in p.perms: p.perms.remove(m)
     detach(m)
+    if g.hooks and m in g.hooks:
+        g.hooks.remove(m)
+        fn = CI.HOOKS[m.cd.name].get('leaves')
+        if fn is not None: fn(g, m)
 
 
 def to_zone_card(g, m, zone):
@@ -628,8 +646,13 @@ def die(g, m, cause='destroy'):
     p = m.owner
     if m not in p.perms: return
     if cause == 'destroy' and indestructible(g, m): return
+    selfdies = CI is not None and m.cd is not None and CI.live(m.cd.name) and CI.HOOKS[m.cd.name].get('self_dies')
     leave(g, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
+    if g.hooks:
+        CI.fire(g, 'dies', m, cause)
+        if cause == 'sac': CI.fire(g, 'sacrifice', p, m)
+    if selfdies: selfdies(g, m, cause)
     # death triggers
     for q in g.players:
         if not q.alive: continue
@@ -726,13 +749,85 @@ def board_power(g, p):
 
 
 # ---------------------------------------------------------------- casting
+def sac_fodder(g, p, what, exclude=None):
+    """the cheapest permanent p would sacrifice for a cost ('creature', 'artifact', 'artifact or creature',
+    'green creature', 'permanent'); 'Treasure' for a Treasure token; None if there is none"""
+    art = 'artifact' in what or what == 'permanent'
+    cre = 'creature' in what or what == 'permanent'
+    cands = [m for m in p.perms if m is not exclude and not m.phased and not m.is_cmd and
+             ((cre and m.creature) or (art and m.cd is not None and 'A' in m.cd.types) or what == 'permanent')]
+    if 'green' in what: cands = [m for m in cands if 'G' in colors_of(m)]
+    best = min(cands, key=lambda m: pval(g, m)) if cands else None
+    if art and p.treasures and (best is None or pval(g, best) > 0.6): return 'Treasure'
+    return best
+
+
+def additional_cost(g, p, c, dry=False):
+    """'As an additional cost to cast this spell, sacrifice ... / discard a card' (compiled cards).
+    dry: can it be paid? Otherwise pay it. Returns False when it can't be paid."""
+    for a in (c.dsl or ()):
+        if a.get('type') != 'additional_cost': continue
+        t = a['text']
+        choice = None
+        if 'sacrifice a land' in t:
+            if p.lands: choice = ('land', min(p.lands, key=lambda L: (not L.tapped, L.cd.name not in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain'))))
+        else:
+            m = re.search(r'sacrifice (?:an? |another )((?:green )?(?:artifact or creature|creature or artifact|creature|artifact|permanent))', t)
+            if m:
+                fod = sac_fodder(g, p, m.group(1), exclude=None)
+                if fod is not None and (fod == 'Treasure' or pval(g, fod) < 4 or 'discard' not in t): choice = ('sac', fod)
+        if choice is None and 'discard a card' in t:
+            others = [x for x in p.hand if x is not c]
+            if others: choice = ('discard', None)
+        if choice is None: return False
+        if dry: continue
+        kind, x = choice
+        if kind == 'land':
+            p.lands.remove(x); p.gy.append(x.cd)
+            if g.hooks: CI.fire(g, 'sacrifice', p, x.cd)
+        elif kind == 'sac':
+            if x == 'Treasure':
+                p.treasures -= 1
+                if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
+            else:
+                c.sac_snapshot = {'mv': x.cd.cmc if x.cd is not None else 0, 'tgh': etgh(g, x)}
+                die(g, x, 'sac')
+        else:
+            others = [x for x in p.hand if x is not c]
+            lands = [x for x in others if x.land]
+            x = lands[0] if len(lands) > 2 or not [y for y in others if not y.land] else \
+                min([y for y in others if not y.land], key=lambda y: card_worth(g, p, y))
+            discard_cards(g, p, [x])
+    return True
+
+
+def castable(g, p, c, zone='hand'):
+    """can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)"""
+    return not g.hooks or CI.allowed(g, p, c, zone)
+
+
+def turn_stamp(g):
+    return (g.round, g.active.key if g.active is not None else None)
+
+
+def casts_this_turn(g, p, pred=None):
+    """spells p has cast during the current turn (anyone's turn), optionally only those matching pred"""
+    log_ = getattr(p, 'turn_casts', None)
+    if not log_ or log_[0] != turn_stamp(g): return 0
+    return sum(1 for c in log_[1] if pred is None or pred(c))
+
+
 def on_cast(g, p, c):
+    st = turn_stamp(g)
+    if getattr(p, 'turn_casts', None) is None or p.turn_casts[0] != st: p.turn_casts = (st, [])
+    p.turn_casts[1].append(c)
     for q in g.opps(p):
         if has(q, 'sauron'): amass(g, q, 1)
         if has(q, 'rhystic') and g.rng.random() < 0.45: draw(g, q, 1)
         if has(q, 'kaervek') and c.cmc > 0: lose_life(g, p, min(c.cmc, 6), q, kind='triggers')
     if c.instant or c.sorcery: magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
+    if g.hooks: CI.fire(g, 'cast', p, c)
     if (c.instant or c.sorcery) and has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy'):
         magecraft(g, p, c, copy=True)                # Jin-Gitaxias copies your first spell each turn
         if 'draw' in c.tags: draw(g, p, int(c.tags['draw']))
@@ -886,6 +981,7 @@ def pick_counter(g, q, c):
     best = None
     for ctr in q.hand:
         if 'ctr' not in ctr.tags or not counter_ok(ctr, c): continue
+        if g.hooks and not castable(g, q, ctr): continue
         if 'fierce' in ctr.tags and commander_out(q): return ctr        # Fierce Guardianship: free with your commander out
         if 'free' in ctr.tags:
             if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, ctr.generic, ctr.pips):
@@ -1111,9 +1207,11 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False):
     if cd.start_loyalty: m.loyalty = int(cd.start_loyalty)
     if undying: m.plus = 1; m.undying = True       # returns with its +1/+1 counter (so it survives -X/-X effects)
     p.perms.append(m)
+    if CI is not None and CI.live(cd.name): g.hooks.append(m)
     if cd.creature: creature_entered(g, p, m)
     if m in p.perms: do_etb(g, p, m)
     if DSLMOD is not None and g.dsl_on and m in p.perms: DSLMOD.fire(g, 'etb', perm=m, owner=p, was_cast=was_cast)
+    if g.hooks and m in p.perms: CI.fire(g, 'etb', p, m)
     return m
 
 
@@ -1242,6 +1340,7 @@ def landfall(g, p):
     if fields and len({L.cd.name for L in p.lands}) >= 7:         # Field of the Dead: 7+ lands with different names
         for _ in fields: make_tokens(g, p, 1, 2, color='B')
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'landfall', player=p)
+    if g.hooks: CI.fire(g, 'landfall', p)
 
 
 def land_to_hand(g, p):
@@ -1298,7 +1397,7 @@ def apply_removal(g, actor, m, kind, spell=None):
     if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m):
         log(f'    {m.name} ({NAME(owner)}) is indestructible', g); return
     import ais
-    if ais.protect_response(g, owner, m, kind, actor):
+    if ais.protect_response(g, owner, m, kind, actor, spell):
         log(f'    {NAME(owner)} protects {m.name}', g); return
     if m not in owner.perms: return
     log(f'    {m.name} ({NAME(owner)}) is removed: {kind}', g)

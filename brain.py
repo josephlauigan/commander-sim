@@ -207,7 +207,9 @@ SPECIAL = ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'tokx_specia
 
 
 def do_cast(g, p, c, zone=None):
-    if any(k in c.tags for k in SPECIAL) and not c.dsl: return False
+    if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE): return False
+    if c.dsl and not additional_cost(g, p, c, dry=True): return False
+    if g.hooks and not castable(g, p, c, zone or ('cmd' if (c is p.cmd and c not in p.hand) else 'hand')): return False
     cv = 'convoke' in c.tags
     if zone == 'gy':
         cg, cp = parse_cost(c.tags['fb'])
@@ -223,6 +225,7 @@ def do_cast(g, p, c, zone=None):
     ctx = {}
     if 'tokx' in c.tags:
         x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x
+    if c.dsl: additional_cost(g, p, c)
     ok = cast_card(g, p, c, zone, ctx)
     if p.key == 'seph' and ok and (c is p.cmd or c.bomb >= 4): A.note_bomb(p, c)
     return True
@@ -254,6 +257,7 @@ def cast_removal(g, p, c, tg):
     fods = [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]
     extra = 4 if ('sacor4' in c.tags and not fods) else 0
     if c not in p.hand or not can_pay(g, p, c.generic + extra, c.pips, cv): return False
+    if g.hooks and not castable(g, p, c): return False
     live = [m for m in tg if m in m.owner.perms and not untargetable(g, m)]
     if not live: return False
     target = sample(g.rng, [(pval(g, m) / 1.5, m) for m in live], T(p))
@@ -281,6 +285,7 @@ def wipe_options(g, p, s):
 
         def go(c=c, cg=cg, cp=cp, victim=victim):
             if c not in p.hand or not can_pay(g, p, cg, cp): return False
+            if g.hooks and not castable(g, p, c): return False
             pay(g, p, cg, cp); cast_card(g, p, c, 'hand', {'victim': victim}); p.stats['wipes_cast'] += 1
             return True
         out.append((u, c.name, go))
@@ -484,6 +489,7 @@ def main(g, p, post):
         opts += extra_options(g, p, s, post, sorcery_ok=True)
         opts += A.breach_gc_options(g, p)
         if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, True)
+        if E.CI is not None: opts += hook_options(g, p, s, post)
         stop_u = (hold_v if hold_card is not None else -3.0) + (1.5 if naj_hold else 0.0)
         opts.append((stop_u, 'stop (hold mana)' if hold_card is not None else 'stop', None))
         order = gumbel_order(g.rng, [(u, (u, lbl, fn)) for u, lbl, fn in opts], T(p))
@@ -497,6 +503,18 @@ def main(g, p, post):
                 acted = True
                 break
         if not acted: return
+
+
+def hook_options(g, p, s, post):
+    """activated abilities of hand-implemented cards (battlefield and graveyard); post=None: end-of-turn window"""
+    o = []
+    if g.hooks:
+        for src, fn in E.CI.hooked(g, 'options'):
+            if src.owner is p: o += fn(g, src, p, s, post) or []
+    for c, fn in E.CI.gy_cards(p, 'gy_options'): o += fn(g, c, p, s, post) or []
+    for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
+    if p.key not in STYLE: o += __import__('pool_ai').special_options(g, p, s, post)
+    return o
 
 
 # ------------------------------------------------------------------ reactive decisions
@@ -518,6 +536,9 @@ def choose_defender(g, p):
         u += 0.15 * grudge.get(q.key, 0)                               # hit back whoever hit you
         blockers = sum(1 for m in q.perms if m.creature and not m.tapped)
         u -= 0.15 * blockers * (1 - aggr)
+        if g.hooks:                                                     # attack taxes and caps on q
+            tax, cap = A.attack_restrictions(g, p, q)
+            u -= 1.2 * tax + (1.5 if cap is not None and cap <= 2 else 0)
         items.append((u, q))
     d = sample(g.rng, items, T(p))
     explain(g, p, [(u, NAME(q)) for u, q in items], NAME(d), 'attacks')
@@ -586,6 +607,7 @@ def end_of_turn_window(g, p):
                 opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
         opts += [x for x in extra_options(g, p, s, True, sorcery_ok=gand) if 'Rhys' not in x[1] and 'Lidless' not in x[1]]
         if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, False)
+        if E.CI is not None: opts += hook_options(g, p, s, None)
         opts += A.monolith_untap_options(g, p)
         for u, lbl, fn in removal_options(g, p, s):
             if lbl.split(' -> ')[0] in [c.name for c in p.hand if c.instant]:

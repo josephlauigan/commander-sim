@@ -526,6 +526,7 @@ def pt(g, m):
 
 def has_kw(g, m, kw):
     if kw in getattr(g, 'eot_kw', {}).get(id(m), ()): return True
+    if m.cd is not None and kw in m.cd.kws and not m.neutered: return True
     if not active(g): return False
     if m.cd is not None and getattr(m.cd, 'dsl', None):
         for a in m.cd.dsl:

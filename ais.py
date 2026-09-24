@@ -78,7 +78,11 @@ def pay_card(g, p, c):
     return True
 
 
-def protect_response(g, owner, m, kind, actor):
+def protect_response(g, owner, m, kind, actor, spell=None):
+    if owner.key not in MAIN:
+        if silenced(g, owner): return False
+        import pool_ai
+        return pool_ai.protect(g, owner, m, kind, actor, spell)
     v = pval(g, m)
     if silenced(g, owner):                      # Conqueror's Flail: only non-spell responses
         if owner.key == 'seph' and kind in ('exile', 'bounce', 'tuck') and m.creature and free_sac(owner) and v >= 6:
@@ -116,6 +120,9 @@ def protect_response(g, owner, m, kind, actor):
 
 def wipe_response(g, q, kind, caster):
     if q is caster or silenced(g, q): return None
+    if q.key not in MAIN:
+        import pool_ai
+        return pool_ai.wipe_response(g, q, kind, caster)
     loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
     if loss < 6: return None
     if q.key == 'seph':
@@ -569,6 +576,8 @@ def generic_cast(g, p, prio, reserve=(0, '')):
         if pr > 0: cands.append((pr, 0.5, p.cmd))
     cands.sort(key=lambda x: (-x[0], x[1]))
     for pr, _, c in cands:
+        if g.hooks and not castable(g, p, c, 'cmd' if (c is p.cmd and c not in p.hand) else 'hand'): continue
+        if c.dsl and not additional_cost(g, p, c, dry=True): continue
         cg, cp = cost_of(p, c)
         rg, rp = reserve if pr < 90 else (0, '')
         E.PAY_FOR = c
@@ -579,6 +588,7 @@ def generic_cast(g, p, prio, reserve=(0, '')):
             E.PAY_FOR = None
         if ok:
             zone = 'cmd' if (c is p.cmd and c not in p.hand) else 'hand'
+            if c.dsl: additional_cost(g, p, c)
             cast_card(g, p, c, zone, {})
             return True
     return False
@@ -589,6 +599,7 @@ def use_removal(g, p, threshold=5, instants_extra=None):
     for c in list(p.hand):
         t = c.tags
         if 'rem' not in t or c.creature: continue
+        if g.hooks and not castable(g, p, c): continue
         if 'needart3' in t and sum(1 for m in p.perms if m.cd is not None and 'A' in m.cd.types) < 3: continue
         tg = legal_targets(g, p, t['rem'], t.get('tgt', 'c'), 'mv4' in t, spell=c)
         if not tg: continue
@@ -1372,10 +1383,32 @@ def can_block(g, b, a):
 
 
 def double_strike(p, m):
-    return m.army and has(p, 'warmachine')
+    return (m.army and has(p, 'warmachine')) or kw(m, 'double strike')
+
+
+def kw(m, k):
+    """does permanent m have keyword k (printed, granted until end of turn, or from a static ability)"""
+    return E.DSLMOD is not None and E.DSLMOD.has_kw(E.CUR_G, m, k)
+
+
+def first_strike(m):
+    return kw(m, 'first strike') or kw(m, 'double strike')
 
 
 def attack_triggers(g, p, atk, d):
+    copies = 1 + (E.CI.total(g, 'trigger_copies', p, 'attack', None) if g.hooks else 0)    # Isshin
+    new = []
+    for _ in range(copies):
+        new += _attack_triggers_once(g, p, atk, d)
+        if g.over: break
+    if has(p, 'najeela'):
+        w = [m for m in atk if m.warrior and m in p.perms]
+        if w: new += make_tokens(g, p, len(w), 1, warrior=True, attacking=True, sick=False)
+    check_state(g)
+    return [x for x in new if x.tapped and x in p.perms]
+
+
+def _attack_triggers_once(g, p, atk, d):
     new = []
     for m in list(atk):
         if m.cd is None: continue
@@ -1405,13 +1438,11 @@ def attack_triggers(g, p, atk, d):
         if equipped(m, 'animist'): land_ramp(g, p, 1, True)        # Sword of the Animist
     rab = len(find(p, 'rabble'))
     if rab: make_tokens(g, p, rab * len(atk), 1)                       # Rabble Rousing: one Citizen per attacker
-    if has(p, 'najeela'):
-        w = [m for m in atk if m.warrior and m in p.perms]
-        if w: new += make_tokens(g, p, len(w), 1, warrior=True, attacking=True, sick=False)
     if E.DSLMOD is not None and g.dsl_on:
         E.DSLMOD.fire(g, 'attack', attackers=list(atk), defender=d, player=p, new=new)
-    check_state(g)
-    return [x for x in new if x.tapped and x in p.perms]
+    if g.hooks:
+        for r in E.CI.fire(g, 'attack', p, atk, d): new += r
+    return new
 
 
 def archon_attack(g, p, d):
@@ -1436,6 +1467,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
         if a in unbl or a not in p.perms: continue
         cands = [b for b in blockers if b not in used and can_block(g, b, a)]
         if not cands: continue
+        if kw(a, 'menace') and len(cands) < 2: continue                 # menace: two blockers or none
         ap, at = epow(g, a), etgh(g, a)
         good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
         if good: b = min(good, key=lambda x: pval(g, x))
@@ -1451,6 +1483,12 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             else:
                 continue
         assign[a] = b; used.add(b); incoming -= ap
+        if kw(a, 'menace'):                           # the second blocker is spent; only the first fights
+            rest = [x for x in cands if x is not b]
+            if rest: used.add(min(rest, key=lambda x: pval(g, x)))
+    if g.hooks: E.CI.fire(g, 'blocks', p, atk, d, assign)
+    if E.CI is not None:
+        for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
     conn = set()
     for a in atk:
         if a not in p.perms or not d.alive: continue
@@ -1462,6 +1500,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             bt = etgh(g, b)
             a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
             b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
+            fa, fb = first_strike(a), first_strike(b)
+            if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
+            elif fb and not fa and a_dies: b_dies = False
             tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags)
             dmg = max(0, ap - bt) if tr else 0
             if b_dies: die(g, b, 'destroy')
@@ -1473,6 +1514,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
         if dmg > 0:
             lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
             if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
+            if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
             if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
                 for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
                     d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x)
@@ -1486,6 +1528,37 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     if conn and has(p, 'facebreaker'): p.treasures += len(find(p, 'facebreaker'))   # Professional Face-Breaker
     check_state(g)
     return conn
+
+
+def has_haste(g, m):
+    """granted or printed haste, and Lightning Greaves / Swiftfoot Boots (pool games only)"""
+    if kw(m, 'haste'): return True
+    return any(e.attached is m and e.cd is not None and e.cd.tags.get('prot') == 'boots' for e in m.owner.perms)
+
+
+def attack_restrictions(g, p, d):
+    """(generic mana per attacker, max attackers or None) for p attacking d"""
+    tax = E.CI.total(g, 'attack_tax', p, d)
+    caps = [c for c in (fn(g, src, p, d) for src, fn in E.CI.hooked(g, 'attack_cap')) if c is not None]
+    return tax, (min(caps) if caps else None)
+
+
+def attack_limits(g, p, d, atk):
+    """Ghostly Prison-style taxes and Crawlspace-style caps: attack with the best creatures that are allowed
+    and worth their tax"""
+    tax, cap = attack_restrictions(g, p, d)
+    atk = sorted(atk, key=lambda m: -epow(g, m))
+    if cap is not None: atk = atk[:cap]
+    if tax:
+        worth = [m for m in atk if epow(g, m) >= tax or (m.is_cmd and epow(g, m) >= 3)]
+        k = 0
+        while k < len(worth) and can_pay(g, p, tax * (k + 1), ''): k += 1
+        atk = worth[:k]
+        if atk:
+            pay(g, p, tax * len(atk), '')
+            log(f'  {NAME(p)} pays {tax * len(atk)} to attack {NAME(d)} with {len(atk)}', g)
+            p.stats['attack_tax_paid'] += tax * len(atk)
+    return atk
 
 
 def ozolith_move(g, p):
@@ -1511,12 +1584,14 @@ def combat(g, p):
         if not g.opps(p): return
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: import brain
-        atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased and (not m.sick or p.haste_all)
+        atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
+               and (not m.sick or p.haste_all or (E.POOL_RULES and has_haste(g, m)))
                and not m.noatk and epow(g, m) > 0]
         if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
         if not atk: break
         d = brain.choose_defender(g, p) if adaptive else choose_defender(g, p)
         if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
+        if g.hooks: atk = attack_limits(g, p, d, atk)
         if not atk: break
         unbl = set()
         a = army_of(p)
@@ -1639,6 +1714,7 @@ def upkeep(g, p):
     if any(has(q, 'braids') for q in g.players if q.alive): braids_sacrifice(g, p)
     if g.over or not p.alive: return
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'upkeep', player=p)
+    if g.hooks: E.CI.fire(g, 'upkeep', p)
     for m in list(p.perms):
         if m.cd is None or m.phased or m not in p.perms: continue
         t = m.cd.tags
@@ -1692,6 +1768,7 @@ def erebos_draw(g, p):
 
 def end_step(g, p):
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
+    if g.hooks: E.CI.fire(g, 'end_step', p)
     for m in find(p, 'breach'):                   # Underworld Breach: sacrifice it at the beginning of the end step
         die(g, m, 'sac')
     for c in p.impulse:                           # Jeska's Will: unplayed exiled cards stay in exile
@@ -1814,6 +1891,7 @@ CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
 
 
 def play_game(seed, decks, max_rounds=20, trace=False):
+    E.POOL_RULES = False
     rng = random.Random(seed)
     players = [Player(k, decks[k], CMDS[k]) for k in ('seph', 'veyran', 'sauron', 'najeela')]
     rng.shuffle(players)
@@ -1870,6 +1948,7 @@ def play_pool_game(seed, seats, max_rounds=20, trace=False):
 
 def setup_pool_game(seed, seats, trace=False):
     """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one"""
+    E.POOL_RULES = True
     players = [Player(k, cards, cmd) for k, cards, cmd in seats]
     g = Game(players, random.Random(f'play:{seed}'))
     E.CUR_G = g
