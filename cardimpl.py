@@ -281,5 +281,16 @@ def keyword_attack(g, p, atk, d):
     return new
 
 
+PROWESS = {'Eris, Roar of the Storm', 'Harmonic Prodigy'}     # hand-tagged cards with prowess (no keyword data)
+
+
+def prowess(g, p, c):
+    """prowess: +1/+1 until end of turn whenever you cast a noncreature spell"""
+    for m in p.perms:
+        if m.phased or not m.creature: continue
+        if (m.cd is not None and ('prowess' in m.cd.kws or m.cd.name in PROWESS)) or (m.data and m.data.get('prowess')):
+            _eot(g, m, 1, 1)
+
+
 def _eot(g, m, dp, dt):
     a, b = g.eot_pt.get(id(m), (0, 0)); g.eot_pt[id(m)] = (a + dp, b + dt)

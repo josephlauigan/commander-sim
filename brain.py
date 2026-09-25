@@ -267,15 +267,23 @@ def removal_options(g, p, s):
         if c.instant: u -= 1.2 * style(p)['caution'] * E.INSTANT_EXTRA / 2.0   # instants are worth holding (profile-dependent)
         if 'needsac' in t and not [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]: continue
         out.append((u, f'{c.name} -> {best.name}', lambda c=c, tg=tg: cast_removal(g, p, c, tg)))
+        if 'kick' in t and t['rem'].startswith('dmg') and can_pay(g, p, c.generic + int(t['kick']), c.pips):
+            kd = f"dmg{int(t['rem'][3:]) + 2}"                       # Burst Lightning kicked: 4 damage
+            tg4 = legal_targets(g, p, kd, t.get('tgt', 'c'), 'mv4' in t, spell=c)
+            b4 = max(tg4, key=lambda m: pval(g, m)) if tg4 else None
+            if b4 is not None and pval(g, b4) > v + 1.0:
+                out.append((pval(g, b4) - 4.5, f'{c.name} (kicked) -> {b4.name}',
+                            lambda c=c, tg4=tg4, kd=kd: cast_removal(g, p, c, tg4, int(c.tags['kick']), kd)))
     return out
 
 
-def cast_removal(g, p, c, tg):
+def cast_removal(g, p, c, tg, kick=0, kind=None):
     cv = 'convoke' in c.tags
     fods = [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]
     extra = 4 if ('sacor4' in c.tags and not fods) else 0
     free = ('freecmd' in c.tags and commander_out(p)) or ('snuff' in c.tags and p.life > 12 and any(
         'swamp' in L.cd.subtypes or L.cd.name == 'Swamp' for L in p.lands))
+    extra += kick
     if c not in p.hand or (not free and not can_pay(g, p, c.generic + extra, c.pips, cv)): return False
     if g.hooks and not castable(g, p, c): return False
     live = [m for m in tg if m in m.owner.perms and not untargetable(g, m)]
@@ -288,7 +296,7 @@ def cast_removal(g, p, c, tg):
     if free and 'snuff' in c.tags and not ('freecmd' in c.tags and commander_out(p)): lose_life(g, p, 4, p)
     elif not free: pay(g, p, c.generic + extra, c.pips, cv)
     if fod: die(g, fod, 'sac')
-    cast_card(g, p, c, 'hand', {'target': target})
+    cast_card(g, p, c, 'hand', dict({'target': target}, **({'rem_kind': kind} if kind else {})))
     p.stats['removal_cast'] += 1
     return True
 
@@ -397,6 +405,12 @@ def special_options(g, p, s, post):
             payoff_n = sum(1 for m in p.perms if m.cd is not None and ('ping' in m.cd.tags or 'dragoncaller' in m.cd.tags
                                                                       or 'aether' in m.cd.tags or 'mystic' in m.cd.tags))
             o.append((3.0 + 0.5 * k + 1.5 * payoff_n, f"Mizzix's Mastery overload ({k} spells)", mastery))
+        if ms and k >= 1 and can_pay(g, p, 3, 'R'):                  # one target: the best instant/sorcery copied free
+            best = max((E.card_worth(g, p, x, in_gy=True) for x in p.gy if (x.instant or x.sorcery) and 'ctr' not in x.tags), default=0)
+            def mastery1(c=ms[0]):
+                if c not in p.hand or not can_pay(g, p, 3, 'R'): return False
+                pay(g, p, 3, 'R'); cast_card(g, p, c, 'hand', {}); return True
+            if best >= 4: o.append((1.0 + 0.4 * best, "Mizzix's Mastery (one spell)", mastery1))
     elif k == 'sauron':
         a = army_of(p)
         if a and not equipped(a, 'cloak') and can_pay(g, p, 2, ''):
@@ -450,10 +464,15 @@ def extra_options(g, p, s, post, sorcery_ok):
         r = c.tags.get('rem', '')
         if 'face' not in c.tags or not r.startswith('dmg') or not can_pay(g, p, c.generic, c.pips): continue
         dmg = int(r[3:]) + thor
+        kick = int(c.tags['kick']) if 'kick' in c.tags and can_pay(g, p, c.generic + int(c.tags['kick']), c.pips) else 0
         for q in s.opps:
             if q.life <= dmg:
                 o.append((9.0, f'{c.name} to the face ({NAME(q)})',
                           lambda c=c, q=q: (pay(g, p, c.generic, c.pips), cast_card(g, p, c, 'hand', {'face': q}))[1] is not None))
+            elif kick and q.life <= dmg + 2:                       # kicked burn is lethal
+                o.append((9.0, f'{c.name} kicked to the face ({NAME(q)})',
+                          lambda c=c, q=q, kick=kick: (pay(g, p, c.generic + kick, c.pips),
+                                                       cast_card(g, p, c, 'hand', {'face': q, 'rem_kind': f"dmg{int(c.tags['rem'][3:]) + 2}"}))[1] is not None))
     # clues
     if p.clues and can_pay(g, p, 2, ''):
         def crack():

@@ -461,6 +461,7 @@ def mana_units(g, p, convoke=False):
                 cols = ''.join(sorted({x for q in g.opps(p) for L in q.lands for x in land_cols(q, L, False) if x in 'WUBRG'}))
             if amt > 0: U.append([m, cols, amt])
         elif 'dork' in t and not m.sick:
+            if m.cd.name == 'Hydro-Channeler' and not (PAY_FOR is not None and (PAY_FOR.instant or PAY_FOR.sorcery)): continue
             c = t['dork']
             amt = CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else 1
             if POOL_RULES and m.cd.name == 'Delighted Halfling': c = __import__('impl_rules').halfling_colors(p) or 'C'
@@ -989,17 +990,23 @@ def on_cast(g, p, c):
         if has(q, 'sauron'): amass(g, q, 1)
         if has(q, 'rhystic') and (__import__('impl_rules').rhystic_unpaid(g, p) if POOL_RULES else g.rng.random() < 0.45): draw(g, q, 1)
         if has(q, 'kaervek') and c.cmc > 0: lose_life(g, p, min(c.cmc, 6), q, kind='triggers')
-    if c.instant or c.sorcery: magecraft(g, p, c)
+    if c.instant or c.sorcery:
+        count_is_cast(g, p); magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
     if g.hooks: CI.fire(g, 'cast', p, c)
-    if (c.instant or c.sorcery) and has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy'):
-        magecraft(g, p, c, copy=True)                # Jin-Gitaxias copies your first spell each turn
-        if 'draw' in c.tags: draw(g, p, int(c.tags['draw']))
-    if has(p, 'conflict') and p.spells_this_turn == 3 and once_per_turn(g, p, 'conflict'):
-        cast_copy(g, p, lambda: bolt_something(g, p, 3))     # Emeritus of Conflict: third spell -> Lightning Bolt copy
+    if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy'):
+        copy_spell(g, p, c)                          # Jin-Gitaxias copies your first artifact/instant/sorcery each turn
+    if (c.instant or c.sorcery) and getattr(p, 'ral_copy', None) == turn_stamp(g):
+        p.ral_copy = None; copy_spell(g, p, c)      # Ral, Storm Conduit -2: copy the next instant/sorcery
+    if not c.creature and CI is not None: CI.prowess(g, p, c)
+    if POOL_RULES and CI is not None and (c.instant or c.sorcery):
+        for x, fn in CI.hand_cards(p, 'hand_cast'): fn(g, x, p, c)       # Return the Favor copies your spell
+    if p.spells_this_turn == 3:                            # Emeritus of Conflict: third spell each turn -> prepared
+        for x in find(p, 'conflict'): x.data = dict(x.data or {}, prepared=True)
     if has(p, 'eris') and p.spells_this_turn == 2:
         n = 2 if (has(p, 'veyran') and (c.instant or c.sorcery)) else 1
-        make_tokens(g, p, n, 4, fly=True)                     # Eris: second spell -> 4/4 flying Dragon
+        for x in make_tokens(g, p, n, 4, fly=True):           # Eris: second spell -> 4/4 flying Dragon with prowess
+            x.data = dict(x.data or {}, prowess=True)
     if has(p, 'prolifall') and c.creature:
         a = army_of(p)
         if a: a.plus += len(find(p, 'prolifall'))
@@ -1046,6 +1053,7 @@ def magecraft(g, p, c=None, copy=False):
         if 'spellloot' in t:                         # Muse Seeker: draw, then discard unless 5+ mana spent
             draw(g, p, mult)
             if not (c is not None and c.cmc >= 5): discard_worst(g, p, mult)
+        if 'veyran' in t: CI._eot(g, m, mult, mult)      # Veyran's own magecraft +1/+1 (it doubles itself)
         if 'sanar' in t and not copy and not m.tapped:   # Sanar: tap for a Treasure once you've cast an I/S
             m.tapped = True; add_treasure(g, p, 1)
     if has(p, 'aether') and not copy: gain(p, p.spells_this_turn * base_mult)
@@ -1071,9 +1079,12 @@ def discard_worst(g, p, n):
 
 
 def cast_copy(g, p, effect=None):
-    """'You may cast a copy of ...': a real cast (magecraft, opponents' cast triggers), no card moves."""
+    """'You may cast a copy of ...' (a back-face instant/sorcery): a real cast (magecraft, opponents' cast triggers,
+    Thousand-Year Storm), no card moves."""
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
-    if p.key == 'veyran': magecraft(g, p)
+    count_is_cast(g, p)
+    magecraft(g, p)
+    if g.hooks and effect is not None: CI.fire(g, 'copycast', p, effect)          # Thousand-Year Storm
     for q in g.opps(p):
         if has(q, 'sauron'): amass(g, q, 1)
         if has(q, 'rhystic') and (__import__('impl_rules').rhystic_unpaid(g, p) if POOL_RULES else g.rng.random() < 0.45): draw(g, q, 1)
@@ -1335,13 +1346,16 @@ def resolve(g, p, c, ctx, zone):
     t = c.tags
     if CI is not None and not c.perm and c.name in CI.HOOKS and 'resolve' in CI.HOOKS[c.name] and CI.live(c.name):
         dest = CI.HOOKS[c.name]['resolve'](g, p, c, ctx)            # hand-written spell (returns where it goes)
-        if dest != 'handled': (p.exile if zone == 'gy' or ctx.get('exile_after') or dest == 'exile' else p.gy).append(c)
+        if dest != 'handled' and zone != 'copy': (p.exile if zone == 'gy' or ctx.get('exile_after') or dest == 'exile' else p.gy).append(c)
         return
     if c.dsl and not c.perm:                     # interpreter-driven instant / sorcery
         if DSLMOD is not None: DSLMOD.resolve_spell(g, p, c, ctx)
+        if zone == 'copy': return
         if zone == 'gy' or ctx.get('exile_after'): p.exile.append(c)
         else: p.gy.append(c)
         return
+    if c.perm and zone == 'copy':                # a copy of a permanent spell becomes a token
+        enter_token_copy(g, p, c); return
     if c.perm:
         if 'moxd' in t:                          # Mox Diamond: discard a land card instead, or it goes to the graveyard
             lands = [x for x in p.hand if x.land]
@@ -1378,8 +1392,8 @@ def resolve(g, p, c, ctx, zone):
     if 'selfdmg' in t: lose_life(g, p, int(t['selfdmg']), p)
     if 'discard1' in t: discard_worst(g, p, 1)
     if ctx.get('face') is not None:
-        lose_life(g, ctx['face'], int(t['rem'][3:]) + (1 if has(p, 'thor') else 0), p, kind='burn')
-    elif 'rem' in t and ctx.get('target') is not None: apply_removal(g, p, ctx['target'], t['rem'], c)
+        lose_life(g, ctx['face'], int(ctx.get('rem_kind', t['rem'])[3:]) + (1 if has(p, 'thor') else 0), p, kind='burn')
+    elif 'rem' in t and ctx.get('target') is not None: apply_removal(g, p, ctx['target'], ctx.get('rem_kind', t['rem']), c)
     if 'wipe' in t and not ctx.get('target') and not ctx.get('face'):
         ctx = dict(ctx); ctx['tags'] = t
         apply_wipe(g, p, t['wipe'], ctx)
@@ -1399,9 +1413,14 @@ def resolve(g, p, c, ctx, zone):
         for q in g.opps(p): edict(g, q)
     if 'pumpall' in t: p.pumpadd += int(t['pumpall'])
     if 'lh' in t and 'lr' not in t: land_to_hand(g, p)
-    if 'crackle' in t:                          # X = (mana spent - 2)/3; 5X to each of X targets
-        x = max(1, ctx.get('x', 1))
-        for q in sorted(g.opps(p), key=lambda o: o.life)[:x]: lose_life(g, q, 5 * x, p, kind='burn')
+    if 'crackle' in t:                          # X = (mana spent - 2)/3; 5X to each of up to X targets
+        x = max(1, ctx.get('x', 1)); d = 5 * x
+        cands = [(100 + (60 - q.life) if q.life <= d else 0.4 * d, q, None) for q in g.opps(p)]
+        cands += [(1.5 * pval(g, m), None, m) for q in g.opps(p) for m in q.perms
+                  if m.creature and not m.phased and etgh(g, m) <= d and pval(g, m) >= 3 and not untargetable(g, m)]
+        for v, q, m in sorted(cands, key=lambda z: -z[0])[:x]:
+            if q is not None: lose_life(g, q, d, p, kind='burn')
+            elif m in m.owner.perms: apply_removal(g, p, m, f'dmg{d}', c)
     if 'drawcre' in t:                          # Shamanic Revelation
         cr = [m for m in p.perms if m.creature and not m.phased]
         draw(g, p, len(cr)); gain(p, 4 * sum(1 for m in cr if epow(g, m) >= 4))
@@ -1420,21 +1439,61 @@ def resolve(g, p, c, ctx, zone):
         discard_cards(g, p, list(p.hand)); draw(g, p, 4)
     if 'yawg' in t:                          # Yawgmoth's Will: the graveyard as it is now can be played from
         p.yawg = True; p.yawg_gy = __import__('collections').Counter(id(x) for x in p.gy)   # copies of a card share an id
-    if 'mastery' in t and ctx.get('overload'):
-        # Mizzix's Mastery overloaded: cast a copy of every instant/sorcery in the graveyard
-        copies = [x for x in p.gy if (x.instant or x.sorcery) and x is not c and 'ctr' not in x.tags]
-        log(f'    Mizzix\'s Mastery recasts {len(copies)} spells', g)
-        for x in copies:
-            p.spells_this_turn += 1; p.stats['spells_cast'] += 1
-            on_cast(g, p, x)
-            if 'draw' in x.tags: draw(g, p, int(x.tags['draw']))
-            if 'burn' in x.tags:
-                opps = g.opps(p)
-                if opps: lose_life(g, min(opps, key=lambda o: o.life), 5, p, kind='burn')
+    if 'mastery' in t:
+        # Mizzix's Mastery: exile target instant/sorcery from your graveyard (each of them, overloaded); cast copies free
+        pool = [x for x in p.gy if (x.instant or x.sorcery) and x is not c and 'ctr' not in x.tags]
+        if not ctx.get('overload'):
+            pool = sorted(pool, key=lambda x: -card_worth(g, p, x, in_gy=True))[:1]
+        for x in pool: p.gy.remove(x); p.exile.append(x)
+        if pool: log(f'    Mizzix\'s Mastery casts copies of {len(pool)} spell(s)', g)
+        for x in pool:
+            copy_spell(g, p, x, cast=True)
             if g.over: return
-        for x in copies: p.gy.remove(x); p.exile.append(x)
+    if zone == 'copy': return                     # copies move no card
     if zone == 'gy' or ctx.get('exile_after'): p.exile.append(c)
     else: p.gy.append(c)
+
+
+def spell_targets(g, p, c, ctx=None):
+    """fresh targets for a copy of spell c ('you may choose new targets for the copy'): the best opposing permanent
+    for removal, the lowest life total for burn that kills nothing worthwhile"""
+    t = c.tags; ctx = dict(ctx or {})
+    ctx.pop('target', None); ctx.pop('face', None)
+    if 'rem' in t:
+        kind = ctx.get('rem_kind', t['rem'])
+        tg = [m for m in legal_targets(g, p, kind, t.get('tgt', 'c'), 'mv4' in t, spell=c) if m.owner is not p]
+        best = max(tg, key=lambda m: pval(g, m)) if tg else None
+        opps = g.opps(p)
+        if best is not None and not ('face' in t and pval(g, best) < 3 and opps): ctx['target'] = best
+        elif 'face' in t and opps: ctx['face'] = min(opps, key=lambda o: o.life)
+    return ctx
+
+
+def is_casts(g, p):
+    """instant and sorcery spells p has cast this turn (copies that were cast included)"""
+    st = turn_stamp(g); v = getattr(p, 'is_cast_n', None)
+    return v[1] if v and v[0] == st else 0
+
+
+def count_is_cast(g, p):
+    st = turn_stamp(g); v = getattr(p, 'is_cast_n', None)
+    p.is_cast_n = (st, (v[1] if v and v[0] == st else 0) + 1)
+
+
+def copy_spell(g, p, c, ctx=None, cast=False):
+    """a copy of spell c with new targets. cast=False: a copy put on the stack (Thousand-Year Storm, Jin-Gitaxias,
+    Ral): only 'cast or copy' triggers see it. cast=True: 'you may cast the copy' (Mizzix's Mastery, Reenact the
+    Crime): a real cast. No card moves either way."""
+    if c.perm and not cast:
+        enter_token_copy(g, p, c); return
+    ctx = spell_targets(g, p, c, ctx)
+    if cast:
+        p.spells_this_turn += 1; p.stats['spells_cast'] += 1
+        on_cast(g, p, c)
+    else:
+        magecraft(g, p, c, copy=True)
+    if g.over or 'ctr' in c.tags or ('crackle' in c.tags and not ctx.get('x')): return   # nothing to counter; X copies as 0
+    resolve(g, p, c, ctx, 'copy')
 
 
 def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0):
@@ -1503,10 +1562,8 @@ def etb_once(g, p, m):
         if name:
             g.flutes.append((m, name)); p.stats['flute_named'] += 1
             log(f'    Disruptor Flute names {name}', g)
-    if 'prepare' in t and p.key == 'veyran':
-        # prepared: cast a copy of the back-face instant/sorcery -> a real spell cast
-        if 'sanar' in t: cast_copy(g, p, lambda: tutor(g, p, 'is'))       # Wild Idea: find an instant/sorcery
-        else: cast_copy(g, p)
+    if 'prepare' in t:                            # enters prepared: its back-face spell can be cast as a copy (impl_mine)
+        m.data = dict(m.data or {}, prepared=True)
     if 'recruit' in t: tutor(g, p, 'cre2')     # Imperial Recruiter: creature with power 2 or less
     opps = g.opps(p)
     if 'titan' in t: make_tokens(g, p, 2, 2, color='B')

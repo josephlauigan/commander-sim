@@ -107,7 +107,7 @@ Banishing Betrayal|I|1U|rem=bounce tgt=nl
 Blasphemous Act|S|8R|wipe=dmg13 perCreature
 Blazing Firesinger // Seething Song|C|2R|vfire pow=2 tgh=3 noatk prepare
 Burning Prophet|C|1R|pow=1 tgh=3 noatk
-Burst Lightning|I|R|rem=dmg2 tgt=c face
+Burst Lightning|I|R|rem=dmg2 tgt=c face kick=4
 Chaos Warp|I|2R|rem=tuck tgt=p
 Coastal Peak|L|-|c=UR t
 Crackle with Power|S|RR|crackle
@@ -119,8 +119,8 @@ Displacer Kitten|C|3U|vkitten pow=2 noatk
 Disruptor Flute|A|2|flash flute
 Dreams of Laguna|I|1U|draw=1 fb=3U
 Dualcaster Mage|C|1RR|pow=2 flash dualcaster
-Emeritus of Conflict // Lightning Bolt|C|1R|pow=2 conflict
-Emeritus of Ideation // Ancestral Recall|C|3U|pow=3 draw=3 prepare
+Emeritus of Conflict // Lightning Bolt|C|1R|pow=2 tgh=2 conflict
+Emeritus of Ideation // Ancestral Recall|C|3U|pow=5 tgh=5 fly prepare
 Eris, Roar of the Storm|C|8UR|pow=4 fly eris leg
 Expressive Iteration|S|UR|draw=1
 Fabricate|S|2U|tut=art
@@ -151,8 +151,8 @@ Prismari Charm|I|UR|draw=1
 Quick Study|I|2U|draw=2
 Ral, Storm Conduit|P|2UR|ping=1 ral
 Reality Shift|I|1U|rem=exile tgt=c rtok=2
-Reenact the Crime|I|1UUU|draw=1
-Return the Favor|I|RR|x
+Reenact the Crime|I|1UUU|reenact
+Return the Favor|I|RR|rtf
 Rite of the Dragoncaller|E|4RR|dragoncaller
 River's Rebuke|S|4UU|wipe=rebuke
 Sanar, Unfinished Genius // Wild Idea|C|UR|pow=0 tgh=4 noatk leg prepare sanar

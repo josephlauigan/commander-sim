@@ -110,6 +110,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
                 m.phased = True; owner.stats['phase_saves'] += 1; return True
             if kind in ('exile', 'bounce', 'tuck') and free_sac(owner) and not m.token:
                 owner.stats['sac_saves'] += 1; seph_sac(g, owner, m); return True
+    elif owner.key == 'veyran':
+        if __import__('impl_mine').rtf_redirect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'sauron':
         if m.army or v >= 5:
             sl = [c for c in owner.hand if c.tags.get('prot') == 'phase']
@@ -782,6 +784,10 @@ def veyran_prio(g, p, c):
     if 'fbgrant' in t: return 38 if any((x.instant or x.sorcery) and 'draw' in x.tags for x in p.gy) else 0
     if c.creature: return 40
     if 'burn' in t and any(q.life <= 15 for q in g.opps(p)): return 35
+    if 'tys' in t: return 57                                                   # Thousand-Year Storm
+    if 'reenact' in t:                                                         # Reenact the Crime: only with a target
+        tg = __import__('impl_mine').reenact_target(g, p, exclude=c)
+        return 50 if tg is not None and E.card_worth(g, p, tg[0]) >= 4 else 0
     return 0
 
 
@@ -1534,6 +1540,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     for a in atk:
         if a not in p.perms or not d.alive: continue
         ap = epow(g, a) * (2 if double_strike(p, a) else 1)
+        if E.POOL_RULES and __import__('impl_mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
         if E.POOL_RULES and a.data and __import__('impl_rules').dovin_blocked(a): ap = 0
         b = assign.get(a)
         if b is None or b not in d.perms:
@@ -1541,6 +1548,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
         else:
             bt = etgh(g, b)
             a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
+            if E.POOL_RULES and __import__('impl_mine').damage_prevented(g, b): a_dies = False
             b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
             if E.POOL_RULES and E.CI is not None:                       # protection from creatures / Demons and Dragons
                 import impl_rules2
@@ -1923,6 +1931,7 @@ def upkeep(g, p):
                 if army: army.plus += 1
                 lose_life(g, p, 1, p)
         if 'spider' in t:                          # saga chapters III and IV draw, then it's sacrificed
+            if m.age == 1: __import__('impl_mine').spider_chapter2(g, p, m)     # chapter II: prevent a creature's damage
             if m.age in (2, 3): draw(g, p, 1)
             if m.age >= 3: leave(g, m); p.gy.append(m.cd); continue
         if 'bolas' in t and m.age <= 5:            # +1 each turn: draw; each opponent loses a card
@@ -2049,6 +2058,7 @@ def continue_turn(g, p, step):
 def _step_start(g, p):
     g.active = p
     g.eot_pt = {}; g.eot_kw = {}
+    for q in g.players: q.gy_start = __import__('collections').Counter(id(x) for x in q.gy)   # what was there before this turn
     for q in g.players: q.floatA = 0
     p.extra_combats = 0
     p.combat_no = 0
