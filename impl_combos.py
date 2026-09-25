@@ -16,17 +16,18 @@ PIECES = set()
 
 
 class Combo:
-    def __init__(s, name, groups, ready, mana=(0, ''), finish=None, status='Approximate', text=''):
+    def __init__(s, name, groups, ready, mana=(0, ''), finish=None, status='Approximate', text='', xcost=None):
         """groups: list of tuples of card names (one of each group is needed); ready(g, p) -> (ok, key permanents,
-        cards to cast from hand); finish(g, p): what happens (default: p wins)"""
+        cards to cast from hand); finish(g, p): what happens (default: p wins); xcost: {card name: mana spent on X}
+        for X spells cast as part of the combo (Walking Ballista needs X >= 1 to survive)"""
         s.name, s.groups, s.ready, s.mana, s.finish = name, groups, ready, mana, finish
-        s.status, s.text = status, text
+        s.status, s.text, s.xcost = status, text, xcost or {}
         for grp in groups: PIECES.update(grp)
 
 
-def combo(name, groups, mana=(0, ''), finish=None, text='', status='Approximate'):
+def combo(name, groups, mana=(0, ''), finish=None, text='', status='Approximate', xcost=None):
     def deco(fn):
-        COMBOS.append(Combo(name, groups, fn, mana, finish, status, text))
+        COMBOS.append(Combo(name, groups, fn, mana, finish, status, text, xcost))
         return fn
     return deco
 
@@ -78,7 +79,7 @@ def attempt(g, p, cmb):
     ok, keys, casts = cmb.ready(g, p)
     if not ok: return False
     gen, pips = cmb.mana
-    if not can_pay(g, p, gen + sum(c.generic for c in casts), pips + ''.join(c.pips for c in casts)): return False
+    if not can_pay(g, p, gen + cast_generic(cmb, casts), pips + ''.join(c.pips for c in casts)): return False
     if getattr(p, 'combo_turn', None) == (p.turns, cmb.name): return False
     p.combo_turn = (p.turns, cmb.name)
     p.stats['combo_attempt'] += 1
@@ -88,7 +89,9 @@ def attempt(g, p, cmb):
         if c not in p.hand or not castable(g, p, c) or not can_pay(g, p, c.generic, c.pips):
             if i: log(f'    ...{cmb.name} fizzles ({c.name} is gone)', g); p.stats['combo_stopped'] += 1
             return i > 0                                 # something already happened: the turn state changed
-        pay(g, p, c.generic, c.pips)
+        x = cmb.xcost.get(c.name, 0)
+        pay(g, p, c.generic + x, c.pips)
+        if x: g.last_x = x
         g.combo_spell = True
         try:
             ok = cast_card(g, p, c, 'hand', {})
@@ -145,10 +148,15 @@ def combo_options(g, p, s, post):
         ok, keys, casts = cmb.ready(g, p)
         if not ok: continue
         gen, pips = cmb.mana
-        if not can_pay(g, p, gen + sum(c.generic for c in casts), pips + ''.join(c.pips for c in casts)): continue
+        if not can_pay(g, p, gen + cast_generic(cmb, casts), pips + ''.join(c.pips for c in casts)): continue
         risk = s.ctr_risk if casts else 0.0
         out.append((14.0 - 6.0 * risk, f'combo: {cmb.name}', lambda cmb=cmb: attempt(g, p, cmb)))
     return out
+
+
+def cast_generic(cmb, casts):
+    """generic mana for the pieces still to be cast, X included"""
+    return sum(c.generic + cmb.xcost.get(c.name, 0) for c in casts)
 
 
 def missing_pieces(g, p):
@@ -407,6 +415,19 @@ def _karn(g, p):
     if lat is not None: return True, [k, lat], []
     c = in_hand(p, 'Mycosynth Lattice')
     if c is not None: return True, [k], [c]
+    return False, [], []
+
+
+@combo('Heliod, Sun-Crowned + Walking Ballista', [('Heliod, Sun-Crowned',), ('Walking Ballista',)], mana=(1, 'W'),
+       xcost={'Walking Ballista': 2},
+       text='Heliod gives the Ballista lifelink ({1}{W}); each ping gains life, which adds a counter: unlimited pings')
+def _heliod(g, p):
+    h = on_bf(p, 'Heliod, Sun-Crowned')
+    if h is None: return False, [], []
+    b = next((m for m in p.perms if m.cd is not None and m.cd.name == 'Walking Ballista' and m.plus > 0 and not m.phased), None)
+    if b is not None: return True, [h, b], []
+    c = in_hand(p, 'Walking Ballista')
+    if c is not None: return True, [h], [c]
     return False, [], []
 
 

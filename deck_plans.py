@@ -72,6 +72,27 @@ def gaa_wish(g, p, *a):
     return impl_combos.missing_pieces(g, p) or list(PILLOW)
 
 
+# ------------------------------------------------------------------ Heliod, Sun-Crowned (mono-white stax)
+def heliod_prio(g, p, c):
+    """rocks and taxes early like GAA; Heliod on turn three; Walking Ballista is kept for the combo (the combo
+    casts it with Heliod out); the protection creatures once Heliod or a stax piece needs guarding"""
+    if c is p.cmd: return 84 if p.turns >= 3 else 0
+    if c.name == 'Walking Ballista': return 0
+    if 'rock' in c.tags: return 86 if p.turns <= 5 else 45
+    if c.name in STAX_EARLY: return 76 if p.turns <= 6 else 55
+    if c.name in PILLOW: return 60 + min(25, int(opp_power(g, p) * 1.5))
+    if c.name in ('Mother of Runes', 'Giver of Runes'): return 70
+    return None
+
+
+def heliod_wish(g, p, *a):
+    import impl_combos
+    if not on_bf(p, 'Walking Ballista') and not any(c.name == 'Walking Ballista' for c in p.hand):
+        return ['Walking Ballista', 'Recruiter of the Guard', 'Ranger-Captain of Eos']
+    if opp_power(g, p) >= 10 and not any(on_bf(p, n) for n in PILLOW): return list(PILLOW)
+    return impl_combos.missing_pieces(g, p) or ['Rule of Law', 'Smothering Tithe', 'Drannith Magistrate', 'Thalia, Guardian of Thraben']
+
+
 # ------------------------------------------------------------------ Yawgmoth, Thran Physician
 UNDYING = ("Geralf's Messenger", 'Butcher Ghoul', 'Young Wolf', 'Nether Traitor')
 

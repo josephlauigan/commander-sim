@@ -751,3 +751,43 @@ note('Exquisite Blood', 'Full', 'opponents\' life loss gains you life; with Sang
 
 
 note('Temur Sabertooth', 'Partial', 'body only (re-buying ETB creatures is not used)')
+
+
+# ======================================================== Heliod, Sun-Crowned (replaces GAA IV in Tier 4)
+def heliod_update(src):
+    """a creature (5/5) only while its controller's devotion to white is 5 or more"""
+    import impl_rules2
+    if src.data is None: src.data = {}
+    src.pow = src.tgh = 5
+    src.data['anim'] = impl_rules2.devotion(src.owner, 'W') >= 5
+
+
+@on('Heliod, Sun-Crowned', 'etb')
+def _heliod_etb(g, src, p, m):
+    if m is src or m.owner is src.owner: heliod_update(src)
+
+
+@on('Heliod, Sun-Crowned', 'sba')
+def _heliod_sba(g, src, *a):
+    heliod_update(src)
+
+
+@on('Heliod, Sun-Crowned', 'grant_kw')
+def _heliod_ind(g, src, m, kw):
+    return kw == 'indestructible' and m is src
+
+
+@on('Heliod, Sun-Crowned', 'gain_life')
+def _heliod_gain(g, src, p, n):
+    """whenever you gain life: a +1/+1 counter on your best creature (a Walking Ballista first: one more ping)"""
+    if p is not src.owner: return
+    cre = [m for m in p.perms if m.creature and not m.phased and m is not src]
+    if not cre: return
+    t = next((m for m in cre if m.cd is not None and m.cd.name == 'Walking Ballista'), None) or \
+        max(cre, key=lambda m: pval(g, m))
+    t.plus += 1
+
+
+card('Heliod, Sun-Crowned', 'leg', types='E', dsl=[])
+note('Heliod, Sun-Crowned', 'Approximate', 'indestructible; a creature only with devotion to white 5+ (5/5); life gain '
+     'puts a +1/+1 counter on your best creature; the {1}{W} lifelink grant is used for the Walking Ballista combo only')
