@@ -21,7 +21,8 @@ COMBO_W = 12.0          # value of holding every piece of a combo the deck plays
 PLAYOUT_WORK = 2_000    # engine steps one playout may take (see E.tick); a playout that runs out is scored where it stands
 GAME_DECISIONS = 1000   # look-ahead decisions per game (a game takes about 125); past this the heuristic AI plays on
 BOARD_LIMIT = 150       # permanents on the table past which copies get too slow (a 250-Goblin lock): heuristic AI
-STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0, 'capped': 0, 'big_board': 0}
+GAME_SEARCH_WORK = 3_000_000   # engine steps of look-ahead playouts per game (a game uses about 270,000); past it, heuristic
+STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0, 'capped': 0, 'big_board': 0}   # capped: games past GAME_DECISIONS or GAME_SEARCH_WORK
 CUTS = []               # where playouts ran out of steps: (deck, round, innermost frames), first few only
 
 _SHARED = None
@@ -32,6 +33,9 @@ def enabled(g, p):
     if not ('*' in KEYS or p.key in KEYS): return False
     if sum(len(q.perms) for q in g.players) > BOARD_LIMIT:
         STATS['big_board'] = STATS.get('big_board', 0) + 1
+        return False
+    if getattr(g, 'search_work', 0) > GAME_SEARCH_WORK:
+        STATS['capped'] += 1
         return False
     if getattr(g, 'search_n', 0) >= GAME_DECISIONS:
         if g.search_n == GAME_DECISIONS: STATS['capped'] += 1; g.search_n += 1
@@ -174,15 +178,20 @@ def combo_progress(q):
     return best * best
 
 
-def _start(g2):
+def _start(g2, g):
+    """a copy g2 of the real game g begins a playout: step budget, and its work is booked to g (GAME_SEARCH_WORK)"""
     g2.in_search = True
+    g2.search_parent = g
     g2.work_start = g2.work; g2.work_cap = g2.work + PLAYOUT_WORK
 
 
 def _done(g2, err=None):
     """book-keeping after a playout; err: the OutOfWork that stopped it"""
     STATS['playouts'] += 1
-    STATS['max_work'] = max(STATS['max_work'], g2.work - g2.work_start)
+    w = g2.work - g2.work_start
+    STATS['max_work'] = max(STATS['max_work'], w)
+    real = getattr(g2, 'search_parent', None)
+    if real is not None: real.search_work = getattr(real, 'search_work', 0) + w
     if err is not None:
         STATS['cut'] += 1
         if len(CUTS) < 20:
@@ -221,7 +230,7 @@ def choose(g, p, post, opts):
             for o, label, n in keyed:
                 rng = random.Random(base_seed * 31 + r)
                 g2 = clone(g)
-                _start(g2)
+                _start(g2, g)
                 p2 = g2.players[g.players.index(p)]
                 determinize(g2, p2, rng)
                 g2.rng = random.Random(rng.random())
@@ -267,7 +276,7 @@ def choose_attack(g, p):
             for c in cands:
                 rng = random.Random(base_seed * 31 + r)
                 g2 = clone(g)
-                _start(g2)
+                _start(g2, g)
                 p2 = g2.players[g.players.index(p)]
                 determinize(g2, p2, rng)
                 g2.rng = random.Random(rng.random())
@@ -299,7 +308,7 @@ def choose_counter(g, q, p, c, ctx, zone):
             for counter in (True, False):
                 rng = random.Random(base_seed * 31 + r)
                 g2, memo = clone(g, want_memo=True)
-                _start(g2)
+                _start(g2, g)
                 q2 = g2.players[g.players.index(q)]; p2 = g2.players[g.players.index(p)]
                 determinize(g2, q2, rng)
                 g2.rng = random.Random(rng.random())
