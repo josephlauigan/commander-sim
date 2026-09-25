@@ -1433,6 +1433,7 @@ def resolve(g, p, c, ctx, zone):
 
 
 def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0):
+    tick(g)
     phys = None
     if 'clone' in cd.tags:                      # Phyrexian Metamorph: copy the best creature or artifact on the battlefield
         cands = [x for q in g.players if q.alive for x in q.perms if x.cd is not None and x.cd is not q.cmd

@@ -1958,6 +1958,7 @@ def end_step(g, p):
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
             if bombs:
                 c = max(bombs, key=lambda c: c.bomb); discard_cards(g, p, [c]); continue
+        E.tick(g)                                    # each discard can set off triggers (Tergrid): count it
         lands = [c for c in p.hand if c.land]
         c = lands[0] if len(lands) >= 2 else max(p.hand, key=lambda c: c.cmc)
         discard_cards(g, p, [c])
