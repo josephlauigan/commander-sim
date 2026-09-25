@@ -842,8 +842,9 @@ def _valakut_end2(g, src, p):
     """at your end step, each card exiled with it that you didn't play goes to the graveyard: 1 damage each"""
     if p is not src.owner: return
     held = getattr(p, 'valakut_cards', [])
-    left = [c for c in held if c in p.hand]
-    for c in left: p.hand.remove(c); p.gy.append(c)
+    left = []
+    for c in held:
+        if c in p.hand: p.hand.remove(c); p.gy.append(c); left.append(c)
     if left:
         for q in g.opps(p): lose_life(g, q, len(left), p, kind='burn', damage=True)
     p.valakut_cards = []

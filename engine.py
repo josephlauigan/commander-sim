@@ -1872,6 +1872,7 @@ def cast_spell_copy(g, p, c, ctx=None):
 def discard_cards(g, q, cards):
     """q discards these cards from hand: to the graveyard (exiled instead under Necropotence), then Tergrid"""
     necro = has(q, 'necro')
+    cards = [c for c in cards if c in q.hand]            # a card paid away meanwhile (Elvish Spirit Guide) is gone
     for c in cards:
         q.hand.remove(c)
         (q.exile if necro else q.gy).append(c)

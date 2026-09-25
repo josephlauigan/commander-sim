@@ -559,6 +559,7 @@ def choose_defender(g, p):
         u = 0.25 * threat(g, p, q)
         if my >= q.life * 0.8: u += 4.0 + 2.0 * aggr               # go for the kill
         u += 0.15 * grudge.get(q.key, 0)                               # hit back whoever hit you
+        if E.POOL_RULES and p.key not in STYLE: u += __import__('pool_ai').ninja_defender_bonus(g, p, q)
         blockers = sum(1 for m in q.perms if m.creature and not m.tapped)
         u -= 0.15 * blockers * (1 - aggr)
         if g.hooks:                                                     # attack taxes and caps on q

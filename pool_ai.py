@@ -436,6 +436,9 @@ def attack_filter(g, p, atk, d):
     if not atk: return atk
     total = sum(E.epow(g, m) for m in atk)
     if total >= d.life: return atk                                  # lethal-ish: everyone goes
+    if combat_reserve(g, p) is not None:                            # ninjutsu: every evasive enabler attacks
+        return [a for a in atk if _evasive(g, a) or not any(A_can(g, b, a) for b in d.perms if b.creature and not b.tapped)] \
+            or atk
     blockers = [b for b in d.perms if b.creature and not b.tapped and not b.phased]
     if not blockers: return atk
     keep, risky = [], []
@@ -451,6 +454,25 @@ def attack_filter(g, p, atk, d):
         if a.token and E.epow(g, a) <= 1 and len(out) >= 3: out.append(a)
     if len(out) < len(atk): E.log(f'      [{E.NAME(p)} holds back {len(atk) - len(out)} attacker(s) that would die to blocks]', g)
     return out
+
+
+def _evasive(g, m):
+    return E.DSLMOD.has_kw(g, m, 'unblockable') or m.fly or E.DSLMOD.has_kw(g, m, 'flying')
+
+
+def A_can(g, b, a):
+    import ais
+    return ais.can_block(g, b, a)
+
+
+def ninja_defender_bonus(g, p, q):
+    """a ninjutsu deck attacks the player who can't block its evasive creatures"""
+    if combat_reserve(g, p) is None: return 0.0
+    ev = [m for m in p.perms if m.creature and not m.sick and not m.tapped and _evasive(g, m)]
+    if not ev: return 0.0
+    blockers = [b for b in q.perms if b.creature and not b.tapped and not b.phased]
+    open_ = sum(1 for a in ev if not any(A_can(g, b, a) for b in blockers))
+    return 3.0 * min(open_, 2) - 1.5 * (open_ == 0)
 
 
 def combat_reserve(g, p):
