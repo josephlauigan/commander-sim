@@ -97,6 +97,21 @@ def heliod_wish(g, p, *a):
 UNDYING = ("Geralf's Messenger", 'Butcher Ghoul', 'Young Wolf', 'Nether Traitor')
 
 
+def yawg_prio(g, p, c):
+    """with Yawgmoth out, the loop comes first: Mikaeus (or undying creatures), then a death payoff once the loop
+    is there; Yawgmoth itself as soon as it can be cast"""
+    import impl_combos
+    if c is p.cmd: return 86
+    if not on_bf(p, 'Yawgmoth, Thran Physician'): return None
+    und = sum(1 for m in p.perms if m.creature and m.cd is not None and 'undying' in m.cd.kws)
+    mik = on_bf(p, 'Mikaeus, the Unhallowed')
+    loop = und >= 2 or mik is not None
+    if c.name == 'Mikaeus, the Unhallowed' and not mik: return 82
+    if c.name in UNDYING and not loop: return 78 if und == 1 else 72
+    if loop and c.name in impl_combos.DRAIN_PAYOFFS and impl_combos.drain_payoff(p) is None: return 80
+    return None
+
+
 def yawg_wish(g, p, *a):
     """the loop needs Yawgmoth plus two undying creatures (or Mikaeus and fodder), then a drain payoff"""
     import impl_combos
