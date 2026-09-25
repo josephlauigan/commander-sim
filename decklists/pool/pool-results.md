@@ -1,6 +1,6 @@
 # Opponent pool results
 
-This file reports how the four main decks do against a fixed field: the 25 decks in `decklists/pool/`, five tiers of five.
+This file reports how the main decks do against a fixed field: the 25 decks in `decklists/pool/`, five tiers of five.
 In each game, one of your decks faces three decks drawn from one tier, with seats shuffled.
 Games are seeded, so any cell can be reproduced with `compare.py --deck <d> --pool <tier> --games N`. Since September 2026
 the default AI is the look-ahead AI (`--ai lookahead`, see `search.py`); section 0 has its results. Sections 1-3 were
@@ -64,8 +64,21 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 - Yawgmoth: Geralf's Messenger as its own loop payoff, -1/-1 counters on X/1 tokens, instant-speed use after blockers
   (a new `defend` event for defending permanents), and a second loop once a payoff is drawn.
 
-The four main decks' matrix against the tiers with look-ahead (loose profile, the harshest interaction) is pending an
-update to their lists.
+### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; 240 games per cell)
+
+Lists as updated in September 2026 (Najeela no longer tracked), after a full modeling pass: every card in the three
+decks audits Full (`python3 pool_audit.py --mine`). Each game seats the deck against three decks of the tier;
+25% is an even share.
+
+| Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 |
+|---|---|---|---|---|---|
+| Sephiroth | **40.8%** (35-47) | **49.6%** (43-56) | **38.8%** (33-45) | **37.9%** (32-44) | 22.5% (18-28) |
+| Veyran | 20.0% (15-26) | 25.0% (20-31) | 17.5% (13-23) | 20.8% (16-26) | 14.2% (10-19) |
+| Sauron | 24.2% (19-30) | 23.3% (18-29) | 20.4% (16-26) | 24.2% (19-30) | 18.3% (14-24) |
+
+Sephiroth is favoured through Low Bracket 4 and near even against High Bracket 4. Veyran and Sauron sit near or
+somewhat below an even share at every tier and fall off against High Bracket 4. These are worst-case numbers: the
+loose profile has opponents counter and remove more freely than the conservative one.
 
 ## 1. Deck × tier matrix (heuristic AI)
 
