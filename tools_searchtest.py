@@ -4,10 +4,11 @@ the heuristic AI and with search, for that deck only.
     python3 tools_searchtest.py <deck key> <tier> <games> [rollouts] [top_k] [all]
 
 With 'all', every deck at the table searches in the second run (not only the tested deck).
+Environment: SEARCH_HORIZON (own turns to look ahead, default search.HORIZON), SEARCH_COMBO_W (search.COMBO_W).
 One task per seed; a worker that dies stops the run with an error (never a silent hang), a seed that takes
 longer than SEED_LIMIT seconds or raises an error is reported and left out.
 """
-import sys, time
+import os, sys, time
 import engine as E, ais, compare, pools, poolmode, search
 from concurrent.futures import ProcessPoolExecutor, wait, FIRST_COMPLETED
 
@@ -17,6 +18,8 @@ SEED_LIMIT = 600
 def _init(rollouts, top_k):
     pools.register(); compare.set_ai('adaptive', 1.0); E.set_profile('conservative')
     search.ROLLOUTS, search.TOP_K = rollouts, top_k
+    search.HORIZON = int(os.environ.get('SEARCH_HORIZON', search.HORIZON))
+    search.COMBO_W = float(os.environ.get('SEARCH_COMBO_W', search.COMBO_W))
 
 
 def _run(me, tier, s, everyone):
@@ -63,14 +66,15 @@ if __name__ == '__main__':
                 if f in since and now - since[f] > SEED_LIMIT and s not in late:
                     late.append(s); print(f'  seed {s} past {SEED_LIMIT}s', flush=True)
             if late and all(started[f] in late for f in pending):
-                for f in pending: f.cancel()
+                procs = list((P._processes or {}).values())
+                for p in procs: p.kill()
                 P.shutdown(wait=False, cancel_futures=True)
-                for p in P._processes.values(): p.kill()
                 break
     m = len(res)
     b = sum(r[0] for r in res) / m; v = sum(r[1] for r in res) / m
     both = sum(1 for r in res if r[0] != r[1])
-    print(f'{me} alone vs {tier}: heuristic {100*b:.1f}%, search {100*v:.1f}% ({100*(v-b):+.1f} pts, n={m}, '
+    print(f'[horizon {os.environ.get("SEARCH_HORIZON", search.HORIZON)}, combo_w {os.environ.get("SEARCH_COMBO_W", search.COMBO_W)}] '
+          f'{me} alone vs {tier}: heuristic {100*b:.1f}%, search {100*v:.1f}% ({100*(v-b):+.1f} pts, n={m}, '
           f'{both} games differ in outcome)  {st}')
     for c in cuts[:10]: print('  playout cut:', c)
     for c in stopped: print('  game stopped:', c)

@@ -10,15 +10,17 @@ For a decision of player p:
      seeds, so they are compared on the same futures.
 The candidate with the best mean score is played in the real game.
 """
-import copy, random, re
+import copy, random, re, zlib
 import engine as E
 
 KEYS = set()            # decks that search ('*' in KEYS: every deck)
 ROLLOUTS = 6
 TOP_K = 5
-HORIZON = 'next_turn'   # play out to the end of p's next turn
+HORIZON = 1             # play out to the end of p's next turn (2: the turn after that)
+COMBO_W = 12.0          # value of holding every piece of a combo the deck plays (scaled by the share of pieces held)
 PLAYOUT_WORK = 2_000    # engine steps one playout may take (see E.tick); a playout that runs out is scored where it stands
-STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0}
+GAME_DECISIONS = 1000   # look-ahead decisions per game (a game takes about 125); past this the heuristic AI plays on
+STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0, 'capped': 0}
 CUTS = []               # where playouts ran out of steps: (deck, round, innermost frames), first few only
 
 _SHARED = None
@@ -26,7 +28,18 @@ _SHARED = None
 
 def enabled(g, p):
     if getattr(g, 'in_search', False) or not E.POOL_RULES: return False
-    return '*' in KEYS or p.key in KEYS
+    if not ('*' in KEYS or p.key in KEYS): return False
+    if getattr(g, 'search_n', 0) >= GAME_DECISIONS:
+        if g.search_n == GAME_DECISIONS: STATS['capped'] += 1; g.search_n += 1
+        return False
+    return True
+
+
+def _decision_seed(g, *parts):
+    """a new decision in game g: its random seed, the same in every process (Python's string hashing is not)"""
+    STATS['decisions'] += 1
+    g.search_n = getattr(g, 'search_n', 0) + 1
+    return zlib.crc32(repr((g.search_n, g.round) + parts).encode())
 
 
 # ------------------------------------------------------------------ copying a game
@@ -91,12 +104,13 @@ def determinize(g2, me, rng):
 # ------------------------------------------------------------------ playing a copy forward
 def play_on(g2, p2, stop_rounds=20, active=None):
     """finish the active player's turn (p2's by default) from the current step, then everyone's turns until the end
-    of p2's next turn"""
+    of p2's next turn (HORIZON of p2's turns)"""
     import ais, brain
     act = active or p2
     if act.alive: ais.continue_turn(g2, act, g2.step)
     ps = g2.players
     k = ps.index(act)
+    left = HORIZON
     while not g2.over and p2.alive:
         k = (k + 1) % len(ps)
         if k == 0: g2.round += 1
@@ -106,7 +120,9 @@ def play_on(g2, p2, stop_rounds=20, active=None):
         brain.end_of_turn_window(g2, q)
         if g2.over: break
         if q.alive: ais.take_turn(g2, q)
-        if q is p2: break
+        if q is p2:
+            left -= 1
+            if left <= 0: break
 
 
 def evaluate(g, p):
@@ -125,7 +141,32 @@ def strength(g, q):
     life = max(0, min(q.life, 60))
     board = sum(E.pval(g, m) for m in q.perms if not m.phased)
     power = sum(E.epow(g, m) for m in q.perms if m.creature and not m.phased)
-    return 0.25 * life + board + 0.35 * power + 0.9 * len(q.hand) + 0.6 * len(q.lands) + 0.4 * q.treasures
+    return (0.25 * life + board + 0.35 * power + 0.9 * len(q.hand) + 0.6 * len(q.lands) + 0.4 * q.treasures
+            + COMBO_W * combo_progress(q))
+
+
+_DECK_COMBOS = {}
+
+
+def deck_combos(q):
+    """the modeled combos whose pieces are all in q's deck (fixed per deck)"""
+    v = _DECK_COMBOS.get(q.key)
+    if v is None:
+        import impl_combos
+        names = {c.name for c in impl_combos.full_deck_names(q)} | {q.cmd.name}
+        v = _DECK_COMBOS[q.key] = [c for c in impl_combos.COMBOS if all(any(n in names for n in grp) for grp in c.groups)]
+    return v
+
+
+def combo_progress(q):
+    """share of q's closest combo that q holds (in hand, on the battlefield, or the commander in the command zone),
+    squared: the last pieces count most. 0 for a deck without a modeled combo."""
+    cmbs = deck_combos(q)
+    if not cmbs: return 0.0
+    have = {m.cd.name for m in q.perms if m.cd is not None and not m.phased} | {c.name for c in q.hand}
+    if q.cmd_in_zone: have.add(q.cmd.name)
+    best = max(sum(1 for grp in c.groups if any(n in have for n in grp)) / len(c.groups) for c in cmbs)
+    return best * best
 
 
 def _start(g2):
@@ -167,9 +208,8 @@ def choose(g, p, post, opts):
     for o in cands:                                     # (label, occurrence) identifies an option in a copy
         n = sum(1 for x in opts[:opts.index(o)] if x[1] == o[1])
         keyed.append((o, o[1], n))
-    STATS['decisions'] += 1
+    base_seed = _decision_seed(g, p.key, len(p.hand), len(p.perms))
     saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
-    base_seed = hash((g.round, p.key, len(p.hand), len(p.perms), STATS['decisions'])) & 0xffffffff
     scores = {id(o): 0.0 for o in cands}
     try:
         for r in range(ROLLOUTS):
@@ -214,9 +254,8 @@ def choose_attack(g, p):
     opps = [i for i, q in enumerate(g.players) if q is not p and q.alive]
     if not opps: return None
     cands = [(i, m) for i in opps for m in ('filtered', 'all')] + [(opps[0], 'none')]
-    STATS['decisions'] += 1
+    base_seed = _decision_seed(g, p.key, 'atk')
     saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
-    base_seed = hash((g.round, p.key, 'atk', STATS['decisions'])) & 0xffffffff
     scores = {c: 0.0 for c in cands}
     try:
         for r in range(ROLLOUTS):
@@ -247,9 +286,8 @@ def choose_attack(g, p):
 # ------------------------------------------------------------------ counterspells
 def choose_counter(g, q, p, c, ctx, zone):
     """q may counter p's spell c (cast in p's main phase): True to counter, by look-ahead to the end of q's next turn"""
-    STATS['decisions'] += 1
+    base_seed = _decision_seed(g, q.key, 'ctr')
     saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
-    base_seed = hash((g.round, q.key, 'ctr', STATS['decisions'])) & 0xffffffff
     scores = {True: 0.0, False: 0.0}
     try:
         for r in range(ROLLOUTS):
