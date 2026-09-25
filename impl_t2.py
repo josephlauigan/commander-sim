@@ -677,3 +677,38 @@ def _prince(g, src, p, m):
     else: gain(o, 3)
 card('Charming Prince', 'human pow=2', dsl=[])
 note('Charming Prince', 'Approximate', 'blinks your best ETB creature (immediately, not at end step), else 3 life')
+
+
+# ======================================================== value blinks: Ephemerate, Restoration Angel (pool decks)
+def _value_blink(name, gen, pips):
+    """cast at the end of an opponent's turn for value: blink your best enters-the-battlefield creature (Ephemerate
+    rebounds; Restoration Angel also arrives as a 3/4 flash flier). Kept for protection when nothing is worth it."""
+    @on(name, 'hand_options')
+    def _opt(g, c, p, s, post):
+        if post is not None or g.active is p or c not in p.hand or p.key in STYLE_KEYS or not can_pay(g, p, gen, pips): return []
+        cands = [m for m in p.perms if m.creature and not m.token and blink_value(g, p, m) >= 3
+                 and not (name == 'Restoration Angel' and has_type(m, 'angel'))]
+        t = max(cands, key=lambda m: blink_value(g, p, m)) if cands else None
+        if t is None and name != 'Restoration Angel': return []
+        v = (blink_value(g, p, t) if t is not None else 0) + (2.5 if name == 'Restoration Angel' else 0)
+        if v < 3: return []
+
+        def go():
+            if c not in p.hand or not can_pay(g, p, gen, pips): return False
+            p.hand.remove(c); pay(g, p, gen, pips)
+            p.spells_this_turn += 1; p.cast_names.add(c.name); on_cast(g, p, c)
+            if name == 'Ephemerate': p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
+            else: enter(g, p, c)
+            if t is not None and t in p.perms: blink(g, p, t)
+            log(f'  {NAME(p)} casts {name} at end of turn' + (f': blinks {t.name}' if t is not None else ''), g)
+            return True
+        return [(v - 1.0, f'{name} (end of turn)', go)]
+
+
+STYLE_KEYS = ('seph', 'veyran', 'sauron', 'najeela')
+_value_blink('Ephemerate', 0, 'W')
+_value_blink('Restoration Angel', 3, 'W')
+note('Ephemerate', 'Full', 'blinks your best enters-the-battlefield creature at the end of an opponent\'s turn (or in '
+     'answer to removal), rebounding next upkeep')
+note('Restoration Angel', 'Full', 'flash 3/4 flier: cast at the end of an opponent\'s turn, blinking your best ETB '
+     'non-Angel creature, or in answer to removal')
