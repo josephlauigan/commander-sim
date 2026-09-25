@@ -41,7 +41,7 @@ Within each tier, the five decks cover different axes: a combat/aggro deck, a gr
 | 4 | [Krenko, Mob Boss — Mono-Red Goblins](t4-low-b4/krenko-mono-red-goblins.md) | Krenko, Mob Boss | Explosive go-wide / combo | 3 | 34 | Yes |
 | 4 | [Chulane — Bant Value & Aluren](t4-low-b4/chulane-bant-value-combo.md) | Chulane, Teller of Tales | Value engine / Aluren combo | 7 | 34 | Yes |
 | 4 | [Prosper — Rakdos Exile & Treasure](t4-low-b4/prosper-rakdos-exile-treasure.md) | Prosper, Tome-Bound | Treasure / impulse-draw value | 6 | 35 | Yes |
-| 4 | [Grand Arbiter Augustin IV — Azorius Stax](t4-low-b4/gaa-azorius-stax-control.md) | Grand Arbiter Augustin IV | Stax / tax control | 7 | 35 | Yes |
+| 4 | [Heliod, Sun-Crowned — Mono-White Stax](t4-low-b4/heliod-mono-white-stax.md) | Heliod, Sun-Crowned | Stax / hatebears + compact combo | 5 | 33 | Yes |
 | 5 | [Urza, Lord High Artificer — Mono-Blue Artifacts](t5-high-b4/urza-mono-blue-artifacts.md) | Urza, Lord High Artificer | Artifact combo + stax | 14 | 29 | Yes |
 | 5 | [Kinnan — Simic Mana Combo](t5-high-b4/kinnan-simic-mana-combo.md) | Kinnan, Bonder Prodigy | Mana combo | 18 | 30 | Yes |
 | 5 | [Winota — Boros Humans & Hatebears](t5-high-b4/winota-boros-humans-cheat.md) | Winota, Joiner of Forces | Aggro-cheat with stax | 9 | 32 | Yes |
@@ -52,5 +52,6 @@ Within each tier, the five decks cover different axes: a combat/aggro deck, a gr
 
 - Every list is exactly 100 cards, singleton, color-identity legal, free of banned cards, and checked against the 53-card Game Changers list as of the February 9, 2026 update (unchanged as of September 2026). Card names were validated against a card database; re-verify against Scryfall if anything fails to resolve.
 - Tier 1 and 2 decks have no two-card infinite combos. Tier 3 decks have exactly three Game Changers and only late-game combos. Krenko sits in Tier 4 despite three Game Changers because Kiki-Jiki + Zealous Conscripts is an early two-card combo.
-- Several decks carry graveyard hate on purpose (Rest in Peace, Bojuka Bog, Dauthi Voidwalker, Tormod's Crypt, Scavenger Grounds) so Sephiroth faces a realistic amount of it. Winota's Magus of the Moon and the stax pieces in GAA IV and Urza test the multicolor mana bases.
+- Several decks carry graveyard hate on purpose (Rest in Peace, Bojuka Bog, Dauthi Voidwalker, Tormod's Crypt, Scavenger Grounds) so Sephiroth faces a realistic amount of it. Winota's Magus of the Moon and the stax pieces in Heliod and Urza test the multicolor mana bases.
+- Grand Arbiter Augustin IV (Azorius stax) was Tier 4's stax deck until September 2026. It is kept in `retired/` and is no longer drawn. Its rules checked out, but the list had no reliable way to win in the sim: it won about 4% against Tier 3, 7.5% even when it could not lose life, and the same with its stax effects switched off. Heliod, Sun-Crowned took the slot (see pool-results.md).
 - These are reasonable, representative builds rather than tuned tournament lists. If the sim shows one pool deck winning far more or less than 25% against its own tier, suspect card modeling first, then the list.

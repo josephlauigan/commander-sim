@@ -156,6 +156,35 @@ Adding real Bracket 4 cards to the Tier 4 lists does not move them into place, s
 2. Re-tier the pool by measured sim strength (section 2c), so the columns are ordered by difficulty.
 3. A deeper AI with look-ahead for combo and control decisions. This is a larger project with no guaranteed result.
 
+### GAA replaced by Heliod (September 2026)
+
+The tables above were measured with Grand Arbiter Augustin IV in Tier 4. GAA has since been retired to `opponents/retired/` and replaced by Heliod, Sun-Crowned (mono-white stax).
+
+**Why GAA was retired.** It won about 4% against Tier 3 under every AI version, including the look-ahead AI. The diagnosis (heuristic AI, 480 games per row, GAA alone against three Tier 3 decks):
+
+| What-if | GAA win rate |
+|---|---|
+| As built | 3.8% |
+| Opponents never pay Rhystic Study / Mystic Remora / Smothering Tithe | 4.6% |
+| GAA's own spells ignore its taxes | 4.4% |
+| Isochron combo needs one less mana | 4.6% |
+| GAA starts on the battlefield on turn one | 5.4% |
+| GAA cannot lose life | 7.5% |
+| All of GAA's stax effects switched off | 3.8% |
+| Taxes on opponents doubled | 4.0% |
+
+The card rules check out (taxes, spell limits, Drannith, and the Isochron loop's need for 3+ mana from nonland permanents). The stax slows every seat alike, and the list has no reliable kill. Even with no opponents, it had seen both Isochron Scepter and Dramatic Reversal by turn 10 in only 12% of games, and had 3+ mana from rocks in only 16%. It dealt about 9 damage per game.
+
+**Heliod calibration** (heuristic AI, 480 games, Heliod alone against three decks of the tier):
+
+| List | vs Tier 3 | vs Tier 4 | vs Tier 5 |
+|---|---|---|---|
+| With Ranger-Captain of Eos and Enlightened Tutor (High B4-level) | 44.8% | 40.0% | 39.0% |
+| **As committed** (Silent Arbiter and Restoration Angel instead) | **29.6%** | **26.5%** | 30.0% |
+| Also without Recruiter of the Guard and Idyllic Tutor | 23.1% | 21.7% | 27.3% |
+
+With Heliod in Tier 4, Tier 5 into Tier 4 is 22.7% (480 games per deck): Kinnan 34, Winota 28, Urza 20, Zur 20, Yawgmoth 12.
+
 ## 4. Old-mode regression
 
 Old mode (`compare.py` without `--pool`) is unchanged by this work. Three guards enforce that:
