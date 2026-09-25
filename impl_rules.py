@@ -677,6 +677,7 @@ def evasion_blocked(g, b, a):
     if n == 'Signal Pest' and not (b.fly or (b.cd is not None and 'reach' in b.cd.tags)
                                    or (E.DSLMOD is not None and (E.DSLMOD.has_kw(g, b, 'flying') or E.DSLMOD.has_kw(g, b, 'reach')))): return True
     if b.token and getattr(a.owner, 'loyalist_turn', None) == turn_stamp(g): return True
+    if E.equipped(a, 'nim') and not ((b.cd is not None and 'A' in b.cd.types) or 'B' in colors_of(b)): return True   # intimidate
     if __import__('impl_rules2').prot_unblockable(g, b, a): return True
     if dovin_blocked(a) or dovin_blocked(b): return False
     return False

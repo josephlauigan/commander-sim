@@ -19,6 +19,16 @@ def tide_response(g, actor, what, value, victim=None):
     return False
 
 
+def seph_sac(g, p, m):
+    """sacrifice m to a free outlet; with Altar of Dementia out, mill yourself for its power (bombs for the
+    reanimation spells) while the library can spare it"""
+    pw = epow(g, m)
+    die(g, m, 'sac')
+    if any(x.cd is not None and x.cd.name == 'Altar of Dementia' and not x.phased for x in p.perms) and pw > 0 \
+            and len(p.library) >= pw + 15:
+        mill(g, p, pw); log(f'    Altar of Dementia: {NAME(p)} mills {pw}', g)
+
+
 def free_sac(p):
     g = E.CUR_G
     return any(m.cd is not None and 'sac' in m.cd.tags and not m.phased and not stopped(g, m.cd.name) for m in p.perms)
@@ -70,9 +80,11 @@ def flute_pick(g, p):
     return name, cands[name]
 
 
-def pay_card(g, p, c):
-    if not pay(g, p, c.generic, c.pips): return False
-    p.hand.remove(c); p.gy.append(c); p.spells_this_turn += 1
+def pay_card(g, p, c, kicked=0):
+    if c not in p.hand or not can_pay(g, p, c.generic + kicked, c.pips + ('W' if kicked else '')): return False
+    p.hand.remove(c)
+    pay(g, p, c.generic + kicked, c.pips + ('W' if kicked else ''))
+    p.gy.append(c); p.spells_this_turn += 1
     p.cast_names.add(c.name)
     on_cast(g, p, c)
     return True
@@ -86,15 +98,18 @@ def protect_response(g, owner, m, kind, actor, spell=None):
     v = pval(g, m)
     if silenced(g, owner):                      # Conqueror's Flail: only non-spell responses
         if owner.key == 'seph' and kind in ('exile', 'bounce', 'tuck') and m.creature and free_sac(owner) and v >= 6:
-            owner.stats['sac_saves'] += 1; die(g, m, 'sac'); return True
+            owner.stats['sac_saves'] += 1; seph_sac(g, owner, m); return True
         return False
     if owner.key == 'seph':
         if v >= 6 and m.creature:
             hi = [c for c in owner.hand if c.tags.get('prot') == 'hi']
             if hi and kind != 'edict' and can_pay(g, owner, 1, 'G'):
                 pay_card(g, owner, hi[0]); owner.stats['hi_used'] += 1; return True
+            gd = [c for c in owner.hand if c.name == "Galadriel's Dismissal"]
+            if gd and can_pay(g, owner, 0, 'W') and pay_card(g, owner, gd[0]):      # phases out: safe from anything
+                m.phased = True; owner.stats['phase_saves'] += 1; return True
             if kind in ('exile', 'bounce', 'tuck') and free_sac(owner) and not m.token:
-                owner.stats['sac_saves'] += 1; die(g, m, 'sac'); return True
+                owner.stats['sac_saves'] += 1; seph_sac(g, owner, m); return True
     elif owner.key == 'sauron':
         if m.army or v >= 5:
             sl = [c for c in owner.hand if c.tags.get('prot') == 'phase']
@@ -130,10 +145,15 @@ def wipe_response(g, q, kind, caster):
             hi = [c for c in q.hand if c.tags.get('prot') == 'hi']
             if hi and can_pay(g, q, 1, 'G'):
                 pay_card(g, q, hi[0]); q.stats['hi_used'] += 1; return 'indes'
+        gd = [c for c in q.hand if c.name == "Galadriel's Dismissal"]
+        if gd and can_pay(g, q, 2, 'WW') and pay_card(g, q, gd[0], kicked=2):   # kicked: every creature you control
+            for m in q.perms:
+                if m.creature: m.phased = True
+            q.stats['phase_saves'] += 1; return 'all'
         if kind in ('exile', 'rift', 'rebuke') and free_sac(q):
             for m in list(q.perms):
                 if m.creature and not m.token and m.cd.bomb and m.cd is not q.cmd:
-                    q.stats['sac_saves'] += 1; die(g, m, 'sac')
+                    q.stats['sac_saves'] += 1; seph_sac(g, q, m)
     elif q.key == 'najeela':
         for c in list(q.hand):
             if c.tags.get('prot') == 'phase' and can_pay(g, q, c.generic, c.pips, 'convoke' in c.tags):
@@ -333,8 +353,9 @@ def seph_tortured(g, p):
     if not bombs or not can_pay(g, p, 0, 'B') or not has_rean_access(g, p): return False
     pay(g, p, 0, 'B'); b = max(bombs, key=lambda c: seph_bval(g, p, c))
     discard_cards(g, p, [b]); p.te_used = p.turns
-    small = [c for c in p.gy if c.creature and not c.bomb]
-    if small: p.gy.remove(small[0]); p.hand.append(small[0])
+    small = [c for c in p.gy if c.creature and not c.bomb and c is not b]       # the best creature that isn't a target
+    if small:
+        x = max(small, key=lambda c: E.card_worth(g, p, c)); p.gy.remove(x); p.hand.append(x)
     return True
 
 
@@ -499,6 +520,7 @@ def seph_prio(g, p, c):
     if 'rite' in t: return 45
     if 'clamp' in t: return 50
     if t.get('prot') == 'boots': return 70 if bomb_on_bf(p) else 25
+    if 'nim' in t: return 58 if (bomb_on_bf(p) or own_bomb_in_gy(g, p)) else 35   # Nim Deathmantle: recursion
     if 'sac' in t: return 50
     if 'bartist' in t or 'drain' in t: return 45
     if 'clone' in t: return 45 if any(x.creature and x.cd is not None and x.cd.bomb for q in g.players for x in q.perms) else 0
@@ -690,6 +712,10 @@ def wipe_modes(g, p, kind):
     opts = {'art': val(lambda m: 'A' in ty(m)), 'ench': val(lambda m: 'E' in ty(m))}
     if kind == 'farewell':
         opts['cre'] = val(lambda m: m.creature)
+        gyv = 0.0                                   # exile all graveyards: theirs (recursion) against yours (reanimation)
+        for q in g.players:
+            if q.alive: gyv += (-1.2 if q is p else 1.0) * 0.25 * sum(E.card_worth(g, q, c, in_gy=True) for c in q.gy)
+        opts['gy'] = gyv
         ch = {k for k, v in opts.items() if v > 0}
         return ch or {'cre'}
     opts['le3'] = val(lambda m: m.creature and (m.cd is None or m.cd.cmc <= 3))
@@ -1746,6 +1772,8 @@ def land_enters_tapped(p, cd):
 
 def play_land(g, p):
     lands = [c for c in p.hand if c.land]
+    if getattr(p, 'yawg', False):                                    # Yawgmoth's Will: lands from the graveyard too
+        lands += [c for c in p.gy if c.land and id(c) in p.yawg_gy]
     if any(c.tags.get('chasm') for c in lands) and not (len(p.lands) >= 4 and chasm_threatened(g, p) and not chasm(p)):
         lands = [c for c in lands if not c.tags.get('chasm')]     # hold Glacial Chasm until it's needed
     if not lands: return
@@ -1762,7 +1790,8 @@ def play_land(g, p):
             s += 4 if theirs >= mine + 3 else -6
         return s + g.rng.random() * 0.1
     c = max(lands, key=score)
-    p.hand.remove(c)
+    if c in p.hand: p.hand.remove(c)
+    else: p.gy.remove(c)
     play_land_card(g, p, c)
 
 
@@ -1927,7 +1956,18 @@ def erebos_draw(g, p):
     return True
 
 
+def yawg_cleanup(g, p):
+    """Yawgmoth's Will: cards that reached your graveyard this turn were exiled instead"""
+    left, keep, new = __import__('collections').Counter(p.yawg_gy), [], []
+    for c in p.gy:
+        if left[id(c)] > 0: left[id(c)] -= 1; keep.append(c)
+        else: new.append(c)
+    if new:
+        p.gy[:] = keep; p.exile.extend(new)
+
+
 def end_step(g, p):
+    if getattr(p, 'yawg', False): yawg_cleanup(g, p)
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
     for m in getattr(p, 'borrowed', None) or []:          # Zealous Conscripts: control returns
         if m in p.perms and m.orig.alive:

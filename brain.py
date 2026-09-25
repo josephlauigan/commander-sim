@@ -221,7 +221,8 @@ def do_cast(g, p, c, zone=None):
     if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE): return False
     if c.dsl and not additional_cost(g, p, c, dry=True): return False
     if zone in (None, 'hand') and c not in p.hand and not (c is p.cmd and p.cmd_in_zone): return False
-    if g.hooks and not castable(g, p, c, zone or ('cmd' if (c is p.cmd and c not in p.hand) else 'hand')): return False
+    if zone == 'yawg' and c not in p.gy: return False
+    if g.hooks and not castable(g, p, c, 'gy' if zone == 'yawg' else zone or ('cmd' if (c is p.cmd and c not in p.hand) else 'hand')): return False
     cv = 'convoke' in c.tags
     if zone == 'gy':
         cg, cp = parse_cost(c.tags['fb'])
@@ -240,7 +241,7 @@ def do_cast(g, p, c, zone=None):
     elif 'xtutor' in c.tags:                         # X spells of outside decks: X = all spare mana
         x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x; g.last_x = x
     if c.dsl: additional_cost(g, p, c)
-    ok = cast_card(g, p, c, zone, ctx)
+    ok = cast_card(g, p, c, 'gy' if zone == 'yawg' else zone, ctx)     # from the graveyard: exiled after
     if p.key == 'seph' and ok and (c is p.cmd or c.bomb >= 4): A.note_bomb(p, c)
     return True
 
@@ -507,6 +508,14 @@ def main_options(g, p, post):
             if rsv and not can_pay(g, p, cg + rsv[0], cp + rsv[1]): u -= 6.0
         if naj_hold and not can_pay(g, p, cg, cp + 'WUBRG'): u -= 4.0
         opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
+    if getattr(p, 'yawg', False):                # Yawgmoth's Will: spells from the graveyard (reanimation has its own path)
+        for c in list(p.gy):
+            if c.land or id(c) not in p.yawg_gy or any(k in c.tags for k in SPECIAL): continue
+            u = card_utility(g, p, s, c)
+            if u is None: continue
+            cg, cp = cost_of(p, c)
+            if not can_pay(g, p, cg, cp): continue
+            opts.append((u, c.name + ' (Yawgmoth\'s Will)', lambda c=c: do_cast(g, p, c, 'yawg')))
     opts += removal_options(g, p, s)
     opts += wipe_options(g, p, s)
     opts += special_options(g, p, s, post)
@@ -559,7 +568,7 @@ def hook_options(g, p, s, post):
     for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
     if p.key not in STYLE:
         o += __import__('pool_ai').special_options(g, p, s, post)
-        o += __import__('impl_lands').land_options(g, p, s, post)
+    o += __import__('impl_lands').land_options(g, p, s, post)
     if E.CI.combo_options is not None: o += E.CI.combo_options(g, p, s, post)
     return o
 

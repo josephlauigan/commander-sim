@@ -4,8 +4,8 @@ CARDS[name] = dict(
     tags='...',          replaces the card's tags (same vocabulary as carddb.py); types= / cost= optional
     dsl=[...],           replaces its compiled abilities (ability language, see dsl_parse.py); [] = none
     status=(status, note))   audit status for pool decks: Full / Approximate / Partial / Unmodeled
-Overrides only apply to cards that are not in the four main decks (so old-mode results never change);
-a card in both keeps its hand tags, and the note is still used by the audit.
+Overrides apply to every card except the main decks' hand-tagged cards (carddb.py), which keep their tags (the
+main decks' AI is built around them); the note is still used by the audit.
 Python implementations (cardimpl hooks) record their notes with note() from the impl_* modules.
 """
 NOTES = {}           # name -> (status, note): read by pool_audit
@@ -30,7 +30,7 @@ def apply(verbose=False):
     main = cardimpl.main_cards()
     for name, spec in CARDS.items():
         base = engine.DB.get(name)
-        if base is None or name in main: continue
+        if base is None or (name in main and base.source == 'manual'): continue   # your hand-tagged cards keep their tags
         if getattr(base, 'pool_override', False): continue
         types = spec.get('types') or base.types
         cost = spec.get('cost') or (f'{base.generic or ""}{base.pips}' or '0')

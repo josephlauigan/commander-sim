@@ -223,6 +223,7 @@ def static_bonus(g, m):
         if x.cd is not None and 'anth' in x.cd.tags and x is not m and not x.phased: b += int(x.cd.tags['anth'])
     if equipped(m, 'flail'): b += 3                                               # Conqueror's Flail (~3 colors)
     if equipped(m, 'animist'): b += 1
+    if equipped(m, 'nim'): b += 2                                                 # Nim Deathmantle
     return b
 
 
@@ -825,6 +826,7 @@ def _die_rest(g, m, p, cause, selfdies):
             enter(g, p, m.cd, plus=-1); p.stats['persist'] += 1
             return
     to_zone_card(g, m, 'gy')
+    if g.hooks and m.creature: CI.fire(g, 'creature_to_gy', m)          # Nim Deathmantle
     if cause == 'sac': tergrid_steal(g, p, m.phys or m.cd, m.orig)
     if CI is not None and m.creature:
         for c, fn in CI.gy_cards(m.orig, 'gy_dies'):
@@ -1416,7 +1418,8 @@ def resolve(g, p, c, ctx, zone):
     if 'fbgrant' in t: flashback_grant(g, p)
     if zone == 'gy' and 'fbnib' in t:           # Nibelheim Aflame from graveyard: discard hand, draw four
         discard_cards(g, p, list(p.hand)); draw(g, p, 4)
-    if 'yawg' in t: p.yawg = True
+    if 'yawg' in t:                          # Yawgmoth's Will: the graveyard as it is now can be played from
+        p.yawg = True; p.yawg_gy = __import__('collections').Counter(id(x) for x in p.gy)   # copies of a card share an id
     if 'mastery' in t and ctx.get('overload'):
         # Mizzix's Mastery overloaded: cast a copy of every instant/sorcery in the graveyard
         copies = [x for x in p.gy if (x.instant or x.sorcery) and x is not c and 'ctr' not in x.tags]
@@ -1521,7 +1524,7 @@ def etb_once(g, p, m):
     if 'rsd' in t: tutor(g, p, 'any')
     if 'witness' in t: import ais; ais.regrow(g, p, False)
     if 'wall' in t: import ais; ais.regrow(g, p, True)
-    if 'atraxa' in t: draw(g, p, 4)
+    if 'atraxa' in t: atraxa_reveal(g, p)
     if 'draw' in t and not ('I' in m.cd.types or 'S' in m.cd.types): draw(g, p, int(t['draw']))
     if 'skate' in t:
         for x in p.perms:
@@ -1809,9 +1812,31 @@ def apply_wipe(g, p, kind, ctx):
                 if m.cd is not None and m.cd.cmc >= 4: die(g, m, 'destroy')
             elif kind == 'nib':
                 if m is not biggest and etgh(g, m) <= x_dmg: die(g, m, 'destroy')
+    if kind == 'farewell' and 'gy' in modes:                     # Farewell: exile all graveyards
+        for q in g.players:
+            q.exile.extend(q.gy); q.gy.clear()
+        log('    Farewell exiles all graveyards', g)
     check_state(g)
 
 # ---------------------------------------------------------------- Game Changer mechanics
+def atraxa_reveal(g, p):
+    """Atraxa, Grand Unifier: reveal the top ten; for each card type put one card of that type into your hand (a
+    multi-type card fills one type); the rest go to the bottom in a random order"""
+    top = [p.library.pop() for _ in range(min(10, len(p.library)))]
+    free = set('ABCEILPS')                     # artifact, battle, creature, enchantment, instant, land, planeswalker, sorcery
+    taken = []
+    for c in sorted(top, key=lambda c: -card_worth(g, p, c)):
+        ts = [t for t in c.types if t in free]
+        if not ts: continue
+        free.discard(min(ts, key=lambda t: sum(1 for x in top if t in x.types)))   # the scarcer type slot
+        taken.append(c)
+    rest = [c for c in top if c not in taken]
+    g.rng.shuffle(rest)
+    p.library[:0] = rest
+    p.hand.extend(taken)
+    log(f'    Atraxa reveals ten: {", ".join(c.name for c in taken)} to hand', g)
+
+
 def card_worth(g, p, c, in_gy=False):
     """how much p's AI wants card c in hand (or, in_gy, in the graveyard: flashback cards keep most of their value)"""
     import ais

@@ -4,6 +4,7 @@ status of each deck's key engines (from its '## Sim modeling notes').
     python3 pool_audit.py                    # summary table per deck + engine status
     python3 pool_audit.py --deck yuriko      # every card of one deck (key prefix is enough)
     python3 pool_audit.py --md FILE          # write the tables as Markdown
+    python3 pool_audit.py --mine             # your decks: every card that is not Full
 
 Statuses (same meaning as CARD_AUDIT.md, with the automatic ones split out):
   Full         hand-verified against Oracle text (CARD_AUDIT.md 'Modeled', or CARD_NOTES below)
@@ -363,8 +364,9 @@ def _main_audit():
 _AUDIT = None
 
 
-def card_status(name):
-    """(status, note) for one card as an outside deck plays it"""
+def card_status(name, mine=False):
+    """(status, note) for one card as an outside deck plays it; mine=True: as one of your decks plays it (your decks'
+    AI acts on the hand tags in carddb.py)"""
     global _AUDIT
     import engine, scryfall, autotag
     if name in CARD_NOTES: return CARD_NOTES[name]
@@ -378,7 +380,7 @@ def card_status(name):
     kwnote = ('keywords not modeled: ' + ', '.join(sorted(kws))) if kws else ''
     if cd.source == 'manual':
         bad = deck_only(cd)
-        if bad:
+        if bad and not mine:
             return 'Unmodeled', f"hand tags ({', '.join(bad)}) are only acted on by the main decks' AI"
         s, note = _AUDIT.get(name, ('Modeled', 'hand-tagged'))
         s = {'Modeled': 'Full', 'Not modeled': 'Unmodeled', 'Unverified': 'Approximate'}.get(s, s)
@@ -460,8 +462,26 @@ def markdown(rows):
     return '\n'.join(L)
 
 
+def audit_mine(verbose=True):
+    """your decks (decklists/mine/): every card that is not Full, as your decks play it"""
+    import pools
+    pools.register()
+    from decks import DECKS
+    out = {}
+    for k, cards in DECKS.items():
+        per = {n: card_status(n, mine=True) for n in sorted(set(cards))}
+        out[k] = per
+        if verbose:
+            bad = [(s, n, note) for n, (s, note) in per.items() if RANK[s] < RANK['Full-auto']]
+            print(f'== {k}: {len(per)} unique cards, {len(bad)} not Full')
+            for s, n, note in sorted(bad, key=lambda x: (RANK[x[0]], x[1])): print(f'  {s:11s} {n[:40]:40s} {note[:120]}')
+    return out
+
+
 def main():
     args = sys.argv[1:]
+    if '--mine' in args:
+        audit_mine(); return
     rows = audit()
     if '--deck' in args:
         key = args[args.index('--deck') + 1]
