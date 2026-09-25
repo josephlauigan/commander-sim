@@ -240,7 +240,7 @@ def run(g, p, e, src, ctx, spell, depth):
                            attacking=e.get('attacking', False), sick=not ('haste' in kws or e.get('attacking')),
                            types=e.get('types'))
         if e.get('attacking') and 'new_attackers' in ctx: ctx['new_attackers'] += made
-    elif d == 'treasure': p.treasures += num(g, p, e.get('n'), ctx, src)
+    elif d == 'treasure': E.add_treasure(g, p, num(g, p, e.get('n'), ctx, src))
     elif d == 'clue': p.clues += num(g, p, e.get('n'), ctx, src)
     elif d == 'gain_life':
         n = num(g, p, e.get('n'), ctx, src) * int(e.get('mult', 1))
@@ -339,7 +339,7 @@ def run(g, p, e, src, ctx, spell, depth):
         if q is not None and q.alive: make_tokens(g, q, 1, int(e.get('pow', 3)))
     elif d == 'opp_treasure':
         q = ctx.get('target_owner')
-        if q is not None and q.alive: q.treasures += num(g, p, e.get('n'), ctx, src)
+        if q is not None and q.alive: E.add_treasure(g, q, num(g, p, e.get('n'), ctx, src))
     elif d == 'exile_graveyard':
         for q in players(g, p, e.get('who', 'each_player'), ctx):
             q.exile.extend(q.gy); q.gy = []
@@ -717,6 +717,7 @@ def ability_options(g, p, sorcery_ok=True):
     for src in list(p.perms):
         if src.cd is None or not getattr(src.cd, 'dsl', None) or src.phased: continue
         if E.stopped(g, src.cd.name): continue                    # Disruptor Flute
+        if E.POOL_RULES and __import__('impl_rules').ability_locked(g, src, p): continue
         for i, a in enumerate(src.cd.dsl):
             t = a.get('type')
             if t == 'activated':

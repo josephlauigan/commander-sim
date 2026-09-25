@@ -250,6 +250,7 @@ def has_type(m, t):
 
 
 def indestructible(g, m):
+    if m.data is not None and m.data.get('indestr'): return True
     return DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible')
 
 
@@ -400,6 +401,7 @@ def land_cols(p, L, anyc):
     g = CUR_G
     if g is not None and g.hooks and L.cd.name not in BASIC_NAMES and CI.blood_moon(g): return 'R'
     if anyc: return p.ident
+    if POOL_RULES and g is not None and g.hooks and __import__('impl_rules').dryad_colors(p): return p.ident
     c = L.cd.tags.get('c', 'C')
     if c == 'A': return p.ident
     if c == 'C': return ''
@@ -422,6 +424,8 @@ def mana_units(g, p, convoke=False):
         if m.tapped or m.phased: continue
         if m.cd is None:
             if rite and not m.sick: U.append([m, p.ident, 1])
+            elif POOL_RULES and m.data and m.data.get('manatok') and not m.sick: U.append([m, m.data['manatok'], 1])
+            elif POOL_RULES and ('scion' in m.ttypes or 'spawn' in m.ttypes) and not m.phased: U.append(['SC', '', 1, m])
             continue
         t = m.cd.tags
         if 'chromemox' in t:                      # Chrome Mox: one mana of the imprinted card's colours (none if nothing imprinted)
@@ -430,11 +434,16 @@ def mana_units(g, p, convoke=False):
         if 'rock' in t:
             if g.hooks and 'A' in m.cd.types and CI.total(g, 'no_artifact_mana', p): continue
             a, c = t['rock'].split(':')
-            U.append([m, p.ident if c == 'A' else ('' if c == 'C' else c), int(a)])
+            amt = CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else int(a)
+            cols = p.ident if c == 'A' else ('' if c == 'C' else c)
+            if POOL_RULES and m.cd.name == 'Fellwar Stone':
+                cols = ''.join(sorted({x for q in g.opps(p) for L in q.lands for x in land_cols(q, L, False) if x in 'WUBRG'}))
+            if amt > 0: U.append([m, cols, amt])
         elif 'dork' in t and not m.sick:
             c = t['dork']
             amt = CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else 1
-            if amt > 0: U.append([m, p.ident if c == 'A' else c, amt])
+            if POOL_RULES and m.cd.name == 'Delighted Halfling': c = __import__('impl_rules').halfling_colors(p) or 'C'
+            if amt > 0: U.append([m, p.ident if c == 'A' else ('' if c == 'C' else c), amt])
         elif rite and m.cd.creature and not m.sick and m.noatk:
             U.append([m, p.ident, 1])
     tre = p.treasures if not (g.hooks and CI.total(g, 'no_artifact_mana', p)) else 0
@@ -447,6 +456,8 @@ def mana_units(g, p, convoke=False):
         U.append(['G', p.ident, 1])
     for _ in range(p.floatU):
         U.append(['FU', 'U', 1])
+    for _ in range(getattr(p, 'floatC', 0)):
+        U.append(['FC', '', 1])
     if convoke:                                   # each untapped creature pays for {1} or one coloured pip
         seen = {id(u[0]) for u in U}
         for m in p.perms:
@@ -455,7 +466,7 @@ def mana_units(g, p, convoke=False):
     return U
 
 
-def plan_pay(U, generic, pips):
+def plan_pay(U, generic, pips, col=None):
     rem = [u[2] for u in U]; used = [0] * len(U)
     for c in sorted(pips, key=lambda c: sum(rem[i] for i, u in enumerate(U) if c in u[1])):
         best, bk = None, None
@@ -465,13 +476,15 @@ def plan_pay(U, generic, pips):
                 if bk is None or k < bk: bk, best = k, i
         if best is None: return None
         rem[best] -= 1; used[best] += 1
+        if col is not None: col[best] += 1
     need = generic
     while need > 0:
         best, bk = None, None
         for i, u in enumerate(U):
             if rem[i] <= 0: continue
             waste = 0 if used[i] else max(0, rem[i] - need)
-            pain = isinstance(u[0], Land) and bool(u[0].cd.tags.get('tomb'))     # Ancient Tomb last: it deals damage
+            pain = (isinstance(u[0], Land) and bool(u[0].cd.tags.get('tomb'))) or (POOL_RULES and not isinstance(u[0], str)
+                    and getattr(u[0], 'cd', None) is not None and 'pain' in u[0].cd.tags)
             k = (u[0] == 'T', pain, waste, len(u[1]))
             if bk is None or k < bk: bk, best = k, i
         if best is None: return None
@@ -485,16 +498,19 @@ def can_pay(g, p, generic, pips, convoke=False):
 
 def pay(g, p, generic, pips, convoke=False):
     U = mana_units(g, p, convoke)
-    used = plan_pay(U, generic, pips)
+    col = [0] * len(U) if POOL_RULES else None
+    used = plan_pay(U, generic, pips, col)
     if used is None: return False
     for i, u in enumerate(U):
         if used[i]:
             if u[0] == 'T':
                 p.treasures -= 1
+                if POOL_RULES: p.left_turn = turn_stamp(g)
                 if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
             elif u[0] == 'F': p.floatR -= 1
             elif u[0] == 'G': p.floatA -= 1
             elif u[0] == 'FU': p.floatU -= 1
+            elif u[0] == 'FC': p.floatC -= 1
             elif isinstance(u[0], str):
                 __import__('impl_partials').special_unit_paid(g, p, u)
             else:
@@ -503,6 +519,8 @@ def pay(g, p, generic, pips, convoke=False):
                 if g.hooks and isinstance(u[0], Perm) and POOL_RULES: CI.fire(g, 'mana_tapped', p, u[0], used[i])
                 if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
                     lose_life(g, p, 2, p, damage=True)
+                if col is not None and col[i] and u[0].cd is not None and 'pain' in u[0].cd.tags:   # painlands, Talismans
+                    lose_life(g, p, 1, p, damage=True)
     return True
 
 
@@ -534,6 +552,7 @@ def cost_of(p, c):
             floor = max([0] + [fn(g, src, p, c) or 0 for src, fn in CI.hooked(g, 'min_cost')])   # Trinisphere
             gen = max(gen, floor - len(pips))
         if POOL_RULES and c.name in SELF_COST: gen = max(0, gen + SELF_COST[c.name](g, p, c))
+        if POOL_RULES and getattr(p, 'emblems', None) and 'tamiyo' in p.emblems and c in p.hand: return 0, ''
     if g is not None and stopped(g, c.name): gen += 3                 # Disruptor Flute tax
     if c is p.cmd: gen += p.tax
     if id(c) in p.agent_ids:                      # Opposition Agent: spend mana as though it were mana of any type
@@ -551,7 +570,8 @@ def draw(g, p, n=1, step=False):
         if not p.alive: return
         st = (g.round, g.active.key if getattr(g, 'active', None) else None)
         if p.draw_st != st: p.draw_st, p.draw_n = st, 0
-        if p.draw_n >= 1 and any(has(q, 'narset') for q in g.opps(p)):      # Narset: opponents draw at most one card each turn
+        if p.draw_n >= 1 and (any(has(q, 'narset') for q in g.opps(p)) or
+                              (POOL_RULES and any(has(q, 'labyrinth') for q in g.players if q.alive))):   # Narset / Spirit of the Labyrinth
             p.stats['narset_denied'] += n - k; return
         if g.hooks and not (step and k == 0):             # Notion Thief: an opponent's extra draws are stolen
             thief = next((src for src, fn in CI.hooked(g, 'steal_draw') if fn(g, src, p)), None)
@@ -570,11 +590,12 @@ def draw(g, p, n=1, step=False):
         extra = not (step and k == 0)
         if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'draw', player=p, extra=extra)
         if g.hooks: CI.fire(g, 'draw', p)
+        if POOL_RULES and getattr(p, 'emblems', None): __import__('impl_rules').emblem_draw(g, p)
         for q in g.opps(p):
             if has(q, 'sheoA'):
                 lose_life(g, p, 2, q, kind='drain'); gain(q, 2)
-            if has(q, 'tithe') and g.rng.random() < 0.5:
-                q.treasures += 1
+            if has(q, 'tithe') and (__import__('impl_rules').tithe_unpaid(g, p) if POOL_RULES else g.rng.random() < 0.5):
+                add_treasure(g, q, 1)
             if extra and has(q, 'bowmasters'):
                 amass(g, q, 1); lose_life(g, p, 1, q, kind='triggers')
         if has(p, 'sheoA'): gain(p, 2)
@@ -687,6 +708,7 @@ def leave(g, m):
         p.ozolith_counters = getattr(p, 'ozolith_counters', 0) + m.plus       # The Ozolith keeps the counters
     if m in p.perms: p.perms.remove(m)
     if g is not None: g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+    if POOL_RULES and g is not None: p.left_turn = turn_stamp(g)          # revolt
     detach(m)
     if getattr(g, 'auras', None): CI.aura_fall(g, m)
     if POOL_RULES and m.data and m.data.get('bestow'): __import__('impl_partials').bestow_fall(g, m)
@@ -718,10 +740,14 @@ def die(g, m, cause='destroy'):
     if cause == 'destroy' and indestructible(g, m): return
     if cause == 'destroy' and getattr(g, 'auras', None) and CI.umbra_save(g, m): return
     if POOL_RULES and cause in ('destroy', 'combat') and m.creature and not m.token and CI is not None \
-            and __import__('impl_lands').try_regenerate(g, m): return
+            and (__import__('impl_lands').try_regenerate(g, m) or __import__('impl_rules').ezuri_regen(g, m)): return
     if POOL_RULES and cause == 'destroy' and m.creature and getattr(p, 'regen_turn', None) == turn_stamp(g):
         m.tapped = True; log(f'    {m.name} regenerates', g); return
     selfdies = CI is not None and m.cd is not None and CI.live(m.cd.name) and CI.HOOKS[m.cd.name].get('self_dies')
+    if POOL_RULES and g.hooks and CI.total(g, 'no_graveyard', p):          # Rest in Peace: exiled, so it never dies
+        leave(g, m)
+        if not m.token: to_zone_card(g, m, 'exile')
+        return
     if POOL_RULES and m.creature and CI is not None and __import__('impl_partials').hushed(g):
         leave(g, m)
         if not m.token: to_zone_card(g, m, 'gy')
@@ -927,12 +953,13 @@ def casts_this_turn(g, p, pred=None):
 
 
 def on_cast(g, p, c):
+    if POOL_RULES and getattr(p, 'emblems', None): __import__('impl_rules').emblem_cast(g, p, c)
     st = turn_stamp(g)
     if getattr(p, 'turn_casts', None) is None or p.turn_casts[0] != st: p.turn_casts = (st, [])
     p.turn_casts[1].append(c)
     for q in g.opps(p):
         if has(q, 'sauron'): amass(g, q, 1)
-        if has(q, 'rhystic') and g.rng.random() < 0.45: draw(g, q, 1)
+        if has(q, 'rhystic') and (__import__('impl_rules').rhystic_unpaid(g, p) if POOL_RULES else g.rng.random() < 0.45): draw(g, q, 1)
         if has(q, 'kaervek') and c.cmc > 0: lose_life(g, p, min(c.cmc, 6), q, kind='triggers')
     if c.instant or c.sorcery: magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
@@ -987,12 +1014,12 @@ def magecraft(g, p, c=None, copy=False):
             make_tokens(g, p, mult, int(t['spelltok']), fly='spelltokfly' in t,
                         color='U' if 'spelltokfly' in t else ('' if 'Iconoclast' in m.cd.name else 'R'))
         if 'spelldraw' in t: draw(g, p, mult)
-        if 'kiln' in t: p.treasures += mult          # Storm-Kiln Artist: a Treasure per trigger
+        if 'kiln' in t: add_treasure(g, p, mult)          # Storm-Kiln Artist: a Treasure per trigger
         if 'spellloot' in t:                         # Muse Seeker: draw, then discard unless 5+ mana spent
             draw(g, p, mult)
             if not (c is not None and c.cmc >= 5): discard_worst(g, p, mult)
         if 'sanar' in t and not copy and not m.tapped:   # Sanar: tap for a Treasure once you've cast an I/S
-            m.tapped = True; p.treasures += 1
+            m.tapped = True; add_treasure(g, p, 1)
     if has(p, 'aether') and not copy: gain(p, p.spells_this_turn * base_mult)
 
 
@@ -1012,7 +1039,7 @@ def cast_copy(g, p, effect=None):
     if p.key == 'veyran': magecraft(g, p)
     for q in g.opps(p):
         if has(q, 'sauron'): amass(g, q, 1)
-        if has(q, 'rhystic') and g.rng.random() < 0.45: draw(g, q, 1)
+        if has(q, 'rhystic') and (__import__('impl_rules').rhystic_unpaid(g, p) if POOL_RULES else g.rng.random() < 0.45): draw(g, q, 1)
     if effect: effect()
     check_state(g)
 
@@ -1168,12 +1195,16 @@ def counter_window(g, p, c, imp, aff):
             if g.rng.random() > 0.9: continue
         ctr = pick_counter(g, q, c)
         if ctr is None: continue
+        if POOL_RULES and __import__('impl_rules').veil_response(g, p, q, ctr): continue
         if not cast_counter(g, q, ctr): continue
         log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
         soft = int(ctr.tags.get('soft', 0))
+        if POOL_RULES and ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
+            soft = sum(casts_this_turn(g, x) for x in g.players if x.alive) - 1
         if soft and can_pay(g, p, soft, ''):           # Spell Pierce / Mystic Confluence: pay and it resolves
             pay(g, p, soft, ''); log(f'    {NAME(p)} pays {soft}', g); continue
         counter_side_effects(g, q, p, ctr)
+        if POOL_RULES and ctr.name == 'Mana Drain': q.drain_mana = getattr(q, 'drain_mana', 0) + c.cmc
         # original caster may fight back
         if max(imp, 7) >= 7 and imp >= 6:
             back = pick_counter(g, p, ctr)
@@ -1191,8 +1222,11 @@ def counter_window(g, p, c, imp, aff):
 def counter_side_effects(g, q, p, ctr):
     """q countered p's spell with ctr"""
     t = ctr.tags
-    if 'offer' in t: p.treasures += 2                          # An Offer You Can't Refuse
-    if 'denial' in t: draw(g, p, 2); draw(g, q, 1)             # Arcane Denial
+    if 'offer' in t: add_treasure(g, p, 2)                          # An Offer You Can't Refuse
+    if 'denial' in t:                                          # Arcane Denial (pool games: at the next upkeep)
+        if POOL_RULES:
+            p.delayed_draws = getattr(p, 'delayed_draws', 0) + 2; q.delayed_draws = getattr(q, 'delayed_draws', 0) + 1
+        else: draw(g, p, 2); draw(g, q, 1)
     if 'undermine' in t: lose_life(g, p, 3, q, kind='triggers', damage=False)   # life loss, not damage
     if 'swan' in t: make_tokens(g, p, 1, 2, fly=True)          # Swan Song gives the caster a Bird
 
@@ -1263,7 +1297,7 @@ def resolve(g, p, c, ctx, zone):
         if 'lr' in t: land_ramp(g, p, int(t['lr']), 'lrt' in t)
         return
     if 'draw' in t: draw(g, p, int(t['fbdraw']) if (zone == 'gy' and 'fbdraw' in t) else int(t['draw']))
-    if 'treas' in t: p.treasures += int(t['treas'])
+    if 'treas' in t: add_treasure(g, p, int(t['treas']))
     if 'lr' in t:
         land_ramp(g, p, int(t['lr']), 'lrt' in t)
         if 'lh' in t: land_to_hand(g, p)
@@ -1467,7 +1501,7 @@ def etb_once(g, p, m):
                                color='G' if 'tokdt' in t else None)
     if m.cd.source == 'scryfall':               # generic ETB effects from auto-tagged cards
         if 'tut' in t: tutor(g, p, t['tut'])
-        if 'treas' in t: p.treasures += int(t['treas'])
+        if 'treas' in t: add_treasure(g, p, int(t['treas']))
         if 'drainetb' in t:
             for q in opps: lose_life(g, q, int(t['drainetb']), p, kind='drain')
         if 'edictetb' in t:
@@ -1542,6 +1576,14 @@ def searchable(g, p):
     return p.library[-min(lim):] if lim else p.library
 
 
+def add_treasure(g, p, n=1):
+    """p creates n Treasure tokens (pool games: through the token machinery, so Academy Manufactor, Xorn, Chatterfang
+    and token doublers apply)"""
+    if n <= 0: return
+    if POOL_RULES and CI is not None: __import__('impl_common').make_artifact_tokens(g, p, 'Treasure', n)
+    else: p.treasures += n
+
+
 def tutor(g, p, kind):
     import ais
     name = ais.tutor_pick(g, p, kind)
@@ -1570,6 +1612,11 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
                   'ce': is_c or 'E' in ty, 'nl': True, 'p': True, 'a': 'A' in ty,
                   'cna': is_c and 'A' not in ty, 'ae': 'A' in ty or 'E' in ty, 'blue': True}.get(tgt, is_c)
             if tgt == 'blue' and not (cd is not None and 'U' in cd.pips): continue
+            if POOL_RULES and spell is not None and 'nonblack' in spell.tags and 'B' in colors_of(m): continue
+            if POOL_RULES and spell is not None and spell.name == 'Fatal Push' and cd is not None and cd.cmc > 2 \
+                    and not __import__('impl_rules').revolt(g, p): continue
+            if POOL_RULES and spell is not None and spell.name == "Bloodchief's Thirst" and cd is not None and cd.cmc > 2 \
+                    and not can_pay(g, p, 2, 'BB'): continue
             if spell is not None and 'alsoart' in spell.tags and 'A' in ty and not is_c:
                 res.append(m); continue                  # Abrade: destroy target artifact mode
             if not ok: continue
@@ -1596,6 +1643,9 @@ def apply_removal(g, actor, m, kind, spell=None):
         if not can_pay(g, actor, m.cd.ward, ''):
             log(f'    ward counters the removal on {m.name}', g); return
         pay(g, actor, m.cd.ward, '')
+    if POOL_RULES and CI is not None and m.cd is not None and spell is not None and actor is not owner:
+        import impl_rules
+        if not impl_rules.removal_taxes(g, actor, m, kind): return
     if POOL_RULES and kind.startswith('dmg') and CI is not None and __import__('impl_partials').tajic_protects(g, m):
         log(f'    damage to {m.name} is prevented (Tajic)', g); return
     log(f'    {m.name} ({NAME(owner)}) is removed: {kind}', g)
@@ -1609,6 +1659,7 @@ def apply_removal(g, actor, m, kind, spell=None):
     elif kind == 'exile': exile_perm(g, m)
     elif kind == 'bounce': bounce(g, m)
     elif kind == 'tuck': tuck(g, m)
+    elif kind in ('elk', 'mutate', 'forest'): __import__('impl_rules').transform_away(g, m, kind)
     if spell is not None:
         t = spell.tags
         if 'rgain' in t: gain(owner, power)                      # Swords to Plowshares

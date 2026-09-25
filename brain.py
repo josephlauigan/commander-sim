@@ -530,8 +530,9 @@ def hook_options(g, p, s, post):
     """activated abilities of hand-implemented cards (battlefield and graveyard); post=None: end-of-turn window"""
     o = []
     if g.hooks:
+        lock = E.POOL_RULES and __import__('impl_rules').ability_locked
         for src, fn in E.CI.hooked(g, 'options'):
-            if src.owner is p: o += fn(g, src, p, s, post) or []
+            if src.owner is p and not (lock and lock(g, src, p)): o += fn(g, src, p, s, post) or []
     for c, fn in E.CI.gy_cards(p, 'gy_options'): o += fn(g, c, p, s, post) or []
     for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
     if p.key not in STYLE:

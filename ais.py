@@ -300,7 +300,7 @@ def seph_fill_resolve(g, p, kind, ctx):
             p.gy.append(c)
             if any(k in c.tags for k in E.KEYSPELL): p.stats['key_milled'] += 1
     elif kind == 'dispute':
-        p.treasures += 1
+        add_treasure(g, p, 1)
     if kind in ('entomb', 'buried', 'unmarked'): g.rng.shuffle(p.library)
 
 
@@ -1376,6 +1376,7 @@ def can_block(g, b, a):
         if D.has_kw(g, b, 'cant_block') or D.has_kw(g, a, 'unblockable'): return False
         if D.has_kw(g, a, 'flying') and not (b.fly or D.has_kw(g, b, 'flying') or D.has_kw(g, b, 'reach')
                                              or (b.cd is not None and 'reach' in b.cd.tags)): return False
+    if E.POOL_RULES and E.CI is not None and __import__('impl_rules').evasion_blocked(g, b, a): return False
     if E.POOL_RULES and E.CI is not None and E.CI.granted_kw(g, a, 'forestwalk') and any(
             L.cd.name == 'Forest' or 'forest' in getattr(L.cd, 'subtypes', ()) for L in b.owner.lands): return False
     if a.cd is not None and 'swampwalk' in a.cd.tags and any(
@@ -1539,6 +1540,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
             if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
             if E.POOL_RULES and getattr(p, 'insight', None): __import__('impl_partials').insight_draw(g, p, a, dmg)
+            if E.POOL_RULES and getattr(p, 'emblems', None): __import__('impl_rules').emblem_combat(g, p, a, d, dmg)
             if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
             if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
                 for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
@@ -1550,7 +1552,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if equipped(a, 'sword'):
                 if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
                 for L in p.lands: L.tapped = False
-    if conn and has(p, 'facebreaker'): p.treasures += len(find(p, 'facebreaker'))   # Professional Face-Breaker
+    if conn and has(p, 'facebreaker'): add_treasure(g, p, len(find(p, 'facebreaker')))   # Professional Face-Breaker
     check_state(g)
     return conn
 
@@ -1573,6 +1575,10 @@ def attack_limits(g, p, d, atk):
     and worth their tax"""
     tax, cap = attack_restrictions(g, p, d)
     atk = sorted(atk, key=lambda m: -epow(g, m))
+    moc = [m for m in atk if m.cd is not None and m.cd.name == 'Master of Cruelties'] if E.POOL_RULES else []
+    if moc and len(atk) > 1:                         # Master of Cruelties attacks alone
+        others = sum(epow(g, m) for m in atk if m is not moc[0])
+        atk = [moc[0]] if d.life > 1 and (d.life - 1) >= others else [m for m in atk if m is not moc[0]]
     if cap is not None: atk = atk[:cap]
     if tax:
         worth = [m for m in atk if epow(g, m) >= tax or (m.is_cmd and epow(g, m) >= 3)]
@@ -1704,6 +1710,9 @@ def goldfish_combat(g, p):
 def land_enters_tapped(p, cd):
     t = cd.tags
     if 't' in t or 'f' in t: return True
+    if E.POOL_RULES and E.CUR_G is not None and cd.name not in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes') \
+            and any(m.cd is not None and m.cd.name in ('Thalia, Heretic Cathar', 'Archon of Emeria') and not m.phased
+                    for q in E.CUR_G.opps(p) for m in q.perms): return True
     if 'ck' in t: return len(p.lands) < 2
     return False
 
@@ -1844,6 +1853,7 @@ def upkeep(g, p):
         t = m.cd.tags
         if m.cd.name in ACTIVATED_ENGINES and blocked(g, p, m.cd.name): continue    # Disruptor Flute
         if 'eng' in t:
+            if E.POOL_RULES and m.cd.name in __import__('impl_rules').REPLACED_TAG_ENGINES: continue
             if 'remora' in t and m.age > 4:
                 leave(g, m); p.gy.append(m.cd); continue
             n = m.cd.name
@@ -1962,8 +1972,9 @@ def take_turn(g, p):
     p.turns += 1
     for q in g.players: q.floatR = 0          # floating mana empties between turns
     for L in p.lands: L.tapped = False
-    for q in g.players: q.floatU = 0
+    for q in g.players: q.floatU = 0; q.floatC = 0
     for m in list(p.perms):
+        if E.POOL_RULES and m.data and m.data.get('frozen'): m.data['frozen'] -= 1; continue   # Frost Titan, Tamiyo
         if not (m.cd is not None and 'nountap' in m.cd.tags): m.tapped = False   # Grim Monolith, Mana Vault
         m.sick = False; m.phased = False; m.age += 1
     p.spells_this_turn = 0; p.yawg = False

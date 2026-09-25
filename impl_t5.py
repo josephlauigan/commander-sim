@@ -95,8 +95,9 @@ walker('Tezzeret the Seeker', [
 
 @on('Kappa Cannoneer', 'etb')
 def _kappa(g, src, p, m):
-    if m.owner is src.owner and is_artifact(m) and m is not src: src.plus += 1
-card('Kappa Cannoneer', 'pow=4 tgh=4', dsl=[{'type': 'static', 'static': 'unblockable'}], ward=4)
+    if m.owner is src.owner and is_artifact(m) and m is not src:
+        src.plus += 1; g.eot_kw.setdefault(id(src), set()).add('unblockable')
+card('Kappa Cannoneer', 'pow=4 tgh=4', dsl=[], ward=4)
 note('Kappa Cannoneer', 'Approximate', 'ward 4, +1/+1 per artifact entering, unblockable (always, not only that turn); '
      'improvise not used')
 

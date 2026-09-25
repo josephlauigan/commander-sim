@@ -289,7 +289,7 @@ def _bombard(g, p, src, m):
 
 
 def _feeder(g, p, src, m): src.plus += 1
-def _ashnod(g, p, src, m): p.floatA += 2
+def _ashnod(g, p, src, m): p.floatC = getattr(p, 'floatC', 0) + 2
 def _altar(g, p, src, m): p.floatA += 1
 
 
@@ -433,7 +433,7 @@ note('Mirkwood Bats', 'Approximate', 'drains on token sacrifices (Treasure / Foo
 
 @CI.on('Revel in Riches', 'dies')
 def _revel(g, src, m, cause):
-    if m.creature and m.owner is not src.owner: src.owner.treasures += 1
+    if m.creature and m.owner is not src.owner: add_treasure(g, src.owner, 1)
 
 
 @CI.on('Revel in Riches', 'upkeep')

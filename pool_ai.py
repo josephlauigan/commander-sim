@@ -281,7 +281,8 @@ def _options(p, m):
     for c in p.hand:
         if c.name in PROTECTORS and PROTECTORS[c.name][0] == 'hand': out.append((c.name, 'hand', PROTECTORS[c.name][1], None))
     for x in p.perms:
-        if x.cd is not None and x.cd.name in PROTECTORS and PROTECTORS[x.cd.name][0] != 'hand' and not x.phased:
+        if x.cd is not None and x.cd.name in PROTECTORS and PROTECTORS[x.cd.name][0] != 'hand' and not x.phased \
+                and not __import__('impl_rules').ability_locked(E.CUR_G, x, p):
             if x.cd.name == 'Giver of Runes' and x is m: continue          # "another target creature"
             if PROTECTORS[x.cd.name][3] == 'self' and x is not m: continue
             out.append((x.cd.name, PROTECTORS[x.cd.name][0], PROTECTORS[x.cd.name][1], x))

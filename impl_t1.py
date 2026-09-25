@@ -163,7 +163,7 @@ def _shares_type(a, b):
 
 
 card('Shared Animosity', '', types='E')
-note('Shared Animosity', 'Approximate', '+1/+0 per other attacker sharing a creature type (tokens count as sharing)')
+note('Shared Animosity', 'Full', 'each attacker +1/+0 per other attacker sharing a creature type')
 
 
 @on('Moonshaker Cavalry', 'etb')
@@ -227,7 +227,7 @@ note('Outlaws\' Merriment', 'Approximate', 'random hasty token each upkeep (tram
 @on('Black Market Connections', 'upkeep')
 def _bmc(g, src, p):
     if src.owner is not p: return
-    p.treasures += 1; lose_life(g, p, 1, p)
+    add_treasure(g, p, 1); lose_life(g, p, 1, p)
     if p.life > 15: draw(g, p, 1); lose_life(g, p, 2, p)
     if p.life > 20: make_tokens(g, p, 1, 3, 2, color=''); lose_life(g, p, 3, p)
 card('Black Market Connections', '', types='E')
@@ -866,7 +866,7 @@ note('Nissa, Resurgent Animist', 'Approximate', 'landfall mana (spendable this t
 
 @on('Tireless Provisioner', 'landfall')
 def _provisioner(g, src, p):
-    if src.owner is p: p.treasures += 1
+    if src.owner is p: add_treasure(g, p, 1)
 card('Tireless Provisioner', 'pow=3 tgh=2', dsl=[])
 note('Tireless Provisioner', 'Approximate', 'always takes the Treasure')
 

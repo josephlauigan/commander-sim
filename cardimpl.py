@@ -192,6 +192,8 @@ def turn_start(g, p):
     """start of p's turn: animated lands revert, land upkeep triggers, rebound spells, Pact of Negation payments"""
     import impl_lands
     if getattr(g, 'animated', None): impl_lands.revert_animated(g)
+    if getattr(p, 'drain_mana', 0):                   # Mana Drain: the countered spell's mana value, colourless
+        p.floatC = getattr(p, 'floatC', 0) + p.drain_mana; p.drain_mana = 0
     for q in g.players:                               # Baubles: draw at the beginning of the next upkeep
         n = getattr(q, 'delayed_draws', 0)
         if n and q.alive: q.delayed_draws = 0; E.draw(g, q, n)
@@ -242,7 +244,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    import impl_common, impl_t1, impl_t2, impl_t3, impl_t4, impl_t5, impl_combos, impl_topdeck, impl_fixes, impl_lands, impl_partials  # noqa: F401
+    import impl_common, impl_t1, impl_t2, impl_t3, impl_t4, impl_t5, impl_combos, impl_topdeck, impl_fixes, impl_lands, impl_partials, impl_rules  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]

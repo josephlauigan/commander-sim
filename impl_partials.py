@@ -1026,6 +1026,9 @@ def special_unit_paid(g, p, u):
     if kind == 'H':
         c = u[3]
         if c in p.hand: p.hand.remove(c); p.exile.append(c)
+    elif kind == 'SC':
+        m = u[3]
+        if m in p.perms: leave(g, m); CI.fire(g, 'sacrifice', p, m) if g.hooks else None
     elif kind == 'QR':
         src = u[3]
         if src.data is None: src.data = {}
