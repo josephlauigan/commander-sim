@@ -76,7 +76,12 @@ def ninjutsu(g, p, atk, d, assign):
         atk.append(m)
         p.stats['ninjutsu'] += 1
         log(f'    ninjutsu: {c.name} replaces {a.name}', g)
-        if g.hooks: CI.fire(g, 'ninjutsu', p, m)
+        if g.hooks:
+            g.ninja_atk = atk                      # the attack a ninjutsu trigger can add to (Thousand-Faced Shadow)
+            try:
+                CI.fire(g, 'ninjutsu', p, m)
+            finally:
+                g.ninja_atk = None
 
 
 @on('Satoru Umezawa', 'ninjutsu')
@@ -201,13 +206,17 @@ def _higure(g, src, p, a, d, dmg):
         import impl_t1; impl_t1.tutor_named(g, p, lambda c: 'ninja' in c.subtypes)
 
 
-@on('Thousand-Faced Shadow', 'etb')
+@on('Thousand-Faced Shadow', 'ninjutsu')
 def _tfs(g, src, p, m):
-    if m is src and src.tapped:
-        others = [x for x in src.owner.perms if x is not src and x.creature and x.tapped and x.cd is not None]
-        if others:
-            t = enter_token_copy(g, src.owner, max(others, key=lambda x: pval(g, x)).cd)
-            if t is not None: t.tapped = True
+    """it entered from hand attacking (ninjutsu): a token copy of another attacking creature, tapped and attacking.
+    Only the ninjutsu itself triggers it, so a token copy (or a Shadow tapped by Thalia, Heretic Cathar) never does."""
+    atk = getattr(g, 'ninja_atk', None)
+    if m is not src or atk is None: return
+    others = [x for x in atk if x is not src and x.cd is not None and x in x.owner.perms]
+    if others:
+        t = enter_token_copy(g, src.owner, max(others, key=lambda x: pval(g, x)).cd)
+        if t is not None:
+            t.tapped = True; t.sick = False; atk.append(t)
 
 
 card('Silver-Fur Master', 'pow=2', dsl=[{'type': 'static', 'static': 'anthem', 'filter': {'type': 'creature', 'controller': 'you',
