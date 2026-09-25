@@ -43,6 +43,7 @@ keys, so a --swap comparison faces identical opponents and draws (paired runs).
     python3 compare.py --deck seph --pool t4 --analyze                         # how it wins / loses there
     python3 compare.py --deck seph --pool t2 --trace 7                         # play-by-play of pool game 7
     python3 compare.py --calibrate within|ordering|all --games 2000 --jobs 24   # pool balance checks
+    python3 tools_swaptest.py <pool deck> <tier> 800 "Out>In; Out>In"          # test list changes without editing
     python3 pools.py --validate                                                # decklist checks
     python3 pool_audit.py [--deck yuriko] [--md FILE]                          # card coverage per deck
 
