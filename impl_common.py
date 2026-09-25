@@ -528,7 +528,7 @@ def _otawara(g, c, p, s, post):
 
     def go():
         if c not in p.hand or t not in t.owner.perms or not can_pay(g, p, n, 'U'): return False
-        pay(g, p, n, 'U'); p.hand.remove(c); p.gy.append(c)
+        p.hand.remove(c); pay(g, p, n, 'U'); p.gy.append(c)
         log(f'  {NAME(p)} channels Otawara', g); apply_removal(g, p, t, 'bounce'); return True
     return [(pval(g, t) - 4.0, f'Otawara -> {t.name}', go)]
 note('Otawara, Soaring City', 'Full', 'land; channelled from hand to bounce a real threat')

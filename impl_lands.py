@@ -170,7 +170,7 @@ def _boseiju(g, c, p, s, post):
 
     def go():
         if c not in p.hand or t not in t.owner.perms or not can_pay(g, p, 1, 'G'): return False
-        pay(g, p, 1, 'G'); p.hand.remove(c); p.gy.append(c)
+        p.hand.remove(c); pay(g, p, 1, 'G'); p.gy.append(c)
         log(f'  {NAME(p)} channels Boseiju', g); apply_removal(g, p, t, 'destroy'); return True
     return [(pval(g, t) - 2.0, 'channel Boseiju', go)]
 note('Boseiju, Who Endures', 'Full', 'channel {1}{G} from hand: destroys a valuable artifact or enchantment')
@@ -186,7 +186,7 @@ def _sokenzan(g, c, p, s, post):
 
     def go():
         if c not in p.hand or not can_pay(g, p, cost, 'R'): return False
-        pay(g, p, cost, 'R'); p.hand.remove(c); p.gy.append(c)
+        p.hand.remove(c); pay(g, p, cost, 'R'); p.gy.append(c)
         make_tokens(g, p, 2, 1, sick=False, types=('spirit',))
         log(f'  {NAME(p)} channels Sokenzan', g); return True
     return [(1.5, 'channel Sokenzan', go)]
@@ -477,7 +477,7 @@ def _tolaria(g, c, p, s, post):
 
     def go():
         if c not in p.hand or t not in p.library or not can_pay(g, p, 1, 'UU'): return False
-        pay(g, p, 1, 'UU'); p.hand.remove(c); p.gy.append(c)
+        p.hand.remove(c); pay(g, p, 1, 'UU'); p.gy.append(c)
         p.library.remove(t); p.hand.append(t); g.rng.shuffle(p.library)
         log(f'  {NAME(p)} transmutes Tolaria West for {t.name}', g); return True
     return [(2.5 if t.name in wish else 1.5, f'transmute Tolaria West ({t.name})', go)]

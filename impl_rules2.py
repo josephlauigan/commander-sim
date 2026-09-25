@@ -116,7 +116,7 @@ def _cleave_flash(g, c, p, atk, d):
     p.attacking = turn_now(g); p.attackers = list(atk)
     if c not in p.hand or not castable(g, p, c) or not can_pay(g, p, *cost_of(p, c)): return
     if len(atk) < 2 and sum(epow(g, m) for m in atk) < 5: return
-    pay(g, p, *cost_of(p, c)); p.hand.remove(c)
+    p.hand.remove(c); pay(g, p, *cost_of(p, c))
     log(f'  {NAME(p)} flashes in Embercleave', g)
     on_cast(g, p, c)
     if not counter_window(g, p, c, 5, {}): p.gy.append(c); return
@@ -178,7 +178,7 @@ def _ragavan_dash(g, c, p, s, post):
 
     def go():
         if c not in p.hand or not can_pay(g, p, 1, 'R'): return False
-        pay(g, p, 1, 'R'); p.hand.remove(c)
+        p.hand.remove(c); pay(g, p, 1, 'R')
         log(f'  {NAME(p)} dashes Ragavan', g); on_cast(g, p, c)
         if not counter_window(g, p, c, 3, {}): p.gy.append(c); return True
         m = enter(g, p, c, was_cast=True); m.sick = False
@@ -379,7 +379,7 @@ def _unearth_cycle(g, c, p, s, post):
 
     def go():
         if c not in p.hand or not can_pay(g, p, 2, ''): return False
-        pay(g, p, 2, ''); p.hand.remove(c); p.gy.append(c); draw(g, p, 1); return True
+        p.hand.remove(c); pay(g, p, 2, ''); p.gy.append(c); draw(g, p, 1); return True
     return [(0.8, 'cycle Unearth', go)]
 full('Unearth', 'returns the best creature card with MV 3 or less; cycling {2} otherwise')
 

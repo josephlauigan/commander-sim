@@ -403,7 +403,7 @@ def spell_options(g, p, s, post):
                         def might(c=c, me=me, foe=foe):
                             x = E.total_mana(g, p) - 1
                             if c not in p.hand or x < 0 or not E.can_pay(g, p, x, 'G'): return False
-                            E.pay(g, p, x, 'G'); p.hand.remove(c); p.gy.append(c); E.on_cast(g, p, c)
+                            p.hand.remove(c); E.pay(g, p, x, 'G'); p.gy.append(c); E.on_cast(g, p, c)
                             import cardimpl; cardimpl._eot(g, me, x, x)
                             if foe in foe.owner.perms and me in p.perms: E.apply_removal(g, p, foe, f'dmg{E.epow(g, me)}', c)
                             return True
@@ -416,7 +416,7 @@ def spell_options(g, p, s, post):
             if post is False and len(atk) >= 3:
                 def pump(c=c):
                     if c not in p.hand or not E.can_pay(g, p, c.generic, c.pips): return False
-                    E.pay(g, p, c.generic, c.pips); p.hand.remove(c); p.gy.append(c); E.on_cast(g, p, c)
+                    p.hand.remove(c); E.pay(g, p, c.generic, c.pips); p.gy.append(c); E.on_cast(g, p, c)
                     for m in p.perms:
                         if m.creature and not E.has_type(m, 'human'):
                             a0, b0 = g.eot_pt.get(id(m), (0, 0)); g.eot_pt[id(m)] = (a0 + 3, b0 + 3)
@@ -425,7 +425,7 @@ def spell_options(g, p, s, post):
             elif draw_n >= 3:
                 def rdraw(c=c, n=draw_n):
                     if c not in p.hand or not E.can_pay(g, p, c.generic, c.pips): return False
-                    E.pay(g, p, c.generic, c.pips); p.hand.remove(c); p.gy.append(c); E.on_cast(g, p, c)
+                    p.hand.remove(c); E.pay(g, p, c.generic, c.pips); p.gy.append(c); E.on_cast(g, p, c)
                     E.draw(g, p, n); return True
                 o.append((1.0 + 0.8 * draw_n, f'{c.name} (draw {draw_n})', rdraw))
     return o

@@ -401,7 +401,7 @@ def _bestow(g, c, p, s, post):
 
     def go():
         if c not in p.hand or host not in p.perms or not can_pay(g, p, 2, 'WW'): return False
-        pay(g, p, 2, 'WW'); p.hand.remove(c)
+        p.hand.remove(c); pay(g, p, 2, 'WW')
         log(f'  {NAME(p)} bestows Eidolon of Countless Battles on {host.name}', g)
         on_cast(g, p, c)
         if not counter_window(g, p, c, 4, {}): p.gy.append(c); return True
@@ -551,7 +551,7 @@ def _golgari_opts(g, c, p, s, post):
 
 def _cast_mode(g, p, c, mode):
     if c not in p.hand or not can_pay(g, p, 0, 'BG'): return False
-    pay(g, p, 0, 'BG'); p.hand.remove(c)
+    p.hand.remove(c); pay(g, p, 0, 'BG')
     cast_card(g, p, c, 'lib', {'mode': mode}); p.gy.append(c) if c not in p.gy else None
     return True
 
@@ -662,7 +662,7 @@ def _insight_opt(g, c, p, s, post):
 
     def go():
         if c not in p.hand or t not in p.perms or not can_pay(g, p, 2, 'G'): return False
-        pay(g, p, 2, 'G'); p.hand.remove(c)
+        p.hand.remove(c); pay(g, p, 2, 'G')
         cast_card(g, p, c, 'lib', {'host': t})
         if c not in p.gy: p.gy.append(c)
         return True
@@ -708,7 +708,7 @@ def _jaxis_blitz(g, c, p, s, post):
 
     def go():
         if c not in p.hand or not can_pay(g, p, 1, 'R'): return False
-        pay(g, p, 1, 'R'); p.hand.remove(c)
+        p.hand.remove(c); pay(g, p, 1, 'R')
         log(f'  {NAME(p)} casts Jaxis for its blitz cost', g)
         on_cast(g, p, c)
         if not counter_window(g, p, c, 3, {}): p.gy.append(c); return True
@@ -821,7 +821,7 @@ def _mardu_eot(g, c, p, s, post):
 
     def go():
         if c not in p.hand or not can_pay(g, p, 0, 'RWB'): return False
-        pay(g, p, 0, 'RWB'); p.hand.remove(c); cast_card(g, p, c, 'lib', {})
+        p.hand.remove(c); pay(g, p, 0, 'RWB'); cast_card(g, p, c, 'lib', {})
         return True
     return [(1.2, 'Mardu Charm (two Warriors)', go)]
 note('Mardu Charm', 'Full', '4 damage to a creature (removal), two first-strike Warriors at end of turn, or a '

@@ -307,7 +307,7 @@ def _boros_charm(g, c, p, s, post):
 
         def go():
             if c not in p.hand or not can_pay(g, p, 0, 'RW'): return False
-            pay(g, p, 0, 'RW'); p.hand.remove(c); on_cast(g, p, c)
+            p.hand.remove(c); pay(g, p, 0, 'RW'); on_cast(g, p, c)
             if counter_window(g, p, c, 6, {}): lose_life(g, q, 4, p, kind='burn', damage=True)
             p.gy.append(c); return True
         return [(9.0, 'Boros Charm (4 damage, lethal)', go)]
@@ -773,7 +773,7 @@ def _chalice(g, c, p, s, post):
 
     def go():
         if c not in p.hand or not can_pay(g, p, 2 * k, ''): return False
-        pay(g, p, 2 * k, ''); p.hand.remove(c)
+        p.hand.remove(c); pay(g, p, 2 * k, '')
         log(f'  {NAME(p)} casts Everflowing Chalice kicked {k} times', g)
         on_cast(g, p, c)
         if not counter_window(g, p, c, 2, {}): p.gy.append(c); return True

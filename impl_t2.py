@@ -524,7 +524,7 @@ def evoke_options(g, p, s, post):
 
         def go(c=c, gen=gen, pips=pips):
             if c not in p.hand or not can_pay(g, p, gen, pips): return False
-            pay(g, p, gen, pips); p.hand.remove(c); p.spells_this_turn += 1; on_cast(g, p, c)
+            p.hand.remove(c); pay(g, p, gen, pips); p.spells_this_turn += 1; on_cast(g, p, c)
             log(f'  {NAME(p)} evokes {c.name}', g)
             m = enter(g, p, c, was_cast=True)
             if m in p.perms: die(g, m, 'sac')

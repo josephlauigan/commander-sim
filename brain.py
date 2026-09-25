@@ -645,7 +645,7 @@ def end_of_turn_window(g, p):
                 if 'eotdraw' in c.tags and can_pay(g, p, c.generic, c.pips):     # Mystic Confluence: draw three
                     def conf(c=c):
                         if c not in p.hand or not can_pay(g, p, c.generic, c.pips): return False
-                        pay(g, p, c.generic, c.pips); p.hand.remove(c); p.gy.append(c)
+                        p.hand.remove(c); pay(g, p, c.generic, c.pips); p.gy.append(c)
                         p.spells_this_turn += 1; on_cast(g, p, c); draw(g, p, int(c.tags['eotdraw'])); return True
                     opts.append((2.5, f'{c.name} (draw three)', conf))
                 continue
