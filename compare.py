@@ -207,8 +207,12 @@ def report_errors():
 
 
 def _chunks(seeds):
-    """small chunks so progress updates often; results are identical to one big chunk"""
-    size = max(25, min(250, len(seeds) // (max(1, JOBS) * 8) or 25))
+    """small chunks so progress updates often and every worker stays busy; results are identical to one big chunk.
+    Look-ahead games take seconds each, so their chunks go down to a single game."""
+    if AI == 'lookahead':
+        size = max(1, min(25, len(seeds) // (max(1, JOBS) * 4)))
+    else:
+        size = max(25, min(250, len(seeds) // (max(1, JOBS) * 8) or 25))
     return [seeds[i:i + size] for i in range(0, len(seeds), size)]
 
 
@@ -232,12 +236,15 @@ def _run_chunks(fn, args_for):
 def _star(a):
     fn, rest = a[0], a[1:]
     return len(rest[3]), fn(*rest)
-AI, TEMP = 'adaptive', 1.0
+AI, TEMP = 'lookahead', 1.0
 
 
 def set_ai(mode, temp):
-    engine.AI_MODE = mode
-    import brain
+    """'lookahead' (default): the adaptive AI, and in pool games every deck picks its main-phase plays, attacks and
+    counters by look-ahead (search.py); 'adaptive' / 'rigid': no look-ahead (much faster)"""
+    import brain, search
+    search.KEYS = {'*'} if mode == 'lookahead' else set()
+    engine.AI_MODE = 'adaptive' if mode == 'lookahead' else mode
     brain.TEMP_SCALE = temp
 
 
@@ -513,7 +520,9 @@ def main():
     ap.add_argument('--analyze', action='store_true', help='deep report on one deck: how it wins/loses, plan timing, card report')
     ap.add_argument('--brief', action='store_true', help='skip the per-axis breakdown')
     ap.add_argument('--trace', type=int, metavar='GAME', help='print a play-by-play log of one game (seed number) and exit')
-    ap.add_argument('--ai', choices=('adaptive', 'rigid'), default='adaptive', help='AI decision model (default adaptive)')
+    ap.add_argument('--ai', choices=('lookahead', 'adaptive', 'rigid'), default='lookahead',
+                    help='AI decision model: lookahead (default; the adaptive AI plus look-ahead search in pool games, '
+                         'about 1 s per game per core) or adaptive (heuristic only, about 100x faster)')
     ap.add_argument('--temp', type=float, default=1.0, help='adaptive AI randomness multiplier (lower = sharper play)')
     ap.add_argument('--quiet', action='store_true', help='no progress bar')
     ap.add_argument('--jobs', type=int, default=1, help='parallel worker processes (e.g. number of CPU cores)')
@@ -610,7 +619,7 @@ def main():
         return
 
     print('Swaps:', '; '.join(f'{o} -> {i}' for o, i in swaps) or '(none)')
-    print(f'AI: {AI}' + (f' (temperature x{TEMP})' if AI == 'adaptive' else ''))
+    print(f'AI: {AI}' + (f' (temperature x{TEMP})' if AI in ('adaptive', 'lookahead') else ''))
     t = time.time()
     abl = swaps if (a.ablate and len(swaps) > 1) else []
     PROG.plan(a.n * len(profiles) * (2 + len(abl)))
