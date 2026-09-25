@@ -2,17 +2,72 @@
 
 This file reports how the four main decks do against a fixed field: the 25 decks in `opponents/`, five tiers of five.
 In each game, one of your decks faces three decks drawn from one tier, with seats shuffled.
-Games use the adaptive AI and are seeded, so any cell can be reproduced with `compare.py --deck <d> --pool <tier> --games N`.
+Games are seeded, so any cell can be reproduced with `compare.py --deck <d> --pool <tier> --games N`. Since September 2026
+the default AI is the look-ahead AI (`--ai lookahead`, see `search.py`); section 0 has its results. Sections 1-3 were
+measured with the heuristic AI alone (`--ai adaptive`) and are kept for comparison.
 
 Contents:
-1. Deck × tier matrix
-2. Calibration: within-tier balance, tier ordering, one ranking of all 25 decks
-3. Why the tiers are not fully ordered, and what was tried
-4. Old-mode regression
+0. Current results with the look-ahead AI
+1. Deck × tier matrix (heuristic AI)
+2. Calibration: within-tier balance, tier ordering, one ranking of all 25 decks (heuristic AI)
+3. Why the tiers were not ordered with the heuristic AI, and what was done
+4. Old mode (removed)
 5. Card coverage
 6. Limitations
 
-## 1. Deck × tier matrix
+## 0. Current results with the look-ahead AI (September 2026)
+
+Every deck at the table picks its main-phase plays, attacks and counterspells by look-ahead: the best few candidates
+are tried on copies of the game (opponents' hands re-dealt from what they could hold), each copy is played forward to
+the end of the player's next turn, and the position is scored (board, cards, life, combo progress). 240 games per
+cell; a 95% interval is about ±5.5 points per deck and ±2.5 points per tier average.
+
+Pool changes since sections 1-3: Grand Arbiter Augustin IV was retired and replaced by Heliod, Sun-Crowned (Tier 4);
+the Yawgmoth list was tuned (6 swaps, section 3). Both with the user's approval.
+
+### 0a. Tier ordering (each deck alone against three decks of the tier below; conservative profile; above 25% = ordered)
+
+| Tier into tier below | Look-ahead | Heuristic, same seeds | Heuristic, earlier (section 2b) |
+|---|---|---|---|
+| T2 into T1 | **27.6%** (Sythis 41, Meren 36, Kaalia 24, Windgrace 23, Brago 15) | - | 30.6% |
+| T3 into T2 | **25.5%** (Aurelia 35, Tergrid 29, Atraxa 28, Korvold 21, Marwyn 14) | - | 24.4% |
+| T4 into T3 | **24.1%** (Chulane 28, Heliod 25, Krenko 25, Prosper 24, Yuriko 20) | 19.5% | 15.6% (with GAA) |
+| T5 into T4 | **28.7%** (Kinnan 41, Winota 33, Zur 28, Urza 25, Yawgmoth 17) | 23.2% | 25.2% (with GAA in T4) |
+
+T2, T3 and T5 are ordered; T4 into T3 is within noise of even (the heuristic AI had it clearly inverted). The
+decks below 25% in their row are the tier's weak decks in 0b as well.
+
+### 0b. Within-tier balance (four of the tier's five decks per game; flag above 35% or below 15%)
+
+| Tier | Avg game (rounds) | conservative | loose |
+|---|---|---|---|
+| T1 High B2 / Low B3 | 12.5 | Light-Paws 30, Isshin 30, Teysa 23, Tatyova 21, Lathril 21 | Light-Paws 31, Isshin 28, Lathril 24, Tatyova 23, Teysa 19 |
+| T2 Mid B3 | 15.4 | **Meren 39 HIGH**, Sythis 33, Kaalia 25, Windgrace 16, **Brago 14 LOW** | **Meren 47 HIGH**, **Sythis 36 HIGH**, Windgrace 21, **Kaalia 13 LOW**, **Brago 10 LOW** |
+| T3 High B3 | 13.1 | **Atraxa 38 HIGH**, Aurelia 35, Korvold 21, Tergrid 20, **Marwyn 12 LOW** | **Atraxa 40 HIGH**, Aurelia 35, Tergrid 24, Korvold 15, **Marwyn 11 LOW** |
+| T4 Low B4 | 10.2 | Heliod 28, Krenko 27, Prosper 27, Yuriko 26, Chulane 18 | Heliod 30, Yuriko 28, Prosper 24, Krenko 23, Chulane 19 |
+| T5 High B4 | 7.6 | Kinnan 34, Winota 29, Zur 25, Urza 22, **Yawgmoth 14 LOW** | Kinnan 35, Winota 29, Zur 24, Urza 21, Yawgmoth 17 |
+
+Games get shorter as the brackets go up (15 rounds in T2 to under 8 in T5), with few timeouts above T2.
+Remaining outliers: Meren and Atraxa run hot; Brago, Marwyn and Yawgmoth run cold. Yawgmoth's mono-black list has
+only three pieces for its undying loop (Mikaeus, Geralf's Messenger, Butcher Ghoul); an immortal Yawgmoth wins 36%, so
+it loses races rather than failing to close.
+
+### 0c. Engine and AI fixes made while calibrating
+
+Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each was fixed and committed:
+- a won position always scores above any unfinished one (a 250-Goblin board no longer "prefers" not to attack);
+- step caps per game and per playout, a cap on look-ahead work per game, and look-ahead copies stop once the table
+  passes 150 permanents, so every game finishes in bounded time;
+- cards leave the hand or graveyard before their cost is paid (payment triggers could move them);
+- Thousand-Faced Shadow copies only from a real ninjutsu; Scourge of the Throne's dethrone check;
+- creature combo pieces get combo cast priority (Mikaeus, Kiki-Jiki, Felidar Guardian ...);
+- Yawgmoth: Geralf's Messenger as its own loop payoff, -1/-1 counters on X/1 tokens, instant-speed use after blockers
+  (a new `defend` event for defending permanents), and a second loop once a payoff is drawn.
+
+The four main decks' matrix against the tiers with look-ahead (loose profile, the harshest interaction) is pending an
+update to their lists.
+
+## 1. Deck × tier matrix (heuristic AI)
 
 Each cell is 5,000 games: the win rate of the deck in that row against three decks of the column's tier, with a 95% interval.
 An even share is 25%. Generated with `python3 compare.py --all-decks --pool all --games 5000`.
@@ -44,7 +99,7 @@ The two profiles also share seeds, so differences under about 1.5 points are noi
 - **T5 is the hardest column** for Sephiroth, Najeela and Veyran.
 - **T4 is still easier than T3 for every deck,** though less than before the deck-plan work (Sephiroth vs T4 went from 64.7% to 59.0%, Najeela from 52.8% to 43.4%). Read the T4 column as "Low B4 lists as the sim can pilot them", not as a Low-B4-strength field. Section 3 explains.
 
-## 2. Calibration
+## 2. Calibration (heuristic AI)
 
 Commands: `python3 compare.py --calibrate all --games 2000` for both profiles.
 Per-deck intervals are about ±2 points (within tier) and ±2 points (ordering, 2,000 games per deck).
@@ -105,7 +160,7 @@ T2 over T1 is ordered. T3 over T2 and T5 over T4 are at parity. **T4 is still in
 - **Strongest in the sim:** Aurelia, Kinnan, Meren, Sythis and Atraxa.
 - **Weakest:** GAA, Marwyn, Yawgmoth, Brago and Light-Paws.
 
-## 3. Why the tiers are not fully ordered, and what was tried
+## 3. Why the tiers were not ordered with the heuristic AI, and what was done
 
 **Card rules are not the cause.** Every card in the pool is fully modeled (section 5).
 The review of the compiled cards found and fixed real errors that had distorted results, including:
@@ -185,29 +240,12 @@ The card rules check out (taxes, spell limits, Drannith, and the Isochron loop's
 
 With Heliod in Tier 4, Tier 5 into Tier 4 is 22.7% (480 games per deck): Kinnan 34, Winota 28, Urza 20, Zur 20, Yawgmoth 12.
 
-## 4. Old-mode regression
+## 4. Old mode (removed)
 
-Old mode (`compare.py` without `--pool`) is unchanged by this work. Three guards enforce that:
-- `engine.POOL_RULES` is False outside pool games, so new rules such as Boots haste, fetch cracking and walker attacks never apply there.
-- A hook on any card in the four main decks is inactive outside pool games.
-- A fixture test (`tests/test_old_mode.py`) fingerprints 500 games per profile and requires an exact match.
-
-n=10,000 per profile on this branch gives:
-
-| Deck | conservative | loose | Reference in the prompt |
-|---|---|---|---|
-| Sephiroth | 46.9% | 47.5% | 50.8 / 51.8 |
-| Najeela | 24.9% | 24.2% | 27.8 / 26.6 |
-| Sauron | 18.2% | 18.4% | 13.9 / 14.0 |
-| Veyran | 10.0% | 9.8% | 7.4 / 7.6 |
-
-These numbers are identical, game for game, to the starting commit `db6149a`, so this branch changed nothing.
-The reference numbers come from an older state of the repo:
-- `73a7a77` gives 48.2/49.3 for Sephiroth.
-- `9cddd67` gives 49.2/50.8.
-- The Erebos modeling and the decklist updates (`c255d7d` / `db6149a`) moved the numbers to their current values.
-
-The pool matrix keeps the same order: Sephiroth > Najeela > Sauron ≈ Veyran.
+The original four-deck mode (the main decks against each other, `compare.py` without `--pool`) was removed in
+September 2026 at the user's request; its exact-replay fixture test went with it. The four deck files are still
+guarded: `tests/test_my_decks.py` checks that they parse to the recorded lists. Its last numbers (n=10,000 per
+profile, conservative / loose): Sephiroth 46.9 / 47.5%, Najeela 24.9 / 24.2%, Sauron 18.2 / 18.4%, Veyran 10.0 / 9.8%.
 
 
 ## 5. Card coverage
