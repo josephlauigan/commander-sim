@@ -382,9 +382,32 @@ def _yawg(g, src, p, s, post):
             pay(g, p, 0, 'BB'); discard_worst(g, p, 1); IC.proliferate(g, p); return True
         out.append((1.0, 'Yawgmoth: proliferate', prol))
     return out
+@on('Yawgmoth, Thran Physician', 'defend')
+def _yawg_defend(g, src, d, p, atk, assign):
+    """at instant speed, after blockers: pay 1 life and sacrifice fodder to put a -1/-1 counter on each unblocked
+    X/1 attacker (a Goblin token), drawing a card each time; while the fodder lasts and life stays above 8"""
+    if src.owner is not d or src not in d.perms: return
+    while d.life > 8:
+        tgt = [a for a in atk if a in p.perms and a not in assign and a.creature and etgh(g, a) <= 1
+               and epow(g, a) >= 1 and not untargetable(g, a)]
+        fod = [m for m in d.perms if m.creature and m is not src and not m.is_cmd and m not in assign.values()
+               and (m.token or pval(g, m) < 2 or (m.cd is not None and 'undying' in m.cd.kws and m.plus <= 0))]
+        if not tgt or not fod: return
+        m = min(fod, key=lambda x: (not (x.cd is not None and 'undying' in x.cd.kws), pval(g, x)))
+        x = max(tgt, key=lambda a: (epow(g, a), pval(g, a)))
+        log(f'    {NAME(d)} sacrifices {m.name} to Yawgmoth: -1/-1 counter on attacking {x.name}', g)
+        lose_life(g, d, 1, d); die(g, m, 'sac')
+        if x in p.perms:
+            x.plus -= 1
+            if etgh(g, x) <= 0: die(g, x, 'sba')
+        draw(g, d, 1)
+        if g.over or not d.alive: return
+
+
 card('Yawgmoth, Thran Physician', 'leg human pow=2 tgh=4', dsl=[])
 note('Yawgmoth, Thran Physician', 'Approximate', 'pay 1 life, sacrifice: -1/-1 counter on an X/1 (tokens included) and '
-     'draw, main phase only; BB discard: proliferate (the undying loop is a combo); protection from Humans not modeled')
+     'draw, in your main phase and after blockers when attacked (unblocked X/1 attackers); BB discard: proliferate '
+     '(the undying loop is a combo); protection from Humans not modeled')
 
 
 @on('Nether Traitor', 'gy_dies')

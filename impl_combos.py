@@ -376,6 +376,7 @@ def _yawg_finish(g, p):
     draw(g, p, min(10, max(0, len(p.library) - 5)))
     lose_life(g, p, 5, p)
     p.yawg_loop = p.turns
+    p.combo_turn = None          # a payoff drawn by the loop lets it go again this turn (ready() stops a second payoff-less loop)
     log(f'    Yawgmoth loop: opposing creatures die, {NAME(p)} draws', g)
 
 
@@ -386,7 +387,8 @@ def _yawg_finish(g, p):
        finish=_yawg_finish)
 def _yawg(g, p):
     y = on_bf(p, 'Yawgmoth, Thran Physician')
-    if y is None or p.life < 12 or getattr(p, 'yawg_loop', None) == p.turns: return False, [], []
+    if y is None or p.life < 12: return False, [], []
+    if getattr(p, 'yawg_loop', None) == p.turns and _yawg_payoff(p) is None: return False, [], []   # looped already; a payoff drawn since wins
     und = [m for m in p.perms if m.creature and m.cd is not None and 'undying' in m.cd.kws and m is not y]
     mik = on_bf(p, 'Mikaeus, the Unhallowed')
     fodder = [m for m in p.perms if m.creature and m is not y and m is not mik and not has_type(m, 'human')]

@@ -1498,6 +1498,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
         if E.POOL_RULES and d.key not in MAIN:
+            if g.hooks: E.CI.fire(g, 'defend', d, p, atk, assign)    # the defender's permanents, after blocks (Yawgmoth)
             for c, fn in E.CI.hand_cards(d, 'hand_defend'): fn(g, c, d, p, atk, assign)
             for L in list(d.lands):
                 h = E.CI.HOOKS.get(L.cd.name)
