@@ -20,7 +20,8 @@ HORIZON = 1             # play out to the end of p's next turn (2: the turn afte
 COMBO_W = 12.0          # value of holding every piece of a combo the deck plays (scaled by the share of pieces held)
 PLAYOUT_WORK = 2_000    # engine steps one playout may take (see E.tick); a playout that runs out is scored where it stands
 GAME_DECISIONS = 1000   # look-ahead decisions per game (a game takes about 125); past this the heuristic AI plays on
-STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0, 'capped': 0}
+BOARD_LIMIT = 150       # permanents on the table past which copies get too slow (a 250-Goblin lock): heuristic AI
+STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0, 'capped': 0, 'big_board': 0}
 CUTS = []               # where playouts ran out of steps: (deck, round, innermost frames), first few only
 
 _SHARED = None
@@ -29,6 +30,9 @@ _SHARED = None
 def enabled(g, p):
     if getattr(g, 'in_search', False) or not E.POOL_RULES: return False
     if not ('*' in KEYS or p.key in KEYS): return False
+    if sum(len(q.perms) for q in g.players) > BOARD_LIMIT:
+        STATS['big_board'] = STATS.get('big_board', 0) + 1
+        return False
     if getattr(g, 'search_n', 0) >= GAME_DECISIONS:
         if g.search_n == GAME_DECISIONS: STATS['capped'] += 1; g.search_n += 1
         return False
