@@ -1647,9 +1647,18 @@ def combat(g, p):
                and (not m.noatk or (E.POOL_RULES and epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
         if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
         if not atk: break
-        d = brain.choose_defender(g, p) if adaptive else choose_defender(g, p)
-        if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
-        if E.POOL_RULES and p.key not in MAIN: atk = __import__('pool_ai').attack_filter(g, p, atk, d)
+        plan = None                                   # look-ahead: (defender index, 'filtered' / 'all' / 'none')
+        if adaptive and E.POOL_RULES and ncomb == 1:
+            import search
+            if getattr(g, 'forced_attack', None) is not None: plan, g.forced_attack = g.forced_attack, None
+            elif search.enabled(g, p): plan = search.choose_attack(g, p)
+        if plan is not None and plan[1] == 'none': break
+        all_atk = list(atk)
+        d = g.players[plan[0]] if plan is not None else (brain.choose_defender(g, p) if adaptive else choose_defender(g, p))
+        if plan is not None and plan[1] == 'all': atk = all_atk
+        else:
+            if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
+            if E.POOL_RULES and p.key not in MAIN: atk = __import__('pool_ai').attack_filter(g, p, atk, d)
         cand0 = list(atk)
         if g.hooks: atk = attack_limits(g, p, d, atk)
         if E.POOL_RULES and g.hooks:
@@ -1980,7 +1989,22 @@ def main_fn(p):
     return MAIN.get(p.key, generic_main)
 
 
+STEPS = ('start', 'main1', 'combat', 'main2', 'end')
+
+
 def take_turn(g, p):
+    continue_turn(g, p, 'start')
+
+
+def continue_turn(g, p, step):
+    """play p's turn from `step` on (a copied game resumes mid-turn from here)"""
+    for st in STEPS[STEPS.index(step):]:
+        g.step = st
+        STEP_FN[st](g, p)
+        if g.over or not p.alive: return
+
+
+def _step_start(g, p):
     g.active = p
     g.eot_pt = {}; g.eot_kw = {}
     for q in g.players: q.floatA = 0
@@ -2016,6 +2040,9 @@ def take_turn(g, p):
     if g.hooks: more_lands(g, p)
     if len(p.lands) == nl and p.turns <= 5: p.stats['land_miss'] += 1
     if p.turns in (4, 6): p.stats[f'mana_T{p.turns}'] = total_mana(g, p); p.stats[f'had_T{p.turns}'] = 1
+
+
+def _step_main1(g, p):
     main_fn(p)(g, p, False)
     if g.over or not p.alive: return
     if g.hooks: more_lands(g, p)
@@ -2023,14 +2050,24 @@ def take_turn(g, p):
     if p.key == 'najeela' and has(p, 'mirror') and not g.goldfish:
         x = total_mana(g, p) - 5
         if x >= 3: p.pump = x
+
+
+def _step_combat(g, p):
     combat(g, p)
     p.pump = 0
-    if g.over or not p.alive: return
+
+
+def _step_main2(g, p):
     main_fn(p)(g, p, True)
     if p.key == 'veyran' and has(p, 'veyran') and engine_payoff(p): p.milestone.setdefault('engine', p.turns)
-    if g.over or not p.alive: return
+
+
+def _step_end(g, p):
     end_step(g, p)
     check_state(g)
+
+
+STEP_FN = {'start': _step_start, 'main1': _step_main1, 'combat': _step_combat, 'main2': _step_main2, 'end': _step_end}
 
 
 def mulligan(g, p, rng=None):

@@ -486,39 +486,54 @@ def extra_options(g, p, s, post, sorcery_ok):
 
 
 # ------------------------------------------------------------------ main phase
+def main_options(g, p, post):
+    """every legal main-phase play for p right now, as (utility, label, fn); fn None is 'stop'"""
+    s = Situation(g, p)
+    hold_card, hold_v = hold_value(g, p, s)
+    opts = []
+    # Najeela keeps WUBRG up before combat when the attack is on
+    naj_hold = (p.key == 'najeela' and not post and has(p, 'najeela')
+                and len([m for m in p.perms if m.creature]) >= 3)
+    for c in list(p.hand) + ([p.cmd] if p.cmd_in_zone else []):
+        if c.land: continue
+        u = card_utility(g, p, s, c)
+        if u is None: continue
+        cg, cp = cost_of(p, c)
+        E.PAY_FOR = c; ok = can_pay(g, p, cg, cp, 'convoke' in c.tags); E.PAY_FOR = None
+        if not ok: continue
+        u -= reserve_penalty(g, p, s, c, hold_card, hold_v)
+        if p.key not in STYLE and not post:                     # outside decks: mana kept for combat (ninjutsu)
+            rsv = __import__('pool_ai').combat_reserve(g, p)
+            if rsv and not can_pay(g, p, cg + rsv[0], cp + rsv[1]): u -= 6.0
+        if naj_hold and not can_pay(g, p, cg, cp + 'WUBRG'): u -= 4.0
+        opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
+    opts += removal_options(g, p, s)
+    opts += wipe_options(g, p, s)
+    opts += special_options(g, p, s, post)
+    opts += extra_options(g, p, s, post, sorcery_ok=True)
+    opts += A.breach_gc_options(g, p)
+    if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, True)
+    if E.CI is not None: opts += hook_options(g, p, s, post)
+    stop_u = (hold_v if hold_card is not None else -3.0) + (1.5 if naj_hold else 0.0)
+    if p.key not in STYLE and not post and __import__('pool_ai').combat_reserve(g, p):
+        stop_u = max(stop_u, 4.5)                                  # ninjutsu window: go to combat, cast after
+    opts.append((stop_u, 'stop (hold mana)' if hold_card is not None else 'stop', None))
+    return opts
+
+
 def main(g, p, post):
     for _ in range(18):
         if g.over or not p.alive: return
-        s = Situation(g, p)
-        hold_card, hold_v = hold_value(g, p, s)
-        opts = []
-        # Najeela keeps WUBRG up before combat when the attack is on
-        naj_hold = (p.key == 'najeela' and not post and has(p, 'najeela')
-                    and len([m for m in p.perms if m.creature]) >= 3)
-        for c in list(p.hand) + ([p.cmd] if p.cmd_in_zone else []):
-            if c.land: continue
-            u = card_utility(g, p, s, c)
-            if u is None: continue
-            cg, cp = cost_of(p, c)
-            E.PAY_FOR = c; ok = can_pay(g, p, cg, cp, 'convoke' in c.tags); E.PAY_FOR = None
-            if not ok: continue
-            u -= reserve_penalty(g, p, s, c, hold_card, hold_v)
-            if p.key not in STYLE and not post:                     # outside decks: mana kept for combat (ninjutsu)
-                rsv = __import__('pool_ai').combat_reserve(g, p)
-                if rsv and not can_pay(g, p, cg + rsv[0], cp + rsv[1]): u -= 6.0
-            if naj_hold and not can_pay(g, p, cg, cp + 'WUBRG'): u -= 4.0
-            opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
-        opts += removal_options(g, p, s)
-        opts += wipe_options(g, p, s)
-        opts += special_options(g, p, s, post)
-        opts += extra_options(g, p, s, post, sorcery_ok=True)
-        opts += A.breach_gc_options(g, p)
-        if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, True)
-        if E.CI is not None: opts += hook_options(g, p, s, post)
-        stop_u = (hold_v if hold_card is not None else -3.0) + (1.5 if naj_hold else 0.0)
-        if p.key not in STYLE and not post and __import__('pool_ai').combat_reserve(g, p):
-            stop_u = max(stop_u, 4.5)                                  # ninjutsu window: go to combat, cast after
-        opts.append((stop_u, 'stop (hold mana)' if hold_card is not None else 'stop', None))
+        opts = main_options(g, p, post)
+        if len(opts) >= 2:
+            import search
+            if search.enabled(g, p):
+                pick = search.choose(g, p, post, opts)
+                if pick is not None:
+                    u, lbl, fn = pick
+                    explain(g, p, [(x, l) for x, l, _ in opts], lbl + ' [search]', 'decides')
+                    if fn is None: return
+                    if fn(): continue
         order = gumbel_order(g.rng, [(u, (u, lbl, fn)) for u, lbl, fn in opts], T(p))
         acted = False
         for u, lbl, fn in order:

@@ -69,12 +69,12 @@ def revert_animated(g):
     g.animated = []
 
 
-_COUNTERS = {}
-
-
 def L_counters(L, n=None):
-    if n is not None: _COUNTERS[id(L)] = n
-    return _COUNTERS.get(id(L), 0)
+    """+1/+1 counters kept on a creature land (Raging Ravine) between animations"""
+    if n is not None:
+        if L.data is None: L.data = {}
+        L.data['counters'] = n
+    return (L.data or {}).get('counters', 0)
 
 
 def animate(g, p, L, pw, tg, kws=(), fly=False):
@@ -424,22 +424,22 @@ def _mosswort(g, p, L):
     import impl_topdeck
     c = max(top, key=lambda c: (not c.land, c.cmc if c.creature else card_worth(g, p, c) / 20))
     top.remove(c); p.library[:0] = top
-    if L.cd is not None: _HIDDEN[id(L)] = c
+    if L.data is None: L.data = {}
+    L.data['hidden'] = c
     log(f'    Mosswort Bridge hides a card', g)
 CI.LAND_ETB['Mosswort Bridge'] = _mosswort
-_HIDDEN = {}
 
 
 @on('Mosswort Bridge', 'land_options')
 def _mosswort_play(g, L, p, s, post):
     """{G}, {T}: play the hidden card free if creatures you control have total power 10 or more"""
-    c = _HIDDEN.get(id(L))
+    c = (L.data or {}).get('hidden')
     if c is None or post is None or L.tapped or not can_pay_without(g, p, L, 0, 'G'): return []
     if sum(epow(g, m) for m in p.perms if m.creature) < 10: return []
 
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 0, 'G'): return False
-        L.tapped = True; del _HIDDEN[id(L)]
+        L.tapped = True; L.data['hidden'] = None
         if c.land: play_land_card_free(g, p, c)
         else: cast_card(g, p, c, 'lib', {})
         return True

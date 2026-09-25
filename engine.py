@@ -56,10 +56,11 @@ for _line in DB_TEXT.strip().splitlines():
 
 
 class Land:
-    __slots__ = ('cd', 'tapped')
+    __slots__ = ('cd', 'tapped', 'data')
 
     def __init__(s, cd, tapped):
         s.cd, s.tapped = cd, tapped
+        s.data = None
 
 
 class Perm:
@@ -1206,7 +1207,13 @@ def counter_window(g, p, c, imp, aff):
             nc = sum(1 for x in q.hand if 'ctr' in x.tags)
             if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
             thr = CTHRESH[q.key] if q.key in CTHRESH else __import__('pool_ai').counter_threshold(q, CTHRESH_DEFAULT)
-            if not nc or g.rng.random() > brain.wants_counter(g, q, val, thr, nc): continue
+            if not nc: continue
+            import search
+            cc = getattr(g, 'cur_cast', None)
+            if (POOL_RULES and cc is not None and cc[0] is c and search.enabled(g, q) and g.active is p
+                    and getattr(g, 'step', None) in ('main1', 'main2') and pick_counter(g, q, c) is not None):
+                if not search.choose_counter(g, q, p, c, cc[1], cc[2]): continue
+            elif g.rng.random() > brain.wants_counter(g, q, val, thr, nc): continue
         else:
             if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): continue
             if g.rng.random() > 0.9: continue
@@ -1276,7 +1283,12 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         return False
     global LAST_COUNTER
     LAST_COUNTER = None
-    if (imp > 0 or aff) and not counter_window(g, p, c, imp, aff):
+    g.cur_cast = (c, ctx, zone)
+    try:
+        ok_cast = not (imp > 0 or aff) or counter_window(g, p, c, imp, aff)
+    finally:
+        g.cur_cast = None
+    if not ok_cast:
         if c is p.cmd: p.cmd_in_zone = True
         elif zone in ('gy',) or ctx.get('exile_after'): p.exile.append(c)
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)
