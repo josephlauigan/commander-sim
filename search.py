@@ -10,7 +10,7 @@ For a decision of player p:
      seeds, so they are compared on the same futures.
 The candidate with the best mean score is played in the real game.
 """
-import copy, random, re, zlib
+import copy, math, random, re, zlib
 import engine as E
 
 KEYS = set()            # decks that search ('*' in KEYS: every deck)
@@ -134,7 +134,8 @@ def evaluate(g, p):
     if not opps: return 100.0
     s = strength(g, p)
     so = sorted((strength(g, q) for q in opps), reverse=True)
-    return s - 0.6 * so[0] - 0.4 * (sum(so) / len(so)) + 12.0 * dead
+    raw = s - 0.6 * so[0] - 0.4 * (sum(so) / len(so)) + 12.0 * dead
+    return 95.0 * math.tanh(raw / 100.0)     # below a win however big the board (250 goblins must still attack)
 
 
 def strength(g, q):
