@@ -270,6 +270,10 @@ def _use(g, p, name, where, cost, src, target_m):
             if cost and not E.can_pay(g, p, *cost): return False
             if cost: E.pay(g, p, *cost)
             E.die(g, src, 'sac')
+        elif where == 'bf_sac_other':                       # Cartel Aristocrat: sacrifice another creature
+            fod = [x for x in p.perms if x.creature and x is not src and not x.is_cmd]
+            if not fod: return False
+            E.die(g, min(fod, key=lambda x: pval(g, x)), 'sac')
     p.stats['protection_used'] += 1
     E.log(f'    {E.NAME(p)} protects with {name}', g)
     return True
@@ -300,7 +304,7 @@ def protect(g, owner, m, kind, actor, spell=None):
         if scope in ('one', 'creatures') and not m.creature and how not in ('hexproof_indes', 'phase', 'all_targeted'): continue
         if not _saves(how, kind, m, spell, True): continue
         # cheapest first: permanents that tap, then one-shot cards; save the board-wide ones for wipes
-        rank = {'bf_tap': 0, 'bf_sac': 2, 'hand': 1, 'bf_self_discard': 0}[where] + (3 if scope not in ('one', 'self') else 0)
+        rank = {'bf_tap': 0, 'bf_sac': 2, 'hand': 1, 'bf_self_discard': 0, 'bf_sac_other': 1}[where] + (3 if scope not in ('one', 'self') else 0)
         cands.append((rank, name, where, cost, src))
     for _, name, where, cost, src in sorted(cands, key=lambda x: x[0]):
         if _use(g, owner, name, where, cost, src, m):

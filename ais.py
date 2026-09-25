@@ -1507,6 +1507,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     for a in atk:
         if a not in p.perms or not d.alive: continue
         ap = epow(g, a) * (2 if double_strike(p, a) else 1)
+        if E.POOL_RULES and a.data and __import__('impl_rules').dovin_blocked(a): ap = 0
         b = assign.get(a)
         if b is None or b not in d.perms:
             dmg = ap
@@ -1514,6 +1515,10 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             bt = etgh(g, b)
             a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
             b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
+            if E.POOL_RULES and E.CI is not None:                       # protection from creatures / Demons and Dragons
+                import impl_rules2
+                if impl_rules2.prot_vs(g, a, b): a_dies = False
+                if impl_rules2.prot_vs(g, b, a): b_dies = False
             fa, fb = first_strike(a), first_strike(b)
             if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
             elif fb and not fa and a_dies: b_dies = False
@@ -1632,6 +1637,7 @@ def combat(g, p):
         if not g.opps(p): return
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: import brain
+        if E.POOL_RULES and g.hooks and ncomb == 1: E.CI.fire(g, 'crew', p)
         atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
                and (not m.sick or p.haste_all or (E.POOL_RULES and has_haste(g, m)))
                and (not m.noatk or (E.POOL_RULES and epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
@@ -1640,7 +1646,12 @@ def combat(g, p):
         d = brain.choose_defender(g, p) if adaptive else choose_defender(g, p)
         if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
         if E.POOL_RULES and p.key not in MAIN: atk = __import__('pool_ai').attack_filter(g, p, atk, d)
+        cand0 = list(atk)
         if g.hooks: atk = attack_limits(g, p, d, atk)
+        if E.POOL_RULES and g.hooks:
+            import impl_rules2
+            if not attack_restrictions(g, p, d)[0]: atk = impl_rules2.forced_attackers(g, p, atk, cand0)
+            atk = impl_rules2.annex_life(g, p, d, atk)
         if g.hooks and atk:                                   # beginning of combat (Helm of the Host)
             for r in E.CI.fire(g, 'combat_start', p): atk += [m for m in r if m not in atk]
         if not atk: break
@@ -1657,6 +1668,8 @@ def combat(g, p):
         for m in atk:
             if not (m.vig or (E.POOL_RULES and kw(m, 'vigilance'))): m.tapped = True
         atk += attack_triggers(g, p, atk, d)
+        if E.POOL_RULES and E.CI is not None:
+            for c, fn in E.CI.hand_cards(p, 'hand_attack'): fn(g, c, p, atk, d)
         if g.over or not d.alive: continue
         conn = resolve_combat(g, p, atk, d, unbl)
         if g.over or not p.alive: return

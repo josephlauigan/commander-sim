@@ -250,13 +250,15 @@ def has_type(m, t):
 
 
 def indestructible(g, m):
+    if POOL_RULES and getattr(g, 'spear', None) == turn_stamp(g) and g.active is not m.owner: return False   # Shadowspear
     if m.data is not None and m.data.get('indestr'): return True
     return DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible')
 
 
 def untargetable(g, m):
     if m.phased: return True
-    if DSLMOD is not None and (DSLMOD.has_kw(g, m, 'hexproof') or DSLMOD.has_kw(g, m, 'shroud')): return True
+    spear = POOL_RULES and getattr(g, 'spear', None) == turn_stamp(g) and g.active is not m.owner   # Shadowspear
+    if DSLMOD is not None and ((DSLMOD.has_kw(g, m, 'hexproof') and not spear) or DSLMOD.has_kw(g, m, 'shroud')): return True
     if m.cd is not None and m.cd.tags.get('sauron'): return True   # ward: sac a legendary
     if equipped(m, 'cloak') or any(e.attached is m and (e.cd.tags.get('prot') == 'boots' or 'spider' in e.cd.tags)
                                    for e in m.owner.perms if e.cd):
@@ -554,7 +556,7 @@ def cost_of(p, c):
         if POOL_RULES and c.name in SELF_COST: gen = max(0, gen + SELF_COST[c.name](g, p, c))
         if POOL_RULES and getattr(p, 'emblems', None) and 'tamiyo' in p.emblems and c in p.hand: return 0, ''
     if g is not None and stopped(g, c.name): gen += 3                 # Disruptor Flute tax
-    if c is p.cmd: gen += p.tax
+    if c is p.cmd and not (POOL_RULES and c.name == 'Liesa, Shroud of Dusk'): gen += p.tax
     if id(c) in p.agent_ids:                      # Opposition Agent: spend mana as though it were mana of any type
         off = [x for x in pips if x not in p.ident]
         if off: gen += len(off); pips = ''.join(x for x in pips if x in p.ident)
@@ -605,6 +607,8 @@ KEYSPELL = ('rean', 'tut', 'yawg')
 
 
 def mill(g, p, n):
+    if POOL_RULES and g is not None and g.hooks and n > 0:
+        CI.fire(g, 'cards_to_gy', p, p.library[-n:])
     for _ in range(n):
         if not p.library: return
         c = p.library.pop(); p.gy.append(c)
@@ -650,6 +654,8 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
             die(g, m, 'sba'); continue
         out.append(m)
     k = len(out)
+    if POOL_RULES and k and g is not None and not getattr(g, 'no_fang', False) and CI is not None:
+        __import__('impl_rules2').chatterfang_squirrels(g, p, k)
     if k and not blank:
         if has(p, 'crusade'):
             for x in p.perms:
@@ -954,6 +960,7 @@ def casts_this_turn(g, p, pred=None):
 
 def on_cast(g, p, c):
     if POOL_RULES and getattr(p, 'emblems', None): __import__('impl_rules').emblem_cast(g, p, c)
+    if POOL_RULES and getattr(p, 'glimpse', None): __import__('impl_rules2').glimpse_draw(g, p, c)
     st = turn_stamp(g)
     if getattr(p, 'turn_casts', None) is None or p.turn_casts[0] != st: p.turn_casts = (st, [])
     p.turn_casts[1].append(c)
@@ -1193,6 +1200,8 @@ def counter_window(g, p, c, imp, aff):
         else:
             if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): continue
             if g.rng.random() > 0.9: continue
+        if POOL_RULES and imp >= 6 and __import__('impl_rules2').hullbreaker_counter(g, q, c):
+            g.bounced_spell = True; return False
         ctr = pick_counter(g, q, c)
         if ctr is None: continue
         if POOL_RULES and __import__('impl_rules').veil_response(g, p, q, ctr): continue
@@ -1236,7 +1245,9 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     ctx = ctx or {}
     if zone == 'hand': p.hand.remove(c)
     elif zone == 'gy': p.gy.remove(c)
-    elif zone == 'cmd': p.cmd_in_zone = False; p.tax += 2
+    elif zone == 'cmd':
+        if POOL_RULES and c.name == 'Liesa, Shroud of Dusk' and p.tax: lose_life(g, p, p.tax, p)
+        p.cmd_in_zone = False; p.tax += 2
     elif zone == 'escape': p.gy.remove(c)
     elif zone == 'lib': pass                      # Bolas's Citadel: already taken off the top of the library       # Underworld Breach: cast from the graveyard, resolves back to it
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
@@ -1258,6 +1269,7 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         elif zone in ('gy',) or ctx.get('exile_after'): p.exile.append(c)
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)
         elif LAST_COUNTER is not None and LAST_COUNTER.name == 'Venser, Shaper Savant' and POOL_RULES: p.hand.append(c)
+        elif POOL_RULES and getattr(g, 'bounced_spell', False): g.bounced_spell = False; p.hand.append(c)
         elif not c.land: p.gy.append(c)
         return False
     resolve(g, p, c, ctx, zone)
@@ -1639,10 +1651,11 @@ def apply_removal(g, actor, m, kind, spell=None):
     if ais.protect_response(g, owner, m, kind, actor, spell):
         log(f'    {NAME(owner)} protects {m.name}', g); return
     if m not in owner.perms: return
-    if m.cd is not None and m.cd.ward and actor is not owner and spell is not None:     # ward {N}: pay or it's countered
-        if not can_pay(g, actor, m.cd.ward, ''):
+    ward = (m.cd.ward if m.cd is not None else 0) + (__import__('impl_rules2').aura_ward(g, m) if POOL_RULES else 0)
+    if ward and actor is not owner and spell is not None:     # ward {N}: pay or it's countered
+        if not can_pay(g, actor, ward, ''):
             log(f'    ward counters the removal on {m.name}', g); return
-        pay(g, actor, m.cd.ward, '')
+        pay(g, actor, ward, '')
     if POOL_RULES and CI is not None and m.cd is not None and spell is not None and actor is not owner:
         import impl_rules
         if not impl_rules.removal_taxes(g, actor, m, kind): return
@@ -1863,6 +1876,7 @@ def discard_cards(g, q, cards):
         q.hand.remove(c)
         (q.exile if necro else q.gy).append(c)
         if g.hooks: CI.fire(g, 'discard', q, c); q.discarded_turn = turn_stamp(g)
+    if POOL_RULES and g.hooks and not necro: CI.fire(g, 'cards_to_gy', q, list(cards))
     if not necro:
         for c in cards: tergrid_steal(g, q, c, q)
 

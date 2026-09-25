@@ -16,6 +16,7 @@ def note(name, status, text):
 
 
 CARDS = {}
+POST = []            # fn() run after the overrides are applied (tag edits that must wait for the card data)
 
 
 def card(name, tags=None, status=None, **kw):
@@ -49,3 +50,4 @@ def apply(verbose=False):
         cd.source = 'pool'
         cd.pool_override = True
         engine.DB[name] = cd
+    for fn in POST: fn()

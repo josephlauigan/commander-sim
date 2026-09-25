@@ -16,15 +16,19 @@ MAIN = CI.main_cards()
 
 
 def set_tags(name, add=(), remove=()):
-    """change a card's tags for pool games; main-deck cards get only tags old mode never reads"""
-    cd = E.DB.get(name)
-    if cd is None: return
-    for k in remove:
-        if name not in MAIN: cd.tags.pop(k, None)
-    for k in add:
-        k, _, v = k.partition('=')
-        if name in MAIN and k not in ('pain', 'nonblack', 'labyrinth'): continue
-        cd.tags[k] = v if v else True
+    """change a card's tags for pool games (applied once the card data is loaded); main-deck cards get only tags
+    old mode never reads"""
+    def fn():
+        cd = E.DB.get(name)
+        if cd is None: return
+        for k in remove:
+            if name not in MAIN: cd.tags.pop(k, None)
+        for k in add:
+            k, _, v = k.partition('=')
+            if name in MAIN and k not in ('pain', 'nonblack', 'labyrinth'): continue
+            cd.tags[k] = v if v else True
+    import pool_cards
+    pool_cards.POST.append(fn)
 
 
 def full(name, text):
@@ -47,21 +51,17 @@ def fix_mana():
     for n, col in (('Azorius Signet', 'WU'), ('Boros Signet', 'WR'), ('Dimir Signet', 'UB'), ('Golgari Signet', 'BG'),
                    ('Rakdos Signet', 'BR'), ('Selesnya Signet', 'WG'), ('Simic Signet', 'UG'), ('Izzet Signet', 'UR'),
                    ('Gruul Signet', 'RG'), ('Orzhov Signet', 'WB')):
-        if n in E.DB:
-            if n not in MAIN: E.DB[n].tags['rock'] = f'1:{col}'
-            full(n, '{1},{T}: two mana of its colours (net one coloured mana)')
+        set_tags(n, add=(f'rock=1:{col}',))
+        full(n, '{1},{T}: two mana of its colours (net one coloured mana)')
     for n, col in (('Talisman of Conviction', 'RW'), ('Talisman of Curiosity', 'GU'), ('Talisman of Dominance', 'UB'),
                    ('Talisman of Hierarchy', 'WB'), ('Talisman of Impulse', 'RG'), ('Talisman of Indulgence', 'BR'),
                    ('Talisman of Progress', 'WU'), ('Talisman of Resilience', 'BG')):
-        if n in E.DB:
-            if n not in MAIN: E.DB[n].tags['rock'] = f'1:{col}'
-            E.DB[n].tags['pain'] = True
-            full(n, '{T}: {C}, or one of its colours for 1 damage')
+        set_tags(n, add=(f'rock=1:{col}', 'pain'))
+        full(n, '{T}: {C}, or one of its colours for 1 damage')
     for n in ('Adarkar Wastes', 'Battlefield Forge', 'Brushland', 'Caves of Koilos', 'Llanowar Wastes', 'Sulfurous Springs',
               'Underground River', 'Yavimaya Coast', 'Shivan Reef', 'Karplusan Forest', 'Sulfur Falls'):
-        if n in E.DB:
-            E.DB[n].tags['pain'] = True
-            full(n, '{T}: {C}, or a coloured mana for 1 damage')
+        set_tags(n, add=('pain',))
+        full(n, '{T}: {C}, or a coloured mana for 1 damage')
     set_tags('Elves of Deep Shadow', add=('pain',)); full('Elves of Deep Shadow', '{T}: {B}, 1 damage to you')
     for n in ('Boreal Druid', 'Elvish Mystic', 'Fyndhorn Elves', 'Sylvan Caryatid'):
         full(n, 'mana creature')
@@ -522,7 +522,7 @@ def _dovin_minus(g, p, src):
         log(f'    Dovin: damage to and from {t.name} is prevented until {NAME(p)}\'s next turn', g)
 
 
-if 'Dovin, Hand of Control' in E.DB:
+if True:
     IC.walker('Dovin, Hand of Control', [
         (-1, 'prevent damage to and from a creature', lambda g, p, src: (pval(g, t) - 2.5 if (t := best_opp_creature(g, p)) is not None
                                                                        and pval(g, t) >= 4 else None), _dovin_minus)],
@@ -677,6 +677,7 @@ def evasion_blocked(g, b, a):
     if n == 'Signal Pest' and not (b.fly or (b.cd is not None and 'reach' in b.cd.tags)
                                    or (E.DSLMOD is not None and (E.DSLMOD.has_kw(g, b, 'flying') or E.DSLMOD.has_kw(g, b, 'reach')))): return True
     if b.token and getattr(a.owner, 'loyalist_turn', None) == turn_stamp(g): return True
+    if __import__('impl_rules2').prot_unblockable(g, b, a): return True
     if dovin_blocked(a) or dovin_blocked(b): return False
     return False
 
