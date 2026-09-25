@@ -2128,17 +2128,25 @@ def play_game(seed, decks, max_rounds=20, trace=False):
     return g
 
 
+STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)
+
+
 def _run_rounds(g, players, max_rounds):
-    for r in range(1, max_rounds + 1):
-        g.round = r
-        for p in players:
-            if p.alive and not g.over:
-                if E.AI_MODE == 'adaptive' and r > 1:
-                    import brain
-                    brain.end_of_turn_window(g, p)
+    try:
+        for r in range(1, max_rounds + 1):
+            g.round = r
+            for p in players:
                 if p.alive and not g.over:
-                    take_turn(g, p)
-        if g.over: break
+                    if E.AI_MODE == 'adaptive' and r > 1:
+                        import brain
+                        brain.end_of_turn_window(g, p)
+                    if p.alive and not g.over:
+                        take_turn(g, p)
+            if g.over: break
+    except E.OutOfWork as e:                        # a runaway loop: the game ends as a timeout
+        import traceback
+        fr = traceback.extract_tb(e.__traceback__)[-8:]
+        STOPPED.append((g.active and g.active.key, g.round, ' <- '.join(f'{f.name}:{f.lineno}' for f in reversed(fr))))
     if not g.over:
         alive = [p for p in players if p.alive]
         g.winner = max(alive, key=lambda p: p.life + board_power(g, p) * 2) if alive else None

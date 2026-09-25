@@ -122,6 +122,19 @@ class Player:
         s.agent_ids = set()   # cards taken with Opposition Agent (castable with mana of any type)
 
 
+GAME_WORK = 20_000      # engine steps one game may take before it is stopped (normal games take under a thousand)
+
+
+class OutOfWork(BaseException):
+    """a game (or a look-ahead copy) used up its engine steps: a runaway loop. BaseException so that no
+    per-game error handler swallows it."""
+
+
+def tick(g):
+    g.work += 1
+    if g.work > g.work_cap: raise OutOfWork
+
+
 class Game:
     def __init__(s, players, rng, goldfish=False):
         s.players = players; s.rng = rng; s.goldfish = goldfish
@@ -133,6 +146,7 @@ class Game:
         s.log = None          # list of strings when tracing a game
         s.hooks = []          # permanents with hand-written implementations (cardimpl), in entry order
         s.hook_cache = None   # event -> [(permanent, fn)], rebuilt when s.hooks changes
+        s.work = 0; s.work_cap = GAME_WORK   # engine steps taken / allowed (see tick)
 
     def opps(s, p):
         return [q for q in s.players if q.alive and q is not p]
@@ -371,6 +385,7 @@ def gain(p, n):
 
 def check_state(g):
     if g.over: return
+    tick(g)
     if g.hooks: CI.fire(g, 'sba')
     for p in g.players:
         if p.alive and (p.life <= 0 or p.decked or (p.cmd_dmg and max(p.cmd_dmg.values()) >= 21)):
@@ -1259,6 +1274,7 @@ def counter_side_effects(g, q, p, ctr):
 
 def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     """card already paid for.  zone: hand/gy/cmd"""
+    tick(g)
     ctx = ctx or {}
     if zone == 'hand':
         if c not in p.hand: return False             # paying for it moved it (a hand-mana source, a discard trigger)

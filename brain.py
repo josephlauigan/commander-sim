@@ -524,6 +524,7 @@ def main_options(g, p, post):
 def main(g, p, post):
     for _ in range(18):
         if g.over or not p.alive: return
+        E.tick(g)
         opts = main_options(g, p, post)
         if len(opts) >= 2:
             import search

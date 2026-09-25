@@ -17,7 +17,9 @@ KEYS = set()            # decks that search ('*' in KEYS: every deck)
 ROLLOUTS = 6
 TOP_K = 5
 HORIZON = 'next_turn'   # play out to the end of p's next turn
-STATS = {'decisions': 0, 'playouts': 0, 'changed': 0}
+PLAYOUT_WORK = 2_000    # engine steps one playout may take (see E.tick); a playout that runs out is scored where it stands
+STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0}
+CUTS = []               # where playouts ran out of steps: (deck, round, innermost frames), first few only
 
 _SHARED = None
 
@@ -126,6 +128,24 @@ def strength(g, q):
     return 0.25 * life + board + 0.35 * power + 0.9 * len(q.hand) + 0.6 * len(q.lands) + 0.4 * q.treasures
 
 
+def _start(g2):
+    g2.in_search = True
+    g2.work_start = g2.work; g2.work_cap = g2.work + PLAYOUT_WORK
+
+
+def _done(g2, err=None):
+    """book-keeping after a playout; err: the OutOfWork that stopped it"""
+    STATS['playouts'] += 1
+    STATS['max_work'] = max(STATS['max_work'], g2.work - g2.work_start)
+    if err is not None:
+        STATS['cut'] += 1
+        if len(CUTS) < 20:
+            import traceback
+            fr = traceback.extract_tb(err.__traceback__)[-8:]
+            CUTS.append((E.NAME(g2.active) if g2.active else '?', g2.round,
+                         ' <- '.join(f'{f.name}:{f.lineno}' for f in reversed(fr))))
+
+
 def _find(opts, label, n):
     k = 0
     for o in opts:
@@ -156,19 +176,23 @@ def choose(g, p, post, opts):
             for o, label, n in keyed:
                 rng = random.Random(base_seed * 31 + r)
                 g2 = clone(g)
-                g2.in_search = True
+                _start(g2)
                 p2 = g2.players[g.players.index(p)]
                 determinize(g2, p2, rng)
                 g2.rng = random.Random(rng.random())
                 E.CUR_G = g2
-                o2 = _find(brain.main_options(g2, p2, post), label, n)
-                if o2 is None: scores[id(o)] -= 50.0; continue
-                if o2[2] is not None:
-                    if not o2[2](): scores[id(o)] -= 50.0; continue
-                    brain.main(g2, p2, post)            # the rest of this phase, heuristically
-                play_on_after_phase(g2, p2, post)
+                err = None
+                try:
+                    o2 = _find(brain.main_options(g2, p2, post), label, n)
+                    if o2 is None: scores[id(o)] -= 50.0; continue
+                    if o2[2] is not None:
+                        if not o2[2](): scores[id(o)] -= 50.0; continue
+                        brain.main(g2, p2, post)        # the rest of this phase, heuristically
+                    play_on_after_phase(g2, p2, post)
+                except E.OutOfWork as e:
+                    err = e
                 scores[id(o)] += evaluate(g2, p2)
-                STATS['playouts'] += 1
+                _done(g2, err)
     finally:
         E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
     best = max(cands, key=lambda o: scores[id(o)])
@@ -199,16 +223,20 @@ def choose_attack(g, p):
             for c in cands:
                 rng = random.Random(base_seed * 31 + r)
                 g2 = clone(g)
-                g2.in_search = True
+                _start(g2)
                 p2 = g2.players[g.players.index(p)]
                 determinize(g2, p2, rng)
                 g2.rng = random.Random(rng.random())
                 E.CUR_G = g2
                 g2.forced_attack = c
                 g2.step = 'combat'
-                play_on(g2, p2)
+                err = None
+                try:
+                    play_on(g2, p2)
+                except E.OutOfWork as e:
+                    err = e
                 scores[c] += evaluate(g2, p2)
-                STATS['playouts'] += 1
+                _done(g2, err)
     finally:
         E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
     best = max(cands, key=lambda c: scores[c])
@@ -228,25 +256,29 @@ def choose_counter(g, q, p, c, ctx, zone):
             for counter in (True, False):
                 rng = random.Random(base_seed * 31 + r)
                 g2, memo = clone(g, want_memo=True)
-                g2.in_search = True
+                _start(g2)
                 q2 = g2.players[g.players.index(q)]; p2 = g2.players[g.players.index(p)]
                 determinize(g2, q2, rng)
                 g2.rng = random.Random(rng.random())
                 E.CUR_G = g2
                 ctx2 = {k: (memo.get(id(v), v) if isinstance(v, (E.Perm, E.Player)) else v) for k, v in (ctx or {}).items()}
-                if counter:
-                    ctr = E.pick_counter(g2, q2, c)
-                    if ctr is None or not E.cast_counter(g2, q2, ctr): scores[counter] -= 50.0; continue
-                    E.counter_side_effects(g2, q2, p2, ctr)
-                    if ctr.name == 'Mana Drain': q2.drain_mana = getattr(q2, 'drain_mana', 0) + c.cmc
-                    if c is p2.cmd: p2.cmd_in_zone = True
-                    elif zone == 'gy' or ctx2.get('exile_after'): p2.exile.append(c)
-                    elif not c.land: p2.gy.append(c)
-                else:
-                    E.resolve(g2, p2, c, ctx2, zone); E.check_state(g2)
-                if not g2.over: play_on(g2, q2, active=p2)
+                err = None
+                try:
+                    if counter:
+                        ctr = E.pick_counter(g2, q2, c)
+                        if ctr is None or not E.cast_counter(g2, q2, ctr): scores[counter] -= 50.0; continue
+                        E.counter_side_effects(g2, q2, p2, ctr)
+                        if ctr.name == 'Mana Drain': q2.drain_mana = getattr(q2, 'drain_mana', 0) + c.cmc
+                        if c is p2.cmd: p2.cmd_in_zone = True
+                        elif zone == 'gy' or ctx2.get('exile_after'): p2.exile.append(c)
+                        elif not c.land: p2.gy.append(c)
+                    else:
+                        E.resolve(g2, p2, c, ctx2, zone); E.check_state(g2)
+                    if not g2.over: play_on(g2, q2, active=p2)
+                except E.OutOfWork as e:
+                    err = e
                 scores[counter] += evaluate(g2, q2)
-                STATS['playouts'] += 1
+                _done(g2, err)
     finally:
         E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
     return scores[True] > scores[False]
