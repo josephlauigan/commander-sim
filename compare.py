@@ -403,11 +403,11 @@ def verdict(deltas, ses, profiles):
 
 def main():
     ap = argparse.ArgumentParser(description='Commander pod simulator: one of your decks against three outside decks '
-                                             'drawn from a tier of opponents/ (pool mode)')
+                                             'drawn from a tier of decklists/pool/ (pool mode)')
     ap.add_argument('--deck', choices=KEYS)
     ap.add_argument('--swap', action='append', help='"Card Out=>Card In" (repeat for several): paired A/B run')
     ap.add_argument('--pool', choices=('t1', 't2', 't3', 't4', 't5', 'all'),
-                    help='play --deck against three outside decks drawn from this tier (see opponents/)')
+                    help='play --deck against three outside decks drawn from this tier (see decklists/pool/)')
     ap.add_argument('--all-decks', action='store_true', help='run each of the four decks (deck x tier matrix)')
     ap.add_argument('--calibrate', choices=('within', 'ordering', 'all'), help='pool balance checks (no --deck needed)')
     ap.add_argument('--games', type=int, help='games per run (default 1500)')

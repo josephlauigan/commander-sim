@@ -1,4 +1,4 @@
-"""Opponent pools: 25 outside decks in five power tiers (opponents/<tier folder>/<deck>.md).
+"""Opponent pools: 25 outside decks in five power tiers (decklists/pool/<tier folder>/<deck>.md).
 
 Deck files use the same layout as the four main decks, so they go through decks.load().
 The commander comes from the '**Commander:**' line.
@@ -7,13 +7,13 @@ The commander comes from the '**Commander:**' line.
     python3 pools.py --validate      # structure, card names, colour identity, bans, Game Changers per tier
 """
 import collections, glob, os, random, re, sys
-from decks import load, P
+from decks import load
 
-POOL_DIR = os.path.join(P, 'opponents')
+POOL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'decklists', 'pool')
 BASICS = {'Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes',
           'Snow-Covered Plains', 'Snow-Covered Island', 'Snow-Covered Swamp',
           'Snow-Covered Mountain', 'Snow-Covered Forest'}
-# Game Changer rules per tier (opponents/README.md): (min, max); None = unrestricted
+# Game Changer rules per tier (decklists/pool/README.md): (min, max); None = unrestricted
 GC_RULES = {'t1': (0, 0), 't2': (1, 2), 't3': (3, 3), 't4': None, 't5': None}
 TIERS = ('t1', 't2', 't3', 't4', 't5')
 

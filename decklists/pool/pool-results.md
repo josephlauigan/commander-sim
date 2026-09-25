@@ -1,6 +1,6 @@
 # Opponent pool results
 
-This file reports how the four main decks do against a fixed field: the 25 decks in `opponents/`, five tiers of five.
+This file reports how the four main decks do against a fixed field: the 25 decks in `decklists/pool/`, five tiers of five.
 In each game, one of your decks faces three decks drawn from one tier, with seats shuffled.
 Games are seeded, so any cell can be reproduced with `compare.py --deck <d> --pool <tier> --games N`. Since September 2026
 the default AI is the look-ahead AI (`--ai lookahead`, see `search.py`); section 0 has its results. Sections 1-3 were
@@ -213,7 +213,7 @@ Adding real Bracket 4 cards to the Tier 4 lists does not move them into place, s
 
 ### GAA replaced by Heliod (September 2026)
 
-The tables above were measured with Grand Arbiter Augustin IV in Tier 4. GAA has since been retired to `opponents/retired/` and replaced by Heliod, Sun-Crowned (mono-white stax).
+The tables above were measured with Grand Arbiter Augustin IV in Tier 4. GAA has since been retired to `decklists/pool/retired/` and replaced by Heliod, Sun-Crowned (mono-white stax).
 
 **Why GAA was retired.** It won about 4% against Tier 3 under every AI version, including the look-ahead AI. The diagnosis (heuristic AI, 480 games per row, GAA alone against three Tier 3 decks):
 

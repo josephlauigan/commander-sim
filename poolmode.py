@@ -1,4 +1,4 @@
-"""Pool mode: test one deck against a fixed field of outside decks (opponents/).
+"""Pool mode: test one deck against a fixed field of outside decks (decklists/pool/).
 
 Each game seats the deck under test plus three opponents drawn without replacement from one tier's five
 decks, in a random seat order (pools.draw_seats). Opponent draws, seat order, every seat's opening shuffle

@@ -10,7 +10,7 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Stax / hatebears with a 
 
 ## Role in the pool
 
-Stax. Taxes, one-spell-per-turn limits, commander and graveyard locks, and hatebears that slow every other seat, with a two-card kill whose first card is always available in the command zone. Replaces Grand Arbiter Augustin IV (retired: its list had no reliable way to win in the sim; see opponents/pool-results.md).
+Stax. Taxes, one-spell-per-turn limits, commander and graveyard locks, and hatebears that slow every other seat, with a two-card kill whose first card is always available in the command zone. Replaces Grand Arbiter Augustin IV (retired: its list had no reliable way to win in the sim; see decklists/pool/pool-results.md).
 
 ## Strategy
 

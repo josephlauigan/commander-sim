@@ -6,9 +6,10 @@ def load(path):
         n,name=line.split(' ',1); out+= [name.strip()]*int(n)
     return out
 import os
-# Deck .md files are looked for in: $SIM_DECKS, then this script's folder, then /mnt/project (Claude's project copy).
+# Your deck .md files are looked for in: $SIM_DECKS, then decklists/mine/ next to this script, then this script's
+# folder, then /mnt/project (Claude's project copy). The outside decks live in decklists/pool/ (pools.py).
 _here = os.path.dirname(os.path.abspath(__file__))
-_cands = [os.environ.get('SIM_DECKS', ''), _here, '/mnt/project']
+_cands = [os.environ.get('SIM_DECKS', ''), os.path.join(_here, 'decklists', 'mine'), _here, '/mnt/project']
 P = next(d for d in _cands if d and os.path.exists(os.path.join(d, 'sephiroth-phyrexian-reanimator.md'))) + os.sep
 DECKS={'seph':load(P+'sephiroth-phyrexian-reanimator.md'),'veyran':load(P+'veyran-izzet-spellslinger.md'),
        'sauron':load(P+'sauron-grixis-amass.md'),'najeela':load(P+'najeela-5c-tokens.md')}

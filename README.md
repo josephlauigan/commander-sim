@@ -3,8 +3,8 @@
 Pure Python 3 (3.9 or newer), standard library only. Nothing to install.
 
 ## Run
-Each run seats one of your decks against three outside decks from `opponents/` (25 decks in five power tiers,
-see `opponents/README.md`), drawn without replacement from one tier and re-drawn every game, in a random seat
+Each run seats one of your decks against three outside decks from `decklists/pool/` (25 decks in five power tiers,
+see `decklists/pool/README.md`), drawn without replacement from one tier and re-drawn every game, in a random seat
 order. Opponent draws, seats and every seat's opening shuffle depend only on the seed and the deck keys, so a
 `--swap` comparison faces identical opponents and draws (paired runs).
 
@@ -33,7 +33,7 @@ order. Opponent draws, seats and every seat's opening shuffle depend only on the
                attacks and counterspells by trying the best few candidates on copies of the game and playing each
                copy forward to the end of its next turn (search.py). It costs about 20 s of CPU per game (1500 games
                on 24 cores: about 20 minutes per profile). adaptive is the heuristic AI alone, about 100x faster:
-               fine for quick checks, but it misplays some decks badly (see opponents/pool-results.md).
+               fine for quick checks, but it misplays some decks badly (see decklists/pool/pool-results.md).
 - `--temp`     adaptive randomness multiplier (default 1.0; 0.5 = sharper, more predictable play,
                2.0 = looser play). Per-deck styles (aggression, caution) live at the top of brain.py
 - `--analyze`  deep report instead of a win rate: how it wins, how it loses (who and by what), game-plan timing,
@@ -47,14 +47,15 @@ and how often it eliminated you. A/B runs report a paired noise band (per-seed p
 seven strength axes (outcome, mana & consistency, speed, card flow, interaction, resilience, threat &
 pressure), baseline -> variant under each profile, with * marking changes larger than the noise band.
 
-The baseline is the list in the deck's .md file in this folder (the "## Import list" block).
-Keep the .md files next to the scripts, or point SIM_DECKS at another folder.
+The baseline is the list in the deck's .md file in `decklists/mine/` (the "## Import list" block);
+point SIM_DECKS at another folder to use lists kept elsewhere. The outside decks are in `decklists/pool/`
+(one folder per tier, plus `retired/` for decks no longer drawn).
 
 The original four-deck mode (your decks against each other) was removed in September 2026; everything is
 measured against the pools.
 
 ## The opponent pools
-- Results and calibration: `opponents/pool-results.md`. Card coverage and what is approximated: run
+- Results and calibration: `decklists/pool/pool-results.md`. Card coverage and what is approximated: run
   `python3 pool_audit.py`, or read the tables in `pool-results.md`.
 - How outside cards are modeled: `pool_cards.py` (tag and ability overrides, audit notes), `cardimpl.py`
   (hook events) with the implementations in `impl_common.py`, `impl_t1.py` .. `impl_t5.py`, and combos in
