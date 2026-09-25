@@ -362,7 +362,8 @@ def _yawg(g, src, p, s, post):
     fod = [m for m in p.perms if m.creature and m is not src and not m.is_cmd and (m.token or pval(g, m) < 2 or
                                                                                    (m.cd is not None and 'undying' in m.cd.kws and m.plus <= 0))]
     tgt = [m for q in g.opps(p) for m in q.perms if m.creature and etgh(g, m) <= 1 and pval(g, m) >= 2 and not untargetable(g, m)]
-    if fod and p.life > 8 and (tgt or IC.death_value(g, p) >= 2 or len(p.hand) <= 2):
+    swarm = [m for q in g.opps(p) for m in q.perms if m.creature and etgh(g, m) <= 1 and epow(g, m) >= 1 and not untargetable(g, m)]
+    if fod and p.life > 8 and (tgt or swarm or IC.death_value(g, p) >= 2 or len(p.hand) <= 2):
         m = min(fod, key=lambda x: (not (x.cd is not None and 'undying' in x.cd.kws), pval(g, x)))
 
         def go(m=m):
@@ -370,10 +371,11 @@ def _yawg(g, src, p, s, post):
             lose_life(g, p, 1, p); die(g, m, 'sac')
             t = [x for q in g.opps(p) for x in q.perms if x.creature and etgh(g, x) <= 1 and not untargetable(g, x)]
             if t:
-                x = max(t, key=lambda x: pval(g, x)); x.plus -= 1
+                x = max(t, key=lambda x: (pval(g, x), epow(g, x))); x.plus -= 1
                 if etgh(g, x) <= 0: die(g, x, 'sba')
             draw(g, p, 1); return True
-        out.append((1.5 + IC.death_value(g, p) / 2.0 + (1.5 if tgt else 0), f'Yawgmoth: sacrifice {m.name}', go))
+        kill = 1.5 if tgt else (0.4 + 0.3 * max(epow(g, x) for x in swarm) if swarm else 0)   # an X/1 attacker (a Goblin token)
+        out.append((1.5 + IC.death_value(g, p) / 2.0 + kill, f'Yawgmoth: sacrifice {m.name}', go))
     if can_pay(g, p, 0, 'BB') and p.hand and any(m.plus > 0 or m.loyalty for m in p.perms) and post is True:
         def prol():
             if not can_pay(g, p, 0, 'BB') or not p.hand: return False
@@ -381,8 +383,8 @@ def _yawg(g, src, p, s, post):
         out.append((1.0, 'Yawgmoth: proliferate', prol))
     return out
 card('Yawgmoth, Thran Physician', 'leg human pow=2 tgh=4', dsl=[])
-note('Yawgmoth, Thran Physician', 'Full', 'pay 1 life, sacrifice: -1/-1 counter on an X/1 and draw; BB discard: '
-     'proliferate (the undying loop is a combo); protection from Humans not modeled')
+note('Yawgmoth, Thran Physician', 'Approximate', 'pay 1 life, sacrifice: -1/-1 counter on an X/1 (tokens included) and '
+     'draw, main phase only; BB discard: proliferate (the undying loop is a combo); protection from Humans not modeled')
 
 
 @on('Nether Traitor', 'gy_dies')

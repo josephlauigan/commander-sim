@@ -361,9 +361,14 @@ def _gravecrawler(g, p):
     return True, [on_bf(p, 'Phyrexian Altar'), drain_payoff(p)], []
 
 
+def _yawg_payoff(p):
+    """a death payoff for the Yawgmoth loop; Geralf's Messenger in the loop is its own (each return drains 2)"""
+    return drain_payoff(p) or on_bf(p, "Geralf's Messenger")
+
+
 def _yawg_finish(g, p):
     """the loop with a death payoff wins; without one it kills every opposing creature and draws ten"""
-    if drain_payoff(p) is not None:
+    if _yawg_payoff(p) is not None:
         import ais; ais.win(g, p, 'combo'); return
     for q in g.opps(p):
         for m in list(q.perms):
@@ -387,7 +392,7 @@ def _yawg(g, p):
     fodder = [m for m in p.perms if m.creature and m is not y and m is not mik and not has_type(m, 'human')]
     loop = len(und) >= 2 or (mik is not None and len(fodder) >= 1)
     if not loop: return False, [], []
-    if drain_payoff(p) is None and not any(m.creature for q in g.opps(p) for m in q.perms): return False, [], []
+    if _yawg_payoff(p) is None and not any(m.creature for q in g.opps(p) for m in q.perms): return False, [], []
     return True, [y] + ([mik] if mik else []), []
 
 
