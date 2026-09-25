@@ -92,6 +92,9 @@ def generic_prio(g, p, c):
     if 'krasis' in t: return 0                                     # cast by special_options with X
     if 'combatspell' in t: return 0                                # SPELL_PRIO decides
     if 'fable' in t: return 58
+    if c.perm and E.CI is not None and E.CI.combo_imp is not None:
+        ci = E.CI.combo_imp(E.CUR_G, p, c)                          # completes a combo (9) or leaves it one short (7):
+        if ci >= 7: return 50 + 4 * ci                              # before the creature rule (Mikaeus, Kiki-Jiki, Felidar)
     if c.creature: return 42 + min(16, 2 * c.pow) + (4 if 'fly' in t else 0)
     if c.perm and E.CI is not None and c.name in E.CI.HOOKS:
         h = E.CI.HOOKS[c.name]
