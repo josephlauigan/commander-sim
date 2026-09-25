@@ -183,6 +183,7 @@ def _start(g2, g):
     g2.in_search = True
     g2.search_parent = g
     g2.work_start = g2.work; g2.work_cap = g2.work + PLAYOUT_WORK
+    g2.board_cap = BOARD_LIMIT                 # a board that explodes mid-playout makes every step slow
 
 
 def _done(g2, err=None):

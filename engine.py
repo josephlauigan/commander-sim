@@ -133,6 +133,7 @@ class OutOfWork(BaseException):
 def tick(g):
     g.work += 1
     if g.work > g.work_cap: raise OutOfWork
+    if g.board_cap and sum(len(q.perms) for q in g.players) > g.board_cap: raise OutOfWork   # look-ahead copies only
 
 
 class Game:
@@ -147,6 +148,7 @@ class Game:
         s.hooks = []          # permanents with hand-written implementations (cardimpl), in entry order
         s.hook_cache = None   # event -> [(permanent, fn)], rebuilt when s.hooks changes
         s.work = 0; s.work_cap = GAME_WORK   # engine steps taken / allowed (see tick)
+        s.board_cap = None                     # look-ahead copies: stop once the table has this many permanents
 
     def opps(s, p):
         return [q for q in s.players if q.alive and q is not p]
