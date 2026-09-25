@@ -15,6 +15,7 @@ CONFIG = {
     'chulane-bant-value-combo': {'prio_fn': lambda g, p, c: __import__('deck_plans').chulane_prio(g, p, c),
                                  'wish': lambda g, p, *a: __import__('deck_plans').chulane_wish(g, p),
                                  'style': {'temp': 1.0, 'aggression': 0.5, 'caution': 0.7}},
+    'yawgmoth-mono-black-aristocrats': {'wish': lambda g, p, *a: __import__('deck_plans').yawg_wish(g, p)},
     'gaa-azorius-stax-control': {'prio_fn': lambda g, p, c: __import__('deck_plans').gaa_prio(g, p, c),
                                  'wish': lambda g, p, *a: __import__('deck_plans').gaa_wish(g, p),
                                  'style': {'temp': 1.0, 'aggression': 0.35, 'caution': 0.9}},

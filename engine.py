@@ -1032,10 +1032,19 @@ def magecraft(g, p, c=None, copy=False):
 
 
 def discard_worst(g, p, n):
+    keep = set()
+    if POOL_RULES and CI is not None and p.key in SEATS:              # outside decks keep combo pieces and wished cards
+        import pool_ai, impl_combos
+        keep = set(impl_combos.PIECES) | set(pool_ai.wish_list(g, p))
     for _ in range(n):
         if not p.hand: return
         lands = [x for x in p.hand if x.land]
         nonl = [x for x in p.hand if not x.land]
+        if keep and len([x for x in nonl if x.name not in keep]) + len(lands) > 0:
+            spare = [x for x in nonl if x.name not in keep]
+            if len(lands) > 2 or not spare: x = lands[0] if lands else min(nonl, key=lambda c: c.cmc)
+            else: x = max(spare, key=lambda c: c.cmc)
+            discard_cards(g, p, [x]); continue
         if len(lands) > 2 or not nonl: x = lands[0]
         else: x = max(nonl, key=lambda c: c.cmc)
         discard_cards(g, p, [x])

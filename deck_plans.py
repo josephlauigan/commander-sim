@@ -70,3 +70,19 @@ def gaa_wish(g, p, *a):
     import impl_combos
     if opp_power(g, p) >= 10 and not any(on_bf(p, n) for n in PILLOW): return list(PILLOW)
     return impl_combos.missing_pieces(g, p) or list(PILLOW)
+
+
+# ------------------------------------------------------------------ Yawgmoth, Thran Physician
+UNDYING = ("Geralf's Messenger", 'Butcher Ghoul', 'Young Wolf', 'Nether Traitor')
+
+
+def yawg_wish(g, p, *a):
+    """the loop needs Yawgmoth plus two undying creatures (or Mikaeus and fodder), then a drain payoff"""
+    import impl_combos
+    und = sum(1 for m in p.perms if m.creature and m.cd is not None and 'undying' in m.cd.kws)
+    mik = on_bf(p, 'Mikaeus, the Unhallowed') or any(c.name == 'Mikaeus, the Unhallowed' for c in p.hand)
+    out = []
+    if not on_bf(p, 'Yawgmoth, Thran Physician') and not p.cmd_in_zone: out.append('Yawgmoth, Thran Physician')
+    if not mik and und < 2: out += ['Mikaeus, the Unhallowed'] + list(UNDYING)
+    if impl_combos.drain_payoff(p) is None: out += list(impl_combos.DRAIN_PAYOFFS)
+    return out + impl_combos.missing_pieces(g, p)

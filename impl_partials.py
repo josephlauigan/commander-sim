@@ -1103,6 +1103,8 @@ def wheel(g, p):
 
 
 def wheel_prio(g, p, c):
+    import impl_combos
+    if any(x.name in impl_combos.PIECES for x in p.hand if x is not c): return 0     # don't wheel away a combo piece
     mine = len(p.hand) - 1
     theirs = max((len(q.hand) for q in g.opps(p)), default=0)
     return 55 if mine <= 2 and theirs <= 5 else 0
