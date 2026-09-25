@@ -863,7 +863,8 @@ def pval(g, m):
     if 'panoptic' in t: v = max(v, 2 + 2 * len(getattr(g, 'imprint', {}).get(id(m), [])))
     if m.is_cmd: v += 1
     if getattr(g, 'auras', None) and cd.creature: v += 1.5 * len(CI.auras_on(g, m))     # removing it takes the Auras too
-    if POOL_RULES and 'P' in cd.types: v = max(v, 3 + 0.4 * (m.loyalty or 0) + (2 if m.is_cmd else 0))
+    if POOL_RULES and 'P' in cd.types:
+        v = max(v, 3 + 0.4 * (m.loyalty or 0) + (2 if m.is_cmd else 0) + 5.0 * min(1.2, CI.ult_pressure(m) if CI else 0))
     if POOL_RULES and CI is not None:
         v = max(v, CI.threat_value(g, m))
         if m.is_cmd: v += 1                                # commanders matter more at a real table
@@ -1402,7 +1403,10 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0)
     m = Perm(p, cd); m.orig = orig or p; m.sick = sick; m.phys = phys
     if 'haste' in cd.tags: m.sick = False
     if cd.dsl: g.dsl_on = True
-    if cd.start_loyalty: m.loyalty = int(cd.start_loyalty)
+    if cd.start_loyalty:
+        m.loyalty = int(cd.start_loyalty)
+        if POOL_RULES and any(x.cd is not None and x.cd.name == 'Doubling Season' and not x.phased for x in p.perms):
+            m.loyalty *= 2                         # Doubling Season: planeswalkers enter with twice the loyalty
     if undying: m.plus = 1; m.undying = True       # returns with its +1/+1 counter (so it survives -X/-X effects)
     if plus: m.plus = plus                        # enters with counters (persist: -1)
     p.perms.append(m)

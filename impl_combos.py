@@ -63,10 +63,13 @@ def free_outlet(p):
     return outs[0] if outs else None
 
 
+DRAIN_PAYOFFS = ('Blood Artist', 'Zulaport Cutthroat', 'Cruel Celebrant', 'Bastion of Remembrance', 'Falkenrath Noble',
+                 'Mayhem Devil', 'Syr Konrad, the Grim', 'Vindictive Vampire', 'Poison-Tip Archer', 'Goblin Bombardment',
+                 'Elas il-Kor, Sadistic Pilgrim')
+
+
 def drain_payoff(p):
-    names = ('Blood Artist', 'Zulaport Cutthroat', 'Cruel Celebrant', 'Bastion of Remembrance', 'Falkenrath Noble',
-             'Mayhem Devil', 'Syr Konrad, the Grim', 'Vindictive Vampire', 'Poison-Tip Archer', 'Goblin Bombardment',
-             'Elas il-Kor, Sadistic Pilgrim')
+    names = DRAIN_PAYOFFS
     return any_bf(p, names) or next((m for m in p.perms if m.cd is not None and ('bartist' in m.cd.tags or 'drain' in m.cd.tags)), None)
 
 
@@ -340,7 +343,7 @@ def _helm(g, p):
 
 
 @combo('Gravecrawler + Phyrexian Altar + a Zombie + a death payoff',
-       [('Gravecrawler',), ('Phyrexian Altar',)], text='infinite death triggers')
+       [('Gravecrawler',), ('Phyrexian Altar',), DRAIN_PAYOFFS], text='infinite death triggers')
 def _gravecrawler(g, p):
     if on_bf(p, 'Phyrexian Altar') is None: return False, [], []
     gc = on_bf(p, 'Gravecrawler') or next((c for c in p.gy if c.name == 'Gravecrawler'), None)
@@ -365,7 +368,7 @@ def _yawg_finish(g, p):
 
 @combo('Yawgmoth + undying loop + a death payoff',
        [('Yawgmoth, Thran Physician',), ('Mikaeus, the Unhallowed', "Geralf's Messenger", 'Butcher Ghoul', 'Young Wolf',
-                                        'Nether Traitor')],
+                                        'Nether Traitor'), DRAIN_PAYOFFS],
        text='sacrifice / -1/-1 counter loop: draws and drains (without a payoff: wipes their creatures, draws ten)',
        finish=_yawg_finish)
 def _yawg(g, p):

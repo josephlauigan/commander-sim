@@ -903,13 +903,24 @@ def walker(name, abilities, status=('Approximate', ''), tags='', static=None):
             def go(delta=delta, eff=eff, label=label):
                 if src not in p.perms or _uses(g, p, src) >= _allowed(p) or src.loyalty + delta < 0: return False
                 src.loyalty_used = (g.round, p.key, _uses(g, p, src) + 1)
-                src.loyalty += delta * (2 if delta > 0 and _doubler(g, p) else 1)
+                src.loyalty += delta                 # loyalty costs aren't doubled (Doubling Season doubles effects only)
                 log(f'  {NAME(p)} uses {name} ({delta:+d}): {label}', g)
                 eff(g, p, src)
                 if src in p.perms and src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy')
                 return True
             out.append((u + 0.15 * delta, f'{name} {delta:+d}', go))
         return out
+
+
+def ult_pressure(m):
+    """how close a planeswalker is to its ultimate (loyalty / cost of its most expensive minus ability)"""
+    abil = WALKERS.get(m.cd.name) if m.cd is not None else None
+    if not abil or not m.loyalty: return 0.0
+    ult = -min((d for d, *_ in abil), default=0)
+    return (m.loyalty / ult) if ult >= 5 else 0.0
+
+
+CI.ult_pressure = ult_pressure
 
 
 def _doubler(g, p):

@@ -122,7 +122,11 @@ def yuriko_wish(g, p):
 
 
 def yuriko_prio(g, p, c):
-    """evasive one-drops first: they carry Yuriko in on turn two"""
+    """evasive one-drops first: they carry Yuriko in on turn two; with a ninjutsu window open, cantrips before
+    combat stack the biggest cards for the reveal"""
+    if c.name in ('Brainstorm', 'Ponder', 'Preordain') and __import__('pool_ai').combat_reserve(g, p):
+        big = any(x.cmc >= 5 for x in p.hand if x is not c) or c.name != 'Brainstorm'
+        return 72 if big else 45
     if c.name in EVASIVE_ONE or (c.creature and c.cmc <= 2 and ('fly' in c.tags or c.name in ('Invisible Stalker',))):
         have = sum(1 for m in p.perms if m.creature and not m.phased)
         return 80 if have < 2 else 58
@@ -245,14 +249,21 @@ def goblins(g, p, n):
 
 @on('Krenko, Mob Boss', 'options')
 def _krenko(g, src, p, s, post):
-    if src.tapped or (src.sick and not E.DSLMOD.has_kw(g, src, 'haste') and not _goblin_haste(p)) or post is None: return []
+    """{T}: a Goblin per Goblin (instant speed). Without a haste enabler the tokens can't attack the turn they're
+    made, so Krenko waits for the end of the turn before yours (the tokens are ready to attack, and sorcery-speed
+    removal and wipes had their chance); with haste, activating in your main phase attacks right away."""
+    if src.tapped or (src.sick and not E.DSLMOD.has_kw(g, src, 'haste') and not _goblin_haste(p)): return []
     n = count_type(g, p, 'goblin')
+    haste = _goblin_haste(p) or any(m.cd is not None and m.cd.name == 'Legion Loyalist' for m in p.perms)
+    if post is None: u = 3.5 + 0.4 * n                       # end of the turn before yours
+    elif post is False: u = (3.0 + 0.4 * n) if haste else (0.2 if n < 4 else 1.0 + 0.2 * n)
+    else: u = 0.2 + 0.1 * n                                   # after combat: only if nothing better will come
 
     def go():
         if src.tapped: return False
         src.tapped = True; n = count_type(g, p, 'goblin'); goblins(g, p, n)
         log(f'  Krenko makes {n} Goblins', g); return True
-    return [(3.0 + 0.4 * n, f'Krenko: {n} Goblins', go)]
+    return [(u, f'Krenko: {n} Goblins', go)]
 
 
 def _goblin_haste(p):

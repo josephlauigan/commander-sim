@@ -1602,14 +1602,18 @@ def walker_attacks(g, p, atk, d, assign):
     face damage (enough to kill it, or it's near its ultimate)"""
     ws = [m for m in d.perms if m.cd is not None and 'P' in m.cd.types and m.loyalty and not m.phased]
     if not ws: return {}
-    w = max(ws, key=lambda m: pval(g, m))
     free = sorted([a for a in atk if a not in assign and a in p.perms], key=lambda a: epow(g, a))
-    if not free or pval(g, w) < 4: return {}
-    out, need = {}, w.loyalty
-    for a in free:
-        if need <= 0: break
-        out[a] = w; need -= epow(g, a) * (2 if double_strike(p, a) else 1)
-    if need > 0 and d.life <= sum(epow(g, a) for a in free) * 1.2: return {}   # lethal on the player instead
+    if not free: return {}
+    if d.life <= sum(epow(g, a) for a in free) * 1.2: return {}             # lethal on the player instead
+    import impl_common
+    out = {}
+    # the most dangerous walkers first (closest to an ultimate, then value); kill as many as the attackers can
+    for w in sorted(ws, key=lambda m: (-impl_common.ult_pressure(m), -pval(g, m))):
+        if pval(g, w) < 4 and impl_common.ult_pressure(w) < 0.6: continue
+        need = w.loyalty
+        for a in [a for a in free if a not in out]:
+            if need <= 0: break
+            out[a] = w; need -= epow(g, a) * (2 if double_strike(p, a) else 1)
     return out
 
 

@@ -161,6 +161,9 @@ def hold_value(g, p, s):
     c = min(held, key=lambda c: c.cmc)
     caution = style(p)['caution']
     v = 1.0 + 3.0 * caution * min(1.0, s.max_threat / 20.0) + 2.5 * s.combo_near
+    if p.key not in STYLE:          # outside decks: three opponents will cast something worth answering this cycle
+        n = sum(1 for x in held if 'ctr' in x.tags)
+        v = max(v, 1.5 + 2.5 * caution * min(2, n))
     if p.key == 'seph' and A.bomb_on_bf(p): v += 2.0 * removal_risk(g, p) + 1.0
     if s.turn <= 2: v -= 2.0
     return c, v
@@ -186,6 +189,7 @@ def draws_cards(c):
 def card_utility(g, p, s, c):
     base = PRIO[p.key](g, p, c) if p.key in PRIO else A.deck_prio(g, p, c)
     if p.key not in PRIO and len(p.library) < 8 and draws_cards(c): return None    # don't draw yourself out
+    if p.key not in PRIO and 'ctr' in c.tags and not c.creature: return None       # counters wait for a spell to counter
     if base <= 0 and c.dsl and E.DSLMOD is not None: base = E.DSLMOD.card_value(g, p, c) * 10
     if base <= 0: return None
     u = base / 10.0                                   # deck knowledge as a prior (0-9)
@@ -501,7 +505,7 @@ def main(g, p, post):
             u -= reserve_penalty(g, p, s, c, hold_card, hold_v)
             if p.key not in STYLE and not post:                     # outside decks: mana kept for combat (ninjutsu)
                 rsv = __import__('pool_ai').combat_reserve(g, p)
-                if rsv and not can_pay(g, p, cg + rsv[0], cp + rsv[1]): u -= 3.0
+                if rsv and not can_pay(g, p, cg + rsv[0], cp + rsv[1]): u -= 6.0
             if naj_hold and not can_pay(g, p, cg, cp + 'WUBRG'): u -= 4.0
             opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
         opts += removal_options(g, p, s)
@@ -512,6 +516,8 @@ def main(g, p, post):
         if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, True)
         if E.CI is not None: opts += hook_options(g, p, s, post)
         stop_u = (hold_v if hold_card is not None else -3.0) + (1.5 if naj_hold else 0.0)
+        if p.key not in STYLE and not post and __import__('pool_ai').combat_reserve(g, p):
+            stop_u = max(stop_u, 4.5)                                  # ninjutsu window: go to combat, cast after
         opts.append((stop_u, 'stop (hold mana)' if hold_card is not None else 'stop', None))
         order = gumbel_order(g.rng, [(u, (u, lbl, fn)) for u, lbl, fn in opts], T(p))
         acted = False
@@ -560,6 +566,10 @@ def choose_defender(g, p):
         if my >= q.life * 0.8: u += 4.0 + 2.0 * aggr               # go for the kill
         u += 0.15 * grudge.get(q.key, 0)                               # hit back whoever hit you
         if E.POOL_RULES and p.key not in STYLE: u += __import__('pool_ai').ninja_defender_bonus(g, p, q)
+        if E.POOL_RULES:                                                # planeswalkers about to ultimate draw attacks
+            import impl_common
+            u += sum(3.0 * min(1.0, impl_common.ult_pressure(m)) for m in q.perms
+                     if m.cd is not None and 'P' in m.cd.types and m.loyalty and impl_common.ult_pressure(m) >= 0.6)
         blockers = sum(1 for m in q.perms if m.creature and not m.tapped)
         u -= 0.15 * blockers * (1 - aggr)
         if g.hooks:                                                     # attack taxes and caps on q

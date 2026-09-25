@@ -44,7 +44,10 @@ def generic_prio(g, p, c):
     if E.CI is not None and c.name in E.CI.SPELL_PRIO:
         v = E.CI.SPELL_PRIO[c.name]
         return v(g, p, c) if callable(v) else v
-    if c is p.cmd: return max(40, cfg.get('cmd_prio', 75) - 3 * p.tax) if p.turns >= cfg.get('cmd_turn', 2) else 0
+    if c is p.cmd:
+        dflt = 85 if (E.CI is not None and c.name in E.CI.HOOKS) else 75      # an engine commander comes first
+        return max(40, cfg.get('cmd_prio', dflt) - 3 * p.tax) if p.turns >= cfg.get('cmd_turn', 2) else 0
+    if 'rock' in t and int(str(t['rock']).split(':')[0]) >= 2 and c.cmc <= 1: return 88  # Sol Ring, Mana Vault: always
     if 'rock' in t or 'dork' in t or 'lr' in t or 'fastmana' in t: return 85 if p.turns <= 5 else 38
     if 'chromemox' in t:
         spare = [x for x in p.hand if not x.land and 'A' not in x.types and set(x.pips) & set(p.ident)]
