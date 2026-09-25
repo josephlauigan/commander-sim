@@ -186,7 +186,7 @@ Bitter Triumph|I|1B|rem=destroy tgt=cp lose=3
 Blood Crypt|L|-|c=BR
 Bloodchief's Thirst|S|2BB|rem=destroy tgt=cp
 Bloodsoaked Insight // Sanguine Morass|L|-|c=B t
-Call of the Ring|E|1B|eng=1
+Call of the Ring|E|1B|callring
 Champion's Helm|A|3|helm
 Conqueror's Flail|A|2|flail
 Crumbling Necropolis|L|-|c=UBR t
@@ -205,7 +205,7 @@ Iron Man, Armored Avenger|AC|3U|pow=2 fly leg ironman
 Izzet Boilerworks|L|-|c=UR t amt=2 bounceland
 Jace's Archivist|C|1UU|archivist pow=2 noatk
 Kaervek the Merciless|C|5BR|kaervek pow=5 leg
-Kindred Discovery|E|3UU|eng=1
+Kindred Discovery|E|3UU|kindred
 Lightning Greaves|A|2|prot=boots
 Mauhúr, Uruk-hai Captain|C|1BR|mauhur pow=2 leg
 Memory Lapse|I|1U|ctr=any lapse
@@ -216,10 +216,10 @@ Noxious Gearhulk|AC|4BB|gearhulk pow=5 tgh=4 rem=destroy tgt=c etb gaintgh
 Orcish Bowmasters|C|1B|bowmasters pow=1 flash
 Phyrexian Arena|E|1BB|eng=1
 Plaza of Heroes|L|-|c=C
-Ral Zarek, Guest Lecturer|P|1BB|pwdiscard
-Reconnaissance Mission|E|2UU|eng=1
+Ral Zarek, Guest Lecturer|P|1BB|ralzarek
+Reconnaissance Mission|E|2UU|recon
 Rhystic Study|E|2U|rhystic
-Ringsight|S|1UB|tut=ubr
+Ringsight|S|1UB|tut=ubr ringtempt
 Rogue's Passage|L|-|c=C passage
 Sauron, the Dark Lord|C|3UBR|sauron pow=7 leg
 Sauron, the Necromancer|C|3BB|pow=4 leg necromancer
@@ -228,7 +228,7 @@ Scavenger Grounds|L|-|c=C desert
 Slip Out the Back|I|U|prot=phase
 Sword of Feast and Famine|A|3|sword
 Sword of the Animist|A|2|animist
-Talisman of Creativity|A|2|rock=1:UR
+Talisman of Creativity|A|2|rock=1:UR pain
 Terminate|I|BR|rem=destroy tgt=c
 Tezzeret's Gambit|S|3U|draw=2 prolif1
 Tome of Legends|A|2|x
@@ -237,7 +237,7 @@ Unclaimed Territory|L|-|c=C
 Undermine|I|UUB|ctr=any undermine
 Unearth|S|B|unearth
 Vision, Synthezoid Avenger|AC|4|pow=3 fly leg
-Vraska, Betrayal's Sting|P|4BB|eng=1 upkprolif
+Vraska, Betrayal's Sting|P|4BB|vraska
 War Machine, Avenging Arsenal|AC|4R|warmachine pow=3 tgh=5 fly leg
 Whispersilk Cloak|A|3|cloak
 Witch-king, Bringer of Ruin|C|4BB|witchking pow=5 tgh=3 fly leg

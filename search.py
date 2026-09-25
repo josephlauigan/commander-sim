@@ -125,6 +125,8 @@ def play_on(g2, p2, stop_rounds=20, active=None):
         if g2.round > stop_rounds: break
         q = ps[k]
         if not q.alive: continue
+        if getattr(q, 'skip_turns', 0) > 0:                   # Ral Zarek -7
+            q.skip_turns -= 1; continue
         brain.end_of_turn_window(g2, q)
         if g2.over: break
         if q.alive: ais.take_turn(g2, q)

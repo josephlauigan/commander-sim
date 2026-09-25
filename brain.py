@@ -417,7 +417,7 @@ def special_options(g, p, s, post):
             for tag in ('sword', 'cloak'):
                 if not equipped(a, tag) and any(e.attached is None or e.attached not in p.perms for e in find(p, tag)):
                     o.append((6.5, 'equip the Army', lambda: A.sauron_equip(g, p))); break
-        if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and has(p, 'bowmasters')
+        if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and __import__('impl_mine').archivist_worth(g, p)
                 and can_pay(g, p, 0, 'U')):
             o.append((5.0, "Jace's Archivist wheel", lambda: A.sauron_archivist(g, p)))
     elif k == 'najeela' and post:

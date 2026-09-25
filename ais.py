@@ -945,6 +945,12 @@ def sauron_prio(g, p, c):
     if 'witchking' in t: return 52
     if 'eng' in t: return 50
     if 'archivist' in t: return 50 if has(p, 'bowmasters') else 20
+    if 'callring' in t: return 55
+    if 'kindred' in t: return 50
+    if 'recon' in t: return 46
+    if 'vraska' in t: return 52
+    if 'ralzarek' in t: return 42
+    if 'helm' in t: return 44 if army_of(p) else 20
     if 'warmachine' in t: return 45
     if t.get('tut'): return 60
     if 'onering' in t: return 60
@@ -965,7 +971,7 @@ def sauron_prio(g, p, c):
 def sauron_equip(g, p):
     a = army_of(p)
     if not a or a.phased: return False
-    for tag in ('sword', 'flail', 'animist', 'cloak'):
+    for tag in ('sword', 'flail', 'animist', 'helm', 'cloak'):
         if equipped(a, tag): continue
         eq = [e for e in find(p, tag) if e.attached is not a and not blocked(g, p, e.cd.name)]
         if not eq: continue
@@ -975,15 +981,16 @@ def sauron_equip(g, p):
                                   for e in p.perms):
             continue                                   # e.g. Sword of Hearth and Home goes on first
         if equipped(a, 'cloak'): return False
-        if can_pay(g, p, 2, ''):
-            pay(g, p, 2, ''); eq[0].attached = a; return True
+        cost = 1 if tag == 'helm' else 2                      # Champion's Helm: equip {1}
+        if can_pay(g, p, cost, ''):
+            pay(g, p, cost, ''); eq[0].attached = a; return True
     return False
 
 
 def sauron_archivist(g, p):
     if getattr(p, 'arch_t', -1) == p.turns: return False
     ar = [m for m in find(p, 'archivist') if not m.sick and not m.tapped and not blocked(g, p, m.cd.name)]
-    if not ar or not has(p, 'bowmasters') or not can_pay(g, p, 0, 'U'): return False
+    if not ar or not __import__('impl_mine').archivist_worth(g, p) or not can_pay(g, p, 0, 'U'): return False
     pay(g, p, 0, 'U'); ar[0].tapped = True; p.arch_t = p.turns
     n = max(len(q.hand) for q in g.players if q.alive)
     for q in g.players:
@@ -1415,12 +1422,15 @@ def can_block(g, b, a):
             L.cd.name in ('Swamp', 'Watery Grave', 'Blood Crypt', 'Overgrown Tomb') for L in b.owner.lands):
         return False                                 # Sheoldred, Whispering One: swampwalk
     if a.fly and not b.fly and not (b.cd is not None and 'reach' in b.cd.tags): return False
+    if 'flying' in g.eot_kw.get(id(a), ()) and not (b.fly or (b.cd is not None and 'reach' in b.cd.tags)
+                                                   or 'flying' in g.eot_kw.get(id(b), ())): return False     # Iron Man
+    if E.CI is not None and __import__('impl_mine').ring_unblockable(g, b, a): return False             # Ring level 1
     if protected_from(g, a, colors_of(b)): return False          # protection: can't be blocked by that colour
     return True
 
 
 def double_strike(p, m):
-    return (m.army and has(p, 'warmachine')) or kw(m, 'double strike')
+    return kw(m, 'double strike')
 
 
 def kw(m, k):
@@ -1458,11 +1468,8 @@ def _attack_triggers_once(g, p, atk, d):
             n = len(g.opps(p)) if att else int(t['tokatk'])
             new += make_tokens(g, p, n, 1, attacking=att, sick=not att, lifelink=not att)
         if 'suntitan' in t: sun_titan(g, p)
-        if 'necromancer' in t:                    # attacking 3/3 Wraith copy of a graveyard creature
-            if any(c.creature for c in p.gy):
-                w = make_tokens(g, p, 1, 3, attacking=True, sick=False)
-                for x in w: x.temp = True; x.name = 'Wraith'
-                new += w
+        if 'necromancer' in t:                    # attacking token copy (3/3 Wraith) of a graveyard creature
+            new += __import__('impl_mine').necromancer_attack(g, p, m)
         if 'kylox' in t:                          # sac tokens, cast instants/sorceries among top X for free
             toks = [x for x in p.perms if x.token and x.creature and x not in atk]
             X = sum(epow(g, x) for x in toks)
@@ -1526,6 +1533,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             rest = [x for x in cands if x is not b]
             if rest: used.add(min(rest, key=lambda x: pval(g, x)))
     if g.hooks: E.CI.fire(g, 'blocks', p, atk, d, assign)
+    ringblk = [b for a, b in assign.items() if E.CI is not None and __import__('impl_mine').ring_blocked(g, p, a, b)]
     to_walker = walker_attacks(g, p, atk, d, assign) if E.POOL_RULES else {}
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
@@ -1587,11 +1595,15 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                     d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
             if a.life or p.najeela_boost or (E.POOL_RULES and kw(a, 'lifelink')): gain(p, dmg)
             if a.is_cmd: d.cmd_dmg[p.key] += dmg
-            if a.army and len(p.hand) <= 3:
-                discard_cards(g, p, list(p.hand)); draw(g, p, 4)
+            if E.CI is not None:
+                IM = __import__('impl_mine')
+                if a.army and has(p, 'sauron'): IM.ring_tempt(g, p)        # Sauron: an Army's combat damage tempts
+                IM.ring_damage(g, p, a, d)                                  # Ring level 4: each opponent loses 3
             if equipped(a, 'sword'):
                 if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
                 for L in p.lands: L.tapped = False
+    for b in ringblk:                                           # Ring level 3: blockers are sacrificed
+        if b in b.owner.perms: die(g, b, 'sac')
     if conn and has(p, 'facebreaker'): add_treasure(g, p, len(find(p, 'facebreaker')))   # Professional Face-Breaker
     check_state(g)
     return conn
@@ -1716,6 +1728,7 @@ def combat(g, p):
         for m in atk:
             if not (m.vig or (E.POOL_RULES and kw(m, 'vigilance'))): m.tapped = True
         atk += attack_triggers(g, p, atk, d)
+        if E.CI is not None: __import__('impl_mine').ring_attack(g, p, atk)      # Ring level 2: loot
         if E.POOL_RULES and E.CI is not None:
             for c, fn in E.CI.hand_cards(p, 'hand_attack'): fn(g, c, p, atk, d)
         if g.over or not d.alive: continue
@@ -1775,6 +1788,7 @@ def land_enters_tapped(p, cd):
             and any(m.cd is not None and m.cd.name in ('Thalia, Heretic Cathar', 'Archon of Emeria') and not m.phased
                     for q in E.CUR_G.opps(p) for m in q.perms): return True
     if 'ck' in t: return len(p.lands) < 2
+    if cd.name == 'Barad-dûr': return not any(m.creature and m.cd is not None and 'leg' in m.cd.tags for m in p.perms)
     return False
 
 
@@ -1930,6 +1944,7 @@ def upkeep(g, p):
                 army = army_of(p)
                 if army: army.plus += 1
                 lose_life(g, p, 1, p)
+        if 'callring' in t: __import__('impl_mine').ring_tempt(g, p)      # Call of the Ring: the Ring tempts you
         if 'spider' in t:                          # saga chapters III and IV draw, then it's sacrificed
             if m.age == 1: __import__('impl_mine').spider_chapter2(g, p, m)     # chapter II: prevent a creature's damage
             if m.age in (2, 3): draw(g, p, 1)
@@ -2159,6 +2174,8 @@ def _run_rounds(g, players, max_rounds):
         for r in range(1, max_rounds + 1):
             g.round = r
             for p in players:
+                if p.alive and not g.over and getattr(p, 'skip_turns', 0) > 0:
+                    p.skip_turns -= 1; log(f'  {NAME(p)} skips a turn', g); continue
                 if p.alive and not g.over:
                     if E.AI_MODE == 'adaptive' and r > 1:
                         import brain

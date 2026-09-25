@@ -224,6 +224,7 @@ def static_bonus(g, m):
     if equipped(m, 'flail'): b += 3                                               # Conqueror's Flail (~3 colors)
     if equipped(m, 'animist'): b += 1
     if equipped(m, 'nim'): b += 2                                                 # Nim Deathmantle
+    if equipped(m, 'helm'): b += 2                                                # Champion's Helm
     return b
 
 
@@ -273,11 +274,15 @@ def indestructible(g, m):
     return DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible')
 
 
+def ward_legends(p):
+    return [x for x in p.perms if x.cd is not None and 'leg' in x.cd.tags and (x.creature or 'A' in x.cd.types) and not x.phased]
+
+
 def untargetable(g, m):
     if m.phased: return True
     spear = POOL_RULES and getattr(g, 'spear', None) == turn_stamp(g) and g.active is not m.owner   # Shadowspear
     if DSLMOD is not None and ((DSLMOD.has_kw(g, m, 'hexproof') and not spear) or DSLMOD.has_kw(g, m, 'shroud')): return True
-    if m.cd is not None and m.cd.tags.get('sauron'): return True   # ward: sac a legendary
+    if equipped(m, 'helm') and CI is not None and __import__('impl_mine').is_legendary(g, m): return True   # Champion's Helm
     if equipped(m, 'cloak') or any(e.attached is m and (e.cd.tags.get('prot') == 'boots' or 'spider' in e.cd.tags)
                                    for e in m.owner.perms if e.cd):
         return True
@@ -344,6 +349,9 @@ def lose_life(g, p, n, src, kind='other', damage=None):
         log(f'    {n} damage to {NAME(p)} is prevented', g)
         return
     p.life -= n
+    if g is not None:
+        st = turn_stamp(g); lt = getattr(p, 'lost_turn', None)
+        p.lost_turn = (st, (lt[1] if lt and lt[0] == st else 0) + n)     # Bloodsoaked Insight's cost
     if CUR_G is not None and CUR_G.hooks and n > 0:
         CI.fire(CUR_G, 'lose_life', p, n)
     if CUR_G is not None and CUR_G.hooks:                 # life lost this turn (Archfiend of Despair)
@@ -391,7 +399,7 @@ def check_state(g):
     tick(g)
     if g.hooks: CI.fire(g, 'sba')
     for p in g.players:
-        if p.alive and (p.life <= 0 or p.decked or (p.cmd_dmg and max(p.cmd_dmg.values()) >= 21)):
+        if p.alive and (p.life <= 0 or p.decked or (p.cmd_dmg and max(p.cmd_dmg.values()) >= 21) or getattr(p, 'poison', 0) >= 10):
             eliminate(g, p)
     alive = [p for p in g.players if p.alive]
     if len(alive) <= 1 and not g.goldfish:
@@ -423,6 +431,8 @@ def land_cols(p, L, anyc):
     if g is not None and g.hooks and L.cd.name not in BASIC_NAMES and CI.blood_moon(g): return 'R'
     if anyc: return p.ident
     if POOL_RULES and g is not None and g.hooks and __import__('impl_rules').dryad_colors(p): return p.ident
+    if CI is not None and L.cd.name == 'Plaza of Heroes': return CI.plaza_colors(g, p)
+    if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p)
     c = L.cd.tags.get('c', 'C')
     if c == 'A': return p.ident
     if c == 'C': return ''
@@ -608,7 +618,7 @@ def draw(g, p, n=1, step=False):
         p.stats['cards_drawn'] += 1
         if has(p, 'ironman'):
             a = army_of(p)
-            if a is not None: a.plus += 1
+            if a is not None: CI.add_counters(g, a, 1)
         extra = not (step and k == 0)
         if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'draw', player=p, extra=extra)
         if g.hooks: CI.fire(g, 'draw', p)
@@ -644,6 +654,7 @@ def amass(g, p, n):
         a = Perm(p, None, pw=0, tg=0, name='Orc Army'); a.army = True; a.colors = 'B'
         p.perms.append(a); a.sick = True
         if has(p, 'mimic'): a.plus += 1
+        if CI is not None: CI.kindred_enter(g, p, a)                  # Kindred Discovery: an Orc Army entered
     a.plus += n + bonus
 
 
@@ -779,6 +790,7 @@ def die(g, m, cause='destroy'):
         if not m.token: to_zone_card(g, m, 'gy')
         return
     leave(g, m)
+    if m.creature: g.died_turn = turn_stamp(g)                           # Barad-dûr
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
     if g.hooks:
         CI.fire(g, 'dies', m, cause)
@@ -989,7 +1001,7 @@ def on_cast(g, p, c):
     for q in g.opps(p):
         if has(q, 'sauron'): amass(g, q, 1)
         if has(q, 'rhystic') and (__import__('impl_rules').rhystic_unpaid(g, p) if POOL_RULES else g.rng.random() < 0.45): draw(g, q, 1)
-        if has(q, 'kaervek') and c.cmc > 0: lose_life(g, p, min(c.cmc, 6), q, kind='triggers')
+        if has(q, 'kaervek') and c.cmc > 0 and CI is not None: CI.kaervek(g, q, p, c)
     if c.instant or c.sorcery:
         count_is_cast(g, p); magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
@@ -1016,7 +1028,8 @@ def on_cast(g, p, c):
     if not c.creature:
         n = len(find(p, 'prolif'))
         a = army_of(p)
-        if n and a: a.plus += n
+        if n and a:
+            for _ in range(n): CI.add_counters(g, a, 1)
     check_state(g)
 
 
@@ -1371,6 +1384,7 @@ def resolve(g, p, c, ctx, zone):
     if 'lr' in t:
         land_ramp(g, p, int(t['lr']), 'lrt' in t)
         if 'lh' in t: land_to_hand(g, p)
+    if 'ringtempt' in t and CI is not None: CI.ring_tempt(g, p)     # Ringsight: the Ring tempts you first
     if 'tut' in t: tutor(g, p, t['tut'])
     if 'gifts' in t: pile_tutor(g, p, 4, 2)     # Gifts Ungiven: four cards, opponent puts two in the graveyard
     if 'intuition' in t: pile_tutor(g, p, 3, 1) # Intuition: three cards, opponent picks the one you keep
@@ -1740,6 +1754,7 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             if not ok: continue
             if mv4 and cd is not None and cd.cmc > 4: continue
             if cd is not None and cd.ward and spell is not None and not can_pay(g, p, spell.generic + cd.ward, spell.pips): continue
+            if cd is not None and cd.tags.get('sauron') and not ward_legends(p): continue     # ward: sacrifice a legend
             if spell is not None and protected_from(g, m, spell.pips): continue
             if kind.startswith('dmg'):
                 if not is_c or etgh(g, m) > int(kind[3:]): continue
@@ -1762,6 +1777,11 @@ def apply_removal(g, actor, m, kind, spell=None):
         if not can_pay(g, actor, ward, ''):
             log(f'    ward counters the removal on {m.name}', g); return
         pay(g, actor, ward, '')
+    if m.cd is not None and m.cd.tags.get('sauron') and actor is not None and actor is not owner and spell is not None:
+        legs = ward_legends(actor)                                # Sauron's ward: sacrifice a legendary artifact/creature
+        if not legs:
+            log(f'    ward counters the removal on {m.name}', g); return
+        die(g, min(legs, key=lambda x: pval(g, x)), 'sac')
     if POOL_RULES and CI is not None and m.cd is not None and spell is not None and actor is not owner:
         import impl_rules
         if not impl_rules.removal_taxes(g, actor, m, kind): return

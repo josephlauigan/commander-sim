@@ -559,3 +559,410 @@ def _summit(g, L, p, s, post):
 
 full('Desolate Lighthouse', '{T}: {C}; {1}{U}{R}, {T}: loot at the end of an opponent\'s turn with mana to spare')
 full('Spectacle Summit', 'enters tapped; {T}: {U} or {R}; {2}{U}{R}, {T}: surveil 1 at the end of an opponent\'s turn')
+
+
+# ================================================================== Sauron
+def _post_sauron():
+    E.DB['Mauhúr, Uruk-hai Captain'].kws = frozenset({'menace'})
+    E.DB['Ral Zarek, Guest Lecturer'].start_loyalty = '3'
+    E.DB["Vraska, Betrayal's Sting"].start_loyalty = '6'
+_PC.POST.append(_post_sauron)
+
+
+# ------------------------------------------------------------------ the Ring (emblem)
+def ring_bearer(g, p):
+    m = getattr(p, 'ring_bearer', None)
+    return m if m is not None and m in p.perms and not m.phased else None
+
+
+def ring_level(p):
+    return getattr(p, 'ring_level', 0)
+
+
+def is_legendary(g, m):
+    if m.cd is not None and 'leg' in m.cd.tags: return True
+    return ring_level(m.owner) >= 1 and ring_bearer(g, m.owner) is m          # the Ring: your Ring-bearer is legendary
+
+
+def ring_tempt(g, p):
+    """the Ring tempts you: the emblem gains its next ability, you choose a Ring-bearer (the Army first: it is the
+    threat, and legendary it turns Champion's Helm on), then the 'tempts you' / 'choose a Ring-bearer' triggers"""
+    p.ring_level = min(4, ring_level(p) + 1)
+    cr = [m for m in p.perms if m.creature and not m.phased]
+    if cr:
+        p.ring_bearer = max(cr, key=lambda m: (m.army, epow(g, m) + 2 * etgh(g, m) / 5))
+        log(f'    The Ring tempts {NAME(p)} (level {p.ring_level}): Ring-bearer {p.ring_bearer.name}', g)
+        for m in find(p, 'callring'):                     # Call of the Ring: pay 2 life, draw a card
+            if p.life > 10: lose_life(g, p, 2, p); draw(g, p, 1)
+    for m in find(p, 'sauron'):                           # Sauron, the Dark Lord: discard your hand, draw four
+        if len(p.hand) <= 3:
+            discard_cards(g, p, list(p.hand)); draw(g, p, 4)
+            log(f'    {NAME(p)} discards the hand and draws four (Sauron)', g)
+            break
+
+
+def ring_attack(g, p, atk):
+    """level 2: whenever your Ring-bearer attacks, draw a card, then discard a card"""
+    b = ring_bearer(g, p)
+    if b is not None and b in atk and ring_level(p) >= 2:
+        draw(g, p, 1); discard_worst(g, p, 1)
+
+
+def ring_unblockable(g, b, a):
+    """level 1: your Ring-bearer can't be blocked by creatures with greater power"""
+    return ring_level(a.owner) >= 1 and ring_bearer(g, a.owner) is a and epow(g, b) > epow(g, a)
+
+
+def ring_blocked(g, p, a, b):
+    """level 3: a creature blocking your Ring-bearer is sacrificed at end of combat"""
+    return ring_level(p) >= 3 and ring_bearer(g, p) is a
+
+
+def ring_damage(g, p, a, d):
+    """level 4: your Ring-bearer's combat damage to a player makes each opponent lose 3 life"""
+    if ring_level(p) >= 4 and ring_bearer(g, p) is a:
+        for q in g.opps(p): lose_life(g, q, 3, p, kind='drain')
+
+
+note('Call of the Ring', 'Full', 'upkeep: the Ring tempts you (the four Ring abilities in order); choosing a Ring-bearer '
+     'pays 2 life for a card')
+note('Sauron, the Dark Lord', 'Full', 'ward (sacrifice a legendary artifact or creature); amass Orcs 1 per opponent '
+     'spell; Army combat damage tempts you; each tempt may discard the hand for four cards (with three or fewer)')
+note('Ringsight', 'Full', 'the Ring tempts you, then a black, blue or red card to hand')
+
+
+# ------------------------------------------------------------------ Champion's Helm
+def helm_hexproof(g, m):
+    return equipped(m, 'helm') and is_legendary(g, m)
+full("Champion's Helm", 'equipped creature +2/+2, and hexproof while legendary (the Ring makes your Ring-bearer '
+     'legendary); equip {1}, onto the Army')
+
+
+# ------------------------------------------------------------------ Sauron, the Necromancer
+def necromancer_attack(g, p, src):
+    """exile a creature card from your graveyard: a tapped, attacking token copy that is a 3/3 black Wraith with menace;
+    exiled at the next end step unless Sauron is your Ring-bearer"""
+    cs = [c for c in p.gy if c.creature]
+    if not cs: return []
+    c = max(cs, key=lambda c: card_worth(g, p, c, in_gy=True) + c.pow)
+    p.gy.remove(c); p.exile.append(c)
+    t = enter_token_copy(g, p, c)
+    if t is None: return []
+    t.pow, t.tgh, t.plus, t.tapped, t.sick = 3, 3, 0, True, False
+    t.name = f'Wraith ({c.name})'
+    g.eot_kw.setdefault(id(t), set()).add('menace')
+    t.temp = ring_bearer(g, p) is not src
+    return [t]
+full('Sauron, the Necromancer', 'menace; attacking exiles your best graveyard creature for a tapped attacking token '
+     'copy (a 3/3 black Wraith with menace, its abilities kept), exiled at end step unless Sauron is Ring-bearer')
+
+
+# ------------------------------------------------------------------ counters: Mauhúr, Metallic Mimic
+def orcish(m):
+    return m.army or (m.cd is not None and any(has_type(m, t) for t in ('orc', 'goblin')))
+
+
+def add_counters(g, m, n):
+    """+1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control"""
+    if n > 0 and orcish(m) and any(x.cd is not None and 'mauhur' in x.cd.tags and not x.phased for x in m.owner.perms): n += 1
+    m.plus += n
+
+
+@on('Metallic Mimic', 'etb')
+def _mimic(g, src, p, m):
+    """(Orc chosen) each other Orc you control enters with an additional +1/+1 counter"""
+    if m is not src and m.owner is src.owner and m.creature and orcish(m): add_counters(g, m, 1)
+full('Metallic Mimic', 'names Orc: each other Orc (and every new Orc Army) enters with an additional +1/+1 counter')
+full('Mauhúr, Uruk-hai Captain', 'menace; every +1/+1 counter placement on an Army, Goblin or Orc you control gets one more')
+
+
+# ------------------------------------------------------------------ Kindred Discovery, Reconnaissance Mission
+def kindred_enter(g, p, m):
+    if orcish(m):
+        for _ in find(p, 'kindred'): draw(g, p, 1)
+
+
+@on('Kindred Discovery', 'etb')
+def _kindred_etb(g, src, p, m):
+    if m is not src and m.owner is src.owner and m.creature and orcish(m): draw(g, src.owner, 1)
+
+
+@on('Kindred Discovery', 'attack')
+def _kindred_attack(g, src, p, atk, d):
+    if p is src.owner:
+        n = sum(1 for m in atk if orcish(m))
+        if n: draw(g, p, n)
+
+
+@on('Reconnaissance Mission', 'combat_damage')
+def _recon(g, src, p, a, d, dmg):
+    if p is src.owner: draw(g, p, 1)
+
+
+@on('Reconnaissance Mission', 'hand_options')
+def _recon_cycle(g, c, p, s, post):
+    """cycling {2} when few creatures would connect"""
+    if post is not None or c not in p.hand or not can_pay(g, p, 2, ''): return []
+    if sum(1 for m in p.perms if m.creature) >= 2: return []
+
+    def go():
+        if c not in p.hand or not can_pay(g, p, 2, ''): return False
+        p.hand.remove(c); pay(g, p, 2, ''); p.gy.append(c); draw(g, p, 1); return True
+    return [(1.0, 'cycle Reconnaissance Mission', go)]
+full('Kindred Discovery', 'names Orc: draws whenever an Orc or Orc Army you control enters or attacks')
+full('Reconnaissance Mission', 'draws for each creature of yours that deals combat damage to a player; cycling {2} '
+     'with fewer than two creatures')
+
+
+# ------------------------------------------------------------------ attack triggers: Iron Man, War Machine
+def modified(g, m):
+    return m.plus != 0 or any(e.attached is m for e in m.owner.perms) or bool(getattr(g, 'auras', None) and CI.auras_on(g, m))
+
+
+@on('Iron Man, Armored Avenger', 'attack')
+def _ironman(g, src, p, atk, d):
+    if src.owner is p and src in atk:
+        for m in atk:
+            if m is not src and modified(g, m): g.eot_kw.setdefault(id(m), set()).add('flying')
+
+
+@on('War Machine, Avenging Arsenal', 'attack')
+def _warmachine(g, src, p, atk, d):
+    if src.owner is p and src in atk:
+        for m in atk:
+            if modified(g, m): g.eot_kw.setdefault(id(m), set()).add('double strike')
+full('Iron Man, Armored Avenger', 'flying; a +1/+1 counter on the Army per card you draw; attacking gives your other '
+     'attacking modified creatures flying')
+full('War Machine, Avenging Arsenal', 'flying; attacking gives your attacking modified creatures double strike')
+
+
+# ------------------------------------------------------------------ Kaervek the Merciless
+def kaervek(g, k, caster, c):
+    """an opponent casts a spell: damage equal to its mana value to any target (a creature it kills, else a face)"""
+    n = c.cmc
+    if n <= 0: return
+    cr = [m for q in g.opps(k) for m in q.perms if m.creature and not untargetable(g, m) and etgh(g, m) <= n]
+    best = max(cr, key=lambda m: pval(g, m)) if cr else None
+    if best is not None and pval(g, best) >= 4: apply_removal(g, k, best, f'dmg{n}')
+    else:
+        opps = g.opps(k)
+        if opps: lose_life(g, min(opps, key=lambda q: q.life - n), n, k, kind='triggers')
+full('Kaervek the Merciless', 'each opponent spell: damage equal to its mana value to any target (the best creature it '
+     'kills, else the lowest life total)')
+
+
+# ------------------------------------------------------------------ Vision, Synthezoid Avenger
+@on('Vision, Synthezoid Avenger', 'cast')
+def _vision(g, src, caster, c):
+    """a spell cast outside its caster's turn: phase out if the spell threatens Vision, else a +1/+1 counter"""
+    if g.active is caster or src.phased or src not in src.owner.perms: return
+    cc = getattr(g, 'cur_cast', None)
+    ctx = cc[1] if cc is not None and cc[0] is c else {}
+    if caster is not src.owner and (ctx.get('target') is src or 'wipe' in c.tags): src.phased = True
+    else: src.plus += 1
+full('Vision, Synthezoid Avenger', 'flying; each spell cast outside its caster\'s turn: phases out if it threatens '
+     'Vision, else a +1/+1 counter')
+
+
+# ------------------------------------------------------------------ Scarlet Witch
+@on('Scarlet Witch, Chaotic Avenger', 'combat_damage')
+def _witch(g, src, p, a, d, dmg):
+    """combat damage to a player: exile the top two face down, then cast a Hero or noncreature spell from among the
+    cards exiled with her, free"""
+    if a is not src: return
+    top = [p.library.pop() for _ in range(min(2, len(p.library)))]
+    src.data = dict(src.data or {}); src.data.setdefault('witch', []).extend(top)
+    p.exile.extend(top)
+    ok = [c for c in src.data['witch'] if c in p.exile and not c.land and (not c.creature or 'hero' in c.subtypes)]
+    if not ok: return
+    c = max(ok, key=lambda c: card_worth(g, p, c))
+    p.exile.remove(c); src.data['witch'].remove(c)
+    log(f'    Scarlet Witch: {NAME(p)} casts {c.name} free', g)
+    cast_card(g, p, c, 'lib', spell_targets(g, p, c))
+full('Scarlet Witch, Chaotic Avenger', 'flying; combat damage to a player exiles the top two, then casts the best Hero '
+     'or noncreature card exiled with her for free')
+
+
+# ------------------------------------------------------------------ planeswalkers: Vraska, Ral Zarek
+def _pw_once(g, src):
+    return not (src.data and src.data.get('act') == turn_stamp(g))
+
+
+def _pw_use(g, src, cost):
+    src.data = dict(src.data or {}, act=turn_stamp(g))
+    src.loyalty += cost
+    if src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy'); return False
+    return True
+
+
+@on("Vraska, Betrayal's Sting", 'options')
+def _vraska(g, src, p, s, post):
+    """0: draw, lose 1 life, proliferate. -2: a creature becomes a Treasure. -9: a player's poison goes to nine"""
+    if p is not src.owner or post is None or src.phased or src.loyalty is None or not _pw_once(g, src): return []
+    out = []
+
+    def zero():
+        if not _pw_once(g, src): return False
+        _pw_use(g, src, 0); draw(g, p, 1); lose_life(g, p, 1, p); proliferate_all(g, p); return True
+    out.append((2.0 if p.life > 10 else 0.5, "Vraska 0 (draw, proliferate)", zero))
+    cr = [m for q in g.opps(p) for m in q.perms if m.creature and not untargetable(g, m)]
+    if cr and src.loyalty >= 2:
+        t = max(cr, key=lambda m: pval(g, m))
+
+        def minus2():
+            if not _pw_once(g, src) or t not in t.owner.perms: return False
+            _pw_use(g, src, -2); q = t.owner; leave(g, t); q.treasures += 1
+            log(f'  {NAME(p)} uses Vraska -2: {t.name} becomes a Treasure', g); return True
+        out.append((pval(g, t) - 2.0, f'Vraska -2 -> {t.name}', minus2))
+    if src.loyalty >= 9:
+        q = max(g.opps(p), key=lambda o: threat(g, p, o)) if g.opps(p) else None
+        if q is not None:
+            def minus9():
+                if not _pw_once(g, src): return False
+                _pw_use(g, src, -9); q.poison = max(getattr(q, 'poison', 0), 9)
+                log(f'  {NAME(p)} uses Vraska -9: {NAME(q)} has nine poison counters', g); return True
+            out.append((12.0, f'Vraska -9 -> {NAME(q)}', minus9))
+    return out
+
+
+def proliferate_all(g, p):
+    """proliferate: your Army and other creatures' +1/+1 counters, your loyalty, opponents' poison and -1/-1"""
+    for m in p.perms:
+        if m.phased: continue
+        if m.plus > 0: add_counters(g, m, 1)
+        if m.loyalty is not None and m.cd is not None and 'P' in m.cd.types: m.loyalty += 1
+    for q in g.opps(p):
+        if getattr(q, 'poison', 0) > 0: q.poison += 1
+        for m in list(q.perms):
+            if m.creature and m.plus < 0:
+                m.plus -= 1
+                if etgh(g, m) <= 0: die(g, m, 'sba')
+    check_state(g)
+
+
+@on('Ral Zarek, Guest Lecturer', 'options')
+def _ralz(g, src, p, s, post):
+    """+1: surveil 2. -1: each opponent discards a card. -2: a creature card (mana value 3 or less) from your graveyard
+    to the battlefield. -7: flip five coins, an opponent skips that many turns"""
+    if p is not src.owner or post is None or src.phased or src.loyalty is None or not _pw_once(g, src): return []
+    out = []
+
+    def plus1():
+        if not _pw_once(g, src): return False
+        _pw_use(g, src, 1)
+        import impl_topdeck; impl_topdeck.scry(g, p, 2, to='gy'); return True
+    out.append((1.0, 'Ral Zarek +1 (surveil 2)', plus1))
+    hands = sum(1 for q in g.opps(p) if q.hand)
+    if hands and src.loyalty >= 2:
+        def minus1():
+            if not _pw_once(g, src): return False
+            _pw_use(g, src, -1)
+            for q in g.opps(p):
+                if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
+            return True
+        out.append((0.8 + 0.5 * hands, 'Ral Zarek -1 (each opponent discards)', minus1))
+    rc = [c for c in p.gy if c.creature and c.cmc <= 3]
+    if rc and src.loyalty >= 2:
+        c = max(rc, key=lambda c: card_worth(g, p, c, in_gy=True))
+
+        def minus2():
+            if not _pw_once(g, src) or c not in p.gy: return False
+            if not _pw_use(g, src, -2): pass
+            p.gy.remove(c); enter(g, p, c); return True
+        out.append((0.8 * card_worth(g, p, c, in_gy=True) / 2.0, f'Ral Zarek -2 -> {c.name}', minus2))
+    if src.loyalty >= 7 and g.opps(p):
+        q = max(g.opps(p), key=lambda o: threat(g, p, o))
+
+        def minus7():
+            if not _pw_once(g, src): return False
+            _pw_use(g, src, -7)
+            n = sum(1 for _ in range(5) if g.rng.random() < 0.5)
+            q.skip_turns = getattr(q, 'skip_turns', 0) + n
+            log(f'  {NAME(p)} uses Ral Zarek -7: {NAME(q)} skips {n} turn(s)', g); return True
+        out.append((8.0, f'Ral Zarek -7 -> {NAME(q)}', minus7))
+    return out
+full("Vraska, Betrayal's Sting", 'loyalty 6: 0 draws, costs 1 life and proliferates (opponents\' poison included); -2 '
+     'turns the best opposing creature into a Treasure; -9 sets a player to nine poison')
+full('Ral Zarek, Guest Lecturer', 'loyalty 3: +1 surveil 2; -1 each opponent discards; -2 returns a creature (mana '
+     'value 3 or less); -7 an opponent skips 0-5 turns (five coins)')
+
+
+# ------------------------------------------------------------------ Jace's Archivist
+def archivist_worth(g, p):
+    """the wheel: with Orcish Bowmasters out (every opponent draw pings), or when your hand is much smaller"""
+    most = max((len(q.hand) for q in g.players if q.alive), default=0)
+    return has(p, 'bowmasters') or (len(p.hand) <= 1 and most >= 4)
+full("Jace's Archivist", '{U}, {T}: everyone discards and draws the largest hand size (used with Orcish Bowmasters, or '
+     'when your hand is much smaller)')
+
+
+# ------------------------------------------------------------------ lands: Barad-dûr, Plaza of Heroes, Unclaimed Territory, Talisman
+@on('Barad-dûr', 'land_options')
+def _baraddur(g, L, p, s, post):
+    """{X}{X}{B}, {T}: amass Orcs X, only if a creature died this turn"""
+    if L.tapped or post is None or getattr(g, 'died_turn', None) != turn_stamp(g): return []
+    import impl_lands as IL
+    x = 0
+    while IL.can_pay_without(g, p, L, 2 * (x + 1), 'B'): x += 1
+    if x < 1: return []
+
+    def go():
+        if L.tapped or not IL.pay_without(g, p, L, 2 * x, 'B'): return False
+        L.tapped = True; amass(g, p, x); log(f'  {NAME(p)} uses Barad-dûr: amass Orcs {x}', g); return True
+    return [(1.0 + x, f'Barad-dûr (amass {x})', go)]
+
+
+def plaza_colors(g, p):
+    if PAY_FOR is not None and 'leg' in PAY_FOR.tags: return p.ident                 # a legendary spell: any colour
+    return ''.join(sorted({x for m in p.perms if m.cd is not None and is_legendary(g, m) for x in m.cd.pips if x in 'WUBRG'}))
+
+
+def territory_colors(g, p):
+    return p.ident if PAY_FOR is not None and PAY_FOR.creature and 'orc' in PAY_FOR.subtypes else ''
+
+
+full('Barad-dûr', 'enters tapped without a legendary creature; {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died')
+full('Plaza of Heroes', '{C}; any colour for legendary spells; colours among your legendary permanents; the exile '
+     'protection is not used')
+full('Unclaimed Territory', 'names Orc: {C}, or any colour for Orc creature spells')
+full('Talisman of Creativity', '{T}: {C}, or {U}/{R} for 1 damage to you')
+
+
+# ------------------------------------------------------------------ Bloodsoaked Insight // Sanguine Morass
+def insight_cost(g, p):
+    lost = sum(v for q in g.opps(p) for st, v in [getattr(q, 'lost_turn', (None, 0))] if st == turn_stamp(g))
+    return max(0, 5 - lost)
+
+
+@on('Bloodsoaked Insight // Sanguine Morass', 'hand_options')
+def _insight(g, c, p, s, post):
+    """cast the front face ({5}{B/R}{B/R}, {1} less per life opponents lost this turn): the top three of an opponent's
+    library, playable until the end of your next turn; otherwise it is a land (Sanguine Morass)"""
+    if post is None or c not in p.hand or g.active is not p: return []
+    gen = insight_cost(g, p)
+    if gen > 2 or not can_pay(g, p, gen, 'B') or not can_pay(g, p, gen + 1, 'B'): return []
+
+    def go():
+        if c not in p.hand or not can_pay(g, p, gen + 1, 'B'): return False
+        p.hand.remove(c); pay(g, p, gen + 1, 'B')
+        p.spells_this_turn += 1; on_cast(g, p, c)
+        opps = g.opps(p)
+        if opps:
+            q = max(opps, key=lambda o: len(o.library))
+            top = [q.library.pop() for _ in range(min(3, len(q.library)))]
+            p.hand.extend(top)
+            p.impulse_long = (getattr(p, 'impulse_long', None) or []) + [(x, p.turns + 1) for x in top]
+            log(f'  {NAME(p)} casts Bloodsoaked Insight: {", ".join(x.name for x in top)} from {NAME(q)}', g)
+        p.gy.append(c); return True
+    return [(3.5 - gen, 'Bloodsoaked Insight', go)]
+full('Bloodsoaked Insight // Sanguine Morass', 'a tapped B/R land, or (when opponents lost enough life this turn) the '
+     'top three of an opponent\'s library, playable until the end of your next turn')
+
+
+# the engine reaches these through the card-rules module
+CI.add_counters = add_counters
+CI.kindred_enter = kindred_enter
+CI.kaervek = kaervek
+CI.plaza_colors = plaza_colors
+CI.territory_colors = territory_colors
+CI.ring_tempt = ring_tempt
