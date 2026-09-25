@@ -63,7 +63,7 @@ note('Karlach, Fury of Avernus', 'Full', 'first combat: attackers untap and gain
 
 @on('Scourge of the Throne', 'attack')
 def _scourge(g, src, p, atk, d):
-    if src.owner is p and src in atk and first_attack(g, src) and d.life >= max(q.life for q in g.opps(p)):
+    if src.owner is p and src in atk and first_attack(g, src) and d.alive and d.life >= max(q.life for q in g.players if q.alive):
         untap_all(p, atk); p.extra_combats += 1
 card('Scourge of the Throne', 'pow=5 fly bomb=5')
 note('Scourge of the Throne', 'Full', 'dethrone; first attack at the highest life total: untap attackers, extra combat')
