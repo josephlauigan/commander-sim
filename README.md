@@ -3,65 +3,68 @@
 Pure Python 3 (3.9 or newer), standard library only. Nothing to install.
 
 ## Run
+Each run seats one of your decks against three outside decks from `opponents/` (25 decks in five power tiers,
+see `opponents/README.md`), drawn without replacement from one tier and re-drawn every game, in a random seat
+order. Opponent draws, seats and every seat's opening shuffle depend only on the seed and the deck keys, so a
+`--swap` comparison faces identical opponents and draws (paired runs).
+
     cd commander-sim
-    python3 compare.py --deck seph --swap "Phyrexian Metamorph=>Grim Tutor" --n 10000 --jobs 5
+    python3 compare.py --deck seph --pool t3 --games 1500 --jobs 24             # one deck vs one tier
+    python3 compare.py --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"   # paired A/B vs that tier
+    python3 compare.py --deck seph --pool all --jobs 24                          # all five tiers
+    python3 compare.py --all-decks --pool all --jobs 24                          # deck x tier matrix
+    python3 compare.py --deck seph --pool t4 --analyze                           # how it wins / loses there
+    python3 compare.py --deck seph --pool t2 --trace 7                           # play-by-play of game 7
+    python3 compare.py --calibrate within|ordering|all --games 240 --jobs 24     # pool balance checks
+    python3 compare.py --deck veyran --cards                                     # every card: source, tags, unmodeled text
+    python3 tools_searchtest.py <pool deck> <tier> 240 6 5 all                   # a pool deck with and without look-ahead
+    python3 tools_swaptest.py <pool deck> <tier> 800 "Out>In; Out>In"            # test pool list changes without editing
+    python3 pools.py --validate                                                  # decklist checks
+    python3 pool_audit.py [--deck yuriko] [--md FILE]                            # card coverage per deck
 
 - `--deck`     seph | veyran | sauron | najeela
+- `--pool`     t1..t5 or all (required, unless --all-decks or --calibrate)
 - `--swap`     "Card Out=>Card In" (repeat for several swaps)
-- `--n`        games per list per profile (default 1500; 10000 for close calls)
-- `--jobs`     worker processes; set to your core count (`sysctl -n hw.ncpu`)
-- `--ablate`   also test each swap on its own
-- `--goldfish` add solo speed numbers
-- `--profiles` conservative,loose (default both)
-- `--ai`       adaptive (default) or rigid. Adaptive AIs read the board and choose plays from a
-               probability distribution; rigid AIs follow fixed priority lists (the original model)
+- `--games`    games per list per profile (default 1500; `--n` is the same)
+- `--seed`     first seed (default 500000)
+- `--jobs`     worker processes; set to your core count
+- `--profiles` conservative,loose (default both); `--profile` runs one
+- `--ai`       lookahead (default) or adaptive. Look-ahead: every deck at the table chooses its main-phase plays,
+               attacks and counterspells by trying the best few candidates on copies of the game and playing each
+               copy forward to the end of its next turn (search.py). It costs about 20 s of CPU per game (1500 games
+               on 24 cores: about 20 minutes per profile). adaptive is the heuristic AI alone, about 100x faster:
+               fine for quick checks, but it misplays some decks badly (see opponents/pool-results.md).
 - `--temp`     adaptive randomness multiplier (default 1.0; 0.5 = sharper, more predictable play,
                2.0 = looser play). Per-deck styles (aggression, caution) live at the top of brain.py
-- `--analyze`  deep report on one deck instead of a comparison: how it wins, how it loses (who
-               and by what), game-plan timing, damage by source, and a card report (win rate when
-               cast, cards stuck in hand, cards opponents remove most). Add --swap to analyze a variant.
+- `--analyze`  deep report instead of a win rate: how it wins, how it loses (who and by what), game-plan timing,
+               damage by source, and a card report. Add --swap to analyze a variant.
 - `--brief`    skip the per-axis breakdown (verdict only)
-- `--trace N`  print a play-by-play log of game N with the variant list (current list if no --swap), then exit
+- `--trace N`  print a play-by-play log of game N (current list, or the variant with --swap), then exit
 
-Every comparison prints, after the verdict, a breakdown along seven strength axes
-(outcome, mana & consistency, speed, card flow, interaction, resilience, threat & pressure),
-baseline -> variant under each profile, with * marking changes larger than the noise band.
+Each run reports your win rate against the 25% even share with a 95% interval, the average turn of your wins
+and losses, how often your plan came online, and for each opponent how often it was seated, how often it won,
+and how often it eliminated you. A/B runs report a paired noise band (per-seed pairs) and a breakdown along
+seven strength axes (outcome, mana & consistency, speed, card flow, interaction, resilience, threat &
+pressure), baseline -> variant under each profile, with * marking changes larger than the noise band.
 
 The baseline is the list in the deck's .md file in this folder (the "## Import list" block).
 Keep the .md files next to the scripts, or point SIM_DECKS at another folder.
 
-## Using the opponent pools
-`opponents/` holds 25 outside decks in five power tiers (see `opponents/README.md`). Pool mode seats your
-deck against three of them, drawn without replacement from one tier and re-drawn every game, in a random
-seat order. Opponent draws, seats and every seat's opening shuffle depend only on the seed and the deck
-keys, so a --swap comparison faces identical opponents and draws (paired runs).
+The original four-deck mode (your decks against each other) was removed in September 2026; everything is
+measured against the pools.
 
-    python3 compare.py --deck seph --pool t3 --games 10000 --jobs 24          # one deck vs one tier
-    python3 compare.py --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"  # paired A/B vs that tier
-    python3 compare.py --deck seph --pool all --games 10000                   # all five tiers
-    python3 compare.py --all-decks --pool all --games 10000 --jobs 24         # deck x tier matrix
-    python3 compare.py --deck seph --pool t4 --analyze                         # how it wins / loses there
-    python3 compare.py --deck seph --pool t2 --trace 7                         # play-by-play of pool game 7
-    python3 compare.py --calibrate within|ordering|all --games 2000 --jobs 24   # pool balance checks
-    python3 tools_swaptest.py <pool deck> <tier> 800 "Out>In; Out>In"          # test list changes without editing
-    python3 pools.py --validate                                                # decklist checks
-    python3 pool_audit.py [--deck yuriko] [--md FILE]                          # card coverage per deck
-
-- `--pool` t1..t5 or all; `--games` (same as --n); `--seed` first seed (default 500000);
-  `--profile conservative|loose` to run one profile (default both).
-- Each run reports your win rate against the 25% even share with a 95% interval, the average turn of your
-  wins and losses, how often your plan came online, and for each opponent how often it was seated, how
-  often it won, and how often it eliminated you. A/B runs report a paired noise band (per-seed pairs).
-- Pool games play by a few extra rules the four-deck mode doesn't have (so old-mode results never change):
-  haste from Boots/Greaves and granted haste, fetch lands cracking, attacking planeswalkers, keyword grants
-  from compiled cards. Your decks keep their own AI; only outside decks use the pool AI.
+## The opponent pools
 - Results and calibration: `opponents/pool-results.md`. Card coverage and what is approximated: run
   `python3 pool_audit.py`, or read the tables in `pool-results.md`.
 - How outside cards are modeled: `pool_cards.py` (tag and ability overrides, audit notes), `cardimpl.py`
   (hook events) with the implementations in `impl_common.py`, `impl_t1.py` .. `impl_t5.py`, and combos in
-  `impl_combos.py`. The generic AI for outside decks is `pool_ai.py`; per-deck settings in `pool_decks.py`.
-- Tests: `python3 -m unittest discover -s tests -t .` (validator, pool sampling and pairing, and an exact
-  old-mode regression guard).
+  `impl_combos.py`. The generic AI for outside decks is `pool_ai.py`; per-deck settings in `pool_decks.py`
+  and `deck_plans.py`. Your decks keep their own hand-tuned AI.
+- The look-ahead: `search.py` (game copies, candidate plays, playouts, position scoring). Engine step caps
+  (`engine.GAME_WORK`, `search.PLAYOUT_WORK`), a per-game decision cap and a board-size limit keep every game
+  bounded; the seeds are deterministic, so any game replays exactly.
+- Tests: `python3 -m unittest discover -s tests -t .` (validator, pool sampling and pairing, pool games with
+  and without look-ahead, and a guard that your four deck files still parse to the recorded lists).
 
 ## How the adaptive AI decides (brain.py)
 Each decision: read the board (mana, hand, incoming damage, who leads, combos close to going off,

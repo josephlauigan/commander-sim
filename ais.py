@@ -2101,35 +2101,6 @@ CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
         'sauron': 'Sauron, the Dark Lord', 'najeela': 'Najeela, the Blade-Blossom'}
 
 
-def play_game(seed, decks, max_rounds=20, trace=False):
-    E.POOL_RULES = False
-    rng = random.Random(seed)
-    players = [Player(k, decks[k], CMDS[k]) for k in ('seph', 'veyran', 'sauron', 'najeela')]
-    rng.shuffle(players)
-    g = Game(players, rng)
-    E.CUR_G = g
-    if trace:
-        g.log = ['Seat order: ' + ', '.join(NAME(p) for p in players)]
-    for p in players:
-        rng.shuffle(p.library); mulligan(g, p)
-        p.seen_names.update(c.name for c in p.hand)
-    for r in range(1, max_rounds + 1):
-        g.round = r
-        for p in players:
-            if p.alive and not g.over:
-                if E.AI_MODE == 'adaptive' and r > 1:
-                    import brain
-                    brain.end_of_turn_window(g, p)     # spend mana held through the other turns
-                if p.alive and not g.over:
-                    take_turn(g, p)
-        if g.over: break
-    if not g.over:
-        alive = [p for p in players if p.alive]
-        g.winner = max(alive, key=lambda p: p.life + board_power(g, p) * 2) if alive else None
-        g.wintype = 'timeout'
-    return g
-
-
 STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)
 
 
@@ -2180,14 +2151,3 @@ def setup_pool_game(seed, seats, trace=False):
         p.seen_names.update(c.name for c in p.hand)
     return g
 
-
-def goldfish(seed, key, cards, turns=10):
-    rng = random.Random(seed)
-    p = Player(key, cards, CMDS[key])
-    g = Game([p], rng, goldfish=True)
-    rng.shuffle(p.library); mulligan(g, p)
-    for t in range(turns):
-        g.round = t + 1
-        take_turn(g, p)
-        if not p.alive: break
-    return g, p

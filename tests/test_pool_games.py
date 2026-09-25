@@ -21,13 +21,13 @@ class PoolGames(unittest.TestCase):
                     g = poolmode.play(seed, 'veyran', None, keys, 3)
                     self.assertIn('veyran', [p.key for p in g.players])
 
-    def test_old_mode_flag_restored(self):
-        import ais
-        from decks import DECKS
-        poolmode.play(500000, 'seph', None, poolmode.pool_keys('t1'))
-        self.assertTrue(engine.POOL_RULES)
-        ais.play_game(500000, DECKS)
-        self.assertFalse(engine.POOL_RULES)
+    def test_lookahead_game_plays(self):
+        compare.set_ai('lookahead', 1.0)
+        try:
+            g = poolmode.play(500000, 'veyran', None, poolmode.pool_keys('t3'), 3)
+            self.assertTrue(g.over or g.wintype == 'timeout')
+        finally:
+            compare.set_ai('adaptive', 1.0)
 
 
 if __name__ == '__main__':

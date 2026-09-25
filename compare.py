@@ -129,33 +129,6 @@ def axis_values(g, me, deck):
     return v
 
 
-def _safe_game(seed, decks, counter):
-    """play one game; if the engine hits an internal error, record the seed and skip the game"""
-    try:
-        return ais.play_game(seed, decks)
-    except Exception as e:
-        counter['__errors__'] += 1
-        counter[f'__err__{seed}__{e.__class__.__name__}: {str(e)[:60]}'] += 1
-        return None
-
-
-def _pod_chunk(deck, cards, profile, seeds, ai='adaptive', temp=1.0):
-    engine.set_profile(profile); set_ai(ai, temp)
-    import cards as _cards; _cards.ensure_cards(cards, verbose=False)     # worker processes: load auto-tagged cards from cache
-    decks = dict(DECKS); decks[deck] = cards
-    W, killer = Counter(), Counter()
-    S1, S2, N = Counter(), Counter(), Counter()
-    for s in seeds:
-        g = _safe_game(s, decks, W)
-        if g is None: continue
-        W[g.winner.key if g.winner else 'none'] += 1
-        me = next(p for p in g.players if p.key == deck)
-        if not me.alive: killer[me.killer.key if me.killer else 'none'] += 1
-        for k, x in axis_values(g, me, deck).items():
-            S1[k] += x; S2[k] += x * x; N[k] += 1
-    return W, killer, S1, S2, N
-
-
 JOBS = 1
 VERBOSE = True
 _POOL = None
@@ -248,23 +221,6 @@ def set_ai(mode, temp):
     brain.TEMP_SCALE = temp
 
 
-def pod(deck, cards, profile, n, seed0=500000):
-    seeds = list(range(seed0, seed0 + n))
-    res = _run_chunks(_pod_chunk, [(deck, cards, profile, s, AI, TEMP) for s in _chunks(seeds)])
-    W, killer, S1, S2, N = Counter(), Counter(), Counter(), Counter(), Counter()
-    for w, k, s1, s2, nn in res:
-        W.update(w); killer.update(k); S1.update(s1); S2.update(s2); N.update(nn)
-    axes = {}
-    ERR.update({k: v for k, v in W.items() if k.startswith('__err')})
-    for k in [k for k in W if k.startswith('__err')]: del W[k]
-    n_ok = sum(W.values())
-    for k in N:
-        m = S1[k] / N[k]
-        var = max(0.0, S2[k] / N[k] - m * m)
-        axes[k] = {'mean': m, 'var': var, 'n': N[k]}
-    return {'profile': profile, 'n': n_ok, 'win': dict(W), 'killed_by': dict(killer), 'axes': axes}
-
-
 def axis_report(deck, pairs):
     """Per-axis table: baseline -> variant for each profile, * marks a change beyond noise (2 SE)."""
     profs = [b['profile'] for b, _ in pairs]
@@ -325,20 +281,6 @@ def axis_report(deck, pairs):
 KINDS = ('combat', 'burn', 'drain', 'aether', 'triggers', 'combo', 'commander damage', 'decked', 'other')
 
 
-def _analyze_chunk(deck, cards, profile, seeds, ai='adaptive', temp=1.0):
-    engine.set_profile(profile); set_ai(ai, temp)
-    import cards as _cards; _cards.ensure_cards(cards, verbose=False)
-    decks = dict(DECKS); decks[deck] = cards
-    R = analysis_record()
-    errs = Counter()
-    for s in seeds:
-        g = _safe_game(s, decks, errs)
-        if g is None: continue
-        analysis_add(R, g, deck)
-    R['errs'] = errs
-    return R
-
-
 def analysis_record():
     return {'n': 0, 'win': 0, 'wintype': Counter(), 'kills': Counter(), 'death': Counter(), 'death_round': 0,
             'survived': 0, 'plan': Counter(), 'plan_n': 0, 'combo': 0, 'aether': 0,
@@ -368,18 +310,6 @@ def analysis_add(R, g, deck):
     for nme in me.cast_names:
         R['cast'][nme] += 1; R['win_cast'][nme] += won
     for nme, k in me.lost_names.items(): R['lost'][nme] += k
-
-
-def analyze(deck, cards, profile, n, seed0=500000):
-    seeds = list(range(seed0, seed0 + n))
-    res = _run_chunks(_analyze_chunk, [(deck, cards, profile, s, AI, TEMP) for s in _chunks(seeds)])
-    R = res[0]
-    for r in res[1:]:
-        for k, v in r.items():
-            if isinstance(v, Counter): R[k].update(v)
-            else: R[k] += v
-    ERR.update(R.pop('errs', Counter()))
-    return R
 
 
 def print_analysis(deck, cards, R, profile):
@@ -455,16 +385,6 @@ def print_analysis(deck, cards, R, profile):
     print('  with a normal paired comparison.')
 
 
-def goldfish(deck, cards, n=10000, turns=10):
-    engine.set_profile('conservative')
-    key = {'seph': 'bomb_by', 'najeela': 'act'}.get(deck, 'combo')
-    ms = []
-    for s in range(n):
-        g, p = ais.goldfish(s, deck, cards, turns)
-        ms.append(p.milestone.get(key))
-    return {t: sum(1 for m in ms if m is not None and m <= t) / n for t in range(3, turns + 1)}
-
-
 def pct(x): return f'{100 * x:5.1f}%'
 
 
@@ -481,108 +401,48 @@ def verdict(deltas, ses, profiles):
     return 'NO CLEAR EFFECT (within noise)'
 
 
-def report(deck, pairs, label='variant'):
-    """pairs: list of (baseline_result, variant_result) per profile"""
-    print(f'\n=== {deck}: baseline vs {label} ===')
-    deltas, ses = [], []
-    for b, v in pairs:
-        n = min(b['n'], v['n'])
-        wb, wv = b['win'].get(deck, 0) / b['n'], v['win'].get(deck, 0) / v['n']
-        se = math.sqrt(wb * (1 - wb) / b['n'] + wv * (1 - wv) / v['n'])
-        deltas.append(wv - wb); ses.append(se)
-        print(f"[{b['profile']:12s}] {deck} win {pct(wb)} -> {pct(wv)}  "
-              f"(delta {100*(wv-wb):+.1f} pts, noise ±{200*se:.1f})   n={n}")
-        others = '  '.join(f"{k} {pct(b['win'].get(k,0)/b['n'])}->{pct(v['win'].get(k,0)/v['n'])}"
-                           for k in KEYS if k != deck)
-        print(f"{'':15s}others: {others}")
-        kb = '  '.join(f"{k} {pct(v['killed_by'].get(k,0)/v['n'])}" for k in KEYS if k != deck)
-        print(f"{'':15s}{deck} (variant) eliminated by: {kb}")
-    print('VERDICT:', verdict(deltas, ses, [b['profile'] for b, _ in pairs]))
-    if VERBOSE and all('axes' in b and 'axes' in v for b, v in pairs): axis_report(deck, pairs)
-    if min(b['n'] for b, _ in pairs) < 1500: print('(small sample: treat as a quick look only)')
-    return deltas
-
-
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description='Commander pod simulator: one of your decks against three outside decks '
+                                             'drawn from a tier of opponents/ (pool mode)')
     ap.add_argument('--deck', choices=KEYS)
-    ap.add_argument('--swap', action='append')
-    ap.add_argument('--n', type=int, default=1500)
-    ap.add_argument('--profiles', default='conservative,loose')
-    ap.add_argument('--ablate', action='store_true')
-    ap.add_argument('--goldfish', action='store_true')
-    ap.add_argument('--part', choices=('baseline', 'variant'))
-    ap.add_argument('--profile')
-    ap.add_argument('--out')
-    ap.add_argument('--report', nargs='+')
-    ap.add_argument('--dsl-all', action='store_true', help='run every card from its Scryfall Oracle text through the ability interpreter (ignores hand tags)')
+    ap.add_argument('--swap', action='append', help='"Card Out=>Card In" (repeat for several): paired A/B run')
+    ap.add_argument('--pool', choices=('t1', 't2', 't3', 't4', 't5', 'all'),
+                    help='play --deck against three outside decks drawn from this tier (see opponents/)')
+    ap.add_argument('--all-decks', action='store_true', help='run each of the four decks (deck x tier matrix)')
+    ap.add_argument('--calibrate', choices=('within', 'ordering', 'all'), help='pool balance checks (no --deck needed)')
+    ap.add_argument('--games', type=int, help='games per run (default 1500)')
+    ap.add_argument('--n', type=int, help='same as --games')
+    ap.add_argument('--seed', type=int, default=500000, help='first seed (games use seed .. seed+n-1)')
+    ap.add_argument('--profiles', default='conservative,loose', help='AI interaction profiles to run (default both)')
+    ap.add_argument('--profile', help='run one profile only')
+    ap.add_argument('--analyze', action='store_true', help='deep report: how the deck wins and loses, plan timing, card report')
+    ap.add_argument('--trace', type=int, metavar='GAME', help='print a play-by-play log of one game (seed offset) and exit')
     ap.add_argument('--cards', action='store_true', help='list every card in --deck with its tags, source and unmodeled text')
-    ap.add_argument('--analyze', action='store_true', help='deep report on one deck: how it wins/loses, plan timing, card report')
+    ap.add_argument('--dsl-all', action='store_true', help='run every card from its Scryfall Oracle text through the ability interpreter (ignores hand tags)')
     ap.add_argument('--brief', action='store_true', help='skip the per-axis breakdown')
-    ap.add_argument('--trace', type=int, metavar='GAME', help='print a play-by-play log of one game (seed number) and exit')
     ap.add_argument('--ai', choices=('lookahead', 'adaptive', 'rigid'), default='lookahead',
-                    help='AI decision model: lookahead (default; the adaptive AI plus look-ahead search in pool games, '
-                         'about 1 s per game per core) or adaptive (heuristic only, about 100x faster)')
+                    help='AI decision model: lookahead (default; the adaptive AI plus look-ahead search, '
+                         'about 20 s of CPU per game) or adaptive (heuristic only, about 100x faster)')
     ap.add_argument('--temp', type=float, default=1.0, help='adaptive AI randomness multiplier (lower = sharper play)')
     ap.add_argument('--quiet', action='store_true', help='no progress bar')
     ap.add_argument('--jobs', type=int, default=1, help='parallel worker processes (e.g. number of CPU cores)')
-    ap.add_argument('--pool', choices=('t1', 't2', 't3', 't4', 't5', 'all'),
-                    help='pool mode: play --deck against three outside decks drawn from this tier (see opponents/)')
-    ap.add_argument('--all-decks', action='store_true', help='pool mode: run each of the four decks (deck x tier matrix)')
-    ap.add_argument('--calibrate', choices=('within', 'ordering', 'all'), help='pool balance checks (no --deck needed)')
-    ap.add_argument('--games', type=int, help='pool mode: games per run (same as --n)')
-    ap.add_argument('--seed', type=int, default=500000, help='pool mode: first seed (games use seed .. seed+n-1)')
     a = ap.parse_args()
+    a.games = a.games or a.n or 1500; a.n = a.games
     global JOBS, VERBOSE
     JOBS = max(1, a.jobs); VERBOSE = not a.brief
     global AI, TEMP
     AI, TEMP = a.ai, a.temp
     set_ai(AI, TEMP)
 
-    if a.report:
-        rs = [json.load(open(f)) for f in a.report]
-        deck = rs[0]['deck']
-        byp = {}
-        for r in rs: byp.setdefault(r['profile'], {})[r['part']] = r
-        report(deck, [(d['baseline'], d['variant']) for d in byp.values() if len(d) == 2])
-        return
-
-    if a.pool or a.calibrate or a.all_decks:
-        import poolmode
-        poolmode.C = sys.modules[__name__]      # this module's settings (--jobs, --brief, --ai), even when run as __main__
-        if a.all_decks and not a.pool: a.pool = 'all'
-        swaps, base, var = [], None, None
-        if a.deck and not a.all_decks:
-            swaps, auto = parse_swaps(a.swap)
-            check_identity(a.deck, swaps)
-            show_auto(auto)
-            apply_swaps(a.deck, swaps)                                    # validates the swaps
-            base, var = DECKS[a.deck], poolmode.swap_in_place(DECKS[a.deck], swaps)
-        elif not a.calibrate and not a.all_decks:
-            sys.exit('--deck is required (or use --all-decks)')
-        if a.trace is not None:
-            poolmode.trace(a, var if swaps else base); return
-        poolmode.main(a, swaps, base, var)
-        return
-
-    if not a.deck: sys.exit('--deck is required')
-    swaps, auto = parse_swaps(a.swap)
-    check_identity(a.deck, swaps)
-    show_auto(auto)
-    base, var = DECKS[a.deck], apply_swaps(a.deck, swaps)
-    profiles = a.profiles.split(',')
-
-    if a.trace is not None:
-        engine.set_profile(profiles[0])
-        decks = dict(DECKS); decks[a.deck] = var
-        g = ais.play_game(500000 + a.trace, decks, trace=True)
-        which = 'variant list' if swaps else 'current list'
-        print(f'Play-by-play of game {a.trace} ({a.deck}: {which}, {profiles[0]} profile, {AI} AI)')
-        print('\n'.join(g.log))
-        print(f"Winner: {g.winner.key if g.winner else 'none'} ({g.wintype})")
-        return
+    swaps, base, var = [], None, None
+    if a.deck and not a.all_decks:
+        swaps, auto = parse_swaps(a.swap)
+        check_identity(a.deck, swaps)
+        show_auto(auto)
+        base, var = DECKS[a.deck], apply_swaps(a.deck, swaps)             # validates the swaps
 
     if a.cards:
+        if not a.deck: sys.exit('--cards needs --deck')
         import cards
         names = sorted(set(var if swaps else base))
         auto = [n for n in names if DB[n].source != 'manual']
@@ -596,54 +456,18 @@ def main():
             print(f'\n(Game Changer check skipped: {e})')
         return
 
-    PROG.on = not a.quiet
-    if a.analyze:
-        t = time.time()
-        PROG.plan(a.n * len(profiles))
-        cards = var if swaps else base
-        if swaps: print('Analyzing the variant list:', '; '.join(f'{o} -> {i}' for o, i in swaps))
-        results = []
-        for prof in profiles:
-            PROG.label = f'analyze / {prof}'
-            results.append((prof, analyze(a.deck, cards, prof, a.n)))
-        for prof, R in results: print_analysis(a.deck, cards, R, prof)
-        print(f'\n({time.time()-t:.0f}s total)')
-        return
-
-    if a.part:
-        t = time.time(); PROG.plan(a.n); PROG.label = f'{a.part} / {a.profile}'
-        r = pod(a.deck, base if a.part == 'baseline' else var, a.profile, a.n)
-        r.update(deck=a.deck, part=a.part)
-        json.dump(r, open(a.out or f'{a.part}_{a.profile}.json', 'w'))
-        print(f'{a.part}/{a.profile} done in {time.time()-t:.0f}s')
-        return
-
-    print('Swaps:', '; '.join(f'{o} -> {i}' for o, i in swaps) or '(none)')
-    print(f'AI: {AI}' + (f' (temperature x{TEMP})' if AI in ('adaptive', 'lookahead') else ''))
-    t = time.time()
-    abl = swaps if (a.ablate and len(swaps) > 1) else []
-    PROG.plan(a.n * len(profiles) * (2 + len(abl)))
-    baselines = {}
-    for p in profiles:
-        PROG.label = f'current list / {p}'; baselines[p] = pod(a.deck, base, p, a.n)
-    variants = {}
-    for p in profiles:
-        PROG.label = f'with swaps / {p}'; variants[p] = pod(a.deck, var, p, a.n)
-    singles = []
-    for sw in abl:
-        rs = {}
-        for p in profiles:
-            PROG.label = f'only {sw[1]} / {p}'; rs[p] = pod(a.deck, apply_swaps(a.deck, [sw]), p, a.n)
-        singles.append((sw, rs))
-    report(a.deck, [(baselines[p], variants[p]) for p in profiles])
-    for sw, rs in singles:
-        report(a.deck, [(baselines[p], rs[p]) for p in profiles], label=f'only {sw[0]} -> {sw[1]}')
-    if a.goldfish:
-        gb, gv = goldfish(a.deck, base), goldfish(a.deck, var)
-        what = {'seph': 'bomb on battlefield', 'najeela': 'first WUBRG activation'}.get(a.deck, 'combo ready')
-        print(f'\nGoldfish ({what}) by turn:')
-        for t_ in gb: print(f'  T{t_:2d}  baseline {pct(gb[t_])}   variant {pct(gv[t_])}')
-    print(f'\n({time.time()-t:.0f}s total)')
+    if not (a.pool or a.calibrate or a.all_decks):
+        sys.exit('--pool t1..t5|all is required (or --all-decks / --calibrate). The four-deck head-to-head mode was '
+                 'removed; decks are measured against the opponent pools.')
+    import poolmode
+    poolmode.C = sys.modules[__name__]      # this module's settings (--jobs, --brief, --ai), even when run as __main__
+    if a.all_decks and not a.pool: a.pool = 'all'
+    if not a.deck and not a.calibrate and not a.all_decks:
+        sys.exit('--deck is required (or use --all-decks)')
+    if swaps: var = poolmode.swap_in_place(DECKS[a.deck], swaps)
+    if a.trace is not None:
+        poolmode.trace(a, var if swaps else base); return
+    poolmode.main(a, swaps, base, var)
 
 
 if __name__ == '__main__':
