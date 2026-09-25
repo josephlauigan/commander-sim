@@ -1048,7 +1048,9 @@ COMBO_PIECES = ('Basalt Monolith', 'Grim Monolith', 'Power Artifact', 'Rings of 
                 "Thassa's Oracle", 'Restoration Angel', 'Butcher Ghoul', "Geralf's Messenger", 'Mikaeus, the Unhallowed',
                 'Freed from the Real', "Pemmin's Aura", 'Demonic Consultation', 'Tainted Pact', 'Mycosynth Lattice',
                 'Thornbite Staff')
-for _n in COMBO_PIECES:
+import impl_combos
+for _n in sorted(set(COMBO_PIECES) | {n for n in impl_combos.PIECES
+                                      if 'executed abstractly' in __import__('pool_cards').NOTES.get(n, ('', ''))[1]}):
     import pool_cards
     st, txt = pool_cards.NOTES.get(_n, ('Full', ''))
     note(_n, 'Full', (txt + '; ' if txt and 'loop is executed abstractly' not in txt else '') +

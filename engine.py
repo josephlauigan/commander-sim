@@ -1253,7 +1253,9 @@ def counter_side_effects(g, q, p, ctr):
 def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     """card already paid for.  zone: hand/gy/cmd"""
     ctx = ctx or {}
-    if zone == 'hand': p.hand.remove(c)
+    if zone == 'hand':
+        if c not in p.hand: return False             # paying for it moved it (a hand-mana source, a discard trigger)
+        p.hand.remove(c)
     elif zone == 'gy': p.gy.remove(c)
     elif zone == 'cmd':
         if POOL_RULES and c.name == 'Liesa, Shroud of Dusk' and p.tax: lose_life(g, p, p.tax, p)
