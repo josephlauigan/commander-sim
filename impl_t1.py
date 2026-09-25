@@ -935,7 +935,7 @@ def _uro_escape(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 0, 'GGUU') or len(p.gy) < 6: return False
-        pay(g, p, 0, 'GGUU'); p.gy.remove(c)
+        p.gy.remove(c); pay(g, p, 0, 'GGUU')
         others = sorted(p.gy, key=lambda x: card_worth(g, p, x, True))[:5]
         for x in others: p.gy.remove(x); p.exile.append(x)
         p.cast_names.add(c.name); p.spells_this_turn += 1; on_cast(g, p, c)

@@ -171,7 +171,7 @@ def _skeleton(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 1, 'B'): return False
-        pay(g, p, 1, 'B'); p.gy.remove(c); m = enter(g, p, c); m.tapped = True; return True
+        p.gy.remove(c); pay(g, p, 1, 'B'); m = enter(g, p, c); m.tapped = True; return True
     return [(0.5 + IC.death_value(g, p) / 2.0, 'return Reassembling Skeleton', go)]
 card('Reassembling Skeleton', 'pow=1 warrior', dsl=[])
 note('Reassembling Skeleton', 'Full', 'recurs itself when there is a sacrifice outlet')
@@ -184,7 +184,7 @@ def _gravecrawler(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 0, 'B'): return False
-        pay(g, p, 0, 'B'); p.gy.remove(c); p.spells_this_turn += 1; on_cast(g, p, c); enter(g, p, c); return True
+        p.gy.remove(c); pay(g, p, 0, 'B'); p.spells_this_turn += 1; on_cast(g, p, c); enter(g, p, c); return True
     return [(0.5 + IC.death_value(g, p) / 2.0, 'cast Gravecrawler from the graveyard', go)]
 card('Gravecrawler', 'pow=2 tgh=1 noblock', dsl=[])
 note('Gravecrawler', 'Full', 'castable from the graveyard with a Zombie; the Phyrexian Altar loop is a combo (see combos)')

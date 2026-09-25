@@ -313,7 +313,7 @@ def _harmonize(g, c, p, s, post):
         if tapper is not None: tapper.tapped = True
         xx = total_mana(g, p) - 4 + r
         if not can_pay(g, p, max(0, xx - r), 'GGGG'): return False
-        pay(g, p, max(0, xx - r), 'GGGG'); p.gy.remove(c); p.exile.append(c)
+        p.gy.remove(c); pay(g, p, max(0, xx - r), 'GGGG'); p.exile.append(c)
         log(f"  {NAME(p)} harmonizes Nature's Rhythm (X={xx})", g)
         import impl_t3
         impl_t3._put_creature(g, p, lambda y: y.cmc <= xx)

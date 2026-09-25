@@ -63,7 +63,7 @@ def _archfiend_unearth(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 3, 'BB'): return False
-        pay(g, p, 3, 'BB'); p.gy.remove(c)
+        p.gy.remove(c); pay(g, p, 3, 'BB')
         m = enter(g, p, c); m.sick = False
         if m.data is None: m.data = {}
         m.data['unearth'] = True
@@ -590,7 +590,7 @@ def _gryff(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 3, 'W'): return False
-        pay(g, p, 3, 'W'); p.gy.remove(c); enter(g, p, c)
+        p.gy.remove(c); pay(g, p, 3, 'W'); enter(g, p, c)
         log(f"  {NAME(p)} returns Gryff's Boon from the graveyard", g); return True
     return [(1.8, "Gryff's Boon (graveyard)", go)]
 note("Gryff's Boon", 'Full', '+1/+0 and flying; {3}{W}: returns from the graveyard onto a creature')

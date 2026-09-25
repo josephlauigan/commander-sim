@@ -390,7 +390,7 @@ note('Yawgmoth, Thran Physician', 'Approximate', 'pay 1 life, sacrifice: -1/-1 c
 @on('Nether Traitor', 'gy_dies')
 def _traitor(g, c, p, m):
     if c in p.gy and can_pay(g, p, 0, 'B'):
-        pay(g, p, 0, 'B'); p.gy.remove(c); enter(g, p, c)
+        p.gy.remove(c); pay(g, p, 0, 'B'); enter(g, p, c)
 card('Nether Traitor', 'pow=1 haste', dsl=[], kws={'unblockable_shadow', 'haste'})
 note('Nether Traitor', 'Full', 'shadow; returns for B when another creature of yours dies')
 
