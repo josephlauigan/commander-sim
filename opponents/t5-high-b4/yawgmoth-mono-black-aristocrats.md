@@ -5,7 +5,7 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Aristocrats combo.
 - **Commander:** Yawgmoth, Thran Physician
 - **Color identity:** Black
 - **Game Changers (12):** Mana Vault, Chrome Mox, Necropotence, Bolas's Citadel, Ad Nauseam, Demonic Tutor, Vampiric Tutor, Imperial Seal, Opposition Agent, Orcish Bowmasters, Braids, Cabal Minion, Ancient Tomb
-- **Combos:** Yawgmoth + two undying creatures (Geralf's Messenger, Butcher Ghoul, or any non-Human under Mikaeus). Gravecrawler + Phyrexian Altar. Mikaeus + Walking Ballista is not infinite on its own, but Ballista is a mana sink for Coffers.
+- **Combos:** Sanguine Bond + Exquisite Blood (two-card drain loop). Yawgmoth + two undying creatures (Geralf's Messenger, Butcher Ghoul, or any non-Human under Mikaeus). Gravecrawler + Phyrexian Altar. Mikaeus + Walking Ballista is not infinite on its own, but Ballista is a mana sink for Coffers.
 - **Lands:** 31 (9 nonbasic + 22 basic)
 
 ## Role in the pool
@@ -15,6 +15,8 @@ A resilient combo that recurs through removal and doubles as a creature-sweeper 
 ## Strategy
 
 Yawgmoth pays 1 life to sacrifice a creature, put a -1/-1 counter on something, and draw. With two undying creatures (Geralf's Messenger, Butcher Ghoul, or anything under Mikaeus), each sacrifice cancels the other's +1/+1 counter, so the loop repeats for as many cards and drain triggers as you want; Geralf's Messenger's drain pays for it. Yawgmoth's -1/-1 counters also sweep opposing X/1s for free. Gravecrawler + Phyrexian Altar is a second loop. Necropotence, Ad Nauseam, and Bolas's Citadel refuel.
+
+Tuned in September 2026 toward a High Bracket 4 build: two more death payoffs (Falkenrath Noble, Vindictive Vampire), steady fodder and card flow (Bitterblossom, Midnight Reaper), and Sanguine Bond + Exquisite Blood as a second compact kill, for Liliana of the Veil, Deadly Rollick, Bloodchief's Thirst, Stitcher's Supplier, Grave Pact and Feed the Swarm. Mono-black has only three loop pieces for the Yawgmoth combo (Mikaeus, Geralf's Messenger, Butcher Ghoul).
 
 ## Sim modeling notes
 
@@ -26,17 +28,15 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 
 **Commander (1).** Yawgmoth, Thran Physician
 
-**Creatures (25).** Blood Artist, Bloodghast, Braids, Cabal Minion, Butcher Ghoul, Carrion Feeder, Dark Confidant, Dauthi Voidwalker, Geralf's Messenger, Gravecrawler, Grim Haruspex, Mikaeus, the Unhallowed, Nether Traitor, Opposition Agent, Orcish Bowmasters, Pitiless Plunderer, Plaguecrafter, Priest of Forgotten Gods, Reassembling Skeleton, Sheoldred, the Apocalypse, Stitcher's Supplier, Syr Konrad, the Grim, Viscera Seer, Walking Ballista, Woe Strider, Zulaport Cutthroat
+**Creatures (27).** Blood Artist, Bloodghast, Braids, Cabal Minion, Butcher Ghoul, Carrion Feeder, Dark Confidant, Dauthi Voidwalker, Falkenrath Noble, Geralf's Messenger, Gravecrawler, Grim Haruspex, Midnight Reaper, Mikaeus, the Unhallowed, Nether Traitor, Opposition Agent, Orcish Bowmasters, Pitiless Plunderer, Plaguecrafter, Priest of Forgotten Gods, Reassembling Skeleton, Sheoldred, the Apocalypse, Syr Konrad, the Grim, Vindictive Vampire, Viscera Seer, Walking Ballista, Woe Strider, Zulaport Cutthroat
 
-**Planeswalkers (1).** Liliana of the Veil
-
-**Enchantments (5).** Animate Dead, Bastion of Remembrance, Grave Pact, Necropotence, Phyrexian Arena
+**Enchantments (7).** Animate Dead, Bastion of Remembrance, Bitterblossom, Exquisite Blood, Necropotence, Phyrexian Arena, Sanguine Bond
 
 **Artifacts (14).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chrome Mox, Fellwar Stone, Jet Medallion, Lotus Petal, Mana Vault, Mind Stone, Phyrexian Altar, Sensei's Divining Top, Skullclamp, Sol Ring, Wishclaw Talisman
 
-**Sorceries (12).** Beseech the Mirror, Bloodchief's Thirst, Damnation, Demonic Tutor, Diabolic Intent, Feed the Swarm, Grim Tutor, Imperial Seal, Night's Whisper, Reanimate, Toxic Deluge, Unearth
+**Sorceries (10).** Beseech the Mirror, Damnation, Demonic Tutor, Diabolic Intent, Grim Tutor, Imperial Seal, Night's Whisper, Reanimate, Toxic Deluge, Unearth
 
-**Instants (11).** Ad Nauseam, Cabal Ritual, Culling the Weak, Dark Ritual, Deadly Dispute, Deadly Rollick, Fatal Push, Infernal Grasp, Snuff Out, Vampiric Tutor, Village Rites
+**Instants (10).** Ad Nauseam, Cabal Ritual, Culling the Weak, Dark Ritual, Deadly Dispute, Fatal Push, Infernal Grasp, Snuff Out, Vampiric Tutor, Village Rites
 
 **Lands (31).** Ancient Tomb, Bojuka Bog, Cabal Coffers, Castle Locthwain, High Market, Phyrexian Tower, Takenuma, Abandoned Mire, Urborg, Tomb of Yawgmoth, War Room, 22 Swamp
 
@@ -50,8 +50,8 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Ashnod's Altar
 1 Bastion of Remembrance
 1 Beseech the Mirror
+1 Bitterblossom
 1 Blood Artist
-1 Bloodchief's Thirst
 1 Bloodghast
 1 Bojuka Bog
 1 Bolas's Citadel
@@ -68,14 +68,13 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Dark Ritual
 1 Dauthi Voidwalker
 1 Deadly Dispute
-1 Deadly Rollick
 1 Demonic Tutor
 1 Diabolic Intent
+1 Exquisite Blood
+1 Falkenrath Noble
 1 Fatal Push
-1 Feed the Swarm
 1 Fellwar Stone
 1 Geralf's Messenger
-1 Grave Pact
 1 Gravecrawler
 1 Grim Haruspex
 1 Grim Tutor
@@ -83,9 +82,9 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Imperial Seal
 1 Infernal Grasp
 1 Jet Medallion
-1 Liliana of the Veil
 1 Lotus Petal
 1 Mana Vault
+1 Midnight Reaper
 1 Mikaeus, the Unhallowed
 1 Mind Stone
 1 Necropotence
@@ -101,12 +100,12 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Priest of Forgotten Gods
 1 Reanimate
 1 Reassembling Skeleton
+1 Sanguine Bond
 1 Sensei's Divining Top
 1 Sheoldred, the Apocalypse
 1 Skullclamp
 1 Snuff Out
 1 Sol Ring
-1 Stitcher's Supplier
 1 Syr Konrad, the Grim
 1 Takenuma, Abandoned Mire
 1 Toxic Deluge
@@ -114,6 +113,7 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Urborg, Tomb of Yawgmoth
 1 Vampiric Tutor
 1 Village Rites
+1 Vindictive Vampire
 1 Viscera Seer
 1 Walking Ballista
 1 War Room
