@@ -17,7 +17,7 @@ import engine, ais, pools
 import compare as C
 from decks import DECKS
 
-MINE = ('seph', 'veyran', 'sauron', 'najeela')
+MINE = ('seph', 'veyran', 'sauron')
 TIER_LABEL = {'t1': 'Tier 1 (High B2 / Low B3)', 't2': 'Tier 2 (Mid B3)', 't3': 'Tier 3 (High B3)',
               't4': 'Tier 4 (Low B4)', 't5': 'Tier 5 (High B4)'}
 

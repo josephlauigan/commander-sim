@@ -22,7 +22,7 @@ order. Opponent draws, seats and every seat's opening shuffle depend only on the
     python3 pools.py --validate                                                  # decklist checks
     python3 pool_audit.py [--deck yuriko] [--md FILE]                            # card coverage per deck
 
-- `--deck`     seph | veyran | sauron | najeela
+- `--deck`     seph | veyran | sauron
 - `--pool`     t1..t5 or all (required, unless --all-decks or --calibrate)
 - `--swap`     "Card Out=>Card In" (repeat for several swaps)
 - `--games`    games per list per profile (default 1500; `--n` is the same)

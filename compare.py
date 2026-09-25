@@ -1,15 +1,10 @@
-"""Compare a deck change under both AI interaction profiles.
+"""Measure one of your decks against the opponent pools (decklists/pool/), or compare a list change (paired runs).
 
 Examples
-  python3 compare.py --deck seph --swap "Farewell=>Damnation"
-  python3 compare.py --deck seph --swap "Persist=>Dread Return" --swap "Swamp=>Island" --n 3000
-  python3 compare.py --deck seph --swap "A=>B" --swap "C=>D" --ablate      # each swap alone too
-  python3 compare.py --deck najeela --swap "A=>B" --goldfish               # add solo speed metrics
-Long runs (to stay under a tool timeout), one piece at a time, then merge:
-  python3 compare.py --deck seph --swap "A=>B" --n 10000 --part baseline --profile loose --out b_loose.json
-  python3 compare.py --report b_loose.json v_loose.json b_cons.json v_cons.json
-Baseline = the deck list currently in the project .md file.  Same seeds are used for
-baseline and variant so the comparison is paired.
+  python3 compare.py --deck seph --pool t3 --games 1500 --jobs 24
+  python3 compare.py --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor" --jobs 24
+  python3 compare.py --all-decks --pool all --jobs 24 --profile loose
+Baseline = the deck list in decklists/mine/. Same seeds are used for baseline and variant, so the comparison is paired.
 """
 import argparse, json, math, os, sys, time
 if '--dsl-all' in sys.argv: os.environ['SIM_DSL_ALL'] = '1'      # must be set before the decks load
@@ -18,7 +13,7 @@ import engine, ais
 from engine import DB
 from decks import DECKS
 
-KEYS = ('seph', 'veyran', 'sauron', 'najeela')
+KEYS = ('seph', 'veyran', 'sauron')
 
 
 def apply_swaps(deck, swaps):

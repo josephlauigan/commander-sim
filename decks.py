@@ -12,7 +12,7 @@ _here = os.path.dirname(os.path.abspath(__file__))
 _cands = [os.environ.get('SIM_DECKS', ''), os.path.join(_here, 'decklists', 'mine'), _here, '/mnt/project']
 P = next(d for d in _cands if d and os.path.exists(os.path.join(d, 'sephiroth-phyrexian-reanimator.md'))) + os.sep
 DECKS={'seph':load(P+'sephiroth-phyrexian-reanimator.md'),'veyran':load(P+'veyran-izzet-spellslinger.md'),
-       'sauron':load(P+'sauron-grixis-amass.md'),'najeela':load(P+'najeela-5c-tokens.md')}
+       'sauron':load(P+'sauron-grixis-amass.md')}
 SWAPS=[('Stinkweed Imp','Eternal Witness'),('Phyrexian Metamorph','Heroic Intervention'),('Persist','Dread Return'),
        ('Mind Stone','Counterspell'),("Yawgmoth's Will",'Mnemonic Wall'),('Sheoldred, the Apocalypse','Rune-Scarred Demon'),
        ('Lash of the Balrog',"Assassin's Trophy"),('Evil Reawakened',"Tishana's Tidebinder"),('Swamp','Island')]

@@ -5,6 +5,7 @@
 **Updated 2026-09-21.** Notion Thief → Rhystic Study, then Thrummingbird → Inexorable Tide.
 **Updated 2026-09-22.** Two swaps: **Gollum, Silent Slinker → Witch-king, Bringer of Ruin** and **Hero's Blade → Infernal Grasp.** Witch-king moved over from the Sephiroth deck: a 6-mana 5/3 flier whose attack trigger makes the defending player sacrifice their smallest creature — a second evasive threat that also clears chump blockers. Infernal Grasp is the eighth piece of spot removal, replacing the weakest equipment. Neither is a Game Changer, so the count holds at three and the deck stays Bracket 3 at the cap. Deck stays at 100.
 **Updated 2026-09-22 (second pass).** Two more swaps with new cards: **Colossus Hammer → Sword of Feast and Famine** and **Mask of Memory → Jace's Archivist.** Neither is a Game Changer, so the deck stays at three. **The Sword creates an infinite-combat combo with Aggravated Assault** — this deck now has a combo and needs disclosing as one; see Bracket and Rule 0. Deck stays at 100.
+**Updated 2026-09-25.** No list changes — the 100 is unchanged. Regenerated for the three-deck pod: Najeela is no longer tracked, so pod references and card conflicts are now against Sephiroth and Veyran only.
 
 ## Strategy
 
@@ -47,7 +48,7 @@ Witch-king's {4}{B}{B} is the only new colour demand, and seventeen black source
 
 **The land base.** Blood Crypt, Shivan Reef, and Steam Vents are untapped duals that took the dead-land count down to four. Boiling Rock Prison and Sanguine Morass still enter tapped, and Sulfur Falls and Frostboil Snarl are conditional, but the deck usually has both colours on turn three.
 
-**Honest note on the rock count.** You run five mana rocks (Arcane Signet, Chromatic Lantern, Mind Stone, Sol Ring, Talisman of Creativity). Coalition Relic, which used to be here, now lives in the Najeela deck.
+**Honest note on the rock count.** You run five mana rocks (Arcane Signet, Chromatic Lantern, Mind Stone, Sol Ring, Talisman of Creativity). Coalition Relic, which used to be here, went to the Najeela deck (no longer tracked).
 
 **Card advantage is the deck's strongest axis.** Phyrexian Arena, Rhystic Study, Call of the Ring, Jace's Archivist, Night's Whisper, Big Score, Ringsight, Kindred Discovery, Reconnaissance Mission, and Sauron's own draw-four. Ringsight tempts the Ring and tutors any black, blue, or red card to hand, so it finds Deepglow Skate, Witch-king, a counter, or a protection piece on demand. It cannot fetch colourless cards — see the tutor section.
 
@@ -79,7 +80,7 @@ Witch-king's {4}{B}{B} is the only new colour demand, and seventeen black source
 
 **Rhystic Study wants to be down early.** The sooner it lands, the more opponent spells it taxes over the game. Deploy it ahead of Sauron when the pod is spell-heavy; it stacks with Kaervek to make every enemy cast an expensive decision.
 
-**Sword of Hearth and Home rides with Feast and Famine.** +2/+2 and protection from green and white: Najeela's white and green tokens can't block the Army, and her white removal (Swords to Plowshares, Generous Gift) can't target it. Every hit blinks one of your creatures (Noxious Gearhulk, Orcish Bowmasters, Deepglow Skate and Grave Titan all re-trigger) and puts a basic land onto the battlefield. Equip both Swords before Whispersilk Cloak, since the Cloak's shroud stops further equips.
+**Sword of Hearth and Home rides with Feast and Famine.** +2/+2 and protection from green and white: white and green creatures can't block the Army, and white or green removal can't target it — in this pod that blanks Sephiroth's Swords to Plowshares, Path to Exile, and Assassin's Trophy against the carrier. Every hit blinks one of your creatures (Noxious Gearhulk, Orcish Bowmasters, Deepglow Skate and Grave Titan all re-trigger) and puts a basic land onto the battlefield. Equip both Swords before Whispersilk Cloak, since the Cloak's shroud stops further equips.
 
 **Watch the equip costs.** Sword of Feast and Famine ({3}, equip {2}) and Sword of the Animist are the equipment you attach on curve; Conqueror's Flail and War Machine are the late additions. Lightning Greaves on the Army gives shroud (same targeting caveat as Whispersilk), so attach it last.
 
@@ -160,7 +161,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Deepglow Skate
 1 Diabolic Tutor
 1 Drowned Catacomb
-1 Sword of Hearth and Home
 1 Exotic Orchard
 1 Feed the Swarm
 1 Flux Channeler
@@ -204,6 +204,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Steam Vents
 1 Sulfur Falls
 1 Sword of Feast and Famine
+1 Sword of Hearth and Home
 1 Sword of the Animist
 1 Talisman of Creativity
 1 Terminate
@@ -239,19 +240,17 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 **The proliferate suite** is Flux Channeler, Inexorable Tide, and Tezzeret's Gambit, with Deepglow Skate doubling and Mauhúr multiplying on top.
 
 
-**Scavenger Grounds hits your own graveyard,** which fights Unearth. Fire it deliberately, mainly at the Sephiroth deck. Plaza of Heroes only pays off when you name a utility land worth shutting off — in your pod, Strip Mine out of Sephiroth (Phyrexian Tower has left that deck).
+**Scavenger Grounds hits your own graveyard,** which fights Unearth. Fire it deliberately, mainly at the Sephiroth deck. Plaza of Heroes only pays off when you name a utility land worth shutting off — in your pod, Strip Mine out of Sephiroth.
 
-**Card conflicts with your other decks.**
-- **Witch-king, Bringer of Ruin moved here from Sephiroth** — one physical copy, now only in this deck.
-- **Diabolic Tutor is now in three decks** (this one, Sephiroth, and Najeela) — three physical copies.
-- Shared with **Veyran**: Blasphemous Act, Counterspell, Cyclonic Rift, Shivan Reef, Steam Vents, Sulfur Falls. (Scavenger Grounds now lives only here — Veyran cut it for Stormcarved Coast.)
-- Shared with **Sephiroth**: Grave Titan, Mind Stone, Night's Whisper, Phyrexian Arena, Toxic Deluge.
-- Shared with **Najeela**: Crumbling Necropolis, Lightning Greaves.
-- Shared with **Sephiroth and Najeela**: Chromatic Lantern, Treno Dark City.
-- Shared with **Najeela and Veyran**: Chaos Warp, Path of Ancestry.
-- Staples in all four decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **New singles**: Infernal Grasp, Sword of Feast and Famine, Jace's Archivist.
-- **To the binder**: Gollum, Silent Slinker; Hero's Blade; Colossus Hammer; Mask of Memory; Tome of Legends; Erebos, God of the Dead.
+**Card conflicts with your other decks** (Sephiroth and Veyran; Najeela is no longer tracked).
+- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
+- Shared with **Veyran**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
+- Shared with **Sephiroth**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Toxic Deluge, Treno Dark City.
+- **No longer shared**: Night's Whisper and Phyrexian Arena left Sephiroth on 09-25, so they're Sauron-only now. Crumbling Necropolis and Lightning Greaves were shared with Najeela.
+- **Diabolic Tutor** is now in two tracked decks (this one and Sephiroth).
+- **To the binder (earlier)**: Gollum, Silent Slinker; Hero's Blade; Colossus Hammer; Mask of Memory; Tome of Legends; Erebos, God of the Dead.
+
+**Sephiroth now plays combo too.** Grand Abolisher shuts off your counterspells and instant removal on its turn, so the window to stop Mikaeus + Triskelion or the Grave Titan + Nim Deathmantle loop is before Abolisher resolves or on your own turn. Go for the Throat can't hit Triskelion (artifact creature) — use Infernal Grasp or Terminate.
 
 **Weakest remaining inclusions.** Unearth is now the softest slot. At three Game Changers you have no room to add a fourth without moving to Bracket 4.
 
