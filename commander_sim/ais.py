@@ -944,6 +944,7 @@ def sauron_prio(g, p, c):
         a = army_of(p); return 56 if a and a.plus >= 6 else 0
     if 'kaervek' in t: return 54
     if 'witchking' in t: return 52
+    if 'sheoA' in t: return 60                              # Sheoldred, the Apocalypse
     if 'eng' in t: return 50
     if 'archivist' in t: return 50 if has(p, 'bowmasters') else 20
     if 'callring' in t: return 55
@@ -972,7 +973,7 @@ def sauron_prio(g, p, c):
 def sauron_equip(g, p):
     a = army_of(p)
     if not a or a.phased: return False
-    for tag in ('sword', 'flail', 'animist', 'helm', 'cloak'):
+    for tag in ('sword', 'flail', 'animist', 'cloak'):          # Champion's Helm: helm_target / helm_equip
         if equipped(a, tag): continue
         eq = [e for e in find(p, tag) if e.attached is not a and not blocked(g, p, e.cd.name)]
         if not eq: continue
@@ -982,10 +983,28 @@ def sauron_equip(g, p):
                                   for e in p.perms):
             continue                                   # e.g. Sword of Hearth and Home goes on first
         if equipped(a, 'cloak'): return False
-        cost = 1 if tag == 'helm' else 2                      # Champion's Helm: equip {1}
-        if can_pay(g, p, cost, ''):
-            pay(g, p, cost, ''); eq[0].attached = a; return True
+        if can_pay(g, p, 2, ''):
+            pay(g, p, 2, ''); eq[0].attached = a; return True
     return False
+
+
+def helm_target(g, p):
+    """where Champion's Helm (+2/+2; hexproof while the creature is legendary) should go: the most valuable legendary
+    creature (the Army once it is the Ring-bearer), else the Army; None if it is already there"""
+    mine = importlib.import_module('commander_sim.cards.impl.mine')
+    cr = [m for m in p.perms if m.creature and not m.phased]
+    legends = [m for m in cr if mine.is_legendary(g, m)]
+    best = max(legends, key=lambda m: pval(g, m)) if legends else army_of(p)
+    if best is None or equipped(best, 'helm'): return None
+    return best
+
+
+def helm_equip(g, p, m):
+    helm = [e for e in find(p, 'helm') if not blocked(g, p, e.cd.name)]
+    if not helm or m not in p.perms or not can_pay(g, p, 1, ''): return False
+    pay(g, p, 1, ''); helm[0].attached = m
+    log(f'  {NAME(p)} equips Champion\'s Helm to {m.name}', g)
+    return True
 
 
 def sauron_archivist(g, p):

@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 100 tests in about a minute. To run one file, or one test:
+That's 108 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -20,7 +20,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | File | Tests | What it checks |
 |---|---|---|
 | `test_rules.py` | 25 | Core rules on hand-built positions: mana colours and payment order, Sol Ring, Talisman pain, commander tax, the state-based losses (life, 21 commander damage, empty library, 10 poison), what each counterspell can hit and what it costs, Swords / Path / Bolt / token removal, Toxic Deluge, tutors, mulligans, commander damage, flying, deathtouch, lifelink. |
-| `test_my_cards.py` | 23 | Key cards of your three decks against their Oracle text: Sheoldred, Massacre Wurm, Archon of Cruelty, Gray Merchant, Blood Artist, Elesh Norn, Sephiroth, Grave Titan, Atraxa, Consecrated Sphinx; magecraft, Veyran's doubling, Archmage Emeritus, Rite of the Dragoncaller, Aetherflux, Jin-Gitaxias, Emeritus of Ideation; Sauron's amass, Kaervek, Witch-king, Orcish Bowmasters, Rhystic Study, Phyrexian Arena. |
+| `test_my_cards.py` | 31 | Key cards of your three decks against their Oracle text: Sheoldred, Massacre Wurm, Archon of Cruelty, Gray Merchant, Blood Artist, Elesh Norn, Sephiroth, Grave Titan, Atraxa, Consecrated Sphinx; magecraft, Veyran's doubling, Archmage Emeritus, Rite of the Dragoncaller, Aetherflux, Jin-Gitaxias, Emeritus of Ideation; Sauron's amass, Kaervek, Witch-king, Orcish Bowmasters, Rhystic Study, Phyrexian Arena, Champion's Helm, Slaughter Pact, Urabrask, and Sauron's AI casting Sheoldred. |
 | `test_search.py` | 7 | The look-ahead AI: game copies are independent, hidden hands are re-dealt correctly, a win always outscores a board, and a whole decision picks one of the options, leaves the real game untouched, and is reproducible. |
 | `test_dsl.py` | 5 | The ability language: Oracle text compiles to the expected abilities, unreadable text is reported, and a compiled card works in a game. |
 | `test_cli.py` | 14 | The Wilson interval and the paired difference, and every command run the way you run it (`python3 -m ...`) with a few games: a tier run, `--swap`, `--analyze`, `--trace`, `--calibrate`, `--cards`, the validator, the audits and `tools.swaptest`. Also checks that `--jobs 1` and `--jobs 3` give the same result. |
@@ -35,7 +35,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
   new list is what you want, rewrite the fixture:
 
   ```
-  python3 -c "import json; from commander_sim.decks import DECKS; json.dump(DECKS, open('tests/fixtures/my_decks_parsed.json', 'w'), indent=1)"
+  python3 tests/test_my_decks.py --record
   ```
 
 - **A card test fails.** A card test failing means the simulator no longer does what the card's Oracle text says.

@@ -206,6 +206,12 @@ def turn_start(g, p):
             E.log(f'  {E.NAME(p)} can\'t pay for Pact of Negation and loses', g)
             p.life = 0; p.last_src = None; E.check_state(g); break
     p.pacts = 0
+    debts, p.pact_debts = getattr(p, 'pact_debts', []), []
+    for gen, pips in debts:                           # Slaughter Pact
+        if E.can_pay(g, p, gen, pips): E.pay(g, p, gen, pips)
+        else:
+            E.log(f'  {E.NAME(p)} can\'t pay for a pact and loses', g)
+            p.life = 0; p.last_src = None; E.check_state(g); break
     if getattr(p, 'sagas', None):
         from commander_sim.cards.impl import common as impl_common; impl_common.saga_step(g, p)
     reb = getattr(p, 'rebound', None)

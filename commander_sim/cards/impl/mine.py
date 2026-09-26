@@ -966,3 +966,25 @@ CI.kaervek = kaervek
 CI.plaza_colors = plaza_colors
 CI.territory_colors = territory_colors
 CI.ring_tempt = ring_tempt
+
+
+# ======================================================== Urabrask, Heretic Praetor
+@on('Urabrask, Heretic Praetor', 'upkeep')
+def _urabrask(g, src, p):
+    """your upkeep: exile the top card, you may play it this turn; each opponent's upkeep: their next draw this turn is
+    exiled instead, playable this turn (engine.draw)"""
+    if p is src.owner:
+        if p.library:
+            c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
+            log(f'    Urabrask exiles {c.name} (playable this turn)', g)
+    elif p.alive:
+        p.urabrask = turn_stamp(g)
+
+
+card('Urabrask, Heretic Praetor', 'leg pow=4 tgh=4 haste', dsl=[])
+note('Urabrask, Heretic Praetor', 'Full', 'your upkeep: top card exiled, playable this turn; opponents: the next draw '
+     'each upkeep is exiled instead and playable that turn (so it is not a draw); unplayed cards stay exiled')
+note('Slaughter Pact', 'Full', 'destroy target nonblack creature for {0}; pay {2}{B} at your next upkeep or lose; the '
+     'AI casts it only when it can pay that')
+note("Champion's Helm", 'Full', 'equip {1}: +2/+2, hexproof while legendary; the AI equips the most valuable legendary '
+     'creature (the Army once it is the Ring-bearer), else the Army')

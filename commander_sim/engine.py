@@ -611,6 +611,11 @@ def draw(g, p, n=1, step=False):
                 draw(g, thief.owner, 1); continue
         if not p.library:
             p.decked = True; return
+        if getattr(p, 'urabrask', None) == turn_stamp(g):     # Urabrask, Heretic Praetor: exiled instead, playable
+            p.urabrask = None                                  # this turn (no draw, so no draw triggers)
+            c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
+            log(f'    {NAME(p)} exiles {c.name} instead of drawing it (Urabrask)', g)
+            continue
         p.draw_n += 1
         p.hand.append(p.library.pop())
         if p.draw_n == 1: p.miracle = (turn_stamp(g), p.hand[-1])
@@ -991,7 +996,21 @@ def casts_this_turn(g, p, pred=None):
     return sum(1 for c in log_[1] if pred is None or pred(c))
 
 
+def pact_affordable(g, p, cost):
+    """could p pay this pact cost, on top of pacts already owed, from its mana sources at the next upkeep (everything
+    untapped)?"""
+    gen, pips = parse_cost(cost)
+    for dg, dp in getattr(p, 'pact_debts', []): gen += dg; pips += dp
+    tapped = [(x, x.tapped) for x in p.lands + p.perms]
+    for x, _ in tapped: x.tapped = False
+    try: return can_pay(g, p, gen, pips)
+    finally:
+        for x, t in tapped: x.tapped = t
+
+
 def on_cast(g, p, c):
+    if 'pactpay' in c.tags:                                # Slaughter Pact: pay at your next upkeep or lose the game
+        p.pact_debts = getattr(p, 'pact_debts', []) + [parse_cost(c.tags['pactpay'])]
     if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_cast(g, p, c)
     if getattr(p, 'glimpse', None): importlib.import_module('commander_sim.cards.impl.rules2').glimpse_draw(g, p, c)
     st = turn_stamp(g)

@@ -67,6 +67,7 @@ Sephiroth, Planet's Heir|C|4UB|bomb=5 pow=4 vig leg heir
 Sheoldred, the Apocalypse|C|2BB|bomb=7 pow=4 tgh=5 dt leg sheoA
 Sheoldred, Whispering One|C|5BB|bomb=8 pow=6 leg sheoW swampwalk
 Skullclamp|A|1|clamp
+Slaughter Pact|I|0|rem=destroy tgt=c nonblack pactpay=2B
 Smothering Tithe|E|3W|tithe
 Sol Ring|A|1|rock=2:C
 Stinkweed Imp|C|2B|pow=1 tgh=2 fly dt dredge noatk

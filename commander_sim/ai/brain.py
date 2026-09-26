@@ -267,6 +267,7 @@ def removal_options(g, p, s):
         u = v - 3.5
         if c.instant: u -= 1.2 * style(p)['caution'] * E.INSTANT_EXTRA / 2.0   # instants are worth holding (profile-dependent)
         if 'needsac' in t and not [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]: continue
+        if 'pactpay' in t and not E.pact_affordable(g, p, t['pactpay']): continue   # Slaughter Pact: or lose the game
         out.append((u, f'{c.name} -> {best.name}', lambda c=c, tg=tg: cast_removal(g, p, c, tg)))
         if 'kick' in t and t['rem'].startswith('dmg') and can_pay(g, p, c.generic + int(t['kick']), c.pips):
             kd = f"dmg{int(t['rem'][3:]) + 2}"                       # Burst Lightning kicked: 4 damage
@@ -418,6 +419,11 @@ def special_options(g, p, s, post):
             for tag in ('sword', 'cloak'):
                 if not equipped(a, tag) and any(e.attached is None or e.attached not in p.perms for e in find(p, tag)):
                     o.append((6.5, 'equip the Army', lambda: A.sauron_equip(g, p))); break
+        ht = A.helm_target(g, p) if find(p, 'helm') and can_pay(g, p, 1, '') else None
+        if ht is not None:
+            leg = importlib.import_module('commander_sim.cards.impl.mine').is_legendary(g, ht)
+            u = 3.0 + (4.0 * removal_risk(g, p) + 0.2 * pval(g, ht) if leg else 0.0)
+            o.append((u, f"equip Champion's Helm to {ht.name}", lambda ht=ht: A.helm_equip(g, p, ht)))
         if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and importlib.import_module('commander_sim.cards.impl.mine').archivist_worth(g, p)
                 and can_pay(g, p, 0, 'U')):
             o.append((5.0, "Jace's Archivist wheel", lambda: A.sauron_archivist(g, p)))
