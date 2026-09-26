@@ -266,6 +266,7 @@ def report(path, text, out, inn, dry):
     """how well the new cards are modeled, and where the file still mentions cards that left"""
     from commander_sim.cards import sources
     from commander_sim import pools, pool_audit
+    from commander_sim.decks import load
     pools.register()
     sources.ensure_cards(inn, verbose=False)
     mine = os.path.basename(path) in MINE.values()             # one of your decks (or a copy of one)
@@ -279,11 +280,15 @@ def report(path, text, out, inn, dry):
         if weak: print('  Cards below Full-auto play weaker (or stronger) than the real card; worth modeling before measuring.')
     lists = re.compile(r'^(## (Import list|Decklist by type)|\*\*[^*]+ \(\d+\)\.\*\*|\d+ )')
     hits = []
+    kept = load(path) if os.path.exists(path) else []
+    cmd_line = next((l for l in text.split('\n') if l.startswith('**Commander (1).**')), '')
     for i, line in enumerate(text.split('\n'), 1):
         if lists.match(line): continue
         for n in out:
             short = n.split(' // ')[0].split(',')[0]
-            if n in line or n.replace(',', '') in line or (len(short) >= 6 and short in line):
+            # a short name ("Kefka") only counts when no card still in the deck, and not the commander, shares it
+            short_ok = len(short) >= 6 and short not in cmd_line and not any(short in k for k in kept)
+            if n in line or n.replace(',', '') in line or (short_ok and short in line):
                 hits.append((i, n, line.strip()))
     if hits:
         print('\nThe rest of the file still mentions cards that left (strategy text is not rewritten):')
