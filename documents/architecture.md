@@ -114,7 +114,7 @@ commander_sim/          compare, poolmode, pools, decks, pool_audit, engine, ais
 commander_sim/ai/       brain, search, pool_ai, pool_decks, deck_plans
 commander_sim/cards/    carddb, sources, scryfall, autotag, dsl_parse, dsl, cardimpl, pool_cards
 commander_sim/cards/impl/   common, t1 … t5, combos, topdeck, fixes, lands, partials, rules, rules2, mine
-commander_sim/tools/    searchtest, swaptest
+commander_sim/tools/    searchtest, swaptest, linecov
 data/                   scryfall_cache.json, cards_dsl.example.json (and cards_dsl.json if you add one)
 ```
 
@@ -129,7 +129,7 @@ deck files, the Scryfall cache and the audit notes. `python3 -m commander_sim` r
 | `poolmode.py` | Everything measured against the pools: one deck vs one tier, paired A/B, the deck × tier matrix, `--analyze`, `--trace`, and the calibration checks. |
 | `pools.py` | Loads the 25 pool deck files, validates them (size, singleton, colour identity, bans, Game Changers per tier), registers them for play, and draws seats for a game. |
 | `decks.py` | Loads your three deck files from `decklists/mine/` into `DECKS`. |
-| `tools/searchtest.py`, `tools/swaptest.py` | Paired tests for pool decks: with and without look-ahead, and with list swaps. |
+| `tools/searchtest.py`, `tools/swaptest.py`, `tools/linecov.py` | Paired tests for pool decks (with and without look-ahead, and with list swaps), and the test suite's line coverage. |
 | `pool_audit.py` | How faithfully each card is modeled, per deck. |
 
 **Game and rules** (`commander_sim/`)
@@ -884,14 +884,26 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (26 tests, about 30 s):
+Run the tests with `python3 -m unittest discover -s tests -t .` (100 tests, about a minute).
+[tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
 |---|---|
-| `test_validator.py` | Deck validation rules: size, singleton, commander, name resolution, colour identity, bans, Game Changer tier rules, and the real pool layout. |
-| `test_pool_sampling.py` | Seat drawing: without replacement, seeded, uniform, and independent of pool order. Pairing: opponents and shuffles identical across deck versions; games reproducible. |
-| `test_pool_games.py` | A game from every tier plays to completion, with the heuristic AI and with look-ahead. |
-| `test_my_decks.py` | Your deck files parse to the recorded lists (`tests/fixtures/my_decks_parsed.json`), so an accidental edit is caught. |
+| `test_rules.py` | Core rules on hand-built positions: mana, commander tax, state-based losses, counterspells, removal, wipes, tutors, mulligans, combat keywords. |
+| `test_my_cards.py` | Key cards of your three decks against their Oracle text. |
+| `test_search.py` | The look-ahead AI: independent copies, re-dealt hidden hands, evaluation bounds, a whole reproducible decision. |
+| `test_dsl.py` | The ability compiler and interpreter. |
+| `test_cli.py` | Statistics, and every command run as a module with a few games; results don't depend on `--jobs`. |
+| `test_pool_games.py` | Games from every tier, alone and with each of your decks, play to the end; one look-ahead game. |
+| `test_pool_sampling.py` | Seat drawing, pairing and reproducibility. |
+| `test_validator.py` | Deck validation rules. |
+| `test_my_decks.py` | Your deck files parse to the recorded lists (`tests/fixtures/my_decks_parsed.json`). |
+
+`tests/table.py` builds a position for a rule test: seat decks, empty the hands, put chosen cards in hand or onto the
+battlefield, then drive the engine directly.
+
+`python3 -m commander_sim.tools.linecov` measures line coverage (86% in September 2026). It records subprocesses and
+worker processes too, using only the standard library.
 
 Other tools:
 

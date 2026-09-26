@@ -624,8 +624,7 @@ def draw(g, p, n=1, step=False):
         if g.hooks: CI.fire(g, 'draw', p)
         if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_draw(g, p)
         for q in g.opps(p):
-            if has(q, 'sheoA'):
-                lose_life(g, p, 2, q, kind='drain'); gain(q, 2)
+            if has(q, 'sheoA'): lose_life(g, p, 2, q, kind='drain')      # Sheoldred, the Apocalypse: they lose 2
             if has(q, 'tithe') and importlib.import_module('commander_sim.cards.impl.rules').tithe_unpaid(g, p):
                 add_treasure(g, q, 1)
             if extra and has(q, 'bowmasters'):
@@ -1590,7 +1589,7 @@ def etb_once(g, p, m):
         for q in opps:
             for x in list(q.perms):
                 if x.creature and etgh(g, x) <= 2:
-                    die(g, x, 'destroy'); lose_life(g, q, 2, p, kind='drain')
+                    die(g, x, 'destroy')                # the 2 life is its dies trigger ('wurmdrain', in _die_rest)
     if 'rsd' in t: tutor(g, p, 'any')
     if 'witness' in t: from commander_sim import ais; ais.regrow(g, p, False)
     if 'wall' in t: from commander_sim import ais; ais.regrow(g, p, True)
@@ -1658,8 +1657,11 @@ def archon_trig(g, p):
     lose_life(g, q, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
 
 
-def edict(g, q):
+def edict(g, q, least_power=False):
+    """q sacrifices the creature it values least (least_power: among those with the least power, Witch-king)"""
     cr = [m for m in q.perms if m.creature and not m.phased]
+    if cr and least_power:
+        lo = min(epow(g, m) for m in cr); cr = [m for m in cr if epow(g, m) == lo]
     if cr: die(g, min(cr, key=lambda x: pval(g, x)), 'sac')
 
 

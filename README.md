@@ -32,12 +32,12 @@ commander_sim/            the simulator (a Python package)
     cardimpl.py           the Python hook registry
     pool_cards.py         overrides for pool cards
     impl/                 Python implementations of individual cards
-  tools/                  searchtest.py, swaptest.py
+  tools/                  searchtest.py, swaptest.py, linecov.py
 data/                     scryfall_cache.json, cards_dsl.example.json
 decklists/mine/           your decks
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
 documents/                architecture.md, card-audit.md
-tests/                    unit and end-to-end tests
+tests/                    rule, card, AI and command tests (tests/README.md)
 ```
 
 ## Run
@@ -90,7 +90,8 @@ python3 -m commander_sim.tools.swaptest <pool deck> <tier> 800 "Out>In; Out>In" 
 python3 -m commander_sim.tools.searchtest <pool deck> <tier> 240 6 5 all          # a pool deck with and without look-ahead
 python3 -m commander_sim.cards.autotag "Talrand, Sky Summoner"           # preview how a card is tagged
 python3 -m commander_sim.cards.dsl "Grave Pact"                          # show a card's compiled abilities
-python3 -m unittest discover -s tests -t .                               # the tests
+python3 -m unittest discover -s tests -t .                               # the tests (see tests/README.md)
+python3 -m commander_sim.tools.linecov                                   # their line coverage
 ```
 
 ## Reading results
