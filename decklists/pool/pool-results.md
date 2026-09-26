@@ -80,16 +80,19 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 
 Lists as updated in September 2026 (Najeela no longer tracked), after a full modeling pass: every card in the three
 decks audits Full (`python3 pool_audit.py --mine`). Each game seats the deck against three decks of the tier;
-25% is an even share.
+25% is an even share. Tiers 2, 3 and 5 were re-run after the six pool lists were tuned (0b); Tiers 1 and 4 did not
+change. Before the tuning those cells read: Sephiroth 49.6 / 38.8 / 22.5%, Veyran 25.0 / 17.5 / 14.2%, Sauron
+23.3 / 20.4 / 18.3% (T2 / T3 / T5).
 
 | Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 |
 |---|---|---|---|---|---|
-| Sephiroth | **40.8%** (35-47) | **49.6%** (43-56) | **38.8%** (33-45) | **37.9%** (32-44) | 22.5% (18-28) |
-| Veyran | 20.0% (15-26) | 25.0% (20-31) | 17.5% (13-23) | 20.8% (16-26) | 14.2% (10-19) |
-| Sauron | 24.2% (19-30) | 23.3% (18-29) | 20.4% (16-26) | 24.2% (19-30) | 18.3% (14-24) |
+| Sephiroth | **40.8%** (35-47) | **47.5%** (41-54) | **42.1%** (36-48) | **37.9%** (32-44) | 22.1% (17-28) |
+| Veyran | 20.0% (15-26) | 17.9% (14-23) | 15.0% (11-20) | 20.8% (16-26) | 12.9% (9-18) |
+| Sauron | 24.2% (19-30) | 27.5% (22-34) | 21.2% (16-27) | 24.2% (19-30) | 17.5% (13-23) |
 
-Sephiroth is favoured through Low Bracket 4 and near even against High Bracket 4. Veyran and Sauron sit near or
-somewhat below an even share at every tier and fall off against High Bracket 4. These are worst-case numbers: the
+Sephiroth is favoured through Low Bracket 4 and near even against High Bracket 4. Sauron sits near an even share
+through Low Bracket 4 and falls off against High Bracket 4. Veyran is below an even share at every tier, clearly so
+from Tier 2 up (13-18%). These are worst-case numbers: the
 loose profile has opponents counter and remove more freely than the conservative one.
 
 ## 1. Deck × tier matrix (heuristic AI)
