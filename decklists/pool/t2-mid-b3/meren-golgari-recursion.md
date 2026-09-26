@@ -16,6 +16,8 @@ Long games. Punishes decks that trade one-for-one and have no graveyard hate. Bo
 
 Every creature is a value ETB, every sacrifice is an experience counter, and Meren returns one to the battlefield each end step. Chupacabra, Shriekmaw, Fleshbag, Plaguecrafter, and Merciless Executioner re-buy removal every turn cycle; Eternal Witness re-buys spells; Gray Merchant drains; Archon of Cruelty is the top end. Survival of the Fittest and Birthing Pod turn surplus creatures into the right creature. No two-card infinite.
 
+Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Archon of Cruelty, Grave Pact, Massacre Wurm, Hornet Queen, Sheoldred, Whispering One and Birthing Pod made way for Bloodgift Demon, Courser of Kruphix, Burglar Rat, Canopy Tactician, Elderfang Ritualist and Mind Stone (the recursion engine is unchanged; the top end is Mid Bracket 3). Within Tier 2: 39-47% before, 25% after.
+
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
@@ -26,13 +28,13 @@ Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand)
 
 **Commander (1).** Meren of Clan Nel Toth
 
-**Creatures (36).** Acidic Slime, Archon of Cruelty, Birds of Paradise, Blood Artist, Carrion Feeder, Caustic Caterpillar, Deathrite Shaman, Eternal Witness, Fauna Shaman, Fleshbag Marauder, Golgari Findbroker, Grave Titan, Gray Merchant of Asphodel, Grim Haruspex, Hornet Queen, Llanowar Elves, Massacre Wurm, Merciless Executioner, Nekrataal, Plaguecrafter, Ravenous Chupacabra, Reclamation Sage, Sakura-Tribe Elder, Satyr Wayfinder, Sheoldred, Whispering One, Shriekmaw, Solemn Simulacrum, Spore Frog, Stitcher's Supplier, Syr Konrad, the Grim, Tireless Tracker, Viscera Seer, Woe Strider, Wood Elves, Yahenni, Undying Partisan, Zulaport Cutthroat
+**Creatures (37).** Acidic Slime, Birds of Paradise, Blood Artist, Bloodgift Demon, Burglar Rat, Canopy Tactician, Carrion Feeder, Caustic Caterpillar, Courser of Kruphix, Deathrite Shaman, Elderfang Ritualist, Eternal Witness, Fauna Shaman, Fleshbag Marauder, Golgari Findbroker, Grave Titan, Gray Merchant of Asphodel, Grim Haruspex, Llanowar Elves, Merciless Executioner, Nekrataal, Plaguecrafter, Ravenous Chupacabra, Reclamation Sage, Sakura-Tribe Elder, Satyr Wayfinder, Shriekmaw, Solemn Simulacrum, Spore Frog, Stitcher's Supplier, Syr Konrad, the Grim, Tireless Tracker, Viscera Seer, Woe Strider, Wood Elves, Yahenni, Undying Partisan, Zulaport Cutthroat
 
 **Planeswalkers (1).** Liliana, Death's Majesty
 
-**Enchantments (5).** Evolutionary Leap, Grave Pact, Pernicious Deed, Phyrexian Arena, Survival of the Fittest
+**Enchantments (4).** Evolutionary Leap, Pernicious Deed, Phyrexian Arena, Survival of the Fittest
 
-**Artifacts (7).** Arcane Signet, Ashnod's Altar, Birthing Pod, Golgari Signet, Skullclamp, Sol Ring, Talisman of Resilience
+**Artifacts (7).** Arcane Signet, Ashnod's Altar, Golgari Signet, Mind Stone, Skullclamp, Sol Ring, Talisman of Resilience
 
 **Sorceries (7).** Bone Shards, Casualties of War, Demonic Tutor, Nature's Lore, Three Visits, Toxic Deluge, Victimize
 
@@ -45,23 +47,26 @@ Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand)
 ```
 1 Acidic Slime
 1 Arcane Signet
-1 Archon of Cruelty
 1 Ashnod's Altar
 1 Assassin's Trophy
 1 Beast Within
 1 Birds of Paradise
-1 Birthing Pod
 1 Blood Artist
+1 Bloodgift Demon
 1 Bojuka Bog
 1 Bone Shards
+1 Burglar Rat
+1 Canopy Tactician
 1 Carrion Feeder
 1 Casualties of War
 1 Caustic Caterpillar
 1 Command Tower
+1 Courser of Kruphix
 1 Deadly Dispute
 1 Deathcap Glade
 1 Deathrite Shaman
 1 Demonic Tutor
+1 Elderfang Ritualist
 1 Eternal Witness
 1 Evolutionary Leap
 1 Evolving Wilds
@@ -72,20 +77,18 @@ Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand)
 1 Golgari Charm
 1 Golgari Findbroker
 1 Golgari Signet
-1 Grave Pact
 1 Grave Titan
 1 Gray Merchant of Asphodel
 1 Grim Haruspex
 1 Grisly Salvage
 1 High Market
-1 Hornet Queen
 1 Infernal Grasp
 1 Liliana, Death's Majesty
 1 Llanowar Elves
 1 Llanowar Wastes
-1 Massacre Wurm
 1 Merciless Executioner
 1 Meren of Clan Nel Toth
+1 Mind Stone
 1 Myriad Landscape
 1 Nature's Lore
 1 Nekrataal
@@ -99,7 +102,6 @@ Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand)
 1 Reclamation Sage
 1 Sakura-Tribe Elder
 1 Satyr Wayfinder
-1 Sheoldred, Whispering One
 1 Shriekmaw
 1 Skullclamp
 1 Sol Ring

@@ -4,7 +4,7 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Aristocrats combo.
 
 - **Commander:** Yawgmoth, Thran Physician
 - **Color identity:** Black
-- **Game Changers (12):** Mana Vault, Chrome Mox, Necropotence, Bolas's Citadel, Ad Nauseam, Demonic Tutor, Vampiric Tutor, Imperial Seal, Opposition Agent, Orcish Bowmasters, Braids, Cabal Minion, Ancient Tomb
+- **Game Changers (14):** Mana Vault, Chrome Mox, Grim Monolith, The One Ring, Necropotence, Bolas's Citadel, Ad Nauseam, Demonic Tutor, Vampiric Tutor, Imperial Seal, Opposition Agent, Orcish Bowmasters, Braids, Cabal Minion, Ancient Tomb
 - **Combos:** Sanguine Bond + Exquisite Blood (two-card drain loop). Yawgmoth + two undying creatures (Geralf's Messenger, Butcher Ghoul, or any non-Human under Mikaeus). Gravecrawler + Phyrexian Altar. Mikaeus + Walking Ballista is not infinite on its own, but Ballista is a mana sink for Coffers.
 - **Lands:** 31 (9 nonbasic + 22 basic)
 
@@ -17,6 +17,8 @@ A resilient combo that recurs through removal and doubles as a creature-sweeper 
 Yawgmoth pays 1 life to sacrifice a creature, put a -1/-1 counter on something, and draw. With two undying creatures (Geralf's Messenger, Butcher Ghoul, or anything under Mikaeus), each sacrifice cancels the other's +1/+1 counter, so the loop repeats for as many cards and drain triggers as you want; Geralf's Messenger's drain pays for it. Yawgmoth's -1/-1 counters also sweep opposing X/1s for free. Gravecrawler + Phyrexian Altar is a second loop. Necropotence, Ad Nauseam, and Bolas's Citadel refuel.
 
 Tuned in September 2026 toward a High Bracket 4 build: two more death payoffs (Falkenrath Noble, Vindictive Vampire), steady fodder and card flow (Bitterblossom, Midnight Reaper), and Sanguine Bond + Exquisite Blood as a second compact kill, for Liliana of the Veil, Deadly Rollick, Bloodchief's Thirst, Stitcher's Supplier, Grave Pact and Feed the Swarm. Mono-black has only three loop pieces for the Yawgmoth combo (Mikaeus, Geralf's Messenger, Butcher Ghoul).
+
+Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Fellwar Stone and Night's Whisper made way for Grim Monolith and The One Ring. Yawgmoth stays at the low edge of Tier 5 (about 15%): mono-black has only three pieces for its loop, and it loses races rather than lacking power.
 
 ## Sim modeling notes
 
@@ -32,9 +34,9 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 
 **Enchantments (7).** Animate Dead, Bastion of Remembrance, Bitterblossom, Exquisite Blood, Necropotence, Phyrexian Arena, Sanguine Bond
 
-**Artifacts (14).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chrome Mox, Fellwar Stone, Jet Medallion, Lotus Petal, Mana Vault, Mind Stone, Phyrexian Altar, Sensei's Divining Top, Skullclamp, Sol Ring, Wishclaw Talisman
+**Artifacts (15).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chrome Mox, Grim Monolith, Jet Medallion, Lotus Petal, Mana Vault, Mind Stone, Phyrexian Altar, Sensei's Divining Top, Skullclamp, Sol Ring, The One Ring, Wishclaw Talisman
 
-**Sorceries (10).** Beseech the Mirror, Damnation, Demonic Tutor, Diabolic Intent, Grim Tutor, Imperial Seal, Night's Whisper, Reanimate, Toxic Deluge, Unearth
+**Sorceries (9).** Beseech the Mirror, Damnation, Demonic Tutor, Diabolic Intent, Grim Tutor, Imperial Seal, Reanimate, Toxic Deluge, Unearth
 
 **Instants (10).** Ad Nauseam, Cabal Ritual, Culling the Weak, Dark Ritual, Deadly Dispute, Fatal Push, Infernal Grasp, Snuff Out, Vampiric Tutor, Village Rites
 
@@ -73,10 +75,10 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Exquisite Blood
 1 Falkenrath Noble
 1 Fatal Push
-1 Fellwar Stone
 1 Geralf's Messenger
 1 Gravecrawler
 1 Grim Haruspex
+1 Grim Monolith
 1 Grim Tutor
 1 High Market
 1 Imperial Seal
@@ -89,7 +91,6 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Mind Stone
 1 Necropotence
 1 Nether Traitor
-1 Night's Whisper
 1 Opposition Agent
 1 Orcish Bowmasters
 1 Phyrexian Altar
@@ -108,6 +109,7 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 1 Sol Ring
 1 Syr Konrad, the Grim
 1 Takenuma, Abandoned Mire
+1 The One Ring
 1 Toxic Deluge
 1 Unearth
 1 Urborg, Tomb of Yawgmoth

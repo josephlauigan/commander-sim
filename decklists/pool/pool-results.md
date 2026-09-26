@@ -47,6 +47,17 @@ decks below 25% in their row are the tier's weak decks in 0b as well.
 | T4 Low B4 | 10.2 | Heliod 28, Krenko 27, Prosper 27, Yuriko 26, Chulane 18 | Heliod 30, Yuriko 28, Prosper 24, Krenko 23, Chulane 19 |
 | T5 High B4 | 7.6 | Kinnan 34, Winota 29, Zur 25, Urza 22, **Yawgmoth 14 LOW** | Kinnan 35, Winota 29, Zur 24, Urza 21, Yawgmoth 17 |
 
+After tuning five lists (Meren and Atraxa trimmed; Brago, Marwyn and Yawgmoth strengthened; see each file's notes),
+look-ahead, 240 games per tier, loose / conservative:
+
+| Tier | loose | conservative |
+|---|---|---|
+| T2 | Sythis 40, Meren 28, Lord Windgrace 23, Kaalia 21, Brago 14 | **Sythis 46**, Kaalia 22, Brago 19, Meren 19, Lord Windgrace 19 |
+| T3 | Aurelia 33, Atraxa 28, Tergrid 26, Korvold 20, Marwyn 18 | Atraxa 35, Aurelia 33, Tergrid 20, Marwyn 18, Korvold 18 |
+| T5 | Kinnan 37, Winota 31, Zur 23, Urza 18, Yawgmoth 16 | Kinnan 34, Winota 27, Zur 26, Urza 23, Yawgmoth 15 |
+
+With Meren's pressure gone, Sythis now leads Tier 2; Kinnan and Yawgmoth sit at the edges of Tier 5.
+
 Games get shorter as the brackets go up (15 rounds in T2 to under 8 in T5), with few timeouts above T2.
 Remaining outliers: Meren and Atraxa run hot; Brago, Marwyn and Yawgmoth run cold. Yawgmoth's mono-black list has
 only three pieces for its undying loop (Mikaeus, Geralf's Messenger, Butcher Ghoul); an immortal Yawgmoth wins 36%, so
