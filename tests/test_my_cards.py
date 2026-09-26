@@ -180,6 +180,17 @@ class Sephiroth(unittest.TestCase):
         self.assertFalse(E.minus_counter(g, finks))           # no -1/-1 counters on your creatures (Yawgmoth, Persist)
         self.assertTrue(E.melira(s))
 
+    def test_finks_at_zero_toughness_under_melira_stays_dead(self):
+        # Kitchen Finks (3/2) enters under an opponent's Elesh Norn (-2/-2): it dies at once, and under Melira persist
+        # returns it without a counter every time, a mandatory loop. It used to recurse until Python gave up.
+        g = table('seph', 'veyran'); s, v = g.players
+        melira = perm(g, s, 'Melira, Sylvok Outcast'); melira.plus = 2           # 4/4: she survives the Norn
+        perm(g, v, 'Elesh Norn, Grand Cenobite')
+        perm(g, s, 'Kitchen Finks')
+        self.assertIn(melira, s.perms)
+        self.assertFalse(any(m.name == 'Kitchen Finks' for m in s.perms))
+        self.assertTrue(any(c.name == 'Kitchen Finks' for c in s.gy))
+
     def test_avacyns_pilgrim(self):
         g = table('seph', 'veyran'); s = g.players[0]
         perm(g, s, "Avacyn's Pilgrim")

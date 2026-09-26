@@ -787,6 +787,20 @@ def minus_counter(g, m, n=1):
     return True
 
 
+RETURN_CAP = 10    # undying / persist returns of one card in one turn; past that it stays dead
+
+
+def returns_left(g, cd):
+    """a card that keeps dying the moment it returns (Kitchen Finks under Melira while an opponent's -X/-X effect
+    leaves it at 0 toughness) is a mandatory loop, a draw under the rules: the simulator lets it stay dead instead"""
+    st = turn_stamp(g)
+    if getattr(g, 'returns_turn', None) != st: g.returns_turn, g.returns = st, {}
+    k = g.returns.get(id(cd), 0)
+    if k >= RETURN_CAP: return False
+    g.returns[id(cd)] = k + 1
+    return True
+
+
 def die(g, m, cause='destroy'):
     p = m.owner
     if m not in p.perms: return
@@ -848,7 +862,8 @@ def _die_rest(g, m, p, cause, selfdies):
         p.stats['undying'] += 1
         return
     k = m.cd.kws
-    if k and m.orig is p and m.cd is not p.cmd and not (g.hooks and CI.total(g, 'no_graveyard', p)):
+    if k and m.orig is p and m.cd is not p.cmd and not (g.hooks and CI.total(g, 'no_graveyard', p)) \
+            and returns_left(g, m.cd):
         if 'undying' in k and m.plus <= 0:                     # undying: back with a +1/+1 counter
             enter(g, p, m.cd, undying=True); p.stats['undying'] += 1; return
         if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter (none under Melira)
