@@ -16,6 +16,8 @@ Can your decks win through an attack tax, and do they bring enchantment removal?
 
 Build a fort that makes attacking it expensive (Ghostly Prison, Sphere of Safety, Norn's Annex, Windborn Muse, Baird, Archangel of Tithes, Crawlspace, Silent Arbiter), draw a card off every enchantment cast, and win with Sigil of the Empty Throne angels, Starfield of Nyx animating the enchantments, or an Ancestral Mask on anything evasive. Removal is almost all enchantment-based, so it grows the engine.
 
+Tuned in September 2026 (with the user's approval) after Meren's trim made Sythis the Tier 2 outlier (40-46% within the tier under the look-ahead AI): Sigil of the Empty Throne and Starfield of Nyx made way for Heliod's Pilgrim and Spirit Mantle (fewer token threats behind the pillowfort). Within Tier 2 (conservative): 46% before, 32% after.
+
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
@@ -26,9 +28,9 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 
 **Commander (1).** Sythis, Harvest's Hand
 
-**Creatures (16).** Ajani's Chosen, Archangel of Tithes, Archon of Sun's Grace, Argothian Enchantress, Baird, Steward of Argive, Destiny Spinner, Eidolon of Blossoms, Kor Spiritdancer, Mesa Enchantress, Reclamation Sage, Sanctum Weaver, Satyr Enchanter, Setessan Champion, Silent Arbiter, Verduran Enchantress, Windborn Muse
+**Creatures (17).** Ajani's Chosen, Archangel of Tithes, Archon of Sun's Grace, Argothian Enchantress, Baird, Steward of Argive, Destiny Spinner, Eidolon of Blossoms, Heliod's Pilgrim, Kor Spiritdancer, Mesa Enchantress, Reclamation Sage, Sanctum Weaver, Satyr Enchanter, Setessan Champion, Silent Arbiter, Verduran Enchantress, Windborn Muse
 
-**Enchantments (31).** All That Glitters, Ancestral Mask, Banishing Light, Carpet of Flowers, Cast Out, Darksteel Mutation, Elephant Grass, Enchantress's Presence, Ethereal Armor, Fertile Ground, Ghostly Prison, Grasp of Fate, Greater Auramancy, Hallowed Haunting, Oblivion Ring, Overgrowth, Privileged Position, Rancor, Rest in Peace, Sentinel's Eyes, Sigil of the Empty Throne, Smothering Tithe, Snake Umbra, Song of the Dryads, Sphere of Safety, Spider Umbra, Starfield of Nyx, Sterling Grove, Sylvan Library, Utopia Sprawl, Wild Growth
+**Enchantments (30).** All That Glitters, Ancestral Mask, Banishing Light, Carpet of Flowers, Cast Out, Darksteel Mutation, Elephant Grass, Enchantress's Presence, Ethereal Armor, Fertile Ground, Ghostly Prison, Grasp of Fate, Greater Auramancy, Hallowed Haunting, Oblivion Ring, Overgrowth, Privileged Position, Rancor, Rest in Peace, Sentinel's Eyes, Smothering Tithe, Snake Umbra, Song of the Dryads, Sphere of Safety, Spider Umbra, Spirit Mantle, Sterling Grove, Sylvan Library, Utopia Sprawl, Wild Growth
 
 **Artifacts (5).** Arcane Signet, Crawlspace, Norn's Annex, Selesnya Signet, Sol Ring
 
@@ -75,6 +77,7 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 1 Grasp of Fate
 1 Greater Auramancy
 1 Hallowed Haunting
+1 Heliod's Pilgrim
 1 Heroic Intervention
 1 Horizon Canopy
 1 Idyllic Tutor
@@ -97,7 +100,6 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 1 Selesnya Signet
 1 Sentinel's Eyes
 1 Setessan Champion
-1 Sigil of the Empty Throne
 1 Silent Arbiter
 1 Smothering Tithe
 1 Snake Umbra
@@ -105,7 +107,7 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 1 Song of the Dryads
 1 Sphere of Safety
 1 Spider Umbra
-1 Starfield of Nyx
+1 Spirit Mantle
 1 Sterling Grove
 1 Sunpetal Grove
 1 Swords to Plowshares

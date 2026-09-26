@@ -52,11 +52,12 @@ look-ahead, 240 games per tier, loose / conservative:
 
 | Tier | loose | conservative |
 |---|---|---|
-| T2 | Sythis 40, Meren 28, Lord Windgrace 23, Kaalia 21, Brago 14 | **Sythis 46**, Kaalia 22, Brago 19, Meren 19, Lord Windgrace 19 |
+| T2 | Sythis 37, Meren 31, Kaalia 22, Brago 19, Lord Windgrace 17 | Sythis 32, Kaalia 30, Meren 26, Brago 23, Lord Windgrace 16 |
 | T3 | Aurelia 33, Atraxa 28, Tergrid 26, Korvold 20, Marwyn 18 | Atraxa 35, Aurelia 33, Tergrid 20, Marwyn 18, Korvold 18 |
 | T5 | Kinnan 37, Winota 31, Zur 23, Urza 18, Yawgmoth 16 | Kinnan 34, Winota 27, Zur 26, Urza 23, Yawgmoth 15 |
 
-With Meren's pressure gone, Sythis now leads Tier 2; Kinnan and Yawgmoth sit at the edges of Tier 5.
+Trimming Meren made Sythis the Tier 2 outlier (40-46%), so Sythis was trimmed too (Sigil of the Empty Throne and Starfield
+of Nyx out). Kinnan and Yawgmoth sit at the edges of Tier 5.
 
 Games get shorter as the brackets go up (15 rounds in T2 to under 8 in T5), with few timeouts above T2.
 Remaining outliers: Meren and Atraxa run hot; Brago, Marwyn and Yawgmoth run cold. Yawgmoth's mono-black list has
