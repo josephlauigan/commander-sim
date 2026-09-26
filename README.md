@@ -16,6 +16,7 @@ commander_sim/            the simulator (a Python package)
   poolmode.py             runs against the pools: one tier, A/B, matrix, calibration, --analyze
   pools.py                the pool decks: loading, validation, seating
   decks.py                your decks (decklists/mine/)
+  update_deck.py          replace a deck's list with a pasted one
   pool_audit.py           how faithfully each card is modeled
   engine.py               game state and rules
   ais.py                  the turn loop, combat, and your decks' play plans
@@ -115,8 +116,25 @@ The pool results and calibration are in `decklists/pool/pool-results.md`.
 ## Your decks
 
 The baseline is the list in each deck's `.md` file in `decklists/mine/` (the `## Import list` block). Point
-`SIM_DECKS` at another folder to use lists kept elsewhere. After editing a list, update
-`tests/fixtures/my_decks_parsed.json` too; a test guards against accidental edits.
+`SIM_DECKS` at another folder to use lists kept elsewhere.
+
+To change a list, give the updater the whole new list, as copied from a deck site or typed one card per line:
+
+```
+python3 -m commander_sim.update_deck sauron new-list.txt --dry-run    # check it and show what would change
+python3 -m commander_sim.update_deck sauron new-list.txt              # write it
+python3 -m commander_sim.update_deck sauron -                         # or paste the list, then Ctrl-D
+python3 -m commander_sim.update_deck sauron new-list.txt --log "Why."  # also add an "Updated <date>" line
+```
+
+It checks the list first (100 cards, singleton, colour identity, bans, every name found on Scryfall) and changes
+nothing if there is a problem. Then it rewrites the `## Import list` and `## Decklist by type` sections and
+records the new list for the deck guard test. It also reports:
+- the cards out and in;
+- how completely the simulator models each new card;
+- which lines of your strategy text still mention cards that left (it doesn't rewrite prose).
+
+It also works for a pool deck (by its key), where it keeps the tier's Game Changer rule.
 
 ## Cards
 

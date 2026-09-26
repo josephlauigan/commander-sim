@@ -16,7 +16,7 @@ def parsed_lists():
 
 class MyDecks(unittest.TestCase):
     def test_my_decks_parse_unchanged(self):
-        self.assertEqual(parsed_lists(), json.load(open(FIX)))
+        with open(FIX) as fh: self.assertEqual(parsed_lists(), json.load(fh))
 
 
 if __name__ == '__main__':

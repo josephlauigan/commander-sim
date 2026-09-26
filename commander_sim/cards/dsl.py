@@ -861,7 +861,7 @@ OVERRIDES_PATH = os.path.join(__import__('commander_sim').DATA, 'cards_dsl.json'
 
 def overrides():
     if os.path.exists(OVERRIDES_PATH):
-        return json.load(open(OVERRIDES_PATH))
+        with open(OVERRIDES_PATH, encoding='utf-8') as fh: return json.load(fh)
     return {}
 
 

@@ -385,6 +385,9 @@ def pct(x): return f'{100 * x:5.1f}%'
 
 def verdict(deltas, ses, profiles):
     clear = [abs(d) > 2 * s for d, s in zip(deltas, ses)]
+    if len(deltas) == 1:                                   # one profile run (--profile)
+        if not clear[0]: return 'NO CLEAR EFFECT (within noise)'
+        return f"{'BETTER' if deltas[0] > 0 else 'WORSE'} under the {profiles[0]} profile (the only one run)"
     if all(clear) and len({d > 0 for d in deltas}) == 1:
         return 'BETTER under both profiles' if deltas[0] > 0 else 'WORSE under both profiles'
     if all(clear):

@@ -353,7 +353,9 @@ STATUSES = ('Full', 'Full-auto', 'Approximate', 'Partial', 'Unmodeled')
 def _main_audit():
     st = {}
     try:
-        for line in open(__import__('os').path.join(__import__('commander_sim').ROOT, 'documents', 'card-audit.md')):
+        with open(__import__('os').path.join(__import__('commander_sim').ROOT, 'documents', 'card-audit.md'), encoding='utf-8') as fh:
+            lines = fh.read().splitlines()
+        for line in lines:
             m = re.match(r'^\| (.+?) \| (Modeled|Approximate|Partial|Not modeled|Unverified) \| (.*?) \|', line)
             if m: st.setdefault(m.group(1), (m.group(2), m.group(3)))
     except OSError:

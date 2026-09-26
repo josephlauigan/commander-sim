@@ -110,7 +110,7 @@ hook events.
 About 21,700 lines of Python in 36 modules, grouped into the `commander_sim` package:
 
 ```
-commander_sim/          compare, poolmode, pools, decks, pool_audit, engine, ais   (+ __main__.py)
+commander_sim/          compare, poolmode, pools, decks, update_deck, pool_audit, engine, ais   (+ __main__.py)
 commander_sim/ai/       brain, search, pool_ai, pool_decks, deck_plans
 commander_sim/cards/    carddb, sources, scryfall, autotag, dsl_parse, dsl, cardimpl, pool_cards
 commander_sim/cards/impl/   common, t1 … t5, combos, topdeck, fixes, lands, partials, rules, rules2, mine
@@ -129,6 +129,7 @@ deck files, the Scryfall cache and the audit notes. `python3 -m commander_sim` r
 | `poolmode.py` | Everything measured against the pools: one deck vs one tier, paired A/B, the deck × tier matrix, `--analyze`, `--trace`, and the calibration checks. |
 | `pools.py` | Loads the 25 pool deck files, validates them (size, singleton, colour identity, bans, Game Changers per tier), registers them for play, and draws seats for a game. |
 | `decks.py` | Loads your three deck files from `decklists/mine/` into `DECKS`. |
+| `update_deck.py` | Replaces a deck's list with a pasted one: validates it, rewrites the file's list sections, records the deck-guard fixture, and reports what changed and how the new cards are modeled. |
 | `tools/searchtest.py`, `tools/swaptest.py`, `tools/linecov.py` | Paired tests for pool decks (with and without look-ahead, and with list swaps), and the test suite's line coverage. |
 | `pool_audit.py` | How faithfully each card is modeled, per deck. |
 
@@ -884,7 +885,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (108 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (118 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -894,6 +895,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (108 tests, abou
 | `test_search.py` | The look-ahead AI: independent copies, re-dealt hidden hands, evaluation bounds, a whole reproducible decision. |
 | `test_dsl.py` | The ability compiler and interpreter. |
 | `test_cli.py` | Statistics, and every command run as a module with a few games; results don't depend on `--jobs`. |
+| `test_update_deck.py` | The deck updater, on copies of real deck files. |
 | `test_pool_games.py` | Games from every tier, alone and with each of your decks, play to the end; one look-ahead game. |
 | `test_pool_sampling.py` | Seat drawing, pairing and reproducibility. |
 | `test_validator.py` | Deck validation rules. |
@@ -946,8 +948,9 @@ A/B difference that holds under both profiles is the most reliable output.
 
 ## 17. How to extend it
 
-**Add or change a card in your deck.** Edit the deck file's `## Import list`, then update
-`tests/fixtures/my_decks_parsed.json`.
+**Add or change a card in your deck.** Run `python3 -m commander_sim.update_deck <deck> <new list>` with the
+whole new list. It validates the list, rewrites the deck file's list sections and the deck-guard fixture, and reports
+how each new card is modeled.
 
 - A card without a `cards/carddb.py` line is fetched from Scryfall and modeled automatically. Check it with
   `python3 -m commander_sim --deck <key> --cards` and `python3 -m commander_sim.pool_audit --mine`.

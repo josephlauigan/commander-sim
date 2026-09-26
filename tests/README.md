@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 108 tests in about a minute. To run one file, or one test:
+That's 118 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -24,6 +24,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_search.py` | 7 | The look-ahead AI: game copies are independent, hidden hands are re-dealt correctly, a win always outscores a board, and a whole decision picks one of the options, leaves the real game untouched, and is reproducible. |
 | `test_dsl.py` | 5 | The ability language: Oracle text compiles to the expected abilities, unreadable text is reported, and a compiled card works in a game. |
 | `test_cli.py` | 14 | The Wilson interval and the paired difference, and every command run the way you run it (`python3 -m ...`) with a few games: a tier run, `--swap`, `--analyze`, `--trace`, `--calibrate`, `--cards`, the validator, the audits and `tools.swaptest`. Also checks that `--jobs 1` and `--jobs 3` give the same result. |
+| `test_update_deck.py` | 10 | The deck updater: list formats from deck sites, name matching, a swap rewriting every section, bad lists refused with nothing written, a pool deck's Game Changer rule and header, and `--dry-run`. |
 | `test_pool_games.py` | 2 | Seeded games from every tier, alone and with each of your decks, play to the end; one game with the look-ahead AI. |
 | `test_pool_sampling.py` | 8 | Seating: opponents drawn without replacement, seeded and uniform. Pairing: a changed list faces the same opponents, seats and draws; games replay exactly. |
 | `test_validator.py` | 15 | The decklist checks: size, singleton, commander, name resolution, colour identity, bans, Game Changers per tier. |
@@ -37,6 +38,8 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
   ```
   python3 tests/test_my_decks.py --record
   ```
+
+  `python3 -m commander_sim.update_deck` records it for you when it updates a list.
 
 - **A card test fails.** A card test failing means the simulator no longer does what the card's Oracle text says.
   Fix the card's implementation, not the test, unless the test itself misread the card.
