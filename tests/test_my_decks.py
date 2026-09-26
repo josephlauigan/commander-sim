@@ -1,4 +1,4 @@
-"""Guard for the four main deck files: they must parse to exactly the recorded lists (the sim never edits them).
+"""Guard for your three deck files: they must parse to exactly the recorded lists (the sim never edits them).
 
 Regenerate only after an intentional change to a deck file:  python3 tests/test_my_decks.py --record
 """
