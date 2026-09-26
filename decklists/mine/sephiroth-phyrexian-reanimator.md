@@ -2,114 +2,75 @@
 
 2026-09-17
 **Rebuilt 2026-09-18** for consistency: lower curve, more early mana, a real graveyard-filling package.
-**Updated 2026-09-20 / 09-21 / 09-22** across earlier passes (untapped duals, Swan Song, the six-card 09-22 swap, Cryptolith Rite trade).
-**Updated 2026-09-23.** Phyrexian Metamorph → Aura Shards, a deliberate move to Bracket 4.
-**Updated 2026-09-25.** Nine out, nine in. The deck now plays **two infinite combos** on purpose and runs **seven Game Changers**.
-
-| Out | In |
-| --- | --- |
-| Night's Whisper | Gifts Ungiven |
-| Swiftfoot Boots (to Veyran) | Assassin's Trophy |
-| Deadly Dispute | Galadriel's Dismissal |
-| Phyrexian Arena | Consecrated Sphinx |
-| Evil Reawakened | Bolas's Citadel |
-| Cryptolith Rite | Displacer Kitten (from Veyran) |
-| Satyr Wayfinder | Triskelion |
-| Wrath of God | Nim Deathmantle |
-| Lethal Scheme | Grand Abolisher |
-
-Deck stays at 100 and 37 lands. The "strongest *fair* deck" stance of the 09-23 version is retired: Sephiroth is now the pod's Bracket 4 deck with combo finishes.
+**Updated 2026-09-20.** Mana-base upgrade only — four tapped lands out, four untapped duals in (net land count unchanged at 37).
+**Updated 2026-09-21.** Corroding Dragonstorm → Swan Song and Path of Ancestry → Blossoming Sands.
+**Updated 2026-09-22.** Six swaps (Vampiric Tutor → Diabolic Tutor, Phyrexian Altar → Ashnod's Altar, Phyrexian Tower → Watery Grave, Soul Enervation → Zulaport Cutthroat, Phyrexian Delver → Smothering Tithe, Witch-king → Dovin's Veto), then Talisman of Dominance → Cryptolith Rite.
+**Updated 2026-09-26 — moved to Bracket 4.** Ten swaps: **Phyrexian Metamorph → Aura Shards**, **Night's Whisper → Gifts Ungiven**, **Swiftfoot Boots → Assassin's Trophy**, **Deadly Dispute → Galadriel's Dismissal**, **Phyrexian Arena → Bolas's Citadel**, **Evil Reawakened → Consecrated Sphinx**, **Satyr Wayfinder → Displacer Kitten** (moved from Veyran), **Lethal Scheme → Grand Abolisher**, **Wrath of God → Triskelion**, and **Cryptolith Rite → Nim Deathmantle**. The deck now runs **seven** Game Changers and **two infinite combos** (Mikaeus + Triskelion, and Nim Deathmantle + Ashnod's Altar + Grave Titan), so it is Bracket 4 on both counts and is now your strongest deck by design. Deck stays at 100 and 37 lands.
 
 ## Strategy
 
-Fill the graveyard, cheat a Phyrexian bomb onto the battlefield three or four turns before anyone can cast one, and then either grind the table out behind the stax creatures or close with one of two combos.
+Fill the graveyard, cheat a Phyrexian bomb onto the battlefield three or four turns before anyone can cast one, drain the table through sacrifice loops while the Praetors make the board unplayable — and, now that the deck is Bracket 4, end the game on the spot with an infinite once the pieces line up.
 
 Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, and appears under that name in the list below. A 7/7 with flying, vigilance, deathtouch, and lifelink whose ETB looks at the top ten cards and takes one of each card type. She is both a castable bomb and the best reanimation target in the deck.
 
-**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise, Llanowar Elves, Sakura-Tribe Elder, and Cultivate for mana, with Smothering Tithe as the four-drop that keeps throwing off Treasure. Stitcher's Supplier, Buried Alive, Entomb, Unmarked Grave, and Grisly Salvage load the graveyard; Tortured Existence and Stinkweed Imp keep it filling. Demonic Tutor, Diabolic Tutor, Diabolic Intent, and now **Gifts Ungiven** find whichever half of the engine is missing.
+**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise, Llanowar Elves, Sakura-Tribe Elder, and Cultivate for mana, with **Smothering Tithe** as the four-drop that keeps paying. Stitcher's Supplier, Buried Alive, Entomb, Unmarked Grave, and Grisly Salvage load the graveyard. Tortured Existence and Stinkweed Imp keep it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
 
 **Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Persist point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free.
 
-**The stax layer.** Elesh Norn, Grand Cenobite shrinks every opposing creature by 2/2. Elesh Norn, Mother of Machines doubles your ETB triggers and blanks theirs. Sheoldred, the Apocalypse taxes their draw steps and Smothering Tithe taxes them again. Aura Shards turns every creature entering into "destroy target artifact or enchantment." Consecrated Sphinx turns their draw steps into yours.
+**The card-advantage layer is new.** **Consecrated Sphinx** draws you two every time an opponent draws. **Bolas's Citadel** lets you play off the top of your library by paying life, and Sheoldred, the Apocalypse gains you 2 for every card you draw — so Sphinx refills the life Citadel spends. Citadel's other ability (tap, sacrifice ten nonland permanents: each opponent loses 10) is a second finisher on a wide board.
 
-**Card flow now comes from engines, not cantrips.** Night's Whisper, Deadly Dispute, and Phyrexian Arena are gone. In their place: **Consecrated Sphinx** (draw two whenever an opponent draws — it's also a premium reanimation target), **Bolas's Citadel** (play off the top by paying life, with Sheoldred, the Apocalypse's lifegain and Sephiroth's lifelink paying the bill), **Displacer Kitten** (every noncreature spell re-triggers an ETB — see Key lines), Skullclamp, and Sephiroth's own ETB.
+**Displacer Kitten** blinks a nonland permanent every time you cast a noncreature spell. Blink Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Gray Merchant for another drain, or Grave Titan for two more Zombies.
 
-**Closing lines.**
-- **Mikaeus, the Unhallowed + Triskelion** — infinite damage, two cards, no sacrifice outlet needed.
-- **Grave Titan + Nim Deathmantle + Ashnod's Altar** — infinite colourless mana and infinite death/ETB triggers; wins through Blood Artist or Zulaport Cutthroat, Bolas's Citadel's activation, or Aura Shards sweeping every artifact and enchantment.
-- The fair lines still exist: a doubled Gray Merchant behind Elesh Norn, Massacre Wurm plus Grand Cenobite as a one-sided wipe, Archon of Cruelty rebought every turn, or a sacrifice chain through Ashnod's Altar with Blood Artist and Zulaport.
-
-**Protecting the turn.** **Grand Abolisher** stops opponents casting spells or activating artifact, creature, and enchantment abilities during your turn — so no instant-speed exile on your reanimation target and no response to the combo. **Galadriel's Dismissal** phases out a creature to dodge removal, or, kicked, phases out your whole board ahead of your own sweeper. Swan Song and Dovin's Veto are the counterspells.
-
-## Consistency
-
-The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The mana base is unchanged this round.
-
-| Colour | Land sources (approx.) | Now also feeds |
-| --- | --- | --- |
-| Black | ~16 | the base colour; Assassin's Trophy's {B} |
-| Blue | ~10 | Gifts Ungiven ({3}{U}), Swan Song, Dovin's Veto; Consecrated Sphinx ({4}{U}{U}) if hardcast |
-| Green | ~13 | Assassin's Trophy's {G} |
-| White | ~13 | Grand Abolisher ({W}{W}), Galadriel's Dismissal ({W}, kicker {2}{W}), Swords, Path, Farewell |
-
-Command Tower, Exotic Orchard, Arcane Signet, and Chromatic Lantern count for all four colours, and Smothering Tithe's Treasures add any colour. **Cryptolith Rite is gone**, so creatures no longer fix — that's the real mana cost of this round.
-
-**Two colour pressure points.** Grand Abolisher's {W}{W} on about 13 white sources is not a reliable turn-two play; treat it as a turn-four-plus card you cast the turn before (or the turn of) the combo. Consecrated Sphinx's {U}{U} on about 10 blue sources is a reanimation target first and a hardcast second.
-
-**Graveyard filling.** Eight ways to load your own yard: Stitcher's Supplier, Buried Alive, Entomb, Unmarked Grave, Grisly Salvage, Tortured Existence, Stinkweed Imp, and **Gifts Ungiven** (which can bin two chosen creatures outright). Satyr Wayfinder and Deadly Dispute have left, so it's one fewer than before — Gifts being instant-speed and a tutor makes up most of the gap.
-
-**Interaction.** Spot removal: Swords to Plowshares, Path to Exile, Anguished Unmaking, **Assassin's Trophy** (instant, any permanent), and Lash of the Balrog, plus Aura Shards as repeatable artifact/enchantment removal. Sweepers: Toxic Deluge and Farewell (Wrath of God is out), with Massacre Wurm as a creature-based one. Counterspells: Swan Song and Dovin's Veto. Protection: Grand Abolisher and Galadriel's Dismissal.
-
-**Sacrifice outlets.** Viscera Seer, Carrion Feeder, Ashnod's Altar, and Altar of Dementia, with Lash of the Balrog and Diabolic Intent as one-shot sacrifice effects and Bolas's Citadel's ten-permanent activation as a finisher.
-
-**Curve.** Still deliberately top-heavy at the top end — Consecrated Sphinx and Bolas's Citadel add two more six-drops — but the six-plus creatures are reanimation targets, not cards you plan to hardcast.
+**The stax layer is what makes it unfair.** Elesh Norn, Grand Cenobite shrinks every opposing creature by 2/2. Elesh Norn, Mother of Machines doubles your own ETB triggers and blanks theirs. Sheoldred, the Apocalypse taxes their draw steps, and Smothering Tithe taxes them again on the same draw. **Aura Shards** destroys an artifact or enchantment every time a creature enters under your control — every reanimation, Grave Titan Zombie, and Kitten blink is removal.
 
 ## Key lines
 
-**Mikaeus + Triskelion (infinite damage).** Triskelion enters with three +1/+1 counters and has "remove a +1/+1 counter: 1 damage to any target." With Mikaeus out, Triskelion is a non-Human with undying. Remove counters to ping opponents, then finish it off with its own last pings so it dies with no counters on it; undying returns it with its three counters plus the undying counter, and it goes again. Each loop is net damage to opponents, repeated as many times as you like. No sacrifice outlet needed. Both pieces are creatures, so they can be Entombed, Buried Alive, or Gifts-binned and reanimated.
+**Mikaeus, the Unhallowed + Triskelion + a free sac outlet is infinite damage.** Mikaeus gives Triskelion undying. Remove Triskelion's +1/+1 counters to deal that much damage, then sacrifice it (Viscera Seer, Carrion Feeder, Ashnod's Altar, or Altar of Dementia) with no +1/+1 counters on it. Undying returns it with a counter on top of the three it enters with; remove them all again and repeat. Every sacrifice also triggers Blood Artist and Zulaport Cutthroat.
 
-**Grave Titan + Nim Deathmantle + Ashnod's Altar (infinite mana and triggers).** Sacrifice Grave Titan and its two Zombies to Ashnod's Altar for six colourless mana. Nim Deathmantle's trigger lets you pay {4} to return Titan (now equipped), which makes two more Zombies. Net +2 colourless per loop, with three creatures dying and three entering each time. Payoffs: Blood Artist or Zulaport drain the table out; Aura Shards destroys every artifact and enchantment opponents control; Altar of Dementia isn't needed. With Elesh Norn, Mother of Machines out, Titan makes four Zombies per return and the loop is faster. Bolas's Citadel's activation (sacrifice ten nonland permanents, each opponent loses 10) turns any pile of Zombies into a kill too.
+**Nim Deathmantle + Ashnod's Altar + Grave Titan is infinite colorless mana, ETBs, and deaths.** Sacrifice Titan to Ashnod's Altar for {C}{C}, pay {4} to return it with Deathmantle, which makes two Zombies; sacrifice those for {C}{C}{C}{C}. Net +{2} per loop. With Blood Artist or Zulaport it drains the table out; with Aura Shards it destroys every artifact and enchantment opponents control; with Elesh Norn, Mother of Machines each Titan makes four Zombies.
 
-**Displacer Kitten is a value engine here, not a combo piece.** Every noncreature spell you cast flickers a nonland permanent you control: re-trigger Sephiroth's ten-card dig, Archon of Cruelty, Grave Titan, Gray Merchant, Massacre Wurm, or reset Triskelion to three counters. With Mother of Machines, each flicker is two ETBs; with Aura Shards, each flicker is another artifact or enchantment destroyed. **Do not flicker a creature returned by Animate Dead or Necromancy that an opponent owns** — it comes back under its owner's control. Flickering your own reanimated creature is fine but leaves the Aura behind, and flickering the Nim Deathmantle carrier drops the Deathmantle.
+**Grand Abolisher protects both.** Opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments during your turn, so resolve Abolisher before you go off. Galadriel's Dismissal and Dovin's Veto cover what Abolisher doesn't.
 
-**Gifts Ungiven, two ways.** Name only two cards and both go to your graveyard — an instant-speed double Entomb (Archon plus Grave Titan, or Mikaeus plus Triskelion). Or name four: two combo creatures and two reanimation spells (for example Mikaeus, Triskelion, Reanimate, Animate Dead). Whatever the opponent splits, you end with pieces in the yard and spells to return them. Cast it at an opponent's end step and untap into the combo turn.
+**Fair closing lines are still here.** A doubled Gray Merchant behind Elesh Norn. Massacre Wurm plus Grand Cenobite as a one-sided wipe. Archon of Cruelty rebought every turn. Altar of Dementia milling one player out with a big creature. Or Bolas's Citadel's ten-permanent drain.
 
-**Galadriel's Dismissal kicked + your own sweeper = a one-sided wipe.** Kick it on yourself (your creatures phase out until your next turn), then Toxic Deluge or Farewell on the same turn. On defence, the unkicked mode saves one reanimated bomb from removal for {W}.
+## Consistency
 
-**Entomb into Reanimate is still the primary early play.** Turn-one Entomb on Archon of Cruelty or Sephiroth, turn-two Reanimate, and you have a 7/7 bomb three or four turns early.
+The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The lands are unchanged from 09-22.
 
-**Tortured Existence converts clutter into the right bomb.** {B}, discard a creature, return a creature from the yard. With combo creatures in the deck, it now also fetches Mikaeus or Triskelion back to hand.
+Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), three creatures (Birds of Paradise, Llanowar Elves, Sakura-Tribe Elder), Cultivate, and Smothering Tithe. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
 
-**Altar of Dementia can target you.** In response to removal on Grave Titan, sacrifice it, mill yourself for its power, and the Titan lands in the yard ready to reanimate.
+**Graveyard fill is a little thinner.** Satyr Wayfinder is out; Gifts Ungiven partly covers it. Stitcher's Supplier, Buried Alive, Entomb, Unmarked Grave, Grisly Salvage, Tortured Existence, and Stinkweed Imp remain.
 
-**Ashnod's Altar makes colourless only.** Without Cryptolith Rite, pair it with coloured sources or Treasure for Reanimate and Gray Merchant. In the Nim loop the mana is colourless too, which is fine — Nim's {4} is generic.
+**Reanimation count is five** (Reanimate, Animate Dead, Necromancy, Unburial Rites, Persist) plus Sheoldred, Whispering One and Yawgmoth's Will. Evil Reawakened is gone. Persist and Unmarked Grave only work on nonlegendary creatures — Archon of Cruelty, Grave Titan, Consecrated Sphinx, Massacre Wurm, and Gray Merchant — so point them there, not at Sephiroth, the Elesh Norns, or the Sheoldreds.
 
-**Holding up protection.** On the combo turn, the ideal is Grand Abolisher already resolved, or Swan Song / Dovin's Veto / Galadriel's Dismissal mana open. Abolisher stops activated abilities of artifacts, creatures, and enchantments, but not lands (Bojuka Bog style effects, Strip Mine) or triggered abilities.
+**Interaction.** Swords to Plowshares, Path to Exile, Anguished Unmaking, Assassin's Trophy, and Lash of the Balrog for spot removal; Aura Shards for repeatable artifact/enchantment removal; Farewell and Toxic Deluge as resets (Wrath of God is gone); Swan Song and Dovin's Veto as counters; Galadriel's Dismissal and Grand Abolisher as protection.
 
 ## Tutor targets by board state
 
-Four tutors — Demonic Tutor ({1}{B}), Diabolic Tutor ({2}{B}{B}), Diabolic Intent ({1}{B}, sacrifice a creature), and **Gifts Ungiven** ({3}{U}, instant) — plus the yard-fetchers (Entomb, Buried Alive, Unmarked Grave, Grisly Salvage) that act as tutors for reanimation targets.
+Four tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), **Diabolic Intent** (sacrifice a creature, any card to hand), and **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard).
 
-- **Mikaeus or Triskelion on board → tutor the other half.** One card from a win. Demonic Tutor is cheapest; Diabolic Intent can eat a spare body to pay for itself.
-- **Grave Titan on board with Ashnod's Altar or Nim → tutor the missing piece**, and a drain payoff (Blood Artist or Zulaport) if none is out.
-- **Nothing assembled, long game ahead → Gifts Ungiven at an end step** for a combo pair plus reanimation (see Key lines), or Entomb for Mikaeus/Triskelion and a reanimation spell.
-- **Empty yard, reanimation spell in hand → Entomb or Buried Alive.**
-- **Yard loaded, nothing to cheat it out → a reanimation spell** (Reanimate for speed, Animate Dead / Necromancy / Unburial Rites / Persist otherwise).
-- **Expecting interaction on the combo turn → Grand Abolisher**, or Dovin's Veto if it has to be an instant-speed answer.
-- **Under pressure → Toxic Deluge or Farewell**, then reanimate the best thing that died; Assassin's Trophy or Swords for a single problem permanent.
+- **One combo piece away → tutor it.** With Mikaeus and a sac outlet out, Demonic Tutor for Triskelion. With Ashnod's Altar and Grave Titan out, tutor Nim Deathmantle. Resolve Grand Abolisher first if you can.
+- **Empty yard, reanimation spell already in hand → tutor Entomb (or Buried Alive).** Demonic Tutor into Entomb on turn two sets up Reanimate on turn three.
+- **Yard loaded, no way to cheat it out → tutor a reanimation spell.** Demonic Tutor leaves the most mana over to cast it the same turn.
+- **Want both halves at once → Gifts Ungiven** for a reanimation target plus reanimation spells, or for Mikaeus, Triskelion, and two reanimation spells — anything that hits the yard comes back.
+- **Engine assembled, need to close → tutor the payoff.** Gray Merchant behind an Elesh Norn, Blood Artist or Zulaport for a sacrifice chain, or Yawgmoth's Will once the yard is deep.
+- **Under pressure → tutor interaction.** Toxic Deluge or Farewell to reset, or Swords / Path / Anguished Unmaking / Assassin's Trophy for one problem.
+
+Diabolic Intent wants a spare body to sacrifice, and the creature it eats becomes a reanimation target. Diabolic Tutor is the least efficient at four mana.
 
 ## Bracket and Rule 0
 
-**Bracket 4**, with **seven** Game Changers: **Farewell**, **Demonic Tutor**, **Smothering Tithe**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, and **Bolas's Citadel**. Grand Abolisher, Displacer Kitten, Triskelion, Nim Deathmantle, Ashnod's Altar, and Diabolic Tutor are all off-list. The deck also contains a **two-card infinite** (Mikaeus + Triskelion), which Bracket 3 wouldn't allow early anyway.
+**Bracket 4.** Seven Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Bolas's Citadel**, and **Consecrated Sphinx**. Two infinite combos, both tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, and Assassin's Trophy are off-list.
 
 Disclose before the game:
 
-- **Mikaeus + Triskelion** is a two-card infinite-damage combo, and the deck has four tutors plus Entomb/Buried Alive/Gifts to assemble it through the graveyard.
-- **Grave Titan + Nim Deathmantle + Ashnod's Altar** is a three-card infinite.
-- **Grand Abolisher**: opponents can't respond on your turn.
-- **Smothering Tithe** and **Consecrated Sphinx** both key off opponents' draws.
-- **Farewell** (and that you may include graveyards), **Aura Shards**, **Strip Mine**, and **Yawgmoth's Will**.
-- The deck reanimates out of *any* graveyard.
+- **Mikaeus + Triskelion + sac outlet** (infinite damage) and **Nim Deathmantle + Ashnod's Altar + Grave Titan** (infinite mana, ETBs, and drains).
+- The seven Game Changers above, especially **Smothering Tithe** (changes every opponent's draw step) and **Consecrated Sphinx**.
+- **Grand Abolisher**, which shuts off their interaction on your turn.
+- **Yawgmoth's Will**, which can produce a long turn out of nowhere.
+- **Farewell**, and that you may include graveyards.
+- **Strip Mine** as a one-shot land kill.
+- The deck reanimates out of *any* graveyard, so opponents' creatures dying is relevant information for them.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
@@ -128,8 +89,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 **Instants (9).** Anguished Unmaking, Assassin's Trophy, Dovin's Veto, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares
 
 **Lands (37).** Ash Barrens, Blossoming Sands, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Llanowar Wastes, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
-
-Triskelion is an artifact creature and is counted with the creatures.
 
 ## Import list (100)
 
@@ -228,33 +187,37 @@ Triskelion is an artifact creature and is counted with the creatures.
 
 ## Flags and tuning levers
 
-**The 09-25 change — 9 out, 9 in.**
+**The 09-26 change — 10 out, 10 in.**
 
 | Out | In | What it does |
 | --- | --- | --- |
-| Night's Whisper | Gifts Ungiven | Two-card draw becomes an instant-speed tutor that also fills the yard. Game Changer. |
-| Swiftfoot Boots | Assassin's Trophy | Protection equipment out, instant catch-all removal in. The Boots went to Veyran. |
-| Deadly Dispute | Galadriel's Dismissal | A draw-two sac effect out; one-mana protection (or a one-sided-wipe setup) in. |
-| Phyrexian Arena | Consecrated Sphinx | Steady draw becomes explosive draw that's also a reanimation target. Game Changer. |
-| Evil Reawakened | Bolas's Citadel | A sixth reanimation spell out; a card-advantage engine and finisher in. Game Changer. |
-| Cryptolith Rite | Displacer Kitten | Creature-based fixing out; an ETB re-trigger engine in (moved from Veyran). |
-| Satyr Wayfinder | Triskelion | A yard filler out; half of the Mikaeus combo in. |
-| Wrath of God | Nim Deathmantle | A third sweeper out; the recursion piece of the Grave Titan loop in. |
-| Lethal Scheme | Grand Abolisher | Instant removal out; combo-turn protection in. |
+| Phyrexian Metamorph | Aura Shards | Clone → repeatable artifact/enchantment removal on every creature ETB. Game Changer. |
+| Night's Whisper | Gifts Ungiven | Two cards → a four-card tutor that also fills the yard. Game Changer. |
+| Swiftfoot Boots | Assassin's Trophy | Equipment → instant removal for any permanent. Boots moved to Veyran. |
+| Deadly Dispute | Galadriel's Dismissal | Sac-for-cards → cheap protection. |
+| Phyrexian Arena | Bolas's Citadel | Slow draw engine → play off the top and a ten-permanent finisher. Game Changer. |
+| Evil Reawakened | Consecrated Sphinx | A sixth reanimation spell → a card-advantage bomb that is also a reanimation target. Game Changer. |
+| Satyr Wayfinder | Displacer Kitten | Yard filler → ETB re-buy engine. Moved from Veyran. |
+| Lethal Scheme | Grand Abolisher | Removal → combo-turn protection. |
+| Wrath of God | Triskelion | A sweeper → half of the Mikaeus infinite. |
+| Cryptolith Rite | Nim Deathmantle | Ramp → half of the Grave Titan infinite. |
 
-**Honest costs.** No creature fixing without Cryptolith Rite. One fewer sweeper and one fewer yard filler. Night's Whisper, Deadly Dispute, and Phyrexian Arena were the cheap, steady draw; the replacements are more powerful but cost six (Sphinx, Citadel) or depend on board state (Kitten). Grand Abolisher's {W}{W} is awkward on this mana base.
+**Weakest remaining slots.** Llanowar Wastes and Caves of Koilos (painlands) are the softest lands. On the spell side, Persist and Unmarked Grave are limited by how many of the bombs are legendary; Stinkweed Imp, Lash of the Balrog, and Diabolic Intent are the ones you've chosen to keep.
 
-**Sim status.** The pod simulator has not been run on this list. The 09-23 numbers (about 51% in the old four-deck pod) are no longer representative, and the card audit marks Displacer Kitten as only partially modeled (combo piece only), so its value-flicker role here will be under-counted until that's fixed.
+**Vampiric Tutor is in the binder** and is the natural addition now that the Game Changer cap no longer applies.
 
-**Weakest remaining slots**, if you keep tuning: Stinkweed Imp (dredge competes with draws) and Sephiroth, Planet's Heir. Lash of the Balrog is the softest removal spell now that Assassin's Trophy is in.
+**Combo watch — both loops use Ashnod's Altar or a free outlet.** Sheoldred, Whispering One and Sephiroth, Planet's Heir don't add a third loop on their own. Displacer Kitten doesn't complete an infinite here either.
 
-**Play-pattern reminders.** Leave Farewell's enchantment mode off with Aura Shards or reanimation Auras out; don't aim Aura Shards at your own Animate Dead or Necromancy; don't Kitten-flicker an opponent-owned reanimated creature; stop the Nim loop before you run out of Zombies to sacrifice for the {4}; Grand Abolisher doesn't stop triggered or land abilities.
-
-**Card conflicts with your other decks** (Sauron and Veyran; Najeela is no longer tracked).
-- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- Shared with **Sauron**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Toxic Deluge, Treno Dark City.
+**Card conflicts with your other decks.**
+- **Displacer Kitten moved here from Veyran** — one physical copy, now only here.
+- **Swiftfoot Boots moved to Veyran**.
+- **Diabolic Tutor** is in this deck and Sauron — two physical copies.
+- **Sheoldred, the Apocalypse**: you own a spare copy, which can go to Sauron.
+- **Lethal Scheme** left this deck; it was planned for Sauron but isn't in that list yet.
+- Shared with **Sauron**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Toxic Deluge, Treno Dark City. (Night's Whisper and Phyrexian Arena are now Sauron-only.)
 - Shared with **Veyran**: Ash Barrens, Evolving Wilds.
-- **Moved in from Veyran**: Displacer Kitten. **Moved to Veyran**: Swiftfoot Boots.
-- **To the binder this round**: Night's Whisper and Phyrexian Arena (Sauron keeps its own copies), Deadly Dispute, Evil Reawakened, Cryptolith Rite, Satyr Wayfinder, Wrath of God, Lethal Scheme. Earlier binder cards: Vampiric Tutor, Phyrexian Altar, Phyrexian Tower, Phyrexian Delver, Soul Enervation, Phyrexian Metamorph.
+- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
+- **New singles**: Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Consecrated Sphinx, Grand Abolisher, Triskelion, Nim Deathmantle.
+- **To the binder**: Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.
 
 **Not a conflict.** Sephiroth, Planet's Heir in the creature slot and Sephiroth, the Savior as commander are different cards, so running both is legal.

@@ -3,9 +3,8 @@
 2026-09-17
 **Updated 2026-09-18 / 09-19 / 09-20** across earlier passes (rebuild, Nibelheim Aflame, extra-combat + land upgrade, bracket correction).
 **Updated 2026-09-21.** Notion Thief → Rhystic Study, then Thrummingbird → Inexorable Tide.
-**Updated 2026-09-22.** Two swaps: **Gollum, Silent Slinker → Witch-king, Bringer of Ruin** and **Hero's Blade → Infernal Grasp.** Witch-king moved over from the Sephiroth deck: a 6-mana 5/3 flier whose attack trigger makes the defending player sacrifice their smallest creature — a second evasive threat that also clears chump blockers. Infernal Grasp is the eighth piece of spot removal, replacing the weakest equipment. Neither is a Game Changer, so the count holds at three and the deck stays Bracket 3 at the cap. Deck stays at 100.
-**Updated 2026-09-22 (second pass).** Two more swaps with new cards: **Colossus Hammer → Sword of Feast and Famine** and **Mask of Memory → Jace's Archivist.** Neither is a Game Changer, so the deck stays at three. **The Sword creates an infinite-combat combo with Aggravated Assault** — this deck now has a combo and needs disclosing as one; see Bracket and Rule 0. Deck stays at 100.
-**Updated 2026-09-25.** No list changes — the 100 is unchanged. Regenerated for the three-deck pod: Najeela is no longer tracked, so pod references and card conflicts are now against Sephiroth and Veyran only.
+**Updated 2026-09-22.** Gollum → Witch-king, Hero's Blade → Infernal Grasp, Colossus Hammer → Sword of Feast and Famine, Mask of Memory → Jace's Archivist. The Sword completes an infinite-combat combo with Aggravated Assault.
+**Updated 2026-09-26.** Six swaps: **Erebos, God of the Dead → Sword of Hearth and Home**, **Hellkite Tyrant → Urabrask, Heretic Praetor**, **Witch-king, Bringer of Ruin → The Ozolith**, **Memory Lapse → Slaughter Pact**, **Tome of Legends → Vandalblast**, and **Unclaimed Territory → Haunted Ridge**. None is a Game Changer, so the deck stays Bracket 3 at the cap with three. Net effect: the softest slots (Erebos, Tome, Unclaimed Territory) are gone; the Army gains insurance against removal (The Ozolith) and a second Sword that re-buys ETBs; interaction adds a free kill spell and a one-sided artifact wipe in place of a soft counter. Deck stays at 100 and 36 lands.
 
 ## Strategy
 
@@ -19,101 +18,74 @@ Sauron does the work for free. He is a 7/6 with ward (sacrifice a legendary arti
 
 Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then every later amass piles more +1/+1 counters onto that same creature. Three opponents casting two spells a turn means six counters a turn cycle that cost you nothing.
 
-**Grow it.** Orcish Bowmasters and Sauron, the Necromancer add counters on their own schedules. Metallic Mimic naming Orc makes the Army enter larger. Iron Man adds a counter every time you draw, and Vision grows on off-turn casts. Barad-dûr is a late-game mana sink: it taps for black, and for {X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, Witch-king's edicts, and three wipes is almost always.
+**Grow it.** Orcish Bowmasters and Sauron, the Necromancer add counters on their own schedules. Metallic Mimic naming Orc makes the Army enter larger. Iron Man adds a counter every time you draw, and Vision grows on off-turn casts. Barad-dûr is a late-game mana sink: it taps for black, and for {X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, Slaughter Pact, and three wipes is almost always.
 
-**Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it — past the first in their draw step, which this never is — triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron, Kaervek, and Rhystic Study. Without Bowmasters it's just a symmetrical wheel that refuels the table, so hold the activation until the payoff is on board.
+**Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron, Kaervek, and Rhystic Study. Without Bowmasters it's just a symmetrical wheel that refuels the table, so hold the activation until the payoff is on board.
 
-**Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler, Inexorable Tide, and Tezzeret's Gambit proliferate it upward turn after turn — Flux Channeler and Inexorable Tide both fire off your own noncreature spells, and Inexorable Tide is an enchantment, so unlike the fragile bodies it survives your sweepers. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more, so even the free amass off opponents' spells lands bigger. He is fragile, so mind your own sweepers around him.
+**Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler, Inexorable Tide, and Tezzeret's Gambit proliferate it upward turn after turn. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
 
-**Cash it in.** Sword of Feast and Famine, Sword of Hearth and Home, Sword of the Animist, and Conqueror's Flail turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard a card and untaps all your lands — so you swing and still have counterspell mana up afterward, and War Machine gives your modified creatures double strike. Whispersilk Cloak is evasion and protection in one — shroud plus unblockable on the Army — and Rogue's Passage is the second way to push it through. Aggravated Assault is the closer: an extra combat phase (untapping your Army) each time you pay {3}{R}{R}, which here means another Ring tempt, another Sword of the Animist land, and another swing from a creature nobody can block — and with Sword of Feast and Famine, it's an infinite (see Key lines). Every connection tempts the Ring, which means discard-your-hand-draw-four on demand, and Kindred Discovery naming Orc plus Reconnaissance Mission and Scarlet Witch turn attacks into more cards.
+**Keep it.** **The Ozolith** is new insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with counters on it, those counters move onto The Ozolith, and at the beginning of combat on your turn you can put them all onto a target creature. A spot-removed, bounced, or swept Army no longer resets you to zero — the next amass makes a fresh Army and The Ozolith hands it the old pile (or put it straight onto Sauron). It also catches the counters when you wipe the board yourself with Blasphemous Act or Toxic Deluge.
 
-**Witch-king clears the way.** Whenever Witch-king, Bringer of Ruin attacks, the defending player sacrifices their lowest-power creature — which is usually the token or small body they'd chump the Army with. Attack with both at the same player and the edict resolves before blocks. He's a 5/3 flier on his own, and every Aggravated Assault combat is another edict.
+**Cash it in.** Sword of Feast and Famine, Sword of Hearth and Home, Sword of the Animist, and Conqueror's Flail turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard and untaps all your lands, and War Machine gives your modified creatures double strike. **Sword of Hearth and Home** is +2/+2 and protection from green and white, and every hit flickers a creature you own and ramps a basic: re-buy Orcish Bowmasters (another ping and amass), Noxious Gearhulk (another kill), Grave Titan (two more Zombies), or — best — Deepglow Skate, which doubles the Army's counters again on every connection. Whispersilk Cloak and Rogue's Passage push the Army through. Aggravated Assault is the closer: an extra combat each time you pay {3}{R}{R}, and with Sword of Feast and Famine it's an infinite (see Key lines). Every connection tempts the Ring, and Kindred Discovery naming Orc plus Reconnaissance Mission and Scarlet Witch turn attacks into more cards.
 
-**Three taxes on the same trigger.** Sauron amasses, **Kaervek the Merciless** throws a burn or removal bolt, and **Rhystic Study** taxes or draws — all three fire off the same event, an opponent casting a spell. Every spell they cast grows your Army, risks a Kaervek bolt, and either costs them {1} or hands you a card. Rhystic doesn't stop the spell, so the amass and the Kaervek trigger still happen whether or not they pay.
+**Urabrask, Heretic Praetor** is the new top-end threat: a hasty 4/4 that turns your upkeep into an extra card and turns each opponent's draw step into "exile the top card, play it this turn or lose it." It strips their ability to sandbag, and every card they rush out is still a cast that feeds Sauron, Kaervek, and Rhystic Study.
 
-**Closing lines.** Sword of Feast and Famine plus Aggravated Assault on an unblockable Army — infinite combats. Without it, a doubled and proliferated Army made unblockable, then swung twice through Aggravated Assault. Noxious Gearhulk or Witch-king clearing the key blocker before the swing. Or raw beatdown from Hellkite Tyrant, Grave Titan, and Witch-king in the air while the Army holds the ground.
-
-## Consistency
-
-100 cards with 37 land slots: 5 Island, 7 Mountain, 6 Swamp and 18 nonbasic. One further slot is Bloodsoaked Insight // Sanguine Morass, a spell whenever you would rather have one, so in practice the deck runs 36 hard lands and one flex card.
-
-| Measure | Count | Note |
-| --- | --- | --- |
-| Black lands | ~17 | the base colour; Blood Crypt joins it |
-| Blue lands | ~16 | comfortable for four counterspells and Rhystic Study |
-| Red lands | ~19 | Blood Crypt, Shivan Reef, and Steam Vents all make red, for Kaervek, Blasphemous Act, Aggravated Assault |
-| Lands whose coloured mana cannot cast a counterspell | 4 | Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Unclaimed Territory |
-
-Witch-king's {4}{B}{B} is the only new colour demand, and seventeen black sources cover it comfortably.
-
-**The land base.** Blood Crypt, Shivan Reef, and Steam Vents are untapped duals that took the dead-land count down to four. Boiling Rock Prison and Sanguine Morass still enter tapped, and Sulfur Falls and Frostboil Snarl are conditional, but the deck usually has both colours on turn three.
-
-**Honest note on the rock count.** You run five mana rocks (Arcane Signet, Chromatic Lantern, Mind Stone, Sol Ring, Talisman of Creativity). Coalition Relic, which used to be here, went to the Najeela deck (no longer tracked).
-
-**Card advantage is the deck's strongest axis.** Phyrexian Arena, Rhystic Study, Call of the Ring, Jace's Archivist, Night's Whisper, Big Score, Ringsight, Kindred Discovery, Reconnaissance Mission, and Sauron's own draw-four. Ringsight tempts the Ring and tutors any black, blue, or red card to hand, so it finds Deepglow Skate, Witch-king, a counter, or a protection piece on demand. It cannot fetch colourless cards — see the tutor section.
-
-**Interaction is well covered.** Counterspells in Arcane Denial, Memory Lapse, Counterspell, and Undermine, plus Cyclonic Rift as a reset, **eight** pieces of spot removal (Bedevil, Bitter Triumph, Bloodchief's Thirst, Chaos Warp, Feed the Swarm, Go for the Throat, Infernal Grasp, Terminate), and three wipes in Blasphemous Act, Nibelheim Aflame, and Toxic Deluge. Infernal Grasp is the cleanest of the eight — {1}{B}, instant, destroy any creature, pay 2 life — with none of Go for the Throat's artifact gap or Terminate's colour requirement. Only one of the three wipes kills your own Army: Nibelheim Aflame points *at* it and spares it, and Blasphemous Act's 13 damage leaves it standing once it is 14 toughness or larger. Toxic Deluge is the only sweeper you cast knowing you lose the board too.
-
-**The single-threat risk is well answered.** Slip Out the Back phases the Army out to dodge targeted removal, wipes, edicts, and bounce, with its counters intact; Not of This World counters removal aimed at a power-7-plus creature for free; Call of the Ring plus Champion's Helm gives hexproof; and Whispersilk Cloak gives shroud. Witch-king is also a second real threat, so the deck is a little less all-in on the Army than it was. **The Ozolith** covers the case where removal gets through anyway: when the Army (or any creature with counters) leaves the battlefield, its counters move to The Ozolith, and at the beginning of combat on your turn you can put them all onto a creature — the next Army token, or any creature you control. A destroyed or exiled Army no longer means starting over.
-
-**Curve.** Low and flat apart from Sauron, Hellkite Tyrant, Grave Titan, Noxious Gearhulk, Kaervek, and now Witch-king at six. The deck functions from turn four onward, which suits a plan that wants opponents to be casting spells.
+**Three taxes on the same trigger.** Sauron amasses, **Kaervek the Merciless** throws a burn or removal bolt, and **Rhystic Study** taxes or draws — all three fire off the same event, an opponent casting a spell.
 
 ## Key lines
 
-**Sword of Feast and Famine + Aggravated Assault is an infinite-combat combo.** Equip the Sword to a creature that will connect — ideally the Army made unblockable by Whispersilk Cloak or Rogue's Passage. It deals combat damage, the defender discards, and all your lands untap. In the main phase that follows, pay {3}{R}{R} from those lands to activate Aggravated Assault: untap your creatures, take another combat and main phase. Connect again, lands untap again, repeat. You need at least five lands that can make {3}{R}{R} and an attacker that can't be blocked; with both, it's deterministic — unlimited combats, each one also tempting the Ring, fetching a Sword of the Animist land, and (with Witch-king attacking) forcing an edict. It's beaten by instant-speed removal on the equipped creature, a fog, or a blocker you can't get past — which is why protecting the carrier comes first.
+**Sword of Feast and Famine + Aggravated Assault is infinite combat.** Equip the Army, make it unblockable (Whispersilk Cloak or Rogue's Passage), and attack. The Sword's hit untaps all your lands, which pays for Aggravated Assault's {3}{R}{R} again, which untaps the Army for another combat. Each hit also tempts the Ring and makes the defender discard. Needs five lands; realistically turn five or later.
 
-**Without the combo, Aggravated Assault is still the closer.** {2}{R} to cast, then {3}{R}{R} per activation as a sorcery for another combat-plus-main phase.
+**Deepglow Skate on Sword of Hearth and Home.** With both Swords on the Army, each connection flickers Skate and doubles every counter. Even without Aggravated Assault, one hit usually ends a player.
 
-**Witch-king before the Army swing.** Declare Witch-king and the Army attacking the same player: Witch-king's trigger resolves in the declare-attackers step, so their smallest creature is gone before they choose blockers. Against a single chump-blocker, that's as good as unblockable. He dies to Blasphemous Act, Toxic Deluge, and your own Nibelheim Aflame (unless you point Nibelheim at him), so sequence wipes accordingly. He's legendary, so Champion's Helm gives him hexproof if the Army doesn't need it.
+**Bowmasters + Archivist wheel** (see Strategy) is the grind engine; hold it for a turn where the counters matter.
 
-**Whispersilk Cloak is the protection upgrade.** {3}, equip {2}, and the Army becomes unblockable *and* gains shroud. The catch: shroud stops you targeting it too, so once the Cloak is on, you can't equip other gear to it and can't aim Slip Out the Back at it. **Equip Sword of Feast and Famine first, then the Cloak** — that's the combo carrier, unblockable and shrouded. Sword's protection from black also stops black targeted removal on its own (it doesn't stop Toxic Deluge, which doesn't target).
+**Sequencing.** Get Sauron down early, since every opponent spell after he lands is a free counter. Land The Ozolith before you commit a big Army, so removal only costs you tempo. Hold the counterspells for the turn you swing.
 
-**Slip Out the Back is your best answer to losing the Army.** {U}, instant, phase it out with a +1/+1 counter on top. A phased-out token returns next turn with every counter, and phasing dodges targeted removal, destroy and exile wipes (Farewell included), edicts, and bounce. Hold it whenever you tap out to swing.
+## Consistency
 
-**Call of the Ring plus Champion's Helm is the standing protection package.** The Ring's first ability makes your Ring-bearer legendary, which turns Champion's Helm on, so naming the Army as Ring-bearer gives it hexproof. Call also rebuilds after an exile: it hands Ring-bearer status to the new Army token at your next upkeep.
+The list is exactly 100 cards. 36 lands (18 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 37 when you need the land half. Five rocks: Sol Ring, Arcane Signet, Mind Stone, Talisman of Creativity, and Chromatic Lantern, plus Big Score's Treasures. Sword of Hearth and Home and Sword of the Animist both ramp basics once the Army connects.
 
-**The Deepglow Skate turn.** Build the Army to eight or ten counters, then Skate doubles it and everything else with counters on your board. With War Machine giving double strike, Whispersilk or Rogue's Passage making it unblockable, and Aggravated Assault for a second combat, that is usually lethal on one player. Hold the Skate until the Army is already large.
+| Measure | Count | Note |
+| --- | --- | --- |
+| Blue lands | 16 | 5 Island plus the U duals, Crumbling Necropolis, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
+| Black lands | 16 | 6 Swamp plus Barad-dûr, Blood Crypt, Drowned Catacomb, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
+| Red lands | 19 | 7 Mountain plus the R duals, Haunted Ridge, Izzet Boilerworks, and the any-colour lands |
+| Colorless-only lands | 3 | Rogue's Passage, Scavenger Grounds, Plaza of Heroes (coloured only for legendary spells) |
 
-**Mauhúr makes every amass bigger.** While he's out, an amass 1 becomes amass 2, and Deepglow Skate doubles a larger base. He's a 2/2, so Blasphemous Act, Toxic Deluge, and Nibelheim Aflame all take him with the table.
+**Haunted Ridge → the Unclaimed Territory slot.** Unclaimed Territory only made coloured mana for Orc creature spells; Haunted Ridge is a real B/R dual. Metallic Mimic and Kindred Discovery still name Orc.
 
-**Nibelheim Aflame is the sweeper you can cast while committed.** {2}{R}{R}, choose a creature you control, and it deals damage equal to its power to each *other* creature. Point it at the Army and a ten-counter token wipes the table while your threat stays with its counters intact. It needs a fat creature to point at, so it is dead early and dead when you are behind on board (that is what Toxic Deluge is for), and it takes your own Mauhúr, Metallic Mimic, Bowmasters, Flux Channeler, and Witch-king with it (Inexorable Tide, being an enchantment, rides through). Flashback {5}{R}{R}, and a flashback cast also discards your hand and draws four.
-
-**Rhystic Study wants to be down early.** The sooner it lands, the more opponent spells it taxes over the game. Deploy it ahead of Sauron when the pod is spell-heavy; it stacks with Kaervek to make every enemy cast an expensive decision.
-
-**Sword of Hearth and Home rides with Feast and Famine.** +2/+2 and protection from green and white: white and green creatures can't block the Army, and white or green removal can't target it — in this pod that blanks Sephiroth's Swords to Plowshares, Path to Exile, and Assassin's Trophy against the carrier. Every hit blinks one of your creatures (Noxious Gearhulk, Orcish Bowmasters, Deepglow Skate and Grave Titan all re-trigger) and puts a basic land onto the battlefield. Equip both Swords before Whispersilk Cloak, since the Cloak's shroud stops further equips.
-
-**Watch the equip costs.** Sword of Feast and Famine ({3}, equip {2}) and Sword of the Animist are the equipment you attach on curve; Conqueror's Flail and War Machine are the late additions. Lightning Greaves on the Army gives shroud (same targeting caveat as Whispersilk), so attach it last.
+**Interaction.** Nine pieces of spot removal (Bedevil, Bitter Triumph, Bloodchief's Thirst, Feed the Swarm, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Chaos Warp) plus Noxious Gearhulk and Vraska; three counters (Counterspell, Arcane Denial, Undermine); four resets in Blasphemous Act, Toxic Deluge, Nibelheim Aflame, and Cyclonic Rift; and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
 
 ## Tutor targets by board state
 
-Two tutors, and their split matters: **Diabolic Tutor** fetches *any* card to hand for {2}{B}{B}; **Ringsight** fetches only a black, blue, or red card to hand *and* tempts the Ring — but it cannot touch anything colourless.
+Two tutors: **Diabolic Tutor** (any card to hand) and **Ringsight** (a blue, black, or red card, tempting the Ring on the way).
 
-- **Ringsight can't get your equipment, rocks, or utility lands.** Sword of Feast and Famine, Sword of Hearth and Home, Sword of the Animist, Conqueror's Flail, Whispersilk Cloak, Champion's Helm, the mana rocks, Rogue's Passage, and Barad-dûr are all colourless — invisible to Ringsight. **Save Diabolic Tutor for those**, and let Ringsight handle the coloured spells it can reach.
-- **Army is huge, need to break through → the unblockable enabler.** Diabolic Tutor for Whispersilk Cloak or Rogue's Passage. If you already have evasion, Ringsight → Deepglow Skate for the doubling turn. Ringsight → Witch-king is the coloured alternative when the problem is one chump-blocker.
-- **Missing one combo piece → Diabolic Tutor for Sword of Feast and Famine** (colourless — Ringsight can't reach it), **or Ringsight for Aggravated Assault** (red, so the cheaper tutor with a Ring tempt on the way). Save Diabolic for the Sword.
-- **Army is set, need one more combat → Aggravated Assault**.
-- **Bowmasters on board, hand running dry → Ringsight for Jace's Archivist** (blue), then wheel the table.
-- **Need protection for the swing → Ringsight for Slip Out the Back or Not of This World**, tempting the Ring on the way.
-- **One problem creature → Ringsight for Infernal Grasp**, the cleanest unconditional kill spell.
-- **Pod is casting into you → Ringsight for Kaervek** (BR) to tax the table, or a counterspell for the turn you commit. Rhystic Study is also worth grabbing early.
-- **Behind on board / need the reset → Ringsight for Toxic Deluge** (black) or Blasphemous Act (red); Nibelheim Aflame is wrong when you have no fat creature to point it at.
-- **Flooded and grinding → Diabolic Tutor for Barad-dûr** if you need the land-based amass sink.
+- **Army is huge, need to break through → the unblockable enabler.** Diabolic Tutor for Whispersilk Cloak or Rogue's Passage. If you already have evasion, Ringsight → Deepglow Skate for the doubling turn.
+- **Missing one combo piece → Diabolic Tutor for Sword of Feast and Famine** (colourless — Ringsight can't reach it), **or Ringsight for Aggravated Assault**. Save Diabolic for the Sword.
+- **Opponents holding removal for the Army → Diabolic Tutor for The Ozolith** before you commit.
+- **Bowmasters on board, hand running dry → Ringsight for Jace's Archivist**, then wheel the table.
+- **Need protection for the swing → Ringsight for Slip Out the Back or Not of This World.**
+- **One problem creature → Ringsight for Infernal Grasp** (or Slaughter Pact if you need it free on the combo turn).
+- **Pod is casting into you → Ringsight for Kaervek** or Urabrask.
+- **Behind on board / need the reset → Ringsight for Toxic Deluge** or Blasphemous Act — ideally with The Ozolith out.
+- **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
 
-Rule of thumb: Ringsight first for anything blue/black/red — you get a Ring tempt as a bonus — and reserve the one Diabolic Tutor for the colourless pieces nothing else can find.
+Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic Tutor for the colourless pieces nothing else can find.
 
 ## Bracket and Rule 0
 
-Bracket 3, at the cap with **three** Game Changers: **Cyclonic Rift**, **Orcish Bowmasters**, and **Rhystic Study**. Witch-king and Infernal Grasp are both off-list, so the count is unchanged. Adding any further Game Changer — Demonic or Vampiric Tutor included — would push the deck to Bracket 4.
+Bracket 3, at the cap with **three** Game Changers: **Cyclonic Rift**, **Orcish Bowmasters**, and **Rhystic Study**. Sword of Hearth and Home, Urabrask, The Ozolith, Slaughter Pact, Vandalblast, and Haunted Ridge are all off-list, so the count is unchanged. Adding any further Game Changer would push the deck to Bracket 4.
 
-**The deck now has a combo: Sword of Feast and Famine + Aggravated Assault**, which with an unblockable carrier is unlimited combat phases. It's a two-card combo (plus evasion the deck runs in Whispersilk Cloak and Rogue's Passage) that needs {3} + {2} equip + {2}{R} and five lands to start, so it realistically assembles turn five or later — consistent with Bracket 3's "no early two-card combos" expectation, but it is a combo and changes the pregame conversation. If you ever want Sauron fair again, the Sword is the card to move.
+**The deck has a combo: Sword of Feast and Famine + Aggravated Assault**, which with an unblockable carrier is unlimited combat phases. It needs five lands and realistically assembles turn five or later — consistent with Bracket 3's "no early two-card combos" expectation, but it changes the pregame conversation.
 
 Disclose before the game:
 
 - **Sword of Feast and Famine + Aggravated Assault is an infinite-combat combo**, and Diabolic Tutor and Ringsight can each find a piece.
-
 - **Cyclonic Rift**, **Orcish Bowmasters**, and **Rhystic Study** (all three Game Changers).
-- **Sauron amasses off every spell an opponent casts**, **Kaervek** punishes the same trigger, and **Rhystic Study** taxes it — people should know all three exist before they sequence their turns.
+- **Sauron amasses off every spell an opponent casts**, **Kaervek** punishes the same trigger, and **Rhystic Study** taxes it.
 - **Jace's Archivist** is a repeatable wheel, and with Orcish Bowmasters out it pings for every card they draw.
+- **Urabrask** replaces each opponent's draw-step draw with an exile-and-play-it-now card.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
@@ -121,7 +93,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (16).** Deepglow Skate, Flux Channeler, Grave Titan, Hellkite Tyrant, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Metallic Mimic, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Vision Synthezoid Avenger, War Machine Avenging Arsenal, Witch-king Bringer of Ruin
+**Creatures (15).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Metallic Mimic, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (2).** Ral Zarek Guest Lecturer, Vraska Betrayal's Sting
 
@@ -129,11 +101,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (13).** Arcane Signet, Champion's Helm, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Hearth and Home, Sword of the Animist, Talisman of Creativity, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (25).** Arcane Denial, Bedevil, Big Score, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Memory Lapse, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slip Out the Back, Terminate, Tezzeret's Gambit, Toxic Deluge, Undermine, Unearth
+**Instants and sorceries (26).** Arcane Denial, Bedevil, Big Score, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Slip Out the Back, Terminate, Tezzeret's Gambit, Toxic Deluge, Undermine, Unearth, Vandalblast
 
-**Lands (36).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Izzet Boilerworks, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, Unclaimed Territory, 5 Island, 7 Mountain, 6 Swamp
+**Lands (36).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
-Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when you need the land half. Name Orc for Metallic Mimic, Kindred Discovery, and Unclaimed Territory. Barad-dûr amasses on its own without a name.
+Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when you need the land half. Name Orc for Metallic Mimic and Kindred Discovery. Barad-dûr amasses on its own without a name.
 
 ## Import list (100)
 
@@ -168,7 +140,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Frostboil Snarl
 1 Go for the Throat
 1 Grave Titan
-1 Hellkite Tyrant
+1 Haunted Ridge
 1 Inexorable Tide
 1 Infernal Grasp
 1 Iron Man, Armored Avenger
@@ -178,7 +150,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Kindred Discovery
 1 Lightning Greaves
 1 Mauhúr, Uruk-hai Captain
-1 Memory Lapse
 1 Metallic Mimic
 1 Mind Stone
 1 Nibelheim Aflame
@@ -199,6 +170,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Scarlet Witch, Chaotic Avenger
 1 Scavenger Grounds
 1 Shivan Reef
+1 Slaughter Pact
 1 Slip Out the Back
 1 Sol Ring
 1 Steam Vents
@@ -212,14 +184,14 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 The Ozolith
 1 Toxic Deluge
 1 Treno, Dark City
-1 Unclaimed Territory
 1 Undermine
 1 Unearth
+1 Urabrask, Heretic Praetor
+1 Vandalblast
 1 Vision, Synthezoid Avenger
 1 Vraska, Betrayal's Sting
 1 War Machine, Avenging Arsenal
 1 Whispersilk Cloak
-1 Witch-king, Bringer of Ruin
 5 Island
 7 Mountain
 6 Swamp
@@ -227,35 +199,30 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 
 ## Flags and tuning levers
 
-**The 09-22 swaps — 2 out, 2 in.**
-- **Gollum, Silent Slinker → Witch-king, Bringer of Ruin.** Gollum was the softest slot — a common in for one +1/+1 counter and a menace body. Witch-king (moved from the Sephiroth deck) is a real second threat: a 5/3 flier whose attack edict removes the chump-blocker the Army would otherwise face, and repeats with every Aggravated Assault combat. The cost is curve — a six-drop replaces a cheap body. This also retires the old Gollum/Erebos lifegain anti-synergy note.
-- **Hero's Blade → Infernal Grasp.** Hero's Blade was legendary-matters gear that didn't auto-attach to the Army. Infernal Grasp is two-mana instant-speed removal with no restrictions, taking spot removal from seven to eight.
+**The 09-26 change — 6 out, 6 in.**
 
-**The 09-22 second pass — 2 out, 2 in (new cards).**
-- **Colossus Hammer → Sword of Feast and Famine.** Hammer was an {8}-equip sink with nothing to cheat it; the Sword equips for {2}, protects from black, strips a card per hit, and untaps your lands. The trade-off is deliberate: it completes the Aggravated Assault infinite.
-- **Mask of Memory → Jace's Archivist.** Mask was the most redundant draw piece (a third combat-damage draw effect next to Kindred Discovery and Reconnaissance Mission) and competed with the Sword for equip mana. Archivist is a repeatable wheel that, with Bowmasters, grows the Army by a counter per card each opponent draws.
+| Out | In | What it does |
+| --- | --- | --- |
+| Erebos, God of the Dead | Sword of Hearth and Home | The softest slot (rarely a creature in Grixis) becomes a second combat Sword that flickers an ETB creature and ramps a basic on every hit. Simmed better than Erebos under both AI profiles. |
+| Hellkite Tyrant | Urabrask, Heretic Praetor | Top-end threat that also taxes opponents' draw steps and keeps them casting into Sauron. |
+| Witch-king, Bringer of Ruin | The Ozolith | Trades a six-drop evasive body for counter insurance on the Army. |
+| Memory Lapse | Slaughter Pact | Soft counter → free unconditional (nonblack) kill spell for the combo turn. |
+| Tome of Legends | Vandalblast | A dead slot → one-sided artifact wipe. |
+| Unclaimed Territory | Haunted Ridge | Orc-only fixing → real B/R dual. |
 
-**Earlier changes still standing.** Rhystic Study (09-21), Inexorable Tide (09-21), Aggravated Assault, Whispersilk Cloak, and the Blood Crypt / Shivan Reef / Steam Vents land upgrade.
+**Weakest remaining inclusions.** Champion's Helm (the Army isn't legendary, so its hexproof rarely applies, and Sauron already has ward) and Unearth (it fights Scavenger Grounds; Lethal Scheme was the planned replacement) are the softest slots, followed by Bedevil and Big Score.
 
-**The proliferate suite** is Flux Channeler, Inexorable Tide, and Tezzeret's Gambit, with Deepglow Skate doubling and Mauhúr multiplying on top.
+**Sheoldred, the Apocalypse (spare copy) is the obvious next add.** Not a Game Changer, so it doesn't move the bracket. Every card opponents draw off Jace's Archivist costs them 2 life on top of Bowmasters, and the Ring's draw-four gains you 8. Note that Urabrask replaces each opponent's draw-step draw, so the two overlap there — Sheoldred still hits every other draw.
 
+**Scavenger Grounds hits your own graveyard,** which fights Unearth. Fire it deliberately. Plaza of Heroes only pays off when you name a utility land worth shutting off.
 
-**Scavenger Grounds hits your own graveyard,** which fights Unearth. Fire it deliberately, mainly at the Sephiroth deck. Plaza of Heroes only pays off when you name a utility land worth shutting off — in your pod, Strip Mine out of Sephiroth.
-
-**Card conflicts with your other decks** (Sephiroth and Veyran; Najeela is no longer tracked).
-- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
+**Card conflicts with your other decks.**
+- **Witch-king, Bringer of Ruin** has left this deck and isn't in Sephiroth either — it goes to the binder unless you want it back somewhere.
+- **Diabolic Tutor** is in this deck and Sephiroth — two physical copies.
+- **Lethal Scheme** has left Sephiroth but isn't in this list; Unearth is still here.
 - Shared with **Veyran**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
 - Shared with **Sephiroth**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Toxic Deluge, Treno Dark City.
-- **No longer shared**: Night's Whisper and Phyrexian Arena left Sephiroth on 09-25, so they're Sauron-only now. Crumbling Necropolis and Lightning Greaves were shared with Najeela.
-- **Diabolic Tutor** is now in two tracked decks (this one and Sephiroth).
-- **To the binder (earlier)**: Gollum, Silent Slinker; Hero's Blade; Colossus Hammer; Mask of Memory; Tome of Legends; Erebos, God of the Dead.
-
-**Sephiroth now plays combo too.** Grand Abolisher shuts off your counterspells and instant removal on its turn, so the window to stop Mikaeus + Triskelion or the Grave Titan + Nim Deathmantle loop is before Abolisher resolves or on your own turn. Go for the Throat can't hit Triskelion (artifact creature) — use Infernal Grasp or Terminate.
-
-**Weakest remaining inclusions.** Unearth is now the softest slot. At three Game Changers you have no room to add a fourth without moving to Bracket 4.
-
-## Change log
-
-**Sep 2026.** Tome of Legends → The Ozolith. Tome was among the softest slots; The Ozolith keeps the Army's counters when the token is removed and puts them back on a creature at the beginning of your combat, so removal on the Army costs you a turn instead of the whole build-up. Not a Game Changer, so the deck stays at three.
-
-**Sep 2026 (sim-tested).** Erebos, God of the Dead → Sword of Hearth and Home. Erebos was the flagged softest slot (rarely a creature). The Sword gives the Army +2/+2 and protection from green and white, and each connection blinks a creature and ramps a land. In the pod simulation (20,000 games per profile) Sauron's win rate went 16.3% → 17.0% (conservative) and 16.1% → 17.3% (loose), with damage per game up ~2 (almost all combat). Cutting Unearth instead gave a similar result; Erebos was cut as the weaker card. Not a Game Changer, so the deck stays at three.
+- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
+- **Now only in this deck**: Night's Whisper and Phyrexian Arena (Sephiroth cut both).
+- **New singles**: Sword of Hearth and Home, Urabrask, The Ozolith, Slaughter Pact, Vandalblast, Haunted Ridge.
+- **To the binder**: Erebos, God of the Dead; Hellkite Tyrant; Witch-king, Bringer of Ruin; Memory Lapse; Tome of Legends; Unclaimed Territory.
