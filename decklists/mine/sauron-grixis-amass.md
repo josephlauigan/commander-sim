@@ -93,15 +93,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (15).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Metallic Mimic, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (18).** Consecrated Sphinx, Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Mauhúr Uruk-hai Captain, Metallic Mimic, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (2).** Ral Zarek Guest Lecturer, Vraska Betrayal's Sting
 
-**Enchantments (7).** Aggravated Assault, Call of the Ring, Inexorable Tide, Kindred Discovery, Phyrexian Arena, Reconnaissance Mission, Rhystic Study
+**Enchantments (5).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Reconnaissance Mission
 
-**Artifacts (13).** Arcane Signet, Champion's Helm, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Hearth and Home, Sword of the Animist, Talisman of Creativity, The Ozolith, Whispersilk Cloak
+**Artifacts (12).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (26).** Arcane Denial, Bedevil, Big Score, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Slip Out the Back, Terminate, Tezzeret's Gambit, Toxic Deluge, Undermine, Unearth, Vandalblast
+**Instants and sorceries (26).** Arcane Denial, Bedevil, Big Score, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Slip Out the Back, Terminate, Tezzeret's Gambit, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (36).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -121,12 +121,13 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Blood Crypt
 1 Bloodchief's Thirst
 1 Bloodsoaked Insight // Sanguine Morass
+1 Brush Off
 1 Call of the Ring
-1 Champion's Helm
 1 Chaos Warp
 1 Chromatic Lantern
 1 Command Tower
 1 Conqueror's Flail
+1 Consecrated Sphinx
 1 Counterspell
 1 Crumbling Necropolis
 1 Cyclonic Rift
@@ -147,7 +148,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Izzet Boilerworks
 1 Jace's Archivist
 1 Kaervek the Merciless
-1 Kindred Discovery
+1 Kefka, Court Mage // Kefka, Ruler of Ruin
 1 Lightning Greaves
 1 Mauhúr, Uruk-hai Captain
 1 Metallic Mimic
@@ -162,13 +163,13 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Plaza of Heroes
 1 Ral Zarek, Guest Lecturer
 1 Reconnaissance Mission
-1 Rhystic Study
 1 Ringsight
 1 Rogue's Passage
 1 Sauron, the Dark Lord
 1 Sauron, the Necromancer
 1 Scarlet Witch, Chaotic Avenger
 1 Scavenger Grounds
+1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Slaughter Pact
 1 Slip Out the Back
@@ -177,15 +178,14 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Sulfur Falls
 1 Sword of Feast and Famine
 1 Sword of Hearth and Home
-1 Sword of the Animist
 1 Talisman of Creativity
+1 Talisman of Dominance
 1 Terminate
 1 Tezzeret's Gambit
 1 The Ozolith
 1 Toxic Deluge
 1 Treno, Dark City
 1 Undermine
-1 Unearth
 1 Urabrask, Heretic Praetor
 1 Vandalblast
 1 Vision, Synthezoid Avenger
