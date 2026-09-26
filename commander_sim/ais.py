@@ -1461,7 +1461,7 @@ def _attack_triggers_once(g, p, atk, d):
     for m in list(atk):
         if m.cd is None: continue
         t = m.cd.tags
-        if 'witchking' in t: edict(g, d)
+        if 'witchking' in t: edict(g, d, least_power=True)
         if 'archon' in t and d.alive: archon_attack(g, p, d)
         if 'titan' in t: make_tokens(g, p, 2, 2)
         if 'tokatk' in t:
