@@ -300,7 +300,7 @@ def report(path, text, out, inn, dry):
         print('\nRecorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).')
     if not dry:
         print('Next: python3 -m unittest discover -s tests -t .   then measure it, e.g. python3 -m commander_sim --deck '
-              '<key> --pool all --jobs 24')
+              '<key> --pool all')
 
 
 def _record_fixture():
