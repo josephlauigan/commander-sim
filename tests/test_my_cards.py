@@ -1,6 +1,6 @@
 """Key cards of your three decks, checked against their Oracle text on hand-built positions."""
 import unittest
-from tests.table import table, hand, lands, perm
+from tests.table import table, hand, lands, perm, token
 from commander_sim import engine as E, ais
 
 C = E.DB
@@ -86,6 +86,105 @@ class Sephiroth(unittest.TestCase):
         E.draw(g, v, 1)
         self.assertEqual(len(s.hand), 2)
 
+    # --- the four loops: Mikaeus + Triskelion, Mikaeus or Melira + Kitchen Finks, Nim Deathmantle + Ashnod's Altar + Grave Titan
+    def loops(self, *cards, opp=()):
+        from commander_sim.cards.impl import mine
+        g = table('seph', 'veyran', 'sauron'); s = g.players[0]
+        for c in cards: perm(g, s, c)
+        for c in opp: perm(g, g.players[1], c)
+        return g, s, {n: kills for n, keys, kills in mine.seph_loops(g, s)}
+
+    def test_mikaeus_triskelion_kills_alone(self):
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Viscera Seer')
+        self.assertEqual(loops, {'Mikaeus + Triskelion': True})
+
+    def test_finks_loops_need_a_payoff(self):
+        for enabler in ('Mikaeus, the Unhallowed', 'Melira, Sylvok Outcast'):
+            g, s, loops = self.loops(enabler, 'Kitchen Finks', "Ashnod's Altar")
+            self.assertEqual(list(loops.values()), [False])
+            g, s, loops = self.loops(enabler, 'Kitchen Finks', "Ashnod's Altar", 'Zulaport Cutthroat')
+            self.assertEqual(list(loops.values()), [True])
+            g, s, loops = self.loops(enabler, 'Kitchen Finks', 'Altar of Dementia')      # mills everyone
+            self.assertEqual(list(loops.values()), [True])
+
+    def test_deathmantle_loop(self):
+        g, s, loops = self.loops('Nim Deathmantle', "Ashnod's Altar", 'Grave Titan')
+        self.assertEqual(list(loops.values()), [False])
+        g, s, loops = self.loops('Nim Deathmantle', "Ashnod's Altar", 'Grave Titan', 'Blood Artist')
+        self.assertEqual(list(loops.values()), [True])
+        g, s, loops = self.loops('Nim Deathmantle', "Ashnod's Altar", 'Grave Titan', 'Triskelion')
+        self.assertEqual(list(loops.values()), [True])            # infinite mana keeps returning Triskelion
+
+    def test_no_outlet_no_loop(self):
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Kitchen Finks', 'Melira, Sylvok Outcast')
+        self.assertEqual(loops, {})
+
+    def test_rest_in_peace_stops_the_loops(self):
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Viscera Seer', opp=('Rest in Peace',))
+        self.assertEqual(loops, {})
+
+    def test_the_ai_goes_for_a_killing_loop(self):
+        from commander_sim.ai import brain
+        g, s, _ = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Viscera Seer')
+        opts = {l: f for u, l, f in brain.main_options(g, s, False)}
+        opts['loop: Mikaeus + Triskelion']()
+        self.assertTrue(g.over); self.assertIs(g.winner, s)
+
+    def test_a_loop_without_payoff_is_infinite_life(self):
+        from commander_sim.cards.impl import mine
+        g, s, _ = self.loops('Melira, Sylvok Outcast', 'Kitchen Finks', "Ashnod's Altar")
+        (name, keys, kills), = mine.seph_loops(g, s)
+        mine.run_loop(g, s, name, keys, kills)
+        self.assertFalse(g.over); self.assertGreater(s.life, 1000)
+
+    def test_aura_shards_clears_artifacts_and_enchantments(self):
+        from commander_sim.cards.impl import mine
+        g, s, _ = self.loops('Melira, Sylvok Outcast', 'Kitchen Finks', "Ashnod's Altar", 'Aura Shards')
+        v = g.players[1]
+        perm(g, v, 'Sol Ring'); perm(g, v, 'Rite of the Dragoncaller'); snipe = perm(g, v, 'Guttersnipe')
+        (name, keys, kills), = mine.seph_loops(g, s)
+        mine.run_loop(g, s, name, keys, kills)
+        self.assertEqual(v.perms, [snipe])
+
+    def test_tutors_find_the_last_piece(self):
+        g, s, _ = self.loops('Mikaeus, the Unhallowed', 'Viscera Seer')
+        self.assertEqual(ais.seph_tutor_target(g, s), 'Triskelion')
+
+    def test_reanimation_takes_the_last_piece(self):
+        g, s, _ = self.loops('Melira, Sylvok Outcast', 'Viscera Seer', 'Blood Artist')
+        s.gy.append(C['Kitchen Finks'])
+        self.assertEqual(ais.rean_targets(g, s, 'animate')[0][1].name, 'Kitchen Finks')
+
+    def test_a_piece_that_completes_a_loop_is_cast_first(self):
+        g, s, _ = self.loops('Mikaeus, the Unhallowed', 'Viscera Seer')
+        self.assertEqual(ais.seph_prio(g, s, hand(s, 'Triskelion')), 85)
+
+    def test_kitchen_finks_persist(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        finks = perm(g, s, 'Kitchen Finks')
+        self.assertEqual(s.life, 42)                          # enters: gain 2
+        E.die(g, finks, 'sac')
+        back = next(m for m in s.perms if m.name == 'Kitchen Finks')
+        self.assertEqual((back.plus, s.life), (-1, 44))      # persist: back with a -1/-1 counter
+        E.die(g, back, 'sac')
+        self.assertFalse(any(m.name == 'Kitchen Finks' for m in s.perms))
+
+    def test_melira_keeps_persist_going(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        perm(g, s, 'Melira, Sylvok Outcast')
+        finks = perm(g, s, 'Kitchen Finks')
+        for _ in range(3):
+            E.die(g, finks, 'sac')
+            finks = next(m for m in s.perms if m.name == 'Kitchen Finks')
+            self.assertEqual(finks.plus, 0)
+        self.assertFalse(E.minus_counter(g, finks))           # no -1/-1 counters on your creatures (Yawgmoth, Persist)
+        self.assertTrue(E.melira(s))
+
+    def test_avacyns_pilgrim(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        perm(g, s, "Avacyn's Pilgrim")
+        self.assertTrue(E.can_pay(g, s, 0, 'W'))
+
 
 class Veyran(unittest.TestCase):
     def test_magecraft_pings_each_opponent(self):
@@ -133,6 +232,14 @@ class Veyran(unittest.TestCase):
         perm(g, v, 'Emeritus of Ideation // Ancestral Recall')
         self.assertEqual(v.hand, [])
 
+    def test_unsummon_returns_a_creature(self):
+        from commander_sim.ai import brain
+        g = table('veyran', 'sauron'); v, r = g.players
+        lands(v, 'Island'); hand(v, 'Unsummon'); k = perm(g, r, 'Kaervek the Merciless')
+        opts = {l: f for u, l, f in brain.removal_options(g, v, brain.Situation(g, v))}
+        opts['Unsummon -> Kaervek the Merciless']()
+        self.assertNotIn(k, r.perms); self.assertIn(C['Kaervek the Merciless'], r.hand)
+
 
 class Sauron(unittest.TestCase):
     def test_sauron_amasses_when_an_opponent_casts(self):
@@ -170,6 +277,120 @@ class Sauron(unittest.TestCase):
         perm(g, r, 'Rhystic Study')
         E.on_cast(g, v, C['Lightning Bolt'])                  # the caster has no mana to pay {1}
         self.assertEqual(len(r.hand), 1)
+
+    def test_champions_helm_goes_on_a_legend(self):
+        # "Equipped creature gets +2/+2. As long as equipped creature is legendary, it has hexproof. Equip {1}"
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Island', 3)
+        sauron = perm(g, r, 'Sauron, the Dark Lord'); E.amass(g, r, 3); perm(g, r, "Champion's Helm")
+        opts = {l: f for u, l, f in brain.main_options(g, r, False)}
+        self.assertIn("equip Champion's Helm to Sauron, the Dark Lord", opts)       # no Sword needed
+        opts["equip Champion's Helm to Sauron, the Dark Lord"]()
+        self.assertEqual(E.epow(g, sauron), 9)
+        self.assertTrue(E.untargetable(g, sauron))
+        self.assertEqual(sum(L.tapped for L in r.lands), 1)
+
+    def test_sauron_casts_sheoldred_early(self):
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Swamp', 4); hand(r, 'Sheoldred, the Apocalypse', "Night's Whisper")
+        u = {l: u for u, l, f in brain.main_options(g, r, False)}
+        self.assertGreater(u['Sheoldred, the Apocalypse'], u["Night's Whisper"])
+
+    def test_slaughter_pact_hits_nonblack_only(self):
+        g = table('sauron', 'seph'); r, s = g.players
+        perm(g, s, 'Blood Artist'); snipe = perm(g, s, 'Birds of Paradise')
+        self.assertEqual(E.legal_targets(g, r, 'destroy', 'c', False, C['Slaughter Pact']), [snipe])
+
+    def test_slaughter_pact_is_paid_at_the_next_upkeep(self):
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Swamp', 3)
+        E.on_cast(g, r, C['Slaughter Pact'])
+        ais.upkeep(g, r)
+        self.assertTrue(r.alive)
+        self.assertEqual(sum(L.tapped for L in r.lands), 3)
+        self.assertEqual(r.pact_debts, [])
+
+    def test_slaughter_pact_unpaid_loses_the_game(self):
+        g = table('sauron', 'veyran', 'seph'); r = g.players[0]
+        lands(r, 'Island', 3)                                  # no black mana
+        E.on_cast(g, r, C['Slaughter Pact'])
+        ais.upkeep(g, r)
+        self.assertFalse(r.alive)
+
+    def test_the_ai_casts_slaughter_pact_only_when_it_can_pay(self):
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r, v = g.players
+        hand(r, 'Slaughter Pact'); perm(g, v, 'Guttersnipe')
+        self.assertEqual(brain.removal_options(g, r, brain.Situation(g, r)), [])
+        lands(r, 'Swamp', 3, tapped=True)                      # tapped now, untapped at the upkeep
+        self.assertEqual(len(brain.removal_options(g, r, brain.Situation(g, r))), 1)
+
+    def test_urabrask_on_your_upkeep(self):
+        # "At the beginning of your upkeep, exile the top card of your library. You may play it this turn."
+        g = table('sauron', 'veyran'); r = g.players[0]
+        perm(g, r, 'Urabrask, Heretic Praetor')
+        top = r.library[-1]
+        ais.upkeep(g, r)
+        self.assertEqual(r.hand, [top]); self.assertEqual(r.impulse, [top])
+
+    def test_urabrask_replaces_an_opponents_draw(self):
+        # "At the beginning of each opponent's upkeep, the next time they would draw a card this turn, instead they
+        #  exile the top card of their library. They may play it this turn."  Exiling isn't drawing: Sheoldred
+        #  doesn't trigger, and the card is gone at the end of the turn if it isn't played.
+        g = table('sauron', 'veyran'); r, v = g.players
+        perm(g, r, 'Urabrask, Heretic Praetor'); perm(g, r, 'Sheoldred, the Apocalypse')
+        g.active = v
+        ais.upkeep(g, v)
+        top = v.library[-1]
+        E.draw(g, v, 1, step=True)
+        self.assertEqual(v.impulse, [top])
+        self.assertEqual(v.life, 40)
+        E.draw(g, v, 1)                                        # only the first draw is replaced
+        self.assertEqual(v.life, 38)
+        ais.end_step(g, v)
+        self.assertNotIn(top, v.hand); self.assertIn(top, v.exile)
+
+    def test_kefka_enters(self):
+        # "each player discards a card. Then you draw a card for each card type among cards discarded this way"
+        g = table('sauron', 'veyran', 'seph'); r, v, s = g.players
+        hand(r, 'Sol Ring'); hand(v, 'Island'); hand(s, 'Grave Titan')
+        kefka = perm(g, r, 'Kefka, Court Mage // Kefka, Ruler of Ruin')
+        self.assertFalse(kefka.fly)                                     # the front face doesn't fly
+        self.assertEqual((len(v.hand), len(s.hand)), (0, 0))
+        self.assertEqual(len(r.hand), 3)                                # artifact, land, creature
+
+    def test_kefka_transforms(self):
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r, v = g.players
+        kefka = perm(g, r, 'Kefka, Court Mage // Kefka, Ruler of Ruin')
+        lands(r, 'Island', 8); lands(v, 'Island', 5); token(g, v, 1)
+        opts = {l: f for u, l, f in brain.main_options(g, r, False)}
+        opts['Kefka: {8}, transform']()
+        self.assertEqual(v.perms, [])                                   # the opponent sacrificed the token
+        self.assertEqual((E.epow(g, kefka), E.etgh(g, kefka), kefka.fly), (5, 7, True))
+        n = len(r.hand)
+        E.lose_life(g, v, 3, r)                                         # on your turn: draw that many
+        self.assertEqual(len(r.hand), n + 3)
+        g.active = v
+        E.lose_life(g, v, 2, r)
+        self.assertEqual(len(r.hand), n + 3)
+
+    def test_brush_off_is_cheaper_against_instants_and_sorceries(self):
+        g = table('sauron', 'veyran'); r = g.players[0]
+        brush = hand(r, 'Brush Off'); lands(r, 'Island', 2)
+        self.assertIs(E.pick_counter(g, r, C['Lightning Bolt']), brush)  # {1}{U}
+        self.assertIsNone(E.pick_counter(g, r, C['Grave Titan']))        # {2}{U}{U}
+        self.assertTrue(E.cast_counter(g, r, brush, C['Lightning Bolt']))
+        self.assertEqual(sum(L.tapped for L in r.lands), 2)
+
+    def test_sauron_values_consecrated_sphinx(self):
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Island', 5); lands(r, 'Swamp', 2); hand(r, 'Consecrated Sphinx', "Night's Whisper")
+        u = {l: u for u, l, f in brain.main_options(g, r, False)}
+        self.assertGreater(u['Consecrated Sphinx'], u["Night's Whisper"])
 
     def test_phyrexian_arena(self):
         g = table('sauron', 'veyran'); r = g.players[0]

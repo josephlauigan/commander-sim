@@ -12,7 +12,8 @@ from commander_sim.engine import DB
 
 
 def load(path):
-    txt = open(path).read(); block = txt.split('## Import list')[1].split('```')[1]
+    with open(path, encoding='utf-8') as fh: txt = fh.read()
+    block = txt.split('## Import list')[1].split('```')[1]
     out = []
     for line in block.strip().splitlines():
         n, name = line.split(' ', 1); out += [name.strip()] * int(n)

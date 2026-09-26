@@ -78,15 +78,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sephiroth, the Savior (Atraxa, Grand Unifier)
 
-**Creatures (23).** Archon of Cruelty, Birds of Paradise, Blood Artist, Carrion Feeder, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Gray Merchant of Asphodel, Llanowar Elves, Massacre Wurm, Mikaeus the Unhallowed, Sakura-Tribe Elder, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Sheoldred Whispering One, Stinkweed Imp, Stitcher's Supplier, Triskelion, Viscera Seer, Zulaport Cutthroat
+**Creatures (23).** Archon of Cruelty, Avacyn's Pilgrim, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Kitchen Finks, Llanowar Elves, Massacre Wurm, Melira Sylvok Outcast, Mikaeus the Unhallowed, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stinkweed Imp, Stitcher's Supplier, Triskelion, Viscera Seer, Zulaport Cutthroat
 
 **Enchantments (5).** Animate Dead, Aura Shards, Necromancy, Smothering Tithe, Tortured Existence
 
 **Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chromatic Lantern, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (14).** Buried Alive, Cultivate, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Entomb, Farewell, Lash of the Balrog, Persist, Reanimate, Toxic Deluge, Unburial Rites, Unmarked Grave, Yawgmoth's Will
+**Sorceries (13).** Buried Alive, Cultivate, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Farewell, Lash of the Balrog, Persist, Reanimate, Toxic Deluge, Unburial Rites, Unmarked Grave, Yawgmoth's Will
 
-**Instants (9).** Anguished Unmaking, Assassin's Trophy, Dovin's Veto, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares
+**Instants (10).** Anguished Unmaking, Assassin's Trophy, Dovin's Veto, Entomb, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares
 
 **Lands (37).** Ash Barrens, Blossoming Sands, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Llanowar Wastes, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
 
@@ -103,6 +103,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Assassin's Trophy
 1 Atraxa, Grand Unifier
 1 Aura Shards
+1 Avacyn's Pilgrim
 1 Birds of Paradise
 1 Blood Artist
 1 Blossoming Sands
@@ -110,7 +111,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Bolas's Citadel
 1 Brushland
 1 Buried Alive
-1 Carrion Feeder
 1 Caves of Koilos
 1 Chromatic Lantern
 1 Command Tower
@@ -133,15 +133,16 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Glacial Fortress
 1 Grand Abolisher
 1 Grave Titan
-1 Gray Merchant of Asphodel
 1 Grisly Salvage
 1 Hallowed Fountain
 1 Hinterland Harbor
 1 Isolated Chapel
+1 Kitchen Finks
 1 Lash of the Balrog
 1 Llanowar Elves
 1 Llanowar Wastes
 1 Massacre Wurm
+1 Melira, Sylvok Outcast
 1 Mikaeus, the Unhallowed
 1 Mind Stone
 1 Necromancy
@@ -152,7 +153,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Persist
 1 Reanimate
 1 Sakura-Tribe Elder
-1 Sephiroth, Planet's Heir
 1 Sheoldred, the Apocalypse
 1 Sheoldred, Whispering One
 1 Skullclamp

@@ -39,7 +39,9 @@ def _request(url, body=None):
 def load_cache():
     global _cache
     if _cache is None:
-        _cache = json.load(open(CACHE_PATH)) if os.path.exists(CACHE_PATH) else {}
+        if os.path.exists(CACHE_PATH):
+            with open(CACHE_PATH, encoding='utf-8') as fh: _cache = json.load(fh)
+        else: _cache = {}
     return _cache
 
 

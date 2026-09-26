@@ -611,6 +611,11 @@ def draw(g, p, n=1, step=False):
                 draw(g, thief.owner, 1); continue
         if not p.library:
             p.decked = True; return
+        if getattr(p, 'urabrask', None) == turn_stamp(g):     # Urabrask, Heretic Praetor: exiled instead, playable
+            p.urabrask = None                                  # this turn (no draw, so no draw triggers)
+            c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
+            log(f'    {NAME(p)} exiles {c.name} instead of drawing it (Urabrask)', g)
+            continue
         p.draw_n += 1
         p.hand.append(p.library.pop())
         if p.draw_n == 1: p.miracle = (turn_stamp(g), p.hand[-1])
@@ -770,6 +775,18 @@ def to_zone_card(g, m, zone):
     elif zone == 'lib': owner.library.insert(g.rng.randrange(len(owner.library) + 1), m.cd)
 
 
+def melira(p):
+    """Melira, Sylvok Outcast: p can't get poison counters, and p's creatures can't have -1/-1 counters put on them"""
+    return any(m.cd is not None and 'melira' in m.cd.tags and not m.phased for m in p.perms)
+
+
+def minus_counter(g, m, n=1):
+    """put n -1/-1 counters on creature m (none under Melira); True if they were put"""
+    if melira(m.owner): return False
+    m.plus -= n
+    return True
+
+
 def die(g, m, cause='destroy'):
     p = m.owner
     if m not in p.perms: return
@@ -834,8 +851,8 @@ def _die_rest(g, m, p, cause, selfdies):
     if k and m.orig is p and m.cd is not p.cmd and not (g.hooks and CI.total(g, 'no_graveyard', p)):
         if 'undying' in k and m.plus <= 0:                     # undying: back with a +1/+1 counter
             enter(g, p, m.cd, undying=True); p.stats['undying'] += 1; return
-        if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter
-            enter(g, p, m.cd, plus=-1); p.stats['persist'] += 1
+        if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter (none under Melira)
+            enter(g, p, m.cd, plus=0 if melira(p) else -1); p.stats['persist'] += 1
             return
     to_zone_card(g, m, 'gy')
     if g.hooks and m.creature: CI.fire(g, 'creature_to_gy', m)          # Nim Deathmantle
@@ -991,7 +1008,21 @@ def casts_this_turn(g, p, pred=None):
     return sum(1 for c in log_[1] if pred is None or pred(c))
 
 
+def pact_affordable(g, p, cost):
+    """could p pay this pact cost, on top of pacts already owed, from its mana sources at the next upkeep (everything
+    untapped)?"""
+    gen, pips = parse_cost(cost)
+    for dg, dp in getattr(p, 'pact_debts', []): gen += dg; pips += dp
+    tapped = [(x, x.tapped) for x in p.lands + p.perms]
+    for x, _ in tapped: x.tapped = False
+    try: return can_pay(g, p, gen, pips)
+    finally:
+        for x, t in tapped: x.tapped = t
+
+
 def on_cast(g, p, c):
+    if 'pactpay' in c.tags:                                # Slaughter Pact: pay at your next upkeep or lose the game
+        p.pact_debts = getattr(p, 'pact_debts', []) + [parse_cost(c.tags['pactpay'])]
     if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_cast(g, p, c)
     if getattr(p, 'glimpse', None): importlib.import_module('commander_sim.cards.impl.rules2').glimpse_draw(g, p, c)
     st = turn_stamp(g)
@@ -1180,11 +1211,17 @@ def counter_ok(ctr, c):
     return False
 
 
+def counter_cost(ctr, spell):
+    """(generic, pips) a counterspell costs against this spell (Brush Off: {1}{U} less against an instant or sorcery)"""
+    if 'brushoff' in ctr.tags and spell is not None and (spell.instant or spell.sorcery): return 1, 'U'
+    return ctr.generic, ctr.pips
+
+
 def pick_counter(g, q, c):
     best = None
     for ctr in q.hand:
         if ctr.name == 'Venser, Shaper Savant' and q.key not in CTHRESH and 'ctr' not in ctr.tags:
-            if can_pay(g, q, ctr.generic, ctr.pips) and castable(g, q, ctr) and (best is None or ctr.cmc < best.cmc): best = ctr
+            if can_pay(g, q, *counter_cost(ctr, c)) and castable(g, q, ctr) and (best is None or ctr.cmc < best.cmc): best = ctr
             continue
         if 'ctr' not in ctr.tags or not counter_ok(ctr, c): continue
         if g.hooks and not castable(g, q, ctr): continue
@@ -1194,10 +1231,10 @@ def pick_counter(g, q, c):
         if 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
             return ctr                                                   # Force of Negation: free on others' turns
         if 'free' in ctr.tags:
-            if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, ctr.generic, ctr.pips):
+            if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, *counter_cost(ctr, c)):
                 if best is None: best = ctr
             continue
-        if can_pay(g, q, ctr.generic, ctr.pips):
+        if can_pay(g, q, *counter_cost(ctr, c)):
             if best is None or ctr.cmc < best.cmc or 'free' in best.tags: best = ctr
     return best
 
@@ -1206,7 +1243,7 @@ def commander_out(p):
     return any(m.is_cmd and not m.phased for m in p.perms)
 
 
-def cast_counter(g, q, ctr):
+def cast_counter(g, q, ctr, spell=None):
     if 'fierce' in ctr.tags and commander_out(q):
         pass                                     # cast without paying its mana cost
     elif 'pact' in ctr.tags:
@@ -1216,11 +1253,11 @@ def cast_counter(g, q, ctr):
     elif 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
         x = min(blues, key=lambda c: card_worth(g, q, c)); q.hand.remove(x); q.exile.append(x)
-    elif 'free' in ctr.tags and not can_pay(g, q, ctr.generic, ctr.pips):
+    elif 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
         if not blues: return False
         q.hand.remove(blues[0]); q.exile.append(blues[0]); lose_life(g, q, 1, q)
-    elif not pay(g, q, ctr.generic, ctr.pips):
+    elif not pay(g, q, *counter_cost(ctr, spell)):
         return False
     q.hand.remove(ctr)
     if ctr.creature:                 # Mystic Snake / Venser: the counter is a creature
@@ -1265,7 +1302,7 @@ def counter_window(g, p, c, imp, aff):
         ctr = pick_counter(g, q, c)
         if ctr is None: continue
         if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, p, q, ctr): continue
-        if not cast_counter(g, q, ctr): continue
+        if not cast_counter(g, q, ctr, c): continue
         log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
         soft = int(ctr.tags.get('soft', 0))
         if ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
@@ -1277,7 +1314,7 @@ def counter_window(g, p, c, imp, aff):
         # original caster may fight back
         if max(imp, 7) >= 7 and imp >= 6:
             back = pick_counter(g, p, ctr)
-            if back is not None and cast_counter(g, p, back):
+            if back is not None and cast_counter(g, p, back, ctr):
                 p.stats['counterwar_won'] += 1
                 log(f'    {NAME(p)} counters back with {back.name}', g)
                 continue

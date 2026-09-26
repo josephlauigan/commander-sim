@@ -106,7 +106,8 @@ def main():
         hits = {}
         for f in os.listdir(out):
             if not f.endswith('.json'): continue
-            for path, ns in json.load(open(os.path.join(out, f))).items():
+            with open(os.path.join(out, f)) as fh: data = json.load(fh)
+            for path, ns in data.items():
                 hits.setdefault(path, set()).update(ns)
     rows = []
     for dp, _, fs in os.walk(PKG):

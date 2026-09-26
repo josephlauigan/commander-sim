@@ -1,4 +1,4 @@
-"""Guard for the four main deck files: they must parse to exactly the recorded lists (the sim never edits them).
+"""Guard for your three deck files: they must parse to exactly the recorded lists (the sim never edits them).
 
 Regenerate only after an intentional change to a deck file:  python3 tests/test_my_decks.py --record
 """
@@ -16,7 +16,7 @@ def parsed_lists():
 
 class MyDecks(unittest.TestCase):
     def test_my_decks_parse_unchanged(self):
-        self.assertEqual(parsed_lists(), json.load(open(FIX)))
+        with open(FIX) as fh: self.assertEqual(parsed_lists(), json.load(fh))
 
 
 if __name__ == '__main__':

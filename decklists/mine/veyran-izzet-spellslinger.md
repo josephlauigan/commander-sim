@@ -103,7 +103,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (3).** Old Fat Spider Can't See Me, Rite of the Dragoncaller, Thousand-Year Storm
 
-**Instants (26).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Disdainful Stroke, Dreams of Laguna, Flashback, Force of Will, Lightning Bolt, Mystic Confluence, Mystical Tutor, Plunder the Trollshaws, Pongify, Prismari Charm, Quick Study, Reality Shift, Reenact the Crime, Return the Favor, Spell Pierce, Think Twice, Vibrant Outburst, Visions of Beyond
+**Instants (26).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Dreams of Laguna, Flashback, Force of Will, Lightning Bolt, Mystic Confluence, Mystical Tutor, Plunder the Trollshaws, Pongify, Prismari Charm, Quick Study, Reality Shift, Reenact the Crime, Return the Favor, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
 **Sorceries (10).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Stock Up
 
@@ -130,7 +130,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Cyclonic Rift
 1 Deduce
 1 Desolate Lighthouse
-1 Disdainful Stroke
 1 Dreams of Laguna
 1 Emeritus of Conflict // Lightning Bolt
 1 Emeritus of Ideation // Ancestral Recall
@@ -193,6 +192,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Thought Vessel
 1 Thousand-Year Storm
 1 Thunderdrum Soloist
+1 Unsummon
 1 Venser, Shaper Savant
 1 Veyran, Voice of Duality
 1 Vibrant Outburst

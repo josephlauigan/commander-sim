@@ -227,7 +227,10 @@ def rean_options(g, p):
 
 def rean_targets(g, p, kind):
     res = []
+    need = importlib.import_module('commander_sim.cards.impl.mine').loop_need(g, p)
     for c in p.gy:
+        if c.creature and c.name in need and not (kind == 'persist' and 'leg' in c.tags):
+            res.append((9.5, c, p)); continue                 # the last piece of a loop
         if c.creature and seph_bval(g, p, c) >= 4:
             if kind == 'persist' and 'leg' in c.tags: continue
             res.append((seph_bval(g, p, c), c, p))
@@ -287,7 +290,7 @@ def seph_rean_resolve(g, p, c, ctx):
     if c.tags.get('rean') == 'reanimate': lose_life(g, p, cd.cmc, p)
     was_removed = cd.name in p.removed_bombs
     m = enter(g, p, cd, orig=src)
-    if c.tags.get('rean') == 'persist': m.plus = -1
+    if c.tags.get('rean') == 'persist': E.minus_counter(g, m)
     if c.tags.get('rean') == 'evil': m.plus += 2
     p.stats['rean_resolved'] += 1
     note_bomb(p, cd, was_removed)
@@ -364,6 +367,9 @@ def seph_tortured(g, p):
 
 def seph_tutor_target(g, p):
     lib = {c.name for c in p.library}
+    mine = importlib.import_module('commander_sim.cards.impl.mine')
+    need = [n for n in mine.loop_need(g, p, {c.name for c in p.hand}) if n in lib]
+    if need: return need[0]                                  # the last piece of a loop
     rean = has_rean_access(g, p)
     tgt = own_bomb_in_gy(g, p)
 
@@ -511,6 +517,8 @@ def seph_boots(g, p):
 
 def seph_prio(g, p, c):
     t = c.tags
+    lp = importlib.import_module('commander_sim.cards.impl.mine').loop_prio(g, p, c)
+    if lp is not None: return lp                             # a piece of one of the loops
     if 'shards' in t: return 68
     if 'onering' in t: return 62
     if c is p.cmd: return 0
@@ -836,7 +844,7 @@ def combo_interrupted(g, p, which, key_perms):
                 if 'free' not in ctr.tags and not can_pay(g, q, ctr.generic, ctr.pips): continue
                 if not cast_counter(g, q, ctr): continue
                 back = pick_counter(g, p, ctr)
-                if back is not None and cast_counter(g, p, back): break
+                if back is not None and cast_counter(g, p, back, ctr): break
                 q.stats['combo_stops_counter'] += 1
                 return True
     return False
@@ -944,6 +952,8 @@ def sauron_prio(g, p, c):
         a = army_of(p); return 56 if a and a.plus >= 6 else 0
     if 'kaervek' in t: return 54
     if 'witchking' in t: return 52
+    if 'sheoA' in t: return 60                              # Sheoldred, the Apocalypse
+    if 'kefka' in t: return 55
     if 'eng' in t: return 50
     if 'archivist' in t: return 50 if has(p, 'bowmasters') else 20
     if 'callring' in t: return 55
@@ -972,7 +982,7 @@ def sauron_prio(g, p, c):
 def sauron_equip(g, p):
     a = army_of(p)
     if not a or a.phased: return False
-    for tag in ('sword', 'flail', 'animist', 'helm', 'cloak'):
+    for tag in ('sword', 'flail', 'animist', 'cloak'):          # Champion's Helm: helm_target / helm_equip
         if equipped(a, tag): continue
         eq = [e for e in find(p, tag) if e.attached is not a and not blocked(g, p, e.cd.name)]
         if not eq: continue
@@ -982,10 +992,28 @@ def sauron_equip(g, p):
                                   for e in p.perms):
             continue                                   # e.g. Sword of Hearth and Home goes on first
         if equipped(a, 'cloak'): return False
-        cost = 1 if tag == 'helm' else 2                      # Champion's Helm: equip {1}
-        if can_pay(g, p, cost, ''):
-            pay(g, p, cost, ''); eq[0].attached = a; return True
+        if can_pay(g, p, 2, ''):
+            pay(g, p, 2, ''); eq[0].attached = a; return True
     return False
+
+
+def helm_target(g, p):
+    """where Champion's Helm (+2/+2; hexproof while the creature is legendary) should go: the most valuable legendary
+    creature (the Army once it is the Ring-bearer), else the Army; None if it is already there"""
+    mine = importlib.import_module('commander_sim.cards.impl.mine')
+    cr = [m for m in p.perms if m.creature and not m.phased]
+    legends = [m for m in cr if mine.is_legendary(g, m)]
+    best = max(legends, key=lambda m: pval(g, m)) if legends else army_of(p)
+    if best is None or equipped(best, 'helm'): return None
+    return best
+
+
+def helm_equip(g, p, m):
+    helm = [e for e in find(p, 'helm') if not blocked(g, p, e.cd.name)]
+    if not helm or m not in p.perms or not can_pay(g, p, 1, ''): return False
+    pay(g, p, 1, ''); helm[0].attached = m
+    log(f'  {NAME(p)} equips Champion\'s Helm to {m.name}', g)
+    return True
 
 
 def sauron_archivist(g, p):

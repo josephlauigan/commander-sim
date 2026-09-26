@@ -819,7 +819,8 @@ def _vraska(g, src, p, s, post):
         if q is not None:
             def minus9():
                 if not _pw_once(g, src): return False
-                _pw_use(g, src, -9); q.poison = max(getattr(q, 'poison', 0), 9)
+                _pw_use(g, src, -9)
+                if not melira(q): q.poison = max(getattr(q, 'poison', 0), 9)
                 log(f'  {NAME(p)} uses Vraska -9: {NAME(q)} has nine poison counters', g); return True
             out.append((12.0, f'Vraska -9 -> {NAME(q)}', minus9))
     return out
@@ -832,7 +833,7 @@ def proliferate_all(g, p):
         if m.plus > 0: add_counters(g, m, 1)
         if m.loyalty is not None and m.cd is not None and 'P' in m.cd.types: m.loyalty += 1
     for q in g.opps(p):
-        if getattr(q, 'poison', 0) > 0: q.poison += 1
+        if getattr(q, 'poison', 0) > 0 and not melira(q): q.poison += 1
         for m in list(q.perms):
             if m.creature and m.plus < 0:
                 m.plus -= 1
@@ -966,3 +967,206 @@ CI.kaervek = kaervek
 CI.plaza_colors = plaza_colors
 CI.territory_colors = territory_colors
 CI.ring_tempt = ring_tempt
+
+
+# ======================================================== Urabrask, Heretic Praetor
+@on('Urabrask, Heretic Praetor', 'upkeep')
+def _urabrask(g, src, p):
+    """your upkeep: exile the top card, you may play it this turn; each opponent's upkeep: their next draw this turn is
+    exiled instead, playable this turn (engine.draw)"""
+    if p is src.owner:
+        if p.library:
+            c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
+            log(f'    Urabrask exiles {c.name} (playable this turn)', g)
+    elif p.alive:
+        p.urabrask = turn_stamp(g)
+
+
+card('Urabrask, Heretic Praetor', 'leg pow=4 tgh=4 haste', dsl=[])
+note('Urabrask, Heretic Praetor', 'Full', 'your upkeep: top card exiled, playable this turn; opponents: the next draw '
+     'each upkeep is exiled instead and playable that turn (so it is not a draw); unplayed cards stay exiled')
+note('Slaughter Pact', 'Full', 'destroy target nonblack creature for {0}; pay {2}{B} at your next upkeep or lose; the '
+     'AI casts it only when it can pay that')
+note("Champion's Helm", 'Full', 'equip {1}: +2/+2, hexproof while legendary; the AI equips the most valuable legendary '
+     'creature (the Army once it is the Ring-bearer), else the Army')
+
+
+# ======================================================== Kefka, Court Mage // Kefka, Ruler of Ruin
+KEFKA = 'Kefka, Court Mage // Kefka, Ruler of Ruin'
+
+
+def _kefka_wheel(g, src, p):
+    """each player discards a card, then you draw a card for each card type among the discarded cards"""
+    discarded = []
+    for q in [x for x in g.players if x.alive]:
+        if not q.hand: continue
+        c = min(q.hand, key=lambda x: E.card_worth(g, q, x))          # each player gives up their least useful card
+        E.discard_cards(g, q, [c]); discarded.append(c)
+    kinds = {t for c in discarded for t in c.types if t in 'LCISAEP'}
+    if kinds: draw(g, p, len(kinds))
+    log(f"    Kefka: {', '.join(c.name for c in discarded) or 'nothing'} discarded, {NAME(p)} draws {len(kinds)}", g)
+
+
+@on(KEFKA, 'etb')
+def _kefka_etb(g, src, p, m):
+    if m is src: _kefka_wheel(g, src, p)
+
+
+@on(KEFKA, 'attack')
+def _kefka_attack(g, src, p, atk, d):
+    if src in atk and not (src.data or {}).get('ruin'): _kefka_wheel(g, src, p)
+
+
+@on(KEFKA, 'options')
+def _kefka_ruin(g, src, p, s, post):
+    """{8}, sorcery speed: each opponent sacrifices a permanent of their choice, then Kefka transforms"""
+    if p is not src.owner or post is None or g.active is not p or (src.data or {}).get('ruin') or not can_pay(g, p, 8, ''):
+        return []
+
+    def go():
+        if src not in p.perms or not can_pay(g, p, 8, ''): return False
+        pay(g, p, 8, '')
+        for q in g.opps(p):
+            toks = [m for m in q.perms if m.token and not m.phased]
+            if toks: die(g, min(toks, key=lambda m: pval(g, m)), 'sac')          # their choice: the cheapest thing
+            elif len(q.lands) > 4:
+                L = q.lands.pop(); q.gy.append(L.cd)
+            elif q.perms: die(g, min(q.perms, key=lambda m: pval(g, m)), 'sac')
+            elif q.lands:
+                L = q.lands.pop(); q.gy.append(L.cd)
+        src.data = dict(src.data or {}, ruin=True)
+        src.pow, src.tgh, src.fly = 5, 7, True
+        log(f'  {NAME(p)} activates Kefka ({{8}}): each opponent sacrifices a permanent; Kefka transforms', g)
+        return True
+    return [(3.0 + 0.5 * len(g.opps(p)), 'Kefka: {8}, transform', go)]
+
+
+@on(KEFKA, 'lose_life')
+def _kefka_ruin_draw(g, src, q, n):
+    """Kefka, Ruler of Ruin: whenever an opponent loses life during your turn, you draw that many cards"""
+    p = src.owner
+    if (src.data or {}).get('ruin') and q is not p and g.active is p and n > 0 and p.alive:
+        draw(g, p, min(n, max(0, len(p.library) - 5)))           # the AI stops short of decking itself
+
+
+card(KEFKA, 'leg human wizard pow=4 tgh=5 kefka', dsl=[])
+note(KEFKA, 'Full', 'enters or attacks: each player discards their least useful card, you draw one per card type '
+     'discarded; {8} at sorcery speed: each opponent sacrifices their cheapest permanent (a token, else a land when '
+     'they have lands to spare), then it transforms: 5/7 flying, and draws as many cards as an opponent loses life '
+     'on your turn (stopping five short of an empty library)')
+note('Brush Off', 'Full', 'counter target spell; {1}{U} against an instant or sorcery')
+note("Avacyn's Pilgrim", 'Full', 'mana dork: {T}: add {W}')
+
+
+# ======================================================== Sephiroth's loops
+# Each loop is run as its end result, after one window for opponents to answer a key piece (ais.combo_interrupted).
+OUTLETS = ('Viscera Seer', "Ashnod's Altar", 'Altar of Dementia')     # free sacrifice outlets
+DRAINS = ('Blood Artist', 'Zulaport Cutthroat')
+LOOPS = (   # (name, piece groups (one card of each), 'kills' alone or needs a 'payoff')
+    ('Mikaeus + Triskelion', (('Mikaeus, the Unhallowed',), ('Triskelion',), OUTLETS), 'kills'),
+    ('Mikaeus + Kitchen Finks', (('Mikaeus, the Unhallowed',), ('Kitchen Finks',), OUTLETS), 'payoff'),
+    ('Melira + Kitchen Finks', (('Melira, Sylvok Outcast',), ('Kitchen Finks',), OUTLETS), 'payoff'),
+    ("Nim Deathmantle + Ashnod's Altar + Grave Titan", (('Nim Deathmantle',), ("Ashnod's Altar",), ('Grave Titan',)), 'payoff'),
+)
+LOOP_CARDS = {n for _, groups, _ in LOOPS for grp in groups for n in grp}
+
+
+def _names_bf(g, p):
+    return {m.cd.name for m in p.perms if m.cd is not None and not m.phased and not m.neutered and not stopped(g, m.cd.name)}
+
+
+def loop_kills(name, names):
+    """does this loop win with what is on the battlefield (names)?"""
+    kind = next(k for n, _, k in LOOPS if n == name)
+    if kind == 'kills': return True
+    if any(d in names for d in DRAINS) or 'Altar of Dementia' in names: return True      # drain, or mill everyone
+    return name.startswith('Nim') and 'Triskelion' in names      # infinite mana: Deathmantle keeps returning Triskelion
+
+
+def loops_blocked(g, p):
+    """graveyard hate or Hushbringer: nothing that dies comes back, or its triggers don't happen"""
+    from commander_sim.cards.impl import partials as IP
+    return bool(g.hooks and CI.total(g, 'no_graveyard', p)) or IP.hushed(g)
+
+
+def seph_loops(g, p):
+    """the loops p can run now: [(name, key permanents, kills)]"""
+    if p.key != 'seph' or loops_blocked(g, p): return []
+    names = _names_bf(g, p)
+    out = []
+    for name, groups, _ in LOOPS:
+        if not all(any(n in names for n in grp) for grp in groups): continue
+        keys = []
+        for grp in groups:                                   # a piece is key only if nothing else fills its role
+            have = [m for m in p.perms if m.cd is not None and m.cd.name in grp and not m.phased]
+            if len(have) == 1 and not (grp == groups[0] and name.endswith('Kitchen Finks')
+                                       and {'Mikaeus, the Unhallowed', 'Melira, Sylvok Outcast'} <= names):
+                keys.append(have[0])
+        out.append((name, keys, loop_kills(name, names)))
+    return out
+
+
+def run_loop(g, p, name, keys, kills):
+    from commander_sim import ais
+    p.stats['combo_attempt'] += 1
+    p.milestone.setdefault('combo', p.turns)
+    p.loop_turn = p.turns
+    log(f'  {NAME(p)} goes for the {name} loop', g)
+    if ais.combo_interrupted(g, p, 'seph', keys):
+        p.stats['combo_stopped'] += 1; log('    ...the loop is stopped', g); return True
+    if any(m.cd is not None and 'shards' in m.cd.tags and not m.phased for m in p.perms) and name != LOOPS[0][0]:
+        for q in g.opps(p):                                  # Aura Shards: every creature entering destroys one
+            for m in list(q.perms):
+                if m.cd is not None and ('A' in m.cd.types or 'E' in m.cd.types) and not indestructible(g, m) \
+                        and not untargetable(g, m):
+                    die(g, m, 'destroy')
+        log("    Aura Shards clears the opponents' artifacts and enchantments", g)
+    if kills:
+        ais.win(g, p, 'combo'); return True
+    if 'Finks' in name:
+        gain(p, 1000); log(f'    {NAME(p)} gains 1000 life (as good as infinite)', g)
+    else:                                                    # infinite colourless mana, a Zombie kept each loop
+        make_tokens(g, p, 20, 2, color='B'); p.floatC = getattr(p, 'floatC', 0) + 20
+        log(f'    {NAME(p)} keeps 20 Zombies and floats 20 colourless mana', g)
+    return True
+
+
+def loop_options(g, p, s):
+    """the AI's main-phase options for Sephiroth's loops"""
+    from commander_sim.ai import brain
+    if getattr(p, 'loop_turn', None) == p.turns: return []
+    o = []
+    for name, keys, kills in seph_loops(g, p):
+        if not kills and 'Finks' in name and p.life >= 500: continue       # infinite life already
+        u = 14.0 - 6.0 * brain.removal_risk(g, p) if kills else (4.0 if 'Finks' in name else 3.0)
+        o.append((u, f'loop: {name}' + ('' if kills else ' (no payoff)'),
+                  lambda name=name, keys=keys, kills=kills: run_loop(g, p, name, keys, kills)))
+    return o
+
+
+def loop_need(g, p, extra=()):
+    """card names that would complete a loop (with what is on the battlefield plus `extra` names), killing loops first"""
+    if loops_blocked(g, p): return []
+    names = _names_bf(g, p) | set(extra)
+    want = []
+    for name, groups, _ in sorted(LOOPS, key=lambda l: l[2] != 'kills'):
+        missing = [grp for grp in groups if not any(n in names for n in grp)]
+        if len(missing) == 1 and (loop_kills(name, names) or name.endswith('Finks')):
+            want += [n for n in missing[0] if n not in want]
+    return want
+
+
+def loop_prio(g, p, c):
+    """Sephiroth's cast priority for a loop piece in hand: it completes a loop / it is one of two pieces down"""
+    if c.name not in LOOP_CARDS or loops_blocked(g, p): return None
+    if c.name in loop_need(g, p): return 85
+    names = _names_bf(g, p)
+    for name, groups, _ in LOOPS:
+        if any(c.name in grp for grp in groups) and sum(any(n in names for n in grp) for grp in groups) >= 1:
+            return 55
+    return None
+
+
+note('Melira, Sylvok Outcast', 'Full', "you can't get poison counters; your creatures can't get -1/-1 counters "
+     '(persist returns them without one); no creature in the pools has infect, so the last clause never applies')
+note('Kitchen Finks', 'Full', 'enters: gain 2 life; persist. Loops with Melira or Mikaeus and a free sacrifice outlet')

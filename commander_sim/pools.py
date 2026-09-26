@@ -25,7 +25,7 @@ class PoolDeck:
         s.folder = os.path.basename(os.path.dirname(path))
         s.tier = s.folder.split('-')[0]
         s.key = os.path.splitext(os.path.basename(path))[0]
-        txt = open(path, encoding='utf-8').read()
+        with open(path, encoding='utf-8') as fh: txt = fh.read()
         s.title = txt.splitlines()[0].lstrip('# ').strip()
         m = re.search(r'^- \*\*Commander:\*\*\s*(.+?)\s*$', txt, re.M)
         s.commander = m.group(1) if m else None

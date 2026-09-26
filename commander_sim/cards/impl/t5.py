@@ -371,7 +371,7 @@ def _yawg(g, src, p, s, post):
             lose_life(g, p, 1, p); die(g, m, 'sac')
             t = [x for q in g.opps(p) for x in q.perms if x.creature and etgh(g, x) <= 1 and not untargetable(g, x)]
             if t:
-                x = max(t, key=lambda x: (pval(g, x), epow(g, x))); x.plus -= 1
+                x = max(t, key=lambda x: (pval(g, x), epow(g, x))); E.minus_counter(g, x)
                 if etgh(g, x) <= 0: die(g, x, 'sba')
             draw(g, p, 1); return True
         kill = 1.5 if tgt else (0.4 + 0.3 * max(epow(g, x) for x in swarm) if swarm else 0)   # an X/1 attacker (a Goblin token)
@@ -397,8 +397,7 @@ def _yawg_defend(g, src, d, p, atk, assign):
         x = max(tgt, key=lambda a: (epow(g, a), pval(g, a)))
         log(f'    {NAME(d)} sacrifices {m.name} to Yawgmoth: -1/-1 counter on attacking {x.name}', g)
         lose_life(g, d, 1, d); die(g, m, 'sac')
-        if x in p.perms:
-            x.plus -= 1
+        if x in p.perms and E.minus_counter(g, x):
             if etgh(g, x) <= 0: die(g, x, 'sba')
         draw(g, d, 1)
         if g.over or not d.alive: return
