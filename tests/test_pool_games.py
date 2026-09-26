@@ -1,4 +1,4 @@
-"""Pool games run end to end: a few seeded games per tier, with and without one of the main decks."""
+"""Pool games run end to end: a few seeded games per tier, of the tier alone and with each of your decks."""
 import os, sys, unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from commander_sim import engine, compare, pools, poolmode
@@ -17,9 +17,11 @@ class PoolGames(unittest.TestCase):
                     g = poolmode.play(seed, None, None, keys, 4)
                     self.assertTrue(g.over or g.wintype == 'timeout')
                     self.assertEqual(len({p.key for p in g.players}), 4)
-                with self.subTest(tier=tier, seed=seed, me='veyran'):
-                    g = poolmode.play(seed, 'veyran', None, keys, 3)
-                    self.assertIn('veyran', [p.key for p in g.players])
+                for me in poolmode.MINE:                      # each of your decks, with three from the tier
+                    with self.subTest(tier=tier, seed=seed, me=me):
+                        g = poolmode.play(seed, me, None, keys, 3)
+                        self.assertIn(me, [p.key for p in g.players])
+                        self.assertTrue(g.over or g.wintype == 'timeout')
 
     def test_lookahead_game_plays(self):
         compare.set_ai('lookahead', 1.0)
