@@ -4,8 +4,8 @@
     me, opp = g.players
     lands(me, 'Island', 2); hand(me, 'Counterspell'); perm(g, opp, 'Grave Titan')
 
-Games use the heuristic AI and the conservative profile; nothing here searches. Every card must be in one of the
-decklists (so the Scryfall cache has it and the tests stay offline).
+Games use the heuristic AI and the conservative profile; nothing here searches. A card that no decklist runs is
+built from data/scryfall_cache.json, so the tests run offline as long as the cache has it.
 """
 from commander_sim import engine as E, ais, compare, pools, poolmode
 
@@ -35,15 +35,19 @@ def table(*keys, seed=1, life=40):
 
 
 def card(name):
+    """a card's definition; one no current decklist runs is built from the Scryfall cache (data/)"""
+    if name not in E.DB:
+        from commander_sim.cards import sources
+        sources.ensure_cards([name], verbose=False)
     return E.DB[name]
 
 
 def take(p, name):
-    """the card out of p's library (a fresh copy of its definition if the deck doesn't run it)"""
+    """the card out of p's library (its definition, if the deck doesn't run it)"""
     for c in p.library:
         if c.name == name:
             p.library.remove(c); return c
-    return E.DB[name]
+    return card(name)
 
 
 def hand(p, *names):
