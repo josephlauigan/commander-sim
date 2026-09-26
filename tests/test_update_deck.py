@@ -74,34 +74,48 @@ class Update(unittest.TestCase):
         self.assertEqual(code, 0); self.assertIn('Nothing to change', out)
         self.assertEqual(_read(path), before)
 
-    def test_a_swap(self):
-        path = self.copy('mine/sauron-grixis-amass.md')
-        new = block(path).replace('1 Big Score', '1 Sheoldred, the Apocalypse')
-        out, code = self.run_it(path, new, '--log', 'Testing Sheoldred.')
-        self.assertEqual(code, 0)
+    def swap_for(self, path):
+        """an instant or sorcery in the list, and a Grixis creature it doesn't run (the list changes over time)"""
+        from commander_sim import engine as E
         cards = load(path)
-        self.assertIn('Sheoldred, the Apocalypse', cards); self.assertNotIn('Big Score', cards)
+        out = next(n for n in sorted(set(cards)) if n in E.DB and (E.DB[n].instant or E.DB[n].sorcery))
+        inn = next(n for n in ('Sheoldred, the Apocalypse', 'Grave Titan', 'Hellkite Tyrant', 'Witch-king, Bringer of Ruin',
+                               'Gray Merchant of Asphodel') if n not in cards)
+        return out, inn
+
+    def test_a_swap(self):
+        import re
+        path = self.copy('mine/sauron-grixis-amass.md')
+        before = _read(path)
+        count = lambda text, label: int(re.search(r'\*\*' + label + r' \((\d+)\)\.\*\*', text).group(1))
+        out_card, in_card = self.swap_for(path)
+        out, code = self.run_it(path, block(path).replace(f'1 {out_card}\n', f'1 {in_card}\n'), '--log', 'A test.')
+        self.assertEqual(code, 0, out)
+        cards = load(path)
+        self.assertIn(in_card, cards); self.assertNotIn(out_card, cards)
         self.assertEqual(len(cards), 100)
         text = _read(path)
-        self.assertIn('**Creatures (16).**', text)                  # Sheoldred joins the creatures
-        self.assertIn('**Instants and sorceries (25).**', text)
-        self.assertIn('Sheoldred the Apocalypse', text)             # the by-type lines drop commas in your decks
-        self.assertIn('Out: Big Score. In: Sheoldred, the Apocalypse. Testing Sheoldred.', text)
-        self.assertIn('still mentions cards that left', out)
+        self.assertEqual(count(text, 'Creatures'), count(before, 'Creatures') + 1)
+        self.assertEqual(count(text, 'Instants and sorceries'), count(before, 'Instants and sorceries') - 1)
+        self.assertIn(in_card.replace(',', ''), text)               # the by-type lines drop commas in your decks
+        self.assertIn(f'Out: {out_card}. In: {in_card}. A test.', text)
 
     def test_a_bad_list_is_refused_and_nothing_is_written(self):
         path = self.copy('mine/sauron-grixis-amass.md')
         before = _read(path)
-        new = block(path).replace('1 Big Score', '1 Lightning Greaves').replace('1 Unearth', '1 Swords to Plowshares')
+        lines = block(path).split('\n')
+        singles = [l for l in lines if l.startswith('1 ') and 'Sauron, the Dark Lord' not in l]
+        new = '\n'.join(lines).replace(singles[0], singles[1]).replace(singles[2], '1 Swords to Plowshares')
         out, code = self.run_it(path, new)
         self.assertEqual(code, 1)
-        self.assertIn('not singleton: Lightning Greaves', out)
+        self.assertIn('not singleton: ' + singles[1][2:], out)
         self.assertIn('outside colour identity', out)
         self.assertEqual(_read(path), before)
 
     def test_ninety_nine_cards_are_refused(self):
         path = self.copy('mine/sauron-grixis-amass.md')
-        out, code = self.run_it(path, block(path).replace('1 Big Score\n', ''))
+        out_card, _ = self.swap_for(path)
+        out, code = self.run_it(path, block(path).replace(f'1 {out_card}\n', ''))
         self.assertEqual(code, 1); self.assertIn('99 cards', out)
 
     def test_a_pool_deck_keeps_its_tiers_game_changer_rule(self):
@@ -120,7 +134,8 @@ class Update(unittest.TestCase):
     def test_dry_run_writes_nothing(self):
         path = self.copy('mine/sauron-grixis-amass.md')
         before = _read(path)
-        out, code = self.run_it(path, block(path).replace('1 Big Score', '1 Sheoldred, the Apocalypse'), '--dry-run')
+        out_card, in_card = self.swap_for(path)
+        out, code = self.run_it(path, block(path).replace(f'1 {out_card}\n', f'1 {in_card}\n'), '--dry-run')
         self.assertIn('nothing written', out)
         self.assertEqual(_read(path), before)
 

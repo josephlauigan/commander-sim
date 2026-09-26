@@ -549,7 +549,7 @@ note("Man-o'-War", 'Full', 'bounces the best opposing creature')
 def _sphinx(g, src, p):
     if p is not src.owner and once_per_turn(g, src.owner, f'sphinx{id(src)}{p.key}{p.draw_n}') and len(src.owner.library) > 12:
         draw(g, src.owner, 2)
-card('Consecrated Sphinx', 'pow=4 tgh=6 fly bomb=6', dsl=[])
+card('Consecrated Sphinx', 'pow=4 tgh=6 fly bomb=6 sphinx', dsl=[])
 note('Consecrated Sphinx', 'Approximate', 'draws two per opponent draw (capped by library size)')
 
 

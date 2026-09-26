@@ -332,6 +332,7 @@ def special_options(g, p, s, post):
     """Only legal plays are listed, so the distribution is over real choices."""
     k = p.key; o = []
     if k == 'seph':
+        o += importlib.import_module('commander_sim.cards.impl.mine').loop_options(g, p, s)     # Sephiroth's loops
         gy_bomb = A.own_bomb_in_gy(g, p)
         rean = A.has_rean_access(g, p)
         # reanimation: best payable (spell, target) pair

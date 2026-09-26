@@ -322,7 +322,7 @@ def choose_counter(g, q, p, c, ctx, zone):
                 try:
                     if counter:
                         ctr = E.pick_counter(g2, q2, c)
-                        if ctr is None or not E.cast_counter(g2, q2, ctr): scores[counter] -= 50.0; continue
+                        if ctr is None or not E.cast_counter(g2, q2, ctr, c): scores[counter] -= 50.0; continue
                         E.counter_side_effects(g2, q2, p2, ctr)
                         if ctr.name == 'Mana Drain': q2.drain_mana = getattr(q2, 'drain_mana', 0) + c.cmc
                         if c is p2.cmd: p2.cmd_in_zone = True

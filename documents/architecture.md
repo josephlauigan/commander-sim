@@ -885,7 +885,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (118 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (137 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
