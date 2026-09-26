@@ -1,7 +1,7 @@
 """Deck validator: structural checks (offline) and card-data checks (synthetic Scryfall records)."""
 import os, sys, unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import pools
+from commander_sim import pools
 
 
 def rec(name, ident='', gc=False, banned=False, type_line='Instant', faces=None):

@@ -1,8 +1,8 @@
 """Pool sampling: opponents drawn without replacement, seeded, and paired across two versions of a deck."""
 import collections, os, sys, unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import pools, ais, poolmode
-from decks import DECKS
+from commander_sim import pools, ais, poolmode
+from commander_sim.decks import DECKS
 
 KEYS = ['a', 'b', 'c', 'd', 'e']
 

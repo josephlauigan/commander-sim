@@ -2,8 +2,8 @@
 
 This file reports how the main decks do against a fixed field: the 25 decks in `decklists/pool/`, five tiers of five.
 In each game, one of your decks faces three decks drawn from one tier, with seats shuffled.
-Games are seeded, so any cell can be reproduced with `compare.py --deck <d> --pool <tier> --games N`. Since September 2026
-the default AI is the look-ahead AI (`--ai lookahead`, see `search.py`); section 0 has its results. Sections 1-3 were
+Games are seeded, so any cell can be reproduced with `python3 -m commander_sim --deck <d> --pool <tier> --games N`. Since September 2026
+the default AI is the look-ahead AI (`--ai lookahead`, see `commander_sim/ai/search.py`); section 0 has its results. Sections 1-3 were
 measured with the heuristic AI alone (`--ai adaptive`) and are kept for comparison.
 
 Contents:
@@ -79,7 +79,7 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 ### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; 240 games per cell)
 
 Lists as updated in September 2026 (Najeela no longer tracked), after a full modeling pass: every card in the three
-decks audits Full (`python3 pool_audit.py --mine`). Each game seats the deck against three decks of the tier;
+decks audits Full (`python3 -m commander_sim.pool_audit --mine`). Each game seats the deck against three decks of the tier;
 25% is an even share. Tiers 2, 3 and 5 were re-run after the six pool lists were tuned (0b); Tiers 1 and 4 did not
 change. Before the tuning those cells read: Sephiroth 49.6 / 38.8 / 22.5%, Veyran 25.0 / 17.5 / 14.2%, Sauron
 23.3 / 20.4 / 18.3% (T2 / T3 / T5).
@@ -98,7 +98,7 @@ loose profile has opponents counter and remove more freely than the conservative
 ## 1. Deck × tier matrix (heuristic AI)
 
 Each cell is 5,000 games: the win rate of the deck in that row against three decks of the column's tier, with a 95% interval.
-An even share is 25%. Generated with `python3 compare.py --all-decks --pool all --games 5000`.
+An even share is 25%. Generated with `python3 -m commander_sim --all-decks --pool all --games 5000`.
 
 **Noise band.** Each interval is about ±1.2 points at 25% and ±1.4 at 50%.
 Cells in the same column use the same seeds, so the opponents and seats match row to row.
@@ -129,7 +129,7 @@ The two profiles also share seeds, so differences under about 1.5 points are noi
 
 ## 2. Calibration (heuristic AI)
 
-Commands: `python3 compare.py --calibrate all --games 2000` for both profiles.
+Commands: `python3 -m commander_sim --calibrate all --games 2000` for both profiles.
 Per-deck intervals are about ±2 points (within tier) and ±2 points (ordering, 2,000 games per deck).
 
 ### 2a. Within-tier balance (conservative / loose; flag above 35% or below 15%)
@@ -199,7 +199,7 @@ The review of the compiled cards found and fixed real errors that had distorted 
 - Deathrite Shaman exiled all graveyards.
 - Doubling Season doubled planeswalker ability costs.
 
-**AI changes that helped.** These apply to every outside deck, or to one deck's play plan (`deck_plans.py`).
+**AI changes that helped.** These apply to every outside deck, or to one deck's play plan (`commander_sim/ai/deck_plans.py`).
 
 | Change | Effect (lone deck vs the tier below) |
 |---|---|
@@ -220,7 +220,7 @@ The review of the compiled cards found and fixed real errors that had distorted 
 - **Game Changers are cheap in the sim.** Replacing Prosper's six Game Changers with basic lands costs it 3 points.
 - **Damage output.** Chulane, GAA and Prosper deal 9–20 damage per game. A lone deck needs 120.
   They mostly win by combo (Chulane, Prosper) or not at all (GAA).
-- **Upgrading the lists does not fix it.** Tested with `tools_swaptest.py` (paired, 800 games, lone vs T3; the lists are unchanged):
+- **Upgrading the lists does not fix it.** Tested with `commander_sim/tools/swaptest.py` (paired, 800 games, lone vs T3; the lists are unchanged):
 
 | Deck | Swaps tested | Result |
 |---|---|---|
@@ -278,9 +278,9 @@ profile, conservative / loose): Sephiroth 46.9 / 47.5%, Najeela 24.9 / 24.2%, Sa
 
 ## 5. Card coverage
 
-`python3 pool_audit.py` (or `--md <file>`) regenerates this. The statuses are:
+`python3 -m commander_sim.pool_audit` (or `--md <file>`) regenerates this. The statuses are:
 - **Full:** a hand implementation or reviewed override. For cards whose rules are complete but whose use is an AI choice, the note says how the AI uses it.
-- **Full-auto:** the ability compiler handles every clause. Each of these was checked against its Oracle text; wrong compilations were replaced (`impl_fixes.py`).
+- **Full-auto:** the ability compiler handles every clause. Each of these was checked against its Oracle text; wrong compilations were replaced (`commander_sim/cards/impl/fixes.py`).
 - **Approximate / Partial / Unmodeled:** none remain.
 
 Counts are per unique card per deck.
@@ -297,13 +297,13 @@ Counts are per unique card per deck.
 - Each opponent gets an instant-speed removal or Tidebinder response.
 - The loop then resolves as its end result: a win, or a lock.
 
-Where the modeling lives:
-- `impl_topdeck.py`: scry, surveil and library manipulation.
-- `impl_fixes.py`: corrected compiled cards.
-- `impl_lands.py`: utility lands.
-- `impl_partials.py`: formerly partial cards.
-- `impl_rules.py` and `impl_rules2.py`: exact rules for formerly approximated clauses.
-- `deck_plans.py`: deck play plans.
+Where the modeling lives (in `commander_sim/cards/impl/` unless noted):
+- `topdeck.py`: scry, surveil and library manipulation.
+- `fixes.py`: corrected compiled cards.
+- `lands.py`: utility lands.
+- `partials.py`: formerly partial cards.
+- `rules.py` and `rules2.py`: exact rules for formerly approximated clauses.
+- `commander_sim/ai/deck_plans.py`: deck play plans.
 
 | Tier | Deck | Full | Full-auto | Approximate | Partial | Unmodeled | Engines: full / approx. / partial / unmodeled |
 |---|---|---|---|---|---|---|---|

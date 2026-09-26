@@ -1,7 +1,7 @@
 """Pool games run end to end: a few seeded games per tier, with and without one of the main decks."""
 import os, sys, unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import engine, compare, pools, poolmode
+from commander_sim import engine, compare, pools, poolmode
 
 
 class PoolGames(unittest.TestCase):

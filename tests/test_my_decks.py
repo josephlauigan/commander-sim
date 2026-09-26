@@ -5,7 +5,7 @@ Regenerate only after an intentional change to a deck file:  python3 tests/test_
 import json, os, sys, unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
-from decks import DECKS
+from commander_sim.decks import DECKS
 
 FIX = os.path.join(HERE, 'fixtures', 'my_decks_parsed.json')
 
