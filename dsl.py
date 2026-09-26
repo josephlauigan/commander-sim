@@ -187,8 +187,7 @@ def run(g, p, e, src, ctx, spell, depth):
     d = e['do']; opps = g.opps(p)
     kind = 'burn' if spell is not None else 'triggers'
     if d in ('scry', 'surveil'):
-        if E.POOL_RULES:
-            import impl_topdeck; impl_topdeck.scry(g, p, e.get('n', 1), 'gy' if d == 'surveil' else 'bottom')
+        import impl_topdeck; impl_topdeck.scry(g, p, e.get('n', 1), 'gy' if d == 'surveil' else 'bottom')
     elif d == 'draw':
         for q in players(g, p, e.get('who', 'you'), ctx):
             if e.get('optional') and len(q.library) <= 12: continue       # "you may draw": don't deck yourself
@@ -375,7 +374,7 @@ def run(g, p, e, src, ctx, spell, depth):
             import ais
             c = max(ls, key=lambda c: (len(c.tags.get('c', '')), 'f' in c.tags)); p.hand.remove(c)
             p.lands.append(E.Land(c, ais.land_enters_tapped(p, c))); E.landfall(g, p)
-            if E.POOL_RULES and 'f' in c.tags and p.lands and p.lands[-1].cd is c: ais.crack_fetch(g, p, p.lands[-1])
+            if 'f' in c.tags and p.lands and p.lands[-1].cd is c: ais.crack_fetch(g, p, p.lands[-1])
     elif d == 'ring_protection':                  # The One Ring: protection from everything until your next turn
         p.ring_prot = True
         log(f'    {NAME(p)} gains protection from everything until their next turn', g)
@@ -717,12 +716,12 @@ def ability_options(g, p, sorcery_ok=True):
     for src in list(p.perms):
         if src.cd is None or not getattr(src.cd, 'dsl', None) or src.phased: continue
         if E.stopped(g, src.cd.name): continue                    # Disruptor Flute
-        if E.POOL_RULES and __import__('impl_rules').ability_locked(g, src, p): continue
+        if __import__('impl_rules').ability_locked(g, src, p): continue
         for i, a in enumerate(src.cd.dsl):
             t = a.get('type')
             if t == 'activated':
                 if a.get('sorcery') and not sorcery_ok: continue
-                if E.POOL_RULES and all(e.get('do') == 'add_mana' for e in a['effects']) and a.get('cost', {}).get('sac'):
+                if all(e.get('do') == 'add_mana' for e in a['effects']) and a.get('cost', {}).get('sac'):
                     continue                       # sacrificing for mana nobody is waiting to spend: never proactive
                 key = f'act{id(src)}{i}'
                 uses = p.flag_turn.get(key + 'n', (None, 0))

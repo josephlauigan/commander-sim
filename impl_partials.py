@@ -26,7 +26,7 @@ def deal_noncombat(g, src_owner, m, n):
 
 
 def tajic_protects(g, m):
-    return E.POOL_RULES and any(x.cd is not None and x.cd.name == 'Tajic, Legion\'s Edge' and x is not m and not x.phased
+    return any(x.cd is not None and x.cd.name == 'Tajic, Legion\'s Edge' and x is not m and not x.phased
                                 for x in m.owner.perms)
 
 
@@ -681,7 +681,7 @@ note('Hushbringer', 'Full', 'flying, lifelink; creatures entering or dying trigg
 
 
 def hushed(g):
-    return E.POOL_RULES and any(m.cd is not None and m.cd.name == 'Hushbringer' and not m.phased and not m.neutered
+    return any(m.cd is not None and m.cd.name == 'Hushbringer' and not m.phased and not m.neutered
                                 for q in g.players if q.alive for m in q.perms)
 
 

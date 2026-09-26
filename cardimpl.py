@@ -21,8 +21,6 @@ Events the engine fires (fn signatures):
   trigger_copies(g, src, p, kind, x)    -> extra copies of a triggered ability (kind 'attack' / 'dies')
 Zone hooks for cards not on the battlefield (ninjutsu from hand, recursion from the graveyard):
   hand_blocks(g, card, p, atk, d, assign)   gy_options(g, card, p, s, post)
-A hook on a card that is also in one of the four main decks only runs in pool games (engine.POOL_RULES),
-so the original four-deck mode is unchanged.
 """
 import engine as E
 
@@ -71,7 +69,7 @@ def main_cards():
 
 
 def live(name):
-    return name in HOOKS and (E.POOL_RULES or name not in main_cards())
+    return name in HOOKS
 
 
 def hooked(g, event):
@@ -228,7 +226,7 @@ def adjust_mana(g, p, U):
             if isinstance(u[0], E.Perm) or u[0] == 'T': u[2] += bonus
     for src, fn in hooked(g, 'extra_mana'):
         if src.owner is p: U += fn(g, src, p, U)
-    if E.POOL_RULES and any(c.name == 'Elvish Spirit Guide' for c in p.hand):
+    if any(c.name == 'Elvish Spirit Guide' for c in p.hand):
         import impl_partials; U += impl_partials.hand_mana(g, p)
     return U
 

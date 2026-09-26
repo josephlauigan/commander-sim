@@ -18,7 +18,7 @@ BASICS = ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes')
 
 
 def land_options(g, p, s, post):
-    """activated abilities of p's lands (pool games)"""
+    """activated abilities of p's lands"""
     o = []
     for L in list(p.lands):
         h = CI.HOOKS.get(L.cd.name)

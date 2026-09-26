@@ -1,4 +1,4 @@
-"""The last approximated clauses of pool cards, implemented from their rules text (pool games only): forced attacks,
+"""The last approximated clauses of pool cards, implemented from their rules text: forced attacks,
 crew, flash in combat, evoke / dash / casualty / overload / level up / adapt / harmonize / bargain / improvise,
 blocking restrictions and taxes, ward from Auras, graveyard triggers, and the remaining activated abilities.
 

@@ -51,7 +51,7 @@ def look(p, n):
 
 def scry(g, p, n, to='bottom'):
     """scry n (to='bottom') or surveil n (to='gy'): keep the good cards on top in the best order"""
-    if not E.POOL_RULES or n <= 0: return
+    if n <= 0: return
     top = look(p, n)
     keep = [c for c in top if desire(g, p, c) >= KEEP]
     rest = [c for c in top if c not in keep]

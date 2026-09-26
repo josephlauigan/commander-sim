@@ -1,4 +1,4 @@
-"""Rules the pool cards were approximating, made exact (pool games only): mana sources (Signets, Talismans, pain,
+"""Rules the pool cards were approximating, made exact: mana sources (Signets, Talismans, pain,
 Moxen, Lotus Petal, conditional dorks), tax payments (Smothering Tithe, Rhystic Study, Mystic Remora), counter
 interactions (Mana Drain, Flusterstorm, Veil of Summer, Siren Stormtamer), removal restrictions and taxes,
 "becomes a 3/3" effects, Council's Judgment's vote, Fact or Fiction's split, ability locks (Collector Ouphe, Cursed
@@ -670,7 +670,7 @@ full('Shriekmaw', 'fear; destroys a nonartifact, nonblack creature on entry; evo
 
 
 def evasion_blocked(g, b, a):
-    """extra blocking restrictions (pool games): fear, Signal Pest, Legion Loyalist, protection from creatures"""
+    """extra blocking restrictions: fear, Signal Pest, Legion Loyalist, protection from creatures"""
     if a.cd is None: return False
     n = a.cd.name
     if n == 'Shriekmaw' and not ((b.cd is not None and 'A' in b.cd.types) or 'B' in colors_of(b)): return True

@@ -1408,15 +1408,15 @@ def choose_defender(g, p):
 
 def can_block(g, b, a):
     if b.cd is not None and 'noblock' in b.cd.tags: return False
-    if E.POOL_RULES and ((a.cd is not None and 'unblockable_shadow' in a.cd.kws) or
+    if ((a.cd is not None and 'unblockable_shadow' in a.cd.kws) or
                          (b.cd is not None and 'unblockable_shadow' in b.cd.kws)): return False      # shadow
     if E.DSLMOD is not None and g.dsl_on:
         D = E.DSLMOD
         if D.has_kw(g, b, 'cant_block') or D.has_kw(g, a, 'unblockable'): return False
         if D.has_kw(g, a, 'flying') and not (b.fly or D.has_kw(g, b, 'flying') or D.has_kw(g, b, 'reach')
                                              or (b.cd is not None and 'reach' in b.cd.tags)): return False
-    if E.POOL_RULES and E.CI is not None and __import__('impl_rules').evasion_blocked(g, b, a): return False
-    if E.POOL_RULES and E.CI is not None and E.CI.granted_kw(g, a, 'forestwalk') and any(
+    if E.CI is not None and __import__('impl_rules').evasion_blocked(g, b, a): return False
+    if E.CI is not None and E.CI.granted_kw(g, a, 'forestwalk') and any(
             L.cd.name == 'Forest' or 'forest' in getattr(L.cd, 'subtypes', ()) for L in b.owner.lands): return False
     if a.cd is not None and 'swampwalk' in a.cd.tags and any(
             L.cd.name in ('Swamp', 'Watery Grave', 'Blood Crypt', 'Overgrown Tomb') for L in b.owner.lands):
@@ -1534,31 +1534,31 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if rest: used.add(min(rest, key=lambda x: pval(g, x)))
     if g.hooks: E.CI.fire(g, 'blocks', p, atk, d, assign)
     ringblk = [b for a, b in assign.items() if E.CI is not None and __import__('impl_mine').ring_blocked(g, p, a, b)]
-    to_walker = walker_attacks(g, p, atk, d, assign) if E.POOL_RULES else {}
+    to_walker = walker_attacks(g, p, atk, d, assign)
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
-        if E.POOL_RULES and d.key not in MAIN:
+        if d.key not in MAIN:
             if g.hooks: E.CI.fire(g, 'defend', d, p, atk, assign)    # the defender's permanents, after blocks (Yawgmoth)
             for c, fn in E.CI.hand_cards(d, 'hand_defend'): fn(g, c, d, p, atk, assign)
             for L in list(d.lands):
                 h = E.CI.HOOKS.get(L.cd.name)
                 if h and 'land_defend' in h: h['land_defend'](g, L, d, p, atk, assign)
-        if E.POOL_RULES and p.key not in MAIN: __import__('impl_t4').ninjutsu(g, p, atk, d, assign)
+        if p.key not in MAIN: __import__('impl_t4').ninjutsu(g, p, atk, d, assign)
     conn = set()
     for a in atk:
         if a not in p.perms or not d.alive: continue
         ap = epow(g, a) * (2 if double_strike(p, a) else 1)
-        if E.POOL_RULES and __import__('impl_mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
-        if E.POOL_RULES and a.data and __import__('impl_rules').dovin_blocked(a): ap = 0
+        if __import__('impl_mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
+        if a.data and __import__('impl_rules').dovin_blocked(a): ap = 0
         b = assign.get(a)
         if b is None or b not in d.perms:
             dmg = ap
         else:
             bt = etgh(g, b)
             a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
-            if E.POOL_RULES and __import__('impl_mine').damage_prevented(g, b): a_dies = False
+            if __import__('impl_mine').damage_prevented(g, b): a_dies = False
             b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
-            if E.POOL_RULES and E.CI is not None:                       # protection from creatures / Demons and Dragons
+            if E.CI is not None:                       # protection from creatures / Demons and Dragons
                 import impl_rules2
                 if impl_rules2.prot_vs(g, a, b): a_dies = False
                 if impl_rules2.prot_vs(g, b, a): b_dies = False
@@ -1566,7 +1566,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
             elif fb and not fa and a_dies: b_dies = False
             tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or \
-                (E.POOL_RULES and kw(a, 'trample'))
+                (kw(a, 'trample'))
             dmg = max(0, ap - bt) if tr else 0
             if b_dies: die(g, b, 'destroy')
             if a_dies: die(g, a, 'destroy')
@@ -1587,13 +1587,13 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
             if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
             if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
-            if E.POOL_RULES and getattr(p, 'insight', None): __import__('impl_partials').insight_draw(g, p, a, dmg)
-            if E.POOL_RULES and getattr(p, 'emblems', None): __import__('impl_rules').emblem_combat(g, p, a, d, dmg)
+            if getattr(p, 'insight', None): __import__('impl_partials').insight_draw(g, p, a, dmg)
+            if getattr(p, 'emblems', None): __import__('impl_rules').emblem_combat(g, p, a, d, dmg)
             if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
             if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
                 for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
                     d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
-            if a.life or p.najeela_boost or (E.POOL_RULES and kw(a, 'lifelink')): gain(p, dmg)
+            if a.life or p.najeela_boost or kw(a, 'lifelink'): gain(p, dmg)
             if a.is_cmd: d.cmd_dmg[p.key] += dmg
             if E.CI is not None:
                 IM = __import__('impl_mine')
@@ -1610,7 +1610,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
 
 
 def has_haste(g, m):
-    """granted or printed haste, and Lightning Greaves / Swiftfoot Boots (pool games only)"""
+    """granted or printed haste, and Lightning Greaves / Swiftfoot Boots"""
     if kw(m, 'haste'): return True
     return any(e.attached is m and e.cd is not None and e.cd.tags.get('prot') == 'boots' for e in m.owner.perms)
 
@@ -1627,7 +1627,7 @@ def attack_limits(g, p, d, atk):
     and worth their tax"""
     tax, cap = attack_restrictions(g, p, d)
     atk = sorted(atk, key=lambda m: -epow(g, m))
-    moc = [m for m in atk if m.cd is not None and m.cd.name == 'Master of Cruelties'] if E.POOL_RULES else []
+    moc = [m for m in atk if m.cd is not None and m.cd.name == 'Master of Cruelties']
     if moc and len(atk) > 1:                         # Master of Cruelties attacks alone
         others = sum(epow(g, m) for m in atk if m is not moc[0])
         atk = [moc[0]] if d.life > 1 and (d.life - 1) >= others else [m for m in atk if m is not moc[0]]
@@ -1688,14 +1688,14 @@ def combat(g, p):
         if not g.opps(p): return
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: import brain
-        if E.POOL_RULES and g.hooks and ncomb == 1: E.CI.fire(g, 'crew', p)
+        if g.hooks and ncomb == 1: E.CI.fire(g, 'crew', p)
         atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
-               and (not m.sick or p.haste_all or (E.POOL_RULES and has_haste(g, m)))
-               and (not m.noatk or (E.POOL_RULES and epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
+               and (not m.sick or p.haste_all or has_haste(g, m))
+               and (not m.noatk or (epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
         if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
         if not atk: break
         plan = None                                   # look-ahead: (defender index, 'filtered' / 'all' / 'none')
-        if adaptive and E.POOL_RULES and ncomb == 1:
+        if adaptive and ncomb == 1:
             import search
             if getattr(g, 'forced_attack', None) is not None: plan, g.forced_attack = g.forced_attack, None
             elif search.enabled(g, p): plan = search.choose_attack(g, p)
@@ -1705,10 +1705,10 @@ def combat(g, p):
         if plan is not None and plan[1] == 'all': atk = all_atk
         else:
             if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
-            if E.POOL_RULES and p.key not in MAIN: atk = __import__('pool_ai').attack_filter(g, p, atk, d)
+            if p.key not in MAIN: atk = __import__('pool_ai').attack_filter(g, p, atk, d)
         cand0 = list(atk)
         if g.hooks: atk = attack_limits(g, p, d, atk)
-        if E.POOL_RULES and g.hooks:
+        if g.hooks:
             import impl_rules2
             if not attack_restrictions(g, p, d)[0]: atk = impl_rules2.forced_attackers(g, p, atk, cand0)
             atk = impl_rules2.annex_life(g, p, d, atk)
@@ -1726,10 +1726,10 @@ def combat(g, p):
                 if can_pay(g, p, 4, ''): pay(g, p, 4, ''); unbl.add(a)
                 else: ps[0].tapped = False
         for m in atk:
-            if not (m.vig or (E.POOL_RULES and kw(m, 'vigilance'))): m.tapped = True
+            if not (m.vig or kw(m, 'vigilance')): m.tapped = True
         atk += attack_triggers(g, p, atk, d)
         if E.CI is not None: __import__('impl_mine').ring_attack(g, p, atk)      # Ring level 2: loot
-        if E.POOL_RULES and E.CI is not None:
+        if E.CI is not None:
             for c, fn in E.CI.hand_cards(p, 'hand_attack'): fn(g, c, p, atk, d)
         if g.over or not d.alive: continue
         conn = resolve_combat(g, p, atk, d, unbl)
@@ -1784,7 +1784,7 @@ def goldfish_combat(g, p):
 def land_enters_tapped(p, cd):
     t = cd.tags
     if 't' in t or 'f' in t: return True
-    if E.POOL_RULES and E.CUR_G is not None and cd.name not in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes') \
+    if E.CUR_G is not None and cd.name not in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes') \
             and any(m.cd is not None and m.cd.name in ('Thalia, Heretic Cathar', 'Archon of Emeria') and not m.phased
                     for q in E.CUR_G.opps(p) for m in q.perms): return True
     if 'ck' in t: return len(p.lands) < 2
@@ -1833,7 +1833,7 @@ def play_land_card(g, p, c, how='plays'):
         if others:
             L = min(others, key=lambda L: len(land_cols(p, L, False))); p.lands.remove(L); p.hand.append(L.cd)
     landfall(g, p)
-    if E.POOL_RULES and 'f' in c.tags and p.lands and p.lands[-1].cd is c: crack_fetch(g, p, p.lands[-1])
+    if 'f' in c.tags and p.lands and p.lands[-1].cd is c: crack_fetch(g, p, p.lands[-1])
     if g.hooks: E.CI.fire(g, 'land_play', p, c)
 
 
@@ -1931,7 +1931,7 @@ def upkeep(g, p):
         t = m.cd.tags
         if m.cd.name in ACTIVATED_ENGINES and blocked(g, p, m.cd.name): continue    # Disruptor Flute
         if 'eng' in t:
-            if E.POOL_RULES and m.cd.name in __import__('impl_rules').REPLACED_TAG_ENGINES: continue
+            if m.cd.name in __import__('impl_rules').REPLACED_TAG_ENGINES: continue
             if 'remora' in t and m.age > 4:
                 leave(g, m); p.gy.append(m.cd); continue
             n = m.cd.name
@@ -2017,7 +2017,7 @@ def end_step(g, p):
     if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
         for m in p.perms:
             if m.plus > 0: m.plus += 1
-    while len(p.hand) > 7 and not has(p, 'nomax') and not (E.POOL_RULES and (any('nomax' in L.cd.tags for L in p.lands)
+    while len(p.hand) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
                                                                           or getattr(p, 'nomax_turn', None) == p.turns)):
         if p.key == 'seph':
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
@@ -2082,7 +2082,7 @@ def _step_start(g, p):
     for L in p.lands: L.tapped = False
     for q in g.players: q.floatU = 0; q.floatC = 0
     for m in list(p.perms):
-        if E.POOL_RULES and m.data and m.data.get('frozen'): m.data['frozen'] -= 1; continue   # Frost Titan, Tamiyo
+        if m.data and m.data.get('frozen'): m.data['frozen'] -= 1; continue   # Frost Titan, Tamiyo
         if not (m.cd is not None and 'nountap' in m.cd.tags): m.tapped = False   # Grim Monolith, Mana Vault
         m.sick = False; m.phased = False; m.age += 1
     p.spells_this_turn = 0; p.yawg = False
@@ -2094,8 +2094,8 @@ def _step_start(g, p):
     for m in find(p, 'vaultping'):                # Mana Vault: at the beginning of your draw step, 1 damage if tapped
         if m.tapped: lose_life(g, p, 1, p, damage=True)
     if has(p, 'necro'): pass                     # Necropotence: skip your draw step
-    elif E.POOL_RULES and loam_dredge(g, p): pass
-    elif E.POOL_RULES and __import__('impl_lands').dakmor_dredge(g, p): pass
+    elif loam_dredge(g, p): pass
+    elif __import__('impl_lands').dakmor_dredge(g, p): pass
     elif g.hooks and E.CI.total(g, 'skip_draw', p): pass     # Solitary Confinement
     elif not (p.key == 'seph' and seph_dredge(g, p)):
         draw(g, p, 1, step=True)
@@ -2205,7 +2205,6 @@ def play_pool_game(seed, seats, max_rounds=20, trace=False):
 
 def setup_pool_game(seed, seats, trace=False):
     """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one"""
-    E.POOL_RULES = True
     players = [Player(k, cards, cmd) for k, cards, cmd in seats]
     g = Game(players, random.Random(f'play:{seed}'))
     g.combo_decks = {p.key for p in players if p.key not in MAIN}

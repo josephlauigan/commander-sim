@@ -364,7 +364,7 @@ def _wg_minus(g, p, src):
     for c in ls:
         p.gy.remove(c); p.lands.append(Land(c, False)); landfall(g, p)
         import ais
-        if E.POOL_RULES and 'f' in c.tags and p.lands and p.lands[-1].cd is c: ais.crack_fetch(g, p, p.lands[-1])
+        if 'f' in c.tags and p.lands and p.lands[-1].cd is c: ais.crack_fetch(g, p, p.lands[-1])
 
 
 def _wg_ult(g, p, src):

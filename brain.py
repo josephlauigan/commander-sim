@@ -580,7 +580,7 @@ def hook_options(g, p, s, post):
     """activated abilities of hand-implemented cards (battlefield and graveyard); post=None: end-of-turn window"""
     o = []
     if g.hooks:
-        lock = E.POOL_RULES and __import__('impl_rules').ability_locked
+        lock = __import__('impl_rules').ability_locked
         for src, fn in E.CI.hooked(g, 'options'):
             if src.owner is p and not (lock and lock(g, src, p)): o += fn(g, src, p, s, post) or []
     for c, fn in E.CI.gy_cards(p, 'gy_options'): o += fn(g, c, p, s, post) or []
@@ -609,11 +609,10 @@ def choose_defender(g, p):
         u = 0.25 * threat(g, p, q)
         if my >= q.life * 0.8: u += 4.0 + 2.0 * aggr               # go for the kill
         u += 0.15 * grudge.get(q.key, 0)                               # hit back whoever hit you
-        if E.POOL_RULES and p.key not in STYLE: u += __import__('pool_ai').ninja_defender_bonus(g, p, q)
-        if E.POOL_RULES:                                                # planeswalkers about to ultimate draw attacks
-            import impl_common
-            u += sum(3.0 * min(1.0, impl_common.ult_pressure(m)) for m in q.perms
-                     if m.cd is not None and 'P' in m.cd.types and m.loyalty and impl_common.ult_pressure(m) >= 0.6)
+        if p.key not in STYLE: u += __import__('pool_ai').ninja_defender_bonus(g, p, q)
+        import impl_common                                              # planeswalkers about to ultimate draw attacks
+        u += sum(3.0 * min(1.0, impl_common.ult_pressure(m)) for m in q.perms
+                 if m.cd is not None and 'P' in m.cd.types and m.loyalty and impl_common.ult_pressure(m) >= 0.6)
         blockers = sum(1 for m in q.perms if m.creature and not m.tapped)
         u -= 0.15 * blockers * (1 - aggr)
         if g.hooks:                                                     # attack taxes and caps on q

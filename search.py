@@ -29,7 +29,7 @@ _SHARED = None
 
 
 def enabled(g, p):
-    if getattr(g, 'in_search', False) or not E.POOL_RULES: return False
+    if getattr(g, 'in_search', False): return False
     if not ('*' in KEYS or p.key in KEYS): return False
     if sum(len(q.perms) for q in g.players) > BOARD_LIMIT:
         STATS['big_board'] = STATS.get('big_board', 0) + 1
