@@ -49,13 +49,15 @@ opening shuffle depend only on the seed and the deck keys, so a `--swap` compari
 draws (paired runs).
 
 ```
-python3 -m commander_sim --deck seph --pool t3 --games 1500 --jobs 24             # one deck vs one tier
+python3 -m commander_sim --deck seph --pool t3 --games 1500                       # one deck vs one tier
 python3 -m commander_sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"  # paired A/B vs that tier
-python3 -m commander_sim --deck seph --pool all --jobs 24                         # all five tiers
-python3 -m commander_sim --all-decks --pool all --jobs 24                         # deck x tier matrix
+python3 -m commander_sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor" --ai adaptive --profile loose
+                                                                                  # the same, a quick read (seconds)
+python3 -m commander_sim --deck seph --pool all                                   # all five tiers
+python3 -m commander_sim --all-decks --pool all                                   # deck x tier matrix
 python3 -m commander_sim --deck seph --pool t4 --analyze                          # how it wins / loses there
 python3 -m commander_sim --deck seph --pool t2 --trace 7                          # play-by-play of game 7
-python3 -m commander_sim --calibrate within|ordering|all --games 240 --jobs 24    # pool balance checks
+python3 -m commander_sim --calibrate within|ordering|all --games 240              # pool balance checks
 python3 -m commander_sim --deck veyran --cards                                    # every card: source, tags, unmodeled text
 ```
 
@@ -66,7 +68,7 @@ Options:
 - `--swap`: `"Card Out=>Card In"`. Repeat it for several swaps.
 - `--games`: games per list per profile (default 1500). `--n` is the same.
 - `--seed`: the first seed (default 500000).
-- `--jobs`: worker processes (default 1). Set it to your core count.
+- `--jobs`: worker processes (default: every CPU core).
 - `--profiles`: `conservative,loose` (default both). `--profile` runs one. Loose opponents counter and remove more
   freely, so it is the worst case for your decks.
 - `--ai`: `lookahead` (default) or `adaptive`.

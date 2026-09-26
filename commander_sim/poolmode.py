@@ -7,7 +7,7 @@ a deck (a --swap) face identical opponents and identical opponent draws: paired,
 
     python3 -m commander_sim --deck seph --pool t3 --games 10000
     python3 -m commander_sim --deck seph --pool t3 --swap "Persist=>Dread Return"      # paired A/B
-    python3 -m commander_sim --all-decks --pool all --games 10000 --jobs 24            # deck x tier matrix
+    python3 -m commander_sim --all-decks --pool all --games 10000                      # deck x tier matrix
     python3 -m commander_sim --deck seph --pool t3 --analyze
     python3 -m commander_sim --calibrate within|ordering --games 10000                 # pool balance checks
 """
@@ -225,6 +225,20 @@ def main(a, swaps, base, var):
     tiers = list(pools.TIERS) if a.pool == 'all' else [a.pool] if a.pool else []
     pools.register()
     t0 = time.time()
+    k = n * len(profiles)                                     # plan the whole command: one bar, one estimate
+    if a.calibrate:
+        total = k * ((len(pools.TIERS) if a.calibrate in ('within', 'all') else 0) +
+                     (20 if a.calibrate in ('ordering', 'all') else 0))
+        what = f'calibration: {a.calibrate}'
+    elif a.all_decks or (len(tiers) > 1 and not swaps and not a.analyze):
+        nd = len(MINE) if a.all_decks else 1
+        total, what = k * len(tiers) * nd, f'{nd} deck{"s" if nd > 1 else ""} x {len(tiers)} tier{"s" if len(tiers) > 1 else ""}'
+    elif swaps:
+        total, what = k * len(tiers) * 2, 'current list and the swapped one'
+    else:
+        total, what = k * len(tiers), 'analysis' if a.analyze else f'{len(tiers)} tier{"s" if len(tiers) > 1 else ""}'
+    what += f', {n:,} per list per tier, profile{"s" if len(profiles) > 1 else ""} ' + ' and '.join(profiles)
+    C.PROG.plan(total); C.PROG.announce(what)
     if a.calibrate:
         run_calibration(a.calibrate, profiles, n, seed0)
     elif a.all_decks or (len(tiers) > 1 and not swaps and not a.analyze):
@@ -233,7 +247,6 @@ def main(a, swaps, base, var):
     elif a.analyze:
         cards = var if swaps else base
         if swaps: print('Analyzing the variant list:', '; '.join(f'{o} -> {i}' for o, i in swaps))
-        C.PROG.plan(n * len(profiles) * len(tiers))
         for tier in tiers:
             for prof in profiles:
                 C.PROG.label = f'analyze {tier} / {prof}'
@@ -242,7 +255,6 @@ def main(a, swaps, base, var):
                 C.print_analysis(a.deck, cards, R, prof)
                 print_opponent_names(tier)
     elif swaps:
-        C.PROG.plan(n * len(profiles) * len(tiers) * 2)
         for tier in tiers:
             pairs = []
             for prof in profiles:
@@ -252,7 +264,6 @@ def main(a, swaps, base, var):
             print('Swaps:', '; '.join(f'{o} -> {i}' for o, i in swaps))
             print_ab(a.deck, tier, pairs)
     else:
-        C.PROG.plan(n * len(profiles) * len(tiers))
         for tier in tiers:
             for prof in profiles:
                 C.PROG.label = f'{tier} / {prof}'
@@ -265,7 +276,6 @@ def print_opponent_names(tier):
 
 
 def matrix(decks, tiers, profiles, n, seed0, out=None):
-    C.PROG.plan(n * len(profiles) * len(tiers) * len(decks))
     cells = {}
     for prof in profiles:
         for d in decks:
@@ -291,7 +301,6 @@ def matrix(decks, tiers, profiles, n, seed0, out=None):
 
 def run_calibration(which, profiles, n, seed0):
     if which in ('within', 'all'):
-        C.PROG.plan(n * len(profiles) * len(pools.TIERS))
         for prof in profiles:
             print(f'\n=== Within-tier balance [{prof}, n={n} games per tier; each deck is seated in ~80%] ===')
             for tier in pools.TIERS:
@@ -303,7 +312,6 @@ def run_calibration(which, profiles, n, seed0):
                     flag = '  HIGH' if w / s > 0.35 else '  LOW' if w / s < 0.15 else ''
                     print(f"    {name_of(k):28s} {100*w/s:5.1f}% ({100*lo:.1f}-{100*hi:.1f}){flag}")
     if which in ('ordering', 'all'):
-        C.PROG.plan(n * len(profiles) * 20)
         for prof in profiles:
             print(f'\n=== Tier ordering: each deck alone against three decks of the tier below [{prof}, n={n}] ===')
             for tier in pools.TIERS[1:]:

@@ -780,15 +780,16 @@ explicit approval; each change is noted in the deck file.
 ### Commands
 
 ```
-python3 -m commander_sim --deck seph --pool t3 --games 1500 --jobs 24             one deck vs one tier
-python3 -m commander_sim --deck seph --pool t3 --swap "Out=>In" --jobs 24         paired A/B
-python3 -m commander_sim --all-decks --pool all --profile loose --jobs 24         deck × tier matrix
+python3 -m commander_sim --deck seph --pool t3 --games 1500                       one deck vs one tier
+python3 -m commander_sim --deck seph --pool t3 --swap "Out=>In"                   paired A/B
+python3 -m commander_sim --all-decks --pool all --profile loose                   deck × tier matrix
 python3 -m commander_sim --deck seph --pool t4 --analyze                          how it wins and loses
 python3 -m commander_sim --deck seph --pool t2 --trace 7                          play-by-play of one game
-python3 -m commander_sim --calibrate within|ordering|all --games 240 --jobs 24    pool balance checks
+python3 -m commander_sim --calibrate within|ordering|all --games 240              pool balance checks
 ```
 
-`--jobs` defaults to 1. Set it to your core count, especially with the look-ahead AI.
+`--jobs` defaults to every CPU core. Each run starts with one line giving the number of games, the AI, the workers
+and an estimated time, and a progress bar that moves every few games.
 
 ### The run
 
@@ -803,7 +804,7 @@ python3 -m commander_sim --calibrate within|ordering|all --games 240 --jobs 24  
 
 ### Parallelism
 
-The seeds (500000, 500001, …) are split into chunks (`compare._chunks`): 1–25 games per chunk for look-ahead, 25–250
+The seeds (500000, 500001, …) are split into chunks (`compare._chunks`): 1–4 games per chunk for look-ahead, 25–250
 for the heuristic AI. Chunks run on a `multiprocessing.Pool` of `--jobs` workers (`_run_chunks`):
 
 1. Each worker sets the profile and AI.
