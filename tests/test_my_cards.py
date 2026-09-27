@@ -191,6 +191,18 @@ class Sephiroth(unittest.TestCase):
         self.assertFalse(any(m.name == 'Kitchen Finks' for m in s.perms))
         self.assertTrue(any(c.name == 'Kitchen Finks' for c in s.gy))
 
+    def test_teferis_protection_against_a_wipe(self):
+        g = table('sauron', 'seph'); r, s = g.players
+        lands(s, 'Plains', 3); hand(s, "Teferi's Protection"); perm(g, s, 'Grave Titan'); perm(g, s, 'Archon of Cruelty')
+        self.assertEqual(ais.wipe_response(g, s, 'destroy', r), 'all')
+        self.assertTrue(s.life_locked)
+
+    def test_sephiroth_casts_necropotence_while_healthy(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        self.assertGreater(ais.seph_prio(g, s, C['Necropotence']), 0)
+        s.life = 20
+        self.assertEqual(ais.seph_prio(g, s, C['Necropotence']), 0)
+
     def test_avacyns_pilgrim(self):
         g = table('seph', 'veyran'); s = g.players[0]
         perm(g, s, "Avacyn's Pilgrim")

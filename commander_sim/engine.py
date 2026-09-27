@@ -115,6 +115,7 @@ class Player:
         s.removed_bombs = set(); s.first_bomb = None
         s.milestone = {}
         s.ring_prot = False   # The One Ring: protection from everything until this player's next turn
+        s.life_locked = False # Teferi's Protection: this player's life total can't change until their next turn
         s.floatU = 0          # blue mana (Lion's Eye Diamond), lasts until end of turn
         s.draw_st = None; s.draw_n = 0      # cards drawn this turn (Narset, Parter of Veils)
         s.chasm_age = 0       # Glacial Chasm age counters (cumulative upkeep)
@@ -342,7 +343,7 @@ DAMAGE_KINDS = ('combat', 'burn', 'aether', 'triggers')
 
 
 def lose_life(g, p, n, src, kind='other', damage=None):
-    if n <= 0 or not p.alive: return
+    if n <= 0 or not p.alive or p.life_locked: return
     if damage is None: damage = kind in DAMAGE_KINDS
     if damage and prevents_damage(g, p, src):
         p.stats['dmg_prevented'] += n
@@ -383,7 +384,7 @@ def shielded(p):
 
 
 def gain(p, n):
-    if not p.alive: return
+    if not p.alive or p.life_locked: return
     if CUR_G is not None and any(has(q, 'erebos') for q in CUR_G.opps(p)): return   # Erebos: opponents can't gain life
     if CUR_G is not None and DSLMOD is not None and DSLMOD.no_lifegain(CUR_G, p): return
     if CUR_G is not None and CUR_G.hooks and CI.total(CUR_G, 'no_lifegain', p): return
@@ -799,6 +800,40 @@ def returns_left(g, cd):
     if k >= RETURN_CAP: return False
     g.returns[id(cd)] = k + 1
     return True
+
+
+TEFERIS_PROTECTION = "Teferi's Protection"
+
+
+def teferis_protection(g, p):
+    """Until your next turn, your life total can't change and you gain protection from everything. All permanents you
+    control phase out (lands too: no mana until your untap step). The card is exiled by the caster."""
+    p.life_locked = True; p.ring_prot = True
+    for m in p.perms: m.phased = True
+    for L in p.lands: L.tapped = True
+    p.floatR = p.floatA = p.floatU = 0; p.floatC = 0
+    g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+    log(f"    {NAME(p)} casts Teferi's Protection: life can't change, protection from everything, all phased out", g)
+
+
+def cast_teferis_protection(g, q, imp=8):
+    """q casts Teferi's Protection from hand at instant speed, if it can; True if it resolved"""
+    c = next((x for x in q.hand if x.name == TEFERIS_PROTECTION), None)
+    if c is None or q.life_locked or silenced(g, q) or not castable(g, q, c) or not can_pay(g, q, c.generic, c.pips):
+        return False
+    q.hand.remove(c)
+    pay(g, q, c.generic, c.pips)
+    q.spells_this_turn += 1; q.stats['spells_cast'] += 1; q.cast_names.add(c.name)
+    on_cast(g, q, c)
+    q.exile.append(c)
+    if not counter_window(g, q, c, imp, {}): return False
+    teferis_protection(g, q); q.stats['protection_used'] += 1
+    return True
+
+
+def last_chance(g, q):
+    """q is about to lose to damage or life loss: Teferi's Protection if it has it"""
+    return q.life_locked or cast_teferis_protection(g, q, imp=9)
 
 
 def die(g, m, cause='destroy'):

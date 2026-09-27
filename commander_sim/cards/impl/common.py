@@ -1266,7 +1266,7 @@ for _n, _t in (('Mother of Runes', 'protection from a colour in response to targ
                ('Giver of Runes', 'protection in response to targeted removal of another creature (protection AI)'),
                ('Deflecting Swat', 'free with your commander: redirects targeted removal away (read as protection)'),
                ('Flawless Maneuver', 'free with your commander: indestructible against destroy effects (protection AI)'),
-               ("Teferi's Protection", 'phases out everything against removal and wipes (protection AI)'),
+               ("Teferi's Protection", "life can't change, protection from everything, everything phases out (see rules2)"),
                ('Heroic Intervention', 'hexproof and indestructible in response (protection AI)'),
                ('Boros Charm', 'indestructible mode used as protection; the damage mode as removal'),
                ('Gods Willing', 'protection from a colour in response to targeted removal'),

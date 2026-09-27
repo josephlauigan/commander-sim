@@ -1122,7 +1122,9 @@ def run_loop(g, p, name, keys, kills):
                     die(g, m, 'destroy')
         log("    Aura Shards clears the opponents' artifacts and enchantments", g)
     if kills:
-        ais.win(g, p, 'combo'); return True
+        names = _names_bf(g, p)
+        by_mill = name != LOOPS[0][0] and not any(d in names for d in DRAINS) and 'Triskelion' not in names
+        ais.win(g, p, 'combo', through_life=not by_mill); return True
     if 'Finks' in name:
         gain(p, 1000); log(f'    {NAME(p)} gains 1000 life (as good as infinite)', g)
     else:                                                    # infinite colourless mana, a Zombie kept each loop

@@ -196,5 +196,57 @@ class Combat(unittest.TestCase):
         self.assertEqual((s.life, v.life), (37, 33))
 
 
+class TeferisProtection(unittest.TestCase):
+    """Until your next turn, your life total can't change and you gain protection from everything. All permanents you
+    control phase out. Exile Teferi's Protection."""
+    def test_the_effects_and_when_they_end(self):
+        g = table('seph', 'sauron'); s, r = g.players
+        lands(s, 'Plains', 3); perm(g, s, 'Grave Titan'); hand(s, "Teferi's Protection")
+        self.assertTrue(E.cast_teferis_protection(g, s))
+        self.assertTrue(all(m.phased for m in s.perms))
+        self.assertTrue(all(L.tapped for L in s.lands))              # its lands phased out too: no mana
+        self.assertEqual([c.name for c in s.exile], ["Teferi's Protection"])
+        E.lose_life(g, s, 10, r); E.gain(s, 5)
+        self.assertEqual(s.life, 40)                                  # life can't change
+        self.assertTrue(E.prevents_damage(g, s, r))                   # protection from everything
+        g.active = s; ais._step_start(g, s)                          # until your next turn
+        self.assertFalse(any(m.phased for m in s.perms))
+        self.assertFalse(s.life_locked or s.ring_prot)
+
+    def test_it_survives_a_damage_combo_but_not_an_alternate_win(self):
+        g = table('sauron', 'seph', 'veyran'); r, s, v = g.players
+        lands(s, 'Plains', 3); hand(s, "Teferi's Protection")
+        ais.win(g, r, 'combo')
+        self.assertTrue(s.alive); self.assertFalse(v.alive); self.assertFalse(g.over)
+        g = table('sauron', 'seph', 'veyran'); r, s, v = g.players
+        lands(s, 'Plains', 3); hand(s, "Teferi's Protection")
+        ais.win(g, r, 'combo', through_life=False)                   # Thassa's Oracle, mill
+        self.assertFalse(s.alive); self.assertTrue(g.over)
+
+    def test_it_answers_lethal_combat_damage_only(self):
+        g = table('sauron', 'seph'); r, s = g.players
+        lands(s, 'Plains', 3); hand(s, "Teferi's Protection")
+        ais.resolve_combat(g, r, [perm(g, r, 'Grave Titan')], s, set())
+        self.assertEqual(s.life, 34)                                  # 6 damage from 40: not lethal, it waits
+        self.assertTrue(any(c.name == "Teferi's Protection" for c in s.hand))
+        g = table('sauron', 'seph'); r, s = g.players
+        lands(s, 'Plains', 3); hand(s, "Teferi's Protection"); s.life = 5
+        ais.resolve_combat(g, r, [perm(g, r, 'Grave Titan')], s, set())
+        self.assertEqual(s.life, 5); self.assertTrue(s.alive)
+
+    def test_it_needs_its_mana(self):
+        g = table('sauron', 'seph'); r, s = g.players
+        lands(s, 'Plains', 2); hand(s, "Teferi's Protection")
+        self.assertFalse(E.cast_teferis_protection(g, s))
+
+    def test_a_pool_deck_uses_it_against_a_wipe(self):
+        from commander_sim.ai import pool_ai
+        g = table('seph', 'heliod-mono-white-stax'); s, h = g.players
+        lands(h, 'Plains', 3); hand(h, "Teferi's Protection"); perm(g, h, 'Grave Titan'); perm(g, h, 'Archon of Cruelty')
+        self.assertEqual(pool_ai.wipe_response(g, h, 'destroy', s), 'all')
+        self.assertTrue(h.life_locked)
+        self.assertEqual([c.name for c in h.exile], ["Teferi's Protection"])
+
+
 if __name__ == '__main__':
     unittest.main()

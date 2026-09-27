@@ -262,6 +262,7 @@ def _use(g, p, name, where, cost, src, target_m):
         p.spells_this_turn += 1; p.stats['spells_cast'] += 1
         if name == 'Ephemerate':
             p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
+        elif name == E.TEFERIS_PROTECTION: p.exile.append(c)
         elif name != 'Restoration Angel': p.gy.append(c)
         p.cast_names.add(c.name); E.on_cast(g, p, c)
         if name == 'Restoration Angel': E.enter(g, p, c)
@@ -316,7 +317,8 @@ def protect(g, owner, m, kind, actor, spell=None):
     for _, name, where, cost, src in sorted(cands, key=lambda x: x[0]):
         if _use(g, owner, name, where, cost, src, m):
             how = PROTECTORS[name][2]
-            if how == 'phase':
+            if name == E.TEFERIS_PROTECTION: E.teferis_protection(g, owner)
+            elif how == 'phase':
                 for x in owner.perms: x.phased = True
             elif how == 'blink' and m in owner.perms:
                 cd = m.cd; E.leave(g, m); n = E.enter(g, owner, cd, orig=m.orig); n.is_cmd = m.is_cmd
@@ -334,6 +336,7 @@ def wipe_response(g, q, kind, caster):
         how, scope = PROTECTORS[name][2], PROTECTORS[name][3]
         if scope in ('one', 'self') or not _saves(how, kind, None, None, False): continue
         if _use(g, q, name, where, cost, src, None):
+            if name == E.TEFERIS_PROTECTION: E.teferis_protection(g, q); return 'all'
             if how == 'phase':
                 for m in q.perms: m.phased = True
                 return 'all'
