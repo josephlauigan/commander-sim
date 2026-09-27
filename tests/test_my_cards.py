@@ -415,6 +415,18 @@ class Sauron(unittest.TestCase):
         u = {l: u for u, l, f in brain.main_options(g, r, False)}
         self.assertGreater(u['Consecrated Sphinx'], u["Night's Whisper"])
 
+    def test_diabolic_intent_needs_a_creature_to_sacrifice(self):
+        # "As an additional cost to cast this spell, sacrifice a creature." It used to be free outside Sephiroth.
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Swamp', 2); c = hand(r, 'Diabolic Intent')
+        self.assertFalse(brain.do_cast(g, r, c))
+        perm(g, r, 'Orcish Bowmasters')                       # its Army comes too
+        army = E.army_of(r); army.plus = 5
+        self.assertTrue(brain.do_cast(g, r, c))
+        self.assertEqual([m.name for m in r.perms], ['Orc Army'])   # the cheapest creature went, not the Army
+        self.assertEqual(len(r.hand), 1)                            # the tutored card
+
     def test_phyrexian_arena(self):
         g = table('sauron', 'veyran'); r = g.players[0]
         perm(g, r, 'Phyrexian Arena')

@@ -225,6 +225,10 @@ def do_cast(g, p, c, zone=None):
     if zone == 'yawg' and c not in p.gy: return False
     if g.hooks and not castable(g, p, c, 'gy' if zone == 'yawg' else zone or ('cmd' if (c is p.cmd and c not in p.hand) else 'hand')): return False
     cv = 'convoke' in c.tags
+    fodder = None
+    if 'needsac' in c.tags:                          # Diabolic Intent: sacrifice a creature as an additional cost
+        fodder = sac_fodder(g, p, 'creature')
+        if fodder is None or fodder == 'Treasure': return False
     if zone == 'gy':
         cg, cp = parse_cost(c.tags['fb'])
     else:
@@ -242,6 +246,9 @@ def do_cast(g, p, c, zone=None):
     elif 'xtutor' in c.tags:                         # X spells of outside decks: X = all spare mana
         x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x; g.last_x = x
     if c.dsl: additional_cost(g, p, c)
+    if fodder is not None:
+        if fodder not in p.perms: return False
+        die(g, fodder, 'sac')
     ok = cast_card(g, p, c, 'gy' if zone == 'yawg' else zone, ctx)     # from the graveyard: exiled after
     if p.key == 'seph' and ok and (c is p.cmd or c.bomb >= 4): A.note_bomb(p, c)
     return True
