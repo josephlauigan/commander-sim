@@ -248,5 +248,29 @@ class TeferisProtection(unittest.TestCase):
         self.assertEqual([c.name for c in h.exile], ["Teferi's Protection"])
 
 
+class DeathriteShaman(unittest.TestCase):
+    """{G}, {T}: exile target creature card from a graveyard, you gain 2 life. The {T} is part of the cost, so it
+    can't also tap Deathrite for the {G}; the card leaves the graveyard before the mana is paid."""
+    def exile_option(self, g, d, k):
+        from commander_sim.ai import brain
+        from commander_sim.cards import cardimpl as CI
+        return next(f for src, fn in CI.hooked(g, 'options') if src is d
+                    for u, l, f in fn(g, d, k, brain.Situation(g, k), False) if 'exile' in l)
+
+    def test_it_cannot_pay_with_itself(self):
+        g = table('korvold-jund-sacrifice', 'seph'); k, s = g.players
+        d = perm(g, k, 'Deathrite Shaman'); s.gy += [C['Grave Titan'], C['Swamp']]   # a land for its own mana
+        self.assertFalse(self.exile_option(g, d, k)())
+        self.assertFalse(d.tapped)
+
+    def test_it_exiles_and_gains(self):
+        g = table('korvold-jund-sacrifice', 'seph'); k, s = g.players
+        d = perm(g, k, 'Deathrite Shaman'); s.gy.append(C['Grave Titan']); lands(k, 'Forest')
+        self.assertTrue(self.exile_option(g, d, k)())
+        self.assertTrue(d.tapped and k.lands[0].tapped)
+        self.assertEqual([c.name for c in s.exile], ['Grave Titan'])
+        self.assertEqual(k.life, 42)
+
+
 if __name__ == '__main__':
     unittest.main()
