@@ -427,6 +427,16 @@ class Sauron(unittest.TestCase):
         self.assertEqual([m.name for m in r.perms], ['Orc Army'])   # the cheapest creature went, not the Army
         self.assertEqual(len(r.hand), 1)                            # the tutored card
 
+    def test_diabolic_intent_never_sacrifices_the_army(self):
+        # the AI used to sacrifice the Army (often with ten or more counters) when it was the only creature,
+        # frequently to fetch the Sword that goes on it
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Swamp', 2); c = hand(r, 'Diabolic Intent')
+        E.amass(g, r, 6)
+        self.assertFalse(brain.do_cast(g, r, c))
+        self.assertIsNotNone(E.army_of(r))
+
     def test_phyrexian_arena(self):
         g = table('sauron', 'veyran'); r = g.players[0]
         perm(g, r, 'Phyrexian Arena')

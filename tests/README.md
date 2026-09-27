@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 148 tests in about a minute. To run one file, or one test:
+That's 149 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -20,7 +20,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | File | Tests | What it checks |
 |---|---|---|
 | `test_rules.py` | 32 | Core rules on hand-built positions: mana colours and payment order, Sol Ring, Talisman pain, commander tax, the state-based losses (life, 21 commander damage, empty library, 10 poison), what each counterspell can hit and what it costs, Swords / Path / Bolt / token removal, Toxic Deluge, tutors, mulligans, commander damage, flying, deathtouch, lifelink, and Teferi's Protection (the life lock and protection, phasing, when it ends, which wins it survives, when the AI casts it). |
-| `test_my_cards.py` | 54 | Key cards of your three decks against their Oracle text, and Sephiroth's four loops (Mikaeus + Triskelion, Mikaeus or Melira + Kitchen Finks, Nim Deathmantle + Ashnod's Altar + Grave Titan): when each kills, what stops it, and how the AI finds and assembles the pieces. Also Kefka, Brush Off, Melira, Avacyn's Pilgrim, Unsummon, Champion's Helm, Slaughter Pact, Urabrask, and the Sauron AI's priorities for Sheoldred and Consecrated Sphinx. |
+| `test_my_cards.py` | 55 | Key cards of your three decks against their Oracle text, and Sephiroth's four loops (Mikaeus + Triskelion, Mikaeus or Melira + Kitchen Finks, Nim Deathmantle + Ashnod's Altar + Grave Titan): when each kills, what stops it, and how the AI finds and assembles the pieces. Also Kefka, Brush Off, Melira, Avacyn's Pilgrim, Unsummon, Champion's Helm, Slaughter Pact, Urabrask, and the Sauron AI's priorities for Sheoldred and Consecrated Sphinx. |
 | `test_search.py` | 7 | The look-ahead AI: game copies are independent, hidden hands are re-dealt correctly, a win always outscores a board, and a whole decision picks one of the options, leaves the real game untouched, and is reproducible. |
 | `test_dsl.py` | 5 | The ability language: Oracle text compiles to the expected abilities, unreadable text is reported, and a compiled card works in a game. |
 | `test_cli.py` | 14 | The Wilson interval and the paired difference, and every command run the way you run it (`python3 -m ...`) with a few games: a tier run, `--swap`, `--analyze`, `--trace`, `--calibrate`, `--cards`, the validator, the audits and `tools.swaptest`. Also checks that `--jobs 1` and `--jobs 3` give the same result. |

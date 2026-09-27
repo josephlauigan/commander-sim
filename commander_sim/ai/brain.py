@@ -218,6 +218,18 @@ def card_utility(g, p, s, c):
 SPECIAL = ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'tokx_special')
 
 
+SPARE_VALUE = 3.0      # a creature worth more than this (pval) isn't sacrificed to pay for a spell
+
+
+def spare_creature(g, p):
+    """the creature p would sacrifice to pay a spell's cost: the cheapest, never its commander or the Army (Sauron's
+    whole plan), and nothing worth more than a utility body; None: wait for a better time"""
+    cands = [m for m in p.perms if m.creature and not m.phased and not m.is_cmd and not m.army]
+    if not cands: return None
+    m = min(cands, key=lambda m: pval(g, m))
+    return m if pval(g, m) <= SPARE_VALUE else None
+
+
 def do_cast(g, p, c, zone=None):
     if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE): return False
     if c.dsl and not additional_cost(g, p, c, dry=True): return False
@@ -227,8 +239,8 @@ def do_cast(g, p, c, zone=None):
     cv = 'convoke' in c.tags
     fodder = None
     if 'needsac' in c.tags:                          # Diabolic Intent: sacrifice a creature as an additional cost
-        fodder = sac_fodder(g, p, 'creature')
-        if fodder is None or fodder == 'Treasure': return False
+        fodder = spare_creature(g, p)
+        if fodder is None: return False
     if zone == 'gy':
         cg, cp = parse_cost(c.tags['fb'])
     else:
