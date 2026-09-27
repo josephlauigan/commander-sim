@@ -84,7 +84,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chromatic Lantern, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (13).** Buried Alive, Cultivate, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Farewell, Lash of the Balrog, Persist, Reanimate, Toxic Deluge, Unburial Rites, Unmarked Grave, Yawgmoth's Will
+**Sorceries (13).** Buried Alive, Cultivate, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Dread Return, Farewell, Lash of the Balrog, Reanimate, Toxic Deluge, Unburial Rites, Unmarked Grave, Yawgmoth's Will
 
 **Instants (10).** Anguished Unmaking, Assassin's Trophy, Dovin's Veto, Entomb, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares
 
@@ -121,6 +121,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Diabolic Tutor
 1 Displacer Kitten
 1 Dovin's Veto
+1 Dread Return
 1 Elesh Norn, Grand Cenobite
 1 Elesh Norn, Mother of Machines
 1 Entomb
@@ -150,7 +151,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Orzhov Signet
 1 Overgrown Tomb
 1 Path to Exile
-1 Persist
 1 Reanimate
 1 Sakura-Tribe Elder
 1 Sheoldred, the Apocalypse
