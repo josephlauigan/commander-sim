@@ -13,7 +13,7 @@ from commander_sim import engine, ais
 from commander_sim.engine import DB
 from commander_sim.decks import DECKS
 
-KEYS = ('seph', 'veyran', 'sauron')
+KEYS = ('seph', 'veyran', 'sauron', 'marchesa')
 
 
 def apply_swaps(deck, swaps):
@@ -84,7 +84,8 @@ METRICS = [
     ('aether_shots',  'Aetherflux shots per game',              'Threat & pressure',    'up',   'veyran'),
 ]
 PLAN = {'seph': 'first 6+ power bomb on the battlefield', 'veyran': 'Veyran + a magecraft payoff on the battlefield',
-        'sauron': 'Sword + Assault combo attempted', 'najeela': 'first WUBRG extra combat'}
+        'sauron': 'Sword + Assault combo attempted', 'marchesa': 'first creature returned by Marchesa',
+        'najeela': 'first WUBRG extra combat'}
 AXIS_NOTE = {
     'Outcome': 'the bottom line; everything else explains why it moved.',
     'Mana & consistency': 'can the deck cast its spells on time? Missed land drops and low mana stall everything else.',
@@ -100,6 +101,7 @@ def plan_turn(me, deck):
     if deck == 'seph': return me.first_bomb
     if deck == 'veyran': return me.milestone.get('engine')
     if deck == 'najeela': return me.milestone.get('act')
+    if deck == 'marchesa': return me.milestone.get('recur')
     return me.milestone.get('combo')
 
 

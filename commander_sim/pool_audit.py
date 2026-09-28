@@ -37,7 +37,7 @@ STAT_TAGS = {'pow', 'tgh', 'fly', 'dt', 'vig', 'lifelink', 'haste', 'trample', '
 # hand tags whose behaviour lives in the four main decks' AI code: an outside deck holding the card never
 # uses it unless the engine's generic path handles the tag (then remove it from this set)
 DECK_ONLY_TAGS = {'tide', 'yawg', 'avarice', 'mastery', 'crackle', 'x'}
-POOL_OK = {'fill': ('dispute', 'stitcher', 'wayfinder', 'grisly'), 'rean': ('animate', 'reanimate', 'evil'),
+POOL_OK = {'fill': ('dispute', 'stitcher', 'wayfinder', 'grisly'), 'rean': ('animate', 'reanimate', 'evil', 'zombify'),
            'prot': ('hi', 'phase', 'indes', 'blink', 'boots')}
 
 

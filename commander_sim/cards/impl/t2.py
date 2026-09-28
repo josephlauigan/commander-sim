@@ -705,7 +705,7 @@ def _value_blink(name, gen, pips):
         return [(v - 1.0, f'{name} (end of turn)', go)]
 
 
-STYLE_KEYS = ('seph', 'veyran', 'sauron', 'najeela')
+STYLE_KEYS = ('seph', 'veyran', 'sauron', 'marchesa', 'najeela')
 _value_blink('Ephemerate', 0, 'W')
 _value_blink('Restoration Angel', 3, 'W')
 note('Ephemerate', 'Full', 'blinks your best enters-the-battlefield creature at the end of an opponent\'s turn (or in '

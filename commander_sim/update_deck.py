@@ -5,7 +5,7 @@
     python3 -m commander_sim.update_deck sauron new-list.txt --dry-run  # show what would change, write nothing
     python3 -m commander_sim.update_deck sauron new-list.txt --log "Why I made these swaps."
 
-The deck is one of your deck keys (seph, veyran, sauron), a pool deck key, or a path to a deck .md file.
+The deck is one of your deck keys (seph, veyran, sauron, marchesa), a pool deck key, or a path to a deck .md file.
 
 The list can be copied from most deck sites: "1 Card Name", "1x Card Name" or just "Card Name" per line. Set codes,
 collector numbers and foil marks ("(MOM) 123 *F*") are ignored, as are blank lines and headers such as "Commander"
@@ -77,7 +77,7 @@ def _read(path):
 
 
 MINE = {'seph': 'sephiroth-phyrexian-reanimator.md', 'veyran': 'veyran-izzet-spellslinger.md',
-        'sauron': 'sauron-grixis-amass.md'}
+        'sauron': 'sauron-grixis-amass.md', 'marchesa': 'marchesa-grixis-recursion.md'}
 
 
 def deck_path(which):
@@ -85,7 +85,7 @@ def deck_path(which):
     if which in MINE: return os.path.join(ROOT, 'decklists', 'mine', MINE[which])
     from commander_sim import pools
     d = pools.by_key().get(which)
-    if d is None: sys.exit(f'No deck {which!r}: use seph, veyran, sauron, a pool deck key, or a path to a deck file')
+    if d is None: sys.exit(f'No deck {which!r}: use seph, veyran, sauron, marchesa, a pool deck key, or a path to a deck file')
     return d.path
 
 
@@ -308,7 +308,7 @@ def _record_fixture():
     from commander_sim.decks import load, P
     fix = os.path.join(ROOT, 'tests', 'fixtures', 'my_decks_parsed.json')
     files = {'seph': 'sephiroth-phyrexian-reanimator.md', 'veyran': 'veyran-izzet-spellslinger.md',
-             'sauron': 'sauron-grixis-amass.md'}
+             'sauron': 'sauron-grixis-amass.md', 'marchesa': 'marchesa-grixis-recursion.md'}
     with open(fix, 'w') as fh: json.dump({k: sorted(load(P + f)) for k, f in files.items()}, fh, indent=0)
 
 

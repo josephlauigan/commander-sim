@@ -28,6 +28,7 @@ STYLE = {
     'seph':    {'temp': 1.0, 'aggression': 0.55, 'caution': 0.60},
     'veyran':  {'temp': 1.0, 'aggression': 0.40, 'caution': 0.80},
     'sauron':  {'temp': 1.0, 'aggression': 0.55, 'caution': 0.75},
+    'marchesa': {'temp': 1.0, 'aggression': 0.65, 'caution': 0.60},
     'najeela': {'temp': 1.0, 'aggression': 0.90, 'caution': 0.30},
 }
 TEMP_SCALE = 1.0     # global multiplier, set from --temp
@@ -178,7 +179,8 @@ def reserve_penalty(g, p, s, c, hold_card, hold_v):
 
 
 # ------------------------------------------------------------------ card utilities
-PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'najeela': A.najeela_prio}
+PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'marchesa': A.marchesa_prio,
+        'najeela': A.najeela_prio}
 
 
 def draws_cards(c):
@@ -227,6 +229,7 @@ def do_cast(g, p, c, zone=None):
     cv = 'convoke' in c.tags
     if zone == 'gy':
         cg, cp = parse_cost(c.tags['fb'])
+        if 'fblife' in c.tags and p.life <= int(c.tags['fblife']) + 5: return False
     else:
         cg, cp = cost_of(p, c)
     E.PAY_FOR = c
@@ -242,6 +245,9 @@ def do_cast(g, p, c, zone=None):
     elif 'xtutor' in c.tags:                         # X spells of outside decks: X = all spare mana
         x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x; g.last_x = x
     if c.dsl: additional_cost(g, p, c)
+    if zone == 'gy' and 'fblife' in c.tags: lose_life(g, p, int(c.tags['fblife']), p)
+    if 'phyU' in c.tags and zone in ('hand', 'cmd') and 'U' in c.pips and cp.count('U') < c.pips.count('U'):
+        lose_life(g, p, 2, p)                                     # {U/P} paid with 2 life
     ok = cast_card(g, p, c, 'gy' if zone == 'yawg' else zone, ctx)     # from the graveyard: exiled after
     if p.key == 'seph' and ok and (c is p.cmd or c.bomb >= 4): A.note_bomb(p, c)
     return True
@@ -294,7 +300,7 @@ def cast_removal(g, p, c, tg, kick=0, kind=None):
     fod = None
     if 'needsac' in c.tags or ('sacor4' in c.tags and fods):
         if not fods: return False
-        fod = min(fods, key=lambda x: pval(g, x))
+        fod = min(fods, key=lambda x: sac_worth(g, x))
     if free and 'snuff' in c.tags and not ('freecmd' in c.tags and commander_out(p)): lose_life(g, p, 4, p)
     elif not free: pay(g, p, c.generic + extra, c.pips, cv)
     if fod: die(g, fod, 'sac')
@@ -428,6 +434,13 @@ def special_options(g, p, s, post):
         if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and importlib.import_module('commander_sim.cards.impl.mine').archivist_worth(g, p)
                 and can_pay(g, p, 0, 'U')):
             o.append((5.0, "Jace's Archivist wheel", lambda: A.sauron_archivist(g, p)))
+    elif k == 'marchesa':
+        o += E.CI.marchesa_options(g, p, s, post)
+        ht = A.helm_target(g, p) if find(p, 'helm') and can_pay(g, p, 1, '') and post is not None else None
+        if ht is not None:
+            leg = importlib.import_module('commander_sim.cards.impl.mine').is_legendary(g, ht)
+            o.append((2.0 + (4.0 * removal_risk(g, p) + 0.2 * pval(g, ht) if leg else 0.0),
+                      f"equip Champion's Helm to {ht.name}", lambda ht=ht: A.helm_equip(g, p, ht)))
     elif k == 'najeela' and post:
         for c in p.hand:
             if 'tokx' in c.tags and total_mana(g, p) >= len(c.pips) + 3:
@@ -584,6 +597,9 @@ def main(g, p, post):
         if not acted: return
 
 
+GENERIC_PLAYS = ('marchesa',)    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
+
+
 def hook_options(g, p, s, post):
     """activated abilities of hand-implemented cards (battlefield and graveyard); post=None: end-of-turn window"""
     o = []
@@ -593,7 +609,7 @@ def hook_options(g, p, s, post):
             if src.owner is p and not (lock and lock(g, src, p)): o += fn(g, src, p, s, post) or []
     for c, fn in E.CI.gy_cards(p, 'gy_options'): o += fn(g, c, p, s, post) or []
     for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
-    if p.key not in STYLE:
+    if p.key not in STYLE or p.key in GENERIC_PLAYS:
         o += importlib.import_module('commander_sim.ai.pool_ai').special_options(g, p, s, post)
     o += importlib.import_module('commander_sim.cards.impl.lands').land_options(g, p, s, post)
     if E.CI.combo_options is not None: o += E.CI.combo_options(g, p, s, post)
@@ -618,6 +634,8 @@ def choose_defender(g, p):
         if my >= q.life * 0.8: u += 4.0 + 2.0 * aggr               # go for the kill
         u += 0.15 * grudge.get(q.key, 0)                               # hit back whoever hit you
         if p.key not in STYLE: u += importlib.import_module('commander_sim.ai.pool_ai').ninja_defender_bonus(g, p, q)
+        if p.key == 'marchesa' and has(p, 'marchesa') and q.life >= max(x.life for x in g.players if x.alive):
+            u += 0.8 * min(4, sum(1 for m in p.perms if m.creature and not m.tapped and not m.sick))   # dethrone
         from commander_sim.cards.impl import common as impl_common                                              # planeswalkers about to ultimate draw attacks
         u += sum(3.0 * min(1.0, impl_common.ult_pressure(m)) for m in q.perms
                  if m.cd is not None and 'P' in m.cd.types and m.loyalty and impl_common.ult_pressure(m) >= 0.6)

@@ -5,7 +5,7 @@ import random, re
 from collections import defaultdict
 from commander_sim.cards.carddb import DB_TEXT
 
-IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'najeela': 'WUBRG'}
+IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'najeela': 'WUBRG'}
 # Outside decks (opponent pools) register here: key -> {'ident': 'WU', 'name': 'Brago'}. The four main decks
 # keep their hard-wired entries in IDENT / NAME / the AI tables; anything else falls back to generic defaults.
 SEATS = {}
@@ -67,7 +67,8 @@ class Land:
 class Perm:
     __slots__ = ('cd', 'owner', 'orig', 'token', 'tapped', 'sick', 'pow', 'tgh', 'fly', 'dt', 'vig',
                  'life', 'plus', 'undying', 'army', 'warrior', 'noatk', 'name', 'phased', 'attached',
-                 'age', 'neutered', 'is_cmd', 'phys', 'temp', 'loyalty', 'loyalty_used', 'colors', 'ttypes', 'data')
+                 'age', 'neutered', 'is_cmd', 'phys', 'temp', 'loyalty', 'loyalty_used', 'colors', 'ttypes', 'data',
+                 'born')
 
     def __init__(s, owner, cd=None, pw=1, tg=None, fly=False, warrior=False, name='Token'):
         s.cd, s.owner, s.orig = cd, owner, owner
@@ -75,7 +76,7 @@ class Perm:
         s.tapped = False; s.sick = True; s.plus = 0; s.undying = False; s.army = False
         s.phased = False; s.attached = None; s.age = 0; s.neutered = False; s.is_cmd = False
         s.phys = None; s.temp = False; s.loyalty = None; s.loyalty_used = None; s.colors = ''
-        s.ttypes = frozenset(); s.data = None
+        s.ttypes = frozenset(); s.data = None; s.born = 0
         if cd:
             t = cd.tags
             s.name = cd.name; s.pow = cd.pow; s.tgh = cd.tgh
@@ -168,7 +169,7 @@ DAMAGE_HOOK = None
 
 
 def NAME(p):
-    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'najeela': 'Najeela'}.get(p.key)
+    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'najeela': 'Najeela'}.get(p.key)
     return n if n is not None else SEATS[p.key]['name']
 
 
@@ -433,6 +434,7 @@ def land_cols(p, L, anyc):
     if g is not None and g.hooks and importlib.import_module('commander_sim.cards.impl.rules').dryad_colors(p): return p.ident
     if CI is not None and L.cd.name == 'Plaza of Heroes': return CI.plaza_colors(g, p)
     if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p)
+    if CI is not None and L.cd.name in CI.LAND_COLS: return CI.LAND_COLS[L.cd.name](g, p, L)
     c = L.cd.tags.get('c', 'C')
     if c == 'A': return p.ident
     if c == 'C': return ''
@@ -508,7 +510,7 @@ def plan_pay(U, generic, pips, col=None):
                 if bk is None or k < bk: bk, best = k, i
         if best is None: return None
         rem[best] -= 1; used[best] += 1
-        if col is not None: col[best] += 1
+        if col is not None: col[best] += c
     need = generic
     while need > 0:
         best, bk = None, None
@@ -530,7 +532,7 @@ def can_pay(g, p, generic, pips, convoke=False):
 
 def pay(g, p, generic, pips, convoke=False):
     U = mana_units(g, p, convoke)
-    col = [0] * len(U)
+    col = [''] * len(U)                                   # the coloured pips each source paid for
     used = plan_pay(U, generic, pips, col)
     if used is None: return False
     for i, u in enumerate(U):
@@ -547,6 +549,8 @@ def pay(g, p, generic, pips, convoke=False):
                 importlib.import_module('commander_sim.cards.impl.partials').special_unit_paid(g, p, u)
             else:
                 u[0].tapped = True
+                global TAP_COLS
+                TAP_COLS = col[i]
                 if CI is not None and getattr(u[0], 'cd', None) is not None and u[0].cd.name in CI.ON_TAP: CI.ON_TAP[u[0].cd.name](g, p, u[0], used[i])
                 if g.hooks and isinstance(u[0], Perm): CI.fire(g, 'mana_tapped', p, u[0], used[i])
                 if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
@@ -578,6 +582,8 @@ def cost_of(p, c):
             gen = max(0, gen - sum(1 for x in p.gy if x.instant or x.sorcery))
         if 'spectacle' in t and p.hit_turn == p.turns:
             gen, pips = 0, 'R'
+        if 'phyU' in t and p.life > 10 and 'U' in pips and not can_pay(g, p, gen, pips):
+            pips = pips.replace('U', '', 1)                # {U/P}: 2 life instead (paid by the caster)
         if DSLMOD is not None: gen = max(0, gen + DSLMOD.cost_delta(g, p, c))
         if g.hooks:
             gen = max(0, gen + CI.total(g, 'cost', p, c))
@@ -593,6 +599,7 @@ def cost_of(p, c):
     return gen, pips
 
 
+TAP_COLS = ''            # the coloured pips the source being tapped paid for (read by CI.ON_TAP hooks)
 PAY_FOR = None           # the card currently being paid for (Mishra's Workshop mana is for artifact spells only)
 
 
@@ -606,9 +613,15 @@ def draw(g, p, n=1, step=False):
                               (any(has(q, 'labyrinth') for q in g.players if q.alive))):   # Narset / Spirit of the Labyrinth
             p.stats['narset_denied'] += n - k; return
         if g.hooks and not (step and k == 0):             # Notion Thief: an opponent's extra draws are stolen
-            thief = next((src for src, fn in CI.hooked(g, 'steal_draw') if fn(g, src, p)), None)
+            chain = getattr(g, 'thief_chain', None) or ()     # 614.5: each replacement applies once per draw
+            thief = next((src for src, fn in CI.hooked(g, 'steal_draw') if src not in chain and fn(g, src, p)), None)
             if thief is not None:
-                draw(g, thief.owner, 1); continue
+                g.thief_chain = chain + (thief,)
+                try:
+                    draw(g, thief.owner, 1)
+                finally:
+                    g.thief_chain = chain
+                continue
         if not p.library:
             p.decked = True; return
         if getattr(p, 'urabrask', None) == turn_stamp(g):     # Urabrask, Heretic Praetor: exiled instead, playable
@@ -665,7 +678,7 @@ def amass(g, p, n):
 TOKEN_CAP = 250          # creature tokens per player; beyond this the board is lethal many times over and games crawl
 
 
-TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'veyran': 'R'}     # default colour of a deck's tokens
+TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R'}     # default colour of a deck's tokens
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
@@ -792,9 +805,9 @@ def die(g, m, cause='destroy'):
     if m not in p.perms: return
     if cause == 'destroy' and indestructible(g, m): return
     if cause == 'destroy' and getattr(g, 'auras', None) and CI.umbra_save(g, m): return
-    if cause in ('destroy', 'combat') and m.creature and not m.token and CI is not None \
+    if cause in ('destroy', 'combat') and m.creature and not m.token and CI is not None and not getattr(g, 'noregen', False) \
             and (importlib.import_module('commander_sim.cards.impl.lands').try_regenerate(g, m) or importlib.import_module('commander_sim.cards.impl.rules').ezuri_regen(g, m)): return
-    if cause == 'destroy' and m.creature and getattr(p, 'regen_turn', None) == turn_stamp(g):
+    if cause == 'destroy' and m.creature and getattr(p, 'regen_turn', None) == turn_stamp(g) and not getattr(g, 'noregen', False):
         m.tapped = True; log(f'    {m.name} regenerates', g); return
     selfdies = CI is not None and m.cd is not None and CI.live(m.cd.name) and CI.HOOKS[m.cd.name].get('self_dies')
     if g.hooks and CI.total(g, 'no_graveyard', p):          # Rest in Peace: exiled, so it never dies
@@ -807,6 +820,7 @@ def die(g, m, cause='destroy'):
         return
     leave(g, m)
     if m.creature: g.died_turn = turn_stamp(g)                           # Barad-dûr
+    if getattr(g, 'marchesa_on', False) and m.creature and not m.token: CI.marchesa_dies(g, p, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
     if g.hooks:
         CI.fire(g, 'dies', m, cause)
@@ -943,8 +957,8 @@ def sac_fodder(g, p, what, exclude=None):
     cands = [m for m in p.perms if m is not exclude and not m.phased and not m.is_cmd and
              ((cre and m.creature) or (art and m.cd is not None and 'A' in m.cd.types) or what == 'permanent')]
     if 'green' in what: cands = [m for m in cands if 'G' in colors_of(m)]
-    best = min(cands, key=lambda m: pval(g, m)) if cands else None
-    if art and p.treasures and (best is None or pval(g, best) > 0.6): return 'Treasure'
+    best = min(cands, key=lambda m: sac_worth(g, m)) if cands else None
+    if art and p.treasures and (best is None or sac_worth(g, best) > 0.6): return 'Treasure'
     return best
 
 
@@ -1043,6 +1057,8 @@ def on_cast(g, p, c):
     if not c.creature and CI is not None: CI.prowess(g, p, c)
     if CI is not None and (c.instant or c.sorcery):
         for x, fn in CI.hand_cards(p, 'hand_cast'): fn(g, x, p, c)       # Return the Favor copies your spell
+        for q in g.opps(p):
+            for x, fn in CI.hand_cards(q, 'hand_opp_cast'): fn(g, x, q, c)   # Dualcaster Mage copies anyone's
     if p.spells_this_turn == 3:                            # Emeritus of Conflict: third spell each turn -> prepared
         for x in find(p, 'conflict'): x.data = dict(x.data or {}, prepared=True)
     if has(p, 'eris') and p.spells_this_turn == 2:
@@ -1157,7 +1173,7 @@ def spell_imp(g, p, c, ctx):
             aff[q] = 0.8 * sum(pval(g, m) for m in q.perms if m.creature or t['wipe'] in ('rift', 'rebuke'))
         return 0, aff
     if 'rean_target' in ctx: return ctx['rean_value'], aff
-    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'najeela': 6}.get(p.key, CMD_IMP), aff
+    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'najeela': 6}.get(p.key, CMD_IMP), aff
     if c.bomb and p.key == 'seph': return c.bomb, aff
     if 'vkitten' in t: return (9 if has(p, 'vfire') else 4), aff
     if 'vfire' in t: return (9 if has(p, 'vkitten') else 4), aff
@@ -1176,15 +1192,15 @@ def spell_imp(g, p, c, ctx):
     return 0, aff
 
 
-CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'najeela': 99}
+CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'najeela': 99}
 CMD_IMP = 6              # importance of an outside deck's commander spell (counter decisions)
 
 # Interaction profiles for the AI opponents.
 #   conservative: counter only big threats (importance >= 7), hold instant removal for emergencies
 #   loose:        counter at importance >= 6, use instant removal as freely as sorcery removal
 PROFILES = {
-    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
-    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
+    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
+    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
 }
 INSTANT_EXTRA = 2
 CTHRESH_DEFAULT = 7      # outside decks: counter threshold under the current profile
@@ -1476,13 +1492,12 @@ def resolve(g, p, c, ctx, zone):
     if 'stampede' in t:                         # Overwhelming Stampede: +X/+X, X = greatest power
         cr = [m for m in p.perms if m.creature]
         if cr: p.pumpadd += max(epow(g, m) for m in cr); p.trample = True
-    if 'prolif1' in t:
-        a = army_of(p)
-        if a: a.plus += 1
+    if 'prolif1' in t and CI is not None: importlib.import_module('commander_sim.cards.impl.mine').proliferate_all(g, p)
     if 'unearth' in t:
         cs = [x for x in p.gy if x.creature and x.cmc <= 3]
         if cs:
-            x = max(cs, key=lambda c: (('bowmasters' in c.tags) * 5 + c.pow)); p.gy.remove(x); enter(g, p, x)
+            x = max(cs, key=lambda c: (('bowmasters' in c.tags) * 5 + c.pow + (CI.card_etb_value(g, p, c) if CI is not None else 0)))
+            p.gy.remove(x); enter(g, p, x)
     if 'fbgrant' in t: flashback_grant(g, p)
     if zone == 'gy' and 'fbnib' in t:           # Nibelheim Aflame from graveyard: discard hand, draw four
         discard_cards(g, p, list(p.hand)); draw(g, p, 4)
@@ -1554,6 +1569,7 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0)
         if cands:
             phys, cd = cd, max(cands, key=lambda x: pval(g, x)).cd
     m = Perm(p, cd); m.orig = orig or p; m.sick = sick; m.phys = phys
+    g.enter_no = getattr(g, 'enter_no', 0) + 1; m.born = g.enter_no
     if 'haste' in cd.tags: m.sick = False
     if cd.dsl: g.dsl_on = True
     if cd.start_loyalty:
@@ -1645,7 +1661,9 @@ def etb_once(g, p, m):
     if 'heir' in t:                               # Sephiroth, Planet's Heir: opponents' creatures get -2/-2
         for q in opps:
             for x in list(q.perms):
-                if x.creature and etgh(g, x) <= 2: die(g, x, 'destroy')
+                if not x.creature or x.phased: continue
+                a, b = g.eot_pt.get(id(x), (0, 0)); g.eot_pt[id(x)] = (a - 2, b - 2)
+                if etgh(g, x) <= 0: die(g, x, 'sba')
     if 'suntitan' in t: sun_titan(g, p)
     if 'mycoloth' in t:                           # devour 2: eat up to three tokens
         toks = [x for x in p.perms if x.token and x.creature][:3]
@@ -1694,12 +1712,20 @@ def archon_trig(g, p):
     lose_life(g, q, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
 
 
+def sac_worth(g, m):
+    """what losing m to a sacrifice costs its controller: its value, or less when Marchesa will return it"""
+    v = pval(g, m)
+    if m in (getattr(m.owner, 'borrowed', None) or ()): return -0.5 * v      # stolen until end of turn: free to lose
+    if getattr(g, 'marchesa_on', False) and m.creature and not m.token and m.plus > 0: v = CI.marchesa_sac_worth(g, m, v)
+    return v
+
+
 def edict(g, q, least_power=False):
     """q sacrifices the creature it values least (least_power: among those with the least power, Witch-king)"""
     cr = [m for m in q.perms if m.creature and not m.phased]
     if cr and least_power:
         lo = min(epow(g, m) for m in cr); cr = [m for m in cr if epow(g, m) == lo]
-    if cr: die(g, min(cr, key=lambda x: pval(g, x)), 'sac')
+    if cr: die(g, min(cr, key=lambda x: sac_worth(g, x)), 'sac')
 
 
 def land_ramp(g, p, n, tapped):
@@ -1796,6 +1822,8 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             if spell is not None and protected_from(g, m, spell.pips): continue
             if kind.startswith('dmg'):
                 if not is_c or etgh(g, m) > int(kind[3:]): continue
+            if kind.startswith('shrink') and (not is_c or etgh(g, m) > int(kind[6:])): continue
+            if spell is not None and 'newonly' in spell.tags and not entered_since_last_turn(g, p, m): continue
             if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m): continue
             res.append(m)
     return res
@@ -1832,7 +1860,17 @@ def apply_removal(g, actor, m, kind, spell=None):
     if owner.key == 'seph' and m.cd is not None and m.cd.bomb:
         owner.stats['bomb_removed'] += 1; owner.stats['bomb_removed_' + kind[:5]] += 1
     power, mv = epow(g, m), (m.cd.cmc if m.cd is not None else 0)
-    if kind in ('destroy',) or kind.startswith('dmg'): die(g, m, 'destroy')
+    st = spell.tags if spell is not None else {}
+    if 'exiledie' in st and (kind == 'destroy' or kind.startswith('dmg') or kind.startswith('shrink')):
+        exile_perm(g, m)                                         # Scorching Dragonfire: exiled instead of dying
+    elif kind.startswith('shrink'):
+        if etgh(g, m) <= int(kind[6:]): die(g, m, 'sba')       # -X/-X: toughness 0, no regeneration
+    elif kind in ('destroy',) or kind.startswith('dmg'):
+        g.noregen = 'noregen' in st
+        try:
+            die(g, m, 'destroy')
+        finally:
+            g.noregen = False
     elif kind == 'exile': exile_perm(g, m)
     elif kind == 'bounce': bounce(g, m)
     elif kind == 'tuck': tuck(g, m)
@@ -1845,6 +1883,11 @@ def apply_removal(g, actor, m, kind, spell=None):
         if 'losemv' in t: lose_life(g, actor, mv, actor)         # Feed the Swarm
         if 'gaintgh' in t: gain(actor, m.tgh)                    # Noxious Gearhulk
     check_state(g)
+
+
+def entered_since_last_turn(g, p, m):
+    """m entered the battlefield after p's last turn ended (Premature Burial)"""
+    return m.born > getattr(p, 'last_turn_end', 0)
 
 
 def sun_titan(g, p):
@@ -1870,6 +1913,14 @@ def etb_removal(g, p, m):
 
 
 def apply_wipe(g, p, kind, ctx):
+    prev, g.batch = getattr(g, 'batch', None), object()     # creatures destroyed together die simultaneously
+    try:
+        _apply_wipe(g, p, kind, ctx)
+    finally:
+        g.batch = prev
+
+
+def _apply_wipe(g, p, kind, ctx):
     from commander_sim import ais
     log(f'    board wipe resolves ({kind})', g)
     if kind == 'rift':

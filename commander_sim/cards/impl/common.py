@@ -341,8 +341,8 @@ def aristocrat_options(g, p, s, post):
         sum(1 for x in p.perms if x.cd is not None and ('bartist' in x.cd.tags or 'drain' in x.cd.tags))
     drain_per *= 1 + (CI.total(g, 'trigger_copies', p, 'dies', None) if g.hooks else 0)
     lethal = drain_per and all(q.life <= drain_per * len(fod) for q in g.opps(p))
-    m = min(fod, key=lambda x: pval(g, x))
-    gain_ = per - 1.5 * pval(g, m) - (0.8 if post is False and not m.sick and not m.tapped else 0)
+    m = min(fod, key=lambda x: sac_worth(g, x))
+    gain_ = per - 1.5 * sac_worth(g, m) - (0.8 if post is False and not m.sick and not m.tapped else 0)
     if not lethal and gain_ < 1.0: return []
 
     def go(src=src, m=m):
