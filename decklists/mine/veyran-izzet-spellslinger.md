@@ -103,9 +103,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (3).** Old Fat Spider Can't See Me, Rite of the Dragoncaller, Thousand-Year Storm
 
-**Instants (26).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Dreams of Laguna, Flashback, Force of Will, Lightning Bolt, Mystic Confluence, Mystical Tutor, Plunder the Trollshaws, Pongify, Prismari Charm, Quick Study, Reality Shift, Reenact the Crime, Return the Favor, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
+**Instants (24).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Dreams of Laguna, Flashback, Lightning Bolt, Mystic Confluence, Mystical Tutor, Plunder the Trollshaws, Pongify, Prismari Charm, Quick Study, Reality Shift, Return the Favor, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
-**Sorceries (10).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Stock Up
+**Sorceries (12).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Jeska's Will, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Stock Up, Twinflame
 
 **Lands (34).** Ash Barrens, Coastal Peak, Command Tower, Desolate Lighthouse, Evolving Wilds, Exotic Orchard, Mistrise Village, Mystic Sanctuary, Path of Ancestry, Scorched Geyser, Shivan Reef, Sokenzan Crucible of Defiance, Spectacle Summit, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Temple of Epiphany, Terramorphic Expanse, 9 Island, 6 Mountain
 
@@ -141,12 +141,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Fellwar Stone
 1 Flashback
 1 Flow State
-1 Force of Will
 1 Gandalf, Friend of the Shire
 1 Guttersnipe
 1 Harmonic Prodigy
 1 Hydro-Channeler
 1 Imperial Recruiter
+1 Jeska's Will
 1 Jin-Gitaxias, Progress Tyrant
 1 Kessig Flamebreather
 1 Light Up the Stage
@@ -167,7 +167,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Quick Study
 1 Ral, Storm Conduit
 1 Reality Shift
-1 Reenact the Crime
 1 Return the Favor
 1 Rite of the Dragoncaller
 1 River's Rebuke
@@ -192,6 +191,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Thought Vessel
 1 Thousand-Year Storm
 1 Thunderdrum Soloist
+1 Twinflame
 1 Unsummon
 1 Venser, Shaper Savant
 1 Veyran, Voice of Duality

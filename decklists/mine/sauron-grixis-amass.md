@@ -101,7 +101,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (12).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (26).** Arcane Denial, Bedevil, Big Score, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Slip Out the Back, Terminate, Tezzeret's Gambit, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (26).** Arcane Denial, Bedevil, Big Score, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Slip Out the Back, Terminate, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (36).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -132,6 +132,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Crumbling Necropolis
 1 Cyclonic Rift
 1 Deepglow Skate
+1 Diabolic Intent
 1 Diabolic Tutor
 1 Drowned Catacomb
 1 Exotic Orchard
@@ -181,7 +182,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Talisman of Creativity
 1 Talisman of Dominance
 1 Terminate
-1 Tezzeret's Gambit
 1 The Ozolith
 1 Toxic Deluge
 1 Treno, Dark City

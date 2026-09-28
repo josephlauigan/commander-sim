@@ -84,11 +84,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chromatic Lantern, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (13).** Buried Alive, Cultivate, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Dread Return, Farewell, Lash of the Balrog, Reanimate, Toxic Deluge, Unburial Rites, Unmarked Grave, Yawgmoth's Will
+**Sorceries (12).** Buried Alive, Cultivate, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Lash of the Balrog, Reanimate, Toxic Deluge, Unburial Rites, Unmarked Grave, Yawgmoth's Will
 
-**Instants (10).** Anguished Unmaking, Assassin's Trophy, Dovin's Veto, Entomb, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares
+**Instants (11).** Anguished Unmaking, Assassin's Trophy, Entomb, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection
 
-**Lands (37).** Ash Barrens, Blossoming Sands, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Llanowar Wastes, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
+**Lands (37).** Arcane Sanctum, Ash Barrens, Blossoming Sands, Bojuka Bog, Brushland, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Llanowar Wastes, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
 
 ## Import list (100)
 
@@ -96,6 +96,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Altar of Dementia
 1 Anguished Unmaking
 1 Animate Dead
+1 Arcane Sanctum
 1 Arcane Signet
 1 Archon of Cruelty
 1 Ash Barrens
@@ -111,16 +112,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Bolas's Citadel
 1 Brushland
 1 Buried Alive
-1 Caves of Koilos
 1 Chromatic Lantern
 1 Command Tower
 1 Consecrated Sphinx
 1 Cultivate
 1 Demonic Tutor
-1 Diabolic Intent
 1 Diabolic Tutor
 1 Displacer Kitten
-1 Dovin's Veto
 1 Dread Return
 1 Elesh Norn, Grand Cenobite
 1 Elesh Norn, Mother of Machines
@@ -129,6 +127,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Exotic Orchard
 1 Fabled Passage
 1 Farewell
+1 Force of Will
 1 Galadriel's Dismissal
 1 Gifts Ungiven
 1 Glacial Fortress
@@ -165,6 +164,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Swan Song
 1 Swords to Plowshares
 1 Talisman of Hierarchy
+1 Teferi's Protection
 1 Temple Garden
 1 Tortured Existence
 1 Toxic Deluge
