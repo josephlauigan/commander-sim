@@ -1172,3 +1172,71 @@ def loop_prio(g, p, c):
 note('Melira, Sylvok Outcast', 'Full', "you can't get poison counters; your creatures can't get -1/-1 counters "
      '(persist returns them without one); no creature in the pools has infect, so the last clause never applies')
 note('Kitchen Finks', 'Full', 'enters: gain 2 life; persist. Loops with Melira or Mikaeus and a free sacrifice outlet')
+
+
+# ======================================================== Twinflame
+MAGECRAFT = ('ping', 'mystic', 'spelldraw', 'spelltok', 'kiln', 'dragoncaller')
+
+
+def twinflame_value(g, p, m, post, spells=None):
+    """what a hasty token copy of creature m (until the end step) is worth this turn; spells: the instants and
+    sorceries still castable after Twinflame (each triggers a magecraft copy again)"""
+    if m.cd is None or not m.creature or m.phased or is_legendary(g, m) or m.owner is not p: return 0.0
+    t = m.cd.tags
+    v = max(0.0, etb_value(g, p, m) + 0.5 * max(0, m.plus))          # the copy enters fresh: its ETB, no counters
+    if 'rem' in t and 'etb' in t: v += 3.0                          # Venser: another bounce
+    if any(k in t for k in MAGECRAFT):
+        if spells is None: spells = sum(1 for c in p.hand if (c.instant or c.sorcery) and c.name != 'Twinflame')
+        per = int(t['ping']) * len(g.opps(p)) if 'ping' in t else 1.5
+        v += 0.5 * per * spells * (2 if has(p, 'veyran') else 1)
+    if not post and not m.cd.tags.get('noatk') and epow(g, m) > 0:
+        v += 0.25 * epow(g, m)                                         # haste: attacks this turn
+    return v
+
+
+@on('Twinflame', 'hand_options')
+def _twinflame(g, c, p, s, post):
+    """Strive: {1}{R}, plus {2}{R} for each target beyond the first. Hasty token copies of any number of your creatures,
+    exiled at the next end step. The AI copies the creatures worth copying that it can pay for, in its main phases."""
+    if post is None or g.active is not p or c not in p.hand or not can_pay(g, p, 1, 'R'): return []
+    mana = total_mana(g, p)
+    rest = sorted(x.cmc for x in p.hand if (x.instant or x.sorcery) and x is not c)
+    best = None
+    for n in range(1, 6):                                  # n targets: {1}{R} + {2}{R} per extra one
+        cost = 2 + 3 * (n - 1)
+        if not can_pay(g, p, 1 + 2 * (n - 1), 'R' * n): break
+        left, spells = mana - cost, 0
+        for x in rest:                                     # the cheapest spells still castable afterwards
+            if x <= left: left -= x; spells += 1
+        ranked = sorted(((twinflame_value(g, p, m, post, spells), m) for m in p.perms), key=lambda x: -x[0])[:n]
+        if len(ranked) < n or ranked[-1][0] < 1.5: break
+        total = sum(v for v, _ in ranked)
+        if best is None or total > best[0]: best = (total, ranked)
+    if best is None: return []
+    total, tg = best
+    k = len(tg) - 1
+
+    def go():
+        targets = [m for _, m in tg if m in p.perms and not m.phased]
+        if c not in p.hand or not targets: return False
+        extra = len(targets) - 1
+        if not can_pay(g, p, 1 + 2 * extra, 'R' * (extra + 1)): return False
+        p.hand.remove(c); pay(g, p, 1 + 2 * extra, 'R' * (extra + 1))
+        p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+        log(f"  {NAME(p)} casts Twinflame copying {', '.join(m.name for m in targets)}", g)
+        on_cast(g, p, c)
+        if g.over or not p.alive: return True
+        if not counter_window(g, p, c, 3, {}):
+            p.gy.append(c); return True
+        for m in targets:
+            if m not in p.perms: continue
+            cp = E.enter_token_copy(g, p, m.cd)
+            if cp is not None: cp.sick = False; cp.temp = True        # haste; exiled at the end step
+        p.gy.append(c); check_state(g)
+        return True
+    return [(1.0 + 0.6 * total, f"Twinflame ({len(tg)} target{'s' if k else ''})", go)]
+
+
+card('Twinflame', 'twinflame', types='S', cost='1R', dsl=[])
+note('Twinflame', 'Full', 'strive ({2}{R} per extra target): hasty token copies of your nonlegendary creatures, exiled at '
+     'the end step; the AI copies magecraft creatures when spells are left to cast, ETB creatures (Venser) and attackers')

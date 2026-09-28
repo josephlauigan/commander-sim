@@ -255,6 +255,37 @@ class Veyran(unittest.TestCase):
         perm(g, v, 'Emeritus of Ideation // Ancestral Recall')
         self.assertEqual(v.hand, [])
 
+    def twinflame(self, n_lands, *creatures, spells=('Lightning Bolt', 'Burst Lightning')):
+        from commander_sim.ai import brain
+        g = table('veyran', 'seph', 'sauron'); v = g.players[0]
+        lands(v, 'Mountain', n_lands)
+        for c in creatures: perm(g, v, c)
+        hand(v, 'Twinflame', *spells)
+        opts = {l: f for u, l, f in brain.main_options(g, v, False) if l.startswith('Twinflame')}
+        return g, v, opts
+
+    def test_twinflame_copies_with_haste_until_the_end_step(self):
+        g, v, opts = self.twinflame(4, 'Guttersnipe', 'Veyran, Voice of Duality')
+        list(opts.values())[0]()
+        copies = [m for m in v.perms if m.token]
+        self.assertEqual([m.name for m in copies], ['Guttersnipe'])
+        self.assertFalse(copies[0].sick)                                 # haste
+        self.assertEqual(sum(L.tapped for L in v.lands), 2)             # {1}{R}: mana left for the burn spells
+        ais.end_step(g, v)
+        self.assertFalse(any(m.token for m in v.perms))                  # exiled at the end step
+
+    def test_twinflame_strive_cost(self):
+        g, v, opts = self.twinflame(8, 'Guttersnipe', 'Kessig Flamebreather', 'Thunderdrum Soloist')
+        self.assertIn('Twinflame (2 targets)', opts)
+        opts['Twinflame (2 targets)']()
+        self.assertEqual(sum(L.tapped for L in v.lands), 5)             # {1}{R} + {2}{R}
+
+    def test_twinflame_skips_legends_and_idle_copies(self):
+        g, v, opts = self.twinflame(4, 'Veyran, Voice of Duality')
+        self.assertEqual(opts, {})                                      # a copy of a legend dies to the legend rule
+        g, v, opts = self.twinflame(2, 'Guttersnipe')
+        self.assertEqual(opts, {})                                      # no mana left to trigger the copy
+
     def test_unsummon_returns_a_creature(self):
         from commander_sim.ai import brain
         g = table('veyran', 'sauron'); v, r = g.players
