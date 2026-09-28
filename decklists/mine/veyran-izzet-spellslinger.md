@@ -5,6 +5,8 @@
 **Updated 2026-09-21.** Terminal Moraine → Spirebluff Canal.
 **Updated 2026-09-22.** Scavenger Grounds → Stormcarved Coast.
 **Updated 2026-09-26.** Seven swaps: **Displacer Kitten → Niv-Mizzet, Parun** (Kitten moved to the Sephiroth deck), **Kylox, Visionary Inventor → Niv-Mizzet, the Firemind**, **Burning Prophet → Kessig Flamebreather**, **Muse Seeker → Imperial Recruiter**, **Dualcaster Mage → Thousand-Year Storm**, **Disruptor Flute → Swiftfoot Boots**, and **Sleight of Hand → Visions of Beyond**. **Losing Displacer Kitten ends the Kitten + Blazing Firesinger infinite** — the deck no longer has a two-card combo, and Aetherflux Reservoir is now a big-turn finisher rather than an infinite kill. None of the new cards is a Game Changer; the deck stays at 100, 34 lands, and three GCs (Bracket 3, at the cap).
+**Updated 2026-09-26 (second pass).** Disdainful Stroke → **Unsummon**.
+**Updated 2026-09-27.** **Force of Will → Jeska's Will** (Force of Will moved to the Sephiroth deck; Jeska's Will takes its Game Changer slot, so the deck stays at three) and **Reenact the Crime → Twinflame**.
 
 ## Strategy
 
@@ -24,9 +26,13 @@ The scope matters. Veyran doubles magecraft and "whenever you cast an instant or
 
 Eris is the reward for a full graveyard: it costs {2} less per *different* mana value among instants and sorceries there.
 
+**Jeska's Will fuels the big turn.** With Veyran on the battlefield you get both modes: add {R} for each card in an opponent's hand (target the fullest hand), then exile the top three cards of your library and play them this turn. That's usually four to seven mana and three more spells for one card, and it's itself a sorcery, so it triggers every pinger. It replaces Force of Will's protection with fuel: the deck now wins more big turns by going longer and protects them less.
+
+**Twinflame doubles your engines for a turn.** For {1}{R} it makes a hasty token copy of a creature you control, exiled at the next end step; each extra target costs {2}{R} more. Copy Guttersnipe or Kessig Flamebreather before a chain and every spell after it pings twice as hard (and Veyran doubles the copy's triggers too). Copy Archmage Emeritus for twice the cards, or Venser for a second bounce. It can't usefully copy Veyran or the Niv-Mizzets: they're legendary, so a copy dies to the legend rule right away.
+
 ## Key lines
 
-**The big turn.** Pingers down, Veyran protected, then chain. Thousand-Year Storm plus a mid-turn Seething Song (Blazing Firesinger's prepared spell) or Mizzix's Mastery on a full yard is the most explosive line the deck has left.
+**The big turn.** Pingers down, Veyran protected, then chain. Thousand-Year Storm plus a mid-turn Seething Song (Blazing Firesinger's prepared spell), Jeska's Will, or Mizzix's Mastery on a full yard is the most explosive line the deck has left. Cast Twinflame on your best pinger early in the chain, not late — every spell after it counts double, and the copy is exiled at end of turn anyway.
 
 **Aetherflux Reservoir** gains 1 life for the first spell, 2 for the second, and so on, and pays 50 life to deal 50 to one player. It's no longer tied to an infinite, but a long turn — especially one extended by Thousand-Year Storm copies of cantrips — still gets you there.
 
@@ -58,7 +64,7 @@ The list is exactly 100 cards.
 
 **Finding cards.** Archmage Emeritus, Hydro-Channeler, and both Niv-Mizzets are repeatable draw; Muse Seeker is gone. Cantrips: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws, and **Visions of Beyond** (draws three instead of one once any graveyard has twenty cards).
 
-**Interaction.** Eight ways to answer a spell (Counterspell, Force of Will, Spell Pierce, An Offer You Can't Refuse, Disdainful Stroke, Mystic Confluence, Return the Favor, Venser), nine pieces of spot removal, and three resets in Blasphemous Act, River's Rebuke, and Cyclonic Rift. Every one is also a magecraft trigger.
+**Interaction.** Six ways to answer a spell (Counterspell, Spell Pierce, An Offer You Can't Refuse, Mystic Confluence, Return the Favor, Venser) — Force of Will and Disdainful Stroke are gone, so the deck has no free counter any more — nine pieces of spot removal plus **Unsummon** (a one-mana bounce that also saves one of your own creatures from removal), and three resets in Blasphemous Act, River's Rebuke, and Cyclonic Rift. Every one is also a magecraft trigger.
 
 **Redundancy.** Four recurring damage-on-cast sources (Guttersnipe, Kessig Flamebreather, Thunderdrum Soloist, Ral) plus two draw-to-damage Niv-Mizzets. Losing one pinger doesn't turn the burn plan off.
 
@@ -70,7 +76,8 @@ Four tutors now, each pointing somewhere different, plus one graveyard rebuy. **
 - **Need more cards → Imperial Recruiter for Archmage Emeritus.**
 - **Veyran keeps dying → Fabricate for Swiftfoot Boots.**
 - **Setting up a finish → Fabricate for Aetherflux Reservoir** before the long turn.
-- **Need to protect a big turn → Solve the Equation for a counter**, or **Mystical Tutor at an opponent's end step**. Force of Will you'd rather already hold, since it's free.
+- **Need to protect a big turn → Solve the Equation for a counter**, or **Mystical Tutor at an opponent's end step**.
+- **Need fuel for the big turn → Mystical Tutor or Solve the Equation for Jeska's Will** (with Veyran out, both modes).
 - **Need reach to close → Mystical Tutor or Solve the Equation for Crackle with Power**, or **Mizzix's Mastery** to recast River's Rebuke or a big Crackle from the yard.
 - **Mana-screwed → Fabricate for Sol Ring or Thought Vessel.**
 
@@ -78,13 +85,13 @@ Timing note: **Mystical Tutor puts the card on top of your library**, so fire it
 
 ## Bracket and Rule 0
 
-Bracket 3, at the cap with **three** Game Changers: **Mystical Tutor**, **Cyclonic Rift**, and **Force of Will**. A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, and Aetherflux Reservoir are all off-list.
+Bracket 3, at the cap with **three** Game Changers: **Mystical Tutor**, **Cyclonic Rift**, and **Jeska's Will**. A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, and Twinflame are all off-list.
 
-**No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns.
+**No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns. **Twinflame is half of a known infinite** (with Dualcaster Mage, which left the deck on 09-26), so if Dualcaster Mage ever comes back, the deck has a two-card combo again.
 
 Disclose before the game:
 
-- **Cyclonic Rift**, **Force of Will**, and **Mystical Tutor** (the three Game Changers).
+- **Cyclonic Rift**, **Jeska's Will**, and **Mystical Tutor** (the three Game Changers).
 - **Aetherflux Reservoir** as a 50-damage finisher after a long turn.
 - **Thousand-Year Storm** and the pinger suite, which can turn one turn into a lot of damage to each opponent.
 - **Jin-Gitaxias, Progress Tyrant**, which taxes or answers the first spell each opponent casts.
@@ -215,16 +222,25 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 | Disruptor Flute | Swiftfoot Boots | Proactive tax → hexproof and haste for Veyran. |
 | Sleight of Hand | Visions of Beyond | Cantrip → cantrip that becomes draw-three late. |
 
-**Weakest remaining slots**, if you want to keep tuning: Visions of Beyond (a one-card cantrip for most of the game — the twenty-card graveyard is rare here, since Emeritus of Ideation and Eris both want the yard) and Reenact the Crime are the softest spells. The curve is now top-heavy, so a cheap body or rock back in for a six-drop is worth simming.
+**The 09-26 and 09-27 changes — 3 out, 3 in.**
 
-**Game Changers — at the cap.** Three: Mystical Tutor, Cyclonic Rift, Force of Will. A fourth moves the deck to Bracket 4.
+| Out | In | What it does |
+| --- | --- | --- |
+| Disdainful Stroke | Unsummon | A narrow counter → a one-mana bounce (tempo, or a save for your own creature). |
+| Force of Will | Jeska's Will | Free protection → fuel: mana plus three cards for the big turn. Keeps the Game Changer count at three. In the simulator the trade came out about even (+1.5 points with the fast AI, −0.7 with look-ahead, both within noise). |
+| Reenact the Crime | Twinflame | A conditional recast → hasty copies of your pingers and value creatures for a turn. |
+
+**Weakest remaining slots**, if you want to keep tuning: Visions of Beyond (a one-card cantrip for most of the game — the twenty-card graveyard is rare here, since Emeritus of Ideation and Eris both want the yard) is the softest spell. The curve is still top-heavy, so a cheap body or rock back in for a six-drop is worth simming. Losing Force of Will leaves no free counter; if the table punishes tapped-out big turns, that's the gap to look at.
+
+**Game Changers — at the cap.** Three: Mystical Tutor, Cyclonic Rift, Jeska's Will. A fourth moves the deck to Bracket 4.
 
 **Rules notes carried forward.** Veyran has no first strike, and magecraft gives +1/+1 until end of turn, not permanent counters. The doubling applies only when your casting or copying an instant or sorcery is what caused the trigger.
 
 **Card conflicts with your other decks.**
 - **Displacer Kitten moved to Sephiroth** — one physical copy, now only there.
+- **Force of Will moved to Sephiroth** — one physical copy, now only there.
 - Shared with **Sauron**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
 - Shared with **Sephiroth**: Ash Barrens, Evolving Wilds.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **New singles**: Niv-Mizzet, Parun; Niv-Mizzet, the Firemind; Kessig Flamebreather; Imperial Recruiter; Thousand-Year Storm; Swiftfoot Boots (Sephiroth cut its copy); Visions of Beyond.
-- **To the binder**: Burning Prophet, Dualcaster Mage, Kylox, Muse Seeker, Disruptor Flute, Sleight of Hand.
+- **New singles**: Jeska's Will, Twinflame, Unsummon; from 09-26, Niv-Mizzet, Parun; Niv-Mizzet, the Firemind; Kessig Flamebreather; Imperial Recruiter; Thousand-Year Storm; Swiftfoot Boots (Sephiroth cut its copy); Visions of Beyond.
+- **To the binder**: Disdainful Stroke, Reenact the Crime; from 09-26, Burning Prophet, Dualcaster Mage, Kylox, Muse Seeker, Disruptor Flute, Sleight of Hand.
