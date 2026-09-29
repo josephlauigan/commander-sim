@@ -272,5 +272,27 @@ class DeathriteShaman(unittest.TestCase):
         self.assertEqual(k.life, 42)
 
 
+
+class GameEndsMidEffect(unittest.TestCase):
+    """effects that keep going after an earlier step changed the game"""
+    def test_ugin_skips_a_permanent_discarded_on_the_way(self):
+        # -10: gain 7, draw 7, then put up to seven permanents from hand onto the battlefield, best first. Kefka's enter
+        # trigger makes each player discard, so Festering Goblin, still on the list, is gone by the time its turn comes
+        from commander_sim.cards.impl import rules
+        g = table('sauron', 'veyran'); s = g.players[0]
+        s.hand = []; s.library = []; hand(s, 'Kefka, Court Mage // Kefka, Ruler of Ruin', 'Festering Goblin')
+        rules._ugin_ult(g, s, None)
+        self.assertEqual([m.name for m in s.perms], ['Kefka, Court Mage // Kefka, Ruler of Ruin'])
+        self.assertIn(C['Festering Goblin'], s.gy)
+
+    def test_dethrone_after_everyone_is_gone(self):
+        # an earlier attack trigger ended the game (the last players died together): dethrone has no life leader
+        from commander_sim.cards import cardimpl as CI
+        g = table('marchesa', 'veyran'); m, v = g.players
+        perm(g, m, 'Marchesa, the Black Rose'); atk = perm(g, m, 'Burglar Rat')
+        for q in g.players: q.alive = False
+        self.assertEqual(CI.keyword_attack(g, m, [atk], v), [])
+
+
 if __name__ == '__main__':
     unittest.main()

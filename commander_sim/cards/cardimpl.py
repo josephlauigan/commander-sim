@@ -272,6 +272,7 @@ def keyword_attack(g, p, atk, d):
     if not grant and not any(m.cd is not None and m.cd.kws for m in atk) and not any(
             m.cd is not None and 'exalted' in m.cd.kws for m in p.perms):
         return new
+    if g.over or not any(q.alive for q in g.players): return new    # an earlier attack trigger ended the game
     top = max(q.life for q in g.players if q.alive)
     for m in list(atk):
         if m not in p.perms: continue
