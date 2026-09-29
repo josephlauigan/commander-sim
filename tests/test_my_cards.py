@@ -716,6 +716,18 @@ class Marchesa(unittest.TestCase):
         E.die(g, rat, 'destroy')
         self.assertFalse(any(L.tapped for L in m.lands))
 
+    def test_nim_deathmantle_card_exiled_while_paying(self):
+        # paying {4} with Treasures sets off Mayhem Devil; its ping kills Dark Confidant, and the state-based check that
+        # follows runs Dauthi Voidwalker's sweep: the card has left the graveyard, so nothing returns (the mana is spent)
+        g = table('seph', 'veyran', 'veyran'); s, a, b = g.players
+        s.treasures = 4; perm(g, s, 'Nim Deathmantle')
+        perm(g, a, 'Mayhem Devil'); perm(g, b, 'Dauthi Voidwalker'); perm(g, b, 'Dark Confidant')
+        titan = perm(g, s, 'Grave Titan')
+        E.die(g, titan, 'destroy')
+        self.assertEqual(s.treasures, 0)
+        self.assertIn(C['Grave Titan'], s.exile)
+        self.assertFalse(any(x.cd is C['Grave Titan'] for x in s.perms))
+
 
 class NewCards(unittest.TestCase):
     """Ephemerate (Sephiroth) and Sword of Fire and Ice (Sauron)"""

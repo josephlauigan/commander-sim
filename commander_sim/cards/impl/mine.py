@@ -60,6 +60,9 @@ def _nim_return(g, src, m):
     if any(cd is m.cd for _, cd, _ in getattr(g, 'marchesa_due', None) or ()): return   # Marchesa returns it free
     if pval(g, m) < 3 and etb_value(g, p, m) < 2.5: return
     pay(g, p, 4, '')
+    if m.cd not in p.gy:              # left the graveyard while paying (a Treasure's sacrifice set off a sweep): no return
+        log(f'    {NAME(p)} pays 4, but {m.name} has left the graveyard', g)
+        return
     p.gy.remove(m.cd)
     n = enter(g, p, m.cd, orig=p)
     src.attached = n
