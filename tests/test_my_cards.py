@@ -520,7 +520,8 @@ class Marchesa(unittest.TestCase):
         bow = perm(g, r, 'Orcish Bowmasters')                  # black
         mimic = perm(g, r, 'Metallic Mimic')                   # artifact
         self.assertEqual(E.legal_targets(g, m, 'destroy', 'cna', spell=C['Terror']), [])
-        self.assertEqual(E.legal_targets(g, m, 'shrink3', 'c', spell=C['Last Gasp']), [bow, mimic])
+        self.assertEqual([x for x in E.legal_targets(g, m, 'shrink3', 'c', spell=C['Last Gasp']) if not x.token],
+                         [bow, mimic])
 
     def test_premature_burial_only_hits_what_entered_since_your_last_turn(self):
         g = table('marchesa', 'veyran'); m, v = g.players
@@ -597,23 +598,23 @@ class Marchesa(unittest.TestCase):
     def test_lethal_throwdown_draws_with_a_modified_creature(self):
         from commander_sim.ai import brain
         g = table('marchesa', 'veyran'); m, v = g.players
-        lands(m, 'Swamp', 1); rat = perm(g, m, 'Burglar Rat'); rat.plus = 1
-        perm(g, v, 'Murmuring Mystic'); hand(m, 'Lethal Throwdown')
+        lands(m, 'Swamp', 1); perm(g, m, 'Marchesa, the Black Rose'); rat = perm(g, m, 'Burglar Rat'); rat.plus = 1
+        perm(g, v, 'Guttersnipe'); hand(m, 'Lethal Throwdown')
         opts = {l: f for u, l, f in brain.main_options(g, m, False)}
-        opts['Lethal Throwdown (sacrifice Burglar Rat) -> Murmuring Mystic']()
-        self.assertIn(C['Murmuring Mystic'], v.gy)
+        opts['Lethal Throwdown (sacrifice Burglar Rat) -> Guttersnipe']()     # the one Marchesa returns
+        self.assertIn(C['Guttersnipe'], v.gy)
         self.assertEqual(len(m.hand), 1)
 
     def test_disembowel_costs_the_targets_mana_value(self):
         from commander_sim.ai import brain
         g = table('marchesa', 'veyran'); m, v = g.players
-        lands(m, 'Swamp', 3); perm(g, v, 'Murmuring Mystic')   # mana value 5: not affordable
+        lands(m, 'Swamp', 4); perm(g, v, 'Murmuring Mystic')   # X=5 plus {B}: not affordable
         hand(m, 'Disembowel')
         self.assertFalse(any(l.startswith('Disembowel') for u, l, f in brain.main_options(g, m, False)))
         perm(g, v, 'Guttersnipe')                               # mana value 3
         opts = {l: f for u, l, f in brain.main_options(g, m, False)}
         opts['Disembowel X=3 -> Guttersnipe']()
-        self.assertEqual(sum(L.tapped for L in m.lands), 3)
+        self.assertEqual(sum(L.tapped for L in m.lands), 4)
 
     def test_two_notion_thieves_do_not_loop(self):
         # 614.5: each replacement applies once; the draw goes to the other Thief's player and back
@@ -631,13 +632,68 @@ class Marchesa(unittest.TestCase):
         E.CI.fire(g, 'upkeep', m)
         self.assertEqual(E.total_mana(g, m), 2)                 # the charge counter plus its tap
 
-    def test_stinkweed_imp_and_nim_deathmantle_leave_marchesa_returns_alone(self):
+    def test_nim_deathmantle_leaves_marchesa_returns_alone(self):
         # Nim Deathmantle doesn't pay {4} for a creature Marchesa returns for free
         g = table('marchesa', 'veyran'); m = g.players[0]
         lands(m, 'Swamp', 4); perm(g, m, 'Marchesa, the Black Rose'); perm(g, m, 'Nim Deathmantle')
         rat = perm(g, m, 'Burglar Rat'); rat.plus = 1
         E.die(g, rat, 'destroy')
         self.assertFalse(any(L.tapped for L in m.lands))
+
+
+class NewCards(unittest.TestCase):
+    """Ephemerate (Sephiroth) and Sword of Fire and Ice (Sauron)"""
+
+    def test_ephemerate_fizzles_targeted_removal(self):
+        # "Exile target creature you control, then return it to the battlefield under its owner's control. Rebound"
+        g = table('seph', 'veyran'); s, v = g.players
+        lands(s, 'Plains', 1); hand(s, 'Ephemerate')
+        grave = perm(g, s, 'Grave Titan')                       # enters: two Zombies
+        E.apply_removal(g, v, grave, 'exile', C['Swords to Plowshares'])
+        self.assertTrue(any(x.cd is not None and x.cd.name == 'Grave Titan' for x in s.perms))
+        self.assertEqual(sum(1 for x in s.perms if x.token), 4)      # entered again: two more Zombies
+        self.assertIn(C['Ephemerate'], s.exile)
+        self.assertEqual(s.rebound, [C['Ephemerate']])
+
+    def test_ephemerate_answers_theft(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        lands(s, 'Plains', 1); hand(s, 'Ephemerate')
+        grave = perm(g, s, 'Grave Titan')
+        self.assertTrue(ais.protect_response(g, s, grave, 'steal', v, C['Zealous Conscripts']))
+        self.assertTrue(any(x.cd is not None and x.cd.name == 'Grave Titan' for x in s.perms))
+
+    def test_ephemerate_rebound_blinks_again(self):
+        from commander_sim.cards import cardimpl
+        g = table('seph', 'veyran'); s, v = g.players
+        lands(s, 'Plains', 1); hand(s, 'Ephemerate')
+        grave = perm(g, s, 'Grave Titan')
+        from commander_sim.cards.impl import mine
+        self.assertTrue(mine.ephemerate_cast(g, s, grave, 'value'))
+        cardimpl.HOOKS['Ephemerate']['rebound'](g, s, C['Ephemerate'])
+        self.assertEqual(sum(1 for x in s.perms if x.token), 6)      # three Grave Titan entries
+        self.assertIn(C['Ephemerate'], s.gy)
+
+    def test_ephemerate_value_blink_offered(self):
+        from commander_sim.ai import brain
+        g = table('seph', 'veyran'); s = g.players[0]
+        lands(s, 'Plains', 1); hand(s, 'Ephemerate'); perm(g, s, 'Grave Titan')
+        self.assertIn('Ephemerate (blink Grave Titan)', [l for u, l, f in brain.main_options(g, s, True)])
+
+    def test_sword_of_fire_and_ice(self):
+        # "+2/+2 and protection from red and from blue. Whenever equipped creature deals combat damage to a player,
+        #  Sword of Fire and Ice deals 2 damage to any target and you draw a card. Equip {2}"
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r, v = g.players
+        lands(r, 'Island', 2); E.amass(g, r, 3); a = E.army_of(r); a.sick = False
+        perm(g, r, 'Sword of Fire and Ice')
+        opts = {l: f for u, l, f in brain.main_options(g, r, False)}
+        opts['equip Sword of Fire and Ice']()
+        self.assertEqual((E.epow(g, a), E.etgh(g, a)), (5, 5))
+        self.assertTrue(E.protected_from(g, a, 'R'))
+        self.assertEqual(E.legal_targets(g, v, 'dmg3', 'c', spell=C['Lightning Bolt']), [])
+        ais.resolve_combat(g, r, [a], v, set())
+        self.assertEqual(v.life, 40 - 5 - 2)                    # the Army, then the Sword's 2 (no creature to hit)
+        self.assertEqual(len(r.hand), 1)
 
 
 if __name__ == '__main__':

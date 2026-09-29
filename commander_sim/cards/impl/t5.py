@@ -265,6 +265,7 @@ def _conscripts(g, src, p, m):
     o = src.owner
     t = best_opp_nonland(g, o, lambda x: x.creature)
     if t is not None and pval(g, t) >= 3 and not t.is_cmd:
+        if __import__('commander_sim.ais', fromlist=['x']).protect_response(g, t.owner, t, 'steal', o, src.cd) or t not in t.owner.perms: return   # targeted: can be answered
         q = t.owner; q.perms.remove(t); t.owner = o; t.tapped = False; t.sick = False; o.perms.append(t)
         g.bf_ver = getattr(g, 'bf_ver', 0) + 1
         o.borrowed = getattr(o, 'borrowed', []) + [t]

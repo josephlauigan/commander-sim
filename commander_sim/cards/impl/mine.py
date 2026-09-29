@@ -13,7 +13,8 @@ def full(name, text): note(name, 'Full', text)
 
 # ================================================================== Sephiroth
 # ------------------------------------------------------------------ Displacer Kitten
-ETB_VALUE = {'atraxa': 8.0, 'rsd': 4.0, 'witness': 2.5, 'wall': 2.0, 'wurm': 4.0, 'bowmasters': 2.5, 'skate': 3.0}
+ETB_VALUE = {'atraxa': 8.0, 'archon': 6.0, 'rsd': 4.0, 'titan': 3.0, 'witness': 2.5, 'wall': 2.0, 'wurm': 4.0,
+             'bowmasters': 2.5, 'skate': 3.0}
 
 
 def etb_value(g, p, m):
@@ -56,6 +57,7 @@ def _nim_return(g, src, m):
     p = src.owner
     if src not in p.perms or src.phased or m.token or m.orig is not p or m.cd not in p.gy: return
     if m.cd is p.cmd or not can_pay(g, p, 4, ''): return
+    if any(cd is m.cd for _, cd, _ in getattr(g, 'marchesa_due', None) or ()): return   # Marchesa returns it free
     if pval(g, m) < 3 and etb_value(g, p, m) < 2.5: return
     pay(g, p, 4, '')
     p.gy.remove(m.cd)
@@ -1170,3 +1172,50 @@ def loop_prio(g, p, c):
 note('Melira, Sylvok Outcast', 'Full', "you can't get poison counters; your creatures can't get -1/-1 counters "
      '(persist returns them without one); no creature in the pools has infect, so the last clause never applies')
 note('Kitchen Finks', 'Full', 'enters: gain 2 life; persist. Loops with Melira or Mikaeus and a free sacrifice outlet')
+
+
+# ------------------------------------------------------------------ Ephemerate: your decks' AI
+def blink_worth(g, p, m):
+    """what blinking p's creature m is worth: its enter effect (hand-tagged or compiled)"""
+    from commander_sim.cards.impl import t2 as impl_t2
+    return max(impl_t2.blink_value(g, p, m), etb_value(g, p, m))
+
+
+def ephemerate_cast(g, p, m, why):
+    """cast Ephemerate from hand on your creature m: exile it and return it (it enters again, untapped and new, so a
+    removal spell aimed at it fizzles); the card is exiled and cast again for free at your next upkeep (rebound).
+    True if m got away (False if Ephemerate couldn't be cast or was countered)"""
+    c = next((x for x in p.hand if x.name == 'Ephemerate'), None)
+    if c is None or m not in p.perms or m.token or not castable(g, p, c) or not can_pay(g, p, 0, 'W'): return False
+    p.hand.remove(c); pay(g, p, 0, 'W')
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+    on_cast(g, p, c)
+    log(f'  {NAME(p)} casts Ephemerate on {m.name} ({why})', g)
+    if g.over or not counter_window(g, p, c, 6 if why == 'protection' else 3, {}):
+        p.gy.append(c); return False
+    p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
+    p.stats['ephemerate_' + why] += 1
+    if m in p.perms:
+        from commander_sim.cards.impl import t2 as impl_t2
+        impl_t2.blink(g, p, m)
+    return True
+
+
+@on('Ephemerate', 'hand_options')
+def _ephemerate_value(g, c, p, s, post):
+    """your decks: blink the creature with the best enters-the-battlefield effect (Archon of Cruelty, Grave Titan);
+    rebound blinks again next upkeep. Kept in hand while it is the only protection for a bomb"""
+    from commander_sim import ais
+    from commander_sim.cards.impl import t2 as impl_t2
+    if p.key not in ais.MAIN or c not in p.hand or not can_pay(g, p, 0, 'W'): return []
+    cands = [(blink_worth(g, p, m), m) for m in p.perms if m.creature and not m.phased and not m.token]
+    cands = [x for x in cands if x[0] >= 3]
+    if not cands: return []
+    bv, m = max(cands, key=lambda x: x[0])
+    keep = 2.5 if any(x.cd is not None and x.cd.bomb >= 6 for x in p.perms if x.creature) else 0.0
+    return [(bv - 2.0 - keep, f'Ephemerate (blink {m.name})',       # two blinks with rebound
+             lambda m=m: ephemerate_cast(g, p, m, 'value'))]
+note('Ephemerate', 'Full', 'instant {W}: blinks your creature, in response to targeted removal (the spell fizzles) '
+     'or for its enter effect; rebound: cast again free at your next upkeep on the best enter-effect creature')
+note('Sword of Fire and Ice', 'Full', 'equipped creature +2/+2, protection from red and blue; on combat damage to a '
+     'player: 2 damage to any target (a creature it kills, else a player) and draw a card; equip {2}')

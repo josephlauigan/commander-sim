@@ -102,6 +102,9 @@ def protect_response(g, owner, m, kind, actor, spell=None):
             owner.stats['sac_saves'] += 1; seph_sac(g, owner, m); return True
         return False
     if owner.key == 'seph':
+        if v >= 5 and m.creature and not m.token and kind not in ('edict', 'wipe') and \
+                importlib.import_module('commander_sim.cards.impl.mine').ephemerate_cast(g, owner, m, 'protection'):
+            return True
         if v >= 6 and m.creature:
             hi = [c for c in owner.hand if c.tags.get('prot') == 'hi']
             if hi and kind != 'edict' and can_pay(g, owner, 1, 'G'):
@@ -950,6 +953,9 @@ def sauron_prio(g, p, c):
     if 'mauhur' in t: return 63
     if 'bowmasters' in t: return 62
     if 'sword' in t: return 60
+    if c.dsl and any(a.get('static') == 'equip_cost' for a in c.dsl) and \
+            any(a.get('source') == 'equipped' and a.get('event') == 'combat_damage' for a in c.dsl):
+        return 57                                            # compiled Swords (Fire and Ice, Hearth and Home)
     if 'assault' in t: return 58 if (has(p, 'sword') or any('sword' in x.tags for x in p.hand)) else 30
     if 'cloak' in t: return 57
     if 'prolif' in t: return 55

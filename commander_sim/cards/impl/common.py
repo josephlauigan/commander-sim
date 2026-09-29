@@ -644,10 +644,20 @@ note('Dream Trawler', 'Approximate', 'draws on attack, +1/+0 per draw; the disca
 
 # ---- rebound (Ephemerate)
 def _ephemerate_rebound(g, p, c):
+    """rebound: cast it again from exile for free (a real cast) on the best enter-effect creature, then to the
+    graveyard; with no creature to target it isn't cast and stays in exile"""
     from commander_sim.cards.impl import t2 as impl_t2
-    cands = [m for m in p.perms if m.creature and impl_t2.blink_value(g, p, m) > 0]
-    if cands: impl_t2.blink(g, p, max(cands, key=lambda m: impl_t2.blink_value(g, p, m)))
-    p.exile.remove(c); p.gy.append(c)
+    cands = [m for m in p.perms if m.creature and not m.token and not m.phased]
+    if not cands: return
+    from commander_sim.cards.impl import mine as impl_mine
+    t = max(cands, key=lambda m: impl_mine.blink_worth(g, p, m))
+    p.exile.remove(c)
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+    E.on_cast(g, p, c)
+    log(f'  {NAME(p)} casts Ephemerate from exile (rebound) on {t.name}', g)
+    if not g.over and E.counter_window(g, p, c, 3, {}) and t in p.perms and impl_mine.blink_worth(g, p, t) > 0:
+        impl_t2.blink(g, p, t)
+    p.gy.append(c)
 
 
 CI.HOOKS.setdefault('Ephemerate', {})['rebound'] = _ephemerate_rebound

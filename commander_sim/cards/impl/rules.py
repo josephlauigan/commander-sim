@@ -496,6 +496,7 @@ def _oko_exchange(g, p, src):
     mine = [m for m in p.perms if (m.token and 'food' in m.ttypes) or (m.creature and pval(g, m) < 2)]
     t = best_opp_creature(g, p, lambda m: epow(g, m) <= 3)
     if t is None: return
+    if __import__('commander_sim.ais', fromlist=['x']).protect_response(g, t.owner, t, 'steal', p, src.cd) or t not in t.owner.perms: return   # targeted: can be answered
     q = t.owner
     q.perms.remove(t); t.owner = p; p.perms.append(t); t.sick = True
     if mine:

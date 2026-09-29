@@ -832,6 +832,7 @@ def _roil(g, src, p):
     if not cands: return
     m = max(cands, key=lambda m: pval(g, m))
     if pval(g, m) < 2: return
+    if __import__('commander_sim.ais', fromlist=['x']).protect_response(g, m.owner, m, 'steal', p, src.cd) or m not in m.owner.perms: return   # targeted: can be answered
     q = m.owner; q.perms.remove(m); m.owner = p; m.attached = None; p.perms.append(m); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     if src.data is None: src.data = {}
     src.data.setdefault('stolen', []).append(m)

@@ -63,7 +63,7 @@ python3 -m commander_sim --deck veyran --cards                                  
 
 Options:
 
-- `--deck`: `seph`, `veyran` or `sauron`.
+- `--deck`: `seph`, `veyran`, `sauron` or `marchesa`.
 - `--pool`: `t1` to `t5`, or `all`. Required, unless you use `--all-decks` or `--calibrate`.
 - `--swap`: `"Card Out=>Card In"`. Repeat it for several swaps.
 - `--games`: games per list per profile (default 1500). `--n` is the same.
