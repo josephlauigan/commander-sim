@@ -74,7 +74,8 @@ def _nim_equip(g, src, p, s, post):
     """equip {4}: onto your best creature (a bomb first)"""
     if p is not src.owner or post is None or not can_pay(g, p, 4, ''): return []
     if src.attached is not None and src.attached in p.perms and not src.attached.phased: return []
-    cre = [m for m in p.perms if m.creature and not m.phased and m.cd is not None]
+    cre = [m for m in p.perms if m.creature and not m.phased and m.cd is not None
+           and not (m.cd.name == 'Triskelion' and has(p, 'mikaeus'))]      # +2/+2 would stop its loop needing no outlet
     if not cre: return []
     t = max(cre, key=lambda m: pval(g, m))
 
@@ -1068,12 +1069,26 @@ note("Avacyn's Pilgrim", 'Full', 'mana dork: {T}: add {W}')
 OUTLETS = ('Viscera Seer', "Ashnod's Altar", 'Altar of Dementia')     # free sacrifice outlets
 DRAINS = ('Blood Artist', 'Zulaport Cutthroat')
 LOOPS = (   # (name, piece groups (one card of each), 'kills' alone or needs a 'payoff')
-    ('Mikaeus + Triskelion', (('Mikaeus, the Unhallowed',), ('Triskelion',), OUTLETS), 'kills'),
+    ('Mikaeus + Triskelion', (('Mikaeus, the Unhallowed',), ('Triskelion',)), 'kills'),      # outlet: trisk_groups
     ('Mikaeus + Kitchen Finks', (('Mikaeus, the Unhallowed',), ('Kitchen Finks',), OUTLETS), 'payoff'),
     ('Melira + Kitchen Finks', (('Melira, Sylvok Outcast',), ('Kitchen Finks',), OUTLETS), 'payoff'),
     ("Nim Deathmantle + Ashnod's Altar + Grave Titan", (('Nim Deathmantle',), ("Ashnod's Altar",), ('Grave Titan',)), 'payoff'),
 )
 LOOP_CARDS = {n for _, groups, _ in LOOPS for grp in groups for n in grp}
+
+
+def trisk_needs_outlet(g, p, names):
+    """Mikaeus + Triskelion needs no outlet: returned by undying with four counters, Triskelion pings itself twice and
+    opponents twice, and dies as a 2/2 with 2 damage. Only a counterless toughness of 4 or more (Elesh Norn, Grand
+    Cenobite, or Nim Deathmantle on it) makes it ping itself four times; then it takes a free sacrifice outlet"""
+    t = next((m for m in p.perms if m.cd is not None and m.cd.name == 'Triskelion' and not m.phased), None)
+    if t is not None: return etgh(g, t) - t.plus >= 4
+    return 'Elesh Norn, Grand Cenobite' in names
+
+
+def loop_groups(g, p, name, groups, names):
+    """a loop's piece groups as they stand: Mikaeus + Triskelion adds an outlet only when it needs one"""
+    return groups + (OUTLETS,) if name == LOOPS[0][0] and trisk_needs_outlet(g, p, names) else groups
 
 
 def _names_bf(g, p):
@@ -1100,6 +1115,7 @@ def seph_loops(g, p):
     names = _names_bf(g, p)
     out = []
     for name, groups, _ in LOOPS:
+        groups = loop_groups(g, p, name, groups, names)
         if not all(any(n in names for n in grp) for grp in groups): continue
         keys = []
         for grp in groups:                                   # a piece is key only if nothing else fills its role
@@ -1157,6 +1173,7 @@ def loop_need(g, p, extra=()):
     names = _names_bf(g, p) | set(extra)
     want = []
     for name, groups, _ in sorted(LOOPS, key=lambda l: l[2] != 'kills'):
+        groups = loop_groups(g, p, name, groups, names)
         missing = [grp for grp in groups if not any(n in names for n in grp)]
         if len(missing) == 1 and (loop_kills(name, names) or name.endswith('Finks')):
             want += [n for n in missing[0] if n not in want]
@@ -1169,6 +1186,7 @@ def loop_prio(g, p, c):
     if c.name in loop_need(g, p): return 85
     names = _names_bf(g, p)
     for name, groups, _ in LOOPS:
+        groups = loop_groups(g, p, name, groups, names)
         if any(c.name in grp for grp in groups) and sum(any(n in names for n in grp) for grp in groups) >= 1:
             return 55
     return None

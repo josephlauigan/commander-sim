@@ -115,9 +115,33 @@ class Sephiroth(unittest.TestCase):
         g, s, loops = self.loops('Nim Deathmantle', "Ashnod's Altar", 'Grave Titan', 'Triskelion')
         self.assertEqual(list(loops.values()), [True])            # infinite mana keeps returning Triskelion
 
-    def test_no_outlet_no_loop(self):
-        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Kitchen Finks', 'Melira, Sylvok Outcast')
+    def test_finks_loops_need_an_outlet(self):
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Kitchen Finks', 'Melira, Sylvok Outcast', 'Blood Artist')
         self.assertEqual(loops, {})
+
+    def test_mikaeus_triskelion_needs_no_outlet(self):
+        # undying returns it with four counters: two pings at itself, two at opponents, and it dies a 2/2 with 2 damage
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion')
+        self.assertEqual(loops, {'Mikaeus + Triskelion': True})
+
+    def test_a_bigger_triskelion_needs_an_outlet(self):
+        # Elesh Norn, Grand Cenobite makes it a counterless 4/4, and Nim Deathmantle on it a 6/6: all four pings (or more)
+        # go to itself, so only a free sacrifice outlet keeps it looping
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Elesh Norn, Grand Cenobite')
+        self.assertEqual(loops, {})
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Elesh Norn, Grand Cenobite', 'Viscera Seer')
+        self.assertEqual(loops, {'Mikaeus + Triskelion': True})
+        g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Nim Deathmantle')
+        next(m for m in s.perms if m.name == 'Nim Deathmantle').attached = next(m for m in s.perms if m.name == 'Triskelion')
+        from commander_sim.cards.impl import mine
+        self.assertEqual({n for n, _, _ in mine.seph_loops(g, s)}, set())
+
+    def test_mikaeus_alone_wants_just_triskelion(self):
+        from commander_sim.cards.impl import mine
+        g, s, _ = self.loops('Mikaeus, the Unhallowed')
+        self.assertEqual(mine.loop_need(g, s), ['Triskelion'])
+        g, s, _ = self.loops('Mikaeus, the Unhallowed', 'Elesh Norn, Grand Cenobite', 'Triskelion')
+        self.assertEqual(mine.loop_need(g, s), list(mine.OUTLETS))
 
     def test_rest_in_peace_stops_the_loops(self):
         g, s, loops = self.loops('Mikaeus, the Unhallowed', 'Triskelion', 'Viscera Seer', opp=('Rest in Peace',))

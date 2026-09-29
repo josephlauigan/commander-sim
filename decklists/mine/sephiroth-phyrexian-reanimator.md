@@ -32,16 +32,16 @@ Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, an
 
 ## Key lines
 
-The deck has **four infinite loops**. Three need a free sacrifice outlet: **Viscera Seer**, **Ashnod's Altar**, or **Altar of Dementia**.
+The deck has **four infinite loops**. The two Kitchen Finks loops need a free sacrifice outlet: **Viscera Seer**, **Ashnod's Altar**, or **Altar of Dementia**. Mikaeus + Triskelion needs only the two cards.
 
 | # | Pieces | Result | Kills alone? |
 | --- | --- | --- | --- |
-| 1 | Mikaeus + Triskelion + free sac outlet | Infinite damage | Yes |
+| 1 | Mikaeus + Triskelion | Infinite damage | Yes |
 | 2 | Mikaeus + Kitchen Finks + free sac outlet | Infinite life, ETBs, and deaths | Needs a payoff |
 | 3 | Melira + Kitchen Finks + free sac outlet | Infinite life, ETBs, and deaths | Needs a payoff |
 | 4 | Nim Deathmantle + Ashnod's Altar + Grave Titan | Infinite colourless mana, ETBs, and deaths | Needs a payoff |
 
-**Mikaeus + Triskelion.** Mikaeus gives Triskelion undying. Remove its +1/+1 counters to deal damage, sacrifice it with no +1/+1 counters on it, and it returns with four counters. Repeat.
+**Mikaeus + Triskelion.** Mikaeus gives Triskelion undying and +1/+1, so with no counters it's a 2/2. When undying returns it with four counters (a 6/6), ping itself twice and opponents twice: the damage stays marked, and once the last counter is gone it's a 2/2 with 2 damage, so it dies with no counters and comes back again. That's 2 damage to opponents per loop, with no outlet needed. (The first time, with three counters, it's two pings at itself and one at an opponent.) **Elesh Norn, Grand Cenobite** breaks this version: her +2/+2 makes it a 4/4 with no counters, so all four pings have to go to itself. With her out, or Nim Deathmantle on Triskelion, sacrifice it to a free outlet after removing the counters instead: 4 damage per loop.
 
 **Mikaeus + Kitchen Finks.** Persist and undying alternate: each return gives Finks one kind of counter, which leaves the other ability free on the next death. Every loop gains 2 life.
 
@@ -77,7 +77,7 @@ Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, 
 
 Three tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), and **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard). Diabolic Intent moved to Sauron.
 
-- **One combo piece away → tutor it.** With Mikaeus and a sac outlet out, Demonic Tutor for Triskelion or Kitchen Finks. With Melira and an outlet out, tutor Finks. With Ashnod's Altar and Grave Titan out, tutor Nim Deathmantle. Resolve Grand Abolisher first if you can.
+- **One combo piece away → tutor it.** With Mikaeus out, Demonic Tutor for Triskelion (no outlet needed), or for Kitchen Finks if a sac outlet is out too. With Melira and an outlet out, tutor Finks. With Ashnod's Altar and Grave Titan out, tutor Nim Deathmantle. Resolve Grand Abolisher first if you can.
 - **Empty yard, reanimation spell already in hand → tutor Entomb (or Buried Alive).** Demonic Tutor into Entomb on turn two sets up Reanimate on turn three.
 - **Yard loaded, no way to cheat it out → tutor a reanimation spell.** Demonic Tutor leaves the most mana over to cast it the same turn.
 - **Want both halves at once → Gifts Ungiven** for a reanimation target plus reanimation spells, or for Triskelion, Kitchen Finks, Melira, and a reanimation spell — any split between hand and graveyard still leaves you a working loop.
@@ -92,7 +92,7 @@ Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also
 
 Disclose before the game:
 
-- **Four infinite loops:** Mikaeus + Triskelion + a sac outlet (infinite damage); Mikaeus or Melira + Kitchen Finks + a sac outlet (infinite life and deaths); Nim Deathmantle + Ashnod's Altar + Grave Titan (infinite mana, ETBs, and deaths).
+- **Four infinite loops:** Mikaeus + Triskelion (infinite damage, no outlet needed); Mikaeus or Melira + Kitchen Finks + a sac outlet (infinite life and deaths); Nim Deathmantle + Ashnod's Altar + Grave Titan (infinite mana, ETBs, and deaths).
 - The nine Game Changers above, especially **Smothering Tithe** (changes every opponent's draw step), **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
 - **Grand Abolisher**, which shuts off their interaction on your turn.
 - **Yawgmoth's Will**, which can produce a long turn out of nowhere.
@@ -250,7 +250,7 @@ In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force
 
 **Vampiric Tutor is in the binder** and is the natural addition now that the Game Changer cap no longer applies.
 
-**Combo watch.** Every loop but the Deathmantle one needs a free sac outlet (Viscera Seer, Ashnod's Altar, or Altar of Dementia); Carrion Feeder left, so there are three. Sheoldred, Whispering One and Displacer Kitten don't complete an infinite on their own.
+**Combo watch.** The two Kitchen Finks loops need a free sac outlet (Viscera Seer, Ashnod's Altar, or Altar of Dementia); Carrion Feeder left, so there are three. Mikaeus + Triskelion needs none unless Elesh Norn, Grand Cenobite is out. Sheoldred, Whispering One and Displacer Kitten don't complete an infinite on their own.
 
 **Card conflicts with your other decks.**
 - **Displacer Kitten and Force of Will moved here from Veyran** — one physical copy each, now only here.
