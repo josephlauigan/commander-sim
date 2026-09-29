@@ -362,7 +362,7 @@ def run(g, p, e, src, ctx, spell, depth):
     elif d == 'oracle':                          # Thassa's Oracle
         x = sum(m.cd.pips.count('U') for m in p.perms if m.cd is not None and m.cd.perm and not m.phased)
         if x >= len(p.library):
-            from commander_sim import ais; ais.win(g, p, 'combo'); return
+            from commander_sim import ais; ais.win(g, p, 'combo', through_life=False); return      # an alternate win
         top = [p.library.pop() for _ in range(min(x, len(p.library)))]
         if top:
             best = max(top, key=lambda c: E.card_worth(g, p, c)); top.remove(best)

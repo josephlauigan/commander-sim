@@ -956,7 +956,7 @@ AI_DECISIONS = {
     'Orcish Bowmasters': '1 damage on entry and per extra draw of an opponent, amassing an Orc Army',
     'Flawless Maneuver': 'free with your commander: your creatures indestructible (against destroy removal and wipes)',
     'Deadly Dispute': 'sacrifice an artifact or creature: draw two and a Treasure',
-    "Teferi's Protection": 'phases out everything you control (against removal and wipes)',
+    "Teferi's Protection": "until your next turn your life can't change and you have protection from everything (damage, drains and damage/drain combo wins are stopped; Thassa's Oracle, mill and Revel in Riches aren't); everything you control phases out, lands too; exiled. Cast against wipes, removal of key permanents, lethal combat damage and lethal combos",
     'Giver of Runes': 'protection for another creature in response to targeted removal',
     'Mother of Runes': 'protection from a colour in response to targeted removal',
     'Tireless Provisioner': 'landfall: a Treasure (preferred to a Food)',

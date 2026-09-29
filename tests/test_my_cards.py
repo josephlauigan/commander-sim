@@ -180,6 +180,29 @@ class Sephiroth(unittest.TestCase):
         self.assertFalse(E.minus_counter(g, finks))           # no -1/-1 counters on your creatures (Yawgmoth, Persist)
         self.assertTrue(E.melira(s))
 
+    def test_finks_at_zero_toughness_under_melira_stays_dead(self):
+        # Kitchen Finks (3/2) enters under an opponent's Elesh Norn (-2/-2): it dies at once, and under Melira persist
+        # returns it without a counter every time, a mandatory loop. It used to recurse until Python gave up.
+        g = table('seph', 'veyran'); s, v = g.players
+        melira = perm(g, s, 'Melira, Sylvok Outcast'); melira.plus = 2           # 4/4: she survives the Norn
+        perm(g, v, 'Elesh Norn, Grand Cenobite')
+        perm(g, s, 'Kitchen Finks')
+        self.assertIn(melira, s.perms)
+        self.assertFalse(any(m.name == 'Kitchen Finks' for m in s.perms))
+        self.assertTrue(any(c.name == 'Kitchen Finks' for c in s.gy))
+
+    def test_teferis_protection_against_a_wipe(self):
+        g = table('sauron', 'seph'); r, s = g.players
+        lands(s, 'Plains', 3); hand(s, "Teferi's Protection"); perm(g, s, 'Grave Titan'); perm(g, s, 'Archon of Cruelty')
+        self.assertEqual(ais.wipe_response(g, s, 'destroy', r), 'all')
+        self.assertTrue(s.life_locked)
+
+    def test_sephiroth_casts_necropotence_while_healthy(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        self.assertGreater(ais.seph_prio(g, s, C['Necropotence']), 0)
+        s.life = 20
+        self.assertEqual(ais.seph_prio(g, s, C['Necropotence']), 0)
+
     def test_avacyns_pilgrim(self):
         g = table('seph', 'veyran'); s = g.players[0]
         perm(g, s, "Avacyn's Pilgrim")
@@ -231,6 +254,37 @@ class Veyran(unittest.TestCase):
         g = table('veyran', 'seph'); v = g.players[0]
         perm(g, v, 'Emeritus of Ideation // Ancestral Recall')
         self.assertEqual(v.hand, [])
+
+    def twinflame(self, n_lands, *creatures, spells=('Lightning Bolt', 'Burst Lightning')):
+        from commander_sim.ai import brain
+        g = table('veyran', 'seph', 'sauron'); v = g.players[0]
+        lands(v, 'Mountain', n_lands)
+        for c in creatures: perm(g, v, c)
+        hand(v, 'Twinflame', *spells)
+        opts = {l: f for u, l, f in brain.main_options(g, v, False) if l.startswith('Twinflame')}
+        return g, v, opts
+
+    def test_twinflame_copies_with_haste_until_the_end_step(self):
+        g, v, opts = self.twinflame(4, 'Guttersnipe', 'Veyran, Voice of Duality')
+        list(opts.values())[0]()
+        copies = [m for m in v.perms if m.token]
+        self.assertEqual([m.name for m in copies], ['Guttersnipe'])
+        self.assertFalse(copies[0].sick)                                 # haste
+        self.assertEqual(sum(L.tapped for L in v.lands), 2)             # {1}{R}: mana left for the burn spells
+        ais.end_step(g, v)
+        self.assertFalse(any(m.token for m in v.perms))                  # exiled at the end step
+
+    def test_twinflame_strive_cost(self):
+        g, v, opts = self.twinflame(8, 'Guttersnipe', 'Kessig Flamebreather', 'Thunderdrum Soloist')
+        self.assertIn('Twinflame (2 targets)', opts)
+        opts['Twinflame (2 targets)']()
+        self.assertEqual(sum(L.tapped for L in v.lands), 5)             # {1}{R} + {2}{R}
+
+    def test_twinflame_skips_legends_and_idle_copies(self):
+        g, v, opts = self.twinflame(4, 'Veyran, Voice of Duality')
+        self.assertEqual(opts, {})                                      # a copy of a legend dies to the legend rule
+        g, v, opts = self.twinflame(2, 'Guttersnipe')
+        self.assertEqual(opts, {})                                      # no mana left to trigger the copy
 
     def test_unsummon_returns_a_creature(self):
         from commander_sim.ai import brain
@@ -391,6 +445,28 @@ class Sauron(unittest.TestCase):
         lands(r, 'Island', 5); lands(r, 'Swamp', 2); hand(r, 'Consecrated Sphinx', "Night's Whisper")
         u = {l: u for u, l, f in brain.main_options(g, r, False)}
         self.assertGreater(u['Consecrated Sphinx'], u["Night's Whisper"])
+
+    def test_diabolic_intent_needs_a_creature_to_sacrifice(self):
+        # "As an additional cost to cast this spell, sacrifice a creature." It used to be free outside Sephiroth.
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Swamp', 2); c = hand(r, 'Diabolic Intent')
+        self.assertFalse(brain.do_cast(g, r, c))
+        perm(g, r, 'Orcish Bowmasters')                       # its Army comes too
+        army = E.army_of(r); army.plus = 5
+        self.assertTrue(brain.do_cast(g, r, c))
+        self.assertEqual([m.name for m in r.perms], ['Orc Army'])   # the cheapest creature went, not the Army
+        self.assertEqual(len(r.hand), 1)                            # the tutored card
+
+    def test_diabolic_intent_never_sacrifices_the_army(self):
+        # the AI used to sacrifice the Army (often with ten or more counters) when it was the only creature,
+        # frequently to fetch the Sword that goes on it
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r = g.players[0]
+        lands(r, 'Swamp', 2); c = hand(r, 'Diabolic Intent')
+        E.amass(g, r, 6)
+        self.assertFalse(brain.do_cast(g, r, c))
+        self.assertIsNotNone(E.army_of(r))
 
     def test_phyrexian_arena(self):
         g = table('sauron', 'veyran'); r = g.players[0]

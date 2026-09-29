@@ -220,6 +220,18 @@ def card_utility(g, p, s, c):
 SPECIAL = ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'tokx_special')
 
 
+SPARE_VALUE = 3.0      # a creature worth more than this (pval) isn't sacrificed to pay for a spell
+
+
+def spare_creature(g, p):
+    """the creature p would sacrifice to pay a spell's cost: the cheapest, never its commander or the Army (Sauron's
+    whole plan), and nothing worth more than a utility body; None: wait for a better time"""
+    cands = [m for m in p.perms if m.creature and not m.phased and not m.is_cmd and not m.army]
+    if not cands: return None
+    m = min(cands, key=lambda m: pval(g, m))
+    return m if pval(g, m) <= SPARE_VALUE else None
+
+
 def do_cast(g, p, c, zone=None):
     if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE): return False
     if c.dsl and not additional_cost(g, p, c, dry=True): return False
@@ -227,6 +239,10 @@ def do_cast(g, p, c, zone=None):
     if zone == 'yawg' and c not in p.gy: return False
     if g.hooks and not castable(g, p, c, 'gy' if zone == 'yawg' else zone or ('cmd' if (c is p.cmd and c not in p.hand) else 'hand')): return False
     cv = 'convoke' in c.tags
+    fodder = None
+    if 'needsac' in c.tags:                          # Diabolic Intent: sacrifice a creature as an additional cost
+        fodder = spare_creature(g, p)
+        if fodder is None: return False
     if zone == 'gy':
         cg, cp = parse_cost(c.tags['fb'])
         if 'fblife' in c.tags and p.life <= int(c.tags['fblife']) + 5: return False
@@ -248,6 +264,9 @@ def do_cast(g, p, c, zone=None):
     if zone == 'gy' and 'fblife' in c.tags: lose_life(g, p, int(c.tags['fblife']), p)
     if 'phyU' in c.tags and zone in ('hand', 'cmd') and 'U' in c.pips and cp.count('U') < c.pips.count('U'):
         lose_life(g, p, 2, p)                                     # {U/P} paid with 2 life
+    if fodder is not None:
+        if fodder not in p.perms: return False
+        die(g, fodder, 'sac')
     ok = cast_card(g, p, c, 'gy' if zone == 'yawg' else zone, ctx)     # from the graveyard: exiled after
     if p.key == 'seph' and ok and (c is p.cmd or c.bomb >= 4): A.note_bomb(p, c)
     return True
