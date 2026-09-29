@@ -369,7 +369,7 @@ def spell_options(g, p, s, post):
                 else: E.die(g, fod, 'sac')
                 E.cast_card(g, p, c, 'hand', {}); return True
             o.append((3.5, c.name, dispute))
-        if t.get('rean') in ('animate', 'reanimate', 'evil') and E.castable(g, p, c) and E.can_pay(g, p, c.generic, c.pips):
+        if t.get('rean') in ('animate', 'reanimate', 'evil', 'zombify') and E.castable(g, p, c) and E.can_pay(g, p, c.generic, c.pips):
             tg = A.rean_targets(g, p, t['rean'])
             if t['rean'] == 'reanimate': tg = [x for x in tg if p.life - x[1].cmc >= 12]
             if not tg: continue

@@ -1,9 +1,9 @@
 """Measure one of your decks against the opponent pools (decklists/pool/), or compare a list change (paired runs).
 
 Examples
-  python3 -m commander_sim --deck seph --pool t3 --games 1500 --jobs 24
-  python3 -m commander_sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor" --jobs 24
-  python3 -m commander_sim --all-decks --pool all --jobs 24 --profile loose
+  python3 -m commander_sim --deck seph --pool t3 --games 1500
+  python3 -m commander_sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"
+  python3 -m commander_sim --all-decks --pool all           --profile loose
 Baseline = the deck list in decklists/mine/. Same seeds are used for baseline and variant, so the comparison is paired.
 """
 import argparse, json, math, os, sys, time
@@ -13,7 +13,7 @@ from commander_sim import engine, ais
 from commander_sim.engine import DB
 from commander_sim.decks import DECKS
 
-KEYS = ('seph', 'veyran', 'sauron')
+KEYS = ('seph', 'veyran', 'sauron', 'marchesa')
 
 
 def apply_swaps(deck, swaps):
@@ -84,7 +84,8 @@ METRICS = [
     ('aether_shots',  'Aetherflux shots per game',              'Threat & pressure',    'up',   'veyran'),
 ]
 PLAN = {'seph': 'first 6+ power bomb on the battlefield', 'veyran': 'Veyran + a magecraft payoff on the battlefield',
-        'sauron': 'Sword + Assault combo attempted', 'najeela': 'first WUBRG extra combat'}
+        'sauron': 'Sword + Assault combo attempted', 'marchesa': 'first creature returned by Marchesa',
+        'najeela': 'first WUBRG extra combat'}
 AXIS_NOTE = {
     'Outcome': 'the bottom line; everything else explains why it moved.',
     'Mana & consistency': 'can the deck cast its spells on time? Missed land drops and low mana stall everything else.',
@@ -100,6 +101,7 @@ def plan_turn(me, deck):
     if deck == 'seph': return me.first_bomb
     if deck == 'veyran': return me.milestone.get('engine')
     if deck == 'najeela': return me.milestone.get('act')
+    if deck == 'marchesa': return me.milestone.get('recur')
     return me.milestone.get('combo')
 
 
@@ -124,7 +126,7 @@ def axis_values(g, me, deck):
     return v
 
 
-JOBS = 1
+JOBS = 1                 # set from --jobs (default: every CPU core)
 VERBOSE = True
 _POOL = None
 
@@ -137,6 +139,18 @@ class Progress:
 
     def plan(s, games):
         s.total += games
+
+    def announce(s, what):
+        """one line before the run starts: how many games, with what, and roughly how long; then an empty bar"""
+        if not s.on or not s.total: return
+        est = s.total * SEC_PER_GAME.get(AI, 1.0) / max(1, min(JOBS, s.total))
+        fmt = lambda x: f'{x / 3600:.1f} hours' if x >= 5400 else (f'{x / 60:.0f} minutes' if x >= 90 else f'{x:.0f} seconds')
+        print(f'{s.total:,} games ({what}), {AI} AI, {JOBS} worker process{"es" if JOBS > 1 else ""}: about {fmt(est)}',
+              file=sys.stderr, flush=True)
+        if AI == 'lookahead' and est > 3600:
+            print('  (for a quick read: --ai adaptive is about 100x faster; --games 240 --profile loose also cut it down)',
+                  file=sys.stderr, flush=True)
+        s.t0 = time.time(); s.update(0)
 
     def update(s, k):
         if s.t0 is None: s.t0 = time.time()
@@ -152,7 +166,7 @@ class Progress:
             s.last = now
             bar = '#' * int(pct / 4) + '-' * (25 - int(pct / 4))
             sys.stderr.write(f'\r[{bar}] {pct:5.1f}%  {s.done:,}/{s.total:,} games  '
-                             f'{fmt(el)} elapsed, ~{fmt(left)} left  {s.label[:28]:28s}')
+                             f'{fmt(el)} elapsed, ~{fmt(left) if s.done else "?"} left  {s.label[:28]:28s}')
             if s.done >= s.total: sys.stderr.write('\n')
             sys.stderr.flush()
         elif pct >= s.next_pct or s.done >= s.total:           # redirected output: a line every 10%
@@ -161,6 +175,7 @@ class Progress:
 
 
 PROG = Progress()
+SEC_PER_GAME = {'lookahead': 20.0, 'adaptive': 0.2, 'rigid': 0.15}     # CPU seconds per game, for the estimate
 ERR = Counter()
 
 
@@ -178,7 +193,7 @@ def _chunks(seeds):
     """small chunks so progress updates often and every worker stays busy; results are identical to one big chunk.
     Look-ahead games take seconds each, so their chunks go down to a single game."""
     if AI == 'lookahead':
-        size = max(1, min(25, len(seeds) // (max(1, JOBS) * 4)))
+        size = max(1, min(4, len(seeds) // (max(1, JOBS) * 4)))
     else:
         size = max(25, min(250, len(seeds) // (max(1, JOBS) * 8) or 25))
     return [seeds[i:i + size] for i in range(0, len(seeds), size)]
@@ -423,11 +438,12 @@ def main():
                          'about 20 s of CPU per game) or adaptive (heuristic only, about 100x faster)')
     ap.add_argument('--temp', type=float, default=1.0, help='adaptive AI randomness multiplier (lower = sharper play)')
     ap.add_argument('--quiet', action='store_true', help='no progress bar')
-    ap.add_argument('--jobs', type=int, default=1, help='parallel worker processes (e.g. number of CPU cores)')
+    ap.add_argument('--jobs', type=int, default=None,
+                    help=f'parallel worker processes (default: every CPU core, {os.cpu_count() or 1} here)')
     a = ap.parse_args()
     a.games = a.games or a.n or 1500; a.n = a.games
     global JOBS, VERBOSE
-    JOBS = max(1, a.jobs); VERBOSE = not a.brief
+    JOBS = max(1, a.jobs or os.cpu_count() or 1); VERBOSE = not a.brief
     global AI, TEMP
     AI, TEMP = a.ai, a.temp
     set_ai(AI, TEMP)

@@ -21,6 +21,8 @@ Events the engine fires (fn signatures):
   trigger_copies(g, src, p, kind, x)    -> extra copies of a triggered ability (kind 'attack' / 'dies')
 Zone hooks for cards not on the battlefield (ninjutsu from hand, recursion from the graveyard):
   hand_blocks(g, card, p, atk, d, assign)   gy_options(g, card, p, s, post)
+  hand_cast(g, card, p, spell)              p (holding card) cast an instant or sorcery
+  hand_opp_cast(g, card, p, spell)          an opponent of p (holding card) cast an instant or sorcery
 """
 from commander_sim import engine as E
 
@@ -37,6 +39,7 @@ def gy_response(g, reanimator, value, src_player=None):
     return False
 DYN_MANA = {}         # card name -> fn(g, p, perm) -> amount of mana its tap ability makes (Priest of Titania ...)
 ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tapped for mana (Heritage Druid ...)
+LAND_COLS = {}        # land name -> fn(g, p, land) -> the colours it can make now (Vivid lands, Gemstone Mine)
 
 
 def dyn_mana(g, p, m):
@@ -250,7 +253,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    from commander_sim.cards.impl import common as impl_common, t1 as impl_t1, t2 as impl_t2, t3 as impl_t3, t4 as impl_t4, t5 as impl_t5, combos as impl_combos, topdeck as impl_topdeck, fixes as impl_fixes, lands as impl_lands, partials as impl_partials, rules as impl_rules, rules2 as impl_rules2, mine as impl_mine  # noqa: F401
+    from commander_sim.cards.impl import common as impl_common, t1 as impl_t1, t2 as impl_t2, t3 as impl_t3, t4 as impl_t4, t5 as impl_t5, combos as impl_combos, topdeck as impl_topdeck, fixes as impl_fixes, lands as impl_lands, partials as impl_partials, rules as impl_rules, rules2 as impl_rules2, mine as impl_mine, marchesa as impl_marchesa  # noqa: F401
 
 
 E.CI = __import__('sys').modules[__name__]
@@ -265,19 +268,25 @@ def keyword_attack(g, p, atk, d):
             if m.name == 'Raging Ravine': m.plus += 1
             elif m.name == 'Hive of the Eye Tyrant' and d.gy:
                 x = max(d.gy, key=lambda c: (c.creature, c.cmc)); d.gy.remove(x); d.exile.append(x)
-    if not any(m.cd is not None and m.cd.kws for m in atk) and not any(
+    grant = E.has(p, 'marchesa')                   # Marchesa: other creatures you control have dethrone
+    if not grant and not any(m.cd is not None and m.cd.kws for m in atk) and not any(
             m.cd is not None and 'exalted' in m.cd.kws for m in p.perms):
         return new
+    top = max(q.life for q in g.players if q.alive)
     for m in list(atk):
-        if m.cd is None or m not in p.perms: continue
+        if m not in p.perms: continue
+        if m.cd is None:
+            if grant and d.life >= top: m.plus += 1   # a token attacking the life leader
+            continue
         k = m.cd.kws
+        if grant and 'dethrone' not in k and d.life >= top: m.plus += 1
         if 'battle cry' in k:
             for x in atk:
                 if x is not m: _eot(g, x, 1, 0)
         if 'mentor' in k:
             lesser = [x for x in atk if x is not m and x in p.perms and E.epow(g, x) < E.epow(g, m)]
             if lesser: max(lesser, key=lambda x: E.epow(g, x)).plus += 1
-        if 'dethrone' in k and d.life >= max(q.life for q in g.players if q.alive):
+        if 'dethrone' in k and d.life >= top:
             m.plus += 1
     if len(atk) == 1:
         n = sum(1 for x in p.perms if x.cd is not None and 'exalted' in x.cd.kws and not x.phased)

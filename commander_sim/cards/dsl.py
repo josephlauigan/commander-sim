@@ -220,15 +220,19 @@ def run(g, p, e, src, ctx, spell, depth):
             from commander_sim import ais
             hit = {m.owner for m in ms}
             prot = {q: ais.wipe_response(g, q, {'destroy': 'destroy', 'exile': 'exile', 'bounce': 'evac'}.get(d, 'destroy'), p) for q in hit}
-            for m in ms:
-                if m not in m.owner.perms or m.phased: continue
-                if prot.get(m.owner) == 'indes' and d == 'destroy': continue
-                if d == 'destroy': die(g, m, 'destroy')
-                elif d == 'exile': exile_perm(g, m)
-                elif d == 'bounce':
-                    if m.token: leave(g, m)
-                    else: bounce(g, m)
-                else: tuck(g, m)
+            prev, g.batch = getattr(g, 'batch', None), object()      # they die at the same time
+            try:
+                for m in ms:
+                    if m not in m.owner.perms or m.phased: continue
+                    if prot.get(m.owner) == 'indes' and d == 'destroy': continue
+                    if d == 'destroy': die(g, m, 'destroy')
+                    elif d == 'exile': exile_perm(g, m)
+                    elif d == 'bounce':
+                        if m.token: leave(g, m)
+                        else: bounce(g, m)
+                    else: tuck(g, m)
+            finally:
+                g.batch = prev
         else:
             for m in ms:
                 snapshot(g, m, ctx)

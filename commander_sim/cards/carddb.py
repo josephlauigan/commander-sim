@@ -234,7 +234,7 @@ Sword of Feast and Famine|A|3|sword
 Sword of the Animist|A|2|animist
 Talisman of Creativity|A|2|rock=1:UR pain
 Terminate|I|BR|rem=destroy tgt=c
-Tezzeret's Gambit|S|3U|draw=2 prolif1
+Tezzeret's Gambit|S|3U|draw=2 prolif1 phyU
 Tome of Legends|A|2|x
 The Ozolith|A|1|ozolith
 Unclaimed Territory|L|-|c=C
@@ -350,4 +350,10 @@ Vampiric Tutor|I|B|seal
 Necropotence|E|BBB|necro
 Opposition Agent|C|2B|pow=3 tgh=2 flash agent
 Tergrid, God of Fright // Tergrid's Lantern|C|3BB|pow=4 tgh=5 leg tergrid
+Terror|I|1B|rem=destroy tgt=cna nonblack noregen
+Last Gasp|I|1B|rem=shrink3 tgt=c
+Orcish Cannonade|I|1RR|rem=dmg2 tgt=c face selfdmg=3 draw=1
+Scorching Dragonfire|I|1R|rem=dmg3 tgt=c exiledie
+Premature Burial|S|1B|rem=destroy tgt=c nonblack newonly
+Zombify|S|3B|rean=zombify
 """

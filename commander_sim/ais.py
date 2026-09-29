@@ -102,6 +102,9 @@ def protect_response(g, owner, m, kind, actor, spell=None):
             owner.stats['sac_saves'] += 1; seph_sac(g, owner, m); return True
         return False
     if owner.key == 'seph':
+        if v >= 5 and m.creature and not m.token and kind not in ('edict', 'wipe') and \
+                importlib.import_module('commander_sim.cards.impl.mine').ephemerate_cast(g, owner, m, 'protection'):
+            return True
         if v >= 6 and m.creature:
             hi = [c for c in owner.hand if c.tags.get('prot') == 'hi']
             if hi and kind != 'edict' and can_pay(g, owner, 1, 'G'):
@@ -122,6 +125,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
                 nw = [c for c in owner.hand if c.tags.get('prot') == 'notw']
                 if nw:
                     owner.hand.remove(nw[0]); owner.gy.append(nw[0]); return True
+    elif owner.key == 'marchesa':
+        if E.CI.marchesa_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'najeela':
         if v >= 5 and not m.token and m.creature:
             for c in owner.hand:
@@ -141,6 +146,7 @@ def wipe_response(g, q, kind, caster):
     if q.key not in MAIN:
         from commander_sim.ai import pool_ai
         return pool_ai.wipe_response(g, q, kind, caster)
+    if q.key == 'marchesa': E.CI.marchesa_wipe_response(g, q, kind)       # countered creatures go to Marchesa first
     loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
     if loss < 6: return None
     if q.key == 'seph':
@@ -226,6 +232,7 @@ def rean_options(g, p):
 
 
 def rean_targets(g, p, kind):
+    if p.key == 'marchesa': return E.CI.marchesa_rean_targets(g, p, kind)
     res = []
     need = importlib.import_module('commander_sim.cards.impl.mine').loop_need(g, p)
     for c in p.gy:
@@ -697,6 +704,7 @@ def wipe_eval(g, p, kind):
             if kind == 'evac' and not m.token: v *= 0.5          # bounced cards can be recast
             if q is p:
                 if rean and m.cd is not None and m.cd.bomb and kind != 'exile': v *= 0.4
+                if p.key == 'marchesa' and kind not in ('exile', 'evac'): v = E.CI.marchesa_wipe_loss(g, p, m, v)
                 ml += v
             else: ol += v
     return ol, ml, None
@@ -945,6 +953,9 @@ def sauron_prio(g, p, c):
     if 'mauhur' in t: return 63
     if 'bowmasters' in t: return 62
     if 'sword' in t: return 60
+    if c.dsl and any(a.get('static') == 'equip_cost' for a in c.dsl) and \
+            any(a.get('source') == 'equipped' and a.get('event') == 'combat_damage' for a in c.dsl):
+        return 57                                            # compiled Swords (Fire and Ice, Hearth and Home)
     if 'assault' in t: return 58 if (has(p, 'sword') or any('sword' in x.tags for x in p.hand)) else 30
     if 'cloak' in t: return 57
     if 'prolif' in t: return 55
@@ -1047,6 +1058,71 @@ def sauron_combo_ready(g, p):
     if not a or a.phased or not has(p, 'assault') or not equipped(a, 'sword'): return False
     evasive = equipped(a, 'cloak') or any(L.cd.tags.get('passage') for L in p.lands)
     return evasive and len(p.lands) >= 5
+
+
+# ======================================================== marchesa
+def marchesa_outlet(p):
+    return any(m.cd is not None and m.cd.name in ('Carrion Feeder', 'Skullport Merchant') and not m.phased for m in p.perms)
+
+
+def marchesa_prio(g, p, c):
+    t = c.tags; n = c.name
+    if c is p.cmd:
+        if getattr(p, 'cmd_pending', False): return 0                    # she returns at end step by herself
+        return 84 if (p.turns >= 3 or marchesa_outlet(p)) else 70
+    if 'rock' in t: return 80 if p.turns <= 5 else 35
+    if 'rhystic' in t: return 78
+    if 'necro' in t: return 74 if p.life >= 20 else 25
+    if 'remora' in t: return 68 if p.turns <= 4 else 10
+    countered = sum(1 for m in p.perms if m.creature and m.plus > 0 and not m.token)
+    opp_cr = [m for q in g.opps(p) for m in q.perms if m.creature and not m.phased]
+    if n == 'Carrion Feeder': return 72 if p.turns <= 4 else 50
+    if n == 'Skullport Merchant': return 64
+    if n == 'Al Bhed Salvagers': return 60
+    if n == 'Triskelion': return 58
+    if n == "Sephiroth, Planet's Heir": return 50 + min(25, int(4 * sum(1 for m in opp_cr if etgh(g, m) <= 2)))
+    if n == 'Deepglow Skate': return 62 if sum(m.plus for m in p.perms if m.plus > 0) >= 4 else 12
+    if n == 'Accursed Marauder':
+        nontok = [m for q in g.opps(p) for m in q.perms if m.creature and not m.token and not m.phased]
+        return 56 if nontok else 20
+    if n == 'Phyrexian Delver': return 60 if rean_targets(g, p, 'evil') else 18
+    if n == 'Hellkite Tyrant': return 57
+    if n == 'Notion Thief': return 50
+    if n in ('Phyrexian Rager', 'Crackling Drake'): return 52
+    if n == 'Burglar Rat': return 48
+    if n == 'Grave Researcher // Reanimate': return 47
+    if n == 'Thrummingbird': return 46 + 2 * min(5, countered)
+    if n == 'Forge Devil': return 42 if any(etgh(g, m) <= 1 and pval(g, m) >= 2 for m in opp_cr) else 18
+    if n == 'Pteramander': return 42
+    if n == 'Stinkweed Imp': return 40
+    if n == 'Torch Fiend': return 38
+    if n == 'Balustrade Spy': return 34
+    if n == 'Festering Goblin': return 30
+    if n == 'Dualcaster Mage': return 15 if p.turns >= 8 else 0      # held to copy a spell
+    if n == 'Act of Treason': return min(82, int(45 + 4 * E.CI.treason_value(g, p))) if E.CI.treason_value(g, p) >= 4 else 0
+    if n == 'Enslave':
+        tg = E.CI.marchesa_steal_value(g, p)
+        return min(80, int(50 + 3 * tg)) if tg >= 4 else 0
+    if n == 'Soul Enervation': return 52 if any(etgh(g, m) <= 4 and pval(g, m) >= 3 for m in opp_cr) else 30
+    if 'prot' in t and t['prot'] == 'boots': return 50 if any(m.creature for m in p.perms) else 20
+    if 'helm' in t: return 40 if any(m.creature and m.cd is not None and 'leg' in m.cd.tags for m in p.perms) else 20
+    if n == 'Nim Deathmantle': return 44
+    if n == "Tezzeret's Gambit": return 46 + 3 * min(4, countered)
+    if 'unearth' in t: return 45 if any(x.creature and x.cmc <= 3 and E.CI.card_etb_value(g, p, x) >= 1.0 for x in p.gy) else 0
+    if 'draw' in t and (c.instant or c.sorcery): return 44
+    if c.creature: return 40
+    if c.perm and 'prot' not in t: return 10
+    return 0
+
+
+def marchesa_main(g, p, post):
+    for _ in range(16):
+        if g.over or not p.alive: return
+        if use_removal(g, p, 6): continue
+        if consider_wipe(g, p): continue
+        res = interaction_reserve(g, p, lambda c: 'ctr' in c.tags) if p.turns >= 4 else (0, '')
+        if generic_cast(g, p, marchesa_prio, res): continue
+        break
 
 
 # ======================================================== najeela
@@ -1169,7 +1245,8 @@ def tutor_pick(g, p, kind):
 
 # ======================================================== Game Changer plays (Veyran's candidate cards)
 def deck_prio(g, p, c):
-    f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'najeela': najeela_prio}.get(p.key)
+    f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'marchesa': marchesa_prio,
+         'najeela': najeela_prio}.get(p.key)
     if f is None:
         from commander_sim.ai import pool_ai; f = pool_ai.generic_prio
     return f(g, p, c)
@@ -2020,6 +2097,7 @@ def yawg_cleanup(g, p):
 
 
 def end_step(g, p):
+    if getattr(g, 'marchesa_due', None): E.CI.marchesa_return(g)        # Marchesa: 'at the beginning of the next end step'
     if getattr(p, 'yawg', False): yawg_cleanup(g, p)
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
     for m in getattr(p, 'borrowed', None) or []:          # Zealous Conscripts: control returns
@@ -2056,6 +2134,7 @@ def end_step(g, p):
         lands = [c for c in p.hand if c.land]
         c = lands[0] if len(lands) >= 2 else max(p.hand, key=lambda c: c.cmc)
         discard_cards(g, p, [c])
+    p.last_turn_end = getattr(g, 'enter_no', 0)              # Premature Burial: what entered since this turn ended
     if p.key == 'seph':
         if bomb_on_bf(p): p.milestone.setdefault('bomb_by', p.turns)
         held = [c for c in p.hand if 'ctr' in c.tags or c.tags.get('prot') == 'hi' or 'tide' in c.tags]
@@ -2074,7 +2153,8 @@ def generic_main(g, p, post):
         break
 
 
-MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'najeela': najeela_main}
+MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'marchesa': marchesa_main,
+        'najeela': najeela_main}
 
 
 def main_fn(p):
@@ -2126,7 +2206,7 @@ def _step_start(g, p):
     elif loam_dredge(g, p): pass
     elif importlib.import_module('commander_sim.cards.impl.lands').dakmor_dredge(g, p): pass
     elif g.hooks and E.CI.total(g, 'skip_draw', p): pass     # Solitary Confinement
-    elif not (p.key == 'seph' and seph_dredge(g, p)):
+    elif not ((p.key == 'seph' and seph_dredge(g, p)) or (p.key == 'marchesa' and E.CI.marchesa_dredge(g, p))):
         draw(g, p, 1, step=True)
     check_state(g)
     if g.over or not p.alive: return
@@ -2192,7 +2272,7 @@ def mulligan(g, p, rng=None):
 
 
 CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
-        'sauron': 'Sauron, the Dark Lord', 'najeela': 'Najeela, the Blade-Blossom'}
+        'sauron': 'Sauron, the Dark Lord', 'marchesa': 'Marchesa, the Black Rose', 'najeela': 'Najeela, the Blade-Blossom'}
 
 
 STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)

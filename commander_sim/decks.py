@@ -23,7 +23,7 @@ def load(path):
 _cands = [os.environ.get('SIM_DECKS', ''), os.path.join(ROOT, 'decklists', 'mine'), '/mnt/project']
 P = next(d for d in _cands if d and os.path.exists(os.path.join(d, 'sephiroth-phyrexian-reanimator.md'))) + os.sep
 DECKS = {'seph': load(P + 'sephiroth-phyrexian-reanimator.md'), 'veyran': load(P + 'veyran-izzet-spellslinger.md'),
-         'sauron': load(P + 'sauron-grixis-amass.md')}
+         'sauron': load(P + 'sauron-grixis-amass.md'), 'marchesa': load(P + 'marchesa-grixis-recursion.md')}
 
 
 def _ensure_all():
