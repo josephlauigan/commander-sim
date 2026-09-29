@@ -175,7 +175,7 @@ class Progress:
 
 
 PROG = Progress()
-SEC_PER_GAME = {'lookahead': 20.0, 'adaptive': 0.2, 'rigid': 0.15}     # CPU seconds per game, for the estimate
+SEC_PER_GAME = {'lookahead': 25.0, 'adaptive': 0.2, 'rigid': 0.15}     # CPU seconds per game, for the estimate
 ERR = Counter()
 
 
@@ -270,8 +270,10 @@ def axis_report(deck, pairs):
     # narrative
     print("\n--- Reading it ---")
     if not moved:
-        print("  No axis moved beyond noise under either profile: the swap is roughly a like-for-like")
-        print("  trade in this pod, or the new card rarely matters. Try --n 10000 to resolve smaller effects.")
+        where = 'under either profile' if len(pairs) > 1 else f'under the {pairs[0][0]["profile"]} profile'
+        more = 'about 4x the games halves the noise' + (' (--ai adaptive makes that cheap)' if AI == 'lookahead' else '')
+        print(f"  No axis moved beyond noise {where}: the swap is roughly a like-for-like")
+        print(f"  trade in this pod, or the new card rarely matters. To resolve smaller effects, {more}.")
         return
     by_axis = {}
     for (axis, label, good), ps in moved.items():

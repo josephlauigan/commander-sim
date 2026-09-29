@@ -146,8 +146,10 @@ def _drs(g, src, p, s, post):
         q, x = max(spell, key=lambda t: (t[0] is not p, card_worth(g, t[0], t[1], True)))
 
         def drain(q=q, x=x):
-            if src.tapped or x not in q.gy or not can_pay(g, p, 0, 'B'): return False
-            pay(g, p, 0, 'B'); src.tapped = True; q.gy.remove(x); q.exile.append(x)
+            if src.tapped or x not in q.gy: return False
+            src.tapped = True                              # {T} is part of the cost: it can't also tap for the mana
+            if not can_pay(g, p, 0, 'B'): src.tapped = False; return False
+            q.gy.remove(x); pay(g, p, 0, 'B'); q.exile.append(x)          # the card is taken before paying
             for o_ in g.opps(p): lose_life(g, o_, 2, p, kind='triggers')
             log(f'  {NAME(p)} uses Deathrite Shaman: exiles {x.name}, each opponent loses 2', g); return True
         o.append((2.2, 'Deathrite Shaman drain', drain))
@@ -155,8 +157,10 @@ def _drs(g, src, p, s, post):
         q, x = max(cre, key=lambda t: (t[0] is not p, t[1].bomb, t[1].cmc))
         if q is not p:
             def hate(q=q, x=x):
-                if src.tapped or x not in q.gy or not can_pay(g, p, 0, 'G'): return False
-                pay(g, p, 0, 'G'); src.tapped = True; q.gy.remove(x); q.exile.append(x); gain(p, 2)
+                if src.tapped or x not in q.gy: return False
+                src.tapped = True
+                if not can_pay(g, p, 0, 'G'): src.tapped = False; return False
+                q.gy.remove(x); pay(g, p, 0, 'G'); q.exile.append(x); gain(p, 2)
                 log(f'  {NAME(p)} uses Deathrite Shaman: exiles {x.name}', g); return True
             o.append((1.2 + 0.4 * x.bomb, 'Deathrite Shaman exile', hate))
     return o

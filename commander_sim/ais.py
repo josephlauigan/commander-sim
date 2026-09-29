@@ -159,6 +159,8 @@ def wipe_response(g, q, kind, caster):
             for m in q.perms:
                 if m.creature: m.phased = True
             q.stats['phase_saves'] += 1; return 'all'
+        if loss >= 10 and E.cast_teferis_protection(g, q):   # everything phases out (a real wipe of a real board)
+            q.stats['phase_saves'] += 1; return 'all'
         if kind in ('exile', 'rift', 'rebuke') and free_sac(q):
             for m in list(q.perms):
                 if m.creature and not m.token and m.cd.bomb and m.cd is not q.cmd:
@@ -531,6 +533,7 @@ def seph_prio(g, p, c):
     if c is p.cmd: return 0
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
     if 'tithe' in t: return 72
+    if 'necro' in t: return 62 if p.life >= 25 else 0          # Necropotence
     if t.get('fill') == 'stitcher': return 75
     if t.get('fill') == 'tortured': return 65
     if t.get('fill') == 'wayfinder': return 45
@@ -858,10 +861,20 @@ def combo_interrupted(g, p, which, key_perms):
     return False
 
 
-def win(g, p, how):
-    log(f'*** {NAME(p)} wins by {how}', g)
+def win(g, p, how, through_life=None):
+    """p wins: every opponent loses. A win that works through life or damage (a drain, burn or combat loop:
+    through_life, the default for 'combo') is survived by an opponent whose life can't change (Teferi's Protection,
+    cast now if they hold it); alternate wins (Thassa's Oracle, Revel in Riches, mill) are not."""
+    if through_life is None: through_life = how == 'combo'
+    left = []
     for q in g.opps(p):
+        if through_life and last_chance(g, q):
+            log(f'    {NAME(q)} survives: its life total can\'t change', g); left.append(q); continue
         q.last_src = p; q.last_kind = how; eliminate(g, q)
+    if left and not g.goldfish:
+        log(f'*** {NAME(p)} goes off, but {", ".join(NAME(q) for q in left)} survive', g)
+        check_state(g); return
+    log(f'*** {NAME(p)} wins by {how}', g)
     g.over = True; g.winner = p; g.wintype = how
 
 
@@ -1650,6 +1663,11 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 h = E.CI.HOOKS.get(L.cd.name)
                 if h and 'land_defend' in h: h['land_defend'](g, L, d, p, atk, assign)
         if p.key not in MAIN: importlib.import_module('commander_sim.cards.impl.t4').ninjutsu(g, p, atk, d, assign)
+    if not shielded(d) and not d.life_locked and any(c.name == E.TEFERIS_PROTECTION for c in d.hand):
+        unbl_dmg = [(a, epow(g, a) * (2 if double_strike(p, a) else 1)) for a in atk
+                    if a in p.perms and (assign.get(a) is None or assign[a] not in d.perms) and a not in to_walker]
+        if sum(x for _, x in unbl_dmg) >= d.life or any(a.is_cmd and d.cmd_dmg[p.key] + x >= 21 for a, x in unbl_dmg):
+            E.last_chance(g, d)                            # lethal coming: Teferi's Protection
     conn = set()
     for a in atk:
         if a not in p.perms or not d.alive: continue
@@ -2015,6 +2033,7 @@ def upkeep(g, p):
     if E.CI is not None: E.CI.turn_start(g, p)
     if p.ring_prot:                               # The One Ring's protection ends as its controller's turn starts
         p.ring_prot = False; log(f'  {NAME(p)} no longer has protection from everything', g)
+    p.life_locked = False                         # Teferi's Protection
     if any(L.cd.tags.get('tabernacle') for q in g.players if q.alive for L in q.lands):
         # The Tabernacle at Pendrell Vale: each creature is destroyed unless its controller pays {1}
         for m in sorted([m for m in p.perms if m.creature and not m.phased], key=lambda m: -pval(g, m)):

@@ -106,7 +106,7 @@ def attempt(g, p, cmb):
         log(f'    ...{cmb.name} is stopped', g); p.stats['combo_stopped'] += 1; return True
     if cmb.finish is not None: cmb.finish(g, p)
     else:
-        from commander_sim import ais; ais.win(g, p, 'combo')
+        from commander_sim import ais; ais.win(g, p, 'combo', through_life='Oracle' not in cmb.name)   # Oracle: an alternate win
     return True
 
 
