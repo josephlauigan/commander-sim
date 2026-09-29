@@ -1310,3 +1310,176 @@ def _twinflame(g, c, p, s, post):
 card('Twinflame', 'twinflame', types='S', cost='1R', dsl=[])
 note('Twinflame', 'Full', 'strive ({2}{R} per extra target): hasty token copies of your nonlegendary creatures, exiled at '
      'the end step; the AI copies magecraft creatures when spells are left to cast, ETB creatures (Venser) and attackers')
+
+
+# ======================================================== Sauron: Underworld Breach + Brain Freeze / Grapeshot
+# Storm: a copy per spell cast before it this turn (every player's). With Breach out, each one is recast from the
+# graveyard for its mana cost plus three other graveyard cards; Brain Freeze on yourself supplies those cards.
+STORM_PIECES = ('Brain Freeze', 'Grapeshot')
+
+
+def storm_count(g):
+    """spells cast this turn before the one resolving now"""
+    return max(0, sum(casts_this_turn(g, q) for q in g.players) - 1)
+
+
+def _opp_by(g, p, key):
+    opps = [q for q in g.opps(p) if q.alive and not q.life_locked]
+    return min(opps, key=key) if opps else None
+
+
+@on('Brain Freeze', 'resolve')
+def _brain_freeze(g, p, c, ctx):
+    """storm; target player mills 3 per copy. The Breach line passes its targets in ctx['mill'] (one per copy)"""
+    n = ctx.get('storm', storm_count(g)) + 1
+    plan = list(ctx.get('mill') or [])
+    for i in range(n):
+        q = plan[i] if i < len(plan) else _opp_by(g, p, lambda x: len(x.library))
+        if q is not None and q.alive: mill(g, q, 3)
+    log(f'    Brain Freeze: {n} cop{"y" if n == 1 else "ies"}, 3 cards each', g)
+
+
+@on('Grapeshot', 'resolve')
+def _grapeshot(g, p, c, ctx):
+    """storm; 1 damage to any target per copy: the lowest-life opponents first, so the copies kill someone"""
+    n = ctx.get('storm', storm_count(g)) + 1
+    left = n
+    while left > 0:
+        q = _opp_by(g, p, lambda x: x.life)
+        if q is None: break
+        k = min(left, max(1, q.life))
+        lose_life(g, q, k, p, kind='burn'); left -= k
+        check_state(g)
+    log(f'    Grapeshot: {n} damage', g)
+
+
+card('Brain Freeze', 'storm stormmill', types='I', cost='1U', dsl=[])
+card('Grapeshot', 'storm stormburn', types='S', cost='1R', dsl=[])
+full('Brain Freeze', 'storm (spells cast before it this turn, by anyone); each copy mills a player 3. Held for the '
+     'Underworld Breach line, where it mills you for fuel, then the table')
+full('Grapeshot', 'storm; each copy deals 1 damage to any target (lowest-life opponent first). Held for the Breach line')
+
+
+def _storm_spots(p):
+    """where the storm pieces are: {name: 'hand' | 'gy'}"""
+    out = {}
+    for n in STORM_PIECES:
+        if any(c.name == n for c in p.hand): out[n] = 'hand'
+        elif any(c.name == n for c in p.gy): out[n] = 'gy'
+    return out
+
+
+def _mill_plan(p, opps_lib, fuel, copies, keep=6):
+    """which player each Brain Freeze copy mills: yourself until the graveyard has `keep` spare cards, then the
+    opponent closest to an empty library. opps_lib: {player: library size} (updated)"""
+    plan = []
+    for _ in range(copies):
+        if fuel < keep:
+            plan.append(p); fuel += 3; continue
+        live = [q for q, n in opps_lib.items() if n > 0]
+        if not live: plan.append(p); fuel += 3; continue
+        q = min(live, key=lambda x: opps_lib[x])
+        opps_lib[q] = max(0, opps_lib[q] - 3); plan.append(q)
+    return plan, fuel
+
+
+def breach_line(g, p, execute=False):
+    """Sauron's Breach line. Dry run (execute=False): does the mana on hand finish every opponent (burned to 0 or
+    milled out)? Execute: cast it for real, one spell at a time (each can be countered), same choices."""
+    from commander_sim import ais
+    if p.key != 'sauron': return False
+    bf_active = has(p, 'breach')
+    breach_hand = next((c for c in p.hand if 'breach' in c.tags), None)
+    if not bf_active and breach_hand is None: return False
+    spots = _storm_spots(p)
+    if not spots: return False
+    opps = [q for q in g.opps(p) if q.alive]
+    if not opps: return False
+    storm_spells = set(STORM_PIECES)
+    fuel = sum(1 for c in p.gy if c.name not in storm_spells)
+    mana = total_mana(g, p)
+    s = sum(casts_this_turn(g, q) for q in g.players)
+    lib = {q: len(q.library) for q in opps}
+    life = {q: q.life for q in opps}
+    if not execute:
+        units = E.mana_units(g, p)
+        cap = {c: sum(u[2] for u in units if c in u[1]) for c in 'UR'}     # one pip of U or R per spell
+        if not bf_active:
+            if not can_pay(g, p, 1, 'R'): return False
+            mana -= 2; s += 1; cap['R'] -= 1
+        spots = dict(spots)
+        while mana >= 2:
+            copies = s + 1
+            gs, bfz = spots.get('Grapeshot'), spots.get('Brain Freeze')
+            can = lambda where, col: cap[col] > 0 and (where == 'hand' or (where == 'gy' and fuel >= 3))
+            alive = [q for q in opps if life[q] > 0 and lib[q] > 0]
+            if not alive: break
+            if gs and can(gs, 'R') and copies >= min(life[q] for q in alive):
+                if gs == 'gy': fuel -= 3
+                left = copies
+                for q in sorted(alive, key=lambda x: life[x]):
+                    k = min(left, life[q]); life[q] -= k; left -= k
+                    if left <= 0: break
+                spots['Grapeshot'] = 'gy'; cap['R'] -= 1
+            elif bfz and can(bfz, 'U'):
+                if bfz == 'gy': fuel -= 3
+                ol = {q: lib[q] for q in alive}
+                _, fuel = _mill_plan(p, ol, fuel, copies)
+                lib.update(ol); spots['Brain Freeze'] = 'gy'; cap['U'] -= 1
+            elif gs and can(gs, 'R'):
+                if gs == 'gy': fuel -= 3
+                left = copies
+                for q in sorted(alive, key=lambda x: life[x]):
+                    k = min(left, life[q]); life[q] -= k; left -= k
+                    if left <= 0: break
+                spots['Grapeshot'] = 'gy'; cap['R'] -= 1
+            else:
+                break
+            mana -= 2; s += 1
+        return all(life[q] <= 0 or lib[q] <= 0 for q in opps)
+    # ---- for real
+    p.stats['breach_line'] += 1
+    p.milestone.setdefault('combo', p.turns)
+    log(f'  {NAME(p)} goes for the Underworld Breach line', g)
+    if not bf_active:
+        if breach_hand not in p.hand or not can_pay(g, p, 1, 'R'): return False
+        pay(g, p, 1, 'R')
+        if not cast_card(g, p, breach_hand, 'hand', {}) or not has(p, 'breach'):
+            log('    ...Underworld Breach is stopped', g); return True
+    for _ in range(60):
+        if g.over or not p.alive or not has(p, 'breach'): break
+        alive = [q for q in g.opps(p) if q.alive and q.library]
+        if not alive: break
+        copies = sum(casts_this_turn(g, q) for q in g.players) + 1
+        spots = _storm_spots(p)
+        fuel = sum(1 for c in p.gy if c.name not in storm_spells)
+
+        def ready(n, pips):
+            w = spots.get(n)
+            return w is not None and (w == 'hand' or fuel >= 3) and can_pay(g, p, 1, pips)
+        gs_kill = ready('Grapeshot', 'R') and copies >= min(q.life for q in alive)
+        if gs_kill or (ready('Grapeshot', 'R') and not ready('Brain Freeze', 'U')):
+            name, pips, ctx = 'Grapeshot', 'R', {'storm': copies - 1}
+        elif ready('Brain Freeze', 'U'):
+            plan, _ = _mill_plan(p, {q: len(q.library) for q in alive}, fuel - (3 if spots['Brain Freeze'] == 'gy' else 0), copies)
+            name, pips, ctx = 'Brain Freeze', 'U', {'storm': copies - 1, 'mill': plan}
+        else:
+            break
+        c = next(x for x in (p.hand if spots[name] == 'hand' else p.gy) if x.name == name)
+        pay(g, p, 1, pips)
+        if spots[name] == 'hand':
+            cast_card(g, p, c, 'hand', ctx)
+        else:
+            others = sorted([x for x in p.gy if x is not c and x.name not in storm_spells],
+                            key=lambda x: card_worth(g, p, x, True))
+            for x in others[:3]: p.gy.remove(x); p.exile.append(x)
+            p.stats['breach_escapes'] += 1
+            cast_card(g, p, c, 'escape', ctx)
+    check_state(g)
+    return True
+
+
+def breach_options(g, p, post):
+    """the AI's main-phase option: go for the Breach line when the dry run finishes the table"""
+    if post is None or g.active is not p or not breach_line(g, p): return []
+    return [(15.0, 'Underworld Breach line', lambda: breach_line(g, p, execute=True))]

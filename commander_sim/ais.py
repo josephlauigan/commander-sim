@@ -961,6 +961,7 @@ def veyran_main(g, p, post):
 def sauron_prio(g, p, c):
     t = c.tags
     if c is p.cmd: return 85
+    if 'storm' in t: return 0                                # Brain Freeze, Grapeshot: held for the Breach line
     if 'rock' in t: return 80 if p.turns <= 5 else 40
     if 'rhystic' in t: return 78
     if 'mauhur' in t: return 63
@@ -1226,6 +1227,10 @@ def _tutor_pick_named(g, p, kind):
         if sw and not asl: order.append('Aggravated Assault')
         if asl and not sw: order.append('Sword of Feast and Famine')
         if sw and asl: order.append('Whispersilk Cloak')
+        br = has(p, 'breach') or any('breach' in c.tags for c in p.hand)
+        st = any('storm' in c.tags for c in p.hand + p.gy)
+        if br and not st: order.insert(0 if not (sw or asl) else len(order), 'Brain Freeze')
+        if st and not br: order.insert(0 if not (sw or asl) else len(order), 'Underworld Breach')
         order += ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault', 'Deepglow Skate', 'Counterspell']
         return first(order)
     if p.key == 'najeela':
@@ -1423,6 +1428,7 @@ def gc_prio_sauron(g, p, c):
     if 'adnaus' in t: return 55 if p.life >= 30 else 0
     if 'narset' in t: return 50
     if 'breach' in t:
+        if any('storm' in x.tags for x in p.hand + p.gy): return 0      # held for the Breach line (breach_options)
         k = len(breach_candidates(g, p, need_mana=False))
         return 56 if k >= 2 and total_mana(g, p) >= 5 else 0
     if 'gifts' in t: return 50
