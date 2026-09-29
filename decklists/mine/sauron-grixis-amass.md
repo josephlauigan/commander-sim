@@ -7,6 +7,7 @@
 **Updated 2026-09-26.** Six swaps: **Erebos, God of the Dead → Sword of Hearth and Home**, **Hellkite Tyrant → Urabrask, Heretic Praetor**, **Witch-king, Bringer of Ruin → The Ozolith**, **Memory Lapse → Slaughter Pact**, **Tome of Legends → Vandalblast**, and **Unclaimed Territory → Haunted Ridge**. None is a Game Changer, so the deck stays Bracket 3 at the cap with three. Net effect: the softest slots (Erebos, Tome, Unclaimed Territory) are gone; the Army gains insurance against removal (The Ozolith) and a second Sword that re-buys ETBs; interaction adds a free kill spell and a one-sided artifact wipe in place of a soft counter. Deck stays at 100 and 36 lands.
 **Updated 2026-09-26 (second pass).** Five out — Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth — and five in: **Consecrated Sphinx**, **Sheoldred, the Apocalypse**, **Kefka, Court Mage**, **Brush Off**, and **Talisman of Dominance**. Consecrated Sphinx takes Rhystic Study's Game Changer slot, so the deck stays at three. The draw-tax plan shifts from Rhystic Study (opponents pay or you draw) to two creatures that punish every card an opponent draws.
 **Updated 2026-09-27.** **Tezzeret's Gambit → Diabolic Intent**, a third tutor. Not a Game Changer.
+**Updated 2026-09-28.** **Big Score → Sword of Fire and Ice**, a third combat Sword on the Army. Not a Game Changer, so the deck stays Bracket 3 at the cap with three. Deck stays at 100 and 36 lands.
 
 ## Strategy
 
@@ -28,7 +29,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Keep it.** **The Ozolith** is new insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with counters on it, those counters move onto The Ozolith, and at the beginning of combat on your turn you can put them all onto a target creature. A spot-removed, bounced, or swept Army no longer resets you to zero — the next amass makes a fresh Army and The Ozolith hands it the old pile (or put it straight onto Sauron). It also catches the counters when you wipe the board yourself with Blasphemous Act or Toxic Deluge.
 
-**Cash it in.** Sword of Feast and Famine, Sword of Hearth and Home, and Conqueror's Flail turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard and untaps all your lands, and War Machine gives your modified creatures double strike. **Sword of Hearth and Home** is +2/+2 and protection from green and white, and every hit flickers a creature you own and ramps a basic: re-buy Orcish Bowmasters (another ping and amass), Noxious Gearhulk (another kill), Grave Titan (two more Zombies), or — best — Deepglow Skate, which doubles the Army's counters again on every connection. Whispersilk Cloak and Rogue's Passage push the Army through. Aggravated Assault is the closer: an extra combat each time you pay {3}{R}{R}, and with Sword of Feast and Famine it's an infinite (see Key lines). Every connection tempts the Ring, and Reconnaissance Mission and Scarlet Witch turn attacks into more cards.
+**Cash it in.** Sword of Feast and Famine, Sword of Hearth and Home, Sword of Fire and Ice, and Conqueror's Flail turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard and untaps all your lands, and War Machine gives your modified creatures double strike. **Sword of Hearth and Home** is +2/+2 and protection from green and white, and every hit flickers a creature you own and ramps a basic: re-buy Orcish Bowmasters (another ping and amass), Noxious Gearhulk (another kill), Grave Titan (two more Zombies), or — best — Deepglow Skate, which doubles the Army's counters again on every connection. **Sword of Fire and Ice** is +2/+2 and protection from blue and red, which blanks most of the burn and bounce aimed at the Army, and every hit deals 2 damage to any target (a blocker it kills, a planeswalker, or a player) and draws you a card. Whispersilk Cloak and Rogue's Passage push the Army through. Aggravated Assault is the closer: an extra combat each time you pay {3}{R}{R}, and with Sword of Feast and Famine it's an infinite (see Key lines). Every connection tempts the Ring, and Reconnaissance Mission and Scarlet Witch turn attacks into more cards.
 
 **Urabrask, Heretic Praetor** is a top-end threat: a hasty 4/4 that turns your upkeep into an extra card and turns each opponent's draw step into "exile the top card, play it this turn or lose it." It strips their ability to sandbag, and every card they rush out is still a cast that feeds Sauron and Kaervek.
 
@@ -44,13 +45,15 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Deepglow Skate on Sword of Hearth and Home.** With both Swords on the Army, each connection flickers Skate and doubles every counter. Even without Aggravated Assault, one hit usually ends a player.
 
+**Three Swords on one Army.** Each Sword has its own hit trigger, so every connection with all three makes the defender discard and untaps your lands (Feast and Famine), flickers and ramps (Hearth and Home), and shoots 2 and draws a card (Fire and Ice). Equip costs add up ({2} each), so put Feast and Famine on first when the Aggravated Assault combo is live, and Fire and Ice first when the table is heavy on blue and red interaction.
+
 **Archivist wheel with Bowmasters and Sheoldred** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each lose about 15 life apiece between Bowmasters' pings and Sheoldred. Hold it for the turn it kills or the counters matter. With Kefka, Ruler of Ruin out and the wheel on your turn, every point of that life loss also draws you a card, so check your library first.
 
 **Sequencing.** Get Sauron down early, since every opponent spell after he lands is a free counter. Land The Ozolith before you commit a big Army, so removal only costs you tempo. Sheoldred and the Sphinx pay off from the turn they land, so cast them before a wheel, not after. Hold the counterspells for the turn you swing.
 
 ## Consistency
 
-The list is exactly 100 cards. 36 lands (18 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 37 when you need the land half. Six rocks: Sol Ring, Arcane Signet, Mind Stone, Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern, plus Big Score's Treasures. Sword of Hearth and Home ramps a basic every time the Army connects.
+The list is exactly 100 cards. 36 lands (18 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 37 when you need the land half. Six rocks: Sol Ring, Arcane Signet, Mind Stone, Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Sword of Hearth and Home ramps a basic every time the Army connects.
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -82,7 +85,7 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 ## Bracket and Rule 0
 
-Bracket 3, at the cap with **three** Game Changers: **Consecrated Sphinx**, **Cyclonic Rift**, and **Orcish Bowmasters**. Consecrated Sphinx replaced Rhystic Study one for one; Sheoldred, Kefka, Brush Off, Talisman of Dominance, and Diabolic Intent are all off-list. Adding any further Game Changer would push the deck to Bracket 4.
+Bracket 3, at the cap with **three** Game Changers: **Consecrated Sphinx**, **Cyclonic Rift**, and **Orcish Bowmasters**. Consecrated Sphinx replaced Rhystic Study one for one; Sheoldred, Kefka, Brush Off, Talisman of Dominance, Diabolic Intent, and Sword of Fire and Ice are all off-list. Adding any further Game Changer would push the deck to Bracket 4.
 
 **The deck has a combo: Sword of Feast and Famine + Aggravated Assault**, which with an unblockable carrier is unlimited combat phases. It needs five lands and realistically assembles turn five or later — consistent with Bracket 3's "no early two-card combos" expectation, but it changes the pregame conversation.
 
@@ -107,9 +110,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (5).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Reconnaissance Mission
 
-**Artifacts (12).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
+**Artifacts (13).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (26).** Arcane Denial, Bedevil, Big Score, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Slip Out the Back, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (25).** Arcane Denial, Bedevil, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Feed the Swarm, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Slip Out the Back, Terminate, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (36).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -123,7 +126,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Arcane Signet
 1 Barad-dûr
 1 Bedevil
-1 Big Score
 1 Bitter Triumph
 1 Blasphemous Act
 1 Blood Crypt
@@ -186,6 +188,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Steam Vents
 1 Sulfur Falls
 1 Sword of Feast and Famine
+1 Sword of Fire and Ice
 1 Sword of Hearth and Home
 1 Talisman of Creativity
 1 Talisman of Dominance
@@ -222,7 +225,9 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 
 **The 09-27 change — Tezzeret's Gambit → Diabolic Intent.** Roughly even in the simulator: the least costly of six cuts tried, within noise of zero. Its weakness in this deck is the sacrifice. Almost every creature here is an engine or a threat, so Diabolic Intent always costs something real. It's a third tutor for the Sword, not a card-advantage upgrade.
 
-**Weakest remaining inclusions.** Big Score and Bedevil, as before, and Diabolic Intent itself if you find you never have a spare creature to feed it. Tezzeret's Gambit (proliferate plus two cards) is the natural card to bring back.
+**The 09-28 change — Big Score → Sword of Fire and Ice.** Big Score's two cards and Treasure were among the softest slots; the Sword turns every Army hit into a card and 2 damage, and its protection from blue and red dodges most burn and bounce. A paired simulator test (500 games per tier, both interaction profiles, fast AI) found no clear change in any tier, with a slight negative lean overall (about −0.8 points): the Sword only pays off once the Army connects, where Big Score was immediate. The test also found the AI had been under-casting compiled Swords (Sword of Hearth and Home included); that is fixed. Bedevil is the alternative cut if you'd rather keep Big Score.
+
+**Weakest remaining inclusions.** Bedevil is the softest spell and Plaza of Heroes the softest land; Diabolic Intent itself if you find you never have a spare creature to feed it. Tezzeret's Gambit (proliferate plus two cards) is the natural card to bring back.
 
 **Scavenger Grounds hits your own graveyard too.** Fire it deliberately. Plaza of Heroes only pays off when you name a utility land worth shutting off.
 
@@ -233,5 +238,5 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 - Shared with **Sephiroth**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **Only in this deck**: Night's Whisper and Phyrexian Arena.
-- **New singles** since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance.
-- **To the binder**: Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.
+- **New singles** since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice.
+- **To the binder**: Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.
