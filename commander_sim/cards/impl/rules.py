@@ -451,6 +451,7 @@ ult('Karn Liberated', -14, 'restart the game', _always(15.0), _karn_ult,
 def _ugin_ult(g, p, src):
     gain(p, 7); draw(g, p, 7)
     for c in sorted([c for c in p.hand if c.perm and not c.land], key=lambda c: -card_worth(g, p, c))[:7]:
+        if c not in p.hand: continue                  # an earlier one's enter trigger made you discard it
         p.hand.remove(c); enter(g, p, c)
 
 
