@@ -1240,6 +1240,15 @@ def _ephemerate_value(g, c, p, s, post):
              lambda m=m: ephemerate_cast(g, p, m, 'value'))]
 note('Ephemerate', 'Full', 'instant {W}: blinks your creature, in response to targeted removal (the spell fizzles) '
      'or for its enter effect; rebound: cast again free at your next upkeep on the best enter-effect creature')
+card('Sword of Truth and Justice', '', types='A', dsl=[      # the parser dropped the counter before the proliferate
+    {'type': 'static', 'static': 'equip_bonus', 'pow': 2, 'tgh': 2},
+    {'type': 'static', 'static': 'equip_protection', 'colors': 'WU'},
+    {'type': 'triggered', 'event': 'combat_damage', 'source': 'equipped',
+     'effects': [{'do': 'counters', 'n': 1, 'what': {'sel': 'target', 'filter': {'type': 'creature', 'controller': 'you'}}},
+                 {'do': 'proliferate'}]},
+    {'type': 'static', 'static': 'equip_cost', 'mana': 2}])
+note('Sword of Truth and Justice', 'Full', 'equipped creature +2/+2, protection from white and blue; on combat damage to '
+     'a player: a +1/+1 counter on your best creature (the Army), then proliferate; equip {2}')
 note('Sword of Fire and Ice', 'Full', 'equipped creature +2/+2, protection from red and blue; on combat damage to a '
      'player: 2 damage to any target (a creature it kills, else a player) and draw a card; equip {2}')
 
@@ -1360,121 +1369,170 @@ full('Brain Freeze', 'storm (spells cast before it this turn, by anyone); each c
 full('Grapeshot', 'storm; each copy deals 1 damage to any target (lowest-life opponent first). Held for the Breach line')
 
 
-def _storm_spots(p):
-    """where the storm pieces are: {name: 'hand' | 'gy'}"""
-    out = {}
-    for n in STORM_PIECES:
-        if any(c.name == n for c in p.hand): out[n] = 'hand'
-        elif any(c.name == n for c in p.gy): out[n] = 'gy'
-    return out
+RITUALS = {'Dark Ritual': (0, 3, 3), 'Cabal Ritual': (1, 3, 5)}    # {generic} besides {B}, mana made, with threshold
+PETAL = 'Lotus Petal'                                             # {0}: sacrifice it for one mana of any colour
+LINE_CARDS = STORM_PIECES + tuple(RITUALS) + (PETAL,)
 
 
-def _mill_plan(p, opps_lib, fuel, copies, keep=6):
-    """which player each Brain Freeze copy mills: yourself until the graveyard has `keep` spare cards, then the
-    opponent closest to an empty library. opps_lib: {player: library size} (updated)"""
-    plan = []
-    for _ in range(copies):
-        if fuel < keep:
-            plan.append(p); fuel += 3; continue
-        live = [q for q, n in opps_lib.items() if n > 0]
-        if not live: plan.append(p); fuel += 3; continue
-        q = min(live, key=lambda x: opps_lib[x])
-        opps_lib[q] = max(0, opps_lib[q] - 3); plan.append(q)
-    return plan, fuel
+def _where(p, name):
+    if any(c.name == name for c in p.hand): return 'hand'
+    if any(c.name == name for c in p.gy): return 'gy'
+    return None
+
+
+def _line_state(g, p):
+    """the numbers the Breach line decides on. Ritual mana floats as any colour in the engine, but a real ritual
+    makes only {B}: it pays generic costs and other rituals, never Brain Freeze's {U} or Grapeshot's {R}"""
+    real = [u for u in E.mana_units(g, p) if u[0] != 'G']
+    opps = [q for q in g.opps(p) if q.alive]
+    return {'land': sum(u[2] for u in real), 'float': p.floatA,
+            **{c: sum(u[2] for u in real if c in u[1]) for c in 'UBR'},
+            'fuel': sum(1 for c in p.gy if c.name not in LINE_CARDS), 'gy': len(p.gy),
+            'storm': sum(casts_this_turn(g, q) for q in g.players),
+            'where': {n: _where(p, n) for n in LINE_CARDS},
+            'breach': has(p, 'breach'), 'breach_hand': any('breach' in c.tags for c in p.hand),
+            'lib': {q: len(q.library) for q in opps}, 'life': {q: q.life for q in opps}, 'mylib': len(p.library)}
+
+
+def _can(st, gen, col):
+    """can the line pay {gen} plus one {col}? ({B} can come from ritual mana)"""
+    ok = (st['float'] > 0 or st['B'] > 0) if col == 'B' else (st[col] > 0 and st['land'] > 0)
+    return ok and st['float'] + st['land'] >= gen + 1
+
+
+def _ready(st, name):
+    w = st['where'][name]
+    return w == 'hand' or (w == 'gy' and st['fuel'] >= 3)
+
+
+def _mill_plan(p, st, copies):
+    """who each Brain Freeze copy mills (st: after paying for it). The table if the copies finish it. Otherwise
+    yourself first, enough fuel to pay for the next Brain Freeze (Lotus Petal escapes for {U}, rituals for generic),
+    escape it, and recast each ritual twice more for storm; then the opponent closest to an empty library. If nothing
+    can pay the next Brain Freeze's {U}, this is the last one: every copy goes to the table"""
+    lib = dict(st['lib'])
+    need = sum(-(-n // 3) for q, n in lib.items() if n > 0 and st['life'][q] > 0)
+    w = st['where']
+    need_u = 0 if st['U'] > 0 and st['land'] > 0 else 1
+    need_gen = max(0, 2 - st['land'] - st['float'] - need_u)
+    petal = w[PETAL] is not None
+    rit = [n for n in RITUALS if w[n]]
+    last = need_u and not petal
+    esc = need_u + (0 if rit else need_gen) if petal else 0
+    esc += -(-need_gen // 2) if rit else 0
+    keep = 3 + 3 * esc + 6 * len(rit)
+    mine = 0 if copies >= need or last else min(copies, -(-max(0, keep - st['fuel']) // 3), st['mylib'] // 3)
+    plan = [p] * mine
+    for _ in range(copies - mine):
+        live = [q for q, n in lib.items() if n > 0 and st['life'][q] > 0]
+        if not live: plan.append(p if st['mylib'] >= 3 * (mine + 1) else live and live[0] or p); mine += 1; continue
+        q = min(live, key=lambda x: lib[x]); lib[q] -= 3; plan.append(q)
+    return plan
+
+
+def _line_step(st):
+    """the next cast of the Breach line, or None. Fuel (graveyard cards) goes first to what the next Brain Freeze needs:
+    its own escape, and a Lotus Petal escape when blue mana runs out; spare fuel becomes ritual escapes, which add
+    storm (and pay generic costs)"""
+    if not st['breach']:
+        return 'breach' if st['breach_hand'] and _can(st, 1, 'R') else None
+    alive = [q for q, n in st['lib'].items() if n > 0 and st['life'][q] > 0]
+    if not alive: return None
+    w = st['where']
+    bf_res = 3 if w['Brain Freeze'] == 'gy' else 0
+    petal_ready = w[PETAL] == 'hand' or (w[PETAL] == 'gy' and st['fuel'] >= 3 + bf_res)
+    petal_res = 3 if w[PETAL] and st['U'] <= 1 else 0          # the Brain Freeze after this one will want a Petal
+
+    def ritual(res):
+        for n, (gen, made, thr) in RITUALS.items():
+            got = thr if st['gy'] >= 7 else made
+            if (w[n] == 'hand' or (w[n] == 'gy' and st['fuel'] >= 3 + res)) and got > gen + 1 and _can(st, gen, 'B'):
+                return n
+        return None
+    copies = st['storm'] + 1
+    gs = w['Grapeshot'] and _ready(st, 'Grapeshot') and _can(st, 1, 'R')
+    if gs and copies >= min(st['life'][q] for q in alive): return 'Grapeshot'
+    bf = w['Brain Freeze'] and _ready(st, 'Brain Freeze')
+    if st['U'] == 0 or st['land'] == 0:                             # no blue left: only a Petal can make it
+        if petal_ready and bf: return PETAL
+        return 'Grapeshot' if gs else None
+    if st['land'] + st['float'] < 2:                                # blue, but short of the generic {1}
+        r = ritual(bf_res + petal_res)
+        if r: return r
+        if petal_ready and bf: return PETAL
+        return 'Grapeshot' if gs else None
+    r = ritual(bf_res + petal_res)                                  # spare fuel first becomes storm
+    if r: return r
+    if bf: return 'Brain Freeze'
+    return 'Grapeshot' if gs else None
+
+
+def _pay_line(g, p, gen, col):
+    """pay for a spell of the line: the pip from a real source ({B} may use ritual mana), generic from ritual mana first"""
+    if col == 'B' and p.floatA > 0: p.floatA -= 1
+    elif not pay(g, p, 0, col): return False
+    k = min(p.floatA, gen); p.floatA -= k
+    return gen - k == 0 or pay(g, p, gen - k, '')
+
+
+def _dry_run(g, p):
+    """would the line finish every opponent if nobody interacts? Played for real on a copy of the game with the
+    opponents' hands removed (so it neither cheats nor fears their counters); cached for the position"""
+    from commander_sim.ai import search
+    key = (turn_stamp(g), total_mana(g, p), p.floatA, len(p.gy), len(p.hand), len(p.library),
+           sum(casts_this_turn(g, q) for q in g.players), tuple(len(q.library) for q in g.players))
+    cached = getattr(g, 'breach_dry', None)
+    if cached is not None and cached[0] == key: return cached[1]
+    g2 = search.clone(g); p2 = g2.players[g.players.index(p)]
+    for q in g2.opps(p2): q.hand = []
+    breach_line(g2, p2, execute=True)
+    ok = all(not q.alive or not q.library for q in g2.opps(p2))
+    g.breach_dry = (key, ok)
+    return ok
 
 
 def breach_line(g, p, execute=False):
-    """Sauron's Breach line. Dry run (execute=False): does the mana on hand finish every opponent (burned to 0 or
-    milled out)? Execute: cast it for real, one spell at a time (each can be countered), same choices."""
-    from commander_sim import ais
-    if p.key != 'sauron': return False
-    bf_active = has(p, 'breach')
-    breach_hand = next((c for c in p.hand if 'breach' in c.tags), None)
-    if not bf_active and breach_hand is None: return False
-    spots = _storm_spots(p)
-    if not spots: return False
-    opps = [q for q in g.opps(p) if q.alive]
-    if not opps: return False
-    storm_spells = set(STORM_PIECES)
-    fuel = sum(1 for c in p.gy if c.name not in storm_spells)
-    mana = total_mana(g, p)
-    s = sum(casts_this_turn(g, q) for q in g.players)
-    lib = {q: len(q.library) for q in opps}
-    life = {q: q.life for q in opps}
-    if not execute:
-        units = E.mana_units(g, p)
-        cap = {c: sum(u[2] for u in units if c in u[1]) for c in 'UR'}     # one pip of U or R per spell
-        if not bf_active:
-            if not can_pay(g, p, 1, 'R'): return False
-            mana -= 2; s += 1; cap['R'] -= 1
-        spots = dict(spots)
-        while mana >= 2:
-            copies = s + 1
-            gs, bfz = spots.get('Grapeshot'), spots.get('Brain Freeze')
-            can = lambda where, col: cap[col] > 0 and (where == 'hand' or (where == 'gy' and fuel >= 3))
-            alive = [q for q in opps if life[q] > 0 and lib[q] > 0]
-            if not alive: break
-            if gs and can(gs, 'R') and copies >= min(life[q] for q in alive):
-                if gs == 'gy': fuel -= 3
-                left = copies
-                for q in sorted(alive, key=lambda x: life[x]):
-                    k = min(left, life[q]); life[q] -= k; left -= k
-                    if left <= 0: break
-                spots['Grapeshot'] = 'gy'; cap['R'] -= 1
-            elif bfz and can(bfz, 'U'):
-                if bfz == 'gy': fuel -= 3
-                ol = {q: lib[q] for q in alive}
-                _, fuel = _mill_plan(p, ol, fuel, copies)
-                lib.update(ol); spots['Brain Freeze'] = 'gy'; cap['U'] -= 1
-            elif gs and can(gs, 'R'):
-                if gs == 'gy': fuel -= 3
-                left = copies
-                for q in sorted(alive, key=lambda x: life[x]):
-                    k = min(left, life[q]); life[q] -= k; left -= k
-                    if left <= 0: break
-                spots['Grapeshot'] = 'gy'; cap['R'] -= 1
-            else:
-                break
-            mana -= 2; s += 1
-        return all(life[q] <= 0 or lib[q] <= 0 for q in opps)
-    # ---- for real
+    """Sauron's Breach line. Dry run (execute=False): does it finish every opponent (burned to 0 or milled out) if
+    nobody interacts? Execute: cast it for real, one spell at a time (each can be countered)."""
+    if p.key != 'sauron' or not g.opps(p): return False
+    st = _line_state(g, p)
+    if not st['breach'] and not st['breach_hand']: return False
+    if not any(st['where'][n] for n in STORM_PIECES): return False
+    if not execute: return _dry_run(g, p)
     p.stats['breach_line'] += 1
     p.milestone.setdefault('combo', p.turns)
     log(f'  {NAME(p)} goes for the Underworld Breach line', g)
-    if not bf_active:
-        if breach_hand not in p.hand or not can_pay(g, p, 1, 'R'): return False
-        pay(g, p, 1, 'R')
-        if not cast_card(g, p, breach_hand, 'hand', {}) or not has(p, 'breach'):
-            log('    ...Underworld Breach is stopped', g); return True
-    for _ in range(60):
-        if g.over or not p.alive or not has(p, 'breach'): break
-        alive = [q for q in g.opps(p) if q.alive and q.library]
-        if not alive: break
-        copies = sum(casts_this_turn(g, q) for q in g.players) + 1
-        spots = _storm_spots(p)
-        fuel = sum(1 for c in p.gy if c.name not in storm_spells)
-
-        def ready(n, pips):
-            w = spots.get(n)
-            return w is not None and (w == 'hand' or fuel >= 3) and can_pay(g, p, 1, pips)
-        gs_kill = ready('Grapeshot', 'R') and copies >= min(q.life for q in alive)
-        if gs_kill or (ready('Grapeshot', 'R') and not ready('Brain Freeze', 'U')):
-            name, pips, ctx = 'Grapeshot', 'R', {'storm': copies - 1}
-        elif ready('Brain Freeze', 'U'):
-            plan, _ = _mill_plan(p, {q: len(q.library) for q in alive}, fuel - (3 if spots['Brain Freeze'] == 'gy' else 0), copies)
-            name, pips, ctx = 'Brain Freeze', 'U', {'storm': copies - 1, 'mill': plan}
-        else:
-            break
-        c = next(x for x in (p.hand if spots[name] == 'hand' else p.gy) if x.name == name)
-        pay(g, p, 1, pips)
-        if spots[name] == 'hand':
-            cast_card(g, p, c, 'hand', ctx)
-        else:
-            others = sorted([x for x in p.gy if x is not c and x.name not in storm_spells],
-                            key=lambda x: card_worth(g, p, x, True))
-            for x in others[:3]: p.gy.remove(x); p.exile.append(x)
+    for _ in range(300):
+        if g.over or not p.alive: break
+        st = _line_state(g, p)
+        act = _line_step(st)
+        if act is None: break
+        if act == 'breach':
+            c = next(x for x in p.hand if 'breach' in x.tags)
+            if not _pay_line(g, p, 1, 'R'): break
+            if not cast_card(g, p, c, 'hand', {}) or not has(p, 'breach'):
+                log('    ...Underworld Breach is stopped', g); break
+            continue
+        zone = st['where'][act]
+        c = next(x for x in (p.hand if zone == 'hand' else p.gy) if x.name == act)
+        ctx = {'storm': st['storm']}
+        gen, col = (RITUALS[act][0], 'B') if act in RITUALS else (None, None) if act == PETAL else \
+            (1, 'U' if act == 'Brain Freeze' else 'R')
+        if zone == 'gy':
+            fuel = sorted([x for x in p.gy if x.name not in LINE_CARDS], key=lambda x: card_worth(g, p, x, True))
+            if len(fuel) < 3: break
+            for x in fuel[:3]: p.gy.remove(x); p.exile.append(x)
             p.stats['breach_escapes'] += 1
-            cast_card(g, p, c, 'escape', ctx)
+        if gen is not None and not _pay_line(g, p, gen, col): break
+        if act == 'Brain Freeze': ctx['mill'] = _mill_plan(p, _line_state(g, p), st['storm'] + 1)   # as paid for
+        cast_card(g, p, c, 'escape' if zone == 'gy' else 'hand', ctx)
+        if act == PETAL:                                      # sacrifice it at once, so it can be escaped again
+            m = next((x for x in p.perms if x.cd is not None and x.cd.name == PETAL), None)
+            if m is not None:
+                leave(g, m); to_zone_card(g, m, 'gy')
+                if st['U'] == 0: p.floatU = getattr(p, 'floatU', 0) + 1
+                elif st['R'] == 0: p.floatR = getattr(p, 'floatR', 0) + 1
+                else: p.floatA += 1
     check_state(g)
     return True
 
