@@ -86,6 +86,7 @@ class MainPhase(unittest.TestCase):
 def bot_for(sess):
     """plays the human seat through the same actions a person would send: land, tap everything, cast what's legal"""
     def answer(req):
+        if req.kind in ('target', 'choose'): return 0
         if req.kind != 'priority': return True
         g = sess.game; p = next(x for x in g.players if x.key == sess.deck)
         for i, c in enumerate(p.hand):
@@ -95,6 +96,11 @@ def bot_for(sess):
         for i, c in enumerate(p.hand):
             if not c.land and legal.check_cast(g, p, c) is None: return {'do': 'cast', 'card': i}
         if p.cmd_in_zone and legal.check_cast(g, p, p.cmd, 'cmd') is None: return {'do': 'cast', 'zone': 'cmd'}
+        tried = sess.__dict__.setdefault('bot_tried', set())   # equip each piece at most once a turn
+        for i, m in enumerate(p.perms):
+            if legal.equip_cost(m) is not None and m.attached is None and (g.round, id(m)) not in tried:
+                tried.add((g.round, id(m)))
+                return {'do': 'use', 'perm': i}
         return {'do': 'pass'}
     return answer
 
@@ -116,7 +122,8 @@ class BotGames(unittest.TestCase):
             self.assertEqual(evs[-1]['kind'], 'over', f"{deck} {tier} {seed}: {evs[-1].get('text', '')[-1500:]}")
             p = next(x for x in s.game.players if x.key == deck)
             self.assertGreater(p.stats['spells_cast'], 3, f'{deck} {tier} {seed}')
-            self.assertEqual([t for k, t in s.human.told if k == 'invalid'], [], f'{deck} {tier} {seed}')
+            bad = [t for k, t in s.human.told if k == 'invalid' and not t.startswith(("Can't equip", 'You have no creature'))]
+            self.assertEqual(bad, [], f'{deck} {tier} {seed}')
 
 
 if __name__ == '__main__':

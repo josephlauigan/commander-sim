@@ -34,7 +34,7 @@ def _player(g, p, me):
          'hand_count': len(p.hand), 'library': len(p.library),
          'graveyard': [c.name for c in p.gy], 'exile': [c.name for c in p.exile],
          'commander_in_zone': bool(p.cmd_in_zone), 'tax': p.tax, 'treasures': p.treasures,
-         'battlefield': [_perm(g, m) for m in p.perms if m.cd is not None or m.token],
+         'battlefield': [dict(_perm(g, m), i=i) for i, m in enumerate(p.perms)],
          'lands': [{'name': L.cd.name, 'tapped': bool(L.tapped)} for L in p.lands]}
     if you:
         from commander_sim.play import mana

@@ -128,6 +128,10 @@ def _gather_floating(p):
     return pool
 
 
+def pool_can_pay(p, generic, pips):
+    return _gather_floating(p).can_pay(generic, pips)
+
+
 def cost_problem(g, p, generic, pips):
     """None if p's pool can pay this now, else the reason (nothing is spent)"""
     pool = _gather_floating(p)

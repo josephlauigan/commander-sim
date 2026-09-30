@@ -528,10 +528,14 @@ def plan_pay(U, generic, pips, col=None):
 
 
 def can_pay(g, p, generic, pips, convoke=False):
+    if getattr(p, 'pool', None) is not None:          # practice mode: the person pays from the mana they have floated
+        return importlib.import_module('commander_sim.play.mana').pool_can_pay(p, generic, pips)
     return plan_pay(mana_units(g, p, convoke), generic, pips) is not None
 
 
 def pay(g, p, generic, pips, convoke=False):
+    if getattr(p, 'pool', None) is not None:          # practice mode: from the person's mana pool
+        return importlib.import_module('commander_sim.play.mana').pay_from_pool(g, p, generic, pips) is None
     U = mana_units(g, p, convoke)
     col = [''] * len(U)                                   # the coloured pips each source paid for
     used = plan_pay(U, generic, pips, col)

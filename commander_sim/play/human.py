@@ -7,7 +7,10 @@ Actions are dicts, the same from the text client and (later) the browser:
   {'do': 'land', 'card': i}                       the i-th card in hand as your land drop
   {'do': 'cast', 'card': i}                       the i-th card in hand
   {'do': 'cast', 'zone': 'cmd'}                   your commander from the command zone
+  {'do': 'use', 'perm': i}                        an ability of your i-th permanent (Equip, loyalty, ...)
   {'do': 'pass'}
+Follow-up questions (which target, which ability) come back as 'target' / 'choose' requests: answer with the index
+of a choice, or 'cancel'.
 """
 from commander_sim import engine as E, ais
 from commander_sim.play import mana, legal
@@ -54,6 +57,10 @@ def apply(g, p, act):
         ais.play_land_card(g, p, c)
         E.check_state(g)
         return None
+    if do == 'use':
+        i = act.get('perm')
+        if not isinstance(i, int) or not 0 <= i < len(p.perms): return "You don't control that."
+        return use(g, p, p.perms[i])
     if do == 'cast':
         zone = 'cmd' if act.get('zone') == 'cmd' else 'hand'
         c = p.cmd if zone == 'cmd' else _hand_card(p, act)
@@ -64,12 +71,75 @@ def apply(g, p, act):
     return 'Unknown action.'
 
 
+def choose(g, p, kind, prompt, labels):
+    """ask the person to pick one of labels; returns its index, or None if they cancel"""
+    ctl = controller_of(g, p)
+    for _ in range(5):
+        ans = ctl.ask(Request(kind, prompt, choices=list(labels) + ['cancel']))
+        if ans == 'cancel' or ans == len(labels): return None
+        if isinstance(ans, int) and not isinstance(ans, bool) and 0 <= ans < len(labels): return ans
+        ctl.tell('invalid', 'Pick one of the numbers, or cancel.')
+    return None                                               # five bad answers in a row: treated as cancel
+
+
+def abilities_of(g, p, m):
+    """[(label, kind, fn)]: what p can activate on permanent m now. Equip, and the abilities its card code offers
+    (planeswalker loyalty abilities, Triskelion, Deathrite ...)"""
+    from commander_sim.ai import brain
+    out = []
+    if legal.equip_cost(m) is not None: out.append((f'Equip {{{legal.equip_cost(m)}}}', 'equip', None))
+    post = getattr(g, 'step', None) == 'main2'
+    if g.hooks:
+        s = brain.Situation(g, p)
+        for src, fn in E.CI.hooked(g, 'options'):
+            if src is m:
+                for u, label, f in fn(g, src, p, s, post) or []:
+                    out.append((label, 'hook', f))
+    return out
+
+
+def use(g, p, m):
+    abil = abilities_of(g, p, m)
+    if not abil: return f'{m.name} has no ability you can activate right now.'
+    k = choose(g, p, 'choose', f'{m.name}: which ability?', [a[0] for a in abil])
+    if k is None: return None
+    label, kind, fn = abil[k]
+    if kind == 'equip':
+        cre = [x for x in p.perms if x.creature and not x.phased and x is not m]
+        if not cre: return 'You have no creature to equip.'
+        j = choose(g, p, 'target', f'Equip {m.name} onto which creature?', [legal.describe_target(g, p, x) for x in cre])
+        if j is None: return None
+        why = legal.check_equip(g, p, m, cre[j])
+        if why: return why
+        mana.pay_from_pool(g, p, legal.equip_cost(m), '')
+        m.attached = cre[j]
+        E.log(f'  {E.NAME(p)} equips {m.name} to {cre[j].name}', g)
+        return None
+    if not fn(): return f"{label}: that can't be done right now."
+    E.check_state(g)
+    return None
+
+
 def cast(g, p, c, zone):
     """cast c (already checked legal): extra costs, pay from the pool, then the engine casts and resolves it. Choices
     not yet made by the player (X, a creature to sacrifice, targets) are made by the AI and reported as automatic"""
     from commander_sim.ai import brain
     ctl = controller_of(g, p)
-    gen, pips = E.cost_of(p, c)
+    gen, pips = legal.base_cost(g, p, c)
+    ctx = {}
+    tgts = legal.spell_targets(g, p, c)
+    if tgts is not None:                                     # targets are chosen before the spell is paid for
+        if not tgts: return f'{c.name} has no legal target right now.'
+        what = legal.WHAT.get(c.tags.get('tgt', 'c'), 'target') + (' or player' if 'face' in c.tags else '')
+        k = choose(g, p, 'target', f'{c.name}: choose a target ({what})', [legal.describe_target(g, p, x) for x in tgts])
+        if k is None: return None
+        x = tgts[k]
+        eg, ep = legal.target_extra_cost(g, p, c, x)
+        gen, pips = gen + eg, pips + ep
+        why = mana.cost_problem(g, p, gen, pips)
+        if why: return f"Can't cast {c.name} on that target. {why}"
+        if isinstance(x, E.Player): ctx['face'] = x
+        else: ctx['target'] = x
     fodder = None
     if 'needsac' in c.tags:                                  # Diabolic Intent: sacrifice a creature
         fodder = brain.spare_creature(g, p)
@@ -77,7 +147,6 @@ def cast(g, p, c, zone):
     if c.dsl and not E.additional_cost(g, p, c, dry=True): return f"You can't pay {c.name}'s additional cost."
     why = mana.pay_from_pool(g, p, gen, pips)
     if why: return f"Can't cast {c.name}. {why}"
-    ctx = {}
     if 'tokx' in c.tags or 'xtutor' in c.tags:              # X: everything left in the pool (automatic for now)
         x = mana.pool_of(p).total(); mana.pool_of(p).empty(); ctx['x'] = x
         if 'xtutor' in c.tags: g.last_x = x

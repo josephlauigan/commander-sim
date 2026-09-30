@@ -89,6 +89,7 @@ def clone(g, want_memo=False):
     finally:
         g.log = saved_log
         if saved_ctl is not None: g.controllers = saved_ctl
+    for q in g2.players: q.__dict__.pop('pool', None)       # a copy's human seat pays like the AI, from its lands
     for obj in [g2] + list(g2.players):
         for k, v in list(vars(obj).items()):
             if isinstance(v, dict) and v: setattr(obj, k, _remap_dict(v, memo))

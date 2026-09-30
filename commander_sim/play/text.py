@@ -49,7 +49,9 @@ HELP = """Commands:
   land N            play card N from your hand as your land drop
   cast N            cast card N from your hand
   cast cmd          cast your commander from the command zone
+  use N             an ability of your permanent N (Equip, loyalty abilities, ...)
   pass              pass priority (move on)
+When asked to choose (a target, an ability), type its number, or cancel.
   quit              end the game"""
 
 
@@ -65,6 +67,10 @@ def priority_prompt(req, out):
     srcs = me.get('mana_sources') or []
     print('  Mana sources: ' + ('  '.join(f"{i + 1}) {x['name']} ({x['colours']})" for i, x in enumerate(srcs))
                                 or '(none untapped)'), file=out)
+    perms = me['battlefield']
+    if perms:
+        print('  Your permanents: ' + '  '.join(f"{m['i'] + 1}) {m['name']}" + (' (tapped)' if m['tapped'] else '')
+                                              for m in perms), file=out)
     if me['commander_in_zone']: print(f"  Commander in the command zone: {me['commander']} (tax {me['tax']})", file=out)
 
 
@@ -78,6 +84,9 @@ def parse(line, view):
     if cmd in ('help', 'h', '?'): return 'help'
     if cmd in ('quit', 'q'): return 'quit'
     if cmd == 'cast' and len(w) > 1 and w[1].lower() in ('cmd', 'commander'): return {'do': 'cast', 'zone': 'cmd'}
+    if cmd == 'use':
+        if len(w) < 2 or not w[1].isdigit(): return '?Which permanent? e.g. use 1'
+        return {'do': 'use', 'perm': int(w[1]) - 1}
     if cmd in ('tap', 'land', 'cast'):
         if len(w) < 2 or not w[1].isdigit(): return f'?Which one? e.g. {cmd} 1'
         n = int(w[1]) - 1
@@ -120,6 +129,18 @@ def run(session, out=sys.stdout, inp=input):
                     if act == 'quit': session.close(); break
                     if isinstance(act, str): print('  ' + act[1:], file=out); continue
                     session.answer(act); break
+            elif req.kind in ('choose', 'target'):
+                print(f'\n{req.prompt}', file=out)
+                for i, ch in enumerate(req.choices): print(f'  {i + 1}) {ch}', file=out)
+                while True:
+                    try:
+                        line = inp('> ').strip().lower()
+                    except EOFError:
+                        line = 'cancel'
+                    if line in ('cancel', 'c', 'x'): session.answer('cancel'); break
+                    if line.isdigit() and 1 <= int(line) <= len(req.choices):
+                        session.answer(int(line) - 1); break
+                    print(f'  Type a number from 1 to {len(req.choices)}, or cancel.', file=out)
             elif req.kind == 'continue':
                 try:
                     inp(f"[{req.prompt}] Enter to continue, q to quit: ").strip().lower() == 'q' and session.close()

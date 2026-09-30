@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 218 tests in about a minute. To run one file, or one test:
+That's 227 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -33,6 +33,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_play.py` | 9 | Practice mode: a session plays a game on its own thread and streams events; seats and opponents; step mode waits for you; closing stops the game; the text client; the table view hides other players' hands; look-ahead copies leave the human seat to the AI. |
 | `test_play_mana.py` | 10 | Practice mode's mana pool: paying colours and generic, any-colour mana, tapping lands, rocks and Treasures into the pool, the wrong colour refused, Talismans hurting only for coloured mana, the reason when you're short, ritual mana joining the pool, and the pool emptying between steps. |
 | `test_play_turn.py` | 9 | Practice mode's main phase: one land per turn, lands and sorceries only in your main phase, instants at any time, the reason when mana is short, commander tax; tap-then-cast, an illegal move explained while you keep priority, casting your commander; and a bot playing whole games of every deck through the human seat. |
+| `test_play_abilities.py` | 9 | Practice mode's targets and abilities: what a removal spell may target (your own permanents too; hexproof respected), burn at players (not one under Teferi's Protection), casting with a target, cancelling costs nothing, Bloodchief's Thirst's kicker, Equip (mana and timing), a planeswalker's loyalty ability, a permanent with nothing to activate. |
 
 ## When a test fails
 

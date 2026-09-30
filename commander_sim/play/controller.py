@@ -63,8 +63,11 @@ class ScriptController(HumanController):
         s.answers = answers if callable(answers) else list(answers)
         s.asked, s.told = [], []
 
+    LIMIT = 20000                                # a runaway script ends the game instead of hanging a test
+
     def ask(s, req):
         s.asked.append(req)
+        if len(s.asked) > s.LIMIT: raise Cancelled()
         if callable(s.answers): return s.answers(req)
         if not s.answers: raise Cancelled()
         return s.answers.pop(0)
