@@ -2194,6 +2194,7 @@ def continue_turn(g, p, step):
     """play p's turn from `step` on (a copied game resumes mid-turn from here)"""
     for st in STEPS[STEPS.index(step):]:
         g.step = st
+        if getattr(g, 'controllers', None): importlib.import_module('commander_sim.play.mana').empty_pools(g)
         STEP_FN[st](g, p)
         if g.over or not p.alive: return
 

@@ -38,6 +38,9 @@ def show_table(view, out=sys.stdout):
             print('      ' + text_ + (f'  x{n}' if n > 1 else ''), file=out)
         if p['you'] and 'hand' in p:
             print('      hand: ' + ('; '.join(p['hand']) or '(empty)'), file=out)
+            srcs = p.get('mana_sources') or []
+            print(f"      mana pool: {p.get('mana_pool', 'empty')}; untapped sources: "
+                  + (', '.join(f"{x['name']} ({x['colours']})" for x in srcs) or 'none'), file=out)
 
 
 def run(session, out=sys.stdout, inp=input):

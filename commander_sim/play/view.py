@@ -36,7 +36,11 @@ def _player(g, p, me):
          'commander_in_zone': bool(p.cmd_in_zone), 'tax': p.tax, 'treasures': p.treasures,
          'battlefield': [_perm(g, m) for m in p.perms if m.cd is not None or m.token],
          'lands': [{'name': L.cd.name, 'tapped': bool(L.tapped)} for L in p.lands]}
-    if you: d['hand'] = [c.name for c in p.hand]
+    if you:
+        from commander_sim.play import mana
+        d['hand'] = [c.name for c in p.hand]
+        d['mana_pool'] = mana.pool_of(p).text()
+        d['mana_sources'] = mana.sources(g, p)
     return d
 
 

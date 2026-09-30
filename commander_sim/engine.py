@@ -537,28 +537,33 @@ def pay(g, p, generic, pips, convoke=False):
     used = plan_pay(U, generic, pips, col)
     if used is None: return False
     for i, u in enumerate(U):
-        if used[i]:
-            if u[0] == 'T':
-                p.treasures -= 1
-                p.left_turn = turn_stamp(g)
-                if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
-            elif u[0] == 'F': p.floatR -= 1
-            elif u[0] == 'G': p.floatA -= 1
-            elif u[0] == 'FU': p.floatU -= 1
-            elif u[0] == 'FC': p.floatC -= 1
-            elif isinstance(u[0], str):
-                importlib.import_module('commander_sim.cards.impl.partials').special_unit_paid(g, p, u)
-            else:
-                u[0].tapped = True
-                global TAP_COLS
-                TAP_COLS = col[i]
-                if CI is not None and getattr(u[0], 'cd', None) is not None and u[0].cd.name in CI.ON_TAP: CI.ON_TAP[u[0].cd.name](g, p, u[0], used[i])
-                if g.hooks and isinstance(u[0], Perm): CI.fire(g, 'mana_tapped', p, u[0], used[i])
-                if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
-                    lose_life(g, p, 2, p, damage=True)
-                if col is not None and col[i] and u[0].cd is not None and 'pain' in u[0].cd.tags:   # painlands, Talismans
-                    lose_life(g, p, 1, p, damage=True)
+        if used[i]: spend_unit(g, p, u, used[i], col[i])
     return True
+
+
+def spend_unit(g, p, u, n, col=''):
+    """use mana unit u (from mana_units) for n mana; col: the coloured pips it paid for (painlands hurt only then).
+    Taps or sacrifices the source and runs its side effects: Treasures, floating mana, on-tap triggers, pain"""
+    if u[0] == 'T':
+        p.treasures -= 1
+        p.left_turn = turn_stamp(g)
+        if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
+    elif u[0] == 'F': p.floatR -= 1
+    elif u[0] == 'G': p.floatA -= 1
+    elif u[0] == 'FU': p.floatU -= 1
+    elif u[0] == 'FC': p.floatC -= 1
+    elif isinstance(u[0], str):
+        importlib.import_module('commander_sim.cards.impl.partials').special_unit_paid(g, p, u)
+    else:
+        u[0].tapped = True
+        global TAP_COLS
+        TAP_COLS = col
+        if CI is not None and getattr(u[0], 'cd', None) is not None and u[0].cd.name in CI.ON_TAP: CI.ON_TAP[u[0].cd.name](g, p, u[0], n)
+        if g.hooks and isinstance(u[0], Perm): CI.fire(g, 'mana_tapped', p, u[0], n)
+        if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
+            lose_life(g, p, 2, p, damage=True)
+        if col and u[0].cd is not None and 'pain' in u[0].cd.tags:   # painlands, Talismans
+            lose_life(g, p, 1, p, damage=True)
 
 
 def total_mana(g, p, convoke=False):
