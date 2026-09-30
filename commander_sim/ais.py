@@ -1625,35 +1625,41 @@ def resolve_combat(g, p, atk, d, unbl):
 
 
 def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
-    blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
-    incoming = sum(epow(g, m) * (2 if double_strike(p, m) else 1) for m in atk)
-    assign = {}; used = set()
-    for a in sorted(atk, key=lambda m: -epow(g, m)):
-        if a in unbl or a not in p.perms: continue
-        cands = [b for b in blockers if b not in used and can_block(g, b, a)]
-        if not cands: continue
-        if kw(a, 'menace') and len(cands) < 2: continue                 # menace: two blockers or none
-        ap, at = epow(g, a), etgh(g, a)
-        good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
-        if good: b = min(good, key=lambda x: pval(g, x))
-        else:
-            trade = [b for b in cands if epow(g, b) >= at or b.dt]
-            if trade and pval(g, a) >= min(pval(g, x) for x in trade):
-                b = min(trade, key=lambda x: pval(g, x))
-            elif shielded(d):                     # the damage is prevented anyway: no chump blocks
-                continue
-            elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < importlib.import_module('commander_sim.ai.brain').chump_prob(g, d, incoming)) \
-                    or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
-                b = min(cands, key=lambda x: pval(g, x))
+    hctl = getattr(g, 'controllers', None)
+    hum_d = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, d)
+    hum_p = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, p)
+    if hum_d:                                          # practice mode: the person declares blockers
+        assign = importlib.import_module('commander_sim.play.combat').human_blocks(g, p, atk, d, unbl)
+    else:
+        blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
+        incoming = sum(epow(g, m) * (2 if double_strike(p, m) else 1) for m in atk)
+        assign = {}; used = set()
+        for a in sorted(atk, key=lambda m: -epow(g, m)):
+            if a in unbl or a not in p.perms: continue
+            cands = [b for b in blockers if b not in used and can_block(g, b, a)]
+            if not cands: continue
+            if kw(a, 'menace') and len(cands) < 2: continue                 # menace: two blockers or none
+            ap, at = epow(g, a), etgh(g, a)
+            good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
+            if good: b = min(good, key=lambda x: pval(g, x))
             else:
-                continue
-        assign[a] = b; used.add(b); incoming -= ap
-        if kw(a, 'menace'):                           # the second blocker is spent; only the first fights
-            rest = [x for x in cands if x is not b]
-            if rest: used.add(min(rest, key=lambda x: pval(g, x)))
+                trade = [b for b in cands if epow(g, b) >= at or b.dt]
+                if trade and pval(g, a) >= min(pval(g, x) for x in trade):
+                    b = min(trade, key=lambda x: pval(g, x))
+                elif shielded(d):                     # the damage is prevented anyway: no chump blocks
+                    continue
+                elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < importlib.import_module('commander_sim.ai.brain').chump_prob(g, d, incoming)) \
+                        or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
+                    b = min(cands, key=lambda x: pval(g, x))
+                else:
+                    continue
+            assign[a] = b; used.add(b); incoming -= ap
+            if kw(a, 'menace'):                           # the second blocker is spent; only the first fights
+                rest = [x for x in cands if x is not b]
+                if rest: used.add(min(rest, key=lambda x: pval(g, x)))
     if g.hooks: E.CI.fire(g, 'blocks', p, atk, d, assign)
     ringblk = [b for a, b in assign.items() if E.CI is not None and importlib.import_module('commander_sim.cards.impl.mine').ring_blocked(g, p, a, b)]
-    to_walker = walker_attacks(g, p, atk, d, assign)
+    to_walker = {} if hum_p else walker_attacks(g, p, atk, d, assign)
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
         if d.key not in MAIN:
@@ -1663,7 +1669,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 h = E.CI.HOOKS.get(L.cd.name)
                 if h and 'land_defend' in h: h['land_defend'](g, L, d, p, atk, assign)
         if p.key not in MAIN: importlib.import_module('commander_sim.cards.impl.t4').ninjutsu(g, p, atk, d, assign)
-    if not shielded(d) and not d.life_locked and any(c.name == E.TEFERIS_PROTECTION for c in d.hand):
+    if not hum_d and not shielded(d) and not d.life_locked and any(c.name == E.TEFERIS_PROTECTION for c in d.hand):
         unbl_dmg = [(a, epow(g, a) * (2 if double_strike(p, a) else 1)) for a in atk
                     if a in p.perms and (assign.get(a) is None or assign[a] not in d.perms) and a not in to_walker]
         if sum(x for _, x in unbl_dmg) >= d.life or any(a.is_cmd and d.cmd_dmg[p.key] + x >= 21 for a, x in unbl_dmg):
@@ -1813,23 +1819,29 @@ def combat(g, p):
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: from commander_sim.ai import brain
         if g.hooks and ncomb == 1: E.CI.fire(g, 'crew', p)
-        atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
-               and (not m.sick or p.haste_all or has_haste(g, m))
-               and (not m.noatk or (epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
-        if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
-        if not atk: break
-        plan = None                                   # look-ahead: (defender index, 'filtered' / 'all' / 'none')
-        if adaptive and ncomb == 1:
-            from commander_sim.ai import search
-            if getattr(g, 'forced_attack', None) is not None: plan, g.forced_attack = g.forced_attack, None
-            elif search.enabled(g, p): plan = search.choose_attack(g, p)
-        if plan is not None and plan[1] == 'none': break
-        all_atk = list(atk)
-        d = g.players[plan[0]] if plan is not None else (brain.choose_defender(g, p) if adaptive else choose_defender(g, p))
-        if plan is not None and plan[1] == 'all': atk = all_atk
+        human = bool(getattr(g, 'controllers', None)) and importlib.import_module('commander_sim.play.human').is_human(g, p)
+        if human:                                     # practice mode: the person declares attackers
+            res = importlib.import_module('commander_sim.play.combat').human_attack(g, p, ncomb)
+            if res is None: break
+            d, atk = res
         else:
-            if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
-            if p.key not in MAIN: atk = importlib.import_module('commander_sim.ai.pool_ai').attack_filter(g, p, atk, d)
+            atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
+                   and (not m.sick or p.haste_all or has_haste(g, m))
+                   and (not m.noatk or (epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
+            if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
+            if not atk: break
+            plan = None                                   # look-ahead: (defender index, 'filtered' / 'all' / 'none')
+            if adaptive and ncomb == 1:
+                from commander_sim.ai import search
+                if getattr(g, 'forced_attack', None) is not None: plan, g.forced_attack = g.forced_attack, None
+                elif search.enabled(g, p): plan = search.choose_attack(g, p)
+            if plan is not None and plan[1] == 'none': break
+            all_atk = list(atk)
+            d = g.players[plan[0]] if plan is not None else (brain.choose_defender(g, p) if adaptive else choose_defender(g, p))
+            if plan is not None and plan[1] == 'all': atk = all_atk
+            else:
+                if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
+                if p.key not in MAIN: atk = importlib.import_module('commander_sim.ai.pool_ai').attack_filter(g, p, atk, d)
         cand0 = list(atk)
         if g.hooks: atk = attack_limits(g, p, d, atk)
         if g.hooks:
@@ -1843,7 +1855,7 @@ def combat(g, p):
         a = army_of(p)
         for m in atk:
             if m.army and equipped(m, 'cloak'): unbl.add(m)
-        if a in atk and a not in unbl and epow(g, a) >= 5:
+        if not human and a in atk and a not in unbl and epow(g, a) >= 5:
             ps = [L for L in p.lands if L.cd.tags.get('passage') and not L.tapped and not blocked(g, p, L.cd.name)]
             if ps:
                 ps[0].tapped = True
@@ -1867,7 +1879,7 @@ def combat(g, p):
                 if m.creature: m.tapped = False
             p.haste_all = True; p.trample = True; p.najeela_boost = True
             continue
-        if (p.key == 'sauron' and has(p, 'assault') and a is not None and a in p.perms
+        if (not human and p.key == 'sauron' and has(p, 'assault') and a is not None and a in p.perms
                 and not blocked(g, p, 'Aggravated Assault')):
             if a in conn and equipped(a, 'sword') and a in unbl and can_pay(g, p, 3, 'RR'):
                 pay(g, p, 3, 'RR'); p.stats['combo_attempt'] += 1

@@ -51,7 +51,8 @@ HELP = """Commands:
   cast cmd          cast your commander from the command zone
   use N             an ability of your permanent N (Equip, loyalty abilities, ...)
   pass              pass priority (move on)
-When asked to choose (a target, an ability), type its number, or cancel.
+When asked to choose (a target, an ability, a blocker), type its number, or cancel / the last choice.
+Attacking: type the attackers' numbers (1,3), all, or none.
   quit              end the game"""
 
 
@@ -129,7 +130,21 @@ def run(session, out=sys.stdout, inp=input):
                     if act == 'quit': session.close(); break
                     if isinstance(act, str): print('  ' + act[1:], file=out); continue
                     session.answer(act); break
-            elif req.kind in ('choose', 'target'):
+            elif req.kind == 'attack':
+                print(f'\n{req.prompt}', file=out)
+                for i, ch in enumerate(req.choices): print(f'  {i + 1}) {ch}', file=out)
+                while True:
+                    try:
+                        line = inp('attackers (e.g. 1,3 / all / none)> ').strip().lower()
+                    except EOFError:
+                        line = 'none'
+                    if line in ('none', 'n', ''): session.answer([]); break
+                    if line == 'all': session.answer(list(range(len(req.choices)))); break
+                    parts = [x for x in line.replace(' ', ',').split(',') if x]
+                    if parts and all(x.isdigit() and 1 <= int(x) <= len(req.choices) for x in parts):
+                        session.answer([int(x) - 1 for x in parts]); break
+                    print('  Type numbers separated by commas, all, or none.', file=out)
+            elif req.kind in ('choose', 'target', 'block'):
                 print(f'\n{req.prompt}', file=out)
                 for i, ch in enumerate(req.choices): print(f'  {i + 1}) {ch}', file=out)
                 while True:

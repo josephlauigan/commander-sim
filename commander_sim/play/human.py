@@ -71,11 +71,12 @@ def apply(g, p, act):
     return 'Unknown action.'
 
 
-def choose(g, p, kind, prompt, labels):
-    """ask the person to pick one of labels; returns its index, or None if they cancel"""
+def choose(g, p, kind, prompt, labels, cancel='cancel'):
+    """ask the person to pick one of labels; returns its index, or None if they cancel (the last choice, named by
+    `cancel`, e.g. 'no block')"""
     ctl = controller_of(g, p)
     for _ in range(5):
-        ans = ctl.ask(Request(kind, prompt, choices=list(labels) + ['cancel']))
+        ans = ctl.ask(Request(kind, prompt, choices=list(labels) + [cancel]))
         if ans == 'cancel' or ans == len(labels): return None
         if isinstance(ans, int) and not isinstance(ans, bool) and 0 <= ans < len(labels): return ans
         ctl.tell('invalid', 'Pick one of the numbers, or cancel.')

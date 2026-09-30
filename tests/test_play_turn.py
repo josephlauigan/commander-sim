@@ -86,7 +86,8 @@ class MainPhase(unittest.TestCase):
 def bot_for(sess):
     """plays the human seat through the same actions a person would send: land, tap everything, cast what's legal"""
     def answer(req):
-        if req.kind in ('target', 'choose'): return 0
+        if req.kind in ('target', 'choose', 'block'): return 0
+        if req.kind == 'attack': return list(range(len(req.choices)))
         if req.kind != 'priority': return True
         g = sess.game; p = next(x for x in g.players if x.key == sess.deck)
         for i, c in enumerate(p.hand):

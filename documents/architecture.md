@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (227 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (234 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -907,6 +907,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (227 tests, abou
 | `test_play_mana.py` | Practice mode's mana pool. |
 | `test_play_turn.py` | Practice mode's main phase and the rules check. |
 | `test_play_abilities.py` | Practice mode's targets and activated abilities. |
+| `test_play_combat.py` | Practice mode's attacks and blocks. |
 
 `tests/table.py` builds a position for a rule test: seat decks, empty the hands, put chosen cards in hand or onto the
 battlefield, then drive the engine directly.
