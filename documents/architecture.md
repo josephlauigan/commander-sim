@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (189 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (199 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -902,6 +902,8 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (189 tests, abou
 | `test_pool_sampling.py` | Seat drawing, pairing and reproducibility. |
 | `test_validator.py` | Deck validation rules. |
 | `test_my_decks.py` | Your deck files parse to the recorded lists (`tests/fixtures/my_decks_parsed.json`). |
+| `test_sim_guard.py` | Seeded games play out exactly as recorded (`tests/fixtures/sim_guard.json`). |
+| `test_play.py` | Practice mode: sessions, events, the seat's view, the controller. |
 
 `tests/table.py` builds a position for a rule test: seat decks, empty the hands, put chosen cards in hand or onto the
 battlefield, then drive the engine directly.

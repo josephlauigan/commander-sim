@@ -83,10 +83,12 @@ def clone(g, want_memo=False):
     once-per-turn flags) are re-keyed to the copies; caches are dropped."""
     memo = dict(_shared())
     saved_log, g.log = g.log, None
+    saved_ctl = g.__dict__.pop('controllers', None)          # practice mode: in a copy the AI plays every seat
     try:
         g2 = copy.deepcopy(g, memo)
     finally:
         g.log = saved_log
+        if saved_ctl is not None: g.controllers = saved_ctl
     for obj in [g2] + list(g2.players):
         for k, v in list(vars(obj).items()):
             if isinstance(v, dict) and v: setattr(obj, k, _remap_dict(v, memo))

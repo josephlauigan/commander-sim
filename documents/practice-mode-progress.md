@@ -12,13 +12,15 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 
 ## Status
 
-- Current step: 1a (not started)
+- Current step: 1b (mana pool): next
 - Last checkpoint: none
 
 ## Done
 
-(nothing yet)
+- **1a** (2026-09-29): `commander_sim/play/`: `session.py` (a game on a worker thread; events: log, turn, request, over, error), `controller.py` (HumanController: requests and answers across threads; `controller_of`/`is_human`), `view.py` (the table from one seat; hidden hands; token names), `text.py` and `__main__.py` (`python3 -m commander_sim.play --text --deck sauron --tier t4 [--step]`: watch a game from your seat). Engine change: `search.clone` drops `g.controllers`, so look-ahead copies play the human seat as the AI. Tests: `test_sim_guard.py` (24 seeded games fingerprinted) and `test_play.py`.
 
 ## Notes and decisions
 
 - 2026-09-29: design agreed; build plan and checkpoint times set by the user.
+- Heuristic-AI games are identical across processes and memory layouts (checked with three perturbed runs), so the sim guard uses them. Look-ahead games are not (see step 3a).
+- `practice-mode` is branched from main, which does not yet have `sauron-breach` (Breach line, mana-payment tie-break, override fix). When that merges, re-record the sim guard.
