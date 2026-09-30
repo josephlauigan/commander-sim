@@ -64,6 +64,7 @@ def priority_prompt(req, out):
     """what you need in front of you each time you get priority: pool, hand and sources, numbered"""
     me = _me(req.data['view'])
     print(f"\n{req.prompt}. Mana pool: {me['mana_pool']}", file=out)
+    for x in req.data.get('stack') or []: print(f"  On the stack: {x['name']}", file=out)
     print('  Hand: ' + ('  '.join(f'{i + 1}) {n}' for i, n in enumerate(me['hand'])) or '(empty)'), file=out)
     srcs = me.get('mana_sources') or []
     print('  Mana sources: ' + ('  '.join(f"{i + 1}) {x['name']} ({x['colours']})" for i, x in enumerate(srcs))

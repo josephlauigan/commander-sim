@@ -37,6 +37,33 @@ def human_main(g, p, post):
         if why: ctl.tell('invalid', why)
 
 
+def respond(g, q, prompt, spell=None):
+    """q (the person) has priority in response to something (a spell on the stack, attackers, the end of a turn).
+    They may tap mana, cast instants and flash spells, use instant-speed abilities, or pass. Returns the counterspell
+    they cast at `spell` (the engine then counters it), or None when they pass"""
+    ctl = controller_of(g, q)
+    stack = [{'name': spell.name}] if spell is not None else []
+    while not g.over and q.alive:
+        act = ctl.ask(Request('priority', f'{prompt}. You have priority', data={'view': build_view(g, q.key), 'stack': stack}))
+        if not isinstance(act, dict): act = {}
+        if act.get('do') == 'pass': return None
+        if act.get('do') == 'cast' and spell is not None and act.get('zone') != 'cmd':
+            c = _hand_card(q, act)
+            if c is not None and 'ctr' in c.tags:
+                why = legal.check_counter(g, q, c, spell)
+                if why: ctl.tell('invalid', why); continue
+                return c
+        why = apply(g, q, act)
+        if why: ctl.tell('invalid', why)
+    return None
+
+
+def humans(g):
+    """the human seats still in the game"""
+    ctl = getattr(g, 'controllers', None)
+    return [p for p in g.players if ctl and p.key in ctl and getattr(ctl[p.key], 'human', False) and p.alive]
+
+
 def _hand_card(p, act):
     i = act.get('card')
     if not isinstance(i, int) or not 0 <= i < len(p.hand): return None
@@ -89,7 +116,7 @@ def abilities_of(g, p, m):
     from commander_sim.ai import brain
     out = []
     if legal.equip_cost(m) is not None: out.append((f'Equip {{{legal.equip_cost(m)}}}', 'equip', None))
-    post = getattr(g, 'step', None) == 'main2'
+    post = (getattr(g, 'step', None) == 'main2') if g.active is p else None    # None: instant-speed abilities only
     if g.hooks:
         s = brain.Situation(g, p)
         for src, fn in E.CI.hooked(g, 'options'):
@@ -122,9 +149,8 @@ def use(g, p, m):
 
 
 def cast(g, p, c, zone):
-    """cast c (already checked legal): extra costs, pay from the pool, then the engine casts and resolves it. Choices
-    not yet made by the player (X, a creature to sacrifice, targets) are made by the AI and reported as automatic"""
-    from commander_sim.ai import brain
+    """cast c (already checked legal): target and extra costs, pay from the pool, then the engine casts and resolves
+    it. Choices not yet made by the player (X for now) are made automatically and reported"""
     ctl = controller_of(g, p)
     gen, pips = legal.base_cost(g, p, c)
     ctx = {}
@@ -142,9 +168,12 @@ def cast(g, p, c, zone):
         if isinstance(x, E.Player): ctx['face'] = x
         else: ctx['target'] = x
     fodder = None
-    if 'needsac' in c.tags:                                  # Diabolic Intent: sacrifice a creature
-        fodder = brain.spare_creature(g, p)
-        if fodder is None: return f'{c.name} needs a creature to sacrifice as it is cast, and you have none you can spare.'
+    if 'needsac' in c.tags:                                  # Diabolic Intent: sacrifice a creature as you cast it
+        cre = [m for m in p.perms if m.creature and not m.phased]
+        if not cre: return f'{c.name} needs a creature to sacrifice as you cast it, and you control none.'
+        k = choose(g, p, 'choose', f'{c.name}: sacrifice which creature?', [legal.describe_target(g, p, m) for m in cre])
+        if k is None: return None
+        fodder = cre[k]
     if c.dsl and not E.additional_cost(g, p, c, dry=True): return f"You can't pay {c.name}'s additional cost."
     why = mana.pay_from_pool(g, p, gen, pips)
     if why: return f"Can't cast {c.name}. {why}"
@@ -154,7 +183,7 @@ def cast(g, p, c, zone):
         ctl.tell('auto', f'X = {x} (the rest of your mana pool)')
     if c.dsl: E.additional_cost(g, p, c)
     if fodder is not None:
-        E.die(g, fodder, 'sac'); ctl.tell('auto', f'Sacrificed {fodder.name} for {c.name}')
+        E.log(f'  {E.NAME(p)} sacrifices {fodder.name} for {c.name}', g); E.die(g, fodder, 'sac')
     if 'phyU' in c.tags and 'U' in c.pips and pips.count('U') < c.pips.count('U'):
         E.lose_life(g, p, 2, p)                              # {U/P} paid with 2 life
     E.cast_card(g, p, c, zone, ctx)

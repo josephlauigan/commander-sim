@@ -1354,8 +1354,14 @@ def counter_window(g, p, c, imp, aff):
     global LAST_COUNTER
     if 'unc' in c.tags: return True
     if g.hooks and CI.total(g, 'uncounterable', p, c): return True
+    hctl = getattr(g, 'controllers', None)
     for q in g.after(p):
         if not q.alive or g.over or silenced(g, q): continue
+        if hctl and q.key in hctl:                         # practice mode: the person may respond, or pass
+            ctr = importlib.import_module('commander_sim.play.human').respond(g, q, f'{NAME(p)} casts {c.name}', spell=c)
+            if ctr is None: continue
+            if not _counter_resolves(g, q, p, c, ctr, imp): continue
+            return False
         val = aff.get(q, imp)
         if AI_MODE == 'adaptive':
             from commander_sim.ai import brain
@@ -1376,27 +1382,39 @@ def counter_window(g, p, c, imp, aff):
             g.bounced_spell = True; return False
         ctr = pick_counter(g, q, c)
         if ctr is None: continue
-        if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, p, q, ctr): continue
-        if not cast_counter(g, q, ctr, c): continue
-        log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
-        soft = int(ctr.tags.get('soft', 0))
-        if ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
-            soft = sum(casts_this_turn(g, x) for x in g.players if x.alive) - 1
-        if soft and can_pay(g, p, soft, ''):           # Spell Pierce / Mystic Confluence: pay and it resolves
-            pay(g, p, soft, ''); log(f'    {NAME(p)} pays {soft}', g); continue
-        counter_side_effects(g, q, p, ctr)
-        if ctr.name == 'Mana Drain': q.drain_mana = getattr(q, 'drain_mana', 0) + c.cmc
-        # original caster may fight back
-        if max(imp, 7) >= 7 and imp >= 6:
-            back = pick_counter(g, p, ctr)
-            if back is not None and cast_counter(g, p, back, ctr):
-                p.stats['counterwar_won'] += 1
-                log(f'    {NAME(p)} counters back with {back.name}', g)
-                continue
-        if p.key == 'seph': p.stats['seph_spell_countered'] += 1
-        p.stats['spells_countered'] += 1
-        LAST_COUNTER = ctr
+        if not _counter_resolves(g, q, p, c, ctr, imp): continue
         return False
+    return True
+
+
+def _counter_resolves(g, q, p, c, ctr, imp):
+    """q casts counterspell ctr at p's spell c: True if c ends up countered (the caster may pay for a soft counter,
+    or counter back)"""
+    global LAST_COUNTER
+    if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, p, q, ctr): return False
+    if not cast_counter(g, q, ctr, c): return False
+    log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
+    soft = int(ctr.tags.get('soft', 0))
+    if ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
+        soft = sum(casts_this_turn(g, x) for x in g.players if x.alive) - 1
+    if soft and can_pay(g, p, soft, ''):           # Spell Pierce / Mystic Confluence: pay and it resolves
+        pay(g, p, soft, ''); log(f'    {NAME(p)} pays {soft}', g); return False
+    counter_side_effects(g, q, p, ctr)
+    if ctr.name == 'Mana Drain': q.drain_mana = getattr(q, 'drain_mana', 0) + c.cmc
+    # original caster may fight back
+    hctl = getattr(g, 'controllers', None)
+    if hctl and p.key in hctl:                     # practice mode: the person may counter the counterspell
+        back = importlib.import_module('commander_sim.play.human').respond(
+            g, p, f'{NAME(q)} counters your {c.name} with {ctr.name}', spell=ctr)
+    elif max(imp, 7) >= 7 and imp >= 6: back = pick_counter(g, p, ctr)
+    else: back = None
+    if back is not None and cast_counter(g, p, back, ctr):
+        p.stats['counterwar_won'] += 1
+        log(f'    {NAME(p)} counters back with {back.name}', g)
+        return False
+    if p.key == 'seph': p.stats['seph_spell_countered'] += 1
+    p.stats['spells_countered'] += 1
+    LAST_COUNTER = ctr
     return True
 
 
@@ -1439,7 +1457,8 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     LAST_COUNTER = None
     g.cur_cast = (c, ctx, zone)
     try:
-        ok_cast = not (imp > 0 or aff) or counter_window(g, p, c, imp, aff)
+        human_near = bool(getattr(g, 'controllers', None)) and any(q.key in g.controllers for q in g.after(p))
+        ok_cast = not (imp > 0 or aff or human_near) or counter_window(g, p, c, imp, aff)
     finally:
         g.cur_cast = None
     if not ok_cast:

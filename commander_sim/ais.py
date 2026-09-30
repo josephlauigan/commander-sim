@@ -1628,7 +1628,10 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     hctl = getattr(g, 'controllers', None)
     hum_d = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, d)
     hum_p = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, p)
-    if hum_d:                                          # practice mode: the person declares blockers
+    if hum_d:                                          # practice mode: priority, then the person declares blockers
+        importlib.import_module('commander_sim.play.human').respond(
+            g, d, f'{NAME(p)} attacks you with {len(atk)} creature(s) ({sum(epow(g, m) for m in atk)} power)')
+        atk = [m for m in atk if m in p.perms]
         assign = importlib.import_module('commander_sim.play.combat').human_blocks(g, p, atk, d, unbl)
     else:
         blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
@@ -2324,11 +2327,15 @@ def _run_rounds(g, players, max_rounds):
                 if p.alive and not g.over and getattr(p, 'skip_turns', 0) > 0:
                     p.skip_turns -= 1; log(f'  {NAME(p)} skips a turn', g); continue
                 if p.alive and not g.over:
-                    if E.AI_MODE == 'adaptive' and r > 1:
+                    hum = importlib.import_module('commander_sim.play.human').humans(g) if getattr(g, 'controllers', None) else []
+                    if E.AI_MODE == 'adaptive' and r > 1 and p not in hum:
                         from commander_sim.ai import brain
                         brain.end_of_turn_window(g, p)
                     if p.alive and not g.over:
                         take_turn(g, p)
+                    for h in hum:                               # practice mode: priority at the end of each other turn
+                        if h is not p and h.alive and p.alive and not g.over:
+                            importlib.import_module('commander_sim.play.human').respond(g, h, f"End of {NAME(p)}'s turn")
             if g.over: break
     except E.OutOfWork as e:                        # a runaway loop: the game ends as a timeout
         import traceback

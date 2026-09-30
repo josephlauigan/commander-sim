@@ -44,10 +44,15 @@ def check_cast(g, p, c, zone='hand'):
     if zone == 'hand' and c not in p.hand: return f"{c.name} isn't in your hand."
     if zone == 'cmd' and not (c is p.cmd and p.cmd_in_zone): return 'Your commander is not in the command zone.'
     if c.land: return f'{c.name} is a land: play it as your land drop instead.'
+    if 'ctr' in c.tags: return f'{c.name} counters a spell: cast it when a spell you can counter is cast.'
+    if E.silenced(g, p): return "You can't cast spells during this player's turn (Conqueror's Flail)."
     if not instant_speed(c):
         why = sorcery_timing(g, p)
         if why: return why.replace('do that', f'cast {c.name}')
     if not E.castable(g, p, c, zone): return f"Something on the battlefield stops you casting {c.name} right now."
+    if 'needsac' in c.tags and not any(m.creature and not m.phased for m in p.perms):
+        return f'{c.name} needs a creature to sacrifice as you cast it, and you control none.'
+    if c.dsl and not E.additional_cost(g, p, c, dry=True): return f"You can't pay {c.name}'s additional cost."
     gen, pips = base_cost(g, p, c)
     why = mana.cost_problem(g, p, gen, pips)
     if why: return f"Can't cast {c.name}. {why}"
@@ -140,3 +145,28 @@ def check_equip(g, p, e, target):
     why = mana.cost_problem(g, p, equip_cost(e), '')
     if why: return f"Can't equip {e.name}. {why}"
     return None
+
+
+# ------------------------------------------------------------------ counterspells
+def alternative_counter_cost(g, p, ctr):
+    """a way to cast counterspell ctr without its mana cost right now, in words, or None"""
+    t = ctr.tags
+    blues = [x for x in p.hand if x is not ctr and 'U' in x.pips]
+    if 'fierce' in t and E.commander_out(p): return 'free while your commander is out'
+    if 'pact' in t: return 'free now; pay {3}{U}{U} at your next upkeep or lose'
+    if 'misstep' in t and p.life > 10: return '2 life'
+    if 'fon' in t and g.active is not p and blues: return 'exile a blue card'
+    if 'free' in t and blues: return 'exile a blue card and pay 1 life'
+    return None
+
+
+def check_counter(g, p, ctr, spell):
+    """can p counter `spell` (on the stack) with ctr from hand now?"""
+    if ctr not in p.hand: return f"{ctr.name} isn't in your hand."
+    if 'ctr' not in ctr.tags: return f"{ctr.name} isn't a counterspell."
+    if not E.counter_ok(ctr, spell): return f"{ctr.name} can't counter {spell.name}."
+    if E.silenced(g, p): return "You can't cast spells during this player's turn (Conqueror's Flail)."
+    if g.hooks and not E.castable(g, p, ctr): return f"Something on the battlefield stops you casting {ctr.name} right now."
+    gen, pips = E.counter_cost(ctr, spell)
+    if mana.cost_problem(g, p, gen, pips) is None or alternative_counter_cost(g, p, ctr): return None
+    return f"Can't cast {ctr.name}. {mana.cost_problem(g, p, gen, pips)}"

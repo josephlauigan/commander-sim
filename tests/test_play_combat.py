@@ -49,17 +49,17 @@ class Blocking(unittest.TestCase):
         g = table('sauron', 'veyran'); s, v = g.players
         wall = perm(g, s, 'Grave Titan'); wall.sick = False
         a = perm(g, v, 'Guttersnipe'); a.sick = False
-        ctl = seat(g, s, [0])
+        ctl = seat(g, s, [{'do': 'pass'}, 0])
         g.active = v
         ais.resolve_combat(g, v, [a], s, set())
         self.assertEqual(s.life, 40); self.assertNotIn(a, v.perms)
-        self.assertEqual(ctl.asked[0].kind, 'block')
+        self.assertEqual([r.kind for r in ctl.asked], ['priority', 'block'])
 
     def test_no_block(self):
         g = table('sauron', 'veyran'); s, v = g.players
         perm(g, s, 'Grave Titan').sick = False
         a = perm(g, v, 'Guttersnipe'); a.sick = False
-        seat(g, s, ['cancel'])
+        seat(g, s, [{'do': 'pass'}, 'cancel'])
         g.active = v
         ais.resolve_combat(g, v, [a], s, set())
         self.assertEqual(s.life, 38)
@@ -68,10 +68,10 @@ class Blocking(unittest.TestCase):
         g = table('sauron', 'veyran'); s, v = g.players
         perm(g, s, 'Grave Titan').sick = False
         a = perm(g, v, 'Guttersnipe'); a.sick = False
-        ctl = seat(g, s, [])
+        ctl = seat(g, s, [{'do': 'pass'}])
         g.active = v
         ais.resolve_combat(g, v, [a], s, {a})
-        self.assertEqual(ctl.asked, []); self.assertEqual(s.life, 38)
+        self.assertEqual([r.kind for r in ctl.asked], ['priority']); self.assertEqual(s.life, 38)
 
 
 if __name__ == '__main__':

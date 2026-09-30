@@ -35,7 +35,7 @@ class RulesCheck(unittest.TestCase):
 
     def test_instants_any_time_you_have_priority(self):
         g = table('sauron', 'veyran'); s, v = g.players
-        cs = hand(s, 'Counterspell'); lands(s, 'Island', 2)
+        cs = hand(s, 'Infernal Grasp'); lands(s, 'Swamp', 2)
         g.active = v; tap_all(g, s)
         self.assertIsNone(legal.check_cast(g, s, cs))
 
@@ -99,7 +99,7 @@ def bot_for(sess):
         if p.cmd_in_zone and legal.check_cast(g, p, p.cmd, 'cmd') is None: return {'do': 'cast', 'zone': 'cmd'}
         tried = sess.__dict__.setdefault('bot_tried', set())   # equip each piece at most once a turn
         for i, m in enumerate(p.perms):
-            if legal.equip_cost(m) is not None and m.attached is None and (g.round, id(m)) not in tried:
+            if g.active is p and legal.equip_cost(m) is not None and m.attached is None and (g.round, id(m)) not in tried:
                 tried.add((g.round, id(m)))
                 return {'do': 'use', 'perm': i}
         return {'do': 'pass'}
