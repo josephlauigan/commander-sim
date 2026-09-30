@@ -203,6 +203,37 @@ tools/knight_dragon.py   draws the loading animation (Pillow; run once, output c
    - **Scope:** the AI comparison log and the review screen with "Try it"; Hint; Undo; save and replay (after the determinism fix).
    - **Done when:** the review of a finished game lists every scored difference, and "Try it" continues from the right position.
 
+## Build plan
+
+The phases broken into steps, built in this order. Estimates are hours of working time. Progress is tracked in [practice-mode-progress.md](practice-mode-progress.md).
+
+| Step | What gets built | What you can do after | Estimate |
+|---|---|---|---|
+| 1a | Game session thread, controller layer, text client from your seat (all choices still automatic), a test that the sims are unchanged | Watch a game from your seat | 2–3 h |
+| 1b | Mana pool; tapping lands, rocks and dorks; paying from the pool | Tap for mana | 2–3 h |
+| 1c | Your main phase by hand: land drop, casting from hand and command zone (with tax), timing, the rules check with reasons and tests | Play your own turns | 3–5 h |
+| 1d | Targets; activated abilities (equip, planeswalkers, abilities such as Jace's Archivist) | Cast removal, use abilities | 3–4 h |
+| 1e | Combat: attackers and defenders; blockers | Fight your own battles | 2–4 h |
+| 1f | Priority on every opponent spell, ability and attack; instants in response | First fully manual game (rare choices "(auto)") | 3–4 h |
+| 1g | Mulligans, discards, sacrifices and edicts, tutors, scry and surveil, modes, "you may" triggers | Nearly every generic choice is yours | 3–4 h |
+| 1h | Sauron's card-specific choices (Ring, Kefka, Archivist, Swords, Breach recasting, Brain Freeze, rituals) | Sauron fully manual (Milestone 1) | 3–5 h |
+| 1i | Seph (reanimation, loop shortcuts), Veyran, Marchesa | All four decks fully manual | 5–10 h |
+| 2a | Server, the seat's view, event stream, a bare page | Follow a game in the browser | 3–5 h |
+| 2b | Image pipeline: card-data fields, tokens, download and cache, loading screen | Images load before the game | 3–4 h |
+| 2c | Setup screen | Start a game from the browser | 1–2 h |
+| 2d | The table: zones, images, tapped cards, counters, hover to enlarge, log, step tracker | See the table | 4–6 h |
+| 2e | Your turn: tap for mana, cast and activate, targets, error messages, pass priority | Play your turns in the browser | 4–7 h |
+| 2f | Combat: attackers, defenders, blockers | Fight in the browser | 2–4 h |
+| 2g | Opponents' turns: playback, pause, step and speed; priority prompt; the stack | Full game in the browser (Milestone 2) | 2–4 h |
+| 3a | The look-ahead AI's choices made independent of memory addresses | A seed always replays the same game | 2–4 h |
+| 3b | Snapshots and Undo | Take back moves | 2–3 h |
+| 3c | Hint | Ask what the AI would do | 1–2 h |
+| 3d | The AI comparison log, computed in the background | (recorded) | 3–5 h |
+| 3e | Review screen with "Try it" | See where you and the AI differed (Milestone 3) | 3–4 h |
+| 3f | Save and replay | Save and replay games | 1–2 h |
+
+Total: about 55–90 hours.
+
 ## Risks and open questions
 
 - **Rules gaps.** Manual play will hit card interactions the AIs never exercised. The plan: log them as "(auto)" or "not modelled", and fix the ones that come up in your decks first.
