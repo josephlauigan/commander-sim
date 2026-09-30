@@ -102,6 +102,9 @@ def parse(line, view):
     return f"?Unknown command {w[0]!r} (help for the list)."
 
 
+TRIES = 20          # unusable answers in a row before a prompt takes its default (pass / none / keep / cancel)
+
+
 def run(session, out=sys.stdout, inp=input):
     """drive a session from the terminal until the game ends"""
     session.start()
@@ -120,7 +123,7 @@ def run(session, out=sys.stdout, inp=input):
             req = ev['request']
             if req.kind == 'priority':
                 priority_prompt(req, out)
-                while True:
+                for _ in range(TRIES):
                     try:
                         line = inp('> ')
                     except EOFError:
@@ -131,10 +134,12 @@ def run(session, out=sys.stdout, inp=input):
                     if act == 'quit': session.close(); break
                     if isinstance(act, str): print('  ' + act[1:], file=out); continue
                     session.answer(act); break
+                else:
+                    session.answer({'do': 'pass'})
             elif req.kind == 'attack':
                 print(f'\n{req.prompt}', file=out)
                 for i, ch in enumerate(req.choices): print(f'  {i + 1}) {ch}', file=out)
-                while True:
+                for _ in range(TRIES):
                     try:
                         line = inp('attackers (e.g. 1,3 / all / none)> ').strip().lower()
                     except EOFError:
@@ -145,10 +150,25 @@ def run(session, out=sys.stdout, inp=input):
                     if parts and all(x.isdigit() and 1 <= int(x) <= len(req.choices) for x in parts):
                         session.answer([int(x) - 1 for x in parts]); break
                     print('  Type numbers separated by commas, all, or none.', file=out)
-            elif req.kind in ('choose', 'target', 'block'):
+                else:
+                    session.answer([])
+            elif req.kind == 'mulligan':
+                print(f'\n{req.prompt}', file=out)
+                for i, n in enumerate(req.data.get('hand', [])): print(f'  {i + 1}) {n}', file=out)
+                for _ in range(TRIES):
+                    try:
+                        line = inp('keep or mulligan? ').strip().lower()
+                    except EOFError:
+                        line = 'keep'
+                    if line in ('keep', 'k', ''): session.answer('keep'); break
+                    if line in ('mulligan', 'mull', 'm'): session.answer('mulligan'); break
+                    print('  Type keep or mulligan.', file=out)
+                else:
+                    session.answer('keep')
+            elif req.kind in ('choose', 'target', 'block', 'search'):
                 print(f'\n{req.prompt}', file=out)
                 for i, ch in enumerate(req.choices): print(f'  {i + 1}) {ch}', file=out)
-                while True:
+                for _ in range(TRIES):
                     try:
                         line = inp('> ').strip().lower()
                     except EOFError:
@@ -157,6 +177,8 @@ def run(session, out=sys.stdout, inp=input):
                     if line.isdigit() and 1 <= int(line) <= len(req.choices):
                         session.answer(int(line) - 1); break
                     print(f'  Type a number from 1 to {len(req.choices)}, or cancel.', file=out)
+                else:
+                    session.answer('cancel')
             elif req.kind == 'continue':
                 try:
                     inp(f"[{req.prompt}] Enter to continue, q to quit: ").strip().lower() == 'q' and session.close()

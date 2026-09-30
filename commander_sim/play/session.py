@@ -76,11 +76,14 @@ class Session:
 
     def _run(s):
         try:
-            g = ais.setup_pool_game(s.seed, [poolmode.seat_spec(k) for k in s._seats])
+            g = ais.setup_pool_game(s.seed, [poolmode.seat_spec(k) for k in s._seats], human=s.deck)
             g.log = EventLog(s)
             g.controllers = {s.deck: s.human}
             s.game = g
             g.log.append('Seat order: ' + ', '.join(ais.NAME(p) for p in g.players))
+            me = next(p for p in g.players if p.key == s.deck)
+            from commander_sim.play import choices
+            choices.mulligan(g, me, me.mull_rng)
             ais._run_rounds(g, g.players, s.max_rounds)
             s.events.put({'kind': 'over', 'view': build_view(g, s.deck),
                           'winner': g.winner.key if g.winner else None, 'how': getattr(g, 'wintype', '')})

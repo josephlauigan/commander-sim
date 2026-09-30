@@ -100,14 +100,15 @@ def apply(g, p, act):
 
 def choose(g, p, kind, prompt, labels, cancel='cancel'):
     """ask the person to pick one of labels; returns its index, or None if they cancel (the last choice, named by
-    `cancel`, e.g. 'no block')"""
+    `cancel`, e.g. 'no block'). cancel=None: a forced choice with no way out (after five bad answers: the first)"""
     ctl = controller_of(g, p)
+    shown = list(labels) + ([cancel] if cancel is not None else [])
     for _ in range(5):
-        ans = ctl.ask(Request(kind, prompt, choices=list(labels) + [cancel]))
-        if ans == 'cancel' or ans == len(labels): return None
+        ans = ctl.ask(Request(kind, prompt, choices=shown))
+        if cancel is not None and (ans == 'cancel' or ans == len(labels)): return None
         if isinstance(ans, int) and not isinstance(ans, bool) and 0 <= ans < len(labels): return ans
-        ctl.tell('invalid', 'Pick one of the numbers, or cancel.')
-    return None                                               # five bad answers in a row: treated as cancel
+        ctl.tell('invalid', 'Pick one of the numbers' + (', or cancel.' if cancel is not None else '.'))
+    return None if cancel is not None else 0
 
 
 def abilities_of(g, p, m):

@@ -1236,14 +1236,17 @@ def _tutor_pick_named(g, p, kind):
 
 
 
+TUTOR_OK = {'any': lambda c: True, 'is': lambda c: c.instant or c.sorcery, 'art': lambda c: 'A' in c.types,
+            'perm': lambda c: c.perm, 'ubr': lambda c: not c.land and any(x in c.pips for x in 'UBR'),
+            'cre2': lambda c: c.creature and c.pow <= 2, 'cre': lambda c: c.creature,
+            'ench': lambda c: 'E' in c.types}          # what each kind of tutor may find
+
+
 def tutor_pick(g, p, kind):
     """deck-specific wish lists first; otherwise the highest-priority legal card (works for any card pool)"""
     n = _tutor_pick_named(g, p, kind)
     if n: return n
-    ok = {'any': lambda c: True, 'is': lambda c: c.instant or c.sorcery, 'art': lambda c: 'A' in c.types,
-          'perm': lambda c: c.perm, 'ubr': lambda c: not c.land and any(x in c.pips for x in 'UBR'),
-          'cre2': lambda c: c.creature and c.pow <= 2, 'cre': lambda c: c.creature,
-          'ench': lambda c: 'E' in c.types}.get(kind, lambda c: True)
+    ok = TUTOR_OK.get(kind, TUTOR_OK['any'])
     prio = deck_prio
     if p.key not in MAIN:                        # outside deck: its wish list, then priority or interpreter value
         from commander_sim.ai import pool_ai
@@ -2158,7 +2161,11 @@ def end_step(g, p):
     if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
         for m in p.perms:
             if m.plus > 0: m.plus += 1
-    while len(p.hand) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
+    hc = E.human_choice(g, p)
+    if hc is not None and not has(p, 'nomax') and not (any('nomax' in L.cd.tags for L in p.lands)
+                                                       or getattr(p, 'nomax_turn', None) == p.turns):
+        hc.discard_to_hand_size(g, p)
+    while hc is None and len(p.hand) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
                                                                           or getattr(p, 'nomax_turn', None) == p.turns)):
         if p.key == 'seph':
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
@@ -2357,8 +2364,9 @@ def play_pool_game(seed, seats, max_rounds=20, trace=False):
     return _run_rounds(g, g.players, max_rounds)
 
 
-def setup_pool_game(seed, seats, trace=False):
-    """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one"""
+def setup_pool_game(seed, seats, trace=False, human=None):
+    """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one. human: a deck
+    key whose mulligans the person makes (practice mode; its shuffle generator is kept as p.mull_rng)"""
     players = [Player(k, cards, cmd) for k, cards, cmd in seats]
     g = Game(players, random.Random(f'play:{seed}'))
     g.combo_decks = {p.key for p in players if p.key not in MAIN}
@@ -2367,7 +2375,9 @@ def setup_pool_game(seed, seats, trace=False):
         g.log = ['Seat order: ' + ', '.join(NAME(p) for p in players)]
     for p in players:
         r = random.Random(f'lib:{seed}:{p.key}')
-        r.shuffle(p.library); mulligan(g, p, r)
+        r.shuffle(p.library)
+        if p.key == human: p.mull_rng = r; continue
+        mulligan(g, p, r)
         p.seen_names.update(c.name for c in p.hand)
     return g
 

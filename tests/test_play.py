@@ -8,6 +8,12 @@ from commander_sim.play.view import build_view
 from commander_sim.play import text
 
 
+def default(req):
+    """a do-nothing answer to any request: pass, keep the hand, first choice, no attack, continue"""
+    return {'priority': {'do': 'pass'}, 'mulligan': 'keep', 'attack': []}.get(
+        req.kind, 0 if req.kind in ('choose', 'target', 'block', 'search') else True)
+
+
 def drain(s, answer=None, limit=20000):
     """run a started session to the end; answer each request with answer(req) (default: True)"""
     evs = []
@@ -16,7 +22,7 @@ def drain(s, answer=None, limit=20000):
         evs.append(ev)
         if ev['kind'] == 'request':
             req = ev['request']
-            s.answer(answer(req) if answer else ({'do': 'pass'} if req.kind == 'priority' else True))
+            s.answer(answer(req) if answer else default(req))
         if ev['kind'] in ('over', 'error'): break
     return evs
 
@@ -41,10 +47,11 @@ class Session_(unittest.TestCase):
     def test_step_mode_waits_for_the_human(self):
         s = Session('veyran', 't1', seed=2, ai='adaptive', step=True).start()
         asked = []
-        evs = drain(s, answer=lambda r: asked.append(r.kind) or ({'do': 'pass'} if r.kind == 'priority' else True))
+        evs = drain(s, answer=lambda r: asked.append(r.kind) or default(r))
         self.assertEqual(evs[-1]['kind'], 'over')
         self.assertGreater(len(asked), 4)
-        self.assertEqual(set(asked), {'continue', 'priority'})
+        self.assertEqual(asked[0], 'mulligan')                  # your opening hand comes first
+        self.assertTrue({'continue', 'priority'} <= set(asked))
 
     def test_closing_stops_the_game(self):
         s = Session('marchesa', 't1', seed=2, ai='adaptive', step=True).start()
@@ -58,7 +65,7 @@ class Session_(unittest.TestCase):
     def test_text_client(self):
         s = Session('sauron', 't1', seed=4, ai='adaptive')
         out = io.StringIO()
-        ev = text.run(s, out=out, inp=lambda prompt='': 'pass')
+        ev = text.run(s, out=out, inp=lambda prompt='': 'keep' if 'mulligan' in prompt else 'pass')
         self.assertEqual(ev['kind'], 'over')
         self.assertIn('Game over:', out.getvalue())
         self.assertIn('(you)', out.getvalue())

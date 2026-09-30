@@ -1177,7 +1177,16 @@ def magecraft(g, p, c=None, copy=False):
     if has(p, 'aether') and not copy: gain(p, p.spells_this_turn * base_mult)
 
 
+def human_choice(g, p):
+    """practice mode: the choices module when p is played by a person, else None (the AI decides)"""
+    ctl = getattr(g, 'controllers', None) if g is not None else None
+    if not ctl or p.key not in ctl or not getattr(ctl[p.key], 'human', False): return None
+    return importlib.import_module('commander_sim.play.choices')
+
+
 def discard_worst(g, p, n):
+    hc = human_choice(g, p)
+    if hc is not None: return hc.discard(g, p, n)
     keep = set()
     if CI is not None and p.key in SEATS:              # outside decks keep combo pieces and wished cards
         from commander_sim.ai import pool_ai
@@ -1803,11 +1812,18 @@ def edict(g, q, least_power=False):
     cr = [m for m in q.perms if m.creature and not m.phased]
     if cr and least_power:
         lo = min(epow(g, m) for m in cr); cr = [m for m in cr if epow(g, m) == lo]
+    hc = human_choice(g, q)
+    if hc is not None and cr: return hc.sacrifice_creature(g, q, cr, 'Sacrifice a creature (edict)')
     if cr: die(g, min(cr, key=lambda x: sac_worth(g, x)), 'sac')
 
 
 def land_ramp(g, p, n, tapped):
+    hc = human_choice(g, p)
     for _ in range(n):
+        if hc is not None:
+            c = hc.pick_basic(g, p, 'Search for a basic land to put onto the battlefield' + (' tapped' if tapped else ''))
+            if c is None: return
+            p.lands.append(Land(c, tapped)); landfall(g, p); continue
         basics = [c for c in searchable(g, p) if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
         if not basics: return
         c = g.rng.choice(basics); p.library.remove(c)
@@ -1835,6 +1851,11 @@ def _landfall_once(g, p):
 
 
 def land_to_hand(g, p):
+    hc = human_choice(g, p)
+    if hc is not None:
+        c = hc.pick_basic(g, p, 'Search for a basic land to put into your hand')
+        if c is not None: p.hand.append(c)
+        g.rng.shuffle(p.library); return
     basics = [c for c in searchable(g, p) if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
     if basics:
         c = g.rng.choice(basics); p.library.remove(c)
@@ -1860,6 +1881,12 @@ def add_treasure(g, p, n=1):
 
 def tutor(g, p, kind):
     from commander_sim import ais
+    hc = human_choice(g, p)
+    if hc is not None:
+        for c in hc.search(g, p, ais.TUTOR_OK.get(kind, ais.TUTOR_OK['any']), 1, 'Search your library'):
+            p.hand.append(c); p.stats['tutored'] += 1; p.seen_names.add(c.name)
+            log(f'    {NAME(p)} tutors a card', g)
+        return
     name = ais.tutor_pick(g, p, kind)
     if name is None: return
     for c in searchable(g, p):
@@ -2236,6 +2263,12 @@ def agent_take(g, a, p, c):
 
 def tutor_to_top(g, p):
     from commander_sim import ais
+    hc = human_choice(g, p)
+    if hc is not None:
+        got = hc.search(g, p, ais.TUTOR_OK['any'], 1, 'Search your library for a card to put on top')
+        lose_life(g, p, 2, p)
+        for c in got: p.library.append(c); p.stats['tutored'] += 1
+        return
     p.to_top = True
     try:
         name = ais.tutor_pick(g, p, 'any')
