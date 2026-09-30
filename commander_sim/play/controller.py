@@ -25,13 +25,19 @@ class HumanController:
     """the human seat: each decision is posted to `requests` and the engine thread blocks until `answer` is called"""
     human = True
 
-    def __init__(s):
+    def __init__(s, notify=None):
         s.requests = queue.Queue()
         s._answers = queue.Queue()
         s._closed = threading.Event()
+        s.notify = notify                        # the session's event stream: notify(event_dict)
+
+    def tell(s, kind, text):
+        """a message for the human that needs no answer (an illegal move, an automatic choice)"""
+        if s.notify is not None: s.notify({'kind': kind, 'text': text})
 
     def ask(s, req):
         if s._closed.is_set(): raise Cancelled()
+        if s.notify is not None: s.notify({'kind': 'request', 'request': req})
         s.requests.put(req)
         while True:
             try:
@@ -48,6 +54,23 @@ class HumanController:
     def close(s):
         s._closed.set()
         s._answers.put(Cancelled())
+
+
+class ScriptController(HumanController):
+    """tests: answers requests from a list (or a function of the request) instead of a person"""
+    def __init__(s, answers):
+        super().__init__()
+        s.answers = answers if callable(answers) else list(answers)
+        s.asked, s.told = [], []
+
+    def ask(s, req):
+        s.asked.append(req)
+        if callable(s.answers): return s.answers(req)
+        if not s.answers: raise Cancelled()
+        return s.answers.pop(0)
+
+    def tell(s, kind, text):
+        s.told.append((kind, text))
 
 
 def controller_of(g, p):

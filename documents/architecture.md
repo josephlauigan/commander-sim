@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (209 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (218 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -905,6 +905,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (209 tests, abou
 | `test_sim_guard.py` | Seeded games play out exactly as recorded (`tests/fixtures/sim_guard.json`). |
 | `test_play.py` | Practice mode: sessions, events, the seat's view, the controller. |
 | `test_play_mana.py` | Practice mode's mana pool. |
+| `test_play_turn.py` | Practice mode's main phase and the rules check. |
 
 `tests/table.py` builds a position for a rule test: seat decks, empty the hands, put chosen cards in hand or onto the
 battlefield, then drive the engine directly.

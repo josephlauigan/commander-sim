@@ -2232,6 +2232,8 @@ def _step_start(g, p):
     if g.over or not p.alive: return
     nl = len(p.lands)
     p.lands_played = 0; p.extra_land_now = 0
+    if getattr(g, 'controllers', None) and importlib.import_module('commander_sim.play.human').is_human(g, p):
+        return                                       # practice mode: the person plays lands in the main phase
     play_land(g, p)
     if g.hooks: more_lands(g, p)
     if len(p.lands) == nl and p.turns <= 5: p.stats['land_miss'] += 1
@@ -2239,6 +2241,8 @@ def _step_start(g, p):
 
 
 def _step_main1(g, p):
+    if getattr(g, 'controllers', None) and importlib.import_module('commander_sim.play.human').is_human(g, p):
+        importlib.import_module('commander_sim.play.human').human_main(g, p, False); return
     main_fn(p)(g, p, False)
     if g.over or not p.alive: return
     if g.hooks: more_lands(g, p)
@@ -2254,6 +2258,8 @@ def _step_combat(g, p):
 
 
 def _step_main2(g, p):
+    if getattr(g, 'controllers', None) and importlib.import_module('commander_sim.play.human').is_human(g, p):
+        importlib.import_module('commander_sim.play.human').human_main(g, p, True); return
     main_fn(p)(g, p, True)
     if p.key == 'veyran' and has(p, 'veyran') and engine_payoff(p): p.milestone.setdefault('engine', p.turns)
 

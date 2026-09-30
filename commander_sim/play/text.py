@@ -43,6 +43,54 @@ def show_table(view, out=sys.stdout):
                   + (', '.join(f"{x['name']} ({x['colours']})" for x in srcs) or 'none'), file=out)
 
 
+HELP = """Commands:
+  show              the table again
+  tap N [C]         tap mana source N (C: the colour, for sources that make several)
+  land N            play card N from your hand as your land drop
+  cast N            cast card N from your hand
+  cast cmd          cast your commander from the command zone
+  pass              pass priority (move on)
+  quit              end the game"""
+
+
+def _me(view):
+    return next(p for p in view['players'] if p['you'])
+
+
+def priority_prompt(req, out):
+    """what you need in front of you each time you get priority: pool, hand and sources, numbered"""
+    me = _me(req.data['view'])
+    print(f"\n{req.prompt}. Mana pool: {me['mana_pool']}", file=out)
+    print('  Hand: ' + ('  '.join(f'{i + 1}) {n}' for i, n in enumerate(me['hand'])) or '(empty)'), file=out)
+    srcs = me.get('mana_sources') or []
+    print('  Mana sources: ' + ('  '.join(f"{i + 1}) {x['name']} ({x['colours']})" for i, x in enumerate(srcs))
+                                or '(none untapped)'), file=out)
+    if me['commander_in_zone']: print(f"  Commander in the command zone: {me['commander']} (tax {me['tax']})", file=out)
+
+
+def parse(line, view):
+    """a typed command -> an action dict, 'show', 'help', 'quit', or an error string starting with '?'"""
+    w = line.strip().split()
+    if not w: return '?Type a command (help for the list).'
+    cmd = w[0].lower()
+    if cmd in ('pass', 'p'): return {'do': 'pass'}
+    if cmd in ('show', 's'): return 'show'
+    if cmd in ('help', 'h', '?'): return 'help'
+    if cmd in ('quit', 'q'): return 'quit'
+    if cmd == 'cast' and len(w) > 1 and w[1].lower() in ('cmd', 'commander'): return {'do': 'cast', 'zone': 'cmd'}
+    if cmd in ('tap', 'land', 'cast'):
+        if len(w) < 2 or not w[1].isdigit(): return f'?Which one? e.g. {cmd} 1'
+        n = int(w[1]) - 1
+        if cmd == 'tap':
+            srcs = _me(view).get('mana_sources') or []
+            if not 0 <= n < len(srcs): return '?No such mana source.'
+            act = {'do': 'tap', 'source': srcs[n]['id']}
+            if len(w) > 2: act['colour'] = w[2].upper()[0]
+            return act
+        return {'do': cmd, 'card': n}
+    return f"?Unknown command {w[0]!r} (help for the list)."
+
+
 def run(session, out=sys.stdout, inp=input):
     """drive a session from the terminal until the game ends"""
     session.start()
@@ -55,9 +103,24 @@ def run(session, out=sys.stdout, inp=input):
             print(ev['text'], file=out)
         elif k == 'turn':
             if ev['player'] == session.deck: show_table(ev['view'], out)
+        elif k in ('invalid', 'auto'):
+            print(('  Not allowed: ' if k == 'invalid' else '  (automatic) ') + ev['text'], file=out)
         elif k == 'request':
             req = ev['request']
-            if req.kind == 'continue':
+            if req.kind == 'priority':
+                priority_prompt(req, out)
+                while True:
+                    try:
+                        line = inp('> ')
+                    except EOFError:
+                        line = 'quit'
+                    act = parse(line, req.data['view'])
+                    if act == 'show': show_table(req.data['view'], out); continue
+                    if act == 'help': print(HELP, file=out); continue
+                    if act == 'quit': session.close(); break
+                    if isinstance(act, str): print('  ' + act[1:], file=out); continue
+                    session.answer(act); break
+            elif req.kind == 'continue':
                 try:
                     inp(f"[{req.prompt}] Enter to continue, q to quit: ").strip().lower() == 'q' and session.close()
                 except EOFError:

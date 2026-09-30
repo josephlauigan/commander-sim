@@ -63,8 +63,12 @@ class ManaPool:
             elif m['A'] > 0: m['A'] -= 1
             else: short.append('{' + c + '}')
         left = sum(m.values())
-        if generic > left: short.append('{' + str(generic - left) + '}')
+        if generic > left: short.insert(0, '{' + str(generic - left) + '}')
         return ''.join(short)
+
+    def has_text(s):
+        """'is empty' / 'has {B}{B}', for messages"""
+        return 'is empty' if s.total() == 0 else f'has {s.text()}'
 
 
 def pool_of(p):
@@ -115,14 +119,27 @@ def sources_name(u):
     return getattr(src, 'name', None) or getattr(getattr(src, 'cd', None), 'name', None) or 'a mana source'
 
 
-def pay_from_pool(g, p, generic, pips):
-    """pay a cost from p's pool and the engine's floating mana (rituals). Returns None, or the reason it can't"""
+def _gather_floating(p):
+    """the engine's floating mana (rituals, Birgi, Lion's Eye Diamond) joins the pool"""
     pool = pool_of(p)
-    for attr, c in (('floatR', 'R'), ('floatU', 'U'), ('floatC', 'C'), ('floatA', 'A')):   # floating mana joins the pool
+    for attr, c in (('floatR', 'R'), ('floatU', 'U'), ('floatC', 'C'), ('floatA', 'A')):
         n = getattr(p, attr, 0)
         if n: pool.add(c, n); setattr(p, attr, 0)
+    return pool
+
+
+def cost_problem(g, p, generic, pips):
+    """None if p's pool can pay this now, else the reason (nothing is spent)"""
+    pool = _gather_floating(p)
+    if pool.can_pay(generic, pips): return None
+    return f'It costs {cost_text(generic, pips)}; your mana pool {pool.has_text()}. Missing {pool.missing(generic, pips)}.'
+
+
+def pay_from_pool(g, p, generic, pips):
+    """pay a cost from p's pool and the engine's floating mana (rituals). Returns None, or the reason it can't"""
+    pool = _gather_floating(p)
     if pool.pay(generic, pips): return None
-    return f'It costs {cost_text(generic, pips)}; your mana pool has {pool.text()}. Missing {pool.missing(generic, pips)}.'
+    return f'It costs {cost_text(generic, pips)}; your mana pool {pool.has_text()}. Missing {pool.missing(generic, pips)}.'
 
 
 def cost_text(generic, pips):

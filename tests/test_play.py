@@ -14,7 +14,9 @@ def drain(s, answer=None, limit=20000):
     for _ in range(limit):
         ev = s.events.get(timeout=120)
         evs.append(ev)
-        if ev['kind'] == 'request': s.answer(answer(ev['request']) if answer else True)
+        if ev['kind'] == 'request':
+            req = ev['request']
+            s.answer(answer(req) if answer else ({'do': 'pass'} if req.kind == 'priority' else True))
         if ev['kind'] in ('over', 'error'): break
     return evs
 
@@ -39,10 +41,10 @@ class Session_(unittest.TestCase):
     def test_step_mode_waits_for_the_human(self):
         s = Session('veyran', 't1', seed=2, ai='adaptive', step=True).start()
         asked = []
-        evs = drain(s, answer=lambda r: asked.append(r.kind) or True)
+        evs = drain(s, answer=lambda r: asked.append(r.kind) or ({'do': 'pass'} if r.kind == 'priority' else True))
         self.assertEqual(evs[-1]['kind'], 'over')
         self.assertGreater(len(asked), 4)
-        self.assertEqual(set(asked), {'continue'})
+        self.assertEqual(set(asked), {'continue', 'priority'})
 
     def test_closing_stops_the_game(self):
         s = Session('marchesa', 't1', seed=2, ai='adaptive', step=True).start()
@@ -56,7 +58,7 @@ class Session_(unittest.TestCase):
     def test_text_client(self):
         s = Session('sauron', 't1', seed=4, ai='adaptive')
         out = io.StringIO()
-        ev = text.run(s, out=out)
+        ev = text.run(s, out=out, inp=lambda prompt='': 'pass')
         self.assertEqual(ev['kind'], 'over')
         self.assertIn('Game over:', out.getvalue())
         self.assertIn('(you)', out.getvalue())

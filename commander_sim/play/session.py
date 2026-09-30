@@ -43,7 +43,7 @@ class Session:
         s.deck, s.tier, s.profile, s.ai, s.step, s.max_rounds = deck, tier, profile, ai, step, max_rounds
         s.seed = seed if seed is not None else random.SystemRandom().randrange(1, 10 ** 6)
         s.events = queue.Queue()
-        s.human = HumanController()
+        s.human = HumanController(notify=s.events.put)
         s.game = None
         s._thread = None
         s._seats = s._choose_seats(opponents, seat)
@@ -98,7 +98,6 @@ class Session:
 
     def ask(s, req):
         """engine thread: post a request and wait for the human's answer"""
-        s.events.put({'kind': 'request', 'request': req})
         return s.human.ask(req)
 
     def answer(s, value):
