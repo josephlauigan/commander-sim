@@ -8,12 +8,13 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 - Commit each finished piece with the whole test suite passing (`python3 -m unittest discover -s tests -t .`). Never commit failing tests; never change decklists.
 - The simulations must not change: every new code path is inert unless a human seat is present. The sim-guard test (added in 1a) must stay green.
 - Push `practice-mode` only at checkpoints. Never push `main`.
+- Run anything heavy (the test suite, a practice game, a sim) under a memory cap: `( ulimit -v 16000000; ... )`. Stop any background run started before a fix. A process that runs this machine out of memory gets the whole VS Code window killed, and this session and its schedule with it.
 - Checkpoints: 7:30am, 11am, 3pm, 6pm and 10pm Mountain time. At each: commit, push, update this file, send one phone notification (under 200 characters) saying what's new and what to try.
 
 ## Status
 
 - Current step: 1g, second half ("choose one" modes and "you may" triggers), then 1h
-- Last checkpoint: 2026-09-30 7:30am (pushed)
+- Last checkpoint: 2026-09-30 6pm (pushed); the session was down from 7:59am to 6:15pm
 
 ## Done
 
@@ -27,6 +28,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 
 ## Notes and decisions
 
+- 2026-09-30, 7:59am: the session died a third time. A background test run started at 7:36, before the fix, was still running the old looping code; it reached 62 GB and the out-of-memory kill took the VS Code window down again (systemd stops the window's whole process group when anything in it is OOM-killed). Nothing ran until the user reopened it at 6:15pm. Lesson recorded in Working rules: cap memory on heavy commands and stop stale background runs after a fix.
 - 2026-09-30: the overnight session died at 22:47. A test (the text client answering "pass" to the new mulligan prompt) looped forever, printed into memory until it reached 60 GB, and the kernel's out-of-memory killer took the session with it; the 7:41am rerun hit the same. Fixed: that test answers correctly, every text-client prompt gives up after 20 unusable answers, and `tests/__init__.py` caps a test run at 12 GB of address space so a runaway fails as a MemoryError instead of killing the session.
 
 - 2026-09-29: design agreed; build plan and checkpoint times set by the user.
