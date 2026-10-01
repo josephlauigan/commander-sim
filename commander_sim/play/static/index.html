@@ -19,6 +19,7 @@
   <div id="status"></div>
   <button id="hint" type="button" hidden title="What would the AI do now?">💡 Hint</button>
   <button id="undo" type="button" hidden title="Take back your last action">↶ Undo</button>
+  <button id="save" type="button" hidden title="Save this game (seed, table and your decisions) to replay later">💾 Save</button>
   <button id="to-setup" type="button" hidden>New game</button>
 </header>
 <section id="setup" aria-label="New game" hidden>
@@ -47,6 +48,8 @@
     </div>
     <div class="row"><button type="submit" class="primary big">Start game</button> <span id="setup-error" class="error"></span></div>
   </form>
+  <h2>Saved games</h2>
+  <div id="saves"><em>None yet: use 💾 Save during a game.</em></div>
 </section>
 <div id="loading" hidden>
   <div class="loading-box">

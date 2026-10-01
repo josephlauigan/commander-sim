@@ -259,7 +259,8 @@ function onEvent(ev, draw = true) {
     pending = null; renderPrompt(null); tryBanner = null;
     $('#prompt').replaceChildren(el('h3', {}, `Game over: ${ev.winner || 'no winner'}${ev.how ? ` (${ev.how})` : ''}`),
       el('div', { class: 'row' }, tools.compare ? el('button', { class: 'primary', onclick: showReview }, 'Review the game') : null,
-        el('button', { onclick: sameSeed }, 'Play this seed again'), el('button', { onclick: () => screen('setup') }, 'New game')));
+        el('button', { onclick: sameSeed }, 'Play this seed again'), el('button', { onclick: saveGame }, 'Save game'),
+        el('button', { onclick: () => screen('setup') }, 'New game')));
     if ((location.hash === '#review' || new URLSearchParams(location.search).has('review')) && tools.compare) showReview();   // a direct link
   }
   else if (ev.kind === 'error') logLine(ev.text, 'invalid');
@@ -361,6 +362,34 @@ async function tryIt(n) {
   if (!r.ok) toast(r.data.error);
 }
 
+async function saveGame() {
+  const r = await api('/api/save', {});
+  if (!r.ok) { toast(r.data.error); return; }
+  const t = $('#toast'); t.textContent = `Saved: ${r.data.name}`; t.hidden = false;
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => { t.hidden = true; }, 4000);
+  listSaves();
+}
+
+async function listSaves() {
+  const r = await api('/api/saves');
+  if (!r.ok || !r.data.saves.length) return;
+  $('#saves').replaceChildren(el('table', { class: 'review' },
+    el('thead', {}, el('tr', {}, ['Saved', 'Deck', 'Tier', 'Seed', 'Where', ''].map((h) => el('th', {}, h)))),
+    el('tbody', {}, r.data.saves.map((x) => el('tr', {}, el('td', {}, x.saved_at || ''), el('td', {}, x.deck),
+      el('td', {}, (x.tier || '').toUpperCase()), el('td', {}, x.seed),
+      el('td', {}, x.finished ? `finished, round ${x.round}` : `round ${x.round}`),
+      el('td', {}, el('button', { onclick: () => loadGame(x.name) }, x.finished ? 'Open (review)' : 'Continue')))))));
+}
+
+async function loadGame(name) {
+  $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false;
+  renderTable(null); renderPrompt(null); loading(0, 0);
+  const r = await api('/api/load', { name });
+  if (!r.ok) { loading(null); toast(r.data.error); return; }
+  const st = (await api('/api/state')).data;
+  setStatus(st.game.seed, st.game.seats); setTools(st.game.tools); screen('game');
+}
+
 async function sameSeed() {
   const st = (await api('/api/state')).data;
   if (!st.game) { screen('setup'); return; }
@@ -412,6 +441,8 @@ function screen(name) {
   if (name !== 'game') $('#playback').hidden = true;
   $('#to-setup').hidden = name !== 'game';
   $('#undo').hidden = name !== 'game' || !tools.undo;
+  $('#save').hidden = name === 'setup';
+  if (name === 'setup') listSaves();
   $('#hint').hidden = name !== 'game' || !tools.hint;
 }
 
@@ -471,6 +502,8 @@ async function init() {
   $('#to-setup').addEventListener('click', () => screen('setup'));
   $('#table').addEventListener('click', onTableClick);
   $('#undo').addEventListener('click', undo);
+  $('#save').addEventListener('click', saveGame);
+  listSaves();
   $('#hint').addEventListener('click', hint);
   setupPlayback();
   $('#pass').addEventListener('click', () => answer({ do: 'pass' }));

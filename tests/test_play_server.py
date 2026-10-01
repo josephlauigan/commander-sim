@@ -66,6 +66,28 @@ class Server(unittest.TestCase):
         self.assertEqual(st, 409); self.assertIn('when the game ends', json.loads(body)['error'])
         self.call('POST', '/api/quit', {})
 
+    def test_save_list_and_load(self):
+        import tempfile
+        saved_dir = server.SAVES
+        server.SAVES = tempfile.mkdtemp()
+        try:
+            self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 4, 'ai': 'adaptive', 'images': False})
+            mull = self.wait_for(lambda e: e['kind'] == 'request')
+            self.call('POST', '/api/answer', {'id': mull['id'], 'answer': 'keep'})
+            nxt = self.wait_for(lambda e: e['kind'] == 'request', since=mull['id'])
+            st, _, body = self.call('POST', '/api/save', {})
+            self.assertEqual(st, 200)
+            name = json.loads(body)['name']
+            saves = json.loads(self.call('GET', '/api/saves')[2])['saves']
+            self.assertEqual([x['name'] for x in saves], [name]); self.assertEqual(saves[0]['seed'], 4)
+            self.assertEqual(self.call('POST', '/api/load', {'name': '../x.json'})[0], 409)
+            self.assertEqual(self.call('POST', '/api/load', {'name': name, 'images': False})[0], 200)
+            again = self.wait_for(lambda e: e['kind'] == 'request')
+            self.assertEqual(again['request']['prompt'], nxt['request']['prompt'])        # back where it was saved
+            self.call('POST', '/api/quit', {})
+        finally:
+            server.SAVES = saved_dir
+
     def test_card_images_are_served(self):
         import os, tempfile
         d = tempfile.mkdtemp(); saved = server.IMAGES

@@ -27,6 +27,20 @@ class Entry:
         s.ai_plan, s.n_choices = None, 0
         s.job = None                 # the work left: a generator, one playout per step
 
+    SAVED = ('n', 'round', 'step', 'kind', 'situation', 'yours', 'ai', 'scores', 'scored', 'note', 'yours_key', 'hand',
+             'cmd', 'ai_plan', 'n_choices')
+
+    def saved(s):
+        """for a saved game (the comparison already worked out; no copy of the game)"""
+        return {k: getattr(s, k) for k in s.SAVED}
+
+    @classmethod
+    def from_saved(cls, d):
+        e = cls(d['n'], d['round'], d['step'], d['kind'], d['situation'], d['yours'])
+        for k in cls.SAVED: setattr(e, k, d.get(k, getattr(e, k, None)))
+        if e.ai_plan is not None: e.ai_plan = tuple(e.ai_plan)
+        return e
+
     def ai_answer(s):
         """the AI's choice as your answer at this decision, or None when it isn't a single action"""
         if s.kind == 'main':

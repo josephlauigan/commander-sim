@@ -13,6 +13,8 @@ Routes:
   POST /api/answer          answer the waiting decision: {id, answer}; a stale id is refused (409)
   POST /api/undo            take back your last answer ({n}: the last n): the game replays from its seed
   GET  /api/review          after the game: a summary, and each decision with what the AI would have done and both scores
+  POST /api/save            save the game (data/saves/<time>-<deck>-<tier>-<seed>.json); GET /api/saves lists them
+  POST /api/load            {name}: replay a saved game to where it was saved
   POST /api/tryit           {n}: back to decision n with the AI's choice there (the review's "Try it")
   POST /api/hint            what the AI would do at the decision waiting for you: {text, detail, choice}
   POST /api/quit            end the game
@@ -24,6 +26,7 @@ import json
 import os
 import queue
 import threading
+import time
 import webbrowser
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
@@ -34,6 +37,7 @@ from commander_sim.play.session import Session, MY_DECKS, TIERS
 
 STATIC = os.path.join(os.path.dirname(__file__), 'static')
 IMAGES = os.path.join(DATA, 'images')
+SAVES = os.path.join(DATA, 'saves')
 TYPES = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
          '.gif': 'image/gif', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.json': 'application/json'}
 
@@ -57,12 +61,13 @@ class Hub:
         s.game_no = 0
 
     # ------------------------------------------------------------------ games
-    def new_game(s, opts):
+    def new_game(s, opts, sess=None):
         s.quit()
-        sess = Session(opts['deck'], opts['tier'], seed=opts.get('seed'), seat=opts.get('seat'),
-                       opponents=opts.get('opponents'), profile=opts.get('profile', 'loose'),
-                       ai=opts.get('ai', 'lookahead'), views=True,
-                       compare=bool((opts.get('tools') or {}).get('compare', True)), seats=opts.get('seats'))
+        if sess is None:
+            sess = Session(opts['deck'], opts['tier'], seed=opts.get('seed'), seat=opts.get('seat'),
+                           opponents=opts.get('opponents'), profile=opts.get('profile', 'loose'),
+                           ai=opts.get('ai', 'lookahead'), views=True,
+                           compare=bool((opts.get('tools') or {}).get('compare', True)), seats=opts.get('seats'))
         with s.cond:
             s.game_no += 1
             s.session, s.events, s.pending, s.view, s.images = sess, [], None, None, {}
@@ -147,6 +152,49 @@ class Hub:
             if sess is None: return 'There is no game running.'
             if not s.tools.get('undo', True): return 'Undo is switched off for this game.'
         return sess.undo(n)
+
+    # ------------------------------------------------------------------ saved games (data/saves/)
+    def save(s):
+        """None and the file's name, or why not"""
+        with s.cond:
+            sess = s.session
+        if sess is None: return 'There is no game to save.', None
+        if sess.current is None and not sess.finished:
+            return 'Save when the game is waiting on your decision (not while the others play).', None
+        with sess.hint_lock:
+            data = sess.saved()
+        data['tools'] = s.tools
+        data['saved_at'] = time.strftime('%Y-%m-%d %H:%M')
+        os.makedirs(SAVES, exist_ok=True)
+        name = f"{time.strftime('%Y%m%d-%H%M%S')}-{sess.deck}-{sess.tier}-{sess.seed}.json"
+        with open(os.path.join(SAVES, name), 'w', encoding='utf-8') as f: json.dump(data, f)
+        return None, name
+
+    def saves(s):
+        out = []
+        if os.path.isdir(SAVES):
+            for name in sorted(os.listdir(SAVES), reverse=True):
+                if not name.endswith('.json'): continue
+                try:
+                    with open(os.path.join(SAVES, name), encoding='utf-8') as f: d = json.load(f)
+                except (OSError, ValueError):
+                    continue
+                out.append({'name': name, 'deck': d.get('deck'), 'tier': d.get('tier'), 'seed': d.get('seed'),
+                            'round': d.get('round'), 'finished': d.get('finished'), 'saved_at': d.get('saved_at')})
+        return out
+
+    def load(s, name, images=True):
+        """None, or why not: the saved game replays to where it was saved"""
+        path = os.path.normpath(os.path.join(SAVES, str(name)))
+        if not path.startswith(SAVES + os.sep) or not os.path.isfile(path): return 'No such saved game.'
+        try:
+            with open(path, encoding='utf-8') as f: data = json.load(f)
+            tools = data.get('tools') or {}
+            sess = Session.load(data, views=True, compare=bool(tools.get('compare', True)))
+        except (OSError, ValueError, KeyError) as e:
+            return f"That saved game can't be loaded: {e}"
+        s.new_game({'tools': tools, 'images': images}, sess)
+        return None
 
     def review(s):
         with s.cond:
@@ -242,6 +290,7 @@ class Handler(BaseHTTPRequestHandler):
         if url.path.startswith('/images/'): return s._static(url.path[len('/images/'):], root=IMAGES)
         if url.path == '/api/state': return s._send(200, s.hub.state())
         if url.path == '/api/options': return s._send(200, options())
+        if url.path == '/api/saves': return s._send(200, {'saves': s.hub.saves()})
         if url.path == '/api/review':
             res = s.hub.review()
             return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, res)
@@ -275,6 +324,12 @@ class Handler(BaseHTTPRequestHandler):
             return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
         if url.path == '/api/undo':
             why = s.hub.undo(int(body.get('n', 1)) if str(body.get('n', 1)).isdigit() else 1)
+            return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
+        if url.path == '/api/save':
+            why, name = s.hub.save()
+            return s._send(409, {'error': why}) if why else s._send(200, {'ok': True, 'name': name})
+        if url.path == '/api/load':
+            why = s.hub.load(body.get('name'), body.get('images', True) is not False)
             return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
         if url.path == '/api/tryit':
             with s.hub.cond:

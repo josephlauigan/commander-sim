@@ -228,6 +228,31 @@ class Session:
         with s.hint_lock:
             s.human.answer(value)
 
+    # ------------------------------------------------------------------ saving and loading
+    SAVE_VERSION = 1
+
+    def saved(s):
+        """the game as a file: the seed and table, your answers, the AI's look-ahead decisions and the comparison.
+        Loading it replays the same game (on the same code: a change to card rules or the AI can change a game)"""
+        return {'version': s.SAVE_VERSION, 'deck': s.deck, 'tier': s.tier, 'seed': s.seed, 'seats': s.seats,
+                'profile': s.profile, 'ai': s.ai, 'max_rounds': s.max_rounds, 'answers': list(s.answers),
+                'tape': [list(e) for e in s.tape.entries],
+                'shadow': [e.saved() for e in s.shadow.entries if e.job is None],   # unfinished comparisons don't save
+                'finished': s.finished, 'round': s.game.round if s.game is not None else 0}
+
+    @classmethod
+    def load(cls, data, views=False, compare=True):
+        """a session that replays a saved game to where it was saved (a finished game to its end)"""
+        if data.get('version') != cls.SAVE_VERSION: raise ValueError('a saved game from a different version')
+        s = cls(data['deck'], data['tier'], seed=data['seed'], profile=data['profile'], ai=data['ai'],
+                max_rounds=data.get('max_rounds', 30), views=views, compare=compare, seats=data['seats'])
+        from commander_sim.play.shadow import Entry
+        s.tape.entries = [(k, tuple(r) if isinstance(r, list) else r, w) for k, r, w in data['tape']]
+        s.shadow.entries = [Entry.from_saved(d) for d in data['shadow']]
+        s.replay = list(data['answers'])
+        s.replaying = bool(s.replay)
+        return s
+
     def review(s):
         """the AI comparison, once the game is over (it stays hidden while you play): {'summary', 'decisions'}"""
         g = s.game
