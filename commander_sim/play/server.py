@@ -12,6 +12,7 @@ Routes:
                             images load first ('loading' events with done/total, then 'images': name -> files)
   POST /api/answer          answer the waiting decision: {id, answer}; a stale id is refused (409)
   POST /api/undo            take back your last answer ({n}: the last n): the game replays from its seed
+  GET  /api/review          after the game: each decision, what the AI would have done, both scores
   POST /api/hint            what the AI would do at the decision waiting for you: {text, detail, choice}
   POST /api/quit            end the game
 
@@ -58,7 +59,8 @@ class Hub:
         s.quit()
         sess = Session(opts['deck'], opts['tier'], seed=opts.get('seed'), seat=opts.get('seat'),
                        opponents=opts.get('opponents'), profile=opts.get('profile', 'loose'),
-                       ai=opts.get('ai', 'lookahead'), views=True)
+                       ai=opts.get('ai', 'lookahead'), views=True,
+                       compare=bool((opts.get('tools') or {}).get('compare', True)))
         with s.cond:
             s.game_no += 1
             s.session, s.events, s.pending, s.view, s.images = sess, [], None, None, {}
@@ -138,6 +140,12 @@ class Hub:
             if sess is None: return 'There is no game running.'
             if not s.tools.get('undo', True): return 'Undo is switched off for this game.'
         return sess.undo(n)
+
+    def review(s):
+        with s.cond:
+            sess = s.session
+        if sess is None: return 'There is no game.'
+        return sess.review()
 
     def hint(s):
         with s.cond:
@@ -219,6 +227,9 @@ class Handler(BaseHTTPRequestHandler):
         if url.path.startswith('/images/'): return s._static(url.path[len('/images/'):], root=IMAGES)
         if url.path == '/api/state': return s._send(200, s.hub.state())
         if url.path == '/api/options': return s._send(200, options())
+        if url.path == '/api/review':
+            res = s.hub.review()
+            return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, {'decisions': res})
         if url.path == '/api/events':
             q = parse_qs(url.query)
             since = s.headers.get('Last-Event-ID') or (q.get('since') or ['0'])[0]

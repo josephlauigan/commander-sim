@@ -59,6 +59,13 @@ class Server(unittest.TestCase):
         self.assertIn('switched off', json.loads(self.call('POST', '/api/hint', {})[2])['error'])
         self.call('POST', '/api/quit', {})
 
+    def test_review_waits_for_the_end(self):
+        self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 4, 'ai': 'adaptive', 'images': False})
+        self.wait_for(lambda e: e['kind'] == 'request')
+        st, _, body = self.call('GET', '/api/review')
+        self.assertEqual(st, 409); self.assertIn('when the game ends', json.loads(body)['error'])
+        self.call('POST', '/api/quit', {})
+
     def test_card_images_are_served(self):
         import os, tempfile
         d = tempfile.mkdtemp(); saved = server.IMAGES

@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (366 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (371 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -920,6 +920,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (366 tests, abou
 | `test_determinism.py` | Seeded games independent of memory layout (hashing, no address reuse). |
 | `test_play_undo.py` | Practice mode's Undo by replay. |
 | `test_play_hint.py` | Practice mode's Hint. |
+| `test_play_shadow.py` | Practice mode's AI comparison log. |
 | `test_play_images.py` | Practice mode's card image lookup, download and cache. |
 | `test_play_catalog.py` | Practice mode's setup screen data. |
 

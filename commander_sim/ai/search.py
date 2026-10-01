@@ -284,36 +284,44 @@ def _choose(g, p, post, opts):
         n = sum(1 for x in opts[:opts.index(o)] if x[1] == o[1])
         keyed.append((o, o[1], n))
     base_seed = _decision_seed(g, p.key, len(p.hand), len(p.perms))
-    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
     scores = {id(o): 0.0 for o in cands}
-    try:
-        for r in range(ROLLOUTS):
-            for o, label, n in keyed:
-                rng = random.Random(base_seed * 31 + r)
-                g2 = clone(g)
-                _start(g2, g)
-                p2 = g2.players[g.players.index(p)]
-                determinize(g2, p2, rng)
-                g2.rng = random.Random(rng.random())
-                E.CUR_G = g2
-                err = None
-                try:
-                    o2 = _find(brain.main_options(g2, p2, post), label, n)
-                    if o2 is None: scores[id(o)] -= 50.0; continue
-                    if o2[2] is not None:
-                        if not o2[2](): scores[id(o)] -= 50.0; continue
-                        brain.main(g2, p2, post)        # the rest of this phase, heuristically
-                    play_on_after_phase(g2, p2, post)
-                except E.OutOfWork as e:
-                    err = e
-                scores[id(o)] += evaluate(g2, p2)
-                _done(g2, err)
-    finally:
-        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
+    for r in range(ROLLOUTS):
+        for o, label, n in keyed:
+            scores[id(o)] += playout_main(g, p, post, label, n, base_seed, r)
     best = max(cands, key=lambda o: scores[id(o)])
     if best is not max(opts, key=lambda o: o[0]): STATS['changed'] += 1
     LAST_SCORES[:] = [(o[1], scores[id(o)] / ROLLOUTS) for o in cands]     # for practice mode's Hint
     return best
+
+
+def playout_main(g, p, post, label, n, base_seed, r):
+    """one playout of main-phase option (label, n-th of that label) for p in game g: copy r of the decision seeded
+    base_seed. Returns the score of the position it reaches (an option that can't be played: -50)"""
+    from commander_sim.ai import brain
+    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
+    try:
+        rng = random.Random(base_seed * 31 + r)
+        g2 = clone(g)
+        _start(g2, g)
+        p2 = g2.players[g.players.index(p)]
+        determinize(g2, p2, rng)
+        g2.rng = random.Random(rng.random())
+        E.CUR_G = g2
+        err = None
+        try:
+            o2 = _find(brain.main_options(g2, p2, post), label, n)
+            if o2 is None: return -50.0
+            if o2[2] is not None:
+                if not o2[2](): return -50.0
+                brain.main(g2, p2, post)        # the rest of this phase, heuristically
+            play_on_after_phase(g2, p2, post)
+        except E.OutOfWork as e:
+            err = e
+        v = evaluate(g2, p2)
+        _done(g2, err)
+        return v
+    finally:
+        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
 
 
 def play_on_after_phase(g2, p2, post):
@@ -341,32 +349,38 @@ def _choose_attack(g, p):
     if not opps: return None
     cands = [(i, m) for i in opps for m in ('filtered', 'all')] + [(opps[0], 'none')]
     base_seed = _decision_seed(g, p.key, 'atk')
-    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
     scores = {c: 0.0 for c in cands}
-    try:
-        for r in range(ROLLOUTS):
-            for c in cands:
-                rng = random.Random(base_seed * 31 + r)
-                g2 = clone(g)
-                _start(g2, g)
-                p2 = g2.players[g.players.index(p)]
-                determinize(g2, p2, rng)
-                g2.rng = random.Random(rng.random())
-                E.CUR_G = g2
-                g2.forced_attack = c
-                g2.step = 'combat'
-                err = None
-                try:
-                    play_on(g2, p2)
-                except E.OutOfWork as e:
-                    err = e
-                scores[c] += evaluate(g2, p2)
-                _done(g2, err)
-    finally:
-        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
+    for r in range(ROLLOUTS):
+        for c in cands:
+            scores[c] += playout_attack(g, p, c, base_seed, r)
     best = max(cands, key=lambda c: scores[c])
     E.log(f'      [{E.NAME(p)} attack plan by search: {best[1]} at {E.NAME(g.players[best[0]])}]', g)
     return best
+
+
+def playout_attack(g, p, c, base_seed, r):
+    """one playout of attack plan c = (defender index, 'filtered' | 'all' | 'none') for p in game g"""
+    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
+    try:
+        rng = random.Random(base_seed * 31 + r)
+        g2 = clone(g)
+        _start(g2, g)
+        p2 = g2.players[g.players.index(p)]
+        determinize(g2, p2, rng)
+        g2.rng = random.Random(rng.random())
+        E.CUR_G = g2
+        g2.forced_attack = c
+        g2.step = 'combat'
+        err = None
+        try:
+            play_on(g2, p2)
+        except E.OutOfWork as e:
+            err = e
+        v = evaluate(g2, p2)
+        _done(g2, err)
+        return v
+    finally:
+        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
 
 
 # ------------------------------------------------------------------ counterspells

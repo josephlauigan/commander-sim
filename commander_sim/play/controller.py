@@ -39,14 +39,20 @@ class HumanController:
         if s._closed.is_set(): raise Cancelled()
         if s.notify is not None: s.notify({'kind': 'request', 'request': req})
         s.requests.put(req)
+        busy = False
         while True:
             try:
-                ans = s._answers.get(timeout=0.2)
+                ans = s._answers.get(timeout=0.001 if busy else 0.2)
             except queue.Empty:
                 if s._closed.is_set(): raise Cancelled()
+                busy = s.idle()                    # the engine thread is free: background work, a little at a time
                 continue
             if isinstance(ans, Cancelled): raise ans
             return ans
+
+    def idle(s):
+        """called on the engine thread while waiting for an answer; True if it did some work (and has more)"""
+        return False
 
     def answer(s, value):
         s._answers.put(value)

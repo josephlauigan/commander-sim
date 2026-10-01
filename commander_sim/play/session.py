@@ -54,8 +54,19 @@ class RecordingController(HumanController):
                 ans = super().ask(req)
             finally:
                 ss.current = None
+            if ss.compare and ss.game is not None:      # the AI comparison: copy the game before the answer applies
+                me = next(p for p in ss.game.players if p.key == ss.deck)
+                ss.shadow.record(ss.game, me, req, ans, len(ss.answers))
         ss.answers.append(ans)
         return ans
+
+    def idle(s):
+        ss = s.session
+        if not ss.compare or not ss.hint_lock.acquire(blocking=False): return False
+        try:
+            return ss.shadow.step()
+        finally:
+            ss.hint_lock.release()
 
     def tell(s, kind, text):
         if not s.session.replaying: super().tell(kind, text)
@@ -77,11 +88,14 @@ class EventLog(list):
 
 class Session:
     def __init__(s, deck, tier, seed=None, seat=None, opponents=None, profile='loose', ai='lookahead',
-                 step=False, max_rounds=30, views=False):
+                 step=False, max_rounds=30, views=False, compare=False):
         if deck not in MY_DECKS: raise ValueError(f'unknown deck {deck!r}: one of {", ".join(MY_DECKS)}')
         if tier not in TIERS: raise ValueError(f'unknown tier {tier!r}: one of {", ".join(TIERS)}')
         s.deck, s.tier, s.profile, s.ai, s.step, s.max_rounds = deck, tier, profile, ai, step, max_rounds
         s.views = views                    # a view of the table with every action (the browser plays them back)
+        s.compare = compare                # the AI comparison log (shadow.py), for the review after the game
+        from commander_sim.play.shadow import Shadow
+        s.shadow = Shadow()
         s.seed = seed if seed is not None else random.SystemRandom().randrange(1, 10 ** 6)
         s.events = queue.Queue()
         from commander_sim.ai import search
@@ -132,6 +146,8 @@ class Session:
             from commander_sim.play import choices
             choices.mulligan(g, me, me.mull_rng)
             ais._run_rounds(g, g.players, s.max_rounds)
+            if s.compare and s.shadow.pending():           # the comparisons not yet worked out, before the review
+                s.shadow.finish(lambda d, t: s.events.put({'kind': 'reviewing', 'done': d, 'total': t}))
             s.events.put({'kind': 'over', 'view': build_view(g, s.deck),
                           'winner': g.winner.key if g.winner else None, 'how': getattr(g, 'wintype', '')})
         except Cancelled:
@@ -169,6 +185,7 @@ class Session:
         s.join(30)
         if s._thread is not None and s._thread.is_alive(): return 'The game is busy; try again in a moment.'
         s.tape.cut(cut)
+        s.shadow.forget_from(len(keep))
         s.answers, s.marks, s.replay = [], [], list(keep)
         s.replaying = False
         s.events.put({'kind': 'reset', 'undone': n})
@@ -181,6 +198,11 @@ class Session:
     def answer(s, value):
         with s.hint_lock:
             s.human.answer(value)
+
+    def review(s):
+        """the AI comparison, once the game is over (it stays hidden while you play): a list of decisions"""
+        if s.game is None or not s.game.over: return 'The review opens when the game ends.'
+        return s.shadow.review()
 
     def hint(s):
         """the AI's advice for the decision waiting for you: {'text', 'detail', 'choice'}, or a string saying why not"""
