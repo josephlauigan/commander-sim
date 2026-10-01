@@ -53,10 +53,27 @@ PERMANENT = {'archivist': ("{U}, {T}: each player discards their hand and draws 
              'assault': ('{3}{R}{R}: untap your creatures; an additional combat (sorcery speed)', assault)}
 
 
+def loop_abilities(g, p, m):
+    """Sephiroth's infinite loops as a table shortcut: on each piece of a loop that is assembled, 'start the loop'
+    (the engine plays it out as its end result, after a window for opponents to answer a key piece)"""
+    import importlib
+    mine = importlib.import_module('commander_sim.cards.impl.mine')
+    if p.key != 'seph' or m.cd is None or m.cd.name not in mine.LOOP_CARDS: return []
+    out = []
+    for name, keys, kills in mine.seph_loops(g, p):
+        groups = next(gr for n, gr, _ in mine.LOOPS if n == name)
+        if not any(m.cd.name in grp for grp in groups) and m.cd.name not in mine.OUTLETS: continue
+
+        def go(g, p, m, name=name, keys=keys, kills=kills):
+            mine.run_loop(g, p, name, keys, kills); return None
+        out.append((f'start the loop: {name}' + ('' if kills else ' (no payoff on the battlefield yet)'), go))
+    return out
+
+
 def permanent_abilities(g, p, m):
     """[(label, fn)] for permanent m"""
     if m.cd is None: return []
-    return [(label, fn) for tag, (label, fn) in PERMANENT.items() if tag in m.cd.tags]
+    return [(label, fn) for tag, (label, fn) in PERMANENT.items() if tag in m.cd.tags] + loop_abilities(g, p, m)
 
 
 # ------------------------------------------------------------------ lands

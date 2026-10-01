@@ -41,7 +41,10 @@ def _player(g, p, me):
         d['hand'] = [c.name for c in p.hand]
         d['mana_pool'] = mana.pool_of(p).text()
         d['mana_sources'] = mana.sources(g, p)
-        from commander_sim.play import abilities
+        from commander_sim.play import abilities, legal
+        d['graveyard_playable'] = [{'i': i, 'name': c.name, 'how': (legal.gy_mode(g, p, c) or ('land',))[0]}
+                                   for i, c in enumerate(p.gy)
+                                   if legal.gy_mode(g, p, c) or (c.land and legal.check_land_gy(g, p, c) is None)]
         for L, entry in zip(p.lands, d['lands']):
             if abilities.land_abilities(g, p, L): entry['ability'] = True
     return d

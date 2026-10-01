@@ -49,6 +49,7 @@ HELP = """Commands:
   land N            play card N from your hand as your land drop
   cast N            cast card N from your hand
   cast cmd          cast your commander from the command zone
+  cast gN / land gN cast or play card N of your graveyard (Yawgmoth's Will, flashback, Underworld Breach)
   use N             an ability of your permanent N (Equip, loyalty abilities, Jace's Archivist ...)
   use LN            an ability of your land N (Rogue's Passage, Scavenger Grounds)
   pass              pass priority (move on)
@@ -74,6 +75,9 @@ def priority_prompt(req, out):
     if perms:
         print('  Your permanents: ' + '  '.join(f"{m['i'] + 1}) {m['name']}" + (' (tapped)' if m['tapped'] else '')
                                               for m in perms), file=out)
+    gyp = me.get('graveyard_playable') or []
+    if gyp:
+        print('  From your graveyard: ' + '  '.join(f"G{x['i'] + 1}) {x['name']} ({x['how']})" for x in gyp), file=out)
     act_lands = [L for L in me['lands'] if L.get('ability') and not L['tapped']]
     if act_lands:
         print('  Lands with abilities: ' + '  '.join(f"L{L['i'] + 1}) {L['name']}" for L in act_lands), file=out)
@@ -95,6 +99,8 @@ def parse(line, view):
             return {'do': 'use', 'land': int(w[1][1:]) - 1}
         if len(w) < 2 or not w[1].isdigit(): return '?Which permanent? e.g. use 1 (or use L1 for a land)'
         return {'do': 'use', 'perm': int(w[1]) - 1}
+    if cmd in ('land', 'cast') and len(w) > 1 and w[1].lower().startswith('g') and w[1][1:].isdigit():
+        return {'do': cmd, 'zone': 'gy', 'card': int(w[1][1:]) - 1}
     if cmd in ('tap', 'land', 'cast'):
         if len(w) < 2 or not w[1].isdigit(): return f'?Which one? e.g. {cmd} 1'
         n = int(w[1]) - 1

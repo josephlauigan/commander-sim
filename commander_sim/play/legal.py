@@ -179,3 +179,55 @@ def check_counter(g, p, ctr, spell):
     gen, pips = E.counter_cost(ctr, spell)
     if mana.cost_problem(g, p, gen, pips) is None or alternative_counter_cost(g, p, ctr): return None
     return f"Can't cast {ctr.name}. {mana.cost_problem(g, p, gen, pips)}"
+
+
+# ------------------------------------------------------------------ casting from the graveyard
+FLASHBACK = {'Unburial Rites': (3, 'W'), 'Dread Return': 'sac3'}   # flashback costs the engine's tags leave out
+
+
+def gy_mode(g, p, c):
+    """how p may cast card c from their graveyard now: ('yawg' | 'flashback' | 'sac3' | 'escape', generic, pips), or
+    None. Yawgmoth's Will: the normal cost; flashback: its own cost; Dread Return: sacrifice three creatures;
+    Underworld Breach: the normal cost plus three other cards from your graveyard exiled"""
+    if c not in p.gy or c.land: return None
+    if getattr(p, 'yawg', False) and id(c) in getattr(p, 'yawg_gy', {}):
+        gen, pips = E.cost_of(p, c); return ('yawg', gen, pips)
+    fb = c.tags.get('fb') or FLASHBACK.get(c.name)
+    if fb == 'sac3': return ('sac3', 0, '')
+    if fb:
+        gen, pips = fb if isinstance(fb, tuple) else E.parse_cost(fb)
+        return ('flashback', gen, pips)
+    if E.has(p, 'breach') and len(p.gy) >= 4:
+        gen, pips = E.cost_of(p, c); return ('escape', gen, pips)
+    return None
+
+
+def check_cast_gy(g, p, c):
+    mode = gy_mode(g, p, c)
+    if mode is None: return f"You can't cast {c.name} from your graveyard right now."
+    if not instant_speed(c):
+        why = sorcery_timing(g, p)
+        if why: return why.replace('do that', f'cast {c.name}')
+    if E.silenced(g, p): return "You can't cast spells during this player's turn (Conqueror's Flail)."
+    if not E.castable(g, p, c, 'gy'): return f"Something on the battlefield stops you casting {c.name} right now."
+    kind, gen, pips = mode
+    if kind == 'sac3' and sum(1 for m in p.perms if m.creature and not m.phased) < 3:
+        return f"{c.name}'s flashback needs three creatures to sacrifice."
+    if 'fblife' in c.tags and kind == 'flashback' and p.life <= int(c.tags['fblife']):
+        return f"{c.name}'s flashback costs {c.tags['fblife']} life, which you don't have to spare."
+    if 'rean' in c.tags:
+        from commander_sim.play import choices
+        if not choices.rean_candidates(g, p, c.tags['rean']): return f'{c.name} has no creature card to return.'
+    why = mana.cost_problem(g, p, gen, pips)
+    if why: return f"Can't cast {c.name} from your graveyard. {why}"
+    return None
+
+
+def check_land_gy(g, p, c):
+    if c not in p.gy or not c.land: return f"{c.name} isn't a land in your graveyard."
+    if not (getattr(p, 'yawg', False) and id(c) in getattr(p, 'yawg_gy', {})):
+        return "You can't play lands from your graveyard right now."
+    why = sorcery_timing(g, p)
+    if why: return why.replace('do that', 'play a land')
+    if getattr(p, 'lands_played', 0) >= land_drops(g, p): return "You've already played a land this turn."
+    return None

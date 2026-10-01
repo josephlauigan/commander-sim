@@ -65,5 +65,56 @@ class Dispute(unittest.TestCase):
         self.assertNotIn(a, s.perms); self.assertEqual(s.treasures, 1)
 
 
+
+class FromTheGraveyard(unittest.TestCase):
+    def test_flashback_deep_analysis(self):
+        from commander_sim.play import human
+        g = table('marchesa', 'veyran'); s = g.players[0]
+        s.gy.append(E.DB['Deep Analysis']); float_mana(s, C=1, U=1); n = len(s.hand)
+        seat(g, s, [{'do': 'cast', 'zone': 'gy', 'card': 0}, {'do': 'pass'}])
+        human.human_main(g, s, False)
+        self.assertEqual((len(s.hand), s.life), (n + 2, 37))
+        self.assertIn(E.DB['Deep Analysis'], s.exile)
+
+    def test_dread_return_flashback_sacrifices_three(self):
+        from commander_sim.play import human
+        g = table('seph', 'veyran'); s = g.players[0]
+        for n in ('Llanowar Elves', 'Birds of Paradise', 'Viscera Seer'): perm(g, s, n)
+        s.gy += [E.DB['Dread Return'], E.DB['Grave Titan']]
+        seat(g, s, [{'do': 'cast', 'zone': 'gy', 'card': 0}, by_text('Grave Titan'), 0, 0, 0, {'do': 'pass'}])
+        human.human_main(g, s, False)
+        self.assertTrue(any(m.name == 'Grave Titan' for m in s.perms))
+        self.assertFalse(any(m.name in ('Llanowar Elves', 'Birds of Paradise', 'Viscera Seer') for m in s.perms))
+
+    def test_yawgmoths_will(self):
+        import collections
+        from commander_sim.play import human
+        g = table('seph', 'veyran'); s = g.players[0]
+        s.gy += [E.DB['Swamp'], E.DB['Entomb']]
+        s.yawg = True; s.yawg_gy = collections.Counter(id(x) for x in s.gy)
+        seat(g, s, [{'do': 'land', 'zone': 'gy', 'card': 0}, {'do': 'pass'}])
+        human.human_main(g, s, False)
+        self.assertEqual(s.lands[-1].cd.name, 'Swamp')
+        float_mana(s, B=1)
+        self.assertIsNone(legal.check_cast_gy(g, s, E.DB['Entomb']))        # its normal cost, from the graveyard
+
+    def test_not_from_the_graveyard_otherwise(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        s.gy.append(E.DB['Entomb'])
+        self.assertIn("can't cast Entomb from your graveyard", legal.check_cast_gy(g, s, s.gy[0]))
+
+
+class Loops(unittest.TestCase):
+    def test_start_the_loop(self):
+        from commander_sim.play import human
+        g = table('seph', 'veyran'); s = g.players[0]
+        perm(g, s, 'Mikaeus, the Unhallowed'); trisk = perm(g, s, 'Triskelion')
+        labels = [a[0] for a in human.abilities_of(g, s, trisk)]
+        self.assertTrue(any(l.startswith('start the loop: Mikaeus + Triskelion') for l in labels), labels)
+        k = next(i for i, l in enumerate(labels) if l.startswith('start the loop'))
+        seat(g, s, [{'do': 'use', 'perm': s.perms.index(trisk)}, k])
+        human.human_main(g, s, False)
+        self.assertTrue(g.over); self.assertIs(g.winner, s)
+
 if __name__ == '__main__':
     unittest.main()

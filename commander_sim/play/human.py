@@ -75,6 +75,21 @@ def apply(g, p, act):
     do = act.get('do')
     if do == 'tap':
         return mana.tap(g, p, act.get('source', -1), act.get('colour'))
+    if do == 'land' and act.get('zone') == 'gy':
+        i = act.get('card')
+        c = p.gy[i] if isinstance(i, int) and 0 <= i < len(p.gy) else None
+        if c is None: return 'There is no such card in your graveyard.'
+        why = legal.check_land_gy(g, p, c)
+        if why: return why
+        p.gy.remove(c); ais.play_land_card(g, p, c, 'plays from the graveyard'); E.check_state(g)
+        return None
+    if do == 'cast' and act.get('zone') == 'gy':
+        i = act.get('card')
+        c = p.gy[i] if isinstance(i, int) and 0 <= i < len(p.gy) else None
+        if c is None: return 'There is no such card in your graveyard.'
+        why = legal.check_cast_gy(g, p, c)
+        if why: return why
+        return cast(g, p, c, 'gy')
     if do == 'land':
         c = _hand_card(p, act)
         if c is None: return 'There is no such card in your hand.'
@@ -173,6 +188,10 @@ def cast(g, p, c, zone):
     ctl = controller_of(g, p)
     gen, pips = legal.base_cost(g, p, c)
     ctx = {}
+    gymode = legal.gy_mode(g, p, c)[0] if zone == 'gy' else None
+    if zone == 'gy':
+        _, gen, pips = legal.gy_mode(g, p, c)
+        if gymode == 'escape': zone = 'escape'               # Underworld Breach: back to the graveyard afterwards
     if 'wipe' in c.tags and 'rem' in c.tags:                 # overload (Cyclonic Rift, Vandalblast)
         og, op = ais.wipe_cost(p, c)
         k = choose(g, p, 'choose', f'{c.name}: cast it how?',
@@ -233,6 +252,16 @@ def cast(g, p, c, zone):
     if c.dsl: E.additional_cost(g, p, c)
     if fodder is not None:
         E.log(f'  {E.NAME(p)} sacrifices {fodder.name} for {c.name}', g); E.die(g, fodder, 'sac')
+    if gymode == 'sac3':                                     # Dread Return's flashback: sacrifice three creatures
+        from commander_sim.play import choices
+        for i in range(3):
+            cre = [m for m in p.perms if m.creature and not m.phased]
+            choices.sacrifice_creature(g, p, cre, f'{c.name} flashback: sacrifice a creature ({i + 1} of 3)')
+    if gymode == 'flashback' and 'fblife' in c.tags: E.lose_life(g, p, int(c.tags['fblife']), p)
+    if gymode == 'escape':                                   # exile three other cards from your graveyard
+        from commander_sim.play import choices
+        for x in choices.pick_cards(g, p, [y for y in p.gy if y is not c], 3, f'Escape {c.name}: exile a card from your graveyard'):
+            p.gy.remove(x); p.exile.append(x)
     if ctx.pop('sac_cost', False):
         from commander_sim.play import choices
         choices.sac_artifact_or_creature(g, p, c.name)
