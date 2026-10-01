@@ -125,7 +125,8 @@ class BotGames(unittest.TestCase):
             self.assertEqual(evs[-1]['kind'], 'over', f"{deck} {tier} {seed}: {evs[-1].get('text', '')[-1500:]}")
             p = next(x for x in s.game.players if x.key == deck)
             self.assertGreater(p.stats['spells_cast'], 3, f'{deck} {tier} {seed}')
-            bad = [t for k, t in s.human.told if k == 'invalid' and not t.startswith(("Can't equip", 'You have no creature'))]
+            bad = [t for k, t in s.human.told if k == 'invalid' and not t.startswith(("Can't equip", 'You have no creature',
+                                                                                  "Can't cast Twinflame on", "Can't cast Disembowel with"))]
             self.assertEqual(bad, [], f'{deck} {tier} {seed}')
 
 

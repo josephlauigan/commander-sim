@@ -47,7 +47,8 @@ def check_cast(g, p, c, zone='hand'):
     if c.land: return f'{c.name} is a land: play it as your land drop instead.'
     if 'ctr' in c.tags: return f'{c.name} counters a spell: cast it when a spell you can counter is cast.'
     if E.silenced(g, p): return "You can't cast spells during this player's turn (Conqueror's Flail)."
-    if not instant_speed(c):
+    if c.name == 'Return the Favor': return 'Return the Favor targets a spell: cast it in response to one.'
+    if not instant_speed(c) and c.name != 'Necromancy':     # Necromancy: "as though it had flash"
         why = sorcery_timing(g, p)
         if why: return why.replace('do that', f'cast {c.name}')
     if not E.castable(g, p, c, zone): return f"Something on the battlefield stops you casting {c.name} right now."
@@ -62,6 +63,9 @@ def check_cast(g, p, c, zone='hand'):
     if c.name == 'Deadly Dispute' and not p.treasures and not any(
             (m.creature or (m.cd is not None and 'A' in m.cd.types)) and not m.phased for m in p.perms):
         return 'Deadly Dispute needs an artifact or creature to sacrifice as you cast it.'
+    from commander_sim.play import cards
+    why = cards.needs(g, p, c)
+    if why: return why
     gen, pips = base_cost(g, p, c)
     why = mana.cost_problem(g, p, gen, pips)
     if why: return f"Can't cast {c.name}. {why}"

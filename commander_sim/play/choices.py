@@ -285,3 +285,20 @@ def target_opponent(g, p, source):
     opps = [q for q in g.opps(p) if legal.player_targetable(q)] or g.opps(p)
     k = choose(g, p, 'target', f'{source}: target opponent?', [legal.describe_target(g, p, q) for q in opps], cancel=None)
     return opps[k]
+
+
+# ------------------------------------------------------------------ copies of spells
+def copy_targets(g, p, c, ctx):
+    """a copy of spell c (Thousand-Year Storm, Jin-Gitaxias, Ral, Return the Favor, Mizzix's Mastery): you may choose
+    new targets for it. Returns the copy's ctx"""
+    ctx = dict(ctx or {})
+    old = ctx.get('target') if ctx.get('target') is not None else ctx.get('face')
+    tg = legal.spell_targets(g, p, c)
+    if not tg: return ctx
+    keep = old is not None and old in tg
+    k = choose(g, p, 'target', f'The copy of {c.name}: choose its target', [legal.describe_target(g, p, x) for x in tg],
+               cancel=f'keep the same target ({legal.describe_target(g, p, old)})' if keep else None)
+    if k is None: return ctx
+    ctx.pop('target', None); ctx.pop('face', None)
+    ctx['face' if isinstance(tg[k], E.Player) else 'target'] = tg[k]
+    return ctx

@@ -25,9 +25,8 @@ class ManaPool:
         s.m = dict.fromkeys(COLOURS + 'A', 0)
 
     def text(s):
-        """{B}{B}{2} style: coloured mana, then colourless as a number, then any-colour"""
-        out = ''.join('{' + c + '}' for c in 'WUBRG' for _ in range(s.m[c]))
-        if s.m['C']: out += '{' + str(s.m['C']) + '}' if s.m['C'] > 1 else '{C}'
+        """{B}{B}{C} style: coloured mana, then colourless, then any-colour ({3} would read as generic mana)"""
+        out = ''.join('{' + c + '}' for c in 'WUBRGC' for _ in range(s.m[c]))
         if s.m['A']: out += f" +{s.m['A']} any"
         return out or 'empty'
 

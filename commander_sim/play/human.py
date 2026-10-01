@@ -37,7 +37,7 @@ def human_main(g, p, post):
         if why: ctl.tell('invalid', why)
 
 
-def respond(g, q, prompt, spell=None):
+def respond(g, q, prompt, spell=None, caster=None):
     """q (the person) has priority in response to something (a spell on the stack, attackers, the end of a turn).
     They may tap mana, cast instants and flash spells, use instant-speed abilities, or pass. Returns the counterspell
     they cast at `spell` (the engine then counters it), or None when they pass"""
@@ -55,6 +55,12 @@ def respond(g, q, prompt, spell=None):
                     why = legal.check_counter(g, q, c, spell)
                     if why: ctl.tell('invalid', why); continue
                     return c
+                from commander_sim.play import cards
+                if c is not None and cards.copy_card(c):          # Return the Favor, Dualcaster Mage: copy the spell
+                    why = legal.check_cast(g, q, c) if c.name != 'Return the Favor' else None
+                    why = why or cards.copy_in_response(g, q, c, spell, caster or g.active)
+                    if why: ctl.tell('invalid', why)
+                    continue
             why = apply(g, q, act)
             if why: ctl.tell('invalid', why)
         return None
@@ -115,6 +121,8 @@ def apply(g, p, act):
         zone = 'cmd' if act.get('zone') == 'cmd' else 'hand'
         c = p.cmd if zone == 'cmd' else _hand_card(p, act)
         if c is None: return 'There is no such card in your hand.'
+        from commander_sim.play import cards
+        if zone == 'hand' and c.name in cards.HAND: return cards.cast_from_hand(g, p, c)
         why = legal.check_cast(g, p, c, zone)
         if why: return why
         return cast(g, p, c, zone)
@@ -229,6 +237,8 @@ def cast(g, p, c, zone):
         if pick is None: return None
         ctx['rean_target'], ctx['rean_src'] = pick
         ctx['rean_value'] = max(4, pick[0].cmc)              # how hard opponents try to stop it
+        if c.name == 'Necromancy' and zone == 'hand' and legal.sorcery_timing(g, p):
+            ctx['flash_sac'] = True                          # cast as though it had flash: sacrificed at cleanup
     if c.name == 'Deadly Dispute': ctx['sac_cost'] = True
     if 'deluge' in c.tags:                                   # Toxic Deluge: pay X life, all creatures get -X/-X
         top = max(0, min(p.life - 1, 20))
@@ -297,7 +307,11 @@ def cast_rean(g, p, c, zone, ctx):
     if not E.counter_window(g, p, c, ctx['rean_value'], {}) or ais.sauron_grounds_response(g, p, ctx['rean_value']) \
             or (g.hooks and E.CI.gy_response(g, p, ctx['rean_value'], src)):
         dest.append(c); return None
+    n0 = len(p.perms)
     ais.seph_rean_resolve(g, p, c, ctx)
+    if ctx.get('flash_sac'):                                 # Necromancy at instant speed: its enter effects, then gone
+        for m in [m for m in p.perms[n0:] if m.cd is cd]:
+            E.log(f'    {m.name} is sacrificed (Necromancy was cast at instant speed)', g); E.die(g, m, 'sac')
     dest.append(c)
     E.check_state(g)
     return None

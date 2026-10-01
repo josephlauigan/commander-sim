@@ -1130,8 +1130,10 @@ def on_cast(g, p, c):
         p.ral_copy = None; copy_spell(g, p, c)      # Ral, Storm Conduit -2: copy the next instant/sorcery
     if not c.creature and CI is not None: CI.prowess(g, p, c)
     if CI is not None and (c.instant or c.sorcery):
-        for x, fn in CI.hand_cards(p, 'hand_cast'): fn(g, x, p, c)       # Return the Favor copies your spell
+        if human_choice(g, p) is None:
+            for x, fn in CI.hand_cards(p, 'hand_cast'): fn(g, x, p, c)       # Return the Favor copies your spell
         for q in g.opps(p):
+            if human_choice(g, q) is not None: continue                   # the person copies it in their window
             for x, fn in CI.hand_cards(q, 'hand_opp_cast'): fn(g, x, q, c)   # Dualcaster Mage copies anyone's
     if p.spells_this_turn == 3:                            # Emeritus of Conflict: third spell each turn -> prepared
         for x in find(p, 'conflict'): x.data = dict(x.data or {}, prepared=True)
@@ -1381,10 +1383,13 @@ def counter_window(g, p, c, imp, aff):
     if 'unc' in c.tags: return True
     if g.hooks and CI.total(g, 'uncounterable', p, c): return True
     hctl = getattr(g, 'controllers', None)
+    if hctl and p.key in hctl and _copy_window(g, p, c):  # practice mode: your own spell, with a copy card in hand
+        importlib.import_module('commander_sim.play.human').respond(g, p, f'You cast {c.name}', spell=c, caster=p)
     for q in g.after(p):
         if not q.alive or g.over or silenced(g, q): continue
         if hctl and q.key in hctl:                         # practice mode: the person may respond, or pass
-            ctr = importlib.import_module('commander_sim.play.human').respond(g, q, f'{NAME(p)} casts {c.name}', spell=c)
+            ctr = importlib.import_module('commander_sim.play.human').respond(g, q, f'{NAME(p)} casts {c.name}', spell=c,
+                                                                              caster=p)
             if ctr is None: continue
             if not _counter_resolves(g, q, p, c, ctr, imp): continue
             return False
@@ -1411,6 +1416,12 @@ def counter_window(g, p, c, imp, aff):
         if not _counter_resolves(g, q, p, c, ctr, imp): continue
         return False
     return True
+
+
+def _copy_window(g, p, c):
+    """practice mode: the caster gets priority on their own instant or sorcery when they hold a card that copies it"""
+    return (c.instant or c.sorcery) and human_choice(g, p) is not None and \
+        any(x.name in ('Return the Favor', 'Dualcaster Mage') for x in p.hand)
 
 
 def _counter_resolves(g, q, p, c, ctr, imp):
@@ -1483,7 +1494,8 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     LAST_COUNTER = None
     g.cur_cast = (c, ctx, zone)
     try:
-        human_near = bool(getattr(g, 'controllers', None)) and any(q.key in g.controllers for q in g.after(p))
+        human_near = bool(getattr(g, 'controllers', None)) and (any(q.key in g.controllers for q in g.after(p))
+                                                                 or _copy_window(g, p, c))
         ok_cast = not (imp > 0 or aff or human_near) or counter_window(g, p, c, imp, aff)
     finally:
         g.cur_cast = None
@@ -1599,7 +1611,11 @@ def resolve(g, p, c, ctx, zone):
     if 'prolif1' in t and CI is not None: importlib.import_module('commander_sim.cards.impl.mine').proliferate_all(g, p)
     if 'unearth' in t:
         cs = [x for x in p.gy if x.creature and x.cmc <= 3]
-        if cs:
+        hc = human_choice(g, p)
+        if cs and hc is not None:
+            x = hc.pick_cards(g, p, cs, 1, 'Unearth: return which creature card (mana value 3 or less)?')[0]
+            p.gy.remove(x); enter(g, p, x)
+        elif cs:
             x = max(cs, key=lambda c: (('bowmasters' in c.tags) * 5 + c.pow + (CI.card_etb_value(g, p, c) if CI is not None else 0)))
             p.gy.remove(x); enter(g, p, x)
     if 'fbgrant' in t: flashback_grant(g, p)
@@ -1625,6 +1641,8 @@ def resolve(g, p, c, ctx, zone):
 def spell_targets(g, p, c, ctx=None):
     """fresh targets for a copy of spell c ('you may choose new targets for the copy'): the best opposing permanent
     for removal, the lowest life total for burn that kills nothing worthwhile"""
+    hc = human_choice(g, p)
+    if hc is not None: return hc.copy_targets(g, p, c, ctx)
     t = c.tags; ctx = dict(ctx or {})
     ctx.pop('target', None); ctx.pop('face', None)
     if 'rem' in t:

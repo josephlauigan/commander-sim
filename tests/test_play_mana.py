@@ -60,7 +60,7 @@ class Tapping(unittest.TestCase):
         mana.tap(g, s, src(g, s, 'Sol Ring'))
         mana.tap(g, s, src(g, s, 'Treasure'), 'R')
         self.assertEqual(s.treasures, 0)
-        self.assertEqual(mana.pool_of(s).text(), '{R}{2}')
+        self.assertEqual(mana.pool_of(s).text(), '{R}{C}{C}')
 
     def test_paying_from_the_pool_and_the_reason_when_short(self):
         g = table('sauron', 'veyran'); s = g.players[0]

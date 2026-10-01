@@ -390,3 +390,285 @@ LANDS = {'Strip Mine': _strip, 'Desolate Lighthouse': _lighthouse, 'Spectacle Su
 
 def land_abilities(g, p, L):
     return LANDS[L.cd.name](g, p, L) if L.cd.name in LANDS else []
+
+
+# ------------------------------------------------------------------ casting from hand: modes the card code keeps for the AI
+def _spell_cast(g, p, c, imp, what=None):
+    """the steps of casting c from hand once it is paid for: on the stack, cast triggers, a window for opponents.
+    True if it resolves (the caller carries out its effect and puts the card away)"""
+    p.hand.remove(c)
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+    E.log(f'  {E.NAME(p)} casts {what or c.name}', g)
+    E.on_cast(g, p, c)
+    if g.over or not p.alive: return False
+    return E.counter_window(g, p, c, imp, {})
+
+
+def _cast_normally(g, p, c):
+    from commander_sim.play import human
+    why = legal.check_cast(g, p, c)
+    return why or human.cast(g, p, c, 'hand')
+
+
+def _cycle(n):
+    def act(g, p, c):
+        why = mana.cost_problem(g, p, n, '')
+        if why: return f"Can't cycle {c.name}. {why}"
+        mana.pay_from_pool(g, p, n, '')
+        p.hand.remove(c); p.gy.append(c)
+        E.log(f'  {E.NAME(p)} cycles {c.name}', g)
+        E.draw(g, p, 1)
+        return None
+    return act
+
+
+def _twinflame(g, p, c):
+    why = legal.check_cast(g, p, c)
+    if why: return why
+    cre = [m for m in p.perms if m.creature and not m.phased]
+    if not cre: return 'Twinflame needs a creature you control to target.'
+    picked = []
+    while True:
+        left = [m for m in cre if m not in picked]
+        if not left: break
+        n = len(picked)
+        k = _choose(g, p, 'target', f'Twinflame: target creature #{n + 1} ({mana.cost_text(1 + 2 * n, "R" * (n + 1))} in all)',
+                    [legal.describe_target(g, p, m) for m in left], cancel='cancel' if not picked else 'done')
+        if k is None: break
+        picked.append(left[k])
+    if not picked: return None
+    extra = len(picked) - 1
+    why = mana.pay_from_pool(g, p, 1 + 2 * extra, 'R' * (extra + 1))
+    if why: return f"Can't cast Twinflame on {len(picked)} creatures. {why}"
+    if not _spell_cast(g, p, c, 3, f"Twinflame copying {', '.join(m.name for m in picked)}"):
+        p.gy.append(c); return None
+    for m in picked:
+        if m not in p.perms: continue
+        cp = E.enter_token_copy(g, p, m.cd)
+        if cp is not None: cp.sick = False; cp.temp = True               # haste; exiled at the end step
+    p.gy.append(c); E.check_state(g)
+    return None
+
+
+def _ephemerate(g, p, c):
+    why = legal.check_cast(g, p, c)
+    if why: return why
+    cre = [m for m in p.perms if m.creature and not m.phased]
+    if not cre: return 'Ephemerate needs a creature you control to target.'
+    k = _choose(g, p, 'target', 'Ephemerate: exile and return which creature?', [legal.describe_target(g, p, m) for m in cre])
+    if k is None: return None
+    m = cre[k]
+    mana.pay_from_pool(g, p, 0, 'W')
+    if not _spell_cast(g, p, c, 3, f'Ephemerate on {m.name}'):
+        p.gy.append(c); return None
+    p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
+    if m in p.perms: _blink(g, p, m)
+    return None
+
+
+def _blink(g, p, m):
+    if m.token: E.leave(g, m); E.log(f'    {m.name} (a token) is exiled for good', g); return
+    importlib.import_module('commander_sim.cards.impl.t2').blink(g, p, m)
+
+
+def ephemerate_rebound(g, p, c):
+    """your upkeep: cast Ephemerate from exile for free, on a creature you choose; not cast, it stays in exile"""
+    cre = [m for m in p.perms if m.creature and not m.phased]
+    if not cre: return
+    k = _choose(g, p, 'target', 'Rebound: cast Ephemerate again? Exile and return which creature',
+                [legal.describe_target(g, p, m) for m in cre], cancel="don't cast it")
+    if k is None: return
+    m = cre[k]
+    p.exile.remove(c)
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+    E.on_cast(g, p, c)
+    E.log(f'  {E.NAME(p)} casts Ephemerate from exile (rebound) on {m.name}', g)
+    if not g.over and E.counter_window(g, p, c, 3, {}) and m in p.perms: _blink(g, p, m)
+    p.gy.append(c)
+
+
+def _sokenzan(g, p, c):
+    leg = sum(1 for m in p.perms if m.creature and m.cd is not None and 'leg' in m.cd.tags and not m.phased)
+    n = max(0, 3 - leg)
+    why = mana.cost_problem(g, p, n, 'R')
+    if why: return f"Can't channel Sokenzan. {why}"
+    mana.pay_from_pool(g, p, n, 'R')
+    p.hand.remove(c); p.gy.append(c)
+    E.log(f'  {E.NAME(p)} channels Sokenzan: two 1/1 Spirits with haste', g)
+    E.make_tokens(g, p, 2, 1, sick=False, types=('spirit',))
+    return None
+
+
+def _insight(g, p, c):
+    why = legal.sorcery_timing(g, p)
+    if why: return why.replace('do that', 'cast Bloodsoaked Insight (a sorcery)')
+    gen = _mine().insight_cost(g, p)
+    ok = next((pp for pp in ('BB', 'BR', 'RR') if not mana.cost_problem(g, p, gen, pp)), None)
+    if ok is None:
+        return (f"Can't cast Bloodsoaked Insight. It costs {{{gen}}}{{B/R}}{{B/R}} ({{1}} less for each life your "
+                f"opponents lost this turn). {mana.cost_problem(g, p, gen, 'BB')}")
+    opps = g.opps(p)
+    if not opps: return 'There is no opponent to target.'
+    k = _choose(g, p, 'target', "Bloodsoaked Insight: whose library?", [E.NAME(q) for q in opps])
+    if k is None: return None
+    q = opps[k]
+    mana.pay_from_pool(g, p, gen, ok)
+    if not _spell_cast(g, p, c, 2, f'Bloodsoaked Insight on {E.NAME(q)}'):
+        p.gy.append(c); return None
+    top = [q.library.pop() for _ in range(min(3, len(q.library)))]
+    p.hand.extend(top)
+    p.impulse_long = (getattr(p, 'impulse_long', None) or []) + [(x, p.turns + 1) for x in top]
+    E.log(f'    {", ".join(x.name for x in top)} from {E.NAME(q)}: playable until the end of your next turn', g)
+    p.gy.append(c)
+    return None
+
+
+def _disintegrate(g, p, c):
+    why = legal.check_cast(g, p, c)
+    if why: return why
+    tg = _choices().damage_targets(g, p, 'R')
+    k = _choose(g, p, 'target', 'Disintegrate: X damage to which target?', [legal.describe_target(g, p, x) for x in tg])
+    if k is None: return None
+    x = tg[k]
+    top = mana.pool_of(p).total() - 1
+    j = _choose(g, p, 'choose', 'Disintegrate: choose X (paid from your mana pool)', [f'X = {n}' for n in range(top + 1)])
+    if j is None: return None
+    why = mana.pay_from_pool(g, p, j, 'R')
+    if why: return f"Can't cast Disintegrate with X = {j}. {why}"
+    ctx = {'rem_kind': f'dmg{j}'}
+    ctx['face' if isinstance(x, E.Player) else 'target'] = x
+    p.stats['removal_cast'] += 1
+    E.cast_card(g, p, c, 'hand', ctx)
+    return None
+
+
+def _disembowel(g, p, c):
+    why = legal.check_cast(g, p, c)
+    if why: return why
+    tg = [m for q in g.players if q.alive for m in q.perms if m.creature and not m.phased
+          and not (m.owner is not p and E.untargetable(g, m))]
+    if not tg: return 'There is no creature to target.'
+    mv = lambda m: m.cd.cmc if m.cd is not None and not m.token else 0
+    k = _choose(g, p, 'target', 'Disembowel: destroy which creature? (X is its mana value)',
+                [f'{legal.describe_target(g, p, m)} (X = {mv(m)})' for m in tg])
+    if k is None: return None
+    t = tg[k]
+    why = mana.pay_from_pool(g, p, mv(t), 'B')
+    if why: return f"Can't cast Disembowel with X = {mv(t)}. {why}"
+    p.stats['removal_cast'] += 1
+    E.cast_card(g, p, c, 'hand', {'target': t})
+    return None
+
+
+def _throwdown(g, p, c):
+    why = legal.check_cast(g, p, c)
+    if why: return why
+    fod = [m for m in p.perms if m.creature and not m.phased]
+    if not fod: return 'Lethal Throwdown needs a creature to sacrifice as you cast it.'
+    tg = [m for q in g.players if q.alive for m in q.perms if not m.phased and (m.creature or (m.cd is not None and 'P' in m.cd.types))
+          and not (m.owner is not p and E.untargetable(g, m))]
+    k = _choose(g, p, 'target', 'Lethal Throwdown: destroy which creature or planeswalker?', [legal.describe_target(g, p, m) for m in tg])
+    if k is None: return None
+    j = _choose(g, p, 'choose', 'Lethal Throwdown: sacrifice which creature? (a modified one draws you a card)',
+                [legal.describe_target(g, p, m) for m in fod])
+    if j is None: return None
+    f = fod[j]
+    mana.pay_from_pool(g, p, 0, 'B')
+    mod = importlib.import_module('commander_sim.cards.impl.marchesa')._modified(g, f)
+    E.log(f'  {E.NAME(p)} sacrifices {f.name} for Lethal Throwdown', g)
+    E.die(g, f, 'sac'); p.stats['removal_cast'] += 1
+    E.cast_card(g, p, c, 'hand', {'target': tg[k], 'modified': mod})
+    return None
+
+
+HAND = {
+    'Twinflame': lambda g, p, c: [('strive: token copies of creatures you control ({1}{R}, plus {2}{R} per extra target)', _twinflame)],
+    'Ephemerate': lambda g, p, c: [('exile a creature you control, then return it (rebound)', _ephemerate)],
+    'Sokenzan, Crucible of Defiance': lambda g, p, c: [('channel ({3}{R}, {1} less per legendary creature): two 1/1 Spirits with haste', _sokenzan)],
+    'Bloodsoaked Insight // Sanguine Morass': lambda g, p, c: [("Bloodsoaked Insight: an opponent's top three, playable until the end of your next turn", _insight)],
+    'Reconnaissance Mission': lambda g, p, c: [('cast it', _cast_normally), ('cycling {2}: discard it, draw a card', _cycle(2))],
+    'Unearth': lambda g, p, c: [('cast it', _cast_normally), ('cycling {2}: discard it, draw a card', _cycle(2))],
+    'Disintegrate': lambda g, p, c: [('X damage to any target', _disintegrate)],
+    'Disembowel': lambda g, p, c: [('destroy target creature with mana value X', _disembowel)],
+    'Lethal Throwdown': lambda g, p, c: [('sacrifice a creature: destroy target creature or planeswalker', _throwdown)],
+}
+
+
+def _you_control_a_creature(g, p, c):
+    if not any(m.creature and not m.phased for m in p.perms): return f'{c.name} needs a creature you control to target.'
+
+
+def _any_creature(g, p, c):
+    if not any(m.creature and not m.phased and not (m.owner is not p and E.untargetable(g, m))
+               for q in g.players if q.alive for m in q.perms):
+        return f'{c.name} has no legal target right now.'
+
+
+NEEDS = {'Twinflame': _you_control_a_creature, 'Ephemerate': _you_control_a_creature,
+         'Disembowel': _any_creature,
+         'Lethal Throwdown': lambda g, p, c: (_you_control_a_creature(g, p, c) and
+                                              f'{c.name} needs a creature to sacrifice as you cast it.')}
+
+
+def needs(g, p, c):
+    """what c needs before it can be cast at all (the rules check asks this), or None"""
+    return NEEDS[c.name](g, p, c) if c.name in NEEDS else None
+
+
+def cast_from_hand(g, p, c):
+    """a card of yours whose casting the card code keeps for the AI: pick how (when there's a choice), then cast it"""
+    ways = HAND[c.name](g, p, c)
+    k = 0
+    if len(ways) > 1:
+        k = _choose(g, p, 'choose', f'{c.name}: which?', [w[0] for w in ways])
+        if k is None: return None
+    return ways[k][1](g, p, c)
+
+
+# ------------------------------------------------------------------ copying a spell: Return the Favor, Dualcaster Mage
+def copy_card(c):
+    return c.name in ('Return the Favor', 'Dualcaster Mage')
+
+
+def copy_in_response(g, p, c, spell, caster):
+    """p casts Return the Favor or Dualcaster Mage at `spell` (cast by `caster`, on the stack now). None, or why not"""
+    cc = getattr(g, 'cur_cast', None)
+    ctx = cc[1] if cc is not None and cc[0] is spell else None
+    if c.name == 'Dualcaster Mage':
+        if not (spell.instant or spell.sorcery): return f'Dualcaster Mage copies an instant or sorcery spell; {spell.name} is not one.'
+        why = mana.cost_problem(g, p, 1, 'RR')
+        if why: return f"Can't cast Dualcaster Mage. {why}"
+        mana.pay_from_pool(g, p, 1, 'RR')
+        E.log(f'  {E.NAME(p)} flashes in Dualcaster Mage to copy {spell.name}', g)
+        if E.cast_card(g, p, c, 'hand', {}) and not g.over: E.copy_spell(g, p, spell, dict(ctx) if ctx else None)
+        return None
+    modes = []
+    if spell.instant or spell.sorcery: modes.append(('copy', f'copy {spell.name} (you may choose new targets)'))
+    if ctx is not None and (ctx.get('target') is not None or ctx.get('face') is not None):
+        modes.append(('redirect', f'change the target of {spell.name}'))
+    if not modes: return f'Return the Favor has nothing to do to {spell.name} (not an instant or sorcery, and no single target).'
+    labels = [f'{t} (+{{1}})' for _, t in modes] + (['both (+{2})'] if len(modes) == 2 else [])
+    k = _choose(g, p, 'choose', 'Return the Favor (spree): which modes?', labels)
+    if k is None: return None
+    chosen = [modes[k][0]] if k < len(modes) else [m for m, _ in modes]
+    why = mana.cost_problem(g, p, len(chosen), 'RR')
+    if why: return f"Can't cast Return the Favor. {why}"
+    new = None
+    if 'redirect' in chosen:
+        tg = [x for x in (legal.spell_targets(g, caster, spell) or [])
+              if x is not ctx.get('target') and x is not ctx.get('face')]
+        if not tg: return f'{spell.name} has no other legal target.'
+        j = _choose(g, p, 'target', f'Return the Favor: the new target for {spell.name}', [legal.describe_target(g, p, x) for x in tg])
+        if j is None: return None
+        new = tg[j]
+    mana.pay_from_pool(g, p, len(chosen), 'RR')
+    if not _spell_cast(g, p, c, 5, f'Return the Favor ({" and ".join(chosen)}) at {spell.name}'):
+        p.gy.append(c); return None
+    if new is not None and ctx is not None:
+        ctx.pop('target', None); ctx.pop('face', None)
+        ctx['face' if isinstance(new, E.Player) else 'target'] = new
+        E.log(f'    {spell.name} now targets {legal.describe_target(g, p, new)}', g)
+    if 'copy' in chosen: E.copy_spell(g, p, spell, dict(ctx) if ctx else None)
+    p.gy.append(c)
+    return None
+
