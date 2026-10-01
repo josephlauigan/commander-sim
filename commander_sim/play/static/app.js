@@ -43,6 +43,7 @@ function you(view) { return view && view.players.find((p) => p.you); }
 
 function renderPrompt(ev) {
   const box = $('#prompt'); box.replaceChildren(); closeMenu();
+  for (const x of document.querySelectorAll('.stackbar')) x.remove();
   $('#pass').hidden = !(ev && ev.request.kind === 'priority');
   $('#table').classList.toggle('can-act', !!(ev && ev.request.kind === 'priority'));
   if (!ev) { box.append(el('div', { class: 'stats' }, 'Waiting for the other players…')); return; }
@@ -50,7 +51,7 @@ function renderPrompt(ev) {
   box.append(el('h3', {}, req.prompt));
   if (req.kind === 'priority') {
     const me = you(ev.view);
-    if (req.data.stack && req.data.stack.length) box.append(el('div', { class: 'row' }, el('b', {}, 'On the stack'), req.data.stack.map((x) => card(x.name))));
+    if (req.data.stack && req.data.stack.length) showStack(req);
     box.append(el('p', { class: 'help' }, 'Click a land or mana rock to tap it, a card in your hand to cast or play it, a permanent to use its abilities, your commander in the command zone or a card in your graveyard to cast it.'));
     const row = (title, items) => items.length && list.append(el('div', { class: 'row' }, el('b', {}, title), items));
     const list = el('details', { class: 'actions' }, el('summary', {}, 'The same as a list'));
@@ -80,6 +81,19 @@ function renderPrompt(ev) {
   } else {
     box.append(el('div', { class: 'row' }, req.choices.map((c, i) => btn(c, i))));
   }
+}
+
+// the stack, between the opponents and your battlefield, with who gets priority on it in turn order
+function showStack(req) {
+  const opps = document.querySelector('#table .opps');
+  if (!opps) return;
+  const me = (req.data.order || []).findIndex((x) => you(pending.view) && x.key === you(pending.view).key);
+  const order = (req.data.order || []).map((x, i) => el('span', { class: i < me ? 'passed' : i === me ? 'you' : '' },
+    i < me ? `${x.name} · passed` : i === me ? 'You' : x.name));
+  opps.after(el('section', { class: 'stackbar', 'aria-label': 'The stack' },
+    el('div', { class: 'cards' }, req.data.stack.map((x) => cardOf(images, x.name, { size: 'md' }))),
+    el('div', {}, el('h3', {}, req.data.caster ? `${req.data.caster} casts ${req.data.stack[0].name}` : 'On the stack'),
+      order.length ? el('div', { class: 'order' }, el('b', {}, 'Priority: '), order.flatMap((o, i) => (i ? [' → ', o] : [o]))) : null)));
 }
 
 // ------------------------------------------------------------------ acting on the table (your priority)
@@ -200,7 +214,6 @@ function logLine(text, cls = '') {
 }
 
 function onEvent(ev) {
-  lastId = Math.max(lastId, ev.id);
   if (ev.view) renderTable(ev.view);
   if (ev.kind === 'log') logLine(ev.text, ev.text.startsWith('---') ? 'turn' : '');
   else if (ev.kind === 'invalid') { logLine('Not allowed: ' + ev.text, 'invalid'); if (ev.id > liveFrom) toast(ev.text); }
@@ -212,13 +225,67 @@ function onEvent(ev) {
   else if (ev.kind === 'error') logLine(ev.text, 'invalid');
 }
 
+// ------------------------------------------------------------------ playback of opponents' turns
+// Events queue up here. An action during another player's turn (a log line with its view of the table) is shown,
+// then the next one waits BASE / speed ms; paused, only "Next action" moves on. Everything else (your own turn,
+// history replayed when the page loads) shows at once. The engine is waiting on your next decision meanwhile, so
+// a decision is reached only after the actions before it have played.
+const BASE = 1100;
+let inbox = [], paused = false, speed = 1, stepOnce = false, skipping = false, pumping = false;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const theirTurn = (view) => view && view.players.some((p) => p.key === view.active && !p.you);
+const paced = (ev) => ev.id > liveFrom && ev.kind === 'log' && ev.view && theirTurn(ev.view);
+
+function receive(ev) { inbox.push(ev); pump(); }
+
+async function pump() {
+  if (pumping) return;
+  pumping = true;
+  try {
+    while (inbox.length) {
+      const ev = inbox[0];
+      if (paced(ev) && !skipping) {
+        if (paused && !stepOnce) break;
+        stepOnce = false;
+        inbox.shift(); onEvent(ev); showControls();
+        if (!paused) await sleep(BASE / speed);
+      } else {
+        inbox.shift(); onEvent(ev);
+        if (ev.kind === 'request' || ev.kind === 'over') skipping = false;
+      }
+    }
+  } finally { pumping = false; showControls(); }
+}
+
+function showControls() {
+  const bar = $('#playback');
+  const waiting = inbox.some(paced);
+  bar.hidden = !(theirTurn(lastView) || waiting);
+  $('#pb-pause').textContent = paused ? '▶ Play' : '❚❚ Pause';
+  $('#pb-next').disabled = !paused || !waiting;
+  for (const b of bar.querySelectorAll('[data-speed]')) b.classList.toggle('on', +b.dataset.speed === speed);
+}
+
+function setupPlayback() {
+  $('#pb-pause').addEventListener('click', () => { paused = !paused; showControls(); pump(); });
+  $('#pb-next').addEventListener('click', () => { stepOnce = true; pump(); });
+  $('#pb-skip').addEventListener('click', () => { skipping = true; pump(); });
+  for (const b of $('#playback').querySelectorAll('[data-speed]')) b.addEventListener('click', () => { speed = +b.dataset.speed; showControls(); });
+}
+
 function connect() {
   if (source) source.close();
   source = new EventSource(`/api/events?since=${lastId}`);
-  source.onmessage = (m) => onEvent(JSON.parse(m.data));
+  source.onmessage = (m) => { const ev = JSON.parse(m.data); lastId = Math.max(lastId, ev.id); receive(ev); };
 }
 
 // ------------------------------------------------------------------ setup
+function setStatus(seed, seats) {
+  const st = $('#status');
+  st.textContent = `Seed ${seed}`;
+  st.title = `Seats in turn order: ${seats.join(', ')}`;
+}
+
 let catalog = null, chosen = { deck: null, tier: 't3' };
 
 function screen(name) {
@@ -267,10 +334,10 @@ async function startGame(e) {
     if (body.opponents.length !== 3) { $('#setup-error').textContent = 'Pick exactly three opponents.'; return; }
   }
   $('#setup-error').textContent = '';
-  $('#log').replaceChildren(); pending = null; renderTable(null); renderPrompt(null); loading(0, 0);
+  $('#log').replaceChildren(); pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/new', body);
   if (!r.ok) { loading(null); $('#setup-error').textContent = r.data.error; return; }
-  $('#status').textContent = `Seed ${r.data.seed} · seats: ${r.data.seats.join(', ')}`;
+  setStatus(r.data.seed, r.data.seats);
   screen('game');
 }
 
@@ -282,6 +349,7 @@ async function init() {
   for (const r of f.opp) r.addEventListener('change', renderSetup);
   $('#to-setup').addEventListener('click', () => screen('setup'));
   $('#table').addEventListener('click', onTableClick);
+  setupPlayback();
   $('#pass').addEventListener('click', () => answer({ do: 'pass' }));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
   document.addEventListener('click', (e) => { if (!e.target.closest('#menu') && !e.target.closest('#table')) closeMenu(); });
@@ -293,7 +361,7 @@ async function init() {
   images = st.images || {};
   liveFrom = st.last_event || 0;
   if (st.game) {
-    $('#status').textContent = `Seed ${st.game.seed} · seats: ${st.game.seats.join(', ')}`;
+    setStatus(st.game.seed, st.game.seats);
     renderTable(st.view); screen('game');
   } else screen('setup');
   connect();

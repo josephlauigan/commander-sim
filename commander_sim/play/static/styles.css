@@ -116,3 +116,13 @@ section.targetable > header { cursor: crosshair; }
 .card.attacking::after { content: '⚔'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 16px; text-shadow: 0 0 4px #000; }
 .card.attacker-now .face { outline: 4px solid #ff6b4a; animation: pulse 1s infinite alternate; }
 @keyframes pulse { from { box-shadow: 0 0 4px #ff6b4a; } to { box-shadow: 0 0 22px #ff6b4a; } }
+#playback { display: flex; gap: 4px; align-items: center; }
+#playback .speeds { display: inline-flex; border: 1px solid #3f7a5a; border-radius: 6px; overflow: hidden; }
+#playback .speeds button { border: none; border-radius: 0; }
+#playback .speeds button.on { background: var(--gold); color: #1a1a14; font-weight: 600; }
+#playback button:disabled { opacity: .45; cursor: default; }
+.stackbar { display: flex; gap: 14px; align-items: center; margin: 10px auto 0; padding: 10px 14px; width: fit-content; max-width: 100%;
+  background: #0f2d1f; border: 2px solid #7fd3ff; border-radius: 12px; box-shadow: 0 0 18px #7fd3ff55; }
+.stackbar h3 { margin: 0 0 6px; font-size: 14px; }
+.stackbar .order { font-size: 13px; color: var(--dim); } .stackbar .order .you { color: var(--gold); font-weight: 700; }
+.stackbar .order .passed { opacity: .75; }

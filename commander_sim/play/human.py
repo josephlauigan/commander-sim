@@ -43,10 +43,15 @@ def respond(g, q, prompt, spell=None, caster=None):
     they cast at `spell` (the engine then counters it), or None when they pass"""
     ctl = controller_of(g, q)
     stack = [{'name': spell.name}] if spell is not None else []
+    order = []                                               # who gets priority on it, in turn order after the caster
+    if caster is not None:
+        order = [{'key': x.key, 'name': E.NAME(x)} for x in g.after(caster) if x.alive]
     g.responding = getattr(g, 'responding', 0) + 1           # something is waiting to resolve: no sorcery-speed play
     try:
         while not g.over and q.alive:
-            act = ctl.ask(Request('priority', f'{prompt}. You have priority', data={'view': build_view(g, q.key), 'stack': stack}))
+            act = ctl.ask(Request('priority', f'{prompt}. You have priority',
+                                  data={'view': build_view(g, q.key), 'stack': stack, 'order': order,
+                                        'caster': None if caster is None else E.NAME(caster)}))
             if not isinstance(act, dict): act = {}
             if act.get('do') == 'pass': return None
             if act.get('do') == 'cast' and spell is not None and act.get('zone') != 'cmd':

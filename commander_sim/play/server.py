@@ -55,7 +55,7 @@ class Hub:
         s.quit()
         sess = Session(opts['deck'], opts['tier'], seed=opts.get('seed'), seat=opts.get('seat'),
                        opponents=opts.get('opponents'), profile=opts.get('profile', 'loose'),
-                       ai=opts.get('ai', 'lookahead'))
+                       ai=opts.get('ai', 'lookahead'), views=True)
         with s.cond:
             s.game_no += 1
             s.session, s.events, s.pending, s.view, s.images = sess, [], None, None, {}

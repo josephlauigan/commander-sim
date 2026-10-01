@@ -10,6 +10,12 @@
 <header>
   <h1>Commander Practice</h1>
   <nav id="steps" aria-label="Turn steps"></nav>
+  <div id="playback" role="group" aria-label="Opponents' turns" hidden>
+    <button id="pb-pause" type="button">❚❚ Pause</button>
+    <button id="pb-next" type="button">Next action</button>
+    <span class="speeds"><button type="button" data-speed="1">1×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="4">4×</button></span>
+    <button id="pb-skip" type="button" title="Show everything up to your next decision">Skip ahead</button>
+  </div>
   <div id="status"></div>
   <button id="to-setup" type="button" hidden>New game</button>
 </header>

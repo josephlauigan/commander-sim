@@ -87,5 +87,14 @@ class Responding(unittest.TestCase):
         self.assertIn('attacks you', ctl.asked[0].prompt)
 
 
+    def test_the_priority_order_on_a_spell(self):
+        g = table('veyran', 'sauron', 'seph'); v, s, ph = g.players
+        ctl = seat(g, ph, [{'do': 'pass'}])
+        from commander_sim.play import human
+        human.respond(g, ph, 'Veyran casts Opt', spell=E.DB['Lightning Bolt'], caster=v)
+        d = ctl.asked[0].data
+        self.assertEqual([x['key'] for x in d['order']], ['sauron', 'seph'])        # after the caster, in turn order
+        self.assertEqual(d['stack'], [{'name': 'Lightning Bolt'}])
+
 if __name__ == '__main__':
     unittest.main()

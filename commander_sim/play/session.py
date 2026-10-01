@@ -28,6 +28,13 @@ def is_private(line):
     return body.lstrip().startswith('[')
 
 
+def is_action(line):
+    """a top-level action ('R4    Tergrid casts Jet Medallion'), not one of its effects (indented further) or a turn
+    header"""
+    body = line[4:] if line.startswith('R') else line
+    return body.startswith('  ') and not body.startswith('   ')
+
+
 class EventLog(list):
     """the game log (g.log): every line is also sent to the session as it happens"""
     def __init__(s, session):
@@ -44,10 +51,11 @@ class EventLog(list):
 
 class Session:
     def __init__(s, deck, tier, seed=None, seat=None, opponents=None, profile='loose', ai='lookahead',
-                 step=False, max_rounds=30):
+                 step=False, max_rounds=30, views=False):
         if deck not in MY_DECKS: raise ValueError(f'unknown deck {deck!r}: one of {", ".join(MY_DECKS)}')
         if tier not in TIERS: raise ValueError(f'unknown tier {tier!r}: one of {", ".join(TIERS)}')
         s.deck, s.tier, s.profile, s.ai, s.step, s.max_rounds = deck, tier, profile, ai, step, max_rounds
+        s.views = views                    # a view of the table with every action (the browser plays them back)
         s.seed = seed if seed is not None else random.SystemRandom().randrange(1, 10 ** 6)
         s.events = queue.Queue()
         s.human = HumanController(notify=s.events.put)
@@ -101,7 +109,10 @@ class Session:
 
     def _on_log(s, line):
         if is_private(line): return                  # stays in the game's log (for the review), never shown in play
-        s.events.put({'kind': 'log', 'text': line})
+        ev = {'kind': 'log', 'text': line}
+        if is_action(line) and s.game is not None and s.views:
+            ev['view'] = build_view(s.game, s.deck)  # the table after each action, for the browser's playback
+        s.events.put(ev)
         if '--- ' in line and ' turn ' in line and s.game is not None and s.game.active is not None:
             g = s.game
             s.events.put({'kind': 'turn', 'player': g.active.key, 'view': build_view(g, s.deck)})

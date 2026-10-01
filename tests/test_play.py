@@ -47,6 +47,18 @@ class Session_(unittest.TestCase):
         self.assertFalse([t for t in logs if 'decides:' in t])
         self.assertTrue(any('decides:' in t for t in s.game.log))          # kept in the game's own log
 
+    def test_actions_carry_the_table_for_playback(self):
+        from commander_sim.play.session import is_action
+        self.assertTrue(is_action('R4    Tergrid casts Jet Medallion'))
+        self.assertFalse(is_action('R4      Jet Medallion (Tergrid) is removed: exile'))
+        self.assertFalse(is_action('R4  --- Tergrid turn 4: life 40'))
+        s = Session('sauron', 't2', seed=3, ai='adaptive', views=True).start()
+        evs = drain(s)
+        acts = [e for e in evs if e['kind'] == 'log' and is_action(e['text'])]
+        self.assertTrue(acts and all('view' in e for e in acts))
+        plain = drain(Session('sauron', 't2', seed=3, ai='adaptive').start())      # without views=True: none
+        self.assertFalse(any('view' in e for e in plain if e['kind'] == 'log'))
+
     def test_seat_and_opponents(self):
         s = Session('seph', 't4', seed=5, seat=1, opponents=['krenko-mono-red-goblins', 'yuriko-dimir-ninjas',
                                                             'heliod-mono-white-stax'], ai='adaptive')
