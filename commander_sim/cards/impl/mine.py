@@ -595,12 +595,20 @@ def ring_tempt(g, p):
     threat, and legendary it turns Champion's Helm on), then the 'tempts you' / 'choose a Ring-bearer' triggers"""
     p.ring_level = min(4, ring_level(p) + 1)
     cr = [m for m in p.perms if m.creature and not m.phased]
+    hc = E.human_choice(g, p)                             # practice mode: the person makes the Ring's choices
     if cr:
-        p.ring_bearer = max(cr, key=lambda m: (m.army, epow(g, m) + 2 * etgh(g, m) / 5))
+        p.ring_bearer = hc.ring_bearer(g, p, cr) if hc is not None else \
+            max(cr, key=lambda m: (m.army, epow(g, m) + 2 * etgh(g, m) / 5))
         log(f'    The Ring tempts {NAME(p)} (level {p.ring_level}): Ring-bearer {p.ring_bearer.name}', g)
-        for m in find(p, 'callring'):                     # Call of the Ring: pay 2 life, draw a card
-            if p.life > 10: lose_life(g, p, 2, p); draw(g, p, 1)
-    for m in find(p, 'sauron'):                           # Sauron, the Dark Lord: discard your hand, draw four
+        for m in find(p, 'callring'):                     # Call of the Ring: you may pay 2 life to draw a card
+            if (hc.yes_no(g, p, 'Call of the Ring: pay 2 life to draw a card?') if hc is not None else p.life > 10):
+                lose_life(g, p, 2, p); draw(g, p, 1)
+    for m in find(p, 'sauron'):                           # Sauron, the Dark Lord: you may discard your hand, draw four
+        if hc is not None:
+            if hc.yes_no(g, p, f'Sauron: discard your hand ({len(p.hand)} cards) and draw four?'):
+                discard_cards(g, p, list(p.hand)); draw(g, p, 4)
+                log(f'    {NAME(p)} discards the hand and draws four (Sauron)', g)
+            break
         if len(p.hand) <= 3:
             discard_cards(g, p, list(p.hand)); draw(g, p, 4)
             log(f'    {NAME(p)} discards the hand and draws four (Sauron)', g)
@@ -747,6 +755,8 @@ def kaervek(g, k, caster, c):
     """an opponent casts a spell: damage equal to its mana value to any target (a creature it kills, else a face)"""
     n = c.cmc
     if n <= 0: return
+    hc = E.human_choice(g, k)
+    if hc is not None: return hc.deal_damage(g, k, n, 'Kaervek the Merciless')
     cr = [m for q in g.opps(k) for m in q.perms if m.creature and not untargetable(g, m) and etgh(g, m) <= n]
     best = max(cr, key=lambda m: pval(g, m)) if cr else None
     if best is not None and pval(g, best) >= 4: apply_removal(g, k, best, f'dmg{n}')

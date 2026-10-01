@@ -199,7 +199,9 @@ def run(g, p, e, src, ctx, spell, depth):
             draw(g, q, num(g, p, e.get('n'), ctx, src))
     elif d == 'damage':
         n = num(g, p, e.get('n'), ctx, src) + (1 if has(p, 'thor') else 0); to = e.get('to', {})
-        if to.get('sel') == 'any_target':
+        if to.get('sel') == 'any_target' and E.human_choice(g, p) is not None:
+            E.human_choice(g, p).deal_damage(g, p, n, getattr(spell or src, 'name', 'Damage'))
+        elif to.get('sel') == 'any_target':
             srccol = spell.pips if spell is not None else (E.colors_of(src) if src is not None and hasattr(src, 'owner') else '')
             tg = [m for q in opps for m in q.perms if m.creature and not untargetable(g, m) and etgh(g, m) <= n
                   and not E.protected_from(g, m, srccol)]

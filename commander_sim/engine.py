@@ -656,7 +656,10 @@ def draw(g, p, n=1, step=False):
             if has(q, 'tithe') and importlib.import_module('commander_sim.cards.impl.rules').tithe_unpaid(g, p):
                 add_treasure(g, q, 1)
             if extra and has(q, 'bowmasters'):
-                amass(g, q, 1); lose_life(g, p, 1, q, kind='triggers')
+                hc = human_choice(g, q)
+                for _ in find(q, 'bowmasters') if hc is not None else ():     # practice mode: each Bowmasters, your target
+                    amass(g, q, 1); hc.deal_damage(g, q, 1, 'Orcish Bowmasters')
+                if hc is None: amass(g, q, 1); lose_life(g, p, 1, q, kind='triggers')
         if has(p, 'sheoA'): gain(p, 2)
 
 
@@ -1738,7 +1741,9 @@ def etb_once(g, p, m):
     if 'skate' in t:
         for x in p.perms:
             if x.plus > 0: x.plus = min(x.plus * 2, 200)
-    if 'bowmasters' in t and opps:
+    if 'bowmasters' in t and opps and human_choice(g, p) is not None:
+        human_choice(g, p).deal_damage(g, p, 1, 'Orcish Bowmasters'); amass(g, p, 1)
+    elif 'bowmasters' in t and opps:
         x1 = [x for q in opps for x in q.perms if x.creature and etgh(g, x) <= 1 and pval(g, x) >= 2 and not untargetable(g, x)]
         if x1: die(g, max(x1, key=lambda x: pval(g, x)), 'destroy')
         else:

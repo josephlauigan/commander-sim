@@ -58,7 +58,8 @@ class MainPhase(unittest.TestCase):
         g = table('sauron', 'veyran'); s = g.players[0]
         hand(s, 'Orcish Bowmasters'); lands(s, 'Swamp', 2)
         ctl = seat(g, s, [{'do': 'tap', 'source': 0}, {'do': 'tap', 'source': 0}, {'do': 'cast', 'card': 0},
-                          {'do': 'pass'}])
+                          lambda req: next(i for i, x in enumerate(req.choices) if 'player' in x and 'you' not in x),
+                          {'do': 'pass'}])                       # Bowmasters' 1 damage: at the opponent
         human.human_main(g, s, False)
         self.assertTrue(any(m.name == 'Orcish Bowmasters' for m in s.perms))
         self.assertEqual(mana.pool_of(s).total(), 0)

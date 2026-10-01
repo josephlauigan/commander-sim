@@ -70,7 +70,8 @@ class ScriptController(HumanController):
         if len(s.asked) > s.LIMIT: raise Cancelled()
         if callable(s.answers): return s.answers(req)
         if not s.answers: raise Cancelled()
-        return s.answers.pop(0)
+        ans = s.answers.pop(0)
+        return ans(req) if callable(ans) else ans                # an answer may depend on the request
 
     def tell(s, kind, text):
         s.told.append((kind, text))

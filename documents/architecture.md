@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (252 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (257 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -910,6 +910,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (252 tests, abou
 | `test_play_combat.py` | Practice mode's attacks and blocks. |
 | `test_play_respond.py` | Practice mode's priority on other players' turns. |
 | `test_play_choices.py` | Practice mode's mulligans, discards, sacrifices, tutors and scry. |
+| `test_play_sauron.py` | Practice mode, Sauron's card-specific choices. |
 
 `tests/table.py` builds a position for a rule test: seat decks, empty the hands, put chosen cards in hand or onto the
 battlefield, then drive the engine directly.

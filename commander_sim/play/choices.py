@@ -152,3 +152,47 @@ def pick_modes(g, p, modes, k, name):
 
 def yes_no(g, p, prompt):
     return choose(g, p, 'choose', prompt, ['yes', 'no'], cancel=None) == 0
+
+
+# ------------------------------------------------------------------ "deals N damage to any target"
+def damage_targets(g, p, colours=''):
+    """everything a damage ability may hit: creatures and planeswalkers (hexproof, shroud, protection respected) and
+    players (not under protection from everything)"""
+    out = []
+    for q in g.players:
+        if not q.alive: continue
+        for m in q.perms:
+            if m.phased or not (m.creature or (m.cd is not None and 'P' in m.cd.types)): continue
+            if (m.owner is not p and E.untargetable(g, m)) or (colours and E.protected_from(g, m, colours)): continue
+            out.append(m)
+    out += [q for q in g.players if legal.player_targetable(q)]
+    return out
+
+
+def deal_damage(g, p, n, source):
+    """p's `source` deals n damage to a target p picks: a creature dies if n reaches its toughness, a planeswalker loses
+    that much loyalty, a player loses that much life"""
+    if n <= 0: return
+    tg = damage_targets(g, p)
+    if not tg: return
+    k = choose(g, p, 'target', f'{source}: deal {n} damage to which target?', [legal.describe_target(g, p, x) for x in tg],
+               cancel=None)
+    x = tg[k]
+    if isinstance(x, E.Player):
+        E.lose_life(g, x, n, p, kind='triggers'); return
+    if x.creature and E.etgh(g, x) <= n:
+        E.apply_removal(g, p, x, f'dmg{n}')
+    elif x.creature:
+        E.log(f'    {source} deals {n} damage to {x.name} (it survives)', g)
+    if x in x.owner.perms and x.cd is not None and 'P' in x.cd.types and x.loyalty is not None:
+        x.loyalty -= n
+        E.log(f'    {source} deals {n} damage to {x.name} (loyalty {max(0, x.loyalty)})', g)
+        if x.loyalty <= 0: E.leave(g, x); E.to_zone_card(g, x, 'gy')
+    E.check_state(g)
+
+
+# ------------------------------------------------------------------ the Ring
+def ring_bearer(g, p, cands):
+    k = choose(g, p, 'choose', 'The Ring tempts you: choose your Ring-bearer', [legal.describe_target(g, p, m) for m in cands],
+               cancel=None)
+    return cands[k]
