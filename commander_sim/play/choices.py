@@ -115,3 +115,40 @@ def scry(g, p, n, to='bottom'):
     else: p.library[:0] = away
     for c in reversed(keep): p.library.append(c)             # kept cards stay in the order they were
     E.log(f'  {E.NAME(p)} {"scries" if to == "bottom" else "surveils"} {n}: {len(keep)} on top', g)
+
+
+# ------------------------------------------------------------------ modes and "you may"
+EFFECT_WORDS = {'regrow': 'return a card from your graveyard to your hand', 'discard': 'a player discards',
+                'destroy': 'destroy', 'exile': 'exile', 'damage': 'deal damage', 'draw': 'draw cards',
+                'bounce': "return a permanent to its owner's hand", 'tap': 'tap', 'untap': 'untap',
+                'counter_spell': 'counter a spell', 'token': 'create tokens', 'grant': 'give an ability',
+                'sacrifice': 'a player sacrifices', 'gain_life': 'gain life', 'lose_life': 'lose life',
+                'counters': 'put counters', 'pump': 'pump', 'mill': 'mill', 'search': 'search your library',
+                'reanimate': 'return a creature to the battlefield'}
+
+
+def describe_mode(ms):
+    """'deal damage 2' / 'destroy (artifact)': a short label for one mode (a list of effects)"""
+    out = []
+    for e in ms:
+        w = EFFECT_WORDS.get(e.get('do'), e.get('do', '?').replace('_', ' '))
+        n = e.get('n')
+        if isinstance(n, int) and n > 1 or (isinstance(n, int) and e.get('do') == 'damage'): w += f' {n}'
+        what = (e.get('what') or e.get('to') or {}).get('filter', {}) or {}
+        if what.get('type'): w += f" ({what['type'].replace('_', ' ')})"
+        out.append(w)
+    return ', then '.join(out)
+
+
+def pick_modes(g, p, modes, k, name):
+    """the person chooses k different modes"""
+    left = list(range(len(modes))); got = []
+    for i in range(k):
+        j = choose(g, p, 'choose', f'{name}: choose a mode' + (f' ({i + 1} of {k})' if k > 1 else ''),
+                   [describe_mode(modes[x]) for x in left], cancel=None)
+        got.append(modes[left.pop(j)])
+    return got
+
+
+def yes_no(g, p, prompt):
+    return choose(g, p, 'choose', prompt, ['yes', 'no'], cancel=None) == 0

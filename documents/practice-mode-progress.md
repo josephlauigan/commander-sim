@@ -13,7 +13,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 
 ## Status
 
-- Current step: 1g, second half ("choose one" modes and "you may" triggers), then 1h
+- Current step: 1h (Sauron's card-specific choices): next
 - Last checkpoint: 2026-09-30 6pm (pushed); the session was down from 7:59am to 6:15pm
 
 ## Done
@@ -25,6 +25,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 - **1e** (2026-09-29): combat. `play/combat.py`: `attack_candidates` (every creature that can legally attack; defender and summoning sickness respected), `human_attack` (pick attackers, then the player they attack), `human_blocks` (for each attacker, pick a blocker or none; menace asks for two). Engine (`ais.combat`, `_resolve_combat`): the human seat's declarations replace the AI's; the AI's automatic Rogue's Passage, Aggravated Assault, planeswalker redirection and emergency Teferi's Protection are off for the human seat. Text client: `1,3` / `all` / `none` for attackers, numbers for blockers. Tests: `test_play_combat.py`; the bot attacks with everything and blocks with its first creature.
 - **1f** (2026-09-29): priority on other turns. `human.respond` (priority with the spell shown on the stack: tap, cast instants and flash, instant-speed abilities, counter the spell, or pass). You get priority on every spell an opponent casts, at the end of each other player's turn, and when attacked (before blocks). When an AI counters your spell you choose whether to counter back. `legal.check_counter` / `alternative_counter_cost` (what a counterspell can hit; Force of Will, Fierce Guardianship, Pact alternatives); counterspells can't be cast with nothing to counter. Engine: `counter_window`'s counter handling moved into `_counter_resolves` (unchanged for the AI; the sim guard confirms), a response window for human seats on every spell, the AI's end-of-turn plays skipped for the human seat. Also: Diabolic Intent now asks which creature to sacrifice (any creature you control), and the rules check covers additional costs. Tests: `test_play_respond.py`.
 - **1g, first half** (2026-09-30): `play/choices.py`: London mulligan with a free first mulligan (your opening hand is yours: the engine skips your seat's mulligan and the session asks), discards (effects and the end-of-turn hand size), sacrificing to edicts, tutors (only the cards that tutor may find; "find nothing" allowed), basic-land searches, scry and surveil. Engine: `engine.human_choice(g, p)` routes `discard_worst`, `edict`, `land_ramp`, `land_to_hand`, `tutor`, `tutor_to_top`, `t1.tutor_named`, `topdeck.scry` and the end-step discard to the person. `human.choose` gains forced choices (no cancel). Text client: keep/mulligan prompt; every prompt falls back to a default after 20 unusable answers. Tests: `test_play_choices.py`.
+- **1g, second half** (2026-09-30): the ability language's "choose one / two" (`modal`) and "you may draw" (`optional`) ask the person (`choices.pick_modes`, `describe_mode`, `yes_no`). None of your four decks' cards use these (their choices live in card code, step 1h/1i); opponents' and future cards do.
 
 ## Notes and decisions
 

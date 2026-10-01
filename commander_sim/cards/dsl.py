@@ -191,7 +191,11 @@ def run(g, p, e, src, ctx, spell, depth):
         from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, e.get('n', 1), 'gy' if d == 'surveil' else 'bottom')
     elif d == 'draw':
         for q in players(g, p, e.get('who', 'you'), ctx):
-            if e.get('optional') and len(q.library) <= 12: continue       # "you may draw": don't deck yourself
+            if e.get('optional'):                                          # "you may draw"
+                hc = E.human_choice(g, q)
+                if hc is not None:
+                    if not hc.yes_no(g, q, f"{getattr(spell or src, 'name', 'An effect')}: draw?"): continue
+                elif len(q.library) <= 12: continue                          # the AI: don't deck yourself
             draw(g, q, num(g, p, e.get('n'), ctx, src))
     elif d == 'damage':
         n = num(g, p, e.get('n'), ctx, src) + (1 if has(p, 'thor') else 0); to = e.get('to', {})
@@ -355,7 +359,9 @@ def run(g, p, e, src, ctx, spell, depth):
     elif d == 'modal':
         modes = e.get('modes', [])
         k = min(int(e.get('choose', 1)), len(modes))
-        best = sorted(modes, key=lambda ms: -value_of(g, p, ms, spell))[:k]
+        hc = E.human_choice(g, p)
+        if hc is not None: best = hc.pick_modes(g, p, modes, k, getattr(spell or src, 'name', 'Choose'))
+        else: best = sorted(modes, key=lambda ms: -value_of(g, p, ms, spell))[:k]
         for ms in best: execute(g, p, ms, src, ctx, spell, depth + 1)
     elif d == 'counter_spell':
         pass                                      # counterspells are cast through the engine's response window

@@ -73,5 +73,22 @@ class Choices(unittest.TestCase):
         self.assertEqual(len(s.library) + len(s.hand), 99)
 
 
+    def test_choose_modes(self):
+        from commander_sim.cards import dsl
+        g = table('sauron', 'veyran'); s, v = g.players
+        hand(v, 'Island', 'Mountain')
+        kc = card("Kolaghan's Command")
+        modal = next(e for a in kc.dsl for e in a.get('effects', []) if e.get('do') == 'modal')
+        ctl = seat(g, s, [1, 0])                             # 'a player discards', then (of the rest) the first
+        dsl.run(g, s, modal, None, {}, kc, 0)
+        self.assertEqual(len(ctl.asked), 2)
+        self.assertEqual(len(ctl.asked[1].choices), 3)        # a mode can't be chosen twice
+        self.assertEqual(len(v.hand), 1)
+
+    def test_yes_no(self):
+        g = table('sauron', 'veyran'); s = g.players[0]
+        seat(g, s, [1])
+        self.assertFalse(choices.yes_no(g, s, 'Draw?'))
+
 if __name__ == '__main__':
     unittest.main()
