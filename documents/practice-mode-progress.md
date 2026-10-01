@@ -14,7 +14,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 ## Status
 
 - Current step: 3f (save and replay): next. 3e done (Milestone 3: see where you and the AI differed). Phase 2 done 2026-09-30 (Milestone 2: a full game in the browser). Phase 1 done 2026-09-30: all four decks fully manual (Milestone 1, Sauron, reached earlier that day).
-- Last checkpoint: 2026-09-30 10pm (pushed). Since 6pm: 1i finished (all four decks fully manual), Phase 2 done (the browser table, Milestone 2), 3a (seeded games independent of memory layout; an engine bug fixed) and 3b (Undo).
+- Last checkpoint: 2026-09-30 10pm (pushed at 10:01pm, and again at 10:35pm when the scheduled prompt arrived late): since 6pm, 1i finished (all four decks fully manual), Phase 2 done (the browser table, Milestone 2), 3a-3e (seeds replay exactly; an engine bug fixed; Undo; Hint; the AI comparison and the review with Try it, Milestone 3).
 
 ## Done
 
