@@ -49,7 +49,8 @@ HELP = """Commands:
   land N            play card N from your hand as your land drop
   cast N            cast card N from your hand
   cast cmd          cast your commander from the command zone
-  use N             an ability of your permanent N (Equip, loyalty abilities, ...)
+  use N             an ability of your permanent N (Equip, loyalty abilities, Jace's Archivist ...)
+  use LN            an ability of your land N (Rogue's Passage, Scavenger Grounds)
   pass              pass priority (move on)
 When asked to choose (a target, an ability, a blocker), type its number, or cancel / the last choice.
 Attacking: type the attackers' numbers (1,3), all, or none.
@@ -73,6 +74,9 @@ def priority_prompt(req, out):
     if perms:
         print('  Your permanents: ' + '  '.join(f"{m['i'] + 1}) {m['name']}" + (' (tapped)' if m['tapped'] else '')
                                               for m in perms), file=out)
+    act_lands = [L for L in me['lands'] if L.get('ability') and not L['tapped']]
+    if act_lands:
+        print('  Lands with abilities: ' + '  '.join(f"L{L['i'] + 1}) {L['name']}" for L in act_lands), file=out)
     if me['commander_in_zone']: print(f"  Commander in the command zone: {me['commander']} (tax {me['tax']})", file=out)
 
 
@@ -87,7 +91,9 @@ def parse(line, view):
     if cmd in ('quit', 'q'): return 'quit'
     if cmd == 'cast' and len(w) > 1 and w[1].lower() in ('cmd', 'commander'): return {'do': 'cast', 'zone': 'cmd'}
     if cmd == 'use':
-        if len(w) < 2 or not w[1].isdigit(): return '?Which permanent? e.g. use 1'
+        if len(w) > 1 and w[1].lower().startswith('l') and w[1][1:].isdigit():
+            return {'do': 'use', 'land': int(w[1][1:]) - 1}
+        if len(w) < 2 or not w[1].isdigit(): return '?Which permanent? e.g. use 1 (or use L1 for a land)'
         return {'do': 'use', 'perm': int(w[1]) - 1}
     if cmd in ('tap', 'land', 'cast'):
         if len(w) < 2 or not w[1].isdigit(): return f'?Which one? e.g. {cmd} 1'

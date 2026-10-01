@@ -1862,6 +1862,7 @@ def combat(g, p):
         a = army_of(p)
         for m in atk:
             if m.army and equipped(m, 'cloak'): unbl.add(m)
+            if m.data and m.data.get('unbl') == turn_stamp(g): unbl.add(m)     # Rogue's Passage, activated by a person
         if not human and a in atk and a not in unbl and epow(g, a) >= 5:
             ps = [L for L in p.lands if L.cd.tags.get('passage') and not L.tapped and not blocked(g, p, L.cd.name)]
             if ps:

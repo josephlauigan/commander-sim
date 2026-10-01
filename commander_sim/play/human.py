@@ -85,6 +85,10 @@ def apply(g, p, act):
         E.check_state(g)
         return None
     if do == 'use':
+        if 'land' in act:
+            i = act.get('land')
+            if not isinstance(i, int) or not 0 <= i < len(p.lands): return "You don't control that land."
+            return use_land(g, p, p.lands[i])
         i = act.get('perm')
         if not isinstance(i, int) or not 0 <= i < len(p.perms): return "You don't control that."
         return use(g, p, p.perms[i])
@@ -118,6 +122,9 @@ def abilities_of(g, p, m):
     out = []
     if legal.equip_cost(m) is not None: out.append((f'Equip {{{legal.equip_cost(m)}}}', 'equip', None))
     post = (getattr(g, 'step', None) == 'main2') if g.active is p else None    # None: instant-speed abilities only
+    from commander_sim.play import abilities
+    for label, f in abilities.permanent_abilities(g, p, m):
+        out.append((label, 'extra', f))
     if g.hooks:
         s = brain.Situation(g, p)
         for src, fn in E.CI.hooked(g, 'options'):
@@ -144,9 +151,20 @@ def use(g, p, m):
         m.attached = cre[j]
         E.log(f'  {E.NAME(p)} equips {m.name} to {cre[j].name}', g)
         return None
+    if kind == 'extra': return fn(g, p, m)
     if not fn(): return f"{label}: that can't be done right now."
     E.check_state(g)
     return None
+
+
+def use_land(g, p, L):
+    """an activated ability of land L (beyond tapping for mana)"""
+    from commander_sim.play import abilities
+    abil = abilities.land_abilities(g, p, L)
+    if not abil: return f'{L.cd.name} has no ability to activate beyond mana (tap it for mana with tap).'
+    k = choose(g, p, 'choose', f'{L.cd.name}: which ability?', [a[0] for a in abil])
+    if k is None: return None
+    return abil[k][1](g, p, L)
 
 
 def cast(g, p, c, zone):
@@ -155,6 +173,17 @@ def cast(g, p, c, zone):
     ctl = controller_of(g, p)
     gen, pips = legal.base_cost(g, p, c)
     ctx = {}
+    if 'wipe' in c.tags and 'rem' in c.tags:                 # overload (Cyclonic Rift, Vandalblast)
+        og, op = ais.wipe_cost(p, c)
+        k = choose(g, p, 'choose', f'{c.name}: cast it how?',
+                   [f'one target ({mana.cost_text(gen, pips)})', f'overloaded ({mana.cost_text(og, op)}): every one you don\'t control'])
+        if k is None: return None
+        if k == 1:
+            why = mana.pay_from_pool(g, p, og, op)
+            if why: return f"Can't overload {c.name}. {why}"
+            E.log(f'  {E.NAME(p)} casts {c.name} overloaded', g)
+            E.cast_card(g, p, c, zone, {})
+            return None
     tgts = legal.spell_targets(g, p, c)
     if tgts is not None:                                     # targets are chosen before the spell is paid for
         if not tgts: return f'{c.name} has no legal target right now.'

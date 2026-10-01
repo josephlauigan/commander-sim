@@ -67,5 +67,69 @@ class Ring(unittest.TestCase):
         self.assertEqual(s.life, 38); self.assertEqual(len(s.hand), 2)   # paid 2, drew 1, kept the hand
 
 
+
+def float_mana(p, **kw):
+    from commander_sim.play import mana
+    for c, n in kw.items(): mana.pool_of(p).add(c, n)
+
+
+class Activations(unittest.TestCase):
+    def test_jaces_archivist(self):
+        from commander_sim.play import abilities
+        g = table('sauron', 'veyran'); s, v = g.players
+        arch = perm(g, s, "Jace's Archivist"); arch.sick = False
+        hand(s, 'Island', 'Swamp'); hand(v, 'Island', 'Mountain', 'Island')
+        seat(g, s, []); float_mana(s, U=1)
+        self.assertIsNone(abilities.archivist(g, s, arch))
+        self.assertEqual((len(s.hand), len(v.hand)), (3, 3)); self.assertTrue(arch.tapped)
+
+    def test_archivist_needs_to_untap_first(self):
+        from commander_sim.play import abilities
+        g = table('sauron', 'veyran'); s = g.players[0]
+        arch = perm(g, s, "Jace's Archivist", sick=True)
+        seat(g, s, []); float_mana(s, U=1)
+        self.assertIn('summoning sickness', abilities.archivist(g, s, arch))
+
+    def test_aggravated_assault(self):
+        from commander_sim.play import abilities
+        g = table('sauron', 'veyran'); s = g.players[0]
+        aa = perm(g, s, 'Aggravated Assault'); t = perm(g, s, 'Grave Titan'); t.tapped = True
+        seat(g, s, []); float_mana(s, C=3, R=2); g.step = 'main1'
+        self.assertIsNone(abilities.assault(g, s, aa))
+        self.assertFalse(t.tapped); self.assertEqual(s.extra_combats, 1)
+
+    def test_rogues_passage(self):
+        from commander_sim.play import human
+        from tests.table import lands
+        g = table('sauron', 'veyran'); s, v = g.players
+        lands(s, "Rogue's Passage"); t = perm(g, s, 'Grave Titan'); t.sick = False
+        perm(g, v, 'Guttersnipe').sick = False
+        float_mana(s, C=4)
+        seat(g, s, [0, pick(g, s, t)])                     # the ability, then the creature
+        self.assertIsNone(human.use_land(g, s, s.lands[0]))
+        self.assertTrue(s.lands[0].tapped)
+        from commander_sim.play import combat
+        seat(g, s, [[combat.attack_candidates(g, s).index(t)]])
+        ais.combat(g, s)                                    # Guttersnipe can't block it
+        self.assertEqual(v.life, 34)
+
+    def test_scavenger_grounds(self):
+        from commander_sim.play import human
+        from tests.table import lands
+        g = table('sauron', 'veyran'); s, v = g.players
+        lands(s, 'Scavenger Grounds'); v.gy.append(E.DB['Grave Titan']); float_mana(s, C=2)
+        seat(g, s, [0])
+        self.assertIsNone(human.use_land(g, s, s.lands[0]))
+        self.assertEqual(v.gy, []); self.assertIn(E.DB['Grave Titan'], v.exile)
+
+    def test_cyclonic_rift_overloaded(self):
+        from commander_sim.play import human
+        g = table('sauron', 'veyran'); s, v = g.players
+        hand(s, 'Cyclonic Rift'); a = perm(g, v, 'Guttersnipe'); b = perm(g, v, 'Sol Ring')
+        float_mana(s, C=6, U=1)
+        seat(g, s, [{'do': 'cast', 'card': 0}, 1, {'do': 'pass'}])
+        human.human_main(g, s, False)
+        self.assertEqual(v.perms, [])
+
 if __name__ == '__main__':
     unittest.main()

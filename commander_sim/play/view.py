@@ -35,12 +35,15 @@ def _player(g, p, me):
          'graveyard': [c.name for c in p.gy], 'exile': [c.name for c in p.exile],
          'commander_in_zone': bool(p.cmd_in_zone), 'tax': p.tax, 'treasures': p.treasures,
          'battlefield': [dict(_perm(g, m), i=i) for i, m in enumerate(p.perms)],
-         'lands': [{'name': L.cd.name, 'tapped': bool(L.tapped)} for L in p.lands]}
+         'lands': [{'name': L.cd.name, 'tapped': bool(L.tapped), 'i': i} for i, L in enumerate(p.lands)]}
     if you:
         from commander_sim.play import mana
         d['hand'] = [c.name for c in p.hand]
         d['mana_pool'] = mana.pool_of(p).text()
         d['mana_sources'] = mana.sources(g, p)
+        from commander_sim.play import abilities
+        for L, entry in zip(p.lands, d['lands']):
+            if abilities.land_abilities(g, p, L): entry['ability'] = True
     return d
 
 
