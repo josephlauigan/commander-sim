@@ -49,7 +49,11 @@ class RecordingController(HumanController):
             ans = ss.replay.pop(0)
         else:
             ss.replaying = False                   # caught up: this decision is live
-            ans = super().ask(req)
+            ss.current = req
+            try:
+                ans = super().ask(req)
+            finally:
+                ss.current = None
         ss.answers.append(ans)
         return ans
 
@@ -83,6 +87,8 @@ class Session:
         from commander_sim.ai import search
         s.tape = search.Tape()             # the look-ahead AI's decisions, for replaying
         s.answers, s.marks, s.replay, s.replaying, s._restarting = [], [], [], False, False
+        s.current = None                   # the decision waiting for you (the engine thread is blocked on it)
+        s.hint_lock = threading.Lock()     # a hint reads the game: your answer waits until it's done
         s.human = RecordingController(s)
         s.game = None
         s._thread = None
@@ -173,7 +179,17 @@ class Session:
         return None
 
     def answer(s, value):
-        s.human.answer(value)
+        with s.hint_lock:
+            s.human.answer(value)
+
+    def hint(s):
+        """the AI's advice for the decision waiting for you: {'text', 'detail', 'choice'}, or a string saying why not"""
+        with s.hint_lock:
+            req = s.current
+            if req is None or s.game is None: return 'There is no decision waiting for you.'
+            me = next(p for p in s.game.players if p.key == s.deck)
+            from commander_sim.play import advisor
+            return advisor.hint(s.game, me, req)
 
     def close(s):
         s.human.close()

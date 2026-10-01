@@ -12,6 +12,7 @@ Routes:
                             images load first ('loading' events with done/total, then 'images': name -> files)
   POST /api/answer          answer the waiting decision: {id, answer}; a stale id is refused (409)
   POST /api/undo            take back your last answer ({n}: the last n): the game replays from its seed
+  POST /api/hint            what the AI would do at the decision waiting for you: {text, detail, choice}
   POST /api/quit            end the game
 
 The engine runs on the session's worker thread. A pump thread moves the session's events into the hub's history
@@ -138,6 +139,13 @@ class Hub:
             if not s.tools.get('undo', True): return 'Undo is switched off for this game.'
         return sess.undo(n)
 
+    def hint(s):
+        with s.cond:
+            sess = s.session
+            if sess is None: return 'There is no game running.'
+            if not s.tools.get('hint', True): return 'Hint is switched off for this game.'
+        return sess.hint()
+
     def state(s):
         with s.cond:
             sess = s.session
@@ -240,6 +248,9 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == '/api/undo':
             why = s.hub.undo(int(body.get('n', 1)) if str(body.get('n', 1)).isdigit() else 1)
             return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
+        if url.path == '/api/hint':
+            res = s.hub.hint()
+            return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, res)
         if url.path == '/api/quit':
             s.hub.quit(); return s._send(200, {'ok': True})
         s._send(404, {'error': 'not found'})

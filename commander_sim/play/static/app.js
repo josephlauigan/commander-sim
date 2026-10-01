@@ -43,6 +43,7 @@ function you(view) { return view && view.players.find((p) => p.you); }
 
 function renderPrompt(ev) {
   const box = $('#prompt'); box.replaceChildren(); closeMenu();
+  $('#hintbox').hidden = true;                // a hint is for the decision it was asked at
   for (const x of document.querySelectorAll('.stackbar')) x.remove();
   $('#pass').hidden = !(ev && ev.request.kind === 'priority');
   $('#table').classList.toggle('can-act', !!(ev && ev.request.kind === 'priority'));
@@ -288,6 +289,18 @@ let tools = { hint: true, undo: true, compare: true };
 function setTools(t) {
   tools = Object.assign({ hint: true, undo: true, compare: true }, t || {});
   $('#undo').hidden = !tools.undo;
+  $('#hint').hidden = !tools.hint;
+}
+
+async function hint() {
+  if (!pending) { toast('There is no decision waiting for you.'); return; }
+  const box = $('#hintbox');
+  box.hidden = false; box.replaceChildren(el('h3', {}, 'Hint'), el('p', {}, 'The AI is thinking…'));
+  const r = await api('/api/hint', {});
+  if (!r.ok) { box.replaceChildren(el('h3', {}, 'Hint'), el('p', {}, r.data.error)); return; }
+  box.replaceChildren(el('h3', {}, 'The AI would: ' + r.data.text),
+    r.data.detail.length ? el('ul', {}, r.data.detail.map((d, i) => (i === 0 ? el('li', { class: 'lead' }, d) : el('li', {}, d)))) : null,
+    el('button', { type: 'button', onclick: () => { box.hidden = true; } }, 'Hide'));
 }
 
 async function undo() {
@@ -308,6 +321,7 @@ function screen(name) {
   $('#game').hidden = name !== 'game';
   $('#to-setup').hidden = name !== 'game';
   $('#undo').hidden = name !== 'game' || !tools.undo;
+  $('#hint').hidden = name !== 'game' || !tools.hint;
 }
 
 function cardImage(name, cls = '') {
@@ -366,6 +380,7 @@ async function init() {
   $('#to-setup').addEventListener('click', () => screen('setup'));
   $('#table').addEventListener('click', onTableClick);
   $('#undo').addEventListener('click', undo);
+  $('#hint').addEventListener('click', hint);
   setupPlayback();
   $('#pass').addEventListener('click', () => answer({ do: 'pass' }));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });

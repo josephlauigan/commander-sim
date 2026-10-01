@@ -17,6 +17,7 @@
     <button id="pb-skip" type="button" title="Show everything up to your next decision">Skip ahead</button>
   </div>
   <div id="status"></div>
+  <button id="hint" type="button" hidden title="What would the AI do now?">💡 Hint</button>
   <button id="undo" type="button" hidden title="Take back your last action">↶ Undo</button>
   <button id="to-setup" type="button" hidden>New game</button>
 </header>
@@ -57,6 +58,7 @@
   <section id="table" aria-label="The table"></section>
   <aside>
     <section id="prompt" aria-label="Your decision"></section>
+    <section id="hintbox" aria-label="Hint" aria-live="polite" hidden></section>
     <section id="log" aria-label="Game log"></section>
   </aside>
 </main>

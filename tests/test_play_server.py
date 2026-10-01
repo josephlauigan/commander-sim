@@ -48,6 +48,17 @@ class Server(unittest.TestCase):
         self.assertEqual(self.call('GET', '/static/../server.py')[0], 404)
         self.assertEqual(self.call('GET', '/static/%2e%2e/server.py')[0], 404)
 
+    def test_hint(self):
+        self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 4, 'ai': 'adaptive', 'images': False})
+        mull = self.wait_for(lambda e: e['kind'] == 'request')
+        st, _, body = self.call('POST', '/api/hint', {})
+        self.assertEqual(st, 200); self.assertIn('text', json.loads(body))           # mulligan: no hint for it yet
+        self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 4, 'ai': 'adaptive', 'images': False,
+                                       'tools': {'hint': False}})
+        self.wait_for(lambda e: e['kind'] == 'request')
+        self.assertIn('switched off', json.loads(self.call('POST', '/api/hint', {})[2])['error'])
+        self.call('POST', '/api/quit', {})
+
     def test_card_images_are_served(self):
         import os, tempfile
         d = tempfile.mkdtemp(); saved = server.IMAGES

@@ -26,6 +26,7 @@ STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0, '
 CUTS = []               # where playouts ran out of steps: (deck, round, innermost frames), first few only
 
 _SHARED = None
+LAST_SCORES = []        # the last main-phase decision's candidates and their mean scores (practice mode's Hint reads it)
 
 
 class Tape:
@@ -311,6 +312,7 @@ def _choose(g, p, post, opts):
         E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
     best = max(cands, key=lambda o: scores[id(o)])
     if best is not max(opts, key=lambda o: o[0]): STATS['changed'] += 1
+    LAST_SCORES[:] = [(o[1], scores[id(o)] / ROLLOUTS) for o in cands]     # for practice mode's Hint
     return best
 
 
