@@ -218,6 +218,17 @@ def cast(g, p, c, zone):
             E.log(f'  {E.NAME(p)} casts {c.name} overloaded', g)
             E.cast_card(g, p, c, zone, {})
             return None
+    if 'mastery' in c.tags:                                  # Mizzix's Mastery: one target, or overloaded
+        from commander_sim.play import cards
+        k = choose(g, p, 'choose', f'{c.name}: cast it how?',
+                   [f'one target ({mana.cost_text(gen, pips)})',
+                    'overloaded ({5}{R}{R}{R}): every instant and sorcery card in your graveyard'])
+        if k is None: return None
+        if k == 1: gen, pips = 5, 'RRR'; ctx['overload'] = True
+        else:
+            pick = cards.mastery_target(g, p, c)
+            if pick is None: return None
+            ctx['mastery_pick'] = pick
     tgts = legal.spell_targets(g, p, c)
     if tgts is not None:                                     # targets are chosen before the spell is paid for
         if not tgts: return f'{c.name} has no legal target right now.'
@@ -262,6 +273,11 @@ def cast(g, p, c, zone):
     if c.dsl and not E.additional_cost(g, p, c, dry=True): return f"You can't pay {c.name}'s additional cost."
     why = mana.pay_from_pool(g, p, gen, pips)
     if why: return f"Can't cast {c.name}. {why}"
+    if 'crackle' in c.tags:                                  # {X}{X}{X}{R}{R}: X from what's left in the pool
+        top = mana.pool_of(p).total() // 3
+        k = choose(g, p, 'choose', f'{c.name}: choose X (it costs {{X}}{{X}}{{X}} more; 5X damage to each of up to X targets)',
+                   [f'X = {x}' for x in range(top + 1)], cancel=None)
+        mana.pay_from_pool(g, p, 3 * k, ''); ctx['x'] = k
     if 'tokx' in c.tags or 'xtutor' in c.tags:              # X: everything left in the pool (automatic for now)
         x = mana.pool_of(p).total(); mana.pool_of(p).empty(); ctx['x'] = x
         if 'xtutor' in c.tags: g.last_x = x

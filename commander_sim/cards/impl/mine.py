@@ -221,6 +221,11 @@ from commander_sim.cards import pool_cards as _PC
 _PC.POST.append(_post_veyran)
 
 
+def _you(g, p):
+    """practice mode: the human seat's versions of these cards' choices (play/cards.py), or None for the AI"""
+    return importlib.import_module('commander_sim.play.cards') if E.human_choice(g, p) is not None else None
+
+
 def spell_copy_value(g, p, c):
     """what one more copy of spell c is worth (Ral's -2, Return the Favor)"""
     t = c.tags
@@ -376,6 +381,7 @@ def _desire(g, p, c):
 @on('Expressive Iteration', 'resolve')
 def _iteration(g, p, c, ctx):
     """top three: one to hand, one to the bottom, one exiled (playable this turn)"""
+    if _you(g, p): return _you(g, p).expressive_iteration(g, p, c, ctx)
     top = sorted(_top(p, 3), key=lambda x: -_desire(g, p, x))
     if not top: return
     p.hand.append(top[0])
@@ -387,6 +393,7 @@ def _iteration(g, p, c, ctx):
 def _flow(g, p, c, ctx):
     """top three: one to hand (two with an instant and a sorcery in the graveyard), the rest on the bottom"""
     k = 2 if (any(x.instant for x in p.gy) and any(x.sorcery for x in p.gy)) else 1
+    if _you(g, p): return _you(g, p).look_and_take(g, p, 3, k, 'Flow State')
     top = sorted(_top(p, 3), key=lambda x: -_desire(g, p, x))
     p.hand.extend(top[:k]); p.library[:0] = top[k:]
 
@@ -394,6 +401,7 @@ def _flow(g, p, c, ctx):
 @on('Stock Up', 'resolve')
 def _stock(g, p, c, ctx):
     """top five: two to hand, the rest on the bottom"""
+    if _you(g, p): return _you(g, p).look_and_take(g, p, 5, 2, 'Stock Up')
     top = sorted(_top(p, 5), key=lambda x: -_desire(g, p, x))
     p.hand.extend(top[:2]); p.library[:0] = top[2:]
 
@@ -415,6 +423,7 @@ def _betrayal(g, p, c, ctx):
 def _charm(g, p, c, ctx):
     """one mode: 1 damage to each of one or two targets (X/1 creatures, a player at 1), bounce an opposing commander or
     big token, or surveil 2 then draw"""
+    if _you(g, p): return _you(g, p).prismari_charm(g, p, c, ctx)
     opps = g.opps(p)
     x1 = sorted([m for q in opps for m in q.perms if m.creature and etgh(g, m) <= 1 and pval(g, m) >= 2
                  and not untargetable(g, m)], key=lambda m: -pval(g, m))[:2]

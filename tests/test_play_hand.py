@@ -43,6 +43,12 @@ class FromHand(unittest.TestCase):
         ctl = main(g, v, {'do': 'cast', 'card': 0}, by_text('Guttersnipe'), by_text('Kessig'))
         self.assertIn("Can't cast Twinflame on 2", ctl.told[-1][1]); self.assertIn(c, v.hand)
 
+    def test_twinflame_copies_a_token(self):
+        g = table('veyran', 'seph'); v = g.players[0]
+        hand(v, 'Twinflame'); E.make_tokens(g, v, 1, 4, fly=True, sick=False); pool(v, R=1, C=1)
+        main(g, v, {'do': 'cast', 'card': 0}, 0)
+        self.assertEqual(sum(1 for m in v.perms if m.token and m.pow == 4), 2)
+
     def test_ephemerate_and_rebound(self):
         g = table('seph', 'veyran'); s = g.players[0]
         hand(s, 'Ephemerate'); m = perm(g, s, 'Grave Titan'); pool(s, W=1)

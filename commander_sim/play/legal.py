@@ -198,6 +198,9 @@ def gy_mode(g, p, c):
     if getattr(p, 'yawg', False) and id(c) in getattr(p, 'yawg_gy', {}):
         gen, pips = E.cost_of(p, c); return ('yawg', gen, pips)
     fb = c.tags.get('fb') or FLASHBACK.get(c.name)
+    if not fb and (c.instant or c.sorcery):
+        from commander_sim.play import cards
+        if cards.granted_flashback(g, p, c): fb = E.cost_of(p, c)       # Flashback (the card): its mana cost
     if fb == 'sac3': return ('sac3', 0, '')
     if fb:
         gen, pips = fb if isinstance(fb, tuple) else E.parse_cost(fb)

@@ -444,7 +444,9 @@ def _twinflame(g, p, c):
         p.gy.append(c); return None
     for m in picked:
         if m not in p.perms: continue
-        cp = E.enter_token_copy(g, p, m.cd)
+        if m.cd is not None: cp = E.enter_token_copy(g, p, m.cd)
+        else:                                                         # a token with no card: the same creature token
+            cp = (E.make_tokens(g, p, 1, m.pow, m.tgh, fly=bool(getattr(m, 'fly', False)), sick=False) or [None])[0]
         if cp is not None: cp.sick = False; cp.temp = True               # haste; exiled at the end step
     p.gy.append(c); E.check_state(g)
     return None
@@ -672,3 +674,123 @@ def copy_in_response(g, p, c, spell, caster):
     p.gy.append(c)
     return None
 
+
+
+# ------------------------------------------------------------------ choices as your spells resolve (Veyran's deck)
+def _look(p, n):
+    return [p.library.pop() for _ in range(min(n, len(p.library)))]
+
+
+def _bottom(p, cards):
+    p.library[:0] = cards                                   # the bottom of the library is index 0
+
+
+def expressive_iteration(g, p, c, ctx):
+    """top three: one into your hand, one exiled (you may play it this turn), the last on the bottom"""
+    top = _look(p, 3)
+    if not top: return
+    ch = _choices()
+    keep = ch.pick_cards(g, p, top, 1, 'Expressive Iteration: put which card into your hand?')[0]
+    top.remove(keep); p.hand.append(keep)
+    if top:
+        ex = ch.pick_cards(g, p, top, 1, 'Expressive Iteration: exile which card (you may play it this turn)?')[0]
+        top.remove(ex); p.hand.append(ex); p.impulse.append(ex)
+    _bottom(p, top)
+    E.log(f'    {E.NAME(p)} keeps one card, exiles one to play this turn, puts {len(top)} on the bottom', g)
+
+
+def look_and_take(g, p, n, k, name):
+    """look at the top n, put k into your hand, the rest on the bottom (Flow State, Stock Up)"""
+    top = _look(p, n)
+    picked = _choices().pick_cards(g, p, top, k, f'{name}: put which card into your hand?')
+    for x in picked: top.remove(x); p.hand.append(x)
+    _bottom(p, top)
+    E.log(f'    {E.NAME(p)} takes {len(picked)}, puts {len(top)} on the bottom', g)
+
+
+def prismari_charm(g, p, c, ctx):
+    """choose one: surveil 2, then draw a card; 1 damage to each of one or two targets; return target nonland
+    permanent to its owner's hand"""
+    modes = ['surveil 2, then draw a card', '1 damage to each of one or two targets', "return target nonland permanent to its owner's hand"]
+    k = _choose(g, p, 'choose', 'Prismari Charm: choose one', modes, cancel=None)
+    if k == 0:
+        _choices().scry(g, p, 2, to='gy'); E.draw(g, p, 1); return
+    if k == 1:
+        tg = _choices().damage_targets(g, p, 'UR')
+        if not tg: return
+        a = _choose(g, p, 'target', 'Prismari Charm: 1 damage to which target?', [legal.describe_target(g, p, x) for x in tg], cancel=None)
+        first = tg.pop(a)
+        b = _choose(g, p, 'target', 'Prismari Charm: a second target?', [legal.describe_target(g, p, x) for x in tg],
+                    cancel='no second target') if tg else None
+        for x in [first] + ([tg[b]] if b is not None else []): _damage(g, p, x, 1, 'Prismari Charm', 'burn')
+        return
+    tg = [m for q in g.players if q.alive for m in q.perms if not m.phased and not (m.owner is not p and E.untargetable(g, m))]
+    if not tg: return
+    j = _choose(g, p, 'target', 'Prismari Charm: return which permanent?', [legal.describe_target(g, p, x) for x in tg], cancel=None)
+    E.apply_removal(g, p, tg[j], 'bounce', c)
+
+
+def jeskas_will(g, p):
+    """choose one (both if you control your commander): add {R} for each card in target opponent's hand; exile the
+    top three cards of your library, you may play them this turn"""
+    opts = ["add {R} for each card in target opponent's hand", 'exile your top three cards: you may play them this turn']
+    if E.commander_out(p): opts.append('both')
+    k = _choose(g, p, 'choose', "Jeska's Will: choose one" + (' (or both: you control your commander)' if len(opts) == 3 else ''),
+                opts, cancel=None)
+    if k in (0, 2):
+        opps = g.opps(p)
+        if opps:
+            j = _choose(g, p, 'target', "Jeska's Will: which opponent's hand?", [f'{E.NAME(q)} ({len(q.hand)} cards)' for q in opps],
+                        cancel=None)
+            n = len(opps[j].hand)
+            mana.pool_of(p).add('R', n); E.log(f"    Jeska's Will adds {n} red mana", g)
+    if k in (1, 2):
+        top = _look(p, 3)
+        for x in top: p.hand.append(x); p.seen_names.add(x.name)
+        p.impulse += top
+        E.log(f"    Jeska's Will exiles {', '.join(x.name for x in top)} (playable this turn)", g)
+
+
+def crackle(g, p, c, ctx):
+    """5X damage to each of up to X targets"""
+    x = ctx.get('x', 0)
+    if x <= 0: return
+    tg = _choices().damage_targets(g, p, 'R')
+    picked = []
+    while len(picked) < x and tg:
+        k = _choose(g, p, 'target', f'Crackle with Power: {5 * x} damage to which target? ({len(picked) + 1} of up to {x})',
+                    [legal.describe_target(g, p, t) for t in tg], cancel='no more targets' if picked else None)
+        if k is None: break
+        picked.append(tg.pop(k))
+    for t in picked: _damage(g, p, t, 5 * x, 'Crackle with Power', 'burn')
+
+
+def mastery_target(g, p, c):
+    """Mizzix's Mastery's target as it's cast: an instant or sorcery card in your graveyard (None: cancelled)"""
+    cs = [x for x in p.gy if (x.instant or x.sorcery) and x is not c]
+    k = _choose(g, p, 'target', "Mizzix's Mastery: exile which instant or sorcery (you cast a copy free)?",
+                [_choices().card_label(x) for x in cs])
+    return None if k is None else cs[k]
+
+
+def flashback_target(g, p, c):
+    """Flashback (the card): target instant or sorcery card in your graveyard gains flashback this turn"""
+    cs = [x for x in p.gy if (x.instant or x.sorcery) and x is not c]
+    if not cs: return
+    k = _choose(g, p, 'target', 'Flashback: which instant or sorcery gains flashback this turn (its mana cost)?',
+                [_choices().card_label(x) for x in cs], cancel=None)
+    st = E.turn_stamp(g)
+    if getattr(p, 'fb_grant', (None,))[0] != st: p.fb_grant = (st, set())     # last turn's grants have ended
+    p.fb_grant[1].add(id(cs[k]))
+    E.log(f'    {cs[k].name} gains flashback this turn', g)
+
+
+def granted_flashback(g, p, c):
+    fb = getattr(p, 'fb_grant', None)
+    return fb is not None and fb[0] == E.turn_stamp(g) and id(c) in fb[1]
+
+
+NEEDS['Mizzix\'s Mastery'] = lambda g, p, c: (None if any((x.instant or x.sorcery) for x in p.gy) else
+                                              "Mizzix's Mastery needs an instant or sorcery card in your graveyard to target.")
+NEEDS['Flashback'] = lambda g, p, c: (None if any((x.instant or x.sorcery) for x in p.gy) else
+                                      'Flashback needs an instant or sorcery card in your graveyard to target.')

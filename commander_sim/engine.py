@@ -1514,6 +1514,8 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
 
 def flashback_grant(g, p):
     """Flashback (the card): recast the best affordable instant/sorcery from your graveyard"""
+    if human_choice(g, p) is not None:
+        return importlib.import_module('commander_sim.play.cards').flashback_target(g, p, None)
     cs = [x for x in p.gy if (x.instant or x.sorcery) and 'ctr' not in x.tags and 'fbgrant' not in x.tags
           and 'rem' not in x.tags and 'wipe' not in x.tags]
     cs = [x for x in cs if can_pay(g, p, x.generic, x.pips)]
@@ -1594,7 +1596,9 @@ def resolve(g, p, c, ctx, zone):
         for q in g.opps(p): edict(g, q)
     if 'pumpall' in t: p.pumpadd += int(t['pumpall'])
     if 'lh' in t and 'lr' not in t: land_to_hand(g, p)
-    if 'crackle' in t:                          # X = (mana spent - 2)/3; 5X to each of up to X targets
+    if 'crackle' in t and human_choice(g, p) is not None:
+        importlib.import_module('commander_sim.play.cards').crackle(g, p, c, ctx)
+    elif 'crackle' in t:                        # X = (mana spent - 2)/3; 5X to each of up to X targets
         x = max(1, ctx.get('x', 1)); d = 5 * x
         cands = [(100 + (60 - q.life) if q.life <= d else 0.4 * d, q, None) for q in g.opps(p)]
         cands += [(1.5 * pval(g, m), None, m) for q in g.opps(p) for m in q.perms
@@ -1626,7 +1630,9 @@ def resolve(g, p, c, ctx, zone):
     if 'mastery' in t:
         # Mizzix's Mastery: exile target instant/sorcery from your graveyard (each of them, overloaded); cast copies free
         pool = [x for x in p.gy if (x.instant or x.sorcery) and x is not c and 'ctr' not in x.tags]
-        if not ctx.get('overload'):
+        if ctx.get('mastery_pick') is not None:        # practice mode: the target chosen as it was cast
+            pool = [x for x in pool if x is ctx['mastery_pick']][:1]
+        elif not ctx.get('overload'):
             pool = sorted(pool, key=lambda x: -card_worth(g, p, x, in_gy=True))[:1]
         for x in pool: p.gy.remove(x); p.exile.append(x)
         if pool: log(f'    Mizzix\'s Mastery casts copies of {len(pool)} spell(s)', g)
@@ -2221,6 +2227,7 @@ def pile_tutor(g, p, n, keep):
 def jeskas_will(g, p):
     """Choose one (both if you control your commander): add {R} for each card in target opponent's hand;
     exile the top three cards of your library, you may play them this turn."""
+    if human_choice(g, p) is not None: return importlib.import_module('commander_sim.play.cards').jeskas_will(g, p)
     opps = g.opps(p)
     most = max((len(q.hand) for q in opps), default=0)
     both = commander_out(p)

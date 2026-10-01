@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 311 tests in about a minute. To run one file, or one test:
+That's 322 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -40,7 +40,8 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_play_sauron.py` | 17 | Practice mode, Sauron's cards: Orcish Bowmasters' damage when it enters and on extra draws, Kaervek's damage (a creature survives damage below its toughness), the Ring (Ring-bearer, Call of the Ring's "pay 2 life", Sauron's "discard your hand"), Jace's Archivist (and summoning sickness), Aggravated Assault, Rogue's Passage through real combat, Scavenger Grounds, Cyclonic Rift overloaded, Toxic Deluge's X, Bitter Triumph's discard-instead-of-life, Noxious Gearhulk's optional target, Kefka's discard, and opponents' taxes (Rhystic Study asks whether to pay; you aren't asked when you can't). |
 | `test_play_seph.py` | 16 | Practice mode, Sephiroth's and Marchesa's graveyard cards: Animate Dead from an opponent's graveyard, Unburial Rites only from yours, Entomb, Grisly Salvage, Deadly Dispute's sacrifice, flashback (Deep Analysis), Dread Return's sacrifice-three flashback, Yawgmoth's Will, no graveyard casting otherwise, starting Mikaeus + Triskelion as a shortcut, Aura Shards' optional target, Archon of Cruelty's target opponent, Consecrated Sphinx's "may draw", Nim Deathmantle's "pay {4}", Tortured Existence, and Gifts Ungiven (you pick, the AI opponent splits). |
 | `test_play_cards.py` | 12 | Practice mode, your decks' activated abilities by the rules: Vraska's -2 on your pick, once per turn and sorcery speed, Ral Zarek's -2, Mind Stone at any time (and needing mana), a prepared Lightning Bolt, Aetherflux Reservoir (and its 50 life), Triskelion, Strip Mine on any land, Desolate Lighthouse, and no sorcery-speed play in response. |
-| `test_play_hand.py` | 14 | Practice mode, casts from hand the card code keeps for the AI: Twinflame (two targets; the extra target's mana), Ephemerate and its rebound (declined: stays in exile), cycling at instant speed, Unearth's pick, Disintegrate at a player, Disembowel's X, Lethal Throwdown, Sokenzan's channel, Necromancy at instant speed; Return the Favor (needs a spell; copies your Lightning Bolt while you hold priority; never cast for you by the AI) and Dualcaster Mage copying an opponent's spell. |
+| `test_play_hand.py` | 15 | Practice mode, casts from hand the card code keeps for the AI: Twinflame (two targets; the extra target's mana; copying a token), Ephemerate and its rebound (declined: stays in exile), cycling at instant speed, Unearth's pick, Disintegrate at a player, Disembowel's X, Lethal Throwdown, Sokenzan's channel, Necromancy at instant speed; Return the Favor (needs a spell; copies your Lightning Bolt while you hold priority; never cast for you by the AI) and Dualcaster Mage copying an opponent's spell. |
+| `test_play_veyran.py` | 10 | Practice mode, Veyran's spells: Crackle with Power's X and targets (and stopping early), Mizzix's Mastery's target, Flashback granting flashback, Jeska's Will (mana from an opponent's hand; exiled lands aren't played for you), Expressive Iteration, Stock Up, Prismari Charm's two pings, and Thousand-Year Storm copies taking new targets. |
 
 ## When a test fails
 
