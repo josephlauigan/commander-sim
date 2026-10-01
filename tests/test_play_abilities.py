@@ -67,7 +67,8 @@ class Targets(unittest.TestCase):
     def test_bloodchiefs_thirst_kicker(self):
         g = table('sauron', 'veyran'); s, v = g.players
         c = hand(s, "Bloodchief's Thirst"); lands(s, 'Swamp', 1); tap_all(g, s)
-        self.assertIsNone(legal.check_cast(g, s, c))              # {B} unkicked
+        perm(g, v, 'Llanowar Elves')
+        self.assertIsNone(legal.check_cast(g, s, c))              # {B} unkicked, at a mana value 1 creature
         big = perm(g, v, 'Sheoldred, the Apocalypse')
         ctl = seat(g, s, [{'do': 'cast', 'card': 0}, Pick(big), {'do': 'pass'}])
         human.human_main(g, s, False)

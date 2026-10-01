@@ -315,6 +315,8 @@ def note_bomb(p, cd, was_removed=False):
 
 
 def seph_fill_resolve(g, p, kind, ctx):
+    hc = E.human_choice(g, p)
+    if hc is not None: return hc.fill(g, p, kind)
     lib_bombs = sorted([c for c in p.library if c.creature and c.bomb >= 5], key=lambda c: -seph_bval(g, p, c))
     a = agent_for(g, p) if kind in ('entomb', 'buried', 'unmarked') else None
     if a is not None:                             # Opposition Agent takes what they search for

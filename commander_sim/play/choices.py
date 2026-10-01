@@ -225,3 +225,56 @@ def pay_tax(g, p, n, what):
     if not pool.pay(n, ''): return False
     E.log(f'    {E.NAME(p)} pays {{{n}}} for {what}', g)
     return True
+
+
+# ------------------------------------------------------------------ reanimation and filling the graveyard
+ANY_GRAVEYARD = ('animate', 'necro', 'reanimate')      # Animate Dead, Necromancy, Reanimate: any graveyard
+
+
+def rean_candidates(g, p, kind):
+    """[(creature card, graveyard owner)] a reanimation spell of this kind may return"""
+    owners = [q for q in g.players if q.alive] if kind in ANY_GRAVEYARD else [p]
+    return [(c, q) for q in owners for c in q.gy if c.creature]
+
+
+def choose_rean(g, p, c):
+    """the target of reanimation spell c: (card, owner), or None if cancelled / nothing to return"""
+    cands = rean_candidates(g, p, c.tags.get('rean', 'animate'))
+    if not cands: return None
+    labels = [f"{card_label(x)} ({'your graveyard' if q is p else E.NAME(q) + chr(39) + 's graveyard'})" for x, q in cands]
+    k = choose(g, p, 'target', f'{c.name}: return which creature card?', labels)
+    return None if k is None else cands[k]
+
+
+def fill(g, p, kind):
+    """Entomb, Buried Alive, Unmarked Grave, Grisly Salvage: the person picks what goes where"""
+    if kind == 'entomb':
+        for c in search(g, p, lambda c: True, 1, 'Entomb: put a card from your library into your graveyard'): p.gy.append(c)
+    elif kind == 'buried':
+        for c in search(g, p, lambda c: c.creature, 3, 'Buried Alive: up to three creature cards into your graveyard'):
+            p.gy.append(c)
+    elif kind == 'unmarked':
+        for c in search(g, p, lambda c: 'leg' not in c.tags, 1, 'Unmarked Grave: a nonlegendary card into your graveyard'):
+            p.gy.append(c)
+    elif kind == 'grisly':
+        top = [p.library.pop() for _ in range(min(5, len(p.library)))]
+        ok = [c for c in top if c.creature or c.land]
+        if ok:
+            k = choose(g, p, 'choose', 'Grisly Salvage: put a creature or land card into your hand?', [card_label(c) for c in ok],
+                       cancel='none')
+            if k is not None: top.remove(ok[k]); p.hand.append(ok[k])
+        p.gy.extend(top)
+        E.log(f'  {E.NAME(p)} reveals five with Grisly Salvage', g)
+    elif kind == 'dispute':
+        E.add_treasure(g, p, 1)
+
+
+def sac_artifact_or_creature(g, p, what):
+    """an additional cost: sacrifice an artifact or creature (a Treasure counts). False if p has none"""
+    cands = [m for m in p.perms if (m.creature or (m.cd is not None and 'A' in m.cd.types)) and not m.phased]
+    labels = [legal.describe_target(g, p, m) for m in cands] + (['a Treasure token'] if p.treasures else [])
+    if not labels: return False
+    k = choose(g, p, 'choose', f'{what}: sacrifice an artifact or creature', labels, cancel=None)
+    if k == len(cands): p.treasures -= 1; E.log(f'  {E.NAME(p)} sacrifices a Treasure', g)
+    else: E.die(g, cands[k], 'sac')
+    return True

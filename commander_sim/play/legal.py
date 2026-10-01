@@ -53,6 +53,14 @@ def check_cast(g, p, c, zone='hand'):
     if 'needsac' in c.tags and not any(m.creature and not m.phased for m in p.perms):
         return f'{c.name} needs a creature to sacrifice as you cast it, and you control none.'
     if c.dsl and not E.additional_cost(g, p, c, dry=True): return f"You can't pay {c.name}'s additional cost."
+    tg = spell_targets(g, p, c)
+    if tg is not None and not tg and 'wipe' not in c.tags: return f'{c.name} has no legal target right now.'
+    if 'rean' in c.tags:
+        from commander_sim.play import choices
+        if not choices.rean_candidates(g, p, c.tags['rean']): return f'{c.name} has no creature card to return.'
+    if c.name == 'Deadly Dispute' and not p.treasures and not any(
+            (m.creature or (m.cd is not None and 'A' in m.cd.types)) and not m.phased for m in p.perms):
+        return 'Deadly Dispute needs an artifact or creature to sacrifice as you cast it.'
     gen, pips = base_cost(g, p, c)
     why = mana.cost_problem(g, p, gen, pips)
     if why: return f"Can't cast {c.name}. {why}"
@@ -92,6 +100,7 @@ def spell_targets(g, p, c):
             if E.untargetable(g, m) or E.protected_from(g, m, c.pips): continue
             if 'nonblack' in t and 'B' in E.colors_of(m): continue
             if 'mv4' in t and m.cd is not None and m.cd.cmc > 4: continue
+            if 'newonly' in t and not E.entered_since_last_turn(g, p, m): continue
             if c.name == 'Fatal Push' and m.cd is not None and m.cd.cmc > 2:
                 from commander_sim.cards.impl import rules
                 if m.cd.cmc > 4 or not rules.revolt(g, p): continue

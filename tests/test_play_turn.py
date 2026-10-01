@@ -35,7 +35,7 @@ class RulesCheck(unittest.TestCase):
 
     def test_instants_any_time_you_have_priority(self):
         g = table('sauron', 'veyran'); s, v = g.players
-        cs = hand(s, 'Infernal Grasp'); lands(s, 'Swamp', 2)
+        cs = hand(s, 'Infernal Grasp'); lands(s, 'Swamp', 2); perm(g, v, 'Guttersnipe')
         g.active = v; tap_all(g, s)
         self.assertIsNone(legal.check_cast(g, s, cs))
 

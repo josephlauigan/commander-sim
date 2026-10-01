@@ -197,6 +197,13 @@ def cast(g, p, c, zone):
         if why: return f"Can't cast {c.name} on that target. {why}"
         if isinstance(x, E.Player): ctx['face'] = x
         else: ctx['target'] = x
+    if 'rean' in c.tags:                                     # reanimation: its target is chosen as it's cast
+        from commander_sim.play import choices
+        pick = choices.choose_rean(g, p, c)
+        if pick is None: return None
+        ctx['rean_target'], ctx['rean_src'] = pick
+        ctx['rean_value'] = max(4, pick[0].cmc)              # how hard opponents try to stop it
+    if c.name == 'Deadly Dispute': ctx['sac_cost'] = True
     if 'deluge' in c.tags:                                   # Toxic Deluge: pay X life, all creatures get -X/-X
         top = max(0, min(p.life - 1, 20))
         k = choose(g, p, 'choose', f'{c.name}: choose X (you pay X life; creatures with toughness X or less die)',
@@ -226,11 +233,35 @@ def cast(g, p, c, zone):
     if c.dsl: E.additional_cost(g, p, c)
     if fodder is not None:
         E.log(f'  {E.NAME(p)} sacrifices {fodder.name} for {c.name}', g); E.die(g, fodder, 'sac')
+    if ctx.pop('sac_cost', False):
+        from commander_sim.play import choices
+        choices.sac_artifact_or_creature(g, p, c.name)
     if ctx.pop('discard_cost', False):
         from commander_sim.play import choices
         x = choices.pick_cards(g, p, [y for y in p.hand if y is not c], 1, f'{c.name}: discard a card')[0]
         E.discard_cards(g, p, [x]); ctx['paid_otherwise'] = True
     if 'phyU' in c.tags and 'U' in c.pips and pips.count('U') < c.pips.count('U'):
         E.lose_life(g, p, 2, p)                              # {U/P} paid with 2 life
+    if 'rean_target' in ctx: return cast_rean(g, p, c, zone, ctx)
     E.cast_card(g, p, c, zone, ctx)
+    return None
+
+
+def cast_rean(g, p, c, zone, ctx):
+    """a reanimation spell (paid): the same steps the AI's reanimation takes, with the person's target. Auras like
+    Animate Dead are modelled as the effect only, as the AI's are"""
+    from commander_sim import ais
+    (p.hand if zone == 'hand' else p.gy).remove(c)
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+    E.on_cast(g, p, c)
+    cd, src = ctx['rean_target'], ctx['rean_src']
+    E.log(f'  {E.NAME(p)} casts {c.name} targeting {cd.name}' + (f" in {E.NAME(src)}'s graveyard" if src is not p else ''), g)
+    dest = p.gy if zone == 'hand' else p.exile
+    if g.over or not p.alive: return None
+    if not E.counter_window(g, p, c, ctx['rean_value'], {}) or ais.sauron_grounds_response(g, p, ctx['rean_value']) \
+            or (g.hooks and E.CI.gy_response(g, p, ctx['rean_value'], src)):
+        dest.append(c); return None
+    ais.seph_rean_resolve(g, p, c, ctx)
+    dest.append(c)
+    E.check_state(g)
     return None
