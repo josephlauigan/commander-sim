@@ -170,5 +170,23 @@ class SpellChoices(unittest.TestCase):
         mine()._kefka_wheel(g, None, s)
         self.assertIn(b, s.gy); self.assertIn(a, s.hand)
 
+
+class Taxes(unittest.TestCase):
+    def test_rhystic_study_asks(self):
+        from tests.table import lands
+        from commander_sim.cards.impl import rules
+        g = table('sauron', 'veyran'); s = g.players[0]
+        lands(s, 'Island', 1)
+        seat(g, s, [0])                                       # yes: pay {1} (taps the Island)
+        self.assertFalse(rules.rhystic_unpaid(g, s)); self.assertTrue(s.lands[0].tapped)
+        seat(g, s, [1])                                       # no
+        self.assertTrue(rules.rhystic_unpaid(g, s))
+
+    def test_cant_pay_isnt_asked(self):
+        from commander_sim.cards.impl import rules
+        g = table('sauron', 'veyran'); s = g.players[0]
+        ctl = seat(g, s, [])
+        self.assertTrue(rules.tithe_unpaid(g, s)); self.assertEqual(ctl.asked, [])
+
 if __name__ == '__main__':
     unittest.main()

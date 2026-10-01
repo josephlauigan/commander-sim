@@ -142,6 +142,8 @@ note('Phyrexian Altar', 'Full', 'sacrifice a creature: one mana of any colour')
 # ================================================================== tax payments
 def tithe_unpaid(g, p):
     """Smothering Tithe: p pays {2} when it can spare the mana, otherwise the Tithe's owner gets a Treasure"""
+    hc = E.human_choice(g, p)
+    if hc is not None: return not hc.pay_tax(g, p, 2, "Smothering Tithe (or its owner gets a Treasure)")
     if spare_after(g, p, 2):
         pay(g, p, 2, ''); return False
     return True
@@ -149,6 +151,8 @@ full('Smothering Tithe', 'opponents pay {2} per draw only when they can spare it
 
 
 def rhystic_unpaid(g, p):
+    hc = E.human_choice(g, p)
+    if hc is not None: return not hc.pay_tax(g, p, 1, 'Rhystic Study (or its owner draws a card)')
     if spare_after(g, p, 1):
         pay(g, p, 1, ''); return False
     return True
@@ -161,7 +165,10 @@ note('Rhystic Study', 'Full', 'opponents pay {1} per spell when they can spare i
 def _remora(g, src, caster, c):
     o = src.owner
     if caster is o or c.creature or c.land: return
-    if spare_after(g, caster, 4): pay(g, caster, 4, ''); return
+    hc = E.human_choice(g, caster)
+    if hc is not None:
+        if hc.pay_tax(g, caster, 4, 'Mystic Remora (or its owner draws a card)'): return
+    elif spare_after(g, caster, 4): pay(g, caster, 4, ''); return
     draw(g, o, 1)
 
 

@@ -13,7 +13,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 
 ## Status
 
-- Current step: 1h, part 2 (Sauron's activated abilities and remaining choices)
+- Current step: 1i (Seph, Veyran, Marchesa: card-specific choices; Seph's loop shortcuts): next. Milestone 1 (Sauron fully manual) reached 2026-09-30.
 - Last checkpoint: 2026-09-30 6pm (pushed); the session was down from 7:59am to 6:15pm
 
 ## Done
@@ -30,7 +30,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 - **1h, part 2a** (2026-09-30): the AI no longer acts for the human seat in response to others: protecting your permanents (`protect_response`), board-wipe responses (Teferi's Protection), `last_chance`, Tishana's Tidebinder, Scavenger Grounds against reanimation, sacrificing in response, Veil of Summer, your graveyard-hate artifacts (`gy_response`) and Marchesa's wipe response. You do these in your own priority windows.
 - **1h, part 2b** (2026-09-30): `play/abilities.py`: activations the engine keeps in deck AI code, now yours: Jace's Archivist ({U}, {T}: wheel), Aggravated Assault ({3}{R}{R}: untap, extra combat; in main 2 the combat happens at once and the main phase continues, so Sword of Feast and Famine loops can be played by hand), Rogue's Passage ({4}, {T}: unblockable this turn; combat honours it) and Scavenger Grounds ({2}, {T}, sacrifice a Desert: exile all graveyards). Lands' abilities: `{'do': 'use', 'land': i}` (text: `use L1`). Overload: Cyclonic Rift and Vandalblast ask "one target or overloaded". Barad-dûr's amass ability isn't modelled by the engine at all (it only taps for {B}); left as is.
 - **1h, part 2c** (2026-09-30): Toxic Deluge asks for X (you pay X life; only creatures with toughness X or less die, where the AI's version kills everything); Bitter Triumph asks whether to discard a card or pay 3 life; creatures that remove something when they enter (Noxious Gearhulk) ask for a target or none; Kefka's "each player discards" lets you pick yours.
-- To do in 1h: play a few full Sauron games through the text client and fix what turns up.
+- **1h, done** (2026-09-30): opponents' taxes ask you (`choices.pay_tax`: Rhystic Study, Smothering Tithe, Mystic Remora; paid from floating mana, then by tapping sources; not asked when you can't pay). Go for the Throat fixed (sim guard re-recorded). 20 bot games of Sauron through the human seat, all five tiers: no errors, only expected refusals. **Milestone 1: Sauron is fully manual.**
 
 ## Notes and decisions
 

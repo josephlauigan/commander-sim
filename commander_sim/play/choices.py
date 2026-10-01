@@ -207,3 +207,21 @@ def etb_removal(g, p, m):
                cancel='no target')
     if k is None: return
     E.apply_removal(g, p, tg[k], m.cd.tags['rem'], m.cd)
+
+
+# ------------------------------------------------------------------ taxes: "unless that player pays {N}"
+def pay_tax(g, p, n, what):
+    """an opponent's tax (Rhystic Study, Smothering Tithe, Mystic Remora): ask p whether to pay {n}. Paid from p's
+    floating mana first, then by tapping p's sources (as you would at the table). Returns True if paid"""
+    from commander_sim.play import mana
+    pool = mana.pool_of(p)
+    can = pool.total() + sum(s['amount'] for s in mana.sources(g, p))
+    if can < n:
+        E.log(f"    {E.NAME(p)} can't pay {{{n}}} for {what}", g)
+        return False
+    if not yes_no(g, p, f'{what}: pay {{{n}}}?'): return False
+    while pool.total() < n and mana.sources(g, p):
+        mana.tap(g, p, mana.sources(g, p)[0]['id'])
+    if not pool.pay(n, ''): return False
+    E.log(f'    {E.NAME(p)} pays {{{n}}} for {what}', g)
+    return True
