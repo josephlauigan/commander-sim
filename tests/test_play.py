@@ -36,6 +36,17 @@ class Session_(unittest.TestCase):
         self.assertTrue(any(e['kind'] == 'log' and 'Seat order' in e['text'] for e in evs))
         self.assertTrue(any(e['kind'] == 'turn' and e['player'] == 'sauron' for e in evs))
 
+    def test_the_ais_reasoning_is_not_shown(self):
+        from commander_sim.play.session import is_private
+        self.assertTrue(is_private('R4       [Tergrid decides: Jet Medallion 56%, Bloodline Keeper 11% -> Jet Medallion]'))
+        self.assertFalse(is_private('R4    Tergrid casts Jet Medallion'))
+        s = Session('sauron', 't3', seed=5, ai='adaptive').start()
+        evs = drain(s)
+        logs = [e['text'] for e in evs if e['kind'] == 'log']
+        self.assertTrue(logs)
+        self.assertFalse([t for t in logs if 'decides:' in t])
+        self.assertTrue(any('decides:' in t for t in s.game.log))          # kept in the game's own log
+
     def test_seat_and_opponents(self):
         s = Session('seph', 't4', seed=5, seat=1, opponents=['krenko-mono-red-goblins', 'yuriko-dimir-ninjas',
                                                             'heliod-mono-white-stax'], ai='adaptive')

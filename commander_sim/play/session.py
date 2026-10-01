@@ -21,6 +21,13 @@ MY_DECKS = poolmode.MINE
 TIERS = ('t1', 't2', 't3', 't4', 't5')
 
 
+def is_private(line):
+    """the AI's reasoning traces ('[Tergrid decides: Jet Medallion 56%, Bloodline Keeper 11% ...]'): they name cards
+    still in an opponent's hand, so they are not part of what the human seat sees"""
+    body = line[4:] if line.startswith('R') else line
+    return body.lstrip().startswith('[')
+
+
 class EventLog(list):
     """the game log (g.log): every line is also sent to the session as it happens"""
     def __init__(s, session):
@@ -93,6 +100,7 @@ class Session:
             s.events.put({'kind': 'error', 'text': traceback.format_exc()})
 
     def _on_log(s, line):
+        if is_private(line): return                  # stays in the game's log (for the review), never shown in play
         s.events.put({'kind': 'log', 'text': line})
         if '--- ' in line and ' turn ' in line and s.game is not None and s.game.active is not None:
             g = s.game

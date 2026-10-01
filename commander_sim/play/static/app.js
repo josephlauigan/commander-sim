@@ -1,4 +1,5 @@
-// The bare browser table (step 2a): follow the game from your seat and answer its decisions with buttons.
+// The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
+import { el, card as cardOf, renderTable as drawTable, renderSteps } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
 let images = {};            // card name -> image files in /images/ (the table uses them from step 2d)
@@ -12,47 +13,19 @@ function loading(done, total) {
   box.querySelector('.bar').setAttribute('aria-valuenow', pct);
 }
 
-function el(tag, attrs = {}, ...kids) {
-  const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'class') e.className = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
-  }
-  for (const k of kids.flat()) if (k != null) e.append(k.nodeType ? k : String(k));
-  return e;
-}
-
 async function api(path, body) {
   const r = await fetch(path, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   return { ok: r.ok, data: await r.json() };
 }
 
 // ------------------------------------------------------------------ the table
-function card(name, extra = {}) {
-  const bits = [name];
-  if (extra.pt) bits.push(extra.pt);
-  if (extra.counters) bits.push(`+${extra.counters}`);
-  if (extra.loyalty != null) bits.push(`loyalty ${extra.loyalty}`);
-  if (extra.attached_to) bits.push(`on ${extra.attached_to}`);
-  return el('span', { class: 'card' + (extra.tapped ? ' tapped' : '') }, bits.join(' · '));
-}
-
+let lastView = null;
 function renderTable(view) {
-  const t = $('#table'); t.replaceChildren();
-  if (!view) return;
-  t.append(el('div', { class: 'stats' }, `Round ${view.round} · ${view.step || ''}`));
-  for (const p of view.players) {
-    const box = el('div', { class: 'player' + (p.you ? ' you' : '') + (p.key === view.active ? ' active' : '') + (p.alive ? '' : ' out') },
-      el('h2', {}, p.name + (p.you ? ' (you)' : '')),
-      el('div', { class: 'stats' }, `${p.life} life · hand ${p.hand_count} · library ${p.library} · graveyard ${p.graveyard.length}` +
-        (p.poison ? ` · ${p.poison} poison` : '') + (p.treasures ? ` · ${p.treasures} Treasure` : '') +
-        (p.commander_in_zone ? ` · ${p.commander} in the command zone (tax ${p.tax})` : '')));
-    if (p.battlefield.length) box.append(el('div', { class: 'zone' }, el('b', {}, 'Battlefield'), p.battlefield.map((m) => card(m.name, m))));
-    if (p.lands.length) box.append(el('div', { class: 'zone' }, el('b', {}, 'Lands'), p.lands.map((L) => card(L.name, L))));
-    if (p.you && p.hand) box.append(el('div', { class: 'zone' }, el('b', {}, 'Hand'), p.hand.map((n) => card(n))));
-    if (p.you) box.append(el('div', { class: 'zone' }, el('b', {}, 'Mana pool'), p.mana_pool));
-    t.append(box);
-  }
+  lastView = view;
+  drawTable($('#table'), view, images);
+  renderSteps($('#steps'), view);
 }
+const card = (name, o = {}) => cardOf(images, name, Object.assign({ size: 'sm' }, o));
 
 // ------------------------------------------------------------------ decisions
 async function answer(value) {
@@ -118,7 +91,7 @@ function onEvent(ev) {
   else if (ev.kind === 'invalid') logLine('Not allowed: ' + ev.text, 'invalid');
   else if (ev.kind === 'auto') logLine('(automatic) ' + ev.text, 'auto');
   else if (ev.kind === 'loading') loading(ev.done, ev.total);
-  else if (ev.kind === 'images') { images = ev.images; loading(null); }
+  else if (ev.kind === 'images') { images = ev.images; loading(null); if (lastView) renderTable(lastView); }
   else if (ev.kind === 'request') { pending = ev; renderPrompt(ev); }
   else if (ev.kind === 'over') { pending = null; renderPrompt(null); $('#prompt').replaceChildren(el('h3', {}, `Game over: ${ev.winner || 'no winner'} (${ev.how})`)); }
   else if (ev.kind === 'error') logLine(ev.text, 'invalid');
