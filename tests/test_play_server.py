@@ -84,6 +84,13 @@ class Server(unittest.TestCase):
         self.assertEqual(first['kind'], 'images')
         self.call('POST', '/api/quit', {})
 
+    def test_catching_up_sends_only_the_last_table(self):
+        evs = [{'id': i, 'kind': 'log', 'text': str(i), 'view': {'round': i}} for i in range(1, 40)]
+        evs.append({'id': 40, 'kind': 'request', 'view': {'round': 39}, 'request': {}})
+        out = server.catch_up(evs, evs[-1])
+        self.assertEqual([e['id'] for e in out if 'view' in e], [40])
+        self.assertEqual(len(out), 40)
+
     def test_options(self):
         st, _, body = self.call('GET', '/api/options')
         d = json.loads(body)

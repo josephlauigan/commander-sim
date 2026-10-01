@@ -12,7 +12,8 @@ Routes:
                             images load first ('loading' events with done/total, then 'images': name -> files)
   POST /api/answer          answer the waiting decision: {id, answer}; a stale id is refused (409)
   POST /api/undo            take back your last answer ({n}: the last n): the game replays from its seed
-  GET  /api/review          after the game: each decision, what the AI would have done, both scores
+  GET  /api/review          after the game: a summary, and each decision with what the AI would have done and both scores
+  POST /api/tryit           {n}: back to decision n with the AI's choice there (the review's "Try it")
   POST /api/hint            what the AI would do at the decision waiting for you: {text, detail, choice}
   POST /api/quit            end the game
 
@@ -21,6 +22,7 @@ The engine runs on the session's worker thread. A pump thread moves the session'
 """
 import json
 import os
+import queue
 import threading
 import webbrowser
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
@@ -60,7 +62,7 @@ class Hub:
         sess = Session(opts['deck'], opts['tier'], seed=opts.get('seed'), seat=opts.get('seat'),
                        opponents=opts.get('opponents'), profile=opts.get('profile', 'loose'),
                        ai=opts.get('ai', 'lookahead'), views=True,
-                       compare=bool((opts.get('tools') or {}).get('compare', True)))
+                       compare=bool((opts.get('tools') or {}).get('compare', True)), seats=opts.get('seats'))
         with s.cond:
             s.game_no += 1
             s.session, s.events, s.pending, s.view, s.images = sess, [], None, None, {}
@@ -95,12 +97,17 @@ class Hub:
         if sess is not None: sess.close()
 
     def _pump(s, sess, no):
+        """the session's events into the history, until a newer game replaces it (a game that ended can go on:
+        the review's "Try it" restarts it)"""
         while True:
-            ev = sess.events.get()
+            try:
+                ev = sess.events.get(timeout=1.0)
+            except queue.Empty:
+                if s.game_no != no: return
+                continue
             with s.cond:
                 if s.game_no != no: return                     # a newer game replaced this one
                 s._add(ev)
-            if ev['kind'] in ('over', 'error'): return
 
     def _add(s, ev):
         """(holding the lock) record one session event"""
@@ -173,6 +180,14 @@ class Hub:
 _CATALOG = []
 
 
+def catch_up(evs, pending):
+    """a page catching up on many events at once (a reload, a reconnect): every action carries the table it left,
+    but only the last table matters, so the others are left out (a long game's history is megabytes otherwise)"""
+    last = max((i for i, e in enumerate(evs) if 'view' in e), default=None)
+    keep = {last} | {i for i, e in enumerate(evs) if pending is not None and e['id'] == pending['id']}
+    return [e if i in keep or 'view' not in e else {k: v for k, v in e.items() if k != 'view'} for i, e in enumerate(evs)]
+
+
 def options():
     """the setup screen's data: your decks, the tiers, and the commanders' images already cached"""
     from commander_sim import poolmode
@@ -229,7 +244,7 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == '/api/options': return s._send(200, options())
         if url.path == '/api/review':
             res = s.hub.review()
-            return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, {'decisions': res})
+            return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, res)
         if url.path == '/api/events':
             q = parse_qs(url.query)
             since = s.headers.get('Last-Event-ID') or (q.get('since') or ['0'])[0]
@@ -246,6 +261,8 @@ class Handler(BaseHTTPRequestHandler):
             if body.get('opponents') is not None and not (isinstance(body['opponents'], list)
                                                           and all(isinstance(x, str) for x in body['opponents'])):
                 return s._send(400, {'error': 'opponents: a list of three deck keys'})
+            if body.get('seats') is not None and not (isinstance(body['seats'], list) and all(isinstance(x, str) for x in body['seats'])):
+                return s._send(400, {'error': 'seats: four deck keys in turn order'})
             if body.get('seat') is not None and not isinstance(body['seat'], int):
                 return s._send(400, {'error': 'seat: 1 to 4'})
             try:
@@ -258,6 +275,11 @@ class Handler(BaseHTTPRequestHandler):
             return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
         if url.path == '/api/undo':
             why = s.hub.undo(int(body.get('n', 1)) if str(body.get('n', 1)).isdigit() else 1)
+            return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
+        if url.path == '/api/tryit':
+            with s.hub.cond:
+                sess = s.hub.session
+            why = 'There is no game.' if sess is None else sess.try_it(body.get('n'))
             return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
         if url.path == '/api/hint':
             res = s.hub.hint()
@@ -284,6 +306,7 @@ class Handler(BaseHTTPRequestHandler):
                 evs = s.hub.events_after(since)
                 if not evs:
                     s.wfile.write(b': keep-alive\n\n'); s.wfile.flush(); continue
+                if len(evs) > 20: evs = catch_up(evs, s.hub.pending)
                 for e in evs:
                     s.wfile.write(f"id: {e['id']}\ndata: {json.dumps(e)}\n\n".encode())
                     since = e['id']

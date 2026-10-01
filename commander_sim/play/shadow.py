@@ -23,21 +23,53 @@ class Entry:
         s.scored = False             # comparison finished
         s.note = ''
         s.yours_key = None           # your choice as the AI's label for it (the key into scores)
+        s.hand, s.cmd = [], None     # your hand and commander (if in the command zone) at the decision
+        s.ai_plan, s.n_choices = None, 0
         s.job = None                 # the work left: a generator, one playout per step
+
+    def ai_answer(s):
+        """the AI's choice as your answer at this decision, or None when it isn't a single action"""
+        if s.kind == 'main':
+            if s.ai.startswith('stop'): return {'do': 'pass'}
+            name = s.ai.split(' -> ')[0]
+            if name in s.hand: return {'do': 'cast', 'card': s.hand.index(name)}
+            if name == s.cmd: return {'do': 'cast', 'zone': 'cmd'}
+            return None
+        if s.kind == 'attack':
+            mode = s.ai_plan[1] if s.ai_plan else None
+            if mode == 'none': return []
+            if mode == 'all': return list(range(s.n_choices))
+        return None
+
+    def ai_text(s):
+        if s.ai is None: return None
+        if s.kind == 'main':
+            if s.ai.startswith('stop'): return 'Pass (nothing more this phase)'
+            name, _, tgt = s.ai.partition(' -> ')
+            return f'Cast {name}' + (f' on {tgt}' if tgt else '')
+        return s.ai
 
     def as_dict(s):
         return {'n': s.n, 'round': s.round, 'step': s.step, 'kind': s.kind, 'situation': s.situation,
+                'key': s.yours_key, 'ai_text': s.ai_text(), 'can_try': s.scored and s.ai is not None,
                 'yours': s.yours, 'ai': s.ai, 'score_yours': s.scores.get(s.yours_key) if s.scored else None,
                 'score_ai': s.scores.get(s.ai) if s.scored and s.ai is not None else None, 'scored': s.scored,
-                'note': s.note, 'scores': dict(s.scores)}
+                'note': s.note, 'scores': dict(s.scores), 'step_text': STEP_TEXT.get(s.step, s.step),
+                'differs': bool(s.scored and s.ai != s.yours_key and s.yours_key in s.scores
+                                and s.scores[s.ai] - s.scores[s.yours_key] >= SAME)}
 
 
 STEPS = {'main1': 'main phase 1', 'main2': 'main phase 2', 'combat': 'combat'}
+STEP_TEXT = {'main1': 'Main 1', 'main2': 'Main 2', 'combat': 'Combat'}
 
 
 def situation(g, p):
-    return (f"Round {g.round}, your {STEPS.get(getattr(g, 'step', ''), getattr(g, 'step', ''))}: {p.life} life, "
-            f"{len(p.hand)} cards in hand, {len(p.lands)} lands, {sum(1 for m in p.perms if m.creature)} creatures")
+    opps = ', '.join(f'{E.NAME(q)} {q.life}' for q in g.players if q is not p and q.alive)
+    return (f"{p.life} life, {len(p.hand)} in hand, {len(p.lands)} lands, {sum(1 for m in p.perms if m.creature)} "
+            f"creatures; opponents: {opps}")
+
+
+SAME = 0.1          # options scoring within this of each other count as the same choice (no difference shown)
 
 
 class Shadow:
@@ -54,6 +86,7 @@ class Shadow:
             if do == 'tap': return                                     # getting mana ready: not a decision of its own
             label = _main_label(p, ans)
             e = Entry(n, g.round, g.step, 'main', situation(g, p), _yours_text(p, ans, label))
+            e.hand, e.cmd = [c.name for c in p.hand], (p.cmd.name if p.cmd_in_zone else None)
             if label is None:
                 e.note = 'not compared: the AI weighs spells and passing here, not this'
                 s.entries.append(e); return
@@ -63,6 +96,7 @@ class Shadow:
         elif req.kind == 'attack':
             label = _attack_label(g, p, req, ans)
             e = Entry(n, g.round, 'combat', 'attack', situation(g, p), _attack_text(g, p, req, ans))
+            e.n_choices = len(req.choices)
             e.yours_key = label
             e.job = _attack_job(e, g, p, label)
             s.entries.append(e)
@@ -211,7 +245,7 @@ def _attack_job(e, g, p, label):
                 yield
         e.scores = {_attack_name(g, c): tot[c] / search.ROLLOUTS for c in cands}
         best = max(cands, key=lambda c: tot[c])
-        e.ai = _attack_name(g, best)
+        e.ai = _attack_name(g, best); e.ai_plan = best
         e.yours_key = _attack_name(g, label) if label in cands else _attack_name(g, (opps[0], label[1]))
         e.scored = True
     return run()

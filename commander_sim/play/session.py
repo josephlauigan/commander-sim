@@ -21,6 +21,9 @@ MY_DECKS = poolmode.MINE
 TIERS = ('t1', 't2', 't3', 't4', 't5')
 
 
+WORSE = 1.0        # the review counts a decision "clearly worse" when the AI's choice scored this much higher
+
+
 def is_private(line):
     """the AI's reasoning traces ('[Tergrid decides: Jet Medallion 56%, Bloodline Keeper 11% ...]'): they name cards
     still in an opponent's hand, so they are not part of what the human seat sees"""
@@ -88,7 +91,7 @@ class EventLog(list):
 
 class Session:
     def __init__(s, deck, tier, seed=None, seat=None, opponents=None, profile='loose', ai='lookahead',
-                 step=False, max_rounds=30, views=False, compare=False):
+                 step=False, max_rounds=30, views=False, compare=False, seats=None):
         if deck not in MY_DECKS: raise ValueError(f'unknown deck {deck!r}: one of {", ".join(MY_DECKS)}')
         if tier not in TIERS: raise ValueError(f'unknown tier {tier!r}: one of {", ".join(TIERS)}')
         s.deck, s.tier, s.profile, s.ai, s.step, s.max_rounds = deck, tier, profile, ai, step, max_rounds
@@ -102,13 +105,23 @@ class Session:
         s.tape = search.Tape()             # the look-ahead AI's decisions, for replaying
         s.answers, s.marks, s.replay, s.replaying, s._restarting = [], [], [], False, False
         s.current = None                   # the decision waiting for you (the engine thread is blocked on it)
+        s.finished = False                 # the game has ended (won, lost, or the round limit)
         s.hint_lock = threading.Lock()     # a hint reads the game: your answer waits until it's done
         s.human = RecordingController(s)
         s.game = None
         s._thread = None
-        s._seats = s._choose_seats(opponents, seat)
+        s._seats = s._exact_seats(seats) if seats else s._choose_seats(opponents, seat)
 
     # ------------------------------------------------------------------ setup
+    def _exact_seats(s, seats):
+        """a seating given in full (playing the same seed again)"""
+        poolmode._setup(s.profile, s.ai, 1.0)
+        keys = poolmode.pool_keys(s.tier)
+        if (len(seats) != 4 or seats.count(s.deck) != 1 or len(set(seats)) != 4
+                or any(k not in keys for k in seats if k != s.deck)):
+            raise ValueError(f'seats: your deck and three of {", ".join(keys)}, in turn order')
+        return list(seats)
+
     def _choose_seats(s, opponents, seat):
         poolmode._setup(s.profile, s.ai, 1.0)
         keys = poolmode.pool_keys(s.tier)
@@ -148,6 +161,7 @@ class Session:
             ais._run_rounds(g, g.players, s.max_rounds)
             if s.compare and s.shadow.pending():           # the comparisons not yet worked out, before the review
                 s.shadow.finish(lambda d, t: s.events.put({'kind': 'reviewing', 'done': d, 'total': t}))
+            s.finished = True
             s.events.put({'kind': 'over', 'view': build_view(g, s.deck),
                           'winner': g.winner.key if g.winner else None, 'how': getattr(g, 'wintype', '')})
         except Cancelled:
@@ -179,30 +193,55 @@ class Session:
         decisions come off the tape), then asks the decision before them again. Returns None, or why not"""
         k = len(s.answers)
         if n < 1 or k < n: return 'Nothing to undo yet.'
-        keep, cut = s.answers[:k - n], s.marks[k - n]
+        return s.rewind(k - n, info={'undone': n})
+
+    def rewind(s, to, then=None, info=None):
+        """restart the game and replay your first `to` answers (then `then`, if given, as your answer to decision
+        `to`); the decisions after are live again. Returns None, or why not"""
+        if not isinstance(to, int) or not 0 <= to <= len(s.answers): return 'No such decision.'
+        keep, cut = s.answers[:to], s.marks[to] if to < len(s.marks) else len(s.tape.entries)
         s._restarting = True
         s.human.close()
         s.join(30)
         if s._thread is not None and s._thread.is_alive(): return 'The game is busy; try again in a moment.'
         s.tape.cut(cut)
         s.shadow.forget_from(len(keep))
-        s.answers, s.marks, s.replay = [], [], list(keep)
+        s.answers, s.marks, s.replay = [], [], list(keep) + ([then] if then is not None else [])
+        s.finished = False
         s.replaying = False
-        s.events.put({'kind': 'reset', 'undone': n})
-        s.replaying = bool(keep)
+        s.events.put(dict({'kind': 'reset', 'undone': 0}, **(info or {})))
+        s.replaying = bool(s.replay)
         s.human = RecordingController(s)
         s._restarting = False
         s.start()
         return None
+
+    def try_it(s, n):
+        """the review's "Try it": back to decision n, with the AI's choice there instead of yours (when it maps onto
+        one action; otherwise you're back at the decision and the AI's choice is shown for you to make)"""
+        e = next((x for x in s.shadow.entries if x.n == n), None)
+        if e is None or not e.scored or e.ai is None: return 'That decision has no AI choice to try.'
+        then = e.ai_answer()
+        return s.rewind(n, then=then, info={'tryit': {'n': n, 'ai': e.ai_text(), 'applied': then is not None}})
 
     def answer(s, value):
         with s.hint_lock:
             s.human.answer(value)
 
     def review(s):
-        """the AI comparison, once the game is over (it stays hidden while you play): a list of decisions"""
-        if s.game is None or not s.game.over: return 'The review opens when the game ends.'
-        return s.shadow.review()
+        """the AI comparison, once the game is over (it stays hidden while you play): {'summary', 'decisions'}"""
+        g = s.game
+        if g is None or not s.finished: return 'The review opens when the game ends.'
+        ds = s.shadow.review()
+        scored = [d for d in ds if d['scored']]
+        me = next(p for p in g.players if p.key == s.deck)
+        won = g.winner is me
+        summary = {'won': won, 'winner': ais.NAME(g.winner) if g.winner else None, 'how': getattr(g, 'wintype', '') or '',
+                   'rounds': g.round, 'answers': len(s.answers), 'decisions': len(ds), 'compared': len(scored),
+                   'matched': sum(1 for d in scored if not d['differs']),
+                   'worse': sum(1 for d in scored if d['score_ai'] - d['score_yours'] >= WORSE),
+                   'worse_margin': WORSE}
+        return {'summary': summary, 'decisions': ds}
 
     def hint(s):
         """the AI's advice for the decision waiting for you: {'text', 'detail', 'choice'}, or a string saying why not"""

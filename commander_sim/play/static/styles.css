@@ -129,3 +129,13 @@ section.targetable > header { cursor: crosshair; }
 #hintbox { background: #102a3a; border: 1px solid #7fd3ff; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
 #hintbox h3 { margin: 0 0 6px; font-size: 14px; color: #bfe9ff; }
 #hintbox ul { margin: 4px 0 8px; padding-left: 18px; font-size: 12px; } #hintbox li.lead { list-style: none; margin-left: -18px; color: var(--dim); }
+#review { max-width: 1200px; margin: 0 auto; padding: 8px 16px 24px; }
+#review h2 { color: var(--gold); margin: 12px 0 6px; }
+#review .summary b { color: var(--text); } #review .summary b.worse { color: var(--bad); }
+table.review { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+table.review th { text-align: left; color: var(--dim); font-weight: 500; border-bottom: 1px solid var(--line); padding: 6px; }
+table.review td { padding: 6px; border-bottom: 1px solid #1f513a; vertical-align: top; }
+table.review td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.review tr.worse td { background: #3a17121f; } table.review tr.worse td.num:first-of-type { color: var(--bad); }
+.tryit { padding: 8px 10px; margin-bottom: 8px; border-radius: 8px; background: #102a3a; border: 1px solid #7fd3ff; color: #bfe9ff; }
+table.review td.when, table.review button.try { white-space: nowrap; }

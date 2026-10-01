@@ -43,6 +43,11 @@ function you(view) { return view && view.players.find((p) => p.you); }
 
 function renderPrompt(ev) {
   const box = $('#prompt'); box.replaceChildren(); closeMenu();
+  if (ev && tryBanner) {
+    box.append(el('div', { class: 'tryit' }, tryBanner.applied ? `Trying the AI's choice: ${tryBanner.ai}. Carry on from here.`
+      : `The AI would have: ${tryBanner.ai}. Make that play, then carry on.`));
+    tryBanner = null;
+  }
   $('#hintbox').hidden = true;                // a hint is for the decision it was asked at
   for (const x of document.querySelectorAll('.stackbar')) x.remove();
   $('#pass').hidden = !(ev && ev.request.kind === 'priority');
@@ -207,26 +212,56 @@ function onTableClick(e) {
 function hidePreviewSoon() { const p = document.getElementById('preview'); if (p) p.hidden = true; }
 
 // ------------------------------------------------------------------ the event stream
+let logQueue = [];           // log lines waiting to be added (a burst of events adds them in one go)
 function logLine(text, cls = '') {
+  logQueue.push(el('div', { class: cls }, text));
+  if (logQueue.length === 1) setTimeout(flushLog, 0);
+}
+
+function flushLog() {
+  if (!logQueue.length) return;
   const log = $('#log');
   const atEnd = log.scrollTop + log.clientHeight >= log.scrollHeight - 4;
-  log.append(el('div', { class: cls }, text));
+  log.append(...logQueue); logQueue = [];
   if (atEnd) log.scrollTop = log.scrollHeight;
 }
 
-function onEvent(ev) {
-  if (ev.view) renderTable(ev.view);
+let stale = null;            // a view not drawn yet (history catching up draws only the last of a run of views)
+let drawTimer = null;
+function scheduleDraw() {
+  if (drawTimer) return;
+  drawTimer = setTimeout(() => { drawTimer = null; if (stale) { renderTable(stale); stale = null; markChoices(pending); } }, 40);
+}
+function onEvent(ev, draw = true) {
+  if (ev.view) { if (draw || ev.kind === 'request') { renderTable(ev.view); stale = null; } else stale = ev.view; }
+  else if (stale && (ev.kind === 'request' || ev.kind === 'over')) { renderTable(stale); stale = null; }
   if (ev.kind === 'log') logLine(ev.text, ev.text.startsWith('---') ? 'turn' : '');
   else if (ev.kind === 'invalid') { logLine('Not allowed: ' + ev.text, 'invalid'); if (ev.id > liveFrom && !ev.replay) toast(ev.text); }
-  else if (ev.kind === 'reset') {           // Undo: the game is replayed from its seed up to the decision taken back
-    $('#log').replaceChildren(); pending = null; renderPrompt(null); markChoices(null);
-    logLine(`(Undo: ${ev.undone} action${ev.undone > 1 ? 's' : ''} taken back; the game so far is replayed)`, 'auto');
+  else if (ev.kind === 'reset') {           // Undo or Try it: the game is replayed from its seed up to a decision
+    $('#log').replaceChildren(); logQueue = []; pending = null; renderPrompt(null); markChoices(null);
+    if (ev.tryit) {
+      tryBanner = ev.tryit;
+      logLine(`(Try it: the game is replayed to that decision, with the AI's choice: ${ev.tryit.ai})`, 'auto');
+      screen('game');
+    } else logLine(`(Undo: ${ev.undone} action${ev.undone > 1 ? 's' : ''} taken back; the game so far is replayed)`, 'auto');
+  }
+  else if (ev.kind === 'reviewing') {
+    $('#prompt').replaceChildren(el('h3', {}, 'Game over'), el('p', {}, `Working out the AI comparison: ${ev.done} of ${ev.total} decisions…`));
   }
   else if (ev.kind === 'auto') logLine('(automatic) ' + ev.text, 'auto');
   else if (ev.kind === 'loading') loading(ev.done, ev.total);
   else if (ev.kind === 'images') { images = ev.images; loading(null); if (lastView) renderTable(lastView); }
-  else if (ev.kind === 'request') { pending = ev; attackSel = new Set(); renderPrompt(ev); markChoices(ev); }
-  else if (ev.kind === 'over') { pending = null; renderPrompt(null); $('#prompt').replaceChildren(el('h3', {}, `Game over: ${ev.winner || 'no winner'} (${ev.how})`)); }
+  else if (ev.kind === 'request') {
+    if (!ev.view) ev.view = lastView;          // caught-up history carries only the latest table
+    pending = ev; attackSel = new Set(); renderPrompt(ev); markChoices(ev);
+  }
+  else if (ev.kind === 'over') {
+    pending = null; renderPrompt(null); tryBanner = null;
+    $('#prompt').replaceChildren(el('h3', {}, `Game over: ${ev.winner || 'no winner'}${ev.how ? ` (${ev.how})` : ''}`),
+      el('div', { class: 'row' }, tools.compare ? el('button', { class: 'primary', onclick: showReview }, 'Review the game') : null,
+        el('button', { onclick: sameSeed }, 'Play this seed again'), el('button', { onclick: () => screen('setup') }, 'New game')));
+    if ((location.hash === '#review' || new URLSearchParams(location.search).has('review')) && tools.compare) showReview();   // a direct link
+  }
   else if (ev.kind === 'error') logLine(ev.text, 'invalid');
 }
 
@@ -255,17 +290,20 @@ async function pump() {
         inbox.shift(); onEvent(ev); showControls();
         if (!paused) await sleep(BASE / speed);
       } else {
-        inbox.shift(); onEvent(ev);
+        inbox.shift();
+        onEvent(ev, false);                  // drawn once the burst is over (scheduleDraw), not once per event
         if (ev.kind === 'request' || ev.kind === 'over') skipping = false;
       }
     }
-  } finally { pumping = false; showControls(); }
+  } finally {
+    pumping = false; showControls(); scheduleDraw();
+  }
 }
 
 function showControls() {
   const bar = $('#playback');
   const waiting = inbox.some(paced);
-  bar.hidden = !(theirTurn(lastView) || waiting);
+  bar.hidden = $('#game').hidden || !(theirTurn(lastView) || waiting);
   $('#pb-pause').textContent = paused ? '▶ Play' : '❚❚ Pause';
   $('#pb-next').disabled = !paused || !waiting;
   for (const b of bar.querySelectorAll('[data-speed]')) b.classList.toggle('on', +b.dataset.speed === speed);
@@ -282,6 +320,57 @@ function connect() {
   if (source) source.close();
   source = new EventSource(`/api/events?since=${lastId}`);
   source.onmessage = (m) => { const ev = JSON.parse(m.data); lastId = Math.max(lastId, ev.id); receive(ev); };
+}
+
+// ------------------------------------------------------------------ the review (after the game)
+let tryBanner = null, reviewData = null, diffsOnly = true;
+
+async function showReview() {
+  const r = await api('/api/review');
+  if (!r.ok) { toast(r.data.error); return; }
+  reviewData = r.data; renderReview(); screen('review');
+}
+
+const fmt = (x) => (x == null ? '–' : (x > 0 ? '+' : '') + x.toFixed(1));
+
+function renderReview() {
+  const { summary: m, decisions } = reviewData;
+  const rows = decisions.filter((d) => !diffsOnly || d.differs);
+  $('#review').replaceChildren(
+    el('h2', {}, m.won ? `You won in round ${m.rounds}` : m.winner ? `${m.winner} won in round ${m.rounds}${m.how ? ` (${m.how})` : ''}` : `No winner after ${m.rounds} rounds`),
+    el('p', { class: 'summary' }, `${m.answers} answers in all; ${m.decisions} decisions the AI weighs, ${m.compared} compared: `,
+      el('b', {}, `${m.matched} matched the AI`), `, `, el('b', { class: 'worse' }, `${m.worse} clearly worse`),
+      ` (the AI's choice scored ${m.worse_margin} or more higher).`),
+    el('p', { class: 'help' }, 'Scores: where the game stood at the end of your next turn, averaged over six playouts, from −100 (lost) to +100 (won).'),
+    el('div', { class: 'row' }, el('label', {}, el('input', Object.assign({ type: 'radio', name: 'rv', onchange: () => { diffsOnly = true; renderReview(); } }, diffsOnly ? { checked: '' } : {})), ' Differences only'),
+      el('label', {}, el('input', Object.assign({ type: 'radio', name: 'rv', onchange: () => { diffsOnly = false; renderReview(); } }, diffsOnly ? {} : { checked: '' })), ' All decisions')),
+    rows.length ? el('table', { class: 'review' },
+      el('thead', {}, el('tr', {}, ['When', 'Situation', 'You', 'The AI', 'Your score', "AI's score", ''].map((h) => el('th', {}, h)))),
+      el('tbody', {}, rows.map((d) => el('tr', { class: d.scored && d.score_ai - d.score_yours >= m.worse_margin ? 'worse' : '' },
+        el('td', { class: 'when' }, `Round ${d.round} · ${d.step_text}`), el('td', {}, d.situation), el('td', {}, d.yours),
+        el('td', {}, d.ai_text || (d.note ? el('em', {}, d.note) : '–')),
+        el('td', { class: 'num' }, fmt(d.score_yours)), el('td', { class: 'num' }, fmt(d.score_ai)),
+        el('td', {}, d.can_try && d.differs ? el('button', { class: 'try', onclick: () => tryIt(d.n) }, 'Try it') : null)))))
+      : el('p', {}, diffsOnly ? 'You and the AI made the same choices everywhere they were compared.' : 'No decisions recorded.'),
+    el('div', { class: 'row' }, el('button', { onclick: () => screen('game') }, 'Back to the table'),
+      el('button', { onclick: sameSeed }, 'Play this seed again'), el('button', { class: 'primary', onclick: () => screen('setup') }, 'New game')));
+}
+
+async function tryIt(n) {
+  const r = await api('/api/tryit', { n });
+  if (!r.ok) toast(r.data.error);
+}
+
+async function sameSeed() {
+  const st = (await api('/api/state')).data;
+  if (!st.game) { screen('setup'); return; }
+  const g = st.game;
+  const body = { deck: g.deck, tier: g.tier, seed: g.seed, ai: g.ai, profile: g.profile, tools: g.tools,
+    seats: g.seats };
+  $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
+  const r = await api('/api/new', body);
+  if (!r.ok) { loading(null); toast(r.data.error); return; }
+  setStatus(r.data.seed, r.data.seats); setTools(body.tools); screen('game');
 }
 
 // ------------------------------------------------------------------ setup
@@ -319,6 +408,8 @@ let catalog = null, chosen = { deck: null, tier: 't3' };
 function screen(name) {
   $('#setup').hidden = name !== 'setup';
   $('#game').hidden = name !== 'game';
+  $('#review').hidden = name !== 'review';
+  if (name !== 'game') $('#playback').hidden = true;
   $('#to-setup').hidden = name !== 'game';
   $('#undo').hidden = name !== 'game' || !tools.undo;
   $('#hint').hidden = name !== 'game' || !tools.hint;
@@ -364,7 +455,7 @@ async function startGame(e) {
     if (body.opponents.length !== 3) { $('#setup-error').textContent = 'Pick exactly three opponents.'; return; }
   }
   $('#setup-error').textContent = '';
-  $('#log').replaceChildren(); pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
+  $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/new', body);
   if (!r.ok) { loading(null); $('#setup-error').textContent = r.data.error; return; }
   setStatus(r.data.seed, r.data.seats); setTools(body.tools);
