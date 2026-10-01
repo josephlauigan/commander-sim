@@ -301,7 +301,49 @@ def _ste(g, p, m):
     return [('sacrifice: a basic land onto the battlefield tapped', act)]
 
 
+def _outlet(text, effect):
+    """a free sacrifice outlet: "Sacrifice a creature: <text>". effect(g, p, m, power) after the sacrifice"""
+    def offer(g, p, m):
+        def act(g, p, m):
+            cre = [x for x in p.perms if x.creature and not x.phased]
+            if not cre: return 'You have no creature to sacrifice.'
+            k = _choose(g, p, 'choose', f'{m.cd.name}: sacrifice which creature?', [legal.describe_target(g, p, x) for x in cre])
+            if k is None: return None
+            x = cre[k]; pw = E.epow(g, x)
+            E.log(f'  {E.NAME(p)} sacrifices {x.name} to {m.cd.name}', g)
+            E.die(g, x, 'sac')
+            effect(g, p, m, pw)
+            E.check_state(g)
+            return None
+        return [(f'sacrifice a creature: {text}', act)]
+    return offer
+
+
+def _feeder(g, p, m, pw):
+    if m in p.perms: m.plus += 1
+
+
+def _dementia(g, p, m, pw):
+    q = _any_player(g, p, f'Altar of Dementia: which player mills {pw}?') if pw > 0 else None
+    if q is not None: E.mill(g, q, pw); E.log(f'    Altar of Dementia: {E.NAME(q)} mills {pw}', g)
+
+
+def _coalition(g, p, m):
+    def act(g, p, m):
+        why = _tapped(m)
+        if why: return why
+        m.tapped = True; m.data = dict(m.data or {}, charge=(m.data or {}).get('charge', 0) + 1)
+        E.log(f'  {E.NAME(p)} puts a charge counter on Coalition Relic', g)
+        return None
+    return [('{T}: put a charge counter on it (each one is a mana of any colour at your next precombat main phase)', act)]
+
+
 ABILITIES = {
+    'Carrion Feeder': _outlet('put a +1/+1 counter on Carrion Feeder', _feeder),
+    'Viscera Seer': _outlet('scry 1', lambda g, p, m, pw: _choices().scry(g, p, 1)),
+    "Ashnod's Altar": _outlet('add {C}{C}', lambda g, p, m, pw: mana.pool_of(p).add('C', 2)),
+    'Altar of Dementia': _outlet("target player mills cards equal to the sacrificed creature's power", _dementia),
+    'Coalition Relic': _coalition,
     "Vraska, Betrayal's Sting": _walker([(0, 'draw a card, lose 1 life, proliferate', _vraska_zero),
                                          (-2, 'target creature becomes a Treasure', _vraska_minus2),
                                          (-9, "a player's poison counters become nine", _vraska_minus9)]),
@@ -794,3 +836,38 @@ NEEDS['Mizzix\'s Mastery'] = lambda g, p, c: (None if any((x.instant or x.sorcer
                                               "Mizzix's Mastery needs an instant or sorcery card in your graveyard to target.")
 NEEDS['Flashback'] = lambda g, p, c: (None if any((x.instant or x.sorcery) for x in p.gy) else
                                       'Flashback needs an instant or sorcery card in your graveyard to target.')
+
+
+# ------------------------------------------------------------------ choices as your spells and triggers resolve (Marchesa's deck)
+def _creatures(g, p, opp_only=False):
+    """creatures p's spell or ability can target (opponents' hexproof and shroud respected)"""
+    return [m for q in g.players if q.alive and not (opp_only and q is p) for m in q.perms if m.creature and not m.phased
+            and not (m.owner is not p and E.untargetable(g, m))]
+
+
+def pick_creature(g, p, prompt, opp_only=False, optional=False):
+    tg = _creatures(g, p, opp_only)
+    if not tg: return None
+    k = _choose(g, p, 'target', prompt, [legal.describe_target(g, p, m) for m in tg], cancel='no target' if optional else None)
+    return None if k is None else tg[k]
+
+
+def crux_mode(g, p):
+    k = _choose(g, p, 'choose', 'Crux of Fate: choose one', ['destroy all Dragons', 'destroy all non-Dragon creatures'], cancel=None)
+    return 'dragons' if k == 0 else 'others'
+
+
+def dredge(g, p):
+    """your draw step: dredge a card in your graveyard instead of drawing? True if you did"""
+    imps = [c for c in p.gy if 'dredge' in c.tags]
+    if not imps or len(p.library) < 5: return False
+    if not _choices().yes_no(g, p, f'Draw step: dredge {imps[0].name} (mill five, return it to your hand) instead of drawing?'):
+        return False
+    p.gy.remove(imps[0]); p.hand.append(imps[0])
+    E.mill(g, p, 5); p.stats['dredged'] += 1
+    E.log(f'  {E.NAME(p)} dredges {imps[0].name} (mills five)', g)
+    return True
+
+
+CAST_TARGET = {'Act of Treason': 'Act of Treason: gain control of which creature until end of turn?'}
+NEEDS['Act of Treason'] = lambda g, p, c: None if _creatures(g, p) else 'Act of Treason has no creature to target.'

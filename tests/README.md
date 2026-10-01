@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 322 tests in about a minute. To run one file, or one test:
+That's 334 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -42,6 +42,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_play_cards.py` | 12 | Practice mode, your decks' activated abilities by the rules: Vraska's -2 on your pick, once per turn and sorcery speed, Ral Zarek's -2, Mind Stone at any time (and needing mana), a prepared Lightning Bolt, Aetherflux Reservoir (and its 50 life), Triskelion, Strip Mine on any land, Desolate Lighthouse, and no sorcery-speed play in response. |
 | `test_play_hand.py` | 15 | Practice mode, casts from hand the card code keeps for the AI: Twinflame (two targets; the extra target's mana; copying a token), Ephemerate and its rebound (declined: stays in exile), cycling at instant speed, Unearth's pick, Disintegrate at a player, Disembowel's X, Lethal Throwdown, Sokenzan's channel, Necromancy at instant speed; Return the Favor (needs a spell; copies your Lightning Bolt while you hold priority; never cast for you by the AI) and Dualcaster Mage copying an opponent's spell. |
 | `test_play_veyran.py` | 10 | Practice mode, Veyran's spells: Crackle with Power's X and targets (and stopping early), Mizzix's Mastery's target, Flashback granting flashback, Jeska's Will (mana from an opponent's hand; exiled lands aren't played for you), Expressive Iteration, Stock Up, Prismari Charm's two pings, and Thousand-Year Storm copies taking new targets. |
+| `test_play_marchesa.py` | 12 | Practice mode, Marchesa's cards and the shared sacrifice outlets: Act of Treason's and Enslave's targets, Crux of Fate's mode, Forge Devil's target, Accursed Marauder (you choose your sacrifice), Phyrexian Delver's pick, Al Bhed Salvagers' target opponent, Mystic Remora's upkeep declined, dredge instead of drawing, Carrion Feeder, Ashnod's Altar, and Coalition Relic's charge. |
 
 ## When a test fails
 

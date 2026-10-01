@@ -2257,6 +2257,8 @@ def _step_start(g, p):
     elif loam_dredge(g, p): pass
     elif importlib.import_module('commander_sim.cards.impl.lands').dakmor_dredge(g, p): pass
     elif g.hooks and E.CI.total(g, 'skip_draw', p): pass     # Solitary Confinement
+    elif E.human_choice(g, p) is not None:
+        if not importlib.import_module('commander_sim.play.cards').dredge(g, p): draw(g, p, 1, step=True)
     elif not ((p.key == 'seph' and seph_dredge(g, p)) or (p.key == 'marchesa' and E.CI.marchesa_dredge(g, p))):
         draw(g, p, 1, step=True)
     check_state(g)

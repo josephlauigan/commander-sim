@@ -229,6 +229,11 @@ def cast(g, p, c, zone):
             pick = cards.mastery_target(g, p, c)
             if pick is None: return None
             ctx['mastery_pick'] = pick
+    from commander_sim.play import cards as mycards
+    if c.name in mycards.CAST_TARGET:                         # a tagless spell with a creature target (Act of Treason)
+        t = mycards.pick_creature(g, p, mycards.CAST_TARGET[c.name], optional=True)
+        if t is None: return None
+        ctx['target'] = t
     tgts = legal.spell_targets(g, p, c)
     if tgts is not None:                                     # targets are chosen before the spell is paid for
         if not tgts: return f'{c.name} has no legal target right now.'

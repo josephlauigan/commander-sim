@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (322 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (334 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -915,6 +915,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (322 tests, abou
 | `test_play_cards.py` | Practice mode, your decks' activated abilities by the rules (`play/cards.py`). |
 | `test_play_hand.py` | Practice mode, alternative casts from hand and copying spells (`play/cards.py`). |
 | `test_play_veyran.py` | Practice mode, choices inside Veyran's spells. |
+| `test_play_marchesa.py` | Practice mode, Marchesa's cards and the sacrifice outlets. |
 
 `tests/table.py` builds a position for a rule test: seat decks, empty the hands, put chosen cards in hand or onto the
 battlefield, then drive the engine directly.

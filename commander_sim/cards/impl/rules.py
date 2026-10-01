@@ -177,6 +177,11 @@ def _remora_age(g, src, p):
     if p is not src.owner: return
     if src.data is None: src.data = {}
     age = src.data.get('age', 0) + 1; src.data['age'] = age
+    hc = E.human_choice(g, p)
+    if hc is not None:                                       # practice mode: pay the cumulative upkeep, or sacrifice
+        if hc.pay_tax(g, p, age, f'Mystic Remora (cumulative upkeep, {age} age counters)'): return
+        log(f'    {NAME(p)} sacrifices Mystic Remora (cumulative upkeep {age})', g); leave(g, src); to_zone_card(g, src, 'gy')
+        return
     if age <= 3 and can_pay(g, p, age, ''): pay(g, p, age, '')
     else:
         log(f'    {NAME(p)} sacrifices Mystic Remora (cumulative upkeep {age})', g); leave(g, src); to_zone_card(g, src, 'gy')

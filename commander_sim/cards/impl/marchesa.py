@@ -17,6 +17,11 @@ def full(name, text): note(name, 'Full', text)
 MARCHESA = 'Marchesa, the Black Rose'
 
 
+def _you(g, p):
+    """practice mode: the human seat's versions of these cards' choices (play/cards.py), or None for the AI"""
+    return importlib.import_module('commander_sim.play.cards') if E.human_choice(g, p) is not None else None
+
+
 def marchesa_out(p):
     return has(p, 'marchesa')
 
@@ -275,7 +280,7 @@ def steal(g, p, m, until_eot):
 
 @on('Act of Treason', 'resolve')
 def _treason(g, p, c, ctx):
-    t = ctx.get('target') or best_steal(g, p, c)
+    t = ctx.get('target') or (None if _you(g, p) else best_steal(g, p, c))
     if t is None or t not in t.owner.perms or t.owner is p or untargetable(g, t): return
     from commander_sim import ais
     if ais.protect_response(g, t.owner, t, 'steal', p, c) or t not in t.owner.perms: return
@@ -300,7 +305,8 @@ full('Act of Treason', 'gains control of the best opposing creature until end of
 @on('Enslave', 'etb')
 def _enslave(g, src, p, m):
     if m is not src: return
-    t = best_steal(g, p, src.cd)
+    t = _you(g, p).pick_creature(g, p, 'Enslave: enchant (and gain control of) which creature?') if _you(g, p) \
+        else best_steal(g, p, src.cd)
     if t is None or t.owner is p:
         leave(g, src); to_zone_card(g, src, 'gy'); return        # no legal target: the Aura goes to the graveyard
     from commander_sim import ais
@@ -344,6 +350,10 @@ def _enervation(g, src, p, m):
     if m is not src: return
     o = src.owner
     src.data = dict(src.data or {}, gy=_gy_creatures(o))
+    if _you(g, o):
+        t = _you(g, o).pick_creature(g, o, 'Soul Enervation: which creature gets -4/-4?')
+        if t is not None: _eot(g, t, -4, -4); check_state(g)
+        return
     tg = [x for x in legal_targets(g, o, 'shrink4', 'c', spell=src.cd)]
     if tg: apply_removal(g, o, max(tg, key=lambda x: pval(g, x)), 'shrink4', src.cd)
     else:                                          # a mandatory target: shrink an opponent's biggest creature anyway
@@ -389,6 +399,9 @@ def _salvage(g, src):
     p = src.owner
     opps = g.opps(p)
     if not opps: return
+    if E.human_choice(g, p) is not None:
+        q = E.human_choice(g, p).target_opponent(g, p, 'Al Bhed Salvagers')
+        lose_life(g, q, 1, p, kind='drain'); gain(p, 1); return
     lethal = [q for q in opps if q.life <= 1]
     lose_life(g, lethal[0] if lethal else min(opps, key=lambda q: q.life), 1, p, kind='drain'); gain(p, 1)
 
@@ -422,6 +435,10 @@ def _spy(g, src, p, m):
     rean = any(c.tags.get('rean') or 'unearth' in c.tags or c.name in ('Phyrexian Delver', 'Zombify') for c in o.hand) \
         or any(x.cd is not None and x.cd.name == 'Grave Researcher // Reanimate' for x in o.perms)
     q = o if (rean and len(o.library) >= 25) else max(g.opps(o), key=lambda x: threat(g, o, x), default=o)
+    if _you(g, o):
+        ps = [x for x in g.players if x.alive]
+        q = ps[E.human_choice(g, o).choose(g, o, 'target', 'Balustrade Spy: which player reveals until a land and mills?',
+                                           [NAME(x) + (' (you)' if x is o else '') for x in ps], cancel=None)]
     n = 0
     while q.library:
         c = q.library.pop(); q.gy.append(c); n += 1
@@ -435,7 +452,7 @@ full('Balustrade Spy', 'flying; enters: a player mills until a land (you, when y
 @on('Coalition Relic', 'end_step')
 def _relic_charge(g, src, p):
     """at your end step, an untapped Relic taps for a charge counter unless held-up instants need the mana"""
-    if p is not src.owner or src.tapped or src.phased: return
+    if p is not src.owner or src.tapped or src.phased or _you(g, p): return
     held = [c for c in p.hand if c.instant and ('ctr' in c.tags or 'rem' in c.tags) and can_pay(g, p, c.generic, c.pips)]
     src.tapped = True
     if held and not any(can_pay(g, p, c.generic, c.pips) for c in held):
@@ -640,6 +657,10 @@ full('Lethal Throwdown', 'sacrifice a creature (the cheapest to lose: one Marche
 def _festering(g, m, cause):
     """when it dies, target creature gets -1/-1 until end of turn"""
     p = m.owner
+    if _you(g, p):
+        t = _you(g, p).pick_creature(g, p, 'Festering Goblin: which creature gets -1/-1 until end of turn?')
+        if t is not None: _eot(g, t, -1, -1); check_state(g)
+        return
     x1 = _opp_x1(g, p)
     if x1:
         t = max(x1, key=lambda x: pval(g, x))
@@ -656,6 +677,10 @@ def _forge_devil(g, src, p, m):
     """1 damage to target creature and 1 damage to you (the target is mandatory)"""
     if m is not src: return
     o = src.owner
+    if _you(g, o):
+        t = _you(g, o).pick_creature(g, o, 'Forge Devil: 1 damage to which creature?')
+        if t is not None: _you(g, o)._damage(g, o, t, 1, 'Forge Devil', 'triggers')
+        lose_life(g, o, 1, o, damage=True); return
     x1 = _opp_x1(g, o)
     if x1: apply_removal(g, o, max(x1, key=lambda x: pval(g, x)), 'dmg1')
     elif not any(x.creature for q in g.opps(o) for x in q.perms if not untargetable(g, x)):
@@ -715,6 +740,13 @@ def _delver(g, src, p, m):
     """return target creature card from your graveyard to the battlefield; lose life equal to its mana value"""
     if m is not src: return
     o = src.owner
+    if _you(g, o):
+        cs = [c for c in o.gy if c.creature]
+        if not cs: return
+        cd = E.human_choice(g, o).pick_cards(g, o, cs, 1, 'Phyrexian Delver: return which creature card (you lose life equal to its mana value)?')[0]
+        if g.hooks and CI.gy_response(g, o, 5, o): return
+        o.gy.remove(cd); enter(g, o, cd, orig=o); lose_life(g, o, cd.cmc, o)
+        log(f'    Phyrexian Delver returns {cd.name}', g); return
     tg = [x for x in reanimate_targets(g, o, 'evil') if x[2] is o and x[1] is not src.cd and o.life - x[1].cmc >= 8]
     if not tg:                                       # a mandatory target: the cheapest creature card, if any
         cs = [c for c in o.gy if c.creature and o.life - c.cmc > 5]
@@ -824,7 +856,7 @@ def crux_mode(g, p):
 
 @on('Crux of Fate', 'resolve')
 def _crux(g, p, c, ctx):
-    mode = crux_mode(g, p)
+    mode = _you(g, p).crux_mode(g, p) if _you(g, p) else crux_mode(g, p)
     log(f'    Crux of Fate: destroy all {"Dragons" if mode == "dragons" else "non-Dragon creatures"}', g)
     from commander_sim import ais
     prev, g.batch = getattr(g, 'batch', None), object()
@@ -865,7 +897,9 @@ def _marauder(g, src, p, m):
     for q in g.players:
         if not q.alive: continue
         cr = [x for x in q.perms if x.creature and not x.phased and not x.token]
-        if cr: die(g, min(cr, key=lambda x: sac_worth(g, x)), 'sac')
+        if cr and E.human_choice(g, q) is not None:
+            E.human_choice(g, q).sacrifice_creature(g, q, cr, 'Accursed Marauder: sacrifice a nontoken creature')
+        elif cr: die(g, min(cr, key=lambda x: sac_worth(g, x)), 'sac')
 card('Accursed Marauder', 'warrior pow=2 tgh=1', types='C', dsl=[])
 full('Accursed Marauder', 'enters: each player sacrifices a nontoken creature of their choice (the one cheapest to '
      'lose; a Marchesa player gives up one she returns)')
