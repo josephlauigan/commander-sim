@@ -6,7 +6,9 @@ Routes:
   GET  /api/state           the game now: its settings, your seat's latest view, the decision waiting for you
   GET  /api/events          server-sent events: every event of the game in order, each with an id (a reconnect
                             with Last-Event-ID, or ?since=N, resumes after it)
-  POST /api/new             start a game: {deck, tier, seed?, seat?, opponents?, profile?, ai?}
+  GET  /images/<file>       a card image from the cache (data/images/)
+  POST /api/new             start a game: {deck, tier, seed?, seat?, opponents?, profile?, ai?, images?}: the card
+                            images load first ('loading' events with done/total, then 'images': name -> files)
   POST /api/answer          answer the waiting decision: {id, answer}; a stale id is refused (409)
   POST /api/quit            end the game
 
@@ -20,10 +22,12 @@ import webbrowser
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
+from commander_sim import DATA
 from commander_sim.play.controller import Request
 from commander_sim.play.session import Session, MY_DECKS, TIERS
 
 STATIC = os.path.join(os.path.dirname(__file__), 'static')
+IMAGES = os.path.join(DATA, 'images')
 TYPES = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
          '.gif': 'image/gif', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.json': 'application/json'}
 
@@ -41,6 +45,7 @@ class Hub:
         s.events = []                # [{'id': n, ...}] for the current game
         s.pending = None             # the request waiting for an answer: its event
         s.view = None                # the latest view of the table from your seat
+        s.images = {}                # card name -> image files, for this game
         s.next_id = 1
         s.game_no = 0
 
@@ -52,11 +57,28 @@ class Hub:
                        ai=opts.get('ai', 'lookahead'))
         with s.cond:
             s.game_no += 1
-            s.session, s.events, s.pending, s.view = sess, [], None, None
+            s.session, s.events, s.pending, s.view, s.images = sess, [], None, None, {}
             no = s.game_no
         threading.Thread(target=s._pump, args=(sess, no), name='practice-pump', daemon=True).start()
-        sess.start()
+        threading.Thread(target=s._load, args=(sess, no, opts.get('images', True)), name='practice-images',
+                         daemon=True).start()
         return sess
+
+    def _load(s, sess, no, want_images):
+        """the loading screen: card images for this game's decks, then the game starts"""
+        found = {}
+        if want_images:
+            from commander_sim import poolmode
+            from commander_sim.play import images
+            names = images.game_names([poolmode.seat_spec(k) for k in sess.seats])
+            try:
+                found = images.prepare(names, lambda d, t: sess.events.put({'kind': 'loading', 'done': d, 'total': t}))
+            except Exception as e:                      # images are a nicety: the game starts without them
+                sess.events.put({'kind': 'log', 'text': f'(card images unavailable: {e})'})
+        sess.events.put({'kind': 'images', 'images': found})
+        with s.cond:
+            if s.game_no != no: return                  # replaced or quit while loading
+        sess.start()
 
     def quit(s):
         with s.cond:
@@ -83,6 +105,7 @@ class Hub:
         else:
             out = {k: v for k, v in ev.items() if k != 'view'}
             if ev.get('view') is not None: s.view = ev['view']
+            if ev['kind'] == 'images': s.images = ev['images']
         if ev.get('view') is not None or (ev['kind'] == 'request' and 'view' in ev['request'].data):
             out['view'] = s.view
         out['id'] = s.next_id; s.next_id += 1
@@ -106,7 +129,7 @@ class Hub:
             sess = s.session
             game = None if sess is None else {'deck': sess.deck, 'tier': sess.tier, 'seed': sess.seed, 'seats': sess.seats,
                                               'profile': sess.profile, 'ai': sess.ai}
-            return {'game': game, 'view': s.view, 'pending': s.pending,
+            return {'game': game, 'view': s.view, 'pending': s.pending, 'images': s.images,
                     'last_event': s.events[-1]['id'] if s.events else 0}
 
     def events_after(s, since, timeout=15.0):
@@ -153,6 +176,7 @@ class Handler(BaseHTTPRequestHandler):
         url = urlparse(s.path)
         if url.path in ('/', '/index.html'): return s._static('index.html')
         if url.path.startswith('/static/'): return s._static(url.path[len('/static/'):])
+        if url.path.startswith('/images/'): return s._static(url.path[len('/images/'):], root=IMAGES)
         if url.path == '/api/state': return s._send(200, s.hub.state())
         if url.path == '/api/options': return s._send(200, options())
         if url.path == '/api/events':
@@ -180,9 +204,9 @@ class Handler(BaseHTTPRequestHandler):
             s.hub.quit(); return s._send(200, {'ok': True})
         s._send(404, {'error': 'not found'})
 
-    def _static(s, name):
-        path = os.path.normpath(os.path.join(STATIC, name))
-        if not path.startswith(STATIC + os.sep) or not os.path.isfile(path): return s._send(404, {'error': 'not found'})
+    def _static(s, name, root=STATIC):
+        path = os.path.normpath(os.path.join(root, name))
+        if not path.startswith(root + os.sep) or not os.path.isfile(path): return s._send(404, {'error': 'not found'})
         with open(path, 'rb') as f: data = f.read()
         s._send(200, data, TYPES.get(os.path.splitext(path)[1], 'application/octet-stream'))
 

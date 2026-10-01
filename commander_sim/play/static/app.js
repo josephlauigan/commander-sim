@@ -1,6 +1,16 @@
 // The bare browser table (step 2a): follow the game from your seat and answer its decisions with buttons.
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
+let images = {};            // card name -> image files in /images/ (the table uses them from step 2d)
+
+function loading(done, total) {
+  const box = $('#loading');
+  if (done === null) { box.hidden = true; return; }
+  box.hidden = false;
+  const pct = total ? Math.round((100 * done) / total) : 0;
+  box.querySelector('.bar > div').style.width = pct + '%';
+  box.querySelector('.bar').setAttribute('aria-valuenow', pct);
+}
 
 function el(tag, attrs = {}, ...kids) {
   const e = document.createElement(tag);
@@ -107,6 +117,8 @@ function onEvent(ev) {
   if (ev.kind === 'log') logLine(ev.text, ev.text.startsWith('---') ? 'turn' : '');
   else if (ev.kind === 'invalid') logLine('Not allowed: ' + ev.text, 'invalid');
   else if (ev.kind === 'auto') logLine('(automatic) ' + ev.text, 'auto');
+  else if (ev.kind === 'loading') loading(ev.done, ev.total);
+  else if (ev.kind === 'images') { images = ev.images; loading(null); }
   else if (ev.kind === 'request') { pending = ev; renderPrompt(ev); }
   else if (ev.kind === 'over') { pending = null; renderPrompt(null); $('#prompt').replaceChildren(el('h3', {}, `Game over: ${ev.winner || 'no winner'} (${ev.how})`)); }
   else if (ev.kind === 'error') logLine(ev.text, 'invalid');
@@ -128,12 +140,13 @@ async function init() {
     e.preventDefault();
     const body = { deck: f.deck.value, tier: f.tier.value, ai: f.ai.value };
     if (f.seed.value) body.seed = +f.seed.value;
-    $('#log').replaceChildren(); pending = null;
+    $('#log').replaceChildren(); pending = null; renderTable(null); loading(0, 0);
     const r = await api('/api/new', body);
-    if (!r.ok) { $('#status').textContent = r.data.error; return; }
+    if (!r.ok) { loading(null); $('#status').textContent = r.data.error; return; }
     $('#status').textContent = `Seed ${r.data.seed} · seats: ${r.data.seats.join(', ')}`;
   });
   const st = (await api('/api/state')).data;
+  images = st.images || {};
   if (st.game) $('#status').textContent = `Seed ${st.game.seed} · seats: ${st.game.seats.join(', ')}`;
   renderTable(st.view);
   connect();

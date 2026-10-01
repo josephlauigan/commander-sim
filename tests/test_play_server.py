@@ -48,6 +48,24 @@ class Server(unittest.TestCase):
         self.assertEqual(self.call('GET', '/static/../server.py')[0], 404)
         self.assertEqual(self.call('GET', '/static/%2e%2e/server.py')[0], 404)
 
+    def test_card_images_are_served(self):
+        import os, tempfile
+        d = tempfile.mkdtemp(); saved = server.IMAGES
+        try:
+            server.IMAGES = d
+            with open(os.path.join(d, 'abc.jpg'), 'wb') as fh: fh.write(b'jpg')
+            st, ct, body = self.call('GET', '/images/abc.jpg')
+            self.assertEqual((st, ct, body), (200, 'image/jpeg', b'jpg'))
+            self.assertEqual(self.call('GET', '/images/../index.json')[0], 404)
+        finally:
+            server.IMAGES = saved
+
+    def test_the_loading_screen_comes_first(self):
+        self.call('POST', '/api/new', {'deck': 'veyran', 'tier': 't1', 'seed': 3, 'ai': 'adaptive', 'images': False})
+        first = self.wait_for(lambda e: e['kind'] in ('images', 'request', 'log'))
+        self.assertEqual(first['kind'], 'images')
+        self.call('POST', '/api/quit', {})
+
     def test_options(self):
         st, _, body = self.call('GET', '/api/options')
         d = json.loads(body)
@@ -59,7 +77,7 @@ class Server(unittest.TestCase):
         self.assertEqual(st, 400)
 
     def test_a_game_from_the_browser(self):
-        st, _, body = self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 7, 'ai': 'adaptive'})
+        st, _, body = self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 7, 'ai': 'adaptive', 'images': False})
         self.assertEqual(st, 200)
         self.assertIn('sauron', json.loads(body)['seats'])
         mull = self.wait_for(lambda e: e['kind'] == 'request')
