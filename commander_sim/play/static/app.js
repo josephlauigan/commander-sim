@@ -216,7 +216,11 @@ function logLine(text, cls = '') {
 function onEvent(ev) {
   if (ev.view) renderTable(ev.view);
   if (ev.kind === 'log') logLine(ev.text, ev.text.startsWith('---') ? 'turn' : '');
-  else if (ev.kind === 'invalid') { logLine('Not allowed: ' + ev.text, 'invalid'); if (ev.id > liveFrom) toast(ev.text); }
+  else if (ev.kind === 'invalid') { logLine('Not allowed: ' + ev.text, 'invalid'); if (ev.id > liveFrom && !ev.replay) toast(ev.text); }
+  else if (ev.kind === 'reset') {           // Undo: the game is replayed from its seed up to the decision taken back
+    $('#log').replaceChildren(); pending = null; renderPrompt(null); markChoices(null);
+    logLine(`(Undo: ${ev.undone} action${ev.undone > 1 ? 's' : ''} taken back; the game so far is replayed)`, 'auto');
+  }
   else if (ev.kind === 'auto') logLine('(automatic) ' + ev.text, 'auto');
   else if (ev.kind === 'loading') loading(ev.done, ev.total);
   else if (ev.kind === 'images') { images = ev.images; loading(null); if (lastView) renderTable(lastView); }
@@ -234,7 +238,7 @@ const BASE = 1100;
 let inbox = [], paused = false, speed = 1, stepOnce = false, skipping = false, pumping = false;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const theirTurn = (view) => view && view.players.some((p) => p.key === view.active && !p.you);
-const paced = (ev) => ev.id > liveFrom && ev.kind === 'log' && ev.view && theirTurn(ev.view);
+const paced = (ev) => ev.id > liveFrom && !ev.replay && ev.kind === 'log' && ev.view && theirTurn(ev.view);
 
 function receive(ev) { inbox.push(ev); pump(); }
 
@@ -280,6 +284,17 @@ function connect() {
 }
 
 // ------------------------------------------------------------------ setup
+let tools = { hint: true, undo: true, compare: true };
+function setTools(t) {
+  tools = Object.assign({ hint: true, undo: true, compare: true }, t || {});
+  $('#undo').hidden = !tools.undo;
+}
+
+async function undo() {
+  const r = await api('/api/undo', { n: 1 });
+  if (!r.ok) toast(r.data.error);
+}
+
 function setStatus(seed, seats) {
   const st = $('#status');
   st.textContent = `Seed ${seed}`;
@@ -292,6 +307,7 @@ function screen(name) {
   $('#setup').hidden = name !== 'setup';
   $('#game').hidden = name !== 'game';
   $('#to-setup').hidden = name !== 'game';
+  $('#undo').hidden = name !== 'game' || !tools.undo;
 }
 
 function cardImage(name, cls = '') {
@@ -337,7 +353,7 @@ async function startGame(e) {
   $('#log').replaceChildren(); pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/new', body);
   if (!r.ok) { loading(null); $('#setup-error').textContent = r.data.error; return; }
-  setStatus(r.data.seed, r.data.seats);
+  setStatus(r.data.seed, r.data.seats); setTools(body.tools);
   screen('game');
 }
 
@@ -349,6 +365,7 @@ async function init() {
   for (const r of f.opp) r.addEventListener('change', renderSetup);
   $('#to-setup').addEventListener('click', () => screen('setup'));
   $('#table').addEventListener('click', onTableClick);
+  $('#undo').addEventListener('click', undo);
   setupPlayback();
   $('#pass').addEventListener('click', () => answer({ do: 'pass' }));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
@@ -361,7 +378,7 @@ async function init() {
   images = st.images || {};
   liveFrom = st.last_event || 0;
   if (st.game) {
-    setStatus(st.game.seed, st.game.seats);
+    setStatus(st.game.seed, st.game.seats); setTools(st.game.tools);
     renderTable(st.view); screen('game');
   } else screen('setup');
   connect();

@@ -11,6 +11,7 @@ Routes:
                             tools are the practice switches {hint, undo, compare} (used from Phase 3); the card
                             images load first ('loading' events with done/total, then 'images': name -> files)
   POST /api/answer          answer the waiting decision: {id, answer}; a stale id is refused (409)
+  POST /api/undo            take back your last answer ({n}: the last n): the game replays from its seed
   POST /api/quit            end the game
 
 The engine runs on the session's worker thread. A pump thread moves the session's events into the hub's history
@@ -47,6 +48,7 @@ class Hub:
         s.pending = None             # the request waiting for an answer: its event
         s.view = None                # the latest view of the table from your seat
         s.images = {}                # card name -> image files, for this game
+        s.tools = {}
         s.next_id = 1
         s.game_no = 0
 
@@ -99,6 +101,8 @@ class Hub:
 
     def _add(s, ev):
         """(holding the lock) record one session event"""
+        if ev['kind'] == 'reset':                       # Undo: the game restarts; what came before is replayed
+            s.events, s.pending, s.view = [], None, None
         if ev['kind'] == 'request':
             req = ev['request']
             out = {'kind': 'request', 'request': {'kind': req.kind, 'prompt': req.prompt, 'choices': req.choices,
@@ -125,6 +129,14 @@ class Hub:
             sess = s.session
         sess.answer(value)
         return None
+
+    def undo(s, n=1):
+        """None, or why it can't"""
+        with s.cond:
+            sess = s.session
+            if sess is None: return 'There is no game running.'
+            if not s.tools.get('undo', True): return 'Undo is switched off for this game.'
+        return sess.undo(n)
 
     def state(s):
         with s.cond:
@@ -224,6 +236,9 @@ class Handler(BaseHTTPRequestHandler):
             return s._send(200, {'ok': True, 'seed': sess.seed, 'seats': sess.seats})
         if url.path == '/api/answer':
             why = s.hub.answer(body.get('id'), body.get('answer'))
+            return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
+        if url.path == '/api/undo':
+            why = s.hub.undo(int(body.get('n', 1)) if str(body.get('n', 1)).isdigit() else 1)
             return s._send(409 if why else 200, {'error': why} if why else {'ok': True})
         if url.path == '/api/quit':
             s.hub.quit(); return s._send(200, {'ok': True})

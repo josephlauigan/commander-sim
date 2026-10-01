@@ -35,6 +35,28 @@ def is_action(line):
     return body.startswith('  ') and not body.startswith('   ')
 
 
+class RecordingController(HumanController):
+    """the human seat, keeping every answer (Undo replays the game from its seed with them). While the session is
+    replaying, recorded answers are given back without asking, and what it would tell you is skipped"""
+    def __init__(s, session):
+        super().__init__(notify=session._emit)
+        s.session = session
+
+    def ask(s, req):
+        ss = s.session
+        ss.marks.append(len(ss.tape.entries))      # how far the AI's tape had got at this decision
+        if ss.replay:
+            ans = ss.replay.pop(0)
+        else:
+            ss.replaying = False                   # caught up: this decision is live
+            ans = super().ask(req)
+        ss.answers.append(ans)
+        return ans
+
+    def tell(s, kind, text):
+        if not s.session.replaying: super().tell(kind, text)
+
+
 class EventLog(list):
     """the game log (g.log): every line is also sent to the session as it happens"""
     def __init__(s, session):
@@ -58,7 +80,10 @@ class Session:
         s.views = views                    # a view of the table with every action (the browser plays them back)
         s.seed = seed if seed is not None else random.SystemRandom().randrange(1, 10 ** 6)
         s.events = queue.Queue()
-        s.human = HumanController(notify=s.events.put)
+        from commander_sim.ai import search
+        s.tape = search.Tape()             # the look-ahead AI's decisions, for replaying
+        s.answers, s.marks, s.replay, s.replaying, s._restarting = [], [], [], False, False
+        s.human = RecordingController(s)
         s.game = None
         s._thread = None
         s._seats = s._choose_seats(opponents, seat)
@@ -94,6 +119,7 @@ class Session:
             g = ais.setup_pool_game(s.seed, [poolmode.seat_spec(k) for k in s._seats], human=s.deck)
             g.log = EventLog(s)
             g.controllers = {s.deck: s.human}
+            g.search_tape = s.tape
             s.game = g
             g.log.append('Seat order: ' + ', '.join(ais.NAME(p) for p in g.players))
             me = next(p for p in g.players if p.key == s.deck)
@@ -103,24 +129,48 @@ class Session:
             s.events.put({'kind': 'over', 'view': build_view(g, s.deck),
                           'winner': g.winner.key if g.winner else None, 'how': getattr(g, 'wintype', '')})
         except Cancelled:
-            s.events.put({'kind': 'over', 'view': None, 'winner': None, 'how': 'closed'})
+            if not s._restarting: s.events.put({'kind': 'over', 'view': None, 'winner': None, 'how': 'closed'})
         except Exception:
             s.events.put({'kind': 'error', 'text': traceback.format_exc()})
 
     def _on_log(s, line):
         if is_private(line): return                  # stays in the game's log (for the review), never shown in play
         ev = {'kind': 'log', 'text': line}
-        if is_action(line) and s.game is not None and s.views:
+        if is_action(line) and s.game is not None and s.views and not s.replaying:
             ev['view'] = build_view(s.game, s.deck)  # the table after each action, for the browser's playback
-        s.events.put(ev)
+        s._emit(ev)
         if '--- ' in line and ' turn ' in line and s.game is not None and s.game.active is not None:
             g = s.game
-            s.events.put({'kind': 'turn', 'player': g.active.key, 'view': build_view(g, s.deck)})
+            s._emit({'kind': 'turn', 'player': g.active.key, 'view': build_view(g, s.deck)})
             if s.step: s.ask(Request('continue', f'{ais.NAME(g.active)}: turn {g.active.turns}'))
+
+    def _emit(s, ev):
+        if s.replaying: ev['replay'] = True        # re-played history after an Undo: shown at once, not animated
+        s.events.put(ev)
 
     def ask(s, req):
         """engine thread: post a request and wait for the human's answer"""
         return s.human.ask(req)
+
+    def undo(s, n=1):
+        """take back your last n answers: the game restarts from its seed and replays the rest (the AI's look-ahead
+        decisions come off the tape), then asks the decision before them again. Returns None, or why not"""
+        k = len(s.answers)
+        if n < 1 or k < n: return 'Nothing to undo yet.'
+        keep, cut = s.answers[:k - n], s.marks[k - n]
+        s._restarting = True
+        s.human.close()
+        s.join(30)
+        if s._thread is not None and s._thread.is_alive(): return 'The game is busy; try again in a moment.'
+        s.tape.cut(cut)
+        s.answers, s.marks, s.replay = [], [], list(keep)
+        s.replaying = False
+        s.events.put({'kind': 'reset', 'undone': n})
+        s.replaying = bool(keep)
+        s.human = RecordingController(s)
+        s._restarting = False
+        s.start()
+        return None
 
     def answer(s, value):
         s.human.answer(value)
