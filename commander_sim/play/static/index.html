@@ -56,6 +56,15 @@
 <button id="pass" class="primary big" type="button" hidden>Pass priority</button>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <footer>Card data from <a href="https://scryfall.com">Scryfall</a>.</footer>
+<script>
+// a script error is shown rather than leaving a blank page
+window.addEventListener('error', (e) => {
+  const t = document.getElementById('toast');
+  if (t) { t.textContent = `Page error: ${e.message} (${(e.filename || '').split('/').pop()}:${e.lineno})`; t.hidden = false; }
+  document.title = 'Page error: ' + e.message;
+});
+window.addEventListener('unhandledrejection', (e) => { document.title = 'Page error: ' + (e.reason && e.reason.message || e.reason); });
+</script>
 <script type="module" src="/static/app.js"></script>
 </body>
 </html>

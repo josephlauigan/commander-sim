@@ -74,5 +74,38 @@ class Blocking(unittest.TestCase):
         self.assertEqual([r.kind for r in ctl.asked], ['priority']); self.assertEqual(s.life, 38)
 
 
+
+class ForTheBrowser(unittest.TestCase):
+    """with a person at the browser, combat requests say where the creatures are, so the table can show them"""
+    def run_with(self, g, p, fn, answers):
+        import threading
+        from commander_sim.play.controller import HumanController
+        got = []
+        ctl = HumanController(notify=got.append); g.controllers = {p.key: ctl}
+
+        def feed():
+            for a in answers:
+                while len([e for e in got if e['kind'] == 'request']) <= answers.index(a): threading.Event().wait(0.02)
+                ctl.answer(a)
+        threading.Thread(target=feed, daemon=True).start()
+        out = fn()
+        return out, [e['request'] for e in got if e['kind'] == 'request']
+
+    def test_attackers_point_at_your_creatures(self):
+        g = table('sauron', 'veyran'); s = g.players[0]
+        t = perm(g, s, 'Grave Titan'); t.sick = False
+        out, reqs = self.run_with(g, s, lambda: combat.human_attack(g, s), [[0]])
+        self.assertEqual(reqs[0].data['refs'], [{'seat': 'sauron', 'perm': s.perms.index(t)}])
+        self.assertEqual(out[1], [t])
+
+    def test_blocks_show_the_attackers(self):
+        g = table('veyran', 'sauron'); v, s = g.players
+        a = perm(g, v, 'Guttersnipe'); b = perm(g, s, 'Orcish Bowmasters')
+        out, reqs = self.run_with(g, s, lambda: combat.human_blocks(g, v, [a], s, set()), ['cancel'])
+        d = reqs[0].data
+        self.assertEqual(d['attacker'], {'seat': 'veyran', 'perm': v.perms.index(a)})
+        self.assertEqual(d['attackers'], [d['attacker']])
+        self.assertIn({'seat': 'sauron', 'perm': s.perms.index(b)}, d['refs'])          # (and the Orc Army it made)
+
 if __name__ == '__main__':
     unittest.main()

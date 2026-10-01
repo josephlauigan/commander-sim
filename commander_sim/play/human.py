@@ -129,14 +129,17 @@ def apply(g, p, act):
     return 'Unknown action.'
 
 
-def choose(g, p, kind, prompt, labels, cancel='cancel'):
+def choose(g, p, kind, prompt, labels, cancel='cancel', data=None):
     """ask the person to pick one of labels; returns its index, or None if they cancel (the last choice, named by
     `cancel`, e.g. 'no block'). cancel=None: a forced choice with no way out (after five bad answers: the first)"""
     ctl = controller_of(g, p)
     shown = list(labels) + ([cancel] if cancel is not None else [])
-    refs = table_refs(g, p, labels) if getattr(ctl, 'notify', None) is not None else []
+    live = getattr(ctl, 'notify', None) is not None              # a person at the browser or terminal
+    refs = table_refs(g, p, labels) if live else []
+    data = dict(data or {}, **({'refs': refs} if any(refs) else {}))
+    if live: data['view'] = build_view(g, p.key)                  # the table as it is now (the step, the pool)
     for _ in range(5):
-        ans = ctl.ask(Request(kind, prompt, choices=shown, data={'refs': refs} if any(refs) else None))
+        ans = ctl.ask(Request(kind, prompt, choices=shown, data=data))
         if cancel is not None and (ans == 'cancel' or ans == len(labels)): return None
         if isinstance(ans, int) and not isinstance(ans, bool) and 0 <= ans < len(labels): return ans
         ctl.tell('invalid', 'Pick one of the numbers' + (', or cancel.' if cancel is not None else '.'))

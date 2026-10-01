@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 353 tests in about a minute. To run one file, or one test:
+That's 355 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -34,7 +34,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_play_mana.py` | 10 | Practice mode's mana pool: paying colours and generic, any-colour mana, tapping lands, rocks and Treasures into the pool, the wrong colour refused, Talismans hurting only for coloured mana, the reason when you're short, ritual mana joining the pool, and the pool emptying between steps. |
 | `test_play_turn.py` | 9 | Practice mode's main phase: one land per turn, lands and sorceries only in your main phase, instants at any time, the reason when mana is short, commander tax; tap-then-cast, an illegal move explained while you keep priority, casting your commander; and a bot playing whole games of every deck through the human seat. |
 | `test_play_abilities.py` | 11 | Practice mode's targets and abilities: what a removal spell may target (your own permanents too; hexproof respected), burn at players (not one under Teferi's Protection), casting with a target, cancelling costs nothing, Bloodchief's Thirst's kicker, Equip (mana and timing), a planeswalker's loyalty ability, a permanent with nothing to activate.; choices point at where they are on the table (for clicking in the browser). |
-| `test_play_combat.py` | 7 | Practice mode's combat declarations: who can attack (by the rules, not the AI's habits), attacking the only opponent, choosing the defending player, not attacking, blocking, not blocking, and unblockable attackers not being asked about. |
+| `test_play_combat.py` | 9 | Practice mode's combat declarations: who can attack (by the rules, not the AI's habits), attacking the only opponent, choosing the defending player, not attacking, blocking, not blocking, and unblockable attackers not being asked about.; with a person at the browser, attack and block requests say where the attackers and blockers are. |
 | `test_play_respond.py` | 8 | Practice mode's priority on other turns: countering an opponent's spell, passing so it resolves, priority on every spell (not just ones the AI would counter), tapping then countering, a counterspell that can't hit that kind of spell, no counterspell without a spell to counter, countering back when the AI counters you, and priority when attacked. |
 | `test_play_choices.py` | 10 | Practice mode's smaller choices: discards (effects and hand size), edicts, tutors limited to what they can find, finding nothing, basic-land searches, scry, the London mulligan with a free first mulligan, choosing modes (Kolaghan's Command), and yes/no. |
 | `test_play_sauron.py` | 17 | Practice mode, Sauron's cards: Orcish Bowmasters' damage when it enters and on extra draws, Kaervek's damage (a creature survives damage below its toughness), the Ring (Ring-bearer, Call of the Ring's "pay 2 life", Sauron's "discard your hand"), Jace's Archivist (and summoning sickness), Aggravated Assault, Rogue's Passage through real combat, Scavenger Grounds, Cyclonic Rift overloaded, Toxic Deluge's X, Bitter Triumph's discard-instead-of-life, Noxious Gearhulk's optional target, Kefka's discard, and opponents' taxes (Rhystic Study asks whether to pay; you aren't asked when you can't). |

@@ -112,3 +112,7 @@ button.big { padding: 8px 22px; font-size: 15px; }
 .targetable { cursor: crosshair !important; }
 .card.targetable .face, section.targetable { outline: 3px solid #7fd3ff; outline-offset: 2px; box-shadow: 0 0 14px #7fd3ffaa; }
 section.targetable > header { cursor: crosshair; }
+.card.attacking .face { outline: 3px solid #ff6b4a; outline-offset: 2px; box-shadow: 0 0 14px #ff6b4aaa; }
+.card.attacking::after { content: '⚔'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 16px; text-shadow: 0 0 4px #000; }
+.card.attacker-now .face { outline: 4px solid #ff6b4a; animation: pulse 1s infinite alternate; }
+@keyframes pulse { from { box-shadow: 0 0 4px #ff6b4a; } to { box-shadow: 0 0 22px #ff6b4a; } }

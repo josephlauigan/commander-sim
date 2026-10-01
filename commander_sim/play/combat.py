@@ -31,8 +31,14 @@ def human_attack(g, p, ncomb=1):
     ctl = controller_of(g, p)
     labels = [legal.describe_target(g, p, m) for m in cands]
     extra = '' if ncomb == 1 else f' (combat {ncomb})'
+    from commander_sim.play.human import table_refs
+    if getattr(ctl, 'notify', None) is not None:
+        from commander_sim.play.view import build_view
+        data = {'refs': table_refs(g, p, labels), 'view': build_view(g, p.key)}
+    else: data = None
     for _ in range(5):
-        ans = ctl.ask(Request('attack', f'Declare attackers{extra}: pick any of your creatures, or none', choices=labels))
+        ans = ctl.ask(Request('attack', f'Declare attackers{extra}: pick any of your creatures, or none', choices=labels,
+                              data=data))
         if ans in (None, 'none', []) or ans is False: return None
         if not isinstance(ans, (list, tuple)) or not all(isinstance(i, int) and 0 <= i < len(cands) for i in ans):
             ctl.tell('invalid', 'Pick attackers by their numbers, or none.'); continue
@@ -53,6 +59,9 @@ def human_blocks(g, p, atk, d, unbl):
     blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
     total = sum(E.epow(g, a) for a in atk if a in p.perms)
     ctl = controller_of(g, d)
+    from commander_sim.play.human import table_refs
+    show = getattr(ctl, 'notify', None) is not None
+    attackers = table_refs(g, d, [legal.describe_target(g, d, a) for a in atk]) if show else []
     for a in sorted(atk, key=lambda m: -E.epow(g, m)):
         if a in unbl or a not in p.perms: continue
         cands = [b for b in blockers if b not in used and ais.can_block(g, b, a)]
@@ -60,8 +69,9 @@ def human_blocks(g, p, atk, d, unbl):
         menace = ais.kw(a, 'menace')
         if menace and len(cands) < 2: continue
         what = legal.describe_target(g, d, a) + (' (menace: needs two blockers)' if menace else '')
+        extra = {'attackers': attackers, 'attacker': table_refs(g, d, [legal.describe_target(g, d, a)])[0]} if show else None
         k = choose(g, d, 'block', f'{E.NAME(p)} attacks you ({total} damage in all). Block {what} with?',
-                   [legal.describe_target(g, d, b) for b in cands], cancel='no block')
+                   [legal.describe_target(g, d, b) for b in cands], cancel='no block', data=extra)
         if k is None: continue
         b = cands[k]
         if menace:
