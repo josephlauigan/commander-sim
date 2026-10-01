@@ -205,7 +205,7 @@ full('Siren Stormtamer', 'flying; {U}, sacrifice: counters a spell targeting you
 
 
 # ================================================================== removal restrictions and taxes
-for _n in ('Snuff Out', 'Nekrataal', 'Shriekmaw', 'Doom Blade', 'Go for the Throat'):
+for _n in ('Snuff Out', 'Nekrataal', 'Shriekmaw', 'Doom Blade'):          # Go for the Throat: nonartifact only
     set_tags(_n, add=('nonblack',))
 full('Snuff Out', 'free for 4 life with a Swamp; destroys a nonblack creature')
 full('Nekrataal', 'first strike; destroys a nonartifact, nonblack creature on entry')

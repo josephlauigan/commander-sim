@@ -30,7 +30,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 - **1h, part 2a** (2026-09-30): the AI no longer acts for the human seat in response to others: protecting your permanents (`protect_response`), board-wipe responses (Teferi's Protection), `last_chance`, Tishana's Tidebinder, Scavenger Grounds against reanimation, sacrificing in response, Veil of Summer, your graveyard-hate artifacts (`gy_response`) and Marchesa's wipe response. You do these in your own priority windows.
 - **1h, part 2b** (2026-09-30): `play/abilities.py`: activations the engine keeps in deck AI code, now yours: Jace's Archivist ({U}, {T}: wheel), Aggravated Assault ({3}{R}{R}: untap, extra combat; in main 2 the combat happens at once and the main phase continues, so Sword of Feast and Famine loops can be played by hand), Rogue's Passage ({4}, {T}: unblockable this turn; combat honours it) and Scavenger Grounds ({2}, {T}, sacrifice a Desert: exile all graveyards). Lands' abilities: `{'do': 'use', 'land': i}` (text: `use L1`). Overload: Cyclonic Rift and Vandalblast ask "one target or overloaded". Barad-dûr's amass ability isn't modelled by the engine at all (it only taps for {B}); left as is.
 - **1h, part 2c** (2026-09-30): Toxic Deluge asks for X (you pay X life; only creatures with toughness X or less die, where the AI's version kills everything); Bitter Triumph asks whether to discard a card or pay 3 life; creatures that remove something when they enter (Noxious Gearhulk) ask for a target or none; Kefka's "each player discards" lets you pick yours.
-- To do in 1h: the Go for the Throat fix (re-record the sim guard); then play a few full Sauron games through the text client and fix what turns up.
+- To do in 1h: play a few full Sauron games through the text client and fix what turns up.
 
 ## Notes and decisions
 
@@ -40,7 +40,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 
 - 2026-09-29: design agreed; build plan and checkpoint times set by the user.
 - Heuristic-AI games are identical across processes and memory layouts (checked with three perturbed runs), so the sim guard uses them. Look-ahead games are not (see step 3a).
-- Found while building 1d, to fix with Sauron's card audit in 1h (fixing changes sims, so re-record the sim guard then): Go for the Throat is tagged "nonblack" (it should target any nonartifact creature, black ones included). Bloodchief's Thirst is stored at its kicked cost (the AI always kicks).
+- Found while building 1d, to fix with Sauron's card audit in 1h (fixing changes sims, so re-record the sim guard then): Go for the Throat was tagged "nonblack" (fixed 2026-09-30; sim guard re-recorded). Bloodchief's Thirst is stored at its kicked cost (the AI always kicks).
 - Priority limits for now: no stop for opponents' activated abilities (the engine has no stack for them); counterspells with an alternative cost (Force of Will) pick the card to exile automatically.
 - Combat limits for now: one defending player per combat; planeswalkers can't be attacked directly; one blocker per attacker (menace: two, only the first deals damage). Rogue's Passage and Aggravated Assault become your own activations in 1h.
 - Abilities that live in deck AI code rather than card hooks (Jace's Archivist's wheel, Rogue's Passage, Vandalblast's overload, Scavenger Grounds) aren't offered yet: 1h (Sauron) and 1i (other decks).
