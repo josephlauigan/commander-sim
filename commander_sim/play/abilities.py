@@ -49,6 +49,26 @@ def assault(g, p, m):
     return None
 
 
+def tortured(g, p, m):
+    """Tortured Existence: {B}, discard a creature card: return target creature card from your graveyard to your hand"""
+    from commander_sim.play import choices
+    tg = [c for c in p.gy if c.creature]
+    fodder = [c for c in p.hand if c.creature]
+    if not tg: return 'There is no creature card in your graveyard to return.'
+    if not fodder: return 'You have no creature card in hand to discard.'
+    why = mana.cost_problem(g, p, 0, 'B')
+    if why: return f"Can't activate Tortured Existence. {why}"
+    from commander_sim.play.human import choose
+    k = choose(g, p, 'target', 'Tortured Existence: return which creature card?', [choices.card_label(c) for c in tg])
+    if k is None: return None                                # targets first, then the costs
+    mana.pay_from_pool(g, p, 0, 'B')
+    d = choices.pick_cards(g, p, fodder, 1, 'Tortured Existence: discard a creature card')[0]
+    E.discard_cards(g, p, [d])
+    if tg[k] in p.gy: p.gy.remove(tg[k]); p.hand.append(tg[k])
+    E.log(f'  {E.NAME(p)} uses Tortured Existence: {d.name} for {tg[k].name}', g)
+    return None
+
+
 PERMANENT = {'archivist': ("{U}, {T}: each player discards their hand and draws that many", archivist),
              'assault': ('{3}{R}{R}: untap your creatures; an additional combat (sorcery speed)', assault)}
 
@@ -73,7 +93,10 @@ def loop_abilities(g, p, m):
 def permanent_abilities(g, p, m):
     """[(label, fn)] for permanent m"""
     if m.cd is None: return []
-    return [(label, fn) for tag, (label, fn) in PERMANENT.items() if tag in m.cd.tags] + loop_abilities(g, p, m)
+    out = [(label, fn) for tag, (label, fn) in PERMANENT.items() if tag in m.cd.tags]
+    if m.cd.tags.get('fill') == 'tortured':
+        out.append(('{B}, discard a creature card: return a creature card from your graveyard to your hand', tortured))
+    return out + loop_abilities(g, p, m)
 
 
 # ------------------------------------------------------------------ lands

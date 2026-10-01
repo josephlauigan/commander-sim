@@ -278,3 +278,10 @@ def sac_artifact_or_creature(g, p, what):
     if k == len(cands): p.treasures -= 1; E.log(f'  {E.NAME(p)} sacrifices a Treasure', g)
     else: E.die(g, cands[k], 'sac')
     return True
+
+
+def target_opponent(g, p, source):
+    """p picks a target opponent (Archon of Cruelty)"""
+    opps = [q for q in g.opps(p) if legal.player_targetable(q)] or g.opps(p)
+    k = choose(g, p, 'target', f'{source}: target opponent?', [legal.describe_target(g, p, q) for q in opps], cancel=None)
+    return opps[k]

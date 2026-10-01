@@ -736,6 +736,17 @@ def shards_trigger(g, p, k):
     """Aura Shards: whenever a creature enters under your control, destroy target artifact or enchantment."""
     if k <= 0 or not has(p, 'shards') or opp_has(g, p, 'mother'): return
     reps = k * (2 if has(p, 'mother') else 1)
+    hc = human_choice(g, p)
+    for _ in range(reps if hc is not None else 0):           # practice mode: you may destroy one, your pick
+        tg = [m for q in g.players if q.alive for m in q.perms if m.cd is not None and not m.creature and not m.phased
+              and ('A' in m.cd.types or 'E' in m.cd.types) and not (m.owner is not p and untargetable(g, m))]
+        if not tg: return
+        k2 = hc.choose(g, p, 'target', 'Aura Shards: destroy target artifact or enchantment?',
+                       [hc.legal.describe_target(g, p, m) for m in tg], cancel='none')
+        if k2 is None: return
+        p.stats['shards_kill'] += 1; apply_removal(g, p, tg[k2], 'destroy')
+        if g.over: return
+    if hc is not None: return
     for _ in range(reps):
         tg = [m for q in g.opps(p) for m in q.perms
               if m.cd is not None and not m.creature and ('A' in m.cd.types or 'E' in m.cd.types)
@@ -1797,9 +1808,11 @@ def etb_once(g, p, m):
             if any(k in c.tags for k in KEYSPELL): p.stats['key_milled'] += 1
 
 
-def archon_trig(g, p):
+def archon_trig(g, p, q=None):
     opps = g.opps(p)
-    q = max(opps, key=lambda o: threat(g, p, o))
+    hc = human_choice(g, p)
+    if hc is not None and q is None: q = hc.target_opponent(g, p, 'Archon of Cruelty')
+    if q is None: q = max(opps, key=lambda o: threat(g, p, o))
     edict(g, q)
     if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
     lose_life(g, q, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
@@ -2154,6 +2167,18 @@ def pile_tutor(g, p, n, keep):
             v = sum(hv[c.name] for c in hand) + sum(gv[c.name] for c in pile if c not in hand)
             if best is None or v < best[0]: best = (v, hand)
         return best
+    hc = human_choice(g, p)
+    if hc is not None:             # practice mode: you pick the cards; the opponent (the AI) still splits them
+        pile = hc.search(g, p, lambda c: True, n, f'Search for up to {n} cards with different names')
+        if not pile: return
+        hand = list(result(pile)[1]) if len(pile) > keep else list(pile)
+        for c in pile:
+            if c in hand: p.hand.append(c); p.seen_names.add(c.name)
+            else: p.gy.append(c)
+        p.stats['tutored'] += 1
+        log(f'    {NAME(p)} gets {", ".join(c.name for c in hand)}'
+            + (f'; {NAME(opp)} bins {", ".join(c.name for c in pile if c not in hand)}' if opp else ''), g)
+        return
     best = None
     for pl in combinations(pool, k):
         r = result(pl)

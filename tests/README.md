@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 279 tests in about a minute. To run one file, or one test:
+That's 285 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -38,7 +38,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_play_respond.py` | 8 | Practice mode's priority on other turns: countering an opponent's spell, passing so it resolves, priority on every spell (not just ones the AI would counter), tapping then countering, a counterspell that can't hit that kind of spell, no counterspell without a spell to counter, countering back when the AI counters you, and priority when attacked. |
 | `test_play_choices.py` | 10 | Practice mode's smaller choices: discards (effects and hand size), edicts, tutors limited to what they can find, finding nothing, basic-land searches, scry, the London mulligan with a free first mulligan, choosing modes (Kolaghan's Command), and yes/no. |
 | `test_play_sauron.py` | 17 | Practice mode, Sauron's cards: Orcish Bowmasters' damage when it enters and on extra draws, Kaervek's damage (a creature survives damage below its toughness), the Ring (Ring-bearer, Call of the Ring's "pay 2 life", Sauron's "discard your hand"), Jace's Archivist (and summoning sickness), Aggravated Assault, Rogue's Passage through real combat, Scavenger Grounds, Cyclonic Rift overloaded, Toxic Deluge's X, Bitter Triumph's discard-instead-of-life, Noxious Gearhulk's optional target, Kefka's discard, and opponents' taxes (Rhystic Study asks whether to pay; you aren't asked when you can't). |
-| `test_play_seph.py` | 10 | Practice mode, Sephiroth's and Marchesa's graveyard cards: Animate Dead from an opponent's graveyard, Unburial Rites only from yours, Entomb, Grisly Salvage, Deadly Dispute's sacrifice, flashback (Deep Analysis), Dread Return's sacrifice-three flashback, Yawgmoth's Will, no graveyard casting otherwise, and starting Mikaeus + Triskelion as a shortcut. |
+| `test_play_seph.py` | 16 | Practice mode, Sephiroth's and Marchesa's graveyard cards: Animate Dead from an opponent's graveyard, Unburial Rites only from yours, Entomb, Grisly Salvage, Deadly Dispute's sacrifice, flashback (Deep Analysis), Dread Return's sacrifice-three flashback, Yawgmoth's Will, no graveyard casting otherwise, starting Mikaeus + Triskelion as a shortcut, Aura Shards' optional target, Archon of Cruelty's target opponent, Consecrated Sphinx's "may draw", Nim Deathmantle's "pay {4}", Tortured Existence, and Gifts Ungiven (you pick, the AI opponent splits). |
 
 ## When a test fails
 

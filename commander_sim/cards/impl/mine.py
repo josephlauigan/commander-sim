@@ -37,6 +37,15 @@ def _kitten(g, src, caster, c):
     if caster is not p or c.creature or c.land or src not in p.perms or src.phased: return
     cands = [m for m in p.perms if m is not src and not m.token and not m.phased and m.cd is not None and m.orig is p]
     if not cands: return
+    hc = E.human_choice(g, p)
+    if hc is not None:                                       # practice mode: up to one, your pick
+        k = hc.choose(g, p, 'target', 'Displacer Kitten: flicker one of your nonland permanents?',
+                      [hc.legal.describe_target(g, p, x) for x in cands], cancel='none')
+        if k is None: return
+        m = cands[k]; cd, was_cmd = m.cd, m.is_cmd
+        log(f'    Displacer Kitten flickers {m.name}', g)
+        leave(g, m); n = enter(g, p, cd, orig=p); n.is_cmd = was_cmd
+        return
     m = max(cands, key=lambda x: etb_value(g, p, x))
     if etb_value(g, p, m) < 2.0: return
     cd, was_cmd = m.cd, m.is_cmd
@@ -56,6 +65,12 @@ def _nim_return(g, src, m):
     attach this Equipment to it"""
     p = src.owner
     if src not in p.perms or src.phased or m.token or m.orig is not p or m.cd not in p.gy: return
+    hc = E.human_choice(g, p)
+    if hc is not None:                                       # practice mode: you may pay {4}
+        if m.cd is p.cmd or not hc.pay_tax(g, p, 4, f'Nim Deathmantle: return {m.name} and attach it'): return
+        if m.cd not in p.gy: return
+        p.gy.remove(m.cd); n = enter(g, p, m.cd, orig=p); src.attached = n
+        log(f'    {NAME(p)} pays 4: Nim Deathmantle returns {n.name}', g); return
     if m.cd is p.cmd or not can_pay(g, p, 4, ''): return
     if any(cd is m.cd for _, cd, _ in getattr(g, 'marchesa_due', None) or ()): return   # Marchesa returns it free
     if pval(g, m) < 3 and etb_value(g, p, m) < 2.5: return

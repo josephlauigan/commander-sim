@@ -1617,6 +1617,8 @@ def _attack_triggers_once(g, p, atk, d):
 
 
 def archon_attack(g, p, d):
+    hc = E.human_choice(g, p)
+    if hc is not None: d = hc.target_opponent(g, p, 'Archon of Cruelty attacks')
     edict(g, d)
     if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
     lose_life(g, d, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
@@ -2107,8 +2109,11 @@ def upkeep(g, p):
         if 'tokup' in t: make_tokens(g, p, int(t['tokup']), 1, warrior='warrior' in t)
         if 'sheoW' in t:
             cr = [c for c in p.gy if c.creature]
+            hc = E.human_choice(g, p)
             if cr:
-                b = max(cr, key=lambda c: seph_bval(g, p, c)); p.gy.remove(b)
+                b = hc.pick_cards(g, p, cr, 1, 'Sheoldred, Whispering One: return a creature card')[0] if hc is not None \
+                    else max(cr, key=lambda c: seph_bval(g, p, c))
+                p.gy.remove(b)
                 was = b.name in p.removed_bombs
                 enter(g, p, b); note_bomb(p, b, was)
             for q in g.opps(p): edict(g, q)

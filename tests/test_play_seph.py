@@ -116,5 +116,52 @@ class Loops(unittest.TestCase):
         human.human_main(g, s, False)
         self.assertTrue(g.over); self.assertIs(g.winner, s)
 
+
+class Triggers(unittest.TestCase):
+    def test_aura_shards_target_or_none(self):
+        from commander_sim.play import human
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Aura Shards'); ring = perm(g, v, 'Sol Ring')
+        seat(g, s, ['cancel']); perm(g, s, 'Llanowar Elves')
+        self.assertIn(ring, v.perms)
+        seat(g, s, [by_text('Sol Ring')]); perm(g, s, 'Birds of Paradise')
+        self.assertNotIn(ring, v.perms)
+
+    def test_archon_targets_your_pick(self):
+        g = table('seph', 'veyran', 'sauron'); s, v, x = g.players
+        seat(g, s, [by_text('Sauron')])
+        perm(g, s, 'Archon of Cruelty')
+        self.assertEqual((v.life, x.life), (40, 37))
+
+    def test_consecrated_sphinx_may(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Consecrated Sphinx'); n = len(s.hand)
+        seat(g, s, [1]); E.draw(g, v, 1)
+        self.assertEqual(len(s.hand), n)
+        seat(g, s, [0]); E.draw(g, v, 1)
+        self.assertEqual(len(s.hand), n + 2)
+
+    def test_nim_deathmantle_pay_or_not(self):
+        from tests.table import lands
+        g = table('seph', 'veyran'); s = g.players[0]
+        perm(g, s, 'Nim Deathmantle'); lands(s, 'Swamp', 4)
+        t = perm(g, s, 'Grave Titan')
+        seat(g, s, [0]); E.die(g, t, 'destroy')
+        self.assertTrue(any(m.name == 'Grave Titan' for m in s.perms))
+
+    def test_tortured_existence(self):
+        from commander_sim.play import abilities
+        g = table('seph', 'veyran'); s = g.players[0]
+        te = perm(g, s, 'Tortured Existence'); hand(s, 'Llanowar Elves'); s.gy.append(E.DB['Grave Titan'])
+        float_mana(s, B=1); seat(g, s, [0, 0])
+        self.assertIsNone(abilities.tortured(g, s, te))
+        self.assertIn(E.DB['Grave Titan'], s.hand); self.assertIn(E.DB['Llanowar Elves'], s.gy)
+
+    def test_gifts_ungiven_you_pick_they_split(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        seat(g, s, [0, 0, 0, 0]); n = len(s.hand)
+        E.pile_tutor(g, s, 4, 2)
+        self.assertEqual((len(s.hand), len(s.gy)), (n + 2, 2))
+
 if __name__ == '__main__':
     unittest.main()
