@@ -14,7 +14,7 @@ Working log for the build in [practice-mode.md](practice-mode.md). Updated at ev
 ## Status
 
 - Current step: 3c (Hint): next. 3b done. Phase 2 done 2026-09-30 (Milestone 2: a full game in the browser). Phase 1 done 2026-09-30: all four decks fully manual (Milestone 1, Sauron, reached earlier that day).
-- Last checkpoint: 2026-09-30 6pm (pushed); the session was down from 7:59am to 6:15pm
+- Last checkpoint: 2026-09-30 10pm (pushed). Since 6pm: 1i finished (all four decks fully manual), Phase 2 done (the browser table, Milestone 2), 3a (seeded games independent of memory layout; an engine bug fixed) and 3b (Undo).
 
 ## Done
 
