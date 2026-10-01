@@ -113,5 +113,31 @@ class Abilities(unittest.TestCase):
         self.assertIn('no ability', ctl.told[0][1])
 
 
+
+class TableRefs(unittest.TestCase):
+    def test_choices_point_at_the_table(self):
+        g = table('sauron', 'veyran'); s, v = g.players
+        gs = perm(g, v, 'Guttersnipe'); c = hand(s, 'Terminate')
+        from commander_sim.play.choices import card_label
+        labels = [legal.describe_target(g, s, gs), legal.describe_target(g, s, v) + '', card_label(c),
+                  legal.describe_target(g, s, gs) + ' (X = 3)', 'a mode']
+        refs = human.table_refs(g, s, labels)
+        self.assertEqual(refs[0], {'seat': 'veyran', 'perm': v.perms.index(gs)})
+        self.assertEqual(refs[1], {'player': 'veyran'})
+        self.assertEqual(refs[2], {'hand': 0})
+        self.assertEqual(refs[3], refs[0])
+        self.assertIsNone(refs[4])
+
+    def test_the_browser_gets_them(self):
+        from commander_sim.play.controller import HumanController
+        import threading
+        g = table('sauron', 'veyran'); s, v = g.players
+        perm(g, v, 'Guttersnipe')
+        got = []
+        ctl = HumanController(notify=got.append); g.controllers = {s.key: ctl}
+        threading.Timer(0.3, lambda: ctl.answer(0)).start()
+        human.choose(g, s, 'target', 'pick', [legal.describe_target(g, s, v.perms[0])])
+        self.assertEqual(got[0]['request'].data['refs'], [{'seat': 'veyran', 'perm': 0}])
+
 if __name__ == '__main__':
     unittest.main()

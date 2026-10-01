@@ -134,12 +134,35 @@ def choose(g, p, kind, prompt, labels, cancel='cancel'):
     `cancel`, e.g. 'no block'). cancel=None: a forced choice with no way out (after five bad answers: the first)"""
     ctl = controller_of(g, p)
     shown = list(labels) + ([cancel] if cancel is not None else [])
+    refs = table_refs(g, p, labels) if getattr(ctl, 'notify', None) is not None else []
     for _ in range(5):
-        ans = ctl.ask(Request(kind, prompt, choices=shown))
+        ans = ctl.ask(Request(kind, prompt, choices=shown, data={'refs': refs} if any(refs) else None))
         if cancel is not None and (ans == 'cancel' or ans == len(labels)): return None
         if isinstance(ans, int) and not isinstance(ans, bool) and 0 <= ans < len(labels): return ans
         ctl.tell('invalid', 'Pick one of the numbers' + (', or cancel.' if cancel is not None else '.'))
     return None if cancel is not None else 0
+
+
+def table_refs(g, p, labels):
+    """for the browser: where each choice is on the table, so it can be clicked there. A label naming a permanent
+    ('Sheoldred, the Apocalypse (Prosper, tapped)', with or without more after it) -> {'seat', 'perm'}; a player ->
+    {'player'}; a card in p's hand -> {'hand'}. None when a label isn't on the table (a mode, a card in a library)"""
+    where = {}
+    for q in g.players:
+        if not q.alive: continue
+        where.setdefault(legal.describe_target(g, p, q), {'player': q.key})
+        for i, m in enumerate(q.perms):
+            where.setdefault(legal.describe_target(g, p, m), {'seat': q.key, 'perm': i})
+    from commander_sim.play.choices import card_label
+    hand = {}
+    for i, c in enumerate(p.hand): hand.setdefault(card_label(c), {'hand': i})
+    out = []
+    for lb in labels:
+        ref = where.get(lb) or hand.get(lb)
+        if ref is None and ' (' in lb:                       # 'Archmage Emeritus (Veyran, 2/2) (X = 4)'
+            ref = next((r for k, r in where.items() if lb.startswith(k + ' ')), None)
+        out.append(ref)
+    return out
 
 
 def abilities_of(g, p, m):

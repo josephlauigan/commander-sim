@@ -82,7 +82,7 @@ function battlefield(p, images, size, mine) {
   const perms = p.battlefield.filter((m) => !m.phased_out);
   const creatures = perms.filter((m) => m.pt), others = perms.filter((m) => !m.pt);
   const opts = (m) => ({ size, tapped: m.tapped, sick: m.sick, counters: m.counters, loyalty: m.loyalty, pt: m.pt,
-    commander: m.commander, attached_to: m.attached_to, attrs: mine ? { 'data-perm': m.i } : {} });
+    commander: m.commander, attached_to: m.attached_to, attrs: Object.assign({ 'data-seat': p.key, 'data-i': m.i }, mine ? { 'data-perm': m.i } : {}) });
   return [
     el('div', { class: 'row perms' }, creatures.map((m) => card(images, m.name, opts(m))),
       creatures.length && others.length ? el('span', { class: 'gap' }) : null, others.map((m) => card(images, m.name, opts(m)))),
@@ -93,7 +93,7 @@ function battlefield(p, images, size, mine) {
 }
 
 function opponent(p, view, images) {
-  return el('section', { class: 'opp' + (p.key === view.active ? ' active' : '') + (p.alive ? '' : ' out'), 'aria-label': p.name },
+  return el('section', { class: 'opp' + (p.key === view.active ? ' active' : '') + (p.alive ? '' : ' out'), 'aria-label': p.name, 'data-player': p.key },
     el('header', {}, card(images, p.commander, { size: 'xs', cls: 'portrait' }), el('div', {}, el('h2', {}, p.name), stats(p))),
     el('div', { class: 'opp-board' }, battlefield(p, images, 'sm', false)),
     el('footer', {}, zoneList('Graveyard', p.graveyard, images), p.exile.length ? zoneList('Exile', p.exile, images) : null,
@@ -106,7 +106,7 @@ export function renderTable(root, view, images) {
   const me = view.players.find((p) => p.you);
   const opps = view.players.filter((p) => !p.you);
   root.append(el('div', { class: 'opps' }, opps.map((p) => opponent(p, view, images))));
-  root.append(el('section', { class: 'mine' + (me.key === view.active ? ' active' : ''), 'aria-label': 'Your battlefield' },
+  root.append(el('section', { class: 'mine' + (me.key === view.active ? ' active' : ''), 'aria-label': 'Your battlefield', 'data-player': me.key },
     el('header', {}, el('h2', {}, `${me.name} (you)`), stats(me, true),
       el('span', { class: 'pool', title: 'your mana pool' }, `Mana pool: ${me.mana_pool}`)),
     battlefield(me, images, 'md', true)));

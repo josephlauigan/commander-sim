@@ -32,7 +32,7 @@ const card = (name, o = {}) => cardOf(images, name, Object.assign({ size: 'sm' }
 async function answer(value) {
   if (!pending) return;
   const id = pending.id;
-  pending = null; renderPrompt(null);
+  pending = null; renderPrompt(null); markChoices(null);
   const r = await api('/api/answer', { id, answer: value });
   if (!r.ok) logLine(r.data.error, 'invalid');
 }
@@ -114,7 +114,25 @@ const tapItems = (srcs) => srcs.flatMap((x) => x.colours.length > 1
   ? [...x.colours].map((c) => [`Tap for {${c}}`, { do: 'tap', source: x.id, colour: c }])
   : [[`Tap for {${x.colours}}`, { do: 'tap', source: x.id }]]);
 
+// a choice whose answer is on the table (a target, a card to discard): those cards and players light up and a click
+// picks them; the list in the panel still works
+function markChoices(ev) {
+  for (const x of document.querySelectorAll('.targetable')) { x.classList.remove('targetable'); delete x.dataset.choice; }
+  if (!ev || ev.request.kind === 'priority' || !ev.request.data.refs) return;
+  ev.request.data.refs.forEach((r, k) => {
+    if (!r) return;
+    const sel = r.player ? `[data-player="${CSS.escape(r.player)}"]` : r.hand !== undefined ? `[data-hand="${r.hand}"]`
+      : `[data-seat="${CSS.escape(r.seat)}"][data-i="${r.perm}"]`;
+    const x = document.querySelector(sel);
+    if (x && x.dataset.choice === undefined) { x.classList.add('targetable'); x.dataset.choice = k; }
+  });
+}
+
 function onTableClick(e) {
+  const pick = e.target.closest('[data-choice]');
+  if (pick && pending && pending.request.kind !== 'priority') {
+    e.preventDefault(); e.stopPropagation(); answer(+pick.dataset.choice); return;
+  }
   const t = e.target.closest('[data-land],[data-perm],[data-hand],[data-cmd],[data-gy],[data-treasure]');
   if (!t) return;
   if (!pending || pending.request.kind !== 'priority') { toast("You don't have priority right now."); return; }
@@ -165,7 +183,7 @@ function onEvent(ev) {
   else if (ev.kind === 'auto') logLine('(automatic) ' + ev.text, 'auto');
   else if (ev.kind === 'loading') loading(ev.done, ev.total);
   else if (ev.kind === 'images') { images = ev.images; loading(null); if (lastView) renderTable(lastView); }
-  else if (ev.kind === 'request') { pending = ev; renderPrompt(ev); }
+  else if (ev.kind === 'request') { pending = ev; renderPrompt(ev); markChoices(ev); }
   else if (ev.kind === 'over') { pending = null; renderPrompt(null); $('#prompt').replaceChildren(el('h3', {}, `Game over: ${ev.winner || 'no winner'} (${ev.how})`)); }
   else if (ev.kind === 'error') logLine(ev.text, 'invalid');
 }
