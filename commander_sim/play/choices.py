@@ -169,7 +169,7 @@ def damage_targets(g, p, colours=''):
     return out
 
 
-def deal_damage(g, p, n, source):
+def deal_damage(g, p, n, source, kind='triggers'):
     """p's `source` deals n damage to a target p picks: a creature dies if n reaches its toughness, a planeswalker loses
     that much loyalty, a player loses that much life"""
     if n <= 0: return
@@ -179,7 +179,7 @@ def deal_damage(g, p, n, source):
                cancel=None)
     x = tg[k]
     if isinstance(x, E.Player):
-        E.lose_life(g, x, n, p, kind='triggers'); return
+        E.lose_life(g, x, n, p, kind=kind); return
     if x.creature and E.etgh(g, x) <= n:
         E.apply_removal(g, p, x, f'dmg{n}')
     elif x.creature:

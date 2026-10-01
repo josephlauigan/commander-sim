@@ -1173,7 +1173,9 @@ def magecraft(g, p, c=None, copy=False):
             if 'opus3' in t and c is not None and c.cmc >= 5: base = 3        # Thunderdrum Soloist, 5+ mana spell
             d = (base + thor) * mult
             if 'ral' in t:
-                tgt = max(opps, key=lambda o: threat(g, p, o)); lose_life(g, tgt, d, p, kind='burn')
+                hc = human_choice(g, p)
+                if hc is not None: hc.deal_damage(g, p, d, m.name, kind='burn')
+                else: tgt = max(opps, key=lambda o: threat(g, p, o)); lose_life(g, tgt, d, p, kind='burn')
             else:
                 for q in opps: lose_life(g, q, d, p, kind='burn')
         if 'dragoncaller' in t: make_tokens(g, p, mult, 5, fly=True, color='R')

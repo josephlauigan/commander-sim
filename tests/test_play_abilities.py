@@ -101,9 +101,9 @@ class Abilities(unittest.TestCase):
         abil = human.abilities_of(g, s, vr)
         self.assertTrue(abil, 'Vraska offers loyalty abilities')
         start = vr.loyalty
-        seat(g, s, [{'do': 'use', 'perm': s.perms.index(vr)}, 0, {'do': 'pass'}])
+        seat(g, s, [{'do': 'use', 'perm': s.perms.index(vr)}, 0, {'do': 'pass'}])     # 0: draw, lose 1, proliferate
         human.human_main(g, s, False)
-        self.assertNotEqual(vr.loyalty, start)
+        self.assertEqual((vr.loyalty, s.life), (start + 1, 39))                       # proliferate counts Vraska too
 
     def test_nothing_to_activate(self):
         g = table('sauron', 'veyran'); s = g.players[0]

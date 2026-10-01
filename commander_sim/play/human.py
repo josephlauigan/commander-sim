@@ -43,19 +43,23 @@ def respond(g, q, prompt, spell=None):
     they cast at `spell` (the engine then counters it), or None when they pass"""
     ctl = controller_of(g, q)
     stack = [{'name': spell.name}] if spell is not None else []
-    while not g.over and q.alive:
-        act = ctl.ask(Request('priority', f'{prompt}. You have priority', data={'view': build_view(g, q.key), 'stack': stack}))
-        if not isinstance(act, dict): act = {}
-        if act.get('do') == 'pass': return None
-        if act.get('do') == 'cast' and spell is not None and act.get('zone') != 'cmd':
-            c = _hand_card(q, act)
-            if c is not None and 'ctr' in c.tags:
-                why = legal.check_counter(g, q, c, spell)
-                if why: ctl.tell('invalid', why); continue
-                return c
-        why = apply(g, q, act)
-        if why: ctl.tell('invalid', why)
-    return None
+    g.responding = getattr(g, 'responding', 0) + 1           # something is waiting to resolve: no sorcery-speed play
+    try:
+        while not g.over and q.alive:
+            act = ctl.ask(Request('priority', f'{prompt}. You have priority', data={'view': build_view(g, q.key), 'stack': stack}))
+            if not isinstance(act, dict): act = {}
+            if act.get('do') == 'pass': return None
+            if act.get('do') == 'cast' and spell is not None and act.get('zone') != 'cmd':
+                c = _hand_card(q, act)
+                if c is not None and 'ctr' in c.tags:
+                    why = legal.check_counter(g, q, c, spell)
+                    if why: ctl.tell('invalid', why); continue
+                    return c
+            why = apply(g, q, act)
+            if why: ctl.tell('invalid', why)
+        return None
+    finally:
+        g.responding -= 1
 
 
 def humans(g):
@@ -137,9 +141,12 @@ def abilities_of(g, p, m):
     out = []
     if legal.equip_cost(m) is not None: out.append((f'Equip {{{legal.equip_cost(m)}}}', 'equip', None))
     post = (getattr(g, 'step', None) == 'main2') if g.active is p else None    # None: instant-speed abilities only
-    from commander_sim.play import abilities
+    from commander_sim.play import abilities, cards
     for label, f in abilities.permanent_abilities(g, p, m):
         out.append((label, 'extra', f))
+    own = cards.abilities(g, p, m)
+    if own is not None:                                  # your deck's card: its abilities by the rules
+        return out + [(label, 'extra', f) for label, f in own]
     if g.hooks:
         s = brain.Situation(g, p)
         for src, fn in E.CI.hooked(g, 'options'):

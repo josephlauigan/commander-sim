@@ -15,6 +15,7 @@ def sorcery_timing(g, p):
     """None if p may do sorcery-speed things now (its own main phase), else why not"""
     if g.active is not p: return "It isn't your turn."
     if getattr(g, 'step', None) not in MAIN_STEPS: return 'You can only do that in one of your main phases.'
+    if getattr(g, 'responding', 0): return 'You can only do that when nothing is waiting to resolve (not in response).'
     return None
 
 

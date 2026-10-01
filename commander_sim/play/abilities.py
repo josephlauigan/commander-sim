@@ -140,7 +140,8 @@ LAND = {'passage': ("{4}, {T}: target creature can't be blocked this turn", pass
 
 def land_abilities(g, p, L):
     """[(label, fn)] for land L"""
-    out = []
+    from commander_sim.play import cards
+    out = list(cards.land_abilities(g, p, L))
     for tag, (label, fn) in LAND.items():
         if L.cd.tags.get(tag) and not (tag == 'desert' and L.cd.name != 'Scavenger Grounds'): out.append((label, fn))
     return out
