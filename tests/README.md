@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 357 tests in about a minute. To run one file, or one test:
+That's 360 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -30,6 +30,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_validator.py` | 15 | The decklist checks: size, singleton, commander, name resolution, colour identity, bans, Game Changers per tier. |
 | `test_my_decks.py` | 1 | Your deck files parse to the lists recorded in `fixtures/my_decks_parsed.json`. |
 | `test_sim_guard.py` | 1 | 24 seeded games (heuristic AI) play out exactly as recorded in `fixtures/sim_guard.json`, so practice-mode hooks can't change a simulation. Re-record after an intended change: `python3 tests/test_sim_guard.py --record`. |
+| `test_determinism.py` | 3 | The same seed plays the same game wherever objects land in memory: cards, players, permanents and lands hash without their addresses (copies like their originals), and a dead permanent's address is never reused while its game lasts. |
 | `test_play.py` | 11 | Practice mode: a session plays a game on its own thread and streams events; the AI's reasoning lines (which name cards in opponents' hands) are kept out of the stream; seats and opponents; step mode waits for you; closing stops the game; the text client; the table view hides other players' hands; look-ahead copies leave the human seat to the AI; actions carry the table's view for playback (only when asked for). |
 | `test_play_mana.py` | 10 | Practice mode's mana pool: paying colours and generic, any-colour mana, tapping lands, rocks and Treasures into the pool, the wrong colour refused, Talismans hurting only for coloured mana, the reason when you're short, ritual mana joining the pool, and the pool emptying between steps. |
 | `test_play_turn.py` | 9 | Practice mode's main phase: one land per turn, lands and sorceries only in your main phase, instants at any time, the reason when mana is short, commander tax; tap-then-cast, an illegal move explained while you keep priority, casting your commander; and a bot playing whole games of every deck through the human seat. |

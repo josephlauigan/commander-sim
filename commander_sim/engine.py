@@ -1,8 +1,32 @@
 """Abstracted 4-player Commander engine.  Rules are simplified on purpose:
 role-tagged cards, greedy mana payment, heuristic AIs, simplified combat."""
 import importlib
-import random, re
+import random, re, zlib
 from collections import defaultdict
+
+
+# Hashes that don't depend on memory addresses. Sets of cards, permanents and players iterate in hash order; with
+# Python's default (address-based) hashing, the look-ahead AI's copies of a game iterated them in an order that depended
+# on where the copies landed in memory, so the same seed could play differently from run to run. Cards hash by name,
+# players by deck key, permanents and lands by a number given in creation order within their game (a copy keeps its
+# original's number). Equality stays identity.
+#
+# Every permanent and land a game creates is also kept alive until the game ends (g.alive_objs). Many tables are keyed
+# by id(permanent) (end-of-turn pumps, granted keywords, once-per-turn flags); if a permanent that left could be freed,
+# a new one could get its address and inherit its entries (a Carrion Feeder cast after Crux of Fate died at once to
+# a dead creature's -X/-X). Look-ahead copies start their own list.
+_HID = [0]
+
+
+def _next_hid(obj):
+    g = CUR_G
+    if g is None:
+        _HID[0] += 1; return _HID[0]
+    g.hid_no = getattr(g, 'hid_no', 0) + 1
+    alive = g.__dict__.get('alive_objs')
+    if alive is None: alive = g.alive_objs = []
+    alive.append(obj)
+    return g.hid_no
 from commander_sim.cards.carddb import DB_TEXT
 
 IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'najeela': 'WUBRG'}
@@ -49,6 +73,11 @@ class CD:
     def __repr__(s):
         return s.name
 
+    def __hash__(s):
+        h = s.__dict__.get('_h')
+        if h is None: h = s._h = zlib.crc32(s.name.encode())
+        return h
+
 
 DB = {}
 for _line in DB_TEXT.strip().splitlines():
@@ -57,21 +86,26 @@ for _line in DB_TEXT.strip().splitlines():
 
 
 class Land:
-    __slots__ = ('cd', 'tapped', 'data')
+    __slots__ = ('cd', 'tapped', 'data', 'hid')
 
     def __init__(s, cd, tapped):
         s.cd, s.tapped = cd, tapped
         s.data = None
+        s.hid = _next_hid(s)
+
+    def __hash__(s):
+        return s.hid
 
 
 class Perm:
     __slots__ = ('cd', 'owner', 'orig', 'token', 'tapped', 'sick', 'pow', 'tgh', 'fly', 'dt', 'vig',
                  'life', 'plus', 'undying', 'army', 'warrior', 'noatk', 'name', 'phased', 'attached',
                  'age', 'neutered', 'is_cmd', 'phys', 'temp', 'loyalty', 'loyalty_used', 'colors', 'ttypes', 'data',
-                 'born')
+                 'born', 'hid')
 
     def __init__(s, owner, cd=None, pw=1, tg=None, fly=False, warrior=False, name='Token'):
         s.cd, s.owner, s.orig = cd, owner, owner
+        s.hid = _next_hid(s)
         s.token = cd is None
         s.tapped = False; s.sick = True; s.plus = 0; s.undying = False; s.army = False
         s.phased = False; s.attached = None; s.age = 0; s.neutered = False; s.is_cmd = False
@@ -93,8 +127,14 @@ class Perm:
     def tag(s, k):
         return s.cd is not None and k in s.cd.tags
 
+    def __hash__(s):
+        return s.hid
+
 
 class Player:
+    def __hash__(s):
+        return zlib.crc32(s.key.encode())
+
     def __init__(s, key, cards, cmdname):
         s.key = key; s.ident = IDENT[key] if key in IDENT else SEATS[key]['ident']
         s.cmd = DB[cmdname]
