@@ -1016,7 +1016,9 @@ def _kefka_wheel(g, src, p):
     discarded = []
     for q in [x for x in g.players if x.alive]:
         if not q.hand: continue
-        c = min(q.hand, key=lambda x: E.card_worth(g, q, x))          # each player gives up their least useful card
+        hc = E.human_choice(g, q)
+        c = hc.pick_cards(g, q, q.hand, 1, 'Kefka: discard a card')[0] if hc is not None else \
+            min(q.hand, key=lambda x: E.card_worth(g, q, x))          # each player gives up their least useful card
         E.discard_cards(g, q, [c]); discarded.append(c)
     kinds = {t for c in discarded for t in c.types if t in 'LCISAEP'}
     if kinds: draw(g, p, len(kinds))

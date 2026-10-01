@@ -197,6 +197,18 @@ def cast(g, p, c, zone):
         if why: return f"Can't cast {c.name} on that target. {why}"
         if isinstance(x, E.Player): ctx['face'] = x
         else: ctx['target'] = x
+    if 'deluge' in c.tags:                                   # Toxic Deluge: pay X life, all creatures get -X/-X
+        top = max(0, min(p.life - 1, 20))
+        k = choose(g, p, 'choose', f'{c.name}: choose X (you pay X life; creatures with toughness X or less die)',
+                   [f'X = {x}' for x in range(top + 1)])
+        if k is None: return None
+        ctx['deluge_x'] = k
+    if c.name == 'Bitter Triumph':                           # additional cost: discard a card, or pay 3 life
+        others = [x for x in p.hand if x is not c]
+        k = choose(g, p, 'choose', f'{c.name}: pay its extra cost how?',
+                   ['pay 3 life'] + (['discard a card'] if others else []))
+        if k is None: return None
+        if k == 1: ctx['discard_cost'] = True
     fodder = None
     if 'needsac' in c.tags:                                  # Diabolic Intent: sacrifice a creature as you cast it
         cre = [m for m in p.perms if m.creature and not m.phased]
@@ -214,6 +226,10 @@ def cast(g, p, c, zone):
     if c.dsl: E.additional_cost(g, p, c)
     if fodder is not None:
         E.log(f'  {E.NAME(p)} sacrifices {fodder.name} for {c.name}', g); E.die(g, fodder, 'sac')
+    if ctx.pop('discard_cost', False):
+        from commander_sim.play import choices
+        x = choices.pick_cards(g, p, [y for y in p.hand if y is not c], 1, f'{c.name}: discard a card')[0]
+        E.discard_cards(g, p, [x]); ctx['paid_otherwise'] = True
     if 'phyU' in c.tags and 'U' in c.pips and pips.count('U') < c.pips.count('U'):
         E.lose_life(g, p, 2, p)                              # {U/P} paid with 2 life
     E.cast_card(g, p, c, zone, ctx)

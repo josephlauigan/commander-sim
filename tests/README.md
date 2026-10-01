@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 263 tests in about a minute. To run one file, or one test:
+That's 267 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -37,7 +37,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_play_combat.py` | 7 | Practice mode's combat declarations: who can attack (by the rules, not the AI's habits), attacking the only opponent, choosing the defending player, not attacking, blocking, not blocking, and unblockable attackers not being asked about. |
 | `test_play_respond.py` | 8 | Practice mode's priority on other turns: countering an opponent's spell, passing so it resolves, priority on every spell (not just ones the AI would counter), tapping then countering, a counterspell that can't hit that kind of spell, no counterspell without a spell to counter, countering back when the AI counters you, and priority when attacked. |
 | `test_play_choices.py` | 10 | Practice mode's smaller choices: discards (effects and hand size), edicts, tutors limited to what they can find, finding nothing, basic-land searches, scry, the London mulligan with a free first mulligan, choosing modes (Kolaghan's Command), and yes/no. |
-| `test_play_sauron.py` | 11 | Practice mode, Sauron's cards: Orcish Bowmasters' damage when it enters and on extra draws, Kaervek's damage (a creature survives damage below its toughness), the Ring (Ring-bearer, Call of the Ring's "pay 2 life", Sauron's "discard your hand"), Jace's Archivist (and summoning sickness), Aggravated Assault, Rogue's Passage through real combat, Scavenger Grounds, and Cyclonic Rift overloaded. |
+| `test_play_sauron.py` | 15 | Practice mode, Sauron's cards: Orcish Bowmasters' damage when it enters and on extra draws, Kaervek's damage (a creature survives damage below its toughness), the Ring (Ring-bearer, Call of the Ring's "pay 2 life", Sauron's "discard your hand"), Jace's Archivist (and summoning sickness), Aggravated Assault, Rogue's Passage through real combat, Scavenger Grounds, Cyclonic Rift overloaded, Toxic Deluge's X, Bitter Triumph's discard-instead-of-life, Noxious Gearhulk's optional target, and Kefka's discard. |
 
 ## When a test fails
 

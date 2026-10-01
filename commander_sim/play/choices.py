@@ -196,3 +196,14 @@ def ring_bearer(g, p, cands):
     k = choose(g, p, 'choose', 'The Ring tempts you: choose your Ring-bearer', [legal.describe_target(g, p, m) for m in cands],
                cancel=None)
     return cands[k]
+
+
+# ------------------------------------------------------------------ creatures that remove something when they enter
+def etb_removal(g, p, m):
+    """Noxious Gearhulk and similar: "when this enters, you may destroy another target creature" (pick, or none)"""
+    tg = [x for x in (legal.spell_targets(g, p, m.cd) or []) if x is not m and isinstance(x, E.Perm)]
+    if not tg: return
+    k = choose(g, p, 'target', f'{m.name} enters: choose a target', [legal.describe_target(g, p, x) for x in tg],
+               cancel='no target')
+    if k is None: return
+    E.apply_removal(g, p, tg[k], m.cd.tags['rem'], m.cd)

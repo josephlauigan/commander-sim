@@ -131,5 +131,44 @@ class Activations(unittest.TestCase):
         human.human_main(g, s, False)
         self.assertEqual(v.perms, [])
 
+
+class SpellChoices(unittest.TestCase):
+    def test_toxic_deluge_x(self):
+        from commander_sim.play import human
+        g = table('sauron', 'veyran'); s, v = g.players
+        hand(s, 'Toxic Deluge'); small = perm(g, v, 'Guttersnipe'); big = perm(g, v, 'Grave Titan')
+        float_mana(s, C=2, B=1)
+        seat(g, s, [{'do': 'cast', 'card': 0}, 2, {'do': 'pass'}])          # X = 2
+        human.human_main(g, s, False)
+        self.assertNotIn(small, v.perms); self.assertIn(big, v.perms)
+        self.assertEqual(s.life, 38)
+
+    def test_bitter_triumph_discard_instead_of_life(self):
+        from commander_sim.play import human
+        g = table('sauron', 'veyran'); s, v = g.players
+        hand(s, 'Bitter Triumph', 'Island'); gs = perm(g, v, 'Guttersnipe')
+        float_mana(s, C=1, B=1)
+        seat(g, s, [{'do': 'cast', 'card': 0}, pick(g, s, gs), 1, 0, {'do': 'pass'}])
+        human.human_main(g, s, False)
+        self.assertNotIn(gs, v.perms); self.assertEqual(s.life, 40)
+        self.assertIn(E.DB['Island'], s.gy)
+
+    def test_gearhulk_target_or_none(self):
+        g = table('sauron', 'veyran'); s, v = g.players
+        gs = perm(g, v, 'Guttersnipe')
+        seat(g, s, ['cancel'])
+        perm(g, s, 'Noxious Gearhulk')
+        self.assertIn(gs, v.perms)
+        seat(g, s, [pick(g, s, gs)])
+        perm(g, s, 'Noxious Gearhulk')
+        self.assertNotIn(gs, v.perms)
+
+    def test_kefka_discard_is_yours(self):
+        g = table('sauron', 'veyran'); s, v = g.players
+        a, b = hand(s, 'Island', 'Counterspell'); hand(v, 'Mountain')
+        seat(g, s, [1])                                                     # discard Counterspell
+        mine()._kefka_wheel(g, None, s)
+        self.assertIn(b, s.gy); self.assertIn(a, s.hand)
+
 if __name__ == '__main__':
     unittest.main()

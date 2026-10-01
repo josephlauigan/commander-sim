@@ -1544,7 +1544,7 @@ def resolve(g, p, c, ctx, zone):
         from commander_sim.cards.impl import t1 as impl_t1; impl_t1.tutor_named(g, p, lambda x: 'aura' in x.subtypes, k=3)
     if 'seal' in t: tutor_to_top(g, p)          # Imperial Seal / Vampiric Tutor: card on top, lose 2 life
     if 'adnaus' in t: ad_nauseam(g, p)
-    if 'lose' in t: lose_life(g, p, int(t['lose']), p)
+    if 'lose' in t and not ctx.get('paid_otherwise'): lose_life(g, p, int(t['lose']), p)
     if 'selfdmg' in t: lose_life(g, p, int(t['selfdmg']), p)
     if 'discard1' in t: discard_worst(g, p, 1)
     if ctx.get('face') is not None:
@@ -2013,6 +2013,8 @@ def sun_titan(g, p):
 
 def etb_removal(g, p, m):
     t = m.cd.tags
+    hc = human_choice(g, p)
+    if hc is not None: return hc.etb_removal(g, p, m)
     tg = legal_targets(g, p, t['rem'], t.get('tgt', 'c'), 'mv4' in t, spell=m.cd)
     if not tg: return
     best = max(tg, key=lambda x: pval(g, x))
@@ -2041,8 +2043,10 @@ def _apply_wipe(g, p, kind, ctx):
     else:
         victims = [q for q in g.players if q.alive]
     if kind == 'minus' and 'deluge' in ctx.get('tags', {}):
-        xs = [etgh(g, m) for q in g.opps(p) for m in q.perms if m.creature]
-        lose_life(g, p, min(max(xs) if xs else 1, 10), p)          # Toxic Deluge: pay X life
+        if ctx.get('deluge_x') is not None: lose_life(g, p, ctx['deluge_x'], p)     # practice mode: the person chose X
+        else:
+            xs = [etgh(g, m) for q in g.opps(p) for m in q.perms if m.creature]
+            lose_life(g, p, min(max(xs) if xs else 1, 10), p)      # Toxic Deluge: pay X life
     modes = set()
     if kind in ('farewell', 'austere2'):
         modes = ais.wipe_modes(g, p, kind)
@@ -2081,7 +2085,9 @@ def _apply_wipe(g, p, kind, ctx):
                 if m.token: leave(g, m)
                 else: bounce(g, m)
                 continue
-            if kind == 'destroy' or kind == 'minus': die(g, m, 'destroy')
+            if kind == 'minus' and ctx.get('deluge_x') is not None:
+                if etgh(g, m) <= ctx['deluge_x']: die(g, m, 'destroy')      # -X/-X: only toughness X or less
+            elif kind == 'destroy' or kind == 'minus': die(g, m, 'destroy')
             elif kind == 'exile': exile_perm(g, m)
             elif kind == 'dmg13':
                 if etgh(g, m) <= 13: die(g, m, 'destroy')
