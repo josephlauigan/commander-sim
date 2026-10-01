@@ -39,6 +39,9 @@ def _player(g, p, me):
     if you:
         from commander_sim.play import mana
         d['hand'] = [c.name for c in p.hand]
+        from commander_sim.play import cards
+        d['hand_land'] = [bool(c.land) for c in p.hand]
+        d['hand_special'] = [c.name in cards.HAND for c in p.hand]      # a land with a spell side or channel
         d['mana_pool'] = mana.pool_of(p).text()
         d['mana_sources'] = mana.sources(g, p)
         from commander_sim.play import abilities, legal

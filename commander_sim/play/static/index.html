@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commander Practice</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header>
+  <h1>Commander Practice</h1>
+  <form id="newgame">
+    <label>Deck <select name="deck"></select></label>
+    <label>Tier <select name="tier"></select></label>
+    <label>Seed <input name="seed" type="number" min="1" placeholder="random"></label>
+    <label>Opponent AI <select name="ai"><option value="lookahead">look-ahead</option><option value="adaptive">adaptive (faster)</option></select></label>
+    <button type="submit">New game</button>
+  </form>
+  <div id="status"></div>
+</header>
+<main>
+  <section id="table" aria-label="The table"></section>
+  <aside>
+    <section id="prompt" aria-label="Your decision"></section>
+    <section id="log" aria-label="Game log"></section>
+  </aside>
+</main>
+<footer>Card data from <a href="https://scryfall.com">Scryfall</a>.</footer>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>
