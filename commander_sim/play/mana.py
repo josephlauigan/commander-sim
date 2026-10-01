@@ -93,7 +93,14 @@ def sources(g, p):
         src = u[0]
         name = 'Treasure' if src == 'T' else (getattr(src, 'name', None) or getattr(getattr(src, 'cd', None), 'name', None)
                                              or (getattr(u[3], 'name', 'Token') if len(u) > 3 else str(src)))
-        out.append({'id': i, 'name': name, 'colours': _colours(u), 'amount': u[2]})
+        d = {'id': i, 'name': name, 'colours': _colours(u), 'amount': u[2]}
+        if src == 'T': d['treasure'] = True                      # where it is on the table, for the browser
+        elif any(src is L for L in p.lands): d['land'] = next(k for k, L in enumerate(p.lands) if L is src)
+        else:
+            m = u[3] if len(u) > 3 and isinstance(src, str) else src
+            k = next((k for k, x in enumerate(p.perms) if x is m), None)
+            if k is not None: d['perm'] = k
+        out.append(d)
     return out
 
 

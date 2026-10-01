@@ -84,5 +84,15 @@ class Tapping(unittest.TestCase):
         self.assertEqual(mana.pool_of(s).total(), 0)
 
 
+
+class WhereSourcesAre(unittest.TestCase):
+    def test_sources_name_their_land_permanent_or_treasure(self):
+        g = table('sauron', 'veyran'); s = g.players[0]
+        lands(s, 'Island', 2); rock = perm(g, s, 'Sol Ring'); s.treasures = 1
+        srcs = mana.sources(g, s)
+        self.assertEqual(sorted(x['land'] for x in srcs if 'land' in x), [0, 1])
+        self.assertEqual([x['perm'] for x in srcs if 'perm' in x], [s.perms.index(rock)])
+        self.assertEqual(sum(1 for x in srcs if x.get('treasure')), 1)
+
 if __name__ == '__main__':
     unittest.main()

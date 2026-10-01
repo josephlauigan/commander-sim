@@ -62,18 +62,19 @@ function groupLands(lands) {
   return [...groups.values()];
 }
 
-function zoneList(title, names, images) {
+function zoneList(title, names, images, attrs = () => ({})) {
   return el('details', { class: 'zonelist' }, el('summary', {}, `${title} (${names.length})`),
-    names.length ? el('div', { class: 'cards' }, names.map((n) => card(images, n, { size: 'sm' }))) : el('em', {}, 'empty'));
+    names.length ? el('div', { class: 'cards' }, names.map((n, i) => card(images, n, { size: 'sm', attrs: attrs(i) }))) : el('em', {}, 'empty'));
 }
 
-function stats(p) {
+function stats(p, mine) {
   return el('div', { class: 'stats' },
     el('span', { class: 'life', title: 'life' }, `♥ ${p.life}`),
     p.poison ? el('span', { title: 'poison counters' }, `☠ ${p.poison}`) : null,
     el('span', { title: 'cards in hand' }, `✋ ${p.hand_count}`),
     el('span', { title: 'cards in library' }, `📚 ${p.library}`),
-    p.treasures ? el('span', { title: 'Treasures' }, `◆ ${p.treasures} Treasure`) : null,
+    p.treasures ? el('span', { title: 'Treasures', class: mine ? 'clickable' : '', 'data-treasure': mine ? '1' : null },
+      `◆ ${p.treasures} Treasure`) : null,
     Object.entries(p.commander_damage || {}).map(([who, n]) => el('span', { title: `commander damage from ${who}` }, `⚔ ${who} ${n}`)));
 }
 
@@ -106,7 +107,7 @@ export function renderTable(root, view, images) {
   const opps = view.players.filter((p) => !p.you);
   root.append(el('div', { class: 'opps' }, opps.map((p) => opponent(p, view, images))));
   root.append(el('section', { class: 'mine' + (me.key === view.active ? ' active' : ''), 'aria-label': 'Your battlefield' },
-    el('header', {}, el('h2', {}, `${me.name} (you)`), stats(me),
+    el('header', {}, el('h2', {}, `${me.name} (you)`), stats(me, true),
       el('span', { class: 'pool', title: 'your mana pool' }, `Mana pool: ${me.mana_pool}`)),
     battlefield(me, images, 'md', true)));
   root.append(el('section', { class: 'bottom', 'aria-label': 'Your hand and zones' },
@@ -116,7 +117,7 @@ export function renderTable(root, view, images) {
       me.commander_in_zone ? el('div', { class: 'cz' }, el('h3', {}, `Command zone (tax ${me.tax})`),
         card(images, me.commander, { size: 'sm', commander: true, attrs: { 'data-cmd': '1' } })) : null,
       el('div', { class: 'chip' }, `Library ${me.library}`),
-      zoneList('Graveyard', me.graveyard, images), zoneList('Exile', me.exile, images))));
+      zoneList('Graveyard', me.graveyard, images, (i) => ({ 'data-gy': i })), zoneList('Exile', me.exile, images))));
 }
 
 export function renderSteps(root, view) {

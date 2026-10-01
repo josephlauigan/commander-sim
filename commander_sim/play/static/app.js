@@ -2,6 +2,7 @@
 import { el, card as cardOf, renderTable as drawTable, renderSteps } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
+let liveFrom = 0;           // events up to this id are history replayed on load: no pop-up messages for them
 let images = {};            // card name -> image files in /images/ (the table uses them from step 2d)
 
 function loading(done, total) {
@@ -41,17 +42,19 @@ const btn = (label, value, cls = '') => el('button', { class: cls, onclick: () =
 function you(view) { return view && view.players.find((p) => p.you); }
 
 function renderPrompt(ev) {
-  const box = $('#prompt'); box.replaceChildren();
+  const box = $('#prompt'); box.replaceChildren(); closeMenu();
+  $('#pass').hidden = !(ev && ev.request.kind === 'priority');
+  $('#table').classList.toggle('can-act', !!(ev && ev.request.kind === 'priority'));
   if (!ev) { box.append(el('div', { class: 'stats' }, 'Waiting for the other players…')); return; }
   const req = ev.request;
   box.append(el('h3', {}, req.prompt));
   if (req.kind === 'priority') {
     const me = you(ev.view);
     if (req.data.stack && req.data.stack.length) box.append(el('div', { class: 'row' }, el('b', {}, 'On the stack'), req.data.stack.map((x) => card(x.name))));
-    const row = (title, items) => items.length && box.append(el('div', { class: 'row' }, el('b', {}, title), items));
-    row('Tap', (me.mana_sources || []).flatMap((s) => s.colours.length > 1
-      ? [...s.colours].map((c) => btn(`${s.name} {${c}}`, { do: 'tap', source: s.id, colour: c }))
-      : [btn(`${s.name} {${s.colours}}`, { do: 'tap', source: s.id })]));
+    box.append(el('p', { class: 'help' }, 'Click a land or mana rock to tap it, a card in your hand to cast or play it, a permanent to use its abilities, your commander in the command zone or a card in your graveyard to cast it.'));
+    const row = (title, items) => items.length && list.append(el('div', { class: 'row' }, el('b', {}, title), items));
+    const list = el('details', { class: 'actions' }, el('summary', {}, 'The same as a list'));
+    row('Tap', (me.mana_sources || []).flatMap((x) => tapButtons(x)));
     row('Hand', me.hand.flatMap((n, i) => me.hand_land[i]
       ? [btn(`Play ${n}`, { do: 'land', card: i })].concat(me.hand_special[i] ? [btn(`Cast ${n.split(' // ')[0]}`, { do: 'cast', card: i })] : [])
       : [btn(`Cast ${n}`, { do: 'cast', card: i })]));
@@ -59,7 +62,7 @@ function renderPrompt(ev) {
     row('Activate', me.battlefield.map((m) => btn(m.name, { do: 'use', perm: m.i })));
     row('Land abilities', me.lands.filter((L) => L.ability).map((L) => btn(L.name, { do: 'use', land: L.i })));
     row('Graveyard', (me.graveyard_playable || []).map((x) => btn(`${x.name} (${x.how})`, { do: x.how === 'land' ? 'land' : 'cast', zone: 'gy', card: x.i })));
-    box.append(el('div', { class: 'row' }, btn('Pass priority', { do: 'pass' }, 'primary')));
+    box.append(list);
   } else if (req.kind === 'attack') {
     const boxes = req.choices.map((c, i) => el('label', {}, el('input', { type: 'checkbox', value: i }), ' ', c));
     box.append(el('div', { class: 'row' }, boxes));
@@ -76,6 +79,76 @@ function renderPrompt(ev) {
   }
 }
 
+// ------------------------------------------------------------------ acting on the table (your priority)
+function tapButtons(x) {
+  return x.colours.length > 1 ? [...x.colours].map((c) => btn(`${x.name} {${c}}`, { do: 'tap', source: x.id, colour: c }))
+    : [btn(`${x.name} {${x.colours}}`, { do: 'tap', source: x.id })];
+}
+
+function toast(text) {
+  const t = $('#toast');
+  t.textContent = text; t.hidden = false;
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => { t.hidden = true; }, 6000);
+}
+
+function closeMenu() { const m = $('#menu'); if (m) m.remove(); }
+
+function menu(e, title, items) {
+  closeMenu();
+  const m = el('div', { id: 'menu', role: 'menu' }, el('div', { class: 'title' }, title),
+    items.map(([label, value]) => el('button', { role: 'menuitem', onclick: () => { closeMenu(); answer(value); } }, label)));
+  document.body.append(m);
+  const r = m.getBoundingClientRect();
+  m.style.left = `${Math.min(e.clientX, window.innerWidth - r.width - 8)}px`;
+  m.style.top = `${Math.min(e.clientY, window.innerHeight - r.height - 8)}px`;
+  m.querySelector('button').focus();
+}
+
+function act(e, title, items, otherwise) {
+  if (!items.length) { toast(otherwise); return; }
+  if (items.length === 1) { answer(items[0][1]); return; }
+  menu(e, title, items);
+}
+
+const tapItems = (srcs) => srcs.flatMap((x) => x.colours.length > 1
+  ? [...x.colours].map((c) => [`Tap for {${c}}`, { do: 'tap', source: x.id, colour: c }])
+  : [[`Tap for {${x.colours}}`, { do: 'tap', source: x.id }]]);
+
+function onTableClick(e) {
+  const t = e.target.closest('[data-land],[data-perm],[data-hand],[data-cmd],[data-gy],[data-treasure]');
+  if (!t) return;
+  if (!pending || pending.request.kind !== 'priority') { toast("You don't have priority right now."); return; }
+  e.preventDefault(); hidePreviewSoon();
+  const me = you(pending.view); const srcs = me.mana_sources || [];
+  const name = t.dataset.name || '';
+  if (t.dataset.land !== undefined) {
+    const i = +t.dataset.land, L = me.lands[i];
+    const items = tapItems(srcs.filter((x) => x.land === i));
+    if (L.ability) items.push(['Activate an ability', { do: 'use', land: i }]);
+    act(e, name, items, L.tapped ? `${name} is tapped.` : `${name} can't be tapped for mana right now.`);
+  } else if (t.dataset.perm !== undefined) {
+    const i = +t.dataset.perm;
+    const items = tapItems(srcs.filter((x) => x.perm === i));
+    items.push(['Activate an ability', { do: 'use', perm: i }]);
+    act(e, name, items, '');
+  } else if (t.dataset.treasure !== undefined) {
+    act(e, 'Treasure', tapItems(srcs.filter((x) => x.treasure).slice(0, 1)), 'No untapped Treasure.');
+  } else if (t.dataset.hand !== undefined) {
+    const i = +t.dataset.hand;
+    if (!me.hand_land[i]) answer({ do: 'cast', card: i });
+    else if (me.hand_special[i]) menu(e, name, [['Play it as your land', { do: 'land', card: i }], [`Cast ${name.split(' // ')[0]}`, { do: 'cast', card: i }]]);
+    else answer({ do: 'land', card: i });
+  } else if (t.dataset.cmd !== undefined) {
+    answer({ do: 'cast', zone: 'cmd' });
+  } else if (t.dataset.gy !== undefined) {
+    const i = +t.dataset.gy;
+    const playable = (me.graveyard_playable || []).find((x) => x.i === i);
+    answer({ do: playable && playable.how === 'land' ? 'land' : 'cast', zone: 'gy', card: i });
+  }
+}
+
+function hidePreviewSoon() { const p = document.getElementById('preview'); if (p) p.hidden = true; }
+
 // ------------------------------------------------------------------ the event stream
 function logLine(text, cls = '') {
   const log = $('#log');
@@ -88,7 +161,7 @@ function onEvent(ev) {
   lastId = Math.max(lastId, ev.id);
   if (ev.view) renderTable(ev.view);
   if (ev.kind === 'log') logLine(ev.text, ev.text.startsWith('---') ? 'turn' : '');
-  else if (ev.kind === 'invalid') logLine('Not allowed: ' + ev.text, 'invalid');
+  else if (ev.kind === 'invalid') { logLine('Not allowed: ' + ev.text, 'invalid'); if (ev.id > liveFrom) toast(ev.text); }
   else if (ev.kind === 'auto') logLine('(automatic) ' + ev.text, 'auto');
   else if (ev.kind === 'loading') loading(ev.done, ev.total);
   else if (ev.kind === 'images') { images = ev.images; loading(null); if (lastView) renderTable(lastView); }
@@ -166,12 +239,17 @@ async function init() {
   f.addEventListener('submit', startGame);
   for (const r of f.opp) r.addEventListener('change', renderSetup);
   $('#to-setup').addEventListener('click', () => screen('setup'));
+  $('#table').addEventListener('click', onTableClick);
+  $('#pass').addEventListener('click', () => answer({ do: 'pass' }));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('#menu') && !e.target.closest('#table')) closeMenu(); });
   renderSetup();
   if (Object.keys(catalog.images).length < catalog.decks.length) {      // the commanders' images arrive shortly after start-up
     setTimeout(async () => { catalog = (await api('/api/options')).data; renderSetup(); }, 6000);
   }
   const st = (await api('/api/state')).data;
   images = st.images || {};
+  liveFrom = st.last_event || 0;
   if (st.game) {
     $('#status').textContent = `Seed ${st.game.seed} · seats: ${st.game.seats.join(', ')}`;
     renderTable(st.view); screen('game');
