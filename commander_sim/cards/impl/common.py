@@ -354,6 +354,7 @@ def aristocrat_options(g, p, s, post):
 def sac_in_response(g, p, m, kind):
     """a creature of p's is about to be exiled / bounced / stolen: sacrifice it for value instead"""
     if not m.creature or kind not in ('exile', 'bounce', 'tuck') or m.is_cmd: return False
+    if human_choice(g, p) is not None: return False
     outs = [o for o in outlets(p) if o is not m]
     if not outs: return False
     sac_through(g, p, outs[0], m)

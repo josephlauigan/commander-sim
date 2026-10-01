@@ -183,6 +183,7 @@ REPLACED_TAG_ENGINES = {'Mystic Remora', 'Sylvan Library'}     # hand-implemente
 # ================================================================== counters
 def veil_response(g, p, q, ctr):
     """q is about to counter p's spell with a blue or black counterspell: p answers with Veil of Summer"""
+    if E.human_choice(g, p) is not None: return False
     if p.key in E.CTHRESH or not ('U' in ctr.pips or 'B' in ctr.pips or ctr.name in ('Force of Will', 'Force of Negation')): return False
     v = next((c for c in p.hand if c.name == 'Veil of Summer'), None)
     if v is None or not can_pay(g, p, 0, 'G') or not castable(g, p, v): return False

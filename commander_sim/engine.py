@@ -858,6 +858,7 @@ def cast_teferis_protection(g, q, imp=8):
 
 def last_chance(g, q):
     """q is about to lose to damage or life loss: Teferi's Protection if it has it"""
+    if human_choice(g, q) is not None: return q.life_locked          # practice mode: the person casts it themselves
     return q.life_locked or cast_teferis_protection(g, q, imp=9)
 
 

@@ -208,7 +208,7 @@ def protect(g, owner, m, kind, actor, spell):
 
 def wipe_response(g, q, kind):
     """an exile or bounce wipe: countered creatures are sacrificed first so Marchesa returns them"""
-    if kind not in ('exile', 'evac', 'rift', 'rebuke'): return
+    if kind not in ('exile', 'evac', 'rift', 'rebuke') or E.human_choice(g, q) is not None: return
     outs = [x for x in outlets(g, q) if x[0] != 'Skullport Merchant']
     if not outs: return
     prev, g.batch = getattr(g, 'batch', None), None      # these sacrifices come before the wipe, one at a time

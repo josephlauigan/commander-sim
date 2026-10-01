@@ -7,7 +7,7 @@ from commander_sim import engine as E
 def tide_response(g, actor, what, value, victim=None):
     """Tishana's Tidebinder (Sephiroth) counters an activated/triggered ability."""
     for q in g.opps(actor):
-        if q.key != 'seph' or silenced(g, q): continue
+        if q.key != 'seph' or silenced(g, q) or E.human_choice(g, q) is not None: continue
         if victim is not None and victim is not q and value < 9: continue
         if value < 6: continue
         tb = [c for c in q.hand if 'tide' in c.tags]
@@ -92,6 +92,7 @@ def pay_card(g, p, c, kicked=0):
 
 
 def protect_response(g, owner, m, kind, actor, spell=None):
+    if E.human_choice(g, owner) is not None: return False     # practice mode: the person protects in their own window
     if owner.key not in MAIN:
         if silenced(g, owner): return False
         from commander_sim.ai import pool_ai
@@ -142,7 +143,7 @@ def protect_response(g, owner, m, kind, actor, spell=None):
 
 
 def wipe_response(g, q, kind, caster):
-    if q is caster or silenced(g, q): return None
+    if q is caster or silenced(g, q) or E.human_choice(g, q) is not None: return None
     if q.key not in MAIN:
         from commander_sim.ai import pool_ai
         return pool_ai.wipe_response(g, q, kind, caster)
@@ -187,7 +188,7 @@ def wipe_response(g, q, kind, caster):
 def sauron_grounds_response(g, seph, value):
     """Sauron exiles all graveyards in response to a reanimation spell."""
     for q in g.opps(seph):
-        if q.key != 'sauron' or value < 6: continue
+        if q.key != 'sauron' or value < 6 or E.human_choice(g, q) is not None: continue
         gl = [L for L in q.lands if L.cd.tags.get('desert') and not L.tapped and not stopped(g, L.cd.name)]
         if not gl: continue
         L = gl[0]; L.tapped = True
