@@ -131,24 +131,78 @@ function connect() {
 }
 
 // ------------------------------------------------------------------ setup
-async function init() {
-  const opts = (await api('/api/options')).data;
+let catalog = null, chosen = { deck: null, tier: 't3' };
+
+function screen(name) {
+  $('#setup').hidden = name !== 'setup';
+  $('#game').hidden = name !== 'game';
+  $('#to-setup').hidden = name !== 'game';
+}
+
+function cardImage(name, cls = '') {
+  const files = (catalog && catalog.images[name]) || images[name];
+  return files ? el('img', { src: `/images/${files[0]}`, alt: name, class: cls, loading: 'lazy' }) : el('span', { class: 'noimg ' + cls });
+}
+
+function pct(x) { return x == null ? '–' : `${x.toFixed(1)}%`; }
+
+function renderSetup() {
+  const deck = catalog.decks.find((d) => d.key === chosen.deck);
+  $('#decks').replaceChildren(...catalog.decks.map((d) => el('button', {
+    type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === chosen.deck),
+    onclick: () => { chosen.deck = d.key; renderSetup(); },
+  }, cardImage(d.commander), el('span', {}, el('b', {}, d.name),
+    el('small', {}, `Bracket ${d.bracket} · ${d.game_changers.length} Game Changers`),
+    el('small', {}, d.average == null ? 'No simulation results yet' : `Simulations: ${pct(d.average)} average`)))));
+  $('#tiers').replaceChildren(...catalog.tiers.map((t) => el('button', {
+    type: 'button', class: 'tier', role: 'radio', 'aria-checked': String(t.key === chosen.tier),
+    onclick: () => { chosen.tier = t.key; renderSetup(); },
+  }, el('span', {}, el('b', {}, t.label)),
+    el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: x.commander }, cardImage(x.commander), x.name))),
+    el('span', { class: 'rate' }, deck && deck.win_rates ? pct(deck.win_rates[t.key]) : '', el('small', {}, deck && deck.win_rates ? 'your win rate in sims' : '')))));
+  const tier = catalog.tiers.find((t) => t.key === chosen.tier);
+  const prev = new Set([...document.querySelectorAll('#picks input:checked')].map((b) => b.value));
+  $('#picks').replaceChildren(...tier.decks.map((x) => el('label', {},
+    el('input', Object.assign({ type: 'checkbox', value: x.key }, prev.has(x.key) ? { checked: '' } : {})), ' ', x.name)));
+  $('#picks').hidden = $('#newgame').opp.value !== 'pick';
+}
+
+async function startGame(e) {
+  e.preventDefault();
   const f = $('#newgame');
-  f.deck.replaceChildren(...opts.decks.map((d) => el('option', { value: d }, d)));
-  f.tier.replaceChildren(...Object.keys(opts.tiers).map((t) => el('option', { value: t }, `${t.toUpperCase()}: ${opts.tiers[t].join(', ')}`)));
-  f.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const body = { deck: f.deck.value, tier: f.tier.value, ai: f.ai.value };
-    if (f.seed.value) body.seed = +f.seed.value;
-    $('#log').replaceChildren(); pending = null; renderTable(null); loading(0, 0);
-    const r = await api('/api/new', body);
-    if (!r.ok) { loading(null); $('#status').textContent = r.data.error; return; }
-    $('#status').textContent = `Seed ${r.data.seed} · seats: ${r.data.seats.join(', ')}`;
-  });
+  const body = { deck: chosen.deck, tier: chosen.tier, ai: f.ai.value, profile: f.profile.value,
+    tools: { hint: f.hint.checked, undo: f.undo.checked, compare: f.compare.checked } };
+  if (f.seed.value) body.seed = +f.seed.value;
+  if (f.seat.value) body.seat = +f.seat.value;
+  if (f.opp.value === 'pick') {
+    body.opponents = [...document.querySelectorAll('#picks input:checked')].map((b) => b.value);
+    if (body.opponents.length !== 3) { $('#setup-error').textContent = 'Pick exactly three opponents.'; return; }
+  }
+  $('#setup-error').textContent = '';
+  $('#log').replaceChildren(); pending = null; renderTable(null); renderPrompt(null); loading(0, 0);
+  const r = await api('/api/new', body);
+  if (!r.ok) { loading(null); $('#setup-error').textContent = r.data.error; return; }
+  $('#status').textContent = `Seed ${r.data.seed} · seats: ${r.data.seats.join(', ')}`;
+  screen('game');
+}
+
+async function init() {
+  catalog = (await api('/api/options')).data;
+  chosen.deck = catalog.decks[0].key;
+  const f = $('#newgame');
+  f.addEventListener('submit', startGame);
+  for (const r of f.opp) r.addEventListener('change', renderSetup);
+  $('#to-setup').addEventListener('click', () => screen('setup'));
+  renderSetup();
+  if (Object.keys(catalog.images).length < catalog.decks.length) {      // the commanders' images arrive shortly after start-up
+    setTimeout(async () => { catalog = (await api('/api/options')).data; renderSetup(); }, 6000);
+  }
   const st = (await api('/api/state')).data;
   images = st.images || {};
-  if (st.game) $('#status').textContent = `Seed ${st.game.seed} · seats: ${st.game.seats.join(', ')}`;
-  renderTable(st.view);
+  if (st.game) {
+    $('#status').textContent = `Seed ${st.game.seed} · seats: ${st.game.seats.join(', ')}`;
+    renderTable(st.view); screen('game');
+  } else screen('setup');
   connect();
 }
 init();

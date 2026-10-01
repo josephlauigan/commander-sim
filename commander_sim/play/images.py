@@ -116,3 +116,14 @@ def prepare(names, progress=None, lookup=_collection, download=_download):
         have = [f for f in e['files'] if os.path.exists(os.path.join(DIR, f))]
         if have: out.setdefault(name, have)
     return out
+
+
+def cached(names):
+    """{card name: image files} for the cards already on disk (no network)"""
+    idx = load_index()
+    out = {}
+    for n in names:
+        e = idx.get(_key(n))
+        have = [f for f in (e or {}).get('files', []) if os.path.exists(os.path.join(DIR, f))]
+        if have: out[n] = have
+    return out

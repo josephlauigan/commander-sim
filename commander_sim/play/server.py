@@ -7,7 +7,8 @@ Routes:
   GET  /api/events          server-sent events: every event of the game in order, each with an id (a reconnect
                             with Last-Event-ID, or ?since=N, resumes after it)
   GET  /images/<file>       a card image from the cache (data/images/)
-  POST /api/new             start a game: {deck, tier, seed?, seat?, opponents?, profile?, ai?, images?}: the card
+  POST /api/new             start a game: {deck, tier, seed?, seat?, opponents?, profile?, ai?, tools?, images?}:
+                            tools are the practice switches {hint, undo, compare} (used from Phase 3); the card
                             images load first ('loading' events with done/total, then 'images': name -> files)
   POST /api/answer          answer the waiting decision: {id, answer}; a stale id is refused (409)
   POST /api/quit            end the game
@@ -58,6 +59,7 @@ class Hub:
         with s.cond:
             s.game_no += 1
             s.session, s.events, s.pending, s.view, s.images = sess, [], None, None, {}
+            s.tools = {k: bool((opts.get('tools') or {}).get(k, True)) for k in ('hint', 'undo', 'compare')}
             no = s.game_no
         threading.Thread(target=s._pump, args=(sess, no), name='practice-pump', daemon=True).start()
         threading.Thread(target=s._load, args=(sess, no, opts.get('images', True)), name='practice-images',
@@ -128,7 +130,7 @@ class Hub:
         with s.cond:
             sess = s.session
             game = None if sess is None else {'deck': sess.deck, 'tier': sess.tier, 'seed': sess.seed, 'seats': sess.seats,
-                                              'profile': sess.profile, 'ai': sess.ai}
+                                              'profile': sess.profile, 'ai': sess.ai, 'tools': s.tools}
             return {'game': game, 'view': s.view, 'pending': s.pending, 'images': s.images,
                     'last_event': s.events[-1]['id'] if s.events else 0}
 
@@ -140,10 +142,28 @@ class Hub:
             return [e for e in s.events if e['id'] > since]
 
 
+_CATALOG = []
+
+
 def options():
+    """the setup screen's data: your decks, the tiers, and the commanders' images already cached"""
     from commander_sim import poolmode
-    poolmode._setup('loose', 'adaptive', 1.0)
-    return {'decks': list(MY_DECKS), 'tiers': {t: poolmode.pool_keys(t) for t in TIERS}}
+    from commander_sim.play import catalog, images
+    if not _CATALOG:
+        poolmode._setup('loose', 'adaptive', 1.0)
+        _CATALOG.append(catalog.catalog())
+    c = _CATALOG[0]
+    names = [d['commander'] for d in c['decks']] + [x['commander'] for t in c['tiers'] for x in t['decks']]
+    return dict(c, images=images.cached(names))
+
+
+def fetch_commanders():
+    """at start-up, in the background: the commanders' images for the setup screen (once; cached after)"""
+    from commander_sim.play import catalog, images
+    try:
+        images.prepare(catalog.commanders())
+    except Exception:
+        pass
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -192,6 +212,11 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == '/api/new':
             if body.get('deck') not in MY_DECKS: return s._send(400, {'error': f'deck: one of {", ".join(MY_DECKS)}'})
             if body.get('tier') not in TIERS: return s._send(400, {'error': f'tier: one of {", ".join(TIERS)}'})
+            if body.get('opponents') is not None and not (isinstance(body['opponents'], list)
+                                                          and all(isinstance(x, str) for x in body['opponents'])):
+                return s._send(400, {'error': 'opponents: a list of three deck keys'})
+            if body.get('seat') is not None and not isinstance(body['seat'], int):
+                return s._send(400, {'error': 'seat: 1 to 4'})
             try:
                 sess = s.hub.new_game(body)
             except (ValueError, TypeError) as e:
@@ -241,6 +266,7 @@ def make_server(port=8765, host='127.0.0.1'):
 
 def serve(port=8765, open_browser=True):
     srv = make_server(port)
+    threading.Thread(target=fetch_commanders, name='practice-commanders', daemon=True).start()
     url = f'http://127.0.0.1:{srv.server_address[1]}/'
     print(f'Practice mode: {url}  (Ctrl+C to stop)')
     if open_browser: threading.Timer(0.5, lambda: webbrowser.open(url)).start()
