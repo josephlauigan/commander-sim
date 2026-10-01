@@ -883,7 +883,7 @@ card('Finale of Devastation', 'xtutor', types='S', dsl=[])
 # ================================================================== Sakura-Tribe Elder: chump, then sacrifice
 @on('Sakura-Tribe Elder', 'blocks')
 def _ste_block(g, src, p, atk, d, assign):
-    if src.owner is d and src in assign.values() and src in d.perms:
+    if src.owner is d and src in assign.values() and src in d.perms and E.human_choice(g, d) is None:
         die(g, src, 'sac'); land_ramp(g, d, 1, True)
         log(f'    {NAME(d)} sacrifices Sakura-Tribe Elder after blocking', g)
 

@@ -1,8 +1,32 @@
 """Abstracted 4-player Commander engine.  Rules are simplified on purpose:
 role-tagged cards, greedy mana payment, heuristic AIs, simplified combat."""
 import importlib
-import random, re
+import random, re, zlib
 from collections import defaultdict
+
+
+# Hashes that don't depend on memory addresses. Sets of cards, permanents and players iterate in hash order; with
+# Python's default (address-based) hashing, the look-ahead AI's copies of a game iterated them in an order that depended
+# on where the copies landed in memory, so the same seed could play differently from run to run. Cards hash by name,
+# players by deck key, permanents and lands by a number given in creation order within their game (a copy keeps its
+# original's number). Equality stays identity.
+#
+# Every permanent and land a game creates is also kept alive until the game ends (g.alive_objs). Many tables are keyed
+# by id(permanent) (end-of-turn pumps, granted keywords, once-per-turn flags); if a permanent that left could be freed,
+# a new one could get its address and inherit its entries (a Carrion Feeder cast after Crux of Fate died at once to
+# a dead creature's -X/-X). Look-ahead copies start their own list.
+_HID = [0]
+
+
+def _next_hid(obj):
+    g = CUR_G
+    if g is None:
+        _HID[0] += 1; return _HID[0]
+    g.hid_no = getattr(g, 'hid_no', 0) + 1
+    alive = g.__dict__.get('alive_objs')
+    if alive is None: alive = g.alive_objs = []
+    alive.append(obj)
+    return g.hid_no
 from commander_sim.cards.carddb import DB_TEXT
 
 IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'najeela': 'WUBRG'}
@@ -49,6 +73,11 @@ class CD:
     def __repr__(s):
         return s.name
 
+    def __hash__(s):
+        h = s.__dict__.get('_h')
+        if h is None: h = s._h = zlib.crc32(s.name.encode())
+        return h
+
 
 DB = {}
 for _line in DB_TEXT.strip().splitlines():
@@ -57,21 +86,26 @@ for _line in DB_TEXT.strip().splitlines():
 
 
 class Land:
-    __slots__ = ('cd', 'tapped', 'data')
+    __slots__ = ('cd', 'tapped', 'data', 'hid')
 
     def __init__(s, cd, tapped):
         s.cd, s.tapped = cd, tapped
         s.data = None
+        s.hid = _next_hid(s)
+
+    def __hash__(s):
+        return s.hid
 
 
 class Perm:
     __slots__ = ('cd', 'owner', 'orig', 'token', 'tapped', 'sick', 'pow', 'tgh', 'fly', 'dt', 'vig',
                  'life', 'plus', 'undying', 'army', 'warrior', 'noatk', 'name', 'phased', 'attached',
                  'age', 'neutered', 'is_cmd', 'phys', 'temp', 'loyalty', 'loyalty_used', 'colors', 'ttypes', 'data',
-                 'born')
+                 'born', 'hid')
 
     def __init__(s, owner, cd=None, pw=1, tg=None, fly=False, warrior=False, name='Token'):
         s.cd, s.owner, s.orig = cd, owner, owner
+        s.hid = _next_hid(s)
         s.token = cd is None
         s.tapped = False; s.sick = True; s.plus = 0; s.undying = False; s.army = False
         s.phased = False; s.attached = None; s.age = 0; s.neutered = False; s.is_cmd = False
@@ -93,8 +127,14 @@ class Perm:
     def tag(s, k):
         return s.cd is not None and k in s.cd.tags
 
+    def __hash__(s):
+        return s.hid
+
 
 class Player:
+    def __hash__(s):
+        return zlib.crc32(s.key.encode())
+
     def __init__(s, key, cards, cmdname):
         s.key = key; s.ident = IDENT[key] if key in IDENT else SEATS[key]['ident']
         s.cmd = DB[cmdname]
@@ -528,37 +568,46 @@ def plan_pay(U, generic, pips, col=None):
 
 
 def can_pay(g, p, generic, pips, convoke=False):
+    if getattr(p, 'pool', None) is not None:          # practice mode: the person pays from the mana they have floated
+        return importlib.import_module('commander_sim.play.mana').pool_can_pay(p, generic, pips)
     return plan_pay(mana_units(g, p, convoke), generic, pips) is not None
 
 
 def pay(g, p, generic, pips, convoke=False):
+    if getattr(p, 'pool', None) is not None:          # practice mode: from the person's mana pool
+        return importlib.import_module('commander_sim.play.mana').pay_from_pool(g, p, generic, pips) is None
     U = mana_units(g, p, convoke)
     col = [''] * len(U)                                   # the coloured pips each source paid for
     used = plan_pay(U, generic, pips, col)
     if used is None: return False
     for i, u in enumerate(U):
-        if used[i]:
-            if u[0] == 'T':
-                p.treasures -= 1
-                p.left_turn = turn_stamp(g)
-                if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
-            elif u[0] == 'F': p.floatR -= 1
-            elif u[0] == 'G': p.floatA -= 1
-            elif u[0] == 'FU': p.floatU -= 1
-            elif u[0] == 'FC': p.floatC -= 1
-            elif isinstance(u[0], str):
-                importlib.import_module('commander_sim.cards.impl.partials').special_unit_paid(g, p, u)
-            else:
-                u[0].tapped = True
-                global TAP_COLS
-                TAP_COLS = col[i]
-                if CI is not None and getattr(u[0], 'cd', None) is not None and u[0].cd.name in CI.ON_TAP: CI.ON_TAP[u[0].cd.name](g, p, u[0], used[i])
-                if g.hooks and isinstance(u[0], Perm): CI.fire(g, 'mana_tapped', p, u[0], used[i])
-                if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
-                    lose_life(g, p, 2, p, damage=True)
-                if col is not None and col[i] and u[0].cd is not None and 'pain' in u[0].cd.tags:   # painlands, Talismans
-                    lose_life(g, p, 1, p, damage=True)
+        if used[i]: spend_unit(g, p, u, used[i], col[i])
     return True
+
+
+def spend_unit(g, p, u, n, col=''):
+    """use mana unit u (from mana_units) for n mana; col: the coloured pips it paid for (painlands hurt only then).
+    Taps or sacrifices the source and runs its side effects: Treasures, floating mana, on-tap triggers, pain"""
+    if u[0] == 'T':
+        p.treasures -= 1
+        p.left_turn = turn_stamp(g)
+        if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
+    elif u[0] == 'F': p.floatR -= 1
+    elif u[0] == 'G': p.floatA -= 1
+    elif u[0] == 'FU': p.floatU -= 1
+    elif u[0] == 'FC': p.floatC -= 1
+    elif isinstance(u[0], str):
+        importlib.import_module('commander_sim.cards.impl.partials').special_unit_paid(g, p, u)
+    else:
+        u[0].tapped = True
+        global TAP_COLS
+        TAP_COLS = col
+        if CI is not None and getattr(u[0], 'cd', None) is not None and u[0].cd.name in CI.ON_TAP: CI.ON_TAP[u[0].cd.name](g, p, u[0], n)
+        if g.hooks and isinstance(u[0], Perm): CI.fire(g, 'mana_tapped', p, u[0], n)
+        if isinstance(u[0], Land) and u[0].cd.tags.get('tomb'):    # Ancient Tomb deals 2 damage to you
+            lose_life(g, p, 2, p, damage=True)
+        if col and u[0].cd is not None and 'pain' in u[0].cd.tags:   # painlands, Talismans
+            lose_life(g, p, 1, p, damage=True)
 
 
 def total_mana(g, p, convoke=False):
@@ -647,7 +696,10 @@ def draw(g, p, n=1, step=False):
             if has(q, 'tithe') and importlib.import_module('commander_sim.cards.impl.rules').tithe_unpaid(g, p):
                 add_treasure(g, q, 1)
             if extra and has(q, 'bowmasters'):
-                amass(g, q, 1); lose_life(g, p, 1, q, kind='triggers')
+                hc = human_choice(g, q)
+                for _ in find(q, 'bowmasters') if hc is not None else ():     # practice mode: each Bowmasters, your target
+                    amass(g, q, 1); hc.deal_damage(g, q, 1, 'Orcish Bowmasters')
+                if hc is None: amass(g, q, 1); lose_life(g, p, 1, q, kind='triggers')
         if has(p, 'sheoA'): gain(p, 2)
 
 
@@ -724,6 +776,17 @@ def shards_trigger(g, p, k):
     """Aura Shards: whenever a creature enters under your control, destroy target artifact or enchantment."""
     if k <= 0 or not has(p, 'shards') or opp_has(g, p, 'mother'): return
     reps = k * (2 if has(p, 'mother') else 1)
+    hc = human_choice(g, p)
+    for _ in range(reps if hc is not None else 0):           # practice mode: you may destroy one, your pick
+        tg = [m for q in g.players if q.alive for m in q.perms if m.cd is not None and not m.creature and not m.phased
+              and ('A' in m.cd.types or 'E' in m.cd.types) and not (m.owner is not p and untargetable(g, m))]
+        if not tg: return
+        k2 = hc.choose(g, p, 'target', 'Aura Shards: destroy target artifact or enchantment?',
+                       [hc.legal.describe_target(g, p, m) for m in tg], cancel='none')
+        if k2 is None: return
+        p.stats['shards_kill'] += 1; apply_removal(g, p, tg[k2], 'destroy')
+        if g.over: return
+    if hc is not None: return
     for _ in range(reps):
         tg = [m for q in g.opps(p) for m in q.perms
               if m.cd is not None and not m.creature and ('A' in m.cd.types or 'E' in m.cd.types)
@@ -846,6 +909,7 @@ def cast_teferis_protection(g, q, imp=8):
 
 def last_chance(g, q):
     """q is about to lose to damage or life loss: Teferi's Protection if it has it"""
+    if human_choice(g, q) is not None: return q.life_locked          # practice mode: the person casts it themselves
     return q.life_locked or cast_teferis_protection(g, q, imp=9)
 
 
@@ -1106,8 +1170,10 @@ def on_cast(g, p, c):
         p.ral_copy = None; copy_spell(g, p, c)      # Ral, Storm Conduit -2: copy the next instant/sorcery
     if not c.creature and CI is not None: CI.prowess(g, p, c)
     if CI is not None and (c.instant or c.sorcery):
-        for x, fn in CI.hand_cards(p, 'hand_cast'): fn(g, x, p, c)       # Return the Favor copies your spell
+        if human_choice(g, p) is None:
+            for x, fn in CI.hand_cards(p, 'hand_cast'): fn(g, x, p, c)       # Return the Favor copies your spell
         for q in g.opps(p):
+            if human_choice(g, q) is not None: continue                   # the person copies it in their window
             for x, fn in CI.hand_cards(q, 'hand_opp_cast'): fn(g, x, q, c)   # Dualcaster Mage copies anyone's
     if p.spells_this_turn == 3:                            # Emeritus of Conflict: third spell each turn -> prepared
         for x in find(p, 'conflict'): x.data = dict(x.data or {}, prepared=True)
@@ -1149,7 +1215,9 @@ def magecraft(g, p, c=None, copy=False):
             if 'opus3' in t and c is not None and c.cmc >= 5: base = 3        # Thunderdrum Soloist, 5+ mana spell
             d = (base + thor) * mult
             if 'ral' in t:
-                tgt = max(opps, key=lambda o: threat(g, p, o)); lose_life(g, tgt, d, p, kind='burn')
+                hc = human_choice(g, p)
+                if hc is not None: hc.deal_damage(g, p, d, m.name, kind='burn')
+                else: tgt = max(opps, key=lambda o: threat(g, p, o)); lose_life(g, tgt, d, p, kind='burn')
             else:
                 for q in opps: lose_life(g, q, d, p, kind='burn')
         if 'dragoncaller' in t: make_tokens(g, p, mult, 5, fly=True, color='R')
@@ -1168,7 +1236,16 @@ def magecraft(g, p, c=None, copy=False):
     if has(p, 'aether') and not copy: gain(p, p.spells_this_turn * base_mult)
 
 
+def human_choice(g, p):
+    """practice mode: the choices module when p is played by a person, else None (the AI decides)"""
+    ctl = getattr(g, 'controllers', None) if g is not None else None
+    if not ctl or p.key not in ctl or not getattr(ctl[p.key], 'human', False): return None
+    return importlib.import_module('commander_sim.play.choices')
+
+
 def discard_worst(g, p, n):
+    hc = human_choice(g, p)
+    if hc is not None: return hc.discard(g, p, n)
     keep = set()
     if CI is not None and p.key in SEATS:              # outside decks keep combo pieces and wished cards
         from commander_sim.ai import pool_ai
@@ -1345,8 +1422,17 @@ def counter_window(g, p, c, imp, aff):
     global LAST_COUNTER
     if 'unc' in c.tags: return True
     if g.hooks and CI.total(g, 'uncounterable', p, c): return True
+    hctl = getattr(g, 'controllers', None)
+    if hctl and p.key in hctl and _copy_window(g, p, c):  # practice mode: your own spell, with a copy card in hand
+        importlib.import_module('commander_sim.play.human').respond(g, p, f'You cast {c.name}', spell=c, caster=p)
     for q in g.after(p):
         if not q.alive or g.over or silenced(g, q): continue
+        if hctl and q.key in hctl:                         # practice mode: the person may respond, or pass
+            ctr = importlib.import_module('commander_sim.play.human').respond(g, q, f'{NAME(p)} casts {c.name}', spell=c,
+                                                                              caster=p)
+            if ctr is None: continue
+            if not _counter_resolves(g, q, p, c, ctr, imp): continue
+            return False
         val = aff.get(q, imp)
         if AI_MODE == 'adaptive':
             from commander_sim.ai import brain
@@ -1367,27 +1453,45 @@ def counter_window(g, p, c, imp, aff):
             g.bounced_spell = True; return False
         ctr = pick_counter(g, q, c)
         if ctr is None: continue
-        if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, p, q, ctr): continue
-        if not cast_counter(g, q, ctr, c): continue
-        log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
-        soft = int(ctr.tags.get('soft', 0))
-        if ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
-            soft = sum(casts_this_turn(g, x) for x in g.players if x.alive) - 1
-        if soft and can_pay(g, p, soft, ''):           # Spell Pierce / Mystic Confluence: pay and it resolves
-            pay(g, p, soft, ''); log(f'    {NAME(p)} pays {soft}', g); continue
-        counter_side_effects(g, q, p, ctr)
-        if ctr.name == 'Mana Drain': q.drain_mana = getattr(q, 'drain_mana', 0) + c.cmc
-        # original caster may fight back
-        if max(imp, 7) >= 7 and imp >= 6:
-            back = pick_counter(g, p, ctr)
-            if back is not None and cast_counter(g, p, back, ctr):
-                p.stats['counterwar_won'] += 1
-                log(f'    {NAME(p)} counters back with {back.name}', g)
-                continue
-        if p.key == 'seph': p.stats['seph_spell_countered'] += 1
-        p.stats['spells_countered'] += 1
-        LAST_COUNTER = ctr
+        if not _counter_resolves(g, q, p, c, ctr, imp): continue
         return False
+    return True
+
+
+def _copy_window(g, p, c):
+    """practice mode: the caster gets priority on their own instant or sorcery when they hold a card that copies it"""
+    return (c.instant or c.sorcery) and human_choice(g, p) is not None and \
+        any(x.name in ('Return the Favor', 'Dualcaster Mage') for x in p.hand)
+
+
+def _counter_resolves(g, q, p, c, ctr, imp):
+    """q casts counterspell ctr at p's spell c: True if c ends up countered (the caster may pay for a soft counter,
+    or counter back)"""
+    global LAST_COUNTER
+    if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, p, q, ctr): return False
+    if not cast_counter(g, q, ctr, c): return False
+    log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
+    soft = int(ctr.tags.get('soft', 0))
+    if ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
+        soft = sum(casts_this_turn(g, x) for x in g.players if x.alive) - 1
+    if soft and can_pay(g, p, soft, ''):           # Spell Pierce / Mystic Confluence: pay and it resolves
+        pay(g, p, soft, ''); log(f'    {NAME(p)} pays {soft}', g); return False
+    counter_side_effects(g, q, p, ctr)
+    if ctr.name == 'Mana Drain': q.drain_mana = getattr(q, 'drain_mana', 0) + c.cmc
+    # original caster may fight back
+    hctl = getattr(g, 'controllers', None)
+    if hctl and p.key in hctl:                     # practice mode: the person may counter the counterspell
+        back = importlib.import_module('commander_sim.play.human').respond(
+            g, p, f'{NAME(q)} counters your {c.name} with {ctr.name}', spell=ctr)
+    elif max(imp, 7) >= 7 and imp >= 6: back = pick_counter(g, p, ctr)
+    else: back = None
+    if back is not None and cast_counter(g, p, back, ctr):
+        p.stats['counterwar_won'] += 1
+        log(f'    {NAME(p)} counters back with {back.name}', g)
+        return False
+    if p.key == 'seph': p.stats['seph_spell_countered'] += 1
+    p.stats['spells_countered'] += 1
+    LAST_COUNTER = ctr
     return True
 
 
@@ -1430,7 +1534,9 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     LAST_COUNTER = None
     g.cur_cast = (c, ctx, zone)
     try:
-        ok_cast = not (imp > 0 or aff) or counter_window(g, p, c, imp, aff)
+        human_near = bool(getattr(g, 'controllers', None)) and (any(q.key in g.controllers for q in g.after(p))
+                                                                 or _copy_window(g, p, c))
+        ok_cast = not (imp > 0 or aff or human_near) or counter_window(g, p, c, imp, aff)
     finally:
         g.cur_cast = None
     if not ok_cast:
@@ -1448,6 +1554,8 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
 
 def flashback_grant(g, p):
     """Flashback (the card): recast the best affordable instant/sorcery from your graveyard"""
+    if human_choice(g, p) is not None:
+        return importlib.import_module('commander_sim.play.cards').flashback_target(g, p, None)
     cs = [x for x in p.gy if (x.instant or x.sorcery) and 'ctr' not in x.tags and 'fbgrant' not in x.tags
           and 'rem' not in x.tags and 'wipe' not in x.tags]
     cs = [x for x in cs if can_pay(g, p, x.generic, x.pips)]
@@ -1503,7 +1611,7 @@ def resolve(g, p, c, ctx, zone):
         from commander_sim.cards.impl import t1 as impl_t1; impl_t1.tutor_named(g, p, lambda x: 'aura' in x.subtypes, k=3)
     if 'seal' in t: tutor_to_top(g, p)          # Imperial Seal / Vampiric Tutor: card on top, lose 2 life
     if 'adnaus' in t: ad_nauseam(g, p)
-    if 'lose' in t: lose_life(g, p, int(t['lose']), p)
+    if 'lose' in t and not ctx.get('paid_otherwise'): lose_life(g, p, int(t['lose']), p)
     if 'selfdmg' in t: lose_life(g, p, int(t['selfdmg']), p)
     if 'discard1' in t: discard_worst(g, p, 1)
     if ctx.get('face') is not None:
@@ -1528,7 +1636,9 @@ def resolve(g, p, c, ctx, zone):
         for q in g.opps(p): edict(g, q)
     if 'pumpall' in t: p.pumpadd += int(t['pumpall'])
     if 'lh' in t and 'lr' not in t: land_to_hand(g, p)
-    if 'crackle' in t:                          # X = (mana spent - 2)/3; 5X to each of up to X targets
+    if 'crackle' in t and human_choice(g, p) is not None:
+        importlib.import_module('commander_sim.play.cards').crackle(g, p, c, ctx)
+    elif 'crackle' in t:                        # X = (mana spent - 2)/3; 5X to each of up to X targets
         x = max(1, ctx.get('x', 1)); d = 5 * x
         cands = [(100 + (60 - q.life) if q.life <= d else 0.4 * d, q, None) for q in g.opps(p)]
         cands += [(1.5 * pval(g, m), None, m) for q in g.opps(p) for m in q.perms
@@ -1545,7 +1655,11 @@ def resolve(g, p, c, ctx, zone):
     if 'prolif1' in t and CI is not None: importlib.import_module('commander_sim.cards.impl.mine').proliferate_all(g, p)
     if 'unearth' in t:
         cs = [x for x in p.gy if x.creature and x.cmc <= 3]
-        if cs:
+        hc = human_choice(g, p)
+        if cs and hc is not None:
+            x = hc.pick_cards(g, p, cs, 1, 'Unearth: return which creature card (mana value 3 or less)?')[0]
+            p.gy.remove(x); enter(g, p, x)
+        elif cs:
             x = max(cs, key=lambda c: (('bowmasters' in c.tags) * 5 + c.pow + (CI.card_etb_value(g, p, c) if CI is not None else 0)))
             p.gy.remove(x); enter(g, p, x)
     if 'fbgrant' in t: flashback_grant(g, p)
@@ -1556,7 +1670,9 @@ def resolve(g, p, c, ctx, zone):
     if 'mastery' in t:
         # Mizzix's Mastery: exile target instant/sorcery from your graveyard (each of them, overloaded); cast copies free
         pool = [x for x in p.gy if (x.instant or x.sorcery) and x is not c and 'ctr' not in x.tags]
-        if not ctx.get('overload'):
+        if ctx.get('mastery_pick') is not None:        # practice mode: the target chosen as it was cast
+            pool = [x for x in pool if x is ctx['mastery_pick']][:1]
+        elif not ctx.get('overload'):
             pool = sorted(pool, key=lambda x: -card_worth(g, p, x, in_gy=True))[:1]
         for x in pool: p.gy.remove(x); p.exile.append(x)
         if pool: log(f'    Mizzix\'s Mastery casts copies of {len(pool)} spell(s)', g)
@@ -1571,6 +1687,8 @@ def resolve(g, p, c, ctx, zone):
 def spell_targets(g, p, c, ctx=None):
     """fresh targets for a copy of spell c ('you may choose new targets for the copy'): the best opposing permanent
     for removal, the lowest life total for burn that kills nothing worthwhile"""
+    hc = human_choice(g, p)
+    if hc is not None: return hc.copy_targets(g, p, c, ctx)
     t = c.tags; ctx = dict(ctx or {})
     ctx.pop('target', None); ctx.pop('face', None)
     if 'rem' in t:
@@ -1701,7 +1819,9 @@ def etb_once(g, p, m):
     if 'skate' in t:
         for x in p.perms:
             if x.plus > 0: x.plus = min(x.plus * 2, 200)
-    if 'bowmasters' in t and opps:
+    if 'bowmasters' in t and opps and human_choice(g, p) is not None:
+        human_choice(g, p).deal_damage(g, p, 1, 'Orcish Bowmasters'); amass(g, p, 1)
+    elif 'bowmasters' in t and opps:
         x1 = [x for q in opps for x in q.perms if x.creature and etgh(g, x) <= 1 and pval(g, x) >= 2 and not untargetable(g, x)]
         if x1: die(g, max(x1, key=lambda x: pval(g, x)), 'destroy')
         else:
@@ -1754,9 +1874,11 @@ def etb_once(g, p, m):
             if any(k in c.tags for k in KEYSPELL): p.stats['key_milled'] += 1
 
 
-def archon_trig(g, p):
+def archon_trig(g, p, q=None):
     opps = g.opps(p)
-    q = max(opps, key=lambda o: threat(g, p, o))
+    hc = human_choice(g, p)
+    if hc is not None and q is None: q = hc.target_opponent(g, p, 'Archon of Cruelty')
+    if q is None: q = max(opps, key=lambda o: threat(g, p, o))
     edict(g, q)
     if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
     lose_life(g, q, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
@@ -1775,11 +1897,18 @@ def edict(g, q, least_power=False):
     cr = [m for m in q.perms if m.creature and not m.phased]
     if cr and least_power:
         lo = min(epow(g, m) for m in cr); cr = [m for m in cr if epow(g, m) == lo]
+    hc = human_choice(g, q)
+    if hc is not None and cr: return hc.sacrifice_creature(g, q, cr, 'Sacrifice a creature (edict)')
     if cr: die(g, min(cr, key=lambda x: sac_worth(g, x)), 'sac')
 
 
 def land_ramp(g, p, n, tapped):
+    hc = human_choice(g, p)
     for _ in range(n):
+        if hc is not None:
+            c = hc.pick_basic(g, p, 'Search for a basic land to put onto the battlefield' + (' tapped' if tapped else ''))
+            if c is None: return
+            p.lands.append(Land(c, tapped)); landfall(g, p); continue
         basics = [c for c in searchable(g, p) if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
         if not basics: return
         c = g.rng.choice(basics); p.library.remove(c)
@@ -1807,6 +1936,11 @@ def _landfall_once(g, p):
 
 
 def land_to_hand(g, p):
+    hc = human_choice(g, p)
+    if hc is not None:
+        c = hc.pick_basic(g, p, 'Search for a basic land to put into your hand')
+        if c is not None: p.hand.append(c)
+        g.rng.shuffle(p.library); return
     basics = [c for c in searchable(g, p) if c.land and c.name in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain')]
     if basics:
         c = g.rng.choice(basics); p.library.remove(c)
@@ -1832,6 +1966,12 @@ def add_treasure(g, p, n=1):
 
 def tutor(g, p, kind):
     from commander_sim import ais
+    hc = human_choice(g, p)
+    if hc is not None:
+        for c in hc.search(g, p, ais.TUTOR_OK.get(kind, ais.TUTOR_OK['any']), 1, 'Search your library'):
+            p.hand.append(c); p.stats['tutored'] += 1; p.seen_names.add(c.name)
+            log(f'    {NAME(p)} tutors a card', g)
+        return
     name = ais.tutor_pick(g, p, kind)
     if name is None: return
     for c in searchable(g, p):
@@ -1952,6 +2092,8 @@ def sun_titan(g, p):
 
 def etb_removal(g, p, m):
     t = m.cd.tags
+    hc = human_choice(g, p)
+    if hc is not None: return hc.etb_removal(g, p, m)
     tg = legal_targets(g, p, t['rem'], t.get('tgt', 'c'), 'mv4' in t, spell=m.cd)
     if not tg: return
     best = max(tg, key=lambda x: pval(g, x))
@@ -1980,8 +2122,10 @@ def _apply_wipe(g, p, kind, ctx):
     else:
         victims = [q for q in g.players if q.alive]
     if kind == 'minus' and 'deluge' in ctx.get('tags', {}):
-        xs = [etgh(g, m) for q in g.opps(p) for m in q.perms if m.creature]
-        lose_life(g, p, min(max(xs) if xs else 1, 10), p)          # Toxic Deluge: pay X life
+        if ctx.get('deluge_x') is not None: lose_life(g, p, ctx['deluge_x'], p)     # practice mode: the person chose X
+        else:
+            xs = [etgh(g, m) for q in g.opps(p) for m in q.perms if m.creature]
+            lose_life(g, p, min(max(xs) if xs else 1, 10), p)      # Toxic Deluge: pay X life
     modes = set()
     if kind in ('farewell', 'austere2'):
         modes = ais.wipe_modes(g, p, kind)
@@ -2020,7 +2164,9 @@ def _apply_wipe(g, p, kind, ctx):
                 if m.token: leave(g, m)
                 else: bounce(g, m)
                 continue
-            if kind == 'destroy' or kind == 'minus': die(g, m, 'destroy')
+            if kind == 'minus' and ctx.get('deluge_x') is not None:
+                if etgh(g, m) <= ctx['deluge_x']: die(g, m, 'destroy')      # -X/-X: only toughness X or less
+            elif kind == 'destroy' or kind == 'minus': die(g, m, 'destroy')
             elif kind == 'exile': exile_perm(g, m)
             elif kind == 'dmg13':
                 if etgh(g, m) <= 13: die(g, m, 'destroy')
@@ -2087,6 +2233,18 @@ def pile_tutor(g, p, n, keep):
             v = sum(hv[c.name] for c in hand) + sum(gv[c.name] for c in pile if c not in hand)
             if best is None or v < best[0]: best = (v, hand)
         return best
+    hc = human_choice(g, p)
+    if hc is not None:             # practice mode: you pick the cards; the opponent (the AI) still splits them
+        pile = hc.search(g, p, lambda c: True, n, f'Search for up to {n} cards with different names')
+        if not pile: return
+        hand = list(result(pile)[1]) if len(pile) > keep else list(pile)
+        for c in pile:
+            if c in hand: p.hand.append(c); p.seen_names.add(c.name)
+            else: p.gy.append(c)
+        p.stats['tutored'] += 1
+        log(f'    {NAME(p)} gets {", ".join(c.name for c in hand)}'
+            + (f'; {NAME(opp)} bins {", ".join(c.name for c in pile if c not in hand)}' if opp else ''), g)
+        return
     best = None
     for pl in combinations(pool, k):
         r = result(pl)
@@ -2109,6 +2267,7 @@ def pile_tutor(g, p, n, keep):
 def jeskas_will(g, p):
     """Choose one (both if you control your commander): add {R} for each card in target opponent's hand;
     exile the top three cards of your library, you may play them this turn."""
+    if human_choice(g, p) is not None: return importlib.import_module('commander_sim.play.cards').jeskas_will(g, p)
     opps = g.opps(p)
     most = max((len(q.hand) for q in opps), default=0)
     both = commander_out(p)
@@ -2208,6 +2367,12 @@ def agent_take(g, a, p, c):
 
 def tutor_to_top(g, p):
     from commander_sim import ais
+    hc = human_choice(g, p)
+    if hc is not None:
+        got = hc.search(g, p, ais.TUTOR_OK['any'], 1, 'Search your library for a card to put on top')
+        lose_life(g, p, 2, p)
+        for c in got: p.library.append(c); p.stats['tutored'] += 1
+        return
     p.to_top = True
     try:
         name = ais.tutor_pick(g, p, 'any')

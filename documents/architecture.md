@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (189 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (376 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -902,6 +902,29 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (189 tests, abou
 | `test_pool_sampling.py` | Seat drawing, pairing and reproducibility. |
 | `test_validator.py` | Deck validation rules. |
 | `test_my_decks.py` | Your deck files parse to the recorded lists (`tests/fixtures/my_decks_parsed.json`). |
+| `test_sim_guard.py` | Seeded games play out exactly as recorded (`tests/fixtures/sim_guard.json`). |
+| `test_play.py` | Practice mode: sessions, events, the seat's view, the controller. |
+| `test_play_mana.py` | Practice mode's mana pool. |
+| `test_play_turn.py` | Practice mode's main phase and the rules check. |
+| `test_play_abilities.py` | Practice mode's targets and activated abilities. |
+| `test_play_combat.py` | Practice mode's attacks and blocks. |
+| `test_play_respond.py` | Practice mode's priority on other players' turns. |
+| `test_play_choices.py` | Practice mode's mulligans, discards, sacrifices, tutors and scry. |
+| `test_play_sauron.py` | Practice mode, Sauron's card-specific choices. |
+| `test_play_seph.py` | Practice mode, Sephiroth's and Marchesa's graveyard cards. |
+| `test_play_cards.py` | Practice mode, your decks' activated abilities by the rules (`play/cards.py`). |
+| `test_play_hand.py` | Practice mode, alternative casts from hand and copying spells (`play/cards.py`). |
+| `test_play_veyran.py` | Practice mode, choices inside Veyran's spells. |
+| `test_play_marchesa.py` | Practice mode, Marchesa's cards and the sacrifice outlets. |
+| `test_play_server.py` | Practice mode's browser server and event stream. |
+| `test_determinism.py` | Seeded games independent of memory layout (hashing, no address reuse). |
+| `test_play_undo.py` | Practice mode's Undo by replay. |
+| `test_play_hint.py` | Practice mode's Hint. |
+| `test_play_shadow.py` | Practice mode's AI comparison log. |
+| `test_play_review.py` | Practice mode's review and "Try it". |
+| `test_play_save.py` | Practice mode's saved games. |
+| `test_play_images.py` | Practice mode's card image lookup, download and cache. |
+| `test_play_catalog.py` | Practice mode's setup screen data. |
 
 `tests/table.py` builds a position for a rule test: seat decks, empty the hands, put chosen cards in hand or onto the
 battlefield, then drive the engine directly.

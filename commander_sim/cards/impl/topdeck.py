@@ -52,6 +52,8 @@ def look(p, n):
 def scry(g, p, n, to='bottom'):
     """scry n (to='bottom') or surveil n (to='gy'): keep the good cards on top in the best order"""
     if n <= 0: return
+    hc = E.human_choice(g, p)
+    if hc is not None: return hc.scry(g, p, n, to)
     top = look(p, n)
     keep = [c for c in top if desire(g, p, c) >= KEEP]
     rest = [c for c in top if c not in keep]

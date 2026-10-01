@@ -26,6 +26,43 @@ STATS = {'decisions': 0, 'playouts': 0, 'changed': 0, 'cut': 0, 'max_work': 0, '
 CUTS = []               # where playouts ran out of steps: (deck, round, innermost frames), first few only
 
 _SHARED = None
+LAST_SCORES = []        # the last main-phase decision's candidates and their mean scores (practice mode's Hint reads it)
+
+
+class Tape:
+    """practice mode: the look-ahead decisions of one game, in order. Undo replays a game from its seed with the same
+    answers; the AI's decisions come off the tape instead of being searched again (the same seed and answers would
+    give the same decisions, only slowly). Each entry: (kind, result, work booked to the game)."""
+    def __init__(s):
+        s.entries, s.pos = [], 0
+
+    def replaying(s):
+        return s.pos < len(s.entries)
+
+    def take(s, kind):
+        e = s.entries[s.pos]; s.pos += 1
+        if e[0] != kind: raise RuntimeError(f'search tape out of step: {e[0]} recorded, {kind} asked')
+        return e
+
+    def put(s, kind, result, work):
+        s.entries.append((kind, result, work)); s.pos = len(s.entries)
+
+    def cut(s, n):
+        """forget everything from entry n on (the decisions after an undone answer)"""
+        del s.entries[n:]; s.pos = 0
+
+
+def _taped(g, kind, compute):
+    """run search `compute` for real game g, or take its result off g's tape (practice mode's Undo)"""
+    tape = getattr(g, 'search_tape', None)
+    if tape is not None and tape.replaying():
+        _, result, work = tape.take(kind)
+        g.search_work = getattr(g, 'search_work', 0) + work
+        return result, True
+    before = getattr(g, 'search_work', 0)
+    result = compute()
+    if tape is not None: tape.put(kind, result, getattr(g, 'search_work', 0) - before)
+    return result, False
 
 
 def enabled(g, p):
@@ -83,10 +120,18 @@ def clone(g, want_memo=False):
     once-per-turn flags) are re-keyed to the copies; caches are dropped."""
     memo = dict(_shared())
     saved_log, g.log = g.log, None
+    saved_ctl = g.__dict__.pop('controllers', None)          # practice mode: in a copy the AI plays every seat
+    saved_alive = g.__dict__.pop('alive_objs', None)         # the game's objects kept alive (engine.py): not copied
+    saved_tape = g.__dict__.pop('search_tape', None)
     try:
         g2 = copy.deepcopy(g, memo)
     finally:
         g.log = saved_log
+        if saved_ctl is not None: g.controllers = saved_ctl
+        if saved_alive is not None: g.alive_objs = saved_alive
+        if saved_tape is not None: g.search_tape = saved_tape
+    g2.alive_objs = list(memo.values())                     # the copy's objects outlive the copy's own changes
+    for q in g2.players: q.__dict__.pop('pool', None)       # a copy's human seat pays like the AI, from its lands
     for obj in [g2] + list(g2.players):
         for k, v in list(vars(obj).items()):
             if isinstance(v, dict) and v: setattr(obj, k, _remap_dict(v, memo))
@@ -216,6 +261,18 @@ def _find(opts, label, n):
 
 def choose(g, p, post, opts):
     """pick a main-phase play by look-ahead; None to let the heuristic choose"""
+    if getattr(g, 'search_tape', None) is None: return _choose(g, p, post, opts)
+    def keyed():
+        o = _choose(g, p, post, opts)
+        return None if o is None else (o[1], sum(1 for x in opts[:opts.index(o)] if x[1] == o[1]))
+    real = [o for o in opts if o[2] is not None]
+    if not real: return None
+    res, replayed = _taped(g, 'main', keyed)
+    if replayed: _decision_seed(g, p.key, len(p.hand), len(p.perms))
+    return None if res is None else _find(opts, res[0], res[1])
+
+
+def _choose(g, p, post, opts):
     from commander_sim.ai import brain
     real = [o for o in opts if o[2] is not None]
     if not real: return None
@@ -227,35 +284,44 @@ def choose(g, p, post, opts):
         n = sum(1 for x in opts[:opts.index(o)] if x[1] == o[1])
         keyed.append((o, o[1], n))
     base_seed = _decision_seed(g, p.key, len(p.hand), len(p.perms))
-    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
     scores = {id(o): 0.0 for o in cands}
-    try:
-        for r in range(ROLLOUTS):
-            for o, label, n in keyed:
-                rng = random.Random(base_seed * 31 + r)
-                g2 = clone(g)
-                _start(g2, g)
-                p2 = g2.players[g.players.index(p)]
-                determinize(g2, p2, rng)
-                g2.rng = random.Random(rng.random())
-                E.CUR_G = g2
-                err = None
-                try:
-                    o2 = _find(brain.main_options(g2, p2, post), label, n)
-                    if o2 is None: scores[id(o)] -= 50.0; continue
-                    if o2[2] is not None:
-                        if not o2[2](): scores[id(o)] -= 50.0; continue
-                        brain.main(g2, p2, post)        # the rest of this phase, heuristically
-                    play_on_after_phase(g2, p2, post)
-                except E.OutOfWork as e:
-                    err = e
-                scores[id(o)] += evaluate(g2, p2)
-                _done(g2, err)
-    finally:
-        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
+    for r in range(ROLLOUTS):
+        for o, label, n in keyed:
+            scores[id(o)] += playout_main(g, p, post, label, n, base_seed, r)
     best = max(cands, key=lambda o: scores[id(o)])
     if best is not max(opts, key=lambda o: o[0]): STATS['changed'] += 1
+    LAST_SCORES[:] = [(o[1], scores[id(o)] / ROLLOUTS) for o in cands]     # for practice mode's Hint
     return best
+
+
+def playout_main(g, p, post, label, n, base_seed, r):
+    """one playout of main-phase option (label, n-th of that label) for p in game g: copy r of the decision seeded
+    base_seed. Returns the score of the position it reaches (an option that can't be played: -50)"""
+    from commander_sim.ai import brain
+    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
+    try:
+        rng = random.Random(base_seed * 31 + r)
+        g2 = clone(g)
+        _start(g2, g)
+        p2 = g2.players[g.players.index(p)]
+        determinize(g2, p2, rng)
+        g2.rng = random.Random(rng.random())
+        E.CUR_G = g2
+        err = None
+        try:
+            o2 = _find(brain.main_options(g2, p2, post), label, n)
+            if o2 is None: return -50.0
+            if o2[2] is not None:
+                if not o2[2](): return -50.0
+                brain.main(g2, p2, post)        # the rest of this phase, heuristically
+            play_on_after_phase(g2, p2, post)
+        except E.OutOfWork as e:
+            err = e
+        v = evaluate(g2, p2)
+        _done(g2, err)
+        return v
+    finally:
+        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
 
 
 def play_on_after_phase(g2, p2, post):
@@ -269,41 +335,64 @@ def play_on_after_phase(g2, p2, post):
 # ------------------------------------------------------------------ attacks
 def choose_attack(g, p):
     """at the first combat of p's turn: (defender index, 'filtered' | 'all' | 'none') by look-ahead"""
+    if getattr(g, 'search_tape', None) is None: return _choose_attack(g, p)
+    if not [i for i, q in enumerate(g.players) if q is not p and q.alive]: return None
+    res, replayed = _taped(g, 'attack', lambda: _choose_attack(g, p))
+    if replayed:
+        _decision_seed(g, p.key, 'atk')
+        E.log(f'      [{E.NAME(p)} attack plan by search: {res[1]} at {E.NAME(g.players[res[0]])}]', g)
+    return res
+
+
+def _choose_attack(g, p):
     opps = [i for i, q in enumerate(g.players) if q is not p and q.alive]
     if not opps: return None
     cands = [(i, m) for i in opps for m in ('filtered', 'all')] + [(opps[0], 'none')]
     base_seed = _decision_seed(g, p.key, 'atk')
-    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
     scores = {c: 0.0 for c in cands}
-    try:
-        for r in range(ROLLOUTS):
-            for c in cands:
-                rng = random.Random(base_seed * 31 + r)
-                g2 = clone(g)
-                _start(g2, g)
-                p2 = g2.players[g.players.index(p)]
-                determinize(g2, p2, rng)
-                g2.rng = random.Random(rng.random())
-                E.CUR_G = g2
-                g2.forced_attack = c
-                g2.step = 'combat'
-                err = None
-                try:
-                    play_on(g2, p2)
-                except E.OutOfWork as e:
-                    err = e
-                scores[c] += evaluate(g2, p2)
-                _done(g2, err)
-    finally:
-        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
+    for r in range(ROLLOUTS):
+        for c in cands:
+            scores[c] += playout_attack(g, p, c, base_seed, r)
     best = max(cands, key=lambda c: scores[c])
     E.log(f'      [{E.NAME(p)} attack plan by search: {best[1]} at {E.NAME(g.players[best[0]])}]', g)
     return best
 
 
+def playout_attack(g, p, c, base_seed, r):
+    """one playout of attack plan c = (defender index, 'filtered' | 'all' | 'none') for p in game g"""
+    saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
+    try:
+        rng = random.Random(base_seed * 31 + r)
+        g2 = clone(g)
+        _start(g2, g)
+        p2 = g2.players[g.players.index(p)]
+        determinize(g2, p2, rng)
+        g2.rng = random.Random(rng.random())
+        E.CUR_G = g2
+        g2.forced_attack = c
+        g2.step = 'combat'
+        err = None
+        try:
+            play_on(g2, p2)
+        except E.OutOfWork as e:
+            err = e
+        v = evaluate(g2, p2)
+        _done(g2, err)
+        return v
+    finally:
+        E.CUR_G, E.LAST_COUNTER, E.PAY_FOR = saved
+
+
 # ------------------------------------------------------------------ counterspells
 def choose_counter(g, q, p, c, ctx, zone):
     """q may counter p's spell c (cast in p's main phase): True to counter, by look-ahead to the end of q's next turn"""
+    if getattr(g, 'search_tape', None) is None: return _choose_counter(g, q, p, c, ctx, zone)
+    res, replayed = _taped(g, 'counter', lambda: _choose_counter(g, q, p, c, ctx, zone))
+    if replayed: _decision_seed(g, q.key, 'ctr')
+    return res
+
+
+def _choose_counter(g, q, p, c, ctx, zone):
     base_seed = _decision_seed(g, q.key, 'ctr')
     saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
     scores = {True: 0.0, False: 0.0}
