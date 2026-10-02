@@ -140,6 +140,17 @@ class Server(unittest.TestCase):
         self.assertEqual(game['tools'], {'hint': False, 'undo': True, 'compare': True})
         self.call('POST', '/api/quit', {})
 
+    def test_auto_pass(self):
+        self.assertEqual(self.call('POST', '/api/new', {'deck': 'zur', 'tier': 't2', 'autopass': 'never'})[0], 400)
+        self.call('POST', '/api/new', {'deck': 'zur', 'tier': 't2', 'seed': 3, 'ai': 'adaptive', 'images': False,
+                                       'autopass': 'all'})
+        self.wait_for(lambda e: e['kind'] == 'request')
+        self.assertEqual(json.loads(self.call('GET', '/api/state')[2])['game']['autopass'], 'all')
+        self.assertEqual(self.call('POST', '/api/autopass', {'mode': 'stack'})[0], 200)
+        self.assertEqual(json.loads(self.call('GET', '/api/state')[2])['game']['autopass'], 'stack')
+        self.assertEqual(self.call('POST', '/api/autopass', {'mode': 'sometimes'})[0], 409)
+        self.call('POST', '/api/quit', {})
+
     def test_a_game_from_the_browser(self):
         st, _, body = self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 7, 'ai': 'adaptive', 'images': False})
         self.assertEqual(st, 200)

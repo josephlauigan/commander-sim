@@ -1,6 +1,6 @@
 # The stack: design
 
-Status: phases 1-4 built 2026-10-02 (spells, activated abilities and triggered abilities on the stack, responses of any depth, priority in every step); phases 5-6 to come. Replaces the engine's fixed response windows with Magic's stack and priority,
+Status: phases 1-6 built 2026-10-02 (spells, activated abilities and triggered abilities on the stack, responses of any depth, priority in every step, look-ahead copies mid-stack, the practice page's stack panel and auto-pass). The results tables have not been re-measured yet. Replaces the engine's fixed response windows with Magic's stack and priority,
 for simulations and practice mode alike (one engine).
 
 ## Goal
@@ -116,6 +116,18 @@ so it resolves correctly later.
 - The AI passes in these steps: its instant-speed plays keep their timing (the end of the turn before its own, and
   answers on the stack), so simulations are unchanged by this phase.
 - A creature whose blocker leaves combat stays blocked: no damage to the player unless it has trample.
+
+### How phases 5 and 6 were built
+
+- **The look-ahead.** A copied game keeps its waiting triggers and the trigger items on its stack (each item carries
+  its `Trigger`); `settle_stack` resolves them in the copy before `play_on` continues the turn. A countered ability
+  or trigger moves no card. Simulation speed is unchanged (Zur 6,000 games in 36s, Sephiroth 3,000 in 59s, as before
+  the stack), because a round of priority only happens when someone could answer.
+- **The practice page.** The stack panel shows each item's card, who controls it, what an ability or trigger does and
+  its target. *Stop* in the header (and on the setup screen) is the auto-pass setting; a change is kept in the
+  session's log against the answer it applies from, so Undo and saved games replay it exactly. Your simultaneous
+  triggers are ordered with a choice ("which resolves first?").
+- **Not done:** re-measuring the results tables (every recorded result shifts a little) waits for a go-ahead.
 
 ### The AI's decisions with priority
 

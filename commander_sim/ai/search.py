@@ -142,7 +142,7 @@ def clone(g, want_memo=False):
         for m in q.perms:
             if m.data: m.data = _remap_dict(m.data, memo)
     g2.hook_cache = None; g2.static_idx = None; g2.coat_cache = None; g2.cur_cast = None
-    g2.trig_queue = []; g2.resolving = 0; g2.trig_mode = None; g2.trig_current = None   # pending triggers stay behind
+    g2.resolving = 0; g2.trig_mode = None; g2.trig_current = None   # pending triggers come along (play_on settles them)
     return (g2, memo) if want_memo else g2
 
 
@@ -165,7 +165,8 @@ def play_on(g2, p2, stop_rounds=20, active=None):
     from commander_sim import ais
     from commander_sim.ai import brain
     act = active or p2
-    if act.alive: ais.continue_turn(g2, act, g2.step)
+    if g2.stack or getattr(g2, 'trig_queue', None): E.settle_stack(g2)       # copied mid-stack: finish it first
+    if act.alive and not g2.over: ais.continue_turn(g2, act, g2.step)
     ps = g2.players
     k = ps.index(act)
     left = HORIZON

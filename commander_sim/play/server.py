@@ -91,7 +91,7 @@ class Hub:
                            opponents=opts.get('opponents'), profile=opts.get('profile', 'loose'),
                            ai=opts.get('ai', 'lookahead'), views=True,
                            compare=bool((opts.get('tools') or {}).get('compare', True)), seats=opts.get('seats'),
-                           partner=opts.get('partner'))
+                           partner=opts.get('partner'), autopass=opts.get('autopass') or 'respond')
         with s.cond:
             s.game_no += 1
             s.session, s.events, s.pending, s.views, s.images = sess, [], {}, {}, {}
@@ -350,6 +350,14 @@ class Hub:
         if seat is None: return 'You have no seat in this game.'
         return sess.review(seat)
 
+    def set_autopass(s, seat, mode):
+        """when this seat's person gets priority, from their next decision on (play.human.autopass)"""
+        with s.cond:
+            sess = s.session
+            if sess is None: return 'There is no game running.'
+            if seat is None: return 'You have no seat in this game.'
+            return sess.set_autopass(seat, mode)
+
     def hint(s, seat):
         with s.cond:
             sess = s.session
@@ -365,7 +373,7 @@ class Hub:
             if sess is not None and seat is not None:
                 game = {'deck': sess.deck, 'tier': sess.tier, 'seed': sess.seed, 'seats': sess.seats,
                         'profile': sess.profile, 'ai': sess.ai, 'tools': s.tools, 'you': seat, 'humans': sess.humans,
-                        'names': dict(sess.names)}
+                        'names': dict(sess.names), 'autopass': sess.autopass_of(seat, at=10 ** 9)}
             p = s.proposal
             return {'game': game, 'busy': sess is not None and seat is None, 'host': local, 'lan': s.lan,
                     'lobby': s.lobby_info(local), 'view': s.views.get(seat), 'pending': s.pending.get(seat),
@@ -527,6 +535,9 @@ class Handler(BaseHTTPRequestHandler):
                 return s._send(400, {'error': 'seats: four deck keys in turn order'})
             if body.get('seat') is not None and not isinstance(body['seat'], int):
                 return s._send(400, {'error': 'seat: 1 to 4'})
+            from commander_sim.play.human import AUTOPASS
+            if body.get('autopass') is not None and body['autopass'] not in AUTOPASS:
+                return s._send(400, {'error': f'autopass: one of {", ".join(AUTOPASS)}'})
             if body.get('two'):
                 if not s.hub.lan:
                     return s._send(409, {'error': 'To play with a friend, start the server with --lan: '
@@ -559,6 +570,8 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == '/api/load':
             why, code = s.hub.load(body.get('name'), body.get('images', True) is not False, s.token())
             return s._reply(why, {'code': code, 'addresses': lan_addresses()} if code else None)
+        if url.path == '/api/autopass':
+            return s._reply(s.hub.set_autopass(s.seat(), body.get('mode')))
         if url.path == '/api/hint':
             res = s.hub.hint(s.seat())
             return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, res)

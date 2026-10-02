@@ -1618,7 +1618,7 @@ def _resolve_batch(g, batch):
     for t in real:
         cd = getattr(t.src, 'cd', t.src)
         nm = getattr(cd, 'name', None) or getattr(t.src, 'name', 'A token')
-        it = StackItem(t.controller, cd, {'source': t.src}, 'trigger', t.imp if t.imp is not None else 3, {},
+        it = StackItem(t.controller, cd, {'source': t.src, 'trigger': t}, 'trigger', t.imp if t.imp is not None else 3, {},
                        generic=False, kind='trigger', name=f'{nm}: {t.name or "trigger"}')
         g.stack.append(it); g.stack_pushes = getattr(g, 'stack_pushes', 0) + 1
         items.append((t, it))
@@ -1891,15 +1891,19 @@ def resolve_counter(g, q, ctr, target):
 
 
 def settle_stack(g):
-    """the look-ahead: finish a copied game's stack at once (no more responses), top first"""
+    """the look-ahead: finish a copied game's stack at once (no more responses), top first, then the triggers
+    waiting to go on it"""
     while g.stack and not g.over:
         it = g.stack.pop()
         p, c = it.controller, it.card
         if it.countered:
+            if it.kind != 'spell': continue
             if c is p.cmd: p.cmd_in_zone = True
             elif it.zone == 'gy' or it.ctx.get('exile_after'): p.exile.append(c)
             elif not c.land: p.gy.append(c)
             continue
+        if it.kind == 'trigger' and it.ctx.get('trigger') is not None:
+            _call(g, it.ctx['trigger']); check_state(g); continue
         if it.kind != 'spell': continue             # an ability: its effect lives with the code that activated it
         tgt = it.ctx.get('counter')
         if tgt is not None:
@@ -1908,6 +1912,7 @@ def settle_stack(g):
         if c.perm and not it.generic: enter(g, p, c, was_cast=True); continue
         resolve(g, p, c, it.ctx, it.zone)
         check_state(g)
+    if getattr(g, 'trig_queue', None) and not g.over: flush_triggers(g)
 
 
 def counter_side_effects(g, q, p, ctr):

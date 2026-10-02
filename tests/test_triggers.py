@@ -69,6 +69,26 @@ class Triggers(unittest.TestCase):
         out = E._order_triggers(g, [ta, tb])
         self.assertIs(out[-1], tb)                              # pushed last: on top, resolves first
 
+    def test_a_copied_game_keeps_its_waiting_triggers(self):
+        from commander_sim.ai import search
+        g = table('seph', 'veyran', 'sauron'); s = g.players[0]
+        g.resolving = 1
+        perm(g, s, 'Archon of Cruelty')                         # its trigger waits for the spell resolving
+        g2 = search.clone(g)
+        E.settle_stack(g2)                                      # the look-ahead finishes the copy's stack
+        self.assertEqual(len(drained(g2, g2.players[0])), 1)
+        self.assertEqual(drained(g, s), [])                     # the real game is untouched
+        self.assertEqual(len(g.trig_queue), 1)
+
+    def test_a_countered_trigger_moves_no_card(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        m = perm(g, s, 'Grave Titan')
+        it = E.StackItem(s, m.cd, {'source': m}, 'trigger', 3, {}, generic=False, kind='trigger', name='x')
+        it.countered = True
+        g.stack.append(it)
+        E.settle_stack(g)
+        self.assertIn(m, s.perms); self.assertNotIn(m.cd, s.gy)
+
     def test_a_converted_hook_has_its_window(self):
         from commander_sim.cards import cardimpl as CI
         table('zur', 'veyran')

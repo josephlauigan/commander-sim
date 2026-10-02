@@ -84,7 +84,7 @@ class RecordingController(HumanController):
 
     @property
     def autopass(s):
-        return s.session.autopass.get(s.seat, 'respond')
+        return s.session.autopass_of(s.seat)
 
 
 class EventLog(list):
@@ -119,7 +119,8 @@ class Session:
         s.deck, s.tier, s.profile, s.ai, s.step, s.max_rounds = deck, tier, profile, ai, step, max_rounds
         s.partner = partner
         s.humans = [deck] + ([partner] if partner else [])       # the seats people play
-        s.autopass = {k: autopass for k in s.humans}             # when each person gets priority (play.human.autopass)
+        s.autopass_start = {k: autopass for k in s.humans}       # when each person gets priority (play.human.autopass)
+        s.autopass_log = []                # changes during the game: (from answer number, seat, mode)
         s.views = views                    # a view of the table with every action (the browser plays them back)
         s.compare = compare                # the AI comparison log (shadow.py), for the review after the game
         from commander_sim.play.shadow import Shadow
@@ -258,6 +259,30 @@ class Session:
         """engine thread: post a request and wait for the human's answer"""
         return s.human.ask(req)
 
+    # ------------------------------------------------------------------ auto-pass
+    def autopass_of(s, seat, at=None):
+        """seat's auto-pass setting once `at` answers have been given (now, by default). A change made while the
+        game waits on decision n applies from answer n + 1, so a replay (Undo, a saved game) stops where it did"""
+        n = len(s.answers) if at is None else at
+        mode = s.autopass_start.get(seat, 'respond')
+        for i, k, m in s.autopass_log:
+            if k == seat and i <= n: mode = m
+        return mode
+
+    def set_autopass(s, seat, mode):
+        from commander_sim.play.human import AUTOPASS
+        if mode not in AUTOPASS: return f'auto-pass: one of {", ".join(AUTOPASS)}'
+        if seat not in s.humans: return 'You have no seat in this game.'
+        s.autopass_log.append((len(s.answers) + 1, seat, mode))
+        return None
+
+    def _autopass_rewind(s, to):
+        """a rewind to answer `to`: the replay keeps the settings it had; the setting now applies from there on"""
+        latest = {k: s.autopass_of(k, at=10 ** 9) for k in s.humans}
+        s.autopass_log = [e for e in s.autopass_log if e[0] <= to]
+        for k, m in latest.items():
+            if s.autopass_of(k, at=to + 1) != m: s.autopass_log.append((to + 1, k, m))
+
     def undo(s, n=1, seat=None):
         """take back your last n answers (with two players, any of the other person's made since go too): the game
         restarts from its seed and replays the rest (the AI's look-ahead decisions come off the tape), then asks the
@@ -277,6 +302,7 @@ class Session:
         `to`); the decisions after are live again. Returns None, or why not"""
         if not isinstance(to, int) or not 0 <= to <= len(s.answers): return 'No such decision.'
         keep, cut = s.answers[:to], s.marks[to] if to < len(s.marks) else len(s.tape.entries)
+        s._autopass_rewind(to)
         s._restarting = True
         for c in s.ctls.values(): c.close()
         s.join(30)
@@ -322,7 +348,8 @@ class Session:
                 'profile': s.profile, 'ai': s.ai, 'max_rounds': s.max_rounds, 'answers': list(s.answers),
                 'tape': [list(e) for e in s.tape.entries],
                 'shadow': [e.saved() for e in s.shadow.entries if e.job is None],   # unfinished comparisons don't save
-                'finished': s.finished, 'round': s.game.round if s.game is not None else 0}
+                'finished': s.finished, 'round': s.game.round if s.game is not None else 0,
+                'autopass': dict(s.autopass_start), 'autopass_log': [list(e) for e in s.autopass_log]}
         if s.partner:
             data['partner'] = s.partner
             data['answer_seats'] = list(s.answer_seats)
@@ -340,6 +367,8 @@ class Session:
         s.tape.entries = [(k, tuple(r) if isinstance(r, list) else r, w) for k, r, w in data['tape']]
         s.shadow.entries = [Entry.from_saved(d) for d in data['shadow']]
         if s.partner: s.shadows[s.partner].entries = [Entry.from_saved(d) for d in data.get('partner_shadow', [])]
+        s.autopass_start.update(data.get('autopass') or {})
+        s.autopass_log = [tuple(e) for e in data.get('autopass_log') or []]
         s.replay = list(data['answers'])
         s.replaying = bool(s.replay)
         return s
