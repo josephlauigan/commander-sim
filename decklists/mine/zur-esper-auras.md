@@ -1,7 +1,7 @@
 # Zur the Enchanter — Esper Auras
 
 2026-10-02
-**Added 2026-10-02.** Not in the simulator yet (the simulator's decks are Sephiroth, Veyran, Sauron and Marchesa). This is a different list from the pool's Tier 5 Zur deck (`decklists/pool/t5-high-b4/zur-esper-enchantment-control.md`).
+**Added 2026-10-02.** In the simulator as deck key `zur` (`python3 -m commander_sim --deck zur --pool t3`) and in practice mode. Every card is modeled except Azorius Guildmage's second ability (countering an activated ability: the engine has no window to answer abilities). This is a different list from the pool's Tier 5 Zur deck (`decklists/pool/t5-high-b4/zur-esper-enchantment-control.md`).
 
 ## Strategy
 
@@ -101,6 +101,8 @@ The list is exactly 100 cards.
 ## Zur's fetch by board state
 
 Zur can fetch any enchantment with mana value 3 or less: everything but Prayer of Binding.
+
+**What the simulator found.** Its Zur AI weighs each fetch: a card engine by how early it is, a lock Aura by the threat it shuts down, and a power Aura by how many hits of commander damage it takes off the kill. Tested against each other, putting power on Zur sooner won about 1.5 points more per tier than taking Rhystic Study and Necropotence first. Commander damage is how this deck wins, and every turn Zur survives with Auras on it is a turn closer. Over 100 games against Tier 3 the AI fetched power Auras about 60% of the time, lock Auras about 30%, and engines about 10%. Take the engine when Zur can't connect safely yet, and power once it can.
 
 - **Early, a full table → Rhystic Study.** With a healthy life total and no pressure → **Necropotence** (free here, despite its {B}{B}{B}). **Mystic Remora** only in the first few turns, then let it go to its upkeep.
 - **A creature that must stop attacking or tapping → Arrest or Prison Sentence.** If it only needs to stop attacking and blocking → **Luminous Bonds** or **Bound in Silence**.

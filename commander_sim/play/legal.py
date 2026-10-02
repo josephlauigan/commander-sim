@@ -101,10 +101,11 @@ TGT_OK = {'c': lambda m, ty: m.creature, 'cp': lambda m, ty: m.creature or 'P' i
           'cap': lambda m, ty: m.creature or 'A' in ty or 'P' in ty, 'ce': lambda m, ty: m.creature or 'E' in ty,
           'nl': lambda m, ty: True, 'p': lambda m, ty: True, 'a': lambda m, ty: 'A' in ty,
           'cna': lambda m, ty: m.creature and 'A' not in ty, 'ae': lambda m, ty: 'A' in ty or 'E' in ty,
-          'blue': lambda m, ty: m.cd is not None and 'U' in m.cd.pips}
+          'blue': lambda m, ty: m.cd is not None and 'U' in m.cd.pips, 'ac': lambda m, ty: m.creature or 'A' in ty}
 WHAT = {'c': 'creature', 'cp': 'creature or planeswalker', 'cap': 'creature, artifact or planeswalker',
         'ce': 'creature or enchantment', 'nl': 'nonland permanent', 'p': 'permanent', 'a': 'artifact',
-        'cna': 'nonartifact creature', 'ae': 'artifact or enchantment', 'blue': 'blue permanent'}
+        'cna': 'nonartifact creature', 'ae': 'artifact or enchantment', 'blue': 'blue permanent',
+        'ac': 'artifact or creature'}
 
 
 def player_targetable(q):
@@ -128,6 +129,8 @@ def spell_targets(g, p, c):
             if 'alsoart' in t and not m.creature and 'A' not in ty: continue
             if E.untargetable(g, m) or E.protected_from(g, m, c.pips): continue
             if 'nonblack' in t and 'B' in E.colors_of(m): continue
+            if 'evil' in t and not ('E' in ty or (m.creature and E.etgh(g, m) >= 4)): continue        # Destroy Evil
+            if 'verdict' in t and m not in getattr(g, 'in_combat', ()): continue                 # Divine Verdict
             if 'mv4' in t and m.cd is not None and m.cd.cmc > 4: continue
             if 'newonly' in t and not E.entered_since_last_turn(g, p, m): continue
             if c.name == 'Fatal Push' and m.cd is not None and m.cd.cmc > 2:
@@ -226,6 +229,7 @@ def gy_mode(g, p, c):
         from commander_sim.play import cards
         if cards.granted_flashback(g, p, c): fb = E.cost_of(p, c)       # Flashback (the card): its mana cost
     if fb == 'sac3': return ('sac3', 0, '')
+    if c.name == 'Demonic Embrace' and p.hand and p.life > 3: return ('embrace', 1, 'BB')      # 3 life and a discard too
     if fb:
         gen, pips = fb if isinstance(fb, tuple) else E.parse_cost(fb)
         return ('flashback', gen, pips)

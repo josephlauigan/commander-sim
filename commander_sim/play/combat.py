@@ -15,6 +15,7 @@ def can_attack(g, p, m):
     if not m.creature or m.tapped or m.phased or m not in p.perms: return False
     if m.sick and not (p.haste_all or ais.has_haste(g, m)): return False
     if ais.kw(m, 'defender'): return False
+    if getattr(g, 'auras', None) and E.CI.locked(g, m, 'pacify'): return False      # Arrest, Luminous Bonds
     return True
 
 

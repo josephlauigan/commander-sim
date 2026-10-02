@@ -10,8 +10,8 @@ from commander_sim.decks import DECKS, P as MINE_DIR
 
 RESULTS = os.path.join(ROOT, 'decklists', 'pool', 'pool-results.md')
 FILES = {'seph': 'sephiroth-phyrexian-reanimator.md', 'veyran': 'veyran-izzet-spellslinger.md',
-         'sauron': 'sauron-grixis-amass.md', 'marchesa': 'marchesa-grixis-recursion.md'}
-ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'marchesa': 'marchesa'}
+         'sauron': 'sauron-grixis-amass.md', 'marchesa': 'marchesa-grixis-recursion.md', 'zur': 'zur-esper-auras.md'}
+ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'marchesa': 'marchesa', 'zur': 'zur'}
 
 
 def display_name(key):

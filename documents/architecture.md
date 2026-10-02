@@ -36,8 +36,9 @@ section 3 places them elsewhere. Commands run from the repository root.
 The question the simulator answers: **how often does one of my Commander decks win a four-player game against
 opponents of a given power level?**
 
-- **Your decks** are the three lists in `decklists/mine/`: Sephiroth (Atraxa reanimator, key `seph`), Veyran
-  (Izzet spellslinger, `veyran`) and Sauron (Grixis amass, `sauron`).
+- **Your decks** are the five lists in `decklists/mine/`: Sephiroth (Atraxa reanimator, key `seph`), Veyran
+  (Izzet spellslinger, `veyran`), Sauron (Grixis amass, `sauron`), Marchesa (Grixis recursion, `marchesa`) and Zur
+  (Esper Auras, `zur`).
 - **The opponents** are 25 outside decks in `decklists/pool/`, five in each of five tiers that follow the official
   Commander brackets:
 
@@ -128,7 +129,7 @@ deck files, the Scryfall cache and the audit notes. `python3 -m commander_sim` r
 | `compare.py` | Command-line entry point. Parses arguments, sets the AI mode, runs chunks of seeds on a process pool, draws the progress bar, holds the metric definitions and report printers. |
 | `poolmode.py` | Everything measured against the pools: one deck vs one tier, paired A/B, the deck × tier matrix, `--analyze`, `--trace`, and the calibration checks. |
 | `pools.py` | Loads the 25 pool deck files, validates them (size, singleton, colour identity, bans, Game Changers per tier), registers them for play, and draws seats for a game. |
-| `decks.py` | Loads your four deck files from `decklists/mine/` into `DECKS`. |
+| `decks.py` | Loads your five deck files from `decklists/mine/` into `DECKS`. |
 | `update_deck.py` | Replaces a deck's list with a pasted one: validates it, rewrites the file's list sections, records the deck-guard fixture, and reports what changed and how the new cards are modeled. |
 | `tools/searchtest.py`, `tools/swaptest.py`, `tools/linecov.py` | Paired tests for pool decks (with and without look-ahead, and with list swaps), and the test suite's line coverage. |
 | `pool_audit.py` | How faithfully each card is modeled, per deck. |
@@ -138,7 +139,7 @@ deck files, the Scryfall cache and the audit notes. `python3 -m commander_sim` r
 | Module | Role |
 |---|---|
 | `engine.py` | The game state classes (`CD`, `Land`, `Perm`, `Player`, `Game`) and the rules: mana, costs, casting, counter windows, resolution, entering and leaving the battlefield, removal, wipes, tutors, drawing, life loss, elimination. |
-| `ais.py` | Game setup and mulligans, the turn loop and its steps, combat, upkeep and end step, lands, and the hand-written plans of your four decks (priority functions, reanimation, combos, protection). |
+| `ais.py` | Game setup and mulligans, the turn loop and its steps, combat, upkeep and end step, lands, and the hand-written plans of your five decks (priority functions, reanimation, combos, protection). |
 
 **AI** (`commander_sim/ai/`)
 
@@ -466,7 +467,7 @@ and battlefield. It is then combined with q's open mana.
 
 **Utilities.** `card_utility` starts from the deck's own priority for the card and adjusts it for the situation:
 
-- the priority comes from `seph_prio`, `veyran_prio`, `sauron_prio` or `marchesa_prio` for your decks, or `pool_ai.generic_prio` plus
+- the priority comes from `seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio` or `zur_prio` for your decks, or `pool_ai.generic_prio` plus
   per-deck plans for pool decks, as a 0–90 score divided by 10;
 - ramp is worth less late in the game;
 - card draw is worth less when under pressure;
@@ -491,9 +492,9 @@ tiny scoring error from deciding every game the same way.
 
 ### Your decks vs pool decks
 
-Your four decks keep hand-written plans in `ais.py`:
+Your five decks keep hand-written plans in `ais.py` (Zur's in `cards/impl/zur.py`):
 
-- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio`);
+- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio`, `zur_prio`);
 - reanimation targets;
 - combo checks (Veyran's kitten combo, Sauron's Sword + Aggravated Assault);
 - protection choices;
@@ -668,6 +669,7 @@ A per-game cache maps each event to its listeners.
 | `cards/impl/partials.py` | Completing cards the audit listed as Partial. |
 | `cards/impl/mine.py` | Cards in your decks that need more than tags: the Ring, equipment, lands and full card text. |
 | `cards/impl/marchesa.py` | Marchesa's return trigger, sacrifice values and AI plays, and the cards of her deck that need code. |
+| `cards/impl/zur.py` | Your Zur deck: Auras that lock a permanent down while attached (Arrest, Encrust, Kasmina's Transmutation ...; removal kinds `arrest`, `pacify`, `encrust`, `kasmina`), Zur's attack trigger choosing an enchantment by board state, the deck's other cards, and its AI priorities and responses. |
 
 `cardimpl.load()` imports these modules in a fixed order. A later registration for the same card and event
 replaces an earlier one.
@@ -887,13 +889,14 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (423 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (451 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
 |---|---|
 | `test_rules.py` | Core rules on hand-built positions: mana, commander tax, state-based losses, counterspells, removal, wipes, tutors, mulligans, combat keywords. |
-| `test_my_cards.py` | Key cards of your four decks against their Oracle text. |
+| `test_my_cards.py` | Key cards of your decks against their Oracle text. |
+| `test_zur.py` | Your Zur deck: lock Auras, Zur's fetch, its other cards, and practice-mode choices. |
 | `test_land_entry.py` | Lands' enters-tapped conditions. |
 | `test_search.py` | The look-ahead AI: independent copies, re-dealt hidden hands, evaluation bounds, a whole reproducible decision. |
 | `test_dsl.py` | The ability compiler and interpreter. |

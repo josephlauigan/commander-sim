@@ -11,12 +11,17 @@ from commander_sim.cards.pool_cards import card, note
 AURA = {}          # name -> spec
 
 
+ON_DETACH = {}      # Aura name -> fn(g, aura, host): the Aura left the battlefield (Kasmina's Transmutation)
+ON_HOST_DIES = {}   # Aura name -> fn(g, aura, host): the creature it enchanted died (Gift of Immortality)
+ZUR_HOST = None     # your Zur deck's own Auras go on Zur (cards/impl/zur.py)
+
+
 def aura(name, pow=0, tgh=0, kws=(), bonus=None, umbra=False, prot='', target='own', on_etb=None, host_ok=None,
-         back_to_hand=None, status=('Full', ''), tags=''):
+         back_to_hand=None, status=('Full', ''), tags='', host_pick=None):
     """register an Aura: static bonus / keywords / protection for the enchanted creature, umbra armor, an ETB
     effect, where it goes when it leaves (back_to_hand: 'always' like Rancor, 'host_dies' like Angelic Destiny)"""
     AURA[name] = dict(pow=pow, tgh=tgh, kws=frozenset(kws), bonus=bonus, umbra=umbra, prot=prot, target=target,
-                      on_etb=on_etb, host_ok=host_ok, back=back_to_hand)
+                      on_etb=on_etb, host_ok=host_ok, back=back_to_hand, host_pick=host_pick)
     CI.HOOKS.setdefault(name, {})['etb'] = _aura_etb
     card(name, tags or 'aura', types='E', dsl=[])
     note(name, *status)
@@ -40,7 +45,12 @@ def _aura_etb(g, src, p, m):
     spec = AURA[src.cd.name]
     host = getattr(g, 'attach_to', None)
     if host is None or host not in host.owner.perms:
-        host = own_host(g, src.owner, spec, src)
+        host = None
+        if human_choice(g, src.owner) is not None: host = human_aura_host(g, src.owner, spec, src)
+        elif spec.get('host_pick'): host = spec['host_pick'](g, src.owner, spec, src)
+        elif ZUR_HOST is not None and src.owner.key == 'zur': host = ZUR_HOST(g, src.owner, spec, src)
+        if host is None and human_choice(g, src.owner) is None and src.owner.key != 'zur':
+            host = own_host(g, src.owner, spec, src)
     if host is None:
         leave(g, src); src.owner.gy.append(src.cd); return
     src.attached = host
@@ -49,6 +59,19 @@ def _aura_etb(g, src, p, m):
     g.dsl_on = True
     log(f'    {src.cd.name} enchants {host.name}', g)
     if spec['on_etb']: spec['on_etb'](g, src.owner, src, host)
+
+
+def human_aura_host(g, p, spec, a):
+    """practice mode: the person picks the creature an Aura enchants (theirs, or any for an Aura that can go either way)"""
+    from commander_sim.play import legal
+    cast = getattr(g, 'last_cast_etb', False) and not getattr(g, 'aura_put', False)
+    mine = [m for m in p.perms if m.creature and not m.phased and m is not a]
+    theirs = [m for q in g.opps(p) for m in q.perms if m.creature and not m.phased] if spec['target'] != 'own' else []
+    cands = [m for m in mine + theirs if not (cast and m.owner is not p and untargetable(g, m))]
+    if not cands: return None
+    k = human_choice(g, p).choose(g, p, 'target', f'{a.cd.name}: enchant which creature?',
+                                  [legal.describe_target(g, p, m) for m in cands], cancel=None)
+    return cands[k] if k is not None else None
 
 
 def auras_on(g, m):
@@ -103,10 +126,13 @@ def aura_fall(g, m):
     """m left the battlefield: Auras attached to it go to the graveyard (or back to hand)"""
     for a in list(g.auras):
         if a is m:
-            g.auras.remove(a); continue
+            g.auras.remove(a)
+            if a.cd.name in ON_DETACH: ON_DETACH[a.cd.name](g, a, a.attached)
+            continue
         if a.attached is m:
             back = AURA[a.cd.name]['back']
             died = m not in m.owner.perms
+            if a.cd.name in ON_HOST_DIES and getattr(g, 'dying', None) is m: ON_HOST_DIES[a.cd.name](g, a, m)
             g.auras.remove(a)
             leave(g, a)
             if back == 'always' or (back == 'host_dies' and died): a.owner.hand.append(a.cd)
@@ -855,7 +881,8 @@ def _grove(g, src, p, s, post):
     def go():
         if src not in p.perms or not can_pay(g, p, 1, ''): return False
         pay(g, p, 1, ''); die(g, src, 'sac')
-        cs = [c for c in searchable(g, p) if 'E' in c.types]
+        cs = [c for c in searchable(g, p) if 'E' in c.types]          # (Aven Mindcensor: maybe none in the top four)
+        if not cs: g.rng.shuffle(p.library); return True
         c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); p.library.append(c)
         return True
     return [(0.5 if len(p.hand) > 2 else 2.0, 'Sterling Grove tutor', go)]

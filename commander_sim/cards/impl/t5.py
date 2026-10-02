@@ -299,6 +299,7 @@ ZUR_PREF = ('Necropotence', 'Ethereal Armor', 'Empyrial Armor', 'Ghostly Prison'
 @on('Zur the Enchanter', 'attack')
 def _zur(g, src, p, atk, d):
     if src not in atk: return
+    if p.key == 'zur': return CI.zur_fetch(g, src, p)          # your Zur deck (cards/impl/zur.py)
     have = {m.cd.name for m in p.perms if m.cd is not None}
     cs = [c for c in searchable(g, p) if 'E' in c.types and c.cmc <= 3 and c.name not in have]
     if not cs: return
