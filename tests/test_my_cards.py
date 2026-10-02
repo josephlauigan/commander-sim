@@ -892,5 +892,30 @@ class SauronBreach(unittest.TestCase):
         self.assertEqual(ais.tutor_pick(g, s, 'any'), 'Brain Freeze')
 
 
+
+class Phyrexian(unittest.TestCase):
+    """Phyrexian mana ({B/P}): the AI pays 2 life instead of the colour when the mana isn't there and it has more
+    than 10 life (Vraska, Betrayal's Sting: {4}{B}{B/P})"""
+    def setUp(self):
+        self.g = table('sauron', 'veyran'); self.s = self.g.players[0]
+        lands(self.s, 'Swamp', 1); lands(self.s, 'Island', 4)
+        self.c = hand(self.s, "Vraska, Betrayal's Sting")
+
+    def test_pays_life_for_the_missing_black(self):
+        from commander_sim.ai import brain
+        self.assertEqual(E.phyrexian(self.c), 'B')
+        self.assertEqual(E.cost_of(self.s, self.c), (4, 'B'))
+        brain.do_cast(self.g, self.s, self.c)
+        self.assertTrue(any(m.name == "Vraska, Betrayal's Sting" for m in self.s.perms))
+        self.assertEqual(self.s.life, 38)
+
+    def test_not_at_low_life(self):
+        self.s.life = 10
+        self.assertEqual(E.cost_of(self.s, self.c), (4, 'BB'))
+
+    def test_full_mana_when_it_has_it(self):
+        lands(self.s, 'Swamp', 1)
+        self.assertEqual(E.cost_of(self.s, self.c), (4, 'BB'))
+
 if __name__ == '__main__':
     unittest.main()

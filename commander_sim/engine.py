@@ -619,6 +619,26 @@ def total_mana(g, p, convoke=False):
 SELF_COST = {}      # pool cards whose own cost changes (Draco's domain, delve): name -> fn(g, p, c) -> generic delta
 
 
+_PHY = {}
+
+
+def phyrexian(c):
+    """the colours of c's Phyrexian mana symbols ('B' for {B/P}), from its printed mana cost"""
+    v = _PHY.get(c.name)
+    if v is None:
+        from commander_sim.cards import scryfall
+        cost = (scryfall.load_cache().get(c.name.lower()) or {}).get('mana_cost') or ''
+        v = ''.join(re.findall(r'\{([WUBRG])/P\}', cost)) or ('U' if 'phyU' in c.tags else '')
+        _PHY[c.name] = v
+    return v
+
+
+def phyrexian_life(c, pips):
+    """life a cast of c paid for Phyrexian symbols, given the pips it paid with mana (cost_of)"""
+    phy = phyrexian(c)
+    return 2 * sum(min(phy.count(col), max(0, c.pips.count(col) - pips.count(col))) for col in set(phy))
+
+
 def cost_of(p, c):
     g = CUR_G
     gen, pips = c.generic, c.pips
@@ -634,8 +654,9 @@ def cost_of(p, c):
             gen = max(0, gen - sum(1 for x in p.gy if x.instant or x.sorcery))
         if 'spectacle' in t and p.hit_turn == p.turns:
             gen, pips = 0, 'R'
-        if 'phyU' in t and p.life > 10 and 'U' in pips and not can_pay(g, p, gen, pips):
-            pips = pips.replace('U', '', 1)                # {U/P}: 2 life instead (paid by the caster)
+        for col in phyrexian(c):                           # {B/P}: 2 life instead of its colour (paid by the caster),
+            if p.life > 10 and col in pips and not can_pay(g, p, gen, pips):   # when the mana isn't there
+                pips = pips.replace(col, '', 1)
         if DSLMOD is not None: gen = max(0, gen + DSLMOD.cost_delta(g, p, c))
         if g.hooks:
             gen = max(0, gen + CI.total(g, 'cost', p, c))

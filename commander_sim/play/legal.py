@@ -1,5 +1,6 @@
 """The rules check for the human seat: is this move legal right now? Each check returns None (legal) or a one-line
 reason to show the player. Nothing here changes the game."""
+import re
 from commander_sim import engine as E
 from commander_sim.play import mana
 
@@ -33,11 +34,33 @@ def instant_speed(c):
     return c.instant or 'flash' in c.tags or 'flash' in (c.kws or ())
 
 
+def phyrexian(c):
+    """the colours of c's Phyrexian mana symbols ({B/P}: 'B'), from its printed mana cost; '' if none"""
+    return E.phyrexian(c)
+
+
 def base_cost(g, p, c):
-    """what c costs to cast (before target-dependent extras). The engine stores a few cards at the cost the AI always
-    pays; the person pays the printed cost"""
+    """what c costs to cast (before target-dependent extras), with every Phyrexian symbol counted as its mana (the
+    person chooses mana or life as they cast it: phyrexian_ways). The engine stores a few cards at the cost the AI
+    always pays; the person pays the printed cost"""
     if c.name == "Bloodchief's Thirst": return 0, 'B'           # {B}; kicker {2}{B} for a target over mana value 2
-    return E.cost_of(p, c)
+    gen, pips = E.cost_of(p, c)
+    for col in set(phyrexian(c)):                                 # the engine may have dropped one for the AI
+        while pips.count(col) < c.pips.count(col): pips += col
+    return gen, pips
+
+
+def phyrexian_ways(g, p, c, gen, pips):
+    """the ways to pay c's Phyrexian symbols you can afford now: [(life paid, pips left to pay with mana)], each
+    symbol paid with its colour or with 2 life (and you need that much life to pay it)"""
+    phy = phyrexian(c)
+    out = []
+    for k in range(len(phy) + 1):                                 # k symbols paid with life
+        left = pips
+        for col in phy[:k]: left = left.replace(col, '', 1)
+        if 2 * k > max(0, p.life) and k: continue
+        if mana.cost_problem(g, p, gen, left) is None: out.append((2 * k, left))
+    return out
 
 
 def check_cast(g, p, c, zone='hand'):
@@ -67,8 +90,9 @@ def check_cast(g, p, c, zone='hand'):
     why = cards.needs(g, p, c)
     if why: return why
     gen, pips = base_cost(g, p, c)
+    if phyrexian(c) and phyrexian_ways(g, p, c, gen, pips): return None          # mana, life, or a mix
     why = mana.cost_problem(g, p, gen, pips)
-    if why: return f"Can't cast {c.name}. {why}"
+    if why: return f"Can't cast {c.name}. {why}" + (f" Its {{{'}{'.join(x + '/P' for x in phyrexian(c))}}} can be paid with 2 life each instead." if phyrexian(c) else '')
     return None
 
 

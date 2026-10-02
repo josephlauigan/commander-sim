@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 394 tests in about a minute. To run one file, or one test:
+That's 401 tests in about a minute. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
