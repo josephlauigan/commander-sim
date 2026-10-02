@@ -1,5 +1,5 @@
 // The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
-import { el, card as cardOf, renderTable as drawTable, renderSteps } from './table.js';
+import { el, card as cardOf, renderTable as drawTable, renderSteps, fitBoards } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
 let liveFrom = 0;           // events up to this id are history replayed on load: no pop-up messages for them
@@ -28,6 +28,7 @@ function renderTable(view) {
   drawTable($('#table'), view, images);
   const row = document.querySelector('#table .passbar');
   if (row && passBtn) row.append(passBtn);
+  if (!$('#game').hidden) fitBoards($('#table'));
   renderSteps($('#steps'), view);
 }
 const card = (name, o = {}) => cardOf(images, name, Object.assign({ size: 'sm' }, o));
@@ -457,6 +458,8 @@ function setStatus(seed, seats) {
 
 let catalog = null, chosen = { deck: null, tier: 't3' };
 
+window.addEventListener('resize', () => fitBoards(document.getElementById('table')));
+
 function screen(name) {
   $('#setup').hidden = name !== 'setup';
   $('#game').hidden = name !== 'game';
@@ -466,6 +469,7 @@ function screen(name) {
   $('#undo').hidden = name !== 'game' || !tools.undo;
   $('#save').hidden = name === 'setup';
   if (name === 'setup') listSaves();
+  if (name === 'game') requestAnimationFrame(() => fitBoards($('#table')));    // hidden areas measure as zero
   $('#hint').hidden = name !== 'game' || !tools.hint;
 }
 
@@ -521,6 +525,7 @@ let zoom = 1;
 function setZoom(z) {
   zoom = Math.min(2.2, Math.max(0.6, Math.round(z * 100) / 100));
   document.documentElement.style.setProperty('--zoom', zoom);
+  fitBoards(document.getElementById('table'));
   try { localStorage.setItem('cardZoom', String(zoom)); } catch (e) { /* private window: not remembered */ }
 }
 

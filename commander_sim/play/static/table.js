@@ -117,7 +117,7 @@ function battlefield(p, images, size, mine) {
 function opponent(p, view, images) {
   return el('section', { class: 'opp' + (p.key === view.active ? ' active' : '') + (p.alive ? '' : ' out'), 'aria-label': p.name, 'data-player': p.key },
     el('header', {}, card(images, p.commander, { size: 'sm', cls: 'portrait' }), el('div', {}, el('h2', {}, p.name), stats(p))),
-    el('div', { class: 'opp-board' }, battlefield(p, images, 'md', false)),
+    el('div', { class: 'opp-board', 'data-fit': '1' }, battlefield(p, images, 'md', false)),
     el('footer', {}, zoneList('Graveyard', p.graveyard, images), p.exile.length ? zoneList('Exile', p.exile, images) : null,
       p.commander_in_zone ? el('span', { class: 'chip' }, `Commander in zone (tax ${p.tax})`) : null));
 }
@@ -132,11 +132,11 @@ export function renderTable(root, view, images) {
   root.append(el('section', { class: 'mine' + (me.key === view.active ? ' active' : ''), 'aria-label': 'Your battlefield', 'data-player': me.key },
     el('header', {}, el('h2', {}, `${me.name} (you)`), stats(me, true),
       el('span', { class: 'pool', title: 'your mana pool' }, `Mana pool: ${me.mana_pool}`)),
-    battlefield(me, images, 'md', true)));
+    el('div', { class: 'mine-board', 'data-fit': '1' }, battlefield(me, images, 'md', true))));
   root.append(el('div', { class: 'passbar' }));          // the Pass priority button goes here (app.js)
   root.append(el('section', { class: 'bottom', 'aria-label': 'Your hand and zones' },
     el('div', { class: 'hand' }, el('h3', {}, `Hand (${me.hand.length})`),
-      el('div', { class: 'cards' }, me.hand.map((n, i) => card(images, n, { size: 'lg', attrs: { 'data-hand': i } })))),
+      el('div', { class: 'cards', 'data-fit': '1' }, me.hand.map((n, i) => card(images, n, { size: 'lg', attrs: { 'data-hand': i } })))),
     el('div', { class: 'zones' },
       me.commander_in_zone ? el('div', { class: 'cz' }, el('h3', {}, `Command zone (tax ${me.tax})`),
         card(images, me.commander, { size: 'sm', commander: true, attrs: { 'data-cmd': '1' } })) : null,
@@ -152,4 +152,16 @@ export function renderSteps(root, view) {
   root.append(el('span', { class: 'whose' }, active ? (active.you ? 'Your turn' : `${active.name}'s turn`) : ''),
     ...STEPS.map(([k, label]) => el('span', { class: 'step' + (k === view.step ? ' now' : '') }, label)),
     el('span', { class: 'round' }, `Round ${view.round}`));
+}
+
+// shrink the cards of each board area until they fit its height (an area never grows; its cards get smaller)
+export function fitBoards(root = document) {
+  for (const box of root.querySelectorAll('[data-fit]')) {
+    let fit = 1;
+    box.style.setProperty('--fit', fit);
+    for (let i = 0; i < 16 && box.scrollHeight > box.clientHeight + 1 && fit > 0.3; i++) {
+      fit *= 0.92;
+      box.style.setProperty('--fit', fit.toFixed(3));
+    }
+  }
 }

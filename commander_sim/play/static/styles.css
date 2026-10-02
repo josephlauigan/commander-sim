@@ -26,11 +26,11 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; pa
 .opp.out { opacity: .45; }
 .opp header, .mine header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
 .opp h2, .mine h2 { margin: 0; font-size: clamp(14px, 0.85vw, 20px); }
-.opp { min-height: 22vh; } .opp .stats, .mine .stats { font-size: clamp(12px, 0.7vw, 16px); }
+.opp { } .opp .stats, .mine .stats { font-size: clamp(12px, 0.7vw, 16px); }
 .opp footer { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin-top: 4px; }
 .stats { display: flex; flex-wrap: wrap; gap: 4px 12px; color: var(--dim); font-size: 12px; }
 .stats .life { color: var(--text); font-weight: 600; }
-.mine { margin: 10px 0; min-height: 200px; }
+.mine { margin: 10px 0; }
 .mine .pool { margin-left: auto; padding: 3px 10px; border-radius: 12px; background: #0f2d1f; border: 1px solid var(--gold); font-size: 13px; }
 .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-end; min-height: 4px; margin: 4px 0; }
 .bottom { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
@@ -46,12 +46,18 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; pa
 .card .face { position: relative; width: 100%; height: 100%; border-radius: 6%/4.5%; overflow: hidden; background: #0f2d1f; box-shadow: 0 1px 3px #0008; }
 .card img { width: 100%; height: 100%; display: block; }
 /* card sizes grow with the window (clamp: smallest, by window width, largest) and with the A-/A+ setting (--zoom) */
-:root { --zoom: 1; }
+:root { --zoom: 1;
+  --xs: clamp(44px, 2.6vw, 90px); --sm: clamp(64px, 3.9vw, 130px); --md: clamp(88px, 6vw, 190px); --lg: clamp(104px, 7.4vw, 240px); }
+/* each board area keeps its starting height (one row of permanents and one of lands; one row of hand cards); when it
+   fills up, its cards shrink to fit (--fit, set per area by fitBoards in table.js) */
 .card { --h: calc(var(--w) * 1.393); width: var(--w); height: var(--h); }
-.card.xs { --w: calc(clamp(44px, 2.6vw, 90px) * var(--zoom)); }
-.card.sm { --w: calc(clamp(64px, 3.9vw, 130px) * var(--zoom)); }
-.card.md { --w: calc(clamp(88px, 6vw, 190px) * var(--zoom)); }
-.card.lg { --w: calc(clamp(104px, 7.4vw, 240px) * var(--zoom)); }
+.card.xs { --w: calc(var(--xs) * var(--zoom) * var(--fit, 1)); }
+.card.sm { --w: calc(var(--sm) * var(--zoom) * var(--fit, 1)); }
+.card.md { --w: calc(var(--md) * var(--zoom) * var(--fit, 1)); }
+.card.lg { --w: calc(var(--lg) * var(--zoom) * var(--fit, 1)); }
+[data-fit] { overflow: hidden; }
+.opp-board, .mine-board { height: calc((var(--md) + var(--sm)) * var(--zoom) * 1.393 + 24px); }
+.hand .cards { height: calc(var(--lg) * var(--zoom) * 1.393 + 6px); align-content: flex-start; }
 .card.tapped { margin: 0 calc((var(--h) - var(--w)) / 2); }
 .card.tapped .face { transform: rotate(90deg); }
 .card.tapped { height: var(--w); width: var(--h); display: flex; align-items: center; justify-content: center; }
