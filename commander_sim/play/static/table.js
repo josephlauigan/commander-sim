@@ -110,14 +110,14 @@ function battlefield(p, images, size, mine) {
       others.map((m) => card(images, m.name, opts(m))), treasure),
     el('div', { class: 'row lands' }, mine
       ? p.lands.map((L) => card(images, L.name, { size: 'sm', tapped: L.tapped, cls: 'land', attrs: { 'data-land': L.i } }))
-      : groupLands(p.lands).map((g) => card(images, g.name, { size: 'xs', tapped: g.tapped, count: g.count, cls: 'land' }))),
+      : groupLands(p.lands).map((g) => card(images, g.name, { size: 'sm', tapped: g.tapped, count: g.count, cls: 'land' }))),
   ];
 }
 
 function opponent(p, view, images) {
   return el('section', { class: 'opp' + (p.key === view.active ? ' active' : '') + (p.alive ? '' : ' out'), 'aria-label': p.name, 'data-player': p.key },
-    el('header', {}, card(images, p.commander, { size: 'xs', cls: 'portrait' }), el('div', {}, el('h2', {}, p.name), stats(p))),
-    el('div', { class: 'opp-board' }, battlefield(p, images, 'sm', false)),
+    el('header', {}, card(images, p.commander, { size: 'sm', cls: 'portrait' }), el('div', {}, el('h2', {}, p.name), stats(p))),
+    el('div', { class: 'opp-board' }, battlefield(p, images, 'md', false)),
     el('footer', {}, zoneList('Graveyard', p.graveyard, images), p.exile.length ? zoneList('Exile', p.exile, images) : null,
       p.commander_in_zone ? el('span', { class: 'chip' }, `Commander in zone (tax ${p.tax})`) : null));
 }
@@ -133,6 +133,7 @@ export function renderTable(root, view, images) {
     el('header', {}, el('h2', {}, `${me.name} (you)`), stats(me, true),
       el('span', { class: 'pool', title: 'your mana pool' }, `Mana pool: ${me.mana_pool}`)),
     battlefield(me, images, 'md', true)));
+  root.append(el('div', { class: 'passbar' }));          // the Pass priority button goes here (app.js)
   root.append(el('section', { class: 'bottom', 'aria-label': 'Your hand and zones' },
     el('div', { class: 'hand' }, el('h3', {}, `Hand (${me.hand.length})`),
       el('div', { class: 'cards' }, me.hand.map((n, i) => card(images, n, { size: 'lg', attrs: { 'data-hand': i } })))),
