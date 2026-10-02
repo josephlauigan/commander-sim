@@ -54,6 +54,7 @@ function you(view) { return view && view.players.find((p) => p.you); }
 
 function renderPrompt(ev) {
   const box = $('#prompt'); box.replaceChildren(); closeMenu();
+  requestAnimationFrame(() => fitBoards($('#table')));     // the stack row comes and goes: the areas change size
   if (ev && tryBanner) {
     box.append(el('div', { class: 'tryit' }, tryBanner.applied ? `Trying the AI's choice: ${tryBanner.ai}. Carry on from here.`
       : `The AI would have: ${tryBanner.ai}. Make that play, then carry on.`));
@@ -461,6 +462,7 @@ let catalog = null, chosen = { deck: null, tier: 't3' };
 window.addEventListener('resize', () => fitBoards(document.getElementById('table')));
 
 function screen(name) {
+  document.body.classList.toggle('playing', name === 'game');     // the game screen fits the window, no scrolling
   $('#setup').hidden = name !== 'setup';
   $('#game').hidden = name !== 'game';
   $('#review').hidden = name !== 'review';
