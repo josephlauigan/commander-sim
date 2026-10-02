@@ -303,3 +303,22 @@ def copy_targets(g, p, c, ctx):
     ctx.pop('target', None); ctx.pop('face', None)
     ctx['face' if isinstance(tg[k], E.Player) else 'target'] = tg[k]
     return ctx
+
+
+# ------------------------------------------------------------------ Atraxa, Grand Unifier (Sephiroth, the Savior)
+TYPE_NAMES = (('A', 'artifact'), ('B', 'battle'), ('C', 'creature'), ('E', 'enchantment'), ('I', 'instant'),
+              ('L', 'land'), ('P', 'planeswalker'), ('S', 'sorcery'))
+
+
+def atraxa_pick(g, p, top):
+    """Atraxa's enter trigger: the top ten revealed; for each card type you may put a card of that type into your hand
+    (a card with two types fills one of them). Returns the cards taken"""
+    E.log(f"    {E.NAME(p)} reveals the top {len(top)}: {', '.join(c.name for c in top)}", g)
+    taken = []
+    for t, word in TYPE_NAMES:
+        cands = [c for c in top if t in c.types and c not in taken]
+        if not cands: continue
+        k = choose(g, p, 'choose', f'Atraxa: put {"an" if word[0] in "aei" else "a"} {word} card into your hand? '
+                   f'(revealed: {", ".join(c.name for c in top)})', [card_label(c) for c in cands], cancel=f'no {word}')
+        if k is not None: taken.append(cands[k])
+    return taken
