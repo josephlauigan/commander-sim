@@ -13,7 +13,7 @@ class Catalog(unittest.TestCase):
         self.assertEqual(set(d), {'seph', 'veyran', 'sauron', 'marchesa'})
         self.assertEqual(d['seph']['name'], 'Sephiroth, the Savior')          # the deck file's name for Atraxa
         self.assertEqual(d['seph']['commander'], 'Atraxa, Grand Unifier')     # the card the engine (and image) uses
-        self.assertEqual(d['seph']['bracket'], 4); self.assertEqual(d['sauron']['bracket'], 3)
+        self.assertEqual(d['seph']['bracket'], 4); self.assertEqual(d['veyran']['bracket'], 3)
         self.assertGreater(len(d['seph']['game_changers']), 3)
 
     def test_tiers(self):
