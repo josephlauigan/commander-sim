@@ -1428,6 +1428,7 @@ def tidebinder_response(g, p, m):
     v = etb_val(m) if m.cd is not None else 0
     if v < 3 and not (m.cd is not None and m.cd.bomb >= 7): return False
     for q in g.after(p):
+        if human_choice(g, q) is not None: continue
         if q is p or not q.alive or q.key in importlib.import_module('commander_sim.decks').DECKS: continue
         c = next((x for x in q.hand if x.name == "Tishana's Tidebinder"), None)
         if c is None or not castable(g, q, c) or not can_pay(g, q, *cost_of(q, c)): continue

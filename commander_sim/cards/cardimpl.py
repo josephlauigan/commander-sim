@@ -35,6 +35,7 @@ def gy_response(g, reanimator, value, src_player=None):
     """an opponent answers a reanimation spell by exiling the graveyard (Tormod's Crypt, Soul-Guide Lantern ...)"""
     if value < 5: return False
     for src, fn in list(hooked(g, 'gy_hate')):
+        if E.human_choice(g, src.owner) is not None: continue        # practice mode: the person activates their own
         if src.owner is not reanimator and fn(g, src, reanimator, src_player or reanimator): return True
     return False
 DYN_MANA = {}         # card name -> fn(g, p, perm) -> amount of mana its tap ability makes (Priest of Titania ...)

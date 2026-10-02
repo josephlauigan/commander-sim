@@ -11,6 +11,8 @@ def best_target_any(g, p, n):
     """'deals n damage to any target': kill the best creature it kills, else the most threatening opponent's face"""
     opps = g.opps(p)
     if not opps: return
+    hc = E.human_choice(g, p)
+    if hc is not None: return hc.deal_damage(g, p, n, 'Damage')
     lethal = [q for q in opps if q.life <= n]
     if lethal: lose_life(g, lethal[0], n, p, kind='triggers'); return
     tg = [m for q in opps for m in q.perms if m.creature and not untargetable(g, m) and etgh(g, m) <= n]

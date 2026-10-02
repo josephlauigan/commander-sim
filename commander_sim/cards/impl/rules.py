@@ -142,6 +142,8 @@ note('Phyrexian Altar', 'Full', 'sacrifice a creature: one mana of any colour')
 # ================================================================== tax payments
 def tithe_unpaid(g, p):
     """Smothering Tithe: p pays {2} when it can spare the mana, otherwise the Tithe's owner gets a Treasure"""
+    hc = E.human_choice(g, p)
+    if hc is not None: return not hc.pay_tax(g, p, 2, "Smothering Tithe (or its owner gets a Treasure)")
     if spare_after(g, p, 2):
         pay(g, p, 2, ''); return False
     return True
@@ -149,6 +151,8 @@ full('Smothering Tithe', 'opponents pay {2} per draw only when they can spare it
 
 
 def rhystic_unpaid(g, p):
+    hc = E.human_choice(g, p)
+    if hc is not None: return not hc.pay_tax(g, p, 1, 'Rhystic Study (or its owner draws a card)')
     if spare_after(g, p, 1):
         pay(g, p, 1, ''); return False
     return True
@@ -161,7 +165,10 @@ note('Rhystic Study', 'Full', 'opponents pay {1} per spell when they can spare i
 def _remora(g, src, caster, c):
     o = src.owner
     if caster is o or c.creature or c.land: return
-    if spare_after(g, caster, 4): pay(g, caster, 4, ''); return
+    hc = E.human_choice(g, caster)
+    if hc is not None:
+        if hc.pay_tax(g, caster, 4, 'Mystic Remora (or its owner draws a card)'): return
+    elif spare_after(g, caster, 4): pay(g, caster, 4, ''); return
     draw(g, o, 1)
 
 
@@ -170,6 +177,11 @@ def _remora_age(g, src, p):
     if p is not src.owner: return
     if src.data is None: src.data = {}
     age = src.data.get('age', 0) + 1; src.data['age'] = age
+    hc = E.human_choice(g, p)
+    if hc is not None:                                       # practice mode: pay the cumulative upkeep, or sacrifice
+        if hc.pay_tax(g, p, age, f'Mystic Remora (cumulative upkeep, {age} age counters)'): return
+        log(f'    {NAME(p)} sacrifices Mystic Remora (cumulative upkeep {age})', g); leave(g, src); to_zone_card(g, src, 'gy')
+        return
     if age <= 3 and can_pay(g, p, age, ''): pay(g, p, age, '')
     else:
         log(f'    {NAME(p)} sacrifices Mystic Remora (cumulative upkeep {age})', g); leave(g, src); to_zone_card(g, src, 'gy')
@@ -183,6 +195,7 @@ REPLACED_TAG_ENGINES = {'Mystic Remora', 'Sylvan Library'}     # hand-implemente
 # ================================================================== counters
 def veil_response(g, p, q, ctr):
     """q is about to counter p's spell with a blue or black counterspell: p answers with Veil of Summer"""
+    if E.human_choice(g, p) is not None: return False
     if p.key in E.CTHRESH or not ('U' in ctr.pips or 'B' in ctr.pips or ctr.name in ('Force of Will', 'Force of Negation')): return False
     v = next((c for c in p.hand if c.name == 'Veil of Summer'), None)
     if v is None or not can_pay(g, p, 0, 'G') or not castable(g, p, v): return False
@@ -204,7 +217,7 @@ full('Siren Stormtamer', 'flying; {U}, sacrifice: counters a spell targeting you
 
 
 # ================================================================== removal restrictions and taxes
-for _n in ('Snuff Out', 'Nekrataal', 'Shriekmaw', 'Doom Blade', 'Go for the Throat'):
+for _n in ('Snuff Out', 'Nekrataal', 'Shriekmaw', 'Doom Blade'):          # Go for the Throat: nonartifact only
     set_tags(_n, add=('nonblack',))
 full('Snuff Out', 'free for 4 life with a Swamp; destroys a nonblack creature')
 full('Nekrataal', 'first strike; destroys a nonartifact, nonblack creature on entry')

@@ -678,6 +678,13 @@ note('Heliod\'s Pilgrim', 'Full', '')
 
 
 def tutor_named(g, p, pred, k=1, to='hand'):
+    hc = E.human_choice(g, p)
+    if hc is not None:                                   # practice mode: the person picks
+        got = hc.search(g, p, pred, k, 'Search your library')
+        for c in got:
+            if to == 'hand': p.hand.append(c); p.seen_names.add(c.name)
+            p.stats['tutored'] += 1
+        return got
     have = {c.name for c in p.hand} | {m.cd.name for m in p.perms if m.cd is not None}
     from commander_sim.ai import pool_ai
     wish = pool_ai.wish_list(g, p)

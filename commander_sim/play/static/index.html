@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commander Practice</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header>
+  <h1>Commander Practice</h1>
+  <nav id="steps" aria-label="Turn steps"></nav>
+  <div id="playback" role="group" aria-label="Opponents' turns" hidden>
+    <button id="pb-pause" type="button">❚❚ Pause</button>
+    <button id="pb-next" type="button">Next action</button>
+    <span class="speeds"><button type="button" data-speed="1">1×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="4">4×</button></span>
+    <button id="pb-skip" type="button" title="Show everything up to your next decision">Skip ahead</button>
+  </div>
+  <div id="status"></div>
+  <button id="hint" type="button" hidden title="What would the AI do now?">💡 Hint</button>
+  <button id="undo" type="button" hidden title="Take back your last action">↶ Undo</button>
+  <button id="save" type="button" hidden title="Save this game (seed, table and your decisions) to replay later">💾 Save</button>
+  <button id="to-setup" type="button" hidden>New game</button>
+</header>
+<section id="setup" aria-label="New game" hidden>
+  <form id="newgame">
+    <h2>Your deck</h2>
+    <div id="decks" class="decks" role="radiogroup" aria-label="Your deck"></div>
+    <h2>The table</h2>
+    <div id="tiers" class="tiers" role="radiogroup" aria-label="Tier"></div>
+    <h2>Opponents</h2>
+    <div class="row">
+      <label><input type="radio" name="opp" value="random" checked> Three drawn at random from the tier</label>
+      <label><input type="radio" name="opp" value="pick"> I'll pick three</label>
+    </div>
+    <div id="picks" class="row" hidden></div>
+    <h2>Options</h2>
+    <div class="row options">
+      <label>Your seat <select name="seat"><option value="">random</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+      <label>Opponents' interaction <select name="profile"><option value="loose">loose</option><option value="conservative">conservative</option></select></label>
+      <label>Opponent AI <select name="ai"><option value="lookahead">look-ahead</option><option value="adaptive">adaptive (faster)</option></select></label>
+      <label>Seed <input name="seed" type="number" min="1" placeholder="random"></label>
+    </div>
+    <div class="row options">
+      <label><input type="checkbox" name="hint" checked> Hint</label>
+      <label><input type="checkbox" name="undo" checked> Undo</label>
+      <label><input type="checkbox" name="compare" checked> Record the AI comparison</label>
+    </div>
+    <div class="row"><button type="submit" class="primary big">Start game</button> <span id="setup-error" class="error"></span></div>
+  </form>
+  <h2>Saved games</h2>
+  <div id="saves"><em>None yet: use 💾 Save during a game.</em></div>
+</section>
+<div id="loading" hidden>
+  <div class="loading-box">
+    <img src="/static/knight-dragon.gif" width="512" height="288" alt="An 8-bit knight raises his shield against a dragon's fire">
+    <div class="bar" role="progressbar" aria-label="Preparing the table" aria-valuemin="0" aria-valuemax="100"><div></div></div>
+  </div>
+</div>
+<section id="review" aria-label="Review" hidden></section>
+<main id="game" hidden>
+  <section id="table" aria-label="The table"></section>
+  <aside>
+    <section id="prompt" aria-label="Your decision"></section>
+    <section id="hintbox" aria-label="Hint" aria-live="polite" hidden></section>
+    <section id="log" aria-label="Game log"></section>
+  </aside>
+</main>
+<button id="pass" class="primary big" type="button" hidden>Pass priority</button>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<footer>Card data from <a href="https://scryfall.com">Scryfall</a>.</footer>
+<script>
+// a script error is shown rather than leaving a blank page
+window.addEventListener('error', (e) => {
+  const t = document.getElementById('toast');
+  if (t) { t.textContent = `Page error: ${e.message} (${(e.filename || '').split('/').pop()}:${e.lineno})`; t.hidden = false; }
+  document.title = 'Page error: ' + e.message;
+});
+window.addEventListener('unhandledrejection', (e) => {
+  const msg = (e.reason && (e.reason.stack || e.reason.message)) || String(e.reason);
+  const t = document.getElementById('toast');
+  if (t) { t.textContent = 'Page error: ' + msg; t.hidden = false; }
+  document.title = 'Page error: ' + msg.split('\n')[0];
+});
+</script>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

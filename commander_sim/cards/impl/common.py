@@ -354,6 +354,7 @@ def aristocrat_options(g, p, s, post):
 def sac_in_response(g, p, m, kind):
     """a creature of p's is about to be exiled / bounced / stolen: sacrifice it for value instead"""
     if not m.creature or kind not in ('exile', 'bounce', 'tuck') or m.is_cmd: return False
+    if human_choice(g, p) is not None: return False
     outs = [o for o in outlets(p) if o is not m]
     if not outs: return False
     sac_through(g, p, outs[0], m)
@@ -646,6 +647,8 @@ note('Dream Trawler', 'Approximate', 'draws on attack, +1/+0 per draw; the disca
 def _ephemerate_rebound(g, p, c):
     """rebound: cast it again from exile for free (a real cast) on the best enter-effect creature, then to the
     graveyard; with no creature to target it isn't cast and stays in exile"""
+    if human_choice(g, p) is not None:
+        return importlib.import_module('commander_sim.play.cards').ephemerate_rebound(g, p, c)
     from commander_sim.cards.impl import t2 as impl_t2
     cands = [m for m in p.perms if m.creature and not m.token and not m.phased]
     if not cands: return

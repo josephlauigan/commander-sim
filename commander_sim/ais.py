@@ -7,7 +7,7 @@ from commander_sim import engine as E
 def tide_response(g, actor, what, value, victim=None):
     """Tishana's Tidebinder (Sephiroth) counters an activated/triggered ability."""
     for q in g.opps(actor):
-        if q.key != 'seph' or silenced(g, q): continue
+        if q.key != 'seph' or silenced(g, q) or E.human_choice(g, q) is not None: continue
         if victim is not None and victim is not q and value < 9: continue
         if value < 6: continue
         tb = [c for c in q.hand if 'tide' in c.tags]
@@ -92,6 +92,7 @@ def pay_card(g, p, c, kicked=0):
 
 
 def protect_response(g, owner, m, kind, actor, spell=None):
+    if E.human_choice(g, owner) is not None: return False     # practice mode: the person protects in their own window
     if owner.key not in MAIN:
         if silenced(g, owner): return False
         from commander_sim.ai import pool_ai
@@ -142,7 +143,7 @@ def protect_response(g, owner, m, kind, actor, spell=None):
 
 
 def wipe_response(g, q, kind, caster):
-    if q is caster or silenced(g, q): return None
+    if q is caster or silenced(g, q) or E.human_choice(g, q) is not None: return None
     if q.key not in MAIN:
         from commander_sim.ai import pool_ai
         return pool_ai.wipe_response(g, q, kind, caster)
@@ -187,7 +188,7 @@ def wipe_response(g, q, kind, caster):
 def sauron_grounds_response(g, seph, value):
     """Sauron exiles all graveyards in response to a reanimation spell."""
     for q in g.opps(seph):
-        if q.key != 'sauron' or value < 6: continue
+        if q.key != 'sauron' or value < 6 or E.human_choice(g, q) is not None: continue
         gl = [L for L in q.lands if L.cd.tags.get('desert') and not L.tapped and not stopped(g, L.cd.name)]
         if not gl: continue
         L = gl[0]; L.tapped = True
@@ -314,6 +315,8 @@ def note_bomb(p, cd, was_removed=False):
 
 
 def seph_fill_resolve(g, p, kind, ctx):
+    hc = E.human_choice(g, p)
+    if hc is not None: return hc.fill(g, p, kind)
     lib_bombs = sorted([c for c in p.library if c.creature and c.bomb >= 5], key=lambda c: -seph_bval(g, p, c))
     a = agent_for(g, p) if kind in ('entomb', 'buried', 'unmarked') else None
     if a is not None:                             # Opposition Agent takes what they search for
@@ -1241,14 +1244,17 @@ def _tutor_pick_named(g, p, kind):
 
 
 
+TUTOR_OK = {'any': lambda c: True, 'is': lambda c: c.instant or c.sorcery, 'art': lambda c: 'A' in c.types,
+            'perm': lambda c: c.perm, 'ubr': lambda c: not c.land and any(x in c.pips for x in 'UBR'),
+            'cre2': lambda c: c.creature and c.pow <= 2, 'cre': lambda c: c.creature,
+            'ench': lambda c: 'E' in c.types}          # what each kind of tutor may find
+
+
 def tutor_pick(g, p, kind):
     """deck-specific wish lists first; otherwise the highest-priority legal card (works for any card pool)"""
     n = _tutor_pick_named(g, p, kind)
     if n: return n
-    ok = {'any': lambda c: True, 'is': lambda c: c.instant or c.sorcery, 'art': lambda c: 'A' in c.types,
-          'perm': lambda c: c.perm, 'ubr': lambda c: not c.land and any(x in c.pips for x in 'UBR'),
-          'cre2': lambda c: c.creature and c.pow <= 2, 'cre': lambda c: c.creature,
-          'ench': lambda c: 'E' in c.types}.get(kind, lambda c: True)
+    ok = TUTOR_OK.get(kind, TUTOR_OK['any'])
     prio = deck_prio
     if p.key not in MAIN:                        # outside deck: its wish list, then priority or interpreter value
         from commander_sim.ai import pool_ai
@@ -1617,6 +1623,8 @@ def _attack_triggers_once(g, p, atk, d):
 
 
 def archon_attack(g, p, d):
+    hc = E.human_choice(g, p)
+    if hc is not None: d = hc.target_opponent(g, p, 'Archon of Cruelty attacks')
     edict(g, d)
     if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
     lose_life(g, d, 3, p, kind='drain'); gain(p, 3); draw(g, p, 1)
@@ -1631,35 +1639,44 @@ def resolve_combat(g, p, atk, d, unbl):
 
 
 def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
-    blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
-    incoming = sum(epow(g, m) * (2 if double_strike(p, m) else 1) for m in atk)
-    assign = {}; used = set()
-    for a in sorted(atk, key=lambda m: -epow(g, m)):
-        if a in unbl or a not in p.perms: continue
-        cands = [b for b in blockers if b not in used and can_block(g, b, a)]
-        if not cands: continue
-        if kw(a, 'menace') and len(cands) < 2: continue                 # menace: two blockers or none
-        ap, at = epow(g, a), etgh(g, a)
-        good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
-        if good: b = min(good, key=lambda x: pval(g, x))
-        else:
-            trade = [b for b in cands if epow(g, b) >= at or b.dt]
-            if trade and pval(g, a) >= min(pval(g, x) for x in trade):
-                b = min(trade, key=lambda x: pval(g, x))
-            elif shielded(d):                     # the damage is prevented anyway: no chump blocks
-                continue
-            elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < importlib.import_module('commander_sim.ai.brain').chump_prob(g, d, incoming)) \
-                    or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
-                b = min(cands, key=lambda x: pval(g, x))
+    hctl = getattr(g, 'controllers', None)
+    hum_d = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, d)
+    hum_p = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, p)
+    if hum_d:                                          # practice mode: priority, then the person declares blockers
+        importlib.import_module('commander_sim.play.human').respond(
+            g, d, f'{NAME(p)} attacks you with {len(atk)} creature(s) ({sum(epow(g, m) for m in atk)} power)')
+        atk = [m for m in atk if m in p.perms]
+        assign = importlib.import_module('commander_sim.play.combat').human_blocks(g, p, atk, d, unbl)
+    else:
+        blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
+        incoming = sum(epow(g, m) * (2 if double_strike(p, m) else 1) for m in atk)
+        assign = {}; used = set()
+        for a in sorted(atk, key=lambda m: -epow(g, m)):
+            if a in unbl or a not in p.perms: continue
+            cands = [b for b in blockers if b not in used and can_block(g, b, a)]
+            if not cands: continue
+            if kw(a, 'menace') and len(cands) < 2: continue                 # menace: two blockers or none
+            ap, at = epow(g, a), etgh(g, a)
+            good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
+            if good: b = min(good, key=lambda x: pval(g, x))
             else:
-                continue
-        assign[a] = b; used.add(b); incoming -= ap
-        if kw(a, 'menace'):                           # the second blocker is spent; only the first fights
-            rest = [x for x in cands if x is not b]
-            if rest: used.add(min(rest, key=lambda x: pval(g, x)))
+                trade = [b for b in cands if epow(g, b) >= at or b.dt]
+                if trade and pval(g, a) >= min(pval(g, x) for x in trade):
+                    b = min(trade, key=lambda x: pval(g, x))
+                elif shielded(d):                     # the damage is prevented anyway: no chump blocks
+                    continue
+                elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < importlib.import_module('commander_sim.ai.brain').chump_prob(g, d, incoming)) \
+                        or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
+                    b = min(cands, key=lambda x: pval(g, x))
+                else:
+                    continue
+            assign[a] = b; used.add(b); incoming -= ap
+            if kw(a, 'menace'):                           # the second blocker is spent; only the first fights
+                rest = [x for x in cands if x is not b]
+                if rest: used.add(min(rest, key=lambda x: pval(g, x)))
     if g.hooks: E.CI.fire(g, 'blocks', p, atk, d, assign)
     ringblk = [b for a, b in assign.items() if E.CI is not None and importlib.import_module('commander_sim.cards.impl.mine').ring_blocked(g, p, a, b)]
-    to_walker = walker_attacks(g, p, atk, d, assign)
+    to_walker = {} if hum_p else walker_attacks(g, p, atk, d, assign)
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
         if d.key not in MAIN:
@@ -1669,7 +1686,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 h = E.CI.HOOKS.get(L.cd.name)
                 if h and 'land_defend' in h: h['land_defend'](g, L, d, p, atk, assign)
         if p.key not in MAIN: importlib.import_module('commander_sim.cards.impl.t4').ninjutsu(g, p, atk, d, assign)
-    if not shielded(d) and not d.life_locked and any(c.name == E.TEFERIS_PROTECTION for c in d.hand):
+    if not hum_d and not shielded(d) and not d.life_locked and any(c.name == E.TEFERIS_PROTECTION for c in d.hand):
         unbl_dmg = [(a, epow(g, a) * (2 if double_strike(p, a) else 1)) for a in atk
                     if a in p.perms and (assign.get(a) is None or assign[a] not in d.perms) and a not in to_walker]
         if sum(x for _, x in unbl_dmg) >= d.life or any(a.is_cmd and d.cmd_dmg[p.key] + x >= 21 for a, x in unbl_dmg):
@@ -1819,23 +1836,29 @@ def combat(g, p):
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: from commander_sim.ai import brain
         if g.hooks and ncomb == 1: E.CI.fire(g, 'crew', p)
-        atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
-               and (not m.sick or p.haste_all or has_haste(g, m))
-               and (not m.noatk or (epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
-        if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
-        if not atk: break
-        plan = None                                   # look-ahead: (defender index, 'filtered' / 'all' / 'none')
-        if adaptive and ncomb == 1:
-            from commander_sim.ai import search
-            if getattr(g, 'forced_attack', None) is not None: plan, g.forced_attack = g.forced_attack, None
-            elif search.enabled(g, p): plan = search.choose_attack(g, p)
-        if plan is not None and plan[1] == 'none': break
-        all_atk = list(atk)
-        d = g.players[plan[0]] if plan is not None else (brain.choose_defender(g, p) if adaptive else choose_defender(g, p))
-        if plan is not None and plan[1] == 'all': atk = all_atk
+        human = bool(getattr(g, 'controllers', None)) and importlib.import_module('commander_sim.play.human').is_human(g, p)
+        if human:                                     # practice mode: the person declares attackers
+            res = importlib.import_module('commander_sim.play.combat').human_attack(g, p, ncomb)
+            if res is None: break
+            d, atk = res
         else:
-            if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
-            if p.key not in MAIN: atk = importlib.import_module('commander_sim.ai.pool_ai').attack_filter(g, p, atk, d)
+            atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
+                   and (not m.sick or p.haste_all or has_haste(g, m))
+                   and (not m.noatk or (epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
+            if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
+            if not atk: break
+            plan = None                                   # look-ahead: (defender index, 'filtered' / 'all' / 'none')
+            if adaptive and ncomb == 1:
+                from commander_sim.ai import search
+                if getattr(g, 'forced_attack', None) is not None: plan, g.forced_attack = g.forced_attack, None
+                elif search.enabled(g, p): plan = search.choose_attack(g, p)
+            if plan is not None and plan[1] == 'none': break
+            all_atk = list(atk)
+            d = g.players[plan[0]] if plan is not None else (brain.choose_defender(g, p) if adaptive else choose_defender(g, p))
+            if plan is not None and plan[1] == 'all': atk = all_atk
+            else:
+                if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
+                if p.key not in MAIN: atk = importlib.import_module('commander_sim.ai.pool_ai').attack_filter(g, p, atk, d)
         cand0 = list(atk)
         if g.hooks: atk = attack_limits(g, p, d, atk)
         if g.hooks:
@@ -1849,7 +1872,8 @@ def combat(g, p):
         a = army_of(p)
         for m in atk:
             if m.army and equipped(m, 'cloak'): unbl.add(m)
-        if a in atk and a not in unbl and epow(g, a) >= 5:
+            if m.data and m.data.get('unbl') == turn_stamp(g): unbl.add(m)     # Rogue's Passage, activated by a person
+        if not human and a in atk and a not in unbl and epow(g, a) >= 5:
             ps = [L for L in p.lands if L.cd.tags.get('passage') and not L.tapped and not blocked(g, p, L.cd.name)]
             if ps:
                 ps[0].tapped = True
@@ -1873,7 +1897,7 @@ def combat(g, p):
                 if m.creature: m.tapped = False
             p.haste_all = True; p.trample = True; p.najeela_boost = True
             continue
-        if (p.key == 'sauron' and has(p, 'assault') and a is not None and a in p.perms
+        if (not human and p.key == 'sauron' and has(p, 'assault') and a is not None and a in p.perms
                 and not blocked(g, p, 'Aggravated Assault')):
             if a in conn and equipped(a, 'sword') and a in unbl and can_pay(g, p, 3, 'RR'):
                 pay(g, p, 3, 'RR'); p.stats['combo_attempt'] += 1
@@ -2091,8 +2115,11 @@ def upkeep(g, p):
         if 'tokup' in t: make_tokens(g, p, int(t['tokup']), 1, warrior='warrior' in t)
         if 'sheoW' in t:
             cr = [c for c in p.gy if c.creature]
+            hc = E.human_choice(g, p)
             if cr:
-                b = max(cr, key=lambda c: seph_bval(g, p, c)); p.gy.remove(b)
+                b = hc.pick_cards(g, p, cr, 1, 'Sheoldred, Whispering One: return a creature card')[0] if hc is not None \
+                    else max(cr, key=lambda c: seph_bval(g, p, c))
+                p.gy.remove(b)
                 was = b.name in p.removed_bombs
                 enter(g, p, b); note_bomb(p, b, was)
             for q in g.opps(p): edict(g, q)
@@ -2149,7 +2176,11 @@ def end_step(g, p):
     if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
         for m in p.perms:
             if m.plus > 0: m.plus += 1
-    while len(p.hand) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
+    hc = E.human_choice(g, p)
+    if hc is not None and not has(p, 'nomax') and not (any('nomax' in L.cd.tags for L in p.lands)
+                                                       or getattr(p, 'nomax_turn', None) == p.turns):
+        hc.discard_to_hand_size(g, p)
+    while hc is None and len(p.hand) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
                                                                           or getattr(p, 'nomax_turn', None) == p.turns)):
         if p.key == 'seph':
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
@@ -2200,6 +2231,7 @@ def continue_turn(g, p, step):
     """play p's turn from `step` on (a copied game resumes mid-turn from here)"""
     for st in STEPS[STEPS.index(step):]:
         g.step = st
+        if getattr(g, 'controllers', None): importlib.import_module('commander_sim.play.mana').empty_pools(g)
         STEP_FN[st](g, p)
         if g.over or not p.alive: return
 
@@ -2231,12 +2263,16 @@ def _step_start(g, p):
     elif loam_dredge(g, p): pass
     elif importlib.import_module('commander_sim.cards.impl.lands').dakmor_dredge(g, p): pass
     elif g.hooks and E.CI.total(g, 'skip_draw', p): pass     # Solitary Confinement
+    elif E.human_choice(g, p) is not None:
+        if not importlib.import_module('commander_sim.play.cards').dredge(g, p): draw(g, p, 1, step=True)
     elif not ((p.key == 'seph' and seph_dredge(g, p)) or (p.key == 'marchesa' and E.CI.marchesa_dredge(g, p))):
         draw(g, p, 1, step=True)
     check_state(g)
     if g.over or not p.alive: return
     nl = len(p.lands)
     p.lands_played = 0; p.extra_land_now = 0
+    if getattr(g, 'controllers', None) and importlib.import_module('commander_sim.play.human').is_human(g, p):
+        return                                       # practice mode: the person plays lands in the main phase
     play_land(g, p)
     if g.hooks: more_lands(g, p)
     if len(p.lands) == nl and p.turns <= 5: p.stats['land_miss'] += 1
@@ -2244,6 +2280,8 @@ def _step_start(g, p):
 
 
 def _step_main1(g, p):
+    if getattr(g, 'controllers', None) and importlib.import_module('commander_sim.play.human').is_human(g, p):
+        importlib.import_module('commander_sim.play.human').human_main(g, p, False); return
     main_fn(p)(g, p, False)
     if g.over or not p.alive: return
     if g.hooks: more_lands(g, p)
@@ -2259,6 +2297,8 @@ def _step_combat(g, p):
 
 
 def _step_main2(g, p):
+    if getattr(g, 'controllers', None) and importlib.import_module('commander_sim.play.human').is_human(g, p):
+        importlib.import_module('commander_sim.play.human').human_main(g, p, True); return
     main_fn(p)(g, p, True)
     if p.key == 'veyran' and has(p, 'veyran') and engine_payoff(p): p.milestone.setdefault('engine', p.turns)
 
@@ -2311,11 +2351,15 @@ def _run_rounds(g, players, max_rounds):
                 if p.alive and not g.over and getattr(p, 'skip_turns', 0) > 0:
                     p.skip_turns -= 1; log(f'  {NAME(p)} skips a turn', g); continue
                 if p.alive and not g.over:
-                    if E.AI_MODE == 'adaptive' and r > 1:
+                    hum = importlib.import_module('commander_sim.play.human').humans(g) if getattr(g, 'controllers', None) else []
+                    if E.AI_MODE == 'adaptive' and r > 1 and p not in hum:
                         from commander_sim.ai import brain
                         brain.end_of_turn_window(g, p)
                     if p.alive and not g.over:
                         take_turn(g, p)
+                    for h in hum:                               # practice mode: priority at the end of each other turn
+                        if h is not p and h.alive and p.alive and not g.over:
+                            importlib.import_module('commander_sim.play.human').respond(g, h, f"End of {NAME(p)}'s turn")
             if g.over: break
     except E.OutOfWork as e:                        # a runaway loop: the game ends as a timeout
         import traceback
@@ -2337,8 +2381,9 @@ def play_pool_game(seed, seats, max_rounds=20, trace=False):
     return _run_rounds(g, g.players, max_rounds)
 
 
-def setup_pool_game(seed, seats, trace=False):
-    """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one"""
+def setup_pool_game(seed, seats, trace=False, human=None):
+    """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one. human: a deck
+    key whose mulligans the person makes (practice mode; its shuffle generator is kept as p.mull_rng)"""
     players = [Player(k, cards, cmd) for k, cards, cmd in seats]
     g = Game(players, random.Random(f'play:{seed}'))
     g.combo_decks = {p.key for p in players if p.key not in MAIN}
@@ -2347,7 +2392,9 @@ def setup_pool_game(seed, seats, trace=False):
         g.log = ['Seat order: ' + ', '.join(NAME(p) for p in players)]
     for p in players:
         r = random.Random(f'lib:{seed}:{p.key}')
-        r.shuffle(p.library); mulligan(g, p, r)
+        r.shuffle(p.library)
+        if p.key == human: p.mull_rng = r; continue
+        mulligan(g, p, r)
         p.seen_names.update(c.name for c in p.hand)
     return g
 
