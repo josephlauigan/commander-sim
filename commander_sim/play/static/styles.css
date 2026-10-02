@@ -157,3 +157,28 @@ table.review tr.worse td { background: #3a17121f; } table.review tr.worse td.num
 table.review td.when, table.review button.try { white-space: nowrap; }
 #zoom { display: inline-flex; border: 1px solid #3f7a5a; border-radius: 6px; overflow: hidden; }
 #zoom button { border: none; border-radius: 0; padding: 4px 9px; }
+
+/* the game screen fills the window exactly: the table's areas share its height (cards shrink to fit them: fitBoards),
+   the side panel's log scrolls inside itself, and the page never scrolls */
+body.playing { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+body.playing > header, body.playing > footer { flex: none; }
+body.playing > footer { padding: 2px 16px; }
+body.playing > main#game { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); padding-top: 8px; padding-bottom: 6px; }
+body.playing #table { display: flex; flex-direction: column; min-height: 0; gap: 8px; }
+body.playing .opps { flex: 1.15 1 0; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+body.playing .opp { display: flex; flex-direction: column; min-height: 0; }
+body.playing .opp-board { flex: 1 1 0; height: auto; min-height: 0; }
+body.playing .opp footer { flex: none; }
+body.playing .stackbar { flex: none; margin: 0 auto; }
+body.playing .mine { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; margin: 0; }
+body.playing .mine-board { flex: 1 1 0; height: auto; min-height: 0; }
+body.playing .passbar { flex: none; min-height: 0; margin: 0; }
+body.playing #pass { padding: 10px 48px; }
+body.playing .bottom { flex: 0.8 1 0; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+body.playing .hand { display: flex; flex-direction: column; min-height: 0; }
+body.playing .hand .cards { flex: 1 1 0; height: auto; min-height: 0; }
+body.playing .zones { overflow-y: auto; min-height: 0; }
+body.playing aside { display: flex; flex-direction: column; min-height: 0; }
+body.playing #prompt { flex: none; max-height: 60%; overflow-y: auto; }
+body.playing #hintbox { flex: none; max-height: 30%; overflow-y: auto; }
+body.playing #log { flex: 1 1 0; height: auto; min-height: 0; }

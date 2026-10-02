@@ -154,8 +154,45 @@ export function renderSteps(root, view) {
     el('span', { class: 'round' }, `Round ${view.round}`));
 }
 
-// shrink the cards of each board area until they fit its height (an area never grows; its cards get smaller)
+// Board areas and card sizes. Each area's cards shrink until they fit its height (an area never grows; its cards get
+// smaller). On the window-sized game screen the opponents' row, your battlefield and your hand also share the
+// height: the largest card scale at which all three fit together is found, each area gets the height its cards need
+// at that scale, and then each area enlarges its own cards as far as its height allows.
+function contentHeight(box) {
+  const top = box.getBoundingClientRect().top;
+  let bottom = top;
+  for (const c of box.children) bottom = Math.max(bottom, c.getBoundingClientRect().bottom);
+  return bottom - top + 4;
+}
+
+function shareHeight(root) {
+  const areas = ['.opps', '.mine', '.bottom'].map((sel) => {
+    const el = root.querySelector(sel);
+    return el && { el, boards: [...el.querySelectorAll('[data-fit]')] };
+  }).filter((a) => a && a.boards.length);
+  if (areas.length < 3) return;
+  for (const a of areas) { a.el.style.flexGrow = 1; for (const b of a.boards) b.style.setProperty('--fit', 1); }
+  const avail = areas.reduce((t, a) => t + a.el.getBoundingClientRect().height, 0);
+  for (const a of areas) a.frame = a.el.getBoundingClientRect().height - a.boards[0].getBoundingClientRect().height;
+  const needAt = (f) => areas.map((a) => {
+    for (const b of a.boards) b.style.setProperty('--fit', f);
+    return a.frame + Math.max(...a.boards.map(contentHeight));
+  });
+  let lo = 0.25, hi = 1, best = needAt(0.25);
+  const all = needAt(1);
+  if (all.reduce((t, x) => t + x, 0) <= avail) { lo = 1; best = all; }
+  else {
+    for (let i = 0; i < 8; i++) {                 // the largest common scale that fits
+      const mid = (lo + hi) / 2, n = needAt(mid);
+      if (n.reduce((t, x) => t + x, 0) <= avail) { lo = mid; best = n; } else hi = mid;
+    }
+  }
+  areas.forEach((a, k) => { a.el.style.flexGrow = Math.max(1, best[k]); });
+}
+
 export function fitBoards(root = document) {
+  if (!root) return;
+  if (document.body.classList.contains('playing')) shareHeight(root);
   for (const box of root.querySelectorAll('[data-fit]')) {
     let fit = 1;
     box.style.setProperty('--fit', fit);
