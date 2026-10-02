@@ -21,9 +21,13 @@ async function api(path, body) {
 
 // ------------------------------------------------------------------ the table
 let lastView = null;
+let passBtn = null;          // the Pass priority button: moved into the table's pass row after each drawing
 function renderTable(view) {
   lastView = view;
+  passBtn = passBtn || document.getElementById('pass');
   drawTable($('#table'), view, images);
+  const row = document.querySelector('#table .passbar');
+  if (row && passBtn) row.append(passBtn);
   renderSteps($('#steps'), view);
 }
 const card = (name, o = {}) => cardOf(images, name, Object.assign({ size: 'sm' }, o));
@@ -56,7 +60,7 @@ function renderPrompt(ev) {
   }
   $('#hintbox').hidden = true;                // a hint is for the decision it was asked at
   for (const x of document.querySelectorAll('.stackbar')) x.remove();
-  $('#pass').hidden = !(ev && ev.request.kind === 'priority');
+  (passBtn || $('#pass')).hidden = !(ev && ev.request.kind === 'priority');
   $('#table').classList.toggle('can-act', !!(ev && ev.request.kind === 'priority'));
   if (!ev) { box.append(el('div', { class: 'stats' }, 'Waiting for the other players…')); return; }
   const req = ev.request;
@@ -535,8 +539,15 @@ async function init() {
   listSaves();
   $('#hint').addEventListener('click', hint);
   setupPlayback();
-  $('#pass').addEventListener('click', () => answer({ do: 'pass' }));
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+  (passBtn = passBtn || $('#pass')).addEventListener('click', () => answer({ do: 'pass' }));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+    // Space passes priority (when the button is showing and you aren't typing or using a menu)
+    if (e.key === ' ' && pending && pending.request.kind === 'priority' && !$('#game').hidden
+        && !(e.target instanceof Element && e.target.closest('input, select, textarea, button, #menu'))) {
+      e.preventDefault(); answer({ do: 'pass' });
+    }
+  });
   document.addEventListener('click', (e) => { if (!e.target.closest('#menu') && !e.target.closest('#table')) closeMenu(); });
   renderSetup();
   if (Object.keys(catalog.images).length < catalog.decks.length) {      // the commanders' images arrive shortly after start-up
