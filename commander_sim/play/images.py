@@ -49,7 +49,9 @@ def _entry(card):
     urls = [u for u in urls if u]
     files = [f"{card['id']}{'' if i == 0 else f'-{i}'}.jpg" for i in range(len(urls))]
     return {'id': card['id'], 'name': card.get('name'), 'urls': urls, 'files': files,
-            'tokens': [p['id'] for p in card.get('all_parts') or [] if p.get('component') == 'token']}
+            'tokens': [p['id'] for p in card.get('all_parts') or [] if p.get('component') == 'token'],
+            'type_line': card.get('type_line', ''), 'power': card.get('power'), 'toughness': card.get('toughness'),
+            'colors': ''.join(card.get('colors') or []), 'keywords': [k.lower() for k in card.get('keywords') or []]}
 
 
 def _collection(identifiers):
@@ -93,7 +95,7 @@ def prepare(names, progress=None, lookup=_collection, download=_download):
             card = found.get(_key(n)) or found.get(_key(n.split(' // ')[0]))
             if card is not None: idx[_key(n)] = _entry(card)
     tokens = list(dict.fromkeys(t for n in names for t in idx.get(_key(n), {}).get('tokens', [])))
-    missing = [t for t in tokens if f'token:{t}' not in idx]
+    missing = [t for t in tokens if 'type_line' not in idx.get(f'token:{t}', {})]     # new, or cached before P/T was kept
     for i in range(0, len(missing), 75):
         for card in lookup([{'id': t} for t in missing[i:i + 75]]):
             idx[f"token:{card['id']}"] = _entry(card)
@@ -126,4 +128,27 @@ def cached(names):
         e = idx.get(_key(n))
         have = [f for f in (e or {}).get('files', []) if os.path.exists(os.path.join(DIR, f))]
         if have: out[n] = have
+    return out
+
+
+_TOKENS = {}
+
+
+def token_kinds(names):
+    """the creature tokens the cards in names can make, from the image index: [{'name', 'power', 'toughness',
+    'colors', 'flying'}] (empty when the images haven't been fetched)"""
+    key = tuple(sorted(set(names)))
+    if key in _TOKENS: return _TOKENS[key]
+    idx = load_index()
+    out, seen = [], set()
+    for n in key:
+        for t in (idx.get(_key(n)) or {}).get('tokens', []):
+            e = idx.get(f'token:{t}')
+            if not e or t in seen or 'Creature' not in e.get('type_line', ''): continue
+            seen.add(t)
+            try: pw, tg = int(e.get('power') or 0), int(e.get('toughness') or 0)
+            except ValueError: continue                      # */* tokens: their size depends on the game
+            out.append({'name': e['name'], 'power': pw, 'toughness': tg, 'colors': e.get('colors', ''),
+                        'flying': 'flying' in e.get('keywords', [])})
+    _TOKENS[key] = out
     return out

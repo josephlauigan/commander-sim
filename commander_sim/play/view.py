@@ -10,7 +10,32 @@ def token_name(m):
     if m.army: return 'Orc Army'
     if m.name and m.name != 'Token': return m.name
     kinds = sorted(t for t in (m.ttypes or ()) if t)
-    return (' '.join(k.title() for k in kinds) + ' token') if kinds else 'Token'
+    if kinds: return ' '.join(k.title() for k in kinds) + ' token'
+    guess = guess_token(m)
+    return f'{guess} token' if guess else 'Token'
+
+
+def guess_token(m):
+    """many cards make tokens the engine doesn't name (Krenko's Goblins): the token its owner's deck makes with the
+    same power, toughness, colour and flying (then any deck at the table's, for tokens given to you: Beast Within)"""
+    try:
+        from commander_sim.play import images
+    except ImportError:
+        return None
+    owner = m.orig or m.owner
+    decks = [owner.deck_names]
+    g = E.CUR_G
+    if g is not None: decks.append(tuple(n for q in g.players for n in q.deck_names))
+    pw, tg = m.pow, m.tgh
+    for names in decks:
+        kinds = [t for t in images.token_kinds(names) if (t['power'], t['toughness']) == (pw, tg)]
+        if not kinds: continue
+        count = {}
+        for t in kinds: count[t['name']] = count.get(t['name'], 0) + 1      # how many of the deck's cards make it
+        def score(t):        # the engine leaves many tokens colourless, so colour only counts when it has one
+            return ((t['colors'] == m.colors) * 2 if m.colors else 0) + (t['flying'] == bool(m.fly)) + count[t['name']] / 100
+        return max(kinds, key=score)['name']
+    return None
 
 
 def _perm(g, m):

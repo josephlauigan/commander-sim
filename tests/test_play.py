@@ -112,6 +112,29 @@ class View(unittest.TestCase):
         self.assertIn('Orc Army', names)
 
 
+class TokenNames(unittest.TestCase):
+    """tokens the engine makes without a type are named after the token their owner's deck makes with that size"""
+    def test_unnamed_tokens_take_the_decks_token_name(self):
+        from commander_sim import engine as E
+        from commander_sim.play import images
+        from commander_sim.play.view import token_name
+        kinds = [{'name': 'Goblin', 'power': 1, 'toughness': 1, 'colors': 'R', 'flying': False}] * 3 + \
+                [{'name': 'Spirit', 'power': 1, 'toughness': 1, 'colors': '', 'flying': True},
+                 {'name': 'Beast', 'power': 3, 'toughness': 3, 'colors': 'G', 'flying': False}]
+        saved = images.token_kinds
+        images.token_kinds = lambda names: kinds
+        try:
+            g = table('sauron', 'veyran'); s = g.players[0]
+            goblin = E.make_tokens(g, s, 1, 1)[0]; goblin.colors = ''           # colourless: the most common 1/1
+            spirit = E.make_tokens(g, s, 1, 1, fly=True)[0]; spirit.colors = ''
+            beast = E.make_tokens(g, s, 1, 3)[0]
+            odd = E.make_tokens(g, s, 1, 7)[0]
+            self.assertEqual([token_name(m) for m in (goblin, spirit, beast, odd)],
+                             ['Goblin token', 'Spirit token', 'Beast token', 'Token'])
+        finally:
+            images.token_kinds = saved
+
+
 class Controller(unittest.TestCase):
     def test_look_ahead_copies_leave_the_human_out(self):
         from commander_sim.ai import search
