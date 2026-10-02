@@ -123,14 +123,17 @@ def clone(g, want_memo=False):
     saved_ctl = g.__dict__.pop('controllers', None)          # practice mode: in a copy the AI plays every seat
     saved_alive = g.__dict__.pop('alive_objs', None)         # the game's objects kept alive (engine.py): not copied
     saved_tape = g.__dict__.pop('search_tape', None)
-    try:
+    saved_parent = g.__dict__.pop('search_parent', None)     # a playout's link to its real game: never copied (a copy
+    try:                                                     # of a copy would otherwise copy that whole game too)
         g2 = copy.deepcopy(g, memo)
     finally:
         g.log = saved_log
         if saved_ctl is not None: g.controllers = saved_ctl
         if saved_alive is not None: g.alive_objs = saved_alive
         if saved_tape is not None: g.search_tape = saved_tape
-    g2.alive_objs = list(memo.values())                     # the copy's objects outlive the copy's own changes
+        if saved_parent is not None: g.search_parent = saved_parent
+    # the copy's objects outlive the copy's own changes; memo[id(memo)] is deepcopy's own list of the originals
+    g2.alive_objs = [v for k, v in memo.items() if k != id(memo)]
     for q in g2.players: q.__dict__.pop('pool', None)       # a copy's human seat pays like the AI, from its lands
     for obj in [g2] + list(g2.players):
         for k, v in list(vars(obj).items()):

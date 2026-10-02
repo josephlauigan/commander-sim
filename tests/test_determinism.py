@@ -35,5 +35,19 @@ class Determinism(unittest.TestCase):
         self.assertTrue(any(x is g2.players[0].perms[0] for x in g2.alive_objs))
 
 
+    def test_a_copy_of_a_copy_leaves_the_real_game_alone(self):
+        """a playout copy that is copied again (the Breach line's dry run inside a look-ahead playout) must not copy
+        the game it came from, which holds the practice-mode seat (threads and queues can't be copied)"""
+        from commander_sim.play.controller import HumanController
+        g = table('sauron', 'veyran'); s = g.players[0]
+        perm(g, s, 'Grave Titan')
+        g.controllers = {s.key: HumanController()}
+        g2 = search.clone(g)
+        search._start(g2, g)                                   # a playout of g: g2.search_parent is g
+        g3 = search.clone(g2)
+        self.assertIsNone(getattr(g3, 'search_parent', None))
+        self.assertIs(g2.search_parent, g)
+        self.assertFalse(any(x is g for x in g3.alive_objs))
+
 if __name__ == '__main__':
     unittest.main()

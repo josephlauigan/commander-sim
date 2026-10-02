@@ -1935,14 +1935,76 @@ def goldfish_combat(g, p):
 
 
 # ======================================================== turn structure
+BASIC_TYPES = ('plains', 'island', 'swamp', 'mountain', 'forest')
+_ENTER_RULES = {}
+_LAND_TYPES = {}
+
+
+def _scry(name):
+    from commander_sim.cards import scryfall
+    return scryfall.load_cache().get(name.strip().lower()) or {}
+
+
+def land_types(name):
+    """(basic land types, is basic) of a land by name, from its Scryfall type line ('Land — Island Swamp')"""
+    v = _LAND_TYPES.get(name)
+    if v is None:
+        tl = (_scry(name).get('type_line') or '').lower()
+        sub = tl.split('—', 1)[1] if '—' in tl else ''
+        v = _LAND_TYPES[name] = (frozenset(w for w in sub.split() if w in BASIC_TYPES), tl.startswith('basic'))
+    return v
+
+
+def enters_rule(cd):
+    """the condition under which land cd enters untapped, read from its Oracle text: ('control', types),
+    ('fewer', n), ('more', n), ('basics', n), ('opponents', n), ('types_more', type, n), ('reveal', types),
+    ('legendary',), or None (no such condition)"""
+    if cd.name in _ENTER_RULES: return _ENTER_RULES[cd.name]
+    txt = (_scry(cd.name).get('oracle_text') or '').lower()
+    rule = None
+    m = re.search(r'enters tapped unless (.*?)\.', txt)
+    if m:
+        cond = m.group(1)
+        two = {'two': 2, 'three': 3}
+        if (k := re.match(r'you control (two|three) or fewer other lands', cond)): rule = ('fewer', two[k.group(1)])
+        elif (k := re.match(r'you control (two|three) or more other lands', cond)): rule = ('more', two[k.group(1)])
+        elif (k := re.match(r'you control (two|three) or more basic lands', cond)): rule = ('basics', two[k.group(1)])
+        elif (k := re.match(r'you have (two|three) or more opponents', cond)): rule = ('opponents', two[k.group(1)])
+        elif (k := re.match(r'you control (two|three) or more other (\w+?)s\b', cond)) and k.group(2) in BASIC_TYPES:
+            rule = ('types_more', k.group(2), two[k.group(1)])
+        elif 'legendary creature' in cond: rule = ('legendary',)
+        else:
+            ts = frozenset(w for w in re.findall(r'an? (\w+)', cond) if w in BASIC_TYPES)
+            if cond.startswith('you control') and ts: rule = ('control', ts)
+    elif (m := re.search(r'you may reveal an? (\w+) or (\w+) card from your hand\. if you don.t, [^.]*enters tapped', txt)):
+        rule = ('reveal', frozenset(w for w in m.groups() if w in BASIC_TYPES))
+    _ENTER_RULES[cd.name] = rule
+    return rule
+
+
+def _untapped_by_rule(g, p, cd, rule):
+    kind = rule[0]
+    if kind == 'control': return any(land_types(L.cd.name)[0] & rule[1] for L in p.lands)
+    if kind == 'fewer': return len(p.lands) <= rule[1]
+    if kind == 'more': return len(p.lands) >= rule[1]
+    if kind == 'basics': return sum(1 for L in p.lands if land_types(L.cd.name)[1]) >= rule[1]
+    if kind == 'opponents': return g is not None and len(g.opps(p)) >= rule[1]
+    if kind == 'types_more': return sum(1 for L in p.lands if rule[1] in land_types(L.cd.name)[0]) >= rule[2]
+    if kind == 'reveal': return any(c is not cd and c.land and land_types(c.name)[0] & rule[1] for c in p.hand)
+    if kind == 'legendary': return any(m.creature and m.cd is not None and 'leg' in m.cd.tags for m in p.perms)
+    return False
+
+
 def land_enters_tapped(p, cd):
     t = cd.tags
-    if 't' in t or 'f' in t: return True
+    if 'f' in t: return True
     if E.CUR_G is not None and cd.name not in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes') \
             and any(m.cd is not None and m.cd.name in ('Thalia, Heretic Cathar', 'Archon of Emeria') and not m.phased
                     for q in E.CUR_G.opps(p) for m in q.perms): return True
+    rule = enters_rule(cd)              # check lands, fast and slow lands, battle lands, snarls ... from the Oracle text
+    if rule is not None: return not _untapped_by_rule(E.CUR_G, p, cd, rule)
+    if 't' in t: return True
     if 'ck' in t: return len(p.lands) < 2
-    if cd.name == 'Barad-dûr': return not any(m.creature and m.cd is not None and 'leg' in m.cd.tags for m in p.perms)
     return False
 
 

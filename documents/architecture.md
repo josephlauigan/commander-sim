@@ -887,13 +887,14 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (386 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (394 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
 |---|---|
 | `test_rules.py` | Core rules on hand-built positions: mana, commander tax, state-based losses, counterspells, removal, wipes, tutors, mulligans, combat keywords. |
 | `test_my_cards.py` | Key cards of your four decks against their Oracle text. |
+| `test_land_entry.py` | Lands' enters-tapped conditions. |
 | `test_search.py` | The look-ahead AI: independent copies, re-dealt hidden hands, evaluation bounds, a whole reproducible decision. |
 | `test_dsl.py` | The ability compiler and interpreter. |
 | `test_cli.py` | Statistics, and every command run as a module with a few games; results don't depend on `--jobs`. |

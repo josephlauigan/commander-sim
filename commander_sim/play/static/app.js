@@ -512,7 +512,17 @@ async function startGame(e) {
   screen('game');
 }
 
+// card size: A- / A+ in the header, remembered in this browser
+let zoom = 1;
+function setZoom(z) {
+  zoom = Math.min(2.2, Math.max(0.6, Math.round(z * 100) / 100));
+  document.documentElement.style.setProperty('--zoom', zoom);
+  try { localStorage.setItem('cardZoom', String(zoom)); } catch (e) { /* private window: not remembered */ }
+}
+
 async function init() {
+  try { setZoom(parseFloat(localStorage.getItem('cardZoom')) || 1); } catch (e) { setZoom(1); }
+  for (const b of document.querySelectorAll('#zoom button')) b.addEventListener('click', () => setZoom(zoom + 0.15 * +b.dataset.zoom));
   catalog = (await api('/api/options')).data;
   chosen.deck = catalog.decks[0].key;
   const f = $('#newgame');
