@@ -141,7 +141,7 @@ you're attacked, and at the end of each turn: respond with instants, counterspel
 **The stack.** Spells, activated abilities and triggered abilities all go on the stack, and everyone gets priority in
 turn order, as in the real game. You can counter a counterspell, answer an ability (Azorius Guildmage, Tishana's
 Tidebinder), or kill a creature before its trigger resolves. When several of your triggers happen at once, you choose
-the order. **Stop** in the header (and *Stop for priority* on the setup screen) sets when the game asks you:
+the order (*Same order as last time* when the same ones come up again). **Stop** in the header (and *Stop for priority* on the setup screen) sets when the game asks you:
 - *when I can respond* (the default): opponents' spells; abilities and triggers when you hold something to answer
   with; attacks on you; the end of each other turn; and the declare blockers step of your combats when you could
   do something;

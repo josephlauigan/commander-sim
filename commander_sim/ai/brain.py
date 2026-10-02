@@ -306,6 +306,31 @@ def removal_options(g, p, s):
     return out
 
 
+def attack_response(g, d, p, atk):
+    """d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with instant removal
+    when it's worth the card (a valuable creature, or the attack is dangerous)"""
+    rem = [c for c in d.hand if c.instant and 'rem' in c.tags and not c.creature]
+    if not rem or not atk: return False
+    incoming = sum(epow(g, m) * (2 if A.double_strike(p, m) else 1) for m in atk if m in p.perms)
+    danger = incoming >= d.life * 0.5 or any(m.is_cmd and d.cmd_dmg[p.key] + epow(g, m) >= 21 for m in atk)
+    best = None
+    for c in rem:
+        if not can_pay(g, d, c.generic, c.pips, 'convoke' in c.tags): continue
+        if 'needsac' in c.tags or 'pactpay' in c.tags: continue
+        tg = [m for m in legal_targets(g, d, c.tags['rem'], c.tags.get('tgt', 'c'), 'mv4' in c.tags, spell=c)
+              if m in atk]
+        for m in tg:
+            v = pval(g, m) + (3.0 if danger else 0.0) + 0.3 * epow(g, m)
+            if best is None or v > best[0]: best = (v, c, m)
+    if best is None: return False
+    v, c, m = best
+    if v - 3.5 - 1.2 * style(d)['caution'] * E.INSTANT_EXTRA / 2.0 <= 0: return False
+    log(f'  {NAME(d)} answers the attack: {c.name} -> {m.name}', g)
+    if not cast_removal(g, d, c, [m]): return False
+    d.stats['attack_removal'] += 1
+    return True
+
+
 def cast_removal(g, p, c, tg, kick=0, kind=None):
     cv = 'convoke' in c.tags
     fods = [m for m in p.perms if m.creature and (m.token or not m.cd.bomb)]

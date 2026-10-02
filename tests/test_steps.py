@@ -78,6 +78,18 @@ class Steps(unittest.TestCase):
         self.assertEqual(s.life, 40)                                 # Guttersnipe has no trample
 
 
+class AIAttacked(unittest.TestCase):
+    def test_the_ai_kills_a_dangerous_attacker(self):
+        g = table('veyran', 'sauron'); v, s = g.players
+        s.life = 6
+        a = perm(g, v, 'Guttersnipe'); a.sick = False
+        b = perm(g, v, 'Harmonic Prodigy'); b.sick = False
+        hand(s, 'Lightning Bolt'); lands(s, 'Mountain', 1)
+        ais.resolve_combat(g, v, [a, b], s, set())
+        self.assertTrue(a not in v.perms or b not in v.perms)      # one attacker died in the declare attackers step
+        self.assertEqual(s.stats['attack_removal'], 1)
+
+
 class AutoPass(unittest.TestCase):
     def setUp(self):
         from commander_sim.play.session import Session

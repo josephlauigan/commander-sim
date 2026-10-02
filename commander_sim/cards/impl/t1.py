@@ -638,7 +638,10 @@ def _lightpaws(g, src, p, m):
     cands = [c for c in o.library if 'aura' in c.subtypes and c.cmc <= m.cd.cmc and c.name not in have
              and c.name in IC.AURA and IC.AURA[c.name]['target'] == 'own'
              and (IC.AURA[c.name]['host_ok'] is None or IC.AURA[c.name]['host_ok'](g, o, src))]
-    if not cands: return
+    if not cands or not trigger_window(g, o, src, 'search for an Aura'): return
+    have = {a.cd.name for a in my_auras(o)}
+    cands = [c for c in cands if c in o.library and c.name not in have]
+    if not cands or src not in o.perms: return
     c = max(cands, key=lambda c: (c.cmc, card_worth(g, o, c)))
     o.library.remove(c); g.rng.shuffle(o.library)
     log(f'    Light-Paws fetches {c.name}', g)

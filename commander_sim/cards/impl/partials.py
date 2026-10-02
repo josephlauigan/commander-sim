@@ -1233,17 +1233,7 @@ note('Sai, Master Thopterist', 'Full', 'a Thopter per artifact spell; {1}{U}, sa
 def _protege(g, src, p, m):
     if m is not src: return
     o = src.owner
-    if g.last_cast_etb:                            # cascade (the spell was cast)
-        cs = []
-        while o.library:
-            c = o.library.pop()
-            if not c.land and c.cmc < 6:
-                log(f'    cascade: {c.name}', g); cs.append(c)
-                cast_card(g, o, c, 'lib', {})
-                break
-            cs.append(c)
-        o.library[:0] = [c for c in cs if c not in o.hand and c not in o.gy and not any(x.cd is c for x in o.perms)
-                         and c not in o.exile][:len(cs)]
+    if g.last_cast_etb: _protege_cascade(g, o, src)     # the spell was cast (entering as a copy: a replacement)
     ent = [x for x in getattr(g, 'entered', []) if x[0] == turn_now(g) and x[1] is not src and x[1].cd is not None
            and x[1] in x[1].owner.perms]
     if ent:
@@ -1253,6 +1243,23 @@ def _protege(g, src, p, m):
             leave(g, src)
             if src.cd in o.gy: o.gy.remove(src.cd)
             x = enter_token_copy(g, o, t.cd)
+
+
+def _protege_cascade(g, o, src):
+    """cascade: a cast trigger"""
+    if not trigger_window(g, o, src, 'cascade'): return
+    cs = []
+    while o.library:
+        c = o.library.pop()
+        if not c.land and c.cmc < 6:
+            log(f'    cascade: {c.name}', g); cs.append(c)
+            cast_card(g, o, c, 'lib', {})
+            break
+        cs.append(c)
+    o.library[:0] = [c for c in cs if c not in o.hand and c not in o.gy and not any(x.cd is c for x in o.perms)
+                     and c not in o.exile][:len(cs)]
+
+
 note("Sakashima's Protege", 'Full', 'flash; cascade; enters as a copy of the best permanent that entered this turn '
      '(the copy is made as a token copy)')
 

@@ -103,9 +103,11 @@ so it resolves correctly later.
   death triggers (undying, persist, Wurmcoil), upkeep and end-step tags, and attack tags get inline windows.
 - **Speed.** When nobody could answer a trigger (no person at the table, nobody holding Tishana's Tidebinder or Azorius
   Guildmage), a batch resolves in APNAP order with no probe and no priority, so simulations run as fast as before.
-- **Not yet.** Combat damage triggers resolve during damage rather than after it; a few hooks stay immediate because
-  they read values the engine keeps only while a permanent enters (Light-Paws, Ob Nixilis's casualty, Sakashima's
-  Protégé).
+- **Combat damage** is dealt all at once: the triggers it causes (combat damage, creatures dying) go on the stack
+  after it, in APNAP order.
+- **Mixed hooks.** Ob Nixilis's casualty sacrifice (a cost) and Sakashima's Protégé entering as a copy (a replacement)
+  stay immediate; the copy and the cascade they trigger have their own windows (`_obnix_copy`, `_protege_cascade`).
+  Enters triggers remember whether the permanent was cast (`Trigger.cast_etb`), so Light-Paws is converted.
 
 ### How phase 4 was built
 
@@ -113,8 +115,9 @@ so it resolves correctly later.
   and declare blockers steps, and the end step; each person at the table gets priority there in turn order from the
   active player, as their auto-pass setting says (`play.human.autopass`: 'respond' by default, 'stack', 'all').
   The end-of-turn priority people had before is now the end step's.
-- The AI passes in these steps: its instant-speed plays keep their timing (the end of the turn before its own, and
-  answers on the stack), so simulations are unchanged by this phase.
+- The AI acts in the declare attackers step when it's attacked: instant removal on an attacker that's valuable or
+  part of a dangerous attack (`ai.brain.attack_response`). Its other instant-speed plays keep their timing (the end of
+  the turn before its own, and answers on the stack).
 - A creature whose blocker leaves combat stays blocked: no damage to the player unless it has trample.
 
 ### How phases 5 and 6 were built
@@ -126,7 +129,8 @@ so it resolves correctly later.
 - **The practice page.** The stack panel shows each item's card, who controls it, what an ability or trigger does and
   its target. *Stop* in the header (and on the setup screen) is the auto-pass setting; a change is kept in the
   session's log against the answer it applies from, so Undo and saved games replay it exactly. Your simultaneous
-  triggers are ordered with a choice ("which resolves first?").
+  triggers are ordered with a choice ("which resolves first?"), with "Same order as last time" offered first when
+  the same triggers come up again.
 - **Not done:** re-measuring the results tables (every recorded result shifts a little) waits for a go-ahead.
 
 ### The AI's decisions with priority

@@ -206,7 +206,13 @@ def _obnix_casualty(g, src, p, m):
     fod = [x for x in o.perms if x.creature and not x.is_cmd and x is not src and (x.token or pval(g, x) < 3) and epow(g, x) >= 2]
     if not fod: return
     x = max(fod, key=lambda x: epow(g, x)); n = epow(g, x)
-    die(g, x, 'sac')
+    die(g, x, 'sac')                                    # casualty: a cost paid as it's cast
+    _obnix_copy(g, o, src, n)
+
+
+def _obnix_copy(g, o, src, n):
+    """casualty's trigger: copy the spell (a token copy with loyalty X)"""
+    if not trigger_window(g, o, src, f'copy it (loyalty {n})', imp=5): return
     cp = enter_token_copy(g, o, src.cd)
     if cp is not None:
         cp.loyalty = n

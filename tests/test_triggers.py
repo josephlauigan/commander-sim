@@ -89,6 +89,39 @@ class Triggers(unittest.TestCase):
         E.settle_stack(g)
         self.assertIn(m, s.perms); self.assertNotIn(m.cd, s.gy)
 
+    def test_same_order_as_last_time(self):
+        g = table('seph', 'veyran', 'sauron'); s = g.players[0]
+        a, b = card('Archon of Cruelty'), card('Grave Titan')
+        mk = lambda: [E.Trigger(s, a, None, (), 'etb', name='drain'), E.Trigger(s, b, None, (), 'etb', name='Zombies')]
+        ctl = seat(g, s, [lambda req: next(i for i, x in enumerate(req.choices) if 'Grave Titan' in x), 0])
+        E._order_triggers(g, mk())
+        out = E._order_triggers(g, mk())                        # the shortcut, offered first
+        self.assertIn('Same order as last time', ctl.asked[1].choices[0])
+        self.assertEqual(out[-1].src, b)                        # Grave Titan's still resolves first
+
+    def test_combat_damage_triggers_wait_for_all_the_damage(self):
+        from commander_sim import ais
+        g = table('veyran', 'sauron'); v, s = g.players
+        a = perm(g, v, 'Moon-Circuit Hacker'); a.sick = False      # combat damage: draw a card
+        b = perm(g, v, 'Guttersnipe'); b.sick = False
+        from commander_sim.cards.impl import t4
+        seen = []
+        real = t4.draw
+        def draw(g, p, n, **kw):
+            seen.append(s.life); return real(g, p, n, **kw)
+        t4.draw = draw
+        try:
+            ais.resolve_combat(g, v, [a, b], s, set())
+        finally:
+            t4.draw = real
+        self.assertTrue(seen)
+        self.assertEqual(seen[0], s.life)                       # both attackers had dealt their damage
+
+    def test_light_paws_has_its_window(self):
+        from commander_sim.cards import cardimpl as CI
+        table('zur', 'veyran')
+        self.assertTrue(E.converted(CI.HOOKS["Light-Paws, Emperor's Voice"]['etb']))
+
     def test_a_converted_hook_has_its_window(self):
         from commander_sim.cards import cardimpl as CI
         table('zur', 'veyran')

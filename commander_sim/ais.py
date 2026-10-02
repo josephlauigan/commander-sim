@@ -1681,9 +1681,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     hctl = getattr(g, 'controllers', None)
     hum_d = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, d)
     hum_p = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, p)
-    if hctl:                                           # practice mode: the declare attackers step's priority
-        E.step_priority(g, 'attackers', defender=d, attackers=atk)
-        atk = [m for m in atk if m in p.perms]
+    E.step_priority(g, 'attackers', defender=d, attackers=atk)        # the declare attackers step's priority
+    atk = [m for m in atk if m in p.perms]
+    if g.over or not d.alive: return set()
     if hum_d:                                          # the person declares blockers
         assign = importlib.import_module('commander_sim.play.combat').human_blocks(g, p, atk, d, unbl)
     else:
@@ -1733,68 +1733,73 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
         if sum(x for _, x in unbl_dmg) >= d.life or any(a.is_cmd and d.cmd_dmg[p.key] + x >= 21 for a, x in unbl_dmg):
             E.last_chance(g, d)                            # lethal coming: Teferi's Protection
     conn = set()
-    for a in atk:
-        if a not in p.perms or not d.alive: continue
-        ap = epow(g, a) * (2 if double_strike(p, a) else 1)
-        if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
-        if a.data and importlib.import_module('commander_sim.cards.impl.rules').dovin_blocked(a): ap = 0
-        b = assign.get(a)
-        tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or kw(a, 'trample')
-        if b is None:
-            dmg = ap
-        elif b not in d.perms:                         # its blocker is gone: still blocked (trample: all to the player)
-            dmg = ap if tr else 0
-        else:
-            bt = etgh(g, b)
-            a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
-            if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, b): a_dies = False
-            b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
-            if E.CI is not None:                       # protection from creatures / Demons and Dragons
-                from commander_sim.cards.impl import rules2 as impl_rules2
-                if impl_rules2.prot_vs(g, a, b): a_dies = False
-                if impl_rules2.prot_vs(g, b, a): b_dies = False
-            fa, fb = first_strike(a), first_strike(b)
-            if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
-            elif fb and not fa and a_dies: b_dies = False
-            dmg = max(0, ap - bt) if tr else 0
-            if b_dies: die(g, b, 'destroy')
-            if a_dies: die(g, a, 'destroy')
-        if dmg > 0 and getattr(g, 'fog', None) == turn_stamp(g):     # Spore Frog and other fogs
-            dmg = 0
-        w = to_walker.get(a)
-        if dmg > 0 and w is not None and w in d.perms:                  # this attacker went after a planeswalker
-            w.loyalty -= dmg; tot_dmg[0] += dmg
-            log(f'    {a.name} deals {dmg} to {w.name} (loyalty {w.loyalty})', g)
-            if w.loyalty <= 0:
-                leave(g, w); to_zone_card(g, w, 'gy'); d.lost_names[w.name] += 1
-            dmg = 0
-        if dmg > 0 and prevents_damage(g, d, p):  # protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
-            d.stats['dmg_prevented'] += dmg
-            log(f'    {dmg} combat damage from {a.name} to {NAME(d)} is prevented', g)
-            dmg = 0
-        if dmg > 0:
-            lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
-            if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
-            if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
-            if getattr(p, 'insight', None): importlib.import_module('commander_sim.cards.impl.partials').insight_draw(g, p, a, dmg)
-            if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_combat(g, p, a, d, dmg)
-            if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
-            if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
-                for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
-                    d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
-            if a.life or p.najeela_boost or kw(a, 'lifelink'): gain(p, dmg)
-            if a.is_cmd: d.cmd_dmg[p.key] += dmg
-            if E.CI is not None:
-                IM = importlib.import_module('commander_sim.cards.impl.mine')
-                if a.army and has(p, 'sauron'): IM.ring_tempt(g, p)        # Sauron: an Army's combat damage tempts
-                IM.ring_damage(g, p, a, d)                                  # Ring level 4: each opponent loses 3
-            if equipped(a, 'sword'):
-                if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
-                for L in p.lands: L.tapped = False
-    for b in ringblk:                                           # Ring level 3: blockers are sacrificed
-        if b in b.owner.perms: die(g, b, 'sac')
-    if conn and has(p, 'facebreaker'): add_treasure(g, p, len(find(p, 'facebreaker')))   # Professional Face-Breaker
-    check_state(g)
+    g.resolving = getattr(g, 'resolving', 0) + 1           # combat damage is dealt at once: its triggers wait
+    try:
+        for a in atk:
+            if a not in p.perms or not d.alive: continue
+            ap = epow(g, a) * (2 if double_strike(p, a) else 1)
+            if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
+            if a.data and importlib.import_module('commander_sim.cards.impl.rules').dovin_blocked(a): ap = 0
+            b = assign.get(a)
+            tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or kw(a, 'trample')
+            if b is None:
+                dmg = ap
+            elif b not in d.perms:                         # its blocker is gone: still blocked (trample: all to the player)
+                dmg = ap if tr else 0
+            else:
+                bt = etgh(g, b)
+                a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
+                if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, b): a_dies = False
+                b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
+                if E.CI is not None:                       # protection from creatures / Demons and Dragons
+                    from commander_sim.cards.impl import rules2 as impl_rules2
+                    if impl_rules2.prot_vs(g, a, b): a_dies = False
+                    if impl_rules2.prot_vs(g, b, a): b_dies = False
+                fa, fb = first_strike(a), first_strike(b)
+                if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
+                elif fb and not fa and a_dies: b_dies = False
+                dmg = max(0, ap - bt) if tr else 0
+                if b_dies: die(g, b, 'destroy')
+                if a_dies: die(g, a, 'destroy')
+            if dmg > 0 and getattr(g, 'fog', None) == turn_stamp(g):     # Spore Frog and other fogs
+                dmg = 0
+            w = to_walker.get(a)
+            if dmg > 0 and w is not None and w in d.perms:                  # this attacker went after a planeswalker
+                w.loyalty -= dmg; tot_dmg[0] += dmg
+                log(f'    {a.name} deals {dmg} to {w.name} (loyalty {w.loyalty})', g)
+                if w.loyalty <= 0:
+                    leave(g, w); to_zone_card(g, w, 'gy'); d.lost_names[w.name] += 1
+                dmg = 0
+            if dmg > 0 and prevents_damage(g, d, p):  # protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
+                d.stats['dmg_prevented'] += dmg
+                log(f'    {dmg} combat damage from {a.name} to {NAME(d)} is prevented', g)
+                dmg = 0
+            if dmg > 0:
+                lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
+                if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
+                if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
+                if getattr(p, 'insight', None): importlib.import_module('commander_sim.cards.impl.partials').insight_draw(g, p, a, dmg)
+                if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_combat(g, p, a, d, dmg)
+                if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
+                if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
+                    for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
+                        d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+                if a.life or p.najeela_boost or kw(a, 'lifelink'): gain(p, dmg)
+                if a.is_cmd: d.cmd_dmg[p.key] += dmg
+                if E.CI is not None:
+                    IM = importlib.import_module('commander_sim.cards.impl.mine')
+                    if a.army and has(p, 'sauron'): IM.ring_tempt(g, p)        # Sauron: an Army's combat damage tempts
+                    IM.ring_damage(g, p, a, d)                                  # Ring level 4: each opponent loses 3
+                if equipped(a, 'sword'):
+                    if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
+                    for L in p.lands: L.tapped = False
+        for b in ringblk:                                           # Ring level 3: blockers are sacrificed
+            if b in b.owner.perms: die(g, b, 'sac')
+        if conn and has(p, 'facebreaker'): add_treasure(g, p, len(find(p, 'facebreaker')))   # Professional Face-Breaker
+        check_state(g)
+    finally:
+        g.resolving -= 1
+    if not g.resolving and getattr(g, 'trig_queue', None) and not g.over: E.flush_triggers(g); check_state(g)
     return conn
 
 

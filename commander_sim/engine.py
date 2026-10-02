@@ -1649,18 +1649,34 @@ def _order_triggers(g, real):
         j = i
         while j < len(real) and real[j].controller is real[i].controller: j += 1
         group = real[i:j]
-        hc = human_choice(g, group[0].controller)
+        q = group[0].controller
+        hc = human_choice(g, q)
         if hc is not None and len(group) > 1:
             left, first = list(group), []
+            last = getattr(g, 'trig_orders', {}).get(q.key)          # the order you chose the last time
+            same = last is not None and sorted(last) == sorted(_trig_label(t) for t in left)
             while len(left) > 1:
-                k = hc.choose(g, group[0].controller, 'choose', 'Your triggers: which resolves first?',
-                              [f'{getattr(getattr(t.src, "cd", t.src), "name", "")}: {t.name}' for t in left], cancel=None)
-                first.append(left.pop(k))
+                labels = [_trig_label(t) for t in left]
+                extra = [f'Same order as last time ({", then ".join(last)})'] if same else []
+                k = hc.choose(g, q, 'choose', 'Your triggers: which resolves first?', extra + labels, cancel=None)
+                if same and k == 0:
+                    for name in last:
+                        t = next(t for t in left if _trig_label(t) == name)
+                        left.remove(t); first.append(t)
+                    break
+                first.append(left.pop(k - len(extra)))
+                same = False
             first += left
+            if not hasattr(g, 'trig_orders'): g.trig_orders = {}
+            g.trig_orders[q.key] = [_trig_label(t) for t in first]
             group = list(reversed(first))               # pushed in reverse: the first to resolve goes on top
         out += group
         i = j
     return out
+
+
+def _trig_label(t):
+    return f'{getattr(getattr(t.src, "cd", t.src), "name", "")}: {t.name}'
 
 
 def trigger_window(g, p, src, name, imp=None):
@@ -1691,13 +1707,18 @@ STEP_NAMES = {'upkeep': 'upkeep', 'draw': 'draw step', 'combat': 'beginning of c
 
 
 def step_priority(g, step, defender=None, attackers=()):
-    """priority in a step of the turn, to each player in turn order from the active player. The AI passes (its
-    instant-speed plays keep their own timing: the end of the turn before its own, and answers on the stack), so only
-    people are asked, as their auto-pass setting says; a simulation does nothing here"""
-    if not getattr(g, 'controllers', None) or g.over or g.active is None: return
-    hm = importlib.import_module('commander_sim.play.human')
+    """priority in a step of the turn, to each player in turn order from the active player. People are asked as
+    their auto-pass setting says. The AI acts here when it's attacked (instant removal on an attacker, ai.brain
+    .attack_response); its other instant-speed plays keep their own timing (the end of the turn before its own, and
+    answers on the stack)"""
+    if g.over or g.active is None: return
+    ctl = getattr(g, 'controllers', None)
+    hm = importlib.import_module('commander_sim.play.human') if ctl else None
     for q in [g.active] + g.after(g.active):
-        if q.alive and not g.over and hm.is_human(g, q): hm.step_priority(g, q, step, defender, attackers)
+        if not q.alive or g.over: continue
+        if hm is not None and hm.is_human(g, q): hm.step_priority(g, q, step, defender, attackers)
+        elif step == 'attackers' and q is defender and AI_MODE == 'adaptive':
+            importlib.import_module('commander_sim.ai.brain').attack_response(g, q, g.active, attackers)
 
 
 def equip_to(g, p, e, m, n):
