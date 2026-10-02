@@ -1,7 +1,8 @@
 # Commander pod simulator
 
 Measures a Commander deck against pools of outside decks in simulated four-player games. You get a win rate with a
-confidence interval, and paired before/after comparisons for list changes.
+confidence interval, and paired before/after comparisons for list changes. You can also play one of your decks by
+hand against the same AI opponents in your browser ([Practice mode](#practice-mode)).
 
 Pure Python 3 (3.9 or newer), standard library only. Nothing to install. Run every command from the repository
 root.
@@ -33,11 +34,13 @@ commander_sim/            the simulator (a Python package)
     cardimpl.py           the Python hook registry
     pool_cards.py         overrides for pool cards
     impl/                 Python implementations of individual cards
+  play/                   practice mode: play a deck by hand (session, rules check, server, the browser page)
   tools/                  searchtest.py, swaptest.py, linecov.py
-data/                     scryfall_cache.json, cards_dsl.example.json
+data/                     scryfall_cache.json, cards_dsl.example.json; images/ and saves/ (practice mode, not in git)
 decklists/mine/           your decks
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
-documents/                architecture.md, card-audit.md
+documents/                architecture.md, card-audit.md, practice-mode.md
+tools/                    knight_dragon.py (draws practice mode's loading animation)
 tests/                    rule, card, AI and command tests (tests/README.md)
 ```
 
@@ -96,6 +99,54 @@ python3 -m commander_sim.cards.dsl "Grave Pact"                          # show 
 python3 -m unittest discover -s tests -t .                               # the tests (see tests/README.md)
 python3 -m commander_sim.tools.linecov                                   # their line coverage
 ```
+
+## Practice mode
+
+Play one of your decks by hand against three AI opponents from a tier, in your browser. The opponents are the same
+decks and AIs as the simulations. The game never suggests moves; it only tells you when a move isn't legal, and why.
+After the game, a review shows where your choices and the AI's differed.
+
+```
+python3 -m commander_sim.play                                            # opens http://127.0.0.1:8765
+python3 -m commander_sim.play --port 9000 --no-browser                   # another port; open it yourself
+python3 -m commander_sim.play --text --deck sauron --tier t3             # the same game in the terminal
+```
+
+Stop the server with Ctrl+C. It listens on this computer only (127.0.0.1), so it can't be reached from a phone or
+another machine.
+
+**Setting up a game.** Pick your deck and a tier (each shows your simulated win rate against it), then the
+opponents (three drawn at random, or pick three), your seat, how much the opponents interact (loose or
+conservative), the opponent AI, and a seed. *Opponent AI*: look-ahead is the stronger opponent but thinks for a few
+seconds at its decisions; adaptive is much faster. The first game with a set of decks downloads their card images
+from Scryfall (about a minute, once); after that they load from `data/images/`.
+
+**Your turn.** Click the table:
+- a land or mana rock taps it for mana (a menu asks for the colour when it makes several); click a land you just
+  tapped to untap it;
+- a card in your hand casts it, or plays it as your land;
+- your commander in the command zone, or a card in your graveyard you're allowed to play, casts it;
+- a permanent offers its abilities (Equip, loyalty abilities, sacrifice outlets ...);
+- **Pass priority** (bottom right) moves on.
+
+Targets and other choices light up on the table: click one, or pick from the list in the panel on the right. To
+attack, click your creatures (each gets a sword), then *Attack with N*; to block, click a blocker for the attacker
+that's pulsing, or *no block*.
+
+**Opponents' turns** play out one action at a time. Use *Pause*, *Next action*, *1× / 2× / 4×* or *Skip ahead* in
+the header. You get priority on every spell an opponent casts (it's shown on the stack, with who has passed), when
+you're attacked, and at the end of each turn: respond with instants, counterspells or abilities, or pass.
+
+**Practice tools** (each can be switched off on the setup screen):
+- 💡 **Hint**: what the AI would do now, with the look-ahead's score for each option.
+- ↶ **Undo**: takes back your last action (the game replays from its seed, so it's exact).
+- 💾 **Save**: keeps the game in `data/saves/`; the setup screen lists saved games to continue or review.
+
+**After the game**, *Review the game* lists each decision where your choice and the AI's differed, with both scores
+(where the game stood at the end of your next turn, from −100 lost to +100 won). *Try it* goes back to that decision
+with the AI's choice played, so you can see how it goes. *Play this seed again* deals the same game.
+
+How it's built: [documents/practice-mode.md](documents/practice-mode.md).
 
 ## Reading results
 
