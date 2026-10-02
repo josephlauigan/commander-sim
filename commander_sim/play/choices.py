@@ -42,7 +42,8 @@ def mulligan(g, p, rng):
         note = '' if bottom == 0 else f' If you keep, you put {bottom} card(s) on the bottom.'
         if k >= 6: break
         ans = ctl.ask(Request('mulligan', f'Your opening hand ({7 - bottom} to keep).{note}',
-                              choices=['keep', 'mulligan'], data={'hand': [card_label(c) for c in p.hand]}))
+                              choices=['keep', 'mulligan'],
+                              data={'hand': [card_label(c) for c in p.hand], 'names': [c.name for c in p.hand]}))
         if ans in (0, 'keep'): break
         k += 1
     bottom = max(0, k - 1)

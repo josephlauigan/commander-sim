@@ -17,6 +17,7 @@ export const STEPS = [['start', 'Beginning'], ['main1', 'Main 1'], ['combat', 'C
 
 function imageFor(images, name) {
   if (!images) return null;
+  name = name.replace(/( \{[^}]*\})+$/, '');                  // a label with its mana cost ("Sol Ring {1}")
   const files = images[name] || images[name.replace(/ token$/, '')] || images[name.split(' // ')[0]];
   return files ? `/images/${files[0]}` : null;
 }

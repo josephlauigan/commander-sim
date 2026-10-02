@@ -86,7 +86,7 @@ function renderPrompt(ev) {
       el('button', { id: 'attack-go', class: 'primary', onclick: () => answer([...attackSel].sort((x, y) => x - y)) }, attackLabel()),
       btn('Attack with everything', req.choices.map((_, i) => i)), btn('No attack', [])));
   } else if (req.kind === 'mulligan') {
-    box.append(el('div', { class: 'row' }, (req.data.hand || []).map((n) => card(n))));
+    box.append(el('div', { class: 'row' }, (req.data.names || req.data.hand || []).map((n) => card(n, { size: 'md' }))));
     box.append(el('div', { class: 'row' }, btn('Keep', 'keep', 'primary'), btn('Mulligan', 'mulligan')));
   } else if (req.kind === 'continue') {
     box.append(el('div', { class: 'row' }, btn('Continue', true, 'primary')));
