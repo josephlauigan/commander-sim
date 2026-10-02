@@ -1,6 +1,6 @@
 """Key cards of your four decks, checked against their Oracle text on hand-built positions."""
 import unittest
-from tests.table import table, hand, lands, perm, token
+from tests.table import table, hand, lands, perm, token, card
 from commander_sim import engine as E, ais
 
 C = E.DB
@@ -806,6 +806,90 @@ class NewCards(unittest.TestCase):
         ais.resolve_combat(g, r, [a], v, set())
         self.assertEqual(v.life, 40 - 5 - 2)                    # the Army, then the Sword's 2 (no creature to hit)
         self.assertEqual(len(r.hand), 1)
+
+    def test_sword_of_truth_and_justice(self):
+        # "Equipped creature gets +2/+2 and has protection from white and from blue. Whenever equipped creature deals
+        #  combat damage to a player, put a +1/+1 counter on a creature you control, then proliferate. Equip {2}"
+        from commander_sim.ai import brain
+        g = table('sauron', 'veyran'); r, v = g.players
+        lands(r, 'Island', 2); E.amass(g, r, 3); a = E.army_of(r); a.sick = False
+        flux = perm(g, r, 'Flux Channeler'); flux.plus = 1
+        perm(g, r, 'Sword of Truth and Justice')
+        opts = {l: f for u, l, f in brain.main_options(g, r, False)}
+        opts['equip Sword of Truth and Justice']()
+        self.assertTrue(E.protected_from(g, a, 'U'))
+        ais.resolve_combat(g, r, [a], v, set())
+        self.assertEqual(a.plus, 3 + 1 + 1)                     # the counter goes on the Army, then proliferate
+        self.assertEqual(flux.plus, 2)
+
+
+
+class SauronBreach(unittest.TestCase):
+    """Underworld Breach + Brain Freeze / Grapeshot (storm: a copy per spell cast before it this turn)"""
+
+    def board(self, islands, mountains, opp_library=20):
+        g = table('sauron', 'veyran', 'veyran', 'veyran'); s = g.players[0]
+        for q in g.players[1:]:
+            q.hand = []; q.gy += q.library[opp_library:]; del q.library[opp_library:]
+        s.hand = []; s.gy = [C['Island']] * 6                          # fuel for escape
+        lands(s, 'Island', islands); lands(s, 'Mountain', mountains)
+        return g, s
+
+    def test_brain_freeze_copies(self):
+        g, s = self.board(2, 0); v = g.players[1]
+        E.cast_card(g, s, hand(s, 'Brain Freeze'), 'hand', {'storm': 2, 'mill': [v, v, v]})
+        self.assertEqual(len(v.library), 20 - 9)
+
+    def test_grapeshot_kills_the_lowest_life_first(self):
+        g, s = self.board(0, 2); a, b = g.players[1], g.players[2]
+        a.life = 3
+        E.cast_card(g, s, hand(s, 'Grapeshot'), 'hand', {'storm': 4})
+        self.assertFalse(a.alive)
+        self.assertEqual(sum(40 - q.life for q in g.players[2:]), 2)
+
+    def test_the_line_waits_for_enough_mana(self):
+        from commander_sim.cards.impl import mine
+        g, s = self.board(6, 6); hand(s, 'Underworld Breach', 'Brain Freeze')
+        self.assertFalse(mine.breach_line(g, s))                       # 12 mana: two opponents milled, not three
+        g, s = self.board(8, 8); hand(s, 'Underworld Breach', 'Brain Freeze')
+        self.assertTrue(mine.breach_line(g, s))
+        g, s = self.board(4, 12); hand(s, 'Underworld Breach', 'Brain Freeze')
+        self.assertFalse(mine.breach_line(g, s))                       # 16 mana, but only four blue for Brain Freeze
+
+    def test_the_line_mills_the_table(self):
+        from commander_sim.cards.impl import mine
+        g, s = self.board(8, 8); hand(s, 'Underworld Breach', 'Brain Freeze')
+        self.assertTrue(mine.breach_line(g, s, execute=True))
+        self.assertEqual([len(q.library) for q in g.players[1:]], [0, 0, 0])
+        self.assertGreaterEqual(s.stats['breach_escapes'], 5)
+
+    def test_lotus_petal_makes_it_infinite(self):
+        # each Petal escape ({0} plus three graveyard cards) makes one mana of any colour: the {U} for the next Brain
+        # Freeze, whose copies mill you for more fuel; from two blue sources it mills out the table
+        from commander_sim.cards.impl import mine
+        g, s = self.board(2, 1, opp_library=60); lands(s, 'Swamp', 1)
+        hand(s, 'Underworld Breach', 'Brain Freeze', 'Lotus Petal')
+        self.assertTrue(mine.breach_line(g, s))
+        mine.breach_line(g, s, execute=True)
+        self.assertEqual([len(q.library) for q in g.players[1:]], [0, 0, 0])
+
+    def test_rituals_alone_run_out_of_blue(self):
+        # Dark Ritual and Cabal Ritual make only black mana: storm grows, but each Brain Freeze still needs a real {U}
+        from commander_sim.cards.impl import mine
+        g, s = self.board(3, 1, opp_library=60); lands(s, 'Swamp', 1)
+        hand(s, 'Underworld Breach', 'Brain Freeze', 'Dark Ritual', 'Cabal Ritual')
+        self.assertFalse(mine.breach_line(g, s))
+
+    def test_the_pieces_are_held_for_the_line(self):
+        g, s = self.board(8, 8)
+        bf, br = hand(s, 'Brain Freeze', 'Underworld Breach')
+        self.assertEqual(ais.sauron_prio(g, s, bf), 0)
+        self.assertEqual(ais.gc_prio_sauron(g, s, br), 0)
+
+    def test_tutors_find_the_missing_piece(self):
+        g, s = self.board(4, 4); hand(s, 'Underworld Breach')
+        s.library.append(card('Brain Freeze'))
+        self.assertEqual(ais.tutor_pick(g, s, 'any'), 'Brain Freeze')
 
 
 if __name__ == '__main__':

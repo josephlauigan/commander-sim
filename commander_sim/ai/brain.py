@@ -440,6 +440,7 @@ def special_options(g, p, s, post):
                 pay(g, p, 3, 'R'); cast_card(g, p, c, 'hand', {}); return True
             if best >= 4: o.append((1.0 + 0.4 * best, "Mizzix's Mastery (one spell)", mastery1))
     elif k == 'sauron':
+        o += importlib.import_module('commander_sim.cards.impl.mine').breach_options(g, p, post)
         a = army_of(p)
         if a and not equipped(a, 'cloak') and can_pay(g, p, 2, ''):
             for tag in ('sword', 'cloak'):
