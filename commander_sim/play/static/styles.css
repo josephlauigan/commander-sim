@@ -44,16 +44,21 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; pa
 .card { position: relative; flex: none; transition: transform .15s; }
 .card .face { position: relative; width: 100%; height: 100%; border-radius: 6%/4.5%; overflow: hidden; background: #0f2d1f; box-shadow: 0 1px 3px #0008; }
 .card img { width: 100%; height: 100%; display: block; }
-.card.xs { width: 44px; height: 61px; } .card.sm { width: 64px; height: 89px; } .card.md { width: 88px; height: 123px; } .card.lg { width: 104px; height: 145px; }
+/* card sizes grow with the window (clamp: smallest, by window width, largest) and with the A-/A+ setting (--zoom) */
+:root { --zoom: 1; }
+.card { --h: calc(var(--w) * 1.393); width: var(--w); height: var(--h); }
+.card.xs { --w: calc(clamp(44px, 2.6vw, 90px) * var(--zoom)); }
+.card.sm { --w: calc(clamp(64px, 3.9vw, 130px) * var(--zoom)); }
+.card.md { --w: calc(clamp(88px, 6vw, 190px) * var(--zoom)); }
+.card.lg { --w: calc(clamp(104px, 7.4vw, 240px) * var(--zoom)); }
 .card.tapped { margin: 0 calc((var(--h) - var(--w)) / 2); }
-.card.xs { --w: 44px; --h: 61px; } .card.sm { --w: 64px; --h: 89px; } .card.md { --w: 88px; --h: 123px; } .card.lg { --w: 104px; --h: 145px; }
 .card.tapped .face { transform: rotate(90deg); }
 .card.tapped { height: var(--w); width: var(--h); display: flex; align-items: center; justify-content: center; }
 .card.tapped .face { width: var(--w); height: var(--h); flex: none; }
 .card.sick .face { filter: saturate(.6); }
 .card.cmdr .face { outline: 2px solid var(--gold); }
 .card .drawn { padding: 4px; font-size: 10px; line-height: 1.2; height: 100%; border: 1px solid var(--line); border-radius: inherit; color: var(--text); background: linear-gradient(#24563c, #163f2b); }
-.badge { position: absolute; padding: 0 4px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #000c; color: #fff; }
+.badge { position: absolute; padding: 0 4px; border-radius: 4px; font-size: calc(clamp(11px, 0.6vw, 15px) * var(--zoom)); font-weight: 700; background: #000c; color: #fff; }
 .badge.pt { right: 2px; bottom: 2px; } .badge.counters { left: 2px; top: 2px; background: #2e7d32e6; }
 .badge.loyalty { right: 2px; top: 2px; background: #333c; border: 1px solid var(--gold); } .badge.count { left: 2px; bottom: 2px; background: #0f2d1fe6; }
 .card.portrait { width: 34px; height: 34px; } .card.portrait .face { border-radius: 50%; } .card.portrait img { object-fit: cover; object-position: 50% 18%; transform: scale(2.2); }
@@ -139,3 +144,5 @@ table.review td.num { text-align: right; font-variant-numeric: tabular-nums; }
 table.review tr.worse td { background: #3a17121f; } table.review tr.worse td.num:first-of-type { color: var(--bad); }
 .tryit { padding: 8px 10px; margin-bottom: 8px; border-radius: 8px; background: #102a3a; border: 1px solid #7fd3ff; color: #bfe9ff; }
 table.review td.when, table.review button.try { white-space: nowrap; }
+#zoom { display: inline-flex; border: 1px solid #3f7a5a; border-radius: 6px; overflow: hidden; }
+#zoom button { border: none; border-radius: 0; padding: 4px 9px; }
