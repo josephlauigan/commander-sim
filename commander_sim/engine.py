@@ -555,12 +555,14 @@ def plan_pay(U, generic, pips, col=None):
     need = generic
     while need > 0:
         best, bk = None, None
+        avail = {c: sum(rem[i] for i, u in enumerate(U) if c in u[1]) for c in 'WUBRG'}
         for i, u in enumerate(U):
             if rem[i] <= 0: continue
             waste = 0 if used[i] else max(0, rem[i] - need)
             pain = (isinstance(u[0], Land) and bool(u[0].cd.tags.get('tomb'))) or (not isinstance(u[0], str)
                     and getattr(u[0], 'cd', None) is not None and 'pain' in u[0].cd.tags)
-            k = (u[0] == 'T', pain, waste, len(u[1]))
+            scarce = min((avail[c] for c in u[1] if c in avail), default=0)     # keep the scarcest colour for later
+            k = (u[0] == 'T', pain, waste, len(u[1]), -scarce)
             if bk is None or k < bk: bk, best = k, i
         if best is None: return None
         take = min(rem[best], need); rem[best] -= take; used[best] += take; need -= take

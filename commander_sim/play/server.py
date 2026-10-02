@@ -99,7 +99,9 @@ class Hub:
             sess, s.session = s.session, None
             s.pending = None
             s.cond.notify_all()
-        if sess is not None: sess.close()
+        if sess is not None:
+            sess.close()
+            sess.join(30)          # its engine thread may be mid-playout: one game at a time touches the engine
 
     def _pump(s, sess, no):
         """the session's events into the history, until a newer game replaces it (a game that ended can go on:

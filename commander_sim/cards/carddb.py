@@ -341,6 +341,8 @@ Gifts Ungiven|I|3U|gifts
 Intuition|I|2U|intuition
 Jeska's Will|S|2R|jeska
 Underworld Breach|E|1R|breach
+Brain Freeze|I|1U|storm stormmill
+Grapeshot|S|1R|storm stormburn
 Panoptic Mirror|A|5|panoptic
 Ad Nauseam|I|3BB|adnaus
 Bolas's Citadel|A|3BBB|leg citadel

@@ -65,7 +65,7 @@ class RecordingController(HumanController):
 
     def idle(s):
         ss = s.session
-        if not ss.compare or not ss.hint_lock.acquire(blocking=False): return False
+        if not ss.compare or s._closed.is_set() or not ss.hint_lock.acquire(blocking=False): return False
         try:
             return ss.shadow.step()
         finally:

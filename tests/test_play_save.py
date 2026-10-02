@@ -15,13 +15,13 @@ class SaveLoad(unittest.TestCase):
         req = until_request(s)
         data = json.loads(json.dumps(s.saved()))                        # through JSON, as on disk
         here = frozen(req)
-        s.close()
+        s.close(); s.join(30)                 # one game at a time touches the engine
         t = Session.load(data).start()
         again = until_request(t)
         self.assertEqual(frozen(again), here)
         self.assertEqual(len(t.answers), 50)
         self.assertEqual(len(t.shadow.entries), len([e for e in data['shadow']]))
-        t.close()
+        t.close(); t.join(30)
 
     def test_wrong_version(self):
         with self.assertRaises(ValueError): Session.load({'version': 0})

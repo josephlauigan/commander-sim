@@ -24,12 +24,14 @@ def card(name, tags=None, status=None, **kw):
     if status: note(name, *status)
 
 
-def apply(verbose=False):
-    """rebuild engine.DB entries for overridden pool cards (called by pools.register)"""
+def apply(verbose=False, names=None):
+    """rebuild engine.DB entries for overridden pool cards (called by pools.register; with names, by
+    sources.ensure_cards for cards fetched later, such as a --swap card no list runs yet)"""
     from commander_sim import engine
     from commander_sim.cards import dsl, cardimpl
     main = cardimpl.main_cards()
     for name, spec in CARDS.items():
+        if names is not None and name not in names: continue
         base = engine.DB.get(name)
         if base is None or (name in main and base.source == 'manual'): continue   # your hand-tagged cards keep their tags
         if getattr(base, 'pool_override', False): continue
@@ -51,4 +53,5 @@ def apply(verbose=False):
         cd.source = 'pool'
         cd.pool_override = True
         engine.DB[name] = cd
-    for fn in POST: fn()
+    if names is None:
+        for fn in POST: fn()

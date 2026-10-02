@@ -83,6 +83,11 @@ def ensure_cards(names, verbose=True):
             if rec is None: continue
             engine.DB[n] = _from_record(n, rec); added.append(engine.DB[n])
             if n in ov: engine.DB[n] = _from_override(n, ov[n], engine.DB[n])
+        from commander_sim.cards import pool_cards              # hand-written overrides for the new cards
+        fresh = {n for n in want if n in engine.DB and n in pool_cards.CARDS}
+        if fresh:
+            pool_cards.apply(names=fresh)
+            added = [engine.DB[a.name] if a.name in fresh else a for a in added]
     return added, [n for n in names if n not in engine.DB]
 
 
