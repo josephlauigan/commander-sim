@@ -7,6 +7,7 @@
 **Updated 2026-09-26.** Seven swaps: **Displacer Kitten → Niv-Mizzet, Parun** (Kitten moved to the Sephiroth deck), **Kylox, Visionary Inventor → Niv-Mizzet, the Firemind**, **Burning Prophet → Kessig Flamebreather**, **Muse Seeker → Imperial Recruiter**, **Dualcaster Mage → Thousand-Year Storm**, **Disruptor Flute → Swiftfoot Boots**, and **Sleight of Hand → Visions of Beyond**. **Losing Displacer Kitten ends the Kitten + Blazing Firesinger infinite** — the deck no longer has a two-card combo, and Aetherflux Reservoir is now a big-turn finisher rather than an infinite kill. None of the new cards is a Game Changer; the deck stays at 100, 34 lands, and three GCs (Bracket 3, at the cap).
 **Updated 2026-09-26 (second pass).** Disdainful Stroke → **Unsummon**.
 **Updated 2026-09-27.** **Force of Will → Jeska's Will** (Force of Will moved to the Sephiroth deck; Jeska's Will takes its Game Changer slot, so the deck stays at three) and **Reenact the Crime → Twinflame**.
+**Updated 2026-10-02.** **Hydro-Channeler → Alania, Divergent Storm**: your first instant and your first sorcery each turn are copied, each copy costing an opponent a free card, and Veyran and Harmonic Prodigy each add a copy. Not a Game Changer; the deck stays at 100 and three GCs (Bracket 3).
 
 ## Strategy
 
@@ -21,6 +22,8 @@ The scope matters. Veyran doubles magecraft and "whenever you cast an instant or
 **The Niv-Mizzets turn cards into damage.** Niv-Mizzet, Parun draws a card whenever *any* player casts an instant or sorcery (your casts doubled by Veyran), and pings for every card you draw. Niv-Mizzet, the Firemind pings on every draw too and taps to draw. With both out, each card you draw is two pings, and **Harmonic Prodigy doubles both of them again** — both Niv-Mizzets are Wizards. Archmage Emeritus draws on every magecraft trigger, so one spell with Parun, Emeritus, and Veyran out can draw four and ping eight.
 
 **Thousand-Year Storm** copies each instant or sorcery once for every other one you've cast before it this turn. Copies trigger magecraft (and Veyran doubles those) but aren't casts, so they don't trigger Guttersnipe, Kessig, or Parun. The fourth spell of a turn becomes four spells' worth of magecraft.
+
+**Alania, Divergent Storm copies the first instant and the first sorcery you cast each turn** (yours and opponents' turns alike), if you have a target opponent draw a card for each copy. Each copy is optional, so take only the ones worth a card. Casting the spell is what triggers Alania, so **Veyran makes it trigger twice**, and Alania is a Wizard, so **Harmonic Prodigy adds a third**: with both out, your first instant and first sorcery each resolve up to four times. Like Thousand-Year Storm's, the copies trigger magecraft (Archmage Emeritus draws, Veyran grows) but aren't casts, so Guttersnipe, Kessig, Thunderdrum and Parun see only the original. The best first spells: **Jeska's Will** (hand the cards to the opponent you'll count for mana, and each copy makes more), Ancestral Recall, Expressive Iteration, Seething Song (each copy is another five red), Crackle with Power (copies keep X), an overloaded Cyclonic Rift, and Lightning Bolt. A copied counterspell is rarely worth a card. Spells cast before Alania landed still count: if your first instant this turn came before Alania, the next one isn't copied.
 
 **Veyran is protected now.** Swiftfoot Boots gives it hexproof and haste, which addresses the deck's longest-standing weakness: a 2/2 commander that dies to everything.
 
@@ -58,11 +61,11 @@ The list is exactly 100 cards.
 | No mana the turn they land | 3 | Ash Barrens, Evolving Wilds, Terramorphic Expanse |
 | Usually enter tapped | 5 | Coastal Peak, Temple of Epiphany, Path of Ancestry, Scorched Geyser, Mistrise Village (Stormcarved Coast only on turns one and two) |
 
-**Curve pressure.** Both Niv-Mizzets and Thousand-Year Storm cost six (Parun is {U}{U}{U}{R}{R}{R}). That's three six-drops where Displacer Kitten, Kylox, and Dualcaster Mage used to be, so the deck is top-heavier than before. Parun's triple-pip cost in both colours is the hardest cast in the list.
+**Curve pressure.** Both Niv-Mizzets and Thousand-Year Storm cost six (Parun is {U}{U}{U}{R}{R}{R}). That's three six-drops where Displacer Kitten, Kylox, and Dualcaster Mage used to be, so the deck is top-heavier than before, and Alania (five mana) replaced a two-drop. Parun's triple-pip cost in both colours is the hardest cast in the list.
 
 **Spell density.** 36 instants and sorceries, plus four prepare cards whose backs are castable spells: Emeritus of Ideation // Ancestral Recall, Emeritus of Conflict // Lightning Bolt, Blazing Firesinger // Seething Song, Sanar // Wild Idea.
 
-**Finding cards.** Archmage Emeritus, Hydro-Channeler, and both Niv-Mizzets are repeatable draw; Muse Seeker is gone. Cantrips: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws, and **Visions of Beyond** (draws three instead of one once any graveyard has twenty cards).
+**Finding cards.** Archmage Emeritus and both Niv-Mizzets are repeatable draw (and Alania's copies of a cantrip draw again); Muse Seeker is gone. Cantrips: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws, and **Visions of Beyond** (draws three instead of one once any graveyard has twenty cards).
 
 **Interaction.** Six ways to answer a spell (Counterspell, Spell Pierce, An Offer You Can't Refuse, Mystic Confluence, Return the Favor, Venser) — Force of Will and Disdainful Stroke are gone, so the deck has no free counter any more — nine pieces of spot removal plus **Unsummon** (a one-mana bounce that also saves one of your own creatures from removal), and three resets in Blasphemous Act, River's Rebuke, and Cyclonic Rift. Every one is also a magecraft trigger.
 
@@ -104,7 +107,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (1).** Ral Storm Conduit
 
-**Creatures (19).** Archmage Emeritus, Blazing Firesinger // Seething Song, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Gandalf Friend of the Shire, Guttersnipe, Harmonic Prodigy, Hydro-Channeler, Imperial Recruiter, Jin-Gitaxias Progress Tyrant, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Sanar Unfinished Genius // Wild Idea, Thor Asgard's Avenger, Thunderdrum Soloist, Venser Shaper Savant
+**Creatures (19).** Alania Divergent Storm, Archmage Emeritus, Blazing Firesinger // Seething Song, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Gandalf Friend of the Shire, Guttersnipe, Harmonic Prodigy, Imperial Recruiter, Jin-Gitaxias Progress Tyrant, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Sanar Unfinished Genius // Wild Idea, Thor Asgard's Avenger, Thunderdrum Soloist, Venser Shaper Savant
 
 **Artifacts (6).** Aetherflux Reservoir, Arcane Signet, Fellwar Stone, Sol Ring, Swiftfoot Boots, Thought Vessel
 
@@ -121,6 +124,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 ```
 1 Abrade
 1 Aetherflux Reservoir
+1 Alania, Divergent Storm
 1 An Offer You Can't Refuse
 1 Arcane Signet
 1 Archmage Emeritus
@@ -151,7 +155,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Gandalf, Friend of the Shire
 1 Guttersnipe
 1 Harmonic Prodigy
-1 Hydro-Channeler
 1 Imperial Recruiter
 1 Jeska's Will
 1 Jin-Gitaxias, Progress Tyrant
