@@ -240,8 +240,12 @@ def cast(g, p, c, zone):
         if gymode == 'escape': zone = 'escape'               # Underworld Breach: back to the graveyard afterwards
     if 'wipe' in c.tags and 'rem' in c.tags:                 # overload (Cyclonic Rift, Vandalblast)
         og, op = ais.wipe_cost(p, c)
-        k = choose(g, p, 'choose', f'{c.name}: cast it how?',
-                   [f'one target ({mana.cost_text(gen, pips)})', f'overloaded ({mana.cost_text(og, op)}): every one you don\'t control'])
+        over = f'overloaded ({mana.cost_text(og, op)}): every one you don\'t control'
+        if legal.spell_targets(g, p, c):
+            k = choose(g, p, 'choose', f'{c.name}: cast it how?', [f'one target ({mana.cost_text(gen, pips)})', over])
+        else:                                                # nothing to target: only the overloaded mode is legal
+            k = choose(g, p, 'choose', f'{c.name}: nothing to target, so it can only be cast overloaded', [over])
+            k = None if k is None else 1
         if k is None: return None
         if k == 1:
             why = mana.pay_from_pool(g, p, og, op)

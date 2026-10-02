@@ -9,6 +9,7 @@
 **Updated 2026-09-26 (second pass).** **Carrion Feeder → Avacyn's Pilgrim**, **Gray Merchant of Asphodel → Kitchen Finks**, and **Sephiroth, Planet's Heir → Melira, Sylvok Outcast**. Kitchen Finks with Melira or Mikaeus makes two more infinite loops, so the deck now has **four**.
 **Updated 2026-09-27.** **Persist → Dread Return**, then **Dovin's Veto → Force of Will** (moved from Veyran), **Diabolic Intent → Teferi's Protection** (Diabolic Intent moved to Sauron), and **Blossoming Sands → Arcane Sanctum**. Force of Will and Teferi's Protection are Game Changers, so the deck now runs **nine**.
 **Updated 2026-09-28.** **Unmarked Grave → Ephemerate.** Not a Game Changer, so the count stays at nine. Deck stays at 100 and 37 lands.
+**Updated 2026-10-01.** Out: Massacre Wurm. In: Muldrotha, the Gravetide. Muldrotha replays permanents from the graveyard (a land, a creature, an artifact, an enchantment each turn).
 
 ## Strategy
 
@@ -23,6 +24,14 @@ Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, an
 **The card-advantage layer is new.** **Consecrated Sphinx** draws you two every time an opponent draws. **Bolas's Citadel** lets you play off the top of your library by paying life, and Sheoldred, the Apocalypse gains you 2 for every card you draw — so Sphinx refills the life Citadel spends. Citadel's other ability (tap, sacrifice ten nonland permanents: each opponent loses 10) is a second finisher on a wide board.
 
 **Displacer Kitten** blinks a nonland permanent every time you cast a noncreature spell. Blink Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Kitchen Finks for 2 more life, or Grave Titan for two more Zombies.
+
+**Muldrotha, the Gravetide turns the graveyard into a second hand.** During each of your turns you may play a land and cast one permanent spell of each permanent type from your graveyard: a creature, an artifact, and an enchantment. In this deck that means:
+- **A reanimation spell every turn.** Animate Dead and Necromancy are enchantments, so once one is in the graveyard Muldrotha recasts it each turn for another reanimation.
+- **Loop pieces back after removal.** Triskelion (as the artifact or the creature), Kitchen Finks, Nim Deathmantle, Ashnod's Altar, or Viscera Seer, so one answer no longer breaks a combo.
+- **Engines back after a wipe.** Aura Shards, Smothering Tithe, Bolas's Citadel, or Skullclamp.
+- **A land from the graveyard each turn.** Replay Evolving Wilds or Fabled Passage for a basic every turn, or Strip Mine for land destruction every turn (say so before the game).
+
+She is a 6/6 for six and a fine reanimation target herself, and she takes Massacre Wurm's slot: the deck trades a one-shot wipe for a grind engine.
 
 **Ephemerate is protection and a second Kitten in one card.** For {W} at instant speed, exile your creature and return it. In response to a removal spell, theft, or any other targeted effect, the spell fizzles because the creature is a new object — so a reanimated bomb survives the first answer the table throws at it. With nothing to protect, blink Archon of Cruelty, Grave Titan, or Sephiroth for their enter triggers. Either way, rebound casts it again for free at your next upkeep: a second drain-and-edict from Archon or two more Zombies from Titan. It can only target creatures, so it can't save Bolas's Citadel or Aura Shards.
 
@@ -59,7 +68,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 **Protect the combo turn.** Resolve **Grand Abolisher** first: opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments during your turn. **Force of Will**, **Swan Song**, **Galadriel's Dismissal**, and **Ephemerate** cover what Abolisher doesn't, and Ephemerate also works on opponents' turns, when Abolisher does nothing.
 
-**Fair closing lines are still here.** Massacre Wurm plus Grand Cenobite as a one-sided wipe. Archon of Cruelty rebought every turn. Altar of Dementia milling one player out with a big creature. Or Bolas's Citadel's ten-permanent drain.
+**Fair closing lines are still here.** Archon of Cruelty rebought every turn (Sheoldred, Whispering One, or Muldrotha recasting Animate Dead). Altar of Dementia milling one player out with a big creature. Or Bolas's Citadel's ten-permanent drain. With Massacre Wurm gone, Elesh Norn, Grand Cenobite's -2/-2 is the one-sided board shrink.
 
 ## Consistency
 
@@ -69,7 +78,7 @@ Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, 
 
 **Graveyard fill is a little thinner.** Satyr Wayfinder is out; Gifts Ungiven partly covers it. Stitcher's Supplier, Buried Alive, Entomb, Grisly Salvage, Tortured Existence, and Stinkweed Imp remain; Unmarked Grave left for Ephemerate on 09-28.
 
-**Reanimation count is five** (Reanimate, Animate Dead, Necromancy, Unburial Rites, Dread Return) plus Sheoldred, Whispering One and Yawgmoth's Will. Dread Return replaced Persist, so every reanimation spell can now take a legendary creature.
+**Reanimation count is five** (Reanimate, Animate Dead, Necromancy, Unburial Rites, Dread Return) plus Sheoldred, Whispering One, Yawgmoth's Will, and Muldrotha (Animate Dead or Necromancy again from the graveyard every turn). Dread Return replaced Persist, so every reanimation spell can now take a legendary creature.
 
 **Interaction.** Swords to Plowshares, Path to Exile, Anguished Unmaking, Assassin's Trophy, and Lash of the Balrog for spot removal; Aura Shards for repeatable artifact/enchantment removal; Farewell and Toxic Deluge as resets (Wrath of God is gone); Force of Will and Swan Song as counters; Galadriel's Dismissal, Ephemerate, Teferi's Protection, and Grand Abolisher as protection.
 
@@ -82,13 +91,14 @@ Three tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), and *
 - **Yard loaded, no way to cheat it out → tutor a reanimation spell.** Demonic Tutor leaves the most mana over to cast it the same turn.
 - **Want both halves at once → Gifts Ungiven** for a reanimation target plus reanimation spells, or for Triskelion, Kitchen Finks, Melira, and a reanimation spell — any split between hand and graveyard still leaves you a working loop.
 - **Loop assembled, need to close → tutor the payoff.** Blood Artist or Zulaport Cutthroat (or Altar of Dementia as the outlet) turns loops 2–4 into a kill; Yawgmoth's Will once the yard is deep.
+- **Long game, combo answered → Muldrotha.** She replays the loop pieces, Aura Shards, and a reanimation spell from the graveyard every turn.
 - **Under pressure → tutor interaction.** Toxic Deluge or Farewell to reset, or Swords / Path / Anguished Unmaking / Assassin's Trophy for one problem.
 
 Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also work as combo tutors here: they put a creature piece in the yard for Reanimate, Animate Dead, Necromancy, or Dread Return.
 
 ## Bracket and Rule 0
 
-**Bracket 4.** Nine Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Bolas's Citadel**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**. Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, and Assassin's Trophy are off-list.
+**Bracket 4.** Nine Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Bolas's Citadel**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**. Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
 
 Disclose before the game:
 
@@ -97,7 +107,8 @@ Disclose before the game:
 - **Grand Abolisher**, which shuts off their interaction on your turn.
 - **Yawgmoth's Will**, which can produce a long turn out of nowhere.
 - **Farewell**, and that you may include graveyards.
-- **Strip Mine** as a one-shot land kill.
+- **Strip Mine** as land kill: one-shot, or **every turn with Muldrotha** replaying it from the graveyard.
+- **Muldrotha** recasts a creature, an artifact, and an enchantment (Animate Dead, Necromancy) from your graveyard each turn.
 - The deck reanimates out of *any* graveyard, so opponents' creatures dying is relevant information for them.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
@@ -106,7 +117,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sephiroth, the Savior (Atraxa, Grand Unifier)
 
-**Creatures (23).** Archon of Cruelty, Avacyn's Pilgrim, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Kitchen Finks, Llanowar Elves, Massacre Wurm, Melira Sylvok Outcast, Mikaeus the Unhallowed, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stinkweed Imp, Stitcher's Supplier, Triskelion, Viscera Seer, Zulaport Cutthroat
+**Creatures (23).** Archon of Cruelty, Avacyn's Pilgrim, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Kitchen Finks, Llanowar Elves, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stinkweed Imp, Stitcher's Supplier, Triskelion, Viscera Seer, Zulaport Cutthroat
 
 **Enchantments (5).** Animate Dead, Aura Shards, Necromancy, Smothering Tithe, Tortured Existence
 
@@ -170,10 +181,10 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Lash of the Balrog
 1 Llanowar Elves
 1 Llanowar Wastes
-1 Massacre Wurm
 1 Melira, Sylvok Outcast
 1 Mikaeus, the Unhallowed
 1 Mind Stone
+1 Muldrotha, the Gravetide
 1 Necromancy
 1 Nim Deathmantle
 1 Orzhov Signet
@@ -246,6 +257,8 @@ In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force
 
 **The 09-28 change — Unmarked Grave → Ephemerate.** Unmarked Grave was the weakest yard-filler: it can't bin a legendary card, and most of the bombs are legendary. Ephemerate adds a one-mana answer to targeted removal and theft on top of Galadriel's Dismissal, and doubles as a value blink with rebound. A paired simulator test (500 games per tier, both interaction profiles, fast AI) found no clear change in win rate in any tier; the swap buys resilience without costing speed.
 
+**The 10-01 change — Massacre Wurm → Muldrotha, the Gravetide.** Massacre Wurm was a fair finisher and one-sided wipe in a deck that wins with loops; Muldrotha is a grind engine that keeps the loops and the reanimation running through removal: a reanimation enchantment, a loop piece, and a land back from the graveyard every turn. Not a Game Changer, so the count stays at nine. Not tested in the simulator yet: it models Muldrotha's body but not her graveyard casting, so a measurement now would undervalue her.
+
 **Weakest remaining slots.** Llanowar Wastes and Caves of Koilos (painlands) are the softest lands. On the spell side, Stinkweed Imp and Lash of the Balrog are the ones you've chosen to keep. Force of Will was worth more than any of them in the simulator.
 
 **Vampiric Tutor is in the binder** and is the natural addition now that the Game Changer cap no longer applies.
@@ -260,5 +273,5 @@ In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force
 - Shared with **Sauron**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City. (Night's Whisper and Phyrexian Arena are Sauron-only.)
 - Shared with **Veyran**: Ash Barrens, Evolving Wilds.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **New singles**: Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
-- **To the binder**: Carrion Feeder, Gray Merchant of Asphodel, Sephiroth, Planet's Heir, Persist, Dovin's Veto, Blossoming Sands, Unmarked Grave; from 09-26, Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.
+- **New singles**: Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
+- **To the binder**: Massacre Wurm (10-01); Carrion Feeder, Gray Merchant of Asphodel, Sephiroth, Planet's Heir, Persist, Dovin's Veto, Blossoming Sands, Unmarked Grave; from 09-26, Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.

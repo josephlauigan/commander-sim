@@ -139,5 +139,16 @@ class TableRefs(unittest.TestCase):
         human.choose(g, s, 'target', 'pick', [legal.describe_target(g, s, v.perms[0])])
         self.assertEqual(got[0]['request'].data['refs'], [{'seat': 'veyran', 'perm': 0}])
 
+
+class Overload(unittest.TestCase):
+    def test_only_overloaded_with_nothing_to_target(self):
+        g = table('sauron', 'veyran'); s = g.players[0]
+        hand(s, 'Vandalblast'); mana.pool_of(s).add('R', 1); mana.pool_of(s).add('C', 4)
+        ctl = seat(g, s, [{'do': 'cast', 'card': 0}, 0, {'do': 'pass'}])
+        human.human_main(g, s, False)
+        self.assertIn('only be cast overloaded', ctl.asked[1].prompt)
+        self.assertEqual(len(ctl.asked[1].choices), 2)                    # overloaded, or cancel
+        self.assertIn(E.DB['Vandalblast'], s.gy)
+
 if __name__ == '__main__':
     unittest.main()
