@@ -311,8 +311,26 @@ def cast(g, p, c, zone):
         if k is None: return None
         fodder = cre[k]
     if c.dsl and not E.additional_cost(g, p, c, dry=True): return f"You can't pay {c.name}'s additional cost."
+    life = 0
+    if legal.phyrexian(c):                                   # {B/P}: its colour, or 2 life (your choice)
+        ways = legal.phyrexian_ways(g, p, c, gen, pips)
+        if not ways:
+            why = mana.cost_problem(g, p, gen, pips)
+            return f"Can't cast {c.name}. {why} Its Phyrexian mana can be paid with 2 life each instead."
+        k = 0
+        if len(ways) > 1:
+            phy = legal.phyrexian(c)
+            sym = ''.join('{' + x + '/P}' for x in phy)
+            k = choose(g, p, 'choose', f'{c.name}: pay {sym} with mana or life?',
+                       [' and '.join(x for x in (''.join('{' + y + '}' for y in phy[paid // 2:]),
+                                                 f'{paid} life' if paid else '') if x) for paid, _ in ways])
+            if k is None: return None
+        life, pips = ways[k]
     why = mana.pay_from_pool(g, p, gen, pips)
     if why: return f"Can't cast {c.name}. {why}"
+    if life:
+        E.lose_life(g, p, life, p)
+        E.log(f'  {E.NAME(p)} pays {life} life for {c.name}\'s Phyrexian mana', g)
     if 'crackle' in c.tags:                                  # {X}{X}{X}{R}{R}: X from what's left in the pool
         top = mana.pool_of(p).total() // 3
         k = choose(g, p, 'choose', f'{c.name}: choose X (it costs {{X}}{{X}}{{X}} more; 5X damage to each of up to X targets)',
@@ -342,8 +360,6 @@ def cast(g, p, c, zone):
         from commander_sim.play import choices
         x = choices.pick_cards(g, p, [y for y in p.hand if y is not c], 1, f'{c.name}: discard a card')[0]
         E.discard_cards(g, p, [x]); ctx['paid_otherwise'] = True
-    if 'phyU' in c.tags and 'U' in c.pips and pips.count('U') < c.pips.count('U'):
-        E.lose_life(g, p, 2, p)                              # {U/P} paid with 2 life
     if 'rean_target' in ctx: return cast_rean(g, p, c, zone, ctx)
     E.cast_card(g, p, c, zone, ctx)
     return None

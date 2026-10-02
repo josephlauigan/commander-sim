@@ -94,5 +94,44 @@ class WhereSourcesAre(unittest.TestCase):
         self.assertEqual([x['perm'] for x in srcs if 'perm' in x], [s.perms.index(rock)])
         self.assertEqual(sum(1 for x in srcs if x.get('treasure')), 1)
 
+
+class Phyrexian(unittest.TestCase):
+    """{B/P}: pay its colour or 2 life, your choice"""
+    def cast_vraska(self, answers, **pool):
+        from commander_sim.play import human
+        from commander_sim.play.controller import ScriptController
+        from tests.table import hand
+        g = table('sauron', 'veyran'); s = g.players[0]
+        hand(s, "Vraska, Betrayal's Sting")
+        for c, n in pool.items(): mana.pool_of(s).add(c, n)
+        g.controllers = {s.key: ScriptController([{'do': 'cast', 'card': 0}] + answers + [{'do': 'pass'}])}
+        human.human_main(g, s, False)
+        return g, s, g.controllers[s.key]
+
+    def test_pay_with_life(self):
+        g, s, ctl = self.cast_vraska([1], B=2, C=4)                 # {4}{B}{B/P}: B B and four more: both ways work
+        self.assertEqual(ctl.asked[1].choices[:2], ['{B}', '2 life'])
+        self.assertTrue(any(m.name == "Vraska, Betrayal's Sting" for m in s.perms))
+        self.assertEqual((s.life, mana.pool_of(s).total()), (38, 1))   # the spare {B} is left over
+
+    def test_pay_with_mana(self):
+        g, s, ctl = self.cast_vraska([0], B=2, C=4)
+        self.assertEqual((s.life, mana.pool_of(s).total()), (40, 0))
+
+    def test_only_life_works(self):
+        g, s, ctl = self.cast_vraska([], B=1, C=4)                  # one {B}: the Phyrexian symbol must be life
+        self.assertTrue(any(m.name == "Vraska, Betrayal's Sting" for m in s.perms))
+        self.assertEqual(s.life, 38)
+
+    def test_rules_check_counts_life(self):
+        from commander_sim.play import legal
+        from tests.table import hand
+        g = table('sauron', 'veyran'); s = g.players[0]
+        c = hand(s, "Vraska, Betrayal's Sting")
+        mana.pool_of(s).add('B', 1); mana.pool_of(s).add('C', 4)
+        self.assertIsNone(legal.check_cast(g, s, c))
+        s.life = 1
+        self.assertIn('2 life each', legal.check_cast(g, s, c))
+
 if __name__ == '__main__':
     unittest.main()
