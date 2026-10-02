@@ -887,7 +887,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (403 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (418 tests, about a minute).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -918,6 +918,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (403 tests, abou
 | `test_play_veyran.py` | Practice mode, choices inside Veyran's spells. |
 | `test_play_marchesa.py` | Practice mode, Marchesa's cards and the sacrifice outlets. |
 | `test_play_server.py` | Practice mode's browser server and event stream. |
+| `test_play_lan.py` | Practice mode with two people on a network: seats, per-seat streams, agreed Undo, saved games. |
 | `test_determinism.py` | Seeded games independent of memory layout (hashing, no address reuse). |
 | `test_play_undo.py` | Practice mode's Undo by replay. |
 | `test_play_hint.py` | Practice mode's Hint. |
