@@ -220,6 +220,16 @@ def log(msg, g=None):
         g.log.append(f'R{g.round:<2d} {msg}')
 
 
+def log_secret(g, p, public, msg):
+    """a line naming a card only p may see (one tutored to hand or to the top of the library): the log keeps msg;
+    a practice table shows the other players `public`"""
+    g = g or CUR_G
+    if g is None or g.log is None: return
+    secret = getattr(g.log, 'secret', None)
+    if secret is None: g.log.append(f'R{g.round:<2d} {msg}')
+    else: secret(p.key, f'R{g.round:<2d} {public}', f'R{g.round:<2d} {msg}')
+
+
 # ---------------------------------------------------------------- helpers
 def has(p, tag):
     for m in p.perms:
@@ -1993,7 +2003,7 @@ def tutor(g, p, kind):
     if hc is not None:
         for c in hc.search(g, p, ais.TUTOR_OK.get(kind, ais.TUTOR_OK['any']), 1, 'Search your library'):
             p.hand.append(c); p.stats['tutored'] += 1; p.seen_names.add(c.name)
-            log(f'    {NAME(p)} tutors a card', g)
+            log_secret(g, p, f'    {NAME(p)} tutors a card', f'    {NAME(p)} tutors {c.name}')
         return
     name = ais.tutor_pick(g, p, kind)
     if name is None: return
@@ -2004,7 +2014,7 @@ def tutor(g, p, kind):
                 p.library.remove(c); agent_take(g, a, p, c); g.rng.shuffle(p.library); return
             p.library.remove(c); p.hand.append(c); p.stats['tutored'] += 1
             p.seen_names.add(c.name)
-            log(f'    {NAME(p)} tutors {c.name}')
+            log_secret(g, p, f'    {NAME(p)} tutors a card', f'    {NAME(p)} tutors {c.name}')
             g.rng.shuffle(p.library); return
 
 
@@ -2411,7 +2421,7 @@ def tutor_to_top(g, p):
     a = agent_for(g, p)
     if a is not None: agent_take(g, a, p, c); g.rng.shuffle(p.library); return
     g.rng.shuffle(p.library); p.library.append(c); p.stats['tutored'] += 1
-    log(f'    {NAME(p)} puts {c.name} on top of their library', g)
+    log_secret(g, p, f'    {NAME(p)} puts a card on top of their library', f'    {NAME(p)} puts {c.name} on top of their library')
 
 
 def ad_nauseam(g, p, floor=18):

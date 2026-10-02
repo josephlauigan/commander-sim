@@ -12,6 +12,8 @@ def main(argv=None):
     ap.add_argument('--text', action='store_true', help='play in the terminal instead of the browser')
     ap.add_argument('--port', type=int, default=8765, help='the browser table\'s port (default 8765)')
     ap.add_argument('--no-browser', action='store_true', help='start the server without opening a browser')
+    ap.add_argument('--lan', action='store_true', help='listen on the local network too, so a friend on another '
+                    'computer can join a two-player game')
     ap.add_argument('--deck', choices=MY_DECKS, default='sauron')
     ap.add_argument('--tier', choices=TIERS, default='t3')
     ap.add_argument('--seed', type=int, help='same seed, same shuffles and seats (default: random)')
@@ -25,7 +27,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if not a.text:
         from commander_sim.play import server
-        server.serve(a.port, open_browser=not a.no_browser)
+        server.serve(a.port, open_browser=not a.no_browser, lan=a.lan)
         return 0
     from commander_sim.play import text
     s = Session(a.deck, a.tier, seed=a.seed, seat=a.seat,

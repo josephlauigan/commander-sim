@@ -110,10 +110,11 @@ After the game, a review shows where your choices and the AI's differed.
 python3 -m commander_sim.play                                            # opens http://127.0.0.1:8765
 python3 -m commander_sim.play --port 9000 --no-browser                   # another port; open it yourself
 python3 -m commander_sim.play --text --deck sauron --tier t3             # the same game in the terminal
+python3 -m commander_sim.play --lan                                      # also lets a friend on your network join
 ```
 
-Stop the server with Ctrl+C. It listens on this computer only (127.0.0.1), so it can't be reached from a phone or
-another machine.
+Stop the server with Ctrl+C. Without `--lan` it listens on this computer only (127.0.0.1), so it can't be reached
+from a phone or another machine.
 
 **Setting up a game.** Pick your deck and a tier (each shows your simulated win rate against it), then the
 opponents (three drawn at random, or pick three), your seat, how much the opponents interact (loose or
@@ -145,6 +146,22 @@ you're attacked, and at the end of each turn: respond with instants, counterspel
 **After the game**, *Review the game* lists each decision where your choice and the AI's differed, with both scores
 (where the game stood at the end of your next turn, from −100 lost to +100 won). *Try it* goes back to that decision
 with the AI's choice played, so you can see how it goes. *Play this seed again* deals the same game.
+
+**Playing with a friend** (two people, two AI opponents, each person on their own computer on the same network):
+1. On your computer, start the server with `--lan`. It prints the address your friend will use.
+2. On the setup screen pick *Me and a friend on another computer*, your deck, the tier and the options, then
+   *Open the table for your friend*. The page shows a link (`http://<your address>:8765/?join=<code>`) and a
+   six-digit code.
+3. Your friend opens the link in their browser, picks their deck (a different one from yours) and clicks *Join*.
+
+Seats are drawn at random. Each of you sees the table from your own seat: the other person's hand is a card count,
+and a card they tutor is named only on their screen. While the game waits on the other person, your panel says so.
+Hint and the review are each person's own. Undo and *Try it* send the game back for both of you, so the other
+person is asked first (a banner with *Yes, go back* / *No*). Only the computer running the server can start, save,
+load or end games; a saved two-player game, when loaded, waits for your friend to join again with the same deck.
+If your friend's page doesn't load, your firewall may be blocking the port (for example `sudo ufw allow 8765/tcp`).
+Anyone on the network can open the page, but only someone with the code can take the second seat, so use it on a
+network you trust.
 
 How it's built: [documents/practice-mode.md](documents/practice-mode.md).
 

@@ -422,7 +422,8 @@ def search(g, p, e, ctx):
         else:
             p.hand.append(c); p.seen_names.add(c.name)
         p.stats['tutored'] += 1
-        log(f'    {NAME(p)} searches for {c.name}', g)
+        if to in ('hand', 'top'): E.log_secret(g, p, f'    {NAME(p)} searches for a card', f'    {NAME(p)} searches for {c.name}')
+        else: log(f'    {NAME(p)} searches for {c.name}', g)
 
 
 def resolve_spell(g, p, c, ctx):

@@ -4,6 +4,11 @@ const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
 let liveFrom = 0;           // events up to this id are history replayed on load: no pop-up messages for them
 let images = {};            // card name -> image files in /images/ (the table uses them from step 2d)
+// who this page is: its seat, whether it's on the host computer, and (two players) the people at the table
+let me = { seat: null, host: true, humans: [], names: {} };
+let waitingOn = null;       // two players: the other person, while the game waits on their decision
+const two = () => me.humans.length > 1;
+const otherName = () => { const k = me.humans.find((x) => x !== me.seat); return (k && me.names[k]) || 'your friend'; };
 
 function loading(done, total) {
   const box = $('#loading');
@@ -64,7 +69,7 @@ function renderPrompt(ev) {
   for (const x of document.querySelectorAll('.stackbar')) x.remove();
   (passBtn || $('#pass')).hidden = !(ev && ev.request.kind === 'priority');
   $('#table').classList.toggle('can-act', !!(ev && ev.request.kind === 'priority'));
-  if (!ev) { box.append(el('div', { class: 'stats' }, 'Waiting for the other players…')); return; }
+  if (!ev) { box.append(el('div', { class: 'stats' }, waitingOn ? `Waiting for ${waitingOn}…` : 'Waiting for the other players…')); return; }
   const req = ev.request;
   box.append(el('h3', {}, req.prompt));
   if (req.kind === 'priority') {
@@ -125,6 +130,22 @@ function toast(text) {
   t.textContent = text; t.hidden = false;
   clearTimeout(toast.timer); toast.timer = setTimeout(() => { t.hidden = true; }, 6000);
 }
+const note = (text) => toast(text);
+
+// two players: the other person asks to Undo or Try it, and you say yes or no
+function showProposal(p) {
+  const box = $('#proposal');
+  if (!p) { box.hidden = true; box.replaceChildren(); return; }
+  const reply = async (yes) => {
+    box.hidden = true;
+    const r = await api('/api/approve', { id: p.id, yes });
+    if (!r.ok) toast(r.data.error);
+  };
+  box.replaceChildren(el('p', {}, p.text), el('div', { class: 'row' },
+    el('button', { type: 'button', onclick: () => reply(false) }, 'No'),
+    el('button', { type: 'button', class: 'primary', onclick: () => reply(true) }, 'Yes, go back')));
+  box.dataset.id = p.id; box.hidden = false;
+}
 
 function closeMenu() { const m = $('#menu'); if (m) m.remove(); }
 
@@ -155,7 +176,9 @@ function untapItem(where) {
   const n = recentTaps.length - k;
   return [[n === 1 ? 'Untap (take back that tap)' : `Untap (takes back your last ${n} taps)`, async () => {
     const r = await api('/api/undo', { n });
-    if (!r.ok) toast(r.data.error); else recentTaps = recentTaps.slice(0, k);
+    if (!r.ok) toast(r.data.error);
+    else if (r.data.asked) { recentTaps = []; note(`Asked ${r.data.asked} to agree to the untap…`); }
+    else recentTaps = recentTaps.slice(0, k);
   }]];
 }
 
@@ -262,14 +285,28 @@ function onEvent(ev, draw = true) {
   if (ev.kind === 'log') logLine(ev.text, ev.text.startsWith('---') ? 'turn' : '');
   else if (ev.kind === 'invalid') { logLine('Not allowed: ' + ev.text, 'invalid'); if (ev.id > liveFrom && !ev.replay) toast(ev.text); }
   else if (ev.kind === 'reset') {           // Undo or Try it: the game is replayed from its seed up to a decision
-    if (!ev.undone) recentTaps = [];
-    $('#log').replaceChildren(); logQueue = []; pending = null; renderPrompt(null); markChoices(null);
+    const mine = !ev.by || ev.by === me.seat || !two();
+    const who = me.names[ev.by] || ev.by;
+    if (!ev.undone || !mine) recentTaps = [];
+    $('#log').replaceChildren(); logQueue = []; pending = null; waitingOn = null; renderPrompt(null); markChoices(null);
+    showProposal(null);
     if (ev.tryit) {
-      tryBanner = ev.tryit;
-      logLine(`(Try it: the game is replayed to that decision, with the AI's choice: ${ev.tryit.ai})`, 'auto');
+      if (mine) tryBanner = ev.tryit;
+      logLine(mine ? `(Try it: the game is replayed to that decision, with the AI's choice: ${ev.tryit.ai})`
+        : `(Try it: ${who} goes back to one of their decisions to try the AI's choice; the game is replayed to there)`, 'auto');
       screen('game');
-    } else logLine(`(Undo: ${ev.undone} action${ev.undone > 1 ? 's' : ''} taken back; the game so far is replayed)`, 'auto');
+    } else logLine(mine ? `(Undo: ${ev.undone} action${ev.undone > 1 ? 's' : ''} taken back; the game so far is replayed)`
+      : `(Undo: ${who} took back ${ev.undone} action${ev.undone > 1 ? 's' : ''}; the game so far is replayed)`, 'auto');
   }
+  else if (ev.kind === 'waiting') { waitingOn = ev.who; if (!pending) renderPrompt(null); }
+  else if (ev.kind === 'decided') {
+    if (ev.by === me.seat) {                  // your answer (history caught up on a reload: that decision is done)
+      if (pending && pending.id < ev.id) { pending = null; renderPrompt(null); markChoices(null); }
+    } else if (ev.who === waitingOn) { waitingOn = null; if (!pending) renderPrompt(null); }
+  }
+  else if (ev.kind === 'proposal') { if (ev.id > liveFrom) showProposal(ev.proposal); }
+  else if (ev.kind === 'proposal_done') { if (+$('#proposal').dataset.id === ev.id) showProposal(null); }
+  else if (ev.kind === 'declined') { if (ev.id > liveFrom) toast(ev.text); }
   else if (ev.kind === 'reviewing') {
     $('#prompt').replaceChildren(el('h3', {}, 'Game over'), el('p', {}, `Working out the AI comparison: ${ev.done} of ${ev.total} decisions…`));
   }
@@ -278,14 +315,20 @@ function onEvent(ev, draw = true) {
   else if (ev.kind === 'images') { images = ev.images; loading(null); if (lastView) renderTable(lastView); }
   else if (ev.kind === 'request') {
     if (!ev.view) ev.view = lastView;          // caught-up history carries only the latest table
-    pending = ev; attackSel = new Set(); renderPrompt(ev); markChoices(ev);
+    pending = ev; waitingOn = null; attackSel = new Set(); renderPrompt(ev); markChoices(ev);
   }
   else if (ev.kind === 'over') {
-    pending = null; renderPrompt(null); tryBanner = null;
-    $('#prompt').replaceChildren(el('h3', {}, `Game over: ${ev.winner || 'no winner'}${ev.how ? ` (${ev.how})` : ''}`),
+    pending = null; waitingOn = null; renderPrompt(null); tryBanner = null; showProposal(null);
+    if (ev.how === 'closed' && !me.host) {
+      $('#prompt').replaceChildren(el('h3', {}, 'The host ended the game.'));
+      return;
+    }
+    const winner = ev.winner && ev.winner === me.seat ? 'you won' : ((me.names && me.names[ev.winner]) || ev.winner || 'no winner');
+    $('#prompt').replaceChildren(el('h3', {}, `Game over: ${winner}${ev.how ? ` (${ev.how})` : ''}`),
       el('div', { class: 'row' }, tools.compare ? el('button', { class: 'primary', onclick: showReview }, 'Review the game') : null,
-        el('button', { onclick: sameSeed }, 'Play this seed again'), el('button', { onclick: saveGame }, 'Save game'),
-        el('button', { onclick: () => screen('setup') }, 'New game')));
+        me.host && !two() ? el('button', { onclick: sameSeed }, 'Play this seed again') : null,
+        me.host ? el('button', { onclick: saveGame }, 'Save game') : null,
+        me.host ? el('button', { onclick: () => screen('setup') }, 'New game') : null));
     if ((location.hash === '#review' || new URLSearchParams(location.search).has('review')) && tools.compare) showReview();   // a direct link
   }
   else if (ev.kind === 'error') logLine(ev.text, 'invalid');
@@ -379,12 +422,14 @@ function renderReview() {
         el('td', {}, d.can_try && d.differs ? el('button', { class: 'try', onclick: () => tryIt(d.n) }, 'Try it') : null)))))
       : el('p', {}, diffsOnly ? 'You and the AI made the same choices everywhere they were compared.' : 'No decisions recorded.'),
     el('div', { class: 'row' }, el('button', { onclick: () => screen('game') }, 'Back to the table'),
-      el('button', { onclick: sameSeed }, 'Play this seed again'), el('button', { class: 'primary', onclick: () => screen('setup') }, 'New game')));
+      me.host && !two() ? el('button', { onclick: sameSeed }, 'Play this seed again') : null,
+      me.host ? el('button', { class: 'primary', onclick: () => screen('setup') }, 'New game') : null));
 }
 
 async function tryIt(n) {
   const r = await api('/api/tryit', { n });
   if (!r.ok) toast(r.data.error);
+  else if (r.data.asked) note(`Asked ${r.data.asked} to agree to going back…`);
 }
 
 async function saveGame() {
@@ -400,7 +445,7 @@ async function listSaves() {
   if (!r.ok || !r.data.saves.length) return;
   $('#saves').replaceChildren(el('table', { class: 'review' },
     el('thead', {}, el('tr', {}, ['Saved', 'Deck', 'Tier', 'Seed', 'Where', ''].map((h) => el('th', {}, h)))),
-    el('tbody', {}, r.data.saves.map((x) => el('tr', {}, el('td', {}, x.saved_at || ''), el('td', {}, x.deck),
+    el('tbody', {}, r.data.saves.map((x) => el('tr', {}, el('td', {}, x.saved_at || ''), el('td', {}, x.partner ? `${x.deck} + ${x.partner} (two players)` : x.deck),
       el('td', {}, (x.tier || '').toUpperCase()), el('td', {}, x.seed),
       el('td', {}, x.finished ? `finished, round ${x.round}` : `round ${x.round}`),
       el('td', {}, el('button', { onclick: () => loadGame(x.name) }, x.finished ? 'Open (review)' : 'Continue')))))));
@@ -411,8 +456,95 @@ async function loadGame(name) {
   renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/load', { name });
   if (!r.ok) { loading(null); toast(r.data.error); return; }
+  if (r.data.code) { loading(null); showLobby(); return; }       // a two-player game: waits for your friend
+  await enterGame();
+}
+
+// the game has started (or this page joined one): its settings, then the table
+async function enterGame() {
   const st = (await api('/api/state')).data;
+  if (!st.game) { route(st); return; }
+  setMe(st);
   setStatus(st.game.seed, st.game.seats); setTools(st.game.tools); screen('game');
+  if (st.proposal) showProposal(st.proposal);
+}
+
+function setMe(st) {
+  me = { seat: st.game ? st.game.you : null, host: st.host, humans: st.game ? st.game.humans : [], names: st.game ? st.game.names : {} };
+  $('#save').dataset.host = st.host ? '1' : '';
+}
+
+// ------------------------------------------------------------------ two players: waiting for your friend, joining
+let pollTimer = null;
+function poll(fn, ms) { clearTimeout(pollTimer); pollTimer = setTimeout(fn, ms); }
+
+async function showLobby() {
+  const st = (await api('/api/state')).data;
+  if (st.game) { await enterGame(); return; }
+  const lb = st.lobby;
+  if (!lb) { screen('setup'); return; }
+  const port = location.port ? `:${location.port}` : '';
+  const links = (lb.addresses || []).map((a) => `http://${a}${port}/?join=${lb.code}`);
+  const deck = (catalog.decks.find((d) => d.key === lb.deck) || {}).name || lb.deck;
+  $('#lobby').replaceChildren(
+    el('h2', {}, 'Waiting for your friend'),
+    el('p', {}, `You play ${deck}${lb.partner ? ` and your friend plays ${(catalog.decks.find((d) => d.key === lb.partner) || {}).name || lb.partner} (a saved game)` : ''}. On their computer, they open:`),
+    links.length ? el('div', {}, links.map((u) => el('div', { class: 'link' }, u)))
+      : el('p', { class: 'help' }, `this computer's address on your network, port ${location.port || 80} (no address found: see your network settings)`),
+    el('p', {}, 'and pick their deck. The page asks for this code (the link above fills it in):'),
+    el('div', { class: 'code' }, lb.code),
+    el('p', { class: 'help' }, "Both computers need to be on the same network. If their page doesn't load, this computer's firewall may be blocking the port."),
+    el('div', { class: 'row' }, el('button', { type: 'button', onclick: async () => { await api('/api/quit', {}); clearTimeout(pollTimer); screen('setup'); } }, 'Cancel')));
+  screen('lobby');
+  poll(showLobby, 1000);
+}
+
+let joinDeck = null;
+async function showJoin(st) {
+  const lb = st.lobby;
+  const box = $('#join');
+  if (!lb) {
+    box.replaceChildren(el('h2', {}, st.busy ? 'A game is being played on this table' : 'Waiting for the host'),
+      el('p', {}, st.busy ? 'This computer has no seat in it. When the host opens a new table for two, you can join it here.'
+        : 'The host opens a table for two on their computer (Players: me and a friend); this page then lets you join.'));
+    screen('join'); poll(route, 2000); return;
+  }
+  const code = new URLSearchParams(location.search).get('join') || '';
+  const hostDeck = catalog.decks.find((d) => d.key === lb.deck);
+  const allowed = (d) => d.key !== lb.deck && (!lb.partner || d.key === lb.partner);
+  if (!joinDeck || !allowed(catalog.decks.find((d) => d.key === joinDeck) || {})) joinDeck = (catalog.decks.find(allowed) || {}).key;
+  const prev = box.querySelector('input[name=code]');
+  const typed = prev ? prev.value : code;
+  const err = el('span', { class: 'error' });
+  box.replaceChildren(
+    el('h2', {}, 'Join the table'),
+    el('p', {}, `The host plays ${hostDeck ? hostDeck.name : lb.deck}, at ${(lb.tier || '').toUpperCase()}, with two AI opponents.`
+      + (lb.partner ? ' It is a saved game: you go on with the same deck.' : ' Pick your deck:')),
+    el('div', { class: 'decks', role: 'radiogroup', 'aria-label': 'Your deck' }, catalog.decks.map((d) => el('button', Object.assign({
+      type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === joinDeck),
+      onclick: () => { joinDeck = d.key; showJoin(st); },
+    }, allowed(d) ? {} : { disabled: '' }), cardImage(d.commander), el('span', {}, el('b', {}, d.name),
+      el('small', {}, d.key === lb.deck ? "The host's deck" : `Bracket ${d.bracket}`))))),
+    el('div', { class: 'row' }, el('label', {}, 'Code ', el('input', { name: 'code', inputmode: 'numeric', autocomplete: 'off', value: typed })),
+      el('button', { type: 'button', class: 'primary big', onclick: async () => {
+        const r = await api('/api/join', { code: box.querySelector('input[name=code]').value, deck: joinDeck });
+        if (!r.ok) { err.textContent = r.data.error; return; }
+        clearTimeout(pollTimer);
+        $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
+        await enterGame();
+      } }, 'Join'), err));
+  screen('join');
+  const check = async () => { const s2 = (await api('/api/state')).data; if (s2.game || !s2.lobby) route(s2); else poll(check, 2000); };
+  poll(check, 2000);
+}
+
+// where a page belongs: the game it has a seat in, waiting for a friend (host), joining (not the host), or setup
+async function route(st) {
+  st = st || (await api('/api/state')).data;
+  if (st.game) { await enterGame(); return; }
+  if (!st.host) { await showJoin(st); return; }
+  if (st.lobby) { await showLobby(); return; }
+  screen('setup');
 }
 
 async function sameSeed() {
@@ -424,7 +556,7 @@ async function sameSeed() {
   $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/new', body);
   if (!r.ok) { loading(null); toast(r.data.error); return; }
-  setStatus(r.data.seed, r.data.seats); setTools(body.tools); screen('game');
+  await enterGame();
 }
 
 // ------------------------------------------------------------------ setup
@@ -449,11 +581,12 @@ async function hint() {
 async function undo() {
   const r = await api('/api/undo', { n: 1 });
   if (!r.ok) toast(r.data.error);
+  else if (r.data.asked) note(`Asked ${r.data.asked} to agree to the Undo…`);
 }
 
 function setStatus(seed, seats) {
   const st = $('#status');
-  st.textContent = `Seed ${seed}`;
+  st.textContent = `Seed ${seed}` + (two() ? ` · with ${otherName()}` : '');
   st.title = `Seats in turn order: ${seats.join(', ')}`;
 }
 
@@ -466,10 +599,13 @@ function screen(name) {
   $('#setup').hidden = name !== 'setup';
   $('#game').hidden = name !== 'game';
   $('#review').hidden = name !== 'review';
+  $('#lobby').hidden = name !== 'lobby';
+  $('#join').hidden = name !== 'join';
+  if (name !== 'lobby' && name !== 'join') clearTimeout(pollTimer);
   if (name !== 'game') $('#playback').hidden = true;
-  $('#to-setup').hidden = name !== 'game';
+  $('#to-setup').hidden = name !== 'game' || !me.host;
   $('#undo').hidden = name !== 'game' || !tools.undo;
-  $('#save').hidden = name === 'setup';
+  $('#save').hidden = name === 'setup' || name === 'lobby' || name === 'join' || !me.host;
   if (name === 'setup') listSaves();
   if (name === 'game') requestAnimationFrame(() => fitBoards($('#table')));    // hidden areas measure as zero
   $('#hint').hidden = name !== 'game' || !tools.hint;
@@ -501,6 +637,17 @@ function renderSetup() {
   $('#picks').replaceChildren(...tier.decks.map((x) => el('label', {},
     el('input', Object.assign({ type: 'checkbox', value: x.key }, prev.has(x.key) ? { checked: '' } : {})), ' ', x.name)));
   $('#picks').hidden = $('#newgame').opp.value !== 'pick';
+  const f = $('#newgame'), pair = f.players.value === 'two';
+  for (const x of document.querySelectorAll('.opp-n')) x.textContent = pair ? 'Two' : 'Three';
+  for (const x of document.querySelectorAll('.opp-n-lc')) x.textContent = pair ? 'two' : 'three';
+  document.querySelector('.seat-pick').hidden = pair;
+  const lanNote = $('#lan-note');
+  lanNote.hidden = !pair;
+  lanNote.textContent = catalog.lan
+    ? 'You pick your deck here; your friend picks theirs (a different one) when they join. Seats are drawn at random. Undo and Try it ask the other person first.'
+    : 'To play with a friend, stop the server and start it again with --lan:  python3 -m commander_sim.play --lan';
+  f.querySelector('button[type=submit]').textContent = pair ? 'Open the table for your friend' : 'Start game';
+  f.querySelector('button[type=submit]').disabled = pair && !catalog.lan;
 }
 
 async function startGame(e) {
@@ -508,18 +655,27 @@ async function startGame(e) {
   const f = $('#newgame');
   const body = { deck: chosen.deck, tier: chosen.tier, ai: f.ai.value, profile: f.profile.value,
     tools: { hint: f.hint.checked, undo: f.undo.checked, compare: f.compare.checked } };
+  const pair = f.players.value === 'two';
   if (f.seed.value) body.seed = +f.seed.value;
-  if (f.seat.value) body.seat = +f.seat.value;
+  if (f.seat.value && !pair) body.seat = +f.seat.value;
   if (f.opp.value === 'pick') {
     body.opponents = [...document.querySelectorAll('#picks input:checked')].map((b) => b.value);
-    if (body.opponents.length !== 3) { $('#setup-error').textContent = 'Pick exactly three opponents.'; return; }
+    const want = pair ? 2 : 3;
+    if (body.opponents.length !== want) { $('#setup-error').textContent = `Pick exactly ${want === 2 ? 'two' : 'three'} opponents.`; return; }
   }
   $('#setup-error').textContent = '';
+  if (pair) {
+    body.two = true;
+    const r = await api('/api/new', body);
+    if (!r.ok) { $('#setup-error').textContent = r.data.error; return; }
+    $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null);
+    await showLobby();
+    return;
+  }
   $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/new', body);
   if (!r.ok) { loading(null); $('#setup-error').textContent = r.data.error; return; }
-  setStatus(r.data.seed, r.data.seats); setTools(body.tools);
-  screen('game');
+  await enterGame();
 }
 
 // card size: A- / A+ in the header, remembered in this browser
@@ -539,6 +695,7 @@ async function init() {
   const f = $('#newgame');
   f.addEventListener('submit', startGame);
   for (const r of f.opp) r.addEventListener('change', renderSetup);
+  for (const r of f.players) r.addEventListener('change', renderSetup);
   $('#to-setup').addEventListener('click', () => screen('setup'));
   $('#table').addEventListener('click', onTableClick);
   $('#undo').addEventListener('click', undo);
@@ -563,10 +720,13 @@ async function init() {
   const st = (await api('/api/state')).data;
   images = st.images || {};
   liveFrom = st.last_event || 0;
+  me.host = st.host;
   if (st.game) {
+    setMe(st);
     setStatus(st.game.seed, st.game.seats); setTools(st.game.tools);
     renderTable(st.view); screen('game');
-  } else screen('setup');
+    if (st.proposal) showProposal(st.proposal);
+  } else await route(st);
   connect();
 }
 init();

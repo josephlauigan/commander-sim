@@ -2445,7 +2445,9 @@ def play_pool_game(seed, seats, max_rounds=20, trace=False):
 
 def setup_pool_game(seed, seats, trace=False, human=None):
     """seat the players, shuffle and mulligan (see play_pool_game); returns the game before turn one. human: a deck
-    key whose mulligans the person makes (practice mode; its shuffle generator is kept as p.mull_rng)"""
+    key (or a list of them) whose mulligans a person makes (practice mode; its shuffle generator is kept as
+    p.mull_rng)"""
+    human = {human} if isinstance(human, str) else set(human or ())
     players = [Player(k, cards, cmd) for k, cards, cmd in seats]
     g = Game(players, random.Random(f'play:{seed}'))
     g.combo_decks = {p.key for p in players if p.key not in MAIN}
@@ -2455,7 +2457,7 @@ def setup_pool_game(seed, seats, trace=False, human=None):
     for p in players:
         r = random.Random(f'lib:{seed}:{p.key}')
         r.shuffle(p.library)
-        if p.key == human: p.mull_rng = r; continue
+        if p.key in human: p.mull_rng = r; continue
         mulligan(g, p, r)
         p.seen_names.update(c.name for c in p.hand)
     return g

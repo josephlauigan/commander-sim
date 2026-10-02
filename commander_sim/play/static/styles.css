@@ -182,3 +182,16 @@ body.playing aside { display: flex; flex-direction: column; min-height: 0; }
 body.playing #prompt { flex: none; max-height: 60%; overflow-y: auto; }
 body.playing #hintbox { flex: none; max-height: 30%; overflow-y: auto; }
 body.playing #log { flex: 1 1 0; height: auto; min-height: 0; }
+/* two players: waiting for the friend (host), joining (friend), and the other person's Undo / Try it to agree to */
+#lobby, #join { max-width: 760px; margin: 0 auto; padding: 16px; }
+#lobby h2, #join h2 { color: var(--gold); margin: 12px 0 8px; font-size: 18px; }
+#lobby .code, #join .code { font: 700 34px/1.2 ui-monospace, monospace; letter-spacing: 6px; color: var(--gold); }
+#lobby .link { font: 600 18px/1.4 ui-monospace, monospace; user-select: all; }
+#lobby .row, #join .row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 10px 0; }
+#join input[name=code] { font: 700 22px ui-monospace, monospace; letter-spacing: 4px; width: 8em; }
+.help { color: var(--dim); font-size: 13px; }
+.deck:disabled { opacity: .4; cursor: not-allowed; }
+#proposal { position: fixed; left: 50%; top: 70px; transform: translateX(-50%); z-index: 30; max-width: min(560px, 92vw);
+  padding: 14px 18px; border-radius: 10px; background: #0f2d1f; border: 2px solid var(--gold); box-shadow: 0 8px 26px #000d; }
+#proposal p { margin: 0 0 10px; font-size: 15px; }
+#proposal .row { display: flex; gap: 10px; justify-content: flex-end; }

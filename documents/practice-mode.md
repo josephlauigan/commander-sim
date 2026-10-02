@@ -15,7 +15,7 @@ Status: design agreed, not yet built. Screen mockups: [Commander Practice Table]
 ## Non-goals
 
 - **Not a full rules engine.** You play against the simulator's model of Commander, with its simplifications (see [Rules model](#rules-model)). Gaps that manual play exposes get fixed in the engine, which also improves the simulations.
-- **No multiplayer between humans,** no online play and no deck building. Decks come from `decklists/mine/` and are edited with `update_deck` as today.
+- **No online play** and no deck building (two people on one local network is supported: see [Two players on a network](#two-players-on-a-network)). Decks come from `decklists/mine/` and are edited with `update_deck` as today.
 - **The simulations are unchanged.** Every new code path runs only when a human is seated. The existing test suite and the recorded sim numbers must not move.
 
 ## Starting it
@@ -23,6 +23,7 @@ Status: design agreed, not yet built. Screen mockups: [Commander Practice Table]
 ```
 python3 -m commander_sim.play            # opens http://127.0.0.1:8765 in your browser
 python3 -m commander_sim.play --port 9000 --no-browser
+python3 -m commander_sim.play --lan      # a friend on the same network can join a two-player game
 ```
 
 ## Screens
@@ -149,6 +150,16 @@ browser (static HTML/CSS/JS)  <-- JSON + server-sent events -->  play/server.py 
   - **A problem to fix first:** the look-ahead AI's choices currently depend on object memory addresses. The same seed replays identically only on identical code, and even an unrelated code change can alter a game. This showed up while debugging crashes.
   - **The fix:** make the search's orderings independent of object identity, so saved games replay reliably. That helps the simulations' reproducibility too.
   - **Fallback:** save the full snapshot as a pickle alongside the decision list.
+
+### Two players on a network
+
+Two people, each on their own computer, play two different decks of `decklists/mine/` against two AI opponents from the tier.
+
+- **One game, one engine.** The game still runs on the host's computer (the one running the server), on one engine thread. Each person's seat has its own controller; the engine already routes every decision through `human_choice(g, p)` and `controller_of(g, p)`, so it asks the right seat. Both mulligan (in seat order); priority, responses and end-of-turn windows go to each person in turn order, as at a real table.
+- **Seats.** Each browser has a cookie. The host opens the table (`POST /api/new` with `two`), which waits in a lobby with a six-digit code; the friend joins with the code and a deck other than the host's. The game maps both cookies to their seats. A page on the host computer without a seat plays the host's seat (as with one player). Only the host computer can start, save, load or end games.
+- **What each person sees.** The session builds a view of the table for each person's seat with every action. Requests and messages are tagged with their seat. The server keeps one history and filters it per seat: the other person's requests become "waiting for <name>", their hand is a count, and a card they tutor to hand or to the top of their library is logged by name only on their screen (`engine.log_secret`; an AI's tutor is hidden from both, which also fixes a leak in the one-player table).
+- **Answers in one list.** Both people's answers go into one list in the order the game asked, with whose each was. Undo (or Try it) of one person's decision rewinds to it, which also takes back the other person's later answers, so the other person must agree first (a proposal they accept or decline). Saved games keep both decks, both answer lists and both comparisons; loading one opens the lobby again for the same second deck.
+- **Per person:** Hint (only for the seat being asked), the AI comparison and the review.
 
 ### Card images
 
