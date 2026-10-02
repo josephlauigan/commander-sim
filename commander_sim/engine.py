@@ -1437,11 +1437,15 @@ def cast_counter(g, q, ctr, spell=None):
         lose_life(g, q, 2, q)
     elif 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
-        x = min(blues, key=lambda c: card_worth(g, q, c)); q.hand.remove(x); q.exile.append(x)
+        x = min(blues, key=lambda c: card_worth(g, q, c))
+        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
+        q.hand.remove(x); q.exile.append(x)
     elif 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
         if not blues: return False
-        q.hand.remove(blues[0]); q.exile.append(blues[0]); lose_life(g, q, 1, q)
+        x = min(blues, key=lambda c: card_worth(g, q, c))           # the least useful blue card
+        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
+        q.hand.remove(x); q.exile.append(x); lose_life(g, q, 1, q)
     elif not pay(g, q, *counter_cost(ctr, spell)):
         return False
     q.hand.remove(ctr)
@@ -1558,7 +1562,9 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     elif zone == 'cmd':
         if c.name == 'Liesa, Shroud of Dusk' and p.tax: lose_life(g, p, p.tax, p)
         p.cmd_in_zone = False; p.tax += 2
-    elif zone == 'escape': p.gy.remove(c)
+    elif zone in ('escape', 'mgy'):                              # mgy: cast from the graveyard by permission (Muldrotha)
+        p.gy.remove(c)
+        if zone == 'mgy' and ctx.get('muld_type') and CI is not None: CI.muld_mark(g, p, ctx['muld_type'])
     elif zone == 'lib': pass                      # Bolas's Citadel: already taken off the top of the library       # Underworld Breach: cast from the graveyard, resolves back to it
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
     p.cast_names.add(c.name)

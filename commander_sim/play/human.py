@@ -96,6 +96,7 @@ def apply(g, p, act):
         if c is None: return 'There is no such card in your graveyard.'
         why = legal.check_land_gy(g, p, c)
         if why: return why
+        if not (getattr(p, 'yawg', False) and id(c) in getattr(p, 'yawg_gy', {})): E.CI.muld_mark(g, p, 'L')   # Muldrotha
         p.gy.remove(c); ais.play_land_card(g, p, c, 'plays from the graveyard'); E.check_state(g)
         return None
     if do == 'cast' and act.get('zone') == 'gy':
@@ -240,6 +241,12 @@ def cast(g, p, c, zone):
     if zone == 'gy':
         _, gen, pips = legal.gy_mode(g, p, c)
         if gymode == 'escape': zone = 'escape'               # Underworld Breach: back to the graveyard afterwards
+        if gymode == 'muldrotha':                            # which of its types this uses up (an artifact creature ...)
+            ts = E.CI.muld_types(g, p, c)
+            names = dict(E.CI.MULD_TYPES)
+            k = choose(g, p, 'choose', f'{c.name}: cast it with Muldrotha as which type?', [names[t] for t in ts]) if len(ts) > 1 else 0
+            if k is None: return None
+            ctx['muld_type'] = ts[k]; zone = 'mgy'
     if 'wipe' in c.tags and 'rem' in c.tags:                 # overload (Cyclonic Rift, Vandalblast)
         og, op = ais.wipe_cost(p, c)
         over = f'overloaded ({mana.cost_text(og, op)}): every one you don\'t control'
@@ -338,10 +345,12 @@ def cast(g, p, c, zone):
         k = choose(g, p, 'choose', f'{c.name}: choose X (it costs {{X}}{{X}}{{X}} more; 5X damage to each of up to X targets)',
                    [f'X = {x}' for x in range(top + 1)], cancel=None)
         mana.pay_from_pool(g, p, 3 * k, ''); ctx['x'] = k
-    if 'tokx' in c.tags or 'xtutor' in c.tags:              # X: everything left in the pool (automatic for now)
-        x = mana.pool_of(p).total(); mana.pool_of(p).empty(); ctx['x'] = x
+    if 'tokx' in c.tags or 'xtutor' in c.tags:              # X: up to what's left in the pool
+        top = mana.pool_of(p).total()
+        x = choose(g, p, 'choose', f'{c.name}: choose X (paid from what is left in your pool)',
+                   [f'X = {x}' for x in range(top + 1)], cancel=None) if top else 0
+        mana.pay_from_pool(g, p, x, ''); ctx['x'] = x
         if 'xtutor' in c.tags: g.last_x = x
-        ctl.tell('auto', f'X = {x} (the rest of your mana pool)')
     if c.dsl: E.additional_cost(g, p, c)
     if fodder is not None:
         E.log(f'  {E.NAME(p)} sacrifices {fodder.name} for {c.name}', g); E.die(g, fodder, 'sac')

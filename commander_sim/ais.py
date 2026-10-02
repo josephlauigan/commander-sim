@@ -135,6 +135,11 @@ def protect_response(g, owner, m, kind, actor, spell=None):
             for c in owner.hand:
                 if c.tags.get('prot') == 'blink' and can_pay(g, owner, c.generic, c.pips):
                     pay(g, owner, c.generic, c.pips); owner.hand.remove(c)
+                    if c.name == 'Restoration Angel':          # its enters trigger does the blinking
+                        g.resto_target = m
+                        try: enter(g, owner, c)
+                        finally: g.resto_target = None
+                        return True
                     if c.creature: enter(g, owner, c)
                     else: owner.gy.append(c)
                     cd = m.cd; leave(g, m)
@@ -2041,6 +2046,8 @@ def play_land(g, p):
     lands = [c for c in p.hand if c.land]
     if getattr(p, 'yawg', False):                                    # Yawgmoth's Will: lands from the graveyard too
         lands += [c for c in p.gy if c.land and id(c) in p.yawg_gy]
+    muld = E.CI is not None and E.CI.muldrotha_on is not None and E.CI.muldrotha_on(g, p)
+    if muld: lands += [c for c in p.gy if c.land and c not in lands and E.CI.muld_types(g, p, c)]   # Muldrotha
     if any(c.tags.get('chasm') for c in lands) and not (len(p.lands) >= 4 and chasm_threatened(g, p) and not chasm(p)):
         lands = [c for c in lands if not c.tags.get('chasm')]     # hold Glacial Chasm until it's needed
     if not lands: return
@@ -2058,7 +2065,9 @@ def play_land(g, p):
         return s + g.rng.random() * 0.1
     c = max(lands, key=score)
     if c in p.hand: p.hand.remove(c)
-    else: p.gy.remove(c)
+    else:
+        if muld and not (getattr(p, 'yawg', False) and id(c) in p.yawg_gy): E.CI.muld_mark(g, p, 'L')
+        p.gy.remove(c)
     play_land_card(g, p, c)
 
 

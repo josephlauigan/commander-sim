@@ -472,29 +472,31 @@ full('Coalition Relic', '{T}: one mana of any colour; untapped at your end step 
 
 
 # ------------------------------------------------------------------ Relic of Legends
+def _legends_to_tap(g, p):
+    """untapped legendary creatures whose tapping costs nothing: summoning sick, or after combat"""
+    return [m for m in p.perms if m.creature and not m.tapped and not m.phased and m.cd is not None and IM.is_legendary(g, m)
+            and (m.sick or g.active is not p or g.step in ('main2', 'end') or m.noatk)]
+
+
 def _legend_to_tap(g, p):
-    """an untapped legendary creature whose tapping costs nothing: summoning sick, or after combat"""
-    for m in p.perms:
-        if (m.creature and not m.tapped and not m.phased and m.cd is not None and IM.is_legendary(g, m)
-                and (m.sick or g.active is not p or g.step in ('main2', 'end') or m.noatk)):
-            return m
-    return None
+    ls = _legends_to_tap(g, p)
+    return ls[0] if ls else None
 
 
 @on('Relic of Legends', 'etb')
 def _relic_legends_live(g, src, p, m): pass            # registers the card so its mana hook is live
 
 
-CI.DYN_MANA['Relic of Legends'] = lambda g, p, m: 1 + (1 if _legend_to_tap(g, p) is not None else 0)
+CI.DYN_MANA['Relic of Legends'] = lambda g, p, m: 1 + (len(_legends_to_tap(g, p)) if human_choice(g, p) is None else 0)
 
 
 def _relic_legends_tap(g, p, m, used):
-    if used >= 2:
-        x = _legend_to_tap(g, p)
-        if x is not None: x.tapped = True
+    """the AI taps one spare legend per extra mana (the person uses Relic's second ability themselves)"""
+    if human_choice(g, p) is not None: return
+    for x in _legends_to_tap(g, p)[:max(0, used - 1)]: x.tapped = True
 CI.ON_TAP['Relic of Legends'] = _relic_legends_tap
-full('Relic of Legends', '{T}: one mana of any colour; tapping an untapped legendary creature adds another (only one '
-     'that would not attack anyway: summoning sick, or after combat)')
+full('Relic of Legends', '{T}: one mana of any colour; tap an untapped legendary creature you control: one more (the '
+     'AI taps those that would not attack anyway: summoning sick, or after combat)')
 
 
 # ------------------------------------------------------------------ Gemstone Mine, Vivid lands

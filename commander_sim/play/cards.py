@@ -13,6 +13,30 @@ def _choose(*a, **k):
     return choose(*a, **k)
 
 
+choose = _choose
+
+
+def pick_exile(g, p, pool, n, prompt, default=()):
+    """'you may exile n cards from your graveyard': no, the suggested n, or n picked one at a time. The cards, or []"""
+    names = ', '.join(c.name for c in default)
+    k = _choose(g, p, 'choose', prompt, [f'yes: {names}', 'yes, and I pick the cards'], cancel='no')
+    if k is None: return []
+    if k == 0: return list(default)
+    picked = []
+    while len(picked) < n:
+        left = [c for c in pool if c not in picked]
+        j = _choose(g, p, 'choose', f'Exile which card? ({len(picked) + 1} of {n})', [c.name for c in left], cancel=None)
+        picked.append(left[j])
+    return picked
+
+
+def pick_blue(g, p, blues, what):
+    """an alternative cost that exiles a blue card from your hand (Force of Will, Force of Negation): which one"""
+    if len(blues) == 1: return blues[0]
+    k = _choose(g, p, 'choose', f'{what}: exile which blue card from your hand?', [c.name for c in blues], cancel=None)
+    return blues[k]
+
+
 def _choices():
     return importlib.import_module('commander_sim.play.choices')
 
@@ -881,6 +905,50 @@ ABILITIES['Recruitment Officer'] = lambda g, p, m: [('{3}{W}: look at the top fo
 ABILITIES['The Eternal Wanderer'] = _walker([(1, "exile up to one target artifact or creature until its owner's next end step", _wanderer_plus),
                                              (0, 'create a 2/2 white Samurai with double strike', _wanderer_zero),
                                              (-4, 'each player keeps one creature and sacrifices the rest', _wanderer_minus4)])
+
+
+def _niv_draw(g, p, m):
+    why = _tapped(m) or ("Niv-Mizzet has summoning sickness (it came under your control this turn)." if m.sick else None)
+    if why: return why
+    m.tapped = True
+    E.log(f'  {E.NAME(p)} activates Niv-Mizzet, the Firemind: draws a card', g)
+    E.draw(g, p, 1)
+    return None
+
+
+def _torch_fiend(g, p, m):
+    why = _cost(g, p, 0, 'R', 'Torch Fiend')
+    if why: return why
+    arts = [x for q in g.players if q.alive for x in q.perms if not x.phased and x.cd is not None and 'A' in x.cd.types
+            and not (x.owner is not p and (E.untargetable(g, x) or E.protected_from(g, x, 'R')))]
+    if not arts: return 'There is no artifact to target.'
+    k = _choose(g, p, 'target', 'Torch Fiend: destroy which artifact?', [legal.describe_target(g, p, x) for x in arts])
+    if k is None: return None
+    mana.pay_from_pool(g, p, 0, 'R')
+    E.log(f'  {E.NAME(p)} sacrifices Torch Fiend: destroys {arts[k].name}', g)
+    E.die(g, m, 'sac')
+    if arts[k] in arts[k].owner.perms: E.apply_removal(g, p, arts[k], 'destroy')
+    return None
+
+
+def _relic_legend(g, p, m):
+    legs = [x for x in p.perms if x.creature and not x.tapped and not x.phased and x.cd is not None
+            and _mine().is_legendary(g, x)]
+    if not legs: return 'You have no untapped legendary creature to tap.'
+    k = _choose(g, p, 'choose', 'Relic of Legends: tap which legendary creature?', [legal.describe_target(g, p, x) for x in legs])
+    if k is None: return None
+    j = _choose(g, p, 'choose', 'Relic of Legends: which colour?', list(p.ident) or ['C'])
+    if j is None: return None
+    legs[k].tapped = True
+    col = (list(p.ident) or ['C'])[j]
+    mana.pool_of(p).add(col, 1)
+    E.log(f'  {E.NAME(p)} taps {legs[k].name} for Relic of Legends: {{{col}}}', g)
+    return None
+
+
+ABILITIES['Niv-Mizzet, the Firemind'] = lambda g, p, m: [('{T}: draw a card', _niv_draw)]
+ABILITIES['Torch Fiend'] = lambda g, p, m: [('{R}, sacrifice Torch Fiend: destroy target artifact', _torch_fiend)]
+ABILITIES['Relic of Legends'] = lambda g, p, m: [('tap an untapped legendary creature you control: one mana of any colour', _relic_legend)]
 
 # ------------------------------------------------------------------ copying a spell: Return the Favor, Dualcaster Mage
 def copy_card(c):

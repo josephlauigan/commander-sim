@@ -699,15 +699,44 @@ def _value_blink(name, gen, pips):
             if c not in p.hand or not can_pay(g, p, gen, pips): return False
             p.hand.remove(c); pay(g, p, gen, pips)
             p.spells_this_turn += 1; p.cast_names.add(c.name); on_cast(g, p, c)
-            if name == 'Ephemerate': p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
-            else: enter(g, p, c)
-            if t is not None and t in p.perms: blink(g, p, t)
+            if name == 'Ephemerate':
+                p.exile.append(c); p.rebound = getattr(p, 'rebound', []) + [c]
+                if t is not None and t in p.perms: blink(g, p, t)
+            else:
+                g.resto_target = t                      # its enters trigger blinks this one
+                try:
+                    enter(g, p, c)
+                finally:
+                    g.resto_target = None
             log(f'  {NAME(p)} casts {name} at end of turn' + (f': blinks {t.name}' if t is not None else ''), g)
             return True
         return [(v - 1.0, f'{name} (end of turn)', go)]
 
 
 STYLE_KEYS = ('seph', 'veyran', 'sauron', 'marchesa', 'najeela')
+
+
+@on('Restoration Angel', 'etb')
+def _resto_etb(g, src, p, m):
+    """when it enters: you may exile target non-Angel creature you control, then return it"""
+    if m is not src: return
+    o = src.owner
+    cands = [x for x in o.perms if x.creature and not x.phased and x is not src and not has_type(x, 'angel')]
+    if not cands: return
+    hc = human_choice(g, o)
+    if hc is not None:
+        from commander_sim.play import legal
+        k = hc.choose(g, o, 'target', 'Restoration Angel enters: exile and return which non-Angel creature of yours?',
+                      [legal.describe_target(g, o, x) for x in cands], cancel='none')
+        t = cands[k] if k is not None else None
+    else:
+        t = getattr(g, 'resto_target', None)
+        if t is None or t not in cands:
+            best = max(cands, key=lambda x: blink_value(g, o, x), default=None)
+            t = best if best is not None and blink_value(g, o, best) >= 3 else None
+    if t is not None and t in o.perms:
+        if t.token: leave(g, t); log(f'    {t.name} (a token) is exiled for good', g)
+        else: blink(g, o, t)
 _value_blink('Ephemerate', 0, 'W')
 _value_blink('Restoration Angel', 3, 'W')
 note('Ephemerate', 'Full', 'blinks your best enters-the-battlefield creature at the end of an opponent\'s turn (or in '

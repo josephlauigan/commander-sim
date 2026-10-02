@@ -3,9 +3,20 @@ deck's other modeled cards, the AI's responses, and the person's choices in prac
 import unittest
 from tests.table import table, hand, perm, lands, token, card
 from commander_sim import engine as E, ais
-from commander_sim.cards.impl import zur as Z, common as IC
 from commander_sim.play import combat, human
 from commander_sim.play.controller import ScriptController
+
+
+Z = IC = None
+
+
+def setUpModule():
+    """the card modules are imported once the card database is set up (a top-level import here would run at test
+    discovery, before the engine's own load order, and change which card definitions win)"""
+    global Z, IC
+    table('zur', 'veyran')
+    from commander_sim.cards.impl import zur as _z, common as _c
+    Z, IC = _z, _c
 
 
 def zur(g, p, sick=False):

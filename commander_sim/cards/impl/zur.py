@@ -796,8 +796,13 @@ def zur_protect(g, owner, m, kind, actor, spell):
             ais.pay_card(g, owner, c)
             if c.name == 'Restoration Angel':
                 if c in owner.gy: owner.gy.remove(c)
-                enter(g, owner, c)
-            t2.blink(g, owner, m)
+                g.resto_target = m                      # its enters trigger blinks the creature under attack
+                try:
+                    enter(g, owner, c)
+                finally:
+                    g.resto_target = None
+            else:
+                t2.blink(g, owner, m)
             log(f'    {NAME(owner)} casts {c.name}: blinks {m.cd.name if m.cd else m.name}', g)
             return True
     return False

@@ -238,6 +238,64 @@ def spell_copy_value(g, p, c):
     return v + 1.0 * sum(1 for m in p.perms if m.cd is not None and any(k in m.cd.tags for k in ('ping', 'spelltok', 'spelldraw', 'kiln')))
 
 
+# ------------------------------------------------------------------ Muldrotha, the Gravetide
+MULD_TYPES = (('L', 'land'), ('C', 'creature'), ('A', 'artifact'), ('E', 'enchantment'), ('P', 'planeswalker'), ('B', 'battle'))
+
+
+def muldrotha_on(g, p):
+    """during each of your turns, a land and a permanent spell of each permanent type from your graveyard"""
+    return g.active is p and any(m.cd is not None and m.cd.name == 'Muldrotha, the Gravetide' and not m.phased
+                                 and not m.neutered for m in p.perms)
+
+
+def muld_used(g, p):
+    st = turn_stamp(g)
+    v = getattr(p, 'muld_used', None)
+    if not v or v[0] != st: p.muld_used = v = (st, set())
+    return v[1]
+
+
+def muld_types(g, p, c):
+    """the permanent types of graveyard card c that Muldrotha still lets p play this turn"""
+    if not muldrotha_on(g, p) or c not in p.gy: return []
+    used = muld_used(g, p)
+    if c.land: return [] if 'L' in used else ['L']
+    if not c.perm: return []
+    return [t for t, _ in MULD_TYPES if t != 'L' and t in c.types and t not in used]
+
+
+def muld_mark(g, p, t):
+    muld_used(g, p).add(t)
+
+
+@on('Muldrotha, the Gravetide', 'options')
+def _muldrotha(g, src, p, s, post):
+    """the AI: cast the best permanent card from the graveyard whose type is still unused this turn"""
+    if p is not src.owner or post is None or not muldrotha_on(g, p): return []
+    from commander_sim import ais
+    out = []
+    for c in list(p.gy):
+        ts = muld_types(g, p, c)
+        if not ts or c.land or not castable(g, p, c, 'gy'): continue
+        gen, pips = cost_of(p, c)
+        if not can_pay(g, p, gen, pips): continue
+        v = ais.deck_prio(g, p, c) / 10.0 + 0.3 * card_worth(g, p, c, in_gy=True) / 10.0
+        if v <= 0.5: continue
+
+        def go(c=c, t=ts[0], gen=gen, pips=pips):
+            if c not in p.gy or t not in muld_types(g, p, c) or not can_pay(g, p, gen, pips): return False
+            pay(g, p, gen, pips); muld_mark(g, p, t)
+            log(f'  {NAME(p)} casts {c.name} from the graveyard (Muldrotha)', g)
+            cast_card(g, p, c, 'mgy', {})
+            return True
+        out.append((v, f'{c.name} from the graveyard (Muldrotha)', go))
+    return out
+CI.muldrotha_on, CI.muld_types, CI.muld_mark, CI.muld_used, CI.MULD_TYPES = muldrotha_on, muld_types, muld_mark, muld_used, MULD_TYPES
+card('Muldrotha, the Gravetide', 'pow=6 tgh=6 leg', dsl=[])
+full('Muldrotha, the Gravetide', 'during each of your turns, play a land and cast a permanent spell of each permanent type '
+     '(artifact, creature, enchantment, planeswalker, battle) from your graveyard; a countered one goes back to the graveyard')
+
+
 # ------------------------------------------------------------------ Thousand-Year Storm
 def _storm_n(g, p):
     """copies: one per instant/sorcery cast before this one this turn; Veyran doubles the trigger"""
@@ -395,6 +453,10 @@ def _ideation_attack(g, src, p, atk, d):
     """whenever it attacks: exile eight cards from your graveyard to prepare it again"""
     if src.owner is not p or src not in atk or (src.data and src.data.get('prepared')) or len(p.gy) < 8: return
     ex = sorted(p.gy, key=lambda c: (c.instant or c.sorcery, card_worth(g, p, c, in_gy=True)))[:8]
+    if _you(g, p):
+        ex = _you(g, p).pick_exile(g, p, p.gy, 8, 'Emeritus of Ideation attacks: exile eight cards from your graveyard '
+                                   'to prepare it?', default=ex)
+        if not ex: return
     for c in ex: p.gy.remove(c); p.exile.append(c)
     src.data = dict(src.data or {}, prepared=True)
     log(f'    {NAME(p)} exiles eight cards: Emeritus of Ideation is prepared', g)
@@ -858,6 +920,11 @@ def _witch(g, src, p, a, d, dmg):
     ok = [c for c in src.data['witch'] if c in p.exile and not c.land and (not c.creature or 'hero' in c.subtypes)]
     if not ok: return
     c = max(ok, key=lambda c: card_worth(g, p, c))
+    if _you(g, p):
+        k = _you(g, p).choose(g, p, 'choose', 'Scarlet Witch: cast a spell from among the cards exiled with her, free?',
+                              [x.name for x in ok], cancel='cast nothing')
+        if k is None: return
+        c = ok[k]
     p.exile.remove(c); src.data['witch'].remove(c)
     log(f'    Scarlet Witch: {NAME(p)} casts {c.name} free', g)
     cast_card(g, p, c, 'lib', spell_targets(g, p, c))
@@ -1130,7 +1197,7 @@ def _kefka_ruin_draw(g, src, q, n):
     """Kefka, Ruler of Ruin: whenever an opponent loses life during your turn, you draw that many cards"""
     p = src.owner
     if (src.data or {}).get('ruin') and q is not p and g.active is p and n > 0 and p.alive:
-        draw(g, p, min(n, max(0, len(p.library) - 5)))           # the AI stops short of decking itself
+        draw(g, p, n)                                             # not optional, even if it decks you
 
 
 card(KEFKA, 'leg human wizard pow=4 tgh=5 kefka', dsl=[])
