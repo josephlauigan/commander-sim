@@ -34,16 +34,9 @@ def instant_speed(c):
     return c.instant or 'flash' in c.tags or 'flash' in (c.kws or ())
 
 
-_PHY = {}
-
-
 def phyrexian(c):
     """the colours of c's Phyrexian mana symbols ({B/P}: 'B'), from its printed mana cost; '' if none"""
-    if c.name not in _PHY:
-        from commander_sim.cards import scryfall
-        cost = (scryfall.load_cache().get(c.name.lower()) or {}).get('mana_cost') or ''
-        _PHY[c.name] = ''.join(re.findall(r'\{([WUBRG])/P\}', cost))
-    return _PHY[c.name]
+    return E.phyrexian(c)
 
 
 def base_cost(g, p, c):

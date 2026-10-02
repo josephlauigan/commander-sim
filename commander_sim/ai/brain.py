@@ -262,8 +262,9 @@ def do_cast(g, p, c, zone=None):
         x = total_mana(g, p, cv); pay(g, p, x, '', cv); ctx['x'] = x; g.last_x = x
     if c.dsl: additional_cost(g, p, c)
     if zone == 'gy' and 'fblife' in c.tags: lose_life(g, p, int(c.tags['fblife']), p)
-    if 'phyU' in c.tags and zone in ('hand', 'cmd') and 'U' in c.pips and cp.count('U') < c.pips.count('U'):
-        lose_life(g, p, 2, p)                                     # {U/P} paid with 2 life
+    if zone in ('hand', 'cmd') and E.phyrexian(c):                # Phyrexian symbols paid with 2 life each
+        life = E.phyrexian_life(c, cp)
+        if life: lose_life(g, p, life, p)
     if fodder is not None:
         if fodder not in p.perms: return False
         die(g, fodder, 'sac')
