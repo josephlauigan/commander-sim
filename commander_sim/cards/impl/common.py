@@ -151,16 +151,19 @@ def n_ench(p): return sum(1 for m in p.perms if m.cd is not None and 'E' in m.cd
 def n_auras(p): return sum(1 for m in p.perms if m.cd is not None and 'aura' in m.cd.subtypes and m.attached is not None)
 
 
-def _sheltered_etb(g, p, a, host):
+def _sheltered_etb(g, p, a, host):                  # on_etb: the enter trigger (attaching is not)
+    if not trigger_window(g, p, a, 'exile a nonland permanent', imp=5) or a not in p.perms: return
     oring_exile(g, a, p, lambda m: m.cd is not None or m.token)
 
 
 def _cartouche_etb(g, p, a, host):
-    make_tokens(g, p, 1, 1, color='W', types=('warrior',))
+    if trigger_window(g, p, a, 'create a 1/1 Warrior'): make_tokens(g, p, 1, 1, color='W', types=('warrior',))
 
 
-def _reverie_etb(g, p, a, host): draw(g, p, n_auras(p))
-def _draw1(g, p, a, host): draw(g, p, 1)
+def _reverie_etb(g, p, a, host):
+    if trigger_window(g, p, a, 'draw a card per Aura'): draw(g, p, n_auras(p))
+def _draw1(g, p, a, host):
+    if trigger_window(g, p, a, 'draw a card'): draw(g, p, 1)
 
 
 aura('All That Glitters', bonus=lambda g, p, a, m: (k := sum(1 for x in p.perms if x.cd is not None and
@@ -206,17 +209,17 @@ def _host_damage(name):
 
 @_host_damage('Celestial Mantle')
 def _mantle(g, src, p, a, d, dmg):
-    if src.attached is a: gain(src.owner, src.owner.life)
+    if src.attached is a and trigger_window(g, src.owner, src, 'double your life total'): gain(src.owner, src.owner.life)
 
 
 @_host_damage('Spirit Link')
 def _spirit_link(g, src, p, a, d, dmg):
-    if src.attached is a: gain(src.owner, dmg)
+    if src.attached is a and trigger_window(g, src.owner, src, f'gain {dmg} life'): gain(src.owner, dmg)
 
 
 @_host_damage('Snake Umbra')
 def _snake(g, src, p, a, d, dmg):
-    if src.attached is a: draw(g, src.owner, 1)
+    if src.attached is a and trigger_window(g, src.owner, src, 'draw a card'): draw(g, src.owner, 1)
 
 
 # hostile Auras: removal on entry
@@ -264,7 +267,8 @@ def oring_return(g, src):
 
 def _oring(name, pred, per_opponent=False, creature_only=False, tags='rem=exile tgt=nl', status=('Full', '')):
     def etb(g, src, p, m):
-        if m is src: oring_exile(g, src, src.owner, pred, per_opponent, creature_only)
+        if m is src and trigger_window(g, src.owner, src, 'exile a permanent', imp=5) and src in src.owner.perms:
+            oring_exile(g, src, src.owner, pred, per_opponent, creature_only)
     CI.HOOKS.setdefault(name, {})['etb'] = etb
     CI.HOOKS[name]['leaves'] = oring_return
     card(name, tags, types='E', dsl=[])
@@ -286,6 +290,7 @@ def _sentinel(g, src, caster, c):
     o = src.owner
     if caster is o or c.creature or c.land: return
     if casts_this_turn(g, caster, lambda x: not x.creature) != 1: return
+    if not trigger_window(g, o, src, f'draw a card unless {NAME(caster)} pays'): return
     x = epow(g, src)
     if x and can_pay(g, caster, x, '') and total_mana(g, caster) >= x + 2:
         pay(g, caster, x, ''); return
@@ -399,10 +404,11 @@ card('Woe Strider', 'pow=3 tgh=2', dsl=[{'type': 'triggered', 'event': 'etb', 's
 
 
 # ======================================================== simple death-trigger creatures (shared by several decks)
-def _dies_other(name, fn, nontoken=False, other=True, yours=True, status=('Full', '')):
+def _dies_other(name, fn, nontoken=False, other=True, yours=True, status=('Full', ''), what='a creature died'):
     @CI.on(name, 'dies')
     def _h(g, src, m, cause):
         if not m.creature or (other and m is src) or (yours and m.owner is not src.owner) or (nontoken and m.token): return
+        if not trigger_window(g, src.owner, src, what): return
         fn(g, src.owner, src, m)
     card(name, None, dsl=[])
     note(name, *status)
@@ -413,19 +419,24 @@ def _drain1(g, p, src, m):
     gain(p, len(g.opps(p)))
 
 
-_dies_other('Cruel Celebrant', _drain1, other=False)
-_dies_other('Grim Haruspex', lambda g, p, s, m: draw(g, p, 1), nontoken=True)
-_dies_other('Midnight Reaper', lambda g, p, s, m: (lose_life(g, p, 1, p), draw(g, p, 1)), nontoken=True, other=False)
+_dies_other('Cruel Celebrant', _drain1, other=False, what='each opponent loses 1 life')
+_dies_other('Grim Haruspex', lambda g, p, s, m: draw(g, p, 1), nontoken=True, what='draw a card')
+_dies_other('Midnight Reaper', lambda g, p, s, m: (lose_life(g, p, 1, p), draw(g, p, 1)), nontoken=True, other=False,
+            what='draw a card and lose 1 life')
 _dies_other('Sifter of Skulls', lambda g, p, s, m: make_tokens(g, p, 1, 1, color='', types=('eldrazi', 'scion')),
-            nontoken=True, status=('Approximate', 'Scion token; its sacrifice-for-mana is not modeled'))
+            nontoken=True, status=('Approximate', 'Scion token; its sacrifice-for-mana is not modeled'),
+            what='create a Scion')
 _dies_other('Pawn of Ulamog', lambda g, p, s, m: make_tokens(g, p, 1, 0, 1, color='', types=('eldrazi', 'spawn')),
-            nontoken=True, other=False, status=('Approximate', 'Spawn token; its sacrifice-for-mana is not modeled'))
+            nontoken=True, other=False, status=('Approximate', 'Spawn token; its sacrifice-for-mana is not modeled'),
+            what='create a Spawn')
 _dies_other('Requiem Angel', lambda g, p, s, m: None if has_type(m, 'spirit') else
-            make_tokens(g, p, 1, 1, fly=True, color='W', types=('spirit',)))
-_dies_other('Dark Prophecy', lambda g, p, s, m: (draw(g, p, 1), lose_life(g, p, 1, p)), other=False)
-_dies_other('Vindictive Vampire', lambda g, p, s, m: (_dmg_each(g, p, 1), gain(p, 1)))
+            make_tokens(g, p, 1, 1, fly=True, color='W', types=('spirit',)), what='create a 1/1 Spirit')
+_dies_other('Dark Prophecy', lambda g, p, s, m: (draw(g, p, 1), lose_life(g, p, 1, p)), other=False,
+            what='draw a card and lose 1 life')
+_dies_other('Vindictive Vampire', lambda g, p, s, m: (_dmg_each(g, p, 1), gain(p, 1)), what='1 damage to each opponent')
 _dies_other('Syr Konrad, the Grim', lambda g, p, s, m: _dmg_each(g, p, 1), yours=False, other=True,
-            status=('Approximate', 'any other creature dying deals 1 to each opponent (cards leaving graveyards ignored)'))
+            status=('Approximate', 'any other creature dying deals 1 to each opponent (cards leaving graveyards ignored)'),
+            what='1 damage to each opponent')
 
 
 def _dmg_each(g, p, n):
@@ -434,20 +445,24 @@ def _dmg_each(g, p, n):
 
 @CI.on('Morbid Opportunist', 'dies')
 def _morbid(g, src, m, cause):
-    if m.creature and m is not src and once_per_turn(g, src.owner, f'morbid{id(src)}'): draw(g, src.owner, 1)
+    k = f'morbid{id(src)}'
+    if m.creature and m is not src and src.owner.flag_turn.get(k) != (g.round, g.active and g.active.key) \
+            and trigger_window(g, src.owner, src, 'draw a card') and once_per_turn(g, src.owner, k): draw(g, src.owner, 1)
 card('Morbid Opportunist', 'human pow=1 tgh=3', dsl=[])
 note('Morbid Opportunist', 'Full', '')
 
 
 @CI.on('Carrier Thrall', 'self_dies')
-def _thrall(g, m, cause): make_tokens(g, m.owner, 1, 1, color='', types=('eldrazi', 'scion'))
+def _thrall(g, m, cause):
+    if trigger_window(g, m.owner, m, 'create a Scion'): make_tokens(g, m.owner, 1, 1, color='', types=('eldrazi', 'scion'))
 card('Carrier Thrall', 'pow=2 tgh=1', dsl=[])
 note('Carrier Thrall', 'Approximate', 'Scion token; its sacrifice-for-mana is not modeled')
 
 
 @CI.on('Mirkwood Bats', 'sacrifice')
 def _bats_sac(g, src, p, what):
-    if p is src.owner and (what in ('Treasure', 'Food', 'Clue') or getattr(what, 'token', False)): _drain_only(g, p)
+    if p is src.owner and (what in ('Treasure', 'Food', 'Clue') or getattr(what, 'token', False)) \
+            and trigger_window(g, p, src, 'each opponent loses 1 life'): _drain_only(g, p)
 
 
 def _drain_only(g, p):
@@ -460,12 +475,12 @@ note('Mirkwood Bats', 'Approximate', 'drains on token sacrifices (Treasure / Foo
 
 @CI.on('Revel in Riches', 'dies')
 def _revel(g, src, m, cause):
-    if m.creature and m.owner is not src.owner: add_treasure(g, src.owner, 1)
+    if m.creature and m.owner is not src.owner and trigger_window(g, src.owner, src, 'create a Treasure'): add_treasure(g, src.owner, 1)
 
 
 @CI.on('Revel in Riches', 'upkeep')
 def _revel_win(g, src, p):
-    if p is src.owner and p.treasures >= 10:
+    if p is src.owner and p.treasures >= 10 and trigger_window(g, p, src, 'you win the game', imp=10) and p.treasures >= 10:
         from commander_sim import ais; ais.win(g, p, 'Revel in Riches')
 card('Revel in Riches', '', types='E', dsl=[])
 note('Revel in Riches', 'Full', '')
@@ -607,6 +622,9 @@ def _reflector(g, src, p, m):
     if m is not src: return
     cands = [x for q in g.opps(src.owner) for x in q.perms if x.creature and not untargetable(g, x)]
     if not cands: return
+    if not trigger_window(g, src.owner, src, 'bounce a creature', imp=5): return
+    cands = [x for q in g.opps(src.owner) for x in q.perms if x.creature and not untargetable(g, x)]
+    if not cands: return
     t = max(cands, key=lambda x: pval(g, x))
     owner, name = t.owner, t.name
     apply_removal(g, src.owner, t, 'bounce', src.cd)
@@ -641,12 +659,12 @@ note('Spark Double', 'Approximate', 'enters as a copy of your best creature or p
 
 @CI.on('Frost Titan', 'etb')
 def _frost(g, src, p, m):
-    if m is src: _frost_tap(g, src)
+    if m is src and trigger_window(g, src.owner, src, 'tap a creature'): _frost_tap(g, src)
 
 
 @CI.on('Frost Titan', 'attack')
 def _frost_atk(g, src, p, atk, d):
-    if src in atk: _frost_tap(g, src)
+    if src in atk and trigger_window(g, src.owner, src, 'tap a creature'): _frost_tap(g, src)
 
 
 def _frost_tap(g, src):
@@ -661,12 +679,12 @@ note('Frost Titan', 'Approximate', 'taps the best opposing creature on entry and
 
 @CI.on('Dream Trawler', 'attack')
 def _trawler(g, src, p, atk, d):
-    if src in atk: draw(g, p, 1)
+    if src in atk and trigger_window(g, p, src, 'draw a card'): draw(g, p, 1)
 
 
 @CI.on('Dream Trawler', 'draw')
 def _trawler_draw(g, src, p):
-    if p is src.owner: _eot(g, src, 1, 0)
+    if p is src.owner and trigger_window(g, p, src, 'gets +1/+0', imp=1) and src in p.perms: _eot(g, src, 1, 0)
 card('Dream Trawler', 'pow=3 tgh=5 fly lifelink bomb=5', dsl=[])
 note('Dream Trawler', 'Approximate', 'draws on attack, +1/+0 per draw; the discard-for-hexproof is used by the '
      'protection AI')
@@ -727,7 +745,7 @@ note('Bojuka Bog', 'Full', 'enters tapped; exiles the most dangerous graveyard')
 
 @CI.on('Rest in Peace', 'etb')
 def _rip(g, src, p, m):
-    if m is src:
+    if m is src and trigger_window(g, src.owner, src, 'exile all graveyards'):
         for q in g.players:
             if q.alive: exile_gy(g, q, 'Rest in Peace')
 
@@ -853,6 +871,7 @@ note('Silent Arbiter', 'Approximate', 'one attacker per combat; the one-blocker 
 @CI.on('Elephant Grass', 'upkeep')
 def _grass(g, src, p):
     if p is not src.owner: return
+    if not trigger_window(g, p, src, 'cumulative upkeep {1}'): return
     src.data = src.data or {}; age = src.data.get('age', 0) + 1; src.data['age'] = age
     if age <= 3 and can_pay(g, p, age, ''): pay(g, p, age, '')
     else: die(g, src, 'sac')
@@ -1279,7 +1298,7 @@ def _tutor_etb(name, pred, tags, status=('Full', '')):
 
     @CI.on(name, 'etb')
     def _t(g, src, p, m):
-        if m is src:
+        if m is src and trigger_window(g, src.owner, src, 'search for a card'):
             from commander_sim.cards.impl import t1 as impl_t1; impl_t1.tutor_named(g, src.owner, pred)
     card(name, tags, dsl=[])
     note(name, *status)
@@ -1292,9 +1311,12 @@ _tutor_etb('Goblin Matron', lambda c: 'goblin' in c.subtypes, 'pow=1')
 
 @CI.on('Solitude', 'etb')
 def _solitude(g, src, p, m):
-    if m is src:
-        t = best_opp_creature(g, src.owner)
-        if t is not None and pval(g, t) >= 2: apply_removal(g, src.owner, t, 'exile', src.cd)
+    if m is not src: return
+    t = best_opp_creature(g, src.owner)
+    if t is None or pval(g, t) < 2: return
+    if not trigger_window(g, src.owner, src, 'exile a creature', imp=6): return
+    t = best_opp_creature(g, src.owner)
+    if t is not None and pval(g, t) >= 2: apply_removal(g, src.owner, t, 'exile', src.cd)
 card('Solitude', 'pow=3 lifelink flash', dsl=[])
 note('Solitude', 'Approximate', 'exiles the best opposing creature on entry; the free evoke is used as protection-less '
      'removal only through normal casting')
@@ -1335,7 +1357,8 @@ for _n, _t in (('Mother of Runes', 'protection from a colour in response to targ
 
 @CI.on('Hero of Bladehold', 'attack')
 def _hero(g, src, p, atk, d):
-    if src in atk: return make_tokens(g, p, 2, 1, color='W', types=('soldier',), attacking=True, sick=False)
+    if src in atk and trigger_window(g, p, src, 'create two attacking Soldiers'):
+        return make_tokens(g, p, 2, 1, color='W', types=('soldier',), attacking=True, sick=False)
 card('Hero of Bladehold', 'human pow=3 tgh=4', dsl=[])
 note('Hero of Bladehold', 'Full', 'battle cry; two Soldiers tapped and attacking')
 
@@ -1343,14 +1366,15 @@ note('Hero of Bladehold', 'Full', 'battle cry; two Soldiers tapped and attacking
 @CI.on('Ophiomancer', 'upkeep')
 def _ophio(g, src, p):
     o = src.owner
-    if not any(has_type(m, 'snake') for m in o.perms): make_tokens(g, o, 1, 1, dt=True, color='B', types=('snake',))
+    if not any(has_type(m, 'snake') for m in o.perms) and trigger_window(g, o, src, 'create a deathtouch Snake') \
+            and not any(has_type(m, 'snake') for m in o.perms): make_tokens(g, o, 1, 1, dt=True, color='B', types=('snake',))
 card('Ophiomancer', 'human shaman pow=2', dsl=[])
 note('Ophiomancer', 'Full', 'a deathtouch Snake each upkeep when you have none')
 
 
 @CI.on("Ajani's Chosen", 'etb')
 def _ajani_chosen(g, src, p, m):
-    if m.owner is src.owner and m.cd is not None and 'E' in m.cd.types:
+    if m.owner is src.owner and m.cd is not None and 'E' in m.cd.types and trigger_window(g, src.owner, src, 'create a 2/2 Cat'):
         make_tokens(g, src.owner, 1, 2, color='W', types=('cat',))
 card("Ajani's Chosen", 'pow=3 tgh=3', dsl=[])
 note("Ajani's Chosen", 'Approximate', 'a 2/2 Cat per enchantment entering; the Aura move is not used')

@@ -472,10 +472,10 @@ def fire(g, event, **kw):
                     if a.get('type') != 'triggered' or a.get('event') != event: continue
                     if src is x and src not in q.perms and a.get('source') != 'self': continue
                     reps = trigger_copies(g, q, src, event, kw)
-                    for ctx in trigger_matches(g, q, src, a, kw):
-                        for _ in range(reps):
-                            execute(g, q, a['effects'], src, ctx)
-                            if g.over: return
+                    entries = [E.Trigger(q, src, execute, (g, q, a['effects'], src, ctx), event, name='trigger', known=True)
+                               for ctx in trigger_matches(g, q, src, a, kw) for _ in range(reps)]
+                    E.queue_triggers(g, entries)                     # on the stack (or once the spell resolving is done)
+                    if g.over: return
     finally:
         g.dsl_depth = depth
 

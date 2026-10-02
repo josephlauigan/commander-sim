@@ -35,6 +35,7 @@ def tajic_protects(g, m):
 @on('Archangel Avacyn // Avacyn, the Purifier', 'dies')
 def _avacyn_flag(g, src, m, cause):
     if m is not src and m.owner is src.owner and m.creature and not E.has_type(m, 'angel') and not (src.data or {}).get('flipped'):
+        if not trigger_window(g, src.owner, src, 'transform at the next upkeep', imp=2): return
         if src.data is None: src.data = {}
         src.data['flip'] = True
 
@@ -42,6 +43,9 @@ def _avacyn_flag(g, src, m, cause):
 @on('Archangel Avacyn // Avacyn, the Purifier', 'upkeep')
 def _avacyn_flip(g, src, p):
     if not src.data or not src.data.get('flip') or src.data.get('flipped'): return
+    if not trigger_window(g, src.owner, src, 'transform: 3 damage to each other creature and each opponent', imp=6):
+        src.data['flip'] = False; return
+    if src not in src.owner.perms: return
     src.data['flip'] = False; src.data['flipped'] = True
     src.pow, src.tgh = 6, 5
     o = src.owner
@@ -77,6 +81,7 @@ def _archfiend_unearth(g, c, p, s, post):
 @on('Archfiend of Sorrows', 'end_step')
 def _archfiend_exile(g, src, p):
     if src.data and src.data.get('unearth') and src in src.owner.perms:
+        if not trigger_window(g, src.owner, src, 'exile it (unearth)', imp=2) or src not in src.owner.perms: return
         leave(g, src)
         if src.cd in src.owner.gy: src.owner.gy.remove(src.cd)
         src.owner.exile.append(src.cd)
@@ -297,6 +302,8 @@ def extort(name):
     def _x(g, src, caster, c):
         if caster is not src.owner or src.phased: return
         if total_mana(g, caster) >= 3 and can_pay(g, caster, 0, 'B'):
+            if not trigger_window(g, caster, src, 'extort'): return
+            if not (total_mana(g, caster) >= 3 and can_pay(g, caster, 0, 'B')): return
             pay(g, caster, 0, 'B')
             n = 0
             for q in g.opps(caster): lose_life(g, q, 1, caster, kind='drain'); n += 1
@@ -357,6 +364,7 @@ E.SELF_COST['Dig Through Time'] = lambda g, p, c: -delve_count(g, p, c)
 @on('Draco', 'upkeep')
 def _draco_upkeep(g, src, p):
     if p is not src.owner: return
+    if not trigger_window(g, p, src, 'sacrifice Draco unless you pay') or src not in p.perms: return
     n = max(0, 10 - 2 * domain(p))
     if can_pay(g, p, n, ''): pay(g, p, n, '')
     else: log(f'    {NAME(p)} sacrifices Draco', g); die(g, src, 'sac')
@@ -461,8 +469,9 @@ def _eti(g, p, c, ctx):
 @on('Faerie Mastermind', 'draw')
 def _mastermind(g, src, p):
     if p is src.owner or not p.alive: return
-    if getattr(p, 'draw_n', 0) == 2 and once_per_turn(g, src.owner, f'mastermind{id(src)}{p.key}'):
-        draw(g, src.owner, 1)
+    if getattr(p, 'draw_n', 0) != 2: return
+    if not trigger_window(g, src.owner, src, 'draw a card'): return
+    if once_per_turn(g, src.owner, f'mastermind{id(src)}{p.key}'): draw(g, src.owner, 1)
 card('Faerie Mastermind', 'pow=2 tgh=1 fly flash', dsl=[])
 note('Faerie Mastermind', 'Full', 'flash, flying; draws when an opponent draws their second card each turn (the '
      'symmetric draw ability is never worth it and is not used)')
@@ -631,7 +640,8 @@ note('Heartless Act', 'Full', 'destroys a creature with no counters, or removes 
 # ------------------------------------------------------------------ Hero of Iroas: heroic
 @on('Hero of Iroas', 'etb')
 def _hero_heroic(g, src, p, m):
-    if m.cd is not None and 'aura' in m.cd.subtypes and m.owner is src.owner and m.attached is src: src.plus += 1
+    if m.cd is not None and 'aura' in m.cd.subtypes and m.owner is src.owner and m.attached is src:
+        if trigger_window(g, src.owner, src, 'a +1/+1 counter', imp=2): src.plus += 1
 note('Hero of Iroas', 'Full', 'Aura spells cost {1} less; heroic: +1/+1 counter when an Aura targets it')
 
 
@@ -742,14 +752,18 @@ def _jaxis_blitz(g, c, p, s, post):
 
 @on('Jaxis, the Troublemaker', 'self_dies')
 def _jaxis_draw(g, m, cause):
-    if m.data and m.data.get('blitz'): draw(g, m.owner, 1)
+    if m.data and m.data.get('blitz') and trigger_window(g, m.owner, m, 'draw a card'): draw(g, m.owner, 1)
 
 
 @on('Jaxis, the Troublemaker', 'end_step')
 def _jaxis_end(g, src, p):
-    if p is src.owner and src.data and src.data.get('blitz') and src in p.perms: die(g, src, 'sac')
+    if p is not src.owner: return
+    blitz = src.data and src.data.get('blitz') and src in p.perms
+    if not blitz and not any(m.data and m.data.get('jaxis_copy') for m in p.perms): return
+    if not trigger_window(g, p, src, 'sacrifice at end of turn', imp=2): return
+    if blitz and src in p.perms: die(g, src, 'sac')
     for m in [m for m in src.owner.perms if m.data and m.data.get('jaxis_copy')]:
-        if p is src.owner: draw(g, src.owner, 1); leave(g, m)
+        draw(g, src.owner, 1); leave(g, m)
 
 
 @on('Jaxis, the Troublemaker', 'options')
@@ -857,6 +871,7 @@ note('Mardu Charm', 'Full', '4 damage to a creature (removal), two first-strike 
 @on('Massacre Girl', 'etb')
 def _massacre(g, src, p, m):
     if m is not src: return
+    if not trigger_window(g, src.owner, src, 'each other creature gets -1/-1, repeated', imp=6): return
     log(f'    Massacre Girl: each other creature gets -1/-1, again for every creature that dies', g)
     shrink = 1
     applied = {}
@@ -945,6 +960,7 @@ note("Multani, Yavimaya's Avatar", 'Full', '+1/+1 per land you control and land 
 @on('Muxus, Goblin Grandee', 'attack')
 def _muxus_attack(g, src, p, atk, d):
     if p is src.owner and src in atk:
+        if not trigger_window(g, p, src, '+1/+1 for each other Goblin') or src not in p.perms: return
         n = sum(1 for m in p.perms if m is not src and m.creature and E.has_type(m, 'goblin'))
         _eot(g, src, n, n)
 note('Muxus, Goblin Grandee', 'Full', 'Goblins from the top six onto the battlefield; attacks with +1/+1 per other Goblin')
@@ -955,8 +971,10 @@ note('Muxus, Goblin Grandee', 'Full', 'Goblins from the top six onto the battlef
 def _oath(g, src, p, m):
     if m is not src: return
     o = src.owner
-    cs = [x for x in o.perms if x is not src and x.cd is not None and not x.token and
-          (etb_val(x) > 0 or (x.cd.start_loyalty and x.loyalty is not None and x.loyalty < int(x.cd.start_loyalty)))]
+    def oc(): return [x for x in o.perms if x is not src and x.cd is not None and not x.token and
+                      (etb_val(x) > 0 or (x.cd.start_loyalty and x.loyalty is not None and x.loyalty < int(x.cd.start_loyalty)))]
+    if not oc() or not trigger_window(g, o, src, 'exile a permanent you control until the end step'): return
+    cs = oc()
     if cs:
         t = max(cs, key=lambda x: etb_val(x) + (3 if x.cd.start_loyalty else 0))
         leave(g, t); o.oath_return = getattr(o, 'oath_return', []) + [t.cd]
@@ -966,6 +984,8 @@ def _oath(g, src, p, m):
 @on('Oath of Teferi', 'end_step')
 def _oath_back(g, src, p):
     o = src.owner
+    if not getattr(o, 'oath_return', []): return
+    if not trigger_window(g, o, src, 'return the exiled permanent'): o.oath_return = []; return
     for cd in getattr(o, 'oath_return', []): enter(g, o, cd)
     o.oath_return = []
 note('Oath of Teferi', 'Full', 'blinks a permanent with an ETB or a used planeswalker until the end step; '
@@ -1003,7 +1023,7 @@ note('Pashalik Mons', 'Full', 'a Goblin of yours dying deals 1; {3}{R}, sacrific
 # ------------------------------------------------------------------ Pia Nalaar
 @on('Pia Nalaar', 'etb')
 def _pia_etb(g, src, p, m):
-    if m is src: make_tokens(g, src.owner, 1, 1, fly=True, types=('thopter', 'artifact'))
+    if m is src and trigger_window(g, src.owner, src, 'create a 1/1 Thopter'): make_tokens(g, src.owner, 1, 1, fly=True, types=('thopter', 'artifact'))
 
 
 @on('Pia Nalaar', 'options')
@@ -1088,6 +1108,7 @@ note('Wirewood Symbiote', 'Full', 'returns a cheap Elf to untap the best mana cr
 def _rabble_hide(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not o.library or not trigger_window(g, o, src, 'hideaway 5'): return
     top = [o.library.pop() for _ in range(min(5, len(o.library)))]
     if not top: return
     c = max(top, key=lambda c: (not c.land, c.cmc, card_worth(g, o, c)))
@@ -1100,6 +1121,7 @@ def _rabble_hide(g, src, p, m):
 def _rabble_play(g, src, p, atk, d):
     if p is not src.owner or not src.data or src.data.get('hidden') is None: return
     if sum(1 for m in p.perms if m.creature) >= 10:
+        if not trigger_window(g, p, src, 'play the hidden card', imp=5) or not src.data or src.data.get('hidden') is None: return
         c = src.data.pop('hidden')
         log(f'    Rabble Rousing plays the hidden {c.name}', g)
         if c.land: p.lands.append(Land(c, False))
@@ -1178,6 +1200,7 @@ def miracle_options(g, p, s, post):
 @on('Retreat to Coralhelm', 'landfall')
 def _coralhelm(g, src, p):
     if p is not src.owner: return
+    if not trigger_window(g, p, src, 'untap a creature or scry 1', imp=2): return
     tapped = [m for m in p.perms if m.creature and m.tapped and m.cd is not None and 'dork' in m.cd.tags]
     if tapped:
         m = max(tapped, key=lambda m: CI.dyn_mana(g, p, m) if m.cd.name in CI.DYN_MANA else 1); m.tapped = False
@@ -1258,6 +1281,8 @@ note("Sentinel's Eyes", 'Full', '+1/+1 and vigilance; escape {W} and two graveya
 @on("Sigarda's Aid", 'etb')
 def _aid(g, src, p, m):
     if m.owner is src.owner and m.cd is not None and 'equipment' in m.cd.subtypes and m is not src:
+        if not any(x.creature and not x.phased for x in src.owner.perms): return
+        if not trigger_window(g, src.owner, src, f'attach {m.name}', imp=2) or m not in m.owner.perms: return
         cr = [x for x in src.owner.perms if x.creature and not x.phased]
         if cr: m.attached = max(cr, key=lambda x: (x.is_cmd, pval(g, x)))
 card("Sigarda's Aid", '', types='E', dsl=[])
@@ -1269,19 +1294,12 @@ def aid_active(p):
 
 
 # ------------------------------------------------------------------ Skyclave Apparition: the token when it leaves
-@on('Skyclave Apparition', 'etb')
-def _skyclave_rec(g, src, p, m):
-    if m is src:
-        lr = getattr(g, 'last_removed', None)
-        if lr and lr[3] is src.owner and lr[2] == 'exile':
-            if src.data is None: src.data = {}
-            src.data['exiled'] = (lr[0], lr[1])
-
-
+# (engine.apply_removal records what it exiled)
 @on('Skyclave Apparition', 'leaves')
 def _skyclave_leave(g, m):
     ex = (m.data or {}).get('exiled')
     if ex and ex[0] is not None and ex[1].alive:
+        if not trigger_window(g, m.owner, m, 'the exiled card\'s owner creates an X/X Illusion'): return
         cd, owner = ex
         make_tokens(g, owner, 1, cd.cmc, color='U', types=('illusion',))
         log(f'    {NAME(owner)} gets a {cd.cmc}/{cd.cmc} Illusion', g)
@@ -1303,7 +1321,8 @@ note('Snap', 'Full', 'bounces a creature and untaps two lands')
 # ------------------------------------------------------------------ Starfield Mystic
 @on('Starfield Mystic', 'dies')
 def _mystic_grow(g, src, m, cause):
-    if m is not src and m.owner is src.owner and m.cd is not None and 'E' in m.cd.types: src.plus += 1
+    if m is not src and m.owner is src.owner and m.cd is not None and 'E' in m.cd.types:
+        if trigger_window(g, src.owner, src, 'a +1/+1 counter', imp=2): src.plus += 1
 note('Starfield Mystic', 'Full', 'enchantments cost {1} less; +1/+1 counter when one of your enchantments goes to the graveyard')
 
 
@@ -1438,13 +1457,15 @@ note('Temur Sabertooth', 'Full', '{1}{G}: returns an ETB creature to recast it (
 @on('The One Ring', 'etb')
 def _ring(g, src, p, m):
     if m is src and g.last_cast_etb:
+        if not trigger_window(g, src.owner, src, 'protection from everything', imp=5): return
         src.owner.ring_prot = True
         log(f'    {NAME(src.owner)} gains protection from everything until their next turn', g)
 
 
 @on('The One Ring', 'upkeep')
 def _ring_burden(g, src, p):
-    if p is src.owner and src.data and src.data.get('burden'): lose_life(g, p, src.data['burden'], p)
+    if p is src.owner and src.data and src.data.get('burden') and trigger_window(g, p, src, 'lose 1 life per burden counter'):
+        if src.data and src.data.get('burden'): lose_life(g, p, src.data['burden'], p)
 
 
 @on('The One Ring', 'options')
@@ -1527,6 +1548,8 @@ def _tide_etb_you(g, src, p, m):
     o = src.owner
     hc = human_choice(g, o)
     if hc is None: return
+    if not any(it.kind != 'spell' for it in g.stack): return
+    if not trigger_window(g, o, src, 'counter an ability', imp=5): return
     abil = [it for it in reversed(g.stack) if it.kind != 'spell']
     if not abil: return
     from commander_sim.play import legal
@@ -1596,5 +1619,5 @@ card('Whirler Rogue', 'human rogue pow=2 tgh=2', dsl=[])
 
 @on('Whirler Rogue', 'etb')
 def _whirler_etb(g, src, p, m):
-    if m is src: make_tokens(g, src.owner, 2, 1, fly=True, types=('thopter', 'artifact'))
+    if m is src and trigger_window(g, src.owner, src, 'create two 1/1 Thopters'): make_tokens(g, src.owner, 2, 1, fly=True, types=('thopter', 'artifact'))
 note('Whirler Rogue', 'Full', 'two flying Thopters; taps two artifacts to make an attacker (a Ninja first) unblockable')

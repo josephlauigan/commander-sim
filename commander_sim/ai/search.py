@@ -142,6 +142,7 @@ def clone(g, want_memo=False):
         for m in q.perms:
             if m.data: m.data = _remap_dict(m.data, memo)
     g2.hook_cache = None; g2.static_idx = None; g2.coat_cache = None; g2.cur_cast = None
+    g2.trig_queue = []; g2.resolving = 0; g2.trig_mode = None; g2.trig_current = None   # pending triggers stay behind
     return (g2, memo) if want_memo else g2
 
 

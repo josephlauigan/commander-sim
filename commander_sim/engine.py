@@ -1,6 +1,7 @@
 """Abstracted 4-player Commander engine.  Rules are simplified on purpose:
 role-tagged cards, greedy mana payment, heuristic AIs, simplified combat."""
 import importlib
+import inspect
 import random, re, zlib
 from collections import defaultdict
 
@@ -194,6 +195,10 @@ class Game:
         s.board_cap = None                     # look-ahead copies: stop once the table has this many permanents
         s.stack = []           # StackItem, top last (see stack_window)
         s.stack_pushes = 0     # items ever put on the stack: tells whether a player with priority did something
+        s.trig_queue = []      # triggered abilities waiting to go on the stack (see flush_triggers)
+        s.resolving = 0        # > 0 while a spell, wipe ... is resolving: its triggers wait until it's done
+        s.trig_mode = None     # 'probe' while finding out which pending triggers really trigger
+        s.trig_current = None  # the stack item of the trigger being resolved
 
     def opps(s, p):
         return [q for q in s.players if q.alive and q is not p]
@@ -870,7 +875,9 @@ def leave(g, m):
     if g.hooks and m in g.hooks:
         g.hooks.remove(m); g.hook_cache = None
         fn = CI.HOOKS[m.cd.name].get('leaves')
-        if fn is not None: fn(g, m)
+        if fn is not None:
+            if converted(fn): queue_triggers(g, [Trigger(p, m, fn, (g, m), 'leaves')])   # "when it leaves" (O-Ring)
+            else: fn(g, m)                                                                # an effect ending
 
 
 def to_zone_card(g, m, zone):
@@ -980,7 +987,10 @@ def die(g, m, cause='destroy'):
         CI.fire(g, 'dies', m, cause)
         if cause == 'sac': CI.fire(g, 'sacrifice', p, m)
     if selfdies:
-        for _ in range(1 + (CI.total(g, 'trigger_copies', p, 'dies', m) if g.hooks else 0)): selfdies(g, m, cause)
+        n = 1 + (CI.total(g, 'trigger_copies', p, 'dies', m) if g.hooks else 0)
+        if converted(selfdies): queue_triggers(g, [Trigger(p, m, selfdies, (g, m, cause), 'self_dies') for _ in range(n)])
+        else:
+            for _ in range(n): selfdies(g, m, cause)
     # death triggers
     for q in g.players:
         if not q.alive: continue
@@ -1003,24 +1013,26 @@ def _hand_tag_death(g, q, p, m):
 def _die_rest(g, m, p, cause, selfdies):
     if m.creature:
         for q in g.opps(p):
-            if has(q, 'wurmdrain'): lose_life(g, p, 2, q, kind='drain')      # Massacre Wurm
+            if has(q, 'wurmdrain') and trigger_window(g, q, find(q, 'wurmdrain')[0], f'{NAME(p)} loses 2 life'):
+                lose_life(g, p, 2, q, kind='drain')                            # Massacre Wurm
             for h in find(q, 'heir'): h.plus += 1                              # Sephiroth, Planet's Heir
-    if m.cd is not None and 'wurmcoil' in m.cd.tags:
+    if m.cd is not None and 'wurmcoil' in m.cd.tags and trigger_window(g, p, m, 'two 3/3 Wurms', imp=5):
         make_tokens(g, p, 1, 3, dt=True, color=''); make_tokens(g, p, 1, 3, lifelink=True, color='')
     if m.token: return
     if m.cd.bomb and m.orig is p: p.removed_bombs.add(m.cd.name)
     # undying from Mikaeus
     if (has(p, 'mikaeus') and m.cd.creature and 'human' not in m.cd.tags and 'mikaeus' not in m.cd.tags
-            and not m.undying and m.plus <= 0 and m.orig is p and m.cd is not p.cmd):
+            and not m.undying and m.plus <= 0 and m.orig is p and m.cd is not p.cmd) \
+            and trigger_window(g, p, m, 'undying'):
         n = enter(g, p, m.cd, undying=True); n.plus = 1; n.undying = True
         p.stats['undying'] += 1
         return
     k = m.cd.kws
     if k and m.orig is p and m.cd is not p.cmd and not (g.hooks and CI.total(g, 'no_graveyard', p)) \
             and returns_left(g, m.cd):
-        if 'undying' in k and m.plus <= 0:                     # undying: back with a +1/+1 counter
+        if 'undying' in k and m.plus <= 0 and trigger_window(g, p, m, 'undying'):   # back with a +1/+1 counter
             enter(g, p, m.cd, undying=True); p.stats['undying'] += 1; return
-        if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter (none under Melira)
+        if 'persist' in k and m.plus >= 0 and trigger_window(g, p, m, 'persist'):  # back with a -1/-1 counter (none under Melira)
             enter(g, p, m.cd, plus=0 if melira(p) else -1); p.stats['persist'] += 1
             return
     if getattr(g, 'gift_dying', None) and CI.gift_returns(g, m): return       # Gift of Immortality
@@ -1201,17 +1213,21 @@ def on_cast(g, p, c):
     if getattr(p, 'turn_casts', None) is None or p.turn_casts[0] != st: p.turn_casts = (st, [])
     p.turn_casts[1].append(c)
     for q in g.opps(p):
-        if has(q, 'sauron'): amass(g, q, 1)
-        if has(q, 'rhystic') and importlib.import_module('commander_sim.cards.impl.rules').rhystic_unpaid(g, p): draw(g, q, 1)
-        if has(q, 'kaervek') and c.cmc > 0 and CI is not None: CI.kaervek(g, q, p, c)
+        if has(q, 'sauron') and trigger_window(g, q, find(q, 'sauron')[0], 'amass 1'): amass(g, q, 1)
+        if has(q, 'rhystic') and trigger_window(g, q, find(q, 'rhystic')[0], 'draw unless they pay {1}') \
+                and importlib.import_module('commander_sim.cards.impl.rules').rhystic_unpaid(g, p): draw(g, q, 1)
+        if has(q, 'kaervek') and c.cmc > 0 and CI is not None and trigger_window(g, q, find(q, 'kaervek')[0], 'damage'):
+            CI.kaervek(g, q, p, c)
     if c.instant or c.sorcery:
         count_is_cast(g, p); magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
     if g.hooks: CI.fire(g, 'cast', p, c)
-    if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy'):
+    if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy') \
+            and trigger_window(g, p, find(p, 'jin')[0], f'copy {c.name}', imp=5):
         copy_spell(g, p, c)                          # Jin-Gitaxias copies your first artifact/instant/sorcery each turn
     if (c.instant or c.sorcery) and getattr(p, 'ral_copy', None) == turn_stamp(g):
-        p.ral_copy = None; copy_spell(g, p, c)      # Ral, Storm Conduit -2: copy the next instant/sorcery
+        p.ral_copy = None                           # Ral, Storm Conduit -2: copy the next instant/sorcery
+        if trigger_window(g, p, None, f'Ral, Storm Conduit: copy {c.name}', imp=5): copy_spell(g, p, c)
     if not c.creature and CI is not None: CI.prowess(g, p, c)
     if CI is not None and (c.instant or c.sorcery):
         if human_choice(g, p) is None:
@@ -1221,11 +1237,11 @@ def on_cast(g, p, c):
             for x, fn in CI.hand_cards(q, 'hand_opp_cast'): fn(g, x, q, c)   # Dualcaster Mage copies anyone's
     if p.spells_this_turn == 3:                            # Emeritus of Conflict: third spell each turn -> prepared
         for x in find(p, 'conflict'): x.data = dict(x.data or {}, prepared=True)
-    if has(p, 'eris') and p.spells_this_turn == 2:
+    if has(p, 'eris') and p.spells_this_turn == 2 and trigger_window(g, p, find(p, 'eris')[0], 'a 4/4 Dragon'):
         n = 2 if (has(p, 'veyran') and (c.instant or c.sorcery)) else 1
         for x in make_tokens(g, p, n, 4, fly=True):           # Eris: second spell -> 4/4 flying Dragon with prowess
             x.data = dict(x.data or {}, prowess=True)
-    if has(p, 'prolifall') and c.creature:
+    if has(p, 'prolifall') and c.creature and trigger_window(g, p, find(p, 'prolifall')[0], 'counters on your Army'):
         a = army_of(p)
         if a: a.plus += len(find(p, 'prolifall'))
     if has(p, 'birgi'):
@@ -1235,8 +1251,12 @@ def on_cast(g, p, c):
         n = len(find(p, 'prolif'))
         a = army_of(p)
         if n and a:
-            for _ in range(n): CI.add_counters(g, a, 1)
+            for x in find(p, 'prolif'):
+                if trigger_window(g, p, x, 'a counter on your Army') and a in a.owner.perms: CI.add_counters(g, a, 1)
     check_state(g)
+
+
+MAGECRAFT_TAGS = ('ping', 'dragoncaller', 'mystic', 'spelltok', 'spelldraw', 'kiln', 'spellloot')
 
 
 def magecraft(g, p, c=None, copy=False):
@@ -1254,6 +1274,7 @@ def magecraft(g, p, c=None, copy=False):
         # copies only trigger "cast or copy" abilities (Archmage Emeritus, Storm-Kiln Artist, Ral)
         if copy and not any(k in t for k in ('spelldraw', 'kiln', 'ral')): continue
         mult = base_mult + (prod if ('shaman' in t or 'wizard' in t) else 0)
+        if any(k in t for k in MAGECRAFT_TAGS) and not trigger_window(g, p, m, 'magecraft'): continue
         if 'ping' in t:
             base = int(t['ping'])
             if 'opus3' in t and c is not None and c.cmc >= 5: base = 3        # Thunderdrum Soloist, 5+ mana spell
@@ -1497,6 +1518,174 @@ def _abilities_answered(g, p):
     return False
 
 
+# ---------------------------------------------------------------- triggered abilities on the stack
+TRIGGER_EVENTS = frozenset(('etb', 'dies', 'self_dies', 'leaves', 'attack', 'blocks', 'upkeep', 'combat_damage',
+                            'end_step', 'landfall', 'cast', 'copycast', 'token_created', 'sacrifice', 'draw', 'discard',
+                            'cards_to_gy', 'creature_to_gy', 'exiled_from_bf', 'land_gy', 'proliferated', 'combat_start',
+                            'gain_life', 'lose_life'))
+
+
+class TriggerProbe(Exception):
+    """raised by trigger_window while the engine finds out whether a pending hook really triggers"""
+    def __init__(s, p, src, name, imp):
+        super().__init__(name); s.p, s.src, s.name, s.imp = p, src, name, imp
+
+
+class Trigger:
+    """a triggered ability waiting to go on the stack: fn(*args) carries it out (card code calls trigger_window at
+    the point it commits; known=True: it triggers for sure, the ability language's). Lives in g.trig_queue only
+    until the next flush, never in a copied game"""
+    __slots__ = ('controller', 'src', 'fn', 'args', 'event', 'name', 'imp', 'known', 'cast_etb')
+
+    def __init__(s, controller, src, fn, args, event, name=None, known=False, imp=None):
+        s.controller, s.src, s.fn, s.args, s.event = controller, src, fn, args, event
+        s.name, s.known, s.imp = name, known, imp
+        s.cast_etb = False                      # an enters trigger: was the permanent cast (g.last_cast_etb then)
+
+
+_CONVERTED = {}
+
+
+def converted(fn):
+    """has this hook been given its trigger_window (its commit point)? Others run at once, as before the stack"""
+    v = _CONVERTED.get(fn)
+    if v is None:
+        try:
+            v = 'trigger_window' in inspect.getsource(fn)
+        except (OSError, TypeError):
+            v = False
+        _CONVERTED[fn] = v
+    return v
+
+
+def queue_triggers(g, entries):
+    """triggered abilities that just triggered: on the stack now, or once the spell resolving has finished. Returns
+    the results of the ones that resolved now (attack triggers' attacking tokens)"""
+    if not entries: return []
+    ce = getattr(g, 'last_cast_etb', False)
+    for t in entries: t.cast_etb = ce
+    g.trig_queue.extend(entries)
+    return flush_triggers(g) if not getattr(g, 'resolving', 0) else []
+
+
+def flush_triggers(g):
+    out = []
+    while getattr(g, 'trig_queue', None) and not g.over:
+        batch, g.trig_queue = g.trig_queue, []
+        out += _resolve_batch(g, batch)
+    return out
+
+
+def _apnap(g, ts):
+    """active player's triggers first (they go on the stack first, so resolve last), then in turn order"""
+    a = g.active if g.active is not None else (ts[0].controller if ts else None)
+    order = [a] + g.after(a) if a is not None else list(g.players)
+    rank = {id(q): i for i, q in enumerate(order)}
+    return sorted(ts, key=lambda t: rank.get(id(t.controller), 99))
+
+
+def _call(g, t):
+    prev, g.last_cast_etb = getattr(g, 'last_cast_etb', False), t.cast_etb
+    try: r = t.fn(*t.args)
+    finally: g.last_cast_etb = prev
+    return [r] if r else []
+
+
+def _resolve_batch(g, batch):
+    batch = _apnap(g, batch)
+    if not _abilities_answered(g, None):                # nobody could respond: as before the stack, in order
+        out = []
+        for t in batch:
+            if g.over: break
+            out += _call(g, t)
+        return out
+    out, real = [], []
+    for t in batch:                                     # which hooks really trigger (guards only, no effects yet)
+        if t.known: real.append(t); continue
+        if not converted(t.fn):
+            out += _call(g, t); continue                # not converted yet: happens at once, as before
+        prev, prev_ce = g.trig_mode, getattr(g, 'last_cast_etb', False)
+        g.trig_mode, g.last_cast_etb = 'probe', t.cast_etb
+        try:
+            t.fn(*t.args)
+        except TriggerProbe as e:
+            t.controller, t.name, t.imp = e.p, e.name, e.imp
+            real.append(t)
+        finally:
+            g.trig_mode, g.last_cast_etb = prev, prev_ce
+    real = _order_triggers(g, real)
+    items = []
+    for t in real:
+        cd = getattr(t.src, 'cd', t.src)
+        nm = getattr(cd, 'name', None) or getattr(t.src, 'name', 'A token')
+        it = StackItem(t.controller, cd, {'source': t.src}, 'trigger', t.imp if t.imp is not None else 3, {},
+                       generic=False, kind='trigger', name=f'{nm}: {t.name or "trigger"}')
+        g.stack.append(it); g.stack_pushes = getattr(g, 'stack_pushes', 0) + 1
+        items.append((t, it))
+    for t, it in reversed(items):                       # the top of the stack resolves first
+        if g.over: break
+        if it not in g.stack: continue
+        if t.known:                                     # the ability language: the window here
+            _priority(g, it, g.active if g.active is not None else t.controller)
+            if it in g.stack: g.stack.remove(it)
+            if not it.countered: out += _call(g, t)
+            continue
+        prev = g.trig_current
+        g.trig_current = it
+        try:
+            out += _call(g, t)                          # its trigger_window takes the item: priority, then resolves
+        finally:
+            g.trig_current = prev
+            if it in g.stack: g.stack.remove(it)        # it no longer triggers (its guard failed this time)
+    return out
+
+
+def _order_triggers(g, real):
+    """the person orders their own simultaneous triggers (which resolves first); the AI keeps the code's order"""
+    if len(real) < 2: return real
+    out = []
+    i = 0
+    while i < len(real):
+        j = i
+        while j < len(real) and real[j].controller is real[i].controller: j += 1
+        group = real[i:j]
+        hc = human_choice(g, group[0].controller)
+        if hc is not None and len(group) > 1:
+            left, first = list(group), []
+            while len(left) > 1:
+                k = hc.choose(g, group[0].controller, 'choose', 'Your triggers: which resolves first?',
+                              [f'{getattr(getattr(t.src, "cd", t.src), "name", "")}: {t.name}' for t in left], cancel=None)
+                first.append(left.pop(k))
+            first += left
+            group = list(reversed(first))               # pushed in reverse: the first to resolve goes on top
+        out += group
+        i = j
+    return out
+
+
+def trigger_window(g, p, src, name, imp=None):
+    """a triggered ability's commit point (after its conditions, before its effect). While the engine probes
+    pending hooks it raises TriggerProbe; while resolving a stack item for it, players have priority on it first;
+    called from engine code outside a batch, it gets its own round. True if it resolves"""
+    if g is None: return True
+    if getattr(g, 'trig_mode', None) == 'probe':
+        g.trig_mode = None
+        raise TriggerProbe(p, src, name, imp)
+    cur = getattr(g, 'trig_current', None)
+    if cur is not None:
+        g.trig_current = None
+        if cur in g.stack:
+            _priority(g, cur, g.active if g.active is not None else p)
+            if cur in g.stack: g.stack.remove(cur)
+        return not cur.countered
+    if g.over or not _abilities_answered(g, p): return True
+    cd = getattr(src, 'cd', src)
+    nm = getattr(cd, 'name', None) or getattr(src, 'name', 'A token')
+    item = StackItem(p, cd, {'source': src}, 'trigger', imp if imp is not None else 3, {}, generic=False,
+                     kind='trigger', name=f'{nm}: {name}' if src is not None else name)
+    return stack_window(g, p, item)
+
+
 def equip_to(g, p, e, m, n):
     """pay equip {n} for equipment e onto m; the ability goes on the stack, and attaches if it resolves and both are
     still there"""
@@ -1524,6 +1713,7 @@ def stack_window(g, p, item):
     item on top (the caller resolves it), False if it was countered"""
     g.stack.append(item); g.stack_pushes = getattr(g, 'stack_pushes', 0) + 1
     try:
+        if getattr(g, 'trig_queue', None) and not g.resolving: flush_triggers(g)   # its cast triggers resolve first
         _priority(g, item, p)
     finally:
         if item in g.stack: g.stack.remove(item)
@@ -1735,19 +1925,19 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     p.cast_names.add(c.name)
     tgt = ctx.get('target')
     log(f'  {NAME(p)} casts {c.name}' + (f' -> {tgt.name} ({NAME(tgt.owner)})' if tgt is not None else ''), g)
-    on_cast(g, p, c)
-    if g.over or not p.alive: return False
-    imp, aff = spell_imp(g, p, c, ctx)
-    jin = [q for q in g.opps(p) if has(q, 'jin') and ('A' in c.types or c.instant or c.sorcery)]
-    if jin and once_per_turn(g, jin[0], 'jincounter'):
-        log(f'    Jin-Gitaxias counters {c.name}', g)
-        (p.exile if zone == 'gy' else p.gy).append(c)
-        return False
     global LAST_COUNTER
-    LAST_COUNTER = None
-    prev_cast, g.cur_cast = getattr(g, 'cur_cast', None), (c, ctx, zone)
-    item = StackItem(p, c, ctx, zone, imp, aff)
+    prev_cast, g.cur_cast = getattr(g, 'cur_cast', None), (c, ctx, zone)     # cast triggers see its targets and X
     try:
+        on_cast(g, p, c)
+        if g.over or not p.alive: return False
+        imp, aff = spell_imp(g, p, c, ctx)
+        jin = [q for q in g.opps(p) if has(q, 'jin') and ('A' in c.types or c.instant or c.sorcery)]
+        if jin and once_per_turn(g, jin[0], 'jincounter'):
+            log(f'    Jin-Gitaxias counters {c.name}', g)
+            (p.exile if zone == 'gy' else p.gy).append(c)
+            return False
+        LAST_COUNTER = None
+        item = StackItem(p, c, ctx, zone, imp, aff)
         human_near = bool(getattr(g, 'controllers', None)) and (any(q.key in g.controllers for q in g.players if q is not p)
                                                                  or _copy_window(g, p, c))
         if not (imp > 0 or aff or human_near) or not counterable(g, item): ok_cast = True   # nobody would answer it
@@ -1781,6 +1971,16 @@ def flashback_grant(g, p):
 
 
 def resolve(g, p, c, ctx, zone):
+    """spell c resolves; the abilities it triggers go on the stack once it has finished"""
+    g.resolving = getattr(g, 'resolving', 0) + 1
+    try:
+        _resolve(g, p, c, ctx, zone)
+    finally:
+        g.resolving -= 1
+    if not g.resolving and getattr(g, 'trig_queue', None): flush_triggers(g)
+
+
+def _resolve(g, p, c, ctx, zone):
     t = c.tags
     if CI is not None and not c.perm and c.name in CI.HOOKS and 'resolve' in CI.HOOKS[c.name] and CI.live(c.name):
         dest = CI.HOOKS[c.name]['resolve'](g, p, c, ctx)            # hand-written spell (returns where it goes)
@@ -2001,14 +2201,43 @@ def do_etb(g, p, m):
     if m.cd.dsl: return                         # interpreter handles this card's abilities
     if opp_has(g, p, 'mother'): return
     reps = 2 if (has(p, 'mother') and m.cd.creature) else 1
-    for _ in range(reps):
-        etb_once(g, p, m)
+    etb_static(g, p, m)
+    if not etb_triggers(m.cd): return
+    name, imp = etb_text(m.cd)
+    for _ in range(reps):                       # its enters triggers go on the stack (once the spell has resolved)
         if g.over: return
+        queue_triggers(g, [Trigger(p, m, etb_once, (g, p, m), 'etb', name=name, known=True, imp=imp)])
 
 
-def etb_once(g, p, m):
+# enters-the-battlefield tags that are triggered abilities (the rest: as it enters, or static)
+ETB_TRIGGER_TAGS = ('chromemox', 'recruit', 'titan', 'archon', 'gray', 'wurm', 'rsd', 'witness', 'wall', 'atraxa', 'skate',
+                    'bowmasters', 'heir', 'suntitan', 'dualcaster', 'uprising', 'tok', 'tokbig')
+ETB_SCRYFALL_TAGS = ('tut', 'treas', 'drainetb', 'edictetb')
+ETB_TEXT = {'archon': ('opponent sacrifices, discards, loses 3', 7), 'gray': ('drain', 6), 'wurm': ('destroy small creatures', 6),
+            'heir': ("opponents' creatures get -2/-2", 6), 'bowmasters': ('1 damage; amass 1', 5),
+            'suntitan': ('return a permanent', 4), 'titan': ('two 2/2 Zombies', 3), 'atraxa': ('reveal ten', 5),
+            'rsd': ('search your library', 4), 'recruit': ('search your library', 4)}
+
+
+def etb_triggers(cd):
+    t = cd.tags
+    if any(k in t for k in ETB_TRIGGER_TAGS) or t.get('fill') in ('stitcher', 'wayfinder'): return True
+    if 'draw' in t and not ('I' in cd.types or 'S' in cd.types): return True
+    if 'rem' in t and 'etb' in t and t['rem'] not in LOCK_KINDS: return True
+    return cd.source == 'scryfall' and any(k in t for k in ETB_SCRYFALL_TAGS)
+
+
+def etb_text(cd):
+    t = cd.tags
+    if 'rem' in t and 'etb' in t: return 'remove a permanent', 6
+    for k, v in ETB_TEXT.items():
+        if k in t: return v
+    return 'enters', 3
+
+
+def etb_static(g, p, m):
+    """what happens as it enters, or is true while it's out (not a triggered ability)"""
     t = m.cd.tags
-    if 'chromemox' in t: chrome_imprint(g, p, m)
     if 'flute' in t:                             # Disruptor Flute: choose a card name
         from commander_sim import ais
         name, score = ais.flute_pick(g, p)
@@ -2017,6 +2246,20 @@ def etb_once(g, p, m):
             log(f'    Disruptor Flute names {name}', g)
     if 'prepare' in t:                            # enters prepared: its back-face spell can be cast as a copy (impl_mine)
         m.data = dict(m.data or {}, prepared=True)
+    if 'rem' in t and 'etb' in t and t['rem'] in LOCK_KINDS: etb_removal(g, p, m)     # an Aura: attached as it resolves
+    if 'mycoloth' in t:                           # devour 2: eat up to three tokens
+        toks = [x for x in p.perms if x.token and x.creature][:3]
+        for x in toks: die(g, x, 'sac')
+        m.plus += 2 * len(toks)
+    if 'endraze' in t: p.pumpadd += 2; p.trample = True
+    if 'spider' in t:                             # Old Fat Spider: hexproof on your best creature (like Boots)
+        cr = [x for x in p.perms if x.creature and x.cd is not None]
+        if cr: m.attached = max(cr, key=lambda x: (('veyran' in x.cd.tags) * 10 + pval(g, x)))
+
+
+def etb_once(g, p, m):
+    t = m.cd.tags
+    if 'chromemox' in t: chrome_imprint(g, p, m)
     if 'recruit' in t: tutor(g, p, 'cre2')     # Imperial Recruiter: creature with power 2 or less
     opps = g.opps(p)
     if 'titan' in t: make_tokens(g, p, 2, 2, color='B')
@@ -2047,7 +2290,7 @@ def etb_once(g, p, m):
         else:
             q = max(opps, key=lambda o: threat(g, p, o)); lose_life(g, q, 1, p, kind='triggers')
         amass(g, p, 1)
-    if 'rem' in t and 'etb' in t: etb_removal(g, p, m)
+    if 'rem' in t and 'etb' in t and t['rem'] not in LOCK_KINDS: etb_removal(g, p, m)
     if 'heir' in t:                               # Sephiroth, Planet's Heir: opponents' creatures get -2/-2
         for q in opps:
             for x in list(q.perms):
@@ -2055,14 +2298,6 @@ def etb_once(g, p, m):
                 a, b = g.eot_pt.get(id(x), (0, 0)); g.eot_pt[id(x)] = (a - 2, b - 2)
                 if etgh(g, x) <= 0: die(g, x, 'sba')
     if 'suntitan' in t: sun_titan(g, p)
-    if 'mycoloth' in t:                           # devour 2: eat up to three tokens
-        toks = [x for x in p.perms if x.token and x.creature][:3]
-        for x in toks: die(g, x, 'sac')
-        m.plus += 2 * len(toks)
-    if 'endraze' in t: p.pumpadd += 2; p.trample = True
-    if 'spider' in t:                             # Old Fat Spider: hexproof on your best creature (like Boots)
-        cr = [x for x in p.perms if x.creature and x.cd is not None]
-        if cr: m.attached = max(cr, key=lambda x: (('veyran' in x.cd.tags) * 10 + pval(g, x)))
     if 'dualcaster' in t:                         # copy a spell: approximated as copying your last instant/sorcery
         last = next((x for x in reversed(p.gy) if x.instant or x.sorcery), None)
         if last is not None:
@@ -2269,6 +2504,9 @@ def apply_removal(g, actor, m, kind, spell=None):
         log(f'    damage to {m.name} is prevented (Tajic)', g); return
     log(f'    {m.name} ({NAME(owner)}) is removed: {kind}', g)
     g.last_removed = (m.cd, owner, kind, actor)
+    src = getattr(g, 'rem_src', None)
+    if kind == 'exile' and src is not None and src.cd is not None and src.cd.name == 'Skyclave Apparition':
+        src.data = dict(src.data or {}, exiled=(m.cd, owner))      # its owner gets an Illusion when the Apparition leaves
     owner.lost_names[m.name] += 1
     owner.stats['threats_lost'] += 1 if pval(g, m) >= 5 else 0
     if owner.key == 'seph' and m.cd is not None and m.cd.bomb:
@@ -2319,7 +2557,10 @@ LOCK_KINDS = ('arrest', 'pacify', 'encrust', 'kasmina')       # removal kinds th
 
 
 def etb_removal(g, p, m):
-    if m.cd.tags['rem'] not in LOCK_KINDS: return _etb_removal(g, p, m)
+    if m.cd.tags['rem'] not in LOCK_KINDS:
+        prev, g.rem_src = getattr(g, 'rem_src', None), m
+        try: return _etb_removal(g, p, m)
+        finally: g.rem_src = prev
     if getattr(g, 'aura_put', False): return                    # put onto the battlefield (Zur): no target; placed by Zur
     prev, g.rem_src = getattr(g, 'rem_src', None), m
     try:
@@ -2342,18 +2583,18 @@ def _etb_removal(g, p, m):
     if not tg: return
     best = max(tg, key=lambda x: pval(g, x))
     if pval(g, best) < 2: return
-    # Tidebinder can counter the trigger
-    from commander_sim import ais
-    if ais.tide_response(g, p, 'etbrem', pval(g, best), victim=best.owner): return
     apply_removal(g, p, best, t['rem'], m.cd)
 
 
 def apply_wipe(g, p, kind, ctx):
     prev, g.batch = getattr(g, 'batch', None), object()     # creatures destroyed together die simultaneously
+    g.resolving = getattr(g, 'resolving', 0) + 1
     try:
         _apply_wipe(g, p, kind, ctx)
     finally:
         g.batch = prev
+        g.resolving -= 1
+    if not g.resolving and getattr(g, 'trig_queue', None): flush_triggers(g)
 
 
 def _apply_wipe(g, p, kind, ctx):

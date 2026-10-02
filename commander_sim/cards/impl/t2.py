@@ -56,8 +56,9 @@ def blink_value(g, p, m):
 @on('Palace Jailer', 'etb')
 def _jailer(g, src, p, m):
     if m is not src: return
+    if not trigger_window(g, src.owner, src, 'become the monarch; exile a creature', imp=5): return
     CI.become_monarch(g, src.owner)
-    IC.oring_exile(g, src, src.owner, lambda x: x.creature)
+    if src in src.owner.perms: IC.oring_exile(g, src, src.owner, lambda x: x.creature)
 
 
 @on('Palace Jailer', 'monarch')
@@ -76,8 +77,11 @@ note('Palace Jailer', 'Full', 'monarch (end-step draw, taken by combat damage); 
 def _brago(g, src, p, a, d, dmg):
     if a is not src: return
     o = src.owner
-    for m in [m for m in o.perms if m is not src and not m.token and m.cd is not None and not m.cd.land
-              and (blink_value(g, o, m) > 0 or m.tapped and ('rock' in m.cd.tags))]:
+    ok = lambda m: (m is not src and not m.token and m.cd is not None and not m.cd.land
+                    and (blink_value(g, o, m) > 0 or m.tapped and ('rock' in m.cd.tags)))
+    if not any(ok(m) for m in o.perms): return
+    if not trigger_window(g, o, src, 'blink nonland permanents', imp=4): return
+    for m in [m for m in o.perms if ok(m)]:
         blink(g, o, m)
 card('Brago, King Eternal', 'leg pow=2 tgh=4 fly', dsl=[])
 note('Brago, King Eternal', 'Full', 'combat damage: blink every nonland permanent with an ETB worth repeating '
@@ -88,12 +92,14 @@ note('Brago, King Eternal', 'Full', 'combat damage: blink every nonland permanen
 def _soulherder(g, src, p):
     if p is not src.owner: return
     cands = [m for m in p.perms if m is not src and m.creature and blink_value(g, p, m) > 0]
+    if not cands or not trigger_window(g, p, src, 'blink a creature'): return
+    cands = [m for m in cands if m in p.perms]
     if cands: blink(g, p, max(cands, key=lambda m: blink_value(g, p, m)))
 
 
 @on('Soulherder', 'exiled_from_bf')
 def _soulherder_grow(g, src, m):
-    if m.creature: src.plus += 1
+    if m.creature and trigger_window(g, src.owner, src, 'a +1/+1 counter', imp=1): src.plus += 1
 card('Soulherder', 'pow=1', dsl=[])
 note('Soulherder', 'Full', 'end step: blink the best ETB creature; grows when creatures are exiled')
 
@@ -102,6 +108,8 @@ note('Soulherder', 'Full', 'end step: blink the best ETB creature; grows when cr
 def _closet(g, src, p):
     if p is not src.owner: return
     cands = [m for m in p.perms if m.creature and blink_value(g, p, m) > 0]
+    if not cands or not trigger_window(g, p, src, 'blink a creature'): return
+    cands = [m for m in cands if m in p.perms]
     if cands: blink(g, p, max(cands, key=lambda m: blink_value(g, p, m)))
 card("Conjurer's Closet", '', types='A', dsl=[])
 note("Conjurer's Closet", 'Full', '')
@@ -143,7 +151,10 @@ ADD = ('angel', 'demon', 'dragon')
 @on('Kaalia of the Vast', 'attack')
 def _kaalia(g, src, p, atk, d):
     if src not in atk or src.owner is not p: return
-    cands = [c for c in p.hand if c.creature and set(ADD) & set(c.subtypes)]
+    ok = lambda c: c.creature and set(ADD) & set(c.subtypes)
+    if not any(ok(c) for c in p.hand): return
+    if not trigger_window(g, p, src, 'put an Angel, Demon or Dragon onto the battlefield attacking', imp=5): return
+    cands = [c for c in p.hand if ok(c)]
     if not cands: return
     c = max(cands, key=lambda c: (c.bomb, c.pow, c.cmc))
     p.hand.remove(c)
@@ -166,7 +177,9 @@ def kaalia_prio(g, p, c):
 
 @on('Terror of the Peaks', 'etb')
 def _terror(g, src, p, m):
-    if m is not src and m.owner is src.owner and m.creature and epow(g, m) > 0: best_target_any(g, src.owner, epow(g, m))
+    if m is not src and m.owner is src.owner and m.creature and epow(g, m) > 0 \
+            and trigger_window(g, src.owner, src, f'{epow(g, m)} damage to any target', imp=5):
+        best_target_any(g, src.owner, epow(g, m))
 card('Terror of the Peaks', 'pow=5 tgh=4 fly bomb=6', dsl=[])
 note('Terror of the Peaks', 'Approximate', 'damage equal to power when another creature enters; the targeting life tax '
      'is ignored')
@@ -174,7 +187,8 @@ note('Terror of the Peaks', 'Approximate', 'damage equal to power when another c
 
 @on('Scourge of Valkas', 'etb')
 def _valkas(g, src, p, m):
-    if m.owner is src.owner and (m is src or has_type(m, 'dragon')):
+    if m.owner is src.owner and (m is src or has_type(m, 'dragon')) \
+            and trigger_window(g, src.owner, src, 'damage to any target per Dragon', imp=5):
         best_target_any(g, src.owner, count_type(g, src.owner, 'dragon'))
 card('Scourge of Valkas', 'pow=4 fly', dsl=[])
 note('Scourge of Valkas', 'Approximate', 'Dragon ETB damage; firebreathing not used')
@@ -183,15 +197,18 @@ note('Scourge of Valkas', 'Approximate', 'Dragon ETB damage; firebreathing not u
 @on('Dragon Tempest', 'etb')
 def _tempest(g, src, p, m):
     if m.owner is not src.owner or not m.creature: return
-    if m.fly or E.DSLMOD.has_kw(g, m, 'flying'): m.sick = False
-    if has_type(m, 'dragon'): best_target_any(g, src.owner, count_type(g, src.owner, 'dragon'))
+    fly, drag = m.fly or E.DSLMOD.has_kw(g, m, 'flying'), has_type(m, 'dragon')
+    if not (fly or drag): return
+    if not trigger_window(g, src.owner, src, 'haste / damage per Dragon', imp=4): return
+    if fly: m.sick = False
+    if drag: best_target_any(g, src.owner, count_type(g, src.owner, 'dragon'))
 card('Dragon Tempest', '', types='E', dsl=[])
 note('Dragon Tempest', 'Full', '')
 
 
 @on('Drakuseth, Maw of Flames', 'attack')
 def _drakuseth(g, src, p, atk, d):
-    if src in atk:
+    if src in atk and trigger_window(g, p, src, '4, 3 and 3 damage to any targets', imp=6):
         best_target_any(g, p, 4); best_target_any(g, p, 3); best_target_any(g, p, 3)
 card('Drakuseth, Maw of Flames', 'leg pow=7 fly bomb=7', dsl=[])
 note('Drakuseth, Maw of Flames', 'Approximate', '4 + 3 + 3 damage split by the any-target heuristic')
@@ -199,7 +216,7 @@ note('Drakuseth, Maw of Flames', 'Approximate', '4 + 3 + 3 damage split by the a
 
 @on('Balefire Dragon', 'combat_damage')
 def _balefire(g, src, p, a, d, dmg):
-    if a is src:
+    if a is src and trigger_window(g, src.owner, src, f'{dmg} damage to each creature {NAME(d)} controls', imp=6):
         for m in list(d.perms):
             if m.creature and etgh(g, m) <= dmg: die(g, m, 'destroy')
 card('Balefire Dragon', 'pow=6 fly bomb=6', dsl=[])
@@ -209,6 +226,7 @@ note('Balefire Dragon', 'Full', '')
 @on('Master of Cruelties', 'blocks')
 def _moc(g, src, p, atk, d, assign):
     if src in atk and len(atk) == 1 and src not in assign and d.life > 1 and not prevents_damage(g, d, p):
+        if not trigger_window(g, p, src, f"{NAME(d)}'s life total becomes 1", imp=7) or d.life <= 1: return
         lose_life(g, d, d.life - 1, p, kind='triggers')
         _eot(g, src, -epow(g, src), 0)
 card('Master of Cruelties', 'pow=1 tgh=4 dt', dsl=[])
@@ -218,7 +236,8 @@ note('Master of Cruelties', 'Approximate', 'attacking alone unblocked sets life 
 
 @on('Admonition Angel', 'landfall')
 def _admonition(g, src, p):
-    if p is src.owner: IC.oring_exile(g, src, p, lambda m: m is not src)
+    if p is src.owner and trigger_window(g, p, src, 'exile a nonland permanent', imp=5) and src in p.perms:
+        IC.oring_exile(g, src, p, lambda m: m is not src)
 
 
 @on('Admonition Angel', 'leaves')
@@ -231,6 +250,7 @@ note('Admonition Angel', 'Full', 'landfall: exile a nonland permanent until it l
 def _serenity(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'exile up to three creatures', imp=6) or src not in o.perms: return
     for _ in range(3):
         cands = [x for q in g.opps(o) for x in q.perms if x.creature and not untargetable(g, x)]
         if not cands: break
@@ -252,7 +272,7 @@ note('Angel of Serenity', 'Approximate', 'exiles up to three opposing creatures 
 
 @on('Archangel Avacyn // Avacyn, the Purifier', 'etb')
 def _avacyn(g, src, p, m):
-    if m is src:
+    if m is src and trigger_window(g, src.owner, src, 'your creatures gain indestructible', imp=5):
         for x in src.owner.perms:
             if x.creature: g.eot_kw.setdefault(id(x), set()).add('indestructible')
 card('Archangel Avacyn // Avacyn, the Purifier', 'leg pow=4 fly vig flash', dsl=[])
@@ -267,15 +287,19 @@ def _despair_nolife(g, src, p):
 @on('Archfiend of Despair', 'end_step')
 def _despair(g, src, p):
     st = turn_stamp(g)
+    lost = lambda q: (lambda lt: lt and lt[0] == st and lt[1] > 0)(getattr(q, 'lost_turn', None))
+    if not any(lost(q) for q in g.opps(src.owner)): return
+    if not trigger_window(g, src.owner, src, 'opponents lose life equal to life lost this turn', imp=5): return
     for q in g.opps(src.owner):
         lt = getattr(q, 'lost_turn', None)
-        if lt and lt[0] == st and lt[1] > 0: lose_life(g, q, lt[1], src.owner, kind='drain')
+        if lost(q): lose_life(g, q, lt[1], src.owner, kind='drain')
 card('Archfiend of Despair', 'pow=6 fly bomb=6', dsl=[])
 note('Archfiend of Despair', 'Full', '')
 
 
 @on('Liesa, Shroud of Dusk', 'cast')
 def _liesa(g, src, caster, c):
+    if not trigger_window(g, src.owner, src, f'{NAME(caster)} loses 2 life'): return
     lose_life(g, caster, 2, src.owner if caster is not src.owner else caster, kind='drain')
 card('Liesa, Shroud of Dusk', 'leg pow=5 fly lifelink', dsl=[])
 note('Liesa, Shroud of Dusk', 'Approximate', 'every spell costs its caster 2 life; the recast-for-life clause is ignored')
@@ -289,7 +313,9 @@ def _glorybringer(g, src, p, atk, d):
     if cands:
         best = max(cands, key=lambda m: pval(g, m))
         if pval(g, best) >= 2:
-            apply_removal(g, p, best, 'dmg4', src.cd); src.data = {'exerted': p.turns}
+            ok = trigger_window(g, p, src, f'4 damage to {best.name}', imp=5)
+            src.data = {'exerted': p.turns}
+            if ok and best in best.owner.perms: apply_removal(g, p, best, 'dmg4', src.cd)
 card('Glorybringer', 'pow=4 fly haste', dsl=[])
 note('Glorybringer', 'Approximate', 'exerts for 4 damage to a creature every other attack')
 
@@ -297,6 +323,7 @@ note('Glorybringer', 'Approximate', 'exerts for 4 damage to a creature every oth
 @on('Thundermaw Hellkite', 'etb')
 def _thundermaw(g, src, p, m):
     if m is not src: return
+    if not trigger_window(g, src.owner, src, '1 damage to each opposing flier and tap them', imp=5): return
     for q in g.opps(src.owner):
         for x in list(q.perms):
             if x.creature and (x.fly or E.DSLMOD.has_kw(g, x, 'flying')):
@@ -309,6 +336,8 @@ note('Thundermaw Hellkite', 'Full', '')
 @on('Aurelia, Exemplar of Justice', 'upkeep')
 def _aurelia_ex(g, src, p):
     if p is not src.owner: return
+    if not any(m.creature and not m.noatk for m in p.perms): return
+    if not trigger_window(g, p, src, 'a creature gets +2/+0, trample and vigilance'): return
     cr = [m for m in p.perms if m.creature and not m.noatk]
     if cr:
         t = max(cr, key=lambda m: (m.is_cmd, epow(g, m))); _eot(g, t, 2, 0)
@@ -319,7 +348,7 @@ note('Aurelia, Exemplar of Justice', 'Full', 'mentor; +2/+0, trample and vigilan
 
 @on('Bloodgift Demon', 'upkeep')
 def _bloodgift(g, src, p):
-    if p is src.owner and p.life > 10: draw(g, p, 1); lose_life(g, p, 1, p)
+    if p is src.owner and p.life > 10 and trigger_window(g, p, src, 'draw a card, lose 1 life'): draw(g, p, 1); lose_life(g, p, 1, p)
 card('Bloodgift Demon', 'pow=5 tgh=4 fly bomb=5', dsl=[])
 note('Bloodgift Demon', 'Full', '')
 
@@ -328,6 +357,7 @@ note('Bloodgift Demon', 'Full', '')
 def _belz(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'put nonland cards into your hand', imp=4): return
     for _ in range(4):
         nl = next((c for c in reversed(o.library) if not c.land), None)
         if nl is None: break
@@ -340,7 +370,7 @@ note('Demonlord Belzenlok', 'Approximate', 'nonland cards to hand until one with
 @on('Resplendent Angel', 'end_step')
 def _resplendent(g, src, p):
     gt = getattr(src.owner, 'gained_turn', None)
-    if gt and gt[0] == turn_stamp(g) and gt[1] >= 5:
+    if gt and gt[0] == turn_stamp(g) and gt[1] >= 5 and trigger_window(g, src.owner, src, 'create a 4/4 Angel'):
         make_tokens(g, src.owner, 1, 4, fly=True, color='W', types=('angel',))
 card('Resplendent Angel', 'pow=3 fly', dsl=[])
 note('Resplendent Angel', 'Approximate', '4/4 Angel on 5+ life gained in a turn; the pump is not used')
@@ -388,19 +418,23 @@ IC.walker('Lord Windgrace', [
 
 @on('Moraug, Fury of Akoum', 'landfall')
 def _moraug(g, src, p):
-    if src.owner is p and g.active is p and getattr(p, 'combat_no', 0) < 1 and p.extra_combats < 3: p.extra_combats += 1
+    if src.owner is p and g.active is p and getattr(p, 'combat_no', 0) < 1 and p.extra_combats < 3 \
+            and trigger_window(g, p, src, 'an additional combat phase', imp=5) and p.extra_combats < 3:
+        p.extra_combats += 1
 card('Moraug, Fury of Akoum', 'leg pow=6 bomb=6 warrior', dsl=[])
 note('Moraug, Fury of Akoum', 'Approximate', 'main-phase landfall: an additional combat (the per-attack +1/+0 is not modeled)')
 
 
 @on('Omnath, Locus of Rage', 'landfall')
 def _omnath(g, src, p):
-    if src.owner is p: make_tokens(g, p, 1, 5, color='RG', types=('elemental',))
+    if src.owner is p and trigger_window(g, p, src, 'create a 5/5 Elemental'): make_tokens(g, p, 1, 5, color='RG', types=('elemental',))
 
 
 @on('Omnath, Locus of Rage', 'dies')
 def _omnath_dies(g, src, m, cause):
-    if m.owner is src.owner and m.creature and has_type(m, 'elemental') or m is src: best_target_any(g, src.owner, 3)
+    if (m.owner is src.owner and m.creature and has_type(m, 'elemental') or m is src) \
+            and trigger_window(g, src.owner, src, '3 damage to any target', imp=4):
+        best_target_any(g, src.owner, 3)
 card('Omnath, Locus of Rage', 'leg pow=5 bomb=6', dsl=[])
 note('Omnath, Locus of Rage', 'Full', '')
 
@@ -419,6 +453,7 @@ note('Multani, Yavimaya\'s Avatar', 'Partial', '+1/+1 per land on the battlefiel
 @on('The Gitrog Monster', 'upkeep')
 def _gitrog_up(g, src, p):
     if p is not src.owner: return
+    if not trigger_window(g, p, src, 'sacrifice it unless you sacrifice a land') or src not in p.perms: return
     if len(p.lands) >= 4:
         L = min(p.lands, key=lambda L: (not L.tapped, len(L.cd.tags.get('c', ''))))
         p.lands.remove(L); p.gy.append(L.cd); CI.fire(g, 'land_gy', p, L.cd)
@@ -427,7 +462,7 @@ def _gitrog_up(g, src, p):
 
 @on('The Gitrog Monster', 'land_gy')
 def _gitrog_draw(g, src, p, cd):
-    if p is src.owner and len(p.library) > 8: draw(g, p, 1)
+    if p is src.owner and len(p.library) > 8 and trigger_window(g, p, src, 'draw a card'): draw(g, p, 1)
 
 
 @on('The Gitrog Monster', 'extra_lands')
@@ -436,7 +471,7 @@ def _gitrog_extra(g, src, p): return 1 if p is src.owner else 0
 
 @on('The Gitrog Monster', 'discard')
 def _gitrog_discard(g, src, q, c):
-    if q is src.owner and c.land and len(q.library) > 8: draw(g, q, 1)
+    if q is src.owner and c.land and len(q.library) > 8 and trigger_window(g, q, src, 'draw a card'): draw(g, q, 1)
 card('The Gitrog Monster', 'leg pow=6 dt bomb=6', dsl=[])
 note('The Gitrog Monster', 'Approximate', 'upkeep land sacrifice, extra land drop, draw when lands hit the graveyard '
      '(sacrifices, fetch lands, discards)')
@@ -448,7 +483,7 @@ def _courser_top(g, src, p): return 1 if p is src.owner else 0
 
 @on('Courser of Kruphix', 'landfall')
 def _courser_life(g, src, p):
-    if p is src.owner: gain(p, 1)
+    if p is src.owner and trigger_window(g, p, src, 'gain 1 life', imp=1): gain(p, 1)
 card('Courser of Kruphix', 'pow=2 tgh=4', dsl=[])
 note('Courser of Kruphix', 'Full', '')
 
@@ -488,12 +523,15 @@ note('Selesnya Sanctuary', 'Full', 'bounce land')
 # ======================================================== Meren of Clan Nel Toth (recursion)
 @on('Meren of Clan Nel Toth', 'dies')
 def _meren_xp(g, src, m, cause):
-    if m.owner is src.owner and m is not src and m.creature: src.owner.experience = getattr(src.owner, 'experience', 0) + 1
+    if m.owner is src.owner and m is not src and m.creature and trigger_window(g, src.owner, src, 'get an experience counter', imp=2):
+        src.owner.experience = getattr(src.owner, 'experience', 0) + 1
 
 
 @on('Meren of Clan Nel Toth', 'end_step')
 def _meren_end(g, src, p):
     if p is not src.owner: return
+    if not any(c.creature for c in p.gy): return
+    if not trigger_window(g, p, src, 'return a creature card from your graveyard', imp=4): return
     cs = [c for c in p.gy if c.creature]
     if not cs: return
     xp = getattr(p, 'experience', 0)
@@ -631,7 +669,9 @@ note('Grisly Salvage', 'Approximate', 'hand-tagged (Sephiroth\'s list): outside 
 def _constellation(name, fn, status=('Full', '')):
     @on(name, 'etb')
     def _c(g, src, p, m):
-        if m.owner is src.owner and m.cd is not None and 'E' in m.cd.types: fn(g, src.owner, src, m)
+        if m.owner is src.owner and m.cd is not None and 'E' in m.cd.types \
+                and trigger_window(g, src.owner, src, 'constellation: draw a card'):
+            fn(g, src.owner, src, m)
     note(name, *status)
 
 
@@ -644,8 +684,9 @@ card('Eidolon of Blossoms', 'pow=2', dsl=[])
 @on('Hallowed Haunting', 'cast')
 def _haunting(g, src, caster, c):
     if caster is src.owner and 'E' in c.types:
-        make_tokens(g, caster, 1, 1, color='W', types=('spirit', 'cleric'))
         g.selfpt = True
+        if trigger_window(g, caster, src, 'create a Spirit Cleric'):
+            make_tokens(g, caster, 1, 1, color='W', types=('spirit', 'cleric'))
 
 
 @on('Hallowed Haunting', 'grant_kw')
@@ -660,7 +701,9 @@ note('Hallowed Haunting', 'Approximate', 'Spirit Cleric per enchantment cast (P/
 @on('Starfield of Nyx', 'upkeep')
 def _starfield(g, src, p):
     if p is not src.owner: return
-    es = [c for c in p.gy if 'E' in c.types and not ('aura' in c.subtypes)]
+    ok = lambda c: 'E' in c.types and not ('aura' in c.subtypes)
+    if not any(ok(c) for c in p.gy) or not trigger_window(g, p, src, 'return an enchantment from your graveyard', imp=4): return
+    es = [c for c in p.gy if ok(c)]
     if es:
         c = max(es, key=lambda c: card_worth(g, p, c)); p.gy.remove(c); enter(g, p, c)
 card('Starfield of Nyx', '', types='E', dsl=[])
@@ -671,7 +714,7 @@ note('Starfield of Nyx', 'Partial', 'returns an enchantment each upkeep; animati
 def _carpet(g, src, p):
     if p is not src.owner: return
     x = max((sum(1 for L in q.lands if 'island' in L.cd.subtypes or L.cd.name == 'Island') for q in g.opps(p)), default=0)
-    p.floatA += x
+    if x and trigger_window(g, p, src, f'add {x} mana', imp=2): p.floatA += x
 card('Carpet of Flowers', '', types='E', dsl=[])
 note('Carpet of Flowers', 'Approximate', 'mana equal to an opponent\'s Islands once each turn (precombat)')
 
@@ -680,6 +723,7 @@ note('Carpet of Flowers', 'Approximate', 'mana equal to an opponent\'s Islands o
 def _prince(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'blink a creature or gain 3 life'): return
     cands = [x for x in o.perms if x is not src and x.creature and blink_value(g, o, x) >= 3]
     if cands: blink(g, o, max(cands, key=lambda x: blink_value(g, o, x)))
     else: gain(o, 3)
@@ -727,9 +771,16 @@ def _resto_etb(g, src, p, m):
     """when it enters: you may exile target non-Angel creature you control, then return it"""
     if m is not src: return
     o = src.owner
-    cands = [x for x in o.perms if x.creature and not x.phased and x is not src and not has_type(x, 'angel')]
-    if not cands: return
+    ok = lambda x: x.creature and not x.phased and x is not src and not has_type(x, 'angel')
+    if not any(ok(x) for x in o.perms): return
     hc = human_choice(g, o)
+    if hc is None:                                  # the AI only puts it on the stack with a worthwhile blink
+        t = getattr(g, 'resto_target', None)
+        if (t is None or not ok(t) or t not in o.perms) and max((blink_value(g, o, x) for x in o.perms if ok(x)), default=0) < 3:
+            return
+    if not trigger_window(g, o, src, 'blink a non-Angel creature', imp=4): return
+    cands = [x for x in o.perms if ok(x)]
+    if not cands: return
     if hc is not None:
         from commander_sim.play import legal
         k = hc.choose(g, o, 'target', 'Restoration Angel enters: exile and return which non-Angel creature of yours?',

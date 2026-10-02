@@ -252,6 +252,8 @@ def _heritage(g, src, p, atk, d):
     o = src.owner
     if p is not o or not atk: return
     cands = [m for m in atk if m in o.perms and not untargetable_by_you(g, m)]
+    if not cands or not trigger_window(g, o, src, 'an attacker gains double strike'): return
+    cands = [m for m in cands if m in o.perms]
     if not cands: return
     hc = human(g, o)
     if hc is not None:
@@ -285,6 +287,7 @@ full('Bastion Protector', 'commander creatures you control get +2/+2 and have in
 
 @on('Ministrant of Obligation', 'self_dies')
 def _ministrant(g, m, cause):
+    if not trigger_window(g, m.owner, m, 'two 1/1 flying Spirits'): return
     make_tokens(g, m.owner, 2, 1, fly=True, color='WB', types=('spirit',))
     log('    Ministrant of Obligation: two 1/1 flying Spirits (afterlife 2)', g)
 card('Ministrant of Obligation', 'human pow=2 tgh=1', dsl=[])
@@ -474,6 +477,7 @@ CI.gift_returns = gift_returns
 def _prayer(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'exile a permanent; gain 2 life', imp=5): return
     hc = human(g, o)
     if hc is not None:
         from commander_sim.play import legal

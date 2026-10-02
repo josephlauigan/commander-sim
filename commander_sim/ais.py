@@ -1611,9 +1611,14 @@ def attack_triggers(g, p, atk, d):
         if g.over: break
     if has(p, 'najeela'):
         w = [m for m in atk if m.warrior and m in p.perms]
-        if w: new += make_tokens(g, p, len(w), 1, warrior=True, attacking=True, sick=False)
+        if w and E.trigger_window(g, p, find(p, 'najeela')[0], 'attacking Warriors', imp=5):
+            new += make_tokens(g, p, len(w), 1, warrior=True, attacking=True, sick=False)
     check_state(g)
     return [x for x in new if x.tapped and x in p.perms]
+
+
+ATTACK_TRIGGER_TAGS = ('witchking', 'archon', 'titan', 'tokatk', 'suntitan', 'necromancer', 'kylox')
+ATTACK_IMP = {'archon': 7, 'kylox': 6, 'witchking': 5, 'necromancer': 4, 'suntitan': 4}
 
 
 def _attack_triggers_once(g, p, atk, d):
@@ -1621,6 +1626,9 @@ def _attack_triggers_once(g, p, atk, d):
     for m in list(atk):
         if m.cd is None: continue
         t = m.cd.tags
+        if any(k in t for k in ATTACK_TRIGGER_TAGS) and not E.trigger_window(g, p, m, 'attacks', imp=ATTACK_IMP.get(
+                next((k for k in ATTACK_IMP if k in t), None), 3)):
+            continue
         if 'witchking' in t: edict(g, d, least_power=True)
         if 'archon' in t and d.alive: archon_attack(g, p, d)
         if 'titan' in t: make_tokens(g, p, 2, 2)
@@ -1643,7 +1651,7 @@ def _attack_triggers_once(g, p, atk, d):
                 p.exile.append(c)
         if equipped(m, 'animist'): land_ramp(g, p, 1, True)        # Sword of the Animist
     rab = len(find(p, 'rabble'))
-    if rab: make_tokens(g, p, rab * len(atk), 1)                       # Rabble Rousing: one Citizen per attacker
+    if rab and E.trigger_window(g, p, find(p, 'rabble')[0], 'a Citizen per attacker'): make_tokens(g, p, rab * len(atk), 1)                       # Rabble Rousing: one Citizen per attacker
     if E.DSLMOD is not None and g.dsl_on:
         E.DSLMOD.fire(g, 'attack', attackers=list(atk), defender=d, player=p, new=new)
     if E.CI is not None:
@@ -2200,6 +2208,7 @@ def upkeep(g, p):
                 leave(g, m); p.gy.append(m.cd); continue
             n = m.cd.name
             if n == 'Sylvan Library' and p.life <= 20: continue
+            if not E.trigger_window(g, p, m, 'draw a card'): continue
             draw(g, p, 1)
             if n == 'Phyrexian Arena': lose_life(g, p, 1, p)
             if n == 'Sylvan Library': lose_life(g, p, 4, p)
@@ -2220,9 +2229,9 @@ def upkeep(g, p):
         if 'pwdiscard' in t and m.age <= 3:        # Ral Zarek -1: each opponent discards
             for q in g.opps(p):
                 if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
-        if 'mycoloth' in t and m.plus > 0: make_tokens(g, p, m.plus, 1, color='G')
-        if 'tokup' in t: make_tokens(g, p, int(t['tokup']), 1, warrior='warrior' in t)
-        if 'sheoW' in t:
+        if 'mycoloth' in t and m.plus > 0 and E.trigger_window(g, p, m, 'Saprolings'): make_tokens(g, p, m.plus, 1, color='G')
+        if 'tokup' in t and E.trigger_window(g, p, m, 'tokens'): make_tokens(g, p, int(t['tokup']), 1, warrior='warrior' in t)
+        if 'sheoW' in t and E.trigger_window(g, p, m, 'return a creature; each opponent sacrifices', imp=6):
             cr = [c for c in p.gy if c.creature]
             hc = E.human_choice(g, p)
             if cr:
@@ -2269,7 +2278,7 @@ def end_step(g, p):
     if E.CI is not None and getattr(g, 'monarch', None) is p: draw(g, p, 1)          # the monarch draws
     if g.hooks: E.CI.fire(g, 'end_step', p)
     for m in find(p, 'breach'):                   # Underworld Breach: sacrifice it at the beginning of the end step
-        die(g, m, 'sac')
+        if E.trigger_window(g, p, m, 'sacrifice it') and m in p.perms: die(g, m, 'sac')
     il = getattr(p, 'impulse_long', None)
     if il:                                         # Prosper / Reckless Impulse: until the end of your next turn
         keep = []
@@ -2283,7 +2292,7 @@ def end_step(g, p):
     if has(p, 'necro'): necro_pay(g, p)
     erebos_draw(g, p)                             # leftover mana at your own end step
     for m in [m for m in p.perms if m.temp]: leave(g, m)
-    if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
+    if has(p, 'pvprolif') and E.trigger_window(g, p, find(p, 'pvprolif')[0], 'proliferate'):   # Atraxa, Praetors' Voice
         for m in p.perms:
             if m.plus > 0: m.plus += 1
     hc = E.human_choice(g, p)

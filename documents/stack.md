@@ -1,6 +1,6 @@
 # The stack: design
 
-Status: phases 1-2 built 2026-10-02 (spells and activated abilities on the stack, responses of any depth); phases 3-6 to come. Replaces the engine's fixed response windows with Magic's stack and priority,
+Status: phases 1-3 built 2026-10-02 (spells, activated abilities and triggered abilities on the stack, responses of any depth); phases 4-6 to come. Replaces the engine's fixed response windows with Magic's stack and priority,
 for simulations and practice mode alike (one engine).
 
 ## Goal
@@ -86,6 +86,26 @@ once; hooks that are static or replacement effects (`cost`, `grant_kw`, `prevent
 hooks ...) stay immediate. Tag-driven triggers inside the engine (magecraft, Rhystic Study, ETB tags) are converted
 one by one. A trigger records what it needs at the moment it triggered (the dying creature's power, the cast spell)
 so it resolves correctly later.
+
+### How phase 3 was built
+
+- **Card code.** A trigger hook in `cards/impl/` calls `trigger_window(g, controller, source, 'what it does')` at its
+  commit point: after the checks for whether it triggers, before its first effect. About 300 hooks were converted.
+  Hooks that are not triggered abilities stay immediate: replacement effects ("enters with", "as it enters"), static
+  effects, durations ending (an O-Ring's return), and Aura attachment.
+- **Queueing.** `cardimpl.fire` and the ability language queue what triggered (`engine.queue_triggers`). While a
+  spell resolves (`g.resolving`), the queue waits; afterwards the batch goes on the stack in APNAP order (the person
+  orders their own) and resolves top first, each with a round of priority.
+- **The probe.** To find which queued hooks really trigger, the engine calls each once with `trig_mode = 'probe'`:
+  `trigger_window` raises before any effect. This is why nothing before the window may have a side effect.
+- **Engine tags.** Enters effects driven by tags (Archon of Cruelty, Gray Merchant, Bowmasters, enters removal ...) are
+  queued as one stack item per permanent. Cast triggers (Rhystic Study, Sauron's amass, magecraft, Jin-Gitaxias),
+  death triggers (undying, persist, Wurmcoil), upkeep and end-step tags, and attack tags get inline windows.
+- **Speed.** When nobody could answer a trigger (no person at the table, nobody holding Tishana's Tidebinder or Azorius
+  Guildmage), a batch resolves in APNAP order with no probe and no priority, so simulations run as fast as before.
+- **Not yet.** Combat damage triggers resolve during damage rather than after it; a few hooks stay immediate because
+  they read values the engine keeps only while a permanent enters (Light-Paws, Ob Nixilis's casualty, Sakashima's
+  Protégé).
 
 ### The AI's decisions with priority
 

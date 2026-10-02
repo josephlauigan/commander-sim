@@ -90,6 +90,17 @@ def hooked(g, event):
 
 
 def fire(g, event, *args):
+    if event in E.TRIGGER_EVENTS:                        # triggered abilities: through the stack (engine.queue_triggers)
+        entries, out = [], []
+        for src, fn in list(hooked(g, event)):
+            reps = 1 + total(g, 'trigger_copies', src.owner, 'dies', args[0]) if event == 'dies' else 1   # Teysa
+            for _ in range(reps):
+                if E.converted(fn): entries.append(E.Trigger(src.owner, src, fn, (g, src) + args, event))
+                else:                                    # not a trigger (or not converted yet): at once, as always
+                    r = fn(g, src, *args)
+                    if r: out.append(r)
+                    if g.over: return out
+        return out + E.queue_triggers(g, entries)
     out = []
     for src, fn in hooked(g, event):
         reps = 1 + total(g, 'trigger_copies', src.owner, 'dies', args[0]) if event == 'dies' else 1   # Teysa

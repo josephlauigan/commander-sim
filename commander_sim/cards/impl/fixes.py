@@ -29,7 +29,10 @@ def best_opp_land(g, p):
 def _slime(g, src, p, m):
     if m is not src: return
     o = src.owner
-    t = best_opp_nonland(g, o, lambda x: x.cd is not None and not x.creature and ('A' in x.cd.types or 'E' in x.cd.types))
+    pred = lambda x: x.cd is not None and not x.creature and ('A' in x.cd.types or 'E' in x.cd.types)
+    if best_opp_nonland(g, o, pred) is None and best_opp_land(g, o) is None: return     # nothing to destroy
+    if not trigger_window(g, o, src, 'destroy an artifact, enchantment or land', imp=5): return
+    t = best_opp_nonland(g, o, pred)
     if t is not None and pval(g, t) >= 2.5: apply_removal(g, o, t, 'destroy'); return
     x = best_opp_land(g, o)
     if x is not None: destroy_land(g, *x)
@@ -323,6 +326,7 @@ note('Retrofitter Foundry', 'Full', 'Servo -> Thopter -> 4/4 Construct chain; un
 def _rishkar(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'put +1/+1 counters on two creatures'): return
     cs = sorted([x for x in o.perms if x.creature and not x.phased], key=lambda x: (x is src, -pval(g, x)), reverse=True)
     for x in cs[:2]: x.plus += 1
 

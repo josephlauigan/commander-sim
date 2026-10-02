@@ -9,6 +9,11 @@ def first_attack(g, src):
     return once_per_turn(g, src.owner, f'first_attack_{id(src)}')
 
 
+def fresh(g, p, key):
+    """once_per_turn(g, p, key) would pass; sets nothing (trigger guards run twice: probe, then real)"""
+    return p.flag_turn.get(key) != (g.round, getattr(g, 'active', None) and g.active.key)
+
+
 def untap_all(p, only=None):
     for m in p.perms:
         if m.creature and (only is None or m in only): m.tapped = False
@@ -28,7 +33,7 @@ note('Isshin, Two Heavens as One', 'Full', 'attack-caused triggers of your perma
 
 @on('Hellrider', 'attack')
 def _hellrider(g, src, p, atk, d):
-    if src.owner is p:
+    if src.owner is p and trigger_window(g, p, src, f'deal {len(atk)} damage to the defending player'):
         for _ in atk: lose_life(g, d, 1, p, kind='triggers')
 note('Hellrider', 'Full', 'haste; 1 damage to the defending player per attacking creature')
 card('Hellrider', 'pow=3 haste')
@@ -36,7 +41,7 @@ card('Hellrider', 'pow=3 haste')
 
 @on('Brutal Hordechief', 'attack')
 def _hordechief(g, src, p, atk, d):
-    if src.owner is p:
+    if src.owner is p and trigger_window(g, p, src, f'drain {len(atk)}'):
         for _ in atk: lose_life(g, d, 1, p, kind='drain'); gain(p, 1)
 card('Brutal Hordechief', 'pow=3 warrior')
 note('Brutal Hordechief', 'Partial', 'drain per attacker modeled; the forced-block activation is not')
@@ -44,7 +49,9 @@ note('Brutal Hordechief', 'Partial', 'drain per attacker modeled; the forced-blo
 
 @on('Aurelia, the Warleader', 'attack')
 def _aurelia(g, src, p, atk, d):
-    if src.owner is p and src in atk and first_attack(g, src):
+    if src.owner is p and src in atk and fresh(g, p, f'first_attack_{id(src)}'):
+        ok = trigger_window(g, p, src, 'untap all creatures, additional combat', imp=6); first_attack(g, src)
+        if not ok: return
         untap_all(p); p.extra_combats += 1
         log(f'    Aurelia: untap, additional combat', g)
 card('Aurelia, the Warleader', 'leg pow=3 tgh=4 fly vig haste')
@@ -53,7 +60,8 @@ note('Aurelia, the Warleader', 'Full', 'first attack each turn: untap all creatu
 
 @on('Karlach, Fury of Avernus', 'attack')
 def _karlach(g, src, p, atk, d):
-    if src.owner is p and getattr(p, 'combat_no', 1) == 1:
+    if src.owner is p and getattr(p, 'combat_no', 1) == 1 \
+            and trigger_window(g, p, src, 'untap attackers, first strike, additional combat', imp=6):
         untap_all(p, atk)
         for m in atk: g.eot_kw.setdefault(id(m), set()).add('first strike')
         p.extra_combats += 1
@@ -63,22 +71,26 @@ note('Karlach, Fury of Avernus', 'Full', 'first combat: attackers untap and gain
 
 @on('Scourge of the Throne', 'attack')
 def _scourge(g, src, p, atk, d):
-    if src.owner is p and src in atk and first_attack(g, src) and d.alive and d.life >= max(q.life for q in g.players if q.alive):
-        untap_all(p, atk); p.extra_combats += 1
+    if src.owner is p and src in atk and fresh(g, p, f'first_attack_{id(src)}') and d.alive \
+            and d.life >= max(q.life for q in g.players if q.alive):
+        ok = trigger_window(g, p, src, 'untap attackers, additional combat', imp=6); first_attack(g, src)
+        if ok: untap_all(p, atk); p.extra_combats += 1
 card('Scourge of the Throne', 'pow=5 fly bomb=5')
 note('Scourge of the Throne', 'Full', 'dethrone; first attack at the highest life total: untap attackers, extra combat')
 
 
 @on('Brimaz, King of Oreskos', 'attack')
 def _brimaz(g, src, p, atk, d):
-    if src.owner is p and src in atk: return attacking_tokens(g, p, 1, 1, color='W')
+    if src.owner is p and src in atk and trigger_window(g, p, src, 'create an attacking 1/1 Cat'):
+        return attacking_tokens(g, p, 1, 1, color='W')
 card('Brimaz, King of Oreskos', 'leg pow=3 tgh=4 vig')
 note('Brimaz, King of Oreskos', 'Approximate', 'attacking Cat token modeled; the blocking token is not')
 
 
 @on('Hanweir Garrison', 'attack')
 def _garrison(g, src, p, atk, d):
-    if src.owner is p and src in atk: return attacking_tokens(g, p, 2, 1, color='R')
+    if src.owner is p and src in atk and trigger_window(g, p, src, 'create two attacking 1/1 Humans'):
+        return attacking_tokens(g, p, 2, 1, color='R')
 card('Hanweir Garrison', 'pow=2 tgh=3')
 note('Hanweir Garrison', 'Full', 'two attacking Human tokens (meld ignored: its partner is not in the deck)')
 
@@ -86,6 +98,7 @@ note('Hanweir Garrison', 'Full', 'two attacking Human tokens (meld ignored: its 
 @on('Anim Pakal, Thousandth Moon', 'attack')
 def _anim(g, src, p, atk, d):
     if src.owner is not p or not any(not has_type(m, 'gnome') for m in atk): return
+    if not trigger_window(g, p, src, 'a +1/+1 counter, then X attacking Gnomes'): return
     src.plus += 1
     made = attacking_tokens(g, p, max(0, src.plus), 1, color='')
     for m in made: m.ttypes = frozenset(('gnome',))
@@ -97,7 +110,9 @@ note('Anim Pakal, Thousandth Moon', 'Full', 'counter, then X attacking Gnome tok
 @on('Caesar, Legion\'s Emperor', 'attack')
 def _caesar(g, src, p, atk, d):
     if src.owner is not p: return
-    fod = [m for m in p.perms if m.creature and m is not src and m not in atk and (m.token or pval(g, m) < 2)]
+    fod = lambda: [m for m in p.perms if m.creature and m is not src and m not in atk and (m.token or pval(g, m) < 2)]
+    if not fod() or not trigger_window(g, p, src, 'sacrifice a creature: two attacking tokens'): return
+    fod = fod()
     if not fod: return
     die(g, min(fod, key=lambda m: pval(g, m)), 'sac')
     made = attacking_tokens(g, p, 2, 1, color='RW')
@@ -114,13 +129,13 @@ note('Caesar, Legion\'s Emperor', 'Approximate', 'sacrifices spare fodder: two a
 
 @on('Goblin Rabblemaster', 'upkeep')
 def _rabble_combat(g, src, p):
-    if src.owner is p:
+    if src.owner is p and trigger_window(g, p, src, 'create a 1/1 Goblin'):
         for m in make_tokens(g, p, 1, 1, sick=False, color='R'): m.ttypes = frozenset(('goblin',))
 
 
 @on('Goblin Rabblemaster', 'attack')
 def _rabble_attack(g, src, p, atk, d):
-    if src.owner is p and src in atk:
+    if src.owner is p and src in atk and trigger_window(g, p, src, '+1/+0 per other attacking Goblin'):
         _eot(g, src, sum(1 for m in atk if m is not src and has_type(m, 'goblin')), 0)
 card('Goblin Rabblemaster', 'pow=2 warrior', dsl=[])
 note('Goblin Rabblemaster', 'Approximate', 'hasty Goblin each turn, +1/+0 per other attacking Goblin; the '
@@ -129,7 +144,7 @@ note('Goblin Rabblemaster', 'Approximate', 'hasty Goblin each turn, +1/+0 per ot
 
 @on('Legion Warboss', 'upkeep')
 def _warboss(g, src, p):
-    if src.owner is p:
+    if src.owner is p and trigger_window(g, p, src, 'create a 1/1 Goblin'):
         for m in make_tokens(g, p, 1, 1, sick=False, color='R'): m.ttypes = frozenset(('goblin',))
 card('Legion Warboss', 'pow=2', dsl=[], kws={'mentor'})
 note('Legion Warboss', 'Approximate', 'hasty Goblin each turn and mentor; the token is not forced to attack')
@@ -138,6 +153,9 @@ note('Legion Warboss', 'Approximate', 'hasty Goblin each turn and mentor; the to
 @on('Tilonalli\'s Summoner', 'attack')
 def _tilonalli(g, src, p, atk, d):
     if src.owner is not p or src not in atk: return
+    x = total_mana(g, p) - 1
+    if x < 1 or not can_pay(g, p, x, 'R'): return
+    if not trigger_window(g, p, src, 'pay X: X attacking tokens'): return
     x = total_mana(g, p) - 1
     if x < 1 or not can_pay(g, p, x, 'R'): return
     pay(g, p, x, 'R')
@@ -152,7 +170,7 @@ note('Tilonalli\'s Summoner', 'Approximate', 'spends all spare mana on X attacki
 
 @on('Shared Animosity', 'attack')
 def _animosity(g, src, p, atk, d):
-    if src.owner is not p: return
+    if src.owner is not p or not trigger_window(g, p, src, 'attackers get +1/+0 per attacker sharing a type'): return
     for m in atk:
         n = sum(1 for x in atk if x is not m and _shares_type(m, x))
         if n: _eot(g, m, n, 0)
@@ -168,7 +186,7 @@ note('Shared Animosity', 'Full', 'each attacker +1/+0 per other attacker sharing
 
 @on('Moonshaker Cavalry', 'etb')
 def _moonshaker(g, src, p, m):
-    if m is src:
+    if m is src and trigger_window(g, p, src, 'creatures gain flying and +X/+X', imp=6):
         n = sum(1 for x in p.perms if x.creature)
         for x in p.perms:
             if x.creature:
@@ -179,7 +197,8 @@ note('Moonshaker Cavalry', 'Full', 'ETB: creatures gain flying and +X/+X')
 
 @on('Ogre Battledriver', 'etb')
 def _battledriver(g, src, p, m):
-    if m is not src and src.owner is p and m.creature and m.owner is p:
+    if m is not src and src.owner is p and m.creature and m.owner is p \
+            and trigger_window(g, p, src, f'{m.name} gets +2/+0 and haste'):
         _eot(g, m, 2, 0); m.sick = False
 card('Ogre Battledriver', 'pow=3 warrior')
 note('Ogre Battledriver', 'Full', 'other creatures entering get +2/+0 and haste')
@@ -188,7 +207,7 @@ note('Ogre Battledriver', 'Full', 'other creatures entering get +2/+0 and haste'
 @on('Mentor of the Meek', 'etb')
 def _mentor_meek(g, src, p, m):
     if m is not src and src.owner is p and m.creature and m.owner is p and epow(g, m) <= 2 and can_pay(g, p, 1, '') \
-            and len(p.hand) <= 6:
+            and len(p.hand) <= 6 and trigger_window(g, p, src, 'pay {1}: draw a card') and can_pay(g, p, 1, ''):
         pay(g, p, 1, ''); draw(g, p, 1)
 card('Mentor of the Meek', 'human pow=2')
 note('Mentor of the Meek', 'Full', 'pays {1} to draw when a small creature enters (if it can, hand not full)')
@@ -197,16 +216,17 @@ note('Mentor of the Meek', 'Full', 'pays {1} to draw when a small creature enter
 @on('Welcoming Vampire', 'etb')
 def _welcoming(g, src, p, m):
     if m is not src and src.owner is p and m.creature and m.owner is p and epow(g, m) <= 2 \
-            and once_per_turn(g, p, f'welcoming{id(src)}'):
-        draw(g, p, 1)
+            and fresh(g, p, f'welcoming{id(src)}'):
+        ok = trigger_window(g, p, src, 'draw a card'); once_per_turn(g, p, f'welcoming{id(src)}')
+        if ok: draw(g, p, 1)
 card('Welcoming Vampire', 'pow=2 tgh=3 fly')
 note('Welcoming Vampire', 'Full', 'draw once each turn when small creatures enter')
 
 
 @on('Laelia, the Blade Reforged', 'attack')
 def _laelia(g, src, p, atk, d):
-    if src.owner is p and src in atk and p.library:
-        c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
+    if src.owner is p and src in atk and p.library and trigger_window(g, p, src, 'exile the top card, +1/+1 counter'):
+        if p.library: c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
         src.plus += 1
 card('Laelia, the Blade Reforged', 'leg warrior pow=2 haste')
 note('Laelia, the Blade Reforged', 'Approximate', 'attack: exile top card playable this turn (as an impulse draw), +1/+1 counter')
@@ -214,7 +234,7 @@ note('Laelia, the Blade Reforged', 'Approximate', 'attack: exile top card playab
 
 @on('Outlaws\' Merriment', 'upkeep')
 def _merriment(g, src, p):
-    if src.owner is not p: return
+    if src.owner is not p or not trigger_window(g, p, src, 'create a random Outlaw'): return
     k = g.rng.randrange(3)
     if k == 0: make_tokens(g, p, 1, 3, 1, sick=False, color='RW')
     elif k == 1: make_tokens(g, p, 1, 2, 1, sick=False, lifelink=True, color='RW')
@@ -226,7 +246,7 @@ note('Outlaws\' Merriment', 'Approximate', 'random hasty token each upkeep (tram
 
 @on('Black Market Connections', 'upkeep')
 def _bmc(g, src, p):
-    if src.owner is not p: return
+    if src.owner is not p or not trigger_window(g, p, src, 'choose modes'): return
     add_treasure(g, p, 1); lose_life(g, p, 1, p)
     if p.life > 15: draw(g, p, 1); lose_life(g, p, 2, p)
     if p.life > 20: make_tokens(g, p, 1, 3, 2, color=''); lose_life(g, p, 3, p)
@@ -236,14 +256,16 @@ note('Black Market Connections', 'Approximate', 'each turn: Treasure; plus a car
 
 @on('Loyal Apprentice', 'upkeep')
 def _apprentice(g, src, p):
-    if src.owner is p and commander_out(p): make_tokens(g, p, 1, 1, fly=True, sick=False, color='')
+    if src.owner is p and commander_out(p) and trigger_window(g, p, src, 'create a 1/1 Thopter'):
+        make_tokens(g, p, 1, 1, fly=True, sick=False, color='')
 card('Loyal Apprentice', 'human pow=2 haste')
 note('Loyal Apprentice', 'Full', 'Thopter at the beginning of combat while you control your commander')
 
 
 @on('Legion\'s Landing // Adanto, the First Fort', 'attack')
 def _landing(g, src, p, atk, d):
-    if src.owner is p and len(atk) >= 3 and src in p.perms:
+    if src.owner is p and len(atk) >= 3 and src in p.perms and trigger_window(g, p, src, 'transform'):
+        if src not in p.perms: return
         leave(g, src)
         from commander_sim.engine import Land
         p.lands.append(Land(ADANTO, False))
@@ -267,7 +289,7 @@ def elf_tokens(g, p, n):
 
 @on('Lathril, Blade of the Elves', 'combat_damage')
 def _lathril_dmg(g, src, p, a, d, dmg):
-    if a is src: elf_tokens(g, p, dmg)
+    if a is src and trigger_window(g, p, src, f'create {dmg} Elf Warriors'): elf_tokens(g, p, dmg)
 
 
 @on('Lathril, Blade of the Elves', 'options')
@@ -332,15 +354,17 @@ note('Heritage Druid', 'Approximate', 'GGG per three untapped non-mana Elves (su
 
 @on("Dwynen's Elite", 'etb')
 def _dwynen(g, src, p, m):
-    if m is src and any(x is not src and has_type(x, 'elf') for x in p.perms): elf_tokens(g, p, 1)
+    if m is src and any(x is not src and has_type(x, 'elf') for x in p.perms) \
+            and trigger_window(g, p, src, 'create a 1/1 Elf Warrior'): elf_tokens(g, p, 1)
 card("Dwynen's Elite", 'pow=2 warrior', dsl=[])
 note("Dwynen's Elite", 'Full', '')
 
 
 @on('Elvish Warmaster', 'etb')
 def _warmaster(g, src, p, m):
-    if m is not src and m.owner is src.owner and has_type(m, 'elf') and once_per_turn(g, src.owner, f'warm{id(src)}'):
-        elf_tokens(g, src.owner, 1)
+    if m is not src and m.owner is src.owner and has_type(m, 'elf') and fresh(g, src.owner, f'warm{id(src)}'):
+        ok = trigger_window(g, src.owner, src, 'create a 1/1 Elf Warrior'); once_per_turn(g, src.owner, f'warm{id(src)}')
+        if ok: elf_tokens(g, src.owner, 1)
 
 
 @on('Elvish Warmaster', 'options')
@@ -363,14 +387,16 @@ note('Elvish Warmaster', 'Full', 'Elf Warrior once a turn when Elves enter; pump
 
 @on('Lys Alana Huntmaster', 'cast')
 def _lys(g, src, caster, c):
-    if caster is src.owner and c.creature and 'elf' in c.subtypes: elf_tokens(g, caster, 1)
+    if caster is src.owner and c.creature and 'elf' in c.subtypes and trigger_window(g, caster, src, 'create a 1/1 Elf Warrior'):
+        elf_tokens(g, caster, 1)
 card('Lys Alana Huntmaster', 'pow=3 warrior', dsl=[])
 note('Lys Alana Huntmaster', 'Full', '')
 
 
 @on('Leaf-Crowned Visionary', 'cast')
 def _leafcrowned(g, src, caster, c):
-    if caster is src.owner and c.creature and 'elf' in c.subtypes and can_pay(g, caster, 0, 'G') and len(caster.hand) < 7:
+    if caster is src.owner and c.creature and 'elf' in c.subtypes and can_pay(g, caster, 0, 'G') and len(caster.hand) < 7 \
+            and trigger_window(g, caster, src, 'pay {G}: draw a card') and can_pay(g, caster, 0, 'G'):
         pay(g, caster, 0, 'G'); draw(g, caster, 1)
 card('Leaf-Crowned Visionary', 'pow=1',
      dsl=[{'type': 'static', 'static': 'anthem', 'filter': {'type': 'creature', 'controller': 'you', 'other': True,
@@ -386,7 +412,8 @@ note('Elvish Promenade', 'Full', 'an Elf Warrior token for each Elf you control'
 
 @on('Prowess of the Fair', 'dies')
 def _prowess(g, src, m, cause):
-    if m.owner is src.owner and not m.token and m.creature and has_type(m, 'elf') and m is not src:
+    if m.owner is src.owner and not m.token and m.creature and has_type(m, 'elf') and m is not src \
+            and trigger_window(g, src.owner, src, 'create a 1/1 Elf Warrior'):
         elf_tokens(g, src.owner, 1)
 card('Prowess of the Fair', '', types='E', dsl=[])
 note('Prowess of the Fair', 'Full', '')
@@ -395,7 +422,7 @@ note('Prowess of the Fair', 'Full', '')
 @on('Eyeblight Cullers', 'self_dies')
 def _cullers(g, m, cause):
     p = m.owner
-    if p.alive:
+    if p.alive and trigger_window(g, p, m, 'three Elf Warriors, mill 3, drain 2'):
         elf_tokens(g, p, 3); mill(g, p, 3)
         for q in g.opps(p): lose_life(g, q, 2, p, kind='drain')
         gain(p, 2)
@@ -418,28 +445,31 @@ def look_take(g, p, n, pred, to='hand', rest='bottom', k=1):
 
 @on('Harald, King of Skemfar', 'etb')
 def _harald(g, src, p, m):
-    if m is src: look_take(g, p, 5, lambda c: 'elf' in c.subtypes or 'warrior' in c.subtypes or c.name.startswith('Tyvar'))
+    if m is src and trigger_window(g, p, src, 'look at the top five'):
+        look_take(g, p, 5, lambda c: 'elf' in c.subtypes or 'warrior' in c.subtypes or c.name.startswith('Tyvar'))
 card('Harald, King of Skemfar', 'leg pow=3 tgh=2 warrior', dsl=[])
 note('Harald, King of Skemfar', 'Full', 'menace; top five: an Elf/Warrior/Tyvar to hand')
 
 
 @on('Sylvan Messenger', 'etb')
 def _messenger(g, src, p, m):
-    if m is src: look_take(g, p, 4, lambda c: 'elf' in c.subtypes, k=4)
+    if m is src and trigger_window(g, p, src, 'reveal the top four, take the Elves'):
+        look_take(g, p, 4, lambda c: 'elf' in c.subtypes, k=4)
 card('Sylvan Messenger', 'pow=2 trample', dsl=[])
 note('Sylvan Messenger', 'Full', '')
 
 
 @on('Elvish Rejuvenator', 'etb')
 def _rejuvenator(g, src, p, m):
-    if m is src: look_take(g, p, 5, lambda c: c.land, to='land_bf')
+    if m is src and trigger_window(g, p, src, 'look at the top five, put a land onto the battlefield'):
+        look_take(g, p, 5, lambda c: c.land, to='land_bf')
 card('Elvish Rejuvenator', 'pow=1', dsl=[])
 note('Elvish Rejuvenator', 'Full', '')
 
 
 @on('Shaman of the Pack', 'etb')
 def _shaman_pack(g, src, p, m):
-    if m is src and g.opps(p):
+    if m is src and g.opps(p) and trigger_window(g, p, src, 'target opponent loses 1 life per Elf') and g.opps(p):
         q = max(g.opps(p), key=lambda o: threat(g, p, o)); lose_life(g, q, count_type(g, p, 'elf'), p, kind='drain')
 card('Shaman of the Pack', 'pow=3 tgh=2 shaman', dsl=[])
 note('Shaman of the Pack', 'Full', '')
@@ -447,7 +477,8 @@ note('Shaman of the Pack', 'Full', '')
 
 @on('Skemfar Avenger', 'dies')
 def _skemfar(g, src, m, cause):
-    if m.owner is src.owner and m is not src and not m.token and (has_type(m, 'elf') or has_type(m, 'berserker')):
+    if m.owner is src.owner and m is not src and not m.token and (has_type(m, 'elf') or has_type(m, 'berserker')) \
+            and trigger_window(g, src.owner, src, 'draw a card, lose 1 life'):
         draw(g, src.owner, 1); lose_life(g, src.owner, 1, src.owner)
 card('Skemfar Avenger', 'pow=3 tgh=1', dsl=[])
 note('Skemfar Avenger', 'Full', '')
@@ -473,7 +504,7 @@ note('Timberwatch Elf', 'Approximate', 'pumps its best attacker before combat')
 
 @on('Tyvar the Bellicose', 'attack')
 def _tyvar(g, src, p, atk, d):
-    if src.owner is p:
+    if src.owner is p and any(has_type(m, 'elf') for m in atk) and trigger_window(g, p, src, 'attacking Elves gain deathtouch'):
         for m in atk:
             if has_type(m, 'elf'): g.eot_kw.setdefault(id(m), set()).add('deathtouch')
 card('Tyvar the Bellicose', 'leg pow=5 tgh=4 warrior', dsl=[])
@@ -518,7 +549,7 @@ note('Allosaurus Shepherd', 'Approximate', 'uncounterable; Elves become 5/5 befo
 
 @on('Beastmaster Ascension', 'attack')
 def _bma(g, src, p, atk, d):
-    if src.owner is p: src.plus += len(atk)
+    if src.owner is p and trigger_window(g, p, src, f'{len(atk)} quest counter(s)'): src.plus += len(atk)
 
 
 card('Beastmaster Ascension', '', types='E',
@@ -529,6 +560,7 @@ note('Beastmaster Ascension', 'Full', 'quest counter per attacker; +5/+5 at seve
 @on('Tendershoot Dryad', 'upkeep')
 def _tendershoot(g, src, p):
     o = src.owner
+    if not trigger_window(g, o, src, 'create a Saproling'): return
     city = len(o.perms) + len(o.lands) >= 10
     for m in make_tokens(g, o, 1, 3 if city else 1, types=('saproling',), color='G'): pass
 card('Tendershoot Dryad', 'pow=2', dsl=[])
@@ -540,7 +572,7 @@ def _guardian(g, src, p, m):
     o = src.owner
     if m.owner is o and m.creature and not m.token and m.cd is not None and \
             not any(x is not m and x.cd is not None and x.cd.name == m.cd.name for x in o.perms) and \
-            not any(c.name == m.cd.name for c in o.gy):
+            not any(c.name == m.cd.name for c in o.gy) and trigger_window(g, o, src, 'draw a card'):
         draw(g, o, 1)
 card('Guardian Project', '', types='E', dsl=[])
 note('Guardian Project', 'Full', '')
@@ -550,12 +582,13 @@ note('Guardian Project', 'Full', '')
 def _nath_up(g, src, p):
     if src.owner is p and g.opps(p):
         q = max(g.opps(p), key=lambda o: (len(o.hand) > 0, threat(g, p, o)))
-        if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
+        if q.hand and trigger_window(g, p, src, 'target opponent discards at random') and q.hand:
+            discard_index(g, q, g.rng.randrange(len(q.hand)))
 
 
 @on('Nath of the Gilt-Leaf', 'discard')
 def _nath_disc(g, src, q, c):
-    if q is not src.owner:
+    if q is not src.owner and trigger_window(g, src.owner, src, 'create a 1/1 deathtouch Elf Warrior'):
         for m in make_tokens(g, src.owner, 1, 1, dt=True, color='G', types=ELF_WARRIOR): pass
 card('Nath of the Gilt-Leaf', 'leg pow=4 warrior', dsl=[])
 note('Nath of the Gilt-Leaf', 'Full', 'random discard each upkeep; Elf Warrior (deathtouch) whenever an opponent discards')
@@ -564,7 +597,9 @@ note('Nath of the Gilt-Leaf', 'Full', 'random discard each upkeep; Elf Warrior (
 @on('Elderfang Ritualist', 'self_dies')
 def _ritualist(g, m, cause):
     p = m.owner
-    cs = [c for c in p.gy if 'elf' in c.subtypes and c is not m.cd]
+    cs = lambda: [c for c in p.gy if 'elf' in c.subtypes and c is not m.cd]
+    if not cs() or not trigger_window(g, p, m, 'return an Elf card to hand'): return
+    cs = cs()
     if cs: c = max(cs, key=lambda c: card_worth(g, p, c)); p.gy.remove(c); p.hand.append(c)
 card('Elderfang Ritualist', 'pow=3 tgh=1', dsl=[])
 note('Elderfang Ritualist', 'Full', '')
@@ -572,7 +607,7 @@ note('Elderfang Ritualist', 'Full', '')
 
 @on('Elvish Harbinger', 'etb')
 def _harbinger(g, src, p, m):
-    if m is not src: return
+    if m is not src or not trigger_window(g, p, src, 'search for an Elf, put it on top'): return
     cs = [c for c in p.library if 'elf' in c.subtypes]
     if cs:
         c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); p.library.append(c)
@@ -637,7 +672,8 @@ def _ward_loop(g, src, p, s, post):
 
 @on('Sram, Senior Edificer', 'cast')
 def _sram(g, src, caster, c):
-    if caster is src.owner and ('aura' in c.subtypes or 'equipment' in c.subtypes or 'vehicle' in c.subtypes):
+    if caster is src.owner and ('aura' in c.subtypes or 'equipment' in c.subtypes or 'vehicle' in c.subtypes) \
+            and trigger_window(g, caster, src, 'draw a card'):
         draw(g, caster, 1)
 card('Sram, Senior Edificer', 'leg pow=2')
 note('Sram, Senior Edificer', 'Full', '')
@@ -645,7 +681,7 @@ note('Sram, Senior Edificer', 'Full', '')
 
 @on('Kor Spiritdancer', 'cast')
 def _spiritdancer(g, src, caster, c):
-    if caster is src.owner and 'aura' in c.subtypes: draw(g, caster, 1)
+    if caster is src.owner and 'aura' in c.subtypes and trigger_window(g, caster, src, 'draw a card'): draw(g, caster, 1)
 
 
 @on('Kor Spiritdancer', 'etb')
@@ -672,7 +708,7 @@ note('Eidolon of Countless Battles', 'Partial', 'cast as a creature with its +1/
 @on('Archon of Sun\'s Grace', 'etb')
 def _archon_sg(g, src, p, m):
     o = src.owner
-    if m.owner is o and m.cd is not None and 'E' in m.cd.types:
+    if m.owner is o and m.cd is not None and 'E' in m.cd.types and trigger_window(g, o, src, 'create a 2/2 flying Pegasus'):
         make_tokens(g, o, 1, 2, fly=True, lifelink=True, color='W', types=('pegasus',))
 card('Archon of Sun\'s Grace', 'pow=3 tgh=4 fly lifelink')
 note('Archon of Sun\'s Grace', 'Full', 'constellation: 2/2 flying lifelink Pegasus')
@@ -680,7 +716,7 @@ note('Archon of Sun\'s Grace', 'Full', 'constellation: 2/2 flying lifelink Pegas
 
 @on('Heliod\'s Pilgrim', 'etb')
 def _pilgrim(g, src, p, m):
-    if m is src: tutor_named(g, p, lambda c: 'aura' in c.subtypes)
+    if m is src and trigger_window(g, p, src, 'search for an Aura'): tutor_named(g, p, lambda c: 'aura' in c.subtypes)
 card('Heliod\'s Pilgrim', 'human pow=1 tgh=2')
 note('Heliod\'s Pilgrim', 'Full', '')
 
@@ -721,7 +757,8 @@ note('Three Dreams', 'Full', 'three Auras with different names to hand')
 
 @on('Land Tax', 'upkeep')
 def _landtax(g, src, p):
-    if src.owner is p and any(len(q.lands) > len(p.lands) for q in g.opps(p)):
+    if src.owner is p and any(len(q.lands) > len(p.lands) for q in g.opps(p)) \
+            and trigger_window(g, p, src, 'search for three basic lands'):
         for _ in range(3): land_to_hand(g, p)
 card('Land Tax', '', types='E')
 note('Land Tax', 'Full', '')
@@ -775,7 +812,7 @@ note('Ancient Greenwarden', 'Full', 'lands from the graveyard; landfall triggers
 
 @on('Aesi, Tyrant of Gyre Strait', 'landfall')
 def _aesi(g, src, p):
-    if src.owner is p and len(p.library) > 15: draw(g, p, 1)       # "you may draw"
+    if src.owner is p and len(p.library) > 15 and trigger_window(g, p, src, 'draw a card'): draw(g, p, 1)       # "you may draw"
 card('Aesi, Tyrant of Gyre Strait', 'leg pow=5 bomb=5', dsl=[])
 
 
@@ -797,7 +834,7 @@ note('Explore', 'Full', 'draw; one extra land drop this turn')
 
 @on('Druid Class', 'landfall')
 def _druidclass(g, src, p):
-    if src.owner is p: gain(p, 1)
+    if src.owner is p and trigger_window(g, p, src, 'gain 1 life'): gain(p, 1)
 
 
 @on('Druid Class', 'extra_lands')
@@ -821,13 +858,14 @@ note('Druid Class', 'Partial', 'landfall life and the level-2 extra land drop; l
 
 @on('Avenger of Zendikar', 'etb')
 def _avenger(g, src, p, m):
-    if m is src:
+    if m is src and trigger_window(g, src.owner, src, 'a 0/1 Plant per land', imp=5):
         for t in make_tokens(g, src.owner, len(src.owner.lands), 0, 1, color='G', types=('plant',)): pass
 
 
 @on('Avenger of Zendikar', 'landfall')
 def _avenger_lf(g, src, p):
-    if src.owner is p:
+    if src.owner is p and any(m.token and has_type(m, 'plant') for m in p.perms) \
+            and trigger_window(g, p, src, '+1/+1 counter on each Plant'):
         for m in p.perms:
             if m.token and has_type(m, 'plant'): m.plus += 1
 card('Avenger of Zendikar', 'pow=5 bomb=6', dsl=[])
@@ -836,7 +874,7 @@ note('Avenger of Zendikar', 'Full', '0/1 Plant per land; landfall: +1/+1 counter
 
 @on('Scute Swarm', 'landfall')
 def _scute(g, src, p):
-    if src.owner is not p: return
+    if src.owner is not p or not trigger_window(g, p, src, 'create a token'): return
     if len(p.lands) >= 6: enter_token_copy(g, p, src.cd)
     else: make_tokens(g, p, 1, 1, color='G', types=('insect',))
 card('Scute Swarm', 'pow=1', dsl=[])
@@ -849,7 +887,8 @@ def _roil(g, src, p):
     cands = [m for q in g.opps(p) for m in q.perms if m.creature and not untargetable(g, m) and not m.is_cmd]
     if not cands: return
     m = max(cands, key=lambda m: pval(g, m))
-    if pval(g, m) < 2: return
+    if pval(g, m) < 2 or not trigger_window(g, p, src, f'gain control of {m.name}', imp=6): return
+    if m not in m.owner.perms or m.owner is p or src not in p.perms: return
     if __import__('commander_sim.ais', fromlist=['x']).protect_response(g, m.owner, m, 'steal', p, src.cd) or m not in m.owner.perms: return   # targeted: can be answered
     q = m.owner; q.perms.remove(m); m.owner = p; m.attached = None; p.perms.append(m); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     if src.data is None: src.data = {}
@@ -868,7 +907,7 @@ note('Roil Elemental', 'Full', 'landfall: steal the best opposing creature while
 
 @on('Nissa, Resurgent Animist', 'landfall')
 def _nissa_ra(g, src, p):
-    if src.owner is not p: return
+    if src.owner is not p or not trigger_window(g, p, src, 'add one mana'): return
     p.floatA += 1
     k = f'nissa{id(src)}'
     st = turn_stamp(g)
@@ -885,26 +924,26 @@ note('Nissa, Resurgent Animist', 'Approximate', 'landfall mana (spendable this t
 
 @on('Tireless Provisioner', 'landfall')
 def _provisioner(g, src, p):
-    if src.owner is p: add_treasure(g, p, 1)
+    if src.owner is p and trigger_window(g, p, src, 'create a Treasure'): add_treasure(g, p, 1)
 card('Tireless Provisioner', 'pow=3 tgh=2', dsl=[])
 note('Tireless Provisioner', 'Approximate', 'always takes the Treasure')
 
 
 @on('Tireless Tracker', 'landfall')
 def _tracker(g, src, p):
-    if src.owner is p: p.clues += 1
+    if src.owner is p and trigger_window(g, p, src, 'investigate'): p.clues += 1
 
 
 @on('Tireless Tracker', 'sacrifice')
 def _tracker_clue(g, src, p, what):
-    if p is src.owner and what == 'Clue': src.plus += 1
+    if p is src.owner and what == 'Clue' and trigger_window(g, p, src, '+1/+1 counter'): src.plus += 1
 card('Tireless Tracker', 'human pow=3 tgh=2', dsl=[])
 note('Tireless Tracker', 'Full', '')
 
 
 @on('Titania, Protector of Argoth', 'etb')
 def _titania(g, src, p, m):
-    if m is src:
+    if m is src and any(c.land for c in src.owner.gy) and trigger_window(g, src.owner, src, 'return a land from the graveyard'):
         ls = [c for c in src.owner.gy if c.land]
         if ls:
             c = max(ls, key=lambda c: len(c.tags.get('c', ''))); src.owner.gy.remove(c)
@@ -913,7 +952,7 @@ def _titania(g, src, p, m):
 
 @on('Titania, Protector of Argoth', 'land_gy')
 def _titania_gy(g, src, p, cd):
-    if p is src.owner: make_tokens(g, p, 1, 5, 3, color='G', types=('elemental',))
+    if p is src.owner and trigger_window(g, p, src, 'create a 5/3 Elemental'): make_tokens(g, p, 1, 5, 3, color='G', types=('elemental',))
 card('Titania, Protector of Argoth', 'leg pow=5 tgh=3 bomb=5', dsl=[])
 note('Titania, Protector of Argoth', 'Full', 'returns a land; 5/3 Elemental when a land goes to the graveyard '
      '(fetch lands, land sacrifices)')
@@ -921,7 +960,7 @@ note('Titania, Protector of Argoth', 'Full', 'returns a land; 5/3 Elemental when
 
 @on('Coiling Oracle', 'etb')
 def _coiling(g, src, p, m):
-    if m is src and src.owner.library:
+    if m is src and src.owner.library and trigger_window(g, src.owner, src, 'reveal the top card') and src.owner.library:
         c = src.owner.library.pop()
         if c.land: src.owner.lands.append(Land(c, False)); landfall(g, src.owner)
         else: src.owner.hand.append(c)
@@ -932,14 +971,15 @@ note('Coiling Oracle', 'Full', '')
 @on('Uro, Titan of Nature\'s Wrath', 'etb')
 def _uro(g, src, p, m):
     if m is not src: return
-    _uro_value(g, src.owner)
-    if getattr(g, 'uro_escaping', False): src.data = {'escaped': True}
-    else: die(g, src, 'sac')
+    esc = getattr(g, 'uro_escaping', False)
+    if trigger_window(g, src.owner, src, 'gain 3 life, draw, put a land'): _uro_value(g, src.owner)
+    if esc: src.data = {'escaped': True}
+    else: die(g, src, 'sac')                                  # the sacrifice trigger, kept as before
 
 
 @on('Uro, Titan of Nature\'s Wrath', 'attack')
 def _uro_atk(g, src, p, atk, d):
-    if src in atk: _uro_value(g, p)
+    if src in atk and trigger_window(g, p, src, 'gain 3 life, draw, put a land'): _uro_value(g, p)
 
 
 def _uro_value(g, p):
@@ -978,7 +1018,7 @@ note('Life from the Loam', 'Approximate', 'returns up to three lands; dredges it
 
 @on('Zendikar Resurgent', 'cast')
 def _zr(g, src, caster, c):
-    if caster is src.owner and c.creature: draw(g, caster, 1)
+    if caster is src.owner and c.creature and trigger_window(g, caster, src, 'draw a card'): draw(g, caster, 1)
 
 
 @on('Zendikar Resurgent', 'land_mana')

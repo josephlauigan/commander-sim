@@ -57,7 +57,8 @@ def stack_priority(g, q, item):
     top = g.stack[-1] if g.stack else item
     if top.kind != 'spell':                                  # an ability: only when you could do something about it
         if top.controller is q or not can_respond(g, q): return
-        respond(g, q, f'{E.NAME(top.controller)} activates {top.name}', spell=top.card, caster=top.controller)
+        verb = 'activates' if top.kind == 'ability' else 'has a trigger:'
+        respond(g, q, f'{E.NAME(top.controller)} {verb} {top.name}', spell=top.card, caster=top.controller)
         return
     if top.controller is q and not E._copy_window(g, q, top.card): return
     who = 'You cast' if top.controller is q else f'{E.NAME(top.controller)} casts'

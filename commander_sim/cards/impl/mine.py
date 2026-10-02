@@ -37,6 +37,10 @@ def _kitten(g, src, caster, c):
     if caster is not p or c.creature or c.land or src not in p.perms or src.phased: return
     cands = [m for m in p.perms if m is not src and not m.token and not m.phased and m.cd is not None and m.orig is p]
     if not cands: return
+    if E.human_choice(g, p) is None and etb_value(g, p, max(cands, key=lambda x: etb_value(g, p, x))) < 2.0: return
+    if not trigger_window(g, p, src, 'flicker a permanent'): return
+    cands = [m for m in cands if m in p.perms]
+    if not cands: return
     hc = E.human_choice(g, p)
     if hc is not None:                                       # practice mode: up to one, your pick
         k = hc.choose(g, p, 'target', 'Displacer Kitten: flicker one of your nonland permanents?',
@@ -65,6 +69,10 @@ def _nim_return(g, src, m):
     attach this Equipment to it"""
     p = src.owner
     if src not in p.perms or src.phased or m.token or m.orig is not p or m.cd not in p.gy: return
+    if m.cd is p.cmd: return
+    if E.human_choice(g, p) is None and (not can_pay(g, p, 4, '') or (pval(g, m) < 3 and etb_value(g, p, m) < 2.5)
+                                         or any(cd is m.cd for _, cd, _ in getattr(g, 'marchesa_due', None) or ())): return
+    if not trigger_window(g, p, src, f'pay {{4}}: return {m.name}'): return
     hc = E.human_choice(g, p)
     if hc is not None:                                       # practice mode: you may pay {4}
         if m.cd is p.cmd or not hc.pay_tax(g, p, 4, f'Nim Deathmantle: return {m.name} and attach it'): return
@@ -312,6 +320,7 @@ def _storm(g, src, caster, c):
     if not n: return
     cc = getattr(g, 'cur_cast', None)
     ctx = cc[1] if cc is not None and cc[0] is c else None           # X is copied (Crackle with Power)
+    if not trigger_window(g, p, src, f'copy {c.name} {n} time(s)', imp=6): return
     log(f'    Thousand-Year Storm copies {c.name} {n} time(s)', g)
     for _ in range(n):
         copy_spell(g, p, c, ctx)
@@ -321,7 +330,8 @@ def _storm(g, src, caster, c):
 @on('Thousand-Year Storm', 'copycast')
 def _storm_copycast(g, src, p, effect):
     """a cast copy of a back-face spell (prepared, Lightning Bolt) is an instant/sorcery cast too"""
-    if p is not src.owner or src.phased: return
+    if p is not src.owner or src.phased or not _storm_n(g, p): return
+    if not trigger_window(g, p, src, 'copy the spell', imp=6): return
     for _ in range(_storm_n(g, p)):
         magecraft(g, p, copy=True); effect()
         if g.over: return
@@ -357,6 +367,10 @@ def _alania(g, src, caster, c):
     for _ in range(alania_triggers(p)):
         opps = g.opps(p)
         if not opps or g.over: return
+        if hc is None and alania_pick(g, p, c, opps) is None: return
+        if not trigger_window(g, p, src, f'copy {c.name}'): continue
+        opps = g.opps(p)
+        if not opps: return
         q = hc.alania(g, p, c, opps) if hc is not None else alania_pick(g, p, c, opps)
         if q is None:
             if hc is None: return                                     # the AI's answer is the same for each trigger
@@ -455,6 +469,8 @@ for _n in PREPARED: on(_n, 'options')(_prepared_opt)
 def _ideation_attack(g, src, p, atk, d):
     """whenever it attacks: exile eight cards from your graveyard to prepare it again"""
     if src.owner is not p or src not in atk or (src.data and src.data.get('prepared')) or len(p.gy) < 8: return
+    if not trigger_window(g, p, src, 'exile eight cards to prepare it'): return
+    if len(p.gy) < 8: return
     ex = sorted(p.gy, key=lambda c: (c.instant or c.sorcery, card_worth(g, p, c, in_gy=True)))[:8]
     if _you(g, p):
         ex = _you(g, p).pick_exile(g, p, p.gy, 8, 'Emeritus of Ideation attacks: exile eight cards from your graveyard '
@@ -833,19 +849,20 @@ def kindred_enter(g, p, m):
 
 @on('Kindred Discovery', 'etb')
 def _kindred_etb(g, src, p, m):
-    if m is not src and m.owner is src.owner and m.creature and orcish(m): draw(g, src.owner, 1)
+    if m is not src and m.owner is src.owner and m.creature and orcish(m) and trigger_window(g, src.owner, src, 'draw a card'):
+        draw(g, src.owner, 1)
 
 
 @on('Kindred Discovery', 'attack')
 def _kindred_attack(g, src, p, atk, d):
     if p is src.owner:
         n = sum(1 for m in atk if orcish(m))
-        if n: draw(g, p, n)
+        if n and trigger_window(g, p, src, f'draw {n}'): draw(g, p, n)
 
 
 @on('Reconnaissance Mission', 'combat_damage')
 def _recon(g, src, p, a, d, dmg):
-    if p is src.owner: draw(g, p, 1)
+    if p is src.owner and trigger_window(g, p, src, 'draw a card'): draw(g, p, 1)
 
 
 @on('Reconnaissance Mission', 'hand_options')
@@ -870,14 +887,16 @@ def modified(g, m):
 
 @on('Iron Man, Armored Avenger', 'attack')
 def _ironman(g, src, p, atk, d):
-    if src.owner is p and src in atk:
+    if src.owner is p and src in atk and any(m is not src and modified(g, m) for m in atk) \
+            and trigger_window(g, p, src, 'modified attackers gain flying'):
         for m in atk:
             if m is not src and modified(g, m): g.eot_kw.setdefault(id(m), set()).add('flying')
 
 
 @on('War Machine, Avenging Arsenal', 'attack')
 def _warmachine(g, src, p, atk, d):
-    if src.owner is p and src in atk:
+    if src.owner is p and src in atk and any(modified(g, m) for m in atk) \
+            and trigger_window(g, p, src, 'modified attackers gain double strike'):
         for m in atk:
             if modified(g, m): g.eot_kw.setdefault(id(m), set()).add('double strike')
 full('Iron Man, Armored Avenger', 'flying; a +1/+1 counter on the Army per card you draw; attacking gives your other '
@@ -907,6 +926,8 @@ full('Kaervek the Merciless', 'each opponent spell: damage equal to its mana val
 def _vision(g, src, caster, c):
     """a spell cast outside its caster's turn: phase out if the spell threatens Vision, else a +1/+1 counter"""
     if g.active is caster or src.phased or src not in src.owner.perms: return
+    if not trigger_window(g, src.owner, src, 'phase out, or a +1/+1 counter'): return
+    if src not in src.owner.perms: return
     cc = getattr(g, 'cur_cast', None)
     ctx = cc[1] if cc is not None and cc[0] is c else {}
     if caster is not src.owner and (ctx.get('target') is src or 'wipe' in c.tags): src.phased = True
@@ -921,6 +942,7 @@ def _witch(g, src, p, a, d, dmg):
     """combat damage to a player: exile the top two face down, then cast a Hero or noncreature spell from among the
     cards exiled with her, free"""
     if a is not src: return
+    if not trigger_window(g, p, src, 'exile the top two, cast one free'): return
     top = [p.library.pop() for _ in range(min(2, len(p.library)))]
     src.data = dict(src.data or {}); src.data.setdefault('witch', []).extend(top)
     p.exile.extend(top)
@@ -1144,10 +1166,10 @@ def _urabrask(g, src, p):
     """your upkeep: exile the top card, you may play it this turn; each opponent's upkeep: their next draw this turn is
     exiled instead, playable this turn (engine.draw)"""
     if p is src.owner:
-        if p.library:
+        if p.library and trigger_window(g, p, src, 'exile the top card, playable this turn') and p.library:
             c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
             log(f'    Urabrask exiles {c.name} (playable this turn)', g)
-    elif p.alive:
+    elif p.alive and trigger_window(g, src.owner, src, f"{NAME(p)}'s next draw is exiled"):
         p.urabrask = turn_stamp(g)
 
 
@@ -1180,12 +1202,12 @@ def _kefka_wheel(g, src, p):
 
 @on(KEFKA, 'etb')
 def _kefka_etb(g, src, p, m):
-    if m is src: _kefka_wheel(g, src, p)
+    if m is src and trigger_window(g, src.owner, src, 'each opponent discards'): _kefka_wheel(g, src, p)
 
 
 @on(KEFKA, 'attack')
 def _kefka_attack(g, src, p, atk, d):
-    if src in atk and not (src.data or {}).get('ruin'): _kefka_wheel(g, src, p)
+    if src in atk and not (src.data or {}).get('ruin') and trigger_window(g, p, src, 'each opponent discards'): _kefka_wheel(g, src, p)
 
 
 @on(KEFKA, 'options')
@@ -1217,7 +1239,8 @@ def _kefka_ruin(g, src, p, s, post):
 def _kefka_ruin_draw(g, src, q, n):
     """Kefka, Ruler of Ruin: whenever an opponent loses life during your turn, you draw that many cards"""
     p = src.owner
-    if (src.data or {}).get('ruin') and q is not p and g.active is p and n > 0 and p.alive:
+    if (src.data or {}).get('ruin') and q is not p and g.active is p and n > 0 and p.alive \
+            and trigger_window(g, p, src, f'draw {n}'):
         draw(g, p, n)                                             # not optional, even if it decks you
 
 
