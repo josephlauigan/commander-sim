@@ -288,6 +288,13 @@ def target_opponent(g, p, source):
     return opps[k]
 
 
+def alania(g, p, c, opps):
+    """Alania, Divergent Storm: copy spell c by having a target opponent draw a card? That opponent, or None"""
+    k = choose(g, p, 'target', f'Alania: have an opponent draw a card to copy {c.name}?',
+               [legal.describe_target(g, p, q) for q in opps], cancel='no copy')
+    return None if k is None else opps[k]
+
+
 # ------------------------------------------------------------------ copies of spells
 def copy_targets(g, p, c, ctx):
     """a copy of spell c (Thousand-Year Storm, Jin-Gitaxias, Ral, Return the Favor, Mizzix's Mastery): you may choose

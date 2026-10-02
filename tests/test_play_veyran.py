@@ -1,6 +1,6 @@
 """Practice mode, Veyran's spells: the choices the card code makes for the AI are yours as they resolve (Crackle
 with Power's X and targets, Mizzix's Mastery, Flashback, Jeska's Will, Expressive Iteration, Flow State, Stock Up,
-Prismari Charm) and copies of your spells take new targets."""
+Prismari Charm) and copies of your spells take new targets; Alania, Divergent Storm's copies (the AI's and yours)."""
 import unittest
 from tests.table import table, hand, perm
 from commander_sim import engine as E
@@ -93,6 +93,60 @@ class Spells(unittest.TestCase):
         perm(g, v, 'Thousand-Year Storm'); hand(v, 'Quick Study', 'Lightning Bolt'); pool(v, U=1, C=2, R=1)
         main(g, v, {'do': 'cast', 'card': 0}, {'do': 'cast', 'card': 0}, by_text('Sephiroth'), by_text('Sauron'))
         self.assertEqual((s.life, o.life), (37, 37))
+
+
+
+class Alania(unittest.TestCase):
+    """Alania, Divergent Storm: your first instant and first sorcery each turn, for an opponent's card per copy"""
+    def bolt(self, g, v, target):
+        E.cast_card(g, v, hand(v, 'Lightning Bolt'), 'hand', {'target': None, 'face': target})
+
+    def test_the_first_instant_is_copied_once(self):
+        g = table('veyran', 'seph', 'sauron'); v, s, o = g.players
+        perm(g, v, 'Alania, Divergent Storm')
+        before = len(s.hand) + len(o.hand)
+        self.bolt(g, v, s)
+        self.assertEqual(len(s.hand) + len(o.hand), before + 1)           # one opponent drew for the copy
+        self.assertEqual(s.life + o.life, 80 - 6)                          # the Bolt and its copy
+        E.cast_card(g, v, hand(v, 'Burst Lightning'), 'hand', {'face': s})   # not the first instant: no copy
+        self.assertEqual(len(s.hand) + len(o.hand), before + 1)
+
+    def test_veyran_and_harmonic_prodigy_each_add_a_copy(self):
+        g = table('veyran', 'seph', 'sauron'); v, s, o = g.players
+        for n in ('Alania, Divergent Storm', 'Veyran, Voice of Duality', 'Harmonic Prodigy'): perm(g, v, n)
+        before = len(s.hand) + len(o.hand)
+        self.bolt(g, v, s)
+        self.assertEqual(len(s.hand) + len(o.hand), before + 3)
+
+    def test_the_first_sorcery_too_and_not_a_counterspell(self):
+        g = table('veyran', 'seph', 'sauron'); v, s, o = g.players
+        perm(g, v, 'Alania, Divergent Storm')
+        before = len(s.hand) + len(o.hand)
+        E.cast_card(g, v, hand(v, 'Stock Up'), 'hand')
+        self.assertEqual(len(s.hand) + len(o.hand), before + 1)
+        c = hand(v, 'Counterspell')
+        g.log = []
+        E.on_cast(g, v, c)                                                 # the first instant: a counterspell
+        self.assertFalse(any('Alania' in x for x in g.log))
+
+    def test_a_spell_before_alania_counts(self):
+        g = table('veyran', 'seph', 'sauron'); v, s, o = g.players
+        self.bolt(g, v, s)
+        perm(g, v, 'Alania, Divergent Storm')
+        before = len(s.hand) + len(o.hand)
+        E.cast_card(g, v, hand(v, 'Burst Lightning'), 'hand', {'face': s})
+        self.assertEqual(len(s.hand) + len(o.hand), before)
+
+    def test_you_choose_who_draws_or_no_copy(self):
+        g = table('veyran', 'seph', 'sauron'); v, s, o = g.players
+        for n in ('Alania, Divergent Storm', 'Veyran, Voice of Duality'): perm(g, v, n)
+        hand(v, 'Lightning Bolt'); pool(v, R=1)
+        ns, no = len(s.hand), len(o.hand)
+        main(g, v, {'do': 'cast', 'card': 0}, by_text('Sephiroth'),       # the Bolt's target
+             by_text('Sauron'), by_text('Sephiroth'),                     # first trigger: Sauron draws; the copy hits Sephiroth
+             'cancel')                                                    # second trigger: no copy
+        self.assertEqual((len(s.hand), len(o.hand)), (ns, no + 1))
+        self.assertEqual(s.life, 40 - 6)
 
 
 if __name__ == '__main__':

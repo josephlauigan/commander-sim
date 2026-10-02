@@ -270,6 +270,48 @@ full('Thousand-Year Storm', 'each instant/sorcery you cast (or cast as a copy) i
      'before it this turn, twice with Veyran; copies pick new targets and keep X')
 
 
+# ------------------------------------------------------------------ Alania, Divergent Storm
+def alania_triggers(p):
+    """Alania triggers once, +1 with Veyran (a cast instant or sorcery), +1 more with Harmonic Prodigy (a Wizard)"""
+    return 1 + (1 if has(p, 'veyran') else 0) + (1 if has(p, 'prodigy') else 0)
+
+
+def alania_pick(g, p, c, opps):
+    """the AI: which opponent draws the card for a copy of c, or None to decline. A copied counterspell does nothing
+    here, so it isn't worth a card; otherwise the least threatening opponent gets it"""
+    if 'ctr' in c.tags: return None
+    return min(opps, key=lambda q: threat(g, p, q))
+
+
+@on('Alania, Divergent Storm', 'cast')
+def _alania(g, src, caster, c):
+    """your first instant and your first sorcery each turn (any turn): for each trigger, you may have target opponent
+    draw a card; if you do, copy the spell (new targets, X kept). The 'first this turn' check counts spells cast before
+    Alania was out too"""
+    p = src.owner
+    if caster is not p or not (c.instant or c.sorcery) or src.phased or src not in p.perms: return
+    if casts_this_turn(g, p, (lambda x: x.instant) if c.instant else (lambda x: x.sorcery)) != 1: return
+    cc = getattr(g, 'cur_cast', None)
+    ctx = cc[1] if cc is not None and cc[0] is c else None           # X is copied (Crackle with Power)
+    hc = E.human_choice(g, p)
+    for _ in range(alania_triggers(p)):
+        opps = g.opps(p)
+        if not opps or g.over: return
+        q = hc.alania(g, p, c, opps) if hc is not None else alania_pick(g, p, c, opps)
+        if q is None:
+            if hc is None: return                                     # the AI's answer is the same for each trigger
+            continue
+        draw(g, q, 1)
+        log(f'    Alania: {NAME(q)} draws a card, {NAME(p)} copies {c.name}', g)
+        copy_spell(g, p, c, ctx)
+
+
+card('Alania, Divergent Storm', 'pow=3 tgh=5 leg noatk wizard alania', types='C', dsl=[])
+full('Alania, Divergent Storm', 'your first instant and first sorcery each turn: for each trigger (Veyran and Harmonic '
+     'Prodigy add one each) you may have the least threatening opponent draw a card to copy the spell (not a '
+     'counterspell); copies pick new targets and keep X. The Otter clause is not modeled (no Otters in your decks)')
+
+
 # ------------------------------------------------------------------ Ral, Storm Conduit: loyalty abilities
 @on('Ral, Storm Conduit', 'options')
 def _ral(g, src, p, s, post):

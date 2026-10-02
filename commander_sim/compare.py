@@ -30,10 +30,13 @@ def parse_swaps(raw):
         if '=>' not in s: sys.exit(f"swap must look like 'Out Card=>In Card': {s}")
         a, b = [x.strip() for x in s.split('=>', 1)]
         swaps.append((a, b))
-    from commander_sim.cards import sources as cards
+    from commander_sim.cards import sources as cards, cardimpl, pool_cards
+    cardimpl.load()
     added, missing = cards.ensure_cards([b for _, b in swaps])
     if missing:
         sys.exit('Not found on Scryfall (check the spelling): ' + ', '.join(missing))
+    coded = {b for _, b in swaps if b in pool_cards.CARDS}
+    if coded: pool_cards.apply(names=coded)      # cards with hand-written code: listed as the games will play them
     auto = [DB[b] for _, b in swaps if DB[b].source != 'manual']
     return swaps, auto
 
