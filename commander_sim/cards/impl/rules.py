@@ -334,6 +334,7 @@ full('Boros Charm', 'permanents indestructible in response to removal and wipes,
 def ability_locked(g, src, p):
     """can src's activated abilities be used right now? (Collector Ouphe / Karn: artifacts; Cursed Totem: creatures;
     Grand Abolisher: nothing of yours during its controller's turn)"""
+    if getattr(g, 'auras', None) and E.CI.locked(g, src, 'noact'): return True      # Arrest, Encrust
     if not g.hooks or src.cd is None and not src.creature: return False
     art = (src.cd is not None and 'A' in src.cd.types) or (src.token and 'artifact' in src.ttypes)
     for q in g.players:

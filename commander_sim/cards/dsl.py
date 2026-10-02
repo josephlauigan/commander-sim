@@ -93,6 +93,8 @@ def matches(g, p, m, f, src=None):
         st = f['subtype']
         if st == 'warrior':
             if not m.warrior and not E.has_type(m, 'warrior'): return False
+        elif st == 'commander':                               # "commander creatures you control" (Bastion Protector)
+            if not m.is_cmd: return False
         elif not E.has_type(m, st): return False
     return True
 
@@ -574,6 +576,7 @@ def pt(g, m):
 
 def has_kw(g, m, kw):
     if kw in getattr(g, 'eot_kw', {}).get(id(m), ()): return True
+    if m.cd is None and m.data and kw in m.data.get('kws', ()): return True      # a token made with keywords (Samurai)
     if m.cd is not None and kw in m.cd.kws and not m.neutered: return True
     if getattr(g, 'auras', None) and E.CI.attached_kw(g, m, kw): return True
     if g.hooks and E.CI.granted_kw(g, m, kw): return True

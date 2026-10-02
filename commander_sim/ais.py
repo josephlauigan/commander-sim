@@ -128,6 +128,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
                     owner.hand.remove(nw[0]); owner.gy.append(nw[0]); return True
     elif owner.key == 'marchesa':
         if E.CI.marchesa_protect(g, owner, m, kind, actor, spell): return True
+    elif owner.key == 'zur':
+        if E.CI.zur_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'najeela':
         if v >= 5 and not m.token and m.creature:
             for c in owner.hand:
@@ -148,6 +150,7 @@ def wipe_response(g, q, kind, caster):
         from commander_sim.ai import pool_ai
         return pool_ai.wipe_response(g, q, kind, caster)
     if q.key == 'marchesa': E.CI.marchesa_wipe_response(g, q, kind)       # countered creatures go to Marchesa first
+    if q.key == 'zur': return E.CI.zur_wipe_response(g, q, kind)
     loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
     if loss < 6: return None
     if q.key == 'seph':
@@ -1142,6 +1145,21 @@ def marchesa_main(g, p, post):
         break
 
 
+# ======================================================== zur
+def zur_prio(g, p, c):
+    return E.CI.zur_prio(g, p, c)
+
+
+def zur_main(g, p, post):
+    for _ in range(16):
+        if g.over or not p.alive: return
+        if use_removal(g, p, 6): continue
+        if consider_wipe(g, p): continue
+        res = interaction_reserve(g, p, lambda c: 'ctr' in c.tags) if p.turns >= 4 else (0, '')
+        if generic_cast(g, p, zur_prio, res): continue
+        break
+
+
 # ======================================================== najeela
 def najeela_prio(g, p, c):
     t = c.tags
@@ -1269,7 +1287,7 @@ def tutor_pick(g, p, kind):
 
 # ======================================================== Game Changer plays (Veyran's candidate cards)
 def deck_prio(g, p, c):
-    f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'marchesa': marchesa_prio,
+    f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'marchesa': marchesa_prio, 'zur': zur_prio,
          'najeela': najeela_prio}.get(p.key)
     if f is None:
         from commander_sim.ai import pool_ai; f = pool_ai.generic_prio
@@ -1539,6 +1557,7 @@ def choose_defender(g, p):
 
 def can_block(g, b, a):
     if b.cd is not None and 'noblock' in b.cd.tags: return False
+    if getattr(g, 'auras', None) and E.CI.locked(g, b, 'pacify'): return False     # Arrest, Luminous Bonds
     if ((a.cd is not None and 'unblockable_shadow' in a.cd.kws) or
                          (b.cd is not None and 'unblockable_shadow' in b.cd.kws)): return False      # shadow
     if E.DSLMOD is not None and g.dsl_on:
@@ -1805,8 +1824,10 @@ def walker_attacks(g, p, atk, d, assign):
     for w in sorted(ws, key=lambda m: (-impl_common.ult_pressure(m), -pval(g, m))):
         if pval(g, w) < 4 and impl_common.ult_pressure(w) < 0.6: continue
         need = w.loyalty
-        for a in [a for a in free if a not in out]:
-            if need <= 0: break
+        cap = 1 if w.cd.name == 'The Eternal Wanderer' else 99      # no more than one creature can attack it
+        for a in [a for a in free if a not in out][::-1] if cap == 1 else [a for a in free if a not in out]:
+            if need <= 0 or cap <= 0: break
+            cap -= 1
             out[a] = w; need -= epow(g, a) * (2 if double_strike(p, a) else 1)
     return out
 
@@ -1845,6 +1866,7 @@ def combat(g, p):
             atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
                    and (not m.sick or p.haste_all or has_haste(g, m))
                    and (not m.noatk or (epow(g, m) >= 3)) and epow(g, m) > 0]    # pumped mana dorks attack
+            if getattr(g, 'auras', None): atk = [m for m in atk if not E.CI.locked(g, m, 'pacify')]   # Arrest
             if chasm(p): atk = []                    # Glacial Chasm: creatures you control can't attack
             if not atk: break
             plan = None                                   # look-ahead: (defender index, 'filtered' / 'all' / 'none')
@@ -1886,7 +1908,14 @@ def combat(g, p):
         if E.CI is not None:
             for c, fn in E.CI.hand_cards(p, 'hand_attack'): fn(g, c, p, atk, d)
         if g.over or not d.alive: continue
-        conn = resolve_combat(g, p, atk, d, unbl)
+        g.in_combat = set(atk)                            # attacking creatures (Divine Verdict's targets)
+        try:
+            if E.CI is not None and any('verdict' in c.tags for c in d.hand):
+                E.CI.verdict_response(g, d, p, atk)
+                atk = [m for m in atk if m in p.perms]
+            conn = resolve_combat(g, p, atk, d, unbl)
+        finally:
+            g.in_combat = ()
         if g.over or not p.alive: return
         if (p.key == 'najeela' and has(p, 'najeela') and ncomb <= 2 and can_pay(g, p, 0, 'WUBRG')
                 and not blocked(g, p, 'Najeela, the Blade-Blossom')):
@@ -2212,6 +2241,7 @@ def yawg_cleanup(g, p):
 
 def end_step(g, p):
     if getattr(g, 'marchesa_due', None): E.CI.marchesa_return(g)        # Marchesa: 'at the beginning of the next end step'
+    if getattr(g, 'zur_due', None): E.CI.zur_end_step(g, p)               # The Eternal Wanderer, Gift of Immortality
     if getattr(p, 'yawg', False): yawg_cleanup(g, p)
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
     for m in getattr(p, 'borrowed', None) or []:          # Zealous Conscripts: control returns
@@ -2271,7 +2301,7 @@ def generic_main(g, p, post):
         break
 
 
-MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'marchesa': marchesa_main,
+MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'marchesa': marchesa_main, 'zur': zur_main,
         'najeela': najeela_main}
 
 
@@ -2311,7 +2341,8 @@ def _step_start(g, p):
     for q in g.players: q.floatU = 0; q.floatC = 0
     for m in list(p.perms):
         if m.data and m.data.get('frozen'): m.data['frozen'] -= 1; continue   # Frost Titan, Tamiyo
-        if not (m.cd is not None and 'nountap' in m.cd.tags): m.tapped = False   # Grim Monolith, Mana Vault
+        if not (m.cd is not None and 'nountap' in m.cd.tags) and not (getattr(g, 'auras', None) and E.CI.locked(g, m, 'frozen')):
+            m.tapped = False                              # Grim Monolith, Mana Vault; Encrust
         m.sick = False; m.phased = False; m.age += 1
     p.spells_this_turn = 0; p.yawg = False
     p.pump = 0; p.pumpadd = 0; p.trample = False; p.combo_tried = False
@@ -2399,7 +2430,8 @@ def mulligan(g, p, rng=None):
 
 
 CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
-        'sauron': 'Sauron, the Dark Lord', 'marchesa': 'Marchesa, the Black Rose', 'najeela': 'Najeela, the Blade-Blossom'}
+        'sauron': 'Sauron, the Dark Lord', 'marchesa': 'Marchesa, the Black Rose', 'zur': 'Zur the Enchanter',
+        'najeela': 'Najeela, the Blade-Blossom'}
 
 
 STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)

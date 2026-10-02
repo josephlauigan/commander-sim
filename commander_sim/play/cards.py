@@ -635,6 +635,10 @@ HAND = {
     'Disintegrate': lambda g, p, c: [('X damage to any target', _disintegrate)],
     'Disembowel': lambda g, p, c: [('destroy target creature with mana value X', _disembowel)],
     'Lethal Throwdown': lambda g, p, c: [('sacrifice a creature: destroy target creature or planeswalker', _throwdown)],
+    'Clever Concealment': lambda g, p, c: [('phase out any number of your nonland permanents (convoke)', lambda g, p, c: _concealment(g, p, c))],
+    'Rootborn Defenses': lambda g, p, c: [('populate; your creatures gain indestructible until end of turn', lambda g, p, c: _rootborn(g, p, c))],
+    'Momentary Blink': lambda g, p, c: [('exile a creature you control, then return it', lambda g, p, c: _momentary(g, p, c))],
+    'Triplicate Spirits': lambda g, p, c: [('three 1/1 white flying Spirits (convoke)', lambda g, p, c: _triplicate(g, p, c))],
 }
 
 
@@ -668,6 +672,215 @@ def cast_from_hand(g, p, c):
         if k is None: return None
     return ways[k][1](g, p, c)
 
+
+# ------------------------------------------------------------------ Zur the Enchanter's deck
+def _zur():
+    return importlib.import_module('commander_sim.cards.impl.zur')
+
+
+def convoke_pay(g, p, c, gen, pips):
+    """convoke: tap your creatures to help pay (each pays {1} or one coloured pip of its colour), the rest from your
+    pool. None once paid, or why not (nothing is tapped or spent then)"""
+    tapped = []
+    while gen or pips:
+        left = [m for m in p.perms if m.creature and not m.tapped and not m.phased and m not in tapped]
+        if not left: break
+        k = _choose(g, p, 'choose', f'{c.name} (convoke): tap a creature to help pay? Still to pay: {mana.cost_text(gen, pips)}',
+                    [legal.describe_target(g, p, m) for m in left], cancel='pay the rest with mana')
+        if k is None: break
+        m = left[k]
+        col = next((x for x in pips if x in E.colors_of(m)), None)
+        if col: pips = pips.replace(col, '', 1)
+        elif gen: gen -= 1
+        else: continue
+        tapped.append(m)
+    why = mana.cost_problem(g, p, gen, pips)
+    if why: return f"Can't cast {c.name}. {why}"
+    for m in tapped: m.tapped = True
+    mana.pay_from_pool(g, p, gen, pips)
+    if tapped: E.log(f'  {E.NAME(p)} taps {", ".join(m.name for m in tapped)} to convoke {c.name}', g)
+    return None
+
+
+def _timing(g, p, c):
+    if E.silenced(g, p): return "You can't cast spells during this player's turn (Conqueror's Flail)."
+    if not legal.instant_speed(c):
+        why = legal.sorcery_timing(g, p)
+        if why: return why.replace('do that', f'cast {c.name}')
+    return None
+
+
+def _concealment(g, p, c):
+    why = _timing(g, p, c)
+    if why: return why
+    picked = []
+    while True:
+        left = [m for m in p.perms if not m.phased and m not in picked and m.attached is None]
+        if not left: break
+        k = _choose(g, p, 'target', f'Clever Concealment: phase out which of your permanents? ({len(picked)} so far)',
+                    [legal.describe_target(g, p, m) for m in left], cancel='done' if picked else 'cancel')
+        if k is None: break
+        picked.append(left[k])
+    if not picked: return None
+    why = convoke_pay(g, p, c, 2, 'WW')
+    if why: return why
+    if not _spell_cast(g, p, c, 4, f'Clever Concealment on {", ".join(m.name for m in picked)}'):
+        p.gy.append(c); return None
+    for m in picked:
+        if m in p.perms:
+            m.phased = True
+            for x in p.perms + [y for q in g.players for y in q.perms]:
+                if x.attached is m: x.phased = True              # what's attached phases out with it
+    p.gy.append(c)
+    E.log(f'    {", ".join(m.name for m in picked)} phase out', g)
+    return None
+
+
+def _rootborn(g, p, c):
+    why = _timing(g, p, c) or mana.cost_problem(g, p, 2, 'W')
+    if why: return why if why.startswith(('You', 'Cast', 'It')) and 'costs' not in why else f"Can't cast {c.name}. {why}"
+    mana.pay_from_pool(g, p, 2, 'W')
+    if not _spell_cast(g, p, c, 3): p.gy.append(c); return None
+    _zur().rootborn(g, p)
+    p.gy.append(c)
+    return None
+
+
+def _momentary(g, p, c, zone='hand'):
+    gen, pips = (1, 'W') if zone == 'hand' else (3, 'U')
+    why = _timing(g, p, c)
+    if why: return why
+    cre = [m for m in p.perms if m.creature and not m.phased]
+    if not cre: return 'Momentary Blink needs a creature you control to target.'
+    k = _choose(g, p, 'target', 'Momentary Blink: exile and return which creature you control?',
+                [legal.describe_target(g, p, m) for m in cre])
+    if k is None: return None
+    why = mana.cost_problem(g, p, gen, pips)
+    if why: return f"Can't cast Momentary Blink{' (flashback)' if zone == 'gy' else ''}. {why}"
+    mana.pay_from_pool(g, p, gen, pips)
+    m = cre[k]
+    if zone == 'hand':
+        if not _spell_cast(g, p, c, 3, f'Momentary Blink on {m.name}'): p.gy.append(c); return None
+        p.gy.append(c)
+    else:
+        p.gy.remove(c)
+        p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+        E.log(f'  {E.NAME(p)} casts Momentary Blink (flashback) on {m.name}', g)
+        E.on_cast(g, p, c)
+        ok = not g.over and E.counter_window(g, p, c, 3, {})
+        p.exile.append(c)
+        if not ok: return None
+    if m in p.perms: _blink(g, p, m)
+    return None
+
+
+def _triplicate(g, p, c):
+    why = _timing(g, p, c)
+    if why: return why
+    why = convoke_pay(g, p, c, 4, 'WW')
+    if why: return why
+    if not _spell_cast(g, p, c, 3): p.gy.append(c); return None
+    E.make_tokens(g, p, 3, 1, fly=True, color='W', types=('spirit',))
+    p.gy.append(c)
+    return None
+
+
+def _embrace_gy(g, p, c):
+    """Demonic Embrace from your graveyard: its cost, 3 life and a discard"""
+    why = legal.sorcery_timing(g, p)
+    if why: return why.replace('do that', 'cast Demonic Embrace')
+    others = list(p.hand)
+    if not others: return 'Demonic Embrace from your graveyard needs a card in hand to discard.'
+    cre = [m for q in g.players if q.alive for m in q.perms
+           if m.creature and not m.phased and not (m.owner is not p and E.untargetable(g, m))
+           and not _zur().untargetable_by_you(g, m) and not E.protected_from(g, m, 'B')]
+    if not cre: return 'Demonic Embrace has no creature to enchant.'
+    k = _choose(g, p, 'target', 'Demonic Embrace: enchant which creature?', [legal.describe_target(g, p, m) for m in cre])
+    if k is None: return None
+    j = _choose(g, p, 'choose', 'Demonic Embrace: discard which card?', [x.name for x in others])
+    if j is None: return None
+    why = mana.cost_problem(g, p, 1, 'BB')
+    if why: return f"Can't cast Demonic Embrace. {why}"
+    mana.pay_from_pool(g, p, 1, 'BB')
+    E.lose_life(g, p, 3, p); E.discard_cards(g, p, [others[j]])
+    p.gy.remove(c)
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+    E.log(f'  {E.NAME(p)} casts Demonic Embrace from the graveyard (3 life, discards {others[j].name})', g)
+    E.on_cast(g, p, c)
+    if g.over or not E.counter_window(g, p, c, 3, {}): return None
+    host = cre[k]
+    g.attach_to = host if host in host.owner.perms else None
+    try:
+        E.enter(g, p, c, was_cast=True)
+    finally:
+        g.attach_to = None
+    E.check_state(g)
+    return None
+
+
+GY = {'Momentary Blink': lambda g, p, c: _momentary(g, p, c, 'gy'), 'Demonic Embrace': _embrace_gy}
+
+
+def _guildmage_tap(g, p, m):
+    why = _cost(g, p, 2, 'W', 'Azorius Guildmage')
+    if why: return why
+    cre = [x for q in g.players if q.alive for x in q.perms if x.creature and not x.phased
+           and not (x.owner is not p and E.untargetable(g, x))]
+    if not cre: return 'There is no creature to tap.'
+    k = _choose(g, p, 'target', 'Azorius Guildmage: tap which creature?', [legal.describe_target(g, p, x) for x in cre])
+    if k is None: return None
+    mana.pay_from_pool(g, p, 2, 'W')
+    cre[k].tapped = True
+    E.log(f'  {E.NAME(p)} activates Azorius Guildmage: taps {cre[k].name}', g)
+    return None
+
+
+def _officer(g, p, m):
+    why = _cost(g, p, 3, 'W', 'Recruitment Officer')
+    if why: return why
+    mana.pay_from_pool(g, p, 3, 'W')
+    _zur().officer_dig(g, p)
+    return None
+
+
+def _wanderer_plus(g, p, m):
+    cands = [x for q in g.players if q.alive for x in q.perms if not x.phased and (x.creature or (x.cd is not None and 'A' in x.cd.types))
+             and not (x.owner is not p and E.untargetable(g, x))]
+    k = _choose(g, p, 'target', 'The Eternal Wanderer +1: exile which artifact or creature until its owner\'s next end step?',
+                [legal.describe_target(g, p, x) for x in cands], cancel='no target') if cands else None
+    if k is None: return lambda: None
+    t = cands[k]
+    return lambda: _zur().wanderer_exile(g, p, t) if t in t.owner.perms else None
+
+
+def _wanderer_zero(g, p, m):
+    def go():
+        for x in E.make_tokens(g, p, 1, 2, color='W', types=('samurai',)): x.data = dict(x.data or {}, kws=('double strike',))
+    return go
+
+
+def _wanderer_minus4(g, p, m):
+    mine = [x for x in p.perms if x.creature and not x.phased]
+    keep = None
+    if mine:
+        k = _choose(g, p, 'choose', 'The Eternal Wanderer -4: which of your creatures do you keep? (the rest are sacrificed)',
+                    [legal.describe_target(g, p, x) for x in mine], cancel=None)
+        keep = mine[k]
+
+    def go():
+        for q in g.players:
+            if not q.alive: continue
+            k2 = keep if q is p else _zur().keep_one(g, q, p)
+            for x in [x for x in q.perms if x.creature and not x.phased and x is not k2]: E.die(g, x, 'sac')
+    return go
+
+
+
+ABILITIES['Azorius Guildmage'] = lambda g, p, m: [('{2}{W}: tap target creature', _guildmage_tap)]
+ABILITIES['Recruitment Officer'] = lambda g, p, m: [('{3}{W}: look at the top four, take a creature card with mana value 3 or less', _officer)]
+ABILITIES['The Eternal Wanderer'] = _walker([(1, "exile up to one target artifact or creature until its owner's next end step", _wanderer_plus),
+                                             (0, 'create a 2/2 white Samurai with double strike', _wanderer_zero),
+                                             (-4, 'each player keeps one creature and sacrifices the rest', _wanderer_minus4)])
 
 # ------------------------------------------------------------------ copying a spell: Return the Favor, Dualcaster Mage
 def copy_card(c):

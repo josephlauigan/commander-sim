@@ -104,6 +104,8 @@ def apply(g, p, act):
         if c is None: return 'There is no such card in your graveyard.'
         why = legal.check_cast_gy(g, p, c)
         if why: return why
+        from commander_sim.play import cards
+        if c.name in cards.GY: return cards.GY[c.name](g, p, c)          # Momentary Blink's flashback, Demonic Embrace
         return cast(g, p, c, 'gy')
     if do == 'land':
         c = _hand_card(p, act)

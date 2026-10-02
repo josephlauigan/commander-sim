@@ -13,7 +13,7 @@ from commander_sim import engine, ais
 from commander_sim.engine import DB
 from commander_sim.decks import DECKS
 
-KEYS = ('seph', 'veyran', 'sauron', 'marchesa')
+KEYS = ('seph', 'veyran', 'sauron', 'marchesa', 'zur')
 
 
 def apply_swaps(deck, swaps):
@@ -88,6 +88,7 @@ METRICS = [
 ]
 PLAN = {'seph': 'first 6+ power bomb on the battlefield', 'veyran': 'Veyran + a magecraft payoff on the battlefield',
         'sauron': 'Sword + Assault combo attempted', 'marchesa': 'first creature returned by Marchesa',
+        'zur': 'first enchantment fetched by Zur',
         'najeela': 'first WUBRG extra combat'}
 AXIS_NOTE = {
     'Outcome': 'the bottom line; everything else explains why it moved.',
@@ -105,6 +106,7 @@ def plan_turn(me, deck):
     if deck == 'veyran': return me.milestone.get('engine')
     if deck == 'najeela': return me.milestone.get('act')
     if deck == 'marchesa': return me.milestone.get('recur')
+    if deck == 'zur': return me.milestone.get('zurfetch')
     return me.milestone.get('combo')
 
 

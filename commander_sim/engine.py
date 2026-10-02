@@ -29,7 +29,7 @@ def _next_hid(obj):
     return g.hid_no
 from commander_sim.cards.carddb import DB_TEXT
 
-IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'najeela': 'WUBRG'}
+IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'najeela': 'WUBRG'}
 # Outside decks (opponent pools) register here: key -> {'ident': 'WU', 'name': 'Brago'}. The four main decks
 # keep their hard-wired entries in IDENT / NAME / the AI tables; anything else falls back to generic defaults.
 SEATS = {}
@@ -210,7 +210,7 @@ DAMAGE_HOOK = None
 
 
 def NAME(p):
-    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'najeela': 'Najeela'}.get(p.key)
+    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'najeela': 'Najeela'}.get(p.key)
     return n if n is not None else SEATS[p.key]['name']
 
 
@@ -504,8 +504,10 @@ def mana_units(g, p, convoke=False):
             if g.hooks: amt += CI.total(g, 'land_mana', p, L)
             U.append([L, land_cols(p, L, anyc), amt])
     rite = has(p, 'rite')
+    auras = getattr(g, 'auras', None) if g is not None else None
     for m in p.perms:
         if m.tapped or m.phased: continue
+        if auras and CI.locked(g, m, 'noact'): continue          # Arrest, Encrust: no mana abilities either
         if m.cd is None:
             if rite and not m.sick: U.append([m, p.ident, 1])
             elif m.data and m.data.get('manatok') and not m.sick: U.append([m, m.data['manatok'], 1])
@@ -764,7 +766,7 @@ def amass(g, p, n):
 TOKEN_CAP = 250          # creature tokens per player; beyond this the board is lethal many times over and games crawl
 
 
-TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R'}     # default colour of a deck's tokens
+TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W'}     # default colour of a deck's tokens
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
@@ -860,8 +862,8 @@ def leave(g, m):
     if m in p.perms: p.perms.remove(m)
     if g is not None: g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     if g is not None: p.left_turn = turn_stamp(g)          # revolt
+    if getattr(g, 'auras', None): CI.aura_fall(g, m)       # before detach, which would unhook your own Auras from it
     detach(m)
-    if getattr(g, 'auras', None): CI.aura_fall(g, m)
     if m.data and m.data.get('bestow'): importlib.import_module('commander_sim.cards.impl.partials').bestow_fall(g, m)
     if g.hooks and m in g.hooks:
         g.hooks.remove(m); g.hook_cache = None
@@ -964,7 +966,11 @@ def die(g, m, cause='destroy'):
         leave(g, m)
         if not m.token: to_zone_card(g, m, 'gy')
         return
-    leave(g, m)
+    prev, g.dying = getattr(g, 'dying', None), m           # Auras that care how their creature left (Gift of Immortality)
+    try:
+        leave(g, m)
+    finally:
+        g.dying = prev
     if m.creature: g.died_turn = turn_stamp(g)                           # Barad-dûr
     if getattr(g, 'marchesa_on', False) and m.creature and not m.token: CI.marchesa_dies(g, p, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
@@ -1015,6 +1021,7 @@ def _die_rest(g, m, p, cause, selfdies):
         if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter (none under Melira)
             enter(g, p, m.cd, plus=0 if melira(p) else -1); p.stats['persist'] += 1
             return
+    if getattr(g, 'gift_dying', None) and CI.gift_returns(g, m): return       # Gift of Immortality
     to_zone_card(g, m, 'gy')
     if g.hooks and m.creature: CI.fire(g, 'creature_to_gy', m)          # Nim Deathmantle
     if cause == 'sac': tergrid_steal(g, p, m.phys or m.cd, m.orig)
@@ -1072,12 +1079,14 @@ def pval(g, m):
     if 'narset' in t: v = max(v, 4)
     if 'panoptic' in t: v = max(v, 2 + 2 * len(getattr(g, 'imprint', {}).get(id(m), [])))
     if m.is_cmd: v += 1
-    if getattr(g, 'auras', None) and cd.creature: v += 1.5 * len(CI.auras_on(g, m))     # removing it takes the Auras too
+    if getattr(g, 'auras', None) and cd.creature:
+        v += 1.5 * sum(1 for a in CI.auras_on(g, m) if a.owner is p and a.cd.name not in CI.LOCKS)   # removing it takes the Auras too
     if 'P' in cd.types:
         v = max(v, 3 + 0.4 * (m.loyalty or 0) + (2 if m.is_cmd else 0) + 5.0 * min(1.2, CI.ult_pressure(m) if CI else 0))
     if CI is not None:
         v = max(v, CI.threat_value(g, m))
         if m.is_cmd: v += 1                                # commanders matter more at a real table
+        if getattr(g, 'auras', None): v *= CI.lock_factor(g, m)    # Arrest, Kasmina's Transmutation ...
     return v
 
 
@@ -1333,7 +1342,7 @@ def spell_imp(g, p, c, ctx):
             aff[q] = 0.8 * sum(pval(g, m) for m in q.perms if m.creature or t['wipe'] in ('rift', 'rebuke'))
         return 0, aff
     if 'rean_target' in ctx: return ctx['rean_value'], aff
-    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'najeela': 6}.get(p.key, CMD_IMP), aff
+    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
     if c.bomb and p.key == 'seph': return c.bomb, aff
     if 'vkitten' in t: return (9 if has(p, 'vfire') else 4), aff
     if 'vfire' in t: return (9 if has(p, 'vkitten') else 4), aff
@@ -1352,15 +1361,15 @@ def spell_imp(g, p, c, ctx):
     return 0, aff
 
 
-CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'najeela': 99}
+CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'najeela': 99}
 CMD_IMP = 6              # importance of an outside deck's commander spell (counter decisions)
 
 # Interaction profiles for the AI opponents.
 #   conservative: counter only big threats (importance >= 7), hold instant removal for emergencies
 #   loose:        counter at importance >= 6, use instant removal as freely as sorcery removal
 PROFILES = {
-    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
-    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
+    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
+    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
 }
 INSTANT_EXTRA = 2
 CTHRESH_DEFAULT = 7      # outside decks: counter threshold under the current profile
@@ -1617,7 +1626,11 @@ def resolve(g, p, c, ctx, zone):
             if not lands:
                 p.gy.append(c); log('    Mox Diamond goes to the graveyard (no land to discard)', g); return
             x = min(lands, key=lambda L: (len(L.tags.get('c', '')), -('t' in L.tags))); p.hand.remove(x); p.gy.append(x)
-        m = enter(g, p, c, was_cast=True)
+        prev, g.cast_target = getattr(g, 'cast_target', None), ctx.get('target')   # an Aura's target, chosen as cast
+        try:
+            m = enter(g, p, c, was_cast=True)
+        finally:
+            g.cast_target = prev
         if c is p.cmd: m.is_cmd = True
         if 'lr' in t: land_ramp(g, p, int(t['lr']), 'lrt' in t)
         return
@@ -2029,9 +2042,13 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             ty = cd.types if cd else 'C'
             ok = {'c': is_c, 'cp': is_c or 'P' in ty, 'cap': is_c or 'A' in ty or 'P' in ty,
                   'ce': is_c or 'E' in ty, 'nl': True, 'p': True, 'a': 'A' in ty,
-                  'cna': is_c and 'A' not in ty, 'ae': 'A' in ty or 'E' in ty, 'blue': True}.get(tgt, is_c)
+                  'cna': is_c and 'A' not in ty, 'ae': 'A' in ty or 'E' in ty, 'blue': True,
+                  'ac': is_c or 'A' in ty}.get(tgt, is_c)
             if tgt == 'blue' and not (cd is not None and 'U' in cd.pips): continue
             if spell is not None and 'nonblack' in spell.tags and 'B' in colors_of(m): continue
+            if spell is not None and 'evil' in spell.tags and not ('E' in ty or (is_c and etgh(g, m) >= 4)): continue
+            if spell is not None and 'verdict' in spell.tags and m not in getattr(g, 'in_combat', ()): continue
+            if kind in LOCK_KINDS and CI is not None and getattr(g, 'auras', None) and CI.lock_factor(g, m) < 1: continue
             if spell is not None and spell.name == 'Fatal Push' and cd is not None and cd.cmc > 2 \
                     and not importlib.import_module('commander_sim.cards.impl.rules').revolt(g, p): continue
             if spell is not None and spell.name == "Bloodchief's Thirst" and cd is not None and cd.cmc > 2 \
@@ -2098,6 +2115,7 @@ def apply_removal(g, actor, m, kind, spell=None):
     elif kind == 'bounce': bounce(g, m)
     elif kind == 'tuck': tuck(g, m)
     elif kind in ('elk', 'mutate', 'forest'): importlib.import_module('commander_sim.cards.impl.rules').transform_away(g, m, kind)
+    elif kind in LOCK_KINDS: CI.apply_lock(g, actor, m, kind)              # Arrest, Encrust ... (cards/impl/zur.py)
     if spell is not None:
         t = spell.tags
         if 'rgain' in t: gain(owner, power)                      # Swords to Plowshares
@@ -2123,7 +2141,26 @@ def sun_titan(g, p):
     else: enter(g, p, x)
 
 
+LOCK_KINDS = ('arrest', 'pacify', 'encrust', 'kasmina')       # removal kinds that are Auras locking the target down
+
+
 def etb_removal(g, p, m):
+    if m.cd.tags['rem'] not in LOCK_KINDS: return _etb_removal(g, p, m)
+    if getattr(g, 'aura_put', False): return                    # put onto the battlefield (Zur): no target; placed by Zur
+    prev, g.rem_src = getattr(g, 'rem_src', None), m
+    try:
+        tg = getattr(g, 'cast_target', None)
+        if tg is not None and tg in tg.owner.perms and not untargetable(g, tg):
+            apply_removal(g, p, tg, m.cd.tags['rem'], m.cd)        # the target chosen as it was cast
+        else:
+            _etb_removal(g, p, m)
+    finally:
+        g.rem_src = prev
+    if m in p.perms and m.attached is None:                     # nothing to enchant: the Aura goes to the graveyard
+        leave(g, m); to_zone_card(g, m, 'gy')
+
+
+def _etb_removal(g, p, m):
     t = m.cd.tags
     hc = human_choice(g, p)
     if hc is not None: return hc.etb_removal(g, p, m)
