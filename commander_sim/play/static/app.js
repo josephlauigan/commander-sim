@@ -29,8 +29,14 @@ function renderTable(view) {
 const card = (name, o = {}) => cardOf(images, name, Object.assign({ size: 'sm' }, o));
 
 // ------------------------------------------------------------------ decisions
-async function answer(value) {
+// taps you made since your last other action, most recent last: {land} / {perm} / {treasure}. A tapped land among
+// them can be untapped (Undo takes back that tap and any made after it)
+let recentTaps = [];
+
+async function answer(value, where) {
   if (!pending) return;
+  if (value && value.do === 'tap') recentTaps.push(where || {});
+  else if (pending.request.kind === 'priority') recentTaps = [];
   const id = pending.id;
   pending = null; renderPrompt(null); markChoices(null);
   const r = await api('/api/answer', { id, answer: value });
@@ -119,7 +125,7 @@ function closeMenu() { const m = $('#menu'); if (m) m.remove(); }
 function menu(e, title, items) {
   closeMenu();
   const m = el('div', { id: 'menu', role: 'menu' }, el('div', { class: 'title' }, title),
-    items.map(([label, value]) => el('button', { role: 'menuitem', onclick: () => { closeMenu(); answer(value); } }, label)));
+    items.map(([label, value, where]) => el('button', { role: 'menuitem', onclick: () => { closeMenu(); typeof value === 'function' ? value() : answer(value, where); } }, label)));
   document.body.append(m);
   const r = m.getBoundingClientRect();
   m.style.left = `${Math.min(e.clientX, window.innerWidth - r.width - 8)}px`;
@@ -129,13 +135,23 @@ function menu(e, title, items) {
 
 function act(e, title, items, otherwise) {
   if (!items.length) { toast(otherwise); return; }
-  if (items.length === 1) { answer(items[0][1]); return; }
+  if (items.length === 1) { typeof items[0][1] === 'function' ? items[0][1]() : answer(items[0][1], items[0][2]); return; }
   menu(e, title, items);
 }
 
-const tapItems = (srcs) => srcs.flatMap((x) => x.colours.length > 1
-  ? [...x.colours].map((c) => [`Tap for {${c}}`, { do: 'tap', source: x.id, colour: c }])
-  : [[`Tap for {${x.colours}}`, { do: 'tap', source: x.id }]]);
+const tapItems = (srcs, where) => srcs.flatMap((x) => x.colours.length > 1
+  ? [...x.colours].map((c) => [`Tap for {${c}}`, { do: 'tap', source: x.id, colour: c }, where])
+  : [[`Tap for {${x.colours}}`, { do: 'tap', source: x.id }, where]]);
+
+function untapItem(where) {
+  const k = recentTaps.map((w) => JSON.stringify(w)).lastIndexOf(JSON.stringify(where));
+  if (k < 0) return [];
+  const n = recentTaps.length - k;
+  return [[n === 1 ? 'Untap (take back that tap)' : `Untap (takes back your last ${n} taps)`, async () => {
+    const r = await api('/api/undo', { n });
+    if (!r.ok) toast(r.data.error); else recentTaps = recentTaps.slice(0, k);
+  }]];
+}
 
 // declaring attackers: the creatures picked so far (indices into the request's choices)
 let attackSel = new Set();
@@ -185,16 +201,18 @@ function onTableClick(e) {
   const name = t.dataset.name || '';
   if (t.dataset.land !== undefined) {
     const i = +t.dataset.land, L = me.lands[i];
-    const items = tapItems(srcs.filter((x) => x.land === i));
+    const items = tapItems(srcs.filter((x) => x.land === i), { land: i });
+    if (L.tapped && tools.undo) items.push(...untapItem({ land: i }));
     if (L.ability) items.push(['Activate an ability', { do: 'use', land: i }]);
     act(e, name, items, L.tapped ? `${name} is tapped.` : `${name} can't be tapped for mana right now.`);
   } else if (t.dataset.perm !== undefined) {
     const i = +t.dataset.perm;
-    const items = tapItems(srcs.filter((x) => x.perm === i));
+    const items = tapItems(srcs.filter((x) => x.perm === i), { perm: i });
+    if (me.battlefield.find((m) => m.i === i)?.tapped && tools.undo) items.push(...untapItem({ perm: i }));
     items.push(['Activate an ability', { do: 'use', perm: i }]);
     act(e, name, items, '');
   } else if (t.dataset.treasure !== undefined) {
-    act(e, 'Treasure', tapItems(srcs.filter((x) => x.treasure).slice(0, 1)), 'No untapped Treasure.');
+    act(e, 'Treasure', tapItems(srcs.filter((x) => x.treasure).slice(0, 1), { treasure: 1 }), 'No untapped Treasure.');
   } else if (t.dataset.hand !== undefined) {
     const i = +t.dataset.hand;
     if (!me.hand_land[i]) answer({ do: 'cast', card: i });
@@ -238,6 +256,7 @@ function onEvent(ev, draw = true) {
   if (ev.kind === 'log') logLine(ev.text, ev.text.startsWith('---') ? 'turn' : '');
   else if (ev.kind === 'invalid') { logLine('Not allowed: ' + ev.text, 'invalid'); if (ev.id > liveFrom && !ev.replay) toast(ev.text); }
   else if (ev.kind === 'reset') {           // Undo or Try it: the game is replayed from its seed up to a decision
+    if (!ev.undone) recentTaps = [];
     $('#log').replaceChildren(); logQueue = []; pending = null; renderPrompt(null); markChoices(null);
     if (ev.tryit) {
       tryBanner = ev.tryit;

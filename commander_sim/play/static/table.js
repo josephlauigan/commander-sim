@@ -33,10 +33,28 @@ function showPreview(src, name, e) {
 }
 function hidePreview() { if (preview) preview.hidden = true; }
 
+// ------------------------------------------------------------------ images kept between redraws
+// The table is redrawn after every action. New <img> elements would blank out until the browser decoded them again
+// (cards blinking in and out during playback), so the loaded images of the last drawing are reused.
+let pool = new Map();
+function takeImg(src, name) {
+  const free = pool.get(src);
+  if (free && free.length) { const img = free.pop(); img.alt = name; return img; }
+  return el('img', { src, alt: name, draggable: 'false', decoding: 'sync' });
+}
+function collect(root) {
+  pool = new Map();
+  for (const img of root.querySelectorAll('img')) {
+    const src = img.getAttribute('src');
+    if (!pool.has(src)) pool.set(src, []);
+    pool.get(src).push(img);
+  }
+}
+
 // ------------------------------------------------------------------ one card
 export function card(images, name, o = {}) {
   const src = imageFor(images, name);
-  const face = src ? el('img', { src, alt: name, loading: 'lazy', draggable: 'false' }) : el('div', { class: 'drawn' }, name);
+  const face = src ? takeImg(src, name) : el('div', { class: 'drawn' }, name);
   const badges = [];
   if (o.counters) badges.push(el('span', { class: 'badge counters', title: `${o.counters} +1/+1 counters` }, `+${o.counters}`));
   if (o.loyalty != null) badges.push(el('span', { class: 'badge loyalty', title: 'loyalty' }, o.loyalty));
@@ -83,9 +101,12 @@ function battlefield(p, images, size, mine) {
   const creatures = perms.filter((m) => m.pt), others = perms.filter((m) => !m.pt);
   const opts = (m) => ({ size, tapped: m.tapped, sick: m.sick, counters: m.counters, loyalty: m.loyalty, pt: m.pt,
     commander: m.commander, attached_to: m.attached_to, attrs: Object.assign({ 'data-seat': p.key, 'data-i': m.i }, mine ? { 'data-perm': m.i } : {}) });
+  const treasure = p.treasures ? card(images, 'Treasure', { size, count: p.treasures, cls: 'token',
+    attrs: mine ? { 'data-treasure': '1' } : {} }) : null;              // Treasures, one card with a count
   return [
     el('div', { class: 'row perms' }, creatures.map((m) => card(images, m.name, opts(m))),
-      creatures.length && others.length ? el('span', { class: 'gap' }) : null, others.map((m) => card(images, m.name, opts(m)))),
+      creatures.length && (others.length || treasure) ? el('span', { class: 'gap' }) : null,
+      others.map((m) => card(images, m.name, opts(m))), treasure),
     el('div', { class: 'row lands' }, mine
       ? p.lands.map((L) => card(images, L.name, { size: 'sm', tapped: L.tapped, cls: 'land', attrs: { 'data-land': L.i } }))
       : groupLands(p.lands).map((g) => card(images, g.name, { size: 'xs', tapped: g.tapped, count: g.count, cls: 'land' }))),
@@ -101,8 +122,9 @@ function opponent(p, view, images) {
 }
 
 export function renderTable(root, view, images) {
+  collect(root);
   root.replaceChildren();
-  if (!view) return;
+  if (!view) { pool = new Map(); return; }
   const me = view.players.find((p) => p.you);
   const opps = view.players.filter((p) => !p.you);
   root.append(el('div', { class: 'opps' }, opps.map((p) => opponent(p, view, images))));
@@ -118,6 +140,7 @@ export function renderTable(root, view, images) {
         card(images, me.commander, { size: 'sm', commander: true, attrs: { 'data-cmd': '1' } })) : null,
       el('div', { class: 'chip' }, `Library ${me.library}`),
       zoneList('Graveyard', me.graveyard, images, (i) => ({ 'data-gy': i })), zoneList('Exile', me.exile, images))));
+  pool = new Map();
 }
 
 export function renderSteps(root, view) {
