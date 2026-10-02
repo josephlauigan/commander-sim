@@ -41,7 +41,9 @@ def stack_view(g):
     """the stack for the page, top first: each item's card, controller and what it targets"""
     out = []
     for it in reversed(g.stack):
-        d = {'name': it.card.name, 'controller': E.NAME(it.controller), 'key': it.controller.key}
+        d = {'name': it.card.name if it.card is not None else it.name, 'controller': E.NAME(it.controller),
+             'key': it.controller.key, 'kind': it.kind}
+        if it.kind != 'spell': d['text'] = it.name
         t = it.ctx.get('counter')
         if t is not None: d['target'] = t.card.name
         elif it.ctx.get('target') is not None: d['target'] = getattr(it.ctx['target'], 'name', '')
@@ -53,11 +55,24 @@ def stack_priority(g, q, item):
     """q (the person) gets priority with something on the stack. Your own spell: only when you hold a card that
     copies it (more choice comes with the auto-pass settings); anyone else's: always"""
     top = g.stack[-1] if g.stack else item
+    if top.kind != 'spell':                                  # an ability: only when you could do something about it
+        if top.controller is q or not can_respond(g, q): return
+        respond(g, q, f'{E.NAME(top.controller)} activates {top.name}', spell=top.card, caster=top.controller)
+        return
     if top.controller is q and not E._copy_window(g, q, top.card): return
     who = 'You cast' if top.controller is q else f'{E.NAME(top.controller)} casts'
     t = top.ctx.get('counter')
-    what = f'{top.card.name} (countering {t.card.name})' if t is not None else top.card.name
+    what = f'{top.card.name} (countering {t.name})' if t is not None else top.card.name
     respond(g, q, f'{who} {what}', spell=top.card, caster=top.controller)
+
+
+def can_respond(g, q):
+    """does q hold anything to do at instant speed right now (an instant or flash card they can afford, an ability
+    counter)?"""
+    have = E.total_mana(g, q) + mana.pool_of(q).total()
+    if any((c.instant or 'flash' in c.tags or 'flash' in getattr(c, 'kws', ())) and c.cmc <= have and not c.land for c in q.hand):
+        return True
+    return any(m.cd is not None and m.cd.name in E.ABILITY_ANSWERS for m in q.perms)
 
 
 def respond(g, q, prompt, spell=None, caster=None):
@@ -266,8 +281,9 @@ def use(g, p, m):
         why = legal.check_equip(g, p, m, cre[j])
         if why: return why
         mana.pay_from_pool(g, p, legal.equip_cost(m), '')
-        m.attached = cre[j]
         E.log(f'  {E.NAME(p)} equips {m.name} to {cre[j].name}', g)
+        if E.ability_window(g, p, m, f'equip to {cre[j].name}', target=cre[j]) and cre[j] in p.perms and m in p.perms:
+            m.attached = cre[j]
         return None
     if kind == 'extra': return fn(g, p, m)
     if not fn(): return f"{label}: that can't be done right now."

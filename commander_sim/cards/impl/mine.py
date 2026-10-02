@@ -96,8 +96,8 @@ def _nim_equip(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 4, '') or t not in p.perms: return False
-        pay(g, p, 4, ''); src.attached = t
-        log(f'  {NAME(p)} equips Nim Deathmantle to {t.name}', g); return True
+        log(f'  {NAME(p)} equips Nim Deathmantle to {t.name}', g)
+        return equip_to(g, p, src, t, 4)
     return [(1.0 + 0.2 * pval(g, t), 'equip Nim Deathmantle', go)]
 card('Nim Deathmantle', 'nim', types='A', dsl=[])
 full('Nim Deathmantle', 'equipped creature +2/+2, intimidate, black Zombie; returns your nontoken creatures that die '
@@ -123,6 +123,7 @@ def _trisk_ping(g, src, p, s, post):
     def go():
         if src.plus <= 0 or src not in p.perms: return False
         src.plus -= 1
+        if not ability_window(g, p, src, '1 damage', imp=8 if lethal else 3): return True
         if lethal and lethal[0].alive: lose_life(g, lethal[0], 1, p, kind='triggers')
         elif tg and tg[0] in tg[0].owner.perms: apply_removal(g, p, tg[0], 'dmg1')
         if etgh(g, src) <= 0: die(g, src, 'sba')
@@ -146,8 +147,9 @@ def _strip(g, L, p, s, post):
     def go():
         if L not in p.lands or x not in q.lands: return False
         p.lands.remove(L); p.gy.append(L.cd)
-        impl_fixes.destroy_land(g, q, x)
-        log(f'  {NAME(p)} sacrifices Strip Mine: destroys {x.cd.name} ({NAME(q)})', g); return True
+        log(f'  {NAME(p)} sacrifices Strip Mine: destroy {x.cd.name} ({NAME(q)})', g)
+        if ability_window(g, p, L.cd, f'destroy {x.cd.name}') and x in q.lands: impl_fixes.destroy_land(g, q, x)
+        return True
     return [(3.0, f'Strip Mine -> {x.cd.name}', go)]
 full('Strip Mine', '{T}: {C}; {T}, sacrifice: destroy an opponent\'s key land (Cradle, Coffers, Urborg, Ancient Tomb ...)')
 
@@ -384,12 +386,14 @@ def _ral(g, src, p, s, post):
             if src not in p.perms or (src.data and src.data.get('act') == turn_stamp(g)): return False
             src.data = dict(src.data or {}, act=turn_stamp(g))
             if minus:
-                src.loyalty -= 2; p.ral_copy = turn_stamp(g)
+                src.loyalty -= 2
                 log(f'  {NAME(p)} uses Ral, Storm Conduit -2: the next instant or sorcery is copied', g)
                 if src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy')
+                if ability_window(g, p, src.cd, '-2'): p.ral_copy = turn_stamp(g)
             else:
                 src.loyalty += 2
-                from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1)
+                if ability_window(g, p, src, '+2'):
+                    from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1)
             return True
         return go
     out = [(1.0, 'Ral, Storm Conduit +2 (scry 1)', act(False))]
@@ -439,8 +443,7 @@ def _prepared_opt(g, src, p, s, post):
     def go():
         if not (src.data and src.data.get('prepared')) or not can_pay(g, p, gen, pips): return False
         pay(g, p, gen, pips); src.data['prepared'] = False
-        log(f'  {NAME(p)} casts a copy of {spell} ({src.cd.name.split(" //")[0]})', g)
-        cast_copy(g, p, _prepared_effect(g, p, src.cd.name))
+        cast_copy(g, p, _prepared_effect(g, p, src.cd.name), name=spell, instant=instant)
         return True
     return [(v, f'{spell} (prepared copy)', go)]
 
@@ -673,8 +676,10 @@ def _lighthouse(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or not IL.pay_without(g, p, L, 1, 'UR'): return False
-        L.tapped = True; draw(g, p, 1); discard_worst(g, p, 1)
-        log(f'  {NAME(p)} loots with Desolate Lighthouse', g); return True
+        L.tapped = True
+        log(f'  {NAME(p)} loots with Desolate Lighthouse', g)
+        if ability_window(g, p, L.cd, 'draw, then discard'): draw(g, p, 1); discard_worst(g, p, 1)
+        return True
     return [(1.2, 'Desolate Lighthouse loot', go)]
 
 
@@ -687,7 +692,9 @@ def _summit(g, L, p, s, post):
     def go():
         if L not in p.lands or L.tapped or not IL.pay_without(g, p, L, 2, 'UR'): return False
         L.tapped = True
-        from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1, to='gy'); return True
+        if ability_window(g, p, L.cd, 'surveil 1'):
+            from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1, to='gy')
+        return True
     return [(0.6, 'Spectacle Summit surveil', go)]
 
 
@@ -952,7 +959,9 @@ def _vraska(g, src, p, s, post):
 
     def zero():
         if not _pw_once(g, src): return False
-        _pw_use(g, src, 0); draw(g, p, 1); lose_life(g, p, 1, p); proliferate_all(g, p); return True
+        _pw_use(g, src, 0)
+        if ability_window(g, p, src, '0'): draw(g, p, 1); lose_life(g, p, 1, p); proliferate_all(g, p)
+        return True
     out.append((2.0 if p.life > 10 else 0.5, "Vraska 0 (draw, proliferate)", zero))
     cr = [m for q in g.opps(p) for m in q.perms if m.creature and not untargetable(g, m)]
     if cr and src.loyalty >= 2:
@@ -960,8 +969,11 @@ def _vraska(g, src, p, s, post):
 
         def minus2():
             if not _pw_once(g, src) or t not in t.owner.perms: return False
-            _pw_use(g, src, -2); q = t.owner; leave(g, t); q.treasures += 1
-            log(f'  {NAME(p)} uses Vraska -2: {t.name} becomes a Treasure', g); return True
+            _pw_use(g, src, -2)
+            log(f'  {NAME(p)} uses Vraska -2: {t.name} becomes a Treasure', g)
+            if ability_window(g, p, src.cd, '-2', target=t) and t in t.owner.perms:
+                q = t.owner; leave(g, t); q.treasures += 1
+            return True
         out.append((pval(g, t) - 2.0, f'Vraska -2 -> {t.name}', minus2))
     if src.loyalty >= 9:
         q = max(g.opps(p), key=lambda o: threat(g, p, o)) if g.opps(p) else None
@@ -969,6 +981,7 @@ def _vraska(g, src, p, s, post):
             def minus9():
                 if not _pw_once(g, src): return False
                 _pw_use(g, src, -9)
+                if not ability_window(g, p, src.cd, '-9', imp=10): return True
                 if not melira(q): q.poison = max(getattr(q, 'poison', 0), 9)
                 log(f'  {NAME(p)} uses Vraska -9: {NAME(q)} has nine poison counters', g); return True
             out.append((12.0, f'Vraska -9 -> {NAME(q)}', minus9))
@@ -1000,15 +1013,18 @@ def _ralz(g, src, p, s, post):
     def plus1():
         if not _pw_once(g, src): return False
         _pw_use(g, src, 1)
-        from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 2, to='gy'); return True
+        if ability_window(g, p, src, '+1'):
+            from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 2, to='gy')
+        return True
     out.append((1.0, 'Ral Zarek +1 (surveil 2)', plus1))
     hands = sum(1 for q in g.opps(p) if q.hand)
     if hands and src.loyalty >= 2:
         def minus1():
             if not _pw_once(g, src): return False
             _pw_use(g, src, -1)
-            for q in g.opps(p):
-                if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
+            if ability_window(g, p, src.cd, '-1'):
+                for q in g.opps(p):
+                    if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
             return True
         out.append((0.8 + 0.5 * hands, 'Ral Zarek -1 (each opponent discards)', minus1))
     rc = [c for c in p.gy if c.creature and c.cmc <= 3]
@@ -1017,8 +1033,9 @@ def _ralz(g, src, p, s, post):
 
         def minus2():
             if not _pw_once(g, src) or c not in p.gy: return False
-            if not _pw_use(g, src, -2): pass
-            p.gy.remove(c); enter(g, p, c); return True
+            _pw_use(g, src, -2)
+            if ability_window(g, p, src.cd, '-2') and c in p.gy: p.gy.remove(c); enter(g, p, c)
+            return True
         out.append((0.8 * card_worth(g, p, c, in_gy=True) / 2.0, f'Ral Zarek -2 -> {c.name}', minus2))
     if src.loyalty >= 7 and g.opps(p):
         q = max(g.opps(p), key=lambda o: threat(g, p, o))
@@ -1026,6 +1043,7 @@ def _ralz(g, src, p, s, post):
         def minus7():
             if not _pw_once(g, src): return False
             _pw_use(g, src, -7)
+            if not ability_window(g, p, src.cd, '-7', imp=10): return True
             n = sum(1 for _ in range(5) if g.rng.random() < 0.5)
             q.skip_turns = getattr(q, 'skip_turns', 0) + n
             log(f'  {NAME(p)} uses Ral Zarek -7: {NAME(q)} skips {n} turn(s)', g); return True
@@ -1058,7 +1076,9 @@ def _baraddur(g, L, p, s, post):
 
     def go():
         if L.tapped or not IL.pay_without(g, p, L, 2 * x, 'B'): return False
-        L.tapped = True; amass(g, p, x); log(f'  {NAME(p)} uses Barad-dûr: amass Orcs {x}', g); return True
+        L.tapped = True; log(f'  {NAME(p)} uses Barad-dûr: amass Orcs {x}', g)
+        if ability_window(g, p, L.cd, f'amass Orcs {x}'): amass(g, p, x)
+        return True
     return [(1.0 + x, f'Barad-dûr (amass {x})', go)]
 
 
@@ -1177,6 +1197,7 @@ def _kefka_ruin(g, src, p, s, post):
     def go():
         if src not in p.perms or not can_pay(g, p, 8, ''): return False
         pay(g, p, 8, '')
+        if not ability_window(g, p, src, '{8}: each opponent sacrifices a permanent', imp=7): return True
         for q in g.opps(p):
             toks = [m for m in q.perms if m.token and not m.phased]
             if toks: die(g, min(toks, key=lambda m: pval(g, m)), 'sac')          # their choice: the cheapest thing

@@ -140,8 +140,10 @@ def _top_draw(g, src, p, s, post):
 
     def go():
         if src not in p.perms or src.tapped: return False
+        src.tapped = True
+        if not ability_window(g, p, src, 'draw, then Top goes on top'): return True
         draw(g, p, 1)
-        leave(g, src); p.library.append(src.cd)
+        if src in p.perms: leave(g, src); p.library.append(src.cd)
         log(f'  {NAME(p)} draws with Sensei\'s Divining Top (Top goes on top)', g)
         return True
     return [(4.0 if citadel else 3.0, "Sensei's Divining Top draw", go)]

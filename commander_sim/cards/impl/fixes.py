@@ -150,6 +150,7 @@ def _drs(g, src, p, s, post):
             src.tapped = True                              # {T} is part of the cost: it can't also tap for the mana
             if not can_pay(g, p, 0, 'B'): src.tapped = False; return False
             q.gy.remove(x); pay(g, p, 0, 'B'); q.exile.append(x)          # the card is taken before paying
+            if not ability_window(g, p, src, 'each opponent loses 2 life'): return True
             for o_ in g.opps(p): lose_life(g, o_, 2, p, kind='triggers')
             log(f'  {NAME(p)} uses Deathrite Shaman: exiles {x.name}, each opponent loses 2', g); return True
         o.append((2.2, 'Deathrite Shaman drain', drain))
@@ -160,7 +161,8 @@ def _drs(g, src, p, s, post):
                 if src.tapped or x not in q.gy: return False
                 src.tapped = True
                 if not can_pay(g, p, 0, 'G'): src.tapped = False; return False
-                q.gy.remove(x); pay(g, p, 0, 'G'); q.exile.append(x); gain(p, 2)
+                q.gy.remove(x); pay(g, p, 0, 'G'); q.exile.append(x)
+                if ability_window(g, p, src, 'you gain 2 life'): gain(p, 2)
                 log(f'  {NAME(p)} uses Deathrite Shaman: exiles {x.name}', g); return True
             o.append((1.2 + 0.4 * x.bomb, 'Deathrite Shaman exile', hate))
     return o
@@ -209,7 +211,9 @@ def _clancaller(g, src, p, s, post):
 
     def go():
         if src.tapped or c not in p.library or not can_pay(g, p, 4, 'GG'): return False
-        pay(g, p, 4, 'GG'); src.tapped = True; p.library.remove(c); g.rng.shuffle(p.library); enter(g, p, c)
+        pay(g, p, 4, 'GG'); src.tapped = True
+        if not ability_window(g, p, src, 'search for Elvish Clancaller') or c not in p.library: return True
+        p.library.remove(c); g.rng.shuffle(p.library); enter(g, p, c)
         log(f'  {NAME(p)} fetches another Elvish Clancaller', g); return True
     return [(2.0, 'Elvish Clancaller search', go)]
 
@@ -241,7 +245,9 @@ def _trashmaster(g, src, p, s, post):
 
     def go():
         if f not in p.perms or t not in t.owner.perms: return False
-        die(g, f, 'sac'); apply_removal(g, p, t, 'destroy'); return True
+        die(g, f, 'sac')
+        if ability_window(g, p, src, f'destroy {t.name}', target=t) and t in t.owner.perms: apply_removal(g, p, t, 'destroy')
+        return True
     return [(pval(g, t) - 1.5, 'Goblin Trashmaster', go)]
 
 
@@ -283,7 +289,9 @@ def _foundry(g, src, p, s, post):
 
         def untap():
             if not src.tapped or not can_pay(g, p, 3, ''): return False
-            pay(g, p, 3, ''); src.tapped = False; return True
+            pay(g, p, 3, '')
+            if ability_window(g, p, src, 'untap'): src.tapped = False
+            return True
         return [(0.8, 'Retrofitter Foundry untap', untap)]
     thop = [m for m in p.perms if m.token and E.has_type(m, 'thopter')]
     servo = [m for m in p.perms if m.token and E.has_type(m, 'servo')]
@@ -294,6 +302,7 @@ def _foundry(g, src, p, s, post):
             if fod is not None and fod not in p.perms: return False
             pay(g, p, cost, ''); src.tapped = True
             if fod is not None: leave(g, fod)
+            if not ability_window(g, p, src, f'a {kind}'): return True
             if kind == 'construct': make_tokens(g, p, 1, 4, types=('construct', 'artifact'))
             elif kind == 'thopter': make_tokens(g, p, 1, 1, fly=True, types=('thopter', 'artifact'))
             else: make_tokens(g, p, 1, 1, types=('servo', 'artifact'))

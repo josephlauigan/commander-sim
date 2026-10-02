@@ -1,6 +1,6 @@
 # The stack: design
 
-Status: phase 1 built 2026-10-02 (spells on the stack, responses of any depth); phases 2-6 to come. Replaces the engine's fixed response windows with Magic's stack and priority,
+Status: phases 1-2 built 2026-10-02 (spells and activated abilities on the stack, responses of any depth); phases 3-6 to come. Replaces the engine's fixed response windows with Magic's stack and priority,
 for simulations and practice mode alike (one engine).
 
 ## Goal

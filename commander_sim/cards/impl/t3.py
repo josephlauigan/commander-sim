@@ -113,7 +113,9 @@ def _oven(g, src, p, s, post):
     def go():
         if src.tapped or m not in p.perms: return False
         src.tapped = True; n = 2 if etgh(g, m) >= 4 else 1
-        die(g, m, 'sac'); make_artifact_tokens(g, p, 'Food', n); return True
+        die(g, m, 'sac')
+        if ability_window(g, p, src, f'{n} Food'): make_artifact_tokens(g, p, 'Food', n)
+        return True
     return [(v, f"Witch's Oven ({m.name})", go)]
 card("Witch's Oven", '', types='A', dsl=[])
 note("Witch's Oven", 'Full', 'sacrifice spare creatures for Food when the death is worth it')
@@ -130,7 +132,9 @@ def _savvy_draw(g, src, p, s, post):
 
     def go():
         if getattr(p, 'foods', 0) < 2: return False
-        sac_food(g, p, 2); draw(g, p, 1); return True
+        sac_food(g, p, 2)
+        if ability_window(g, p, src, 'draw a card'): draw(g, p, 1)
+        return True
     return [(2.0, 'Savvy Hunter: two Foods for a card', go)]
 card('Savvy Hunter', 'human warrior pow=3', dsl=[])
 note('Savvy Hunter', 'Full', '')
@@ -171,7 +175,9 @@ def _skeleton(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 1, 'B'): return False
-        p.gy.remove(c); pay(g, p, 1, 'B'); m = enter(g, p, c); m.tapped = True; return True
+        pay(g, p, 1, 'B')
+        if ability_window(g, p, c, 'return to the battlefield') and c in p.gy: p.gy.remove(c); m = enter(g, p, c); m.tapped = True
+        return True
     return [(0.5 + IC.death_value(g, p) / 2.0, 'return Reassembling Skeleton', go)]
 card('Reassembling Skeleton', 'pow=1 warrior', dsl=[])
 note('Reassembling Skeleton', 'Full', 'recurs itself when there is a sacrifice outlet')
@@ -184,7 +190,10 @@ def _gravecrawler(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 0, 'B'): return False
-        p.gy.remove(c); pay(g, p, 0, 'B'); p.spells_this_turn += 1; on_cast(g, p, c); enter(g, p, c); return True
+        p.gy.remove(c); pay(g, p, 0, 'B'); p.spells_this_turn += 1; on_cast(g, p, c)
+        if counter_window(g, p, c, 3, {}): enter(g, p, c)
+        else: p.gy.append(c)
+        return True
     return [(0.5 + IC.death_value(g, p) / 2.0, 'cast Gravecrawler from the graveyard', go)]
 card('Gravecrawler', 'pow=2 tgh=1 noblock', dsl=[])
 note('Gravecrawler', 'Full', 'castable from the graveyard with a Zombie; the Phyrexian Altar loop is a combo (see combos)')
@@ -337,7 +346,9 @@ def _joraga(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 1, 'G'): return False
-        pay(g, p, 1, 'G'); src.data = {'level': 1}; return True
+        pay(g, p, 1, 'G')
+        if ability_window(g, p, src, 'level up') and src in p.perms: src.data = {'level': 1}
+        return True
     return [(3.0, 'level up Joraga Treespeaker', go)]
 card('Joraga Treespeaker', 'pow=1 dork=G noatk', dsl=[])
 note('Joraga Treespeaker', 'Approximate', 'levels once to tap for GG (level 5 not modeled)')
@@ -729,7 +740,9 @@ def _ichormoon(g, src, p, s, post):
     def go():
         w = ws[0]
         if w.loyalty_used == (g.round, p.key): return False
-        w.loyalty_used = (g.round, p.key); IC.proliferate(g, p); return True
+        w.loyalty_used = (g.round, p.key)
+        if ability_window(g, p, w, 'proliferate'): IC.proliferate(g, p)
+        return True
     return [(1.0, 'Ichormoon Gauntlet: proliferate', go)]
 card('Ichormoon Gauntlet', '', types='A', dsl=[])
 note('Ichormoon Gauntlet', 'Approximate', 'a planeswalker may proliferate instead of its own ability')

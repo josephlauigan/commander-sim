@@ -775,6 +775,8 @@ def ability_options(g, p, sorcery_ok=True):
                     u0 = p.flag_turn.get(key + 'n', (None, 0))
                     p.flag_turn[key + 'n'] = (stamp, (u0[1] + 1) if u0[0] == stamp else 1)
                     log(f'  {NAME(p)} activates {src.name}', g)
+                    if not all(e.get('do') == 'add_mana' for e in a['effects']) and \
+                            not E.ability_window(g, p, src, 'ability'): return True     # countered (mana abilities skip the stack)
                     execute(g, p, a['effects'], src, {})
                     return True
                 out.append((u, f'{src.name} ability', go))
@@ -790,6 +792,7 @@ def ability_options(g, p, sorcery_ok=True):
                         if getattr(src, 'loyalty_used', None) == (g.round, p.key) or src not in p.perms: return False
                         src.loyalty_used = (g.round, p.key); src.loyalty += a['loyalty']
                         log(f'  {NAME(p)} uses {src.name} ({a["loyalty"]:+d})', g)
+                        if not E.ability_window(g, p, src, f'{a["loyalty"]:+d}'): return True
                         execute(g, p, a['effects'], src, {})
                         if src.loyalty <= 0 and src in p.perms: leave(g, src); p.gy.append(src.cd)
                         return True
@@ -818,8 +821,11 @@ def equip_options(g, p):
 
         def go(src=src, best=best, n=n):
             if not can_pay(g, p, n, '') or best not in p.perms: return False
-            pay(g, p, n, ''); src.attached = best
-            log(f'  {NAME(p)} equips {src.name} to {best.name}', g); return True
+            pay(g, p, n, '')
+            log(f'  {NAME(p)} equips {src.name} to {best.name}', g)
+            if E.ability_window(g, p, src, f'equip to {best.name}', target=best) and best in p.perms and src in p.perms:
+                src.attached = best
+            return True
         out.append((u, f'equip {src.name}', go))
     return out
 

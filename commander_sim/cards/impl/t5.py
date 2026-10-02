@@ -34,7 +34,9 @@ def _urza_five(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 5, ''): return False
-        pay(g, p, 5, ''); g.rng.shuffle(p.library)
+        pay(g, p, 5, '')
+        if not ability_window(g, p, src, 'shuffle, play the top card free') or not p.library: return True
+        g.rng.shuffle(p.library)
         c = p.library.pop(); log(f'  Urza: {c.name} off the top, free', g)
         if c.land:
             if getattr(p, 'lands_played', 1) < 1: from commander_sim import ais; ais.play_land_card(g, p, c)
@@ -160,6 +162,7 @@ def _kinnan_act(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 5, 'GU'): return False
         pay(g, p, 5, 'GU')
+        if not ability_window(g, p, src, 'look at the top five'): return True
         top = [p.library.pop() for _ in range(min(5, len(p.library)))]
         hits = [c for c in top if c.creature and 'human' not in c.subtypes]
         if hits:
@@ -240,6 +243,7 @@ def _kiki(g, src, p, s, post):
     def go():
         if src.tapped or t not in p.perms: return False
         src.tapped = True
+        if not ability_window(g, p, src, f'copy {t.name}', target=t) or t not in p.perms: return True
         c = enter_token_copy(g, p, t.cd)
         if c is not None: c.sick = False; c.temp = True
         return True
@@ -371,6 +375,7 @@ def _yawg(g, src, p, s, post):
         def go(m=m):
             if m not in p.perms or p.life <= 8: return False
             lose_life(g, p, 1, p); die(g, m, 'sac')
+            if not ability_window(g, p, src, 'a -1/-1 counter, draw a card'): return True
             t = [x for q in g.opps(p) for x in q.perms if x.creature and etgh(g, x) <= 1 and not untargetable(g, x)]
             if t:
                 x = max(t, key=lambda x: (pval(g, x), epow(g, x))); E.minus_counter(g, x)
@@ -381,7 +386,9 @@ def _yawg(g, src, p, s, post):
     if can_pay(g, p, 0, 'BB') and p.hand and any(m.plus > 0 or m.loyalty for m in p.perms) and post is True:
         def prol():
             if not can_pay(g, p, 0, 'BB') or not p.hand: return False
-            pay(g, p, 0, 'BB'); discard_worst(g, p, 1); IC.proliferate(g, p); return True
+            pay(g, p, 0, 'BB'); discard_worst(g, p, 1)
+            if ability_window(g, p, src, 'proliferate'): IC.proliferate(g, p)
+            return True
         out.append((1.0, 'Yawgmoth: proliferate', prol))
     return out
 @on('Yawgmoth, Thran Physician', 'defend')
@@ -430,7 +437,9 @@ def _wishclaw(g, src, p, s, post):
 
     def go():
         if src.tapped or not can_pay(g, p, 1, ''): return False
-        pay(g, p, 1, ''); src.tapped = True; tutor(g, p, 'any')
+        pay(g, p, 1, ''); src.tapped = True
+        if not ability_window(g, p, src, 'search for a card', imp=7): return True
+        tutor(g, p, 'any')
         opp = max(g.opps(p), key=lambda q: threat(g, p, q))
         p.perms.remove(src); src.owner = opp; opp.perms.append(src); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
         return True

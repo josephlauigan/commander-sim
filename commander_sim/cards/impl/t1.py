@@ -281,6 +281,7 @@ def _lathril_drain(g, src, p, s, post):
         if len(es) < 10 or src.tapped: return False
         src.tapped = True
         for m in sorted(es, key=lambda m: (not m.sick, pval(g, m)))[:10]: m.tapped = True
+        if not ability_window(g, p, src, 'each opponent loses 10 life', imp=9): return True
         for q in g.opps(p): lose_life(g, q, 10, p, kind='drain')
         gain(p, 10); log(f'  Lathril taps ten Elves: each opponent loses 10', g); check_state(g)
         return True
@@ -351,6 +352,7 @@ def _warmaster_pump(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 5, 'GG'): return False
         pay(g, p, 5, 'GG')
+        if not ability_window(g, p, src, 'Elves get +2/+2 and deathtouch'): return True
         for m in p.perms:
             if m.creature and has_type(m, 'elf'): _eot(g, m, 2, 2); g.eot_kw.setdefault(id(m), set()).add('deathtouch')
         return True
@@ -461,7 +463,9 @@ def _timberwatch(g, src, p, s, post):
     def go():
         if src.tapped: return False
         src.tapped = True
-        t = max(atk, key=lambda m: (m.fly or m.is_cmd, epow(g, m))); _eot(g, t, x, x); return True
+        t = max(atk, key=lambda m: (m.fly or m.is_cmd, epow(g, m)))
+        if ability_window(g, p, src, f'{t.name} gets +{x}/+{x}', target=t) and t in p.perms: _eot(g, t, x, x)
+        return True
     return [(1.0 + 0.3 * x, 'Timberwatch Elf pump', go)]
 card('Timberwatch Elf', 'pow=1 tgh=2', dsl=[])
 note('Timberwatch Elf', 'Approximate', 'pumps its best attacker before combat')
@@ -485,6 +489,7 @@ def _ezuri(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 2, 'GGG'): return False
         pay(g, p, 2, 'GGG')
+        if not ability_window(g, p, src, 'Elves get +3/+3 and trample', imp=6): return True
         for m in p.perms:
             if m.creature and has_type(m, 'elf'): _eot(g, m, 3, 3)
         p.trample = True; return True
@@ -502,6 +507,7 @@ def _allosaurus(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 4, 'GG'): return False
         pay(g, p, 4, 'GG')
+        if not ability_window(g, p, src, 'Elves become 5/5'): return True
         for m in p.perms:
             if m.creature and has_type(m, 'elf'): _eot(g, m, max(0, 5 - epow(g, m)), max(0, 5 - etgh(g, m)))
         return True
@@ -621,7 +627,9 @@ def _ward_loop(g, src, p, s, post):
 
     def go():
         if src not in p.perms or not can_pay(g, p, 0, 'WW'): return False
-        pay(g, p, 0, 'W'); leave(g, src); c = src.cd
+        pay(g, p, 0, 'W')
+        if not ability_window(g, p, src, 'return to hand') or src not in p.perms: return True
+        leave(g, src); c = src.cd
         pay(g, p, 0, 'W'); cast_card(g, p, c, 'hand', {}) if c in p.hand else None
         return True
     return [(5.0, 'Flickering Ward recast (Light-Paws)', go)]
@@ -727,7 +735,8 @@ def _wayfarer(g, src, p, s, post):
     def go():
         if src.tapped or not can_pay(g, p, 0, 'W'): return False
         pay(g, p, 0, 'W'); src.tapped = True
-        tutor_named(g, p, lambda c: c.land); return True
+        if ability_window(g, p, src, 'search for a land'): tutor_named(g, p, lambda c: c.land)
+        return True
     return [(2.5, 'Weathered Wayfarer', go)]
 card('Weathered Wayfarer', 'human pow=1')
 note('Weathered Wayfarer', 'Full', '')
@@ -802,7 +811,9 @@ def _druidclass_level(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 2, 'G'): return False
-        pay(g, p, 2, 'G'); src.data = {'level': 2}; return True
+        pay(g, p, 2, 'G')
+        if ability_window(g, p, src, 'level 2') and src in p.perms: src.data = {'level': 2}
+        return True
     return [(2.0, 'Druid Class level 2', go)]
 card('Druid Class', '', types='E', dsl=[])
 note('Druid Class', 'Partial', 'landfall life and the level-2 extra land drop; level 3 (land creature) not modeled')
@@ -947,6 +958,7 @@ def _uro_escape(g, c, p, s, post):
         others = sorted(p.gy, key=lambda x: card_worth(g, p, x, True))[:5]
         for x in others: p.gy.remove(x); p.exile.append(x)
         p.cast_names.add(c.name); p.spells_this_turn += 1; on_cast(g, p, c)
+        if not counter_window(g, p, c, 6, {}): p.gy.append(c); return True
         g.uro_escaping = True
         try: enter(g, p, c, was_cast=True)
         finally: g.uro_escaping = False

@@ -210,7 +210,7 @@ def sauron_grounds_response(g, seph, value):
             L.tapped = False; continue
         pay(g, q, 2, ''); q.lands.remove(L); q.gy.append(L.cd)
         q.stats['grounds_used'] += 1
-        if tide_response(g, q, 'grounds', 9, victim=seph):
+        if not ability_window(g, q, L.cd, 'exile all graveyards', imp=9):
             return False
         for p in g.players:
             if p.alive:
@@ -537,7 +537,7 @@ def seph_boots(g, p):
         if blocked(g, p, e.cd.name): continue
         bombs = [m for m in p.perms if m.creature and m.cd is not None and m.cd.bomb >= 6 and not untargetable(g, m)]
         if bombs and can_pay(g, p, 1, ''):
-            pay(g, p, 1, ''); e.attached = max(bombs, key=lambda x: pval(g, x)); return True
+            return equip_to(g, p, e, max(bombs, key=lambda x: pval(g, x)), 1)
     return False
 
 
@@ -941,8 +941,7 @@ def veyran_boots(g, p):
         if 'veyran' in t: return 9
         if 'vkitten' in t or 'vfire' in t: return 7
         return pval(g, m)
-    pay(g, p, 1, ''); eq[0].attached = max(cands, key=rank)
-    return True
+    return equip_to(g, p, eq[0], max(cands, key=rank), 1)
 
 
 def aether_check(g, p):
@@ -950,7 +949,8 @@ def aether_check(g, p):
     opps = [q for q in g.opps(p) if not shielded(q)]          # the damage would be prevented
     if not opps: return False
     lose_life(g, p, 50, p)
-    if tide_response(g, p, 'aether', 9): return True
+    src = next((m for m in find(p, 'aether')), None)
+    if not ability_window(g, p, src if src is not None else DB['Aetherflux Reservoir'], '50 damage', imp=9): return True
     tgt = max(opps, key=lambda o: threat(g, p, o))
     p.stats['aether_shots'] += 1; p.milestone.setdefault('aether', p.turns)
     log(f'  Veyran fires Aetherflux Reservoir at {NAME(tgt)}', g)
@@ -1035,7 +1035,7 @@ def sauron_equip(g, p):
             continue                                   # e.g. Sword of Hearth and Home goes on first
         if equipped(a, 'cloak'): return False
         if can_pay(g, p, 2, ''):
-            pay(g, p, 2, ''); eq[0].attached = a; return True
+            return equip_to(g, p, eq[0], a, 2)
     return False
 
 
@@ -1053,8 +1053,8 @@ def helm_target(g, p):
 def helm_equip(g, p, m):
     helm = [e for e in find(p, 'helm') if not blocked(g, p, e.cd.name)]
     if not helm or m not in p.perms or not can_pay(g, p, 1, ''): return False
-    pay(g, p, 1, ''); helm[0].attached = m
     log(f'  {NAME(p)} equips Champion\'s Helm to {m.name}', g)
+    equip_to(g, p, helm[0], m, 1)
     return True
 
 
@@ -1638,7 +1638,8 @@ def _attack_triggers_once(g, p, atk, d):
             top = [p.library.pop() for _ in range(min(X, len(p.library)))]
             for c in top:
                 if c.instant or c.sorcery:
-                    cast_copy(g, p, (lambda c=c: draw(g, p, int(c.tags['draw']))) if 'draw' in c.tags else None)
+                    cast_copy(g, p, (lambda c=c: draw(g, p, int(c.tags['draw']))) if 'draw' in c.tags else None,
+                              name=c.name, instant=c.instant)
                 p.exile.append(c)
         if equipped(m, 'animist'): land_ramp(g, p, 1, True)        # Sword of the Animist
     rab = len(find(p, 'rabble'))
@@ -1932,7 +1933,8 @@ def combat(g, p):
                 and not blocked(g, p, 'Najeela, the Blade-Blossom')):
             pay(g, p, 0, 'WUBRG'); p.stats['najeela_act'] += 1
             p.milestone.setdefault('act', p.turns); log('  Najeela activates WUBRG for an extra combat', g)
-            if tide_response(g, p, 'najeela', 8): break
+            nj = next((m for m in find(p, 'najeela')), None)
+            if nj is not None and not ability_window(g, p, nj, 'untap, an additional combat', imp=8): break
             for m in p.perms:
                 if m.creature: m.tapped = False
             p.haste_all = True; p.trample = True; p.najeela_boost = True
@@ -1948,7 +1950,8 @@ def combat(g, p):
                 win(g, p, 'combo'); return
             if ncomb == 1 and can_pay(g, p, 3, 'RR'):
                 pay(g, p, 3, 'RR')
-                if tide_response(g, p, 'assault', 7): break
+                asl = next((m for m in find(p, 'assault')), None)
+                if asl is not None and not ability_window(g, p, asl, 'untap, an additional combat', imp=7): break
                 for m in p.perms:
                     if m.creature: m.tapped = False
                 continue

@@ -78,6 +78,7 @@ def _walker(abilities):
                 if ready is False: return None                     # cancelled
                 E.log(f'  {E.NAME(p)} activates {m.cd.name} {cost:+d}: {text}', g)
                 _mine()._pw_use(g, m, cost)                        # a walker at 0 loyalty is gone; the effect still happens
+                if not E.ability_window(g, p, m.cd if m not in p.perms else m, f'{cost:+d}'): return None
                 if callable(ready): ready()
                 E.check_state(g)
                 return None
@@ -214,8 +215,7 @@ def _prepared(g, p, m):
             eff = lambda: E.tutor(g, p, 'is')
         mana.pay_from_pool(g, p, gen, pips)
         m.data['prepared'] = False
-        E.log(f'  {E.NAME(p)} casts a copy of {spell} ({m.cd.name.split(" //")[0]})', g)
-        E.cast_copy(g, p, eff)
+        E.cast_copy(g, p, eff, name=spell, instant=instant)
         return None
     if not (m.data and m.data.get('prepared')): return []
     return [(f'prepared: cast a copy of {spell} ({mana.cost_text(gen, pips)}): {text}', act)]
@@ -250,7 +250,8 @@ def _mind_stone(g, p, m):
         if why: return why
         mana.pay_from_pool(g, p, 1, ''); m.tapped = True
         E.log(f'  {E.NAME(p)} sacrifices Mind Stone: draw a card', g)
-        E.die(g, m, 'sac'); E.draw(g, p, 1)
+        E.die(g, m, 'sac')
+        if E.ability_window(g, p, m.cd, 'draw a card'): E.draw(g, p, 1)
         return None
     return [('{1}, {T}, sacrifice: draw a card', act)]
 
@@ -263,7 +264,7 @@ def _triskelion(g, p, m):
         if k is None: return None
         m.plus -= 1
         E.log(f'  {E.NAME(p)} removes a counter from Triskelion', g)
-        _damage(g, p, tg[k], 1, 'Triskelion', 'triggers')
+        if E.ability_window(g, p, m, '1 damage', target=tg[k]): _damage(g, p, tg[k], 1, 'Triskelion', 'triggers')
         if m in p.perms and E.etgh(g, m) <= 0: E.die(g, m, 'sba')
         return None
     return [('remove a +1/+1 counter: 1 damage to any target', act)]
@@ -277,7 +278,7 @@ def _aetherflux(g, p, m):
         if k is None: return None
         E.lose_life(g, p, 50, p)
         E.log(f'  {E.NAME(p)} pays 50 life: Aetherflux Reservoir', g)
-        if ais.tide_response(g, p, 'aether', 9): return None
+        if not E.ability_window(g, p, m, '50 damage', imp=9, target=tg[k]): return None
         p.stats['aether_shots'] += 1; p.milestone.setdefault('aether', p.turns)
         _damage(g, p, tg[k], 50, 'Aetherflux Reservoir', 'aether')
         return None
@@ -291,6 +292,7 @@ def _pteramander(g, p, m):
         why = _cost(g, p, n, 'U', 'Pteramander')
         if why: return why
         mana.pay_from_pool(g, p, n, 'U')
+        if not E.ability_window(g, p, m, 'adapt 4'): return None
         if m.plus > 0: E.log(f'  {E.NAME(p)} adapts Pteramander (it has counters already: nothing happens)', g)
         else: m.plus += 4; E.log(f'  {E.NAME(p)} adapts Pteramander (4 counters)', g)
         return None
@@ -312,7 +314,7 @@ def _skullport(g, p, m):
             if g.hooks: E.CI.fire(g, 'sacrifice', p, 'Treasure')
         else:
             E.die(g, cre[k - (1 if p.treasures else 0)], 'sac')
-        E.draw(g, p, 1)
+        if E.ability_window(g, p, m, 'draw a card'): E.draw(g, p, 1)
         return None
     return [('{1}{B}, sacrifice another creature or a Treasure: draw a card', act)]
 
@@ -320,7 +322,8 @@ def _skullport(g, p, m):
 def _ste(g, p, m):
     def act(g, p, m):
         E.log(f'  {E.NAME(p)} sacrifices Sakura-Tribe Elder', g)
-        E.die(g, m, 'sac'); E.land_ramp(g, p, 1, True)
+        E.die(g, m, 'sac')
+        if E.ability_window(g, p, m.cd, 'search for a basic land'): E.land_ramp(g, p, 1, True)
         return None
     return [('sacrifice: a basic land onto the battlefield tapped', act)]
 
@@ -336,7 +339,7 @@ def _outlet(text, effect):
             x = cre[k]; pw = E.epow(g, x)
             E.log(f'  {E.NAME(p)} sacrifices {x.name} to {m.cd.name}', g)
             E.die(g, x, 'sac')
-            effect(g, p, m, pw)
+            if E.ability_window(g, p, m, text): effect(g, p, m, pw)
             E.check_state(g)
             return None
         return [(f'sacrifice a creature: {text}', act)]
@@ -356,8 +359,10 @@ def _coalition(g, p, m):
     def act(g, p, m):
         why = _tapped(m)
         if why: return why
-        m.tapped = True; m.data = dict(m.data or {}, charge=(m.data or {}).get('charge', 0) + 1)
+        m.tapped = True
         E.log(f'  {E.NAME(p)} puts a charge counter on Coalition Relic', g)
+        if E.ability_window(g, p, m, 'a charge counter') and m in p.perms:
+            m.data = dict(m.data or {}, charge=(m.data or {}).get('charge', 0) + 1)
         return None
     return [('{T}: put a charge counter on it (each one is a mana of any colour at your next precombat main phase)', act)]
 
@@ -405,8 +410,9 @@ def _strip(g, p, L):
         if k is None: return None
         q, x = tg[k]
         p.lands.remove(L); p.gy.append(L.cd)
-        E.log(f'  {E.NAME(p)} sacrifices Strip Mine: destroys {x.cd.name} ({E.NAME(q)})', g)
-        if x in q.lands: importlib.import_module('commander_sim.cards.impl.fixes').destroy_land(g, q, x)
+        E.log(f'  {E.NAME(p)} sacrifices Strip Mine: destroy {x.cd.name} ({E.NAME(q)})', g)
+        if E.ability_window(g, p, L.cd, f'destroy {x.cd.name}') and x in q.lands:
+            importlib.import_module('commander_sim.cards.impl.fixes').destroy_land(g, q, x)
         return None
     return [('{T}, sacrifice: destroy target land', act)]
 
@@ -417,7 +423,7 @@ def _lighthouse(g, p, L):
         if why: return why
         mana.pay_from_pool(g, p, 1, 'UR'); L.tapped = True
         E.log(f'  {E.NAME(p)} loots with Desolate Lighthouse', g)
-        E.draw(g, p, 1); E.discard_worst(g, p, 1)
+        if E.ability_window(g, p, L.cd, 'draw, then discard'): E.draw(g, p, 1); E.discard_worst(g, p, 1)
         return None
     return [('{1}{U}{R}, {T}: draw a card, then discard a card', act)]
 
@@ -427,7 +433,7 @@ def _summit(g, p, L):
         why = _tapped(L, 'Spectacle Summit') or _cost(g, p, 2, 'UR', 'Spectacle Summit')
         if why: return why
         mana.pay_from_pool(g, p, 2, 'UR'); L.tapped = True
-        _choices().scry(g, p, 1, to='gy')
+        if E.ability_window(g, p, L.cd, 'surveil 1'): _choices().scry(g, p, 1, to='gy')
         return None
     return [('{2}{U}{R}, {T}: surveil 1', act)]
 
@@ -446,7 +452,8 @@ def _baraddur(g, p, L):
         why = mana.pay_from_pool(g, p, 2 * x, 'B')
         if why: return f"Can't activate Barad-dûr. {why}"
         L.tapped = True
-        E.amass(g, p, x); E.log(f'  {E.NAME(p)} uses Barad-dûr: amass Orcs {x}', g)
+        E.log(f'  {E.NAME(p)} uses Barad-dûr: amass Orcs {x}', g)
+        if E.ability_window(g, p, L.cd, f'amass Orcs {x}'): E.amass(g, p, x)
         return None
     return [('{X}{X}{B}, {T}: amass Orcs X (only if a creature died this turn)', act)]
 
@@ -854,8 +861,8 @@ def _guildmage_tap(g, p, m):
     k = _choose(g, p, 'target', 'Azorius Guildmage: tap which creature?', [legal.describe_target(g, p, x) for x in cre])
     if k is None: return None
     mana.pay_from_pool(g, p, 2, 'W')
-    cre[k].tapped = True
-    E.log(f'  {E.NAME(p)} activates Azorius Guildmage: taps {cre[k].name}', g)
+    E.log(f'  {E.NAME(p)} activates Azorius Guildmage: tap {cre[k].name}', g)
+    if E.ability_window(g, p, m, f'tap {cre[k].name}', target=cre[k]): cre[k].tapped = True
     return None
 
 
@@ -863,7 +870,7 @@ def _officer(g, p, m):
     why = _cost(g, p, 3, 'W', 'Recruitment Officer')
     if why: return why
     mana.pay_from_pool(g, p, 3, 'W')
-    _zur().officer_dig(g, p)
+    if E.ability_window(g, p, m, 'look at the top four'): _zur().officer_dig(g, p)
     return None
 
 
@@ -900,7 +907,24 @@ def _wanderer_minus4(g, p, m):
 
 
 
-ABILITIES['Azorius Guildmage'] = lambda g, p, m: [('{2}{W}: tap target creature', _guildmage_tap)]
+def _guildmage_counter(g, p, m):
+    abil = [it for it in reversed(g.stack) if it.kind == 'ability']
+    if not abil: return 'There is no activated ability on the stack to counter.'
+    why = _cost(g, p, 2, 'U', 'Azorius Guildmage')
+    if why: return why
+    k = 0
+    if len(abil) > 1:
+        k = _choose(g, p, 'target', 'Azorius Guildmage: counter which ability?', [f'{it.name} ({E.NAME(it.controller)})' for it in abil])
+        if k is None: return None
+    t = abil[k]
+    mana.pay_from_pool(g, p, 2, 'U')
+    E.log(f'  {E.NAME(p)} activates Azorius Guildmage: counter {t.name}', g)
+    if E.ability_window(g, p, m, f'counter {t.name}', target=t) and t in g.stack: t.countered = True
+    return None
+
+
+ABILITIES['Azorius Guildmage'] = lambda g, p, m: [('{2}{W}: tap target creature', _guildmage_tap)] + (
+    [('{2}{U}: counter target activated ability', _guildmage_counter)] if any(it.kind == 'ability' for it in g.stack) else [])
 ABILITIES['Recruitment Officer'] = lambda g, p, m: [('{3}{W}: look at the top four, take a creature card with mana value 3 or less', _officer)]
 ABILITIES['The Eternal Wanderer'] = _walker([(1, "exile up to one target artifact or creature until its owner's next end step", _wanderer_plus),
                                              (0, 'create a 2/2 white Samurai with double strike', _wanderer_zero),
@@ -911,8 +935,8 @@ def _niv_draw(g, p, m):
     why = _tapped(m) or ("Niv-Mizzet has summoning sickness (it came under your control this turn)." if m.sick else None)
     if why: return why
     m.tapped = True
-    E.log(f'  {E.NAME(p)} activates Niv-Mizzet, the Firemind: draws a card', g)
-    E.draw(g, p, 1)
+    E.log(f'  {E.NAME(p)} activates Niv-Mizzet, the Firemind: draw a card', g)
+    if E.ability_window(g, p, m, 'draw a card'): E.draw(g, p, 1)
     return None
 
 
@@ -925,9 +949,10 @@ def _torch_fiend(g, p, m):
     k = _choose(g, p, 'target', 'Torch Fiend: destroy which artifact?', [legal.describe_target(g, p, x) for x in arts])
     if k is None: return None
     mana.pay_from_pool(g, p, 0, 'R')
-    E.log(f'  {E.NAME(p)} sacrifices Torch Fiend: destroys {arts[k].name}', g)
+    E.log(f'  {E.NAME(p)} sacrifices Torch Fiend: destroy {arts[k].name}', g)
     E.die(g, m, 'sac')
-    if arts[k] in arts[k].owner.perms: E.apply_removal(g, p, arts[k], 'destroy')
+    if E.ability_window(g, p, m.cd, f'destroy {arts[k].name}', target=arts[k]) and arts[k] in arts[k].owner.perms:
+        E.apply_removal(g, p, arts[k], 'destroy')
     return None
 
 

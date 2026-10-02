@@ -207,6 +207,8 @@ def _embrace_gy(g, c, p, s, post):
         if c not in p.gy or worst not in p.hand or not can_pay(g, p, 1, 'BB') or host not in p.perms: return False
         pay(g, p, 1, 'BB'); lose_life(g, p, 3, p); discard_cards(g, p, [worst])
         p.gy.remove(c); p.spells_this_turn += 1; on_cast(g, p, c)
+        if not counter_window(g, p, c, 4, {}) or host not in p.perms:
+            p.gy.append(c); return True
         g.attach_to = host
         try:
             enter(g, p, c, was_cast=True)
@@ -298,7 +300,7 @@ def _officer(g, src, p, s, post):
     def go():
         if src not in p.perms or not can_pay(g, p, 3, 'W'): return False
         pay(g, p, 3, 'W')
-        officer_dig(g, p)
+        if ability_window(g, p, src, 'look at the top four'): officer_dig(g, p)
         return True
     return [(1.4, 'Recruitment Officer: dig for a creature', go)]
 
@@ -334,8 +336,9 @@ def _guildmage(g, src, p, s, post):
 
     def go():
         if src not in p.perms or t not in t.owner.perms or t.tapped or not can_pay(g, p, 2, 'W'): return False
-        pay(g, p, 2, 'W'); t.tapped = True
-        log(f'  {NAME(p)} activates Azorius Guildmage: taps {t.name}', g)
+        pay(g, p, 2, 'W')
+        log(f'  {NAME(p)} activates Azorius Guildmage: tap {t.name}', g)
+        if ability_window(g, p, src, f'tap {t.name}', target=t): t.tapped = True
         return True
     return [(1.0 + 0.5 * pval(g, t), f'Azorius Guildmage: tap {t.name}', go)]
 
@@ -350,8 +353,8 @@ def guildmage_target(g, p):
                 and not untargetable(g, b) and ais.can_block(g, b, a) and epow(g, b) >= etgh(g, a) - 0]
     return max(blockers, key=lambda b: epow(g, b), default=None)
 card('Azorius Guildmage', 'wizard pow=2 tgh=2', dsl=[])
-note('Azorius Guildmage', 'Partial', "{2}{W}: taps the creature that would block your attacker, before combat; "
-     "{2}{U} (counter target activated ability) is not modeled: the engine has no window to answer abilities")
+full('Azorius Guildmage', "{2}{W}: taps the creature that would block your attacker, before combat; {2}{U}: counters "
+     "an opponent's important activated ability on the stack")
 
 
 # ================================================================== The Eternal Wanderer
@@ -370,17 +373,20 @@ def _wanderer(g, src, p, s, post):
             src.data = dict(src.data or {}, act=turn_stamp(g))
             if kind == 'plus':
                 src.loyalty += 1
-                if t is not None and t in t.owner.perms: wanderer_exile(g, p, t)
-                else: log(f'  {NAME(p)} uses The Eternal Wanderer +1', g)
+                log(f'  {NAME(p)} uses The Eternal Wanderer +1', g)
+                if ability_window(g, p, src, '+1', target=t) and t is not None and t in t.owner.perms: wanderer_exile(g, p, t)
             elif kind == 'zero':
+                log(f'  {NAME(p)} uses The Eternal Wanderer 0', g)
+                if not ability_window(g, p, src, '0'): return True
                 n = make_tokens(g, p, 1, 2, color='W', types=('samurai',))
                 for x in n: x.data = dict(x.data or {}, kws=('double strike',))
                 log(f'  {NAME(p)} uses The Eternal Wanderer 0: a 2/2 double-strike Samurai', g)
             else:
                 src.loyalty -= 4
                 log(f'  {NAME(p)} uses The Eternal Wanderer -4', g)
-                wanderer_ult(g, p)
-                if src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy')
+                dead = src.loyalty <= 0
+                if dead: leave(g, src); to_zone_card(g, src, 'gy')
+                if ability_window(g, p, src.cd if dead else src, '-4', imp=8): wanderer_ult(g, p)
             return True
         return go
     if t is not None: out.append((1.5 + 0.6 * pval(g, t), f'The Eternal Wanderer +1 (exile {t.name})', act('plus')))
@@ -548,7 +554,8 @@ def _blink_option(g, p, c, gen, pips, zone):
         pay(g, p, gen, pips)
         p.spells_this_turn += 1; on_cast(g, p, c)
         (p.gy if zone == 'hand' else p.exile).append(c)
-        t2.blink(g, p, t)
+        if not counter_window(g, p, c, 4, {}): return True
+        if t in p.perms: t2.blink(g, p, t)
         log(f'  {NAME(p)} casts Momentary Blink{" (flashback)" if zone == "gy" else ""}: blinks {t.cd.name}', g)
         return True
     return [(t2.blink_value(g, p, t) - 1.5 - (1.0 if zone == 'gy' else 0), f'Momentary Blink on {t.name}', go)]

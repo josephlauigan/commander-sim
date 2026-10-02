@@ -271,7 +271,9 @@ def _krenko(g, src, p, s, post):
 
     def go():
         if src.tapped: return False
-        src.tapped = True; n = count_type(g, p, 'goblin'); goblins(g, p, n)
+        src.tapped = True
+        if not ability_window(g, p, src, 'a Goblin per Goblin', imp=5): return True
+        n = count_type(g, p, 'goblin'); goblins(g, p, n)
         log(f'  Krenko makes {n} Goblins', g); return True
     return [(u, f'Krenko: {n} Goblins', go)]
 
@@ -650,6 +652,7 @@ def _scoundrel(g, src, p, s, post):
         if src.tapped or not can_pay(g, p, 1, ''): return False
         pay(g, p, 1, ''); src.tapped = True
         from commander_sim.cards.impl import t3 as impl_t3; impl_t3.sac_worst_permanent(g, p, src)
+        if not ability_window(g, p, src, 'flip a coin'): return True
         if g.rng.random() < 0.5: make_artifact_tokens(g, p, 'Treasure', 2)
         return True
     return [(1.0, 'Tavern Scoundrel flip', go)]
@@ -716,6 +719,7 @@ def _scepter_use(g, src, p, s, post):
     def go():
         if src.tapped or not can_pay(g, p, 2, ''): return False
         pay(g, p, 2, ''); src.tapped = True
+        if not ability_window(g, p, src, f'cast a copy of {name}'): return True
         log(f'  {NAME(p)} casts a copy of {name} with Isochron Scepter', g)
         n = len(p.gy)
         cast_card(g, p, c, 'lib', dict(ctx))

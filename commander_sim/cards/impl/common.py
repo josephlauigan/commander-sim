@@ -484,6 +484,7 @@ def _priest(g, src, p, s, post):
         if len(f2) < 2 or src.tapped: return False
         src.tapped = True
         for m in f2: die(g, m, 'sac')
+        if not ability_window(g, p, src, 'each opponent loses 2 life and sacrifices a creature', imp=6): return True
         for q in g.opps(p): lose_life(g, q, 2, p, kind='drain'); edict(g, q)
         p.floatA += 2; draw(g, p, 1); check_state(g); return True
     return [(3.5 + 0.5 * len(g.opps(p)), 'Priest of Forgotten Gods', go)]
@@ -537,7 +538,9 @@ def _mind_stone(g, src, p, s, post):
         if src.tapped or src not in p.perms: return False
         src.tapped = True
         if not can_pay(g, p, 1, ''): src.tapped = False; return False
-        pay(g, p, 1, ''); die(g, src, 'sac'); draw(g, p, 1); return True
+        pay(g, p, 1, ''); die(g, src, 'sac')
+        if ability_window(g, p, src.cd, 'draw a card'): draw(g, p, 1)
+        return True
     return [(1.0, 'crack Mind Stone', go)]
 note('Mind Stone', 'Full', 'taps for {C}; cracked for a card late (six or more lands)')
 
@@ -765,7 +768,7 @@ def _dauthi_play(g, src, p, s, post):
     def go():
         if src not in p.perms or c not in q.exile: return False
         die(g, src, 'sac')
-        if c not in q.exile: return True
+        if not ability_window(g, p, src.cd, f'play {c.name}', imp=5) or c not in q.exile: return True
         q.exile.remove(c)
         log(f'  Dauthi Voidwalker: {NAME(p)} plays {c.name} free', g)
         if c.perm: enter(g, p, c, orig=q)
@@ -798,7 +801,8 @@ def _gy_hate_card(name, cost, when_used, status):
             pay(g, p, *cost)
             if when_used == 'sac': die(g, src, 'sac')
             else: src.tapped = True
-            exile_gy(g, q, name); return True
+            if ability_window(g, p, src.cd, f'exile {NAME(q)}\'s graveyard'): exile_gy(g, q, name)
+            return True
         return [(1.0 + gy_worth(g, p, q) / 4.0, f'{name} on {NAME(q)}', go)]
     note(name, *status)
 
@@ -881,6 +885,7 @@ def _grove(g, src, p, s, post):
     def go():
         if src not in p.perms or not can_pay(g, p, 1, ''): return False
         pay(g, p, 1, ''); die(g, src, 'sac')
+        if not ability_window(g, p, src.cd, 'an enchantment on top'): return True
         cs = [c for c in searchable(g, p) if 'E' in c.types]          # (Aven Mindcensor: maybe none in the top four)
         if not cs: g.rng.shuffle(p.library); return True
         c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); p.library.append(c)
@@ -945,7 +950,10 @@ def walker(name, abilities, status=('Approximate', ''), tags='', static=None):
                 src.loyalty_used = (g.round, p.key, _uses(g, p, src) + 1)
                 src.loyalty += delta                 # loyalty costs aren't doubled (Doubling Season doubles effects only)
                 log(f'  {NAME(p)} uses {name} ({delta:+d}): {label}', g)
-                eff(g, p, src)
+                dead = src.loyalty <= 0              # state-based: a walker at 0 loyalty goes before its ability resolves
+                if dead: leave(g, src); to_zone_card(g, src, 'gy')
+                if ability_window(g, p, src.cd if dead else src, f'{delta:+d}', imp=8 if delta <= -5 else None):
+                    eff(g, p, src)
                 if src in p.perms and src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy')
                 return True
             out.append((u + 0.15 * delta, f'{name} {delta:+d}', go))
@@ -1243,6 +1251,7 @@ def _ballista_ping(g, src, p, s, post):
     def go():
         if src.plus <= 0: return False
         src.plus -= 1
+        if not ability_window(g, p, src, '1 damage', imp=8 if lethal else 3): return True
         if lethal: lose_life(g, lethal[0], 1, p, kind='triggers')
         elif tg and tg[0] in tg[0].owner.perms: apply_removal(g, p, tg[0], 'dmg1')
         if etgh(g, src) <= 0: die(g, src, 'sba')
@@ -1423,6 +1432,7 @@ def _deed(g, src, p, s, post):
         pay(g, p, x, '')
         log(f'  {NAME(p)} sacrifices Pernicious Deed (X={x})', g)
         die(g, src, 'sac')
+        if not ability_window(g, p, src.cd, f'destroy everything with mana value {x} or less', imp=8): return True
         for q in [q for q in g.players if q.alive]:
             for m in list(q.perms):
                 if m.phased: continue

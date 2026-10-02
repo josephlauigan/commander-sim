@@ -22,8 +22,10 @@ def archivist(g, p, m):
     why = _tap_ok(m, creature=True) or _pay(g, p, 0, 'U', "Jace's Archivist")
     if why: return why
     m.tapped = True
+    E.log(f"  {E.NAME(p)} activates Jace's Archivist", g)
+    if not E.ability_window(g, p, m, 'each player discards their hand and draws'): return None
     n = max(len(q.hand) for q in g.players if q.alive)
-    E.log(f"  {E.NAME(p)} activates Jace's Archivist: everyone discards and draws {n}", g)
+    E.log(f"    everyone discards and draws {n}", g)
     for q in g.players:
         if q.alive: E.discard_cards(g, q, list(q.hand))
     for q in g.players:
@@ -39,6 +41,7 @@ def assault(g, p, m):
     if why: return why.replace('do that', 'activate Aggravated Assault')
     why = _pay(g, p, 3, 'RR', 'Aggravated Assault')
     if why: return why
+    if not E.ability_window(g, p, m, 'untap, an additional combat', imp=7): return None
     for x in p.perms:
         if x.creature: x.tapped = False
     E.log(f'  {E.NAME(p)} activates Aggravated Assault: creatures untap, an extra combat follows', g)
@@ -64,6 +67,7 @@ def tortured(g, p, m):
     mana.pay_from_pool(g, p, 0, 'B')
     d = choices.pick_cards(g, p, fodder, 1, 'Tortured Existence: discard a creature card')[0]
     E.discard_cards(g, p, [d])
+    if not E.ability_window(g, p, m, f'return {tg[k].name} to hand'): return None
     if tg[k] in p.gy: p.gy.remove(tg[k]); p.hand.append(tg[k])
     E.log(f'  {E.NAME(p)} uses Tortured Existence: {d.name} for {tg[k].name}', g)
     return None
@@ -113,8 +117,10 @@ def passage(g, p, L):
                [legal.describe_target(g, p, x) for x in cre])
     if k is None: return None
     mana.pay_from_pool(g, p, 4, ''); L.tapped = True
-    m = cre[k]; m.data = m.data or {}; m.data['unbl'] = E.turn_stamp(g)
+    m = cre[k]
     E.log(f"  {E.NAME(p)} activates Rogue's Passage: {m.name} can't be blocked this turn", g)
+    if E.ability_window(g, p, L.cd, f"{m.name} can't be blocked", target=m) and m in m.owner.perms:
+        m.data = m.data or {}; m.data['unbl'] = E.turn_stamp(g)
     return None
 
 
@@ -128,9 +134,11 @@ def grounds(g, p, L):
     L.tapped = True
     d = L if L in deserts else deserts[0]            # it is a Desert itself: sacrifice it (the usual choice)
     p.lands.remove(d); p.gy.append(d.cd)
+    E.log(f'  {E.NAME(p)} activates Scavenger Grounds', g)
+    if not E.ability_window(g, p, L.cd, 'exile all graveyards', imp=9): return None
     for q in g.players:
         if q.alive: q.exile.extend(q.gy); q.gy = []
-    E.log(f'  {E.NAME(p)} activates Scavenger Grounds: all graveyards are exiled', g)
+    E.log('    all graveyards are exiled', g)
     return None
 
 

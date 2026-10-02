@@ -118,7 +118,9 @@ def _blink_option(name, cost_g, cost_p, other=True, label=None, needs_pair=False
 
         def go():
             if t not in p.perms or not can_pay(g, p, cost_g, cost_p): return False
-            pay(g, p, cost_g, cost_p); blink(g, p, t); return True
+            pay(g, p, cost_g, cost_p)
+            if ability_window(g, p, src, f'blink {t.name}', target=t) and t in p.perms: blink(g, p, t)
+            return True
         return [(0.5 + 0.5 * blink_value(g, p, t), label or f'{name}: blink {t.name}', go)]
 
 
@@ -556,6 +558,7 @@ def _survival(g, src, p, s, post):
     def go():
         if d not in p.hand or not can_pay(g, p, 0, 'G'): return False
         pay(g, p, 0, 'G'); discard_cards(g, p, [d])
+        if not ability_window(g, p, src, 'search for a creature'): return True
         if want in p.library: p.library.remove(want); p.hand.append(want); g.rng.shuffle(p.library); p.stats['tutored'] += 1
         return True
     return [(1.5 + card_worth(g, p, want) / 30.0, 'Survival of the Fittest', go)]
@@ -580,8 +583,10 @@ def _pod(g, src, p, s, post):
     def go():
         if m not in p.perms or c not in p.library or src.tapped or not can_pay(g, p, 1, 'G'): return False
         pay(g, p, 1, 'G'); src.tapped = True
-        p.library.remove(c); g.rng.shuffle(p.library)     # take it before the sacrifice's triggers draw
-        die(g, m, 'sac'); enter(g, p, c); return True
+        die(g, m, 'sac')
+        if not ability_window(g, p, src, f'search for {c.name}', imp=6) or c not in p.library: return True
+        p.library.remove(c); g.rng.shuffle(p.library)
+        enter(g, p, c); return True
     return [(1.5 + best[0], f'Birthing Pod {m.name} -> {c.name}', go)]
 card('Birthing Pod', '', types='A', dsl=[])
 note('Birthing Pod', 'Full', 'sacrifice a creature for one with MV one higher, when it upgrades')
@@ -597,6 +602,7 @@ def _leap(g, src, p, s, post):
     def go():
         if m not in p.perms or not can_pay(g, p, 0, 'G'): return False
         pay(g, p, 0, 'G'); die(g, m, 'sac')
+        if not ability_window(g, p, src, 'reveal until a creature'): return True
         for i in range(len(p.library) - 1, -1, -1):
             if p.library[i].creature:
                 c = p.library.pop(i); p.hand.append(c); break

@@ -64,7 +64,9 @@ def _archfiend_unearth(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 3, 'BB'): return False
-        p.gy.remove(c); pay(g, p, 3, 'BB')
+        pay(g, p, 3, 'BB')
+        if not ability_window(g, p, c, 'unearth') or c not in p.gy: return True
+        p.gy.remove(c)
         m = enter(g, p, c); m.sick = False
         if m.data is None: m.data = {}
         m.data['unearth'] = True
@@ -98,12 +100,15 @@ def _keeper(g, src, p, s, post):
     if not src.tapped and not src.sick:
         def tok():
             if src.tapped: return False
-            src.tapped = True; make_tokens(g, p, 1, 2, fly=True, color='B', types=('vampire',)); return True
+            src.tapped = True
+            if ability_window(g, p, src, 'a 2/2 flying Vampire'): make_tokens(g, p, 1, 2, fly=True, color='B', types=('vampire',))
+            return True
         o.append((2.0, 'Bloodline Keeper token', tok))
     if not (src.data or {}).get('lord') and count_type(g, p, 'vampire') >= 5 and can_pay(g, p, 0, 'B'):
         def flip():
             if not can_pay(g, p, 0, 'B'): return False
             pay(g, p, 0, 'B')
+            if not ability_window(g, p, src, 'transform') or src not in p.perms: return True
             if src.data is None: src.data = {}
             src.data['lord'] = True; src.pow, src.tgh = 5, 5
             log(f'  {NAME(p)} transforms Bloodline Keeper into Lord of Lineage', g); return True
@@ -145,6 +150,7 @@ def _hordechief_act(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 3, pips): return False
         pay(g, p, 3, pips)
+        if not ability_window(g, p, src, 'opponents block as you choose'): return True
         if src.data is None: src.data = {}
         src.data['lure'] = turn_now(g)
         log(f'  {NAME(p)} activates Brutal Hordechief: opponents block as {NAME(p)} chooses', g); return True
@@ -246,7 +252,9 @@ def _conduit(g, src, p, s, post):
 
     def go():
         if src.tapped or c not in p.gy or not can_pay(g, p, *cost_of(p, c)): return False
-        src.tapped = True; pay(g, p, *cost_of(p, c))
+        src.tapped = True
+        if not ability_window(g, p, src, f'cast {c.name} from the graveyard') or c not in p.gy: return True
+        pay(g, p, *cost_of(p, c))
         log(f'  {NAME(p)} casts {c.name} from the graveyard with Conduit of Worlds', g)
         cast_card(g, p, c, 'gy', {})
         p.conduit_lock = turn_now(g)
@@ -366,7 +374,9 @@ def _druid3(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 4, 'G') or not p.lands: return False
-        pay(g, p, 4, 'G'); src.data['level'] = 3
+        pay(g, p, 4, 'G')
+        if not ability_window(g, p, src, 'level 3') or src not in p.perms or not p.lands: return True
+        src.data['level'] = 3
         L = min(p.lands, key=lambda L: (len(L.cd.tags.get('c', '')), L.cd.name not in ('Forest', 'Island')))
         p.lands.remove(L)
         m = Perm(p, None, pw=len(p.lands) + 1, tg=len(p.lands) + 1, name=L.cd.name)
@@ -487,7 +497,8 @@ def _gix(g, src, p, s, post):
         pay(g, p, 4, 'BBB')
         for c in junk:
             if c in p.hand: p.hand.remove(c); p.gy.append(c)
-        top = [q.library.pop() for _ in range(len(junk))]
+        if not ability_window(g, p, src, f'exile the top {len(junk)} of a library', imp=6): return True
+        top = [q.library.pop() for _ in range(min(len(junk), len(q.library)))]
         log(f'  {NAME(p)} activates Gix: exiles {len(top)} cards of {NAME(q)}', g)
         for c in top:
             if c.land and len(p.lands) < 20: p.lands.append(Land(c, False))
@@ -511,7 +522,9 @@ def _cratermaker(g, src, p, s, post):
     def go():
         if src not in p.perms or t not in t.owner.perms or not can_pay(g, p, 1, ''): return False
         pay(g, p, 1, ''); die(g, src, 'sac')
-        apply_removal(g, p, t, 'dmg2' if t is t1 else 'destroy'); return True
+        if ability_window(g, p, src.cd, f'{t.name}', target=t) and t in t.owner.perms:
+            apply_removal(g, p, t, 'dmg2' if t is t1 else 'destroy')
+        return True
     return [(pval(g, t) - 2.0, f'Goblin Cratermaker -> {t.name}', go)]
 card('Goblin Cratermaker', 'pow=2 tgh=2 warrior', dsl=[])
 note('Goblin Cratermaker', 'Full', '{1}, sacrifice: 2 damage to a creature or destroy a colorless nonland permanent')
@@ -578,6 +591,7 @@ def _hireling(g, src, p, s, post):
         pay(g, p, 0, 'B'); p.treasures -= x
         for _ in range(x): CI.fire(g, 'sacrifice', p, 'Treasure') if g.hooks else None
         log(f'  {NAME(p)} sacrifices {x} Treasures: {t.name} gets -{x}/-{x}', g)
+        if not ability_window(g, p, src, f'-{x}/-{x} to {t.name}', target=t) or t not in t.owner.perms: return True
         if not untargetable(g, t): _eot(g, t, -x, -x); die(g, t, 'sba') if etgh(g, t) <= 0 else None
         return True
     return [(pval(g, t) - 1.0 - 0.6 * x, f'Grim Hireling -> {t.name}', go)]
@@ -591,8 +605,10 @@ def _gryff(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 3, 'W'): return False
-        p.gy.remove(c); pay(g, p, 3, 'W'); enter(g, p, c)
-        log(f"  {NAME(p)} returns Gryff's Boon from the graveyard", g); return True
+        pay(g, p, 3, 'W')
+        log(f"  {NAME(p)} returns Gryff's Boon from the graveyard", g)
+        if ability_window(g, p, c, 'return to the battlefield') and c in p.gy: p.gy.remove(c); enter(g, p, c)
+        return True
     return [(1.8, "Gryff's Boon (graveyard)", go)]
 note("Gryff's Boon", 'Full', '+1/+0 and flying; {3}{W}: returns from the graveyard onto a creature')
 
@@ -636,8 +652,10 @@ def _hope_sac(g, src, p, s, post):
 
     def go():
         if src not in p.perms: return False
-        die(g, src, 'sac'); d.hope_lock = (p, p.turns)
-        log(f'  {NAME(p)} sacrifices Hope of Ghirapur: {NAME(d)} can\'t cast noncreature spells', g); return True
+        die(g, src, 'sac')
+        log(f'  {NAME(p)} sacrifices Hope of Ghirapur: {NAME(d)} can\'t cast noncreature spells', g)
+        if ability_window(g, p, src.cd, f"{NAME(d)} can't cast noncreature spells"): d.hope_lock = (p, p.turns)
+        return True
     return [(1.0 + 0.2 * len(d.hand), 'Hope of Ghirapur', go)]
 note('Hope of Ghirapur', 'Full', 'flying; after it connects, sacrificed to stop that player casting noncreature '
      'spells until your next turn')
@@ -696,7 +714,9 @@ def _archers(g, src, p, s, post):
 
     def go():
         if src.tapped or t not in t.owner.perms: return False
-        src.tapped = True; apply_removal(g, p, t, f'dmg{n}'); return True
+        src.tapped = True
+        if ability_window(g, p, src, f'{n} damage to {t.name}', target=t) and t in t.owner.perms: apply_removal(g, p, t, f'dmg{n}')
+        return True
     return [(pval(g, t) - 1.0, f'Jagged-Scar Archers -> {t.name}', go)]
 note('Jagged-Scar Archers', 'Full', 'P/T = Elves you control; {T}: damage equal to its power to a flier')
 
@@ -745,6 +765,7 @@ def _jaxis_copy(g, src, p, s, post):
         if src.tapped or t not in p.perms or not can_pay(g, p, 0, 'R'): return False
         pay(g, p, 0, 'R'); src.tapped = True
         x = min(junk, key=lambda c: card_worth(g, p, c)); p.hand.remove(x); p.gy.append(x)
+        if not ability_window(g, p, src, f'copy {t.name}', target=t) or t not in p.perms: return True
         tok = enter_token_copy(g, p, t.cd)
         if tok is not None:
             tok.sick = False
@@ -795,7 +816,9 @@ def _loran(g, src, p, s, post):
 
     def go():
         if src.tapped: return False
-        src.tapped = True; draw(g, p, 1); draw(g, q, 1); return True
+        src.tapped = True
+        if ability_window(g, p, src, 'you and an opponent draw'): draw(g, p, 1); draw(g, q, 1)
+        return True
     return [(0.6, 'Loran draw', go)]
 note('Loran of the Third Path', 'Full', 'destroys an artifact or enchantment on entry; {T}: you and the least '
      'threatening opponent each draw (at end of turn)')
@@ -863,8 +886,10 @@ def bauble(name):
 
         def go():
             if src not in p.perms: return False
-            die(g, src, 'sac'); p.delayed_draws = getattr(p, 'delayed_draws', 0) + 1
-            log(f'  {NAME(p)} sacrifices {name} (draws at the next upkeep)', g); return True
+            die(g, src, 'sac')
+            log(f'  {NAME(p)} sacrifices {name} (draws at the next upkeep)', g)
+            if ability_window(g, p, src.cd, 'draw at the next upkeep'): p.delayed_draws = getattr(p, 'delayed_draws', 0) + 1
+            return True
         return [(0.8, name, go)]
     card(name, '', types='A', cost='0', dsl=[])
     note(name, 'Full', '{T}, sacrifice: draw at the beginning of the next upkeep (kept as an artifact for Urza)')
@@ -881,9 +906,18 @@ def _fanatic(g, src, p, s, post):
     t = best_opp_creature(g, p, lambda m: etgh(g, m) <= 1)
     lethal = [q for q in g.opps(p) if q.life <= 1]
     if lethal:
-        return [(9.0, 'Mogg Fanatic (lethal)', lambda: (die(g, src, 'sac'), lose_life(g, lethal[0], 1, p, kind='burn'), True)[2])]
+        def kill():
+            die(g, src, 'sac')
+            if ability_window(g, p, src.cd, '1 damage', imp=9): lose_life(g, lethal[0], 1, p, kind='burn')
+            return True
+        return [(9.0, 'Mogg Fanatic (lethal)', kill)]
     if t is None or pval(g, t) < 3: return []
-    return [(pval(g, t) - 1.5, f'Mogg Fanatic -> {t.name}', lambda: (die(g, src, 'sac'), apply_removal(g, p, t, 'dmg1'), True)[2])]
+
+    def ping():
+        die(g, src, 'sac')
+        if ability_window(g, p, src.cd, f'1 damage to {t.name}', target=t) and t in t.owner.perms: apply_removal(g, p, t, 'dmg1')
+        return True
+    return [(pval(g, t) - 1.5, f'Mogg Fanatic -> {t.name}', ping)]
 card('Mogg Fanatic', 'pow=1 tgh=1', dsl=[])
 note('Mogg Fanatic', 'Full', 'sacrifice: 1 damage to a valuable X/1 or a player at 1 life')
 
@@ -899,6 +933,7 @@ def _multani(g, c, p, s, post):
         pay(g, p, 1, 'G')
         for L in sorted(p.lands, key=lambda L: (not L.tapped, len(L.cd.tags.get('c', ''))))[:2]:
             p.lands.remove(L); p.hand.append(L.cd)
+        if not ability_window(g, p, c, 'return to hand') or c not in p.gy: return True
         p.gy.remove(c); p.hand.append(c)
         log(f"  {NAME(p)} returns Multani to hand", g); return True
     return [(1.5, 'Multani (graveyard)', go)]
@@ -959,7 +994,8 @@ def _mons_make(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 3, 'R') or fod[0] not in p.perms: return False
         pay(g, p, 3, 'R'); die(g, fod[0], 'sac')
-        make_tokens(g, p, 2, 1, color='R', types=('goblin',)); return True
+        if ability_window(g, p, src, 'two Goblins'): make_tokens(g, p, 2, 1, color='R', types=('goblin',))
+        return True
     return [(1.2 if post is None else 0.8, 'Pashalik Mons tokens', go)]
 note('Pashalik Mons', 'Full', 'a Goblin of yours dying deals 1; {3}{R}, sacrifice a Goblin: two Goblin tokens')
 
@@ -986,6 +1022,7 @@ def _pia(g, src, p, s, post):
         if arts and arts[0] in p.perms: die(g, arts[0], 'sac')
         elif p.treasures: p.treasures -= 1
         else: return False
+        if not ability_window(g, p, src, f"{b.name} can't block", target=b): return True
         g.eot_kw.setdefault(id(b), set()).add('cant_block')
         log(f'  {NAME(p)} uses Pia Nalaar: {b.name} can\'t block', g); return True
     return [(1.0, 'Pia Nalaar (can\'t block)', go)]
@@ -1162,7 +1199,8 @@ def _sai_draw(g, src, p, s, post):
         if not can_pay(g, p, 1, 'U') or len([m for m in thop if m in p.perms]) < 2: return False
         pay(g, p, 1, 'U')
         for m in [m for m in thop if m in p.perms][:2]: die(g, m, 'sac')
-        draw(g, p, 1); return True
+        if ability_window(g, p, src, 'draw a card'): draw(g, p, 1)
+        return True
     return [(1.0, 'Sai: sacrifice two for a card', go)]
 note('Sai, Master Thopterist', 'Full', 'a Thopter per artifact spell; {1}{U}, sacrifice two artifacts: draw (spare Thopters)')
 
@@ -1208,7 +1246,10 @@ def _eyes(g, c, p, s, post):
         pay(g, p, 0, 'W')
         for x in sorted([x for x in p.gy if x is not c], key=lambda x: card_worth(g, p, x, True))[:2]:
             p.gy.remove(x); p.exile.append(x)
-        p.gy.remove(c); log(f"  {NAME(p)} escapes Sentinel's Eyes", g); enter(g, p, c); return True
+        p.gy.remove(c); log(f"  {NAME(p)} escapes Sentinel's Eyes", g); on_cast(g, p, c)
+        if counter_window(g, p, c, 3, {}): enter(g, p, c)
+        else: p.exile.append(c)
+        return True
     return [(1.5, "escape Sentinel's Eyes", go)]
 note("Sentinel's Eyes", 'Full', '+1/+1 and vigilance; escape {W} and two graveyard cards')
 
@@ -1346,6 +1387,7 @@ def _tekuthal_ind(g, src, p, s, post):
         if not can_pay(g, p, 1, ''): return False
         if can_pay(g, p, 1, 'UU'): pay(g, p, 1, 'UU')
         else: pay(g, p, 1, ''); lose_life(g, p, 4, p)
+        if not ability_window(g, p, src, 'an indestructible counter'): return True
         left = 3
         for m in sorted(pool, key=lambda m: pval(g, m)):
             while left and m.plus > 0: m.plus -= 1; left -= 1
@@ -1382,7 +1424,10 @@ def _sabertooth(g, src, p, s, post):
 
     def go():
         if m not in p.perms or not can_pay(g, p, 1, 'G'): return False
-        pay(g, p, 1, 'G'); bounce(g, m); g.eot_kw.setdefault(id(src), set()).add('indestructible')
+        pay(g, p, 1, 'G')
+        if not ability_window(g, p, src, f'return {m.name} to hand', target=m): return True
+        if m in p.perms: bounce(g, m)
+        g.eot_kw.setdefault(id(src), set()).add('indestructible')
         log(f'  {NAME(p)} returns {m.name} with Temur Sabertooth', g); return True
     return [(1.0 + v, f'Temur Sabertooth rebuys {m.name}', go)]
 card('Temur Sabertooth', 'pow=4 tgh=3', dsl=[])
@@ -1411,6 +1456,7 @@ def _ring_draw(g, src, p, s, post):
     def go():
         if src.tapped: return False
         src.tapped = True
+        if not ability_window(g, p, src, 'a burden counter, then draw'): return True
         if src.data is None: src.data = {}
         src.data['burden'] = src.data.get('burden', 0) + 1
         draw(g, p, src.data['burden']); return True
@@ -1441,6 +1487,58 @@ def tidebinder_response(g, p, m):
         tb.data['bound'] = m; m.neutered = True
         return True
     return False
+
+
+def answer_ability(g, q, item):
+    """the AI q with priority and an opponent's important ability (or trigger) on top of the stack: counter it with
+    Azorius Guildmage ({2}{U}) or by flashing in Tishana's Tidebinder (its source then loses its abilities)"""
+    gm = next((m for m in q.perms if m.cd is not None and m.cd.name == 'Azorius Guildmage' and not m.phased
+               and not m.neutered), None)
+    if gm is not None and item.kind == 'ability' and can_pay(g, q, 2, 'U'):
+        pay(g, q, 2, 'U')
+        log(f'  {NAME(q)} activates Azorius Guildmage: counters {item.name}', g)
+        if ability_window(g, q, gm, 'counter target activated ability', imp=item.imp, target=item) and item in g.stack:
+            item.countered = True
+        return True
+    c = next((x for x in q.hand if x.name == "Tishana's Tidebinder"), None)
+    if c is None or human_choice(g, q) is not None or not castable(g, q, c) or not can_pay(g, q, *cost_of(q, c)): return False
+    pay(g, q, *cost_of(q, c)); q.hand.remove(c)
+    log(f"    {NAME(q)} flashes in Tishana's Tidebinder: {item.name} is countered", g)
+    on_cast(g, q, c)
+    if not counter_window(g, q, c, 4, {}): q.gy.append(c); return True
+    tb = enter(g, q, c, was_cast=True)
+    if item in g.stack:
+        item.countered = True
+        src = item.ctx.get('source')
+        if isinstance(src, Perm) and src in src.owner.perms and src.cd is not None and (src.creature or 'A' in src.cd.types or 'P' in src.cd.types):
+            if tb.data is None: tb.data = {}
+            tb.data['bound'] = src; src.neutered = True
+    return True
+
+
+CI.answer_ability = answer_ability
+
+
+@on("Tishana's Tidebinder", 'etb')
+def _tide_etb_you(g, src, p, m):
+    """practice mode: when your Tidebinder enters, you may counter an activated or triggered ability on the stack (the
+    AI's own Tidebinder plays are in answer_ability and tidebinder_response)"""
+    if m is not src: return
+    o = src.owner
+    hc = human_choice(g, o)
+    if hc is None: return
+    abil = [it for it in reversed(g.stack) if it.kind != 'spell']
+    if not abil: return
+    from commander_sim.play import legal
+    k = hc.choose(g, o, 'target', "Tishana's Tidebinder: counter which ability?", [f'{it.name} ({NAME(it.controller)})' for it in abil],
+                  cancel='none')
+    if k is None: return
+    t = abil[k]; t.countered = True
+    s_ = t.ctx.get('source')
+    if isinstance(s_, Perm) and s_ in s_.owner.perms:
+        if src.data is None: src.data = {}
+        src.data['bound'] = s_; s_.neutered = True
+    log(f"    Tishana's Tidebinder counters {t.name}", g)
 
 
 @on("Tishana's Tidebinder", 'leaves')

@@ -722,7 +722,7 @@ def _researcher_cast(g, src, p, s, post):
             if cd not in q.gy: return
             if g.hooks and CI.gy_response(g, p, v, q): return
             q.gy.remove(cd); enter(g, p, cd, orig=q); lose_life(g, p, cd.cmc, p)
-        cast_copy(g, p, eff)
+        cast_copy(g, p, eff, name='Reanimate', instant=False, imp=max(5, v))
         return True
     return [(v * 0.9 * (1 - 0.35 * s.ctr_risk), f'Reanimate (prepared copy) -> {cd.name}', go)]
 
@@ -772,8 +772,10 @@ def _pteramander(g, src, p, s, post):
 
     def go():
         if src not in p.perms or src.plus > 0 or not can_pay(g, p, n, 'U'): return False
-        pay(g, p, n, 'U'); src.plus += 4
-        log(f'  {NAME(p)} adapts Pteramander (4 counters)', g); return True
+        pay(g, p, n, 'U')
+        log(f'  {NAME(p)} adapts Pteramander (4 counters)', g)
+        if ability_window(g, p, src, 'adapt 4') and src in p.perms and src.plus <= 0: src.plus += 4
+        return True
     return [(2.0 + (1.5 if marchesa_out(p) else 0) - 0.25 * n, 'Pteramander: adapt 4', go)]
 card('Pteramander', 'pow=1 tgh=1 fly', types='C', dsl=[])
 full('Pteramander', 'flying; {7}{U}, {1} less per instant and sorcery in your graveyard: adapt 4')
@@ -799,7 +801,8 @@ def _merchant_draw(g, src, p, s, post):
         if not p.treasures: return True
         p.treasures -= 1
         if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
-        draw(g, p, 1); return True
+        if ability_window(g, p, src, 'draw a card'): draw(g, p, 1)
+        return True
     return [(1.2 if post is None else 0.6, 'Skullport Merchant (sacrifice a Treasure): draw', go)]
 card('Skullport Merchant', 'pow=1 tgh=4', types='C', dsl=[])
 full('Skullport Merchant', 'enters: a Treasure; {1}{B}, sacrifice another creature or a Treasure: draw a card')

@@ -1309,9 +1309,25 @@ def discard_worst(g, p, n):
         discard_cards(g, p, [x])
 
 
-def cast_copy(g, p, effect=None):
+BACK_FACES = {}            # name -> a stand-in card for a cast copy of a back face the card data doesn't have
+
+
+def back_face(name, instant):
+    cd = DB.get(name)
+    if cd is None:
+        cd = BACK_FACES.get(name)
+        if cd is None: cd = BACK_FACES[name] = CD(name, 'I' if instant else 'S', '0', '')
+    return cd
+
+
+def cast_copy(g, p, effect=None, name=None, instant=True, imp=4):
     """'You may cast a copy of ...' (a back-face instant/sorcery): a real cast (magecraft, opponents' cast triggers,
-    Thousand-Year Storm), no card moves."""
+    Thousand-Year Storm), no card moves. Named, it goes on the stack, where it can be countered"""
+    if name is not None:
+        log(f'  {NAME(p)} casts a copy of {name}', g)
+        if not counter_window(g, p, back_face(name, instant), imp, {}):
+            p.spells_this_turn += 1; p.stats['spells_cast'] += 1
+            return
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
     count_is_cast(g, p)
     magecraft(g, p)
@@ -1453,15 +1469,52 @@ class StackItem:
     """a spell on the stack: its controller, card, targets (ctx), where it was cast from, how much it matters
     (imp: to everyone; aff: per player), who has already declined to counter it, and whether it was countered.
     Plain data: the look-ahead copies a game with items on the stack"""
-    def __init__(s, controller, card, ctx=None, zone='hand', imp=0, aff=None, generic=True):
+    def __init__(s, controller, card, ctx=None, zone='hand', imp=0, aff=None, generic=True, kind='spell', name=None):
         s.controller, s.card, s.ctx, s.zone, s.imp, s.aff = controller, card, ctx or {}, zone, imp, aff or {}
+        s.kind = kind                  # 'spell' | 'ability' | 'trigger'
+        s.name = name or (card.name if card is not None else 'an ability')
         s.generic = generic            # resolved by engine.resolve (cast_card); False: by its caster's own code
         s.passed = set()               # player keys who chose not to counter it
         s.countered = False
         s.countered_by = None
 
     def __repr__(s):
-        return f'StackItem({s.card.name!r}, {s.controller.key})'
+        return f'StackItem({s.name!r}, {s.kind}, {s.controller.key})'
+
+
+ABILITY_ANSWERS = ("Tishana's Tidebinder", 'Azorius Guildmage')     # cards the AI uses to counter abilities
+
+
+def _abilities_answered(g, p):
+    """could anyone answer an ability of p's? (a person at the table, or an opponent with an ability counter) - when
+    nobody could, an ability resolves without a round of priority, which keeps simulations fast"""
+    if getattr(g, 'controllers', None): return True
+    for q in g.players:
+        if q is p or not q.alive: continue
+        if any(c.name in ABILITY_ANSWERS for c in q.hand) or any(
+                m.cd is not None and m.cd.name in ABILITY_ANSWERS and not m.phased for m in q.perms):
+            return True
+    return False
+
+
+def equip_to(g, p, e, m, n):
+    """pay equip {n} for equipment e onto m; the ability goes on the stack, and attaches if it resolves and both are
+    still there"""
+    pay(g, p, n, '')
+    if ability_window(g, p, e, f'equip to {m.name}', target=m) and m in p.perms and e in p.perms: e.attached = m
+    return True
+
+
+def ability_window(g, p, src, name, imp=None, target=None):
+    """p has paid the cost of an activated ability of src (a permanent, or a card for abilities from hand or the
+    graveyard): it goes on the stack and players get priority. True if it resolves (the caller then applies its
+    effect, even if src is gone by then), False if it was countered. Mana abilities don't use this"""
+    if g is None or g.over or not _abilities_answered(g, p): return True
+    cd = getattr(src, 'cd', src)
+    if imp is None: imp = 3 + (0.5 * pval(g, src) if isinstance(src, Perm) and src in src.owner.perms else 0)
+    item = StackItem(p, cd, {'source': src, 'target': target}, 'ability', imp, {}, generic=False, kind='ability',
+                     name=f"{getattr(cd, 'name', None) or getattr(src, 'name', 'A token')}: {name}")
+    return stack_window(g, p, item)
 
 
 def stack_window(g, p, item):
@@ -1523,6 +1576,9 @@ def ai_respond(g, q, item):
     top = g.stack[-1] if g.stack else None
     if top is None or top.controller is q or q.key in top.passed: return
     top.passed.add(q.key)
+    if top.kind != 'spell':                        # an ability (or trigger): Azorius Guildmage, Tishana's Tidebinder
+        if top.imp >= 6 and CI is not None: CI.answer_ability(g, q, top)
+        return
     if not any('ctr' in x.tags or x.name == 'Venser, Shaper Savant' for x in q.hand): return     # nothing to respond with
     if not counterable(g, top): return
     c, p = top.card, top.controller
@@ -1640,6 +1696,7 @@ def settle_stack(g):
             elif it.zone == 'gy' or it.ctx.get('exile_after'): p.exile.append(c)
             elif not c.land: p.gy.append(c)
             continue
+        if it.kind != 'spell': continue             # an ability: its effect lives with the code that activated it
         tgt = it.ctx.get('counter')
         if tgt is not None:
             if tgt in g.stack: tgt.countered = True; tgt.countered_by = c

@@ -70,3 +70,57 @@ class Stack(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Abilities(unittest.TestCase):
+    """activated abilities go on the stack once their cost is paid; mana abilities don't"""
+    def test_the_ai_counters_an_important_ability_with_azorius_guildmage(self):
+        from tests.table import perm
+        g = table('veyran', 'zur'); v, z = g.players
+        perm(g, z, 'Azorius Guildmage'); lands(z, 'Island', 3)
+        src = perm(g, v, 'Triskelion')
+        self.assertFalse(E.ability_window(g, v, src, '1 damage', imp=8))         # countered
+        self.assertTrue(E.ability_window(g, v, src, '1 damage', imp=2))          # not worth the mana
+
+    def test_no_window_when_nobody_could_answer(self):
+        from tests.table import perm
+        g = table('veyran', 'sauron'); v, s = g.players
+        src = perm(g, v, 'Triskelion')
+        n = g.stack_pushes
+        self.assertTrue(E.ability_window(g, v, src, '1 damage', imp=9))
+        self.assertEqual(g.stack_pushes, n)
+
+    def test_a_countered_equip_does_not_attach(self):
+        from tests.table import perm
+        g = table('sauron', 'zur'); s, z = g.players
+        perm(g, z, 'Azorius Guildmage'); lands(z, 'Island', 3)
+        a = perm(g, s, 'Orcish Bowmasters'); e = perm(g, s, 'Lightning Greaves')
+        lands(s, 'Swamp', 2)
+        E.equip_to(g, s, e, a, 0)                       # imp 3 + Greaves' value: below the AI's bar, so it resolves
+        self.assertIs(e.attached, a)
+
+    def test_you_counter_an_ability_with_azorius_guildmage(self):
+        from tests.table import perm
+        from commander_sim.play import mana
+        g = table('veyran', 'zur'); v, z = g.players
+        gm = perm(g, z, 'Azorius Guildmage')
+        mana.pool_of(z).add('U', 1); mana.pool_of(z).add('C', 2)
+        src = perm(g, v, 'Triskelion')
+        idx = z.perms.index(gm)
+        seat(g, z, [{'do': 'use', 'perm': idx}, lambda req: next(i for i, x in enumerate(req.choices) if 'counter' in x)])
+        self.assertFalse(E.ability_window(g, v, src, '1 damage', imp=8))
+
+    def test_an_ability_resolves_even_if_its_source_dies_in_response(self):
+        from tests.table import perm
+        g = table('veyran', 'sauron', 'seph'); v, s, ph = g.players
+        b = perm(g, v, 'Triskelion'); b.plus = 3
+        hand(ph, 'Lightning Bolt'); lands(ph, 'Mountain', 1)
+        bolt = len(ph.hand) - 1
+        from commander_sim.play import mana
+        mana.pool_of(ph).add('R', 1)
+        seat(g, ph, [{'do': 'cast', 'card': bolt}, lambda req: next(i for i, x in enumerate(req.choices) if 'Triskelion' in x), {'do': 'pass'}])
+        life = s.life
+        b.plus -= 1                                      # the cost: a counter removed
+        resolves = E.ability_window(g, v, b, '1 damage', imp=8)
+        self.assertTrue(resolves)                        # the Bolt killed Triskelion, the ping still happens
+        self.assertNotIn(b, v.perms)
