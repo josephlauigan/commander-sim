@@ -684,6 +684,7 @@ def _any_creature(g, p, c):
 
 
 NEEDS = {'Twinflame': _you_control_a_creature, 'Ephemerate': _you_control_a_creature,
+         'Momentary Blink': _you_control_a_creature,
          'Disembowel': _any_creature,
          'Lethal Throwdown': lambda g, p, c: (_you_control_a_creature(g, p, c) and
                                               f'{c.name} needs a creature to sacrifice as you cast it.')}

@@ -1681,10 +1681,10 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     hctl = getattr(g, 'controllers', None)
     hum_d = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, d)
     hum_p = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, p)
-    if hum_d:                                          # practice mode: priority, then the person declares blockers
-        importlib.import_module('commander_sim.play.human').respond(
-            g, d, f'{NAME(p)} attacks you with {len(atk)} creature(s) ({sum(epow(g, m) for m in atk)} power)')
+    if hctl:                                           # practice mode: the declare attackers step's priority
+        E.step_priority(g, 'attackers', defender=d, attackers=atk)
         atk = [m for m in atk if m in p.perms]
+    if hum_d:                                          # the person declares blockers
         assign = importlib.import_module('commander_sim.play.combat').human_blocks(g, p, atk, d, unbl)
     else:
         blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
@@ -1725,6 +1725,8 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 h = E.CI.HOOKS.get(L.cd.name)
                 if h and 'land_defend' in h: h['land_defend'](g, L, d, p, atk, assign)
         if p.key not in MAIN: importlib.import_module('commander_sim.cards.impl.t4').ninjutsu(g, p, atk, d, assign)
+    if hctl:                                           # practice mode: the declare blockers step's priority
+        E.step_priority(g, 'blockers', defender=d, attackers=atk)
     if not hum_d and not shielded(d) and not d.life_locked and any(c.name == E.TEFERIS_PROTECTION for c in d.hand):
         unbl_dmg = [(a, epow(g, a) * (2 if double_strike(p, a) else 1)) for a in atk
                     if a in p.perms and (assign.get(a) is None or assign[a] not in d.perms) and a not in to_walker]
@@ -1737,8 +1739,11 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
         if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
         if a.data and importlib.import_module('commander_sim.cards.impl.rules').dovin_blocked(a): ap = 0
         b = assign.get(a)
-        if b is None or b not in d.perms:
+        tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or kw(a, 'trample')
+        if b is None:
             dmg = ap
+        elif b not in d.perms:                         # its blocker is gone: still blocked (trample: all to the player)
+            dmg = ap if tr else 0
         else:
             bt = etgh(g, b)
             a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
@@ -1751,8 +1756,6 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             fa, fb = first_strike(a), first_strike(b)
             if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
             elif fb and not fa and a_dies: b_dies = False
-            tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or \
-                (kw(a, 'trample'))
             dmg = max(0, ap - bt) if tr else 0
             if b_dies: die(g, b, 'destroy')
             if a_dies: die(g, a, 'destroy')
@@ -1874,6 +1877,8 @@ def combat(g, p):
         ncomb += 1
         p.combat_no = ncomb
         if not g.opps(p): return
+        E.step_priority(g, 'combat')
+        if g.over or not p.alive: return
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: from commander_sim.ai import brain
         if g.hooks and ncomb == 1: E.CI.fire(g, 'crew', p)
@@ -2377,6 +2382,8 @@ def _step_start(g, p):
     log(f'--- {NAME(p)} turn {p.turns}: life {p.life}, {len(p.hand)} cards in hand, {len(p.lands)} lands', g)
     upkeep(g, p)
     if g.over or not p.alive: return
+    E.step_priority(g, 'upkeep')
+    if g.over or not p.alive: return
     for m in find(p, 'vaultping'):                # Mana Vault: at the beginning of your draw step, 1 damage if tapped
         if m.tapped: lose_life(g, p, 1, p, damage=True)
     if has(p, 'necro'): pass                     # Necropotence: skip your draw step
@@ -2388,6 +2395,8 @@ def _step_start(g, p):
     elif not ((p.key == 'seph' and seph_dredge(g, p)) or (p.key == 'marchesa' and E.CI.marchesa_dredge(g, p))):
         draw(g, p, 1, step=True)
     check_state(g)
+    if g.over or not p.alive: return
+    E.step_priority(g, 'draw')
     if g.over or not p.alive: return
     nl = len(p.lands)
     p.lands_played = 0; p.extra_land_now = 0
@@ -2426,6 +2435,7 @@ def _step_main2(g, p):
 def _step_end(g, p):
     end_step(g, p)
     check_state(g)
+    if not g.over and p.alive: E.step_priority(g, 'end')
 
 
 STEP_FN = {'start': _step_start, 'main1': _step_main1, 'combat': _step_combat, 'main2': _step_main2, 'end': _step_end}
@@ -2478,9 +2488,6 @@ def _run_rounds(g, players, max_rounds):
                         brain.end_of_turn_window(g, p)
                     if p.alive and not g.over:
                         take_turn(g, p)
-                    for h in hum:                               # practice mode: priority at the end of each other turn
-                        if h is not p and h.alive and p.alive and not g.over:
-                            importlib.import_module('commander_sim.play.human').respond(g, h, f"End of {NAME(p)}'s turn")
             if g.over: break
     except E.OutOfWork as e:                        # a runaway loop: the game ends as a timeout
         import traceback

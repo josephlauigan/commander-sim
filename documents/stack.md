@@ -1,6 +1,6 @@
 # The stack: design
 
-Status: phases 1-3 built 2026-10-02 (spells, activated abilities and triggered abilities on the stack, responses of any depth); phases 4-6 to come. Replaces the engine's fixed response windows with Magic's stack and priority,
+Status: phases 1-4 built 2026-10-02 (spells, activated abilities and triggered abilities on the stack, responses of any depth, priority in every step); phases 5-6 to come. Replaces the engine's fixed response windows with Magic's stack and priority,
 for simulations and practice mode alike (one engine).
 
 ## Goal
@@ -106,6 +106,16 @@ so it resolves correctly later.
 - **Not yet.** Combat damage triggers resolve during damage rather than after it; a few hooks stay immediate because
   they read values the engine keeps only while a permanent enters (Light-Paws, Ob Nixilis's casualty, Sakashima's
   Protégé).
+
+### How phase 4 was built
+
+- `engine.step_priority(g, step)` runs in the upkeep, the draw step, the beginning of combat, the declare attackers
+  and declare blockers steps, and the end step; each person at the table gets priority there in turn order from the
+  active player, as their auto-pass setting says (`play.human.autopass`: 'respond' by default, 'stack', 'all').
+  The end-of-turn priority people had before is now the end step's.
+- The AI passes in these steps: its instant-speed plays keep their timing (the end of the turn before its own, and
+  answers on the stack), so simulations are unchanged by this phase.
+- A creature whose blocker leaves combat stays blocked: no damage to the player unless it has trample.
 
 ### The AI's decisions with priority
 

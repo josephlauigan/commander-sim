@@ -82,6 +82,10 @@ class RecordingController(HumanController):
     def tell(s, kind, text):
         if not s.session.replaying: super().tell(kind, text)
 
+    @property
+    def autopass(s):
+        return s.session.autopass.get(s.seat, 'respond')
+
 
 class EventLog(list):
     """the game log (g.log): every line is also sent to the session as it happens"""
@@ -106,7 +110,7 @@ class EventLog(list):
 
 class Session:
     def __init__(s, deck, tier, seed=None, seat=None, opponents=None, profile='loose', ai='lookahead',
-                 step=False, max_rounds=30, views=False, compare=False, seats=None, partner=None):
+                 step=False, max_rounds=30, views=False, compare=False, seats=None, partner=None, autopass='respond'):
         if deck not in MY_DECKS: raise ValueError(f'unknown deck {deck!r}: one of {", ".join(MY_DECKS)}')
         if tier not in TIERS: raise ValueError(f'unknown tier {tier!r}: one of {", ".join(TIERS)}')
         if partner is not None and partner not in MY_DECKS:
@@ -115,6 +119,7 @@ class Session:
         s.deck, s.tier, s.profile, s.ai, s.step, s.max_rounds = deck, tier, profile, ai, step, max_rounds
         s.partner = partner
         s.humans = [deck] + ([partner] if partner else [])       # the seats people play
+        s.autopass = {k: autopass for k in s.humans}             # when each person gets priority (play.human.autopass)
         s.views = views                    # a view of the table with every action (the browser plays them back)
         s.compare = compare                # the AI comparison log (shadow.py), for the review after the game
         from commander_sim.play.shadow import Shadow

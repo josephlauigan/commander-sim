@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 482 tests in about a minute and a half. To run one file, or one test:
+That's 487 tests in about a minute and a half. To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -51,6 +51,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_audit_fixes.py` | 14 | The gaps the October 2026 modeling audit found: Muldrotha's one permanent of each type from the graveyard (the AI and you), Restoration Angel's enters trigger (cast normally, it blinks; you choose or decline), Kefka's draw, Relic of Legends, and choices practice mode used to make for you (card-text targets, Niv-Mizzet, Emeritus of Ideation, Force of Will's exiled card, X). |
 | `test_stack.py` | 10 | The stack: a counter war between three players, a countered counterspell doing nothing, responses resolving first with priority going round, the person seeing the whole stack, the stack copying with the game; activated abilities on the stack (the AI and you countering one with Azorius Guildmage, a countered equip not attaching, an ability resolving after its source dies in response, and no round of priority when nobody could answer). |
 | `test_triggers.py` | 7 | Triggered abilities on the stack: an enters trigger waiting for the spell resolving to finish, Tidebinder countering a trigger, your priority on an opponent's trigger, the engine's probe never doubling an effect, APNAP order, ordering your own triggers, and converted card code having its window. |
+| `test_steps.py` | 5 | Priority in every step: full control stops at the upkeep, draw step, beginning of combat and end step; by default only the end of each other turn (not every step); the declare blockers step of your combat when you could do something (and not when you couldn't); a creature whose blocker is removed stays blocked. |
 | `test_play_undo.py` | 3 | Practice mode's Undo: after 40 decisions, taking back three asks the 37th again with the identical table; replayed history is marked as such; nothing to undo at the start. |
 | `test_play_hint.py` | 2 | Practice mode's Hint: asked at every decision of a look-ahead game, the game that follows is identical to one without hints; main-phase hints come with the look-ahead's scores; no decision waiting. |
 | `test_play_shadow.py` | 2 | Practice mode's AI comparison: with it on, a look-ahead game plays out identically; main-phase decisions are scored for your choice and the AI's; Undo forgets the comparisons of undone decisions. |

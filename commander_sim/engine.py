@@ -1686,6 +1686,20 @@ def trigger_window(g, p, src, name, imp=None):
     return stack_window(g, p, item)
 
 
+STEP_NAMES = {'upkeep': 'upkeep', 'draw': 'draw step', 'combat': 'beginning of combat',
+              'attackers': 'declare attackers step', 'blockers': 'declare blockers step', 'end': 'end step'}
+
+
+def step_priority(g, step, defender=None, attackers=()):
+    """priority in a step of the turn, to each player in turn order from the active player. The AI passes (its
+    instant-speed plays keep their own timing: the end of the turn before its own, and answers on the stack), so only
+    people are asked, as their auto-pass setting says; a simulation does nothing here"""
+    if not getattr(g, 'controllers', None) or g.over or g.active is None: return
+    hm = importlib.import_module('commander_sim.play.human')
+    for q in [g.active] + g.after(g.active):
+        if q.alive and not g.over and hm.is_human(g, q): hm.step_priority(g, q, step, defender, attackers)
+
+
 def equip_to(g, p, e, m, n):
     """pay equip {n} for equipment e onto m; the ability goes on the stack, and attaches if it resolves and both are
     still there"""

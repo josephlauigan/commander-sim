@@ -51,20 +51,72 @@ def stack_view(g):
     return out
 
 
+AUTOPASS = ('respond', 'stack', 'all')     # stop when I can respond (the default) / on every stack item / every step
+
+
+def autopass(g, q):
+    """q's auto-pass setting: 'respond' (asked only when you could do something, plus opponents' spells, attacks on
+    you and the end of each other turn), 'stack' (every spell, ability and trigger too) or 'all' (every step)"""
+    ctl = controller_of(g, q)
+    mode = getattr(ctl, 'autopass', None)
+    return mode if mode in AUTOPASS else 'respond'
+
+
 def stack_priority(g, q, item):
     """q (the person) gets priority with something on the stack. Your own spell: only when you hold a card that
-    copies it (more choice comes with the auto-pass settings); anyone else's: always"""
+    copies it, or with auto-pass off; anyone else's: always. An ability or trigger: when you could do something about
+    it, or always with auto-pass at 'stack' or 'all'"""
+    mode = autopass(g, q)
     top = g.stack[-1] if g.stack else item
-    if top.kind != 'spell':                                  # an ability: only when you could do something about it
-        if top.controller is q or not can_respond(g, q): return
-        verb = 'activates' if top.kind == 'ability' else 'has a trigger:'
-        respond(g, q, f'{E.NAME(top.controller)} {verb} {top.name}', spell=top.card, caster=top.controller)
+    if top.kind != 'spell':
+        if top.controller is q and mode != 'all': return
+        if mode == 'respond' and not can_respond(g, q): return
+        if top.controller is q: who = 'You activate' if top.kind == 'ability' else 'Your trigger:'
+        else: who = E.NAME(top.controller) + (' activates' if top.kind == 'ability' else ' has a trigger:')
+        respond(g, q, f'{who} {top.name}', spell=top.card, caster=top.controller)
         return
-    if top.controller is q and not E._copy_window(g, q, top.card): return
+    if top.controller is q and mode != 'all' and not E._copy_window(g, q, top.card): return
     who = 'You cast' if top.controller is q else f'{E.NAME(top.controller)} casts'
     t = top.ctx.get('counter')
     what = f'{top.card.name} (countering {t.name})' if t is not None else top.card.name
     respond(g, q, f'{who} {what}', spell=top.card, caster=top.controller)
+
+
+def step_priority(g, q, step, defender=None, attackers=()):
+    """q (the person) has priority in a step of the turn (engine.step_priority), when their auto-pass setting stops
+    there: with 'all', every step; otherwise when attacked, at the end of each other player's turn, and in the declare
+    blockers step of a combat they're in when they could do something"""
+    a = g.active
+    mode = autopass(g, q)
+    if mode != 'all':
+        if step == 'end': stop = a is not q
+        elif step == 'attackers': stop = q is defender
+        elif step == 'blockers': stop = (q is a or q is defender) and can_act(g, q)
+        else: stop = False
+        if not stop: return
+    if step == 'end': prompt = 'End of your turn' if a is q else f"End of {E.NAME(a)}'s turn"
+    elif step == 'attackers' and q is defender:
+        prompt = f'{E.NAME(a)} attacks you with {len(attackers)} creature(s) ({sum(E.epow(g, m) for m in attackers)} power)'
+    else:
+        prompt = f"{'Your' if a is q else E.NAME(a) + chr(39) + 's'} {E.STEP_NAMES[step]}"
+    respond(g, q, prompt)
+
+
+def can_act(g, q):
+    """anything q could do at instant speed now: an instant or flash card they can afford, or an ability"""
+    if can_respond(g, q): return True
+    from commander_sim.play import abilities, cards
+    g.responding = getattr(g, 'responding', 0) + 1           # instant speed: sorcery-speed abilities aren't offered
+    try:
+        def usable(x, labels):                               # a tapped permanent's {T} abilities don't count
+            return any(not (x.tapped and '{T}' in lbl) for lbl in labels)
+        for m in q.perms:
+            if m.phased or m.cd is None: continue
+            if usable(m, [lbl for lbl, _ in abilities.permanent_abilities(g, q, m) + (cards.abilities(g, q, m) or [])]):
+                return True
+        return any(usable(L, [lbl for lbl, _ in abilities.land_abilities(g, q, L)]) for L in q.lands)
+    finally:
+        g.responding -= 1
 
 
 def can_respond(g, q):
