@@ -163,5 +163,21 @@ class Triggers(unittest.TestCase):
         E.pile_tutor(g, s, 4, 2)
         self.assertEqual((len(s.hand), len(s.gy)), (n + 2, 2))
 
+
+class Atraxa(unittest.TestCase):
+    def test_you_pick_a_card_of_each_type(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        top = [E.DB[n] for n in ('Swamp', 'Sol Ring', 'Grave Titan', 'Animate Dead', 'Entomb', 'Reanimate',
+                                 'Forest', 'Mind Stone', 'Kitchen Finks', 'Toxic Deluge')]
+        s.library += list(reversed(top))                      # the first of these on top
+        n = len(s.library)
+        ctl = seat(g, s, [by_text('Mind Stone'), by_text('Kitchen Finks'), by_text('Animate Dead'), by_text('Entomb'),
+                          'cancel', by_text('Toxic Deluge')])      # artifact, creature, enchantment, instant, no land, sorcery
+        E.atraxa_reveal(g, s)
+        self.assertEqual(sorted(c.name for c in s.hand[-5:]),
+                         ['Animate Dead', 'Entomb', 'Kitchen Finks', 'Mind Stone', 'Toxic Deluge'])
+        self.assertEqual(len(s.library), n - 5)                    # the other five on the bottom
+        self.assertIn('artifact', ctl.asked[0].prompt); self.assertIn('land', ctl.asked[4].prompt)
+
 if __name__ == '__main__':
     unittest.main()

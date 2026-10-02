@@ -2210,7 +2210,9 @@ def atraxa_reveal(g, p):
     top = [p.library.pop() for _ in range(min(10, len(p.library)))]
     free = set('ABCEILPS')                     # artifact, battle, creature, enchantment, instant, land, planeswalker, sorcery
     taken = []
-    for c in sorted(top, key=lambda c: -card_worth(g, p, c)):
+    hc = human_choice(g, p)
+    if hc is not None: taken = hc.atraxa_pick(g, p, top)        # practice mode: your picks, type by type
+    for c in sorted(top, key=lambda c: -card_worth(g, p, c)) if hc is None else ():
         ts = [t for t in c.types if t in free]
         if not ts: continue
         free.discard(min(ts, key=lambda t: sum(1 for x in top if t in x.types)))   # the scarcer type slot
