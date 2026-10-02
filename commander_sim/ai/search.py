@@ -399,6 +399,7 @@ def _choose_counter(g, q, p, c, ctx, zone):
     base_seed = _decision_seed(g, q.key, 'ctr')
     saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
     scores = {True: 0.0, False: 0.0}
+    idx = len(g.stack) - 1                          # the spell in question is on top of the stack
     try:
         for r in range(ROLLOUTS):
             for counter in (True, False):
@@ -409,19 +410,16 @@ def _choose_counter(g, q, p, c, ctx, zone):
                 determinize(g2, q2, rng)
                 g2.rng = random.Random(rng.random())
                 E.CUR_G = g2
-                ctx2 = {k: (memo.get(id(v), v) if isinstance(v, (E.Perm, E.Player)) else v) for k, v in (ctx or {}).items()}
                 err = None
                 try:
+                    it2 = g2.stack[idx] if 0 <= idx < len(g2.stack) else None
                     if counter:
                         ctr = E.pick_counter(g2, q2, c)
                         if ctr is None or not E.cast_counter(g2, q2, ctr, c): scores[counter] -= 50.0; continue
                         E.counter_side_effects(g2, q2, p2, ctr)
                         if ctr.name == 'Mana Drain': q2.drain_mana = getattr(q2, 'drain_mana', 0) + c.cmc
-                        if c is p2.cmd: p2.cmd_in_zone = True
-                        elif zone == 'gy' or ctx2.get('exile_after'): p2.exile.append(c)
-                        elif not c.land: p2.gy.append(c)
-                    else:
-                        E.resolve(g2, p2, c, ctx2, zone); E.check_state(g2)
+                        if it2 is not None: it2.countered = True
+                    E.settle_stack(g2)                       # the rest of the stack resolves, no more responses
                     if not g2.over: play_on(g2, q2, active=p2)
                 except E.OutOfWork as e:
                     err = e

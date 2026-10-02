@@ -82,13 +82,16 @@ def flute_pick(g, p):
 
 
 def pay_card(g, p, c, kicked=0):
+    """cast c in response (protection, a board-saving spell): pay, then it goes on the stack where others may counter
+    it. True if it resolves (the caller carries out its effect)"""
     if c not in p.hand or not can_pay(g, p, c.generic + kicked, c.pips + ('W' if kicked else '')): return False
     p.hand.remove(c)
     pay(g, p, c.generic + kicked, c.pips + ('W' if kicked else ''))
     p.gy.append(c); p.spells_this_turn += 1
     p.cast_names.add(c.name)
+    log(f'  {NAME(p)} casts {c.name}', g)
     on_cast(g, p, c)
-    return True
+    return counter_window(g, p, c, 6, {})
 
 
 def protect_response(g, owner, m, kind, actor, spell=None):
@@ -109,7 +112,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if v >= 6 and m.creature:
             hi = [c for c in owner.hand if c.tags.get('prot') == 'hi']
             if hi and kind != 'edict' and can_pay(g, owner, 1, 'G'):
-                pay_card(g, owner, hi[0]); owner.stats['hi_used'] += 1; return True
+                if pay_card(g, owner, hi[0]): owner.stats['hi_used'] += 1; return True
+                return False
             gd = [c for c in owner.hand if c.name == "Galadriel's Dismissal"]
             if gd and can_pay(g, owner, 0, 'W') and pay_card(g, owner, gd[0]):      # phases out: safe from anything
                 m.phased = True; owner.stats['phase_saves'] += 1; return True
@@ -121,7 +125,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if m.army or v >= 5:
             sl = [c for c in owner.hand if c.tags.get('prot') == 'phase']
             if sl and can_pay(g, owner, 0, 'U'):
-                pay_card(g, owner, sl[0]); m.phased = True; return True
+                if pay_card(g, owner, sl[0]): m.phased = True; return True
+                return False
             if m.army and epow(g, m) >= 7:
                 nw = [c for c in owner.hand if c.tags.get('prot') == 'notw']
                 if nw:
@@ -162,7 +167,7 @@ def wipe_response(g, q, kind, caster):
         if kind in ('destroy', 'dmg13', 'austere', 'nib'):
             hi = [c for c in q.hand if c.tags.get('prot') == 'hi']
             if hi and can_pay(g, q, 1, 'G'):
-                pay_card(g, q, hi[0]); q.stats['hi_used'] += 1; return 'indes'
+                if pay_card(g, q, hi[0]): q.stats['hi_used'] += 1; return 'indes'
         gd = [c for c in q.hand if c.name == "Galadriel's Dismissal"]
         if gd and can_pay(g, q, 2, 'WW') and pay_card(g, q, gd[0], kicked=2):   # kicked: every creature you control
             for m in q.perms:
@@ -177,19 +182,20 @@ def wipe_response(g, q, kind, caster):
     elif q.key == 'najeela':
         for c in list(q.hand):
             if c.tags.get('prot') == 'phase' and can_pay(g, q, c.generic, c.pips, 'convoke' in c.tags):
-                pay_card(g, q, c)
+                if not pay_card(g, q, c): return None
                 for m in q.perms: m.phased = True
                 return 'all'
         if kind in ('destroy', 'dmg13', 'austere', 'nib'):
             for c in list(q.hand):
                 if c.tags.get('prot') == 'indes' and can_pay(g, q, c.generic, c.pips):
-                    pay_card(g, q, c); return 'indes'
+                    if pay_card(g, q, c): return 'indes'
+                    return None
     elif q.key == 'sauron':
         a = army_of(q)
         if a:
             sl = [c for c in q.hand if c.tags.get('prot') == 'phase']
             if sl and can_pay(g, q, 0, 'U'):
-                pay_card(g, q, sl[0]); a.phased = True
+                if pay_card(g, q, sl[0]): a.phased = True
     return None
 
 
@@ -492,8 +498,8 @@ def seph_trophy_grounds(g, p):
         if not gl: continue
         for c in p.hand:
             if c.tags.get('tgt') == 'p' and c.tags.get('rem') == 'destroy' and can_pay(g, p, c.generic, c.pips):
-                pay_card(g, p, c)
-                q.lands.remove(gl[0]); q.gy.append(gl[0].cd); land_ramp(g, q, 1, True)
+                if not pay_card(g, p, c): return True
+                if gl[0] in q.lands: q.lands.remove(gl[0]); q.gy.append(gl[0].cd); land_ramp(g, q, 1, True)
                 p.stats['trophy_grounds'] += 1
                 return True
     return False

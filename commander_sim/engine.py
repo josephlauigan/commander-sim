@@ -192,6 +192,8 @@ class Game:
         s.hook_cache = None   # event -> [(permanent, fn)], rebuilt when s.hooks changes
         s.work = 0; s.work_cap = GAME_WORK   # engine steps taken / allowed (see tick)
         s.board_cap = None                     # look-ahead copies: stop once the table has this many permanents
+        s.stack = []           # StackItem, top last (see stack_window)
+        s.stack_pushes = 0     # items ever put on the stack: tells whether a player with priority did something
 
     def opps(s, p):
         return [q for q in s.players if q.alive and q is not p]
@@ -1429,25 +1431,8 @@ def commander_out(p):
 
 
 def cast_counter(g, q, ctr, spell=None):
-    if 'fierce' in ctr.tags and commander_out(q):
-        pass                                     # cast without paying its mana cost
-    elif 'pact' in ctr.tags:
-        q.pacts = getattr(q, 'pacts', 0) + 1     # pay {3}{U}{U} at the next upkeep or lose
-    elif 'misstep' in ctr.tags and q.life > 10:
-        lose_life(g, q, 2, q)
-    elif 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
-        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
-        x = min(blues, key=lambda c: card_worth(g, q, c))
-        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
-        q.hand.remove(x); q.exile.append(x)
-    elif 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
-        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
-        if not blues: return False
-        x = min(blues, key=lambda c: card_worth(g, q, c))           # the least useful blue card
-        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
-        q.hand.remove(x); q.exile.append(x); lose_life(g, q, 1, q)
-    elif not pay(g, q, *counter_cost(ctr, spell)):
-        return False
+    """a counterspell cast and resolved at once, outside the stack (combo interruption, the look-ahead's copies)"""
+    if not pay_counter(g, q, ctr, spell): return False
     q.hand.remove(ctr)
     if ctr.creature:                 # Mystic Snake / Venser: the counter is a creature
         g.skip_etb = ctr.name == 'Venser, Shaper Savant'
@@ -1464,44 +1449,109 @@ def cast_counter(g, q, ctr, spell=None):
 LAST_COUNTER = None
 
 
+class StackItem:
+    """a spell on the stack: its controller, card, targets (ctx), where it was cast from, how much it matters
+    (imp: to everyone; aff: per player), who has already declined to counter it, and whether it was countered.
+    Plain data: the look-ahead copies a game with items on the stack"""
+    def __init__(s, controller, card, ctx=None, zone='hand', imp=0, aff=None, generic=True):
+        s.controller, s.card, s.ctx, s.zone, s.imp, s.aff = controller, card, ctx or {}, zone, imp, aff or {}
+        s.generic = generic            # resolved by engine.resolve (cast_card); False: by its caster's own code
+        s.passed = set()               # player keys who chose not to counter it
+        s.countered = False
+        s.countered_by = None
+
+    def __repr__(s):
+        return f'StackItem({s.card.name!r}, {s.controller.key})'
+
+
+def stack_window(g, p, item):
+    """item goes on the stack and every player gets priority, p first then in turn order. A player may respond (a
+    counterspell, an instant ...): the response goes on the stack above it, gets its own round of priority, and
+    resolves when everyone passes on it; then the active player gets priority again. True once everyone passes with
+    item on top (the caller resolves it), False if it was countered"""
+    g.stack.append(item); g.stack_pushes = getattr(g, 'stack_pushes', 0) + 1
+    try:
+        _priority(g, item, p)
+    finally:
+        if item in g.stack: g.stack.remove(item)
+    return not item.countered
+
+
+def _priority(g, item, first):
+    start, rounds = first, 0
+    while not g.over and not item.countered and item in g.stack:
+        order = [start] + [x for x in g.after(start)]
+        order = [x for x in order if x.alive]
+        passes, k, acted = 0, 0, False
+        while passes < len(order) and not g.over:
+            q = order[k % len(order)]
+            if take_priority(g, q, item):
+                acted = True; break               # a response resolved (or was countered) above item
+            passes += 1; k += 1
+        if not acted: return                       # everyone passed in succession: item resolves
+        rounds += 1
+        if rounds > 12: return                     # a runaway exchange of responses
+        start = g.active if g.active is not None and g.active.alive else first
+
+
+def take_priority(g, q, item):
+    """q has priority with item on top of the stack; True if q put something on the stack (it has resolved by now)"""
+    if not q.alive or g.over or silenced(g, q): return False
+    n = getattr(g, 'stack_pushes', 0)
+    if human_choice(g, q) is not None: importlib.import_module('commander_sim.play.human').stack_priority(g, q, item)
+    else: ai_respond(g, q, item)
+    return getattr(g, 'stack_pushes', 0) != n
+
+
 def counter_window(g, p, c, imp, aff):
-    global LAST_COUNTER
-    if 'unc' in c.tags: return True
-    if g.hooks and CI.total(g, 'uncounterable', p, c): return True
-    hctl = getattr(g, 'controllers', None)
-    if hctl and p.key in hctl and _copy_window(g, p, c):  # practice mode: your own spell, with a copy card in hand
-        importlib.import_module('commander_sim.play.human').respond(g, p, f'You cast {c.name}', spell=c, caster=p)
-    for q in g.after(p):
-        if not q.alive or g.over or silenced(g, q): continue
-        if hctl and q.key in hctl:                         # practice mode: the person may respond, or pass
-            ctr = importlib.import_module('commander_sim.play.human').respond(g, q, f'{NAME(p)} casts {c.name}', spell=c,
-                                                                              caster=p)
-            if ctr is None: continue
-            if not _counter_resolves(g, q, p, c, ctr, imp): continue
-            return False
-        val = aff.get(q, imp)
-        if AI_MODE == 'adaptive':
-            from commander_sim.ai import brain
-            nc = sum(1 for x in q.hand if 'ctr' in x.tags)
-            if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
-            thr = CTHRESH[q.key] if q.key in CTHRESH else importlib.import_module('commander_sim.ai.pool_ai').counter_threshold(q, CTHRESH_DEFAULT)
-            if not nc: continue
-            from commander_sim.ai import search
-            cc = getattr(g, 'cur_cast', None)
-            if (cc is not None and cc[0] is c and search.enabled(g, q) and g.active is p
-                    and getattr(g, 'step', None) in ('main1', 'main2') and pick_counter(g, q, c) is not None):
-                if not search.choose_counter(g, q, p, c, cc[1], cc[2]): continue
-            elif g.rng.random() > brain.wants_counter(g, q, val, thr, nc): continue
-        else:
-            if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): continue
-            if g.rng.random() > 0.9: continue
-        if imp >= 6 and importlib.import_module('commander_sim.cards.impl.rules2').hullbreaker_counter(g, q, c):
-            g.bounced_spell = True; return False
+    """a spell cast by its own card code (not cast_card): it goes on the stack with a round of priority. True if it
+    resolves (the caller carries out its effect), False if it was countered"""
+    if 'unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', p, c)): return True
+    item = StackItem(p, c, {}, 'hand', imp, aff, generic=False)
+    ok = stack_window(g, p, item)
+    if not ok: global LAST_COUNTER; LAST_COUNTER = item.countered_by
+    return ok
+
+
+def counterable(g, item):
+    c = item.card
+    return not ('unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', item.controller, c)))
+
+
+def ai_respond(g, q, item):
+    """the AI with priority: counter the spell on top of the stack (or a counterspell aimed at its own spell), or pass"""
+    top = g.stack[-1] if g.stack else None
+    if top is None or top.controller is q or q.key in top.passed: return
+    top.passed.add(q.key)
+    if not any('ctr' in x.tags or x.name == 'Venser, Shaper Savant' for x in q.hand): return     # nothing to respond with
+    if not counterable(g, top): return
+    c, p = top.card, top.controller
+    target = top.ctx.get('counter')
+    if target is not None:                         # a counterspell: answer it only to save your own spell
+        if target.controller is not q or target.imp < 6: return
         ctr = pick_counter(g, q, c)
-        if ctr is None: continue
-        if not _counter_resolves(g, q, p, c, ctr, imp): continue
-        return False
-    return True
+        if ctr is not None: cast_counter_spell(g, q, ctr, top)
+        return
+    val = top.aff.get(q, top.imp)
+    if val <= 0 and not top.aff: return
+    if AI_MODE == 'adaptive':
+        from commander_sim.ai import brain
+        nc = sum(1 for x in q.hand if 'ctr' in x.tags)
+        if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
+        thr = CTHRESH[q.key] if q.key in CTHRESH else importlib.import_module('commander_sim.ai.pool_ai').counter_threshold(q, CTHRESH_DEFAULT)
+        if not nc: return
+        from commander_sim.ai import search
+        if (top.generic and len(g.stack) == 1 and search.enabled(g, q) and g.active is p
+                and getattr(g, 'step', None) in ('main1', 'main2') and pick_counter(g, q, c) is not None):
+            if not search.choose_counter(g, q, p, c, top.ctx, top.zone): return
+        elif g.rng.random() > brain.wants_counter(g, q, val, thr, nc): return
+    else:
+        if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): return
+        if g.rng.random() > 0.9: return
+    if top.imp >= 6 and importlib.import_module('commander_sim.cards.impl.rules2').hullbreaker_counter(g, q, c):
+        g.bounced_spell = True; top.countered = True; return
+    ctr = pick_counter(g, q, c)
+    if ctr is not None: cast_counter_spell(g, q, ctr, top)
 
 
 def _copy_window(g, p, c):
@@ -1510,35 +1560,93 @@ def _copy_window(g, p, c):
         any(x.name in ('Return the Favor', 'Dualcaster Mage') for x in p.hand)
 
 
-def _counter_resolves(g, q, p, c, ctr, imp):
-    """q casts counterspell ctr at p's spell c: True if c ends up countered (the caster may pay for a soft counter,
-    or counter back)"""
-    global LAST_COUNTER
-    if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, p, q, ctr): return False
-    if not cast_counter(g, q, ctr, c): return False
-    log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
+def pay_counter(g, q, ctr, spell):
+    """pay counterspell ctr's cost (or its alternative cost) against spell; True if paid"""
+    if getattr(g, 'free_counter', False): return True           # practice mode: paid from the person's pool
+    if 'fierce' in ctr.tags and commander_out(q):
+        return True                              # cast without paying its mana cost
+    if 'pact' in ctr.tags:
+        q.pacts = getattr(q, 'pacts', 0) + 1     # pay {3}{U}{U} at the next upkeep or lose
+        return True
+    if 'misstep' in ctr.tags and q.life > 10:
+        lose_life(g, q, 2, q); return True
+    if 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
+        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
+        x = min(blues, key=lambda c: card_worth(g, q, c))
+        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
+        q.hand.remove(x); q.exile.append(x); return True
+    if 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
+        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
+        if not blues: return False
+        x = min(blues, key=lambda c: card_worth(g, q, c))           # the least useful blue card
+        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
+        q.hand.remove(x); q.exile.append(x); lose_life(g, q, 1, q); return True
+    return pay(g, q, *counter_cost(ctr, spell))
+
+
+def cast_counter_spell(g, q, ctr, target):
+    """q casts counterspell ctr at stack item target. It goes on the stack (players may respond, the target's caster
+    can counter it back), and on resolution counters target if target is still there. True if it was cast"""
+    if ctr not in q.hand or target not in g.stack: return False
+    if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, target.controller, q, ctr): return False
+    if not pay_counter(g, q, ctr, target.card): return False
+    q.hand.remove(ctr)
+    q.spells_this_turn += 1; q.stats['counters_cast'] += 1; q.cast_names.add(ctr.name)
+    log(f'    {NAME(q)} casts {ctr.name} at {target.card.name}', g)
+    on_cast(g, q, ctr)
+    item = StackItem(q, ctr, {'counter': target}, 'hand', max(target.imp, 6), {}, generic=False)
+    if stack_window(g, q, item):
+        resolve_counter(g, q, ctr, target)
+        if ctr.creature:                         # Mystic Snake / Venser: the counter is a creature
+            g.skip_etb = ctr.name == 'Venser, Shaper Savant'
+            try: enter(g, q, ctr, was_cast=True)
+            finally: g.skip_etb = False
+        else: q.gy.append(ctr)
+    else:
+        q.gy.append(ctr)
+    return True
+
+
+def resolve_counter(g, q, ctr, target):
+    """counterspell ctr resolves: counter target if it is still on the stack (unless its controller pays for a soft
+    counter)"""
+    if target not in g.stack or target.countered: return              # gone: the counterspell does nothing
+    p, c = target.controller, target.card
     soft = int(ctr.tags.get('soft', 0))
     if ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
         soft = sum(casts_this_turn(g, x) for x in g.players if x.alive) - 1
     if soft and can_pay(g, p, soft, ''):           # Spell Pierce / Mystic Confluence: pay and it resolves
-        pay(g, p, soft, ''); log(f'    {NAME(p)} pays {soft}', g); return False
+        hc = human_choice(g, p)
+        if hc is None or hc.pay_tax(g, p, soft, ctr.name):
+            if hc is None: pay(g, p, soft, '')
+            log(f'    {NAME(p)} pays {soft}', g); return
+    log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
     counter_side_effects(g, q, p, ctr)
     if ctr.name == 'Mana Drain': q.drain_mana = getattr(q, 'drain_mana', 0) + c.cmc
-    # original caster may fight back
-    hctl = getattr(g, 'controllers', None)
-    if hctl and p.key in hctl:                     # practice mode: the person may counter the counterspell
-        back = importlib.import_module('commander_sim.play.human').respond(
-            g, p, f'{NAME(q)} counters your {c.name} with {ctr.name}', spell=ctr)
-    elif max(imp, 7) >= 7 and imp >= 6: back = pick_counter(g, p, ctr)
-    else: back = None
-    if back is not None and cast_counter(g, p, back, ctr):
-        p.stats['counterwar_won'] += 1
-        log(f'    {NAME(p)} counters back with {back.name}', g)
-        return False
     if p.key == 'seph': p.stats['seph_spell_countered'] += 1
     p.stats['spells_countered'] += 1
-    LAST_COUNTER = ctr
-    return True
+    if target.ctx.get('counter') is not None and target.ctx['counter'].controller is q:
+        q.stats['counterwar_won'] += 1             # q countered the counterspell aimed at q's spell
+    target.countered = True; target.countered_by = ctr
+
+
+def settle_stack(g):
+    """the look-ahead: finish a copied game's stack at once (no more responses), top first"""
+    while g.stack and not g.over:
+        it = g.stack.pop()
+        p, c = it.controller, it.card
+        if it.countered:
+            if c is p.cmd: p.cmd_in_zone = True
+            elif it.zone == 'gy' or it.ctx.get('exile_after'): p.exile.append(c)
+            elif not c.land: p.gy.append(c)
+            continue
+        tgt = it.ctx.get('counter')
+        if tgt is not None:
+            if tgt in g.stack: tgt.countered = True; tgt.countered_by = c
+            p.gy.append(c); continue
+        if c.perm and not it.generic: enter(g, p, c, was_cast=True); continue
+        resolve(g, p, c, it.ctx, it.zone)
+        check_state(g)
 
 
 def counter_side_effects(g, q, p, ctr):
@@ -1580,14 +1688,17 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         return False
     global LAST_COUNTER
     LAST_COUNTER = None
-    g.cur_cast = (c, ctx, zone)
+    prev_cast, g.cur_cast = getattr(g, 'cur_cast', None), (c, ctx, zone)
+    item = StackItem(p, c, ctx, zone, imp, aff)
     try:
-        human_near = bool(getattr(g, 'controllers', None)) and (any(q.key in g.controllers for q in g.after(p))
+        human_near = bool(getattr(g, 'controllers', None)) and (any(q.key in g.controllers for q in g.players if q is not p)
                                                                  or _copy_window(g, p, c))
-        ok_cast = not (imp > 0 or aff or human_near) or counter_window(g, p, c, imp, aff)
+        if not (imp > 0 or aff or human_near) or not counterable(g, item): ok_cast = True   # nobody would answer it
+        else: ok_cast = stack_window(g, p, item)
     finally:
-        g.cur_cast = None
+        g.cur_cast = prev_cast
     if not ok_cast:
+        LAST_COUNTER = item.countered_by
         if c is p.cmd: p.cmd_in_zone = True
         elif zone in ('gy',) or ctx.get('exile_after'): p.exile.append(c)
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)

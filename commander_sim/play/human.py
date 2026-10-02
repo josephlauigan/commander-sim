@@ -37,40 +37,94 @@ def human_main(g, p, post):
         if why: ctl.tell('invalid', why)
 
 
+def stack_view(g):
+    """the stack for the page, top first: each item's card, controller and what it targets"""
+    out = []
+    for it in reversed(g.stack):
+        d = {'name': it.card.name, 'controller': E.NAME(it.controller), 'key': it.controller.key}
+        t = it.ctx.get('counter')
+        if t is not None: d['target'] = t.card.name
+        elif it.ctx.get('target') is not None: d['target'] = getattr(it.ctx['target'], 'name', '')
+        out.append(d)
+    return out
+
+
+def stack_priority(g, q, item):
+    """q (the person) gets priority with something on the stack. Your own spell: only when you hold a card that
+    copies it (more choice comes with the auto-pass settings); anyone else's: always"""
+    top = g.stack[-1] if g.stack else item
+    if top.controller is q and not E._copy_window(g, q, top.card): return
+    who = 'You cast' if top.controller is q else f'{E.NAME(top.controller)} casts'
+    t = top.ctx.get('counter')
+    what = f'{top.card.name} (countering {t.card.name})' if t is not None else top.card.name
+    respond(g, q, f'{who} {what}', spell=top.card, caster=top.controller)
+
+
 def respond(g, q, prompt, spell=None, caster=None):
     """q (the person) has priority in response to something (a spell on the stack, attackers, the end of a turn).
-    They may tap mana, cast instants and flash spells, use instant-speed abilities, or pass. Returns the counterspell
-    they cast at `spell` (the engine then counters it), or None when they pass"""
+    They may tap mana, cast instants and flash spells (a counterspell goes on the stack aimed at a spell there), use
+    instant-speed abilities, or pass. Returns once they pass, or once something they did went on the stack (it has
+    resolved by then, after its own round of priority)"""
     ctl = controller_of(g, q)
-    stack = [{'name': spell.name}] if spell is not None else []
     order = []                                               # who gets priority on it, in turn order after the caster
     if caster is not None:
         order = [{'key': x.key, 'name': E.NAME(x)} for x in g.after(caster) if x.alive]
     g.responding = getattr(g, 'responding', 0) + 1           # something is waiting to resolve: no sorcery-speed play
     try:
         while not g.over and q.alive:
+            stack = stack_view(g) if g.stack else ([{'name': spell.name}] if spell is not None else [])
             act = ctl.ask(Request('priority', f'{prompt}. You have priority',
                                   data={'view': build_view(g, q.key), 'stack': stack, 'order': order,
                                         'caster': None if caster is None else E.NAME(caster)}))
             if not isinstance(act, dict): act = {}
             if act.get('do') == 'pass': return None
-            if act.get('do') == 'cast' and spell is not None and act.get('zone') != 'cmd':
+            n = getattr(g, 'stack_pushes', 0)
+            if act.get('do') == 'cast' and g.stack and act.get('zone') != 'cmd':
                 c = _hand_card(q, act)
                 if c is not None and 'ctr' in c.tags:
-                    why = legal.check_counter(g, q, c, spell)
+                    why = cast_counterspell(g, q, c)
                     if why: ctl.tell('invalid', why); continue
-                    return c
+                    return None
                 from commander_sim.play import cards
                 if c is not None and cards.copy_card(c):          # Return the Favor, Dualcaster Mage: copy the spell
+                    top = g.stack[-1]
                     why = legal.check_cast(g, q, c) if c.name != 'Return the Favor' else None
-                    why = why or cards.copy_in_response(g, q, c, spell, caster or g.active)
+                    why = why or cards.copy_in_response(g, q, c, top.card, top.controller)
                     if why: ctl.tell('invalid', why)
                     continue
             why = apply(g, q, act)
             if why: ctl.tell('invalid', why)
+            if getattr(g, 'stack_pushes', 0) != n and g.stack: return None    # it went on the stack and resolved
         return None
     finally:
         g.responding -= 1
+
+
+def cast_counterspell(g, q, c):
+    """q casts counterspell c at a spell on the stack (the top one, or one they pick when there are several it can
+    counter). None, or why not"""
+    cands = [it for it in reversed(g.stack) if it.controller is not q or len(g.stack) > 1]
+    cands = [it for it in cands if E.counter_ok(c, it.card) and E.counterable(g, it)]
+    if not cands: return f"{c.name} can't counter anything on the stack."
+    it = cands[0]
+    if len(cands) > 1:
+        k = choose(g, q, 'target', f'{c.name}: counter which spell?',
+                   [f"{x.card.name} ({E.NAME(x.controller)})" for x in cands])
+        if k is None: return 'Cancelled.'
+        it = cands[k]
+    why = legal.check_counter(g, q, c, it.card)
+    if why: return why
+    alt = legal.alternative_counter_cost(g, q, c)
+    gen, pips = E.counter_cost(c, it.card)
+    if mana.cost_problem(g, q, gen, pips) is None:            # pay from your pool
+        mana.pay_from_pool(g, q, gen, pips)
+        g.free_counter = True                                 # already paid
+    elif not alt: return f"Can't cast {c.name}. {mana.cost_problem(g, q, gen, pips)}"
+    try:
+        if not E.cast_counter_spell(g, q, c, it): return f"{c.name} couldn't be cast."
+    finally:
+        g.free_counter = False
+    return None
 
 
 def humans(g):

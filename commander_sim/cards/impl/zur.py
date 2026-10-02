@@ -781,19 +781,20 @@ def zur_protect(g, owner, m, kind, actor, spell):
     for c in list(owner.hand):
         tp = c.tags.get('prot')
         if tp == 'phase' and can_pay(g, owner, c.generic, c.pips, 'convoke' in c.tags):      # Clever Concealment
-            ais.pay_card(g, owner, c)
+            if not ais.pay_card(g, owner, c): return False
             m.phased = True
             for a in auras: a.phased = True
             log(f'    {NAME(owner)} casts {c.name}: {m.name} phases out', g)
             return True
         if tp == 'indes' and (kind == 'destroy' or kind.startswith('dmg')) and can_pay(g, owner, c.generic, c.pips):
-            ais.pay_card(g, owner, c); rootborn(g, owner)                                     # Rootborn Defenses
+            if not ais.pay_card(g, owner, c): return False                                   # Rootborn Defenses
+            rootborn(g, owner)
             return True
     if auras or kind not in ('destroy', 'exile', 'bounce', 'tuck') and not kind.startswith('dmg'): return False
     for c in list(owner.hand):
         if c.name in ('Momentary Blink', 'Restoration Angel') and can_pay(g, owner, c.generic, c.pips):
             from commander_sim.cards.impl import t2
-            ais.pay_card(g, owner, c)
+            if not ais.pay_card(g, owner, c): return False
             if c.name == 'Restoration Angel':
                 if c in owner.gy: owner.gy.remove(c)
                 g.resto_target = m                      # its enters trigger blinks the creature under attack
@@ -816,7 +817,7 @@ def zur_wipe_response(g, q, kind):
     if loss < 6: return None
     for c in list(q.hand):
         if c.tags.get('prot') == 'phase' and can_pay(g, q, c.generic, c.pips, 'convoke' in c.tags):
-            ais.pay_card(g, q, c)
+            if not ais.pay_card(g, q, c): return None
             mine = [m for m in q.perms if m.creature]
             for m in q.perms:
                 if m.creature or (m.attached is not None and m.attached in mine): m.phased = True
@@ -825,7 +826,8 @@ def zur_wipe_response(g, q, kind):
     if kind in ('destroy', 'dmg13', 'austere', 'nib'):
         for c in list(q.hand):
             if c.tags.get('prot') == 'indes' and can_pay(g, q, c.generic, c.pips):
-                ais.pay_card(g, q, c); rootborn(g, q)
+                if not ais.pay_card(g, q, c): return None
+                rootborn(g, q)
                 return 'indes'
     return None
 
@@ -848,9 +850,8 @@ def verdict_response(g, d, p, atk):
     if epow(g, t) < 3 and pval(g, t) < 4: return
     from commander_sim import ais
     c = vs[0]
-    ais.pay_card(g, d, c)
-    log(f'  {NAME(d)} casts Divine Verdict on attacking {t.name}', g)
-    apply_removal(g, d, t, 'destroy', c)
+    if not ais.pay_card(g, d, c): return
+    if t in t.owner.perms: apply_removal(g, d, t, 'destroy', c)
 
 
 CI.verdict_response = verdict_response
