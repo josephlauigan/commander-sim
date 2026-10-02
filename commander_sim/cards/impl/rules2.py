@@ -43,7 +43,7 @@ def forced_attackers(g, p, atk, cands):
 
 @on('Goblin Rabblemaster', 'upkeep')
 def _rabble_tok(g, src, p):
-    if p is src.owner and p is g.active:
+    if p is src.owner and p is g.active and trigger_window(g, p, src, 'create a hasty 1/1 Goblin'):
         for m in make_tokens(g, p, 1, 1, color='R', types=('goblin',), sick=False):
             if m.data is None: m.data = {}
             m.data['must_attack'] = turn_now(g)
@@ -51,7 +51,7 @@ def _rabble_tok(g, src, p):
 
 @on('Legion Warboss', 'upkeep')
 def _warboss_tok(g, src, p):
-    if p is src.owner and p is g.active:
+    if p is src.owner and p is g.active and trigger_window(g, p, src, 'create a hasty 1/1 Goblin'):
         for m in make_tokens(g, p, 1, 1, color='R', types=('goblin',), sick=False):
             if m.data is None: m.data = {}
             m.data['must_attack'] = turn_now(g)
@@ -84,7 +84,8 @@ def R_open(g, p):
 
 @on("Esika's Chariot", 'attack')
 def _chariot_copy(g, src, p, atk, d):
-    if src in atk:
+    if src in atk and any(m.token and m.creature and not m.phased for m in p.perms) \
+            and trigger_window(g, p, src, 'copy a token'):
         toks = [m for m in p.perms if m.token and m.creature and not m.phased]
         if toks:
             t = max(toks, key=lambda m: epow(g, m))
@@ -93,7 +94,7 @@ def _chariot_copy(g, src, p, atk, d):
 
 @on("Esika's Chariot", 'etb')
 def _chariot_cats(g, src, p, m):
-    if m is src: make_tokens(g, src.owner, 2, 2, color='G', types=('cat',))
+    if m is src and trigger_window(g, src.owner, src, 'create two 2/2 Cats'): make_tokens(g, src.owner, 2, 2, color='G', types=('cat',))
 
 
 card("Esika's Chariot", 'leg', types='A', dsl=[])
@@ -191,7 +192,8 @@ def _ragavan_dash(g, c, p, s, post):
 
 @on('Ragavan, Nimble Pilferer', 'end_step')
 def _ragavan_back(g, src, p):
-    if p is src.owner and src.data and src.data.get('dash') and src in p.perms:
+    if p is src.owner and src.data and src.data.get('dash') and src in p.perms \
+            and trigger_window(g, p, src, 'return it to hand (dash)', imp=1) and src in p.perms:
         leave(g, src); p.hand.append(src.cd)
 full('Ragavan, Nimble Pilferer', 'combat damage: a Treasure and the defender\'s top card (castable this turn); dash {1}{R}')
 
@@ -204,7 +206,13 @@ def _obnix_casualty(g, src, p, m):
     fod = [x for x in o.perms if x.creature and not x.is_cmd and x is not src and (x.token or pval(g, x) < 3) and epow(g, x) >= 2]
     if not fod: return
     x = max(fod, key=lambda x: epow(g, x)); n = epow(g, x)
-    die(g, x, 'sac')
+    die(g, x, 'sac')                                    # casualty: a cost paid as it's cast
+    _obnix_copy(g, o, src, n)
+
+
+def _obnix_copy(g, o, src, n):
+    """casualty's trigger: copy the spell (a token copy with loyalty X)"""
+    if not trigger_window(g, o, src, f'copy it (loyalty {n})', imp=5): return
     cp = enter_token_copy(g, o, src.cd)
     if cp is not None:
         cp.loyalty = n
@@ -246,6 +254,7 @@ def _joraga(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 1, 'G'): return False
         pay(g, p, 1, 'G')
+        if not ability_window(g, p, src, 'level up') or src not in p.perms: return True
         if src.data is None: src.data = {}
         src.data['level'] = src.data.get('level', 0) + 1
         return True
@@ -272,7 +281,9 @@ def _adapt(g, src, p, s, post):
 
     def go():
         if src.plus > 0 or not can_pay(g, p, 3, 'GG'): return False
-        pay(g, p, 3, 'GG'); src.plus += 3; log(f'  {NAME(p)} adapts Incubation Druid', g); return True
+        pay(g, p, 3, 'GG'); log(f'  {NAME(p)} adapts Incubation Druid', g)
+        if ability_window(g, p, src, 'adapt 3') and src in p.perms and src.plus <= 0: src.plus += 3
+        return True
     return [(1.5, 'adapt Incubation Druid', go)]
 full('Incubation Druid', 'taps for one mana of a colour a land could make; three once it has a counter; adapt 3 for {3}{G}{G}')
 
@@ -315,7 +326,8 @@ def _harmonize(g, c, p, s, post):
         xx = total_mana(g, p) - 4 + r
         if not can_pay(g, p, max(0, xx - r), 'GGGG'): return False
         p.gy.remove(c); pay(g, p, max(0, xx - r), 'GGGG'); p.exile.append(c)
-        log(f"  {NAME(p)} harmonizes Nature's Rhythm (X={xx})", g)
+        log(f"  {NAME(p)} harmonizes Nature's Rhythm (X={xx})", g); on_cast(g, p, c)
+        if not counter_window(g, p, c, 5, {}): return True
         from commander_sim.cards.impl import t3 as impl_t3
         impl_t3._put_creature(g, p, lambda y: y.cmc <= xx)
         return True
@@ -396,6 +408,7 @@ def _wishclaw(g, src, p, s, post):
         pay(g, p, 1, ''); src.tapped = True
         if src.data is None: src.data = {}
         src.data['wishes'] = src.data.get('wishes', 3) - 1
+        if not ability_window(g, p, src, 'search for a card', imp=7): return True
         tutor(g, p, 'any')
         q = max(g.opps(p), key=lambda q: threat(g, p, q)) if g.opps(p) else None
         if q is not None and src in p.perms and src.data['wishes'] > 0:
@@ -418,14 +431,17 @@ def _aura_silence(g, src, p, s, post):
 
     def go():
         if src not in p.perms or t not in t.owner.perms: return False
-        die(g, src, 'sac'); apply_removal(g, p, t, 'destroy'); return True
+        die(g, src, 'sac')
+        if ability_window(g, p, src.cd, f'destroy {t.name}', target=t) and t in t.owner.perms: apply_removal(g, p, t, 'destroy')
+        return True
     return [(pval(g, t) - 3.0, f'sacrifice Aura of Silence -> {t.name}', go)]
 full('Aura of Silence', 'opponents\' artifacts and enchantments cost {2} more; sacrifice: destroy a valuable one')
 
 
 @on('Soul-Guide Lantern', 'etb')
 def _lantern_etb(g, src, p, m):
-    if m is not src: return
+    if m is not src or not any(q.gy for q in g.opps(src.owner)): return
+    if not trigger_window(g, src.owner, src, 'exile a card from a graveyard'): return
     best = max([(q, x) for q in g.opps(src.owner) for x in q.gy], key=lambda t: (t[1].creature, t[1].bomb, t[1].cmc), default=None)
     if best is not None: best[0].gy.remove(best[1]); best[0].exile.append(best[1])
 
@@ -438,7 +454,9 @@ def _lantern_draw(g, src, p, s, post):
 
     def go():
         if src not in p.perms or not can_pay(g, p, 1, ''): return False
-        pay(g, p, 1, ''); die(g, src, 'sac'); draw(g, p, 1); return True
+        pay(g, p, 1, ''); die(g, src, 'sac')
+        if ability_window(g, p, src.cd, 'draw a card'): draw(g, p, 1)
+        return True
     return [(0.7, 'Soul-Guide Lantern draw', go)]
 full('Soul-Guide Lantern', 'exiles a card from a graveyard on entry; sacrificed to exile a graveyard (reanimation) or '
      'for a card')
@@ -455,8 +473,10 @@ def _shadowspear(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 1, ''): return False
-        pay(g, p, 1, ''); g.spear = turn_now(g)
-        log(f'  {NAME(p)} activates Shadowspear', g); return True
+        pay(g, p, 1, '')
+        log(f'  {NAME(p)} activates Shadowspear', g)
+        if ability_window(g, p, src, 'opponents lose hexproof and indestructible'): g.spear = turn_now(g)
+        return True
     return [(1.5 + pval(g, max(prot, key=lambda m: pval(g, m))) / 3.0, 'Shadowspear', go)]
 
 
@@ -517,7 +537,7 @@ full('Liesa, Shroud of Dusk', 'can\'t be countered; flying, lifelink; commander 
 @on('Syr Konrad, the Grim', 'cards_to_gy')
 def _konrad_mill(g, src, p, cards):
     n = sum(1 for c in cards if c.creature)
-    if n:
+    if n and trigger_window(g, src.owner, src, f'{n} damage to each opponent'):
         for q in g.opps(src.owner): lose_life(g, q, n, src.owner, kind='triggers')
 full('Syr Konrad, the Grim', 'another creature dying, or a creature card milled or discarded, deals 1 to each opponent')
 
@@ -554,6 +574,7 @@ def _fang(g, src, p, s, post):
         if t not in t.owner.perms or not can_pay(g, p, 0, 'B'): return False
         pay(g, p, 0, 'B')
         for m in [m for m in p.perms if m.token and 'squirrel' in m.ttypes][:x]: die(g, m, 'sac')
+        if not ability_window(g, p, src, f'+{x}/-{x} to {t.name}', target=t) or t not in t.owner.perms: return True
         if not untargetable(g, t): _eot(g, t, x, -x); die(g, t, 'sba') if etgh(g, t) <= 0 else None
         return True
     return [(pval(g, t) - 0.5 * x, f'Chatterfang -> {t.name}', go)]
@@ -584,6 +605,9 @@ def _dsphere(g, src, p, m):
     o = src.owner
     t = best_opp_nonland(g, o, lambda x: not (x.cd is not None and x.cd.land))
     if t is None: return
+    if not trigger_window(g, o, src, 'exile a nonland permanent and all with its name', imp=5): return
+    t = best_opp_nonland(g, o, lambda x: not (x.cd is not None and x.cd.land))
+    if t is None: return
     same = [x for q in g.opps(o) for x in q.perms if x.name == t.name and not x.phased]
     src.data = src.data or {}; src.data['held'] = []
     for x in same:
@@ -611,7 +635,10 @@ def _displacer_opp(g, src, p, s, post):
 
     def go():
         if t not in t.owner.perms or not can_pay(g, p, 3, ''): return False
-        pay(g, p, 3, ''); leave(g, t); log(f'  {NAME(p)} blinks {t.name} with Eldrazi Displacer (a token: gone)', g); return True
+        pay(g, p, 3, '')
+        if ability_window(g, p, src, f'blink {t.name}', target=t) and t in t.owner.perms:
+            leave(g, t); log(f'  {NAME(p)} blinks {t.name} with Eldrazi Displacer (a token: gone)', g)
+        return True
     return [(1.0 + 0.4 * epow(g, t), 'Eldrazi Displacer on a token', go)]
 full('Eldrazi Displacer', 'blinks your ETB creatures, or an opponent\'s token (gone) with {2}{C}')
 
@@ -620,6 +647,7 @@ full('Eldrazi Displacer', 'blinks your ETB creatures, or an opponent\'s token (g
 def _prince(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'blink a creature or gain 3 life'): return
     cs = [x for x in o.perms if x is not src and x.creature and not x.token and x.cd is not None and R_etb(x) > 0]
     if cs:
         t = max(cs, key=R_etb); leave(g, t); o.oath_return = getattr(o, 'oath_return', []) + [t.cd]
@@ -649,6 +677,7 @@ def _bcg_pump(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 1, 'R'): return False
         pay(g, p, 1, 'R'); p.bcg_turn = turn_now(g)
+        if not ability_window(g, p, src, 'Goblins get +1/+0'): return True
         for m in p.perms:
             if m.creature and E.has_type(m, 'goblin'): _eot(g, m, 1, 0)
         return True
@@ -665,9 +694,9 @@ def _purph_on(g, src, p, m):
     if m is src:
         if src.data is None: src.data = {}
         src.pow, src.tgh = 6, 5
-    if m.owner is src.owner and m.creature and m is not src:
+    purph_update(src)                                   # (the devotion check: bookkeeping, before the window)
+    if m.owner is src.owner and m.creature and m is not src and trigger_window(g, src.owner, src, '2 damage to each opponent'):
         for q in g.opps(src.owner): lose_life(g, q, 2, src.owner, kind='triggers', damage=True)
-    purph_update(src)
 
 
 def purph_update(src):
@@ -686,6 +715,7 @@ def _purph_pump(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 2, 'R'): return False
         pay(g, p, 2, 'R'); p.purph_turn = turn_now(g)
+        if not ability_window(g, p, src, 'creatures get +1/+0'): return True
         for m in p.perms:
             if m.creature: _eot(g, m, 1, 0)
         return True
@@ -708,7 +738,9 @@ def _scourge_fire(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, n - 1, 'R'): return False
-        pay(g, p, n - 1, 'R'); _eot(g, src, n, 0); return True
+        pay(g, p, n - 1, 'R')
+        if ability_window(g, p, src, f'+{n}/+0') and src in p.perms: _eot(g, src, n, 0)
+        return True
     return [(0.4 * n, 'Scourge of Valkas firebreathing', go)]
 full('Scourge of Valkas', 'flying; Dragons entering deal damage equal to their power; {R}: +1/+0 before an open attack')
 
@@ -719,7 +751,10 @@ def _resplendent_pump(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 3, 'WWW'): return False
-        pay(g, p, 3, 'WWW'); _eot(g, src, 2, 0); g.eot_kw.setdefault(id(src), set()).add('lifelink'); return True
+        pay(g, p, 3, 'WWW')
+        if ability_window(g, p, src, '+2/+0 and lifelink') and src in p.perms:
+            _eot(g, src, 2, 0); g.eot_kw.setdefault(id(src), set()).add('lifelink')
+        return True
     return [(1.2, 'Resplendent Angel pump', go)]
 full('Resplendent Angel', 'flying; a 4/4 Angel at end step after gaining 5+ life; {3}{W}{W}{W}: +2/+0 and lifelink')
 
@@ -727,6 +762,9 @@ full('Resplendent Angel', 'flying; a 4/4 Angel at end step after gaining 5+ life
 @on('Rionya, Fire Dancer', 'combat_start')
 def _rionya_x(g, src, p):
     if p is not src.owner: return
+    cs = [m for m in p.perms if m.creature and m is not src and m.cd is not None and not m.phased]
+    if not cs: return
+    if not trigger_window(g, p, src, 'create hasty token copies of a creature'): return
     cs = [m for m in p.perms if m.creature and m is not src and m.cd is not None and not m.phased]
     if not cs: return
     t = max(cs, key=lambda m: (epow(g, m) + R_etb(m)))
@@ -744,7 +782,8 @@ def _rionya_x(g, src, p):
 
 @on('Rionya, Fire Dancer', 'end_step')
 def _rionya_exile(g, src, p):
-    if p is src.owner:
+    if p is src.owner and any(m.data and m.data.get('rionya') for m in p.perms) \
+            and trigger_window(g, p, src, 'exile the token copies', imp=1):
         for m in [m for m in p.perms if m.data and m.data.get('rionya')]: leave(g, m)
 full('Rionya, Fire Dancer', 'each combat: 1 + (instants and sorceries cast this turn) hasty token copies of a creature, '
      'exiled at end step')
@@ -771,7 +810,9 @@ def _sfm_put(g, src, p, s, post):
 
     def go():
         if c not in p.hand or src.tapped or not can_pay(g, p, 1, 'W'): return False
-        pay(g, p, 1, 'W'); src.tapped = True; p.hand.remove(c); enter(g, p, c)
+        pay(g, p, 1, 'W'); src.tapped = True
+        if not ability_window(g, p, src, f'put {c.name} onto the battlefield', imp=5) or c not in p.hand: return True
+        p.hand.remove(c); enter(g, p, c)
         log(f'  {NAME(p)} puts {c.name} onto the battlefield with Stoneforge Mystic', g); return True
     return [(1.0 + c.cmc / 2.0, f'Stoneforge Mystic ({c.name})', go)]
 full('Stoneforge Mystic', 'fetches an Equipment; {1}{W},{T}: puts an expensive Equipment from hand onto the battlefield')
@@ -784,7 +825,9 @@ def _goose_food(g, src, p, s, post):
 
     def go():
         if src.tapped or not can_pay(g, p, 1, 'G'): return False
-        pay(g, p, 1, 'G'); src.tapped = True; make_artifact_tokens(g, p, 'Food', 1); return True
+        pay(g, p, 1, 'G'); src.tapped = True
+        if ability_window(g, p, src, 'a Food'): make_artifact_tokens(g, p, 'Food', 1)
+        return True
     return [(0.9, 'Gilded Goose: Food', go)]
 full('Gilded Goose', 'flying; a Food on entry; {1}{G},{T}: Food (at end of turn); {T}, sacrifice a Food: any colour')
 
@@ -797,7 +840,9 @@ def _adanto(g, L, p, s, post):
 
     def go():
         if L.tapped or not impl_lands.pay_without(g, p, L, 2, 'W'): return False
-        L.tapped = True; make_tokens(g, p, 1, 1, lifelink=True, color='W', types=('vampire',)); return True
+        L.tapped = True
+        if ability_window(g, p, L.cd, 'a 1/1 lifelink Vampire'): make_tokens(g, p, 1, 1, lifelink=True, color='W', types=('vampire',))
+        return True
     return [(1.2, 'Adanto token', go)]
 full("Legion's Landing // Adanto, the First Fort", 'a 1/1 lifelink token; flips with three attackers into a land that '
      'taps for W or makes more tokens')
@@ -815,6 +860,7 @@ def _spinner(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 3, 'G') or len(p.lands) < 2: return False
         pay(g, p, 3, 'G')
+        if not ability_window(g, p, src, 'animate a land') or not p.lands: return True
         L = next((L for L in p.lands if L.tapped), p.lands[0])
         impl_lands.animate(g, p, L, x, x, kws=('trample', 'haste'))
         return True
@@ -843,6 +889,8 @@ def _valakut_end2(g, src, p):
     """at your end step, each card exiled with it that you didn't play goes to the graveyard: 1 damage each"""
     if p is not src.owner: return
     held = getattr(p, 'valakut_cards', [])
+    if any(c in p.hand for c in held) and not trigger_window(g, p, src, 'unplayed cards to the graveyard, 1 damage each'): return
+    held = getattr(p, 'valakut_cards', [])
     left = []
     for c in held:
         if c in p.hand: p.hand.remove(c); p.gy.append(c); left.append(c)
@@ -854,6 +902,7 @@ def _valakut_end2(g, src, p):
 @on('Valakut Exploration', 'landfall')
 def _valakut_land2(g, src, p):
     if p is not src.owner or not p.library: return
+    if not trigger_window(g, p, src, 'exile the top card') or not p.library: return
     c = p.library.pop(); p.hand.append(c); p.seen_names.add(c.name)
     p.valakut_cards = getattr(p, 'valakut_cards', []) + [c]
 full('Valakut Exploration', 'landfall: exile the top card, playable until end of turn; unplayed ones go to the '
@@ -894,7 +943,9 @@ def _ste_eot(g, src, p, s, post):
 
     def go():
         if src not in p.perms: return False
-        die(g, src, 'sac'); land_ramp(g, p, 1, True); return True
+        die(g, src, 'sac')
+        if ability_window(g, p, src.cd, 'search for a basic land'): land_ramp(g, p, 1, True)
+        return True
     return [(1.5, 'sacrifice Sakura-Tribe Elder', go)]
 card('Sakura-Tribe Elder', 'pow=1 tgh=1', dsl=[])
 full('Sakura-Tribe Elder', 'blocks, then is sacrificed for a basic land (or at the end of an opponent\'s turn)')
@@ -915,6 +966,7 @@ def _farseek(g, p, c, ctx):
 def _springbloom(g, src, p, m):
     if m is not src or len(src.owner.lands) < 3: return
     o = src.owner
+    if not trigger_window(g, o, src, 'sacrifice a land for two basics') or len(o.lands) < 3: return
     L = min(o.lands, key=lambda L: (L.cd.name not in ('Forest', 'Island', 'Plains', 'Swamp', 'Mountain'), not L.tapped))
     o.lands.remove(L); o.gy.append(L.cd)
     land_ramp(g, o, 2, True)
@@ -926,7 +978,8 @@ full('Springbloom Druid', 'on entry: sacrifice a land for two basics tapped')
 def _kotwo(g, src, p, m):
     if m is not src: return
     o = src.owner
-    if any(len(q.lands) > len(o.lands) for q in g.opps(o)):
+    if any(len(q.lands) > len(o.lands) for q in g.opps(o)) and trigger_window(g, o, src, 'search for a Plains') \
+            and any(len(q.lands) > len(o.lands) for q in g.opps(o)):
         cs = [x for x in searchable(g, o) if x.land and (x.name == 'Plains' or 'plains' in x.subtypes)]
         if cs: x = cs[0]; o.library.remove(x); g.rng.shuffle(o.library); o.lands.append(Land(x, False))
 card('Knight of the White Orchid', 'pow=2 tgh=2', dsl=[], kws={'first strike'})
@@ -1078,7 +1131,10 @@ def _woe_escape(g, c, p, s, post):
         pay(g, p, 3, 'BB')
         for x in sorted([x for x in p.gy if x is not c], key=lambda x: card_worth(g, p, x, True))[:4]:
             p.gy.remove(x); p.exile.append(x)
-        p.gy.remove(c); m = enter(g, p, c, plus=2); log(f'  {NAME(p)} escapes Woe Strider', g); return True
+        p.gy.remove(c); log(f'  {NAME(p)} escapes Woe Strider', g); on_cast(g, p, c)
+        if counter_window(g, p, c, 3, {}): enter(g, p, c, plus=2)
+        else: p.exile.append(c)
+        return True
     return [(1.6, 'escape Woe Strider', go)]
 
 
@@ -1088,7 +1144,7 @@ pool_ai.PROTECTORS['Cartel Aristocrat'] = ('bf_sac_other', None, 'color', 'self'
 
 @on('Ichormoon Gauntlet', 'cast')
 def _ichor(g, src, caster, c):
-    if caster is src.owner and not c.creature and not c.land: IC.proliferate(g, caster)
+    if caster is src.owner and not c.creature and not c.land and trigger_window(g, caster, src, 'proliferate'): IC.proliferate(g, caster)
 full('Ichormoon Gauntlet', 'planeswalkers have 0: proliferate; each noncreature spell you cast proliferates')
 def prot_vs(g, m, other):
     """m has protection from creature `other` (Spirit Mantle / Unquestioned Authority: all creatures; Baneslayer:

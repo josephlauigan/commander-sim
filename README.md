@@ -138,6 +138,19 @@ that's pulsing, or *no block*.
 the header. You get priority on every spell an opponent casts (it's shown on the stack, with who has passed), when
 you're attacked, and at the end of each turn: respond with instants, counterspells or abilities, or pass.
 
+**The stack.** Spells, activated abilities and triggered abilities all go on the stack, and everyone gets priority in
+turn order, as in the real game. You can counter a counterspell, answer an ability (Azorius Guildmage, Tishana's
+Tidebinder), or kill a creature before its trigger resolves. When several of your triggers happen at once, you choose
+the order (*Same order as last time* when the same ones come up again). **Stop** in the header (and *Stop for priority* on the setup screen) sets when the game asks you:
+- *when I can respond* (the default): opponents' spells; abilities and triggers when you hold something to answer
+  with; attacks on you; the end of each other turn; and the declare blockers step of your combats when you could
+  do something;
+- *on every spell, ability and trigger*;
+- *at every step (full control)*: also every upkeep, draw step, beginning of combat, declare attackers and
+  blockers step, and end step, yours included.
+
+A change applies from your next decision, and Undo and saved games replay it exactly.
+
 **Practice tools** (each can be switched off on the setup screen):
 - 💡 **Hint**: what the AI would do now, with the look-ahead's score for each option.
 - ↶ **Undo**: takes back your last action (the game replays from its seed, so it's exact).

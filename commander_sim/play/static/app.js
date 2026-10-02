@@ -113,9 +113,17 @@ function showStack(req) {
   const me = (req.data.order || []).findIndex((x) => you(pending.view) && x.key === you(pending.view).key);
   const order = (req.data.order || []).map((x, i) => el('span', { class: i < me ? 'passed' : i === me ? 'you' : '' },
     i < me ? `${x.name} · passed` : i === me ? 'You' : x.name));
+  const top = req.data.stack[0];
+  const what = (x) => (x.text ? x.text.split(': ').slice(1).join(': ') || x.text : x.name);
+  const head = top.kind && top.kind !== 'spell' ? `${top.controller}: ${what(top)}`
+    : req.data.caster ? `${req.data.caster} casts ${top.name}` : 'On the stack';
   opps.after(el('section', { class: 'stackbar', 'aria-label': 'The stack' },
-    el('div', { class: 'cards' }, req.data.stack.map((x) => cardOf(images, x.name, { size: 'md' }))),
-    el('div', {}, el('h3', {}, req.data.caster ? `${req.data.caster} casts ${req.data.stack[0].name}` : 'On the stack'),
+    el('div', { class: 'cards' }, req.data.stack.map((x) => el('figure', { class: 'item' + (x.kind && x.kind !== 'spell' ? ' ability' : '') },
+      cardOf(images, x.name, { size: 'md' }),
+      x.controller ? el('figcaption', {}, el('b', {}, x.controller),
+        x.kind && x.kind !== 'spell' ? ` · ${x.kind === 'trigger' ? 'trigger' : 'ability'}: ${what(x)}` : '',
+        x.target ? ` → ${x.target}` : '') : null))),
+    el('div', {}, el('h3', {}, head),
       order.length ? el('div', { class: 'order' }, el('b', {}, 'Priority: '), order.flatMap((o, i) => (i ? [' → ', o] : [o]))) : null)));
 }
 
@@ -465,8 +473,16 @@ async function enterGame() {
   const st = (await api('/api/state')).data;
   if (!st.game) { route(st); return; }
   setMe(st);
-  setStatus(st.game.seed, st.game.seats); setTools(st.game.tools); screen('game');
+  setStatus(st.game.seed, st.game.seats); setTools(st.game.tools); setAutopass(st.game.autopass); screen('game');
   if (st.proposal) showProposal(st.proposal);
+}
+
+// when the game stops to give you priority (play/human.py autopass); a change applies from your next decision
+function setAutopass(mode) { $('#autopass').value = mode || 'respond'; }
+async function changeAutopass() {
+  const r = await api('/api/autopass', { mode: $('#autopass').value });
+  if (!r.ok) toast(r.data.error);
+  else note('From your next decision on.');
 }
 
 function setMe(st) {
@@ -552,7 +568,7 @@ async function sameSeed() {
   if (!st.game) { screen('setup'); return; }
   const g = st.game;
   const body = { deck: g.deck, tier: g.tier, seed: g.seed, ai: g.ai, profile: g.profile, tools: g.tools,
-    seats: g.seats };
+    seats: g.seats, autopass: g.autopass };
   $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/new', body);
   if (!r.ok) { loading(null); toast(r.data.error); return; }
@@ -609,6 +625,7 @@ function screen(name) {
   if (name === 'setup') listSaves();
   if (name === 'game') requestAnimationFrame(() => fitBoards($('#table')));    // hidden areas measure as zero
   $('#hint').hidden = name !== 'game' || !tools.hint;
+  $('#autopass-box').hidden = name !== 'game';
 }
 
 function cardImage(name, cls = '') {
@@ -654,7 +671,7 @@ async function startGame(e) {
   e.preventDefault();
   const f = $('#newgame');
   const body = { deck: chosen.deck, tier: chosen.tier, ai: f.ai.value, profile: f.profile.value,
-    tools: { hint: f.hint.checked, undo: f.undo.checked, compare: f.compare.checked } };
+    tools: { hint: f.hint.checked, undo: f.undo.checked, compare: f.compare.checked }, autopass: f.autopass.value };
   const pair = f.players.value === 'two';
   if (f.seed.value) body.seed = +f.seed.value;
   if (f.seat.value && !pair) body.seat = +f.seat.value;
@@ -702,6 +719,7 @@ async function init() {
   $('#save').addEventListener('click', saveGame);
   listSaves();
   $('#hint').addEventListener('click', hint);
+  $('#autopass').addEventListener('change', changeAutopass);
   setupPlayback();
   (passBtn = passBtn || $('#pass')).addEventListener('click', () => answer({ do: 'pass' }));
   document.addEventListener('keydown', (e) => {
@@ -723,7 +741,7 @@ async function init() {
   me.host = st.host;
   if (st.game) {
     setMe(st);
-    setStatus(st.game.seed, st.game.seats); setTools(st.game.tools);
+    setStatus(st.game.seed, st.game.seats); setTools(st.game.tools); setAutopass(st.game.autopass);
     renderTable(st.view); screen('game');
     if (st.proposal) showProposal(st.proposal);
   } else await route(st);

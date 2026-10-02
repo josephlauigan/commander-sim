@@ -92,16 +92,18 @@ def bot_for(sess):
         if req.kind == 'attack': return list(range(len(req.choices)))
         if req.kind != 'priority': return True
         g = sess.game; p = next(x for x in g.players if x.key == sess.deck)
-        failed = sess.__dict__.setdefault('bot_failed', set())       # a spell that just failed on its target: not again this turn
+        failed = sess.__dict__.setdefault('bot_failed', set())       # a spell refused this turn: not again this turn
         told = sess.human.told
-        if told and told[-1][0] == 'invalid' and ' on that target' in told[-1][1]:
-            failed.add((g.round, told[-1][1].split("Can't cast ")[1].split(' on that target')[0]))
+        last = sess.__dict__.get('bot_last')
+        if last is not None and len(told) > last[2] and told[-1][0] == 'invalid': failed.add(last[:2])
+        sess.bot_last = None
         for i, c in enumerate(p.hand):
             if c.land and legal.check_land(g, p, c) is None: return {'do': 'land', 'card': i}
         srcs = mana.sources(g, p)
         if srcs: return {'do': 'tap', 'source': srcs[0]['id']}
         for i, c in enumerate(p.hand):
             if not c.land and (g.round, c.name) not in failed and legal.check_cast(g, p, c) is None:
+                sess.bot_last = (g.round, c.name, len(told))
                 return {'do': 'cast', 'card': i}
         if p.cmd_in_zone and legal.check_cast(g, p, p.cmd, 'cmd') is None: return {'do': 'cast', 'zone': 'cmd'}
         tried = sess.__dict__.setdefault('bot_tried', set())   # equip each piece at most once a turn

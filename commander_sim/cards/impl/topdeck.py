@@ -140,8 +140,10 @@ def _top_draw(g, src, p, s, post):
 
     def go():
         if src not in p.perms or src.tapped: return False
+        src.tapped = True
+        if not ability_window(g, p, src, 'draw, then Top goes on top'): return True
         draw(g, p, 1)
-        leave(g, src); p.library.append(src.cd)
+        if src in p.perms: leave(g, src); p.library.append(src.cd)
         log(f'  {NAME(p)} draws with Sensei\'s Divining Top (Top goes on top)', g)
         return True
     return [(4.0 if citadel else 3.0, "Sensei's Divining Top draw", go)]
@@ -183,7 +185,9 @@ note('Scroll Rack', 'Full', 'each upkeep: swaps the least wanted cards in hand f
 @on('Sylvan Library', 'draw')
 def _library(g, src, p):
     """draw step: draw two more, then for each keep it for 4 life or put it back (the most wanted on top)"""
-    if p is not src.owner or g.active is not p or not once_per_turn(g, p, f'sylvan{id(src)}'): return
+    k = f'sylvan{id(src)}'
+    if p is not src.owner or g.active is not p or p.flag_turn.get(k) == (g.round, g.active and g.active.key): return
+    if not trigger_window(g, p, src, 'draw two more cards') or not once_per_turn(g, p, k): return
     before = list(p.hand)
     draw(g, p, 2)
     new = [c for c in p.hand if c not in before][:2]

@@ -82,13 +82,16 @@ def flute_pick(g, p):
 
 
 def pay_card(g, p, c, kicked=0):
+    """cast c in response (protection, a board-saving spell): pay, then it goes on the stack where others may counter
+    it. True if it resolves (the caller carries out its effect)"""
     if c not in p.hand or not can_pay(g, p, c.generic + kicked, c.pips + ('W' if kicked else '')): return False
     p.hand.remove(c)
     pay(g, p, c.generic + kicked, c.pips + ('W' if kicked else ''))
     p.gy.append(c); p.spells_this_turn += 1
     p.cast_names.add(c.name)
+    log(f'  {NAME(p)} casts {c.name}', g)
     on_cast(g, p, c)
-    return True
+    return counter_window(g, p, c, 6, {})
 
 
 def protect_response(g, owner, m, kind, actor, spell=None):
@@ -109,7 +112,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if v >= 6 and m.creature:
             hi = [c for c in owner.hand if c.tags.get('prot') == 'hi']
             if hi and kind != 'edict' and can_pay(g, owner, 1, 'G'):
-                pay_card(g, owner, hi[0]); owner.stats['hi_used'] += 1; return True
+                if pay_card(g, owner, hi[0]): owner.stats['hi_used'] += 1; return True
+                return False
             gd = [c for c in owner.hand if c.name == "Galadriel's Dismissal"]
             if gd and can_pay(g, owner, 0, 'W') and pay_card(g, owner, gd[0]):      # phases out: safe from anything
                 m.phased = True; owner.stats['phase_saves'] += 1; return True
@@ -121,7 +125,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if m.army or v >= 5:
             sl = [c for c in owner.hand if c.tags.get('prot') == 'phase']
             if sl and can_pay(g, owner, 0, 'U'):
-                pay_card(g, owner, sl[0]); m.phased = True; return True
+                if pay_card(g, owner, sl[0]): m.phased = True; return True
+                return False
             if m.army and epow(g, m) >= 7:
                 nw = [c for c in owner.hand if c.tags.get('prot') == 'notw']
                 if nw:
@@ -135,6 +140,11 @@ def protect_response(g, owner, m, kind, actor, spell=None):
             for c in owner.hand:
                 if c.tags.get('prot') == 'blink' and can_pay(g, owner, c.generic, c.pips):
                     pay(g, owner, c.generic, c.pips); owner.hand.remove(c)
+                    if c.name == 'Restoration Angel':          # its enters trigger does the blinking
+                        g.resto_target = m
+                        try: enter(g, owner, c)
+                        finally: g.resto_target = None
+                        return True
                     if c.creature: enter(g, owner, c)
                     else: owner.gy.append(c)
                     cd = m.cd; leave(g, m)
@@ -157,7 +167,7 @@ def wipe_response(g, q, kind, caster):
         if kind in ('destroy', 'dmg13', 'austere', 'nib'):
             hi = [c for c in q.hand if c.tags.get('prot') == 'hi']
             if hi and can_pay(g, q, 1, 'G'):
-                pay_card(g, q, hi[0]); q.stats['hi_used'] += 1; return 'indes'
+                if pay_card(g, q, hi[0]): q.stats['hi_used'] += 1; return 'indes'
         gd = [c for c in q.hand if c.name == "Galadriel's Dismissal"]
         if gd and can_pay(g, q, 2, 'WW') and pay_card(g, q, gd[0], kicked=2):   # kicked: every creature you control
             for m in q.perms:
@@ -172,19 +182,20 @@ def wipe_response(g, q, kind, caster):
     elif q.key == 'najeela':
         for c in list(q.hand):
             if c.tags.get('prot') == 'phase' and can_pay(g, q, c.generic, c.pips, 'convoke' in c.tags):
-                pay_card(g, q, c)
+                if not pay_card(g, q, c): return None
                 for m in q.perms: m.phased = True
                 return 'all'
         if kind in ('destroy', 'dmg13', 'austere', 'nib'):
             for c in list(q.hand):
                 if c.tags.get('prot') == 'indes' and can_pay(g, q, c.generic, c.pips):
-                    pay_card(g, q, c); return 'indes'
+                    if pay_card(g, q, c): return 'indes'
+                    return None
     elif q.key == 'sauron':
         a = army_of(q)
         if a:
             sl = [c for c in q.hand if c.tags.get('prot') == 'phase']
             if sl and can_pay(g, q, 0, 'U'):
-                pay_card(g, q, sl[0]); a.phased = True
+                if pay_card(g, q, sl[0]): a.phased = True
     return None
 
 
@@ -199,7 +210,7 @@ def sauron_grounds_response(g, seph, value):
             L.tapped = False; continue
         pay(g, q, 2, ''); q.lands.remove(L); q.gy.append(L.cd)
         q.stats['grounds_used'] += 1
-        if tide_response(g, q, 'grounds', 9, victim=seph):
+        if not ability_window(g, q, L.cd, 'exile all graveyards', imp=9):
             return False
         for p in g.players:
             if p.alive:
@@ -487,8 +498,8 @@ def seph_trophy_grounds(g, p):
         if not gl: continue
         for c in p.hand:
             if c.tags.get('tgt') == 'p' and c.tags.get('rem') == 'destroy' and can_pay(g, p, c.generic, c.pips):
-                pay_card(g, p, c)
-                q.lands.remove(gl[0]); q.gy.append(gl[0].cd); land_ramp(g, q, 1, True)
+                if not pay_card(g, p, c): return True
+                if gl[0] in q.lands: q.lands.remove(gl[0]); q.gy.append(gl[0].cd); land_ramp(g, q, 1, True)
                 p.stats['trophy_grounds'] += 1
                 return True
     return False
@@ -526,7 +537,7 @@ def seph_boots(g, p):
         if blocked(g, p, e.cd.name): continue
         bombs = [m for m in p.perms if m.creature and m.cd is not None and m.cd.bomb >= 6 and not untargetable(g, m)]
         if bombs and can_pay(g, p, 1, ''):
-            pay(g, p, 1, ''); e.attached = max(bombs, key=lambda x: pval(g, x)); return True
+            return equip_to(g, p, e, max(bombs, key=lambda x: pval(g, x)), 1)
     return False
 
 
@@ -930,8 +941,7 @@ def veyran_boots(g, p):
         if 'veyran' in t: return 9
         if 'vkitten' in t or 'vfire' in t: return 7
         return pval(g, m)
-    pay(g, p, 1, ''); eq[0].attached = max(cands, key=rank)
-    return True
+    return equip_to(g, p, eq[0], max(cands, key=rank), 1)
 
 
 def aether_check(g, p):
@@ -939,7 +949,8 @@ def aether_check(g, p):
     opps = [q for q in g.opps(p) if not shielded(q)]          # the damage would be prevented
     if not opps: return False
     lose_life(g, p, 50, p)
-    if tide_response(g, p, 'aether', 9): return True
+    src = next((m for m in find(p, 'aether')), None)
+    if not ability_window(g, p, src if src is not None else DB['Aetherflux Reservoir'], '50 damage', imp=9): return True
     tgt = max(opps, key=lambda o: threat(g, p, o))
     p.stats['aether_shots'] += 1; p.milestone.setdefault('aether', p.turns)
     log(f'  Veyran fires Aetherflux Reservoir at {NAME(tgt)}', g)
@@ -1024,7 +1035,7 @@ def sauron_equip(g, p):
             continue                                   # e.g. Sword of Hearth and Home goes on first
         if equipped(a, 'cloak'): return False
         if can_pay(g, p, 2, ''):
-            pay(g, p, 2, ''); eq[0].attached = a; return True
+            return equip_to(g, p, eq[0], a, 2)
     return False
 
 
@@ -1042,8 +1053,8 @@ def helm_target(g, p):
 def helm_equip(g, p, m):
     helm = [e for e in find(p, 'helm') if not blocked(g, p, e.cd.name)]
     if not helm or m not in p.perms or not can_pay(g, p, 1, ''): return False
-    pay(g, p, 1, ''); helm[0].attached = m
     log(f'  {NAME(p)} equips Champion\'s Helm to {m.name}', g)
+    equip_to(g, p, helm[0], m, 1)
     return True
 
 
@@ -1600,9 +1611,14 @@ def attack_triggers(g, p, atk, d):
         if g.over: break
     if has(p, 'najeela'):
         w = [m for m in atk if m.warrior and m in p.perms]
-        if w: new += make_tokens(g, p, len(w), 1, warrior=True, attacking=True, sick=False)
+        if w and E.trigger_window(g, p, find(p, 'najeela')[0], 'attacking Warriors', imp=5):
+            new += make_tokens(g, p, len(w), 1, warrior=True, attacking=True, sick=False)
     check_state(g)
     return [x for x in new if x.tapped and x in p.perms]
+
+
+ATTACK_TRIGGER_TAGS = ('witchking', 'archon', 'titan', 'tokatk', 'suntitan', 'necromancer', 'kylox')
+ATTACK_IMP = {'archon': 7, 'kylox': 6, 'witchking': 5, 'necromancer': 4, 'suntitan': 4}
 
 
 def _attack_triggers_once(g, p, atk, d):
@@ -1610,6 +1626,9 @@ def _attack_triggers_once(g, p, atk, d):
     for m in list(atk):
         if m.cd is None: continue
         t = m.cd.tags
+        if any(k in t for k in ATTACK_TRIGGER_TAGS) and not E.trigger_window(g, p, m, 'attacks', imp=ATTACK_IMP.get(
+                next((k for k in ATTACK_IMP if k in t), None), 3)):
+            continue
         if 'witchking' in t: edict(g, d, least_power=True)
         if 'archon' in t and d.alive: archon_attack(g, p, d)
         if 'titan' in t: make_tokens(g, p, 2, 2)
@@ -1627,11 +1646,12 @@ def _attack_triggers_once(g, p, atk, d):
             top = [p.library.pop() for _ in range(min(X, len(p.library)))]
             for c in top:
                 if c.instant or c.sorcery:
-                    cast_copy(g, p, (lambda c=c: draw(g, p, int(c.tags['draw']))) if 'draw' in c.tags else None)
+                    cast_copy(g, p, (lambda c=c: draw(g, p, int(c.tags['draw']))) if 'draw' in c.tags else None,
+                              name=c.name, instant=c.instant)
                 p.exile.append(c)
         if equipped(m, 'animist'): land_ramp(g, p, 1, True)        # Sword of the Animist
     rab = len(find(p, 'rabble'))
-    if rab: make_tokens(g, p, rab * len(atk), 1)                       # Rabble Rousing: one Citizen per attacker
+    if rab and E.trigger_window(g, p, find(p, 'rabble')[0], 'a Citizen per attacker'): make_tokens(g, p, rab * len(atk), 1)                       # Rabble Rousing: one Citizen per attacker
     if E.DSLMOD is not None and g.dsl_on:
         E.DSLMOD.fire(g, 'attack', attackers=list(atk), defender=d, player=p, new=new)
     if E.CI is not None:
@@ -1661,10 +1681,10 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     hctl = getattr(g, 'controllers', None)
     hum_d = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, d)
     hum_p = bool(hctl) and importlib.import_module('commander_sim.play.human').is_human(g, p)
-    if hum_d:                                          # practice mode: priority, then the person declares blockers
-        importlib.import_module('commander_sim.play.human').respond(
-            g, d, f'{NAME(p)} attacks you with {len(atk)} creature(s) ({sum(epow(g, m) for m in atk)} power)')
-        atk = [m for m in atk if m in p.perms]
+    E.step_priority(g, 'attackers', defender=d, attackers=atk)        # the declare attackers step's priority
+    atk = [m for m in atk if m in p.perms]
+    if g.over or not d.alive: return set()
+    if hum_d:                                          # the person declares blockers
         assign = importlib.import_module('commander_sim.play.combat').human_blocks(g, p, atk, d, unbl)
     else:
         blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
@@ -1705,73 +1725,81 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 h = E.CI.HOOKS.get(L.cd.name)
                 if h and 'land_defend' in h: h['land_defend'](g, L, d, p, atk, assign)
         if p.key not in MAIN: importlib.import_module('commander_sim.cards.impl.t4').ninjutsu(g, p, atk, d, assign)
+    if hctl:                                           # practice mode: the declare blockers step's priority
+        E.step_priority(g, 'blockers', defender=d, attackers=atk)
     if not hum_d and not shielded(d) and not d.life_locked and any(c.name == E.TEFERIS_PROTECTION for c in d.hand):
         unbl_dmg = [(a, epow(g, a) * (2 if double_strike(p, a) else 1)) for a in atk
                     if a in p.perms and (assign.get(a) is None or assign[a] not in d.perms) and a not in to_walker]
         if sum(x for _, x in unbl_dmg) >= d.life or any(a.is_cmd and d.cmd_dmg[p.key] + x >= 21 for a, x in unbl_dmg):
             E.last_chance(g, d)                            # lethal coming: Teferi's Protection
     conn = set()
-    for a in atk:
-        if a not in p.perms or not d.alive: continue
-        ap = epow(g, a) * (2 if double_strike(p, a) else 1)
-        if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
-        if a.data and importlib.import_module('commander_sim.cards.impl.rules').dovin_blocked(a): ap = 0
-        b = assign.get(a)
-        if b is None or b not in d.perms:
-            dmg = ap
-        else:
-            bt = etgh(g, b)
-            a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
-            if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, b): a_dies = False
-            b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
-            if E.CI is not None:                       # protection from creatures / Demons and Dragons
-                from commander_sim.cards.impl import rules2 as impl_rules2
-                if impl_rules2.prot_vs(g, a, b): a_dies = False
-                if impl_rules2.prot_vs(g, b, a): b_dies = False
-            fa, fb = first_strike(a), first_strike(b)
-            if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
-            elif fb and not fa and a_dies: b_dies = False
-            tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or \
-                (kw(a, 'trample'))
-            dmg = max(0, ap - bt) if tr else 0
-            if b_dies: die(g, b, 'destroy')
-            if a_dies: die(g, a, 'destroy')
-        if dmg > 0 and getattr(g, 'fog', None) == turn_stamp(g):     # Spore Frog and other fogs
-            dmg = 0
-        w = to_walker.get(a)
-        if dmg > 0 and w is not None and w in d.perms:                  # this attacker went after a planeswalker
-            w.loyalty -= dmg; tot_dmg[0] += dmg
-            log(f'    {a.name} deals {dmg} to {w.name} (loyalty {w.loyalty})', g)
-            if w.loyalty <= 0:
-                leave(g, w); to_zone_card(g, w, 'gy'); d.lost_names[w.name] += 1
-            dmg = 0
-        if dmg > 0 and prevents_damage(g, d, p):  # protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
-            d.stats['dmg_prevented'] += dmg
-            log(f'    {dmg} combat damage from {a.name} to {NAME(d)} is prevented', g)
-            dmg = 0
-        if dmg > 0:
-            lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
-            if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
-            if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
-            if getattr(p, 'insight', None): importlib.import_module('commander_sim.cards.impl.partials').insight_draw(g, p, a, dmg)
-            if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_combat(g, p, a, d, dmg)
-            if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
-            if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
-                for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
-                    d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
-            if a.life or p.najeela_boost or kw(a, 'lifelink'): gain(p, dmg)
-            if a.is_cmd: d.cmd_dmg[p.key] += dmg
-            if E.CI is not None:
-                IM = importlib.import_module('commander_sim.cards.impl.mine')
-                if a.army and has(p, 'sauron'): IM.ring_tempt(g, p)        # Sauron: an Army's combat damage tempts
-                IM.ring_damage(g, p, a, d)                                  # Ring level 4: each opponent loses 3
-            if equipped(a, 'sword'):
-                if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
-                for L in p.lands: L.tapped = False
-    for b in ringblk:                                           # Ring level 3: blockers are sacrificed
-        if b in b.owner.perms: die(g, b, 'sac')
-    if conn and has(p, 'facebreaker'): add_treasure(g, p, len(find(p, 'facebreaker')))   # Professional Face-Breaker
-    check_state(g)
+    g.resolving = getattr(g, 'resolving', 0) + 1           # combat damage is dealt at once: its triggers wait
+    try:
+        for a in atk:
+            if a not in p.perms or not d.alive: continue
+            ap = epow(g, a) * (2 if double_strike(p, a) else 1)
+            if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, a): ap = 0      # Old Fat Spider chapter II
+            if a.data and importlib.import_module('commander_sim.cards.impl.rules').dovin_blocked(a): ap = 0
+            b = assign.get(a)
+            tr = p.trample or has(p, 'uprising') or (a.cd is not None and 'trample' in a.cd.tags) or kw(a, 'trample')
+            if b is None:
+                dmg = ap
+            elif b not in d.perms:                         # its blocker is gone: still blocked (trample: all to the player)
+                dmg = ap if tr else 0
+            else:
+                bt = etgh(g, b)
+                a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
+                if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, b): a_dies = False
+                b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
+                if E.CI is not None:                       # protection from creatures / Demons and Dragons
+                    from commander_sim.cards.impl import rules2 as impl_rules2
+                    if impl_rules2.prot_vs(g, a, b): a_dies = False
+                    if impl_rules2.prot_vs(g, b, a): b_dies = False
+                fa, fb = first_strike(a), first_strike(b)
+                if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
+                elif fb and not fa and a_dies: b_dies = False
+                dmg = max(0, ap - bt) if tr else 0
+                if b_dies: die(g, b, 'destroy')
+                if a_dies: die(g, a, 'destroy')
+            if dmg > 0 and getattr(g, 'fog', None) == turn_stamp(g):     # Spore Frog and other fogs
+                dmg = 0
+            w = to_walker.get(a)
+            if dmg > 0 and w is not None and w in d.perms:                  # this attacker went after a planeswalker
+                w.loyalty -= dmg; tot_dmg[0] += dmg
+                log(f'    {a.name} deals {dmg} to {w.name} (loyalty {w.loyalty})', g)
+                if w.loyalty <= 0:
+                    leave(g, w); to_zone_card(g, w, 'gy'); d.lost_names[w.name] += 1
+                dmg = 0
+            if dmg > 0 and prevents_damage(g, d, p):  # protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
+                d.stats['dmg_prevented'] += dmg
+                log(f'    {dmg} combat damage from {a.name} to {NAME(d)} is prevented', g)
+                dmg = 0
+            if dmg > 0:
+                lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
+                if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
+                if g.hooks: E.CI.fire(g, 'combat_damage', p, a, d, dmg)
+                if getattr(p, 'insight', None): importlib.import_module('commander_sim.cards.impl.partials').insight_draw(g, p, a, dmg)
+                if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_combat(g, p, a, d, dmg)
+                if E.CI is not None and getattr(g, 'monarch', None) is d: E.CI.become_monarch(g, p)
+                if a.cd is not None and 'hellkite' in a.cd.tags:          # Hellkite Tyrant steals their artifacts
+                    for x in [x for x in d.perms if x.cd is not None and 'A' in x.cd.types and not x.creature]:
+                        d.perms.remove(x); x.owner = p; x.attached = None; p.perms.append(x); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+                if a.life or p.najeela_boost or kw(a, 'lifelink'): gain(p, dmg)
+                if a.is_cmd: d.cmd_dmg[p.key] += dmg
+                if E.CI is not None:
+                    IM = importlib.import_module('commander_sim.cards.impl.mine')
+                    if a.army and has(p, 'sauron'): IM.ring_tempt(g, p)        # Sauron: an Army's combat damage tempts
+                    IM.ring_damage(g, p, a, d)                                  # Ring level 4: each opponent loses 3
+                if equipped(a, 'sword'):
+                    if d.hand: discard_index(g, d, g.rng.randrange(len(d.hand)))
+                    for L in p.lands: L.tapped = False
+        for b in ringblk:                                           # Ring level 3: blockers are sacrificed
+            if b in b.owner.perms: die(g, b, 'sac')
+        if conn and has(p, 'facebreaker'): add_treasure(g, p, len(find(p, 'facebreaker')))   # Professional Face-Breaker
+        check_state(g)
+    finally:
+        g.resolving -= 1
+    if not g.resolving and getattr(g, 'trig_queue', None) and not g.over: E.flush_triggers(g); check_state(g)
     return conn
 
 
@@ -1854,6 +1882,8 @@ def combat(g, p):
         ncomb += 1
         p.combat_no = ncomb
         if not g.opps(p): return
+        E.step_priority(g, 'combat')
+        if g.over or not p.alive: return
         adaptive = E.AI_MODE == 'adaptive'
         if adaptive: from commander_sim.ai import brain
         if g.hooks and ncomb == 1: E.CI.fire(g, 'crew', p)
@@ -1921,7 +1951,8 @@ def combat(g, p):
                 and not blocked(g, p, 'Najeela, the Blade-Blossom')):
             pay(g, p, 0, 'WUBRG'); p.stats['najeela_act'] += 1
             p.milestone.setdefault('act', p.turns); log('  Najeela activates WUBRG for an extra combat', g)
-            if tide_response(g, p, 'najeela', 8): break
+            nj = next((m for m in find(p, 'najeela')), None)
+            if nj is not None and not ability_window(g, p, nj, 'untap, an additional combat', imp=8): break
             for m in p.perms:
                 if m.creature: m.tapped = False
             p.haste_all = True; p.trample = True; p.najeela_boost = True
@@ -1937,7 +1968,8 @@ def combat(g, p):
                 win(g, p, 'combo'); return
             if ncomb == 1 and can_pay(g, p, 3, 'RR'):
                 pay(g, p, 3, 'RR')
-                if tide_response(g, p, 'assault', 7): break
+                asl = next((m for m in find(p, 'assault')), None)
+                if asl is not None and not ability_window(g, p, asl, 'untap, an additional combat', imp=7): break
                 for m in p.perms:
                     if m.creature: m.tapped = False
                 continue
@@ -2041,6 +2073,8 @@ def play_land(g, p):
     lands = [c for c in p.hand if c.land]
     if getattr(p, 'yawg', False):                                    # Yawgmoth's Will: lands from the graveyard too
         lands += [c for c in p.gy if c.land and id(c) in p.yawg_gy]
+    muld = E.CI is not None and E.CI.muldrotha_on is not None and E.CI.muldrotha_on(g, p)
+    if muld: lands += [c for c in p.gy if c.land and c not in lands and E.CI.muld_types(g, p, c)]   # Muldrotha
     if any(c.tags.get('chasm') for c in lands) and not (len(p.lands) >= 4 and chasm_threatened(g, p) and not chasm(p)):
         lands = [c for c in lands if not c.tags.get('chasm')]     # hold Glacial Chasm until it's needed
     if not lands: return
@@ -2058,7 +2092,9 @@ def play_land(g, p):
         return s + g.rng.random() * 0.1
     c = max(lands, key=score)
     if c in p.hand: p.hand.remove(c)
-    else: p.gy.remove(c)
+    else:
+        if muld and not (getattr(p, 'yawg', False) and id(c) in p.yawg_gy): E.CI.muld_mark(g, p, 'L')
+        p.gy.remove(c)
     play_land_card(g, p, c)
 
 
@@ -2182,6 +2218,7 @@ def upkeep(g, p):
                 leave(g, m); p.gy.append(m.cd); continue
             n = m.cd.name
             if n == 'Sylvan Library' and p.life <= 20: continue
+            if not E.trigger_window(g, p, m, 'draw a card'): continue
             draw(g, p, 1)
             if n == 'Phyrexian Arena': lose_life(g, p, 1, p)
             if n == 'Sylvan Library': lose_life(g, p, 4, p)
@@ -2202,9 +2239,9 @@ def upkeep(g, p):
         if 'pwdiscard' in t and m.age <= 3:        # Ral Zarek -1: each opponent discards
             for q in g.opps(p):
                 if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
-        if 'mycoloth' in t and m.plus > 0: make_tokens(g, p, m.plus, 1, color='G')
-        if 'tokup' in t: make_tokens(g, p, int(t['tokup']), 1, warrior='warrior' in t)
-        if 'sheoW' in t:
+        if 'mycoloth' in t and m.plus > 0 and E.trigger_window(g, p, m, 'Saprolings'): make_tokens(g, p, m.plus, 1, color='G')
+        if 'tokup' in t and E.trigger_window(g, p, m, 'tokens'): make_tokens(g, p, int(t['tokup']), 1, warrior='warrior' in t)
+        if 'sheoW' in t and E.trigger_window(g, p, m, 'return a creature; each opponent sacrifices', imp=6):
             cr = [c for c in p.gy if c.creature]
             hc = E.human_choice(g, p)
             if cr:
@@ -2251,7 +2288,7 @@ def end_step(g, p):
     if E.CI is not None and getattr(g, 'monarch', None) is p: draw(g, p, 1)          # the monarch draws
     if g.hooks: E.CI.fire(g, 'end_step', p)
     for m in find(p, 'breach'):                   # Underworld Breach: sacrifice it at the beginning of the end step
-        die(g, m, 'sac')
+        if E.trigger_window(g, p, m, 'sacrifice it') and m in p.perms: die(g, m, 'sac')
     il = getattr(p, 'impulse_long', None)
     if il:                                         # Prosper / Reckless Impulse: until the end of your next turn
         keep = []
@@ -2265,7 +2302,7 @@ def end_step(g, p):
     if has(p, 'necro'): necro_pay(g, p)
     erebos_draw(g, p)                             # leftover mana at your own end step
     for m in [m for m in p.perms if m.temp]: leave(g, m)
-    if has(p, 'pvprolif'):                        # Atraxa, Praetors' Voice: proliferate
+    if has(p, 'pvprolif') and E.trigger_window(g, p, find(p, 'pvprolif')[0], 'proliferate'):   # Atraxa, Praetors' Voice
         for m in p.perms:
             if m.plus > 0: m.plus += 1
     hc = E.human_choice(g, p)
@@ -2350,6 +2387,8 @@ def _step_start(g, p):
     log(f'--- {NAME(p)} turn {p.turns}: life {p.life}, {len(p.hand)} cards in hand, {len(p.lands)} lands', g)
     upkeep(g, p)
     if g.over or not p.alive: return
+    E.step_priority(g, 'upkeep')
+    if g.over or not p.alive: return
     for m in find(p, 'vaultping'):                # Mana Vault: at the beginning of your draw step, 1 damage if tapped
         if m.tapped: lose_life(g, p, 1, p, damage=True)
     if has(p, 'necro'): pass                     # Necropotence: skip your draw step
@@ -2361,6 +2400,8 @@ def _step_start(g, p):
     elif not ((p.key == 'seph' and seph_dredge(g, p)) or (p.key == 'marchesa' and E.CI.marchesa_dredge(g, p))):
         draw(g, p, 1, step=True)
     check_state(g)
+    if g.over or not p.alive: return
+    E.step_priority(g, 'draw')
     if g.over or not p.alive: return
     nl = len(p.lands)
     p.lands_played = 0; p.extra_land_now = 0
@@ -2399,6 +2440,7 @@ def _step_main2(g, p):
 def _step_end(g, p):
     end_step(g, p)
     check_state(g)
+    if not g.over and p.alive: E.step_priority(g, 'end')
 
 
 STEP_FN = {'start': _step_start, 'main1': _step_main1, 'combat': _step_combat, 'main2': _step_main2, 'end': _step_end}
@@ -2451,9 +2493,6 @@ def _run_rounds(g, players, max_rounds):
                         brain.end_of_turn_window(g, p)
                     if p.alive and not g.over:
                         take_turn(g, p)
-                    for h in hum:                               # practice mode: priority at the end of each other turn
-                        if h is not p and h.alive and p.alive and not g.over:
-                            importlib.import_module('commander_sim.play.human').respond(g, h, f"End of {NAME(p)}'s turn")
             if g.over: break
     except E.OutOfWork as e:                        # a runaway loop: the game ends as a timeout
         import traceback

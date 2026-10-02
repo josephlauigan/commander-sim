@@ -9,6 +9,11 @@ from commander_sim.cards.impl.common import make_artifact_tokens, sac_food, prol
 from commander_sim.cards.impl.t2 import best_target_any
 
 
+def _fresh(g, p, key):
+    """once_per_turn(key) would pass, without using it up (checked before a trigger window)"""
+    return p.flag_turn.get(key) != (g.round, getattr(g, 'active', None) and g.active.key)
+
+
 # ======================================================== Korvold, Fae-Cursed King (sacrifice value)
 def sac_worst_permanent(g, p, exclude=None):
     """sacrifice the least valuable permanent (Food / Clue / Treasure first); returns what was sacrificed"""
@@ -34,17 +39,18 @@ def sac_worst_permanent(g, p, exclude=None):
 
 @on('Korvold, Fae-Cursed King', 'etb')
 def _korvold_etb(g, src, p, m):
-    if m is src: sac_worst_permanent(g, src.owner, exclude=src)
+    if m is src and trigger_window(g, src.owner, src, 'sacrifice another permanent'): sac_worst_permanent(g, src.owner, exclude=src)
 
 
 @on('Korvold, Fae-Cursed King', 'attack')
 def _korvold_atk(g, src, p, atk, d):
-    if src in atk: sac_worst_permanent(g, p, exclude=src)
+    if src in atk and trigger_window(g, p, src, 'sacrifice another permanent'): sac_worst_permanent(g, p, exclude=src)
 
 
 @on('Korvold, Fae-Cursed King', 'sacrifice')
 def _korvold_sac(g, src, p, what):
     if p is src.owner and what is not src:
+        if not trigger_window(g, p, src, 'a +1/+1 counter and draw a card'): return
         src.plus += 1
         if len(p.library) > 10: draw(g, p, 1)
 card('Korvold, Fae-Cursed King', 'leg pow=4 fly', dsl=[])
@@ -54,7 +60,7 @@ note('Korvold, Fae-Cursed King', 'Full', 'enters/attacks: sacrifice the least va
 
 @on('Mayhem Devil', 'sacrifice')
 def _mayhem(g, src, p, what):
-    best_target_any(g, src.owner, 1)
+    if trigger_window(g, src.owner, src, '1 damage to any target'): best_target_any(g, src.owner, 1)
 card('Mayhem Devil', 'pow=3', dsl=[])
 note('Mayhem Devil', 'Full', 'any player\'s sacrifice (Treasures included): 1 damage')
 
@@ -74,7 +80,7 @@ note('Chatterfang, Squirrel General', 'Approximate', 'extra Squirrels for artifa
 
 @on('Gilded Goose', 'etb')
 def _goose(g, src, p, m):
-    if m is src: make_artifact_tokens(g, src.owner, 'Food', 1)
+    if m is src and trigger_window(g, src.owner, src, 'create a Food', imp=2): make_artifact_tokens(g, src.owner, 'Food', 1)
 
 
 CI.DYN_MANA['Gilded Goose'] = lambda g, p, m: 1 if getattr(p, 'foods', 0) else 0
@@ -85,12 +91,13 @@ note('Gilded Goose', 'Approximate', 'Food on entry; taps and sacrifices a Food f
 
 @on('Trail of Crumbs', 'etb')
 def _trail(g, src, p, m):
-    if m is src: make_artifact_tokens(g, src.owner, 'Food', 1)
+    if m is src and trigger_window(g, src.owner, src, 'create a Food', imp=2): make_artifact_tokens(g, src.owner, 'Food', 1)
 
 
 @on('Trail of Crumbs', 'sacrifice')
 def _trail_sac(g, src, p, what):
     if p is src.owner and what == 'Food' and can_pay(g, p, 1, '') and len(p.library) > 5:
+        if not trigger_window(g, p, src, 'pay 1: look at the top two', imp=2) or not can_pay(g, p, 1, ''): return
         pay(g, p, 1, '')
         top = [p.library.pop() for _ in range(min(2, len(p.library)))]
         perm = [c for c in top if c.perm or c.land]
@@ -113,7 +120,9 @@ def _oven(g, src, p, s, post):
     def go():
         if src.tapped or m not in p.perms: return False
         src.tapped = True; n = 2 if etgh(g, m) >= 4 else 1
-        die(g, m, 'sac'); make_artifact_tokens(g, p, 'Food', n); return True
+        die(g, m, 'sac')
+        if ability_window(g, p, src, f'{n} Food'): make_artifact_tokens(g, p, 'Food', n)
+        return True
     return [(v, f"Witch's Oven ({m.name})", go)]
 card("Witch's Oven", '', types='A', dsl=[])
 note("Witch's Oven", 'Full', 'sacrifice spare creatures for Food when the death is worth it')
@@ -121,7 +130,7 @@ note("Witch's Oven", 'Full', 'sacrifice spare creatures for Food when the death 
 
 @on('Savvy Hunter', 'attack')
 def _savvy(g, src, p, atk, d):
-    if src in atk: make_artifact_tokens(g, p, 'Food', 1)
+    if src in atk and trigger_window(g, p, src, 'create a Food', imp=2): make_artifact_tokens(g, p, 'Food', 1)
 
 
 @on('Savvy Hunter', 'options')
@@ -130,7 +139,9 @@ def _savvy_draw(g, src, p, s, post):
 
     def go():
         if getattr(p, 'foods', 0) < 2: return False
-        sac_food(g, p, 2); draw(g, p, 1); return True
+        sac_food(g, p, 2)
+        if ability_window(g, p, src, 'draw a card'): draw(g, p, 1)
+        return True
     return [(2.0, 'Savvy Hunter: two Foods for a card', go)]
 card('Savvy Hunter', 'human warrior pow=3', dsl=[])
 note('Savvy Hunter', 'Full', '')
@@ -138,7 +149,9 @@ note('Savvy Hunter', 'Full', '')
 
 @on('Grim Hireling', 'combat_damage')
 def _hireling(g, src, p, a, d, dmg):
-    if a.owner is src.owner and once_per_turn(g, src.owner, f'hire{id(src)}{id(d)}'):
+    key = f'hire{id(src)}{id(d)}'
+    if a.owner is src.owner and _fresh(g, src.owner, key):
+        if not trigger_window(g, src.owner, src, 'create two Treasures') or not once_per_turn(g, src.owner, key): return
         make_artifact_tokens(g, src.owner, 'Treasure', 2)
 card('Grim Hireling', 'pow=3 tgh=2', dsl=[])
 note('Grim Hireling', 'Partial', 'two Treasures per player hit; the -X/-X ability is not used')
@@ -146,14 +159,16 @@ note('Grim Hireling', 'Partial', 'two Treasures per player hit; the -X/-X abilit
 
 @on('Old Gnawbone', 'combat_damage')
 def _gnawbone(g, src, p, a, d, dmg):
-    if a.owner is src.owner: make_artifact_tokens(g, src.owner, 'Treasure', dmg)
+    if a.owner is src.owner and trigger_window(g, src.owner, src, f'create {dmg} Treasures'):
+        make_artifact_tokens(g, src.owner, 'Treasure', dmg)
 card('Old Gnawbone', 'leg pow=7 fly bomb=7', dsl=[])
 note('Old Gnawbone', 'Full', '')
 
 
 @on('Awakening Zone', 'upkeep')
 def _azone(g, src, p):
-    if p is src.owner: make_tokens(g, p, 1, 0, 1, color='', types=('eldrazi', 'spawn'))
+    if p is src.owner and trigger_window(g, p, src, 'create a 0/1 Eldrazi Spawn', imp=2):
+        make_tokens(g, p, 1, 0, 1, color='', types=('eldrazi', 'spawn'))
 card('Awakening Zone', '', types='E', dsl=[])
 note('Awakening Zone', 'Approximate', '0/1 Spawn each upkeep (sacrifice fodder; the mana ability is not used)')
 
@@ -171,7 +186,9 @@ def _skeleton(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 1, 'B'): return False
-        p.gy.remove(c); pay(g, p, 1, 'B'); m = enter(g, p, c); m.tapped = True; return True
+        pay(g, p, 1, 'B')
+        if ability_window(g, p, c, 'return to the battlefield') and c in p.gy: p.gy.remove(c); m = enter(g, p, c); m.tapped = True
+        return True
     return [(0.5 + IC.death_value(g, p) / 2.0, 'return Reassembling Skeleton', go)]
 card('Reassembling Skeleton', 'pow=1 warrior', dsl=[])
 note('Reassembling Skeleton', 'Full', 'recurs itself when there is a sacrifice outlet')
@@ -184,7 +201,10 @@ def _gravecrawler(g, c, p, s, post):
 
     def go():
         if c not in p.gy or not can_pay(g, p, 0, 'B'): return False
-        p.gy.remove(c); pay(g, p, 0, 'B'); p.spells_this_turn += 1; on_cast(g, p, c); enter(g, p, c); return True
+        p.gy.remove(c); pay(g, p, 0, 'B'); p.spells_this_turn += 1; on_cast(g, p, c)
+        if counter_window(g, p, c, 3, {}): enter(g, p, c)
+        else: p.gy.append(c)
+        return True
     return [(0.5 + IC.death_value(g, p) / 2.0, 'cast Gravecrawler from the graveyard', go)]
 card('Gravecrawler', 'pow=2 tgh=1 noblock', dsl=[])
 note('Gravecrawler', 'Full', 'castable from the graveyard with a Zombie; the Phyrexian Altar loop is a combo (see combos)')
@@ -219,14 +239,20 @@ note('Fable of the Mirror-Breaker // Reflection of Kiki-Jiki', 'Approximate', 'c
 @on('Fable of the Mirror-Breaker // Reflection of Kiki-Jiki', 'etb')
 def _fable(g, src, p, m):
     if m is src:
-        src.data = {'lore': 1}
+        src.data = {'lore': 1}                          # enters with a lore counter (not the trigger)
+        if not trigger_window(g, src.owner, src, 'chapter I: create a 2/2 Goblin Shaman'): return
         for t in make_tokens(g, src.owner, 1, 2, color='R', types=('goblin', 'shaman')): t.data = {'fable_goblin': True}
 
 
 @on('Fable of the Mirror-Breaker // Reflection of Kiki-Jiki', 'upkeep')
 def _fable_lore(g, src, p):
     if p is not src.owner or not src.data or 'lore' not in src.data: return
-    src.data['lore'] += 1
+    n = src.data['lore'] + 1                            # the lore counter is not part of the trigger
+    ok = trigger_window(g, p, src, 'chapter II: discard up to two, draw that many' if n == 2 else 'chapter III: transform', imp=4)
+    src.data['lore'] = n
+    if not ok:
+        if n >= 3 and src in p.perms: die(g, src, 'sac')  # final chapter gone: the Saga is sacrificed
+        return
     if src.data['lore'] == 2:
         k = min(2, len(p.hand))
         worst = sorted(p.hand, key=lambda c: card_worth(g, p, c))[:k]
@@ -239,14 +265,15 @@ def _fable_lore(g, src, p):
 @on('Fable of the Mirror-Breaker // Reflection of Kiki-Jiki', 'attack')
 def _fable_goblin(g, src, p, atk, d):
     if src.owner is p:
-        for m in atk:
-            if m.data and m.data.get('fable_goblin'): make_artifact_tokens(g, p, 'Treasure', 1)
+        k = sum(1 for m in atk if m.data and m.data.get('fable_goblin'))
+        if k and trigger_window(g, p, src, f'create {k} Treasure'): make_artifact_tokens(g, p, 'Treasure', k)
 
 
 # ======================================================== Marwyn, the Nurturer (Elves, Craterhoof)
 @on('Marwyn, the Nurturer', 'etb')
 def _marwyn(g, src, p, m):
-    if m is not src and m.owner is src.owner and has_type(m, 'elf'): src.plus += 1
+    if m is not src and m.owner is src.owner and has_type(m, 'elf') and trigger_window(g, src.owner, src, 'a +1/+1 counter', imp=1):
+        src.plus += 1
 card('Marwyn, the Nurturer', 'leg pow=1 dork=G', dsl=[])
 note('Marwyn, the Nurturer', 'Full', '+1/+1 counter per Elf; taps for G equal to its power')
 
@@ -258,6 +285,7 @@ def hoof_bonus(g, p):
 @on('Craterhoof Behemoth', 'etb')
 def _hoof(g, src, p, m):
     if m is not src: return
+    if not trigger_window(g, src.owner, src, 'creatures get +X/+X and trample', imp=8): return
     o = src.owner; x = hoof_bonus(g, o)
     for c in o.perms:
         if c.creature: _eot(g, c, x, x); g.eot_kw.setdefault(id(c), set()).add('trample')
@@ -337,7 +365,9 @@ def _joraga(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 1, 'G'): return False
-        pay(g, p, 1, 'G'); src.data = {'level': 1}; return True
+        pay(g, p, 1, 'G')
+        if ability_window(g, p, src, 'level up') and src in p.perms: src.data = {'level': 1}
+        return True
     return [(3.0, 'level up Joraga Treespeaker', go)]
 card('Joraga Treespeaker', 'pow=1 dork=G noatk', dsl=[])
 note('Joraga Treespeaker', 'Approximate', 'levels once to tap for GG (level 5 not modeled)')
@@ -348,14 +378,19 @@ note('Arbor Elf', 'Approximate', 'untapping a Forest read as tapping for G')
 @on('Kogla, the Titan Ape', 'etb')
 def _kogla(g, src, p, m):
     if m is src:
-        t = best_opp_creature(g, src.owner, lambda x: etgh(g, x) <= 7)
+        pred = lambda x: etgh(g, x) <= 7
+        if best_opp_creature(g, src.owner, pred) is None: return
+        if not trigger_window(g, src.owner, src, 'fight a creature', imp=5): return
+        t = best_opp_creature(g, src.owner, pred)
         if t is not None: apply_removal(g, src.owner, t, 'dmg7')
 
 
 @on('Kogla, the Titan Ape', 'attack')
 def _kogla_atk(g, src, p, atk, d):
     if src in atk:
-        ts = [m for m in d.perms if m.cd is not None and ('A' in m.cd.types or 'E' in m.cd.types) and not untargetable(g, m)]
+        ok = lambda m: m.cd is not None and ('A' in m.cd.types or 'E' in m.cd.types) and not untargetable(g, m)
+        if not any(ok(m) for m in d.perms) or not trigger_window(g, p, src, 'destroy an artifact or enchantment', imp=5): return
+        ts = [m for m in d.perms if ok(m)]
         if ts: apply_removal(g, p, max(ts, key=lambda m: pval(g, m)), 'destroy')
 card('Kogla, the Titan Ape', 'leg pow=7 tgh=6 bomb=7', dsl=[])
 note('Kogla, the Titan Ape', 'Approximate', 'fights on entry (as 7 damage), destroys an artifact/enchantment on attack')
@@ -367,12 +402,13 @@ def _primal(g, p, c, ctx): pass
 
 @on('Esika\'s Chariot', 'etb')
 def _chariot(g, src, p, m):
-    if m is src: make_tokens(g, src.owner, 2, 2, color='G', types=('cat',))
+    if m is src and trigger_window(g, src.owner, src, 'create two 2/2 Cats'): make_tokens(g, src.owner, 2, 2, color='G', types=('cat',))
 
 
 @on('Esika\'s Chariot', 'attack')
 def _chariot_atk(g, src, p, atk, d):
     if src in atk:
+        if not any(m.token and m.creature for m in p.perms) or not trigger_window(g, p, src, 'copy a token'): return
         toks = [m for m in p.perms if m.token and m.creature]
         if toks:
             t = max(toks, key=lambda m: epow(g, m))
@@ -413,7 +449,9 @@ walker('Nissa, Who Shakes the World', [
 @on('Combat Celebrant', 'attack')
 def _celebrant(g, src, p, atk, d):
     if src not in atk or (src.data or {}).get('exerted') in (p.turns, p.turns - 1): return
-    src.data = dict(src.data or {}, exerted=p.turns)
+    ok = trigger_window(g, p, src, 'untap creatures; an additional combat', imp=6)
+    src.data = dict(src.data or {}, exerted=p.turns)   # exerted as it attacked
+    if not ok: return
     for m in p.perms:
         if m.creature and m is not src: m.tapped = False
     p.extra_combats += 1
@@ -424,7 +462,10 @@ note('Combat Celebrant', 'Full', 'exerts (not two turns running): untap the othe
 
 @on('Hellkite Charger', 'attack')
 def _charger(g, src, p, atk, d):
-    if src in atk and can_pay(g, p, 5, 'RR') and sum(epow(g, m) for m in atk) >= 8 and once_per_turn(g, p, f'charger{id(src)}{p.combat_no}'):
+    key = f'charger{id(src)}{p.combat_no}'
+    if src in atk and can_pay(g, p, 5, 'RR') and sum(epow(g, m) for m in atk) >= 8 and _fresh(g, p, key):
+        if not trigger_window(g, p, src, 'pay 5RR: untap attackers, an additional combat', imp=6): return
+        if not can_pay(g, p, 5, 'RR') or not once_per_turn(g, p, key): return
         pay(g, p, 5, 'RR')
         for m in atk: m.tapped = False
         p.extra_combats += 1
@@ -434,7 +475,9 @@ note('Hellkite Charger', 'Full', 'pays {5}{R}{R} for another combat when the att
 
 @on('Port Razer', 'combat_damage')
 def _razer(g, src, p, a, d, dmg):
-    if a is src and once_per_turn(g, p, f'razer{id(src)}{id(d)}'):
+    key = f'razer{id(src)}{id(d)}'
+    if a is src and _fresh(g, p, key):
+        if not trigger_window(g, p, src, 'untap creatures; an additional combat', imp=6) or not once_per_turn(g, p, key): return
         for m in p.perms:
             if m.creature: m.tapped = False
         p.extra_combats += 1
@@ -473,6 +516,8 @@ CI.HOOKS.setdefault('World at War', {})['rebound'] = _war_rebound
 @on('Embercleave', 'etb')
 def _embercleave(g, src, p, m):
     if m is not src: return
+    if not any(x.creature and not x.noatk for x in src.owner.perms): return
+    if not trigger_window(g, src.owner, src, 'attach to a creature', imp=4) or src not in src.owner.perms: return
     cr = [x for x in src.owner.perms if x.creature and not x.noatk]
     if cr: src.attached = max(cr, key=lambda x: (not x.sick, epow(g, x)))
 
@@ -488,6 +533,8 @@ note('Embercleave', 'Approximate', 'cast in the main phase onto the best attacke
 @on('Helm of the Host', 'combat_start')
 def _helm(g, src, p):
     if src.owner is not p or src.attached is None or src.attached not in p.perms or src.attached.cd is None: return
+    if not trigger_window(g, p, src, f'create a token copy of {src.attached.name}', imp=5): return
+    if src.attached is None or src.attached not in p.perms or src.attached.cd is None: return
     name = src.attached.name       # the copy can make the legend rule remove the equipped original
     t = enter_token_copy(g, p, src.attached.cd)
     if t is None: return
@@ -500,7 +547,7 @@ note('Helm of the Host', 'Full', 'a hasty token copy of the equipped creature at
 
 @on('Legion Loyalist', 'attack')
 def _loyalist(g, src, p, atk, d):
-    if src in atk and len(atk) >= 3:
+    if src in atk and len(atk) >= 3 and trigger_window(g, p, src, 'attackers gain first strike and trample'):
         for m in atk: g.eot_kw.setdefault(id(m), set()).update(('first strike', 'trample'))
 card('Legion Loyalist', 'pow=1 haste', dsl=[])
 note('Legion Loyalist', 'Approximate', 'battalion: first strike and trample (the token-blocking clause is ignored)')
@@ -508,7 +555,7 @@ note('Legion Loyalist', 'Approximate', 'battalion: first strike and trample (the
 
 @on('Stoneforge Mystic', 'etb')
 def _sfm(g, src, p, m):
-    if m is src:
+    if m is src and trigger_window(g, src.owner, src, 'search for an Equipment'):
         from commander_sim.cards.impl import t1 as impl_t1; impl_t1.tutor_named(g, src.owner, lambda c: 'equipment' in c.subtypes)
 card('Stoneforge Mystic', 'pow=1 tgh=2', dsl=[])
 note('Stoneforge Mystic', 'Approximate', 'fetches an Equipment; the put-onto-battlefield ability is not used')
@@ -518,7 +565,7 @@ note('Winds of Abandon', 'Approximate', 'single-target mode (overload not used)'
 
 @on('Outpost Siege', 'upkeep')
 def _siege(g, src, p):
-    if p is src.owner and p.library:
+    if p is src.owner and p.library and trigger_window(g, p, src, 'exile the top card; you may play it') and p.library:
         c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
 card('Outpost Siege', '', types='E', dsl=[])
 note('Outpost Siege', 'Approximate', 'Khans: an impulse card each upkeep')
@@ -527,33 +574,33 @@ note('Outpost Siege', 'Approximate', 'Khans: an impulse card each upkeep')
 # ======================================================== Atraxa (superfriends, proliferate)
 @on("Atraxa, Praetors' Voice", 'end_step')
 def _atraxa(g, src, p):
-    if p is src.owner: IC.proliferate(g, p)
+    if p is src.owner and trigger_window(g, p, src, 'proliferate'): IC.proliferate(g, p)
 note("Atraxa, Praetors' Voice", 'Approximate', 'proliferates at your end step (+1/+1, loyalty, opponents\' -1/-1); '
      'in the four main decks\' own games it keeps its hand tag')
 
 
 @on('Evolution Sage', 'landfall')
 def _evosage(g, src, p):
-    if p is src.owner: IC.proliferate(g, p)
+    if p is src.owner and trigger_window(g, p, src, 'proliferate'): IC.proliferate(g, p)
 card('Evolution Sage', 'pow=3 tgh=2', dsl=[])
 note('Evolution Sage', 'Full', 'landfall: proliferate')
 
 
 @on('Flux Channeler', 'cast')
 def _flux(g, src, caster, c):
-    if caster is src.owner and not c.creature: IC.proliferate(g, caster)
+    if caster is src.owner and not c.creature and trigger_window(g, caster, src, 'proliferate'): IC.proliferate(g, caster)
 note('Flux Channeler', 'Full', 'noncreature spell: proliferate (pool games)')
 
 
 @on('Inexorable Tide', 'cast')
 def _tide(g, src, caster, c):
-    if caster is src.owner: IC.proliferate(g, caster)
+    if caster is src.owner and trigger_window(g, caster, src, 'proliferate'): IC.proliferate(g, caster)
 note('Inexorable Tide', 'Full', 'every spell: proliferate (pool games)')
 
 
 @on('Thrummingbird', 'combat_damage')
 def _thrum(g, src, p, a, d, dmg):
-    if a is src: IC.proliferate(g, p)
+    if a is src and trigger_window(g, p, src, 'proliferate'): IC.proliferate(g, p)
 card('Thrummingbird', 'pow=1 fly', dsl=[])
 note('Thrummingbird', 'Full', '')
 
@@ -729,7 +776,9 @@ def _ichormoon(g, src, p, s, post):
     def go():
         w = ws[0]
         if w.loyalty_used == (g.round, p.key): return False
-        w.loyalty_used = (g.round, p.key); IC.proliferate(g, p); return True
+        w.loyalty_used = (g.round, p.key)
+        if ability_window(g, p, w, 'proliferate'): IC.proliferate(g, p)
+        return True
     return [(1.0, 'Ichormoon Gauntlet: proliferate', go)]
 card('Ichormoon Gauntlet', '', types='A', dsl=[])
 note('Ichormoon Gauntlet', 'Approximate', 'a planeswalker may proliferate instead of its own ability')
@@ -739,7 +788,7 @@ note('Ichormoon Gauntlet', 'Approximate', 'a planeswalker may proliferate instea
 def _on_opp_discard(name, fn, status=('Full', '')):
     @on(name, 'discard')
     def _d(g, src, q, c):
-        if q is not src.owner: fn(g, src.owner, src, q, c)
+        if q is not src.owner and trigger_window(g, src.owner, src, f'{NAME(q)} discarded'): fn(g, src.owner, src, q, c)
     note(name, *status)
 
 
@@ -779,6 +828,7 @@ def _quandary_never(g, p, c, ctx): pass
 @on('Painful Quandary', 'cast')
 def _quandary(g, src, caster, c):
     if caster is not src.owner:
+        if not trigger_window(g, src.owner, src, f'{NAME(caster)} discards or loses 5 life', imp=4): return
         if caster.hand and caster.life <= 15: discard_worst(g, caster, 1)
         else: lose_life(g, caster, 5, src.owner, kind='drain')
 card('Painful Quandary', '', types='E', dsl=[])
@@ -807,13 +857,13 @@ walker('Liliana, Dreadhorde General', [
 
 @on('Liliana, Dreadhorde General', 'dies')
 def _ldg(g, src, m, cause):
-    if m.owner is src.owner and m.creature: draw(g, src.owner, 1)
+    if m.owner is src.owner and m.creature and trigger_window(g, src.owner, src, 'draw a card'): draw(g, src.owner, 1)
 
 
 def _each_opp_discard_etb(name, n, tags, status=('Full', '')):
     @on(name, 'etb')
     def _e(g, src, p, m):
-        if m is src:
+        if m is src and trigger_window(g, src.owner, src, f'each opponent discards {n}'):
             for q in g.opps(src.owner): discard_worst_for(g, q, n)
     card(name, tags, dsl=[])
     note(name, *status)
@@ -832,6 +882,7 @@ _each_opp_discard_etb('Elderfang Disciple', 1, 'pow=1')
 @on('Chittering Rats', 'etb')
 def _rats(g, src, p, m):
     if m is src and g.opps(src.owner):
+        if not trigger_window(g, src.owner, src, 'an opponent puts a card from hand on top of their library', imp=4): return
         q = max(g.opps(src.owner), key=lambda q: threat(g, src.owner, q))
         if q.hand:
             c = min(q.hand, key=lambda c: card_worth(g, q, c)); q.hand.remove(c); q.library.append(c)
@@ -849,14 +900,15 @@ def _each_player_sacrifice(g, p, nontoken=False, spare_self=True):
 
 @on('Accursed Marauder', 'etb')
 def _marauder(g, src, p, m):
-    if m is src: _each_player_sacrifice(g, src.owner, nontoken=True)
+    if m is src and trigger_window(g, src.owner, src, 'each player sacrifices a nontoken creature', imp=5):
+        _each_player_sacrifice(g, src.owner, nontoken=True)
 card('Accursed Marauder', 'pow=3 tgh=1', dsl=[])
 note('Accursed Marauder', 'Full', 'each player sacrifices a nontoken creature')
 
 
 @on('Merciless Executioner', 'etb')
 def _executioner(g, src, p, m):
-    if m is src: _each_player_sacrifice(g, src.owner)
+    if m is src and trigger_window(g, src.owner, src, 'each player sacrifices a creature', imp=5): _each_player_sacrifice(g, src.owner)
 card('Merciless Executioner', 'pow=3 tgh=1', dsl=[])
 note('Merciless Executioner', 'Full', '')
 
@@ -868,6 +920,8 @@ def _innocent(g, p, c, ctx): _each_player_sacrifice(g, p)
 @on('Archfiend of Depravity', 'end_step')
 def _depravity(g, src, p):
     if p is src.owner: return
+    if sum(1 for m in p.perms if m.creature and not m.phased) <= 2: return
+    if not trigger_window(g, src.owner, src, f'{NAME(p)} keeps two creatures, sacrifices the rest', imp=6): return
     cr = sorted([m for m in p.perms if m.creature and not m.phased], key=lambda m: -pval(g, m))
     for m in cr[2:]: die(g, m, 'sac')
 card('Archfiend of Depravity', 'pow=5 tgh=4 fly bomb=6', dsl=[])
@@ -877,7 +931,9 @@ note('Archfiend of Depravity', 'Full', 'opponents keep only two creatures at the
 @on('Braids, Arisen Nightmare', 'end_step')
 def _braids_an(g, src, p):
     if p is not src.owner: return
-    fod = [m for m in p.perms if m.creature and m is not src and (m.token or pval(g, m) < 2)]
+    ok = lambda m: m.creature and m is not src and (m.token or pval(g, m) < 2)
+    if not any(ok(m) for m in p.perms) or not trigger_window(g, p, src, 'sacrifice a creature: opponents sacrifice or you drain'): return
+    fod = [m for m in p.perms if ok(m)]
     if not fod: return
     die(g, min(fod, key=lambda m: pval(g, m)), 'sac')
     for q in g.opps(p):
@@ -891,6 +947,8 @@ note('Braids, Arisen Nightmare', 'Approximate', 'sacrifices a spare creature eac
 @on('Phyrexian Obliterator', 'blocks')
 def _obliterator(g, src, p, atk, d, assign):
     if d is src.owner:
+        if not any(b is src and epow(g, a) > 0 for a, b in assign.items()): return
+        if not trigger_window(g, d, src, f'{NAME(p)} sacrifices permanents', imp=6): return
         for a, b in assign.items():
             if b is src:
                 for _ in range(epow(g, a)):
@@ -906,7 +964,9 @@ note('Phyrexian Obliterator', 'Approximate', 'blocking it costs the attacker tha
 def _tinybones(g, src, p):
     if p is not src.owner: return
     if any(getattr(q, 'discarded_turn', None) == turn_stamp(g) for q in g.opps(p)):
-        cs = [c for q in g.opps(p) for c in q.gy if not c.land and c.cmc <= 4]
+        ok = lambda c: not c.land and c.cmc <= 4
+        if not any(ok(c) for q in g.opps(p) for c in q.gy) or not trigger_window(g, p, src, "play a card from an opponent's graveyard"): return
+        cs = [c for q in g.opps(p) for c in q.gy if ok(c)]
         if cs:
             c = max(cs, key=lambda c: card_worth(g, p, c))
             for q in g.opps(p):
@@ -919,14 +979,15 @@ note('Tinybones, Trinket Thief', 'Approximate', 'end step after a discard: plays
 
 @on('Rotting Regisaur', 'upkeep')
 def _regisaur(g, src, p):
-    if p is src.owner and p.hand: discard_worst(g, p, 1)
+    if p is src.owner and p.hand and trigger_window(g, p, src, 'discard a card'): discard_worst(g, p, 1)
 card('Rotting Regisaur', 'pow=7 tgh=6 bomb=6', dsl=[])
 note('Rotting Regisaur', 'Full', '')
 
 
 @on('Gix, Yawgmoth Praetor', 'combat_damage')
 def _gix(g, src, p, a, d, dmg):
-    if a.owner is src.owner and d is not src.owner and p.life > 10 and len(p.library) > 10:
+    if a.owner is src.owner and d is not src.owner and p.life > 10 and len(p.library) > 10 \
+            and trigger_window(g, p, src, 'pay 1 life: draw a card'):
         lose_life(g, p, 1, p); draw(g, p, 1)
 card('Gix, Yawgmoth Praetor', 'leg pow=3 tgh=3', dsl=[])
 note('Gix, Yawgmoth Praetor', 'Partial', 'draw for combat damage; the discard-to-play ability is not used')

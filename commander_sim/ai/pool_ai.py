@@ -183,8 +183,11 @@ def special_options(g, p, s, post):
 
         def go(e=e, best=best, n=n):
             if best not in p.perms or not E.can_pay(g, p, n, ''): return False
-            E.pay(g, p, n, ''); e.attached = best
-            E.log(f'  {E.NAME(p)} equips {e.cd.name} to {best.name}', g); return True
+            E.pay(g, p, n, '')
+            E.log(f'  {E.NAME(p)} equips {e.cd.name} to {best.name}', g)
+            if E.ability_window(g, p, e, f'equip to {best.name}', target=best) and best in p.perms and e in p.perms:
+                e.attached = best
+            return True
         o.append((u, f'equip {e.cd.name}', go))
     for e in E.find(p, 'clamp'):                              # Skullclamp: equip {1} to an X/1, it dies, draw two
         if E.stopped(g, e.cd.name) or not E.can_pay(g, p, 1, ''): continue

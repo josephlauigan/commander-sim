@@ -1,6 +1,7 @@
 """Abstracted 4-player Commander engine.  Rules are simplified on purpose:
 role-tagged cards, greedy mana payment, heuristic AIs, simplified combat."""
 import importlib
+import inspect
 import random, re, zlib
 from collections import defaultdict
 
@@ -192,6 +193,12 @@ class Game:
         s.hook_cache = None   # event -> [(permanent, fn)], rebuilt when s.hooks changes
         s.work = 0; s.work_cap = GAME_WORK   # engine steps taken / allowed (see tick)
         s.board_cap = None                     # look-ahead copies: stop once the table has this many permanents
+        s.stack = []           # StackItem, top last (see stack_window)
+        s.stack_pushes = 0     # items ever put on the stack: tells whether a player with priority did something
+        s.trig_queue = []      # triggered abilities waiting to go on the stack (see flush_triggers)
+        s.resolving = 0        # > 0 while a spell, wipe ... is resolving: its triggers wait until it's done
+        s.trig_mode = None     # 'probe' while finding out which pending triggers really trigger
+        s.trig_current = None  # the stack item of the trigger being resolved
 
     def opps(s, p):
         return [q for q in s.players if q.alive and q is not p]
@@ -868,7 +875,9 @@ def leave(g, m):
     if g.hooks and m in g.hooks:
         g.hooks.remove(m); g.hook_cache = None
         fn = CI.HOOKS[m.cd.name].get('leaves')
-        if fn is not None: fn(g, m)
+        if fn is not None:
+            if converted(fn): queue_triggers(g, [Trigger(p, m, fn, (g, m), 'leaves')])   # "when it leaves" (O-Ring)
+            else: fn(g, m)                                                                # an effect ending
 
 
 def to_zone_card(g, m, zone):
@@ -978,7 +987,10 @@ def die(g, m, cause='destroy'):
         CI.fire(g, 'dies', m, cause)
         if cause == 'sac': CI.fire(g, 'sacrifice', p, m)
     if selfdies:
-        for _ in range(1 + (CI.total(g, 'trigger_copies', p, 'dies', m) if g.hooks else 0)): selfdies(g, m, cause)
+        n = 1 + (CI.total(g, 'trigger_copies', p, 'dies', m) if g.hooks else 0)
+        if converted(selfdies): queue_triggers(g, [Trigger(p, m, selfdies, (g, m, cause), 'self_dies') for _ in range(n)])
+        else:
+            for _ in range(n): selfdies(g, m, cause)
     # death triggers
     for q in g.players:
         if not q.alive: continue
@@ -1001,24 +1013,26 @@ def _hand_tag_death(g, q, p, m):
 def _die_rest(g, m, p, cause, selfdies):
     if m.creature:
         for q in g.opps(p):
-            if has(q, 'wurmdrain'): lose_life(g, p, 2, q, kind='drain')      # Massacre Wurm
+            if has(q, 'wurmdrain') and trigger_window(g, q, find(q, 'wurmdrain')[0], f'{NAME(p)} loses 2 life'):
+                lose_life(g, p, 2, q, kind='drain')                            # Massacre Wurm
             for h in find(q, 'heir'): h.plus += 1                              # Sephiroth, Planet's Heir
-    if m.cd is not None and 'wurmcoil' in m.cd.tags:
+    if m.cd is not None and 'wurmcoil' in m.cd.tags and trigger_window(g, p, m, 'two 3/3 Wurms', imp=5):
         make_tokens(g, p, 1, 3, dt=True, color=''); make_tokens(g, p, 1, 3, lifelink=True, color='')
     if m.token: return
     if m.cd.bomb and m.orig is p: p.removed_bombs.add(m.cd.name)
     # undying from Mikaeus
     if (has(p, 'mikaeus') and m.cd.creature and 'human' not in m.cd.tags and 'mikaeus' not in m.cd.tags
-            and not m.undying and m.plus <= 0 and m.orig is p and m.cd is not p.cmd):
+            and not m.undying and m.plus <= 0 and m.orig is p and m.cd is not p.cmd) \
+            and trigger_window(g, p, m, 'undying'):
         n = enter(g, p, m.cd, undying=True); n.plus = 1; n.undying = True
         p.stats['undying'] += 1
         return
     k = m.cd.kws
     if k and m.orig is p and m.cd is not p.cmd and not (g.hooks and CI.total(g, 'no_graveyard', p)) \
             and returns_left(g, m.cd):
-        if 'undying' in k and m.plus <= 0:                     # undying: back with a +1/+1 counter
+        if 'undying' in k and m.plus <= 0 and trigger_window(g, p, m, 'undying'):   # back with a +1/+1 counter
             enter(g, p, m.cd, undying=True); p.stats['undying'] += 1; return
-        if 'persist' in k and m.plus >= 0:                     # persist: back with a -1/-1 counter (none under Melira)
+        if 'persist' in k and m.plus >= 0 and trigger_window(g, p, m, 'persist'):  # back with a -1/-1 counter (none under Melira)
             enter(g, p, m.cd, plus=0 if melira(p) else -1); p.stats['persist'] += 1
             return
     if getattr(g, 'gift_dying', None) and CI.gift_returns(g, m): return       # Gift of Immortality
@@ -1199,17 +1213,21 @@ def on_cast(g, p, c):
     if getattr(p, 'turn_casts', None) is None or p.turn_casts[0] != st: p.turn_casts = (st, [])
     p.turn_casts[1].append(c)
     for q in g.opps(p):
-        if has(q, 'sauron'): amass(g, q, 1)
-        if has(q, 'rhystic') and importlib.import_module('commander_sim.cards.impl.rules').rhystic_unpaid(g, p): draw(g, q, 1)
-        if has(q, 'kaervek') and c.cmc > 0 and CI is not None: CI.kaervek(g, q, p, c)
+        if has(q, 'sauron') and trigger_window(g, q, find(q, 'sauron')[0], 'amass 1'): amass(g, q, 1)
+        if has(q, 'rhystic') and trigger_window(g, q, find(q, 'rhystic')[0], 'draw unless they pay {1}') \
+                and importlib.import_module('commander_sim.cards.impl.rules').rhystic_unpaid(g, p): draw(g, q, 1)
+        if has(q, 'kaervek') and c.cmc > 0 and CI is not None and trigger_window(g, q, find(q, 'kaervek')[0], 'damage'):
+            CI.kaervek(g, q, p, c)
     if c.instant or c.sorcery:
         count_is_cast(g, p); magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
     if g.hooks: CI.fire(g, 'cast', p, c)
-    if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy'):
+    if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy') \
+            and trigger_window(g, p, find(p, 'jin')[0], f'copy {c.name}', imp=5):
         copy_spell(g, p, c)                          # Jin-Gitaxias copies your first artifact/instant/sorcery each turn
     if (c.instant or c.sorcery) and getattr(p, 'ral_copy', None) == turn_stamp(g):
-        p.ral_copy = None; copy_spell(g, p, c)      # Ral, Storm Conduit -2: copy the next instant/sorcery
+        p.ral_copy = None                           # Ral, Storm Conduit -2: copy the next instant/sorcery
+        if trigger_window(g, p, None, f'Ral, Storm Conduit: copy {c.name}', imp=5): copy_spell(g, p, c)
     if not c.creature and CI is not None: CI.prowess(g, p, c)
     if CI is not None and (c.instant or c.sorcery):
         if human_choice(g, p) is None:
@@ -1219,11 +1237,11 @@ def on_cast(g, p, c):
             for x, fn in CI.hand_cards(q, 'hand_opp_cast'): fn(g, x, q, c)   # Dualcaster Mage copies anyone's
     if p.spells_this_turn == 3:                            # Emeritus of Conflict: third spell each turn -> prepared
         for x in find(p, 'conflict'): x.data = dict(x.data or {}, prepared=True)
-    if has(p, 'eris') and p.spells_this_turn == 2:
+    if has(p, 'eris') and p.spells_this_turn == 2 and trigger_window(g, p, find(p, 'eris')[0], 'a 4/4 Dragon'):
         n = 2 if (has(p, 'veyran') and (c.instant or c.sorcery)) else 1
         for x in make_tokens(g, p, n, 4, fly=True):           # Eris: second spell -> 4/4 flying Dragon with prowess
             x.data = dict(x.data or {}, prowess=True)
-    if has(p, 'prolifall') and c.creature:
+    if has(p, 'prolifall') and c.creature and trigger_window(g, p, find(p, 'prolifall')[0], 'counters on your Army'):
         a = army_of(p)
         if a: a.plus += len(find(p, 'prolifall'))
     if has(p, 'birgi'):
@@ -1233,8 +1251,12 @@ def on_cast(g, p, c):
         n = len(find(p, 'prolif'))
         a = army_of(p)
         if n and a:
-            for _ in range(n): CI.add_counters(g, a, 1)
+            for x in find(p, 'prolif'):
+                if trigger_window(g, p, x, 'a counter on your Army') and a in a.owner.perms: CI.add_counters(g, a, 1)
     check_state(g)
+
+
+MAGECRAFT_TAGS = ('ping', 'dragoncaller', 'mystic', 'spelltok', 'spelldraw', 'kiln', 'spellloot')
 
 
 def magecraft(g, p, c=None, copy=False):
@@ -1252,6 +1274,7 @@ def magecraft(g, p, c=None, copy=False):
         # copies only trigger "cast or copy" abilities (Archmage Emeritus, Storm-Kiln Artist, Ral)
         if copy and not any(k in t for k in ('spelldraw', 'kiln', 'ral')): continue
         mult = base_mult + (prod if ('shaman' in t or 'wizard' in t) else 0)
+        if any(k in t for k in MAGECRAFT_TAGS) and not trigger_window(g, p, m, 'magecraft'): continue
         if 'ping' in t:
             base = int(t['ping'])
             if 'opus3' in t and c is not None and c.cmc >= 5: base = 3        # Thunderdrum Soloist, 5+ mana spell
@@ -1307,9 +1330,25 @@ def discard_worst(g, p, n):
         discard_cards(g, p, [x])
 
 
-def cast_copy(g, p, effect=None):
+BACK_FACES = {}            # name -> a stand-in card for a cast copy of a back face the card data doesn't have
+
+
+def back_face(name, instant):
+    cd = DB.get(name)
+    if cd is None:
+        cd = BACK_FACES.get(name)
+        if cd is None: cd = BACK_FACES[name] = CD(name, 'I' if instant else 'S', '0', '')
+    return cd
+
+
+def cast_copy(g, p, effect=None, name=None, instant=True, imp=4):
     """'You may cast a copy of ...' (a back-face instant/sorcery): a real cast (magecraft, opponents' cast triggers,
-    Thousand-Year Storm), no card moves."""
+    Thousand-Year Storm), no card moves. Named, it goes on the stack, where it can be countered"""
+    if name is not None:
+        log(f'  {NAME(p)} casts a copy of {name}', g)
+        if not counter_window(g, p, back_face(name, instant), imp, {}):
+            p.spells_this_turn += 1; p.stats['spells_cast'] += 1
+            return
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
     count_is_cast(g, p)
     magecraft(g, p)
@@ -1429,21 +1468,8 @@ def commander_out(p):
 
 
 def cast_counter(g, q, ctr, spell=None):
-    if 'fierce' in ctr.tags and commander_out(q):
-        pass                                     # cast without paying its mana cost
-    elif 'pact' in ctr.tags:
-        q.pacts = getattr(q, 'pacts', 0) + 1     # pay {3}{U}{U} at the next upkeep or lose
-    elif 'misstep' in ctr.tags and q.life > 10:
-        lose_life(g, q, 2, q)
-    elif 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
-        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
-        x = min(blues, key=lambda c: card_worth(g, q, c)); q.hand.remove(x); q.exile.append(x)
-    elif 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
-        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
-        if not blues: return False
-        q.hand.remove(blues[0]); q.exile.append(blues[0]); lose_life(g, q, 1, q)
-    elif not pay(g, q, *counter_cost(ctr, spell)):
-        return False
+    """a counterspell cast and resolved at once, outside the stack (combo interruption, the look-ahead's copies)"""
+    if not pay_counter(g, q, ctr, spell): return False
     q.hand.remove(ctr)
     if ctr.creature:                 # Mystic Snake / Venser: the counter is a creature
         g.skip_etb = ctr.name == 'Venser, Shaper Savant'
@@ -1460,44 +1486,353 @@ def cast_counter(g, q, ctr, spell=None):
 LAST_COUNTER = None
 
 
-def counter_window(g, p, c, imp, aff):
-    global LAST_COUNTER
-    if 'unc' in c.tags: return True
-    if g.hooks and CI.total(g, 'uncounterable', p, c): return True
-    hctl = getattr(g, 'controllers', None)
-    if hctl and p.key in hctl and _copy_window(g, p, c):  # practice mode: your own spell, with a copy card in hand
-        importlib.import_module('commander_sim.play.human').respond(g, p, f'You cast {c.name}', spell=c, caster=p)
-    for q in g.after(p):
-        if not q.alive or g.over or silenced(g, q): continue
-        if hctl and q.key in hctl:                         # practice mode: the person may respond, or pass
-            ctr = importlib.import_module('commander_sim.play.human').respond(g, q, f'{NAME(p)} casts {c.name}', spell=c,
-                                                                              caster=p)
-            if ctr is None: continue
-            if not _counter_resolves(g, q, p, c, ctr, imp): continue
-            return False
-        val = aff.get(q, imp)
-        if AI_MODE == 'adaptive':
-            from commander_sim.ai import brain
-            nc = sum(1 for x in q.hand if 'ctr' in x.tags)
-            if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
-            thr = CTHRESH[q.key] if q.key in CTHRESH else importlib.import_module('commander_sim.ai.pool_ai').counter_threshold(q, CTHRESH_DEFAULT)
-            if not nc: continue
-            from commander_sim.ai import search
-            cc = getattr(g, 'cur_cast', None)
-            if (cc is not None and cc[0] is c and search.enabled(g, q) and g.active is p
-                    and getattr(g, 'step', None) in ('main1', 'main2') and pick_counter(g, q, c) is not None):
-                if not search.choose_counter(g, q, p, c, cc[1], cc[2]): continue
-            elif g.rng.random() > brain.wants_counter(g, q, val, thr, nc): continue
-        else:
-            if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): continue
-            if g.rng.random() > 0.9: continue
-        if imp >= 6 and importlib.import_module('commander_sim.cards.impl.rules2').hullbreaker_counter(g, q, c):
-            g.bounced_spell = True; return False
-        ctr = pick_counter(g, q, c)
-        if ctr is None: continue
-        if not _counter_resolves(g, q, p, c, ctr, imp): continue
-        return False
+class StackItem:
+    """a spell on the stack: its controller, card, targets (ctx), where it was cast from, how much it matters
+    (imp: to everyone; aff: per player), who has already declined to counter it, and whether it was countered.
+    Plain data: the look-ahead copies a game with items on the stack"""
+    def __init__(s, controller, card, ctx=None, zone='hand', imp=0, aff=None, generic=True, kind='spell', name=None):
+        s.controller, s.card, s.ctx, s.zone, s.imp, s.aff = controller, card, ctx or {}, zone, imp, aff or {}
+        s.kind = kind                  # 'spell' | 'ability' | 'trigger'
+        s.name = name or (card.name if card is not None else 'an ability')
+        s.generic = generic            # resolved by engine.resolve (cast_card); False: by its caster's own code
+        s.passed = set()               # player keys who chose not to counter it
+        s.countered = False
+        s.countered_by = None
+
+    def __repr__(s):
+        return f'StackItem({s.name!r}, {s.kind}, {s.controller.key})'
+
+
+ABILITY_ANSWERS = ("Tishana's Tidebinder", 'Azorius Guildmage')     # cards the AI uses to counter abilities
+
+
+def _abilities_answered(g, p):
+    """could anyone answer an ability of p's? (a person at the table, or an opponent with an ability counter) - when
+    nobody could, an ability resolves without a round of priority, which keeps simulations fast"""
+    if getattr(g, 'controllers', None): return True
+    for q in g.players:
+        if q is p or not q.alive: continue
+        if any(c.name in ABILITY_ANSWERS for c in q.hand) or any(
+                m.cd is not None and m.cd.name in ABILITY_ANSWERS and not m.phased for m in q.perms):
+            return True
+    return False
+
+
+# ---------------------------------------------------------------- triggered abilities on the stack
+TRIGGER_EVENTS = frozenset(('etb', 'dies', 'self_dies', 'leaves', 'attack', 'blocks', 'upkeep', 'combat_damage',
+                            'end_step', 'landfall', 'cast', 'copycast', 'token_created', 'sacrifice', 'draw', 'discard',
+                            'cards_to_gy', 'creature_to_gy', 'exiled_from_bf', 'land_gy', 'proliferated', 'combat_start',
+                            'gain_life', 'lose_life'))
+
+
+class TriggerProbe(Exception):
+    """raised by trigger_window while the engine finds out whether a pending hook really triggers"""
+    def __init__(s, p, src, name, imp):
+        super().__init__(name); s.p, s.src, s.name, s.imp = p, src, name, imp
+
+
+class Trigger:
+    """a triggered ability waiting to go on the stack: fn(*args) carries it out (card code calls trigger_window at
+    the point it commits; known=True: it triggers for sure, the ability language's). Lives in g.trig_queue only
+    until the next flush, never in a copied game"""
+    __slots__ = ('controller', 'src', 'fn', 'args', 'event', 'name', 'imp', 'known', 'cast_etb')
+
+    def __init__(s, controller, src, fn, args, event, name=None, known=False, imp=None):
+        s.controller, s.src, s.fn, s.args, s.event = controller, src, fn, args, event
+        s.name, s.known, s.imp = name, known, imp
+        s.cast_etb = False                      # an enters trigger: was the permanent cast (g.last_cast_etb then)
+
+
+_CONVERTED = {}
+
+
+def converted(fn):
+    """has this hook been given its trigger_window (its commit point)? Others run at once, as before the stack"""
+    v = _CONVERTED.get(fn)
+    if v is None:
+        try:
+            v = 'trigger_window' in inspect.getsource(fn)
+        except (OSError, TypeError):
+            v = False
+        _CONVERTED[fn] = v
+    return v
+
+
+def queue_triggers(g, entries):
+    """triggered abilities that just triggered: on the stack now, or once the spell resolving has finished. Returns
+    the results of the ones that resolved now (attack triggers' attacking tokens)"""
+    if not entries: return []
+    ce = getattr(g, 'last_cast_etb', False)
+    for t in entries: t.cast_etb = ce
+    g.trig_queue.extend(entries)
+    return flush_triggers(g) if not getattr(g, 'resolving', 0) else []
+
+
+def flush_triggers(g):
+    out = []
+    while getattr(g, 'trig_queue', None) and not g.over:
+        batch, g.trig_queue = g.trig_queue, []
+        out += _resolve_batch(g, batch)
+    return out
+
+
+def _apnap(g, ts):
+    """active player's triggers first (they go on the stack first, so resolve last), then in turn order"""
+    a = g.active if g.active is not None else (ts[0].controller if ts else None)
+    order = [a] + g.after(a) if a is not None else list(g.players)
+    rank = {id(q): i for i, q in enumerate(order)}
+    return sorted(ts, key=lambda t: rank.get(id(t.controller), 99))
+
+
+def _call(g, t):
+    prev, g.last_cast_etb = getattr(g, 'last_cast_etb', False), t.cast_etb
+    try: r = t.fn(*t.args)
+    finally: g.last_cast_etb = prev
+    return [r] if r else []
+
+
+def _resolve_batch(g, batch):
+    batch = _apnap(g, batch)
+    if not _abilities_answered(g, None):                # nobody could respond: as before the stack, in order
+        out = []
+        for t in batch:
+            if g.over: break
+            out += _call(g, t)
+        return out
+    out, real = [], []
+    for t in batch:                                     # which hooks really trigger (guards only, no effects yet)
+        if t.known: real.append(t); continue
+        if not converted(t.fn):
+            out += _call(g, t); continue                # not converted yet: happens at once, as before
+        prev, prev_ce = g.trig_mode, getattr(g, 'last_cast_etb', False)
+        g.trig_mode, g.last_cast_etb = 'probe', t.cast_etb
+        try:
+            t.fn(*t.args)
+        except TriggerProbe as e:
+            t.controller, t.name, t.imp = e.p, e.name, e.imp
+            real.append(t)
+        finally:
+            g.trig_mode, g.last_cast_etb = prev, prev_ce
+    real = _order_triggers(g, real)
+    items = []
+    for t in real:
+        cd = getattr(t.src, 'cd', t.src)
+        nm = getattr(cd, 'name', None) or getattr(t.src, 'name', 'A token')
+        it = StackItem(t.controller, cd, {'source': t.src, 'trigger': t}, 'trigger', t.imp if t.imp is not None else 3, {},
+                       generic=False, kind='trigger', name=f'{nm}: {t.name or "trigger"}')
+        g.stack.append(it); g.stack_pushes = getattr(g, 'stack_pushes', 0) + 1
+        items.append((t, it))
+    for t, it in reversed(items):                       # the top of the stack resolves first
+        if g.over: break
+        if it not in g.stack: continue
+        if t.known:                                     # the ability language: the window here
+            _priority(g, it, g.active if g.active is not None else t.controller)
+            if it in g.stack: g.stack.remove(it)
+            if not it.countered: out += _call(g, t)
+            continue
+        prev = g.trig_current
+        g.trig_current = it
+        try:
+            out += _call(g, t)                          # its trigger_window takes the item: priority, then resolves
+        finally:
+            g.trig_current = prev
+            if it in g.stack: g.stack.remove(it)        # it no longer triggers (its guard failed this time)
+    return out
+
+
+def _order_triggers(g, real):
+    """the person orders their own simultaneous triggers (which resolves first); the AI keeps the code's order"""
+    if len(real) < 2: return real
+    out = []
+    i = 0
+    while i < len(real):
+        j = i
+        while j < len(real) and real[j].controller is real[i].controller: j += 1
+        group = real[i:j]
+        q = group[0].controller
+        hc = human_choice(g, q)
+        if hc is not None and len(group) > 1:
+            left, first = list(group), []
+            last = getattr(g, 'trig_orders', {}).get(q.key)          # the order you chose the last time
+            same = last is not None and sorted(last) == sorted(_trig_label(t) for t in left)
+            while len(left) > 1:
+                labels = [_trig_label(t) for t in left]
+                extra = [f'Same order as last time ({", then ".join(last)})'] if same else []
+                k = hc.choose(g, q, 'choose', 'Your triggers: which resolves first?', extra + labels, cancel=None)
+                if same and k == 0:
+                    for name in last:
+                        t = next(t for t in left if _trig_label(t) == name)
+                        left.remove(t); first.append(t)
+                    break
+                first.append(left.pop(k - len(extra)))
+                same = False
+            first += left
+            if not hasattr(g, 'trig_orders'): g.trig_orders = {}
+            g.trig_orders[q.key] = [_trig_label(t) for t in first]
+            group = list(reversed(first))               # pushed in reverse: the first to resolve goes on top
+        out += group
+        i = j
+    return out
+
+
+def _trig_label(t):
+    return f'{getattr(getattr(t.src, "cd", t.src), "name", "")}: {t.name}'
+
+
+def trigger_window(g, p, src, name, imp=None):
+    """a triggered ability's commit point (after its conditions, before its effect). While the engine probes
+    pending hooks it raises TriggerProbe; while resolving a stack item for it, players have priority on it first;
+    called from engine code outside a batch, it gets its own round. True if it resolves"""
+    if g is None: return True
+    if getattr(g, 'trig_mode', None) == 'probe':
+        g.trig_mode = None
+        raise TriggerProbe(p, src, name, imp)
+    cur = getattr(g, 'trig_current', None)
+    if cur is not None:
+        g.trig_current = None
+        if cur in g.stack:
+            _priority(g, cur, g.active if g.active is not None else p)
+            if cur in g.stack: g.stack.remove(cur)
+        return not cur.countered
+    if g.over or not _abilities_answered(g, p): return True
+    cd = getattr(src, 'cd', src)
+    nm = getattr(cd, 'name', None) or getattr(src, 'name', 'A token')
+    item = StackItem(p, cd, {'source': src}, 'trigger', imp if imp is not None else 3, {}, generic=False,
+                     kind='trigger', name=f'{nm}: {name}' if src is not None else name)
+    return stack_window(g, p, item)
+
+
+STEP_NAMES = {'upkeep': 'upkeep', 'draw': 'draw step', 'combat': 'beginning of combat',
+              'attackers': 'declare attackers step', 'blockers': 'declare blockers step', 'end': 'end step'}
+
+
+def step_priority(g, step, defender=None, attackers=()):
+    """priority in a step of the turn, to each player in turn order from the active player. People are asked as
+    their auto-pass setting says. The AI acts here when it's attacked (instant removal on an attacker, ai.brain
+    .attack_response); its other instant-speed plays keep their own timing (the end of the turn before its own, and
+    answers on the stack)"""
+    if g.over or g.active is None: return
+    ctl = getattr(g, 'controllers', None)
+    hm = importlib.import_module('commander_sim.play.human') if ctl else None
+    for q in [g.active] + g.after(g.active):
+        if not q.alive or g.over: continue
+        if hm is not None and hm.is_human(g, q): hm.step_priority(g, q, step, defender, attackers)
+        elif step == 'attackers' and q is defender and AI_MODE == 'adaptive':
+            importlib.import_module('commander_sim.ai.brain').attack_response(g, q, g.active, attackers)
+
+
+def equip_to(g, p, e, m, n):
+    """pay equip {n} for equipment e onto m; the ability goes on the stack, and attaches if it resolves and both are
+    still there"""
+    pay(g, p, n, '')
+    if ability_window(g, p, e, f'equip to {m.name}', target=m) and m in p.perms and e in p.perms: e.attached = m
     return True
+
+
+def ability_window(g, p, src, name, imp=None, target=None):
+    """p has paid the cost of an activated ability of src (a permanent, or a card for abilities from hand or the
+    graveyard): it goes on the stack and players get priority. True if it resolves (the caller then applies its
+    effect, even if src is gone by then), False if it was countered. Mana abilities don't use this"""
+    if g is None or g.over or not _abilities_answered(g, p): return True
+    cd = getattr(src, 'cd', src)
+    if imp is None: imp = 3 + (0.5 * pval(g, src) if isinstance(src, Perm) and src in src.owner.perms else 0)
+    item = StackItem(p, cd, {'source': src, 'target': target}, 'ability', imp, {}, generic=False, kind='ability',
+                     name=f"{getattr(cd, 'name', None) or getattr(src, 'name', 'A token')}: {name}")
+    return stack_window(g, p, item)
+
+
+def stack_window(g, p, item):
+    """item goes on the stack and every player gets priority, p first then in turn order. A player may respond (a
+    counterspell, an instant ...): the response goes on the stack above it, gets its own round of priority, and
+    resolves when everyone passes on it; then the active player gets priority again. True once everyone passes with
+    item on top (the caller resolves it), False if it was countered"""
+    g.stack.append(item); g.stack_pushes = getattr(g, 'stack_pushes', 0) + 1
+    try:
+        if getattr(g, 'trig_queue', None) and not g.resolving: flush_triggers(g)   # its cast triggers resolve first
+        _priority(g, item, p)
+    finally:
+        if item in g.stack: g.stack.remove(item)
+    return not item.countered
+
+
+def _priority(g, item, first):
+    start, rounds = first, 0
+    while not g.over and not item.countered and item in g.stack:
+        order = [start] + [x for x in g.after(start)]
+        order = [x for x in order if x.alive]
+        passes, k, acted = 0, 0, False
+        while passes < len(order) and not g.over:
+            q = order[k % len(order)]
+            if take_priority(g, q, item):
+                acted = True; break               # a response resolved (or was countered) above item
+            passes += 1; k += 1
+        if not acted: return                       # everyone passed in succession: item resolves
+        rounds += 1
+        if rounds > 12: return                     # a runaway exchange of responses
+        start = g.active if g.active is not None and g.active.alive else first
+
+
+def take_priority(g, q, item):
+    """q has priority with item on top of the stack; True if q put something on the stack (it has resolved by now)"""
+    if not q.alive or g.over or silenced(g, q): return False
+    n = getattr(g, 'stack_pushes', 0)
+    if human_choice(g, q) is not None: importlib.import_module('commander_sim.play.human').stack_priority(g, q, item)
+    else: ai_respond(g, q, item)
+    return getattr(g, 'stack_pushes', 0) != n
+
+
+def counter_window(g, p, c, imp, aff):
+    """a spell cast by its own card code (not cast_card): it goes on the stack with a round of priority. True if it
+    resolves (the caller carries out its effect), False if it was countered"""
+    if 'unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', p, c)): return True
+    item = StackItem(p, c, {}, 'hand', imp, aff, generic=False)
+    ok = stack_window(g, p, item)
+    if not ok: global LAST_COUNTER; LAST_COUNTER = item.countered_by
+    return ok
+
+
+def counterable(g, item):
+    c = item.card
+    return not ('unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', item.controller, c)))
+
+
+def ai_respond(g, q, item):
+    """the AI with priority: counter the spell on top of the stack (or a counterspell aimed at its own spell), or pass"""
+    top = g.stack[-1] if g.stack else None
+    if top is None or top.controller is q or q.key in top.passed: return
+    top.passed.add(q.key)
+    if top.kind != 'spell':                        # an ability (or trigger): Azorius Guildmage, Tishana's Tidebinder
+        if top.imp >= 6 and CI is not None: CI.answer_ability(g, q, top)
+        return
+    if not any('ctr' in x.tags or x.name == 'Venser, Shaper Savant' for x in q.hand): return     # nothing to respond with
+    if not counterable(g, top): return
+    c, p = top.card, top.controller
+    target = top.ctx.get('counter')
+    if target is not None:                         # a counterspell: answer it only to save your own spell
+        if target.controller is not q or target.imp < 6: return
+        ctr = pick_counter(g, q, c)
+        if ctr is not None: cast_counter_spell(g, q, ctr, top)
+        return
+    val = top.aff.get(q, top.imp)
+    if val <= 0 and not top.aff: return
+    if AI_MODE == 'adaptive':
+        from commander_sim.ai import brain
+        nc = sum(1 for x in q.hand if 'ctr' in x.tags)
+        if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
+        thr = CTHRESH[q.key] if q.key in CTHRESH else importlib.import_module('commander_sim.ai.pool_ai').counter_threshold(q, CTHRESH_DEFAULT)
+        if not nc: return
+        from commander_sim.ai import search
+        if (top.generic and len(g.stack) == 1 and search.enabled(g, q) and g.active is p
+                and getattr(g, 'step', None) in ('main1', 'main2') and pick_counter(g, q, c) is not None):
+            if not search.choose_counter(g, q, p, c, top.ctx, top.zone): return
+        elif g.rng.random() > brain.wants_counter(g, q, val, thr, nc): return
+    else:
+        if val < CTHRESH.get(q.key, CTHRESH_DEFAULT): return
+        if g.rng.random() > 0.9: return
+    if top.imp >= 6 and importlib.import_module('commander_sim.cards.impl.rules2').hullbreaker_counter(g, q, c):
+        g.bounced_spell = True; top.countered = True; return
+    ctr = pick_counter(g, q, c)
+    if ctr is not None: cast_counter_spell(g, q, ctr, top)
 
 
 def _copy_window(g, p, c):
@@ -1506,35 +1841,99 @@ def _copy_window(g, p, c):
         any(x.name in ('Return the Favor', 'Dualcaster Mage') for x in p.hand)
 
 
-def _counter_resolves(g, q, p, c, ctr, imp):
-    """q casts counterspell ctr at p's spell c: True if c ends up countered (the caster may pay for a soft counter,
-    or counter back)"""
-    global LAST_COUNTER
-    if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, p, q, ctr): return False
-    if not cast_counter(g, q, ctr, c): return False
-    log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
+def pay_counter(g, q, ctr, spell):
+    """pay counterspell ctr's cost (or its alternative cost) against spell; True if paid"""
+    if getattr(g, 'free_counter', False): return True           # practice mode: paid from the person's pool
+    if 'fierce' in ctr.tags and commander_out(q):
+        return True                              # cast without paying its mana cost
+    if 'pact' in ctr.tags:
+        q.pacts = getattr(q, 'pacts', 0) + 1     # pay {3}{U}{U} at the next upkeep or lose
+        return True
+    if 'misstep' in ctr.tags and q.life > 10:
+        lose_life(g, q, 2, q); return True
+    if 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
+        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
+        x = min(blues, key=lambda c: card_worth(g, q, c))
+        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
+        q.hand.remove(x); q.exile.append(x); return True
+    if 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
+        blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
+        if not blues: return False
+        x = min(blues, key=lambda c: card_worth(g, q, c))           # the least useful blue card
+        if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
+        q.hand.remove(x); q.exile.append(x); lose_life(g, q, 1, q); return True
+    return pay(g, q, *counter_cost(ctr, spell))
+
+
+def cast_counter_spell(g, q, ctr, target):
+    """q casts counterspell ctr at stack item target. It goes on the stack (players may respond, the target's caster
+    can counter it back), and on resolution counters target if target is still there. True if it was cast"""
+    if ctr not in q.hand or target not in g.stack: return False
+    if importlib.import_module('commander_sim.cards.impl.rules').veil_response(g, target.controller, q, ctr): return False
+    if not pay_counter(g, q, ctr, target.card): return False
+    q.hand.remove(ctr)
+    q.spells_this_turn += 1; q.stats['counters_cast'] += 1; q.cast_names.add(ctr.name)
+    log(f'    {NAME(q)} casts {ctr.name} at {target.card.name}', g)
+    on_cast(g, q, ctr)
+    item = StackItem(q, ctr, {'counter': target}, 'hand', max(target.imp, 6), {}, generic=False)
+    if stack_window(g, q, item):
+        resolve_counter(g, q, ctr, target)
+        if ctr.creature:                         # Mystic Snake / Venser: the counter is a creature
+            g.skip_etb = ctr.name == 'Venser, Shaper Savant'
+            try: enter(g, q, ctr, was_cast=True)
+            finally: g.skip_etb = False
+        else: q.gy.append(ctr)
+    else:
+        q.gy.append(ctr)
+    return True
+
+
+def resolve_counter(g, q, ctr, target):
+    """counterspell ctr resolves: counter target if it is still on the stack (unless its controller pays for a soft
+    counter)"""
+    if target not in g.stack or target.countered: return              # gone: the counterspell does nothing
+    p, c = target.controller, target.card
     soft = int(ctr.tags.get('soft', 0))
     if ctr.name == 'Flusterstorm':                 # storm: a copy per spell cast before it this turn
         soft = sum(casts_this_turn(g, x) for x in g.players if x.alive) - 1
     if soft and can_pay(g, p, soft, ''):           # Spell Pierce / Mystic Confluence: pay and it resolves
-        pay(g, p, soft, ''); log(f'    {NAME(p)} pays {soft}', g); return False
+        hc = human_choice(g, p)
+        if hc is None or hc.pay_tax(g, p, soft, ctr.name):
+            if hc is None: pay(g, p, soft, '')
+            log(f'    {NAME(p)} pays {soft}', g); return
+    log(f'    {NAME(q)} counters {c.name} with {ctr.name}', g)
     counter_side_effects(g, q, p, ctr)
     if ctr.name == 'Mana Drain': q.drain_mana = getattr(q, 'drain_mana', 0) + c.cmc
-    # original caster may fight back
-    hctl = getattr(g, 'controllers', None)
-    if hctl and p.key in hctl:                     # practice mode: the person may counter the counterspell
-        back = importlib.import_module('commander_sim.play.human').respond(
-            g, p, f'{NAME(q)} counters your {c.name} with {ctr.name}', spell=ctr)
-    elif max(imp, 7) >= 7 and imp >= 6: back = pick_counter(g, p, ctr)
-    else: back = None
-    if back is not None and cast_counter(g, p, back, ctr):
-        p.stats['counterwar_won'] += 1
-        log(f'    {NAME(p)} counters back with {back.name}', g)
-        return False
     if p.key == 'seph': p.stats['seph_spell_countered'] += 1
     p.stats['spells_countered'] += 1
-    LAST_COUNTER = ctr
-    return True
+    if target.ctx.get('counter') is not None and target.ctx['counter'].controller is q:
+        q.stats['counterwar_won'] += 1             # q countered the counterspell aimed at q's spell
+    target.countered = True; target.countered_by = ctr
+
+
+def settle_stack(g):
+    """the look-ahead: finish a copied game's stack at once (no more responses), top first, then the triggers
+    waiting to go on it"""
+    while g.stack and not g.over:
+        it = g.stack.pop()
+        p, c = it.controller, it.card
+        if it.countered:
+            if it.kind != 'spell': continue
+            if c is p.cmd: p.cmd_in_zone = True
+            elif it.zone == 'gy' or it.ctx.get('exile_after'): p.exile.append(c)
+            elif not c.land: p.gy.append(c)
+            continue
+        if it.kind == 'trigger' and it.ctx.get('trigger') is not None:
+            _call(g, it.ctx['trigger']); check_state(g); continue
+        if it.kind != 'spell': continue             # an ability: its effect lives with the code that activated it
+        tgt = it.ctx.get('counter')
+        if tgt is not None:
+            if tgt in g.stack: tgt.countered = True; tgt.countered_by = c
+            p.gy.append(c); continue
+        if c.perm and not it.generic: enter(g, p, c, was_cast=True); continue
+        resolve(g, p, c, it.ctx, it.zone)
+        check_state(g)
+    if getattr(g, 'trig_queue', None) and not g.over: flush_triggers(g)
 
 
 def counter_side_effects(g, q, p, ctr):
@@ -1558,30 +1957,35 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
     elif zone == 'cmd':
         if c.name == 'Liesa, Shroud of Dusk' and p.tax: lose_life(g, p, p.tax, p)
         p.cmd_in_zone = False; p.tax += 2
-    elif zone == 'escape': p.gy.remove(c)
+    elif zone in ('escape', 'mgy'):                              # mgy: cast from the graveyard by permission (Muldrotha)
+        p.gy.remove(c)
+        if zone == 'mgy' and ctx.get('muld_type') and CI is not None: CI.muld_mark(g, p, ctx['muld_type'])
     elif zone == 'lib': pass                      # Bolas's Citadel: already taken off the top of the library       # Underworld Breach: cast from the graveyard, resolves back to it
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
     p.cast_names.add(c.name)
     tgt = ctx.get('target')
     log(f'  {NAME(p)} casts {c.name}' + (f' -> {tgt.name} ({NAME(tgt.owner)})' if tgt is not None else ''), g)
-    on_cast(g, p, c)
-    if g.over or not p.alive: return False
-    imp, aff = spell_imp(g, p, c, ctx)
-    jin = [q for q in g.opps(p) if has(q, 'jin') and ('A' in c.types or c.instant or c.sorcery)]
-    if jin and once_per_turn(g, jin[0], 'jincounter'):
-        log(f'    Jin-Gitaxias counters {c.name}', g)
-        (p.exile if zone == 'gy' else p.gy).append(c)
-        return False
     global LAST_COUNTER
-    LAST_COUNTER = None
-    g.cur_cast = (c, ctx, zone)
+    prev_cast, g.cur_cast = getattr(g, 'cur_cast', None), (c, ctx, zone)     # cast triggers see its targets and X
     try:
-        human_near = bool(getattr(g, 'controllers', None)) and (any(q.key in g.controllers for q in g.after(p))
+        on_cast(g, p, c)
+        if g.over or not p.alive: return False
+        imp, aff = spell_imp(g, p, c, ctx)
+        jin = [q for q in g.opps(p) if has(q, 'jin') and ('A' in c.types or c.instant or c.sorcery)]
+        if jin and once_per_turn(g, jin[0], 'jincounter'):
+            log(f'    Jin-Gitaxias counters {c.name}', g)
+            (p.exile if zone == 'gy' else p.gy).append(c)
+            return False
+        LAST_COUNTER = None
+        item = StackItem(p, c, ctx, zone, imp, aff)
+        human_near = bool(getattr(g, 'controllers', None)) and (any(q.key in g.controllers for q in g.players if q is not p)
                                                                  or _copy_window(g, p, c))
-        ok_cast = not (imp > 0 or aff or human_near) or counter_window(g, p, c, imp, aff)
+        if not (imp > 0 or aff or human_near) or not counterable(g, item): ok_cast = True   # nobody would answer it
+        else: ok_cast = stack_window(g, p, item)
     finally:
-        g.cur_cast = None
+        g.cur_cast = prev_cast
     if not ok_cast:
+        LAST_COUNTER = item.countered_by
         if c is p.cmd: p.cmd_in_zone = True
         elif zone in ('gy',) or ctx.get('exile_after'): p.exile.append(c)
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)
@@ -1607,6 +2011,16 @@ def flashback_grant(g, p):
 
 
 def resolve(g, p, c, ctx, zone):
+    """spell c resolves; the abilities it triggers go on the stack once it has finished"""
+    g.resolving = getattr(g, 'resolving', 0) + 1
+    try:
+        _resolve(g, p, c, ctx, zone)
+    finally:
+        g.resolving -= 1
+    if not g.resolving and getattr(g, 'trig_queue', None): flush_triggers(g)
+
+
+def _resolve(g, p, c, ctx, zone):
     t = c.tags
     if CI is not None and not c.perm and c.name in CI.HOOKS and 'resolve' in CI.HOOKS[c.name] and CI.live(c.name):
         dest = CI.HOOKS[c.name]['resolve'](g, p, c, ctx)            # hand-written spell (returns where it goes)
@@ -1827,14 +2241,43 @@ def do_etb(g, p, m):
     if m.cd.dsl: return                         # interpreter handles this card's abilities
     if opp_has(g, p, 'mother'): return
     reps = 2 if (has(p, 'mother') and m.cd.creature) else 1
-    for _ in range(reps):
-        etb_once(g, p, m)
+    etb_static(g, p, m)
+    if not etb_triggers(m.cd): return
+    name, imp = etb_text(m.cd)
+    for _ in range(reps):                       # its enters triggers go on the stack (once the spell has resolved)
         if g.over: return
+        queue_triggers(g, [Trigger(p, m, etb_once, (g, p, m), 'etb', name=name, known=True, imp=imp)])
 
 
-def etb_once(g, p, m):
+# enters-the-battlefield tags that are triggered abilities (the rest: as it enters, or static)
+ETB_TRIGGER_TAGS = ('chromemox', 'recruit', 'titan', 'archon', 'gray', 'wurm', 'rsd', 'witness', 'wall', 'atraxa', 'skate',
+                    'bowmasters', 'heir', 'suntitan', 'dualcaster', 'uprising', 'tok', 'tokbig')
+ETB_SCRYFALL_TAGS = ('tut', 'treas', 'drainetb', 'edictetb')
+ETB_TEXT = {'archon': ('opponent sacrifices, discards, loses 3', 7), 'gray': ('drain', 6), 'wurm': ('destroy small creatures', 6),
+            'heir': ("opponents' creatures get -2/-2", 6), 'bowmasters': ('1 damage; amass 1', 5),
+            'suntitan': ('return a permanent', 4), 'titan': ('two 2/2 Zombies', 3), 'atraxa': ('reveal ten', 5),
+            'rsd': ('search your library', 4), 'recruit': ('search your library', 4)}
+
+
+def etb_triggers(cd):
+    t = cd.tags
+    if any(k in t for k in ETB_TRIGGER_TAGS) or t.get('fill') in ('stitcher', 'wayfinder'): return True
+    if 'draw' in t and not ('I' in cd.types or 'S' in cd.types): return True
+    if 'rem' in t and 'etb' in t and t['rem'] not in LOCK_KINDS: return True
+    return cd.source == 'scryfall' and any(k in t for k in ETB_SCRYFALL_TAGS)
+
+
+def etb_text(cd):
+    t = cd.tags
+    if 'rem' in t and 'etb' in t: return 'remove a permanent', 6
+    for k, v in ETB_TEXT.items():
+        if k in t: return v
+    return 'enters', 3
+
+
+def etb_static(g, p, m):
+    """what happens as it enters, or is true while it's out (not a triggered ability)"""
     t = m.cd.tags
-    if 'chromemox' in t: chrome_imprint(g, p, m)
     if 'flute' in t:                             # Disruptor Flute: choose a card name
         from commander_sim import ais
         name, score = ais.flute_pick(g, p)
@@ -1843,6 +2286,20 @@ def etb_once(g, p, m):
             log(f'    Disruptor Flute names {name}', g)
     if 'prepare' in t:                            # enters prepared: its back-face spell can be cast as a copy (impl_mine)
         m.data = dict(m.data or {}, prepared=True)
+    if 'rem' in t and 'etb' in t and t['rem'] in LOCK_KINDS: etb_removal(g, p, m)     # an Aura: attached as it resolves
+    if 'mycoloth' in t:                           # devour 2: eat up to three tokens
+        toks = [x for x in p.perms if x.token and x.creature][:3]
+        for x in toks: die(g, x, 'sac')
+        m.plus += 2 * len(toks)
+    if 'endraze' in t: p.pumpadd += 2; p.trample = True
+    if 'spider' in t:                             # Old Fat Spider: hexproof on your best creature (like Boots)
+        cr = [x for x in p.perms if x.creature and x.cd is not None]
+        if cr: m.attached = max(cr, key=lambda x: (('veyran' in x.cd.tags) * 10 + pval(g, x)))
+
+
+def etb_once(g, p, m):
+    t = m.cd.tags
+    if 'chromemox' in t: chrome_imprint(g, p, m)
     if 'recruit' in t: tutor(g, p, 'cre2')     # Imperial Recruiter: creature with power 2 or less
     opps = g.opps(p)
     if 'titan' in t: make_tokens(g, p, 2, 2, color='B')
@@ -1873,7 +2330,7 @@ def etb_once(g, p, m):
         else:
             q = max(opps, key=lambda o: threat(g, p, o)); lose_life(g, q, 1, p, kind='triggers')
         amass(g, p, 1)
-    if 'rem' in t and 'etb' in t: etb_removal(g, p, m)
+    if 'rem' in t and 'etb' in t and t['rem'] not in LOCK_KINDS: etb_removal(g, p, m)
     if 'heir' in t:                               # Sephiroth, Planet's Heir: opponents' creatures get -2/-2
         for q in opps:
             for x in list(q.perms):
@@ -1881,14 +2338,6 @@ def etb_once(g, p, m):
                 a, b = g.eot_pt.get(id(x), (0, 0)); g.eot_pt[id(x)] = (a - 2, b - 2)
                 if etgh(g, x) <= 0: die(g, x, 'sba')
     if 'suntitan' in t: sun_titan(g, p)
-    if 'mycoloth' in t:                           # devour 2: eat up to three tokens
-        toks = [x for x in p.perms if x.token and x.creature][:3]
-        for x in toks: die(g, x, 'sac')
-        m.plus += 2 * len(toks)
-    if 'endraze' in t: p.pumpadd += 2; p.trample = True
-    if 'spider' in t:                             # Old Fat Spider: hexproof on your best creature (like Boots)
-        cr = [x for x in p.perms if x.creature and x.cd is not None]
-        if cr: m.attached = max(cr, key=lambda x: (('veyran' in x.cd.tags) * 10 + pval(g, x)))
     if 'dualcaster' in t:                         # copy a spell: approximated as copying your last instant/sorcery
         last = next((x for x in reversed(p.gy) if x.instant or x.sorcery), None)
         if last is not None:
@@ -2095,6 +2544,9 @@ def apply_removal(g, actor, m, kind, spell=None):
         log(f'    damage to {m.name} is prevented (Tajic)', g); return
     log(f'    {m.name} ({NAME(owner)}) is removed: {kind}', g)
     g.last_removed = (m.cd, owner, kind, actor)
+    src = getattr(g, 'rem_src', None)
+    if kind == 'exile' and src is not None and src.cd is not None and src.cd.name == 'Skyclave Apparition':
+        src.data = dict(src.data or {}, exiled=(m.cd, owner))      # its owner gets an Illusion when the Apparition leaves
     owner.lost_names[m.name] += 1
     owner.stats['threats_lost'] += 1 if pval(g, m) >= 5 else 0
     if owner.key == 'seph' and m.cd is not None and m.cd.bomb:
@@ -2145,7 +2597,10 @@ LOCK_KINDS = ('arrest', 'pacify', 'encrust', 'kasmina')       # removal kinds th
 
 
 def etb_removal(g, p, m):
-    if m.cd.tags['rem'] not in LOCK_KINDS: return _etb_removal(g, p, m)
+    if m.cd.tags['rem'] not in LOCK_KINDS:
+        prev, g.rem_src = getattr(g, 'rem_src', None), m
+        try: return _etb_removal(g, p, m)
+        finally: g.rem_src = prev
     if getattr(g, 'aura_put', False): return                    # put onto the battlefield (Zur): no target; placed by Zur
     prev, g.rem_src = getattr(g, 'rem_src', None), m
     try:
@@ -2168,18 +2623,18 @@ def _etb_removal(g, p, m):
     if not tg: return
     best = max(tg, key=lambda x: pval(g, x))
     if pval(g, best) < 2: return
-    # Tidebinder can counter the trigger
-    from commander_sim import ais
-    if ais.tide_response(g, p, 'etbrem', pval(g, best), victim=best.owner): return
     apply_removal(g, p, best, t['rem'], m.cd)
 
 
 def apply_wipe(g, p, kind, ctx):
     prev, g.batch = getattr(g, 'batch', None), object()     # creatures destroyed together die simultaneously
+    g.resolving = getattr(g, 'resolving', 0) + 1
     try:
         _apply_wipe(g, p, kind, ctx)
     finally:
         g.batch = prev
+        g.resolving -= 1
+    if not g.resolving and getattr(g, 'trig_queue', None): flush_triggers(g)
 
 
 def _apply_wipe(g, p, kind, ctx):

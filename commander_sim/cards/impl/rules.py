@@ -126,7 +126,7 @@ card('Goldspan Dragon', 'pow=4 tgh=4 fly haste bomb=6', dsl=[])
 
 @on('Goldspan Dragon', 'attack')
 def _goldspan_atk(g, src, p, atk, d):
-    if p is src.owner and src in atk: add_treasure(g, p, 1)
+    if p is src.owner and src in atk and trigger_window(g, p, src, 'create a Treasure'): add_treasure(g, p, 1)
 
 
 @on('Goldspan Dragon', 'treasure_bonus')
@@ -165,6 +165,7 @@ note('Rhystic Study', 'Full', 'opponents pay {1} per spell when they can spare i
 def _remora(g, src, caster, c):
     o = src.owner
     if caster is o or c.creature or c.land: return
+    if not trigger_window(g, o, src, f'draw a card unless {NAME(caster)} pays {{4}}'): return
     hc = E.human_choice(g, caster)
     if hc is not None:
         if hc.pay_tax(g, caster, 4, 'Mystic Remora (or its owner draws a card)'): return
@@ -175,6 +176,7 @@ def _remora(g, src, caster, c):
 @on('Mystic Remora', 'upkeep')
 def _remora_age(g, src, p):
     if p is not src.owner: return
+    if not trigger_window(g, p, src, 'cumulative upkeep {1}'): return
     if src.data is None: src.data = {}
     age = src.data.get('age', 0) + 1; src.data['age'] = age
     hc = E.human_choice(g, p)
@@ -570,12 +572,12 @@ full('Spirit of the Labyrinth', 'each player (you too) can\'t draw more than one
 # Frost Titan: the tapped creature stays tapped
 @on('Frost Titan', 'etb')
 def _frost(g, src, p, m):
-    if m is src: _freeze(g, src)
+    if m is src and trigger_window(g, src.owner, src, 'tap a permanent'): _freeze(g, src)
 
 
 @on('Frost Titan', 'attack')
 def _frost_atk(g, src, p, atk, d):
-    if src in atk: _freeze(g, src)
+    if src in atk and trigger_window(g, src.owner, src, 'tap a permanent'): _freeze(g, src)
 
 
 def _freeze(g, src):
@@ -591,7 +593,7 @@ full('Frost Titan', 'ward {2}; taps a permanent on entry and attack; it doesn\'t
 # Tithe Taker: afterlife
 @on('Tithe Taker', 'self_dies')
 def _tithe_afterlife(g, m, cause):
-    make_tokens(g, m.owner, 1, 1, fly=True, color='W', types=('spirit',))
+    if trigger_window(g, m.owner, m, 'create a 1/1 flying Spirit'): make_tokens(g, m.owner, 1, 1, fly=True, color='W', types=('spirit',))
 full('Tithe Taker', 'spells cost {1} more during your turn; afterlife 1')
 
 
@@ -606,9 +608,10 @@ full('Bloodghast', 'can\'t block; haste while an opponent is at 10 or less; retu
 @on('Mogg War Marshal', 'upkeep')
 def _mwm_echo(g, src, p):
     if p is src.owner and (src.data or {}).get('echo') != 'done':
+        ok = trigger_window(g, p, src, 'echo: sacrifice it unless you pay', imp=1)
         if src.data is None: src.data = {}
         src.data['echo'] = 'done'
-        log(f'    {NAME(p)} doesn\'t pay echo for Mogg War Marshal', g); die(g, src, 'sac')
+        if ok and src in p.perms: log(f'    {NAME(p)} doesn\'t pay echo for Mogg War Marshal', g); die(g, src, 'sac')
 full('Mogg War Marshal', 'a Goblin on entry and on death; echo is left unpaid (sacrificed for the second Goblin)')
 
 
@@ -626,6 +629,7 @@ full("Nature's Claim", 'destroys an artifact or enchantment; its controller gain
 @on('Plaguecrafter', 'etb')
 def _plague(g, src, p, m):
     if m is not src: return
+    if not trigger_window(g, src.owner, src, 'each player sacrifices a creature or planeswalker', imp=5): return
     for q in [q for q in g.players if q.alive]:
         cs = [x for x in q.perms if (x.creature or (x.cd is not None and 'P' in x.cd.types)) and not x.phased]
         if q is src.owner: cs = [x for x in cs if x is not src] or cs
@@ -651,6 +655,7 @@ full("Liliana's Triumph", 'each opponent sacrifices a creature; with a Liliana o
 @on('Painful Quandary', 'cast')
 def _quandary(g, src, caster, c):
     if caster is src.owner: return
+    if not trigger_window(g, src.owner, src, f'{NAME(caster)} discards or loses 5 life'): return
     junk = [x for x in caster.hand if card_worth(g, caster, x) < 30]
     if junk and caster.life > 10: discard_cards(g, caster, [min(junk, key=lambda x: card_worth(g, caster, x))])
     elif caster.hand and caster.life <= 10: discard_worst(g, caster, 1)
@@ -662,14 +667,15 @@ full('Painful Quandary', 'each opponent\'s spell: they discard a junk card (or a
 # Sticky Fingers: draw when the creature dies
 @on('Sticky Fingers', 'dies')
 def _sticky_dies(g, src, m, cause):
-    if src.attached is m: draw(g, src.owner, 1)
+    if src.attached is m and trigger_window(g, src.owner, src, 'draw a card'): draw(g, src.owner, 1)
 full('Sticky Fingers', 'menace; a Treasure on combat damage; draw when the enchanted creature dies')
 
 
 # Reckless Fireweaver: every artifact entering
 @on('Reckless Fireweaver', 'etb')
 def _fireweaver_etb(g, src, p, m):
-    if m.owner is src.owner and m is not src and m.cd is not None and 'A' in m.cd.types:
+    if m.owner is src.owner and m is not src and m.cd is not None and 'A' in m.cd.types \
+            and trigger_window(g, src.owner, src, '1 damage to each opponent'):
         for q in g.opps(src.owner): lose_life(g, q, 1, src.owner, kind='triggers')
 full('Reckless Fireweaver', 'each artifact (cast or token) entering under your control deals 1 to each opponent')
 
@@ -703,7 +709,7 @@ def evasion_blocked(g, b, a):
 # Legion Loyalist: battalion also stops tokens from blocking
 @on('Legion Loyalist', 'attack')
 def _loyalist2(g, src, p, atk, d):
-    if src in atk and len(atk) >= 3:
+    if src in atk and len(atk) >= 3 and trigger_window(g, p, src, 'attackers gain first strike and trample'):
         for m in atk: g.eot_kw.setdefault(id(m), set()).update(('first strike', 'trample'))
         p.loyalist_turn = turn_stamp(g)
 full('Legion Loyalist', 'battalion: attackers gain first strike and trample and can\'t be blocked by tokens')
@@ -730,7 +736,7 @@ full('Moraug, Fury of Akoum', 'creatures +1/+0 for each time they attacked this 
 # Brimaz: a blocking Cat
 @on('Brimaz, King of Oreskos', 'blocks')
 def _brimaz_block(g, src, p, atk, d, assign):
-    if src.owner is d and src in assign.values(): make_tokens(g, d, 1, 1, color='W', types=('cat',))
+    if src.owner is d and src in assign.values() and trigger_window(g, d, src, 'create a blocking 1/1 Cat'): make_tokens(g, d, 1, 1, color='W', types=('cat',))
 full('Brimaz, King of Oreskos', 'vigilance; a 1/1 Cat attacking with it, and one blocking with it')
 
 
@@ -777,7 +783,7 @@ full('Awakening Zone', 'a 0/1 Spawn each upkeep (sacrifice: {C})')
 # Mirkwood Bats: creating tokens drains too
 @on('Mirkwood Bats', 'token_created')
 def _bats_make(g, src, p, kinds, n):
-    if p is src.owner:
+    if p is src.owner and trigger_window(g, p, src, f'each opponent loses {n} life'):
         for q in g.opps(p): lose_life(g, q, n, p, kind='drain')
 full('Mirkwood Bats', 'flying; each token you create or sacrifice drains each opponent 1')
 

@@ -18,6 +18,7 @@
   </div>
   <div id="status"></div>
   <span id="zoom" role="group" aria-label="Card size"><button type="button" data-zoom="-1" title="Smaller cards">A−</button><button type="button" data-zoom="1" title="Bigger cards">A+</button></span>
+  <label id="autopass-box" hidden title="When the game stops to give you priority (from your next decision)">Stop <select id="autopass"><option value="respond">when I can respond</option><option value="stack">on every spell, ability and trigger</option><option value="all">at every step (full control)</option></select></label>
   <button id="hint" type="button" hidden title="What would the AI do now?">💡 Hint</button>
   <button id="undo" type="button" hidden title="Take back your last action">↶ Undo</button>
   <button id="save" type="button" hidden title="Save this game (seed, table and your decisions) to replay later">💾 Save</button>
@@ -47,6 +48,7 @@
       <label>Opponents' interaction <select name="profile"><option value="loose">loose</option><option value="conservative">conservative</option></select></label>
       <label>Opponent AI <select name="ai"><option value="lookahead">look-ahead</option><option value="adaptive">adaptive (faster)</option></select></label>
       <label>Seed <input name="seed" type="number" min="1" placeholder="random"></label>
+      <label title="You can change this during the game">Stop for priority <select name="autopass"><option value="respond">when I can respond</option><option value="stack">on every spell, ability and trigger</option><option value="all">at every step (full control)</option></select></label>
     </div>
     <div class="row options">
       <label><input type="checkbox" name="hint" checked> Hint</label>

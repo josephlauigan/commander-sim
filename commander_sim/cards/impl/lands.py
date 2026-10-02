@@ -114,6 +114,7 @@ def manland(name, gen, pips, pw, tg, kws=(), fly=False, extra=None, status_text=
 
         def go():
             if L not in p.lands or L.tapped or not pay_without(g, p, L, gen, pips): return False
+            if not ability_window(g, p, L.cd, 'becomes a creature'): return True
             m = animate(g, p, L, pw, tg, kws, fly)
             if extra: extra(g, p, m)
             return True
@@ -148,8 +149,10 @@ def cycler_land(name, cost, pain=True):
 
         def go():
             if L not in p.lands or L.tapped or not pay_without(g, p, L, cost, ''): return False
-            sac_land(g, p, L); draw(g, p, 1)
-            log(f'  {NAME(p)} sacrifices {name}: draws a card', g); return True
+            sac_land(g, p, L)
+            log(f'  {NAME(p)} sacrifices {name}: draws a card', g)
+            if ability_window(g, p, L.cd, 'draw a card'): draw(g, p, 1)
+            return True
         return [(1.2 if post is None else 0.6, f'{name} draw', go)]
     note(name, 'Full', ('mana costs 1 life; ' if pain else '') + f'{{{cost}}}, T, sacrifice: draw (used when flooded)')
 
@@ -217,7 +220,9 @@ def _ld_land(name, cost, cond, status_text):
             if L not in p.lands or L.tapped or not pay_without(g, p, L, cost, ''): return False
             q, T_ = x
             if T_ not in q.lands: return False
-            sac_land(g, p, L); destroy_land(g, q, T_)
+            sac_land(g, p, L)
+            if not ability_window(g, p, L.cd, f'destroy {T_.cd.name}') or T_ not in q.lands: return True
+            destroy_land(g, q, T_)
             if name == 'Ghost Quarter': land_ramp(g, q, 1, True)
             return True
         return [(2.5, f'{name} -> {x[1].cd.name}', go)]
@@ -238,8 +243,9 @@ def _locthwain(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 1, 'BB'): return False
-        L.tapped = True; draw(g, p, 1); lose_life(g, p, len(p.hand), p)
-        log(f'  {NAME(p)} uses Castle Locthwain', g); return True
+        L.tapped = True; log(f'  {NAME(p)} uses Castle Locthwain', g)
+        if ability_window(g, p, L.cd, 'draw a card'): draw(g, p, 1); lose_life(g, p, len(p.hand), p)
+        return True
     return [(1.5, 'Castle Locthwain', go)]
 note('Castle Locthwain', 'Full', 'enters tapped without another land early; draws at end of turn when life allows')
 
@@ -253,10 +259,11 @@ def _embereth(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 1, 'RR'): return False
-        L.tapped = True
-        for m in p.perms:
-            if m.creature: CI._eot(g, m, 1, 0)
-        log(f'  {NAME(p)} uses Castle Embereth', g); return True
+        L.tapped = True; log(f'  {NAME(p)} uses Castle Embereth', g)
+        if ability_window(g, p, L.cd, 'creatures get +1/+0'):
+            for m in p.perms:
+                if m.creature: CI._eot(g, m, 1, 0)
+        return True
     return [(0.5 + 0.35 * len(ready), 'Castle Embereth', go)]
 note('Castle Embereth', 'Full', '{1}{R}{R},{T}: creatures +1/+0 before an attack with four or more')
 
@@ -269,8 +276,9 @@ def _war_room(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 3, ''): return False
-        L.tapped = True; lose_life(g, p, n, p); draw(g, p, 1)
-        log(f'  {NAME(p)} uses War Room', g); return True
+        L.tapped = True; lose_life(g, p, n, p); log(f'  {NAME(p)} uses War Room', g)
+        if ability_window(g, p, L.cd, 'draw a card'): draw(g, p, 1)
+        return True
     return [(1.3, 'War Room', go)]
 note('War Room', 'Full', '{3},{T}, life = commander colors: draw (at end of an opponent\'s turn)')
 
@@ -284,7 +292,9 @@ def _bastion(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 4, ''): return False
-        L.tapped = True; IC.proliferate(g, p); return True
+        L.tapped = True
+        if ability_window(g, p, L.cd, 'proliferate'): IC.proliferate(g, p)
+        return True
     return [(0.8 + 0.3 * worth, "Karn's Bastion", go)]
 note("Karn's Bastion", 'Full', '{4},{T}: proliferate (at end of turn, when it helps)')
 
@@ -300,8 +310,9 @@ def _ruins(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or c not in p.gy or not pay_without(g, p, L, 1, 'U'): return False
-        L.tapped = True; p.gy.remove(c); p.library.append(c)
-        log(f'  {NAME(p)} puts {c.name} on top with Academy Ruins', g); return True
+        L.tapped = True; log(f'  {NAME(p)} puts {c.name} on top with Academy Ruins', g)
+        if ability_window(g, p, L.cd, f'{c.name} on top') and c in p.gy: p.gy.remove(c); p.library.append(c)
+        return True
     return [(1.5, 'Academy Ruins', go)]
 note('Academy Ruins', 'Full', '{1}{U},{T}: the best artifact from the graveyard on top of the library')
 
@@ -329,10 +340,11 @@ def _vault(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 2, 'WB'): return False
-        L.tapped = True
-        for m in p.perms:
-            if m.creature: g.eot_kw.setdefault(id(m), set()).update(('deathtouch', 'lifelink'))
-        log(f'  {NAME(p)} uses Vault of the Archangel', g); return True
+        L.tapped = True; log(f'  {NAME(p)} uses Vault of the Archangel', g)
+        if ability_window(g, p, L.cd, 'deathtouch and lifelink'):
+            for m in p.perms:
+                if m.creature: g.eot_kw.setdefault(id(m), set()).update(('deathtouch', 'lifelink'))
+        return True
     return [(0.3 * len(ready), 'Vault of the Archangel', go)]
 note('Vault of the Archangel', 'Full', 'deathtouch and lifelink for the team before an attack with three or more')
 
@@ -346,7 +358,9 @@ def _pendelhaven(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped: return False
-        L.tapped = True; CI._eot(g, ones[0], 1, 2); return True
+        L.tapped = True
+        if ability_window(g, p, L.cd, '+1/+2', target=ones[0]) and ones[0] in p.perms: CI._eot(g, ones[0], 1, 2)
+        return True
     return [(0.4, 'Pendelhaven', go)]
 note('Pendelhaven', 'Full', 'taps for {G}; {T}: a 1/1 attacker gets +1/+2 when the mana is not needed')
 
@@ -361,7 +375,9 @@ def _oran(g, L, p, s, post):
     def go():
         if L not in p.lands or L.tapped: return False
         L.tapped = True
-        for m in new: m.plus += 1
+        if ability_window(g, p, L.cd, '+1/+1 counters'):
+            for m in new:
+                if m in p.perms: m.plus += 1
         return True
     return [(0.4 * len(new), 'Oran-Rief', go)]
 note('Oran-Rief, the Vastwood', 'Full', 'enters tapped; {T}: +1/+1 counters on green creatures that entered this turn')
@@ -440,6 +456,7 @@ def _mosswort_play(g, L, p, s, post):
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 0, 'G'): return False
         L.tapped = True; L.data['hidden'] = None
+        if not ability_window(g, p, L.cd, f'play {c.name}'): return True
         if c.land: play_land_card_free(g, p, c)
         else: cast_card(g, p, c, 'lib', {})
         return True

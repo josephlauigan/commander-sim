@@ -17,9 +17,10 @@ def is_artifact(m):
 @on('Urza, Lord High Artificer', 'etb')
 def _urza(g, src, p, m):
     if m is src:
+        g.selfpt = True
+        if not trigger_window(g, src.owner, src, 'create a Construct'): return
         for t in make_tokens(g, src.owner, 1, 0, 0, color='', types=('construct',)):
             t.data = {'construct': True, 'artifact': True}
-        g.selfpt = True
 
 
 @on('Urza, Lord High Artificer', 'extra_mana')
@@ -34,7 +35,9 @@ def _urza_five(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 5, ''): return False
-        pay(g, p, 5, ''); g.rng.shuffle(p.library)
+        pay(g, p, 5, '')
+        if not ability_window(g, p, src, 'shuffle, play the top card free') or not p.library: return True
+        g.rng.shuffle(p.library)
         c = p.library.pop(); log(f'  Urza: {c.name} off the top, free', g)
         if c.land:
             if getattr(p, 'lands_played', 1) < 1: from commander_sim import ais; ais.play_land_card(g, p, c)
@@ -96,6 +99,7 @@ walker('Tezzeret the Seeker', [
 @on('Kappa Cannoneer', 'etb')
 def _kappa(g, src, p, m):
     if m.owner is src.owner and is_artifact(m) and m is not src:
+        if not trigger_window(g, src.owner, src, 'a +1/+1 counter, can\'t be blocked', imp=2): return
         src.plus += 1; g.eot_kw.setdefault(id(src), set()).add('unblockable')
 card('Kappa Cannoneer', 'pow=4 tgh=4', dsl=[], ward=4)
 note('Kappa Cannoneer', 'Approximate', 'ward 4, +1/+1 per artifact entering, unblockable (always, not only that turn); '
@@ -104,7 +108,7 @@ note('Kappa Cannoneer', 'Approximate', 'ward 4, +1/+1 per artifact entering, unb
 
 @on('Sai, Master Thopterist', 'cast')
 def _sai(g, src, caster, c):
-    if caster is src.owner and 'A' in c.types:
+    if caster is src.owner and 'A' in c.types and trigger_window(g, caster, src, 'create a 1/1 Thopter'):
         for t in make_tokens(g, caster, 1, 1, fly=True, color='', types=('thopter',)): t.data = {'artifact': True}
 card('Sai, Master Thopterist', 'leg human pow=1 tgh=4', dsl=[])
 note('Sai, Master Thopterist', 'Partial', 'Thopter per artifact spell; the sacrifice-for-cards ability is not used')
@@ -160,6 +164,7 @@ def _kinnan_act(g, src, p, s, post):
     def go():
         if not can_pay(g, p, 5, 'GU'): return False
         pay(g, p, 5, 'GU')
+        if not ability_window(g, p, src, 'look at the top five'): return True
         top = [p.library.pop() for _ in range(min(5, len(p.library)))]
         hits = [c for c in top if c.creature and 'human' not in c.subtypes]
         if hits:
@@ -213,6 +218,8 @@ note('Elvish Spirit Guide', 'Partial', 'cast as a 2/2; the exile-for-G is not us
 @on('Winota, Joiner of Forces', 'attack')
 def _winota(g, src, p, atk, d):
     if src.owner is not p: return
+    if not any(not has_type(m, 'human') for m in atk): return
+    if not trigger_window(g, p, src, 'look at the top six for a Human', imp=6): return
     new = []
     for a in [m for m in atk if not has_type(m, 'human')]:
         top = [p.library.pop() for _ in range(min(6, len(p.library)))]
@@ -240,6 +247,7 @@ def _kiki(g, src, p, s, post):
     def go():
         if src.tapped or t not in p.perms: return False
         src.tapped = True
+        if not ability_window(g, p, src, f'copy {t.name}', target=t) or t not in p.perms: return True
         c = enter_token_copy(g, p, t.cd)
         if c is not None: c.sick = False; c.temp = True
         return True
@@ -254,6 +262,8 @@ def _felidar(g, src, p, m):
     if m is not src: return
     cands = [x for x in src.owner.perms if x is not src and not x.token and x.cd is not None and blink_value(g, src.owner, x) > 0
              and x.cd.name not in ('Felidar Guardian', 'Restoration Angel')]      # the loop is a combo, not a value blink
+    if not cands or not trigger_window(g, src.owner, src, 'blink a permanent'): return
+    cands = [x for x in cands if x in src.owner.perms]
     if cands: blink(g, src.owner, max(cands, key=lambda x: blink_value(g, src.owner, x)))
 card('Felidar Guardian', 'pow=1 tgh=4', dsl=[])
 note('Felidar Guardian', 'Full', 'blinks your best ETB permanent (Kiki loop is a combo)')
@@ -265,6 +275,7 @@ def _conscripts(g, src, p, m):
     o = src.owner
     t = best_opp_nonland(g, o, lambda x: x.creature)
     if t is not None and pval(g, t) >= 3 and not t.is_cmd:
+        if not trigger_window(g, o, src, f'gain control of {t.name}', imp=6) or t not in t.owner.perms: return
         if __import__('commander_sim.ais', fromlist=['x']).protect_response(g, t.owner, t, 'steal', o, src.cd) or t not in t.owner.perms: return   # targeted: can be answered
         q = t.owner; q.perms.remove(t); t.owner = o; t.tapped = False; t.sick = False; o.perms.append(t)
         g.bf_ver = getattr(g, 'bf_ver', 0) + 1
@@ -275,7 +286,8 @@ note('Zealous Conscripts', 'Approximate', 'steals the best opposing creature unt
 
 @on('Goblin Guide', 'attack')
 def _guide(g, src, p, atk, d):
-    if src in atk and d.library and d.library[-1].land: d.hand.append(d.library.pop())
+    if src in atk and d.library and d.library[-1].land and trigger_window(g, p, src, 'defending player reveals the top card', imp=2):
+        if d.library and d.library[-1].land: d.hand.append(d.library.pop())
 card('Goblin Guide', 'pow=2 haste', dsl=[])
 note('Goblin Guide', 'Full', '')
 card('Signal Pest', 'pow=0 tgh=1', dsl=[], kws={'battle cry'})
@@ -286,7 +298,9 @@ note('Signal Pest', 'Approximate', 'battle cry; its evasion is ignored')
 def _loran(g, src, p, m):
     if m is src:
         t = best_opp_nonland(g, src.owner, lambda x: x.cd is not None and ('A' in x.cd.types or 'E' in x.cd.types))
-        if t is not None and pval(g, t) >= 2: apply_removal(g, src.owner, t, 'destroy')
+        if t is None or pval(g, t) < 2: return
+        if not trigger_window(g, src.owner, src, f'destroy {t.name}', imp=5) or t not in t.owner.perms: return
+        apply_removal(g, src.owner, t, 'destroy')
 card('Loran of the Third Path', 'leg human pow=2 tgh=1 vig', dsl=[])
 note('Loran of the Third Path', 'Partial', 'destroys an artifact/enchantment on entry; the draw ability is not used')
 
@@ -299,7 +313,12 @@ ZUR_PREF = ('Necropotence', 'Ethereal Armor', 'Empyrial Armor', 'Ghostly Prison'
 @on('Zur the Enchanter', 'attack')
 def _zur(g, src, p, atk, d):
     if src not in atk: return
-    if p.key == 'zur': return CI.zur_fetch(g, src, p)          # your Zur deck (cards/impl/zur.py)
+    if p.key == 'zur':                                          # your Zur deck (cards/impl/zur.py)
+        if not trigger_window(g, p, src, 'search for an enchantment', imp=5): return
+        return CI.zur_fetch(g, src, p)
+    have = {m.cd.name for m in p.perms if m.cd is not None}
+    if not any('E' in c.types and c.cmc <= 3 and c.name not in have for c in searchable(g, p)): return
+    if not trigger_window(g, p, src, 'search for an enchantment', imp=5): return
     have = {m.cd.name for m in p.perms if m.cd is not None}
     cs = [c for c in searchable(g, p) if 'E' in c.types and c.cmc <= 3 and c.name not in have]
     if not cs: return
@@ -327,6 +346,7 @@ def _conf_draw(g, src, p): return 1 if p is src.owner else 0
 @on('Solitary Confinement', 'upkeep')
 def _conf_up(g, src, p):
     if p is not src.owner: return
+    if not trigger_window(g, p, src, 'sacrifice unless you discard') or src not in p.perms: return
     if p.hand: discard_worst(g, p, 1)
     else: die(g, src, 'sac')
 card('Solitary Confinement', '', types='E', dsl=[])
@@ -371,6 +391,7 @@ def _yawg(g, src, p, s, post):
         def go(m=m):
             if m not in p.perms or p.life <= 8: return False
             lose_life(g, p, 1, p); die(g, m, 'sac')
+            if not ability_window(g, p, src, 'a -1/-1 counter, draw a card'): return True
             t = [x for q in g.opps(p) for x in q.perms if x.creature and etgh(g, x) <= 1 and not untargetable(g, x)]
             if t:
                 x = max(t, key=lambda x: (pval(g, x), epow(g, x))); E.minus_counter(g, x)
@@ -381,7 +402,9 @@ def _yawg(g, src, p, s, post):
     if can_pay(g, p, 0, 'BB') and p.hand and any(m.plus > 0 or m.loyalty for m in p.perms) and post is True:
         def prol():
             if not can_pay(g, p, 0, 'BB') or not p.hand: return False
-            pay(g, p, 0, 'BB'); discard_worst(g, p, 1); IC.proliferate(g, p); return True
+            pay(g, p, 0, 'BB'); discard_worst(g, p, 1)
+            if ability_window(g, p, src, 'proliferate'): IC.proliferate(g, p)
+            return True
         out.append((1.0, 'Yawgmoth: proliferate', prol))
     return out
 @on('Yawgmoth, Thran Physician', 'defend')
@@ -430,7 +453,9 @@ def _wishclaw(g, src, p, s, post):
 
     def go():
         if src.tapped or not can_pay(g, p, 1, ''): return False
-        pay(g, p, 1, ''); src.tapped = True; tutor(g, p, 'any')
+        pay(g, p, 1, ''); src.tapped = True
+        if not ability_window(g, p, src, 'search for a card', imp=7): return True
+        tutor(g, p, 'any')
         opp = max(g.opps(p), key=lambda q: threat(g, p, q))
         p.perms.remove(src); src.owner = opp; opp.perms.append(src); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
         return True

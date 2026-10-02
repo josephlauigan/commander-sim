@@ -33,7 +33,7 @@ class Responding(unittest.TestCase):
         self.assertFalse(opp_casts(g, v, 'Guttersnipe'))
         self.assertFalse(any(m.name == 'Guttersnipe' for m in v.perms))
         self.assertIn(E.DB['Counterspell'], s.gy)
-        self.assertEqual(ctl.asked[0].data['stack'], [{'name': 'Guttersnipe'}])
+        self.assertEqual([x['name'] for x in ctl.asked[0].data['stack']], ['Guttersnipe'])
 
     def test_pass_and_it_resolves(self):
         g = table('veyran', 'sauron'); v, s = g.players
@@ -73,8 +73,11 @@ class Responding(unittest.TestCase):
         sheo = hand(s, 'Sheoldred, the Apocalypse')
         hand(s, 'Counterspell'); lands(s, 'Island', 2); tap_all(g, s)
         ctr = hand(v, 'Counterspell'); lands(v, 'Island', 2)
-        seat(g, s, [{'do': 'cast', 'card': 1}])            # hand: Sheoldred, Counterspell
-        self.assertFalse(E._counter_resolves(g, v, s, sheo, ctr, 7))
+        seat(g, s, [{'do': 'cast', 'card': 1}, 0])         # hand: Sheoldred, Counterspell; target: their counterspell
+        item = E.StackItem(s, sheo, {}, 'hand', 7, {})
+        g.stack.append(item)                               # Sheoldred is on the stack; Veyran counters it
+        self.assertTrue(E.cast_counter_spell(g, v, ctr, item))
+        self.assertFalse(item.countered)                   # you countered the counterspell
         self.assertEqual(s.stats['counterwar_won'], 1)
 
     def test_priority_when_attacked(self):

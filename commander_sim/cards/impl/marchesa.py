@@ -321,7 +321,7 @@ def _enslave_upkeep(g, src, p):
     """at the beginning of your upkeep, the enchanted creature deals 1 damage to its owner"""
     h = src.attached
     if p is not src.owner or h is None or h not in src.owner.perms or not h.orig.alive or h.orig is src.owner: return
-    lose_life(g, h.orig, 1, src.owner, kind='triggers', damage=True)
+    if trigger_window(g, p, src, f'1 damage to {NAME(h.orig)}'): lose_life(g, h.orig, 1, src.owner, kind='triggers', damage=True)
 
 
 @on('Enslave', 'leaves')
@@ -349,6 +349,7 @@ def _gy_creatures(p):
 def _enervation(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'a creature gets -4/-4'): return
     src.data = dict(src.data or {}, gy=_gy_creatures(o))
     if _you(g, o):
         t = _you(g, o).pick_creature(g, o, 'Soul Enervation: which creature gets -4/-4?')
@@ -409,17 +410,19 @@ def _salvage(g, src):
 @on('Al Bhed Salvagers', 'dies')
 def _salvagers_dies(g, src, m, cause):
     if m is src or m.owner is not src.owner or src not in src.owner.perms or src.phased: return
-    if m.creature or (m.cd is not None and 'A' in m.cd.types): _salvage(g, src)
+    if (m.creature or (m.cd is not None and 'A' in m.cd.types)) and trigger_window(g, src.owner, src, 'an opponent loses 1 life'):
+        _salvage(g, src)
 
 
 @on('Al Bhed Salvagers', 'self_dies')
 def _salvagers_self(g, m, cause):
-    _salvage(g, m)
+    if trigger_window(g, m.owner, m, 'an opponent loses 1 life'): _salvage(g, m)
 
 
 @on('Al Bhed Salvagers', 'sacrifice')
 def _salvagers_treasure(g, src, p, what):
-    if p is src.owner and what in ('Treasure', 'Clue', 'Food') and src in p.perms and not src.phased: _salvage(g, src)
+    if p is src.owner and what in ('Treasure', 'Clue', 'Food') and src in p.perms and not src.phased \
+            and trigger_window(g, p, src, 'an opponent loses 1 life'): _salvage(g, src)
 card('Al Bhed Salvagers', 'human warrior pow=2 tgh=3', types='C', dsl=[])
 full('Al Bhed Salvagers', 'whenever it or another creature or artifact you control dies (Treasures too): the opponent '
      'nearest death loses 1 life and you gain 1')
@@ -432,6 +435,7 @@ def _spy(g, src, p, m):
     """target player reveals until a land and mills the rest: you, when the graveyard feeds reanimation"""
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'a player reveals until a land'): return
     rean = any(c.tags.get('rean') or 'unearth' in c.tags or c.name in ('Phyrexian Delver', 'Zombify') for c in o.hand) \
         or any(x.cd is not None and x.cd.name == 'Grave Researcher // Reanimate' for x in o.perms)
     q = o if (rean and len(o.library) >= 25) else max(g.opps(o), key=lambda x: threat(g, o, x), default=o)
@@ -457,14 +461,15 @@ def _relic_charge(g, src, p):
     src.tapped = True
     if held and not any(can_pay(g, p, c.generic, c.pips) for c in held):
         src.tapped = False; return                  # it would cost the held-up instant: keep it untapped
-    src.data = dict(src.data or {}, charge=(src.data or {}).get('charge', 0) + 1)
+    if ability_window(g, p, src, 'a charge counter'): src.data = dict(src.data or {}, charge=(src.data or {}).get('charge', 0) + 1)
 
 
 @on('Coalition Relic', 'upkeep')
 def _relic_release(g, src, p):
     """at the beginning of your precombat main phase: one mana of any colour per charge counter"""
     k = (src.data or {}).get('charge', 0)
-    if p is src.owner and k:
+    if p is src.owner and k and trigger_window(g, p, src, f'{k} mana of any colour'):
+        k = (src.data or {}).get('charge', 0)
         src.data['charge'] = 0; p.floatA += k
 card('Coalition Relic', 'rock=1:A', types='A', dsl=[])
 full('Coalition Relic', '{T}: one mana of any colour; untapped at your end step it takes a charge counter instead '
@@ -472,29 +477,31 @@ full('Coalition Relic', '{T}: one mana of any colour; untapped at your end step 
 
 
 # ------------------------------------------------------------------ Relic of Legends
+def _legends_to_tap(g, p):
+    """untapped legendary creatures whose tapping costs nothing: summoning sick, or after combat"""
+    return [m for m in p.perms if m.creature and not m.tapped and not m.phased and m.cd is not None and IM.is_legendary(g, m)
+            and (m.sick or g.active is not p or g.step in ('main2', 'end') or m.noatk)]
+
+
 def _legend_to_tap(g, p):
-    """an untapped legendary creature whose tapping costs nothing: summoning sick, or after combat"""
-    for m in p.perms:
-        if (m.creature and not m.tapped and not m.phased and m.cd is not None and IM.is_legendary(g, m)
-                and (m.sick or g.active is not p or g.step in ('main2', 'end') or m.noatk)):
-            return m
-    return None
+    ls = _legends_to_tap(g, p)
+    return ls[0] if ls else None
 
 
 @on('Relic of Legends', 'etb')
 def _relic_legends_live(g, src, p, m): pass            # registers the card so its mana hook is live
 
 
-CI.DYN_MANA['Relic of Legends'] = lambda g, p, m: 1 + (1 if _legend_to_tap(g, p) is not None else 0)
+CI.DYN_MANA['Relic of Legends'] = lambda g, p, m: 1 + (len(_legends_to_tap(g, p)) if human_choice(g, p) is None else 0)
 
 
 def _relic_legends_tap(g, p, m, used):
-    if used >= 2:
-        x = _legend_to_tap(g, p)
-        if x is not None: x.tapped = True
+    """the AI taps one spare legend per extra mana (the person uses Relic's second ability themselves)"""
+    if human_choice(g, p) is not None: return
+    for x in _legends_to_tap(g, p)[:max(0, used - 1)]: x.tapped = True
 CI.ON_TAP['Relic of Legends'] = _relic_legends_tap
-full('Relic of Legends', '{T}: one mana of any colour; tapping an untapped legendary creature adds another (only one '
-     'that would not attack anyway: summoning sick, or after combat)')
+full('Relic of Legends', '{T}: one mana of any colour; tap an untapped legendary creature you control: one more (the '
+     'AI taps those that would not attack anyway: summoning sick, or after combat)')
 
 
 # ------------------------------------------------------------------ Gemstone Mine, Vivid lands
@@ -536,7 +543,9 @@ IC.SELF_PT['Crackling Drake'] = lambda g, p, m: (sum(1 for c in m.orig.gy + m.or
 
 @on('Crackling Drake', 'etb')
 def _drake(g, src, p, m):
-    if m is src: g.selfpt = True; draw(g, src.owner, 1)
+    if m is src:
+        g.selfpt = True
+        if trigger_window(g, src.owner, src, 'draw a card'): draw(g, src.owner, 1)
 card('Crackling Drake', 'pow=0 tgh=4 fly', types='C', dsl=[])
 full('Crackling Drake', 'flying; power = instants and sorceries you own in graveyard and exile; enters: draw a card')
 
@@ -657,6 +666,7 @@ full('Lethal Throwdown', 'sacrifice a creature (the cheapest to lose: one Marche
 def _festering(g, m, cause):
     """when it dies, target creature gets -1/-1 until end of turn"""
     p = m.owner
+    if not trigger_window(g, p, m, 'a creature gets -1/-1'): return
     if _you(g, p):
         t = _you(g, p).pick_creature(g, p, 'Festering Goblin: which creature gets -1/-1 until end of turn?')
         if t is not None: _eot(g, t, -1, -1); check_state(g)
@@ -677,6 +687,7 @@ def _forge_devil(g, src, p, m):
     """1 damage to target creature and 1 damage to you (the target is mandatory)"""
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, '1 damage to a creature and to you'): return
     if _you(g, o):
         t = _you(g, o).pick_creature(g, o, 'Forge Devil: 1 damage to which creature?')
         if t is not None: _you(g, o)._damage(g, o, t, 1, 'Forge Devil', 'triggers')
@@ -697,6 +708,7 @@ full('Forge Devil', 'enters: 1 damage to a creature (an opposing X/1 when there 
 def _researcher(g, src, p):
     """your upkeep: surveil 1, then with three or more creature cards in your graveyard it becomes prepared"""
     if p is not src.owner or src.phased: return
+    if not trigger_window(g, p, src, 'surveil 1'): return
     from commander_sim.cards.impl import topdeck
     topdeck.scry(g, p, 1, to='gy')
     if sum(1 for c in p.gy if c.creature) >= 3: src.data = dict(src.data or {}, prepared=True)
@@ -720,7 +732,7 @@ def _researcher_cast(g, src, p, s, post):
             if cd not in q.gy: return
             if g.hooks and CI.gy_response(g, p, v, q): return
             q.gy.remove(cd); enter(g, p, cd, orig=q); lose_life(g, p, cd.cmc, p)
-        cast_copy(g, p, eff)
+        cast_copy(g, p, eff, name='Reanimate', instant=False, imp=max(5, v))
         return True
     return [(v * 0.9 * (1 - 0.35 * s.ctr_risk), f'Reanimate (prepared copy) -> {cd.name}', go)]
 
@@ -740,6 +752,7 @@ def _delver(g, src, p, m):
     """return target creature card from your graveyard to the battlefield; lose life equal to its mana value"""
     if m is not src: return
     o = src.owner
+    if not any(c.creature for c in o.gy) or not trigger_window(g, o, src, 'return a creature card'): return
     if _you(g, o):
         cs = [c for c in o.gy if c.creature]
         if not cs: return
@@ -770,8 +783,10 @@ def _pteramander(g, src, p, s, post):
 
     def go():
         if src not in p.perms or src.plus > 0 or not can_pay(g, p, n, 'U'): return False
-        pay(g, p, n, 'U'); src.plus += 4
-        log(f'  {NAME(p)} adapts Pteramander (4 counters)', g); return True
+        pay(g, p, n, 'U')
+        log(f'  {NAME(p)} adapts Pteramander (4 counters)', g)
+        if ability_window(g, p, src, 'adapt 4') and src in p.perms and src.plus <= 0: src.plus += 4
+        return True
     return [(2.0 + (1.5 if marchesa_out(p) else 0) - 0.25 * n, 'Pteramander: adapt 4', go)]
 card('Pteramander', 'pow=1 tgh=1 fly', types='C', dsl=[])
 full('Pteramander', 'flying; {7}{U}, {1} less per instant and sorcery in your graveyard: adapt 4')
@@ -780,7 +795,7 @@ full('Pteramander', 'flying; {7}{U}, {1} less per instant and sorcery in your gr
 # ------------------------------------------------------------------ Skullport Merchant
 @on('Skullport Merchant', 'etb')
 def _merchant(g, src, p, m):
-    if m is src: add_treasure(g, src.owner, 1)
+    if m is src and trigger_window(g, src.owner, src, 'a Treasure'): add_treasure(g, src.owner, 1)
 
 
 @on('Skullport Merchant', 'options')
@@ -797,7 +812,8 @@ def _merchant_draw(g, src, p, s, post):
         if not p.treasures: return True
         p.treasures -= 1
         if g.hooks: CI.fire(g, 'sacrifice', p, 'Treasure')
-        draw(g, p, 1); return True
+        if ability_window(g, p, src, 'draw a card'): draw(g, p, 1)
+        return True
     return [(1.2 if post is None else 0.6, 'Skullport Merchant (sacrifice a Treasure): draw', go)]
 card('Skullport Merchant', 'pow=1 tgh=4', types='C', dsl=[])
 full('Skullport Merchant', 'enters: a Treasure; {1}{B}, sacrifice another creature or a Treasure: draw a card')
@@ -881,7 +897,7 @@ full('Crux of Fate', 'destroy all Dragons or all non-Dragon creatures, whichever
 def _tyrant(g, src, p):
     if p is not src.owner or src.phased: return
     n = sum(1 for m in p.perms if m.cd is not None and 'A' in m.cd.types) + p.treasures + p.clues + getattr(p, 'food', 0)
-    if n >= 20:
+    if n >= 20 and trigger_window(g, p, src, 'win the game', imp=10):
         log(f'  {NAME(p)} controls {n} artifacts: Hellkite Tyrant wins the game', g)
         from commander_sim import ais
         ais.win(g, p, 'alt')
@@ -894,6 +910,7 @@ note('Hellkite Tyrant', 'Full', 'flying, trample; combat damage to a player take
 def _marauder(g, src, p, m):
     """each player sacrifices a nontoken creature of their choice (the one cheapest to lose: Marchesa's returns)"""
     if m is not src: return
+    if not trigger_window(g, src.owner, src, 'each player sacrifices a creature', imp=5): return
     for q in g.players:
         if not q.alive: continue
         cr = [x for x in q.perms if x.creature and not x.phased and not x.token]

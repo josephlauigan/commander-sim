@@ -136,11 +136,23 @@ def players(g, p, w, ctx=None):
 HARMFUL = ('destroy', 'exile', 'bounce', 'tuck', 'damage', 'tap')
 
 
+def _ask_target(g, p, hc, cands, sel, src, spell):
+    from commander_sim.play import legal
+    what = getattr(spell or src, 'name', None) or getattr(getattr(src, 'cd', None), 'name', 'An ability')
+    k = hc.choose(g, p, 'target', f'{what}: choose a target', [legal.describe_target(g, p, m) for m in cands],
+                  cancel='no target' if sel.get('upto') else None)
+    return cands[k] if k is not None else None
+
+
 def choose_target(g, p, sel, harmful, ctx, src=None, spell=None):
-    """pick the most sensible legal target (or reuse the one the AI picked when casting)"""
+    """pick the most sensible legal target (or reuse the one the AI picked when casting); the person picks their own"""
     f = dict(sel.get('filter') or {})
     pre = ctx.get('target')
     if pre is not None and pre in pre.owner.perms and matches(g, p, pre, f, src): return pre
+    if harmful and E.human_choice(g, p) is not None:
+        cands = [m for q in g.players if q.alive for m in q.perms if matches(g, p, m, f, src)
+                 and not (m.owner is not p and (untargetable(g, m) or E.protected_from(g, m, spell.pips if spell is not None else '')))]
+        return _ask_target(g, p, E.human_choice(g, p), cands, sel, src, spell) if cands else None
     cands = []
     for q in g.players:
         if not q.alive: continue
@@ -156,6 +168,9 @@ def choose_target(g, p, sel, harmful, ctx, src=None, spell=None):
         if f.get('controller') != 'you': return None
         return min(cands, key=lambda m: pval(g, m)) if cands else None     # a cost on your own: the least valuable
     mine = [m for m in cands if m.owner is p]
+    hc = E.human_choice(g, p)
+    if hc is not None and cands:                                           # practice mode: the person picks
+        return _ask_target(g, p, hc, cands, sel, src, spell)
     return max(mine, key=lambda m: pval(g, m)) if mine else (max(cands, key=lambda m: pval(g, m)) if cands else None)
 
 
@@ -338,6 +353,10 @@ def run(g, p, e, src, ctx, spell, depth):
             cands = [m for m in p.perms if m.creature and m.cd is not None and not m.phased and m.cd is not p.cmd
                      and (etb_value(m.cd) > 0) and matches(g, p, m, sel.get('filter'), src)]
             ms = [max(cands, key=lambda m: etb_value(m.cd))] if cands else []
+            if E.human_choice(g, p) is not None:                               # practice mode: any of yours, or none
+                mine = [m for m in p.perms if m.creature and not m.phased and matches(g, p, m, sel.get('filter'), src)]
+                t = _ask_target(g, p, E.human_choice(g, p), mine, dict(sel, upto=True), src, spell) if mine else None
+                ms = [t] if t is not None else []
         else:
             ms = select(g, p, sel, False, ctx, src, spell)
         for m in ms:
@@ -453,10 +472,10 @@ def fire(g, event, **kw):
                     if a.get('type') != 'triggered' or a.get('event') != event: continue
                     if src is x and src not in q.perms and a.get('source') != 'self': continue
                     reps = trigger_copies(g, q, src, event, kw)
-                    for ctx in trigger_matches(g, q, src, a, kw):
-                        for _ in range(reps):
-                            execute(g, q, a['effects'], src, ctx)
-                            if g.over: return
+                    entries = [E.Trigger(q, src, execute, (g, q, a['effects'], src, ctx), event, name='trigger', known=True)
+                               for ctx in trigger_matches(g, q, src, a, kw) for _ in range(reps)]
+                    E.queue_triggers(g, entries)                     # on the stack (or once the spell resolving is done)
+                    if g.over: return
     finally:
         g.dsl_depth = depth
 
@@ -756,6 +775,8 @@ def ability_options(g, p, sorcery_ok=True):
                     u0 = p.flag_turn.get(key + 'n', (None, 0))
                     p.flag_turn[key + 'n'] = (stamp, (u0[1] + 1) if u0[0] == stamp else 1)
                     log(f'  {NAME(p)} activates {src.name}', g)
+                    if not all(e.get('do') == 'add_mana' for e in a['effects']) and \
+                            not E.ability_window(g, p, src, 'ability'): return True     # countered (mana abilities skip the stack)
                     execute(g, p, a['effects'], src, {})
                     return True
                 out.append((u, f'{src.name} ability', go))
@@ -771,6 +792,7 @@ def ability_options(g, p, sorcery_ok=True):
                         if getattr(src, 'loyalty_used', None) == (g.round, p.key) or src not in p.perms: return False
                         src.loyalty_used = (g.round, p.key); src.loyalty += a['loyalty']
                         log(f'  {NAME(p)} uses {src.name} ({a["loyalty"]:+d})', g)
+                        if not E.ability_window(g, p, src, f'{a["loyalty"]:+d}'): return True
                         execute(g, p, a['effects'], src, {})
                         if src.loyalty <= 0 and src in p.perms: leave(g, src); p.gy.append(src.cd)
                         return True
@@ -799,8 +821,11 @@ def equip_options(g, p):
 
         def go(src=src, best=best, n=n):
             if not can_pay(g, p, n, '') or best not in p.perms: return False
-            pay(g, p, n, ''); src.attached = best
-            log(f'  {NAME(p)} equips {src.name} to {best.name}', g); return True
+            pay(g, p, n, '')
+            log(f'  {NAME(p)} equips {src.name} to {best.name}', g)
+            if E.ability_window(g, p, src, f'equip to {best.name}', target=best) and best in p.perms and src in p.perms:
+                src.attached = best
+            return True
         out.append((u, f'equip {src.name}', go))
     return out
 

@@ -37,40 +37,162 @@ def human_main(g, p, post):
         if why: ctl.tell('invalid', why)
 
 
+def stack_view(g):
+    """the stack for the page, top first: each item's card, controller and what it targets"""
+    out = []
+    for it in reversed(g.stack):
+        d = {'name': it.card.name if it.card is not None else it.name, 'controller': E.NAME(it.controller),
+             'key': it.controller.key, 'kind': it.kind}
+        if it.kind != 'spell': d['text'] = it.name
+        t = it.ctx.get('counter')
+        if t is not None: d['target'] = t.card.name
+        elif it.ctx.get('target') is not None: d['target'] = getattr(it.ctx['target'], 'name', '')
+        out.append(d)
+    return out
+
+
+AUTOPASS = ('respond', 'stack', 'all')     # stop when I can respond (the default) / on every stack item / every step
+
+
+def autopass(g, q):
+    """q's auto-pass setting: 'respond' (asked only when you could do something, plus opponents' spells, attacks on
+    you and the end of each other turn), 'stack' (every spell, ability and trigger too) or 'all' (every step)"""
+    ctl = controller_of(g, q)
+    mode = getattr(ctl, 'autopass', None)
+    return mode if mode in AUTOPASS else 'respond'
+
+
+def stack_priority(g, q, item):
+    """q (the person) gets priority with something on the stack. Your own spell: only when you hold a card that
+    copies it, or with auto-pass off; anyone else's: always. An ability or trigger: when you could do something about
+    it, or always with auto-pass at 'stack' or 'all'"""
+    mode = autopass(g, q)
+    top = g.stack[-1] if g.stack else item
+    if top.kind != 'spell':
+        if top.controller is q and mode != 'all': return
+        if mode == 'respond' and not can_respond(g, q): return
+        if top.controller is q: who = 'You activate' if top.kind == 'ability' else 'Your trigger:'
+        else: who = E.NAME(top.controller) + (' activates' if top.kind == 'ability' else ' has a trigger:')
+        respond(g, q, f'{who} {top.name}', spell=top.card, caster=top.controller)
+        return
+    if top.controller is q and mode != 'all' and not E._copy_window(g, q, top.card): return
+    who = 'You cast' if top.controller is q else f'{E.NAME(top.controller)} casts'
+    t = top.ctx.get('counter')
+    what = f'{top.card.name} (countering {t.name})' if t is not None else top.card.name
+    respond(g, q, f'{who} {what}', spell=top.card, caster=top.controller)
+
+
+def step_priority(g, q, step, defender=None, attackers=()):
+    """q (the person) has priority in a step of the turn (engine.step_priority), when their auto-pass setting stops
+    there: with 'all', every step; otherwise when attacked, at the end of each other player's turn, and in the declare
+    blockers step of a combat they're in when they could do something"""
+    a = g.active
+    mode = autopass(g, q)
+    if mode != 'all':
+        if step == 'end': stop = a is not q
+        elif step == 'attackers': stop = q is defender
+        elif step == 'blockers': stop = (q is a or q is defender) and can_act(g, q)
+        else: stop = False
+        if not stop: return
+    if step == 'end': prompt = 'End of your turn' if a is q else f"End of {E.NAME(a)}'s turn"
+    elif step == 'attackers' and q is defender:
+        prompt = f'{E.NAME(a)} attacks you with {len(attackers)} creature(s) ({sum(E.epow(g, m) for m in attackers)} power)'
+    else:
+        prompt = f"{'Your' if a is q else E.NAME(a) + chr(39) + 's'} {E.STEP_NAMES[step]}"
+    respond(g, q, prompt)
+
+
+def can_act(g, q):
+    """anything q could do at instant speed now: an instant or flash card they can afford, or an ability"""
+    if can_respond(g, q): return True
+    from commander_sim.play import abilities, cards
+    g.responding = getattr(g, 'responding', 0) + 1           # instant speed: sorcery-speed abilities aren't offered
+    try:
+        def usable(x, labels):                               # a tapped permanent's {T} abilities don't count
+            return any(not (x.tapped and '{T}' in lbl) for lbl in labels)
+        for m in q.perms:
+            if m.phased or m.cd is None: continue
+            if usable(m, [lbl for lbl, _ in abilities.permanent_abilities(g, q, m) + (cards.abilities(g, q, m) or [])]):
+                return True
+        return any(usable(L, [lbl for lbl, _ in abilities.land_abilities(g, q, L)]) for L in q.lands)
+    finally:
+        g.responding -= 1
+
+
+def can_respond(g, q):
+    """does q hold anything to do at instant speed right now (an instant or flash card they can afford, an ability
+    counter)?"""
+    have = E.total_mana(g, q) + mana.pool_of(q).total()
+    if any((c.instant or 'flash' in c.tags or 'flash' in getattr(c, 'kws', ())) and c.cmc <= have and not c.land for c in q.hand):
+        return True
+    return any(m.cd is not None and m.cd.name in E.ABILITY_ANSWERS for m in q.perms)
+
+
 def respond(g, q, prompt, spell=None, caster=None):
     """q (the person) has priority in response to something (a spell on the stack, attackers, the end of a turn).
-    They may tap mana, cast instants and flash spells, use instant-speed abilities, or pass. Returns the counterspell
-    they cast at `spell` (the engine then counters it), or None when they pass"""
+    They may tap mana, cast instants and flash spells (a counterspell goes on the stack aimed at a spell there), use
+    instant-speed abilities, or pass. Returns once they pass, or once something they did went on the stack (it has
+    resolved by then, after its own round of priority)"""
     ctl = controller_of(g, q)
-    stack = [{'name': spell.name}] if spell is not None else []
     order = []                                               # who gets priority on it, in turn order after the caster
     if caster is not None:
         order = [{'key': x.key, 'name': E.NAME(x)} for x in g.after(caster) if x.alive]
     g.responding = getattr(g, 'responding', 0) + 1           # something is waiting to resolve: no sorcery-speed play
     try:
         while not g.over and q.alive:
+            stack = stack_view(g) if g.stack else ([{'name': spell.name}] if spell is not None else [])
             act = ctl.ask(Request('priority', f'{prompt}. You have priority',
                                   data={'view': build_view(g, q.key), 'stack': stack, 'order': order,
                                         'caster': None if caster is None else E.NAME(caster)}))
             if not isinstance(act, dict): act = {}
             if act.get('do') == 'pass': return None
-            if act.get('do') == 'cast' and spell is not None and act.get('zone') != 'cmd':
+            n = getattr(g, 'stack_pushes', 0)
+            if act.get('do') == 'cast' and g.stack and act.get('zone') != 'cmd':
                 c = _hand_card(q, act)
                 if c is not None and 'ctr' in c.tags:
-                    why = legal.check_counter(g, q, c, spell)
+                    why = cast_counterspell(g, q, c)
                     if why: ctl.tell('invalid', why); continue
-                    return c
+                    return None
                 from commander_sim.play import cards
                 if c is not None and cards.copy_card(c):          # Return the Favor, Dualcaster Mage: copy the spell
+                    top = g.stack[-1]
                     why = legal.check_cast(g, q, c) if c.name != 'Return the Favor' else None
-                    why = why or cards.copy_in_response(g, q, c, spell, caster or g.active)
+                    why = why or cards.copy_in_response(g, q, c, top.card, top.controller)
                     if why: ctl.tell('invalid', why)
                     continue
             why = apply(g, q, act)
             if why: ctl.tell('invalid', why)
+            if getattr(g, 'stack_pushes', 0) != n and g.stack: return None    # it went on the stack and resolved
         return None
     finally:
         g.responding -= 1
+
+
+def cast_counterspell(g, q, c):
+    """q casts counterspell c at a spell on the stack (the top one, or one they pick when there are several it can
+    counter). None, or why not"""
+    cands = [it for it in reversed(g.stack) if it.controller is not q or len(g.stack) > 1]
+    cands = [it for it in cands if E.counter_ok(c, it.card) and E.counterable(g, it)]
+    if not cands: return f"{c.name} can't counter anything on the stack."
+    it = cands[0]
+    if len(cands) > 1:
+        k = choose(g, q, 'target', f'{c.name}: counter which spell?',
+                   [f"{x.card.name} ({E.NAME(x.controller)})" for x in cands])
+        if k is None: return 'Cancelled.'
+        it = cands[k]
+    why = legal.check_counter(g, q, c, it.card)
+    if why: return why
+    alt = legal.alternative_counter_cost(g, q, c)
+    gen, pips = E.counter_cost(c, it.card)
+    if mana.cost_problem(g, q, gen, pips) is None:            # pay from your pool
+        mana.pay_from_pool(g, q, gen, pips)
+        g.free_counter = True                                 # already paid
+    elif not alt: return f"Can't cast {c.name}. {mana.cost_problem(g, q, gen, pips)}"
+    try:
+        if not E.cast_counter_spell(g, q, c, it): return f"{c.name} couldn't be cast."
+    finally:
+        g.free_counter = False
+    return None
 
 
 def humans(g):
@@ -96,6 +218,7 @@ def apply(g, p, act):
         if c is None: return 'There is no such card in your graveyard.'
         why = legal.check_land_gy(g, p, c)
         if why: return why
+        if not (getattr(p, 'yawg', False) and id(c) in getattr(p, 'yawg_gy', {})): E.CI.muld_mark(g, p, 'L')   # Muldrotha
         p.gy.remove(c); ais.play_land_card(g, p, c, 'plays from the graveyard'); E.check_state(g)
         return None
     if do == 'cast' and act.get('zone') == 'gy':
@@ -211,8 +334,9 @@ def use(g, p, m):
         why = legal.check_equip(g, p, m, cre[j])
         if why: return why
         mana.pay_from_pool(g, p, legal.equip_cost(m), '')
-        m.attached = cre[j]
         E.log(f'  {E.NAME(p)} equips {m.name} to {cre[j].name}', g)
+        if E.ability_window(g, p, m, f'equip to {cre[j].name}', target=cre[j]) and cre[j] in p.perms and m in p.perms:
+            m.attached = cre[j]
         return None
     if kind == 'extra': return fn(g, p, m)
     if not fn(): return f"{label}: that can't be done right now."
@@ -240,6 +364,12 @@ def cast(g, p, c, zone):
     if zone == 'gy':
         _, gen, pips = legal.gy_mode(g, p, c)
         if gymode == 'escape': zone = 'escape'               # Underworld Breach: back to the graveyard afterwards
+        if gymode == 'muldrotha':                            # which of its types this uses up (an artifact creature ...)
+            ts = E.CI.muld_types(g, p, c)
+            names = dict(E.CI.MULD_TYPES)
+            k = choose(g, p, 'choose', f'{c.name}: cast it with Muldrotha as which type?', [names[t] for t in ts]) if len(ts) > 1 else 0
+            if k is None: return None
+            ctx['muld_type'] = ts[k]; zone = 'mgy'
     if 'wipe' in c.tags and 'rem' in c.tags:                 # overload (Cyclonic Rift, Vandalblast)
         og, op = ais.wipe_cost(p, c)
         over = f'overloaded ({mana.cost_text(og, op)}): every one you don\'t control'
@@ -338,10 +468,12 @@ def cast(g, p, c, zone):
         k = choose(g, p, 'choose', f'{c.name}: choose X (it costs {{X}}{{X}}{{X}} more; 5X damage to each of up to X targets)',
                    [f'X = {x}' for x in range(top + 1)], cancel=None)
         mana.pay_from_pool(g, p, 3 * k, ''); ctx['x'] = k
-    if 'tokx' in c.tags or 'xtutor' in c.tags:              # X: everything left in the pool (automatic for now)
-        x = mana.pool_of(p).total(); mana.pool_of(p).empty(); ctx['x'] = x
+    if 'tokx' in c.tags or 'xtutor' in c.tags:              # X: up to what's left in the pool
+        top = mana.pool_of(p).total()
+        x = choose(g, p, 'choose', f'{c.name}: choose X (paid from what is left in your pool)',
+                   [f'X = {x}' for x in range(top + 1)], cancel=None) if top else 0
+        mana.pay_from_pool(g, p, x, ''); ctx['x'] = x
         if 'xtutor' in c.tags: g.last_x = x
-        ctl.tell('auto', f'X = {x} (the rest of your mana pool)')
     if c.dsl: E.additional_cost(g, p, c)
     if fodder is not None:
         E.log(f'  {E.NAME(p)} sacrifices {fodder.name} for {c.name}', g); E.die(g, fodder, 'sac')

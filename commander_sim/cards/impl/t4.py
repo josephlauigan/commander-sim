@@ -103,6 +103,8 @@ def _ninja(m):
 @on('Yuriko, the Tiger\'s Shadow', 'combat_damage')
 def _yuriko(g, src, p, a, d, dmg):
     if a.owner is not src.owner or not _ninja(a) or not p.library: return
+    if not trigger_window(g, src.owner, src, 'reveal the top card, each opponent loses its mana value', imp=5): return
+    if not p.library: return
     c = p.library.pop(); p.hand.append(c); p.seen_names.add(c.name)
     if c.cmc:
         for q in g.opps(p): lose_life(g, q, c.cmc, p, kind='triggers')
@@ -145,43 +147,49 @@ for _n, (_g, _p) in NINJUTSU.items():
 
 @on('Ingenious Infiltrator', 'combat_damage')
 def _infiltrator(g, src, p, a, d, dmg):
-    if a.owner is src.owner and _ninja(a): draw(g, src.owner, 1)
+    if a.owner is src.owner and _ninja(a) and trigger_window(g, src.owner, src, 'draw a card'): draw(g, src.owner, 1)
 
 
 @on('Mistblade Shinobi', 'combat_damage')
 def _mistblade(g, src, p, a, d, dmg):
     if a is src:
         t = max([m for m in d.perms if m.creature and not untargetable(g, m)], key=lambda m: pval(g, m), default=None)
-        if t is not None: bounce(g, t)
+        if t is not None and trigger_window(g, src.owner, src, f'return {t.name} to hand', imp=5) and t in d.perms:
+            bounce(g, t)
 
 
 @on('Moon-Circuit Hacker', 'combat_damage')
 def _hacker(g, src, p, a, d, dmg):
-    if a is src: draw(g, p, 1)
+    if a is src and trigger_window(g, p, src, 'draw a card'): draw(g, p, 1)
 
 
 @on('Prosperous Thief', 'combat_damage')
 def _thief(g, src, p, a, d, dmg):
-    if a.owner is src.owner and (_ninja(a) or has_type(a, 'rogue')) and once_per_turn(g, p, f'thief{id(src)}{id(d)}'):
+    k = f'thief{id(src)}{id(d)}'
+    if a.owner is src.owner and (_ninja(a) or has_type(a, 'rogue')) and p.flag_turn.get(k) != (g.round, g.active and g.active.key) \
+            and trigger_window(g, p, src, 'create a Treasure') and once_per_turn(g, p, k):
         make_artifact_tokens(g, p, 'Treasure', 1)
 
 
 @on('Mist-Syndicate Naga', 'combat_damage')
 def _naga(g, src, p, a, d, dmg):
-    if a is src: enter_token_copy(g, p, src.cd)
+    if a is src and trigger_window(g, p, src, 'create a token copy'): enter_token_copy(g, p, src.cd)
 
 
 @on('Ink-Eyes, Servant of Oni', 'combat_damage')
 def _inkeyes(g, src, p, a, d, dmg):
     if a is src:
         cs = [c for c in d.gy if c.creature]
-        if cs:
+        if cs and trigger_window(g, p, src, 'reanimate a creature card', imp=5):
+            cs = [c for c in d.gy if c.creature]
+            if not cs: return
             c = max(cs, key=lambda c: (c.bomb or c.pow)); d.gy.remove(c); enter(g, p, c, orig=d)
 
 
 @on('Fallen Shinobi', 'combat_damage')
 def _shinobi(g, src, p, a, d, dmg):
-    if a is not src: return
+    if a is not src or not d.library: return
+    if not trigger_window(g, p, src, 'exile the top two cards, play them free', imp=5): return
     for _ in range(2):
         if not d.library: return
         c = d.library.pop()
@@ -195,7 +203,9 @@ def _shinobi(g, src, p, a, d, dmg):
 def _oni(g, src, p, a, d, dmg):
     if a is not src: return
     cs = [c for c in d.hand if not c.land and not ('ctr' in c.tags)]
-    if cs:
+    if cs and trigger_window(g, p, src, 'cast a card from that player\'s hand', imp=5):
+        cs = [c for c in d.hand if not c.land and not ('ctr' in c.tags)]
+        if not cs: return
         c = max(cs, key=lambda c: card_worth(g, d, c)); d.hand.remove(c)
         if c.perm: enter(g, p, c, orig=d)
         else: p.hand.append(c); cast_card(g, p, c, 'hand', {})
@@ -203,7 +213,7 @@ def _oni(g, src, p, a, d, dmg):
 
 @on('Higure, the Still Wind', 'combat_damage')
 def _higure(g, src, p, a, d, dmg):
-    if a is src:
+    if a is src and trigger_window(g, p, src, 'search for a Ninja'):
         from commander_sim.cards.impl import t1 as impl_t1; impl_t1.tutor_named(g, p, lambda c: 'ninja' in c.subtypes)
 
 
@@ -271,7 +281,9 @@ def _krenko(g, src, p, s, post):
 
     def go():
         if src.tapped: return False
-        src.tapped = True; n = count_type(g, p, 'goblin'); goblins(g, p, n)
+        src.tapped = True
+        if not ability_window(g, p, src, 'a Goblin per Goblin', imp=5): return True
+        n = count_type(g, p, 'goblin'); goblins(g, p, n)
         log(f'  Krenko makes {n} Goblins', g); return True
     return [(u, f'Krenko: {n} Goblins', go)]
 
@@ -301,7 +313,8 @@ IC._reducer('Ruby Medallion', lambda c: 'R' in c.pips)
 def _etb_goblins(name, n, tags, status=('Full', '')):
     @on(name, 'etb')
     def _e(g, src, p, m):
-        if m is src: goblins(g, src.owner, n)
+        if m is src and trigger_window(g, src.owner, src, f'create {n} Goblin' + ('s' if n > 1 else '')):
+            goblins(g, src.owner, n)
     card(name, tags, dsl=[])
     note(name, *status)
 
@@ -313,11 +326,12 @@ _etb_goblins('Goblin Instigator', 1, 'pow=1')
 
 @on('Mogg War Marshal', 'etb')
 def _mogg(g, src, p, m):
-    if m is src: goblins(g, src.owner, 1)
+    if m is src and trigger_window(g, src.owner, src, 'create a Goblin'): goblins(g, src.owner, 1)
 
 
 @on('Mogg War Marshal', 'self_dies')
-def _mogg_dies(g, m, cause): goblins(g, m.owner, 1)
+def _mogg_dies(g, m, cause):
+    if trigger_window(g, m.owner, m, 'create a Goblin'): goblins(g, m.owner, 1)
 card('Mogg War Marshal', 'pow=1 warrior', dsl=[])
 note('Mogg War Marshal', 'Approximate', 'Goblin on entry and death; echo not paid')
 
@@ -328,7 +342,7 @@ def _outburst(g, p, c, ctx): goblins(g, p, 3)
 
 @on('Impact Tremors', 'etb')
 def _tremors(g, src, p, m):
-    if m.owner is src.owner and m.creature and m is not src:
+    if m.owner is src.owner and m.creature and m is not src and trigger_window(g, src.owner, src, '1 damage to each opponent'):
         for q in g.opps(src.owner): lose_life(g, q, 1, src.owner, kind='triggers')
 card('Impact Tremors', '', types='E', dsl=[])
 note('Impact Tremors', 'Full', '')
@@ -336,7 +350,7 @@ note('Impact Tremors', 'Full', '')
 
 @on('Purphoros, God of the Forge', 'etb')
 def _purphoros(g, src, p, m):
-    if m.owner is src.owner and m.creature and m is not src:
+    if m.owner is src.owner and m.creature and m is not src and trigger_window(g, src.owner, src, '2 damage to each opponent'):
         for q in g.opps(src.owner): lose_life(g, q, 2, src.owner, kind='triggers')
 card('Purphoros, God of the Forge', 'leg', types='E', dsl=[])
 note('Purphoros, God of the Forge', 'Approximate', '2 damage per creature entering; never a creature (devotion ignored); pump unused')
@@ -348,21 +362,22 @@ note('Skirk Prospector', 'Approximate', 'free sacrifice outlet (Goblins) adding 
 
 @on('Pashalik Mons', 'dies')
 def _mons(g, src, m, cause):
-    if m.owner is src.owner and (m is src or has_type(m, 'goblin')): best_target_any(g, src.owner, 1)
+    if m.owner is src.owner and (m is src or has_type(m, 'goblin')) and trigger_window(g, src.owner, src, '1 damage to any target'):
+        best_target_any(g, src.owner, 1)
 card('Pashalik Mons', 'leg pow=2 warrior', dsl=[])
 note('Pashalik Mons', 'Partial', 'a Goblin dying deals 1; the token-making activation is not used')
 
 
 @on('Goblin Sharpshooter', 'dies')
 def _sharpshooter(g, src, m, cause):
-    if m is not src: best_target_any(g, src.owner, 1)
+    if m is not src and trigger_window(g, src.owner, src, '1 damage to any target'): best_target_any(g, src.owner, 1)
 card('Goblin Sharpshooter', 'pow=1', dsl=[])
 note('Goblin Sharpshooter', 'Approximate', '1 damage whenever a creature dies (the untap loop is abstracted)')
 
 
 @on('Goblin Chainwhirler', 'etb')
 def _chainwhirler(g, src, p, m):
-    if m is src:
+    if m is src and trigger_window(g, src.owner, src, '1 damage to each opponent and their creatures', imp=5):
         for q in g.opps(src.owner):
             lose_life(g, q, 1, src.owner, kind='triggers')
             for x in list(q.perms):
@@ -375,7 +390,9 @@ note('Goblin Chainwhirler', 'Full', '')
 def _lackey(g, src, p, a, d, dmg):
     if a is src:
         gs = [c for c in p.hand if 'goblin' in c.subtypes and c.perm]
-        if gs: c = max(gs, key=lambda c: c.cmc); p.hand.remove(c); enter(g, p, c)
+        if gs and trigger_window(g, p, src, 'put a Goblin onto the battlefield'):
+            gs = [c for c in p.hand if 'goblin' in c.subtypes and c.perm]
+            if gs: c = max(gs, key=lambda c: c.cmc); p.hand.remove(c); enter(g, p, c)
 card('Goblin Lackey', 'pow=1', dsl=[])
 note('Goblin Lackey', 'Full', '')
 
@@ -383,6 +400,7 @@ note('Goblin Lackey', 'Full', '')
 @on('Goblin Recruiter', 'etb')
 def _recruiter(g, src, p, m):
     if m is not src: return
+    if not trigger_window(g, src.owner, src, 'stack Goblins on top'): return
     o = src.owner
     gs = sorted([c for c in o.library if 'goblin' in c.subtypes], key=lambda c: card_worth(g, o, c))[-4:]
     for c in gs: o.library.remove(c)
@@ -393,7 +411,7 @@ note('Goblin Recruiter', 'Approximate', 'stacks the four best Goblins on top')
 
 @on('Goblin Ringleader', 'etb')
 def _ringleader(g, src, p, m):
-    if m is src:
+    if m is src and trigger_window(g, src.owner, src, 'take the Goblins from the top four'):
         from commander_sim.cards.impl import t1 as impl_t1; impl_t1.look_take(g, src.owner, 4, lambda c: 'goblin' in c.subtypes, k=4)
 card('Goblin Ringleader', 'pow=2 haste', dsl=[])
 note('Goblin Ringleader', 'Full', '')
@@ -402,6 +420,7 @@ note('Goblin Ringleader', 'Full', '')
 @on('Muxus, Goblin Grandee', 'etb')
 def _muxus(g, src, p, m):
     if m is not src: return
+    if not trigger_window(g, src.owner, src, 'Goblins from the top six onto the battlefield', imp=6): return
     o = src.owner
     top = [o.library.pop() for _ in range(min(6, len(o.library)))]
     for c in top:
@@ -413,14 +432,15 @@ note('Muxus, Goblin Grandee', 'Partial', 'Goblins from the top six onto the batt
 
 @on('Goblin Piledriver', 'attack')
 def _piledriver(g, src, p, atk, d):
-    if src in atk: _eot(g, src, 2 * sum(1 for m in atk if m is not src and has_type(m, 'goblin')), 0)
+    if src in atk and trigger_window(g, p, src, 'gets +2/+0 per other attacking Goblin'):
+        _eot(g, src, 2 * sum(1 for m in atk if m is not src and has_type(m, 'goblin')), 0)
 card('Goblin Piledriver', 'pow=1 tgh=2 warrior', dsl=[])
 note('Goblin Piledriver', 'Full', '')
 
 
 @on('Battle Cry Goblin', 'attack')
 def _bcg(g, src, p, atk, d):
-    if src in atk and sum(epow(g, m) for m in atk) >= 6:
+    if src in atk and sum(epow(g, m) for m in atk) >= 6 and trigger_window(g, p, src, 'create an attacking Goblin'):
         return make_tokens(g, p, 1, 1, color='R', types=GOBLIN, attacking=True, sick=False)
 card('Battle Cry Goblin', 'pow=2', dsl=[])
 note('Battle Cry Goblin', 'Approximate', 'pack tactics Goblin; the pump is not used')
@@ -428,7 +448,8 @@ note('Battle Cry Goblin', 'Approximate', 'pack tactics Goblin; the pump is not u
 
 @on('Krenko, Tin Street Kingpin', 'attack')
 def _kingpin(g, src, p, atk, d):
-    if src in atk: src.plus += 1; goblins(g, p, epow(g, src))
+    if src in atk and trigger_window(g, p, src, 'a +1/+1 counter, then Goblins equal to its power'):
+        src.plus += 1; goblins(g, p, epow(g, src))
 card('Krenko, Tin Street Kingpin', 'leg pow=1 tgh=2', dsl=[])
 note('Krenko, Tin Street Kingpin', 'Full', '')
 
@@ -448,6 +469,8 @@ note('Conspicuous Snoop', 'Partial', 'body only')
 @on('Rionya, Fire Dancer', 'combat_start')
 def _rionya(g, src, p):
     if src.owner is not p: return
+    cr = [m for m in p.perms if m.creature and m is not src and m.cd is not None]
+    if not cr or not trigger_window(g, p, src, 'create a hasty token copy', imp=4): return
     cr = [m for m in p.perms if m.creature and m is not src and m.cd is not None]
     if not cr: return
     t = enter_token_copy(g, p, max(cr, key=lambda m: pval(g, m)).cd)
@@ -486,14 +509,14 @@ walker('Chandra, Torch of Defiance', [
 
 @on('Valakut Exploration', 'landfall')
 def _valakut(g, src, p):
-    if p is src.owner and p.library:
+    if p is src.owner and p.library and trigger_window(g, p, src, 'exile the top card, play it this turn') and p.library:
         c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
         src.data = src.data or {}; src.data['n'] = src.data.get('n', 0) + 1
 
 
 @on('Valakut Exploration', 'end_step')
 def _valakut_end(g, src, p):
-    if p is src.owner and src.data and src.data.get('n'):
+    if p is src.owner and src.data and src.data.get('n') and trigger_window(g, p, src, 'damage to each opponent'):
         n = src.data['n']; src.data['n'] = 0
         for q in g.opps(p): lose_life(g, q, min(n, sum(1 for c in p.exile) + 1), p, kind='triggers')
 card('Valakut Exploration', '', types='E', dsl=[])
@@ -504,6 +527,7 @@ note('Valakut Exploration', 'Approximate', 'landfall impulse card; unplayed card
 @on('Chulane, Teller of Tales', 'cast')
 def _chulane(g, src, caster, c):
     if caster is not src.owner or not c.creature: return
+    if not trigger_window(g, caster, src, 'draw a card, then put a land onto the battlefield'): return
     draw(g, caster, 1)
     from commander_sim.cards import dsl
     dsl.run(g, caster, {'do': 'put_land'}, None, {}, None, 0)
@@ -525,12 +549,14 @@ def _self_bounce(name, pred_other, tags, status=('Approximate', '')):
     @on(name, 'etb')
     def _b(g, src, p, m):
         if m is not src: return
+        if not trigger_window(g, src.owner, src, 'return a permanent you control to hand'): return
         o = src.owner
         mine = [x for x in o.perms if x is not src and pred_other(x) and not x.is_cmd]
         cands = [x for x in mine if x.cd is not None and CI.HOOKS.get(x.cd.name, {}).get('etb') is not None or
                  (x.cd is not None and importlib.import_module('commander_sim.cards.dsl').etb_value(x.cd) > 0)]
         tgt = max(cands, key=lambda x: importlib.import_module('commander_sim.cards.dsl').etb_value(x.cd), default=None) if cands else None
         if tgt is None: tgt = src
+        if tgt not in o.perms: return
         if tgt.token: leave(g, tgt)
         else: bounce(g, tgt)
     card(name, tags, dsl=[])
@@ -547,7 +573,9 @@ note("Man-o'-War", 'Full', 'bounces the best opposing creature')
 
 @on('Consecrated Sphinx', 'draw')
 def _sphinx(g, src, p):
-    if p is not src.owner and once_per_turn(g, src.owner, f'sphinx{id(src)}{p.key}{p.draw_n}'):
+    k = f'sphinx{id(src)}{p.key}{p.draw_n}'
+    if p is not src.owner and src.owner.flag_turn.get(k) != (g.round, g.active and g.active.key) \
+            and trigger_window(g, src.owner, src, 'you may draw two cards', imp=4) and once_per_turn(g, src.owner, k):
         hc = E.human_choice(g, src.owner)
         if hc is not None:
             if hc.yes_no(g, src.owner, f'Consecrated Sphinx: {E.NAME(p)} drew. Draw two cards?'): draw(g, src.owner, 2)
@@ -560,7 +588,8 @@ note('Consecrated Sphinx', 'Approximate', 'draws two per opponent draw (capped b
 def _hullbreaker(g, src, caster, c):
     if caster is not src.owner: return
     t = best_opp_nonland(g, caster)
-    if t is not None and pval(g, t) >= 3: bounce(g, t)
+    if t is not None and pval(g, t) >= 3 and trigger_window(g, caster, src, f'return {t.name} to hand', imp=5) \
+            and any(t in q.perms for q in g.players): bounce(g, t)
 card('Hullbreaker Horror', 'pow=7 tgh=8 flash unc bomb=7', dsl=[])
 note('Hullbreaker Horror', 'Approximate', 'uncounterable; each of your spells bounces the best opposing nonland permanent')
 
@@ -572,14 +601,15 @@ note('Temur Sabertooth', 'Partial', 'body only (re-buying ETB creatures is not u
 # ======================================================== Prosper, Tome-Bound (Treasure, impulse draw)
 @on('Prosper, Tome-Bound', 'end_step')
 def _prosper(g, src, p):
-    if p is src.owner and p.library:
+    if p is src.owner and p.library and trigger_window(g, p, src, 'exile the top card, play it until next turn') and p.library:
         c = p.library.pop(); p.hand.append(c); p.seen_names.add(c.name)
         p.impulse_long = getattr(p, 'impulse_long', []) + [(c, p.turns + 1)]
 
 
 @on('Prosper, Tome-Bound', 'cast')
 def _prosper_treasure(g, src, caster, c):
-    if caster is src.owner and (c in caster.impulse or any(x is c for x, _ in getattr(caster, 'impulse_long', []))):
+    if caster is src.owner and (c in caster.impulse or any(x is c for x, _ in getattr(caster, 'impulse_long', []))) \
+            and trigger_window(g, caster, src, 'create a Treasure'):
         make_artifact_tokens(g, caster, 'Treasure', 1)
 card('Prosper, Tome-Bound', 'leg pow=1 tgh=4 dt', dsl=[])
 note('Prosper, Tome-Bound', 'Full', 'end step: exile the top card, playable until the end of your next turn; a '
@@ -596,7 +626,9 @@ def _reckless(g, p, c, ctx):
 
 @on('Mahadi, Emporium Master', 'end_step')
 def _mahadi(g, src, p):
-    if p is src.owner: make_artifact_tokens(g, p, 'Treasure', getattr(g, 'deaths_turn', {}).get(turn_stamp(g), 0))
+    if p is src.owner and getattr(g, 'deaths_turn', {}).get(turn_stamp(g), 0) \
+            and trigger_window(g, p, src, 'a Treasure per creature that died'):
+        make_artifact_tokens(g, p, 'Treasure', getattr(g, 'deaths_turn', {}).get(turn_stamp(g), 0))
 
 
 @on('Mahadi, Emporium Master', 'dies')
@@ -609,7 +641,7 @@ note('Mahadi, Emporium Master', 'Approximate', 'counts deaths while it is on the
 
 @on('Ragavan, Nimble Pilferer', 'combat_damage')
 def _ragavan(g, src, p, a, d, dmg):
-    if a is src:
+    if a is src and trigger_window(g, p, src, 'create a Treasure, exile the top card', imp=4):
         make_artifact_tokens(g, p, 'Treasure', 1)
         if d.library:
             c = d.library.pop(); d.exile.append(c)
@@ -628,7 +660,7 @@ note('Xorn', 'Approximate', 'an extra Treasure for hooked Treasure makers')
 
 @on('Reckless Fireweaver', 'token_created')
 def _fireweaver(g, src, p, kinds, n):
-    if p is src.owner:
+    if p is src.owner and trigger_window(g, p, src, f'{n} damage to each opponent'):
         for q in g.opps(p): lose_life(g, q, n, p, kind='triggers')
 card('Reckless Fireweaver', 'human pow=1 tgh=3', dsl=[])
 note('Reckless Fireweaver', 'Approximate', 'artifact tokens made by hooks trigger it; cast artifacts do not')
@@ -636,7 +668,7 @@ note('Reckless Fireweaver', 'Approximate', 'artifact tokens made by hooks trigge
 
 @on('Dark Confidant', 'upkeep')
 def _bob(g, src, p):
-    if p is src.owner and p.library:
+    if p is src.owner and p.library and trigger_window(g, p, src, 'reveal the top card, lose life equal to its mv') and p.library:
         c = p.library.pop(); p.hand.append(c); lose_life(g, p, c.cmc, p)
 card('Dark Confidant', 'human wizard pow=2 tgh=1', dsl=[])
 note('Dark Confidant', 'Full', '')
@@ -650,6 +682,7 @@ def _scoundrel(g, src, p, s, post):
         if src.tapped or not can_pay(g, p, 1, ''): return False
         pay(g, p, 1, ''); src.tapped = True
         from commander_sim.cards.impl import t3 as impl_t3; impl_t3.sac_worst_permanent(g, p, src)
+        if not ability_window(g, p, src, 'flip a coin'): return True
         if g.rng.random() < 0.5: make_artifact_tokens(g, p, 'Treasure', 2)
         return True
     return [(1.0, 'Tavern Scoundrel flip', go)]
@@ -662,7 +695,7 @@ IC.aura('Sticky Fingers', kws=('menace',), status=('Approximate', 'menace and a 
 
 @on('Sticky Fingers', 'combat_damage')
 def _sticky(g, src, p, a, d, dmg):
-    if src.attached is a: make_artifact_tokens(g, src.owner, 'Treasure', 1)
+    if src.attached is a and trigger_window(g, src.owner, src, 'create a Treasure'): make_artifact_tokens(g, src.owner, 'Treasure', 1)
 
 
 def _obnix_plus(g, p, src):
@@ -688,6 +721,8 @@ def _scepter_etb(g, src, p, m):
     """imprint: Dramatic Reversal if in hand, else the best removal / card-draw instant with mana value 2 or less"""
     if m is not src: return
     o = src.owner
+    cs = [c for c in o.hand if _imprintable(c)]
+    if not cs or not trigger_window(g, o, src, 'imprint an instant'): return
     cs = [c for c in o.hand if _imprintable(c)]
     if not cs: return
     c = max(cs, key=lambda c: (c.name == 'Dramatic Reversal', 'rem' in c.tags, card_worth(g, o, c)))
@@ -716,6 +751,7 @@ def _scepter_use(g, src, p, s, post):
     def go():
         if src.tapped or not can_pay(g, p, 2, ''): return False
         pay(g, p, 2, ''); src.tapped = True
+        if not ability_window(g, p, src, f'cast a copy of {name}'): return True
         log(f'  {NAME(p)} casts a copy of {name} with Isochron Scepter', g)
         n = len(p.gy)
         cast_card(g, p, c, 'lib', dict(ctx))
@@ -741,7 +777,9 @@ CI.SPELL_PRIO['Dramatic Reversal'] = 0
 
 @on('Sanguine Bond', 'gain_life')
 def _bond(g, src, p, n):
-    if p is src.owner and g.opps(p) and getattr(g, 'bond_depth', 0) < 3:
+    if p is src.owner and g.opps(p) and getattr(g, 'bond_depth', 0) < 3 \
+            and trigger_window(g, p, src, f'an opponent loses {n} life', imp=5):
+        if not g.opps(p): return
         g.bond_depth = getattr(g, 'bond_depth', 0) + 1
         try:
             lose_life(g, max(g.opps(p), key=lambda q: threat(g, p, q)), n, p, kind='drain')
@@ -751,7 +789,7 @@ def _bond(g, src, p, n):
 
 @on('Exquisite Blood', 'lose_life')
 def _blood(g, src, p, n):
-    if p is not src.owner and getattr(g, 'bond_depth', 0) < 3:
+    if p is not src.owner and getattr(g, 'bond_depth', 0) < 3 and trigger_window(g, src.owner, src, f'gain {n} life', imp=4):
         g.bond_depth = getattr(g, 'bond_depth', 0) + 1
         try:
             gain(src.owner, n)
@@ -794,6 +832,8 @@ def _heliod_ind(g, src, m, kw):
 def _heliod_gain(g, src, p, n):
     """whenever you gain life: a +1/+1 counter on your best creature (a Walking Ballista first: one more ping)"""
     if p is not src.owner: return
+    cre = [m for m in p.perms if m.creature and not m.phased and m is not src]
+    if not cre or not trigger_window(g, p, src, 'a +1/+1 counter on a creature'): return
     cre = [m for m in p.perms if m.creature and not m.phased and m is not src]
     if not cre: return
     t = next((m for m in cre if m.cd is not None and m.cd.name == 'Walking Ballista'), None) or \

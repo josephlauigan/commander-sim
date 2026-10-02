@@ -37,6 +37,10 @@ def _kitten(g, src, caster, c):
     if caster is not p or c.creature or c.land or src not in p.perms or src.phased: return
     cands = [m for m in p.perms if m is not src and not m.token and not m.phased and m.cd is not None and m.orig is p]
     if not cands: return
+    if E.human_choice(g, p) is None and etb_value(g, p, max(cands, key=lambda x: etb_value(g, p, x))) < 2.0: return
+    if not trigger_window(g, p, src, 'flicker a permanent'): return
+    cands = [m for m in cands if m in p.perms]
+    if not cands: return
     hc = E.human_choice(g, p)
     if hc is not None:                                       # practice mode: up to one, your pick
         k = hc.choose(g, p, 'target', 'Displacer Kitten: flicker one of your nonland permanents?',
@@ -65,6 +69,10 @@ def _nim_return(g, src, m):
     attach this Equipment to it"""
     p = src.owner
     if src not in p.perms or src.phased or m.token or m.orig is not p or m.cd not in p.gy: return
+    if m.cd is p.cmd: return
+    if E.human_choice(g, p) is None and (not can_pay(g, p, 4, '') or (pval(g, m) < 3 and etb_value(g, p, m) < 2.5)
+                                         or any(cd is m.cd for _, cd, _ in getattr(g, 'marchesa_due', None) or ())): return
+    if not trigger_window(g, p, src, f'pay {{4}}: return {m.name}'): return
     hc = E.human_choice(g, p)
     if hc is not None:                                       # practice mode: you may pay {4}
         if m.cd is p.cmd or not hc.pay_tax(g, p, 4, f'Nim Deathmantle: return {m.name} and attach it'): return
@@ -96,8 +104,8 @@ def _nim_equip(g, src, p, s, post):
 
     def go():
         if not can_pay(g, p, 4, '') or t not in p.perms: return False
-        pay(g, p, 4, ''); src.attached = t
-        log(f'  {NAME(p)} equips Nim Deathmantle to {t.name}', g); return True
+        log(f'  {NAME(p)} equips Nim Deathmantle to {t.name}', g)
+        return equip_to(g, p, src, t, 4)
     return [(1.0 + 0.2 * pval(g, t), 'equip Nim Deathmantle', go)]
 card('Nim Deathmantle', 'nim', types='A', dsl=[])
 full('Nim Deathmantle', 'equipped creature +2/+2, intimidate, black Zombie; returns your nontoken creatures that die '
@@ -123,6 +131,7 @@ def _trisk_ping(g, src, p, s, post):
     def go():
         if src.plus <= 0 or src not in p.perms: return False
         src.plus -= 1
+        if not ability_window(g, p, src, '1 damage', imp=8 if lethal else 3): return True
         if lethal and lethal[0].alive: lose_life(g, lethal[0], 1, p, kind='triggers')
         elif tg and tg[0] in tg[0].owner.perms: apply_removal(g, p, tg[0], 'dmg1')
         if etgh(g, src) <= 0: die(g, src, 'sba')
@@ -146,8 +155,9 @@ def _strip(g, L, p, s, post):
     def go():
         if L not in p.lands or x not in q.lands: return False
         p.lands.remove(L); p.gy.append(L.cd)
-        impl_fixes.destroy_land(g, q, x)
-        log(f'  {NAME(p)} sacrifices Strip Mine: destroys {x.cd.name} ({NAME(q)})', g); return True
+        log(f'  {NAME(p)} sacrifices Strip Mine: destroy {x.cd.name} ({NAME(q)})', g)
+        if ability_window(g, p, L.cd, f'destroy {x.cd.name}') and x in q.lands: impl_fixes.destroy_land(g, q, x)
+        return True
     return [(3.0, f'Strip Mine -> {x.cd.name}', go)]
 full('Strip Mine', '{T}: {C}; {T}, sacrifice: destroy an opponent\'s key land (Cradle, Coffers, Urborg, Ancient Tomb ...)')
 
@@ -238,6 +248,64 @@ def spell_copy_value(g, p, c):
     return v + 1.0 * sum(1 for m in p.perms if m.cd is not None and any(k in m.cd.tags for k in ('ping', 'spelltok', 'spelldraw', 'kiln')))
 
 
+# ------------------------------------------------------------------ Muldrotha, the Gravetide
+MULD_TYPES = (('L', 'land'), ('C', 'creature'), ('A', 'artifact'), ('E', 'enchantment'), ('P', 'planeswalker'), ('B', 'battle'))
+
+
+def muldrotha_on(g, p):
+    """during each of your turns, a land and a permanent spell of each permanent type from your graveyard"""
+    return g.active is p and any(m.cd is not None and m.cd.name == 'Muldrotha, the Gravetide' and not m.phased
+                                 and not m.neutered for m in p.perms)
+
+
+def muld_used(g, p):
+    st = turn_stamp(g)
+    v = getattr(p, 'muld_used', None)
+    if not v or v[0] != st: p.muld_used = v = (st, set())
+    return v[1]
+
+
+def muld_types(g, p, c):
+    """the permanent types of graveyard card c that Muldrotha still lets p play this turn"""
+    if not muldrotha_on(g, p) or c not in p.gy: return []
+    used = muld_used(g, p)
+    if c.land: return [] if 'L' in used else ['L']
+    if not c.perm: return []
+    return [t for t, _ in MULD_TYPES if t != 'L' and t in c.types and t not in used]
+
+
+def muld_mark(g, p, t):
+    muld_used(g, p).add(t)
+
+
+@on('Muldrotha, the Gravetide', 'options')
+def _muldrotha(g, src, p, s, post):
+    """the AI: cast the best permanent card from the graveyard whose type is still unused this turn"""
+    if p is not src.owner or post is None or not muldrotha_on(g, p): return []
+    from commander_sim import ais
+    out = []
+    for c in list(p.gy):
+        ts = muld_types(g, p, c)
+        if not ts or c.land or not castable(g, p, c, 'gy'): continue
+        gen, pips = cost_of(p, c)
+        if not can_pay(g, p, gen, pips): continue
+        v = ais.deck_prio(g, p, c) / 10.0 + 0.3 * card_worth(g, p, c, in_gy=True) / 10.0
+        if v <= 0.5: continue
+
+        def go(c=c, t=ts[0], gen=gen, pips=pips):
+            if c not in p.gy or t not in muld_types(g, p, c) or not can_pay(g, p, gen, pips): return False
+            pay(g, p, gen, pips); muld_mark(g, p, t)
+            log(f'  {NAME(p)} casts {c.name} from the graveyard (Muldrotha)', g)
+            cast_card(g, p, c, 'mgy', {})
+            return True
+        out.append((v, f'{c.name} from the graveyard (Muldrotha)', go))
+    return out
+CI.muldrotha_on, CI.muld_types, CI.muld_mark, CI.muld_used, CI.MULD_TYPES = muldrotha_on, muld_types, muld_mark, muld_used, MULD_TYPES
+card('Muldrotha, the Gravetide', 'pow=6 tgh=6 leg', dsl=[])
+full('Muldrotha, the Gravetide', 'during each of your turns, play a land and cast a permanent spell of each permanent type '
+     '(artifact, creature, enchantment, planeswalker, battle) from your graveyard; a countered one goes back to the graveyard')
+
+
 # ------------------------------------------------------------------ Thousand-Year Storm
 def _storm_n(g, p):
     """copies: one per instant/sorcery cast before this one this turn; Veyran doubles the trigger"""
@@ -252,6 +320,7 @@ def _storm(g, src, caster, c):
     if not n: return
     cc = getattr(g, 'cur_cast', None)
     ctx = cc[1] if cc is not None and cc[0] is c else None           # X is copied (Crackle with Power)
+    if not trigger_window(g, p, src, f'copy {c.name} {n} time(s)', imp=6): return
     log(f'    Thousand-Year Storm copies {c.name} {n} time(s)', g)
     for _ in range(n):
         copy_spell(g, p, c, ctx)
@@ -261,7 +330,8 @@ def _storm(g, src, caster, c):
 @on('Thousand-Year Storm', 'copycast')
 def _storm_copycast(g, src, p, effect):
     """a cast copy of a back-face spell (prepared, Lightning Bolt) is an instant/sorcery cast too"""
-    if p is not src.owner or src.phased: return
+    if p is not src.owner or src.phased or not _storm_n(g, p): return
+    if not trigger_window(g, p, src, 'copy the spell', imp=6): return
     for _ in range(_storm_n(g, p)):
         magecraft(g, p, copy=True); effect()
         if g.over: return
@@ -297,6 +367,10 @@ def _alania(g, src, caster, c):
     for _ in range(alania_triggers(p)):
         opps = g.opps(p)
         if not opps or g.over: return
+        if hc is None and alania_pick(g, p, c, opps) is None: return
+        if not trigger_window(g, p, src, f'copy {c.name}'): continue
+        opps = g.opps(p)
+        if not opps: return
         q = hc.alania(g, p, c, opps) if hc is not None else alania_pick(g, p, c, opps)
         if q is None:
             if hc is None: return                                     # the AI's answer is the same for each trigger
@@ -326,12 +400,14 @@ def _ral(g, src, p, s, post):
             if src not in p.perms or (src.data and src.data.get('act') == turn_stamp(g)): return False
             src.data = dict(src.data or {}, act=turn_stamp(g))
             if minus:
-                src.loyalty -= 2; p.ral_copy = turn_stamp(g)
+                src.loyalty -= 2
                 log(f'  {NAME(p)} uses Ral, Storm Conduit -2: the next instant or sorcery is copied', g)
                 if src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy')
+                if ability_window(g, p, src.cd, '-2'): p.ral_copy = turn_stamp(g)
             else:
                 src.loyalty += 2
-                from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1)
+                if ability_window(g, p, src, '+2'):
+                    from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1)
             return True
         return go
     out = [(1.0, 'Ral, Storm Conduit +2 (scry 1)', act(False))]
@@ -381,8 +457,7 @@ def _prepared_opt(g, src, p, s, post):
     def go():
         if not (src.data and src.data.get('prepared')) or not can_pay(g, p, gen, pips): return False
         pay(g, p, gen, pips); src.data['prepared'] = False
-        log(f'  {NAME(p)} casts a copy of {spell} ({src.cd.name.split(" //")[0]})', g)
-        cast_copy(g, p, _prepared_effect(g, p, src.cd.name))
+        cast_copy(g, p, _prepared_effect(g, p, src.cd.name), name=spell, instant=instant)
         return True
     return [(v, f'{spell} (prepared copy)', go)]
 
@@ -394,7 +469,13 @@ for _n in PREPARED: on(_n, 'options')(_prepared_opt)
 def _ideation_attack(g, src, p, atk, d):
     """whenever it attacks: exile eight cards from your graveyard to prepare it again"""
     if src.owner is not p or src not in atk or (src.data and src.data.get('prepared')) or len(p.gy) < 8: return
+    if not trigger_window(g, p, src, 'exile eight cards to prepare it'): return
+    if len(p.gy) < 8: return
     ex = sorted(p.gy, key=lambda c: (c.instant or c.sorcery, card_worth(g, p, c, in_gy=True)))[:8]
+    if _you(g, p):
+        ex = _you(g, p).pick_exile(g, p, p.gy, 8, 'Emeritus of Ideation attacks: exile eight cards from your graveyard '
+                                   'to prepare it?', default=ex)
+        if not ex: return
     for c in ex: p.gy.remove(c); p.exile.append(c)
     src.data = dict(src.data or {}, prepared=True)
     log(f'    {NAME(p)} exiles eight cards: Emeritus of Ideation is prepared', g)
@@ -611,8 +692,10 @@ def _lighthouse(g, L, p, s, post):
 
     def go():
         if L not in p.lands or L.tapped or not IL.pay_without(g, p, L, 1, 'UR'): return False
-        L.tapped = True; draw(g, p, 1); discard_worst(g, p, 1)
-        log(f'  {NAME(p)} loots with Desolate Lighthouse', g); return True
+        L.tapped = True
+        log(f'  {NAME(p)} loots with Desolate Lighthouse', g)
+        if ability_window(g, p, L.cd, 'draw, then discard'): draw(g, p, 1); discard_worst(g, p, 1)
+        return True
     return [(1.2, 'Desolate Lighthouse loot', go)]
 
 
@@ -625,7 +708,9 @@ def _summit(g, L, p, s, post):
     def go():
         if L not in p.lands or L.tapped or not IL.pay_without(g, p, L, 2, 'UR'): return False
         L.tapped = True
-        from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1, to='gy'); return True
+        if ability_window(g, p, L.cd, 'surveil 1'):
+            from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 1, to='gy')
+        return True
     return [(0.6, 'Spectacle Summit surveil', go)]
 
 
@@ -764,19 +849,20 @@ def kindred_enter(g, p, m):
 
 @on('Kindred Discovery', 'etb')
 def _kindred_etb(g, src, p, m):
-    if m is not src and m.owner is src.owner and m.creature and orcish(m): draw(g, src.owner, 1)
+    if m is not src and m.owner is src.owner and m.creature and orcish(m) and trigger_window(g, src.owner, src, 'draw a card'):
+        draw(g, src.owner, 1)
 
 
 @on('Kindred Discovery', 'attack')
 def _kindred_attack(g, src, p, atk, d):
     if p is src.owner:
         n = sum(1 for m in atk if orcish(m))
-        if n: draw(g, p, n)
+        if n and trigger_window(g, p, src, f'draw {n}'): draw(g, p, n)
 
 
 @on('Reconnaissance Mission', 'combat_damage')
 def _recon(g, src, p, a, d, dmg):
-    if p is src.owner: draw(g, p, 1)
+    if p is src.owner and trigger_window(g, p, src, 'draw a card'): draw(g, p, 1)
 
 
 @on('Reconnaissance Mission', 'hand_options')
@@ -801,14 +887,16 @@ def modified(g, m):
 
 @on('Iron Man, Armored Avenger', 'attack')
 def _ironman(g, src, p, atk, d):
-    if src.owner is p and src in atk:
+    if src.owner is p and src in atk and any(m is not src and modified(g, m) for m in atk) \
+            and trigger_window(g, p, src, 'modified attackers gain flying'):
         for m in atk:
             if m is not src and modified(g, m): g.eot_kw.setdefault(id(m), set()).add('flying')
 
 
 @on('War Machine, Avenging Arsenal', 'attack')
 def _warmachine(g, src, p, atk, d):
-    if src.owner is p and src in atk:
+    if src.owner is p and src in atk and any(modified(g, m) for m in atk) \
+            and trigger_window(g, p, src, 'modified attackers gain double strike'):
         for m in atk:
             if modified(g, m): g.eot_kw.setdefault(id(m), set()).add('double strike')
 full('Iron Man, Armored Avenger', 'flying; a +1/+1 counter on the Army per card you draw; attacking gives your other '
@@ -838,6 +926,8 @@ full('Kaervek the Merciless', 'each opponent spell: damage equal to its mana val
 def _vision(g, src, caster, c):
     """a spell cast outside its caster's turn: phase out if the spell threatens Vision, else a +1/+1 counter"""
     if g.active is caster or src.phased or src not in src.owner.perms: return
+    if not trigger_window(g, src.owner, src, 'phase out, or a +1/+1 counter'): return
+    if src not in src.owner.perms: return
     cc = getattr(g, 'cur_cast', None)
     ctx = cc[1] if cc is not None and cc[0] is c else {}
     if caster is not src.owner and (ctx.get('target') is src or 'wipe' in c.tags): src.phased = True
@@ -852,12 +942,18 @@ def _witch(g, src, p, a, d, dmg):
     """combat damage to a player: exile the top two face down, then cast a Hero or noncreature spell from among the
     cards exiled with her, free"""
     if a is not src: return
+    if not trigger_window(g, p, src, 'exile the top two, cast one free'): return
     top = [p.library.pop() for _ in range(min(2, len(p.library)))]
     src.data = dict(src.data or {}); src.data.setdefault('witch', []).extend(top)
     p.exile.extend(top)
     ok = [c for c in src.data['witch'] if c in p.exile and not c.land and (not c.creature or 'hero' in c.subtypes)]
     if not ok: return
     c = max(ok, key=lambda c: card_worth(g, p, c))
+    if _you(g, p):
+        k = _you(g, p).choose(g, p, 'choose', 'Scarlet Witch: cast a spell from among the cards exiled with her, free?',
+                              [x.name for x in ok], cancel='cast nothing')
+        if k is None: return
+        c = ok[k]
     p.exile.remove(c); src.data['witch'].remove(c)
     log(f'    Scarlet Witch: {NAME(p)} casts {c.name} free', g)
     cast_card(g, p, c, 'lib', spell_targets(g, p, c))
@@ -885,7 +981,9 @@ def _vraska(g, src, p, s, post):
 
     def zero():
         if not _pw_once(g, src): return False
-        _pw_use(g, src, 0); draw(g, p, 1); lose_life(g, p, 1, p); proliferate_all(g, p); return True
+        _pw_use(g, src, 0)
+        if ability_window(g, p, src, '0'): draw(g, p, 1); lose_life(g, p, 1, p); proliferate_all(g, p)
+        return True
     out.append((2.0 if p.life > 10 else 0.5, "Vraska 0 (draw, proliferate)", zero))
     cr = [m for q in g.opps(p) for m in q.perms if m.creature and not untargetable(g, m)]
     if cr and src.loyalty >= 2:
@@ -893,8 +991,11 @@ def _vraska(g, src, p, s, post):
 
         def minus2():
             if not _pw_once(g, src) or t not in t.owner.perms: return False
-            _pw_use(g, src, -2); q = t.owner; leave(g, t); q.treasures += 1
-            log(f'  {NAME(p)} uses Vraska -2: {t.name} becomes a Treasure', g); return True
+            _pw_use(g, src, -2)
+            log(f'  {NAME(p)} uses Vraska -2: {t.name} becomes a Treasure', g)
+            if ability_window(g, p, src.cd, '-2', target=t) and t in t.owner.perms:
+                q = t.owner; leave(g, t); q.treasures += 1
+            return True
         out.append((pval(g, t) - 2.0, f'Vraska -2 -> {t.name}', minus2))
     if src.loyalty >= 9:
         q = max(g.opps(p), key=lambda o: threat(g, p, o)) if g.opps(p) else None
@@ -902,6 +1003,7 @@ def _vraska(g, src, p, s, post):
             def minus9():
                 if not _pw_once(g, src): return False
                 _pw_use(g, src, -9)
+                if not ability_window(g, p, src.cd, '-9', imp=10): return True
                 if not melira(q): q.poison = max(getattr(q, 'poison', 0), 9)
                 log(f'  {NAME(p)} uses Vraska -9: {NAME(q)} has nine poison counters', g); return True
             out.append((12.0, f'Vraska -9 -> {NAME(q)}', minus9))
@@ -933,15 +1035,18 @@ def _ralz(g, src, p, s, post):
     def plus1():
         if not _pw_once(g, src): return False
         _pw_use(g, src, 1)
-        from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 2, to='gy'); return True
+        if ability_window(g, p, src, '+1'):
+            from commander_sim.cards.impl import topdeck as impl_topdeck; impl_topdeck.scry(g, p, 2, to='gy')
+        return True
     out.append((1.0, 'Ral Zarek +1 (surveil 2)', plus1))
     hands = sum(1 for q in g.opps(p) if q.hand)
     if hands and src.loyalty >= 2:
         def minus1():
             if not _pw_once(g, src): return False
             _pw_use(g, src, -1)
-            for q in g.opps(p):
-                if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
+            if ability_window(g, p, src.cd, '-1'):
+                for q in g.opps(p):
+                    if q.hand: discard_index(g, q, g.rng.randrange(len(q.hand)))
             return True
         out.append((0.8 + 0.5 * hands, 'Ral Zarek -1 (each opponent discards)', minus1))
     rc = [c for c in p.gy if c.creature and c.cmc <= 3]
@@ -950,8 +1055,9 @@ def _ralz(g, src, p, s, post):
 
         def minus2():
             if not _pw_once(g, src) or c not in p.gy: return False
-            if not _pw_use(g, src, -2): pass
-            p.gy.remove(c); enter(g, p, c); return True
+            _pw_use(g, src, -2)
+            if ability_window(g, p, src.cd, '-2') and c in p.gy: p.gy.remove(c); enter(g, p, c)
+            return True
         out.append((0.8 * card_worth(g, p, c, in_gy=True) / 2.0, f'Ral Zarek -2 -> {c.name}', minus2))
     if src.loyalty >= 7 and g.opps(p):
         q = max(g.opps(p), key=lambda o: threat(g, p, o))
@@ -959,6 +1065,7 @@ def _ralz(g, src, p, s, post):
         def minus7():
             if not _pw_once(g, src): return False
             _pw_use(g, src, -7)
+            if not ability_window(g, p, src.cd, '-7', imp=10): return True
             n = sum(1 for _ in range(5) if g.rng.random() < 0.5)
             q.skip_turns = getattr(q, 'skip_turns', 0) + n
             log(f'  {NAME(p)} uses Ral Zarek -7: {NAME(q)} skips {n} turn(s)', g); return True
@@ -991,7 +1098,9 @@ def _baraddur(g, L, p, s, post):
 
     def go():
         if L.tapped or not IL.pay_without(g, p, L, 2 * x, 'B'): return False
-        L.tapped = True; amass(g, p, x); log(f'  {NAME(p)} uses Barad-dûr: amass Orcs {x}', g); return True
+        L.tapped = True; log(f'  {NAME(p)} uses Barad-dûr: amass Orcs {x}', g)
+        if ability_window(g, p, L.cd, f'amass Orcs {x}'): amass(g, p, x)
+        return True
     return [(1.0 + x, f'Barad-dûr (amass {x})', go)]
 
 
@@ -1057,10 +1166,10 @@ def _urabrask(g, src, p):
     """your upkeep: exile the top card, you may play it this turn; each opponent's upkeep: their next draw this turn is
     exiled instead, playable this turn (engine.draw)"""
     if p is src.owner:
-        if p.library:
+        if p.library and trigger_window(g, p, src, 'exile the top card, playable this turn') and p.library:
             c = p.library.pop(); p.hand.append(c); p.impulse.append(c); p.seen_names.add(c.name)
             log(f'    Urabrask exiles {c.name} (playable this turn)', g)
-    elif p.alive:
+    elif p.alive and trigger_window(g, src.owner, src, f"{NAME(p)}'s next draw is exiled"):
         p.urabrask = turn_stamp(g)
 
 
@@ -1093,12 +1202,12 @@ def _kefka_wheel(g, src, p):
 
 @on(KEFKA, 'etb')
 def _kefka_etb(g, src, p, m):
-    if m is src: _kefka_wheel(g, src, p)
+    if m is src and trigger_window(g, src.owner, src, 'each opponent discards'): _kefka_wheel(g, src, p)
 
 
 @on(KEFKA, 'attack')
 def _kefka_attack(g, src, p, atk, d):
-    if src in atk and not (src.data or {}).get('ruin'): _kefka_wheel(g, src, p)
+    if src in atk and not (src.data or {}).get('ruin') and trigger_window(g, p, src, 'each opponent discards'): _kefka_wheel(g, src, p)
 
 
 @on(KEFKA, 'options')
@@ -1110,6 +1219,7 @@ def _kefka_ruin(g, src, p, s, post):
     def go():
         if src not in p.perms or not can_pay(g, p, 8, ''): return False
         pay(g, p, 8, '')
+        if not ability_window(g, p, src, '{8}: each opponent sacrifices a permanent', imp=7): return True
         for q in g.opps(p):
             toks = [m for m in q.perms if m.token and not m.phased]
             if toks: die(g, min(toks, key=lambda m: pval(g, m)), 'sac')          # their choice: the cheapest thing
@@ -1129,8 +1239,9 @@ def _kefka_ruin(g, src, p, s, post):
 def _kefka_ruin_draw(g, src, q, n):
     """Kefka, Ruler of Ruin: whenever an opponent loses life during your turn, you draw that many cards"""
     p = src.owner
-    if (src.data or {}).get('ruin') and q is not p and g.active is p and n > 0 and p.alive:
-        draw(g, p, min(n, max(0, len(p.library) - 5)))           # the AI stops short of decking itself
+    if (src.data or {}).get('ruin') and q is not p and g.active is p and n > 0 and p.alive \
+            and trigger_window(g, p, src, f'draw {n}'):
+        draw(g, p, n)                                             # not optional, even if it decks you
 
 
 card(KEFKA, 'leg human wizard pow=4 tgh=5 kefka', dsl=[])

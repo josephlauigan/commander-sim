@@ -142,6 +142,7 @@ def clone(g, want_memo=False):
         for m in q.perms:
             if m.data: m.data = _remap_dict(m.data, memo)
     g2.hook_cache = None; g2.static_idx = None; g2.coat_cache = None; g2.cur_cast = None
+    g2.resolving = 0; g2.trig_mode = None; g2.trig_current = None   # pending triggers come along (play_on settles them)
     return (g2, memo) if want_memo else g2
 
 
@@ -164,7 +165,8 @@ def play_on(g2, p2, stop_rounds=20, active=None):
     from commander_sim import ais
     from commander_sim.ai import brain
     act = active or p2
-    if act.alive: ais.continue_turn(g2, act, g2.step)
+    if g2.stack or getattr(g2, 'trig_queue', None): E.settle_stack(g2)       # copied mid-stack: finish it first
+    if act.alive and not g2.over: ais.continue_turn(g2, act, g2.step)
     ps = g2.players
     k = ps.index(act)
     left = HORIZON
@@ -399,6 +401,7 @@ def _choose_counter(g, q, p, c, ctx, zone):
     base_seed = _decision_seed(g, q.key, 'ctr')
     saved = (E.CUR_G, E.LAST_COUNTER, E.PAY_FOR)
     scores = {True: 0.0, False: 0.0}
+    idx = len(g.stack) - 1                          # the spell in question is on top of the stack
     try:
         for r in range(ROLLOUTS):
             for counter in (True, False):
@@ -409,19 +412,16 @@ def _choose_counter(g, q, p, c, ctx, zone):
                 determinize(g2, q2, rng)
                 g2.rng = random.Random(rng.random())
                 E.CUR_G = g2
-                ctx2 = {k: (memo.get(id(v), v) if isinstance(v, (E.Perm, E.Player)) else v) for k, v in (ctx or {}).items()}
                 err = None
                 try:
+                    it2 = g2.stack[idx] if 0 <= idx < len(g2.stack) else None
                     if counter:
                         ctr = E.pick_counter(g2, q2, c)
                         if ctr is None or not E.cast_counter(g2, q2, ctr, c): scores[counter] -= 50.0; continue
                         E.counter_side_effects(g2, q2, p2, ctr)
                         if ctr.name == 'Mana Drain': q2.drain_mana = getattr(q2, 'drain_mana', 0) + c.cmc
-                        if c is p2.cmd: p2.cmd_in_zone = True
-                        elif zone == 'gy' or ctx2.get('exile_after'): p2.exile.append(c)
-                        elif not c.land: p2.gy.append(c)
-                    else:
-                        E.resolve(g2, p2, c, ctx2, zone); E.check_state(g2)
+                        if it2 is not None: it2.countered = True
+                    E.settle_stack(g2)                       # the rest of the stack resolves, no more responses
                     if not g2.over: play_on(g2, q2, active=p2)
                 except E.OutOfWork as e:
                     err = e

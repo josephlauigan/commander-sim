@@ -142,6 +142,11 @@ section.targetable > header { cursor: crosshair; }
 .stackbar h3 { margin: 0 0 6px; font-size: 14px; }
 .stackbar .order { font-size: 13px; color: var(--dim); } .stackbar .order .you { color: var(--gold); font-weight: 700; }
 .stackbar .order .passed { opacity: .75; }
+.stackbar figure.item { margin: 0; display: inline-flex; flex-direction: column; align-items: center; gap: 4px; max-width: 150px; }
+.stackbar figure.item figcaption { font-size: 12px; color: var(--dim); text-align: center; line-height: 1.25; }
+.stackbar figure.item figcaption b { color: var(--text); font-weight: 600; }
+.stackbar figure.item.ability img { outline: 2px dashed #7fd3ff; outline-offset: 2px; }
+#autopass-box { font-size: 13px; color: var(--dim); } #autopass-box select { margin-left: 4px; }
 #hintbox { background: #102a3a; border: 1px solid #7fd3ff; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
 #hintbox h3 { margin: 0 0 6px; font-size: 14px; color: #bfe9ff; }
 #hintbox ul { margin: 4px 0 8px; padding-left: 18px; font-size: 12px; } #hintbox li.lead { list-style: none; margin-left: -18px; color: var(--dim); }

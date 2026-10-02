@@ -235,6 +235,8 @@ def gy_mode(g, p, c):
         return ('flashback', gen, pips)
     if E.has(p, 'breach') and len(p.gy) >= 4:
         gen, pips = E.cost_of(p, c); return ('escape', gen, pips)
+    if E.CI.muld_types(g, p, c):                                          # Muldrotha: a permanent of an unused type
+        gen, pips = E.cost_of(p, c); return ('muldrotha', gen, pips)
     return None
 
 
@@ -261,7 +263,7 @@ def check_cast_gy(g, p, c):
 
 def check_land_gy(g, p, c):
     if c not in p.gy or not c.land: return f"{c.name} isn't a land in your graveyard."
-    if not (getattr(p, 'yawg', False) and id(c) in getattr(p, 'yawg_gy', {})):
+    if not (getattr(p, 'yawg', False) and id(c) in getattr(p, 'yawg_gy', {})) and not E.CI.muld_types(g, p, c):
         return "You can't play lands from your graveyard right now."
     why = sorcery_timing(g, p)
     if why: return why.replace('do that', 'play a land')

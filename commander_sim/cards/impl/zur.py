@@ -207,6 +207,8 @@ def _embrace_gy(g, c, p, s, post):
         if c not in p.gy or worst not in p.hand or not can_pay(g, p, 1, 'BB') or host not in p.perms: return False
         pay(g, p, 1, 'BB'); lose_life(g, p, 3, p); discard_cards(g, p, [worst])
         p.gy.remove(c); p.spells_this_turn += 1; on_cast(g, p, c)
+        if not counter_window(g, p, c, 4, {}) or host not in p.perms:
+            p.gy.append(c); return True
         g.attach_to = host
         try:
             enter(g, p, c, was_cast=True)
@@ -250,6 +252,8 @@ def _heritage(g, src, p, atk, d):
     o = src.owner
     if p is not o or not atk: return
     cands = [m for m in atk if m in o.perms and not untargetable_by_you(g, m)]
+    if not cands or not trigger_window(g, o, src, 'an attacker gains double strike'): return
+    cands = [m for m in cands if m in o.perms]
     if not cands: return
     hc = human(g, o)
     if hc is not None:
@@ -283,6 +287,7 @@ full('Bastion Protector', 'commander creatures you control get +2/+2 and have in
 
 @on('Ministrant of Obligation', 'self_dies')
 def _ministrant(g, m, cause):
+    if not trigger_window(g, m.owner, m, 'two 1/1 flying Spirits'): return
     make_tokens(g, m.owner, 2, 1, fly=True, color='WB', types=('spirit',))
     log('    Ministrant of Obligation: two 1/1 flying Spirits (afterlife 2)', g)
 card('Ministrant of Obligation', 'human pow=2 tgh=1', dsl=[])
@@ -298,7 +303,7 @@ def _officer(g, src, p, s, post):
     def go():
         if src not in p.perms or not can_pay(g, p, 3, 'W'): return False
         pay(g, p, 3, 'W')
-        officer_dig(g, p)
+        if ability_window(g, p, src, 'look at the top four'): officer_dig(g, p)
         return True
     return [(1.4, 'Recruitment Officer: dig for a creature', go)]
 
@@ -334,8 +339,9 @@ def _guildmage(g, src, p, s, post):
 
     def go():
         if src not in p.perms or t not in t.owner.perms or t.tapped or not can_pay(g, p, 2, 'W'): return False
-        pay(g, p, 2, 'W'); t.tapped = True
-        log(f'  {NAME(p)} activates Azorius Guildmage: taps {t.name}', g)
+        pay(g, p, 2, 'W')
+        log(f'  {NAME(p)} activates Azorius Guildmage: tap {t.name}', g)
+        if ability_window(g, p, src, f'tap {t.name}', target=t): t.tapped = True
         return True
     return [(1.0 + 0.5 * pval(g, t), f'Azorius Guildmage: tap {t.name}', go)]
 
@@ -350,8 +356,8 @@ def guildmage_target(g, p):
                 and not untargetable(g, b) and ais.can_block(g, b, a) and epow(g, b) >= etgh(g, a) - 0]
     return max(blockers, key=lambda b: epow(g, b), default=None)
 card('Azorius Guildmage', 'wizard pow=2 tgh=2', dsl=[])
-note('Azorius Guildmage', 'Partial', "{2}{W}: taps the creature that would block your attacker, before combat; "
-     "{2}{U} (counter target activated ability) is not modeled: the engine has no window to answer abilities")
+full('Azorius Guildmage', "{2}{W}: taps the creature that would block your attacker, before combat; {2}{U}: counters "
+     "an opponent's important activated ability on the stack")
 
 
 # ================================================================== The Eternal Wanderer
@@ -370,17 +376,20 @@ def _wanderer(g, src, p, s, post):
             src.data = dict(src.data or {}, act=turn_stamp(g))
             if kind == 'plus':
                 src.loyalty += 1
-                if t is not None and t in t.owner.perms: wanderer_exile(g, p, t)
-                else: log(f'  {NAME(p)} uses The Eternal Wanderer +1', g)
+                log(f'  {NAME(p)} uses The Eternal Wanderer +1', g)
+                if ability_window(g, p, src, '+1', target=t) and t is not None and t in t.owner.perms: wanderer_exile(g, p, t)
             elif kind == 'zero':
+                log(f'  {NAME(p)} uses The Eternal Wanderer 0', g)
+                if not ability_window(g, p, src, '0'): return True
                 n = make_tokens(g, p, 1, 2, color='W', types=('samurai',))
                 for x in n: x.data = dict(x.data or {}, kws=('double strike',))
                 log(f'  {NAME(p)} uses The Eternal Wanderer 0: a 2/2 double-strike Samurai', g)
             else:
                 src.loyalty -= 4
                 log(f'  {NAME(p)} uses The Eternal Wanderer -4', g)
-                wanderer_ult(g, p)
-                if src.loyalty <= 0: leave(g, src); to_zone_card(g, src, 'gy')
+                dead = src.loyalty <= 0
+                if dead: leave(g, src); to_zone_card(g, src, 'gy')
+                if ability_window(g, p, src.cd if dead else src, '-4', imp=8): wanderer_ult(g, p)
             return True
         return go
     if t is not None: out.append((1.5 + 0.6 * pval(g, t), f'The Eternal Wanderer +1 (exile {t.name})', act('plus')))
@@ -468,6 +477,7 @@ CI.gift_returns = gift_returns
 def _prayer(g, src, p, m):
     if m is not src: return
     o = src.owner
+    if not trigger_window(g, o, src, 'exile a permanent; gain 2 life', imp=5): return
     hc = human(g, o)
     if hc is not None:
         from commander_sim.play import legal
@@ -548,7 +558,8 @@ def _blink_option(g, p, c, gen, pips, zone):
         pay(g, p, gen, pips)
         p.spells_this_turn += 1; on_cast(g, p, c)
         (p.gy if zone == 'hand' else p.exile).append(c)
-        t2.blink(g, p, t)
+        if not counter_window(g, p, c, 4, {}): return True
+        if t in p.perms: t2.blink(g, p, t)
         log(f'  {NAME(p)} casts Momentary Blink{" (flashback)" if zone == "gy" else ""}: blinks {t.cd.name}', g)
         return True
     return [(t2.blink_value(g, p, t) - 1.5 - (1.0 if zone == 'gy' else 0), f'Momentary Blink on {t.name}', go)]
@@ -781,23 +792,29 @@ def zur_protect(g, owner, m, kind, actor, spell):
     for c in list(owner.hand):
         tp = c.tags.get('prot')
         if tp == 'phase' and can_pay(g, owner, c.generic, c.pips, 'convoke' in c.tags):      # Clever Concealment
-            ais.pay_card(g, owner, c)
+            if not ais.pay_card(g, owner, c): return False
             m.phased = True
             for a in auras: a.phased = True
             log(f'    {NAME(owner)} casts {c.name}: {m.name} phases out', g)
             return True
         if tp == 'indes' and (kind == 'destroy' or kind.startswith('dmg')) and can_pay(g, owner, c.generic, c.pips):
-            ais.pay_card(g, owner, c); rootborn(g, owner)                                     # Rootborn Defenses
+            if not ais.pay_card(g, owner, c): return False                                   # Rootborn Defenses
+            rootborn(g, owner)
             return True
     if auras or kind not in ('destroy', 'exile', 'bounce', 'tuck') and not kind.startswith('dmg'): return False
     for c in list(owner.hand):
         if c.name in ('Momentary Blink', 'Restoration Angel') and can_pay(g, owner, c.generic, c.pips):
             from commander_sim.cards.impl import t2
-            ais.pay_card(g, owner, c)
+            if not ais.pay_card(g, owner, c): return False
             if c.name == 'Restoration Angel':
                 if c in owner.gy: owner.gy.remove(c)
-                enter(g, owner, c)
-            t2.blink(g, owner, m)
+                g.resto_target = m                      # its enters trigger blinks the creature under attack
+                try:
+                    enter(g, owner, c)
+                finally:
+                    g.resto_target = None
+            else:
+                t2.blink(g, owner, m)
             log(f'    {NAME(owner)} casts {c.name}: blinks {m.cd.name if m.cd else m.name}', g)
             return True
     return False
@@ -811,7 +828,7 @@ def zur_wipe_response(g, q, kind):
     if loss < 6: return None
     for c in list(q.hand):
         if c.tags.get('prot') == 'phase' and can_pay(g, q, c.generic, c.pips, 'convoke' in c.tags):
-            ais.pay_card(g, q, c)
+            if not ais.pay_card(g, q, c): return None
             mine = [m for m in q.perms if m.creature]
             for m in q.perms:
                 if m.creature or (m.attached is not None and m.attached in mine): m.phased = True
@@ -820,7 +837,8 @@ def zur_wipe_response(g, q, kind):
     if kind in ('destroy', 'dmg13', 'austere', 'nib'):
         for c in list(q.hand):
             if c.tags.get('prot') == 'indes' and can_pay(g, q, c.generic, c.pips):
-                ais.pay_card(g, q, c); rootborn(g, q)
+                if not ais.pay_card(g, q, c): return None
+                rootborn(g, q)
                 return 'indes'
     return None
 
@@ -843,9 +861,8 @@ def verdict_response(g, d, p, atk):
     if epow(g, t) < 3 and pval(g, t) < 4: return
     from commander_sim import ais
     c = vs[0]
-    ais.pay_card(g, d, c)
-    log(f'  {NAME(d)} casts Divine Verdict on attacking {t.name}', g)
-    apply_removal(g, d, t, 'destroy', c)
+    if not ais.pay_card(g, d, c): return
+    if t in t.owner.perms: apply_removal(g, d, t, 'destroy', c)
 
 
 CI.verdict_response = verdict_response

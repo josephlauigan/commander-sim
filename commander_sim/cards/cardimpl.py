@@ -90,6 +90,17 @@ def hooked(g, event):
 
 
 def fire(g, event, *args):
+    if event in E.TRIGGER_EVENTS:                        # triggered abilities: through the stack (engine.queue_triggers)
+        entries, out = [], []
+        for src, fn in list(hooked(g, event)):
+            reps = 1 + total(g, 'trigger_copies', src.owner, 'dies', args[0]) if event == 'dies' else 1   # Teysa
+            for _ in range(reps):
+                if E.converted(fn): entries.append(E.Trigger(src.owner, src, fn, (g, src) + args, event))
+                else:                                    # not a trigger (or not converted yet): at once, as always
+                    r = fn(g, src, *args)
+                    if r: out.append(r)
+                    if g.over: return out
+        return out + E.queue_triggers(g, entries)
     out = []
     for src, fn in hooked(g, event):
         reps = 1 + total(g, 'trigger_copies', src.owner, 'dies', args[0]) if event == 'dies' else 1   # Teysa
@@ -256,6 +267,8 @@ def load():
     """import the implementation modules (they register themselves)"""
     from commander_sim.cards.impl import common as impl_common, t1 as impl_t1, t2 as impl_t2, t3 as impl_t3, t4 as impl_t4, t5 as impl_t5, combos as impl_combos, topdeck as impl_topdeck, fixes as impl_fixes, lands as impl_lands, partials as impl_partials, rules as impl_rules, rules2 as impl_rules2, mine as impl_mine, marchesa as impl_marchesa, zur as impl_zur  # noqa: F401
 
+
+muldrotha_on = None          # set by cards/impl/mine.py (Muldrotha, the Gravetide)
 
 E.CI = __import__('sys').modules[__name__]
 
