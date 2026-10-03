@@ -782,9 +782,22 @@ def _bond(g, src, p, n):
         if not g.opps(p): return
         g.bond_depth = getattr(g, 'bond_depth', 0) + 1
         try:
-            lose_life(g, max(g.opps(p), key=lambda q: threat(g, p, q)), n, p, kind='drain')
+            lose_life(g, bond_target(g, p, n), n, p, kind='drain')
         finally:
             g.bond_depth -= 1
+
+
+def bond_target(g, p, n):
+    """the opponent who loses the life: the person's choice; else one it kills, else the most threatening"""
+    opps = g.opps(p)
+    hc = human_choice(g, p)
+    if hc is not None and len(opps) > 1:
+        k = hc.choose(g, p, 'target', f'Sanguine Bond: which opponent loses {n} life?',
+                      [f'{NAME(q)} ({q.life} life)' for q in opps], cancel=None)
+        return opps[k]
+    dead = [q for q in opps if q.life <= n and not q.life_locked]
+    if dead: return max(dead, key=lambda q: threat(g, p, q))
+    return max(opps, key=lambda q: threat(g, p, q))
 
 
 @on('Exquisite Blood', 'lose_life')

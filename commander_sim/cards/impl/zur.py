@@ -5,7 +5,8 @@
   activated abilities), Kasmina's Transmutation (loses all abilities, base 1/1), and Phyrexian Boon (-1/-2 on a
   non-black creature, +2/+1 on a black one). Cast, they target as they enter (etb_removal); put onto the battlefield
   by Zur, they don't target, so hexproof and ward don't stop them (protection does).
-- Zur's attack trigger for this deck: the enchantment the board calls for, and where its Aura goes.
+- Zur's attack trigger for this deck: the enchantment the board calls for, and where its Aura goes (Zur in your
+  Y'shtola deck's 99 uses it too, with that deck's values: cards/impl/yshtola.py).
 - The deck's other cards that need code: Demonic Embrace, Gift of Immortality, Duelist's Heritage, Bastion
   Protector, Ministrant of Obligation, Recruitment Officer, Azorius Guildmage, The Eternal Wanderer, Prayer of
   Binding, Momentary Blink, Rootborn Defenses, Divine Verdict, Destroy Evil, Disenchant, Vivid Meadow.
@@ -620,7 +621,7 @@ def put_enchantment(g, p, c, zur):
             leave(g, a); p.gy.append(c)
         return
     if 'aura' in c.subtypes and c.name in IC.AURA:
-        g.attach_to = zur if c.name != 'Phyrexian Boon' and human(g, p) is None else None   # the person chooses
+        g.attach_to = zur if c.name != 'Phyrexian Boon' and human(g, p) is None and p.key == 'zur' else None   # the person chooses
         g.aura_put = True
         try:
             enter(g, p, c)
@@ -644,6 +645,7 @@ def human_lock_host(g, p, name):
 
 def fetch_value(g, p, c, zur):
     """how much an enchantment from Zur is worth now"""
+    if p.key != 'zur': return CI.yshtola_fetch_value(g, p, c, zur)          # Zur in Y'shtola's deck (cards/impl/yshtola.py)
     n = c.name
     have = {m.cd.name for m in p.perms if m.cd is not None and not m.phased}
     if n in have and n not in IC.AURA and n not in LOCKS: return 0                 # a second copy of a global (none)

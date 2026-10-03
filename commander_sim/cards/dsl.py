@@ -423,15 +423,25 @@ def search(g, p, e, ctx):
             E.land_to_hand(g, p); continue
         cands = [c for c in E.searchable(g, p) if card_matches(c, f)]
         if not cands: return
-        if not f or f.get('type') in (None, 'any'):
+        hc = E.human_choice(g, p)
+        if hc is not None:                                              # practice mode: the person searches
+            got = hc.search(g, p, lambda x: card_matches(x, f), 1, 'Search your library'
+                            + (f" for {f['type']} card" if f.get('type') not in (None, 'any') else ''))
+            if not got: return
+            c = got[0]
+        elif not f or f.get('type') in (None, 'any'):
             from commander_sim import ais
             nm = ais.tutor_pick(g, p, 'any')
             c = next((x for x in cands if x.name == nm), None) or max(cands, key=lambda c: card_value(g, p, c))
         else:
+            from commander_sim import ais
+            kind = {'enchantment': 'ench', 'creature': 'cre', 'artifact': 'art'}.get(f.get('type'))
+            nm = ais._tutor_pick_named(g, p, kind) if kind and p.key in ais.MAIN else None   # your deck's wish list
             wish = importlib.import_module('commander_sim.ai.pool_ai').wish_list(g, p) if p.key not in E.IDENT else []
             want = [c for c in cands if c.name in wish]
-            c = min(want, key=lambda c: wish.index(c.name)) if want else max(cands, key=lambda c: (card_value(g, p, c), c.cmc))
-        p.library.remove(c)
+            c = next((x for x in cands if x.name == nm), None) or (
+                min(want, key=lambda c: wish.index(c.name)) if want else max(cands, key=lambda c: (card_value(g, p, c), c.cmc)))
+        if c in p.library: p.library.remove(c)
         a = E.agent_for(g, p)
         if a is not None: E.agent_take(g, a, p, c); continue      # Opposition Agent
         if to == 'battlefield':

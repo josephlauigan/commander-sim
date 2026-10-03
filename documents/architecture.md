@@ -36,9 +36,9 @@ section 3 places them elsewhere. Commands run from the repository root.
 The question the simulator answers: **how often does one of my Commander decks win a four-player game against
 opponents of a given power level?**
 
-- **Your decks** are the six lists in `decklists/mine/`: Sephiroth (Atraxa reanimator, key `seph`), Veyran
+- **Your decks** are the seven lists in `decklists/mine/`: Sephiroth (Atraxa reanimator, key `seph`), Veyran
   (Izzet spellslinger, `veyran`), Sauron (Grixis amass, `sauron`), Marchesa (Grixis recursion, `marchesa`), Zur
-  (Esper Auras, `zur`) and Galadriel (Bant Rebels, `galadriel`).
+  (Esper Auras, `zur`), Galadriel (Bant Rebels, `galadriel`) and Y'shtola (Esper Drain, `yshtola`).
 - **The opponents** are 25 outside decks in `decklists/pool/`, five in each of five tiers that follow the official
   Commander brackets:
 
@@ -114,7 +114,8 @@ About 21,700 lines of Python in 36 modules, grouped into the `commander_sim` pac
 commander_sim/          compare, poolmode, pools, decks, update_deck, pool_audit, engine, ais   (+ __main__.py)
 commander_sim/ai/       brain, search, pool_ai, pool_decks, deck_plans
 commander_sim/cards/    carddb, sources, scryfall, autotag, dsl_parse, dsl, cardimpl, pool_cards
-commander_sim/cards/impl/   common, t1 … t5, combos, topdeck, fixes, lands, partials, rules, rules2, mine
+commander_sim/cards/impl/   common, t1 … t5, combos, topdeck, fixes, lands, partials, rules, rules2, mine, marchesa,
+                            zur, galadriel, yshtola
 commander_sim/tools/    searchtest, swaptest, linecov
 data/                   scryfall_cache.json, cards_dsl.example.json (and cards_dsl.json if you add one)
 ```
@@ -129,7 +130,7 @@ deck files, the Scryfall cache and the audit notes. `python3 -m commander_sim` r
 | `compare.py` | Command-line entry point. Parses arguments, sets the AI mode, runs chunks of seeds on a process pool, draws the progress bar, holds the metric definitions and report printers. |
 | `poolmode.py` | Everything measured against the pools: one deck vs one tier, paired A/B, the deck × tier matrix, `--analyze`, `--trace`, and the calibration checks. |
 | `pools.py` | Loads the 25 pool deck files, validates them (size, singleton, colour identity, bans, Game Changers per tier), registers them for play, and draws seats for a game. |
-| `decks.py` | Loads your five deck files from `decklists/mine/` into `DECKS`. |
+| `decks.py` | Loads your seven deck files from `decklists/mine/` into `DECKS`. |
 | `update_deck.py` | Replaces a deck's list with a pasted one: validates it, rewrites the file's list sections, records the deck-guard fixture, and reports what changed and how the new cards are modeled. |
 | `tools/searchtest.py`, `tools/swaptest.py`, `tools/linecov.py` | Paired tests for pool decks (with and without look-ahead, and with list swaps), and the test suite's line coverage. |
 | `pool_audit.py` | How faithfully each card is modeled, per deck. |
@@ -492,9 +493,11 @@ tiny scoring error from deciding every game the same way.
 
 ### Your decks vs pool decks
 
-Your six decks keep hand-written plans in `ais.py` (Zur's in `cards/impl/zur.py`, Galadriel's in `cards/impl/galadriel.py`):
+Your seven decks keep hand-written plans in `ais.py` (Zur's in `cards/impl/zur.py`, Galadriel's in `cards/impl/galadriel.py`,
+Y'shtola's in `cards/impl/yshtola.py`):
 
-- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio`, `zur_prio`, `galadriel_prio`);
+- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio`, `zur_prio`, `galadriel_prio`,
+  `yshtola_prio`);
 - reanimation targets;
 - combo checks (Veyran's kitten combo, Sauron's Sword + Aggravated Assault);
 - protection choices;
@@ -670,6 +673,7 @@ A per-game cache maps each event to its listeners.
 | `cards/impl/mine.py` | Cards in your decks that need more than tags: the Ring, equipment, lands and full card text. |
 | `cards/impl/marchesa.py` | Marchesa's return trigger, sacrifice values and AI plays, and the cards of her deck that need code. |
 | `cards/impl/galadriel.py` | Your Galadriel deck: Galadriel's Alliance (a mode not yet chosen this turn per creature entering), the Rebel searchers and which Rebel to fetch, Maskwood Nexus and the cards that name a creature type (`CI.AS_ENTERS`), Panharmonicon (enters triggers twice, through `trigger_copies`), the deck's other cards, and its AI priorities and responses. |
+| `cards/impl/yshtola.py` | Your Y'shtola deck: her cast trigger (mana value read as cast, X included) and end-step draw, the drain package (X drains, Ill-Gotten Inheritance, Urborg Syphon-Mage, Marauding Blight-Priest), cards taken from opponents and cast with mana of any type (Gonti, Hostage Taker, Thief of Sanity: held in hand like Opposition Agent's, `p.stolen` remembering the owner), Curiosity, Jester's Cap, the tutors' wish list, Zur's fetch values for this deck, and its AI priorities and responses. |
 | `cards/impl/zur.py` | Your Zur deck: Auras that lock a permanent down while attached (Arrest, Encrust, Kasmina's Transmutation ...; removal kinds `arrest`, `pacify`, `encrust`, `kasmina`), Zur's attack trigger choosing an enchantment by board state, the deck's other cards, and its AI priorities and responses. |
 
 `cardimpl.load()` imports these modules in a fixed order. A later registration for the same card and event
@@ -898,6 +902,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (451 tests, abou
 | `test_rules.py` | Core rules on hand-built positions: mana, commander tax, state-based losses, counterspells, removal, wipes, tutors, mulligans, combat keywords. |
 | `test_my_cards.py` | Key cards of your decks against their Oracle text. |
 | `test_zur.py` | Your Zur deck: lock Auras, Zur's fetch, its other cards, and practice-mode choices. |
+| `test_yshtola.py` | Your Y'shtola deck: her two triggers, Curiosity, the drains, the cards taken from opponents, its other cards, the AI's choices, and practice-mode abilities and choices. |
 | `test_galadriel.py` | Your Galadriel deck: Alliance, the Rebel searchers, the creature-type cards, Panharmonicon, its other cards, and practice-mode abilities and choices. |
 | `test_land_entry.py` | Lands' enters-tapped conditions. |
 | `test_search.py` | The look-ahead AI: independent copies, re-dealt hidden hands, evaluation bounds, a whole reproducible decision. |

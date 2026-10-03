@@ -189,7 +189,7 @@ def sources_name(u):
 def _gather_floating(p):
     """the engine's floating mana (rituals, Birgi, Lion's Eye Diamond) joins the pool"""
     pool = pool_of(p)
-    for attr, c in (('floatR', 'R'), ('floatU', 'U'), ('floatC', 'C'), ('floatA', 'A'), ('floatG', 'G')):
+    for attr, c in (('floatR', 'R'), ('floatU', 'U'), ('floatC', 'C'), ('floatA', 'A'), ('floatG', 'G'), ('floatB', 'B')):
         n = getattr(p, attr, 0)
         if n: pool.add(c, n); setattr(p, attr, 0)
     return pool

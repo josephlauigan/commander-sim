@@ -313,7 +313,7 @@ ZUR_PREF = ('Necropotence', 'Ethereal Armor', 'Empyrial Armor', 'Ghostly Prison'
 @on('Zur the Enchanter', 'attack')
 def _zur(g, src, p, atk, d):
     if src not in atk: return
-    if p.key == 'zur':                                          # your Zur deck (cards/impl/zur.py)
+    if p.key in ('zur', 'yshtola'):                             # your Zur deck, and Y'shtola's (cards/impl/zur.py)
         if not trigger_window(g, p, src, 'search for an enchantment', imp=5): return
         return CI.zur_fetch(g, src, p)
     have = {m.cd.name for m in p.perms if m.cd is not None}
