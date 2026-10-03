@@ -382,7 +382,7 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Austere Command | Modeled | tags: `wipe=austere2` |
 | Birds of Paradise | Modeled | tags: `dork=A noatk fly` |
 | Bonders' Enclave | Partial | mana only; draw ability ignored |
-| Cathars' Crusade | Approximate | counters capped at +60 per creature |
+| Cathars' Crusade | Modeled | a +1/+1 counter on each of your creatures whenever one enters (twice with Panharmonicon) |
 | Chaos Warp | Partial | shuffle-away modeled; the revealed-permanent replacement ignored |
 | Chromatic Lantern | Modeled | tags: `rock=1:A lantern` |
 | Clever Concealment | Modeled | tags: `prot=phase convoke` |

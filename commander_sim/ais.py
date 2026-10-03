@@ -135,6 +135,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if E.CI.marchesa_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'zur':
         if E.CI.zur_protect(g, owner, m, kind, actor, spell): return True
+    elif owner.key == 'galadriel':
+        if E.CI.galadriel_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'najeela':
         if v >= 5 and not m.token and m.creature:
             for c in owner.hand:
@@ -161,6 +163,7 @@ def wipe_response(g, q, kind, caster):
         return pool_ai.wipe_response(g, q, kind, caster)
     if q.key == 'marchesa': E.CI.marchesa_wipe_response(g, q, kind)       # countered creatures go to Marchesa first
     if q.key == 'zur': return E.CI.zur_wipe_response(g, q, kind)
+    if q.key == 'galadriel': return E.CI.galadriel_wipe_response(g, q, kind)
     loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
     if loss < 6: return None
     if q.key == 'seph':
@@ -737,8 +740,28 @@ def wipe_cost(p, c):
     return cost_of(p, c)
 
 
+WIPE_MODE_TEXT = {'art': 'artifacts', 'ench': 'enchantments', 'cre': 'all creatures', 'gy': 'all graveyards',
+                  'le3': 'creatures with mana value 3 or less', 'ge4': 'creatures with mana value 4 or greater'}
+
+
 def wipe_modes(g, p, kind):
-    """pick modes for Farewell (any number) or Austere Command (exactly two) by net value"""
+    """pick modes for Farewell (any number) or Austere Command (exactly two): you choose; the AI by net value"""
+    hc = E.human_choice(g, p)
+    if hc is not None:
+        keys = ['art', 'ench', 'cre', 'gy'] if kind == 'farewell' else ['art', 'ench', 'le3', 'ge4']
+        verb = 'exile' if kind == 'farewell' else 'destroy'
+        picked = set()
+        while True:
+            left = [k for k in keys if k not in picked]
+            if not left or (kind == 'austere2' and len(picked) == 2): break
+            done = 'done' if (kind == 'farewell' and picked) else None
+            k = hc.choose(g, p, 'choose', f"{'Farewell' if kind == 'farewell' else 'Austere Command'}: {verb} which? "
+                                         f"({'one or more' if kind == 'farewell' else 'choose two'}; chosen: "
+                                         f"{', '.join(WIPE_MODE_TEXT[x] for x in sorted(picked)) or 'none'})",
+                          [WIPE_MODE_TEXT[x] for x in left], cancel=done)
+            if k is None: break
+            picked.add(left[k])
+        return picked
     def val(pred):
         v = 0.0
         for q in g.players:
@@ -1171,6 +1194,22 @@ def zur_main(g, p, post):
         break
 
 
+# ======================================================== galadriel
+def galadriel_prio(g, p, c):
+    return E.CI.galadriel_prio(g, p, c)
+
+
+def galadriel_main(g, p, post):
+    for _ in range(16):
+        if g.over or not p.alive: return
+        if use_removal(g, p, 6): continue
+        if consider_wipe(g, p): continue
+        res = interaction_reserve(g, p, lambda c: 'ctr' in c.tags) if p.turns >= 4 else (0, '')
+        if generic_cast(g, p, galadriel_prio, res): continue
+        if E.CI.galadriel_abilities(g, p): continue
+        break
+
+
 # ======================================================== najeela
 def najeela_prio(g, p, c):
     t = c.tags
@@ -1299,7 +1338,7 @@ def tutor_pick(g, p, kind):
 # ======================================================== Game Changer plays (Veyran's candidate cards)
 def deck_prio(g, p, c):
     f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'marchesa': marchesa_prio, 'zur': zur_prio,
-         'najeela': najeela_prio}.get(p.key)
+         'galadriel': galadriel_prio, 'najeela': najeela_prio}.get(p.key)
     if f is None:
         from commander_sim.ai import pool_ai; f = pool_ai.generic_prio
     return f(g, p, c)
@@ -1582,7 +1621,8 @@ def can_block(g, b, a):
     if a.cd is not None and 'swampwalk' in a.cd.tags and any(
             L.cd.name in ('Swamp', 'Watery Grave', 'Blood Crypt', 'Overgrown Tomb') for L in b.owner.lands):
         return False                                 # Sheoldred, Whispering One: swampwalk
-    if a.fly and not b.fly and not (b.cd is not None and 'reach' in b.cd.tags): return False
+    if a.fly and not b.fly and not (b.cd is not None and 'reach' in b.cd.tags) \
+            and not (getattr(b.owner, 'elspeth_emblem', False) and b.creature): return False
     if 'flying' in g.eot_kw.get(id(a), ()) and not (b.fly or (b.cd is not None and 'reach' in b.cd.tags)
                                                    or 'flying' in g.eot_kw.get(id(b), ())): return False     # Iron Man
     if E.CI is not None and importlib.import_module('commander_sim.cards.impl.mine').ring_unblockable(g, b, a): return False             # Ring level 1
@@ -1699,7 +1739,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
             if good: b = min(good, key=lambda x: pval(g, x))
             else:
-                trade = [b for b in cands if epow(g, b) >= at or b.dt]
+                trade = [b for b in cands if epow(g, b) >= at or b.dt or (b.cd is not None and b.cd.name == 'Defiant Vanguard')]
                 if trade and pval(g, a) >= min(pval(g, x) for x in trade):
                     b = min(trade, key=lambda x: pval(g, x))
                 elif shielded(d):                     # the damage is prevented anyway: no chump blocks
@@ -1714,6 +1754,12 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 rest = [x for x in cands if x is not b]
                 if rest: used.add(min(rest, key=lambda x: pval(g, x)))
     if g.hooks: E.CI.fire(g, 'blocks', p, atk, d, assign)
+    for a, b in list(assign.items()):                  # flanking: a blocker without flanking gets -1/-1
+        if b is not None and b in d.perms and E.DSLMOD is not None and E.DSLMOD.has_kw(g, a, 'flanking') \
+                and not E.DSLMOD.has_kw(g, b, 'flanking'):
+            x, y = g.eot_pt.get(id(b), (0, 0)); g.eot_pt[id(b)] = (x - 1, y - 1)
+            if etgh(g, b) <= 0: die(g, b, 'sba')
+    g.blocking = {b for b in assign.values() if b is not None}
     ringblk = [b for a, b in assign.items() if E.CI is not None and importlib.import_module('commander_sim.cards.impl.mine').ring_blocked(g, p, a, b)]
     to_walker = {} if hum_p else walker_attacks(g, p, atk, d, assign)
     if E.CI is not None:
@@ -1748,9 +1794,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 dmg = ap if tr else 0
             else:
                 bt = etgh(g, b)
-                a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b))
+                a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b)) and not E.no_damage(g, a)
                 if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, b): a_dies = False
-                b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a))
+                b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a)) and not E.no_damage(g, b)
                 if E.CI is not None:                       # protection from creatures / Demons and Dragons
                     from commander_sim.cards.impl import rules2 as impl_rules2
                     if impl_rules2.prot_vs(g, a, b): a_dies = False
@@ -1795,6 +1841,8 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                     for L in p.lands: L.tapped = False
         for b in ringblk:                                           # Ring level 3: blockers are sacrificed
             if b in b.owner.perms: die(g, b, 'sac')
+        if E.CI is not None: E.CI.vanguard_blocks(g, assign)       # Defiant Vanguard: at end of combat
+        g.blocking = set()
         if conn and has(p, 'facebreaker'): add_treasure(g, p, len(find(p, 'facebreaker')))   # Professional Face-Breaker
         check_state(g)
     finally:
@@ -2279,6 +2327,7 @@ def yawg_cleanup(g, p):
 def end_step(g, p):
     if getattr(g, 'marchesa_due', None): E.CI.marchesa_return(g)        # Marchesa: 'at the beginning of the next end step'
     if getattr(g, 'zur_due', None): E.CI.zur_end_step(g, p)               # The Eternal Wanderer, Gift of Immortality
+    if getattr(g, 'eot_returns', None): E.CI.eot_returns(g)               # Eerie Interlude
     if getattr(p, 'yawg', False): yawg_cleanup(g, p)
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
     for m in getattr(p, 'borrowed', None) or []:          # Zealous Conscripts: control returns
@@ -2339,7 +2388,7 @@ def generic_main(g, p, post):
 
 
 MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'marchesa': marchesa_main, 'zur': zur_main,
-        'najeela': najeela_main}
+        'galadriel': galadriel_main, 'najeela': najeela_main}
 
 
 def main_fn(p):
@@ -2375,9 +2424,11 @@ def _step_start(g, p):
     p.turns += 1
     for q in g.players: q.floatR = 0          # floating mana empties between turns
     for L in p.lands: L.tapped = False
-    for q in g.players: q.floatU = 0; q.floatC = 0
+    for q in g.players: q.floatU = 0; q.floatC = 0; q.floatG = 0
+    crack = E.CI is not None and E.CI.crackdown_on(g)              # Crackdown: big nonwhite creatures stay tapped
     for m in list(p.perms):
         if m.data and m.data.get('frozen'): m.data['frozen'] -= 1; continue   # Frost Titan, Tamiyo
+        if crack and m.tapped and E.CI.crackdown_holds(g, m): m.sick = False; m.phased = False; m.age += 1; continue
         if not (m.cd is not None and 'nountap' in m.cd.tags) and not (getattr(g, 'auras', None) and E.CI.locked(g, m, 'frozen')):
             m.tapped = False                              # Grim Monolith, Mana Vault; Encrust
         m.sick = False; m.phased = False; m.age += 1
@@ -2473,7 +2524,7 @@ def mulligan(g, p, rng=None):
 
 CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
         'sauron': 'Sauron, the Dark Lord', 'marchesa': 'Marchesa, the Black Rose', 'zur': 'Zur the Enchanter',
-        'najeela': 'Najeela, the Blade-Blossom'}
+        'galadriel': 'Galadriel, Light of Valinor', 'najeela': 'Najeela, the Blade-Blossom'}
 
 
 STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)

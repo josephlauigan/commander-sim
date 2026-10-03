@@ -697,6 +697,7 @@ def evasion_blocked(g, b, a):
     if a.cd is None: return False
     n = a.cd.name
     if n == 'Shriekmaw' and not ((b.cd is not None and 'A' in b.cd.types) or 'B' in colors_of(b)): return True
+    if n == 'Amrou Seekers' and not ((b.cd is not None and 'A' in b.cd.types) or 'W' in colors_of(b)): return True
     if n == 'Signal Pest' and not (b.fly or (b.cd is not None and 'reach' in b.cd.tags)
                                    or (E.DSLMOD is not None and (E.DSLMOD.has_kw(g, b, 'flying') or E.DSLMOD.has_kw(g, b, 'reach')))): return True
     if b.token and getattr(a.owner, 'loyalist_turn', None) == turn_stamp(g): return True

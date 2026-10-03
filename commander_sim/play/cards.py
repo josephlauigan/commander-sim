@@ -1178,3 +1178,219 @@ def dredge(g, p):
 
 CAST_TARGET = {'Act of Treason': 'Act of Treason: gain control of which creature until end of turn?'}
 NEEDS['Act of Treason'] = lambda g, p, c: None if _creatures(g, p) else 'Act of Treason has no creature to target.'
+
+
+# ------------------------------------------------------------------ Galadriel's deck (Bant Rebels)
+def _gal():
+    return importlib.import_module('commander_sim.cards.impl.galadriel')
+
+
+def _creature_tap_ok(m):
+    return _tapped(m) or (f'{m.cd.name} has summoning sickness (it came under your control this turn).' if m.sick else None)
+
+
+def _gal_pay(g, p, m, gen, pips, what):
+    """pay a creature's ability from your pool (Secluded Courtyard's mana may pay if it's of the named type).
+    None once paid, or why not"""
+    prev, mana.SPENDING = mana.SPENDING, m
+    try:
+        why = _cost(g, p, gen, pips, what)
+        if why: return why
+        mana.pay_from_pool(g, p, gen, pips)
+    finally:
+        mana.SPENDING = prev
+    return None
+
+
+def _pick_x(g, p, what, lo=0):
+    """X for an ability, up to the mana in your pool"""
+    n = mana.pool_of(p).total() + sum(getattr(p, a, 0) for a in ('floatR', 'floatU', 'floatC', 'floatA', 'floatG'))
+    if n < lo: return None
+    xs = list(range(lo, n + 1))
+    k = _choose(g, p, 'choose', f'{what}: X = ? (your pool has {n} mana)', [f'X = {x}' for x in xs])
+    return None if k is None else xs[k]
+
+
+def _searcher_act(cost, cap):
+    def act(g, p, m):
+        why = _creature_tap_ok(m) or _gal_pay(g, p, m, cost, '', m.cd.name)
+        if why: return why
+        m.tapped = True
+        E.log(f'  {E.NAME(p)} activates {m.cd.name}', g)
+        if E.ability_window(g, p, m, f'search for a Rebel (mana value {cap} or less)'): _gal().put_rebel(g, p, m.cd.name, cap)
+        return None
+    return act
+
+
+def _lin_search(g, p, m):
+    why = _creature_tap_ok(m)
+    if why: return why
+    x = _pick_x(g, p, 'Lin Sivvi')
+    if x is None: return None
+    why = _gal_pay(g, p, m, x, '', 'Lin Sivvi')
+    if why: return why
+    m.tapped = True
+    E.log(f'  {E.NAME(p)} activates Lin Sivvi, X = {x}', g)
+    if E.ability_window(g, p, m, f'search for a Rebel (mana value {x} or less)'): _gal().put_rebel(g, p, 'Lin Sivvi', x)
+    return None
+
+
+def _lin_bottom(g, p, m):
+    cs = _gal().rebel_cards(p, p.gy, 99) + [c for c in p.gy if not c.perm and 'rebel' in c.subtypes]
+    if not cs: return 'There is no Rebel card in your graveyard.'
+    k = _choose(g, p, 'target', 'Lin Sivvi: put which Rebel card from your graveyard on the bottom of your library?',
+                [c.name for c in cs])
+    if k is None: return None
+    why = _gal_pay(g, p, m, 3, '', 'Lin Sivvi')
+    if why: return why
+    c = cs[k]
+    E.log(f'  {E.NAME(p)} activates Lin Sivvi: {c.name} to the bottom of the library', g)
+    if E.ability_window(g, p, m, f'put {c.name} on the bottom of the library', target=c) and c in p.gy:
+        p.gy.remove(c); p.library.insert(0, c)
+    return None
+
+
+def _revivalist(g, p, m):
+    why = _creature_tap_ok(m)
+    if why: return why
+    if not _gal().rebel_cards(p, p.gy, 5): return 'There is no Rebel permanent card with mana value 5 or less in your graveyard.'
+    why = _gal_pay(g, p, m, 6, '', 'Ramosian Revivalist')
+    if why: return why
+    m.tapped = True
+    E.log(f'  {E.NAME(p)} activates Ramosian Revivalist', g)
+    if E.ability_window(g, p, m, 'return a Rebel from your graveyard'): _gal().put_rebel(g, p, 'Ramosian Revivalist', 5, 'gy')
+    return None
+
+
+def _bringer(colour, word):
+    def act(g, p, m):
+        why = _creature_tap_ok(m)
+        if why: return why
+        cre = [x for q in g.players if q.alive for x in q.perms if x.creature and not x.phased and colour in E.colors_of(x)
+               and not (x.owner is not p and E.untargetable(g, x)) and not E.protected_from(g, x, 'W')]
+        if not cre: return f'There is no {word} creature to target.'
+        k = _choose(g, p, 'target', f'{m.cd.name}: exile which {word} creature?', [legal.describe_target(g, p, x) for x in cre])
+        if k is None: return None
+        _gal().bringer_use(g, p, m, cre[k])
+        return None
+    return act
+
+
+def _ballista(g, p, m):
+    why = _creature_tap_ok(m)
+    if why: return why
+    fighting = set(getattr(g, 'in_combat', ()) or ()) | set(getattr(g, 'blocking', ()) or ())
+    cre = [x for x in fighting if x in x.owner.perms and not (x.owner is not p and E.untargetable(g, x))
+           and not E.protected_from(g, x, 'W')]
+    if not cre: return 'Ballista Squad needs an attacking or blocking creature to target.'
+    k = _choose(g, p, 'target', 'Ballista Squad: X damage to which attacking or blocking creature?', [legal.describe_target(g, p, x) for x in cre])
+    if k is None: return None
+    x = _pick_x(g, p, 'Ballista Squad (plus {W})', 0)
+    if x is None: return None
+    why = _gal_pay(g, p, m, x, 'W', 'Ballista Squad')
+    if why: return why
+    m.tapped = True
+    t = cre[k]
+    E.log(f'  {E.NAME(p)} activates Ballista Squad: {x} damage to {t.name}', g)
+    if E.ability_window(g, p, m, f'{x} damage to {t.name}', target=t) and t in t.owner.perms:
+        if E.no_damage(g, t): E.log(f'    the damage to {t.name} is prevented', g)
+        elif E.etgh(g, t) <= x: E.apply_removal(g, p, t, f'dmg{x}')
+        else: E.log(f'    {t.name} survives', g)
+    return None
+
+
+def _tapper_act(gen, pips, tough):
+    def act(g, p, m):
+        why = _creature_tap_ok(m)
+        if why: return why
+        cre = [x for q in g.players if q.alive for x in q.perms if x.creature and not x.phased and E.etgh(g, x) <= tough
+               and not (x.owner is not p and E.untargetable(g, x))]
+        if not cre: return 'There is no creature it can tap.'
+        k = _choose(g, p, 'target', f'{m.cd.name}: tap which creature?', [legal.describe_target(g, p, x) for x in cre])
+        if k is None: return None
+        why = _gal_pay(g, p, m, gen, pips, m.cd.name)
+        if why: return why
+        m.tapped = True
+        t = cre[k]
+        E.log(f'  {E.NAME(p)} activates {m.cd.name}: tap {t.name}', g)
+        if E.ability_window(g, p, m, f'tap {t.name}', target=t) and t in t.owner.perms: t.tapped = True
+        return None
+    return act
+
+
+def _maskwood(g, p, m):
+    why = _tapped(m) or _cost(g, p, 3, '', 'Maskwood Nexus')
+    if why: return why
+    mana.pay_from_pool(g, p, 3, '')
+    m.tapped = True
+    E.log(f'  {E.NAME(p)} activates Maskwood Nexus', g)
+    if E.ability_window(g, p, m, 'a 2/2 Shapeshifter with changeling'): _gal().shapeshifter(g, p)
+    return None
+
+
+def _mirror(g, p, m):
+    x = _pick_x(g, p, 'Mirror Entity', 0)
+    if x is None: return None
+    why = _gal_pay(g, p, m, x, '', 'Mirror Entity')
+    if why: return why
+    E.log(f'  {E.NAME(p)} activates Mirror Entity, X = {x}', g)
+    if E.ability_window(g, p, m, f'your creatures become {x}/{x}'): _gal().mirror(g, p, x)
+    return None
+
+
+def _elspeth_plus(g, p, m):
+    return lambda: E.make_tokens(g, p, 3, 1, color='W', types=('soldier',))
+
+
+def _elspeth_minus3(g, p, m):
+    def go():
+        for q in g.players:
+            for x in list(q.perms):
+                if x.creature and not x.phased and E.epow(g, x) >= 4: E.die(g, x, 'destroy')
+    return go
+
+
+def _elspeth_minus7(g, p, m):
+    return lambda: E.CI.elspeth_emblem(g, p)
+
+
+def _turn_up(g, p, m):
+    why = _cost(g, p, 0, 'W', 'turn Whipcorder face up')
+    if why: return why
+    mana.pay_from_pool(g, p, 0, 'W')
+    _gal().turn_face_up(g, p, m)
+    return None
+
+
+def _morph_cast(g, p, c):
+    why = _timing(g, p, c) or _cost(g, p, 3, '', 'cast it face down')
+    if why: return why.replace("Can't activate", "Can't cast")
+    mana.pay_from_pool(g, p, 3, '')
+    if not _spell_cast(g, p, c, 2, 'a face-down creature (morph)'): p.gy.append(c); return None
+    _gal().enter_face_down(g, p, c)
+    return None
+
+
+for _n, (_cost_n, _cap) in (('Ramosian Sergeant', (3, 2)), ('Ramosian Lieutenant', (4, 3)), ('Ramosian Captain', (5, 4)),
+                            ('Defiant Vanguard', (5, 4)), ('Ramosian Commander', (6, 5))):
+    ABILITIES[_n] = (lambda c, k: lambda g, p, m: [(f'{{{c}}}, {{T}}: search for a Rebel permanent card with mana value {k} '
+                                                    f'or less, put it onto the battlefield', _searcher_act(c, k))])(_cost_n, _cap)
+ABILITIES['Lin Sivvi, Defiant Hero'] = lambda g, p, m: [
+    ('{X}, {T}: search for a Rebel permanent card with mana value X or less, put it onto the battlefield', _lin_search),
+    ('{3}: put target Rebel card from your graveyard on the bottom of your library', _lin_bottom)]
+ABILITIES['Ramosian Revivalist'] = lambda g, p, m: [
+    ('{6}, {T}: return a Rebel permanent card with mana value 5 or less from your graveyard to the battlefield', _revivalist)]
+ABILITIES['Lawbringer'] = lambda g, p, m: [('{T}, sacrifice it: exile target red creature', _bringer('R', 'red'))]
+ABILITIES['Lightbringer'] = lambda g, p, m: [('{T}, sacrifice it: exile target black creature', _bringer('B', 'black'))]
+ABILITIES['Ballista Squad'] = lambda g, p, m: [('{X}{W}, {T}: X damage to target attacking or blocking creature', _ballista)]
+ABILITIES['Errant Doomsayers'] = lambda g, p, m: [('{T}: tap target creature with toughness 2 or less', _tapper_act(0, '', 2))]
+ABILITIES['Whipcorder'] = lambda g, p, m: ([('turn it face up ({W})', _turn_up)] if (m.data or {}).get('facedown')
+                                           else [('{W}, {T}: tap target creature', _tapper_act(0, 'W', 999))])
+ABILITIES['Maskwood Nexus'] = lambda g, p, m: [('{3}, {T}: a 2/2 blue Shapeshifter with changeling', _maskwood)]
+ABILITIES['Mirror Entity'] = lambda g, p, m: [('{X}: until end of turn, your creatures have base power and toughness '
+                                               'X/X and gain all creature types', _mirror)]
+ABILITIES["Elspeth, Sun's Champion"] = _walker([(1, 'create three 1/1 white Soldiers', _elspeth_plus),
+                                                (-3, 'destroy all creatures with power 4 or greater', _elspeth_minus3),
+                                                (-7, 'emblem: your creatures get +2/+2 and have flying', _elspeth_minus7)])
+HAND['Whipcorder'] = lambda g, p, c: [('cast it ({W}{W})', _cast_normally),
+                                      ('cast it face down as a 2/2 creature for {3} (morph)', _morph_cast)]

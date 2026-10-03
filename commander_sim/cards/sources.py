@@ -88,7 +88,26 @@ def ensure_cards(names, verbose=True):
         if fresh:
             pool_cards.apply(names=fresh)
             added = [engine.DB[a.name] if a.name in fresh else a for a in added]
+    _printed_types(names)
     return added, [n for n in names if n not in engine.DB]
+
+
+def _printed_types(names):
+    """hand-tagged cards keep their tags but get their printed creature types (and changeling) from the card data,
+    for the cards that care about creature types (Kindred Discovery, Door of Destinies, the Banners)"""
+    from commander_sim.cards import scryfall
+    cache = None
+    for n, cd in list(engine.DB.items()):                 # every hand-tagged card, whichever names were asked for
+        if cd is None or cd.source != 'manual' or cd.subtypes or getattr(cd, 'types_filled', False): continue
+        cd.types_filled = True
+        if cache is None: cache = scryfall.load_cache()
+        rec = cache.get(n.lower())
+        if not rec: continue
+        face = rec['card_faces'][0] if rec.get('card_faces') and rec.get('layout') not in ('split',) else rec
+        tl = face.get('type_line') or rec.get('type_line') or ''
+        if '—' not in tl: continue
+        cd.subtypes = frozenset(w.lower() for w in tl.split('—')[1].split())
+        if 'Changeling' in (rec.get('keywords') or []): cd.kws = cd.kws | {'changeling'}
 
 
 def describe(cd):

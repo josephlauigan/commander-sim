@@ -842,21 +842,27 @@ full('Mauhúr, Uruk-hai Captain', 'menace; every +1/+1 counter placement on an A
 
 
 # ------------------------------------------------------------------ Kindred Discovery, Reconnaissance Mission
+def kindred_match(src, m):
+    """is m of the type Kindred Discovery named (Orc: Orcs and Orc Armies)"""
+    t = (src.data or {}).get('ctype', 'orc')
+    return orcish(m) if t == 'orc' else has_type(m, t)
+
+
 def kindred_enter(g, p, m):
-    if orcish(m):
-        for _ in find(p, 'kindred'): draw(g, p, 1)
+    for src in find(p, 'kindred'):
+        if kindred_match(src, m): draw(g, p, 1)
 
 
 @on('Kindred Discovery', 'etb')
 def _kindred_etb(g, src, p, m):
-    if m is not src and m.owner is src.owner and m.creature and orcish(m) and trigger_window(g, src.owner, src, 'draw a card'):
+    if m is not src and m.owner is src.owner and m.creature and kindred_match(src, m) and trigger_window(g, src.owner, src, 'draw a card'):
         draw(g, src.owner, 1)
 
 
 @on('Kindred Discovery', 'attack')
 def _kindred_attack(g, src, p, atk, d):
     if p is src.owner:
-        n = sum(1 for m in atk if orcish(m))
+        n = sum(1 for m in atk if kindred_match(src, m))
         if n and trigger_window(g, p, src, f'draw {n}'): draw(g, p, n)
 
 
@@ -875,7 +881,8 @@ def _recon_cycle(g, c, p, s, post):
         if c not in p.hand or not can_pay(g, p, 2, ''): return False
         p.hand.remove(c); pay(g, p, 2, ''); p.gy.append(c); draw(g, p, 1); return True
     return [(1.0, 'cycle Reconnaissance Mission', go)]
-full('Kindred Discovery', 'names Orc: draws whenever an Orc or Orc Army you control enters or attacks')
+full('Kindred Discovery', 'names a creature type as it enters (Orc for Sauron: Orc Armies count): draws whenever a '
+     'creature of that type you control enters or attacks')
 full('Reconnaissance Mission', 'draws for each creature of yours that deals combat damage to a player; cycling {2} '
      'with fewer than two creatures')
 
