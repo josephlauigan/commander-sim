@@ -1524,6 +1524,29 @@ def necro_pay(g, p, floor=20):
     log(f'  {NAME(p)} pays {n} life to Necropotence', g)
 
 
+def necro_exile(g, p, n):
+    """Necropotence, activated n times by the person: the top n cards exiled face down until p's next end step (this
+    turn's if it's p's turn before the end step, else the next)"""
+    ready = p.turns if (g.active is p and g.step != 'end') else p.turns + 1
+    if not hasattr(p, 'necro_wait') or p.necro_wait is None: p.necro_wait = []
+    for _ in range(min(n, len(p.library))):
+        p.necro_wait.append((p.library.pop(), ready))
+
+
+def necro_deliver(g, p):
+    """the beginning of p's end step: the cards Necropotence exiled for this end step go to p's hand"""
+    w = getattr(p, 'necro_wait', None)
+    if not w: return
+    now = [c for c, r in w if r <= p.turns]
+    p.necro_wait = [(c, r) for c, r in w if r > p.turns]
+    if not now: return
+    p.hand.extend(now)
+    for c in now: p.seen_names.add(c.name)
+    p.stats['necro_cards'] += len(now)
+    E.log_secret(g, p, f'  {NAME(p)} puts {len(now)} card(s) into their hand (Necropotence)',
+                 f'  {NAME(p)} puts {", ".join(c.name for c in now)} into their hand (Necropotence)')
+
+
 def braids_sacrifice(g, p):
     """Braids, Cabal Minion: at the beginning of each player's upkeep, that player sacrifices an artifact,
     creature, or land"""
@@ -2325,6 +2348,7 @@ def yawg_cleanup(g, p):
 
 
 def end_step(g, p):
+    necro_deliver(g, p)
     if getattr(g, 'marchesa_due', None): E.CI.marchesa_return(g)        # Marchesa: 'at the beginning of the next end step'
     if getattr(g, 'zur_due', None): E.CI.zur_end_step(g, p)               # The Eternal Wanderer, Gift of Immortality
     if getattr(g, 'eot_returns', None): E.CI.eot_returns(g)               # Eerie Interlude
@@ -2348,7 +2372,7 @@ def end_step(g, p):
     for c in p.impulse:                           # Jeska's Will: unplayed exiled cards stay in exile
         if c in p.hand: p.hand.remove(c); p.exile.append(c)
     p.impulse = []
-    if has(p, 'necro'): necro_pay(g, p)
+    if has(p, 'necro') and E.human_choice(g, p) is None: necro_pay(g, p)     # the person pays with the ability
     erebos_draw(g, p)                             # leftover mana at your own end step
     for m in [m for m in p.perms if m.temp]: leave(g, m)
     if has(p, 'pvprolif') and E.trigger_window(g, p, find(p, 'pvprolif')[0], 'proliferate'):   # Atraxa, Praetors' Voice

@@ -320,5 +320,39 @@ class Practice(unittest.TestCase):
         self.assertTrue(ais.double_strike(z, sam[0]))
 
 
+
+class Necropotence(unittest.TestCase):
+    def test_you_pay_life_and_get_the_cards_at_your_end_step(self):
+        g = table('zur', 'veyran', 'sauron'); z = g.players[0]
+        necro = perm(g, z, 'Necropotence')
+        hand_n, lib_n, life = len(z.hand), len(z.library), z.life
+        seat(g, z, [0, by_text('pay 3 life')])
+        self.assertIsNone(human.use(g, z, necro))
+        self.assertEqual((z.life, len(z.library), len(z.hand)), (life - 3, lib_n - 3, hand_n))   # face down for now
+        ais.end_step(g, z)
+        self.assertEqual(len(z.hand), hand_n + 3)
+
+    def test_paid_in_your_end_step_they_wait_a_turn(self):
+        g = table('zur', 'veyran', 'sauron'); z = g.players[0]
+        necro = perm(g, z, 'Necropotence')
+        g.step = 'end'
+        n = len(z.hand)
+        seat(g, z, [0, by_text('pay 2 life')])
+        human.use(g, z, necro)
+        ais.end_step(g, z)
+        self.assertEqual(len(z.hand), n)
+        z.turns += 1
+        ais.end_step(g, z)
+        self.assertEqual(len(z.hand), n + 2)
+
+    def test_the_ai_does_not_pay_for_you(self):
+        g = table('zur', 'veyran', 'sauron'); z = g.players[0]
+        perm(g, z, 'Necropotence')
+        seat(g, z, [])
+        life = z.life
+        ais.end_step(g, z)
+        self.assertEqual(z.life, life)
+
+
 if __name__ == '__main__':
     unittest.main()

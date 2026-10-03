@@ -1394,3 +1394,25 @@ ABILITIES["Elspeth, Sun's Champion"] = _walker([(1, 'create three 1/1 white Sold
                                                 (-7, 'emblem: your creatures get +2/+2 and have flying', _elspeth_minus7)])
 HAND['Whipcorder'] = lambda g, p, c: [('cast it ({W}{W})', _cast_normally),
                                       ('cast it face down as a 2/2 creature for {3} (morph)', _morph_cast)]
+
+
+
+# ------------------------------------------------------------------ Necropotence (Zur's deck)
+def _necro(g, p, m):
+    if ais.blocked(g, p, 'Necropotence'): return 'Disruptor Flute names Necropotence: its ability can\'t be activated.'
+    most = min(p.life, len(p.library), 30)
+    if most < 1: return 'You have no life or no library to pay with.'
+    ns = list(range(1, most + 1))
+    k = _choose(g, p, 'choose', f'Necropotence: pay how much life? (you have {p.life}; the cards come to your hand at '
+                                f'your next end step)', [f'pay {n} life' for n in ns])
+    if k is None: return None
+    n = ns[k]
+    E.lose_life(g, p, n, p)
+    E.log(f'  {E.NAME(p)} pays {n} life to Necropotence', g)
+    if E.ability_window(g, p, m, f'exile the top {n} card(s) face down') and not g.over: ais.necro_exile(g, p, n)
+    E.check_state(g)
+    return None
+
+
+ABILITIES['Necropotence'] = lambda g, p, m: [('pay 1 life (any number of times): exile the top card of your library '
+                                              'face down; put it into your hand at the beginning of your next end step', _necro)]
