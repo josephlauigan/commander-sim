@@ -30,7 +30,7 @@ def _next_hid(obj):
     return g.hid_no
 from commander_sim.cards.carddb import DB_TEXT
 
-IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'najeela': 'WUBRG'}
+IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'galadriel': 'WUG', 'najeela': 'WUBRG'}
 # Outside decks (opponent pools) register here: key -> {'ident': 'WU', 'name': 'Brago'}. The four main decks
 # keep their hard-wired entries in IDENT / NAME / the AI tables; anything else falls back to generic defaults.
 SEATS = {}
@@ -159,6 +159,7 @@ class Player:
         s.ring_prot = False   # The One Ring: protection from everything until this player's next turn
         s.life_locked = False # Teferi's Protection: this player's life total can't change until their next turn
         s.floatU = 0          # blue mana (Lion's Eye Diamond), lasts until end of turn
+        s.floatG = 0          # green mana (Galadriel's Alliance), lasts until end of turn
         s.draw_st = None; s.draw_n = 0      # cards drawn this turn (Narset, Parter of Veils)
         s.chasm_age = 0       # Glacial Chasm age counters (cumulative upkeep)
         s.impulse = []        # cards exiled with "you may play them this turn" (Jeska's Will), held in hand
@@ -217,7 +218,7 @@ DAMAGE_HOOK = None
 
 
 def NAME(p):
-    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'najeela': 'Najeela'}.get(p.key)
+    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'galadriel': 'Galadriel', 'najeela': 'Najeela'}.get(p.key)
     return n if n is not None else SEATS[p.key]['name']
 
 
@@ -324,7 +325,21 @@ ALL_TYPES = frozenset(('human', 'warrior', 'shaman', 'wizard', 'elf', 'goblin', 
 
 
 def has_type(m, t):
-    return t in subtypes(m)
+    return t in subtypes(m) or (m.creature and t not in NONCREATURE_TYPES and (
+        maskwood(m.owner) or (CUR_G is not None and 'all types' in CUR_G.eot_kw.get(id(m), ()))))       # Mirror Entity
+
+
+NONCREATURE_TYPES = frozenset(('aura', 'equipment', 'vehicle', 'saga', 'treasure', 'food', 'clue', 'curse', 'shrine'))
+
+
+def maskwood(p):
+    """Maskwood Nexus: p's creatures are every creature type"""
+    return any(x.cd is not None and x.cd.name == 'Maskwood Nexus' and not x.phased for x in p.perms)
+
+
+def no_damage(g, m):
+    """all damage that would be dealt to m is prevented (Cho-Manno, Revolutionary)"""
+    return m.cd is not None and 'nodmg' in m.cd.tags and not m.neutered
 
 
 def indestructible(g, m):
@@ -552,6 +567,8 @@ def mana_units(g, p, convoke=False):
         U.append(['FU', 'U', 1])
     for _ in range(getattr(p, 'floatC', 0)):
         U.append(['FC', '', 1])
+    for _ in range(getattr(p, 'floatG', 0)):
+        U.append(['FG', 'G', 1])
     if convoke:                                   # each untapped creature pays for {1} or one coloured pip
         seen = {id(u[0]) for u in U}
         for m in p.perms:
@@ -617,6 +634,7 @@ def spend_unit(g, p, u, n, col=''):
     elif u[0] == 'G': p.floatA -= 1
     elif u[0] == 'FU': p.floatU -= 1
     elif u[0] == 'FC': p.floatC -= 1
+    elif u[0] == 'FG': p.floatG -= 1
     elif isinstance(u[0], str):
         importlib.import_module('commander_sim.cards.impl.partials').special_unit_paid(g, p, u)
     else:
@@ -773,7 +791,7 @@ def amass(g, p, n):
 TOKEN_CAP = 250          # creature tokens per player; beyond this the board is lethal many times over and games crawl
 
 
-TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W'}     # default colour of a deck's tokens
+TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W', 'galadriel': 'W'}     # default colour of a deck's tokens
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
@@ -801,8 +819,9 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
         importlib.import_module('commander_sim.cards.impl.rules2').chatterfang_squirrels(g, p, k)
     if k and not blank:
         if has(p, 'crusade'):
+            n = k * len(find(p, 'crusade')) * (1 + (CI.total(g, 'trigger_copies', p, 'etb', out[0]) if g.hooks else 0))
             for x in p.perms:
-                if x.creature: x.plus = min(x.plus + k, 60)
+                if x.creature: x.plus = min(x.plus + n, 999)
         if has(p, 'warleader'):                            # Warleader's Call deals damage
             for q in g.opps(p): lose_life(g, q, k, p, kind='drain', damage=True)
         if has(p, 'wisp') and pw <= 2:                     # Wispdrinker Vampire
@@ -846,8 +865,9 @@ def creature_entered(g, p, m):
         die(g, m, 'sba'); return
     if not opp_has(g, p, 'mother'):
         if has(p, 'crusade'):
+            n = len(find(p, 'crusade')) * (1 + (CI.total(g, 'trigger_copies', p, 'etb', m) if g.hooks else 0))
             for x in p.perms:
-                if x.creature: x.plus = min(x.plus + 1, 60)
+                if x.creature: x.plus = min(x.plus + n, 999)
         if has(p, 'warleader'):                            # Warleader's Call deals damage
             for q in g.opps(p): lose_life(g, q, 1, p, kind='drain', damage=True)
         if has(p, 'wisp') and epow(g, m) <= 2 and not (m.cd is not None and 'wisp' in m.cd.tags):
@@ -931,7 +951,7 @@ def teferis_protection(g, p):
     p.life_locked = True; p.ring_prot = True
     for m in p.perms: m.phased = True
     for L in p.lands: L.tapped = True
-    p.floatR = p.floatA = p.floatU = 0; p.floatC = 0
+    p.floatR = p.floatA = p.floatU = 0; p.floatC = 0; p.floatG = 0
     g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     log(f"    {NAME(p)} casts Teferi's Protection: life can't change, protection from everything, all phased out", g)
 
@@ -964,6 +984,8 @@ def die(g, m, cause='destroy'):
     if cause == 'destroy' and getattr(g, 'auras', None) and CI.umbra_save(g, m): return
     if cause in ('destroy', 'combat') and m.creature and not m.token and CI is not None and not getattr(g, 'noregen', False) \
             and (importlib.import_module('commander_sim.cards.impl.lands').try_regenerate(g, m) or importlib.import_module('commander_sim.cards.impl.rules').ezuri_regen(g, m)): return
+    if cause in ('destroy', 'combat') and m.cd is not None and CI is not None and m.cd.name in CI.SELF_REGEN \
+            and not getattr(g, 'noregen', False) and CI.SELF_REGEN[m.cd.name](g, m): return
     if cause == 'destroy' and m.creature and getattr(p, 'regen_turn', None) == turn_stamp(g) and not getattr(g, 'noregen', False):
         m.tapped = True; log(f'    {m.name} regenerates', g); return
     selfdies = CI is not None and m.cd is not None and CI.live(m.cd.name) and CI.HOOKS[m.cd.name].get('self_dies')
@@ -981,6 +1003,15 @@ def die(g, m, cause='destroy'):
     finally:
         g.dying = prev
     if m.creature: g.died_turn = turn_stamp(g)                           # Barad-dûr
+    g.resolving = getattr(g, 'resolving', 0) + 1          # its dies triggers wait until the card is in the graveyard
+    try:
+        _die_triggers(g, m, p, cause, selfdies)
+    finally:
+        g.resolving -= 1
+    if not g.resolving and getattr(g, 'trig_queue', None) and not g.over: flush_triggers(g)
+
+
+def _die_triggers(g, m, p, cause, selfdies):
     if getattr(g, 'marchesa_on', False) and m.creature and not m.token: CI.marchesa_dies(g, p, m)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
     if g.hooks:
@@ -1381,7 +1412,7 @@ def spell_imp(g, p, c, ctx):
             aff[q] = 0.8 * sum(pval(g, m) for m in q.perms if m.creature or t['wipe'] in ('rift', 'rebuke'))
         return 0, aff
     if 'rean_target' in ctx: return ctx['rean_value'], aff
-    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
+    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'galadriel': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
     if c.bomb and p.key == 'seph': return c.bomb, aff
     if 'vkitten' in t: return (9 if has(p, 'vfire') else 4), aff
     if 'vfire' in t: return (9 if has(p, 'vkitten') else 4), aff
@@ -1400,15 +1431,15 @@ def spell_imp(g, p, c, ctx):
     return 0, aff
 
 
-CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'najeela': 99}
+CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'najeela': 99}
 CMD_IMP = 6              # importance of an outside deck's commander spell (counter decisions)
 
 # Interaction profiles for the AI opponents.
 #   conservative: counter only big threats (importance >= 7), hold instant removal for emergencies
 #   loose:        counter at importance >= 6, use instant removal as freely as sorcery removal
 PROFILES = {
-    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
-    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
+    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
+    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'galadriel': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
 }
 INSTANT_EXTRA = 2
 CTHRESH_DEFAULT = 7      # outside decks: counter threshold under the current profile
@@ -1719,6 +1750,8 @@ def step_priority(g, step, defender=None, attackers=()):
         if hm is not None and hm.is_human(g, q): hm.step_priority(g, q, step, defender, attackers)
         elif step == 'attackers' and q is defender and AI_MODE == 'adaptive':
             importlib.import_module('commander_sim.ai.brain').attack_response(g, q, g.active, attackers)
+        elif step == 'combat' and q is not g.active and q.key == 'galadriel' and CI is not None:
+            CI.galadriel_precombat(g, q)                   # tap the attacker it fears (Errant Doomsayers, Whipcorder)
 
 
 def equip_to(g, p, e, m, n):
@@ -2209,6 +2242,7 @@ def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0)
     p.perms.append(m)
     g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     if CI is not None and CI.live(cd.name): g.hooks.append(m); g.hook_cache = None
+    if CI is not None and cd.name in CI.AS_ENTERS: CI.AS_ENTERS[cd.name](g, p, m)     # naming a creature type
     quiet = False
     if CI is not None:
         from commander_sim.cards.impl import partials as IP
@@ -2244,6 +2278,7 @@ def do_etb(g, p, m):
     etb_static(g, p, m)
     if not etb_triggers(m.cd): return
     name, imp = etb_text(m.cd)
+    if g.hooks: reps += CI.total(g, 'trigger_copies', p, 'etb', m)       # Panharmonicon
     for _ in range(reps):                       # its enters triggers go on the stack (once the spell has resolved)
         if g.over: return
         queue_triggers(g, [Trigger(p, m, etb_once, (g, p, m), 'etb', name=name, known=True, imp=imp)])
@@ -2510,7 +2545,7 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             if cd is not None and cd.tags.get('sauron') and not ward_legends(p): continue     # ward: sacrifice a legend
             if spell is not None and protected_from(g, m, spell.pips): continue
             if kind.startswith('dmg'):
-                if not is_c or etgh(g, m) > int(kind[3:]): continue
+                if not is_c or etgh(g, m) > int(kind[3:]) or no_damage(g, m): continue
             if kind.startswith('shrink') and (not is_c or etgh(g, m) > int(kind[6:])): continue
             if spell is not None and 'newonly' in spell.tags and not entered_since_last_turn(g, p, m): continue
             if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m): continue
@@ -2540,6 +2575,8 @@ def apply_removal(g, actor, m, kind, spell=None):
     if CI is not None and m.cd is not None and spell is not None and actor is not owner:
         from commander_sim.cards.impl import rules as impl_rules
         if not impl_rules.removal_taxes(g, actor, m, kind): return
+    if kind.startswith('dmg') and no_damage(g, m):
+        log(f'    the damage to {m.name} is prevented', g); return
     if kind.startswith('dmg') and CI is not None and importlib.import_module('commander_sim.cards.impl.partials').tajic_protects(g, m):
         log(f'    damage to {m.name} is prevented (Tajic)', g); return
     log(f'    {m.name} ({NAME(owner)}) is removed: {kind}', g)
@@ -2694,11 +2731,11 @@ def _apply_wipe(g, p, kind, ctx):
             elif kind == 'destroy' or kind == 'minus': die(g, m, 'destroy')
             elif kind == 'exile': exile_perm(g, m)
             elif kind == 'dmg13':
-                if etgh(g, m) <= 13: die(g, m, 'destroy')
+                if etgh(g, m) <= 13 and not no_damage(g, m): die(g, m, 'destroy')
             elif kind == 'austere':
                 if m.cd is not None and m.cd.cmc >= 4: die(g, m, 'destroy')
             elif kind == 'nib':
-                if m is not biggest and etgh(g, m) <= x_dmg: die(g, m, 'destroy')
+                if m is not biggest and etgh(g, m) <= x_dmg and not no_damage(g, m): die(g, m, 'destroy')
     if kind == 'farewell' and 'gy' in modes:                     # Farewell: exile all graveyards
         for q in g.players:
             q.exile.extend(q.gy); q.gy.clear()

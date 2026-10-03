@@ -89,6 +89,11 @@ change. Before the tuning those cells read: Sephiroth 49.6 / 38.8 / 22.5%, Veyra
 | Sephiroth | **40.8%** (35-47) | **47.5%** (41-54) | **42.1%** (36-48) | **37.9%** (32-44) | 22.1% (17-28) |
 | Veyran | 20.0% (15-26) | 17.9% (14-23) | 15.0% (11-20) | 20.8% (16-26) | 12.9% (9-18) |
 | Sauron | 24.2% (19-30) | 27.5% (22-34) | 21.2% (16-27) | 24.2% (19-30) | 17.5% (13-23) |
+| Marchesa | 12.5% (8-20) | 22.5% (16-31) | 14.2% (9-22) | 16.7% (11-24) | 9.2% (5-16) |
+| Zur | 24.2% (17-33) | 15.0% (10-23) | 16.7% (11-24) | 10.0% (6-17) | 16.7% (11-24) |
+| Galadriel | 15.0% (10-23) | 11.7% (7-19) | 8.3% (5-15) | 12.5% (8-20) | 8.3% (5-15) |
+
+Marchesa, Zur and Galadriel were measured on 2026-10-02 with 120 games per cell (intervals about half again as wide), after the stack work (every spell, ability and trigger on the stack) and the Galadriel deck's engine fixes. All three sit below an even share at every tier; Zur does best against Tier 1, Marchesa against Tier 2.
 
 Sephiroth is favoured through Low Bracket 4 and near even against High Bracket 4. Sauron sits near an even share
 through Low Bracket 4 and falls off against High Bracket 4. Veyran is below an even share at every tier, clearly so

@@ -32,7 +32,7 @@ class Review(unittest.TestCase):
             if ev['kind'] in ('request', 'over', 'error'): break
         self.assertEqual(evs[0]['kind'], 'reset'); self.assertEqual(evs[0]['tryit']['n'], diff['n'])
         self.assertEqual(len(s.answers) > diff['n'], evs[0]['tryit']['applied'])    # the AI's choice was answered for you
-        s.close()
+        s.close(); s.join(60)
 
     def test_the_same_seed_again(self):
         a = Session('veyran', 't3', seed=21, ai='adaptive')

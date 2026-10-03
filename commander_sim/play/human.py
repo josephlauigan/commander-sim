@@ -355,6 +355,16 @@ def use_land(g, p, L):
 
 
 def cast(g, p, c, zone):
+    """cast card c from zone (its costs from your pool); restricted mana (Secluded Courtyard) may pay for it if it's a
+    creature spell of the named type"""
+    prev, mana.SPENDING = mana.SPENDING, c
+    try:
+        return _cast(g, p, c, zone)
+    finally:
+        mana.SPENDING = prev
+
+
+def _cast(g, p, c, zone):
     """cast c (already checked legal): target and extra costs, pay from the pool, then the engine casts and resolves
     it. Choices not yet made by the player (X for now) are made automatically and reported"""
     ctl = controller_of(g, p)

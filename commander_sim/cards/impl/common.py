@@ -93,6 +93,8 @@ def attached_bonus(g, m):
     if getattr(g, 'selfpt', None) and m.cd is not None and m.cd.name in SELF_PT and m.owner.alive:
         x, y = SELF_PT[m.cd.name](g, m.owner, m); dp += x; dt += y
     if getattr(g, 'selfpt', None) and m.creature:
+        for fn in CREATURE_PT:
+            x, y = fn(g, m); dp += x; dt += y
         from commander_sim.cards.impl import partials as IP
         b = IP.coat_bonus(g, m) + IP.lineage_bonus(g, m) + IP.bestow_bonus(g, m)
         dp += b; dt += b
@@ -101,6 +103,7 @@ def attached_bonus(g, m):
 
 SELF_PT = {}         # creature name -> fn(g, p, m) -> (dp, dt): characteristic-defining bonuses (Kor Spiritdancer ...)
 TOKEN_PT = []        # fn(g, token) -> (dp, dt) for tokens with data (Urza's Construct)
+CREATURE_PT = []     # fn(g, creature) -> (dp, dt) for any creature (the Banners, Door of Destinies)
 
 
 def attached_kw(g, m, kw):
@@ -1014,7 +1017,7 @@ walker("Elspeth, Sun's Champion", [
         sum(pval(g, m) for q in g.opps(p) for m in q.perms if m.creature and epow(g, m) >= 4),
         sum(pval(g, m) for m in p.perms if m.creature and epow(g, m) >= 4)),
      lambda g, p, src: [die(g, m, 'destroy') for q in g.players for m in list(q.perms) if m.creature and epow(g, m) >= 4]),
-    (-7, 'emblem', always(9.0), lambda g, p, src: setattr(p, 'elspeth_emblem', True)),
+    (-7, 'emblem', always(9.0), lambda g, p, src: CI.elspeth_emblem(g, p)),
 ], ('Approximate', 'tokens, the power-4 sweep when it pays, the emblem (+2/+2 flying) as a lasting anthem'))
 
 

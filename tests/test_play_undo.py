@@ -56,7 +56,7 @@ class Undo(unittest.TestCase):
             if ev['kind'] == 'request': break
         self.assertEqual(frozen(ev['request']), seen[40 - 3])
         self.assertEqual(len(s.answers), 40 - 3)
-        s.close()
+        s.close(); s.join(60)
 
     def test_replayed_history_is_marked(self):
         s, _ = self.play('adaptive', 15)
@@ -68,13 +68,13 @@ class Undo(unittest.TestCase):
         self.assertEqual(evs[0]['kind'], 'reset')
         self.assertTrue(all(e.get('replay') for e in evs[1:-1] if e['kind'] == 'log'))
         self.assertNotIn('replay', evs[-1])
-        s.close()
+        s.close(); s.join(60)
 
     def test_nothing_to_undo(self):
         s = Session('sauron', 't2', seed=11, ai='adaptive').start()
         until_request(s)
         self.assertEqual(s.undo(), 'Nothing to undo yet.')
-        s.close()
+        s.close(); s.join(60)
 
 
 if __name__ == '__main__':

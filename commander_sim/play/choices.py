@@ -181,7 +181,9 @@ def deal_damage(g, p, n, source, kind='triggers'):
     x = tg[k]
     if isinstance(x, E.Player):
         E.lose_life(g, x, n, p, kind=kind); return
-    if x.creature and E.etgh(g, x) <= n:
+    if x.creature and E.no_damage(g, x):
+        E.log(f'    the damage to {x.name} is prevented', g)
+    elif x.creature and E.etgh(g, x) <= n:
         E.apply_removal(g, p, x, f'dmg{n}')
     elif x.creature:
         E.log(f'    {source} deals {n} damage to {x.name} (it survives)', g)

@@ -491,6 +491,7 @@ def trigger_copies(g, q, src, event, kw):
     if ('shaman' in t or 'wizard' in t) and 'prodigy' not in t and has(q, 'prodigy'):
         n += 1
     if event == 'dies' and g.hooks: n += E.CI.total(g, 'trigger_copies', q, 'dies', kw.get('perm'))     # Teysa
+    if event == 'etb' and g.hooks: n += E.CI.total(g, 'trigger_copies', q, 'etb', kw.get('perm'))       # Panharmonicon
     return n
 
 
@@ -595,6 +596,7 @@ def pt(g, m):
 
 def has_kw(g, m, kw):
     if kw in getattr(g, 'eot_kw', {}).get(id(m), ()): return True
+    if kw == 'flying' and m.creature and getattr(m.owner, 'elspeth_emblem', False): return True     # Elspeth's emblem
     if m.cd is None and m.data and kw in m.data.get('kws', ()): return True      # a token made with keywords (Samurai)
     if m.cd is not None and kw in m.cd.kws and not m.neutered: return True
     if getattr(g, 'auras', None) and E.CI.attached_kw(g, m, kw): return True

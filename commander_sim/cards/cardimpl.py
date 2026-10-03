@@ -41,6 +41,8 @@ def gy_response(g, reanimator, value, src_player=None):
 DYN_MANA = {}         # card name -> fn(g, p, perm) -> amount of mana its tap ability makes (Priest of Titania ...)
 ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tapped for mana (Heritage Druid ...)
 LAND_COLS = {}        # land name -> fn(g, p, land) -> the colours it can make now (Vivid lands, Gemstone Mine)
+AS_ENTERS = {}        # card name -> fn(g, p, perm) as it enters, before any trigger (naming a creature type)
+SELF_REGEN = {}       # creature name -> fn(g, perm) -> True if it regenerates instead of being destroyed
 
 
 def dyn_mana(g, p, m):
@@ -94,6 +96,7 @@ def fire(g, event, *args):
         entries, out = [], []
         for src, fn in list(hooked(g, event)):
             reps = 1 + total(g, 'trigger_copies', src.owner, 'dies', args[0]) if event == 'dies' else 1   # Teysa
+            if event == 'etb' and E.converted(fn): reps += total(g, 'trigger_copies', src.owner, 'etb', args[1])   # Panharmonicon
             for _ in range(reps):
                 if E.converted(fn): entries.append(E.Trigger(src.owner, src, fn, (g, src) + args, event))
                 else:                                    # not a trigger (or not converted yet): at once, as always
@@ -265,7 +268,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    from commander_sim.cards.impl import common as impl_common, t1 as impl_t1, t2 as impl_t2, t3 as impl_t3, t4 as impl_t4, t5 as impl_t5, combos as impl_combos, topdeck as impl_topdeck, fixes as impl_fixes, lands as impl_lands, partials as impl_partials, rules as impl_rules, rules2 as impl_rules2, mine as impl_mine, marchesa as impl_marchesa, zur as impl_zur  # noqa: F401
+    from commander_sim.cards.impl import common as impl_common, t1 as impl_t1, t2 as impl_t2, t3 as impl_t3, t4 as impl_t4, t5 as impl_t5, combos as impl_combos, topdeck as impl_topdeck, fixes as impl_fixes, lands as impl_lands, partials as impl_partials, rules as impl_rules, rules2 as impl_rules2, mine as impl_mine, marchesa as impl_marchesa, zur as impl_zur, galadriel as impl_galadriel  # noqa: F401
 
 
 muldrotha_on = None          # set by cards/impl/mine.py (Muldrotha, the Gravetide)

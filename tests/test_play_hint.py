@@ -19,6 +19,7 @@ class Hint(unittest.TestCase):
                 if isinstance(h, dict): got.append((req.kind, req.data['view']['step'], h))
             s.answer(bot(req))
         s.close()
+        s.join(60)                  # as the server does: one game at a time touches the engine
         return seen, got
 
     def test_hints_change_nothing(self):

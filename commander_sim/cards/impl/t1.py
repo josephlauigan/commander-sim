@@ -206,8 +206,14 @@ note('Ogre Battledriver', 'Full', 'other creatures entering get +2/+0 and haste'
 
 @on('Mentor of the Meek', 'etb')
 def _mentor_meek(g, src, p, m):
-    if m is not src and src.owner is p and m.creature and m.owner is p and epow(g, m) <= 2 and can_pay(g, p, 1, '') \
-            and len(p.hand) <= 6 and trigger_window(g, p, src, 'pay {1}: draw a card') and can_pay(g, p, 1, ''):
+    if m is src or src.owner is not p or not m.creature or m.owner is not p or epow(g, m) > 2: return
+    hc = human_choice(g, p)
+    if hc is not None:                                  # you may pay {1}: asked as it resolves
+        if not trigger_window(g, p, src, 'pay {1}: draw a card'): return
+        if hc.pay_tax(g, p, 1, 'Mentor of the Meek (draw a card)'):
+            draw(g, p, 1)
+        return
+    if can_pay(g, p, 1, '') and len(p.hand) <= 6 and trigger_window(g, p, src, 'pay {1}: draw a card') and can_pay(g, p, 1, ''):
         pay(g, p, 1, ''); draw(g, p, 1)
 card('Mentor of the Meek', 'human pow=2')
 note('Mentor of the Meek', 'Full', 'pays {1} to draw when a small creature enters (if it can, hand not full)')

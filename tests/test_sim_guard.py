@@ -12,7 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
 FIX = os.path.join(HERE, 'fixtures', 'sim_guard.json')
-DECKS = ('seph', 'veyran', 'sauron', 'marchesa', 'zur')
+DECKS = ('seph', 'veyran', 'sauron', 'marchesa', 'zur', 'galadriel')
 TIERS = ('t2', 't4')
 SEEDS = (500000, 500001, 500002)
 

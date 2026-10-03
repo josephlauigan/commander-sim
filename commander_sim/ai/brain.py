@@ -30,6 +30,7 @@ STYLE = {
     'sauron':  {'temp': 1.0, 'aggression': 0.55, 'caution': 0.75},
     'marchesa': {'temp': 1.0, 'aggression': 0.65, 'caution': 0.60},
     'zur':     {'temp': 1.0, 'aggression': 0.60, 'caution': 0.70},
+    'galadriel': {'temp': 1.0, 'aggression': 0.70, 'caution': 0.55},
     'najeela': {'temp': 1.0, 'aggression': 0.90, 'caution': 0.30},
 }
 TEMP_SCALE = 1.0     # global multiplier, set from --temp
@@ -181,7 +182,7 @@ def reserve_penalty(g, p, s, c, hold_card, hold_v):
 
 # ------------------------------------------------------------------ card utilities
 PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'marchesa': A.marchesa_prio,
-        'zur': A.zur_prio, 'najeela': A.najeela_prio}
+        'zur': A.zur_prio, 'galadriel': A.galadriel_prio, 'najeela': A.najeela_prio}
 
 
 def draws_cards(c):
@@ -310,7 +311,8 @@ def attack_response(g, d, p, atk):
     """d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with instant removal
     when it's worth the card (a valuable creature, or the attack is dangerous)"""
     rem = [c for c in d.hand if c.instant and 'rem' in c.tags and not c.creature]
-    if not rem or not atk: return False
+    answers = E.CI.galadriel_attack_answers(g, d, p, atk) if E.CI is not None and d.key == 'galadriel' else []
+    if (not rem and not answers) or not atk: return False
     incoming = sum(epow(g, m) * (2 if A.double_strike(p, m) else 1) for m in atk if m in p.perms)
     danger = incoming >= d.life * 0.5 or any(m.is_cmd and d.cmd_dmg[p.key] + epow(g, m) >= 21 for m in atk)
     best = None
@@ -322,6 +324,10 @@ def attack_response(g, d, p, atk):
         for m in tg:
             v = pval(g, m) + (3.0 if danger else 0.0) + 0.3 * epow(g, m)
             if best is None or v > best[0]: best = (v, c, m)
+    if answers:                                    # its permanents' answers (Ballista Squad, Lawbringer, Lightbringer)
+        v2, fn = max(answers, key=lambda x: x[0])
+        if v2 + (3.0 if danger else 0.0) - 3.0 > 0 and (best is None or v2 >= best[0] - 1.0):
+            if fn(): d.stats['attack_removal'] += 1; return True
     if best is None: return False
     v, c, m = best
     if v - 3.5 - 1.2 * style(d)['caution'] * E.INSTANT_EXTRA / 2.0 <= 0: return False
@@ -644,7 +650,7 @@ def main(g, p, post):
         if not acted: return
 
 
-GENERIC_PLAYS = ('marchesa', 'zur')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
+GENERIC_PLAYS = ('marchesa', 'zur', 'galadriel')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
 
 
 def hook_options(g, p, s, post):

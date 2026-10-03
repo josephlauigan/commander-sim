@@ -36,9 +36,9 @@ section 3 places them elsewhere. Commands run from the repository root.
 The question the simulator answers: **how often does one of my Commander decks win a four-player game against
 opponents of a given power level?**
 
-- **Your decks** are the five lists in `decklists/mine/`: Sephiroth (Atraxa reanimator, key `seph`), Veyran
-  (Izzet spellslinger, `veyran`), Sauron (Grixis amass, `sauron`), Marchesa (Grixis recursion, `marchesa`) and Zur
-  (Esper Auras, `zur`).
+- **Your decks** are the six lists in `decklists/mine/`: Sephiroth (Atraxa reanimator, key `seph`), Veyran
+  (Izzet spellslinger, `veyran`), Sauron (Grixis amass, `sauron`), Marchesa (Grixis recursion, `marchesa`), Zur
+  (Esper Auras, `zur`) and Galadriel (Bant Rebels, `galadriel`).
 - **The opponents** are 25 outside decks in `decklists/pool/`, five in each of five tiers that follow the official
   Commander brackets:
 
@@ -492,9 +492,9 @@ tiny scoring error from deciding every game the same way.
 
 ### Your decks vs pool decks
 
-Your five decks keep hand-written plans in `ais.py` (Zur's in `cards/impl/zur.py`):
+Your six decks keep hand-written plans in `ais.py` (Zur's in `cards/impl/zur.py`, Galadriel's in `cards/impl/galadriel.py`):
 
-- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio`, `zur_prio`);
+- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio`, `zur_prio`, `galadriel_prio`);
 - reanimation targets;
 - combo checks (Veyran's kitten combo, Sauron's Sword + Aggravated Assault);
 - protection choices;
@@ -669,6 +669,7 @@ A per-game cache maps each event to its listeners.
 | `cards/impl/partials.py` | Completing cards the audit listed as Partial. |
 | `cards/impl/mine.py` | Cards in your decks that need more than tags: the Ring, equipment, lands and full card text. |
 | `cards/impl/marchesa.py` | Marchesa's return trigger, sacrifice values and AI plays, and the cards of her deck that need code. |
+| `cards/impl/galadriel.py` | Your Galadriel deck: Galadriel's Alliance (a mode not yet chosen this turn per creature entering), the Rebel searchers and which Rebel to fetch, Maskwood Nexus and the cards that name a creature type (`CI.AS_ENTERS`), Panharmonicon (enters triggers twice, through `trigger_copies`), the deck's other cards, and its AI priorities and responses. |
 | `cards/impl/zur.py` | Your Zur deck: Auras that lock a permanent down while attached (Arrest, Encrust, Kasmina's Transmutation ...; removal kinds `arrest`, `pacify`, `encrust`, `kasmina`), Zur's attack trigger choosing an enchantment by board state, the deck's other cards, and its AI priorities and responses. |
 
 `cardimpl.load()` imports these modules in a fixed order. A later registration for the same card and event
@@ -897,6 +898,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (451 tests, abou
 | `test_rules.py` | Core rules on hand-built positions: mana, commander tax, state-based losses, counterspells, removal, wipes, tutors, mulligans, combat keywords. |
 | `test_my_cards.py` | Key cards of your decks against their Oracle text. |
 | `test_zur.py` | Your Zur deck: lock Auras, Zur's fetch, its other cards, and practice-mode choices. |
+| `test_galadriel.py` | Your Galadriel deck: Alliance, the Rebel searchers, the creature-type cards, Panharmonicon, its other cards, and practice-mode abilities and choices. |
 | `test_land_entry.py` | Lands' enters-tapped conditions. |
 | `test_search.py` | The look-ahead AI: independent copies, re-dealt hidden hands, evaluation bounds, a whole reproducible decision. |
 | `test_dsl.py` | The ability compiler and interpreter. |
