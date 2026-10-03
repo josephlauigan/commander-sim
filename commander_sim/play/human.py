@@ -408,7 +408,9 @@ def _cast(g, p, c, zone):
             ctx['mastery_pick'] = pick
     from commander_sim.play import cards as mycards
     if c.name in mycards.CAST_TARGET:                         # a tagless spell with a creature target (Act of Treason)
-        t = mycards.pick_creature(g, p, mycards.CAST_TARGET[c.name], optional=True)
+        spec = mycards.CAST_TARGET[c.name]
+        prompt, keep = spec if isinstance(spec, tuple) else (spec, None)
+        t = mycards.pick_creature(g, p, prompt, optional=True, keep=keep)
         if t is None: return None
         ctx['target'] = t
     tgts = legal.spell_targets(g, p, c)
@@ -478,7 +480,7 @@ def _cast(g, p, c, zone):
         k = choose(g, p, 'choose', f'{c.name}: choose X (it costs {{X}}{{X}}{{X}} more; 5X damage to each of up to X targets)',
                    [f'X = {x}' for x in range(top + 1)], cancel=None)
         mana.pay_from_pool(g, p, 3 * k, ''); ctx['x'] = k
-    if 'tokx' in c.tags or 'xtutor' in c.tags:              # X: up to what's left in the pool
+    if 'tokx' in c.tags or 'xtutor' in c.tags or 'xdrain' in c.tags:   # X: up to what's left in the pool
         top = mana.pool_of(p).total()
         x = choose(g, p, 'choose', f'{c.name}: choose X (paid from what is left in your pool)',
                    [f'X = {x}' for x in range(top + 1)], cancel=None) if top else 0
