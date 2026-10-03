@@ -137,6 +137,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if E.CI.zur_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'galadriel':
         if E.CI.galadriel_protect(g, owner, m, kind, actor, spell): return True
+    elif owner.key == 'yshtola':
+        if E.CI.yshtola_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'najeela':
         if v >= 5 and not m.token and m.creature:
             for c in owner.hand:
@@ -164,6 +166,7 @@ def wipe_response(g, q, kind, caster):
     if q.key == 'marchesa': E.CI.marchesa_wipe_response(g, q, kind)       # countered creatures go to Marchesa first
     if q.key == 'zur': return E.CI.zur_wipe_response(g, q, kind)
     if q.key == 'galadriel': return E.CI.galadriel_wipe_response(g, q, kind)
+    if q.key == 'yshtola': return E.CI.yshtola_wipe_response(g, q, kind)
     loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
     if loss < 6: return None
     if q.key == 'seph':
@@ -1210,6 +1213,23 @@ def galadriel_main(g, p, post):
         break
 
 
+# ======================================================== yshtola
+def yshtola_prio(g, p, c):
+    return E.CI.yshtola_prio(g, p, c)
+
+
+def yshtola_main(g, p, post):
+    for _ in range(16):
+        if g.over or not p.alive: return
+        if use_removal(g, p, 6): continue
+        if consider_wipe(g, p): continue
+        if E.CI.yshtola_x_spell(g, p, post): continue
+        res = interaction_reserve(g, p, lambda c: 'ctr' in c.tags) if p.turns >= 4 else (0, '')
+        if generic_cast(g, p, yshtola_prio, res): continue
+        if E.CI.yshtola_abilities(g, p, post): continue
+        break
+
+
 # ======================================================== najeela
 def najeela_prio(g, p, c):
     t = c.tags
@@ -1304,6 +1324,8 @@ def _tutor_pick_named(g, p, kind):
         if st and not br: order.insert(0 if not (sw or asl) else len(order), 'Underworld Breach')
         order += ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault', 'Deepglow Skate', 'Counterspell']
         return first(order)
+    if p.key == 'yshtola':
+        return E.CI.yshtola_tutor(g, p, kind, okn)
     if p.key == 'najeela':
         order = [] if has(p, 'crusade') else ["Cathars' Crusade"]
         order += ['Chromatic Lantern', 'Mirror Entity', "Warleader's Call"]
@@ -1338,7 +1360,7 @@ def tutor_pick(g, p, kind):
 # ======================================================== Game Changer plays (Veyran's candidate cards)
 def deck_prio(g, p, c):
     f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'marchesa': marchesa_prio, 'zur': zur_prio,
-         'galadriel': galadriel_prio, 'najeela': najeela_prio}.get(p.key)
+         'galadriel': galadriel_prio, 'yshtola': yshtola_prio, 'najeela': najeela_prio}.get(p.key)
     if f is None:
         from commander_sim.ai import pool_ai; f = pool_ai.generic_prio
     return f(g, p, c)
@@ -1769,6 +1791,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                     continue
                 elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < importlib.import_module('commander_sim.ai.brain').chump_prob(g, d, incoming)) \
                         or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
+                    if d.key == 'yshtola' and incoming < d.life:      # Y'shtola is the engine: she chumps only to live
+                        cands = [x for x in cands if not x.is_cmd]
+                        if not cands: continue
                     b = min(cands, key=lambda x: pval(g, x))
                 else:
                     continue
@@ -2382,15 +2407,17 @@ def end_step(g, p):
     if hc is not None and not has(p, 'nomax') and not (any('nomax' in L.cd.tags for L in p.lands)
                                                        or getattr(p, 'nomax_turn', None) == p.turns):
         hc.discard_to_hand_size(g, p)
-    while hc is None and len(p.hand) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
+    stolen = getattr(p, 'stolen', None) or {}                 # cards cast from exile (Gonti) are held in hand, not in it
+    held = lambda: [c for c in p.hand if id(c) not in stolen] if stolen else p.hand
+    while hc is None and len(held()) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
                                                                           or getattr(p, 'nomax_turn', None) == p.turns)):
         if p.key == 'seph':
             bombs = [c for c in p.hand if c.creature and c.bomb >= 6]
             if bombs:
                 c = max(bombs, key=lambda c: c.bomb); discard_cards(g, p, [c]); continue
         E.tick(g)                                    # each discard can set off triggers (Tergrid): count it
-        lands = [c for c in p.hand if c.land]
-        c = lands[0] if len(lands) >= 2 else max(p.hand, key=lambda c: c.cmc)
+        lands = [c for c in held() if c.land]
+        c = lands[0] if len(lands) >= 2 else max(held(), key=lambda c: c.cmc)
         discard_cards(g, p, [c])
     p.last_turn_end = getattr(g, 'enter_no', 0)              # Premature Burial: what entered since this turn ended
     if p.key == 'seph':
@@ -2412,7 +2439,7 @@ def generic_main(g, p, post):
 
 
 MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'marchesa': marchesa_main, 'zur': zur_main,
-        'galadriel': galadriel_main, 'najeela': najeela_main}
+        'galadriel': galadriel_main, 'yshtola': yshtola_main, 'najeela': najeela_main}
 
 
 def main_fn(p):
@@ -2448,7 +2475,7 @@ def _step_start(g, p):
     p.turns += 1
     for q in g.players: q.floatR = 0          # floating mana empties between turns
     for L in p.lands: L.tapped = False
-    for q in g.players: q.floatU = 0; q.floatC = 0; q.floatG = 0
+    for q in g.players: q.floatU = 0; q.floatC = 0; q.floatG = 0; q.floatB = 0
     crack = E.CI is not None and E.CI.crackdown_on(g)              # Crackdown: big nonwhite creatures stay tapped
     for m in list(p.perms):
         if m.data and m.data.get('frozen'): m.data['frozen'] -= 1; continue   # Frost Titan, Tamiyo
@@ -2548,7 +2575,7 @@ def mulligan(g, p, rng=None):
 
 CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
         'sauron': 'Sauron, the Dark Lord', 'marchesa': 'Marchesa, the Black Rose', 'zur': 'Zur the Enchanter',
-        'galadriel': 'Galadriel, Light of Valinor', 'najeela': 'Najeela, the Blade-Blossom'}
+        'galadriel': 'Galadriel, Light of Valinor', 'yshtola': "Y'shtola, Night's Blessed", 'najeela': 'Najeela, the Blade-Blossom'}
 
 
 STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)

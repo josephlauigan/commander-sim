@@ -268,7 +268,7 @@ def become_monarch(g, p):
 
 def load():
     """import the implementation modules (they register themselves)"""
-    from commander_sim.cards.impl import common as impl_common, t1 as impl_t1, t2 as impl_t2, t3 as impl_t3, t4 as impl_t4, t5 as impl_t5, combos as impl_combos, topdeck as impl_topdeck, fixes as impl_fixes, lands as impl_lands, partials as impl_partials, rules as impl_rules, rules2 as impl_rules2, mine as impl_mine, marchesa as impl_marchesa, zur as impl_zur, galadriel as impl_galadriel  # noqa: F401
+    from commander_sim.cards.impl import common as impl_common, t1 as impl_t1, t2 as impl_t2, t3 as impl_t3, t4 as impl_t4, t5 as impl_t5, combos as impl_combos, topdeck as impl_topdeck, fixes as impl_fixes, lands as impl_lands, partials as impl_partials, rules as impl_rules, rules2 as impl_rules2, mine as impl_mine, marchesa as impl_marchesa, zur as impl_zur, galadriel as impl_galadriel, yshtola as impl_yshtola  # noqa: F401
 
 
 muldrotha_on = None          # set by cards/impl/mine.py (Muldrotha, the Gravetide)

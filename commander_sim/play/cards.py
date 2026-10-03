@@ -1152,8 +1152,8 @@ def _creatures(g, p, opp_only=False):
             and not (m.owner is not p and E.untargetable(g, m))]
 
 
-def pick_creature(g, p, prompt, opp_only=False, optional=False):
-    tg = _creatures(g, p, opp_only)
+def pick_creature(g, p, prompt, opp_only=False, optional=False, keep=None):
+    tg = [m for m in _creatures(g, p, opp_only) if keep is None or keep(g, p, m)]
     if not tg: return None
     k = _choose(g, p, 'target', prompt, [legal.describe_target(g, p, m) for m in tg], cancel='no target' if optional else None)
     return None if k is None else tg[k]
@@ -1204,7 +1204,7 @@ def _gal_pay(g, p, m, gen, pips, what):
 
 def _pick_x(g, p, what, lo=0):
     """X for an ability, up to the mana in your pool"""
-    n = mana.pool_of(p).total() + sum(getattr(p, a, 0) for a in ('floatR', 'floatU', 'floatC', 'floatA', 'floatG'))
+    n = mana.pool_of(p).total() + sum(getattr(p, a, 0) for a in ('floatR', 'floatU', 'floatC', 'floatA', 'floatG', 'floatB'))
     if n < lo: return None
     xs = list(range(lo, n + 1))
     k = _choose(g, p, 'choose', f'{what}: X = ? (your pool has {n} mana)', [f'X = {x}' for x in xs])
@@ -1416,3 +1416,63 @@ def _necro(g, p, m):
 
 ABILITIES['Necropotence'] = lambda g, p, m: [('pay 1 life (any number of times): exile the top card of your library '
                                               'face down; put it into your hand at the beginning of your next end step', _necro)]
+
+
+# ------------------------------------------------------------------ Y'shtola's deck (Esper Drain)
+def _ysh():
+    return importlib.import_module('commander_sim.cards.impl.yshtola')
+
+
+def _own_hand(p):
+    """the cards in your hand (not the ones taken from opponents, which are in exile)"""
+    stolen = getattr(p, 'stolen', None) or {}
+    return [c for c in p.hand if id(c) not in stolen]
+
+
+def _syphon_mage(g, p, m):
+    why = _creature_tap_ok(m) or ('You have no card in hand to discard.' if not _own_hand(p) else None) \
+        or _cost(g, p, 2, 'B', 'Urborg Syphon-Mage')
+    if why: return why
+    cs = _own_hand(p)
+    k = _choose(g, p, 'choose', 'Urborg Syphon-Mage: discard which card?', [_choices().card_label(c) for c in cs])
+    if k is None: return None
+    mana.pay_from_pool(g, p, 2, 'B'); m.tapped = True
+    E.discard_cards(g, p, [cs[k]])
+    _ysh().syphon(g, p, m)
+    return None
+
+
+def _inheritance(g, p, m):
+    why = _cost(g, p, 5, 'B', 'Ill-Gotten Inheritance')
+    if why: return why
+    opps = g.opps(p)
+    if not opps: return 'There is no opponent to target.'
+    k = _choose(g, p, 'target', 'Ill-Gotten Inheritance: 4 damage to which opponent?',
+                [f'{E.NAME(q)} ({q.life} life)' for q in opps])
+    if k is None: return None
+    mana.pay_from_pool(g, p, 5, 'B')
+    _ysh().inheritance_sac(g, p, m, opps[k])
+    return None
+
+
+def _jesters_cap(g, p, m):
+    why = _tapped(m) or _cost(g, p, 2, '', "Jester's Cap")
+    if why: return why
+    ps = [q for q in g.players if q.alive]
+    k = _choose(g, p, 'target', "Jester's Cap: search which player's library?",
+                [E.NAME(q) + (' (you)' if q is p else '') for q in ps])
+    if k is None: return None
+    mana.pay_from_pool(g, p, 2, '')
+    _ysh().cap_use(g, p, m, ps[k])
+    return None
+
+
+ABILITIES['Urborg Syphon-Mage'] = lambda g, p, m: [
+    ('{2}{B}, {T}, discard a card: each other player loses 2 life; you gain the life lost this way', _syphon_mage)]
+ABILITIES['Ill-Gotten Inheritance'] = lambda g, p, m: [
+    ('{5}{B}, sacrifice it: 4 damage to target opponent; you gain 4 life', _inheritance)]
+ABILITIES["Jester's Cap"] = lambda g, p, m: [
+    ("{2}, {T}, sacrifice it: search target player's library for three cards and exile them", _jesters_cap)]
+CAST_TARGET['Take Up the Shield'] = ('Take Up the Shield: which creature gets a +1/+1 counter, lifelink and indestructible?',
+                                     lambda g, p, m: not (m.owner is p and _zur().untargetable_by_you(g, m)))
+NEEDS['Take Up the Shield'] = lambda g, p, c: None if _creatures(g, p) else 'Take Up the Shield has no creature to target.'

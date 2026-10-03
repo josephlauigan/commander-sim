@@ -30,7 +30,7 @@ def _next_hid(obj):
     return g.hid_no
 from commander_sim.cards.carddb import DB_TEXT
 
-IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'galadriel': 'WUG', 'najeela': 'WUBRG'}
+IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'galadriel': 'WUG', 'yshtola': 'WUB', 'najeela': 'WUBRG'}
 # Outside decks (opponent pools) register here: key -> {'ident': 'WU', 'name': 'Brago'}. The four main decks
 # keep their hard-wired entries in IDENT / NAME / the AI tables; anything else falls back to generic defaults.
 SEATS = {}
@@ -160,6 +160,7 @@ class Player:
         s.life_locked = False # Teferi's Protection: this player's life total can't change until their next turn
         s.floatU = 0          # blue mana (Lion's Eye Diamond), lasts until end of turn
         s.floatG = 0          # green mana (Galadriel's Alliance), lasts until end of turn
+        s.floatB = 0          # black mana (Dark Petition's spell mastery)
         s.draw_st = None; s.draw_n = 0      # cards drawn this turn (Narset, Parter of Veils)
         s.chasm_age = 0       # Glacial Chasm age counters (cumulative upkeep)
         s.impulse = []        # cards exiled with "you may play them this turn" (Jeska's Will), held in hand
@@ -218,7 +219,7 @@ DAMAGE_HOOK = None
 
 
 def NAME(p):
-    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'galadriel': 'Galadriel', 'najeela': 'Najeela'}.get(p.key)
+    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'galadriel': 'Galadriel', 'yshtola': "Y'shtola", 'najeela': 'Najeela'}.get(p.key)
     return n if n is not None else SEATS[p.key]['name']
 
 
@@ -425,12 +426,9 @@ def lose_life(g, p, n, src, kind='other', damage=None):
     p.life -= n
     if g is not None:
         st = turn_stamp(g); lt = getattr(p, 'lost_turn', None)
-        p.lost_turn = (st, (lt[1] if lt and lt[0] == st else 0) + n)     # Bloodsoaked Insight's cost
+        p.lost_turn = (st, (lt[1] if lt and lt[0] == st else 0) + n)     # Bloodsoaked Insight, Archfiend, Y'shtola
     if CUR_G is not None and CUR_G.hooks and n > 0:
         CI.fire(CUR_G, 'lose_life', p, n)
-    if CUR_G is not None and CUR_G.hooks:                 # life lost this turn (Archfiend of Despair)
-        st = turn_stamp(CUR_G); lt = getattr(p, 'lost_turn', None)
-        p.lost_turn = (st, (lt[1] if lt and lt[0] == st else 0) + n)
     if src is not None and src is not p:
         p.last_src = src; p.last_kind = kind
         src.stats['dmg_dealt'] += n; src.stats['dmgk_' + kind] += n
@@ -571,6 +569,8 @@ def mana_units(g, p, convoke=False):
         U.append(['FC', '', 1])
     for _ in range(getattr(p, 'floatG', 0)):
         U.append(['FG', 'G', 1])
+    for _ in range(getattr(p, 'floatB', 0)):
+        U.append(['FB', 'B', 1])
     if convoke:                                   # each untapped creature pays for {1} or one coloured pip
         seen = {id(u[0]) for u in U}
         for m in p.perms:
@@ -637,6 +637,7 @@ def spend_unit(g, p, u, n, col=''):
     elif u[0] == 'FU': p.floatU -= 1
     elif u[0] == 'FC': p.floatC -= 1
     elif u[0] == 'FG': p.floatG -= 1
+    elif u[0] == 'FB': p.floatB -= 1
     elif isinstance(u[0], str):
         importlib.import_module('commander_sim.cards.impl.partials').special_unit_paid(g, p, u)
     else:
@@ -793,7 +794,7 @@ def amass(g, p, n):
 TOKEN_CAP = 250          # creature tokens per player; beyond this the board is lethal many times over and games crawl
 
 
-TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W', 'galadriel': 'W'}     # default colour of a deck's tokens
+TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W', 'galadriel': 'W', 'yshtola': 'W'}     # default colour of a deck's tokens
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
@@ -953,7 +954,7 @@ def teferis_protection(g, p):
     p.life_locked = True; p.ring_prot = True
     for m in p.perms: m.phased = True
     for L in p.lands: L.tapped = True
-    p.floatR = p.floatA = p.floatU = 0; p.floatC = 0; p.floatG = 0
+    p.floatR = p.floatA = p.floatU = 0; p.floatC = 0; p.floatG = 0; p.floatB = 0
     g.bf_ver = getattr(g, 'bf_ver', 0) + 1
     log(f"    {NAME(p)} casts Teferi's Protection: life can't change, protection from everything, all phased out", g)
 
@@ -1414,7 +1415,7 @@ def spell_imp(g, p, c, ctx):
             aff[q] = 0.8 * sum(pval(g, m) for m in q.perms if m.creature or t['wipe'] in ('rift', 'rebuke'))
         return 0, aff
     if 'rean_target' in ctx: return ctx['rean_value'], aff
-    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'galadriel': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
+    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
     if c.bomb and p.key == 'seph': return c.bomb, aff
     if 'vkitten' in t: return (9 if has(p, 'vfire') else 4), aff
     if 'vfire' in t: return (9 if has(p, 'vkitten') else 4), aff
@@ -1433,15 +1434,15 @@ def spell_imp(g, p, c, ctx):
     return 0, aff
 
 
-CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'najeela': 99}
+CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 99}
 CMD_IMP = 6              # importance of an outside deck's commander spell (counter decisions)
 
 # Interaction profiles for the AI opponents.
 #   conservative: counter only big threats (importance >= 7), hold instant removal for emergencies
 #   loose:        counter at importance >= 6, use instant removal as freely as sorcery removal
 PROFILES = {
-    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
-    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'galadriel': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
+    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
+    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'galadriel': 6, 'yshtola': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
 }
 INSTANT_EXTRA = 2
 CTHRESH_DEFAULT = 7      # outside decks: counter threshold under the current profile
@@ -1996,6 +1997,10 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         p.gy.remove(c)
         if zone == 'mgy' and ctx.get('muld_type') and CI is not None: CI.muld_mark(g, p, ctx['muld_type'])
     elif zone == 'lib': pass                      # Bolas's Citadel: already taken off the top of the library       # Underworld Breach: cast from the graveyard, resolves back to it
+    if id(c) in p.agent_ids and c not in p.hand:
+        p.agent_ids.discard(id(c))                # the card taken from an opponent is cast: other copies cost as usual
+        owner = getattr(p, 'stolen', {}).pop(id(c), None)
+        if owner is not None and owner is not p: ctx = dict(ctx, owner=owner)   # Gonti, Hostage Taker: still theirs
     p.spells_this_turn += 1; p.stats['spells_cast'] += 1
     p.cast_names.add(c.name)
     tgt = ctx.get('target')
@@ -2026,7 +2031,7 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)
         elif LAST_COUNTER is not None and LAST_COUNTER.name == 'Venser, Shaper Savant': p.hand.append(c)
         elif getattr(g, 'bounced_spell', False): g.bounced_spell = False; p.hand.append(c)
-        elif not c.land: p.gy.append(c)
+        elif not c.land: gy_of(p, ctx).append(c)
         return False
     resolve(g, p, c, ctx, zone)
     check_state(g)
@@ -2045,6 +2050,11 @@ def flashback_grant(g, p):
     pay(g, p, x.generic, x.pips); cast_card(g, p, x, 'gy')
 
 
+def gy_of(p, ctx):
+    """the graveyard a spell goes to: its owner's (a card cast from an opponent's deck goes back to theirs)"""
+    return ctx['owner'].gy if ctx.get('owner') is not None else p.gy
+
+
 def resolve(g, p, c, ctx, zone):
     """spell c resolves; the abilities it triggers go on the stack once it has finished"""
     g.resolving = getattr(g, 'resolving', 0) + 1
@@ -2059,13 +2069,13 @@ def _resolve(g, p, c, ctx, zone):
     t = c.tags
     if CI is not None and not c.perm and c.name in CI.HOOKS and 'resolve' in CI.HOOKS[c.name] and CI.live(c.name):
         dest = CI.HOOKS[c.name]['resolve'](g, p, c, ctx)            # hand-written spell (returns where it goes)
-        if dest != 'handled' and zone != 'copy': (p.exile if zone == 'gy' or ctx.get('exile_after') or dest == 'exile' else p.gy).append(c)
+        if dest != 'handled' and zone != 'copy': (p.exile if zone == 'gy' or ctx.get('exile_after') or dest == 'exile' else gy_of(p, ctx)).append(c)
         return
     if c.dsl and not c.perm:                     # interpreter-driven instant / sorcery
         if DSLMOD is not None: DSLMOD.resolve_spell(g, p, c, ctx)
         if zone == 'copy': return
         if zone == 'gy' or ctx.get('exile_after'): p.exile.append(c)
-        else: p.gy.append(c)
+        else: gy_of(p, ctx).append(c)
         return
     if c.perm and zone == 'copy':                # a copy of a permanent spell becomes a token
         enter_token_copy(g, p, c); return
@@ -2077,7 +2087,7 @@ def _resolve(g, p, c, ctx, zone):
             x = min(lands, key=lambda L: (len(L.tags.get('c', '')), -('t' in L.tags))); p.hand.remove(x); p.gy.append(x)
         prev, g.cast_target = getattr(g, 'cast_target', None), ctx.get('target')   # an Aura's target, chosen as cast
         try:
-            m = enter(g, p, c, was_cast=True)
+            m = enter(g, p, c, was_cast=True, orig=ctx.get('owner'))
         finally:
             g.cast_target = prev
         if c is p.cmd: m.is_cmd = True
@@ -2176,7 +2186,7 @@ def _resolve(g, p, c, ctx, zone):
             if g.over: return
     if zone == 'copy': return                     # copies move no card
     if zone == 'gy' or ctx.get('exile_after'): p.exile.append(c)
-    else: p.gy.append(c)
+    else: gy_of(p, ctx).append(c)
 
 
 def spell_targets(g, p, c, ctx=None):
