@@ -67,7 +67,7 @@ Each searcher finds a bigger one, so one early searcher becomes the whole chain:
 
 ## What the simulator found
 
-Against the opponent pools (adaptive AI, 60 games per tier) the deck wins about 13% of games at each tier, close to Zur and Marchesa. The deck's result depends on finding a searcher. In games where one appears, the AI puts about three Rebels onto the battlefield per game, and one game in nine reaches eight or more. With six searchers in 99 cards (plus Recruiter of the Guard, which finds the Sergeant, Lieutenant or Captain), about 40% of games see none. Galadriel's first Alliance trigger comes on turn 6 in a typical game; the AI chooses counters most often, then mana, then the draw.
+Against the opponent pools with the look-ahead AI (loose profile, 120 games per tier) the deck won 15.0% against Tier 1, 11.7% against Tier 2, 8.3% against Tier 3, 12.5% against Tier 4 and 8.3% against Tier 5; an even share is 25%. That's a little below Marchesa (15% on average) and Zur (16.5%). The deck's result depends on finding a searcher. In games where one appears, the AI puts about three Rebels onto the battlefield per game, and one game in nine reaches eight or more. With six searchers in 99 cards (plus Recruiter of the Guard, which finds the Sergeant, Lieutenant or Captain), about 40% of games see none. Galadriel's first Alliance trigger comes on turn 6 in a typical game; the AI chooses counters most often, then mana, then the draw.
 
 ## Consistency
 
