@@ -472,6 +472,8 @@ def check_state(g):
     if g.over: return
     tick(g)
     if g.hooks: CI.fire(g, 'sba')
+    for q in g.players:                                   # a land put onto the battlefield without landfall's path
+        if q.alive and any(L.data is None or not L.data.get('in') for L in q.lands): lands_entered(g, q)
     for p in g.players:
         if p.alive and (p.life <= 0 or p.decked or (p.cmd_dmg and max(p.cmd_dmg.values()) >= 21) or getattr(p, 'poison', 0) >= 10):
             eliminate(g, p)
@@ -2448,7 +2450,36 @@ def land_ramp(g, p, n, tapped):
         landfall(g, p)
 
 
+LAND_ETB_FX = {}     # land name -> [('scry', n) | ('gain', n)]: its 'when this land enters' effects (Oracle text)
+
+
+def land_etb_fx(cd):
+    if cd.name not in LAND_ETB_FX:
+        import re
+        from commander_sim.cards import scryfall
+        txt = ((scryfall.load_cache().get(cd.name.lower()) or {}).get('oracle_text') or '').lower()
+        fx = []
+        m = re.search(r'when this land enters, scry (\d+)', txt)
+        if m: fx.append(('scry', int(m.group(1))))
+        m = re.search(r'when this land enters, you gain (\d+) life', txt)
+        if m: fx.append(('gain', int(m.group(1))))
+        LAND_ETB_FX[cd.name] = fx
+    return LAND_ETB_FX[cd.name]
+
+
+def lands_entered(g, p):
+    """the lands that just entered under p's control: their enters triggers (a Temple's scry, a gain land's life)"""
+    for L in p.lands:
+        if L.data is not None and L.data.get('in'): continue
+        L.data = dict(L.data or {}, **{'in': True})
+        for kind, n in land_etb_fx(L.cd):
+            if g.over or not trigger_window(g, p, L.cd, f'scry {n}' if kind == 'scry' else f'gain {n} life'): continue
+            if kind == 'scry': importlib.import_module('commander_sim.cards.impl.topdeck').scry(g, p, n)
+            else: gain(p, n); log(f'    {NAME(p)} gains {n} life ({L.cd.name})', g)
+
+
 def landfall(g, p):
+    lands_entered(g, p)
     copies = 1 + (CI.total(g, 'trigger_copies', p, 'landfall', None) if g.hooks else 0)     # Ancient Greenwarden
     for _ in range(copies):
         _landfall_once(g, p)
