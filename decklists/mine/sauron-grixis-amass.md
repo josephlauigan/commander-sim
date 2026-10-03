@@ -9,6 +9,7 @@
 **Updated 2026-09-27.** **Tezzeret's Gambit → Diabolic Intent**, a third tutor. Not a Game Changer.
 **Updated 2026-09-28.** **Big Score → Sword of Fire and Ice**, a third combat Sword on the Army. Not a Game Changer, so the deck stays Bracket 3 at the cap with three. Deck stays at 100 and 36 lands.
 **Updated 2026-10-01.** Out: Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back. In: Brain Freeze, Dark Ritual, Lotus Petal, Underworld Breach. The Underworld Breach package: a Breach + Brain Freeze combo fuelled by Dark Ritual and Lotus Petal. Underworld Breach is a fourth Game Changer, so the deck moves to Bracket 4.
+**Updated 2026-10-02.** Out: Plaza of Heroes. In: Thought Vessel. Thought Vessel is a two-mana rock toward the six-mana commander, and no maximum hand size suits the draw engines. Plaza of Heroes was the softest land.
 
 ## Strategy
 
@@ -65,14 +66,14 @@ Needs Breach, Brain Freeze and enough graveyard to start: Ritual and Petal make 
 
 ## Consistency
 
-The list is exactly 100 cards. 36 lands (18 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 37 when you need the land half. Six rocks: Sol Ring, Arcane Signet, Mind Stone, Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Dark Ritual and Lotus Petal are one-shot fast mana (and the Breach line's fuel). Sword of Hearth and Home ramps a basic every time the Army connects.
+The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Seven rocks: Sol Ring, Arcane Signet, Mind Stone, Thought Vessel (no maximum hand size), Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Dark Ritual and Lotus Petal are one-shot fast mana (and the Breach line's fuel). Sword of Hearth and Home ramps a basic every time the Army connects.
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | Blue lands | 16 | 5 Island plus the U duals, Crumbling Necropolis, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
 | Black lands | 16 | 6 Swamp plus Barad-dûr, Blood Crypt, Drowned Catacomb, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
 | Red lands | 19 | 7 Mountain plus the R duals, Haunted Ridge, Izzet Boilerworks, and the any-colour lands |
-| Colorless-only lands | 3 | Rogue's Passage, Scavenger Grounds, Plaza of Heroes (coloured only for legendary spells) |
+| Colorless-only lands | 2 | Rogue's Passage, Scavenger Grounds |
 
 **Haunted Ridge → the Unclaimed Territory slot.** Unclaimed Territory only made coloured mana for Orc creature spells; Haunted Ridge is a real B/R dual.
 
@@ -126,13 +127,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (6).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Reconnaissance Mission, Underworld Breach
 
-**Artifacts (14).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
+**Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Thought Vessel, Whispersilk Cloak
 
 **Instants and sorceries (24).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Terminate, Toxic Deluge, Undermine, Vandalblast
 
-**Lands (36).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
+**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
-Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when you need the land half. Barad-dûr amasses on its own without a name.
+Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when you need the land half. Barad-dûr amasses on its own without a name.
 
 ## Import list (100)
 
@@ -187,7 +188,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Orcish Bowmasters
 1 Path of Ancestry
 1 Phyrexian Arena
-1 Plaza of Heroes
 1 Ral Zarek, Guest Lecturer
 1 Reconnaissance Mission
 1 Ringsight
@@ -209,6 +209,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Talisman of Dominance
 1 Terminate
 1 The Ozolith
+1 Thought Vessel
 1 Toxic Deluge
 1 Treno, Dark City
 1 Undermine
@@ -245,9 +246,9 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 
 **The 10-01 change — the Underworld Breach package.** Bedevil → Underworld Breach, Slip Out the Back → Brain Freeze, Metallic Mimic → Dark Ritual, Feed the Swarm → Lotus Petal. The four cuts were the softest removal, the protection spell, and the Army's least important growth card. Tested in the simulator before the change (look-ahead AI, loose profile): over all five tiers it was about even with the old list (−1.3 points, within noise), better against the Bracket 4 tiers and worse against Bracket 3 ones; a confirming 800-game run against Tiers 4 and 5 found +2.9 and −0.1. Of the three Breach versions tried (with Grapeshot, a lighter package without rituals, and this one), this was the best. Breach is a fourth Game Changer: the deck is now Bracket 4.
 
-**Weakest remaining inclusions.** Plaza of Heroes is the softest land; Diabolic Intent if you find you never have a spare creature to feed it. Brain Freeze and Dark Ritual are weak on their own, which is the cost of the Breach line: if you go back to Bracket 3, the whole package comes out together (Breach is the Game Changer). Bedevil, Feed the Swarm, and Tezzeret's Gambit are the natural cards to bring back.
+**Weakest remaining inclusions.** Plaza of Heroes, the softest land, left on 10-02 for Thought Vessel; Diabolic Intent if you find you never have a spare creature to feed it. Brain Freeze and Dark Ritual are weak on their own, which is the cost of the Breach line: if you go back to Bracket 3, the whole package comes out together (Breach is the Game Changer). Bedevil, Feed the Swarm, and Tezzeret's Gambit are the natural cards to bring back.
 
-**Scavenger Grounds hits your own graveyard too.** Fire it deliberately. Plaza of Heroes only pays off when you name a utility land worth shutting off.
+**Scavenger Grounds hits your own graveyard too.** Fire it deliberately.
 
 **Card conflicts with your other decks.**
 - **Two physical copies needed** of Consecrated Sphinx, Sheoldred, the Apocalypse, and Diabolic Tutor, which are in this deck and Sephiroth.
@@ -256,5 +257,5 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 - Shared with **Sephiroth**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **Only in this deck**: Night's Whisper and Phyrexian Arena.
-- **New singles** since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
-- **To the binder**: Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.
+- **New singles**: Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
+- **To the binder**: Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

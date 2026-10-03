@@ -335,7 +335,8 @@ SAC_OUTLET = {'Viscera Seer': None, 'Carrion Feeder': _feeder, 'Woe Strider': No
 DEATH_DRAIN = {'Blood Artist': 1, 'Zulaport Cutthroat': 1, 'Cruel Celebrant': 1, 'Bastion of Remembrance': 1,
                'Falkenrath Noble': 1, 'Vindictive Vampire': 1, 'Syr Konrad, the Grim': 1, 'Poison-Tip Archer': 1,
                'Elas il-Kor, Sadistic Pilgrim': 1, 'Mayhem Devil': 0.5, 'Goblin Bombardment': 0.3,
-               'Mirkwood Bats': 0.3, 'Grave Pact': 1.5, 'Dictate of Erebos': 1.5, 'Butcher of Malakir': 1.5}
+               'Mirkwood Bats': 0.3}
+EDICTS = ('Grave Pact', 'Dictate of Erebos', 'Butcher of Malakir')    # each opponent sacrifices a creature
 DEATH_DRAW = {'Grim Haruspex': 1, 'Midnight Reaper': 1, 'Morbid Opportunist': 0.5, 'Skemfar Avenger': 1,
               'Dark Prophecy': 1, 'Pitiless Plunderer': 0.6, 'Korvold, Fae-Cursed King': 1}
 
@@ -347,7 +348,13 @@ def death_value(g, p, m=None):
     drain = sum(DEATH_DRAIN.get(n, 0) for n in names) + tags
     draw_ = sum(DEATH_DRAW.get(n, 0) for n in names)
     copies = 1 + (CI.total(g, 'trigger_copies', p, 'dies', m) if g.hooks else 0)
-    return copies * (drain * len(g.opps(p)) * 0.8 + draw_ * 1.5)
+    edict = 0.0
+    k = sum(1 for n in names if n in EDICTS)
+    if k:                                        # each opponent loses the creature it values least
+        for q in g.opps(p):
+            cr = [x for x in q.perms if x.creature and not x.phased]
+            if cr: edict += 0.5 + 0.8 * min(pval(g, x) for x in cr)
+    return copies * (drain * len(g.opps(p)) * 0.8 + draw_ * 1.5 + k * edict)
 
 
 def outlets(p):

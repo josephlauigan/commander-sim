@@ -664,6 +664,9 @@ def hook_options(g, p, s, post):
     for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
     if p.key not in STYLE or p.key in GENERIC_PLAYS:
         o += importlib.import_module('commander_sim.ai.pool_ai').special_options(g, p, s, post)
+    elif any(m.cd is not None and m.cd.name == 'Grave Pact' and not m.phased for m in p.perms):
+        IC = importlib.import_module('commander_sim.cards.impl.common')     # Grave Pact: sacrifice for edicts
+        o += IC.aristocrat_options(g, p, s, post)
     o += importlib.import_module('commander_sim.cards.impl.lands').land_options(g, p, s, post)
     if E.CI.combo_options is not None: o += E.CI.combo_options(g, p, s, post)
     return o

@@ -10,6 +10,7 @@
 **Updated 2026-09-27.** **Persist → Dread Return**, then **Dovin's Veto → Force of Will** (moved from Veyran), **Diabolic Intent → Teferi's Protection** (Diabolic Intent moved to Sauron), and **Blossoming Sands → Arcane Sanctum**. Force of Will and Teferi's Protection are Game Changers, so the deck now runs **nine**.
 **Updated 2026-09-28.** **Unmarked Grave → Ephemerate.** Not a Game Changer, so the count stays at nine. Deck stays at 100 and 37 lands.
 **Updated 2026-10-01.** Out: Massacre Wurm. In: Muldrotha, the Gravetide. Muldrotha replays permanents from the graveyard (a land, a creature, an artifact, an enchantment each turn).
+**Updated 2026-10-02.** Out: Cultivate. In: Grave Pact. Grave Pact turns every sacrifice into an edict on each opponent: the free outlets, Grave Titan's Zombies and the loops all feed it. Cultivate was the least needed ramp in a deck that cheats its threats in.
 
 ## Strategy
 
@@ -17,7 +18,7 @@ Fill the graveyard, cheat a Phyrexian bomb onto the battlefield three or four tu
 
 Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, and appears under that name in the list below. A 7/7 with flying, vigilance, deathtouch, and lifelink whose ETB looks at the top ten cards and takes one of each card type. She is both a castable bomb and the best reanimation target in the deck.
 
-**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise, Llanowar Elves, Avacyn's Pilgrim, Sakura-Tribe Elder, and Cultivate for mana, with **Smothering Tithe** as the four-drop that keeps paying. Stitcher's Supplier, Buried Alive, Entomb, and Grisly Salvage load the graveyard. Tortured Existence and Stinkweed Imp keep it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
+**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise, Llanowar Elves, Avacyn's Pilgrim and Sakura-Tribe Elder for mana, with **Smothering Tithe** as the four-drop that keeps paying. Stitcher's Supplier, Buried Alive, Entomb, and Grisly Salvage load the graveyard. Tortured Existence and Stinkweed Imp keep it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
 
 **Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
 
@@ -63,6 +64,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 - **Altar of Dementia as the outlet:** Finks mills a player every loop, so loops 2 and 3 win without a drain creature; opponents lose on their next draw. The Deathmantle loop can use it too, sacrificing the Zombies to mill.
 - **Aura Shards:** every Finks or Titan return and every Zombie destroys an artifact or enchantment, which clears the table's.
 - **Triskelion with loop 4:** the infinite mana keeps paying Deathmantle to return Triskelion for three more pings.
+- **Grave Pact:** every creature of yours that dies makes each opponent sacrifice a creature, so any loop also empties their boards. Outside the loops it turns each free sacrifice (a Zombie token, Stitcher's Supplier, a Kitchen Finks that persists back) into an edict on the whole table. It costs {1}{B}{B}{B}, so it wants the Swamps and black duals.
 
 **Shared weak points.** Mikaeus is in two loops and Finks is in two, so Melira keeps Finks alive as a combo if Mikaeus is answered, and Triskelion covers you if Finks is. Graveyard and sacrifice hate hurts all four, since every loop relies on creatures dying and returning: Rest in Peace stops them outright, and a Torpor Orb–style card (no ETB triggers) shuts off the payoffs.
 
@@ -74,7 +76,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The only land change since 09-22 is **Blossoming Sands → Arcane Sanctum**: one tapped land for another, but with blue (for Force of Will and Consecrated Sphinx) in place of green.
 
-Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), four creatures (Birds of Paradise, Llanowar Elves, **Avacyn's Pilgrim**, Sakura-Tribe Elder), Cultivate, and Smothering Tithe. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
+Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), four creatures (Birds of Paradise, Llanowar Elves, **Avacyn's Pilgrim**, Sakura-Tribe Elder), and Smothering Tithe. Cultivate left on 10-02 for Grave Pact. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
 
 **Graveyard fill is a little thinner.** Satyr Wayfinder is out; Gifts Ungiven partly covers it. Stitcher's Supplier, Buried Alive, Entomb, Grisly Salvage, Tortured Existence, and Stinkweed Imp remain; Unmarked Grave left for Ephemerate on 09-28.
 
@@ -119,11 +121,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (23).** Archon of Cruelty, Avacyn's Pilgrim, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Kitchen Finks, Llanowar Elves, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stinkweed Imp, Stitcher's Supplier, Triskelion, Viscera Seer, Zulaport Cutthroat
 
-**Enchantments (5).** Animate Dead, Aura Shards, Necromancy, Smothering Tithe, Tortured Existence
+**Enchantments (6).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Smothering Tithe, Tortured Existence
 
 **Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chromatic Lantern, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (11).** Buried Alive, Cultivate, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Lash of the Balrog, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
+**Sorceries (10).** Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Lash of the Balrog, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
 
 **Instants (12).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection
 
@@ -154,7 +156,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Chromatic Lantern
 1 Command Tower
 1 Consecrated Sphinx
-1 Cultivate
 1 Demonic Tutor
 1 Diabolic Tutor
 1 Displacer Kitten
@@ -172,6 +173,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Gifts Ungiven
 1 Glacial Fortress
 1 Grand Abolisher
+1 Grave Pact
 1 Grave Titan
 1 Grisly Salvage
 1 Hallowed Fountain
@@ -273,5 +275,5 @@ In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force
 - Shared with **Sauron**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City. (Night's Whisper and Phyrexian Arena are Sauron-only.)
 - Shared with **Veyran**: Ash Barrens, Evolving Wilds.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **New singles**: Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
-- **To the binder**: Massacre Wurm (10-01); Carrion Feeder, Gray Merchant of Asphodel, Sephiroth, Planet's Heir, Persist, Dovin's Veto, Blossoming Sands, Unmarked Grave; from 09-26, Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.
+- **New singles**: Grave Pact (10-02); Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
+- **To the binder**: Cultivate (10-02); Massacre Wurm (10-01); Carrion Feeder, Gray Merchant of Asphodel, Sephiroth, Planet's Heir, Persist, Dovin's Veto, Blossoming Sands, Unmarked Grave; from 09-26, Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.
