@@ -10,6 +10,7 @@
 **Updated 2026-09-28.** **Big Score → Sword of Fire and Ice**, a third combat Sword on the Army. Not a Game Changer, so the deck stays Bracket 3 at the cap with three. Deck stays at 100 and 36 lands.
 **Updated 2026-10-01.** Out: Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back. In: Brain Freeze, Dark Ritual, Lotus Petal, Underworld Breach. The Underworld Breach package: a Breach + Brain Freeze combo fuelled by Dark Ritual and Lotus Petal. Underworld Breach is a fourth Game Changer, so the deck moves to Bracket 4.
 **Updated 2026-10-02.** Out: Plaza of Heroes. In: Thought Vessel. Thought Vessel is a two-mana rock toward the six-mana commander, and no maximum hand size suits the draw engines. Plaza of Heroes was the softest land.
+**Updated 2026-10-03.** Out: Ral Zarek, Guest Lecturer. In: Marchesa, the Black Rose. Marchesa gives every creature dethrone (a +1/+1 counter when attacking the player with the most life, the Army included) and returns any creature with a +1/+1 counter that dies at the next end step. Ral Zarek's planeswalker slot did the least.
 
 ## Strategy
 
@@ -28,6 +29,8 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 **Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. With **Sheoldred, the Apocalypse** out, each of those cards also costs its drawer 2 life — thirty more damage across the table — and **Consecrated Sphinx** lets you draw two for each (it's a "may": take only what your library can spare). Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and Kaervek. Without Bowmasters, Sheoldred, or the Sphinx it's just a symmetrical wheel that refuels the table, so hold the activation until a payoff is on board.
 
 **Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler and Inexorable Tide proliferate it upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
+
+**Marchesa, the Black Rose** gives all your creatures dethrone: each one attacking the player with the most life (or tied for it) gets a +1/+1 counter, so the Army grows on every swing at the leader, and Mauhúr adds one more. Any creature of yours with a +1/+1 counter that dies comes back at the beginning of the next end step: Bowmasters, Kefka or Grave Titan after a dethrone hit or a Skate or Flux Channeler pass, and Marchesa herself. The Army is a token, so it doesn't come back; The Ozolith keeps its counters instead.
 
 **Keep it.** **The Ozolith** is new insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with counters on it, those counters move onto The Ozolith, and at the beginning of combat on your turn you can put them all onto a target creature. A spot-removed, bounced, or swept Army no longer resets you to zero — the next amass makes a fresh Army and The Ozolith hands it the old pile (or put it straight onto Sauron). It also catches the counters when you wipe the board yourself with Blasphemous Act or Toxic Deluge.
 
@@ -121,9 +124,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (17).** Consecrated Sphinx, Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (18).** Consecrated Sphinx, Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Marchesa the Black Rose, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
-**Planeswalkers (2).** Ral Zarek Guest Lecturer, Vraska Betrayal's Sting
+**Planeswalkers (1).** Vraska Betrayal's Sting
 
 **Enchantments (6).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Reconnaissance Mission, Underworld Breach
 
@@ -179,6 +182,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Kefka, Court Mage // Kefka, Ruler of Ruin
 1 Lightning Greaves
 1 Lotus Petal
+1 Marchesa, the Black Rose
 1 Mauhúr, Uruk-hai Captain
 1 Mind Stone
 1 Nibelheim Aflame
@@ -188,7 +192,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Orcish Bowmasters
 1 Path of Ancestry
 1 Phyrexian Arena
-1 Ral Zarek, Guest Lecturer
 1 Reconnaissance Mission
 1 Ringsight
 1 Rogue's Passage
@@ -252,10 +255,11 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 
 **Card conflicts with your other decks.**
 - **Two physical copies needed** of Consecrated Sphinx, Sheoldred, the Apocalypse, and Diabolic Tutor, which are in this deck and Sephiroth.
+- **Marchesa, the Black Rose** is also the commander of your Marchesa deck: a second copy, or move her between decks.
 - **Diabolic Intent** moved here from Sephiroth, so one copy is enough.
 - Shared with **Veyran**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
 - Shared with **Sephiroth**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **Only in this deck**: Night's Whisper and Phyrexian Arena.
-- **New singles**: Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
-- **To the binder**: Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.
+- **New singles**: Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
+- **To the binder**: Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.
