@@ -1981,6 +1981,11 @@ def counter_side_effects(g, q, p, ctr):
         p.delayed_draws = getattr(p, 'delayed_draws', 0) + 2; q.delayed_draws = getattr(q, 'delayed_draws', 0) + 1
     if 'undermine' in t: lose_life(g, p, 3, q, kind='triggers', damage=False)   # life loss, not damage
     if 'swan' in t: make_tokens(g, p, 1, 2, fly=True)          # Swan Song gives the caster a Bird
+    if ctr.name == 'Statute of Denial' and any(m.creature and not m.phased and 'U' in colors_of(m) for m in q.perms):
+        draw(g, q, 1)                                          # a blue creature: draw a card, then discard a card
+        hc = human_choice(g, q)
+        if hc is not None: hc.discard(g, q, 1)
+        else: discard_worst(g, q, 1)
 
 
 def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
