@@ -810,6 +810,7 @@ def veyran_prio(g, p, c):
     t = c.tags
     if c is p.cmd: return 70
     if 'rock' in t or 'fastmana' in t: return 80 if p.turns <= 5 else 40
+    if 'remora' in t: return 66 if p.turns <= 4 else 0              # Mystic Remora: only early, while upkeep is cheap
     if 'vkitten' in t or 'vfire' in t: return 74
     if 'recruit' in t: return 73
     if 'kiln' in t: return 70
