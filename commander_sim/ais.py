@@ -853,7 +853,7 @@ def veyran_prio(g, p, c):
     if 'stormburn' in t:                                                       # Grapeshot: the end of a long turn
         st = importlib.import_module('commander_sim.cards.impl.mine').storm_count(g)
         return 62 if st >= 5 or any(q.life <= st + 1 for q in g.opps(p)) else 0
-    if c.name in ('Propaganda', 'Ghostly Prison'):                             # attack tax: sooner when the table hits hard
+    if c.name in ('Propaganda', 'Ghostly Prison', 'Crawlspace'):                             # attack tax: sooner when the table hits hard
         return 52 + min(18, int(importlib.import_module('commander_sim.ai.deck_plans').opp_power(g, p)))
     if c.name == 'Fiery Emancipation': return 64 if any(m.cd is not None and ('ping' in m.cd.tags or m.creature) for m in p.perms) else 40
     if c.name == 'Galvanic Iteration':                                          # with another spell to copy this turn
@@ -1842,6 +1842,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     to_walker = {} if hum_p else walker_attacks(g, p, atk, d, assign)
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
+        if d.key == 'veyran':                     # your instant-speed answers to an attack (Aetherize)
+            for c, fn in E.CI.hand_cards(d, 'hand_defend'):
+                if c.name == 'Aetherize': fn(g, c, d, p, atk, assign)
         if d.key not in MAIN:
             if g.hooks: E.CI.fire(g, 'defend', d, p, atk, assign)    # the defender's permanents, after blocks (Yawgmoth)
             for c, fn in E.CI.hand_cards(d, 'hand_defend'): fn(g, c, d, p, atk, assign)

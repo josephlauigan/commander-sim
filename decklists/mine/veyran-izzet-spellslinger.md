@@ -9,6 +9,7 @@
 **Updated 2026-09-27.** **Force of Will → Jeska's Will** (Force of Will moved to the Sephiroth deck; Jeska's Will takes its Game Changer slot, so the deck stays at three) and **Reenact the Crime → Twinflame**.
 **Updated 2026-10-02.** **Hydro-Channeler → Alania, Divergent Storm**: your first instant and your first sorcery each turn are copied, each copy costing an opponent a free card, and Veyran and Harmonic Prodigy each add a copy. Not a Game Changer; the deck stays at 100 and three GCs (Bracket 3).
 **Updated 2026-10-04.** Out: Gandalf, Friend of the Shire, Mystic Confluence, Pongify, Reality Shift, Return the Favor, Spell Pierce, Swiftfoot Boots, Thought Vessel, Thunderdrum Soloist. In: Deflecting Swat, Docent of Perfection // Final Iteration, Fiery Emancipation, Lightning Greaves, Slip Out the Back, Storm-Kiln Artist, Talrand, Sky Summoner, Third Path Iconoclast, Young Pyromancer. The tokens rebuild: spells now leave creatures behind, Fiery Emancipation triples every ping, and the protection package is Deflecting Swat, Lightning Greaves and Slip Out the Back.
+**Updated 2026-10-04.** Out: Twinflame. In: Crawlspace. Twinflame → Crawlspace: no more than two creatures can attack you each combat, against the creature decks that cause most of the deck's losses.
 
 ## Strategy
 
@@ -51,11 +52,11 @@ Eris is the reward for a full graveyard: it costs {2} less per *different* mana 
 
 **Jeska's Will fuels the big turn.** With Veyran on the battlefield you get both modes: add {R} for each card in an opponent's hand (target the fullest hand), then exile the top three cards of your library and play them this turn. That's usually four to seven mana and three more spells for one card, and it's itself a sorcery, so it triggers every pinger. It replaces Force of Will's protection with fuel: the deck now wins more big turns by going longer and protects them less.
 
-**Twinflame doubles your engines for a turn.** For {1}{R} it makes a hasty token copy of a creature you control, exiled at the next end step; each extra target costs {2}{R} more. Copy Guttersnipe or Kessig Flamebreather before a chain and every spell after it pings twice as hard (and Veyran doubles the copy's triggers too). Copy Archmage Emeritus for twice the cards, Young Pyromancer or Storm-Kiln Artist for twice the tokens or Treasure, or Venser for a second bounce. It can't usefully copy Veyran, Talrand or the Niv-Mizzets: they're legendary, so a copy dies to the legend rule right away.
+**Crawlspace caps the attacks on you.** No more than two creatures can attack you each combat. Most of the deck's losses are to creature decks (Lord Windgrace, Brago, Kaalia, Sythis, Aurelia), and the tokens rarely protect you because they aren't on the board when the big attack comes. Crawlspace works from the turn it lands, doesn't affect your own attacks, and is an artifact, so Fabricate can find it. It replaced Twinflame, which sat in hand most games.
 
 ## Key lines
 
-**The big turn.** Pingers or token makers down, Veyran protected, Fiery Emancipation out if you have it, then chain. Thousand-Year Storm plus a mid-turn Seething Song (Blazing Firesinger's prepared spell), Jeska's Will, or Mizzix's Mastery on a full yard is the most explosive line the deck has left. Cast Twinflame on your best pinger early in the chain, not late — every spell after it counts double, and the copy is exiled at end of turn anyway.
+**The big turn.** Pingers or token makers down, Veyran protected, Fiery Emancipation out if you have it, then chain. Thousand-Year Storm plus a mid-turn Seething Song (Blazing Firesinger's prepared spell), Jeska's Will, or Mizzix's Mastery on a full yard is the most explosive line the deck has left.
 
 **Aetherflux Reservoir** gains 1 life for the first spell, 2 for the second, and so on, and pays 50 life to deal 50 to one player. It's no longer tied to an infinite, but a long turn — especially one extended by Thousand-Year Storm copies of cantrips — still gets you there.
 
@@ -108,6 +109,7 @@ Four tutors now, each pointing somewhere different, plus one graveyard rebuy. **
 - **Need mana for the chain → Imperial Recruiter for Storm-Kiln Artist.**
 - **Need more cards → Imperial Recruiter for Archmage Emeritus.**
 - **Veyran keeps dying → Fabricate for Lightning Greaves**, or Mystical Tutor for Slip Out the Back or Deflecting Swat.
+- **A creature deck is attacking you → Fabricate for Crawlspace.**
 - **Setting up a finish → Fabricate for Aetherflux Reservoir** before the long turn.
 - **Need to protect a big turn → Solve the Equation for a counter**, or **Mystical Tutor at an opponent's end step**.
 - **Need fuel for the big turn → Mystical Tutor or Solve the Equation for Jeska's Will** (with Veyran out, both modes).
@@ -118,9 +120,9 @@ Timing note: **Mystical Tutor puts the card on top of your library**, so fire it
 
 ## Bracket and Rule 0
 
-Bracket 3, at the cap with **three** Game Changers: **Mystical Tutor**, **Cyclonic Rift**, and **Jeska's Will**. A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Twinflame, Fiery Emancipation and Deflecting Swat are all off-list.
+Bracket 3, at the cap with **three** Game Changers: **Mystical Tutor**, **Cyclonic Rift**, and **Jeska's Will**. A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation, Deflecting Swat and Crawlspace are all off-list.
 
-**No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns. **Twinflame is half of a known infinite** (with Dualcaster Mage, which left the deck on 09-26), so if Dualcaster Mage ever comes back, the deck has a two-card combo again.
+**No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns. Twinflame, half of the Dualcaster Mage infinite, left on 10-04.
 
 Disclose before the game:
 
@@ -140,13 +142,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (22).** Alania Divergent Storm, Archmage Emeritus, Blazing Firesinger // Seething Song, Docent of Perfection // Final Iteration, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Guttersnipe, Harmonic Prodigy, Imperial Recruiter, Jin-Gitaxias Progress Tyrant, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Sanar Unfinished Genius // Wild Idea, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Thor Asgard's Avenger, Venser Shaper Savant, Young Pyromancer
 
-**Artifacts (5).** Aetherflux Reservoir, Arcane Signet, Fellwar Stone, Lightning Greaves, Sol Ring
+**Artifacts (6).** Aetherflux Reservoir, Arcane Signet, Crawlspace, Fellwar Stone, Lightning Greaves, Sol Ring
 
 **Enchantments (4).** Fiery Emancipation, Old Fat Spider Can't See Me, Rite of the Dragoncaller, Thousand-Year Storm
 
 **Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Deflecting Swat, Dreams of Laguna, Flashback, Lightning Bolt, Mystical Tutor, Plunder the Trollshaws, Prismari Charm, Quick Study, Slip Out the Back, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
-**Sorceries (12).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Jeska's Will, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Stock Up, Twinflame
+**Sorceries (11).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Jeska's Will, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Stock Up
 
 **Lands (34).** Ash Barrens, Coastal Peak, Command Tower, Desolate Lighthouse, Evolving Wilds, Exotic Orchard, Mistrise Village, Mystic Sanctuary, Path of Ancestry, Scorched Geyser, Shivan Reef, Sokenzan Crucible of Defiance, Spectacle Summit, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Temple of Epiphany, Terramorphic Expanse, 9 Island, 6 Mountain
 
@@ -169,6 +171,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Command Tower
 1 Counterspell
 1 Crackle with Power
+1 Crawlspace
 1 Cyclonic Rift
 1 Deduce
 1 Deflecting Swat
@@ -231,7 +234,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Third Path Iconoclast
 1 Thor, Asgard's Avenger
 1 Thousand-Year Storm
-1 Twinflame
 1 Unsummon
 1 Venser, Shaper Savant
 1 Veyran, Voice of Duality
@@ -244,7 +246,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 ## Flags and tuning levers
 
-**The 10-04 change — the tokens rebuild, 9 out, 9 in.**
+**The 10-04 change — the tokens rebuild plus Crawlspace, 10 out, 10 in.**
 
 | Out | In | What it does |
 | --- | --- | --- |
@@ -257,6 +259,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 | Thunderdrum Soloist | Storm-Kiln Artist | A pinger → a Treasure per instant or sorcery cast or copied. |
 | Gandalf, Friend of the Shire | Docent of Perfection | A utility Wizard → a 5/4 flier that makes Wizard tokens; flips into Final Iteration, which pumps them. |
 | Thought Vessel | Fiery Emancipation | A rock → triple damage from every source you control. |
+| Twinflame | Crawlspace | Copies of your engines → no more than two creatures can attack you each combat. |
 
 **Simulator results for the 10-04 change** (loose profile, paired games against all five opponent tiers):
 
@@ -266,8 +269,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 | These nine swaps (Fellwar Stone kept) | +2.2 | not run |
 | A middle list keeping Spell Pierce, Pongify and Reality Shift | +3.7 | +0.9 |
 | A storm rebuild (rituals, cantrips, Grapeshot, Galvanic Iteration) | +1.1 | −2.4 |
+| Then Twinflame → Propaganda (attack tax of {2}) | +2.2 (5,000 per tier) | +1.2 |
 
-The tokens list was the only one ahead at every tier under both AIs. The engine (Veyran plus a payoff) came online in 8–13 points more games under look-ahead. Birgi was worth about +0.8 points and was left out to save a purchase.
+The tokens list was the only one ahead at every tier under both AIs. The engine (Veyran plus a payoff) came online in 8–13 points more games under look-ahead. Birgi was worth about +0.8 points and was left out to save a purchase. Tokens turned out to be poor blockers: in the simulator Veyran had untapped tokens in only about a quarter of the attacks that killed it. Of the attack deterrents, Propaganda tested well, Aetherize was rarely castable (Veyran is usually tapped out on opponents' turns), and Crawlspace was chosen without a full test.
 
 
 **The 09-26 change — 7 out, 7 in.**
@@ -302,6 +306,6 @@ The tokens list was the only one ahead at every tier under both AIs. The engine 
 - Shared with **Sauron**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
 - Shared with **Sephiroth**: Ash Barrens, Evolving Wilds.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **New singles (10-04)**: Deflecting Swat, Young Pyromancer, Third Path Iconoclast, Talrand, Sky Summoner, Storm-Kiln Artist, Docent of Perfection, Fiery Emancipation. **Slip Out the Back** comes from the binder (it left Sauron on 10-01). **Lightning Greaves** is a new copy: the existing ones are in Sauron, Marchesa, Zur and Y'shtola.
+- **New singles (10-04)**: Crawlspace, Deflecting Swat, Young Pyromancer, Third Path Iconoclast, Talrand, Sky Summoner, Storm-Kiln Artist, Docent of Perfection, Fiery Emancipation. **Slip Out the Back** comes from the binder (it left Sauron on 10-01). **Lightning Greaves** is a new copy: the existing ones are in Sauron, Marchesa, Zur and Y'shtola.
 - **Earlier singles**: Jeska's Will, Twinflame, Unsummon; from 09-26, Niv-Mizzet, Parun; Niv-Mizzet, the Firemind; Kessig Flamebreather; Imperial Recruiter; Thousand-Year Storm; Swiftfoot Boots (Sephiroth cut its copy); Visions of Beyond.
-- **To the binder**: Return the Favor, Mystic Confluence, Swiftfoot Boots, Spell Pierce, Pongify, Reality Shift, Thunderdrum Soloist, Gandalf, Friend of the Shire, Thought Vessel (10-04); Disdainful Stroke, Reenact the Crime; from 09-26, Burning Prophet, Dualcaster Mage, Kylox, Muse Seeker, Disruptor Flute, Sleight of Hand.
+- **To the binder**: Return the Favor, Mystic Confluence, Swiftfoot Boots, Spell Pierce, Pongify, Reality Shift, Thunderdrum Soloist, Gandalf, Friend of the Shire, Thought Vessel, Twinflame (10-04); Disdainful Stroke, Reenact the Crime; from 09-26, Burning Prophet, Dualcaster Mage, Kylox, Muse Seeker, Disruptor Flute, Sleight of Hand.
