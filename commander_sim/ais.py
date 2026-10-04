@@ -1027,6 +1027,7 @@ def sauron_prio(g, p, c):
     if 'storm' in t: return 0                                # Brain Freeze, Grapeshot: held for the Breach line
     if 'rock' in t: return 80 if p.turns <= 5 else 40
     if 'rhystic' in t: return 78
+    if 'remora' in t: return 66 if p.turns <= 4 else 0              # Mystic Remora: only early, while upkeep is cheap
     if 'mauhur' in t: return 63
     if 'bowmasters' in t: return 62
     if 'sword' in t: return 60
