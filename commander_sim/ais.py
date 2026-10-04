@@ -129,10 +129,17 @@ def protect_response(g, owner, m, kind, actor, spell=None):
             if sl and can_pay(g, owner, 0, 'U'):
                 if pay_card(g, owner, sl[0]): m.phased = True; return True
                 return False
-            if m.army and epow(g, m) >= 7:
-                nw = [c for c in owner.hand if c.tags.get('prot') == 'notw']
-                if nw:
-                    owner.hand.remove(nw[0]); owner.gy.append(nw[0]); return True
+            nw = [c for c in owner.hand if c.tags.get('prot') == 'notw']
+            if nw:                                      # Not of This World: free with a 7-power creature (the Army or Sauron)
+                free = any(x.creature and not x.phased and epow(g, x) >= 7 for x in owner.perms)
+                if free or can_pay(g, owner, 7, ''):
+                    c = nw[0]
+                    if not free: pay(g, owner, 7, '')
+                    owner.hand.remove(c); owner.gy.append(c); owner.spells_this_turn += 1
+                    owner.cast_names.add(c.name)
+                    log(f'  {NAME(owner)} casts {c.name}', g)
+                    on_cast(g, owner, c)
+                    return counter_window(g, owner, c, 6, {})
     elif owner.key == 'marchesa':
         if E.CI.marchesa_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'zur':
@@ -544,8 +551,8 @@ def seph_boots(g, p):
         if e.cd.tags.get('prot') != 'boots' or e.attached is not None: continue
         if blocked(g, p, e.cd.name): continue
         bombs = [m for m in p.perms if m.creature and m.cd is not None and m.cd.bomb >= 6 and not untargetable(g, m)]
-        if bombs and can_pay(g, p, 1, ''):
-            return equip_to(g, p, e, max(bombs, key=lambda x: pval(g, x)), 1)
+        if bombs and can_pay(g, p, boots_cost(e), ''):
+            return equip_to(g, p, e, max(bombs, key=lambda x: pval(g, x)), boots_cost(e))
     return False
 
 
@@ -970,7 +977,7 @@ def veyran_boots(g, p):
     """Equip Swiftfoot Boots / Lightning Greaves: Kitten during a combo setup, else Veyran, else the best engine."""
     eq = [e for e in find(p, 'prot') if e.cd.tags.get('prot') == 'boots' and (e.attached is None or e.attached not in p.perms)
           and not blocked(g, p, e.cd.name)]
-    if not eq or not can_pay(g, p, 1, ''): return False
+    if not eq or not can_pay(g, p, boots_cost(eq[0]), ''): return False
     cands = [m for m in p.perms if m.creature and m.cd is not None and not untargetable(g, m)]
     if not cands: return False
 
@@ -980,7 +987,7 @@ def veyran_boots(g, p):
         if 'veyran' in t: return 9
         if 'vkitten' in t or 'vfire' in t: return 7
         return pval(g, m)
-    return equip_to(g, p, eq[0], max(cands, key=rank), 1)
+    return equip_to(g, p, eq[0], max(cands, key=rank), boots_cost(eq[0]))
 
 
 def aether_check(g, p):
@@ -1044,6 +1051,8 @@ def sauron_prio(g, p, c):
     if 'ralzarek' in t: return 42
     if 'helm' in t: return 44 if army_of(p) else 20
     if 'warmachine' in t: return 45
+    if t.get('prot') == 'boots':                             # Lightning Greaves: for Sauron himself (never the Army)
+        return 50 if has(p, 'sauron') or p.cmd_in_zone and total_mana(g, p) >= 7 else 25
     if t.get('tut'): return 60
     if 'onering' in t: return 60
     gc = gc_prio_sauron(g, p, c)
@@ -1076,6 +1085,24 @@ def sauron_equip(g, p):
         if can_pay(g, p, 2, ''):
             return equip_to(g, p, eq[0], a, 2)
     return False
+
+
+def boots_cost(e):
+    return 0 if e.cd.name == 'Lightning Greaves' else 1
+
+
+def sauron_boots(g, p):
+    """Lightning Greaves / Swiftfoot Boots onto Sauron, else the best other creature; never the Army (shroud would
+    stop the Swords from being equipped)"""
+    eq = [e for e in find(p, 'prot') if e.cd.tags.get('prot') == 'boots' and (e.attached is None or e.attached not in p.perms)
+          and not blocked(g, p, e.cd.name)]
+    if not eq or not can_pay(g, p, boots_cost(eq[0]), ''): return False
+    cands = [m for m in p.perms if m.creature and not m.army and not m.token and m.cd is not None
+             and not m.phased and not untargetable(g, m)]
+    if not cands: return False
+    best = max(cands, key=lambda m: (('sauron' in m.cd.tags), pval(g, m)))
+    if 'sauron' not in best.cd.tags and pval(g, best) < 4: return False
+    return equip_to(g, p, eq[0], best, boots_cost(eq[0]))
 
 
 def helm_target(g, p):
@@ -1115,6 +1142,7 @@ def sauron_main(g, p, post):
     for _ in range(16):
         if g.over or not p.alive: return
         if sauron_equip(g, p): continue
+        if sauron_boots(g, p): continue
         if sauron_archivist(g, p): continue
         if use_removal(g, p, 6): continue
         if consider_wipe(g, p): continue
