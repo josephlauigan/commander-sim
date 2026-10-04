@@ -541,6 +541,7 @@ def mana_units(g, p, convoke=False):
             continue
         if 'rock' in t:
             if g.hooks and 'A' in m.cd.types and CI.total(g, 'no_artifact_mana', p): continue
+            if 'pstone' in t and not art: continue                   # Powerstone: artifact spells and abilities only
             a, c = t['rock'].split(':')
             amt = CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else int(a)
             cols = p.ident if c == 'A' else ('' if c == 'C' else c)

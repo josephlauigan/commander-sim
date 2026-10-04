@@ -1481,3 +1481,32 @@ def _deed(g, src, p, s, post):
 card('Pernicious Deed', '', types='E', dsl=[])
 note('Pernicious Deed', 'Full', '{X}, sacrifice: destroys every artifact, creature and enchantment with mana value X or '
      'less; used when opponents lose clearly more')
+
+
+
+# ------------------------------------------------------------------ Powerstone tokens
+POWERSTONE = None
+
+
+def make_powerstone(g, p, n=1, tapped=True):
+    """n Powerstone tokens: artifacts with "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell"
+    (engine.mana_units offers it only when an artifact is being paid for)"""
+    global POWERSTONE
+    if POWERSTONE is None: POWERSTONE = E.CD('Powerstone', 'A', '0', 'rock=1:C pstone')
+    for _ in range(n * (E.DSLMOD.token_mult(g, p) if E.DSLMOD is not None else 1)):
+        m = enter(g, p, POWERSTONE)
+        m.token = True; m.tapped = tapped
+    log(f'    {NAME(p)} creates {n} Powerstone token(s)', g)
+
+
+CI.make_powerstone = make_powerstone
+
+
+@CI.on('Static Net', 'etb')
+def _static_net(g, src, p, m):
+    """when it enters: you gain 2 life and create a tapped Powerstone (its exile is the ability language's)"""
+    if m is not src or not trigger_window(g, src.owner, src, 'gain 2 life; a Powerstone'): return
+    gain(src.owner, 2); log(f'    {NAME(src.owner)} gains 2 life (Static Net)', g)
+    make_powerstone(g, src.owner)
+note('Static Net', 'Full', 'exiles an opponent\'s nonland permanent until it leaves; you gain 2 life and get a tapped '
+     'Powerstone (mana for artifacts only)')
