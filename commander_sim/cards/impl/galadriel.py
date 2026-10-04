@@ -1024,7 +1024,8 @@ def galadriel_prio(g, p, c):
     gal = named(p, 'Galadriel, Light of Valinor')
     cre = sum(1 for m in p.perms if m.creature and not m.phased)
     if c is p.cmd: return 84 if p.turns >= 3 else 66
-    if 'ctr' in t or n in INDES or n in ('Eerie Interlude', 'Planar Genesis'): return 0     # held for their window
+    if 'ctr' in t or n in INDES or n == 'Eerie Interlude': return 0     # held for their window
+    if 'remora' in t: return 66 if p.turns <= 4 else 0              # Mystic Remora: only early, while upkeep is cheap
     if ('rem' in t or 'wipe' in t) and not c.perm: return 0       # removal and wipes: through their own decisions
     if 'rock' in t or 'dork' in t or n == 'Springleaf Drum': return 82 if p.turns <= 5 else 30
     if 'lr' in t or n in ('Farhaven Elf', 'Shared Roots'): return 78 if p.turns <= 5 else 25
@@ -1054,6 +1055,7 @@ def galadriel_prio(g, p, c):
         b = flicker_target(g, p)
         return 45 if b is not None and etb_worth(g, p, b) >= 3 else 0
     if n == 'Shamanic Revelation': return 60 if cre >= 4 else 15
+    if n == 'Planar Genesis': return 52 if p.turns <= 6 else 44     # a land or a card; nothing to wait for
     if n == 'Elspeth, Sun\'s Champion': return 66
     if n == 'Reya Dawnbringer': return 50
     if 'tokatk' in t: return 70
