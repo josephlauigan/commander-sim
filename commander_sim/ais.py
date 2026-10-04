@@ -1660,6 +1660,20 @@ def choose_defender(g, p):
     return max(opps, key=lambda q: threat(g, p, q) + g.rng.random() * 3)
 
 
+TOKEN_BLOCKS = __import__('os').environ.get('VEY_BLOCK', '1') != '0'
+
+
+def fiery(pl):
+    """Fiery Emancipation: damage from pl's sources is tripled (once per copy)"""
+    return 3 ** sum(1 for m in pl.perms if m.cd is not None and m.cd.name == 'Fiery Emancipation' and not m.phased)
+
+
+def spare_tokens(g, d, cands):
+    """Veyran's small creature tokens: the next spell replaces them, so they block freely"""
+    if not TOKEN_BLOCKS or d.key != 'veyran': return []
+    return [x for x in cands if x.token and not x.army and epow(g, x) <= 2]
+
+
 def can_block(g, b, a):
     if b.cd is not None and 'noblock' in b.cd.tags: return False
     if getattr(g, 'auras', None) and E.CI.locked(g, b, 'pacify'): return False     # Arrest, Luminous Bonds
@@ -1784,6 +1798,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     else:
         blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
         incoming = sum(epow(g, m) * (2 if double_strike(p, m) else 1) for m in atk)
+        fd, fp = fiery(d), fiery(p)
         assign = {}; used = set()
         for a in sorted(atk, key=lambda m: -epow(g, m)):
             if a in unbl or a not in p.perms: continue
@@ -1791,14 +1806,17 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if not cands: continue
             if kw(a, 'menace') and len(cands) < 2: continue                 # menace: two blockers or none
             ap, at = epow(g, a), etgh(g, a)
-            good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
+            good = [b for b in cands if (epow(g, b) * fd >= at or b.dt) and not (ap * fp >= etgh(g, b) or a.dt)]
             if good: b = min(good, key=lambda x: pval(g, x))
             else:
-                trade = [b for b in cands if epow(g, b) >= at or b.dt or (b.cd is not None and b.cd.name == 'Defiant Vanguard')]
+                trade = [b for b in cands if epow(g, b) * fd >= at or b.dt or (b.cd is not None and b.cd.name == 'Defiant Vanguard')]
+                spare = spare_tokens(g, d, cands)
                 if trade and pval(g, a) >= min(pval(g, x) for x in trade):
                     b = min(trade, key=lambda x: pval(g, x))
                 elif shielded(d):                     # the damage is prevented anyway: no chump blocks
                     continue
+                elif spare and ap >= 2 and (ap * fp >= 3 or incoming * fp >= d.life * 0.2):
+                    b = min(spare, key=lambda x: pval(g, x))     # chump with a spare token
                 elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < importlib.import_module('commander_sim.ai.brain').chump_prob(g, d, incoming)) \
                         or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
                     if d.key == 'yshtola' and incoming < d.life:      # Y'shtola is the engine: she chumps only to live
@@ -1852,9 +1870,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 dmg = ap if tr else 0
             else:
                 bt = etgh(g, b)
-                a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b)) and not E.no_damage(g, a)
+                a_dies = (epow(g, b) * fiery(d) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b)) and not E.no_damage(g, a)
                 if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, b): a_dies = False
-                b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a)) and not E.no_damage(g, b)
+                b_dies = (ap * fiery(p) >= bt or a.dt) and not protected_from(g, b, colors_of(a)) and not E.no_damage(g, b)
                 if E.CI is not None:                       # protection from creatures / Demons and Dragons
                     from commander_sim.cards.impl import rules2 as impl_rules2
                     if impl_rules2.prot_vs(g, a, b): a_dies = False
