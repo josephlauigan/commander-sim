@@ -259,7 +259,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 | Thunderdrum Soloist | Storm-Kiln Artist | A pinger → a Treasure per instant or sorcery cast or copied. |
 | Gandalf, Friend of the Shire | Docent of Perfection | A utility Wizard → a 5/4 flier that makes Wizard tokens; flips into Final Iteration, which pumps them. |
 | Thought Vessel | Fiery Emancipation | A rock → triple damage from every source you control. |
-| Twinflame | Crawlspace | Copies of your engines → no more than two creatures can attack you each combat. |
+| Twinflame | Crawlspace | Copies of your engines → no more than two creatures can attack you each combat. A stand-in: **Propaganda** tested better and takes this slot once found. |
 
 **Simulator results for the 10-04 change** (loose profile, paired games against all five opponent tiers):
 
