@@ -1,6 +1,7 @@
 # Y'shtola, Night's Blessed — Esper Drain
 
 **Updated 2026-10-03.** Out: Clever Concealment, Disdainful Stroke, Momentary Blink, Rootborn Defenses, Take Up the Shield. In: Cast Away Doubt, Memory Trap, Static Net, Statute of Denial, Your Fate Ends Here. Five rarely cast cards (each cast in 5% or less of the games it was drawn, or mana value 2) out for spells of mana value 3 or more that trigger Y'shtola: Static Net (exile, 2 life, a Powerstone), Cast Away Doubt (draw two; with her trigger each opponent loses 4), Your Fate Ends Here (instant removal), Memory Trap (exile) and Statute of Denial (a counter that triggers her).
+**Updated 2026-10-04.** Out: Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, Temple of Deceit, Temple of Enlightenment, Temple of Silence, Vivid Creek, Vivid Marsh, Vivid Meadow. In: 4 Island, 3 Plains, 3 Swamp. The ten lands that always entered tapped became basics. Tested: about +1.2 points on average (1,000 paired games per tier, adaptive AI), positive in four of five tiers; Y'shtola wants to land on turn 3 or 4 with a spell to follow, and no land now always enters tapped.
 
 2026-10-03
 **Added 2026-10-03.** In the simulator as deck key `yshtola` (`python3 -m commander_sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. It shares much of its Esper shell with the Zur deck (`zur-esper-auras.md`), but it is a separate deck with its own commander, plan and list; Zur the Enchanter is in the 99 here.
@@ -84,17 +85,17 @@ Zur can find Arrest, Bound in Silence, Curiosity, Encrust, Luminous Bonds, Mysti
 
 The list is exactly 100 cards.
 
-37 lands (21 nonbasic, 5 Plains, 4 Island, 7 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic.
+37 lands (11 nonbasic, 8 Plains, 8 Island, 10 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic.
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| White lands | 17 | 5 Plains plus Arcane Sanctum, Caves of Koilos, Command Tower, Glacial Fortress, Irrigated Farmland, Prairie Stream, Temple of Enlightenment, Isolated Chapel, Scoured Barrens, Shattered Sanctum, Temple of Silence, Vivid Meadow |
-| Blue lands | 13 | 4 Island plus Arcane Sanctum, Command Tower, Glacial Fortress, Irrigated Farmland, Prairie Stream, Temple of Enlightenment, Dimir Guildgate, Temple of Deceit, Vivid Creek |
-| Black lands | 17 | 7 Swamp plus Arcane Sanctum, Caves of Koilos, Command Tower, Isolated Chapel, Scoured Barrens, Shattered Sanctum, Temple of Silence, Dimir Guildgate, Temple of Deceit, Vivid Marsh |
-| Any colour, with a condition | 6 | Exotic Orchard (an opponent's land), Spire of Industry (1 life, with an artifact), and Vivid Creek, Marsh and Meadow (two charge counters each) |
-| No mana the turn they land | 3 | Evolving Wilds, Terramorphic Expanse, Fabled Passage (each finds any basic) |
-| Always enter tapped | 10 | Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, three Temples, three Vivid lands |
-| Sometimes enter tapped | 4 | Glacial Fortress, Isolated Chapel (need a basic type), Prairie Stream (two basics), Shattered Sanctum (two other lands) |
+| White lands | 14 | 8 Plains plus Caves of Koilos, Command Tower, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum |
+| Blue lands | 11 | 8 Island plus Command Tower, Glacial Fortress, Prairie Stream |
+| Black lands | 14 | 10 Swamp plus Caves of Koilos, Command Tower, Isolated Chapel, Shattered Sanctum |
+| Any colour, with a condition | 2 | Exotic Orchard (an opponent's land), Spire of Industry (1 life, with an artifact) |
+| No mana the turn they land | 3 | Evolving Wilds, Terramorphic Expanse, Fabled Passage (each finds any basic, now one of 26) |
+| Always enter tapped | 0 | the ten that did (Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, three Temples, three Vivid lands) became basics on 10-04 |
+| Sometimes enter tapped | 4 | Glacial Fortress, Isolated Chapel (need a basic type), Prairie Stream (two basics), Shattered Sanctum (two other lands); with 26 basics they rarely do |
 
 Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so Swamps outnumber the other basics. Blue has the fewest sources. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception.
 
@@ -169,13 +170,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Sorceries (16).** Austere Command, Bribery, Cast Away Doubt, Crux of Fate, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Idyllic Tutor, Night's Whisper, Plea for Guidance, Read the Bones, Tezzeret's Gambit, Triplicate Spirits, Vanquish the Horde
 
-**Lands (37).** Arcane Sanctum, Caves of Koilos, Command Tower, Dimir Guildgate, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Irrigated Farmland, Isolated Chapel, Prairie Stream, Scoured Barrens, Shattered Sanctum, Spire of Industry, Temple of Deceit, Temple of Enlightenment, Temple of Silence, Terramorphic Expanse, Vivid Creek, Vivid Marsh, Vivid Meadow, 5 Plains, 4 Island, 7 Swamp
+**Lands (37).** Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum, Spire of Industry, Terramorphic Expanse, 8 Plains, 8 Island, 10 Swamp
 
 ## Import list (100)
 
 ```
 1 Anguished Unmaking
-1 Arcane Sanctum
 1 Arcane Signet
 1 Arrest
 1 Austere Command
@@ -194,7 +194,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Debt to the Deathless
 1 Deep Analysis
 1 Diabolic Tutor
-1 Dimir Guildgate
 1 Dovin's Veto
 1 Encrust
 1 Enslave
@@ -211,7 +210,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Hostage Taker
 1 Idyllic Tutor
 1 Ill-Gotten Inheritance
-1 Irrigated Farmland
+8 Island
 1 Isolated Chapel
 1 Jester's Cap
 1 Lightning Greaves
@@ -224,6 +223,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Night's Whisper
 1 Notion Thief
 1 Path to Exile
+8 Plains
 1 Plea for Guidance
 1 Prairie Stream
 1 Prayer of Binding
@@ -232,7 +232,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Read the Bones
 1 Restoration Angel
 1 Sanguine Bond
-1 Scoured Barrens
 1 Secure the Wastes
 1 Shattered Sanctum
 1 Skyclave Apparition
@@ -240,10 +239,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Spire of Industry
 1 Static Net
 1 Statute of Denial
+10 Swamp
 1 Talisman of Progress
-1 Temple of Deceit
-1 Temple of Enlightenment
-1 Temple of Silence
 1 Terramorphic Expanse
 1 Tezzeret's Gambit
 1 The Eternal Wanderer
@@ -251,21 +248,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Triplicate Spirits
 1 Urborg Syphon-Mage
 1 Vanquish the Horde
-1 Vivid Creek
-1 Vivid Marsh
-1 Vivid Meadow
 1 Windborn Muse
 1 Y'shtola, Night's Blessed
 1 Your Fate Ends Here
 1 Zur the Enchanter
-5 Plains
-4 Island
-7 Swamp
 ```
 
 ## Flags and tuning levers
 
-**Tapped lands are the biggest cost.** Ten always enter tapped, and four more often do. Y'shtola is a four-drop that wants to land on turn 3 or 4 with a spell to follow, so untapped duals in place of the Guildgate, the Vivid lands or Arcane Sanctum help most. Options: Drowned Catacomb, Godless Shrine, Watery Grave, Hallowed Fountain.
+**Tapped lands were the biggest cost, and are gone.** The ten lands that always entered tapped became basics on 10-04 (about +1.2 points in testing). Four duals still sometimes enter tapped (Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum); with 26 basics they rarely do. To add fixing back without tapped lands: Drowned Catacomb, Godless Shrine, Watery Grave, Hallowed Fountain.
 
 **Two triggers a turn is the target.** Her draw needs 4 life lost by one player, which one trigger alone never does. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
 
