@@ -1803,3 +1803,56 @@ full('Galvanic Iteration', 'copies your next instant or sorcery this turn (a cop
 def _emancipation_live(g, src, p, m): pass
 card('Fiery Emancipation', '', types='E', dsl=[])
 full('Fiery Emancipation', 'damage your sources deal to opponents and their permanents is tripled (pings, burn, combat)')
+
+
+# ------------------------------------------------------------------ Docent of Perfection // Final Iteration
+DOCENT = 'Docent of Perfection // Final Iteration'
+
+
+def _wizards(p):
+    return sum(1 for m in p.perms if m.creature and not m.phased and has_type(m, 'wizard'))
+
+
+@on(DOCENT, 'etb')
+def _docent_in(g, src, p, m):
+    if m is src: g.selfpt = True                     # the engine reads its Wizards' size from here on
+
+
+def _final(src):
+    """transformed: once its controller has had three Wizards (its trigger's 'then if you control three or more
+    Wizards, transform'; read whenever the Wizards' size or flying is checked, and kept once true)"""
+    if (src.data or {}).get('final'): return True
+    if src in src.owner.perms and _wizards(src.owner) >= 3:
+        src.data = dict(src.data or {}, final=True)
+        log(f'    Docent of Perfection transforms into Final Iteration', E.CUR_G)
+        return True
+    return False
+
+
+def _final_iteration(g, m):
+    p = m.owner
+    if not m.creature or not has_type(m, 'wizard'): return 0, 0
+    k = sum(1 for x in p.perms if x.cd is not None and x.cd.name == DOCENT and not x.phased and _final(x))
+    return 2 * k, k
+
+
+importlib.import_module("commander_sim.cards.impl.common").CREATURE_PT.append(_final_iteration)
+
+
+@on(DOCENT, 'grant_kw')
+def _final_fly(g, src, m, kw):
+    return kw == 'flying' and m.owner is src.owner and m.creature and has_type(m, 'wizard') and _final(src)
+full(DOCENT, 'a 1/1 Human Wizard per instant or sorcery you cast; with three Wizards it transforms into Final '
+     'Iteration: Wizards you control get +2/+1 and have flying')
+
+
+# ------------------------------------------------------------------ Manamorphose
+@on('Manamorphose', 'resolve')
+def _manamorphose(g, p, c, ctx):
+    """add two mana in any combination of colours, draw a card"""
+    if human_choice(g, p) is not None: importlib.import_module('commander_sim.play.mana').pool_of(p).add('A', 2)
+    else: p.floatA += 2
+    draw(g, p, 1)
+    return 'gy'
+card('Manamorphose', 'draw=1', types='I', dsl=[])
+full('Manamorphose', 'two mana of any colours and a card: mana-neutral, a free spell for storm and magecraft')

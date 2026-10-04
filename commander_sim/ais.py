@@ -850,6 +850,9 @@ def veyran_prio(g, p, c):
     if c.creature: return 40
     if 'burn' in t and any(q.life <= 15 for q in g.opps(p)): return 35
     if 'tys' in t: return 57                                                   # Thousand-Year Storm
+    if 'stormburn' in t:                                                       # Grapeshot: the end of a long turn
+        st = importlib.import_module('commander_sim.cards.impl.mine').storm_count(g)
+        return 62 if st >= 5 or any(q.life <= st + 1 for q in g.opps(p)) else 0
     if c.name == 'Fiery Emancipation': return 64 if any(m.cd is not None and ('ping' in m.cd.tags or m.creature) for m in p.perms) else 40
     if c.name == 'Galvanic Iteration':                                          # with another spell to copy this turn
         rest = total_mana(g, p) - 2
