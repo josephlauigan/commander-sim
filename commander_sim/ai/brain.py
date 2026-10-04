@@ -215,7 +215,27 @@ def card_utility(g, p, s, c):
         u += 0.9 * n_pay * (2 if has(p, 'veyran') else 1)
     if (c.bomb >= 5 or c is p.cmd or base >= 70) and not c.land:
         u *= 1.0 - 0.35 * s.ctr_risk                  # walking into open counter mana
+    if p.key == 'veyran' and c is not p.cmd: u += veyran_sequence(g, p, c)
     return u
+
+
+VEYRAN_SEQ = __import__('os').environ.get('VEY_SEQ', '1') != '0'
+
+
+def veyran_sequence(g, p, c):
+    """Veyran doubles every cast trigger, so a spell cast while Veyran waits in the command zone wastes half its
+    value. On your own turn: with the mana for Veyran, cast Veyran before any instant or sorcery that isn't urgent
+    (removal, counters, protection, ramp); one land short, hold sorcery-speed card draw for next turn. Payoff creatures
+    still come first (the deck's notes: deploy pingers before Veyran)"""
+    if not VEYRAN_SEQ or g.active is not p or not p.cmd_in_zone or not (c.instant or c.sorcery): return 0.0
+    if any(m.cd is not None and m.cd.name == p.cmd.name and not m.phased for m in p.perms): return 0.0
+    t = c.tags
+    if any(k in t for k in ('rem', 'ctr', 'wipe', 'prot', 'lr', 'rock', 'fastmana')) or c.land: return 0.0
+    gen, pips = cost_of(p, p.cmd)
+    need, have = gen + len(pips), total_mana(g, p)
+    if have >= need: return -4.0
+    if have + 1 >= need and 'draw' in t and len(p.hand) >= 3 and c.sorcery: return -2.5
+    return 0.0
 
 
 # ------------------------------------------------------------------ generic executors

@@ -183,7 +183,7 @@ def cast_counterspell(g, q, c):
     why = legal.check_counter(g, q, c, it.card)
     if why: return why
     alt = legal.alternative_counter_cost(g, q, c)
-    gen, pips = E.counter_cost(c, it.card)
+    gen, pips = E.counter_cost(c, it.card, q)
     if mana.cost_problem(g, q, gen, pips) is None:            # pay from your pool
         mana.pay_from_pool(g, q, gen, pips)
         g.free_counter = True                                 # already paid

@@ -641,6 +641,54 @@ def rtf_redirect(g, owner, m, kind, actor, spell):
     log(f'    {NAME(owner)} casts Return the Favor: {spell.name} now targets {t.name}', g)
     apply_removal(g, actor, t, kind, spell)
     return True
+def _cast_response(g, owner, c, gen, pips):
+    """cast c from hand as a response (paid unless free): its cast triggers (magecraft, Veyran) happen"""
+    if c not in owner.hand: return False
+    if gen or pips:
+        if not can_pay(g, owner, gen, pips): return False
+        pay(g, owner, gen, pips)
+    owner.hand.remove(c)
+    owner.spells_this_turn += 1; owner.cast_names.add(c.name); owner.stats['spells_cast'] += 1
+    on_cast(g, owner, c)
+    owner.gy.append(c)
+    return True
+
+
+def veyran_protect(g, owner, m, kind, actor, spell):
+    """removal aimed at Veyran (or another key permanent): Deflecting Swat (free with your commander out) sends a
+    targeted spell at one of the caster's permanents; Dive Down (hexproof, +0/+3) and Slip Out the Back (phases
+    out) save a creature from a targeted spell"""
+    if pval(g, m) < 4 and not m.is_cmd: return False
+    targeted = spell is not None and actor is not None and actor is not owner and kind not in ('edict', 'wipe')
+    if not targeted: return False
+    sw = next((c for c in owner.hand if c.name == 'Deflecting Swat'), None)
+    if sw is not None:
+        free = commander_out(owner)
+        alt = [x for x in actor.perms if not x.phased and not untargetable(g, x) and (x.creature or kind != 'dmg')]
+        if alt and _cast_response(g, owner, sw, *((0, '') if free else (2, 'R'))):
+            t = max(alt, key=lambda x: pval(g, x))
+            log(f'    {NAME(owner)} casts Deflecting Swat: {spell.name} now targets {t.name}', g)
+            apply_removal(g, actor, t, kind, spell)
+            return True
+    if not m.creature: return False
+    for name in ('Slip Out the Back', 'Dive Down', 'Shore Up'):
+        c = next((x for x in owner.hand if x.name == name), None)
+        if c is None or not _cast_response(g, owner, c, 0, 'U'): continue
+        if name == 'Slip Out the Back':
+            m.phased = True; log(f'    {NAME(owner)} casts Slip Out the Back: {m.name} phases out', g)
+        else:
+            g.eot_kw.setdefault(id(m), set()).add('hexproof')
+            a, b = g.eot_pt.get(id(m), (0, 0))
+            g.eot_pt[id(m)] = (a, b + 3) if name == 'Dive Down' else (a + 1, b + 1)
+            if name == 'Shore Up': m.tapped = False
+            log(f'    {NAME(owner)} casts {name}: {m.name} gains hexproof', g)
+        return True
+    return False
+
+
+full('Deflecting Swat', 'free while you control your commander: changes the target of a removal spell aimed at your '
+     'permanent to one of the caster\'s (Veyran\'s AI casts it in response)')
+full('Dive Down', '+0/+3 and hexproof: Veyran\'s AI casts it in response to targeted removal on a key creature')
 full('Return the Favor', 'spree: copies your own big instant/sorcery ({1}{R}{R}), or turns a removal spell aimed at '
      'your permanent onto one of the caster\'s ({1}{R}{R})')
 
@@ -1737,3 +1785,21 @@ def breach_options(g, p, post):
     """the AI's main-phase option: go for the Breach line when the dry run finishes the table"""
     if post is None or g.active is not p or not breach_line(g, p): return []
     return [(15.0, 'Underworld Breach line', lambda: breach_line(g, p, execute=True))]
+
+
+
+# ------------------------------------------------------------------ Galvanic Iteration, Fiery Emancipation
+@on('Galvanic Iteration', 'resolve')
+def _galvanic(g, p, c, ctx):
+    """when you next cast an instant or sorcery spell this turn, copy it (engine.on_cast)"""
+    p.galvanic = turn_stamp(g)
+    log(f'    Galvanic Iteration: {NAME(p)}\'s next instant or sorcery this turn is copied', g)
+    return 'exile' if ctx.get('flashback') else 'gy'
+card('Galvanic Iteration', 'fb=1UR', types='I', dsl=[])
+full('Galvanic Iteration', 'copies your next instant or sorcery this turn (a copy: magecraft fires again); flashback {1}{U}{R}')
+
+
+@on('Fiery Emancipation', 'etb')
+def _emancipation_live(g, src, p, m): pass
+card('Fiery Emancipation', '', types='E', dsl=[])
+full('Fiery Emancipation', 'damage your sources deal to opponents and their permanents is tripled (pings, burn, combat)')

@@ -419,6 +419,8 @@ DAMAGE_KINDS = ('combat', 'burn', 'aether', 'triggers')
 def lose_life(g, p, n, src, kind='other', damage=None):
     if n <= 0 or not p.alive or p.life_locked: return
     if damage is None: damage = kind in DAMAGE_KINDS
+    if damage and src is not None and src is not p and getattr(src, 'perms', None) is not None:
+        n *= 3 ** sum(1 for m in src.perms if m.cd is not None and m.cd.name == 'Fiery Emancipation' and not m.phased)
     if damage and prevents_damage(g, p, src):
         p.stats['dmg_prevented'] += n
         log(f'    {n} damage to {NAME(p)} is prevented', g)
@@ -1260,6 +1262,9 @@ def on_cast(g, p, c):
     if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy') \
             and trigger_window(g, p, find(p, 'jin')[0], f'copy {c.name}', imp=5):
         copy_spell(g, p, c)                          # Jin-Gitaxias copies your first artifact/instant/sorcery each turn
+    if (c.instant or c.sorcery) and c.name != 'Galvanic Iteration' and getattr(p, 'galvanic', None) == turn_stamp(g):
+        p.galvanic = None                           # Galvanic Iteration: copy the next instant or sorcery
+        if trigger_window(g, p, None, f'Galvanic Iteration: copy {c.name}', imp=4): copy_spell(g, p, c)
     if (c.instant or c.sorcery) and getattr(p, 'ral_copy', None) == turn_stamp(g):
         p.ral_copy = None                           # Ral, Storm Conduit -2: copy the next instant/sorcery
         if trigger_window(g, p, None, f'Ral, Storm Conduit: copy {c.name}', imp=5): copy_spell(g, p, c)
@@ -1470,9 +1475,12 @@ def counter_ok(ctr, c):
     return False
 
 
-def counter_cost(ctr, spell):
-    """(generic, pips) a counterspell costs against this spell (Brush Off: {1}{U} less against an instant or sorcery)"""
+def counter_cost(ctr, spell, q=None):
+    """(generic, pips) a counterspell costs against this spell (Brush Off: {1}{U} less against an instant or sorcery;
+    Wizard's Retort: {1} less while q controls a Wizard)"""
     if 'brushoff' in ctr.tags and spell is not None and (spell.instant or spell.sorcery): return 1, 'U'
+    if ctr.name == "Wizard's Retort" and q is not None and any(m.creature and not m.phased and has_type(m, 'wizard') for m in q.perms):
+        return max(0, ctr.generic - 1), ctr.pips
     return ctr.generic, ctr.pips
 
 
@@ -1480,7 +1488,7 @@ def pick_counter(g, q, c):
     best = None
     for ctr in q.hand:
         if ctr.name == 'Venser, Shaper Savant' and q.key not in CTHRESH and 'ctr' not in ctr.tags:
-            if can_pay(g, q, *counter_cost(ctr, c)) and castable(g, q, ctr) and (best is None or ctr.cmc < best.cmc): best = ctr
+            if can_pay(g, q, *counter_cost(ctr, c, q)) and castable(g, q, ctr) and (best is None or ctr.cmc < best.cmc): best = ctr
             continue
         if 'ctr' not in ctr.tags or not counter_ok(ctr, c): continue
         if g.hooks and not castable(g, q, ctr): continue
@@ -1490,10 +1498,10 @@ def pick_counter(g, q, c):
         if 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
             return ctr                                                   # Force of Negation: free on others' turns
         if 'free' in ctr.tags:
-            if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, *counter_cost(ctr, c)):
+            if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, *counter_cost(ctr, c, q)):
                 if best is None: best = ctr
             continue
-        if can_pay(g, q, *counter_cost(ctr, c)):
+        if can_pay(g, q, *counter_cost(ctr, c, q)):
             if best is None or ctr.cmc < best.cmc or 'free' in best.tags: best = ctr
     return best
 
@@ -1893,13 +1901,13 @@ def pay_counter(g, q, ctr, spell):
         x = min(blues, key=lambda c: card_worth(g, q, c))
         if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
         q.hand.remove(x); q.exile.append(x); return True
-    if 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
+    if 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell, q)):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
         if not blues: return False
         x = min(blues, key=lambda c: card_worth(g, q, c))           # the least useful blue card
         if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
         q.hand.remove(x); q.exile.append(x); lose_life(g, q, 1, q); return True
-    return pay(g, q, *counter_cost(ctr, spell))
+    return pay(g, q, *counter_cost(ctr, spell, q))
 
 
 def cast_counter_spell(g, q, ctr, target):
@@ -2603,6 +2611,9 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
 
 def apply_removal(g, actor, m, kind, spell=None):
     owner = m.owner
+    if kind.startswith('dmg') and actor is not None and actor is not owner:        # Fiery Emancipation: triple damage
+        k = sum(1 for x in actor.perms if x.cd is not None and x.cd.name == 'Fiery Emancipation' and not x.phased)
+        if k: kind = f'dmg{int(kind[3:]) * 3 ** k}'
     if m not in owner.perms or untargetable(g, m): return
     if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m):
         log(f'    {m.name} ({NAME(owner)}) is indestructible', g); return

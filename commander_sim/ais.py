@@ -120,7 +120,9 @@ def protect_response(g, owner, m, kind, actor, spell=None):
             if kind in ('exile', 'bounce', 'tuck') and free_sac(owner) and not m.token:
                 owner.stats['sac_saves'] += 1; seph_sac(g, owner, m); return True
     elif owner.key == 'veyran':
-        if importlib.import_module('commander_sim.cards.impl.mine').rtf_redirect(g, owner, m, kind, actor, spell): return True
+        IM = importlib.import_module('commander_sim.cards.impl.mine')
+        if IM.rtf_redirect(g, owner, m, kind, actor, spell): return True
+        if IM.veyran_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'sauron':
         if m.army or v >= 5:
             sl = [c for c in owner.hand if c.tags.get('prot') == 'phase']
@@ -848,6 +850,11 @@ def veyran_prio(g, p, c):
     if c.creature: return 40
     if 'burn' in t and any(q.life <= 15 for q in g.opps(p)): return 35
     if 'tys' in t: return 57                                                   # Thousand-Year Storm
+    if c.name == 'Fiery Emancipation': return 64 if any(m.cd is not None and ('ping' in m.cd.tags or m.creature) for m in p.perms) else 40
+    if c.name == 'Galvanic Iteration':                                          # with another spell to copy this turn
+        rest = total_mana(g, p) - 2
+        return 47 if any(x is not c and (x.instant or x.sorcery) and x.cmc <= rest and ('draw' in x.tags or 'burn' in x.tags or 'rem' in x.tags)
+                         for x in p.hand) else 0
     if 'reenact' in t:                                                         # Reenact the Crime: only with a target
         tg = importlib.import_module('commander_sim.cards.impl.mine').reenact_target(g, p, exclude=c)
         return 50 if tg is not None and E.card_worth(g, p, tg[0]) >= 4 else 0
