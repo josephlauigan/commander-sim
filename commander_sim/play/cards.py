@@ -1476,3 +1476,10 @@ ABILITIES["Jester's Cap"] = lambda g, p, m: [
 CAST_TARGET['Take Up the Shield'] = ('Take Up the Shield: which creature gets a +1/+1 counter, lifelink and indestructible?',
                                      lambda g, p, m: not (m.owner is p and _zur().untargetable_by_you(g, m)))
 NEEDS['Take Up the Shield'] = lambda g, p, c: None if _creatures(g, p) else 'Take Up the Shield has no creature to target.'
+
+
+def _narset_minus2(g, p, m):
+    return lambda: importlib.import_module('commander_sim.cards.impl.common').narset_dig(g, p, m)
+
+
+ABILITIES['Narset, Parter of Veils'] = _walker([(-2, 'look at the top four; take a noncreature, nonland card', _narset_minus2)])

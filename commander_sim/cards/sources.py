@@ -23,6 +23,7 @@ def _from_record(name, rec):
     if not cd.dsl:                              # nothing compiled: use the regex tagger's tags instead
         cd = engine.CD(name, r['types'], r['cost'], r['tags'])
         cd.source = 'scryfall'; cd.unparsed = r['unparsed'] + ['note: ' + x for x in r['notes']]
+        cd.start_loyalty = face.get('loyalty') or rec.get('loyalty')     # a planeswalker keeps its printed loyalty
     cd.game_changer = r['game_changer']
     cd.identity = ''.join(rec.get('color_identity') or [])
     keyword_data(cd, rec, oracle)

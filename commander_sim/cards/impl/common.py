@@ -1510,3 +1510,30 @@ def _static_net(g, src, p, m):
     make_powerstone(g, src.owner)
 note('Static Net', 'Full', 'exiles an opponent\'s nonland permanent until it leaves; you gain 2 life and get a tapped '
      'Powerstone (mana for artifacts only)')
+
+
+# ------------------------------------------------------------------ Narset, Parter of Veils
+def narset_dig(g, p, src):
+    """−2: look at the top four; a noncreature, nonland card into your hand (you choose, or the AI's best); the rest
+    on the bottom in a random order"""
+    top = [p.library.pop() for _ in range(min(4, len(p.library)))]
+    ok = [c for c in top if not c.creature and not c.land]
+    pick = None
+    hc = human_choice(g, p)
+    if hc is not None and ok:
+        k = hc.choose(g, p, 'choose', f'Narset: take a noncreature, nonland card? (top four: {", ".join(c.name for c in top)})',
+                      [c.name for c in ok], cancel='take nothing')
+        pick = ok[k] if k is not None else None
+    elif ok:
+        pick = max(ok, key=lambda c: card_worth(g, p, c))
+    rest = [c for c in top if c is not pick]
+    g.rng.shuffle(rest)
+    for c in rest: p.library.insert(0, c)
+    if pick is not None: p.hand.append(pick); p.seen_names.add(pick.name)
+    log(f'    Narset: {NAME(p)} takes ' + ('a card' if pick is not None else 'nothing'), g)
+
+
+walker('Narset, Parter of Veils', [
+    (-2, 'dig for a noncreature, nonland card', lambda g, p, src: 2.5 if len(p.library) >= 4 else None, narset_dig),
+], ('Full', "static: each opponent can't draw more than one card each turn (engine.draw, tag narset); −2: the best "
+            "noncreature, nonland card of the top four"), tags='leg narset')
