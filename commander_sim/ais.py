@@ -853,6 +853,8 @@ def veyran_prio(g, p, c):
     if 'stormburn' in t:                                                       # Grapeshot: the end of a long turn
         st = importlib.import_module('commander_sim.cards.impl.mine').storm_count(g)
         return 62 if st >= 5 or any(q.life <= st + 1 for q in g.opps(p)) else 0
+    if c.name in ('Propaganda', 'Ghostly Prison'):                             # attack tax: sooner when the table hits hard
+        return 52 + min(18, int(importlib.import_module('commander_sim.ai.deck_plans').opp_power(g, p)))
     if c.name == 'Fiery Emancipation': return 64 if any(m.cd is not None and ('ping' in m.cd.tags or m.creature) for m in p.perms) else 40
     if c.name == 'Galvanic Iteration':                                          # with another spell to copy this turn
         rest = total_mana(g, p) - 2
