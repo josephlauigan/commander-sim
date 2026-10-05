@@ -1,8 +1,8 @@
 """Lands that enter tapped unless a condition holds, by their Oracle text: check lands, fast lands, slow lands,
-battle lands, bond lands, Mystic Sanctuary, snarls and Barad-dûr."""
+battle lands, bond lands, Mystic Sanctuary, snarls and Barad-dûr; and lands' enters triggers (scry, gain life)."""
 import unittest
 from tests.table import table, lands, hand, card
-from commander_sim import ais
+from commander_sim import ais, engine as E
 
 
 def tapped(p, name):
@@ -64,3 +64,24 @@ class LandEntry(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class LandEntersTriggers(unittest.TestCase):
+    """'When this land enters' effects read from the Oracle text: a Temple's scry, a gain land's life"""
+    def test_you_scry_when_your_temple_enters(self):
+        from tests.table import table, card
+        from commander_sim.play import human
+        from commander_sim.play.controller import ScriptController
+        g = table('zur', 'veyran'); z = g.players[0]
+        z.hand.append(card('Temple of Enlightenment'))
+        ctl = ScriptController(lambda req: 0); g.controllers = {z.key: ctl}
+        self.assertIsNone(human.apply(g, z, {'do': 'land', 'card': len(z.hand) - 1}))
+        self.assertTrue(any(r.prompt.startswith('Scry') for r in ctl.asked))
+
+    def test_a_gain_land_gains_life_and_each_land_only_once(self):
+        from tests.table import table, card
+        g = table('zur', 'veyran'); z = g.players[0]
+        life = z.life
+        ais.play_land_card(g, z, card('Scoured Barrens'))
+        E.check_state(g); E.landfall(g, z)
+        self.assertEqual(z.life, life + 1)

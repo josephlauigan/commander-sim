@@ -208,7 +208,7 @@ def check_counter(g, p, ctr, spell):
     if not E.counter_ok(ctr, spell): return f"{ctr.name} can't counter {spell.name}."
     if E.silenced(g, p): return "You can't cast spells during this player's turn (Conqueror's Flail)."
     if g.hooks and not E.castable(g, p, ctr): return f"Something on the battlefield stops you casting {ctr.name} right now."
-    gen, pips = E.counter_cost(ctr, spell)
+    gen, pips = E.counter_cost(ctr, spell, p)
     if mana.cost_problem(g, p, gen, pips) is None or alternative_counter_cost(g, p, ctr): return None
     return f"Can't cast {ctr.name}. {mana.cost_problem(g, p, gen, pips)}"
 

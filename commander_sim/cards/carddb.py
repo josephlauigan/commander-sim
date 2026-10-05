@@ -176,7 +176,7 @@ Temple of Epiphany|L|-|c=UR t
 Terramorphic Expanse|L|-|c=A f
 Think Twice|I|1U|draw=1 fb=2U
 Thor, Asgard's Avenger|C|2RR|pow=4 thor
-Thought Vessel|A|2|rock=1:C
+Thought Vessel|A|2|rock=1:C nomax
 Thunderdrum Soloist|C|1R|ping=1 pow=1 tgh=3 noatk opus3
 Venser, Shaper Savant|C|2UU|pow=2 rem=bounce tgt=nl etb flash
 Veyran, Voice of Duality|C|1UR|veyran pow=2 leg noatk

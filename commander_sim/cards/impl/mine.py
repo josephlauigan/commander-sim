@@ -641,6 +641,54 @@ def rtf_redirect(g, owner, m, kind, actor, spell):
     log(f'    {NAME(owner)} casts Return the Favor: {spell.name} now targets {t.name}', g)
     apply_removal(g, actor, t, kind, spell)
     return True
+def _cast_response(g, owner, c, gen, pips):
+    """cast c from hand as a response (paid unless free): its cast triggers (magecraft, Veyran) happen"""
+    if c not in owner.hand: return False
+    if gen or pips:
+        if not can_pay(g, owner, gen, pips): return False
+        pay(g, owner, gen, pips)
+    owner.hand.remove(c)
+    owner.spells_this_turn += 1; owner.cast_names.add(c.name); owner.stats['spells_cast'] += 1
+    on_cast(g, owner, c)
+    owner.gy.append(c)
+    return True
+
+
+def veyran_protect(g, owner, m, kind, actor, spell):
+    """removal aimed at Veyran (or another key permanent): Deflecting Swat (free with your commander out) sends a
+    targeted spell at one of the caster's permanents; Dive Down (hexproof, +0/+3) and Slip Out the Back (phases
+    out) save a creature from a targeted spell"""
+    if pval(g, m) < 4 and not m.is_cmd: return False
+    targeted = spell is not None and actor is not None and actor is not owner and kind not in ('edict', 'wipe')
+    if not targeted: return False
+    sw = next((c for c in owner.hand if c.name == 'Deflecting Swat'), None)
+    if sw is not None:
+        free = commander_out(owner)
+        alt = [x for x in actor.perms if not x.phased and not untargetable(g, x) and (x.creature or kind != 'dmg')]
+        if alt and _cast_response(g, owner, sw, *((0, '') if free else (2, 'R'))):
+            t = max(alt, key=lambda x: pval(g, x))
+            log(f'    {NAME(owner)} casts Deflecting Swat: {spell.name} now targets {t.name}', g)
+            apply_removal(g, actor, t, kind, spell)
+            return True
+    if not m.creature: return False
+    for name in ('Slip Out the Back', 'Dive Down', 'Shore Up'):
+        c = next((x for x in owner.hand if x.name == name), None)
+        if c is None or not _cast_response(g, owner, c, 0, 'U'): continue
+        if name == 'Slip Out the Back':
+            m.phased = True; log(f'    {NAME(owner)} casts Slip Out the Back: {m.name} phases out', g)
+        else:
+            g.eot_kw.setdefault(id(m), set()).add('hexproof')
+            a, b = g.eot_pt.get(id(m), (0, 0))
+            g.eot_pt[id(m)] = (a, b + 3) if name == 'Dive Down' else (a + 1, b + 1)
+            if name == 'Shore Up': m.tapped = False
+            log(f'    {NAME(owner)} casts {name}: {m.name} gains hexproof', g)
+        return True
+    return False
+
+
+full('Deflecting Swat', 'free while you control your commander: changes the target of a removal spell aimed at your '
+     'permanent to one of the caster\'s (Veyran\'s AI casts it in response)')
+full('Dive Down', '+0/+3 and hexproof: Veyran\'s AI casts it in response to targeted removal on a key creature')
 full('Return the Favor', 'spree: copies your own big instant/sorcery ({1}{R}{R}), or turns a removal spell aimed at '
      'your permanent onto one of the caster\'s ({1}{R}{R})')
 
@@ -1737,3 +1785,74 @@ def breach_options(g, p, post):
     """the AI's main-phase option: go for the Breach line when the dry run finishes the table"""
     if post is None or g.active is not p or not breach_line(g, p): return []
     return [(15.0, 'Underworld Breach line', lambda: breach_line(g, p, execute=True))]
+
+
+
+# ------------------------------------------------------------------ Galvanic Iteration, Fiery Emancipation
+@on('Galvanic Iteration', 'resolve')
+def _galvanic(g, p, c, ctx):
+    """when you next cast an instant or sorcery spell this turn, copy it (engine.on_cast)"""
+    p.galvanic = turn_stamp(g)
+    log(f'    Galvanic Iteration: {NAME(p)}\'s next instant or sorcery this turn is copied', g)
+    return 'exile' if ctx.get('flashback') else 'gy'
+card('Galvanic Iteration', 'fb=1UR', types='I', dsl=[])
+full('Galvanic Iteration', 'copies your next instant or sorcery this turn (a copy: magecraft fires again); flashback {1}{U}{R}')
+
+
+@on('Fiery Emancipation', 'etb')
+def _emancipation_live(g, src, p, m): pass
+card('Fiery Emancipation', '', types='E', dsl=[])
+full('Fiery Emancipation', 'damage your sources deal to opponents and their permanents is tripled (pings, burn, combat)')
+
+
+# ------------------------------------------------------------------ Docent of Perfection // Final Iteration
+DOCENT = 'Docent of Perfection // Final Iteration'
+
+
+def _wizards(p):
+    return sum(1 for m in p.perms if m.creature and not m.phased and has_type(m, 'wizard'))
+
+
+@on(DOCENT, 'etb')
+def _docent_in(g, src, p, m):
+    if m is src: g.selfpt = True                     # the engine reads its Wizards' size from here on
+
+
+def _final(src):
+    """transformed: once its controller has had three Wizards (its trigger's 'then if you control three or more
+    Wizards, transform'; read whenever the Wizards' size or flying is checked, and kept once true)"""
+    if (src.data or {}).get('final'): return True
+    if src in src.owner.perms and _wizards(src.owner) >= 3:
+        src.data = dict(src.data or {}, final=True)
+        log(f'    Docent of Perfection transforms into Final Iteration', E.CUR_G)
+        return True
+    return False
+
+
+def _final_iteration(g, m):
+    p = m.owner
+    if not m.creature or not has_type(m, 'wizard'): return 0, 0
+    k = sum(1 for x in p.perms if x.cd is not None and x.cd.name == DOCENT and not x.phased and _final(x))
+    return 2 * k, k
+
+
+importlib.import_module("commander_sim.cards.impl.common").CREATURE_PT.append(_final_iteration)
+
+
+@on(DOCENT, 'grant_kw')
+def _final_fly(g, src, m, kw):
+    return kw == 'flying' and m.owner is src.owner and m.creature and has_type(m, 'wizard') and _final(src)
+full(DOCENT, 'a 1/1 Human Wizard per instant or sorcery you cast; with three Wizards it transforms into Final '
+     'Iteration: Wizards you control get +2/+1 and have flying')
+
+
+# ------------------------------------------------------------------ Manamorphose
+@on('Manamorphose', 'resolve')
+def _manamorphose(g, p, c, ctx):
+    """add two mana in any combination of colours, draw a card"""
+    if human_choice(g, p) is not None: importlib.import_module('commander_sim.play.mana').pool_of(p).add('A', 2)
+    else: p.floatA += 2
+    draw(g, p, 1)
+    return 'gy'
+card('Manamorphose', 'draw=1', types='I', dsl=[])
+full('Manamorphose', 'two mana of any colours and a card: mana-neutral, a free spell for storm and magecraft')

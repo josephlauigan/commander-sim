@@ -294,10 +294,10 @@ def keyword_attack(g, p, atk, d):
     for m in list(atk):
         if m not in p.perms: continue
         if m.cd is None:
-            if grant and d.life >= top: m.plus += 1   # a token attacking the life leader
+            if grant and d.life >= top: add_counters(g, m, 1)   # a token attacking the life leader (the Army)
             continue
         k = m.cd.kws
-        if grant and 'dethrone' not in k and d.life >= top: m.plus += 1
+        if grant and 'dethrone' not in k and d.life >= top: add_counters(g, m, 1)
         if 'battle cry' in k:
             for x in atk:
                 if x is not m: _eot(g, x, 1, 0)
@@ -305,7 +305,7 @@ def keyword_attack(g, p, atk, d):
             lesser = [x for x in atk if x is not m and x in p.perms and E.epow(g, x) < E.epow(g, m)]
             if lesser: max(lesser, key=lambda x: E.epow(g, x)).plus += 1
         if 'dethrone' in k and d.life >= top:
-            m.plus += 1
+            add_counters(g, m, 1)
     if len(atk) == 1:
         n = sum(1 for x in p.perms if x.cd is not None and 'exalted' in x.cd.kws and not x.phased)
         if n: _eot(g, atk[0], n, n)

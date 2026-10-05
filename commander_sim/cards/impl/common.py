@@ -335,7 +335,8 @@ SAC_OUTLET = {'Viscera Seer': None, 'Carrion Feeder': _feeder, 'Woe Strider': No
 DEATH_DRAIN = {'Blood Artist': 1, 'Zulaport Cutthroat': 1, 'Cruel Celebrant': 1, 'Bastion of Remembrance': 1,
                'Falkenrath Noble': 1, 'Vindictive Vampire': 1, 'Syr Konrad, the Grim': 1, 'Poison-Tip Archer': 1,
                'Elas il-Kor, Sadistic Pilgrim': 1, 'Mayhem Devil': 0.5, 'Goblin Bombardment': 0.3,
-               'Mirkwood Bats': 0.3, 'Grave Pact': 1.5, 'Dictate of Erebos': 1.5, 'Butcher of Malakir': 1.5}
+               'Mirkwood Bats': 0.3}
+EDICTS = ('Grave Pact', 'Dictate of Erebos', 'Butcher of Malakir')    # each opponent sacrifices a creature
 DEATH_DRAW = {'Grim Haruspex': 1, 'Midnight Reaper': 1, 'Morbid Opportunist': 0.5, 'Skemfar Avenger': 1,
               'Dark Prophecy': 1, 'Pitiless Plunderer': 0.6, 'Korvold, Fae-Cursed King': 1}
 
@@ -347,7 +348,13 @@ def death_value(g, p, m=None):
     drain = sum(DEATH_DRAIN.get(n, 0) for n in names) + tags
     draw_ = sum(DEATH_DRAW.get(n, 0) for n in names)
     copies = 1 + (CI.total(g, 'trigger_copies', p, 'dies', m) if g.hooks else 0)
-    return copies * (drain * len(g.opps(p)) * 0.8 + draw_ * 1.5)
+    edict = 0.0
+    k = sum(1 for n in names if n in EDICTS)
+    if k:                                        # each opponent loses the creature it values least
+        for q in g.opps(p):
+            cr = [x for x in q.perms if x.creature and not x.phased]
+            if cr: edict += 0.5 + 0.8 * min(pval(g, x) for x in cr)
+    return copies * (drain * len(g.opps(p)) * 0.8 + draw_ * 1.5 + k * edict)
 
 
 def outlets(p):
@@ -1474,3 +1481,59 @@ def _deed(g, src, p, s, post):
 card('Pernicious Deed', '', types='E', dsl=[])
 note('Pernicious Deed', 'Full', '{X}, sacrifice: destroys every artifact, creature and enchantment with mana value X or '
      'less; used when opponents lose clearly more')
+
+
+
+# ------------------------------------------------------------------ Powerstone tokens
+POWERSTONE = None
+
+
+def make_powerstone(g, p, n=1, tapped=True):
+    """n Powerstone tokens: artifacts with "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell"
+    (engine.mana_units offers it only when an artifact is being paid for)"""
+    global POWERSTONE
+    if POWERSTONE is None: POWERSTONE = E.CD('Powerstone', 'A', '0', 'rock=1:C pstone')
+    for _ in range(n * (E.DSLMOD.token_mult(g, p) if E.DSLMOD is not None else 1)):
+        m = enter(g, p, POWERSTONE)
+        m.token = True; m.tapped = tapped
+    log(f'    {NAME(p)} creates {n} Powerstone token(s)', g)
+
+
+CI.make_powerstone = make_powerstone
+
+
+@CI.on('Static Net', 'etb')
+def _static_net(g, src, p, m):
+    """when it enters: you gain 2 life and create a tapped Powerstone (its exile is the ability language's)"""
+    if m is not src or not trigger_window(g, src.owner, src, 'gain 2 life; a Powerstone'): return
+    gain(src.owner, 2); log(f'    {NAME(src.owner)} gains 2 life (Static Net)', g)
+    make_powerstone(g, src.owner)
+note('Static Net', 'Full', 'exiles an opponent\'s nonland permanent until it leaves; you gain 2 life and get a tapped '
+     'Powerstone (mana for artifacts only)')
+
+
+# ------------------------------------------------------------------ Narset, Parter of Veils
+def narset_dig(g, p, src):
+    """−2: look at the top four; a noncreature, nonland card into your hand (you choose, or the AI's best); the rest
+    on the bottom in a random order"""
+    top = [p.library.pop() for _ in range(min(4, len(p.library)))]
+    ok = [c for c in top if not c.creature and not c.land]
+    pick = None
+    hc = human_choice(g, p)
+    if hc is not None and ok:
+        k = hc.choose(g, p, 'choose', f'Narset: take a noncreature, nonland card? (top four: {", ".join(c.name for c in top)})',
+                      [c.name for c in ok], cancel='take nothing')
+        pick = ok[k] if k is not None else None
+    elif ok:
+        pick = max(ok, key=lambda c: card_worth(g, p, c))
+    rest = [c for c in top if c is not pick]
+    g.rng.shuffle(rest)
+    for c in rest: p.library.insert(0, c)
+    if pick is not None: p.hand.append(pick); p.seen_names.add(pick.name)
+    log(f'    Narset: {NAME(p)} takes ' + ('a card' if pick is not None else 'nothing'), g)
+
+
+walker('Narset, Parter of Veils', [
+    (-2, 'dig for a noncreature, nonland card', lambda g, p, src: 2.5 if len(p.library) >= 4 else None, narset_dig),
+], ('Full', "static: each opponent can't draw more than one card each turn (engine.draw, tag narset); −2: the best "
+            "noncreature, nonland card of the top four"), tags='leg narset')

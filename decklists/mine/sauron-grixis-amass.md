@@ -9,6 +9,9 @@
 **Updated 2026-09-27.** **Tezzeret's Gambit → Diabolic Intent**, a third tutor. Not a Game Changer.
 **Updated 2026-09-28.** **Big Score → Sword of Fire and Ice**, a third combat Sword on the Army. Not a Game Changer, so the deck stays Bracket 3 at the cap with three. Deck stays at 100 and 36 lands.
 **Updated 2026-10-01.** Out: Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back. In: Brain Freeze, Dark Ritual, Lotus Petal, Underworld Breach. The Underworld Breach package: a Breach + Brain Freeze combo fuelled by Dark Ritual and Lotus Petal. Underworld Breach is a fourth Game Changer, so the deck moves to Bracket 4.
+**Updated 2026-10-02.** Out: Plaza of Heroes. In: Thought Vessel. Thought Vessel is a two-mana rock toward the six-mana commander, and no maximum hand size suits the draw engines. Plaza of Heroes was the softest land.
+**Updated 2026-10-03.** Out: Ral Zarek, Guest Lecturer. In: Marchesa, the Black Rose. Marchesa gives every creature dethrone (a +1/+1 counter when attacking the player with the most life, the Army included) and returns any creature with a +1/+1 counter that dies at the next end step. Ral Zarek's planeswalker slot did the least.
+**Updated 2026-10-03.** Out: Reconnaissance Mission. In: Disdainful Stroke. Disdainful Stroke is a two-mana answer to wipes, big creatures and commanders (mana value 4 or more), held up while the Army grows. Reconnaissance Mission drew one card per hit for a one-creature attack plan.
 
 ## Strategy
 
@@ -28,9 +31,11 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler and Inexorable Tide proliferate it upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
 
+**Marchesa, the Black Rose** gives all your creatures dethrone: each one attacking the player with the most life (or tied for it) gets a +1/+1 counter, so the Army grows on every swing at the leader, and Mauhúr adds one more. Any creature of yours with a +1/+1 counter that dies comes back at the beginning of the next end step: Bowmasters, Kefka or Grave Titan after a dethrone hit or a Skate or Flux Channeler pass, and Marchesa herself. The Army is a token, so it doesn't come back; The Ozolith keeps its counters instead.
+
 **Keep it.** **The Ozolith** is new insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with counters on it, those counters move onto The Ozolith, and at the beginning of combat on your turn you can put them all onto a target creature. A spot-removed, bounced, or swept Army no longer resets you to zero — the next amass makes a fresh Army and The Ozolith hands it the old pile (or put it straight onto Sauron). It also catches the counters when you wipe the board yourself with Blasphemous Act or Toxic Deluge.
 
-**Cash it in.** Sword of Feast and Famine, Sword of Hearth and Home, Sword of Fire and Ice, and Conqueror's Flail turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard and untaps all your lands, and War Machine gives your modified creatures double strike. **Sword of Hearth and Home** is +2/+2 and protection from green and white, and every hit flickers a creature you own and ramps a basic: re-buy Orcish Bowmasters (another ping and amass), Noxious Gearhulk (another kill), Grave Titan (two more Zombies), or — best — Deepglow Skate, which doubles the Army's counters again on every connection. **Sword of Fire and Ice** is +2/+2 and protection from blue and red, which blanks most of the burn and bounce aimed at the Army, and every hit deals 2 damage to any target (a blocker it kills, a planeswalker, or a player) and draws you a card. Whispersilk Cloak and Rogue's Passage push the Army through. Aggravated Assault is the closer: an extra combat each time you pay {3}{R}{R}, and with Sword of Feast and Famine it's an infinite (see Key lines). Every connection tempts the Ring, and Reconnaissance Mission and Scarlet Witch turn attacks into more cards.
+**Cash it in.** Sword of Feast and Famine, Sword of Hearth and Home, Sword of Fire and Ice, and Conqueror's Flail turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard and untaps all your lands, and War Machine gives your modified creatures double strike. **Sword of Hearth and Home** is +2/+2 and protection from green and white, and every hit flickers a creature you own and ramps a basic: re-buy Orcish Bowmasters (another ping and amass), Noxious Gearhulk (another kill), Grave Titan (two more Zombies), or — best — Deepglow Skate, which doubles the Army's counters again on every connection. **Sword of Fire and Ice** is +2/+2 and protection from blue and red, which blanks most of the burn and bounce aimed at the Army, and every hit deals 2 damage to any target (a blocker it kills, a planeswalker, or a player) and draws you a card. Whispersilk Cloak and Rogue's Passage push the Army through. Aggravated Assault is the closer: an extra combat each time you pay {3}{R}{R}, and with Sword of Feast and Famine it's an infinite (see Key lines). Every connection tempts the Ring, and Scarlet Witch turns attacks into more cards.
 
 **Urabrask, Heretic Praetor** is a top-end threat: a hasty 4/4 that turns your upkeep into an extra card and turns each opponent's draw step into "exile the top card, play it this turn or lose it." It strips their ability to sandbag, and every card they rush out is still a cast that feeds Sauron and Kaervek.
 
@@ -65,18 +70,18 @@ Needs Breach, Brain Freeze and enough graveyard to start: Ritual and Petal make 
 
 ## Consistency
 
-The list is exactly 100 cards. 36 lands (18 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 37 when you need the land half. Six rocks: Sol Ring, Arcane Signet, Mind Stone, Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Dark Ritual and Lotus Petal are one-shot fast mana (and the Breach line's fuel). Sword of Hearth and Home ramps a basic every time the Army connects.
+The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Seven rocks: Sol Ring, Arcane Signet, Mind Stone, Thought Vessel (no maximum hand size), Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Dark Ritual and Lotus Petal are one-shot fast mana (and the Breach line's fuel). Sword of Hearth and Home ramps a basic every time the Army connects.
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | Blue lands | 16 | 5 Island plus the U duals, Crumbling Necropolis, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
 | Black lands | 16 | 6 Swamp plus Barad-dûr, Blood Crypt, Drowned Catacomb, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
 | Red lands | 19 | 7 Mountain plus the R duals, Haunted Ridge, Izzet Boilerworks, and the any-colour lands |
-| Colorless-only lands | 3 | Rogue's Passage, Scavenger Grounds, Plaza of Heroes (coloured only for legendary spells) |
+| Colorless-only lands | 2 | Rogue's Passage, Scavenger Grounds |
 
 **Haunted Ridge → the Unclaimed Territory slot.** Unclaimed Territory only made coloured mana for Orc creature spells; Haunted Ridge is a real B/R dual.
 
-**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Chaos Warp) plus Noxious Gearhulk and Vraska; four counters (Counterspell, Arcane Denial, Undermine, and **Brush Off**, which costs only {1}{U} against an instant or sorcery); four resets in Blasphemous Act, Toxic Deluge, Nibelheim Aflame, and Cyclonic Rift; and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
+**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Chaos Warp) plus Noxious Gearhulk and Vraska; five counters (Counterspell, Arcane Denial, Undermine, **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more, and **Brush Off**, which costs only {1}{U} against an instant or sorcery); four resets in Blasphemous Act, Toxic Deluge, Nibelheim Aflame, and Cyclonic Rift; and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
 
 ## Tutor targets by board state
 
@@ -120,19 +125,19 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (17).** Consecrated Sphinx, Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (18).** Consecrated Sphinx, Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Marchesa the Black Rose, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
-**Planeswalkers (2).** Ral Zarek Guest Lecturer, Vraska Betrayal's Sting
+**Planeswalkers (1).** Vraska Betrayal's Sting
 
-**Enchantments (6).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Reconnaissance Mission, Underworld Breach
+**Enchantments (5).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Underworld Breach
 
-**Artifacts (14).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
+**Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Thought Vessel, Whispersilk Cloak
 
-**Instants and sorceries (24).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (25).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Terminate, Toxic Deluge, Undermine, Vandalblast
 
-**Lands (36).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
+**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
-Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when you need the land half. Barad-dûr amasses on its own without a name.
+Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when you need the land half. Barad-dûr amasses on its own without a name.
 
 ## Import list (100)
 
@@ -161,6 +166,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Deepglow Skate
 1 Diabolic Intent
 1 Diabolic Tutor
+1 Disdainful Stroke
 1 Drowned Catacomb
 1 Exotic Orchard
 1 Flux Channeler
@@ -178,6 +184,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Kefka, Court Mage // Kefka, Ruler of Ruin
 1 Lightning Greaves
 1 Lotus Petal
+1 Marchesa, the Black Rose
 1 Mauhúr, Uruk-hai Captain
 1 Mind Stone
 1 Nibelheim Aflame
@@ -187,9 +194,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Orcish Bowmasters
 1 Path of Ancestry
 1 Phyrexian Arena
-1 Plaza of Heroes
-1 Ral Zarek, Guest Lecturer
-1 Reconnaissance Mission
 1 Ringsight
 1 Rogue's Passage
 1 Sauron, the Dark Lord
@@ -209,6 +213,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 1 Talisman of Dominance
 1 Terminate
 1 The Ozolith
+1 Thought Vessel
 1 Toxic Deluge
 1 Treno, Dark City
 1 Undermine
@@ -245,16 +250,17 @@ Sanguine Morass is counted above as a spell, so the deck plays as 37 lands when 
 
 **The 10-01 change — the Underworld Breach package.** Bedevil → Underworld Breach, Slip Out the Back → Brain Freeze, Metallic Mimic → Dark Ritual, Feed the Swarm → Lotus Petal. The four cuts were the softest removal, the protection spell, and the Army's least important growth card. Tested in the simulator before the change (look-ahead AI, loose profile): over all five tiers it was about even with the old list (−1.3 points, within noise), better against the Bracket 4 tiers and worse against Bracket 3 ones; a confirming 800-game run against Tiers 4 and 5 found +2.9 and −0.1. Of the three Breach versions tried (with Grapeshot, a lighter package without rituals, and this one), this was the best. Breach is a fourth Game Changer: the deck is now Bracket 4.
 
-**Weakest remaining inclusions.** Plaza of Heroes is the softest land; Diabolic Intent if you find you never have a spare creature to feed it. Brain Freeze and Dark Ritual are weak on their own, which is the cost of the Breach line: if you go back to Bracket 3, the whole package comes out together (Breach is the Game Changer). Bedevil, Feed the Swarm, and Tezzeret's Gambit are the natural cards to bring back.
+**Weakest remaining inclusions.** Plaza of Heroes, the softest land, left on 10-02 for Thought Vessel; Diabolic Intent if you find you never have a spare creature to feed it. Brain Freeze and Dark Ritual are weak on their own, which is the cost of the Breach line: if you go back to Bracket 3, the whole package comes out together (Breach is the Game Changer). Bedevil, Feed the Swarm, and Tezzeret's Gambit are the natural cards to bring back.
 
-**Scavenger Grounds hits your own graveyard too.** Fire it deliberately. Plaza of Heroes only pays off when you name a utility land worth shutting off.
+**Scavenger Grounds hits your own graveyard too.** Fire it deliberately.
 
 **Card conflicts with your other decks.**
 - **Two physical copies needed** of Consecrated Sphinx, Sheoldred, the Apocalypse, and Diabolic Tutor, which are in this deck and Sephiroth.
+- **Marchesa, the Black Rose** is also the commander of your Marchesa deck: a second copy, or move her between decks.
 - **Diabolic Intent** moved here from Sephiroth, so one copy is enough.
 - Shared with **Veyran**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
 - Shared with **Sephiroth**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **Only in this deck**: Night's Whisper and Phyrexian Arena.
-- **New singles** since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
-- **To the binder**: Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.
+- **New singles**: Disdainful Stroke (10-03, from the Y'shtola deck); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
+- **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

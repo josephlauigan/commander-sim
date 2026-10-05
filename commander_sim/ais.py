@@ -120,17 +120,26 @@ def protect_response(g, owner, m, kind, actor, spell=None):
             if kind in ('exile', 'bounce', 'tuck') and free_sac(owner) and not m.token:
                 owner.stats['sac_saves'] += 1; seph_sac(g, owner, m); return True
     elif owner.key == 'veyran':
-        if importlib.import_module('commander_sim.cards.impl.mine').rtf_redirect(g, owner, m, kind, actor, spell): return True
+        IM = importlib.import_module('commander_sim.cards.impl.mine')
+        if IM.rtf_redirect(g, owner, m, kind, actor, spell): return True
+        if IM.veyran_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'sauron':
         if m.army or v >= 5:
             sl = [c for c in owner.hand if c.tags.get('prot') == 'phase']
             if sl and can_pay(g, owner, 0, 'U'):
                 if pay_card(g, owner, sl[0]): m.phased = True; return True
                 return False
-            if m.army and epow(g, m) >= 7:
-                nw = [c for c in owner.hand if c.tags.get('prot') == 'notw']
-                if nw:
-                    owner.hand.remove(nw[0]); owner.gy.append(nw[0]); return True
+            nw = [c for c in owner.hand if c.tags.get('prot') == 'notw']
+            if nw:                                      # Not of This World: free with a 7-power creature (the Army or Sauron)
+                free = any(x.creature and not x.phased and epow(g, x) >= 7 for x in owner.perms)
+                if free or can_pay(g, owner, 7, ''):
+                    c = nw[0]
+                    if not free: pay(g, owner, 7, '')
+                    owner.hand.remove(c); owner.gy.append(c); owner.spells_this_turn += 1
+                    owner.cast_names.add(c.name)
+                    log(f'  {NAME(owner)} casts {c.name}', g)
+                    on_cast(g, owner, c)
+                    return counter_window(g, owner, c, 6, {})
     elif owner.key == 'marchesa':
         if E.CI.marchesa_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'zur':
@@ -542,8 +551,8 @@ def seph_boots(g, p):
         if e.cd.tags.get('prot') != 'boots' or e.attached is not None: continue
         if blocked(g, p, e.cd.name): continue
         bombs = [m for m in p.perms if m.creature and m.cd is not None and m.cd.bomb >= 6 and not untargetable(g, m)]
-        if bombs and can_pay(g, p, 1, ''):
-            return equip_to(g, p, e, max(bombs, key=lambda x: pval(g, x)), 1)
+        if bombs and can_pay(g, p, boots_cost(e), ''):
+            return equip_to(g, p, e, max(bombs, key=lambda x: pval(g, x)), boots_cost(e))
     return False
 
 
@@ -552,11 +561,12 @@ def seph_prio(g, p, c):
     lp = importlib.import_module('commander_sim.cards.impl.mine').loop_prio(g, p, c)
     if lp is not None: return lp                             # a piece of one of the loops
     if 'shards' in t: return 68
-    if 'onering' in t: return 62
+    if c.name == 'The One Ring': return 62
     if c is p.cmd: return 0
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
     if 'tithe' in t: return 72
     if 'necro' in t: return 62 if p.life >= 25 else 0          # Necropotence
+    if 'citadel' in t: return 60 if p.life >= 25 else 20          # Bolas's Citadel: with life to spend
     if t.get('fill') == 'stitcher': return 75
     if t.get('fill') == 'tortured': return 65
     if t.get('fill') == 'wayfinder': return 45
@@ -808,6 +818,7 @@ def veyran_prio(g, p, c):
     t = c.tags
     if c is p.cmd: return 70
     if 'rock' in t or 'fastmana' in t: return 80 if p.turns <= 5 else 40
+    if 'remora' in t: return 66 if p.turns <= 4 else 0              # Mystic Remora: only early, while upkeep is cheap
     if 'vkitten' in t or 'vfire' in t: return 74
     if 'recruit' in t: return 73
     if 'kiln' in t: return 70
@@ -818,7 +829,7 @@ def veyran_prio(g, p, c):
     if 'aether' in t: return 66
     if 'dragoncaller' in t: return 60
     if 'spelldraw' in t or 'mystic' in t: return 58
-    if 'onering' in t: return 58
+    if c.name == 'The One Ring': return 58
     if 'rhystic' in t: return 62
     if 'sphinx' in t: return 60
     if 'narset' in t: return 52
@@ -848,6 +859,16 @@ def veyran_prio(g, p, c):
     if c.creature: return 40
     if 'burn' in t and any(q.life <= 15 for q in g.opps(p)): return 35
     if 'tys' in t: return 57                                                   # Thousand-Year Storm
+    if 'stormburn' in t:                                                       # Grapeshot: the end of a long turn
+        st = importlib.import_module('commander_sim.cards.impl.mine').storm_count(g)
+        return 62 if st >= 5 or any(q.life <= st + 1 for q in g.opps(p)) else 0
+    if c.name in ('Propaganda', 'Ghostly Prison', 'Crawlspace'):                             # attack tax: sooner when the table hits hard
+        return 52 + min(18, int(importlib.import_module('commander_sim.ai.deck_plans').opp_power(g, p)))
+    if c.name == 'Fiery Emancipation': return 64 if any(m.cd is not None and ('ping' in m.cd.tags or m.creature) for m in p.perms) else 40
+    if c.name == 'Galvanic Iteration':                                          # with another spell to copy this turn
+        rest = total_mana(g, p) - 2
+        return 47 if any(x is not c and (x.instant or x.sorcery) and x.cmc <= rest and ('draw' in x.tags or 'burn' in x.tags or 'rem' in x.tags)
+                         for x in p.hand) else 0
     if 'reenact' in t:                                                         # Reenact the Crime: only with a target
         tg = importlib.import_module('commander_sim.cards.impl.mine').reenact_target(g, p, exclude=c)
         return 50 if tg is not None and E.card_worth(g, p, tg[0]) >= 4 else 0
@@ -957,7 +978,7 @@ def veyran_boots(g, p):
     """Equip Swiftfoot Boots / Lightning Greaves: Kitten during a combo setup, else Veyran, else the best engine."""
     eq = [e for e in find(p, 'prot') if e.cd.tags.get('prot') == 'boots' and (e.attached is None or e.attached not in p.perms)
           and not blocked(g, p, e.cd.name)]
-    if not eq or not can_pay(g, p, 1, ''): return False
+    if not eq or not can_pay(g, p, boots_cost(eq[0]), ''): return False
     cands = [m for m in p.perms if m.creature and m.cd is not None and not untargetable(g, m)]
     if not cands: return False
 
@@ -967,7 +988,7 @@ def veyran_boots(g, p):
         if 'veyran' in t: return 9
         if 'vkitten' in t or 'vfire' in t: return 7
         return pval(g, m)
-    return equip_to(g, p, eq[0], max(cands, key=rank), 1)
+    return equip_to(g, p, eq[0], max(cands, key=rank), boots_cost(eq[0]))
 
 
 def aether_check(g, p):
@@ -1007,6 +1028,7 @@ def sauron_prio(g, p, c):
     if 'storm' in t: return 0                                # Brain Freeze, Grapeshot: held for the Breach line
     if 'rock' in t: return 80 if p.turns <= 5 else 40
     if 'rhystic' in t: return 78
+    if 'remora' in t: return 66 if p.turns <= 4 else 0              # Mystic Remora: only early, while upkeep is cheap
     if 'mauhur' in t: return 63
     if 'bowmasters' in t: return 62
     if 'sword' in t: return 60
@@ -1031,8 +1053,10 @@ def sauron_prio(g, p, c):
     if 'ralzarek' in t: return 42
     if 'helm' in t: return 44 if army_of(p) else 20
     if 'warmachine' in t: return 45
+    if t.get('prot') == 'boots':                             # Lightning Greaves: for Sauron himself (never the Army)
+        return 50 if has(p, 'sauron') or p.cmd_in_zone and total_mana(g, p) >= 7 else 25
     if t.get('tut'): return 60
-    if 'onering' in t: return 60
+    if c.name == 'The One Ring': return 60
     gc = gc_prio_sauron(g, p, c)
     if gc is not None: return gc
     if 'draw' in t and (c.instant or c.sorcery): return 40
@@ -1063,6 +1087,24 @@ def sauron_equip(g, p):
         if can_pay(g, p, 2, ''):
             return equip_to(g, p, eq[0], a, 2)
     return False
+
+
+def boots_cost(e):
+    return 0 if e.cd.name == 'Lightning Greaves' else 1
+
+
+def sauron_boots(g, p):
+    """Lightning Greaves / Swiftfoot Boots onto Sauron, else the best other creature; never the Army (shroud would
+    stop the Swords from being equipped)"""
+    eq = [e for e in find(p, 'prot') if e.cd.tags.get('prot') == 'boots' and (e.attached is None or e.attached not in p.perms)
+          and not blocked(g, p, e.cd.name)]
+    if not eq or not can_pay(g, p, boots_cost(eq[0]), ''): return False
+    cands = [m for m in p.perms if m.creature and not m.army and not m.token and m.cd is not None
+             and not m.phased and not untargetable(g, m)]
+    if not cands: return False
+    best = max(cands, key=lambda m: (('sauron' in m.cd.tags), pval(g, m)))
+    if 'sauron' not in best.cd.tags and pval(g, best) < 4: return False
+    return equip_to(g, p, eq[0], best, boots_cost(eq[0]))
 
 
 def helm_target(g, p):
@@ -1102,6 +1144,7 @@ def sauron_main(g, p, post):
     for _ in range(16):
         if g.over or not p.alive: return
         if sauron_equip(g, p): continue
+        if sauron_boots(g, p): continue
         if sauron_archivist(g, p): continue
         if use_removal(g, p, 6): continue
         if consider_wipe(g, p): continue
@@ -1546,6 +1589,29 @@ def necro_pay(g, p, floor=20):
     log(f'  {NAME(p)} pays {n} life to Necropotence', g)
 
 
+def necro_exile(g, p, n):
+    """Necropotence, activated n times by the person: the top n cards exiled face down until p's next end step (this
+    turn's if it's p's turn before the end step, else the next)"""
+    ready = p.turns if (g.active is p and g.step != 'end') else p.turns + 1
+    if not hasattr(p, 'necro_wait') or p.necro_wait is None: p.necro_wait = []
+    for _ in range(min(n, len(p.library))):
+        p.necro_wait.append((p.library.pop(), ready))
+
+
+def necro_deliver(g, p):
+    """the beginning of p's end step: the cards Necropotence exiled for this end step go to p's hand"""
+    w = getattr(p, 'necro_wait', None)
+    if not w: return
+    now = [c for c, r in w if r <= p.turns]
+    p.necro_wait = [(c, r) for c, r in w if r > p.turns]
+    if not now: return
+    p.hand.extend(now)
+    for c in now: p.seen_names.add(c.name)
+    p.stats['necro_cards'] += len(now)
+    E.log_secret(g, p, f'  {NAME(p)} puts {len(now)} card(s) into their hand (Necropotence)',
+                 f'  {NAME(p)} puts {", ".join(c.name for c in now)} into their hand (Necropotence)')
+
+
 def braids_sacrifice(g, p):
     """Braids, Cabal Minion: at the beginning of each player's upkeep, that player sacrifices an artifact,
     creature, or land"""
@@ -1625,6 +1691,20 @@ def choose_defender(g, p):
     lethal = [q for q in opps if q.life <= my * 0.6]
     if lethal: return min(lethal, key=lambda q: q.life)
     return max(opps, key=lambda q: threat(g, p, q) + g.rng.random() * 3)
+
+
+TOKEN_BLOCKS = __import__('os').environ.get('VEY_BLOCK', '1') != '0'
+
+
+def fiery(pl):
+    """Fiery Emancipation: damage from pl's sources is tripled (once per copy)"""
+    return 3 ** sum(1 for m in pl.perms if m.cd is not None and m.cd.name == 'Fiery Emancipation' and not m.phased)
+
+
+def spare_tokens(g, d, cands):
+    """Veyran's small creature tokens: the next spell replaces them, so they block freely"""
+    if not TOKEN_BLOCKS or d.key != 'veyran': return []
+    return [x for x in cands if x.token and not x.army and epow(g, x) <= 2]
 
 
 def can_block(g, b, a):
@@ -1751,6 +1831,7 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     else:
         blockers = [m for m in d.perms if m.creature and not m.tapped and not m.phased]
         incoming = sum(epow(g, m) * (2 if double_strike(p, m) else 1) for m in atk)
+        fd, fp = fiery(d), fiery(p)
         assign = {}; used = set()
         for a in sorted(atk, key=lambda m: -epow(g, m)):
             if a in unbl or a not in p.perms: continue
@@ -1758,14 +1839,17 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
             if not cands: continue
             if kw(a, 'menace') and len(cands) < 2: continue                 # menace: two blockers or none
             ap, at = epow(g, a), etgh(g, a)
-            good = [b for b in cands if (epow(g, b) >= at or b.dt) and not (ap >= etgh(g, b) or a.dt)]
+            good = [b for b in cands if (epow(g, b) * fd >= at or b.dt) and not (ap * fp >= etgh(g, b) or a.dt)]
             if good: b = min(good, key=lambda x: pval(g, x))
             else:
-                trade = [b for b in cands if epow(g, b) >= at or b.dt or (b.cd is not None and b.cd.name == 'Defiant Vanguard')]
+                trade = [b for b in cands if epow(g, b) * fd >= at or b.dt or (b.cd is not None and b.cd.name == 'Defiant Vanguard')]
+                spare = spare_tokens(g, d, cands)
                 if trade and pval(g, a) >= min(pval(g, x) for x in trade):
                     b = min(trade, key=lambda x: pval(g, x))
                 elif shielded(d):                     # the damage is prevented anyway: no chump blocks
                     continue
+                elif spare and ap >= 2 and (ap * fp >= 3 or incoming * fp >= d.life * 0.2):
+                    b = min(spare, key=lambda x: pval(g, x))     # chump with a spare token
                 elif (E.AI_MODE == 'adaptive' and ap >= 2 and g.rng.random() < importlib.import_module('commander_sim.ai.brain').chump_prob(g, d, incoming)) \
                         or (E.AI_MODE != 'adaptive' and incoming >= d.life * 0.4 and ap >= 2):
                     if d.key == 'yshtola' and incoming < d.life:      # Y'shtola is the engine: she chumps only to live
@@ -1789,6 +1873,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
     to_walker = {} if hum_p else walker_attacks(g, p, atk, d, assign)
     if E.CI is not None:
         for c, fn in E.CI.hand_cards(p, 'hand_blocks'): fn(g, c, p, atk, d, assign)
+        if d.key == 'veyran':                     # your instant-speed answers to an attack (Aetherize)
+            for c, fn in E.CI.hand_cards(d, 'hand_defend'):
+                if c.name == 'Aetherize': fn(g, c, d, p, atk, assign)
         if d.key not in MAIN:
             if g.hooks: E.CI.fire(g, 'defend', d, p, atk, assign)    # the defender's permanents, after blocks (Yawgmoth)
             for c, fn in E.CI.hand_cards(d, 'hand_defend'): fn(g, c, d, p, atk, assign)
@@ -1819,9 +1906,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 dmg = ap if tr else 0
             else:
                 bt = etgh(g, b)
-                a_dies = (epow(g, b) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b)) and not E.no_damage(g, a)
+                a_dies = (epow(g, b) * fiery(d) >= etgh(g, a) or b.dt) and not protected_from(g, a, colors_of(b)) and not E.no_damage(g, a)
                 if importlib.import_module('commander_sim.cards.impl.mine').damage_prevented(g, b): a_dies = False
-                b_dies = (ap >= bt or a.dt) and not protected_from(g, b, colors_of(a)) and not E.no_damage(g, b)
+                b_dies = (ap * fiery(p) >= bt or a.dt) and not protected_from(g, b, colors_of(a)) and not E.no_damage(g, b)
                 if E.CI is not None:                       # protection from creatures / Demons and Dragons
                     from commander_sim.cards.impl import rules2 as impl_rules2
                     if impl_rules2.prot_vs(g, a, b): a_dies = False
@@ -2350,6 +2437,7 @@ def yawg_cleanup(g, p):
 
 
 def end_step(g, p):
+    necro_deliver(g, p)
     if getattr(g, 'marchesa_due', None): E.CI.marchesa_return(g)        # Marchesa: 'at the beginning of the next end step'
     if getattr(g, 'zur_due', None): E.CI.zur_end_step(g, p)               # The Eternal Wanderer, Gift of Immortality
     if getattr(g, 'eot_returns', None): E.CI.eot_returns(g)               # Eerie Interlude
@@ -2373,7 +2461,7 @@ def end_step(g, p):
     for c in p.impulse:                           # Jeska's Will: unplayed exiled cards stay in exile
         if c in p.hand: p.hand.remove(c); p.exile.append(c)
     p.impulse = []
-    if has(p, 'necro'): necro_pay(g, p)
+    if has(p, 'necro') and E.human_choice(g, p) is None: necro_pay(g, p)     # the person pays with the ability
     erebos_draw(g, p)                             # leftover mana at your own end step
     for m in [m for m in p.perms if m.temp]: leave(g, m)
     if has(p, 'pvprolif') and E.trigger_window(g, p, find(p, 'pvprolif')[0], 'proliferate'):   # Atraxa, Praetors' Voice

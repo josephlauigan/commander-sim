@@ -419,6 +419,8 @@ DAMAGE_KINDS = ('combat', 'burn', 'aether', 'triggers')
 def lose_life(g, p, n, src, kind='other', damage=None):
     if n <= 0 or not p.alive or p.life_locked: return
     if damage is None: damage = kind in DAMAGE_KINDS
+    if damage and src is not None and src is not p and getattr(src, 'perms', None) is not None:
+        n *= 3 ** sum(1 for m in src.perms if m.cd is not None and m.cd.name == 'Fiery Emancipation' and not m.phased)
     if damage and prevents_damage(g, p, src):
         p.stats['dmg_prevented'] += n
         log(f'    {n} damage to {NAME(p)} is prevented', g)
@@ -470,6 +472,8 @@ def check_state(g):
     if g.over: return
     tick(g)
     if g.hooks: CI.fire(g, 'sba')
+    for q in g.players:                                   # a land put onto the battlefield without landfall's path
+        if q.alive and any(L.data is None or not L.data.get('in') for L in q.lands): lands_entered(g, q)
     for p in g.players:
         if p.alive and (p.life <= 0 or p.decked or (p.cmd_dmg and max(p.cmd_dmg.values()) >= 21) or getattr(p, 'poison', 0) >= 10):
             eliminate(g, p)
@@ -539,6 +543,7 @@ def mana_units(g, p, convoke=False):
             continue
         if 'rock' in t:
             if g.hooks and 'A' in m.cd.types and CI.total(g, 'no_artifact_mana', p): continue
+            if 'pstone' in t and not art: continue                   # Powerstone: artifact spells and abilities only
             a, c = t['rock'].split(':')
             amt = CI.dyn_mana(g, p, m) if CI is not None and m.cd.name in CI.DYN_MANA else int(a)
             cols = p.ident if c == 'A' else ('' if c == 'C' else c)
@@ -1237,6 +1242,8 @@ def pact_affordable(g, p, cost):
 
 
 def on_cast(g, p, c):
+    if getattr(p, 'mistrise_next', None) == turn_stamp(g):     # Mistrise Village: this spell can't be countered
+        p.mistrise_next = None; g.unc_cast = (id(c), turn_stamp(g))
     if 'pactpay' in c.tags:                                # Slaughter Pact: pay at your next upkeep or lose the game
         p.pact_debts = getattr(p, 'pact_debts', []) + [parse_cost(c.tags['pactpay'])]
     if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_cast(g, p, c)
@@ -1257,6 +1264,9 @@ def on_cast(g, p, c):
     if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy') \
             and trigger_window(g, p, find(p, 'jin')[0], f'copy {c.name}', imp=5):
         copy_spell(g, p, c)                          # Jin-Gitaxias copies your first artifact/instant/sorcery each turn
+    if (c.instant or c.sorcery) and c.name != 'Galvanic Iteration' and getattr(p, 'galvanic', None) == turn_stamp(g):
+        p.galvanic = None                           # Galvanic Iteration: copy the next instant or sorcery
+        if trigger_window(g, p, None, f'Galvanic Iteration: copy {c.name}', imp=4): copy_spell(g, p, c)
     if (c.instant or c.sorcery) and getattr(p, 'ral_copy', None) == turn_stamp(g):
         p.ral_copy = None                           # Ral, Storm Conduit -2: copy the next instant/sorcery
         if trigger_window(g, p, None, f'Ral, Storm Conduit: copy {c.name}', imp=5): copy_spell(g, p, c)
@@ -1467,9 +1477,12 @@ def counter_ok(ctr, c):
     return False
 
 
-def counter_cost(ctr, spell):
-    """(generic, pips) a counterspell costs against this spell (Brush Off: {1}{U} less against an instant or sorcery)"""
+def counter_cost(ctr, spell, q=None):
+    """(generic, pips) a counterspell costs against this spell (Brush Off: {1}{U} less against an instant or sorcery;
+    Wizard's Retort: {1} less while q controls a Wizard)"""
     if 'brushoff' in ctr.tags and spell is not None and (spell.instant or spell.sorcery): return 1, 'U'
+    if ctr.name == "Wizard's Retort" and q is not None and any(m.creature and not m.phased and has_type(m, 'wizard') for m in q.perms):
+        return max(0, ctr.generic - 1), ctr.pips
     return ctr.generic, ctr.pips
 
 
@@ -1477,7 +1490,7 @@ def pick_counter(g, q, c):
     best = None
     for ctr in q.hand:
         if ctr.name == 'Venser, Shaper Savant' and q.key not in CTHRESH and 'ctr' not in ctr.tags:
-            if can_pay(g, q, *counter_cost(ctr, c)) and castable(g, q, ctr) and (best is None or ctr.cmc < best.cmc): best = ctr
+            if can_pay(g, q, *counter_cost(ctr, c, q)) and castable(g, q, ctr) and (best is None or ctr.cmc < best.cmc): best = ctr
             continue
         if 'ctr' not in ctr.tags or not counter_ok(ctr, c): continue
         if g.hooks and not castable(g, q, ctr): continue
@@ -1487,10 +1500,10 @@ def pick_counter(g, q, c):
         if 'fon' in ctr.tags and g.active is not q and any(x is not ctr and 'U' in x.pips for x in q.hand):
             return ctr                                                   # Force of Negation: free on others' turns
         if 'free' in ctr.tags:
-            if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, *counter_cost(ctr, c)):
+            if any(x is not ctr and 'U' in x.pips for x in q.hand) or can_pay(g, q, *counter_cost(ctr, c, q)):
                 if best is None: best = ctr
             continue
-        if can_pay(g, q, *counter_cost(ctr, c)):
+        if can_pay(g, q, *counter_cost(ctr, c, q)):
             if best is None or ctr.cmc < best.cmc or 'free' in best.tags: best = ctr
     return best
 
@@ -1818,16 +1831,20 @@ def take_priority(g, q, item):
 def counter_window(g, p, c, imp, aff):
     """a spell cast by its own card code (not cast_card): it goes on the stack with a round of priority. True if it
     resolves (the caller carries out its effect), False if it was countered"""
-    if 'unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', p, c)): return True
+    if 'unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', p, c)) or mistrised(g, c): return True
     item = StackItem(p, c, {}, 'hand', imp, aff, generic=False)
     ok = stack_window(g, p, item)
     if not ok: global LAST_COUNTER; LAST_COUNTER = item.countered_by
     return ok
 
 
+def mistrised(g, c):
+    return getattr(g, 'unc_cast', None) == (id(c), turn_stamp(g))
+
+
 def counterable(g, item):
     c = item.card
-    return not ('unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', item.controller, c)))
+    return not ('unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', item.controller, c)) or mistrised(g, c))
 
 
 def ai_respond(g, q, item):
@@ -1890,13 +1907,13 @@ def pay_counter(g, q, ctr, spell):
         x = min(blues, key=lambda c: card_worth(g, q, c))
         if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
         q.hand.remove(x); q.exile.append(x); return True
-    if 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell)):
+    if 'free' in ctr.tags and not can_pay(g, q, *counter_cost(ctr, spell, q)):
         blues = [x for x in q.hand if x is not ctr and 'U' in x.pips]
         if not blues: return False
         x = min(blues, key=lambda c: card_worth(g, q, c))           # the least useful blue card
         if human_choice(g, q) is not None: x = importlib.import_module('commander_sim.play.cards').pick_blue(g, q, blues, ctr.name)
         q.hand.remove(x); q.exile.append(x); lose_life(g, q, 1, q); return True
-    return pay(g, q, *counter_cost(ctr, spell))
+    return pay(g, q, *counter_cost(ctr, spell, q))
 
 
 def cast_counter_spell(g, q, ctr, target):
@@ -1978,6 +1995,12 @@ def counter_side_effects(g, q, p, ctr):
         p.delayed_draws = getattr(p, 'delayed_draws', 0) + 2; q.delayed_draws = getattr(q, 'delayed_draws', 0) + 1
     if 'undermine' in t: lose_life(g, p, 3, q, kind='triggers', damage=False)   # life loss, not damage
     if 'swan' in t: make_tokens(g, p, 1, 2, fly=True)          # Swan Song gives the caster a Bird
+    if ctr.name == 'Absorb': gain(q, 3)                         # Absorb: counter target spell, you gain 3 life
+    if ctr.name == 'Statute of Denial' and any(m.creature and not m.phased and 'U' in colors_of(m) for m in q.perms):
+        draw(g, q, 1)                                          # a blue creature: draw a card, then discard a card
+        hc = human_choice(g, q)
+        if hc is not None: hc.discard(g, q, 1)
+        else: discard_worst(g, q, 1)
 
 
 def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
@@ -2458,7 +2481,36 @@ def land_ramp(g, p, n, tapped):
         landfall(g, p)
 
 
+LAND_ETB_FX = {}     # land name -> [('scry', n) | ('gain', n)]: its 'when this land enters' effects (Oracle text)
+
+
+def land_etb_fx(cd):
+    if cd.name not in LAND_ETB_FX:
+        import re
+        from commander_sim.cards import scryfall
+        txt = ((scryfall.load_cache().get(cd.name.lower()) or {}).get('oracle_text') or '').lower()
+        fx = []
+        m = re.search(r'when this land enters, scry (\d+)', txt)
+        if m: fx.append(('scry', int(m.group(1))))
+        m = re.search(r'when this land enters, you gain (\d+) life', txt)
+        if m: fx.append(('gain', int(m.group(1))))
+        LAND_ETB_FX[cd.name] = fx
+    return LAND_ETB_FX[cd.name]
+
+
+def lands_entered(g, p):
+    """the lands that just entered under p's control: their enters triggers (a Temple's scry, a gain land's life)"""
+    for L in p.lands:
+        if L.data is not None and L.data.get('in'): continue
+        L.data = dict(L.data or {}, **{'in': True})
+        for kind, n in land_etb_fx(L.cd):
+            if g.over or not trigger_window(g, p, L.cd, f'scry {n}' if kind == 'scry' else f'gain {n} life'): continue
+            if kind == 'scry': importlib.import_module('commander_sim.cards.impl.topdeck').scry(g, p, n)
+            else: gain(p, n); log(f'    {NAME(p)} gains {n} life ({L.cd.name})', g)
+
+
 def landfall(g, p):
+    lands_entered(g, p)
     copies = 1 + (CI.total(g, 'trigger_copies', p, 'landfall', None) if g.hooks else 0)     # Ancient Greenwarden
     for _ in range(copies):
         _landfall_once(g, p)
@@ -2565,6 +2617,9 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
 
 def apply_removal(g, actor, m, kind, spell=None):
     owner = m.owner
+    if kind.startswith('dmg') and actor is not None and actor is not owner:        # Fiery Emancipation: triple damage
+        k = sum(1 for x in actor.perms if x.cd is not None and x.cd.name == 'Fiery Emancipation' and not x.phased)
+        if k: kind = f'dmg{int(kind[3:]) * 3 ** k}'
     if m not in owner.perms or untargetable(g, m): return
     if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m):
         log(f'    {m.name} ({NAME(owner)}) is indestructible', g); return

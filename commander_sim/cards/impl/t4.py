@@ -579,7 +579,10 @@ def _sphinx(g, src, p):
         hc = E.human_choice(g, src.owner)
         if hc is not None:
             if hc.yes_no(g, src.owner, f'Consecrated Sphinx: {E.NAME(p)} drew. Draw two cards?'): draw(g, src.owner, 2)
-        elif len(src.owner.library) > 12: draw(g, src.owner, 2)
+        elif len(src.owner.library) > 12 and getattr(g, 'sphinx_depth', 0) < 4:
+            g.sphinx_depth = getattr(g, 'sphinx_depth', 0) + 1     # two Sphinxes feed each other: stop after a few rounds
+            try: draw(g, src.owner, 2)
+            finally: g.sphinx_depth -= 1
 card('Consecrated Sphinx', 'pow=4 tgh=6 fly bomb=6 sphinx', dsl=[])
 note('Consecrated Sphinx', 'Approximate', 'draws two per opponent draw (capped by library size)')
 

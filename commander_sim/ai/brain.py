@@ -215,12 +215,33 @@ def card_utility(g, p, s, c):
         u += 0.9 * n_pay * (2 if has(p, 'veyran') else 1)
     if (c.bomb >= 5 or c is p.cmd or base >= 70) and not c.land:
         u *= 1.0 - 0.35 * s.ctr_risk                  # walking into open counter mana
+    if p.key == 'veyran' and c is not p.cmd: u += veyran_sequence(g, p, c)
     return u
+
+
+VEYRAN_SEQ = __import__('os').environ.get('VEY_SEQ', '1') != '0'
+
+
+def veyran_sequence(g, p, c):
+    """Veyran doubles every cast trigger, so a spell cast while Veyran waits in the command zone wastes half its
+    value. On your own turn: with the mana for Veyran, cast Veyran before any instant or sorcery that isn't urgent
+    (removal, counters, protection, ramp); one land short, hold sorcery-speed card draw for next turn. Payoff creatures
+    still come first (the deck's notes: deploy pingers before Veyran)"""
+    if not VEYRAN_SEQ or g.active is not p or not p.cmd_in_zone or not (c.instant or c.sorcery): return 0.0
+    if any(m.cd is not None and m.cd.name == p.cmd.name and not m.phased for m in p.perms): return 0.0
+    t = c.tags
+    if any(k in t for k in ('rem', 'ctr', 'wipe', 'prot', 'lr', 'rock', 'fastmana')) or c.land: return 0.0
+    gen, pips = cost_of(p, p.cmd)
+    need, have = gen + len(pips), total_mana(g, p)
+    if have >= need: return -4.0
+    if have + 1 >= need and 'draw' in t and len(p.hand) >= 3 and c.sorcery: return -2.5
+    return 0.0
 
 
 # ------------------------------------------------------------------ generic executors
 # cards whose casting needs deck-specific choices (targets, modes, X); never cast them generically
 SPECIAL = ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'tokx_special', 'xdrain')
+CAST_FILL = ('stitcher', 'tortured', 'wayfinder')     # graveyard fillers that are plain permanents: cast them normally
 
 
 SPARE_VALUE = 3.0      # a creature worth more than this (pval) isn't sacrificed to pay for a spell
@@ -236,7 +257,8 @@ def spare_creature(g, p):
 
 
 def do_cast(g, p, c, zone=None):
-    if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE): return False
+    if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE) \
+            and c.tags.get('fill') not in CAST_FILL: return False
     if c.dsl and not additional_cost(g, p, c, dry=True): return False
     if zone in (None, 'hand') and c not in p.hand and not (c is p.cmd and p.cmd_in_zone): return False
     if zone == 'yawg' and c not in p.gy: return False
@@ -665,6 +687,9 @@ def hook_options(g, p, s, post):
     for c, fn in E.CI.hand_cards(p, 'hand_options'): o += fn(g, c, p, s, post) or []
     if p.key not in STYLE or p.key in GENERIC_PLAYS:
         o += importlib.import_module('commander_sim.ai.pool_ai').special_options(g, p, s, post)
+    elif any(m.cd is not None and m.cd.name == 'Grave Pact' and not m.phased for m in p.perms):
+        IC = importlib.import_module('commander_sim.cards.impl.common')     # Grave Pact: sacrifice for edicts
+        o += IC.aristocrat_options(g, p, s, post)
     o += importlib.import_module('commander_sim.cards.impl.lands').land_options(g, p, s, post)
     if E.CI.combo_options is not None: o += E.CI.combo_options(g, p, s, post)
     return o

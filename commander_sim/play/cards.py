@@ -367,7 +367,57 @@ def _coalition(g, p, m):
     return [('{T}: put a charge counter on it (each one is a mana of any colour at your next precombat main phase)', act)]
 
 
+def _citadel(g, p, m):
+    """Bolas's Citadel: play the top card of your library (a spell for life equal to its mana value instead of its
+    mana cost); {T}, sacrifice ten nonland permanents: each opponent loses 10 life"""
+    out = []
+    top = p.library[-1] if p.library else None
+
+    def play_top(g, p, m):
+        if not p.library or p.library[-1] is not top: return 'The top card of your library has changed.'
+        if top.land:
+            why = legal.sorcery_timing(g, p)
+            if why: return why.replace('do that', 'play a land')
+            if getattr(p, 'lands_played', 0) >= legal.land_drops(g, p): return "You've already played a land this turn."
+            p.library.pop(); ais.play_land_card(g, p, top, 'plays (from the top, Citadel)')
+            E.check_state(g); return None
+        if not legal.instant_speed(top):
+            why = legal.sorcery_timing(g, p)
+            if why: return why.replace('do that', f'cast {top.name}')
+        if 'ctr' in top.tags: return f'{top.name} counters a spell: it can only be cast in response to one.'
+        if any(k in top.tags for k in ('x', 'tokx', 'xtutor', 'xdrain', 'crackle', 'rean', 'deluge')):
+            return f"{top.name} has a choice of X or a graveyard target the Citadel path doesn't support; draw it instead."
+        if p.life <= top.cmc: return f'Casting {top.name} costs {top.cmc} life; you have {p.life}.'
+        if not E.castable(g, p, top, 'lib'): return f'Something on the battlefield stops you casting {top.name} right now.'
+        from commander_sim.play import human
+        return human.cast(g, p, top, 'citadel')
+    if top is not None:
+        what = f'play {top.name}' if top.land else f'cast {top.name} for {top.cmc} life'
+        out.append((f'{what} from the top of your library', play_top))
+
+    def boom(g, p, m):
+        why = _tapped(m, "Bolas's Citadel")
+        if why: return why
+        fod = [x for x in p.perms if not x.phased and x is not m]
+        if len(fod) + 1 < 10: return f'You need ten nonland permanents to sacrifice; you have {len(fod) + 1}.'
+        from commander_sim.play import choices
+        picked = [m]
+        while len(picked) < 10:
+            left = [x for x in fod if x not in picked]
+            k = _choose(g, p, 'choose', f"Bolas's Citadel: sacrifice which permanent? ({len(picked) + 1} of 10)",
+                        [legal.describe_target(g, p, x) for x in left], cancel=None)
+            picked.append(left[k])
+        m.tapped = True
+        for x in picked: E.die(g, x, 'sac')
+        for q in g.opps(p): E.lose_life(g, q, 10, p)
+        E.log(f"  {E.NAME(p)} sacrifices ten permanents to Bolas's Citadel: each opponent loses 10", g)
+        E.check_state(g); return None
+    out.append(('{T}, sacrifice ten nonland permanents: each opponent loses 10 life', boom))
+    return out
+
+
 ABILITIES = {
+    "Bolas's Citadel": _citadel,
     'Carrion Feeder': _outlet('put a +1/+1 counter on Carrion Feeder', _feeder),
     'Viscera Seer': _outlet('scry 1', lambda g, p, m, pw: _choices().scry(g, p, 1)),
     "Ashnod's Altar": _outlet('add {C}{C}', lambda g, p, m, pw: mana.pool_of(p).add('C', 2)),
@@ -458,7 +508,19 @@ def _baraddur(g, p, L):
     return [('{X}{X}{B}, {T}: amass Orcs X (only if a creature died this turn)', act)]
 
 
-LANDS = {'Strip Mine': _strip, 'Desolate Lighthouse': _lighthouse, 'Spectacle Summit': _summit, 'Barad-dûr': _baraddur}
+def _mistrise(g, p, L):
+    def act(g, p, L):
+        why = _tapped(L, 'Mistrise Village') or _cost(g, p, 0, 'U', 'Mistrise Village')
+        if why: return why
+        mana.pay_from_pool(g, p, 0, 'U'); L.tapped = True
+        p.mistrise_next = E.turn_stamp(g)
+        E.log(f"  {E.NAME(p)} activates Mistrise Village: the next spell this turn can't be countered", g)
+        return None
+    return [("{U}, {T}: the next spell you cast this turn can't be countered", act)]
+
+
+LANDS = {'Strip Mine': _strip, 'Desolate Lighthouse': _lighthouse, 'Spectacle Summit': _summit, 'Barad-dûr': _baraddur,
+         'Mistrise Village': _mistrise}
 
 
 def land_abilities(g, p, L):
@@ -1396,6 +1458,28 @@ HAND['Whipcorder'] = lambda g, p, c: [('cast it ({W}{W})', _cast_normally),
                                       ('cast it face down as a 2/2 creature for {3} (morph)', _morph_cast)]
 
 
+
+# ------------------------------------------------------------------ Necropotence (Zur's deck)
+def _necro(g, p, m):
+    if ais.blocked(g, p, 'Necropotence'): return 'Disruptor Flute names Necropotence: its ability can\'t be activated.'
+    most = min(p.life, len(p.library), 30)
+    if most < 1: return 'You have no life or no library to pay with.'
+    ns = list(range(1, most + 1))
+    k = _choose(g, p, 'choose', f'Necropotence: pay how much life? (you have {p.life}; the cards come to your hand at '
+                                f'your next end step)', [f'pay {n} life' for n in ns])
+    if k is None: return None
+    n = ns[k]
+    E.lose_life(g, p, n, p)
+    E.log(f'  {E.NAME(p)} pays {n} life to Necropotence', g)
+    if E.ability_window(g, p, m, f'exile the top {n} card(s) face down') and not g.over: ais.necro_exile(g, p, n)
+    E.check_state(g)
+    return None
+
+
+ABILITIES['Necropotence'] = lambda g, p, m: [('pay 1 life (any number of times): exile the top card of your library '
+                                              'face down; put it into your hand at the beginning of your next end step', _necro)]
+
+
 # ------------------------------------------------------------------ Y'shtola's deck (Esper Drain)
 def _ysh():
     return importlib.import_module('commander_sim.cards.impl.yshtola')
@@ -1454,3 +1538,10 @@ ABILITIES["Jester's Cap"] = lambda g, p, m: [
 CAST_TARGET['Take Up the Shield'] = ('Take Up the Shield: which creature gets a +1/+1 counter, lifelink and indestructible?',
                                      lambda g, p, m: not (m.owner is p and _zur().untargetable_by_you(g, m)))
 NEEDS['Take Up the Shield'] = lambda g, p, c: None if _creatures(g, p) else 'Take Up the Shield has no creature to target.'
+
+
+def _narset_minus2(g, p, m):
+    return lambda: importlib.import_module('commander_sim.cards.impl.common').narset_dig(g, p, m)
+
+
+ABILITIES['Narset, Parter of Veils'] = _walker([(-2, 'look at the top four; take a noncreature, nonland card', _narset_minus2)])

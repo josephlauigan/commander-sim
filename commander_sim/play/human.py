@@ -183,7 +183,7 @@ def cast_counterspell(g, q, c):
     why = legal.check_counter(g, q, c, it.card)
     if why: return why
     alt = legal.alternative_counter_cost(g, q, c)
-    gen, pips = E.counter_cost(c, it.card)
+    gen, pips = E.counter_cost(c, it.card, q)
     if mana.cost_problem(g, q, gen, pips) is None:            # pay from your pool
         mana.pay_from_pool(g, q, gen, pips)
         g.free_counter = True                                 # already paid
@@ -369,6 +369,8 @@ def _cast(g, p, c, zone):
     it. Choices not yet made by the player (X for now) are made automatically and reported"""
     ctl = controller_of(g, p)
     gen, pips = legal.base_cost(g, p, c)
+    cit = zone == 'citadel'                                  # Bolas's Citadel: life equal to mana value, no mana cost
+    if cit: zone, gen, pips = 'lib', 0, ''
     ctx = {}
     gymode = legal.gy_mode(g, p, c)[0] if zone == 'gy' else None
     if zone == 'gy':
@@ -380,7 +382,7 @@ def _cast(g, p, c, zone):
             k = choose(g, p, 'choose', f'{c.name}: cast it with Muldrotha as which type?', [names[t] for t in ts]) if len(ts) > 1 else 0
             if k is None: return None
             ctx['muld_type'] = ts[k]; zone = 'mgy'
-    if 'wipe' in c.tags and 'rem' in c.tags:                 # overload (Cyclonic Rift, Vandalblast)
+    if 'wipe' in c.tags and 'rem' in c.tags and not cit:     # overload (Cyclonic Rift, Vandalblast)
         og, op = ais.wipe_cost(p, c)
         over = f'overloaded ({mana.cost_text(og, op)}): every one you don\'t control'
         if legal.spell_targets(g, p, c):
@@ -395,7 +397,7 @@ def _cast(g, p, c, zone):
             E.log(f'  {E.NAME(p)} casts {c.name} overloaded', g)
             E.cast_card(g, p, c, zone, {})
             return None
-    if 'mastery' in c.tags:                                  # Mizzix's Mastery: one target, or overloaded
+    if 'mastery' in c.tags and not cit:                      # Mizzix's Mastery: one target, or overloaded
         from commander_sim.play import cards
         k = choose(g, p, 'choose', f'{c.name}: cast it how?',
                    [f'one target ({mana.cost_text(gen, pips)})',
@@ -456,7 +458,7 @@ def _cast(g, p, c, zone):
         fodder = cre[k]
     if c.dsl and not E.additional_cost(g, p, c, dry=True): return f"You can't pay {c.name}'s additional cost."
     life = 0
-    if legal.phyrexian(c):                                   # {B/P}: its colour, or 2 life (your choice)
+    if legal.phyrexian(c) and not cit:                       # {B/P}: its colour, or 2 life (your choice)
         ways = legal.phyrexian_ways(g, p, c, gen, pips)
         if not ways:
             why = mana.cost_problem(g, p, gen, pips)
@@ -475,6 +477,10 @@ def _cast(g, p, c, zone):
     if life:
         E.lose_life(g, p, life, p)
         E.log(f'  {E.NAME(p)} pays {life} life for {c.name}\'s Phyrexian mana', g)
+    if cit:
+        if not p.library or p.library[-1] is not c: return 'The top card of your library has changed.'
+        p.library.pop(); E.lose_life(g, p, c.cmc, p); p.stats['citadel_casts'] += 1
+        E.log(f'  {E.NAME(p)} casts {c.name} from the top for {c.cmc} life (Citadel)', g)
     if 'crackle' in c.tags:                                  # {X}{X}{X}{R}{R}: X from what's left in the pool
         top = mana.pool_of(p).total() // 3
         k = choose(g, p, 'choose', f'{c.name}: choose X (it costs {{X}}{{X}}{{X}} more; 5X damage to each of up to X targets)',

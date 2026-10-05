@@ -917,5 +917,28 @@ class Phyrexian(unittest.TestCase):
         lands(self.s, 'Swamp', 1)
         self.assertEqual(E.cost_of(self.s, self.c), (4, 'BB'))
 
+
+class SauronMarchesa(unittest.TestCase):
+    """Marchesa, the Black Rose in Sauron's deck (10-03): dethrone for the Army, with Mauhúr's extra counter, and the
+    return of a creature with a counter"""
+    def test_the_army_gets_dethrone_and_mauhurs_extra_counter(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, ph = g.players
+        perm(g, s, 'Marchesa, the Black Rose'); perm(g, s, 'Mauhúr, Uruk-hai Captain')
+        E.amass(g, s, 2)
+        army = ais.army_of(s); army.sick = False
+        before = army.plus
+        v.life = 45                                                   # the life leader
+        ais.attack_triggers(g, s, [army], v)
+        self.assertEqual(army.plus, before + 2)                       # dethrone 1, Mauhúr 1
+
+    def test_a_creature_with_a_counter_returns(self):
+        g = table('sauron', 'veyran'); s, v = g.players
+        perm(g, s, 'Marchesa, the Black Rose')
+        b = perm(g, s, 'Orcish Bowmasters'); b.plus = 1
+        E.die(g, b, 'destroy')
+        ais.end_step(g, s)
+        self.assertTrue(any(m.cd is b.cd for m in s.perms))
+
+
 if __name__ == '__main__':
     unittest.main()

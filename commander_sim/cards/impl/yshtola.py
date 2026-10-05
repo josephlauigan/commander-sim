@@ -700,6 +700,8 @@ def yshtola_prio(g, p, c):
     if c is p.cmd: return 90 if p.turns >= 2 else 60
     b = trigger_bonus(g, p, c)
     if 'rock' in t: return 82 if p.turns <= 5 else 30 + b
+    if 'citadel' in t: return (60 + b) if p.life >= 25 else 20          # Bolas's Citadel: with life to spend
+    if n == 'The One Ring': return 66 + b                             # draw engine, a turn of protection, and it triggers her
     if 'necro' in t: return 74 if p.life >= 20 else 20
     if 'remora' in t: return 66 if p.turns <= 4 else 8
     if n == 'Esper Sentinel': return 62 if p.turns <= 4 else 30
@@ -741,7 +743,7 @@ def yshtola_prio(g, p, c):
         return 45 + min(30, int(6 * max((pval(g, m) for m in tg), default=0))) if tg else 25
     if n == 'Restoration Angel': return 25                            # held for flash
     if n == 'The Eternal Wanderer': return 58 + b
-    if n == 'Prayer of Binding':
+    if n in ('Prayer of Binding', 'Static Net', 'Memory Trap'):      # exile an opponent's best nonland permanent
         best = max((pval(g, m) for q in g.opps(p) for m in q.perms if not m.phased and not untargetable(g, m)), default=0)
         return min(75, int(40 + 6 * best)) + b if best >= 3 else 0
     if n == "Jester's Cap": return 34 + b
@@ -806,3 +808,4 @@ def yshtola_wipe_response(g, q, kind):
 
 CI.yshtola_protect = yshtola_protect
 CI.yshtola_wipe_response = yshtola_wipe_response
+note('Statute of Denial', 'Full', 'counter target spell; if you control a blue creature, draw a card, then discard a card')
