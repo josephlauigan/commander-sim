@@ -1242,6 +1242,8 @@ def pact_affordable(g, p, cost):
 
 
 def on_cast(g, p, c):
+    if getattr(p, 'mistrise_next', None) == turn_stamp(g):     # Mistrise Village: this spell can't be countered
+        p.mistrise_next = None; g.unc_cast = (id(c), turn_stamp(g))
     if 'pactpay' in c.tags:                                # Slaughter Pact: pay at your next upkeep or lose the game
         p.pact_debts = getattr(p, 'pact_debts', []) + [parse_cost(c.tags['pactpay'])]
     if getattr(p, 'emblems', None): importlib.import_module('commander_sim.cards.impl.rules').emblem_cast(g, p, c)
@@ -1829,16 +1831,20 @@ def take_priority(g, q, item):
 def counter_window(g, p, c, imp, aff):
     """a spell cast by its own card code (not cast_card): it goes on the stack with a round of priority. True if it
     resolves (the caller carries out its effect), False if it was countered"""
-    if 'unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', p, c)): return True
+    if 'unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', p, c)) or mistrised(g, c): return True
     item = StackItem(p, c, {}, 'hand', imp, aff, generic=False)
     ok = stack_window(g, p, item)
     if not ok: global LAST_COUNTER; LAST_COUNTER = item.countered_by
     return ok
 
 
+def mistrised(g, c):
+    return getattr(g, 'unc_cast', None) == (id(c), turn_stamp(g))
+
+
 def counterable(g, item):
     c = item.card
-    return not ('unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', item.controller, c)))
+    return not ('unc' in c.tags or (g.hooks and CI.total(g, 'uncounterable', item.controller, c)) or mistrised(g, c))
 
 
 def ai_respond(g, q, item):

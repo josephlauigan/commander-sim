@@ -108,6 +108,42 @@ class Lands(unittest.TestCase):
         self.assertEqual((len(v.hand), len(v.gy)), (n, 1)); self.assertTrue(v.lands[0].tapped)
 
 
+class Citadel(unittest.TestCase):
+    def test_cast_the_top_card_for_life(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        cit = perm(g, s, "Bolas's Citadel")
+        top = E.DB['Mind Stone']; s.library.append(top); life = s.life
+        use(g, s, cit, by_text('Mind Stone'))
+        self.assertTrue(any(m.name == 'Mind Stone' for m in s.perms))
+        self.assertEqual(s.life, life - 2)
+
+    def test_play_the_top_land(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        cit = perm(g, s, "Bolas's Citadel")
+        s.library.append(E.DB['Command Tower']); n = len(s.lands)
+        use(g, s, cit, by_text('play Command Tower'))
+        self.assertEqual(len(s.lands), n + 1)
+
+    def test_sacrifice_ten(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        cit = perm(g, s, "Bolas's Citadel")
+        for _ in range(9): E.make_tokens(g, s, 1, 1, sick=False)
+        use(g, s, cit, by_text('sacrifice ten'), *[0] * 9)
+        self.assertEqual(v.life, 30)
+        self.assertNotIn(cit, s.perms)
+
+
+class Mistrise(unittest.TestCase):
+    def test_next_spell_cant_be_countered(self):
+        g = table('veyran', 'seph'); v = g.players[0]
+        lands(v, 'Mistrise Village'); mana.pool_of(v).add('U', 1)
+        seat(g, v, [{'do': 'use', 'land': 0}, 0, {'do': 'pass'}])
+        human.human_main(g, v, False)
+        c = E.DB['Think Twice']; E.on_cast(g, v, c)
+        self.assertTrue(E.mistrised(g, c))
+        self.assertFalse(E.mistrised(g, E.DB['Counterspell']))      # only the next spell
+
+
 class Responding(unittest.TestCase):
     def test_no_sorcery_speed_play_in_response(self):
         g = table('sauron', 'veyran'); s = g.players[0]

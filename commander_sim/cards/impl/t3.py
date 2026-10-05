@@ -72,7 +72,10 @@ note('Academy Manufactor', 'Approximate', 'hooked token makers create one of eac
 
 @on('Chatterfang, Squirrel General', 'token_created')
 def _chatter_art(g, src, p, kinds, n):
-    if p is src.owner: make_tokens(g, p, n, 1, color='G', types=('squirrel',))
+    if p is not src.owner or getattr(g, 'chatter_depth', 0) >= 10: return     # a token loop (Squirrels -> Treasures): stop
+    g.chatter_depth = getattr(g, 'chatter_depth', 0) + 1
+    try: make_tokens(g, p, n, 1, color='G', types=('squirrel',))
+    finally: g.chatter_depth -= 1
 card('Chatterfang, Squirrel General', 'leg pow=3 warrior', dsl=[])
 note('Chatterfang, Squirrel General', 'Approximate', 'extra Squirrels for artifact tokens made by hooks; creature '
      'token copies and its activated ability not modeled')

@@ -566,6 +566,7 @@ def seph_prio(g, p, c):
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
     if 'tithe' in t: return 72
     if 'necro' in t: return 62 if p.life >= 25 else 0          # Necropotence
+    if 'citadel' in t: return 60 if p.life >= 25 else 20          # Bolas's Citadel: with life to spend
     if t.get('fill') == 'stitcher': return 75
     if t.get('fill') == 'tortured': return 65
     if t.get('fill') == 'wayfinder': return 45

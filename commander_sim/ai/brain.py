@@ -241,6 +241,7 @@ def veyran_sequence(g, p, c):
 # ------------------------------------------------------------------ generic executors
 # cards whose casting needs deck-specific choices (targets, modes, X); never cast them generically
 SPECIAL = ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle', 'tokx_special', 'xdrain')
+CAST_FILL = ('stitcher', 'tortured', 'wayfinder')     # graveyard fillers that are plain permanents: cast them normally
 
 
 SPARE_VALUE = 3.0      # a creature worth more than this (pval) isn't sacrificed to pay for a spell
@@ -256,7 +257,8 @@ def spare_creature(g, p):
 
 
 def do_cast(g, p, c, zone=None):
-    if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE): return False
+    if any(k in c.tags for k in SPECIAL) and not c.dsl and not (c.creature and p.key not in STYLE) \
+            and c.tags.get('fill') not in CAST_FILL: return False
     if c.dsl and not additional_cost(g, p, c, dry=True): return False
     if zone in (None, 'hand') and c not in p.hand and not (c is p.cmd and p.cmd_in_zone): return False
     if zone == 'yawg' and c not in p.gy: return False
