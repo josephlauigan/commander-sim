@@ -561,7 +561,7 @@ def seph_prio(g, p, c):
     lp = importlib.import_module('commander_sim.cards.impl.mine').loop_prio(g, p, c)
     if lp is not None: return lp                             # a piece of one of the loops
     if 'shards' in t: return 68
-    if 'onering' in t: return 62
+    if c.name == 'The One Ring': return 62
     if c is p.cmd: return 0
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
     if 'tithe' in t: return 72
@@ -828,7 +828,7 @@ def veyran_prio(g, p, c):
     if 'aether' in t: return 66
     if 'dragoncaller' in t: return 60
     if 'spelldraw' in t or 'mystic' in t: return 58
-    if 'onering' in t: return 58
+    if c.name == 'The One Ring': return 58
     if 'rhystic' in t: return 62
     if 'sphinx' in t: return 60
     if 'narset' in t: return 52
@@ -1055,7 +1055,7 @@ def sauron_prio(g, p, c):
     if t.get('prot') == 'boots':                             # Lightning Greaves: for Sauron himself (never the Army)
         return 50 if has(p, 'sauron') or p.cmd_in_zone and total_mana(g, p) >= 7 else 25
     if t.get('tut'): return 60
-    if 'onering' in t: return 60
+    if c.name == 'The One Ring': return 60
     gc = gc_prio_sauron(g, p, c)
     if gc is not None: return gc
     if 'draw' in t and (c.instant or c.sorcery): return 40
