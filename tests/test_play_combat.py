@@ -36,6 +36,33 @@ class Attacking(unittest.TestCase):
         self.assertEqual((v.life, x.life), (40, 34))
         self.assertEqual([r.kind for r in ctl.asked], ['attack', 'target'])
 
+    def test_split_attackers_between_players(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        t = perm(g, s, 'Grave Titan'); t.sick = False
+        b = perm(g, s, 'Orcish Bowmasters'); b.sick = False
+        c = combat.attack_candidates(g, s)
+        ctl = seat(g, s, [[c.index(t), c.index(b)], 2, 0, 1])   # split: Titan at Veyran, Bowmasters at Sephiroth
+        lv, lx = v.life, x.life                                  # (Bowmasters' enter damage already dealt)
+        ais.combat(g, s)
+        self.assertEqual((v.life, x.life), (lv - 6, lx - 1))
+        self.assertTrue(t.tapped and b.tapped)
+        self.assertIn(combat.SPLIT, ctl.asked[1].choices)
+
+    def test_split_to_one_player_is_one_attack(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        t = perm(g, s, 'Grave Titan'); t.sick = False
+        b = perm(g, s, 'Orcish Bowmasters'); b.sick = False
+        c = combat.attack_candidates(g, s)
+        seat(g, s, [[c.index(t), c.index(b)], 2, 1, 1])
+        self.assertEqual(combat.human_attack(g, s), [(x, [t, b])])
+
+    def test_a_single_attacker_isnt_offered_a_split(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        t = perm(g, s, 'Grave Titan'); t.sick = False
+        ctl = seat(g, s, [[0], 0])
+        combat.human_attack(g, s)
+        self.assertNotIn(combat.SPLIT, ctl.asked[1].choices)
+
     def test_no_attack(self):
         g = table('sauron', 'veyran'); s, v = g.players
         t = perm(g, s, 'Grave Titan'); t.sick = False
@@ -96,7 +123,7 @@ class ForTheBrowser(unittest.TestCase):
         t = perm(g, s, 'Grave Titan'); t.sick = False
         out, reqs = self.run_with(g, s, lambda: combat.human_attack(g, s), [[0]])
         self.assertEqual(reqs[0].data['refs'], [{'seat': 'sauron', 'perm': s.perms.index(t)}])
-        self.assertEqual(out[1], [t])
+        self.assertEqual(out, [(g.players[1], [t])])
 
     def test_blocks_show_the_attackers(self):
         g = table('veyran', 'sauron'); v, s = g.players

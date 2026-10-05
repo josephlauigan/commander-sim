@@ -2051,7 +2051,8 @@ def combat(g, p):
         if human:                                     # practice mode: the person declares attackers
             res = importlib.import_module('commander_sim.play.combat').human_attack(g, p, ncomb)
             if res is None: break
-            d, atk = res
+            groups = [(q, list(xs)) for q, xs in res]            # the person may attack several players
+            d = max(groups, key=lambda x: len(x[1]))[0]          # the main defending player (attack triggers name it)
         else:
             atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
                    and (not m.sick or p.haste_all or has_haste(g, m))
@@ -2071,14 +2072,26 @@ def combat(g, p):
             else:
                 if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
                 if p.key not in MAIN: atk = importlib.import_module('commander_sim.ai.pool_ai').attack_filter(g, p, atk, d)
-        cand0 = list(atk)
-        if g.hooks: atk = attack_limits(g, p, d, atk)
-        if g.hooks:
-            from commander_sim.cards.impl import rules2 as impl_rules2
-            if not attack_restrictions(g, p, d)[0]: atk = impl_rules2.forced_attackers(g, p, atk, cand0)
-            atk = impl_rules2.annex_life(g, p, d, atk)
+            groups = [(d, atk)]
+        declared = [m for _, xs in groups for m in xs]
+        kept = []
+        for gd, xs in groups:                                 # each defending player's taxes and restrictions
+            cand0 = [m for m in declared if m in xs or not any(m in ys for q, ys in groups if q is not gd)]
+            if g.hooks: xs = attack_limits(g, p, gd, xs)
+            if g.hooks:
+                from commander_sim.cards.impl import rules2 as impl_rules2
+                if not attack_restrictions(g, p, gd)[0] and gd is d:
+                    xs = impl_rules2.forced_attackers(g, p, xs, cand0)
+                xs = impl_rules2.annex_life(g, p, gd, xs)
+            if xs: kept.append((gd, xs))
+        groups = kept
+        if not any(gd is d for gd, _ in groups) and groups: d = groups[0][0]
+        main = next((xs for gd, xs in groups if gd is d), None)
+        atk = [m for _, xs in groups for m in xs]
         if g.hooks and atk:                                   # beginning of combat (Helm of the Host)
-            for r in E.CI.fire(g, 'combat_start', p): atk += [m for m in r if m not in atk]
+            for r in E.CI.fire(g, 'combat_start', p):
+                new = [m for m in r if m not in atk]
+                atk += new; main += new
         if not atk: break
         unbl = set()
         a = army_of(p)
@@ -2093,17 +2106,21 @@ def combat(g, p):
                 else: ps[0].tapped = False
         for m in atk:
             if not (m.vig or kw(m, 'vigilance')): m.tapped = True
-        atk += attack_triggers(g, p, atk, d)
+        new = attack_triggers(g, p, atk, d)                # once for the whole attack, naming the main defender
+        atk += new; main += new
         if E.CI is not None: importlib.import_module('commander_sim.cards.impl.mine').ring_attack(g, p, atk)      # Ring level 2: loot
         if E.CI is not None:
             for c, fn in E.CI.hand_cards(p, 'hand_attack'): fn(g, c, p, atk, d)
-        if g.over or not d.alive: continue
+        if g.over or not any(gd.alive for gd, _ in groups): continue
         g.in_combat = set(atk)                            # attacking creatures (Divine Verdict's targets)
+        conn = set()
         try:
-            if E.CI is not None and any('verdict' in c.tags for c in d.hand):
-                E.CI.verdict_response(g, d, p, atk)
-                atk = [m for m in atk if m in p.perms]
-            conn = resolve_combat(g, p, atk, d, unbl)
+            for gd, xs in groups:                         # each defending player blocks, then takes damage, in turn
+                if g.over or not p.alive or not gd.alive: continue
+                if E.CI is not None and any('verdict' in c.tags for c in gd.hand):
+                    E.CI.verdict_response(g, gd, p, xs)
+                    xs = [m for m in xs if m in p.perms]
+                conn |= resolve_combat(g, p, xs, gd, unbl)
         finally:
             g.in_combat = ()
         if g.over or not p.alive: return
