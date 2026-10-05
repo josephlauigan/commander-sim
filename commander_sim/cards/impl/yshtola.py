@@ -700,6 +700,7 @@ def yshtola_prio(g, p, c):
     if c is p.cmd: return 90 if p.turns >= 2 else 60
     b = trigger_bonus(g, p, c)
     if 'rock' in t: return 82 if p.turns <= 5 else 30 + b
+    if 'citadel' in t: return (60 + b) if p.life >= 25 else 20          # Bolas's Citadel: with life to spend
     if n == 'The One Ring': return 66 + b                             # draw engine, a turn of protection, and it triggers her
     if 'necro' in t: return 74 if p.life >= 20 else 20
     if 'remora' in t: return 66 if p.turns <= 4 else 8
