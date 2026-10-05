@@ -466,7 +466,7 @@ def markdown(rows):
 
 
 def audit_mine(verbose=True):
-    """your decks (decklists/mine/): every card that is not Full, as your decks play it"""
+    """your decks (decklists/JD/, Avery/, Other/): every card that is not Full, as your decks play it"""
     from commander_sim import pools
     pools.register()
     from commander_sim.decks import DECKS

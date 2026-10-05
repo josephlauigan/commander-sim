@@ -36,7 +36,7 @@ section 3 places them elsewhere. Commands run from the repository root.
 The question the simulator answers: **how often does one of my Commander decks win a four-player game against
 opponents of a given power level?**
 
-- **Your decks** are the seven lists in `decklists/mine/`: Sephiroth (Atraxa reanimator, key `seph`), Veyran
+- **Your decks** are the seven lists in `decklists/JD/`, `decklists/Avery/` and `decklists/Other/` (`deck_files.py`): Sephiroth (Atraxa reanimator, key `seph`), Veyran
   (Izzet spellslinger, `veyran`), Sauron (Grixis amass, `sauron`), Marchesa (Grixis recursion, `marchesa`), Zur
   (Esper Auras, `zur`), Galadriel (Bant Rebels, `galadriel`) and Y'shtola (Esper Drain, `yshtola`).
 - **The opponents** are 25 outside decks in `decklists/pool/`, five in each of five tiers that follow the official
@@ -130,7 +130,7 @@ deck files, the Scryfall cache and the audit notes. `python3 -m commander_sim` r
 | `compare.py` | Command-line entry point. Parses arguments, sets the AI mode, runs chunks of seeds on a process pool, draws the progress bar, holds the metric definitions and report printers. |
 | `poolmode.py` | Everything measured against the pools: one deck vs one tier, paired A/B, the deck × tier matrix, `--analyze`, `--trace`, and the calibration checks. |
 | `pools.py` | Loads the 25 pool deck files, validates them (size, singleton, colour identity, bans, Game Changers per tier), registers them for play, and draws seats for a game. |
-| `decks.py` | Loads your seven deck files from `decklists/mine/` into `DECKS`. |
+| `deck_files.py`, `decks.py` | Where each of your seven deck files lives (one folder per owner: JD, Avery, Other), and loading them into `DECKS`. |
 | `update_deck.py` | Replaces a deck's list with a pasted one: validates it, rewrites the file's list sections, records the deck-guard fixture, and reports what changed and how the new cards are modeled. |
 | `tools/searchtest.py`, `tools/swaptest.py`, `tools/linecov.py` | Paired tests for pool decks (with and without look-ahead, and with list swaps), and the test suite's line coverage. |
 | `pool_audit.py` | How faithfully each card is modeled, per deck. |

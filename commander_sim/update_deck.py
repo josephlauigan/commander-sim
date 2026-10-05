@@ -76,14 +76,14 @@ def _read(path):
     with open(path, encoding='utf-8') as fh: return fh.read()
 
 
-MINE = {'seph': 'sephiroth-phyrexian-reanimator.md', 'veyran': 'veyran-izzet-spellslinger.md',
-        'sauron': 'sauron-grixis-amass.md', 'marchesa': 'marchesa-grixis-recursion.md', 'zur': 'zur-esper-auras.md',
-        'galadriel': 'galadriel-bant-rebels.md', 'yshtola': 'yshtola-esper-drain.md'}
+from commander_sim.deck_files import FILES, deck_path as _deck_path, is_deck_file
+
+MINE = {k: f for k, (_, f) in FILES.items()}          # your deck keys -> file names (decklists/<owner>/)
 
 
 def deck_path(which):
     if os.path.exists(which): return os.path.abspath(which)
-    if which in MINE: return os.path.join(ROOT, 'decklists', 'mine', MINE[which])
+    if which in MINE: return _deck_path(which)
     from commander_sim import pools
     d = pools.by_key().get(which)
     if d is None: sys.exit(f'No deck {which!r}: use seph, veyran, sauron, marchesa, zur, galadriel, yshtola, a pool deck key, or a path to a deck file')
@@ -271,7 +271,7 @@ def report(path, text, out, inn, dry):
     pools.register()
     sources.ensure_cards(inn, verbose=False)
     mine = os.path.basename(path) in MINE.values()             # one of your decks (or a copy of one)
-    real = os.path.dirname(path) == os.path.join(ROOT, 'decklists', 'mine')
+    real = is_deck_file(path)
     if inn:
         print('\nHow the simulator models the new cards:')
         for n in inn:
@@ -306,9 +306,9 @@ def report(path, text, out, inn, dry):
 
 def _record_fixture():
     import json
-    from commander_sim.decks import load, P
+    from commander_sim.decks import load, deck_path
     fix = os.path.join(ROOT, 'tests', 'fixtures', 'my_decks_parsed.json')
-    with open(fix, 'w') as fh: json.dump({k: sorted(load(P + f)) for k, f in MINE.items()}, fh, indent=0)
+    with open(fix, 'w') as fh: json.dump({k: sorted(load(deck_path(k))) for k in MINE}, fh, indent=0)
 
 
 if __name__ == '__main__':
