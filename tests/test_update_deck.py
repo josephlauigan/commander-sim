@@ -4,7 +4,6 @@ from commander_sim import ROOT, update_deck
 from commander_sim.decks import load
 from commander_sim.update_deck import _read
 
-MINE = os.path.join(ROOT, 'decklists', 'mine')
 FIX = os.path.join(ROOT, 'tests', 'fixtures', 'my_decks_parsed.json')
 
 
@@ -68,7 +67,7 @@ class Update(unittest.TestCase):
         return out.getvalue(), 0
 
     def test_the_same_list_changes_nothing(self):
-        path = self.copy('mine/sauron-grixis-amass.md')
+        path = self.copy('JD/sauron-grixis-amass.md')
         before = _read(path)
         out, code = self.run_it(path, block(path))
         self.assertEqual(code, 0); self.assertIn('Nothing to change', out)
@@ -85,7 +84,7 @@ class Update(unittest.TestCase):
 
     def test_a_swap(self):
         import re
-        path = self.copy('mine/sauron-grixis-amass.md')
+        path = self.copy('JD/sauron-grixis-amass.md')
         before = _read(path)
         count = lambda text, label: int(re.search(r'\*\*' + label + r' \((\d+)\)\.\*\*', text).group(1))
         out_card, in_card = self.swap_for(path)
@@ -101,7 +100,7 @@ class Update(unittest.TestCase):
         self.assertIn(f'Out: {out_card}. In: {in_card}. A test.', text)
 
     def test_a_bad_list_is_refused_and_nothing_is_written(self):
-        path = self.copy('mine/sauron-grixis-amass.md')
+        path = self.copy('JD/sauron-grixis-amass.md')
         before = _read(path)
         lines = block(path).split('\n')
         singles = [l for l in lines if l.startswith('1 ') and 'Sauron, the Dark Lord' not in l]
@@ -113,7 +112,7 @@ class Update(unittest.TestCase):
         self.assertEqual(_read(path), before)
 
     def test_ninety_nine_cards_are_refused(self):
-        path = self.copy('mine/sauron-grixis-amass.md')
+        path = self.copy('JD/sauron-grixis-amass.md')
         out_card, _ = self.swap_for(path)
         out, code = self.run_it(path, block(path).replace(f'1 {out_card}\n', ''))
         self.assertEqual(code, 1); self.assertIn('99 cards', out)
@@ -132,7 +131,7 @@ class Update(unittest.TestCase):
         self.assertIn('- **Lands:** 37 (22 nonbasic + 15 basic)', _read(path))
 
     def test_dry_run_writes_nothing(self):
-        path = self.copy('mine/sauron-grixis-amass.md')
+        path = self.copy('JD/sauron-grixis-amass.md')
         before = _read(path)
         out_card, in_card = self.swap_for(path)
         out, code = self.run_it(path, block(path).replace(f'1 {out_card}\n', f'1 {in_card}\n'), '--dry-run')

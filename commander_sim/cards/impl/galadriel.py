@@ -1,4 +1,4 @@
-"""Galadriel, Light of Valinor (your Bant Rebels deck, key `galadriel`, decklists/mine/galadriel-bant-rebels.md).
+"""Galadriel, Light of Valinor (your Bant Rebels deck, key `galadriel`, decklists/Avery/galadriel-bant-rebels.md).
 
 - Galadriel's Alliance trigger: each other creature entering picks a mode not yet chosen this turn ({G}{G}{G}, a
   +1/+1 counter on each creature you control, or scry 2 and draw).

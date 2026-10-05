@@ -16,7 +16,7 @@ commander_sim/            the simulator (a Python package)
   compare.py              command line: python3 -m commander_sim ...
   poolmode.py             runs against the pools: one tier, A/B, matrix, calibration, --analyze
   pools.py                the pool decks: loading, validation, seating
-  decks.py                your decks (decklists/mine/)
+  decks.py                your decks (decklists/JD/, Avery/, Other/; deck_files.py says which is where)
   update_deck.py          replace a deck's list with a pasted one
   pool_audit.py           how faithfully each card is modeled
   engine.py               game state and rules
@@ -37,7 +37,9 @@ commander_sim/            the simulator (a Python package)
   play/                   practice mode: play a deck by hand (session, rules check, server, the browser page)
   tools/                  searchtest.py, swaptest.py, linecov.py
 data/                     scryfall_cache.json, cards_dsl.example.json; images/ and saves/ (practice mode, not in git)
-decklists/mine/           your decks
+decklists/JD/             JD's decks: Sauron, Sephiroth, Veyran, Y'shtola
+decklists/Avery/          Avery's deck: Galadriel
+decklists/Other/          Marchesa, Zur
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
 documents/                architecture.md, card-audit.md, practice-mode.md
 tools/                    knight_dragon.py (draws practice mode's loading animation)
@@ -198,8 +200,11 @@ The pool results and calibration are in `decklists/pool/pool-results.md`.
 
 ## Your decks
 
-The baseline is the list in each deck's `.md` file in `decklists/mine/` (the `## Import list` block). Point
-`SIM_DECKS` at another folder to use lists kept elsewhere.
+The baseline is the list in each deck's `.md` file (the `## Import list` block), in its owner's folder:
+`decklists/JD/` (Sauron, Sephiroth, Veyran, Y'shtola), `decklists/Avery/` (Galadriel) and `decklists/Other/`
+(Marchesa, Zur). `commander_sim/deck_files.py` maps each deck key to its folder and file; to add a deck or move one
+between folders, change it there. Point `SIM_DECKS` at another folder (flat, or with the same owner folders) to use
+lists kept elsewhere.
 
 To change a list, give the updater the whole new list, as copied from a deck site or typed one card per line:
 

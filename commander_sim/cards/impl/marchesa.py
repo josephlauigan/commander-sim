@@ -1,4 +1,4 @@
-"""Card rules for Marchesa, the Black Rose (decklists/mine/marchesa-grixis-recursion.md): the commander's recursion
+"""Card rules for Marchesa, the Black Rose (decklists/Other/marchesa-grixis-recursion.md): the commander's recursion
 engine, and the cards of that deck that need more than their tags. Hooks here are live in every game (pool rules).
 """
 from commander_sim.engine import *

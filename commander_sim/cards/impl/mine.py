@@ -1,4 +1,4 @@
-"""Card rules for cards in the main decks (decklists/mine/) that need more than their hand tags: equipment, lands with
+"""Card rules for cards in your decks (decklists/JD/, Avery/, Other/) that need more than their hand tags: equipment, lands with
 abilities, and cards whose full text the tag model left out. Hooks here are live in every game (pool rules).
 """
 from commander_sim.engine import *

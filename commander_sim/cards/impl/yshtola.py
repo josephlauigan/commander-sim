@@ -1,4 +1,4 @@
-"""Y'shtola, Night's Blessed (your Esper Drain deck, key `yshtola`, decklists/mine/yshtola-esper-drain.md).
+"""Y'shtola, Night's Blessed (your Esper Drain deck, key `yshtola`, decklists/JD/yshtola-esper-drain.md).
 
 - Y'shtola: whenever you cast a noncreature spell with mana value 3 or greater (X counts), she deals 2 damage to each
   opponent and you gain 2 life; at the beginning of each end step, if a player lost 4 or more life this turn, you draw.

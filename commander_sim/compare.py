@@ -4,7 +4,7 @@ Examples
   python3 -m commander_sim --deck seph --pool t3 --games 1500
   python3 -m commander_sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"
   python3 -m commander_sim --all-decks --pool all           --profile loose
-Baseline = the deck list in decklists/mine/. Same seeds are used for baseline and variant, so the comparison is paired.
+Baseline = the deck list in decklists/<owner>/ (deck_files.py). Same seeds are used for baseline and variant, so the comparison is paired.
 """
 import argparse, json, math, os, sys, time
 if '--dsl-all' in sys.argv: os.environ['SIM_DSL_ALL'] = '1'      # must be set before the decks load

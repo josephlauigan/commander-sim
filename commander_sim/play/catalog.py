@@ -1,23 +1,21 @@
 """What the setup screen shows: your four decks (commander, bracket, Game Changers, how they do in the simulations) and
 the five tiers (their decks, and how the chosen deck does against each). Read from the repository's own files:
-decklists/mine/*.md, decklists/pool/, the card cache's Game Changer flags, and the look-ahead results table in
+decklists/JD/, Avery/ and Other/, decklists/pool/, the card cache's Game Changer flags, and the look-ahead results table in
 decklists/pool/pool-results.md (section 0d)."""
 import os
 import re
 
 from commander_sim import ROOT, ais, pools
-from commander_sim.decks import DECKS, P as MINE_DIR
+from commander_sim.decks import DECKS, FILES as DECK_FILES, deck_path
 
 RESULTS = os.path.join(ROOT, 'decklists', 'pool', 'pool-results.md')
-FILES = {'seph': 'sephiroth-phyrexian-reanimator.md', 'veyran': 'veyran-izzet-spellslinger.md',
-         'sauron': 'sauron-grixis-amass.md', 'marchesa': 'marchesa-grixis-recursion.md', 'zur': 'zur-esper-auras.md',
-         'galadriel': 'galadriel-bant-rebels.md', 'yshtola': 'yshtola-esper-drain.md'}
+FILES = {k: f for k, (_, f) in DECK_FILES.items()}
 ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'marchesa': 'marchesa', 'zur': 'zur', 'galadriel': 'galadriel', "y'shtola": 'yshtola', 'yshtola': 'yshtola'}
 
 
 def display_name(key):
     """the commander as the deck file names it (Sephiroth's deck plays Atraxa, Grand Unifier as Sephiroth, the Savior)"""
-    path = os.path.join(MINE_DIR, FILES[key])
+    path = deck_path(key)
     if os.path.exists(path):
         with open(path, encoding='utf-8') as f: txt = f.read()
         m = re.search(r'^\*\*Commander \(1\)\.\*\*\s*(.+?)\s*(?:\(.*\))?\s*$', txt, re.M)
@@ -48,7 +46,7 @@ def game_changers(cards):
 
 def bracket(key, gcs):
     """the bracket the deck file states, else 4 above three Game Changers and 3 otherwise"""
-    path = os.path.join(MINE_DIR, FILES[key])
+    path = deck_path(key)
     if os.path.exists(path):
         with open(path, encoding='utf-8') as f: txt = f.read()
         m = re.search(r'^\**Bracket (\d)', txt, re.M)
