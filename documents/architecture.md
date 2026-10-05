@@ -415,6 +415,12 @@ gain from Swords to Plowshares and the land from Path to Exile.
    the filtered attackers, everyone, or nobody (`search.choose_attack`). Otherwise the heuristic picks the defender
    (`brain.choose_defender`: a lethal target if there is one, else the biggest threat with some randomness) and
    removes attackers worth keeping home as blockers (`brain.filter_attackers`, `pool_ai.attack_filter`).
+   **Splitting** (`split_attack`): the attackers may then go at different players. An attacker moves when it
+   finishes off a player who can't block it, when the chosen defender has a blocker that would eat it (as many
+   attackers as there are such blockers), or when an outside deck held it back from the defender but it is safe
+   elsewhere. The look-ahead's "everyone" plan stays at one player; its "filtered" plan includes the splits. Each
+   defending player then gets restrictions, blocks and damage in turn (in the rules they happen at once); attack
+   triggers fire once for the whole attack. A person in practice mode can split attackers too.
 3. **Restrictions.** Attack taxes and caps (Ghostly Prison, Propaganda, Crawlspace, Silent Arbiter), forced
    attacks, and beginning-of-combat triggers.
 4. **Attack triggers.** Hooks, ability-language `attack` triggers, battle cry, mentor, exalted, ninjutsu and the

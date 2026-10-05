@@ -1,8 +1,9 @@
 """Combat for the human seat: declaring attackers (and which player they attack) and declaring blockers.
 
 The engine still resolves combat (damage, first strike, trample, triggers); only the declarations are the person's.
-Limitations for now: all attackers in one combat attack the same player, and planeswalkers can't be attacked
-directly; each attacker is blocked by at most one creature (menace needs two, and only the first deals damage).
+Your attackers may attack different players: each player's blocks and damage are worked out in turn (in reality
+they happen at the same time). Limitations for now: planeswalkers can't be attacked directly; each attacker is
+blocked by at most one creature (menace needs two, and only the first deals damage).
 """
 from commander_sim import engine as E, ais
 from commander_sim.play import legal
@@ -24,8 +25,12 @@ def attack_candidates(g, p):
     return [m for m in p.perms if can_attack(g, p, m)]
 
 
+SPLIT = 'split them: choose a player for each creature'
+
+
 def human_attack(g, p, ncomb=1):
-    """ask which creatures attack and whom: (defending player, attackers), or None for no attack"""
+    """ask which creatures attack and whom: [(defending player, attackers)], one entry per player attacked (in turn
+    order), or None for no attack"""
     cands = attack_candidates(g, p)
     opps = [q for q in g.opps(p) if q.alive]
     if not cands or not opps: return None
@@ -44,13 +49,19 @@ def human_attack(g, p, ncomb=1):
         if not isinstance(ans, (list, tuple)) or not all(isinstance(i, int) and 0 <= i < len(cands) for i in ans):
             ctl.tell('invalid', 'Pick attackers by their numbers, or none.'); continue
         atk = [cands[i] for i in dict.fromkeys(ans)]
-        if len(opps) == 1: d = opps[0]
-        else:
-            k = choose(g, p, 'target', f'Attack which player with {len(atk)} creature(s)?',
-                       [legal.describe_target(g, p, q) for q in opps])
-            if k is None: continue                             # changed their mind: declare again
-            d = opps[k]
-        return d, atk
+        if len(opps) == 1: return [(opps[0], atk)]
+        who = [legal.describe_target(g, p, q) for q in opps]
+        k = choose(g, p, 'target', f'Attack which player with {len(atk)} creature(s)?',
+                   who + ([SPLIT] if len(atk) > 1 else []))
+        if k is None: continue                                 # changed their mind: declare again
+        if k < len(opps): return [(opps[k], atk)]
+        to = {}
+        for m in atk:                                          # split: each creature's player
+            j = choose(g, p, 'target', f'{legal.describe_target(g, p, m)} attacks which player?', who)
+            if j is None: break
+            to[m] = opps[j]
+        if len(to) < len(atk): continue                       # cancelled part way: declare again
+        return [(q, [m for m in atk if to[m] is q]) for q in opps if any(to[m] is q for m in atk)]
     return None
 
 

@@ -1685,6 +1685,58 @@ def chasm_threatened(g, p):
 
 
 # ======================================================== combat
+def good_blockers(g, q, a, p):
+    """q's untapped creatures that could block attacker a, kill it and survive"""
+    return [b for b in q.perms if b.creature and not b.tapped and not b.phased and can_block(g, b, a)
+            and (epow(g, b) * fiery(q) >= etgh(g, a) or b.dt) and not (epow(g, a) * fiery(p) >= etgh(g, b) or a.dt)]
+
+
+def blockable(g, q, a):
+    return any(b.creature and not b.tapped and not b.phased and can_block(g, b, a) for b in q.perms)
+
+
+def split_attack(g, p, d, atk, held=()):
+    """the AI's attackers may go at different players, as in a real game: [(defending player, attackers)].
+    Everything starts at d (the player the AI chose); an attacker moves when that clearly helps:
+      - a player the attack can kill outright: the attackers they can't block at all go at them (not ones d's
+        death depends on);
+      - an attacker d can block and kill (while the blocker survives) goes at a player with no such blocker, for as
+        many attackers as d has such blockers (the most valuable first);
+      - an attacker held back from d for that reason (outside decks) attacks a player where it's safe.
+    Attack taxes: an attacker only moves to a player whose tax is no higher than d's"""
+    others = [q for q in g.opps(p) if q is not d and q.alive and not shielded(q)]
+    if not others or not (atk or held): return [(d, list(atk))]
+    tax = {q: (attack_restrictions(g, p, q)[0] if g.hooks else 0) for q in others + [d]}
+    hit = lambda a: epow(g, a) * (2 if double_strike(p, a) else 1) * fiery(p)
+    to = {a: d for a in atk}
+    d_kill = [a for a in atk if not blockable(g, d, a)]
+    d_dies = sum(hit(a) for a in d_kill) >= d.life
+    for q in sorted(others, key=lambda q: q.life):                  # finish a player off
+        if tax[q] > tax[d]: continue
+        free = sorted([a for a in list(atk) + list(held) if to.get(a, d) is d and not blockable(g, q, a)
+                       and not (d_dies and a in d_kill) and hit(a) > 0], key=hit, reverse=True)
+        if sum(hit(a) for a in free) < q.life: continue
+        need = 0
+        for a in free:
+            if need >= q.life: break
+            to[a] = q; need += hit(a)
+    risky = sorted([a for a in atk if to[a] is d and good_blockers(g, d, a, p)], key=lambda a: -pval(g, a))
+    eaters = {id(b) for a in risky for b in good_blockers(g, d, a, p)}
+    for a in risky[:len(eaters)]:                     # away from a bad block (each blocker stops only one attacker)
+        safe = [q for q in others if tax[q] <= tax[d] and not good_blockers(g, q, a, p)]
+        if safe: to[a] = max(safe, key=lambda q: (not blockable(g, q, a), threat(g, p, q)))
+    for a in held:                                                    # held back from d: somewhere it's safe
+        if a in to: continue
+        safe = [q for q in others if tax[q] == 0 and not good_blockers(g, q, a, p)]
+        if safe: to[a] = max(safe, key=lambda q: (not blockable(g, q, a), threat(g, p, q)))
+    groups = [(q, [a for a in to if to[a] is q]) for q in [d] + others]
+    groups = [(q, xs) for q, xs in groups if xs]
+    moved = [(q, xs) for q, xs in groups if q is not d]
+    for q, xs in moved:
+        log(f'      [{NAME(p)} sends {len(xs)} attacker(s) at {NAME(q)} instead]', g)
+    return groups or [(d, [])]
+
+
 def choose_defender(g, p):
     opps = [q for q in g.opps(p) if not shielded(q)] or g.opps(p)     # combat damage to a protected player is prevented
     my = sum(epow(g, m) for m in p.perms if m.creature and not m.tapped and not m.noatk and not m.sick)
@@ -2051,7 +2103,8 @@ def combat(g, p):
         if human:                                     # practice mode: the person declares attackers
             res = importlib.import_module('commander_sim.play.combat').human_attack(g, p, ncomb)
             if res is None: break
-            d, atk = res
+            groups = [(q, list(xs)) for q, xs in res]            # the person may attack several players
+            d = max(groups, key=lambda x: len(x[1]))[0]          # the main defending player (attack triggers name it)
         else:
             atk = [m for m in p.perms if m.creature and not m.tapped and not m.phased
                    and (not m.sick or p.haste_all or has_haste(g, m))
@@ -2067,18 +2120,31 @@ def combat(g, p):
             if plan is not None and plan[1] == 'none': break
             all_atk = list(atk)
             d = g.players[plan[0]] if plan is not None else (brain.choose_defender(g, p) if adaptive else choose_defender(g, p))
-            if plan is not None and plan[1] == 'all': atk = all_atk
+            if plan is not None and plan[1] == 'all': groups = [(d, all_atk)]       # everything at one player
             else:
                 if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
+                pre = list(atk)
                 if p.key not in MAIN: atk = importlib.import_module('commander_sim.ai.pool_ai').attack_filter(g, p, atk, d)
-        cand0 = list(atk)
-        if g.hooks: atk = attack_limits(g, p, d, atk)
-        if g.hooks:
-            from commander_sim.cards.impl import rules2 as impl_rules2
-            if not attack_restrictions(g, p, d)[0]: atk = impl_rules2.forced_attackers(g, p, atk, cand0)
-            atk = impl_rules2.annex_life(g, p, d, atk)
+                groups = split_attack(g, p, d, atk, [m for m in pre if m not in atk])
+        declared = [m for _, xs in groups for m in xs]
+        kept = []
+        for gd, xs in groups:                                 # each defending player's taxes and restrictions
+            cand0 = [m for m in declared if m in xs or not any(m in ys for q, ys in groups if q is not gd)]
+            if g.hooks: xs = attack_limits(g, p, gd, xs)
+            if g.hooks:
+                from commander_sim.cards.impl import rules2 as impl_rules2
+                if not attack_restrictions(g, p, gd)[0] and gd is d:
+                    xs = impl_rules2.forced_attackers(g, p, xs, cand0)
+                xs = impl_rules2.annex_life(g, p, gd, xs)
+            if xs: kept.append((gd, xs))
+        groups = kept
+        if not any(gd is d for gd, _ in groups) and groups: d = groups[0][0]
+        main = next((xs for gd, xs in groups if gd is d), None)
+        atk = [m for _, xs in groups for m in xs]
         if g.hooks and atk:                                   # beginning of combat (Helm of the Host)
-            for r in E.CI.fire(g, 'combat_start', p): atk += [m for m in r if m not in atk]
+            for r in E.CI.fire(g, 'combat_start', p):
+                new = [m for m in r if m not in atk]
+                atk += new; main += new
         if not atk: break
         unbl = set()
         a = army_of(p)
@@ -2093,17 +2159,21 @@ def combat(g, p):
                 else: ps[0].tapped = False
         for m in atk:
             if not (m.vig or kw(m, 'vigilance')): m.tapped = True
-        atk += attack_triggers(g, p, atk, d)
+        new = attack_triggers(g, p, atk, d)                # once for the whole attack, naming the main defender
+        atk += new; main += new
         if E.CI is not None: importlib.import_module('commander_sim.cards.impl.mine').ring_attack(g, p, atk)      # Ring level 2: loot
         if E.CI is not None:
             for c, fn in E.CI.hand_cards(p, 'hand_attack'): fn(g, c, p, atk, d)
-        if g.over or not d.alive: continue
+        if g.over or not any(gd.alive for gd, _ in groups): continue
         g.in_combat = set(atk)                            # attacking creatures (Divine Verdict's targets)
+        conn = set()
         try:
-            if E.CI is not None and any('verdict' in c.tags for c in d.hand):
-                E.CI.verdict_response(g, d, p, atk)
-                atk = [m for m in atk if m in p.perms]
-            conn = resolve_combat(g, p, atk, d, unbl)
+            for gd, xs in groups:                         # each defending player blocks, then takes damage, in turn
+                if g.over or not p.alive or not gd.alive: continue
+                if E.CI is not None and any('verdict' in c.tags for c in gd.hand):
+                    E.CI.verdict_response(g, gd, p, xs)
+                    xs = [m for m in xs if m in p.perms]
+                conn |= resolve_combat(g, p, xs, gd, unbl)
         finally:
             g.in_combat = ()
         if g.over or not p.alive: return
