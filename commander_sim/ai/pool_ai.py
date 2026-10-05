@@ -64,7 +64,9 @@ def generic_prio(g, p, c):
     if 'ctr' in t or 'rem' in t or 'wipe' in t or t.get('prot') or 'tide' in t: return 0   # held / cast by the response logic
     if any(k in t for k in ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle')) and not c.dsl and not c.creature: return 0
     if 'tokx' in t: return 50 if total_mana(E.CUR_G, p) >= 5 else 0
-    if 'rhystic' in t or 'tithe' in t or 'eng' in t or 'necro' in t: return 64
+    if 'tithe' in t:                                                # Smothering Tithe: from the Treasures it will make
+        return importlib.import_module('commander_sim.cards.impl.rules').tithe_prio(E.CUR_G, p, c)
+    if 'rhystic' in t or 'eng' in t or 'necro' in t: return 64
     if 'seal' in t: return 56 if p.life >= 15 else 20            # Vampiric Tutor / Imperial Seal
     if 'jeska' in t: return 52
     if 'intuition' in t or 'gifts' in t: return 50

@@ -392,6 +392,7 @@ def wipe_options(g, p, s):
         cg, cp = A.wipe_cost(p, c)
         if not can_pay(g, p, cg, cp): continue
         ol, ml, victim = A.wipe_eval(g, p, kind)
+        if ol <= 0: continue                         # hits nothing of theirs (Nibelheim Aflame with no creature of ours)
         swing = ol - 1.2 * ml
         u = swing / 2.2 - 2.5 + 2.0 * min(1.5, s.danger)
 

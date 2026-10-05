@@ -738,6 +738,10 @@ def yshtola_prio(g, p, c):
     if t.get('prot') == 'boots': return 58 if ysh is not None else 25
     if n == 'Bastion Protector': return 50 if ysh is not None else 30
     if n == 'Notion Thief': return 50
+    if 'tithe' in t:                                                  # Smothering Tithe: from the Treasures it will make
+        return importlib.import_module('commander_sim.cards.impl.rules').tithe_prio(g, p, c) + b
+    if 'sphinx' in t:                                                 # Consecrated Sphinx: from what it will draw
+        return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
     if n == 'Skyclave Apparition':
         tg = E.legal_targets(g, p, 'exile', 'nl', True, spell=c)
         return 45 + min(30, int(6 * max((pval(g, m) for m in tg), default=0))) if tg else 25

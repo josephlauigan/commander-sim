@@ -464,11 +464,17 @@ class Sauron(unittest.TestCase):
         self.assertEqual(sum(L.tapped for L in r.lands), 2)
 
     def test_sauron_values_consecrated_sphinx(self):
+        # its priority follows what it will draw: two per opponent draw, so three opponents make it the better card,
+        # and it's worth less with one opponent left
         from commander_sim.ai import brain
-        g = table('sauron', 'veyran'); r = g.players[0]
+        g = table('sauron', 'veyran', 'veyran', 'veyran'); r = g.players[0]
         lands(r, 'Island', 5); lands(r, 'Swamp', 2); hand(r, 'Consecrated Sphinx', "Night's Whisper")
         u = {l: u for u, l, f in brain.main_options(g, r, False)}
         self.assertGreater(u['Consecrated Sphinx'], u["Night's Whisper"])
+        g1 = table('sauron', 'veyran'); r1 = g1.players[0]
+        lands(r1, 'Island', 5); lands(r1, 'Swamp', 2); hand(r1, 'Consecrated Sphinx', "Night's Whisper")
+        u1 = {l: u for u, l, f in brain.main_options(g1, r1, False)}
+        self.assertLess(u1['Consecrated Sphinx'], u['Consecrated Sphinx'])
 
     def test_diabolic_intent_needs_a_creature_to_sacrifice(self):
         # "As an additional cost to cast this spell, sacrifice a creature." It used to be free outside Sephiroth.
@@ -880,11 +886,87 @@ class SauronBreach(unittest.TestCase):
         hand(s, 'Underworld Breach', 'Brain Freeze', 'Dark Ritual', 'Cabal Ritual')
         self.assertFalse(mine.breach_line(g, s))
 
+    def test_lions_eye_diamond_makes_it_infinite(self):
+        # each Diamond escape ({0} plus three graveyard cards) discards the hand and makes three blue: a whole Brain
+        # Freeze; from one Island and two Mountains it mills out the table, which the same lands alone can't
+        from commander_sim.cards.impl import mine
+        g, s = self.board(1, 2, opp_library=60)
+        hand(s, 'Underworld Breach', 'Brain Freeze')
+        self.assertFalse(mine.breach_line(g, s))
+        g, s = self.board(1, 2, opp_library=60)
+        hand(s, 'Underworld Breach', 'Brain Freeze', "Lion's Eye Diamond")
+        self.assertTrue(mine.breach_line(g, s))
+        mine.breach_line(g, s, execute=True)
+        self.assertEqual([len(q.library) for q in g.players[1:]], [0, 0, 0])
+        self.assertGreaterEqual(s.stats['led_used'], 2)
+
+    def test_laboratory_maniac_mills_yourself_out(self):
+        # with Laboratory Maniac out, every Brain Freeze copy mills you; Lotus Petal escapes pay each next Brain
+        # Freeze (the copies refill the graveyard), and an escaped Night's Whisper draws from the empty library to win.
+        # Milling three 60-card libraries from the same mana fails
+        from commander_sim.cards.impl import mine
+        g, s = self.board(2, 2, opp_library=60); lands(s, 'Swamp', 2)
+        del s.library[30:]
+        hand(s, 'Underworld Breach', 'Brain Freeze', 'Lotus Petal', "Night's Whisper")
+        self.assertFalse(mine.breach_line(g, s))
+        g, s = self.board(2, 2, opp_library=60); lands(s, 'Swamp', 2)
+        del s.library[30:]
+        hand(s, 'Underworld Breach', 'Brain Freeze', 'Lotus Petal', "Night's Whisper")
+        perm(g, s, 'Laboratory Maniac')
+        self.assertTrue(mine.breach_line(g, s))
+        mine.breach_line(g, s, execute=True)
+        self.assertIs(g.winner, s)
+
+    def test_the_line_casts_laboratory_maniac_from_hand(self):
+        from commander_sim.cards.impl import mine
+        g, s = self.board(4, 2, opp_library=60); lands(s, 'Swamp', 2)
+        del s.library[30:]
+        hand(s, 'Laboratory Maniac', 'Underworld Breach', 'Brain Freeze', 'Lotus Petal', "Night's Whisper")
+        self.assertTrue(mine.breach_line(g, s))
+        mine.breach_line(g, s, execute=True)
+        self.assertIs(g.winner, s)
+
+    def test_birgi_pays_for_each_brain_freeze(self):
+        # Birgi adds {R} for each spell cast: with her out, a Petal escape makes the {U} and Birgi the {1}. Holding her
+        # in hand doesn't stop a line that works without casting her first (the dry run tries both)
+        from commander_sim.cards.impl import mine
+        B = 'Birgi, God of Storytelling // Harnfel, Horn of Bounty'
+        g, s = self.board(1, 2, opp_library=60); perm(g, s, B)
+        hand(s, 'Underworld Breach', 'Brain Freeze', 'Lotus Petal')
+        mine.breach_line(g, s, execute=True)
+        self.assertEqual([len(q.library) for q in g.players[1:]], [0, 0, 0])
+        self.assertGreaterEqual(s.floatR, 5)                              # Birgi's spare red
+        g, s = self.board(1, 2, opp_library=60)
+        hand(s, B, 'Underworld Breach', 'Brain Freeze', 'Lotus Petal')
+        self.assertTrue(mine.breach_line(g, s))
+
+    def test_jeskas_will_never_spends_the_blue_brain_freeze_needs(self):
+        # Jeska's Will makes red for each card in an opponent's hand, but paying for it can eat the Petal's {U}: the
+        # dry run falls back to the plain line, so holding it never stops a line that works without it
+        from commander_sim.cards.impl import mine
+        g, s = self.board(0, 4, opp_library=60); s.gy = []
+        for q in g.players[1:]: q.hand = [card('Island')] * 7
+        hand(s, "Jeska's Will", 'Underworld Breach', 'Brain Freeze', 'Lotus Petal')
+        self.assertTrue(mine.breach_line(g, s))
+        mine.breach_line(g, s, execute=True)
+        self.assertEqual([len(q.library) for q in g.players[1:]], [0, 0, 0])
+
+    def test_laboratory_maniac_turns_an_empty_draw_into_a_win(self):
+        g = table('sauron', 'veyran'); s = g.players[0]
+        s.library = []
+        E.draw(g, s, 1)
+        self.assertTrue(s.decked)
+        g = table('sauron', 'veyran'); s = g.players[0]
+        s.library = []; perm(g, s, 'Laboratory Maniac')
+        E.draw(g, s, 1)
+        self.assertIs(g.winner, s)
+
     def test_the_pieces_are_held_for_the_line(self):
         g, s = self.board(8, 8)
-        bf, br = hand(s, 'Brain Freeze', 'Underworld Breach')
+        bf, br, led = hand(s, 'Brain Freeze', 'Underworld Breach', "Lion's Eye Diamond")
         self.assertEqual(ais.sauron_prio(g, s, bf), 0)
         self.assertEqual(ais.gc_prio_sauron(g, s, br), 0)
+        self.assertEqual(ais.sauron_prio(g, s, led), 0)
 
     def test_tutors_find_the_missing_piece(self):
         g, s = self.board(4, 4); hand(s, 'Underworld Breach')

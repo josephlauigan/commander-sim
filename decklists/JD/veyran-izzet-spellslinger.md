@@ -10,6 +10,7 @@
 **Updated 2026-10-02.** **Hydro-Channeler → Alania, Divergent Storm**: your first instant and your first sorcery each turn are copied, each copy costing an opponent a free card, and Veyran and Harmonic Prodigy each add a copy. Not a Game Changer; the deck stays at 100 and three GCs (Bracket 3).
 **Updated 2026-10-04.** Out: Gandalf, Friend of the Shire, Mystic Confluence, Pongify, Reality Shift, Return the Favor, Spell Pierce, Swiftfoot Boots, Thought Vessel, Thunderdrum Soloist. In: Deflecting Swat, Docent of Perfection // Final Iteration, Fiery Emancipation, Lightning Greaves, Slip Out the Back, Storm-Kiln Artist, Talrand, Sky Summoner, Third Path Iconoclast, Young Pyromancer. The tokens rebuild: spells now leave creatures behind, Fiery Emancipation triples every ping, and the protection package is Deflecting Swat, Lightning Greaves and Slip Out the Back.
 **Updated 2026-10-04.** Out: Twinflame. In: Crawlspace. Twinflame → Crawlspace: no more than two creatures can attack you each combat, against the creature decks that cause most of the deck's losses.
+**Updated 2026-10-05.** Out: Crawlspace. In: Propaganda. Crawlspace → Propaganda, the planned swap once Propaganda was found (it tested ahead of Crawlspace in the 10-04 rebuild).
 
 ## Strategy
 
@@ -52,7 +53,7 @@ Eris is the reward for a full graveyard: it costs {2} less per *different* mana 
 
 **Jeska's Will fuels the big turn.** With Veyran on the battlefield you get both modes: add {R} for each card in an opponent's hand (target the fullest hand), then exile the top three cards of your library and play them this turn. That's usually four to seven mana and three more spells for one card, and it's itself a sorcery, so it triggers every pinger. It replaces Force of Will's protection with fuel: the deck now wins more big turns by going longer and protects them less.
 
-**Crawlspace caps the attacks on you.** No more than two creatures can attack you each combat. Most of the deck's losses are to creature decks (Lord Windgrace, Brago, Kaalia, Sythis, Aurelia), and the tokens rarely protect you because they aren't on the board when the big attack comes. Crawlspace works from the turn it lands, doesn't affect your own attacks, and is an artifact, so Fabricate can find it. It replaced Twinflame, which sat in hand most games.
+**Propaganda taxes the attacks on you.** Each creature that attacks you costs its controller {2}. Most of the deck's losses are to creature decks (Lord Windgrace, Brago, Kaalia, Sythis, Aurelia), and the tokens rarely protect you because they aren't on the board when the big attack comes. Propaganda works from the turn it lands and doesn't affect your own attacks. It took the slot Twinflame left (Crawlspace held it from 10-04 until Propaganda was found on 10-05; Propaganda tested ahead of it).
 
 ## Key lines
 
@@ -109,7 +110,7 @@ Four tutors now, each pointing somewhere different, plus one graveyard rebuy. **
 - **Need mana for the chain → Imperial Recruiter for Storm-Kiln Artist.**
 - **Need more cards → Imperial Recruiter for Archmage Emeritus.**
 - **Veyran keeps dying → Fabricate for Lightning Greaves**, or Mystical Tutor for Slip Out the Back or Deflecting Swat.
-- **A creature deck is attacking you → Fabricate for Crawlspace.**
+- **A creature deck is attacking you → cast Propaganda early.** It's an enchantment, so no tutor here finds it.
 - **Setting up a finish → Fabricate for Aetherflux Reservoir** before the long turn.
 - **Need to protect a big turn → Solve the Equation for a counter**, or **Mystical Tutor at an opponent's end step**.
 - **Need fuel for the big turn → Mystical Tutor or Solve the Equation for Jeska's Will** (with Veyran out, both modes).
@@ -120,7 +121,7 @@ Timing note: **Mystical Tutor puts the card on top of your library**, so fire it
 
 ## Bracket and Rule 0
 
-Bracket 3, at the cap with **three** Game Changers: **Mystical Tutor**, **Cyclonic Rift**, and **Jeska's Will**. A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation, Deflecting Swat and Crawlspace are all off-list.
+Bracket 3, at the cap with **three** Game Changers: **Mystical Tutor**, **Cyclonic Rift**, and **Jeska's Will**. A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation, Deflecting Swat and Propaganda are all off-list.
 
 **No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns. Twinflame, half of the Dualcaster Mage infinite, left on 10-04.
 
@@ -142,9 +143,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (22).** Alania Divergent Storm, Archmage Emeritus, Blazing Firesinger // Seething Song, Docent of Perfection // Final Iteration, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Guttersnipe, Harmonic Prodigy, Imperial Recruiter, Jin-Gitaxias Progress Tyrant, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Sanar Unfinished Genius // Wild Idea, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Thor Asgard's Avenger, Venser Shaper Savant, Young Pyromancer
 
-**Artifacts (6).** Aetherflux Reservoir, Arcane Signet, Crawlspace, Fellwar Stone, Lightning Greaves, Sol Ring
+**Artifacts (5).** Aetherflux Reservoir, Arcane Signet, Fellwar Stone, Lightning Greaves, Sol Ring
 
-**Enchantments (4).** Fiery Emancipation, Old Fat Spider Can't See Me, Rite of the Dragoncaller, Thousand-Year Storm
+**Enchantments (5).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm
 
 **Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Deflecting Swat, Dreams of Laguna, Flashback, Lightning Bolt, Mystical Tutor, Plunder the Trollshaws, Prismari Charm, Quick Study, Slip Out the Back, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
@@ -171,7 +172,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Command Tower
 1 Counterspell
 1 Crackle with Power
-1 Crawlspace
 1 Cyclonic Rift
 1 Deduce
 1 Deflecting Swat
@@ -209,6 +209,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Path of Ancestry
 1 Plunder the Trollshaws
 1 Prismari Charm
+1 Propaganda
 1 Quick Study
 1 Ral, Storm Conduit
 1 Rite of the Dragoncaller
@@ -307,5 +308,6 @@ The tokens list was the only one ahead at every tier under both AIs. The engine 
 - Shared with **Sephiroth**: Ash Barrens, Evolving Wilds.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **New singles (10-04)**: Crawlspace, Deflecting Swat, Young Pyromancer, Third Path Iconoclast, Talrand, Sky Summoner, Storm-Kiln Artist, Docent of Perfection, Fiery Emancipation. **Slip Out the Back** comes from the binder (it left Sauron on 10-01). **Lightning Greaves** is a new copy: the existing ones are in Sauron, Marchesa, Zur and Y'shtola.
+- **Propaganda (10-05)** is a new copy: the existing one is in Y'shtola. Crawlspace went to bulk.
 - **Earlier singles**: Jeska's Will, Twinflame, Unsummon; from 09-26, Niv-Mizzet, Parun; Niv-Mizzet, the Firemind; Kessig Flamebreather; Imperial Recruiter; Thousand-Year Storm; Swiftfoot Boots (Sephiroth cut its copy); Visions of Beyond.
 - **To the binder**: Return the Favor, Mystic Confluence, Swiftfoot Boots, Spell Pierce, Pongify, Reality Shift, Thunderdrum Soloist, Gandalf, Friend of the Shire, Thought Vessel, Twinflame (10-04); Disdainful Stroke, Reenact the Crime; from 09-26, Burning Prophet, Dualcaster Mage, Kylox, Muse Seeker, Disruptor Flute, Sleight of Hand.

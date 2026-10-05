@@ -11,6 +11,7 @@
 **Updated 2026-09-28.** **Unmarked Grave → Ephemerate.** Not a Game Changer, so the count stays at nine. Deck stays at 100 and 37 lands.
 **Updated 2026-10-01.** Out: Massacre Wurm. In: Muldrotha, the Gravetide. Muldrotha replays permanents from the graveyard (a land, a creature, an artifact, an enchantment each turn).
 **Updated 2026-10-02.** Out: Cultivate. In: Grave Pact. Grave Pact turns every sacrifice into an edict on each opponent: the free outlets, Grave Titan's Zombies and the loops all feed it. Cultivate was the least needed ramp in a deck that cheats its threats in.
+**Updated 2026-10-05.** Out: Bolas's Citadel. In: Phyrexian Arena. Bolas's Citadel → Phyrexian Arena (Citadel moves to Y'shtola). Tested: no loss (0.0 points on average, 1,000 paired games per tier, adaptive AI). Eight Game Changers; still Bracket 4.
 
 ## Strategy
 
@@ -22,19 +23,19 @@ Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, an
 
 **Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
 
-**The card-advantage layer is new.** **Consecrated Sphinx** draws you two every time an opponent draws. **Bolas's Citadel** lets you play off the top of your library by paying life, and Sheoldred, the Apocalypse gains you 2 for every card you draw — so Sphinx refills the life Citadel spends. Citadel's other ability (tap, sacrifice ten nonland permanents: each opponent loses 10) is a second finisher on a wide board.
+**The card-advantage layer.** **Consecrated Sphinx** draws you two every time an opponent draws, and **Phyrexian Arena** adds a card every upkeep for 1 life (it took Bolas's Citadel's slot on 10-05, at no measurable cost; Citadel moved to Y'shtola). Sheoldred, the Apocalypse gains you 2 for every card you draw, so with her out the Arena's draws gain more life than they cost.
 
 **Displacer Kitten** blinks a nonland permanent every time you cast a noncreature spell. Blink Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Kitchen Finks for 2 more life, or Grave Titan for two more Zombies.
 
 **Muldrotha, the Gravetide turns the graveyard into a second hand.** During each of your turns you may play a land and cast one permanent spell of each permanent type from your graveyard: a creature, an artifact, and an enchantment. In this deck that means:
 - **A reanimation spell every turn.** Animate Dead and Necromancy are enchantments, so once one is in the graveyard Muldrotha recasts it each turn for another reanimation.
 - **Loop pieces back after removal.** Triskelion (as the artifact or the creature), Kitchen Finks, Nim Deathmantle, Ashnod's Altar, or Viscera Seer, so one answer no longer breaks a combo.
-- **Engines back after a wipe.** Aura Shards, Smothering Tithe, Bolas's Citadel, or Skullclamp.
+- **Engines back after a wipe.** Aura Shards, Smothering Tithe, Phyrexian Arena, or Skullclamp.
 - **A land from the graveyard each turn.** Replay Evolving Wilds or Fabled Passage for a basic every turn, or Strip Mine for land destruction every turn (say so before the game).
 
 She is a 6/6 for six and a fine reanimation target herself, and she takes Massacre Wurm's slot: the deck trades a one-shot wipe for a grind engine.
 
-**Ephemerate is protection and a second Kitten in one card.** For {W} at instant speed, exile your creature and return it. In response to a removal spell, theft, or any other targeted effect, the spell fizzles because the creature is a new object — so a reanimated bomb survives the first answer the table throws at it. With nothing to protect, blink Archon of Cruelty, Grave Titan, or Sephiroth for their enter triggers. Either way, rebound casts it again for free at your next upkeep: a second drain-and-edict from Archon or two more Zombies from Titan. It can only target creatures, so it can't save Bolas's Citadel or Aura Shards.
+**Ephemerate is protection and a second Kitten in one card.** For {W} at instant speed, exile your creature and return it. In response to a removal spell, theft, or any other targeted effect, the spell fizzles because the creature is a new object — so a reanimated bomb survives the first answer the table throws at it. With nothing to protect, blink Archon of Cruelty, Grave Titan, or Sephiroth for their enter triggers. Either way, rebound casts it again for free at your next upkeep: a second drain-and-edict from Archon or two more Zombies from Titan. It can only target creatures, so it can't save Aura Shards or Smothering Tithe.
 
 **The stax layer is what makes it unfair.** Elesh Norn, Grand Cenobite shrinks every opposing creature by 2/2. Elesh Norn, Mother of Machines doubles your own ETB triggers and blanks theirs. Sheoldred, the Apocalypse taxes their draw steps, and Smothering Tithe taxes them again on the same draw. **Aura Shards** destroys an artifact or enchantment every time a creature enters under your control — every reanimation, Grave Titan Zombie, and Kitten blink is removal.
 
@@ -70,7 +71,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 **Protect the combo turn.** Resolve **Grand Abolisher** first: opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments during your turn. **Force of Will**, **Swan Song**, **Galadriel's Dismissal**, and **Ephemerate** cover what Abolisher doesn't, and Ephemerate also works on opponents' turns, when Abolisher does nothing.
 
-**Fair closing lines are still here.** Archon of Cruelty rebought every turn (Sheoldred, Whispering One, or Muldrotha recasting Animate Dead). Altar of Dementia milling one player out with a big creature. Or Bolas's Citadel's ten-permanent drain. With Massacre Wurm gone, Elesh Norn, Grand Cenobite's -2/-2 is the one-sided board shrink.
+**Fair closing lines are still here.** Archon of Cruelty rebought every turn (Sheoldred, Whispering One, or Muldrotha recasting Animate Dead). Altar of Dementia milling one player out with a big creature. With Massacre Wurm gone, Elesh Norn, Grand Cenobite's -2/-2 is the one-sided board shrink.
 
 ## Consistency
 
@@ -100,12 +101,12 @@ Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also
 
 ## Bracket and Rule 0
 
-**Bracket 4.** Nine Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Bolas's Citadel**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**. Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
+**Bracket 4.** Eight Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection** (Bolas's Citadel moved to Y'shtola on 10-05). Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
 
 Disclose before the game:
 
 - **Four infinite loops:** Mikaeus + Triskelion (infinite damage, no outlet needed); Mikaeus or Melira + Kitchen Finks + a sac outlet (infinite life and deaths); Nim Deathmantle + Ashnod's Altar + Grave Titan (infinite mana, ETBs, and deaths).
-- The nine Game Changers above, especially **Smothering Tithe** (changes every opponent's draw step), **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
+- The eight Game Changers above, especially **Smothering Tithe** (changes every opponent's draw step), **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
 - **Grand Abolisher**, which shuts off their interaction on your turn.
 - **Yawgmoth's Will**, which can produce a long turn out of nowhere.
 - **Farewell**, and that you may include graveyards.
@@ -121,9 +122,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (23).** Archon of Cruelty, Avacyn's Pilgrim, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Kitchen Finks, Llanowar Elves, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stinkweed Imp, Stitcher's Supplier, Triskelion, Viscera Seer, Zulaport Cutthroat
 
-**Enchantments (6).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Smothering Tithe, Tortured Existence
+**Enchantments (7).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Smothering Tithe, Tortured Existence
 
-**Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chromatic Lantern, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
+**Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
 
 **Sorceries (10).** Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Lash of the Balrog, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
 
@@ -149,7 +150,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Birds of Paradise
 1 Blood Artist
 1 Bojuka Bog
-1 Bolas's Citadel
 1 Brushland
 1 Buried Alive
 1 Caves of Koilos
@@ -192,6 +192,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Orzhov Signet
 1 Overgrown Tomb
 1 Path to Exile
+1 Phyrexian Arena
 1 Reanimate
 1 Sakura-Tribe Elder
 1 Sheoldred, the Apocalypse
@@ -271,8 +272,9 @@ In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force
 - **Displacer Kitten and Force of Will moved here from Veyran** — one physical copy each, now only here.
 - **Swiftfoot Boots moved to Veyran**.
 - **Diabolic Intent moved to Sauron** — one physical copy, now only there.
-- **Two physical copies needed** of Consecrated Sphinx, Sheoldred, the Apocalypse, and Diabolic Tutor, which are in this deck and Sauron.
-- Shared with **Sauron**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City. (Night's Whisper and Phyrexian Arena are Sauron-only.)
+- **Two physical copies needed** of Sheoldred, the Apocalypse and Diabolic Tutor (in this deck and Sauron), Consecrated Sphinx (this deck and Y'shtola, from 10-05) and Smothering Tithe (this deck and Y'shtola, from 10-05).
+- **Bolas's Citadel moved to Y'shtola** (10-05) — one physical copy, now only there.
+- Shared with **Sauron**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Phyrexian Arena (10-05: a second copy, or share it), Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City. (Night's Whisper is Sauron-only.)
 - Shared with **Veyran**: Ash Barrens, Evolving Wilds.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
 - **New singles**: Grave Pact (10-02); Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.

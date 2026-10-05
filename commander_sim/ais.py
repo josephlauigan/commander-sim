@@ -562,9 +562,12 @@ def seph_prio(g, p, c):
     if lp is not None: return lp                             # a piece of one of the loops
     if 'shards' in t: return 68
     if c.name == 'The One Ring': return 62
+    if 'sphinx' in t:                                        # Consecrated Sphinx: hard-cast from what it will draw
+        return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
     if c is p.cmd: return 0
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
-    if 'tithe' in t: return 72
+    if 'tithe' in t:                                         # Smothering Tithe: from the Treasures it will make
+        return importlib.import_module('commander_sim.cards.impl.rules').tithe_prio(g, p, c)
     if 'necro' in t: return 62 if p.life >= 25 else 0          # Necropotence
     if 'citadel' in t: return 60 if p.life >= 25 else 20          # Bolas's Citadel: with life to spend
     if t.get('fill') == 'stitcher': return 75
@@ -831,7 +834,7 @@ def veyran_prio(g, p, c):
     if 'spelldraw' in t or 'mystic' in t: return 58
     if c.name == 'The One Ring': return 58
     if 'rhystic' in t: return 62
-    if 'sphinx' in t: return 60
+    if 'sphinx' in t: return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
     if 'narset' in t: return 52
     if 'chromemox' in t:                         # needs a coloured nonland card to spare
         spare = [x for x in p.hand if not x.land and 'A' not in x.types and set(x.pips) & set(p.ident)]
@@ -1026,6 +1029,7 @@ def sauron_prio(g, p, c):
     t = c.tags
     if c is p.cmd: return 85
     if 'storm' in t: return 0                                # Brain Freeze, Grapeshot: held for the Breach line
+    if 'led' in t: return 0                                  # Lion's Eye Diamond: held for the Breach line too
     if 'rock' in t: return 80 if p.turns <= 5 else 40
     if 'rhystic' in t: return 78
     if 'remora' in t: return 66 if p.turns <= 4 else 0              # Mystic Remora: only early, while upkeep is cheap
@@ -1056,6 +1060,10 @@ def sauron_prio(g, p, c):
     if t.get('prot') == 'boots':                             # Lightning Greaves: for Sauron himself (never the Army)
         return 50 if has(p, 'sauron') or p.cmd_in_zone and total_mana(g, p) >= 7 else 25
     if t.get('tut'): return 60
+    if c.name == 'Gamble': return 60                         # hand-written tutor without a tut tag
+    if c.name in ('Wheel of Fortune', 'Windfall', 'Reforge the Soul'):   # hand-written wheels: their own timing (hand nearly empty)
+        f = E.CI.SPELL_PRIO.get(c.name, 0) if E.CI is not None else 0
+        return f(g, p, c) if callable(f) else f
     if c.name == 'The One Ring': return 60
     gc = gc_prio_sauron(g, p, c)
     if gc is not None: return gc
@@ -1363,9 +1371,20 @@ def _tutor_pick_named(g, p, kind):
         if sw and asl: order.append('Whispersilk Cloak')
         br = has(p, 'breach') or any('breach' in c.tags for c in p.hand)
         st = any('storm' in c.tags for c in p.hand + p.gy)
+        if any(n in p.deck_names for n in ('Grapeshot', "Lion's Eye Diamond") + E.LABMEN):   # Breach-first builds
+            line = []
+            if not br: line.append('Underworld Breach')
+            if not st: line += ['Brain Freeze', 'Grapeshot']
+            rit = any(c.name in ('Dark Ritual', 'Cabal Ritual', 'Lotus Petal', "Lion's Eye Diamond", "Jeska's Will") for c in p.hand + p.gy)
+            lab = any(m.cd is not None and m.cd.name in E.LABMEN for m in p.perms) or any(c.name in E.LABMEN for c in p.hand)
+            if br and st and not lab: line += list(E.LABMEN)            # the self-mill finish
+            if br and st and not rit: line += ["Lion's Eye Diamond", "Jeska's Will", 'Dark Ritual', 'Cabal Ritual', 'Lotus Petal']
+            return first(line + order + ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault',
+                                         'Deepglow Skate', 'Counterspell', 'Whispersilk Cloak'])
         if br and not st: order.insert(0 if not (sw or asl) else len(order), 'Brain Freeze')
         if st and not br: order.insert(0 if not (sw or asl) else len(order), 'Underworld Breach')
-        order += ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault', 'Deepglow Skate', 'Counterspell']
+        order += ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault', 'Deepglow Skate', 'Counterspell',
+                  'Whispersilk Cloak']                     # artifact tutors with the Sword already found: evasion, not a rock
         return first(order)
     if p.key == 'yshtola':
         return E.CI.yshtola_tutor(g, p, kind, okn)
@@ -1557,7 +1576,7 @@ def breach_gc_options(g, p):
 def gc_prio_sauron(g, p, c):
     """Sauron's priorities for Game Changer candidates (None: not one of them)"""
     t = c.tags
-    if 'sphinx' in t: return 62
+    if 'sphinx' in t: return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
     if 'necro' in t: return 70 if p.life >= 25 else 30
     if 'citadel' in t: return 58 if p.life >= 25 else 20
     if 'tergrid' in t: return 55
@@ -2196,7 +2215,8 @@ def combat(g, p):
                 if combo_interrupted(g, p, 'sauron', [a]):
                     p.stats['combo_stopped'] += 1; log('    ...the combo is stopped', g); break
                 win(g, p, 'combo'); return
-            if ncomb == 1 and can_pay(g, p, 3, 'RR'):
+            again = a in conn and equipped(a, 'sword')       # the Sword's hit untapped the lands: Assault again
+            if (ncomb == 1 or again) and ncomb < 12 and can_pay(g, p, 3, 'RR'):
                 pay(g, p, 3, 'RR')
                 asl = next((m for m in find(p, 'assault')), None)
                 if asl is not None and not ability_window(g, p, asl, 'untap, an additional combat', imp=7): break

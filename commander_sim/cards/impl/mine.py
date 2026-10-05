@@ -1615,7 +1615,11 @@ full('Grapeshot', 'storm; each copy deals 1 damage to any target (lowest-life op
 
 RITUALS = {'Dark Ritual': (0, 3, 3), 'Cabal Ritual': (1, 3, 5)}    # {generic} besides {B}, mana made, with threshold
 PETAL = 'Lotus Petal'                                             # {0}: sacrifice it for one mana of any colour
-LINE_CARDS = STORM_PIECES + tuple(RITUALS) + (PETAL,)
+LED = "Lion's Eye Diamond"                                       # {0}: discard your hand, sacrifice it: three of one colour
+BIRGI = 'Birgi, God of Storytelling // Harnfel, Horn of Bounty'  # {R} whenever you cast a spell: with Petal, a Brain Freeze
+SETUP = E.LABMEN + (BIRGI,)                                       # permanents the line may cast first from hand
+JESKA = "Jeska's Will"                                            # {2}{R}: {R} for each card in an opponent's hand
+LINE_CARDS = STORM_PIECES + tuple(RITUALS) + (PETAL, LED, "Jeska's Will")
 
 
 def _where(p, name):
@@ -1635,7 +1639,15 @@ def _line_state(g, p):
             'storm': sum(casts_this_turn(g, q) for q in g.players),
             'where': {n: _where(p, n) for n in LINE_CARDS},
             'breach': has(p, 'breach'), 'breach_hand': any('breach' in c.tags for c in p.hand),
-            'lib': {q: len(q.library) for q in opps}, 'life': {q: q.life for q in opps}, 'mylib': len(p.library)}
+            'led_bf': any(m.cd is not None and m.cd.name == LED and not m.phased for m in p.perms),
+            'labman': any(m.cd is not None and m.cd.name in E.LABMEN and not m.phased for m in p.perms),
+            'setup_hand': None if getattr(g, 'line_no_setup', False) else
+                          next(((c.name, c.generic, c.pips) for c in p.hand if c.name in SETUP and len(c.pips) == 1
+                                and not any(m.cd is not None and m.cd.name == c.name for m in p.perms)), None),
+            'draws': [(c.name, z, c.generic, c.pips) for z, cs in (('hand', p.hand), ('gy', p.gy)) for c in cs
+                      if c.tags.get('draw') and (c.instant or c.sorcery) and len(c.pips) == 1 and c.name not in LINE_CARDS],
+            'lib': {q: len(q.library) for q in opps}, 'life': {q: q.life for q in opps}, 'mylib': len(p.library),
+            'opp_hand': 0 if getattr(g, 'line_no_setup', False) else max((len(q.hand) for q in opps), default=0)}
 
 
 def _can(st, gen, col):
@@ -1654,17 +1666,23 @@ def _mill_plan(p, st, copies):
     yourself first, enough fuel to pay for the next Brain Freeze (Lotus Petal escapes for {U}, rituals for generic),
     escape it, and recast each ritual twice more for storm; then the opponent closest to an empty library. If nothing
     can pay the next Brain Freeze's {U}, this is the last one: every copy goes to the table"""
+    if st.get('labman'): return [p] * copies          # Laboratory Maniac / Jace: mill yourself out, then draw
     lib = dict(st['lib'])
     need = sum(-(-n // 3) for q, n in lib.items() if n > 0 and st['life'][q] > 0)
     w = st['where']
     need_u = 0 if st['U'] > 0 and st['land'] > 0 else 1
     need_gen = max(0, 2 - st['land'] - st['float'] - need_u)
     petal = w[PETAL] is not None
+    led = w[LED] is not None or st.get('led_bf')
     rit = [n for n in RITUALS if w[n]]
-    last = need_u and not petal
-    esc = need_u + (0 if rit else need_gen) if petal else 0
-    esc += -(-need_gen // 2) if rit else 0
-    keep = 3 + 3 * esc + 6 * len(rit)
+    jeska = 3 if w[JESKA] else 0                    # fuel for a Jeska's Will escape
+    last = need_u and not petal and not led
+    if led:                                          # one Lion's Eye Diamond escape pays the whole next Brain Freeze;
+        keep = 6 + (3 if need_u or need_gen else 0) + jeska  # plus three spare: milled line cards aren't fuel
+    else:
+        esc = need_u + (0 if rit else need_gen) if petal else 0
+        esc += -(-need_gen // 2) if rit else 0
+        keep = 6 + 3 * esc + 6 * len(rit) + jeska     # three spare: milled line cards aren't fuel
     mine = 0 if copies >= need or last else min(copies, -(-max(0, keep - st['fuel']) // 3), st['mylib'] // 3)
     plan = [p] * mine
     for _ in range(copies - mine):
@@ -1674,18 +1692,36 @@ def _mill_plan(p, st, copies):
     return plan
 
 
+def _draw_ready(st):
+    """a draw spell the line can cast (from hand) or escape (from the graveyard) now: (name, zone, generic, pip)"""
+    for n, z, gen, pip in st['draws']:
+        if (z == 'hand' or st['fuel'] >= 4) and _can(st, gen, pip): return n, z, gen, pip   # (it isn't its own fuel)
+    return None
+
+
 def _line_step(st):
     """the next cast of the Breach line, or None. Fuel (graveyard cards) goes first to what the next Brain Freeze needs:
     its own escape, and a Lotus Petal escape when blue mana runs out; spare fuel becomes ritual escapes, which add
     storm (and pay generic costs)"""
+    if st['setup_hand'] and _can(st, *st['setup_hand'][1:]):
+        return 'setup'                                              # Laboratory Maniac / Birgi first, from hand
     if not st['breach']:
         return 'breach' if st['breach_hand'] and _can(st, 1, 'R') else None
     alive = [q for q, n in st['lib'].items() if n > 0 and st['life'][q] > 0]
     if not alive: return None
+    if st['labman'] and st['mylib'] == 0:                          # library empty: draw a card to win
+        if _draw_ready(st): return 'draw'
+        w = st['where']                                             # short of its mana: Petal escapes pay for it
+        res = 4 if any(z == 'gy' for _, z, _, _ in st['draws']) else 0
+        if st['draws'] and (w[PETAL] == 'hand' or (w[PETAL] == 'gy' and st['fuel'] >= 3 + res)): return PETAL
+        return None
     w = st['where']
     bf_res = 3 if w['Brain Freeze'] == 'gy' else 0
     petal_ready = w[PETAL] == 'hand' or (w[PETAL] == 'gy' and st['fuel'] >= 3 + bf_res)
     petal_res = 3 if w[PETAL] and st['U'] <= 1 else 0          # the Brain Freeze after this one will want a Petal
+
+    def led_ready(res):
+        return st['led_bf'] or w[LED] == 'hand' or (w[LED] == 'gy' and st['fuel'] >= 3 + res)
 
     def ritual(res):
         for n, (gen, made, thr) in RITUALS.items():
@@ -1697,16 +1733,22 @@ def _line_step(st):
     gs = w['Grapeshot'] and _ready(st, 'Grapeshot') and _can(st, 1, 'R')
     if gs and copies >= min(st['life'][q] for q in alive): return 'Grapeshot'
     bf = w['Brain Freeze'] and _ready(st, 'Brain Freeze')
-    if st['U'] == 0 or st['land'] == 0:                             # no blue left: only a Petal can make it
+    if st['U'] == 0 or st['land'] == 0:                             # no blue left: a Diamond or a Petal makes it
+        if led_ready(bf_res) and bf: return LED
         if petal_ready and bf: return PETAL
         return 'Grapeshot' if gs else None
     if st['land'] + st['float'] < 2:                                # blue, but short of the generic {1}
+        if led_ready(bf_res) and bf: return LED
         r = ritual(bf_res + petal_res)
         if r: return r
         if petal_ready and bf: return PETAL
         return 'Grapeshot' if gs else None
+    if st['opp_hand'] - 3 >= 2 and w[JESKA] and (w[JESKA] == 'hand' or st['fuel'] >= 3 + bf_res + petal_res) \
+            and _can(st, 2, 'R'):
+        return JESKA                                                # Jeska's Will: a big hand is a big mana burst
     r = ritual(bf_res + petal_res)                                  # spare fuel first becomes storm
     if r: return r
+    if w[LED] and led_ready(bf_res + 3): return LED                 # (a Diamond escape: storm and three more mana)
     if bf: return 'Brain Freeze'
     return 'Grapeshot' if gs else None
 
@@ -1727,10 +1769,16 @@ def _dry_run(g, p):
            sum(casts_this_turn(g, q) for q in g.players), tuple(len(q.library) for q in g.players))
     cached = getattr(g, 'breach_dry', None)
     if cached is not None and cached[0] == key: return cached[1]
-    g2 = search.clone(g); p2 = g2.players[g.players.index(p)]
-    for q in g2.opps(p2): q.hand = []
-    breach_line(g2, p2, execute=True)
-    ok = all(not q.alive or not q.library for q in g2.opps(p2))
+    ok = False
+    for no_setup in (False, True):                  # with Lab Man / Birgi / Jeska's Will, then the plain line
+        g2 = search.clone(g); p2 = g2.players[g.players.index(p)]
+        for q in g2.opps(p2):                       # no answers in hand, but the same number of cards (Jeska's Will)
+            q.hand = [E.DB['Island']] * len(q.hand)
+        g2.line_no_setup = no_setup
+        breach_line(g2, p2, execute=True)
+        ok = g2.winner is p2 or all(not q.alive or not q.library for q in g2.opps(p2))
+        if ok: break
+    g.line_no_setup = ok and no_setup               # the real line follows the plan that worked
     g.breach_dry = (key, ok)
     return ok
 
@@ -1757,6 +1805,41 @@ def breach_line(g, p, execute=False):
             if not cast_card(g, p, c, 'hand', {}) or not has(p, 'breach'):
                 log('    ...Underworld Breach is stopped', g); break
             continue
+        if act == LED:
+            if not _line_led(g, p, st): break
+            continue
+        if act == JESKA:
+            zone = st['where'][JESKA]
+            c = next(x for x in (p.hand if zone == 'hand' else p.gy) if x.name == JESKA)
+            if zone == 'gy':
+                fuel = sorted([x for x in p.gy if x.name not in LINE_CARDS], key=lambda x: card_worth(g, p, x, True))
+                if len(fuel) < 3: break
+                for x in fuel[:3]: p.gy.remove(x); p.exile.append(x)
+                p.stats['breach_escapes'] += 1
+            if not _pay_line(g, p, 2, 'R'): break
+            g.jeska_mana = True                                 # in the line it's always the mana mode
+            try:
+                cast_card(g, p, c, 'escape' if zone == 'gy' else 'hand', {})
+            finally:
+                g.jeska_mana = False
+            continue
+        if act == 'setup':
+            c = next(x for x in p.hand if x.name == st['setup_hand'][0])
+            if not _pay_line(g, p, c.generic, c.pips): break
+            cast_card(g, p, c, 'hand', {})
+            if not any(m.cd is not None and m.cd.name == c.name for m in p.perms): break        # countered
+            continue
+        if act == 'draw':                                       # Laboratory Maniac / Jace: the draw that wins
+            n, zone, gen, pip = _draw_ready(st)
+            c = next(x for x in (p.hand if zone == 'hand' else p.gy) if x.name == n)
+            if zone == 'gy':
+                fuel = sorted([x for x in p.gy if x.name not in LINE_CARDS and x is not c], key=lambda x: card_worth(g, p, x, True))
+                if len(fuel) < 3: break
+                for x in fuel[:3]: p.gy.remove(x); p.exile.append(x)
+                p.stats['breach_escapes'] += 1
+            if not _pay_line(g, p, gen, pip): break
+            cast_card(g, p, c, 'escape' if zone == 'gy' else 'hand', {})
+            continue
         zone = st['where'][act]
         c = next(x for x in (p.hand if zone == 'hand' else p.gy) if x.name == act)
         ctx = {'storm': st['storm']}
@@ -1774,10 +1857,36 @@ def breach_line(g, p, execute=False):
             m = next((x for x in p.perms if x.cd is not None and x.cd.name == PETAL), None)
             if m is not None:
                 leave(g, m); to_zone_card(g, m, 'gy')
-                if st['U'] == 0: p.floatU = getattr(p, 'floatU', 0) + 1
+                if st.get('labman') and st['mylib'] == 0: p.floatA += 1      # any colour, for the winning draw
+                elif st['U'] == 0: p.floatU = getattr(p, 'floatU', 0) + 1
                 elif st['R'] == 0: p.floatR = getattr(p, 'floatR', 0) + 1
                 else: p.floatA += 1
     check_state(g)
+    return True
+
+
+def _line_led(g, p, st):
+    """Lion's Eye Diamond in the Breach line: cast it (from hand, or escaped from the graveyard) unless it's already out,
+    then discard your hand and sacrifice it for three mana: blue for Brain Freeze, red when only Grapeshot is left"""
+    if not st['led_bf']:
+        zone = st['where'][LED]
+        c = next(x for x in (p.hand if zone == 'hand' else p.gy) if x.name == LED)
+        if zone == 'gy':
+            fuel = sorted([x for x in p.gy if x.name not in LINE_CARDS], key=lambda x: card_worth(g, p, x, True))
+            if len(fuel) < 3: return False
+            for x in fuel[:3]: p.gy.remove(x); p.exile.append(x)
+            p.stats['breach_escapes'] += 1
+        cast_card(g, p, c, 'escape' if zone == 'gy' else 'hand', {})
+    m = next((x for x in p.perms if x.cd is not None and x.cd.name == LED and not x.phased), None)
+    if m is None: return False                                         # countered
+    discard_cards(g, p, list(p.hand))
+    leave(g, m); to_zone_card(g, m, 'gy')
+    w = st['where']
+    col = 'R' if st['R'] == 0 and w['Grapeshot'] and not w['Brain Freeze'] else 'U'
+    if col == 'U': p.floatU += 3
+    else: p.floatR += 3
+    p.stats['led_used'] += 1
+    log(f"    Lion's Eye Diamond: {NAME(p)} discards the hand for {col * 3}", g)
     return True
 
 

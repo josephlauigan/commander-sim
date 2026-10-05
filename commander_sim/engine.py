@@ -414,6 +414,7 @@ def once_per_turn(g, p, key):
 # lose_life kinds that are damage (prevented by protection); 'drain' and 'other' are life loss.
 # 'triggers' is mostly damage (Orcish Bowmasters, Kaervek, DSL damage abilities); Undermine passes damage=False.
 DAMAGE_KINDS = ('combat', 'burn', 'aether', 'triggers')
+LABMEN = ('Laboratory Maniac', 'Jace, Wielder of Mysteries')     # drawing from an empty library wins instead
 
 
 def lose_life(g, p, n, src, kind='other', damage=None):
@@ -739,6 +740,8 @@ def draw(g, p, n=1, step=False):
                     g.thief_chain = chain
                 continue
         if not p.library:
+            if any(m.cd is not None and m.cd.name in LABMEN and not m.phased for m in p.perms):
+                importlib.import_module('commander_sim.ais').win(g, p, 'Laboratory Maniac'); return
             p.decked = True; return
         if getattr(p, 'urabrask', None) == turn_stamp(g):     # Urabrask, Heretic Praetor: exiled instead, playable
             p.urabrask = None                                  # this turn (no draw, so no draw triggers)
@@ -2901,7 +2904,7 @@ def jeskas_will(g, p):
     most = max((len(q.hand) for q in opps), default=0)
     both = commander_out(p)
     need = sum(x.cmc for x in p.hand if not x.land) - total_mana(g, p)
-    mana = both or (most >= 4 and need >= 3)
+    mana = both or getattr(g, 'jeska_mana', False) or (most >= 4 and need >= 3)    # (the Breach line: always mana)
     if mana:
         p.floatR += most; log(f'    Jeska\'s Will adds {most} red mana', g)
     if both or not mana:

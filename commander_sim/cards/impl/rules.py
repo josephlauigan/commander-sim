@@ -150,6 +150,20 @@ def tithe_unpaid(g, p):
 full('Smothering Tithe', 'opponents pay {2} per draw only when they can spare it; otherwise you get a Treasure')
 
 
+def tithe_prio(g, p, c):
+    """cast priority (0-90 scale) for Smothering Tithe from the game: the Treasures it will make over the next three
+    rounds (one per opponent draw they can't spare {2} for: likelier early, while they have few lands), worth more
+    when your hand already holds more spells than your mana can cast"""
+    opps = [q for q in g.opps(p) if q.alive]
+    lands = sum(len(q.lands) for q in opps) / len(opps) if opps else 0
+    unpaid = 0.65 if lands <= 4 else 0.45 if lands <= 6 else 0.3
+    treasures = 3 * len(opps) * unpaid
+    mana = max(1, total_mana(g, p))
+    backlog = sum(x.cmc for x in p.hand if x is not c and not x.land) / mana     # turns of spells waiting in hand
+    need = 1.2 if backlog >= 2 else 1.0 if backlog >= 1 else 0.7
+    return int(max(15, min(75, 35 + 4 * treasures * need)))
+
+
 def rhystic_unpaid(g, p):
     hc = E.human_choice(g, p)
     if hc is not None: return not hc.pay_tax(g, p, 1, 'Rhystic Study (or its owner draws a card)')
