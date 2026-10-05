@@ -1398,24 +1398,47 @@ def _saga_etb(g, p, L):
 CI.LAND_ETB["Urza's Saga"] = _saga_etb
 
 
+def _saga_construct(g, p, L):
+    """{2}, {T}: a 0/0 Construct that gets +1/+1 for each artifact you control. The {2} comes from other sources (the
+    Saga taps as part of the cost). Made when it would be at least a 3/3, or when the mana would go unused anyway
+    (nothing castable in hand needs it)"""
+    if L.tapped or L not in p.lands: return
+    L.tapped = True                                     # the Saga taps as part of the cost: it can't pay its own {2}
+    if not can_pay(g, p, 2, ''): L.tapped = False; return
+    arts = sum(1 for m in p.perms if not m.phased and ((m.cd is not None and 'A' in m.cd.types)
+                                                       or (m.data and m.data.get('artifact'))))
+    avail = total_mana(g, p)
+    need = max((c.generic + len(c.pips) for c in p.hand if not c.land and c.generic + len(c.pips) <= avail), default=0)
+    if arts + 1 < 3 and avail - 2 < need: L.tapped = False; return
+    pay(g, p, 2, '')
+    g.selfpt = True                                     # before the token exists: a 0/0 is checked at once
+    make_tokens(g, p, 1, 0, 0, color='', types=('construct',), data={'construct': True, 'artifact': True})
+    log(f'    Urza\'s Saga: {NAME(p)} makes a Construct ({arts + 1}/{arts + 1})', g)
+
+
 def saga_step(g, p):
+    """each precombat main phase a lore counter: chapter II grants the Construct ability (used that turn), chapter
+    III's search trigger can be answered with one more Construct before the Saga is sacrificed"""
     for s_ in list(getattr(p, 'sagas', [])):
         L, lore = s_
         if L not in p.lands: p.sagas.remove(s_); continue
         s_[1] = lore = lore + 1
-        if lore == 2 and can_pay(g, p, 2, ''):
-            pay(g, p, 2, '')
-            for t in make_tokens(g, p, 1, 0, 0, color='', types=('construct',)): t.data = {'construct': True, 'artifact': True}
-            g.selfpt = True
+        if lore == 2: _saga_construct(g, p, L)
         if lore >= 3:
-            cs = [c for c in searchable(g, p) if 'A' in c.types and c.cmc <= 1 and not c.land]
+            _saga_construct(g, p, L)                    # in response to chapter III
+            cs = [c for c in searchable(g, p) if 'A' in c.types and c.cmc <= 1 and not c.land and 'x' not in c.tags]
             if cs:
-                c = max(cs, key=lambda c: card_worth(g, p, c)); p.library.remove(c); g.rng.shuffle(p.library); enter(g, p, c)
+                from commander_sim import ais
+                want = ais.tutor_pick(g, p, 'art')     # the deck's wish list first (a Breach piece, a combo part)
+                c = next((x for x in cs if x.name == want), None) or max(cs, key=lambda c: ais.tutor_value(g, p, c))
+                p.library.remove(c); g.rng.shuffle(p.library); enter(g, p, c)
+                log(f'    Urza\'s Saga: {NAME(p)} puts {c.name} onto the battlefield', g)
             p.lands.remove(L); p.gy.append(L.cd); p.sagas.remove(s_)
 
 
-note("Urza's Saga", 'Approximate', 'taps for C; chapter II a Construct (paying {2}), chapter III a 0/1-cost artifact, '
-     'then sacrificed')
+note("Urza's Saga", 'Approximate', 'taps for C; chapter II and in response to chapter III: a Construct each ({2} from '
+     'other sources, the Saga taps; when it would be 3/3+ or the mana is spare); chapter III a 0/1-cost artifact (wish '
+     'list first), then sacrificed')
 
 
 # ======================================================== threat values for key engines (how badly opponents want them gone)

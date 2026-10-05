@@ -113,7 +113,7 @@ def counter_risk(g, p):
         if not ph: continue
         up = open_mana(g, q, 'U')
         can = 1.0 if up >= 2 else (0.4 if up >= 1 else 0.0)
-        if any('free' in c.tags for c in full_deck(q) if is_counter(c)): can = max(can, 0.25)
+        if any(E.free_counter(q, c) for c in full_deck(q) if is_counter(c)): can = max(can, 0.25)
         miss *= 1.0 - ph * can * 0.85
     return 1.0 - miss
 
@@ -161,7 +161,7 @@ HELD = lambda c: (('ctr' in c.tags and 'free' not in c.tags) or c.tags.get('prot
 
 def hold_value(g, p, s):
     """How much the AI wants to keep mana open right now."""
-    held = [c for c in p.hand if HELD(c) and can_pay(g, p, c.generic, c.pips)]
+    held = [c for c in p.hand if HELD(c) and not E.free_counter(p, c) and can_pay(g, p, c.generic, c.pips)]
     if not held: return None, 0.0
     c = min(held, key=lambda c: c.cmc)
     caution = style(p)['caution']
@@ -196,12 +196,16 @@ def card_utility(g, p, s, c):
     base = PRIO[p.key](g, p, c) if p.key in PRIO else A.deck_prio(g, p, c)
     if p.key not in PRIO and len(p.library) < 8 and draws_cards(c): return None    # don't draw yourself out
     if p.key not in PRIO and 'ctr' in c.tags and not c.creature: return None       # counters wait for a spell to counter
-    if base <= 0 and c.dsl and E.DSLMOD is not None: base = E.DSLMOD.card_value(g, p, c) * 10
+    if ('top' in c.tags or 'seal' in c.tags) and c.instant and g.active is p \
+            and not any('draw' in x.tags for x in p.hand if x is not c):
+        return None                     # a card put on top on your own turn waits a turn: tutor at the end of theirs
+    hand_written = E.CI is not None and c.name in E.CI.SPELL_PRIO      # its own priority said no: keep it no
+    if base <= 0 and c.dsl and E.DSLMOD is not None and not hand_written: base = E.DSLMOD.card_value(g, p, c) * 10
     if base <= 0: return None
     u = base / 10.0                                   # deck knowledge as a prior (0-9)
     t = c.tags
     if 'rock' in t or 'dork' in t or 'lr' in t:
-        if s.lands_in_hand == 0 and s.turn <= 6: u += 1.5
+        if s.lands_in_hand == 0 and s.turn <= 6 and 'moxd' not in t: u += 1.5    # (Mox Diamond needs a land)
         u -= 0.35 * max(0, s.turn - 5)
     if 'draw' in t or 'eng' in t:
         if s.hand <= 2: u += 1.2
@@ -384,17 +388,20 @@ def cast_removal(g, p, c, tg, kick=0, kind=None):
     return True
 
 
-def wipe_options(g, p, s):
+def wipe_options(g, p, s, eot=False):
+    """eot: the end of the turn before yours, where only instant-speed wipes (Cyclonic Rift's overload) are offered;
+    in the main phase an instant-speed wipe is held for that window unless the danger is now"""
     out = []
     for c in p.hand:
         kind = c.tags.get('wipe')
-        if not kind: continue
+        if not kind or (eot and not c.instant): continue
         cg, cp = A.wipe_cost(p, c)
         if not can_pay(g, p, cg, cp): continue
         ol, ml, victim = A.wipe_eval(g, p, kind)
         if ol <= 0: continue                         # hits nothing of theirs (Nibelheim Aflame with no creature of ours)
         swing = ol - 1.2 * ml
         u = swing / 2.2 - 2.5 + 2.0 * min(1.5, s.danger)
+        if c.instant and not eot and s.danger < 0.8: u -= 1.5     # held: at the end of the turn before yours it sticks
 
         def go(c=c, cg=cg, cp=cp, victim=victim):
             if c not in p.hand or not can_pay(g, p, cg, cp): return False
@@ -624,6 +631,8 @@ def main_options(g, p, post):
             rsv = importlib.import_module('commander_sim.ai.pool_ai').combat_reserve(g, p)
             if rsv and not can_pay(g, p, cg + rsv[0], cp + rsv[1]): u -= 6.0
         if naj_hold and not can_pay(g, p, cg, cp + 'WUBRG'): u -= 4.0
+        if c.creature and c.tags.get('flash') and c is not p.cmd and s.danger < 0.8:
+            u -= 1.5                     # flash: better at the end of the turn before yours (Notion Thief, Bowmasters)
         opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
     if getattr(p, 'yawg', False):                # Yawgmoth's Will: spells from the graveyard (reanimation has its own path)
         for c in list(p.gy):
@@ -762,6 +771,22 @@ E.DAMAGE_HOOK = note_damage
 
 
 # ------------------------------------------------------------------ end-of-turn window
+def _overload_rift(g, p, opts):
+    """Cyclonic Rift at the end of the turn before yours: mana untaps next, so the overload costs nothing extra.
+    When it bounces clearly more than the best single target (1.5 times), drop the single-target choices and rank the
+    overload above them"""
+    rift = next((c for c in p.hand if c.tags.get('wipe') == 'rift' and c.instant), None)
+    if rift is None: return opts
+    over = [o for o in opts if o[1] == rift.name]
+    if not over: return opts                                      # the overload isn't affordable or hits nothing
+    ol = A.wipe_eval(g, p, 'rift')[0]
+    best = max((pval(g, m) * (1.0 if m.token else 0.5) for q in g.opps(p) for m in q.perms if not m.phased), default=0)
+    if ol < 1.5 * best: return opts
+    single = [o for o in opts if o[1].startswith(rift.name + ' -> ')]
+    top = max([o[0] for o in single] + [over[0][0]])
+    return [o for o in opts if o not in single and o not in over] + [(top + 0.5, over[0][1] + ' (overload)', over[0][2])]
+
+
 def end_of_turn_window(g, p):
     A.erebos_draw(g, p)
     """At the end of the turn before yours, spend mana you held up but didn't need:
@@ -785,11 +810,17 @@ def end_of_turn_window(g, p):
             cv = 'convoke' in c.tags
             if not can_pay(g, p, c.generic, c.pips, cv): continue
             if 'draw' in c.tags or 'tokx' in c.tags or 'treas' in c.tags or c.sorcery or 'gifts' in c.tags or 'intuition' in c.tags \
-                    or 'seal' in c.tags or 'adnaus' in c.tags:
+                    or 'seal' in c.tags or 'adnaus' in c.tags or 'top' in c.tags:      # (Mystical Tutor: on top)
                 u = card_utility(g, p, s, c)
-                if u is None: u = 3.0
+                if u is None and 'tokx' not in c.tags: continue    # the deck's AI said no (Ad Nauseam at low life)
                 if 'tokx' in c.tags: u = 3.0 + total_mana(g, p, cv) / 2.0
                 opts.append((u, c.name, lambda c=c: do_cast(g, p, c)))
+        opts += wipe_options(g, p, s, eot=True)                   # Cyclonic Rift's overload at instant speed
+        for c in p.hand:                                          # flash creatures: in before the next turn's draws
+            if not (c.creature and c.tags.get('flash')) or any(k in c.tags for k in SPECIAL): continue
+            if not can_pay(g, p, c.generic, c.pips): continue
+            u = card_utility(g, p, s, c)
+            if u is not None: opts.append((u + 1.0, c.name, lambda c=c: do_cast(g, p, c)))
         opts += [x for x in extra_options(g, p, s, True, sorcery_ok=gand) if 'Rhys' not in x[1] and 'Lidless' not in x[1]]
         if E.DSLMOD is not None and g.dsl_on: opts += E.DSLMOD.ability_options(g, p, False)
         if E.CI is not None: opts += hook_options(g, p, s, None)
@@ -797,6 +828,7 @@ def end_of_turn_window(g, p):
         for u, lbl, fn in removal_options(g, p, s):
             if lbl.split(' -> ')[0] in [c.name for c in p.hand if c.instant]:
                 opts.append((u + 1.2 * style(p)['caution'], lbl, fn))
+        opts = _overload_rift(g, p, opts)
         if not opts: return
         opts.append((-1.5, 'pass', None))
         order = gumbel_order(g.rng, [(u, (u, lbl, fn)) for u, lbl, fn in opts], T(p))

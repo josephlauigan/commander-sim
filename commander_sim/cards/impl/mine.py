@@ -1633,11 +1633,12 @@ def _line_state(g, p):
     makes only {B}: it pays generic costs and other rituals, never Brain Freeze's {U} or Grapeshot's {R}"""
     real = [u for u in E.mana_units(g, p) if u[0] != 'G']
     opps = [q for q in g.opps(p) if q.alive]
+    gy_ok = not g.hooks or E.castable(g, p, E.DB['Brain Freeze'], 'gy')   # a lock on casting from graveyards stops escapes
     return {'land': sum(u[2] for u in real), 'float': p.floatA,
             **{c: sum(u[2] for u in real if c in u[1]) for c in 'UBR'},
             'fuel': sum(1 for c in p.gy if c.name not in LINE_CARDS), 'gy': len(p.gy),
             'storm': sum(casts_this_turn(g, q) for q in g.players),
-            'where': {n: _where(p, n) for n in LINE_CARDS},
+            'where': {n: (w if gy_ok or w != 'gy' else None) for n in LINE_CARDS for w in (_where(p, n),)},
             'breach': has(p, 'breach'), 'breach_hand': any('breach' in c.tags for c in p.hand),
             'led_bf': any(m.cd is not None and m.cd.name == LED and not m.phased for m in p.perms),
             'labman': any(m.cd is not None and m.cd.name in E.LABMEN and not m.phased for m in p.perms),
@@ -1645,7 +1646,8 @@ def _line_state(g, p):
                           next(((c.name, c.generic, c.pips) for c in p.hand if c.name in SETUP and len(c.pips) == 1
                                 and not any(m.cd is not None and m.cd.name == c.name for m in p.perms)), None),
             'draws': [(c.name, z, c.generic, c.pips) for z, cs in (('hand', p.hand), ('gy', p.gy)) for c in cs
-                      if c.tags.get('draw') and (c.instant or c.sorcery) and len(c.pips) == 1 and c.name not in LINE_CARDS],
+                      if c.tags.get('draw') and (c.instant or c.sorcery) and len(c.pips) == 1 and c.name not in LINE_CARDS
+                      and (z == 'hand' or gy_ok)],
             'lib': {q: len(q.library) for q in opps}, 'life': {q: q.life for q in opps}, 'mylib': len(p.library),
             'opp_hand': 0 if getattr(g, 'line_no_setup', False) else max((len(q.hand) for q in opps), default=0)}
 

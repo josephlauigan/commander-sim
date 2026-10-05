@@ -41,10 +41,16 @@ def turn_now(g):
 
 
 def spare_after(g, p, n):
-    """can p pay n now and still cast the most expensive spell it holds"""
+    """can p pay a tax of n (Rhystic Study, Smothering Tithe) and still cast the most expensive spell it could cast
+    now: any spell on its own turn, an instant or flash card on someone else's; cards it can't afford anyway
+    don't stop it paying"""
     if not can_pay(g, p, n, ''): return False
-    need = max((cost_of(p, c)[0] + len(cost_of(p, c)[1]) for c in p.hand if not c.land), default=0)
-    return total_mana(g, p) - n >= need
+    avail = total_mana(g, p)
+    own = getattr(g, 'active', None) is p
+    mv = lambda c: cost_of(p, c)[0] + len(cost_of(p, c)[1])
+    need = max((mv(c) for c in p.hand if not c.land and (own or c.instant or 'flash' in c.tags) and mv(c) <= avail),
+               default=0)
+    return avail - n >= need
 
 
 # ================================================================== mana sources

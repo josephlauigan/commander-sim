@@ -10,7 +10,8 @@ import importlib
 from commander_sim.engine import *
 from commander_sim import engine as E
 from commander_sim.cards import cardimpl as CI
-from commander_sim.cards.pool_cards import note
+from commander_sim.cards.pool_cards import card, note
+from commander_sim.cards.cardimpl import on
 
 COMBOS = []
 PIECES = set()
@@ -339,7 +340,36 @@ def _bond(g, p):
 def _oracle(g, p):
     o = in_hand(p, "Thassa's Oracle"); t = any_hand(p, ('Demonic Consultation', 'Tainted Pact'))
     if o is None or t is None: return False, [], []
-    return True, [], [t, o]
+    if t.name == 'Tainted Pact' and len({c.name for c in p.library}) < len(p.library):
+        return False, [], []                     # Pact stops at the first duplicate name (two Islands): no win
+    # the Oracle first, the exile spell with its trigger on the stack: and Oracle's {U}{U} is paid before the {1}
+    return True, [], [o, t]
+
+
+def oracle_devotion(p):
+    return sum(m.cd.pips.count('U') for m in p.perms if m.cd is not None and m.cd.perm and not m.phased)
+
+
+@on("Thassa's Oracle", 'etb')
+def _oracle_etb(g, src, p, m):
+    """look at the top X cards (X = your devotion to blue): you win if X is at least your library's size; otherwise
+    keep the best one on top"""
+    if m is not src or getattr(g, 'combo_spell', False): return       # in the combo the exile spell comes next
+    x = oracle_devotion(p)
+    if x >= len(p.library):
+        from commander_sim import ais; ais.win(g, p, 'combo', through_life=False); return
+    top = [p.library.pop() for _ in range(min(x, len(p.library)))]
+    if top:
+        best = max(top, key=lambda c: E.card_worth(g, p, c)); top.remove(best)
+        g.rng.shuffle(top); p.library[:0] = top; p.library.append(best)
+
+
+card("Thassa's Oracle", 'wizard pow=1 tgh=3', dsl=[])
+note("Thassa's Oracle", 'Full', 'ETB: look at the top X (devotion to blue), win if X is at least the library size; '
+                               'cast alone only when that wins, otherwise held for Demonic Consultation / Tainted Pact')
+CI.SPELL_PRIO["Thassa's Oracle"] = lambda g, p, c: 85 if oracle_devotion(p) + 2 >= len(p.library) else 0
+card('Tainted Pact', '', types='I', dsl=[])          # only ever the combo's exile spell, never a cantrip
+note('Tainted Pact', 'Approximate', 'cast only in the Thassa\'s Oracle combo (needs a library with no duplicate names)')
 
 
 @combo('Helm of the Host + Combat Celebrant', [('Helm of the Host',), ('Combat Celebrant',)],

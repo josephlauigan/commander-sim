@@ -227,7 +227,17 @@ note('Elvish Clancaller', 'Full', 'other Elves you control +1/+1; {4}{G}{G},{T}:
 
 
 # ------------------------------------------------------------------ Gamble: tutor, then discard at random
-@IC.spell('Gamble', prio=58, types='S', status=('Full', 'tutor any card to hand, then discard a card at random'))
+def gamble_prio(g, p, c):
+    """Gamble tutors, then discards a card at random from a hand that includes the one it found: worth casting by
+    the chance of keeping that card (none with an empty hand), less with good cards that could go instead"""
+    rest = [x for x in p.hand if x is not c]
+    keep = len(rest) / (len(rest) + 1)                   # the random discard misses the tutored card
+    if not rest: return 0
+    risk = sum(card_worth(g, p, x) for x in rest if not x.land) / max(1, len(rest)) / 10   # what a miss costs
+    return int(max(0, 60 * keep - 8 * risk))
+
+
+@IC.spell('Gamble', prio=gamble_prio, types='S', status=('Full', 'tutor any card to hand, then discard a card at random'))
 def _gamble(g, p, c, ctx):
     tutor(g, p, 'any')
     rest = [x for x in p.hand if x is not c]
@@ -352,3 +362,66 @@ note('Elvish Champion', 'Full', 'other Elves +1/+1 and forestwalk')
 @on('Elvish Champion', 'grant_kw')
 def _forestwalk(g, src, m, kw):
     return kw == 'forestwalk' and m is not src and E.has_type(m, 'elf')
+
+
+# ------------------------------------------------------------------ Crop Rotation: sacrifice a land, fetch the right one
+def _crop_target(g, p):
+    """(land card, gain) Crop Rotation should fetch now, or (None, 0): Gaea's Cradle with three or more creatures out;
+    with landfall payoffs out, a fetch land (two landfalls); otherwise nothing worth a card"""
+    lib = [c for c in searchable(g, p) if c.land]
+    n = sum(1 for m in p.perms if m.creature and not m.phased)
+    cradle = next((c for c in lib if c.name == "Gaea's Cradle"), None)
+    if cradle is not None and n >= 3: return cradle, n - 1
+    payoffs = sum(1 for src, _ in (CI.hooked(g, 'landfall') or ()) if src.owner is p) if g.hooks else 0
+    fetch = next((c for c in lib if c.tags.get('f')), None)
+    if fetch is not None and payoffs: return fetch, payoffs
+    return None, 0
+
+
+def crop_prio(g, p, c):
+    if not p.lands: return 0
+    target, gain = _crop_target(g, p)
+    return 0 if target is None or gain < 2 else min(80, 50 + 6 * gain)
+
+
+@IC.spell('Crop Rotation', prio=crop_prio, types='I',
+          status=('Approximate', 'sacrifices your least useful land (tapped first) for Gaea\'s Cradle with three or more '
+                                 'creatures, or a fetch land when landfall payoffs are out; held otherwise'))
+def _crop_rotation(g, p, c, ctx):
+    if not p.lands: return
+    keep = ("Gaea's Cradle", 'Ancient Tomb')
+    sac = min(p.lands, key=lambda L: (L.cd.name in keep, not L.tapped, len(L.cd.tags.get('c', '')), g.rng.random()))
+    target, _ = _crop_target(g, p)
+    p.lands.remove(sac); p.gy.append(sac.cd)
+    if g.hooks: CI.fire(g, 'land_gy', p, sac.cd)
+    if target is None or target not in p.library: return
+    p.library.remove(target); g.rng.shuffle(p.library); p.stats['tutored'] += 1
+    from commander_sim import ais
+    p.lands.append(Land(target, ais.land_enters_tapped(p, target)))
+    log(f'    Crop Rotation: {NAME(p)} sacrifices {sac.cd.name} for {target.name}', g)
+    landfall(g, p)
+    if target.tags.get('f'): ais.crack_fetch(g, p, p.lands[-1])
+
+
+# ------------------------------------------------------------------ Mana Vault: pay {4} at upkeep to untap it
+@on('Mana Vault', 'upkeep')
+def _vault_upkeep(g, src, p):
+    """untapping costs 4 and gives back 3 now (1 mana net this turn) and stops the 1 damage each draw step: done
+    when life has started to matter and the rest of the mana still casts the best spell in hand"""
+    o = src.owner
+    if p is not o or not src.tapped or src.phased or o.life > 20 or not can_pay(g, o, 4, ''): return
+    avail = total_mana(g, o)
+    need = max((c.cmc for c in o.hand if not c.land and c.cmc <= avail), default=0)
+    if avail - 1 < need: return
+    pay(g, o, 4, ''); src.tapped = False
+    log(f'    {NAME(o)} pays {{4}} to untap Mana Vault', g)
+
+
+# ------------------------------------------------------------------ Tergrid, God of Fright: menace
+_TERGRID = "Tergrid, God of Fright // Tergrid's Lantern"
+if _TERGRID in DB: DB[_TERGRID].kws = DB[_TERGRID].kws | {'menace'}
+
+
+# ------------------------------------------------------------------ contextual priorities for the outside decks' cards
+CI.SPELL_PRIO['Seedborn Muse'] = lambda g, p, c: importlib.import_module('commander_sim.ai.gc_prio').seedborn_prio(g, p, c)
+CI.SPELL_PRIO['Drannith Magistrate'] = lambda g, p, c: importlib.import_module('commander_sim.ai.gc_prio').drannith_prio(g, p, c)

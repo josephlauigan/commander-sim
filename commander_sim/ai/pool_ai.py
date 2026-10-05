@@ -31,6 +31,30 @@ def counter_threshold(q, base):
     return base - min(2.5, 0.3 * n)
 
 
+def tutor_prio(g, p, c, kind='any', life=0):
+    """cast priority (0-90) for a tutor: high when the deck's wish list or a missing combo piece is in the library,
+    otherwise by the impact of the best card it would find (ais.tutor_value); lower with a full hand, and not when
+    its life cost (Vampiric Tutor, Imperial Seal) would leave you exposed"""
+    from commander_sim import ais
+    if _TUTOR_DEPTH[0]: return 45            # valuing a tutor as another tutor's target: no recursion
+    if life and p.life - life < 6: return 0  # Vampiric Tutor / Imperial Seal: 2 life is a real cost only near death
+    ok = ais.TUTOR_OK.get(kind, ais.TUTOR_OK['any'])
+    _TUTOR_DEPTH[0] += 1
+    try:
+        if tutor_pick(g, p, kind, ok): v = 72
+        else:
+            cands = [x for x in E.searchable(g, p) if ok(x) and not x.land]
+            if not cands: return 0
+            v = 25 + min(40, max(ais.tutor_value(g, p, x) for x in cands) / 2.5)
+    finally:
+        _TUTOR_DEPTH[0] -= 1
+    if len(p.hand) >= 7: v -= 10
+    return int(v)
+
+
+_TUTOR_DEPTH = [0]
+
+
 def generic_prio(g, p, c):
     """0-90 cast priority from what the card is tagged to do. 0 = not cast proactively (held interaction,
     or no tags: the adaptive AI then falls back to the ability interpreter's value estimate)."""
@@ -48,14 +72,19 @@ def generic_prio(g, p, c):
     if c is p.cmd:
         dflt = 85 if (E.CI is not None and c.name in E.CI.HOOKS) else 75      # an engine commander comes first
         return max(40, cfg.get('cmd_prio', dflt) - 3 * p.tax) if p.turns >= cfg.get('cmd_turn', 2) else 0
-    if 'rock' in t and int(str(t['rock']).split(':')[0]) >= 2 and c.cmc <= 1: return 88  # Sol Ring, Mana Vault: always
-    if 'rock' in t or 'dork' in t or 'lr' in t or 'fastmana' in t: return 85 if p.turns <= 5 else 38
-    if 'chromemox' in t:
+    GP = importlib.import_module('commander_sim.ai.gc_prio')
+    if c.perm and E.CI is not None and E.CI.combo_imp is not None:
+        ci = E.CI.combo_imp(E.CUR_G, p, c) or 0                   # a combo piece first (Grim Monolith with Power
+        if ci >= 7: return 50 + 4 * ci                            # Artifact), as the combo branch below would
+    if 'chromemox' in t:                                          # before 'rock': its imprint decides
         spare = [x for x in p.hand if not x.land and 'A' not in x.types and set(x.pips) & set(p.ident)]
-        return (82 if p.turns <= 5 else 30) if len(spare) >= 2 else 0
-    if 'moxd' in t:
-        n = sum(1 for x in p.hand if x.land)
-        return (82 if p.turns <= 5 else 30) if n >= 2 or (n >= 1 and p.land_turn == p.turns) else 0
+        return GP.ramp_prio(g, p, c, 1) if len(spare) >= 2 else 0
+    if 'moxd' in t:                                               # Mox Diamond: needs a land to discard (it carries
+        n = sum(1 for x in p.hand if x.land)                      # rock=1:A too, so this check comes first)
+        return GP.ramp_prio(g, p, c, 1) if n >= 2 or (n >= 1 and p.land_turn == p.turns) else 0
+    if 'rock' in t and int(str(t['rock']).split(':')[0]) >= 2 and c.cmc <= 1: return 88  # Sol Ring, Mana Vault: always
+    if 'grim' in t: return GP.ramp_prio(g, p, c, 3)               # Grim Monolith: three now, {4} to untap
+    if 'rock' in t or 'dork' in t or 'lr' in t or 'fastmana' in t: return 85 if p.turns <= 5 else 38
     if t.get('prot') == 'boots' or 'cloak' in t: return 45 if any(m.creature for m in p.perms) else 25
     if 'rem' in t and 'etb' in t and c.perm:                     # creature / enchantment with an ETB removal
         tg = E.legal_targets(E.CUR_G, p, t['rem'], t.get('tgt', 'c'), 'mv4' in t, spell=c)
@@ -66,21 +95,24 @@ def generic_prio(g, p, c):
     if 'tokx' in t: return 50 if total_mana(E.CUR_G, p) >= 5 else 0
     if 'tithe' in t:                                                # Smothering Tithe: from the Treasures it will make
         return importlib.import_module('commander_sim.cards.impl.rules').tithe_prio(E.CUR_G, p, c)
-    if 'rhystic' in t or 'eng' in t or 'necro' in t: return 64
-    if 'seal' in t: return 56 if p.life >= 15 else 20            # Vampiric Tutor / Imperial Seal
-    if 'jeska' in t: return 52
-    if 'intuition' in t or 'gifts' in t: return 50
-    if 'adnaus' in t: return 58 if p.life >= 30 else 0
-    if 'citadel' in t: return 58 if p.life >= 25 else 20
-    if 'agent' in t: return 50
-    if 'braids' in t or 'birgi' in t: return 45
+    if 'necro' in t: return importlib.import_module('commander_sim.ais').necro_prio(E.CUR_G, p, c)
+    if 'rhystic' in t: return importlib.import_module('commander_sim.ai.gc_prio').rhystic_prio(g, p, c)
+    if 'eng' in t: return 64
+    if 'seal' in t: return tutor_prio(E.CUR_G, p, c, 'any', life=2)   # Vampiric Tutor / Imperial Seal
+    if 'jeska' in t: return importlib.import_module('commander_sim.ai.gc_prio').jeska_prio(g, p, c)
+    if 'intuition' in t or 'gifts' in t: return tutor_prio(E.CUR_G, p, c, 'any')
+    if 'adnaus' in t: return importlib.import_module('commander_sim.ai.gc_prio').adnaus_prio(g, p, c)
+    if 'citadel' in t: return importlib.import_module('commander_sim.ai.gc_prio').citadel_prio(g, p, c)
+    if 'agent' in t: return importlib.import_module('commander_sim.ai.gc_prio').agent_prio(g, p, c)
+    if 'braids' in t: return importlib.import_module('commander_sim.ai.gc_prio').braids_prio(g, p, c)
+    if 'birgi' in t: return 45
     if 'rabble' in t: return 55
     if 'stampede' in t: return 55 if sum(1 for m in p.perms if m.creature) >= 6 else 0
     if 'drawcre' in t: return 55 if sum(1 for m in p.perms if m.creature) >= 4 else 20
     if 'clamp' in t: return 55
     if 'crusade' in t or 'anth' in t or 'warleader' in t: return 60
     if any(k in t for k in ('tokup', 'tokatk', 'tok', 'spelltok', 'ping', 'kiln', 'spelldraw', 'drain', 'bartist')): return 62
-    if t.get('tut'): return 58
+    if t.get('tut'): return tutor_prio(E.CUR_G, p, c, t['tut'])
     if 'draw' in t and (c.instant or c.sorcery): return 46
     if 'draw' in t: return 52
     if 'treas' in t or 'mktok' in t or 'drainetb' in t or 'edictetb' in t: return 50
@@ -306,6 +338,14 @@ def _options(p, m):
     return out
 
 
+def _worth_whole_board(g, owner, m):
+    """spend Teferi's Protection (the whole board phases out) on one targeted removal only for the commander or a
+    permanent carrying at least 40% of the board's value"""
+    if m.is_cmd: return True
+    board = sum(pval(g, x) for x in owner.perms if not x.phased)
+    return board > 0 and pval(g, m) >= 0.4 * board
+
+
 def protect(g, owner, m, kind, actor, spell=None):
     """targeted removal is aimed at owner's permanent m: respond if it's worth it"""
     if not worth_protecting(g, owner, m):
@@ -316,6 +356,7 @@ def protect(g, owner, m, kind, actor, spell=None):
         how, scope = PROTECTORS[name][2], PROTECTORS[name][3]
         if scope in ('one', 'creatures') and not m.creature and how not in ('hexproof_indes', 'phase', 'all_targeted'): continue
         if not _saves(how, kind, m, spell, True): continue
+        if name == E.TEFERIS_PROTECTION and not _worth_whole_board(g, owner, m): continue   # kept for wipes and lethal
         # cheapest first: permanents that tap, then one-shot cards; save the board-wide ones for wipes
         rank = {'bf_tap': 0, 'bf_sac': 2, 'hand': 1, 'bf_self_discard': 0, 'bf_sac_other': 1}[where] + (3 if scope not in ('one', 'self') else 0)
         cands.append((rank, name, where, cost, src))
@@ -334,7 +375,8 @@ def protect(g, owner, m, kind, actor, spell=None):
 
 def wipe_response(g, q, kind, caster):
     """a board wipe is about to hit q: 'all' (everything saved), 'indes' (indestructible), or None"""
-    loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
+    from commander_sim import ais as A
+    loss = A.wipe_loss(g, q, kind, caster)                       # by the wipe's own rule: Vandalblast spares creatures
     if loss < 6: return None
     if kind == 'destroy' and importlib.import_module('commander_sim.cards.impl.partials').regen_wipe(g, q): return 'indes'
     for name, where, cost, src in sorted(_options(q, None), key=lambda o: o[1] != 'bf_sac'):

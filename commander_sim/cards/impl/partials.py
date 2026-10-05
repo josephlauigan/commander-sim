@@ -1492,7 +1492,7 @@ def _ring_draw(g, src, p, s, post):
 card('The One Ring', 'leg', types='A', dsl=[], kws={'indestructible'})
 note('The One Ring', 'Full', 'indestructible; protection from everything until your next turn when cast; {T}: burden '
      'counter, draw that many; upkeep life loss per burden')
-CI.SPELL_PRIO['The One Ring'] = 62
+CI.SPELL_PRIO['The One Ring'] = lambda g, p, c: importlib.import_module('commander_sim.ai.gc_prio').one_ring_prio(g, p, c)
 
 
 # ------------------------------------------------------------------ Tishana's Tidebinder

@@ -222,10 +222,15 @@ class Sephiroth(unittest.TestCase):
         self.assertTrue(s.life_locked)
 
     def test_sephiroth_casts_necropotence_while_healthy(self):
+        # Necropotence keeps life above what the table could hit you for (necro_floor: the biggest opposing board plus
+        # 6, at least 10); it's cast only when the life above that floor buys two or more cards
         g = table('seph', 'veyran'); s = g.players[0]
         self.assertGreater(ais.seph_prio(g, s, C['Necropotence']), 0)
-        s.life = 20
+        s.life = 11
         self.assertEqual(ais.seph_prio(g, s, C['Necropotence']), 0)
+        s.life = 30
+        for _ in range(3): perm(g, g.players[1], 'Grave Titan')
+        self.assertEqual(ais.seph_prio(g, s, C['Necropotence']), 0)        # three Titans: the floor is above 30
 
     def test_avacyns_pilgrim(self):
         g = table('seph', 'veyran'); s = g.players[0]

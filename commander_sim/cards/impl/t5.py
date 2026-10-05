@@ -19,8 +19,7 @@ def _urza(g, src, p, m):
     if m is src:
         g.selfpt = True
         if not trigger_window(g, src.owner, src, 'create a Construct'): return
-        for t in make_tokens(g, src.owner, 1, 0, 0, color='', types=('construct',)):
-            t.data = {'construct': True, 'artifact': True}
+        make_tokens(g, src.owner, 1, 0, 0, color='', types=('construct',), data={'construct': True, 'artifact': True})
 
 
 @on('Urza, Lord High Artificer', 'extra_mana')
@@ -190,17 +189,16 @@ def _seedborn(g, src, p):
     o = src.owner
     if p is o: return
     for L in o.lands: L.tapped = False
-    for m in o.perms:
-        if not (m.cd is not None and 'nountap' in m.cd.tags): m.tapped = False
+    for m in o.perms: m.tapped = False     # "doesn't untap during your untap step" (Grim Monolith) doesn't stop it here
 card('Seedborn Muse', 'pow=2 tgh=4', dsl=[])
 note('Seedborn Muse', 'Full', 'untaps your permanents in each other player\'s untap step')
 
 
-@IC.spell('Worldly Tutor', prio=40, types='I')
+@IC.spell('Worldly Tutor', prio=lambda g, p, c: importlib.import_module('commander_sim.ai.pool_ai').tutor_prio(g, p, c, 'cre'),
+          types='I', tags='top', status=('Full', 'a creature on top of the library: the wish list first, cast at the end '
+                                                'of the turn before yours'))
 def _worldly(g, p, c, ctx):
-    cs = [x for x in searchable(g, p) if x.creature]
-    if cs:
-        x = max(cs, key=lambda x: card_worth(g, p, x)); p.library.remove(x); g.rng.shuffle(p.library); p.library.append(x)
+    tutor_to_top(g, p, 'cre', life=0)
 
 
 @IC.spell("Nature's Rhythm", prio=lambda g, p, c: 55 if total_mana(g, p) >= 5 else 0, types='S',
@@ -320,7 +318,8 @@ def _zur(g, src, p, atk, d):
     if not any('E' in c.types and c.cmc <= 3 and c.name not in have for c in searchable(g, p)): return
     if not trigger_window(g, p, src, 'search for an enchantment', imp=5): return
     have = {m.cd.name for m in p.perms if m.cd is not None}
-    cs = [c for c in searchable(g, p) if 'E' in c.types and c.cmc <= 3 and c.name not in have]
+    cs = [c for c in searchable(g, p) if 'E' in c.types and c.cmc <= 3 and c.name not in have
+          and not ('necro' in c.tags and importlib.import_module('commander_sim.ais').necro_prio(g, p, c) == 0)]
     if not cs: return
     c = min(cs, key=lambda c: (ZUR_PREF.index(c.name) if c.name in ZUR_PREF else 99, -card_worth(g, p, c)))
     p.library.remove(c); g.rng.shuffle(p.library)
