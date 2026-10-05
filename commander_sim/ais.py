@@ -1685,6 +1685,58 @@ def chasm_threatened(g, p):
 
 
 # ======================================================== combat
+def good_blockers(g, q, a, p):
+    """q's untapped creatures that could block attacker a, kill it and survive"""
+    return [b for b in q.perms if b.creature and not b.tapped and not b.phased and can_block(g, b, a)
+            and (epow(g, b) * fiery(q) >= etgh(g, a) or b.dt) and not (epow(g, a) * fiery(p) >= etgh(g, b) or a.dt)]
+
+
+def blockable(g, q, a):
+    return any(b.creature and not b.tapped and not b.phased and can_block(g, b, a) for b in q.perms)
+
+
+def split_attack(g, p, d, atk, held=()):
+    """the AI's attackers may go at different players, as in a real game: [(defending player, attackers)].
+    Everything starts at d (the player the AI chose); an attacker moves when that clearly helps:
+      - a player the attack can kill outright: the attackers they can't block at all go at them (not ones d's
+        death depends on);
+      - an attacker d can block and kill (while the blocker survives) goes at a player with no such blocker, for as
+        many attackers as d has such blockers (the most valuable first);
+      - an attacker held back from d for that reason (outside decks) attacks a player where it's safe.
+    Attack taxes: an attacker only moves to a player whose tax is no higher than d's"""
+    others = [q for q in g.opps(p) if q is not d and q.alive and not shielded(q)]
+    if not others or not (atk or held): return [(d, list(atk))]
+    tax = {q: (attack_restrictions(g, p, q)[0] if g.hooks else 0) for q in others + [d]}
+    hit = lambda a: epow(g, a) * (2 if double_strike(p, a) else 1) * fiery(p)
+    to = {a: d for a in atk}
+    d_kill = [a for a in atk if not blockable(g, d, a)]
+    d_dies = sum(hit(a) for a in d_kill) >= d.life
+    for q in sorted(others, key=lambda q: q.life):                  # finish a player off
+        if tax[q] > tax[d]: continue
+        free = sorted([a for a in list(atk) + list(held) if to.get(a, d) is d and not blockable(g, q, a)
+                       and not (d_dies and a in d_kill) and hit(a) > 0], key=hit, reverse=True)
+        if sum(hit(a) for a in free) < q.life: continue
+        need = 0
+        for a in free:
+            if need >= q.life: break
+            to[a] = q; need += hit(a)
+    risky = sorted([a for a in atk if to[a] is d and good_blockers(g, d, a, p)], key=lambda a: -pval(g, a))
+    eaters = {id(b) for a in risky for b in good_blockers(g, d, a, p)}
+    for a in risky[:len(eaters)]:                     # away from a bad block (each blocker stops only one attacker)
+        safe = [q for q in others if tax[q] <= tax[d] and not good_blockers(g, q, a, p)]
+        if safe: to[a] = max(safe, key=lambda q: (not blockable(g, q, a), threat(g, p, q)))
+    for a in held:                                                    # held back from d: somewhere it's safe
+        if a in to: continue
+        safe = [q for q in others if tax[q] == 0 and not good_blockers(g, q, a, p)]
+        if safe: to[a] = max(safe, key=lambda q: (not blockable(g, q, a), threat(g, p, q)))
+    groups = [(q, [a for a in to if to[a] is q]) for q in [d] + others]
+    groups = [(q, xs) for q, xs in groups if xs]
+    moved = [(q, xs) for q, xs in groups if q is not d]
+    for q, xs in moved:
+        log(f'      [{NAME(p)} sends {len(xs)} attacker(s) at {NAME(q)} instead]', g)
+    return groups or [(d, [])]
+
+
 def choose_defender(g, p):
     opps = [q for q in g.opps(p) if not shielded(q)] or g.opps(p)     # combat damage to a protected player is prevented
     my = sum(epow(g, m) for m in p.perms if m.creature and not m.tapped and not m.noatk and not m.sick)
@@ -2068,11 +2120,12 @@ def combat(g, p):
             if plan is not None and plan[1] == 'none': break
             all_atk = list(atk)
             d = g.players[plan[0]] if plan is not None else (brain.choose_defender(g, p) if adaptive else choose_defender(g, p))
-            if plan is not None and plan[1] == 'all': atk = all_atk
+            if plan is not None and plan[1] == 'all': groups = [(d, all_atk)]       # everything at one player
             else:
                 if adaptive and ncomb == 1: atk = brain.filter_attackers(g, p, atk)
+                pre = list(atk)
                 if p.key not in MAIN: atk = importlib.import_module('commander_sim.ai.pool_ai').attack_filter(g, p, atk, d)
-            groups = [(d, atk)]
+                groups = split_attack(g, p, d, atk, [m for m in pre if m not in atk])
         declared = [m for _, xs in groups for m in xs]
         kept = []
         for gd, xs in groups:                                 # each defending player's taxes and restrictions

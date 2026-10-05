@@ -71,6 +71,45 @@ class Attacking(unittest.TestCase):
         self.assertEqual(v.life, 40); self.assertFalse(t.tapped)
 
 
+class AISplits(unittest.TestCase):
+    """the AI's attackers may go at different players (ais.split_attack)"""
+    def test_an_attacker_avoids_a_bad_block(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        a = perm(g, s, 'Orcish Bowmasters'); a.sick = False      # 1/1
+        perm(g, v, 'Grave Titan')                                # Veyran's 6/6 would eat it
+        self.assertEqual(ais.split_attack(g, s, v, [a]), [(x, [a])])
+
+    def test_one_blocker_stops_only_one_attacker(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        a = perm(g, s, 'Orcish Bowmasters'); b = perm(g, s, 'Orcish Bowmasters'); a.sick = b.sick = False
+        perm(g, v, 'Niv-Mizzet, Parun')                          # one blocker that eats a 1/1
+        groups = dict((q.key, xs) for q, xs in ais.split_attack(g, s, v, [a, b]))
+        self.assertEqual((len(groups['veyran']), len(groups['seph'])), (1, 1))
+
+    def test_finish_off_a_player_who_cant_block(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        t = perm(g, s, 'Grave Titan'); t.sick = False
+        perm(g, v, 'Grave Titan')                                # Veyran can trade with it; Sephiroth has nothing
+        x.life = 5
+        self.assertEqual(ais.split_attack(g, s, v, [t]), [(x, [t])])
+
+    def test_nothing_moves_without_a_reason(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        t = perm(g, s, 'Grave Titan'); t.sick = False
+        self.assertEqual(ais.split_attack(g, s, v, [t]), [(v, [t])])
+
+    def test_the_ai_attacks_two_players_in_one_combat(self):
+        g = table('sauron', 'veyran', 'seph'); s, v, x = g.players
+        t = perm(g, s, 'Grave Titan'); t.sick = False
+        b = perm(g, s, 'Orcish Bowmasters'); b.sick = False
+        perm(g, x, 'Grave Titan', sick=False)                    # Sephiroth can eat the Bowmasters
+        lv, lx = v.life, x.life
+        g.forced_attack = (g.players.index(x), 'filtered')       # the plan names Sephiroth
+        ais.combat(g, s)
+        self.assertLess(v.life, lv)                              # the Bowmasters went at Veyran instead
+        self.assertTrue(t.tapped and b.tapped)
+
+
 class Blocking(unittest.TestCase):
     def test_block(self):
         g = table('sauron', 'veyran'); s, v = g.players
