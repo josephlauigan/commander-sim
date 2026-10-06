@@ -1,0 +1,4 @@
+08:00:57 start: 0 games already done; decks ['seph']; tiers ['t4', 't5']; swap ["Phyrexian Arena=>Bolas's Citadel"]; games per cell 480; jobs 24; timeout 2700s; stop launching 13:15, deadline 13:35
+09:00:58 progress: 364 games done, 0 crashes, 0 timeouts, 24 running
+10:00:58 progress: 710 games done, 0 crashes, 0 timeouts, 24 running
+10:38:58 STOPPED by request (Citadel showed no gain at the halfway point)
