@@ -83,10 +83,19 @@ def full_deck(p):
     return p.full
 
 
+def deck_matches(p, pred):
+    """the cards in p's whole decklist matching pred: the list never changes during a game, so it is worked out once
+    per player and predicate (counter_risk asks for it at every decision of every look-ahead playout)"""
+    cache = p.__dict__.setdefault('full_match', {})
+    v = cache.get(pred)
+    if v is None: v = cache[pred] = [c for c in full_deck(p) if pred(c)]
+    return v
+
+
 def prob_holding(g, q, pred):
     """P(opponent q holds >=1 card matching pred), from public info only:
     their decklist minus copies already seen (graveyard, exile, battlefield)."""
-    total = sum(1 for c in full_deck(q) if pred(c))
+    total = len(deck_matches(q, pred))
     seen = sum(1 for c in q.gy + q.exile if pred(c)) + sum(1 for m in q.perms if m.cd is not None and pred(m.cd))
     left = max(0, total - seen)
     unknown = len(q.library) + len(q.hand)
@@ -114,7 +123,7 @@ def counter_risk(g, p):
         if not ph: continue
         up = open_mana(g, q, 'U')
         can = 1.0 if up >= 2 else (0.4 if up >= 1 else 0.0)
-        if any(E.free_counter(q, c) for c in full_deck(q) if is_counter(c)): can = max(can, 0.25)
+        if any(E.free_counter(q, c) for c in deck_matches(q, is_counter)): can = max(can, 0.25)
         miss *= 1.0 - ph * can * 0.85
     return 1.0 - miss
 

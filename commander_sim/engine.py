@@ -505,9 +505,24 @@ BASIC_NAMES = ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes', 'Sno
 
 def land_cols(p, L, anyc):
     g = CUR_G
-    if g is not None and g.hooks and L.cd.name not in BASIC_NAMES and CI.blood_moon(g): return 'R'
+    hooks = g is not None and g.hooks
+    return _land_cols(g, p, L, anyc, hooks and CI.blood_moon(g), hooks and _RULES().dryad_colors(p))
+
+
+_RULES_MOD = []
+
+
+def _RULES():
+    if not _RULES_MOD: _RULES_MOD.append(importlib.import_module('commander_sim.cards.impl.rules'))
+    return _RULES_MOD[0]
+
+
+def _land_cols(g, p, L, anyc, moon, dryad):
+    """land_cols with the board-wide checks (Blood Moon, Dryad of the Ilysian Grove) already made: mana_units makes
+    them once per call instead of once per land"""
+    if moon and L.cd.name not in BASIC_NAMES: return 'R'
     if anyc: return p.ident
-    if g is not None and g.hooks and importlib.import_module('commander_sim.cards.impl.rules').dryad_colors(p): return p.ident
+    if dryad: return p.ident
     if CI is not None and L.cd.name == 'Plaza of Heroes': return CI.plaza_colors(g, p)
     if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p)
     if CI is not None and L.cd.name in CI.LAND_COLS: return CI.LAND_COLS[L.cd.name](g, p, L)
@@ -521,6 +536,9 @@ def mana_units(g, p, convoke=False):
     U = []
     anyc = has(p, 'lantern') or (any(L.cd.tags.get('worldtree') for L in p.lands) and len(p.lands) >= 6)
     art = PAY_FOR is not None and 'A' in PAY_FOR.types
+    G = CUR_G                                     # land_cols reads the current game (as it always has)
+    moon = G is not None and G.hooks and CI.blood_moon(G)
+    dryad = G is not None and G.hooks and _RULES().dryad_colors(p)
     for L in p.lands:
         if not L.tapped:
             if L.cd.tags.get('workshop') and not art: continue          # Mishra's Workshop: artifact spells only
@@ -528,7 +546,7 @@ def mana_units(g, p, convoke=False):
             amt = int(L.cd.tags.get('amt', 1))
             if CI is not None and L.cd.name in CI.DYN_MANA: amt = CI.dyn_mana(g, p, L)
             if g.hooks: amt += CI.total(g, 'land_mana', p, L)
-            U.append([L, land_cols(p, L, anyc), amt])
+            U.append([L, _land_cols(G, p, L, anyc, moon, dryad), amt])
     rite = has(p, 'rite')
     auras = getattr(g, 'auras', None) if g is not None else None
     for m in p.perms:
