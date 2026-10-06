@@ -78,7 +78,26 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 
 ### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; 240 games per cell)
 
-Lists as updated in September 2026 (Najeela no longer tracked), after a full modeling pass: every card in the three
+**October 6 re-run of JD's four decks** (72 games per cell, intervals about ±10 points; `audit/overnight/run.py`,
+seeds 500000-500071). Lists after the October bracket reshuffle (Y'shtola: Consecrated Sphinx, Bolas's Citadel,
+Smothering Tithe; Sephiroth: Phyrexian Arena for Citadel; Sauron: Fact or Fiction; Veyran: Propaganda) and the Game
+Changer audit (contextual priorities, modeling fixes). The last column is the share over all five tiers (360 games,
+about ±4.5 points), then the September figure from the table below.
+
+| Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 | All tiers (Sept.) |
+|---|---|---|---|---|---|---|
+| Y'shtola | **44.4%** (34-56) | **56.9%** (45-68) | **48.6%** (37-60) | **48.6%** (37-60) | 25.4% (17-37) | **44.8%** (34.0%) |
+| Sephiroth | **43.1%** (32-55) | **58.3%** (47-69) | 31.9% (22-43) | **37.5%** (27-49) | 12.5% (7-22) | **36.7%** (38.1%) |
+| Sauron | 29.2% (20-41) | 33.3% (24-45) | 16.7% (10-27) | 29.2% (20-41) | 31.9% (22-43) | 28.1% (22.9%) |
+| Veyran | 16.7% (10-27) | 25.0% (16-36) | 31.9% (22-43) | 16.7% (10-27) | 16.7% (10-27) | 21.4% (17.3%) |
+
+Only Y'shtola's change is clearly real (+11 points over all tiers, about three standard errors): it fits the three
+Game Changers she gained. Sauron's +5 is borderline; Sephiroth and Veyran are unchanged within noise. Sephiroth's
+Tier 5 cell fell from 22% to 13% (Bolas's Citadel left the list), but the intervals overlap. The re-run mixes deck
+changes with AI and engine changes, so it doesn't say which caused what. 1,439 games, no crashes or timeouts; look-ahead
+games averaged 6-7 minutes each for every deck.
+
+**September 2026 (240 games per cell).** Lists as updated in September 2026 (Najeela no longer tracked), after a full modeling pass: every card in the three
 decks audits Full (`python3 -m commander_sim.pool_audit --mine`). Each game seats the deck against three decks of the tier;
 25% is an even share. Tiers 2, 3 and 5 were re-run after the six pool lists were tuned (0b); Tiers 1 and 4 did not
 change. Before the tuning those cells read: Sephiroth 49.6 / 38.8 / 22.5%, Veyran 25.0 / 17.5 / 14.2%, Sauron
