@@ -12,6 +12,7 @@
 **Updated 2026-10-02.** Out: Plaza of Heroes. In: Thought Vessel. Thought Vessel is a two-mana rock toward the six-mana commander, and no maximum hand size suits the draw engines. Plaza of Heroes was the softest land.
 **Updated 2026-10-03.** Out: Ral Zarek, Guest Lecturer. In: Marchesa, the Black Rose. Marchesa gives every creature dethrone (a +1/+1 counter when attacking the player with the most life, the Army included) and returns any creature with a +1/+1 counter that dies at the next end step. Ral Zarek's planeswalker slot did the least.
 **Updated 2026-10-03.** Out: Reconnaissance Mission. In: Disdainful Stroke. Disdainful Stroke is a two-mana answer to wipes, big creatures and commanders (mana value 4 or more), held up while the Army grows. Reconnaissance Mission drew one card per hit for a one-creature attack plan.
+**Updated 2026-10-05.** Out: Consecrated Sphinx. In: Fact or Fiction. Consecrated Sphinx → Fact or Fiction. Back to Bracket 3: three Game Changers (Underworld Breach, Cyclonic Rift, Orcish Bowmasters). Tested: no loss (+0.1 points on average, 1,000 paired games per tier, adaptive AI). The Sphinx moves to Y'shtola.
 
 ## Strategy
 
@@ -27,7 +28,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Grow it.** Orcish Bowmasters and Sauron, the Necromancer add counters on their own schedules. Iron Man adds a counter every time you draw, and Vision grows on off-turn casts. Barad-dûr is a late-game mana sink: it taps for black, and for {X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, Slaughter Pact, and three wipes is almost always.
 
-**Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. With **Sheoldred, the Apocalypse** out, each of those cards also costs its drawer 2 life — thirty more damage across the table — and **Consecrated Sphinx** lets you draw two for each (it's a "may": take only what your library can spare). Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and Kaervek. Without Bowmasters, Sheoldred, or the Sphinx it's just a symmetrical wheel that refuels the table, so hold the activation until a payoff is on board.
+**Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. With **Sheoldred, the Apocalypse** out, each of those cards also costs its drawer 2 life — thirty more damage across the table. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and Kaervek. Without Bowmasters or Sheoldred it's just a symmetrical wheel that refuels the table, so hold the activation until a payoff is on board.
 
 **Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler and Inexorable Tide proliferate it upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
 
@@ -41,7 +42,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Two punishers on the same trigger.** Sauron amasses and **Kaervek the Merciless** throws a burn or removal bolt equal to the spell's mana value — both fire off the same event, an opponent casting a spell.
 
-**Two punishers on every draw.** **Sheoldred, the Apocalypse** makes each opponent lose 2 life for every card they draw and gains you 2 for every card you draw — the Ring's discard-and-draw-four is 8 life. **Consecrated Sphinx** (a Game Changer, in Rhystic Study's old slot) lets you draw two whenever an opponent draws. Together they turn the table's natural card flow, and every Jace's Archivist wheel, into your advantage. One overlap to know: Urabrask exiles each opponent's first draw of their turn instead of letting them draw it, so neither Sheoldred nor the Sphinx sees that card — they still see every other draw.
+**A punisher on every draw.** **Sheoldred, the Apocalypse** makes each opponent lose 2 life for every card they draw and gains you 2 for every card you draw — the Ring's discard-and-draw-four is 8 life. It turns the table's natural card flow, and every Jace's Archivist wheel, into your advantage. **Fact or Fiction** (in Consecrated Sphinx's old slot) is the instant-speed dig: cast it at the end of an opponent's turn for two of the five cards. One overlap to know: Urabrask exiles each opponent's first draw of their turn instead of letting them draw it, so Sheoldred doesn't see that card — it still sees every other draw.
 
 **Underworld Breach** is the deck's second engine. While it's out (it's sacrificed at the end of the turn), every nonland card in your graveyard can be cast again by paying its mana cost and exiling three other cards from your graveyard. Dark Ritual ({B} for {B}{B}{B}) and Lotus Petal ({0}, sacrifice for one mana of any colour) turn that into mana: each escape nets two black or one of any colour, and each one adds to the storm count. Brain Freeze ({1}{U}, storm) mills three cards per copy, so it fills your graveyard with fuel early in the turn and empties opponents' libraries late in it. Ritual and Petal also cast normally as fast mana, but they are in the deck for this line, and Brain Freeze does almost nothing without Breach.
 
@@ -95,7 +96,7 @@ Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any ca
 - **Need protection for the swing → Ringsight for Not of This World.**
 - **One problem creature → Ringsight for Infernal Grasp** (or Slaughter Pact if you need it free on the combo turn).
 - **Pod is casting into you → Ringsight for Kaervek** or Urabrask.
-- **Opponents drawing a lot (or you're about to wheel) → Ringsight for Sheoldred, the Apocalypse or Consecrated Sphinx.**
+- **Opponents drawing a lot (or you're about to wheel) → Ringsight for Sheoldred, the Apocalypse.**
 - **Behind on board / need the reset → Ringsight for Toxic Deluge** or Blasphemous Act — ideally with The Ozolith out.
 - **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
 
@@ -103,9 +104,9 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 ## Bracket and Rule 0
 
-Bracket 4, with **four** Game Changers: **Consecrated Sphinx**, **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach**. Breach is the fourth, which takes the deck past Bracket 3's cap of three; Sheoldred, Kefka, Brush Off, Talisman of Dominance, Diabolic Intent, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list.
+Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx moved to Y'shtola on 10-05, at no measurable cost). Sheoldred, Kefka, Brush Off, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
 
-**The deck has two combos.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later. **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal as fuel) mills the table in one turn; it can come together as early as turn four with a tutor. Both are fine at a Bracket 4 table, and both change the pregame conversation.
+**The deck has two combos.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later. **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal as fuel) mills the table in one turn; it can come together as early as turn four with a tutor. The Sword line is a late-game combo; the Breach line can be early, so say so before the game at a Bracket 3 table.
 
 In the simulator, against the tables a Bracket 4 deck sits at, the Breach version did about as well as the old Bracket 3 list (look-ahead AI, 800 games per tier: +2.9 points against Tier 4, −0.1 against Tier 5). The combo went off in 2–6% of games, against under 1% before. It traded some strength against softer Bracket 3 tables for that speed.
 
@@ -113,9 +114,9 @@ Disclose before the game:
 
 - **Sword of Feast and Famine + Aggravated Assault is an infinite-combat combo**, and Diabolic Tutor, Diabolic Intent, and Ringsight can each find a piece.
 - **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal) mills the table out in one turn; all three tutors find Breach pieces.
-- **Consecrated Sphinx**, **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (the four Game Changers).
+- **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (the three Game Changers).
 - **Sauron amasses off every spell an opponent casts**, and **Kaervek** punishes the same trigger.
-- **Sheoldred, the Apocalypse** and **Consecrated Sphinx** punish every card an opponent draws.
+- **Sheoldred, the Apocalypse** punishes every card an opponent draws.
 - **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters or Sheoldred out it hurts for every card they draw.
 - **Urabrask** replaces each opponent's draw-step draw with an exile-and-play-it-now card.
 
@@ -125,7 +126,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (18).** Consecrated Sphinx, Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Marchesa the Black Rose, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (17).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Marchesa the Black Rose, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
@@ -133,7 +134,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Thought Vessel, Whispersilk Cloak
 
-**Instants and sorceries (25).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Terminate, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -158,7 +159,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Chromatic Lantern
 1 Command Tower
 1 Conqueror's Flail
-1 Consecrated Sphinx
 1 Counterspell
 1 Crumbling Necropolis
 1 Cyclonic Rift
@@ -169,6 +169,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Disdainful Stroke
 1 Drowned Catacomb
 1 Exotic Orchard
+1 Fact or Fiction
 1 Flux Channeler
 1 Foreboding Ruins
 1 Frostboil Snarl
@@ -255,12 +256,12 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 **Scavenger Grounds hits your own graveyard too.** Fire it deliberately.
 
 **Card conflicts with your other decks.**
-- **Two physical copies needed** of Consecrated Sphinx, Sheoldred, the Apocalypse, and Diabolic Tutor, which are in this deck and Sephiroth.
+- **Two physical copies needed** of Sheoldred, the Apocalypse and Diabolic Tutor, which are in this deck and Sephiroth.
 - **Marchesa, the Black Rose** is also the commander of your Marchesa deck: a second copy, or move her between decks.
 - **Diabolic Intent** moved here from Sephiroth, so one copy is enough.
 - Shared with **Veyran**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
-- Shared with **Sephiroth**: Chromatic Lantern, Consecrated Sphinx, Diabolic Tutor, Grave Titan, Mind Stone, Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
+- Shared with **Sephiroth**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Phyrexian Arena (10-05), Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
 - Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **Only in this deck**: Night's Whisper and Phyrexian Arena.
+- **Only in this deck**: Night's Whisper and Fact or Fiction (new 10-05).
 - **New singles**: Disdainful Stroke (10-03, from the Y'shtola deck); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
 - **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

@@ -714,8 +714,8 @@ def zur_prio(g, p, c):
     zur = zur_perm(p)
     if c is p.cmd: return 84 if p.turns >= 2 else 60
     if 'rock' in t: return 82 if p.turns <= 5 else 30
-    if 'rhystic' in t: return 78
-    if 'necro' in t: return 74 if p.life >= 20 else 20
+    if 'rhystic' in t: return importlib.import_module('commander_sim.ai.gc_prio').rhystic_prio(g, p, c)
+    if 'necro' in t: return importlib.import_module('commander_sim.ais').necro_prio(g, p, c)
     if 'remora' in t: return 66 if p.turns <= 4 else 8
     if n == 'Esper Sentinel': return 62 if p.turns <= 4 else 30
     if n in LOCKS:

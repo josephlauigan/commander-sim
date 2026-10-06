@@ -146,7 +146,7 @@ Murmuring Mystic|C|3U|mystic pow=1 tgh=5 noatk wizard
 Muse Seeker|C|1U|pow=1 tgh=2 noatk spellloot
 Mystic Confluence|I|3UUU|ctr=any soft=3 eotdraw=3
 Mystic Sanctuary|L|-|c=U t
-Mystical Tutor|I|U|tut=is
+Mystical Tutor|I|U|tut=is top
 Old Fat Spider Can't See Me|E|2U|spider
 Path of Ancestry|L|-|c=A t
 Plunder the Trollshaws|I|1U|draw=1 fb=3U fbdraw=2

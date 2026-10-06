@@ -99,6 +99,17 @@ def matches(g, p, m, f, src=None):
     return True
 
 
+# the same type words as TYPE_OK, for cards (in a library, hand or graveyard) rather than permanents: without these a
+# search for "an artifact or enchantment card" (Enlightened Tutor) found any card
+CARD_TYPE_OK = {
+    'planeswalker': lambda c: 'P' in c.types, 'nonland': lambda c: not c.land,
+    'cp': lambda c: c.creature or 'P' in c.types, 'ac': lambda c: c.creature or 'A' in c.types,
+    'acp': lambda c: c.creature or 'A' in c.types or 'P' in c.types, 'ce': lambda c: c.creature or 'E' in c.types,
+    'ae': lambda c: 'A' in c.types or 'E' in c.types, 'nonartifact_creature': lambda c: c.creature and 'A' not in c.types,
+    'spell': lambda c: not c.land,
+}
+
+
 def card_matches(c, f):
     f = f or {}
     t = f.get('type')
@@ -109,6 +120,7 @@ def card_matches(c, f):
     elif t == 'enchantment': ok = 'E' in c.types
     elif t == 'instant_or_sorcery': ok = c.instant or c.sorcery
     elif t == 'noncreature': ok = not c.creature and not c.land
+    elif t in CARD_TYPE_OK: ok = CARD_TYPE_OK[t](c)
     else: ok = True
     if not ok: return False
     if 'max_mv' in f and c.cmc > f['max_mv']: return False

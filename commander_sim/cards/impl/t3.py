@@ -322,8 +322,24 @@ def _put_creature(g, p, pred, prefer_hoof=True):
     return c
 
 
-@IC.spell('Natural Order', prio=lambda g, p, c: 80 if sum(1 for m in p.perms if m.creature) >= 5 and any(
-    x.name == 'Craterhoof Behemoth' for x in p.library) else (40 if any(m.creature and (m.token or pval(g, m) < 2) for m in p.perms) else 0),
+def natural_order_prio(g, p, c):
+    """Natural Order sacrifices a green creature first: Craterhoof only when the board is still wide after that
+    (five or more creatures besides the one sacrificed), otherwise only a spare body (a token or a cheap creature)
+    for a real threat (a bomb or the deck's wish list); never a real creature for a sidegrade"""
+    green = [m for m in p.perms if m.creature and not m.phased and m.cd is not None and 'G' in m.cd.pips]
+    if not green: return 0
+    n = sum(1 for m in p.perms if m.creature and not m.phased)
+    lib = [x for x in p.library if x.creature and 'G' in x.pips]
+    if n - 1 >= 5 and any(x.name == 'Craterhoof Behemoth' for x in lib): return 85
+    spare = [m for m in green if m.token or pval(g, m) < 2]
+    if not spare: return 0
+    from commander_sim.ai import pool_ai
+    wish = set(pool_ai.wish_list(g, p))
+    best = max((6 if x.name in wish else (x.bomb or 0) for x in lib), default=0)
+    return 55 if best >= 5 else 0
+
+
+@IC.spell('Natural Order', prio=natural_order_prio,
           status=('Full', 'sacrifices a spare green creature for the best green creature (Craterhoof on a wide board)'))
 def _natural_order(g, p, c, ctx):
     _put_creature(g, p, lambda x: 'G' in x.pips)

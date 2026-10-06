@@ -176,7 +176,7 @@ def wipe_response(g, q, kind, caster):
     if q.key == 'zur': return E.CI.zur_wipe_response(g, q, kind)
     if q.key == 'galadriel': return E.CI.galadriel_wipe_response(g, q, kind)
     if q.key == 'yshtola': return E.CI.yshtola_wipe_response(g, q, kind)
-    loss = sum(pval(g, m) for m in q.perms if m.creature or kind in ('rift', 'rebuke'))
+    loss = wipe_loss(g, q, kind, caster)
     if loss < 6: return None
     if q.key == 'seph':
         if kind in ('destroy', 'dmg13', 'austere', 'nib'):
@@ -560,13 +560,19 @@ def seph_prio(g, p, c):
     t = c.tags
     lp = importlib.import_module('commander_sim.cards.impl.mine').loop_prio(g, p, c)
     if lp is not None: return lp                             # a piece of one of the loops
-    if 'shards' in t: return 68
-    if c.name == 'The One Ring': return 62
+    if 'shards' in t: return importlib.import_module('commander_sim.ai.gc_prio').shards_prio(g, p, c)
+    if 'gifts' in t:                                         # Gifts Ungiven: an instant, held for the end of a turn
+        if g.active is p: return 0
+        return 55 if seph_tutor_target(g, p) is not None else 30
+    if c.name == 'The One Ring': return importlib.import_module('commander_sim.ai.gc_prio').one_ring_prio(g, p, c)
+    if 'sphinx' in t:                                        # Consecrated Sphinx: hard-cast from what it will draw
+        return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
     if c is p.cmd: return 0
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
-    if 'tithe' in t: return 72
-    if 'necro' in t: return 62 if p.life >= 25 else 0          # Necropotence
-    if 'citadel' in t: return 60 if p.life >= 25 else 20          # Bolas's Citadel: with life to spend
+    if 'tithe' in t:                                         # Smothering Tithe: from the Treasures it will make
+        return importlib.import_module('commander_sim.cards.impl.rules').tithe_prio(g, p, c)
+    if 'necro' in t: return necro_prio(g, p, c)                 # Necropotence
+    if 'citadel' in t: return importlib.import_module('commander_sim.ai.gc_prio').citadel_prio(g, p, c)          # Bolas's Citadel: life above the threat floor
     if t.get('fill') == 'stitcher': return 75
     if t.get('fill') == 'tortured': return 65
     if t.get('fill') == 'wayfinder': return 45
@@ -698,6 +704,49 @@ def use_removal(g, p, threshold=5, instants_extra=None):
     return False
 
 
+def wipe_hit(g, p, kind):
+    """(permanent, its controller) -> does p's board wipe of this kind hit it? The one place each wipe's rule lives:
+    wipe_eval scores a wipe for its caster from it, and wipe_loss prices it for each player about to be hit"""
+    if kind in ('farewell', 'austere2'):
+        modes = wipe_modes(g, p, kind)
+
+        def hit(m, q):
+            ty = m.cd.types if m.cd is not None else 'C'
+            return (('art' in modes and 'A' in ty) or ('ench' in modes and 'E' in ty) or ('cre' in modes and m.creature)
+                    or ('le3' in modes and m.creature and (m.cd is None or m.cd.cmc <= 3))
+                    or ('ge4' in modes and m.creature and m.cd is not None and m.cd.cmc >= 4))
+        return hit
+    if kind == 'vandal': return lambda m, q: q is not p and m.cd is not None and 'A' in m.cd.types
+    if kind == 'rift': return lambda m, q: q is not p
+    if kind == 'rebuke':
+        victim = wipe_eval(g, p, kind)[2]
+        return lambda m, q: q is victim
+    biggest, X = None, 0
+    if kind == 'nib':
+        cr = [m for m in p.perms if m.creature]
+        if cr: biggest = max(cr, key=lambda x: epow(g, x)); X = epow(g, biggest)
+    rules = {'destroy': lambda m: True, 'minus': lambda m: True, 'exile': lambda m: True, 'evac': lambda m: True,
+             'dmg13': lambda m: etgh(g, m) <= 13, 'austere': lambda m: m.cd is not None and m.cd.cmc >= 4,
+             'austere2': lambda m: m.cd is not None and m.cd.cmc >= 4, 'nib': lambda m: biggest is not None and etgh(g, m) <= X}
+    rule = rules.get(kind, lambda m: True)
+    return lambda m, q: m.creature and m is not biggest and rule(m)
+
+
+def wipe_loss(g, q, kind, caster):
+    """what q loses to caster's wipe of this kind, by the wipe's own rule (a Vandalblast with no artifacts out costs
+    nothing): bounced cards count half (they can be recast), and a reanimator's bombs count less unless exiled"""
+    hit = wipe_hit(g, caster, kind)
+    rean = q.key == 'seph' and has_rean_access(g, q)
+    loss = 0.0
+    for m in q.perms:
+        if m.phased or not hit(m, q): continue
+        v = pval(g, m)
+        if kind in ('rift', 'evac', 'rebuke') and not m.token: v *= 0.5
+        if rean and m.cd is not None and m.cd.bomb and kind not in ('exile', 'rift', 'evac', 'rebuke'): v *= 0.4
+        loss += v
+    return loss
+
+
 def wipe_eval(g, p, kind):
     if kind in ('farewell', 'austere2'):
         modes = wipe_modes(g, p, kind)
@@ -717,7 +766,8 @@ def wipe_eval(g, p, kind):
     if kind == 'vandal':
         return sum(pval(g, m) for q in g.opps(p) for m in q.perms if m.cd is not None and 'A' in m.cd.types), 0, None
     if kind in ('rift', 'rebuke'):
-        vals = {q: sum(pval(g, m) for m in q.perms) for q in g.opps(p)}
+        def bounced(m): return pval(g, m) * (1.0 if m.token or kind != 'rift' else 0.5)   # bounced cards can be recast
+        vals = {q: sum(bounced(m) for m in q.perms if not m.phased) for q in g.opps(p)}
         if not vals: return 0, 0, None
         if kind == 'rift': return sum(vals.values()), 0, None
         v = max(vals, key=vals.get); return vals[v], 0, v
@@ -757,6 +807,19 @@ WIPE_MODE_TEXT = {'art': 'artifacts', 'ench': 'enchantments', 'cre': 'all creatu
                   'le3': 'creatures with mana value 3 or less', 'ge4': 'creatures with mana value 4 or greater'}
 
 
+GY_ENGINES = ('Meren of Clan Nel Toth', 'Muldrotha, the Gravetide', 'Sheoldred, Whispering One')
+
+
+def gy_worth(g, q, c):
+    """what card c in q's graveyard is worth to q (what Farewell's graveyard mode takes from them): flashback-style
+    value, and for a player who can bring creatures back (reanimation spells, a recursion engine out) the creature"""
+    v = 0.25 * E.card_worth(g, q, c, in_gy=True)
+    if c.creature and (has_rean_access(g, q) or any(m.cd is not None and m.cd.name in GY_ENGINES and not m.phased
+                                                    for m in q.perms)):
+        v = max(v, 0.6 * (c.bomb or (1 + 0.3 * c.pow)))
+    return v
+
+
 def wipe_modes(g, p, kind):
     """pick modes for Farewell (any number) or Austere Command (exactly two): you choose; the AI by net value"""
     hc = E.human_choice(g, p)
@@ -789,7 +852,7 @@ def wipe_modes(g, p, kind):
         opts['cre'] = val(lambda m: m.creature)
         gyv = 0.0                                   # exile all graveyards: theirs (recursion) against yours (reanimation)
         for q in g.players:
-            if q.alive: gyv += (-1.2 if q is p else 1.0) * 0.25 * sum(E.card_worth(g, q, c, in_gy=True) for c in q.gy)
+            if q.alive: gyv += (-1.2 if q is p else 1.0) * sum(gy_worth(g, q, c) for c in q.gy)
         opts['gy'] = gyv
         ch = {k for k, v in opts.items() if v > 0}
         return ch or {'cre'}
@@ -829,9 +892,9 @@ def veyran_prio(g, p, c):
     if 'aether' in t: return 66
     if 'dragoncaller' in t: return 60
     if 'spelldraw' in t or 'mystic' in t: return 58
-    if c.name == 'The One Ring': return 58
-    if 'rhystic' in t: return 62
-    if 'sphinx' in t: return 60
+    if c.name == 'The One Ring': return importlib.import_module('commander_sim.ai.gc_prio').one_ring_prio(g, p, c)
+    if 'rhystic' in t: return importlib.import_module('commander_sim.ai.gc_prio').rhystic_prio(g, p, c)
+    if 'sphinx' in t: return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
     if 'narset' in t: return 52
     if 'chromemox' in t:                         # needs a coloured nonland card to spare
         spare = [x for x in p.hand if not x.land and 'A' not in x.types and set(x.pips) & set(p.ident)]
@@ -846,7 +909,7 @@ def veyran_prio(g, p, c):
     if 'panoptic' in t: return 44 if mirror_candidates(g, p) else 12
     if 'gifts' in t: return 50
     if 'intuition' in t: return 48
-    if 'jeska' in t: return 52
+    if 'jeska' in t: return importlib.import_module('commander_sim.ai.gc_prio').jeska_prio(g, p, c)
     if t.get('tut') == 'any': return 45
     if 'thor' in t: return 50
     if t.get('tut') == 'art': return 55
@@ -916,7 +979,7 @@ def combo_interrupted(g, p, which, key_perms):
             break
         if which == 'veyran' and not uncounterable:
             for ctr in [c for c in q.hand if c.tags.get('ctr') in ('any', 'nc', 'ise')]:
-                if 'free' not in ctr.tags and not can_pay(g, q, ctr.generic, ctr.pips): continue
+                if not E.free_counter(q, ctr) and not can_pay(g, q, ctr.generic, ctr.pips): continue
                 if not cast_counter(g, q, ctr): continue
                 back = pick_counter(g, p, ctr)
                 if back is not None and cast_counter(g, p, back, ctr): break
@@ -1026,8 +1089,9 @@ def sauron_prio(g, p, c):
     t = c.tags
     if c is p.cmd: return 85
     if 'storm' in t: return 0                                # Brain Freeze, Grapeshot: held for the Breach line
+    if 'led' in t: return 0                                  # Lion's Eye Diamond: held for the Breach line too
     if 'rock' in t: return 80 if p.turns <= 5 else 40
-    if 'rhystic' in t: return 78
+    if 'rhystic' in t: return importlib.import_module('commander_sim.ai.gc_prio').rhystic_prio(g, p, c)
     if 'remora' in t: return 66 if p.turns <= 4 else 0              # Mystic Remora: only early, while upkeep is cheap
     if 'mauhur' in t: return 63
     if 'bowmasters' in t: return 62
@@ -1056,7 +1120,12 @@ def sauron_prio(g, p, c):
     if t.get('prot') == 'boots':                             # Lightning Greaves: for Sauron himself (never the Army)
         return 50 if has(p, 'sauron') or p.cmd_in_zone and total_mana(g, p) >= 7 else 25
     if t.get('tut'): return 60
-    if c.name == 'The One Ring': return 60
+    if c.name == 'Gamble':                                   # hand-written tutor: by the chance of keeping its card
+        return importlib.import_module('commander_sim.cards.impl.fixes').gamble_prio(g, p, c)
+    if c.name in ('Wheel of Fortune', 'Windfall', 'Reforge the Soul'):   # hand-written wheels: their own timing (hand nearly empty)
+        f = E.CI.SPELL_PRIO.get(c.name, 0) if E.CI is not None else 0
+        return f(g, p, c) if callable(f) else f
+    if c.name == 'The One Ring': return importlib.import_module('commander_sim.ai.gc_prio').one_ring_prio(g, p, c)
     gc = gc_prio_sauron(g, p, c)
     if gc is not None: return gc
     if 'draw' in t and (c.instant or c.sorcery): return 40
@@ -1171,8 +1240,8 @@ def marchesa_prio(g, p, c):
         if getattr(p, 'cmd_pending', False): return 0                    # she returns at end step by herself
         return 84 if (p.turns >= 3 or marchesa_outlet(p)) else 70
     if 'rock' in t: return 80 if p.turns <= 5 else 35
-    if 'rhystic' in t: return 78
-    if 'necro' in t: return 74 if p.life >= 20 else 25
+    if 'rhystic' in t: return importlib.import_module('commander_sim.ai.gc_prio').rhystic_prio(g, p, c)
+    if 'necro' in t: return necro_prio(g, p, c)
     if 'remora' in t: return 68 if p.turns <= 4 else 10
     countered = sum(1 for m in p.perms if m.creature and m.plus > 0 and not m.token)
     opp_cr = [m for q in g.opps(p) for m in q.perms if m.creature and not m.phased]
@@ -1363,9 +1432,20 @@ def _tutor_pick_named(g, p, kind):
         if sw and asl: order.append('Whispersilk Cloak')
         br = has(p, 'breach') or any('breach' in c.tags for c in p.hand)
         st = any('storm' in c.tags for c in p.hand + p.gy)
+        if any(n in p.deck_names for n in ('Grapeshot', "Lion's Eye Diamond") + E.LABMEN):   # Breach-first builds
+            line = []
+            if not br: line.append('Underworld Breach')
+            if not st: line += ['Brain Freeze', 'Grapeshot']
+            rit = any(c.name in ('Dark Ritual', 'Cabal Ritual', 'Lotus Petal', "Lion's Eye Diamond", "Jeska's Will") for c in p.hand + p.gy)
+            lab = any(m.cd is not None and m.cd.name in E.LABMEN for m in p.perms) or any(c.name in E.LABMEN for c in p.hand)
+            if br and st and not lab: line += list(E.LABMEN)            # the self-mill finish
+            if br and st and not rit: line += ["Lion's Eye Diamond", "Jeska's Will", 'Dark Ritual', 'Cabal Ritual', 'Lotus Petal']
+            return first(line + order + ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault',
+                                         'Deepglow Skate', 'Counterspell', 'Whispersilk Cloak'])
         if br and not st: order.insert(0 if not (sw or asl) else len(order), 'Brain Freeze')
         if st and not br: order.insert(0 if not (sw or asl) else len(order), 'Underworld Breach')
-        order += ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault', 'Deepglow Skate', 'Counterspell']
+        order += ['Rhystic Study', 'Sword of Feast and Famine', 'Aggravated Assault', 'Deepglow Skate', 'Counterspell',
+                  'Whispersilk Cloak']                     # artifact tutors with the Sword already found: evasion, not a rock
         return first(order)
     if p.key == 'yshtola':
         return E.CI.yshtola_tutor(g, p, kind, okn)
@@ -1396,8 +1476,22 @@ def tutor_pick(g, p, kind):
         prio = lambda g, p, c: deck_prio(g, p, c) or (E.DSLMOD.card_value(g, p, c) * 10 if c.dsl and E.DSLMOD else 0)
     cands = [c for c in E.searchable(g, p) if ok(c) and not c.land]
     if not cands: return None
+    if p.turns > 4:                              # past the early turns: impact, not cast priority (no Sol Ring on turn 10)
+        return max(cands, key=lambda c: (tutor_value(g, p, c), c.cmc)).name
     best = max(cands, key=lambda c: (prio(g, p, c), c.bomb, c.cmc))
     return best.name
+
+
+MANA_TAGS = ('rock', 'dork', 'lr', 'fastmana', 'moxd', 'chromemox')
+
+
+def tutor_value(g, p, c):
+    """what fetching card c is worth now: its card worth (cast priority based, right early on), with mana sources
+    discounted after turn 4 and a bomb valued by its bomb rating"""
+    v = float(E.card_worth(g, p, c))
+    if p.turns > 4 and any(k in c.tags for k in MANA_TAGS): v *= 0.3
+    if c.bomb: v = max(v, 10.0 * float(c.bomb))
+    return v
 
 
 # ======================================================== Game Changer plays (Veyran's candidate cards)
@@ -1429,6 +1523,7 @@ def breach_candidates(g, p, need_mana=True):
 
 def breach_escape(g, p, c):
     if c not in p.gy or len(p.gy) < 4 or not has(p, 'breach'): return False
+    if g.hooks and not castable(g, p, c, 'gy'): return False          # Drannith Magistrate, Rule of Law ...
     cg, cp = cost_of(p, c)
     if not can_pay(g, p, cg, cp): return False
     pay(g, p, cg, cp)
@@ -1557,14 +1652,14 @@ def breach_gc_options(g, p):
 def gc_prio_sauron(g, p, c):
     """Sauron's priorities for Game Changer candidates (None: not one of them)"""
     t = c.tags
-    if 'sphinx' in t: return 62
-    if 'necro' in t: return 70 if p.life >= 25 else 30
-    if 'citadel' in t: return 58 if p.life >= 25 else 20
+    if 'sphinx' in t: return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
+    if 'necro' in t: return necro_prio(g, p, c)
+    if 'citadel' in t: return importlib.import_module('commander_sim.ai.gc_prio').citadel_prio(g, p, c)
     if 'tergrid' in t: return 55
-    if 'agent' in t: return 50
-    if 'braids' in t: return 40
+    if 'agent' in t: return importlib.import_module('commander_sim.ai.gc_prio').agent_prio(g, p, c)
+    if 'braids' in t: return importlib.import_module('commander_sim.ai.gc_prio').braids_prio(g, p, c)
     if 'seal' in t: return 58
-    if 'adnaus' in t: return 55 if p.life >= 30 else 0
+    if 'adnaus' in t: return importlib.import_module('commander_sim.ai.gc_prio').adnaus_prio(g, p, c)
     if 'narset' in t: return 50
     if 'breach' in t:
         if any('storm' in x.tags for x in p.hand + p.gy): return 0      # held for the Breach line (breach_options)
@@ -1572,14 +1667,35 @@ def gc_prio_sauron(g, p, c):
         return 56 if k >= 2 and total_mana(g, p) >= 5 else 0
     if 'gifts' in t: return 50
     if 'intuition' in t: return 48
-    if 'jeska' in t: return 50
+    if 'jeska' in t: return importlib.import_module('commander_sim.ai.gc_prio').jeska_prio(g, p, c)
     return None
 
 
-def necro_pay(g, p, floor=20):
-    """Necropotence: pay 1 life per card (exiled face down, to hand at this end step); keep life at the floor and
-    don't overshoot the hand size (extra discards are exiled)"""
+def necro_floor(g, p):
+    """the life Necropotence keeps: the biggest board one opponent could swing at you (its creatures' power) plus a
+    buffer of 6, and never under 10"""
+    biggest = max((sum(epow(g, m) for m in q.perms if m.creature and not m.phased) for q in g.opps(p)), default=0)
+    return max(10, biggest + 6)
+
+
+def necro_cards(g, p, c=None):
+    """how many cards Necropotence would buy at this end step: life above the floor, room in hand, library"""
+    room = 8 - len([x for x in p.hand if x is not c])
+    return max(0, min(p.life - necro_floor(g, p), room, len(p.library)))
+
+
+def necro_prio(g, p, c):
+    """cast priority (0-90) for Necropotence: it skips your draw step, so it's worth it only when the life above the
+    floor buys at least two cards a turn; more cards, higher priority"""
+    n = necro_cards(g, p, c)
+    return 0 if n < 2 else min(80, 45 + 5 * n)
+
+
+def necro_pay(g, p, floor=None):
+    """Necropotence: pay 1 life per card (exiled face down, to hand at this end step); keep life at the floor
+    (necro_floor: what the table could hit you for) and don't overshoot the hand size (extra discards are exiled)"""
     if blocked(g, p, 'Necropotence'): return
+    if floor is None: floor = necro_floor(g, p)
     n = max(0, min(p.life - floor, 8 - len(p.hand), len(p.library)))
     if not n: return
     lose_life(g, p, n, p)
@@ -1645,7 +1761,9 @@ def citadel_options(g, p):
                 p.library.pop(); p.lands.append(Land(top, land_enters_tapped(p, top))); p.land_turn = p.turns
                 log(f'  {NAME(p)} plays {top.name} from the top (Citadel)', g); landfall(g, p); return True
             out.append((3.0, f'Citadel: play {top.name}', land))
-    elif (p.life - top.cmc >= 15 and 'ctr' not in top.tags and 'x' not in top.tags and 'tokx' not in top.tags
+    elif g.hooks and not castable(g, p, top, 'lib'):                  # Drannith Magistrate, Rule of Law ...
+        pass
+    elif (p.life - top.cmc >= importlib.import_module('commander_sim.ai.gc_prio').citadel_floor(g, p) and 'ctr' not in top.tags and 'x' not in top.tags and 'tokx' not in top.tags
           and not (any(k in top.tags for k in ('rean', 'fill', 'yawg', 'avarice', 'mastery', 'crackle')) and not top.dsl)):
         from commander_sim.ai import brain
         u = brain.card_utility(g, p, brain.Situation(g, p), top)
@@ -1654,7 +1772,7 @@ def citadel_options(g, p):
             u = (max(pval(g, m) for m in tg) - 3.0) if tg else None
         if u is not None:
             def cast():
-                if not p.library or p.library[-1] is not top or p.life - top.cmc < 15: return False
+                if not p.library or p.library[-1] is not top or p.life - top.cmc < importlib.import_module('commander_sim.ai.gc_prio').citadel_floor(g, p): return False
                 ctx = {}
                 if 'rem' in top.tags:
                     tg = legal_targets(g, p, top.tags['rem'], top.tags.get('tgt', 'c'), 'mv4' in top.tags, spell=top)
@@ -2196,7 +2314,8 @@ def combat(g, p):
                 if combo_interrupted(g, p, 'sauron', [a]):
                     p.stats['combo_stopped'] += 1; log('    ...the combo is stopped', g); break
                 win(g, p, 'combo'); return
-            if ncomb == 1 and can_pay(g, p, 3, 'RR'):
+            again = a in conn and equipped(a, 'sword')       # the Sword's hit untapped the lands: Assault again
+            if (ncomb == 1 or again) and ncomb < 12 and can_pay(g, p, 3, 'RR'):
                 pay(g, p, 3, 'RR')
                 asl = next((m for m in find(p, 'assault')), None)
                 if asl is not None and not ability_window(g, p, asl, 'untap, an additional combat', imp=7): break
@@ -2311,10 +2430,18 @@ def play_land(g, p):
     have = set(''.join(land_cols(p, L, False) for L in p.lands))
 
     def score(c):
-        cols = p.ident if c.tags.get('c') == 'A' else c.tags.get('c', '')
+        col = c.tags.get('c', '')
+        cols = p.ident if col == 'A' else ('' if col == 'C' else col)      # colourless is no new colour
         s = len(set(cols) - have) * 2 + (0 if land_enters_tapped(p, c) else 3)
         if c.tags.get('chasm'): s += 10
-        if c.tags.get('workshop'): s -= 2        # its mana only casts artifacts
+        amt = int(c.tags.get('amt', 1) or 1)
+        if amt > 1 and not c.tags.get('workshop'):                       # Ancient Tomb: more mana, 2 damage a tap
+            s += 1.5 * (amt - 1) - (0 if p.life > 15 else 1.5 if p.life > 6 else 6)
+        if c.tags.get('workshop'):               # its mana only casts artifacts: worth what's in hand to cast
+            arts = sum(1 for x in p.hand if 'A' in x.types and not x.land)
+            s += 2 * min(arts, 2) - 2
+        if c.name == "Gaea's Cradle":            # a G for each creature you control
+            s += sum(1 for m in p.perms if m.creature and not m.phased) - 1
         if c.tags.get('tabernacle'):             # taxes every creature, yours too
             mine = sum(1 for m in p.perms if m.creature)
             theirs = max((sum(1 for m in q.perms if m.creature) for q in g.opps(p)), default=0)
@@ -2542,7 +2669,8 @@ def end_step(g, p):
                                                        or getattr(p, 'nomax_turn', None) == p.turns):
         hc.discard_to_hand_size(g, p)
     stolen = getattr(p, 'stolen', None) or {}                 # cards cast from exile (Gonti) are held in hand, not in it
-    held = lambda: [c for c in p.hand if id(c) not in stolen] if stolen else p.hand
+    taken = getattr(p, 'agent_ids', None) or set()            # Opposition Agent's cards are exiled, not in hand
+    held = lambda: [c for c in p.hand if id(c) not in stolen and id(c) not in taken] if (stolen or taken) else p.hand
     while hc is None and len(held()) > 7 and not has(p, 'nomax') and not ((any('nomax' in L.cd.tags for L in p.lands)
                                                                           or getattr(p, 'nomax_turn', None) == p.turns)):
         if p.key == 'seph':

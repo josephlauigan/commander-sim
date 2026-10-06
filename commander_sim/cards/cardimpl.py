@@ -46,7 +46,9 @@ SELF_REGEN = {}       # creature name -> fn(g, perm) -> True if it regenerates i
 
 
 def dyn_mana(g, p, m):
-    return DYN_MANA[m.cd.name](g, p, m) if live(m.cd.name) else 1
+    """the mana m's tap ability makes now; being in DYN_MANA is the registration (no other hook needed: Gaea's
+    Cradle, Mox Opal and the elf lords used to make a flat 1 because they have no event hook)"""
+    return DYN_MANA[m.cd.name](g, p, m) if m.cd.name in DYN_MANA else 1
 
 
 def count_type(g, p, t, everyone=False):

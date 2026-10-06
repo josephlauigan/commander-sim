@@ -414,6 +414,7 @@ def once_per_turn(g, p, key):
 # lose_life kinds that are damage (prevented by protection); 'drain' and 'other' are life loss.
 # 'triggers' is mostly damage (Orcish Bowmasters, Kaervek, DSL damage abilities); Undermine passes damage=False.
 DAMAGE_KINDS = ('combat', 'burn', 'aether', 'triggers')
+LABMEN = ('Laboratory Maniac', 'Jace, Wielder of Mysteries')     # drawing from an empty library wins instead
 
 
 def lose_life(g, p, n, src, kind='other', damage=None):
@@ -523,6 +524,7 @@ def mana_units(g, p, convoke=False):
     for L in p.lands:
         if not L.tapped:
             if L.cd.tags.get('workshop') and not art: continue          # Mishra's Workshop: artifact spells only
+            if L.cd.tags.get('tomb') and p.life <= 2: continue          # Ancient Tomb's 2 damage would kill you
             amt = int(L.cd.tags.get('amt', 1))
             if CI is not None and L.cd.name in CI.DYN_MANA: amt = CI.dyn_mana(g, p, L)
             if g.hooks: amt += CI.total(g, 'land_mana', p, L)
@@ -739,6 +741,8 @@ def draw(g, p, n=1, step=False):
                     g.thief_chain = chain
                 continue
         if not p.library:
+            if any(m.cd is not None and m.cd.name in LABMEN and not m.phased for m in p.perms):
+                importlib.import_module('commander_sim.ais').win(g, p, 'Laboratory Maniac'); return
             p.decked = True; return
         if getattr(p, 'urabrask', None) == turn_stamp(g):     # Urabrask, Heretic Praetor: exiled instead, playable
             p.urabrask = None                                  # this turn (no draw, so no draw triggers)
@@ -765,7 +769,8 @@ def draw(g, p, n=1, step=False):
                 hc = human_choice(g, q)
                 for _ in find(q, 'bowmasters') if hc is not None else ():     # practice mode: each Bowmasters, your target
                     amass(g, q, 1); hc.deal_damage(g, q, 1, 'Orcish Bowmasters')
-                if hc is None: amass(g, q, 1); lose_life(g, p, 1, q, kind='triggers')
+                for _ in find(q, 'bowmasters') if hc is None else ():          # each Bowmasters triggers
+                    amass(g, q, 1); lose_life(g, p, 1, q, kind='triggers')
         if has(p, 'sheoA'): gain(p, 2)
 
 
@@ -801,7 +806,8 @@ TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'vey
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
-                color=None, types=None):
+                color=None, types=None, data=None):
+    """data: set on each token before its toughness is checked (a 0/0 Construct that grows with artifacts)"""
     out = []
     if DSLMOD is not None: n *= DSLMOD.token_mult(g, p)
     have = sum(1 for m in p.perms if m.token)
@@ -815,6 +821,7 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
         m.life = lifelink; m.sick = sick; m.dt = dt
         m.colors = TOKEN_COLOR.get(p.key, '') if color is None else color
         if types: m.ttypes = frozenset(types)
+        if data: m.data = dict(data)
         if attacking: m.tapped = True
         p.perms.append(m)
         if etgh(g, m) <= 0:
@@ -845,7 +852,7 @@ def shards_trigger(g, p, k):
     reps = k * (2 if has(p, 'mother') else 1)
     hc = human_choice(g, p)
     for _ in range(reps if hc is not None else 0):           # practice mode: you may destroy one, your pick
-        tg = [m for q in g.players if q.alive for m in q.perms if m.cd is not None and not m.creature and not m.phased
+        tg = [m for q in g.players if q.alive for m in q.perms if m.cd is not None and not m.phased
               and ('A' in m.cd.types or 'E' in m.cd.types) and not (m.owner is not p and untargetable(g, m))]
         if not tg: return
         k2 = hc.choose(g, p, 'target', 'Aura Shards: destroy target artifact or enchantment?',
@@ -855,8 +862,8 @@ def shards_trigger(g, p, k):
         if g.over: return
     if hc is not None: return
     for _ in range(reps):
-        tg = [m for q in g.opps(p) for m in q.perms
-              if m.cd is not None and not m.creature and ('A' in m.cd.types or 'E' in m.cd.types)
+        tg = [m for q in g.opps(p) for m in q.perms                      # artifact and enchantment creatures too
+              if m.cd is not None and ('A' in m.cd.types or 'E' in m.cd.types) and not m.phased
               and not untargetable(g, m) and not indestructible(g, m)]
         if not tg: return
         best = max(tg, key=lambda m: pval(g, m))
@@ -1508,6 +1515,12 @@ def pick_counter(g, q, c):
     return best
 
 
+def free_counter(q, c):
+    """counterspell c costs q no mana right now: Force of Will-style pitch counters, or Fierce Guardianship (and kin)
+    while q controls its commander"""
+    return 'free' in c.tags or ('fierce' in c.tags and commander_out(q))
+
+
 def commander_out(p):
     return any(m.is_cmd and not m.phased for m in p.perms)
 
@@ -1872,6 +1885,8 @@ def ai_respond(g, q, item):
         if q.key == 'veyran' and has(q, 'veyran'): val += 1.5   # every counter is also a doubled magecraft trigger
         thr = CTHRESH[q.key] if q.key in CTHRESH else importlib.import_module('commander_sim.ai.pool_ai').counter_threshold(q, CTHRESH_DEFAULT)
         if not nc: return
+        pk = pick_counter(g, q, c)                  # Force of Will pitched (no mana for it): two cards for one
+        if pk is not None and 'free' in pk.tags and not can_pay(g, q, *counter_cost(pk, c, q)): thr += 1.5
         from commander_sim.ai import search
         if (top.generic and len(g.stack) == 1 and search.enabled(g, q) and g.active is p
                 and getattr(g, 'step', None) in ('main1', 'main2') and pick_counter(g, q, c) is not None):
@@ -2120,7 +2135,9 @@ def _resolve(g, p, c, ctx, zone):
         land_ramp(g, p, int(t['lr']), 'lrt' in t)
         if 'lh' in t: land_to_hand(g, p)
     if 'ringtempt' in t and CI is not None: CI.ring_tempt(g, p)     # Ringsight: the Ring tempts you first
-    if 'tut' in t: tutor(g, p, t['tut'])
+    if 'tut' in t:
+        if 'top' in t: tutor_to_top(g, p, t['tut'], life=0)      # Mystical Tutor: on top of the library
+        else: tutor(g, p, t['tut'])
     if 'gifts' in t: pile_tutor(g, p, 4, 2)     # Gifts Ungiven: four cards, opponent puts two in the graveyard
     if 'intuition' in t: pile_tutor(g, p, 3, 1) # Intuition: three cards, opponent picks the one you keep
     if 'jeska' in t: jeskas_will(g, p)
@@ -2256,6 +2273,12 @@ def copy_spell(g, p, c, ctx=None, cast=False):
 
 def enter(g, p, cd, orig=None, sick=True, was_cast=False, undying=False, plus=0):
     tick(g)
+    if 'moxd' in cd.tags and not was_cast:     # Mox Diamond put onto the battlefield (Urza's Saga): the same replacement
+        lands = [x for x in p.hand if x.land]   # as when cast (cast_card handles that case before calling enter)
+        if not lands:
+            p.gy.append(cd); log('    Mox Diamond goes to the graveyard (no land to discard)', g)
+            return Perm(p, cd)                  # never on the battlefield
+        x = min(lands, key=lambda L: (len(L.tags.get('c', '')), -('t' in L.tags))); p.hand.remove(x); p.gy.append(x)
     phys = None
     if 'clone' in cd.tags:                      # Phyrexian Metamorph: copy the best creature or artifact on the battlefield
         cands = [x for q in g.players if q.alive for x in q.perms if x.cd is not None and x.cd is not q.cmd
@@ -2851,7 +2874,11 @@ def pile_tutor(g, p, n, keep):
     for c in p.library: uniq.setdefault(c.name, c)
     cs = list(uniq.values())
     if not cs: return
-    hv = {c.name: card_worth(g, p, c) for c in cs}; gv = {c.name: card_worth(g, p, c, True) for c in cs}
+    from commander_sim import ais
+    hv = {c.name: ais.tutor_value(g, p, c) for c in cs}
+    gv = {c.name: max(card_worth(g, p, c, True), 15 * ais.gy_worth(g, p, c)) for c in cs}   # reanimation targets count
+    want = ais.tutor_pick(g, p, 'any')                     # the deck's tutor target goes in the pile
+    if want in hv: hv[want] += 50
     pool = sorted(cs, key=lambda c: -hv[c.name])[:8] + sorted(cs, key=lambda c: -gv[c.name])[:3]
     pool = list({c.name: c for c in pool}.values())
     k = min(n, len(pool))
@@ -2901,7 +2928,7 @@ def jeskas_will(g, p):
     most = max((len(q.hand) for q in opps), default=0)
     both = commander_out(p)
     need = sum(x.cmc for x in p.hand if not x.land) - total_mana(g, p)
-    mana = both or (most >= 4 and need >= 3)
+    mana = both or getattr(g, 'jeska_mana', False) or (most >= 4 and need >= 3)    # (the Breach line: always mana)
     if mana:
         p.floatR += most; log(f'    Jeska\'s Will adds {most} red mana', g)
     if both or not mana:
@@ -2994,20 +3021,22 @@ def agent_take(g, a, p, c):
     log(f'    Opposition Agent: {NAME(a)} takes {c.name} from {NAME(p)}\'s search', g)
 
 
-def tutor_to_top(g, p):
+def tutor_to_top(g, p, kind='any', life=2):
+    """search for a card of this kind and put it on top of your library (Vampiric Tutor and Imperial Seal: any card,
+    2 life; Mystical Tutor: an instant or sorcery, no life)"""
     from commander_sim import ais
     hc = human_choice(g, p)
     if hc is not None:
-        got = hc.search(g, p, ais.TUTOR_OK['any'], 1, 'Search your library for a card to put on top')
-        lose_life(g, p, 2, p)
+        got = hc.search(g, p, ais.TUTOR_OK.get(kind, ais.TUTOR_OK['any']), 1, 'Search your library for a card to put on top')
+        if life: lose_life(g, p, life, p)
         for c in got: p.library.append(c); p.stats['tutored'] += 1
         return
     p.to_top = True
     try:
-        name = ais.tutor_pick(g, p, 'any')
+        name = ais.tutor_pick(g, p, kind)
     finally:
         p.to_top = False
-    lose_life(g, p, 2, p)
+    if life: lose_life(g, p, life, p)
     if name is None: return
     c = next((x for x in searchable(g, p) if x.name == name), None)
     if c is None: return
@@ -3018,11 +3047,16 @@ def tutor_to_top(g, p):
     log_secret(g, p, f'    {NAME(p)} puts a card on top of their library', f'    {NAME(p)} puts {c.name} on top of their library')
 
 
-def ad_nauseam(g, p, floor=18):
-    """reveal the top card, put it in hand, lose life equal to its mana value; repeat while it is safe"""
+def ad_nauseam(g, p, floor=None):
+    """reveal the top card, put it in hand, lose life equal to its mana value; repeat while it is safe: never below
+    what the table could hit you for (ais.necro_floor) with room for a 7-drop, and stop once a combo is ready"""
+    A = importlib.import_module('commander_sim.ais')
+    if floor is None: floor = A.necro_floor(g, p)
+    C = importlib.import_module('commander_sim.cards.impl.combos')
     n = 0
     while p.library and p.alive and p.life - 7 > floor and n < 15:
         c = p.library.pop(); p.hand.append(c); p.seen_names.add(c.name); n += 1
         lose_life(g, p, c.cmc, p)
+        if any(cmb.ready(g, p)[0] for cmb in getattr(C, 'COMBOS', ())): break      # enough: the combo is in hand
     p.stats['adnaus_cards'] += n
     log(f'    Ad Nauseam: {n} cards, life now {p.life}', g)

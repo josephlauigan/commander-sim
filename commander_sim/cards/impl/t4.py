@@ -584,6 +584,24 @@ def _sphinx(g, src, p):
             try: draw(g, src.owner, 2)
             finally: g.sphinx_depth -= 1
 card('Consecrated Sphinx', 'pow=4 tgh=6 fly bomb=6 sphinx', dsl=[])
+
+
+def sphinx_prio(g, p, c):
+    """cast priority (0-90 scale) for Consecrated Sphinx from the game: the cards it will draw over the next three
+    rounds (two per opponent draw, stopping 12 cards from the bottom of your library), discounted when your hand
+    already holds more than two turns of spells, and when you're low on life against a big board (a six-drop that
+    doesn't defend you)"""
+    opps = [q for q in g.opps(p) if q.alive]
+    per_round = 2 * len(opps)
+    rounds = min(3.0, max(0, len(p.library) - 12) / per_round) if per_round else 0
+    cards = per_round * rounds
+    mana = max(1, total_mana(g, p))
+    backlog = sum(x.cmc for x in p.hand if x is not c and not x.land) / mana    # turns of spells already in hand
+    use = 1.0 if backlog <= 1 else 0.6 if backlog <= 2 else 0.35
+    v = 30 + 1.6 * cards * use
+    big = sum(epow(g, m) for q in opps for m in q.perms if m.creature and not m.phased) >= 12
+    if big and p.life <= 15: v -= 15
+    return int(max(15, min(75, v)))
 note('Consecrated Sphinx', 'Approximate', 'draws two per opponent draw (capped by library size)')
 
 

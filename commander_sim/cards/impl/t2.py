@@ -591,7 +591,9 @@ def _survival(g, src, p, s, post):
     d = min(disc, key=lambda c: card_worth(g, p, c))
     reanim = any(m.cd is not None and m.cd.name in ('Meren of Clan Nel Toth',) for m in p.perms)
     if reanim: d = max(disc, key=lambda c: c.cmc if c.cmc <= getattr(p, 'experience', 0) else -1)
-    want = max(lib, key=lambda c: card_worth(g, p, c))
+    from commander_sim import ais
+    name = ais.tutor_pick(g, p, 'cre')                                # the wish list first, then impact
+    want = next((c for c in lib if c.name == name), None) or max(lib, key=lambda c: ais.tutor_value(g, p, c))
 
     def go():
         if d not in p.hand or not can_pay(g, p, 0, 'G'): return False
