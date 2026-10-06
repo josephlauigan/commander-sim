@@ -1765,8 +1765,14 @@ def _pay_line(g, p, gen, col):
 
 def _dry_run(g, p):
     """would the line finish every opponent if nobody interacts? Played for real on a copy of the game with the
-    opponents' hands removed (so it neither cheats nor fears their counters); cached for the position"""
+    opponents' hands removed (so it neither cheats nor fears their counters); cached for the position. Inside a
+    look-ahead playout (itself a copy) it reuses the real game's answer for this turn: cloning the game again at every
+    playout decision made Sauron's look-ahead games many times slower than the other decks'"""
     from commander_sim.ai import search
+    if getattr(g, 'in_search', False):
+        real = getattr(g, 'search_parent', None)
+        c = getattr(real, 'breach_dry', None) if real is not None else None
+        return bool(c and c[0][0] == turn_stamp(g) and c[1])
     key = (turn_stamp(g), total_mana(g, p), p.floatA, len(p.gy), len(p.hand), len(p.library),
            sum(casts_this_turn(g, q) for q in g.players), tuple(len(q.library) for q in g.players))
     cached = getattr(g, 'breach_dry', None)

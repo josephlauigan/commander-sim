@@ -87,6 +87,8 @@ def matches(g, p, m, f, src=None):
     if 'max_pow' in f and epow(g, m) > f['max_pow']: return False
     if 'min_pow' in f and epow(g, m) < f['min_pow']: return False
     if f.get('nontoken') and m.token: return False
+    kw = f.get('keyword')                                      # "creatures you control with flying" (Alela)
+    if kw and not ((kw == 'flying' and getattr(m, 'fly', False)) or has_kw(g, m, kw)): return False
     if f.get('nonlegendary') and cd is not None and 'leg' in cd.tags: return False
     if f.get('legendary') and not (cd is not None and 'leg' in cd.tags): return False
     if f.get('subtype') and f['subtype'] not in ('', None):
@@ -256,6 +258,7 @@ def run(g, p, e, src, ctx, spell, depth):
             hit = {m.owner for m in ms}
             prot = {q: ais.wipe_response(g, q, {'destroy': 'destroy', 'exile': 'exile', 'bounce': 'evac'}.get(d, 'destroy'), p) for q in hit}
             prev, g.batch = getattr(g, 'batch', None), object()      # they die at the same time
+            prev_d, g.destroyer = getattr(g, 'destroyer', None), p    # Karmic Justice: who destroyed them
             try:
                 for m in ms:
                     if m not in m.owner.perms or m.phased: continue
@@ -267,7 +270,7 @@ def run(g, p, e, src, ctx, spell, depth):
                         else: bounce(g, m)
                     else: tuck(g, m)
             finally:
-                g.batch = prev
+                g.batch = prev; g.destroyer = prev_d
         else:
             for m in ms:
                 snapshot(g, m, ctx)

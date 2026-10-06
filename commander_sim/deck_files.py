@@ -8,7 +8,7 @@ from commander_sim import ROOT
 # deck key -> (owner folder in decklists/, file)
 FILES = {'seph': ('JD', 'sephiroth-phyrexian-reanimator.md'), 'veyran': ('JD', 'veyran-izzet-spellslinger.md'),
          'sauron': ('JD', 'sauron-grixis-amass.md'), 'yshtola': ('JD', 'yshtola-esper-drain.md'),
-         'galadriel': ('Avery', 'galadriel-bant-rebels.md'),
+         'galadriel': ('Avery', 'galadriel-bant-rebels.md'), 'alela': ('Avery', 'alela-esper-faeries.md'),
          'marchesa': ('Other', 'marchesa-grixis-recursion.md'), 'zur': ('Other', 'zur-esper-auras.md')}
 OWNERS = tuple(dict.fromkeys(o for o, _ in FILES.values()))
 

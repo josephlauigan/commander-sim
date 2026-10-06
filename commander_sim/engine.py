@@ -30,7 +30,7 @@ def _next_hid(obj):
     return g.hid_no
 from commander_sim.cards.carddb import DB_TEXT
 
-IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'galadriel': 'WUG', 'yshtola': 'WUB', 'najeela': 'WUBRG'}
+IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'galadriel': 'WUG', 'yshtola': 'WUB', 'alela': 'WUB', 'najeela': 'WUBRG'}
 # Outside decks (opponent pools) register here: key -> {'ident': 'WU', 'name': 'Brago'}. The four main decks
 # keep their hard-wired entries in IDENT / NAME / the AI tables; anything else falls back to generic defaults.
 SEATS = {}
@@ -219,7 +219,7 @@ DAMAGE_HOOK = None
 
 
 def NAME(p):
-    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'galadriel': 'Galadriel', 'yshtola': "Y'shtola", 'najeela': 'Najeela'}.get(p.key)
+    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'galadriel': 'Galadriel', 'yshtola': "Y'shtola", 'alela': 'Alela', 'najeela': 'Najeela'}.get(p.key)
     return n if n is not None else SEATS[p.key]['name']
 
 
@@ -505,9 +505,24 @@ BASIC_NAMES = ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes', 'Sno
 
 def land_cols(p, L, anyc):
     g = CUR_G
-    if g is not None and g.hooks and L.cd.name not in BASIC_NAMES and CI.blood_moon(g): return 'R'
+    hooks = g is not None and g.hooks
+    return _land_cols(g, p, L, anyc, hooks and CI.blood_moon(g), hooks and _RULES().dryad_colors(p))
+
+
+_RULES_MOD = []
+
+
+def _RULES():
+    if not _RULES_MOD: _RULES_MOD.append(importlib.import_module('commander_sim.cards.impl.rules'))
+    return _RULES_MOD[0]
+
+
+def _land_cols(g, p, L, anyc, moon, dryad):
+    """land_cols with the board-wide checks (Blood Moon, Dryad of the Ilysian Grove) already made: mana_units makes
+    them once per call instead of once per land"""
+    if moon and L.cd.name not in BASIC_NAMES: return 'R'
     if anyc: return p.ident
-    if g is not None and g.hooks and importlib.import_module('commander_sim.cards.impl.rules').dryad_colors(p): return p.ident
+    if dryad: return p.ident
     if CI is not None and L.cd.name == 'Plaza of Heroes': return CI.plaza_colors(g, p)
     if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p)
     if CI is not None and L.cd.name in CI.LAND_COLS: return CI.LAND_COLS[L.cd.name](g, p, L)
@@ -521,6 +536,9 @@ def mana_units(g, p, convoke=False):
     U = []
     anyc = has(p, 'lantern') or (any(L.cd.tags.get('worldtree') for L in p.lands) and len(p.lands) >= 6)
     art = PAY_FOR is not None and 'A' in PAY_FOR.types
+    G = CUR_G                                     # land_cols reads the current game (as it always has)
+    moon = G is not None and G.hooks and CI.blood_moon(G)
+    dryad = G is not None and G.hooks and _RULES().dryad_colors(p)
     for L in p.lands:
         if not L.tapped:
             if L.cd.tags.get('workshop') and not art: continue          # Mishra's Workshop: artifact spells only
@@ -528,7 +546,7 @@ def mana_units(g, p, convoke=False):
             amt = int(L.cd.tags.get('amt', 1))
             if CI is not None and L.cd.name in CI.DYN_MANA: amt = CI.dyn_mana(g, p, L)
             if g.hooks: amt += CI.total(g, 'land_mana', p, L)
-            U.append([L, land_cols(p, L, anyc), amt])
+            U.append([L, _land_cols(G, p, L, anyc, moon, dryad), amt])
     rite = has(p, 'rite')
     auras = getattr(g, 'auras', None) if g is not None else None
     for m in p.perms:
@@ -802,7 +820,7 @@ def amass(g, p, n):
 TOKEN_CAP = 250          # creature tokens per player; beyond this the board is lethal many times over and games crawl
 
 
-TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W', 'galadriel': 'W', 'yshtola': 'W'}     # default colour of a deck's tokens
+TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W', 'galadriel': 'W', 'yshtola': 'W', 'alela': 'U'}     # default colour of a deck's tokens
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
@@ -843,6 +861,7 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
     shards_trigger(g, p, k)
     if DSLMOD is not None and g.dsl_on:
         for x in out: DSLMOD.fire(g, 'etb', perm=x, owner=p)
+    if k and g is not None and g.hooks: CI.fire(g, 'tokens_enter', p, out)     # Plumecreed Mentor
     return out
 
 
@@ -915,7 +934,7 @@ def leave(g, m):
 
 def to_zone_card(g, m, zone):
     """move a nontoken card to zone ('gy','exile','hand','lib'); commanders go to command zone."""
-    if m.token: return
+    if m.token or 'tokpw' in m.cd.tags: return          # a token with a card face (the Jace token) just ceases to exist
     owner = m.orig
     if m.phys is not None:
         cd = m.phys
@@ -927,6 +946,7 @@ def to_zone_card(g, m, zone):
     elif zone == 'exile': owner.exile.append(m.cd)
     elif zone == 'hand': owner.hand.append(m.cd)
     elif zone == 'lib': owner.library.insert(g.rng.randrange(len(owner.library) + 1), m.cd)
+    elif zone == 'top': owner.library.append(m.cd)
 
 
 def melira(p):
@@ -1430,7 +1450,7 @@ def spell_imp(g, p, c, ctx):
             aff[q] = 0.8 * sum(pval(g, m) for m in q.perms if m.creature or t['wipe'] in ('rift', 'rebuke'))
         return 0, aff
     if 'rean_target' in ctx: return ctx['rean_value'], aff
-    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
+    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'alela': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
     if c.bomb and p.key == 'seph': return c.bomb, aff
     if 'vkitten' in t: return (9 if has(p, 'vfire') else 4), aff
     if 'vfire' in t: return (9 if has(p, 'vkitten') else 4), aff
@@ -1449,15 +1469,15 @@ def spell_imp(g, p, c, ctx):
     return 0, aff
 
 
-CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 99}
+CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'alela': 7, 'najeela': 99}
 CMD_IMP = 6              # importance of an outside deck's commander spell (counter decisions)
 
 # Interaction profiles for the AI opponents.
 #   conservative: counter only big threats (importance >= 7), hold instant removal for emergencies
 #   loose:        counter at importance >= 6, use instant removal as freely as sorcery removal
 PROFILES = {
-    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
-    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'galadriel': 6, 'yshtola': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
+    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'alela': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
+    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'galadriel': 6, 'yshtola': 6, 'alela': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
 }
 INSTANT_EXTRA = 2
 CTHRESH_DEFAULT = 7      # outside decks: counter threshold under the current profile
@@ -1476,6 +1496,7 @@ def counter_ok(ctr, c):
     if s == 'any': return True
     if s == 'nc': return not c.creature
     if s == 'ise': return c.instant or c.sorcery or ('E' in c.types and not c.creature)
+    if s == 'is': return c.instant or c.sorcery                       # Muddle the Mixture
     if s == 'mv4': return c.cmc >= 4
     if s == 'cre': return c.creature
     if s == 'mv1': return c.cmc == 1                                  # Mental Misstep
@@ -1779,6 +1800,8 @@ def step_priority(g, step, defender=None, attackers=()):
             importlib.import_module('commander_sim.ai.brain').attack_response(g, q, g.active, attackers)
         elif step == 'combat' and q is not g.active and q.key == 'galadriel' and CI is not None:
             CI.galadriel_precombat(g, q)                   # tap the attacker it fears (Errant Doomsayers, Whipcorder)
+        if step == 'combat' and q is not g.active and CI is not None and g.hooks and not (hm is not None and hm.is_human(g, q)):
+            CI.opposition_precombat(g, q)                  # Opposition: tap the attackers down
 
 
 def equip_to(g, p, e, m, n):
@@ -2065,7 +2088,8 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         if c is p.cmd: p.cmd_in_zone = True
         elif zone in ('gy',) or ctx.get('exile_after'): p.exile.append(c)
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)
-        elif LAST_COUNTER is not None and LAST_COUNTER.name == 'Venser, Shaper Savant': p.hand.append(c)
+        elif LAST_COUNTER is not None and (LAST_COUNTER.name == 'Venser, Shaper Savant' or 'remand' in LAST_COUNTER.tags):
+            p.hand.append(c)                                              # Fatehold Charm: back to its owner's hand
         elif getattr(g, 'bounced_spell', False): g.bounced_spell = False; p.hand.append(c)
         elif not c.land: gy_of(p, ctx).append(c)
         return False
@@ -2632,6 +2656,7 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             if kind.startswith('dmg'):
                 if not is_c or etgh(g, m) > int(kind[3:]) or no_damage(g, m): continue
             if kind.startswith('shrink') and (not is_c or etgh(g, m) > int(kind[6:])): continue
+            if kind == 'zero' and (not is_c or etgh(g, m) - m.tgh > 0): continue    # base 0/0: dies unless pumped
             if spell is not None and 'newonly' in spell.tags and not entered_since_last_turn(g, p, m): continue
             if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m): continue
             res.append(m)
@@ -2682,13 +2707,17 @@ def apply_removal(g, actor, m, kind, spell=None):
         exile_perm(g, m)                                         # Scorching Dragonfire: exiled instead of dying
     elif kind.startswith('shrink'):
         if etgh(g, m) <= int(kind[6:]): die(g, m, 'sba')       # -X/-X: toughness 0, no regeneration
+    elif kind == 'zero':
+        if etgh(g, m) - m.tgh <= 0: die(g, m, 'sba')           # Multiply by Zero: base 0/0 (counters still count)
     elif kind in ('destroy',) or kind.startswith('dmg'):
         g.noregen = 'noregen' in st
+        prev_d, g.destroyer = getattr(g, 'destroyer', None), actor      # Karmic Justice: who destroyed it
         try:
             die(g, m, 'destroy')
         finally:
-            g.noregen = False
+            g.noregen = False; g.destroyer = prev_d
     elif kind == 'exile': exile_perm(g, m)
+    elif kind == 'top': leave(g, m); to_zone_card(g, m, 'top')         # Plan for All Outcomes: on top of the library
     elif kind == 'bounce': bounce(g, m)
     elif kind == 'tuck': tuck(g, m)
     elif kind in ('elk', 'mutate', 'forest'): importlib.import_module('commander_sim.cards.impl.rules').transform_away(g, m, kind)
@@ -2700,6 +2729,7 @@ def apply_removal(g, actor, m, kind, spell=None):
         if 'rtok' in t: make_tokens(g, owner, 1, int(t['rtok']), color='' if 'Reality' in spell.name else 'G')
         if 'losemv' in t: lose_life(g, actor, mv, actor)         # Feed the Swarm
         if 'gaintgh' in t: gain(actor, m.tgh)                    # Noxious Gearhulk
+        if 'enddraw' in t and m not in getattr(g, 'in_combat', ()): draw(g, owner, 1)   # Prophesied End
     check_state(g)
 
 
@@ -2753,11 +2783,12 @@ def _etb_removal(g, p, m):
 
 def apply_wipe(g, p, kind, ctx):
     prev, g.batch = getattr(g, 'batch', None), object()     # creatures destroyed together die simultaneously
+    prev_d, g.destroyer = getattr(g, 'destroyer', None), p   # Karmic Justice: who destroyed them
     g.resolving = getattr(g, 'resolving', 0) + 1
     try:
         _apply_wipe(g, p, kind, ctx)
     finally:
-        g.batch = prev
+        g.batch = prev; g.destroyer = prev_d
         g.resolving -= 1
     if not g.resolving and getattr(g, 'trig_queue', None): flush_triggers(g)
 

@@ -116,7 +116,7 @@ class Server(unittest.TestCase):
     def test_options(self):
         st, _, body = self.call('GET', '/api/options')
         d = json.loads(body)
-        self.assertEqual(sorted(x['key'] for x in d['decks']), ['galadriel', 'marchesa', 'sauron', 'seph', 'veyran', 'yshtola', 'zur'])
+        self.assertEqual(sorted(x['key'] for x in d['decks']), ['alela', 'galadriel', 'marchesa', 'sauron', 'seph', 'veyran', 'yshtola', 'zur'])
         self.assertEqual([t['key'] for t in d['tiers']], ['t1', 't2', 't3', 't4', 't5'])
         self.assertEqual(len(d['tiers'][2]['decks']), 5)
         self.assertIn('images', d)

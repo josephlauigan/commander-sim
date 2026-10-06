@@ -389,6 +389,9 @@ def emblem_cast(g, p, c):
         if lethal: lose_life(g, lethal[0], 5, p, kind='burn', damage=True)
         elif t is not None and pval(g, t) >= 4: apply_removal(g, p, t, 'dmg5')
         elif g.opps(p): lose_life(g, min(g.opps(p), key=lambda q: q.life), 5, p, kind='burn', damage=True)
+    if 'venser' in p.emblems:                          # Venser, the Sojourner: exile target permanent
+        t = best_opp_nonland(g, p)
+        if t is not None and pval(g, t) >= 1: apply_removal(g, p, t, 'exile')
 
 
 def emblem_draw(g, p):

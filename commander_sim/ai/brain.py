@@ -32,6 +32,7 @@ STYLE = {
     'zur':     {'temp': 1.0, 'aggression': 0.60, 'caution': 0.70},
     'galadriel': {'temp': 1.0, 'aggression': 0.70, 'caution': 0.55},
     'yshtola': {'temp': 1.0, 'aggression': 0.50, 'caution': 0.75},
+    'alela':   {'temp': 1.0, 'aggression': 0.70, 'caution': 0.60},
     'najeela': {'temp': 1.0, 'aggression': 0.90, 'caution': 0.30},
 }
 TEMP_SCALE = 1.0     # global multiplier, set from --temp
@@ -82,10 +83,19 @@ def full_deck(p):
     return p.full
 
 
+def deck_matches(p, pred):
+    """the cards in p's whole decklist matching pred: the list never changes during a game, so it is worked out once
+    per player and predicate (counter_risk asks for it at every decision of every look-ahead playout)"""
+    cache = p.__dict__.setdefault('full_match', {})
+    v = cache.get(pred)
+    if v is None: v = cache[pred] = [c for c in full_deck(p) if pred(c)]
+    return v
+
+
 def prob_holding(g, q, pred):
     """P(opponent q holds >=1 card matching pred), from public info only:
     their decklist minus copies already seen (graveyard, exile, battlefield)."""
-    total = sum(1 for c in full_deck(q) if pred(c))
+    total = len(deck_matches(q, pred))
     seen = sum(1 for c in q.gy + q.exile if pred(c)) + sum(1 for m in q.perms if m.cd is not None and pred(m.cd))
     left = max(0, total - seen)
     unknown = len(q.library) + len(q.hand)
@@ -113,7 +123,7 @@ def counter_risk(g, p):
         if not ph: continue
         up = open_mana(g, q, 'U')
         can = 1.0 if up >= 2 else (0.4 if up >= 1 else 0.0)
-        if any(E.free_counter(q, c) for c in full_deck(q) if is_counter(c)): can = max(can, 0.25)
+        if any(E.free_counter(q, c) for c in deck_matches(q, is_counter)): can = max(can, 0.25)
         miss *= 1.0 - ph * can * 0.85
     return 1.0 - miss
 
@@ -183,7 +193,8 @@ def reserve_penalty(g, p, s, c, hold_card, hold_v):
 
 # ------------------------------------------------------------------ card utilities
 PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'marchesa': A.marchesa_prio,
-        'zur': A.zur_prio, 'galadriel': A.galadriel_prio, 'yshtola': A.yshtola_prio, 'najeela': A.najeela_prio}
+        'zur': A.zur_prio, 'galadriel': A.galadriel_prio, 'yshtola': A.yshtola_prio, 'alela': A.alela_prio,
+        'najeela': A.najeela_prio}
 
 
 def draws_cards(c):
@@ -683,7 +694,7 @@ def main(g, p, post):
         if not acted: return
 
 
-GENERIC_PLAYS = ('marchesa', 'zur', 'galadriel', 'yshtola')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
+GENERIC_PLAYS = ('marchesa', 'zur', 'galadriel', 'yshtola', 'alela')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
 
 
 def hook_options(g, p, s, post):

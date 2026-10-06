@@ -10,7 +10,7 @@ from commander_sim.decks import DECKS, FILES as DECK_FILES, deck_path
 
 RESULTS = os.path.join(ROOT, 'decklists', 'pool', 'pool-results.md')
 FILES = {k: f for k, (_, f) in DECK_FILES.items()}
-ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'marchesa': 'marchesa', 'zur': 'zur', 'galadriel': 'galadriel', "y'shtola": 'yshtola', 'yshtola': 'yshtola'}
+ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'marchesa': 'marchesa', 'zur': 'zur', 'galadriel': 'galadriel', "y'shtola": 'yshtola', 'yshtola': 'yshtola', 'alela': 'alela'}
 
 
 def display_name(key):
