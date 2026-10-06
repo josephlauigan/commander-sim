@@ -1096,6 +1096,7 @@ def sauron_prio(g, p, c):
     if 'mauhur' in t: return 63
     if 'bowmasters' in t: return 62
     if 'sword' in t: return 60
+    if c.name == 'Andúril, Flame of the West': return 57          # another Sword-like piece for the Army
     if c.dsl and any(a.get('static') == 'equip_cost' for a in c.dsl) and \
             any(a.get('source') == 'equipped' and a.get('event') == 'combat_damage' for a in c.dsl):
         return 57                                            # compiled Swords (Fire and Ice, Hearth and Home)

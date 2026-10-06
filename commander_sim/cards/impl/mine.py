@@ -1497,6 +1497,28 @@ note('Sword of Fire and Ice', 'Full', 'equipped creature +2/+2, protection from 
      'player: 2 damage to any target (a creature it kills, else a player) and draw a card; equip {2}')
 
 
+# ======================================================== Andúril, Flame of the West
+ANDURIL = 'Andúril, Flame of the West'
+card(ANDURIL, 'leg', types='A', dsl=[{'type': 'static', 'static': 'equip_bonus', 'pow': 3, 'tgh': 1},
+                                    {'type': 'static', 'static': 'equip_cost', 'mana': 2}])
+
+
+@on(ANDURIL, 'attack')
+def _anduril(g, src, p, atk, d):
+    """the equipped creature attacks: two tapped 1/1 white Spirits with flying, attacking if it's legendary (the Ring
+    makes your Ring-bearer legendary, so the Orc Army's Spirits attack once the Ring has tempted you)"""
+    host = src.attached
+    if src.owner is not p or host is None or host not in atk or host not in p.perms: return None
+    leg = is_legendary(g, host)
+    if not trigger_window(g, p, src, 'two 1/1 flying Spirits' + (', attacking' if leg else '')): return None
+    toks = make_tokens(g, p, 2, 1, 1, fly=True, color='W', types=('spirit',), attacking=True, sick=not leg)
+    return toks if leg else None                  # tapped either way; only a legendary creature's Spirits attack
+
+
+note(ANDURIL, 'Full', 'equipped creature +3/+1; when it attacks, two tapped 1/1 flying Spirits (attacking if the '
+     'creature is legendary, as the Ring-bearer Army is); equip {2}')
+
+
 # ======================================================== Twinflame
 MAGECRAFT = ('ping', 'mystic', 'spelldraw', 'spelltok', 'kiln', 'dragoncaller')
 

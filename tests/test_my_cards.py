@@ -1027,5 +1027,33 @@ class SauronMarchesa(unittest.TestCase):
         self.assertTrue(any(m.cd is b.cd for m in s.perms))
 
 
+class Anduril(unittest.TestCase):
+    """Andúril, Flame of the West: +3/+1; two tapped 1/1 flying Spirits when the equipped creature attacks, attacking
+    only if that creature is legendary (the Ring makes your Ring-bearer legendary)"""
+    def setUp(self):
+        self.g = table('sauron', 'veyran'); self.p, self.q = self.g.players
+        self.a = perm(self.g, self.p, 'Andúril, Flame of the West')
+
+    def attack(self, m):
+        self.a.attached = m
+        return E.CI.HOOKS['Andúril, Flame of the West']['attack'](self.g, self.a, self.p, [m], self.q) or []
+
+    def spirits(self):
+        return [m for m in self.p.perms if m.token and 'spirit' in m.ttypes]
+
+    def test_nonlegendary_spirits_enter_tapped_not_attacking(self):
+        army = E.Perm(self.p, None, pw=0, tg=0, name='Orc Army'); army.army = True; army.plus = 3
+        self.p.perms.append(army)
+        self.assertEqual(self.attack(army), [])
+        self.assertEqual(len(self.spirits()), 2)
+        self.assertTrue(all(m.tapped and m.fly for m in self.spirits()))
+        self.assertEqual(E.epow(self.g, army), 6)
+
+    def test_legendary_spirits_attack(self):
+        s = perm(self.g, self.p, 'Sauron, the Dark Lord')
+        self.assertEqual(len(self.attack(s)), 2)
+        self.assertEqual(E.epow(self.g, s), 10)
+
+
 if __name__ == '__main__':
     unittest.main()
