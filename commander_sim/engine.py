@@ -30,7 +30,7 @@ def _next_hid(obj):
     return g.hid_no
 from commander_sim.cards.carddb import DB_TEXT
 
-IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'galadriel': 'WUG', 'yshtola': 'WUB', 'najeela': 'WUBRG'}
+IDENT = {'seph': 'WUBG', 'veyran': 'UR', 'sauron': 'UBR', 'marchesa': 'UBR', 'zur': 'WUB', 'galadriel': 'WUG', 'yshtola': 'WUB', 'alela': 'WUB', 'najeela': 'WUBRG'}
 # Outside decks (opponent pools) register here: key -> {'ident': 'WU', 'name': 'Brago'}. The four main decks
 # keep their hard-wired entries in IDENT / NAME / the AI tables; anything else falls back to generic defaults.
 SEATS = {}
@@ -219,7 +219,7 @@ DAMAGE_HOOK = None
 
 
 def NAME(p):
-    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'galadriel': 'Galadriel', 'yshtola': "Y'shtola", 'najeela': 'Najeela'}.get(p.key)
+    n = {'seph': 'Sephiroth', 'veyran': 'Veyran', 'sauron': 'Sauron', 'marchesa': 'Marchesa', 'zur': 'Zur', 'galadriel': 'Galadriel', 'yshtola': "Y'shtola", 'alela': 'Alela', 'najeela': 'Najeela'}.get(p.key)
     return n if n is not None else SEATS[p.key]['name']
 
 
@@ -802,7 +802,7 @@ def amass(g, p, n):
 TOKEN_CAP = 250          # creature tokens per player; beyond this the board is lethal many times over and games crawl
 
 
-TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W', 'galadriel': 'W', 'yshtola': 'W'}     # default colour of a deck's tokens
+TOKEN_COLOR = {'najeela': 'W', 'seph': 'B', 'sauron': 'B', 'marchesa': 'B', 'veyran': 'R', 'zur': 'W', 'galadriel': 'W', 'yshtola': 'W', 'alela': 'U'}     # default colour of a deck's tokens
 
 
 def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False, lifelink=False, sick=True, dt=False,
@@ -1430,7 +1430,7 @@ def spell_imp(g, p, c, ctx):
             aff[q] = 0.8 * sum(pval(g, m) for m in q.perms if m.creature or t['wipe'] in ('rift', 'rebuke'))
         return 0, aff
     if 'rean_target' in ctx: return ctx['rean_value'], aff
-    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
+    if c is p.cmd: return {'seph': 8, 'veyran': 5, 'sauron': 6, 'marchesa': 6, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'alela': 7, 'najeela': 6}.get(p.key, CMD_IMP), aff
     if c.bomb and p.key == 'seph': return c.bomb, aff
     if 'vkitten' in t: return (9 if has(p, 'vfire') else 4), aff
     if 'vfire' in t: return (9 if has(p, 'vkitten') else 4), aff
@@ -1449,15 +1449,15 @@ def spell_imp(g, p, c, ctx):
     return 0, aff
 
 
-CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 99}
+CTHRESH = {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'alela': 7, 'najeela': 99}
 CMD_IMP = 6              # importance of an outside deck's commander spell (counter decisions)
 
 # Interaction profiles for the AI opponents.
 #   conservative: counter only big threats (importance >= 7), hold instant removal for emergencies
 #   loose:        counter at importance >= 6, use instant removal as freely as sorcery removal
 PROFILES = {
-    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
-    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'galadriel': 6, 'yshtola': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
+    'conservative': {'cthresh': {'seph': 6, 'veyran': 7, 'sauron': 7, 'marchesa': 7, 'zur': 7, 'galadriel': 7, 'yshtola': 7, 'alela': 7, 'najeela': 99}, 'instant_extra': 2, 'default': 7},
+    'loose':        {'cthresh': {'seph': 6, 'veyran': 6, 'sauron': 6, 'marchesa': 6, 'zur': 6, 'galadriel': 6, 'yshtola': 6, 'alela': 6, 'najeela': 99}, 'instant_extra': 0, 'default': 6},
 }
 INSTANT_EXTRA = 2
 CTHRESH_DEFAULT = 7      # outside decks: counter threshold under the current profile

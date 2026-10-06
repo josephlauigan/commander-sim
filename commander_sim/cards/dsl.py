@@ -87,6 +87,8 @@ def matches(g, p, m, f, src=None):
     if 'max_pow' in f and epow(g, m) > f['max_pow']: return False
     if 'min_pow' in f and epow(g, m) < f['min_pow']: return False
     if f.get('nontoken') and m.token: return False
+    kw = f.get('keyword')                                      # "creatures you control with flying" (Alela)
+    if kw and not ((kw == 'flying' and getattr(m, 'fly', False)) or has_kw(g, m, kw)): return False
     if f.get('nonlegendary') and cd is not None and 'leg' in cd.tags: return False
     if f.get('legendary') and not (cd is not None and 'leg' in cd.tags): return False
     if f.get('subtype') and f['subtype'] not in ('', None):

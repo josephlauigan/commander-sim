@@ -1497,7 +1497,7 @@ def tutor_value(g, p, c):
 # ======================================================== Game Changer plays (Veyran's candidate cards)
 def deck_prio(g, p, c):
     f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'marchesa': marchesa_prio, 'zur': zur_prio,
-         'galadriel': galadriel_prio, 'yshtola': yshtola_prio, 'najeela': najeela_prio}.get(p.key)
+         'galadriel': galadriel_prio, 'yshtola': yshtola_prio, 'alela': alela_prio, 'najeela': najeela_prio}.get(p.key)
     if f is None:
         from commander_sim.ai import pool_ai; f = pool_ai.generic_prio
     return f(g, p, c)
@@ -2700,8 +2700,22 @@ def generic_main(g, p, post):
         break
 
 
+def alela_prio(g, p, c):
+    return E.CI.alela_prio(g, p, c)
+
+
+def alela_main(g, p, post):
+    for _ in range(16):
+        if g.over or not p.alive: return
+        if use_removal(g, p, 6): continue
+        if consider_wipe(g, p): continue
+        res = interaction_reserve(g, p, lambda c: 'ctr' in c.tags) if p.turns >= 4 else (0, '')
+        if generic_cast(g, p, alela_prio, res): continue
+        break
+
+
 MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'marchesa': marchesa_main, 'zur': zur_main,
-        'galadriel': galadriel_main, 'yshtola': yshtola_main, 'najeela': najeela_main}
+        'galadriel': galadriel_main, 'yshtola': yshtola_main, 'alela': alela_main, 'najeela': najeela_main}
 
 
 def main_fn(p):
@@ -2837,7 +2851,8 @@ def mulligan(g, p, rng=None):
 
 CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
         'sauron': 'Sauron, the Dark Lord', 'marchesa': 'Marchesa, the Black Rose', 'zur': 'Zur the Enchanter',
-        'galadriel': 'Galadriel, Light of Valinor', 'yshtola': "Y'shtola, Night's Blessed", 'najeela': 'Najeela, the Blade-Blossom'}
+        'galadriel': 'Galadriel, Light of Valinor', 'yshtola': "Y'shtola, Night's Blessed",
+        'alela': 'Alela, Artful Provocateur', 'najeela': 'Najeela, the Blade-Blossom'}
 
 
 STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)

@@ -32,6 +32,7 @@ STYLE = {
     'zur':     {'temp': 1.0, 'aggression': 0.60, 'caution': 0.70},
     'galadriel': {'temp': 1.0, 'aggression': 0.70, 'caution': 0.55},
     'yshtola': {'temp': 1.0, 'aggression': 0.50, 'caution': 0.75},
+    'alela':   {'temp': 1.0, 'aggression': 0.70, 'caution': 0.60},
     'najeela': {'temp': 1.0, 'aggression': 0.90, 'caution': 0.30},
 }
 TEMP_SCALE = 1.0     # global multiplier, set from --temp
@@ -183,7 +184,8 @@ def reserve_penalty(g, p, s, c, hold_card, hold_v):
 
 # ------------------------------------------------------------------ card utilities
 PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'marchesa': A.marchesa_prio,
-        'zur': A.zur_prio, 'galadriel': A.galadriel_prio, 'yshtola': A.yshtola_prio, 'najeela': A.najeela_prio}
+        'zur': A.zur_prio, 'galadriel': A.galadriel_prio, 'yshtola': A.yshtola_prio, 'alela': A.alela_prio,
+        'najeela': A.najeela_prio}
 
 
 def draws_cards(c):
@@ -683,7 +685,7 @@ def main(g, p, post):
         if not acted: return
 
 
-GENERIC_PLAYS = ('marchesa', 'zur', 'galadriel', 'yshtola')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
+GENERIC_PLAYS = ('marchesa', 'zur', 'galadriel', 'yshtola', 'alela')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
 
 
 def hook_options(g, p, s, post):
