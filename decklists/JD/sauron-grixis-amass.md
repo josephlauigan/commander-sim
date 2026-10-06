@@ -13,6 +13,7 @@
 **Updated 2026-10-03.** Out: Ral Zarek, Guest Lecturer. In: Marchesa, the Black Rose. Marchesa gives every creature dethrone (a +1/+1 counter when attacking the player with the most life, the Army included) and returns any creature with a +1/+1 counter that dies at the next end step. Ral Zarek's planeswalker slot did the least.
 **Updated 2026-10-03.** Out: Reconnaissance Mission. In: Disdainful Stroke. Disdainful Stroke is a two-mana answer to wipes, big creatures and commanders (mana value 4 or more), held up while the Army grows. Reconnaissance Mission drew one card per hit for a one-creature attack plan.
 **Updated 2026-10-05.** Out: Consecrated Sphinx. In: Fact or Fiction. Consecrated Sphinx → Fact or Fiction. Back to Bracket 3: three Game Changers (Underworld Breach, Cyclonic Rift, Orcish Bowmasters). Tested: no loss (+0.1 points on average, 1,000 paired games per tier, adaptive AI). The Sphinx moves to Y'shtola.
+**Updated 2026-10-06.** Out: Brush Off. In: Spell Pierce. Brush Off → Spell Pierce: a spare copy from the binder; one blue mana is easy to hold up on the Breach turn.
 
 ## Strategy
 
@@ -82,7 +83,7 @@ The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Sw
 
 **Haunted Ridge → the Unclaimed Territory slot.** Unclaimed Territory only made coloured mana for Orc creature spells; Haunted Ridge is a real B/R dual.
 
-**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Chaos Warp) plus Noxious Gearhulk and Vraska; five counters (Counterspell, Arcane Denial, Undermine, **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more, and **Brush Off**, which costs only {1}{U} against an instant or sorcery); four resets in Blasphemous Act, Toxic Deluge, Nibelheim Aflame, and Cyclonic Rift; and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
+**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Chaos Warp) plus Noxious Gearhulk and Vraska; five counters (Counterspell, Arcane Denial, Undermine, **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more, and **Spell Pierce**, a one-mana soft counter for noncreature spells that's easy to hold up on the Breach turn); four resets in Blasphemous Act, Toxic Deluge, Nibelheim Aflame, and Cyclonic Rift; and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
 
 ## Tutor targets by board state
 
@@ -104,7 +105,7 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 ## Bracket and Rule 0
 
-Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx moved to Y'shtola on 10-05, at no measurable cost). Sheoldred, Kefka, Brush Off, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
+Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx moved to Y'shtola on 10-05, at no measurable cost). Sheoldred, Kefka, Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
 
 **The deck has two combos.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later. **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal as fuel) mills the table in one turn; it can come together as early as turn four with a tutor. The Sword line is a late-game combo; the Breach line can be early, so say so before the game at a Bracket 3 table.
 
@@ -134,7 +135,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Thought Vessel, Whispersilk Cloak
 
-**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Brush Off, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -153,7 +154,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Bloodchief's Thirst
 1 Bloodsoaked Insight // Sanguine Morass
 1 Brain Freeze
-1 Brush Off
 1 Call of the Ring
 1 Chaos Warp
 1 Chromatic Lantern
@@ -205,6 +205,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Shivan Reef
 1 Slaughter Pact
 1 Sol Ring
+1 Spell Pierce
 1 Steam Vents
 1 Sulfur Falls
 1 Sword of Feast and Famine
