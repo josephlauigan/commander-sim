@@ -1,0 +1,9 @@
+23:20:39 start: 0 games already done; decks ['sauron', 'seph', 'veyran', 'yshtola']; jobs 24; timeout 2700s; stop launching 06:00, deadline 06:28
+00:20:40 progress: 215 games done, 0 crashes, 0 timeouts, 24 running
+01:20:40 progress: 431 games done, 0 crashes, 0 timeouts, 24 running
+02:20:41 progress: 624 games done, 0 crashes, 0 timeouts, 24 running
+03:20:42 progress: 860 games done, 0 crashes, 0 timeouts, 24 running
+04:20:42 progress: 1068 games done, 0 crashes, 0 timeouts, 24 running
+05:20:42 progress: 1287 games done, 0 crashes, 0 timeouts, 24 running
+06:06:12 finished: 1439 games done, 0 crashes, 0 timeouts
+06:06:12 WATCHDOG done
