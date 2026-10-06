@@ -843,6 +843,7 @@ def make_tokens(g, p, n, pw, tg=None, fly=False, warrior=False, attacking=False,
     shards_trigger(g, p, k)
     if DSLMOD is not None and g.dsl_on:
         for x in out: DSLMOD.fire(g, 'etb', perm=x, owner=p)
+    if k and g is not None and g.hooks: CI.fire(g, 'tokens_enter', p, out)     # Plumecreed Mentor
     return out
 
 
@@ -915,7 +916,7 @@ def leave(g, m):
 
 def to_zone_card(g, m, zone):
     """move a nontoken card to zone ('gy','exile','hand','lib'); commanders go to command zone."""
-    if m.token: return
+    if m.token or 'tokpw' in m.cd.tags: return          # a token with a card face (the Jace token) just ceases to exist
     owner = m.orig
     if m.phys is not None:
         cd = m.phys
@@ -927,6 +928,7 @@ def to_zone_card(g, m, zone):
     elif zone == 'exile': owner.exile.append(m.cd)
     elif zone == 'hand': owner.hand.append(m.cd)
     elif zone == 'lib': owner.library.insert(g.rng.randrange(len(owner.library) + 1), m.cd)
+    elif zone == 'top': owner.library.append(m.cd)
 
 
 def melira(p):
@@ -1476,6 +1478,7 @@ def counter_ok(ctr, c):
     if s == 'any': return True
     if s == 'nc': return not c.creature
     if s == 'ise': return c.instant or c.sorcery or ('E' in c.types and not c.creature)
+    if s == 'is': return c.instant or c.sorcery                       # Muddle the Mixture
     if s == 'mv4': return c.cmc >= 4
     if s == 'cre': return c.creature
     if s == 'mv1': return c.cmc == 1                                  # Mental Misstep
@@ -1779,6 +1782,8 @@ def step_priority(g, step, defender=None, attackers=()):
             importlib.import_module('commander_sim.ai.brain').attack_response(g, q, g.active, attackers)
         elif step == 'combat' and q is not g.active and q.key == 'galadriel' and CI is not None:
             CI.galadriel_precombat(g, q)                   # tap the attacker it fears (Errant Doomsayers, Whipcorder)
+        if step == 'combat' and q is not g.active and CI is not None and g.hooks and not (hm is not None and hm.is_human(g, q)):
+            CI.opposition_precombat(g, q)                  # Opposition: tap the attackers down
 
 
 def equip_to(g, p, e, m, n):
@@ -2065,7 +2070,8 @@ def cast_card(g, p, c, zone='hand', ctx=None, paid=True):
         if c is p.cmd: p.cmd_in_zone = True
         elif zone in ('gy',) or ctx.get('exile_after'): p.exile.append(c)
         elif LAST_COUNTER is not None and 'lapse' in LAST_COUNTER.tags and not c.land: p.library.append(c)
-        elif LAST_COUNTER is not None and LAST_COUNTER.name == 'Venser, Shaper Savant': p.hand.append(c)
+        elif LAST_COUNTER is not None and (LAST_COUNTER.name == 'Venser, Shaper Savant' or 'remand' in LAST_COUNTER.tags):
+            p.hand.append(c)                                              # Fatehold Charm: back to its owner's hand
         elif getattr(g, 'bounced_spell', False): g.bounced_spell = False; p.hand.append(c)
         elif not c.land: gy_of(p, ctx).append(c)
         return False
@@ -2632,6 +2638,7 @@ def legal_targets(g, p, kind, tgt, mv4=False, spell=None):
             if kind.startswith('dmg'):
                 if not is_c or etgh(g, m) > int(kind[3:]) or no_damage(g, m): continue
             if kind.startswith('shrink') and (not is_c or etgh(g, m) > int(kind[6:])): continue
+            if kind == 'zero' and (not is_c or etgh(g, m) - m.tgh > 0): continue    # base 0/0: dies unless pumped
             if spell is not None and 'newonly' in spell.tags and not entered_since_last_turn(g, p, m): continue
             if (kind == 'destroy' or kind.startswith('dmg')) and indestructible(g, m): continue
             res.append(m)
@@ -2682,13 +2689,17 @@ def apply_removal(g, actor, m, kind, spell=None):
         exile_perm(g, m)                                         # Scorching Dragonfire: exiled instead of dying
     elif kind.startswith('shrink'):
         if etgh(g, m) <= int(kind[6:]): die(g, m, 'sba')       # -X/-X: toughness 0, no regeneration
+    elif kind == 'zero':
+        if etgh(g, m) - m.tgh <= 0: die(g, m, 'sba')           # Multiply by Zero: base 0/0 (counters still count)
     elif kind in ('destroy',) or kind.startswith('dmg'):
         g.noregen = 'noregen' in st
+        prev_d, g.destroyer = getattr(g, 'destroyer', None), actor      # Karmic Justice: who destroyed it
         try:
             die(g, m, 'destroy')
         finally:
-            g.noregen = False
+            g.noregen = False; g.destroyer = prev_d
     elif kind == 'exile': exile_perm(g, m)
+    elif kind == 'top': leave(g, m); to_zone_card(g, m, 'top')         # Plan for All Outcomes: on top of the library
     elif kind == 'bounce': bounce(g, m)
     elif kind == 'tuck': tuck(g, m)
     elif kind in ('elk', 'mutate', 'forest'): importlib.import_module('commander_sim.cards.impl.rules').transform_away(g, m, kind)
@@ -2700,6 +2711,7 @@ def apply_removal(g, actor, m, kind, spell=None):
         if 'rtok' in t: make_tokens(g, owner, 1, int(t['rtok']), color='' if 'Reality' in spell.name else 'G')
         if 'losemv' in t: lose_life(g, actor, mv, actor)         # Feed the Swarm
         if 'gaintgh' in t: gain(actor, m.tgh)                    # Noxious Gearhulk
+        if 'enddraw' in t and m not in getattr(g, 'in_combat', ()): draw(g, owner, 1)   # Prophesied End
     check_state(g)
 
 
@@ -2753,11 +2765,12 @@ def _etb_removal(g, p, m):
 
 def apply_wipe(g, p, kind, ctx):
     prev, g.batch = getattr(g, 'batch', None), object()     # creatures destroyed together die simultaneously
+    prev_d, g.destroyer = getattr(g, 'destroyer', None), p   # Karmic Justice: who destroyed them
     g.resolving = getattr(g, 'resolving', 0) + 1
     try:
         _apply_wipe(g, p, kind, ctx)
     finally:
-        g.batch = prev
+        g.batch = prev; g.destroyer = prev_d
         g.resolving -= 1
     if not g.resolving and getattr(g, 'trig_queue', None): flush_triggers(g)
 

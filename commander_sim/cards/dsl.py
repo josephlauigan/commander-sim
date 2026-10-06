@@ -258,6 +258,7 @@ def run(g, p, e, src, ctx, spell, depth):
             hit = {m.owner for m in ms}
             prot = {q: ais.wipe_response(g, q, {'destroy': 'destroy', 'exile': 'exile', 'bounce': 'evac'}.get(d, 'destroy'), p) for q in hit}
             prev, g.batch = getattr(g, 'batch', None), object()      # they die at the same time
+            prev_d, g.destroyer = getattr(g, 'destroyer', None), p    # Karmic Justice: who destroyed them
             try:
                 for m in ms:
                     if m not in m.owner.perms or m.phased: continue
@@ -269,7 +270,7 @@ def run(g, p, e, src, ctx, spell, depth):
                         else: bounce(g, m)
                     else: tuck(g, m)
             finally:
-                g.batch = prev
+                g.batch = prev; g.destroyer = prev_d
         else:
             for m in ms:
                 snapshot(g, m, ctx)

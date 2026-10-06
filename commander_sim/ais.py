@@ -2269,6 +2269,7 @@ def combat(g, p):
         for m in atk:
             if m.army and equipped(m, 'cloak'): unbl.add(m)
             if m.data and m.data.get('unbl') == turn_stamp(g): unbl.add(m)     # Rogue's Passage, activated by a person
+            if getattr(p, 'unbl_all', None) == turn_stamp(g): unbl.add(m)      # Venser, the Sojourner's -1
         if not human and a in atk and a not in unbl and epow(g, a) >= 5:
             ps = [L for L in p.lands if L.cd.tags.get('passage') and not L.tapped and not blocked(g, p, L.cd.name)]
             if ps:
@@ -2383,6 +2384,7 @@ def enters_rule(cd):
         elif (k := re.match(r'you control (two|three) or more other (\w+?)s\b', cond)) and k.group(2) in BASIC_TYPES:
             rule = ('types_more', k.group(2), two[k.group(1)])
         elif 'legendary creature' in cond: rule = ('legendary',)
+        elif 'planeswalker' in cond: rule = ('planeswalker',)                 # Fatehold Annex and the other Annexes
         else:
             ts = frozenset(w for w in re.findall(r'an? (\w+)', cond) if w in BASIC_TYPES)
             if cond.startswith('you control') and ts: rule = ('control', ts)
@@ -2402,6 +2404,7 @@ def _untapped_by_rule(g, p, cd, rule):
     if kind == 'types_more': return sum(1 for L in p.lands if rule[1] in land_types(L.cd.name)[0]) >= rule[2]
     if kind == 'reveal': return any(c is not cd and c.land and land_types(c.name)[0] & rule[1] for c in p.hand)
     if kind == 'legendary': return any(m.creature and m.cd is not None and 'leg' in m.cd.tags for m in p.perms)
+    if kind == 'planeswalker': return any(m.cd is not None and 'P' in m.cd.types and not m.phased for m in p.perms)
     return False
 
 
@@ -2643,6 +2646,7 @@ def end_step(g, p):
     for m in getattr(p, 'borrowed', None) or []:          # Zealous Conscripts: control returns
         if m in p.perms and m.orig.alive:
             p.perms.remove(m); m.owner = m.orig; m.orig.perms.append(m); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+            if m.data and m.data.pop('tap_on_return', False): m.tapped = True     # Ray of Command
     p.borrowed = []
     if E.CI is not None and getattr(g, 'monarch', None) is p: draw(g, p, 1)          # the monarch draws
     if g.hooks: E.CI.fire(g, 'end_step', p)
