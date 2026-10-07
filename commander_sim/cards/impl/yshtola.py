@@ -237,6 +237,21 @@ def _x_option(g, c, p, s, post):
 for _n in X_DRAIN: CI.HOOKS[_n]['hand_options'] = _x_option
 
 
+# ------------------------------------------------------------------ Polluted Bonds
+@on('Polluted Bonds', 'landfall')
+def _polluted_bonds(g, src, p):
+    """a land an opponent controls enters: that player loses 2 life and you gain 2 (Sanguine Bond and Marauding
+    Blight-Priest turn the gain into more drain)"""
+    o = src.owner
+    if p is o or p not in g.opps(o) or not p.alive: return
+    if not trigger_window(g, o, src, f'{NAME(p)} loses 2 life; you gain 2'): return
+    lose_life(g, p, 2, o, kind='drain')
+    gain(o, 2)
+    check_state(g)
+card('Polluted Bonds', '', types='E', dsl=[])
+full('Polluted Bonds', "whenever a land an opponent controls enters, that player loses 2 life and you gain 2")
+
+
 # ------------------------------------------------------------------ Ill-Gotten Inheritance
 @on('Ill-Gotten Inheritance', 'upkeep')
 def _inheritance(g, src, p):
@@ -712,6 +727,7 @@ def yshtola_prio(g, p, c):
     if n == 'Sanguine Bond': return 76 + b
     if n == 'Marauding Blight-Priest': return 62
     if n == 'Ill-Gotten Inheritance': return 54 + b
+    if n == 'Polluted Bonds': return (56 if p.turns <= 8 else 38) + b     # opponents' land drops still to come
     if n in ('Propaganda', 'Windborn Muse'):
         if any(m.cd is not None and m.cd.name in ('Propaganda', 'Windborn Muse') for m in p.perms):
             return 30 + b

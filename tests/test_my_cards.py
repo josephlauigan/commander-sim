@@ -1055,5 +1055,22 @@ class Anduril(unittest.TestCase):
         self.assertEqual(E.epow(self.g, s), 10)
 
 
+class PollutedBonds(unittest.TestCase):
+    """Y'shtola's Polluted Bonds: an opponent's land drains 2 and gains you 2; your own lands don't"""
+    def test_opponent_land_drains(self):
+        g = table('yshtola', 'veyran'); p, q = g.players
+        perm(g, p, 'Polluted Bonds')
+        q.hand.append(card('Island')); g.active = q
+        ais.play_land(g, q)
+        self.assertEqual((q.life, p.life), (38, 42))
+
+    def test_own_land_does_nothing(self):
+        g = table('yshtola', 'veyran'); p, q = g.players
+        perm(g, p, 'Polluted Bonds')
+        p.hand.append(card('Plains'))
+        ais.play_land(g, p)
+        self.assertEqual((q.life, p.life), (40, 40))
+
+
 if __name__ == '__main__':
     unittest.main()
