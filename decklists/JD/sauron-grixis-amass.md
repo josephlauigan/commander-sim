@@ -14,6 +14,7 @@
 **Updated 2026-10-03.** Out: Reconnaissance Mission. In: Disdainful Stroke. Disdainful Stroke is a two-mana answer to wipes, big creatures and commanders (mana value 4 or more), held up while the Army grows. Reconnaissance Mission drew one card per hit for a one-creature attack plan.
 **Updated 2026-10-05.** Out: Consecrated Sphinx. In: Fact or Fiction. Consecrated Sphinx → Fact or Fiction. Back to Bracket 3: three Game Changers (Underworld Breach, Cyclonic Rift, Orcish Bowmasters). Tested: no loss (+0.1 points on average, 1,000 paired games per tier, adaptive AI). The Sphinx moves to Y'shtola.
 **Updated 2026-10-06.** Out: Brush Off. In: Spell Pierce. Brush Off → Spell Pierce: a spare copy from the binder; one blue mana is easy to hold up on the Breach turn.
+**Updated 2026-10-07.** Out: Marchesa, the Black Rose. In: Talrand, Sky Summoner. Marchesa, the Black Rose → Talrand, Sky Summoner: a 2/2 flying Drake for every instant or sorcery, so the deck has bodies besides the Orc Army (it loses to combat in about three games in four). Tested even with Marchesa (0.0 points, fast AI, 1,000 pairs per tier); Marchesa goes back to being only the Marchesa deck's commander.
 
 ## Strategy
 
@@ -33,7 +34,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler and Inexorable Tide proliferate it upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
 
-**Marchesa, the Black Rose** gives all your creatures dethrone: each one attacking the player with the most life (or tied for it) gets a +1/+1 counter, so the Army grows on every swing at the leader, and Mauhúr adds one more. Any creature of yours with a +1/+1 counter that dies comes back at the beginning of the next end step: Bowmasters, Kefka or Grave Titan after a dethrone hit or a Skate or Flux Channeler pass, and Marchesa herself. The Army is a token, so it doesn't come back; The Ozolith keeps its counters instead.
+**Talrand, Sky Summoner** (10-07, in Marchesa's slot) makes a 2/2 flying Drake whenever you cast an instant or sorcery. The deck runs 26 of them, so Talrand turns counterspells, removal and draw spells into a second army of fliers: blockers against the creature decks that cause most losses, and attackers that don't depend on the Orc Army.
 
 **Keep it.** **The Ozolith** is new insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with counters on it, those counters move onto The Ozolith, and at the beginning of combat on your turn you can put them all onto a target creature. A spot-removed, bounced, or swept Army no longer resets you to zero — the next amass makes a fresh Army and The Ozolith hands it the old pile (or put it straight onto Sauron). It also catches the counters when you wipe the board yourself with Blasphemous Act or Toxic Deluge.
 
@@ -127,7 +128,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (17).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Marchesa the Black Rose, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (17).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
@@ -185,7 +186,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Kefka, Court Mage // Kefka, Ruler of Ruin
 1 Lightning Greaves
 1 Lotus Petal
-1 Marchesa, the Black Rose
 1 Mauhúr, Uruk-hai Captain
 1 Mind Stone
 1 Nibelheim Aflame
@@ -213,6 +213,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Sword of Hearth and Home
 1 Talisman of Creativity
 1 Talisman of Dominance
+1 Talrand, Sky Summoner
 1 Terminate
 1 The Ozolith
 1 Thought Vessel
@@ -258,7 +259,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 
 **Card conflicts with your other decks.**
 - **Two physical copies needed** of Sheoldred, the Apocalypse and Diabolic Tutor, which are in this deck and Sephiroth.
-- **Marchesa, the Black Rose** is also the commander of your Marchesa deck: a second copy, or move her between decks.
+- **Talrand, Sky Summoner** is also in Veyran: a second copy.
 - **Diabolic Intent** moved here from Sephiroth, so one copy is enough.
 - Shared with **Veyran**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
 - Shared with **Sephiroth**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Phyrexian Arena (10-05), Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
