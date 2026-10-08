@@ -41,14 +41,6 @@ Disclose before the game: the six tutors, Force of Will, Grand Abolisher and Dra
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
-## Card conflicts with your other decks
-
-- **Force of Will, Demonic Tutor, Grand Abolisher, Toxic Deluge, Brushland, Llanowar Wastes, Underground River, Yavimaya Coast** are also in Sephiroth.
-- **Mystical Tutor, Caves of Koilos, Skyclave Apparition, Coalition Relic, Shattered Sanctum** are also in Y'shtola.
-- **Fact or Fiction, Arcane Denial, Bitter Triumph, Toxic Deluge, Crumbling Necropolis, Shivan Reef** are also in Sauron.
-- **Marchesa, the Black Rose** is the Marchesa deck's commander (a spare copy is in bulk). **Seaside Citadel** is also in Galadriel; **Disenchant** in Zur.
-- Command Tower, Exotic Orchard, Evolving Wilds, Terramorphic Expanse, Path of Ancestry and Arcane Sanctum appear in several decks.
-
 ## Decklist by type (100)
 
 **Commander (1).** Jodah, the Unifier

@@ -39,12 +39,6 @@ Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and li
 
 **Bracket 3,** with two Game Changers: **Rhystic Study** and **Notion Thief**. No two-card infinite combos, no mass land destruction, no extra turns. Opposition is a soft lock piece worth mentioning before the game.
 
-## Card conflicts with your other decks
-
-- **Dark Ritual** is also in Sauron: a second copy, or swap in a bench card.
-- **Notion Thief** is also in Y'shtola; **Rhystic Study** is also in the Marchesa and Zur decks.
-- Sol Ring and Mind Stone come from the alternate bulk list as their own copies.
-
 **Bench (in bulk if you want to tune):** Unbreakable Formation, Cho-Manno's Blessing, Medic's Kitesail, Twisted Fates, Silence the Echo, Aven Fisher, Sanguine Glorifier, Way of the Mentor, Way of the Cryomancer, Rewrite Regrets, Mnemonic Wall, Bonders' Enclave.
 
 ## Decklist by type (100)
