@@ -141,9 +141,13 @@ section.targetable > header { cursor: crosshair; }
 .stackbar { display: flex; gap: 14px; align-items: center; margin: 10px auto 0; padding: 10px 14px; width: fit-content; max-width: 100%;
   background: #0f2d1f; border: 2px solid #7fd3ff; border-radius: 12px; box-shadow: 0 0 18px #7fd3ff55; }
 .stackbar h3 { margin: 0 0 6px; font-size: 14px; }
+/* the stack takes as little of the table as it can: small cards (at most about a seventh of the window's height), in
+   one row that scrolls sideways, so the battlefields above and below keep their room */
+.stackbar .cards { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; min-width: 0; }
+.stackbar .card.sm { --w: min(calc(var(--sm) * var(--zoom)), calc(14vh / 1.393)); }
 .stackbar .order { font-size: 13px; color: var(--dim); } .stackbar .order .you { color: var(--gold); font-weight: 700; }
 .stackbar .order .passed { opacity: .75; }
-.stackbar figure.item { margin: 0; display: inline-flex; flex-direction: column; align-items: center; gap: 4px; max-width: 150px; }
+.stackbar figure.item { margin: 0; display: inline-flex; flex: none; flex-direction: column; align-items: center; gap: 4px; max-width: 150px; }
 .stackbar figure.item figcaption { font-size: 12px; color: var(--dim); text-align: center; line-height: 1.25; }
 .stackbar figure.item figcaption b { color: var(--text); font-weight: 600; }
 .stackbar figure.item.ability img { outline: 2px dashed #7fd3ff; outline-offset: 2px; }
@@ -177,7 +181,7 @@ body.playing .opp-board { flex: 1 1 0; height: auto; min-height: 0; }
 body.playing .opp footer { flex: none; }
 body.playing .stackbar { flex: none; margin: 0 auto; }
 body.playing .mine { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; margin: 0; }
-body.playing .mine-board { flex: 1 1 0; height: auto; min-height: 0; }
+body.playing .mine-board { flex: 1 1 0; height: auto; min-height: 0; overflow-y: auto; }   /* past the smallest card size it scrolls: your lands stay reachable */
 body.playing .passbar { flex: none; min-height: 0; margin: 0; }
 body.playing #pass { padding: 10px 48px; }
 body.playing .bottom { flex: 0.8 1 0; min-height: 0; grid-template-rows: minmax(0, 1fr); }

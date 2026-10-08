@@ -119,7 +119,7 @@ function showStack(req) {
     : req.data.caster ? `${req.data.caster} casts ${top.name}` : 'On the stack';
   opps.after(el('section', { class: 'stackbar', 'aria-label': 'The stack' },
     el('div', { class: 'cards' }, req.data.stack.map((x) => el('figure', { class: 'item' + (x.kind && x.kind !== 'spell' ? ' ability' : '') },
-      cardOf(images, x.name, { size: 'md' }),
+      cardOf(images, x.name, { size: 'sm' }),
       x.controller ? el('figcaption', {}, el('b', {}, x.controller),
         x.kind && x.kind !== 'spell' ? ` · ${x.kind === 'trigger' ? 'trigger' : 'ability'}: ${what(x)}` : '',
         x.target ? ` → ${x.target}` : '') : null))),
