@@ -46,7 +46,7 @@ class LandEntry(unittest.TestCase):
         self.assertFalse(tapped(s, 'Foreboding Ruins'))
 
     def test_battle_bond_and_sanctuary(self):
-        g = table('sauron', 'veyran', 'seph', 'marchesa'); s = g.players[0]
+        g = table('sauron', 'veyran', 'seph', 'jodah'); s = g.players[0]
         self.assertFalse(tapped(s, 'Luxury Suite'))                     # three opponents
         lands(s, 'Island')
         self.assertTrue(tapped(s, 'Sunken Hollow'))                     # two or more basic lands
@@ -102,7 +102,7 @@ class LandEntersTriggers(unittest.TestCase):
         from tests.table import table, card
         from commander_sim.play import human
         from commander_sim.play.controller import ScriptController
-        g = table('zur', 'veyran'); z = g.players[0]
+        g = table('yshtola', 'veyran'); z = g.players[0]
         z.hand.append(card('Temple of Enlightenment'))
         ctl = ScriptController(lambda req: 0); g.controllers = {z.key: ctl}
         self.assertIsNone(human.apply(g, z, {'do': 'land', 'card': len(z.hand) - 1}))
@@ -110,7 +110,7 @@ class LandEntersTriggers(unittest.TestCase):
 
     def test_a_gain_land_gains_life_and_each_land_only_once(self):
         from tests.table import table, card
-        g = table('zur', 'veyran'); z = g.players[0]
+        g = table('yshtola', 'veyran'); z = g.players[0]
         life = z.life
         ais.play_land_card(g, z, card('Scoured Barrens'))
         E.check_state(g); E.landfall(g, z)

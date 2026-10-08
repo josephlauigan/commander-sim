@@ -94,32 +94,32 @@ class AutoPass(unittest.TestCase):
     def setUp(self):
         from commander_sim.play.session import Session
         self.Session = Session
-        self.s = Session('zur', 't3', seed=1, ai='adaptive')
+        self.s = Session('yshtola', 't3', seed=1, ai='adaptive')
 
     def test_a_change_applies_from_your_next_answer(self):
         s = self.s
         s.answers = [0, 0]                                        # waiting on the third decision
-        self.assertIsNone(s.set_autopass('zur', 'all'))
-        self.assertEqual(s.autopass_of('zur'), 'respond')         # this decision was asked under the old setting
+        self.assertIsNone(s.set_autopass('yshtola', 'all'))
+        self.assertEqual(s.autopass_of('yshtola'), 'respond')         # this decision was asked under the old setting
         s.answers.append(0)
-        self.assertEqual(s.autopass_of('zur'), 'all')
-        self.assertIn('one of', s.set_autopass('zur', 'never'))
+        self.assertEqual(s.autopass_of('yshtola'), 'all')
+        self.assertIn('one of', s.set_autopass('yshtola', 'never'))
 
     def test_undo_replays_the_old_setting_then_keeps_the_new(self):
         s = self.s
         s.answers = [0, 0, 0, 0]
-        s.set_autopass('zur', 'all')                              # from answer 5
+        s.set_autopass('yshtola', 'all')                              # from answer 5
         s._autopass_rewind(2)                                     # Undo back to the third decision
-        self.assertEqual(s.autopass_of('zur', at=2), 'respond')   # the replay is as it was
-        self.assertEqual(s.autopass_of('zur', at=3), 'all')       # then your setting now
+        self.assertEqual(s.autopass_of('yshtola', at=2), 'respond')   # the replay is as it was
+        self.assertEqual(s.autopass_of('yshtola', at=3), 'all')       # then your setting now
 
     def test_a_saved_game_keeps_the_settings(self):
-        s = self.Session('zur', 't3', seed=1, ai='adaptive', autopass='stack')
+        s = self.Session('yshtola', 't3', seed=1, ai='adaptive', autopass='stack')
         s.answers = [0]
-        s.set_autopass('zur', 'all')
+        s.set_autopass('yshtola', 'all')
         s2 = self.Session.load(s.saved())
-        self.assertEqual(s2.autopass_start, {'zur': 'stack'})
-        self.assertEqual(s2.autopass_of('zur', at=1), 'stack'); self.assertEqual(s2.autopass_of('zur', at=2), 'all')
+        self.assertEqual(s2.autopass_start, {'yshtola': 'stack'})
+        self.assertEqual(s2.autopass_of('yshtola', at=1), 'stack'); self.assertEqual(s2.autopass_of('yshtola', at=2), 'all')
 
 
 if __name__ == '__main__':

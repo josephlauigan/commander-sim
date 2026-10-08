@@ -174,9 +174,7 @@ def _ral_minus2(g, p, m):
 PREPARED = {'Blazing Firesinger // Seething Song': (2, 'R', True, 'Seething Song', 'add {R}{R}{R}{R}{R}'),
             'Emeritus of Ideation // Ancestral Recall': (0, 'U', True, 'Ancestral Recall', 'target player draws three'),
             'Sanar, Unfinished Genius // Wild Idea': (3, 'UR', False, 'Wild Idea', 'search for an instant or sorcery'),
-            'Emeritus of Conflict // Lightning Bolt': (0, 'R', True, 'Lightning Bolt', '3 damage to any target'),
-            'Grave Researcher // Reanimate': (0, 'B', False, 'Reanimate',
-                                              'a creature card from a graveyard to the battlefield; lose life equal to its mana value')}
+            'Emeritus of Conflict // Lightning Bolt': (0, 'R', True, 'Lightning Bolt', '3 damage to any target')}
 
 
 def _prepared(g, p, m):
@@ -283,40 +281,6 @@ def _aetherflux(g, p, m):
         _damage(g, p, tg[k], 50, 'Aetherflux Reservoir', 'aether')
         return None
     return [('pay 50 life: 50 damage to any target', act)]
-
-
-def _pteramander(g, p, m):
-    n = max(0, 7 - sum(1 for c in p.gy if c.instant or c.sorcery))
-
-    def act(g, p, m):
-        why = _cost(g, p, n, 'U', 'Pteramander')
-        if why: return why
-        mana.pay_from_pool(g, p, n, 'U')
-        if not E.ability_window(g, p, m, 'adapt 4'): return None
-        if m.plus > 0: E.log(f'  {E.NAME(p)} adapts Pteramander (it has counters already: nothing happens)', g)
-        else: m.plus += 4; E.log(f'  {E.NAME(p)} adapts Pteramander (4 counters)', g)
-        return None
-    return [(f'{mana.cost_text(n, "U")}: adapt 4 ({{1}} less per instant and sorcery in your graveyard)', act)]
-
-
-def _skullport(g, p, m):
-    def act(g, p, m):
-        cre = [x for x in p.perms if x.creature and not x.phased and x is not m]
-        if not cre and not p.treasures: return 'You have no other creature or Treasure to sacrifice.'
-        why = _cost(g, p, 1, 'B', 'Skullport Merchant')
-        if why: return why
-        labels = (['a Treasure'] if p.treasures else []) + [legal.describe_target(g, p, x) for x in cre]
-        k = _choose(g, p, 'choose', 'Skullport Merchant: sacrifice what?', labels)
-        if k is None: return None
-        mana.pay_from_pool(g, p, 1, 'B')
-        if p.treasures and k == 0:
-            p.treasures -= 1
-            if g.hooks: E.CI.fire(g, 'sacrifice', p, 'Treasure')
-        else:
-            E.die(g, cre[k - (1 if p.treasures else 0)], 'sac')
-        if E.ability_window(g, p, m, 'draw a card'): E.draw(g, p, 1)
-        return None
-    return [('{1}{B}, sacrifice another creature or a Treasure: draw a card', act)]
 
 
 def _ste(g, p, m):
@@ -435,8 +399,6 @@ ABILITIES = {
     'Mind Stone': _mind_stone,
     'Triskelion': _triskelion,
     'Aetherflux Reservoir': _aetherflux,
-    'Pteramander': _pteramander,
-    'Skullport Merchant': _skullport,
     'Sakura-Tribe Elder': _ste,
     'Nim Deathmantle': lambda g, p, m: [],                  # equip {4}: the Equip ability every equipment has
 }
@@ -660,64 +622,6 @@ def _insight(g, p, c):
     return None
 
 
-def _disintegrate(g, p, c):
-    why = legal.check_cast(g, p, c)
-    if why: return why
-    tg = _choices().damage_targets(g, p, 'R')
-    k = _choose(g, p, 'target', 'Disintegrate: X damage to which target?', [legal.describe_target(g, p, x) for x in tg])
-    if k is None: return None
-    x = tg[k]
-    top = mana.pool_of(p).total() - 1
-    j = _choose(g, p, 'choose', 'Disintegrate: choose X (paid from your mana pool)', [f'X = {n}' for n in range(top + 1)])
-    if j is None: return None
-    why = mana.pay_from_pool(g, p, j, 'R')
-    if why: return f"Can't cast Disintegrate with X = {j}. {why}"
-    ctx = {'rem_kind': f'dmg{j}'}
-    ctx['face' if isinstance(x, E.Player) else 'target'] = x
-    p.stats['removal_cast'] += 1
-    E.cast_card(g, p, c, 'hand', ctx)
-    return None
-
-
-def _disembowel(g, p, c):
-    why = legal.check_cast(g, p, c)
-    if why: return why
-    tg = [m for q in g.players if q.alive for m in q.perms if m.creature and not m.phased
-          and not (m.owner is not p and E.untargetable(g, m))]
-    if not tg: return 'There is no creature to target.'
-    mv = lambda m: m.cd.cmc if m.cd is not None and not m.token else 0
-    k = _choose(g, p, 'target', 'Disembowel: destroy which creature? (X is its mana value)',
-                [f'{legal.describe_target(g, p, m)} (X = {mv(m)})' for m in tg])
-    if k is None: return None
-    t = tg[k]
-    why = mana.pay_from_pool(g, p, mv(t), 'B')
-    if why: return f"Can't cast Disembowel with X = {mv(t)}. {why}"
-    p.stats['removal_cast'] += 1
-    E.cast_card(g, p, c, 'hand', {'target': t})
-    return None
-
-
-def _throwdown(g, p, c):
-    why = legal.check_cast(g, p, c)
-    if why: return why
-    fod = [m for m in p.perms if m.creature and not m.phased]
-    if not fod: return 'Lethal Throwdown needs a creature to sacrifice as you cast it.'
-    tg = [m for q in g.players if q.alive for m in q.perms if not m.phased and (m.creature or (m.cd is not None and 'P' in m.cd.types))
-          and not (m.owner is not p and E.untargetable(g, m))]
-    k = _choose(g, p, 'target', 'Lethal Throwdown: destroy which creature or planeswalker?', [legal.describe_target(g, p, m) for m in tg])
-    if k is None: return None
-    j = _choose(g, p, 'choose', 'Lethal Throwdown: sacrifice which creature? (a modified one draws you a card)',
-                [legal.describe_target(g, p, m) for m in fod])
-    if j is None: return None
-    f = fod[j]
-    mana.pay_from_pool(g, p, 0, 'B')
-    mod = importlib.import_module('commander_sim.cards.impl.marchesa')._modified(g, f)
-    E.log(f'  {E.NAME(p)} sacrifices {f.name} for Lethal Throwdown', g)
-    E.die(g, f, 'sac'); p.stats['removal_cast'] += 1
-    E.cast_card(g, p, c, 'hand', {'target': tg[k], 'modified': mod})
-    return None
-
-
 HAND = {
     'Twinflame': lambda g, p, c: [('strive: token copies of creatures you control ({1}{R}, plus {2}{R} per extra target)', _twinflame)],
     'Ephemerate': lambda g, p, c: [('exile a creature you control, then return it (rebound)', _ephemerate)],
@@ -725,12 +629,8 @@ HAND = {
     'Bloodsoaked Insight // Sanguine Morass': lambda g, p, c: [("Bloodsoaked Insight: an opponent's top three, playable until the end of your next turn", _insight)],
     'Reconnaissance Mission': lambda g, p, c: [('cast it', _cast_normally), ('cycling {2}: discard it, draw a card', _cycle(2))],
     'Unearth': lambda g, p, c: [('cast it', _cast_normally), ('cycling {2}: discard it, draw a card', _cycle(2))],
-    'Disintegrate': lambda g, p, c: [('X damage to any target', _disintegrate)],
-    'Disembowel': lambda g, p, c: [('destroy target creature with mana value X', _disembowel)],
-    'Lethal Throwdown': lambda g, p, c: [('sacrifice a creature: destroy target creature or planeswalker', _throwdown)],
     'Clever Concealment': lambda g, p, c: [('phase out any number of your nonland permanents (convoke)', lambda g, p, c: _concealment(g, p, c))],
     'Rootborn Defenses': lambda g, p, c: [('populate; your creatures gain indestructible until end of turn', lambda g, p, c: _rootborn(g, p, c))],
-    'Momentary Blink': lambda g, p, c: [('exile a creature you control, then return it', lambda g, p, c: _momentary(g, p, c))],
     'Triplicate Spirits': lambda g, p, c: [('three 1/1 white flying Spirits (convoke)', lambda g, p, c: _triplicate(g, p, c))],
 }
 
@@ -739,17 +639,7 @@ def _you_control_a_creature(g, p, c):
     if not any(m.creature and not m.phased for m in p.perms): return f'{c.name} needs a creature you control to target.'
 
 
-def _any_creature(g, p, c):
-    if not any(m.creature and not m.phased and not (m.owner is not p and E.untargetable(g, m))
-               for q in g.players if q.alive for m in q.perms):
-        return f'{c.name} has no legal target right now.'
-
-
-NEEDS = {'Twinflame': _you_control_a_creature, 'Ephemerate': _you_control_a_creature,
-         'Momentary Blink': _you_control_a_creature,
-         'Disembowel': _any_creature,
-         'Lethal Throwdown': lambda g, p, c: (_you_control_a_creature(g, p, c) and
-                                              f'{c.name} needs a creature to sacrifice as you cast it.')}
+NEEDS = {'Twinflame': _you_control_a_creature, 'Ephemerate': _you_control_a_creature}
 
 
 def needs(g, p, c):
@@ -767,7 +657,7 @@ def cast_from_hand(g, p, c):
     return ways[k][1](g, p, c)
 
 
-# ------------------------------------------------------------------ Zur the Enchanter's deck
+# ------------------------------------------------------------------ cards first written for the Zur deck (cards/impl/zur.py)
 def _zur():
     return importlib.import_module('commander_sim.cards.impl.zur')
 
@@ -840,34 +730,6 @@ def _rootborn(g, p, c):
     return None
 
 
-def _momentary(g, p, c, zone='hand'):
-    gen, pips = (1, 'W') if zone == 'hand' else (3, 'U')
-    why = _timing(g, p, c)
-    if why: return why
-    cre = [m for m in p.perms if m.creature and not m.phased]
-    if not cre: return 'Momentary Blink needs a creature you control to target.'
-    k = _choose(g, p, 'target', 'Momentary Blink: exile and return which creature you control?',
-                [legal.describe_target(g, p, m) for m in cre])
-    if k is None: return None
-    why = mana.cost_problem(g, p, gen, pips)
-    if why: return f"Can't cast Momentary Blink{' (flashback)' if zone == 'gy' else ''}. {why}"
-    mana.pay_from_pool(g, p, gen, pips)
-    m = cre[k]
-    if zone == 'hand':
-        if not _spell_cast(g, p, c, 3, f'Momentary Blink on {m.name}'): p.gy.append(c); return None
-        p.gy.append(c)
-    else:
-        p.gy.remove(c)
-        p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
-        E.log(f'  {E.NAME(p)} casts Momentary Blink (flashback) on {m.name}', g)
-        E.on_cast(g, p, c)
-        ok = not g.over and E.counter_window(g, p, c, 3, {})
-        p.exile.append(c)
-        if not ok: return None
-    if m in p.perms: _blink(g, p, m)
-    return None
-
-
 def _triplicate(g, p, c):
     why = _timing(g, p, c)
     if why: return why
@@ -879,62 +741,7 @@ def _triplicate(g, p, c):
     return None
 
 
-def _embrace_gy(g, p, c):
-    """Demonic Embrace from your graveyard: its cost, 3 life and a discard"""
-    why = legal.sorcery_timing(g, p)
-    if why: return why.replace('do that', 'cast Demonic Embrace')
-    others = list(p.hand)
-    if not others: return 'Demonic Embrace from your graveyard needs a card in hand to discard.'
-    cre = [m for q in g.players if q.alive for m in q.perms
-           if m.creature and not m.phased and not (m.owner is not p and E.untargetable(g, m))
-           and not _zur().untargetable_by_you(g, m) and not E.protected_from(g, m, 'B')]
-    if not cre: return 'Demonic Embrace has no creature to enchant.'
-    k = _choose(g, p, 'target', 'Demonic Embrace: enchant which creature?', [legal.describe_target(g, p, m) for m in cre])
-    if k is None: return None
-    j = _choose(g, p, 'choose', 'Demonic Embrace: discard which card?', [x.name for x in others])
-    if j is None: return None
-    why = mana.cost_problem(g, p, 1, 'BB')
-    if why: return f"Can't cast Demonic Embrace. {why}"
-    mana.pay_from_pool(g, p, 1, 'BB')
-    E.lose_life(g, p, 3, p); E.discard_cards(g, p, [others[j]])
-    p.gy.remove(c)
-    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
-    E.log(f'  {E.NAME(p)} casts Demonic Embrace from the graveyard (3 life, discards {others[j].name})', g)
-    E.on_cast(g, p, c)
-    if g.over or not E.counter_window(g, p, c, 3, {}): return None
-    host = cre[k]
-    g.attach_to = host if host in host.owner.perms else None
-    try:
-        E.enter(g, p, c, was_cast=True)
-    finally:
-        g.attach_to = None
-    E.check_state(g)
-    return None
-
-
-GY = {'Momentary Blink': lambda g, p, c: _momentary(g, p, c, 'gy'), 'Demonic Embrace': _embrace_gy}
-
-
-def _guildmage_tap(g, p, m):
-    why = _cost(g, p, 2, 'W', 'Azorius Guildmage')
-    if why: return why
-    cre = [x for q in g.players if q.alive for x in q.perms if x.creature and not x.phased
-           and not (x.owner is not p and E.untargetable(g, x))]
-    if not cre: return 'There is no creature to tap.'
-    k = _choose(g, p, 'target', 'Azorius Guildmage: tap which creature?', [legal.describe_target(g, p, x) for x in cre])
-    if k is None: return None
-    mana.pay_from_pool(g, p, 2, 'W')
-    E.log(f'  {E.NAME(p)} activates Azorius Guildmage: tap {cre[k].name}', g)
-    if E.ability_window(g, p, m, f'tap {cre[k].name}', target=cre[k]): cre[k].tapped = True
-    return None
-
-
-def _officer(g, p, m):
-    why = _cost(g, p, 3, 'W', 'Recruitment Officer')
-    if why: return why
-    mana.pay_from_pool(g, p, 3, 'W')
-    if E.ability_window(g, p, m, 'look at the top four'): _zur().officer_dig(g, p)
-    return None
+GY = {}             # graveyard casts the card code keeps for you: card name -> fn(g, p, card)
 
 
 def _wanderer_plus(g, p, m):
@@ -969,6 +776,19 @@ def _wanderer_minus4(g, p, m):
     return go
 
 
+def _guildmage_tap(g, p, m):
+    why = _cost(g, p, 2, 'W', 'Azorius Guildmage')
+    if why: return why
+    cre = [x for q in g.players if q.alive for x in q.perms if x.creature and not x.phased
+           and not (x.owner is not p and E.untargetable(g, x))]
+    if not cre: return 'There is no creature to tap.'
+    k = _choose(g, p, 'target', 'Azorius Guildmage: tap which creature?', [legal.describe_target(g, p, x) for x in cre])
+    if k is None: return None
+    mana.pay_from_pool(g, p, 2, 'W')
+    E.log(f'  {E.NAME(p)} activates Azorius Guildmage: tap {cre[k].name}', g)
+    if E.ability_window(g, p, m, f'tap {cre[k].name}', target=cre[k]): cre[k].tapped = True
+    return None
+
 
 def _guildmage_counter(g, p, m):
     abil = [it for it in reversed(g.stack) if it.kind == 'ability']
@@ -988,7 +808,6 @@ def _guildmage_counter(g, p, m):
 
 ABILITIES['Azorius Guildmage'] = lambda g, p, m: [('{2}{W}: tap target creature', _guildmage_tap)] + (
     [('{2}{U}: counter target activated ability', _guildmage_counter)] if any(it.kind == 'ability' for it in g.stack) else [])
-ABILITIES['Recruitment Officer'] = lambda g, p, m: [('{3}{W}: look at the top four, take a creature card with mana value 3 or less', _officer)]
 ABILITIES['The Eternal Wanderer'] = _walker([(1, "exile up to one target artifact or creature until its owner's next end step", _wanderer_plus),
                                              (0, 'create a 2/2 white Samurai with double strike', _wanderer_zero),
                                              (-4, 'each player keeps one creature and sacrifices the rest', _wanderer_minus4)])
@@ -1003,40 +822,7 @@ def _niv_draw(g, p, m):
     return None
 
 
-def _torch_fiend(g, p, m):
-    why = _cost(g, p, 0, 'R', 'Torch Fiend')
-    if why: return why
-    arts = [x for q in g.players if q.alive for x in q.perms if not x.phased and x.cd is not None and 'A' in x.cd.types
-            and not (x.owner is not p and (E.untargetable(g, x) or E.protected_from(g, x, 'R')))]
-    if not arts: return 'There is no artifact to target.'
-    k = _choose(g, p, 'target', 'Torch Fiend: destroy which artifact?', [legal.describe_target(g, p, x) for x in arts])
-    if k is None: return None
-    mana.pay_from_pool(g, p, 0, 'R')
-    E.log(f'  {E.NAME(p)} sacrifices Torch Fiend: destroy {arts[k].name}', g)
-    E.die(g, m, 'sac')
-    if E.ability_window(g, p, m.cd, f'destroy {arts[k].name}', target=arts[k]) and arts[k] in arts[k].owner.perms:
-        E.apply_removal(g, p, arts[k], 'destroy')
-    return None
-
-
-def _relic_legend(g, p, m):
-    legs = [x for x in p.perms if x.creature and not x.tapped and not x.phased and x.cd is not None
-            and _mine().is_legendary(g, x)]
-    if not legs: return 'You have no untapped legendary creature to tap.'
-    k = _choose(g, p, 'choose', 'Relic of Legends: tap which legendary creature?', [legal.describe_target(g, p, x) for x in legs])
-    if k is None: return None
-    j = _choose(g, p, 'choose', 'Relic of Legends: which colour?', list(p.ident) or ['C'])
-    if j is None: return None
-    legs[k].tapped = True
-    col = (list(p.ident) or ['C'])[j]
-    mana.pool_of(p).add(col, 1)
-    E.log(f'  {E.NAME(p)} taps {legs[k].name} for Relic of Legends: {{{col}}}', g)
-    return None
-
-
 ABILITIES['Niv-Mizzet, the Firemind'] = lambda g, p, m: [('{T}: draw a card', _niv_draw)]
-ABILITIES['Torch Fiend'] = lambda g, p, m: [('{R}, sacrifice Torch Fiend: destroy target artifact', _torch_fiend)]
-ABILITIES['Relic of Legends'] = lambda g, p, m: [('tap an untapped legendary creature you control: one mana of any colour', _relic_legend)]
 
 # ------------------------------------------------------------------ copying a spell: Return the Favor, Dualcaster Mage
 def copy_card(c):
@@ -1207,7 +993,7 @@ NEEDS['Flashback'] = lambda g, p, c: (None if any((x.instant or x.sorcery) for x
                                       'Flashback needs an instant or sorcery card in your graveyard to target.')
 
 
-# ------------------------------------------------------------------ choices as your spells and triggers resolve (Marchesa's deck)
+# ------------------------------------------------------------------ choices as your spells and triggers resolve
 def _creatures(g, p, opp_only=False):
     """creatures p's spell or ability can target (opponents' hexproof and shroud respected)"""
     return [m for q in g.players if q.alive and not (opp_only and q is p) for m in q.perms if m.creature and not m.phased
@@ -1219,11 +1005,6 @@ def pick_creature(g, p, prompt, opp_only=False, optional=False, keep=None):
     if not tg: return None
     k = _choose(g, p, 'target', prompt, [legal.describe_target(g, p, m) for m in tg], cancel='no target' if optional else None)
     return None if k is None else tg[k]
-
-
-def crux_mode(g, p):
-    k = _choose(g, p, 'choose', 'Crux of Fate: choose one', ['destroy all Dragons', 'destroy all non-Dragon creatures'], cancel=None)
-    return 'dragons' if k == 0 else 'others'
 
 
 def dredge(g, p):
@@ -1238,8 +1019,7 @@ def dredge(g, p):
     return True
 
 
-CAST_TARGET = {'Act of Treason': 'Act of Treason: gain control of which creature until end of turn?'}
-NEEDS['Act of Treason'] = lambda g, p, c: None if _creatures(g, p) else 'Act of Treason has no creature to target.'
+CAST_TARGET = {}     # tagless spells with a creature target chosen as they're cast: card name -> prompt
 
 
 # ------------------------------------------------------------------ Galadriel's deck (Bant Rebels)

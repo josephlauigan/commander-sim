@@ -1118,7 +1118,8 @@ def _seer(g, p, src, m):
 
 IC.SAC_OUTLET['Viscera Seer'] = _seer
 IC.SAC_OUTLET['Woe Strider'] = _seer
-card('Carrion Feeder', 'pow=1 tgh=1 noblock', dsl=[])
+# Carrion Feeder keeps its hand tags in carddb.py (sac pow=1 noatk noblock) in pool games too: they were what pool decks
+# played while the Marchesa deck ran it, and the seeded games are kept as they were when that deck was removed.
 
 
 @on('Woe Strider', 'gy_options')

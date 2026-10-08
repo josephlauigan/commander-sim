@@ -9,7 +9,7 @@ from tests.test_play_undo import bot, until_request, frozen
 class SaveLoad(unittest.TestCase):
     def test_a_saved_game_comes_back_the_same(self):
         bot.played = {}
-        s = Session('marchesa', 't2', seed=500000, ai='lookahead', compare=True).start()
+        s = Session('alela', 't2', seed=500000, ai='lookahead', compare=True).start()
         for _ in range(50):
             req = until_request(s); s.answer(bot(req))
         req = until_request(s)

@@ -13,7 +13,6 @@ AURA = {}          # name -> spec
 
 ON_DETACH = {}      # Aura name -> fn(g, aura, host): the Aura left the battlefield (Kasmina's Transmutation)
 ON_HOST_DIES = {}   # Aura name -> fn(g, aura, host): the creature it enchanted died (Gift of Immortality)
-ZUR_HOST = None     # your Zur deck's own Auras go on Zur (cards/impl/zur.py)
 
 
 def aura(name, pow=0, tgh=0, kws=(), bonus=None, umbra=False, prot='', target='own', on_etb=None, host_ok=None,
@@ -48,8 +47,7 @@ def _aura_etb(g, src, p, m):
         host = None
         if human_choice(g, src.owner) is not None: host = human_aura_host(g, src.owner, spec, src)
         elif spec.get('host_pick'): host = spec['host_pick'](g, src.owner, spec, src)
-        elif ZUR_HOST is not None and src.owner.key == 'zur': host = ZUR_HOST(g, src.owner, spec, src)
-        if host is None and human_choice(g, src.owner) is None and src.owner.key != 'zur':
+        if host is None and human_choice(g, src.owner) is None:
             host = own_host(g, src.owner, spec, src)
     if host is None:
         leave(g, src); src.owner.gy.append(src.cd); return

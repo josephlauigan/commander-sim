@@ -288,7 +288,7 @@ class GameEndsMidEffect(unittest.TestCase):
     def test_dethrone_after_everyone_is_gone(self):
         # an earlier attack trigger ended the game (the last players died together): dethrone has no life leader
         from commander_sim.cards import cardimpl as CI
-        g = table('marchesa', 'veyran'); m, v = g.players
+        g = table('jodah', 'veyran'); m, v = g.players
         perm(g, m, 'Marchesa, the Black Rose'); atk = perm(g, m, 'Burglar Rat')
         for q in g.players: q.alive = False
         self.assertEqual(CI.keyword_attack(g, m, [atk], v), [])

@@ -1,6 +1,6 @@
-"""What the setup screen shows: your four decks (commander, bracket, Game Changers, how they do in the simulations) and
+"""What the setup screen shows: your decks (commander, bracket, Game Changers, how they do in the simulations) and
 the five tiers (their decks, and how the chosen deck does against each). Read from the repository's own files:
-decklists/JD/, Avery/ and Other/, decklists/pool/, the card cache's Game Changer flags, and the look-ahead results table in
+decklists/JD/ and Avery/, decklists/pool/, the card cache's Game Changer flags, and the look-ahead results table in
 decklists/pool/pool-results.md (section 0d)."""
 import os
 import re
@@ -10,7 +10,7 @@ from commander_sim.decks import DECKS, FILES as DECK_FILES, deck_path
 
 RESULTS = os.path.join(ROOT, 'decklists', 'pool', 'pool-results.md')
 FILES = {k: f for k, (_, f) in DECK_FILES.items()}
-ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'marchesa': 'marchesa', 'zur': 'zur', 'galadriel': 'galadriel', "y'shtola": 'yshtola', 'yshtola': 'yshtola', 'alela': 'alela', 'jodah': 'jodah'}
+ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'galadriel': 'galadriel', "y'shtola": 'yshtola', 'yshtola': 'yshtola', 'alela': 'alela', 'jodah': 'jodah'}
 
 
 def display_name(key):

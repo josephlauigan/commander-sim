@@ -13,7 +13,7 @@ from commander_sim import engine, ais
 from commander_sim.engine import DB
 from commander_sim.decks import DECKS
 
-KEYS = ('seph', 'veyran', 'sauron', 'marchesa', 'zur', 'galadriel', 'yshtola', 'alela', 'jodah')
+KEYS = ('seph', 'veyran', 'sauron', 'galadriel', 'yshtola', 'alela', 'jodah')
 
 
 def apply_swaps(deck, swaps):
@@ -87,8 +87,7 @@ METRICS = [
     ('aether_shots',  'Aetherflux shots per game',              'Threat & pressure',    'up',   'veyran'),
 ]
 PLAN = {'seph': 'first 6+ power bomb on the battlefield', 'veyran': 'Veyran + a magecraft payoff on the battlefield',
-        'sauron': 'Sword + Assault combo attempted', 'marchesa': 'first creature returned by Marchesa',
-        'zur': 'first enchantment fetched by Zur',
+        'sauron': 'Sword + Assault combo attempted',
         'galadriel': 'first Alliance trigger from Galadriel',
         'yshtola': "first drain from Y'shtola's cast trigger",
         'alela': 'first Faerie made by Alela',
@@ -109,8 +108,6 @@ def plan_turn(me, deck):
     if deck == 'seph': return me.first_bomb
     if deck == 'veyran': return me.milestone.get('engine')
     if deck == 'najeela': return me.milestone.get('act')
-    if deck == 'marchesa': return me.milestone.get('recur')
-    if deck == 'zur': return me.milestone.get('zurfetch')
     if deck == 'galadriel': return me.milestone.get('alliance')
     if deck == 'yshtola': return me.milestone.get('yshtola')
     if deck == 'alela': return me.milestone.get('faerie')

@@ -739,9 +739,6 @@ def yshtola_prio(g, p, c):
         return min(80, int(42 + 7 * Z.lock_worth(g, p, tg, kind))) + b if tg is not None else 0
     if n == 'Curiosity':
         return 50 if ysh is not None and not Z.untargetable_by_you(g, ysh) else 18
-    if n == 'Enslave':
-        v = E.CI.marchesa_steal_value(g, p)
-        return min(80, int(50 + 3 * v)) + b if v >= 4 else 0
     if n == 'Bribery': return 56 + b
     if n == 'Hostage Taker':
         tg = taker_target(g, p, None) if human(g, p) is None else None
@@ -807,8 +804,8 @@ CI.yshtola_abilities = yshtola_abilities
 
 # ------------------------------------------------------------------ protection and wipes
 def yshtola_protect(g, owner, m, kind, actor, spell):
-    """removal at Y'shtola or another key creature: Take Up the Shield against destroy and damage, then the Zur deck's
-    answers (Clever Concealment, Rootborn Defenses, Momentary Blink, Restoration Angel)"""
+    """removal at Y'shtola or another key creature: Take Up the Shield against destroy and damage, then the answers in
+    cards/impl/zur.py (Clever Concealment, Rootborn Defenses, Restoration Angel)"""
     from commander_sim import ais
     if not m.creature or pval(g, m) < 4: return False
     if kind == 'destroy' or kind.startswith('dmg'):

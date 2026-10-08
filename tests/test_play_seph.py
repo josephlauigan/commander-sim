@@ -1,4 +1,4 @@
-"""Practice mode, Sephiroth's (and Marchesa's) graveyard cards: reanimation targets are chosen as the spell is cast,
+"""Practice mode, Sephiroth's graveyard cards (and Deep Analysis): reanimation targets are chosen as the spell is cast,
 from any graveyard where the card allows; Entomb, Buried Alive and Grisly Salvage let you pick; Deadly Dispute asks
 what to sacrifice."""
 import unittest
@@ -58,7 +58,7 @@ class Reanimation(unittest.TestCase):
 class Dispute(unittest.TestCase):
     def test_deadly_dispute_sacrifices_your_pick(self):
         from commander_sim.play import human
-        g = table('marchesa', 'veyran'); s = g.players[0]
+        g = table('seph', 'veyran'); s = g.players[0]
         hand(s, 'Deadly Dispute'); a = perm(g, s, 'Sol Ring'); float_mana(s, C=1, B=1)
         seat(g, s, [{'do': 'cast', 'card': 0}, 0, {'do': 'pass'}])
         human.human_main(g, s, False)
@@ -69,7 +69,7 @@ class Dispute(unittest.TestCase):
 class FromTheGraveyard(unittest.TestCase):
     def test_flashback_deep_analysis(self):
         from commander_sim.play import human
-        g = table('marchesa', 'veyran'); s = g.players[0]
+        g = table('yshtola', 'veyran'); s = g.players[0]
         s.gy.append(E.DB['Deep Analysis']); float_mana(s, C=1, U=1); n = len(s.hand)
         seat(g, s, [{'do': 'cast', 'zone': 'gy', 'card': 0}, {'do': 'pass'}])
         human.human_main(g, s, False)

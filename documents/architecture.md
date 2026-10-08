@@ -36,9 +36,10 @@ section 3 places them elsewhere. Commands run from the repository root.
 The question the simulator answers: **how often does one of my Commander decks win a four-player game against
 opponents of a given power level?**
 
-- **Your decks** are the seven lists in `decklists/JD/`, `decklists/Avery/` and `decklists/Other/` (`deck_files.py`): Sephiroth (Atraxa reanimator, key `seph`), Veyran
-  (Izzet spellslinger, `veyran`), Sauron (Grixis amass, `sauron`), Marchesa (Grixis recursion, `marchesa`), Zur
-  (Esper Auras, `zur`), Galadriel (Bant Rebels, `galadriel`) and Y'shtola (Esper Drain, `yshtola`).
+- **Your decks** are the seven lists in `decklists/JD/` and `decklists/Avery/` (`deck_files.py`): Sephiroth (Atraxa
+  reanimator, key `seph`), Veyran (Izzet spellslinger, `veyran`), Sauron (Grixis amass, `sauron`), Y'shtola (Esper
+  Drain, `yshtola`), Jodah (WUBRG legends, `jodah`), Galadriel (Bant Rebels, `galadriel`) and Alela (Esper Faeries,
+  `alela`).
 - **The opponents** are 25 outside decks in `decklists/pool/`, five in each of five tiers that follow the official
   Commander brackets:
 
@@ -130,7 +131,7 @@ deck files, the Scryfall cache and the audit notes. `python3 -m commander_sim` r
 | `compare.py` | Command-line entry point. Parses arguments, sets the AI mode, runs chunks of seeds on a process pool, draws the progress bar, holds the metric definitions and report printers. |
 | `poolmode.py` | Everything measured against the pools: one deck vs one tier, paired A/B, the deck × tier matrix, `--analyze`, `--trace`, and the calibration checks. |
 | `pools.py` | Loads the 25 pool deck files, validates them (size, singleton, colour identity, bans, Game Changers per tier), registers them for play, and draws seats for a game. |
-| `deck_files.py`, `decks.py` | Where each of your seven deck files lives (one folder per owner: JD, Avery, Other), and loading them into `DECKS`. |
+| `deck_files.py`, `decks.py` | Where each of your seven deck files lives (one folder per owner: JD, Avery), and loading them into `DECKS`. |
 | `update_deck.py` | Replaces a deck's list with a pasted one: validates it, rewrites the file's list sections, records the deck-guard fixture, and reports what changed and how the new cards are modeled. |
 | `tools/searchtest.py`, `tools/swaptest.py`, `tools/linecov.py` | Paired tests for pool decks (with and without look-ahead, and with list swaps), and the test suite's line coverage. |
 | `pool_audit.py` | How faithfully each card is modeled, per deck. |
@@ -474,7 +475,7 @@ and battlefield. It is then combined with q's open mana.
 
 **Utilities.** `card_utility` starts from the deck's own priority for the card and adjusts it for the situation:
 
-- the priority comes from `seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio` or `zur_prio` for your decks, or `pool_ai.generic_prio` plus
+- the priority comes from `seph_prio`, `veyran_prio`, `sauron_prio`, `yshtola_prio` and the rest for your decks, or `pool_ai.generic_prio` plus
   per-deck plans for pool decks, as a 0–90 score divided by 10;
 - ramp is worth less late in the game;
 - card draw is worth less when under pressure;
@@ -499,11 +500,11 @@ tiny scoring error from deciding every game the same way.
 
 ### Your decks vs pool decks
 
-Your seven decks keep hand-written plans in `ais.py` (Zur's in `cards/impl/zur.py`, Galadriel's in `cards/impl/galadriel.py`,
-Y'shtola's in `cards/impl/yshtola.py`):
+Your seven decks keep hand-written plans in `ais.py` (Galadriel's in `cards/impl/galadriel.py`, Y'shtola's in
+`cards/impl/yshtola.py`, which also uses the protection and wipe responses in `cards/impl/zur.py`):
 
-- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `marchesa_prio`, `zur_prio`, `galadriel_prio`,
-  `yshtola_prio`);
+- priority functions (`seph_prio`, `veyran_prio`, `sauron_prio`, `galadriel_prio`, `yshtola_prio`, `alela_prio`,
+  `jodah_prio`);
 - reanimation targets;
 - combo checks (Veyran's kitten combo, Sauron's Sword + Aggravated Assault);
 - protection choices;
@@ -677,10 +678,10 @@ A per-game cache maps each event to its listeners.
 | `cards/impl/fixes.py` | Replacements for cards the compiler reads wrongly. |
 | `cards/impl/partials.py` | Completing cards the audit listed as Partial. |
 | `cards/impl/mine.py` | Cards in your decks that need more than tags: the Ring, equipment, lands and full card text. |
-| `cards/impl/marchesa.py` | Marchesa's return trigger, sacrifice values and AI plays, and the cards of her deck that need code. |
+| `cards/impl/marchesa.py` | Cards first written for the Marchesa deck (removed 2026-10-07) that other lists still run: Marchesa's return trigger (she is in Jodah's 99) and sacrifice values, Coalition Relic, Notion Thief, Hellkite Tyrant, Accursed Marauder; also `best_steal`/`steal` and `card_etb_value`, which other modules use. |
 | `cards/impl/galadriel.py` | Your Galadriel deck: Galadriel's Alliance (a mode not yet chosen this turn per creature entering), the Rebel searchers and which Rebel to fetch, Maskwood Nexus and the cards that name a creature type (`CI.AS_ENTERS`), Panharmonicon (enters triggers twice, through `trigger_copies`), the deck's other cards, and its AI priorities and responses. |
 | `cards/impl/yshtola.py` | Your Y'shtola deck: her cast trigger (mana value read as cast, X included) and end-step draw, the drain package (X drains, Ill-Gotten Inheritance, Urborg Syphon-Mage, Marauding Blight-Priest), cards taken from opponents and cast with mana of any type (Gonti, Hostage Taker, Thief of Sanity: held in hand like Opposition Agent's, `p.stolen` remembering the owner), Curiosity, Jester's Cap, the tutors' wish list, Zur's fetch values for this deck, and its AI priorities and responses. |
-| `cards/impl/zur.py` | Your Zur deck: Auras that lock a permanent down while attached (Arrest, Encrust, Kasmina's Transmutation ...; removal kinds `arrest`, `pacify`, `encrust`, `kasmina`), Zur's attack trigger choosing an enchantment by board state, the deck's other cards, and its AI priorities and responses. |
+| `cards/impl/zur.py` | Cards first written for the Zur deck (removed 2026-10-07) that other lists still run: Auras that lock a permanent down while attached (Arrest, Encrust ...; removal kinds `arrest`, `pacify`, `encrust`, `kasmina`), Zur's attack trigger in Y'shtola's 99, The Eternal Wanderer, Rootborn Defenses, and the protection and wipe responses Y'shtola's AI uses. |
 
 `cardimpl.load()` imports these modules in a fixed order. A later registration for the same card and event
 replaces an earlier one.
@@ -900,14 +901,14 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (451 tests, about a minute).
+Run the tests with `python3 -m unittest discover -s tests -t .` (635 tests, about a minute and a half).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
 |---|---|
 | `test_rules.py` | Core rules on hand-built positions: mana, commander tax, state-based losses, counterspells, removal, wipes, tutors, mulligans, combat keywords. |
 | `test_my_cards.py` | Key cards of your decks against their Oracle text. |
-| `test_zur.py` | Your Zur deck: lock Auras, Zur's fetch, its other cards, and practice-mode choices. |
+| `test_zur.py` | Cards first written for the Zur deck that other lists still run: lock Auras, Zur's fetch in Y'shtola's 99, the other cards, and practice-mode choices. |
 | `test_yshtola.py` | Your Y'shtola deck: her two triggers, Curiosity, the drains, the cards taken from opponents, its other cards, the AI's choices, and practice-mode abilities and choices. |
 | `test_galadriel.py` | Your Galadriel deck: Alliance, the Rebel searchers, the creature-type cards, Panharmonicon, its other cards, and practice-mode abilities and choices. |
 | `test_land_entry.py` | Lands' enters-tapped conditions. |
@@ -928,11 +929,11 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (451 tests, abou
 | `test_play_respond.py` | Practice mode's priority on other players' turns. |
 | `test_play_choices.py` | Practice mode's mulligans, discards, sacrifices, tutors and scry. |
 | `test_play_sauron.py` | Practice mode, Sauron's card-specific choices. |
-| `test_play_seph.py` | Practice mode, Sephiroth's and Marchesa's graveyard cards. |
+| `test_play_seph.py` | Practice mode, Sephiroth's graveyard cards and Deep Analysis. |
 | `test_play_cards.py` | Practice mode, your decks' activated abilities by the rules (`play/cards.py`). |
 | `test_play_hand.py` | Practice mode, alternative casts from hand and copying spells (`play/cards.py`). |
 | `test_play_veyran.py` | Practice mode, choices inside Veyran's spells. |
-| `test_play_marchesa.py` | Practice mode, Marchesa's cards and the sacrifice outlets. |
+| `test_play_marchesa.py` | Practice mode, cards first written for the Marchesa deck that other lists still run, and the sacrifice outlets. |
 | `test_play_server.py` | Practice mode's browser server and event stream. |
 | `test_play_lan.py` | Practice mode with two people on a network: seats, per-seat streams, agreed Undo, saved games. |
 | `test_determinism.py` | Seeded games independent of memory layout (hashing, no address reuse). |
