@@ -6,7 +6,7 @@ Run every test from the repository root:
 python3 -m unittest discover -s tests -t .
 ```
 
-That's 635 tests in about twenty minutes (the look-ahead tests are the slow ones). To run one file, or one test:
+That's 638 tests in about twenty minutes (the look-ahead tests are the slow ones). To run one file, or one test:
 
 ```
 python3 -m unittest tests.test_my_cards
@@ -31,6 +31,7 @@ The tests need no network access. The card data they use is in `data/scryfall_ca
 | `test_validator.py` | 15 | The decklist checks: size, singleton, commander, name resolution, colour identity, bans, Game Changers per tier. |
 | `test_my_decks.py` | 1 | Your deck files parse to the lists recorded in `fixtures/my_decks_parsed.json`. |
 | `test_sim_guard.py` | 1 | 42 seeded games (heuristic AI) play out exactly as recorded in `fixtures/sim_guard.json`, so practice-mode hooks can't change a simulation. Re-record after an intended change: `python3 tests/test_sim_guard.py --record`. |
+| `test_ios_app.py` | 3 | The iPad app's start-up (ios/): the first launch copies the bundled card data into the app's writable folder, a new build replaces the card cache and keeps saved games and downloaded images, and the staged app plays and saves a game from its own copies. |
 | `test_land_entry.py` | 11 | Lands that enter tapped unless a condition holds, read from their Oracle text: check lands (dual types count), fast lands, slow lands, snarls (a matching card in hand), battle and bond lands, Mystic Sanctuary, and plain tapped/untapped lands.; and lands' enters triggers: you scry when your Temple enters, a gain land gains its life once.; shock lands (you choose to pay 2 life or enter tapped; the AI pays only when it uses the mana) |
 | `test_determinism.py` | 4 | The same seed plays the same game wherever objects land in memory: cards, players, permanents and lands hash without their addresses (copies like their originals), and a dead permanent's address is never reused while its game lasts. |
 | `test_play.py` | 12 | Practice mode: a session plays a game on its own thread and streams events; the AI's reasoning lines (which name cards in opponents' hands) are kept out of the stream; seats and opponents; step mode waits for you; closing stops the game; the text client; the table view hides other players' hands; look-ahead copies leave the human seat to the AI; actions carry the table's view for playback (only when asked for). |

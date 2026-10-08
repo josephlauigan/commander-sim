@@ -11,8 +11,12 @@ For how it works inside, see [documents/architecture.md](documents/architecture.
 
 ## Repository layout
 
+Two ways to run it share one core. On this computer, `commander_sim/` runs as it is: the simulations, the overnight
+runs and practice mode in your browser. The iPad app in `ios/` packages a copy of the same package (practice mode
+only, offline) with the deck lists and card data; it changes nothing here.
+
 ```
-commander_sim/            the simulator (a Python package)
+commander_sim/            the simulator and practice mode (a Python package): the shared core
   compare.py              command line: python3 -m commander_sim ...
   poolmode.py             runs against the pools: one tier, A/B, matrix, calibration, --analyze
   pools.py                the pool decks: loading, validation, seating
@@ -41,6 +45,7 @@ decklists/JD/             JD's decks: Jodah, Sauron, Sephiroth, Veyran, Y'shtola
 decklists/Avery/          Avery's decks: Alela, Galadriel
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
 documents/                architecture.md, card-audit.md, practice-mode.md
+ios/                      the iPad app: Briefcase project, start-up code, stage.py (ios/README.md)
 tools/                    knight_dragon.py (draws practice mode's loading animation)
 tests/                    rule, card, AI and command tests (tests/README.md)
 ```
@@ -105,7 +110,8 @@ python3 -m commander_sim.tools.linecov                                   # their
 
 Play one of your decks by hand against three AI opponents from a tier, in your browser. The opponents are the same
 decks and AIs as the simulations. The game never suggests moves; it only tells you when a move isn't legal, and why.
-After the game, a review shows where your choices and the AI's differed.
+After the game, a review shows where your choices and the AI's differed. It is also an iPad app that plays offline:
+see [ios/README.md](ios/README.md).
 
 ```
 python3 -m commander_sim.play                                            # opens http://127.0.0.1:8765

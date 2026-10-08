@@ -114,6 +114,7 @@ class Hub:
             try:
                 found = images.prepare(names, lambda d, t: sess.events.put({'kind': 'loading', 'done': d, 'total': t}))
             except Exception as e:                      # images are a nicety: the game starts without them
+                found = images.cached(names)            # offline: the ones already on disk
                 sess.events.put({'kind': 'log', 'text': f'(card images unavailable: {e})'})
         sess.events.put({'kind': 'images', 'images': found})
         with s.cond:
@@ -619,6 +620,15 @@ def make_server(port=8765, host='127.0.0.1'):
     srv.daemon_threads = True
     srv.hub = hub
     return srv
+
+
+def start(port=0, fetch_images=True):
+    """the server on this device only, running on a background thread (the iPad app): returns (server, url). Port 0
+    takes any free port"""
+    srv = make_server(port, '127.0.0.1')
+    if fetch_images: threading.Thread(target=fetch_commanders, name='practice-commanders', daemon=True).start()
+    threading.Thread(target=srv.serve_forever, name='practice-server', daemon=True).start()
+    return srv, f'http://127.0.0.1:{srv.server_address[1]}/'
 
 
 def serve(port=8765, open_browser=True, lan=False):
