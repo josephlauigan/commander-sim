@@ -170,7 +170,7 @@ table.review td.when, table.review button.try { white-space: nowrap; }
 
 /* the game screen fills the window exactly: the table's areas share its height (cards shrink to fit them: fitBoards),
    the side panel's log scrolls inside itself, and the page never scrolls */
-body.playing { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+body.playing { height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
 body.playing > header, body.playing > footer { flex: none; }
 body.playing > footer { padding: 2px 16px; }
 body.playing > main#game { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); padding-top: 8px; padding-bottom: 6px; }
@@ -207,3 +207,24 @@ body.playing #log { flex: 1 1 0; height: auto; min-height: 0; }
 #proposal .row { display: flex; gap: 10px; justify-content: flex-end; }
 .resume { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 12px 0 4px; padding: 12px 16px; border: 1px solid var(--gold); border-radius: 8px; }
 .resume small { color: var(--dim); }
+
+/* narrower screens (an iPad in landscape): during a game the title goes, and the turn steps take a row of their own
+   under the controls instead of squeezing into a column beside them, so the table keeps its height */
+@media (max-width: 1400px) {
+  body.playing > header { gap: 6px 12px; padding: 6px 12px; }
+  body.playing > header h1 { display: none; }
+  body.playing #steps { order: 9; flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; }
+  body.playing #steps .step { flex: none; padding: 3px 9px; }
+  body.playing #status { max-width: none; }
+}
+
+/* touch screens (the iPad app): a long press enlarges a card (table.js) instead of selecting text or opening the
+   system's menu, a double tap doesn't zoom the page, and buttons are bigger targets */
+#table, #prompt, #setup .deck, #setup .tier, header, .card, .stackbar { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+button, select, .card, [data-choice], .deck, .tier { touch-action: manipulation; }
+@media (pointer: coarse) {
+  button, select { min-height: 36px; }
+  #menu button { padding: 11px 14px; font-size: 15px; }
+  #zoom button { padding: 6px 14px; }
+  #playback .speeds button { padding: 4px 12px; }
+}

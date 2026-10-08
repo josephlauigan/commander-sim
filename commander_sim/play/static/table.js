@@ -39,6 +39,26 @@ function showPreview(src, name, e, more = []) {
 }
 function hidePreview() { if (preview) preview.hidden = true; }
 
+// touch (the iPad): a press held on a card enlarges it until the finger lifts; a tap still plays it. The tap's own
+// mouse events are ignored (they'd open the preview and leave it open), and the click that ends a hold is swallowed
+let lastPointer = 'mouse', holdTimer = null, held = false;
+document.addEventListener('pointerdown', (e) => { lastPointer = e.pointerType; }, true);
+document.addEventListener('click', (e) => { if (held) { held = false; e.stopPropagation(); e.preventDefault(); } }, true);
+for (const kind of ['pointerup', 'pointercancel']) {          // also when the card was redrawn under the finger
+  document.addEventListener(kind, (e) => { if (e.pointerType !== 'mouse') { clearTimeout(holdTimer); hidePreview(); } }, true);
+}
+function touchPreview(c, show) {
+  c.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse') return;
+    held = false; clearTimeout(holdTimer);
+    const at = { clientX: e.clientX, clientY: e.clientY };
+    holdTimer = setTimeout(() => { held = true; show(at); }, 350);
+  });
+  for (const kind of ['pointerup', 'pointercancel', 'pointerleave']) {
+    c.addEventListener(kind, (e) => { if (e.pointerType !== 'mouse') { clearTimeout(holdTimer); hidePreview(); } });
+  }
+}
+
 // ------------------------------------------------------------------ images kept between redraws
 // The table is redrawn after every action. New <img> elements would blank out until the browser decoded them again
 // (cards blinking in and out during playback), so the loaded images of the last drawing are reused.
@@ -71,8 +91,9 @@ export function card(images, name, o = {}) {
   const title = [name, o.pt, o.tapped ? 'tapped' : '', o.sick ? 'summoning sick' : '', o.attached_to ? `attached to ${o.attached_to}` : '']
     .filter(Boolean).join(' · ');
   const c = el('div', { class: cls, title, 'data-name': name, ...(o.attrs || {}) }, el('div', { class: 'face' }, face, badges));
-  c.addEventListener('mouseenter', (e) => showPreview(src, name, e, all));
+  c.addEventListener('mouseenter', (e) => { if (lastPointer === 'mouse') showPreview(src, name, e, all); });
   c.addEventListener('mouseleave', hidePreview);
+  touchPreview(c, (at) => showPreview(src, name, at, all));
   return c;
 }
 

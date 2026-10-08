@@ -73,7 +73,10 @@ If Briefcase says a `toga-iOS` version can't be found, change the version in `py
 
 ## Not done yet
 
-- **Touch.** The page was made for a mouse: hover tips, small click targets, and the layout at iPad size.
+- **Touch, on a real iPad.** Done so far, checked in screenshots at iPad sizes but not by hand: a long press
+  enlarges a card (a tap still plays it), no text selection or system menu on the table, no double-tap zoom, bigger
+  buttons, and a compact header in landscape so the boards and hand keep their room. Still to try on the device:
+  how the long press and the ability menus feel, and whether cards need to be bigger (A+ in the header does that).
 - **AI speed.** The look-ahead AI takes a few seconds per decision on a desktop; on the iPad it may need fewer
   playouts, or the adaptive AI by default.
 - **An app icon.**
