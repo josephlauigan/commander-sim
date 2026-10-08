@@ -1,5 +1,5 @@
 // The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
-import { el, card as cardOf, renderTable as drawTable, renderSteps, fitBoards } from './table.js';
+import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
 let liveFrom = 0;           // events up to this id are history replayed on load: no pop-up messages for them
@@ -381,7 +381,7 @@ function showControls() {
   const bar = $('#playback');
   const waiting = inbox.some(paced);
   bar.hidden = $('#game').hidden || !(theirTurn(lastView) || waiting);
-  $('#pb-pause').textContent = paused ? '▶ Play' : '❚❚ Pause';
+  $('#pb-pause').replaceChildren(icon(paused ? 'play' : 'pause'), paused ? ' Play' : ' Pause');
   $('#pb-next').disabled = !paused || !waiting;
   for (const b of bar.querySelectorAll('[data-speed]')) b.classList.toggle('on', +b.dataset.speed === speed);
 }
@@ -720,6 +720,7 @@ function setZoom(z) {
 }
 
 async function init() {
+  for (const b of document.querySelectorAll('[data-icon]')) b.prepend(icon(b.dataset.icon), ' ');
   try { setZoom(parseFloat(localStorage.getItem('cardZoom')) || 1); } catch (e) { setZoom(1); }
   for (const b of document.querySelectorAll('#zoom button')) b.addEventListener('click', () => setZoom(zoom + 0.15 * +b.dataset.zoom));
   catalog = (await api('/api/options')).data;
