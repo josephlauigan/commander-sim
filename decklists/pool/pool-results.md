@@ -78,6 +78,35 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 
 ### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; 240 games per cell)
 
+**October 7 run of all seven decks** (72 games per cell, intervals about ±10 points; over all five tiers 360 games,
+about ±4.5 points; `audit/overnight/run.py`, seeds 500000-500071, results in `audit/overnight/2026-10-07-full/`). The
+code is PR #37 (c02b10e, the Marchesa and Zur decks removed). The lists include the October 6-7 swaps: Sauron: Spell
+Pierce, Andúril and Talrand; Veyran: Underworld Breach for Mystical Tutor; Y'shtola: Mystical Tutor, Polluted Bonds and
+Grand Arbiter Augustin IV. In brackets: the previous figure over all tiers (October 6 for JD's four decks, October 2
+for Galadriel). Alela and Jodah had no look-ahead results before this run.
+
+| Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 | All tiers (before) |
+|---|---|---|---|---|---|---|
+| Y'shtola | **41.7%** (31-53) | **59.7%** (48-70) | **48.6%** (37-60) | **33.3%** (24-45) | 15.3% (9-25) | **39.7%** (44.8%) |
+| Sephiroth | **34.7%** (25-46) | **48.6%** (37-60) | **45.8%** (35-57) | **37.5%** (27-49) | 13.9% (8-24) | **36.1%** (36.7%) |
+| Sauron | **36.1%** (26-48) | 26.4% (18-38) | 25.0% (16-36) | 16.7% (10-27) | 20.8% (13-32) | 25.0% (28.1%) |
+| Veyran | 26.4% (18-38) | 31.9% (22-43) | 30.6% (21-42) | 23.6% (15-35) | 12.5% (7-22) | 25.0% (21.4%) |
+| Jodah | 8.3% (4-17) | 13.9% (8-24) | 11.1% (6-20) | 19.4% (12-30) | 18.1% (11-28) | 14.2% (new) |
+| Galadriel | 12.5% (7-22) | 12.5% (7-22) | 13.9% (8-24) | 6.9% (3-15) | 11.1% (6-20) | 11.4% (11.2%) |
+| Alela | 11.1% (6-20) | 11.1% (6-20) | 6.9% (3-15) | 12.5% (7-22) | 9.7% (5-19) | 10.3% (new) |
+
+No deck moved by more than noise. Y'shtola's −5 and Veyran's +4 are both under 1.5 standard errors. Y'shtola and
+Sephiroth are still the two decks above an even share, through Low Bracket 4. Sauron and Veyran sit at an even share.
+Jodah, Galadriel and Alela are below it at every tier. Jodah is the one deck that does better against Bracket 4 (18-19%)
+than against Tiers 1-3. 2,520 games, no crashes or timeouts.
+
+Games averaged 0.5-0.7 minutes each with 22 at a time, against 4-7 minutes in the October 5-6 runs. The code didn't
+cause it: Sauron against Tier 2 (seed 500000) on the October 5 code plays the same game (Brago wins on turn 20) in 60 s
+today, against 879 s in that run, on the same hardware, kernel and Python. The earlier runs were slowed down, perhaps
+by throttling. A full run of all seven decks now takes about an hour.
+
+The practice setup screen reads the first row for each deck in this section, so it shows these figures.
+
 **October 6 re-run of JD's four decks** (72 games per cell, intervals about ±10 points; `audit/overnight/run.py`,
 seeds 500000-500071). Lists after the October bracket reshuffle (Y'shtola: Consecrated Sphinx, Bolas's Citadel,
 Smothering Tithe; Sephiroth: Phyrexian Arena for Citadel; Sauron: Fact or Fiction; Veyran: Propaganda) and the Game

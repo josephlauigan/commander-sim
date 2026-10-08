@@ -24,7 +24,8 @@ class Catalog(unittest.TestCase):
 
     def test_win_rates_from_the_results_table(self):
         md = ('# r\n\n### 0d. Your decks\n\n| Deck | T1 | T2 | T3 | T4 | T5 |\n|---|---|---|---|---|---|\n'
-              '| Sauron | 24.2% (19-30) | **27.5%** (22-34) | 21.2% | 24.2% | 17.5% |\n| Other | 1% | 1% | 1% | 1% | 1% |\n\n## 1. Next\n')
+              '| Sauron | 24.2% (19-30) | **27.5%** (22-34) | 21.2% | 24.2% | 17.5% |\n| Other | 1% | 1% | 1% | 1% | 1% |\n\n'
+              'Older:\n\n| Deck | T1 | T2 | T3 | T4 | T5 |\n|---|---|---|---|---|---|\n| Sauron | 9% | 9% | 9% | 9% | 9% |\n\n## 1. Next\n')
         path = os.path.join(tempfile.mkdtemp(), 'r.md')
         with open(path, 'w') as f: f.write(md)
         self.assertEqual(catalog.win_rates(path), {'sauron': {'t1': 24.2, 't2': 27.5, 't3': 21.2, 't4': 24.2, 't5': 17.5}})
