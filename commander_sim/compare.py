@@ -13,7 +13,7 @@ from commander_sim import engine, ais
 from commander_sim.engine import DB
 from commander_sim.decks import DECKS
 
-KEYS = ('seph', 'veyran', 'sauron', 'marchesa', 'zur', 'galadriel', 'yshtola', 'alela')
+KEYS = ('seph', 'veyran', 'sauron', 'marchesa', 'zur', 'galadriel', 'yshtola', 'alela', 'jodah')
 
 
 def apply_swaps(deck, swaps):
@@ -92,6 +92,7 @@ PLAN = {'seph': 'first 6+ power bomb on the battlefield', 'veyran': 'Veyran + a 
         'galadriel': 'first Alliance trigger from Galadriel',
         'yshtola': "first drain from Y'shtola's cast trigger",
         'alela': 'first Faerie made by Alela',
+        'jodah': 'first legend cast free by Jodah',
         'najeela': 'first WUBRG extra combat'}
 AXIS_NOTE = {
     'Outcome': 'the bottom line; everything else explains why it moved.',
@@ -113,6 +114,7 @@ def plan_turn(me, deck):
     if deck == 'galadriel': return me.milestone.get('alliance')
     if deck == 'yshtola': return me.milestone.get('yshtola')
     if deck == 'alela': return me.milestone.get('faerie')
+    if deck == 'jodah': return me.milestone.get('jodah')
     return me.milestone.get('combo')
 
 

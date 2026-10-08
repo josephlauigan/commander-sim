@@ -189,7 +189,7 @@ Big Score|I|3R|draw=2 treas=2 discard1
 Bitter Triumph|I|1B|rem=destroy tgt=cp lose=3
 Blood Crypt|L|-|c=BR
 Bloodchief's Thirst|S|2BB|rem=destroy tgt=cp
-Bloodsoaked Insight // Sanguine Morass|L|-|c=B t
+Bloodsoaked Insight // Sanguine Morass|L|-|c=BR t
 Call of the Ring|E|1B|callring
 Champion's Helm|A|3|helm
 Conqueror's Flail|A|2|flail

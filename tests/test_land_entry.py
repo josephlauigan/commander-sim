@@ -62,6 +62,36 @@ class LandEntry(unittest.TestCase):
         self.assertFalse(tapped(s, 'Command Tower'))
 
 
+class ShockLands(unittest.TestCase):
+    """'As this land enters, you may pay 2 life. If you don't, it enters tapped' (Steam Vents and the other shocks)"""
+    def test_you_choose_to_pay(self):
+        from commander_sim.play import human
+        from commander_sim.play.controller import ScriptController
+        for answer, paid in ((0, True), (1, False)):                 # 0 = yes (pay 2), 1 = no (tapped)
+            g = table('sauron', 'veyran'); s = g.players[0]
+            life = s.life
+            s.hand.append(card('Steam Vents'))
+            ctl = ScriptController(lambda req, a=answer: a); g.controllers = {s.key: ctl}
+            self.assertIsNone(human.apply(g, s, {'do': 'land', 'card': len(s.hand) - 1}))
+            self.assertTrue(any('pay 2 life' in r.prompt for r in ctl.asked))
+            self.assertEqual(s.lands[-1].tapped, not paid)
+            self.assertEqual(s.life, life - 2 if paid else life)
+
+    def test_the_ai_pays_only_when_it_uses_the_mana(self):
+        g = table('sauron', 'veyran'); s = g.players[0]
+        s.turns = 6; lands(s, 'Island', 1)
+        s.hand.append(card('Counterspell'))                          # two mana: needs the shock untapped
+        life = s.life
+        ais.play_land_card(g, s, card('Steam Vents'))
+        self.assertFalse(s.lands[-1].tapped)
+        self.assertEqual(s.life, life - 2)
+        g = table('sauron', 'veyran'); s = g.players[0]
+        s.turns = 6; s.hand = []                                     # nothing to cast: save the life
+        ais.play_land_card(g, s, card('Steam Vents'))
+        self.assertTrue(s.lands[-1].tapped)
+        self.assertEqual(s.life, 40)
+
+
 if __name__ == '__main__':
     unittest.main()
 

@@ -108,7 +108,8 @@ def bot_for(sess):
         if p.cmd_in_zone and legal.check_cast(g, p, p.cmd, 'cmd') is None: return {'do': 'cast', 'zone': 'cmd'}
         tried = sess.__dict__.setdefault('bot_tried', set())   # equip each piece at most once a turn
         for i, m in enumerate(p.perms):
-            if g.active is p and legal.equip_cost(m) is not None and m.attached is None and (g.round, id(m)) not in tried:
+            if g.active is p and legal.equip_cost(m) is not None and m.attached is None and (g.round, id(m)) not in tried \
+                    and legal.sorcery_timing(g, p) is None:           # equip only at sorcery speed (nothing on the stack)
                 tried.add((g.round, id(m)))
                 return {'do': 'use', 'perm': i}
         return {'do': 'pass'}
@@ -128,7 +129,8 @@ class BotGames(unittest.TestCase):
     def test_every_deck_plays_through_the_human_seat(self):
         for deck, tier, seed in (('sauron', 't2', 1), ('sauron', 't4', 2), ('seph', 't3', 1), ('veyran', 't1', 1),
                                  ('marchesa', 't2', 1), ('zur', 't3', 1), ('galadriel', 't3', 1),
-                                 ('yshtola', 't3', 1), ('alela', 't3', 2)):
+                                 ('yshtola', 't3', 1), ('alela', 't3', 2),
+                                 ('jodah', 't4', 2)):
             s, evs = bot_game(deck, tier, seed)
             self.assertEqual(evs[-1]['kind'], 'over', f"{deck} {tier} {seed}: {evs[-1].get('text', '')[-1500:]}")
             p = next(x for x in s.game.players if x.key == deck)

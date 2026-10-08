@@ -15,7 +15,8 @@ def run(compare, n=70, undo_at=None):
         if req is None: break
         seen.append(frozen(req))
         s.answer(bot(req))
-    return s, seen
+    until_request(s)            # park the engine on its next question: the AI's turns after the last answer are played
+    return s, seen              # now, not while the next session runs (sessions share the engine's current-game pointer)
 
 
 class Shadow(unittest.TestCase):

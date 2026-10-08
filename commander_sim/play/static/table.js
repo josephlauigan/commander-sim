@@ -15,20 +15,25 @@ export function el(tag, attrs = {}, ...kids) {
 
 export const STEPS = [['start', 'Beginning'], ['main1', 'Main 1'], ['combat', 'Combat'], ['main2', 'Main 2'], ['end', 'End']];
 
-function imageFor(images, name) {
+function filesFor(images, name) {
   if (!images) return null;
   name = name.replace(/( \{[^}]*\})+$/, '');                  // a label with its mana cost ("Sol Ring {1}")
-  const files = images[name] || images[name.replace(/ token$/, '')] || images[name.split(' // ')[0]];
-  return files ? `/images/${files[0]}` : null;
+  return images[name] || images[name.replace(/ token$/, '')] || images[name.split(' // ')[0]] || null;
+}
+function imageFor(images, name, face = 0) {                  // face 1: a two-faced card's back (Sanguine Morass)
+  const files = filesFor(images, name);
+  return files ? `/images/${files[Math.min(face, files.length - 1)]}` : null;
 }
 
 // ------------------------------------------------------------------ hover to enlarge
 let preview = null;
-function showPreview(src, name, e) {
+function showPreview(src, name, e, more = []) {
   if (!preview) { preview = el('div', { id: 'preview', 'aria-hidden': 'true' }); document.body.append(preview); }
-  preview.replaceChildren(src ? el('img', { src, alt: '' }) : el('div', { class: 'drawn big' }, name));
-  const right = e.clientX < window.innerWidth / 2;
-  preview.style.left = right ? `${Math.min(e.clientX + 24, window.innerWidth - 320)}px` : `${Math.max(8, e.clientX - 324)}px`;
+  const srcs = src ? [src, ...more.filter((s) => s !== src)] : [];  // a two-faced card: both faces, side by side
+  preview.classList.toggle('two', srcs.length > 1);
+  preview.replaceChildren(...(srcs.length ? srcs.map((s) => el('img', { src: s, alt: '' })) : [el('div', { class: 'drawn big' }, name)]));
+  const right = e.clientX < window.innerWidth / 2, w = srcs.length > 1 ? 608 : 300;
+  preview.style.left = right ? `${Math.min(e.clientX + 24, window.innerWidth - w - 20)}px` : `${Math.max(8, e.clientX - w - 24)}px`;
   preview.style.top = `${Math.max(8, Math.min(e.clientY - 200, window.innerHeight - 440))}px`;
   preview.hidden = false;
 }
@@ -54,7 +59,8 @@ function collect(root) {
 
 // ------------------------------------------------------------------ one card
 export function card(images, name, o = {}) {
-  const src = imageFor(images, name);
+  const src = imageFor(images, name, o.face || 0);
+  const all = (filesFor(images, name) || []).map((f) => `/images/${f}`);
   const face = src ? takeImg(src, name) : el('div', { class: 'drawn' }, name);
   const badges = [];
   if (o.counters) badges.push(el('span', { class: 'badge counters', title: `${o.counters} +1/+1 counters` }, `+${o.counters}`));
@@ -65,7 +71,7 @@ export function card(images, name, o = {}) {
   const title = [name, o.pt, o.tapped ? 'tapped' : '', o.sick ? 'summoning sick' : '', o.attached_to ? `attached to ${o.attached_to}` : '']
     .filter(Boolean).join(' · ');
   const c = el('div', { class: cls, title, 'data-name': name, ...(o.attrs || {}) }, el('div', { class: 'face' }, face, badges));
-  c.addEventListener('mouseenter', (e) => showPreview(src, name, e));
+  c.addEventListener('mouseenter', (e) => showPreview(src, name, e, all));
   c.addEventListener('mouseleave', hidePreview);
   return c;
 }
@@ -109,8 +115,8 @@ function battlefield(p, images, size, mine) {
       creatures.length && (others.length || treasure) ? el('span', { class: 'gap' }) : null,
       others.map((m) => card(images, m.name, opts(m))), treasure),
     el('div', { class: 'row lands' }, mine
-      ? p.lands.map((L) => card(images, L.name, { size: 'sm', tapped: L.tapped, cls: 'land', attrs: { 'data-land': L.i } }))
-      : groupLands(p.lands).map((g) => card(images, g.name, { size: 'sm', tapped: g.tapped, count: g.count, cls: 'land' }))),
+      ? p.lands.map((L) => card(images, L.name, { size: 'sm', tapped: L.tapped, face: L.face, cls: 'land', attrs: { 'data-land': L.i } }))
+      : groupLands(p.lands).map((g) => card(images, g.name, { size: 'sm', tapped: g.tapped, face: g.face, count: g.count, cls: 'land' }))),
   ];
 }
 

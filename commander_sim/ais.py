@@ -1501,7 +1501,7 @@ def tutor_value(g, p, c):
 # ======================================================== Game Changer plays (Veyran's candidate cards)
 def deck_prio(g, p, c):
     f = {'seph': seph_prio, 'veyran': veyran_prio, 'sauron': sauron_prio, 'marchesa': marchesa_prio, 'zur': zur_prio,
-         'galadriel': galadriel_prio, 'yshtola': yshtola_prio, 'alela': alela_prio, 'najeela': najeela_prio}.get(p.key)
+         'galadriel': galadriel_prio, 'yshtola': yshtola_prio, 'alela': alela_prio, 'jodah': jodah_prio, 'najeela': najeela_prio}.get(p.key)
     if f is None:
         from commander_sim.ai import pool_ai; f = pool_ai.generic_prio
     return f(g, p, c)
@@ -2091,6 +2091,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 if fa and not fb and b_dies: a_dies = False              # first strike kills the blocker first
                 elif fb and not fa and a_dies: b_dies = False
                 dmg = max(0, ap - bt) if tr else 0
+                if E.CI is not None and E.CI.kaldra_exile is not None:      # Sword of Kaldra: exiles what it damages
+                    if ap > 0 and E.CI.kaldra_exile(g, a, b): b_dies = False
+                    if epow(g, b) > 0 and a in p.perms and E.CI.kaldra_exile(g, b, a): a_dies = False
                 if b_dies: die(g, b, 'destroy')
                 if a_dies: die(g, a, 'destroy')
             if dmg > 0 and getattr(g, 'fog', None) == turn_stamp(g):     # Spore Frog and other fogs
@@ -2106,6 +2109,9 @@ def _resolve_combat(g, p, atk, d, unbl, tot_dmg):
                 d.stats['dmg_prevented'] += dmg
                 log(f'    {dmg} combat damage from {a.name} to {NAME(d)} is prevented', g)
                 dmg = 0
+            if dmg > 0 and a.cd is not None and a.cd.name == 'Szadek, Lord of Secrets':
+                a.plus += dmg; E.mill(g, d, dmg); conn.add(a)          # instead: +1/+1 counters, and they mill that many
+                log(f'    Szadek: {dmg} +1/+1 counters, {NAME(d)} mills {dmg}', g); dmg = 0
             if dmg > 0:
                 lose_life(g, d, dmg, p, kind='combat'); conn.add(a); tot_dmg[0] += dmg
                 if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
@@ -2392,6 +2398,8 @@ def enters_rule(cd):
         else:
             ts = frozenset(w for w in re.findall(r'an? (\w+)', cond) if w in BASIC_TYPES)
             if cond.startswith('you control') and ts: rule = ('control', ts)
+    elif (m := re.search(r'you may pay (\d+) life\. if you don.t, it enters tapped', txt)):
+        rule = ('pay', int(m.group(1)))                 # shock lands, The Black Gate: pay life or enter tapped
     elif (m := re.search(r'you may reveal an? (\w+) or (\w+) card from your hand\. if you don.t, [^.]*enters tapped', txt)):
         rule = ('reveal', frozenset(w for w in m.groups() if w in BASIC_TYPES))
     _ENTER_RULES[cd.name] = rule
@@ -2408,8 +2416,19 @@ def _untapped_by_rule(g, p, cd, rule):
     if kind == 'types_more': return sum(1 for L in p.lands if rule[1] in land_types(L.cd.name)[0]) >= rule[2]
     if kind == 'reveal': return any(c is not cd and c.land and land_types(c.name)[0] & rule[1] for c in p.hand)
     if kind == 'legendary': return any(m.creature and m.cd is not None and 'leg' in m.cd.tags for m in p.perms)
+    if kind == 'pay': return pays_for_land(g, p, cd, rule[1])
     if kind == 'planeswalker': return any(m.cd is not None and 'P' in m.cd.types and not m.phased for m in p.perms)
     return False
+
+
+def pays_for_land(g, p, cd, n):
+    """the AI: pay n life so land cd enters untapped? Yes when the extra mana casts something this turn (or it's an
+    early turn) and life is comfortable"""
+    if p.life <= n + 10: return False
+    mana_after = (total_mana(g, p) if g is not None else len(p.lands)) + 1
+    spells = [c for c in p.hand if not c.land and c is not cd]
+    if any(sum(cost_of(p, c)[0:1]) + len(cost_of(p, c)[1]) == mana_after for c in spells): return True
+    return p.turns <= 3 and p.life >= 30
 
 
 def land_enters_tapped(p, cd):
@@ -2464,7 +2483,18 @@ def play_land(g, p):
 
 def play_land_card(g, p, c, how='plays'):
     """put land card c (already taken from its zone) onto the battlefield as p's land drop"""
-    p.lands.append(Land(c, land_enters_tapped(p, c))); p.land_turn = p.turns
+    rule = enters_rule(c)
+    if rule is not None and rule[0] == 'pay' and not (E.CUR_G is not None and E.CUR_G.hooks and any(
+            m.cd is not None and m.cd.name in ('Thalia, Heretic Cathar', 'Archon of Emeria') and not m.phased
+            for q in g.opps(p) for m in q.perms)):
+        hc = E.human_choice(g, p)
+        n = rule[1]
+        paid = hc.yes_no(g, p, f'{c.name}: pay {n} life so it enters untapped?') if hc is not None else pays_for_land(g, p, c, n)
+        if paid: lose_life(g, p, n, p); log(f'  {NAME(p)} pays {n} life for an untapped {c.name}', g)
+        p.lands.append(Land(c, not paid))
+    else:
+        p.lands.append(Land(c, land_enters_tapped(p, c)))
+    p.land_turn = p.turns
     if E.CI is not None and c.name in E.CI.LAND_ETB and E.CI.live(c.name): E.CI.LAND_ETB[c.name](g, p, p.lands[-1])
     p.lands_played = getattr(p, 'lands_played', 0) + 1
     log(f'  {NAME(p)} {how} {c.name}', g)
@@ -2555,6 +2585,7 @@ def upkeep(g, p):
     if p.ring_prot:                               # The One Ring's protection ends as its controller's turn starts
         p.ring_prot = False; log(f'  {NAME(p)} no longer has protection from everything', g)
     p.life_locked = False                         # Teferi's Protection
+    if getattr(p, 'suspended', None) and E.CI is not None: E.CI.suspend_upkeep(g, p)    # suspend (Profane Tutor)
     if any(L.cd.tags.get('tabernacle') for q in g.players if q.alive for L in q.lands):
         # The Tabernacle at Pendrell Vale: each creature is destroyed unless its controller pays {1}
         for m in sorted([m for m in p.perms if m.creature and not m.phased], key=lambda m: -pval(g, m)):
@@ -2645,6 +2676,7 @@ def end_step(g, p):
     if getattr(g, 'marchesa_due', None): E.CI.marchesa_return(g)        # Marchesa: 'at the beginning of the next end step'
     if getattr(g, 'zur_due', None): E.CI.zur_end_step(g, p)               # The Eternal Wanderer, Gift of Immortality
     if getattr(g, 'eot_returns', None): E.CI.eot_returns(g)               # Eerie Interlude
+    if getattr(g, 'jar_due', None): E.CI.jar_end(g)                       # Memory Jar
     if getattr(p, 'yawg', False): yawg_cleanup(g, p)
     if E.DSLMOD is not None and g.dsl_on: E.DSLMOD.fire(g, 'end_step', player=p)
     for m in getattr(p, 'borrowed', None) or []:          # Zealous Conscripts: control returns
@@ -2722,8 +2754,22 @@ def alela_main(g, p, post):
         break
 
 
+def jodah_prio(g, p, c):
+    return E.CI.jodah_prio(g, p, c)
+
+
+def jodah_main(g, p, post):
+    for _ in range(16):
+        if g.over or not p.alive: return
+        if use_removal(g, p, 6): continue
+        if consider_wipe(g, p): continue
+        res = interaction_reserve(g, p, lambda c: 'ctr' in c.tags) if p.turns >= 4 else (0, '')
+        if generic_cast(g, p, jodah_prio, res): continue
+        break
+
+
 MAIN = {'seph': seph_main, 'veyran': veyran_main, 'sauron': sauron_main, 'marchesa': marchesa_main, 'zur': zur_main,
-        'galadriel': galadriel_main, 'yshtola': yshtola_main, 'alela': alela_main, 'najeela': najeela_main}
+        'galadriel': galadriel_main, 'yshtola': yshtola_main, 'alela': alela_main, 'jodah': jodah_main, 'najeela': najeela_main}
 
 
 def main_fn(p):
@@ -2860,7 +2906,7 @@ def mulligan(g, p, rng=None):
 CMDS = {'seph': 'Atraxa, Grand Unifier', 'veyran': 'Veyran, Voice of Duality',
         'sauron': 'Sauron, the Dark Lord', 'marchesa': 'Marchesa, the Black Rose', 'zur': 'Zur the Enchanter',
         'galadriel': 'Galadriel, Light of Valinor', 'yshtola': "Y'shtola, Night's Blessed",
-        'alela': 'Alela, Artful Provocateur', 'najeela': 'Najeela, the Blade-Blossom'}
+        'alela': 'Alela, Artful Provocateur', 'jodah': 'Jodah, the Unifier', 'najeela': 'Najeela, the Blade-Blossom'}
 
 
 STOPPED = []    # games stopped by the engine step cap (E.GAME_WORK): (active deck, round, innermost frames)

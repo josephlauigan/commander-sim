@@ -5,6 +5,20 @@ Hidden information stays hidden: other players' hands and every library are coun
 from commander_sim import engine as E
 
 
+_FACES = {}
+
+
+def _land_face(name):
+    """{'face': n} for a two-faced card whose land side isn't its front (Bloodsoaked Insight // Sanguine Morass): the
+    battlefield shows the land face"""
+    if ' // ' not in name: return {}
+    if name not in _FACES:
+        from commander_sim.cards import scryfall
+        faces = (scryfall.load_cache().get(name.lower()) or {}).get('card_faces') or []
+        _FACES[name] = next((k for k, f in enumerate(faces) if 'Land' in (f.get('type_line') or '')), 0)
+    return {'face': _FACES[name]} if _FACES[name] else {}
+
+
 def token_name(m):
     """a token's name as players say it: 'Orc Army', 'Goblin token', 'Treasure'"""
     if m.army: return 'Orc Army'
@@ -60,7 +74,8 @@ def _player(g, p, me):
          'graveyard': [c.name for c in p.gy], 'exile': [c.name for c in p.exile],
          'commander_in_zone': bool(p.cmd_in_zone), 'tax': p.tax, 'treasures': p.treasures,
          'battlefield': [dict(_perm(g, m), i=i) for i, m in enumerate(p.perms)],
-         'lands': [{'name': L.cd.name, 'tapped': bool(L.tapped), 'i': i} for i, L in enumerate(p.lands)]}
+         'lands': [dict({'name': L.cd.name, 'tapped': bool(L.tapped), 'i': i}, **_land_face(L.cd.name))
+                   for i, L in enumerate(p.lands)]}
     if you:
         from commander_sim.play import mana
         d['hand'] = [c.name for c in p.hand]
