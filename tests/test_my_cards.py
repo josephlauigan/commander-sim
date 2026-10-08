@@ -1027,5 +1027,77 @@ class SauronMarchesa(unittest.TestCase):
         self.assertTrue(any(m.cd is b.cd for m in s.perms))
 
 
+class Anduril(unittest.TestCase):
+    """Andúril, Flame of the West: +3/+1; two tapped 1/1 flying Spirits when the equipped creature attacks, attacking
+    only if that creature is legendary (the Ring makes your Ring-bearer legendary)"""
+    def setUp(self):
+        self.g = table('sauron', 'veyran'); self.p, self.q = self.g.players
+        self.a = perm(self.g, self.p, 'Andúril, Flame of the West')
+
+    def attack(self, m):
+        self.a.attached = m
+        return E.CI.HOOKS['Andúril, Flame of the West']['attack'](self.g, self.a, self.p, [m], self.q) or []
+
+    def spirits(self):
+        return [m for m in self.p.perms if m.token and 'spirit' in m.ttypes]
+
+    def test_nonlegendary_spirits_enter_tapped_not_attacking(self):
+        army = E.Perm(self.p, None, pw=0, tg=0, name='Orc Army'); army.army = True; army.plus = 3
+        self.p.perms.append(army)
+        self.assertEqual(self.attack(army), [])
+        self.assertEqual(len(self.spirits()), 2)
+        self.assertTrue(all(m.tapped and m.fly for m in self.spirits()))
+        self.assertEqual(E.epow(self.g, army), 6)
+
+    def test_legendary_spirits_attack(self):
+        s = perm(self.g, self.p, 'Sauron, the Dark Lord')
+        self.assertEqual(len(self.attack(s)), 2)
+        self.assertEqual(E.epow(self.g, s), 10)
+
+
+class PollutedBonds(unittest.TestCase):
+    """Y'shtola's Polluted Bonds: an opponent's land drains 2 and gains you 2; your own lands don't"""
+    def test_opponent_land_drains(self):
+        g = table('yshtola', 'veyran'); p, q = g.players
+        perm(g, p, 'Polluted Bonds')
+        q.hand.append(card('Island')); g.active = q
+        ais.play_land(g, q)
+        self.assertEqual((q.life, p.life), (38, 42))
+
+    def test_own_land_does_nothing(self):
+        g = table('yshtola', 'veyran'); p, q = g.players
+        perm(g, p, 'Polluted Bonds')
+        p.hand.append(card('Plains'))
+        ais.play_land(g, p)
+        self.assertEqual((q.life, p.life), (40, 40))
+
+
+class LordOfTheNazgul(unittest.TestCase):
+    """a 3/3 menace Wraith per instant or sorcery; nine Wraiths are 9/9 until end of turn"""
+    def test_wraiths(self):
+        g = table('sauron', 'veyran'); p = g.players[0]
+        lord = perm(g, p, 'Lord of the Nazgûl')
+        E.on_cast(g, p, card('Counterspell'))
+        w = [m for m in p.perms if m.token]
+        self.assertEqual(len(w), 1)
+        self.assertEqual((w[0].pow, w[0].tgh), (3, 3))
+        self.assertTrue(ais.kw(w[0], 'menace'))
+        for _ in range(7): E.on_cast(g, p, card('Counterspell'))
+        self.assertEqual(E.epow(g, w[0]), 9)
+        self.assertEqual(E.epow(g, lord), 9)
+
+
+class Palantir(unittest.TestCase):
+    """end step: an influence counter and scry 2, then a card for you or life loss for the targeted opponent"""
+    def test_counters_grow_and_pay_out(self):
+        g = table('sauron', 'veyran'); p, q = g.players
+        pl = perm(g, p, 'Palantír of Orthanc')
+        for n in range(1, 4):
+            hand, life = len(p.hand), q.life
+            E.CI.fire(g, 'end_step', p)
+            self.assertEqual(pl.data['influence'], n)
+            self.assertTrue(len(p.hand) == hand + 1 or q.life <= life)
+
+
 if __name__ == '__main__':
     unittest.main()

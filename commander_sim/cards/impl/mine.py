@@ -1497,6 +1497,109 @@ note('Sword of Fire and Ice', 'Full', 'equipped creature +2/+2, protection from 
      'player: 2 damage to any target (a creature it kills, else a player) and draw a card; equip {2}')
 
 
+# ======================================================== Andúril, Flame of the West
+ANDURIL = 'Andúril, Flame of the West'
+card(ANDURIL, 'leg', types='A', dsl=[{'type': 'static', 'static': 'equip_bonus', 'pow': 3, 'tgh': 1},
+                                    {'type': 'static', 'static': 'equip_cost', 'mana': 2}])
+
+
+@on(ANDURIL, 'attack')
+def _anduril(g, src, p, atk, d):
+    """the equipped creature attacks: two tapped 1/1 white Spirits with flying, attacking if it's legendary (the Ring
+    makes your Ring-bearer legendary, so the Orc Army's Spirits attack once the Ring has tempted you)"""
+    host = src.attached
+    if src.owner is not p or host is None or host not in atk or host not in p.perms: return None
+    leg = is_legendary(g, host)
+    if not trigger_window(g, p, src, 'two 1/1 flying Spirits' + (', attacking' if leg else '')): return None
+    toks = make_tokens(g, p, 2, 1, 1, fly=True, color='W', types=('spirit',), attacking=True, sick=not leg)
+    return toks if leg else None                  # tapped either way; only a legendary creature's Spirits attack
+
+
+note(ANDURIL, 'Full', 'equipped creature +3/+1; when it attacks, two tapped 1/1 flying Spirits (attacking if the '
+     'creature is legendary, as the Ring-bearer Army is); equip {2}')
+
+
+# ======================================================== Lord of the Nazgûl
+NAZGUL = 'Lord of the Nazgûl'
+card(NAZGUL, 'leg pow=4 tgh=3 fly', dsl=[])
+
+
+@on(NAZGUL, 'cast')
+def _nazgul(g, src, caster, c):
+    """whenever you cast an instant or sorcery: a 3/3 black Wraith with menace; then with nine or more Wraiths, your
+    Wraiths have base power and toughness 9/9 until end of turn"""
+    o = src.owner
+    if caster is not o or not (c.instant or c.sorcery): return
+    if not trigger_window(g, o, src, 'a 3/3 Wraith with menace'): return
+    make_tokens(g, o, 1, 3, 3, color='B', types=('wraith',), data={'kws': ('menace',)})
+    wraiths = [m for m in o.perms if m.creature and not m.phased and E.has_type(m, 'wraith')]
+    if len(wraiths) >= 9:
+        for m in wraiths:
+            a, b = g.eot_pt.get(id(m), (0, 0))
+            g.eot_pt[id(m)] = (a + 9 - m.pow, b + 9 - m.tgh)     # base 9/9 (counters and other bonuses still apply)
+        g.dsl_on = True
+        log(f'    Lord of the Nazgûl: {len(wraiths)} Wraiths are 9/9 this turn', g)
+
+
+note(NAZGUL, 'Approximate', 'flying; a 3/3 menace Wraith for each instant or sorcery you cast; nine or more Wraiths are '
+     '9/9 until end of turn (protection from Ring-bearers is not modeled)')
+
+
+# ======================================================== Palantír of Orthanc
+PALANTIR = 'Palantír of Orthanc'
+card(PALANTIR, 'leg', types='A', dsl=[])
+
+
+def _palantir_target(g, o):
+    """the opponent to put the choice to: the one closest to dying (the life loss counts most there)"""
+    opps = g.opps(o)
+    hc = E.human_choice(g, o)
+    if hc is not None and len(opps) > 1:
+        k = hc.choose(g, o, 'target', 'Palantír of Orthanc: target which opponent?', [NAME(q) for q in opps], cancel=None)
+        return opps[k if k is not None else 0]
+    return min(opps, key=lambda q: q.life) if opps else None
+
+
+def _palantir_lets_draw(g, q, o, x):
+    """the targeted opponent's choice: True = you draw a card, False = you mill x and they lose the total mana value.
+    The AI takes the loss while it's small and hands over the card once the expected loss would really hurt"""
+    hc = E.human_choice(g, q)
+    if hc is not None:
+        return hc.yes_no(g, q, f'Palantír of Orthanc: let {NAME(o)} draw a card? (If not, they mill {x} and you lose '
+                               'life equal to the total mana value of those cards.)')
+    lib = o.library
+    avg = sum(c.cmc for c in lib) / len(lib) if lib else 0
+    expect = avg * min(x, len(lib))
+    return expect >= q.life or expect > max(6, q.life / 4)
+
+
+@on(PALANTIR, 'end_step')
+def _palantir(g, src, p):
+    o = src.owner
+    if p is not o: return
+    if not trigger_window(g, o, src, 'influence counter, scry 2, then an opponent chooses', imp=3) or src not in o.perms: return
+    src.data = dict(src.data or {}, influence=(src.data or {}).get('influence', 0) + 1)
+    x = src.data['influence']
+    importlib.import_module('commander_sim.cards.impl.topdeck').scry(g, o, 2)
+    q = _palantir_target(g, o)
+    if q is None or not q.alive: return
+    if _palantir_lets_draw(g, q, o, x):
+        log(f'    Palantír: {NAME(q)} lets {NAME(o)} draw a card', g)
+        draw(g, o, 1)
+    else:
+        milled = o.library[-x:] if x <= len(o.library) else list(o.library)
+        loss = sum(c.cmc for c in milled)
+        mill(g, o, x)
+        log(f'    Palantír: {NAME(o)} mills {len(milled)}; {NAME(q)} loses {loss}', g)
+        if loss: lose_life(g, q, loss, o, kind='triggers')
+        check_state(g)
+
+
+note(PALANTIR, 'Full', 'end step: an influence counter and scry 2, then the targeted opponent lets you draw a card or '
+     'takes life loss equal to the mana values of the cards you mill (one per counter); the AI takes small losses and '
+     'hands over the card once the loss would hurt')
+
+
 # ======================================================== Twinflame
 MAGECRAFT = ('ping', 'mystic', 'spelldraw', 'spelltok', 'kiln', 'dragoncaller')
 

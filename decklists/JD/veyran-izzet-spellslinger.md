@@ -11,6 +11,7 @@
 **Updated 2026-10-04.** Out: Gandalf, Friend of the Shire, Mystic Confluence, Pongify, Reality Shift, Return the Favor, Spell Pierce, Swiftfoot Boots, Thought Vessel, Thunderdrum Soloist. In: Deflecting Swat, Docent of Perfection // Final Iteration, Fiery Emancipation, Lightning Greaves, Slip Out the Back, Storm-Kiln Artist, Talrand, Sky Summoner, Third Path Iconoclast, Young Pyromancer. The tokens rebuild: spells now leave creatures behind, Fiery Emancipation triples every ping, and the protection package is Deflecting Swat, Lightning Greaves and Slip Out the Back.
 **Updated 2026-10-04.** Out: Twinflame. In: Crawlspace. Twinflame → Crawlspace: no more than two creatures can attack you each combat, against the creature decks that cause most of the deck's losses.
 **Updated 2026-10-05.** Out: Crawlspace. In: Propaganda. Crawlspace → Propaganda, the planned swap once Propaganda was found (it tested ahead of Crawlspace in the 10-04 rebuild).
+**Updated 2026-10-06.** Out: Mystical Tutor. In: Underworld Breach. Mystical Tutor → Underworld Breach: a second Breach copy; every escape is a cast, so the pingers, token makers and Storm-Kiln Artist trigger again, doubled by Veyran. Mystical Tutor moves to Y'shtola. Still three Game Changers (Bracket 3).
 
 ## Strategy
 
@@ -103,31 +104,31 @@ Every one is also a magecraft trigger. Expect to hold up mana less often and win
 
 ## Tutor targets by board state
 
-Four tutors now, each pointing somewhere different, plus one graveyard rebuy. **Mystical Tutor and Solve the Equation only find instants and sorceries**, **Fabricate finds artifacts**, and **Imperial Recruiter finds a creature with power 2 or less**.
+Three tutors, each pointing somewhere different, plus one graveyard rebuy. **Solve the Equation only finds instants and sorceries**, **Fabricate finds artifacts**, and **Imperial Recruiter finds a creature with power 2 or less**. **Underworld Breach** (10-06, in Mystical Tutor's slot) turns the graveyard into a second hand: each instant or sorcery you escape (pay its cost and exile three other cards) is a real cast, so the pingers, token makers and Storm-Kiln Artist trigger again, doubled by Veyran, and Grapeshot's storm count keeps climbing. It is sacrificed at your end step, so cast it on the turn you go off.
 
 - **Need a damage engine → Imperial Recruiter for Guttersnipe or Kessig Flamebreather.** Or Harmonic Prodigy when a Niv-Mizzet, Talrand or a Shaman engine is already out.
 - **Need a board → Imperial Recruiter for Talrand or Young Pyromancer.**
 - **Need mana for the chain → Imperial Recruiter for Storm-Kiln Artist.**
 - **Need more cards → Imperial Recruiter for Archmage Emeritus.**
-- **Veyran keeps dying → Fabricate for Lightning Greaves**, or Mystical Tutor for Slip Out the Back or Deflecting Swat.
+- **Veyran keeps dying → Fabricate for Lightning Greaves**, or Solve the Equation for Slip Out the Back or Deflecting Swat.
 - **A creature deck is attacking you → cast Propaganda early.** It's an enchantment, so no tutor here finds it.
 - **Setting up a finish → Fabricate for Aetherflux Reservoir** before the long turn.
-- **Need to protect a big turn → Solve the Equation for a counter**, or **Mystical Tutor at an opponent's end step**.
-- **Need fuel for the big turn → Mystical Tutor or Solve the Equation for Jeska's Will** (with Veyran out, both modes).
-- **Need reach to close → Mystical Tutor or Solve the Equation for Crackle with Power**, or **Mizzix's Mastery** to recast River's Rebuke or a big Crackle from the yard.
+- **Need to protect a big turn → Solve the Equation for a counter.**
+- **Need fuel for the big turn → Solve the Equation for Jeska's Will** (with Veyran out, both modes), or **Underworld Breach** to cast it again from the graveyard.
+- **Need reach to close → Solve the Equation for Crackle with Power**, or **Mizzix's Mastery** to recast River's Rebuke or a big Crackle from the yard.
 - **Mana-screwed → Fabricate for Sol Ring or Fellwar Stone.**
 
-Timing note: **Mystical Tutor puts the card on top of your library**, so fire it at the end of the turn before you go off. **Solve the Equation goes to hand**, so it's the better pick when you intend to cast the card this turn. Venser can bounce Imperial Recruiter to your hand for a second search.
+Timing note: **Solve the Equation puts the card into your hand**, so you can cast it the same turn. Venser can bounce Imperial Recruiter to your hand for a second search.
 
 ## Bracket and Rule 0
 
-Bracket 3, at the cap with **three** Game Changers: **Mystical Tutor**, **Cyclonic Rift**, and **Jeska's Will**. A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation, Deflecting Swat and Propaganda are all off-list.
+Bracket 3, at the cap with **three** Game Changers: **Underworld Breach**, **Cyclonic Rift**, and **Jeska's Will** (Breach replaced Mystical Tutor on 10-06). A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation, Deflecting Swat and Propaganda are all off-list.
 
 **No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns. Twinflame, half of the Dualcaster Mage infinite, left on 10-04.
 
 Disclose before the game:
 
-- **Cyclonic Rift**, **Jeska's Will**, and **Mystical Tutor** (the three Game Changers).
+- **Cyclonic Rift**, **Jeska's Will**, and **Underworld Breach** (the three Game Changers). Breach makes the big turn longer: it lets you cast your graveyard's instants and sorceries again, so mention it as a combo enabler.
 - **Aetherflux Reservoir** as a 50-damage finisher after a long turn.
 - **Thousand-Year Storm** and the pinger suite, which can turn one turn into a lot of damage to each opponent.
 - **Fiery Emancipation**, which triples all of your damage (a Guttersnipe with Veyran out deals 12 to each opponent per spell).
@@ -145,9 +146,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (5).** Aetherflux Reservoir, Arcane Signet, Fellwar Stone, Lightning Greaves, Sol Ring
 
-**Enchantments (5).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm
+**Enchantments (6).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm, Underworld Breach
 
-**Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Deflecting Swat, Dreams of Laguna, Flashback, Lightning Bolt, Mystical Tutor, Plunder the Trollshaws, Prismari Charm, Quick Study, Slip Out the Back, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
+**Instants (20).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Deflecting Swat, Dreams of Laguna, Flashback, Lightning Bolt, Plunder the Trollshaws, Prismari Charm, Quick Study, Slip Out the Back, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
 **Sorceries (11).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Jeska's Will, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Stock Up
 
@@ -202,7 +203,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Mizzix's Mastery
 1 Murmuring Mystic
 1 Mystic Sanctuary
-1 Mystical Tutor
 1 Niv-Mizzet, Parun
 1 Niv-Mizzet, the Firemind
 1 Old Fat Spider Can't See Me
@@ -235,6 +235,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Third Path Iconoclast
 1 Thor, Asgard's Avenger
 1 Thousand-Year Storm
+1 Underworld Breach
 1 Unsummon
 1 Venser, Shaper Savant
 1 Veyran, Voice of Duality
@@ -297,7 +298,7 @@ The tokens list was the only one ahead at every tier under both AIs. The engine 
 
 **Weakest remaining slots**, if you want to keep tuning: Visions of Beyond (a one-card cantrip for most of the game — the twenty-card graveyard is rare here, since Emeritus of Ideation and Eris both want the yard) is the softest spell. The curve is still top-heavy, so a cheap body or rock back in for a six-drop is worth simming. Since 10-04 the deck runs light on counters (three, plus Deflecting Swat); if the table punishes tapped-out big turns, that's the gap to look at, and Spell Pierce is the first card to bring back.
 
-**Game Changers — at the cap.** Three: Mystical Tutor, Cyclonic Rift, Jeska's Will. A fourth moves the deck to Bracket 4.
+**Game Changers — at the cap.** Three: Underworld Breach, Cyclonic Rift, Jeska's Will. A fourth moves the deck to Bracket 4.
 
 **Rules notes carried forward.** Veyran has no first strike, and magecraft gives +1/+1 until end of turn, not permanent counters. The doubling applies only when your casting or copying an instant or sorcery is what caused the trigger.
 

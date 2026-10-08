@@ -3,6 +3,8 @@
 **Updated 2026-10-03.** Out: Clever Concealment, Disdainful Stroke, Momentary Blink, Rootborn Defenses, Take Up the Shield. In: Cast Away Doubt, Memory Trap, Static Net, Statute of Denial, Your Fate Ends Here. Five rarely cast cards (each cast in 5% or less of the games it was drawn, or mana value 2) out for spells of mana value 3 or more that trigger Y'shtola: Static Net (exile, 2 life, a Powerstone), Cast Away Doubt (draw two; with her trigger each opponent loses 4), Your Fate Ends Here (instant removal), Memory Trap (exile) and Statute of Denial (a counter that triggers her).
 **Updated 2026-10-04.** Out: Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, Temple of Deceit, Temple of Enlightenment, Temple of Silence, Vivid Creek, Vivid Marsh, Vivid Meadow. In: 4 Island, 3 Plains, 3 Swamp. The ten lands that always entered tapped became basics. Tested: about +1.2 points on average (1,000 paired games per tier, adaptive AI), positive in four of five tiers; Y'shtola wants to land on turn 3 or 4 with a spell to follow, and no land now always enters tapped.
 **Updated 2026-10-05.** Out: Enslave, Jester's Cap, Plea for Guidance. In: Bolas's Citadel, Consecrated Sphinx, Smothering Tithe. Enslave → Consecrated Sphinx, Plea for Guidance → Bolas's Citadel, Jester's Cap → Smothering Tithe. Three cards that sat in hand most games out for three Game Changers: the deck moves to Bracket 4 with five. Tested: +1.2 points on average, ahead in all five tiers (1,000 paired games per tier, adaptive AI); Smothering Tithe's Treasures ease the mana the deck is short of.
+**Updated 2026-10-06.** Out: Vanquish the Horde. In: Mystical Tutor. Vanquish the Horde → Mystical Tutor (from Veyran): finds Exsanguinate or Debt to the Deathless at the end of an opponent's turn. Vanquish was her most redundant reset (Austere Command, Crux of Fate and Massacre Wurm stay). Six Game Changers (Bracket 4).
+**Updated 2026-10-07.** Out: Statute of Denial. In: Polluted Bonds. Statute of Denial → Polluted Bonds: a five-mana enchantment that triggers her when cast, then drains an opponent 2 (and gains you 2, feeding Sanguine Bond and Marauding Blight-Priest) on every land they play. Statute was stuck in hand in about three quarters of the games it was drawn.
 
 2026-10-03
 **Added 2026-10-03.** In the simulator as deck key `yshtola` (`python3 -m commander_sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. It shares much of its Esper shell with the Zur deck (`zur-esper-auras.md`), but it is a separate deck with its own commander, plan and list; Zur the Enchanter is in the 99 here.
@@ -28,6 +30,7 @@ She checks at *every* end step, so instant-speed triggers on opponents' turns dr
 - **Ill-Gotten Inheritance:** 1 to each opponent and 1 life every upkeep (which sets off the Priest and Bond). {5}{B}, sacrifice: 4 damage to an opponent and 4 life.
 - **Urborg Syphon-Mage:** {2}{B}, {T}, discard a card: each other player loses 2 and you gain the total. Discard spare lands.
 - **Static Net:** exiles an opponent's nonland permanent and gains you 2 life, a lifegain event of its own on top of her trigger.
+- **Polluted Bonds** (10-07): whenever a land an opponent controls enters, they lose 2 and you gain 2. Each opponent's land drop is a drain plus a lifegain event for the Priest and Bond, and casting it triggers her too.
 
 **The finishers.** Exsanguinate (each opponent loses X) and Debt to the Deathless (each opponent loses 2X) gain you everything they drain. With Sanguine Bond out, that gain hits one opponent again. Debt for X = 5 at a table of three opponents at 25 life:
 - each opponent loses 10, you gain 30;
@@ -52,12 +55,12 @@ A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your
 - **Pillowfort:** Propaganda and Windborn Muse tax every attacker {2}.
 - **Locks:** Arrest, Prison Sentence, Luminous Bonds, Bound in Silence and Encrust shut down threats (and each triggers Y'shtola as you cast it).
 - **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Skyclave Apparition, Prayer of Binding and The Eternal Wanderer.
-- **Wipes:** Austere Command, Crux of Fate, Vanquish the Horde. Massacre Wurm is a one-sided sweeper of small creatures that drains 2 for each one that dies.
+- **Wipes:** Austere Command and Crux of Fate. Massacre Wurm is a one-sided sweeper of small creatures that drains 2 for each one that dies.
 
 **Protect Y'shtola.**
 - **Equipment:** Lightning Greaves (shroud) and Champion's Helm (+2/+2, hexproof on a legend).
 - **Restoration Angel:** flash, and blinks Y'shtola out of an exile or steal effect.
-- **Counterspells:** Statute of Denial and Dovin's Veto stop the removal spell itself.
+- **Counterspell:** Dovin's Veto stops the removal spell itself.
 - The protection instants (Take Up the Shield, Rootborn Defenses, Clever Concealment, Momentary Blink) left on 10-03: they were rarely cast, and removal does more against the creature decks that beat this one.
 - **Bastion Protector:** commanders get +2/+2 and indestructible.
 
@@ -102,7 +105,7 @@ The list is exactly 100 cards.
 
 Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so Swamps outnumber the other basics. Blue has the fewest sources. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception.
 
-**Curve.** One-drops 7, two-drops 7, three-drops 22, four-drops 15, five 4, six 6, and Vanquish the Horde (eight, minus one per creature on the battlefield). Average mana value 3.4, with Exsanguinate and Debt counted at X = 0. It is a slower curve than the Zur deck's, by design: Y'shtola pays you for mana value 3 and up.
+**Curve.** One-drops 8, two-drops 7, three-drops 22, four-drops 15, five 4, six 6. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slower curve than the Zur deck's, by design: Y'shtola pays you for mana value 3 and up.
 
 **Card types.** 14 creatures, 15 enchantments, 8 artifacts, 9 instants, 15 sorceries, 1 planeswalker.
 
@@ -114,12 +117,13 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 - **Tutors:** Diabolic Tutor and Dark Petition (any card), Idyllic Tutor (an enchantment), and Zur's attacks.
 
 **Interaction.**
-- **Counterspells (two):** Statute of Denial (it triggers Y'shtola, and with a blue creature out you loot), Dovin's Veto.
+- **Counterspell (one):** Dovin's Veto.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
 - **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap, The Eternal Wanderer, Massacre Wurm.
 - **Removal Auras (five):** Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust.
 - **Theft:** Bribery.
-- **Board wipes (three):** Austere Command, Crux of Fate, Vanquish the Horde.
+- **Board wipes (two):** Austere Command, Crux of Fate.
+- **Mystical Tutor** (10-06, from Veyran): at an opponent's end step, put Exsanguinate or Debt to the Deathless on top for your turn.
 
 ## What the simulator found
 
@@ -146,11 +150,11 @@ Measured on 2026-10-03 with the look-ahead AI against the loose profile (opponen
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with five Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Bolas's Citadel** and **Smothering Tithe** (the last three added 10-05). There are still no two-card infinite combos (Sanguine Bond isn't paired with Exquisite Blood), no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
+**Bracket 4,** with six Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Bolas's Citadel**, **Smothering Tithe** (the last three added 10-05) and **Mystical Tutor** (10-06). There are still no two-card infinite combos (Sanguine Bond isn't paired with Exquisite Blood), no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
 
 Disclose before the game:
 
-- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Bolas's Citadel** and **Smothering Tithe** (the five Game Changers).
+- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Bolas's Citadel**, **Smothering Tithe** and **Mystical Tutor** (the six Game Changers).
 - **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor), plus Zur's enchantment search.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
 - **Theft:** Bribery, Hostage Taker, Gonti and Thief of Sanity use opponents' cards.
@@ -165,13 +169,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (1).** The Eternal Wanderer
 
-**Enchantments (15).** Arrest, Bound in Silence, Curiosity, Encrust, Ill-Gotten Inheritance, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Prayer of Binding, Prison Sentence, Propaganda, Sanguine Bond, Smothering Tithe, Static Net
+**Enchantments (16).** Arrest, Bound in Silence, Curiosity, Encrust, Ill-Gotten Inheritance, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Sanguine Bond, Smothering Tithe, Static Net
 
 **Artifacts (8).** Arcane Signet, Bolas's Citadel, Champion's Helm, Chromatic Lantern, Coalition Relic, Lightning Greaves, Sol Ring, Talisman of Progress
 
-**Instants (9).** Anguished Unmaking, Dovin's Veto, Fatal Push, Generous Gift, Go for the Throat, Path to Exile, Secure the Wastes, Statute of Denial, Your Fate Ends Here
+**Instants (9).** Anguished Unmaking, Dovin's Veto, Fatal Push, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Secure the Wastes, Your Fate Ends Here
 
-**Sorceries (15).** Austere Command, Bribery, Cast Away Doubt, Crux of Fate, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit, Triplicate Spirits, Vanquish the Horde
+**Sorceries (14).** Austere Command, Bribery, Cast Away Doubt, Crux of Fate, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit, Triplicate Spirits
 
 **Lands (37).** Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum, Spire of Industry, Terramorphic Expanse, 8 Plains, 8 Island, 10 Swamp
 
@@ -221,10 +225,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Massacre Wurm
 1 Memory Trap
 1 Mystic Remora
+1 Mystical Tutor
 1 Necropotence
 1 Night's Whisper
 1 Notion Thief
 1 Path to Exile
+1 Polluted Bonds
 1 Prairie Stream
 1 Prayer of Binding
 1 Prison Sentence
@@ -239,7 +245,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sol Ring
 1 Spire of Industry
 1 Static Net
-1 Statute of Denial
 1 Talisman of Progress
 1 Terramorphic Expanse
 1 Tezzeret's Gambit
@@ -247,7 +252,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Thief of Sanity
 1 Triplicate Spirits
 1 Urborg Syphon-Mage
-1 Vanquish the Horde
 1 Windborn Muse
 1 Y'shtola, Night's Blessed
 1 Your Fate Ends Here

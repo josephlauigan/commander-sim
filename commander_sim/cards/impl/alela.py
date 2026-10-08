@@ -60,6 +60,8 @@ def alela_prio(g, p, c):
     v = pool_ai.generic_prio(g, p, c) or 0
     if c is p.cmd: return max(v, 85)
     if not v and c.dsl and E.DSLMOD is not None: v = int(E.DSLMOD.card_value(g, p, c) * 10)   # untagged: its value
+    if not v and 'landfall2' in c.tags:                       # Felidar Retreat: a 2/2 Cat for each land still to come
+        v = 50 if p.turns <= 6 else 30
     if v and not c.land and ('A' in c.types or 'E' in c.types): v += faerie_bonus(g, p)
     return min(90, v)
 
