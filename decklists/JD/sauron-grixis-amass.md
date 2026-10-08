@@ -12,9 +12,9 @@
 **Updated 2026-10-02.** Out: Plaza of Heroes. In: Thought Vessel. Thought Vessel is a two-mana rock toward the six-mana commander, and no maximum hand size suits the draw engines. Plaza of Heroes was the softest land.
 **Updated 2026-10-03.** Out: Ral Zarek, Guest Lecturer. In: Marchesa, the Black Rose. Marchesa gives every creature dethrone (a +1/+1 counter when attacking the player with the most life, the Army included) and returns any creature with a +1/+1 counter that dies at the next end step. Ral Zarek's planeswalker slot did the least.
 **Updated 2026-10-03.** Out: Reconnaissance Mission. In: Disdainful Stroke. Disdainful Stroke is a two-mana answer to wipes, big creatures and commanders (mana value 4 or more), held up while the Army grows. Reconnaissance Mission drew one card per hit for a one-creature attack plan.
-**Updated 2026-10-05.** Out: Consecrated Sphinx. In: Fact or Fiction. Consecrated Sphinx → Fact or Fiction. Back to Bracket 3: three Game Changers (Underworld Breach, Cyclonic Rift, Orcish Bowmasters). Tested: no loss (+0.1 points on average, 1,000 paired games per tier, adaptive AI). The Sphinx moves to Y'shtola.
-**Updated 2026-10-06.** Out: Brush Off. In: Spell Pierce. Brush Off → Spell Pierce: a spare copy from the binder; one blue mana is easy to hold up on the Breach turn.
-**Updated 2026-10-07.** Out: Marchesa, the Black Rose. In: Talrand, Sky Summoner. Marchesa, the Black Rose → Talrand, Sky Summoner: a 2/2 flying Drake for every instant or sorcery, so the deck has bodies besides the Orc Army (it loses to combat in about three games in four). Tested even with Marchesa (0.0 points, fast AI, 1,000 pairs per tier); Marchesa goes back to being only the Marchesa deck's commander.
+**Updated 2026-10-05.** Out: Consecrated Sphinx. In: Fact or Fiction. Consecrated Sphinx → Fact or Fiction. Back to Bracket 3: three Game Changers (Underworld Breach, Cyclonic Rift, Orcish Bowmasters). Tested: no loss (+0.1 points on average, 1,000 paired games per tier, adaptive AI).
+**Updated 2026-10-06.** Out: Brush Off. In: Spell Pierce. Brush Off → Spell Pierce: one blue mana is easy to hold up on the Breach turn.
+**Updated 2026-10-07.** Out: Marchesa, the Black Rose. In: Talrand, Sky Summoner. Marchesa, the Black Rose → Talrand, Sky Summoner: a 2/2 flying Drake for every instant or sorcery, so the deck has bodies besides the Orc Army (it loses to combat in about three games in four). Tested even with Marchesa (0.0 points, fast AI, 1,000 pairs per tier).
 
 ## Strategy
 
@@ -106,7 +106,7 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 ## Bracket and Rule 0
 
-Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx moved to Y'shtola on 10-05, at no measurable cost). Sheoldred, Kefka, Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
+Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx left on 10-05, at no measurable cost). Sheoldred, Kefka, Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
 
 **The deck has two combos.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later. **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal as fuel) mills the table in one turn; it can come together as early as turn four with a tutor. The Sword line is a late-game combo; the Breach line can be early, so say so before the game at a Bracket 3 table.
 
@@ -257,13 +257,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 
 **Scavenger Grounds hits your own graveyard too.** Fire it deliberately.
 
-**Card conflicts with your other decks.**
-- **Two physical copies needed** of Sheoldred, the Apocalypse and Diabolic Tutor, which are in this deck and Sephiroth.
-- **Talrand, Sky Summoner** is also in Veyran: a second copy.
-- **Diabolic Intent** moved here from Sephiroth, so one copy is enough.
-- Shared with **Veyran**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
-- Shared with **Sephiroth**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Phyrexian Arena (10-05), Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City.
-- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **Only in this deck**: Night's Whisper and Fact or Fiction (new 10-05).
-- **New singles**: Disdainful Stroke (10-03, from the Y'shtola deck); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal (none is in your other decks).
+**New cards and cuts.**
+- **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
 - **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

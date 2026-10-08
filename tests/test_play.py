@@ -77,7 +77,7 @@ class Session_(unittest.TestCase):
         self.assertTrue({'continue', 'priority'} <= set(asked))
 
     def test_closing_stops_the_game(self):
-        s = Session('marchesa', 't1', seed=2, ai='adaptive', step=True).start()
+        s = Session('jodah', 't1', seed=2, ai='adaptive', step=True).start()
         ev = s.events.get(timeout=60)
         while ev['kind'] != 'request': ev = s.events.get(timeout=60)
         s.close(); s.join(10)

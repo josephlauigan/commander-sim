@@ -28,8 +28,6 @@ STYLE = {
     'seph':    {'temp': 1.0, 'aggression': 0.55, 'caution': 0.60},
     'veyran':  {'temp': 1.0, 'aggression': 0.40, 'caution': 0.80},
     'sauron':  {'temp': 1.0, 'aggression': 0.55, 'caution': 0.75},
-    'marchesa': {'temp': 1.0, 'aggression': 0.65, 'caution': 0.60},
-    'zur':     {'temp': 1.0, 'aggression': 0.60, 'caution': 0.70},
     'galadriel': {'temp': 1.0, 'aggression': 0.70, 'caution': 0.55},
     'yshtola': {'temp': 1.0, 'aggression': 0.50, 'caution': 0.75},
     'alela':   {'temp': 1.0, 'aggression': 0.70, 'caution': 0.60},
@@ -193,9 +191,8 @@ def reserve_penalty(g, p, s, c, hold_card, hold_v):
 
 
 # ------------------------------------------------------------------ card utilities
-PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'marchesa': A.marchesa_prio,
-        'zur': A.zur_prio, 'galadriel': A.galadriel_prio, 'yshtola': A.yshtola_prio, 'alela': A.alela_prio,
-        'jodah': A.jodah_prio, 'najeela': A.najeela_prio}
+PRIO = {'seph': A.seph_prio, 'veyran': A.veyran_prio, 'sauron': A.sauron_prio, 'galadriel': A.galadriel_prio,
+        'yshtola': A.yshtola_prio, 'alela': A.alela_prio, 'jodah': A.jodah_prio, 'najeela': A.najeela_prio}
 
 
 def draws_cards(c):
@@ -530,13 +527,6 @@ def special_options(g, p, s, post):
         if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and importlib.import_module('commander_sim.cards.impl.mine').archivist_worth(g, p)
                 and can_pay(g, p, 0, 'U')):
             o.append((5.0, "Jace's Archivist wheel", lambda: A.sauron_archivist(g, p)))
-    elif k == 'marchesa':
-        o += E.CI.marchesa_options(g, p, s, post)
-        ht = A.helm_target(g, p) if find(p, 'helm') and can_pay(g, p, 1, '') and post is not None else None
-        if ht is not None:
-            leg = importlib.import_module('commander_sim.cards.impl.mine').is_legendary(g, ht)
-            o.append((2.0 + (4.0 * removal_risk(g, p) + 0.2 * pval(g, ht) if leg else 0.0),
-                      f"equip Champion's Helm to {ht.name}", lambda ht=ht: A.helm_equip(g, p, ht)))
     elif k == 'najeela' and post:
         for c in p.hand:
             if 'tokx' in c.tags and total_mana(g, p) >= len(c.pips) + 3:
@@ -695,7 +685,7 @@ def main(g, p, post):
         if not acted: return
 
 
-GENERIC_PLAYS = ('marchesa', 'zur', 'galadriel', 'yshtola', 'alela', 'jodah')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
+GENERIC_PLAYS = ('galadriel', 'yshtola', 'alela', 'jodah')    # your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
 
 
 def hook_options(g, p, s, post):
@@ -735,8 +725,6 @@ def choose_defender(g, p):
         if my >= q.life * 0.8: u += 4.0 + 2.0 * aggr               # go for the kill
         u += 0.15 * grudge.get(q.key, 0)                               # hit back whoever hit you
         if p.key not in STYLE: u += importlib.import_module('commander_sim.ai.pool_ai').ninja_defender_bonus(g, p, q)
-        if p.key == 'marchesa' and has(p, 'marchesa') and q.life >= max(x.life for x in g.players if x.alive):
-            u += 0.8 * min(4, sum(1 for m in p.perms if m.creature and not m.tapped and not m.sick))   # dethrone
         from commander_sim.cards.impl import common as impl_common                                              # planeswalkers about to ultimate draw attacks
         u += sum(3.0 * min(1.0, impl_common.ult_pressure(m)) for m in q.perms
                  if m.cd is not None and 'P' in m.cd.types and m.loyalty and impl_common.ult_pressure(m) >= 0.6)

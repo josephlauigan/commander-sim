@@ -16,7 +16,7 @@ commander_sim/            the simulator (a Python package)
   compare.py              command line: python3 -m commander_sim ...
   poolmode.py             runs against the pools: one tier, A/B, matrix, calibration, --analyze
   pools.py                the pool decks: loading, validation, seating
-  decks.py                your decks (decklists/JD/, Avery/, Other/; deck_files.py says which is where)
+  decks.py                your decks (decklists/JD/, Avery/; deck_files.py says which is where)
   update_deck.py          replace a deck's list with a pasted one
   pool_audit.py           how faithfully each card is modeled
   engine.py               game state and rules
@@ -37,9 +37,8 @@ commander_sim/            the simulator (a Python package)
   play/                   practice mode: play a deck by hand (session, rules check, server, the browser page)
   tools/                  searchtest.py, swaptest.py, linecov.py
 data/                     scryfall_cache.json, cards_dsl.example.json; images/ and saves/ (practice mode, not in git)
-decklists/JD/             JD's decks: Sauron, Sephiroth, Veyran, Y'shtola
-decklists/Avery/          Avery's deck: Galadriel
-decklists/Other/          Marchesa, Zur
+decklists/JD/             JD's decks: Jodah, Sauron, Sephiroth, Veyran, Y'shtola
+decklists/Avery/          Avery's decks: Alela, Galadriel
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
 documents/                architecture.md, card-audit.md, practice-mode.md
 tools/                    knight_dragon.py (draws practice mode's loading animation)
@@ -68,7 +67,7 @@ python3 -m commander_sim --deck veyran --cards                                  
 
 Options:
 
-- `--deck`: `seph`, `veyran`, `sauron`, `marchesa`, `zur`, `galadriel` or `yshtola`.
+- `--deck`: `seph`, `veyran`, `sauron`, `yshtola`, `jodah`, `galadriel` or `alela`.
 - `--pool`: `t1` to `t5`, or `all`. Required, unless you use `--all-decks` or `--calibrate`.
 - `--swap`: `"Card Out=>Card In"`. Repeat it for several swaps.
 - `--games`: games per list per profile (default 1500). `--n` is the same.
@@ -201,8 +200,8 @@ The pool results and calibration are in `decklists/pool/pool-results.md`.
 ## Your decks
 
 The baseline is the list in each deck's `.md` file (the `## Import list` block), in its owner's folder:
-`decklists/JD/` (Sauron, Sephiroth, Veyran, Y'shtola), `decklists/Avery/` (Galadriel) and `decklists/Other/`
-(Marchesa, Zur). `commander_sim/deck_files.py` maps each deck key to its folder and file; to add a deck or move one
+`decklists/JD/` (Jodah, Sauron, Sephiroth, Veyran, Y'shtola) and `decklists/Avery/` (Alela, Galadriel).
+`commander_sim/deck_files.py` maps each deck key to its folder and file; to add a deck or move one
 between folders, change it there. Point `SIM_DECKS` at another folder (flat, or with the same owner folders) to use
 lists kept elsewhere.
 

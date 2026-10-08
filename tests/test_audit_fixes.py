@@ -1,6 +1,6 @@
 """The gaps found by the October 2026 modeling audit: Muldrotha, the Gravetide; Restoration Angel's enters trigger;
-Kefka's draw; Relic of Legends; and the choices practice mode used to make for you (card-text targets, Emeritus of
-Ideation, Scarlet Witch, Force of Will's exiled card, X, Niv-Mizzet's and Torch Fiend's abilities)."""
+Kefka's draw; and the choices practice mode used to make for you (Emeritus of Ideation, Scarlet Witch, Force of Will's
+exiled card, X, Niv-Mizzet's ability)."""
 import unittest
 from tests.table import table, hand, perm, lands, card
 from commander_sim import engine as E, ais
@@ -60,17 +60,17 @@ class Muldrotha(unittest.TestCase):
 
 class RestorationAngel(unittest.TestCase):
     def test_cast_normally_it_blinks(self):
-        g = table('zur', 'veyran', 'sauron'); z, v, s = g.players
+        g = table('yshtola', 'veyran', 'sauron'); z, v, s = g.players
         for n in ('Guttersnipe', 'Harmonic Prodigy'): perm(g, v, n)
         for n in ('Orcish Bowmasters', 'Witch-king of Angmar'): perm(g, s, n)
-        for n in ('Esper Sentinel', 'Ministrant of Obligation'): perm(g, z, n)
+        for n in ('Esper Sentinel', 'Thrummingbird'): perm(g, z, n)
         mar = perm(g, z, 'Accursed Marauder')                                         # each player sacrifices one
         theirs = sum(1 for q in (v, s) for m in q.perms if m.creature and not m.token)
         perm(g, z, 'Restoration Angel')                                               # blinks the Marauder
         self.assertLess(sum(1 for q in (v, s) for m in q.perms if m.creature and not m.token), theirs)
 
     def test_you_choose_or_decline(self):
-        g = table('zur', 'veyran', 'sauron'); z = g.players[0]
+        g = table('yshtola', 'veyran', 'sauron'); z = g.players[0]
         perm(g, z, 'Esper Sentinel')
         ctl = seat(g, z, ['cancel'])
         perm(g, z, 'Restoration Angel')
@@ -79,39 +79,12 @@ class RestorationAngel(unittest.TestCase):
 
 class Kefka(unittest.TestCase):
     def test_the_draw_is_not_optional(self):
-        table('sauron', 'veyran')                       # the card database first (see setUpModule in test_zur)
+        table('sauron', 'veyran')                       # the card database first (see setUpModule in test_yshtola)
         from commander_sim.cards.impl import mine
         self.assertNotIn('len(p.library) - 5', __import__('inspect').getsource(mine._kefka_ruin_draw))
 
 
-class RelicOfLegends(unittest.TestCase):
-    def test_the_ai_taps_every_spare_legend(self):
-        g = table('marchesa', 'veyran', 'sauron'); m = g.players[0]
-        r = perm(g, m, 'Relic of Legends')
-        a = perm(g, m, 'Marchesa, the Black Rose', sick=True); b = perm(g, m, 'Hellkite Tyrant', sick=True)
-        from commander_sim.cards import cardimpl as CI
-        legs = sum(1 for x in (a, b) if __import__('commander_sim.cards.impl.mine', fromlist=['x']).is_legendary(g, x))
-        self.assertEqual(CI.DYN_MANA['Relic of Legends'](g, m, r), 1 + legs)
-
-    def test_your_second_ability(self):
-        g = table('marchesa', 'veyran', 'sauron'); m = g.players[0]
-        r = perm(g, m, 'Relic of Legends'); a = perm(g, m, 'Marchesa, the Black Rose')
-        seat(g, m, [by_text('tap an untapped legendary'), 0, 0])
-        self.assertIsNone(human.use(g, m, r))
-        self.assertTrue(a.tapped)
-        self.assertEqual(mana.pool_of(m).total(), 1)
-
-
 class YourChoices(unittest.TestCase):
-    def test_card_text_targets_ask_you(self):
-        g = table('marchesa', 'veyran', 'sauron'); m, v, s = g.players
-        rock = perm(g, v, 'Sol Ring'); perm(g, s, 'Sol Ring')
-        tf = perm(g, m, 'Torch Fiend')
-        mana.pool_of(m).add('R', 1)
-        seat(g, m, [0, by_text('Veyran')])
-        self.assertIsNone(human.use(g, m, tf))
-        self.assertNotIn(rock, v.perms)
-
     def test_niv_mizzet_the_firemind_draws(self):
         g = table('veyran', 'seph', 'sauron'); v = g.players[0]
         niv = perm(g, v, 'Niv-Mizzet, the Firemind')
@@ -137,7 +110,7 @@ class YourChoices(unittest.TestCase):
         self.assertIs(cards.pick_blue(g, s, [a, b], 'Force of Will'), b)
 
     def test_you_choose_x(self):
-        g = table('zur', 'veyran', 'sauron'); z = g.players[0]
+        g = table('yshtola', 'veyran', 'sauron'); z = g.players[0]
         hand(z, 'Secure the Wastes')
         mana.pool_of(z).add('W', 1); mana.pool_of(z).add('C', 4)
         seat(g, z, [{'do': 'cast', 'card': 0}, by_text('X = 2'), {'do': 'pass'}])

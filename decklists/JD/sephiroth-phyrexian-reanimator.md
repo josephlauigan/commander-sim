@@ -5,13 +5,13 @@
 **Updated 2026-09-20.** Mana-base upgrade only — four tapped lands out, four untapped duals in (net land count unchanged at 37).
 **Updated 2026-09-21.** Corroding Dragonstorm → Swan Song and Path of Ancestry → Blossoming Sands.
 **Updated 2026-09-22.** Six swaps (Vampiric Tutor → Diabolic Tutor, Phyrexian Altar → Ashnod's Altar, Phyrexian Tower → Watery Grave, Soul Enervation → Zulaport Cutthroat, Phyrexian Delver → Smothering Tithe, Witch-king → Dovin's Veto), then Talisman of Dominance → Cryptolith Rite.
-**Updated 2026-09-26 — moved to Bracket 4.** Ten swaps: **Phyrexian Metamorph → Aura Shards**, **Night's Whisper → Gifts Ungiven**, **Swiftfoot Boots → Assassin's Trophy**, **Deadly Dispute → Galadriel's Dismissal**, **Phyrexian Arena → Bolas's Citadel**, **Evil Reawakened → Consecrated Sphinx**, **Satyr Wayfinder → Displacer Kitten** (moved from Veyran), **Lethal Scheme → Grand Abolisher**, **Wrath of God → Triskelion**, and **Cryptolith Rite → Nim Deathmantle**. The deck now runs **seven** Game Changers and **two infinite combos** (Mikaeus + Triskelion, and Nim Deathmantle + Ashnod's Altar + Grave Titan), so it is Bracket 4 on both counts and is now your strongest deck by design. Deck stays at 100 and 37 lands.
+**Updated 2026-09-26 — moved to Bracket 4.** Ten swaps: **Phyrexian Metamorph → Aura Shards**, **Night's Whisper → Gifts Ungiven**, **Swiftfoot Boots → Assassin's Trophy**, **Deadly Dispute → Galadriel's Dismissal**, **Phyrexian Arena → Bolas's Citadel**, **Evil Reawakened → Consecrated Sphinx**, **Satyr Wayfinder → Displacer Kitten**, **Lethal Scheme → Grand Abolisher**, **Wrath of God → Triskelion**, and **Cryptolith Rite → Nim Deathmantle**. The deck now runs **seven** Game Changers and **two infinite combos** (Mikaeus + Triskelion, and Nim Deathmantle + Ashnod's Altar + Grave Titan), so it is Bracket 4 on both counts and is now your strongest deck by design. Deck stays at 100 and 37 lands.
 **Updated 2026-09-26 (second pass).** **Carrion Feeder → Avacyn's Pilgrim**, **Gray Merchant of Asphodel → Kitchen Finks**, and **Sephiroth, Planet's Heir → Melira, Sylvok Outcast**. Kitchen Finks with Melira or Mikaeus makes two more infinite loops, so the deck now has **four**.
-**Updated 2026-09-27.** **Persist → Dread Return**, then **Dovin's Veto → Force of Will** (moved from Veyran), **Diabolic Intent → Teferi's Protection** (Diabolic Intent moved to Sauron), and **Blossoming Sands → Arcane Sanctum**. Force of Will and Teferi's Protection are Game Changers, so the deck now runs **nine**.
+**Updated 2026-09-27.** **Persist → Dread Return**, then **Dovin's Veto → Force of Will**, **Diabolic Intent → Teferi's Protection**, and **Blossoming Sands → Arcane Sanctum**. Force of Will and Teferi's Protection are Game Changers, so the deck now runs **nine**.
 **Updated 2026-09-28.** **Unmarked Grave → Ephemerate.** Not a Game Changer, so the count stays at nine. Deck stays at 100 and 37 lands.
 **Updated 2026-10-01.** Out: Massacre Wurm. In: Muldrotha, the Gravetide. Muldrotha replays permanents from the graveyard (a land, a creature, an artifact, an enchantment each turn).
 **Updated 2026-10-02.** Out: Cultivate. In: Grave Pact. Grave Pact turns every sacrifice into an edict on each opponent: the free outlets, Grave Titan's Zombies and the loops all feed it. Cultivate was the least needed ramp in a deck that cheats its threats in.
-**Updated 2026-10-05.** Out: Bolas's Citadel. In: Phyrexian Arena. Bolas's Citadel → Phyrexian Arena (Citadel moves to Y'shtola). Tested: no loss (0.0 points on average, 1,000 paired games per tier, adaptive AI). Eight Game Changers; still Bracket 4.
+**Updated 2026-10-05.** Out: Bolas's Citadel. In: Phyrexian Arena. Bolas's Citadel → Phyrexian Arena. Tested: no loss (0.0 points on average, 1,000 paired games per tier, adaptive AI). Eight Game Changers; still Bracket 4.
 
 ## Strategy
 
@@ -23,7 +23,7 @@ Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, an
 
 **Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
 
-**The card-advantage layer.** **Consecrated Sphinx** draws you two every time an opponent draws, and **Phyrexian Arena** adds a card every upkeep for 1 life (it took Bolas's Citadel's slot on 10-05, at no measurable cost; Citadel moved to Y'shtola). Sheoldred, the Apocalypse gains you 2 for every card you draw, so with her out the Arena's draws gain more life than they cost.
+**The card-advantage layer.** **Consecrated Sphinx** draws you two every time an opponent draws, and **Phyrexian Arena** adds a card every upkeep for 1 life (it took Bolas's Citadel's slot on 10-05, at no measurable cost). Sheoldred, the Apocalypse gains you 2 for every card you draw, so with her out the Arena's draws gain more life than they cost.
 
 **Displacer Kitten** blinks a nonland permanent every time you cast a noncreature spell. Blink Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Kitchen Finks for 2 more life, or Grave Titan for two more Zombies.
 
@@ -87,7 +87,7 @@ Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, 
 
 ## Tutor targets by board state
 
-Three tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), and **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard). Diabolic Intent moved to Sauron.
+Three tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), and **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard).
 
 - **One combo piece away → tutor it.** With Mikaeus out, Demonic Tutor for Triskelion (no outlet needed), or for Kitchen Finks if a sac outlet is out too. With Melira and an outlet out, tutor Finks. With Ashnod's Altar and Grave Titan out, tutor Nim Deathmantle. Resolve Grand Abolisher first if you can.
 - **Empty yard, reanimation spell already in hand → tutor Entomb (or Buried Alive).** Demonic Tutor into Entomb on turn two sets up Reanimate on turn three.
@@ -101,7 +101,7 @@ Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also
 
 ## Bracket and Rule 0
 
-**Bracket 4.** Eight Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection** (Bolas's Citadel moved to Y'shtola on 10-05). Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
+**Bracket 4.** Eight Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection** (Bolas's Citadel left on 10-05). Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
 
 Disclose before the game:
 
@@ -235,11 +235,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 | --- | --- | --- |
 | Phyrexian Metamorph | Aura Shards | Clone → repeatable artifact/enchantment removal on every creature ETB. Game Changer. |
 | Night's Whisper | Gifts Ungiven | Two cards → a four-card tutor that also fills the yard. Game Changer. |
-| Swiftfoot Boots | Assassin's Trophy | Equipment → instant removal for any permanent. Boots moved to Veyran. |
+| Swiftfoot Boots | Assassin's Trophy | Equipment → instant removal for any permanent. |
 | Deadly Dispute | Galadriel's Dismissal | Sac-for-cards → cheap protection. |
 | Phyrexian Arena | Bolas's Citadel | Slow draw engine → play off the top and a ten-permanent finisher. Game Changer. |
 | Evil Reawakened | Consecrated Sphinx | A sixth reanimation spell → a card-advantage bomb that is also a reanimation target. Game Changer. |
-| Satyr Wayfinder | Displacer Kitten | Yard filler → ETB re-buy engine. Moved from Veyran. |
+| Satyr Wayfinder | Displacer Kitten | Yard filler → ETB re-buy engine. |
 | Lethal Scheme | Grand Abolisher | Removal → combo-turn protection. |
 | Wrath of God | Triskelion | A sweeper → half of the Mikaeus infinite. |
 | Cryptolith Rite | Nim Deathmantle | Ramp → half of the Grave Titan infinite. |
@@ -252,8 +252,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 | Gray Merchant of Asphodel | Kitchen Finks | A drain → half of two new infinite loops (with Melira or Mikaeus). |
 | Sephiroth, Planet's Heir | Melira, Sylvok Outcast | A bomb → the other half of the Finks loop. |
 | Persist | Dread Return | Nonlegendary-only reanimation → any creature, plus a free flashback. |
-| Dovin's Veto | Force of Will | A noncreature counter → a free counter for anything. Moved from Veyran. Game Changer. |
-| Diabolic Intent | Teferi's Protection | A tutor → wipe and lethal insurance. Diabolic Intent moved to Sauron. Game Changer. |
+| Dovin's Veto | Force of Will | A noncreature counter → a free counter for anything. Game Changer. |
+| Diabolic Intent | Teferi's Protection | A tutor → wipe and lethal insurance. Game Changer. |
 | Blossoming Sands | Arcane Sanctum | A tapped W/G land → a tapped W/U/B land. |
 
 In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force of Will and Teferi's Protection together were worth about +2 points on average. Force of Will did the work: on its own it was the best of five cuts tried. Teferi's Protection was about even on its own; it's insurance, so it only shows up in the games it saves. In the simulator, 20–38% of the deck's wins (depending on the tier) came from a loop, but adding the Finks lines barely moved the overall win rate: the loops mostly won games the deck was already winning.
@@ -268,14 +268,6 @@ In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force
 
 **Combo watch.** The two Kitchen Finks loops need a free sac outlet (Viscera Seer, Ashnod's Altar, or Altar of Dementia); Carrion Feeder left, so there are three. Mikaeus + Triskelion needs none unless Elesh Norn, Grand Cenobite is out. Sheoldred, Whispering One and Displacer Kitten don't complete an infinite on their own.
 
-**Card conflicts with your other decks.**
-- **Displacer Kitten and Force of Will moved here from Veyran** — one physical copy each, now only here.
-- **Swiftfoot Boots moved to Veyran**.
-- **Diabolic Intent moved to Sauron** — one physical copy, now only there.
-- **Two physical copies needed** of Sheoldred, the Apocalypse and Diabolic Tutor (in this deck and Sauron), Consecrated Sphinx (this deck and Y'shtola, from 10-05) and Smothering Tithe (this deck and Y'shtola, from 10-05).
-- **Bolas's Citadel moved to Y'shtola** (10-05) — one physical copy, now only there.
-- Shared with **Sauron**: Chromatic Lantern, Diabolic Tutor, Grave Titan, Mind Stone, Phyrexian Arena (10-05: a second copy, or share it), Sheoldred, the Apocalypse, Toxic Deluge, Treno Dark City. (Night's Whisper is Sauron-only.)
-- Shared with **Veyran**: Ash Barrens, Evolving Wilds.
-- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
+**New cards and cuts.**
 - **New singles**: Grave Pact (10-02); Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
 - **To the binder**: Cultivate (10-02); Massacre Wurm (10-01); Carrion Feeder, Gray Merchant of Asphodel, Sephiroth, Planet's Heir, Persist, Dovin's Veto, Blossoming Sands, Unmarked Grave; from 09-26, Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.

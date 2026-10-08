@@ -229,7 +229,6 @@ def gy_mode(g, p, c):
         from commander_sim.play import cards
         if cards.granted_flashback(g, p, c): fb = E.cost_of(p, c)       # Flashback (the card): its mana cost
     if fb == 'sac3': return ('sac3', 0, '')
-    if c.name == 'Demonic Embrace' and p.hand and p.life > 3: return ('embrace', 1, 'BB')      # 3 life and a discard too
     if fb:
         gen, pips = fb if isinstance(fb, tuple) else E.parse_cost(fb)
         return ('flashback', gen, pips)

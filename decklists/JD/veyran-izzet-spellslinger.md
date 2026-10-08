@@ -4,14 +4,14 @@
 **Updated 2026-09-18 / 09-19 / 09-20** across earlier passes (trim to 100, Ral + Aetherflux, Force of Will + Steam Vents, tutor guide).
 **Updated 2026-09-21.** Terminal Moraine → Spirebluff Canal.
 **Updated 2026-09-22.** Scavenger Grounds → Stormcarved Coast.
-**Updated 2026-09-26.** Seven swaps: **Displacer Kitten → Niv-Mizzet, Parun** (Kitten moved to the Sephiroth deck), **Kylox, Visionary Inventor → Niv-Mizzet, the Firemind**, **Burning Prophet → Kessig Flamebreather**, **Muse Seeker → Imperial Recruiter**, **Dualcaster Mage → Thousand-Year Storm**, **Disruptor Flute → Swiftfoot Boots**, and **Sleight of Hand → Visions of Beyond**. **Losing Displacer Kitten ends the Kitten + Blazing Firesinger infinite** — the deck no longer has a two-card combo, and Aetherflux Reservoir is now a big-turn finisher rather than an infinite kill. None of the new cards is a Game Changer; the deck stays at 100, 34 lands, and three GCs (Bracket 3, at the cap).
+**Updated 2026-09-26.** Seven swaps: **Displacer Kitten → Niv-Mizzet, Parun**, **Kylox, Visionary Inventor → Niv-Mizzet, the Firemind**, **Burning Prophet → Kessig Flamebreather**, **Muse Seeker → Imperial Recruiter**, **Dualcaster Mage → Thousand-Year Storm**, **Disruptor Flute → Swiftfoot Boots**, and **Sleight of Hand → Visions of Beyond**. **Losing Displacer Kitten ends the Kitten + Blazing Firesinger infinite** — the deck no longer has a two-card combo, and Aetherflux Reservoir is now a big-turn finisher rather than an infinite kill. None of the new cards is a Game Changer; the deck stays at 100, 34 lands, and three GCs (Bracket 3, at the cap).
 **Updated 2026-09-26 (second pass).** Disdainful Stroke → **Unsummon**.
-**Updated 2026-09-27.** **Force of Will → Jeska's Will** (Force of Will moved to the Sephiroth deck; Jeska's Will takes its Game Changer slot, so the deck stays at three) and **Reenact the Crime → Twinflame**.
+**Updated 2026-09-27.** **Force of Will → Jeska's Will** (Jeska's Will takes its Game Changer slot, so the deck stays at three) and **Reenact the Crime → Twinflame**.
 **Updated 2026-10-02.** **Hydro-Channeler → Alania, Divergent Storm**: your first instant and your first sorcery each turn are copied, each copy costing an opponent a free card, and Veyran and Harmonic Prodigy each add a copy. Not a Game Changer; the deck stays at 100 and three GCs (Bracket 3).
 **Updated 2026-10-04.** Out: Gandalf, Friend of the Shire, Mystic Confluence, Pongify, Reality Shift, Return the Favor, Spell Pierce, Swiftfoot Boots, Thought Vessel, Thunderdrum Soloist. In: Deflecting Swat, Docent of Perfection // Final Iteration, Fiery Emancipation, Lightning Greaves, Slip Out the Back, Storm-Kiln Artist, Talrand, Sky Summoner, Third Path Iconoclast, Young Pyromancer. The tokens rebuild: spells now leave creatures behind, Fiery Emancipation triples every ping, and the protection package is Deflecting Swat, Lightning Greaves and Slip Out the Back.
 **Updated 2026-10-04.** Out: Twinflame. In: Crawlspace. Twinflame → Crawlspace: no more than two creatures can attack you each combat, against the creature decks that cause most of the deck's losses.
 **Updated 2026-10-05.** Out: Crawlspace. In: Propaganda. Crawlspace → Propaganda, the planned swap once Propaganda was found (it tested ahead of Crawlspace in the 10-04 rebuild).
-**Updated 2026-10-06.** Out: Mystical Tutor. In: Underworld Breach. Mystical Tutor → Underworld Breach: a second Breach copy; every escape is a cast, so the pingers, token makers and Storm-Kiln Artist trigger again, doubled by Veyran. Mystical Tutor moves to Y'shtola. Still three Game Changers (Bracket 3).
+**Updated 2026-10-06.** Out: Mystical Tutor. In: Underworld Breach. Mystical Tutor → Underworld Breach: every escape is a cast, so the pingers, token makers and Storm-Kiln Artist trigger again, doubled by Veyran. Still three Game Changers (Bracket 3).
 
 ## Strategy
 
@@ -280,7 +280,7 @@ The tokens list was the only one ahead at every tier under both AIs. The engine 
 
 | Out | In | What it does |
 | --- | --- | --- |
-| Displacer Kitten | Niv-Mizzet, Parun | Kitten moved to Sephiroth. Ends the Firesinger infinite; Parun turns every instant/sorcery (anyone's) into a card and a ping. |
+| Displacer Kitten | Niv-Mizzet, Parun | Ends the Firesinger infinite; Parun turns every instant/sorcery (anyone's) into a card and a ping. |
 | Kylox, Visionary Inventor | Niv-Mizzet, the Firemind | Swaps a token-sacrifice free-spell turn for a draw-to-damage engine that stacks with Parun. |
 | Burning Prophet | Kessig Flamebreather | Scry-on-cast body → a third each-opponent pinger, doubled by Veyran. |
 | Muse Seeker | Imperial Recruiter | A draw body → a creature tutor for the pingers, Archmage Emeritus, or Harmonic Prodigy. |
@@ -302,13 +302,8 @@ The tokens list was the only one ahead at every tier under both AIs. The engine 
 
 **Rules notes carried forward.** Veyran has no first strike, and magecraft gives +1/+1 until end of turn, not permanent counters. The doubling applies only when your casting or copying an instant or sorcery is what caused the trigger.
 
-**Card conflicts with your other decks.**
-- **Displacer Kitten moved to Sephiroth** — one physical copy, now only there.
-- **Force of Will moved to Sephiroth** — one physical copy, now only there.
-- Shared with **Sauron**: Blasphemous Act, Chaos Warp, Counterspell, Cyclonic Rift, Path of Ancestry, Shivan Reef, Steam Vents, Sulfur Falls.
-- Shared with **Sephiroth**: Ash Barrens, Evolving Wilds.
-- Staples in all three decks: Arcane Signet, Command Tower, Exotic Orchard, Sol Ring.
-- **New singles (10-04)**: Crawlspace, Deflecting Swat, Young Pyromancer, Third Path Iconoclast, Talrand, Sky Summoner, Storm-Kiln Artist, Docent of Perfection, Fiery Emancipation. **Slip Out the Back** comes from the binder (it left Sauron on 10-01). **Lightning Greaves** is a new copy: the existing ones are in Sauron, Marchesa, Zur and Y'shtola.
-- **Propaganda (10-05)** is a new copy: the existing one is in Y'shtola. Crawlspace went to bulk.
-- **Earlier singles**: Jeska's Will, Twinflame, Unsummon; from 09-26, Niv-Mizzet, Parun; Niv-Mizzet, the Firemind; Kessig Flamebreather; Imperial Recruiter; Thousand-Year Storm; Swiftfoot Boots (Sephiroth cut its copy); Visions of Beyond.
+**New cards and cuts.**
+- **New singles (10-04)**: Crawlspace, Deflecting Swat, Young Pyromancer, Third Path Iconoclast, Talrand, Sky Summoner, Storm-Kiln Artist, Docent of Perfection, Fiery Emancipation, Lightning Greaves. **Slip Out the Back** comes from the binder.
+- **Propaganda (10-05)** is a new single. Crawlspace went to bulk.
+- **Earlier singles**: Jeska's Will, Twinflame, Unsummon; from 09-26, Niv-Mizzet, Parun; Niv-Mizzet, the Firemind; Kessig Flamebreather; Imperial Recruiter; Thousand-Year Storm; Swiftfoot Boots; Visions of Beyond.
 - **To the binder**: Return the Favor, Mystic Confluence, Swiftfoot Boots, Spell Pierce, Pongify, Reality Shift, Thunderdrum Soloist, Gandalf, Friend of the Shire, Thought Vessel, Twinflame (10-04); Disdainful Stroke, Reenact the Crime; from 09-26, Burning Prophet, Dualcaster Mage, Kylox, Muse Seeker, Disruptor Flute, Sleight of Hand.

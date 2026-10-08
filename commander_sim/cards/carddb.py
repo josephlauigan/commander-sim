@@ -122,7 +122,6 @@ Disdainful Stroke|I|1U|ctr=mv4
 Displacer Kitten|C|3U|vkitten pow=2 noatk
 Disruptor Flute|A|2|flash flute
 Dreams of Laguna|I|1U|draw=1 fb=3U
-Dualcaster Mage|C|1RR|pow=2 flash dualcaster
 Emeritus of Conflict // Lightning Bolt|C|1R|pow=2 tgh=2 conflict
 Emeritus of Ideation // Ancestral Recall|C|3U|pow=5 tgh=5 fly prepare
 Eris, Roar of the Storm|C|8UR|pow=4 fly eris leg
@@ -262,7 +261,6 @@ End-Raze Forerunners|C|5GGG|pow=7 haste vig trample endraze
 Ephemerate|I|W|prot=blink
 Felidar Retreat|E|3W|landfall2
 Garruk's Uprising|E|2G|uprising
-Gemstone Mine|L|-|c=A
 Generous Gift|I|2W|rem=destroy tgt=p rtok=3
 Harmonize|S|2GG|draw=3
 Hornet Queen|C|4GGG|pow=2 fly dt tok=4 tokfly tokdt
@@ -280,7 +278,6 @@ Overwhelming Stampede|S|3GG|stampede
 Prairie Stream|L|-|c=WU t
 Professional Face-Breaker|C|2R|pow=2 tgh=3 warrior facebreaker
 Rabble Rousing|E|4W|rabble
-Relic of Legends|A|3|rock=1:A
 Restoration Angel|C|3W|pow=3 fly flash prot=blink
 Rhys the Redeemed|C|G|pow=1 tokup=1 warrior leg rhys
 Sauron, the Lidless Eye|C|3BR|pow=4 leg lidless
@@ -296,8 +293,6 @@ Sterling Grove|E|GW|x
 Sun Titan|C|4WW|pow=6 vig suntitan
 Sylvan Library|E|1G|eng=1
 Talisman of Dominance|A|2|rock=1:UB
-Temple of Malice|L|-|c=BR t
-Temple of Silence|L|-|c=WB t
 The Dawning Archaic|C|10|pow=7 leg dawning
 The World Tree|L|-|c=G t worldtree
 Trostani's Summoner|C|5GW|pow=1 tokbig
@@ -305,9 +300,7 @@ Ultimate Magic: Holy|I|2W|prot=indes
 Unbreakable Formation|I|2W|prot=indes
 Vandalblast|S|R|rem=destroy tgt=a wipe=vandal
 Vanquish the Horde|S|6WW|wipe=destroy perCreature
-Vivid Creek|L|-|c=A t
 Vivid Grove|L|-|c=A t
-Vivid Marsh|L|-|c=A t
 Wargate|S|2GWU|tut=perm
 Warleader's Call|E|1RW|warleader
 Wispdrinker Vampire|C|2WB|pow=2 tgh=4 fly wisp
@@ -352,10 +345,5 @@ Vampiric Tutor|I|B|seal
 Necropotence|E|BBB|necro
 Opposition Agent|C|2B|pow=3 tgh=2 flash agent
 Tergrid, God of Fright // Tergrid's Lantern|C|3BB|pow=4 tgh=5 leg tergrid
-Terror|I|1B|rem=destroy tgt=cna nonblack noregen
 Last Gasp|I|1B|rem=shrink3 tgt=c
-Orcish Cannonade|I|1RR|rem=dmg2 tgt=c face selfdmg=3 draw=1
-Scorching Dragonfire|I|1R|rem=dmg3 tgt=c exiledie
-Premature Burial|S|1B|rem=destroy tgt=c nonblack newonly
-Zombify|S|3B|rean=zombify
 """

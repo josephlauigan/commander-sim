@@ -1,0 +1,4 @@
+21:44:43 start: 0 games already done; decks ['alela', 'jodah', 'galadriel', 'yshtola', 'seph', 'sauron', 'veyran']; tiers ['t1', 't2', 't3', 't4', 't5']; swap none; games per cell 72; jobs 22; timeout 2700s; stop launching 20:00, deadline 20:30
+22:44:44 progress: 2272 games done, 0 crashes, 0 timeouts, 21 running
+22:51:46 finished: 2520 games done, 0 crashes, 0 timeouts
+22:51:46 WATCHDOG done

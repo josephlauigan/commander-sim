@@ -116,7 +116,7 @@ class Server(unittest.TestCase):
     def test_options(self):
         st, _, body = self.call('GET', '/api/options')
         d = json.loads(body)
-        self.assertEqual(sorted(x['key'] for x in d['decks']), ['alela', 'galadriel', 'jodah', 'marchesa', 'sauron', 'seph', 'veyran', 'yshtola', 'zur'])
+        self.assertEqual(sorted(x['key'] for x in d['decks']), ['alela', 'galadriel', 'jodah', 'sauron', 'seph', 'veyran', 'yshtola'])
         self.assertEqual([t['key'] for t in d['tiers']], ['t1', 't2', 't3', 't4', 't5'])
         self.assertEqual(len(d['tiers'][2]['decks']), 5)
         self.assertIn('images', d)
@@ -131,18 +131,18 @@ class Server(unittest.TestCase):
     def test_picked_opponents_seat_and_tools(self):
         st, _, body = self.call('GET', '/api/options')
         t1 = [x['key'] for x in json.loads(body)['tiers'][0]['decks']][:3]
-        st, _, body = self.call('POST', '/api/new', {'deck': 'marchesa', 'tier': 't1', 'opponents': t1, 'seat': 2,
+        st, _, body = self.call('POST', '/api/new', {'deck': 'alela', 'tier': 't1', 'opponents': t1, 'seat': 2,
                                                      'ai': 'adaptive', 'images': False, 'tools': {'hint': False}})
         self.assertEqual(st, 200)
         seats = json.loads(body)['seats']
-        self.assertEqual(seats[1], 'marchesa'); self.assertEqual(sorted(seats[:1] + seats[2:]), sorted(t1))
+        self.assertEqual(seats[1], 'alela'); self.assertEqual(sorted(seats[:1] + seats[2:]), sorted(t1))
         game = json.loads(self.call('GET', '/api/state')[2])['game']
         self.assertEqual(game['tools'], {'hint': False, 'undo': True, 'compare': True})
         self.call('POST', '/api/quit', {})
 
     def test_auto_pass(self):
-        self.assertEqual(self.call('POST', '/api/new', {'deck': 'zur', 'tier': 't2', 'autopass': 'never'})[0], 400)
-        self.call('POST', '/api/new', {'deck': 'zur', 'tier': 't2', 'seed': 3, 'ai': 'adaptive', 'images': False,
+        self.assertEqual(self.call('POST', '/api/new', {'deck': 'yshtola', 'tier': 't2', 'autopass': 'never'})[0], 400)
+        self.call('POST', '/api/new', {'deck': 'yshtola', 'tier': 't2', 'seed': 3, 'ai': 'adaptive', 'images': False,
                                        'autopass': 'all'})
         self.wait_for(lambda e: e['kind'] == 'request')
         self.assertEqual(json.loads(self.call('GET', '/api/state')[2])['game']['autopass'], 'all')

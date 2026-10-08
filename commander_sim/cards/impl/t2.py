@@ -765,7 +765,7 @@ def _value_blink(name, gen, pips):
         return [(v - 1.0, f'{name} (end of turn)', go)]
 
 
-STYLE_KEYS = ('seph', 'veyran', 'sauron', 'marchesa', 'najeela')
+STYLE_KEYS = ('seph', 'veyran', 'sauron', 'najeela')
 
 
 @on('Restoration Angel', 'etb')

@@ -5,7 +5,7 @@
     python3 -m commander_sim.update_deck sauron new-list.txt --dry-run  # show what would change, write nothing
     python3 -m commander_sim.update_deck sauron new-list.txt --log "Why I made these swaps."
 
-The deck is one of your deck keys (seph, veyran, sauron, marchesa, zur, galadriel, yshtola, alela, jodah), a pool deck key, or a path to a deck .md file.
+The deck is one of your deck keys (seph, veyran, sauron, galadriel, yshtola, alela, jodah), a pool deck key, or a path to a deck .md file.
 
 The list can be copied from most deck sites: "1 Card Name", "1x Card Name" or just "Card Name" per line. Set codes,
 collector numbers and foil marks ("(MOM) 123 *F*") are ignored, as are blank lines and headers such as "Commander"
@@ -86,7 +86,7 @@ def deck_path(which):
     if which in MINE: return _deck_path(which)
     from commander_sim import pools
     d = pools.by_key().get(which)
-    if d is None: sys.exit(f'No deck {which!r}: use seph, veyran, sauron, marchesa, zur, galadriel, yshtola, a pool deck key, or a path to a deck file')
+    if d is None: sys.exit(f'No deck {which!r}: use seph, veyran, sauron, galadriel, yshtola, alela, jodah, a pool deck key, or a path to a deck file')
     return d.path
 
 

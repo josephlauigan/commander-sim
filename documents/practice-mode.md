@@ -15,7 +15,7 @@ Status: design agreed, not yet built. Screen mockups: [Commander Practice Table]
 ## Non-goals
 
 - **Not a full rules engine.** You play against the simulator's model of Commander, with its simplifications (see [Rules model](#rules-model)). Gaps that manual play exposes get fixed in the engine, which also improves the simulations.
-- **No online play** and no deck building (two people on one local network is supported: see [Two players on a network](#two-players-on-a-network)). Decks come from your deck folders (`decklists/JD/`, `Avery/`, `Other/`) and are edited with `update_deck` as today.
+- **No online play** and no deck building (two people on one local network is supported: see [Two players on a network](#two-players-on-a-network)). Decks come from your deck folders (`decklists/JD/`, `Avery/`) and are edited with `update_deck` as today.
 - **The simulations are unchanged.** Every new code path runs only when a human is seated. The existing test suite and the recorded sim numbers must not move.
 
 ## Starting it
@@ -31,7 +31,7 @@ python3 -m commander_sim.play --lan      # a friend on the same network can join
 The mockup has one artboard per screen.
 
 1. **New game (setup).**
-   - **Your deck:** your four decks, each shown with its commander's art, bracket, Game Changer count and its average win rate from the latest overnight run.
+   - **Your deck:** your decks, each shown with its commander's art, bracket, Game Changer count and its average win rate from the latest overnight run.
    - **The table:** the five tiers, each with its five decks and the chosen deck's sim win rate against that tier.
    - **Opponents:** three drawn at random from the tier (the default), or you pick three.
    - **Options:**
@@ -153,7 +153,7 @@ browser (static HTML/CSS/JS)  <-- JSON + server-sent events -->  play/server.py 
 
 ### Two players on a network
 
-Two people, each on their own computer, play two different decks of your deck folders (`decklists/JD/`, `Avery/`, `Other/`) against two AI opponents from the tier.
+Two people, each on their own computer, play two different decks of your deck folders (`decklists/JD/`, `Avery/`) against two AI opponents from the tier.
 
 - **One game, one engine.** The game still runs on the host's computer (the one running the server), on one engine thread. Each person's seat has its own controller; the engine already routes every decision through `human_choice(g, p)` and `controller_of(g, p)`, so it asks the right seat. Both mulligan (in seat order); priority, responses and end-of-turn windows go to each person in turn order, as at a real table.
 - **Seats.** Each browser has a cookie. The host opens the table (`POST /api/new` with `two`), which waits in a lobby with a six-digit code; the friend joins with the code and a deck other than the host's. The game maps both cookies to their seats. A page on the host computer without a seat plays the host's seat (as with one player). Only the host computer can start, save, load or end games.

@@ -1,6 +1,6 @@
-"""What the setup screen shows: your four decks (commander, bracket, Game Changers, how they do in the simulations) and
+"""What the setup screen shows: your decks (commander, bracket, Game Changers, how they do in the simulations) and
 the five tiers (their decks, and how the chosen deck does against each). Read from the repository's own files:
-decklists/JD/, Avery/ and Other/, decklists/pool/, the card cache's Game Changer flags, and the look-ahead results table in
+decklists/JD/ and Avery/, decklists/pool/, the card cache's Game Changer flags, and the look-ahead results table in
 decklists/pool/pool-results.md (section 0d)."""
 import os
 import re
@@ -10,7 +10,7 @@ from commander_sim.decks import DECKS, FILES as DECK_FILES, deck_path
 
 RESULTS = os.path.join(ROOT, 'decklists', 'pool', 'pool-results.md')
 FILES = {k: f for k, (_, f) in DECK_FILES.items()}
-ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'marchesa': 'marchesa', 'zur': 'zur', 'galadriel': 'galadriel', "y'shtola": 'yshtola', 'yshtola': 'yshtola', 'alela': 'alela', 'jodah': 'jodah'}
+ROW_NAMES = {'sephiroth': 'seph', 'veyran': 'veyran', 'sauron': 'sauron', 'galadriel': 'galadriel', "y'shtola": 'yshtola', 'yshtola': 'yshtola', 'alela': 'alela', 'jodah': 'jodah'}
 
 
 def display_name(key):
@@ -24,7 +24,8 @@ def display_name(key):
 
 
 def win_rates(path=RESULTS):
-    """{deck key: {tier: win %}} from the results table of your decks against the tiers (look-ahead AI)"""
+    """{deck key: {tier: win %}} from the results tables of your decks against the tiers (look-ahead AI); the newest
+    table comes first, so a deck's first row wins"""
     if not os.path.exists(path): return {}
     with open(path, encoding='utf-8') as f: txt = f.read()
     m = re.search(r'^### 0d\..*?\n(.*?)(?=^#)', txt, re.M | re.S)
@@ -34,7 +35,7 @@ def win_rates(path=RESULTS):
         key = ROW_NAMES.get(cells[0].lower()) if cells else None
         if key is None or len(cells) < 6: continue
         rates = [re.search(r'([\d.]+)%', c) for c in cells[1:6]]
-        if all(rates): out[key] = {t: float(r.group(1)) for t, r in zip(pools.TIERS, rates)}
+        if all(rates) and key not in out: out[key] = {t: float(r.group(1)) for t, r in zip(pools.TIERS, rates)}
     return out
 
 

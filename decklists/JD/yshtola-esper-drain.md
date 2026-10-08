@@ -3,12 +3,12 @@
 **Updated 2026-10-03.** Out: Clever Concealment, Disdainful Stroke, Momentary Blink, Rootborn Defenses, Take Up the Shield. In: Cast Away Doubt, Memory Trap, Static Net, Statute of Denial, Your Fate Ends Here. Five rarely cast cards (each cast in 5% or less of the games it was drawn, or mana value 2) out for spells of mana value 3 or more that trigger Y'shtola: Static Net (exile, 2 life, a Powerstone), Cast Away Doubt (draw two; with her trigger each opponent loses 4), Your Fate Ends Here (instant removal), Memory Trap (exile) and Statute of Denial (a counter that triggers her).
 **Updated 2026-10-04.** Out: Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, Temple of Deceit, Temple of Enlightenment, Temple of Silence, Vivid Creek, Vivid Marsh, Vivid Meadow. In: 4 Island, 3 Plains, 3 Swamp. The ten lands that always entered tapped became basics. Tested: about +1.2 points on average (1,000 paired games per tier, adaptive AI), positive in four of five tiers; Y'shtola wants to land on turn 3 or 4 with a spell to follow, and no land now always enters tapped.
 **Updated 2026-10-05.** Out: Enslave, Jester's Cap, Plea for Guidance. In: Bolas's Citadel, Consecrated Sphinx, Smothering Tithe. Enslave → Consecrated Sphinx, Plea for Guidance → Bolas's Citadel, Jester's Cap → Smothering Tithe. Three cards that sat in hand most games out for three Game Changers: the deck moves to Bracket 4 with five. Tested: +1.2 points on average, ahead in all five tiers (1,000 paired games per tier, adaptive AI); Smothering Tithe's Treasures ease the mana the deck is short of.
-**Updated 2026-10-06.** Out: Vanquish the Horde. In: Mystical Tutor. Vanquish the Horde → Mystical Tutor (from Veyran): finds Exsanguinate or Debt to the Deathless at the end of an opponent's turn. Vanquish was her most redundant reset (Austere Command, Crux of Fate and Massacre Wurm stay). Six Game Changers (Bracket 4).
+**Updated 2026-10-06.** Out: Vanquish the Horde. In: Mystical Tutor. Vanquish the Horde → Mystical Tutor: finds Exsanguinate or Debt to the Deathless at the end of an opponent's turn. Vanquish was her most redundant reset (Austere Command, Crux of Fate and Massacre Wurm stay). Six Game Changers (Bracket 4).
 **Updated 2026-10-07.** Out: Statute of Denial. In: Polluted Bonds. Statute of Denial → Polluted Bonds: a five-mana enchantment that triggers her when cast, then drains an opponent 2 (and gains you 2, feeding Sanguine Bond and Marauding Blight-Priest) on every land they play. Statute was stuck in hand in about three quarters of the games it was drawn.
 **Updated 2026-10-07.** Out: Crux of Fate. In: Grand Arbiter Augustin IV. Crux of Fate → Grand Arbiter Augustin IV: your white and blue spells cost {1} less each, opponents' spells {1} more. Crux was stuck in hand in about six games in ten. Seven Game Changers (Bracket 4). Tested at −0.6 points (fast AI, 1,000 pairs per tier), within noise.
 
 2026-10-03
-**Added 2026-10-03.** In the simulator as deck key `yshtola` (`python3 -m commander_sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. It shares much of its Esper shell with the Zur deck (`zur-esper-auras.md`), but it is a separate deck with its own commander, plan and list; Zur the Enchanter is in the 99 here.
+**Added 2026-10-03.** In the simulator as deck key `yshtola` (`python3 -m commander_sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. Zur the Enchanter is in the 99.
 
 ## Strategy
 
@@ -106,7 +106,7 @@ The list is exactly 100 cards.
 
 Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so Swamps outnumber the other basics. Blue has the fewest sources. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception.
 
-**Curve.** One-drops 8, two-drops 7, three-drops 22, four-drops 15, five 4, six 6. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slower curve than the Zur deck's, by design: Y'shtola pays you for mana value 3 and up.
+**Curve.** One-drops 8, two-drops 7, three-drops 22, four-drops 15, five 4, six 6. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
 **Card types.** 14 creatures, 15 enchantments, 8 artifacts, 9 instants, 15 sorceries, 1 planeswalker.
 
@@ -125,19 +125,19 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 - **Theft:** Bribery.
 - **Board wipe (one):** Austere Command.
 - **Grand Arbiter Augustin IV** (10-07): your white and blue spells cost {1} less each (a white-and-blue spell {2} less), and opponents' spells cost {1} more.
-- **Mystical Tutor** (10-06, from Veyran): at an opponent's end step, put Exsanguinate or Debt to the Deathless on top for your turn.
+- **Mystical Tutor** (10-06): at an opponent's end step, put Exsanguinate or Debt to the Deathless on top for your turn.
 
 ## What the simulator found
 
 Measured on 2026-10-03 with the look-ahead AI against the loose profile (opponents counter and remove freely: the worst case), 120 games per tier, the same settings as the other recent decks in `decklists/pool/pool-results.md`. An even share is 25%.
 
-| Tier | Y'shtola | Zur (same settings) | Galadriel (same settings) |
-| --- | --- | --- | --- |
-| T1 High B2 / Low B3 | **31.7%** (24-40) | 24.2% | 15.0% |
-| T2 Mid B3 | **50.8%** (42-60) | 15.0% | 11.7% |
-| T3 High B3 | **37.5%** (29-46) | 16.7% | 8.3% |
-| T4 Low B4 | **35.8%** (28-45) | 10.0% | 12.5% |
-| T5 High B4 | 14.2% (9-22) | 16.7% | 8.3% |
+| Tier | Y'shtola | Galadriel (same settings) |
+| --- | --- | --- |
+| T1 High B2 / Low B3 | **31.7%** (24-40) | 15.0% |
+| T2 Mid B3 | **50.8%** (42-60) | 11.7% |
+| T3 High B3 | **37.5%** (29-46) | 8.3% |
+| T4 Low B4 | **35.8%** (28-45) | 12.5% |
+| T5 High B4 | 14.2% (9-22) | 8.3% |
 
 **Above an even share through Low Bracket 4, below it against High Bracket 4.** Tier 2 is the standout, at about half of all games, level with Sephiroth. Against Tier 5 the fast combo decks (Kinnan, Urza, Yawgmoth) win before the drain gets there.
 
@@ -278,6 +278,6 @@ Replacements worth testing:
 - **Removal with mana value 3:** Mortify (instant) or Vindicate (sorcery).
 - **More lifegain payoffs:** Vito, Thorn of the Dusk Rose; Exquisite Blood. Exquisite Blood with Sanguine Bond is an infinite combo and moves the deck toward Bracket 4.
 
-**Life is still a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Spire of Industry and Talisman of Progress all cost life. Unlike the Zur deck, this one gains it back steadily: 2 per Y'shtola trigger, plus every drain.
+**Life is still a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Spire of Industry and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
 
 **Mystic Remora's upkeep grows.** Pay it for a turn or two at most, then let it go.

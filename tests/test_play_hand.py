@@ -1,5 +1,5 @@
 """Practice mode: casts from hand that the card code keeps for the AI (play/cards.py HAND), copying spells with
-Return the Favor and Dualcaster Mage, and new targets for copies. The AI never casts these for the human seat."""
+Return the Favor, and new targets for copies. The AI never casts these for the human seat."""
 import unittest
 from tests.table import table, hand, perm
 from commander_sim import engine as E
@@ -61,7 +61,7 @@ class FromHand(unittest.TestCase):
         self.assertIn(c, s.exile)                                      # not cast: stays in exile
 
     def test_cycling_at_instant_speed(self):
-        g = table('marchesa', 'veyran'); s, v = g.players
+        g = table('seph', 'veyran'); s, v = g.players
         g.active = v
         hand(s, 'Unearth'); pool(s, C=2); n = len(s.hand)
         seat(g, s, [{'do': 'cast', 'card': 0}, by_text('cycling'), {'do': 'pass'}])
@@ -69,28 +69,10 @@ class FromHand(unittest.TestCase):
         self.assertEqual(len(s.hand), n); self.assertIn(E.DB['Unearth'], s.gy)
 
     def test_unearth_your_pick(self):
-        g = table('marchesa', 'veyran'); s = g.players[0]
-        hand(s, 'Unearth'); s.gy += [E.DB['Phyrexian Delver'], E.DB['Burglar Rat']]; pool(s, B=1)
+        g = table('seph', 'veyran'); s = g.players[0]
+        hand(s, 'Unearth'); s.gy += [E.DB['Carrion Feeder'], E.DB['Burglar Rat']]; pool(s, B=1)
         main(g, s, {'do': 'cast', 'card': 0}, by_text('cast it'), by_text('Burglar Rat'))
         self.assertTrue(any(m.name == 'Burglar Rat' for m in s.perms))
-
-    def test_disintegrate_at_a_player(self):
-        g = table('marchesa', 'veyran'); s, v = g.players
-        hand(s, 'Disintegrate'); pool(s, R=1, C=4)
-        main(g, s, {'do': 'cast', 'card': 0}, by_text('Veyran'), by_text('X = 4'))
-        self.assertEqual(v.life, 36)
-
-    def test_disembowel_pays_the_mana_value(self):
-        g = table('marchesa', 'veyran'); s, v = g.players
-        hand(s, 'Disembowel'); t = perm(g, v, 'Archmage Emeritus'); pool(s, B=1, C=4)      # its mana value is 4
-        main(g, s, {'do': 'cast', 'card': 0}, by_text('Archmage'))
-        self.assertNotIn(t, v.perms); self.assertEqual(mana.pool_of(s).total(), 0)
-
-    def test_lethal_throwdown(self):
-        g = table('marchesa', 'veyran'); s, v = g.players
-        hand(s, 'Lethal Throwdown'); f = perm(g, s, 'Burglar Rat'); t = perm(g, v, 'Guttersnipe'); pool(s, B=1)
-        main(g, s, {'do': 'cast', 'card': 0}, by_text('Guttersnipe'), by_text('Burglar Rat'))
-        self.assertNotIn(t, v.perms); self.assertNotIn(f, s.perms)
 
     def test_sokenzan_channel(self):
         g = table('veyran', 'seph'); v = g.players[0]
@@ -128,17 +110,6 @@ class Copies(unittest.TestCase):
         hand(v, 'Lightning Bolt', 'Return the Favor'); pool(v, R=4)
         main(g, v, {'do': 'cast', 'card': 0}, by_text('Sephiroth'), {'do': 'pass'})
         self.assertEqual(s.life, 37); self.assertTrue(any(c.name == 'Return the Favor' for c in v.hand))
-
-    def test_dualcaster_mage_copies_an_opponents_spell(self):
-        from commander_sim.play import cards
-        g = table('marchesa', 'veyran'); s, v = g.players
-        bolt = E.DB['Lightning Bolt']
-        hand(s, 'Dualcaster Mage'); pool(s, R=2, C=1)
-        g.cur_cast = (bolt, {'face': s}, 'hand')
-        seat(g, s, [by_text('Veyran')])
-        why = cards.copy_in_response(g, s, s.hand[0], bolt, v)
-        self.assertIsNone(why)
-        self.assertEqual(v.life, 37); self.assertTrue(any(m.name == 'Dualcaster Mage' for m in s.perms))
 
 
 if __name__ == '__main__':

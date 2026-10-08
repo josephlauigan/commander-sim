@@ -1,5 +1,5 @@
-"""Your decks: the lists in decklists/JD/, decklists/Avery/ and decklists/Other/ (one folder per owner, see
-deck_files.py), read from each file's '## Import list' block. The outside decks live in decklists/pool/ (pools.py).
+"""Your decks: the lists in decklists/JD/ and decklists/Avery/ (one folder per owner, see deck_files.py), read from
+each file's '## Import list' block. The outside decks live in decklists/pool/ (pools.py).
 Any listed card without hand-written tags is looked up on Scryfall and modeled automatically (cached in
 data/scryfall_cache.json).
 

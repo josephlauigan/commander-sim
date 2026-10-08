@@ -1,4 +1,4 @@
-"""Where your deck files live: one folder per owner under decklists/ (JD, Avery, Other).
+"""Where your deck files live: one folder per owner under decklists/ (JD, Avery).
 
 Deck files are looked for in $SIM_DECKS (flat, or with the owner folders), then decklists/<owner>/ in the repository,
 then /mnt/project (Claude's project copy)."""
@@ -9,8 +9,7 @@ from commander_sim import ROOT
 FILES = {'seph': ('JD', 'sephiroth-phyrexian-reanimator.md'), 'veyran': ('JD', 'veyran-izzet-spellslinger.md'),
          'sauron': ('JD', 'sauron-grixis-amass.md'), 'yshtola': ('JD', 'yshtola-esper-drain.md'),
          'galadriel': ('Avery', 'galadriel-bant-rebels.md'), 'alela': ('Avery', 'alela-esper-faeries.md'),
-         'jodah': ('JD', 'jodah-wubrg-legends.md'),
-         'marchesa': ('Other', 'marchesa-grixis-recursion.md'), 'zur': ('Other', 'zur-esper-auras.md')}
+         'jodah': ('JD', 'jodah-wubrg-legends.md')}
 OWNERS = tuple(dict.fromkeys(o for o, _ in FILES.values()))
 
 

@@ -49,11 +49,11 @@ class Triggers(unittest.TestCase):
         self.assertEqual(len(drained(g, s)), 1)                 # passed: it resolves
 
     def test_the_probe_never_doubles_an_effect(self):
-        g = table('zur', 'veyran', 'sauron'); z, v, r = g.players
+        g = table('yshtola', 'veyran', 'sauron'); z, v, r = g.players
         seat(g, r, passes)                                      # a person at the table: triggers are probed first
-        m = perm(g, z, 'Ministrant of Obligation')
+        m = perm(g, z, 'Tithe Taker')                            # afterlife 1
         E.die(g, m, 'destroy')
-        self.assertEqual(sum(1 for x in z.perms if x.token), 2)
+        self.assertEqual(sum(1 for x in z.perms if x.token), 1)
 
     def test_the_active_player_s_triggers_go_on_the_stack_first(self):
         g = table('seph', 'veyran', 'sauron'); s, v, r = g.players
@@ -119,13 +119,13 @@ class Triggers(unittest.TestCase):
 
     def test_light_paws_has_its_window(self):
         from commander_sim.cards import cardimpl as CI
-        table('zur', 'veyran')
+        table('yshtola', 'veyran')
         self.assertTrue(E.converted(CI.HOOKS["Light-Paws, Emperor's Voice"]['etb']))
 
     def test_a_converted_hook_has_its_window(self):
         from commander_sim.cards import cardimpl as CI
-        table('zur', 'veyran')
-        fn = CI.HOOKS['Ministrant of Obligation']['self_dies']
+        table('yshtola', 'veyran')
+        fn = CI.HOOKS['Tithe Taker']['self_dies']
         self.assertTrue(E.converted(fn))
 
 

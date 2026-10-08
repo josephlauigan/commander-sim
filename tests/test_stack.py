@@ -76,7 +76,7 @@ class Abilities(unittest.TestCase):
     """activated abilities go on the stack once their cost is paid; mana abilities don't"""
     def test_the_ai_counters_an_important_ability_with_azorius_guildmage(self):
         from tests.table import perm
-        g = table('veyran', 'zur'); v, z = g.players
+        g = table('veyran', 'yshtola'); v, z = g.players
         perm(g, z, 'Azorius Guildmage'); lands(z, 'Island', 3)
         src = perm(g, v, 'Triskelion')
         self.assertFalse(E.ability_window(g, v, src, '1 damage', imp=8))         # countered
@@ -92,7 +92,7 @@ class Abilities(unittest.TestCase):
 
     def test_a_countered_equip_does_not_attach(self):
         from tests.table import perm
-        g = table('sauron', 'zur'); s, z = g.players
+        g = table('sauron', 'yshtola'); s, z = g.players
         perm(g, z, 'Azorius Guildmage'); lands(z, 'Island', 3)
         a = perm(g, s, 'Orcish Bowmasters'); e = perm(g, s, 'Lightning Greaves')
         lands(s, 'Swamp', 2)
@@ -102,7 +102,7 @@ class Abilities(unittest.TestCase):
     def test_you_counter_an_ability_with_azorius_guildmage(self):
         from tests.table import perm
         from commander_sim.play import mana
-        g = table('veyran', 'zur'); v, z = g.players
+        g = table('veyran', 'yshtola'); v, z = g.players
         gm = perm(g, z, 'Azorius Guildmage')
         mana.pool_of(z).add('U', 1); mana.pool_of(z).add('C', 2)
         src = perm(g, v, 'Triskelion')

@@ -228,7 +228,7 @@ def apply(g, p, act):
         why = legal.check_cast_gy(g, p, c)
         if why: return why
         from commander_sim.play import cards
-        if c.name in cards.GY: return cards.GY[c.name](g, p, c)          # Momentary Blink's flashback, Demonic Embrace
+        if c.name in cards.GY: return cards.GY[c.name](g, p, c)          # graveyard casts the card code keeps for you
         return cast(g, p, c, 'gy')
     if do == 'land':
         c = _hand_card(p, act)
@@ -409,7 +409,7 @@ def _cast(g, p, c, zone):
             if pick is None: return None
             ctx['mastery_pick'] = pick
     from commander_sim.play import cards as mycards
-    if c.name in mycards.CAST_TARGET:                         # a tagless spell with a creature target (Act of Treason)
+    if c.name in mycards.CAST_TARGET:                         # a tagless spell with a creature target
         spec = mycards.CAST_TARGET[c.name]
         prompt, keep = spec if isinstance(spec, tuple) else (spec, None)
         t = mycards.pick_creature(g, p, prompt, optional=True, keep=keep)
