@@ -9,6 +9,7 @@ ios/
   pyproject.toml              the Briefcase project (app name, bundle id, iOS settings)
   icons/                      the app icon at every size (python3 tools/app_icon.py redraws them)
   stage.py                    copies the core, the deck lists and the card data into src/ before a build
+  run.sh                      stage, build and start in the iPad simulator (the Mac)
   src/commander_ipad/
     app.py                    the app: starts the server, shows the table full screen
     bootstrap.py              start-up without Toga: data folders, first-launch copy (tests/test_ios_app.py)
@@ -48,12 +49,15 @@ One-time setup:
 
 Then each time:
 ```
+ios/run.sh                        # stage, update the app, build, and start it in the iPad Pro 13-inch (M5) simulator
+```
+`DEVICE="iPad Air 11-inch (M3)" ios/run.sh` picks another simulator (`xcrun simctl list devices` lists them). The
+steps it runs, if you want them one at a time:
+```
 python3 ios/stage.py              # copy the current code, decks and card data into ios/src/
 cd ios
 briefcase dev                     # the app in a window on the Mac: the quickest check
-briefcase create iOS              # first time only: makes the Xcode project
-briefcase update iOS              # later times: puts the newly staged code into it
-briefcase run iOS                 # builds it and starts it in the iPad simulator (pick an iPad)
+briefcase run iOS -u -d "iPad Pro 13-inch (M5)"    # -u: put the newly staged code in first (creates the app the first time)
 ```
 
 ## Put it on your iPad
