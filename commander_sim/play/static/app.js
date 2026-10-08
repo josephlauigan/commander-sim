@@ -450,13 +450,26 @@ async function saveGame() {
 
 async function listSaves() {
   const r = await api('/api/saves');
-  if (!r.ok || !r.data.saves.length) return;
+  if (!r.ok) return;
+  showResume(r.data.autosave);
+  if (!r.data.saves.length) return;
   $('#saves').replaceChildren(el('table', { class: 'review' },
     el('thead', {}, el('tr', {}, ['Saved', 'Deck', 'Tier', 'Seed', 'Where', ''].map((h) => el('th', {}, h)))),
     el('tbody', {}, r.data.saves.map((x) => el('tr', {}, el('td', {}, x.saved_at || ''), el('td', {}, x.partner ? `${x.deck} + ${x.partner} (two players)` : x.deck),
       el('td', {}, (x.tier || '').toUpperCase()), el('td', {}, x.seed),
       el('td', {}, x.finished ? `finished, round ${x.round}` : `round ${x.round}`),
       el('td', {}, el('button', { onclick: () => loadGame(x.name) }, x.finished ? 'Open (review)' : 'Continue')))))));
+}
+
+// the game in progress when the page or the app was closed (the server saves it at each of your decisions)
+function showResume(x) {
+  const box = $('#resume');
+  box.hidden = !x || x.finished;
+  if (box.hidden) return;
+  const deck = catalog.decks.find((d) => d.key === x.deck);
+  box.replaceChildren(el('span', {}, el('strong', {}, 'Your last game: '),
+    `${deck ? deck.name : x.deck} at ${(x.tier || '').toUpperCase()}, round ${x.round}`, el('small', {}, ` (seed ${x.seed}, ${x.saved_at || ''})`)),
+  el('button', { class: 'primary big', onclick: () => loadGame('autosave.json') }, 'Continue'));
 }
 
 async function loadGame(name) {
@@ -654,7 +667,9 @@ function renderSetup() {
   $('#picks').replaceChildren(...tier.decks.map((x) => el('label', {},
     el('input', Object.assign({ type: 'checkbox', value: x.key }, prev.has(x.key) ? { checked: '' } : {})), ' ', x.name)));
   $('#picks').hidden = $('#newgame').opp.value !== 'pick';
-  const f = $('#newgame'), pair = f.players.value === 'two';
+  const f = $('#newgame');
+  if (catalog.app) { f.players.value = 'one'; $('#players-pick').hidden = true; }   // the iPad app: one player only
+  const pair = f.players.value === 'two';
   for (const x of document.querySelectorAll('.opp-n')) x.textContent = pair ? 'Two' : 'Three';
   for (const x of document.querySelectorAll('.opp-n-lc')) x.textContent = pair ? 'two' : 'three';
   document.querySelector('.seat-pick').hidden = pair;

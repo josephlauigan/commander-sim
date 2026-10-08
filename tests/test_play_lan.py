@@ -226,6 +226,7 @@ class Browser:
 class TwoPlayerServer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.saves_dir, server.SAVES = server.SAVES, __import__('tempfile').mkdtemp()     # autosaves go here, not data/saves
         cls.srv = server.make_server(port=0)
         cls.srv.hub.lan = True
         # requests marked X-Test-Remote come "from the other computer" (the test can't use a second machine)
@@ -236,6 +237,7 @@ class TwoPlayerServer(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.srv.hub.quit(); cls.srv.shutdown(); cls.srv.server_close()
+        server.SAVES = cls.saves_dir
 
     def open_table(self):
         host, friend = Browser(self.port), Browser(self.port, remote=True)

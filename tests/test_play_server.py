@@ -10,6 +10,7 @@ from commander_sim.play import server
 class Server(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.saves_dir, server.SAVES = server.SAVES, __import__('tempfile').mkdtemp()     # autosaves go here, not data/saves
         cls.srv = server.make_server(port=0)
         cls.port = cls.srv.server_address[1]
         threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
@@ -17,6 +18,7 @@ class Server(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.srv.hub.quit(); cls.srv.shutdown(); cls.srv.server_close()
+        server.SAVES = cls.saves_dir
 
     def call(self, method, path, body=None):
         c = http.client.HTTPConnection('127.0.0.1', self.port, timeout=30)
@@ -87,6 +89,36 @@ class Server(unittest.TestCase):
             self.call('POST', '/api/quit', {})
         finally:
             server.SAVES = saved_dir
+
+    def test_the_game_saves_itself_at_each_of_your_decisions(self):
+        import os, time
+        path = os.path.join(server.SAVES, server.AUTOSAVE)
+
+        def autosaved(answers):
+            for _ in range(100):                     # the pump writes it just after the decision's event
+                if os.path.exists(path):
+                    with open(path, encoding='utf-8') as f: d = json.load(f)
+                    if len(d['answers']) == answers: return d
+                time.sleep(0.05)
+            self.fail(f'no autosave with {answers} answers')
+        self.call('POST', '/api/new', {'deck': 'sauron', 'tier': 't2', 'seed': 4, 'ai': 'adaptive', 'images': False})
+        mull = self.wait_for(lambda e: e['kind'] == 'request')
+        self.assertEqual(autosaved(0)['seed'], 4)
+        self.call('POST', '/api/answer', {'id': mull['id'], 'answer': 'keep'})
+        nxt = self.wait_for(lambda e: e['kind'] == 'request', since=mull['id'])
+        autosaved(1)
+        listed = json.loads(self.call('GET', '/api/saves')[2])
+        self.assertEqual(listed['saves'], [])                                     # not among your saved games
+        self.assertEqual((listed['autosave']['deck'], listed['autosave']['seed']), ('sauron', 4))
+        self.srv.hub.quit()                          # the app closed by iOS: the game is gone, its autosave isn't
+        self.assertTrue(os.path.exists(path))
+        self.assertEqual(self.call('POST', '/api/load', {'name': server.AUTOSAVE, 'images': False})[0], 200)
+        again = self.wait_for(lambda e: e['kind'] == 'request')
+        self.assertEqual(again['request']['prompt'], nxt['request']['prompt'])      # Continue: back where it was
+        self.call('POST', '/api/quit', {})            # you ended it: nothing to continue
+        self.assertFalse(os.path.exists(path))
+        self.assertIsNone(json.loads(self.call('GET', '/api/saves')[2])['autosave'])
+        self.assertFalse(json.loads(self.call('GET', '/api/options')[2])['app'])
 
     def test_card_images_are_served(self):
         import os, tempfile

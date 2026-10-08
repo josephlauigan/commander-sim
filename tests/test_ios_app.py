@@ -79,7 +79,7 @@ saved = post('api/save', {})
 print(json.dumps({'root': commander_sim.ROOT, 'data': commander_sim.DATA, 'saves': server.SAVES,
                   'core': commander_sim.__file__, 'page': '<html' in page.lower(),
                   'decks': sorted(d['key'] for d in opts['decks']), 'tiers': len(opts['tiers']),
-                  'decision': bool(st['pending']), 'saved': sorted(os.listdir(server.SAVES)) if os.path.isdir(server.SAVES) else [],
+                  'decision': bool(st['pending']), 'app': opts['app'], 'saved': sorted(os.listdir(server.SAVES)) if os.path.isdir(server.SAVES) else [],
                   'save_reply': saved}))
 srv.shutdown()
 '''
@@ -110,8 +110,9 @@ class StagedApp(unittest.TestCase):
         self.assertEqual(got['decks'], ['alela', 'galadriel', 'jodah', 'sauron', 'seph', 'veyran', 'yshtola'])
         self.assertEqual(got['tiers'], 5)
         self.assertTrue(os.path.exists(os.path.join(data, 'scryfall_cache.json')))
+        self.assertTrue(got['app'])                                      # the page hides two-player mode
         self.assertTrue(got['decision'])                                 # a game dealt and asked for your first play
-        self.assertEqual(len(got['saved']), 1, got['save_reply'])        # saved into the app's writable folder
+        self.assertEqual(sorted(got['saved']), sorted(['autosave.json', got['save_reply']['name']]))   # in the app's folder
 
 
 if __name__ == '__main__':

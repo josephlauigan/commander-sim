@@ -15,6 +15,10 @@ ios/
   src/commander_sim/          (staged, not in git) the copy of the core
 ```
 
+**Leaving the app.** iOS may close the app while it's in the background. The game saves itself each time it waits
+on you, so when the app opens again the setup screen offers *Continue* for the game you were in. The app also hides
+the two-player option, which needs a second computer.
+
 **Where files go.** An app's bundle is read-only. The app copies the bundled `data/` (the card cache and the card
 images) into its own writable folder the first time each build runs; saved games and images downloaded on the iPad
 live there too and survive updates. A new build's card cache always replaces the old one.
@@ -70,9 +74,6 @@ If Briefcase says a `toga-iOS` version can't be found, change the version in `py
 ## Not done yet
 
 - **Touch.** The page was made for a mouse: hover tips, small click targets, and the layout at iPad size.
-- **Leaving the app.** iOS can close an app in the background, which loses a game in progress. The game should save
-  itself when the app goes to the background, and offer to continue when it opens.
 - **AI speed.** The look-ahead AI takes a few seconds per decision on a desktop; on the iPad it may need fewer
   playouts, or the adaptive AI by default.
-- **Two-player mode.** The "me and a friend" option needs another computer on the network, so the app should hide it.
 - **An app icon.**

@@ -163,6 +163,9 @@ A change applies from your next decision, and Undo and saved games replay it exa
 - ↶ **Undo**: takes back your last action (the game replays from its seed, so it's exact).
 - 💾 **Save**: keeps the game in `data/saves/`; the setup screen lists saved games to continue or review.
 
+The game also saves itself each time it waits on you (`data/saves/autosave.json`), so if the page or the server
+is closed mid-game, the setup screen offers *Continue* for it. Ending the game, or finishing it, clears it.
+
 **After the game**, *Review the game* lists each decision where your choice and the AI's differed, with both scores
 (where the game stood at the end of your next turn, from −100 lost to +100 won). *Try it* goes back to that decision
 with the AI's choice played, so you can see how it goes. *Play this seed again* deals the same game.

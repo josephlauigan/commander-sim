@@ -25,11 +25,14 @@
   <button id="to-setup" type="button" hidden>New game</button>
 </header>
 <section id="setup" aria-label="New game" hidden>
+  <div id="resume" class="resume" hidden></div>
   <form id="newgame">
+    <div id="players-pick">
     <h2>Players</h2>
     <div class="row">
       <label><input type="radio" name="players" value="one" checked> Just me, against three AI opponents</label>
       <label><input type="radio" name="players" value="two"> Me and a friend on another computer, against two AI opponents</label>
+    </div>
     </div>
     <p id="lan-note" class="help" hidden></p>
     <h2>Your deck</h2>
