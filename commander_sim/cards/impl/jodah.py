@@ -85,7 +85,11 @@ def jodah_cascade(g, o, mv):
             cast_card(g, o, hit, 'lib', {})
             cast = True
         else:
+            log(f'    Jodah reveals {hit.name} ({len(seen)} other cards): not cast', g)
             seen.append(hit)
+    else:                                             # nothing cheaper: the whole library is exiled, then goes back
+        log(f'    Jodah exiles {len(seen)} cards and finds no legendary nonland card with mana value below {mv}: '
+            f'they all go to the bottom in a random order (the library is shuffled)', g)
     g.rng.shuffle(seen)
     o.library[:0] = seen                              # to the bottom, random order
     return cast

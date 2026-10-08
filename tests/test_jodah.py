@@ -41,6 +41,15 @@ class Jodah(unittest.TestCase):
         self.assertIn('King Darien XLVIII', names)        # first legend below 6 from the top
         self.assertNotIn('Lyra Dawnbringer', names)
 
+    def test_a_cascade_that_finds_nothing_says_so(self):
+        g = table('jodah', 'veyran'); p = g.players[0]
+        jodah(g, p)
+        p.library = [card('Island'), card('Lyra Dawnbringer'), card('Mind Stone')]   # no legend below mana value 2
+        g.log = []
+        E.cast_card(g, p, hand(p, 'Wrenn and Six'))
+        self.assertEqual(sorted(c.name for c in p.library), ['Island', 'Lyra Dawnbringer', 'Mind Stone'])
+        self.assertTrue(any('finds no legendary nonland card with mana value below 2' in l for l in g.log))
+
     def test_no_cascade_from_a_free_cast(self):
         g = table('jodah', 'veyran'); p = g.players[0]
         jodah(g, p)
