@@ -1072,5 +1072,32 @@ class PollutedBonds(unittest.TestCase):
         self.assertEqual((q.life, p.life), (40, 40))
 
 
+class LordOfTheNazgul(unittest.TestCase):
+    """a 3/3 menace Wraith per instant or sorcery; nine Wraiths are 9/9 until end of turn"""
+    def test_wraiths(self):
+        g = table('sauron', 'veyran'); p = g.players[0]
+        lord = perm(g, p, 'Lord of the Nazgûl')
+        E.on_cast(g, p, card('Counterspell'))
+        w = [m for m in p.perms if m.token]
+        self.assertEqual(len(w), 1)
+        self.assertEqual((w[0].pow, w[0].tgh), (3, 3))
+        self.assertTrue(ais.kw(w[0], 'menace'))
+        for _ in range(7): E.on_cast(g, p, card('Counterspell'))
+        self.assertEqual(E.epow(g, w[0]), 9)
+        self.assertEqual(E.epow(g, lord), 9)
+
+
+class Palantir(unittest.TestCase):
+    """end step: an influence counter and scry 2, then a card for you or life loss for the targeted opponent"""
+    def test_counters_grow_and_pay_out(self):
+        g = table('sauron', 'veyran'); p, q = g.players
+        pl = perm(g, p, 'Palantír of Orthanc')
+        for n in range(1, 4):
+            hand, life = len(p.hand), q.life
+            E.CI.fire(g, 'end_step', p)
+            self.assertEqual(pl.data['influence'], n)
+            self.assertTrue(len(p.hand) == hand + 1 or q.life <= life)
+
+
 if __name__ == '__main__':
     unittest.main()

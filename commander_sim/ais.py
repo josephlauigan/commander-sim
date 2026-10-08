@@ -1097,6 +1097,9 @@ def sauron_prio(g, p, c):
     if 'bowmasters' in t: return 62
     if 'sword' in t: return 60
     if c.name == 'Andúril, Flame of the West': return 57          # another Sword-like piece for the Army
+    if c.name == 'Palantír of Orthanc': return 54 if p.turns <= 8 else 40     # card or damage every end step
+    if c.name == 'Lord of the Nazgûl':                         # a Wraith per instant or sorcery still to come
+        return 58 if sum(1 for x in p.hand if x.instant or x.sorcery) >= 2 else 50
     if c.dsl and any(a.get('static') == 'equip_cost' for a in c.dsl) and \
             any(a.get('source') == 'equipped' and a.get('event') == 'combat_damage' for a in c.dsl):
         return 57                                            # compiled Swords (Fire and Ice, Hearth and Home)
