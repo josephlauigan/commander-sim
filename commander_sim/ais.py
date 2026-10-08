@@ -2398,6 +2398,8 @@ def enters_rule(cd):
         else:
             ts = frozenset(w for w in re.findall(r'an? (\w+)', cond) if w in BASIC_TYPES)
             if cond.startswith('you control') and ts: rule = ('control', ts)
+    elif (m := re.search(r'you may pay (\d+) life\. if you don.t, it enters tapped', txt)):
+        rule = ('pay', int(m.group(1)))                 # shock lands, The Black Gate: pay life or enter tapped
     elif (m := re.search(r'you may reveal an? (\w+) or (\w+) card from your hand\. if you don.t, [^.]*enters tapped', txt)):
         rule = ('reveal', frozenset(w for w in m.groups() if w in BASIC_TYPES))
     _ENTER_RULES[cd.name] = rule
@@ -2414,8 +2416,19 @@ def _untapped_by_rule(g, p, cd, rule):
     if kind == 'types_more': return sum(1 for L in p.lands if rule[1] in land_types(L.cd.name)[0]) >= rule[2]
     if kind == 'reveal': return any(c is not cd and c.land and land_types(c.name)[0] & rule[1] for c in p.hand)
     if kind == 'legendary': return any(m.creature and m.cd is not None and 'leg' in m.cd.tags for m in p.perms)
+    if kind == 'pay': return pays_for_land(g, p, cd, rule[1])
     if kind == 'planeswalker': return any(m.cd is not None and 'P' in m.cd.types and not m.phased for m in p.perms)
     return False
+
+
+def pays_for_land(g, p, cd, n):
+    """the AI: pay n life so land cd enters untapped? Yes when the extra mana casts something this turn (or it's an
+    early turn) and life is comfortable"""
+    if p.life <= n + 10: return False
+    mana_after = (total_mana(g, p) if g is not None else len(p.lands)) + 1
+    spells = [c for c in p.hand if not c.land and c is not cd]
+    if any(sum(cost_of(p, c)[0:1]) + len(cost_of(p, c)[1]) == mana_after for c in spells): return True
+    return p.turns <= 3 and p.life >= 30
 
 
 def land_enters_tapped(p, cd):
@@ -2470,7 +2483,18 @@ def play_land(g, p):
 
 def play_land_card(g, p, c, how='plays'):
     """put land card c (already taken from its zone) onto the battlefield as p's land drop"""
-    p.lands.append(Land(c, land_enters_tapped(p, c))); p.land_turn = p.turns
+    rule = enters_rule(c)
+    if rule is not None and rule[0] == 'pay' and not (E.CUR_G is not None and E.CUR_G.hooks and any(
+            m.cd is not None and m.cd.name in ('Thalia, Heretic Cathar', 'Archon of Emeria') and not m.phased
+            for q in g.opps(p) for m in q.perms)):
+        hc = E.human_choice(g, p)
+        n = rule[1]
+        paid = hc.yes_no(g, p, f'{c.name}: pay {n} life so it enters untapped?') if hc is not None else pays_for_land(g, p, c, n)
+        if paid: lose_life(g, p, n, p); log(f'  {NAME(p)} pays {n} life for an untapped {c.name}', g)
+        p.lands.append(Land(c, not paid))
+    else:
+        p.lands.append(Land(c, land_enters_tapped(p, c)))
+    p.land_turn = p.turns
     if E.CI is not None and c.name in E.CI.LAND_ETB and E.CI.live(c.name): E.CI.LAND_ETB[c.name](g, p, p.lands[-1])
     p.lands_played = getattr(p, 'lands_played', 0) + 1
     log(f'  {NAME(p)} {how} {c.name}', g)

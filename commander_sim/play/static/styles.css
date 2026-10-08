@@ -71,6 +71,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; pa
 .card.portrait { width: clamp(34px, 2.6vw, 60px); height: clamp(34px, 2.6vw, 60px); } .card.portrait .face { border-radius: 50%; } .card.portrait img { object-fit: cover; object-position: 50% 18%; transform: scale(2.2); }
 #preview { position: fixed; z-index: 20; width: 300px; pointer-events: none; filter: drop-shadow(0 6px 16px #000a); }
 #preview img { width: 300px; border-radius: 14px; display: block; }
+#preview.two { width: 608px; display: flex; gap: 8px; }        /* a two-faced card: both faces */
 #preview .drawn.big { width: 300px; height: 418px; padding: 16px; font-size: 18px; border-radius: 14px; background: linear-gradient(#24563c, #163f2b); border: 2px solid var(--gold); }
 #prompt { background: var(--panel); border: 1px solid var(--gold); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; min-height: 60px; }
 #prompt h3 { margin: 0 0 8px; font-size: 14px; color: var(--gold); }
