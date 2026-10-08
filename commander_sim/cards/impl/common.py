@@ -969,7 +969,9 @@ def walker(name, abilities, status=('Approximate', ''), tags='', static=None):
         if src.loyalty is None: src.loyalty = int(src.cd.start_loyalty or 3)
         if _uses(g, p, src) >= _allowed(p): return []
         out = []
+        extra = CI.total(g, 'loyalty_extra', p) if g.hooks else 0      # Carth the Lion: each costs an extra [+1]
         for delta, label, val, eff in WALKERS[name]:
+            delta = delta + extra
             if src.loyalty + delta < 0: continue
             u = val(g, p, src)
             if u is None: continue
