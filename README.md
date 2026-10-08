@@ -46,7 +46,7 @@ decklists/Avery/          Avery's decks: Alela, Galadriel
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
 documents/                architecture.md, card-audit.md, practice-mode.md
 ios/                      the iPad app: Briefcase project, start-up code, stage.py (ios/README.md)
-tools/                    knight_dragon.py (draws practice mode's loading animation)
+tools/                    knight_dragon.py, app_icon.py (draw the loading animation and the iPad app's icon)
 tests/                    rule, card, AI and command tests (tests/README.md)
 ```
 

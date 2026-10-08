@@ -12,6 +12,7 @@ author_email = "josephlauigan@gmail.com"
 formal_name = "Commander Practice"
 description = "Practise your Commander decks against the simulator's AI opponents."
 sources = ["src/commander_ipad", "src/commander_sim"]
+icon = "icons/commander_ipad"        # icons/commander_ipad-<size>.png, drawn by tools/app_icon.py
 requires = []
 
 [tool.briefcase.app.commander_ipad.macOS]

@@ -7,6 +7,7 @@ app on a background thread and listens on the iPad only.
 ```
 ios/
   pyproject.toml              the Briefcase project (app name, bundle id, iOS settings)
+  icons/                      the app icon at every size (python3 tools/app_icon.py redraws them)
   stage.py                    copies the core, the deck lists and the card data into src/ before a build
   src/commander_ipad/
     app.py                    the app: starts the server, shows the table full screen
@@ -79,4 +80,3 @@ If Briefcase says a `toga-iOS` version can't be found, change the version in `py
   how the long press and the ability menus feel, and whether cards need to be bigger (A+ in the header does that).
 - **AI speed.** The look-ahead AI takes a few seconds per decision on a desktop; on the iPad it may need fewer
   playouts, or the adaptive AI by default.
-- **An app icon.**
