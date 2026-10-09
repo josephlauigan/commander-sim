@@ -2,3 +2,21 @@
 22:44:44 progress: 2272 games done, 0 crashes, 0 timeouts, 21 running
 22:51:46 finished: 2520 games done, 0 crashes, 0 timeouts
 22:51:46 WATCHDOG done
+06:22:39 start: 2520 games already done; decks ['alela', 'jodah', 'galadriel', 'yshtola', 'seph', 'sauron', 'veyran']; tiers ['t1', 't2', 't3', 't4', 't5']; swap none; games per cell 480; jobs 22; timeout 2700s; stop launching 20:00, deadline 20:30
+06:33:37 start: 2958 games already done; decks ['alela', 'jodah', 'galadriel', 'yshtola', 'seph', 'sauron', 'veyran']; tiers ['t1', 't2', 't3', 't4', 't5']; swap none; games per cell 960; jobs 22; timeout 2700s; stop launching 06:00, deadline 06:30
+07:33:37 progress: 5231 games done, 0 crashes, 0 timeouts, 21 running
+20:00:00 LAUNCHER resuming the run
+20:00:00 start: 6097 games already done; decks ['alela', 'jodah', 'galadriel', 'yshtola', 'seph', 'sauron', 'veyran']; tiers ['t1', 't2', 't3', 't4', 't5']; swap none; games per cell 960; jobs 22; timeout 2700s; stop launching 19:00, deadline 19:30
+21:00:01 progress: 8402 games done, 0 crashes, 0 timeouts, 20 running
+22:00:02 progress: 10653 games done, 0 crashes, 0 timeouts, 21 running
+22:59:59 start: 12980 games already done; decks ['alela', 'jodah', 'galadriel', 'yshtola', 'seph', 'sauron', 'veyran']; tiers ['t1', 't2', 't3', 't4', 't5']; swap none; games per cell 960; jobs 24; timeout 2700s; stop launching 19:00, deadline 19:30
+23:59:59 progress: 15380 games done, 0 crashes, 0 timeouts, 23 running
+01:00:00 progress: 17843 games done, 0 crashes, 0 timeouts, 24 running
+02:00:00 progress: 20296 games done, 0 crashes, 0 timeouts, 23 running
+03:00:01 progress: 22680 games done, 0 crashes, 0 timeouts, 24 running
+04:00:01 progress: 25113 games done, 0 crashes, 0 timeouts, 24 running
+05:00:01 progress: 27565 games done, 0 crashes, 0 timeouts, 24 running
+06:00:02 progress: 30011 games done, 0 crashes, 0 timeouts, 24 running
+07:00:02 progress: 32434 games done, 0 crashes, 0 timeouts, 24 running
+07:30:20 finished: 33600 games done, 0 crashes, 0 timeouts
+07:30:20 WATCHDOG done
