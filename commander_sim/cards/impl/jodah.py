@@ -100,8 +100,18 @@ full(JODAH, 'legends you control get +X/+X (X = your legendary creatures); casti
 
 
 # ================================================================== the AI
+_AI = set(__import__('os').environ.get('JODAH_AI', 'first,tutor').split(','))   # audit/jodah: switch fixes off for A/B
+
+
+def jodah_payable(g, p):
+    """Jodah is in the command zone and can be cast now"""
+    return p.cmd_in_zone and can_pay(g, p, *cost_of(p, p.cmd))
+
+
 def jodah_prio(g, p, c):
-    """the generic priorities; with Jodah out, legendary spells first, the dearer the better (more to cascade into)"""
+    """the generic priorities; with Jodah out, legendary spells first, the dearer the better (more to cascade into).
+    With Jodah castable now, Jodah comes first: a legend cast before it gives up its cascade, and any other spell
+    that leaves too little mana for Jodah puts it off a turn."""
     from commander_sim.ai import pool_ai
     v = pool_ai.generic_prio(g, p, c) or 0
     if c is p.cmd: return max(v, 86)
@@ -110,10 +120,42 @@ def jodah_prio(g, p, c):
         v = max(v, 40) + 4 + min(16, 2 * c.cmc)
     elif legend_card(c) and c.creature:
         v = max(v, 35)
+    if 'first' in _AI and v > 15 and jodah_payable(g, p):
+        gen, pips = cost_of(p, p.cmd); cg, cp = cost_of(p, c)
+        if legend_card(c) or not can_pay(g, p, gen + cg, pips + cp): v = 15
     return min(90, v)
 
 
 CI.jodah_prio = jodah_prio
+
+
+def jodah_tutor(g, p, kind, okn):
+    """the card a tutor finds: before Jodah, the mana that casts it (Coalition Relic fixes, Sisay's Ring doesn't); with
+    Jodah out or on the way, the dearest legend not already in hand (its cascade can find any cheaper legend); the
+    third Kaldra piece; Toxic Deluge or Force of Will under pressure (instant and sorcery tutors)"""
+    if 'tutor' not in _AI: return None
+    have = {m.cd.name for m in p.perms if m.cd is not None}
+    hand = {c.name for c in p.hand}
+    mana = len(p.lands) + sum(1 for m in p.perms if m.cd is not None and ('rock' in m.cd.tags or 'dork' in m.cd.tags))
+    out = jodahs(p) > 0
+    order = []
+    if not out and p.cmd_in_zone and mana < 4:
+        order += ['Coalition Relic', 'Star Compass', 'Moss Diamond', 'Fyndhorn Elder']
+    kaldra = [n for n in KALDRA if n not in have | hand]
+    if len(kaldra) == 1: order += kaldra
+    big = sorted((c for c in E.searchable(g, p) if legend_card(c) and c.creature and c.name not in hand),
+                 key=lambda c: (-c.cmc, c.name))
+    if not any(legend_card(c) and c.cmc >= 6 for c in p.hand):
+        order += [c.name for c in big if c.cmc >= 6 and c.name != 'Szadek, Lord of Secrets']
+    if kind == 'is':
+        under = sum(epow(g, m) for q in g.opps(p) for m in q.perms if m.creature and not m.phased) >= 15
+        order += (['Toxic Deluge'] if under else []) + ['Demonic Tutor', 'Force of Will']
+    if kind in ('art', 'ench', 'ae'):
+        order += ['Blackblade Reforged', 'Privileged Position', 'Coalition Relic', 'Court of Ardenvale']
+    return next((n for n in order if n in okn), None)
+
+
+CI.jodah_tutor = jodah_tutor
 
 
 # ================================================================== the 99: cards that need code

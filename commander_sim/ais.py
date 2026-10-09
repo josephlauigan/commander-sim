@@ -1318,6 +1318,7 @@ def _tutor_pick_named(g, p, kind):
         if kind == 'cre2': return c.creature and c.pow <= 2
         if kind == 'cre': return c.creature
         if kind == 'ench': return 'E' in c.types
+        if kind == 'ae': return 'A' in c.types or 'E' in c.types
         return True
     okn = {c.name for c in E.searchable(g, p) if ok(c)}
 
@@ -1365,6 +1366,8 @@ def _tutor_pick_named(g, p, kind):
         return first(order)
     if p.key == 'yshtola':
         return E.CI.yshtola_tutor(g, p, kind, okn)
+    if p.key == 'jodah':
+        return E.CI.jodah_tutor(g, p, kind, okn)
     if p.key == 'najeela':
         order = [] if has(p, 'crusade') else ["Cathars' Crusade"]
         order += ['Chromatic Lantern', 'Mirror Entity', "Warleader's Call"]

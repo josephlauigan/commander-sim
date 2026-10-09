@@ -1160,12 +1160,14 @@ def _baraddur(g, L, p, s, post):
 
 
 def plaza_colors(g, p):
-    if PAY_FOR is not None and 'leg' in PAY_FOR.tags: return p.ident                 # a legendary spell: any colour
+    pf = E.PAY_FOR                                  # (E.PAY_FOR: the name imported from the engine is never updated)
+    if pf is not None and 'leg' in pf.tags: return p.ident                            # a legendary spell: any colour
     return ''.join(sorted({x for m in p.perms if m.cd is not None and is_legendary(g, m) for x in m.cd.pips if x in 'WUBRG'}))
 
 
 def territory_colors(g, p):
-    return p.ident if PAY_FOR is not None and PAY_FOR.creature and 'orc' in PAY_FOR.subtypes else ''
+    pf = E.PAY_FOR
+    return p.ident if pf is not None and pf.creature and 'orc' in pf.subtypes else ''
 
 
 full('Barad-dûr', 'enters tapped without a legendary creature; {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died')

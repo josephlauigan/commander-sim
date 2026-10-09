@@ -450,7 +450,7 @@ def search(g, p, e, ctx):
             c = next((x for x in cands if x.name == nm), None) or max(cands, key=lambda c: card_value(g, p, c))
         else:
             from commander_sim import ais
-            kind = {'enchantment': 'ench', 'creature': 'cre', 'artifact': 'art'}.get(f.get('type'))
+            kind = {'enchantment': 'ench', 'creature': 'cre', 'artifact': 'art', 'ae': 'ae'}.get(f.get('type'))
             nm = ais._tutor_pick_named(g, p, kind) if kind and p.key in ais.MAIN else None   # your deck's wish list
             wish = importlib.import_module('commander_sim.ai.pool_ai').wish_list(g, p) if p.key not in E.IDENT else []
             want = [c for c in cands if c.name in wish]
