@@ -28,6 +28,7 @@ from commander_sim import engine as E
 
 HOOKS = {}            # card name -> {event: fn}
 SPELL_PRIO = {}       # card name -> number or fn(g, p, c): cast priority 0-90 for outside decks (0 = not now)
+RESPONSE_ONLY = {}    # deck key -> card names its AI casts only in response (no interpreter-value casting)
 LAND_ETB = {}         # land name -> fn(g, p, land) when it enters as a land drop (Bojuka Bog ...)
 
 
@@ -43,6 +44,7 @@ ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tap
 LAND_COLS = {}        # land name -> fn(g, p, land) -> the colours it can make now (Vivid lands, Gemstone Mine)
 AS_ENTERS = {}        # card name -> fn(g, p, perm) as it enters, before any trigger (naming a creature type)
 SELF_REGEN = {}       # creature name -> fn(g, perm) -> True if it regenerates instead of being destroyed
+SELF_CAST = {}        # card name -> fn(g, p, c) when p casts it: "when you cast this spell" (cascade)
 
 
 def dyn_mana(g, p, m):

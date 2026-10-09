@@ -246,7 +246,7 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Orcish Bowmasters | Approximate | ETB shoots a valuable 1-toughness creature, else a face; draw triggers ping faces |
 | Path of Ancestry | Modeled | tags: `c=A t` |
 | Phyrexian Arena | Modeled | tags: `eng=1` |
-| Plaza of Heroes | Approximate | treated as colourless |
+| Plaza of Heroes | Modeled | {C}; any colour for legendary spells; colours among your legends; the exile ability protects Jodah (Jodah's AI) |
 | Ral Zarek, Guest Lecturer | Partial | each opponent discards for three turns; +1 and -2 ignored |
 | Reconnaissance Mission | Approximate | a card per upkeep; cycling ignored |
 | Rhystic Study | Modeled | tags: `rhystic` |
@@ -269,7 +269,7 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Tome of Legends | Not modeled | never cast |
 | Toxic Deluge | Approximate | pays X equal to the biggest opposing toughness (max 10) |
 | Treno, Dark City | Modeled | tags: `c=UB t` |
-| Unclaimed Territory | Approximate | treated as colourless |
+| Unclaimed Territory | Modeled | names the creature type most of your creatures share (Sauron: Orc); any colour for those creature spells |
 | Undermine | Modeled | tags: `ctr=any undermine` |
 | Unearth | Approximate | returns the best creature with MV 3 or less; cycling ignored |
 | Vision, Synthezoid Avenger | Partial | 3/3 flier; phasing and counters ignored |
@@ -364,13 +364,23 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Unbreakable Formation | Partial | indestructible vs wipes; addendum counters ignored |
 | Vandalblast | Modeled | tags: `rem=destroy tgt=a wipe=vandal` |
 | Vanquish the Horde | Modeled | tags: `wipe=destroy perCreature` |
-| Vivid Creek | Approximate | treated as any colour |
-| Vivid Grove | Approximate | treated as any colour |
-| Vivid Marsh | Approximate | treated as any colour |
+| Vivid Creek | Modeled | enters tapped; {U}, or any colour twice (charge counters) |
+| Vivid Grove | Modeled | enters tapped; {G}, or any colour twice (charge counters) |
+| Vivid Marsh | Modeled | enters tapped; {B}, or any colour twice (charge counters) |
 | Wargate | Approximate | tutors to hand instead of the battlefield |
 | Warleader's Call | Modeled | tags: `warleader` |
 | Wispdrinker Vampire | Modeled | tags: `pow=2 tgh=4 fly wisp` |
 | Wurmcoil Engine | Modeled | tags: `pow=6 dt lifelink wurmcoil` |
+
+## Jodah rework candidates (not in the list; audit/jodah, 10-09)
+
+| Card | Status | Notes |
+|---|---|---|
+| Bolt Bend | Modeled | costs {3} less with a creature of power 4 or more; redirects removal aimed at Jodah (or a key legend while Jodah is away) to an opponent's best permanent. Redirect targets ignore "an opponent controls" restrictions |
+| Command Beacon | Modeled | {C}; {T}, sacrifice: the commander from the command zone to hand, cast from there without tax. Used at tax 4+, or at 2 when it makes Jodah castable now |
+| Maelstrom Nexus | Modeled | the first spell each turn has cascade (stacks with Jodah's legend cascade); the AI passes on counterspells and held protection |
+| Maelstrom Wanderer | Modeled | creatures you control have haste; cascade, cascade |
+| Sisay, Weatherlight Captain | Modeled | +1/+1 per colour among your other legends; {W}{U}{B}{R}{G}: a legend with mana value below its power onto the battlefield (the tutor wish list, else the dearest; never while Jodah is castable) |
 
 ## Tagged test cards (not in any current list)
 

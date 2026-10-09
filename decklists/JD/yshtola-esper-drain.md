@@ -6,6 +6,7 @@
 **Updated 2026-10-06.** Out: Vanquish the Horde. In: Mystical Tutor. Vanquish the Horde → Mystical Tutor: finds Exsanguinate or Debt to the Deathless at the end of an opponent's turn. Vanquish was her most redundant reset (Austere Command, Crux of Fate and Massacre Wurm stay). Six Game Changers (Bracket 4).
 **Updated 2026-10-07.** Out: Statute of Denial. In: Polluted Bonds. Statute of Denial → Polluted Bonds: a five-mana enchantment that triggers her when cast, then drains an opponent 2 (and gains you 2, feeding Sanguine Bond and Marauding Blight-Priest) on every land they play. Statute was stuck in hand in about three quarters of the games it was drawn.
 **Updated 2026-10-07.** Out: Crux of Fate. In: Grand Arbiter Augustin IV. Crux of Fate → Grand Arbiter Augustin IV: your white and blue spells cost {1} less each, opponents' spells {1} more. Crux was stuck in hand in about six games in ten. Seven Game Changers (Bracket 4). Tested at −0.6 points (fast AI, 1,000 pairs per tier), within noise.
+**Updated 2026-10-09.** Out: Secure the Wastes. In: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal. JD's choice: Venat draws a card the first time each turn you cast a legendary spell; its flip side ({7}: exile a nonland permanent) makes a creature indestructible each turn. Measured +0.1 ±0.8 for Secure the Wastes (adaptive, paired, 1,000 games per tier). Not a Game Changer.
 
 2026-10-03
 **Added 2026-10-03.** In the simulator as deck key `yshtola` (`python3 -m commander_sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. Zur the Enchanter is in the 99.
@@ -16,7 +17,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 
 Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance) reads: *at the beginning of each end step, if a player lost 4 or more life this turn, you draw a card. Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.*
 
-**Thirty-six spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate with X = 1 or more triggers her, and so does Secure the Wastes with X = 2 or more. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
+**Thirty-five spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 - **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn.
@@ -167,7 +168,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (15).** Bastion Protector, Consecrated Sphinx, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Windborn Muse, Zur the Enchanter
+**Creatures (16).** Bastion Protector, Consecrated Sphinx, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Windborn Muse, Zur the Enchanter
 
 **Planeswalkers (1).** The Eternal Wanderer
 
@@ -175,7 +176,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (8).** Arcane Signet, Bolas's Citadel, Champion's Helm, Chromatic Lantern, Coalition Relic, Lightning Greaves, Sol Ring, Talisman of Progress
 
-**Instants (9).** Anguished Unmaking, Dovin's Veto, Fatal Push, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Secure the Wastes, Your Fate Ends Here
+**Instants (8).** Anguished Unmaking, Dovin's Veto, Fatal Push, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Your Fate Ends Here
 
 **Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit, Triplicate Spirits
 
@@ -240,7 +241,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Read the Bones
 1 Restoration Angel
 1 Sanguine Bond
-1 Secure the Wastes
 1 Shattered Sanctum
 1 Skyclave Apparition
 1 Smothering Tithe
@@ -254,6 +254,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Thief of Sanity
 1 Triplicate Spirits
 1 Urborg Syphon-Mage
+1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
 1 Windborn Muse
 1 Y'shtola, Night's Blessed
 1 Your Fate Ends Here
@@ -271,7 +272,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Weakest slots for this commander.**
 - **Fatal Push, Path to Exile, Dovin's Veto:** good cards, but mana value 1 or 2 doesn't trigger Y'shtola.
-- **Secure the Wastes:** triggers only with X = 2 or more.
+- **Venat, Heart of Hydaelyn:** a creature, so no trigger, and its draw needs legendary spells, which the deck has few of. JD's pick (measured +0.1, neutral).
 - **Bastion Protector and Restoration Angel:** creatures, so no trigger.
 
 Replacements worth testing:

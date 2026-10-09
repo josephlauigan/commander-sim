@@ -1,6 +1,7 @@
 """How the AI pilots Jodah: casts, cascades, attacks, mana, tutors, counters, mulligans, dead cards.
 
     PYTHONPATH=. python3 audit/jodah/jodah_stats.py run t1,t2,t3,t4,t5 300 out.json [--jobs 15] [--ai adaptive] [--seed0 700000]
+        [--swap "Out=>In" ...]                                                # a changed list, as in ab.py
     PYTHONPATH=. python3 audit/jodah/jodah_stats.py report out.json [more.json ...]
     PYTHONPATH=. python3 audit/jodah/jodah_stats.py log t2 700012              # print one game's trace
 
@@ -181,8 +182,10 @@ def one(tier, seed, keys, ai):
 
 def _work(args):
     tier, seeds, ai, swaps = args
-    from commander_sim import poolmode, pools
-    poolmode._setup('loose', ai, 1.0)
+    from commander_sim import poolmode, pools, decks
+    poolmode._setup('loose', ai, 1.0, [b for _, b in swaps])
+    if swaps and swaps[0][0] in decks.DECKS['jodah']:            # once per worker process; same positions as ab.py
+        decks.DECKS['jodah'] = poolmode.swap_in_place(decks.DECKS['jodah'], swaps)
     instrument()
     keys = poolmode.pool_keys(tier)
     out = []
@@ -192,11 +195,12 @@ def _work(args):
     return out
 
 
-def run(tiers, n, path, jobs=15, ai='adaptive', seed0=700000):
+def run(tiers, n, path, jobs=15, ai='adaptive', seed0=700000, swaps=()):
+    sw = tuple(tuple(x.strip() for x in s.split('=>')) for s in swaps)
     tasks = []
     for t in tiers:
         seeds = list(range(seed0, seed0 + n))
-        for i in range(0, n, 10): tasks.append((t, seeds[i:i + 10], ai, ()))
+        for i in range(0, n, 10): tasks.append((t, seeds[i:i + 10], ai, sw))
     with Pool(jobs) as pool:
         res = [x for part in pool.imap_unordered(_work, tasks) for x in part]
     json.dump(res, open(path, 'w'))
@@ -219,8 +223,8 @@ def report(paths):
     print(f'{len(G)} games, tiers {tiers}')
     groups = [(t, [d for d in G if d['tier'] == t]) for t in tiers] + [('all', G)]
     print('\n== Outcome and Jodah')
-    print(f"{'tier':5s} {'n':>4s} {'win':>5s} {'cast':>5s} {'t(med)':>6s} {'by t5':>5s} {'by t6':>5s} {'casts':>5s} "
-          f"{'left':>5s} {'plan':>5s} {'winP':>5s} {'win!P':>5s} {'loss t':>6s} {'mull':>5s}")
+    print(f"{'tier':5s} {'n':>4s} {'win':>5s} {'cast':>5s} {'t(med)':>6s} {'by t4':>5s} {'by t5':>5s} {'by t6':>5s} "
+          f"{'casts':>5s} {'left':>5s} {'plan':>5s} {'winP':>5s} {'win!P':>5s} {'win t':>6s} {'loss t':>6s} {'mull':>5s}")
     for t, gs in groups:
         n = len(gs)
         first = [min((c[0] for c in d['casts'] if c[1] == JODAH), default=None) for d in gs]
@@ -229,10 +233,12 @@ def report(paths):
         left = [len(d['jodah_left']) for d in gs]
         pl = [d for d in gs if d['plan']]; npl = [d for d in gs if not d['plan']]
         lt = [d['turns'] for d in gs if not d['won']]
+        wt = [d['turns'] for d in gs if d['won']]
         print(f"{t:5s} {n:4d} {pct(sum(d['won'] for d in gs), n):>5s} {pct(len(fc), n):>5s} {med(fc):>6} "
-              f"{pct(sum(1 for x in fc if x <= 5), n):>5s} {pct(sum(1 for x in fc if x <= 6), n):>5s} {mean(ncast):>5s} "
+              f"{pct(sum(1 for x in fc if x <= 4), n):>5s} {pct(sum(1 for x in fc if x <= 5), n):>5s} "
+              f"{pct(sum(1 for x in fc if x <= 6), n):>5s} {mean(ncast):>5s} "
               f"{mean(left):>5s} {pct(len(pl), n):>5s} {pct(sum(d['won'] for d in pl), len(pl)):>5s} "
-              f"{pct(sum(d['won'] for d in npl), len(npl)):>5s} {med(lt):>6} {mean([d['mulls'] for d in gs]):>5s}")
+              f"{pct(sum(d['won'] for d in npl), len(npl)):>5s} {med(wt):>6} {med(lt):>6} {mean([d['mulls'] for d in gs]):>5s}")
     print('  cast: Jodah cast at all; t(med): its first cast turn; casts: Jodah casts per game; left: times it left the '
           'battlefield; plan: a cascade happened; winP/win!P: win rate with/without a cascade')
 
@@ -381,6 +387,7 @@ if __name__ == '__main__':
         if '--jobs' in a: kw['jobs'] = int(a[a.index('--jobs') + 1])
         if '--ai' in a: kw['ai'] = a[a.index('--ai') + 1]
         if '--seed0' in a: kw['seed0'] = int(a[a.index('--seed0') + 1])
+        kw['swaps'] = [a[i + 1] for i, x in enumerate(a) if x == '--swap']
         run(a[1].split(','), int(a[2]), a[3], **kw)
     elif a[0] == 'report': report(a[1:])
     elif a[0] == 'log': show(a[1], int(a[2]))

@@ -171,7 +171,14 @@ HELD = lambda c: (('ctr' in c.tags and 'free' not in c.tags) or c.tags.get('prot
 def hold_value(g, p, s):
     """How much the AI wants to keep mana open right now."""
     held = [c for c in p.hand if HELD(c) and not E.free_counter(p, c) and can_pay(g, p, c.generic, c.pips)]
+    if p.key == 'jodah':                # Jodah out: the mana for a protection spell (cards/impl/jodah.py)
+        jc, jv = E.CI.jodah_hold(g, p)
+        if jc is not None and (not held or jv > _hold(g, p, s, held)[1]): return jc, jv
     if not held: return None, 0.0
+    return _hold(g, p, s, held)
+
+
+def _hold(g, p, s, held):
     c = min(held, key=lambda c: c.cmc)
     caution = style(p)['caution']
     v = 1.0 + 3.0 * caution * min(1.0, s.max_threat / 20.0) + 2.5 * s.combo_near
@@ -208,7 +215,8 @@ def card_utility(g, p, s, c):
     if ('top' in c.tags or 'seal' in c.tags) and c.instant and g.active is p \
             and not any('draw' in x.tags for x in p.hand if x is not c):
         return None                     # a card put on top on your own turn waits a turn: tutor at the end of theirs
-    hand_written = E.CI is not None and c.name in E.CI.SPELL_PRIO      # its own priority said no: keep it no
+    hand_written = E.CI is not None and (c.name in E.CI.SPELL_PRIO                  # its own priority said no: keep
+                                         or c.name in E.CI.RESPONSE_ONLY.get(p.key, ()))   # it no (or kept for responses)
     if base <= 0 and c.dsl and E.DSLMOD is not None and not hand_written: base = E.DSLMOD.card_value(g, p, c) * 10
     if base <= 0: return None
     u = base / 10.0                                   # deck knowledge as a prior (0-9)
@@ -220,7 +228,7 @@ def card_utility(g, p, s, c):
         if s.hand <= 2: u += 1.2
         if s.danger > 0.8: u -= 0.8                  # no time to durdle
     if c.creature and c.pow >= 2 and s.danger > 0.5: u += 0.8   # need bodies to block
-    if c is p.cmd: u -= 0.35 * p.tax                   # recasting gets pricier each time
+    if c is p.cmd and c not in p.hand: u -= 0.35 * p.tax   # recasting gets pricier each time (no tax from hand)
     if (c.instant or c.sorcery) and p.key == 'veyran':
         # each spell fires every magecraft payoff (doubled by Veyran): casting is value in itself
         n_pay = sum(1 for m in p.perms if m.cd is not None and not m.phased and
@@ -527,6 +535,8 @@ def special_options(g, p, s, post):
         if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and importlib.import_module('commander_sim.cards.impl.mine').archivist_worth(g, p)
                 and can_pay(g, p, 0, 'U')):
             o.append((5.0, "Jace's Archivist wheel", lambda: A.sauron_archivist(g, p)))
+    elif k == 'jodah':
+        o += E.CI.jodah_options(g, p, post)
     elif k == 'najeela' and post:
         for c in p.hand:
             if 'tokx' in c.tags and total_mana(g, p) >= len(c.pips) + 3:
@@ -573,6 +583,7 @@ def extra_options(g, p, s, post, sorcery_ok):
         dmg = int(r[3:]) + thor
         kick = int(c.tags['kick']) if 'kick' in c.tags and can_pay(g, p, c.generic + int(c.tags['kick']), c.pips) else 0
         for q in s.opps:
+            if E.player_hexproof(g, q): continue
             if q.life <= dmg:
                 o.append((9.0, f'{c.name} to the face ({NAME(q)})',
                           lambda c=c, q=q: (pay(g, p, c.generic, c.pips), cast_card(g, p, c, 'hand', {'face': q}))[1] is not None))

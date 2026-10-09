@@ -152,10 +152,11 @@ def determinize(g2, me, rng):
         if q is me:
             rng.shuffle(q.library)
         elif q.alive:
-            pool = q.hand + q.library
+            keep = [c for c in q.hand if c is q.cmd]          # a commander put into hand (Command Beacon) is known
+            pool = [c for c in q.hand if c is not q.cmd] + q.library
             rng.shuffle(pool)
-            n = len(q.hand)
-            q.hand, q.library = pool[:n], pool[n:]
+            n = len(q.hand) - len(keep)
+            q.hand, q.library = keep + pool[:n], pool[n:]
 
 
 # ------------------------------------------------------------------ playing a copy forward

@@ -52,10 +52,50 @@ def diagnostics(diag):
             raise SystemExit(f'unknown --diag {d}')
 
 
+def count_protection():
+    """per-game counts for the Jodah seat, saved with each tier (S1: sums over the games): Jodah leaving the
+    battlefield, and the protection stats the Jodah AI records (jprot_*: removal or a wipe that a protection card
+    stopped, by card; jprot_aimed: removal that reached Jodah while it was already hexproof or indestructible;
+    jr_shalai_rem / jr_shalai_taken: opposing removal while Shalai and Jodah were both out / that took Shalai)"""
+    from commander_sim import engine as E, compare as C, poolmode
+    from commander_sim.cards.impl import jodah as J
+    poolmode._setup('loose', 'adaptive', 1.0)                 # every card module loaded (they import apply_removal)
+    o_leave, o_axes = E.leave, C.axis_values
+
+    def leave(g, m):
+        if m.cd is not None and m.cd.name == 'Jodah, the Unifier' and m in m.owner.perms and m.owner.key == 'jodah':
+            m.owner.stats['jodah_left'] += 1
+        return o_leave(g, m)
+
+    def axis_values(g, me, deck):
+        v = o_axes(g, me, deck)
+        if deck == 'jodah':
+            v.update({k: x for k, x in me.stats.items() if k.startswith(('jprot', 'jr_')) or k in ('jodah_left', 'jodah_cascades')})
+            v['jodah_left'] = me.stats['jodah_left']
+        return v
+    o_rem = E.apply_removal
+
+    def apply_removal(g, actor, m, kind, spell=None):
+        if m.cd is not None and m.cd.name == 'Jodah, the Unifier' and m.owner.key == 'jodah' and m in m.owner.perms \
+                and (E.untargetable(g, m) or ((kind == 'destroy' or kind.startswith('dmg')) and E.indestructible(g, m))):
+            m.owner.stats['jprot_aimed'] += 1
+        o = m.owner
+        out = {x.cd.name for x in o.perms if x.cd is not None and not x.phased}
+        if o.key == 'jodah' and actor is not o and m in o.perms and {J.SHALAI, 'Jodah, the Unifier'} <= out:
+            o.stats['jr_shalai_rem'] += 1                 # opposing removal that had to land elsewhere than Jodah
+            if m.cd is not None and m.cd.name == J.SHALAI: o.stats['jr_shalai_taken'] += 1
+        return o_rem(g, actor, m, kind, spell)
+    for mod in list(sys.modules.values()):
+        if getattr(mod, '__name__', '').startswith('commander_sim') and getattr(mod, 'apply_removal', None) is o_rem:
+            mod.apply_removal = apply_removal
+    E.leave, C.axis_values = leave, axis_values
+
+
 def run(tiers, n, path, jobs=15, ai='adaptive', seed0=500000, diag=(), swaps=()):
     from commander_sim import poolmode, compare as C
     from commander_sim.decks import DECKS
     if diag: diagnostics(diag)
+    count_protection()
     cards = None
     if swaps:                                       # deck-list suggestions, tested paired (the list file is untouched)
         cards = list(DECKS['jodah'])
@@ -67,7 +107,8 @@ def run(tiers, n, path, jobs=15, ai='adaptive', seed0=500000, diag=(), swaps=())
     for t in tiers:
         R = poolmode.run('jodah', cards, poolmode.pool_keys(t), 'loose', n, seed0)
         out[t] = {'n': R['n'], 'win': R['win'], 'plan': R['plan'], 'by_seed': {str(k): v for k, v in R['by_seed'].items()},
-                  'win_turns': R['win_turns'], 'killed_me': dict(R['killed_me'])}
+                  'win_turns': R['win_turns'], 'killed_me': dict(R['killed_me']),
+                  'S1': {k: v for k, v in R['S1'].items() if k.startswith(('jprot', 'jr_')) or k in ('jodah_left', 'plan_reached', 'jodah_cascades')}}
         print(f"{t}: {100 * R['win'] / R['n']:.1f}% of {R['n']}, plan {100 * R['plan'] / R['n']:.0f}%", flush=True)
         json.dump(out, open(path, 'w'))                 # after each tier: a stopped run keeps what it finished
 

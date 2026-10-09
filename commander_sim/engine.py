@@ -346,6 +346,8 @@ def no_damage(g, m):
 def indestructible(g, m):
     if getattr(g, 'spear', None) == turn_stamp(g) and g.active is not m.owner: return False   # Shadowspear
     if m.data is not None and m.data.get('indestr'): return True
+    u = m.data and m.data.get('indestr_until')              # (player, their turn count): until that player's next turn
+    if u and u[0].turns == u[1]: return True
     return DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible')
 
 
@@ -362,6 +364,11 @@ def untargetable(g, m):
                                    for e in m.owner.perms if e.cd):
         return True
     return False
+
+
+def player_hexproof(g, q):
+    """q can't be the target of opponents' spells and abilities (Shalai, Voice of Plenty)"""
+    return bool(g.hooks) and CI is not None and any(fn(g, src, q) for src, fn in CI.hooked(g, 'player_hexproof'))
 
 
 def colors_of(m):
@@ -524,7 +531,7 @@ def _land_cols(g, p, L, anyc, moon, dryad):
     if anyc: return p.ident
     if dryad: return p.ident
     if CI is not None and L.cd.name == 'Plaza of Heroes': return CI.plaza_colors(g, p)
-    if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p)
+    if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p, L)
     if CI is not None and L.cd.name in CI.LAND_COLS: return CI.LAND_COLS[L.cd.name](g, p, L)
     c = L.cd.tags.get('c', 'C')
     if c == 'A': return p.ident
@@ -728,7 +735,7 @@ def cost_of(p, c):
         if c.name in SELF_COST: gen = max(0, gen + SELF_COST[c.name](g, p, c))
         if getattr(p, 'emblems', None) and 'tamiyo' in p.emblems and c in p.hand: return 0, ''
     if g is not None and stopped(g, c.name): gen += 3                 # Disruptor Flute tax
-    if c is p.cmd and not (c.name == 'Liesa, Shroud of Dusk'): gen += p.tax
+    if c is p.cmd and c not in p.hand and not (c.name == 'Liesa, Shroud of Dusk'): gen += p.tax   # no tax from hand
     if id(c) in p.agent_ids:                      # Opposition Agent: spend mana as though it were mana of any type
         off = [x for x in pips if x not in p.ident]
         if off: gen += len(off); pips = ''.join(x for x in pips if x in p.ident)
@@ -1286,6 +1293,7 @@ def on_cast(g, p, c):
     if c.instant or c.sorcery:
         count_is_cast(g, p); magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
+    if CI is not None and c.name in CI.SELF_CAST: CI.SELF_CAST[c.name](g, p, c)
     if g.hooks: CI.fire(g, 'cast', p, c)
     if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy') \
             and trigger_window(g, p, find(p, 'jin')[0], f'copy {c.name}', imp=5):
@@ -2187,7 +2195,8 @@ def _resolve(g, p, c, ctx, zone):
     if 'selfdmg' in t: lose_life(g, p, int(t['selfdmg']), p)
     if 'discard1' in t: discard_worst(g, p, 1)
     if ctx.get('face') is not None:
-        lose_life(g, ctx['face'], int(ctx.get('rem_kind', t['rem'])[3:]) + (1 if has(p, 'thor') else 0), p, kind='burn')
+        if not player_hexproof(g, ctx['face']):                     # Shalai: the burn has no legal target
+            lose_life(g, ctx['face'], int(ctx.get('rem_kind', t['rem'])[3:]) + (1 if has(p, 'thor') else 0), p, kind='burn')
     elif 'rem' in t and ctx.get('target') is not None: apply_removal(g, p, ctx['target'], ctx.get('rem_kind', t['rem']), c)
     if 'wipe' in t and not ctx.get('target') and not ctx.get('face'):
         ctx = dict(ctx); ctx['tags'] = t
@@ -2267,7 +2276,7 @@ def spell_targets(g, p, c, ctx=None):
         kind = ctx.get('rem_kind', t['rem'])
         tg = [m for m in legal_targets(g, p, kind, t.get('tgt', 'c'), 'mv4' in t, spell=c) if m.owner is not p]
         best = max(tg, key=lambda m: pval(g, m)) if tg else None
-        opps = g.opps(p)
+        opps = [q for q in g.opps(p) if not player_hexproof(g, q)]
         if best is not None and not ('face' in t and pval(g, best) < 3 and opps): ctx['target'] = best
         elif 'face' in t and opps: ctx['face'] = min(opps, key=lambda o: o.life)
     return ctx
@@ -3013,6 +3022,7 @@ def discard_cards(g, q, cards):
     cards = [c for c in cards if c in q.hand]            # a card paid away meanwhile (Elvish Spirit Guide) is gone
     for c in cards:
         q.hand.remove(c)
+        if c is q.cmd: q.cmd_in_zone = True; continue      # a commander in hand (Command Beacon): to the command zone
         (q.exile if necro else q.gy).append(c)
         if g.hooks: CI.fire(g, 'discard', q, c); q.discarded_turn = turn_stamp(g)
     if g.hooks and not necro: CI.fire(g, 'cards_to_gy', q, list(cards))
@@ -3023,6 +3033,7 @@ def discard_cards(g, q, cards):
 def discard_index(g, q, i):
     """q discards the card at position i in hand (random discards)"""
     c = q.hand.pop(i)
+    if c is q.cmd: q.cmd_in_zone = True; return
     if g.hooks: CI.fire(g, 'discard', q, c); q.discarded_turn = turn_stamp(g)
     if has(q, 'necro'): q.exile.append(c); return
     q.gy.append(c); tergrid_steal(g, q, c, q)
