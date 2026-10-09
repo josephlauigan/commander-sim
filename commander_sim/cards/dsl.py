@@ -139,6 +139,7 @@ def players(g, p, w, ctx=None):
     if w == 'each_opponent': return opps
     if w == 'each_player': return [q for q in g.players if q.alive]
     if w in ('target_opponent', 'target_player'):
+        opps = [q for q in opps if not E.player_hexproof(g, q)]          # Shalai, Voice of Plenty
         return [max(opps, key=lambda q: threat(g, p, q))] if opps else []
     if w == 'target_controller':
         t = ctx.get('target_owner'); return [t] if t is not None and t.alive else []

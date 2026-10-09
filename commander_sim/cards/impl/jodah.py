@@ -527,6 +527,50 @@ card('Sisay, Weatherlight Captain', 'leg human pow=2 tgh=2', dsl=[])
 full('Sisay, Weatherlight Captain', '+1/+1 for each colour among your other legendary permanents; {W}{U}{B}{R}{G}: a '
      "legendary permanent card with mana value below Sisay's power onto the battlefield (the tutor wish list's pick, "
      'else the dearest legend; never while Jodah could be cast instead)')
+# ------------------------------------------------------------------ Shalai, Voice of Plenty (packages C and D)
+SHALAI = 'Shalai, Voice of Plenty'
+
+
+@on(SHALAI, 'grant_kw')
+def _shalai_hexproof(g, src, m, kw):
+    """your planeswalkers and other creatures have hexproof (Shalai herself doesn't)"""
+    return kw == 'hexproof' and m is not src and m.owner is src.owner and (
+        m.creature or (m.cd is not None and 'P' in m.cd.types))
+
+
+@on(SHALAI, 'player_hexproof')
+def _shalai_you(g, src, q):
+    return q is src.owner
+
+
+@on(SHALAI, 'options')
+def _shalai_counters(g, src, p, s, post):
+    """{4}{G}{G}: a +1/+1 counter on each creature you control; with mana left late (second main phase, or the end of
+    the turn before yours) and two or more creatures"""
+    cs = [m for m in p.perms if m.creature and not m.phased]
+    if post is False or len(cs) < 2 or not can_pay(g, p, 4, 'GG'): return []
+
+    def go():
+        if src not in p.perms or not can_pay(g, p, 4, 'GG'): return False
+        pay(g, p, 4, 'GG')
+        if not ability_window(g, p, src, '+1/+1 counters'): return True
+        for m in p.perms:
+            if m.creature and not m.phased: m.plus += 1
+        p.stats['jr_shalai_counters'] += 1
+        log(f'  {NAME(p)} activates Shalai: a +1/+1 counter on each creature', g)
+        return True
+    return [(1.0 + 0.5 * len(cs), 'Shalai: +1/+1 counters', go)]
+
+
+card(SHALAI, 'leg pow=3 tgh=4 fly', dsl=[])
+CI.PVAL[SHALAI] = 6.0                         # opponents' removal goes to her once she shields the rest
+full(SHALAI, 'flying; you, your planeswalkers and your other creatures have hexproof (opponents\' targeted removal, '
+     'burn to the face and "target player" effects pass you by); {4}{G}{G}: a +1/+1 counter on each creature you '
+     'control (used with mana left in the second main phase or at the end of the turn before yours)')
+# Feed the Cycle (package B's on-theme removal): the additional cost is always paid as {B}, so it plays as {1}{B}{B}
+card('Feed the Cycle', 'rem=destroy tgt=cp', types='I', cost='1BB', dsl=[])
+note('Feed the Cycle', 'Approximate', 'instant: destroy target creature or planeswalker; the additional cost is always '
+     'paid as {B} (forage, exiling three cards from your graveyard, is not modeled), so it costs {1}{B}{B}')
 
 
 # ================================================================== the 99: cards that need code

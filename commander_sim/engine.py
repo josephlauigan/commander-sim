@@ -364,6 +364,11 @@ def untargetable(g, m):
     return False
 
 
+def player_hexproof(g, q):
+    """q can't be the target of opponents' spells and abilities (Shalai, Voice of Plenty)"""
+    return bool(g.hooks) and CI is not None and any(fn(g, src, q) for src, fn in CI.hooked(g, 'player_hexproof'))
+
+
 def colors_of(m):
     """a permanent's colours (cards: coloured mana symbols in the cost; tokens: their token colour)"""
     if m is None: return set()
@@ -2188,7 +2193,8 @@ def _resolve(g, p, c, ctx, zone):
     if 'selfdmg' in t: lose_life(g, p, int(t['selfdmg']), p)
     if 'discard1' in t: discard_worst(g, p, 1)
     if ctx.get('face') is not None:
-        lose_life(g, ctx['face'], int(ctx.get('rem_kind', t['rem'])[3:]) + (1 if has(p, 'thor') else 0), p, kind='burn')
+        if not player_hexproof(g, ctx['face']):                     # Shalai: the burn has no legal target
+            lose_life(g, ctx['face'], int(ctx.get('rem_kind', t['rem'])[3:]) + (1 if has(p, 'thor') else 0), p, kind='burn')
     elif 'rem' in t and ctx.get('target') is not None: apply_removal(g, p, ctx['target'], ctx.get('rem_kind', t['rem']), c)
     if 'wipe' in t and not ctx.get('target') and not ctx.get('face'):
         ctx = dict(ctx); ctx['tags'] = t
@@ -2268,7 +2274,7 @@ def spell_targets(g, p, c, ctx=None):
         kind = ctx.get('rem_kind', t['rem'])
         tg = [m for m in legal_targets(g, p, kind, t.get('tgt', 'c'), 'mv4' in t, spell=c) if m.owner is not p]
         best = max(tg, key=lambda m: pval(g, m)) if tg else None
-        opps = g.opps(p)
+        opps = [q for q in g.opps(p) if not player_hexproof(g, q)]
         if best is not None and not ('face' in t and pval(g, best) < 3 and opps): ctx['target'] = best
         elif 'face' in t and opps: ctx['face'] = min(opps, key=lambda o: o.life)
     return ctx

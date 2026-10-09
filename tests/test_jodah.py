@@ -448,6 +448,54 @@ class Rework(unittest.TestCase):
         for n in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest'): lands(p, n)
         self.assertEqual(E.CI.HOOKS['Sisay, Weatherlight Captain']['options'](g, s, p, brain.Situation(g, p), False), [])
 
+    def test_shalai_gives_hexproof_to_jodah_and_you_but_not_herself(self):
+        g, p, q = self.g, self.p, self.q
+        j = jodah(g, p)
+        w = perm(g, p, 'Teferi, Hero of Dominaria')
+        sh = perm(g, p, 'Shalai, Voice of Plenty')
+        self.assertTrue(E.untargetable(g, j))
+        self.assertTrue(E.untargetable(g, w))                         # planeswalkers too
+        self.assertFalse(E.untargetable(g, sh))
+        self.assertTrue(E.player_hexproof(g, p))
+        self.assertFalse(E.player_hexproof(g, q))
+        tg = E.legal_targets(g, q, 'exile', 'cp', False, spell=card('Swords to Plowshares'))
+        self.assertNotIn(j, tg); self.assertNotIn(w, tg); self.assertIn(sh, tg)
+        E.apply_removal(g, q, j, 'exile', card('Swords to Plowshares'))
+        self.assertIn(j, p.perms)
+        life = p.life
+        E.cast_card(g, q, card('Lightning Bolt'), 'hand', {'face': p})  # burn aimed at a hexproof player does nothing
+        self.assertEqual(p.life, life)
+        E.apply_removal(g, q, sh, 'exile', card('Swords to Plowshares'))
+        self.assertFalse(E.untargetable(g, j))                        # Shalai gone: Jodah is exposed again
+
+    def test_shalai_counters_with_mana_left_late(self):
+        g, p = self.g, self.p
+        from commander_sim.ai import brain
+        j = jodah(g, p)
+        sh = perm(g, p, 'Shalai, Voice of Plenty')
+        lands(p, 'Forest', 2); lands(p, 'Plains', 4)
+        hook = E.CI.HOOKS['Shalai, Voice of Plenty']['options']
+        self.assertEqual(hook(g, sh, p, brain.Situation(g, p), False), [])   # not in the first main phase
+        o = hook(g, sh, p, brain.Situation(g, p), True)
+        self.assertEqual([x[1] for x in o], ['Shalai: +1/+1 counters'])
+        p0, s0 = E.epow(g, j), E.epow(g, sh)
+        o[0][2]()
+        self.assertEqual((E.epow(g, j), E.epow(g, sh)), (p0 + 1, s0 + 1))
+        self.assertEqual(p.stats['jr_shalai_counters'], 1)
+
+    def test_feed_the_cycle_costs_1bb_and_answers_an_attack(self):
+        g, p, q = self.g, self.p, self.q
+        from commander_sim.ai import brain
+        c = card('Feed the Cycle')
+        self.assertEqual((c.generic, c.pips, c.tags['rem'], c.tags['tgt']), (1, 'BB', 'destroy', 'cp'))
+        g.active = q
+        lyra = perm(g, q, 'Lyra Dawnbringer')
+        hand(p, 'Feed the Cycle'); lands(p, 'Swamp', 2)
+        self.assertFalse(brain.attack_response(g, p, q, [lyra]))      # {1}{B}: one mana short
+        lands(p, 'Swamp')
+        self.assertTrue(brain.attack_response(g, p, q, [lyra]))
+        self.assertNotIn(lyra, q.perms)
+
 
 if __name__ == '__main__':
     unittest.main()

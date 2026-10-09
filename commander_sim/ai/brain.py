@@ -583,6 +583,7 @@ def extra_options(g, p, s, post, sorcery_ok):
         dmg = int(r[3:]) + thor
         kick = int(c.tags['kick']) if 'kick' in c.tags and can_pay(g, p, c.generic + int(c.tags['kick']), c.pips) else 0
         for q in s.opps:
+            if E.player_hexproof(g, q): continue
             if q.life <= dmg:
                 o.append((9.0, f'{c.name} to the face ({NAME(q)})',
                           lambda c=c, q=q: (pay(g, p, c.generic, c.pips), cast_card(g, p, c, 'hand', {'face': q}))[1] is not None))
