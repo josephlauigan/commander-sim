@@ -20,9 +20,12 @@ opponents, same draws); the noise band is ±2 standard errors of the per-seed di
 | 7 | Plaza of Heroes never made coloured mana for legendary spells | modeling gap (bug) | fixed; 0.0 ± 0.4 |
 | 8 | Dead cards: Kaervek's Purge never cast; Desertion 12%, Dismiss 23%, Invoke Despair 29%; Szadek deals no damage | deck weakness | see suggestions |
 
-All changes together: **+1.1 ± 1.2** (adaptive, same 5,000 seeds as the original code) and +XX on look-ahead (below).
-The deck stays near the bottom: what holds it back is the list (one creature commander with little protection, a
-five-colour mana base), not how it is piloted.
+All changes together: **+1.1 ± 1.2** on the adaptive AI (the same 5,000 seeds as the original code; measured one at a
+time on more games the parts look larger: style +1.9 ± 0.8, sequencing +0.4 ± 0.5, tutors +0.7 ± 0.6). On the
+look-ahead AI the check was too small to show anything:
+**−0.3 ± 2.4** over 1,170 paired games (T1-T3 +2.9 ± 3.5; T4-T5 −2.8 ± 3.3), see "Look-ahead check" below.
+The deck stays near the bottom either way: what holds it back is the list (a creature commander that the lower tiers
+remove 1-1.6 times a game, little protection, a five-colour mana base), not how it is piloted.
 
 ## Why Tiers 1-3 beat it
 
@@ -151,11 +154,37 @@ Measured +0.7 ± 0.6 (2,000 games per tier).
 
 ## Deck-list suggestions (not applied; the list is the user's call)
 
-Paired, adaptive, 1,000 games per tier, with the AI changes in:
+Paired, adaptive, 600 games per tier (seeds 500000-500599), with the AI changes in:
 
-| Swap | change |
-| --- | --- |
-| XX | XX |
+| Swap | change | note |
+| --- | --- | --- |
+| Invoke Despair → Chromatic Lantern | **+1.3 ± 0.8** | BBBB is rarely castable; Lantern fixes every colour |
+| Sisay's Ring → Arcane Signet | +0.8 ± 0.7 | coloured mana a turn sooner instead of two colourless |
+| Szadek → Lightning Greaves | +0.1 ± 0.9 | shroud and haste; flat in this simulator |
+| Kaervek's Purge → Swords to Plowshares | −0.2 ± 0.7 | the Purge is dead, but one more removal spell doesn't move the result |
+| Desertion → Heroic Intervention | −0.5 ± 0.8 | |
+
+Only the Lantern is clearly above noise.
+The bigger lever is mana that makes all five colours early (Chromatic Lantern, Arcane Signet, Birds of Paradise,
+City of Brass / Mana Confluence; the last two are not in the card database yet) and protection that covers Jodah on
+the opponents' turns; the removal-proof diagnostic shows how much room there is (+15).
+
+## Look-ahead check
+
+The overnight run's Jodah games (old code, seeds 500000-500174, look-ahead) are reproducible game for game (checked on
+two seeds), so they serve as the baseline; the new code played the same seeds (`ab.py merge` builds the file).
+
+| | T1 | T2 | T3 | T4 | T5 | all |
+| --- | --- | --- | --- | --- | --- | --- |
+| before | 9.7% | 9.8% | 9.2% | 15.0% | 18.4% | |
+| after | 13.2% | 13.8% | 9.2% | 10.3% | 11.5% | |
+| paired change | +4.6 ± 6.8 | +4.0 ± 5.7 | +0.0 ± 5.6 | −4.6 ± 6.5 | −6.9 ± 6.6 | −0.6 ± 2.8 |
+
+T4 and T5 looked worse, so 150 more seeds per tier (500200-500349) were played with both the old code (an
+`origin/main` copy) and the new: T4 +0.7 ± 7.0, T5 +0.7 ± 6.1. Pooled over everything, 1,170 paired look-ahead games:
+**T1-T3 +2.9 ± 3.5, T4-T5 −2.8 ± 3.3, all −0.3 ± 2.4.** No tier moved by more than its noise; the look-ahead search
+overrides much of what the style and priorities change, and a real effect of 1-2 points needs several thousand
+look-ahead games to see.
 
 ## Code changes (branch `jodah-ai-audit`)
 
@@ -163,7 +192,7 @@ Paired, adaptive, 1,000 games per tier, with the AI changes in:
 - `cards/impl/jodah.py`: `jodah_prio` casts Jodah first when it is payable; `jodah_tutor` wish list. Both can be
   switched off for A/B with `JODAH_AI` (default `first,tutor`; `JODAH_AI=none` restores the old choices).
 - `ais.py`, `cards/dsl.py`: Jodah's tutor hook; the `ae` (artifact or enchantment) search kind for Enlightened Tutor.
-- `ai/brain.py`: Jodah's style aggression 0.90, caution 0.30.
+- `ai/brain.py`: Jodah's style aggression 0.90, caution 0.30 (`ab.py --diag aggr=0.6,caution=0.65` plays the old one).
 - `tests/fixtures/sim_guard.json`: the five Jodah entries re-recorded; no other deck's entry changed.
 
 ## Scripts
