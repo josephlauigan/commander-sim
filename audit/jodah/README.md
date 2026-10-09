@@ -299,7 +299,7 @@ tutors are cast before Jodah: of 170 cast with Jodah out (T1-T3, 300 games each)
 hand and only 12 with removal risk ≥ 0.3; `ptutor` fetched protection 5 times. Fetching protection instead of a legend
 at any risk (`ptutorall`) is a wash.
 
-LOOKAHEAD_PLACEHOLDER
+(The look-ahead confirmation was not run: the job was stopped first, as no package came near +3.)
 
 ### Why protection can't reach the +15 of the diagnostic
 
@@ -338,6 +338,122 @@ game; a four-card package saves Jodah about once in ten games.
 - Tests: `tests/test_jodah.py` `Lands` and `Protection`. `tests/fixtures/sim_guard.json`: the six Jodah entries
   re-recorded (the new lands); no other deck's entry changed.
 
+
+## Follow-up (2026-10-09): the rework package
+
+Branch `jodah-rework` (on `jodah-protection-2`: PR #38's AI, the land switch, the protection AI). Measured with swaps
+against that branch's list; **the list is unchanged** (JD decides). Adaptive AI, loose profile, paired; noise bands are
+±2 standard errors of the per-seed differences.
+
+| Area | In | Out |
+| --- | --- | --- |
+| Mana | Chromatic Lantern | Invoke Despair |
+| Mana | Arcane Signet | Sisay's Ring |
+| Protection | Bolt Bend | Kaervek's Purge |
+| Protection | Flawless Maneuver | Desertion |
+| Recast Jodah | Command Beacon | Exotic Orchard |
+| Backup cascade | Maelstrom Nexus | Szadek, Lord of Secrets |
+| Backup cascade | Maelstrom Wanderer | Dismiss |
+| Legend engine | Sisay, Weatherlight Captain | Dissipate |
+
+(Bolt Bend replaced Deflecting Swat, then Royal Treatment, in the package before anything was measured: JD owns
+neither Swat nor the Swat price. Their single-card rows above: Swat +0.5 ± 0.7, Royal Treatment +0.3 ± 0.6.)
+
+**Answer: not a big difference on its own.** +1.9 ± 0.8 with the adaptive AI and +3.4 ± 2.3 with the look-ahead AI (300 games per tier), which only just reaches +3 and is within its noise. The mana half carries it; packages B-D below do better.
+
+### Results
+
+| Stage | T1 | T2 | T3 | T4 | T5 | all tiers |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1. Mana + protection (4 swaps), 1,000/tier | +0.2 ± 2.2 | +0.6 ± 2.3 | +1.3 ± 2.3 | −1.8 ± 2.6 | +0.8 ± 2.2 | +0.2 ± 1.0 |
+| 1. pooled, 3,000/tier | +1.2 ± 1.4 | +1.5 ± 1.4 | +1.0 ± 1.4 | +0.4 ± 1.4 | +1.4 ± 1.3 | **+1.1 ± 0.6** |
+| 2. Redundancy (4 swaps), 1,000/tier | −0.4 ± 2.7 | +1.5 ± 2.7 | +0.8 ± 2.6 | −3.1 ± 2.6 | −0.3 ± 2.3 | −0.3 ± 1.2 |
+| 2. pooled, 3,000/tier | +0.1 ± 1.5 | +1.9 ± 1.5 | +0.6 ± 1.5 | −0.5 ± 1.5 | −0.8 ± 1.3 | **+0.3 ± 0.7** |
+| 3. Full package, 1,000/tier | +2.6 ± 3.1 | +1.4 ± 2.9 | +0.9 ± 3.0 | +0.9 ± 3.1 | +0.8 ± 2.8 | +1.3 ± 1.3 |
+| 3. pooled, 3,000/tier | +3.0 ± 1.8 | +2.3 ± 1.7 | +0.6 ± 1.7 | +2.3 ± 1.8 | +1.4 ± 1.6 | **+1.9 ± 0.8** |
+LOOKAHEAD_ROWS
+
+The 1,000-per-tier rows are seeds 500000-; "pooled" adds 2,000 per tier at seeds 800000-. Adaptive win rate over all
+tiers, pooled: 19.0% (current list) → 20.1% (stage 1) / 19.2% (stage 2) / 20.9% (full package).
+Bolt Bend alone (for Kaervek's Purge, pooled): +0.0 ± 0.3.
+
+Look-ahead, full package against the current list (300 games per tier, paired; the job was stopped before a second,
+larger run finished): T1 12.0 → 12.7 (+0.7 ± 5.3), T2 13.0 → 17.7 (+4.7 ± 5.3), T3 12.0 → 13.3 (+1.3 ± 5.3), T4 7.7 →
+17.7 (+10.0 ± 5.0), T5 14.7 → 15.0 (+0.3 ± 5.1); all tiers **+3.4 ± 2.3**.
+
+### What the new cards do in the games (full package, per game)
+
+| | T1 | T2 | T3 | T4 | T5 | all | look-ahead, all |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Jodah leaves the battlefield (current list) | 1.26 | 1.66 | 1.40 | 1.04 | 0.39 | 1.15 | – |
+| Jodah leaves the battlefield (package) | 1.22 | 1.65 | 1.42 | 1.04 | 0.40 | 1.15 | – |
+| Jodah's legend cascades (current list → package) | 1.34 → 1.49 | 1.34 → 1.49 | 1.42 → 1.47 | 1.13 → 1.23 | 1.13 → 1.21 | 1.27 → 1.38 | – |
+| Maelstrom Nexus cascades | 0.19 | 0.28 | 0.23 | 0.16 | 0.10 | 0.19 | – |
+| Maelstrom Wanderer cascades (two per cast) | 0.30 | 0.38 | 0.32 | 0.24 | 0.17 | 0.28 | – |
+| Spells cast free by those cascades | 0.45 | 0.61 | 0.51 | 0.32 | 0.23 | 0.43 | – |
+| Sisay activations | 0.10 | 0.12 | 0.14 | 0.09 | 0.13 | 0.12 | – |
+| Command Beacon used (then Jodah cast from hand) | 0.08 | 0.13 | 0.11 | 0.09 | 0.03 | 0.09 | LA_BEACON |
+| Removal or a wipe stopped (Bolt Bend, Flawless Maneuver, Plaza) | 0.07 | 0.09 | 0.05 | 0.06 | 0.01 | 0.06 | LA_SAVES |
+
+Adaptive numbers pooled over 15,000 games. Of the 0.057 saves a game: Flawless Maneuver 0.023 against targeted
+removal and 0.015 against wipes, Bolt Bend 0.014 for Jodah and 0.003 for another legend, Plaza of Heroes 0.002.
+
+- **Jodah's removal rate doesn't move** (1.15 a game either way). The package doesn't touch finding 1; what it adds is
+  more free spells when Jodah is out or not: about 0.1 more legend cascades and 0.4 free spells from Nexus and the
+  Wanderer a game.
+- **Each engine fires rarely**: each is one card, drawn (or tutored) in a fifth to a third of the games, and needs five mana (Nexus,
+  Sisay's WUBRG) or eight (the Wanderer). Sisay is activated in few games, but when it sticks it can take over: one
+  traced game had nine activations (T2, seed 700003).
+- **Command Beacon** is used in 9% of games (tax 4+, or tax 2 when it makes Jodah castable that turn), always followed by
+  Jodah from hand.
+- **Mana**: stage 1 is mostly the Lantern and the Signet (the protection half measured +0.0 ± 0.3 for Bolt Bend; the
+  earlier P2 package, with Flawless Maneuver, +0.6 ± 0.5).
+
+### The cuts
+
+- **Land: Exotic Orchard.** Every candidate was played as the Command Beacon cut inside the full package (1,000 games
+  per tier, seeds 600000-, paired against the Orchard cut): Path of Ancestry −0.3 ± 0.8, Plains −0.3 ± 0.9, Arcane
+  Sanctum −0.2 ± 0.8, Shattered Sanctum −0.6 ± 0.8, Overgrown Farmland −0.6 ± 0.8. None differs beyond noise, and the
+  Orchard cut measured best. The simulator models Exotic Orchard as any colour, untapped (a second Command Tower); in
+  a real pod it makes only the colours the opponents' lands make, so the simulator, if anything, overstates what the
+  Orchard cut costs. White is the deck's best-supplied colour (18 land sources, against 15 for blue and red), which is
+  why the white slow lands and Plains were the other candidates.
+- **Non-land: Dissipate.** Card usage with the other six non-land swaps in (adaptive, 3,000 games per tier): Dissipate is
+  cast in 24% of the games it is drawn, the lowest of any card left apart from the new protection (Bolt Bend 9%,
+  Flawless Maneuver 24%, both cast only in response), and it has among the smallest gaps between games it is drawn
+  and games it isn't (+4.2 points; the median card +9.0). Next lowest: Sisters of Stone Death (39%, but +9.0),
+  Razia (41%, +14.3), Memory Jar (42%, +4.5), Pillage (44%, +4.9). Finding 3 already showed the held counters rarely
+  repay the mana they keep up.
+
+### Modelling (new code)
+
+- **Commander from hand** (`engine.cost_of`, `brain.card_utility`): no commander tax when the commander is cast from
+  hand; a commander discarded from hand goes to the command zone; the look-ahead's hidden-hand reshuffle keeps a known
+  commander in its owner's hand. Nothing changes unless a commander is in hand, so no other deck's games changed.
+- **Command Beacon** (`jodah.py`, a land option): sacrificed on your turn when Jodah is castable from hand afterwards
+  and the tax is 4 or more, or 2 and Jodah can't be cast from the command zone this turn. Jodah-first sequencing counts
+  Jodah in hand as castable.
+- **Cascade**: Jodah's cascade became `cascade(g, o, mv, who)`: Jodah's (legendary only) or plain. The AI passes on
+  counterspells and on the protection it keeps for responses. **Maelstrom Nexus**: a cast trigger on the first spell
+  of each turn (the first entry in the turn's cast list, so it survives Jodah's trigger resolving first): a legend from
+  hand with Jodah out gets both cascades. **Maelstrom Wanderer**: `CI.SELF_CAST`, a new hook in `engine.on_cast` for
+  "when you cast this spell" (cascade, cascade); haste from the ability interpreter.
+- **Sisay, Weatherlight Captain**: +1/+1 per colour among your other legendary permanents (Jodah's anthem applies on
+  top); WUBRG: a legendary permanent with mana value below Sisay's power onto the battlefield. The AI activates it on
+  its own turn, never while Jodah is castable (same mana), picking with the tutor wish list (the third Kaldra piece, the
+  dearest legendary creature), else the dearest legend below the limit.
+- **Bolt Bend**: Deflecting Swat's redirect, costing {R} with a creature of power 4 or more (always, with Jodah out),
+  else {3}{R}. Redirects (Swat and Bolt Bend) now pick the best permanent of any opponent, and also guard a legend
+  worth 5 or more while Jodah is not on the battlefield. Simplification: the new target ignores restrictions such as
+  "a creature an opponent controls".
+- `ab.py` records the new counters (`jr_*`). Tests: `tests/test_jodah.py` `Rework` and two Bolt Bend tests in
+  `Protection`. `sim_guard.json` and the decklist are unchanged.
+
+### Noticed, not changed
+
+- **Tolsimir Wolfblood** gives +2/+2 to every other creature you control: the ability interpreter ignores the colour in
+  its two anthems ("other green creatures", "other white creatures"; `dsl.matches` has no colour filter). Fixing it
+  changes the current list's games, so it was left for its own change.
 
 ## Follow-up (2026-10-09): packages B, C and D (speed, better cascades, the best of all)
 
