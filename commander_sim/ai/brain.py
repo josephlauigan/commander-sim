@@ -31,7 +31,7 @@ STYLE = {
     'galadriel': {'temp': 1.0, 'aggression': 0.70, 'caution': 0.55},
     'yshtola': {'temp': 1.0, 'aggression': 0.50, 'caution': 0.75},
     'alela':   {'temp': 1.0, 'aggression': 0.70, 'caution': 0.60},
-    'jodah':   {'temp': 1.0, 'aggression': 0.60, 'caution': 0.65},
+    'jodah':   {'temp': 1.0, 'aggression': 0.90, 'caution': 0.30},   # audit/jodah: holding back cost ~2 points
     'najeela': {'temp': 1.0, 'aggression': 0.90, 'caution': 0.30},
 }
 TEMP_SCALE = 1.0     # global multiplier, set from --temp

@@ -172,5 +172,37 @@ class Spells(unittest.TestCase):
         self.assertEqual(E.total_mana(g, p), 2)
 
 
+class JodahAudit(unittest.TestCase):
+    """audit/jodah: Plaza of Heroes' colours, Jodah before the legends, the tutor wish list"""
+    def test_plaza_any_colour_for_legendary_spells_only(self):
+        g = table('jodah', 'veyran'); p = g.players[0]
+        for n in ('Frontier Bivouac', 'Forest', 'Plaza of Heroes', 'Sandsteppe Citadel', 'Crumbling Necropolis'):
+            lands(p, n)
+        try:
+            E.PAY_FOR = p.cmd
+            self.assertTrue(E.can_pay(g, p, 0, 'WUBRG'))      # Plaza makes the fifth colour for Jodah
+            E.PAY_FOR = card('Toxic Deluge')
+            self.assertFalse(E.can_pay(g, p, 0, 'WUBRG'))
+        finally:
+            E.PAY_FOR = None
+
+    def test_jodah_before_legends(self):
+        g = table('jodah', 'veyran'); p = g.players[0]; g.active = p
+        for n in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest'): lands(p, n)
+        lyra = hand(p, 'Lyra Dawnbringer')
+        self.assertLessEqual(J.jodah_prio(g, p, lyra), 15)    # cast Jodah first, then Lyra cascades
+        self.assertGreater(J.jodah_prio(g, p, p.cmd), 80)
+        jodah(g, p)
+        self.assertGreater(J.jodah_prio(g, p, lyra), 40)
+
+    def test_tutor_finds_fixing_early_and_a_big_legend_later(self):
+        g = table('jodah', 'veyran'); p = g.players[0]
+        lands(p, 'Forest', 2)
+        p.library += [card('Coalition Relic'), card("Sisay's Ring"), card('Razia, Boros Archangel')]
+        self.assertEqual(ais.tutor_pick(g, p, 'any'), 'Coalition Relic')
+        lands(p, 'Plains', 3); jodah(g, p)
+        self.assertEqual(ais.tutor_pick(g, p, 'any'), 'Razia, Boros Archangel')
+
+
 if __name__ == '__main__':
     unittest.main()
