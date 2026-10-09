@@ -497,5 +497,138 @@ class Rework(unittest.TestCase):
         self.assertNotIn(lyra, q.perms)
 
 
+class VenatTymna(unittest.TestCase):
+    """swap candidates (10-09): Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal and Tymna the Weaver"""
+    V = 'Venat, Heart of Hydaelyn'
+
+    def setUp(self):
+        self.g = table('jodah', 'veyran', 'seph'); self.p, self.q, self.r = self.g.players
+
+    def test_venat_draws_once_a_turn_for_legendary_spells(self):
+        g, p = self.g, self.p
+        perm(g, p, self.V)
+        n = len(p.hand)
+        E.cast_card(g, p, hand(p, 'Mind Stone'))                      # not legendary: nothing
+        self.assertEqual(len(p.hand), n)
+        E.cast_card(g, p, hand(p, 'Mirri, Weatherlight Duelist'))
+        self.assertEqual(len(p.hand), n + 1)
+        E.cast_card(g, p, hand(p, 'King Darien XLVIII'))              # the second legend this turn: no card
+        self.assertEqual((len(p.hand), p.stats['jr_venat_draws']), (n + 1, 1))
+        E.cast_card(g, self.q, card('Lyra Dawnbringer'))              # an opponent's legend: no card
+        self.assertEqual(len(p.hand), n + 1)
+
+    def test_venat_front_is_not_indestructible(self):
+        g, p = self.g, self.p
+        v = perm(g, p, self.V)
+        self.assertEqual((E.epow(g, v), E.etgh(g, v)), (3, 3))
+        self.assertFalse(E.indestructible(g, v))
+
+    def test_heros_sundering_exiles_and_transforms(self):
+        g, p, q = self.g, self.p, self.q
+        from commander_sim.ai import brain
+        v = perm(g, p, self.V, sick=True)
+        hook = E.CI.HOOKS[self.V]['options']
+        lyra = perm(g, q, 'Lyra Dawnbringer')
+        lands(p, 'Plains', 7)
+        self.assertEqual(hook(g, v, p, brain.Situation(g, p), False), [])    # summoning sick: no {T}
+        v.sick = False
+        self.assertEqual(hook(g, v, p, brain.Situation(g, p), None), [])     # sorcery speed only
+        o = hook(g, v, p, brain.Situation(g, p), False)
+        self.assertEqual([x[1] for x in o], ["Hero's Sundering -> Lyra Dawnbringer"])
+        o[0][2]()
+        self.assertNotIn(lyra, q.perms)
+        self.assertTrue(v.tapped)
+        self.assertEqual((E.epow(g, v), E.etgh(g, v)), (4, 4))
+        self.assertTrue(E.indestructible(g, v))
+        self.assertEqual(hook(g, v, p, brain.Situation(g, p), False), [])    # once transformed, no more
+        n = len(p.hand)
+        E.cast_card(g, p, hand(p, 'Mirri, Weatherlight Duelist'))     # Hydaelyn has no cast trigger
+        self.assertEqual(len(p.hand), n)
+
+    def test_sundering_waits_for_a_worthy_target(self):
+        g, p, q = self.g, self.p, self.q
+        from commander_sim.ai import brain
+        v = perm(g, p, self.V)
+        lands(p, 'Plains', 7)
+        token(g, q, 1)
+        self.assertEqual(E.CI.HOOKS[self.V]['options'](g, v, p, brain.Situation(g, p), False), [])
+
+    def test_sundering_waits_while_jodah_is_castable(self):
+        g, p, q = self.g, self.p, self.q
+        from commander_sim.ai import brain
+        v = perm(g, p, self.V)
+        perm(g, q, 'Lyra Dawnbringer')
+        for n in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Plains', 'Plains'): lands(p, n)
+        hook = E.CI.HOOKS[self.V]['options']
+        self.assertEqual(hook(g, v, p, brain.Situation(g, p), False), [])
+        jodah(g, p)
+        self.assertEqual(len(hook(g, v, p, brain.Situation(g, p), False)), 1)
+
+    def _hydaelyn(self):
+        v = perm(self.g, self.p, self.V)
+        v.data = {'hydaelyn': True}; v.pow, v.tgh = 4, 4
+        return v
+
+    def test_blessing_protects_jodah_first_until_your_next_turn(self):
+        g, p, q = self.g, self.p, self.q
+        self._hydaelyn()
+        lyra = perm(g, p, 'Lyra Dawnbringer')
+        j = jodah(g, p)
+        n, c0 = len(p.hand), j.plus
+        E.CI.fire(g, 'crew', p)
+        self.assertEqual((j.plus, lyra.plus), (c0 + 1, 0))
+        self.assertEqual(len(p.hand), n + 1)                           # Jodah is legendary: a card
+        self.assertTrue(E.indestructible(g, j))
+        E.CI.fire(g, 'crew', p)                                        # once a turn
+        self.assertEqual(j.plus, c0 + 1)
+        g.active = q                                                    # the opponents' turns: still indestructible
+        self.assertTrue(E.indestructible(g, j))
+        E.apply_removal(g, q, j, 'destroy', card('Swords to Plowshares'))
+        self.assertIn(j, p.perms)
+        p.turns += 1                                                    # your next turn: it ends
+        self.assertFalse(E.indestructible(g, j))
+        self.assertEqual((p.stats['jr_hyd_turns'], p.stats['jr_hyd_draws']), (1, 1))
+
+    def test_blessing_prefers_a_legend_and_draws_only_for_one(self):
+        g, p = self.g, self.p
+        self._hydaelyn()
+        perm(g, p, 'Solemn Simulacrum')
+        mirri = perm(g, p, 'Mirri, Weatherlight Duelist')             # a smaller legend, but a card
+        n = len(p.hand)
+        E.CI.fire(g, 'crew', p)
+        self.assertEqual((mirri.plus, len(p.hand)), (1, n + 1))
+        g2 = table('jodah', 'veyran'); p2 = g2.players[0]
+        v = perm(g2, p2, self.V); v.data = {'hydaelyn': True}
+        s = perm(g2, p2, 'Solemn Simulacrum')
+        n = len(p2.hand)
+        E.CI.fire(g2, 'crew', p2)
+        self.assertEqual((s.plus, len(p2.hand)), (1, n))               # not legendary: no card
+
+    def test_tymna_pays_a_life_per_opponent_hit(self):
+        g, p, q, r = self.g, self.p, self.q, self.r
+        t = perm(g, p, 'Tymna the Weaver')
+        a = token(g, p, 3)
+        n = len(p.hand)
+        E.CI.fire(g, 'main2', p)                                        # nobody hit: nothing
+        self.assertEqual(len(p.hand), n)
+        ais.resolve_combat(g, p, [t], q, set())
+        ais.resolve_combat(g, p, [a], r, set())
+        life = p.life                                                   # (Tymna's lifelink: +2)
+        E.CI.fire(g, 'main2', p)
+        self.assertEqual((p.life, len(p.hand), p.stats['jr_tymna_draws']), (life - 2, n + 2, 2))
+        E.CI.fire(g, 'main2', p)                                        # once a turn
+        self.assertEqual(len(p.hand), n + 2)
+
+    def test_tymna_keeps_low_life(self):
+        g, p, q = self.g, self.p, self.q
+        perm(g, p, 'Tymna the Weaver')
+        a = token(g, p, 3)
+        ais.resolve_combat(g, p, [a], q, set())
+        p.life = 10                                                     # Necropotence's floor: 10 at least
+        n = len(p.hand)
+        E.CI.fire(g, 'main2', p)
+        self.assertEqual((p.life, len(p.hand)), (10, n))
+
+
 if __name__ == '__main__':
     unittest.main()

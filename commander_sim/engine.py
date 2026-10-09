@@ -346,6 +346,8 @@ def no_damage(g, m):
 def indestructible(g, m):
     if getattr(g, 'spear', None) == turn_stamp(g) and g.active is not m.owner: return False   # Shadowspear
     if m.data is not None and m.data.get('indestr'): return True
+    u = m.data and m.data.get('indestr_until')              # (player, their turn count): until that player's next turn
+    if u and u[0].turns == u[1]: return True
     return DSLMOD is not None and DSLMOD.has_kw(g, m, 'indestructible')
 
 

@@ -573,6 +573,109 @@ note('Feed the Cycle', 'Approximate', 'instant: destroy target creature or plane
      'paid as {B} (forage, exiling three cards from your graveyard, is not modeled), so it costs {1}{B}{B}')
 
 
+# ------------------------------------------------------------------ Venat, Heart of Hydaelyn // Hydaelyn (10-09)
+VENAT = 'Venat, Heart of Hydaelyn'
+
+
+def hydaelyn(m):
+    return bool(m.data and m.data.get('hydaelyn'))
+
+
+@on(VENAT, 'cast')
+def _venat_draw(g, src, caster, c):
+    """Venat: whenever you cast a legendary spell, draw a card; only once each turn"""
+    o = src.owner
+    if caster is not o or hydaelyn(src) or not legend_card(c) or o.flag_turn.get('venat') == turn_stamp(g): return
+    if not trigger_window(g, o, src, 'draw a card') or not once_per_turn(g, o, 'venat'): return
+    draw(g, o, 1); o.stats['jr_venat_draws'] += 1
+
+
+@on(VENAT, 'options')
+def _sundering(g, src, p, s, post):
+    """Hero's Sundering: {7}, {T}, as a sorcery: exile target nonland permanent, then Venat transforms. On the best
+    opposing nonland permanent, when it is worth 3 or more; never while Jodah could be cast instead"""
+    if p is not src.owner or post is None or g.active is not p or hydaelyn(src) or src.tapped or src.sick \
+            or not can_pay(g, p, 7, '') or (p.cmd.name == JODAH and jodah_payable(g, p)): return []
+    t = IC.best_opp_nonland(g, p)
+    if t is None or pval(g, t) < 3: return []
+
+    def go():
+        if src not in p.perms or src.tapped or t not in t.owner.perms or not can_pay(g, p, 7, ''): return False
+        pay(g, p, 7, ''); src.tapped = True; p.stats['jr_venat_sunder'] += 1
+        log(f"  {NAME(p)} activates Hero's Sundering: exile {t.name}, transform Venat", g)
+        if not ability_window(g, p, src, f'exile {t.name}, transform', target=t): return True
+        if t not in t.owner.perms or untargetable(g, t): return True              # no legal target: it does nothing
+        apply_removal(g, p, t, 'exile', src.cd)
+        if src in p.perms:
+            if src.data is None: src.data = {}
+            src.data['hydaelyn'] = True; src.pow, src.tgh = 4, 4
+            log('    Venat transforms into Hydaelyn, the Mothercrystal', g)
+        return True
+    return [(1.0 + pval(g, t) * (1.25 if t.owner is s.leader else 1.0), f"Hero's Sundering -> {t.name}", go)]
+
+
+@on(VENAT, 'grant_kw')
+def _hydaelyn_indestructible(g, src, m, kw):
+    return kw == 'indestructible' and m is src and hydaelyn(src)
+
+
+@on(VENAT, 'crew')
+def _blessing(g, src, p):
+    """Hydaelyn, beginning of combat on your turn: a +1/+1 counter on another creature you control, indestructible
+    until your next turn, a card if it is legendary. Jodah first, else the most valuable (a legend counts 2 more)"""
+    if p is not src.owner or not hydaelyn(src) or not once_per_turn(g, p, 'blessing'): return
+    p.stats['jr_hyd_turns'] += 1
+    cs = [m for m in p.perms if m.creature and m is not src and not m.phased]
+    if not cs: return
+    t = max(cs, key=lambda m: (m.cd is not None and m.cd.name == JODAH, pval(g, m) + (2 if legendary(g, m) else 0)))
+    if not trigger_window(g, p, src, f'+1/+1 counter, indestructible: {t.name}') or t not in p.perms: return
+    t.plus += 1
+    if t.data is None: t.data = {}
+    t.data['indestr_until'] = (p, p.turns)                       # engine.indestructible
+    log(f'    Hydaelyn blesses {t.name}: a +1/+1 counter, indestructible until {NAME(p)}\'s next turn', g)
+    if legendary(g, t): draw(g, p, 1); p.stats['jr_hyd_draws'] += 1
+
+
+card(VENAT, 'leg wizard pow=3 tgh=3', dsl=[], kws=())           # not the back face's indestructible
+full(VENAT, 'whenever you cast a legendary spell, draw a card (once each turn); {7}, {T}, as a sorcery: exile the '
+     'best opposing nonland permanent (worth 3 or more; Jodah is cast first when it can be), then it transforms into '
+     'Hydaelyn: a 4/4 indestructible that at the beginning of your combat puts a +1/+1 counter on another creature of '
+     'yours (Jodah first, else the most valuable, legends preferred), which is indestructible until your next turn and '
+     'draws a card if legendary')
+
+
+# ------------------------------------------------------------------ Tymna the Weaver (10-09)
+TYMNA = 'Tymna the Weaver'
+
+
+@on(TYMNA, 'combat_damage')
+def _tymna_hit(g, src, p, a, d, dmg):
+    if p is src.owner and d is not p: p.flag_turn[f'hit{g.players.index(d)}'] = turn_stamp(g)     # (bookkeeping)
+
+
+@on(TYMNA, 'main2')
+def _tymna(g, src, p):
+    """at the beginning of your postcombat main phase: you may pay X life to draw X (X = opponents dealt combat
+    damage this turn). The AI pays when the life left is at least Necropotence's floor (what the table could hit it
+    for plus 6, at least 10) and the library has more than X cards"""
+    st = turn_stamp(g)
+    if p is not src.owner or p.flag_turn.get('tymna') == st: return
+    x = sum(1 for i, q in enumerate(g.players) if q is not p and q.alive and p.flag_turn.get(f'hit{i}') == st)
+    if not x: return
+    if not trigger_window(g, p, src, f'pay {x} life, draw {x}') or not once_per_turn(g, p, 'tymna'): return
+    if p.life < x or p.life_locked: return
+    hc = human(g, p)
+    if not (hc.yes_no(g, p, f'Tymna the Weaver: pay {x} life to draw {x}?') if hc is not None else
+            p.life - x >= importlib.import_module('commander_sim.ais').necro_floor(g, p) and len(p.library) > x): return
+    lose_life(g, p, x, p); draw(g, p, x); p.stats['jr_tymna_draws'] += x
+    log(f'    {NAME(p)} pays {x} life to Tymna the Weaver and draws {x}', g)
+
+
+card(TYMNA, 'leg human pow=2 tgh=2 lifelink', dsl=[])
+full(TYMNA, 'lifelink; at the beginning of your postcombat main phase, pay X life to draw X (X = opponents dealt combat '
+     'damage this turn): the AI pays while the life left stays at Necropotence\'s floor or above. Partner is ignored')
+
+
 # ================================================================== the 99: cards that need code
 def _attached(g, m, name):
     return [e for e in m.owner.perms if e.cd is not None and e.cd.name == name and e.attached is m and not e.phased]

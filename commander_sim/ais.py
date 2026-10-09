@@ -2778,6 +2778,8 @@ def _step_combat(g, p):
 
 
 def _step_main2(g, p):
+    if g.hooks: E.CI.fire(g, 'main2', p)               # at the beginning of your postcombat main phase (Tymna)
+    if g.over or not p.alive: return
     if getattr(g, 'controllers', None) and importlib.import_module('commander_sim.play.human').is_human(g, p):
         importlib.import_module('commander_sim.play.human').human_main(g, p, True); return
     main_fn(p)(g, p, True)
