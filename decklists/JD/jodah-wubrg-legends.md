@@ -2,6 +2,7 @@
 
 **Updated 2026-10-09.** Out: Evolving Wilds, Terramorphic Expanse. In: Unclaimed Territory, Vivid Creek. JD's land switch (Unclaimed Territory names Human: Jodah and 10 other creatures are Humans). Measured flat: +0.2 ± 0.5 points (13,000 paired games, adaptive AI; audit/jodah/README.md).
 **Updated 2026-10-09.** Out: Blackblade Reforged, Desertion, Dismiss, Dissipate, Helm of Kaldra, Invoke Despair, Kaervek's Purge, Pillage, Shield of Kaldra, Sisay's Ring, Sword of Kaldra, Szadek, Lord of Secrets. In: Arcane Signet, Birds of Paradise, Chromatic Lantern, Fellwar Stone, Gix, Yawgmoth Praetor, Paradise Druid, Shalai, Voice of Plenty, Talisman of Hierarchy. The Jodah rework (audit/jodah, packages B-D): the Kaldra pieces cost 3-4 mana, did little alone and blocked a quarter of cascades, so three basics take their slots (+5 on their own); Birds of Paradise, Paradise Druid, Fellwar Stone, Talisman of Hierarchy, Chromatic Lantern and Arcane Signet get Jodah out a turn sooner and fix colours; Shalai gives Jodah hexproof and soaks up removal; Gix draws off combat damage. The recommended package measured +6.5 with the look-ahead AI. Off-theme picks (not Donato Giancola / Richard Kane Ferguson) were allowed for this measured gain.
+**Updated 2026-10-09.** Out: Shalai, Voice of Plenty. In: Tymna the Weaver. JD's choice: Tymna draws a card for each opponent your creatures hit (paying that much life) after combat. In the Shalai slot she measured -0.7 ±0.8 against Shalai, within noise (adaptive, paired, 1,000 games per tier).
 
 2026-10-07
 **Added 2026-10-07.** In the simulator as deck key `jodah` (`python3 -m commander_sim --deck jodah --pool t4`) and in practice mode.
@@ -10,7 +11,7 @@
 
 Jodah, the Unifier ({W}{U}{B}{R}{G}, 5/5) reads: *Legendary creatures you control get +X/+X, where X is the number of legendary creatures you control. Whenever you cast a legendary spell from your hand, exile cards from the top of your library until you exile a legendary nonland card with lesser mana value. You may cast that card without paying its mana cost. Put the rest on the bottom in a random order.*
 
-**Legend cascade.** 25 of the 59 spells are legendary, from Wrenn and Six at two mana up to Razia and Sisters of Stone Death at eight. With Jodah out, every legendary spell cast from hand brings a free legendary of lower mana value with it: Tolsimir (6) can bring Dragonlord Dromoka, Lyra (5) can bring Elenda, Shalai or Gix. The free card is cast, so Jodah triggers again only for spells cast from hand.
+**Legend cascade.** 25 of the 59 spells are legendary, from Wrenn and Six at two mana up to Razia and Sisters of Stone Death at eight. With Jodah out, every legendary spell cast from hand brings a free legendary of lower mana value with it: Tolsimir (6) can bring Dragonlord Dromoka, Lyra (5) can bring Elenda, Tymna or Gix. The free card is cast, so Jodah triggers again only for spells cast from hand.
 
 **Legends get big.** Each legendary creature gets +1/+1 for every legendary creature you control, Jodah included. Three legends on the battlefield makes each of them +3/+3; Elenda, Lyra and Kura become threats on their own.
 
@@ -18,9 +19,9 @@ Jodah, the Unifier ({W}{U}{B}{R}{G}, 5/5) reads: *Legendary creatures you contro
 - **Card flow:** Fact or Fiction, Memory Jar, Mordenkainen, Experimental Augury, Tireless Tracker, Urza, Powerstone Prodigy, Court of Ardenvale (the monarch).
 - **Mana:** Birds of Paradise, Paradise Druid, Fyndhorn Elder, Arcane Signet, Fellwar Stone, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic, Moss Diamond, Star Compass, Solemn Simulacrum, Cartographer's Survey, Plaza of Heroes (any colour for legendary spells). The simulations found the deck short of mana: the ramp gets Jodah out by turn 4 about twice as often.
 - **Tutors:** Demonic, Vampiric, Enlightened, Mystical, Worldly and Profane Tutor find the legend or the answer the game needs.
-- **Protection:** Shalai, Voice of Plenty (you, your planeswalkers and your other creatures, Jodah included, have hexproof), Privileged Position (hexproof for your other permanents), Grand Abolisher and Dragonlord Dromoka (opponents can't cast spells during your turn).
+- **Protection:** Privileged Position (hexproof for your other permanents), Grand Abolisher and Dragonlord Dromoka (opponents can't cast spells during your turn).
 - **Interaction:** Force of Will and Arcane Denial; Bitter Triumph, Darksteel Mutation, Skyclave Apparition, Lagrella, Disenchant; Toxic Deluge.
-- **Card draw from combat:** Gix, Yawgmoth Praetor draws a card (for 1 life) whenever one of your creatures deals combat damage to an opponent.
+- **Card draw from combat:** Gix, Yawgmoth Praetor draws a card (for 1 life) whenever one of your creatures deals combat damage to an opponent; Tymna the Weaver draws a card (for 1 life each) for every opponent your creatures hit, after combat.
 
 ## Key lines
 
@@ -48,7 +49,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Jodah, the Unifier
 
-**Creatures (29).** Birds of Paradise, Caparocti Sunborn, Carth the Lion, Cromat, Dakkon Blackblade, Dragonlord Dromoka, Elenda, the Dusk Rose, Fyndhorn Elder, Genesis Hydra, Gix, Yawgmoth Praetor, Grand Abolisher, King Darien XLVIII, Korlash, Heir to Blackblade, Kura, the Boundless Sky, Lagrella, the Magpie, Lyra Dawnbringer, Marchesa, the Black Rose, Mirri, Weatherlight Duelist, Paradise Druid, Razia, Boros Archangel, Shalai, Voice of Plenty, Sisters of Stone Death, Skyclave Apparition, Sol'kanar the Swamp King, Solemn Simulacrum, Terror of the Peaks, Tireless Tracker, Tolsimir Wolfblood, Urza, Powerstone Prodigy
+**Creatures (29).** Birds of Paradise, Caparocti Sunborn, Carth the Lion, Cromat, Dakkon Blackblade, Dragonlord Dromoka, Elenda, the Dusk Rose, Fyndhorn Elder, Genesis Hydra, Gix, Yawgmoth Praetor, Grand Abolisher, King Darien XLVIII, Korlash, Heir to Blackblade, Kura, the Boundless Sky, Lagrella, the Magpie, Lyra Dawnbringer, Marchesa, the Black Rose, Mirri, Weatherlight Duelist, Paradise Druid, Razia, Boros Archangel, Sisters of Stone Death, Skyclave Apparition, Sol'kanar the Swamp King, Solemn Simulacrum, Terror of the Peaks, Tireless Tracker, Tolsimir Wolfblood, Tymna the Weaver, Urza, Powerstone Prodigy
 
 **Planeswalkers (4).** Dakkon, Shadow Slayer, Mordenkainen, The Aetherspark, Wrenn and Six
 
@@ -130,7 +131,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sandsteppe Citadel
 1 Savage Lands
 1 Seaside Citadel
-1 Shalai, Voice of Plenty
 1 Shattered Sanctum
 1 Shivan Reef
 1 Sisters of Stone Death
@@ -145,6 +145,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Tireless Tracker
 1 Tolsimir Wolfblood
 1 Toxic Deluge
+1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River
 1 Urza, Powerstone Prodigy
