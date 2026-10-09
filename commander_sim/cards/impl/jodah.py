@@ -120,8 +120,6 @@ def jodah_prio(g, p, c):
         v = max(v, 40) + 4 + min(16, 2 * c.cmc)
     elif legend_card(c) and c.creature:
         v = max(v, 35)
-    if 'helm' in c.tags and not find(p, 'helm'):            # Champion's Helm: hexproof for Jodah, the deck's engine
-        v = 48 if jodahs(p) else 30
     if 'first' in _AI and v > 15 and jodah_payable(g, p):
         gen, pips = cost_of(p, p.cmd); cg, cp = cost_of(p, c)
         if legend_card(c) or not can_pay(g, p, gen + cg, pips + cp): v = 15
@@ -129,18 +127,6 @@ def jodah_prio(g, p, c):
 
 
 CI.jodah_prio = jodah_prio
-
-
-def helm_target(g, p):
-    """where Champion's Helm (+2/+2; hexproof while the creature is legendary) goes: Jodah, else the most valuable
-    legendary creature; None if it is already there"""
-    legends = [m for m in p.perms if m.creature and not m.phased and legendary(g, m)]
-    if not legends: return None
-    best = max(legends, key=lambda m: (m.is_cmd, pval(g, m)))
-    return None if equipped(best, 'helm') else best
-
-
-CI.jodah_helm_target = helm_target
 
 
 def jodah_tutor(g, p, kind, okn):

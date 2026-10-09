@@ -203,22 +203,6 @@ class JodahAudit(unittest.TestCase):
         lands(p, 'Plains', 3); jodah(g, p)
         self.assertEqual(ais.tutor_pick(g, p, 'any'), 'Razia, Boros Archangel')
 
-    def test_champions_helm_goes_on_jodah(self):
-        from commander_sim.ai import brain
-        g = table('jodah', 'veyran'); p = g.players[0]; g.active = p
-        lands(p, 'Plains', 3)
-        helm = hand(p, "Champion's Helm")
-        before = J.jodah_prio(g, p, helm)
-        j = jodah(g, p)
-        self.assertGreater(J.jodah_prio(g, p, helm), before)            # cast sooner once Jodah is out to protect
-        perm(g, p, "Champion's Helm"); lyra = perm(g, p, 'Lyra Dawnbringer')
-        opts = {name: go for _, name, go in brain.special_options(g, p, None, False)}
-        self.assertNotIn(f"equip Champion's Helm to {lyra.name}", opts)  # Jodah, not the bigger legend
-        opts[f"equip Champion's Helm to {j.name}"]()
-        self.assertTrue(E.equipped(j, 'helm'))
-        self.assertTrue(E.untargetable(g, j))                            # a legend wearing it has hexproof
-        self.assertFalse(any('Champion' in name for _, name, _ in brain.special_options(g, p, None, False)))
-
 
 if __name__ == '__main__':
     unittest.main()

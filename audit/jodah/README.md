@@ -208,14 +208,11 @@ PYTHONPATH=. python3 audit/jodah/ab.py compare a.json b.json
 ```
 `ab.py --ai lookahead` runs the look-ahead AI (minutes per game; use small counts).
 
-## Follow-up (2026-10-08): Kaervek's Purge → Champion's Helm (applied to the list)
+## Tried and reverted (2026-10-08): Kaervek's Purge → Champion's Helm
 
-The AI now casts the Helm (priority 48 with Jodah out, 30 before) and equips it to Jodah first, else the most
-valuable legend (brain.special_options; jodah.helm_target). Paired, adaptive, loose, 600 games per tier, Helm list ->
-Purge list: T1 19.0 -> 18.8, T2 17.0 -> 15.8, T3 16.3 -> 16.8, T4 21.5 -> 21.3, T5 23.5 -> 23.7 (noise about ±1.6 per
-tier): about +0.2 for the Helm, within noise.
-
-Why so small: in 450 traced games against Tiers 1-3 the Helm was drawn in 18%, cast in 14% and on Jodah in 11%.
-Wearing it, Jodah was removed 8 times; without it, 323 times (destroy 30% of games, exile 21%, bounce 10%). One
-protection card reaches too few games; protecting Jodah reliably would take several, or a tutor that finds one.
+The swap, with the AI casting the Helm and equipping it to Jodah first, measured about +0.2 points, within noise
+(adaptive, paired, 600 games per tier: T1 19.0 vs 18.8, T2 17.0 vs 15.8, T3 16.3 vs 16.8, T4 21.5 vs 21.3, T5 23.5
+vs 23.7, Helm vs Purge). Over 450 games against Tiers 1-3, the Helm was on Jodah in only 11% of them; wearing it,
+Jodah was removed 8 times, and without it 323 times. JD chose to keep Kaervek's Purge, so the swap and its AI code
+were reverted.
 
