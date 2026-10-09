@@ -337,3 +337,158 @@ game; a four-card package saves Jodah about once in ten games.
 - `ab.py` records per-game protection stats (`S1`: `jprot_*`, `jodah_left`).
 - Tests: `tests/test_jodah.py` `Lands` and `Protection`. `tests/fixtures/sim_guard.json`: the six Jodah entries
   re-recorded (the new lands); no other deck's entry changed.
+
+
+## Follow-up (2026-10-09): packages B, C and D (speed, better cascades, the best of all)
+
+Branch `jodah-packages-bcd` (on `jodah-rework`, e3d3a61: PR #38's AI, the land switch, the protection AI and the
+package A models). Every package is measured against the current list (land switch in) with the adaptive AI, loose
+profile, paired: 1,000 games per tier at seeds 500000- and 2,000 per tier at 800000- (15,000 paired games each). These
+are package A's seed sets; the same code and list replay A's baseline game for game (checked on 40 seeds), so A's
+baseline files are reused. Noise bands are ±2 standard errors of the per-seed differences. Base: 19.0%.
+
+**Answer: Dbudget, +9.5 ± 0.9 points with the adaptive AI and +6.5 ± 2.5 with the look-ahead AI (11.9% → 18.4%
+over all tiers, 1,500 paired games).** Over half of it is one change: the three Kaldra pieces out. Kaldra for three
+basic lands alone is **+5.1 ± 0.7**, as much as all of package C.
+The expensive legends add nothing measurable: Grist, Teferi, Time Raveler and Oko in the Kaldra slots measure 2.4
+points below three basics, and Teferi, Hero of Dominaria is +0.1 ± 0.7 on top of Dbudget.
+
+### Results (adaptive)
+
+| Package | In / out | all | T1-T3 | T4-T5 | win | price |
+| --- | --- | --- | --- | --- | --- | --- |
+| A (the other job's) | Lantern, Signet, Bolt Bend, Flawless Maneuver, Command Beacon, Maelstrom Nexus, Maelstrom Wanderer, Sisay / Invoke Despair, Sisay's Ring, Kaervek's Purge, Desertion, Exotic Orchard, Szadek, Dismiss, Dissipate | +1.9 ± 0.8 | +2.0 ± 1.0 | +1.8 ± 1.2 | 20.9% | $27 |
+| **B** speed and early defence | Birds of Paradise, Paradise Druid, Fellwar Stone, Talisman of Hierarchy, Swords to Plowshares, Path to Exile, Feed the Cycle / Helm, Shield, Sword of Kaldra, Szadek, Kaervek's Purge, Desertion, Invoke Despair | **+3.1 ± 0.7** | +3.6 ± 1.0 | +2.5 ± 1.1 | 22.1% | $11 |
+| **C** better cascades | Grist, the Hunger Tide; Teferi, Time Raveler; Oko, Thief of Crowns; Shalai, Voice of Plenty; Teferi, Hero of Dominaria / Helm, Shield, Sword of Kaldra, Blackblade Reforged, Wrenn and Six | **+4.6 ± 0.7** | +5.6 ± 1.0 | +3.1 ± 1.1 | 23.6% | $14 |
+| C with Atraxa, Praetors' Voice for Shalai (first version) | | +5.0 ± 0.7 | +6.4 ± 1.0 | +2.9 ± 1.1 | 24.0% | $38 |
+| **Dbudget** (recommended) | Plains, Forest, Island; Shalai; Birds, Paradise Druid, Fellwar Stone, Talisman of Hierarchy; Chromatic Lantern, Arcane Signet, Bolt Bend, Flawless Maneuver / Helm, Shield, Sword of Kaldra; Blackblade; Szadek, Dismiss, Dissipate, Pillage; Invoke Despair, Sisay's Ring, Kaervek's Purge, Desertion | **+9.5 ± 0.9** | +10.0 ± 1.2 | +8.8 ± 1.4 | 28.5% | $24 |
+| D3shalai | Dbudget with Teferi, Hero of Dominaria for Wrenn and Six (basics Plains, Island, Swamp) | +9.7 ± 0.9 | +10.4 ± 1.2 | +8.5 ± 1.4 | 28.6% | $27 |
+| D1shalai | Dbudget with Grist, Teferi TR and Oko in the Kaldra slots instead of basics, and Teferi, Hero for Wrenn and Six | +7.3 ± 0.9 | +8.5 ± 1.1 | +5.6 ± 1.3 | 26.3% | $36 |
+| D4 | D3 (Atraxa) plus Grist, Teferi TR, Oko for Memory Jar, Genesis Hydra, Profane Tutor | +10.4 ± 0.9 | +11.6 ± 1.2 | +8.8 ± 1.4 | 29.4% | $61 |
+
+Prices: the cheapest paper printing on Scryfall (`!"Name" game:paper`, `unique=prints`, lowest `prices.usd`), 10-09.
+
+### What each part is worth (paired between arms, 15,000 games each)
+
+| Change | all |
+| --- | --- |
+| **Kaldra pieces → three basics** (Plains, Island, Swamp), from the base | **+5.1 ± 0.7** |
+| Kaldra → Grist, Teferi TR, Oko (C3), from the base | +2.8 ± 0.6 (2.4 ± 0.7 below the basics) |
+| Kaldra and Szadek → Birds, Paradise Druid, Fellwar Stone, Talisman (B's ramp), from the base | +3.8 ± 0.7 (1.3 ± 0.7 below the basics) |
+| B's removal (Swords, Path, Feed the Cycle for Kaervek's Purge, Desertion, Invoke Despair), from the base | −0.2 ± 0.5 |
+| Package A's first half (Lantern, Signet, Bolt Bend, Flawless), from the base | +1.1 ± 0.6 |
+| the same, on top of C plus the ramp (D0 → D1) | +1.4 ± 0.7 |
+| B's ramp in Szadek, Dismiss, Dissipate, Pillage, on top of C (C → D0) | +1.2 ± 0.7 |
+| ramp and A's first half on top of Kaldra → basics (Kland → DnoC2) | +1.7 ± 0.8 |
+| Blackblade → Shalai on top of that (DnoC2 → Dbudget; Dbudget's basics are Plains, Forest, Island) | +2.7 ± 0.7 |
+| Blackblade → Swamp instead (DbudgetBB) → Shalai | +0.5 ± 0.5 |
+| Shalai instead of Atraxa (D3 → D3shalai; D1 → D1shalai) | −0.1 ± 0.3; −0.3 ± 0.3 |
+| Wrenn and Six → Teferi, Hero (Dbudget → D3shalai, basics differ too) | +0.1 ± 0.7 |
+
+Reading: the Kaldra pieces and Blackblade Reforged cost the deck points. Each is cast from hand for 3-4 mana that
+does little alone (Kaldra was assembled in 19 of 1,500 traced games), and each is a cascade hit that stops Jodah's
+trigger from reaching a real legend (Kaldra pieces and Blackblade were 27% of all cascade hits). Any replacement
+helps; a land helps most (the deck misses 0.71 land drops a game on 36 lands; 39-40 lands cut that to 0.58). B's
+removal was flat: the deck's problem in the simulator is mana, not answers. The cheap ramp and package A's mana
+(Lantern, Signet) help on top of the lands.
+
+### Look-ahead AI (300 games per tier, all tiers, seeds 500000-, paired)
+
+The other job's `look_base.json` (same list and code; 32 seeds of Tier 1 replayed game for game) is the baseline.
+
+| Package | T1 | T2 | T3 | T4 | T5 | all |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Dbudget** | 12.0% → 19.0% (+7.0 ± 5.5) | 13.0% → 17.0% (+4.0 ± 5.6) | 12.0% → 21.0% (+9.0 ± 5.7) | 7.7% → 16.7% (+9.0 ± 5.4) | 14.7% → 18.3% (+3.7 ± 5.6) | **+6.5 ± 2.5** (n=1500) |
+| C (Atraxa version) | 12.0% → 16.3% (+4.3 ± 5.5) | 13.0% → 15.3% (+2.3 ± 5.5) | 12.0% → 17.7% (+5.7 ± 5.6) | 7.7% → 18.3% (+10.7 ± 4.9) | 14.7% → 15.7% (+1.0 ± 5.0) | **+4.8 ± 2.4** (n=1500) |
+
+D3shalai (Dbudget with Teferi, Hero for Wrenn and Six) was started first and stopped after Tier 1: 12.0% → 17.3%.
+B and D1shalai were not run with the look-ahead AI (stopped for time).
+
+### Mechanisms (1,500 traced games each, 300 per tier, seeds 900000-, the same for every package)
+
+| Package | win | Jodah first cast (median turn) | cast by turn 4 / 5 | median win / loss turn | median turn eliminated | Jodah leaves / game | combats with creatures ready | cascades / game | top cascade hits |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| base | 19.3% | 5.0 | 18% / 43% | 12.0 / 9.0 | 9 | 1.11 | 36% | 1.32 | Wrenn and Six 288, Blackblade Reforged 281, Helm of Kaldra 149, Mirri, Weatherlight Duelist 144, Dakkon, Shadow Slayer 124 |
+| A | 19.9% | 5 | 23% / 46% | 12 / 9 | 9.0 | 1.13 | 38% | 1.37 | Blackblade Reforged 319, Wrenn and Six 293, Sisay, Weatherlight Captain 148, Lagrella, the Magpie 131, Mirri, Weatherlight Duelist 130 |
+| B | 20.1% | 5 | 27% / 57% | 12.0 / 9.0 | 9 | 1.25 | 40% | 1.38 | Wrenn and Six 325, Blackblade Reforged 282, Urza, Powerstone Prodigy 171, Mirri, Weatherlight Duelist 155, King Darien XLVIII 146 |
+| C (Atraxa) | 25.3% | 5.0 | 18% / 44% | 13 / 9 | 9 | 1.16 | 39% | 1.25 | Lagrella, the Magpie 149, Urza, Powerstone Prodigy 147, Mirri, Weatherlight Duelist 146, Grist, the Hunger Tide 146, King Darien XLVIII 145 |
+| C (Shalai) | 24.7% | 5 | 18% / 44% | 13.0 / 9.0 | 9.0 | 1.17 | 38% | 1.25 | Urza, Powerstone Prodigy 154, Grist, the Hunger Tide 149, Lagrella, the Magpie 145, King Darien XLVIII 145, Mirri, Weatherlight Duelist 144 |
+| Kaldra->lands | 22.9% | 5.0 | 20% / 46% | 12.5 / 9.0 | 9 | 1.21 | 39% | 1.43 | Wrenn and Six 338, Blackblade Reforged 290, Urza, Powerstone Prodigy 165, Dakkon, Shadow Slayer 152, Mirri, Weatherlight Duelist 152 |
+| D3 (Atraxa) | 30.4% | 5.0 | 34% / 63% | 12.0 / 9.0 | 9 | 1.36 | 44% | 1.56 | Urza, Powerstone Prodigy 280, Mirri, Weatherlight Duelist 277, Lagrella, the Magpie 258, King Darien XLVIII 235, Dakkon, Shadow Slayer 222 |
+| Dbudget | 28.2% | 5.0 | 35% / 62% | 12 / 9 | 9.0 | 1.33 | 43% | 1.66 | Wrenn and Six 478, Urza, Powerstone Prodigy 235, King Darien XLVIII 218, Mirri, Weatherlight Duelist 218, Dakkon, Shadow Slayer 205 |
+| D1shalai | 27.4% | 5 | 33% / 62% | 12 / 9 | 9 | 1.29 | 42% | 1.48 | Urza, Powerstone Prodigy 184, Oko, Thief of Crowns 180, Mirri, Weatherlight Duelist 174, Lagrella, the Magpie 173, Dakkon, Shadow Slayer 156 |
+
+- **Speed:** Dbudget casts Jodah by turn 4 in 35% of games (18% before) and by turn 5 in 62% (43%). The median first
+  cast stays turn 5. B alone: 27% / 57%. C doesn't change it.
+- **Survival:** the median turn of death stays 9 in every package; the wins come from turning more games into
+  cascades (cascades a game 1.32 → 1.66, games with any 54% → 64% in Dbudget), not from living longer.
+- **Jodah's removal:** leaves the battlefield 1.33 times a game in Dbudget against 1.11, because it is cast more (1.98
+  casts a game against 1.67): per cast, 0.67 against 0.66. Nothing in these packages protects it better.
+- **Creatures ready to attack:** 36% of combats → 43%.
+- **Cascades:** with Kaldra and Blackblade gone, the hits are the cheap legends (Wrenn and Six, Urza, King Darien,
+  Mirri, Dakkon). Cascades that find nothing rise (0.16 → 0.40 a game in D3) when Wrenn and Six goes too; Dbudget keeps it (0.22).
+
+### Shalai, Voice of Plenty
+
+Opposing targeted removal resolved while Shalai and Jodah were both out 0.051 times a game in Dbudget (15,000 games);
+80% of it took Shalai (0.041 a game), the rest other permanents: each of those is a removal spell that couldn't pick
+Jodah. Jodah left the battlefield 1.342 times a game with Shalai against 1.386 with a basic land in her slot, and 1.347
+against 1.371 with Atraxa (D3): about 0.03-0.04 a game fewer. Shalai measures the same as Atraxa (−0.1 ± 0.3) and
++0.5 ± 0.5 over a basic land. She is cheap ($1) and does no harm; her hexproof rarely
+matters because Jodah is usually removed before she is out or by wipes. Her counters were used 0.016 times a game.
+
+### The planeswalkers (Grist, Oko, the Teferis)
+
+Traced 40 Tier 2 games: the AI uses them as written. Oko's +1 Elks the opposing creature the engine values most
+(`best_opp_creature`, value 4 or more), else +2 Food; Grist's −2 kills the best creature when it has a token to
+sacrifice; Teferi, Time Raveler's −3 bounces the best nonland permanent; Teferi, Hero's −3 tucks a threat. Opponents
+attack planeswalkers (`walker_attacks`) and remove them (in those 40 games Oko was removed 5 times, the other three 5 times together). Known
+approximations: Oko never Elks his own Food or uses it as a blocker, Grist's insect-mill repeat is ignored, Teferi TR's
++1 does nothing. Nothing points to them being much weaker than the real cards; they lose to three basics because the
+deck needs mana more than another 3-4 mana spell.
+
+### Cards (price, ownership)
+
+None of the new cards is in `bulk-cards.txt`. Birds of Paradise, Talisman of Hierarchy, Swords to Plowshares and Path
+to Exile are in Sephiroth's list, Fellwar Stone in Veyran's, Chromatic Lantern and Arcane Signet in several (those
+copies aren't available: the decks don't share cards). On-theme (Donato Giancola / Richard Kane Ferguson): only Feed
+the Cycle (B). Lands are exempt from the art rule, so the basics can be any art.
+
+| Card | price | | Card | price |
+| --- | --- | --- | --- | --- |
+| Shalai, Voice of Plenty | $1.09 | | Chromatic Lantern | $0.45 |
+| Birds of Paradise | $8.03 | | Arcane Signet | $0.40 |
+| Paradise Druid | $0.23 | | Bolt Bend | $3.45 |
+| Fellwar Stone | $0.51 | | Flawless Maneuver | $9.28 |
+| Talisman of Hierarchy | $0.41 | | Swords to Plowshares | $0.89 |
+| Grist, the Hunger Tide | $0.42 | | Path to Exile | $0.69 |
+| Teferi, Time Raveler | $3.84 | | Feed the Cycle | $0.26 |
+| Oko, Thief of Crowns | $5.03 | | Atraxa, Praetors' Voice | $25.79 |
+| Teferi, Hero of Dominaria | $3.22 | | basic land | $0.06 |
+
+Not chosen: Chrome Mox ($153, on-theme), Delighted Halfling ($25), Mana Cylix (on-theme, a filter that doesn't ramp;
+modeled only as a rock), Hazezon Tamar ($170, on-theme, its tokens are modeled but it is 7 mana), Niv-Mizzet Reborn
+(not modeled; few two-colour cards in the list to find), Noble Hierarchy (exalted not modeled).
+
+### Recommendation
+
+**Dbudget** (12 swaps, about $24): Helm, Shield and Sword of Kaldra → Plains, Forest, Island (white and green have the
+most pips per source, then blue); Blackblade Reforged → Shalai, Voice of Plenty; Szadek → Birds of Paradise; Dismiss
+→ Paradise Druid; Dissipate → Fellwar Stone; Pillage → Talisman of Hierarchy; Invoke Despair → Chromatic Lantern;
+Sisay's Ring → Arcane Signet; Kaervek's Purge → Bolt Bend; Desertion → Flawless Maneuver. It is well beyond the +3
+threshold. If the art rule matters more than a point or two, the core is the land change: Kaldra (and Blackblade) out
+for lands is +5 to +9 points by itself and needs no off-theme card at all.
+
+### Code (this branch)
+
+- `cards/impl/jodah.py`: **Shalai, Voice of Plenty** (hexproof for your planeswalkers and other creatures through a
+  `grant_kw` hook; you through `engine.player_hexproof`, which burn to the face, copied burn and DSL "target player"
+  effects check; a fixed removal value of 6, so opposing removal goes to her; {4}{G}{G} counters with mana left in the
+  second main phase or at the end of the turn before yours). The cached Oracle text reads "a +1/+1 counter on each
+  creature you control" (Shalai included), not "each other creature"; the model follows the cache.
+  **Feed the Cycle** (approximate: its additional cost is always paid as {B}, so it costs {1}{B}{B}).
+- `engine.py`, `ai/brain.py`, `cards/dsl.py`: `player_hexproof` and its three checks (no hook, no change elsewhere).
+- `audit/jodah/jodah_stats.py`: `--swap` for traced package games; the report adds "by t4" and the median win turn.
+- `audit/jodah/ab.py`: `jr_shalai_rem`, `jr_shalai_taken` (removal that met Shalai while Jodah was out).
+- Tests: `test_jodah.py` (Shalai's hexproof for Jodah, planeswalkers and you but not her; her counters; Feed the
+  Cycle). `sim_guard.json` and the decklist unchanged; full suite passes.
