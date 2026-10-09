@@ -216,3 +216,124 @@ vs 23.7, Helm vs Purge). Over 450 games against Tiers 1-3, the Helm was on Jodah
 Jodah was removed 8 times, and without it 323 times. JD chose to keep Kaervek's Purge, so the swap and its AI code
 were reverted.
 
+
+## Follow-up (2026-10-09): protection for Jodah, and the land switch
+
+Branch `jodah-protection-2` (on `jodah-ai-audit`, PR #38's AI). Adaptive AI, loose profile, paired runs; noise bands are
+±2 standard errors of the per-seed differences. "Saves" counts removal or a wipe that a protection card (or Plaza of
+Heroes) stopped from taking Jodah.
+
+**Answer: no protection card or package measurably improves the deck.** The best packages measure +0.5 to +0.7 points
+(±0.6, 15,000 paired games each), all inside the noise, and about the same at Tiers 1-3, where removal is heaviest.
+Protection stops 0.08-0.11 removals per game, against 1.1 removals that still land. The +15 points of the removal-proof
+diagnostic stay out of reach for one to four cards.
+
+### The land switch (applied to the list)
+
+Evolving Wilds → Vivid Creek and Terramorphic Expanse → Unclaimed Territory: **+0.2 ± 0.5** (13,000 paired games:
+600 per tier at seeds 500000-, 2,000 per tier at 600000-). By tier: T1 +0.9 ± 1.2, T2 +0.2 ± 1.2, T3 −0.4 ± 1.2,
+T4 −0.1 ± 1.1, T5 +0.1 ± 1.1. Flat. It is JD's planned change, so it is in the list, and everything below is measured on
+top of it. `bulk-cards.txt`: Evolving Wilds and Terramorphic Expanse in, Vivid Creek and Unclaimed Territory out.
+
+### Singles (600 games per tier, all tiers, each for Kaervek's Purge)
+
+Kaervek's Purge is never cast (finding 8), so each row is close to the card's own value.
+
+| Card | change | saves / game | Jodah leaves / game | JD owns it |
+| --- | --- | --- | --- | --- |
+| Deflecting Swat | +0.5 ± 0.7 | 0.045 | 1.13 | no (Veyran's list has one) |
+| Heroic Intervention | +0.5 ± 0.7 | 0.015 | 1.14 | no |
+| Flawless Maneuver | +0.5 ± 0.6 | 0.037 | 1.13 | no |
+| Lightning Greaves | +0.5 ± 0.7 | (equipment) | 1.09 | no (in Veyran's, Y'shtola's, Sauron's lists) |
+| Fierce Guardianship | +0.4 ± 0.8 | (a counter) | 1.13 | no |
+| Loran's Escape | +0.3 ± 0.6 | 0.021 | 1.13 | no |
+| Tamiyo's Safekeeping | +0.3 ± 0.6 | 0.022 | 1.14 | no |
+| Lazotep Plating | +0.3 ± 0.6 | 0.010 | 1.14 | no |
+| Royal Treatment | +0.3 ± 0.6 | 0.020 | 1.13 | **yes** (bulk) |
+| Snakeskin Veil | +0.3 ± 0.6 | 0.020 | 1.13 | no |
+| Teferi's Protection | +0.2 ± 0.6 | 0.009 | 1.14 | no (Sephiroth's list has one) |
+| Dark Endurance | +0.2 ± 0.6 | 0.009 | 1.14 | **yes** (bulk) |
+| Unbreakable Formation | +0.1 ± 0.6 | 0.006 | 1.14 | **yes** (bulk) |
+| Swiftfoot Boots | +0.0 ± 0.7 | (equipment) | 1.11 | **yes** (bulk) |
+| Giver of Runes | +0.0 ± 0.7 | 0.031 | 1.15 | no |
+| Mother of Runes | −0.1 ± 0.7 | 0.022 | 1.15 | no |
+| Mithril Coat | −0.3 ± 0.9 | (equipment) | 1.08 | no |
+
+Base: Jodah leaves the battlefield 1.14 times a game. The rows differ by less than their noise; a ranking among them is
+not supported. Royal Treatment and Snakeskin Veil play identically here (hexproof and a +1/+1). The equipment works when
+it is out (Lightning Greaves was on Jodah on 597 of the 600 opponent turns it and Jodah were both out, Mithril Coat on
+589 of 669), but it was out on only 15% of the opponent turns with Jodah out: one card is drawn too rarely
+(T1-T3, 600 traced games each).
+
+### Packages (cutting the weakest cards in order: Kaervek's Purge, Desertion, Dismiss, Szadek)
+
+1,000 games per tier at seeds 500000- plus 2,000 per tier at 600000-, pooled (15,000 paired games each):
+
+| Package | change | T1-T3 | T4 | T5 | saves / game | Jodah leaves / game |
+| --- | --- | --- | --- | --- | --- | --- |
+| P2: Deflecting Swat, Flawless Maneuver | **+0.6 ± 0.5** | +0.3 ± 0.6 | +1.6 ± 1.1 | +0.6 ± 1.0 | 0.080 | 1.12 |
+| P3: P2 + Heroic Intervention | +0.6 ± 0.6 | +0.3 ± 0.7 | +1.5 ± 1.3 | +0.7 ± 1.2 | 0.093 | 1.12 |
+| P4: P3 + Lightning Greaves | +0.5 ± 0.6 | +0.4 ± 0.8 | +1.7 ± 1.4 | −0.2 ± 1.3 | 0.087 | 1.07 |
+| P4b: P3 + Tamiyo's Safekeeping | +0.7 ± 0.6 | +0.5 ± 0.8 | +2.2 ± 1.4 | −0.0 ± 1.3 | 0.112 | 1.11 |
+| Owned: Swiftfoot Boots, Royal Treatment, Unbreakable Formation, Dark Endurance | −0.3 ± 1.1 | −0.3 ± 1.4 | +0.4 ± 2.4 | −1.2 ± 2.3 | 0.026 | 1.09 |
+
+(The owned package: 1,000 games per tier only.) Where the saves come from in P4b: Deflecting Swat 0.042 a game,
+Flawless Maneuver 0.023 against targeted removal and 0.014 against wipes, Tamiyo's Safekeeping 0.020, Heroic
+Intervention 0.011, Plaza of Heroes 0.003. Saves by tier (P4b): T1 0.14, T2 0.20, T3 0.10, T4 0.11, T5 0.02.
+Removal that reached an already-protected Jodah: 0.002-0.003 a game; the opponents' AI aims elsewhere.
+
+**Suggestion (not applied):** if JD wants protection, P2 (Kaervek's Purge → Deflecting Swat, Desertion → Flawless
+Maneuver): both cost nothing while Jodah is out, it does as well as the larger packages, and it cuts the two weakest
+cards. Expect about half a point, not more. JD owns neither card; of the cards JD owns, none measured above zero.
+
+### AI variants tried on top (switches in `JODAH_AI`; off by default)
+
+| Variant | change (vs the same package without it) |
+| --- | --- |
+| `hold`: keep mana up for a protection spell while Jodah is out (value 3 + 6 × removal risk) | −0.1 ± 0.3 (P4, 5,000 games) |
+| `ptutor`: tutors fetch protection with Jodah out, unprotected and removal risk ≥ 0.3 | −0.0 ± 0.0 (P4, 15,000 games: fires in about 1% of games) |
+| `ptutorall`: the same at any removal risk | −0.1 ± 0.2 (P4, 10,000 games) |
+
+Holding mana up saves a few more removals (0.096 against 0.087 a game) and costs as much in legends not cast. Most
+tutors are cast before Jodah: of 170 cast with Jodah out (T1-T3, 300 games each), 55 came with protection already in
+hand and only 12 with removal risk ≥ 0.3; `ptutor` fetched protection 5 times. Fetching protection instead of a legend
+at any risk (`ptutorall`) is a wash.
+
+LOOKAHEAD_PLACEHOLDER
+
+### Why protection can't reach the +15 of the diagnostic
+
+Traced with every protection card in the list at once (17 cards, T2, 200 games): Jodah still left the battlefield 282
+times. Of those, 33 were combat, 20 sacrifices and edicts, 59 wipes (Toxic Deluge's −X/−X and exile wipes need
+Teferi's Protection; Elspeth's −3, Pernicious Deed and Council's Judgment don't offer a response in the engine), and
+of the 131 targeted removals that still landed, 97 met a protection card in hand that couldn't be used: no mana left
+(the deck spends its mana on legends, by design since finding 3) or the wrong kind (indestructible against exile or
+bounce). A save only delays: the next removal comes a turn or two later. The diagnostic stops every removal in every
+game; a four-card package saves Jodah about once in ten games.
+
+### What changed in the code
+
+- **Unclaimed Territory** (`cards/impl/mine.py`): names a creature type as it enters, the one most of the deck's
+  creature cards share (Jodah's deck: Human, 11 cards, Jodah included); Sauron's deck keeps naming Orc
+  (`TERRITORY_TYPE`). Any colour only for a creature spell of that type (or a changeling); `engine.land_cols` passes
+  the land. No current deck but Jodah's plays it; Sauron's sim_guard entries are unchanged.
+- **Vivid lands** (`cards/impl/lands.py`): were "any colour" forever; now two charge counters, each spent when the
+  land makes a colour other than its own, then only that colour. No other current deck plays them.
+- **Plaza of Heroes** (`cards/impl/jodah.py`): its "{3}, {T}, exile: hexproof and indestructible" is used on Jodah
+  against removal and destroy wipes, after any protection card. It saved Jodah 7 times in 3,000 games: 0.0 ± 0.1.
+- **Jodah's protection AI** (`cards/impl/jodah.py`; hooked from `ais.protect_response` and `ais.wipe_response`, which
+  had no Jodah branch, so before this no protection card would have been used): removal aimed at Jodah or a wipe that
+  would take it gets the cheapest card that stops it: free ones first (Flawless Maneuver, Deflecting Swat), Giver or
+  Mother of Runes, then by mana, Plaza of Heroes, Teferi's Protection last. Hexproof and indestructible last the
+  turn; the spells can be countered. Kept for responses, never cast for their interpreter value
+  (`cardimpl.RESPONSE_ONLY`, read by `brain.card_utility`).
+- New card models: Tamiyo's Safekeeping, Loran's Escape, Snakeskin Veil, Royal Treatment (approximate: the Role is a
+  +1/+1 counter, no ward), Dark Endurance (no +2/+0), Lazotep Plating, Mithril Coat (flash; attaches to Jodah as it
+  enters; equip {3}).
+- Equipment onto Jodah: Swiftfoot Boots, Lightning Greaves and Mithril Coat move to Jodah when they sit on another
+  creature (`jodah_options`; the generic equip only moves unattached equipment). Mother and Giver of Runes stay home
+  instead of attacking (they were tapped when the removal came).
+- `JODAH_AI` switches `hold`, `ptutor`, `ptutorall` (off) and `noplaza` (A/B only).
+- `ab.py` records per-game protection stats (`S1`: `jprot_*`, `jodah_left`).
+- Tests: `tests/test_jodah.py` `Lands` and `Protection`. `tests/fixtures/sim_guard.json`: the six Jodah entries
+  re-recorded (the new lands); no other deck's entry changed.
