@@ -1,5 +1,7 @@
 # Jodah, the Unifier — WUBRG Legends
 
+**Updated 2026-10-08.** Out: Kaervek's Purge. In: Champion's Helm. Champion's Helm gives Jodah hexproof: the audit (audit/jodah) found removal of Jodah is what costs the deck most against Tiers 1-3, and Kaervek's Purge was never cast in 406 games where it was drawn.
+
 2026-10-07
 **Added 2026-10-07.** In the simulator as deck key `jodah` (`python3 -m commander_sim --deck jodah --pool t4`) and in practice mode.
 
@@ -15,8 +17,8 @@ Jodah, the Unifier ({W}{U}{B}{R}{G}, 5/5) reads: *Legendary creatures you contro
 - **Card flow:** Fact or Fiction, Memory Jar, Mordenkainen, Experimental Augury, Tireless Tracker, Urza, Powerstone Prodigy, Court of Ardenvale (the monarch).
 - **Mana:** Coalition Relic, Moss Diamond, Star Compass, Sisay's Ring, Fyndhorn Elder, Solemn Simulacrum, Cartographer's Survey, Plaza of Heroes (any colour for legendary spells).
 - **Tutors:** Demonic, Vampiric, Enlightened, Mystical, Worldly and Profane Tutor find the legend or the answer the game needs.
-- **Protection:** Privileged Position (hexproof for your other permanents), Grand Abolisher and Dragonlord Dromoka (opponents can't cast spells during your turn), Shield of Kaldra.
-- **Interaction:** Force of Will, Dismiss, Dissipate, Desertion and Arcane Denial; Bitter Triumph, Darksteel Mutation, Skyclave Apparition, Kaervek's Purge, Lagrella, Disenchant, Pillage; Toxic Deluge and Invoke Despair.
+- **Protection:** Champion's Helm (+2/+2 and hexproof on Jodah or another legend), Privileged Position (hexproof for your other permanents), Grand Abolisher and Dragonlord Dromoka (opponents can't cast spells during your turn), Shield of Kaldra.
+- **Interaction:** Force of Will, Dismiss, Dissipate, Desertion and Arcane Denial; Bitter Triumph, Darksteel Mutation, Skyclave Apparition, Lagrella, Disenchant, Pillage; Toxic Deluge and Invoke Despair.
 - **Kaldra:** Sword, Shield and Helm of Kaldra assemble Kaldra, a 4/4 legendary Avatar wearing all three (+5/+5, first strike, trample, haste, indestructible). Each piece is legendary, so each one triggers Jodah when cast.
 
 ## Key lines
@@ -49,20 +51,19 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (4).** Dakkon, Shadow Slayer, Mordenkainen, The Aetherspark, Wrenn and Six
 
-**Artifacts (10).** Blackblade Reforged, Coalition Relic, Helm of Kaldra, Memory Jar, Mirari, Moss Diamond, Shield of Kaldra, Sisay's Ring, Star Compass, Sword of Kaldra
+**Artifacts (11).** Blackblade Reforged, Champion's Helm, Coalition Relic, Helm of Kaldra, Memory Jar, Mirari, Moss Diamond, Shield of Kaldra, Sisay's Ring, Star Compass, Sword of Kaldra
 
 **Enchantments (3).** Court of Ardenvale, Darksteel Mutation, Privileged Position
 
 **Instants (13).** Arcane Denial, Bitter Triumph, Desertion, Disenchant, Dismiss, Dissipate, Enlightened Tutor, Experimental Augury, Fact or Fiction, Force of Will, Mystical Tutor, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (7).** Cartographer's Survey, Demonic Tutor, Invoke Despair, Kaervek's Purge, Pillage, Profane Tutor, Toxic Deluge
+**Sorceries (6).** Cartographer's Survey, Demonic Tutor, Invoke Despair, Pillage, Profane Tutor, Toxic Deluge
 
 **Lands (36).** Adarkar Wastes, Arcane Sanctum, Battlefield Forge, Brushland, Caves of Koilos, Command Tower, Crumbling Necropolis, Evolving Wilds, Exotic Orchard, Frontier Bivouac, Jungle Shrine, Karplusan Forest, Llanowar Wastes, Mystic Monastery, Nomad Outpost, Opulent Palace, Overgrown Farmland, Path of Ancestry, Plaza of Heroes, Sandsteppe Citadel, Savage Lands, Seaside Citadel, Shattered Sanctum, Shivan Reef, Sulfurous Springs, Terramorphic Expanse, Underground River, Yavimaya Coast, 2 Forest, 1 Island, 1 Mountain, 2 Plains, 2 Swamp
 
 ## Import list (100)
 
 ```
-1 Jodah, the Unifier
 1 Adarkar Wastes
 1 Arcane Denial
 1 Arcane Sanctum
@@ -74,6 +75,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Carth the Lion
 1 Cartographer's Survey
 1 Caves of Koilos
+1 Champion's Helm
 1 Coalition Relic
 1 Command Tower
 1 Court of Ardenvale
@@ -101,8 +103,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grand Abolisher
 1 Helm of Kaldra
 1 Invoke Despair
+1 Jodah, the Unifier
 1 Jungle Shrine
-1 Kaervek's Purge
 1 Karplusan Forest
 1 King Darien XLVIII
 1 Korlash, Heir to Blackblade

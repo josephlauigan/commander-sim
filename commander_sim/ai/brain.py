@@ -527,6 +527,11 @@ def special_options(g, p, s, post):
         if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and importlib.import_module('commander_sim.cards.impl.mine').archivist_worth(g, p)
                 and can_pay(g, p, 0, 'U')):
             o.append((5.0, "Jace's Archivist wheel", lambda: A.sauron_archivist(g, p)))
+    elif k == 'jodah':
+        ht = E.CI.jodah_helm_target(g, p) if find(p, 'helm') and can_pay(g, p, 1, '') else None
+        if ht is not None:                          # Champion's Helm onto Jodah (a legend: hexproof), sooner under threat
+            u = 3.0 + 4.0 * removal_risk(g, p) + 0.2 * pval(g, ht) + (2.0 if ht.is_cmd else 0.0)
+            o.append((u, f"equip Champion's Helm to {ht.name}", lambda ht=ht: A.helm_equip(g, p, ht)))
     elif k == 'najeela' and post:
         for c in p.hand:
             if 'tokx' in c.tags and total_mana(g, p) >= len(c.pips) + 3:
