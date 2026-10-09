@@ -371,7 +371,7 @@ neither Swat nor the Swat price. Their single-card rows above: Swat +0.5 ± 0.7,
 | 2. pooled, 3,000/tier | +0.1 ± 1.5 | +1.9 ± 1.5 | +0.6 ± 1.5 | −0.5 ± 1.5 | −0.8 ± 1.3 | **+0.3 ± 0.7** |
 | 3. Full package, 1,000/tier | +2.6 ± 3.1 | +1.4 ± 2.9 | +0.9 ± 3.0 | +0.9 ± 3.1 | +0.8 ± 2.8 | +1.3 ± 1.3 |
 | 3. pooled, 3,000/tier | +3.0 ± 1.8 | +2.3 ± 1.7 | +0.6 ± 1.7 | +2.3 ± 1.8 | +1.4 ± 1.6 | **+1.9 ± 0.8** |
-LOOKAHEAD_ROWS
+| 4. Full package, look-ahead, 300/tier | +0.7 ± 5.3 | +4.7 ± 5.3 | +1.3 ± 5.3 | +10.0 ± 5.0 | +0.3 ± 5.1 | **+3.4 ± 2.3** |
 
 The 1,000-per-tier rows are seeds 500000-; "pooled" adds 2,000 per tier at seeds 800000-. Adaptive win rate over all
 tiers, pooled: 19.0% (current list) → 20.1% (stage 1) / 19.2% (stage 2) / 20.9% (full package).
@@ -392,8 +392,8 @@ larger run finished): T1 12.0 → 12.7 (+0.7 ± 5.3), T2 13.0 → 17.7 (+4.7 ± 
 | Maelstrom Wanderer cascades (two per cast) | 0.30 | 0.38 | 0.32 | 0.24 | 0.17 | 0.28 | – |
 | Spells cast free by those cascades | 0.45 | 0.61 | 0.51 | 0.32 | 0.23 | 0.43 | – |
 | Sisay activations | 0.10 | 0.12 | 0.14 | 0.09 | 0.13 | 0.12 | – |
-| Command Beacon used (then Jodah cast from hand) | 0.08 | 0.13 | 0.11 | 0.09 | 0.03 | 0.09 | LA_BEACON |
-| Removal or a wipe stopped (Bolt Bend, Flawless Maneuver, Plaza) | 0.07 | 0.09 | 0.05 | 0.06 | 0.01 | 0.06 | LA_SAVES |
+| Command Beacon used (then Jodah cast from hand) | 0.08 | 0.13 | 0.11 | 0.09 | 0.03 | 0.09 | – |
+| Removal or a wipe stopped (Bolt Bend, Flawless Maneuver, Plaza) | 0.07 | 0.09 | 0.05 | 0.06 | 0.01 | 0.06 | – |
 
 Adaptive numbers pooled over 15,000 games. Of the 0.057 saves a game: Flawless Maneuver 0.023 against targeted
 removal and 0.015 against wipes, Bolt Bend 0.014 for Jodah and 0.003 for another legend, Plaza of Heroes 0.002.
