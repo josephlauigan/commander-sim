@@ -1165,15 +1165,35 @@ def plaza_colors(g, p):
     return ''.join(sorted({x for m in p.perms if m.cd is not None and is_legendary(g, m) for x in m.cd.pips if x in 'WUBRG'}))
 
 
-def territory_colors(g, p):
+TERRITORY_TYPE = {'sauron': 'orc'}                 # a deck's own choice; others name their commonest creature type
+
+
+def territory_type(p):
+    """the creature type Unclaimed Territory names as it enters: the one most of p's creature cards share"""
+    t = TERRITORY_TYPE.get(p.key) or getattr(p, 'territory_type', None)
+    if t is None:
+        cards = p.library + p.hand + p.gy + p.exile + [m.cd for m in p.perms if m.cd is not None] + [p.cmd]
+        n = __import__("collections").Counter(x for c in cards if c is not None and c.creature for x in c.subtypes)
+        t = p.territory_type = min(n, key=lambda x: (-n[x], x)) if n else 'human'
+    return t
+
+
+def territory_colors(g, p, L=None):
+    """{C}, or any colour for a creature spell of the named type (a changeling is every type)"""
     pf = E.PAY_FOR
-    return p.ident if pf is not None and pf.creature and 'orc' in pf.subtypes else ''
+    if pf is None or not pf.creature: return ''
+    t = (L.data or {}).get('ctype') if L is not None else None
+    if t is None:
+        t = territory_type(p)
+        if L is not None: L.data = dict(L.data or {}, ctype=t)
+    return p.ident if t in pf.subtypes or 'changeling' in pf.kws else ''
 
 
 full('Barad-dûr', 'enters tapped without a legendary creature; {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died')
-full('Plaza of Heroes', '{C}; any colour for legendary spells; colours among your legendary permanents; the exile '
-     'protection is not used')
-full('Unclaimed Territory', 'names Orc: {C}, or any colour for Orc creature spells')
+full('Plaza of Heroes', '{C}; any colour for legendary spells; colours among your legendary permanents; {3}, {T}, exile: '
+     "hexproof and indestructible for a legend (Jodah's AI uses it on Jodah against removal and destroy wipes)")
+full('Unclaimed Territory', 'names the creature type most of your creatures share (Sauron: Orc; Jodah: Human): {C}, or '
+     'any colour for a creature spell of that type')
 full('Talisman of Creativity', '{T}: {C}, or {U}/{R} for 1 damage to you')
 
 

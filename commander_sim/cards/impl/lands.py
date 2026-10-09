@@ -427,6 +427,27 @@ note('Mystic Sanctuary', 'Full', 'enters untapped with three other Islands, then
      'the graveyard on top')
 
 
+# ------------------------------------------------------------------ Vivid lands: two charge counters for any colour
+VIVID = {'Vivid Creek': 'U', 'Vivid Grove': 'G', 'Vivid Marsh': 'B', 'Vivid Meadow': 'W', 'Vivid Crag': 'R'}
+
+
+def _vivid_charge(L):
+    return (L.data or {}).get('charge', 2)              # enters with two (however it entered)
+
+
+def _vivid_tap(g, p, L, used):
+    """a colour other than its own used a charge counter"""
+    if any(x in 'WUBRG' and x != VIVID[L.cd.name] for x in E.TAP_COLS):
+        L.data = dict(L.data or {}, charge=max(0, _vivid_charge(L) - 1))
+
+
+for _n, _c in VIVID.items():
+    card(_n, 'c=A t', types='L', dsl=[])                # c=A: any colour to the land-drop and mulligan choices
+    CI.LAND_COLS[_n] = lambda g, p, L, c=_c: c + p.ident.replace(c, '') if _vivid_charge(L) else c
+    CI.ON_TAP[_n] = _vivid_tap
+    note(_n, 'Full', f'enters tapped with two charge counters; {{T}}: {{{_c}}}, or remove a counter for any colour')
+
+
 card('Simic Growth Chamber', 'amt=2 c=UG t bounceland', types='L')
 note('Simic Growth Chamber', 'Full', 'enters tapped, returns a land to hand, taps for {G}{U}')
 card('Reliquary Tower', 'c=C nomax', types='L')

@@ -144,6 +144,8 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if E.CI.galadriel_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'yshtola':
         if E.CI.yshtola_protect(g, owner, m, kind, actor, spell): return True
+    elif owner.key == 'jodah':
+        if E.CI.jodah_protect(g, owner, m, kind, actor, spell): return True
     elif owner.key == 'najeela':
         if v >= 5 and not m.token and m.creature:
             for c in owner.hand:
@@ -170,6 +172,7 @@ def wipe_response(g, q, kind, caster):
         return pool_ai.wipe_response(g, q, kind, caster)
     if q.key == 'galadriel': return E.CI.galadriel_wipe_response(g, q, kind)
     if q.key == 'yshtola': return E.CI.yshtola_wipe_response(g, q, kind)
+    if q.key == 'jodah': return E.CI.jodah_wipe_response(g, q, kind, caster)
     loss = wipe_loss(g, q, kind, caster)
     if loss < 6: return None
     if q.key == 'seph':

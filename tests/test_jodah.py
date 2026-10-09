@@ -204,5 +204,120 @@ class JodahAudit(unittest.TestCase):
         self.assertEqual(ais.tutor_pick(g, p, 'any'), 'Razia, Boros Archangel')
 
 
+class Lands(unittest.TestCase):
+    """the 10-09 land switch: Vivid Creek and Unclaimed Territory"""
+    def test_unclaimed_territory_names_the_commonest_creature_type(self):
+        g = table('jodah', 'veyran'); p = g.players[0]
+        from commander_sim.cards.impl import mine
+        self.assertEqual(mine.territory_type(p), 'human')          # Jodah, Grand Abolisher, Mirri ... are Humans
+        self.assertEqual(mine.TERRITORY_TYPE['sauron'], 'orc')      # Sauron's deck keeps naming Orc
+        lands(p, 'Unclaimed Territory'); lands(p, 'Island'); lands(p, 'Swamp')
+        try:
+            E.PAY_FOR = card('Grand Abolisher')                       # a Human: any colour
+            self.assertTrue(E.can_pay(g, p, 0, 'WUB'))
+            E.PAY_FOR = card('Lyra Dawnbringer')                      # an Angel: colourless only
+            self.assertFalse(E.can_pay(g, p, 0, 'WUB'))
+            self.assertTrue(E.can_pay(g, p, 1, 'UB'))
+            E.PAY_FOR = card('Toxic Deluge')                          # not a creature spell
+            self.assertFalse(E.can_pay(g, p, 0, 'WUB'))
+        finally:
+            E.PAY_FOR = None
+        self.assertEqual(p.lands[0].data.get('ctype'), 'human')
+
+    def test_vivid_creek_makes_any_colour_twice(self):
+        g = table('jodah', 'veyran'); p = g.players[0]
+        lands(p, 'Vivid Creek')
+        for _ in range(2):
+            self.assertTrue(E.can_pay(g, p, 0, 'R'))
+            E.pay(g, p, 0, 'R'); p.lands[0].tapped = False
+        self.assertFalse(E.can_pay(g, p, 0, 'R'))                      # the counters are gone: {U} only
+        self.assertTrue(E.can_pay(g, p, 0, 'U'))
+        E.pay(g, p, 0, 'U')
+        self.assertEqual(p.lands[0].data['charge'], 0)
+
+
+class Protection(unittest.TestCase):
+    """the 10-09 protection study: what Jodah's AI does with protection when removal or a wipe comes for Jodah"""
+    def setUp(self):
+        self.g = table('jodah', 'veyran'); self.p, self.q = self.g.players
+        self.j = jodah(self.g, self.p)
+        self.g.active = self.q
+
+    def test_heroic_intervention_answers_targeted_removal(self):
+        g, p, q, j = self.g, self.p, self.q, self.j
+        lands(p, 'Forest', 2); hand(p, 'Heroic Intervention')
+        E.apply_removal(g, q, j, 'exile', card('Swords to Plowshares'))
+        self.assertIn(j, p.perms)
+        self.assertTrue(E.untargetable(g, j))                     # hexproof for the rest of the turn
+        self.assertEqual(p.stats['jprot_Heroic Intervention'], 1)
+
+    def test_flawless_maneuver_is_free_but_only_stops_destroy(self):
+        g, p, q, j = self.g, self.p, self.q, self.j
+        hand(p, 'Flawless Maneuver')
+        E.apply_removal(g, q, j, 'exile', card('Swords to Plowshares'))
+        self.assertNotIn(j, p.perms)                              # indestructible doesn't stop exile
+        j = jodah(g, p)
+        E.apply_removal(g, q, j, 'destroy', card('Swords to Plowshares'))
+        self.assertIn(j, p.perms)                                 # no lands: cast free with Jodah out
+        self.assertEqual(p.stats['jprot_Flawless Maneuver'], 1)
+
+    def test_protection_is_held_not_cast_for_value(self):
+        g, p = self.g, self.p
+        from commander_sim.ai import brain
+        lands(p, 'Plains', 3)
+        for n in ('Flawless Maneuver', "Tamiyo's Safekeeping", "Teferi's Protection"):
+            self.assertIsNone(brain.card_utility(g, p, brain.Situation(g, p), hand(p, n)))
+
+    def test_safekeeping_keeps_jodah_through_a_wrath(self):
+        g, p, q, j = self.g, self.p, self.q, self.j
+        other = perm(g, p, 'Lyra Dawnbringer')
+        lands(p, 'Forest'); hand(p, "Tamiyo's Safekeeping")
+        self.assertIsNone(ais.wipe_response(g, p, 'destroy', q))   # Jodah alone is indestructible
+        for m in list(p.perms): E.die(g, m, 'destroy')
+        self.assertIn(j, p.perms)
+        self.assertNotIn(other, p.perms)
+        self.assertEqual(p.stats["jprot_wipe_Tamiyo's Safekeeping"], 1)
+
+    def test_teferis_protection_against_an_exile_wipe(self):
+        g, p, q = self.g, self.p, self.q
+        lands(p, 'Plains', 3); hand(p, "Teferi's Protection")
+        self.assertEqual(ais.wipe_response(g, p, 'exile', q), 'all')
+
+    def test_plaza_of_heroes_saves_jodah(self):
+        g, p, q, j = self.g, self.p, self.q, self.j
+        lands(p, 'Plaza of Heroes'); lands(p, 'Swamp', 3)
+        E.apply_removal(g, q, j, 'destroy', card('Swords to Plowshares'))
+        self.assertIn(j, p.perms)
+        self.assertNotIn('Plaza of Heroes', [L.cd.name for L in p.lands])
+        self.assertIn('Plaza of Heroes', [c.name for c in p.exile])
+        self.assertTrue(all(L.tapped for L in p.lands))
+
+    def test_runes_and_swat(self):
+        g, p, q, j = self.g, self.p, self.q, self.j
+        perm(g, p, 'Giver of Runes')
+        E.apply_removal(g, q, j, 'exile', card('Swords to Plowshares'))
+        self.assertIn(j, p.perms)
+        t = perm(g, q, 'Grave Titan')
+        hand(p, 'Deflecting Swat')
+        E.apply_removal(g, q, j, 'exile', card('Swords to Plowshares'))  # Giver is tapped: Swat, free, sends it back
+        self.assertIn(j, p.perms)
+        self.assertNotIn(t, q.perms)
+
+    def test_equipment_goes_to_jodah(self):
+        g, p, j = self.g, self.p, self.j
+        g.active = p
+        lands(p, 'Plains', 3)
+        other = perm(g, p, 'Lyra Dawnbringer')
+        boots = perm(g, p, 'Swiftfoot Boots'); boots.attached = other
+        o = J.jodah_options(g, p, False)
+        self.assertEqual([x[1] for x in o], ['equip Swiftfoot Boots to Jodah'])
+        o[0][2]()
+        self.assertIs(boots.attached, j)
+        self.assertTrue(E.untargetable(g, j))
+        coat = perm(g, p, 'Mithril Coat')                         # attaches to Jodah as it enters
+        self.assertIs(coat.attached, j)
+        self.assertTrue(E.indestructible(g, j))
+
+
 if __name__ == '__main__':
     unittest.main()

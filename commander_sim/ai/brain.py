@@ -171,7 +171,14 @@ HELD = lambda c: (('ctr' in c.tags and 'free' not in c.tags) or c.tags.get('prot
 def hold_value(g, p, s):
     """How much the AI wants to keep mana open right now."""
     held = [c for c in p.hand if HELD(c) and not E.free_counter(p, c) and can_pay(g, p, c.generic, c.pips)]
+    if p.key == 'jodah':                # Jodah out: the mana for a protection spell (cards/impl/jodah.py)
+        jc, jv = E.CI.jodah_hold(g, p)
+        if jc is not None and (not held or jv > _hold(g, p, s, held)[1]): return jc, jv
     if not held: return None, 0.0
+    return _hold(g, p, s, held)
+
+
+def _hold(g, p, s, held):
     c = min(held, key=lambda c: c.cmc)
     caution = style(p)['caution']
     v = 1.0 + 3.0 * caution * min(1.0, s.max_threat / 20.0) + 2.5 * s.combo_near
@@ -208,7 +215,8 @@ def card_utility(g, p, s, c):
     if ('top' in c.tags or 'seal' in c.tags) and c.instant and g.active is p \
             and not any('draw' in x.tags for x in p.hand if x is not c):
         return None                     # a card put on top on your own turn waits a turn: tutor at the end of theirs
-    hand_written = E.CI is not None and c.name in E.CI.SPELL_PRIO      # its own priority said no: keep it no
+    hand_written = E.CI is not None and (c.name in E.CI.SPELL_PRIO                  # its own priority said no: keep
+                                         or c.name in E.CI.RESPONSE_ONLY.get(p.key, ()))   # it no (or kept for responses)
     if base <= 0 and c.dsl and E.DSLMOD is not None and not hand_written: base = E.DSLMOD.card_value(g, p, c) * 10
     if base <= 0: return None
     u = base / 10.0                                   # deck knowledge as a prior (0-9)
@@ -527,6 +535,8 @@ def special_options(g, p, s, post):
         if (any(not m.tapped and not m.sick for m in find(p, 'archivist')) and importlib.import_module('commander_sim.cards.impl.mine').archivist_worth(g, p)
                 and can_pay(g, p, 0, 'U')):
             o.append((5.0, "Jace's Archivist wheel", lambda: A.sauron_archivist(g, p)))
+    elif k == 'jodah':
+        o += E.CI.jodah_options(g, p, post)
     elif k == 'najeela' and post:
         for c in p.hand:
             if 'tokx' in c.tags and total_mana(g, p) >= len(c.pips) + 3:

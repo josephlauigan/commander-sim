@@ -524,7 +524,7 @@ def _land_cols(g, p, L, anyc, moon, dryad):
     if anyc: return p.ident
     if dryad: return p.ident
     if CI is not None and L.cd.name == 'Plaza of Heroes': return CI.plaza_colors(g, p)
-    if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p)
+    if CI is not None and L.cd.name == 'Unclaimed Territory': return CI.territory_colors(g, p, L)
     if CI is not None and L.cd.name in CI.LAND_COLS: return CI.LAND_COLS[L.cd.name](g, p, L)
     c = L.cd.tags.get('c', 'C')
     if c == 'A': return p.ident

@@ -113,6 +113,7 @@ def jodah_prio(g, p, c):
     With Jodah castable now, Jodah comes first: a legend cast before it gives up its cascade, and any other spell
     that leaves too little mana for Jodah puts it off a turn."""
     from commander_sim.ai import pool_ai
+    if c.name in PROTECT and not (legend_card(c) and jodahs(p)): return 0         # kept for removal and wipes
     v = pool_ai.generic_prio(g, p, c) or 0
     if c is p.cmd: return max(v, 86)
     if not v and c.dsl and E.DSLMOD is not None: v = int(E.DSLMOD.card_value(g, p, c) * 10)
@@ -139,6 +140,9 @@ def jodah_tutor(g, p, kind, okn):
     mana = len(p.lands) + sum(1 for m in p.perms if m.cd is not None and ('rock' in m.cd.tags or 'dork' in m.cd.tags))
     out = jodahs(p) > 0
     order = []
+    if _AI & {'ptutor', 'ptutorall'} and out and not hand & PROTECTION and not untargetable(g, _the_jodah(p)) and \
+            ('ptutorall' in _AI or importlib.import_module('commander_sim.ai.brain').removal_risk(g, p) >= 0.3):
+        order += [n for n in PROTECTION_ORDER if n not in have]              # Jodah out and exposed: protect it
     if not out and p.cmd_in_zone and mana < 4:
         order += ['Coalition Relic', 'Star Compass', 'Moss Diamond', 'Fyndhorn Elder']
     kaldra = [n for n in KALDRA if n not in have | hand]
@@ -156,6 +160,232 @@ def jodah_tutor(g, p, kind, okn):
 
 
 CI.jodah_tutor = jodah_tutor
+
+
+# ================================================================== protecting Jodah (audit/jodah, 10-09)
+# Cards the AI keeps for removal aimed at Jodah or a wipe that would hit it. name: (cost, free while Jodah is out,
+# what it stops, what it does). Stops: 'tgt' targeted removal, 'destroy' destroy and damage (targeted or a wipe),
+# 'both', 'all' (anything). Does: grant hexproof ('hex') and/or indestructible ('ind') to Jodah or (_all) to every
+# creature (Flawless Maneuver, Unbreakable Formation) or permanent (Heroic Intervention, Lazotep Plating) until end of
+# turn; 'swat' sends the removal at one of the caster's permanents; 'coat' puts Mithril Coat on Jodah; 'phase' is
+# Teferi's Protection. Listed cheapest first: free ones, then by mana; Teferi's Protection last.
+PROTECT = {
+    'Flawless Maneuver':     ((2, 'W'), True, 'destroy', 'ind_all'),
+    'Deflecting Swat':       ((2, 'R'), True, 'tgt', 'swat'),
+    "Tamiyo's Safekeeping":  ((0, 'G'), False, 'both', 'hexind'),
+    "Loran's Escape":        ((0, 'W'), False, 'both', 'hexind'),
+    'Snakeskin Veil':        ((0, 'G'), False, 'tgt', 'hex'),
+    'Royal Treatment':       ((0, 'G'), False, 'tgt', 'hex'),
+    'Dark Endurance':        ((1, 'B'), False, 'destroy', 'ind'),
+    'Heroic Intervention':   ((1, 'G'), False, 'both', 'hexind_all'),
+    'Lazotep Plating':       ((1, 'U'), False, 'tgt', 'hex_all'),
+    'Unbreakable Formation': ((2, 'W'), False, 'destroy', 'ind_all'),
+    'Mithril Coat':          ((3, ''), False, 'destroy', 'coat'),
+    "Teferi's Protection":   ((2, 'W'), False, 'all', 'phase'),
+}
+CI.RESPONSE_ONLY['jodah'] = set(PROTECT)            # never cast for their interpreter value (brain.card_utility)
+WIPE_DESTROY = ('destroy', 'dmg13', 'austere', 'austere2', 'nib')     # wipes that indestructible survives
+
+
+def _the_jodah(p):
+    return next((m for m in p.perms if m.cd is not None and m.cd.name == JODAH and not m.phased), None)
+
+
+def _grant(g, ms, kws):
+    for m in ms:
+        g.eot_kw.setdefault(id(m), set()).update(kws)
+
+
+def _saved(p, name, wipe=False):
+    p.stats['jprot_saves'] += 1
+    p.stats[f"jprot_{'wipe_' if wipe else ''}{name}"] += 1
+
+
+def _cast_protection(g, p, c):
+    """cast protection card c from hand in response (free if it can be): True if it resolves"""
+    (gen, pips), free_cmd = PROTECT[c.name][:2]
+    free = free_cmd and commander_out(p)
+    if c not in p.hand or not castable(g, p, c) or not (free or can_pay(g, p, gen, pips)): return False
+    p.hand.remove(c)
+    if not free: pay(g, p, gen, pips)
+    p.spells_this_turn += 1; p.stats['spells_cast'] += 1; p.cast_names.add(c.name)
+    log(f'  {NAME(p)} casts {c.name}' + (' (free)' if free else ''), g)
+    on_cast(g, p, c)
+    ok = counter_window(g, p, c, 6, {})
+    if c.name == 'Mithril Coat' and ok:
+        e = enter(g, p, c); e.attached = _the_jodah(p) or _best_legend(g, p)
+    else:
+        (p.exile if c.name == E.TEFERIS_PROTECTION else p.gy).append(c)
+    return ok
+
+
+def _swat_targets(g, actor, kind):
+    return [x for x in actor.perms if not x.phased and not untargetable(g, x) and (x.creature or not kind.startswith('dmg'))]
+
+
+def _apply(g, p, j, name, does, spell=None, actor=None, kind=None):
+    """the protection's effect on Jodah j (and the rest of p's board); False if it found nothing to do (Deflecting
+    Swat with no new target left)"""
+    if does == 'phase': E.teferis_protection(g, p); return True
+    if does == 'swat':
+        alt = _swat_targets(g, actor, kind)
+        if not alt: return False
+        t = max(alt, key=lambda x: pval(g, x))
+        log(f'    Deflecting Swat: {spell.name} now targets {t.name}', g)
+        apply_removal(g, actor, t, kind, spell); return True
+    kws = {'hex': {'hexproof'}, 'ind': {'indestructible'}, 'hexind': {'hexproof', 'indestructible'}}.get(does.split('_')[0], set())
+    scope = [j]
+    if does.endswith('_all'):
+        scope = [m for m in p.perms if not m.phased and (m.creature or does != 'ind_all')]
+    _grant(g, scope, kws)
+    if name in ('Snakeskin Veil', 'Royal Treatment'): j.plus += 1            # the counter / the Royal Role's +1/+1
+    if name == "Tamiyo's Safekeeping": gain(p, 2)
+    if name == 'Lazotep Plating': amass(g, p, 1)
+    if name == "Loran's Escape": importlib.import_module('commander_sim.cards.impl.topdeck').scry(g, p, 1)
+    return True
+
+
+def _stops(stops, kind, targeted):
+    destroyish = kind == 'destroy' or kind.startswith('dmg') or (not targeted and kind in WIPE_DESTROY)
+    return stops == 'all' or (stops in ('tgt', 'both') and targeted) or (stops in ('destroy', 'both') and destroyish)
+
+
+def _rune_save(g, p, j, spell):
+    """Giver of Runes (another creature: anything) or Mother of Runes (a coloured spell): tap for protection"""
+    for name in ('Giver of Runes', 'Mother of Runes'):
+        for m in _mine_named(p, name):
+            if m is j or m.tapped or m.sick: continue
+            if name == 'Mother of Runes' and not (spell is not None and set(spell.pips) & set('WUBRG')): continue
+            m.tapped = True
+            log(f'    {NAME(p)} taps {name}: Jodah gains protection', g)
+            return name
+    return None
+
+
+def _plaza_save(g, p, j):
+    """Plaza of Heroes: {3}, {T}, exile it: a legendary creature gains hexproof and indestructible until end of turn"""
+    if 'noplaza' in _AI: return False                                        # audit/jodah A/B: as before 10-09
+    IL = importlib.import_module('commander_sim.cards.impl.lands')
+    for L in [L for L in p.lands if L.cd.name == 'Plaza of Heroes' and not L.tapped]:
+        if not IL.can_pay_without(g, p, L, 3, '') or not IL.pay_without(g, p, L, 3, ''): continue
+        p.lands.remove(L); p.exile.append(L.cd)
+        log(f'    {NAME(p)} exiles Plaza of Heroes: Jodah gains hexproof and indestructible', g)
+        if ability_window(g, p, L.cd, 'hexproof and indestructible for Jodah'):
+            _grant(g, [j], {'hexproof', 'indestructible'}); return True
+        return False
+    return False
+
+
+def jodah_protect(g, p, m, kind, actor, spell=None):
+    """removal aimed at Jodah: the cheapest answer that stops it (free spells, Giver or Mother of Runes, then by mana,
+    Plaza of Heroes, Teferi's Protection last). True if Jodah is safe"""
+    if m.cd is None or m.cd.name != JODAH or kind in ('edict', 'wipe'): return False
+    if actor is None or actor is p: return False
+    shrink = kind.startswith('shrink') or kind == 'zero'              # -X/-X: indestructible doesn't help
+    n = _rune_save(g, p, m, spell)
+    if n: _saved(p, n); return True
+    for name, (cost, free, stops, does) in PROTECT.items():
+        c = next((c for c in p.hand if c.name == name), None)
+        if c is None or not _stops(stops, kind, True) or (shrink and stops == 'destroy'): continue
+        if does == 'swat' and (spell is None or not _swat_targets(g, actor, kind)): continue
+        if name == E.TEFERIS_PROTECTION and p.life_locked: continue
+        if not _cast_protection(g, p, c) or not _apply(g, p, m, name, does, spell, actor, kind): return False
+        _saved(p, name)
+        return True
+    if _plaza_save(g, p, m): _saved(p, 'Plaza of Heroes'); return True
+    return False
+
+
+def jodah_wipe_response(g, p, kind, caster):
+    """a wipe that would take Jodah: indestructible (destroy and damage wipes) or Teferi's Protection. 'all', 'indes'
+    (the whole board is indestructible) or None (Jodah alone may be safe)"""
+    j = _the_jodah(p)
+    if j is None or caster is p or not importlib.import_module('commander_sim.ais').wipe_hit(g, caster, kind)(j, p):
+        return None
+    for name, (cost, free, stops, does) in PROTECT.items():
+        if does in ('swat',) or not _stops(stops, kind, False): continue
+        c = next((c for c in p.hand if c.name == name), None)
+        if c is None or (name == E.TEFERIS_PROTECTION and p.life_locked): continue
+        if not _cast_protection(g, p, c): return None
+        _apply(g, p, j, name, does); _saved(p, name, wipe=True)
+        return 'all' if does == 'phase' else 'indes' if does in ('ind_all', 'hexind_all') else None
+    if kind in WIPE_DESTROY and _plaza_save(g, p, j): _saved(p, 'Plaza of Heroes', wipe=True)
+    return None
+
+
+CI.jodah_protect = jodah_protect
+HOLD = [float(x) for x in __import__('os').environ.get('JODAH_HOLD', '3,6').split(',')]   # audit/jodah A/B
+
+
+def jodah_hold(g, p):
+    """(card, value) of keeping mana up for a protection spell while Jodah is out (switch hold): worth more the likelier
+    an opponent holds instant removal; free spells (Flawless Maneuver, Deflecting Swat) need nothing kept"""
+    if 'hold' not in _AI or not jodahs(p): return None, 0.0
+    cs = [c for c in p.hand if c.name in PROTECT and not (PROTECT[c.name][1] and commander_out(p))
+          and can_pay(g, p, *PROTECT[c.name][0])]
+    if not cs: return None, 0.0
+    c = min(cs, key=lambda c: sum(PROTECT[c.name][0][:1]) + len(PROTECT[c.name][0][1]))
+    return c, HOLD[0] + HOLD[1] * importlib.import_module('commander_sim.ai.brain').removal_risk(g, p)
+
+
+CI.jodah_hold = jodah_hold
+PROTECTION_ORDER = ('Lightning Greaves', 'Swiftfoot Boots', 'Mithril Coat', 'Giver of Runes', 'Mother of Runes',
+                    'Flawless Maneuver', 'Deflecting Swat', 'Heroic Intervention', "Tamiyo's Safekeeping",
+                    "Loran's Escape", "Teferi's Protection", 'Snakeskin Veil', 'Royal Treatment', 'Lazotep Plating',
+                    'Unbreakable Formation', 'Dark Endurance')       # what the tutors find (switch ptutor), best first
+PROTECTION = set(PROTECTION_ORDER)
+CI.jodah_wipe_response = jodah_wipe_response
+
+
+def jodah_options(g, p, post):
+    """main phase: Swiftfoot Boots, Lightning Greaves or Mithril Coat onto Jodah when they are elsewhere (the generic
+    equip only moves unattached equipment)"""
+    j = _the_jodah(p)
+    if j is None or post is None: return []
+    o = []
+    for e in p.perms:
+        if e.cd is None or e.phased or e.attached is j: continue
+        n = {'Swiftfoot Boots': 1, 'Lightning Greaves': 0, 'Mithril Coat': 3}.get(e.cd.name)
+        if n is None or not can_pay(g, p, n, '') or (e.cd.name != 'Mithril Coat' and untargetable(g, j)): continue
+        if e.cd.name == 'Mithril Coat' and indestructible(g, j): continue
+        o.append((4.0 + 0.2 * pval(g, j) - 0.5 * n, f'equip {e.cd.name} to Jodah',
+                  lambda e=e, n=n: j in p.perms and can_pay(g, p, n, '') and equip_to(g, p, e, j, n)))
+    return o
+
+
+CI.jodah_options = jodah_options
+
+
+def _runes_home(g, p, m):
+    """Jodah's AI keeps Mother and Giver of Runes home (untapped, to protect Jodah) instead of attacking with them"""
+    if p.key == 'jodah': m.noatk = True
+for _n in ('Mother of Runes', 'Giver of Runes'): CI.AS_ENTERS[_n] = _runes_home
+
+
+@on('Mithril Coat', 'etb')
+def _coat_etb(g, src, p, m):
+    """attach it to a legendary creature you control: Jodah first"""
+    if m is src and src.attached is None:
+        src.attached = _the_jodah(src.owner) or _best_legend(g, src.owner)
+
+
+card('Mithril Coat', 'leg flash prot=coat', types='A', dsl=[
+    {'type': 'static', 'static': 'self_keyword', 'keyword': 'indestructible'},
+    {'type': 'static', 'static': 'equip_keyword', 'keyword': 'indestructible'},
+    {'type': 'static', 'static': 'equip_cost', 'mana': 3}])
+full('Mithril Coat', 'flash; indestructible; attaches to your legendary creature as it enters (Jodah first); the '
+     "equipped creature is indestructible; equip {3}. Jodah's AI casts it with Jodah out, or in response to "
+     'destroy removal or a wipe')
+for _n, _t, _s in (("Tamiyo's Safekeeping", 'G', 'hexproof and indestructible until end of turn; you gain 2 life'),
+                   ("Loran's Escape", 'W', 'hexproof and indestructible until end of turn; scry 1'),
+                   ('Snakeskin Veil', 'G', 'a +1/+1 counter and hexproof until end of turn'),
+                   ('Dark Endurance', '1B', '+2/+0 and indestructible until end of turn (the +2/+0 is not modeled)'),
+                   ('Lazotep Plating', '1U', 'amass Zombies 1; you and your permanents gain hexproof until end of turn')):
+    card(_n, 'prot=jodah', types='I', dsl=[])
+    full(_n, _s + " (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)")
+card('Royal Treatment', 'prot=jodah', types='I', dsl=[])
+note('Royal Treatment', 'Approximate', 'hexproof until end of turn; the Royal Role is a +1/+1 counter (its ward {1} is '
+     "not modeled); Jodah's AI casts it in response to removal aimed at Jodah")
 
 
 # ================================================================== the 99: cards that need code

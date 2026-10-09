@@ -28,6 +28,7 @@ from commander_sim import engine as E
 
 HOOKS = {}            # card name -> {event: fn}
 SPELL_PRIO = {}       # card name -> number or fn(g, p, c): cast priority 0-90 for outside decks (0 = not now)
+RESPONSE_ONLY = {}    # deck key -> card names its AI casts only in response (no interpreter-value casting)
 LAND_ETB = {}         # land name -> fn(g, p, land) when it enters as a land drop (Bojuka Bog ...)
 
 

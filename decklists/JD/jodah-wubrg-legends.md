@@ -1,5 +1,7 @@
 # Jodah, the Unifier — WUBRG Legends
 
+**Updated 2026-10-09.** Out: Evolving Wilds, Terramorphic Expanse. In: Unclaimed Territory, Vivid Creek. JD's land switch (Unclaimed Territory names Human: Jodah and 10 other creatures are Humans). Measured flat: +0.2 ± 0.5 points (13,000 paired games, adaptive AI; audit/jodah/README.md).
+
 2026-10-07
 **Added 2026-10-07.** In the simulator as deck key `jodah` (`python3 -m commander_sim --deck jodah --pool t4`) and in practice mode.
 
@@ -25,7 +27,7 @@ Jodah, the Unifier ({W}{U}{B}{R}{G}, 5/5) reads: *Legendary creatures you contro
 - **Jodah, then legends from hand.** Cast the expensive legends first: a seven- or eight-drop cascades into almost any other legend in the deck.
 - **Protect the board.** Privileged Position or Grand Abolisher before the big turn; hold Force of Will for the wipe.
 
-**Mulligan:** keep three lands that make at least three colours, or two lands and a rock. The mana base has 36 lands: 10 painlands, 10 tri-lands (they enter tapped), 2 slow lands (Overgrown Farmland, Shattered Sanctum), Command Tower, Exotic Orchard, Path of Ancestry, Plaza of Heroes, two fetches for basics (Evolving Wilds, Terramorphic Expanse) and 8 basics.
+**Mulligan:** keep three lands that make at least three colours, or two lands and a rock. The mana base has 36 lands: 10 painlands, 10 tri-lands (they enter tapped), 2 slow lands (Overgrown Farmland, Shattered Sanctum), Command Tower, Exotic Orchard, Path of Ancestry, Plaza of Heroes, Vivid Creek ({U}, or any colour twice), Unclaimed Territory (any colour for Human creature spells, Jodah included) and 8 basics.
 
 ## What the simulator found
 
@@ -57,12 +59,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Sorceries (7).** Cartographer's Survey, Demonic Tutor, Invoke Despair, Kaervek's Purge, Pillage, Profane Tutor, Toxic Deluge
 
-**Lands (36).** Adarkar Wastes, Arcane Sanctum, Battlefield Forge, Brushland, Caves of Koilos, Command Tower, Crumbling Necropolis, Evolving Wilds, Exotic Orchard, Frontier Bivouac, Jungle Shrine, Karplusan Forest, Llanowar Wastes, Mystic Monastery, Nomad Outpost, Opulent Palace, Overgrown Farmland, Path of Ancestry, Plaza of Heroes, Sandsteppe Citadel, Savage Lands, Seaside Citadel, Shattered Sanctum, Shivan Reef, Sulfurous Springs, Terramorphic Expanse, Underground River, Yavimaya Coast, 2 Forest, 1 Island, 1 Mountain, 2 Plains, 2 Swamp
+**Lands (36).** Adarkar Wastes, Arcane Sanctum, Battlefield Forge, Brushland, Caves of Koilos, Command Tower, Crumbling Necropolis, Exotic Orchard, Frontier Bivouac, Jungle Shrine, Karplusan Forest, Llanowar Wastes, Mystic Monastery, Nomad Outpost, Opulent Palace, Overgrown Farmland, Path of Ancestry, Plaza of Heroes, Sandsteppe Citadel, Savage Lands, Seaside Citadel, Shattered Sanctum, Shivan Reef, Sulfurous Springs, Unclaimed Territory, Underground River, Vivid Creek, Yavimaya Coast, 2 Forest, 1 Island, 1 Mountain, 2 Plains, 2 Swamp
 
 ## Import list (100)
 
 ```
-1 Jodah, the Unifier
 1 Adarkar Wastes
 1 Arcane Denial
 1 Arcane Sanctum
@@ -90,7 +91,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Dragonlord Dromoka
 1 Elenda, the Dusk Rose
 1 Enlightened Tutor
-1 Evolving Wilds
 1 Exotic Orchard
 1 Experimental Augury
 1 Fact or Fiction
@@ -101,6 +101,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grand Abolisher
 1 Helm of Kaldra
 1 Invoke Despair
+1 Jodah, the Unifier
 1 Jungle Shrine
 1 Kaervek's Purge
 1 Karplusan Forest
@@ -142,15 +143,16 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sulfurous Springs
 1 Sword of Kaldra
 1 Szadek, Lord of Secrets
-1 Terramorphic Expanse
 1 Terror of the Peaks
 1 The Aetherspark
 1 Tireless Tracker
 1 Tolsimir Wolfblood
 1 Toxic Deluge
+1 Unclaimed Territory
 1 Underground River
 1 Urza, Powerstone Prodigy
 1 Vampiric Tutor
+1 Vivid Creek
 1 Worldly Tutor
 1 Wrenn and Six
 1 Yavimaya Coast
