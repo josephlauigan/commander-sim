@@ -318,6 +318,136 @@ class Protection(unittest.TestCase):
         self.assertIs(coat.attached, j)
         self.assertTrue(E.indestructible(g, j))
 
+    def test_bolt_bend_costs_r_with_power_four_and_redirects(self):
+        g, p, q, j = self.g, self.p, self.q, self.j
+        self.assertEqual(J.prot_cost(g, p, 'Bolt Bend'), (0, 'R'))   # Jodah is a 5/5
+        E.leave(g, j); p.perms.clear(); perm(g, p, 'Mirri, Weatherlight Duelist')
+        self.assertEqual(J.prot_cost(g, p, 'Bolt Bend'), (3, 'R'))   # a 3/2 only: full price
+        j = jodah(g, p)
+        t = perm(g, q, 'Grave Titan')
+        lands(p, 'Mountain'); bend = hand(p, 'Bolt Bend')
+        E.apply_removal(g, q, j, 'exile', card('Swords to Plowshares'))
+        self.assertIn(j, p.perms)
+        self.assertNotIn(t, q.perms)                                 # the Swords hit the caster's Titan
+        self.assertIn(bend, p.gy)
+        self.assertTrue(p.lands[0].tapped)                            # paid {R}
+        self.assertEqual(p.stats['jprot_Bolt Bend'], 1)
+
+    def test_bolt_bend_guards_a_key_legend_while_jodah_is_away(self):
+        g, p, q, j = self.g, self.p, self.q, self.j
+        E.leave(g, j); p.perms.clear(); p.cmd_in_zone = True
+        wanderer = perm(g, p, 'Maelstrom Wanderer')                  # a 7/5 bomb
+        t = perm(g, q, 'Grave Titan')
+        lands(p, 'Mountain'); hand(p, 'Bolt Bend')
+        E.apply_removal(g, q, wanderer, 'destroy', card('Swords to Plowshares'))
+        self.assertIn(wanderer, p.perms)
+        self.assertNotIn(t, q.perms)
+        self.assertEqual(p.stats['jprot_Bolt Bend (legend)'], 1)
+
+
+class Rework(unittest.TestCase):
+    """the 10-09 rework candidates: Command Beacon (Jodah from hand, no tax), Maelstrom Nexus and Maelstrom Wanderer
+    (plain cascade, on top of Jodah's), Sisay, Weatherlight Captain"""
+    def setUp(self):
+        self.g = table('jodah', 'veyran'); self.p, self.q = self.g.players
+
+    def test_command_beacon_puts_jodah_in_hand_and_skips_the_tax(self):
+        g, p = self.g, self.p
+        from commander_sim.ai import brain
+        from commander_sim.cards.impl import lands as IL
+        for n in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Command Beacon'): lands(p, n)
+        p.tax = 2                                                     # castable from the zone (7 mana is not there):
+        o = IL.land_options(g, p, brain.Situation(g, p), False)       # the Beacon makes it castable now
+        self.assertEqual([x[1] for x in o], ['Command Beacon: Jodah, the Unifier to hand'])
+        o[0][2]()
+        self.assertIn(p.cmd, p.hand)
+        self.assertFalse(p.cmd_in_zone)
+        self.assertEqual(E.cost_of(p, p.cmd), (0, 'WUBRG'))           # no commander tax from hand
+        self.assertTrue(brain.do_cast(g, p, p.cmd))
+        j = next(m for m in p.perms if m.cd is p.cmd)
+        self.assertTrue(j.is_cmd)
+        self.assertEqual(p.tax, 2)                                    # a cast from hand doesn't add tax
+        self.assertEqual((p.stats['jr_beacon'], p.stats['jr_jodah_from_hand']), (1, 1))
+        E.die(g, j, 'destroy')
+        self.assertTrue(p.cmd_in_zone)                                # back to the command zone
+
+    def test_command_beacon_waits_while_the_tax_is_small(self):
+        g, p = self.g, self.p
+        from commander_sim.ai import brain
+        from commander_sim.cards.impl import lands as IL
+        for n in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Forest', 'Forest', 'Command Beacon'): lands(p, n)
+        p.tax = 2                                                     # 7 lands pay for Jodah with tax: keep the land
+        self.assertEqual(IL.land_options(g, p, brain.Situation(g, p), False), [])
+        p.tax = 4
+        self.assertEqual(len(IL.land_options(g, p, brain.Situation(g, p), False)), 1)
+
+    def test_a_discarded_commander_goes_to_the_command_zone(self):
+        g, p = self.g, self.p
+        p.cmd_in_zone = False; p.hand.append(p.cmd)
+        E.discard_cards(g, p, [p.cmd])
+        self.assertTrue(p.cmd_in_zone)
+        self.assertNotIn(p.cmd, p.gy)
+
+    def test_nexus_cascades_the_first_spell_only(self):
+        g, p = self.g, self.p
+        perm(g, p, 'Maelstrom Nexus')
+        p.library = [card('Fact or Fiction'), card('Island'), card('Arcane Signet')]
+        E.cast_card(g, p, hand(p, 'Coalition Relic'))                 # mana value 3: Arcane Signet (2), not the 4
+        self.assertIn('Arcane Signet', [m.name for m in p.perms])
+        E.cast_card(g, p, hand(p, 'Star Compass'))                    # the second spell: no cascade
+        self.assertEqual(p.stats['jr_nexus'], 1)
+        self.assertEqual(len(p.library), 2)
+
+    def test_nexus_passes_on_a_counterspell(self):
+        g, p = self.g, self.p
+        perm(g, p, 'Maelstrom Nexus')
+        p.library = [card('Arcane Denial')]
+        E.cast_card(g, p, hand(p, 'Coalition Relic'))
+        self.assertEqual([c.name for c in p.library], ['Arcane Denial'])
+
+    def test_nexus_and_jodah_both_cascade_a_legend_from_hand(self):
+        g, p = self.g, self.p
+        jodah(g, p); perm(g, p, 'Maelstrom Nexus')
+        p.library = [card('Moss Diamond'), card('King Darien XLVIII')]   # Jodah finds the legend, Nexus the rock
+        E.cast_card(g, p, hand(p, 'Lyra Dawnbringer'))
+        names = [m.name for m in p.perms]
+        self.assertIn('King Darien XLVIII', names)
+        self.assertIn('Moss Diamond', names)
+        self.assertEqual((p.stats['jodah_cascades'], p.stats['jr_nexus']), (1, 1))
+
+    def test_wanderer_cascades_twice(self):
+        g, p = self.g, self.p
+        p.library = [card('Moss Diamond'), card('Island'), card('Lyra Dawnbringer')]
+        E.cast_card(g, p, hand(p, 'Maelstrom Wanderer'))
+        names = [m.name for m in p.perms]
+        self.assertIn('Lyra Dawnbringer', names)
+        self.assertIn('Moss Diamond', names)
+        self.assertEqual(p.stats['jr_wanderer'], 2)
+
+    def test_sisay_grows_with_colours_and_fetches_below_its_power(self):
+        g, p = self.g, self.p
+        from commander_sim.ai import brain
+        s = perm(g, p, 'Sisay, Weatherlight Captain')
+        self.assertEqual(E.epow(g, s), 2)
+        perm(g, p, 'Dakkon Blackblade')                               # white, blue, black: +3/+3
+        self.assertEqual(E.epow(g, s), 5)
+        p.library = [card('Lyra Dawnbringer'), card('Mirri, Weatherlight Duelist'), card('Caparocti Sunborn')]
+        for n in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest'): lands(p, n)
+        p.cmd_in_zone = False                                         # (Jodah gone for good: no Jodah first)
+        o = E.CI.HOOKS['Sisay, Weatherlight Captain']['options'](g, s, p, brain.Situation(g, p), False)
+        self.assertEqual([x[1] for x in o], ['Sisay: Caparocti Sunborn'])    # the dearest below 5 (Lyra is 5)
+        o[0][2]()
+        self.assertIn('Caparocti Sunborn', [m.name for m in p.perms])
+        self.assertEqual(p.stats['jr_sisay'], 1)
+
+    def test_sisay_waits_while_jodah_is_castable(self):
+        g, p = self.g, self.p
+        from commander_sim.ai import brain
+        s = perm(g, p, 'Sisay, Weatherlight Captain')
+        p.library = [card('Blackblade Reforged')]
+        for n in ('Plains', 'Island', 'Swamp', 'Mountain', 'Forest'): lands(p, n)
+        self.assertEqual(E.CI.HOOKS['Sisay, Weatherlight Captain']['options'](g, s, p, brain.Situation(g, p), False), [])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -67,29 +67,40 @@ def _jodah_cast(g, src, caster, c):
 def jodah_cascade(g, o, mv):
     """exile from the top until a legendary nonland card with mana value below mv; cast it free (you may); the rest
     go to the bottom in a random order"""
+    return cascade(g, o, mv, 'Jodah')
+
+
+def cascade(g, o, mv, who):
+    """Jodah's legend cascade (who 'Jodah') or plain cascade (Maelstrom Nexus, Maelstrom Wanderer): exile from the top
+    until a nonland card (legendary, for Jodah) with mana value below mv; cast it free (you may: the AI passes on
+    counterspells and on the protection it keeps for responses); the rest go to the bottom in a random order"""
     seen, hit = [], None
     while o.library:
         x = o.library.pop()
-        if legend_card(x) and x.cmc < mv:
+        if not x.land and x.cmc < mv and (who != 'Jodah' or legend_card(x)):
             hit = x; break
         seen.append(x)
     cast = False
     if hit is not None:
         hc = human(g, o)
-        want = hc.yes_no(g, o, f'Jodah: cast {hit.name} without paying its mana cost?') if hc is not None else True
+        want = hc.yes_no(g, o, f'{who}: cast {hit.name} without paying its mana cost?') if hc is not None else \
+            'ctr' not in hit.tags and hit.name not in CI.RESPONSE_ONLY.get(o.key, ())
         if want and castable(g, o, hit, 'lib'):
             g.last_x = 0                                  # cast free: X is 0
-            o.milestone.setdefault('jodah', o.turns)
-            o.stats['jodah_cascades'] += 1
-            log(f'    Jodah reveals {hit.name} ({len(seen)} other cards): cast free', g)
+            if who == 'Jodah':
+                o.milestone.setdefault('jodah', o.turns)
+                o.stats['jodah_cascades'] += 1
+            else:
+                o.stats['jr_cascade_hits'] += 1
+            log(f'    {who} reveals {hit.name} ({len(seen)} other cards): cast free', g)
             cast_card(g, o, hit, 'lib', {})
             cast = True
         else:
-            log(f'    Jodah reveals {hit.name} ({len(seen)} other cards): not cast', g)
+            log(f'    {who} reveals {hit.name} ({len(seen)} other cards): not cast', g)
             seen.append(hit)
     else:                                             # nothing cheaper: the whole library is exiled, then goes back
-        log(f'    Jodah exiles {len(seen)} cards and finds no legendary nonland card with mana value below {mv}: '
-            f'they all go to the bottom in a random order (the library is shuffled)', g)
+        log(f'    {who} exiles {len(seen)} cards and finds no {"legendary " if who == "Jodah" else ""}nonland card '
+            f'with mana value below {mv}: they all go to the bottom in a random order (the library is shuffled)', g)
     g.rng.shuffle(seen)
     o.library[:0] = seen                              # to the bottom, random order
     return cast
@@ -104,8 +115,8 @@ _AI = set(__import__('os').environ.get('JODAH_AI', 'first,tutor').split(','))   
 
 
 def jodah_payable(g, p):
-    """Jodah is in the command zone and can be cast now"""
-    return p.cmd_in_zone and can_pay(g, p, *cost_of(p, p.cmd))
+    """Jodah is in the command zone (or in hand: Command Beacon) and can be cast now"""
+    return (p.cmd_in_zone or p.cmd in p.hand) and can_pay(g, p, *cost_of(p, p.cmd))
 
 
 def jodah_prio(g, p, c):
@@ -167,11 +178,13 @@ CI.jodah_tutor = jodah_tutor
 # what it stops, what it does). Stops: 'tgt' targeted removal, 'destroy' destroy and damage (targeted or a wipe),
 # 'both', 'all' (anything). Does: grant hexproof ('hex') and/or indestructible ('ind') to Jodah or (_all) to every
 # creature (Flawless Maneuver, Unbreakable Formation) or permanent (Heroic Intervention, Lazotep Plating) until end of
-# turn; 'swat' sends the removal at one of the caster's permanents; 'coat' puts Mithril Coat on Jodah; 'phase' is
-# Teferi's Protection. Listed cheapest first: free ones, then by mana; Teferi's Protection last.
+# turn; 'swat' sends the removal at an opponent's permanent (the 'swat' cards also guard a key legend, see
+# jodah_protect); 'coat' puts Mithril Coat on Jodah; 'phase' is Teferi's Protection. Listed cheapest first: free ones,
+# then by mana (Bolt Bend: {R} with a creature of power 4 or more, as with Jodah out); Teferi's Protection last.
 PROTECT = {
     'Flawless Maneuver':     ((2, 'W'), True, 'destroy', 'ind_all'),
     'Deflecting Swat':       ((2, 'R'), True, 'tgt', 'swat'),
+    'Bolt Bend':             ((3, 'R'), False, 'tgt', 'swat'),
     "Tamiyo's Safekeeping":  ((0, 'G'), False, 'both', 'hexind'),
     "Loran's Escape":        ((0, 'W'), False, 'both', 'hexind'),
     'Snakeskin Veil':        ((0, 'G'), False, 'tgt', 'hex'),
@@ -201,9 +214,16 @@ def _saved(p, name, wipe=False):
     p.stats[f"jprot_{'wipe_' if wipe else ''}{name}"] += 1
 
 
+def prot_cost(g, p, name):
+    """a protection card's mana cost now: Bolt Bend costs {3} less with a creature of power 4 or more"""
+    gen, pips = PROTECT[name][0]
+    if name == 'Bolt Bend' and any(m.creature and not m.phased and epow(g, m) >= 4 for m in p.perms): gen = 0
+    return gen, pips
+
+
 def _cast_protection(g, p, c):
     """cast protection card c from hand in response (free if it can be): True if it resolves"""
-    (gen, pips), free_cmd = PROTECT[c.name][:2]
+    (gen, pips), free_cmd = prot_cost(g, p, c.name), PROTECT[c.name][1]
     free = free_cmd and commander_out(p)
     if c not in p.hand or not castable(g, p, c) or not (free or can_pay(g, p, gen, pips)): return False
     p.hand.remove(c)
@@ -219,8 +239,10 @@ def _cast_protection(g, p, c):
     return ok
 
 
-def _swat_targets(g, actor, kind):
-    return [x for x in actor.perms if not x.phased and not untargetable(g, x) and (x.creature or not kind.startswith('dmg'))]
+def _swat_targets(g, p, kind):
+    """where Deflecting Swat or Bolt Bend can send the removal: any opponent's permanent it can target"""
+    return [x for q in g.opps(p) for x in q.perms
+            if not x.phased and not untargetable(g, x) and (x.creature or not kind.startswith('dmg'))]
 
 
 def _apply(g, p, j, name, does, spell=None, actor=None, kind=None):
@@ -228,10 +250,10 @@ def _apply(g, p, j, name, does, spell=None, actor=None, kind=None):
     Swat with no new target left)"""
     if does == 'phase': E.teferis_protection(g, p); return True
     if does == 'swat':
-        alt = _swat_targets(g, actor, kind)
+        alt = _swat_targets(g, p, kind)
         if not alt: return False
-        t = max(alt, key=lambda x: pval(g, x))
-        log(f'    Deflecting Swat: {spell.name} now targets {t.name}', g)
+        t = max(alt, key=lambda x: (pval(g, x), x.owner is actor))
+        log(f'    {name}: {spell.name} now targets {t.name} ({NAME(t.owner)})', g)
         apply_removal(g, actor, t, kind, spell); return True
     kws = {'hex': {'hexproof'}, 'ind': {'indestructible'}, 'hexind': {'hexproof', 'indestructible'}}.get(does.split('_')[0], set())
     scope = [j]
@@ -276,23 +298,31 @@ def _plaza_save(g, p, j):
     return False
 
 
+def key_legend(g, p, m):
+    """a legendary creature other than Jodah worth a redirect (Deflecting Swat, Bolt Bend) while Jodah is not out to
+    need it: value 5 or more (a bomb, or power 8 or more)"""
+    return m.creature and legendary(g, m) and m.cd is not None and m.cd.name != JODAH and not jodahs(p) and pval(g, m) >= 5
+
+
 def jodah_protect(g, p, m, kind, actor, spell=None):
     """removal aimed at Jodah: the cheapest answer that stops it (free spells, Giver or Mother of Runes, then by mana,
-    Plaza of Heroes, Teferi's Protection last). True if Jodah is safe"""
-    if m.cd is None or m.cd.name != JODAH or kind in ('edict', 'wipe'): return False
-    if actor is None or actor is p: return False
+    Plaza of Heroes, Teferi's Protection last). Aimed at a key legend: a redirect only. True if it is safe"""
+    if m.cd is None or kind in ('edict', 'wipe') or actor is None or actor is p: return False
+    other = m.cd.name != JODAH
+    if other and not key_legend(g, p, m): return False
     shrink = kind.startswith('shrink') or kind == 'zero'              # -X/-X: indestructible doesn't help
-    n = _rune_save(g, p, m, spell)
+    n = None if other else _rune_save(g, p, m, spell)
     if n: _saved(p, n); return True
     for name, (cost, free, stops, does) in PROTECT.items():
         c = next((c for c in p.hand if c.name == name), None)
-        if c is None or not _stops(stops, kind, True) or (shrink and stops == 'destroy'): continue
-        if does == 'swat' and (spell is None or not _swat_targets(g, actor, kind)): continue
+        if c is None or not _stops(stops, kind, True) or (shrink and stops == 'destroy') or (other and does != 'swat'):
+            continue
+        if does == 'swat' and (spell is None or not _swat_targets(g, p, kind)): continue
         if name == E.TEFERIS_PROTECTION and p.life_locked: continue
         if not _cast_protection(g, p, c) or not _apply(g, p, m, name, does, spell, actor, kind): return False
-        _saved(p, name)
+        _saved(p, name + (' (legend)' if other else ''))
         return True
-    if _plaza_save(g, p, m): _saved(p, 'Plaza of Heroes'); return True
+    if not other and _plaza_save(g, p, m): _saved(p, 'Plaza of Heroes'); return True
     return False
 
 
@@ -322,15 +352,15 @@ def jodah_hold(g, p):
     an opponent holds instant removal; free spells (Flawless Maneuver, Deflecting Swat) need nothing kept"""
     if 'hold' not in _AI or not jodahs(p): return None, 0.0
     cs = [c for c in p.hand if c.name in PROTECT and not (PROTECT[c.name][1] and commander_out(p))
-          and can_pay(g, p, *PROTECT[c.name][0])]
+          and can_pay(g, p, *prot_cost(g, p, c.name))]
     if not cs: return None, 0.0
-    c = min(cs, key=lambda c: sum(PROTECT[c.name][0][:1]) + len(PROTECT[c.name][0][1]))
+    c = min(cs, key=lambda c: prot_cost(g, p, c.name)[0] + len(prot_cost(g, p, c.name)[1]))
     return c, HOLD[0] + HOLD[1] * importlib.import_module('commander_sim.ai.brain').removal_risk(g, p)
 
 
 CI.jodah_hold = jodah_hold
 PROTECTION_ORDER = ('Lightning Greaves', 'Swiftfoot Boots', 'Mithril Coat', 'Giver of Runes', 'Mother of Runes',
-                    'Flawless Maneuver', 'Deflecting Swat', 'Heroic Intervention', "Tamiyo's Safekeeping",
+                    'Flawless Maneuver', 'Deflecting Swat', 'Bolt Bend', 'Heroic Intervention', "Tamiyo's Safekeeping",
                     "Loran's Escape", "Teferi's Protection", 'Snakeskin Veil', 'Royal Treatment', 'Lazotep Plating',
                     'Unbreakable Formation', 'Dark Endurance')       # what the tutors find (switch ptutor), best first
 PROTECTION = set(PROTECTION_ORDER)
@@ -386,6 +416,117 @@ for _n, _t, _s in (("Tamiyo's Safekeeping", 'G', 'hexproof and indestructible un
 card('Royal Treatment', 'prot=jodah', types='I', dsl=[])
 note('Royal Treatment', 'Approximate', 'hexproof until end of turn; the Royal Role is a +1/+1 counter (its ward {1} is '
      "not modeled); Jodah's AI casts it in response to removal aimed at Jodah")
+card('Bolt Bend', 'prot=jodah', types='I', dsl=[])
+full('Bolt Bend', "costs {3} less with a creature of power 4 or more ({R} with Jodah out); changes the target of a "
+     "removal spell to an opponent's best permanent (Jodah's AI casts it in response to removal aimed at Jodah, or at a "
+     'key legend while Jodah is not out)')
+
+
+# ================================================================== the rework candidates (audit/jodah, 10-09)
+# ------------------------------------------------------------------ Command Beacon
+@on('Command Beacon', 'land_options')
+def _beacon(g, L, p, s, post):
+    """{T}, sacrifice: the commander from the command zone to hand, where casting it pays no commander tax. Used on
+    your turn when Jodah is castable from hand after the sacrifice, and the tax is 4 or more, or it is 2 and Jodah
+    can't be cast from the command zone this turn"""
+    if post is None or L.tapped or g.active is not p or not p.cmd_in_zone or p.tax < 2: return []
+    IL = importlib.import_module('commander_sim.cards.impl.lands')
+    gen, pips = cost_of(p, p.cmd)
+    E.PAY_FOR = p.cmd                                  # Plaza of Heroes' colours count
+    try:
+        after, now = IL.can_pay_without(g, p, L, gen - p.tax, pips), can_pay(g, p, gen, pips)
+    finally:
+        E.PAY_FOR = None
+    if not after or (now and p.tax < 4): return []
+
+    def go():
+        if L not in p.lands or L.tapped or not p.cmd_in_zone: return False
+        IL.sac_land(g, p, L); p.stats['jr_beacon'] += 1
+        log(f'  {NAME(p)} sacrifices Command Beacon: {p.cmd.name} to hand (tax {p.tax} saved)', g)
+        if ability_window(g, p, L.cd, f'{p.cmd.name} to hand') and p.cmd_in_zone:
+            p.cmd_in_zone = False; p.hand.append(p.cmd)
+        return True
+    return [(9.5, f'Command Beacon: {p.cmd.name} to hand', go)]
+full('Command Beacon', '{T}: {C}; {T}, sacrifice: your commander from the command zone to hand (cast from there '
+     'without commander tax). The AI uses it when the tax is 4 or more, or 2 and it makes the commander castable now')
+
+
+def _jodah_from_hand(g, p, c):
+    cur = getattr(g, 'cur_cast', None)
+    if cur is not None and cur[2] == 'hand': p.stats['jr_jodah_from_hand'] += 1     # audit/jodah: Beacon's payoff
+CI.SELF_CAST[JODAH] = _jodah_from_hand
+
+
+# ------------------------------------------------------------------ Maelstrom Nexus, Maelstrom Wanderer
+@on('Maelstrom Nexus', 'cast')
+def _nexus(g, src, caster, c):
+    """the first spell you cast each turn has cascade (a legend from hand with Jodah out cascades twice)"""
+    o = src.owner
+    log_ = getattr(o, 'turn_casts', None)
+    if caster is not o or not log_ or log_[0] != turn_stamp(g) or log_[1][0] is not c: return
+    if not trigger_window(g, o, src, f'cascade (mana value below {c.cmc})', imp=4): return
+    o.stats['jr_nexus'] += 1
+    cascade(g, o, c.cmc, 'Maelstrom Nexus')
+card('Maelstrom Nexus', '', types='E', dsl=[])
+CI.SPELL_PRIO['Maelstrom Nexus'] = 50
+full('Maelstrom Nexus', 'the first spell you cast each turn has cascade (it stacks with Jodah\'s legend cascade)')
+
+
+def _wanderer_cast(g, p, c):
+    """cascade, cascade (cast triggers: they resolve before the Wanderer)"""
+    for _ in range(2):
+        if not p.alive or g.over or not trigger_window(g, p, None, f'{c.name}: cascade', imp=4): continue
+        p.stats['jr_wanderer'] += 1
+        cascade(g, p, c.cmc, 'Maelstrom Wanderer')
+CI.SELF_CAST['Maelstrom Wanderer'] = _wanderer_cast
+note('Maelstrom Wanderer', 'Full', 'creatures you control have haste; cascade, cascade')
+
+
+# ------------------------------------------------------------------ Sisay, Weatherlight Captain
+def _sisay_pt(g, p, m):
+    """+1/+1 for each colour among your other legendary permanents"""
+    cols = set()
+    for x in p.perms:
+        if x is not m and not x.phased and legendary(g, x): cols |= colors_of(x)
+    return len(cols), len(cols)
+IC.SELF_PT['Sisay, Weatherlight Captain'] = _sisay_pt
+CI.AS_ENTERS['Sisay, Weatherlight Captain'] = lambda g, p, m: setattr(g, 'selfpt', True)
+
+
+def sisay_pick(g, p, power):
+    """a legendary permanent card with mana value below Sisay's power: the tutor wish list's pick (the third Kaldra
+    piece, the dearest legendary creature), else the dearest legend"""
+    ok = [c for c in E.searchable(g, p) if 'leg' in c.tags and (c.perm or c.creature) and not c.land and c.cmc < power]
+    if not ok: return None
+    name = jodah_tutor(g, p, 'leg', {c.name for c in ok})
+    return next((c for c in ok if c.name == name), None) or \
+        max(ok, key=lambda c: (c.creature, c.cmc, card_worth(g, p, c)))
+
+
+@on('Sisay, Weatherlight Captain', 'options')
+def _sisay(g, src, p, s, post):
+    """{W}{U}{B}{R}{G}: a legendary permanent card with mana value below Sisay's power onto the battlefield. On your
+    turn, never while Jodah could be cast with the same mana"""
+    if p is not src.owner or post is None or g.active is not p or not can_pay(g, p, 0, 'WUBRG'): return []
+    if jodah_payable(g, p): return []
+    t = sisay_pick(g, p, epow(g, src))
+    if t is None: return []
+
+    def go():
+        if src not in p.perms or not can_pay(g, p, 0, 'WUBRG') or t not in p.library: return False
+        pay(g, p, 0, 'WUBRG'); p.stats['jr_sisay'] += 1
+        log(f'  {NAME(p)} activates Sisay: {t.name}', g)
+        if not ability_window(g, p, src, f'search for {t.name}') or t not in p.library: return True
+        p.library.remove(t); g.rng.shuffle(p.library)
+        a = agent_for(g, p)
+        if a is not None: agent_take(g, a, p, t)
+        else: enter(g, p, t)
+        return True
+    return [(min(7.0, 1.5 + 0.6 * t.cmc), f'Sisay: {t.name}', go)]
+card('Sisay, Weatherlight Captain', 'leg human pow=2 tgh=2', dsl=[])
+full('Sisay, Weatherlight Captain', '+1/+1 for each colour among your other legendary permanents; {W}{U}{B}{R}{G}: a '
+     "legendary permanent card with mana value below Sisay's power onto the battlefield (the tutor wish list's pick, "
+     'else the dearest legend; never while Jodah could be cast instead)')
 
 
 # ================================================================== the 99: cards that need code

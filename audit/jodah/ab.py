@@ -68,7 +68,7 @@ def count_protection():
     def axis_values(g, me, deck):
         v = o_axes(g, me, deck)
         if deck == 'jodah':
-            v.update({k: x for k, x in me.stats.items() if k.startswith('jprot') or k == 'jodah_left'})
+            v.update({k: x for k, x in me.stats.items() if k.startswith(('jprot', 'jr_')) or k in ('jodah_left', 'jodah_cascades')})
             v['jodah_left'] = me.stats['jodah_left']
         return v
     o_rem = E.apply_removal
@@ -101,7 +101,7 @@ def run(tiers, n, path, jobs=15, ai='adaptive', seed0=500000, diag=(), swaps=())
         R = poolmode.run('jodah', cards, poolmode.pool_keys(t), 'loose', n, seed0)
         out[t] = {'n': R['n'], 'win': R['win'], 'plan': R['plan'], 'by_seed': {str(k): v for k, v in R['by_seed'].items()},
                   'win_turns': R['win_turns'], 'killed_me': dict(R['killed_me']),
-                  'S1': {k: v for k, v in R['S1'].items() if k.startswith('jprot') or k in ('jodah_left', 'plan_reached')}}
+                  'S1': {k: v for k, v in R['S1'].items() if k.startswith(('jprot', 'jr_')) or k in ('jodah_left', 'plan_reached', 'jodah_cascades')}}
         print(f"{t}: {100 * R['win'] / R['n']:.1f}% of {R['n']}, plan {100 * R['plan'] / R['n']:.0f}%", flush=True)
         json.dump(out, open(path, 'w'))                 # after each tier: a stopped run keeps what it finished
 

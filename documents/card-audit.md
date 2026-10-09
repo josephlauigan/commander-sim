@@ -372,6 +372,16 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Wispdrinker Vampire | Modeled | tags: `pow=2 tgh=4 fly wisp` |
 | Wurmcoil Engine | Modeled | tags: `pow=6 dt lifelink wurmcoil` |
 
+## Jodah rework candidates (not in the list; audit/jodah, 10-09)
+
+| Card | Status | Notes |
+|---|---|---|
+| Bolt Bend | Modeled | costs {3} less with a creature of power 4 or more; redirects removal aimed at Jodah (or a key legend while Jodah is away) to an opponent's best permanent. Redirect targets ignore "an opponent controls" restrictions |
+| Command Beacon | Modeled | {C}; {T}, sacrifice: the commander from the command zone to hand, cast from there without tax. Used at tax 4+, or at 2 when it makes Jodah castable now |
+| Maelstrom Nexus | Modeled | the first spell each turn has cascade (stacks with Jodah's legend cascade); the AI passes on counterspells and held protection |
+| Maelstrom Wanderer | Modeled | creatures you control have haste; cascade, cascade |
+| Sisay, Weatherlight Captain | Modeled | +1/+1 per colour among your other legends; {W}{U}{B}{R}{G}: a legend with mana value below its power onto the battlefield (the tutor wish list, else the dearest; never while Jodah is castable) |
+
 ## Tagged test cards (not in any current list)
 
 | Card | Status | Notes |

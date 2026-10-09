@@ -228,7 +228,7 @@ def card_utility(g, p, s, c):
         if s.hand <= 2: u += 1.2
         if s.danger > 0.8: u -= 0.8                  # no time to durdle
     if c.creature and c.pow >= 2 and s.danger > 0.5: u += 0.8   # need bodies to block
-    if c is p.cmd: u -= 0.35 * p.tax                   # recasting gets pricier each time
+    if c is p.cmd and c not in p.hand: u -= 0.35 * p.tax   # recasting gets pricier each time (no tax from hand)
     if (c.instant or c.sorcery) and p.key == 'veyran':
         # each spell fires every magecraft payoff (doubled by Veyran): casting is value in itself
         n_pay = sum(1 for m in p.perms if m.cd is not None and not m.phased and

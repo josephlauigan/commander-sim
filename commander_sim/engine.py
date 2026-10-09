@@ -728,7 +728,7 @@ def cost_of(p, c):
         if c.name in SELF_COST: gen = max(0, gen + SELF_COST[c.name](g, p, c))
         if getattr(p, 'emblems', None) and 'tamiyo' in p.emblems and c in p.hand: return 0, ''
     if g is not None and stopped(g, c.name): gen += 3                 # Disruptor Flute tax
-    if c is p.cmd and not (c.name == 'Liesa, Shroud of Dusk'): gen += p.tax
+    if c is p.cmd and c not in p.hand and not (c.name == 'Liesa, Shroud of Dusk'): gen += p.tax   # no tax from hand
     if id(c) in p.agent_ids:                      # Opposition Agent: spend mana as though it were mana of any type
         off = [x for x in pips if x not in p.ident]
         if off: gen += len(off); pips = ''.join(x for x in pips if x in p.ident)
@@ -1286,6 +1286,7 @@ def on_cast(g, p, c):
     if c.instant or c.sorcery:
         count_is_cast(g, p); magecraft(g, p, c)
     if DSLMOD is not None and g.dsl_on: DSLMOD.fire(g, 'cast', caster=p, spell=c)
+    if CI is not None and c.name in CI.SELF_CAST: CI.SELF_CAST[c.name](g, p, c)
     if g.hooks: CI.fire(g, 'cast', p, c)
     if has(p, 'jin') and ('A' in c.types or c.instant or c.sorcery) and once_per_turn(g, p, 'jincopy') \
             and trigger_window(g, p, find(p, 'jin')[0], f'copy {c.name}', imp=5):
@@ -3013,6 +3014,7 @@ def discard_cards(g, q, cards):
     cards = [c for c in cards if c in q.hand]            # a card paid away meanwhile (Elvish Spirit Guide) is gone
     for c in cards:
         q.hand.remove(c)
+        if c is q.cmd: q.cmd_in_zone = True; continue      # a commander in hand (Command Beacon): to the command zone
         (q.exile if necro else q.gy).append(c)
         if g.hooks: CI.fire(g, 'discard', q, c); q.discarded_turn = turn_stamp(g)
     if g.hooks and not necro: CI.fire(g, 'cards_to_gy', q, list(cards))
@@ -3023,6 +3025,7 @@ def discard_cards(g, q, cards):
 def discard_index(g, q, i):
     """q discards the card at position i in hand (random discards)"""
     c = q.hand.pop(i)
+    if c is q.cmd: q.cmd_in_zone = True; return
     if g.hooks: CI.fire(g, 'discard', q, c); q.discarded_turn = turn_stamp(g)
     if has(q, 'necro'): q.exile.append(c); return
     q.gy.append(c); tergrid_steal(g, q, c, q)

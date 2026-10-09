@@ -44,6 +44,7 @@ ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tap
 LAND_COLS = {}        # land name -> fn(g, p, land) -> the colours it can make now (Vivid lands, Gemstone Mine)
 AS_ENTERS = {}        # card name -> fn(g, p, perm) as it enters, before any trigger (naming a creature type)
 SELF_REGEN = {}       # creature name -> fn(g, perm) -> True if it regenerates instead of being destroyed
+SELF_CAST = {}        # card name -> fn(g, p, c) when p casts it: "when you cast this spell" (cascade)
 
 
 def dyn_mana(g, p, m):
