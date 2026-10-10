@@ -21,6 +21,7 @@ pub mod rules2;
 pub mod t1;
 pub mod t3;
 pub mod topdeck;
+pub mod yshtola;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t3, combos, topdeck,
 /// fixes, lands, partials, rules, rules2, mine, galadriel, jodah): a later module's slot replaces an earlier one's for
@@ -40,6 +41,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     rules2::register(&mut r, db)?;
     mine::register(&mut r, db)?;
     galadriel::register(&mut r, db)?;
+    yshtola::register(&mut r, db)?;
     jodah::register(&mut r, db)?;
     Ok(r)
 }
