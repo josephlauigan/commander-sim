@@ -325,6 +325,9 @@ pub type DynManaPermFn = fn(&Game, PlayerId, PermId) -> u32;
 pub type LandEtbFn = fn(&mut Game, PlayerId, crate::ids::LandId) -> Res;
 /// LAND_COLS(g, p, land): the colours a land can make now (Vivid lands, Gemstone Mine)
 pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::Colors;
+/// SELF_PT(g, p, m): a creature's own power/toughness rule (Kor Spiritdancer: +2/+2 per Aura on it): Python's
+/// `common.SELF_PT`
+pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
 pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
@@ -415,6 +418,8 @@ pub struct CardImpl {
     pub land_cols: Option<LandColsFn>,
     /// rebound(g, p, c): a rebound spell in p's exile is cast again at p's upkeep
     pub rebound: Option<SelfCastFn>,
+    /// a creature's own power/toughness rule (common.SELF_PT), applied while `g.selfpt` is on
+    pub self_pt: Option<SelfPtFn>,
     /// the AI's cast priority for the card (Python's `CI.SPELL_PRIO`, a number or a function)
     pub prio: Option<PrioFn>,
     /// how much opponents want to counter it (Python's `CI.SPELL_IMP`)

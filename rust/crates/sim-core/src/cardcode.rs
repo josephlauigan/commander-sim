@@ -231,8 +231,6 @@ port_res! {
     fn muld_mark(p: PlayerId, kind: Sym);
     /// PORT(M5): CI.ring_tempt (The Ring tempts you)
     fn ring_tempt(p: PlayerId);
-    /// PORT(M5): t1.tutor_named for Auras (Three Dreams)
-    fn tutor_auras(p: PlayerId, k: usize);
     /// PORT(M5): mine.proliferate_all
     fn proliferate_all(p: PlayerId);
     /// PORT(M5): rules.transform_away (Elk, mutate, Forest Dryad)
@@ -254,6 +252,37 @@ port_bool! {
     fn hullbreaker_counter(q: PlayerId, c: CardId);
     /// PORT(M5): rules.veil_response
     fn veil_response(p: PlayerId, q: PlayerId, ctr: CardId);
+}
+
+/// t1.tutor_named for Auras (Three Dreams): k Auras with different names to hand
+pub fn tutor_auras(g: &mut Game, p: PlayerId, k: usize) -> Res {
+    crate::impls::t1::tutor_named(g, p, &|g, c| g.db.get(c).has_subtype("aura"), k, "hand")?;
+    Ok(())
+}
+
+/// PORT(M5): common.AURA, for t1's Light-Paws and Flickering Ward: c has an entry in the Aura table
+/// (`c.name in IC.AURA`)
+pub fn aura_known(_g: &Game, _c: CardId) -> bool {
+    false
+}
+
+/// PORT(M5): common.AURA, for t1's Light-Paws: c's entry enchants your own creatures (`AURA[c]['target'] == 'own'`)
+/// and its `host_ok` (if any) accepts host for player p
+pub fn aura_own_fits(_g: &Game, _p: PlayerId, _c: CardId, _host: PermId) -> bool {
+    false
+}
+
+/// common.SELF_PT for m (Kor Spiritdancer, Eidolon of Countless Battles ...): its own power/toughness rule, while
+/// `g.selfpt` is on and its controller is in the game; (0, 0) without one. For common.attached_bonus.
+pub fn self_pt(g: &Game, m: PermId) -> (i32, i32) {
+    let x = g.perm(m);
+    if !g.selfpt || !g.player(x.owner).alive {
+        return (0, 0);
+    }
+    match x.cd.and_then(|c| imp_of(g, c)).and_then(|i| i.self_pt) {
+        Some(f) => f(g, x.owner, m),
+        None => (0, 0),
+    }
 }
 
 /// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)

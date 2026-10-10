@@ -377,6 +377,51 @@ impl CardDef {
     }
 }
 
+/// Cards Python's card code makes on the fly (`E.CD(...)`) without putting them in the card database, so the export
+/// doesn't have them; they are added after the exported cards: the land Legion's Landing transforms into
+/// (t1.ADANTO: `CD('Adanto, the First Fort', 'L', '-', 'c=W')`).
+pub fn engine_made() -> Vec<RawCard> {
+    let mut tags = indexmap::IndexMap::new();
+    tags.insert("c".to_string(), TagValue::Value("W".to_string()));
+    let mut r = RawCard {
+        name: "Adanto, the First Fort".into(),
+        types: "L".into(),
+        generic: 0,
+        pips: String::new(),
+        tags,
+        pow: 0,
+        tgh: 0,
+        bomb: 0,
+        dsl: None,
+        start_loyalty: None,
+        kws: vec![],
+        subtypes: vec![],
+        protfrom: String::new(),
+        ward: 0,
+        identity: None,
+        game_changer: None,
+        source: "manual".into(),
+        unparsed: vec![],
+        derived: crate::export::Derived {
+            cmc: 0,
+            land: false,
+            creature: false,
+            instant: false,
+            sorcery: false,
+            perm: false,
+        },
+        phyrexian: String::new(),
+        land_etb_fx: vec![],
+        enters_rule: None,
+        land_types: vec![],
+        basic: false,
+        python_hooks: vec![],
+        spell_prio: false,
+    };
+    r.derived = r.compute_derived();
+    vec![r]
+}
+
 /// Every card definition, by id and by name.
 #[derive(Debug)]
 pub struct CardDb {
@@ -389,9 +434,10 @@ impl CardDb {
         if raw.len() > u16::MAX as usize {
             return Err(format!("{} cards: more than a CardId can number", raw.len()));
         }
-        let mut cards = Vec::with_capacity(raw.len());
-        let mut by_name = HashMap::with_capacity(raw.len());
-        for (i, r) in raw.iter().enumerate() {
+        let extra: Vec<RawCard> = engine_made().into_iter().filter(|e| !raw.iter().any(|r| r.name == e.name)).collect();
+        let mut cards = Vec::with_capacity(raw.len() + extra.len());
+        let mut by_name = HashMap::with_capacity(raw.len() + extra.len());
+        for (i, r) in raw.iter().chain(&extra).enumerate() {
             let id = CardId(i as u16);
             if by_name.insert(r.name.as_str().into(), id).is_some() {
                 return Err(format!("{}: defined twice", r.name));
@@ -452,7 +498,8 @@ pub(crate) mod tests {
     fn every_card_builds_and_its_tags_read_back_as_exported() {
         let raw = load_cards(&data("cards.json")).unwrap();
         let db = db();
-        assert_eq!(db.len(), raw.len());
+        let extra = engine_made().iter().filter(|e| !raw.iter().any(|r| r.name == e.name)).count();
+        assert_eq!(db.len(), raw.len() + extra);
         for r in &raw {
             let c = db.by_name(&r.name).unwrap();
             let names: Vec<&str> = c.tags.iter().map(|t| t.name()).collect();

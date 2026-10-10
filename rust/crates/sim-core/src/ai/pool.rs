@@ -327,8 +327,8 @@ pub fn card_threat_value(g: &Game, c: CardId) -> f64 {
         if LOCK.iter().any(|&e| h.handles(e)) {
             v = v.max(5.0);
         }
-        // the events with slots so far; M5 adds sacrifice, extra_lands, discard, land_gy
-        const ENGINE: [Event; 13] = [
+        // cardimpl.ENGINE_EVENTS
+        const ENGINE: [Event; 17] = [
             Event::Options,
             Event::Cast,
             Event::Dies,
@@ -342,6 +342,10 @@ pub fn card_threat_value(g: &Game, c: CardId) -> f64 {
             Event::TriggerCopies,
             Event::LandMana,
             Event::GrantKw,
+            Event::Sacrifice,
+            Event::ExtraLands,
+            Event::Discard,
+            Event::LandGy,
         ];
         if ENGINE.iter().any(|&e| h.handles(e)) {
             v = v.max(3.0);

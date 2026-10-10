@@ -687,6 +687,10 @@ pub struct Game {
     pub in_combat: Vec<PermId>,
     /// an Aura put onto the battlefield without being cast (Zur): placed by its card code
     pub aura_put: bool,
+    /// the creature an Aura entering now goes on (Light-Paws' fetch; Python's `g.attach_to`)
+    pub attach_to: Option<PermId>,
+    /// Uro, Titan of Nature's Wrath is entering by escape: it isn't sacrificed (Python's `g.uro_escaping`)
+    pub uro_escaping: bool,
     /// the last removal: (card, owner, kind, who removed it)
     pub last_removed: Option<(Option<CardId>, PlayerId, Sym, Option<PlayerId>)>,
     /// wipes resolved so far: creatures destroyed together die simultaneously
@@ -805,6 +809,8 @@ impl Game {
             entered: vec![],
             in_combat: vec![],
             aura_put: false,
+            attach_to: None,
+            uro_escaping: false,
             last_removed: None,
             batch: 0,
             marchesa_on: false,
