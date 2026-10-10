@@ -419,7 +419,18 @@ pub fn engine_made() -> Vec<RawCard> {
         spell_prio: false,
     };
     r.derived = r.compute_derived();
-    vec![r]
+    let mut out = vec![r.clone()];
+    // the back faces mine.py's prepared cards cast copies of, when the card data has no card of that name
+    // (engine.back_face: `CD(name, 'I' if instant else 'S', '0', '')`)
+    for (name, types) in [("Ancestral Recall", "I"), ("Wild Idea", "S")] {
+        let mut b = r.clone();
+        b.name = name.into();
+        b.types = types.into();
+        b.tags = indexmap::IndexMap::new();
+        b.derived = b.compute_derived();
+        out.push(b);
+    }
+    out
 }
 
 /// Every card definition, by id and by name.

@@ -714,8 +714,9 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
 pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> Res<Vec<Opt>> {
     match g.player(p).key {
         "sauron" => decks::sauron_options(g, p, s, post),
-        // PORT(phase 6): Sephiroth's (loops, reanimation, fill, tutors, hardcasts ...), Veyran's (the combo,
-        // Aetherflux, Mizzix's Mastery) and Jodah's plays
+        "seph" => super::seph::options(g, p, s, post),
+        "veyran" => super::veyran::options(g, p, s, post),
+        // PORT(phase 6): Jodah's plays
         _ => Ok(vec![]),
     }
 }

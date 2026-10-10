@@ -209,6 +209,8 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (Event::TokenCreated, Call::ArtifactTokens { p, kinds, n }) => {
             imp.token_created.map_or(Ok(()), |f| f(g, src, *p, kinds, *n))
         }
+        (Event::CreatureToGy, Call::Leaves { m }) => imp.creature_to_gy.map_or(Ok(()), |f| f(g, src, *m)),
+        (Event::Copycast, Call::Copycast { p, effect }) => imp.copycast.map_or(Ok(()), |f| f(g, src, *p, *effect)),
         (e, c) => panic!("hook call {e:?} with {c:?}: no such pairing"),
     }
 }

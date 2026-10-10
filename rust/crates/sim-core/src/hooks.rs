@@ -336,6 +336,9 @@ pub type SpellImpFn = fn(&Game, PlayerId, CardId) -> f64;
 /// an entry of common.TOKEN_PT (tokens with data: Urza's Construct) or common.CREATURE_PT (any creature: the
 /// Banners): (g, m) -> (dp, dt)
 pub type PtFn = fn(&Game, PermId) -> (i32, i32);
+/// copycast(g, src, p, effect): p cast a copy of a back-face spell (a prepared card's): Thousand-Year Storm copies it.
+/// Python passes the copy's effect as a closure; here it is the card code's own number for it (impls::mine).
+pub type CopycastFn = fn(&mut Game, Src, PlayerId, u8) -> Res;
 
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
@@ -410,6 +413,9 @@ pub struct CardImpl {
     pub defend: Option<DefendFn>,
     /// skip_draw(g, src, p): p skips its draw step (Solitary Confinement): a count over the hooked permanents
     pub skip_draw: Option<PlayerCountFn>,
+    /// creature_to_gy(g, src, m): a creature's card went to its owner's graveyard from the battlefield (Nim Deathmantle)
+    pub creature_to_gy: Option<LeavesFn>,
+    pub copycast: Option<CopycastFn>,
     // Python's per-card tables (CI.SELF_CAST, AS_ENTERS, SELF_REGEN, ON_TAP, DYN_MANA, LAND_ETB, LAND_COLS)
     pub self_cast: Option<SelfCastFn>,
     pub as_enters: Option<AsEntersFn>,
@@ -521,6 +527,8 @@ impl CardImpl {
             Event::Defend => self.defend.is_some(),
             Event::SkipDraw => self.skip_draw.is_some(),
             Event::Rebound => self.rebound.is_some(),
+            Event::CreatureToGy => self.creature_to_gy.is_some(),
+            Event::Copycast => self.copycast.is_some(),
             _ => false,
         }
     }
@@ -635,6 +643,11 @@ pub enum Call {
         a: PermId,
         d: PlayerId,
         dmg: i32,
+    },
+    /// copycast: p cast a copy whose effect is the card code's number `effect`
+    Copycast {
+        p: PlayerId,
+        effect: u8,
     },
 }
 

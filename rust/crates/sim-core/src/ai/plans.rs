@@ -230,7 +230,7 @@ const STAX_EARLY: [&str; 14] = [
 ];
 const PILLOW: [&str; 2] = ["Ghostly Prison", "Propaganda"];
 
-fn opp_power(g: &Game, p: PlayerId) -> i32 {
+pub fn opp_power(g: &Game, p: PlayerId) -> i32 {
     g.opps(p)
         .flat_map(|q| g.player(q).perms.iter().copied())
         .filter(|&m| g.is_creature(m) && !g.perm(m).phased)

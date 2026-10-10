@@ -201,10 +201,14 @@ macro_rules! port_res {
 port_res! {
     /// PORT(M5): marchesa.marchesa_dies
     fn marchesa_dies(p: PlayerId, m: PermId);
-    /// PORT(M5): CI.muld_mark (Muldrotha's permanent types used this turn)
-    fn muld_mark(p: PlayerId, kind: Sym);
     /// PORT(M5): CI.apply_lock (zur.apply_lock: Arrest, Encrust ...; no pilot deck runs a lock Aura)
     fn apply_lock(actor: Option<PlayerId>, m: PermId, kind: Sym);
+}
+
+/// CI.muld_mark (mine.muld_mark): Muldrotha's permanent type `kind` was played from the graveyard this turn
+pub fn muld_mark(g: &mut Game, p: PlayerId, kind: Sym) -> Res {
+    crate::impls::mine::muld_mark(g, p, kind);
+    Ok(())
 }
 
 /// rules.emblem_draw: Teferi's emblem exiles an opposing permanent whenever p draws
@@ -614,14 +618,26 @@ pub fn hand_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Re
     Ok(())
 }
 
-/// PORT(M5): CI.muldrotha_on
-pub fn muldrotha_on(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// CI.muldrotha_on (mine.muldrotha_on)
+pub fn muldrotha_on(g: &Game, p: PlayerId) -> bool {
+    crate::impls::mine::muldrotha_on(g, p)
 }
 
-/// PORT(M5): CI.muld_types (a permanent type Muldrotha still allows this turn)
-pub fn muld_types(_g: &Game, _p: PlayerId, _c: CardId) -> bool {
-    false
+/// CI.muld_types (mine.muld_types): a permanent type Muldrotha still allows this turn for graveyard card c
+pub fn muld_types(g: &Game, p: PlayerId, c: CardId) -> bool {
+    !crate::impls::mine::muld_types(g, p, c).is_empty()
+}
+
+/// CI.SAGA's first function (mine.bahamut_wants_lore) for p's permanent m: a Saga creature with card code (Summon:
+/// Bahamut) with a lore counter that wants a proliferated one. False for anything else (common.proliferate and Karn's
+/// Bastion: `m.data and 'lore' in m.data and m.cd.name in CI.SAGA and CI.SAGA[m.cd.name][0](g, p, m)`).
+pub fn saga_wants_lore(g: &Game, p: PlayerId, m: PermId) -> bool {
+    crate::impls::mine::saga_wants_lore(g, p, m) == Some(true)
+}
+
+/// CI.SAGA's second function (mine._bahamut_proliferated): proliferate gave p's Saga m a lore counter
+pub fn saga_proliferated(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    crate::impls::mine::bahamut_proliferated(g, p, m)
 }
 
 /// CI.LAND_ETB: a land played as a land drop enters (Bojuka Bog ...)
@@ -834,9 +850,9 @@ pub fn breach_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     crate::impls::mine::breach_options(g, p, post)
 }
 
-/// PORT(phase 6): mine.loop_need: the creature cards that complete one of Sephiroth's loops
-pub fn loop_need(_g: &Game, _p: PlayerId) -> Vec<CardId> {
-    vec![]
+/// mine.loop_need: the cards that complete one of Sephiroth's loops (with what is on p's battlefield)
+pub fn loop_need(g: &Game, p: PlayerId) -> Vec<CardId> {
+    crate::impls::mine::loop_need(g, p, &[]).into_iter().filter_map(|n| g.db.id(n)).collect()
 }
 
 /// common.sac_in_response: sacrifice the permanent for value before removal resolves

@@ -69,6 +69,8 @@ pub enum DataKey {
     /// a land that entered this turn ("in")
     In,
     Indestr,
+    /// Palantír of Orthanc's influence counters
+    Influence,
     /// (player, their turn count): indestructible until that player's next turn
     IndestrUntil,
     /// a token copy made by Jaxis, the Troublemaker (sacrificed at the end step)
@@ -450,6 +452,15 @@ pub struct Player {
     pub yawg_loop: Option<u32>,
     /// Sunfall's Incubator: its +1/+1 counters (0: none)
     pub incubator: i32,
+    /// Muldrotha, the Gravetide: the permanent types played from the graveyard this turn (Python's `muld_used`)
+    pub muld_used: Option<(TurnStamp, Vec<Sym>)>,
+    /// Sephiroth: the turn count a loop was last gone for (mine.run_loop)
+    pub loop_turn: Option<u32>,
+    /// Sephiroth: the turn count Tortured Existence was last used on
+    pub te_used: Option<u32>,
+    /// Sephiroth's Skullclamp: (turn count, uses that turn)
+    pub clamp_t: Option<u32>,
+    pub clamp_n: u32,
 }
 
 impl Player {
@@ -560,6 +571,11 @@ impl Player {
             combo_turn: None,
             yawg_loop: None,
             incubator: 0,
+            muld_used: None,
+            loop_turn: None,
+            te_used: None,
+            clamp_t: None,
+            clamp_n: 0,
             stats: IndexMap::new(),
         }
     }
@@ -802,6 +818,12 @@ pub struct Game {
     pub combo_spell: bool,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
+    /// Return the Favor is being cast (it doesn't copy itself): Python's `g.in_rtf`
+    pub in_rtf: bool,
+    /// the creature a Restoration Angel entering now blinks (Python's `g.resto_target`)
+    pub resto_target: Option<PermId>,
+    /// how deep blinks are nested (t2.blink stops at 3): Python's `g.blink_depth`
+    pub blink_depth: u32,
 }
 
 impl Game {
@@ -896,6 +918,9 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             lattice_lock: None,
+            in_rtf: false,
+            resto_target: None,
+            blink_depth: 0,
         }
     }
 
