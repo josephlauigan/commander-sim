@@ -3,8 +3,9 @@
 //! The engine calls these exactly where the Python does. Each is a `PORT(Mx)` placeholder returning what a table
 //! without that card gives, until the card code is ported (M5 for Tier 1 and Sauron, phase 6 for the rest).
 
+use crate::engine::hooks;
 use crate::flow::Res;
-use crate::hooks::Opt;
+use crate::hooks::{CardImpl, Event, Opt};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::Game;
@@ -20,20 +21,25 @@ pub fn dryad_colors(_g: &Game, _p: PlayerId) -> bool {
     false
 }
 
-/// PORT(M5): a land with its own colour rules (Plaza of Heroes, Unclaimed Territory, CI.LAND_COLS: Vivid lands,
-/// Gemstone Mine ...). None: the land's `c` tag decides.
-pub fn land_colors(_g: &Game, _p: PlayerId, _l: LandId) -> Option<crate::cards::Colors> {
-    None
+/// a card's code, if it has any
+fn imp_of(g: &Game, c: CardId) -> Option<CardImpl> {
+    g.registry.get(c).copied()
 }
 
-/// PORT(M5): CI.DYN_MANA, mana a source makes now (Gaea's Cradle, Priest of Titania). None: its tag's amount.
-pub fn dyn_mana_land(_g: &Game, _p: PlayerId, _l: LandId) -> Option<u32> {
-    None
+/// a land with its own colour rules (CI.LAND_COLS: Plaza of Heroes, Unclaimed Territory, Vivid lands, Gemstone
+/// Mine ...). None: the land's `c` tag decides.
+pub fn land_colors(g: &Game, p: PlayerId, l: LandId) -> Option<crate::cards::Colors> {
+    imp_of(g, g.land(l).cd)?.land_cols.map(|f| f(g, p, l))
 }
 
-/// PORT(M5): CI.DYN_MANA for a nonland permanent
-pub fn dyn_mana_perm(_g: &Game, _p: PlayerId, _m: PermId) -> Option<u32> {
-    None
+/// CI.DYN_MANA, the mana a land makes now (Gaea's Cradle). None: its tag's amount.
+pub fn dyn_mana_land(g: &Game, p: PlayerId, l: LandId) -> Option<u32> {
+    imp_of(g, g.land(l).cd)?.dyn_mana_land.map(|f| f(g, p, l))
+}
+
+/// CI.DYN_MANA for a nonland permanent (Priest of Titania)
+pub fn dyn_mana_perm(g: &Game, p: PlayerId, m: PermId) -> Option<u32> {
+    imp_of(g, g.perm(m).cd?)?.dyn_mana_perm.map(|f| f(g, p, m))
 }
 
 /// PORT(M5): CI.locked(g, m, kind): an Aura locks m (Arrest: no activated abilities; Pacify: can't attack)
@@ -92,14 +98,20 @@ pub fn special_unit_paid(_g: &mut Game, _p: PlayerId, _u: crate::engine::mana::U
     Ok(())
 }
 
-/// PORT(M5): CI.ON_TAP for a land (Vivid lands' charge counters ...)
-pub fn on_tap_land(_g: &mut Game, _p: PlayerId, _l: LandId, _n: u32) -> crate::flow::Res {
-    Ok(())
+/// CI.ON_TAP for a land (Vivid lands' charge counters ...)
+pub fn on_tap_land(g: &mut Game, p: PlayerId, l: LandId, n: u32) -> crate::flow::Res {
+    match imp_of(g, g.land(l).cd).and_then(|i| i.on_tap_land) {
+        Some(f) => f(g, p, l, n),
+        None => Ok(()),
+    }
 }
 
-/// PORT(M5): CI.ON_TAP for a permanent (Heritage Druid, Mana Vault's damage ...)
-pub fn on_tap_perm(_g: &mut Game, _p: PlayerId, _m: PermId, _n: u32) -> crate::flow::Res {
-    Ok(())
+/// CI.ON_TAP for a permanent (Heritage Druid, Mana Vault's damage ...)
+pub fn on_tap_perm(g: &mut Game, p: PlayerId, m: PermId, n: u32) -> crate::flow::Res {
+    match g.perm(m).cd.and_then(|c| imp_of(g, c)).and_then(|i| i.on_tap_perm) {
+        Some(f) => f(g, p, m, n),
+        None => Ok(()),
+    }
 }
 
 /// PORT(M5): engine.SELF_COST, a card's own cost change (Draco's domain, delve)
@@ -207,12 +219,6 @@ port_res! {
     fn bestow_fall(m: PermId);
     /// PORT(M5): marchesa.marchesa_dies
     fn marchesa_dies(p: PlayerId, m: PermId);
-    /// PORT(M5): CI.gy_cards(owner, 'gy_dies') hooks of cards in the graveyard
-    fn gy_dies(owner: PlayerId, m: PermId);
-    /// PORT(M5): CI.AS_ENTERS (naming a creature type as it enters)
-    fn as_enters(p: PlayerId, m: PermId);
-    /// PORT(M5): CI.gy_cards(p, 'gy_landfall')
-    fn gy_landfall(p: PlayerId);
     /// PORT(M5): partials.answer_ability (Tishana's Tidebinder, Azorius Guildmage)
     fn answer_ability(q: PlayerId, item: u32);
     /// PORT(M5): rules.emblem_cast
@@ -221,12 +227,6 @@ port_res! {
     fn glimpse_draw(p: PlayerId, c: CardId);
     /// PORT(M5): CI.kaervek
     fn kaervek(q: PlayerId, p: PlayerId, c: CardId);
-    /// PORT(M5): CI.SELF_CAST ("when you cast this spell": cascade)
-    fn self_cast(p: PlayerId, c: CardId);
-    /// PORT(M5): CI.hand_cards(p, 'hand_cast') (Return the Favor)
-    fn hand_cast(p: PlayerId, c: CardId);
-    /// PORT(M5): CI.hand_cards(q, 'hand_opp_cast') (Dualcaster Mage)
-    fn hand_opp_cast(q: PlayerId, c: CardId);
     /// PORT(M5): CI.muld_mark (Muldrotha's permanent types used this turn)
     fn muld_mark(p: PlayerId, kind: Sym);
     /// PORT(M5): CI.ring_tempt (The Ring tempts you)
@@ -248,14 +248,80 @@ port_bool! {
     fn try_regenerate(m: PermId);
     /// PORT(M5): rules.ezuri_regen
     fn ezuri_regen(m: PermId);
-    /// PORT(M5): CI.SELF_REGEN
-    fn self_regen(m: PermId);
     /// PORT(M5): partials.tidebinder_response
     fn tidebinder_response(p: PlayerId, m: PermId);
     /// PORT(M5): rules2.hullbreaker_counter
     fn hullbreaker_counter(q: PlayerId, c: CardId);
     /// PORT(M5): rules.veil_response
     fn veil_response(p: PlayerId, q: PlayerId, ctr: CardId);
+}
+
+/// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)
+pub fn gy_dies(g: &mut Game, owner: PlayerId, m: PermId) -> Res {
+    let own = g.perm(m).cd;
+    for c in g.player(owner).gy.clone() {
+        if Some(c) != own
+            && let Some(f) = imp_of(g, c).and_then(|i| i.gy_dies)
+        {
+            f(g, c, owner, m)?;
+        }
+    }
+    Ok(())
+}
+
+/// CI.AS_ENTERS: as m enters, before any trigger (naming a creature type)
+pub fn as_enters(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    match g.perm(m).cd.and_then(|c| imp_of(g, c)).and_then(|i| i.as_enters) {
+        Some(f) => f(g, p, m),
+        None => Ok(()),
+    }
+}
+
+/// CI.gy_cards(p, 'gy_landfall'): cards in p's graveyard see a land enter under p's control
+pub fn gy_landfall(g: &mut Game, p: PlayerId) -> Res {
+    for c in g.player(p).gy.clone() {
+        if let Some(f) = imp_of(g, c).and_then(|i| i.gy_landfall) {
+            f(g, c, p)?;
+        }
+    }
+    Ok(())
+}
+
+/// CI.SELF_CAST: "when you cast this spell" (cascade)
+pub fn self_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    match imp_of(g, c).and_then(|i| i.self_cast) {
+        Some(f) => f(g, p, c),
+        None => Ok(()),
+    }
+}
+
+/// CI.hand_cards(p, 'hand_cast'): cards in p's hand see p cast c (Return the Favor)
+pub fn hand_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    for x in g.player(p).hand.clone() {
+        if let Some(f) = imp_of(g, x).and_then(|i| i.hand_cast) {
+            f(g, x, p, c)?;
+        }
+    }
+    Ok(())
+}
+
+/// CI.hand_cards(q, 'hand_opp_cast'): cards in q's hand see an opponent cast c (Dualcaster Mage)
+pub fn hand_opp_cast(g: &mut Game, q: PlayerId, c: CardId) -> Res {
+    for x in g.player(q).hand.clone() {
+        if let Some(f) = imp_of(g, x).and_then(|i| i.hand_opp_cast) {
+            f(g, x, q, c)?;
+        }
+    }
+    Ok(())
+}
+
+/// CI.SELF_REGEN: m regenerates instead of being destroyed (the caller checks the cause and Rest in Peace-style
+/// `noregen`)
+pub fn self_regen(g: &mut Game, m: PermId) -> Res<bool> {
+    match g.perm(m).cd.and_then(|c| imp_of(g, c)).and_then(|i| i.self_regen) {
+        Some(f) => f(g, m),
+        None => Ok(false),
+    }
 }
 
 /// PORT(M5): CI.marchesa_sac_worth
@@ -297,9 +363,13 @@ pub fn evasion_blocked(_g: &Game, _b: PermId, _a: PermId) -> bool {
     false
 }
 
-/// PORT(M5): CI.granted_kw (keywords card code grants)
-pub fn granted_kw(_g: &Game, _m: PermId, _kw: &str) -> bool {
-    false
+/// CI.granted_kw: a static keyword grant from a hooked permanent (Teysa: tokens have vigilance and lifelink)
+pub fn granted_kw(g: &Game, m: PermId, kw: &str) -> bool {
+    if g.hooks.is_empty() {
+        return false;
+    }
+    let kw = crate::sym::intern(kw);
+    hooks::hooked(g, Event::GrantKw).iter().any(|(src, imp)| (imp.grant_kw.unwrap())(g, *src, m, kw))
 }
 
 /// PORT(M5): mine.ring_unblockable (the Ring, level 1)
@@ -342,25 +412,70 @@ pub fn keyword_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId
     Ok(vec![])
 }
 
-/// PORT(M5): CI.fire(g, 'blocks', ...) hooks that change blocks
-pub fn blocks_hooks(
-    _g: &mut Game,
-    _p: PlayerId,
-    _atk: &[PermId],
-    _d: PlayerId,
-    _assign: &mut Vec<(PermId, PermId)>,
-) -> Res {
+/// CI.fire(g, 'blocks', p, atk, d, assign): hooks that see or change the blocks (Brimaz's blocking token). They
+/// run here rather than through the trigger queue, since they edit `assign`; one with a `trigger_window` still gets
+/// its own stack window.
+pub fn blocks_hooks(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &mut Vec<(PermId, PermId)>) -> Res {
+    if g.hooks.is_empty() {
+        return Ok(());
+    }
+    for (src, imp) in hooks::hooked(g, Event::Blocks) {
+        (imp.blocks.unwrap())(g, src, p, atk, d, assign)?;
+        if g.over {
+            break;
+        }
+    }
     Ok(())
 }
 
-/// PORT(M5): hand_blocks, Aetherize, the defender's 'defend' hooks, land_defend, ninjutsu
-pub fn defend_hooks(
-    _g: &mut Game,
-    _p: PlayerId,
-    _atk: &[PermId],
-    _d: PlayerId,
-    _assign: &mut Vec<(PermId, PermId)>,
-) -> Res {
+/// After blocks (ais.py): cards in the attacker's hand ('hand_blocks'); your Veyran's Aetherize; an outside
+/// defender's 'defend' hooks (Yawgmoth), hand answers ('hand_defend') and lands ('land_defend'); an outside attacker's
+/// ninjutsu.
+pub fn defend_hooks(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &mut Vec<(PermId, PermId)>) -> Res {
+    for c in g.player(p).hand.clone() {
+        if let Some(f) = imp_of(g, c).and_then(|i| i.hand_blocks) {
+            f(g, c, p, atk, d, assign)?;
+        }
+    }
+    let dk = g.player(d).key;
+    if dk == "veyran" {
+        // your instant-speed answers to an attack (Aetherize)
+        for c in g.player(d).hand.clone() {
+            if &*g.db.get(c).name == "Aetherize"
+                && let Some(f) = imp_of(g, c).and_then(|i| i.hand_defend)
+            {
+                f(g, c, d, p, atk, assign)?;
+            }
+        }
+    }
+    if !crate::ai::is_main(dk) {
+        if !g.hooks.is_empty() {
+            for (src, imp) in hooks::hooked(g, Event::Defend) {
+                (imp.defend.unwrap())(g, src, d, p, atk, assign)?;
+                if g.over {
+                    return Ok(());
+                }
+            }
+        }
+        for c in g.player(d).hand.clone() {
+            if let Some(f) = imp_of(g, c).and_then(|i| i.hand_defend) {
+                f(g, c, d, p, atk, assign)?;
+            }
+        }
+        for l in g.player(d).lands.clone() {
+            if let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_defend) {
+                f(g, l, d, p, atk, assign)?;
+            }
+        }
+    }
+    if !crate::ai::is_main(g.player(p).key) {
+        ninjutsu(g, p, atk, d, assign)?;
+    }
+    Ok(())
+}
+
+/// PORT(phase 6): t4.ninjutsu (Yuriko's Ninjas swap in for unblocked attackers)
+pub fn ninjutsu(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId, _assign: &mut [(PermId, PermId)]) -> Res {
     Ok(())
 }
 
@@ -405,8 +520,13 @@ pub fn ring_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId]) -> Res {
     Ok(())
 }
 
-/// PORT(M5): CI.hand_cards(p, 'hand_attack')
-pub fn hand_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId) -> Res {
+/// CI.hand_cards(p, 'hand_attack'): cards in p's hand as p attacks d
+pub fn hand_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res {
+    for c in g.player(p).hand.clone() {
+        if let Some(f) = imp_of(g, c).and_then(|i| i.hand_attack) {
+            f(g, c, p, atk, d)?;
+        }
+    }
     Ok(())
 }
 
@@ -420,29 +540,30 @@ pub fn muld_types(_g: &Game, _p: PlayerId, _c: CardId) -> bool {
     false
 }
 
-/// PORT(M5): CI.LAND_ETB (Bojuka Bog ...)
-pub fn land_etb(_g: &mut Game, _p: PlayerId, _l: LandId) -> Res {
-    Ok(())
+/// CI.LAND_ETB: a land played as a land drop enters (Bojuka Bog ...)
+pub fn land_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+    match imp_of(g, g.land(l).cd).and_then(|i| i.land_etb) {
+        Some(f) => f(g, p, l),
+        None => Ok(()),
+    }
 }
 
-/// PORT(M5): CI.total(g, 'extra_lands', p) (Exploration, Azusa ...)
-pub fn extra_lands(_g: &Game, _p: PlayerId) -> u32 {
-    0
+/// CI.total(g, 'extra_lands', p): extra land drops (Exploration, Azusa ...)
+pub fn extra_lands(g: &Game, p: PlayerId) -> u32 {
+    if g.hooks.is_empty() { 0 } else { hooks::total_count(g, Event::ExtraLands, p).max(0) as u32 }
 }
 
-/// PORT(M5): lands_from_top (Oracle of Mul Daya)
-pub fn lands_from_top(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// CI.total(g, 'lands_from_top', p) > 0 (Oracle of Mul Daya)
+pub fn lands_from_top(g: &Game, p: PlayerId) -> bool {
+    !g.hooks.is_empty() && hooks::total_count(g, Event::LandsFromTop, p) > 0
 }
 
-/// PORT(M5): lands_from_gy (Crucible of Worlds)
-pub fn lands_from_gy(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// CI.total(g, 'lands_from_gy', p) > 0 (Crucible of Worlds)
+pub fn lands_from_gy(g: &Game, p: PlayerId) -> bool {
+    !g.hooks.is_empty() && hooks::total_count(g, Event::LandsFromGy, p) > 0
 }
 
 port_res! {
-    /// PORT(M5): CI.turn_start
-    fn turn_start(p: PlayerId);
     /// PORT(M5): CI.suspend_upkeep
     fn suspend_upkeep(p: PlayerId);
     /// PORT(M5): ais.mirror_upkeep (Panoptic Mirror)
@@ -483,9 +604,71 @@ pub fn crackdown_holds(_g: &Game, _m: PermId) -> bool {
     false
 }
 
-/// PORT(M5): CI.total(g, 'skip_draw', p) (Solitary Confinement)
-pub fn skip_draw(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// CI.total(g, 'skip_draw', p) (Solitary Confinement)
+pub fn skip_draw(g: &Game, p: PlayerId) -> bool {
+    !g.hooks.is_empty() && hooks::total_count(g, Event::SkipDraw, p) > 0
+}
+
+/// cardimpl.turn_start: the start of p's turn: animated lands revert, vehicles stop being crewed, Mana Drain's mana,
+/// Baubles' delayed draws, lands' upkeep abilities, pact payments, Sagas' chapters, rebound spells
+pub fn turn_start(g: &mut Game, p: PlayerId) -> Res {
+    crate::impls::lands::revert_animated(g)?;
+    crate::impls::rules2::uncrew(g, p);
+    let drain = std::mem::take(&mut g.player_mut(p).drain_mana);
+    g.player_mut(p).floating.c += drain; // Mana Drain: the countered spell's mana value, colourless
+    for q in 0..g.players.len() {
+        let q = PlayerId(q as u8);
+        let n = g.player(q).delayed_draws;
+        if n > 0 && g.player(q).alive {
+            g.player_mut(q).delayed_draws = 0; // Baubles: draw at the beginning of the next upkeep
+            crate::engine::zones::draw(g, q, n, false)?;
+        }
+    }
+    for l in g.player(p).lands.clone() {
+        if g.player(p).lands.contains(&l)
+            && let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_upkeep)
+        {
+            f(g, l, p)?;
+        }
+    }
+    use crate::engine::mana::{can_pay, pay};
+    let pacts = std::mem::take(&mut g.player_mut(p).pacts);
+    for _ in 0..pacts {
+        if can_pay(g, p, 3, "UU", false) {
+            pay(g, p, 3, "UU", false)?;
+        } else {
+            crate::glog!(g, "  {} can't pay for Pact of Negation and loses", g.player(p).name);
+            lose_to_pact(g, p)?;
+            break;
+        }
+    }
+    let debts = std::mem::take(&mut g.player_mut(p).pact_debts);
+    for (generic, pips) in debts {
+        if can_pay(g, p, generic, &pips, false) {
+            pay(g, p, generic, &pips, false)?;
+        } else {
+            crate::glog!(g, "  {} can't pay for a pact and loses", g.player(p).name);
+            lose_to_pact(g, p)?;
+            break;
+        }
+    }
+    crate::impls::common::saga_step(g, p)?;
+    let reb = std::mem::take(&mut g.player_mut(p).rebound);
+    for c in reb {
+        if g.player(p).exile.contains(&c)
+            && let Some(f) = imp_of(g, c).and_then(|i| i.rebound)
+        {
+            f(g, p, c)?;
+        }
+    }
+    Ok(())
+}
+
+fn lose_to_pact(g: &mut Game, p: PlayerId) -> Res {
+    let pl = g.player_mut(p);
+    pl.life = 0;
+    pl.last_src = None;
+    crate::engine::life::check_state(g)
 }
 
 // ------------------------------------------------------------------ M3: the ability language's card-code calls

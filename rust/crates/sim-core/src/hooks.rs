@@ -280,6 +280,51 @@ pub type ManaTappedFn = fn(&mut Game, Src, PlayerId, PermId, u32) -> Res;
 /// gy_options / hand_options (g, c, p, post): plays from a card in p's graveyard or hand (post: None at the end-of-turn
 /// window)
 pub type CardOptionsFn = fn(&mut Game, CardId, PlayerId, Option<bool>) -> Res<Vec<Opt>>;
+/// sacrifice(g, src, p, what): p sacrificed a permanent, or a Treasure / Food / Clue
+pub type SacrificeFn = fn(&mut Game, Src, PlayerId, Sacrificed) -> Res;
+/// token_created(g, src, p, kinds, n): p made n Treasure / Food / Clue tokens of these kinds
+pub type TokenCreatedFn = fn(&mut Game, Src, PlayerId, &[Sym], i32) -> Res;
+/// The attackers' blockers: (attacker, blocker) pairs.
+pub type Assign = Vec<(PermId, PermId)>;
+/// blocks(g, src, p, atk, d, assign): d's blockers are declared against p's attackers; may change the blocks
+pub type BlocksFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
+/// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize)
+pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
+/// land_defend(g, land, d, p, atk, assign): a land of defender d's answers p's attack (Kor Haven)
+pub type LandDefendFn = fn(&mut Game, crate::ids::LandId, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
+/// land_options(g, land, p, post): a land's activated abilities the AI may use (post: None at the end-of-turn window)
+pub type LandOptionsFn = fn(&mut Game, crate::ids::LandId, PlayerId, Option<bool>) -> Res<Vec<Opt>>;
+/// land_upkeep(g, land, p): p's upkeep, for a land of p's (Emeria, the Sky Ruin)
+pub type LandUpkeepFn = fn(&mut Game, crate::ids::LandId, PlayerId) -> Res;
+/// gy_dies(g, c, owner, m): card c in owner's graveyard sees owner's creature m die (Nether Traitor)
+pub type GyDiesFn = fn(&mut Game, CardId, PlayerId, PermId) -> Res;
+/// gy_landfall(g, c, p): card c in p's graveyard sees a land enter under p's control
+pub type GyPlayerFn = fn(&mut Game, CardId, PlayerId) -> Res;
+/// hand_cast / hand_opp_cast (g, c, p, spell): card c in p's hand sees spell cast (Return the Favor, Dualcaster Mage)
+pub type HandCastFn = fn(&mut Game, CardId, PlayerId, CardId) -> Res;
+/// hand_blocks(g, c, p, atk, d, assign): card c in attacker p's hand after blocks (ninjutsu-style)
+pub type HandBlocksFn = fn(&mut Game, CardId, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
+/// hand_attack(g, c, p, atk, d): card c in p's hand as p attacks d
+pub type HandAttackFn = fn(&mut Game, CardId, PlayerId, &[PermId], PlayerId) -> Res;
+/// defend(g, src, d, p, atk, assign): the defender's permanents after blocks (Yawgmoth)
+pub type DefendFn = fn(&mut Game, Src, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
+/// SELF_CAST(g, p, c): "when you cast this spell" (cascade)
+pub type SelfCastFn = fn(&mut Game, PlayerId, CardId) -> Res;
+/// AS_ENTERS(g, p, m): as m enters, before any trigger (naming a creature type)
+pub type AsEntersFn = fn(&mut Game, PlayerId, PermId) -> Res;
+/// SELF_REGEN(g, m): true if m regenerates instead of being destroyed
+pub type SelfRegenFn = fn(&mut Game, PermId) -> Res<bool>;
+/// ON_TAP for a land / a permanent (g, p, source, n): after it's tapped for n mana (Vivid lands, Heritage Druid)
+pub type OnTapLandFn = fn(&mut Game, PlayerId, crate::ids::LandId, u32) -> Res;
+pub type OnTapPermFn = fn(&mut Game, PlayerId, PermId, u32) -> Res;
+/// DYN_MANA for a land / a permanent (g, p, source): the mana its tap ability makes now (Gaea's Cradle, Priest of
+/// Titania)
+pub type DynManaLandFn = fn(&Game, PlayerId, crate::ids::LandId) -> u32;
+pub type DynManaPermFn = fn(&Game, PlayerId, PermId) -> u32;
+/// LAND_ETB(g, p, land): a land played as a land drop enters (Bojuka Bog)
+pub type LandEtbFn = fn(&mut Game, PlayerId, crate::ids::LandId) -> Res;
+/// LAND_COLS(g, p, land): the colours a land can make now (Vivid lands, Gemstone Mine)
+pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::Colors;
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
 pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
@@ -331,6 +376,45 @@ pub struct CardImpl {
     pub resolve: Option<ResolveFn>,
     pub gy_options: Option<CardOptionsFn>,
     pub hand_options: Option<CardOptionsFn>,
+    /// extra land drops for p (Exploration, Azusa): a count over the hooked permanents
+    pub extra_lands: Option<PlayerCountFn>,
+    /// p may play lands from the graveyard (Crucible of Worlds) / the top of the library (Oracle of Mul Daya)
+    pub lands_from_gy: Option<PlayerCountFn>,
+    pub lands_from_top: Option<PlayerCountFn>,
+    pub blocks: Option<BlocksFn>,
+    pub sacrifice: Option<SacrificeFn>,
+    /// land_play(g, src, p, c): p played land c
+    pub land_play: Option<CastFn>,
+    pub token_created: Option<TokenCreatedFn>,
+    /// discard(g, src, q, c): q discarded c
+    pub discard: Option<CastFn>,
+    /// land_gy(g, src, p, c): land card c of p's went to the graveyard from the battlefield
+    pub land_gy: Option<CastFn>,
+    pub hand_defend: Option<HandDefendFn>,
+    pub land_defend: Option<LandDefendFn>,
+    pub land_options: Option<LandOptionsFn>,
+    pub land_upkeep: Option<LandUpkeepFn>,
+    pub gy_dies: Option<GyDiesFn>,
+    pub gy_landfall: Option<GyPlayerFn>,
+    pub hand_cast: Option<HandCastFn>,
+    pub hand_opp_cast: Option<HandCastFn>,
+    pub hand_blocks: Option<HandBlocksFn>,
+    pub hand_attack: Option<HandAttackFn>,
+    pub defend: Option<DefendFn>,
+    /// skip_draw(g, src, p): p skips its draw step (Solitary Confinement): a count over the hooked permanents
+    pub skip_draw: Option<PlayerCountFn>,
+    // Python's per-card tables (CI.SELF_CAST, AS_ENTERS, SELF_REGEN, ON_TAP, DYN_MANA, LAND_ETB, LAND_COLS)
+    pub self_cast: Option<SelfCastFn>,
+    pub as_enters: Option<AsEntersFn>,
+    pub self_regen: Option<SelfRegenFn>,
+    pub on_tap_land: Option<OnTapLandFn>,
+    pub on_tap_perm: Option<OnTapPermFn>,
+    pub dyn_mana_land: Option<DynManaLandFn>,
+    pub dyn_mana_perm: Option<DynManaPermFn>,
+    pub land_etb: Option<LandEtbFn>,
+    pub land_cols: Option<LandColsFn>,
+    /// rebound(g, p, c): a rebound spell in p's exile is cast again at p's upkeep
+    pub rebound: Option<SelfCastFn>,
     /// the AI's cast priority for the card (Python's `CI.SPELL_PRIO`, a number or a function)
     pub prio: Option<PrioFn>,
     /// how much opponents want to counter it (Python's `CI.SPELL_IMP`)
@@ -398,6 +482,26 @@ impl CardImpl {
             Event::Resolve => self.resolve.is_some(),
             Event::GyOptions => self.gy_options.is_some(),
             Event::HandOptions => self.hand_options.is_some(),
+            Event::ExtraLands => self.extra_lands.is_some(),
+            Event::LandsFromGy => self.lands_from_gy.is_some(),
+            Event::LandsFromTop => self.lands_from_top.is_some(),
+            Event::Blocks => self.blocks.is_some(),
+            Event::Sacrifice => self.sacrifice.is_some(),
+            Event::LandPlay => self.land_play.is_some(),
+            Event::TokenCreated => self.token_created.is_some(),
+            Event::Discard => self.discard.is_some(),
+            Event::LandGy => self.land_gy.is_some(),
+            Event::HandDefend => self.hand_defend.is_some(),
+            Event::LandDefend => self.land_defend.is_some(),
+            Event::LandOptions => self.land_options.is_some(),
+            Event::LandUpkeep => self.land_upkeep.is_some(),
+            Event::GyDies => self.gy_dies.is_some(),
+            Event::GyLandfall => self.gy_landfall.is_some(),
+            Event::HandCast => self.hand_cast.is_some(),
+            Event::HandAttack => self.hand_attack.is_some(),
+            Event::Defend => self.defend.is_some(),
+            Event::SkipDraw => self.skip_draw.is_some(),
+            Event::Rebound => self.rebound.is_some(),
             _ => false,
         }
     }
@@ -424,6 +528,22 @@ impl Registry {
         }
         *slot = Some(imp);
         Ok(())
+    }
+
+    /// A card's code to fill in, by name: Python modules add events to the same card (`@on` in t1.py and
+    /// partials.py), so modules set the slots they implement. A name not in the card database is an error.
+    pub fn card(&mut self, db: &CardDb, name: &str) -> Result<&mut CardImpl, String> {
+        let id = db.id(name).ok_or_else(|| format!("card code for {name:?}, which isn't in the card database"))?;
+        Ok(self.by_card[id.index()].get_or_insert_with(CardImpl::default))
+    }
+
+    /// how many cards have code
+    pub fn len(&self) -> usize {
+        self.by_card.iter().filter(|x| x.is_some()).count()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     pub fn get(&self, c: CardId) -> Option<&CardImpl> {

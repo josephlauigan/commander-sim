@@ -41,10 +41,10 @@ pub fn deck(key: &str) -> &'static RawDeck {
     decks().iter().find(|d| d.key == key).unwrap_or_else(|| panic!("no deck {key:?}"))
 }
 
-/// The card code. PORT(M5): fills as cards are ported; empty until then.
+/// The card code (impls/), built once.
 pub fn registry() -> Arc<Registry> {
     static R: OnceLock<Arc<Registry>> = OnceLock::new();
-    R.get_or_init(|| Arc::new(Registry::new(&db()))).clone()
+    R.get_or_init(|| Arc::new(crate::impls::registry(&db()).unwrap())).clone()
 }
 
 /// A player for deck `key` in seat `i`, its library shuffled from the seat's own stream.

@@ -54,6 +54,9 @@ pub fn total_count(g: &Game, e: Event, p: PlayerId) -> i32 {
                 Event::NoArtifactMana => imp.no_artifact_mana,
                 Event::NonlandManaBonus => imp.nonland_mana_bonus,
                 Event::TreasureBonus => imp.treasure_bonus,
+                Event::ExtraLands => imp.extra_lands,
+                Event::LandsFromGy => imp.lands_from_gy,
+                Event::LandsFromTop => imp.lands_from_top,
                 _ => panic!("{e:?} is not a count event"),
             };
             (f.unwrap())(g, *src, p)
@@ -134,26 +137,38 @@ pub fn fire_sba(g: &mut Game) -> Res {
 }
 
 /// A triggered event happened: each hooked permanent's trigger is queued, or (marked at once) runs now. Python's
-/// `CI.fire` for an event in `TRIGGER_EVENTS`. Copies from Panharmonicon / Teysa are added as their card code is
-/// ported (PORT(M5): trigger_copies).
+/// `CI.fire` for an event in `TRIGGER_EVENTS`, with its copies: a dies trigger once more per Teysa Karlov, an enters
+/// trigger that goes on the stack once more per Panharmonicon.
 pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
     let mut entries = vec![];
     for (src, imp) in hooked(g, e) {
-        if imp.runs_at_once(e) {
-            run_hook(g, src, e, &call)?;
-            if g.over {
-                return Ok(());
+        let owner = g.perm(src).owner;
+        let mut reps = 1;
+        if let (Event::Dies, Call::Dies { m, .. }) = (e, &call) {
+            reps += total_trigger_copies(g, owner, "dies", Some(*m));
+        }
+        if let (Event::Etb, Call::Etb { m, .. }) = (e, &call)
+            && !imp.runs_at_once(e)
+        {
+            reps += total_trigger_copies(g, owner, "etb", Some(*m));
+        }
+        for _ in 0..reps.max(1) {
+            if imp.runs_at_once(e) {
+                run_hook(g, src, e, &call)?;
+                if g.over {
+                    return Ok(());
+                }
+            } else {
+                entries.push(Trigger {
+                    controller: owner,
+                    src: Some(src),
+                    act: TrigAct::Hook { event: e, call: call.clone() },
+                    name: None,
+                    known: false,
+                    imp: None,
+                    cast_etb: false,
+                });
             }
-        } else {
-            entries.push(Trigger {
-                controller: g.perm(src).owner,
-                src: Some(src),
-                act: TrigAct::Hook { event: e, call: call.clone() },
-                name: None,
-                known: false,
-                imp: None,
-                cast_etb: false,
-            });
         }
     }
     crate::engine::stack::queue_triggers(g, entries)
@@ -181,7 +196,18 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
             imp.combat_damage.map_or(Ok(()), |f| f(g, src, *p, *a, *d, *dmg))
         }
         (Event::Attack, Call::Attack { p, atk, d }) => {
-            imp.attack.map_or(Ok(()), |f| f(g, src, *p, atk, *d).map(|_| ()))
+            // the attacking tokens it made join the attack (combat.rs collects g.new_attackers)
+            let Some(f) = imp.attack else { return Ok(()) };
+            let made = f(g, src, *p, atk, *d)?;
+            g.new_attackers.extend(made);
+            Ok(())
+        }
+        (Event::Sacrifice, Call::Sacrifice { p, what }) => imp.sacrifice.map_or(Ok(()), |f| f(g, src, *p, *what)),
+        (Event::LandPlay, Call::Cards { p, cards }) => imp.land_play.map_or(Ok(()), |f| f(g, src, *p, cards[0])),
+        (Event::LandGy, Call::Cards { p, cards }) => imp.land_gy.map_or(Ok(()), |f| f(g, src, *p, cards[0])),
+        (Event::Discard, Call::Discard { p, c }) => imp.discard.map_or(Ok(()), |f| f(g, src, *p, *c)),
+        (Event::TokenCreated, Call::ArtifactTokens { p, kinds, n }) => {
+            imp.token_created.map_or(Ok(()), |f| f(g, src, *p, kinds, *n))
         }
         (e, c) => panic!("hook call {e:?} with {c:?}: no such pairing"),
     }
