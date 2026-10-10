@@ -802,6 +802,16 @@ pub struct Game {
     pub combo_spell: bool,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
+    /// how deep Consecrated Sphinx draws are nested (two Sphinxes feed each other: t4's `g.sphinx_depth`)
+    pub sphinx_depth: u32,
+    /// how deep Sanguine Bond / Exquisite Blood are nested (t4's `g.bond_depth`)
+    pub bond_depth: u32,
+    /// creatures that died this turn while Mahadi, Emporium Master was out (t4's `g.deaths_turn`, current turn only)
+    pub deaths_turn: Option<(TurnStamp, i32)>,
+    /// The Eternal Wanderer's exiles, back at their owner's next end step: (owner, card) (zur's `g.zur_due`)
+    pub zur_due: Vec<(PlayerId, CardId)>,
+    /// the creature Restoration Angel's enter trigger blinks (Python's `g.resto_target`)
+    pub resto_target: Option<PermId>,
 }
 
 impl Game {
@@ -896,6 +906,11 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             lattice_lock: None,
+            sphinx_depth: 0,
+            bond_depth: 0,
+            deaths_turn: None,
+            zur_due: vec![],
+            resto_target: None,
         }
     }
 
