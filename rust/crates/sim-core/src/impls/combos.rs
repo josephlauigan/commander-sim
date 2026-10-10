@@ -270,8 +270,19 @@ fn affordable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
 }
 
 // ------------------------------------------------------------------ execution
+/// the index in COMBOS of the first combo whose name contains `part` (tests: Python's
+/// `next(c for c in COMBOS if part in c.name)`)
+pub fn combo_index(part: &str) -> Option<usize> {
+    COMBOS.iter().position(|c| c.name.contains(part))
+}
+
+/// COMBOS[i].ready(g, p)[0]: p has everything COMBOS[i] needs
+pub fn ready(g: &Game, p: PlayerId, i: usize) -> bool {
+    (COMBOS[i].ready)(g, p).0
+}
+
 /// combos.attempt: p goes for COMBOS[i]
-fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
+pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     let cmb = &COMBOS[i as usize];
     let (ok, keys, casts) = (cmb.ready)(g, p);
     if !ok || !affordable(g, p, cmb, &casts) {
@@ -516,7 +527,9 @@ pub fn deck_combos(g: &Game, q: PlayerId) -> Vec<usize> {
     if let Some(v) = DECK_COMBOS.with(|m| m.borrow().get(key).cloned()) {
         return v;
     }
-    let names: Vec<&str> = g.player(q).deck_names.iter().map(|&c| name_of(g, c)).collect();
+    let pl = g.player(q);
+    let mut names: Vec<&str> = pl.deck_names.iter().map(|&c| name_of(g, c)).collect();
+    names.push(name_of(g, pl.cmd)); // `| {q.cmd.name}`
     let v: Vec<usize> = COMBOS
         .iter()
         .enumerate()
@@ -681,7 +694,8 @@ fn power_artifact(g: &Game, p: PlayerId) -> Ready {
     let pa = any_bf(g, p, &["Power Artifact", "Rings of Brighthearth"]);
     let mono = any_bf(g, p, &["Basalt Monolith", "Grim Monolith"]);
     let (Some(pa), Some(mono)) = (pa, mono) else { return NOT_READY() };
-    if &*g.perm(pa).name == "Rings of Brighthearth" && &*g.perm(mono).name != "Basalt Monolith" {
+    let cd_name = |m: PermId| g.perm(m).cd.map_or("", |c| name_of(g, c));
+    if cd_name(pa) == "Rings of Brighthearth" && cd_name(mono) != "Basalt Monolith" {
         return NOT_READY();
     }
     let sink = any_bf(g, p, &["Urza, Lord High Artificer", "Kinnan, Bonder Prodigy", "Walking Ballista"]).is_some()
@@ -822,9 +836,11 @@ fn gravecrawler(g: &Game, p: PlayerId) -> Ready {
     if !gc {
         return NOT_READY();
     }
-    let zombies = g.player(p).perms.iter().any(|&m| {
-        has_type(g, m, "zombie") && !g.perm(m).cd.is_some_and(|c| name_of(g, c) == "Gravecrawler")
-    });
+    let zombies = g
+        .player(p)
+        .perms
+        .iter()
+        .any(|&m| has_type(g, m, "zombie") && !g.perm(m).cd.is_some_and(|c| name_of(g, c) == "Gravecrawler"));
     let Some(payoff) = drain_payoff(g, p) else { return NOT_READY() };
     if !zombies {
         return NOT_READY();
@@ -877,11 +893,8 @@ fn yawg(g: &Game, p: PlayerId) -> Ready {
         .filter(|&&m| g.is_creature(m) && m != y && g.perm(m).cd.is_some_and(|c| g.db.get(c).has_kw("undying")))
         .count();
     let mik = on_bf(g, p, "Mikaeus, the Unhallowed");
-    let fodder = pl
-        .perms
-        .iter()
-        .filter(|&&m| g.is_creature(m) && m != y && Some(m) != mik && !has_type(g, m, "human"))
-        .count();
+    let fodder =
+        pl.perms.iter().filter(|&&m| g.is_creature(m) && m != y && Some(m) != mik && !has_type(g, m, "human")).count();
     let looping = und >= 2 || (mik.is_some() && fodder >= 1);
     if !looping {
         return NOT_READY();

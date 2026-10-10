@@ -925,9 +925,7 @@ fn tolaria(g: &mut Game, _c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec
     }
     let t = match zero.iter().copied().find(|x| wish.contains(x)) {
         Some(t) => t,
-        None => {
-            first_max(&zero, |x| (KEY_LANDS.contains(&name_of(g, x)), card_worth(g, p, x, false))).unwrap()
-        }
+        None => first_max(&zero, |x| (KEY_LANDS.contains(&name_of(g, x)), card_worth(g, p, x, false))).unwrap(),
     };
     let in_wish = wish.contains(&t);
     if !in_wish && !(g.db.get(t).land && KEY_LANDS.contains(&name_of(g, t))) && card_worth(g, p, t, false) < 45.0 {
