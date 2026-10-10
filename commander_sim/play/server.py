@@ -25,11 +25,16 @@ Routes:
                             players: {asked: name} and the other person is asked first)
   POST /api/approve         the other person's answer to an Undo or Try it: {id, yes}
   GET  /api/review          after the game: a summary, and each decision with what the AI would have done and both scores
-  POST /api/save            save the game (data/saves/<time>-<deck>-<tier>-<seed>.json); GET /api/saves lists them
+  POST /api/save            save the game (data/saves/<time>-<deck>-<tier>-<seed>.json); GET /api/saves lists them,
+                            and the game saved by itself (autosave below), if there is one
   POST /api/load            {name}: replay a saved game to where it was saved
   POST /api/tryit           {n}: back to decision n with the AI's choice there (the review's "Try it")
   POST /api/hint            what the AI would do at the decision waiting for you: {text, detail, choice}
   POST /api/quit            end the game
+
+Autosave: whenever a one-player game waits on your decision it is saved to data/saves/autosave.json, so a game the
+page or the app lost (the iPad app closed in the background, the server stopped) can be continued from the setup
+screen. The file goes when the game ends or you end it.
 
 The engine runs on the session's worker thread. A pump thread moves the session's events into the hub's history
 (JSON-ready, numbered) and wakes the event streams. Views are built on the engine thread, never here. The history
@@ -54,6 +59,7 @@ from commander_sim.play.session import Session, MY_DECKS, TIERS
 STATIC = os.path.join(os.path.dirname(__file__), 'static')
 IMAGES = os.path.join(DATA, 'images')
 SAVES = os.path.join(DATA, 'saves')
+AUTOSAVE = 'autosave.json'
 TYPES = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
          '.gif': 'image/gif', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.json': 'application/json'}
 
@@ -67,8 +73,9 @@ class Hub:
     """the current game and its event history, shared by the request handlers"""
     PROPOSAL_WAIT = 60.0             # an Undo or Try it the other person hasn't answered: a new one may replace it
 
-    def __init__(s, lan=False):
+    def __init__(s, lan=False, app=False):
         s.lan = lan                  # listening on the local network (a second player can join)
+        s.app = app                  # the iPad app's server (ios/): one player only
         s.cond = threading.Condition()
         s.session = None
         s.events = []                # [{'id': n, ...}] for the current game, with their routing (see for_seat)
@@ -114,6 +121,7 @@ class Hub:
             try:
                 found = images.prepare(names, lambda d, t: sess.events.put({'kind': 'loading', 'done': d, 'total': t}))
             except Exception as e:                      # images are a nicety: the game starts without them
+                found = images.cached(names)            # offline: the ones already on disk
                 sess.events.put({'kind': 'log', 'text': f'(card images unavailable: {e})'})
         sess.events.put({'kind': 'images', 'images': found})
         with s.cond:
@@ -246,6 +254,8 @@ class Hub:
             with s.cond:
                 if s.game_no != no: return                     # a newer game replaced this one
                 s._add(ev, sess)
+            if ev['kind'] == 'request' and not sess.partner: s._autosave(sess, no)
+            elif ev['kind'] == 'over' and ev.get('how') != 'closed': s.forget_autosave()
 
     def _add(s, ev, sess):
         """(holding the lock) record one session event"""
@@ -312,11 +322,42 @@ class Hub:
         with open(os.path.join(SAVES, name), 'w', encoding='utf-8') as f: json.dump(data, f)
         return None, name
 
-    def saves(s):
+    def _autosave(s, sess, no):
+        """the game, waiting on your decision, into data/saves/autosave.json (a failure only skips this one)"""
+        if not sess.hint_lock.acquire(timeout=0.5): return       # a hint is reading the game: the next decision saves
+        try:
+            data = sess.saved()
+        except Exception:
+            return
+        finally:
+            sess.hint_lock.release()
+        with s.cond:
+            if s.game_no != no: return
+            data['tools'] = s.tools
+        data['saved_at'] = time.strftime('%Y-%m-%d %H:%M')
+        try:
+            os.makedirs(SAVES, exist_ok=True)
+            tmp = os.path.join(SAVES, AUTOSAVE + '.tmp')
+            with open(tmp, 'w', encoding='utf-8') as f: json.dump(data, f)
+            os.replace(tmp, os.path.join(SAVES, AUTOSAVE))
+        except OSError:
+            pass
+
+    def forget_autosave(s):
+        try:
+            os.remove(os.path.join(SAVES, AUTOSAVE))
+        except OSError:
+            pass
+
+    def autosaved(s):
+        """the game saved by itself, as the saves list shows a game, or None"""
+        return next((x for x in s.saves(AUTOSAVE)), None)
+
+    def saves(s, only=None):
         out = []
         if os.path.isdir(SAVES):
             for name in sorted(os.listdir(SAVES), reverse=True):
-                if not name.endswith('.json'): continue
+                if not name.endswith('.json') or (name == AUTOSAVE) != (only == AUTOSAVE): continue
                 try:
                     with open(os.path.join(SAVES, name), encoding='utf-8') as f: d = json.load(f)
                 except (OSError, ValueError):
@@ -508,8 +549,8 @@ class Handler(BaseHTTPRequestHandler):
         if url.path.startswith('/images/'): return s._static(url.path[len('/images/'):], root=IMAGES)
         if url.path in s.HOST_ONLY and not s.local(): return s._send(403, {'error': 'Only the host computer can do that.'})
         if url.path == '/api/state': return s._send(200, s.hub.state(s.seat(), s.local()))
-        if url.path == '/api/options': return s._send(200, dict(options(), lan=s.hub.lan, host=s.local()))
-        if url.path == '/api/saves': return s._send(200, {'saves': s.hub.saves()})
+        if url.path == '/api/options': return s._send(200, dict(options(), lan=s.hub.lan, host=s.local(), app=s.hub.app))
+        if url.path == '/api/saves': return s._send(200, {'saves': s.hub.saves(), 'autosave': s.hub.autosaved()})
         if url.path == '/api/review':
             res = s.hub.review(s.seat())
             return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, res)
@@ -576,7 +617,7 @@ class Handler(BaseHTTPRequestHandler):
             res = s.hub.hint(s.seat())
             return s._send(409, {'error': res}) if isinstance(res, str) else s._send(200, res)
         if url.path == '/api/quit':
-            s.hub.quit(); return s._send(200, {'ok': True})
+            s.hub.quit(); s.hub.forget_autosave(); return s._send(200, {'ok': True})
         s._send(404, {'error': 'not found'})
 
     def _static(s, name, root=STATIC):
@@ -612,13 +653,22 @@ class Handler(BaseHTTPRequestHandler):
             pass
 
 
-def make_server(port=8765, host='127.0.0.1'):
-    hub = Hub(lan=host not in ('127.0.0.1', 'localhost'))
+def make_server(port=8765, host='127.0.0.1', app=False):
+    hub = Hub(lan=host not in ('127.0.0.1', 'localhost'), app=app)
     handler = type('PracticeHandler', (Handler,), {'hub': hub})
     srv = ThreadingHTTPServer((host, port), handler)
     srv.daemon_threads = True
     srv.hub = hub
     return srv
+
+
+def start(port=0, fetch_images=True):
+    """the server on this device only, running on a background thread (the iPad app): returns (server, url). Port 0
+    takes any free port"""
+    srv = make_server(port, '127.0.0.1', app=True)
+    if fetch_images: threading.Thread(target=fetch_commanders, name='practice-commanders', daemon=True).start()
+    threading.Thread(target=srv.serve_forever, name='practice-server', daemon=True).start()
+    return srv, f'http://127.0.0.1:{srv.server_address[1]}/'
 
 
 def serve(port=8765, open_browser=True, lan=False):

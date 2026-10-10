@@ -1,0 +1,6 @@
+# copies made by stage.py, and Briefcase's output
+src/commander_sim/
+src/commander_ipad/resources/
+build/
+dist/
+logs/
