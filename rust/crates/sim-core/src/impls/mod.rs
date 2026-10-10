@@ -11,6 +11,8 @@ use crate::hooks::Registry;
 pub mod combos;
 pub mod common;
 pub mod fixes;
+pub mod galadriel;
+pub mod jodah;
 pub mod lands;
 pub mod mine;
 pub mod partials;
@@ -18,6 +20,7 @@ pub mod rules;
 pub mod rules2;
 pub mod t1;
 pub mod t3;
+pub mod topdeck;
 
 /// every module's card code
 pub fn registry(db: &CardDb) -> Result<Registry, String> {
@@ -25,6 +28,8 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     combos::register(&mut r, db)?;
     common::register(&mut r, db)?;
     fixes::register(&mut r, db)?;
+    galadriel::register(&mut r, db)?;
+    jodah::register(&mut r, db)?;
     lands::register(&mut r, db)?;
     mine::register(&mut r, db)?;
     partials::register(&mut r, db)?;
@@ -32,5 +37,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     rules2::register(&mut r, db)?;
     t1::register(&mut r, db)?;
     t3::register(&mut r, db)?;
+    topdeck::register(&mut r, db)?;
     Ok(r)
 }
