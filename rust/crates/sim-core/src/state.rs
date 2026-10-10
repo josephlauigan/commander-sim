@@ -427,6 +427,10 @@ pub struct Player {
     pub rebound: Vec<CardId>,
     /// the turn count Jace's Archivist was last used on
     pub arch_t: Option<u32>,
+    /// combos.attempt: the combo last gone for, (turn count, combo name): once per turn each
+    pub combo_turn: Option<(u32, Sym)>,
+    /// combos: the turn count of the last Yawgmoth loop without a payoff (it doesn't loop twice in a turn)
+    pub yawg_loop: Option<u32>,
 }
 
 impl Player {
@@ -530,6 +534,8 @@ impl Player {
             act_uses: IndexMap::new(),
             rebound: vec![],
             arch_t: None,
+            combo_turn: None,
+            yawg_loop: None,
             stats: IndexMap::new(),
         }
     }
@@ -753,6 +759,13 @@ pub struct Game {
     /// look-ahead decisions taken in this game, and engine steps its playouts used (the per-game caps)
     pub search_n: u32,
     pub search_work: u64,
+    /// creature lands animated until the start of the next turn: (controller, the creature, the land)
+    /// (lands.animate, revert_animated)
+    pub animated: Vec<(PlayerId, PermId, LandId)>,
+    /// a combo's last pieces are being cast (combos.attempt): Thassa's Oracle waits for the exile spell
+    pub combo_spell: bool,
+    /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
+    pub lattice_lock: Option<PlayerId>,
 }
 
 impl Game {
@@ -840,6 +853,9 @@ impl Game {
             forced_attack: None,
             search_n: 0,
             search_work: 0,
+            animated: vec![],
+            combo_spell: false,
+            lattice_lock: None,
         }
     }
 

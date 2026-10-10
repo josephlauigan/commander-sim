@@ -290,8 +290,9 @@ pub type Assign = Vec<(PermId, PermId)>;
 pub type BlocksFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
 /// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize)
 pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
-/// land_defend(g, land, d, p, atk, assign): a land of defender d's answers p's attack (Kor Haven)
-pub type LandDefendFn = fn(&mut Game, crate::ids::LandId, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
+/// land_defend(g, land, d, p, atk, assign): a land of defender d's answers p's attack (Kor Haven: an attacker taken
+/// out of `atk` deals no combat damage)
+pub type LandDefendFn = fn(&mut Game, crate::ids::LandId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
 /// land_options(g, land, p, post): a land's activated abilities the AI may use (post: None at the end-of-turn window)
 pub type LandOptionsFn = fn(&mut Game, crate::ids::LandId, PlayerId, Option<bool>) -> Res<Vec<Opt>>;
 /// land_upkeep(g, land, p): p's upkeep, for a land of p's (Emeria, the Sky Ruin)

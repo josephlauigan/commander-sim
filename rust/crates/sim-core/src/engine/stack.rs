@@ -310,6 +310,25 @@ pub fn ability_window(
     stack_window(g, p, it)
 }
 
+/// ability_window for an ability whose source is a card, not a permanent (a land's ability, a card in hand or the
+/// graveyard): Python's `ability_window(g, p, L.cd, ...)`
+pub fn ability_window_card(
+    g: &mut Game,
+    p: PlayerId,
+    cd: CardId,
+    name: &str,
+    imp: Option<f64>,
+    target: Option<PermId>,
+) -> Res<bool> {
+    if g.over || !abilities_answered(g, Some(p)) {
+        return Ok(true);
+    }
+    let full = format!("{}: {name}", g.db.get(cd).name);
+    let ctx = Ctx { target, ..Ctx::default() };
+    let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
+    stack_window(g, p, it)
+}
+
 /// pay equip {n} for equipment e onto m; it attaches if the ability resolves and both are still there
 pub fn equip_to(g: &mut Game, p: PlayerId, e: PermId, m: PermId, n: u32) -> Res<bool> {
     pay(g, p, n, "", false)?;

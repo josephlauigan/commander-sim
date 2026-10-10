@@ -244,8 +244,6 @@ port_res! {
 port_bool! {
     /// PORT(M5): common.umbra_save (umbra armor)
     fn umbra_save(m: PermId);
-    /// PORT(M5): lands.try_regenerate (Yavimaya Hollow)
-    fn try_regenerate(m: PermId);
     /// PORT(M5): rules.ezuri_regen
     fn ezuri_regen(m: PermId);
     /// PORT(M5): partials.tidebinder_response
@@ -254,6 +252,11 @@ port_bool! {
     fn hullbreaker_counter(q: PlayerId, c: CardId);
     /// PORT(M5): rules.veil_response
     fn veil_response(p: PlayerId, q: PlayerId, ctr: CardId);
+}
+
+/// lands.try_regenerate: a land that regenerates (Yavimaya Hollow) saves m from destruction
+pub fn try_regenerate(g: &mut Game, m: PermId) -> Res<bool> {
+    crate::impls::lands::try_regenerate(g, m)
 }
 
 /// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)
@@ -352,9 +355,9 @@ pub fn tajic_protects(_g: &Game, _m: PermId) -> bool {
 /// PORT(M5): Skyclave Apparition remembers what it exiled
 pub fn apparition_note(_g: &mut Game, _src: PermId, _cd: Option<CardId>, _owner: PlayerId) {}
 
-/// PORT(M5): combos: a modeled combo is ready in p's hand and battlefield
-pub fn combo_ready(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// combos: a modeled combo is ready in p's hand and battlefield (Python: `any(cmb.ready(g, p)[0] for cmb in COMBOS)`)
+pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
+    crate::impls::combos::combo_ready(g, p)
 }
 
 // ------------------------------------------------------------------ M3: combat and the turn
@@ -431,7 +434,13 @@ pub fn blocks_hooks(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assi
 /// After blocks (ais.py): cards in the attacker's hand ('hand_blocks'); your Veyran's Aetherize; an outside
 /// defender's 'defend' hooks (Yawgmoth), hand answers ('hand_defend') and lands ('land_defend'); an outside attacker's
 /// ninjutsu.
-pub fn defend_hooks(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &mut Vec<(PermId, PermId)>) -> Res {
+pub fn defend_hooks(
+    g: &mut Game,
+    p: PlayerId,
+    atk: &mut Vec<PermId>,
+    d: PlayerId,
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
     for c in g.player(p).hand.clone() {
         if let Some(f) = imp_of(g, c).and_then(|i| i.hand_blocks) {
             f(g, c, p, atk, d, assign)?;
@@ -584,9 +593,9 @@ port_res! {
     fn opposition_precombat(q: PlayerId);
 }
 
-port_bool! {
-    /// PORT(M5): lands.dakmor_dredge
-    fn dakmor_dredge(p: PlayerId);
+/// lands.dakmor_dredge: Dakmor Salvage dredges 2 instead of the draw when p has no land in hand
+pub fn dakmor_dredge(g: &mut Game, p: PlayerId) -> Res<bool> {
+    crate::impls::lands::dakmor_dredge(g, p)
 }
 
 /// PORT(M5): rules.REPLACED_TAG_ENGINES (engines whose card code replaces the tag's draw)
@@ -688,39 +697,39 @@ pub fn ability_locked(_g: &Game, _src: PermId, _p: PlayerId) -> bool {
 }
 
 // ------------------------------------------------------------------ M4: what the AI reads from card code
-/// PORT(M5): combos.combo_imp: a combo piece's importance for counter decisions (9: completes a combo, 7: one short)
-pub fn combo_imp(_g: &Game, _p: PlayerId, _c: CardId) -> f64 {
-    0.0
+/// combos.combo_imp: a combo piece's importance for counter decisions (9: completes a combo, 7: one short)
+pub fn combo_imp(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    crate::impls::combos::combo_imp(g, p, c)
 }
 
-/// PORT(M5): combos.PIECES: every card that is a piece of a modeled combo
-pub fn combo_pieces(_g: &Game) -> Vec<CardId> {
-    vec![]
+/// combos.PIECES: every card that is a piece of a modeled combo
+pub fn combo_pieces(g: &Game) -> Vec<CardId> {
+    crate::impls::combos::pieces(g)
 }
 
-/// PORT(M5): c is a piece of a modeled combo (Python: `c.name in impl_combos.PIECES`)
-pub fn is_combo_piece(_g: &Game, _c: CardId) -> bool {
-    false
+/// c is a piece of a modeled combo (Python: `c.name in impl_combos.PIECES`)
+pub fn is_combo_piece(g: &Game, c: CardId) -> bool {
+    crate::impls::combos::is_piece_name(&g.db.get(c).name)
 }
 
-/// PORT(M5): combos.missing_pieces: the pieces of p's closest combo it doesn't have yet (for tutors)
-pub fn missing_pieces(_g: &Game, _p: PlayerId) -> Vec<CardId> {
-    vec![]
+/// combos.missing_pieces: the pieces of p's closest combo it doesn't have yet (for tutors)
+pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
+    crate::impls::combos::missing_pieces(g, p)
 }
 
-/// PORT(M5): search.combo_progress: the share of q's closest combo that q holds, squared
-pub fn combo_progress(_g: &Game, _q: PlayerId) -> f64 {
-    0.0
+/// search.combo_progress: the share of q's closest combo that q holds, squared
+pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
+    crate::impls::combos::combo_progress(g, q)
 }
 
-/// PORT(M5): combos.piece_threat: extra value of m if it's a piece of a combo its controller nearly has
-pub fn piece_threat(_g: &Game, _m: PermId) -> f64 {
-    0.0
+/// combos.piece_threat: extra value of m if it's a piece of a combo its controller nearly has
+pub fn piece_threat(g: &Game, m: PermId) -> f64 {
+    crate::impls::combos::piece_threat(g, m)
 }
 
-/// PORT(M5): combos.combo_options: go for a ready combo (ctr_risk: the chance a spell in it is countered)
-pub fn combo_options(_g: &mut Game, _p: PlayerId, _ctr_risk: f64, _post: Option<bool>) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// combos.combo_options: go for a ready combo (ctr_risk: the chance a spell in it is countered)
+pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool>) -> Res<Vec<Opt>> {
+    crate::impls::combos::combo_options(g, p, ctr_risk, post)
 }
 
 /// PORT(M5): common.aristocrat_options (sacrifice outlets with a payoff out: Grave Pact, Blood Artist ...)
@@ -728,9 +737,9 @@ pub fn aristocrat_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> R
     Ok(vec![])
 }
 
-/// PORT(M5): lands.land_options (lands' activated abilities: Barad-dûr, Urza's Saga ...)
-pub fn land_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// lands.land_options (lands' activated abilities: Barad-dûr, Urza's Saga ...): each land's `land_options` slot
+pub fn land_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    crate::impls::lands::land_options(g, p, post)
 }
 
 /// PORT(M5): ais.breach_gc_options: Underworld Breach escapes, Panoptic Mirror imprints, Lion's Eye Diamond,

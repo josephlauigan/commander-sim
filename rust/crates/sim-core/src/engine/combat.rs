@@ -507,7 +507,7 @@ fn resolve_combat_inner(
     tot: &mut i32,
 ) -> Res<Vec<PermId>> {
     step_priority(g, "attackers", Some(d), atk)?; // the declare attackers step's priority
-    let atk: Vec<PermId> = atk.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).owner == p).collect();
+    let mut atk: Vec<PermId> = atk.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).owner == p).collect();
     if g.over || !g.player(d).alive {
         return Ok(vec![]);
     }
@@ -530,7 +530,7 @@ fn resolve_combat_inner(
     let ringblk: Vec<PermId> =
         assign.iter().filter(|&&(a, b)| cardcode::ring_blocked(g, p, a, b)).map(|x| x.1).collect();
     let to_walker = walker_attacks(g, p, &atk, d, &assign);
-    cardcode::defend_hooks(g, p, &atk, d, &mut assign)?; // Aetherize, Yawgmoth, ninjutsu ...
+    cardcode::defend_hooks(g, p, &mut atk, d, &mut assign)?; // Aetherize, Yawgmoth, Kor Haven, ninjutsu ...
     let blocker_of = |assign: &[(PermId, PermId)], a: PermId| assign.iter().find(|x| x.0 == a).map(|x| x.1);
     if !shielded(g, d)
         && !g.player(d).life_locked
