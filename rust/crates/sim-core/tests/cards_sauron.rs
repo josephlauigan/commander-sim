@@ -3,8 +3,8 @@
 //!
 //! Some tests use cards no current decklist runs (Witch-king, Bringer of Ruin; Brush Off; Grapeshot; Lion's Eye
 //! Diamond; Laboratory Maniac): they are still in the card database, and they check branches of the Breach line, so
-//! they run. SauronMarchesa is ignored: it needs marchesa.py's card code (Marchesa is in Jodah's list now, ported in
-//! phase 6); `cargo test -- --ignored` runs it.
+//! they run. SauronMarchesa runs with marchesa.py's card code (impls/marchesa.rs, ported with Jodah's deck in phase
+//! 6).
 
 use sim_core::ai::{act, brain, decks};
 use sim_core::engine::{cast, removal, stack, turn, values, zones};
@@ -505,7 +505,6 @@ fn tutors_find_the_missing_piece() {
 // Mauhúr's extra counter, and the return of a creature with a counter
 
 #[test]
-#[ignore = "needs marchesa.py's card code (Marchesa is in Jodah's list now: phase 6)"]
 fn the_army_gets_dethrone_and_mauhurs_extra_counter() {
     let mut g = table(&["sauron", "veyran", "seph"]);
     perm(&mut g, P0, "Marchesa, the Black Rose");
@@ -520,7 +519,6 @@ fn the_army_gets_dethrone_and_mauhurs_extra_counter() {
 }
 
 #[test]
-#[ignore = "needs marchesa.py's card code (Marchesa is in Jodah's list now: phase 6)"]
 fn a_creature_with_a_counter_returns() {
     let mut g = table(&["sauron", "veyran"]);
     perm(&mut g, P0, "Marchesa, the Black Rose");

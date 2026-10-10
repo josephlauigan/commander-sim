@@ -1315,10 +1315,9 @@ fn allowed(g: &Game, p: PlayerId) -> i64 {
     if oath { 2 } else { 1 }
 }
 
-/// Carth the Lion: each loyalty ability costs an extra [+1] (CI.total(g, 'loyalty_extra', p)).
-/// PORT(phase 6): the loyalty_extra event has no CardImpl slot yet, so this is 0.
-fn loyalty_extra(_g: &Game, _p: PlayerId) -> i32 {
-    0
+/// Carth the Lion: each loyalty ability costs an extra [+1] (CI.total(g, 'loyalty_extra', p) if g.hooks else 0)
+fn loyalty_extra(g: &Game, p: PlayerId) -> i32 {
+    if g.hooks.is_empty() { 0 } else { crate::engine::hooks::total_count(g, Event::LoyaltyExtra, p) }
 }
 
 fn walker_abilities(g: &Game, src: PermId) -> &'static [WalkerAb] {

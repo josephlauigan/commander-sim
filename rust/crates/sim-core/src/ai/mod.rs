@@ -265,9 +265,9 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> f64 {
     decks::deck_prio(g, p, c) as f64
 }
 
-/// PORT(M5): marchesa.card_etb_value (what a creature card does for p as it enters)
-pub fn card_etb_value(_g: &Game, _p: PlayerId, _c: CardId) -> f64 {
-    0.0
+/// marchesa.card_etb_value (what a creature card does for p as it enters)
+pub fn card_etb_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    crate::impls::marchesa::card_etb_value(g, p, Some(c))
 }
 
 /// CI.combo_imp, a combo piece's importance (9: completes a combo, 7: one short)
