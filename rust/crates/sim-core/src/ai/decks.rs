@@ -49,9 +49,12 @@ fn has_static(g: &Game, c: CardId, kind: &str) -> bool {
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     match g.player(p).key {
         "sauron" => sauron_prio(g, p, c),
+        "seph" => super::seph::seph_prio(g, p, c),
+        "veyran" => super::veyran::veyran_prio(g, p, c),
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
-        // PORT(phase 6): seph_prio, veyran_prio, galadriel_prio, alela_prio, jodah_prio. Until then
-        // your other decks cast by the outside decks' tag priority.
+        "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
+        "alela" => crate::impls::alela::alela_prio(g, p, c),
+        "jodah" => crate::impls::jodah::jodah_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -676,8 +679,9 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     let pl = g.player(p);
     let held = |t: Tag| has(g, p, t) || in_hand_tag(g, p, t);
     match pl.key {
-        // PORT(phase 6): Sephiroth's (seph_tutor_target) and Jodah's wish lists
+        "seph" => super::seph::seph_tutor_target(g, p).and_then(|n| g.db.id(n)).filter(|c| okn.contains(c)),
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
+        "jodah" => crate::impls::jodah::jodah_tutor(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {
                 return first(&["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
@@ -1187,10 +1191,15 @@ pub fn protect_response(
     }
     let v = pval(g, m);
     if silenced(g, owner) {
-        // PORT(phase 6): Sephiroth's free sacrifice outlets still work under Conqueror's Flail
+        // Conqueror's Flail: only non-spell responses (Sephiroth's free sacrifice outlets)
+        if key == "seph" {
+            return super::seph::protect_silenced(g, owner, m, kind, v);
+        }
         return Ok(false);
     }
     match key {
+        "seph" => super::seph::protect(g, owner, m, kind, v),
+        "veyran" => super::veyran::protect(g, owner, m, kind, actor, spell),
         "sauron" => {
             if g.perm(m).army || v >= 5.0 {
                 let sl =
@@ -1228,8 +1237,8 @@ pub fn protect_response(
             Ok(false)
         }
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
-        // PORT(phase 6): Sephiroth (Ephemerate, Restoration Angel, Heroic Intervention, Galadriel's Dismissal,
-        // sacrifice in response), Veyran, Galadriel, Jodah
+        "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
+        "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
     }
 }
@@ -1246,12 +1255,21 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if key == "yshtola" {
         return crate::impls::yshtola::yshtola_wipe_response(g, q, kind);
     }
-    // PORT(phase 6): Galadriel's and Jodah's answers
-    if matches!(key, "galadriel" | "jodah") {
+    if key == "galadriel" {
+        return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
+    }
+    if key == "jodah" {
+        return crate::impls::jodah::jodah_wipe_response(g, q, kind, caster);
+    }
+    if matches!(key, "galadriel" | "yshtola" | "jodah") {
         return Ok(None);
     }
-    if wipe_loss(g, q, kind, caster) < 6.0 {
+    let loss = wipe_loss(g, q, kind, caster);
+    if loss < 6.0 {
         return Ok(None);
+    }
+    if key == "seph" {
+        return super::seph::wipe_response(g, q, kind, loss);
     }
     if key == "sauron"
         && let Some(a) = army_of(g, q)
@@ -1264,8 +1282,6 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
             g.perm_mut(a).phased = true;
         }
     }
-    // PORT(phase 6): Sephiroth's answers (Heroic Intervention, Galadriel's Dismissal kicked, Teferi's Protection,
-    // sacrificing bombs to an exile wipe)
     Ok(None)
 }
 
