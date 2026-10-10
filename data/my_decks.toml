@@ -1,0 +1,44 @@
+# Your decks: the deck key, its file under decklists/, the name the logs use, the commander the simulator
+# plays and the colour identity of the seat. Extracted once from deck_files.py, engine.py and ais.py.
+
+[seph]
+file = "JD/sephiroth-phyrexian-reanimator.md"
+name = "Sephiroth"
+commander = "Atraxa, Grand Unifier"
+ident = "WUBG"
+
+[veyran]
+file = "JD/veyran-izzet-spellslinger.md"
+name = "Veyran"
+commander = "Veyran, Voice of Duality"
+ident = "UR"
+
+[sauron]
+file = "JD/sauron-grixis-amass.md"
+name = "Sauron"
+commander = "Sauron, the Dark Lord"
+ident = "UBR"
+
+[yshtola]
+file = "JD/yshtola-esper-drain.md"
+name = "Y'shtola"
+commander = "Y'shtola, Night's Blessed"
+ident = "WUB"
+
+[galadriel]
+file = "Avery/galadriel-bant-rebels.md"
+name = "Galadriel"
+commander = "Galadriel, Light of Valinor"
+ident = "WUG"
+
+[alela]
+file = "Avery/alela-esper-faeries.md"
+name = "Alela"
+commander = "Alela, Artful Provocateur"
+ident = "WUB"
+
+[jodah]
+file = "JD/jodah-wubrg-legends.md"
+name = "Jodah"
+commander = "Jodah, the Unifier"
+ident = "WUBRG"
