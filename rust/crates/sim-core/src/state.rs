@@ -37,6 +37,8 @@ pub enum DataKey {
     Artifact,
     Attacks,
     Bestow,
+    /// cast for its blitz cost (Jaxis, the Troublemaker)
+    Blitz,
     Bound,
     Burden,
     Charge,
@@ -45,6 +47,10 @@ pub enum DataKey {
     Counters,
     Crewed,
     Ctype,
+    /// (Dovin's controller, their turn count): damage to and from it is prevented until their next turn
+    Dovin,
+    /// a land made a creature by Druid Class's level 3
+    DruidClass,
     Elk,
     Escaped,
     Exerted,
@@ -65,6 +71,8 @@ pub enum DataKey {
     Indestr,
     /// (player, their turn count): indestructible until that player's next turn
     IndestrUntil,
+    /// a token copy made by Jaxis, the Troublemaker (sacrificed at the end step)
+    JaxisCopy,
     Kaldra,
     Kicks,
     Kws,
@@ -440,6 +448,8 @@ pub struct Player {
     pub combo_turn: Option<(u32, Sym)>,
     /// combos: the turn count of the last Yawgmoth loop without a payoff (it doesn't loop twice in a turn)
     pub yawg_loop: Option<u32>,
+    /// Sunfall's Incubator: its +1/+1 counters (0: none)
+    pub incubator: i32,
 }
 
 impl Player {
@@ -549,6 +559,7 @@ impl Player {
             adv_done: vec![],
             combo_turn: None,
             yawg_loop: None,
+            incubator: 0,
             stats: IndexMap::new(),
         }
     }

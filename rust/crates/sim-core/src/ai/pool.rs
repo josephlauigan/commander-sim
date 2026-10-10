@@ -838,6 +838,8 @@ enum Where {
     BfSac,
     BfTap,
     BfSelfDiscard,
+    /// sacrifice another creature (Cartel Aristocrat)
+    BfSacOther,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -865,8 +867,8 @@ enum Scope {
 /// a protector: (name, where, cost, what it saves, scope, free while you control your commander)
 type Protector = (&'static str, Where, Option<(u32, &'static str)>, How, Scope, bool);
 
-/// pool_ai.PROTECTORS
-const PROTECTORS: [Protector; 15] = [
+/// pool_ai.PROTECTORS, with the entries rules.py (Siren Stormtamer) and rules2.py (Cartel Aristocrat) add as they load
+const PROTECTORS: [Protector; 17] = [
     ("Heroic Intervention", Where::Hand, Some((1, "G")), How::HexproofIndes, Scope::Perms, false),
     ("Teferi's Protection", Where::Hand, Some((2, "W")), How::Phase, Scope::Perms, false),
     ("Flawless Maneuver", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, true),
@@ -882,6 +884,8 @@ const PROTECTORS: [Protector; 15] = [
     ("Dream Trawler", Where::BfSelfDiscard, None, How::AllTargeted, Scope::Selfish, false),
     ("Benevolent Bodyguard", Where::BfSac, None, How::Color, Scope::One, false),
     ("Alseid of Life's Bounty", Where::BfSac, Some((1, "")), How::Color, Scope::One, false),
+    ("Siren Stormtamer", Where::BfSac, Some((0, "U")), How::AllTargeted, Scope::One, false), // rules.py
+    ("Cartel Aristocrat", Where::BfSacOther, None, How::Color, Scope::Selfish, false),       // rules2.py
 ];
 
 const WIPE_INDES: [&str; 6] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal"];
@@ -996,6 +1000,18 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>) -> Re
                     discard_worst(g, p, 1)?;
                     g.perm_mut(s).tapped = true;
                 }
+                Where::BfSacOther => {
+                    // Cartel Aristocrat: sacrifice another creature
+                    let fod: Vec<PermId> = g
+                        .player(p)
+                        .perms
+                        .iter()
+                        .copied()
+                        .filter(|&x| g.is_creature(x) && x != s && !g.perm(x).is_cmd)
+                        .collect();
+                    let Some(x) = min_by(&fod, |x| pval(g, x)) else { return Ok(false) };
+                    die(g, x, "sac")?;
+                }
                 _ => {
                     if let Some((cg, cp)) = cost {
                         if !can_pay(g, p, cg, cp, false) {
@@ -1053,7 +1069,7 @@ pub fn protect(
         // cheapest first: permanents that tap, then one-shot cards; save the board-wide ones for wipes
         let rank = match wh {
             Where::BfTap | Where::BfSelfDiscard => 0,
-            Where::Hand => 1,
+            Where::Hand | Where::BfSacOther => 1,
             Where::BfSac => 2,
         } + if matches!(scope, Scope::One | Scope::Selfish) { 0 } else { 3 };
         cands.push((rank, i, src));
