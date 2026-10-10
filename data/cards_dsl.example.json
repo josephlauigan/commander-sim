@@ -1,0 +1,17 @@
+{
+  "_readme": "Rename to cards_dsl.json to use. Entries here override every other source for that card. Types: C creature, I instant, S sorcery, E enchantment, A artifact, P planeswalker, L land.",
+  "Grave Pact": {
+    "types": "E", "cost": "1BBB",
+    "abilities": [
+      {"type": "triggered", "event": "dies", "source": "you_creature",
+       "effects": [{"do": "sacrifice", "who": "each_opponent", "filter": {"type": "creature"}}]}
+    ]
+  },
+  "Talrand, Sky Summoner": {
+    "types": "C", "cost": "2UU", "tags": "pow=2 leg wizard noatk",
+    "abilities": [
+      {"type": "triggered", "event": "cast", "who": "you", "spell": "instant_or_sorcery",
+       "effects": [{"do": "token", "n": 1, "pow": 2, "tgh": 2, "keywords": ["flying"]}]}
+    ]
+  }
+}
