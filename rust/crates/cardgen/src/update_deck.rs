@@ -24,11 +24,11 @@
 //!     mentions cards that left (strategy text isn't rewritten).
 
 use crate::audit::{self, Audit, cut};
-use crate::data::{MyDeck, Project, read};
+use crate::data::{Project, read};
 use crate::decks::{self, BASICS, py_repr};
 use crate::export::Inputs;
 use crate::json::{self, J};
-use crate::re::{findall, is, rmatch, search, split, sub};
+use crate::re::{findall, rmatch, search, sub};
 use crate::scryfall;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -169,11 +169,6 @@ pub fn sort_key(old_singles: &[String]) -> SortKey {
 fn sorted_by(mut v: Vec<String>, key: SortKey) -> Vec<String> {
     v.sort_by_key(|a| key.key(a));
     v
-}
-
-pub struct Recs<'a> {
-    pub map: BTreeMap<String, J>,
-    _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// the new file text
@@ -343,7 +338,6 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         inp.cache.save()?;
     }
     let old = decks::load(&path)?;
-    let mut extra = inp.wanted();
     let built = inp.build();
     let known = |n: &str| old.iter().any(|o| o == n) || built.cards.contains_key(n);
     let mut problems = vec![];
@@ -435,20 +429,12 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         say!("Wrote {rel}.");
     }
     // how well the new cards are modeled, and where the file still mentions cards that left
-    extra.extra.extend(in_cards.iter().cloned());
-    let mut inp2 = Inputs::load(project)?;
-    inp2.cache = {
-        let mut c = crate::scryfall::Cache::load(&project.data("scryfall_cache.json"))?;
-        // the cards fetched above are already saved
-        let _ = &mut c;
-        c
-    };
+    let inp2 = Inputs::load(project)?; // the lists as written now (the cache was saved above)
     let mine = inp2.my.iter().any(|d| Path::new(&d.file).file_name() == path.file_name());
     let real = inp2.my.iter().any(|d| decks::deck_path(project, d) == path) || project_deck(&inp2, &path);
-    let wanted_extra: std::collections::BTreeSet<String> = in_cards.iter().cloned().collect();
     let built2 = crate::sources::build(&inp2.carddb, &inp2.overrides, &inp2.cache, &{
         let mut w = inp2.wanted();
-        w.extra.extend(wanted_extra);
+        w.extra.extend(in_cards.iter().cloned()); // a --dry-run list isn't in the files yet
         w
     });
     let a = Audit::new(&inp2, &built2.cards)?;
@@ -466,7 +452,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let cmd_line = text.split('\n').find(|l| l.starts_with("**Commander (1).**")).unwrap_or("").to_string();
     let mut hits: Vec<(usize, String, String)> = vec![];
     for (i, line) in text.split('\n').enumerate() {
-        if is(r"^(## (Import list|Decklist by type)|\*\*[^*]+ \(\d+\)\.\*\*|\d+ )", line) && rmatch(r"^(## (Import list|Decklist by type)|\*\*[^*]+ \(\d+\)\.\*\*|\d+ )", line).is_some() {
+        if rmatch(r"^(## (Import list|Decklist by type)|\*\*[^*]+ \(\d+\)\.\*\*|\d+ )", line).is_some() {
             continue;
         }
         for n in &out_cards {
@@ -502,18 +488,18 @@ fn project_deck(inp: &Inputs, path: &Path) -> bool {
 }
 
 /// tests/fixtures/my_decks_parsed.json: every one of your decks' cards, sorted (the deck guard test)
-fn record_fixture(inp: &Inputs) -> Result<(), String> {
+pub fn fixture_json(inp: &Inputs) -> Result<String, String> {
     let mut o = crate::json::Obj::new();
     for d in &inp.my {
         let mut cards = decks::load(&decks::deck_path(&inp.project, d))?;
         cards.sort();
         o.set(&d.key, J::Arr(cards.into_iter().map(J::from).collect()));
     }
-    let path = inp.project.root.join("tests").join("fixtures").join("my_decks_parsed.json");
-    std::fs::write(&path, json::dumps(&J::Obj(o), Some(0), true)).map_err(|e| format!("{}: {e}", path.display()))
+    Ok(json::dumps(&J::Obj(o), Some(0), true))
 }
 
-#[allow(dead_code)]
-fn _unused(_: &MyDeck, _: Vec<String>) -> Vec<String> {
-    split(r"x", "x")
+fn record_fixture(inp: &Inputs) -> Result<(), String> {
+    let path = inp.project.root.join("tests").join("fixtures").join("my_decks_parsed.json");
+    std::fs::write(&path, fixture_json(inp)?).map_err(|e| format!("{}: {e}", path.display()))
 }
+

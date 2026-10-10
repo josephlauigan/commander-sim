@@ -57,3 +57,11 @@ fn every_list_card_has_data() {
     let inp = Inputs::load(&p).unwrap();
     assert!(inp.uncached().is_empty(), "cards missing from the Scryfall cache: {:?}", inp.uncached());
 }
+
+#[test]
+fn deck_guard_fixture_is_current() {
+    let p = project();
+    let inp = Inputs::load(&p).unwrap();
+    let want = std::fs::read_to_string(p.root.join("tests/fixtures/my_decks_parsed.json")).unwrap();
+    assert_eq!(cardgen::update_deck::fixture_json(&inp).unwrap(), want);
+}
