@@ -44,6 +44,8 @@ pub enum DataKey {
     Charge,
     Construct,
     Copy,
+    /// Spark Double entered as a copy (its own enter hook doesn't copy again)
+    Copied,
     Counters,
     Crewed,
     Ctype,
@@ -98,6 +100,8 @@ pub enum DataKey {
     TapOnReturn,
     Unblockable,
     Unbl,
+    /// unearthed (Archfiend of Sorrows: exiled at the end step)
+    Unearth,
     Used,
     Voice,
     Void,
@@ -450,6 +454,17 @@ pub struct Player {
     pub yawg_loop: Option<u32>,
     /// Sunfall's Incubator: its +1/+1 counters (0: none)
     pub incubator: i32,
+    /// Reflector Mage: (the card name this player can't cast, until the Mage's controller has this turn count, that
+    /// controller) (Python's `locked_name`)
+    pub locked_name: Option<(Sym, u32, PlayerId)>,
+    /// Urza's Sagas on the battlefield and their lore counters (Python's `p.sagas`)
+    pub sagas: Vec<(LandId, u32)>,
+    /// Hunter's Insight: (the turn, the creature): its combat damage to a player draws that many
+    pub insight: Option<(TurnStamp, PermId)>,
+    /// Conduit of Worlds: no more spells this turn
+    pub conduit_lock: Option<TurnStamp>,
+    /// Oath of Teferi: the cards it exiled, back at the end step
+    pub oath_return: Vec<CardId>,
 }
 
 impl Player {
@@ -560,6 +575,11 @@ impl Player {
             combo_turn: None,
             yawg_loop: None,
             incubator: 0,
+            locked_name: None,
+            sagas: vec![],
+            insight: None,
+            conduit_lock: None,
+            oath_return: vec![],
             stats: IndexMap::new(),
         }
     }
@@ -619,6 +639,10 @@ pub struct Ctx {
     pub storm: Option<i32>,
     /// Brain Freeze in the Breach line: who each copy mills
     pub mill: Vec<PlayerId>,
+    /// a modal spell's chosen mode (Golgari Charm, Mardu Charm: Python's `ctx['mode']`)
+    pub mode: Option<Sym>,
+    /// the creature a spell is cast on without targeting it as removal (Hunter's Insight: `ctx['host']`)
+    pub host: Option<PermId>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).
@@ -802,6 +826,12 @@ pub struct Game {
     pub combo_spell: bool,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
+    /// Coat of Arms has entered (partials.coat_bonus applies)
+    pub coat: bool,
+    /// Bloodline Keeper has entered (partials.lineage_bonus applies)
+    pub lineage: bool,
+    /// partials.coat_bonus's cache: (bf_ver, each creature's bonus), as Python's `g.coat_cache`
+    pub coat_cache: std::cell::RefCell<Option<(u64, Vec<(PermId, i32)>)>>,
 }
 
 impl Game {
@@ -896,6 +926,9 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             lattice_lock: None,
+            coat: false,
+            lineage: false,
+            coat_cache: std::cell::RefCell::new(None),
         }
     }
 

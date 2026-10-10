@@ -11,9 +11,9 @@ use crate::pysum::PySum;
 use crate::state::Game;
 use crate::sym::Sym;
 
-/// PORT(M5): Blood Moon / Magus of the Moon in play (nonbasic lands tap for R)
-pub fn blood_moon(_g: &Game) -> bool {
-    false
+/// cardimpl.blood_moon: Blood Moon / Magus of the Moon in play (nonbasic lands tap for R)
+pub fn blood_moon(g: &Game) -> bool {
+    crate::impls::common::blood_moon(g)
 }
 
 /// rules.dryad_colors: Dryad of the Ilysian Grove: p's lands tap for any colour in its identity
@@ -116,9 +116,9 @@ pub fn on_tap_perm(g: &mut Game, p: PlayerId, m: PermId, n: u32) -> crate::flow:
     }
 }
 
-/// PORT(M5): engine.SELF_COST, a card's own cost change (Draco's domain, delve)
-pub fn self_cost(_g: &Game, _p: PlayerId, _c: crate::ids::CardId) -> i32 {
-    0
+/// engine.SELF_COST, a card's own cost change (Draco's domain, delve): its `self_cost` slot
+pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
+    imp_of(g, c).and_then(|i| i.self_cost).map_or(0, |f| f(g, p, c))
 }
 
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control
@@ -423,8 +423,10 @@ pub fn tajic_protects(g: &Game, m: PermId) -> bool {
     crate::impls::partials::tajic_protects(g, m)
 }
 
-/// PORT(M5): Skyclave Apparition remembers what it exiled
-pub fn apparition_note(_g: &mut Game, _src: PermId, _cd: Option<CardId>, _owner: PlayerId) {}
+/// Skyclave Apparition remembers what it exiled (its owner gets an Illusion when it leaves: partials)
+pub fn apparition_note(g: &mut Game, src: PermId, cd: Option<CardId>, owner: PlayerId) {
+    crate::impls::partials::apparition_note(g, src, cd, owner)
+}
 
 /// combos: a modeled combo is ready in p's hand and battlefield (Python: `any(cmb.ready(g, p)[0] for cmb in COMBOS)`)
 pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
@@ -871,9 +873,10 @@ pub fn is_sac_outlet(name: &str) -> bool {
     crate::impls::common::is_sac_outlet(name)
 }
 
-/// PORT(M5): CI.gy_response: an opponent answers a reanimation spell aimed at src's graveyard (Scavenger Grounds)
-pub fn gy_response(_g: &mut Game, _p: PlayerId, _value: f64, _src: PlayerId) -> Res<bool> {
-    Ok(false)
+/// CI.gy_response: an opponent answers a reanimation spell aimed at src's graveyard (Tormod's Crypt, Soul-Guide
+/// Lantern: common.py's gy_hate hooks)
+pub fn gy_response(g: &mut Game, p: PlayerId, value: f64, src: PlayerId) -> Res<bool> {
+    crate::impls::common::gy_response(g, p, value, src)
 }
 
 /// rules.tithe_prio: Smothering Tithe by the Treasures it will make over the next three rounds (likelier early,

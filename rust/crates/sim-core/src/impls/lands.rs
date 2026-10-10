@@ -6,8 +6,6 @@
 //! Creature lands become a creature (a token standing in for the land) until end of turn: the land leaves the
 //! player's lands while animated and comes back at the start of the next turn; if the creature died, the land goes
 //! to the graveyard.
-//!
-//! Not ported here: Karn's Bastion (it needs common.proliferate and the Saga chapters, CI.SAGA, from common.rs).
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::hooks::fire_trigger;
@@ -572,6 +570,48 @@ fn war_room_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+/// Karn's Bastion (Full): {4},{T}: proliferate (at end of turn, when it helps; in your main phase for a lore counter
+/// on Summon: Bahamut, a Saga whose CI.SAGA rule wants one)
+fn bastion(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let saga: i32 = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            x.data.get(DataKey::Lore).is_some()
+                && !x.phased
+                && x.cd.and_then(|c| g.registry.get(c)).and_then(|i| i.saga).is_some_and(|s| (s.0)(g, p, m))
+        })
+        .count() as i32
+        * 2;
+    if (post.is_some() && saga == 0) || g.land(l).tapped || !can_pay_without(g, p, l, 4, "") {
+        return Ok(vec![]);
+    }
+    let mine =
+        g.player(p).perms.iter().filter(|&&m| g.perm(m).plus > 0 || g.perm(m).loyalty.is_some_and(|x| x != 0)).count();
+    let theirs = g.opps(p).flat_map(|q| g.player(q).perms.iter()).filter(|&&m| g.perm(m).plus > 0).count();
+    let worth = mine as i32 - theirs as i32 + saga;
+    if worth < 2 {
+        return Ok(vec![]);
+    }
+    let u = 0.8 + 0.3 * worth as f64 + if saga != 0 { 2.0 } else { 0.0 }; // a chapter: a destroy, two cards
+    Ok(vec![opt(u, "Karn's Bastion".into(), bastion_go, l.0 as i64)])
+}
+
+fn bastion_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if !has_land(g, p, l) || g.land(l).tapped || !pay_without(g, p, l, 4, "")? {
+        return Ok(false);
+    }
+    g.land_mut(l).tapped = true;
+    g.player_mut(p).stat("proliferate_bastion", 1);
+    if ability_window_card(g, p, g.land(l).cd, "proliferate", None, None)? {
+        super::common::proliferate(g, p, 1)?;
+    }
+    Ok(true)
+}
+
 /// {1}{U},{T}: the best artifact from the graveyard on top of the library
 fn academy_ruins(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_some() || g.land(l).tapped || !can_pay_without(g, p, l, 1, "U") {
@@ -969,7 +1009,7 @@ pub fn dakmor_dredge(g: &mut Game, p: PlayerId) -> Res<bool> {
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
-    let land_opts: [(&str, LandOptionsFn); 17] = [
+    let land_opts: [(&str, LandOptionsFn); 18] = [
         ("Mutavault", manland_options),
         ("Hissing Quagmire", manland_options),
         ("Needle Spires", manland_options),
@@ -984,6 +1024,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         ("Castle Locthwain", locthwain),
         ("Castle Embereth", embereth),
         ("War Room", war_room),
+        ("Karn's Bastion", bastion),
         ("Academy Ruins", academy_ruins),
         ("Vault of the Archangel", vault),
         ("Pendelhaven", pendelhaven),

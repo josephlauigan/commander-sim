@@ -336,6 +336,14 @@ pub type SpellImpFn = fn(&Game, PlayerId, CardId) -> f64;
 /// an entry of common.TOKEN_PT (tokens with data: Urza's Construct) or common.CREATURE_PT (any creature: the
 /// Banners): (g, m) -> (dp, dt)
 pub type PtFn = fn(&Game, PermId) -> (i32, i32);
+/// gy_hate(g, src, reanimator, gy_owner): true if src exiled gy_owner's graveyard in response
+pub type GyHateFn = fn(&mut Game, Src, PlayerId, PlayerId) -> Res<bool>;
+/// blood_moon(g, src): true while src makes nonbasic lands tap for R
+pub type BloodMoonFn = fn(&Game, Src) -> bool;
+/// CI.SAGA's wants(g, p, m): proliferate should add a lore counter to Saga m
+pub type SagaWantsFn = fn(&Game, PlayerId, PermId) -> bool;
+/// CI.SAGA's add_lore(g, p, m): a lore counter on Saga m (its chapter triggers)
+pub type SagaLoreFn = fn(&mut Game, PlayerId, PermId) -> Res;
 
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
@@ -430,6 +438,18 @@ pub struct CardImpl {
     pub spell_imp: Option<SpellImpFn>,
     /// a fixed value of removing it (Python's `CI.PVAL`)
     pub pval: Option<f64>,
+    /// gy_hate(g, src, reanimator, gy_owner): exile a graveyard in response to a reanimation (Tormod's Crypt)
+    pub gy_hate: Option<GyHateFn>,
+    /// blood_moon(g, src): nonbasic lands tap for R (Magus of the Moon)
+    pub blood_moon: Option<BloodMoonFn>,
+    /// loyalty_extra(g, src, p): p's loyalty abilities each cost this much more [+1] (Carth the Lion), summed
+    pub loyalty_extra: Option<PlayerCountFn>,
+    /// proliferate_extra(g, src, p): p proliferates this many more times (Tekuthal), summed
+    pub proliferate_extra: Option<PlayerCountFn>,
+    /// a Saga's proliferate rule (Python's `CI.SAGA`): (wants another lore counter, add it: that chapter)
+    pub saga: Option<(SagaWantsFn, SagaLoreFn)>,
+    /// engine.SELF_COST: generic mana added to (+) or taken off (-) the card's own cost (Draco's domain, delve)
+    pub self_cost: Option<PrioFn>,
     /// an Aura's bonus, keywords and host rule (common.AURA; set by `impls::common::aura`)
     pub aura: Option<&'static crate::impls::common::AuraSpec>,
     /// a planeswalker's loyalty abilities for the walker framework (common.WALKERS; set by `impls::common::walker`)
@@ -521,6 +541,10 @@ impl CardImpl {
             Event::Defend => self.defend.is_some(),
             Event::SkipDraw => self.skip_draw.is_some(),
             Event::Rebound => self.rebound.is_some(),
+            Event::GyHate => self.gy_hate.is_some(),
+            Event::BloodMoon => self.blood_moon.is_some(),
+            Event::LoyaltyExtra => self.loyalty_extra.is_some(),
+            Event::ProliferateExtra => self.proliferate_extra.is_some(),
             _ => false,
         }
     }

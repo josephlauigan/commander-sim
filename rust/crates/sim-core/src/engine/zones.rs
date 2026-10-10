@@ -633,7 +633,11 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
         return Ok(());
     }
     if creature && hushed(g) {
-        leave(g, m)?;
+        // still a death (Python doesn't record it here): common.aura_fall returns Angelic Destiny for it
+        let prev = g.dying.replace(m);
+        let r = leave(g, m);
+        g.dying = prev;
+        r?;
         if !token {
             to_zone_card(g, m, Zone::Gy);
         }

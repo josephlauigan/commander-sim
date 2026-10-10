@@ -34,6 +34,10 @@ pub enum Source {
     Scion(PermId),
     /// a card in hand that makes mana when exiled (Elvish Spirit Guide: 'H')
     HandCard(CardId),
+    /// Quirion Ranger (the first) returns a Forest to hand to untap mana creature `dork` (the second): 'QR'
+    Quirion(PermId, PermId),
+    /// Wirewood Symbiote (the first) returns an Elf (the third) to hand to untap mana creature `dork` (the second): 'WS'
+    Symbiote(PermId, PermId, PermId),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -349,7 +353,9 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
         Source::FloatC => g.player_mut(p).floating.c -= 1,
         Source::FloatG => g.player_mut(p).floating.g -= 1,
         Source::FloatB => g.player_mut(p).floating.b -= 1,
-        Source::Scion(_) | Source::HandCard(_) => cardcode::special_unit_paid(g, p, w)?,
+        Source::Scion(_) | Source::HandCard(_) | Source::Quirion(..) | Source::Symbiote(..) => {
+            cardcode::special_unit_paid(g, p, w)?
+        }
         Source::Land(l) => {
             g.land_mut(l).tapped = true;
             g.tap_cols = Colors::from_letters(col);
