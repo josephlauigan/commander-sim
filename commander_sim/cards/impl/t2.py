@@ -1,4 +1,5 @@
 """Tier 2 pool decks: Kaalia, Meren, Sythis, Brago, Lord Windgrace (and the staples they share)."""
+import importlib
 from commander_sim.engine import *
 from commander_sim import engine as E
 from commander_sim.cards import cardimpl as CI
@@ -88,13 +89,36 @@ note('Brago, King Eternal', 'Full', 'combat damage: blink every nonland permanen
      '(and tapped mana rocks)')
 
 
+def flicker_worth(g, p, m):
+    """what flickering p's creature m is worth to p's AI: Sephiroth's values its own (cards/impl/mine.py: the
+    commander Atraxa, Summon: Bahamut's restart, counters and Equipment lost); outside decks use blink_value"""
+    if p.key == 'seph': return importlib.import_module('commander_sim.cards.impl.mine').flicker_worth(g, p, m)
+    return blink_value(g, p, m)
+
+
+def end_step_flicker(g, src, p, other, rocks=False):
+    """Soulherder, Conjurer's Closet, Teleportation Circle: at the beginning of your end step, you may exile a creature
+    you control, then return it: the one with the best enters-the-battlefield effect. rocks (Teleportation Circle,
+    which takes an artifact too): with no creature worth it, a tapped mana rock, which comes back untapped for the
+    opponents' turns"""
+    if p is not src.owner: return
+    p.stats['flicker_chance ' + src.cd.name] += 1
+    cands = [m for m in p.perms if (m is not src or not other) and m.creature and flicker_worth(g, p, m) > 0]
+    if not cands and rocks:
+        cands = [m for m in p.perms if m.tapped and not m.token and m.cd is not None and 'rock' in m.cd.tags
+                 and not m.creature and m.orig is p]
+    if not cands or not trigger_window(g, p, src, 'blink a creature' if cands[0].creature else 'blink a mana rock'):
+        return
+    cands = [m for m in cands if m in p.perms]
+    if not cands: return
+    m = max(cands, key=lambda m: flicker_worth(g, p, m) if m.creature else E.pval(g, m))
+    p.stats['flicker ' + src.cd.name] += 1; p.stats[f'flicker {src.cd.name} -> {m.name}'] += 1
+    blink(g, p, m)
+
+
 @on('Soulherder', 'end_step')
 def _soulherder(g, src, p):
-    if p is not src.owner: return
-    cands = [m for m in p.perms if m is not src and m.creature and blink_value(g, p, m) > 0]
-    if not cands or not trigger_window(g, p, src, 'blink a creature'): return
-    cands = [m for m in cands if m in p.perms]
-    if cands: blink(g, p, max(cands, key=lambda m: blink_value(g, p, m)))
+    end_step_flicker(g, src, p, True)
 
 
 @on('Soulherder', 'exiled_from_bf')
@@ -106,13 +130,35 @@ note('Soulherder', 'Full', 'end step: blink the best ETB creature; grows when cr
 
 @on("Conjurer's Closet", 'end_step')
 def _closet(g, src, p):
-    if p is not src.owner: return
-    cands = [m for m in p.perms if m.creature and blink_value(g, p, m) > 0]
+    end_step_flicker(g, src, p, False)
+card("Conjurer's Closet", '', types='A', dsl=[])
+note("Conjurer's Closet", 'Full', 'end step: blink the best ETB creature')
+
+
+@on('Teleportation Circle', 'end_step')
+def _teleport_circle(g, src, p):
+    end_step_flicker(g, src, p, False, rocks=True)
+card('Teleportation Circle', '', types='E', dsl=[])
+note('Teleportation Circle', 'Full', 'end step: blink the best ETB creature, else untap a tapped mana rock by blinking it')
+
+
+@on('Flickering Hound', 'cast')
+def _flickering_hound(g, src, caster, c):
+    """Whenever you cast a creature spell, exile up to one other target creature you control, then return that card
+    to the battlefield under its owner's control: the one with the best enter effect (the spell itself isn't on the
+    battlefield yet)"""
+    p = src.owner
+    if caster is not p or not c.creature or src not in p.perms or src.phased: return
+    p.stats['flicker_chance Flickering Hound'] += 1
+    cands = [m for m in p.perms if m is not src and m.creature and flicker_worth(g, p, m) > 0]
     if not cands or not trigger_window(g, p, src, 'blink a creature'): return
     cands = [m for m in cands if m in p.perms]
-    if cands: blink(g, p, max(cands, key=lambda m: blink_value(g, p, m)))
-card("Conjurer's Closet", '', types='A', dsl=[])
-note("Conjurer's Closet", 'Full', '')
+    if not cands: return
+    m = max(cands, key=lambda m: flicker_worth(g, p, m))
+    p.stats['flicker Flickering Hound'] += 1; p.stats[f'flicker Flickering Hound -> {m.name}'] += 1
+    blink(g, p, m)
+card('Flickering Hound', 'pow=2', dsl=[])
+note('Flickering Hound', 'Full', 'whenever you cast a creature spell: blink your best ETB creature')
 
 
 def _blink_option(name, cost_g, cost_p, other=True, label=None, needs_pair=False):
@@ -778,7 +824,7 @@ def _resto_etb(g, src, p, m):
     hc = human_choice(g, o)
     if hc is None:                                  # the AI only puts it on the stack with a worthwhile blink
         t = getattr(g, 'resto_target', None)
-        if (t is None or not ok(t) or t not in o.perms) and max((blink_value(g, o, x) for x in o.perms if ok(x)), default=0) < 3:
+        if (t is None or not ok(t) or t not in o.perms) and max((flicker_worth(g, o, x) for x in o.perms if ok(x)), default=0) < 3:
             return
     if not trigger_window(g, o, src, 'blink a non-Angel creature', imp=4): return
     cands = [x for x in o.perms if ok(x)]
@@ -791,9 +837,10 @@ def _resto_etb(g, src, p, m):
     else:
         t = getattr(g, 'resto_target', None)
         if t is None or t not in cands:
-            best = max(cands, key=lambda x: blink_value(g, o, x), default=None)
-            t = best if best is not None and blink_value(g, o, best) >= 3 else None
+            best = max(cands, key=lambda x: flicker_worth(g, o, x), default=None)
+            t = best if best is not None and flicker_worth(g, o, best) >= 3 else None
     if t is not None and t in o.perms:
+        o.stats['flicker Restoration Angel'] += 1; o.stats[f'flicker Restoration Angel -> {t.name}'] += 1
         if t.token: leave(g, t); log(f'    {t.name} (a token) is exiled for good', g)
         else: blink(g, o, t)
 _value_blink('Ephemerate', 0, 'W')

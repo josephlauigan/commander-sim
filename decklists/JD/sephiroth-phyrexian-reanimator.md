@@ -12,6 +12,8 @@
 **Updated 2026-10-01.** Out: Massacre Wurm. In: Muldrotha, the Gravetide. Muldrotha replays permanents from the graveyard (a land, a creature, an artifact, an enchantment each turn).
 **Updated 2026-10-02.** Out: Cultivate. In: Grave Pact. Grave Pact turns every sacrifice into an edict on each opponent: the free outlets, Grave Titan's Zombies and the loops all feed it. Cultivate was the least needed ramp in a deck that cheats its threats in.
 **Updated 2026-10-05.** Out: Bolas's Citadel. In: Phyrexian Arena. Bolas's Citadel → Phyrexian Arena. Tested: no loss (0.0 points on average, 1,000 paired games per tier, adaptive AI). Eight Game Changers; still Bracket 4.
+**Updated 2026-10-10 — a flicker package.** Five swaps: **Stinkweed Imp → Teleportation Circle**, **Lash of the Balrog → Conjurer's Closet**, **Grisly Salvage → Restoration Angel**, **Llanowar Elves → Summon: Bahamut**, and **Llanowar Wastes → Karn's Bastion**. None is a Game Changer, so the count stays at eight; still Bracket 4, 100 cards and 37 lands.
+**Updated 2026-10-10 (second pass).** **Avacyn's Pilgrim → Flickering Hound**: the Pilgrim only made {W}, and the Hound turns every creature you cast (Muldrotha's recasts included) into another flicker. Still eight Game Changers, Bracket 4, 100 cards and 37 lands.
 
 ## Strategy
 
@@ -19,7 +21,7 @@ Fill the graveyard, cheat a Phyrexian bomb onto the battlefield three or four tu
 
 Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, and appears under that name in the list below. A 7/7 with flying, vigilance, deathtouch, and lifelink whose ETB looks at the top ten cards and takes one of each card type. She is both a castable bomb and the best reanimation target in the deck.
 
-**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise, Llanowar Elves, Avacyn's Pilgrim and Sakura-Tribe Elder for mana, with **Smothering Tithe** as the four-drop that keeps paying. Stitcher's Supplier, Buried Alive, Entomb, and Grisly Salvage load the graveyard. Tortured Existence and Stinkweed Imp keep it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
+**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana, with **Smothering Tithe** as the four-drop that keeps paying. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
 
 **Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
 
@@ -36,6 +38,10 @@ Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, an
 She is a 6/6 for six and a fine reanimation target herself, and she takes Massacre Wurm's slot: the deck trades a one-shot wipe for a grind engine.
 
 **Ephemerate is protection and a second Kitten in one card.** For {W} at instant speed, exile your creature and return it. In response to a removal spell, theft, or any other targeted effect, the spell fizzles because the creature is a new object — so a reanimated bomb survives the first answer the table throws at it. With nothing to protect, blink Archon of Cruelty, Grave Titan, or Sephiroth for their enter triggers. Either way, rebound casts it again for free at your next upkeep: a second drain-and-edict from Archon or two more Zombies from Titan. It can only target creatures, so it can't save Aura Shards or Smothering Tithe.
+
+**The flicker package re-buys enter triggers every turn.** **Teleportation Circle** and **Conjurer's Closet** each exile a creature you control at the beginning of your end step and return it: Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Grave Titan for two more Zombies. Teleportation Circle can take an artifact instead, so with no creature worth it, flicker a tapped Sol Ring or Signet and it comes back untapped for the opponents' turns. **Restoration Angel** is a 3/4 flash flier that does the same once at instant speed: at the end of an opponent's turn for value, or in response to removal or theft aimed at a bomb (the spell fizzles, as with Ephemerate). It can't flicker an Angel, so not Sephiroth herself. **Flickering Hound** does it on your turn instead: whenever you cast a creature spell (Muldrotha's recasts count), it flickers another creature you control, Sephiroth included. Don't flicker a creature carrying +1/+1 counters or Equipment unless its enter trigger is worth more than what it loses.
+
+**Summon: Bahamut** is a 9/9 flying Saga creature for {9}, and a reanimation target as much as a spell. Its chapters I and II each destroy a nonland permanent, III draws two, and IV, **Mega Flare**, deals damage equal to the total mana value of your other permanents to each opponent before it's sacrificed. Flickering it starts it over at chapter I with two more destroys. **Karn's Bastion** ({4}, {T}: proliferate) moves Bahamut's lore toward Mega Flare and grows +1/+1 counters, such as Triskelion's.
 
 **The stax layer is what makes it unfair.** Elesh Norn, Grand Cenobite shrinks every opposing creature by 2/2. Elesh Norn, Mother of Machines doubles your own ETB triggers and blanks theirs. Sheoldred, the Apocalypse taxes their draw steps, and Smothering Tithe taxes them again on the same draw. **Aura Shards** destroys an artifact or enchantment every time a creature enters under your control — every reanimation, Grave Titan Zombie, and Kitten blink is removal.
 
@@ -75,15 +81,15 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 ## Consistency
 
-The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The only land change since 09-22 is **Blossoming Sands → Arcane Sanctum**: one tapped land for another, but with blue (for Force of Will and Consecrated Sphinx) in place of green.
+The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The land changes since 09-22 are **Blossoming Sands → Arcane Sanctum** (one tapped land for another, but with blue for Force of Will and Consecrated Sphinx in place of green) and, on 10-10, **Llanowar Wastes → Karn's Bastion**: one fewer green and black source, for a land that proliferates.
 
-Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), four creatures (Birds of Paradise, Llanowar Elves, **Avacyn's Pilgrim**, Sakura-Tribe Elder), and Smothering Tithe. Cultivate left on 10-02 for Grave Pact. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
+Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), two creatures (Birds of Paradise, Sakura-Tribe Elder), and Smothering Tithe. Llanowar Elves left on 10-10 for Summon: Bahamut, and Avacyn's Pilgrim for Flickering Hound. Cultivate left on 10-02 for Grave Pact. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
 
-**Graveyard fill is a little thinner.** Satyr Wayfinder is out; Gifts Ungiven partly covers it. Stitcher's Supplier, Buried Alive, Entomb, Grisly Salvage, Tortured Existence, and Stinkweed Imp remain; Unmarked Grave left for Ephemerate on 09-28.
+**Graveyard fill is thinner.** Satyr Wayfinder is out; Gifts Ungiven partly covers it. Unmarked Grave left for Ephemerate on 09-28, and Grisly Salvage and Stinkweed Imp left for the flicker package on 10-10. Stitcher's Supplier, Buried Alive, Entomb, and Tortured Existence remain.
 
 **Reanimation count is five** (Reanimate, Animate Dead, Necromancy, Unburial Rites, Dread Return) plus Sheoldred, Whispering One, Yawgmoth's Will, and Muldrotha (Animate Dead or Necromancy again from the graveyard every turn). Dread Return replaced Persist, so every reanimation spell can now take a legendary creature.
 
-**Interaction.** Swords to Plowshares, Path to Exile, Anguished Unmaking, Assassin's Trophy, and Lash of the Balrog for spot removal; Aura Shards for repeatable artifact/enchantment removal; Farewell and Toxic Deluge as resets (Wrath of God is gone); Force of Will and Swan Song as counters; Galadriel's Dismissal, Ephemerate, Teferi's Protection, and Grand Abolisher as protection.
+**Interaction.** Swords to Plowshares, Path to Exile, Anguished Unmaking, and Assassin's Trophy for spot removal, plus two destroys from each Summon: Bahamut; Aura Shards for repeatable artifact/enchantment removal; Farewell and Toxic Deluge as resets (Wrath of God is gone); Force of Will and Swan Song as counters; Galadriel's Dismissal, Ephemerate, Teferi's Protection, and Grand Abolisher as protection.
 
 ## Tutor targets by board state
 
@@ -120,17 +126,17 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sephiroth, the Savior (Atraxa, Grand Unifier)
 
-**Creatures (23).** Archon of Cruelty, Avacyn's Pilgrim, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Kitchen Finks, Llanowar Elves, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stinkweed Imp, Stitcher's Supplier, Triskelion, Viscera Seer, Zulaport Cutthroat
+**Creatures (23).** Archon of Cruelty, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Flickering Hound, Grand Abolisher, Grave Titan, Kitchen Finks, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Triskelion, Viscera Seer, Zulaport Cutthroat
 
-**Enchantments (7).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Smothering Tithe, Tortured Existence
+**Enchantments (8).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Smothering Tithe, Teleportation Circle, Tortured Existence
 
-**Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
+**Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (10).** Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Lash of the Balrog, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
+**Sorceries (9).** Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
 
-**Instants (12).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Grisly Salvage, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection
+**Instants (11).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection
 
-**Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Llanowar Wastes, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
+**Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Karn's Bastion, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
 
 ## Import list (100)
 
@@ -146,7 +152,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Assassin's Trophy
 1 Atraxa, Grand Unifier
 1 Aura Shards
-1 Avacyn's Pilgrim
 1 Birds of Paradise
 1 Blood Artist
 1 Bojuka Bog
@@ -155,6 +160,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Caves of Koilos
 1 Chromatic Lantern
 1 Command Tower
+1 Conjurer's Closet
 1 Consecrated Sphinx
 1 Demonic Tutor
 1 Diabolic Tutor
@@ -168,6 +174,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Exotic Orchard
 1 Fabled Passage
 1 Farewell
+1 Flickering Hound
 1 Force of Will
 1 Galadriel's Dismissal
 1 Gifts Ungiven
@@ -175,14 +182,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grand Abolisher
 1 Grave Pact
 1 Grave Titan
-1 Grisly Salvage
 1 Hallowed Fountain
 1 Hinterland Harbor
 1 Isolated Chapel
+1 Karn's Bastion
 1 Kitchen Finks
-1 Lash of the Balrog
-1 Llanowar Elves
-1 Llanowar Wastes
 1 Melira, Sylvok Outcast
 1 Mikaeus, the Unhallowed
 1 Mind Stone
@@ -194,20 +198,22 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Path to Exile
 1 Phyrexian Arena
 1 Reanimate
+1 Restoration Angel
 1 Sakura-Tribe Elder
 1 Sheoldred, the Apocalypse
 1 Sheoldred, Whispering One
 1 Skullclamp
 1 Smothering Tithe
 1 Sol Ring
-1 Stinkweed Imp
 1 Stitcher's Supplier
 1 Strip Mine
+1 Summon: Bahamut
 1 Sunpetal Grove
 1 Swan Song
 1 Swords to Plowshares
 1 Talisman of Hierarchy
 1 Teferi's Protection
+1 Teleportation Circle
 1 Temple Garden
 1 Tortured Existence
 1 Toxic Deluge
@@ -262,12 +268,27 @@ In the simulator (look-ahead AI, loose profile, 120 paired games per tier) Force
 
 **The 10-01 change — Massacre Wurm → Muldrotha, the Gravetide.** Massacre Wurm was a fair finisher and one-sided wipe in a deck that wins with loops; Muldrotha is a grind engine that keeps the loops and the reanimation running through removal: a reanimation enchantment, a loop piece, and a land back from the graveyard every turn. Not a Game Changer, so the count stays at nine. Not tested in the simulator yet: it models Muldrotha's body but not her graveyard casting, so a measurement now would undervalue her.
 
-**Weakest remaining slots.** Llanowar Wastes and Caves of Koilos (painlands) are the softest lands. On the spell side, Stinkweed Imp and Lash of the Balrog are the ones you've chosen to keep. Force of Will was worth more than any of them in the simulator.
+**The 10-10 change — a flicker package, 6 out, 6 in.**
+
+| Out | In | What it does |
+| --- | --- | --- |
+| Stinkweed Imp | Teleportation Circle | Yard filler → an end-step flicker of a creature (or a tapped mana rock) every turn. |
+| Lash of the Balrog | Conjurer's Closet | Spot removal → a second end-step flicker. |
+| Grisly Salvage | Restoration Angel | Yard filler → an instant-speed flicker that also saves a bomb from removal. |
+| Llanowar Elves | Summon: Bahamut | A mana dork → two destroys, two cards and Mega Flare; a reanimation target. |
+| Llanowar Wastes | Karn's Bastion | A painland → a colorless land that proliferates (Bahamut's lore, +1/+1 counters). |
+| Avacyn's Pilgrim | Flickering Hound | A {W} mana dork → a flicker on every creature you cast (second pass). |
+
+Chosen for flavour more than strength. In the simulator (adaptive AI, loose profile, 1,000 paired games per tier), the first three swaps with Soulherder in Teleportation Circle's slot were +0.6 ± 1.2 points, and all five (with Bahamut in Yawgmoth's Will's slot) were −0.5 ± 1.4: both within noise. Teleportation Circle works like Conjurer's Closet in the simulator, and this exact list hasn't been run yet.
+
+**Weakest remaining slots.** Caves of Koilos (a painland) is the softest land. Force of Will was worth more than any of the cut cards in the simulator.
 
 **Vampiric Tutor is in the binder** and is the natural addition now that the Game Changer cap no longer applies.
 
 **Combo watch.** The two Kitchen Finks loops need a free sac outlet (Viscera Seer, Ashnod's Altar, or Altar of Dementia); Carrion Feeder left, so there are three. Mikaeus + Triskelion needs none unless Elesh Norn, Grand Cenobite is out. Sheoldred, Whispering One and Displacer Kitten don't complete an infinite on their own.
 
 **New cards and cuts.**
+- **Got (10-10)**: all six: Teleportation Circle, Conjurer's Closet, Restoration Angel, Summon: Bahamut, Karn's Bastion, Flickering Hound.
 - **New singles**: Grave Pact (10-02); Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
+- **To bulk (10-10)**: Stinkweed Imp, Lash of the Balrog, Grisly Salvage, Llanowar Elves, Llanowar Wastes, Avacyn's Pilgrim.
 - **To the binder**: Cultivate (10-02); Massacre Wurm (10-01); Carrion Feeder, Gray Merchant of Asphodel, Sephiroth, Planet's Heir, Persist, Dovin's Veto, Blossoming Sands, Unmarked Grave; from 09-26, Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.

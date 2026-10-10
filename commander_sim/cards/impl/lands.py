@@ -285,18 +285,22 @@ note('War Room', 'Full', '{3},{T}, life = commander colors: draw (at end of an o
 
 @on("Karn's Bastion", 'land_options')
 def _bastion(g, L, p, s, post):
-    """{4}, {T}: proliferate"""
-    if post is not None or L.tapped or not can_pay_without(g, p, L, 4, ''): return []
+    """{4}, {T}: proliferate: at the end of the turn before yours, or in your main phase for a Saga's chapter"""
+    saga = sum(2 for m in p.perms if m.data and 'lore' in m.data and m.cd.name in CI.SAGA      # (Summon: Bahamut)
+               and not m.phased and CI.SAGA[m.cd.name][0](g, p, m))
+    if (post is not None and not saga) or L.tapped or not can_pay_without(g, p, L, 4, ''): return []
     worth = sum(1 for m in p.perms if (m.plus > 0 or m.loyalty)) - sum(1 for q in g.opps(p) for m in q.perms if m.plus > 0)
+    worth += saga
     if worth < 2: return []
 
     def go():
         if L not in p.lands or L.tapped or not pay_without(g, p, L, 4, ''): return False
-        L.tapped = True
+        L.tapped = True; p.stats['proliferate_bastion'] += 1
         if ability_window(g, p, L.cd, 'proliferate'): IC.proliferate(g, p)
         return True
-    return [(0.8 + 0.3 * worth, "Karn's Bastion", go)]
-note("Karn's Bastion", 'Full', '{4},{T}: proliferate (at end of turn, when it helps)')
+    return [(0.8 + 0.3 * worth + (2.0 if saga else 0), "Karn's Bastion", go)]     # a chapter: a destroy, two cards
+note("Karn's Bastion", 'Full', '{4},{T}: proliferate (at end of turn, when it helps; in your main phase for a lore '
+     'counter on Summon: Bahamut)')
 
 
 @on('Academy Ruins', 'land_options')

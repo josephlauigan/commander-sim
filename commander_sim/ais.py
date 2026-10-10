@@ -109,6 +109,9 @@ def protect_response(g, owner, m, kind, actor, spell=None):
         if v >= 5 and m.creature and not m.token and kind not in ('edict', 'wipe') and \
                 importlib.import_module('commander_sim.cards.impl.mine').ephemerate_cast(g, owner, m, 'protection'):
             return True
+        if v >= 5 and m.creature and (kind in ('destroy', 'exile', 'bounce', 'tuck') or kind.startswith('dmg')) and \
+                importlib.import_module('commander_sim.cards.impl.mine').resto_cast(g, owner, m, 'protection'):
+            return True
         if v >= 6 and m.creature:
             hi = [c for c in owner.hand if c.tags.get('prot') == 'hi']
             if hi and kind != 'edict' and can_pay(g, owner, 1, 'G'):
@@ -238,6 +241,7 @@ def seph_bval(g, p, cd):
     t = cd.tags
     if 'normgc' in t and any(q.key == 'najeela' for q in g.opps(p)): v += 2
     if 'mother' in t and any(q.key == 'sauron' for q in g.opps(p)): v += 1
+    if 'bahamut' in t: v += min(1.5, sum(m.cd.cmc for m in p.perms if m.cd is not None) / 15)   # Mega Flare's reach
     return v
 
 
@@ -564,6 +568,7 @@ def seph_prio(g, p, c):
     if 'sphinx' in t:                                        # Consecrated Sphinx: hard-cast from what it will draw
         return importlib.import_module('commander_sim.cards.impl.t4').sphinx_prio(g, p, c)
     if c is p.cmd: return 0
+    if c.name in FLICKERS: return flicker_prio(g, p, c)
     if 'rock' in t or 'dork' in t or 'lr' in t: return 80 if p.turns <= 5 else 30
     if 'tithe' in t:                                         # Smothering Tithe: from the Treasures it will make
         return importlib.import_module('commander_sim.cards.impl.rules').tithe_prio(g, p, c)
@@ -586,6 +591,20 @@ def seph_prio(g, p, c):
     if 'tide' in t: return 5 if p.turns >= 12 else 0
     if c.creature and not c.bomb: return 30
     return 0
+
+
+FLICKERS = ('Soulherder', "Conjurer's Closet", 'Teleportation Circle', 'Flickering Hound', 'Restoration Angel')
+
+
+def flicker_prio(g, p, c):
+    """the flicker engines: sooner with a creature worth flickering out. Restoration Angel waits for the end of an
+    opponent's turn, and is held to protect a bomb when it has nothing worth blinking"""
+    IT2 = importlib.import_module('commander_sim.cards.impl.t2')
+    best = max((IT2.flicker_worth(g, p, m) for m in p.perms if m.creature and not m.phased
+                and not (c.name == 'Restoration Angel' and has_type(m, 'angel'))), default=0)
+    if c.name != 'Restoration Angel': return 50 if best >= 3 else 30
+    if g.active is p: return 0
+    return 30 + int(6 * min(5, best)) if best >= 3 else (0 if bomb_on_bf(p) else 25)
 
 
 def interaction_reserve(g, p, pred):
@@ -2749,6 +2768,8 @@ def _step_start(g, p):
     check_state(g)
     if g.over or not p.alive: return
     E.step_priority(g, 'draw')
+    if g.over or not p.alive: return
+    if g.hooks: E.CI.fire(g, 'main1', p)               # at the beginning of your precombat main phase (Sagas' lore)
     if g.over or not p.alive: return
     nl = len(p.lands)
     p.lands_played = 0; p.extra_land_now = 0
