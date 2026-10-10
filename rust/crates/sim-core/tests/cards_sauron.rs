@@ -587,3 +587,62 @@ fn bloodsoaked_insight_takes_an_opponents_top_three() {
     }
     assert_eq!(tapped_lands(&g, P0), 4); // {2} + {1}{B}
 }
+
+// ======================================================== Sauron never decks himself after the Breach line
+// (a Python bug, fixed in Rust only: spare Brain Freeze copies milled Sauron, then his own draws lost him the game
+// before the milled-out table drew)
+
+#[test]
+fn spare_brain_freeze_copies_never_mill_sauron() {
+    // three cards an opponent: the second Brain Freeze has four copies and the table needs one; three are spare
+    let mut g = board(8, 8, 3);
+    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
+    let before = g.player(P0).library.len();
+    assert!(mine::breach_line(&mut g, P0, true).unwrap());
+    assert_eq!(opp_libraries(&g), [0, 0, 0]);
+    assert_eq!(g.player(P0).library.len(), before);
+}
+
+#[test]
+fn sauron_wont_draw_four_from_a_short_library() {
+    let mut g = table(&["sauron", "veyran"]);
+    perm(&mut g, P0, "Sauron, the Dark Lord");
+    hand(&mut g, P0, &["Island", "Swamp"]);
+    g.player_mut(P0).library.truncate(3);
+    mine::ring_tempt(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).hand.len(), 2);
+    assert_eq!(g.player(P0).library.len(), 3);
+    assert!(g.player(P0).alive);
+}
+
+#[test]
+fn call_of_the_ring_wont_draw_from_an_empty_library() {
+    let mut g = table(&["sauron", "veyran"]);
+    perm(&mut g, P0, "Call of the Ring");
+    token(&mut g, P0, 2);
+    hand(&mut g, P0, &["Island", "Swamp", "Forest", "Plains"]); // four cards: Sauron's draw-four is off anyway
+    g.player_mut(P0).library.clear();
+    mine::ring_tempt(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).life, 40);
+    assert!(g.player(P0).alive);
+}
+
+#[test]
+fn the_ring_bearer_stays_home_when_its_loot_would_deck_sauron() {
+    let mut g = table(&["sauron", "veyran"]);
+    let b = token(&mut g, P0, 3);
+    g.player_mut(P0).ring_level = 2;
+    g.player_mut(P0).ring_bearer = Some(b);
+    g.player_mut(P0).library.clear();
+    assert!(mine::ring_loot_decks(&g, P0, b));
+    sim_core::engine::combat::combat(&mut g, P0).unwrap();
+    assert!(g.player(P0).alive);
+    assert!(!g.perm(b).tapped);
+    // with a card left the loot is safe, and it attacks
+    let mut g = table(&["sauron", "veyran"]);
+    let b = token(&mut g, P0, 3);
+    g.player_mut(P0).ring_level = 2;
+    g.player_mut(P0).ring_bearer = Some(b);
+    g.player_mut(P0).library.truncate(1);
+    assert!(!mine::ring_loot_decks(&g, P0, b));
+}

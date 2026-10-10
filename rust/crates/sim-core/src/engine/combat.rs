@@ -846,6 +846,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                     && (!x.sick || haste_all || has_haste(g, m))
                     && (!x.noatk || epow(g, m) >= 3) // pumped mana dorks attack
                     && epow(g, m) > 0
+                    && !crate::impls::mine::ring_loot_decks(g, p, m)
             })
             .collect();
         if !g.auras.is_empty() {

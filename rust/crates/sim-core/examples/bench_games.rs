@@ -16,6 +16,7 @@ fn main() {
     let decks = testkit::tier(tier);
     let mut wins: std::collections::BTreeMap<String, u32> = Default::default();
     let mut rounds = 0;
+    let (mut lines, mut line_wins, mut decked) = (0, 0, 0);
     let t0 = Instant::now();
     for i in 0..n {
         let k = (i as usize * 3) % decks.len();
@@ -24,6 +25,12 @@ fn main() {
         let w = g.winner.map_or("nobody".to_string(), |w| g.player(w).key.to_string());
         *wins.entry(w).or_default() += 1;
         rounds += g.round;
+        let me = g.player(sim_core::ids::PlayerId(0));
+        if me.stats.get("breach_line").copied().unwrap_or(0) > 0 {
+            lines += 1;
+            line_wins += (g.winner == Some(sim_core::ids::PlayerId(0))) as u32;
+        }
+        decked += me.decked as u32;
     }
     let dt = t0.elapsed().as_secs_f64();
     println!(
@@ -31,6 +38,7 @@ fn main() {
         n as f64 / dt,
         rounds as f64 / n as f64
     );
+    println!("  Sauron's Breach line: {lines} games, {line_wins} won; Sauron decked himself in {decked}");
     for (k, v) in wins {
         println!("  {k}: {v}");
     }

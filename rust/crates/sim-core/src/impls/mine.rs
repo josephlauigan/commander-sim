@@ -120,21 +120,28 @@ pub fn ring_tempt(g: &mut Game, p: PlayerId) -> Res {
         g.player_mut(p).ring_bearer = Some(b);
         crate::glog!(g, "    The Ring tempts {} (level {lvl}): Ring-bearer {}", g.player(p).name, g.perm(b).name);
         for _ in find(g, p, Tag::Callring) {
-            // Call of the Ring: you may pay 2 life to draw a card
-            if g.player(p).life > 10 {
+            // Call of the Ring: you may pay 2 life to draw a card (not from an empty library)
+            if g.player(p).life > 10 && !g.player(p).library.is_empty() {
                 lose_life(g, p, 2, Some(p), "other", None)?;
                 draw(g, p, 1, false)?;
             }
         }
     }
-    if !find(g, p, Tag::Sauron).is_empty() && g.player(p).hand.len() <= 3 {
-        // Sauron, the Dark Lord: you may discard your hand, then draw four
+    if !find(g, p, Tag::Sauron).is_empty() && g.player(p).hand.len() <= 3 && g.player(p).library.len() >= 4 {
+        // Sauron, the Dark Lord: you may discard your hand, then draw four (not when that would draw from an empty
+        // library)
         let hand = g.player(p).hand.clone();
         discard_cards(g, p, &hand)?;
         draw(g, p, 4, false)?;
         crate::glog!(g, "    {} discards the hand and draws four (Sauron)", g.player(p).name);
     }
     Ok(())
+}
+
+/// m is p's Ring-bearer, the Ring is at level 2 and p's library is empty: attacking would loot from an empty library
+/// and lose the game, so m stays home
+pub fn ring_loot_decks(g: &Game, p: PlayerId, m: PermId) -> bool {
+    ring_level(g, p) >= 2 && ring_bearer(g, p) == Some(m) && g.player(p).library.is_empty()
 }
 
 /// mine.ring_attack: level 2: whenever your Ring-bearer attacks, draw a card, then discard a card
@@ -1083,7 +1090,9 @@ fn mill_plan(p: PlayerId, st: &LineState, copies: i64) -> Vec<PlayerId> {
     for _ in 0..(copies - mine).max(0) {
         let live: Vec<PlayerId> = lib.iter().filter(|&&(q, n)| n > 0 && st.life_of(q) > 0).map(|&(q, _)| q).collect();
         if live.is_empty() {
-            plan.push(p); // (Python: `p if mylib >= 3 * (mine + 1) else live and live[0] or p`: p either way)
+            // every opponent is milled out: the spare copy mills one of them (nothing), never yourself. (Python sent it
+            // at you, and Sauron decked himself on his own draws before the table drew from empty libraries.)
+            plan.push(st.lib.first().map_or(p, |x| x.0));
             continue;
         }
         let q = min_by(&live, |x| lib.iter().find(|y| y.0 == x).unwrap().1 as f64).unwrap();
