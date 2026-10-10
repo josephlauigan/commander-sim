@@ -7,6 +7,7 @@ and status: `documents/rust-rewrite-scope.md`.
 rust/
   Cargo.toml          the workspace
   crates/sim-core/    engine, rules, AI, cards (a library)
+  crates/sim-cli/     commander-sim, the command-line program that runs simulations (the run harness, no Python)
   crates/sim-py/      the Python module rust_sim, so the Python run harness can play games in Rust
   crates/practice/    practice mode's server (later; it will replace python3 -m commander_sim.play)
   crates/cardgen/     card data and deck lists without Python: builds data/cards.json and data/decks.json, edits
@@ -20,6 +21,11 @@ deck lists in `decklists/`. Re-export after any change to cards or deck lists. `
 `cardgen audit` reports how faithfully cards are modeled; how to add a card or edit a deck is in
 `crates/cardgen/README.md`. (`python3 -m commander_sim.tools.export_cards` is the frozen Python original; it writes
 the same files.)
+
+Running simulations: `cargo build --release -p sim-cli`, then `rust/target/release/commander-sim` with the options
+`python3 -m commander_sim` took (`--deck sauron --pool t1 --profile loose --games 960`, `--swap`, `--calibrate`,
+`--analyze`, `--trace` ...; no `--engine`): the same seats, seeds, statistics and reports. See
+`crates/sim-cli/README.md`.
 
 Toolchain: Rust via rustup (`~/.cargo/bin`). Run the Rust tests with `cargo test` from `rust/`.
 

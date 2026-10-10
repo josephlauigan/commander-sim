@@ -93,6 +93,13 @@ pub struct PlayerSummary {
     pub killer: Option<String>,
     pub stats: HashMap<String, i64>,
     pub milestone: HashMap<String, u32>,
+    /// the turn a bomb first landed (Sephiroth's plan turn), how the player was eliminated ('combat', 'drain' ...),
+    /// the cards it saw and cast, and its permanents removed, by name (--analyze's card report)
+    pub first_bomb: Option<u32>,
+    pub death_kind: String,
+    pub seen: Vec<String>,
+    pub cast_names: Vec<String>,
+    pub lost_names: Vec<(String, u32)>,
 }
 
 pub fn summary(g: &Game) -> Summary {
@@ -113,6 +120,11 @@ pub fn summary(g: &Game) -> Summary {
                 killer: p.killer.map(key),
                 stats: p.stats.iter().map(|(k, v)| (k.to_string(), *v)).collect(),
                 milestone: p.milestone.iter().map(|(k, v)| (k.to_string(), *v)).collect(),
+                first_bomb: p.first_bomb,
+                death_kind: p.death_kind.to_string(),
+                seen: p.seen.iter().map(|&c| g.db.get(c).name.to_string()).collect(),
+                cast_names: p.cast_names.iter().map(|&c| g.db.get(c).name.to_string()).collect(),
+                lost_names: p.lost_names.iter().map(|(k, v)| (k.to_string(), *v)).collect(),
             })
             .collect(),
         search_n: g.search_n,
