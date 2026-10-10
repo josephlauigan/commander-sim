@@ -429,6 +429,9 @@ pub struct Player {
     pub rebound: Vec<CardId>,
     /// the turn count Jace's Archivist was last used on
     pub arch_t: Option<u32>,
+    /// the Ring's level (how many times it has tempted this player, at most 4) and the chosen Ring-bearer
+    pub ring_level: u32,
+    pub ring_bearer: Option<PermId>,
 }
 
 impl Player {
@@ -533,6 +536,8 @@ impl Player {
             act_uses: IndexMap::new(),
             rebound: vec![],
             arch_t: None,
+            ring_level: 0,
+            ring_bearer: None,
             stats: IndexMap::new(),
         }
     }
@@ -588,6 +593,10 @@ pub struct Ctx {
     pub victim: Option<PlayerId>,
     /// a reanimation spell's target is in this player's graveyard
     pub rean_src: Option<PlayerId>,
+    /// storm: the spells cast before it this turn, as counted when it was cast (the Breach line)
+    pub storm: Option<i32>,
+    /// Brain Freeze in the Breach line: who each copy mills
+    pub mill: Vec<PlayerId>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).
@@ -706,6 +715,10 @@ pub struct Game {
     pub dsl_on: bool,
     /// Jeska's Will always adds mana (the Underworld Breach line)
     pub jeska_mana: bool,
+    /// the Breach line's dry run worked only without its setup casts (Laboratory Maniac, Birgi, Jeska's Will)
+    pub line_no_setup: bool,
+    /// the Breach line's dry run for a position: (its turn, the position's numbers, does it finish the table)
+    pub breach_dry: Option<(TurnStamp, Vec<u32>, bool)>,
     /// how deep the ability language's triggers are nested (MAX_DEPTH stops runaway chains)
     pub dsl_depth: u32,
     /// creatures with a power/toughness rule of their own (card code; Python's `g.selfpt`)
@@ -820,6 +833,8 @@ impl Game {
             no_fang: false,
             dsl_on: false,
             jeska_mana: false,
+            line_no_setup: false,
+            breach_dry: None,
             dsl_depth: 0,
             selfpt: false,
             blocking: vec![],
