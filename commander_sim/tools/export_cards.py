@@ -6,11 +6,12 @@ data/cards.json: every card in engine.DB once all decks and pools are loaded (yo
 name. Each card's fields are the CD's own (engine.CD): name, types, cost, tags (string values, or true for a bare
 tag), the compiled abilities (dsl), Scryfall keywords and subtypes, protection, ward, colour identity, and where
 the definition came from. `derived` repeats what the CD works out from those (land, creature, cmc, ...), so the
-Rust loader can check it computes the same. `python_hooks` lists the events a card's Python implementation
+Rust loader can check it computes the same. `phyrexian` is the colours of its Phyrexian mana symbols and
+`land_etb_fx` a land's "when this land enters" scry / gain life, both read from the card cache. `python_hooks` lists the events a card's Python implementation
 handles (cards/impl/*.py), and `spell_prio` whether it has a hand-written cast priority: the work list for porting
 cards by hand.
 
-data/decks.json: your decks (key, commander, the 99) and the pool decks (tier, key, commander, the 99).
+data/decks.json: your decks (key, display name, commander, the 99) and the pool decks (tier as well).
 
 The export is deterministic: the same code and card cache give the same files.
 """
@@ -54,9 +55,16 @@ def card_record(E, cd):
         'unparsed': cd.unparsed,
         'derived': {'cmc': cd.cmc, 'land': cd.land, 'creature': cd.creature, 'instant': cd.instant,
                     'sorcery': cd.sorcery, 'perm': cd.perm},
+        'phyrexian': E.phyrexian(cd),
+        'land_etb_fx': [list(x) for x in E.land_etb_fx(cd)] if cd.land else [],
         'python_hooks': hooks,
         'spell_prio': CI is not None and cd.name in CI.SPELL_PRIO,
     }
+
+
+class _Seat:
+    """just enough of a Player for engine.NAME"""
+    def __init__(self, key): self.key = key
 
 
 def export(out_dir):
@@ -64,9 +72,10 @@ def export(out_dir):
     from commander_sim import ais
     cards = [card_record(E, E.DB[n]) for n in sorted(E.DB)]
     decks = {
-        'mine': [{'key': k, 'commander': ais.CMDS[k], 'cards': sorted(v)} for k, v in sorted(DECKS.items())],
-        'pool': [{'tier': d.tier, 'key': d.key, 'commander': d.commander, 'cards': sorted(d.cards)}
-                 for d in pools.load_pool()],
+        'mine': [{'key': k, 'name': E.NAME(_Seat(k)), 'commander': ais.CMDS[k], 'cards': sorted(v)}
+                 for k, v in sorted(DECKS.items())],
+        'pool': [{'tier': d.tier, 'key': d.key, 'name': pools.short_name(d), 'commander': d.commander,
+                  'cards': sorted(d.cards)} for d in pools.load_pool()],
     }
     os.makedirs(out_dir, exist_ok=True)
     paths = []

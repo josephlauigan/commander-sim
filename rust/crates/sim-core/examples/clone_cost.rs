@@ -2,33 +2,16 @@
 //! the profiler). A mid-game table: four players with full zones, 8 lands and 15 permanents each, some with state.
 //!     cargo run --release -p sim-core --example clone_cost
 
-use sim_core::cards::CardDb;
-use sim_core::export::load_decks;
-use sim_core::ids::{CardId, PlayerId};
-use sim_core::rng::Rng;
-use sim_core::settings::{AiMode, Profile, Settings};
-use sim_core::state::{DataKey, Game, Land, PermData, Player, Val};
+use sim_core::ids::PlayerId;
+use sim_core::state::{DataKey, Land, PermData, Val};
 use sim_core::sym::intern;
-use std::path::PathBuf;
-use std::sync::Arc;
+use sim_core::testkit;
 use std::time::Instant;
 
 fn main() {
-    let data = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data");
-    let db = Arc::new(CardDb::load(&data.join("cards.json")).unwrap());
-    let decks = load_decks(&data.join("decks.json")).unwrap();
-    let seats: Vec<_> = decks.pool.iter().filter(|d| d.tier.as_deref() == Some("t4")).take(4).collect();
-    let players = seats
-        .iter()
-        .enumerate()
-        .map(|(i, d)| {
-            let ids: Arc<[CardId]> = d.cards.iter().map(|n| db.id(n).unwrap()).collect();
-            let cmd = db.id(&d.commander).unwrap();
-            Player::new(PlayerId(i as u8), intern(&d.key), Default::default(), cmd, ids)
-        })
-        .collect();
-    let settings = Arc::new(Settings::new(Profile::Loose, AiMode::Lookahead, 1.0));
-    let mut g = Game::new(db.clone(), settings, players, Rng::named("play:1"));
+    let t4: Vec<&str> =
+        testkit::decks().iter().filter(|d| d.tier.as_deref() == Some("t4")).take(4).map(|d| &*d.key).collect();
+    let mut g = testkit::table(&t4);
     for i in 0..4 {
         let p = PlayerId(i);
         for _ in 0..7 {

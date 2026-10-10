@@ -164,6 +164,13 @@ impl Tags {
 }
 
 // ------------------------------------------------------------------ card definitions
+/// A land's "when this land enters" effect (Python's `land_etb_fx`)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LandEtb {
+    Scry(i32),
+    Gain(i32),
+}
+
 #[derive(Debug, Clone)]
 pub struct CardDef {
     pub id: CardId,
@@ -198,11 +205,22 @@ pub struct CardDef {
     pub protfrom: Colors,
     pub ward: u32,
     pub game_changer: bool,
+    /// where its definition came from ('manual', 'scryfall', 'scryfall+dsl' ...)
+    pub source: Box<str>,
+    /// the colours of its Phyrexian mana symbols, in cost order ("BB" for {B/P}{B/P})
+    pub phyrexian: Box<str>,
+    /// a land's "when this land enters" effects
+    pub land_etb_fx: Box<[LandEtb]>,
     /// events its Python implementation handles (for tracking the port; empty for cards with no hooks)
     pub python_hooks: Box<[Box<str>]>,
 }
 
 impl CardDef {
+    /// built from Scryfall data and auto-tagged (Python's `cd.source == 'scryfall'`)
+    pub fn source_scryfall(&self) -> bool {
+        &*self.source == "scryfall"
+    }
+
     pub fn tag(&self, t: Tag) -> bool {
         self.tags.has(t)
     }
@@ -251,6 +269,17 @@ impl CardDef {
             protfrom: Colors::from_letters(&r.protfrom),
             ward: r.ward,
             game_changer: r.game_changer == Some(true),
+            source: r.source.as_str().into(),
+            phyrexian: r.phyrexian.as_str().into(),
+            land_etb_fx: r
+                .land_etb_fx
+                .iter()
+                .map(|(k, n)| match k.as_str() {
+                    "scry" => Ok(LandEtb::Scry(*n)),
+                    "gain" => Ok(LandEtb::Gain(*n)),
+                    _ => Err(at(format!("land enters effect {k:?}"))),
+                })
+                .collect::<Result<_, _>>()?,
             python_hooks: r.python_hooks.iter().map(|s| s.as_str().into()).collect(),
         })
     }

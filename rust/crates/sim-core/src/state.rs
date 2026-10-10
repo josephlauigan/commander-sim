@@ -18,7 +18,7 @@ use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::rng::Rng;
 use crate::settings::Settings;
 use crate::sym::Sym;
-use indexmap::IndexMap;
+use indexmap::{IndexMap, IndexSet};
 use std::sync::Arc;
 
 /// The most seats a game can have (cmd_dmg and similar per-seat tables are arrays this long).
@@ -63,6 +63,8 @@ pub enum DataKey {
     /// a land that entered this turn ("in")
     In,
     Indestr,
+    /// (player, their turn count): indestructible until that player's next turn
+    IndestrUntil,
     Kaldra,
     Kicks,
     Kws,
@@ -275,6 +277,8 @@ pub struct Player {
     pub id: PlayerId,
     /// the deck key ('sauron', 'krenko-mono-red-goblins')
     pub key: Sym,
+    /// the name shown in logs ('Sauron', 'Krenko')
+    pub name: Sym,
     pub ident: Colors,
     pub cmd: CardId,
     pub deck_names: Arc<[CardId]>,
@@ -313,12 +317,92 @@ pub struct Player {
     pub last_src: Option<PlayerId>,
     pub ring_prot: bool,
     pub life_locked: bool,
+    /// the kind of the last life loss (for how the player was eliminated)
+    pub last_kind: Sym,
+    pub death_kind: Sym,
+    /// this player's own turn count when it last dealt damage to an opponent
+    pub hit_turn: i32,
+    /// life lost / gained this turn (Bloodsoaked Insight, Archfiend, Y'shtola)
+    pub lost_turn: Option<(TurnStamp, i32)>,
+    pub gained_turn: Option<(TurnStamp, i32)>,
+    /// emblems from planeswalker ultimates ('tamiyo', 'nissa' ...)
+    pub emblems: Vec<Sym>,
+    /// cards taken with Opposition Agent (castable with mana of any type)
+    pub agent_ids: Vec<CardId>,
+    /// the last turn a permanent of this player's left the battlefield (revolt)
+    pub left_turn: Option<TurnStamp>,
+    /// once-per-turn flags (Python's `flag_turn`)
+    pub flag_turn: IndexMap<Sym, TurnStamp>,
+    /// the AI's memory of who hurt it (brain.note_damage)
+    pub grudge: IndexMap<Sym, f64>,
+    /// cards cast this game
+    pub cast_names: IndexSet<CardId>,
+    /// cards this player has seen (drawn, tutored)
+    pub seen: IndexSet<CardId>,
+    /// the turn draws are counted for (Narset, Parter of Veils)
+    pub draw_st: Option<TurnStamp>,
+    /// cards drawn this turn
+    pub draw_n: u32,
+    /// this turn's first draw (miracle)
+    pub miracle: Option<(TurnStamp, CardId)>,
+    /// Urabrask, Heretic Praetor: the next draw this turn is exiled instead
+    pub urabrask: Option<TurnStamp>,
+    /// cards exiled with "you may play them this turn" (held in hand)
+    pub impulse: Vec<CardId>,
+    /// key spells milled (reports)
+    pub milled_keys: Vec<CardId>,
+    /// The Ozolith: counters it holds
+    pub ozolith_counters: i32,
+    /// this player's bombs that were removed
+    pub removed_bombs: Vec<CardId>,
+    /// a regeneration shield this turn
+    pub regen_turn: Option<TurnStamp>,
+    /// creatures borrowed until end of turn (free to sacrifice)
+    pub borrowed: Vec<PermId>,
+    /// this player's permanents removed, by name
+    pub lost_names: IndexMap<Sym, u32>,
+    /// the last turn this player discarded
+    pub discarded_turn: Option<TurnStamp>,
+    /// extra land drops this turn (Explore)
+    pub extra_land_now: u32,
+    /// Hope of Ghirapur: no noncreature spells until that player's turn count passes
+    pub hope_lock: Option<(PlayerId, u32)>,
+    /// Mistrise Village: the next spell this turn can't be countered
+    pub mistrise_next: Option<TurnStamp>,
+    /// pact costs owed at the next upkeep (generic, pips)
+    pub pact_debts: Vec<(u32, String)>,
+    /// Pact of Negation casts to pay for
+    pub pacts: u32,
+    /// Glimpse of Tomorrow-style cast draws
+    pub glimpse: bool,
+    /// spells cast this turn
+    pub turn_casts: Option<(TurnStamp, Vec<CardId>)>,
+    /// instants and sorceries cast this turn
+    pub is_cast_n: Option<(TurnStamp, i32)>,
+    /// Galvanic Iteration: copy the next instant or sorcery this turn
+    pub galvanic: Option<TurnStamp>,
+    /// Ral, Storm Conduit -2: copy the next instant or sorcery this turn
+    pub ral_copy: Option<TurnStamp>,
+    /// cards taken from other players' decks (Gonti, Hostage Taker): whose they are
+    pub stolen: IndexMap<CardId, PlayerId>,
+    /// Yawgmoth's Will this turn
+    pub yawg: bool,
+    /// the graveyard as it was when Yawgmoth's Will resolved
+    pub yawg_gy: Vec<CardId>,
+    /// Mana Drain: colourless mana at the next main phase
+    pub drain_mana: u32,
+    /// Arcane Denial: draws at the next upkeep
+    pub delayed_draws: u32,
+    /// the tutor being chosen puts the card on top (tutor_pick reads it)
+    pub to_top: bool,
+    /// the permanent number (born) when this player's last turn ended
+    pub last_turn_end: u32,
     /// counters for reports (Python's `p.stats`)
     pub stats: IndexMap<Sym, i64>,
 }
 
 impl Player {
-    pub fn new(id: PlayerId, key: Sym, ident: Colors, cmd: CardId, cards: Arc<[CardId]>) -> Player {
+    pub fn new(id: PlayerId, key: Sym, name: Sym, ident: Colors, cmd: CardId, cards: Arc<[CardId]>) -> Player {
         let mut library: Vec<CardId> = cards.iter().copied().collect();
         if let Some(i) = library.iter().position(|&c| c == cmd) {
             library.remove(i);
@@ -326,6 +410,7 @@ impl Player {
         Player {
             id,
             key,
+            name,
             ident,
             cmd,
             deck_names: cards,
@@ -362,6 +447,47 @@ impl Player {
             last_src: None,
             ring_prot: false,
             life_locked: false,
+            last_kind: "other",
+            death_kind: "",
+            hit_turn: -1,
+            lost_turn: None,
+            gained_turn: None,
+            emblems: vec![],
+            agent_ids: vec![],
+            left_turn: None,
+            flag_turn: IndexMap::new(),
+            grudge: IndexMap::new(),
+            cast_names: IndexSet::new(),
+            seen: IndexSet::new(),
+            draw_st: None,
+            draw_n: 0,
+            miracle: None,
+            urabrask: None,
+            impulse: vec![],
+            milled_keys: vec![],
+            ozolith_counters: 0,
+            removed_bombs: vec![],
+            regen_turn: None,
+            borrowed: vec![],
+            lost_names: IndexMap::new(),
+            discarded_turn: None,
+            extra_land_now: 0,
+            hope_lock: None,
+            mistrise_next: None,
+            pact_debts: vec![],
+            pacts: 0,
+            glimpse: false,
+            turn_casts: None,
+            is_cast_n: None,
+            galvanic: None,
+            ral_copy: None,
+            stolen: IndexMap::new(),
+            yawg: false,
+            yawg_gy: vec![],
+            drain_mana: 0,
+            delayed_draws: 0,
+            to_top: false,
+            last_turn_end: 0,
             stats: IndexMap::new(),
         }
     }
@@ -379,26 +505,72 @@ pub enum StackKind {
     Trigger,
 }
 
+/// A spell's targets and choices (Python's `ctx` dict). Fields are added as the code that sets them is ported.
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct Ctx {
+    /// the permanent it targets
+    pub target: Option<PermId>,
+    /// the player it targets (burn to the face)
+    pub face: Option<PlayerId>,
+    /// a counterspell: the stack item it counters (by `StackItem::id`)
+    pub counter: Option<u32>,
+    /// an ability or trigger: its source
+    pub source: Option<PermId>,
+    /// a trigger on the stack: what it does when it resolves
+    pub trigger: Option<Box<crate::hooks::Trigger>>,
+    /// X
+    pub x: i32,
+    /// the owner of a card cast from another player's deck (it goes back to their graveyard)
+    pub owner: Option<PlayerId>,
+    /// exiled instead of going to the graveyard after it resolves
+    pub exile_after: bool,
+    /// Desertion: the countered artifact or creature enters under this player's control
+    pub desert_to: Option<PlayerId>,
+    /// the removal kind, when it differs from the card's `rem` tag (a modal spell)
+    pub rem_kind: Option<Sym>,
+    /// an alternative cost paid the life it would cost (Snuff Out ...)
+    pub paid_otherwise: bool,
+    /// a reanimation spell's target and its value (counter decisions)
+    pub rean_target: Option<CardId>,
+    pub rean_value: f64,
+    /// Muldrotha: the permanent type it was cast as
+    pub muld_type: Option<Sym>,
+    /// Mizzix's Mastery overloaded
+    pub overload: bool,
+    /// Toxic Deluge's X when a person chose it
+    pub deluge_x: Option<i32>,
+    /// Cyclonic Rift-style wipes of one player (rebuke): the player
+    pub victim: Option<PlayerId>,
+}
+
 /// A spell or ability on the stack (Python's `StackItem`).
 #[derive(Debug, Clone, PartialEq)]
 pub struct StackItem {
+    /// unique within the game, so other items (a counterspell) can name it
+    pub id: u32,
     pub controller: PlayerId,
     pub card: Option<CardId>,
-    pub kind: StackKind,
-    pub name: Sym,
-    /// where a spell was cast from ('hand', 'cmd', 'gy' ...)
+    pub ctx: Ctx,
+    /// where a spell was cast from ('hand', 'cmd', 'gy' ...); 'trigger' for triggers
     pub zone: Sym,
     /// how much it matters to everyone, and per player
     pub imp: f64,
     pub aff: Vec<(PlayerId, f64)>,
     /// resolved by the engine's own casting code (false: by its caster's code)
     pub generic: bool,
+    pub kind: StackKind,
+    pub name: String,
     /// seats that chose not to counter it
     pub passed: Vec<PlayerId>,
     pub countered: bool,
     pub countered_by: Option<CardId>,
-    /// the counterspell's target, when this item is a counterspell
-    pub counters: Option<usize>,
+}
+
+impl StackItem {
+    /// how much it matters to q (Python's `top.aff.get(q, top.imp)`)
+    pub fn value_to(&self, q: PlayerId) -> f64 {
+        self.aff.iter().find(|x| x.0 == q).map_or(self.imp, |x| x.1)
+    }
 }
 
 // ------------------------------------------------------------------ the game
@@ -406,6 +578,8 @@ pub struct StackItem {
 pub struct Game {
     pub db: Arc<CardDb>,
     pub settings: Arc<Settings>,
+    /// the card code (hooks.rs)
+    pub registry: Arc<crate::hooks::Registry>,
     pub players: Vec<Player>,
     pub perms: Vec<Perm>,
     pub lands: Vec<Land>,
@@ -417,12 +591,91 @@ pub struct Game {
     pub over: bool,
     pub winner: Option<PlayerId>,
     pub wintype: Option<Sym>,
-    pub elim: Vec<PlayerId>,
+    /// eliminated players, with the round they went out
+    pub elim: Vec<(PlayerId, u32)>,
     pub monarch: Option<PlayerId>,
+    /// bumped whenever a permanent enters, leaves or changes control (Python's `bf_ver`)
+    pub bf_ver: u64,
+    /// Auras on the battlefield that the card code tracks (Python's `g.auras`)
+    pub auras: Vec<PermId>,
+    /// Disruptor Flutes and the card each names
+    pub flutes: Vec<(PermId, CardId)>,
+    /// Panoptic Mirror: the cards imprinted on each mirror
+    pub imprint: Vec<(PermId, CardId)>,
+    /// Shadowspear's activation: the turn opponents' permanents lose hexproof and indestructible
+    pub spear: Option<TurnStamp>,
+    /// the card being paid for now (Mishra's Workshop mana is for artifact spells only): Python's `PAY_FOR`
+    pub pay_for: Option<CardId>,
+    /// the coloured pips the source being tapped paid for (read by on-tap card code): Python's `TAP_COLS`
+    pub tap_cols: Colors,
+    /// triggered abilities of a permanent that entered as it was cast see it was cast (Python's `last_cast_etb`)
+    pub last_cast_etb: bool,
+    /// a creature entering doesn't trigger its enter effects (Venser cast as a counter)
+    pub skip_etb: bool,
+    /// the permanent whose removal is happening (Skyclave Apparition remembers what it exiled)
+    pub rem_src: Option<PermId>,
+    /// destruction can't be regenerated from (Wrath of God)
+    pub noregen: bool,
+    /// who destroyed the permanents dying now (Karmic Justice)
+    pub destroyer: Option<PlayerId>,
+    /// Notion Thief's draw replacements already applied to this draw (614.5)
+    pub thief_chain: Vec<PermId>,
+    /// the spell being cast now: (card, its choices, zone) (cast triggers see its targets and X)
+    pub cur_cast: Option<(CardId, Ctx, Sym)>,
+    /// an Aura's target chosen as it was cast
+    pub cast_target: Option<PermId>,
+    /// what a sacrificed permanent was, for spells that count it: (mana value, toughness)
+    pub sac_snapshot: Option<(u32, i32)>,
+    /// Silence-style lock: (the turn, the player it doesn't stop)
+    pub silence: Option<(TurnStamp, PlayerId)>,
+    /// undying / persist returns this turn, by card (RETURN_CAP)
+    pub returns_turn: Option<TurnStamp>,
+    pub returns: IndexMap<CardId, u32>,
+    /// the permanent dying now (Auras that care how their creature left)
+    pub dying: Option<PermId>,
+    /// the last turn a creature died (Barad-dûr)
+    pub died_turn: Option<TurnStamp>,
+    /// permanents entered, numbered in order (born)
+    pub enter_no: u32,
+    /// permanents that entered this turn
+    pub entered: Vec<(TurnStamp, PermId)>,
+    /// creatures in combat now (Settle the Wreckage, Prophesied End)
+    pub in_combat: Vec<PermId>,
+    /// an Aura put onto the battlefield without being cast (Zur): placed by its card code
+    pub aura_put: bool,
+    /// the last removal: (card, owner, kind, who removed it)
+    pub last_removed: Option<(Option<CardId>, PlayerId, Sym, Option<PlayerId>)>,
+    /// wipes resolved so far: creatures destroyed together die simultaneously
+    pub batch: u32,
+    /// Marchesa's return triggers are in play
+    pub marchesa_on: bool,
+    /// Chatterfang doesn't add Squirrels (its own tokens)
+    pub no_fang: bool,
+    /// a permanent with compiled abilities has been on the battlefield (the interpreter is active)
+    pub dsl_on: bool,
+    /// Jeska's Will always adds mana (the Underworld Breach line)
+    pub jeska_mana: bool,
+    /// a game with one player and no opponents to beat (Python's `goldfish`)
+    pub goldfish: bool,
+    /// Garland, Royal Kidnapper's steals are in play (Python's `g.garland`)
+    pub garland: bool,
     /// permanents with hand-written card code, in entry order (Python's `g.hooks`)
     pub hooks: Vec<PermId>,
     pub stack: Vec<StackItem>,
+    /// items ever put on the stack: tells whether a player with priority did something; also the next item's id
     pub stack_pushes: u32,
+    /// 'probe' while finding out which pending triggers really trigger (Python's `trig_mode`)
+    pub trig_probe: bool,
+    /// the stack item of the trigger being resolved (by id)
+    pub trig_current: Option<u32>,
+    /// the counterspell that countered the last spell (Python's `LAST_COUNTER`)
+    pub last_counter: Option<CardId>,
+    /// Hullbreaker Horror bounced the spell instead of countering it
+    pub bounced_spell: bool,
+    /// a spell made uncounterable by Mistrise Village: (card, turn)
+    pub unc_cast: Option<(CardId, TurnStamp)>,
+    /// practice mode: the person paid for a counterspell from their pool
+    pub free_counter: bool,
     pub trig_queue: Vec<crate::hooks::Trigger>,
     /// > 0 while a spell or effect is resolving: its triggers wait until it's done
     pub resolving: u32,
@@ -440,11 +693,18 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(db: Arc<CardDb>, settings: Arc<Settings>, players: Vec<Player>, rng: Rng) -> Game {
+    pub fn new(
+        db: Arc<CardDb>,
+        registry: Arc<crate::hooks::Registry>,
+        settings: Arc<Settings>,
+        players: Vec<Player>,
+        rng: Rng,
+    ) -> Game {
         let work_cap = settings.game_work;
         Game {
             db,
             settings,
+            registry,
             players,
             perms: vec![],
             lands: vec![],
@@ -457,9 +717,48 @@ impl Game {
             wintype: None,
             elim: vec![],
             monarch: None,
+            bf_ver: 0,
+            auras: vec![],
+            flutes: vec![],
+            imprint: vec![],
+            spear: None,
+            pay_for: None,
+            tap_cols: Colors::NONE,
+            last_cast_etb: false,
+            skip_etb: false,
+            rem_src: None,
+            noregen: false,
+            destroyer: None,
+            thief_chain: vec![],
+            cur_cast: None,
+            cast_target: None,
+            sac_snapshot: None,
+            silence: None,
+            returns_turn: None,
+            returns: IndexMap::new(),
+            dying: None,
+            died_turn: None,
+            enter_no: 0,
+            entered: vec![],
+            in_combat: vec![],
+            aura_put: false,
+            last_removed: None,
+            batch: 0,
+            marchesa_on: false,
+            no_fang: false,
+            dsl_on: false,
+            jeska_mana: false,
+            goldfish: false,
+            garland: false,
             hooks: vec![],
             stack: vec![],
             stack_pushes: 0,
+            trig_probe: false,
+            trig_current: None,
+            last_counter: None,
+            bounced_spell: false,
+            unc_cast: None,
+            free_counter: false,
             trig_queue: vec![],
             resolving: 0,
             work: 0,
@@ -583,6 +882,18 @@ impl Game {
         id
     }
 
+    /// A land put onto p's battlefield, without its enter effects (the engine's land play adds those).
+    pub fn add_land_entering(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> LandId {
+        self.add_land(p, cd, tapped)
+    }
+
+    pub fn add_land(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> LandId {
+        let id = LandId(self.lands.len() as u32);
+        self.lands.push(Land { id, cd, owner: p, tapped, data: PermData::default(), on_bf: true });
+        self.player_mut(p).lands.push(id);
+        id
+    }
+
     /// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
     pub fn is_creature(&self, m: PermId) -> bool {
         let m = self.perm(m);
@@ -593,26 +904,16 @@ impl Game {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cards::tests::db;
-    use crate::settings::{AiMode, Profile};
     use crate::sym::intern;
 
     pub fn four_seat_game() -> Game {
-        let db = db();
-        let decks = crate::export::load_decks(&crate::cards::tests::data("decks.json")).unwrap();
-        let mut seats = vec![decks.mine.iter().find(|d| d.key == "sauron").unwrap().clone()];
-        seats.extend(decks.pool.iter().filter(|d| d.tier.as_deref() == Some("t1")).take(3).cloned());
-        let players = seats
+        let t1: Vec<&str> = crate::testkit::decks()
             .iter()
-            .enumerate()
-            .map(|(i, d)| {
-                let ids: Arc<[CardId]> = d.cards.iter().map(|n| db.id(n).unwrap()).collect();
-                let cmd = db.id(&d.commander).unwrap();
-                Player::new(PlayerId(i as u8), intern(&d.key), db.get(cmd).identity.unwrap_or_default(), cmd, ids)
-            })
+            .filter(|d| d.tier.as_deref() == Some("t1"))
+            .take(3)
+            .map(|d| &*d.key)
             .collect();
-        let settings = Arc::new(Settings::new(Profile::Loose, AiMode::Lookahead, 1.0));
-        Game::new(db, settings, players, Rng::named("play:500000"))
+        crate::testkit::table(&["sauron", t1[0], t1[1], t1[2]])
     }
 
     #[test]

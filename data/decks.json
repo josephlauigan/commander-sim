@@ -3,6 +3,7 @@
  "mine": [
   {
    "key": "alela",
+   "name": "Alela",
    "commander": "Alela, Artful Provocateur",
    "cards": [
     "Aether Hub",
@@ -109,6 +110,7 @@
   },
   {
    "key": "galadriel",
+   "name": "Galadriel",
    "commander": "Galadriel, Light of Valinor",
    "cards": [
     "Abduction",
@@ -215,6 +217,7 @@
   },
   {
    "key": "jodah",
+   "name": "Jodah",
    "commander": "Jodah, the Unifier",
    "cards": [
     "Adarkar Wastes",
@@ -321,6 +324,7 @@
   },
   {
    "key": "sauron",
+   "name": "Sauron",
    "commander": "Sauron, the Dark Lord",
    "cards": [
     "Aggravated Assault",
@@ -427,6 +431,7 @@
   },
   {
    "key": "seph",
+   "name": "Sephiroth",
    "commander": "Atraxa, Grand Unifier",
    "cards": [
     "Altar of Dementia",
@@ -533,6 +538,7 @@
   },
   {
    "key": "veyran",
+   "name": "Veyran",
    "commander": "Veyran, Voice of Duality",
    "cards": [
     "Abrade",
@@ -639,6 +645,7 @@
   },
   {
    "key": "yshtola",
+   "name": "Y'shtola",
    "commander": "Y'shtola, Night's Blessed",
    "cards": [
     "Anguished Unmaking",
@@ -748,6 +755,7 @@
   {
    "tier": "t1",
    "key": "isshin-mardu-attack-triggers",
+   "name": "Isshin",
    "commander": "Isshin, Two Heavens as One",
    "cards": [
     "Adeline, Resplendent Cathar",
@@ -855,6 +863,7 @@
   {
    "tier": "t1",
    "key": "lathril-golgari-elves",
+   "name": "Lathril",
    "commander": "Lathril, Blade of the Elves",
    "cards": [
     "Allosaurus Shepherd",
@@ -962,6 +971,7 @@
   {
    "tier": "t1",
    "key": "light-paws-aura-voltron",
+   "name": "Light-Paws",
    "commander": "Light-Paws, Emperor's Voice",
    "cards": [
     "All That Glitters",
@@ -1069,6 +1079,7 @@
   {
    "tier": "t1",
    "key": "tatyova-simic-landfall",
+   "name": "Tatyova",
    "commander": "Tatyova, Benthic Druid",
    "cards": [
     "Aesi, Tyrant of Gyre Strait",
@@ -1176,6 +1187,7 @@
   {
    "tier": "t1",
    "key": "teysa-orzhov-aristocrats",
+   "name": "Teysa Karlov",
    "commander": "Teysa Karlov",
    "cards": [
     "Anguished Unmaking",
@@ -1283,6 +1295,7 @@
   {
    "tier": "t2",
    "key": "brago-azorius-blink-control",
+   "name": "Brago",
    "commander": "Brago, King Eternal",
    "cards": [
     "Absorb",
@@ -1390,6 +1403,7 @@
   {
    "tier": "t2",
    "key": "kaalia-mardu-creature-cheat",
+   "name": "Kaalia of the Vast",
    "commander": "Kaalia of the Vast",
    "cards": [
     "Admonition Angel",
@@ -1497,6 +1511,7 @@
   {
    "tier": "t2",
    "key": "lord-windgrace-jund-lands",
+   "name": "Lord Windgrace",
    "commander": "Lord Windgrace",
    "cards": [
     "Ancient Greenwarden",
@@ -1604,6 +1619,7 @@
   {
    "tier": "t2",
    "key": "meren-golgari-recursion",
+   "name": "Meren of Clan Nel Toth",
    "commander": "Meren of Clan Nel Toth",
    "cards": [
     "Acidic Slime",
@@ -1711,6 +1727,7 @@
   {
    "tier": "t2",
    "key": "sythis-selesnya-enchantress",
+   "name": "Sythis",
    "commander": "Sythis, Harvest's Hand",
    "cards": [
     "Ajani's Chosen",
@@ -1818,6 +1835,7 @@
   {
    "tier": "t3",
    "key": "atraxa-superfriends",
+   "name": "Atraxa",
    "commander": "Atraxa, Praetors' Voice",
    "cards": [
     "Anguished Unmaking",
@@ -1925,6 +1943,7 @@
   {
    "tier": "t3",
    "key": "aurelia-boros-extra-combats",
+   "name": "Aurelia",
    "commander": "Aurelia, the Warleader",
    "cards": [
     "Adeline, Resplendent Cathar",
@@ -2032,6 +2051,7 @@
   {
    "tier": "t3",
    "key": "korvold-jund-sacrifice",
+   "name": "Korvold",
    "commander": "Korvold, Fae-Cursed King",
    "cards": [
     "Academy Manufactor",
@@ -2139,6 +2159,7 @@
   {
    "tier": "t3",
    "key": "marwyn-mono-green-elves",
+   "name": "Marwyn",
    "commander": "Marwyn, the Nurturer",
    "cards": [
     "Allosaurus Shepherd",
@@ -2246,6 +2267,7 @@
   {
    "tier": "t3",
    "key": "tergrid-mono-black-disruption",
+   "name": "Tergrid",
    "commander": "Tergrid, God of Fright // Tergrid's Lantern",
    "cards": [
     "Accursed Marauder",
@@ -2353,6 +2375,7 @@
   {
    "tier": "t4",
    "key": "chulane-bant-value-combo",
+   "name": "Chulane",
    "commander": "Chulane, Teller of Tales",
    "cards": [
     "Aluren",
@@ -2460,6 +2483,7 @@
   {
    "tier": "t4",
    "key": "heliod-mono-white-stax",
+   "name": "Heliod",
    "commander": "Heliod, Sun-Crowned",
    "cards": [
     "Adeline, Resplendent Cathar",
@@ -2567,6 +2591,7 @@
   {
    "tier": "t4",
    "key": "krenko-mono-red-goblins",
+   "name": "Krenko",
    "commander": "Krenko, Mob Boss",
    "cards": [
     "Abrade",
@@ -2674,6 +2699,7 @@
   {
    "tier": "t4",
    "key": "prosper-rakdos-exile-treasure",
+   "name": "Prosper",
    "commander": "Prosper, Tome-Bound",
    "cards": [
     "Abrade",
@@ -2781,6 +2807,7 @@
   {
    "tier": "t4",
    "key": "yuriko-dimir-ninjas",
+   "name": "Yuriko",
    "commander": "Yuriko, the Tiger's Shadow",
    "cards": [
     "Arcane Denial",
@@ -2888,6 +2915,7 @@
   {
    "tier": "t5",
    "key": "kinnan-simic-mana-combo",
+   "name": "Kinnan",
    "commander": "Kinnan, Bonder Prodigy",
    "cards": [
     "An Offer You Can't Refuse",
@@ -2995,6 +3023,7 @@
   {
    "tier": "t5",
    "key": "urza-mono-blue-artifacts",
+   "name": "Urza",
    "commander": "Urza, Lord High Artificer",
    "cards": [
     "Academy Ruins",
@@ -3102,6 +3131,7 @@
   {
    "tier": "t5",
    "key": "winota-boros-humans-cheat",
+   "name": "Winota",
    "commander": "Winota, Joiner of Forces",
    "cards": [
     "Abrade",
@@ -3209,6 +3239,7 @@
   {
    "tier": "t5",
    "key": "yawgmoth-mono-black-aristocrats",
+   "name": "Yawgmoth",
    "commander": "Yawgmoth, Thran Physician",
    "cards": [
     "Ad Nauseam",
@@ -3316,6 +3347,7 @@
   {
    "tier": "t5",
    "key": "zur-esper-enchantment-control",
+   "name": "Zur the Enchanter",
    "commander": "Zur the Enchanter",
    "cards": [
     "Adarkar Wastes",

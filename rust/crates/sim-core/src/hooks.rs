@@ -251,6 +251,32 @@ pub type CanCastFn = fn(&Game, Src, PlayerId, CardId, Sym) -> bool;
 pub type AttackLimitFn = fn(&Game, Src, PlayerId, PlayerId) -> Option<i32>;
 /// grant_kw(g, src, m, kw): a static keyword grant
 pub type GrantKwFn = fn(&Game, Src, PermId, Sym) -> bool;
+/// prevent_damage, no_lifegain, player_hexproof (g, src, p): a static that applies to player p
+pub type PlayerStaticFn = fn(&Game, Src, PlayerId) -> bool;
+/// lose_life, gain_life (g, src, p, n): player p lost or gained n life
+pub type LifeFn = fn(&mut Game, Src, PlayerId, i32) -> Res;
+/// sba(g, src): state-based checks of a card's own (run at once)
+pub type SbaFn = fn(&mut Game, Src) -> Res;
+/// mana_lock, no_creature_mana, no_artifact_mana, nonland_mana_bonus, treasure_bonus (g, src, p): a count summed
+/// over the hooked permanents (Python's `CI.total`)
+pub type PlayerCountFn = fn(&Game, Src, PlayerId) -> i32;
+/// land_mana(g, src, p, land): extra mana a land of p's makes
+pub type LandManaFn = fn(&Game, Src, PlayerId, crate::ids::LandId) -> i32;
+/// extra_mana(g, src, p, units): mana sources a card adds (Urza, Kinnan)
+pub type ExtraManaFn = fn(&Game, Src, PlayerId, &[crate::engine::mana::Unit]) -> Vec<crate::engine::mana::Unit>;
+/// steal_draw(g, src, p): Notion Thief takes p's extra draw
+pub type StealDrawFn = fn(&Game, Src, PlayerId) -> bool;
+/// trigger_copies(g, src, p, kind, x): extra copies of p's triggered abilities ('etb', 'dies', 'landfall')
+pub type TriggerCopiesFn = fn(&Game, Src, PlayerId, Sym, Option<PermId>) -> i32;
+/// search_limit(g, src, p): p may only search the top n cards (Aven Mindcensor)
+pub type SearchLimitFn = fn(&Game, Src, PlayerId) -> Option<u32>;
+/// uncounterable(g, src, caster, c): c can't be countered
+pub type UncounterableFn = fn(&Game, Src, PlayerId, CardId) -> bool;
+/// resolve(g, p, c, ctx): a hand-written instant or sorcery resolves; returns where the card goes ('gy', 'exile',
+/// 'handled' when its code moved it)
+pub type ResolveFn = fn(&mut Game, PlayerId, CardId, &crate::state::Ctx) -> Res<Sym>;
+/// mana_tapped(g, src, p, m, n): p tapped permanent m for n mana (run at once)
+pub type ManaTappedFn = fn(&mut Game, Src, PlayerId, PermId, u32) -> Res;
 
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
@@ -274,9 +300,44 @@ pub struct CardImpl {
     pub attack_tax: Option<AttackLimitFn>,
     pub attack_cap: Option<AttackLimitFn>,
     pub grant_kw: Option<GrantKwFn>,
+    pub prevent_damage: Option<PlayerStaticFn>,
+    pub no_lifegain: Option<PlayerStaticFn>,
+    pub player_hexproof: Option<PlayerStaticFn>,
+    pub lose_life: Option<LifeFn>,
+    pub gain_life: Option<LifeFn>,
+    pub sba: Option<SbaFn>,
+    pub min_cost: Option<CostFn>,
+    pub mana_lock: Option<PlayerCountFn>,
+    pub no_creature_mana: Option<PlayerCountFn>,
+    pub no_artifact_mana: Option<PlayerCountFn>,
+    pub nonland_mana_bonus: Option<PlayerCountFn>,
+    pub treasure_bonus: Option<PlayerCountFn>,
+    pub land_mana: Option<LandManaFn>,
+    pub extra_mana: Option<ExtraManaFn>,
+    pub mana_tapped: Option<ManaTappedFn>,
+    pub steal_draw: Option<StealDrawFn>,
+    pub trigger_copies: Option<TriggerCopiesFn>,
+    pub search_limit: Option<SearchLimitFn>,
+    pub uncounterable: Option<UncounterableFn>,
+    /// no_graveyard (Rest in Peace): a count over the hooked permanents
+    pub no_graveyard: Option<PlayerCountFn>,
+    pub resolve: Option<ResolveFn>,
+    /// triggered-event hooks that run at once instead of going on the stack: Python's hooks without a
+    /// `trigger_window` call (cardimpl `converted` is false). A bit per `Event`.
+    pub at_once: u128,
 }
 
 impl CardImpl {
+    /// Mark a triggered-event hook as running at once (not through the stack).
+    pub fn at_once(mut self, e: Event) -> CardImpl {
+        self.at_once |= 1u128 << (e as u32);
+        self
+    }
+
+    pub fn runs_at_once(&self, e: Event) -> bool {
+        self.at_once >> (e as u32) & 1 == 1
+    }
+
     /// Does the card handle `e`? (only for the events with a slot so far)
     pub fn handles(&self, e: Event) -> bool {
         match e {
@@ -299,6 +360,27 @@ impl CardImpl {
             Event::AttackTax => self.attack_tax.is_some(),
             Event::AttackCap => self.attack_cap.is_some(),
             Event::GrantKw => self.grant_kw.is_some(),
+            Event::PreventDamage => self.prevent_damage.is_some(),
+            Event::NoLifegain => self.no_lifegain.is_some(),
+            Event::PlayerHexproof => self.player_hexproof.is_some(),
+            Event::LoseLife => self.lose_life.is_some(),
+            Event::GainLife => self.gain_life.is_some(),
+            Event::Sba => self.sba.is_some(),
+            Event::MinCost => self.min_cost.is_some(),
+            Event::ManaLock => self.mana_lock.is_some(),
+            Event::NoCreatureMana => self.no_creature_mana.is_some(),
+            Event::NoArtifactMana => self.no_artifact_mana.is_some(),
+            Event::NonlandManaBonus => self.nonland_mana_bonus.is_some(),
+            Event::TreasureBonus => self.treasure_bonus.is_some(),
+            Event::LandMana => self.land_mana.is_some(),
+            Event::ExtraMana => self.extra_mana.is_some(),
+            Event::ManaTapped => self.mana_tapped.is_some(),
+            Event::StealDraw => self.steal_draw.is_some(),
+            Event::TriggerCopies => self.trigger_copies.is_some(),
+            Event::SearchLimit => self.search_limit.is_some(),
+            Event::Uncounterable => self.uncounterable.is_some(),
+            Event::NoGraveyard => self.no_graveyard.is_some(),
+            Event::Resolve => self.resolve.is_some(),
             _ => false,
         }
     }
@@ -336,28 +418,96 @@ impl Registry {
 /// A triggered ability's event and arguments, as data.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Call {
-    Etb { p: PlayerId, m: PermId },
-    Leaves { m: PermId },
-    Dies { m: PermId, cause: Sym },
-    Player { p: PlayerId },
-    Cast { caster: PlayerId, c: CardId },
-    Attack { p: PlayerId, atk: Vec<PermId>, d: PlayerId },
-    CombatDamage { p: PlayerId, a: PermId, d: PlayerId, dmg: i32 },
+    Etb {
+        p: PlayerId,
+        m: PermId,
+    },
+    Leaves {
+        m: PermId,
+    },
+    Dies {
+        m: PermId,
+        cause: Sym,
+    },
+    Player {
+        p: PlayerId,
+    },
+    Cast {
+        caster: PlayerId,
+        c: CardId,
+    },
+    Life {
+        p: PlayerId,
+        n: i32,
+    },
+    Sacrifice {
+        p: PlayerId,
+        what: Sacrificed,
+    },
+    /// cards_to_gy: these cards of p's are going to the graveyard
+    Cards {
+        p: PlayerId,
+        cards: Vec<CardId>,
+    },
+    /// tokens_enter: these tokens entered under p's control
+    Tokens {
+        p: PlayerId,
+        toks: Vec<PermId>,
+    },
+    /// discard: p discarded c
+    Discard {
+        p: PlayerId,
+        c: CardId,
+    },
+    /// token_created: p made n Treasure / Food / Clue tokens of these kinds
+    ArtifactTokens {
+        p: PlayerId,
+        kinds: Vec<Sym>,
+        n: i32,
+    },
+    Attack {
+        p: PlayerId,
+        atk: Vec<PermId>,
+        d: PlayerId,
+    },
+    CombatDamage {
+        p: PlayerId,
+        a: PermId,
+        d: PlayerId,
+        dmg: i32,
+    },
+}
+
+/// What was sacrificed (Python passes a permanent, or 'Treasure' / 'Food' / 'Clue', or a land's card).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Sacrificed {
+    Perm(PermId),
+    Token(Sym),
+    Card(CardId),
 }
 
 /// A triggered ability waiting to go on the stack (Python's `Trigger`).
 #[derive(Debug, Clone, PartialEq)]
 pub struct Trigger {
     pub controller: PlayerId,
-    pub src: PermId,
-    pub event: Event,
-    pub call: Call,
+    /// its source permanent (None: a land's or the engine's own)
+    pub src: Option<PermId>,
+    pub act: TrigAct,
     pub name: Option<Sym>,
-    /// it triggers for sure (the ability language's), so no probe is needed
+    /// it triggers for sure (the engine's and the ability language's), so no probe is needed
     pub known: bool,
     pub imp: Option<f64>,
     /// an enters trigger of a permanent that was cast
     pub cast_etb: bool,
+}
+
+/// What a trigger does when it resolves.
+#[derive(Debug, Clone, PartialEq)]
+pub enum TrigAct {
+    /// a card's hook for this event (found again in the registry by its source's card)
+    Hook { event: Event, call: Call },
+    /// the engine's tag-driven enter effects (Python's `etb_once`)
+    EtbOnce { p: PlayerId, m: PermId },
 }
 
 // ------------------------------------------------------------------ AI options

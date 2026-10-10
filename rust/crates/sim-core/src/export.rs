@@ -49,6 +49,10 @@ pub struct RawCard {
     pub source: String,
     pub unparsed: Vec<String>,
     pub derived: Derived,
+    /// the colours of its Phyrexian mana symbols ("B" for {B/P})
+    pub phyrexian: String,
+    /// a land's "when this land enters" effects: ("scry", n) or ("gain", n)
+    pub land_etb_fx: Vec<(String, i32)>,
     /// Events the card's Python implementation handles: what has to be ported by hand.
     pub python_hooks: Vec<String>,
     pub spell_prio: bool,
@@ -81,6 +85,8 @@ pub struct RawDeck {
     #[serde(default)]
     pub tier: Option<String>,
     pub key: String,
+    /// the name shown in logs ('Sauron', 'Krenko')
+    pub name: String,
     pub commander: String,
     pub cards: Vec<String>,
 }
