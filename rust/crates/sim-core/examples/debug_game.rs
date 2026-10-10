@@ -1,5 +1,5 @@
 //! Look at one game's end state (development aid).
-//!     cargo run --release -p sim-core --example debug_game <deck> <tier> <seed>
+//!     cargo run --release -p sim-core --example debug_game <deck> <tier> <seed> [lookahead]
 
 use sim_core::testkit;
 
@@ -9,7 +9,12 @@ fn main() {
     let pool = testkit::tier(t);
     let mine: Vec<&str> = testkit::decks().iter().filter(|d| d.tier.is_none()).map(|d| &*d.key).collect();
     let i = mine.iter().position(|k| k == me).unwrap();
-    let g = testkit::play(&[me, pool[i % 5], pool[(i + 1) % 5], pool[(i + 2) % 5]], seed, true);
+    let ai = if a.get(4).map(|s| s.as_str()) == Some("lookahead") {
+        sim_core::settings::AiMode::Lookahead
+    } else {
+        sim_core::settings::AiMode::Adaptive
+    };
+    let g = testkit::play_with(&[me, pool[i % 5], pool[(i + 1) % 5], pool[(i + 2) % 5]], seed, true, ai);
     let log = g.log.as_ref().unwrap();
     for line in &log[log.len().saturating_sub(25)..] {
         println!("{line}");

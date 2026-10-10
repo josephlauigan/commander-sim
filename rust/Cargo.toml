@@ -9,3 +9,4 @@ publish = false
 
 [profile.release]
 debug = 1          # line tables for profiling
+overflow-checks = true  # a counter that wraps panics instead of growing a Vec to 60 GB (Deadly Dispute, 10/10)
