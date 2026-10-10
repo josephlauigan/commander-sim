@@ -16,7 +16,7 @@ order, how to check the result, what could go wrong, and the decisions still ope
 7. [Validation: how to trust the new version](#7-validation-how-to-trust-the-new-version)
 8. [Risks](#8-risks)
 9. [Decisions still open](#9-decisions-still-open)
-10. [Recommended path](#10-recommended-path)
+10. [Path and milestones](#10-path-and-milestones)
 
 ---
 
@@ -42,8 +42,8 @@ order, how to check the result, what could go wrong, and the decisions still ope
 - **The main risk is trust, not speed.** The Rust version will play slightly differently in hundreds of small ways.
   Every win rate has to be checked again before the new numbers replace the old ones. Saved practice games from the
   Python version won't load in the Rust one (section 9).
-- **Before starting:** do the cheap Python speedups and a Rust pilot slice first, then make a go / no-go call on the
-  measurements (section 10).
+- **How it proceeds:** a Rust pilot slice first, in milestones M0–M6 with a check-in after each, then a go / no-go
+  call on the measurements (section 10).
 
 ---
 
@@ -413,18 +413,29 @@ probably not worth the cost. A layered check works better:
 
 ---
 
-## 10. Recommended path
+## 10. Path and milestones
 
-1. **PyPy check** (about one session). Run the test suite and time a game under PyPy. It often runs code like this
-   3–5 times faster with no changes. It wouldn't help the iPad, but it shows how much of the gain is available
-   cheaply.
-2. **Python hot spots** (a few sessions). Cache mana payment and the board read, and replace `deepcopy` with a
-   purpose-built clone. These should leave every game result unchanged, which a fixed-seed comparison confirms.
-   They also speed up practice mode and the iPad now, while the port is under way.
-3. **A Rust pilot slice** (2–3 weeks of sessions):
-   - Phases 1–5, plus the cards of Tier 1 and one of your decks, run with `--engine rust`.
-   - A minimal Swift shell on the iPad simulator that starts a Rust library, to prove the iOS build early.
-   - Measure: speed against the Python version (and against PyPy), and agreement with the Python results on that
-     tier (section 7, steps 2 and 3).
-4. **Go / no-go** on those measurements.
-5. **Then part 1** (phases 6–8) for the remaining tiers and decks, **then part 2** (phases 9–13) straight after.
+The port started on 10 October 2026, on branch `rust-port` (from `jodah-final`, plus Sephiroth's flicker package).
+The cheap Python speedups this section first recommended (PyPy, caching mana payment, a purpose-built clone) were
+skipped, to start the port directly.
+
+### The pilot (milestones M0–M6)
+
+The pilot is phases 1–5, plus the cards of Tier 1 and one of your decks (**Sauron**: 16 cards with hand-written
+code and a ~150-line plan in `ais.py`). It ends in a go / no-go. **Work stops for a check-in at the end of every
+milestone**, and the next one starts only after that.
+
+| Milestone | Phases | What gets done | Shown at the check-in | Size | Status |
+|---|---|---|---|---|---|
+| **M0** Setup and reference numbers | 0, start of 1 | Rust installed; the Cargo workspace (`sim-core`, `sim-py`, `practice`); the card export (`data/cards.json`, `data/decks.json`); the Python bridge (`rust_sim`); the Python reference run: Sauron vs Tier 1, loose profile, 960 games | Rust loads every card; the reference win rate | 1 session | Done except the reference number |
+| **M1** Data model (**design review**) | 1 | `CardDef` and the tags as typed data; `Game`, `Player`, `Perm` in arrays with ids; the hook table; the `Controller` interface; loading `cards.json` into them | A short write-up and the core types, to review before anything is built on them | 1–2 sessions | |
+| **M2** Rules engine | 2 | `engine.py`: mana and payment, casting, the stack, counterspells, removal, zones, triggers, state checks, step caps; the rules tests in Rust | Rules tests passing, against the Python count | ~1–2 weeks | |
+| **M3** Turn loop, combat, ability language | 3, 4 | The non-deck parts of `ais.py`; `dsl.py` | A full game in Rust with tag- and ability-language cards, next to Python's play-by-play | ~1 week | |
+| **M4** AI and look-ahead | 5 | `brain`, `pool_ai`, `deck_plans`, `gc_prio`, the Sauron plan, `search`; the differential harness (the same position in both engines, options and scores compared) | Which options and scores match, and which don't | ~1 week | |
+| **M5** Pilot cards and go / no-go | parts of 6 and 7 | The shared card files Tier 1 and Sauron need, their cards, `--engine rust` in `poolmode`; the 960 reference games in Rust | **Go / no-go:** speed against Python, and the win rate against the reference with confidence intervals | ~1–2 weeks | |
+| **M6** iOS proof | 12 (early) | The core library built for iOS, and a minimal Swift web-view shell, with instructions | You build it on your Mac and it starts in the iPad simulator (any time after M1) | 1 session + your Mac | |
+
+### After the pilot
+
+On a "go": part 1 for the remaining tiers and your decks (phases 6–8), then part 2, practice mode (phases 9–13),
+straight after. The milestones and check-ins for those are set at the go / no-go.
