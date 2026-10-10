@@ -1841,7 +1841,7 @@ pub fn breach_gc_options(g: &mut Game, p: PlayerId) -> Res<Vec<Opt>> {
 // ======================================================== Sephiroth
 // ------------------------------------------------------------------ Displacer Kitten
 /// mine.ETB_VALUE: what entering again is worth, by the card's tags (in Python's dict order)
-const ETB_VALUE: [(Tag, f64); 9] = [
+pub(crate) const ETB_VALUE: [(Tag, f64); 9] = [
     (Tag::Atraxa, 8.0),
     (Tag::Archon, 6.0),
     (Tag::Rsd, 4.0),

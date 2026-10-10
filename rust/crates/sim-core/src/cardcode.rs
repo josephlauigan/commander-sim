@@ -1073,11 +1073,9 @@ pub fn kaalia_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
     crate::impls::t2::kaalia_prio(g, p, c)
 }
 
-/// PORT(phase 6): mine.flicker_worth (what flickering Sephiroth's creature m is worth: the commander Atraxa, Summon:
-/// Bahamut's restart, counters and Equipment lost); t2.flicker_worth calls it for Sephiroth's deck. Until then
-/// t2.blink_value.
+/// mine.flicker_worth (what flickering Sephiroth's creature m is worth); t2.flicker_worth calls it for Sephiroth's deck
 pub fn seph_flicker_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
-    crate::impls::t2::blink_value(g, p, m) as f64
+    crate::impls::mine::flicker_worth(g, p, m)
 }
 
 /// zur.zur_fetch (CI.zur_fetch: Zur attacking in your Y'shtola deck searches for an enchantment with mana value 3 or

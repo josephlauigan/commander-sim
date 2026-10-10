@@ -1239,8 +1239,6 @@ pub fn protect_response(
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
-        // PORT(phase 6): Sephiroth (Ephemerate, Restoration Angel, Heroic Intervention, Galadriel's Dismissal,
-        // sacrifice in response), Veyran
         _ => Ok(false),
     }
 }
