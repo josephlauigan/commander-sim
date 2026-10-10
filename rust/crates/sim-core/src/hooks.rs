@@ -305,6 +305,9 @@ pub type GyPlayerFn = fn(&mut Game, CardId, PlayerId) -> Res;
 pub type HandCastFn = fn(&mut Game, CardId, PlayerId, CardId) -> Res;
 /// hand_blocks(g, c, p, atk, d, assign): card c in attacker p's hand after blocks (ninjutsu-style)
 pub type HandBlocksFn = fn(&mut Game, CardId, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
+/// ninjutsu(g, src, p, m, atk): p's m entered tapped and attacking by ninjutsu (run at once, not a trigger); atk is
+/// the attack it joined, which the hook may add to (Thousand-Faced Shadow; Python's `g.ninja_atk`)
+pub type NinjutsuFn = fn(&mut Game, Src, PlayerId, PermId, &mut Vec<PermId>) -> Res;
 /// hand_attack(g, c, p, atk, d): card c in p's hand as p attacks d
 pub type HandAttackFn = fn(&mut Game, CardId, PlayerId, &[PermId], PlayerId) -> Res;
 /// defend(g, src, d, p, atk, assign): the defender's permanents after blocks (Yawgmoth)
@@ -407,6 +410,7 @@ pub struct CardImpl {
     pub hand_opp_cast: Option<HandCastFn>,
     pub hand_blocks: Option<HandBlocksFn>,
     pub hand_attack: Option<HandAttackFn>,
+    pub ninjutsu: Option<NinjutsuFn>,
     pub defend: Option<DefendFn>,
     /// skip_draw(g, src, p): p skips its draw step (Solitary Confinement): a count over the hooked permanents
     pub skip_draw: Option<PlayerCountFn>,
@@ -522,6 +526,7 @@ impl CardImpl {
             Event::GyLandfall => self.gy_landfall.is_some(),
             Event::HandCast => self.hand_cast.is_some(),
             Event::HandAttack => self.hand_attack.is_some(),
+            Event::Ninjutsu => self.ninjutsu.is_some(),
             Event::Defend => self.defend.is_some(),
             Event::SkipDraw => self.skip_draw.is_some(),
             Event::Rebound => self.rebound.is_some(),

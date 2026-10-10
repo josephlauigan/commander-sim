@@ -807,7 +807,15 @@ pub struct Game {
     pub lattice_lock: Option<PlayerId>,
     /// t2.blink: how deep blinks are nested (blink chains are combos, not loops: Python's `g.blink_depth`)
     pub blink_depth: u32,
-    /// the creature a Restoration Angel being cast from hand blinks (Python's `g.resto_target`)
+    /// how deep Consecrated Sphinx draws are nested (two Sphinxes feed each other: t4's `g.sphinx_depth`)
+    pub sphinx_depth: u32,
+    /// how deep Sanguine Bond / Exquisite Blood are nested (t4's `g.bond_depth`)
+    pub bond_depth: u32,
+    /// creatures that died this turn while Mahadi, Emporium Master was out (t4's `g.deaths_turn`, current turn only)
+    pub deaths_turn: Option<(TurnStamp, i32)>,
+    /// The Eternal Wanderer's exiles, back at their owner's next end step: (owner, card) (zur's `g.zur_due`)
+    pub zur_due: Vec<(PlayerId, CardId)>,
+    /// the creature Restoration Angel's enter trigger blinks (Python's `g.resto_target`)
     pub resto_target: Option<PermId>,
 }
 
@@ -904,6 +912,10 @@ impl Game {
             combo_spell: false,
             lattice_lock: None,
             blink_depth: 0,
+            sphinx_depth: 0,
+            bond_depth: 0,
+            deaths_turn: None,
+            zur_due: vec![],
             resto_target: None,
         }
     }

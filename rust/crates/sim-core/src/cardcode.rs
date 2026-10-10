@@ -42,11 +42,10 @@ pub fn dyn_mana_perm(g: &Game, p: PlayerId, m: PermId) -> Option<u32> {
     imp_of(g, g.perm(m).cd?)?.dyn_mana_perm.map(|f| f(g, p, m))
 }
 
-/// PORT(M5): CI.locked(g, m, kind) (zur.locked): an Aura locks m (Arrest: no activated abilities; Pacify: can't
-/// attack). Only zur.py's lock Auras (Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust) use it, and
-/// no pilot deck runs one.
-pub fn locked(_g: &Game, _m: PermId, _kind: &str) -> bool {
-    false
+/// CI.locked(g, m, kind) (zur.locked): an Aura locks m (Arrest: no activated abilities; Pacify: can't attack).
+/// zur.py's lock Auras: Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust.
+pub fn locked(g: &Game, m: PermId, kind: &str) -> bool {
+    crate::impls::zur::locked(g, m, kind)
 }
 
 /// rules.halfling_colors: Delighted Halfling's coloured mana only pays for legendary spells (None: colourless)
@@ -84,10 +83,9 @@ pub fn threat_value(g: &Game, m: PermId) -> f64 {
     crate::ai::pool::card_threat_value(g, c) + piece_threat(g, m)
 }
 
-/// PORT(M5): how much of m's value is left under the Auras locking it (zur.lock_factor; zur.py's lock Auras only,
-/// which no pilot deck runs)
-pub fn lock_factor(_g: &Game, _m: PermId) -> f64 {
-    1.0
+/// how much of m's value is left under the Auras locking it (zur.lock_factor; zur.py's lock Auras only)
+pub fn lock_factor(g: &Game, m: PermId) -> f64 {
+    crate::impls::zur::lock_factor(g, m)
 }
 
 /// partials.hand_mana, Elvish Spirit Guide and kin: exile from hand for mana
@@ -203,8 +201,11 @@ port_res! {
     fn marchesa_dies(p: PlayerId, m: PermId);
     /// PORT(M5): CI.muld_mark (Muldrotha's permanent types used this turn)
     fn muld_mark(p: PlayerId, kind: Sym);
-    /// PORT(M5): CI.apply_lock (zur.apply_lock: Arrest, Encrust ...; no pilot deck runs a lock Aura)
-    fn apply_lock(actor: Option<PlayerId>, m: PermId, kind: Sym);
+}
+
+/// CI.apply_lock (zur.apply_lock: Arrest, Encrust ...): the entering lock Aura enchants m
+pub fn apply_lock(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym) -> Res {
+    crate::impls::zur::apply_lock(g, actor, m, kind)
 }
 
 /// rules.emblem_draw: Teferi's emblem exiles an opposing permanent whenever p draws
@@ -554,9 +555,9 @@ pub fn defend_hooks(
     Ok(())
 }
 
-/// PORT(phase 6): t4.ninjutsu (Yuriko's Ninjas swap in for unblocked attackers)
-pub fn ninjutsu(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId, _assign: &mut [(PermId, PermId)]) -> Res {
-    Ok(())
+/// t4.ninjutsu (Yuriko's Ninjas swap in for unblocked attackers): changes the attack
+pub fn ninjutsu(g: &mut Game, p: PlayerId, atk: &mut Vec<PermId>, d: PlayerId, assign: &mut [(PermId, PermId)]) -> Res {
+    crate::impls::t4::ninjutsu(g, p, atk, d, assign)
 }
 
 /// partials.insight_draw (Hunter's Insight) and rules.emblem_combat (Vraska's and Kaito's emblems) on combat damage
@@ -672,12 +673,21 @@ port_res! {
     fn necro_deliver(p: PlayerId);
     /// PORT(M5): ais.necro_pay
     fn necro_pay(p: PlayerId);
-    /// PORT(M5): the delayed end-step effects: Marchesa's returns, The Eternal Wanderer, Eerie Interlude, Memory Jar
-    fn delayed_end_step(p: PlayerId);
     /// PORT(M5): Galadriel's precombat taps
     fn galadriel_precombat(q: PlayerId);
     /// PORT(M5): Opposition's precombat taps
     fn opposition_precombat(q: PlayerId);
+}
+
+/// the delayed end-step effects: Marchesa's returns, The Eternal Wanderer (zur.zur_end_step), Eerie Interlude,
+/// Memory Jar
+pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
+    // PORT(M5): marchesa.marchesa_return (g.marchesa_due)
+    if !g.zur_due.is_empty() {
+        crate::impls::zur::zur_end_step(g, p)?; // The Eternal Wanderer
+    }
+    // PORT(M5): CI.eot_returns (Eerie Interlude), CI.jar_end (Memory Jar)
+    Ok(())
 }
 
 /// ais.mirror_upkeep (Panoptic Mirror)
@@ -877,9 +887,9 @@ pub fn aid_active(g: &Game, p: PlayerId) -> bool {
     crate::impls::partials::aid_active(g, p)
 }
 
-/// PORT(M5): t4.NINJUTSU, ninjutsu_cost: the ninjutsu costs of the Ninjas in p's hand
-pub fn ninjutsu_costs(_g: &Game, _p: PlayerId) -> Vec<(u32, String)> {
-    vec![]
+/// t4.NINJUTSU, ninjutsu_cost: the ninjutsu costs of the Ninjas in p's hand
+pub fn ninjutsu_costs(g: &Game, p: PlayerId) -> Vec<(u32, String)> {
+    crate::impls::t4::ninjutsu_costs(g, p)
 }
 
 /// common.SAC_OUTLET
@@ -923,14 +933,14 @@ pub fn tithe_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     (35.0 + 4.0 * treasures * need).clamp(15.0, 75.0) as i32
 }
 
-/// PORT(M5): t4.yuriko_wish
-pub fn yuriko_wish(_g: &Game, _p: PlayerId) -> Vec<CardId> {
-    vec![]
+/// t4.yuriko_wish
+pub fn yuriko_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
+    crate::impls::t4::yuriko_wish(g, p)
 }
 
-/// PORT(M5): t4.yuriko_prio
-pub fn yuriko_prio(_g: &Game, _p: PlayerId, _c: CardId) -> Option<i32> {
-    None
+/// t4.yuriko_prio
+pub fn yuriko_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    crate::impls::t4::yuriko_prio(g, p, c)
 }
 
 /// t2.kaalia_prio
