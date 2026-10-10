@@ -280,6 +280,7 @@ def static_bonus(g, m):
     if has(p, 'anthem2') and 'anthem2' not in t: b += 2                       # Elesh Norn, Grand Cenobite
     if has(p, 'anthemnh') and 'anthemnh' not in t and 'human' not in t: b += 1   # Mikaeus
     if has(p, 'warleader'): b += 1                                                # Warleader's Call
+    if m.orig is not p and has(p, 'garland'): b += 2                              # Garland: creatures you don't own
     for x in p.perms:                                                             # auto-tagged anthems
         if x.cd is not None and 'anth' in x.cd.tags and x is not m and not x.phased: b += int(x.cd.tags['anth'])
     if equipped(m, 'flail'): b += 3                                               # Conqueror's Flail (~3 colors)
@@ -353,6 +354,11 @@ def indestructible(g, m):
 
 def ward_legends(p):
     return [x for x in p.perms if x.cd is not None and 'leg' in x.cd.tags and (x.creature or 'A' in x.cd.types) and not x.phased]
+
+
+def no_sac(m):
+    """Garland, Royal Kidnapper: creatures you control but don't own can't be sacrificed"""
+    return m.orig is not m.owner and m.creature and has(m.owner, 'garland')
 
 
 def untargetable(g, m):
@@ -503,6 +509,7 @@ def eliminate(g, p):
     for m in list(p.perms):
         p.perms.remove(m)
     g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+    if getattr(g, 'garland', None): CI.garland_check(g)      # Garland's steals from (or owned by) p end
 
 
 # ---------------------------------------------------------------- mana
@@ -1021,6 +1028,7 @@ def die(g, m, cause='destroy'):
     p = m.owner
     if m not in p.perms: return
     if cause == 'destroy' and indestructible(g, m): return
+    if cause == 'sac' and no_sac(m): return
     if cause == 'destroy' and getattr(g, 'auras', None) and CI.umbra_save(g, m): return
     if cause in ('destroy', 'combat') and m.creature and not m.token and CI is not None and not getattr(g, 'noregen', False) \
             and (importlib.import_module('commander_sim.cards.impl.lands').try_regenerate(g, m) or importlib.import_module('commander_sim.cards.impl.rules').ezuri_regen(g, m)): return
@@ -1194,7 +1202,7 @@ def sac_fodder(g, p, what, exclude=None):
     'green creature', 'permanent'); 'Treasure' for a Treasure token; None if there is none"""
     art = 'artifact' in what or what == 'permanent'
     cre = 'creature' in what or what == 'permanent'
-    cands = [m for m in p.perms if m is not exclude and not m.phased and not m.is_cmd and
+    cands = [m for m in p.perms if m is not exclude and not m.phased and not m.is_cmd and not no_sac(m) and
              ((cre and m.creature) or (art and m.cd is not None and 'A' in m.cd.types) or what == 'permanent')]
     if 'green' in what: cands = [m for m in cands if 'G' in colors_of(m)]
     best = min(cands, key=lambda m: sac_worth(g, m)) if cands else None
@@ -2518,7 +2526,7 @@ def sac_worth(g, m):
 
 def edict(g, q, least_power=False):
     """q sacrifices the creature it values least (least_power: among those with the least power, Witch-king)"""
-    cr = [m for m in q.perms if m.creature and not m.phased]
+    cr = [m for m in q.perms if m.creature and not m.phased and not no_sac(m)]
     if cr and least_power:
         lo = min(epow(g, m) for m in cr); cr = [m for m in cr if epow(g, m) == lo]
     hc = human_choice(g, q)

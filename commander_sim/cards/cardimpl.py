@@ -269,6 +269,7 @@ def become_monarch(g, p):
     if getattr(g, 'monarch', None) is p or not p.alive: return
     g.monarch = p
     E.log(f'    {E.NAME(p)} becomes the monarch', g)
+    if getattr(g, 'garland', None): garland_check(g)         # Garland: steals from the old monarch end
     if g.hooks: fire(g, 'monarch', p)
 
 
@@ -280,6 +281,7 @@ def load():
 muldrotha_on = None          # set by cards/impl/mine.py (Muldrotha, the Gravetide)
 kaldra_exile = None          # set by cards/impl/jodah.py (Sword of Kaldra)
 jar_end = None               # set by cards/impl/jodah.py (Memory Jar's end step)
+garland_check = None         # set by cards/impl/jodah.py (Garland, Royal Kidnapper's control effects)
 suspend_upkeep = None        # set by cards/impl/jodah.py (suspend: Profane Tutor)
 
 E.CI = __import__('sys').modules[__name__]
