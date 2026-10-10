@@ -332,3 +332,24 @@ fn every_deck_finishes_games_with_the_look_ahead() {
     assert!(g.wintype.is_some());
     assert!(g.search_n > 0);
 }
+
+#[test]
+fn deadly_dispute_cant_spend_the_treasure_it_sacrifices() {
+    // one Swamp and one Treasure pay for Dispute only by spending the Treasure it would sacrifice
+    let mut g = table(&["korvold-jund-sacrifice", "sauron"]);
+    let c = hand(&mut g, P0, &["Deadly Dispute"])[0];
+    lands(&mut g, P0, "Swamp", 1, false);
+    g.player_mut(P0).treasures = 1;
+    let s = brain::Situation::new(&g, P0);
+    let a = pool::spell_options(&g, P0, &s, Some(false)).into_iter().find(|o| o.label == "Deadly Dispute").unwrap();
+    assert!(!sim_core::ai::act::perform(&mut g, P0, &a.act.unwrap()).unwrap());
+    assert_eq!(g.player(P0).treasures, 1);
+    assert!(g.player(P0).hand.contains(&c));
+    // with a second Swamp it's cast, sacrificing the Treasure
+    lands(&mut g, P0, "Swamp", 1, false);
+    let s = brain::Situation::new(&g, P0);
+    let a = pool::spell_options(&g, P0, &s, Some(false)).into_iter().find(|o| o.label == "Deadly Dispute").unwrap();
+    assert!(sim_core::ai::act::perform(&mut g, P0, &a.act.unwrap()).unwrap());
+    assert!(!g.player(P0).hand.contains(&c));
+    assert!(g.player(P0).treasures <= 1);
+}

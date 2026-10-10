@@ -34,11 +34,16 @@ def pool_keys(tier):
 
 def play(seed, me, my_cards, opp_keys, k=3):
     seats = pools.draw_seats(seed, opp_keys, me, k)
-    return ais.play_pool_game(seed, [seat_spec(s, my_cards if s == me else None) for s in seats])
+    specs = [seat_spec(s, my_cards if s == me else None) for s in seats]
+    if getattr(C, 'ENGINE', 'python') == 'rust':
+        from commander_sim import rust_engine
+        return rust_engine.play_pool_game(seed, specs, C.AI, C.TEMP)
+    return ais.play_pool_game(seed, specs)
 
 
 def _setup(profile, ai, temp, extra_cards=()):
     engine.set_profile(profile); C.set_ai(ai, temp)
+    from commander_sim import rust_engine; rust_engine.PROFILE[0] = profile
     pools.register()
     if extra_cards:
         from commander_sim.cards import sources as _cards; _cards.ensure_cards(list(extra_cards), verbose=False)

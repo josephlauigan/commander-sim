@@ -17,6 +17,9 @@ fn main() {
         for (i, me) in mine.iter().enumerate() {
             for k in 0..n {
                 let seed = 910_000 + 100 * i as u64 + k;
+                if std::env::var_os("ALL_DECKS_VERBOSE").is_some() {
+                    eprintln!("{t} {me} seed {seed}");
+                }
                 let g = play_with(&[me, pool[i % 5], pool[(i + 1) % 5], pool[(i + 2) % 5]], seed, false, ai);
                 games += 1;
                 rounds += g.round;

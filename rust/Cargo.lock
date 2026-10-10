@@ -65,6 +65,10 @@ checksum = "05c8b63e8d9609db387f0324918f81d68fe27748f084ef092fb35954d0539a85"
 [[package]]
 name = "practice"
 version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "sim-core",
+]
 
 [[package]]
 name = "proc-macro2"
@@ -198,6 +202,7 @@ name = "sim-py"
 version = "0.1.0"
 dependencies = [
  "pyo3",
+ "serde_json",
  "sim-core",
 ]
 
