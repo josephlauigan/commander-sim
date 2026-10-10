@@ -230,6 +230,7 @@ def _star(a):
     fn, rest = a[0], a[1:]
     return len(rest[3]), fn(*rest)
 AI, TEMP = 'lookahead', 1.0
+ENGINE = 'python'        # --engine: 'rust' plays pool games with the Rust port (rust_engine.py)
 
 
 def set_ai(mode, temp):
@@ -450,14 +451,16 @@ def main():
                          'about 20 s of CPU per game) or adaptive (heuristic only, about 100x faster)')
     ap.add_argument('--temp', type=float, default=1.0, help='adaptive AI randomness multiplier (lower = sharper play)')
     ap.add_argument('--quiet', action='store_true', help='no progress bar')
+    ap.add_argument('--engine', choices=('python', 'rust'), default='python',
+                    help='which engine plays the pool games (rust: the port in rust/, built by rust/build-py.sh)')
     ap.add_argument('--jobs', type=int, default=None,
                     help=f'parallel worker processes (default: every CPU core, {os.cpu_count() or 1} here)')
     a = ap.parse_args()
     a.games = a.games or a.n or 1500; a.n = a.games
     global JOBS, VERBOSE
     JOBS = max(1, a.jobs or os.cpu_count() or 1); VERBOSE = not a.brief
-    global AI, TEMP
-    AI, TEMP = a.ai, a.temp
+    global AI, TEMP, ENGINE
+    AI, TEMP, ENGINE = a.ai, a.temp, a.engine
     set_ai(AI, TEMP)
 
     swaps, base, var = [], None, None

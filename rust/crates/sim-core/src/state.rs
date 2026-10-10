@@ -427,6 +427,8 @@ pub struct Player {
     pub elspeth_emblem: bool,
     /// the turn each milestone was first reached (reports: 'combo', 'engine', 'bomb_by' ...)
     pub milestone: IndexMap<Sym, u32>,
+    /// the turn a bomb (bomb 6+ or power 6+) first landed (ais.note_bomb: Sephiroth's plan turn)
+    pub first_bomb: Option<u32>,
     /// compiled activated abilities used this round: (permanent, ability) -> (round stamp, uses)
     pub act_uses: IndexMap<(PermId, u16), (TurnStamp, u32)>,
     /// counters for reports (Python's `p.stats`)
@@ -537,6 +539,7 @@ impl Player {
             unbl_all: None,
             elspeth_emblem: false,
             milestone: IndexMap::new(),
+            first_bomb: None,
             act_uses: IndexMap::new(),
             rebound: vec![],
             arch_t: None,
