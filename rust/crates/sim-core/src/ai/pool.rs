@@ -87,7 +87,7 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return f(g, p, c);
     }
     if c == pl.cmd {
-        let dflt = if imp.is_some() { 85 } else { 75 }; // an engine commander comes first
+        let dflt = if imp.is_some_and(|i| i.live()) { 85 } else { 75 }; // an engine commander comes first
         return if pl.turns >= cfg.cmd_turn.unwrap_or(2) {
             40.max(cfg.cmd_prio.unwrap_or(dflt) - 3 * pl.tax as i32)
         } else {
@@ -273,7 +273,7 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 42 + (2 * d.pow).min(16) + if t.has(Tag::Fly) { 4 } else { 0 };
     }
     if d.perm
-        && let Some(h) = imp
+        && let Some(h) = imp.filter(|i| i.live())
     {
         if h.attack_tax.is_some() || h.attack_cap.is_some() {
             // pillowfort: worth what it keeps off you
@@ -338,12 +338,12 @@ pub fn card_threat_value(g: &Game, c: CardId) -> f64 {
             Event::EndStep,
             Event::Landfall,
             Event::Draw,
+            Event::Sacrifice,
             Event::CombatDamage,
             Event::TriggerCopies,
+            Event::ExtraLands,
             Event::LandMana,
             Event::GrantKw,
-            Event::Sacrifice,
-            Event::ExtraLands,
             Event::Discard,
             Event::LandGy,
         ];

@@ -72,6 +72,8 @@ pub enum DataKey {
     Legendary,
     Level,
     Lord,
+    /// the walker framework's loyalty activations this round (Python's third item of `loyalty_used`; Oath of Teferi)
+    LoyaltyN,
     Lore,
     Lure,
     Manatok,
@@ -432,6 +434,8 @@ pub struct Player {
     /// the Ring's level (how many times it has tempted this player, at most 4) and the chosen Ring-bearer
     pub ring_level: u32,
     pub ring_bearer: Option<PermId>,
+    /// adventure cards whose adventure half was cast (Python's `adv_done`; common.adventure_options)
+    pub adv_done: Vec<CardId>,
 }
 
 impl Player {
@@ -538,6 +542,7 @@ impl Player {
             arch_t: None,
             ring_level: 0,
             ring_bearer: None,
+            adv_done: vec![],
             stats: IndexMap::new(),
         }
     }
@@ -680,6 +685,8 @@ pub struct Game {
     pub cur_cast: Option<(CardId, Ctx, Sym)>,
     /// an Aura's target chosen as it was cast
     pub cast_target: Option<PermId>,
+    /// the creature an Aura entering now goes on (Light-Paws fetching an Aura onto itself): Python's `g.attach_to`
+    pub attach_to: Option<PermId>,
     /// what a sacrificed permanent was, for spells that count it: (mana value, toughness)
     pub sac_snapshot: Option<(u32, i32)>,
     /// Silence-style lock: (the turn, the player it doesn't stop)
@@ -699,8 +706,6 @@ pub struct Game {
     pub in_combat: Vec<PermId>,
     /// an Aura put onto the battlefield without being cast (Zur): placed by its card code
     pub aura_put: bool,
-    /// the creature an Aura entering now goes on (Light-Paws' fetch; Python's `g.attach_to`)
-    pub attach_to: Option<PermId>,
     /// Uro, Titan of Nature's Wrath is entering by escape: it isn't sacrificed (Python's `g.uro_escaping`)
     pub uro_escaping: bool,
     /// the last removal: (card, owner, kind, who removed it)
@@ -815,6 +820,7 @@ impl Game {
             thief_chain: vec![],
             cur_cast: None,
             cast_target: None,
+            attach_to: None,
             sac_snapshot: None,
             silence: None,
             returns_turn: None,
@@ -825,7 +831,6 @@ impl Game {
             entered: vec![],
             in_combat: vec![],
             aura_put: false,
-            attach_to: None,
             uro_escaping: false,
             last_removed: None,
             batch: 0,

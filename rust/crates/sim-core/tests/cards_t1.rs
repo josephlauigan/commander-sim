@@ -245,7 +245,6 @@ fn three_dreams_finds_three_auras_with_different_names() {
 }
 
 #[test]
-#[ignore = "needs common.AURA (cardcode::aura_known / aura_own_fits, ported with common.py)"]
 fn light_paws_fetches_an_aura_onto_itself_when_an_aura_is_cast() {
     let mut g = table(&[LIGHT_PAWS, "seph"]);
     let lp = perm(&mut g, P0, "Light-Paws, Emperor's Voice");
@@ -286,7 +285,6 @@ fn eidolon_dies_alone_and_counts_creatures_and_auras() {
 
 /// with the size rule already on (Kor Spiritdancer), Eidolon survives and gets +1/+1 per creature and Aura
 #[test]
-#[ignore = "needs common.attached_bonus (cardcode::attached_bonus, ported with common.py) to add cardcode::self_pt"]
 fn eidolon_survives_once_the_size_rule_is_on() {
     let mut g = table(&[LIGHT_PAWS, "seph"]);
     perm(&mut g, P0, "Kor Spiritdancer");

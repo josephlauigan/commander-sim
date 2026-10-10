@@ -332,6 +332,9 @@ pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);
 pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
 pub type SpellImpFn = fn(&Game, PlayerId, CardId) -> f64;
+/// an entry of common.TOKEN_PT (tokens with data: Urza's Construct) or common.CREATURE_PT (any creature: the
+/// Banners): (g, m) -> (dp, dt)
+pub type PtFn = fn(&Game, PermId) -> (i32, i32);
 
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
@@ -426,6 +429,10 @@ pub struct CardImpl {
     pub spell_imp: Option<SpellImpFn>,
     /// a fixed value of removing it (Python's `CI.PVAL`)
     pub pval: Option<f64>,
+    /// an Aura's bonus, keywords and host rule (common.AURA; set by `impls::common::aura`)
+    pub aura: Option<&'static crate::impls::common::AuraSpec>,
+    /// a planeswalker's loyalty abilities for the walker framework (common.WALKERS; set by `impls::common::walker`)
+    pub walker: Option<&'static [crate::impls::common::WalkerAb]>,
     /// triggered-event hooks that run at once instead of going on the stack: Python's hooks without a
     /// `trigger_window` call (cardimpl `converted` is false). A bit per `Event`.
     pub at_once: u128,
@@ -440,6 +447,12 @@ impl CardImpl {
 
     pub fn runs_at_once(&self, e: Event) -> bool {
         self.at_once >> (e as u32) & 1 == 1
+    }
+
+    /// Python's `CI.live(name)` (`name in HOOKS`): the card handles an event, rather than only having a table entry
+    /// (PVAL, SPELL_PRIO, DYN_MANA, LAND_ETB ...). A live card's permanents go in `g.hooks`.
+    pub fn live(&self) -> bool {
+        EVENTS.iter().any(|&(e, _)| self.handles(e)) || self.hand_opp_cast.is_some() || self.hand_blocks.is_some()
     }
 
     /// Does the card handle `e`? (only for the events with a slot so far)
@@ -516,11 +529,15 @@ impl CardImpl {
 #[derive(Debug, Default)]
 pub struct Registry {
     by_card: Vec<Option<CardImpl>>,
+    /// common.TOKEN_PT: bonuses for tokens with data, summed (modules push theirs in `register`)
+    pub token_pt: Vec<PtFn>,
+    /// common.CREATURE_PT: bonuses for any creature while `g.selfpt` is on, summed
+    pub creature_pt: Vec<PtFn>,
 }
 
 impl Registry {
     pub fn new(db: &CardDb) -> Registry {
-        Registry { by_card: vec![None; db.len()] }
+        Registry { by_card: vec![None; db.len()], ..Registry::default() }
     }
 
     /// Register a card's code by name (Python's `@on(name, ...)`). A name not in the card database is an error, so
