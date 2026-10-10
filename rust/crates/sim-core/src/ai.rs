@@ -329,3 +329,9 @@ pub fn engine_payoff(_g: &Game, _p: PlayerId) -> bool {
 
 /// PORT(M5): ais.end_step's Sephiroth milestones (reports)
 pub fn seph_end_milestones(_g: &mut Game, _p: PlayerId) {}
+
+/// PORT(M4): the ability language's search choice (ais.tutor_pick for 'any', the deck's wish list or
+/// ais._tutor_pick_named by type). None: the interpreter takes the card it values most.
+pub fn dsl_search_pick(_g: &Game, _p: PlayerId, _f: &crate::dsl::model::Filter, _cands: &[CardId]) -> Option<CardId> {
+    None
+}

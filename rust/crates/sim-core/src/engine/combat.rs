@@ -375,7 +375,13 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
     if !rab.is_empty() && trigger_window(g, p, Some(rab[0]), "a Citizen per attacker", None)? {
         make_tokens(g, p, Tokens::new((rab.len() * atk.len()) as u32, 1))?; // Rabble Rousing: one Citizen per attacker
     }
-    // PORT(M3): DSLMOD.fire(g, 'attack', attackers=atk, defender=d, player=p, new=new)
+    if g.dsl_on {
+        g.new_attackers.clear();
+        let fired =
+            crate::dsl::Fired { attackers: atk.to_vec(), defender: Some(d), player: Some(p), ..Default::default() };
+        crate::dsl::fire(g, "attack", fired)?;
+        new.append(&mut g.new_attackers); // attacking tokens its triggers made
+    }
     new.extend(cardcode::keyword_attack(g, p, atk, d)?);
     if !g.hooks.is_empty() {
         g.new_attackers.clear();
@@ -649,7 +655,10 @@ fn resolve_combat_inner(
                 lose_life(g, d, dmg, Some(p), "combat", None)?;
                 conn.push(a);
                 *tot += dmg;
-                // PORT(M3): DSLMOD.fire(g, 'combat_damage', attacker=a, defender=d)
+                if g.dsl_on {
+                    let fired = crate::dsl::Fired { attacker: Some(a), defender: Some(d), ..Default::default() };
+                    crate::dsl::fire(g, "combat_damage", fired)?;
+                }
                 if !g.hooks.is_empty() {
                     fire_trigger(g, Event::CombatDamage, Call::CombatDamage { p, a, d, dmg })?;
                 }

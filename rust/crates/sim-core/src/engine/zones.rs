@@ -101,7 +101,9 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         {
             cardcode::add_counters(g, a, 1);
         }
-        // PORT(M3): DSLMOD.fire(g, 'draw', player=p, extra=extra)
+        if g.dsl_on {
+            crate::dsl::fire(g, "draw", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+        }
         if !g.hooks.is_empty() {
             fire_trigger(g, Event::Draw, Call::Player { p })?;
         }
@@ -292,7 +294,11 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
         }
     }
     shards_trigger(g, p, k)?;
-    // PORT(M3): DSLMOD.fire(g, 'etb', perm=x, owner=p) for each token
+    if g.dsl_on {
+        for &x in &out {
+            crate::dsl::fire(g, "etb", crate::dsl::Fired { perm: Some(x), owner: Some(p), ..Default::default() })?;
+        }
+    }
     if k > 0 && !g.hooks.is_empty() {
         fire_trigger(g, Event::TokensEnter, Call::Tokens { p, toks: out.clone() })?; // Plumecreed Mentor
     }
@@ -655,7 +661,10 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     if g.marchesa_on && creature && !token {
         cardcode::marchesa_dies(g, p, m)?;
     }
-    // PORT(M3): DSLMOD.fire(g, 'dies', perm=m, owner=p, card=m.cd, dying=m)
+    if g.dsl_on {
+        let fired = crate::dsl::Fired { perm: Some(m), owner: Some(p), dying: Some(m), ..Default::default() };
+        crate::dsl::fire(g, "dies", fired)?;
+    }
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Dies, Call::Dies { m, cause })?;
         if cause == "sac" {
@@ -880,7 +889,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let m = g.new_perm(p, Some(cd), "Token", 0, 0);
     g.enter_no += 1;
     let d = g.db.get(cd);
-    let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.dsl.is_some(), d.start_loyalty);
+    let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
     let born = g.enter_no;
     let x = g.perm_mut(m);
@@ -932,7 +941,10 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     if g.perm(m).on_bf {
         do_etb(g, p, m)?;
     }
-    // PORT(M3): DSLMOD.fire(g, 'etb', perm=m, owner=p, was_cast=was_cast)
+    if g.dsl_on && g.perm(m).on_bf {
+        let fired = crate::dsl::Fired { perm: Some(m), owner: Some(p), was_cast: how.was_cast, ..Default::default() };
+        crate::dsl::fire(g, "etb", fired)?;
+    }
     if !g.hooks.is_empty() && g.perm(m).on_bf {
         g.last_cast_etb = how.was_cast;
         let r = fire_trigger(g, Event::Etb, Call::Etb { p, m });
@@ -963,7 +975,7 @@ pub fn enter_token_copy(g: &mut Game, p: PlayerId, cd: CardId) -> Res<Option<Per
 /// the tag-driven enter effects: as it enters (etb_static), then its triggered ones on the stack (etb_once)
 pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let cd = g.perm(m).cd.unwrap();
-    if g.db.get(cd).dsl.is_some() || opp_has(g, p, Tag::Mother) {
+    if g.db.get(cd).has_dsl() || opp_has(g, p, Tag::Mother) {
         return Ok(()); // the ability language handles its abilities
     }
     let mut reps = if has(g, p, Tag::Mother) && g.db.get(cd).creature { 2 } else { 1 };
@@ -1410,7 +1422,9 @@ fn landfall_once(g: &mut Game, p: PlayerId) -> Res {
             make_tokens(g, p, Tokens { color: Some(Colors::from_letters("B")), ..Tokens::new(1, 2) })?;
         }
     }
-    // PORT(M3): DSLMOD.fire(g, 'landfall', player=p)
+    if g.dsl_on {
+        crate::dsl::fire(g, "landfall", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+    }
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Landfall, Call::Player { p })?;
     }

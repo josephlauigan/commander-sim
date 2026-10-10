@@ -227,7 +227,10 @@ fn teferis_protection_effects() {
     life::gain(&mut g, s, 5).unwrap();
     assert_eq!(g.player(s).life, 40); // life can't change
     assert!(life::prevents_damage(&g, s, Some(r))); // protection from everything
-    // PORT(M3): "until your next turn" (ais._step_start) is checked with the turn loop
+    g.active = Some(s);
+    sim_core::engine::turn::step_start(&mut g, s).unwrap(); // until your next turn
+    assert!(!g.player(s).perms.iter().any(|&m| g.perm(m).phased));
+    assert!(!(g.player(s).life_locked || g.player(s).ring_prot));
 }
 
 #[test]
@@ -293,4 +296,63 @@ fn a_pact_is_affordable_from_everything_untapped() {
     assert!(g.land(ls[0]).tapped); // the real game is untouched
     g.player_mut(P0).pact_debts.push((1, String::new()));
     assert!(!pact_affordable(&g, P0, "3UU")); // a debt already owed
+}
+
+// ------------------------------------------------------------------ Mulligan
+#[test]
+fn kept_hands() {
+    for seed in 0..40 {
+        let mut g = table(&["seph", "veyran"]);
+        let mut r = sim_core::rng::Rng::from_u64(seed);
+        sim_core::engine::turn::mulligan(&mut g, P0, &mut r);
+        let pl = g.player(P0);
+        assert_eq!(pl.hand.len() + pl.library.len(), 99); // the commander is in the command zone
+        assert!((5..=7).contains(&pl.hand.len()));
+        if pl.hand.len() == 7 && !pl.stats.contains_key("mulls") {
+            let lands = pl.hand.iter().filter(|&&c| g.db.get(c).land).count();
+            assert!((2..=5).contains(&lands));
+        }
+    }
+}
+
+// ------------------------------------------------------------------ Combat
+use sim_core::engine::combat;
+
+#[test]
+fn an_unblocked_commander_deals_commander_damage() {
+    let mut g = table(&["sauron", "veyran"]);
+    let w = perm(&mut g, P0, "Witch-king, Bringer of Ruin"); // 5/3 flying
+    g.perm_mut(w).is_cmd = true;
+    combat::resolve_combat(&mut g, P0, &[w], P1, &[]).unwrap();
+    assert_eq!(g.player(P1).life, 35);
+    assert_eq!(g.player(P1).cmd_dmg[0], 5);
+}
+
+#[test]
+fn flyers_need_flying_or_reach_to_block() {
+    let mut g = table(&["sauron", "veyran"]);
+    let blocker = perm(&mut g, P1, "Murmuring Mystic");
+    let flyer = perm(&mut g, P0, "Witch-king, Bringer of Ruin");
+    let ground = perm(&mut g, P0, "Grave Titan");
+    assert!(!combat::can_block(&g, blocker, flyer));
+    assert!(combat::can_block(&g, blocker, ground));
+}
+
+#[test]
+fn a_deathtouch_blocker_kills_a_big_attacker() {
+    let mut g = table(&["sauron", "seph"]);
+    let k = perm(&mut g, P0, "Kaervek the Merciless"); // 5/4
+    let imp = perm(&mut g, P1, "Stinkweed Imp"); // 1/2 flying, deathtouch
+    combat::resolve_combat(&mut g, P0, &[k], P1, &[]).unwrap();
+    assert!(!g.perm(k).on_bf && !g.perm(imp).on_bf);
+    assert_eq!(g.player(P1).life, 40);
+}
+
+#[test]
+fn lifelink() {
+    let mut g = table(&["seph", "veyran"]);
+    let a = perm(&mut g, P0, "Atraxa, Grand Unifier"); // 7/7 lifelink
+    g.player_mut(P0).life = 30;
+    combat::resolve_combat(&mut g, P0, &[a], P1, &[]).unwrap();
+    assert_eq!((g.player(P0).life, g.player(P1).life), (37, 33));
 }

@@ -14,7 +14,9 @@ fn every_deck_finishes_games_at_every_tier() {
             let g = play(&[me, pool[i % 5], pool[(i + 1) % 5], pool[(i + 2) % 5]], seed, false);
             assert!(g.winner.is_some() || g.players.iter().all(|q| !q.alive), "{me} vs {t}: no result");
             assert!(g.wintype.is_some());
-            assert!(g.stack.is_empty() && g.trig_queue.is_empty(), "{me} vs {t}: the game ended mid-stack");
+            assert!(g.stack.is_empty(), "{me} vs {t}: the game ended mid-stack");
+            // triggers still waiting are fine once the game is over (Python stops resolving them too)
+            assert!(g.over || g.trig_queue.is_empty(), "{me} vs {t}: triggers left waiting in a game still on");
             played += 1;
         }
     }

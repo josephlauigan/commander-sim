@@ -417,6 +417,8 @@ pub struct Player {
     pub elspeth_emblem: bool,
     /// the turn each milestone was first reached (reports: 'combo', 'engine', 'bomb_by' ...)
     pub milestone: IndexMap<Sym, u32>,
+    /// compiled activated abilities used this round: (permanent, ability) -> (round stamp, uses)
+    pub act_uses: IndexMap<(PermId, u16), (TurnStamp, u32)>,
     /// counters for reports (Python's `p.stats`)
     pub stats: IndexMap<Sym, i64>,
 }
@@ -518,6 +520,7 @@ impl Player {
             unbl_all: None,
             elspeth_emblem: false,
             milestone: IndexMap::new(),
+            act_uses: IndexMap::new(),
             stats: IndexMap::new(),
         }
     }
@@ -685,6 +688,10 @@ pub struct Game {
     pub dsl_on: bool,
     /// Jeska's Will always adds mana (the Underworld Breach line)
     pub jeska_mana: bool,
+    /// how deep the ability language's triggers are nested (MAX_DEPTH stops runaway chains)
+    pub dsl_depth: u32,
+    /// creatures with a power/toughness rule of their own (card code; Python's `g.selfpt`)
+    pub selfpt: bool,
     /// blocking creatures in the combat being resolved
     pub blocking: Vec<PermId>,
     /// a fog this turn (Spore Frog): no combat damage
@@ -786,6 +793,8 @@ impl Game {
             no_fang: false,
             dsl_on: false,
             jeska_mana: false,
+            dsl_depth: 0,
+            selfpt: false,
             blocking: vec![],
             fog: None,
             new_attackers: vec![],

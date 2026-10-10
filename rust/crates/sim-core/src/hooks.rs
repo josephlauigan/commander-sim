@@ -508,6 +508,8 @@ pub enum TrigAct {
     Hook { event: Event, call: Call },
     /// the engine's tag-driven enter effects (Python's `etb_once`)
     EtbOnce { p: PlayerId, m: PermId },
+    /// a compiled triggered ability: ability `idx` of `card` on permanent `src`, with what triggered it
+    Dsl { p: PlayerId, src: PermId, card: CardId, idx: u16, ctx: Box<crate::dsl::DslCtx> },
 }
 
 // ------------------------------------------------------------------ AI options
@@ -524,8 +526,31 @@ pub struct Opt {
 /// What an option does. Engine verbs are variants; card abilities name their card's function and arguments.
 #[derive(Debug, Clone)]
 pub enum Action {
-    Cast { card: CardId, zone: Sym },
-    Ability { src: PermId, f: AbilityFn, arg: i64 },
+    Cast {
+        card: CardId,
+        zone: Sym,
+    },
+    Ability {
+        src: PermId,
+        f: AbilityFn,
+        arg: i64,
+    },
+    /// a compiled activated ability (dsl::activate)
+    Dsl {
+        src: PermId,
+        idx: u16,
+    },
+    /// a compiled loyalty ability (dsl::use_loyalty)
+    Loyalty {
+        src: PermId,
+        idx: u16,
+    },
+    /// equip src to target for {n} (dsl::equip)
+    Equip {
+        src: PermId,
+        target: PermId,
+        n: u32,
+    },
 }
 
 /// A card ability chosen from `options`: returns whether it did anything (Python's `fn()` returning a truth value).

@@ -99,7 +99,7 @@ fn type_codes(g: &Game, c: CardId) -> Vec<char> {
 pub fn card_worth(g: &Game, p: PlayerId, c: CardId, in_gy: bool) -> f64 {
     let mut v = ai::deck_prio(g, p, c);
     let d = g.db.get(c);
-    if v <= 0.0 && d.dsl.is_some() {
+    if v <= 0.0 && d.has_dsl() {
         v = crate::dsl::card_value(g, p, c) * 10.0;
     }
     if v <= 0.0 {

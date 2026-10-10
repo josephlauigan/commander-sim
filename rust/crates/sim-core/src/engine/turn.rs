@@ -472,7 +472,9 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
     if g.over || !g.player(p).alive {
         return Ok(());
     }
-    // PORT(M3): DSLMOD.fire(g, 'upkeep', player=p)
+    if g.dsl_on {
+        crate::dsl::fire(g, "upkeep", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+    }
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Upkeep, Call::Player { p })?;
     }
@@ -629,7 +631,9 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     if g.player(p).yawg {
         yawg_cleanup(g, p);
     }
-    // PORT(M3): DSLMOD.fire(g, 'end_step', player=p)
+    if g.dsl_on {
+        crate::dsl::fire(g, "end_step", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+    }
     for m in std::mem::take(&mut g.player_mut(p).borrowed) {
         // Zealous Conscripts: control returns
         let orig = g.perm(m).orig;
@@ -760,7 +764,8 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
     Ok(())
 }
 
-fn step_start(g: &mut Game, p: PlayerId) -> Res {
+/// the start of p's turn: untap, upkeep, draw, the land drop (Python's `_step_start`)
+pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     g.active = Some(p);
     for m in &mut g.perms {
         m.eot_pt = (0, 0);

@@ -455,3 +455,19 @@ pub fn crackdown_holds(_g: &Game, _m: PermId) -> bool {
 pub fn skip_draw(_g: &Game, _p: PlayerId) -> bool {
     false
 }
+
+// ------------------------------------------------------------------ M3: the ability language's card-code calls
+/// PORT(M5): CI.attached_bonus (Auras' and Elspeth's emblem's power and toughness)
+pub fn attached_bonus(_g: &Game, _m: PermId) -> (i32, i32) {
+    (0, 0)
+}
+
+/// PORT(M5): CI.attached_kw (keywords from Auras)
+pub fn attached_kw(_g: &Game, _m: PermId, _kw: &str) -> bool {
+    false
+}
+
+/// PORT(M5): rules.ability_locked (Pithing Needle, Linvala ...)
+pub fn ability_locked(_g: &Game, _src: PermId, _p: PlayerId) -> bool {
+    false
+}

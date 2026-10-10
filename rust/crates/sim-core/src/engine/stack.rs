@@ -58,6 +58,7 @@ fn call(g: &mut Game, t: &Trigger) -> Res {
     let r = match &t.act {
         TrigAct::Hook { event, call } => run_hook(g, t.src.expect("a hook trigger has a source"), *event, call),
         TrigAct::EtbOnce { p, m } => crate::engine::zones::etb_once(g, *p, *m),
+        TrigAct::Dsl { p, src, card, idx, ctx } => crate::dsl::run_trigger(g, *p, *src, *card, *idx, ctx),
     };
     g.last_cast_etb = prev;
     r

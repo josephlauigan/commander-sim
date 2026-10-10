@@ -60,14 +60,15 @@ pub fn sac_fodder(g: &Game, p: PlayerId, what: &str, exclude: Option<PermId>) ->
 /// "As an additional cost to cast this spell, sacrifice ... / discard a card" (compiled cards). dry: can it be paid?
 /// Otherwise pay it. False when it can't be paid. Python's `additional_cost`.
 pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<bool> {
-    let texts: Vec<String> = match &g.db.get(c).dsl {
-        Some(serde_json::Value::Array(abs)) => abs
+    let texts: Vec<String> =
+        g.db.get(c)
+            .abilities
             .iter()
-            .filter(|a| a.get("type").and_then(|t| t.as_str()) == Some("additional_cost"))
-            .filter_map(|a| a.get("text").and_then(|t| t.as_str()).map(String::from))
-            .collect(),
-        _ => vec![],
-    };
+            .filter_map(|a| match a {
+                crate::dsl::model::Ability::AdditionalCost { text } => Some(text.clone()),
+                _ => None,
+            })
+            .collect();
     enum Choice {
         Land(crate::ids::LandId),
         Sac(Fodder),
@@ -259,7 +260,9 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         count_is_cast(g, p);
         magecraft(g, p, Some(c), false)?;
     }
-    // PORT(M3): DSLMOD.fire(g, 'cast', caster=p, spell=c)
+    if g.dsl_on {
+        crate::dsl::fire(g, "cast", crate::dsl::Fired { caster: Some(p), spell: Some(c), ..Default::default() })?;
+    }
     cardcode::self_cast(g, p, c)?; // "when you cast this spell" (cascade)
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Cast, Call::Cast { caster: p, c })?;
@@ -801,7 +804,7 @@ fn to_gy_or_exile(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym, ex
 fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> Res {
     let d = g.db.get(c);
     let t = d.tags.clone();
-    let (perm, has_dsl) = (d.perm, d.dsl.is_some());
+    let (perm, has_dsl) = (d.perm, d.has_dsl());
     if !perm && let Some(f) = g.registry.get(c).and_then(|i| i.resolve) {
         // hand-written spell (returns where it goes)
         let dest = f(g, p, c, ctx)?;

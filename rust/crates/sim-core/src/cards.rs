@@ -265,8 +265,8 @@ pub struct CardDef {
     pub colors: Colors,
     /// colour identity; None for the hand-tagged cards that don't record one
     pub identity: Option<Colors>,
-    /// compiled abilities, as the Python exports them; typed when the ability language is ported (M3)
-    pub dsl: Option<serde_json::Value>,
+    /// compiled abilities (the ability language), empty for a card without them
+    pub abilities: std::sync::Arc<[crate::dsl::model::Ability]>,
     pub start_loyalty: Option<i32>,
     /// Scryfall keywords, lower case
     pub kws: Box<[Box<str>]>,
@@ -299,6 +299,11 @@ impl CardDef {
 
     pub fn tag(&self, t: Tag) -> bool {
         self.tags.has(t)
+    }
+
+    /// has compiled abilities (Python's `if cd.dsl:`)
+    pub fn has_dsl(&self) -> bool {
+        !self.abilities.is_empty()
     }
 
     pub fn has_kw(&self, kw: &str) -> bool {
@@ -338,7 +343,10 @@ impl CardDef {
             bomb: r.bomb,
             colors: Colors::from_letters(&r.pips),
             identity: r.identity.as_deref().map(Colors::from_letters),
-            dsl: r.dsl.clone(),
+            abilities: match &r.dsl {
+                Some(v) => crate::dsl::model::parse(v).map_err(|e| at(format!("abilities: {e}")))?.into(),
+                None => std::sync::Arc::from(Vec::new()),
+            },
             start_loyalty,
             kws: r.kws.iter().map(|s| s.as_str().into()).collect(),
             subtypes: r.subtypes.iter().map(|s| s.as_str().into()).collect(),
