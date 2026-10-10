@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = ["crates/sim-core", "crates/sim-py", "crates/practice"]
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+publish = false
+
+[profile.release]
+debug = 1          # line tables for profiling

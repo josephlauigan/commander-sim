@@ -1,0 +1,12 @@
+[package]
+name = "sim-py"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "rust_sim"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.29.3", features = ["extension-module", "abi3-py312"] }
+sim-core = { version = "0.1.0", path = "../sim-core" }
