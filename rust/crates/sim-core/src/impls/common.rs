@@ -245,13 +245,10 @@ pub fn auras_on(g: &Game, m: PermId) -> Vec<PermId> {
     auras_on_iter(g, m).collect()
 }
 
-/// zur.LOCKS: the Auras that lock what they enchant (they don't count as m's own Auras)
-const LOCK_AURAS: [&str; 5] = ["Arrest", "Prison Sentence", "Luminous Bonds", "Bound in Silence", "Encrust"];
-
 /// engine.pval's count of m's controller's own Auras on m (common.auras_on, without zur.LOCKS)
 pub fn own_auras_on(g: &Game, m: PermId) -> usize {
     let p = owner(g, m);
-    auras_on_iter(g, m).filter(|&a| owner(g, a) == p && !LOCK_AURAS.contains(&card_name(g, a))).count()
+    auras_on_iter(g, m).filter(|&a| owner(g, a) == p && crate::impls::zur::lock_kind(card_name(g, a)).is_none()).count()
 }
 
 /// common.attached_bonus: power and toughness from Auras, Elspeth's emblem, and the card code's own rules (TOKEN_PT,

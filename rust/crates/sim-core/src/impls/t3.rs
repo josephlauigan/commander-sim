@@ -1,16 +1,15 @@
 //! Python's `cards/impl/t3.py`: Tier 3 pool decks' cards (the ones the Tier 1 and Sauron decks play so far: Chord of
 //! Calling, Elderfang Disciple, Flux Channeler, Inexorable Tide; the rest come with phase 6).
 
-use super::partials::{at_once, first_max, name_of, remove_card};
-use crate::cards::{CardDb, Types};
-use crate::engine::hooks::fire_trigger;
+use super::partials::{at_once, first_max, remove_card};
+use crate::cards::CardDb;
 use crate::engine::mana::total_mana;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::etgh;
-use crate::engine::zones::{Enter, die, discard_cards, enter, min_by, searchable};
+
+use crate::engine::zones::{Enter, discard_cards, enter, min_by, searchable};
 use crate::flow::Res;
-use crate::hooks::{Call, Event, Registry, Src};
+use crate::hooks::{Event, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
@@ -83,40 +82,6 @@ fn elderfang(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 }
 
 // ------------------------------------------------------------------ proliferate: Flux Channeler, Inexorable Tide
-/// common.proliferate, once: your permanents' +1/+1 counters and loyalty, opponents' -1/-1 counters. A copy until
-/// common.rs has it (the merge should call common's): without Tekuthal's extra proliferates or Sagas' lore counters,
-/// which no Tier 1 or Sauron deck has.
-fn proliferate(g: &mut Game, p: PlayerId) -> Res {
-    let dbl = if g.player(p).perms.iter().any(|&m| name_of(g, m) == "Doubling Season") { 2 } else { 1 };
-    for m in g.player(p).perms.clone() {
-        let x = g.perm(m);
-        if x.army || x.phased {
-            continue;
-        }
-        let walker = x.loyalty.is_some() && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER));
-        let x = g.perm_mut(m);
-        if x.plus > 0 {
-            x.plus += dbl;
-        }
-        if walker {
-            x.loyalty = x.loyalty.map(|l| l + dbl);
-        }
-    }
-    for q in g.opps(p).collect::<Vec<_>>() {
-        for m in g.player(q).perms.clone() {
-            if g.is_creature(m) && g.perm(m).plus < 0 {
-                g.perm_mut(m).plus -= 1;
-                if etgh(g, m) <= 0 {
-                    die(g, m, "sba")?;
-                }
-            }
-        }
-    }
-    if !g.hooks.is_empty() {
-        fire_trigger(g, Event::Proliferated, Call::Player { p })?;
-    }
-    Ok(())
-}
 
 /// noncreature spell: proliferate
 fn flux(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
@@ -124,7 +89,7 @@ fn flux(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         && !g.db.get(c).creature
         && trigger_window(g, caster, Some(src), "proliferate", None)?
     {
-        proliferate(g, caster)?;
+        crate::impls::common::proliferate(g, caster, 1)?;
     }
     Ok(())
 }
@@ -132,7 +97,7 @@ fn flux(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 /// every spell: proliferate
 fn tide(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
     if caster == g.perm(src).owner && trigger_window(g, caster, Some(src), "proliferate", None)? {
-        proliferate(g, caster)?;
+        crate::impls::common::proliferate(g, caster, 1)?;
     }
     Ok(())
 }

@@ -67,41 +67,6 @@ fn bottom_random(g: &mut Game, p: PlayerId, mut top: Vec<CardId>) {
     g.player_mut(p).library.splice(0..0, top);
 }
 
-/// common.proliferate, once: your permanents' +1/+1 counters and loyalty, opponents' -1/-1 counters. A copy (as
-/// t3.rs has one) until common.rs has it (the merge should call common's): without Tekuthal's extra proliferates,
-/// the counters kept in `data` or Sagas' lore counters, which no Tier 5 deck has.
-fn proliferate(g: &mut Game, p: PlayerId) -> Res {
-    let dbl = if g.player(p).perms.iter().any(|&m| cname(g, m) == "Doubling Season") { 2 } else { 1 };
-    for m in g.player(p).perms.clone() {
-        let x = g.perm(m);
-        if x.army || x.phased {
-            continue;
-        }
-        let walker = x.loyalty.is_some() && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER));
-        let x = g.perm_mut(m);
-        if x.plus > 0 {
-            x.plus += dbl;
-        }
-        if walker {
-            x.loyalty = x.loyalty.map(|l| l + dbl);
-        }
-    }
-    for q in g.opps(p).collect::<Vec<_>>() {
-        for m in g.player(q).perms.clone() {
-            if g.is_creature(m) && g.perm(m).plus < 0 {
-                g.perm_mut(m).plus -= 1;
-                if etgh(g, m) <= 0 {
-                    die(g, m, "sba")?;
-                }
-            }
-        }
-    }
-    if !g.hooks.is_empty() {
-        crate::engine::hooks::fire_trigger(g, Event::Proliferated, crate::hooks::Call::Player { p })?;
-    }
-    Ok(())
-}
-
 // ======================================================== Urza, Lord High Artificer
 /// Construct token (+1/+1 per artifact)
 fn urza(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
@@ -836,7 +801,7 @@ fn yawg_prol(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     pay(g, p, 0, "BB", false)?;
     discard_worst(g, p, 1)?;
     if ability_window(g, p, Some(src), "proliferate", None, None)? {
-        proliferate(g, p)?;
+        crate::impls::common::proliferate(g, p, 1)?;
     }
     Ok(true)
 }
