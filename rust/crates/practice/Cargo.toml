@@ -3,4 +3,14 @@ name = "practice"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+# staticlib: linked into the iPad app (ios-shell/); rlib: used by the commander-practice binary
+crate-type = ["staticlib", "rlib"]
+
+[[bin]]
+name = "commander-practice"
+path = "src/main.rs"
+
 [dependencies]
+sim-core = { version = "0.1.0", path = "../sim-core" }
+serde_json = "1.0.151"
