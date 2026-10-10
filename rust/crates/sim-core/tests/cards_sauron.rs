@@ -1,9 +1,10 @@
 //! Sauron's cards on hand-built positions: Python's tests/test_my_cards.py, classes Sauron, SauronBreach and
 //! SauronMarchesa. Each expectation comes from the card's Oracle text (quoted where the Python quotes it).
 //!
-//! Tests of cards no current decklist runs (Witch-king, Bringer of Ruin; Brush Off; Grapeshot; Lion's Eye Diamond;
-//! Laboratory Maniac) are ported but ignored: `cargo test -- --ignored` runs them. SauronMarchesa is ignored too: it
-//! needs marchesa.py's card code (Marchesa is in Jodah's list now, ported in phase 6).
+//! Some tests use cards no current decklist runs (Witch-king, Bringer of Ruin; Brush Off; Grapeshot; Lion's Eye
+//! Diamond; Laboratory Maniac): they are still in the card database, and they check branches of the Breach line, so
+//! they run. SauronMarchesa is ignored: it needs marchesa.py's card code (Marchesa is in Jodah's list now, ported in
+//! phase 6); `cargo test -- --ignored` runs it.
 
 use sim_core::ai::{act, brain, decks};
 use sim_core::engine::{cast, removal, stack, turn, values, zones};
@@ -64,7 +65,6 @@ fn kaervek() {
 }
 
 #[test]
-#[ignore = "Witch-king, Bringer of Ruin is in no current decklist"]
 fn witch_king_takes_the_least_power() {
     // "defending player sacrifices a creature with the least power among creatures they control"
     let mut g = table(&["sauron", "veyran"]);
@@ -222,7 +222,6 @@ fn kefka_transforms() {
 }
 
 #[test]
-#[ignore = "Brush Off is in no current decklist"]
 fn brush_off_is_cheaper_against_instants_and_sorceries() {
     let mut g = table(&["sauron", "veyran"]);
     let brush = hand(&mut g, P0, &["Brush Off"])[0];
@@ -329,7 +328,6 @@ fn brain_freeze_copies() {
 }
 
 #[test]
-#[ignore = "Grapeshot is in no current decklist"]
 fn grapeshot_kills_the_lowest_life_first() {
     let mut g = board(0, 2, 20);
     g.player_mut(P1).life = 3;
@@ -383,7 +381,6 @@ fn rituals_alone_run_out_of_blue() {
 }
 
 #[test]
-#[ignore = "Lion's Eye Diamond is in no current decklist"]
 fn lions_eye_diamond_makes_it_infinite() {
     // each Diamond escape ({0} plus three graveyard cards) discards the hand and makes three blue: a whole Brain
     // Freeze; from one Island and two Mountains it mills out the table, which the same lands alone can't
@@ -407,7 +404,6 @@ fn labman_board() -> Game {
 }
 
 #[test]
-#[ignore = "Laboratory Maniac is in no current decklist"]
 fn laboratory_maniac_mills_yourself_out() {
     // with Laboratory Maniac out, every Brain Freeze copy mills you; Lotus Petal escapes pay each next Brain Freeze
     // (the copies refill the graveyard), and an escaped Night's Whisper draws from the empty library to win.
@@ -424,7 +420,6 @@ fn laboratory_maniac_mills_yourself_out() {
 }
 
 #[test]
-#[ignore = "Laboratory Maniac is in no current decklist"]
 fn the_line_casts_laboratory_maniac_from_hand() {
     let mut g = board(4, 2, 60);
     lands(&mut g, P0, "Swamp", 2, false);
@@ -468,7 +463,6 @@ fn jeskas_will_never_spends_the_blue_brain_freeze_needs() {
 }
 
 #[test]
-#[ignore = "Laboratory Maniac is in no current decklist"]
 fn laboratory_maniac_turns_an_empty_draw_into_a_win() {
     let mut g = table(&["sauron", "veyran"]);
     g.player_mut(P0).library.clear();
@@ -483,7 +477,7 @@ fn laboratory_maniac_turns_an_empty_draw_into_a_win() {
 
 #[test]
 fn the_pieces_are_held_for_the_line() {
-    // (Python also checks Lion's Eye Diamond, in no current decklist: see the ignored test below)
+    // (Python also checks Lion's Eye Diamond: see the test below)
     let mut g = board(8, 8, 20);
     let cs = hand(&mut g, P0, &["Brain Freeze", "Underworld Breach"]);
     assert_eq!(decks::sauron_prio(&g, P0, cs[0]), 0);
@@ -491,7 +485,6 @@ fn the_pieces_are_held_for_the_line() {
 }
 
 #[test]
-#[ignore = "Lion's Eye Diamond is in no current decklist"]
 fn lions_eye_diamond_is_held_for_the_line() {
     let mut g = board(8, 8, 20);
     let led = hand(&mut g, P0, &["Brain Freeze", "Underworld Breach", "Lion's Eye Diamond"])[2];
