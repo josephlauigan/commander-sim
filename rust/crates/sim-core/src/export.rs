@@ -53,6 +53,11 @@ pub struct RawCard {
     pub phyrexian: String,
     /// a land's "when this land enters" effects: ("scry", n) or ("gain", n)
     pub land_etb_fx: Vec<(String, i32)>,
+    /// the condition a land enters untapped under ([kind, args...]), from its Oracle text
+    pub enters_rule: Option<Vec<serde_json::Value>>,
+    /// a land's basic land types ("island", "swamp" ...) and whether it's a basic land
+    pub land_types: Vec<String>,
+    pub basic: bool,
     /// Events the card's Python implementation handles: what has to be ported by hand.
     pub python_hooks: Vec<String>,
     pub spell_prio: bool,

@@ -126,3 +126,29 @@ pub fn token(g: &mut Game, p: PlayerId, power: i32) -> crate::ids::PermId {
 pub fn card(g: &Game, name: &str) -> CardId {
     g.db.id(name).unwrap_or_else(|| panic!("{name:?} isn't in data/cards.json"))
 }
+
+/// a seat for deck `key` (Python's `poolmode.seat_spec`)
+pub fn seat_spec(key: &str) -> crate::engine::turn::Seat {
+    let db = db();
+    let d = deck(key);
+    crate::engine::turn::Seat {
+        key: intern(&d.key),
+        name: intern(&d.name),
+        commander: db.id(&d.commander).unwrap(),
+        cards: d.cards.iter().map(|n| db.id(n).unwrap()).collect(),
+    }
+}
+
+/// a whole game with these decks seated in this order, from seed: setup, mulligans and up to 20 rounds
+pub fn play(keys: &[&str], seed: u64, trace: bool) -> Game {
+    let seats: Vec<_> = keys.iter().map(|k| seat_spec(k)).collect();
+    let settings = Arc::new(Settings::new(Profile::Loose, AiMode::Adaptive, 1.0));
+    let mut g = crate::engine::turn::setup_game(db(), registry(), settings, seed, &seats, trace);
+    crate::engine::turn::run_rounds(&mut g, 20);
+    g
+}
+
+/// the decks of a tier ('t1' ... 't5'), in file order
+pub fn tier(t: &str) -> Vec<&'static str> {
+    decks().iter().filter(|d| d.tier.as_deref() == Some(t)).map(|d| &*d.key).collect()
+}

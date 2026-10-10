@@ -118,13 +118,6 @@ pub fn wants_counter(val: f64, thr: f64, ncounters: usize) -> f64 {
     sig((val - thr + 0.5) / 0.8) * scarcity
 }
 
-/// ais.land_enters_tapped. PORT(M3): the Oracle-text rules (check lands, fast lands ...: enters_rule) and Thalia,
-/// Heretic Cathar / Archon of Emeria
-pub fn land_enters_tapped(g: &Game, _p: PlayerId, c: CardId) -> bool {
-    let t = &g.db.get(c).tags;
-    t.has(crate::tag::Tag::F) || t.has(crate::tag::Tag::T)
-}
-
 /// PORT(M4): ais.flute_pick, the card name Disruptor Flute names
 pub fn flute_pick(_g: &Game, _p: PlayerId) -> Option<CardId> {
     None
@@ -201,3 +194,138 @@ pub fn seph_fill_resolve(_g: &mut Game, _p: PlayerId, _kind: Sym, _ctx: &Ctx) ->
 pub fn seph_rean_resolve(_g: &mut Game, _p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res {
     Ok(())
 }
+
+/// brain.chump_prob: how likely d chump-blocks, by how much of its life is coming at it
+pub fn chump_prob(g: &Game, d: PlayerId, incoming: i32) -> f64 {
+    let frac = incoming as f64 / g.player(d).life.max(1) as f64;
+    sig((frac - 0.35) / 0.08)
+}
+
+/// PORT(M4): brain.choose_defender (threat, lethal, grudge, blockers, taxes, play style). Until then the fixed rule of
+/// ais.choose_defender: a player the attack can nearly kill, else the biggest threat with a little noise.
+pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
+    use crate::engine::values::{shielded, threat};
+    let mut opps: Vec<PlayerId> = g.opps(p).filter(|&q| !shielded(g, q)).collect();
+    if opps.is_empty() {
+        opps = g.opps(p).collect();
+    }
+    let my: i32 = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            g.is_creature(m) && !x.tapped && !x.noatk && !x.sick
+        })
+        .map(|&m| epow(g, m))
+        .sum();
+    let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life as f64 <= my as f64 * 0.6).collect();
+    if let Some(q) = crate::engine::zones::min_by(&lethal, |q| g.player(q).life as f64) {
+        return q;
+    }
+    let mut best: Option<(PlayerId, f64)> = None;
+    for q in opps {
+        let v = threat(g, p, q) + g.rng.random() * 3.0;
+        if best.is_none_or(|b| v > b.1) {
+            best = Some((q, v));
+        }
+    }
+    best.unwrap().0
+}
+
+/// PORT(M4): brain.filter_attackers (keep ground creatures home when the table threatens a lot of damage)
+pub fn filter_attackers(_g: &mut Game, _p: PlayerId, atk: Vec<PermId>) -> Vec<PermId> {
+    atk
+}
+
+/// PORT(M4): pool_ai.attack_filter (an outside deck's own attack rules)
+pub fn attack_filter(_g: &mut Game, _p: PlayerId, atk: Vec<PermId>, _d: PlayerId) -> Vec<PermId> {
+    atk
+}
+
+/// PORT(M4): search.choose_attack, the look-ahead's attack plan: (defender, 'filtered' | 'all' | 'none')
+pub fn choose_attack(_g: &mut Game, _p: PlayerId) -> Res<Option<(PlayerId, Sym)>> {
+    Ok(None)
+}
+
+/// PORT(M4): brain.attack_response (instant removal on a dangerous attacker)
+pub fn attack_response(_g: &mut Game, _d: PlayerId, _p: PlayerId, _atk: &[PermId]) -> Res<bool> {
+    Ok(false)
+}
+
+/// PORT(M4): brain.end_of_turn_window (instant-speed draw, flash creatures and removal before your turn)
+pub fn end_of_turn_window(_g: &mut Game, _p: PlayerId) -> Res {
+    Ok(())
+}
+
+/// PORT(M4): brain.main, the heuristic AI's main phase (with the look-ahead's choices). Until then: cast the most
+/// expensive permanent or untargeted spell that's affordable, the commander included, until nothing fits.
+pub fn main(g: &mut Game, p: PlayerId, _post: bool) -> Res {
+    use crate::engine::{cast, mana};
+    use crate::tag::Tag;
+    for _ in 0..18 {
+        if g.over || !g.player(p).alive {
+            return Ok(());
+        }
+        g.tick()?;
+        let pl = g.player(p);
+        let mut cands: Vec<(CardId, Sym)> = pl
+            .hand
+            .iter()
+            .copied()
+            .filter(|&c| {
+                let d = g.db.get(c);
+                !d.land && ![Tag::Rem, Tag::Wipe, Tag::Ctr, Tag::Rean, Tag::Fill].iter().any(|&t| d.tag(t))
+            })
+            .map(|c| (c, "hand"))
+            .collect();
+        if pl.cmd_in_zone {
+            cands.push((pl.cmd, "cmd"));
+        }
+        let mut best: Option<(CardId, Sym, u32, String)> = None;
+        for (c, zone) in cands {
+            let (gn, pips) = mana::cost_of(g, p, c);
+            if !cast::castable(g, p, c, zone) || !mana::can_pay(g, p, gn, &pips, false) {
+                continue;
+            }
+            if best.as_ref().is_none_or(|b| g.db.get(c).cmc > g.db.get(b.0).cmc) {
+                best = Some((c, zone, gn, pips));
+            }
+        }
+        let Some((c, zone, gn, pips)) = best else { return Ok(()) };
+        g.pay_for = Some(c);
+        let paid = mana::pay(g, p, gn, &pips, false);
+        g.pay_for = None;
+        if !paid? {
+            return Ok(());
+        }
+        cast::cast_card(g, p, c, zone, crate::state::Ctx::default())?;
+    }
+    Ok(())
+}
+
+/// PORT(M5): ais.combo_interrupted (an opponent stops a combo with a counter or removal)
+pub fn combo_interrupted(_g: &mut Game, _p: PlayerId, _which: &str, _key: &[PermId]) -> Res<bool> {
+    Ok(false)
+}
+
+/// PORT(M5): ais.seph_bval (Sephiroth's reanimation target value). Until then: the card's bomb rating.
+pub fn seph_bval(g: &Game, _p: PlayerId, c: CardId) -> f64 {
+    g.db.get(c).bomb as f64
+}
+
+/// PORT(M5): ais.note_bomb (Sephiroth's reports)
+pub fn note_bomb(_g: &mut Game, _p: PlayerId, _c: CardId, _was_removed: bool) {}
+
+/// PORT(M5): ais.seph_dredge (Sephiroth dredges instead of drawing)
+pub fn seph_dredge(_g: &mut Game, _p: PlayerId) -> Res<bool> {
+    Ok(false)
+}
+
+/// PORT(M5): ais.engine_payoff (Veyran's engine is online)
+pub fn engine_payoff(_g: &Game, _p: PlayerId) -> bool {
+    false
+}
+
+/// PORT(M5): ais.end_step's Sephiroth milestones (reports)
+pub fn seph_end_milestones(_g: &mut Game, _p: PlayerId) {}

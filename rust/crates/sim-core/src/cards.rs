@@ -164,6 +164,76 @@ impl Tags {
 }
 
 // ------------------------------------------------------------------ card definitions
+/// The condition a land enters untapped under (Python's `ais.enters_rule`, read from the Oracle text). Basic land
+/// types are kept as colours: Plains W, Island U, Swamp B, Mountain R, Forest G.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EnterRule {
+    /// you control a land of one of these types (check lands)
+    Control(Colors),
+    /// you control n or fewer other lands (fast lands)
+    Fewer(u32),
+    /// you control n or more other lands (slow lands)
+    More(u32),
+    /// you control n or more basic lands (battle lands)
+    Basics(u32),
+    /// you have n or more opponents (Bond lands)
+    Opponents(u32),
+    /// you control n or more other lands of this type
+    TypesMore(Colors, u32),
+    /// reveal a land card of one of these types from your hand (snarls)
+    Reveal(Colors),
+    /// you control a legendary creature
+    Legendary,
+    /// you control a planeswalker (the Annexes)
+    Planeswalker,
+    /// pay n life or it enters tapped (shock lands)
+    Pay(i32),
+}
+
+/// basic land type name -> its colour letter
+pub fn basic_type_color(t: &str) -> Option<char> {
+    Some(match t {
+        "plains" => 'W',
+        "island" => 'U',
+        "swamp" => 'B',
+        "mountain" => 'R',
+        "forest" => 'G',
+        _ => return None,
+    })
+}
+
+fn types_to_colors(v: &[serde_json::Value]) -> Colors {
+    let s: String = v.iter().filter_map(|x| x.as_str()).filter_map(basic_type_color).collect();
+    Colors::from_letters(&s)
+}
+
+impl EnterRule {
+    fn from_json(v: &[serde_json::Value]) -> Result<EnterRule, String> {
+        let kind = v.first().and_then(|x| x.as_str()).ok_or("an enters rule without a kind")?;
+        let n = |i: usize| v.get(i).and_then(|x| x.as_i64()).ok_or(format!("enters rule {kind}: no number"));
+        let types = |i: usize| match v.get(i) {
+            Some(serde_json::Value::Array(a)) => Ok(types_to_colors(a)),
+            Some(serde_json::Value::String(s)) => {
+                Ok(Colors::from_letters(&basic_type_color(s).map(String::from).unwrap_or_default()))
+            }
+            _ => Err(format!("enters rule {kind}: no types")),
+        };
+        Ok(match kind {
+            "control" => EnterRule::Control(types(1)?),
+            "fewer" => EnterRule::Fewer(n(1)? as u32),
+            "more" => EnterRule::More(n(1)? as u32),
+            "basics" => EnterRule::Basics(n(1)? as u32),
+            "opponents" => EnterRule::Opponents(n(1)? as u32),
+            "types_more" => EnterRule::TypesMore(types(1)?, n(2)? as u32),
+            "reveal" => EnterRule::Reveal(types(1)?),
+            "legendary" => EnterRule::Legendary,
+            "planeswalker" => EnterRule::Planeswalker,
+            "pay" => EnterRule::Pay(n(1)? as i32),
+            k => return Err(format!("unknown enters rule {k:?}")),
+        })
+    }
+}
+
 /// A land's "when this land enters" effect (Python's `land_etb_fx`)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LandEtb {
@@ -211,6 +281,12 @@ pub struct CardDef {
     pub phyrexian: Box<str>,
     /// a land's "when this land enters" effects
     pub land_etb_fx: Box<[LandEtb]>,
+    /// the condition a land enters untapped under, if its text has one
+    pub enters_rule: Option<EnterRule>,
+    /// a land's basic land types, as colours (Plains W ... Forest G)
+    pub land_types: Colors,
+    /// a basic land
+    pub basic: bool,
     /// events its Python implementation handles (for tracking the port; empty for cards with no hooks)
     pub python_hooks: Box<[Box<str>]>,
 }
@@ -280,6 +356,14 @@ impl CardDef {
                     _ => Err(at(format!("land enters effect {k:?}"))),
                 })
                 .collect::<Result<_, _>>()?,
+            enters_rule: match &r.enters_rule {
+                Some(v) => Some(EnterRule::from_json(v).map_err(at)?),
+                None => None,
+            },
+            land_types: Colors::from_letters(
+                &r.land_types.iter().filter_map(|t| basic_type_color(t)).collect::<String>(),
+            ),
+            basic: r.basic,
             python_hooks: r.python_hooks.iter().map(|s| s.as_str().into()).collect(),
         })
     }

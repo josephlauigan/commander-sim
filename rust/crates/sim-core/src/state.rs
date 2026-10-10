@@ -397,6 +397,26 @@ pub struct Player {
     pub to_top: bool,
     /// the permanent number (born) when this player's last turn ended
     pub last_turn_end: u32,
+    /// the graveyard at the start of this turn
+    pub gy_start: Vec<CardId>,
+    /// Glacial Chasm's age counters (cumulative upkeep)
+    pub chasm_age: i32,
+    /// suspended cards (Profane Tutor)
+    pub suspended: Vec<(CardId, u32)>,
+    /// cards playable until the end of a later turn (Prosper): (card, the turn count it lasts to)
+    pub impulse_long: Vec<(CardId, u32)>,
+    /// Erebos's draw this turn
+    pub erebos_t: Option<TurnStamp>,
+    /// no maximum hand size this turn (its turn count)
+    pub nomax_turn: Option<u32>,
+    /// turns this player skips (Ral Zarek's -7)
+    pub skip_turns: u32,
+    /// Venser, the Sojourner's -1: creatures can't be blocked this turn
+    pub unbl_all: Option<TurnStamp>,
+    /// Elspeth's emblem: creatures have flying
+    pub elspeth_emblem: bool,
+    /// the turn each milestone was first reached (reports: 'combo', 'engine', 'bomb_by' ...)
+    pub milestone: IndexMap<Sym, u32>,
     /// counters for reports (Python's `p.stats`)
     pub stats: IndexMap<Sym, i64>,
 }
@@ -488,6 +508,16 @@ impl Player {
             delayed_draws: 0,
             to_top: false,
             last_turn_end: 0,
+            gy_start: vec![],
+            chasm_age: 0,
+            suspended: vec![],
+            impulse_long: vec![],
+            erebos_t: None,
+            nomax_turn: None,
+            skip_turns: 0,
+            unbl_all: None,
+            elspeth_emblem: false,
+            milestone: IndexMap::new(),
             stats: IndexMap::new(),
         }
     }
@@ -655,6 +685,14 @@ pub struct Game {
     pub dsl_on: bool,
     /// Jeska's Will always adds mana (the Underworld Breach line)
     pub jeska_mana: bool,
+    /// blocking creatures in the combat being resolved
+    pub blocking: Vec<PermId>,
+    /// a fog this turn (Spore Frog): no combat damage
+    pub fog: Option<TurnStamp>,
+    /// attacking creatures card code made during attack triggers (Python returns them from CI.fire)
+    pub new_attackers: Vec<PermId>,
+    /// the game ran out of engine steps (a runaway loop) and was stopped
+    pub stopped: bool,
     /// a game with one player and no opponents to beat (Python's `goldfish`)
     pub goldfish: bool,
     /// Garland, Royal Kidnapper's steals are in play (Python's `g.garland`)
@@ -748,6 +786,10 @@ impl Game {
             no_fang: false,
             dsl_on: false,
             jeska_mana: false,
+            blocking: vec![],
+            fog: None,
+            new_attackers: vec![],
+            stopped: false,
             goldfish: false,
             garland: false,
             hooks: vec![],

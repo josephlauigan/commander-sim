@@ -11,13 +11,17 @@
 //! | removal.rs | removal, wipes |
 //! | tutors.rs | tutors and the Game Changer mechanics |
 //! | hooks.rs | calling card code (cardimpl.py's dispatch) |
+//! | combat.rs | ais.py: combat |
+//! | turn.rs | ais.py: lands, upkeep, end step, the turn, mulligans, a game |
 
 pub mod cast;
+pub mod combat;
 pub mod hooks;
 pub mod life;
 pub mod mana;
 pub mod removal;
 pub mod stack;
+pub mod turn;
 pub mod tutors;
 pub mod values;
 pub mod zones;

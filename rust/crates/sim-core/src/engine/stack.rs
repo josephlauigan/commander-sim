@@ -851,3 +851,29 @@ pub fn cast_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId
     pl.cast_names.insert(ctr);
     Ok(true)
 }
+
+/// Priority in a step of the turn, to each player in turn order from the active player. The AI acts here when it's
+/// attacked (instant removal on an attacker); its other instant-speed plays keep their own timing. Python's
+/// `step_priority`.
+pub fn step_priority(g: &mut Game, step: &str, defender: Option<PlayerId>, attackers: &[PermId]) -> Res {
+    let Some(a) = g.active else { return Ok(()) };
+    if g.over {
+        return Ok(());
+    }
+    let order: Vec<PlayerId> = std::iter::once(a).chain(g.after(a)).collect();
+    for q in order {
+        if !g.player(q).alive || g.over {
+            continue;
+        }
+        // HUMAN(phase 9): a person's step priority (play/human.step_priority)
+        if step == "attackers" && Some(q) == defender {
+            ai::attack_response(g, q, a, attackers)?;
+        } else if step == "combat" && q != a && g.player(q).key == "galadriel" {
+            crate::cardcode::galadriel_precombat(g, q)?; // tap the attacker it fears (Errant Doomsayers, Whipcorder)
+        }
+        if step == "combat" && q != a && !g.hooks.is_empty() {
+            crate::cardcode::opposition_precombat(g, q)?; // Opposition: tap the attackers down
+        }
+    }
+    Ok(())
+}

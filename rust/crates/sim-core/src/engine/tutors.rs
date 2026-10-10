@@ -274,7 +274,7 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res {
             pl.hand.retain(|&c| c != l);
             pl.impulse.retain(|&c| c != l);
             pl.land_turn = pl.turns as i32;
-            let tapped = ai::land_enters_tapped(g, p, l);
+            let tapped = crate::engine::turn::land_enters_tapped(g, p, l);
             g.add_land(p, l, tapped);
             landfall(g, p)?;
         }

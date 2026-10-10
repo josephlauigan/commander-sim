@@ -7,7 +7,8 @@ card in the card cache (data/scryfall_cache.json; the tests use cards no list ru
 tag), the compiled abilities (dsl), Scryfall keywords and subtypes, protection, ward, colour identity, and where
 the definition came from. `derived` repeats what the CD works out from those (land, creature, cmc, ...), so the
 Rust loader can check it computes the same. `phyrexian` is the colours of its Phyrexian mana symbols and
-`land_etb_fx` a land's "when this land enters" scry / gain life, both read from the card cache. `python_hooks` lists the events a card's Python implementation
+`land_etb_fx` a land's "when this land enters" scry / gain life, `enters_rule` the condition it enters untapped
+under (ais.enters_rule) and `land_types` / `basic` its basic land types, all read from the card cache. `python_hooks` lists the events a card's Python implementation
 handles (cards/impl/*.py), and `spell_prio` whether it has a hand-written cast priority: the work list for porting
 cards by hand.
 
@@ -59,9 +60,24 @@ def card_record(E, cd):
                     'sorcery': cd.sorcery, 'perm': cd.perm},
         'phyrexian': E.phyrexian(cd),
         'land_etb_fx': [list(x) for x in E.land_etb_fx(cd)] if cd.land else [],
+        'enters_rule': _rule(cd) if cd.land else None,
+        'land_types': sorted(_ais().land_types(cd.name)[0]) if cd.land else [],
+        'basic': _ais().land_types(cd.name)[1] if cd.land else False,
         'python_hooks': hooks,
         'spell_prio': CI is not None and cd.name in CI.SPELL_PRIO,
     }
+
+
+def _ais():
+    from commander_sim import ais
+    return ais
+
+
+def _rule(cd):
+    """ais.enters_rule as JSON: [kind, ...args], basic land types as a sorted list"""
+    r = _ais().enters_rule(cd)
+    if r is None: return None
+    return [r[0]] + [sorted(x) if isinstance(x, frozenset) else x for x in r[1:]]
 
 
 class _Seat:

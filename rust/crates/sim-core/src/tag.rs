@@ -193,6 +193,7 @@ pub enum Tag {
     Pstone,
     Pumpall,
     Pvprolif,
+    Pwdiscard,
     Rabble,
     Ral,
     Ralzarek,
@@ -274,6 +275,7 @@ pub enum Tag {
     Unc,
     Undermine,
     Unearth,
+    Upkprolif,
     Uprising,
     Vaultping,
     Verdict,
@@ -309,7 +311,7 @@ pub enum TagKind {
     Str,
 }
 
-pub const TAG_COUNT: usize = 293;
+pub const TAG_COUNT: usize = 295;
 
 /// (tag, its name in the Python code and the export, the kind of value it takes), in `Tag` order.
 pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
@@ -499,6 +501,7 @@ pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
     (Tag::Pstone, "pstone", TagKind::Flag),
     (Tag::Pumpall, "pumpall", TagKind::Int),
     (Tag::Pvprolif, "pvprolif", TagKind::Flag),
+    (Tag::Pwdiscard, "pwdiscard", TagKind::Flag),
     (Tag::Rabble, "rabble", TagKind::Flag),
     (Tag::Ral, "ral", TagKind::Flag),
     (Tag::Ralzarek, "ralzarek", TagKind::Flag),
@@ -580,6 +583,7 @@ pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
     (Tag::Unc, "unc", TagKind::Flag),
     (Tag::Undermine, "undermine", TagKind::Flag),
     (Tag::Unearth, "unearth", TagKind::Flag),
+    (Tag::Upkprolif, "upkprolif", TagKind::Flag),
     (Tag::Uprising, "uprising", TagKind::Flag),
     (Tag::Vaultping, "vaultping", TagKind::Flag),
     (Tag::Verdict, "verdict", TagKind::Flag),

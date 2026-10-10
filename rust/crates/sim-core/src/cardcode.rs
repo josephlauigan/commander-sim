@@ -258,3 +258,200 @@ pub fn apparition_note(_g: &mut Game, _src: PermId, _cd: Option<CardId>, _owner:
 pub fn combo_ready(_g: &Game, _p: PlayerId) -> bool {
     false
 }
+
+// ------------------------------------------------------------------ M3: combat and the turn
+/// PORT(M5): rules.evasion_blocked (menace-style and type-based evasion from card code)
+pub fn evasion_blocked(_g: &Game, _b: PermId, _a: PermId) -> bool {
+    false
+}
+
+/// PORT(M5): CI.granted_kw (keywords card code grants)
+pub fn granted_kw(_g: &Game, _m: PermId, _kw: &str) -> bool {
+    false
+}
+
+/// PORT(M5): mine.ring_unblockable (the Ring, level 1)
+pub fn ring_unblockable(_g: &Game, _b: PermId, _a: PermId) -> bool {
+    false
+}
+
+/// PORT(M5): mine.ring_blocked (the Ring, level 3)
+pub fn ring_blocked(_g: &Game, _p: PlayerId, _a: PermId, _b: PermId) -> bool {
+    false
+}
+
+/// PORT(M5): mine.damage_prevented (Old Fat Spider's chapter II)
+pub fn damage_prevented(_g: &Game, _m: PermId) -> bool {
+    false
+}
+
+/// PORT(M5): rules.dovin_blocked
+pub fn dovin_blocked(_g: &Game, _m: PermId) -> bool {
+    false
+}
+
+/// PORT(M5): rules2.prot_vs (protection from creatures, from Demons and Dragons)
+pub fn prot_vs(_g: &Game, _m: PermId, _from: PermId) -> bool {
+    false
+}
+
+/// PORT(M5): CI.kaldra_exile (Sword of Kaldra exiles what it damages): true if it exiled
+pub fn kaldra_exile(_g: &mut Game, _src: PermId, _m: PermId) -> Res<bool> {
+    Ok(false)
+}
+
+/// PORT(M5): mine.necromancer_attack (an attacking token copy of a graveyard creature)
+pub fn necromancer_attack(_g: &mut Game, _p: PlayerId, _m: PermId) -> Res<Vec<PermId>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): CI.keyword_attack (keyword attack triggers: annihilator, myriad ...)
+pub fn keyword_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): CI.fire(g, 'blocks', ...) hooks that change blocks
+pub fn blocks_hooks(
+    _g: &mut Game,
+    _p: PlayerId,
+    _atk: &[PermId],
+    _d: PlayerId,
+    _assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): hand_blocks, Aetherize, the defender's 'defend' hooks, land_defend, ninjutsu
+pub fn defend_hooks(
+    _g: &mut Game,
+    _p: PlayerId,
+    _atk: &[PermId],
+    _d: PlayerId,
+    _assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): Professional's Insight-style draws and emblems on combat damage
+pub fn combat_damage_cards(_g: &mut Game, _p: PlayerId, _a: PermId, _d: PlayerId, _dmg: i32) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): CI.become_monarch
+pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
+    g.monarch = Some(p);
+    Ok(())
+}
+
+/// PORT(M5): mine.ring_damage (the Ring, level 4)
+pub fn ring_damage(_g: &mut Game, _p: PlayerId, _a: PermId, _d: PlayerId) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): CI.vanguard_blocks (Defiant Vanguard)
+pub fn vanguard_blocks(_g: &mut Game, _assign: &[(PermId, PermId)]) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): rules2.forced_attackers
+pub fn forced_attackers(_g: &mut Game, _p: PlayerId, xs: Vec<PermId>, _cand0: &[PermId]) -> Res<Vec<PermId>> {
+    Ok(xs)
+}
+
+/// PORT(M5): rules2.annex_life
+pub fn annex_life(_g: &mut Game, _p: PlayerId, _d: PlayerId, xs: Vec<PermId>) -> Res<Vec<PermId>> {
+    Ok(xs)
+}
+
+/// PORT(M5): CI.fire(g, 'combat_start', p) (Helm of the Host): new attackers
+pub fn combat_start(_g: &mut Game, _p: PlayerId) -> Res<Vec<PermId>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): mine.ring_attack (the Ring, level 2)
+pub fn ring_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId]) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): CI.hand_cards(p, 'hand_attack')
+pub fn hand_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): CI.muldrotha_on
+pub fn muldrotha_on(_g: &Game, _p: PlayerId) -> bool {
+    false
+}
+
+/// PORT(M5): CI.muld_types (a permanent type Muldrotha still allows this turn)
+pub fn muld_types(_g: &Game, _p: PlayerId, _c: CardId) -> bool {
+    false
+}
+
+/// PORT(M5): CI.LAND_ETB (Bojuka Bog ...)
+pub fn land_etb(_g: &mut Game, _p: PlayerId, _l: LandId) -> Res {
+    Ok(())
+}
+
+/// PORT(M5): CI.total(g, 'extra_lands', p) (Exploration, Azusa ...)
+pub fn extra_lands(_g: &Game, _p: PlayerId) -> u32 {
+    0
+}
+
+/// PORT(M5): lands_from_top (Oracle of Mul Daya)
+pub fn lands_from_top(_g: &Game, _p: PlayerId) -> bool {
+    false
+}
+
+/// PORT(M5): lands_from_gy (Crucible of Worlds)
+pub fn lands_from_gy(_g: &Game, _p: PlayerId) -> bool {
+    false
+}
+
+port_res! {
+    /// PORT(M5): CI.turn_start
+    fn turn_start(p: PlayerId);
+    /// PORT(M5): CI.suspend_upkeep
+    fn suspend_upkeep(p: PlayerId);
+    /// PORT(M5): ais.mirror_upkeep (Panoptic Mirror)
+    fn mirror_upkeep(p: PlayerId);
+    /// PORT(M5): ais.braids_sacrifice
+    fn braids_sacrifice(p: PlayerId);
+    /// PORT(M5): mine.spider_chapter2
+    fn spider_chapter2(p: PlayerId, m: PermId);
+    /// PORT(M5): ais.necro_deliver (Necropotence's cards at the end step)
+    fn necro_deliver(p: PlayerId);
+    /// PORT(M5): ais.necro_pay
+    fn necro_pay(p: PlayerId);
+    /// PORT(M5): the delayed end-step effects: Marchesa's returns, The Eternal Wanderer, Eerie Interlude, Memory Jar
+    fn delayed_end_step(p: PlayerId);
+    /// PORT(M5): Galadriel's precombat taps
+    fn galadriel_precombat(q: PlayerId);
+    /// PORT(M5): Opposition's precombat taps
+    fn opposition_precombat(q: PlayerId);
+}
+
+port_bool! {
+    /// PORT(M5): lands.dakmor_dredge
+    fn dakmor_dredge(p: PlayerId);
+}
+
+/// PORT(M5): rules.REPLACED_TAG_ENGINES (engines whose card code replaces the tag's draw)
+pub fn replaced_tag_engine(_name: &str) -> bool {
+    false
+}
+
+/// PORT(M5): CI.crackdown_on
+pub fn crackdown_on(_g: &Game) -> bool {
+    false
+}
+
+/// PORT(M5): CI.crackdown_holds
+pub fn crackdown_holds(_g: &Game, _m: PermId) -> bool {
+    false
+}
+
+/// PORT(M5): CI.total(g, 'skip_draw', p) (Solitary Confinement)
+pub fn skip_draw(_g: &Game, _p: PlayerId) -> bool {
+    false
+}
