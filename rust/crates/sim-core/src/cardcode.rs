@@ -116,9 +116,13 @@ pub fn on_tap_perm(g: &mut Game, p: PlayerId, m: PermId, n: u32) -> crate::flow:
     }
 }
 
-/// PORT(M5): engine.SELF_COST, a card's own cost change (Draco's domain, delve)
-pub fn self_cost(_g: &Game, _p: PlayerId, _c: crate::ids::CardId) -> i32 {
-    0
+/// engine.SELF_COST, a card's own cost change: rules2's Embercleave ({1} less per attacking creature). PORT(M5):
+/// Draco's domain, delve (partials), Emry (alela).
+pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
+    match &*g.db.get(c).name {
+        "Embercleave" => crate::impls::rules2::embercleave_cost(g, p),
+        _ => 0,
+    }
 }
 
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control
@@ -594,9 +598,11 @@ pub fn annex_life(g: &mut Game, p: PlayerId, d: PlayerId, xs: Vec<PermId>) -> Re
     crate::impls::rules2::annex_life(g, p, d, xs)
 }
 
-/// PORT(M5): CI.fire(g, 'combat_start', p) (Helm of the Host): new attackers
-pub fn combat_start(_g: &mut Game, _p: PlayerId) -> Res<Vec<PermId>> {
-    Ok(vec![])
+/// CI.fire(g, 'combat_start', p) (Helm of the Host, Rionya): the new attackers its triggers made
+pub fn combat_start(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
+    g.new_attackers.clear();
+    hooks::fire_trigger(g, Event::CombatStart, crate::hooks::Call::Player { p })?;
+    Ok(std::mem::take(&mut g.new_attackers))
 }
 
 /// mine.ring_attack (the Ring, level 2)

@@ -51,6 +51,10 @@ pub enum DataKey {
     Dovin,
     /// a land made a creature by Druid Class's level 3
     DruidClass,
+    /// Mogg War Marshal's echo was dealt with ('done')
+    Echo,
+    /// Ragavan was cast for its dash cost (returned to hand at the end step)
+    Dash,
     Elk,
     Escaped,
     Exerted,
@@ -92,6 +96,8 @@ pub enum DataKey {
     Prevent,
     Prowess,
     Reflection,
+    /// a hasty token copy made by Rionya, Fire Dancer (exiled at the end step)
+    Rionya,
     Ruin,
     Serenity,
     Stolen,
@@ -450,6 +456,22 @@ pub struct Player {
     pub yawg_loop: Option<u32>,
     /// Sunfall's Incubator: its +1/+1 counters (0: none)
     pub incubator: i32,
+    /// Legion Loyalist's battalion this turn: tokens can't block this player's creatures (rules.evasion_blocked)
+    pub loyalist_turn: Option<TurnStamp>,
+    /// Embercleave: the turn this player last attacked, and with what (rules2: its cost is {1} less per attacker)
+    pub attacking: Option<TurnStamp>,
+    pub attackers: Vec<PermId>,
+    /// Valakut Exploration: the cards it exiled this turn (held in hand until the end step)
+    pub valakut_cards: Vec<CardId>,
+    /// Charming Prince (and Oath of Teferi's partials code): permanents exiled until the end step
+    pub oath_return: Vec<CardId>,
+    /// once-a-turn pumps: Battle Cry Goblin, Purphoros
+    pub bcg_turn: Option<TurnStamp>,
+    pub purph_turn: Option<TurnStamp>,
+    /// Glimpse of Nature: the turn it was cast (Python keeps the turn in `p.glimpse`; `glimpse` stays the flag)
+    pub glimpse_turn: Option<TurnStamp>,
+    /// Bloodchief's Thirst: the last one this player cast was kicked (rules.thirst_cast records it for the resolve)
+    pub thirst_kicked: bool,
 }
 
 impl Player {
@@ -560,6 +582,15 @@ impl Player {
             combo_turn: None,
             yawg_loop: None,
             incubator: 0,
+            loyalist_turn: None,
+            attacking: None,
+            attackers: vec![],
+            valakut_cards: vec![],
+            oath_return: vec![],
+            bcg_turn: None,
+            purph_turn: None,
+            glimpse_turn: None,
+            thirst_kicked: false,
             stats: IndexMap::new(),
         }
     }
@@ -802,6 +833,8 @@ pub struct Game {
     pub combo_spell: bool,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
+    /// how deep Chatterfang's Squirrels for artifact tokens are nested (t3: a token loop stops at 10)
+    pub chatter_depth: u32,
 }
 
 impl Game {
@@ -896,6 +929,7 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             lattice_lock: None,
+            chatter_depth: 0,
         }
     }
 

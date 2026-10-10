@@ -288,8 +288,9 @@ pub type TokenCreatedFn = fn(&mut Game, Src, PlayerId, &[Sym], i32) -> Res;
 pub type Assign = Vec<(PermId, PermId)>;
 /// blocks(g, src, p, atk, d, assign): d's blockers are declared against p's attackers; may change the blocks
 pub type BlocksFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
-/// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize)
-pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
+/// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize; The Wandering
+/// Emperor takes the attacker it exiles out of `atk`)
+pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
 /// land_defend(g, land, d, p, atk, assign): a land of defender d's answers p's attack (Kor Haven: an attacker taken
 /// out of `atk` deals no combat damage)
 pub type LandDefendFn = fn(&mut Game, crate::ids::LandId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
@@ -329,6 +330,10 @@ pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::C
 /// SELF_PT(g, p, m): a creature's own power/toughness rule (Kor Spiritdancer: +2/+2 per Aura on it): Python's
 /// `common.SELF_PT`
 pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);
+/// combat_start(g, src, p): the beginning of p's combat (Helm of the Host); returns new attacking creatures
+pub type CombatStartFn = fn(&mut Game, Src, PlayerId) -> Res<Vec<PermId>>;
+/// cards_to_gy(g, src, p, cards): these cards of p's are going to the graveyard (milled, discarded)
+pub type CardsToGyFn = fn(&mut Game, Src, PlayerId, &[CardId]) -> Res;
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
 pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
@@ -410,6 +415,12 @@ pub struct CardImpl {
     pub defend: Option<DefendFn>,
     /// skip_draw(g, src, p): p skips its draw step (Solitary Confinement): a count over the hooked permanents
     pub skip_draw: Option<PlayerCountFn>,
+    /// crew(g, src, p): p's first combat, before attackers (Esika's Chariot crews): not a trigger, run at once
+    pub crew: Option<PlayerFn>,
+    pub combat_start: Option<CombatStartFn>,
+    pub cards_to_gy: Option<CardsToGyFn>,
+    /// proliferate_extra(g, src, p): extra proliferates for p (Tekuthal): a count over the hooked permanents
+    pub proliferate_extra: Option<PlayerCountFn>,
     // Python's per-card tables (CI.SELF_CAST, AS_ENTERS, SELF_REGEN, ON_TAP, DYN_MANA, LAND_ETB, LAND_COLS)
     pub self_cast: Option<SelfCastFn>,
     pub as_enters: Option<AsEntersFn>,
@@ -521,6 +532,10 @@ impl CardImpl {
             Event::Defend => self.defend.is_some(),
             Event::SkipDraw => self.skip_draw.is_some(),
             Event::Rebound => self.rebound.is_some(),
+            Event::Crew => self.crew.is_some(),
+            Event::CombatStart => self.combat_start.is_some(),
+            Event::CardsToGy => self.cards_to_gy.is_some(),
+            Event::ProliferateExtra => self.proliferate_extra.is_some(),
             _ => false,
         }
     }

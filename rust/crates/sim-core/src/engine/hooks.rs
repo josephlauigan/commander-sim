@@ -57,6 +57,7 @@ pub fn total_count(g: &Game, e: Event, p: PlayerId) -> i32 {
                 Event::ExtraLands => imp.extra_lands,
                 Event::LandsFromGy => imp.lands_from_gy,
                 Event::LandsFromTop => imp.lands_from_top,
+                Event::ProliferateExtra => imp.proliferate_extra,
                 _ => panic!("{e:?} is not a count event"),
             };
             (f.unwrap())(g, *src, p)
@@ -209,6 +210,15 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (Event::TokenCreated, Call::ArtifactTokens { p, kinds, n }) => {
             imp.token_created.map_or(Ok(()), |f| f(g, src, *p, kinds, *n))
         }
+        (Event::Crew, Call::Player { p }) => imp.crew.map_or(Ok(()), |f| f(g, src, *p)),
+        (Event::CombatStart, Call::Player { p }) => {
+            // the attacking tokens it made join the attack (cardcode::combat_start collects g.new_attackers)
+            let Some(f) = imp.combat_start else { return Ok(()) };
+            let made = f(g, src, *p)?;
+            g.new_attackers.extend(made);
+            Ok(())
+        }
+        (Event::CardsToGy, Call::Cards { p, cards }) => imp.cards_to_gy.map_or(Ok(()), |f| f(g, src, *p, cards)),
         (e, c) => panic!("hook call {e:?} with {c:?}: no such pairing"),
     }
 }

@@ -1,21 +1,30 @@
 //! Python's `cards/impl/rules.py`: rules the pool cards were approximating, made exact (mana sources, counter
 //! interactions, removal restrictions and taxes, "becomes a 3/3" effects, Council's Judgment's vote, Fact or Fiction's
-//! split, ability locks, emblems, and single-card clauses). The Tier 1 and Sauron cards so far; the planeswalker
-//! ultimates (common's WALKERS) and the other decks' cards come with phase 6.
+//! split, ability locks, emblems, planeswalker ultimates, and single-card clauses).
+//!
+//! The ultimates rules.py appends to other modules' walkers are `WalkerAb` constants here: t3.rs's walkers list
+//! theirs; the walkers of common.py (Teferi, Hero of Dominaria), t4.py (Chandra, Torch of Defiance; Kaito Shizuki)
+//! and t5.py (Tezzeret the Seeker; Jace, Wielder of Mysteries) end their lists with `TEFERI_ULT`, `CHANDRA_ULT`,
+//! `KAITO_ULT`, `TEZZ_ULT` and `JWOM_ULT` once those modules are ported.
 
+use super::common::WalkerAb;
 use super::partials::{
-    at_once, best_opp_creature, best_opp_nonland, first_max, first_min, name_of, of_type, on, pack, remove_card, unpack,
+    at_once, best_opp_creature, best_opp_nonland, eot_kw, first_max, first_min, name_of, of_type, on, pack,
+    remove_card, unpack,
 };
+use super::t3::{card_is, controls, eot, live_creatures, sort_desc, top_threat};
 use crate::cards::{CardDb, Colors, Types};
+use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{colors_of, equipped, etgh, has_type, pval, shielded, threat};
+use crate::engine::values::{colors_of, epow, equipped, etgh, has_type, pval, shielded, threat};
 use crate::engine::zones::{
-    Enter, Tokens, Zone, die, draw, enter, exile_perm, leave, make_tokens, max_by, min_by, searchable, to_zone_card,
+    Enter, Tokens, Zone, add_treasure, die, discard_cards, draw, enter, exile_perm, leave, make_tokens, max_by, min_by,
+    searchable, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
@@ -410,9 +419,8 @@ fn tithe_afterlife(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
     Ok(())
 }
 
-/// rules.evasion_blocked: extra blocking restrictions: fear, Amrou Seekers, Signal Pest, intimidate, protection from
-/// creature types. Legion Loyalist's battalion (tokens can't block) comes with its attack hook in phase 6: nothing
-/// sets `loyalist_turn` before then.
+/// rules.evasion_blocked: extra blocking restrictions: fear, Amrou Seekers, Signal Pest, Legion Loyalist's battalion
+/// (tokens can't block), intimidate, protection from creature types
 pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     if g.perm(a).cd.is_none() {
         return false;
@@ -429,6 +437,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
             }
         }
         _ => {}
+    }
+    if g.perm(b).token && g.player(g.perm(a).owner).loyalist_turn == Some(g.turn_stamp()) {
+        return true; // Legion Loyalist
     }
     if equipped(g, a, Tag::Nim) && !art_or('B') {
         return true; // intimidate
@@ -493,17 +504,688 @@ fn bats_make(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) -> Res
     Ok(())
 }
 
-/// Bloodchief's Thirst: kicked only when needed. Python reads `p.thirst_kicked`, which nothing sets, so a target with
-/// mana value 3 or more (chosen when the kicker mana is there) is never destroyed.
+/// Bloodchief's Thirst as it's cast (a SELF_CAST hook): is it kicked? Bloodchief's Thirst is {B} with kicker {2}{B};
+/// the engine stores it at the cost the AI always pays, {2}{B}{B}: the {B} and the kicker. The removal code aims it
+/// at a creature or planeswalker with mana value 3 or more only when that mana is there (engine/removal.rs
+/// legal_targets), and the AI pays it whatever the target, so the kick is taken exactly when the target needs it:
+/// recorded here for the resolve. HUMAN(phase 9): a person pays the printed {B}, and the kicker only for such a
+/// target (play/legal.target_extra_cost).
+fn thirst_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    let target = g.cur_cast.as_ref().filter(|x| x.0 == c).and_then(|x| x.1.target);
+    let needs = target.is_some_and(|t| g.perm(t).cd.is_some_and(|x| g.db.get(x).cmc > 2));
+    g.player_mut(p).thirst_kicked = needs;
+    Ok(())
+}
+
+/// Bloodchief's Thirst: destroys a creature or planeswalker with mana value 2 or less, or anything when kicked
+/// (kicked when the target needs it and the mana is there).
+/// Fix (Rust only): Python reads `getattr(p, 'thirst_kicked', False)`, which nothing sets, so a target with mana value
+/// 3 or more (chosen only when the kicker mana is there, and paid for) was never destroyed. The kick is recorded by
+/// `thirst_cast` as it's cast.
 fn thirst(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) else { return Ok("gy") };
     let mv = g.perm(t).cd.map_or(0, |x| g.db.get(x).cmc);
-    let kicked = false; // getattr(p, 'thirst_kicked', False)
+    let kicked = g.player(p).thirst_kicked;
     if mv > 2 && !kicked {
         return Ok("gy");
     }
     apply_removal(g, Some(p), t, "destroy", Some(c))?;
     Ok("gy")
+}
+
+// ================================================================== more mana sources
+/// Mox Amber: mana only while you control a legendary creature or planeswalker
+fn moxamber(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+    g.player(p).perms.iter().any(|&x| {
+        let y = g.perm(x);
+        y.cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg))
+            && (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER))
+            && !y.phased
+    }) as u32
+}
+
+/// Mox Opal: metalcraft: mana only with three or more artifacts
+fn moxopal(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+    let n = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&x| card_is(g, x, Types::ARTIFACT) || (g.perm(x).token && g.perm(x).ttypes.contains(&"artifact")))
+        .count();
+    (n >= 3) as u32
+}
+
+/// Sanctum Weaver: {T}: X mana of one colour, X = enchantments you control
+fn sanctum_weaver(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+    g.player(p).perms.iter().filter(|&&x| card_is(g, x, Types::ENCHANTMENT) && !g.perm(x).phased).count() as u32
+}
+
+/// Goldspan Dragon: a Treasure when it attacks
+fn goldspan_atk(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if p == g.perm(src).owner && atk.contains(&src) && trigger_window(g, p, Some(src), "create a Treasure", None)? {
+        add_treasure(g, p, 1)?;
+    }
+    Ok(vec![])
+}
+
+/// Goldspan Dragon: your Treasures tap for two mana
+fn goldspan_bonus(g: &Game, src: Src, p: PlayerId) -> i32 {
+    (p == g.perm(src).owner) as i32
+}
+
+// ================================================================== Mystic Remora
+/// draws when an opponent casts a noncreature spell unless they can spare {4}
+fn remora(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let o = g.perm(src).owner;
+    let d = g.db.get(c);
+    if caster == o || d.creature || d.land {
+        return Ok(());
+    }
+    let name = format!("draw a card unless {} pays {{4}}", pname(g, caster));
+    if !trigger_window(g, o, Some(src), &name, None)? {
+        return Ok(());
+    }
+    // HUMAN(phase 9): a person decides whether to pay (hc.pay_tax)
+    if crate::cardcode::spare_after(g, caster, 4) {
+        pay(g, caster, 4, "", false)?;
+        return Ok(());
+    }
+    draw(g, o, 1, false)
+}
+
+/// cumulative upkeep {1} (kept three turns)
+fn remora_age(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != g.perm(src).owner || !trigger_window(g, p, Some(src), "cumulative upkeep {1}", None)? {
+        return Ok(());
+    }
+    let age = g.perm(src).data.int(DataKey::Age) + 1;
+    g.perm_mut(src).data.set(DataKey::Age, Val::Int(age));
+    // HUMAN(phase 9): a person pays the cumulative upkeep, or sacrifices it
+    if age <= 3 && can_pay(g, p, age as u32, "", false) {
+        pay(g, p, age as u32, "", false)?;
+    } else {
+        crate::glog!(g, "    {} sacrifices Mystic Remora (cumulative upkeep {})", pname(g, p), age);
+        leave(g, src)?;
+        to_zone_card(g, src, Zone::Gy);
+    }
+    Ok(())
+}
+
+// ================================================================== planeswalker ultimates and emblems
+/// rules.give_emblem
+pub fn give_emblem(g: &mut Game, p: PlayerId, kind: Sym) {
+    let e = &mut g.player_mut(p).emblems;
+    if !e.contains(&kind) {
+        e.push(kind);
+    }
+}
+
+/// Chandra, Torch of Defiance -7: emblem (5 damage per spell you cast). For t4's walker list.
+pub const CHANDRA_ULT: WalkerAb = WalkerAb {
+    delta: -7,
+    label: "emblem",
+    val: |_, _, _| Some(9.0),
+    eff: |g, p, _| {
+        give_emblem(g, p, "chandra");
+        Ok(())
+    },
+};
+
+/// Vraska, Golgari Queen -9: emblem (combat damage makes a player lose)
+pub const VRASKA_ULT: WalkerAb = WalkerAb {
+    delta: -9,
+    label: "emblem",
+    val: |_, _, _| Some(12.0),
+    eff: |g, p, _| {
+        give_emblem(g, p, "vraska");
+        Ok(())
+    },
+};
+
+/// Teferi, Hero of Dominaria -8: emblem (exile an opposing permanent whenever you draw). For common's walker list.
+pub const TEFERI_ULT: WalkerAb = WalkerAb {
+    delta: -8,
+    label: "emblem",
+    val: |_, _, _| Some(10.0),
+    eff: |g, p, _| {
+        give_emblem(g, p, "teferi");
+        Ok(())
+    },
+};
+
+/// Kaito Shizuki -7: emblem (combat damage puts a creature from your library onto the battlefield). For t4's list.
+pub const KAITO_ULT: WalkerAb = WalkerAb {
+    delta: -7,
+    label: "emblem",
+    val: |_, _, _| Some(8.0),
+    eff: |g, p, _| {
+        give_emblem(g, p, "kaito");
+        Ok(())
+    },
+};
+
+/// Tamiyo, Field Researcher -7: draw three and cast spells from hand for free
+fn tamiyo_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    draw(g, p, 3, false)?;
+    give_emblem(g, p, "tamiyo");
+    Ok(())
+}
+
+pub const TAMIYO_ULT: WalkerAb =
+    WalkerAb { delta: -7, label: "draw three and emblem", val: |_, _, _| Some(10.0), eff: tamiyo_ult };
+
+/// Liliana of the Veil -6: the opponent with the most on the table splits it into two piles (alternating by value);
+/// it keeps the better pile and sacrifices the rest
+fn lotv_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let Some(q) = max_by(&opps, |q| g.player(q).perms.iter().map(|&m| pval(g, m)).psum()) else { return Ok(()) };
+    let mut ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
+    sort_desc(&mut ps, |m| pval(g, m));
+    let a: Vec<PermId> = ps.iter().copied().step_by(2).collect();
+    let b: Vec<PermId> = ps.iter().copied().skip(1).step_by(2).collect();
+    let keep = if a.iter().map(|&m| pval(g, m)).psum() >= b.iter().map(|&m| pval(g, m)).psum() { a } else { b };
+    for m in ps {
+        if !keep.contains(&m) && controls(g, q, m) {
+            die(g, m, "sac")?;
+        }
+    }
+    Ok(())
+}
+
+pub const LOTV_ULT: WalkerAb =
+    WalkerAb { delta: -6, label: "split permanents", val: |g, p, _| g.opps(p).next().map(|_| 8.0), eff: lotv_ult };
+
+/// the first letter of a card's type line as the engine stores it (Python's `m.cd.types[0]`): the stored codes put a
+/// land first, then an artifact ('LA', 'LE', 'AP'); the creatures are keyed apart
+fn first_type(g: &Game, m: PermId) -> char {
+    let Some(c) = g.perm(m).cd else { return 'T' };
+    let t = g.db.get(c).types;
+    [
+        (Types::LAND, 'L'),
+        (Types::ARTIFACT, 'A'),
+        (Types::ENCHANTMENT, 'E'),
+        (Types::PLANESWALKER, 'P'),
+        (Types::CREATURE, 'C'),
+        (Types::INSTANT, 'I'),
+        (Types::SORCERY, 'S'),
+    ]
+    .iter()
+    .find(|x| t.has(x.0))
+    .map_or('T', |x| x.1)
+}
+
+/// Liliana, Dreadhorde General -9: each opponent keeps one permanent of each type (and one land)
+fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let mut ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
+        sort_desc(&mut ps, |m| pval(g, m));
+        let mut keep: Vec<(char, PermId)> = vec![];
+        for m in ps {
+            let k = if g.is_creature(m) { 'C' } else { first_type(g, m) };
+            if !keep.iter().any(|x| x.0 == k) {
+                keep.push((k, m));
+            }
+        }
+        for m in g.player(q).perms.clone() {
+            if !keep.iter().any(|x| x.1 == m) {
+                die(g, m, "sac")?;
+            }
+        }
+        let lands = g.player(q).lands.clone();
+        if lands.len() > 1 {
+            let amt = |l: crate::ids::LandId| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1);
+            let best = first_max(&lands, amt).unwrap();
+            for l in lands {
+                if l != best {
+                    crate::engine::turn::remove_land(g, q, l);
+                    let cd = g.land(l).cd;
+                    g.player_mut(q).gy.push(cd);
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+pub const LDG_ULT: WalkerAb =
+    WalkerAb { delta: -9, label: "each opponent keeps one of each type", val: |_, _, _| Some(12.0), eff: ldg_ult };
+
+/// Jace, the Mind Sculptor -12: the most threatening opponent's library is exiled; its hand becomes its library
+fn jtms_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let Some(q) = top_threat(g, p) else { return Ok(()) };
+    let pl = g.player_mut(q);
+    let lib = std::mem::take(&mut pl.library);
+    pl.exile.extend(lib);
+    pl.library = std::mem::take(&mut pl.hand);
+    shuffle_library(g, q);
+    crate::glog!(g, "    Jace exiles {}'s library", pname(g, q));
+    Ok(())
+}
+
+pub const JTMS_ULT: WalkerAb =
+    WalkerAb { delta: -12, label: "exile a library", val: |_, _, _| Some(10.0), eff: jtms_ult };
+
+/// Karn Liberated -14: restart the game with Karn's exiled cards (read as a win)
+fn karn_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    crate::glog!(g, "    Karn Liberated restarts the game");
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let pl = g.player_mut(q);
+        pl.life = 0;
+        pl.last_src = Some(p);
+    }
+    check_state(g)
+}
+
+pub const KARN_ULT: WalkerAb =
+    WalkerAb { delta: -14, label: "restart the game", val: |_, _, _| Some(15.0), eff: karn_ult };
+
+/// rules._ugin_ult: Ugin, the Spirit Dragon -10: gain 7, draw 7, then up to seven permanents from hand onto the
+/// battlefield, the best first (one an earlier one's enter trigger made you discard is skipped)
+pub fn ugin_ult(g: &mut Game, p: PlayerId, _src: Option<PermId>) -> Res {
+    gain(g, p, 7)?;
+    draw(g, p, 7, false)?;
+    let mut cs: Vec<CardId> =
+        g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).perm && !g.db.get(c).land).collect();
+    sort_desc(&mut cs, |c| card_worth(g, p, c, false));
+    for c in cs.into_iter().take(7) {
+        if !remove_card(&mut g.player_mut(p).hand, c) {
+            continue; // an earlier one's enter trigger made you discard it
+        }
+        enter(g, p, c, Enter::default())?;
+    }
+    Ok(())
+}
+
+pub const UGIN_ULT: WalkerAb = WalkerAb {
+    delta: -10,
+    label: "gain 7, draw 7, put 7 permanents",
+    val: |_, _, _| Some(12.0),
+    eff: |g, p, src| ugin_ult(g, p, Some(src)),
+};
+
+/// Nissa, Who Shakes the World -8: every Forest from the library onto the battlefield tapped (the emblem, lands
+/// indestructible, is recorded in Python as `p.nissa_emblem`, which nothing reads)
+fn nissa_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let forests: Vec<CardId> = searchable(g, p)
+        .into_iter()
+        .filter(|&c| {
+            let d = g.db.get(c);
+            d.land && (&*d.name == "Forest" || d.has_subtype("forest"))
+        })
+        .collect();
+    for c in forests {
+        remove_card(&mut g.player_mut(p).library, c);
+        g.add_land(p, c, true);
+    }
+    shuffle_library(g, p);
+    Ok(())
+}
+
+pub const NISSA_ULT: WalkerAb =
+    WalkerAb { delta: -8, label: "emblem and Forests", val: |_, _, _| Some(8.0), eff: nissa_ult };
+
+/// Tezzeret the Seeker -5: your artifacts become 5/5 creatures (Python sets `p.tezz_turn`, which nothing reads, so
+/// they stay creatures)
+fn tezz_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    for m in g.player(p).perms.clone() {
+        if card_is(g, m, Types::ARTIFACT) || (g.perm(m).token && g.perm(m).ttypes.contains(&"artifact")) {
+            let x = g.perm_mut(m);
+            x.data.set(DataKey::Anim, Val::Bool(true));
+            (x.pow, x.tgh) = (5, 5);
+            x.sick = false;
+        }
+    }
+    Ok(())
+}
+
+/// For t5's walker list.
+pub const TEZZ_ULT: WalkerAb = WalkerAb {
+    delta: -5,
+    label: "artifacts become 5/5",
+    val: |g, p, src| {
+        let n = g.player(p).perms.iter().filter(|&&m| card_is(g, m, Types::ARTIFACT) && !g.is_creature(m)).count();
+        (g.perm(src).loyalty.unwrap_or(0) >= 5).then(|| 1.5 * n as f64)
+    },
+    eff: tezz_ult,
+};
+
+/// Jace, Wielder of Mysteries -8: draw seven; an empty library wins
+fn jwom_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    draw(g, p, 7, false)?;
+    if g.player(p).library.is_empty() {
+        crate::ai::win(g, p, "Jace", None)?;
+    }
+    Ok(())
+}
+
+/// For t5's walker list.
+pub const JWOM_ULT: WalkerAb = WalkerAb {
+    delta: -8,
+    label: "draw seven",
+    val: |g, p, _| Some(if g.player(p).library.len() <= 7 { 12.0 } else { 4.0 }),
+    eff: jwom_ult,
+};
+
+/// Oko +1, exact (rules replaces t3's vanilla 3/3): the best opposing creature becomes a 3/3 Elk with no abilities
+fn oko_elk_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    let t = best_opp_creature(g, p, |_, _| true)?;
+    (pval(g, t) >= 4.0).then(|| pval(g, t) - 2.0)
+}
+
+fn oko_elk_exact(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    if let Some(t) = best_opp_creature(g, p, |_, _| true) {
+        transform_away(g, t, "elk")?;
+    }
+    Ok(())
+}
+
+pub const OKO_ELK: WalkerAb =
+    WalkerAb { delta: 1, label: "Elk an opposing creature", val: oko_elk_val, eff: oko_elk_exact };
+
+fn oko_steal_target(g: &Game, p: PlayerId) -> Option<PermId> {
+    best_opp_creature(g, p, |g, m| epow(g, m) <= 3)
+}
+
+/// Oko -5: exchange a spare creature (or Food) for their best creature with power 3 or less (targeted: it can be
+/// answered)
+fn oko_exchange(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+    let mine: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            (x.token && x.ttypes.contains(&"food")) || (g.is_creature(m) && pval(g, m) < 2.0)
+        })
+        .collect();
+    let Some(t) = oko_steal_target(g, p) else { return Ok(()) };
+    let q = g.perm(t).owner;
+    let cd = g.perm(src).cd;
+    if crate::ai::protect_response(g, q, t, "steal", Some(p), cd)? || !controls(g, q, t) {
+        return Ok(());
+    }
+    g.player_mut(q).perms.retain(|&x| x != t);
+    g.perm_mut(t).owner = p;
+    g.player_mut(p).perms.push(t);
+    g.perm_mut(t).sick = true;
+    if let Some(&x) = mine.first() {
+        g.player_mut(p).perms.retain(|&y| y != x);
+        g.perm_mut(x).owner = q;
+        g.player_mut(q).perms.push(x);
+    }
+    g.bf_ver += 1;
+    crate::glog!(g, "    Oko exchanges control: {} takes {}", pname(g, p), g.perm(t).name);
+    Ok(())
+}
+
+pub const OKO_ULT: WalkerAb = WalkerAb {
+    delta: -5,
+    label: "exchange control",
+    val: |g, p, _| {
+        let t = oko_steal_target(g, p)?;
+        (pval(g, t) >= 5.0).then(|| pval(g, t) - 1.0)
+    },
+    eff: oko_exchange,
+};
+
+/// Dovin, Hand of Control -1: damage to and from their best creature is prevented until your next turn
+fn dovin_minus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    if let Some(t) = best_opp_creature(g, p, |_, _| true) {
+        let turns = g.player(p).turns as i64;
+        g.perm_mut(t).data.set(DataKey::Dovin, Val::List(vec![Val::Player(p), Val::Int(turns)]));
+        crate::glog!(
+            g,
+            "    Dovin: damage to and from {} is prevented until {}'s next turn",
+            g.perm(t).name,
+            pname(g, p)
+        );
+    }
+    Ok(())
+}
+
+static DOVIN: [WalkerAb; 1] = [WalkerAb {
+    delta: -1,
+    label: "prevent damage to and from a creature",
+    val: |g, p, _| {
+        let t = best_opp_creature(g, p, |_, _| true)?;
+        (pval(g, t) >= 4.0).then(|| pval(g, t) - 2.5)
+    },
+    eff: dovin_minus,
+}];
+
+/// Dovin: opponents' artifact, instant and sorcery spells cost {1} more (common._tax_spell)
+fn dovin_tax(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
+    let d = g.db.get(c);
+    if caster == g.perm(src).owner {
+        return 0;
+    }
+    (d.types.has(Types::ARTIFACT) || d.instant || d.sorcery) as i32
+}
+
+// ================================================================== more single-card clauses
+/// rules._freeze: Frost Titan taps a creature or artifact; it doesn't untap during its controller's next untap step
+fn freeze(g: &mut Game, src: PermId) -> Res {
+    let o = g.perm(src).owner;
+    let Some(t) = best_opp_nonland(g, o, |g, m| g.is_creature(m) || card_is(g, m, Types::ARTIFACT)) else {
+        return Ok(());
+    };
+    g.perm_mut(t).tapped = true;
+    g.perm_mut(t).data.set(DataKey::Frozen, Val::Int(1));
+    crate::glog!(g, "    Frost Titan taps {} (it doesn't untap next turn)", g.perm(t).name);
+    Ok(())
+}
+
+fn frost(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = g.perm(src).owner;
+    if m == src && trigger_window(g, o, Some(src), "tap a permanent", None)? {
+        freeze(g, src)?;
+    }
+    Ok(())
+}
+
+fn frost_atk(g: &mut Game, src: Src, _p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    let o = g.perm(src).owner;
+    if atk.contains(&src) && trigger_window(g, o, Some(src), "tap a permanent", None)? {
+        freeze(g, src)?;
+    }
+    Ok(vec![])
+}
+
+/// Bloodghast: haste while an opponent has 10 or less life
+fn bloodghast(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = g.perm(src).owner;
+    if m == src && g.opps(o).any(|q| g.player(q).life <= 10) {
+        g.perm_mut(src).sick = false;
+    }
+    Ok(())
+}
+
+/// Mogg War Marshal: echo is never paid (the sacrifice makes a second Goblin)
+fn mwm_echo(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p == g.perm(src).owner && g.perm(src).data.get(DataKey::Echo) != Some(&Val::Str("done")) {
+        let ok = trigger_window(g, p, Some(src), "echo: sacrifice it unless you pay", Some(1.0))?;
+        g.perm_mut(src).data.set(DataKey::Echo, Val::Str("done"));
+        if ok && controls(g, p, src) {
+            crate::glog!(g, "    {} doesn't pay echo for Mogg War Marshal", pname(g, p));
+            die(g, src, "sac")?;
+        }
+    }
+    Ok(())
+}
+
+/// Plaguecrafter: each player sacrifices a creature or planeswalker, or discards a card if they can't
+fn plague(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = g.perm(src).owner;
+    if !trigger_window(g, o, Some(src), "each player sacrifices a creature or planeswalker", Some(5.0))? {
+        return Ok(());
+    }
+    let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+    for q in alive {
+        let mut cs: Vec<PermId> = g
+            .player(q)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&x| (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER)) && !g.perm(x).phased)
+            .collect();
+        if q == o {
+            let others: Vec<PermId> = cs.iter().copied().filter(|&x| x != src).collect();
+            if !others.is_empty() {
+                cs = others;
+            }
+        }
+        if let Some(x) = min_by(&cs, |x| pval(g, x)) {
+            die(g, x, "sac")?;
+        } else if !g.player(q).hand.is_empty() {
+            discard_worst(g, q, 1)?;
+        }
+    }
+    Ok(())
+}
+
+/// Liliana's Triumph: each opponent sacrifices a creature; with a Liliana out, each discards too
+fn triumph(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let cs = live_creatures(g, q);
+        if let Some(x) = min_by(&cs, |x| pval(g, x)) {
+            die(g, x, "sac")?;
+        }
+    }
+    if g.player(p).perms.iter().any(|&m| g.perm(m).cd.is_some() && name_of(g, m).contains("Liliana")) {
+        for q in g.opps(p).collect::<Vec<_>>() {
+            if !g.player(q).hand.is_empty() {
+                discard_worst(g, q, 1)?;
+            }
+        }
+    }
+    Ok("gy")
+}
+
+/// Painful Quandary: each opponent's spell: they discard a junk card (or any card when low on life), else lose 5
+fn quandary(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
+    let o = g.perm(src).owner;
+    if caster == o {
+        return Ok(());
+    }
+    let name = format!("{} discards or loses 5 life", pname(g, caster));
+    if !trigger_window(g, o, Some(src), &name, None)? {
+        return Ok(());
+    }
+    let junk: Vec<CardId> =
+        g.player(caster).hand.iter().copied().filter(|&x| card_worth(g, caster, x, false) < 30.0).collect();
+    let life = g.player(caster).life;
+    if !junk.is_empty() && life > 10 {
+        let x = min_by(&junk, |x| card_worth(g, caster, x, false)).unwrap();
+        discard_cards(g, caster, &[x])
+    } else if !g.player(caster).hand.is_empty() && life <= 10 {
+        discard_worst(g, caster, 1)
+    } else {
+        lose_life(g, caster, 5, Some(o), "triggers", None)
+    }
+}
+
+/// Sticky Fingers: draw when the enchanted creature dies
+fn sticky_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    let o = g.perm(src).owner;
+    if g.perm(src).attached == Some(m) && trigger_window(g, o, Some(src), "draw a card", None)? {
+        draw(g, o, 1, false)?;
+    }
+    Ok(())
+}
+
+/// Reckless Fireweaver: each artifact (cast or token) entering under your control deals 1 to each opponent
+fn fireweaver(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = g.perm(src).owner;
+    if g.perm(m).owner == o
+        && m != src
+        && card_is(g, m, Types::ARTIFACT)
+        && trigger_window(g, o, Some(src), "1 damage to each opponent", None)?
+    {
+        for q in g.opps(o).collect::<Vec<_>>() {
+            lose_life(g, q, 1, Some(o), "triggers", None)?;
+        }
+    }
+    Ok(())
+}
+
+/// Legion Loyalist: battalion: attackers gain first strike and trample and can't be blocked by tokens
+fn loyalist(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if atk.contains(&src)
+        && atk.len() >= 3
+        && trigger_window(g, p, Some(src), "attackers gain first strike and trample", None)?
+    {
+        for &m in atk {
+            eot_kw(g, m, "first strike");
+            eot_kw(g, m, "trample");
+        }
+        g.player_mut(p).loyalist_turn = Some(g.turn_stamp());
+    }
+    Ok(vec![])
+}
+
+/// Moraug: creatures +1/+0 for each time they attacked this turn
+fn moraug(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if p != g.perm(src).owner {
+        return Ok(vec![]);
+    }
+    let st = g.turn_stamp();
+    for &m in atk {
+        let n = match g.perm(m).data.get(DataKey::Attacks) {
+            Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) => v.get(1).map_or(0, Val::int) + 1,
+            _ => 1,
+        };
+        g.perm_mut(m).data.set(DataKey::Attacks, Val::List(vec![Val::Stamp(st), Val::Int(n)]));
+        eot(g, m, 1, 0);
+    }
+    Ok(vec![])
+}
+
+/// Everflowing Chalice: multikicker {2} (as many kicks as the mana allows, up to three); taps for one per kick
+fn chalice(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(false) || !castable(g, p, c, "hand") {
+        return Ok(vec![]);
+    }
+    let k = (total_mana(g, p, false) / 2).min(3);
+    if k < 1 {
+        return Ok(vec![]);
+    }
+    let u = if g.player(p).turns <= 6 { 3.0 + k as f64 } else { 1.0 + k as f64 };
+    Ok(vec![Opt {
+        utility: u,
+        label: format!("Everflowing Chalice x{k}"),
+        act: Some(Action::Plan { f: chalice_go, arg: pack(c.0 as u32, k) }),
+    }])
+}
+
+fn chalice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (c, k) = unpack(arg);
+    let c = CardId(c as u16);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2 * k, "", false) {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(p).hand, c);
+    pay(g, p, 2 * k, "", false)?;
+    crate::glog!(g, "  {} casts Everflowing Chalice kicked {} times", pname(g, p), k);
+    on_cast(g, p, c)?;
+    if !counter_window(g, p, c, 2.0, vec![])? {
+        g.player_mut(p).gy.push(c);
+        return Ok(true);
+    }
+    let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
+    g.perm_mut(m).data.set(DataKey::Kicks, Val::Int(k as i64));
+    Ok(true)
+}
+
+fn chalice_mana(g: &Game, _p: PlayerId, m: PermId) -> u32 {
+    g.perm(m).data.int(DataKey::Kicks).max(0) as u32
+}
+
+fn no_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -530,6 +1212,45 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Mirkwood Bats")?;
     c.token_created = Some(bats_make);
     at_once(c, Event::TokenCreated, false);
-    r.card(db, "Bloodchief's Thirst")?.resolve = Some(thirst);
+    let c = r.card(db, "Bloodchief's Thirst")?;
+    c.resolve = Some(thirst);
+    c.self_cast = Some(thirst_cast);
+    // mana sources
+    r.card(db, "Mox Amber")?.dyn_mana_perm = Some(moxamber);
+    r.card(db, "Mox Opal")?.dyn_mana_perm = Some(moxopal);
+    let c = r.card(db, "Springleaf Drum")?;
+    c.dyn_mana_perm = Some(drum);
+    c.on_tap_perm = Some(drum_tap);
+    r.card(db, "Sanctum Weaver")?.dyn_mana_perm = Some(sanctum_weaver);
+    let c = r.card(db, "Goldspan Dragon")?;
+    c.attack = Some(goldspan_atk);
+    c.treasure_bonus = Some(goldspan_bonus);
+    let c = r.card(db, "Mystic Remora")?;
+    c.cast = Some(remora);
+    c.upkeep = Some(remora_age);
+    // Dovin
+    super::common::walker(r, db, "Dovin, Hand of Control", &DOVIN)?;
+    r.card(db, "Dovin, Hand of Control")?.cost = Some(dovin_tax);
+    // single-card clauses
+    let c = r.card(db, "Frost Titan")?;
+    c.etb = Some(frost);
+    c.attack = Some(frost_atk);
+    let c = r.card(db, "Bloodghast")?;
+    c.etb = Some(bloodghast);
+    at_once(c, Event::Etb, true);
+    r.card(db, "Mogg War Marshal")?.upkeep = Some(mwm_echo);
+    r.card(db, "Plaguecrafter")?.etb = Some(plague);
+    r.card(db, "Liliana's Triumph")?.resolve = Some(triumph);
+    r.card(db, "Painful Quandary")?.cast = Some(quandary);
+    r.card(db, "Sticky Fingers")?.dies = Some(sticky_dies);
+    r.card(db, "Reckless Fireweaver")?.etb = Some(fireweaver);
+    r.card(db, "Legion Loyalist")?.attack = Some(loyalist);
+    let c = r.card(db, "Moraug, Fury of Akoum")?;
+    c.attack = Some(moraug);
+    at_once(c, Event::Attack, true);
+    let c = r.card(db, "Everflowing Chalice")?;
+    c.hand_options = Some(chalice);
+    c.dyn_mana_perm = Some(chalice_mana);
+    c.prio = Some(no_prio);
     Ok(())
 }
