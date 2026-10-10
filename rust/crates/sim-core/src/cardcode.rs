@@ -52,10 +52,9 @@ pub fn halfling_colors(_g: &Game, _p: PlayerId) -> Option<crate::cards::Colors> 
     None
 }
 
-/// PORT(M5): mine.is_legendary (Champion's Helm's hexproof needs a legendary creature)
+/// mine.is_legendary: a legendary card, or your Ring-bearer (Champion's Helm's hexproof needs a legendary creature)
 pub fn is_legendary(g: &Game, m: PermId) -> bool {
-    use crate::tag::Tag;
-    g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg))
+    crate::impls::mine::is_legendary(g, m)
 }
 
 /// PORT(M5): CI.attached_prot, colours an Aura gives protection from
@@ -209,8 +208,6 @@ macro_rules! port_bool {
 port_res! {
     /// PORT(M5): rules.emblem_draw (emblems that trigger on draws)
     fn emblem_draw(p: PlayerId);
-    /// PORT(M5): mine.kindred_enter (Kindred Discovery draws)
-    fn kindred_enter(p: PlayerId, m: PermId);
     /// PORT(M5): rules2.chatterfang_squirrels
     fn chatterfang_squirrels(p: PlayerId, n: i32);
     /// PORT(M5): common.aura_fall (Auras on a permanent that left)
@@ -225,16 +222,10 @@ port_res! {
     fn emblem_cast(p: PlayerId, c: CardId);
     /// PORT(M5): rules2.glimpse_draw
     fn glimpse_draw(p: PlayerId, c: CardId);
-    /// PORT(M5): CI.kaervek
-    fn kaervek(q: PlayerId, p: PlayerId, c: CardId);
     /// PORT(M5): CI.muld_mark (Muldrotha's permanent types used this turn)
     fn muld_mark(p: PlayerId, kind: Sym);
-    /// PORT(M5): CI.ring_tempt (The Ring tempts you)
-    fn ring_tempt(p: PlayerId);
     /// PORT(M5): t1.tutor_named for Auras (Three Dreams)
     fn tutor_auras(p: PlayerId, k: usize);
-    /// PORT(M5): mine.proliferate_all
-    fn proliferate_all(p: PlayerId);
     /// PORT(M5): rules.transform_away (Elk, mutate, Forest Dryad)
     fn transform_away(m: PermId, kind: Sym);
     /// PORT(M5): CI.apply_lock (Arrest, Encrust ...)
@@ -254,6 +245,27 @@ port_bool! {
     fn hullbreaker_counter(q: PlayerId, c: CardId);
     /// PORT(M5): rules.veil_response
     fn veil_response(p: PlayerId, q: PlayerId, ctr: CardId);
+}
+
+/// mine.kindred_enter: Kindred Discovery draws when a creature of the named type entered without `enter` (an Orc
+/// Army)
+pub fn kindred_enter(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    crate::impls::mine::kindred_enter(g, p, m)
+}
+
+/// CI.kaervek (mine.kaervek): Kaervek the Merciless's damage, q's, for p's spell c
+pub fn kaervek(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> Res {
+    crate::impls::mine::kaervek(g, q, p, c)
+}
+
+/// CI.ring_tempt (mine.ring_tempt): the Ring tempts p
+pub fn ring_tempt(g: &mut Game, p: PlayerId) -> Res {
+    crate::impls::mine::ring_tempt(g, p)
+}
+
+/// mine.proliferate_all: proliferate everything worth it (your counters and loyalty, opponents' poison and -1/-1)
+pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
+    crate::impls::mine::proliferate_all(g, p)
 }
 
 /// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)
@@ -372,19 +384,19 @@ pub fn granted_kw(g: &Game, m: PermId, kw: &str) -> bool {
     hooks::hooked(g, Event::GrantKw).iter().any(|(src, imp)| (imp.grant_kw.unwrap())(g, *src, m, kw))
 }
 
-/// PORT(M5): mine.ring_unblockable (the Ring, level 1)
-pub fn ring_unblockable(_g: &Game, _b: PermId, _a: PermId) -> bool {
-    false
+/// mine.ring_unblockable (the Ring, level 1)
+pub fn ring_unblockable(g: &Game, b: PermId, a: PermId) -> bool {
+    crate::impls::mine::ring_unblockable(g, b, a)
 }
 
-/// PORT(M5): mine.ring_blocked (the Ring, level 3)
-pub fn ring_blocked(_g: &Game, _p: PlayerId, _a: PermId, _b: PermId) -> bool {
-    false
+/// mine.ring_blocked (the Ring, level 3)
+pub fn ring_blocked(g: &Game, p: PlayerId, a: PermId, b: PermId) -> bool {
+    crate::impls::mine::ring_blocked(g, p, a, b)
 }
 
-/// PORT(M5): mine.damage_prevented (Old Fat Spider's chapter II)
-pub fn damage_prevented(_g: &Game, _m: PermId) -> bool {
-    false
+/// mine.damage_prevented (Old Fat Spider's chapter II)
+pub fn damage_prevented(g: &Game, m: PermId) -> bool {
+    crate::impls::mine::damage_prevented(g, m)
 }
 
 /// PORT(M5): rules.dovin_blocked
@@ -402,9 +414,9 @@ pub fn kaldra_exile(_g: &mut Game, _src: PermId, _m: PermId) -> Res<bool> {
     Ok(false)
 }
 
-/// PORT(M5): mine.necromancer_attack (an attacking token copy of a graveyard creature)
-pub fn necromancer_attack(_g: &mut Game, _p: PlayerId, _m: PermId) -> Res<Vec<PermId>> {
-    Ok(vec![])
+/// mine.necromancer_attack (an attacking token copy of a graveyard creature)
+pub fn necromancer_attack(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<PermId>> {
+    crate::impls::mine::necromancer_attack(g, p, m)
 }
 
 /// PORT(M5): CI.keyword_attack (keyword attack triggers: annihilator, myriad ...)
@@ -490,9 +502,9 @@ pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
-/// PORT(M5): mine.ring_damage (the Ring, level 4)
-pub fn ring_damage(_g: &mut Game, _p: PlayerId, _a: PermId, _d: PlayerId) -> Res {
-    Ok(())
+/// mine.ring_damage (the Ring, level 4)
+pub fn ring_damage(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId) -> Res {
+    crate::impls::mine::ring_damage(g, p, a, d)
 }
 
 /// PORT(M5): CI.vanguard_blocks (Defiant Vanguard)
@@ -515,9 +527,9 @@ pub fn combat_start(_g: &mut Game, _p: PlayerId) -> Res<Vec<PermId>> {
     Ok(vec![])
 }
 
-/// PORT(M5): mine.ring_attack (the Ring, level 2)
-pub fn ring_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId]) -> Res {
-    Ok(())
+/// mine.ring_attack (the Ring, level 2)
+pub fn ring_attack(g: &mut Game, p: PlayerId, atk: &[PermId]) -> Res {
+    crate::impls::mine::ring_attack(g, p, atk)
 }
 
 /// CI.hand_cards(p, 'hand_attack'): cards in p's hand as p attacks d
@@ -566,12 +578,8 @@ pub fn lands_from_gy(g: &Game, p: PlayerId) -> bool {
 port_res! {
     /// PORT(M5): CI.suspend_upkeep
     fn suspend_upkeep(p: PlayerId);
-    /// PORT(M5): ais.mirror_upkeep (Panoptic Mirror)
-    fn mirror_upkeep(p: PlayerId);
     /// PORT(M5): ais.braids_sacrifice
     fn braids_sacrifice(p: PlayerId);
-    /// PORT(M5): mine.spider_chapter2
-    fn spider_chapter2(p: PlayerId, m: PermId);
     /// PORT(M5): ais.necro_deliver (Necropotence's cards at the end step)
     fn necro_deliver(p: PlayerId);
     /// PORT(M5): ais.necro_pay
@@ -582,6 +590,16 @@ port_res! {
     fn galadriel_precombat(q: PlayerId);
     /// PORT(M5): Opposition's precombat taps
     fn opposition_precombat(q: PlayerId);
+}
+
+/// ais.mirror_upkeep (Panoptic Mirror)
+pub fn mirror_upkeep(g: &mut Game, p: PlayerId) -> Res {
+    crate::impls::mine::mirror_upkeep(g, p)
+}
+
+/// mine.spider_chapter2
+pub fn spider_chapter2(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    crate::impls::mine::spider_chapter2(g, p, m)
 }
 
 port_bool! {
@@ -733,15 +751,14 @@ pub fn land_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Res<Vec
     Ok(vec![])
 }
 
-/// PORT(M5): ais.breach_gc_options: Underworld Breach escapes, Panoptic Mirror imprints, Lion's Eye Diamond,
-/// Bolas's Citadel
-pub fn breach_gc_options(_g: &mut Game, _p: PlayerId) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// ais.breach_gc_options: Underworld Breach escapes, Panoptic Mirror imprints, Lion's Eye Diamond, Bolas's Citadel
+pub fn breach_gc_options(g: &mut Game, p: PlayerId) -> Res<Vec<Opt>> {
+    crate::impls::mine::breach_gc_options(g, p)
 }
 
-/// PORT(M5): mine.breach_options: Sauron's Underworld Breach line
-pub fn breach_options(_g: &mut Game, _p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// mine.breach_options: Sauron's Underworld Breach line
+pub fn breach_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
+    crate::impls::mine::breach_options(g, p, post)
 }
 
 /// PORT(phase 6): mine.loop_need: the creature cards that complete one of Sephiroth's loops
