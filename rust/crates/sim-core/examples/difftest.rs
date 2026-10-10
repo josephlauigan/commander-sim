@@ -73,7 +73,12 @@ fn build(pos: &Value) -> Game {
             perm(&mut g, p, &n);
         }
         for t in s.get("tokens").and_then(Value::as_array).into_iter().flatten() {
-            token(&mut g, p, t.as_i64().unwrap() as i32);
+            // a token that dies at once (an opponent's Elesh Norn) is gone, as in Python
+            let spec = sim_core::engine::zones::Tokens {
+                sick: false,
+                ..sim_core::engine::zones::Tokens::new(1, t.as_i64().unwrap() as i32)
+            };
+            sim_core::engine::zones::make_tokens(&mut g, p, spec).unwrap();
         }
     }
     g

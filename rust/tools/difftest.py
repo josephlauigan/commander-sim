@@ -106,7 +106,7 @@ def build(pos):
         for n in s.get('perms', ()):
             perm(g, p, n)
         for t in s.get('tokens', ()):
-            token(g, p, t)
+            E.make_tokens(g, p, 1, t, None, sick=False)     # (one that dies at once, to an Elesh Norn, is gone)
     return g
 
 
@@ -246,6 +246,13 @@ def basics_only(a, b):
     return any(x['lands'] != y['lands'] for x, y in zip(a, b))
 
 
+def shuffled_only(a, b):
+    """only the library's order differs (its ends), everything else as built is the same: a search during the build
+    (Imperial Recruiter's) shuffled it, and the engines' random generators differ"""
+    return all({k: v for k, v in x.items() if k != 'ends'} == {k: v for k, v in y.items() if k != 'ends'}
+               for x, y in zip(a, b))
+
+
 def board_card_code(pos, built):
     """the card-coded permanents and lands on the battlefield (as asked for, and as Python built it)"""
     names = [n for s in pos['seats'] for n in list(s.get('perms', ())) + [ln[0] for ln in s.get('lands', ())]]
@@ -267,7 +274,8 @@ def classify(pos, py, rs):
         d = []
         diff('built', py['built'], rs['built'], d)
         cards = [n for _, a, b in d for n in involved(str(a)) + involved(str(b))]
-        cause = ('card code' if board or cards else 'random' if basics_only(py['built'], rs['built']) else 'build')
+        cause = ('card code' if board or cards else 'random' if basics_only(py['built'], rs['built'])
+                 or shuffled_only(py['built'], rs['built']) else 'build')
         return [(cause, p, a, b) for p, a, b in d]
     me = pos['decks'][pos.get('me', 0)]
     found = []

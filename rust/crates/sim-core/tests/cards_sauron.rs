@@ -644,3 +644,27 @@ fn the_ring_bearer_stays_home_when_its_loot_would_deck_sauron() {
     g.player_mut(P0).library.truncate(1);
     assert!(!mine::ring_loot_decks(&g, P0, b));
 }
+
+// ======================================================== a finished Breach line isn't offered again
+// (a Python bug, fixed in Rust only: once every opponent's library was empty, the dry run still counted the line as
+// finishing the table, and the AI kept choosing the 15.0 "Underworld Breach line" option, which did nothing, until the
+// main phase's action cap)
+
+#[test]
+fn a_finished_breach_line_is_not_offered() {
+    let mut g = board(8, 8, 20);
+    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
+    let line = |g: &mut Game| mine::breach_options(g, P0, true).unwrap().len();
+    assert_eq!(line(&mut g), 1); // the table can be milled out
+    assert!(mine::breach_line(&mut g, P0, true).unwrap());
+    assert_eq!(opp_libraries(&g), [0, 0, 0]);
+    assert!(g.players[1..].iter().all(|q| q.alive)); // they lose on their own draws
+    assert!(!mine::breach_line(&mut g, P0, false).unwrap()); // nothing left to do
+    assert_eq!(line(&mut g), 0);
+    let opts = brain::main_options(&mut g, P0, true).unwrap();
+    assert!(!opts.iter().any(|o| o.label == "Underworld Breach line"));
+    // the same with Breach still in hand and the libraries already empty
+    let mut g = board(8, 8, 0);
+    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
+    assert_eq!(line(&mut g), 0);
+}

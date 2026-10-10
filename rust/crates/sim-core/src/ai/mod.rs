@@ -21,7 +21,9 @@ pub mod decks;
 pub mod plans;
 pub mod pool;
 pub mod search;
+pub mod seph;
 pub mod topdeck;
+pub mod veyran;
 
 use crate::engine::values::epow;
 use crate::flow::Res;
@@ -584,17 +586,9 @@ pub fn tide_response(
     Ok(false)
 }
 
-/// PORT(phase 6): ais.seph_bval (Sephiroth's reanimation target value). Until then: the card's bomb rating, or a
-/// creature's power.
-pub fn seph_bval(g: &Game, _p: PlayerId, c: CardId) -> f64 {
-    let d = g.db.get(c);
-    if d.bomb != 0 {
-        d.bomb as f64
-    } else if d.creature {
-        d.pow as f64
-    } else {
-        0.0
-    }
+/// ais.seph_bval (Sephiroth's reanimation target value)
+pub fn seph_bval(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    seph::seph_bval(g, p, c)
 }
 
 /// ais.note_bomb: a bomb landed (the reports, and Sephiroth's plan turn)
@@ -618,18 +612,20 @@ pub fn note_bomb(g: &mut Game, p: PlayerId, c: CardId, was_removed: bool) {
     }
 }
 
-/// PORT(phase 6): ais.seph_dredge (Sephiroth dredges instead of drawing)
-pub fn seph_dredge(_g: &mut Game, _p: PlayerId) -> Res<bool> {
-    Ok(false)
+/// ais.seph_dredge (Sephiroth dredges instead of drawing)
+pub fn seph_dredge(g: &mut Game, p: PlayerId) -> Res<bool> {
+    seph::seph_dredge(g, p)
 }
 
-/// PORT(phase 6): ais.engine_payoff (Veyran's engine is online)
-pub fn engine_payoff(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// ais.engine_payoff (Veyran's engine is online)
+pub fn engine_payoff(g: &Game, p: PlayerId) -> bool {
+    veyran::engine_payoff(g, p)
 }
 
-/// PORT(phase 6): ais.end_step's Sephiroth milestones (reports)
-pub fn seph_end_milestones(_g: &mut Game, _p: PlayerId) {}
+/// ais.end_step's Sephiroth milestones (reports)
+pub fn seph_end_milestones(g: &mut Game, p: PlayerId) {
+    seph::end_milestones(g, p)
+}
 
 /// the ability language's search choice (dsl.py's search): for any card, ais.tutor_pick; for a card type, your
 /// deck's named list or an outside deck's wish list. None: the interpreter takes the card it values most.

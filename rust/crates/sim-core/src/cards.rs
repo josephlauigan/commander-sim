@@ -419,6 +419,7 @@ pub fn engine_made() -> Vec<RawCard> {
         spell_prio: false,
     };
     r.derived = r.compute_derived();
+    let mut out = vec![r.clone()];
     // common.POWERSTONE: `CD('Powerstone', 'A', '0', 'rock=1:C pstone')`, the token common.make_powerstone makes
     let mut ps = r.clone();
     ps.name = "Powerstone".into();
@@ -427,7 +428,18 @@ pub fn engine_made() -> Vec<RawCard> {
     ps.tags.insert("rock".to_string(), TagValue::Value("1:C".to_string()));
     ps.tags.insert("pstone".to_string(), TagValue::Flag(true));
     ps.derived = ps.compute_derived();
-    vec![r, ps]
+    out.push(ps);
+    // the back faces mine.py's prepared cards cast copies of, when the card data has no card of that name
+    // (engine.back_face: `CD(name, 'I' if instant else 'S', '0', '')`)
+    for (name, types) in [("Ancestral Recall", "I"), ("Wild Idea", "S")] {
+        let mut b = r.clone();
+        b.name = name.into();
+        b.types = types.into();
+        b.tags = indexmap::IndexMap::new();
+        b.derived = b.compute_derived();
+        out.push(b);
+    }
+    out
 }
 
 /// Corrections to exported card definitions (bugs in the Python data, fixed in Rust only). Heliod's Pilgrim: its

@@ -75,6 +75,8 @@ pub enum DataKey {
     /// a land that entered this turn ("in")
     In,
     Indestr,
+    /// Palantír of Orthanc's influence counters
+    Influence,
     /// (player, their turn count): indestructible until that player's next turn
     IndestrUntil,
     /// a token copy made by Jaxis, the Troublemaker (sacrificed at the end step)
@@ -471,6 +473,15 @@ pub struct Player {
     pub conduit_lock: Option<TurnStamp>,
     /// Oath of Teferi: the cards it exiled, back at the end step
     pub oath_return: Vec<CardId>,
+    /// Muldrotha, the Gravetide: the permanent types played from the graveyard this turn (Python's `muld_used`)
+    pub muld_used: Option<(TurnStamp, Vec<Sym>)>,
+    /// Sephiroth: the turn count a loop was last gone for (mine.run_loop)
+    pub loop_turn: Option<u32>,
+    /// Sephiroth: the turn count Tortured Existence was last used on
+    pub te_used: Option<u32>,
+    /// Sephiroth's Skullclamp: (turn count, uses that turn)
+    pub clamp_t: Option<u32>,
+    pub clamp_n: u32,
     /// Meren of Clan Nel Toth's experience counters (Python's `p.experience`)
     pub experience: i32,
     /// energy counters (Static Prison, Aether Hub)
@@ -597,6 +608,11 @@ impl Player {
             insight: None,
             conduit_lock: None,
             oath_return: vec![],
+            muld_used: None,
+            loop_turn: None,
+            te_used: None,
+            clamp_t: None,
+            clamp_n: 0,
             experience: 0,
             energy: 0,
             art_tok: None,
@@ -863,6 +879,8 @@ pub struct Game {
     pub lineage: bool,
     /// partials.coat_bonus's cache: (bf_ver, each creature's bonus), as Python's `g.coat_cache`
     pub coat_cache: std::cell::RefCell<Option<(u64, Vec<(PermId, i32)>)>>,
+    /// Return the Favor is being cast (it doesn't copy itself): Python's `g.in_rtf`
+    pub in_rtf: bool,
     /// t2.blink: how deep blinks are nested (blink chains are combos, not loops: Python's `g.blink_depth`)
     pub blink_depth: u32,
     /// how deep Consecrated Sphinx draws are nested (two Sphinxes feed each other: t4's `g.sphinx_depth`)
@@ -978,6 +996,7 @@ impl Game {
             coat: false,
             lineage: false,
             coat_cache: std::cell::RefCell::new(None),
+            in_rtf: false,
             blink_depth: 0,
             sphinx_depth: 0,
             bond_depth: 0,

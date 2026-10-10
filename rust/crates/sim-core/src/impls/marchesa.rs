@@ -113,18 +113,7 @@ pub fn marchesa_sac_worth(g: &Game, m: PermId, v: f64) -> f64 {
 }
 
 // ------------------------------------------------------------------ what re-entering is worth (sacrifice decisions)
-/// mine.ETB_VALUE (Sephiroth's table: Displacer Kitten's blink values), in Python's dict order
-const ETB_VALUE: [(Tag, f64); 9] = [
-    (Tag::Atraxa, 8.0),
-    (Tag::Archon, 6.0),
-    (Tag::Rsd, 4.0),
-    (Tag::Titan, 3.0),
-    (Tag::Witness, 2.5),
-    (Tag::Wall, 2.0),
-    (Tag::Wurm, 4.0),
-    (Tag::Bowmasters, 2.5),
-    (Tag::Skate, 3.0),
-];
+use super::mine::ETB_VALUE;
 
 /// marchesa.card_etb_value: what creature card c does for p when it enters the battlefield, on the board as it is now
 pub fn card_etb_value(g: &Game, p: PlayerId, c: Option<CardId>) -> f64 {
