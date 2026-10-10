@@ -2,9 +2,7 @@
 //! restrictions and taxes, ward from Auras, graveyard triggers, and the remaining activated abilities). The Tier 1 and
 //! Sauron cards so far; the other decks' cards come with phase 6.
 
-use super::partials::{
-    ability_window_card, at_once, auras_on, exile_fodder, first_min, name_of, on, remove_card,
-};
+use super::partials::{ability_window_card, at_once, auras_on, exile_fodder, first_min, name_of, on, remove_card};
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::lose_life;
@@ -159,11 +157,11 @@ pub fn glimpse_draw(g: &mut Game, p: PlayerId, c: CardId) -> Res {
 
 /// rules2.chatterfang_squirrels: Chatterfang makes that many 1/1 Squirrels whenever p makes tokens
 pub fn chatterfang_squirrels(g: &mut Game, p: PlayerId, n: i32) -> Res {
-    if n > 0
-        && g.player(p).perms.iter().any(|&m| !g.perm(m).phased && name_of(g, m) == "Chatterfang, Squirrel General")
+    if n > 0 && g.player(p).perms.iter().any(|&m| !g.perm(m).phased && name_of(g, m) == "Chatterfang, Squirrel General")
     {
         g.no_fang = true;
-        let spec = Tokens { color: Some(Colors::from_letters("G")), types: vec!["squirrel"], ..Tokens::new(n as u32, 1) };
+        let spec =
+            Tokens { color: Some(Colors::from_letters("G")), types: vec!["squirrel"], ..Tokens::new(n as u32, 1) };
         let r = make_tokens(g, p, spec);
         g.no_fang = false;
         r?;
@@ -214,7 +212,14 @@ pub fn hullbreaker_counter(g: &mut Game, q: PlayerId, c: CardId) -> Res<bool> {
 
 // ================================================================== Sakura-Tribe Elder: chump, then sacrifice
 /// after it blocks, it's sacrificed for a basic land
-fn ste_block(g: &mut Game, src: Src, _p: PlayerId, _atk: &[PermId], d: PlayerId, assign: &mut Vec<(PermId, PermId)>) -> Res {
+fn ste_block(
+    g: &mut Game,
+    src: Src,
+    _p: PlayerId,
+    _atk: &[PermId],
+    d: PlayerId,
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
     if g.perm(src).owner == d && assign.iter().any(|x| x.1 == src) && on(g, d, src) && g.humans.get(d).is_none() {
         die(g, src, "sac")?;
         land_ramp(g, d, 1, true)?;
@@ -302,10 +307,7 @@ pub fn seer(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
 
 /// escape {3}{B}{B}, exile four other cards: returns with two +1/+1 counters
 fn woe_escape(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false)
-        || !can_pay(g, p, 3, "BB", false)
-        || g.player(p).gy.iter().filter(|&&x| x != c).count() < 4
-    {
+    if post != Some(false) || !can_pay(g, p, 3, "BB", false) || g.player(p).gy.iter().filter(|&&x| x != c).count() < 4 {
         return Ok(vec![]);
     }
     Ok(vec![Opt {

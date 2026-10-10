@@ -4,8 +4,7 @@
 //! ultimates (common's WALKERS) and the other decks' cards come with phase 6.
 
 use super::partials::{
-    at_once, best_opp_creature, best_opp_nonland, first_max, first_min, name_of, of_type, on, pack, remove_card,
-    unpack,
+    at_once, best_opp_creature, best_opp_nonland, first_max, first_min, name_of, of_type, on, pack, remove_card, unpack,
 };
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
@@ -88,7 +87,8 @@ pub fn veil_response(g: &mut Game, p: PlayerId, _q: PlayerId, ctr: CardId) -> Re
         return Ok(false); // HUMAN(phase 9): a person casts their own Veil
     }
     let d = g.db.get(ctr);
-    let blue_black = d.pips.contains('U') || d.pips.contains('B') || matches!(&*d.name, "Force of Will" | "Force of Negation");
+    let blue_black =
+        d.pips.contains('U') || d.pips.contains('B') || matches!(&*d.name, "Force of Will" | "Force of Negation");
     if CTHRESH.contains(&g.player(p).key) || !blue_black {
         return Ok(false);
     }
@@ -388,9 +388,9 @@ pub fn dovin_blocked(g: &Game, m: PermId) -> bool {
 // ================================================================== single-card clauses
 /// Nature's Claim: its controller gains 4 life
 fn natures_claim(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let t = ctx.target.or_else(|| {
-        best_opp_nonland(g, p, |g, m| of_type(g, m, Types::ARTIFACT) || of_type(g, m, Types::ENCHANTMENT))
-    });
+    let t = ctx
+        .target
+        .or_else(|| best_opp_nonland(g, p, |g, m| of_type(g, m, Types::ARTIFACT) || of_type(g, m, Types::ENCHANTMENT)));
     if let Some(t) = t.filter(|&t| g.perm(t).on_bf) {
         let q = g.perm(t).owner;
         apply_removal(g, Some(p), t, "destroy", Some(c))?;

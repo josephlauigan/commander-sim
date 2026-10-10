@@ -44,7 +44,9 @@ pub fn best_opp_land(g: &Game, p: PlayerId) -> Option<(PlayerId, LandId)> {
     let lands: Vec<(PlayerId, LandId)> = g
         .opps(p)
         .flat_map(|q| g.player(q).lands.iter().map(move |&l| (q, l)))
-        .filter(|&(_, l)| !matches!(&*g.db.get(g.land(l).cd).name, "Plains" | "Island" | "Swamp" | "Mountain" | "Forest"))
+        .filter(|&(_, l)| {
+            !matches!(&*g.db.get(g.land(l).cd).name, "Plains" | "Island" | "Swamp" | "Mountain" | "Forest")
+        })
         .collect();
     first_max(&lands, |(q, l)| {
         let t = &g.db.get(g.land(l).cd).tags;
@@ -55,7 +57,14 @@ pub fn best_opp_land(g: &Game, p: PlayerId) -> Option<(PlayerId, LandId)> {
 // ------------------------------------------------------------------ Aetherize
 /// d is attacked by p: return all attacking creatures when the attack is big (at least a third of d's life, or it
 /// holds tokens that would simply vanish)
-fn aetherize(g: &mut Game, c: CardId, d: PlayerId, p: PlayerId, atk: &[PermId], assign: &mut Vec<(PermId, PermId)>) -> Res {
+fn aetherize(
+    g: &mut Game,
+    c: CardId,
+    d: PlayerId,
+    p: PlayerId,
+    atk: &[PermId],
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
     if !g.player(d).hand.contains(&c) || !castable(g, d, c, "hand") {
         return Ok(());
     }
@@ -63,11 +72,8 @@ fn aetherize(g: &mut Game, c: CardId, d: PlayerId, p: PlayerId, atk: &[PermId], 
     if !can_pay(g, d, gn, &pips, false) {
         return Ok(());
     }
-    let power: i32 = atk
-        .iter()
-        .filter(|&&a| on(g, p, a) && !assign.iter().any(|x| x.0 == a))
-        .map(|&a| epow(g, a))
-        .sum();
+    let power: i32 =
+        atk.iter().filter(|&&a| on(g, p, a) && !assign.iter().any(|x| x.0 == a)).map(|&a| epow(g, a)).sum();
     let toks = atk.iter().filter(|&&a| g.perm(a).token).count();
     if (power as f64) < (8.0f64).max(g.player(d).life as f64 / 3.0) && toks < 4 {
         return Ok(());

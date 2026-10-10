@@ -17,7 +17,12 @@ use crate::sym::Sym;
 
 /// t3._put_creature: a creature card from the library onto the battlefield: the deck's wish list first, Craterhoof
 /// with a wide board, else the most useful
-pub fn put_creature(g: &mut Game, p: PlayerId, pred: impl Fn(&Game, CardId) -> bool, prefer_hoof: bool) -> Res<Option<CardId>> {
+pub fn put_creature(
+    g: &mut Game,
+    p: PlayerId,
+    pred: impl Fn(&Game, CardId) -> bool,
+    prefer_hoof: bool,
+) -> Res<Option<CardId>> {
     let cs: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| g.db.get(c).creature && pred(g, c)).collect();
     if cs.is_empty() {
         return Ok(None);

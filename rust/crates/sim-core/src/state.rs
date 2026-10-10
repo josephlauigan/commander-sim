@@ -69,10 +69,10 @@ pub enum DataKey {
     /// a land that entered this turn ("in")
     In,
     Indestr,
-    /// a token copy made by Jaxis, the Troublemaker (sacrificed at the end step)
-    JaxisCopy,
     /// (player, their turn count): indestructible until that player's next turn
     IndestrUntil,
+    /// a token copy made by Jaxis, the Troublemaker (sacrificed at the end step)
+    JaxisCopy,
     Kaldra,
     Kicks,
     Kws,

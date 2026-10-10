@@ -11,8 +11,7 @@ use crate::state::Game;
 
 /// galadriel._elves: the Elf creatures p controls
 fn elves(g: &Game, p: PlayerId) -> u32 {
-    g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased && has_type(g, m, "elf")).count()
-        as u32
+    g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased && has_type(g, m, "elf")).count() as u32
 }
 
 /// {T}: {G} for each Elf you control (replaces t1's count, which counted every Elf permanent)

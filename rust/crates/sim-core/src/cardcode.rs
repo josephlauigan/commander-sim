@@ -16,9 +16,9 @@ pub fn blood_moon(_g: &Game) -> bool {
     false
 }
 
-/// PORT(M5): Dryad of the Ilysian Grove (rules.dryad_colors): p's lands tap for any colour in its identity
-pub fn dryad_colors(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// rules.dryad_colors: Dryad of the Ilysian Grove: p's lands tap for any colour in its identity
+pub fn dryad_colors(g: &Game, p: PlayerId) -> bool {
+    crate::impls::rules::dryad_colors(g, p)
 }
 
 /// a card's code, if it has any
@@ -47,9 +47,9 @@ pub fn locked(_g: &Game, _m: PermId, _kind: &str) -> bool {
     false
 }
 
-/// PORT(M5): rules.halfling_colors (Delighted Halfling)
-pub fn halfling_colors(_g: &Game, _p: PlayerId) -> Option<crate::cards::Colors> {
-    None
+/// rules.halfling_colors: Delighted Halfling's coloured mana only pays for legendary spells (None: colourless)
+pub fn halfling_colors(g: &Game, p: PlayerId) -> Option<crate::cards::Colors> {
+    crate::impls::rules::halfling_colors(g, p)
 }
 
 /// PORT(M5): mine.is_legendary (Champion's Helm's hexproof needs a legendary creature)
@@ -88,14 +88,14 @@ pub fn lock_factor(_g: &Game, _m: PermId) -> f64 {
     1.0
 }
 
-/// PORT(M5): partials.hand_mana, Elvish Spirit Guide and kin: exile from hand for mana
-pub fn hand_mana(_g: &Game, _p: PlayerId) -> Vec<crate::engine::mana::Unit> {
-    vec![]
+/// partials.hand_mana, Elvish Spirit Guide and kin: exile from hand for mana
+pub fn hand_mana(g: &Game, p: PlayerId) -> Vec<crate::engine::mana::Unit> {
+    crate::impls::partials::hand_mana(g, p)
 }
 
-/// PORT(M5): partials.special_unit_paid, paying with a Scion (sacrifice it) or a card in hand (exile it)
-pub fn special_unit_paid(_g: &mut Game, _p: PlayerId, _u: crate::engine::mana::Unit) -> crate::flow::Res {
-    Ok(())
+/// partials.special_unit_paid, paying with a Scion (sacrifice it) or a card in hand (exile it)
+pub fn special_unit_paid(g: &mut Game, p: PlayerId, u: crate::engine::mana::Unit) -> crate::flow::Res {
+    crate::impls::partials::special_unit_paid(g, p, u)
 }
 
 /// CI.ON_TAP for a land (Vivid lands' charge counters ...)
@@ -207,24 +207,12 @@ macro_rules! port_bool {
 }
 
 port_res! {
-    /// PORT(M5): rules.emblem_draw (emblems that trigger on draws)
-    fn emblem_draw(p: PlayerId);
     /// PORT(M5): mine.kindred_enter (Kindred Discovery draws)
     fn kindred_enter(p: PlayerId, m: PermId);
-    /// PORT(M5): rules2.chatterfang_squirrels
-    fn chatterfang_squirrels(p: PlayerId, n: i32);
     /// PORT(M5): common.aura_fall (Auras on a permanent that left)
     fn aura_fall(m: PermId);
-    /// PORT(M5): partials.bestow_fall
-    fn bestow_fall(m: PermId);
     /// PORT(M5): marchesa.marchesa_dies
     fn marchesa_dies(p: PlayerId, m: PermId);
-    /// PORT(M5): partials.answer_ability (Tishana's Tidebinder, Azorius Guildmage)
-    fn answer_ability(q: PlayerId, item: u32);
-    /// PORT(M5): rules.emblem_cast
-    fn emblem_cast(p: PlayerId, c: CardId);
-    /// PORT(M5): rules2.glimpse_draw
-    fn glimpse_draw(p: PlayerId, c: CardId);
     /// PORT(M5): CI.kaervek
     fn kaervek(q: PlayerId, p: PlayerId, c: CardId);
     /// PORT(M5): CI.muld_mark (Muldrotha's permanent types used this turn)
@@ -235,8 +223,6 @@ port_res! {
     fn tutor_auras(p: PlayerId, k: usize);
     /// PORT(M5): mine.proliferate_all
     fn proliferate_all(p: PlayerId);
-    /// PORT(M5): rules.transform_away (Elk, mutate, Forest Dryad)
-    fn transform_away(m: PermId, kind: Sym);
     /// PORT(M5): CI.apply_lock (Arrest, Encrust ...)
     fn apply_lock(actor: Option<PlayerId>, m: PermId, kind: Sym);
 }
@@ -246,14 +232,62 @@ port_bool! {
     fn umbra_save(m: PermId);
     /// PORT(M5): lands.try_regenerate (Yavimaya Hollow)
     fn try_regenerate(m: PermId);
-    /// PORT(M5): rules.ezuri_regen
-    fn ezuri_regen(m: PermId);
-    /// PORT(M5): partials.tidebinder_response
-    fn tidebinder_response(p: PlayerId, m: PermId);
-    /// PORT(M5): rules2.hullbreaker_counter
-    fn hullbreaker_counter(q: PlayerId, c: CardId);
-    /// PORT(M5): rules.veil_response
-    fn veil_response(p: PlayerId, q: PlayerId, ctr: CardId);
+}
+
+/// rules.emblem_draw: Teferi's emblem exiles an opposing permanent whenever p draws
+pub fn emblem_draw(g: &mut Game, p: PlayerId) -> Res {
+    crate::impls::rules::emblem_draw(g, p)
+}
+
+/// rules2.chatterfang_squirrels: Chatterfang makes that many Squirrels whenever p makes tokens
+pub fn chatterfang_squirrels(g: &mut Game, p: PlayerId, n: i32) -> Res {
+    crate::impls::rules2::chatterfang_squirrels(g, p, n)
+}
+
+/// partials.bestow_fall: a bestowed Eidolon on m becomes a creature when m leaves
+pub fn bestow_fall(g: &mut Game, m: PermId) -> Res {
+    crate::impls::partials::bestow_fall(g, m)
+}
+
+/// partials.answer_ability: counter an opponent's important ability on top of the stack (Tishana's Tidebinder,
+/// Azorius Guildmage); `item` is the stack item's id
+pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
+    crate::impls::partials::answer_ability(g, q, item)
+}
+
+/// rules.emblem_cast: Chandra's and Venser's emblems on each spell p casts
+pub fn emblem_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    crate::impls::rules::emblem_cast(g, p, c)
+}
+
+/// rules2.glimpse_draw: Glimpse of Nature draws for each creature spell
+pub fn glimpse_draw(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    crate::impls::rules2::glimpse_draw(g, p, c)
+}
+
+/// rules.transform_away: becomes a 3/3 Elk, a 0/1 Insect (mutate) or a Forest, with no abilities
+pub fn transform_away(g: &mut Game, m: PermId, kind: Sym) -> Res {
+    crate::impls::rules::transform_away(g, m, kind)
+}
+
+/// rules.ezuri_regen: Ezuri regenerates another valuable Elf for {G}
+pub fn ezuri_regen(g: &mut Game, m: PermId) -> Res<bool> {
+    crate::impls::rules::ezuri_regen(g, m)
+}
+
+/// partials.tidebinder_response: an outside deck flashes in Tishana's Tidebinder to counter m's enters trigger
+pub fn tidebinder_response(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
+    crate::impls::partials::tidebinder_response(g, p, m)
+}
+
+/// rules2.hullbreaker_counter: Hullbreaker Horror bounces spell c when q casts a cheap instant
+pub fn hullbreaker_counter(g: &mut Game, q: PlayerId, c: CardId) -> Res<bool> {
+    crate::impls::rules2::hullbreaker_counter(g, q, c)
+}
+
+/// rules.veil_response: p answers q's counterspell ctr with Veil of Summer
+pub fn veil_response(g: &mut Game, p: PlayerId, q: PlayerId, ctr: CardId) -> Res<bool> {
+    crate::impls::rules::veil_response(g, p, q, ctr)
 }
 
 /// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)
@@ -334,19 +368,19 @@ pub fn is_prowess_card(_g: &Game, _c: CardId) -> bool {
     false
 }
 
-/// PORT(M5): rules2.aura_ward
-pub fn aura_ward(_g: &Game, _m: PermId) -> u32 {
-    0
+/// rules2.aura_ward: ward {2} from Sheltered by Ghosts
+pub fn aura_ward(g: &Game, m: PermId) -> u32 {
+    crate::impls::rules2::aura_ward(g, m)
 }
 
-/// PORT(M5): rules.removal_taxes (Karmic Justice ...): false stops the removal
-pub fn removal_taxes(_g: &mut Game, _actor: Option<PlayerId>, _m: PermId, _kind: Sym) -> Res<bool> {
-    Ok(true)
+/// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal
+pub fn removal_taxes(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym) -> Res<bool> {
+    crate::impls::rules::removal_taxes(g, actor, m, kind)
 }
 
-/// PORT(M5): partials.tajic_protects
-pub fn tajic_protects(_g: &Game, _m: PermId) -> bool {
-    false
+/// partials.tajic_protects: Tajic prevents noncombat damage to its controller's other creatures
+pub fn tajic_protects(g: &Game, m: PermId) -> bool {
+    crate::impls::partials::tajic_protects(g, m)
 }
 
 /// PORT(M5): Skyclave Apparition remembers what it exiled
@@ -358,9 +392,9 @@ pub fn combo_ready(_g: &Game, _p: PlayerId) -> bool {
 }
 
 // ------------------------------------------------------------------ M3: combat and the turn
-/// PORT(M5): rules.evasion_blocked (menace-style and type-based evasion from card code)
-pub fn evasion_blocked(_g: &Game, _b: PermId, _a: PermId) -> bool {
-    false
+/// rules.evasion_blocked: fear, intimidate, Signal Pest and kin: b can't block a
+pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
+    crate::impls::rules::evasion_blocked(g, b, a)
 }
 
 /// CI.granted_kw: a static keyword grant from a hooked permanent (Teysa: tokens have vigilance and lifelink)
@@ -387,14 +421,14 @@ pub fn damage_prevented(_g: &Game, _m: PermId) -> bool {
     false
 }
 
-/// PORT(M5): rules.dovin_blocked
-pub fn dovin_blocked(_g: &Game, _m: PermId) -> bool {
-    false
+/// rules.dovin_blocked: Dovin's -1: damage to and from m is prevented
+pub fn dovin_blocked(g: &Game, m: PermId) -> bool {
+    crate::impls::rules::dovin_blocked(g, m)
 }
 
-/// PORT(M5): rules2.prot_vs (protection from creatures, from Demons and Dragons)
-pub fn prot_vs(_g: &Game, _m: PermId, _from: PermId) -> bool {
-    false
+/// rules2.prot_vs (protection from creatures, from Demons and Dragons)
+pub fn prot_vs(g: &Game, m: PermId, from: PermId) -> bool {
+    crate::impls::rules2::prot_vs(g, m, from)
 }
 
 /// PORT(M5): CI.kaldra_exile (Sword of Kaldra exiles what it damages): true if it exiled
@@ -479,8 +513,12 @@ pub fn ninjutsu(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId, _ass
     Ok(())
 }
 
-/// PORT(M5): Professional's Insight-style draws and emblems on combat damage
-pub fn combat_damage_cards(_g: &mut Game, _p: PlayerId, _a: PermId, _d: PlayerId, _dmg: i32) -> Res {
+/// partials.insight_draw (Hunter's Insight) and rules.emblem_combat (Vraska's and Kaito's emblems) on combat damage
+pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
+    crate::impls::partials::insight_draw(g, p, a, dmg)?;
+    if !g.player(p).emblems.is_empty() {
+        crate::impls::rules::emblem_combat(g, p, a, d, dmg)?;
+    }
     Ok(())
 }
 
@@ -500,14 +538,14 @@ pub fn vanguard_blocks(_g: &mut Game, _assign: &[(PermId, PermId)]) -> Res {
     Ok(())
 }
 
-/// PORT(M5): rules2.forced_attackers
-pub fn forced_attackers(_g: &mut Game, _p: PlayerId, xs: Vec<PermId>, _cand0: &[PermId]) -> Res<Vec<PermId>> {
-    Ok(xs)
+/// rules2.forced_attackers: Goblin Rabblemaster's Goblins and Legion Warboss's tokens attack if able
+pub fn forced_attackers(g: &mut Game, p: PlayerId, xs: Vec<PermId>, cand0: &[PermId]) -> Res<Vec<PermId>> {
+    crate::impls::rules2::forced_attackers(g, p, xs, cand0)
 }
 
-/// PORT(M5): rules2.annex_life
-pub fn annex_life(_g: &mut Game, _p: PlayerId, _d: PlayerId, xs: Vec<PermId>) -> Res<Vec<PermId>> {
-    Ok(xs)
+/// rules2.annex_life: Norn's Annex: each attacker at d costs {W} or 2 life
+pub fn annex_life(g: &mut Game, p: PlayerId, d: PlayerId, xs: Vec<PermId>) -> Res<Vec<PermId>> {
+    crate::impls::rules2::annex_life(g, p, d, xs)
 }
 
 /// PORT(M5): CI.fire(g, 'combat_start', p) (Helm of the Host): new attackers
@@ -589,9 +627,9 @@ port_bool! {
     fn dakmor_dredge(p: PlayerId);
 }
 
-/// PORT(M5): rules.REPLACED_TAG_ENGINES (engines whose card code replaces the tag's draw)
-pub fn replaced_tag_engine(_name: &str) -> bool {
-    false
+/// rules.REPLACED_TAG_ENGINES (engines whose card code replaces the tag's draw)
+pub fn replaced_tag_engine(name: &str) -> bool {
+    crate::impls::rules::replaced_tag_engine(name)
 }
 
 /// PORT(M5): CI.crackdown_on
@@ -682,9 +720,9 @@ pub fn attached_kw(_g: &Game, _m: PermId, _kw: &str) -> bool {
     false
 }
 
-/// PORT(M5): rules.ability_locked (Pithing Needle, Linvala ...)
-pub fn ability_locked(_g: &Game, _src: PermId, _p: PlayerId) -> bool {
-    false
+/// rules.ability_locked (Collector Ouphe, Cursed Totem, Grand Abolisher, Arrest ...)
+pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
+    crate::impls::rules::ability_locked(g, src, p)
 }
 
 // ------------------------------------------------------------------ M4: what the AI reads from card code
@@ -754,9 +792,9 @@ pub fn sac_in_response(_g: &mut Game, _owner: PlayerId, _m: PermId, _kind: Sym) 
     Ok(false)
 }
 
-/// PORT(M5): partials.regen_wipe: regenerate the board against a destroy wipe
-pub fn regen_wipe(_g: &mut Game, _q: PlayerId) -> Res<bool> {
-    Ok(false)
+/// partials.regen_wipe: regenerate the board against a destroy wipe (Golgari Charm)
+pub fn regen_wipe(g: &mut Game, q: PlayerId) -> Res<bool> {
+    crate::impls::partials::regen_wipe(g, q)
 }
 
 /// PORT(M5): the outside decks' card plays: common.adventure_options, t2.evoke_options,
@@ -765,9 +803,9 @@ pub fn pool_card_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Re
     Ok(vec![])
 }
 
-/// PORT(M5): partials.aid_active (Sigarda's Aid: Auras at instant speed)
-pub fn aid_active(_g: &Game, _p: PlayerId) -> bool {
-    false
+/// partials.aid_active (Sigarda's Aid: Auras at instant speed)
+pub fn aid_active(g: &Game, p: PlayerId) -> bool {
+    crate::impls::partials::aid_active(g, p)
 }
 
 /// PORT(M5): t4.NINJUTSU, ninjutsu_cost: the ninjutsu costs of the Ninjas in p's hand

@@ -113,12 +113,6 @@ pub(crate) fn eot_kw(g: &mut Game, m: PermId, kw: Sym) {
     }
 }
 
-/// a power/toughness change until end of turn (cardimpl._eot)
-pub(crate) fn eot_pt(g: &mut Game, m: PermId, dp: i32, dt: i32) {
-    let x = g.perm_mut(m);
-    x.eot_pt = (x.eot_pt.0 + dp, x.eot_pt.1 + dt);
-}
-
 /// remove card c from a list (Python's `list.remove`: the first copy)
 pub(crate) fn remove_card(v: &mut Vec<CardId>, c: CardId) -> bool {
     match v.iter().position(|&x| x == c) {
@@ -214,17 +208,22 @@ fn hordechief_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -
     if ready < 3 || theirs == 0 || g.perm(src).data.get(DataKey::Lure) == Some(&turn_now(g)) {
         return Ok(vec![]);
     }
+    // the hybrid pips are chosen as the option is offered
+    let pips = HORDECHIEF_PIPS.iter().position(|x| can_pay(g, p, 3, x, false)).unwrap();
     Ok(vec![Opt {
         utility: 0.5 * theirs as f64,
         label: "Brutal Hordechief (choose blocks)".into(),
-        act: Some(Action::Ability { src, f: hordechief_go, arg: 0 }),
+        act: Some(Action::Ability { src, f: hordechief_go, arg: pips as i64 }),
     }])
 }
 
-fn hordechief_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    let Some(pips) = ["RR", "RW", "WW"].into_iter().find(|x| can_pay(g, p, 3, x, false)) else {
+const HORDECHIEF_PIPS: [&str; 3] = ["RR", "RW", "WW"];
+
+fn hordechief_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let pips = HORDECHIEF_PIPS[arg as usize];
+    if !can_pay(g, p, 3, pips, false) {
         return Ok(false);
-    };
+    }
     pay(g, p, 3, pips, false)?;
     if !ability_window(g, p, Some(src), "opponents block as you choose", None, None)? {
         return Ok(true);
@@ -482,11 +481,7 @@ pub fn special_unit_paid(g: &mut Game, p: PlayerId, u: Unit) -> Res {
             if on(g, p, m) {
                 leave(g, m)?;
                 if !g.hooks.is_empty() {
-                    fire_trigger(
-                        g,
-                        Event::Sacrifice,
-                        crate::hooks::Call::Sacrifice { p, what: Sacrificed::Perm(m) },
-                    )?;
+                    fire_trigger(g, Event::Sacrifice, crate::hooks::Call::Sacrifice { p, what: Sacrificed::Perm(m) })?;
                 }
             }
         }
@@ -506,10 +501,7 @@ pub fn regen_wipe(_g: &mut Game, _p: PlayerId) -> Res<bool> {
 // ======================================================== Gryff's Boon: recursion
 /// {3}{W}: returns from the graveyard onto a creature
 fn gryff_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false)
-        || !can_pay(g, p, 3, "W", false)
-        || !g.player(p).perms.iter().any(|&m| g.is_creature(m))
-    {
+    if post != Some(false) || !can_pay(g, p, 3, "W", false) || !g.player(p).perms.iter().any(|&m| g.is_creature(m)) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -554,9 +546,21 @@ fn heartless(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 fn hero_heroic(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     let aura = g.perm(m).cd.is_some_and(|c| g.db.get(c).has_subtype("aura"));
-    if aura && g.perm(m).owner == o && g.perm(m).attached == Some(src) && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(2.0))? {
+    if aura
+        && g.perm(m).owner == o
+        && g.perm(m).attached == Some(src)
+        && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(2.0))?
+    {
         g.perm_mut(src).plus += 1;
     }
+    Ok(())
+}
+
+// ======================================================== Hunter's Insight
+/// partials.insight_draw: the creature Hunter's Insight was cast on deals combat damage to a player: draw that many.
+/// PORT(phase 6): Hunter's Insight (no Tier 1 or Sauron deck plays it) sets `p.insight`, which has no Rust field yet,
+/// so this draws nothing until then.
+pub fn insight_draw(_g: &mut Game, _p: PlayerId, _a: PermId, _dmg: i32) -> Res {
     Ok(())
 }
 
@@ -567,9 +571,7 @@ fn archers_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> 
         return Ok(vec![]);
     }
     let n = epow(g, src);
-    let t = best_opp_creature(g, p, |g, m| {
-        (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")) && etgh(g, m) <= n
-    });
+    let t = best_opp_creature(g, p, |g, m| (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")) && etgh(g, m) <= n);
     let Some(t) = t.filter(|&t| pval(g, t) >= 2.5) else { return Ok(vec![]) };
     Ok(vec![Opt {
         utility: pval(g, t) - 1.0,
@@ -752,12 +754,8 @@ fn mardu_charm(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
         apply_removal(g, Some(p), t, "dmg4", Some(c))?;
         return Ok("gy");
     }
-    let spec = Tokens {
-        warrior: true,
-        color: Some(Colors::from_letters("W")),
-        types: vec!["warrior"],
-        ..Tokens::new(2, 1)
-    };
+    let spec =
+        Tokens { warrior: true, color: Some(Colors::from_letters("W")), types: vec!["warrior"], ..Tokens::new(2, 1) };
     for m in make_tokens(g, p, spec)? {
         eot_kw(g, m, "first strike");
     }
@@ -913,7 +911,8 @@ fn hybrid(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let q = g.perm(t).owner;
     apply_removal(g, Some(p), t, "destroy", Some(c))?;
     if !on(g, q, t) {
-        let spec = Tokens { color: Some(Colors::from_letters("G")), types: vec!["frog", "lizard"], ..Tokens::new(1, 3) };
+        let spec =
+            Tokens { color: Some(Colors::from_letters("G")), types: vec!["frog", "lizard"], ..Tokens::new(1, 3) };
         make_tokens(g, q, spec)?;
     }
     Ok("gy")
@@ -1139,8 +1138,7 @@ pub fn tidebinder_response(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
         if q == p || !g.player(q).alive || crate::ai::is_main(g.player(q).key) {
             continue;
         }
-        let Some(c) = g.player(q).hand.iter().copied().find(|&x| &*g.db.get(x).name == "Tishana's Tidebinder")
-        else {
+        let Some(c) = g.player(q).hand.iter().copied().find(|&x| &*g.db.get(x).name == "Tishana's Tidebinder") else {
             continue;
         };
         if !castable(g, q, c, "hand") || !can_pay_cost(g, q, c) {
