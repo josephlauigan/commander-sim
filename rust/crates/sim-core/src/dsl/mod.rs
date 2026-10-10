@@ -446,6 +446,7 @@ fn run(
                     prot.push((q, crate::ai::wipe_response(g, q, wipe_kind, p)?));
                 }
                 g.batch += 1; // they die at the same time
+                let prev_batch = g.cur_batch.replace(g.batch);
                 let prev = g.destroyer.replace(p); // Karmic Justice: who destroyed them
                 let r = (|| -> Res {
                     for m in ms {
@@ -472,6 +473,7 @@ fn run(
                     }
                     Ok(())
                 })();
+                g.cur_batch = prev_batch;
                 g.destroyer = prev;
                 r?;
             } else {
@@ -1193,7 +1195,7 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
             if let Ability::Static { kind, per, pow, base0, .. } = a
                 && kind == "self_scaling"
             {
-                let k = num(g, x.owner, per.as_ref(), &DslCtx::default(), Some(m));
+                let k = num(g, x.owner, per.as_ref(), &DslCtx::base(), Some(m));
                 dp += pow.unwrap_or(1) * k;
                 if *base0 == Some(true) {
                     dt += k;

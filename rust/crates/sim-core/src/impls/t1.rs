@@ -1678,7 +1678,7 @@ fn uro_value(g: &mut Game, p: PlayerId) -> Res {
 
 /// dsl.run(g, p, {'do': 'put_land'}): put a land card from your hand onto the battlefield (the one making the most
 /// colours, a fetch land breaking ties)
-fn put_land(g: &mut Game, p: PlayerId) -> Res {
+pub fn put_land(g: &mut Game, p: PlayerId) -> Res {
     let ls: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
     if let Some(c) = max_by(&ls, |c| {
         let t = &g.db.get(c).tags;

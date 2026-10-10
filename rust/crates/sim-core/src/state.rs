@@ -44,6 +44,8 @@ pub enum DataKey {
     Charge,
     Construct,
     Copy,
+    /// Spark Double entered as a copy (its own enter hook doesn't copy again)
+    Copied,
     Counters,
     Crewed,
     Ctype,
@@ -51,10 +53,16 @@ pub enum DataKey {
     Dovin,
     /// a land made a creature by Druid Class's level 3
     DruidClass,
+    /// Mogg War Marshal's echo was dealt with ('done')
+    Echo,
+    /// Ragavan was cast for its dash cost (returned to hand at the end step)
+    Dash,
     Elk,
     Escaped,
     Exerted,
     Exiled,
+    /// Whipcorder face down: its printed (power, toughness) (galadriel.enter_face_down)
+    Facedown,
     FableGoblin,
     Final,
     Flip,
@@ -65,10 +73,14 @@ pub enum DataKey {
     Hidden,
     Hit,
     Hostage,
+    /// Venat, Heart of Hydaelyn has transformed into Hydaelyn, the Mothercrystal
+    Hydaelyn,
     Imprint,
     /// a land that entered this turn ("in")
     In,
     Indestr,
+    /// Palantír of Orthanc's influence counters
+    Influence,
     /// (player, their turn count): indestructible until that player's next turn
     IndestrUntil,
     /// a token copy made by Jaxis, the Troublemaker (sacrificed at the end step)
@@ -84,6 +96,8 @@ pub enum DataKey {
     LoyaltyN,
     Lore,
     Lure,
+    /// Knight of the Holy Nimbus: an opponent paid {2}, it can't regenerate this turn
+    Noregen,
     Manatok,
     MordDog,
     MustAttack,
@@ -92,11 +106,15 @@ pub enum DataKey {
     Prevent,
     Prowess,
     Reflection,
+    /// a hasty token copy made by Rionya, Fire Dancer (exiled at the end step)
+    Rionya,
     Ruin,
     Serenity,
     Stolen,
     TapOnReturn,
     Unblockable,
+    /// Reconstructed Thopter came back by unearth (exiled at the end step)
+    Unearth,
     Unbl,
     Used,
     Voice,
@@ -450,6 +468,51 @@ pub struct Player {
     pub yawg_loop: Option<u32>,
     /// Sunfall's Incubator: its +1/+1 counters (0: none)
     pub incubator: i32,
+    /// Reflector Mage: (the card name this player can't cast, until the Mage's controller has this turn count, that
+    /// controller) (Python's `locked_name`)
+    pub locked_name: Option<(Sym, u32, PlayerId)>,
+    /// Urza's Sagas on the battlefield and their lore counters (Python's `p.sagas`)
+    pub sagas: Vec<(LandId, u32)>,
+    /// Hunter's Insight: (the turn, the creature): its combat damage to a player draws that many
+    pub insight: Option<(TurnStamp, PermId)>,
+    /// Conduit of Worlds: no more spells this turn
+    pub conduit_lock: Option<TurnStamp>,
+    /// Oath of Teferi: the cards it exiled, back at the end step
+    pub oath_return: Vec<CardId>,
+    /// Muldrotha, the Gravetide: the permanent types played from the graveyard this turn (Python's `muld_used`)
+    pub muld_used: Option<(TurnStamp, Vec<Sym>)>,
+    /// Sephiroth: the turn count a loop was last gone for (mine.run_loop)
+    pub loop_turn: Option<u32>,
+    /// Sephiroth: the turn count Tortured Existence was last used on
+    pub te_used: Option<u32>,
+    /// Sephiroth's Skullclamp: (turn count, uses that turn)
+    pub clamp_t: Option<u32>,
+    pub clamp_n: u32,
+    /// Legion Loyalist's battalion this turn: tokens can't block this player's creatures (rules.evasion_blocked)
+    pub loyalist_turn: Option<TurnStamp>,
+    /// Embercleave: the turn this player last attacked, and with what (rules2: its cost is {1} less per attacker)
+    pub attacking: Option<TurnStamp>,
+    pub attackers: Vec<PermId>,
+    /// Valakut Exploration: the cards it exiled this turn (held in hand until the end step)
+    pub valakut_cards: Vec<CardId>,
+    /// once-a-turn pumps: Battle Cry Goblin, Purphoros
+    pub bcg_turn: Option<TurnStamp>,
+    pub purph_turn: Option<TurnStamp>,
+    /// Glimpse of Nature: the turn it was cast (Python keeps the turn in `p.glimpse`; `glimpse` stays the flag)
+    pub glimpse_turn: Option<TurnStamp>,
+    /// Bloodchief's Thirst: the last one this player cast was kicked (rules.thirst_cast records it for the resolve)
+    pub thirst_kicked: bool,
+    /// Meren of Clan Nel Toth's experience counters (Python's `p.experience`)
+    pub experience: i32,
+    /// energy counters (Static Prison, Aether Hub)
+    pub energy: i32,
+    /// Malcator: artifact tokens made this turn, (turn, how many) (Python's `art_tok`)
+    pub art_tok: Option<(TurnStamp, i32)>,
+    /// Reconstructed Thopter cards already unearthed (once each)
+    pub unearthed: Vec<CardId>,
+    /// the wipe (by `Game::cur_batch`) Marchesa, the Black Rose died in: creatures dying in the same wipe return too
+    /// (Python's `p.marchesa_batch`)
+    pub marchesa_batch: Option<u32>,
 }
 
 impl Player {
@@ -560,6 +623,29 @@ impl Player {
             combo_turn: None,
             yawg_loop: None,
             incubator: 0,
+            locked_name: None,
+            sagas: vec![],
+            insight: None,
+            conduit_lock: None,
+            oath_return: vec![],
+            muld_used: None,
+            loop_turn: None,
+            te_used: None,
+            clamp_t: None,
+            clamp_n: 0,
+            loyalist_turn: None,
+            attacking: None,
+            attackers: vec![],
+            valakut_cards: vec![],
+            bcg_turn: None,
+            purph_turn: None,
+            glimpse_turn: None,
+            thirst_kicked: false,
+            experience: 0,
+            energy: 0,
+            art_tok: None,
+            unearthed: vec![],
+            marchesa_batch: None,
             stats: IndexMap::new(),
         }
     }
@@ -619,6 +705,10 @@ pub struct Ctx {
     pub storm: Option<i32>,
     /// Brain Freeze in the Breach line: who each copy mills
     pub mill: Vec<PlayerId>,
+    /// a modal spell's chosen mode (Golgari Charm, Mardu Charm: Python's `ctx['mode']`)
+    pub mode: Option<Sym>,
+    /// the creature a spell is cast on without targeting it as removal (Hunter's Insight: `ctx['host']`)
+    pub host: Option<PermId>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).
@@ -757,6 +847,15 @@ pub struct Game {
     pub goldfish: bool,
     /// Garland, Royal Kidnapper's steals are in play (Python's `g.garland`)
     pub garland: bool,
+    /// Garland's steals: (who took it, the creature, the player it came from, the round it was taken)
+    pub garland_list: Vec<(PlayerId, PermId, PlayerId, u32)>,
+    /// Marchesa's returns at the next end step: (the player it returns for, the card, its owner)
+    pub marchesa_due: Vec<(PlayerId, CardId, PlayerId)>,
+    /// Memory Jar: the hands set aside, returned at the end step
+    pub jar_due: Vec<(PlayerId, Vec<CardId>)>,
+    /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
+    /// while not None)
+    pub cur_batch: Option<u32>,
     /// permanents with hand-written card code, in entry order (Python's `g.hooks`)
     pub hooks: Vec<PermId>,
     pub stack: Vec<StackItem>,
@@ -802,6 +901,30 @@ pub struct Game {
     pub combo_spell: bool,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
+    /// Coat of Arms has entered (partials.coat_bonus applies)
+    pub coat: bool,
+    /// Bloodline Keeper has entered (partials.lineage_bonus applies)
+    pub lineage: bool,
+    /// partials.coat_bonus's cache: (bf_ver, each creature's bonus), as Python's `g.coat_cache`
+    pub coat_cache: std::cell::RefCell<Option<(u64, Vec<(PermId, i32)>)>>,
+    /// Return the Favor is being cast (it doesn't copy itself): Python's `g.in_rtf`
+    pub in_rtf: bool,
+    /// how deep Chatterfang's Squirrels for artifact tokens are nested (t3: a token loop stops at 10)
+    pub chatter_depth: u32,
+    /// t2.blink: how deep blinks are nested (blink chains are combos, not loops: Python's `g.blink_depth`)
+    pub blink_depth: u32,
+    /// how deep Consecrated Sphinx draws are nested (two Sphinxes feed each other: t4's `g.sphinx_depth`)
+    pub sphinx_depth: u32,
+    /// how deep Sanguine Bond / Exquisite Blood are nested (t4's `g.bond_depth`)
+    pub bond_depth: u32,
+    /// creatures that died this turn while Mahadi, Emporium Master was out (t4's `g.deaths_turn`, current turn only)
+    pub deaths_turn: Option<(TurnStamp, i32)>,
+    /// The Eternal Wanderer's exiles, back at their owner's next end step: (owner, card) (zur's `g.zur_due`)
+    pub zur_due: Vec<(PlayerId, CardId)>,
+    /// the creature Restoration Angel's enter trigger blinks (Python's `g.resto_target`)
+    pub resto_target: Option<PermId>,
+    /// Eerie Interlude: (player, card) exiled until the beginning of the next end step (Python's `g.eot_returns`)
+    pub eot_returns: Vec<(PlayerId, CardId)>,
 }
 
 impl Game {
@@ -872,6 +995,10 @@ impl Game {
             stopped: false,
             goldfish: false,
             garland: false,
+            garland_list: vec![],
+            marchesa_due: vec![],
+            jar_due: vec![],
+            cur_batch: None,
             hooks: vec![],
             stack: vec![],
             stack_pushes: 0,
@@ -896,6 +1023,18 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             lattice_lock: None,
+            coat: false,
+            lineage: false,
+            coat_cache: std::cell::RefCell::new(None),
+            in_rtf: false,
+            chatter_depth: 0,
+            blink_depth: 0,
+            sphinx_depth: 0,
+            bond_depth: 0,
+            deaths_turn: None,
+            zur_due: vec![],
+            resto_target: None,
+            eot_returns: vec![],
         }
     }
 

@@ -3,8 +3,8 @@
 //!
 //! Some tests use cards no current decklist runs (Witch-king, Bringer of Ruin; Brush Off; Grapeshot; Lion's Eye
 //! Diamond; Laboratory Maniac): they are still in the card database, and they check branches of the Breach line, so
-//! they run. SauronMarchesa is ignored: it needs marchesa.py's card code (Marchesa is in Jodah's list now, ported in
-//! phase 6); `cargo test -- --ignored` runs it.
+//! they run. SauronMarchesa runs with marchesa.py's card code (impls/marchesa.rs, ported with Jodah's deck in phase
+//! 6).
 
 use sim_core::ai::{act, brain, decks};
 use sim_core::engine::{cast, removal, stack, turn, values, zones};
@@ -505,7 +505,6 @@ fn tutors_find_the_missing_piece() {
 // Mauhúr's extra counter, and the return of a creature with a counter
 
 #[test]
-#[ignore = "needs marchesa.py's card code (Marchesa is in Jodah's list now: phase 6)"]
 fn the_army_gets_dethrone_and_mauhurs_extra_counter() {
     let mut g = table(&["sauron", "veyran", "seph"]);
     perm(&mut g, P0, "Marchesa, the Black Rose");
@@ -520,7 +519,6 @@ fn the_army_gets_dethrone_and_mauhurs_extra_counter() {
 }
 
 #[test]
-#[ignore = "needs marchesa.py's card code (Marchesa is in Jodah's list now: phase 6)"]
 fn a_creature_with_a_counter_returns() {
     let mut g = table(&["sauron", "veyran"]);
     perm(&mut g, P0, "Marchesa, the Black Rose");
@@ -645,4 +643,28 @@ fn the_ring_bearer_stays_home_when_its_loot_would_deck_sauron() {
     g.player_mut(P0).ring_bearer = Some(b);
     g.player_mut(P0).library.truncate(1);
     assert!(!mine::ring_loot_decks(&g, P0, b));
+}
+
+// ======================================================== a finished Breach line isn't offered again
+// (a Python bug, fixed in Rust only: once every opponent's library was empty, the dry run still counted the line as
+// finishing the table, and the AI kept choosing the 15.0 "Underworld Breach line" option, which did nothing, until the
+// main phase's action cap)
+
+#[test]
+fn a_finished_breach_line_is_not_offered() {
+    let mut g = board(8, 8, 20);
+    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
+    let line = |g: &mut Game| mine::breach_options(g, P0, true).unwrap().len();
+    assert_eq!(line(&mut g), 1); // the table can be milled out
+    assert!(mine::breach_line(&mut g, P0, true).unwrap());
+    assert_eq!(opp_libraries(&g), [0, 0, 0]);
+    assert!(g.players[1..].iter().all(|q| q.alive)); // they lose on their own draws
+    assert!(!mine::breach_line(&mut g, P0, false).unwrap()); // nothing left to do
+    assert_eq!(line(&mut g), 0);
+    let opts = brain::main_options(&mut g, P0, true).unwrap();
+    assert!(!opts.iter().any(|o| o.label == "Underworld Breach line"));
+    // the same with Breach still in hand and the libraries already empty
+    let mut g = board(8, 8, 0);
+    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
+    assert_eq!(line(&mut g), 0);
 }

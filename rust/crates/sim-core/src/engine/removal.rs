@@ -316,9 +316,11 @@ fn etb_removal_pick(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 /// card: the wipe spell (its tags matter: Toxic Deluge), None for a wipe with no card
 pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
     g.batch += 1; // creatures destroyed together die simultaneously
+    let prev_batch = g.cur_batch.replace(g.batch);
     let prev = g.destroyer.replace(p); // Karmic Justice: who destroyed them
     g.resolving += 1;
     let r = apply_wipe_inner(g, p, kind, card, ctx);
+    g.cur_batch = prev_batch;
     g.destroyer = prev;
     g.resolving -= 1;
     r?;

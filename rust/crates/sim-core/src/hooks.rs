@@ -239,6 +239,8 @@ pub type PlayerFn = fn(&mut Game, Src, PlayerId) -> Res;
 pub type CastFn = fn(&mut Game, Src, PlayerId, CardId) -> Res;
 /// attack(g, src, p, atk, d): p attacked d with atk; returns new attacking creatures
 pub type AttackFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId) -> Res<Vec<PermId>>;
+/// tokens_enter(g, src, p, toks): these tokens entered under p's control (Plumecreed Mentor; run at once)
+pub type TokensFn = fn(&mut Game, Src, PlayerId, &[PermId]) -> Res;
 /// combat_damage(g, src, p, a, d, dmg): attacker a dealt dmg combat damage to player d
 pub type CombatDamageFn = fn(&mut Game, Src, PlayerId, PermId, PlayerId, i32) -> Res;
 /// options(g, src, p, post): activated abilities the AI may use (post: None at the end-of-turn window)
@@ -288,8 +290,9 @@ pub type TokenCreatedFn = fn(&mut Game, Src, PlayerId, &[Sym], i32) -> Res;
 pub type Assign = Vec<(PermId, PermId)>;
 /// blocks(g, src, p, atk, d, assign): d's blockers are declared against p's attackers; may change the blocks
 pub type BlocksFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
-/// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize)
-pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
+/// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize; The Wandering
+/// Emperor takes the attacker it exiles out of `atk`)
+pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
 /// land_defend(g, land, d, p, atk, assign): a land of defender d's answers p's attack (Kor Haven: an attacker taken
 /// out of `atk` deals no combat damage)
 pub type LandDefendFn = fn(&mut Game, crate::ids::LandId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
@@ -305,6 +308,9 @@ pub type GyPlayerFn = fn(&mut Game, CardId, PlayerId) -> Res;
 pub type HandCastFn = fn(&mut Game, CardId, PlayerId, CardId) -> Res;
 /// hand_blocks(g, c, p, atk, d, assign): card c in attacker p's hand after blocks (ninjutsu-style)
 pub type HandBlocksFn = fn(&mut Game, CardId, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
+/// ninjutsu(g, src, p, m, atk): p's m entered tapped and attacking by ninjutsu (run at once, not a trigger); atk is
+/// the attack it joined, which the hook may add to (Thousand-Faced Shadow; Python's `g.ninja_atk`)
+pub type NinjutsuFn = fn(&mut Game, Src, PlayerId, PermId, &mut Vec<PermId>) -> Res;
 /// hand_attack(g, c, p, atk, d): card c in p's hand as p attacks d
 pub type HandAttackFn = fn(&mut Game, CardId, PlayerId, &[PermId], PlayerId) -> Res;
 /// defend(g, src, d, p, atk, assign): the defender's permanents after blocks (Yawgmoth)
@@ -329,6 +335,10 @@ pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::C
 /// SELF_PT(g, p, m): a creature's own power/toughness rule (Kor Spiritdancer: +2/+2 per Aura on it): Python's
 /// `common.SELF_PT`
 pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);
+/// combat_start(g, src, p): the beginning of p's combat (Helm of the Host); returns new attacking creatures
+pub type CombatStartFn = fn(&mut Game, Src, PlayerId) -> Res<Vec<PermId>>;
+/// cards_to_gy(g, src, p, cards): these cards of p's are going to the graveyard (milled, discarded)
+pub type CardsToGyFn = fn(&mut Game, Src, PlayerId, &[CardId]) -> Res;
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
 pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
@@ -336,6 +346,17 @@ pub type SpellImpFn = fn(&Game, PlayerId, CardId) -> f64;
 /// an entry of common.TOKEN_PT (tokens with data: Urza's Construct) or common.CREATURE_PT (any creature: the
 /// Banners): (g, m) -> (dp, dt)
 pub type PtFn = fn(&Game, PermId) -> (i32, i32);
+/// gy_hate(g, src, reanimator, gy_owner): true if src exiled gy_owner's graveyard in response
+pub type GyHateFn = fn(&mut Game, Src, PlayerId, PlayerId) -> Res<bool>;
+/// blood_moon(g, src): true while src makes nonbasic lands tap for R
+pub type BloodMoonFn = fn(&Game, Src) -> bool;
+/// CI.SAGA's wants(g, p, m): proliferate should add a lore counter to Saga m
+pub type SagaWantsFn = fn(&Game, PlayerId, PermId) -> bool;
+/// CI.SAGA's add_lore(g, p, m): a lore counter on Saga m (its chapter triggers)
+pub type SagaLoreFn = fn(&mut Game, PlayerId, PermId) -> Res;
+/// copycast(g, src, p, effect): p cast a copy of a back-face spell (a prepared card's): Thousand-Year Storm copies it.
+/// Python passes the copy's effect as a closure; here it is the card code's own number for it (impls::mine).
+pub type CopycastFn = fn(&mut Game, Src, PlayerId, u8) -> Res;
 
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
@@ -407,9 +428,22 @@ pub struct CardImpl {
     pub hand_opp_cast: Option<HandCastFn>,
     pub hand_blocks: Option<HandBlocksFn>,
     pub hand_attack: Option<HandAttackFn>,
+    pub ninjutsu: Option<NinjutsuFn>,
     pub defend: Option<DefendFn>,
     /// skip_draw(g, src, p): p skips its draw step (Solitary Confinement): a count over the hooked permanents
     pub skip_draw: Option<PlayerCountFn>,
+    /// creature_to_gy(g, src, m): a creature's card went to its owner's graveyard from the battlefield (Nim Deathmantle)
+    pub creature_to_gy: Option<LeavesFn>,
+    pub copycast: Option<CopycastFn>,
+    pub combat_start: Option<CombatStartFn>,
+    pub cards_to_gy: Option<CardsToGyFn>,
+    /// monarch(g, src, p): p became the monarch (run at once: not a triggered event; Palace Jailer)
+    pub monarch: Option<PlayerFn>,
+    /// exiled_from_bf(g, src, m): m was exiled from the battlefield and returned (a blink; Soulherder)
+    pub exiled_from_bf: Option<LeavesFn>,
+    /// loyalty_extra(g, src, p): extra loyalty each of p's loyalty abilities costs (Carth the Lion): a count over the
+    /// hooked permanents
+    pub loyalty_extra: Option<PlayerCountFn>,
     // Python's per-card tables (CI.SELF_CAST, AS_ENTERS, SELF_REGEN, ON_TAP, DYN_MANA, LAND_ETB, LAND_COLS)
     pub self_cast: Option<SelfCastFn>,
     pub as_enters: Option<AsEntersFn>,
@@ -420,6 +454,11 @@ pub struct CardImpl {
     pub dyn_mana_perm: Option<DynManaPermFn>,
     pub land_etb: Option<LandEtbFn>,
     pub land_cols: Option<LandColsFn>,
+    /// crew(g, src, p): p's beginning of combat, its first combat each turn (vehicles crew, Opposition taps; run at
+    /// once: not a triggered event in Python)
+    pub crew: Option<PlayerFn>,
+    /// tokens_enter(g, src, p, toks): tokens entered under p's control (run at once)
+    pub tokens_enter: Option<TokensFn>,
     /// rebound(g, p, c): a rebound spell in p's exile is cast again at p's upkeep
     pub rebound: Option<SelfCastFn>,
     /// a creature's own power/toughness rule (common.SELF_PT), applied while `g.selfpt` is on
@@ -430,6 +469,16 @@ pub struct CardImpl {
     pub spell_imp: Option<SpellImpFn>,
     /// a fixed value of removing it (Python's `CI.PVAL`)
     pub pval: Option<f64>,
+    /// gy_hate(g, src, reanimator, gy_owner): exile a graveyard in response to a reanimation (Tormod's Crypt)
+    pub gy_hate: Option<GyHateFn>,
+    /// blood_moon(g, src): nonbasic lands tap for R (Magus of the Moon)
+    pub blood_moon: Option<BloodMoonFn>,
+    /// proliferate_extra(g, src, p): p proliferates this many more times (Tekuthal), summed
+    pub proliferate_extra: Option<PlayerCountFn>,
+    /// a Saga's proliferate rule (Python's `CI.SAGA`): (wants another lore counter, add it: that chapter)
+    pub saga: Option<(SagaWantsFn, SagaLoreFn)>,
+    /// engine.SELF_COST: generic mana added to (+) or taken off (-) the card's own cost (Draco's domain, delve)
+    pub self_cost: Option<PrioFn>,
     /// an Aura's bonus, keywords and host rule (common.AURA; set by `impls::common::aura`)
     pub aura: Option<&'static crate::impls::common::AuraSpec>,
     /// a planeswalker's loyalty abilities for the walker framework (common.WALKERS; set by `impls::common::walker`)
@@ -518,9 +567,22 @@ impl CardImpl {
             Event::GyLandfall => self.gy_landfall.is_some(),
             Event::HandCast => self.hand_cast.is_some(),
             Event::HandAttack => self.hand_attack.is_some(),
+            Event::Ninjutsu => self.ninjutsu.is_some(),
             Event::Defend => self.defend.is_some(),
             Event::SkipDraw => self.skip_draw.is_some(),
             Event::Rebound => self.rebound.is_some(),
+            Event::GyHate => self.gy_hate.is_some(),
+            Event::BloodMoon => self.blood_moon.is_some(),
+            Event::LoyaltyExtra => self.loyalty_extra.is_some(),
+            Event::ProliferateExtra => self.proliferate_extra.is_some(),
+            Event::CreatureToGy => self.creature_to_gy.is_some(),
+            Event::Copycast => self.copycast.is_some(),
+            Event::Crew => self.crew.is_some(),
+            Event::CombatStart => self.combat_start.is_some(),
+            Event::CardsToGy => self.cards_to_gy.is_some(),
+            Event::Monarch => self.monarch.is_some(),
+            Event::ExiledFromBf => self.exiled_from_bf.is_some(),
+            Event::TokensEnter => self.tokens_enter.is_some(),
             _ => false,
         }
     }
@@ -635,6 +697,11 @@ pub enum Call {
         a: PermId,
         d: PlayerId,
         dmg: i32,
+    },
+    /// copycast: p cast a copy whose effect is the card code's number `effect`
+    Copycast {
+        p: PlayerId,
+        effect: u8,
     },
 }
 
