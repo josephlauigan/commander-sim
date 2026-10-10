@@ -1100,12 +1100,17 @@ def proliferate(g, p, times=1):
     times *= 1 + (CI.total(g, 'proliferate_extra', p) if g.hooks else 0)            # Tekuthal
     dbl = 2 if any(m.cd is not None and m.cd.name == 'Doubling Season' for m in p.perms) else 1
     for _ in range(times):
+        sagas = []
         for m in p.perms:
             if m.army or m.phased: continue
             if m.plus > 0: m.plus += dbl
             if m.loyalty is not None and m.cd is not None and 'P' in m.cd.types: m.loyalty += dbl
             if m.data and m.data.get('counters'):
                 for k in m.data['counters']: m.data['counters'][k] += dbl
+            if m.data and 'lore' in m.data and m.cd.name in CI.SAGA and CI.SAGA[m.cd.name][0](g, p, m): sagas.append(m)
+        for m in sagas:                                      # a lore counter: that chapter triggers (Summon: Bahamut)
+            if m in p.perms: CI.SAGA[m.cd.name][1](g, p, m)
+            if g.over or not p.alive: return
         for q in g.opps(p):
             for m in list(q.perms):
                 if m.creature and m.plus < 0:

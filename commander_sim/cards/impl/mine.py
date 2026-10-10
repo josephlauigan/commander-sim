@@ -58,6 +58,7 @@ def _kitten(g, src, caster, c):
     leave(g, m)
     n = enter(g, p, cd, orig=p)
     n.is_cmd = was_cmd
+    if g.hooks and m.creature: CI.fire(g, 'exiled_from_bf', m)        # (Soulherder)
 card('Displacer Kitten', 'pow=2 tgh=2 noatk', types='C', dsl=[])
 full('Displacer Kitten', 'each noncreature spell you cast flickers your permanent with the best enters-the-battlefield '
      'value (Atraxa, Grand Unifier, Eternal Witness ...); stolen permanents are left alone')
@@ -239,11 +240,17 @@ def mega_flare(g, p, src):
     return sum(m.cd.cmc for m in p.perms if m is not src and m.cd is not None and not m.phased)
 
 
+def flare_strong(g, p, m):
+    """Mega Flare would kill an opponent, or deal 10 or more to each"""
+    x = mega_flare(g, p, m)
+    return x >= 10 or any(q.life <= x for q in g.opps(p))
+
+
 def bahamut_restart(g, p, m):
     """blinking it: a new object at chapter I (another destroy now, II and III again) that isn't sacrificed after
-    IV. Not while Mega Flare is next and would kill an opponent"""
+    IV. Not while a strong Mega Flare is next"""
     lore = (m.data or {}).get('lore', 1)
-    if lore >= 3 and any(q.life <= mega_flare(g, p, m) for q in g.opps(p)): return 0.0
+    if lore >= 3 and flare_strong(g, p, m): return 0.0
     t = bahamut_target(g, p)
     return 1.0 + (min(5.0, pval(g, t)) if t is not None else 0.0) + (lore - 1)
 
@@ -276,21 +283,38 @@ def _bahamut_chapter(g, p, src, n):
 def _bahamut_enters(g, src, p, m):
     """it enters with a lore counter (AS_ENTERS), so chapter I triggers: cast, reanimated or blinked alike"""
     if m is not src: return
+    src.owner.stats['bahamut_enters'] += 1
     if not trigger_window(g, src.owner, src, BAHAMUT_CH[1], imp=5): return
     _bahamut_chapter(g, src.owner, src, 1)
 
 
 @on(BAHAMUT, 'main1')
-def _bahamut_lore(g, src, p):
-    """after your draw step: a lore counter, and that chapter triggers; sacrificed once chapter IV has resolved"""
-    if p is not src.owner or not src.data or 'lore' not in src.data: return
+def _bahamut_main1(g, src, p):
+    """after your draw step: a lore counter"""
+    if p is src.owner and src.data and 'lore' in src.data: bahamut_lore(g, p, src)
+
+
+def bahamut_lore(g, p, src):
+    """a lore counter (after your draw step, or proliferated): that chapter triggers; sacrificed once IV has resolved"""
     n = src.data['lore'] = src.data['lore'] + 1
     if n <= 4 and trigger_window(g, p, src, BAHAMUT_CH[n], imp=7 if n == 4 else 5): _bahamut_chapter(g, p, src, n)
     if n >= 4 and src in p.perms: die(g, src, 'sac')
+
+
+def bahamut_wants_lore(g, p, m):
+    """proliferate adds a lore counter toward chapter II or III, or to IV when Mega Flare is strong"""
+    return m.owner is p and (m.data['lore'] < 3 or flare_strong(g, p, m))
+
+
+def _bahamut_proliferated(g, p, m):
+    p.stats['bahamut_proliferated'] += 1
+    bahamut_lore(g, p, m)
 CI.AS_ENTERS[BAHAMUT] = lambda g, p, m: setattr(m, 'data', dict(m.data or {}, lore=1))
+CI.SAGA[BAHAMUT] = (bahamut_wants_lore, _bahamut_proliferated)
 full(BAHAMUT, 'Saga: a lore counter as it enters (cast, reanimated or blinked: a new object at chapter I) and after '
      'your draw step; I, II destroy the most threatening opposing nonland permanent; III draw two; IV Mega Flare '
-     '(the total mana value of your other permanents to each opponent), then it is sacrificed. Flying 9/9')
+     '(the total mana value of your other permanents to each opponent), then it is sacrificed. Flying 9/9. Proliferate '
+     'adds a lore counter (that chapter triggers) toward II or III, or to IV when Mega Flare kills or deals 10 or more')
 
 
 # ================================================================== Veyran
@@ -1541,6 +1565,33 @@ def blink_worth(g, p, m):
     from commander_sim.cards.impl import t2 as impl_t2
     if m.cd is not None and 'bahamut' in m.cd.tags: return etb_value(g, p, m)     # its restart, not a flat enter hook
     return max(impl_t2.blink_value(g, p, m), etb_value(g, p, m))
+
+
+def flicker_worth(g, p, m):
+    """Soulherder, Conjurer's Closet, Restoration Angel: blink_worth, less the +1/+1 counters lost (etb_value's
+    count) and the Equipment that falls off (Nim Deathmantle); never a token or a creature that would return to
+    another owner"""
+    if m.token or m.cd is None or m.orig is not p: return 0.0
+    v = blink_worth(g, p, m)
+    if m.plus > 0: v = min(v, etb_value(g, p, m))
+    return v - 1.5 * sum(1 for e in p.perms if e.attached is m)
+
+
+def resto_cast(g, p, m, why):
+    """flash in Restoration Angel from hand: its enters trigger blinks your non-Angel creature m (a removal spell aimed
+    at it fizzles). True if m got away"""
+    from commander_sim import ais
+    c = next((x for x in p.hand if x.name == 'Restoration Angel'), None)
+    if c is None or m not in p.perms or m.token or has_type(m, 'angel') or not castable(g, p, c) \
+            or not can_pay(g, p, c.generic, c.pips) or not ais.pay_card(g, p, c): return False
+    p.gy.remove(c)
+    g.resto_target = m
+    try:
+        enter(g, p, c)
+    finally:
+        g.resto_target = None
+    p.stats['resto_' + why] += 1
+    return m not in p.perms
 
 
 def ephemerate_cast(g, p, m, why):

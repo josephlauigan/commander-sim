@@ -44,6 +44,7 @@ DYN_MANA = {}         # card name -> fn(g, p, perm) -> amount of mana its tap ab
 ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tapped for mana (Heritage Druid ...)
 LAND_COLS = {}        # land name -> fn(g, p, land) -> the colours it can make now (Vivid lands, Gemstone Mine)
 AS_ENTERS = {}        # card name -> fn(g, p, perm) as it enters, before any trigger (naming a creature type)
+SAGA = {}             # Saga name -> (wants(g, p, perm), add_lore(g, p, perm)): proliferate's lore counter, if wanted
 SELF_REGEN = {}       # creature name -> fn(g, perm) -> True if it regenerates instead of being destroyed
 SELF_CAST = {}        # card name -> fn(g, p, c) when p casts it: "when you cast this spell" (cascade)
 
