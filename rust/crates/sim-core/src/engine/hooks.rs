@@ -206,6 +206,8 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (Event::LandPlay, Call::Cards { p, cards }) => imp.land_play.map_or(Ok(()), |f| f(g, src, *p, cards[0])),
         (Event::LandGy, Call::Cards { p, cards }) => imp.land_gy.map_or(Ok(()), |f| f(g, src, *p, cards[0])),
         (Event::Discard, Call::Discard { p, c }) => imp.discard.map_or(Ok(()), |f| f(g, src, *p, *c)),
+        (Event::Crew, Call::Player { p }) => imp.crew.map_or(Ok(()), |f| f(g, src, *p)),
+        (Event::TokensEnter, Call::Tokens { p, toks }) => imp.tokens_enter.map_or(Ok(()), |f| f(g, src, *p, toks)),
         (Event::TokenCreated, Call::ArtifactTokens { p, kinds, n }) => {
             imp.token_created.map_or(Ok(()), |f| f(g, src, *p, kinds, *n))
         }

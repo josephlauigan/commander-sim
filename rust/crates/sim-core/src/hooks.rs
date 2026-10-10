@@ -239,6 +239,8 @@ pub type PlayerFn = fn(&mut Game, Src, PlayerId) -> Res;
 pub type CastFn = fn(&mut Game, Src, PlayerId, CardId) -> Res;
 /// attack(g, src, p, atk, d): p attacked d with atk; returns new attacking creatures
 pub type AttackFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId) -> Res<Vec<PermId>>;
+/// tokens_enter(g, src, p, toks): these tokens entered under p's control (Plumecreed Mentor; run at once)
+pub type TokensFn = fn(&mut Game, Src, PlayerId, &[PermId]) -> Res;
 /// combat_damage(g, src, p, a, d, dmg): attacker a dealt dmg combat damage to player d
 pub type CombatDamageFn = fn(&mut Game, Src, PlayerId, PermId, PlayerId, i32) -> Res;
 /// options(g, src, p, post): activated abilities the AI may use (post: None at the end-of-turn window)
@@ -420,6 +422,11 @@ pub struct CardImpl {
     pub dyn_mana_perm: Option<DynManaPermFn>,
     pub land_etb: Option<LandEtbFn>,
     pub land_cols: Option<LandColsFn>,
+    /// crew(g, src, p): p's beginning of combat, its first combat each turn (vehicles crew, Opposition taps; run at
+    /// once: not a triggered event in Python)
+    pub crew: Option<PlayerFn>,
+    /// tokens_enter(g, src, p, toks): tokens entered under p's control (run at once)
+    pub tokens_enter: Option<TokensFn>,
     /// rebound(g, p, c): a rebound spell in p's exile is cast again at p's upkeep
     pub rebound: Option<SelfCastFn>,
     /// a creature's own power/toughness rule (common.SELF_PT), applied while `g.selfpt` is on
@@ -521,6 +528,8 @@ impl CardImpl {
             Event::Defend => self.defend.is_some(),
             Event::SkipDraw => self.skip_draw.is_some(),
             Event::Rebound => self.rebound.is_some(),
+            Event::Crew => self.crew.is_some(),
+            Event::TokensEnter => self.tokens_enter.is_some(),
             _ => false,
         }
     }

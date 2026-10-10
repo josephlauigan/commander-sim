@@ -49,8 +49,10 @@ fn has_static(g: &Game, c: CardId, kind: &str) -> bool {
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     match g.player(p).key {
         "sauron" => sauron_prio(g, p, c),
-        // PORT(phase 6): seph_prio, veyran_prio, galadriel_prio, yshtola_prio, alela_prio, jodah_prio. Until then
-        // your other decks cast by the outside decks' tag priority.
+        "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
+        "alela" => crate::impls::alela::alela_prio(g, p, c),
+        // PORT(phase 6): seph_prio, veyran_prio, yshtola_prio, jodah_prio. Until then your other decks cast by the
+        // outside decks' tag priority.
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -1216,8 +1218,9 @@ pub fn protect_response(
             }
             Ok(false)
         }
+        "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         // PORT(phase 6): Sephiroth (Ephemerate, Restoration Angel, Heroic Intervention, Galadriel's Dismissal,
-        // sacrifice in response), Veyran, Galadriel, Y'shtola, Jodah
+        // sacrifice in response), Veyran, Y'shtola, Jodah
         _ => Ok(false),
     }
 }
@@ -1231,8 +1234,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if !is_main(key) {
         return pool::wipe_response(g, q, kind, caster);
     }
-    // PORT(phase 6): Galadriel's, Y'shtola's and Jodah's answers
-    if matches!(key, "galadriel" | "yshtola" | "jodah") {
+    if key == "galadriel" {
+        return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
+    }
+    // PORT(phase 6): Y'shtola's and Jodah's answers
+    if matches!(key, "yshtola" | "jodah") {
         return Ok(None);
     }
     if wipe_loss(g, q, kind, caster) < 6.0 {

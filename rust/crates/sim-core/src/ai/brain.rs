@@ -578,8 +578,10 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             x.instant && x.tag(Tag::Rem) && !x.creature
         })
         .collect();
-    // PORT(phase 6): Galadriel's permanents' answers (CI.galadriel_attack_answers)
-    if rem.is_empty() || atk.is_empty() {
+    // Galadriel's permanents' answers (Ballista Squad, Lawbringer, Lightbringer)
+    let answers =
+        if g.player(d).key == "galadriel" { crate::impls::galadriel::attack_answers(g, d, p, atk) } else { vec![] };
+    if (rem.is_empty() && answers.is_empty()) || atk.is_empty() {
         return Ok(false);
     }
     let incoming: i32 = atk
@@ -608,6 +610,17 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, m));
             }
+        }
+    }
+    if let Some(&(v2, a)) = answers.iter().fold(None, |b: Option<&(f64, _)>, x| match b {
+        Some(y) if y.0 >= x.0 => Some(y),
+        _ => Some(x),
+    }) && v2 + if danger { 3.0 } else { 0.0 } - 3.0 > 0.0
+        && best.is_none_or(|b| v2 >= b.0 - 1.0)
+    {
+        if crate::impls::galadriel::answer(g, d, a)? {
+            g.player_mut(d).stat("attack_removal", 1);
+            return Ok(true);
         }
     }
     let Some((v, c, m)) = best else { return Ok(false) };

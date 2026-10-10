@@ -55,6 +55,8 @@ pub enum DataKey {
     Escaped,
     Exerted,
     Exiled,
+    /// Whipcorder face down: its printed (power, toughness) (galadriel.enter_face_down)
+    Facedown,
     FableGoblin,
     Final,
     Flip,
@@ -84,6 +86,8 @@ pub enum DataKey {
     LoyaltyN,
     Lore,
     Lure,
+    /// Knight of the Holy Nimbus: an opponent paid {2}, it can't regenerate this turn
+    Noregen,
     Manatok,
     MordDog,
     MustAttack,
@@ -97,6 +101,8 @@ pub enum DataKey {
     Stolen,
     TapOnReturn,
     Unblockable,
+    /// Reconstructed Thopter came back by unearth (exiled at the end step)
+    Unearth,
     Unbl,
     Used,
     Voice,
@@ -450,6 +456,12 @@ pub struct Player {
     pub yawg_loop: Option<u32>,
     /// Sunfall's Incubator: its +1/+1 counters (0: none)
     pub incubator: i32,
+    /// energy counters (Static Prison, Aether Hub)
+    pub energy: i32,
+    /// Malcator: artifact tokens made this turn, (turn, how many) (Python's `art_tok`)
+    pub art_tok: Option<(TurnStamp, i32)>,
+    /// Reconstructed Thopter cards already unearthed (once each)
+    pub unearthed: Vec<CardId>,
 }
 
 impl Player {
@@ -560,6 +572,9 @@ impl Player {
             combo_turn: None,
             yawg_loop: None,
             incubator: 0,
+            energy: 0,
+            art_tok: None,
+            unearthed: vec![],
             stats: IndexMap::new(),
         }
     }
@@ -802,6 +817,10 @@ pub struct Game {
     pub combo_spell: bool,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
+    /// Eerie Interlude: (player, card) exiled until the beginning of the next end step (Python's `g.eot_returns`)
+    pub eot_returns: Vec<(PlayerId, CardId)>,
+    /// blinks in progress (t2.blink: chains deeper than 3 stop)
+    pub blink_depth: u32,
 }
 
 impl Game {
@@ -896,6 +915,8 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             lattice_lock: None,
+            eot_returns: vec![],
+            blink_depth: 0,
         }
     }
 
