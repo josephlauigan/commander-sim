@@ -1202,7 +1202,8 @@ fn pilgrim(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-/// common.TUTOR_PRED: what the creature tutors can find (tutors follow chains: Recruiter -> Spellseeker -> Reversal)
+/// common.TUTOR_PRED: what the creature tutors can find (tutors follow chains: Recruiter -> Spellseeker -> Reversal).
+/// Copied here for tutor_named's chain rank: the table is filled by common.py (_tutor_etb) and t5.py.
 fn tutor_pred(g: &Game, c: CardId) -> Option<fn(&Game, CardId) -> bool> {
     match &*g.db.get(c).name {
         "Spellseeker" => Some(|g, x| {
@@ -1214,6 +1215,15 @@ fn tutor_pred(g: &Game, c: CardId) -> Option<fn(&Game, CardId) -> bool> {
             d.creature && d.tgh <= 2
         }),
         "Goblin Matron" => Some(|g, x| card_sub(g, x, "goblin")),
+        // t5.py's entries
+        "Trophy Mage" => Some(|g, x| {
+            let d = g.db.get(x);
+            d.types.has(Types::ARTIFACT) && d.cmc == 3
+        }),
+        "Tribute Mage" => Some(|g, x| {
+            let d = g.db.get(x);
+            d.types.has(Types::ARTIFACT) && d.cmc == 2
+        }),
         _ => None,
     }
 }
