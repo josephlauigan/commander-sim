@@ -16,9 +16,9 @@
 //!   tappers before an opponent's combat.
 //!
 //! Not ported: `galadriel_abilities` (it returns False, and only Python's old-mode main loop calls it; the Rust has no
-//! old mode). The person's choices (practice mode) are `HUMAN(phase 9)`. A few functions of modules other agents
-//! port (marchesa.best_steal / steal, zur.guildmage_target / populate / rootborn, t2.blink / blink_value) have
-//! stand-ins at the end of this file: swap them for those modules' functions once they land.
+//! old mode). The person's choices (practice mode) are `HUMAN(phase 9)`. Other modules' functions it uses
+//! (marchesa.best_steal / steal, zur.guildmage_target / rootborn, t2.blink / blink_value) are re-exported at the end
+//! of this file.
 
 use super::partials::at_once;
 use crate::ai::decks::{pay_card, protect_response};
@@ -26,7 +26,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::combat::has_haste;
 use crate::engine::mana::{can_pay, pay, total_mana};
-use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{
@@ -1723,38 +1723,11 @@ pub fn elspeth_emblem(g: &mut Game, p: PlayerId) {
     crate::glog!(g, "    {} gets an emblem: creatures they control get +2/+2 and have flying", pname(g, p));
 }
 
-// ================================================================== stand-ins for other modules
+// ================================================================== other modules' functions this one uses
 // These port functions of modules other agents port in phase 6. Replace them with those modules' functions (same
 // names) once they land.
 
-/// stand-in for marchesa.best_steal: the most valuable creature p may gain control of with this spell
-pub fn best_steal(g: &Game, p: PlayerId, spell: Option<CardId>) -> Option<PermId> {
-    let tg: Vec<PermId> =
-        legal_targets(g, p, "steal", "c", false, spell).into_iter().filter(|&m| !g.perm(m).phased).collect();
-    max_by(&tg, |m| pval(g, m))
-}
-
-/// stand-in for marchesa.steal: p gains control of m (until end of turn: untapped, hasty, given back at the end
-/// step)
-pub fn steal(g: &mut Game, p: PlayerId, m: PermId, until_eot: bool) {
-    let q = g.perm(m).owner;
-    g.player_mut(q).perms.retain(|&x| x != m);
-    let x = g.perm_mut(m);
-    x.owner = p;
-    x.attached = None;
-    g.player_mut(p).perms.push(m);
-    g.bf_ver += 1;
-    if until_eot {
-        let x = g.perm_mut(m);
-        x.tapped = false;
-        x.sick = false;
-        g.player_mut(p).borrowed.push(m);
-    } else {
-        g.perm_mut(m).sick = true;
-    }
-    crate::glog!(g, "    {} gains control of {} ({})", pname(g, p), name_of(g, m), pname(g, q));
-}
-
+pub use super::marchesa::{best_steal, steal};
 pub use super::zur::guildmage_target;
 use super::zur::rootborn;
 
