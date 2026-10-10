@@ -568,9 +568,25 @@ pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dm
     Ok(())
 }
 
-/// PORT(M5): CI.become_monarch
+/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; the 'monarch' hooks run at
+/// once (Palace Jailer's exiled creature returns)
 pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
+    if g.monarch == Some(p) || !g.player(p).alive {
+        return Ok(());
+    }
     g.monarch = Some(p);
+    crate::glog!(g, "    {} becomes the monarch", g.player(p).name);
+    if g.garland {
+        garland_check(g);
+    }
+    if !g.hooks.is_empty() {
+        for (src, imp) in hooks::hooked(g, Event::Monarch) {
+            (imp.monarch.unwrap())(g, src, p)?;
+            if g.over {
+                break;
+            }
+        }
+    }
     Ok(())
 }
 
@@ -849,7 +865,7 @@ pub fn regen_wipe(g: &mut Game, q: PlayerId) -> Res<bool> {
     crate::impls::partials::regen_wipe(g, q)
 }
 
-/// the outside decks' card plays: common.adventure_options, t2.evoke_options (PORT(phase 6)),
+/// the outside decks' card plays: common.adventure_options, t2.evoke_options,
 /// common.aristocrat_options, common.food_options, partials.miracle_options and incubator_options (PORT(M5):
 /// partials, wired in impls::common::pool_card_options)
 pub fn pool_card_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -917,7 +933,20 @@ pub fn yuriko_prio(_g: &Game, _p: PlayerId, _c: CardId) -> Option<i32> {
     None
 }
 
-/// PORT(M5): t2.kaalia_prio
-pub fn kaalia_prio(_g: &Game, _p: PlayerId, _c: CardId) -> Option<i32> {
-    None
+/// t2.kaalia_prio
+pub fn kaalia_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    crate::impls::t2::kaalia_prio(g, p, c)
+}
+
+/// PORT(phase 6): mine.flicker_worth (what flickering Sephiroth's creature m is worth: the commander Atraxa, Summon:
+/// Bahamut's restart, counters and Equipment lost); t2.flicker_worth calls it for Sephiroth's deck. Until then
+/// t2.blink_value.
+pub fn seph_flicker_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    crate::impls::t2::blink_value(g, p, m) as f64
+}
+
+/// PORT(phase 6): zur.zur_fetch (CI.zur_fetch: Zur attacking in your Y'shtola deck searches for an enchantment with
+/// mana value 3 or less and puts it onto the battlefield)
+pub fn zur_fetch(_g: &mut Game, _src: PermId, _p: PlayerId) -> Res {
+    Ok(())
 }

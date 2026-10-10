@@ -450,6 +450,8 @@ pub struct Player {
     pub yawg_loop: Option<u32>,
     /// Sunfall's Incubator: its +1/+1 counters (0: none)
     pub incubator: i32,
+    /// Meren of Clan Nel Toth's experience counters (Python's `p.experience`)
+    pub experience: i32,
 }
 
 impl Player {
@@ -560,6 +562,7 @@ impl Player {
             combo_turn: None,
             yawg_loop: None,
             incubator: 0,
+            experience: 0,
             stats: IndexMap::new(),
         }
     }
@@ -802,6 +805,10 @@ pub struct Game {
     pub combo_spell: bool,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
+    /// t2.blink: how deep blinks are nested (blink chains are combos, not loops: Python's `g.blink_depth`)
+    pub blink_depth: u32,
+    /// the creature a Restoration Angel being cast from hand blinks (Python's `g.resto_target`)
+    pub resto_target: Option<PermId>,
 }
 
 impl Game {
@@ -896,6 +903,8 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             lattice_lock: None,
+            blink_depth: 0,
+            resto_target: None,
         }
     }
 

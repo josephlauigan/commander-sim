@@ -1488,7 +1488,7 @@ fn adventure_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// common.aristocrat_options, common.food_options, partials.miracle_options and partials.incubator_options
 pub fn pool_card_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let mut o = adventure_options(g, p, post)?;
-    // PORT(phase 6): o.extend(t2::evoke_options(g, p, post)?) — t2.evoke_options goes here
+    o.extend(super::t2::evoke_options(g, p, post)?);
     o.extend(aristocrat_options(g, p, post)?);
     o.extend(food_options(g, p, post)?);
     o.extend(super::partials::miracle_options(g, p, post)?);

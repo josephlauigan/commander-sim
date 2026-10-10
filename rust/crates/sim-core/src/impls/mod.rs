@@ -19,18 +19,23 @@ pub mod partials;
 pub mod rules;
 pub mod rules2;
 pub mod t1;
+pub mod t2;
 pub mod t3;
+pub mod t5;
 pub mod topdeck;
 
-/// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t3, combos, topdeck,
-/// fixes, lands, partials, rules, rules2, mine, galadriel, jodah): a later module's slot replaces an earlier one's for
-/// the same card and event, as a later `@on(name, event)` does in Python (partials' and rules' Druid Class and Ezuri
-/// options replace t1's, rules2's Goblin Rabblemaster and Legion Warboss upkeeps replace t1's ...)
+/// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t5, combos,
+/// topdeck, fixes, lands, partials, rules, rules2, mine, galadriel, jodah; t4 goes between t3 and t5): a later
+/// module's slot replaces an earlier one's for the same card and event, as a later `@on(name, event)` does in Python
+/// (partials' and rules' Druid Class and Ezuri options replace t1's, rules2's Goblin Rabblemaster and Legion Warboss
+/// upkeeps replace t1's ...)
 pub fn registry(db: &CardDb) -> Result<Registry, String> {
     let mut r = Registry::new(db);
     common::register(&mut r, db)?;
     t1::register(&mut r, db)?;
+    t2::register(&mut r, db)?;
     t3::register(&mut r, db)?;
+    t5::register(&mut r, db)?;
     combos::register(&mut r, db)?;
     topdeck::register(&mut r, db)?;
     fixes::register(&mut r, db)?;
