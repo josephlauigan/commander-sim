@@ -24,7 +24,7 @@ use super::partials::at_once;
 use crate::ai::decks::{pay_card, protect_response};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
-use crate::engine::combat::{can_block, has_haste};
+use crate::engine::combat::has_haste;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
@@ -1755,118 +1755,14 @@ pub fn steal(g: &mut Game, p: PlayerId, m: PermId, until_eot: bool) {
     crate::glog!(g, "    {} gains control of {} ({})", pname(g, p), name_of(g, m), pname(g, q));
 }
 
-/// stand-in for zur.guildmage_target: an untapped opposing creature that could block your best attacker (your
-/// commander first) and win the fight (also Galadriel's tappers)
-pub fn guildmage_target(g: &Game, p: PlayerId) -> Option<PermId> {
-    let mine: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| {
-            let x = g.perm(m);
-            g.is_creature(m) && !x.tapped && !x.phased && (!x.sick || x.is_cmd)
-        })
-        .collect();
-    let a = max_by(&mine, |m| (g.perm(m).is_cmd as i32 * 5 + epow(g, m)) as f64)?;
-    let blockers: Vec<PermId> = g
-        .opps(p)
-        .flat_map(|q| g.player(q).perms.iter().copied())
-        .filter(|&b| {
-            let x = g.perm(b);
-            g.is_creature(b)
-                && !x.tapped
-                && !x.phased
-                && !untargetable(g, b)
-                && can_block(g, b, a)
-                && epow(g, b) >= etgh(g, a)
-        })
-        .collect();
-    max_by(&blockers, |b| epow(g, b) as f64)
-}
+pub use super::zur::guildmage_target;
+use super::zur::rootborn;
 
-/// stand-in for zur.populate: a copy of your best creature token
-fn populate(g: &mut Game, p: PlayerId) -> Res {
-    let toks: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| g.perm(m).token && g.is_creature(m) && !g.perm(m).phased)
-        .collect();
-    let Some(t) = first_max(&toks, |m| (epow(g, m), g.perm(m).fly)) else { return Ok(()) };
-    let x = g.perm(t).clone();
-    let spec = Tokens {
-        tgh: Some(x.tgh),
-        fly: x.fly,
-        color: Some(x.colors),
-        types: x.ttypes.clone(),
-        ..Tokens::new(1, x.pow)
-    };
-    for n in make_tokens(g, p, spec)? {
-        let y = g.perm_mut(n);
-        y.lifelink = x.lifelink;
-        y.dt = x.dt;
-        if !x.data.is_empty() {
-            y.data = x.data.clone();
-        }
-    }
-    Ok(())
-}
+pub use super::t2::blink;
 
-/// stand-in for zur.rootborn: Rootborn Defenses resolves: populate, then indestructible until end of turn
-fn rootborn(g: &mut Game, p: PlayerId) -> Res {
-    populate(g, p)?;
-    for m in g.player(p).perms.clone() {
-        if g.is_creature(m) {
-            add_kw(g, m, "indestructible");
-        }
-    }
-    crate::glog!(g, "  {} casts Rootborn Defenses: creatures gain indestructible", pname(g, p));
-    Ok(())
-}
-
-/// stand-in for t2.blink: exile m and return it under its owner's control (enter effects again, untapped, summoning
-/// sick). PORT(phase 6, t2): CI.fire(g, 'exiled_from_bf', m) (Soulherder) once that event has a slot.
-pub fn blink(g: &mut Game, _p: PlayerId, m: PermId) -> Res<Option<PermId>> {
-    if g.perm(m).token || g.perm(m).cd.is_none() || !on_bf(g, m) {
-        return Ok(None);
-    }
-    if g.blink_depth >= 3 {
-        return Ok(None); // blink chains are combos, not loops here
-    }
-    g.blink_depth += 1;
-    let r = (|| {
-        let x = g.perm(m);
-        let (cd, owner, cmd) = (x.cd.unwrap(), x.orig, x.is_cmd);
-        leave(g, m)?;
-        let n = enter(g, owner, cd, Enter { orig: Some(owner), ..Enter::default() })?;
-        g.perm_mut(n).is_cmd = cmd;
-        crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
-        Ok(Some(n))
-    })();
-    g.blink_depth -= 1;
-    r
-}
-
-/// stand-in for t2.blink_value: how much re-entering is worth for p's permanent m
-pub fn blink_value(g: &Game, _p: PlayerId, m: PermId) -> f64 {
-    let x = g.perm(m);
-    let Some(cd) = x.cd else { return 0.0 };
-    if x.token || x.is_cmd {
-        return 0.0;
-    }
-    let mut v = crate::dsl::etb_value(g, cd) as f64;
-    if g.registry.get(cd).is_some_and(|i| i.etb.is_some()) {
-        v += 3.0;
-    }
-    if matches!(
-        &*g.db.get(cd).name,
-        "Oblivion Ring" | "Banishing Light" | "Detention Sphere" | "Cast Out" | "Journey to Nowhere"
-    ) {
-        v = 0.0;
-    }
-    v
+/// t2.blink_value, as a float for this module's sums
+pub fn blink_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    super::t2::blink_value(g, p, m) as f64
 }
 
 // ================================================================== registry
