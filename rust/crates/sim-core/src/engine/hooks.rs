@@ -57,6 +57,7 @@ pub fn total_count(g: &Game, e: Event, p: PlayerId) -> i32 {
                 Event::ExtraLands => imp.extra_lands,
                 Event::LandsFromGy => imp.lands_from_gy,
                 Event::LandsFromTop => imp.lands_from_top,
+                Event::SkipDraw => imp.skip_draw,
                 _ => panic!("{e:?} is not a count event"),
             };
             (f.unwrap())(g, *src, p)
@@ -181,6 +182,7 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
     match (e, call) {
         (Event::Etb, Call::Etb { p, m }) => imp.etb.map_or(Ok(()), |f| f(g, src, *p, *m)),
         (Event::Leaves, Call::Leaves { m }) => imp.leaves.map_or(Ok(()), |f| f(g, src, *m)),
+        (Event::ExiledFromBf, Call::Leaves { m }) => imp.exiled_from_bf.map_or(Ok(()), |f| f(g, src, *m)),
         (Event::Dies, Call::Dies { m, cause }) => imp.dies.map_or(Ok(()), |f| f(g, src, *m, cause)),
         (Event::SelfDies, Call::Dies { m, cause }) => imp.self_dies.map_or(Ok(()), |f| f(g, src, *m, cause)),
         (Event::Upkeep, Call::Player { p }) => imp.upkeep.map_or(Ok(()), |f| f(g, src, *p)),

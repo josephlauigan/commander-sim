@@ -410,6 +410,10 @@ pub struct CardImpl {
     pub defend: Option<DefendFn>,
     /// skip_draw(g, src, p): p skips its draw step (Solitary Confinement): a count over the hooked permanents
     pub skip_draw: Option<PlayerCountFn>,
+    /// monarch(g, src, p): p became the monarch (run at once: not a triggered event; Palace Jailer)
+    pub monarch: Option<PlayerFn>,
+    /// exiled_from_bf(g, src, m): m was exiled from the battlefield and returned (a blink; Soulherder)
+    pub exiled_from_bf: Option<LeavesFn>,
     // Python's per-card tables (CI.SELF_CAST, AS_ENTERS, SELF_REGEN, ON_TAP, DYN_MANA, LAND_ETB, LAND_COLS)
     pub self_cast: Option<SelfCastFn>,
     pub as_enters: Option<AsEntersFn>,
@@ -521,6 +525,8 @@ impl CardImpl {
             Event::Defend => self.defend.is_some(),
             Event::SkipDraw => self.skip_draw.is_some(),
             Event::Rebound => self.rebound.is_some(),
+            Event::Monarch => self.monarch.is_some(),
+            Event::ExiledFromBf => self.exiled_from_bf.is_some(),
             _ => false,
         }
     }
