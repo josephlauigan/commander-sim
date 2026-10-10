@@ -932,6 +932,22 @@ class SephFlicker(unittest.TestCase):
         E.CI.fire(g2, 'end_step', s2)
         self.assertIn(rock2, s2.perms)                         # an untapped rock gains nothing: left alone
 
+    def test_flickering_hound_flickers_on_your_creature_casts(self):
+        """Flickering Hound: "Whenever you cast a creature spell, exile up to one other target creature you control,
+        then return that card to the battlefield under its owner's control." """
+        g = table('seph', 'veyran'); s, v = g.players
+        hound = perm(g, s, 'Flickering Hound'); perm(g, s, 'Grave Titan')
+        archon = perm(g, s, 'Archon of Cruelty')
+        E.CI.fire(g, 'cast', v, card('Grave Titan'))           # an opponent's creature spell: nothing
+        self.assertIn(archon, s.perms)
+        E.CI.fire(g, 'cast', s, card('Swords to Plowshares'))  # your noncreature spell: nothing
+        self.assertIn(archon, s.perms)
+        E.CI.fire(g, 'cast', s, card('Viscera Seer'))          # your creature spell: Archon blinks
+        self.assertNotIn(archon, s.perms)
+        self.named(s, 'Archon of Cruelty')
+        self.assertIn(hound, s.perms)                          # never itself
+        self.assertEqual(s.stats['flicker Flickering Hound'], 1)
+
     def test_flicker_priorities(self):
         g = table('seph', 'veyran'); s, v = g.players
         circle = card('Teleportation Circle')

@@ -1568,9 +1568,9 @@ def blink_worth(g, p, m):
 
 
 def flicker_worth(g, p, m):
-    """Soulherder, Conjurer's Closet, Teleportation Circle, Restoration Angel: blink_worth, less the +1/+1 counters
-    lost (etb_value's count) and the Equipment that falls off (Nim Deathmantle); never a token or a creature that
-    would return to another owner"""
+    """Soulherder, Conjurer's Closet, Teleportation Circle, Flickering Hound, Restoration Angel: blink_worth, less the
+    +1/+1 counters lost (etb_value's count) and the Equipment that falls off (Nim Deathmantle); never a token or a
+    creature that would return to another owner"""
     if m.token or m.cd is None or m.orig is not p: return 0.0
     v = blink_worth(g, p, m)
     if m.plus > 0: v = min(v, etb_value(g, p, m))
