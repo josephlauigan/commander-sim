@@ -55,6 +55,8 @@ pub enum DataKey {
     Escaped,
     Exerted,
     Exiled,
+    /// Whipcorder face down: its printed (power, toughness) (galadriel.enter_face_down)
+    Facedown,
     FableGoblin,
     Final,
     Flip,
@@ -65,6 +67,8 @@ pub enum DataKey {
     Hidden,
     Hit,
     Hostage,
+    /// Venat, Heart of Hydaelyn has transformed into Hydaelyn, the Mothercrystal
+    Hydaelyn,
     Imprint,
     /// a land that entered this turn ("in")
     In,
@@ -86,6 +90,8 @@ pub enum DataKey {
     LoyaltyN,
     Lore,
     Lure,
+    /// Knight of the Holy Nimbus: an opponent paid {2}, it can't regenerate this turn
+    Noregen,
     Manatok,
     MordDog,
     MustAttack,
@@ -99,6 +105,8 @@ pub enum DataKey {
     Stolen,
     TapOnReturn,
     Unblockable,
+    /// Reconstructed Thopter came back by unearth (exiled at the end step)
+    Unearth,
     Unbl,
     Used,
     Voice,
@@ -461,6 +469,17 @@ pub struct Player {
     /// Sephiroth's Skullclamp: (turn count, uses that turn)
     pub clamp_t: Option<u32>,
     pub clamp_n: u32,
+    /// Meren of Clan Nel Toth's experience counters (Python's `p.experience`)
+    pub experience: i32,
+    /// energy counters (Static Prison, Aether Hub)
+    pub energy: i32,
+    /// Malcator: artifact tokens made this turn, (turn, how many) (Python's `art_tok`)
+    pub art_tok: Option<(TurnStamp, i32)>,
+    /// Reconstructed Thopter cards already unearthed (once each)
+    pub unearthed: Vec<CardId>,
+    /// the wipe (by `Game::cur_batch`) Marchesa, the Black Rose died in: creatures dying in the same wipe return too
+    /// (Python's `p.marchesa_batch`)
+    pub marchesa_batch: Option<u32>,
 }
 
 impl Player {
@@ -576,6 +595,11 @@ impl Player {
             te_used: None,
             clamp_t: None,
             clamp_n: 0,
+            experience: 0,
+            energy: 0,
+            art_tok: None,
+            unearthed: vec![],
+            marchesa_batch: None,
             stats: IndexMap::new(),
         }
     }
@@ -773,6 +797,15 @@ pub struct Game {
     pub goldfish: bool,
     /// Garland, Royal Kidnapper's steals are in play (Python's `g.garland`)
     pub garland: bool,
+    /// Garland's steals: (who took it, the creature, the player it came from, the round it was taken)
+    pub garland_list: Vec<(PlayerId, PermId, PlayerId, u32)>,
+    /// Marchesa's returns at the next end step: (the player it returns for, the card, its owner)
+    pub marchesa_due: Vec<(PlayerId, CardId, PlayerId)>,
+    /// Memory Jar: the hands set aside, returned at the end step
+    pub jar_due: Vec<(PlayerId, Vec<CardId>)>,
+    /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
+    /// while not None)
+    pub cur_batch: Option<u32>,
     /// permanents with hand-written card code, in entry order (Python's `g.hooks`)
     pub hooks: Vec<PermId>,
     pub stack: Vec<StackItem>,
@@ -820,10 +853,20 @@ pub struct Game {
     pub lattice_lock: Option<PlayerId>,
     /// Return the Favor is being cast (it doesn't copy itself): Python's `g.in_rtf`
     pub in_rtf: bool,
-    /// the creature a Restoration Angel entering now blinks (Python's `g.resto_target`)
-    pub resto_target: Option<PermId>,
-    /// how deep blinks are nested (t2.blink stops at 3): Python's `g.blink_depth`
+    /// t2.blink: how deep blinks are nested (blink chains are combos, not loops: Python's `g.blink_depth`)
     pub blink_depth: u32,
+    /// how deep Consecrated Sphinx draws are nested (two Sphinxes feed each other: t4's `g.sphinx_depth`)
+    pub sphinx_depth: u32,
+    /// how deep Sanguine Bond / Exquisite Blood are nested (t4's `g.bond_depth`)
+    pub bond_depth: u32,
+    /// creatures that died this turn while Mahadi, Emporium Master was out (t4's `g.deaths_turn`, current turn only)
+    pub deaths_turn: Option<(TurnStamp, i32)>,
+    /// The Eternal Wanderer's exiles, back at their owner's next end step: (owner, card) (zur's `g.zur_due`)
+    pub zur_due: Vec<(PlayerId, CardId)>,
+    /// the creature Restoration Angel's enter trigger blinks (Python's `g.resto_target`)
+    pub resto_target: Option<PermId>,
+    /// Eerie Interlude: (player, card) exiled until the beginning of the next end step (Python's `g.eot_returns`)
+    pub eot_returns: Vec<(PlayerId, CardId)>,
 }
 
 impl Game {
@@ -894,6 +937,10 @@ impl Game {
             stopped: false,
             goldfish: false,
             garland: false,
+            garland_list: vec![],
+            marchesa_due: vec![],
+            jar_due: vec![],
+            cur_batch: None,
             hooks: vec![],
             stack: vec![],
             stack_pushes: 0,
@@ -919,8 +966,13 @@ impl Game {
             combo_spell: false,
             lattice_lock: None,
             in_rtf: false,
-            resto_target: None,
             blink_depth: 0,
+            sphinx_depth: 0,
+            bond_depth: 0,
+            deaths_turn: None,
+            zur_due: vec![],
+            resto_target: None,
+            eot_returns: vec![],
         }
     }
 

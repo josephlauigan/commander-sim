@@ -433,6 +433,20 @@ pub fn engine_made() -> Vec<RawCard> {
     out
 }
 
+/// Corrections to exported card definitions (bugs in the Python data, fixed in Rust only). Heliod's Pilgrim: its
+/// compiled enters trigger searches for any card (filter `{}`), on top of the card code's search for an Aura, so it
+/// found two cards; the compiled trigger goes, and the card code's Aura search stays.
+fn data_fixes(d: &mut CardDef) {
+    if &*d.name == "Heliod's Pilgrim" {
+        d.abilities = d
+            .abilities
+            .iter()
+            .filter(|a| !matches!(a, crate::dsl::model::Ability::Triggered { event, .. } if event == "etb"))
+            .cloned()
+            .collect();
+    }
+}
+
 /// Every card definition, by id and by name.
 #[derive(Debug)]
 pub struct CardDb {
@@ -453,7 +467,9 @@ impl CardDb {
             if by_name.insert(r.name.as_str().into(), id).is_some() {
                 return Err(format!("{}: defined twice", r.name));
             }
-            cards.push(CardDef::from_raw(id, r)?);
+            let mut d = CardDef::from_raw(id, r)?;
+            data_fixes(&mut d);
+            cards.push(d);
         }
         Ok(CardDb { cards, by_name })
     }

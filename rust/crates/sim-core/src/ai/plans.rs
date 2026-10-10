@@ -107,9 +107,9 @@ pub fn config(key: &str) -> &'static DeckConfig {
 }
 
 /// cards a deck's AI casts only in response, never for their ability-language value (Python's
-/// `CI.RESPONSE_ONLY`). PORT(phase 6): Jodah's protection spells.
-pub fn response_only(_key: &str, _c: CardId) -> bool {
-    false
+/// `CI.RESPONSE_ONLY`): Jodah's protection spells
+pub fn response_only(g: &Game, key: &str, c: CardId) -> bool {
+    key == "jodah" && crate::impls::jodah::response_only(&g.db.get(c).name)
 }
 
 /// what this deck's tutors want: its configured list, else the pieces of its closest combo

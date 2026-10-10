@@ -188,7 +188,7 @@ fn top_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 
 /// Scroll Rack: {1}, {T}: exile any number of cards from hand face down, put that many from the top into hand, then
 /// put the exiled cards on top in any order: swaps the least wanted cards (Yuriko: puts the biggest on top). Each
-/// upkeep; Python doesn't tap it, so neither does this.
+/// upkeep, tapping it (Python never tapped it, so it was free to use again: fixed in Rust).
 fn rack(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let pl = g.player(p);
     if p != g.perm(src).owner
@@ -206,6 +206,7 @@ fn rack(g: &mut Game, src: Src, p: PlayerId) -> Res {
             return Ok(());
         }
         pay(g, p, 1, "", false)?;
+        g.perm_mut(src).tapped = true;
         let top = look(g, p, big.len());
         let pl = g.player_mut(p);
         for &c in &big {
@@ -226,6 +227,7 @@ fn rack(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     pay(g, p, 1, "", false)?;
+    g.perm_mut(src).tapped = true;
     let top = look(g, p, worst.len());
     let pl = g.player_mut(p);
     for &c in &worst {
@@ -251,9 +253,11 @@ fn library(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, p, Some(src), "draw two more cards", None)? || !once_per_turn(g, p, k) {
         return Ok(());
     }
-    let before = g.player(p).hand.clone();
+    let before = g.player(p).hand.len();
     draw(g, p, 2, false)?;
-    let new: Vec<CardId> = g.player(p).hand.iter().copied().filter(|c| !before.contains(c)).take(2).collect();
+    // the cards just drawn are the end of the hand (Python picked them by identity, and cards are shared per name, so
+    // a drawn second copy of a card already in hand — a basic land — was kept for free; fixed in Rust)
+    let new: Vec<CardId> = g.player(p).hand.get(before..).unwrap_or(&[]).to_vec();
     let order = sorted_by(g, &new, |g, c| -desire(g, p, c));
     for c in order {
         if g.player(p).life >= 24 && desire(g, p, c) >= 55.0 {
