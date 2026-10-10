@@ -262,7 +262,7 @@ pub fn gy_worth(g: &Game, q: PlayerId, c: CardId) -> f64 {
 
 /// ais.deck_prio, the deck's cast priority for a card (0-90)
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    decks::deck_prio(g, p, c) as f64
+    decks::deck_prio_f(g, p, c)
 }
 
 /// PORT(M5): marchesa.card_etb_value (what a creature card does for p as it enters)

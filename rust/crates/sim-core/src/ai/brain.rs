@@ -241,7 +241,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     let pl = g.player(p);
     let d = g.db.get(c);
     let main = is_main(pl.key);
-    let mut base = decks::deck_prio(g, p, c) as f64;
+    let mut base = decks::deck_prio_f(g, p, c);
     if !main && pl.library.len() < 8 && draws_cards(g, c) {
         return None; // don't draw yourself out
     }
