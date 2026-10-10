@@ -37,6 +37,8 @@ pub enum DataKey {
     Artifact,
     Attacks,
     Bestow,
+    /// cast for its blitz cost (Jaxis, the Troublemaker)
+    Blitz,
     Bound,
     Burden,
     Charge,
@@ -45,6 +47,10 @@ pub enum DataKey {
     Counters,
     Crewed,
     Ctype,
+    /// (Dovin's controller, their turn count): damage to and from it is prevented until their next turn
+    Dovin,
+    /// a land made a creature by Druid Class's level 3
+    DruidClass,
     Elk,
     Escaped,
     Exerted,
@@ -63,6 +69,8 @@ pub enum DataKey {
     /// a land that entered this turn ("in")
     In,
     Indestr,
+    /// a token copy made by Jaxis, the Troublemaker (sacrificed at the end step)
+    JaxisCopy,
     /// (player, their turn count): indestructible until that player's next turn
     IndestrUntil,
     Kaldra,
@@ -427,6 +435,8 @@ pub struct Player {
     pub rebound: Vec<CardId>,
     /// the turn count Jace's Archivist was last used on
     pub arch_t: Option<u32>,
+    /// Sunfall's Incubator: its +1/+1 counters (0: none)
+    pub incubator: i32,
 }
 
 impl Player {
@@ -530,6 +540,7 @@ impl Player {
             act_uses: IndexMap::new(),
             rebound: vec![],
             arch_t: None,
+            incubator: 0,
             stats: IndexMap::new(),
         }
     }
