@@ -913,7 +913,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     }
     g.player_mut(p).perms.push(m);
     g.bf_ver += 1;
-    if g.registry.get(cd).is_some() {
+    if g.registry.get(cd).is_some_and(|i| i.live()) {
         g.hooks.push(m);
     }
     cardcode::as_enters(g, p, m)?; // naming a creature type

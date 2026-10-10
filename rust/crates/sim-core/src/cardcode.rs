@@ -58,22 +58,22 @@ pub fn is_legendary(g: &Game, m: PermId) -> bool {
     g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg))
 }
 
-/// PORT(M5): CI.attached_prot, colours an Aura gives protection from
-pub fn attached_prot(_g: &Game, _m: PermId) -> crate::cards::Colors {
-    crate::cards::Colors::NONE
+/// CI.attached_prot (common.attached_prot): colours m's Auras give it protection from
+pub fn attached_prot(g: &Game, m: PermId) -> crate::cards::Colors {
+    crate::impls::common::attached_prot(g, m)
 }
 
 /// PORT(M5): CI.garland_check, Garland's steals end when a player leaves
 pub fn garland_check(_g: &mut Game) {}
 
-/// PORT(M5): your own Auras on m (common.auras_on, excluding locks: CI.LOCKS)
-pub fn own_auras_on(_g: &Game, _m: PermId) -> usize {
-    0
+/// your own Auras on m (common.auras_on, excluding locks: CI.LOCKS)
+pub fn own_auras_on(g: &Game, m: PermId) -> usize {
+    crate::impls::common::own_auras_on(g, m)
 }
 
-/// PORT(M5): how close a planeswalker is to its ultimate (common.ult_pressure, from its WALKERS entry)
-pub fn ult_pressure(_g: &Game, _m: PermId) -> f64 {
-    0.0
+/// how close a planeswalker is to its ultimate (common.ult_pressure, from its WALKERS entry)
+pub fn ult_pressure(g: &Game, m: PermId) -> f64 {
+    crate::impls::common::ult_pressure(g, m)
 }
 
 /// cardimpl.threat_value: what a permanent is worth removing beyond its tags (its card code and compiled abilities,
@@ -213,8 +213,6 @@ port_res! {
     fn kindred_enter(p: PlayerId, m: PermId);
     /// PORT(M5): rules2.chatterfang_squirrels
     fn chatterfang_squirrels(p: PlayerId, n: i32);
-    /// PORT(M5): common.aura_fall (Auras on a permanent that left)
-    fn aura_fall(m: PermId);
     /// PORT(M5): partials.bestow_fall
     fn bestow_fall(m: PermId);
     /// PORT(M5): marchesa.marchesa_dies
@@ -242,8 +240,6 @@ port_res! {
 }
 
 port_bool! {
-    /// PORT(M5): common.umbra_save (umbra armor)
-    fn umbra_save(m: PermId);
     /// PORT(M5): lands.try_regenerate (Yavimaya Hollow)
     fn try_regenerate(m: PermId);
     /// PORT(M5): rules.ezuri_regen
@@ -254,6 +250,16 @@ port_bool! {
     fn hullbreaker_counter(q: PlayerId, c: CardId);
     /// PORT(M5): rules.veil_response
     fn veil_response(p: PlayerId, q: PlayerId, ctr: CardId);
+}
+
+/// common.aura_fall: Auras on a permanent that left go to the graveyard (or back to hand)
+pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
+    crate::impls::common::aura_fall(g, m)
+}
+
+/// common.umbra_save: umbra armor: an umbra on m is destroyed instead of m
+pub fn umbra_save(g: &mut Game, m: PermId) -> Res<bool> {
+    crate::impls::common::umbra_save(g, m)
 }
 
 /// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)
@@ -672,14 +678,15 @@ fn lose_to_pact(g: &mut Game, p: PlayerId) -> Res {
 }
 
 // ------------------------------------------------------------------ M3: the ability language's card-code calls
-/// PORT(M5): CI.attached_bonus (Auras' and Elspeth's emblem's power and toughness)
-pub fn attached_bonus(_g: &Game, _m: PermId) -> (i32, i32) {
-    (0, 0)
+/// CI.attached_bonus (common.attached_bonus): Auras' and Elspeth's emblem's power and toughness, and the card
+/// code's own rules (TOKEN_PT, SELF_PT, CREATURE_PT)
+pub fn attached_bonus(g: &Game, m: PermId) -> (i32, i32) {
+    crate::impls::common::attached_bonus(g, m)
 }
 
-/// PORT(M5): CI.attached_kw (keywords from Auras)
-pub fn attached_kw(_g: &Game, _m: PermId, _kw: &str) -> bool {
-    false
+/// CI.attached_kw (common.attached_kw): keywords from Auras
+pub fn attached_kw(g: &Game, m: PermId, kw: &str) -> bool {
+    crate::impls::common::attached_kw(g, m, kw)
 }
 
 /// PORT(M5): rules.ability_locked (Pithing Needle, Linvala ...)
@@ -723,9 +730,9 @@ pub fn combo_options(_g: &mut Game, _p: PlayerId, _ctr_risk: f64, _post: Option<
     Ok(vec![])
 }
 
-/// PORT(M5): common.aristocrat_options (sacrifice outlets with a payoff out: Grave Pact, Blood Artist ...)
-pub fn aristocrat_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// common.aristocrat_options (sacrifice outlets with a payoff out: Grave Pact, Blood Artist ...)
+pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    crate::impls::common::aristocrat_options(g, p, post)
 }
 
 /// PORT(M5): lands.land_options (lands' activated abilities: Barad-dûr, Urza's Saga ...)
@@ -749,9 +756,9 @@ pub fn loop_need(_g: &Game, _p: PlayerId) -> Vec<CardId> {
     vec![]
 }
 
-/// PORT(M5): common.sac_in_response: sacrifice the permanent for value before removal resolves
-pub fn sac_in_response(_g: &mut Game, _owner: PlayerId, _m: PermId, _kind: Sym) -> Res<bool> {
-    Ok(false)
+/// common.sac_in_response: sacrifice the permanent for value before removal resolves
+pub fn sac_in_response(g: &mut Game, owner: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
+    crate::impls::common::sac_in_response(g, owner, m, kind)
 }
 
 /// PORT(M5): partials.regen_wipe: regenerate the board against a destroy wipe
@@ -759,10 +766,11 @@ pub fn regen_wipe(_g: &mut Game, _q: PlayerId) -> Res<bool> {
     Ok(false)
 }
 
-/// PORT(M5): the outside decks' card plays: common.adventure_options, t2.evoke_options,
-/// common.aristocrat_options, common.food_options, partials.miracle_options and incubator_options
-pub fn pool_card_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// the outside decks' card plays: common.adventure_options, t2.evoke_options (PORT(phase 6)),
+/// common.aristocrat_options, common.food_options, partials.miracle_options and incubator_options (PORT(M5):
+/// partials, wired in impls::common::pool_card_options)
+pub fn pool_card_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    crate::impls::common::pool_card_options(g, p, post)
 }
 
 /// PORT(M5): partials.aid_active (Sigarda's Aid: Auras at instant speed)
@@ -775,9 +783,9 @@ pub fn ninjutsu_costs(_g: &Game, _p: PlayerId) -> Vec<(u32, String)> {
     vec![]
 }
 
-/// PORT(M5): common.SAC_OUTLET
-pub fn is_sac_outlet(_name: &str) -> bool {
-    false
+/// common.SAC_OUTLET
+pub fn is_sac_outlet(name: &str) -> bool {
+    crate::impls::common::is_sac_outlet(name)
 }
 
 /// PORT(M5): CI.gy_response: an opponent answers a reanimation spell aimed at src's graveyard (Scavenger Grounds)
