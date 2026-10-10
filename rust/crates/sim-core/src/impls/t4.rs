@@ -127,32 +127,6 @@ fn ability(utility: f64, label: String, src: PermId, f: crate::hooks::AbilityFn,
     Opt { utility, label, act: Some(Action::Ability { src, f, arg }) }
 }
 
-/// t2.best_target_any: 'deals n damage to any target': kill the best creature it kills, else the most threatening
-/// opponent's face. MERGE: a private copy until t2.rs lands; then call `super::t2::best_target_any`.
-fn best_target_any(g: &mut Game, p: PlayerId, n: i32) -> Res {
-    let os = opps(g, p);
-    if os.is_empty() {
-        return Ok(());
-    }
-    // HUMAN(phase 9): hc.deal_damage (the person picks the target)
-    if let Some(&q) = os.iter().find(|&&q| g.player(q).life <= n) {
-        return lose_life(g, q, n, Some(p), "triggers", None);
-    }
-    let tg: Vec<PermId> = os
-        .iter()
-        .flat_map(|&q| g.player(q).perms.iter().copied())
-        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= n)
-        .collect();
-    let best = max_by(&tg, |m| pval(g, m));
-    match best {
-        Some(b) if pval(g, b) >= 3.0 => apply_removal(g, Some(p), b, &format!("dmg{n}"), None),
-        _ => {
-            let q = max_by(&os, |q| threat(g, p, q)).unwrap();
-            lose_life(g, q, n, Some(p), "triggers", None)
-        }
-    }
-}
-
 /// t3.sac_worst_permanent: sacrifice the least valuable permanent (Food / Clue / Treasure first). MERGE: a private
 /// copy until t3's is ported; then call it.
 fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -> Res {
@@ -807,7 +781,7 @@ fn mons(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
         && (m == src || has_type(g, m, "goblin"))
         && trigger_window(g, o, Some(src), "1 damage to any target", None)?
     {
-        best_target_any(g, o, 1)?;
+        super::t2::best_target_any(g, o, 1)?;
     }
     Ok(())
 }
@@ -816,7 +790,7 @@ fn mons(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
 fn sharpshooter(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     let o = owner(g, src);
     if m != src && trigger_window(g, o, Some(src), "1 damage to any target", None)? {
-        best_target_any(g, o, 1)?;
+        super::t2::best_target_any(g, o, 1)?;
     }
     Ok(())
 }

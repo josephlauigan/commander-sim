@@ -174,7 +174,6 @@ fn curiosity_goes_on_your_best_evasive_creature_without_yshtola() {
 
 // ======================================================== the drain package
 #[test]
-#[ignore = "Sanguine Bond's gain-life hook is t4.py's, ported with t4"]
 fn blight_priest_and_sanguine_bond() {
     let mut g = three();
     perm(&mut g, P0, "Marauding Blight-Priest");
@@ -186,7 +185,6 @@ fn blight_priest_and_sanguine_bond() {
 }
 
 #[test]
-#[ignore = "Sanguine Bond's gain-life hook is t4.py's, ported with t4"]
 fn sanguine_bond_takes_the_kill() {
     let mut g = three();
     perm(&mut g, P0, "Sanguine Bond");
@@ -478,7 +476,6 @@ fn take_up_the_shield_as_a_spell() {
 }
 
 #[test]
-#[ignore = "Zur's attack trigger is t5.py / zur.py's (other agents' ports)"]
 fn zur_in_the_99_fetches_for_this_deck() {
     let mut g = two();
     let y = ysh(&mut g, P0);

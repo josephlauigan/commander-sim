@@ -643,10 +643,9 @@ pub fn put_enchantment(g: &mut Game, p: PlayerId, c: CardId, _zur: PermId) -> Re
     Ok(())
 }
 
-/// zur.fetch_value: how much an enchantment from Zur is worth now (Y'shtola's values: CI.yshtola_fetch_value).
-/// PORT(phase 6): yshtola.fetch_value (the Y'shtola port's); until it's merged, 0: Zur fetches nothing.
-fn fetch_value(_g: &Game, _p: PlayerId, _c: CardId, _zur: PermId) -> f64 {
-    0.0
+/// zur.fetch_value: how much an enchantment from Zur is worth now (Y'shtola's values: CI.yshtola_fetch_value)
+fn fetch_value(g: &Game, p: PlayerId, c: CardId, zur: PermId) -> f64 {
+    crate::impls::yshtola::fetch_value(g, p, c, zur)
 }
 
 // ================================================================== the AI: protection and wipe responses (Y'shtola's)

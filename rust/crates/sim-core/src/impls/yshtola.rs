@@ -17,10 +17,9 @@
 //!
 //! The person's choices (practice mode) are `HUMAN(phase 9)`: the AI's choice is used.
 //!
-//! MERGE(zur): the zur.py functions this module calls (untargetable_by_you, the lock Auras' LOCKS / lock_host /
-//! lock_worth, zur_protect, zur_wipe_response) are ported in `zur_shim` at the end of this file, because zur.py is
-//! ported in another worktree. Once `impls/zur.rs` is merged, point `use zur_shim as zur;` at `crate::impls::zur`
-//! (adapting `is_lock` / `lock_kind` to its LOCKS table) and delete `zur_shim`.
+//! The zur.py functions this module calls (untargetable_by_you, the lock Auras' LOCKS / lock_host /
+//! lock_worth, zur_protect, zur_wipe_response) come from `impls/zur.rs`, through the small `zur` module at the end of
+//! this file.
 
 use crate::ai::decks::{helm_equip, helm_target, necro_prio, pay_card, sphinx_prio};
 use crate::ai::plans::{citadel_prio, one_ring_prio, wish_list};
@@ -42,7 +41,6 @@ use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
-use zur_shim as zur;
 
 pub const YSH: &str = "Y'shtola, Night's Blessed";
 
@@ -1265,315 +1263,17 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 }
 
 // ======================================================== zur.py's pieces this deck uses
-/// MERGE(zur): a port of the zur.py functions Y'shtola's code calls, until `impls/zur.rs` (ported in another
-/// worktree) is merged; then `use crate::impls::zur as zur;` replaces it. Each function is zur.py's of the same name.
-mod zur_shim {
-    use super::*;
-    use crate::engine::zones::{Tokens, make_tokens};
+/// zur.rs, with the two lookups Y'shtola's code reads by name
+mod zur {
+    pub use crate::impls::zur::*;
 
-    /// zur.LOCKS / LOCK_KINDS: the lock Auras and their kind
-    const LOCKS: [(&str, &str); 5] = [
-        ("Arrest", "arrest"),
-        ("Prison Sentence", "arrest"),
-        ("Luminous Bonds", "pacify"),
-        ("Bound in Silence", "pacify"),
-        ("Encrust", "encrust"),
-    ];
-
-    /// zur.LOCK_KINDS: the locks each kind puts on what it enchants
-    fn kind_locks(kind: &str) -> &'static [&'static str] {
-        match kind {
-            "arrest" => &["pacify", "noact"],
-            "pacify" => &["pacify"],
-            "encrust" => &["frozen", "noact"],
-            "kasmina" => &["neuter"],
-            _ => &[],
-        }
-    }
-
-    /// `name in zur.LOCKS`
+    /// one of zur.py's lock Auras (Arrest, Prison Sentence ...)
     pub fn is_lock(name: &str) -> bool {
-        LOCKS.iter().any(|x| x.0 == name)
+        crate::impls::zur::lock_kind(name).is_some()
     }
 
-    /// the kind of lock Aura `name` (Python: `next(k for k, v in LOCK_KINDS.items() if frozenset(v) == LOCKS[name])`)
+    /// the lock Aura's kind ("" if it isn't one)
     pub fn lock_kind(name: &str) -> &'static str {
-        LOCKS.iter().find(|x| x.0 == name).map(|x| x.1).unwrap_or("")
-    }
-
-    fn locks_of(g: &Game, a: PermId) -> &'static [&'static str] {
-        card_name(g, a).map_or(&[], |n| kind_locks(lock_kind(n)))
-    }
-
-    /// zur.locked: is permanent m locked down by an Aura (kind: pacify, noact, frozen, neuter)?
-    pub fn locked(g: &Game, m: PermId, kind: &str) -> bool {
-        g.auras.iter().any(|&a| {
-            let x = g.perm(a);
-            x.attached == Some(m) && x.cd.is_some() && locks_of(g, a).contains(&kind) && !x.phased && x.on_bf
-        })
-    }
-
-    /// zur.lock_factor: how much of m's value is left under the Auras locking it
-    pub fn lock_factor(g: &Game, m: PermId) -> f64 {
-        let mut f: f64 = 1.0;
-        for &a in &g.auras {
-            let x = g.perm(a);
-            if x.attached != Some(m) || x.cd.is_none() || x.phased || !x.on_bf {
-                continue;
-            }
-            let ks = locks_of(g, a);
-            if ks.is_empty() {
-                continue;
-            }
-            if ks.contains(&"neuter") {
-                f = f.min(0.15);
-            } else if ks.contains(&"pacify") {
-                f = f.min(if ks.contains(&"noact") { 0.3 } else { 0.4 });
-            } else if ks.contains(&"frozen") {
-                f = f.min(0.35);
-            }
-        }
-        f
-    }
-
-    /// zur.lock_host: the best opposing permanent for lock Aura `name` (targeted: cast, so hexproof and ward stop
-    /// it), or None
-    pub fn lock_host(g: &Game, p: PlayerId, name: &str, targeted: bool, exclude: &[PermId]) -> Option<PermId> {
-        let kind = lock_kind(name);
-        let ok_art = name == "Encrust";
-        let col = Colors::from_letters(if name != "Encrust" && name != "Kasmina's Transmutation" { "W" } else { "U" });
-        let (mut best, mut bv) = (None, 0.0);
-        for q in g.opps(p) {
-            for &m in &g.player(q).perms {
-                if g.perm(m).phased || exclude.contains(&m) {
-                    continue;
-                }
-                let art = g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT));
-                if !(g.is_creature(m) || (ok_art && art)) {
-                    continue;
-                }
-                if protected_from(g, m, col) || (targeted && untargetable(g, m)) {
-                    continue;
-                }
-                if kind_locks(kind).iter().any(|k| locked(g, m, k)) {
-                    continue;
-                }
-                let v = lock_worth(g, p, m, kind);
-                if v > bv {
-                    (best, bv) = (Some(m), v);
-                }
-            }
-        }
-        if bv >= 2.0 { best } else { None }
-    }
-
-    /// zur.lock_worth: what locking m this way takes away from its controller
-    pub fn lock_worth(g: &Game, _p: PlayerId, m: PermId, kind: &str) -> f64 {
-        let v = pval(g, m) * lock_factor(g, m);
-        let acts = activated(g, m);
-        let cr = g.is_creature(m);
-        let pw = 4.min(epow(g, m)) as f64;
-        match kind {
-            "pacify" => {
-                if !cr {
-                    return 0.0;
-                }
-                v * (0.45 + 0.1 * pw) * if acts { 0.5 } else { 1.0 }
-            }
-            "arrest" => v * (0.55 + 0.08 * pw + if acts { 0.4 } else { 0.0 }),
-            "encrust" => {
-                if cr || acts {
-                    v * (0.5 + if acts { 0.5 } else { 0.0 })
-                } else {
-                    0.0
-                }
-            }
-            "kasmina" => {
-                if !cr {
-                    return 0.0;
-                }
-                let rich = g
-                    .perm(m)
-                    .cd
-                    .is_some_and(|c| g.registry.get(c).is_some_and(|i| i.live()) || g.db.get(c).has_dsl() || acts);
-                v * if rich { 0.9 } else { 0.6 }
-            }
-            _ => v,
-        }
-    }
-
-    /// zur.activated: does m have activated abilities worth stopping (mana abilities included)?
-    pub fn activated(g: &Game, m: PermId) -> bool {
-        use crate::dsl::model::Ability;
-        let Some(c) = g.perm(m).cd else { return false };
-        let d = g.db.get(c);
-        if d.tag(Tag::Rock) || d.tag(Tag::Dork) || d.tag(Tag::Clamp) {
-            return true;
-        }
-        if g.registry.get(c).is_some_and(|i| i.options.is_some()) {
-            return true;
-        }
-        if matches!(&*d.name, "Lightning Greaves" | "Swiftfoot Boots" | "Whispersilk Cloak") {
-            return true;
-        }
-        d.abilities.iter().any(|a| matches!(a, Ability::Activated { .. } | Ability::Loyalty { .. }))
-    }
-
-    /// zur.untargetable_by_you: shroud (Lightning Greaves) stops even your own spells and abilities
-    pub fn untargetable_by_you(g: &Game, m: PermId) -> bool {
-        let o = g.perm(m).owner;
-        g.player(o).perms.iter().any(|&e| {
-            let x = g.perm(e);
-            x.attached == Some(m) && card_name(g, e) == Some("Lightning Greaves") && x.on_bf && x.owner == o
-        }) || crate::dsl::has_kw(g, m, "shroud")
-    }
-
-    /// zur.populate: a copy of p's best creature token
-    pub fn populate(g: &mut Game, p: PlayerId) -> Res {
-        let toks: Vec<PermId> = g
-            .player(p)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| g.perm(m).token && g.is_creature(m) && !g.perm(m).phased)
-            .collect();
-        let mut best: Option<(PermId, (i32, bool))> = None;
-        for &m in &toks {
-            let k = (epow(g, m), g.perm(m).fly);
-            if best.is_none_or(|b| k > b.1) {
-                best = Some((m, k));
-            }
-        }
-        let Some((t, _)) = best else { return Ok(()) };
-        let x = g.perm(t).clone();
-        let spec = Tokens {
-            tgh: Some(x.tgh),
-            fly: x.fly,
-            color: Some(x.colors),
-            types: x.ttypes.clone(),
-            ..Tokens::new(1, x.pow)
-        };
-        for n in make_tokens(g, p, spec)? {
-            let y = g.perm_mut(n);
-            (y.lifelink, y.dt) = (x.lifelink, x.dt);
-            if !x.data.is_empty() {
-                y.data = x.data.clone();
-            }
-        }
-        Ok(())
-    }
-
-    /// zur.rootborn: Rootborn Defenses resolves: populate, then indestructible until end of turn
-    pub fn rootborn(g: &mut Game, p: PlayerId) -> Res {
-        populate(g, p)?;
-        for m in g.player(p).perms.clone() {
-            if g.is_creature(m) {
-                add_eot_kw(g, m, "indestructible");
-            }
-        }
-        crate::glog!(g, "  {} casts Rootborn Defenses: creatures gain indestructible", pname(g, p));
-        Ok(())
-    }
-
-    /// zur.zur_protect: removal at a key creature: phase it out with its Auras (Clever Concealment), make it
-    /// indestructible (Rootborn Defenses), or blink it with Restoration Angel (not a creature with Auras on it, which
-    /// would lose them)
-    pub fn zur_protect(
-        g: &mut Game,
-        owner: PlayerId,
-        m: PermId,
-        kind: Sym,
-        _actor: Option<PlayerId>,
-        _spell: Option<CardId>,
-    ) -> Res<bool> {
-        if pval(g, m) < 4.0 || !g.is_creature(m) {
-            return Ok(false);
-        }
-        let auras = auras_on(g, m);
-        for c in g.player(owner).hand.clone() {
-            let d = g.db.get(c);
-            let tp = d.tags.str(Tag::Prot);
-            if tp == Some("phase") && can_pay(g, owner, d.generic, &d.pips, d.tag(Tag::Convoke)) {
-                // Clever Concealment
-                if !pay_card(g, owner, c, 0)? {
-                    return Ok(false);
-                }
-                g.perm_mut(m).phased = true;
-                for &a in &auras {
-                    g.perm_mut(a).phased = true;
-                }
-                crate::glog!(g, "    {} casts {}: {} phases out", pname(g, owner), g.db.get(c).name, g.perm(m).name);
-                return Ok(true);
-            }
-            if tp == Some("indes")
-                && (kind == "destroy" || kind.starts_with("dmg"))
-                && can_pay(g, owner, d.generic, &d.pips, false)
-            {
-                // Rootborn Defenses
-                if !pay_card(g, owner, c, 0)? {
-                    return Ok(false);
-                }
-                rootborn(g, owner)?;
-                return Ok(true);
-            }
-        }
-        if !auras.is_empty() || (!matches!(kind, "destroy" | "exile" | "bounce" | "tuck") && !kind.starts_with("dmg")) {
-            return Ok(false);
-        }
-        for c in g.player(owner).hand.clone() {
-            let d = g.db.get(c);
-            if &*d.name == "Restoration Angel" && can_pay(g, owner, d.generic, &d.pips, false) {
-                if !pay_card(g, owner, c, 0)? {
-                    return Ok(false);
-                }
-                remove_card(&mut g.player_mut(owner).gy, c);
-                // Python sets g.resto_target = m, and the Angel's enters trigger (t2.py) blinks it: the zur.rs and
-                // t2.rs ports carry that; here the Angel enters
-                enter(g, owner, c, Enter::default())?;
-                let nm = g.perm(m).cd.map_or(g.perm(m).name.to_string(), |c| g.db.get(c).name.to_string());
-                crate::glog!(g, "    {} casts {}: blinks {nm}", pname(g, owner), g.db.get(c).name);
-                return Ok(true);
-            }
-        }
-        Ok(false)
-    }
-
-    /// zur.zur_wipe_response: a wipe: phase out your creatures and the Auras on them (Clever Concealment), or make
-    /// them indestructible (Rootborn Defenses)
-    pub fn zur_wipe_response(g: &mut Game, q: PlayerId, kind: Sym) -> Res<Option<Sym>> {
-        let all = matches!(kind, "rift" | "rebuke");
-        let loss = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) || all).map(|&m| pval(g, m)).psum();
-        if loss < 6.0 {
-            return Ok(None);
-        }
-        for c in g.player(q).hand.clone() {
-            let d = g.db.get(c);
-            if d.tags.str(Tag::Prot) == Some("phase") && can_pay(g, q, d.generic, &d.pips, d.tag(Tag::Convoke)) {
-                if !pay_card(g, q, c, 0)? {
-                    return Ok(None);
-                }
-                let mine: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
-                for m in g.player(q).perms.clone() {
-                    if g.is_creature(m) || g.perm(m).attached.is_some_and(|a| mine.contains(&a)) {
-                        g.perm_mut(m).phased = true;
-                    }
-                }
-                crate::glog!(g, "    {} casts {}: their creatures phase out", pname(g, q), g.db.get(c).name);
-                return Ok(Some("all"));
-            }
-        }
-        if matches!(kind, "destroy" | "dmg13" | "austere" | "nib") {
-            for c in g.player(q).hand.clone() {
-                let d = g.db.get(c);
-                if d.tags.str(Tag::Prot) == Some("indes") && can_pay(g, q, d.generic, &d.pips, false) {
-                    if !pay_card(g, q, c, 0)? {
-                        return Ok(None);
-                    }
-                    rootborn(g, q)?;
-                    return Ok(Some("indes"));
-                }
-            }
-        }
-        Ok(None)
+        crate::impls::zur::lock_kind(name).unwrap_or("")
     }
 }
