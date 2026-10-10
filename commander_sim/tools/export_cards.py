@@ -12,7 +12,8 @@ under (ais.enters_rule) and `land_types` / `basic` its basic land types, all rea
 handles (cards/impl/*.py), and `spell_prio` whether it has a hand-written cast priority: the work list for porting
 cards by hand.
 
-data/decks.json: your decks (key, display name, commander, the 99) and the pool decks (tier as well).
+data/decks.json: your decks (key, display name, commander, colour identity, the 99) and the pool decks (tier as
+well).
 
 The export is deterministic: the same code and card cache give the same files.
 """
@@ -85,15 +86,20 @@ class _Seat:
     def __init__(self, key): self.key = key
 
 
+def ident(E, key):
+    """the seat's colour identity as the engine sets it (a commander's card doesn't always record one)"""
+    return ''.join(c for c in 'WUBRG' if c in (E.IDENT[key] if key in E.IDENT else E.SEATS[key]['ident']))
+
+
 def export(out_dir):
     E, pools, DECKS = load_everything()
     from commander_sim import ais
     cards = [card_record(E, E.DB[n]) for n in sorted(E.DB)]
     decks = {
-        'mine': [{'key': k, 'name': E.NAME(_Seat(k)), 'commander': ais.CMDS[k], 'cards': sorted(v)}
-                 for k, v in sorted(DECKS.items())],
+        'mine': [{'key': k, 'name': E.NAME(_Seat(k)), 'commander': ais.CMDS[k], 'ident': ident(E, k),
+                  'cards': sorted(v)} for k, v in sorted(DECKS.items())],
         'pool': [{'tier': d.tier, 'key': d.key, 'name': pools.short_name(d), 'commander': d.commander,
-                  'cards': sorted(d.cards)} for d in pools.load_pool()],
+                  'ident': ident(E, d.key), 'cards': sorted(d.cards)} for d in pools.load_pool()],
     }
     os.makedirs(out_dir, exist_ok=True)
     paths = []

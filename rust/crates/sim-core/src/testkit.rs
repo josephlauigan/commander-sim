@@ -52,16 +52,17 @@ pub fn seat(db: &CardDb, i: usize, key: &str, seed: u64) -> Player {
     let d = deck(key);
     let ids: Arc<[CardId]> = d.cards.iter().map(|n| db.id(n).unwrap()).collect();
     let cmd = db.id(&d.commander).unwrap();
-    let mut p = Player::new(
-        PlayerId(i as u8),
-        intern(&d.key),
-        intern(&d.name),
-        db.get(cmd).identity.unwrap_or_default(),
-        cmd,
-        ids,
-    );
+    let mut p = Player::new(PlayerId(i as u8), intern(&d.key), intern(&d.name), ident(db, d), cmd, ids);
     Rng::named(&format!("lib:{seed}:{key}")).shuffle(&mut p.library);
     p
+}
+
+/// a deck's colour identity: decks.json's, else its commander's
+pub fn ident(db: &CardDb, d: &RawDeck) -> crate::cards::Colors {
+    match &d.ident {
+        Some(s) => crate::cards::Colors::from_letters(s),
+        None => db.id(&d.commander).and_then(|c| db.get(c).identity).unwrap_or_default(),
+    }
 }
 
 /// A game with these decks seated in this order: hands empty, the first seat active in its first main phase.
@@ -142,6 +143,7 @@ pub fn seat_spec(key: &str) -> crate::engine::turn::Seat {
         key: intern(&d.key),
         name: intern(&d.name),
         commander: db.id(&d.commander).unwrap(),
+        ident: ident(&db, d),
         cards: d.cards.iter().map(|n| db.id(n).unwrap()).collect(),
     }
 }

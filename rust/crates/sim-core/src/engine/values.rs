@@ -5,6 +5,7 @@ use crate::cardcode;
 use crate::cards::Colors;
 use crate::dsl;
 use crate::ids::{PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::state::{DataKey, Game, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -493,7 +494,7 @@ pub fn pval(g: &Game, m: PermId) -> f64 {
 /// how threatening q's board is to `me` (Python's `threat`)
 pub fn threat(g: &Game, _me: PlayerId, q: PlayerId) -> f64 {
     let pl = g.player(q);
-    let mut s: f64 = pl.perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).sum();
+    let mut s: f64 = pl.perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).psum();
     if pl.key == "veyran" && has(g, q, Tag::Vkitten) && has(g, q, Tag::Vfire) {
         s += 10.0;
     }

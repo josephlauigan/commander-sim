@@ -2,7 +2,7 @@
 //! a whole decision), test_rules.Tutors and the AI's half of TeferisProtection, test_game_changers' Mox Diamond
 //! priority, and Rust-only checks of the heuristic AI's choices.
 
-use sim_core::ai::{brain, decks, plans, pool, search};
+use sim_core::ai::{brain, decks, plans, pool, search, topdeck};
 use sim_core::engine::{combat, tutors};
 use sim_core::ids::PlayerId;
 use sim_core::settings::AiMode;
@@ -185,6 +185,58 @@ fn a_pool_deck_uses_teferis_protection_against_a_wipe() {
     assert_eq!(pool::wipe_response(&mut g, P1, "destroy", P0).unwrap(), Some("all"));
     assert!(g.player(P1).life_locked);
     assert_eq!(g.player(P1).exile, vec![card(&g, "Teferi's Protection")]);
+}
+
+// ------------------------------------------------------------------ scry and surveil (topdeck.scry, Rust-only)
+/// put these cards on top of p's library, the last named on top
+fn stack_top(g: &mut Game, p: PlayerId, names: &[&str]) {
+    for n in names {
+        let c = take(g, p, n);
+        g.player_mut(p).library.push(c);
+    }
+}
+
+#[test]
+fn scry_keeps_what_it_wants_on_top_and_bottoms_the_rest() {
+    let mut g = table(&["sauron", "veyran"]);
+    lands(&mut g, P0, "Island", 6, false); // enough lands: another is worth little
+    stack_top(&mut g, P0, &["Sol Ring", "Mountain"]); // the Mountain on top
+    topdeck::scry(&mut g, P0, 2, false).unwrap();
+    let lib = &g.player(P0).library;
+    assert_eq!(*lib.last().unwrap(), card(&g, "Sol Ring"));
+    assert_eq!(lib[0], card(&g, "Mountain")); // the bottom
+    assert!(g.player(P0).scry_turn.is_some());
+}
+
+#[test]
+fn a_land_stays_on_top_when_short_on_lands() {
+    let mut g = table(&["sauron", "veyran"]);
+    stack_top(&mut g, P0, &["Mountain"]);
+    topdeck::scry(&mut g, P0, 1, false).unwrap();
+    assert_eq!(*g.player(P0).library.last().unwrap(), card(&g, "Mountain"));
+}
+
+#[test]
+fn surveil_puts_the_unwanted_into_the_graveyard() {
+    let mut g = table(&["sauron", "veyran"]);
+    lands(&mut g, P0, "Island", 6, false);
+    stack_top(&mut g, P0, &["Sol Ring", "Mountain"]);
+    let n = g.player(P0).library.len();
+    topdeck::scry(&mut g, P0, 2, true).unwrap();
+    let pl = g.player(P0);
+    assert_eq!(pl.gy, vec![card(&g, "Mountain")]);
+    assert_eq!(pl.library.len(), n - 1);
+    assert_eq!(*pl.library.last().unwrap(), card(&g, "Sol Ring"));
+}
+
+#[test]
+fn kept_cards_go_back_the_most_wanted_on_top() {
+    let mut g = table(&["sauron", "veyran"]);
+    let cs = [card(&g, "Sol Ring"), card(&g, "Grave Titan"), card(&g, "Arcane Signet")];
+    topdeck::arrange(&mut g, P0, &cs);
+    let lib = &g.player(P0).library;
+    let top: Vec<f64> = lib[lib.len() - 3..].iter().map(|&c| topdeck::desire(&g, P0, c)).collect();
+    assert!(top[0] <= top[1] && top[1] <= top[2]);
 }
 
 // ------------------------------------------------------------------ test_game_changers.Mana

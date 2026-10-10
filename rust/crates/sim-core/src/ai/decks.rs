@@ -15,6 +15,7 @@ use crate::engine::zones::{discard_cards, draw, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::state::Game;
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -240,7 +241,7 @@ pub fn sphinx_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let cards = per_round as f64 * rounds;
     let mana = total_mana(g, p, false).max(1) as f64;
     let backlog: f64 =
-        g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).map(|&x| g.db.get(x).cmc as f64).sum::<f64>()
+        g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).map(|&x| g.db.get(x).cmc as f64).psum()
             / mana;
     let usef = if backlog <= 1.0 {
         1.0
@@ -283,7 +284,7 @@ pub fn gamble_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 0;
     }
     let keep = rest.len() as f64 / (rest.len() + 1) as f64;
-    let risk = rest.iter().filter(|&&x| !g.db.get(x).land).map(|&x| card_worth(g, p, x, false)).sum::<f64>()
+    let risk = rest.iter().filter(|&&x| !g.db.get(x).land).map(|&x| card_worth(g, p, x, false)).psum()
         / rest.len().max(1) as f64
         / 10.0;
     (60.0 * keep - 8.0 * risk).max(0.0) as i32
@@ -1114,7 +1115,7 @@ pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Vec<Sym> {
         let mut gyv = 0.0;
         for q in g.players.iter().filter(|q| q.alive) {
             let s = if q.id == p { -1.2 } else { 1.0 };
-            gyv += s * q.gy.iter().map(|&c| gy_worth(g, q.id, c)).sum::<f64>();
+            gyv += s * q.gy.iter().map(|&c| gy_worth(g, q.id, c)).psum();
         }
         opts.push(("gy", gyv));
         let ch: Vec<Sym> = opts.iter().filter(|x| x.1 > 0.0).map(|x| x.0).collect();

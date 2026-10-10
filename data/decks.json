@@ -5,6 +5,7 @@
    "key": "alela",
    "name": "Alela",
    "commander": "Alela, Artful Provocateur",
+   "ident": "WUB",
    "cards": [
     "Aether Hub",
     "Airlift Chaplain",
@@ -112,6 +113,7 @@
    "key": "galadriel",
    "name": "Galadriel",
    "commander": "Galadriel, Light of Valinor",
+   "ident": "WUG",
    "cards": [
     "Abduction",
     "Adeline, Resplendent Cathar",
@@ -219,6 +221,7 @@
    "key": "jodah",
    "name": "Jodah",
    "commander": "Jodah, the Unifier",
+   "ident": "WUBRG",
    "cards": [
     "Adarkar Wastes",
     "Arcane Denial",
@@ -326,6 +329,7 @@
    "key": "sauron",
    "name": "Sauron",
    "commander": "Sauron, the Dark Lord",
+   "ident": "UBR",
    "cards": [
     "Aggravated Assault",
     "Arcane Denial",
@@ -433,6 +437,7 @@
    "key": "seph",
    "name": "Sephiroth",
    "commander": "Atraxa, Grand Unifier",
+   "ident": "WUBG",
    "cards": [
     "Altar of Dementia",
     "Anguished Unmaking",
@@ -540,6 +545,7 @@
    "key": "veyran",
    "name": "Veyran",
    "commander": "Veyran, Voice of Duality",
+   "ident": "UR",
    "cards": [
     "Abrade",
     "Aetherflux Reservoir",
@@ -647,6 +653,7 @@
    "key": "yshtola",
    "name": "Y'shtola",
    "commander": "Y'shtola, Night's Blessed",
+   "ident": "WUB",
    "cards": [
     "Anguished Unmaking",
     "Arcane Signet",
@@ -757,6 +764,7 @@
    "key": "isshin-mardu-attack-triggers",
    "name": "Isshin",
    "commander": "Isshin, Two Heavens as One",
+   "ident": "WBR",
    "cards": [
     "Adeline, Resplendent Cathar",
     "Anguished Unmaking",
@@ -865,6 +873,7 @@
    "key": "lathril-golgari-elves",
    "name": "Lathril",
    "commander": "Lathril, Blade of the Elves",
+   "ident": "BG",
    "cards": [
     "Allosaurus Shepherd",
     "Arcane Signet",
@@ -973,6 +982,7 @@
    "key": "light-paws-aura-voltron",
    "name": "Light-Paws",
    "commander": "Light-Paws, Emperor's Voice",
+   "ident": "W",
    "cards": [
     "All That Glitters",
     "Alseid of Life's Bounty",
@@ -1081,6 +1091,7 @@
    "key": "tatyova-simic-landfall",
    "name": "Tatyova",
    "commander": "Tatyova, Benthic Druid",
+   "ident": "UG",
    "cards": [
     "Aesi, Tyrant of Gyre Strait",
     "Aetherize",
@@ -1189,6 +1200,7 @@
    "key": "teysa-orzhov-aristocrats",
    "name": "Teysa Karlov",
    "commander": "Teysa Karlov",
+   "ident": "WB",
    "cards": [
     "Anguished Unmaking",
     "Arcane Signet",
@@ -1297,6 +1309,7 @@
    "key": "brago-azorius-blink-control",
    "name": "Brago",
    "commander": "Brago, King Eternal",
+   "ident": "WU",
    "cards": [
     "Absorb",
     "Adarkar Wastes",
@@ -1405,6 +1418,7 @@
    "key": "kaalia-mardu-creature-cheat",
    "name": "Kaalia of the Vast",
    "commander": "Kaalia of the Vast",
+   "ident": "WBR",
    "cards": [
     "Admonition Angel",
     "Angel of Serenity",
@@ -1513,6 +1527,7 @@
    "key": "lord-windgrace-jund-lands",
    "name": "Lord Windgrace",
    "commander": "Lord Windgrace",
+   "ident": "BRG",
    "cards": [
     "Ancient Greenwarden",
     "Arcane Signet",
@@ -1621,6 +1636,7 @@
    "key": "meren-golgari-recursion",
    "name": "Meren of Clan Nel Toth",
    "commander": "Meren of Clan Nel Toth",
+   "ident": "BG",
    "cards": [
     "Acidic Slime",
     "Arcane Signet",
@@ -1729,6 +1745,7 @@
    "key": "sythis-selesnya-enchantress",
    "name": "Sythis",
    "commander": "Sythis, Harvest's Hand",
+   "ident": "WG",
    "cards": [
     "Ajani's Chosen",
     "All That Glitters",
@@ -1837,6 +1854,7 @@
    "key": "atraxa-superfriends",
    "name": "Atraxa",
    "commander": "Atraxa, Praetors' Voice",
+   "ident": "WUBG",
    "cards": [
     "Anguished Unmaking",
     "Arcane Denial",
@@ -1945,6 +1963,7 @@
    "key": "aurelia-boros-extra-combats",
    "name": "Aurelia",
    "commander": "Aurelia, the Warleader",
+   "ident": "WR",
    "cards": [
     "Adeline, Resplendent Cathar",
     "Anim Pakal, Thousandth Moon",
@@ -2053,6 +2072,7 @@
    "key": "korvold-jund-sacrifice",
    "name": "Korvold",
    "commander": "Korvold, Fae-Cursed King",
+   "ident": "BRG",
    "cards": [
     "Academy Manufactor",
     "Arcane Signet",
@@ -2161,6 +2181,7 @@
    "key": "marwyn-mono-green-elves",
    "name": "Marwyn",
    "commander": "Marwyn, the Nurturer",
+   "ident": "G",
    "cards": [
     "Allosaurus Shepherd",
     "Arbor Elf",
@@ -2269,6 +2290,7 @@
    "key": "tergrid-mono-black-disruption",
    "name": "Tergrid",
    "commander": "Tergrid, God of Fright // Tergrid's Lantern",
+   "ident": "B",
    "cards": [
     "Accursed Marauder",
     "Arcane Signet",
@@ -2377,6 +2399,7 @@
    "key": "chulane-bant-value-combo",
    "name": "Chulane",
    "commander": "Chulane, Teller of Tales",
+   "ident": "WUG",
    "cards": [
     "Aluren",
     "Ancient Greenwarden",
@@ -2485,6 +2508,7 @@
    "key": "heliod-mono-white-stax",
    "name": "Heliod",
    "commander": "Heliod, Sun-Crowned",
+   "ident": "W",
    "cards": [
     "Adeline, Resplendent Cathar",
     "Ancient Tomb",
@@ -2593,6 +2617,7 @@
    "key": "krenko-mono-red-goblins",
    "name": "Krenko",
    "commander": "Krenko, Mob Boss",
+   "ident": "R",
    "cards": [
     "Abrade",
     "Ancient Tomb",
@@ -2701,6 +2726,7 @@
    "key": "prosper-rakdos-exile-treasure",
    "name": "Prosper",
    "commander": "Prosper, Tome-Bound",
+   "ident": "BR",
    "cards": [
     "Abrade",
     "Academy Manufactor",
@@ -2809,6 +2835,7 @@
    "key": "yuriko-dimir-ninjas",
    "name": "Yuriko",
    "commander": "Yuriko, the Tiger's Shadow",
+   "ident": "UB",
    "cards": [
     "Arcane Denial",
     "Arcane Signet",
@@ -2917,6 +2944,7 @@
    "key": "kinnan-simic-mana-combo",
    "name": "Kinnan",
    "commander": "Kinnan, Bonder Prodigy",
+   "ident": "UG",
    "cards": [
     "An Offer You Can't Refuse",
     "Ancient Tomb",
@@ -3025,6 +3053,7 @@
    "key": "urza-mono-blue-artifacts",
    "name": "Urza",
    "commander": "Urza, Lord High Artificer",
+   "ident": "U",
    "cards": [
     "Academy Ruins",
     "An Offer You Can't Refuse",
@@ -3133,6 +3162,7 @@
    "key": "winota-boros-humans-cheat",
    "name": "Winota",
    "commander": "Winota, Joiner of Forces",
+   "ident": "WR",
    "cards": [
     "Abrade",
     "Adeline, Resplendent Cathar",
@@ -3241,6 +3271,7 @@
    "key": "yawgmoth-mono-black-aristocrats",
    "name": "Yawgmoth",
    "commander": "Yawgmoth, Thran Physician",
+   "ident": "B",
    "cards": [
     "Ad Nauseam",
     "Ancient Tomb",
@@ -3349,6 +3380,7 @@
    "key": "zur-esper-enchantment-control",
    "name": "Zur the Enchanter",
    "commander": "Zur the Enchanter",
+   "ident": "WUB",
    "cards": [
     "Adarkar Wastes",
     "Ancient Tomb",

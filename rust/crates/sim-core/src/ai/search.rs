@@ -16,6 +16,7 @@ use super::{act, brain};
 use crate::flow::{Res, Stop};
 use crate::hooks::Opt;
 use crate::ids::{CardId, PlayerId};
+use crate::pysum::PySum;
 use crate::rng::Rng;
 use crate::settings::AiMode;
 use crate::state::{Game, Step};
@@ -212,7 +213,7 @@ pub fn evaluate(g: &Game, p: PlayerId) -> f64 {
     let s = strength(g, p);
     let mut so: Vec<f64> = opps.iter().map(|&q| strength(g, q)).collect();
     so.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
-    let raw = s - 0.6 * so[0] - 0.4 * (so.iter().sum::<f64>() / so.len() as f64) + 12.0 * dead;
+    let raw = s - 0.6 * so[0] - 0.4 * (so.iter().copied().psum() / so.len() as f64) + 12.0 * dead;
     95.0 * (raw / 100.0).tanh()
 }
 
@@ -221,17 +222,9 @@ pub fn strength(g: &Game, q: PlayerId) -> f64 {
     use crate::engine::values::{epow, pval};
     let pl = g.player(q);
     let life = pl.life.clamp(0, 60) as f64;
-    let mut board = 0.0;
-    let mut power = 0.0;
-    for &m in &pl.perms {
-        if g.perm(m).phased {
-            continue;
-        }
-        board += pval(g, m);
-        if g.is_creature(m) {
-            power += epow(g, m) as f64;
-        }
-    }
+    let live = || pl.perms.iter().copied().filter(|&m| !g.perm(m).phased);
+    let board = live().map(|m| pval(g, m)).psum();
+    let power = live().filter(|&m| g.is_creature(m)).map(|m| epow(g, m) as f64).sum::<f64>(); // whole numbers
     0.25 * life
         + board
         + 0.35 * power

@@ -15,6 +15,7 @@ use crate::engine::zones::{Enter, die, draw, enter, leave, max_by, min_by, searc
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -1007,7 +1008,7 @@ fn worth_whole_board(g: &Game, owner: PlayerId, m: PermId) -> bool {
     if g.perm(m).is_cmd {
         return true;
     }
-    let board: f64 = g.player(owner).perms.iter().filter(|&&x| !g.perm(x).phased).map(|&x| pval(g, x)).sum();
+    let board: f64 = g.player(owner).perms.iter().filter(|&&x| !g.perm(x).phased).map(|&x| pval(g, x)).psum();
     board > 0.0 && pval(g, m) >= 0.4 * board
 }
 

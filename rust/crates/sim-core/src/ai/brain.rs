@@ -25,6 +25,7 @@ use crate::engine::zones::{die, draw, max_by, min_by, sac_worth};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -1024,7 +1025,7 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
                 let up = crate::cardcode::ult_pressure(g, m);
                 (up >= 0.6).then(|| 3.0 * up.min(1.0))
             })
-            .sum::<f64>();
+            .psum();
         let blockers = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).tapped).count();
         u -= 0.15 * blockers as f64 * (1.0 - aggr);
         if !g.hooks.is_empty() {

@@ -18,6 +18,7 @@ use crate::engine::zones::{self, Enter, Tokens, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -1425,8 +1426,7 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                     Some("all") => {
                         let ms = select(g, p, &sel, true, &DslCtx::default(), None, spell);
                         v +=
-                            ms.iter().map(|&m| pval(g, m) * if g.perm(m).owner != p { 1.0 } else { -1.2 }).sum::<f64>()
-                                / 2.0;
+                            ms.iter().map(|&m| pval(g, m) * if g.perm(m).owner != p { 1.0 } else { -1.2 }).psum() / 2.0;
                     }
                     Some("player") | Some("any_target") if d == "damage" => {
                         v += 0.6
@@ -1464,7 +1464,7 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
             "modal" => {
                 let mut ms: Vec<f64> = e.modes.iter().map(|m| value_of(g, p, m, spell)).collect();
                 ms.sort_by(|a, b| b.total_cmp(a));
-                v += ms.iter().take(e.choose.unwrap_or(1) as usize).sum::<f64>();
+                v += ms.iter().take(e.choose.unwrap_or(1) as usize).copied().psum();
             }
             _ => v += eff_value(d) * if matches!(d, "draw" | "treasure" | "clue" | "add_mana") { n } else { 1.0 },
         }
@@ -1605,7 +1605,7 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
                             .unwrap_or("")
                             .chars()
                             .map(|ch| ch.to_digit(10).unwrap_or(1) as f64)
-                            .sum::<f64>();
+                            .psum();
                     if cost.sac.as_deref() == Some("self") {
                         cost_v += 1.5;
                     }

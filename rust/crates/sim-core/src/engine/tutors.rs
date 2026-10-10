@@ -7,6 +7,7 @@ use crate::engine::values::{commander_out, threat};
 use crate::engine::zones::*;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::state::Game;
 use crate::tag::Tag;
 
@@ -168,8 +169,8 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
     let result = |pile: &[CardId]| -> (f64, Vec<CardId>) {
         let mut best: Option<(f64, Vec<CardId>)> = None;
         for hand in combinations(pile, keep.min(pile.len())) {
-            let v: f64 = hand.iter().map(|&c| val(&hv, c)).sum::<f64>()
-                + pile.iter().filter(|c| !hand.contains(c)).map(|&c| val(&gv, c)).sum::<f64>();
+            let v: f64 = hand.iter().map(|&c| val(&hv, c)).psum()
+                + pile.iter().filter(|c| !hand.contains(c)).map(|&c| val(&gv, c)).psum();
             if best.as_ref().is_none_or(|b| v < b.0) {
                 best = Some((v, hand));
             }

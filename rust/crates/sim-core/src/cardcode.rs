@@ -6,6 +6,7 @@
 use crate::flow::Res;
 use crate::hooks::Opt;
 use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::state::Game;
 use crate::sym::Sym;
 
@@ -168,6 +169,11 @@ pub fn rhystic_unpaid(g: &mut Game, p: PlayerId) -> Res<bool> {
     Ok(true)
 }
 
+/// topdeck.scry: scry n, or surveil n (the AI's ordering is ai::topdeck)
+pub fn scry(g: &mut Game, p: PlayerId, n: i32, surveil: bool) -> Res {
+    crate::ai::topdeck::scry(g, p, n, surveil)
+}
+
 macro_rules! port_res {
     ($($(#[$doc:meta])* fn $name:ident($($arg:ident: $ty:ty),*);)*) => {$(
         $(#[$doc])*
@@ -205,8 +211,6 @@ port_res! {
     fn gy_dies(owner: PlayerId, m: PermId);
     /// PORT(M5): CI.AS_ENTERS (naming a creature type as it enters)
     fn as_enters(p: PlayerId, m: PermId);
-    /// PORT(M4): topdeck.scry (scry n, or surveil n): until then, the order stays
-    fn scry(p: PlayerId, n: i32, surveil: bool);
     /// PORT(M5): CI.gy_cards(p, 'gy_landfall')
     fn gy_landfall(p: PlayerId);
     /// PORT(M5): partials.answer_ability (Tishana's Tidebinder, Azorius Guildmage)
@@ -617,7 +621,7 @@ pub fn tithe_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let treasures = 3.0 * opps.len() as f64 * unpaid;
     let mana = crate::engine::mana::total_mana(g, p, false).max(1) as f64;
     let backlog: f64 =
-        g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).map(|&x| g.db.get(x).cmc as f64).sum::<f64>()
+        g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).map(|&x| g.db.get(x).cmc as f64).psum()
             / mana;
     let need = if backlog >= 2.0 {
         1.2

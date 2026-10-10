@@ -987,8 +987,7 @@ pub fn setup_game(
         .iter()
         .enumerate()
         .map(|(i, s)| {
-            let ident = db.get(s.commander).identity.unwrap_or_default();
-            crate::state::Player::new(PlayerId(i as u8), s.key, s.name, ident, s.commander, s.cards.clone())
+            crate::state::Player::new(PlayerId(i as u8), s.key, s.name, s.ident, s.commander, s.cards.clone())
         })
         .collect();
     let mut g = Game::new(db, registry, settings, players, crate::rng::Rng::named(&format!("play:{seed}")));
@@ -1015,6 +1014,8 @@ pub struct Seat {
     pub key: Sym,
     pub name: Sym,
     pub commander: CardId,
+    /// the colour identity (Python's IDENT / SEATS): Command Tower, Arcane Signet and Chromatic Lantern make these
+    pub ident: crate::cards::Colors,
     pub cards: std::sync::Arc<[CardId]>,
 }
 

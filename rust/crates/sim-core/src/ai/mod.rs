@@ -10,6 +10,7 @@
 //! - `pool`: the outside decks' AI (a cast priority from card tags, their protection and attack rules).
 //! - `plans`: per-deck configuration and plans for outside decks, and the Game Changers' priorities.
 //! - `decks`: your decks' priorities, tutor targets, protection and wipe answers, and the wipe evaluation.
+//! - `topdeck`: how much a player wants each card next, and scry / surveil.
 //!
 //! This file has the decisions the engine calls inline. Deck-specific code for your other decks (Sephiroth, Veyran,
 //! Galadriel, Y'shtola, Alela, Jodah) waits for phase 6 (`PORT(phase 6)`), card code for M5 (`PORT(M5)`).
@@ -20,10 +21,12 @@ pub mod decks;
 pub mod plans;
 pub mod pool;
 pub mod search;
+pub mod topdeck;
 
 use crate::engine::values::epow;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::pysum::PySum;
 use crate::rng::Rng;
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
@@ -108,7 +111,7 @@ pub fn explain(g: &mut Game, p: PlayerId, items: &[(f64, String)], chosen: &str,
     let t = temp(g, p);
     let mx = items.iter().map(|x| x.0).fold(f64::NEG_INFINITY, f64::max);
     let mut ws: Vec<(f64, &str)> = items.iter().map(|(u, l)| (((u - mx) / t).exp(), l.as_str())).collect();
-    let tot: f64 = ws.iter().map(|x| x.0).sum();
+    let tot: f64 = ws.iter().map(|x| x.0).psum();
     ws.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
     let dist: Vec<String> = ws.iter().take(4).map(|(w, l)| format!("{l} {:.0}%", 100.0 * w / tot)).collect();
     let name = g.player(p).name;

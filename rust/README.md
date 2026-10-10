@@ -16,3 +16,6 @@ Card data comes from Python: `python3 -m commander_sim.tools.export_cards` write
 `data/decks.json`, which Rust loads. Re-export after any change to cards or deck lists.
 
 Toolchain: Rust via rustup (`~/.cargo/bin`). Run the Rust tests with `cargo test` from `rust/`.
+
+`python3 rust/tools/difftest.py` (from the repository root) is the differential harness: the same positions in both
+engines, the AI's options and scores compared (see `PORT_STATUS.md`).

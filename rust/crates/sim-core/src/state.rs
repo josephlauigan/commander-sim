@@ -347,6 +347,8 @@ pub struct Player {
     pub miracle: Option<(TurnStamp, CardId)>,
     /// Urabrask, Heretic Praetor: the next draw this turn is exiled instead
     pub urabrask: Option<TurnStamp>,
+    /// the turn this player last scried or surveilled (Desperate Futurescribe)
+    pub scry_turn: Option<TurnStamp>,
     /// cards exiled with "you may play them this turn" (held in hand)
     pub impulse: Vec<CardId>,
     /// key spells milled (reports)
@@ -489,6 +491,7 @@ impl Player {
             draw_n: 0,
             miracle: None,
             urabrask: None,
+            scry_turn: None,
             impulse: vec![],
             milled_keys: vec![],
             ozolith_counters: 0,

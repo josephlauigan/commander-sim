@@ -26,7 +26,11 @@ fn main() {
         rounds += g.round;
     }
     let dt = t0.elapsed().as_secs_f64();
-    println!("{n} games ({ai:?}, {tier}) in {dt:.2}s: {:.1} games/s, {:.1} rounds a game", n as f64 / dt, rounds as f64 / n as f64);
+    println!(
+        "{n} games ({ai:?}, {tier}) in {dt:.2}s: {:.1} games/s, {:.1} rounds a game",
+        n as f64 / dt,
+        rounds as f64 / n as f64
+    );
     for (k, v) in wins {
         println!("  {k}: {v}");
     }
