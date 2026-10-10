@@ -630,5 +630,77 @@ class VenatTymna(unittest.TestCase):
         self.assertEqual((p.life, len(p.hand)), (10, n))
 
 
+class Garland(unittest.TestCase):
+    """swap candidate (10-09): Garland, Royal Kidnapper"""
+    G = 'Garland, Royal Kidnapper'
+
+    def setUp(self):
+        self.g = table('jodah', 'veyran', 'seph'); self.p, self.q, self.r = self.g.players
+
+    def test_etb_crowns_the_opponent_with_the_best_creature_and_steals_it(self):
+        g, p, q, r = self.g, self.p, self.q, self.r
+        lyra = perm(g, q, 'Lyra Dawnbringer')
+        s = perm(g, r, 'Solemn Simulacrum')
+        self.assertEqual((E.epow(g, lyra), E.etgh(g, lyra)), (5, 5))
+        perm(g, p, self.G)
+        self.assertIs(g.monarch, q)                                    # Veyran has the creature worth taking
+        self.assertIn(lyra, p.perms)
+        self.assertNotIn(lyra, q.perms)
+        self.assertEqual((E.epow(g, lyra), E.etgh(g, lyra)), (7, 7))   # +2/+2: controlled, not owned
+        self.assertIn(s, r.perms)
+        self.assertEqual(p.stats['jr_garland_steals'], 1)
+
+    def test_control_returns_when_that_opponent_loses_the_monarch(self):
+        g, p, q, r = self.g, self.p, self.q, self.r
+        lyra = perm(g, q, 'Lyra Dawnbringer')
+        perm(g, p, self.G)
+        a = token(g, r, 2)
+        ais.resolve_combat(g, r, [a], q, {a})                           # Sephiroth takes the crown from Veyran
+        self.assertIs(g.monarch, r)
+        self.assertIn(lyra, q.perms)
+        self.assertNotIn(lyra, p.perms)
+        self.assertEqual((E.epow(g, lyra), E.etgh(g, lyra)), (5, 5))
+        self.assertEqual(p.stats['jr_garland_back'], 1)
+
+    def test_an_opponent_taking_the_monarch_from_you_triggers_a_steal(self):
+        g, p, q, r = self.g, self.p, self.q, self.r
+        perm(g, p, self.G)                                              # no creatures yet: nothing to take
+        self.assertIs(g.monarch, q)
+        E.CI.become_monarch(g, p)                                       # (you take it back: no trigger for you)
+        self.assertEqual(p.stats['jr_garland_steals'], 0)
+        s = perm(g, r, 'Solemn Simulacrum')
+        a = token(g, r, 1)
+        ais.resolve_combat(g, r, [a], p, {a})                           # Sephiroth hits you and takes the crown
+        self.assertIs(g.monarch, r)
+        self.assertIn(s, p.perms)                                       # the more valuable of Sephiroth's creatures
+        self.assertEqual(p.stats['jr_garland_steals'], 1)
+
+    def test_stolen_creatures_cant_be_sacrificed(self):
+        g, p, q = self.g, self.p, self.q
+        t = token(g, q, 1)
+        gar = perm(g, p, self.G)
+        self.assertIn(t, p.perms)
+        self.assertEqual((E.epow(g, t), E.etgh(g, t)), (3, 3))
+        E.die(g, t, 'sac')
+        self.assertIn(t, p.perms)
+        self.assertIsNone(E.sac_fodder(g, p, 'creature', exclude=gar))
+        E.edict(g, p)                                                   # not the stolen 1/1: Garland has to go
+        self.assertIn(t, p.perms)
+        self.assertNotIn(gar, p.perms)
+        self.assertEqual((E.epow(g, t), E.etgh(g, t)), (1, 1))         # Garland gone: no bonus, still yours
+        E.edict(g, p)                                                   # ... and it can be sacrificed again
+        self.assertNotIn(t, p.perms)
+
+    def test_the_steal_outlasts_garland_and_ends_with_the_owner(self):
+        g, p, q = self.g, self.p, self.q
+        lyra = perm(g, q, 'Lyra Dawnbringer')
+        gar = perm(g, p, self.G)
+        E.die(g, gar)
+        self.assertIn(lyra, p.perms)                                    # "for as long as they're the monarch"
+        q.life = 0; E.check_state(g)                                    # Veyran leaves the game: so does its card
+        self.assertNotIn(lyra, p.perms)
+        self.assertFalse(g.garland)
+
+
 if __name__ == '__main__':
     unittest.main()

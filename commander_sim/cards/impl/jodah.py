@@ -676,6 +676,88 @@ full(TYMNA, 'lifelink; at the beginning of your postcombat main phase, pay X lif
      'damage this turn): the AI pays while the life left stays at Necropotence\'s floor or above. Partner is ignored')
 
 
+# ------------------------------------------------------------------ Garland, Royal Kidnapper (10-09)
+GARLAND = 'Garland, Royal Kidnapper'
+
+
+def garland_pick(g, p, q):
+    """q's creature Garland's trigger takes: the most valuable one p can target"""
+    cs = [m for m in q.perms if m.creature and not untargetable(g, m) and not protected_from(g, m, 'UB')]
+    return max(cs, key=lambda m: pval(g, m), default=None)
+
+
+@on(GARLAND, 'etb')
+def _garland_etb(g, src, p, m):
+    """When Garland enters, target opponent becomes the monarch: the one whose best creature is most worth stealing
+    (then the one with the smaller board, the less likely to lose the crown)"""
+    if m is not src: return
+    o = src.owner
+    opps = [q for q in g.opps(o) if q.alive and not player_hexproof(g, q)]
+    if not opps: return
+    hc = human(g, o)
+    if hc is not None:
+        q = opps[hc.choose(g, o, 'target', 'Garland: which opponent becomes the monarch?', [NAME(q) for q in opps], cancel=None)]
+    else:
+        def worth(q):
+            t = garland_pick(g, o, q)
+            return (pval(g, t) if t is not None else -1, -board_power(g, q))
+        q = max(opps, key=worth)
+    if not trigger_window(g, o, src, f'{NAME(q)} becomes the monarch', imp=4) or not q.alive: return
+    o.stats['jr_garland_etb'] += 1
+    CI.become_monarch(g, q)
+
+
+@on(GARLAND, 'monarch')
+def _garland_steal(g, src, q):
+    """Whenever an opponent becomes the monarch, gain control of target creature that player controls for as long as
+    they're the monarch (garland_check ends it)"""
+    o = src.owner
+    if q is o or not q.alive: return
+    hc = human(g, o)
+    t = importlib.import_module('commander_sim.play.cards').pick_creature(
+        g, o, f'Garland: gain control of which of {NAME(q)}\'s creatures?', keep=lambda g, p, m: m.owner is q) \
+        if hc is not None else garland_pick(g, o, q)
+    if t is None or not trigger_window(g, o, src, f'gain control of {t.name}', imp=6): return
+    if t not in q.perms or untargetable(g, t) or getattr(g, 'monarch', None) is not q: return   # the duration is over
+    if importlib.import_module('commander_sim.ais').protect_response(g, q, t, 'steal', o, src.cd) or t not in q.perms: return
+    importlib.import_module('commander_sim.cards.impl.marchesa').steal(g, o, t, until_eot=False)
+    g.garland = (getattr(g, 'garland', None) or []) + [(o, t, q, g.round)]
+    o.stats['jr_garland_steals'] += 1; o.stats[f'jr_garland_took:{t.name}'] += 1
+
+
+@on(GARLAND, 'combat_damage')
+def _garland_hit(g, src, p, a, d, dmg):
+    """(bookkeeping: combat damage by the creatures Garland took)"""
+    if p is src.owner and any(t is a for _, t, _, _ in getattr(g, 'garland', None) or ()):
+        p.stats['jr_garland_dmg'] += dmg
+        if a.data is None: a.data = {}
+        if not a.data.get('garland_hit'): a.data['garland_hit'] = True; p.stats['jr_garland_hit'] += 1
+
+
+def garland_check(g):
+    """Garland's control effects end once the player a creature came from is no longer the monarch (or has left
+    the game); a creature whose owner has left the game leaves with them"""
+    keep = []
+    for o, t, q, r in g.garland:
+        if t not in o.perms: o.stats['jr_garland_gone'] += 1; continue           # it left (or changed control again)
+        if q.alive and getattr(g, 'monarch', None) is q: keep.append((o, t, q, r)); continue
+        o.perms.remove(t); g.bf_ver = getattr(g, 'bf_ver', 0) + 1
+        o.stats['jr_garland_back'] += 1; o.stats['jr_garland_rounds'] += g.round - r
+        if getattr(g, 'monarch', None) is o: o.stats['jr_garland_back_me'] += 1      # (you took the crown back)
+        if t.orig.alive:
+            t.owner = t.orig; t.orig.perms.append(t)
+            log(f'    {t.name} returns to {NAME(t.orig)} (Garland)', g)
+    g.garland = keep
+CI.garland_check = garland_check
+
+
+card(GARLAND, 'leg human knight pow=3 tgh=4 garland', dsl=[])
+full(GARLAND, 'enters: target opponent becomes the monarch (the one whose best creature is most worth stealing); '
+     'whenever an opponent becomes the monarch, gain control of their most valuable creature while they stay the '
+     'monarch (it returns when they lose the crown or leave the game); creatures you control but don\'t own get +2/+2 '
+     'and can\'t be sacrificed')
+
+
 # ================================================================== the 99: cards that need code
 def _attached(g, m, name):
     return [e for e in m.owner.perms if e.cd is not None and e.cd.name == name and e.attached is m and not e.phased]
