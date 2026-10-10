@@ -114,9 +114,13 @@ pub fn on_tap_perm(g: &mut Game, p: PlayerId, m: PermId, n: u32) -> crate::flow:
     }
 }
 
-/// PORT(M5): engine.SELF_COST, a card's own cost change (Draco's domain, delve)
-pub fn self_cost(_g: &Game, _p: PlayerId, _c: crate::ids::CardId) -> i32 {
-    0
+/// engine.SELF_COST, a card's own cost change: Emry's affinity for artifacts. PORT(M5): Draco's domain, delve
+/// (partials), Embercleave (rules2)
+pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
+    match &*g.db.get(c).name {
+        "Emry, Lurker of the Loch" => crate::impls::alela::emry_cost(g, p, c),
+        _ => 0,
+    }
 }
 
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control
@@ -596,9 +600,9 @@ pub fn ring_damage(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId) -> Res {
     crate::impls::mine::ring_damage(g, p, a, d)
 }
 
-/// PORT(M5): CI.vanguard_blocks (Defiant Vanguard)
-pub fn vanguard_blocks(_g: &mut Game, _assign: &[(PermId, PermId)]) -> Res {
-    Ok(())
+/// galadriel.vanguard_blocks (CI.vanguard_blocks): each Defiant Vanguard that blocked destroys itself and the attacker
+pub fn vanguard_blocks(g: &mut Game, assign: &[(PermId, PermId)]) -> Res {
+    crate::impls::galadriel::vanguard_blocks(g, assign)
 }
 
 /// rules2.forced_attackers: Goblin Rabblemaster's Goblins and Legion Warboss's tokens attack if able
@@ -673,10 +677,16 @@ port_res! {
     fn necro_deliver(p: PlayerId);
     /// PORT(M5): ais.necro_pay
     fn necro_pay(p: PlayerId);
-    /// PORT(M5): Galadriel's precombat taps
-    fn galadriel_precombat(q: PlayerId);
-    /// PORT(M5): Opposition's precombat taps
-    fn opposition_precombat(q: PlayerId);
+}
+
+/// galadriel.precombat (CI.galadriel_precombat): Galadriel's tappers before another player's combat
+pub fn galadriel_precombat(g: &mut Game, q: PlayerId) -> Res {
+    crate::impls::galadriel::precombat(g, q)
+}
+
+/// alela.opposition_precombat (CI.opposition_precombat): Opposition's taps before another player's combat
+pub fn opposition_precombat(g: &mut Game, q: PlayerId) -> Res {
+    crate::impls::alela::opposition_precombat(g, q)
 }
 
 /// the delayed end-step effects: Marchesa's returns, The Eternal Wanderer (zur.zur_end_step), Eerie Interlude,
@@ -686,7 +696,8 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     if !g.zur_due.is_empty() {
         crate::impls::zur::zur_end_step(g, p)?; // The Eternal Wanderer
     }
-    // PORT(M5): CI.eot_returns (Eerie Interlude), CI.jar_end (Memory Jar)
+    crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
+    // PORT(M5): CI.jar_end (Memory Jar)
     Ok(())
 }
 
@@ -710,14 +721,14 @@ pub fn replaced_tag_engine(name: &str) -> bool {
     crate::impls::rules::replaced_tag_engine(name)
 }
 
-/// PORT(M5): CI.crackdown_on
-pub fn crackdown_on(_g: &Game) -> bool {
-    false
+/// galadriel.crackdown_on (CI.crackdown_on)
+pub fn crackdown_on(g: &Game) -> bool {
+    crate::impls::galadriel::crackdown_on(g)
 }
 
-/// PORT(M5): CI.crackdown_holds
-pub fn crackdown_holds(_g: &Game, _m: PermId) -> bool {
-    false
+/// galadriel.crackdown_holds (CI.crackdown_holds)
+pub fn crackdown_holds(g: &Game, m: PermId) -> bool {
+    crate::impls::galadriel::crackdown_holds(g, m)
 }
 
 /// CI.total(g, 'skip_draw', p) (Solitary Confinement)

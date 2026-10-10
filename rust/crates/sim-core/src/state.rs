@@ -55,6 +55,8 @@ pub enum DataKey {
     Escaped,
     Exerted,
     Exiled,
+    /// Whipcorder face down: its printed (power, toughness) (galadriel.enter_face_down)
+    Facedown,
     FableGoblin,
     Final,
     Flip,
@@ -84,6 +86,8 @@ pub enum DataKey {
     LoyaltyN,
     Lore,
     Lure,
+    /// Knight of the Holy Nimbus: an opponent paid {2}, it can't regenerate this turn
+    Noregen,
     Manatok,
     MordDog,
     MustAttack,
@@ -97,6 +101,8 @@ pub enum DataKey {
     Stolen,
     TapOnReturn,
     Unblockable,
+    /// Reconstructed Thopter came back by unearth (exiled at the end step)
+    Unearth,
     Unbl,
     Used,
     Voice,
@@ -452,6 +458,12 @@ pub struct Player {
     pub incubator: i32,
     /// Meren of Clan Nel Toth's experience counters (Python's `p.experience`)
     pub experience: i32,
+    /// energy counters (Static Prison, Aether Hub)
+    pub energy: i32,
+    /// Malcator: artifact tokens made this turn, (turn, how many) (Python's `art_tok`)
+    pub art_tok: Option<(TurnStamp, i32)>,
+    /// Reconstructed Thopter cards already unearthed (once each)
+    pub unearthed: Vec<CardId>,
 }
 
 impl Player {
@@ -563,6 +575,9 @@ impl Player {
             yawg_loop: None,
             incubator: 0,
             experience: 0,
+            energy: 0,
+            art_tok: None,
+            unearthed: vec![],
             stats: IndexMap::new(),
         }
     }
@@ -817,6 +832,8 @@ pub struct Game {
     pub zur_due: Vec<(PlayerId, CardId)>,
     /// the creature Restoration Angel's enter trigger blinks (Python's `g.resto_target`)
     pub resto_target: Option<PermId>,
+    /// Eerie Interlude: (player, card) exiled until the beginning of the next end step (Python's `g.eot_returns`)
+    pub eot_returns: Vec<(PlayerId, CardId)>,
 }
 
 impl Game {
@@ -917,6 +934,7 @@ impl Game {
             deaths_turn: None,
             zur_due: vec![],
             resto_target: None,
+            eot_returns: vec![],
         }
     }
 

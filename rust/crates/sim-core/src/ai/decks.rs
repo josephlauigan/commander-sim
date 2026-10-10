@@ -50,8 +50,10 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     match g.player(p).key {
         "sauron" => sauron_prio(g, p, c),
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
-        // PORT(phase 6): seph_prio, veyran_prio, galadriel_prio, alela_prio, jodah_prio. Until then
-        // your other decks cast by the outside decks' tag priority.
+        "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
+        "alela" => crate::impls::alela::alela_prio(g, p, c),
+        // PORT(phase 6): seph_prio, veyran_prio, jodah_prio. Until then those decks cast by the outside decks' tag
+        // priority.
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -1228,8 +1230,9 @@ pub fn protect_response(
             Ok(false)
         }
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
+        "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         // PORT(phase 6): Sephiroth (Ephemerate, Restoration Angel, Heroic Intervention, Galadriel's Dismissal,
-        // sacrifice in response), Veyran, Galadriel, Jodah
+        // sacrifice in response), Veyran, Jodah
         _ => Ok(false),
     }
 }
@@ -1246,8 +1249,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if key == "yshtola" {
         return crate::impls::yshtola::yshtola_wipe_response(g, q, kind);
     }
-    // PORT(phase 6): Galadriel's and Jodah's answers
-    if matches!(key, "galadriel" | "jodah") {
+    if key == "galadriel" {
+        return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
+    }
+    // PORT(phase 6): Jodah's answers
+    if matches!(key, "jodah") {
         return Ok(None);
     }
     if wipe_loss(g, q, kind, caster) < 6.0 {

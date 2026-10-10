@@ -1296,12 +1296,12 @@ pub fn walker(r: &mut Registry, db: &CardDb, name: &str, abilities: &'static [Wa
     Ok(())
 }
 
-fn round_stamp(g: &Game, p: PlayerId) -> TurnStamp {
+pub(crate) fn round_stamp(g: &Game, p: PlayerId) -> TurnStamp {
     TurnStamp { round: g.round, active: Some(p) }
 }
 
 /// common._uses: loyalty abilities src used this round
-fn uses(g: &Game, p: PlayerId, src: PermId) -> i64 {
+pub(crate) fn uses(g: &Game, p: PlayerId, src: PermId) -> i64 {
     let x = g.perm(src);
     if x.loyalty_used != Some(round_stamp(g, p)) {
         return 0;
@@ -1310,7 +1310,7 @@ fn uses(g: &Game, p: PlayerId, src: PermId) -> i64 {
 }
 
 /// common._allowed: Oath of Teferi lets each planeswalker use two abilities a turn
-fn allowed(g: &Game, p: PlayerId) -> i64 {
+pub(crate) fn allowed(g: &Game, p: PlayerId) -> i64 {
     let oath = g.player(p).perms.iter().any(|&m| card_name(g, m) == "Oath of Teferi" && !g.perm(m).phased);
     if oath { 2 } else { 1 }
 }
