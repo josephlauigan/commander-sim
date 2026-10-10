@@ -5,6 +5,7 @@
 pub mod json;
 pub mod py;
 pub mod re;
+pub mod audit;
 pub mod autotag;
 pub mod cardinfo;
 pub mod cd;
@@ -15,3 +16,4 @@ pub mod dsl_parse;
 pub mod export;
 pub mod scryfall;
 pub mod sources;
+pub mod update_deck;
