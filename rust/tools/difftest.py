@@ -301,6 +301,8 @@ def main():
     ap.add_argument('--load', help='positions from this file instead (from --keep)')
     ap.add_argument('--keep', help='write the positions to this file')
     ap.add_argument('--json', help='write every difference to this file')
+    ap.add_argument('--decks', help="the decks random positions are drawn from: comma-separated deck keys or tiers "
+                                    "('t2,alela'); default: sauron and Tier 1")
     a = ap.parse_args()
     setup()
     load_card_code()
@@ -308,10 +310,11 @@ def main():
         positions = json.load(open(a.load))
     else:
         decks = load_decks()
-        t1 = [k for k, d in decks.items() if d.get('tier') == 't1']
+        keys = []
+        for x in (a.decks or 'sauron,t1').split(','):
+            keys += [k for k, d in decks.items() if d.get('tier') == x] if x in ('t1', 't2', 't3', 't4', 't5') else [x]
         rng = random.Random(a.seed)
-        positions = list(HAND_BUILT) + [random_position(rng, i, decks, ['sauron'] + t1, t1 + ['sauron'])
-                                        for i in range(a.gen)]
+        positions = list(HAND_BUILT) + [random_position(rng, i, decks, keys, keys) for i in range(a.gen)]
     if a.keep: json.dump(positions, open(a.keep, 'w'), indent=1)
     py = [py_report(p) for p in positions]
     rs = rust_reports(positions)
