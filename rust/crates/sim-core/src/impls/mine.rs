@@ -1949,10 +1949,7 @@ fn nim_return(g: &mut Game, src: Src, m: PermId) -> Res {
     if cd == g.player(p).cmd {
         return Ok(());
     }
-    if !can_pay(g, p, 4, "", false)
-        || (pval(g, m) < 3.0 && etb_value(g, p, m) < 2.5)
-        || marchesa_returns(g, cd)
-    {
+    if !can_pay(g, p, 4, "", false) || (pval(g, m) < 3.0 && etb_value(g, p, m) < 2.5) || marchesa_returns(g, cd) {
         return Ok(());
     }
     let name = g.perm(m).name;
@@ -2000,10 +1997,7 @@ fn nim_equip(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
         .copied()
         .filter(|&m| {
             let x = g.perm(m);
-            g.is_creature(m)
-                && !x.phased
-                && x.cd.is_some()
-                && !(card_name(g, m) == Some("Triskelion") && mikaeus) // +2/+2 would stop its loop needing no outlet
+            g.is_creature(m) && !x.phased && x.cd.is_some() && !(card_name(g, m) == Some("Triskelion") && mikaeus) // +2/+2 would stop its loop needing no outlet
         })
         .collect();
     let Some(t) = first_max(&cre, |m| pval(g, m)) else { return Ok(vec![]) };
@@ -2041,9 +2035,10 @@ fn trisk_ping(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
     }
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let lethal = opps.iter().copied().find(|&q| g.player(q).life <= plus);
-    let tg = opps.iter().flat_map(|&q| g.player(q).perms.iter().copied()).find(|&m| {
-        g.is_creature(m) && etgh(g, m) <= 1 && pval(g, m) >= 2.5 && !untargetable(g, m)
-    });
+    let tg = opps
+        .iter()
+        .flat_map(|&q| g.player(q).perms.iter().copied())
+        .find(|&m| g.is_creature(m) && etgh(g, m) <= 1 && pval(g, m) >= 2.5 && !untargetable(g, m));
     if lethal.is_none() && tg.is_none() {
         return Ok(vec![]);
     }
@@ -2107,8 +2102,7 @@ fn strip(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<O
             }
         }
     }
-    let Some((_, x)) =
-        first_max(&tg, |(q, x)| (STRIP_FIRST.contains(&&*g.db.get(g.land(x).cd).name), threat(g, p, q)))
+    let Some((_, x)) = first_max(&tg, |(q, x)| (STRIP_FIRST.contains(&&*g.db.get(g.land(x).cd).name), threat(g, p, q)))
     else {
         return Ok(vec![]);
     };
@@ -2173,10 +2167,7 @@ fn necro_flash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
     Ok(vec![Opt {
         utility: 1.5 + 0.5 * val,
         label: format!("Necromancy (flash) -> {}", g.db.get(cd).name),
-        act: Some(Action::Plan {
-            f: necro_flash_go,
-            arg: c.0 as i64 | (cd.0 as i64) << 16 | (src.0 as i64) << 32,
-        }),
+        act: Some(Action::Plan { f: necro_flash_go, arg: c.0 as i64 | (cd.0 as i64) << 16 | (src.0 as i64) << 32 }),
     }])
 }
 
@@ -2199,8 +2190,7 @@ fn necro_flash_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let n0 = g.player(p).perms.len();
     crate::ai::seph_rean_resolve(g, p, c, &Ctx { rean_target: Some(cd), rean_src: Some(src), ..Ctx::default() })?;
-    let new: Vec<PermId> =
-        g.player(p).perms.iter().skip(n0).copied().filter(|&m| g.perm(m).cd == Some(cd)).collect();
+    let new: Vec<PermId> = g.player(p).perms.iter().skip(n0).copied().filter(|&m| g.perm(m).cd == Some(cd)).collect();
     for m in new {
         die(g, m, "sac")?; // cast when a sorcery couldn't be: sacrificed at cleanup
     }
@@ -2365,7 +2355,8 @@ pub fn spell_copy_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
         v += 4.0;
     }
     const PAY: [Tag; 4] = [Tag::Ping, Tag::Spelltok, Tag::Spelldraw, Tag::Kiln];
-    let n = g.player(p).perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|x| PAY.iter().any(|&k| g.db.get(x).tag(k))));
+    let n =
+        g.player(p).perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|x| PAY.iter().any(|&k| g.db.get(x).tag(k))));
     v + 1.0 * n.count() as f64
 }
 
@@ -3587,12 +3578,8 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
                 spells += 1;
             }
         }
-        let mut ranked: Vec<(f64, PermId)> = g
-            .player(p)
-            .perms
-            .iter()
-            .map(|&m| (twinflame_value(g, p, m, post, Some(spells)), m))
-            .collect();
+        let mut ranked: Vec<(f64, PermId)> =
+            g.player(p).perms.iter().map(|&m| (twinflame_value(g, p, m, post, Some(spells)), m)).collect();
         ranked.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
         ranked.truncate(n);
         if ranked.len() < n || ranked[n - 1].0 < 1.5 {
@@ -4013,7 +4000,8 @@ fn t2_blink_value(g: &Game, _p: PlayerId, m: PermId) -> f64 {
     if g.registry.get(cd).is_some_and(|i| i.etb.is_some()) {
         v += 3.0;
     }
-    const ORINGS: [&str; 5] = ["Oblivion Ring", "Banishing Light", "Detention Sphere", "Cast Out", "Journey to Nowhere"];
+    const ORINGS: [&str; 5] =
+        ["Oblivion Ring", "Banishing Light", "Detention Sphere", "Cast Out", "Journey to Nowhere"];
     if ORINGS.contains(&&*g.db.get(cd).name) {
         v = 0.0;
     }
@@ -4139,13 +4127,13 @@ fn ephemerate_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -
         .filter(|x| x.0 >= 3.0)
         .collect();
     let Some((bv, m)) = first_max(&cands, |x| x.0) else { return Ok(vec![]) };
-    let keep = if g.player(p).perms.iter().any(|&x| {
-        g.is_creature(x) && g.perm(x).cd.is_some_and(|cd| g.db.get(cd).bomb >= 6)
-    }) {
-        2.5
-    } else {
-        0.0
-    };
+    let keep =
+        if g.player(p).perms.iter().any(|&x| g.is_creature(x) && g.perm(x).cd.is_some_and(|cd| g.db.get(cd).bomb >= 6))
+        {
+            2.5
+        } else {
+            0.0
+        };
     Ok(vec![Opt {
         utility: bv - 2.0 - keep, // two blinks with rebound
         label: format!("Ephemerate (blink {})", g.perm(m).name),

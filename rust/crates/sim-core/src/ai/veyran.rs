@@ -78,11 +78,7 @@ pub fn veyran_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
                     && crate::cards::Colors::from_letters(&xd.pips).intersects(pl.ident)
             })
             .count();
-        return if spare >= 2 {
-            if pl.turns <= 5 { 80 } else { 30 }
-        } else {
-            0
-        };
+        return if spare >= 2 { if pl.turns <= 5 { 80 } else { 30 } } else { 0 };
     }
     if t.has(Tag::Moxd) {
         // needs a land card to discard (keep one for the land drop)
@@ -160,9 +156,8 @@ pub fn veyran_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 52 + 18.min(plans::opp_power(g, p));
     }
     if &*d.name == "Fiery Emancipation" {
-        let any = pl.perms.iter().any(|&m| {
-            g.perm(m).cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Ping) || g.is_creature(m))
-        });
+        let any =
+            pl.perms.iter().any(|&m| g.perm(m).cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Ping) || g.is_creature(m)));
         return if any { 64 } else { 40 };
     }
     if &*d.name == "Galvanic Iteration" {
@@ -210,7 +205,11 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
         act: Some(Action::Plan { f, arg }),
     };
     let pl = g.player(p);
-    if has(g, p, Tag::Vkitten) && has(g, p, Tag::Vfire) && payoff(g, p) && !pl.combo_tried && can_pay(g, p, 2, "R", false)
+    if has(g, p, Tag::Vkitten)
+        && has(g, p, Tag::Vfire)
+        && payoff(g, p)
+        && !pl.combo_tried
+        && can_pay(g, p, 2, "R", false)
     {
         let risk = 1.0 - (1.0 - counter_risk(g, p)) * (1.0 - removal_risk(g, p));
         let u = 12.0 - 8.0 * risk + if s.danger > 0.6 { 3.0 } else { 0.0 };
@@ -239,8 +238,7 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
             && g.perm(e).attached.is_none_or(|a| !g.perm(a).on_bf || g.perm(a).owner != p)
     });
     let key_creature = pl.perms.iter().any(|&m| {
-        g.is_creature(m)
-            && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Veyran) || g.db.get(c).tag(Tag::Vkitten))
+        g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Veyran) || g.db.get(c).tag(Tag::Vkitten))
     });
     if can_pay(g, p, 1, "", false) && loose_boots && key_creature {
         o.push(plan(3.0 + 5.0 * removal_risk(g, p), "equip Boots".into(), boots_go, 0));

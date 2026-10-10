@@ -13,8 +13,7 @@ use crate::engine::stack::{counter_window, equip_to};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, epow, etgh, find, has, pval, stopped, untargetable};
 use crate::engine::zones::{
-    KEYSPELL, agent_for, agent_take, cast_teferis_protection, die, discard_cards, draw, land_ramp, max_by, mill,
-    min_by,
+    KEYSPELL, agent_for, agent_take, cast_teferis_protection, die, discard_cards, draw, land_ramp, max_by, mill, min_by,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Opt};
@@ -167,9 +166,11 @@ pub fn seph_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 45;
     }
     if t.has(Tag::Clone) {
-        let bomb = g.players.iter().flat_map(|q| q.perms.iter()).any(|&x| {
-            g.is_creature(x) && g.perm(x).cd.is_some_and(|cd| g.db.get(cd).bomb != 0)
-        });
+        let bomb = g
+            .players
+            .iter()
+            .flat_map(|q| q.perms.iter())
+            .any(|&x| g.is_creature(x) && g.perm(x).cd.is_some_and(|cd| g.db.get(cd).bomb != 0));
         return if bomb { 45 } else { 0 };
     }
     let key = |x: CardId| KEYSPELL.iter().any(|&k| g.db.get(x).tag(k));
@@ -200,9 +201,7 @@ fn flicker_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         .iter()
         .copied()
         .filter(|&m| {
-            g.is_creature(m)
-                && !g.perm(m).phased
-                && !(resto && crate::engine::values::has_type(g, m, "angel"))
+            g.is_creature(m) && !g.perm(m).phased && !(resto && crate::engine::values::has_type(g, m, "angel"))
         })
         .map(|m| mine::flicker_worth(g, p, m)) // (t2.flicker_worth is Sephiroth's own for 'seph')
         .fold(0.0, f64::max);
@@ -309,7 +308,8 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
             o.push(plan(7.5, "Yawgmoth's Will line", yawg_go));
         }
     }
-    let te = pl.perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Fill) == Some("tortured")));
+    let te =
+        pl.perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Fill) == Some("tortured")));
     if te
         && !gy_bomb
         && rean
@@ -367,7 +367,8 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
         let x = g.perm(m);
         g.is_creature(m)
             && etgh(g, m) == 1
-            && (x.token || x.cd.is_some_and(|c| matches!(g.db.get(c).tags.str(Tag::Fill), Some("stitcher" | "wayfinder"))))
+            && (x.token
+                || x.cd.is_some_and(|c| matches!(g.db.get(c).tags.str(Tag::Fill), Some("stitcher" | "wayfinder"))))
     });
     if has(g, p, Tag::Clamp) && can_pay(g, p, 1, "", false) && pl.clamp_n < 2 && clamp_fod {
         o.push(plan(4.0, "Skullclamp", clamp_go));
@@ -376,16 +377,18 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
         let x = g.perm(m);
         g.is_creature(m) && (x.token || x.cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Fill) == Some("stitcher")))
     });
-    if payable_in_hand(g, p, |c| g.db.get(c).tags.str(Tag::Fill) == Some("dispute")) && (pl.treasures > 0 || dispute_fod)
+    if payable_in_hand(g, p, |c| g.db.get(c).tags.str(Tag::Fill) == Some("dispute"))
+        && (pl.treasures > 0 || dispute_fod)
     {
         o.push(plan(3.5, "Deadly Dispute", dispute_go));
     }
     let loose_boots = find(g, p, Tag::Prot).iter().any(|&e| {
         g.perm(e).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Prot) == Some("boots")) && g.perm(e).attached.is_none()
     });
-    let bomb_out = pl.perms.iter().any(|&m| {
-        g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).bomb >= 6) && !untargetable(g, m)
-    });
+    let bomb_out = pl
+        .perms
+        .iter()
+        .any(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).bomb >= 6) && !untargetable(g, m));
     if can_pay(g, p, 1, "", false) && loose_boots && bomb_out {
         o.push(plan(3.0 + 4.0 * removal_risk(g, p), "equip Boots", boots_go));
     }
@@ -514,9 +517,11 @@ fn tortured_go(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
 /// ais.seph_tortured: Tortured Existence bins a bomb for the reanimation spells and returns the best creature that
 /// isn't a reanimation target, once per turn
 pub fn seph_tortured(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let te = g.player(p).perms.iter().any(|&m| {
-        g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Fill) == Some("tortured"))
-    });
+    let te = g
+        .player(p)
+        .perms
+        .iter()
+        .any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Fill) == Some("tortured")));
     if !te || blocked(g, p, "Tortured Existence") {
         return Ok(false);
     }
@@ -806,9 +811,7 @@ fn dispute_go(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
 
 /// ais.seph_dispute: Deadly Dispute, sacrificing a token, Stitcher's Supplier or a Treasure
 pub fn seph_dispute(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(c) =
-        g.player(p).hand.iter().copied().find(|&c| g.db.get(c).tags.str(Tag::Fill) == Some("dispute"))
-    else {
+    let Some(c) = g.player(p).hand.iter().copied().find(|&c| g.db.get(c).tags.str(Tag::Fill) == Some("dispute")) else {
         return Ok(false);
     };
     let fod = g.player(p).perms.iter().copied().find(|&m| {

@@ -763,8 +763,13 @@ fn bastion_proliferates_bahamut_and_the_loop_counters() {
     let trisk = perm(&mut g, P0, "Triskelion"); // three +1/+1 counters
     let finks = perm(&mut g, P0, "Kitchen Finks");
     g.perm_mut(finks).plus = -1; // persisted: a -1/-1 counter
-    let bastion =
-        |g: &mut Game| -> Vec<Opt> { sim_core::cardcode::land_options(g, P0, Some(false)).unwrap().into_iter().filter(|o| o.label == "Karn's Bastion").collect() };
+    let bastion = |g: &mut Game| -> Vec<Opt> {
+        sim_core::cardcode::land_options(g, P0, Some(false))
+            .unwrap()
+            .into_iter()
+            .filter(|o| o.label == "Karn's Bastion")
+            .collect()
+    };
     assert!(bastion(&mut g).is_empty()); // counters alone: at the end of the turn before yours
     let b = perm(&mut g, P0, B);
     let vey = perm(&mut g, P1, "Veyran, Voice of Duality");
@@ -842,7 +847,8 @@ fn muldrotha_table() -> (Game, PermId) {
 #[test]
 fn muldrotha_one_permanent_of_each_type_from_the_graveyard() {
     let (mut g, _) = muldrotha_table();
-    let (sol, stone, tower) = (take(&mut g, P0, "Sol Ring"), take(&mut g, P0, "Mind Stone"), take(&mut g, P0, "Command Tower"));
+    let (sol, stone, tower) =
+        (take(&mut g, P0, "Sol Ring"), take(&mut g, P0, "Mind Stone"), take(&mut g, P0, "Command Tower"));
     g.player_mut(P0).gy.extend([sol, stone, tower]);
     assert_eq!(mine::muld_types(&g, P0, sol), vec!["A"]);
     mine::muld_mark(&mut g, P0, "A");

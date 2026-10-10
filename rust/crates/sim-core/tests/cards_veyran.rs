@@ -301,7 +301,9 @@ fn emeritus_of_ideation_prepares_again_when_it_attacks() {
     let mut g = table(&["veyran", "seph"]);
     let em = perm(&mut g, P0, "Emeritus of Ideation // Ancestral Recall");
     g.perm_mut(em).data.set(DataKey::Prepared, Val::Bool(false));
-    for n in ["Island", "Mountain", "Think Twice", "Deduce", "Quick Study", "Stock Up", "Flow State", "Abrade", "Unsummon"] {
+    for n in
+        ["Island", "Mountain", "Think Twice", "Deduce", "Quick Study", "Stock Up", "Flow State", "Abrade", "Unsummon"]
+    {
         let c = take(&mut g, P0, n);
         g.player_mut(P0).gy.push(c);
     }
@@ -393,7 +395,10 @@ fn visions_of_beyond_draws_three_with_a_big_graveyard() {
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     assert_eq!(g.player(P0).hand.len(), 1);
     let mut g = table(&["veyran", "seph"]);
-    let rest = { let lib = &mut g.player_mut(P1).library; lib.split_off(lib.len() - 20) };
+    let rest = {
+        let lib = &mut g.player_mut(P1).library;
+        lib.split_off(lib.len() - 20)
+    };
     g.player_mut(P1).gy.extend(rest);
     let c = hand(&mut g, P0, &["Visions of Beyond"])[0];
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
