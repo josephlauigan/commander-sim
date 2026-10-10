@@ -42,7 +42,9 @@ pub fn dyn_mana_perm(g: &Game, p: PlayerId, m: PermId) -> Option<u32> {
     imp_of(g, g.perm(m).cd?)?.dyn_mana_perm.map(|f| f(g, p, m))
 }
 
-/// PORT(M5): CI.locked(g, m, kind): an Aura locks m (Arrest: no activated abilities; Pacify: can't attack)
+/// PORT(M5): CI.locked(g, m, kind) (zur.locked): an Aura locks m (Arrest: no activated abilities; Pacify: can't
+/// attack). Only zur.py's lock Auras (Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust) use it, and
+/// no pilot deck runs one.
 pub fn locked(_g: &Game, _m: PermId, _kind: &str) -> bool {
     false
 }
@@ -83,7 +85,8 @@ pub fn threat_value(g: &Game, m: PermId) -> f64 {
     crate::ai::pool::card_threat_value(g, c) + piece_threat(g, m)
 }
 
-/// PORT(M5): how much of m's value is left under the Auras locking it (zur.lock_factor)
+/// PORT(M5): how much of m's value is left under the Auras locking it (zur.lock_factor; zur.py's lock Auras only,
+/// which no pilot deck runs)
 pub fn lock_factor(_g: &Game, _m: PermId) -> f64 {
     1.0
 }
@@ -235,7 +238,7 @@ port_res! {
     fn proliferate_all(p: PlayerId);
     /// PORT(M5): rules.transform_away (Elk, mutate, Forest Dryad)
     fn transform_away(m: PermId, kind: Sym);
-    /// PORT(M5): CI.apply_lock (Arrest, Encrust ...)
+    /// PORT(M5): CI.apply_lock (zur.apply_lock: Arrest, Encrust ...; no pilot deck runs a lock Aura)
     fn apply_lock(actor: Option<PlayerId>, m: PermId, kind: Sym);
 }
 

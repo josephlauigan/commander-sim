@@ -4,9 +4,9 @@
 //! framework (`walker`, `ult_pressure`), Food, adventures and the fixed threat values (`CI.PVAL`).
 //!
 //! Ported for M5: everything the pilot decks (Sauron and Tier 1) play, and the table-driven entries of the same
-//! families (every Aura, the O-Ring family, the death-trigger creatures, the sacrifice outlets). The rest of
-//! common.py's cards (pillowfort taxes, stax pieces, the four planeswalkers, Urza's Saga, Walking Ballista ...) wait
-//! for phase 6; they play with their tags meanwhile.
+//! families (every Aura, the O-Ring family, the death-trigger creatures, the sacrifice outlets, the uncounterable
+//! grants). The rest of common.py's cards (pillowfort taxes, stax pieces, the four planeswalkers, Urza's Saga, Walking
+//! Ballista, graveyard hate ...) wait for phase 6; they play with their tags meanwhile.
 
 use crate::cards::{CardDb, CardDef, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
@@ -15,7 +15,7 @@ use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, trigger_window};
-use crate::engine::values::{epow, has_type, once_per_turn, pval, protected_from, stopped, untargetable};
+use crate::engine::values::{epow, has_type, once_per_turn, protected_from, pval, stopped, untargetable};
 use crate::engine::zones::{
     Enter, Tokens, Zone, add_treasure, die, draw, edict, enter, leave, make_tokens, max_by, min_by, sac_worth,
     to_zone_card,
@@ -290,15 +290,22 @@ pub fn attached_bonus(g: &Game, m: PermId) -> (i32, i32) {
         dt += b;
     }
     if g.selfpt && g.is_creature(m) {
-        // the CREATURE_PT entries, then partials' coat_bonus + lineage_bonus + bestow_bonus (which partials
-        // registers as one creature_pt entry giving (b, b))
         for f in &g.registry.creature_pt {
             let (a, b) = f(g, m);
             dp += a;
             dt += b;
         }
+        let b = partials_bonus(g, m);
+        dp += b;
+        dt += b;
     }
     (dp, dt)
+}
+
+/// PORT(M5, partials): `IP.coat_bonus(g, m) + IP.lineage_bonus(g, m) + IP.bestow_bonus(g, m)` (Coat of Arms, Lord of
+/// Lineage, bestowed Eidolons): wire to partials' port at merge time. No pilot deck runs these cards.
+fn partials_bonus(_g: &Game, _m: PermId) -> i32 {
+    0
 }
 
 /// common.attached_kw: an Aura on m gives it keyword kw
@@ -424,10 +431,7 @@ fn empyrial(g: &Game, p: PlayerId, _a: PermId, _m: PermId) -> (i32, i32) {
 /// common.aura(...) calls
 static AURAS: &[(&str, AuraSpec)] = &[
     ("All That Glitters", AuraSpec { bonus: Some(glitters), ..AURA }),
-    (
-        "Angelic Destiny",
-        AuraSpec { pow: 4, tgh: 4, kws: &["flying", "first strike"], back: Some("host_dies"), ..AURA },
-    ),
+    ("Angelic Destiny", AuraSpec { pow: 4, tgh: 4, kws: &["flying", "first strike"], back: Some("host_dies"), ..AURA }),
     ("Battle Mastery", AuraSpec { kws: &["double strike"], ..AURA }),
     (
         "Cartouche of Solidarity",
@@ -437,13 +441,7 @@ static AURAS: &[(&str, AuraSpec)] = &[
     ("Celestial Mantle", AuraSpec { pow: 3, tgh: 3, ..AURA }),
     (
         "Daybreak Coronet",
-        AuraSpec {
-            pow: 3,
-            tgh: 3,
-            kws: &["first strike", "vigilance", "lifelink"],
-            host_ok: Some(coronet_ok),
-            ..AURA
-        },
+        AuraSpec { pow: 3, tgh: 3, kws: &["first strike", "vigilance", "lifelink"], host_ok: Some(coronet_ok), ..AURA },
     ),
     ("Ethereal Armor", AuraSpec { kws: &["first strike"], bonus: Some(ethereal), ..AURA }),
     // Approximate: lifelink, umbra armor; moving it is not modeled
@@ -482,8 +480,7 @@ static AURAS: &[(&str, AuraSpec)] = &[
 // ---- the enchanted creature's combat damage (common._host_damage)
 /// Celestial Mantle: double your life total
 fn mantle(g: &mut Game, src: Src, _p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
-    if g.perm(src).attached == Some(a) && trigger_window(g, owner(g, src), Some(src), "double your life total", None)?
-    {
+    if g.perm(src).attached == Some(a) && trigger_window(g, owner(g, src), Some(src), "double your life total", None)? {
         let o = owner(g, src);
         let life = g.player(o).life;
         gain(g, o, life)?;
@@ -493,7 +490,8 @@ fn mantle(g: &mut Game, src: Src, _p: PlayerId, a: PermId, _d: PlayerId, _dmg: i
 
 /// Spirit Link: gain that much life
 fn spirit_link(g: &mut Game, src: Src, _p: PlayerId, a: PermId, _d: PlayerId, dmg: i32) -> Res {
-    if g.perm(src).attached == Some(a) && trigger_window(g, owner(g, src), Some(src), &format!("gain {dmg} life"), None)?
+    if g.perm(src).attached == Some(a)
+        && trigger_window(g, owner(g, src), Some(src), &format!("gain {dmg} life"), None)?
     {
         gain(g, owner(g, src), dmg)?;
     }
@@ -509,15 +507,13 @@ fn snake_umbra(g: &mut Game, src: Src, _p: PlayerId, a: PermId, _d: PlayerId, _d
 }
 
 // ======================================================== exile-until-it-leaves (Oblivion Ring family)
-/// which opposing permanents an O-Ring effect may take
-pub type PermPred = fn(&Game, PermId) -> bool;
-
-/// common.oring_exile: exile the best permanent(s) opponents control until src leaves the battlefield
+/// common.oring_exile: exile the best permanent(s) opponents control until src leaves the battlefield (pred: which
+/// opposing permanents it may take)
 pub fn oring_exile(
     g: &mut Game,
     src: PermId,
     p: PlayerId,
-    pred: PermPred,
+    pred: impl Fn(&Game, PermId) -> bool,
     per_opponent: bool,
     creature_only: bool,
 ) -> Res {
@@ -566,7 +562,7 @@ pub fn oring_exile(
 }
 
 /// common.oring_return: src left the battlefield: what it exiled returns (an effect ending, not a trigger)
-fn oring_return(g: &mut Game, src: Src, _m: PermId) -> Res {
+pub fn oring_return(g: &mut Game, src: PermId) -> Res {
     let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Oring).cloned() else { return Ok(()) };
     for e in v {
         let Val::List(pair) = e else { continue };
@@ -608,6 +604,11 @@ fn journey(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// Grasp of Fate: one per opponent
 fn grasp(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     oring_etb(g, src, m, true, false)
+}
+
+/// the O-Ring family's leaves hook (common.oring_return)
+fn oring_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
+    oring_return(g, src)
 }
 
 // ======================================================== Esper Sentinel
@@ -756,11 +757,8 @@ pub fn is_sac_outlet(name: &str) -> bool {
 
 /// the bartist / drain hand tags among p's permanents (phased ones too, as the Python counts them)
 fn drain_tags(g: &Game, p: PlayerId) -> f64 {
-    g.player(p)
-        .perms
-        .iter()
-        .filter(|&&x| def(g, x).is_some_and(|d| d.tag(Tag::Bartist) || d.tag(Tag::Drain)))
-        .count() as f64
+    g.player(p).perms.iter().filter(|&&x| def(g, x).is_some_and(|d| d.tag(Tag::Bartist) || d.tag(Tag::Drain))).count()
+        as f64
 }
 
 /// common.death_value: what one creature death is worth to p right now (drains, cards, edicts), with copies
@@ -846,13 +844,9 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
     }
     let per = death_value(g, p, None);
     let pl = g.player(p);
-    let mut drain_per = pl
-        .perms
-        .iter()
-        .filter(|&&x| g.perm(x).cd.is_some())
-        .map(|&x| lookup(&DEATH_DRAIN, card_name(g, x)))
-        .psum()
-        + drain_tags(g, p);
+    let mut drain_per =
+        pl.perms.iter().filter(|&&x| g.perm(x).cd.is_some()).map(|&x| lookup(&DEATH_DRAIN, card_name(g, x))).psum()
+            + drain_tags(g, p);
     drain_per *= (1 + if g.hooks.is_empty() { 0 } else { total_trigger_copies(g, p, "dies", None) }) as f64;
     let lethal = drain_per != 0.0 && g.opps(p).all(|q| g.player(q).life as f64 <= drain_per * fod.len() as f64);
     let m = min_by(&fod, |x| sac_worth(g, x)).unwrap();
@@ -955,7 +949,8 @@ fn pawn(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
 
 fn requiem(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     if dies_guard(g, src, m, false, true, true, "create a 1/1 Spirit")? && !has_type(g, m, "spirit") {
-        let spec = Tokens { fly: true, color: Some(Colors::from_letters("W")), types: vec!["spirit"], ..Tokens::new(1, 1) };
+        let spec =
+            Tokens { fly: true, color: Some(Colors::from_letters("W")), types: vec!["spirit"], ..Tokens::new(1, 1) };
         make_tokens(g, owner(g, src), spec)?;
     }
     Ok(())
@@ -1134,7 +1129,12 @@ pub fn exile_gy(g: &mut Game, q: PlayerId, by: Option<&str>) {
     let pl = g.player_mut(q);
     let gy = std::mem::take(&mut pl.gy);
     pl.exile.extend(gy);
-    crate::glog!(g, "    {}'s graveyard is exiled{}", player_name(g, q), by.map_or(String::new(), |b| format!(" by {b}")));
+    crate::glog!(
+        g,
+        "    {}'s graveyard is exiled{}",
+        player_name(g, q),
+        by.map_or(String::new(), |b| format!(" by {b}"))
+    );
 }
 
 /// Rest in Peace (Approximate): graveyards are exiled on entry and then kept empty (cards are exiled as soon as
@@ -1185,7 +1185,8 @@ fn ophiomancer(g: &mut Game, src: Src, _p: PlayerId) -> Res {
     let o = owner(g, src);
     let none = |g: &Game| !g.player(o).perms.iter().any(|&m| has_type(g, m, "snake"));
     if none(g) && trigger_window(g, o, Some(src), "create a deathtouch Snake", None)? && none(g) {
-        let spec = Tokens { dt: true, color: Some(Colors::from_letters("B")), types: vec!["snake"], ..Tokens::new(1, 1) };
+        let spec =
+            Tokens { dt: true, color: Some(Colors::from_letters("B")), types: vec!["snake"], ..Tokens::new(1, 1) };
         make_tokens(g, o, spec)?;
     }
     Ok(())
@@ -1215,7 +1216,8 @@ fn deed(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>
     let mut best: Option<(f64, u32)> = None;
     for x in 0..=avail {
         let hit = |m: PermId| !g.perm(m).phased && m != src && deed_hit(g, m, x);
-        let theirs = g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| hit(m)).map(|m| pval(g, m)).psum();
+        let theirs =
+            g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| hit(m)).map(|m| pval(g, m)).psum();
         let mine = g.player(p).perms.iter().copied().filter(|&m| hit(m)).map(|m| pval(g, m)).psum();
         let net = theirs - 1.3 * mine;
         if best.is_none_or(|b| net > b.0) {
@@ -1257,6 +1259,19 @@ fn deed_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ======================================================== uncounterable spells
+/// Destiny Spinner (Approximate): your creature and enchantment spells can't be countered (the land animation is
+/// rules2's)
+fn spinner(g: &Game, src: Src, caster: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    caster == owner(g, src) && (d.creature || d.types.has(Types::ENCHANTMENT))
+}
+
+/// Allosaurus Shepherd: your green spells can't be countered (rules.py registers the same rule again)
+fn shepherd(g: &Game, src: Src, caster: PlayerId, c: CardId) -> bool {
+    caster == owner(g, src) && g.db.get(c).pips.contains('G')
+}
+
 // ======================================================== planeswalkers (the walker framework)
 /// value(g, p, src): the ability's utility now, None if it can't be used
 pub type WalkerVal = fn(&Game, PlayerId, PermId) -> Option<f64>;
@@ -1296,8 +1311,7 @@ fn uses(g: &Game, p: PlayerId, src: PermId) -> i64 {
 
 /// common._allowed: Oath of Teferi lets each planeswalker use two abilities a turn
 fn allowed(g: &Game, p: PlayerId) -> i64 {
-    let oath =
-        g.player(p).perms.iter().any(|&m| card_name(g, m) == "Oath of Teferi" && !g.perm(m).phased);
+    let oath = g.player(p).perms.iter().any(|&m| card_name(g, m) == "Oath of Teferi" && !g.perm(m).phased);
     if oath { 2 } else { 1 }
 }
 
@@ -1593,7 +1607,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     ] {
         let c = r.card(db, name)?;
         c.etb = Some(f);
-        c.leaves = Some(oring_return);
+        c.leaves = Some(oring_leaves);
         *c = c.at_once(Event::Leaves);
     }
     r.card(db, "Esper Sentinel")?.cast = Some(sentinel);
@@ -1628,6 +1642,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Hero of Bladehold")?.attack = Some(hero);
     r.card(db, "Ophiomancer")?.upkeep = Some(ophiomancer);
     r.card(db, "Pernicious Deed")?.options = Some(deed);
+    r.card(db, "Destiny Spinner")?.uncounterable = Some(spinner);
+    r.card(db, "Allosaurus Shepherd")?.uncounterable = Some(shepherd);
     for &(name, v) in PVAL {
         r.card(db, name)?.pval = Some(v);
     }
