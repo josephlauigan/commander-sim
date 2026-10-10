@@ -10,6 +10,7 @@ Events the engine fires (fn signatures):
   blocks(g, src, p, atk, d, assign)     blockers declared (assign: attacker -> blocker); may change atk
   combat_damage(g, src, p, a, d, dmg)   attacker a dealt dmg combat damage to player d
   upkeep(g, src, p) / end_step(g, src, p)   p's upkeep / end step (every hooked permanent hears every player's)
+  main1(g, src, p) / main2(g, src, p)       the beginning of p's precombat / postcombat main phase
   draw(g, src, p)                       p drew a card
   landfall(g, src, p)                   a land entered under p's control
   sacrifice(g, src, p, what)            p sacrificed a permanent (what: Perm, or 'Treasure' / 'Food' / 'Clue')
@@ -43,6 +44,7 @@ DYN_MANA = {}         # card name -> fn(g, p, perm) -> amount of mana its tap ab
 ON_TAP = {}           # card name -> fn(g, p, perm, amount used) after it is tapped for mana (Heritage Druid ...)
 LAND_COLS = {}        # land name -> fn(g, p, land) -> the colours it can make now (Vivid lands, Gemstone Mine)
 AS_ENTERS = {}        # card name -> fn(g, p, perm) as it enters, before any trigger (naming a creature type)
+SAGA = {}             # Saga name -> (wants(g, p, perm), add_lore(g, p, perm)): proliferate's lore counter, if wanted
 SELF_REGEN = {}       # creature name -> fn(g, perm) -> True if it regenerates instead of being destroyed
 SELF_CAST = {}        # card name -> fn(g, p, c) when p casts it: "when you cast this spell" (cascade)
 

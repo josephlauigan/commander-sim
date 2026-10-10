@@ -721,6 +721,269 @@ class NewCards(unittest.TestCase):
         self.assertEqual(flux.plus, 2)
 
 
+class Bahamut(unittest.TestCase):
+    """Summon: Bahamut (tested for Sephiroth): "(As this Saga enters and after your draw step, add a lore counter.
+    Sacrifice after IV.) I, II - Destroy up to one target nonland permanent. III - Draw two cards. IV - Mega Flare -
+    This creature deals damage equal to the total mana value of other permanents you control to each opponent." 9/9
+    flying"""
+    B = 'Summon: Bahamut'
+
+    def bahamut(self, p):
+        return next(m for m in p.perms if m.cd is not None and m.cd.name == self.B)
+
+    def lore(self, g, p, n=1):
+        for _ in range(n): E.CI.fire(g, 'main1', p)
+
+    def test_chapter_one_destroys_the_biggest_threat(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        snipe = perm(g, v, 'Guttersnipe'); vey = perm(g, v, 'Veyran, Voice of Duality'); lands(v, 'Island', 1)
+        b = perm(g, s, self.B)
+        self.assertEqual(b.data['lore'], 1)
+        self.assertTrue(b.fly and (b.pow, b.tgh) == (9, 9))
+        self.assertEqual(v.perms, [snipe])                     # Veyran, not Guttersnipe; lands are never targets
+        self.assertEqual(len(v.lands), 1)
+
+    def test_chapter_two_after_your_draw_step(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); snipe = perm(g, v, 'Guttersnipe')
+        self.lore(g, v)                                        # an opponent's main phase adds nothing
+        self.assertEqual((b.data['lore'], v.perms), (1, [snipe]))
+        ais._step_start(g, s)                                  # upkeep, draw step, then the lore counter
+        self.assertEqual(b.data['lore'], 2)
+        self.assertEqual(v.perms, [])
+
+    def test_chapter_three_draws_two(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); self.lore(g, s)
+        n = len(s.hand)
+        self.lore(g, s)
+        self.assertEqual((b.data['lore'], len(s.hand)), (3, n + 2))
+
+    def test_mega_flare_then_sacrificed(self):
+        g = table('seph', 'veyran', 'sauron'); s, v, r = g.players
+        perm(g, s, 'Sol Ring'); perm(g, s, 'Grave Titan'); lands(s, 'Swamp', 3)   # 1 + 6 (Zombies and lands: 0)
+        b = perm(g, s, self.B); self.lore(g, s, 2)
+        self.lore(g, s)
+        self.assertEqual(lives(g), [40, 33, 33])
+        self.assertNotIn(b, s.perms)
+        self.assertIn(C[self.B], s.gy)                         # sacrificed: back in the graveyard to reanimate
+
+    def test_mega_flare_kills(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Grave Titan'); v.life = 6
+        perm(g, s, self.B); self.lore(g, s, 3)
+        self.assertFalse(v.alive)
+        self.assertTrue(g.over and g.winner is s)
+
+    def test_reanimated_at_chapter_one(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        lands(s, 'Swamp', 2); hand(s, 'Animate Dead')
+        s.gy += [C['Grave Titan'], card(self.B)]
+        self.assertEqual(ais.rean_targets(g, s, 'animate')[0][1].name, self.B)    # above Grave Titan
+        self.assertTrue(ais.seph_reanimate(g, s))
+        self.assertEqual(self.bahamut(s).data['lore'], 1)
+        self.assertNotIn(vey, v.perms)
+
+    def test_entomb_target(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        perm(g, s, 'Sol Ring'); s.library.append(card(self.B))
+        ais.seph_fill_resolve(g, s, 'entomb', {})
+        self.assertEqual(s.gy, [C['Archon of Cruelty']])       # the one bomb above it on a small board
+        s.gy = []                                              # then above the other 8s (Sheoldred, Elesh Norn)
+        ais.seph_fill_resolve(g, s, 'entomb', {})
+        self.assertEqual(s.gy, [C[self.B]])
+
+    def test_blink_restarts_at_chapter_one(self):
+        from commander_sim.cards.impl import mine
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); self.lore(g, s, 2)             # chapter III done: IV next
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        lands(s, 'Plains', 1); hand(s, 'Ephemerate')
+        self.assertTrue(mine.ephemerate_cast(g, s, b, 'value'))
+        n = self.bahamut(s)
+        self.assertIsNot(n, b)
+        self.assertEqual(n.data['lore'], 1)                    # a new object: chapter I again
+        self.assertNotIn(vey, v.perms)
+        self.lore(g, s, 2)
+        self.assertIn(n, s.perms)                              # not sacrificed: the count started over
+
+    def test_kitten_blinks_it_for_a_target(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); perm(g, s, 'Displacer Kitten')
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        E.on_cast(g, s, card('Swords to Plowshares'))
+        self.assertNotIn(b, s.perms)
+        self.assertNotIn(vey, v.perms)
+
+    def test_no_blink_before_a_lethal_mega_flare(self):
+        from commander_sim.cards.impl import mine
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Grave Titan'); v.life = 6
+        b = perm(g, s, self.B); self.lore(g, s, 2)
+        perm(g, v, 'Veyran, Voice of Duality')
+        self.assertEqual(mine.blink_worth(g, s, b), 0.0)
+
+    def test_hardcast_needs_nine_mana(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        s.cmd_in_zone = False
+        hand(s, self.B); lands(s, 'Swamp', 8)
+        self.assertFalse(ais.seph_hardcast(g, s))
+        lands(s, 'Swamp', 1)
+        self.assertTrue(ais.seph_hardcast(g, s))
+        self.assertEqual(self.bahamut(s).data['lore'], 1)
+
+
+class SephFlicker(unittest.TestCase):
+    """The flicker package tested for Sephiroth. Soulherder: "Whenever a creature is exiled from the battlefield, put a
+    +1/+1 counter on this creature. At the beginning of your end step, you may exile another target creature you
+    control, then return that card to the battlefield under its owner's control." Conjurer's Closet: "At the beginning
+    of your end step, you may exile target creature you control, then return that card to the battlefield under your
+    control." Restoration Angel: "Flash. Flying. When this creature enters, you may exile target non-Angel creature you
+    control, then return that card to the battlefield under your control." Karn's Bastion: "{T}: Add {C}. {4}, {T}:
+    Proliferate." """
+    B = 'Summon: Bahamut'
+
+    def named(self, p, name):
+        return next(m for m in p.perms if m.cd is not None and m.cd.name == name)
+
+    def test_soulherder_flickers_the_commander_at_your_end_step(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        herd = perm(g, s, 'Soulherder'); perm(g, s, 'Grave Titan')
+        atx = perm(g, s, 'Atraxa, Grand Unifier'); atx.is_cmd = True
+        E.CI.fire(g, 'end_step', v)                            # an opponent's end step: nothing
+        self.assertIn(atx, s.perms)
+        n = len(s.hand)
+        E.CI.fire(g, 'end_step', s)
+        self.assertNotIn(atx, s.perms)                         # Atraxa (8) over Grave Titan (3)
+        new = self.named(s, 'Atraxa, Grand Unifier')
+        self.assertTrue(new.is_cmd)                            # still the commander
+        self.assertGreater(len(s.hand), n)                     # its reveal-ten enter trigger again
+        self.assertEqual(herd.plus, 1)                         # a creature was exiled from the battlefield
+
+    def test_closet_restarts_bahamut_for_another_destroy(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, "Conjurer's Closet"); b = perm(g, s, self.B)
+        E.CI.fire(g, 'main1', s)                               # chapter II: nothing to destroy yet
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        E.CI.fire(g, 'end_step', s)
+        self.assertNotIn(b, s.perms)
+        self.assertEqual(self.named(s, self.B).data['lore'], 1)    # a new object at chapter I
+        self.assertNotIn(vey, v.perms)
+
+    def test_no_restart_before_a_strong_mega_flare(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, "Conjurer's Closet"); titan = perm(g, s, 'Grave Titan')     # Mega Flare: 5 + 6 = 11
+        b = perm(g, s, self.B); E.CI.fire(g, 'main1', s); E.CI.fire(g, 'main1', s)
+        perm(g, v, 'Veyran, Voice of Duality')
+        E.CI.fire(g, 'end_step', s)
+        self.assertIn(b, s.perms)                              # Mega Flare next turn instead
+        self.assertEqual(b.data['lore'], 3)
+        self.assertNotIn(titan, s.perms)                       # the next best enter effect: two more Zombies
+
+    def test_counters_worth_more_than_the_enter_effect(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, "Conjurer's Closet"); titan = perm(g, s, 'Grave Titan'); titan.plus = 6
+        E.CI.fire(g, 'end_step', s)
+        self.assertIn(titan, s.perms)                          # two Zombies aren't worth six +1/+1 counters
+        self.assertEqual(titan.plus, 6)
+
+    def test_restoration_angel_saves_a_bomb_from_removal(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        lands(s, 'Plains', 4); hand(s, 'Restoration Angel')
+        archon = perm(g, s, 'Archon of Cruelty')
+        E.apply_removal(g, v, archon, 'exile', C['Swords to Plowshares'])
+        self.assertNotIn(archon, s.perms)
+        self.named(s, 'Archon of Cruelty')                     # blinked: the Swords fizzled
+        self.named(s, 'Restoration Angel')
+        self.assertEqual(s.stats['resto_protection'], 1)
+
+    def test_restoration_angel_blinks_the_best_enter_effect(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        titan = perm(g, s, 'Grave Titan'); archon = perm(g, s, 'Archon of Cruelty')
+        atx = perm(g, s, 'Atraxa, Grand Unifier'); atx.is_cmd = True
+        perm(g, s, 'Restoration Angel')
+        self.assertIn(atx, s.perms)                            # a Phyrexian Angel: not a legal target
+        self.assertIn(titan, s.perms)
+        self.assertNotIn(archon, s.perms)                      # Archon's drain over Grave Titan's Zombies
+
+    def test_teleportation_circle_flickers_the_best_creature(self):
+        """Teleportation Circle: "At the beginning of your end step, exile up to one target artifact or creature you
+        control, then return that card to the battlefield under its owner's control." """
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Teleportation Circle'); perm(g, s, 'Grave Titan')
+        archon = perm(g, s, 'Archon of Cruelty')
+        E.CI.fire(g, 'end_step', v)                            # an opponent's end step: nothing
+        self.assertIn(archon, s.perms)
+        E.CI.fire(g, 'end_step', s)
+        self.assertNotIn(archon, s.perms)                      # Archon's drain over Grave Titan's Zombies
+        self.named(s, 'Archon of Cruelty')
+        self.assertEqual(s.stats['flicker Teleportation Circle'], 1)
+
+    def test_teleportation_circle_untaps_a_rock_with_no_creature_worth_it(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Teleportation Circle')
+        rock = perm(g, s, 'Sol Ring'); rock.tapped = True
+        E.CI.fire(g, 'end_step', s)
+        self.assertNotIn(rock, s.perms)
+        self.assertFalse(self.named(s, 'Sol Ring').tapped)     # back untapped for the opponents' turns
+        g2 = table('seph', 'veyran'); s2, _ = g2.players
+        perm(g2, s2, 'Teleportation Circle'); rock2 = perm(g2, s2, 'Sol Ring')
+        E.CI.fire(g2, 'end_step', s2)
+        self.assertIn(rock2, s2.perms)                         # an untapped rock gains nothing: left alone
+
+    def test_flicker_priorities(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        circle = card('Teleportation Circle')
+        self.assertEqual(ais.seph_prio(g, s, circle), 30)
+        resto, closet = card('Restoration Angel'), card("Conjurer's Closet")
+        self.assertEqual(ais.seph_prio(g, s, closet), 30)
+        perm(g, s, 'Archon of Cruelty')
+        self.assertEqual(ais.seph_prio(g, s, closet), 50)      # a creature worth flickering
+        self.assertEqual(ais.seph_prio(g, s, circle), 50)
+        self.assertEqual(ais.seph_prio(g, s, resto), 0)      # your own turn: wait for the end of an opponent's
+        g.active = v
+        self.assertEqual(ais.seph_prio(g, s, resto), 30 + 6 * 5)
+        g2 = table('seph', 'veyran'); s2, v2 = g2.players; g2.active = v2
+        self.assertEqual(ais.seph_prio(g2, s2, resto), 25)     # nothing to blink: a 3/4 flash flier
+        perm(g2, s2, 'Sheoldred, Whispering One')
+        self.assertEqual(ais.seph_prio(g2, s2, resto), 0)      # held to protect the bomb
+
+    def bastion(self, g, p, post=None):
+        from commander_sim.cards.impl import lands as IL
+        return [o for o in IL.land_options(g, p, None, post) if o[1] == "Karn's Bastion"]
+
+    def test_bastion_proliferates_bahamut_and_the_loop_counters(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        lands(s, "Karn's Bastion", 1); lands(s, 'Swamp', 4)
+        trisk = perm(g, s, 'Triskelion')                       # three +1/+1 counters
+        finks = perm(g, s, 'Kitchen Finks'); finks.plus = -1   # persisted: a -1/-1 counter
+        self.assertEqual(self.bastion(g, s, post=False), [])   # counters alone: at the end of the turn before yours
+        b = perm(g, s, self.B)
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        opts = self.bastion(g, s, post=False)                  # a chapter: in your main phase too
+        self.assertEqual(len(opts), 1)
+        self.assertTrue(opts[0][2]())
+        self.assertEqual(b.data['lore'], 2)                    # chapter II triggers
+        self.assertNotIn(vey, v.perms)
+        self.assertEqual((trisk.plus, finks.plus), (4, -1))    # the loop's counters: more pings, persist untouched
+        self.assertEqual(s.stats['bahamut_proliferated'], 1)
+
+    def test_bastion_holds_the_lore_before_a_weak_mega_flare(self):
+        from commander_sim.cards.impl import common as IC
+        g = table('seph', 'veyran'); s, v = g.players
+        lands(s, "Karn's Bastion", 1); lands(s, 'Swamp', 4)
+        b = perm(g, s, self.B); E.CI.fire(g, 'main1', s); E.CI.fire(g, 'main1', s)
+        self.assertEqual(self.bastion(g, s), [])               # Mega Flare would deal 0
+        IC.proliferate(g, s)
+        self.assertEqual(b.data['lore'], 3)
+        v.life = 6; perm(g, s, 'Grave Titan')                  # now it kills
+        self.assertEqual(len(self.bastion(g, s)), 1)
+        IC.proliferate(g, s)
+        self.assertFalse(v.alive)
+        self.assertNotIn(b, s.perms)
+
+
 
 class SauronBreach(unittest.TestCase):
     """Underworld Breach + Brain Freeze / Grapeshot (storm: a copy per spell cast before it this turn)"""
