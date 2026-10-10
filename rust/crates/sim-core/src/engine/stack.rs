@@ -42,7 +42,7 @@ pub fn flush_triggers(g: &mut Game) -> Res {
 }
 
 /// active player's triggers first (they go on the stack first, so resolve last), then in turn order
-fn apnap(g: &Game, mut ts: Vec<Trigger>) -> Vec<Trigger> {
+pub fn apnap(g: &Game, mut ts: Vec<Trigger>) -> Vec<Trigger> {
     let a = g.active.or_else(|| ts.first().map(|t| t.controller));
     let order: Vec<PlayerId> = match a {
         Some(a) => std::iter::once(a).chain(g.after(a)).collect(),
@@ -243,6 +243,27 @@ fn new_item(
         generic: false,
         kind,
         name,
+        passed: vec![],
+        countered: false,
+        countered_by: None,
+    }
+}
+
+/// A spell item for card c with a fresh id, as cast_card would make it (tests and card code that put a spell on the
+/// stack by hand). Python's `StackItem(p, c, ctx, 'hand', imp, {})`.
+pub fn spell_item(g: &mut Game, p: PlayerId, c: CardId, ctx: Ctx, imp: f64) -> StackItem {
+    g.stack_pushes += 1;
+    StackItem {
+        id: g.stack_pushes,
+        controller: p,
+        card: Some(c),
+        ctx,
+        zone: "hand",
+        imp,
+        aff: vec![],
+        generic: true,
+        kind: StackKind::Spell,
+        name: g.db.get(c).name.to_string(),
         passed: vec![],
         countered: false,
         countered_by: None,

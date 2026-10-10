@@ -109,3 +109,20 @@ pub fn lands(g: &mut Game, p: PlayerId, name: &str, n: usize, tapped: bool) -> V
         })
         .collect()
 }
+
+/// a permanent put onto the battlefield (its enter effects happen), not summoning sick: Python's `perm`
+pub fn perm(g: &mut Game, p: PlayerId, name: &str) -> crate::ids::PermId {
+    let c = take(g, p, name);
+    crate::engine::zones::enter(g, p, c, crate::engine::zones::Enter { sick: false, ..Default::default() }).unwrap()
+}
+
+/// a vanilla creature token, not summoning sick: Python's `token`
+pub fn token(g: &mut Game, p: PlayerId, power: i32) -> crate::ids::PermId {
+    let spec = crate::engine::zones::Tokens { sick: false, ..crate::engine::zones::Tokens::new(1, power) };
+    crate::engine::zones::make_tokens(g, p, spec).unwrap()[0]
+}
+
+/// a card's id by name
+pub fn card(g: &Game, name: &str) -> CardId {
+    g.db.id(name).unwrap_or_else(|| panic!("{name:?} isn't in data/cards.json"))
+}

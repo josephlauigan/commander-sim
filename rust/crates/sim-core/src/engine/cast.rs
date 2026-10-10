@@ -191,6 +191,24 @@ pub fn casts_this_turn(g: &Game, p: PlayerId) -> i32 {
     }
 }
 
+/// Could p pay this pact cost, on top of pacts already owed, from its mana sources at the next upkeep (everything
+/// untapped)? Python untaps and re-taps in place; a copy of the game does the same without touching it.
+pub fn pact_affordable(g: &Game, p: PlayerId, cost: &str) -> bool {
+    let (mut gn, mut pips) = parse_cost(cost);
+    for (dg, dp) in &g.player(p).pact_debts {
+        gn += dg;
+        pips.push_str(dp);
+    }
+    let mut g2 = g.clone();
+    for l in g2.player(p).lands.clone() {
+        g2.land_mut(l).tapped = false;
+    }
+    for m in g2.player(p).perms.clone() {
+        g2.perm_mut(m).tapped = false;
+    }
+    can_pay(&g2, p, gn, &pips, false)
+}
+
 // ------------------------------------------------------------------ casting triggers
 /// what happens when p casts c (cast triggers of tagged cards, magecraft, copies). Python's `on_cast`.
 pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
@@ -930,7 +948,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         && ctx.target.is_none()
         && ctx.face.is_none()
     {
-        apply_wipe(g, p, intern(w), c, ctx)?;
+        apply_wipe(g, p, intern(w), Some(c), ctx)?;
     }
     if let Some(f) = t.str(Tag::Fill) {
         ai::seph_fill_resolve(g, p, intern(f), ctx)?;

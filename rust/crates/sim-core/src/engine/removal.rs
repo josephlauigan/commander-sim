@@ -313,7 +313,8 @@ fn etb_removal_pick(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 }
 
 /// a board wipe of this kind resolves (card: the wipe spell, whose tags matter). Python's `apply_wipe`.
-pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: CardId, ctx: &Ctx) -> Res {
+/// card: the wipe spell (its tags matter: Toxic Deluge), None for a wipe with no card
+pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
     g.batch += 1; // creatures destroyed together die simultaneously
     let prev = g.destroyer.replace(p); // Karmic Justice: who destroyed them
     g.resolving += 1;
@@ -327,14 +328,14 @@ pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: CardId, ctx: &Ctx)
     Ok(())
 }
 
-fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: CardId, ctx: &Ctx) -> Res {
+fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
     crate::glog!(g, "    board wipe resolves ({})", kind);
     let mut victims: Vec<PlayerId> = match kind {
         "rift" | "vandal" => g.opps(p).collect(),
         "rebuke" => ctx.victim.filter(|&v| g.player(v).alive).into_iter().collect(),
         _ => g.players.iter().filter(|q| q.alive).map(|q| q.id).collect(),
     };
-    if kind == "minus" && g.db.get(card).tag(Tag::Deluge) {
+    if kind == "minus" && card.is_some_and(|c| g.db.get(c).tag(Tag::Deluge)) {
         let x = match ctx.deluge_x {
             Some(x) => x, // practice mode: the person chose X
             None => {

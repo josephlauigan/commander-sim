@@ -2,8 +2,8 @@
 
     python3 -m commander_sim.tools.export_cards [--out DIR]       (default: data/)
 
-data/cards.json: every card in engine.DB once all decks and pools are loaded (your decks, the five tiers), sorted by
-name. Each card's fields are the CD's own (engine.CD): name, types, cost, tags (string values, or true for a bare
+data/cards.json: every card in engine.DB once all decks and pools are loaded (your decks, the five tiers) and every
+card in the card cache (data/scryfall_cache.json; the tests use cards no list runs), sorted by name. Each card's fields are the CD's own (engine.CD): name, types, cost, tags (string values, or true for a bare
 tag), the compiled abilities (dsl), Scryfall keywords and subtypes, protection, ward, colour identity, and where
 the definition came from. `derived` repeats what the CD works out from those (land, creature, cmc, ...), so the
 Rust loader can check it computes the same. `phyrexian` is the colours of its Phyrexian mana symbols and
@@ -27,6 +27,8 @@ def load_everything():
     names = set(ais.CMDS.values())
     for cards in DECKS.values(): names |= set(cards)
     for d in pools.load_pool(): names |= set(d.cards) | {d.commander}
+    from commander_sim.cards import scryfall               # every cached card too: the tests use cards no list runs
+    names |= {v['name'] for v in scryfall.load_cache().values() if isinstance(v, dict) and v.get('name')}
     sources.ensure_cards(sorted(names), verbose=False)
     return E, pools, DECKS
 
