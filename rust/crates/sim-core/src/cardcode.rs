@@ -121,6 +121,7 @@ pub fn on_tap_perm(g: &mut Game, p: PlayerId, m: PermId, n: u32) -> crate::flow:
 pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
     match &*g.db.get(c).name {
         "Emry, Lurker of the Loch" => crate::impls::alela::emry_cost(g, p, c),
+        "Embercleave" => crate::impls::rules2::embercleave_cost(g, p),
         _ => imp_of(g, c).and_then(|i| i.self_cost).map_or(0, |f| f(g, p, c)),
     }
 }
@@ -207,8 +208,7 @@ pub fn marchesa_dies(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     crate::impls::marchesa::marchesa_dies(g, p, m)
 }
 
-port_res! {
-}
+port_res! {}
 
 /// CI.apply_lock (zur.apply_lock: Arrest, Encrust ...): the entering lock Aura enchants m
 pub fn apply_lock(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym) -> Res {
@@ -712,9 +712,11 @@ pub fn annex_life(g: &mut Game, p: PlayerId, d: PlayerId, xs: Vec<PermId>) -> Re
     crate::impls::rules2::annex_life(g, p, d, xs)
 }
 
-/// PORT(M5): CI.fire(g, 'combat_start', p) (Helm of the Host): new attackers
-pub fn combat_start(_g: &mut Game, _p: PlayerId) -> Res<Vec<PermId>> {
-    Ok(vec![])
+/// CI.fire(g, 'combat_start', p) (Helm of the Host, Rionya): the new attackers its triggers made
+pub fn combat_start(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
+    g.new_attackers.clear();
+    hooks::fire_trigger(g, Event::CombatStart, crate::hooks::Call::Player { p })?;
+    Ok(std::mem::take(&mut g.new_attackers))
 }
 
 /// mine.ring_attack (the Ring, level 2)

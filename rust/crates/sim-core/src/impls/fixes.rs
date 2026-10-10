@@ -62,7 +62,7 @@ fn aetherize(
     c: CardId,
     d: PlayerId,
     p: PlayerId,
-    atk: &[PermId],
+    atk: &mut Vec<PermId>,
     assign: &mut Vec<(PermId, PermId)>,
 ) -> Res {
     if !g.player(d).hand.contains(&c) || !castable(g, d, c, "hand") {
@@ -86,7 +86,7 @@ fn aetherize(
         g.player_mut(d).gy.push(c);
         return Ok(());
     }
-    for &a in atk {
+    for &a in atk.iter() {
         if g.perm(a).on_bf {
             if g.perm(a).token {
                 leave(g, a)?;

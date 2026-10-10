@@ -28,6 +28,12 @@ fn named(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| g.perm(m).name == name).collect()
 }
 
+fn resolve(g: &mut Game, p: PlayerId, name: &str, ctx: Ctx) -> &'static str {
+    let c = card(g, name);
+    let f = g.registry.get(c).unwrap().resolve.unwrap();
+    f(g, p, c, &ctx).unwrap()
+}
+
 fn drained(g: &Game, p: PlayerId) -> Vec<PlayerId> {
     g.opps(p).filter(|&q| g.player(q).life < 40).collect()
 }
@@ -293,4 +299,308 @@ fn mother_of_runes_stays_home_only_for_jodah() {
     let mut g = table(&["light-paws-aura-voltron", "sauron"]);
     let m = perm(&mut g, P0, "Mother of Runes");
     assert!(!g.perm(m).noatk);
+}
+
+// ------------------------------------------------------------------ rules: the rest
+#[test]
+fn ugin_skips_a_permanent_discarded_on_the_way() {
+    // test_rules.GameEndsMidEffect: -10: gain 7, draw 7, then up to seven permanents from hand onto the battlefield,
+    // best first. Kefka's enter trigger makes each player discard, so Festering Goblin, still on the list, is gone by
+    // the time its turn comes
+    let mut g = table(&["sauron", "veyran"]);
+    let s = P0;
+    g.player_mut(s).hand.clear();
+    g.player_mut(s).library.clear();
+    hand(&mut g, s, &["Kefka, Court Mage // Kefka, Ruler of Ruin", "Festering Goblin"]);
+    sim_core::impls::rules::ugin_ult(&mut g, s, None).unwrap();
+    let names: Vec<&str> = g.player(s).perms.iter().map(|&m| g.perm(m).name).collect();
+    assert_eq!(names, ["Kefka, Court Mage // Kefka, Ruler of Ruin"]);
+    assert!(g.player(s).gy.contains(&card(&g, "Festering Goblin")));
+}
+
+#[test]
+fn mystic_remora_is_kept_three_turns() {
+    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let r = perm(&mut g, P0, "Mystic Remora");
+    lands(&mut g, P0, "Island", 6, false);
+    let up = g.registry.get(card(&g, "Mystic Remora")).unwrap().upkeep.unwrap();
+    for age in 1..=3 {
+        for l in g.player(P0).lands.clone() {
+            g.land_mut(l).tapped = false;
+        }
+        up(&mut g, r, P0).unwrap();
+        assert!(g.perm(r).on_bf);
+        assert_eq!(g.perm(r).data.int(DataKey::Age), age);
+    }
+    up(&mut g, r, P0).unwrap();
+    assert!(!g.perm(r).on_bf);
+    assert!(g.player(P0).gy.contains(&card(&g, "Mystic Remora")));
+}
+
+#[test]
+fn mystic_remora_draws_unless_the_caster_can_spare_four() {
+    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let r = perm(&mut g, P0, "Mystic Remora");
+    let f = g.registry.get(card(&g, "Mystic Remora")).unwrap().cast.unwrap();
+    let h = g.player(P0).hand.len();
+    let spell = card(&g, "Counterspell");
+    f(&mut g, r, P1, spell).unwrap(); // no mana: it can't pay
+    assert_eq!(g.player(P0).hand.len(), h + 1);
+    let elves = card(&g, "Llanowar Elves");
+    f(&mut g, r, P1, elves).unwrap(); // a creature spell: no trigger
+    assert_eq!(g.player(P0).hand.len(), h + 1);
+}
+
+#[test]
+fn goldspan_dragon_makes_treasures_tap_for_two() {
+    let mut g = table(&["aurelia-boros-extra-combats", "sauron"]);
+    g.player_mut(P0).treasures = 1;
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
+    let d = perm(&mut g, P0, "Goldspan Dragon");
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2);
+    sim_core::engine::combat::attack_triggers(&mut g, P0, &[d], P1).unwrap();
+    stack::settle_stack(&mut g).unwrap();
+    assert_eq!(g.player(P0).treasures, 2);
+}
+
+#[test]
+fn mox_opal_needs_metalcraft() {
+    let mut g = table(&["urza-mono-blue-artifacts", "sauron"]);
+    perm(&mut g, P0, "Mox Opal");
+    perm(&mut g, P0, "Sol Ring");
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2); // Sol Ring only
+    perm(&mut g, P0, "Arcane Signet");
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 4); // and Opal with three artifacts
+}
+
+#[test]
+fn everflowing_chalice_is_kicked_as_the_mana_allows() {
+    let mut g = table(&["urza-mono-blue-artifacts", "sauron"]);
+    lands(&mut g, P0, "Island", 5, false);
+    let c = hand(&mut g, P0, &["Everflowing Chalice"])[0];
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    let o = f(&mut g, c, P0, Some(false)).unwrap();
+    assert_eq!(o[0].label, "Everflowing Chalice x2");
+    assert!(perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    let m = named(&g, P0, "Everflowing Chalice")[0];
+    assert_eq!(g.perm(m).data.int(DataKey::Kicks), 2);
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1 + 2); // the Island left and the Chalice's two
+}
+
+#[test]
+fn legion_loyalist_battalion_stops_token_blockers() {
+    let mut g = table(&["aurelia-boros-extra-combats", "sauron"]);
+    let l = perm(&mut g, P0, "Legion Loyalist");
+    let a = token(&mut g, P0, 2);
+    let b = token(&mut g, P0, 2);
+    let blocker = token(&mut g, P1, 1);
+    assert!(!sim_core::cardcode::evasion_blocked(&g, blocker, l));
+    sim_core::engine::combat::attack_triggers(&mut g, P0, &[l, a, b], P1).unwrap();
+    stack::settle_stack(&mut g).unwrap();
+    assert!(sim_core::cardcode::evasion_blocked(&g, blocker, l));
+    // Python returns early for an attacker without a card: a token attacker still meets token blockers
+    assert!(!sim_core::cardcode::evasion_blocked(&g, blocker, a));
+    assert!(g.perm(a).eot_kw.contains(&"first strike") && g.perm(a).eot_kw.contains(&"trample"));
+}
+
+#[test]
+fn frost_titan_freezes_the_best_creature() {
+    let mut g = table(&["brago-azorius-blink-control", "sauron"]);
+    let t = perm(&mut g, P1, "Grave Titan");
+    perm(&mut g, P0, "Frost Titan");
+    stack::settle_stack(&mut g).unwrap();
+    assert!(g.perm(t).tapped);
+    assert_eq!(g.perm(t).data.int(DataKey::Frozen), 1);
+}
+
+#[test]
+fn moraug_pumps_each_attack() {
+    let mut g = table(&["lord-windgrace-jund-lands", "sauron"]);
+    perm(&mut g, P0, "Moraug, Fury of Akoum");
+    let a = token(&mut g, P0, 2);
+    sim_core::engine::combat::attack_triggers(&mut g, P0, &[a], P1).unwrap();
+    sim_core::engine::combat::attack_triggers(&mut g, P0, &[a], P1).unwrap();
+    assert_eq!(g.perm(a).eot_pt, (2, 0));
+    match g.perm(a).data.get(DataKey::Attacks) {
+        Some(Val::List(v)) => assert_eq!(v[1], Val::Int(2)),
+        x => panic!("{x:?}"),
+    }
+}
+
+#[test]
+fn plaguecrafter_makes_each_player_sacrifice() {
+    let mut g = table(&["tergrid-mono-black-disruption", "sauron"]);
+    let t = token(&mut g, P1, 1);
+    perm(&mut g, P0, "Plaguecrafter");
+    stack::settle_stack(&mut g).unwrap();
+    assert!(!g.perm(t).on_bf);
+    assert!(named(&g, P0, "Plaguecrafter").is_empty()); // nothing else of its controller's to give
+}
+
+// ------------------------------------------------------------------ rules2: the rest
+#[test]
+fn esikas_chariot_crews_with_spare_creatures() {
+    let mut g = table(&["marwyn-mono-green-elves", "sauron"]);
+    let c = perm(&mut g, P0, "Esika's Chariot");
+    stack::settle_stack(&mut g).unwrap(); // two Cats
+    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count(), 2);
+    let call = sim_core::hooks::Call::Player { p: P0 };
+    sim_core::engine::hooks::fire_trigger(&mut g, sim_core::hooks::Event::Crew, call).unwrap();
+    assert!(g.is_creature(c));
+    assert_eq!((g.perm(c).pow, g.perm(c).tgh), (4, 4));
+    sim_core::impls::rules2::uncrew(&mut g, P0); // the same turn: still crewed
+    assert!(g.is_creature(c));
+    g.round += 1;
+    sim_core::impls::rules2::uncrew(&mut g, P0);
+    assert!(!g.is_creature(c));
+}
+
+#[test]
+fn embercleave_flashes_in_cheaper_per_attacker() {
+    let mut g = table(&["aurelia-boros-extra-combats", "sauron"]);
+    let atk: Vec<PermId> = (0..3).map(|_| token(&mut g, P0, 2)).collect();
+    for &a in &atk {
+        g.perm_mut(a).tapped = true;
+    }
+    lands(&mut g, P0, "Mountain", 3, false);
+    let e = hand(&mut g, P0, &["Embercleave"])[0];
+    sim_core::cardcode::hand_attack(&mut g, P0, &atk, P1).unwrap();
+    assert!(!g.player(P0).hand.contains(&e));
+    let m = named(&g, P0, "Embercleave")[0];
+    assert!(atk.contains(&g.perm(m).attached.unwrap()));
+    assert_eq!(sim_core::cardcode::self_cost(&g, P0, e), -3);
+}
+
+#[test]
+fn the_wandering_emperor_exiles_an_attacker_out_of_the_attack() {
+    let mut g = table(&["sauron", "atraxa-superfriends"]);
+    let (p, d) = (P0, P1);
+    let big = perm(&mut g, p, "Grave Titan");
+    g.perm_mut(big).tapped = true;
+    let mut atk = vec![big];
+    hand(&mut g, d, &["The Wandering Emperor"]);
+    lands(&mut g, d, "Plains", 4, false);
+    let mut assign = vec![];
+    sim_core::cardcode::defend_hooks(&mut g, p, &mut atk, d, &mut assign).unwrap();
+    assert!(atk.is_empty());
+    assert!(!g.perm(big).on_bf);
+    let w = named(&g, d, "The Wandering Emperor")[0];
+    assert_eq!(g.perm(w).loyalty, Some(1)); // 3, less 2
+    assert_eq!(g.player(d).life, 42);
+}
+
+#[test]
+fn detention_sphere_exiles_every_copy_and_returns_them() {
+    let mut g = table(&["brago-azorius-blink-control", "sauron"]);
+    let a = perm(&mut g, P1, "Grave Titan");
+    let s = perm(&mut g, P0, "Detention Sphere");
+    stack::settle_stack(&mut g).unwrap();
+    assert!(!g.perm(a).on_bf);
+    assert!(g.player(P1).exile.contains(&card(&g, "Grave Titan")));
+    zones::leave(&mut g, s).unwrap();
+    stack::settle_stack(&mut g).unwrap();
+    assert_eq!(named(&g, P1, "Grave Titan").len(), 1);
+    assert!(!g.player(P1).exile.contains(&card(&g, "Grave Titan")));
+}
+
+#[test]
+fn purphoros_burns_for_each_creature_entering() {
+    let mut g = table(&["krenko-mono-red-goblins", "sauron"]);
+    let p = perm(&mut g, P0, "Purphoros, God of the Forge");
+    stack::settle_stack(&mut g).unwrap();
+    assert!(!g.is_creature(p)); // devotion to red below five
+    let gob = token(&mut g, P0, 1);
+    let f = g.registry.get(card(&g, "Purphoros, God of the Forge")).unwrap().etb.unwrap();
+    f(&mut g, p, P0, gob).unwrap();
+    assert_eq!(g.player(P1).life, 38);
+}
+
+#[test]
+fn syr_konrad_pings_for_milled_creatures() {
+    let mut g = table(&["meren-golgari-recursion", "sauron"]);
+    perm(&mut g, P0, "Syr Konrad, the Grim");
+    let titan = take(&mut g, P0, "Grave Titan");
+    let elves = take(&mut g, P0, "Llanowar Elves");
+    let swamp = take(&mut g, P0, "Swamp");
+    g.player_mut(P0).library.extend([titan, elves, swamp]);
+    zones::mill(&mut g, P0, 3).unwrap();
+    stack::settle_stack(&mut g).unwrap();
+    assert_eq!(g.player(P1).life, 38);
+}
+
+#[test]
+fn winds_of_abandon_overloaded_exiles_every_opposing_creature() {
+    let mut g = table(&["aurelia-boros-extra-combats", "sauron"]);
+    lands(&mut g, P0, "Plains", 4, false);
+    for _ in 0..3 {
+        token(&mut g, P1, 2);
+    }
+    let n = g.player(P1).lands.len();
+    resolve(&mut g, P0, "Winds of Abandon", Ctx::default());
+    assert!(g.player(P1).perms.iter().all(|&m| !g.is_creature(m)));
+    assert_eq!(g.player(P1).lands.len(), n + 3);
+}
+
+#[test]
+fn charming_prince_blinks_until_the_end_step() {
+    let mut g = table(&["brago-azorius-blink-control", "sauron"]);
+    perm(&mut g, P0, "Wall of Omens");
+    stack::settle_stack(&mut g).unwrap();
+    let p = perm(&mut g, P0, "Charming Prince");
+    stack::settle_stack(&mut g).unwrap();
+    assert!(named(&g, P0, "Wall of Omens").is_empty());
+    assert_eq!(g.player(P0).oath_return, [card(&g, "Wall of Omens")]);
+    let f = g.registry.get(card(&g, "Charming Prince")).unwrap().end_step.unwrap();
+    f(&mut g, p, P1).unwrap(); // any player's end step
+    assert_eq!(named(&g, P0, "Wall of Omens").len(), 1);
+    assert!(g.player(P0).oath_return.is_empty());
+}
+
+#[test]
+fn rionya_copies_the_best_creature_and_exiles_the_copies() {
+    let mut g = table(&["krenko-mono-red-goblins", "sauron"]);
+    let r = perm(&mut g, P0, "Rionya, Fire Dancer");
+    perm(&mut g, P0, "Goblin Rabblemaster");
+    let new = sim_core::cardcode::combat_start(&mut g, P0).unwrap();
+    assert_eq!(new.len(), 1);
+    assert!(g.perm(new[0]).token && !g.perm(new[0]).sick);
+    let f = g.registry.get(card(&g, "Rionya, Fire Dancer")).unwrap().end_step.unwrap();
+    f(&mut g, r, P0).unwrap();
+    assert!(!g.perm(new[0]).on_bf);
+}
+
+#[test]
+fn silent_arbiter_keeps_one_blocker() {
+    let mut g = table(&["sythis-selesnya-enchantress", "sauron"]);
+    perm(&mut g, P1, "Silent Arbiter");
+    let (a1, a2) = (token(&mut g, P0, 1), token(&mut g, P0, 4));
+    let (b1, b2) = (token(&mut g, P1, 1), token(&mut g, P1, 1));
+    let mut assign = vec![(a1, b1), (a2, b2)];
+    sim_core::cardcode::blocks_hooks(&mut g, P0, &[a1, a2], P1, &mut assign).unwrap();
+    assert_eq!(assign, [(a2, b2)]);
+}
+
+#[test]
+fn glimpse_of_nature_draws_for_creature_spells_this_turn() {
+    let mut g = table(&["marwyn-mono-green-elves", "sauron"]);
+    resolve(&mut g, P0, "Glimpse of Nature", Ctx::default());
+    let h = g.player(P0).hand.len();
+    let elves = card(&g, "Llanowar Elves");
+    sim_core::engine::cast::on_cast(&mut g, P0, elves).unwrap();
+    assert_eq!(g.player(P0).hand.len(), h + 1);
+    g.round += 1; // another turn: no more
+    sim_core::engine::cast::on_cast(&mut g, P0, elves).unwrap();
+    assert_eq!(g.player(P0).hand.len(), h + 1);
+}
+
+#[test]
+fn valakut_exploration_burns_for_unplayed_cards() {
+    let mut g = table(&["krenko-mono-red-goblins", "sauron"]);
+    let v = perm(&mut g, P0, "Valakut Exploration");
+    let imp = *g.registry.get(card(&g, "Valakut Exploration")).unwrap();
+    (imp.landfall.unwrap())(&mut g, v, P0).unwrap();
+    assert_eq!(g.player(P0).valakut_cards.len(), 1);
+    (imp.end_step.unwrap())(&mut g, v, P0).unwrap();
+    assert_eq!(g.player(P1).life, 39);
+    assert!(g.player(P0).valakut_cards.is_empty());
 }

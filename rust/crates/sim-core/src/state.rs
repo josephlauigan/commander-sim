@@ -53,6 +53,10 @@ pub enum DataKey {
     Dovin,
     /// a land made a creature by Druid Class's level 3
     DruidClass,
+    /// Mogg War Marshal's echo was dealt with ('done')
+    Echo,
+    /// Ragavan was cast for its dash cost (returned to hand at the end step)
+    Dash,
     Elk,
     Escaped,
     Exerted,
@@ -102,6 +106,8 @@ pub enum DataKey {
     Prevent,
     Prowess,
     Reflection,
+    /// a hasty token copy made by Rionya, Fire Dancer (exiled at the end step)
+    Rionya,
     Ruin,
     Serenity,
     Stolen,
@@ -482,6 +488,20 @@ pub struct Player {
     /// Sephiroth's Skullclamp: (turn count, uses that turn)
     pub clamp_t: Option<u32>,
     pub clamp_n: u32,
+    /// Legion Loyalist's battalion this turn: tokens can't block this player's creatures (rules.evasion_blocked)
+    pub loyalist_turn: Option<TurnStamp>,
+    /// Embercleave: the turn this player last attacked, and with what (rules2: its cost is {1} less per attacker)
+    pub attacking: Option<TurnStamp>,
+    pub attackers: Vec<PermId>,
+    /// Valakut Exploration: the cards it exiled this turn (held in hand until the end step)
+    pub valakut_cards: Vec<CardId>,
+    /// once-a-turn pumps: Battle Cry Goblin, Purphoros
+    pub bcg_turn: Option<TurnStamp>,
+    pub purph_turn: Option<TurnStamp>,
+    /// Glimpse of Nature: the turn it was cast (Python keeps the turn in `p.glimpse`; `glimpse` stays the flag)
+    pub glimpse_turn: Option<TurnStamp>,
+    /// Bloodchief's Thirst: the last one this player cast was kicked (rules.thirst_cast records it for the resolve)
+    pub thirst_kicked: bool,
     /// Meren of Clan Nel Toth's experience counters (Python's `p.experience`)
     pub experience: i32,
     /// energy counters (Static Prison, Aether Hub)
@@ -613,6 +633,14 @@ impl Player {
             te_used: None,
             clamp_t: None,
             clamp_n: 0,
+            loyalist_turn: None,
+            attacking: None,
+            attackers: vec![],
+            valakut_cards: vec![],
+            bcg_turn: None,
+            purph_turn: None,
+            glimpse_turn: None,
+            thirst_kicked: false,
             experience: 0,
             energy: 0,
             art_tok: None,
@@ -881,6 +909,8 @@ pub struct Game {
     pub coat_cache: std::cell::RefCell<Option<(u64, Vec<(PermId, i32)>)>>,
     /// Return the Favor is being cast (it doesn't copy itself): Python's `g.in_rtf`
     pub in_rtf: bool,
+    /// how deep Chatterfang's Squirrels for artifact tokens are nested (t3: a token loop stops at 10)
+    pub chatter_depth: u32,
     /// t2.blink: how deep blinks are nested (blink chains are combos, not loops: Python's `g.blink_depth`)
     pub blink_depth: u32,
     /// how deep Consecrated Sphinx draws are nested (two Sphinxes feed each other: t4's `g.sphinx_depth`)
@@ -997,6 +1027,7 @@ impl Game {
             lineage: false,
             coat_cache: std::cell::RefCell::new(None),
             in_rtf: false,
+            chatter_depth: 0,
             blink_depth: 0,
             sphinx_depth: 0,
             bond_depth: 0,

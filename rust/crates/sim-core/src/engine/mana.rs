@@ -337,7 +337,9 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
         Source::Treasure => {
             let st = g.turn_stamp();
             let pl = g.player_mut(p);
-            pl.treasures -= 1;
+            // a trigger during the payment (Gilded Goose's Food sacrificed: Trail of Crumbs pays {1}) may have spent
+            // the Treasure this plan counted on: Python's count goes negative, an unsigned one stays at 0
+            pl.treasures = pl.treasures.saturating_sub(1);
             pl.left_turn = Some(st);
             if !g.hooks.is_empty() {
                 hooks::fire_trigger(
@@ -347,12 +349,12 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
                 )?;
             }
         }
-        Source::FloatR => g.player_mut(p).floating.r -= 1,
-        Source::FloatAny => g.player_mut(p).floating.any -= 1,
-        Source::FloatU => g.player_mut(p).floating.u -= 1,
-        Source::FloatC => g.player_mut(p).floating.c -= 1,
-        Source::FloatG => g.player_mut(p).floating.g -= 1,
-        Source::FloatB => g.player_mut(p).floating.b -= 1,
+        Source::FloatR => g.player_mut(p).floating.r = g.player(p).floating.r.saturating_sub(1),
+        Source::FloatAny => g.player_mut(p).floating.any = g.player(p).floating.any.saturating_sub(1),
+        Source::FloatU => g.player_mut(p).floating.u = g.player(p).floating.u.saturating_sub(1),
+        Source::FloatC => g.player_mut(p).floating.c = g.player(p).floating.c.saturating_sub(1),
+        Source::FloatG => g.player_mut(p).floating.g = g.player(p).floating.g.saturating_sub(1),
+        Source::FloatB => g.player_mut(p).floating.b = g.player(p).floating.b.saturating_sub(1),
         Source::Scion(_) | Source::HandCard(_) | Source::Quirion(..) | Source::Symbiote(..) => {
             cardcode::special_unit_paid(g, p, w)?
         }

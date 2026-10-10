@@ -785,7 +785,6 @@ fn nim_deathmantle_leaves_marchesa_returns_alone() {
 }
 
 #[test]
-#[ignore = "needs Mayhem Devil's (t3.rs) and Dauthi Voidwalker's (common.rs) card code: un-ignore after the merge"]
 fn nim_deathmantle_card_exiled_while_paying() {
     // paying {4} with Treasures sets off Mayhem Devil; its ping kills Dark Confidant, and the state-based check that
     // follows runs Dauthi Voidwalker's sweep: the card has left the graveyard, so nothing returns (the mana is spent)

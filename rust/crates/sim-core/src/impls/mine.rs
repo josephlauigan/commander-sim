@@ -1932,9 +1932,9 @@ fn kitten(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 
 // ------------------------------------------------------------------ Nim Deathmantle
 /// Marchesa's returns due at the next end step include card cd (Python's `g.marchesa_due`, set by marchesa.py's card
-/// code, which isn't in the Rust yet: nothing is due until it is)
-fn marchesa_returns(_g: &Game, _cd: CardId) -> bool {
-    false
+/// code, impls/marchesa.rs)
+fn marchesa_returns(g: &Game, cd: CardId) -> bool {
+    g.marchesa_due.iter().any(|&(_, c, _)| c == cd)
 }
 
 /// whenever a nontoken creature is put into your graveyard from the battlefield, you may pay {4}: return it and

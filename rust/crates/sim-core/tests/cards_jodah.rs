@@ -944,7 +944,6 @@ fn marchesa_a_countered_creature_returns_at_the_next_end_step() {
 }
 
 #[test]
-#[ignore = "needs t3.py's Burglar Rat (each opponent discards as it enters), another agent's port"]
 fn marchesa_a_returning_creature_enters_again() {
     let mut g = table(&["jodah", "veyran"]);
     hand(&mut g, P1, &["Island", "Island"]);

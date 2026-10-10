@@ -290,8 +290,9 @@ pub type TokenCreatedFn = fn(&mut Game, Src, PlayerId, &[Sym], i32) -> Res;
 pub type Assign = Vec<(PermId, PermId)>;
 /// blocks(g, src, p, atk, d, assign): d's blockers are declared against p's attackers; may change the blocks
 pub type BlocksFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId, &mut Assign) -> Res;
-/// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize)
-pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &[PermId], &mut Assign) -> Res;
+/// hand_defend(g, c, d, p, atk, assign): a card in defender d's hand answers p's attack (Aetherize; The Wandering
+/// Emperor takes the attacker it exiles out of `atk`)
+pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
 /// land_defend(g, land, d, p, atk, assign): a land of defender d's answers p's attack (Kor Haven: an attacker taken
 /// out of `atk` deals no combat damage)
 pub type LandDefendFn = fn(&mut Game, crate::ids::LandId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
@@ -334,6 +335,10 @@ pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::C
 /// SELF_PT(g, p, m): a creature's own power/toughness rule (Kor Spiritdancer: +2/+2 per Aura on it): Python's
 /// `common.SELF_PT`
 pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);
+/// combat_start(g, src, p): the beginning of p's combat (Helm of the Host); returns new attacking creatures
+pub type CombatStartFn = fn(&mut Game, Src, PlayerId) -> Res<Vec<PermId>>;
+/// cards_to_gy(g, src, p, cards): these cards of p's are going to the graveyard (milled, discarded)
+pub type CardsToGyFn = fn(&mut Game, Src, PlayerId, &[CardId]) -> Res;
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
 pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
@@ -430,6 +435,8 @@ pub struct CardImpl {
     /// creature_to_gy(g, src, m): a creature's card went to its owner's graveyard from the battlefield (Nim Deathmantle)
     pub creature_to_gy: Option<LeavesFn>,
     pub copycast: Option<CopycastFn>,
+    pub combat_start: Option<CombatStartFn>,
+    pub cards_to_gy: Option<CardsToGyFn>,
     /// monarch(g, src, p): p became the monarch (run at once: not a triggered event; Palace Jailer)
     pub monarch: Option<PlayerFn>,
     /// exiled_from_bf(g, src, m): m was exiled from the battlefield and returned (a blink; Soulherder)
@@ -570,9 +577,11 @@ impl CardImpl {
             Event::ProliferateExtra => self.proliferate_extra.is_some(),
             Event::CreatureToGy => self.creature_to_gy.is_some(),
             Event::Copycast => self.copycast.is_some(),
+            Event::Crew => self.crew.is_some(),
+            Event::CombatStart => self.combat_start.is_some(),
+            Event::CardsToGy => self.cards_to_gy.is_some(),
             Event::Monarch => self.monarch.is_some(),
             Event::ExiledFromBf => self.exiled_from_bf.is_some(),
-            Event::Crew => self.crew.is_some(),
             Event::TokensEnter => self.tokens_enter.is_some(),
             _ => false,
         }
