@@ -63,8 +63,10 @@ pub fn attached_prot(g: &Game, m: PermId) -> crate::cards::Colors {
     crate::impls::common::attached_prot(g, m)
 }
 
-/// PORT(M5): CI.garland_check, Garland's steals end when a player leaves
-pub fn garland_check(_g: &mut Game) {}
+/// CI.garland_check (jodah.garland_check): Garland's steals end when their player loses the crown or leaves
+pub fn garland_check(g: &mut Game) {
+    crate::impls::jodah::garland_check(g)
+}
 
 /// your own Auras on m (common.auras_on, excluding locks: CI.LOCKS)
 pub fn own_auras_on(g: &Game, m: PermId) -> usize {
@@ -200,9 +202,12 @@ macro_rules! port_res {
     )*};
 }
 
+/// marchesa.marchesa_dies: creature m that p controlled died (Marchesa's return trigger)
+pub fn marchesa_dies(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    crate::impls::marchesa::marchesa_dies(g, p, m)
+}
+
 port_res! {
-    /// PORT(M5): marchesa.marchesa_dies
-    fn marchesa_dies(p: PlayerId, m: PermId);
     /// PORT(M5): CI.muld_mark (Muldrotha's permanent types used this turn)
     fn muld_mark(p: PlayerId, kind: Sym);
 }
@@ -403,9 +408,9 @@ pub fn self_regen(g: &mut Game, m: PermId) -> Res<bool> {
     }
 }
 
-/// PORT(M5): CI.marchesa_sac_worth
-pub fn marchesa_sac_worth(_g: &Game, _m: PermId, v: f64) -> f64 {
-    v
+/// CI.marchesa_sac_worth (marchesa.marchesa_sac_worth): a creature Marchesa will return costs little to sacrifice
+pub fn marchesa_sac_worth(g: &Game, m: PermId, v: f64) -> f64 {
+    crate::impls::marchesa::marchesa_sac_worth(g, m, v)
 }
 
 /// PORT(M5): CI.PROWESS (cards with prowess the keywords don't show)
@@ -476,9 +481,9 @@ pub fn prot_vs(g: &Game, m: PermId, from: PermId) -> bool {
     crate::impls::rules2::prot_vs(g, m, from)
 }
 
-/// PORT(M5): CI.kaldra_exile (Sword of Kaldra exiles what it damages): true if it exiled
-pub fn kaldra_exile(_g: &mut Game, _src: PermId, _m: PermId) -> Res<bool> {
-    Ok(false)
+/// CI.kaldra_exile (jodah.kaldra_exile: Sword of Kaldra exiles what it damages): true if it exiled
+pub fn kaldra_exile(g: &mut Game, src: PermId, m: PermId) -> Res<bool> {
+    crate::impls::jodah::kaldra_exile(g, src, m)
 }
 
 /// mine.necromancer_attack (an attacking token copy of a graveyard creature)
@@ -486,8 +491,94 @@ pub fn necromancer_attack(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<PermI
     crate::impls::mine::necromancer_attack(g, p, m)
 }
 
-/// PORT(M5): CI.keyword_attack (keyword attack triggers: annihilator, myriad ...)
-pub fn keyword_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+/// CI.keyword_attack: battle cry, mentor, dethrone (and Marchesa's: other creatures you control have dethrone),
+/// exalted; attacking creature lands (Raging Ravine grows, Hive of the Eye Tyrant exiles a card). Returns new
+/// attacking creatures (none so far)
+pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
+    use crate::engine::values::{epow, has};
+    use crate::state::DataKey;
+    for &m in atk {
+        let x = g.perm(m);
+        if !(x.token && x.data.get(DataKey::Land).is_some()) {
+            continue;
+        }
+        if x.name == "Raging Ravine" {
+            g.perm_mut(m).plus += 1;
+        } else if x.name == "Hive of the Eye Tyrant" && !g.player(d).gy.is_empty() {
+            let mut best: Option<(CardId, (bool, u32))> = None;
+            for &c in &g.player(d).gy {
+                let k = (g.db.get(c).creature, g.db.get(c).cmc);
+                if best.is_none_or(|b| k > b.1) {
+                    best = Some((c, k));
+                }
+            }
+            let c = best.unwrap().0;
+            let pl = g.player_mut(d);
+            let i = pl.gy.iter().position(|&y| y == c).unwrap();
+            pl.gy.remove(i);
+            pl.exile.push(c);
+        }
+    }
+    let grant = has(g, p, crate::tag::Tag::Marchesa); // Marchesa: other creatures you control have dethrone
+    let any_kws = atk.iter().any(|&m| g.perm(m).cd.is_some_and(|c| !g.db.get(c).kws.is_empty()));
+    let exalted = g.player(p).perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).has_kw("exalted")));
+    if !grant && !any_kws && !exalted {
+        return Ok(vec![]);
+    }
+    if g.over || !g.players.iter().any(|q| q.alive) {
+        return Ok(vec![]); // an earlier attack trigger ended the game
+    }
+    let top = g.players.iter().filter(|q| q.alive).map(|q| q.life).max().unwrap_or(0);
+    for &m in atk {
+        if !(g.perm(m).on_bf && g.perm(m).owner == p) {
+            continue;
+        }
+        let leader = g.player(d).life >= top;
+        let Some(c) = g.perm(m).cd else {
+            if grant && leader {
+                add_counters(g, m, 1); // a token attacking the life leader (the Army)
+            }
+            continue;
+        };
+        let d_ = g.db.get(c);
+        let (dethrone, battle_cry, mentor) = (d_.has_kw("dethrone"), d_.has_kw("battle cry"), d_.has_kw("mentor"));
+        if grant && !dethrone && leader {
+            add_counters(g, m, 1);
+        }
+        if battle_cry {
+            for &x in atk {
+                if x != m {
+                    g.perm_mut(x).eot_pt.0 += 1;
+                }
+            }
+        }
+        if mentor {
+            let pm = epow(g, m);
+            let lesser: Vec<PermId> = atk
+                .iter()
+                .copied()
+                .filter(|&x| x != m && g.perm(x).on_bf && g.perm(x).owner == p && epow(g, x) < pm)
+                .collect();
+            if let Some(x) = crate::engine::zones::max_by(&lesser, |x| epow(g, x) as f64) {
+                g.perm_mut(x).plus += 1;
+            }
+        }
+        if dethrone && leader {
+            add_counters(g, m, 1);
+        }
+    }
+    if atk.len() == 1 {
+        let n = g
+            .player(p)
+            .perms
+            .iter()
+            .filter(|&&x| !g.perm(x).phased && g.perm(x).cd.is_some_and(|c| g.db.get(c).has_kw("exalted")))
+            .count() as i32;
+        if n > 0 {
+            let e = &mut g.perm_mut(atk[0]).eot_pt;
+            *e = (e.0 + n, e.1 + n);
+        }
+    }
     Ok(vec![])
 }
 
@@ -573,8 +664,8 @@ pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dm
     Ok(())
 }
 
-/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; the 'monarch' hooks run at
-/// once (Palace Jailer's exiled creature returns)
+/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; 'monarch' hooks (Garland,
+/// Palace Jailer) run at once
 pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
     if g.monarch == Some(p) || !g.player(p).alive {
         return Ok(());
@@ -668,9 +759,12 @@ pub fn lands_from_gy(g: &Game, p: PlayerId) -> bool {
     !g.hooks.is_empty() && hooks::total_count(g, Event::LandsFromGy, p) > 0
 }
 
+/// CI.suspend_upkeep (jodah.suspend_upkeep): a time counter off each suspended card; at zero it's cast free
+pub fn suspend_upkeep(g: &mut Game, p: PlayerId) -> Res {
+    crate::impls::jodah::suspend_upkeep(g, p)
+}
+
 port_res! {
-    /// PORT(M5): CI.suspend_upkeep
-    fn suspend_upkeep(p: PlayerId);
     /// PORT(M5): ais.braids_sacrifice
     fn braids_sacrifice(p: PlayerId);
     /// PORT(M5): ais.necro_deliver (Necropotence's cards at the end step)
@@ -689,15 +783,19 @@ pub fn opposition_precombat(g: &mut Game, q: PlayerId) -> Res {
     crate::impls::alela::opposition_precombat(g, q)
 }
 
-/// the delayed end-step effects: Marchesa's returns, The Eternal Wanderer (zur.zur_end_step), Eerie Interlude,
-/// Memory Jar
+/// the delayed end-step effects, in Python's order: Marchesa's returns, The Eternal Wanderer (zur.zur_end_step),
+/// Eerie Interlude (galadriel.eot_returns), Memory Jar (jodah.jar_end)
 pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
-    // PORT(M5): marchesa.marchesa_return (g.marchesa_due)
+    if !g.marchesa_due.is_empty() {
+        crate::impls::marchesa::marchesa_return(g)?; // Marchesa: 'at the beginning of the next end step'
+    }
     if !g.zur_due.is_empty() {
         crate::impls::zur::zur_end_step(g, p)?; // The Eternal Wanderer
     }
     crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
-    // PORT(M5): CI.jar_end (Memory Jar)
+    if !g.jar_due.is_empty() {
+        crate::impls::jodah::jar_end(g)?; // Memory Jar
+    }
     Ok(())
 }
 

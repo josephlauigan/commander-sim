@@ -420,6 +420,9 @@ pub struct CardImpl {
     pub monarch: Option<PlayerFn>,
     /// exiled_from_bf(g, src, m): m was exiled from the battlefield and returned (a blink; Soulherder)
     pub exiled_from_bf: Option<LeavesFn>,
+    /// loyalty_extra(g, src, p): extra loyalty each of p's loyalty abilities costs (Carth the Lion): a count over the
+    /// hooked permanents
+    pub loyalty_extra: Option<PlayerCountFn>,
     // Python's per-card tables (CI.SELF_CAST, AS_ENTERS, SELF_REGEN, ON_TAP, DYN_MANA, LAND_ETB, LAND_COLS)
     pub self_cast: Option<SelfCastFn>,
     pub as_enters: Option<AsEntersFn>,
@@ -541,6 +544,7 @@ impl CardImpl {
             Event::ExiledFromBf => self.exiled_from_bf.is_some(),
             Event::Crew => self.crew.is_some(),
             Event::TokensEnter => self.tokens_enter.is_some(),
+            Event::LoyaltyExtra => self.loyalty_extra.is_some(),
             _ => false,
         }
     }

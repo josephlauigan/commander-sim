@@ -58,6 +58,7 @@ pub fn total_count(g: &Game, e: Event, p: PlayerId) -> i32 {
                 Event::LandsFromGy => imp.lands_from_gy,
                 Event::LandsFromTop => imp.lands_from_top,
                 Event::SkipDraw => imp.skip_draw,
+                Event::LoyaltyExtra => imp.loyalty_extra,
                 _ => panic!("{e:?} is not a count event"),
             };
             (f.unwrap())(g, *src, p)
@@ -154,7 +155,8 @@ pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
             reps += total_trigger_copies(g, owner, "etb", Some(*m));
         }
         for _ in 0..reps.max(1) {
-            if imp.runs_at_once(e) {
+            // an event outside TRIGGER_EVENTS ('crew', 'monarch') runs at once, as Python's CI.fire does
+            if imp.runs_at_once(e) || !e.is_trigger() {
                 run_hook(g, src, e, &call)?;
                 if g.over {
                     return Ok(());
@@ -191,6 +193,8 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (Event::Main2, Call::Player { p }) => imp.main2.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Draw, Call::Player { p }) => imp.draw.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Landfall, Call::Player { p }) => imp.landfall.map_or(Ok(()), |f| f(g, src, *p)),
+        (Event::Crew, Call::Player { p }) => imp.crew.map_or(Ok(()), |f| f(g, src, *p)),
+        (Event::Monarch, Call::Player { p }) => imp.monarch.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Cast, Call::Cast { caster, c }) => imp.cast.map_or(Ok(()), |f| f(g, src, *caster, *c)),
         (Event::LoseLife, Call::Life { p, n }) => imp.lose_life.map_or(Ok(()), |f| f(g, src, *p, *n)),
         (Event::GainLife, Call::Life { p, n }) => imp.gain_life.map_or(Ok(()), |f| f(g, src, *p, *n)),
@@ -208,7 +212,6 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (Event::LandPlay, Call::Cards { p, cards }) => imp.land_play.map_or(Ok(()), |f| f(g, src, *p, cards[0])),
         (Event::LandGy, Call::Cards { p, cards }) => imp.land_gy.map_or(Ok(()), |f| f(g, src, *p, cards[0])),
         (Event::Discard, Call::Discard { p, c }) => imp.discard.map_or(Ok(()), |f| f(g, src, *p, *c)),
-        (Event::Crew, Call::Player { p }) => imp.crew.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::TokensEnter, Call::Tokens { p, toks }) => imp.tokens_enter.map_or(Ok(()), |f| f(g, src, *p, toks)),
         (Event::TokenCreated, Call::ArtifactTokens { p, kinds, n }) => {
             imp.token_created.map_or(Ok(()), |f| f(g, src, *p, kinds, *n))

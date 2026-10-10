@@ -189,11 +189,23 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
             held(g, c) && !free_counter(g, p, c) && can_pay(g, p, d.generic, &d.pips, false)
         })
         .collect();
-    // PORT(phase 6): Jodah's protection mana (CI.jodah_hold)
+    if pl.key == "jodah" {
+        // Jodah out: the mana for a protection spell (cards/impl/jodah.py)
+        let (jc, jv) = crate::impls::jodah::jodah_hold(g, p);
+        if jc.is_some() && (held.is_empty() || jv > hold_of(g, p, s, &held).1) {
+            return (jc, jv);
+        }
+    }
     if held.is_empty() {
         return (None, 0.0);
     }
-    let c = min_by(&held, |c| g.db.get(c).cmc as f64).unwrap();
+    hold_of(g, p, s, &held)
+}
+
+/// brain._hold: the cheapest held card, and how much keeping its mana up is worth
+fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<CardId>, f64) {
+    let pl = g.player(p);
+    let c = min_by(held, |c| g.db.get(c).cmc as f64).unwrap();
     let caution = style(g, pl.key).caution;
     let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * s.combo_near as i32 as f64;
     if !is_main(pl.key) {
@@ -256,7 +268,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
         return None; // a card put on top on your own turn waits a turn: tutor at the end of theirs
     }
     // its own priority said no (or it's kept for responses): keep it
-    let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some()) || plans::response_only(pl.key, c);
+    let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some()) || plans::response_only(g, pl.key, c);
     if base <= 0.0 && d.has_dsl() && !hand_written {
         base = crate::dsl::card_value(g, p, c) * 10.0;
     }
@@ -727,8 +739,9 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
 pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> Res<Vec<Opt>> {
     match g.player(p).key {
         "sauron" => decks::sauron_options(g, p, s, post),
+        "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
         // PORT(phase 6): Sephiroth's (loops, reanimation, fill, tutors, hardcasts ...), Veyran's (the combo,
-        // Aetherflux, Mizzix's Mastery) and Jodah's plays
+        // Aetherflux, Mizzix's Mastery)
         _ => Ok(vec![]),
     }
 }

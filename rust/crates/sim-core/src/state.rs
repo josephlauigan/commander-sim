@@ -67,6 +67,8 @@ pub enum DataKey {
     Hidden,
     Hit,
     Hostage,
+    /// Venat, Heart of Hydaelyn has transformed into Hydaelyn, the Mothercrystal
+    Hydaelyn,
     Imprint,
     /// a land that entered this turn ("in")
     In,
@@ -464,6 +466,9 @@ pub struct Player {
     pub art_tok: Option<(TurnStamp, i32)>,
     /// Reconstructed Thopter cards already unearthed (once each)
     pub unearthed: Vec<CardId>,
+    /// the wipe (by `Game::cur_batch`) Marchesa, the Black Rose died in: creatures dying in the same wipe return too
+    /// (Python's `p.marchesa_batch`)
+    pub marchesa_batch: Option<u32>,
 }
 
 impl Player {
@@ -578,6 +583,7 @@ impl Player {
             energy: 0,
             art_tok: None,
             unearthed: vec![],
+            marchesa_batch: None,
             stats: IndexMap::new(),
         }
     }
@@ -775,6 +781,15 @@ pub struct Game {
     pub goldfish: bool,
     /// Garland, Royal Kidnapper's steals are in play (Python's `g.garland`)
     pub garland: bool,
+    /// Garland's steals: (who took it, the creature, the player it came from, the round it was taken)
+    pub garland_list: Vec<(PlayerId, PermId, PlayerId, u32)>,
+    /// Marchesa's returns at the next end step: (the player it returns for, the card, its owner)
+    pub marchesa_due: Vec<(PlayerId, CardId, PlayerId)>,
+    /// Memory Jar: the hands set aside, returned at the end step
+    pub jar_due: Vec<(PlayerId, Vec<CardId>)>,
+    /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
+    /// while not None)
+    pub cur_batch: Option<u32>,
     /// permanents with hand-written card code, in entry order (Python's `g.hooks`)
     pub hooks: Vec<PermId>,
     pub stack: Vec<StackItem>,
@@ -904,6 +919,10 @@ impl Game {
             stopped: false,
             goldfish: false,
             garland: false,
+            garland_list: vec![],
+            marchesa_due: vec![],
+            jar_due: vec![],
+            cur_batch: None,
             hooks: vec![],
             stack: vec![],
             stack_pushes: 0,

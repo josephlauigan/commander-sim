@@ -52,8 +52,8 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
         "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
         "alela" => crate::impls::alela::alela_prio(g, p, c),
-        // PORT(phase 6): seph_prio, veyran_prio, jodah_prio. Until then those decks cast by the outside decks' tag
-        // priority.
+        "jodah" => crate::impls::jodah::jodah_prio(g, p, c),
+        // PORT(phase 6): seph_prio, veyran_prio. Until then those decks cast by the outside decks' tag priority.
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -678,8 +678,9 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     let pl = g.player(p);
     let held = |t: Tag| has(g, p, t) || in_hand_tag(g, p, t);
     match pl.key {
-        // PORT(phase 6): Sephiroth's (seph_tutor_target) and Jodah's wish lists
+        // PORT(phase 6): Sephiroth's wish list (seph_tutor_target)
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
+        "jodah" => crate::impls::jodah::jodah_tutor(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {
                 return first(&["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
@@ -1231,8 +1232,9 @@ pub fn protect_response(
         }
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
+        "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         // PORT(phase 6): Sephiroth (Ephemerate, Restoration Angel, Heroic Intervention, Galadriel's Dismissal,
-        // sacrifice in response), Veyran, Jodah
+        // sacrifice in response), Veyran
         _ => Ok(false),
     }
 }
@@ -1252,8 +1254,10 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if key == "galadriel" {
         return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
     }
-    // PORT(phase 6): Jodah's answers
-    if matches!(key, "jodah") {
+    if key == "jodah" {
+        return crate::impls::jodah::jodah_wipe_response(g, q, kind, caster);
+    }
+    if matches!(key, "galadriel" | "yshtola" | "jodah") {
         return Ok(None);
     }
     if wipe_loss(g, q, kind, caster) < 6.0 {
