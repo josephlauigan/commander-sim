@@ -62,6 +62,11 @@ fn captures(r: &Regex, s: &str, from: usize) -> Option<M> {
     r.captures_from_pos(s, from).unwrap_or_else(|e| panic!("regex {}: {e}", r.as_str())).map(|c| M::from(&c))
 }
 
+/// match an already compiled pattern at the start of s's text (the pattern carries its own anchor)
+pub fn captures_re(r: &Regex, s: &str) -> Option<M> {
+    captures(r, s, 0)
+}
+
 /// `re.search(pat, s)`
 pub fn search(pat: &str, s: &str) -> Option<M> {
     captures(rx(pat), s, 0)
