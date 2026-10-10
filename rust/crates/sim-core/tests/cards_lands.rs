@@ -331,3 +331,36 @@ fn sylvan_library_puts_cards_back_when_life_is_short() {
     zones::draw(&mut g, P0, 1, false).unwrap(); // once per turn
     assert_eq!(g.player(P0).hand.len(), 2);
 }
+
+/// a drawn second copy of a card already in hand is put back too (Python picked the drawn cards by identity and kept
+/// it for free: fixed in Rust)
+#[test]
+fn sylvan_library_puts_back_a_copy_of_a_card_in_hand() {
+    let (mut g, [swamp, forest, elves]) = sylvan_table(20);
+    g.player_mut(P0).hand.push(forest);
+    zones::draw(&mut g, P0, 1, true).unwrap();
+    let mut h = g.player(P0).hand.clone();
+    h.sort();
+    let mut want = vec![forest, elves];
+    want.sort();
+    assert_eq!(h, want); // the Forest that was in hand and the Elves drawn
+    let lib = &g.player(P0).library;
+    let top2 = &lib[lib.len() - 2..];
+    assert!(top2.contains(&swamp) && top2.contains(&forest));
+}
+
+/// Scroll Rack taps when used (Python never tapped it: fixed in Rust): a flooded hand swaps two lands for the two
+/// spells on top
+#[test]
+fn scroll_rack_taps_when_used() {
+    let mut g = table(&["lathril-golgari-elves", "veyran"]);
+    let rk = perm(&mut g, P0, "Scroll Rack");
+    lands(&mut g, P0, "Forest", 8, false);
+    g.player_mut(P0).hand = vec![take(&mut g, P0, "Forest"), take(&mut g, P0, "Swamp")];
+    let top = [take(&mut g, P0, "Elvish Archdruid"), take(&mut g, P0, "Elvish Warmaster")];
+    g.player_mut(P0).library.extend(top);
+    let f = g.registry.get(g.perm(rk).cd.unwrap()).and_then(|i| i.upkeep).unwrap();
+    f(&mut g, rk, P0).unwrap();
+    assert!(top.iter().all(|c| g.player(P0).hand.contains(c))); // it was used
+    assert!(g.perm(rk).tapped);
+}

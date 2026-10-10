@@ -42,11 +42,10 @@ pub fn dyn_mana_perm(g: &Game, p: PlayerId, m: PermId) -> Option<u32> {
     imp_of(g, g.perm(m).cd?)?.dyn_mana_perm.map(|f| f(g, p, m))
 }
 
-/// PORT(M5): CI.locked(g, m, kind) (zur.locked): an Aura locks m (Arrest: no activated abilities; Pacify: can't
-/// attack). Only zur.py's lock Auras (Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust) use it, and
-/// no pilot deck runs one.
-pub fn locked(_g: &Game, _m: PermId, _kind: &str) -> bool {
-    false
+/// CI.locked(g, m, kind) (zur.locked): an Aura locks m (Arrest: no activated abilities; Pacify: can't attack).
+/// zur.py's lock Auras: Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust.
+pub fn locked(g: &Game, m: PermId, kind: &str) -> bool {
+    crate::impls::zur::locked(g, m, kind)
 }
 
 /// rules.halfling_colors: Delighted Halfling's coloured mana only pays for legendary spells (None: colourless)
@@ -64,8 +63,10 @@ pub fn attached_prot(g: &Game, m: PermId) -> crate::cards::Colors {
     crate::impls::common::attached_prot(g, m)
 }
 
-/// PORT(M5): CI.garland_check, Garland's steals end when a player leaves
-pub fn garland_check(_g: &mut Game) {}
+/// CI.garland_check (jodah.garland_check): Garland's steals end when their player loses the crown or leaves
+pub fn garland_check(g: &mut Game) {
+    crate::impls::jodah::garland_check(g)
+}
 
 /// your own Auras on m (common.auras_on, excluding locks: CI.LOCKS)
 pub fn own_auras_on(g: &Game, m: PermId) -> usize {
@@ -84,10 +85,9 @@ pub fn threat_value(g: &Game, m: PermId) -> f64 {
     crate::ai::pool::card_threat_value(g, c) + piece_threat(g, m)
 }
 
-/// PORT(M5): how much of m's value is left under the Auras locking it (zur.lock_factor; zur.py's lock Auras only,
-/// which no pilot deck runs)
-pub fn lock_factor(_g: &Game, _m: PermId) -> f64 {
-    1.0
+/// how much of m's value is left under the Auras locking it (zur.lock_factor; zur.py's lock Auras only)
+pub fn lock_factor(g: &Game, m: PermId) -> f64 {
+    crate::impls::zur::lock_factor(g, m)
 }
 
 /// partials.hand_mana, Elvish Spirit Guide and kin: exile from hand for mana
@@ -116,9 +116,13 @@ pub fn on_tap_perm(g: &mut Game, p: PlayerId, m: PermId, n: u32) -> crate::flow:
     }
 }
 
-/// engine.SELF_COST, a card's own cost change (Draco's domain, delve): its `self_cost` slot
+/// engine.SELF_COST, a card's own cost change: Emry's affinity for artifacts. PORT(M5): Draco's domain, delve
+/// (partials), Embercleave (rules2)
 pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
-    imp_of(g, c).and_then(|i| i.self_cost).map_or(0, |f| f(g, p, c))
+    match &*g.db.get(c).name {
+        "Emry, Lurker of the Loch" => crate::impls::alela::emry_cost(g, p, c),
+        _ => imp_of(g, c).and_then(|i| i.self_cost).map_or(0, |f| f(g, p, c)),
+    }
 }
 
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control
@@ -198,13 +202,19 @@ macro_rules! port_res {
     )*};
 }
 
+/// marchesa.marchesa_dies: creature m that p controlled died (Marchesa's return trigger)
+pub fn marchesa_dies(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    crate::impls::marchesa::marchesa_dies(g, p, m)
+}
+
 port_res! {
-    /// PORT(M5): marchesa.marchesa_dies
-    fn marchesa_dies(p: PlayerId, m: PermId);
     /// PORT(M5): CI.muld_mark (Muldrotha's permanent types used this turn)
     fn muld_mark(p: PlayerId, kind: Sym);
-    /// PORT(M5): CI.apply_lock (zur.apply_lock: Arrest, Encrust ...; no pilot deck runs a lock Aura)
-    fn apply_lock(actor: Option<PlayerId>, m: PermId, kind: Sym);
+}
+
+/// CI.apply_lock (zur.apply_lock: Arrest, Encrust ...): the entering lock Aura enchants m
+pub fn apply_lock(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym) -> Res {
+    crate::impls::zur::apply_lock(g, actor, m, kind)
 }
 
 /// rules.emblem_draw: Teferi's emblem exiles an opposing permanent whenever p draws
@@ -398,9 +408,9 @@ pub fn self_regen(g: &mut Game, m: PermId) -> Res<bool> {
     }
 }
 
-/// PORT(M5): CI.marchesa_sac_worth
-pub fn marchesa_sac_worth(_g: &Game, _m: PermId, v: f64) -> f64 {
-    v
+/// CI.marchesa_sac_worth (marchesa.marchesa_sac_worth): a creature Marchesa will return costs little to sacrifice
+pub fn marchesa_sac_worth(g: &Game, m: PermId, v: f64) -> f64 {
+    crate::impls::marchesa::marchesa_sac_worth(g, m, v)
 }
 
 /// PORT(M5): CI.PROWESS (cards with prowess the keywords don't show)
@@ -473,9 +483,9 @@ pub fn prot_vs(g: &Game, m: PermId, from: PermId) -> bool {
     crate::impls::rules2::prot_vs(g, m, from)
 }
 
-/// PORT(M5): CI.kaldra_exile (Sword of Kaldra exiles what it damages): true if it exiled
-pub fn kaldra_exile(_g: &mut Game, _src: PermId, _m: PermId) -> Res<bool> {
-    Ok(false)
+/// CI.kaldra_exile (jodah.kaldra_exile: Sword of Kaldra exiles what it damages): true if it exiled
+pub fn kaldra_exile(g: &mut Game, src: PermId, m: PermId) -> Res<bool> {
+    crate::impls::jodah::kaldra_exile(g, src, m)
 }
 
 /// mine.necromancer_attack (an attacking token copy of a graveyard creature)
@@ -483,8 +493,94 @@ pub fn necromancer_attack(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<PermI
     crate::impls::mine::necromancer_attack(g, p, m)
 }
 
-/// PORT(M5): CI.keyword_attack (keyword attack triggers: annihilator, myriad ...)
-pub fn keyword_attack(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+/// CI.keyword_attack: battle cry, mentor, dethrone (and Marchesa's: other creatures you control have dethrone),
+/// exalted; attacking creature lands (Raging Ravine grows, Hive of the Eye Tyrant exiles a card). Returns new
+/// attacking creatures (none so far)
+pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
+    use crate::engine::values::{epow, has};
+    use crate::state::DataKey;
+    for &m in atk {
+        let x = g.perm(m);
+        if !(x.token && x.data.get(DataKey::Land).is_some()) {
+            continue;
+        }
+        if x.name == "Raging Ravine" {
+            g.perm_mut(m).plus += 1;
+        } else if x.name == "Hive of the Eye Tyrant" && !g.player(d).gy.is_empty() {
+            let mut best: Option<(CardId, (bool, u32))> = None;
+            for &c in &g.player(d).gy {
+                let k = (g.db.get(c).creature, g.db.get(c).cmc);
+                if best.is_none_or(|b| k > b.1) {
+                    best = Some((c, k));
+                }
+            }
+            let c = best.unwrap().0;
+            let pl = g.player_mut(d);
+            let i = pl.gy.iter().position(|&y| y == c).unwrap();
+            pl.gy.remove(i);
+            pl.exile.push(c);
+        }
+    }
+    let grant = has(g, p, crate::tag::Tag::Marchesa); // Marchesa: other creatures you control have dethrone
+    let any_kws = atk.iter().any(|&m| g.perm(m).cd.is_some_and(|c| !g.db.get(c).kws.is_empty()));
+    let exalted = g.player(p).perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).has_kw("exalted")));
+    if !grant && !any_kws && !exalted {
+        return Ok(vec![]);
+    }
+    if g.over || !g.players.iter().any(|q| q.alive) {
+        return Ok(vec![]); // an earlier attack trigger ended the game
+    }
+    let top = g.players.iter().filter(|q| q.alive).map(|q| q.life).max().unwrap_or(0);
+    for &m in atk {
+        if !(g.perm(m).on_bf && g.perm(m).owner == p) {
+            continue;
+        }
+        let leader = g.player(d).life >= top;
+        let Some(c) = g.perm(m).cd else {
+            if grant && leader {
+                add_counters(g, m, 1); // a token attacking the life leader (the Army)
+            }
+            continue;
+        };
+        let d_ = g.db.get(c);
+        let (dethrone, battle_cry, mentor) = (d_.has_kw("dethrone"), d_.has_kw("battle cry"), d_.has_kw("mentor"));
+        if grant && !dethrone && leader {
+            add_counters(g, m, 1);
+        }
+        if battle_cry {
+            for &x in atk {
+                if x != m {
+                    g.perm_mut(x).eot_pt.0 += 1;
+                }
+            }
+        }
+        if mentor {
+            let pm = epow(g, m);
+            let lesser: Vec<PermId> = atk
+                .iter()
+                .copied()
+                .filter(|&x| x != m && g.perm(x).on_bf && g.perm(x).owner == p && epow(g, x) < pm)
+                .collect();
+            if let Some(x) = crate::engine::zones::max_by(&lesser, |x| epow(g, x) as f64) {
+                g.perm_mut(x).plus += 1;
+            }
+        }
+        if dethrone && leader {
+            add_counters(g, m, 1);
+        }
+    }
+    if atk.len() == 1 {
+        let n = g
+            .player(p)
+            .perms
+            .iter()
+            .filter(|&&x| !g.perm(x).phased && g.perm(x).cd.is_some_and(|c| g.db.get(c).has_kw("exalted")))
+            .count() as i32;
+        if n > 0 {
+            let e = &mut g.perm_mut(atk[0]).eot_pt;
+            *e = (e.0 + n, e.1 + n);
+        }
+    }
     Ok(vec![])
 }
 
@@ -556,9 +652,9 @@ pub fn defend_hooks(
     Ok(())
 }
 
-/// PORT(phase 6): t4.ninjutsu (Yuriko's Ninjas swap in for unblocked attackers)
-pub fn ninjutsu(_g: &mut Game, _p: PlayerId, _atk: &[PermId], _d: PlayerId, _assign: &mut [(PermId, PermId)]) -> Res {
-    Ok(())
+/// t4.ninjutsu (Yuriko's Ninjas swap in for unblocked attackers): changes the attack
+pub fn ninjutsu(g: &mut Game, p: PlayerId, atk: &mut Vec<PermId>, d: PlayerId, assign: &mut [(PermId, PermId)]) -> Res {
+    crate::impls::t4::ninjutsu(g, p, atk, d, assign)
 }
 
 /// partials.insight_draw (Hunter's Insight) and rules.emblem_combat (Vraska's and Kaito's emblems) on combat damage
@@ -570,9 +666,25 @@ pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dm
     Ok(())
 }
 
-/// PORT(M5): CI.become_monarch
+/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; 'monarch' hooks (Garland,
+/// Palace Jailer) run at once
 pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
+    if g.monarch == Some(p) || !g.player(p).alive {
+        return Ok(());
+    }
     g.monarch = Some(p);
+    crate::glog!(g, "    {} becomes the monarch", g.player(p).name);
+    if g.garland {
+        garland_check(g);
+    }
+    if !g.hooks.is_empty() {
+        for (src, imp) in hooks::hooked(g, Event::Monarch) {
+            (imp.monarch.unwrap())(g, src, p)?;
+            if g.over {
+                break;
+            }
+        }
+    }
     Ok(())
 }
 
@@ -581,9 +693,9 @@ pub fn ring_damage(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId) -> Res {
     crate::impls::mine::ring_damage(g, p, a, d)
 }
 
-/// PORT(M5): CI.vanguard_blocks (Defiant Vanguard)
-pub fn vanguard_blocks(_g: &mut Game, _assign: &[(PermId, PermId)]) -> Res {
-    Ok(())
+/// galadriel.vanguard_blocks (CI.vanguard_blocks): each Defiant Vanguard that blocked destroys itself and the attacker
+pub fn vanguard_blocks(g: &mut Game, assign: &[(PermId, PermId)]) -> Res {
+    crate::impls::galadriel::vanguard_blocks(g, assign)
 }
 
 /// rules2.forced_attackers: Goblin Rabblemaster's Goblins and Legion Warboss's tokens attack if able
@@ -649,21 +761,44 @@ pub fn lands_from_gy(g: &Game, p: PlayerId) -> bool {
     !g.hooks.is_empty() && hooks::total_count(g, Event::LandsFromGy, p) > 0
 }
 
+/// CI.suspend_upkeep (jodah.suspend_upkeep): a time counter off each suspended card; at zero it's cast free
+pub fn suspend_upkeep(g: &mut Game, p: PlayerId) -> Res {
+    crate::impls::jodah::suspend_upkeep(g, p)
+}
+
 port_res! {
-    /// PORT(M5): CI.suspend_upkeep
-    fn suspend_upkeep(p: PlayerId);
     /// PORT(M5): ais.braids_sacrifice
     fn braids_sacrifice(p: PlayerId);
     /// PORT(M5): ais.necro_deliver (Necropotence's cards at the end step)
     fn necro_deliver(p: PlayerId);
     /// PORT(M5): ais.necro_pay
     fn necro_pay(p: PlayerId);
-    /// PORT(M5): the delayed end-step effects: Marchesa's returns, The Eternal Wanderer, Eerie Interlude, Memory Jar
-    fn delayed_end_step(p: PlayerId);
-    /// PORT(M5): Galadriel's precombat taps
-    fn galadriel_precombat(q: PlayerId);
-    /// PORT(M5): Opposition's precombat taps
-    fn opposition_precombat(q: PlayerId);
+}
+
+/// galadriel.precombat (CI.galadriel_precombat): Galadriel's tappers before another player's combat
+pub fn galadriel_precombat(g: &mut Game, q: PlayerId) -> Res {
+    crate::impls::galadriel::precombat(g, q)
+}
+
+/// alela.opposition_precombat (CI.opposition_precombat): Opposition's taps before another player's combat
+pub fn opposition_precombat(g: &mut Game, q: PlayerId) -> Res {
+    crate::impls::alela::opposition_precombat(g, q)
+}
+
+/// the delayed end-step effects, in Python's order: Marchesa's returns, The Eternal Wanderer (zur.zur_end_step),
+/// Eerie Interlude (galadriel.eot_returns), Memory Jar (jodah.jar_end)
+pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
+    if !g.marchesa_due.is_empty() {
+        crate::impls::marchesa::marchesa_return(g)?; // Marchesa: 'at the beginning of the next end step'
+    }
+    if !g.zur_due.is_empty() {
+        crate::impls::zur::zur_end_step(g, p)?; // The Eternal Wanderer
+    }
+    crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
+    if !g.jar_due.is_empty() {
+        crate::impls::jodah::jar_end(g)?; // Memory Jar
+    }
+    Ok(())
 }
 
 /// ais.mirror_upkeep (Panoptic Mirror)
@@ -686,14 +821,14 @@ pub fn replaced_tag_engine(name: &str) -> bool {
     crate::impls::rules::replaced_tag_engine(name)
 }
 
-/// PORT(M5): CI.crackdown_on
-pub fn crackdown_on(_g: &Game) -> bool {
-    false
+/// galadriel.crackdown_on (CI.crackdown_on)
+pub fn crackdown_on(g: &Game) -> bool {
+    crate::impls::galadriel::crackdown_on(g)
 }
 
-/// PORT(M5): CI.crackdown_holds
-pub fn crackdown_holds(_g: &Game, _m: PermId) -> bool {
-    false
+/// galadriel.crackdown_holds (CI.crackdown_holds)
+pub fn crackdown_holds(g: &Game, m: PermId) -> bool {
+    crate::impls::galadriel::crackdown_holds(g, m)
 }
 
 /// CI.total(g, 'skip_draw', p) (Solitary Confinement)
@@ -851,7 +986,7 @@ pub fn regen_wipe(g: &mut Game, q: PlayerId) -> Res<bool> {
     crate::impls::partials::regen_wipe(g, q)
 }
 
-/// the outside decks' card plays: common.adventure_options, t2.evoke_options (PORT(phase 6)),
+/// the outside decks' card plays: common.adventure_options, t2.evoke_options,
 /// common.aristocrat_options, common.food_options, partials.miracle_options and incubator_options (PORT(M5):
 /// partials, wired in impls::common::pool_card_options)
 pub fn pool_card_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -863,9 +998,9 @@ pub fn aid_active(g: &Game, p: PlayerId) -> bool {
     crate::impls::partials::aid_active(g, p)
 }
 
-/// PORT(M5): t4.NINJUTSU, ninjutsu_cost: the ninjutsu costs of the Ninjas in p's hand
-pub fn ninjutsu_costs(_g: &Game, _p: PlayerId) -> Vec<(u32, String)> {
-    vec![]
+/// t4.NINJUTSU, ninjutsu_cost: the ninjutsu costs of the Ninjas in p's hand
+pub fn ninjutsu_costs(g: &Game, p: PlayerId) -> Vec<(u32, String)> {
+    crate::impls::t4::ninjutsu_costs(g, p)
 }
 
 /// common.SAC_OUTLET
@@ -910,17 +1045,30 @@ pub fn tithe_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     (35.0 + 4.0 * treasures * need).clamp(15.0, 75.0) as i32
 }
 
-/// PORT(M5): t4.yuriko_wish
-pub fn yuriko_wish(_g: &Game, _p: PlayerId) -> Vec<CardId> {
-    vec![]
+/// t4.yuriko_wish
+pub fn yuriko_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
+    crate::impls::t4::yuriko_wish(g, p)
 }
 
-/// PORT(M5): t4.yuriko_prio
-pub fn yuriko_prio(_g: &Game, _p: PlayerId, _c: CardId) -> Option<i32> {
-    None
+/// t4.yuriko_prio
+pub fn yuriko_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    crate::impls::t4::yuriko_prio(g, p, c)
 }
 
-/// PORT(M5): t2.kaalia_prio
-pub fn kaalia_prio(_g: &Game, _p: PlayerId, _c: CardId) -> Option<i32> {
-    None
+/// t2.kaalia_prio
+pub fn kaalia_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    crate::impls::t2::kaalia_prio(g, p, c)
+}
+
+/// PORT(phase 6): mine.flicker_worth (what flickering Sephiroth's creature m is worth: the commander Atraxa, Summon:
+/// Bahamut's restart, counters and Equipment lost); t2.flicker_worth calls it for Sephiroth's deck. Until then
+/// t2.blink_value.
+pub fn seph_flicker_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    crate::impls::t2::blink_value(g, p, m) as f64
+}
+
+/// zur.zur_fetch (CI.zur_fetch: Zur attacking in your Y'shtola deck searches for an enchantment with mana value 3 or
+/// less and puts it onto the battlefield)
+pub fn zur_fetch(g: &mut Game, src: PermId, p: PlayerId) -> Res {
+    crate::impls::zur::zur_fetch(g, src, p)
 }

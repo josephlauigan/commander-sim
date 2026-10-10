@@ -227,10 +227,10 @@ fn heliod_s_pilgrim_finds_an_aura() {
     let mut g = table(&[LIGHT_PAWS, "seph"]);
     let n = g.player(P0).library.len();
     perm(&mut g, P0, "Heliod's Pilgrim");
-    // Python, ported as is: the card's compiled search (any card) runs as well as t1's Aura search
+    // one Aura only (Python's compiled search for any card ran as well, finding a second card: fixed in Rust)
     assert_eq!(auras_in_hand(&g, P0).len(), 1);
-    assert_eq!(g.player(P0).hand.len(), 2);
-    assert_eq!(g.player(P0).library.len(), n - 3); // the Pilgrim and the two cards found
+    assert_eq!(g.player(P0).hand.len(), 1);
+    assert_eq!(g.player(P0).library.len(), n - 2); // the Pilgrim and the Aura found
 }
 
 #[test]
@@ -255,6 +255,22 @@ fn light_paws_fetches_an_aura_onto_itself_when_an_aura_is_cast() {
     assert_eq!(on_lp, 2); // the cast Aura and the one Light-Paws fetched
 }
 
+/// Flickering Ward's loop: {W} returns it to hand, {W} recasts it, and Light-Paws fetches another Aura. (Python lost
+/// the card instead of returning it to hand: fixed in Rust.)
+#[test]
+fn flickering_ward_returns_to_hand_and_is_recast() {
+    let mut g = table(&[LIGHT_PAWS, "seph"]);
+    let lp = perm(&mut g, P0, "Light-Paws, Emperor's Voice");
+    let w = perm(&mut g, P0, "Flickering Ward");
+    lands(&mut g, P0, "Plains", 2, false);
+    let auras = |g: &Game| g.auras.iter().filter(|&&x| g.perm(x).attached == Some(lp) && g.perm(x).on_bf).count();
+    let before = auras(&g);
+    assert_eq!(use_option(&mut g, P0, w, Some(false)), Some(true));
+    assert_eq!(named(&g, P0, "Flickering Ward"), 1); // back on the battlefield, recast
+    assert!(!g.player(P0).hand.contains(&card(&g, "Flickering Ward")));
+    assert_eq!(auras(&g), before + 1); // the recast Ward fetched an Aura
+}
+
 #[test]
 fn kor_spiritdancer_draws_on_aura_casts_and_turns_its_size_rule_on() {
     let mut g = table(&[LIGHT_PAWS, "seph"]);
@@ -270,17 +286,18 @@ fn kor_spiritdancer_draws_on_aura_casts_and_turns_its_size_rule_on() {
     assert_eq!(g.player(P0).hand.len(), n + 1);
 }
 
-/// Python, ported as is: Eidolon enters as a 0/0 and dies to the state check before its own enters hook turns the
-/// size rule on. Its rule counts its controller's creatures and Auras.
+/// Eidolon turns its size rule on as it enters, so cast alone it survives as a 1/1 (itself). (Python turned it on in
+/// its enters hook, after the state check had killed the 0/0: a bug, fixed in Rust only.) Its rule counts its
+/// controller's creatures and Auras.
 #[test]
-fn eidolon_dies_alone_and_counts_creatures_and_auras() {
+fn eidolon_survives_alone_and_counts_creatures_and_auras() {
     let mut g = table(&[LIGHT_PAWS, "seph"]);
     let e = perm(&mut g, P0, "Eidolon of Countless Battles");
-    assert!(!g.perm(e).on_bf);
-    assert_eq!(cardcode::self_pt(&g, e), (0, 0)); // the rule is off
+    assert!(g.perm(e).on_bf);
+    assert_eq!(cardcode::self_pt(&g, e), (1, 1));
     perm(&mut g, P0, "Kor Spiritdancer");
     token(&mut g, P0, 1);
-    assert_eq!(cardcode::self_pt(&g, e), (2, 2));
+    assert_eq!(cardcode::self_pt(&g, e), (3, 3));
 }
 
 /// with the size rule already on (Kor Spiritdancer), Eidolon survives and gets +1/+1 per creature and Aura
@@ -292,4 +309,19 @@ fn eidolon_survives_once_the_size_rule_is_on() {
     token(&mut g, P0, 1);
     assert!(g.perm(e).on_bf);
     assert_eq!(cardcode::self_pt(&g, e), (3, 3));
+}
+
+/// Nissa, Resurgent Animist's second landfall in a turn reveals from the top until an Elf or Elemental: it goes to
+/// hand, the cards revealed above it go to the bottom. (Python left them on top: fixed in Rust.)
+#[test]
+fn nissa_takes_the_first_elf_from_the_top_and_bottoms_the_rest() {
+    let mut g = table(&[LATHRIL, "seph"]);
+    perm(&mut g, P0, "Nissa, Resurgent Animist");
+    let (forest, elf, swamp) = (card(&g, "Forest"), card(&g, "Llanowar Elves"), card(&g, "Swamp"));
+    g.player_mut(P0).library = vec![swamp, swamp, elf, forest, forest]; // the top is the end
+    zones::landfall(&mut g, P0).unwrap();
+    assert!(!g.player(P0).hand.contains(&elf)); // the first landfall only makes mana
+    zones::landfall(&mut g, P0).unwrap();
+    assert!(g.player(P0).hand.contains(&elf));
+    assert_eq!(g.player(P0).library, vec![forest, forest, swamp, swamp]); // the two Forests went to the bottom
 }
