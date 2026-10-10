@@ -1,0 +1,28 @@
+# Briefcase project for the iPad app (see README.md). Run Briefcase from this folder, after python3 stage.py.
+[tool.briefcase]
+project_name = "Commander Practice"
+bundle = "com.josephlauigan"
+version = "0.1.0"
+url = "https://github.com/josephlauigan/commander-sim"
+license.text = "Private"
+author = "Joseph Lauigan"
+author_email = "josephlauigan@gmail.com"
+
+[tool.briefcase.app.commander_ipad]
+formal_name = "Commander Practice"
+description = "Practise your Commander decks against the simulator's AI opponents."
+sources = ["src/commander_ipad", "src/commander_sim"]
+icon = "icons/commander_ipad"        # icons/commander_ipad-<size>.png, drawn by tools/app_icon.py
+requires = []
+
+[tool.briefcase.app.commander_ipad.macOS]
+# `briefcase dev` / `briefcase run` on the Mac: the same app in a window, for trying changes before the iPad
+requires = ["toga-cocoa~=0.5.0", "std-nslog~=1.0.0"]
+
+[tool.briefcase.app.commander_ipad.iOS]
+requires = ["toga-iOS~=0.5.0", "std-nslog~=1.0.0"]
+
+[tool.briefcase.app.commander_ipad.iOS.info]
+# the web view loads the table from the server inside the app (http://127.0.0.1)
+NSAppTransportSecurity = { NSAllowsLocalNetworking = true }
+UIRequiresFullScreen = true

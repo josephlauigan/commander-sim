@@ -142,6 +142,25 @@ card('Teleportation Circle', '', types='E', dsl=[])
 note('Teleportation Circle', 'Full', 'end step: blink the best ETB creature, else untap a tapped mana rock by blinking it')
 
 
+@on('Flickering Hound', 'cast')
+def _flickering_hound(g, src, caster, c):
+    """Whenever you cast a creature spell, exile up to one other target creature you control, then return that card
+    to the battlefield under its owner's control: the one with the best enter effect (the spell itself isn't on the
+    battlefield yet)"""
+    p = src.owner
+    if caster is not p or not c.creature or src not in p.perms or src.phased: return
+    p.stats['flicker_chance Flickering Hound'] += 1
+    cands = [m for m in p.perms if m is not src and m.creature and flicker_worth(g, p, m) > 0]
+    if not cands or not trigger_window(g, p, src, 'blink a creature'): return
+    cands = [m for m in cands if m in p.perms]
+    if not cands: return
+    m = max(cands, key=lambda m: flicker_worth(g, p, m))
+    p.stats['flicker Flickering Hound'] += 1; p.stats[f'flicker Flickering Hound -> {m.name}'] += 1
+    blink(g, p, m)
+card('Flickering Hound', 'pow=2', dsl=[])
+note('Flickering Hound', 'Full', 'whenever you cast a creature spell: blink your best ETB creature')
+
+
 def _blink_option(name, cost_g, cost_p, other=True, label=None, needs_pair=False):
     @on(name, 'options')
     def _opt(g, src, p, s, post):

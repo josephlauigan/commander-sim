@@ -901,7 +901,7 @@ look-ahead.
 
 ## 15. Tests and tools
 
-Run the tests with `python3 -m unittest discover -s tests -t .` (635 tests, about a minute and a half).
+Run the tests with `python3 -m unittest discover -s tests -t .` (639 tests, about a minute and a half).
 [tests/README.md](../tests/README.md) describes each file, how to run one test, and how to write a new one.
 
 | File | What it checks |
@@ -911,6 +911,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (635 tests, abou
 | `test_zur.py` | Cards first written for the Zur deck that other lists still run: lock Auras, Zur's fetch in Y'shtola's 99, the other cards, and practice-mode choices. |
 | `test_yshtola.py` | Your Y'shtola deck: her two triggers, Curiosity, the drains, the cards taken from opponents, its other cards, the AI's choices, and practice-mode abilities and choices. |
 | `test_galadriel.py` | Your Galadriel deck: Alliance, the Rebel searchers, the creature-type cards, Panharmonicon, its other cards, and practice-mode abilities and choices. |
+| `test_ios_app.py` | The iPad app's start-up: data folders, the first-launch copy, a staged app playing a game. |
 | `test_land_entry.py` | Lands' enters-tapped conditions. |
 | `test_search.py` | The look-ahead AI: independent copies, re-dealt hidden hands, evaluation bounds, a whole reproducible decision. |
 | `test_dsl.py` | The ability compiler and interpreter. |
@@ -934,7 +935,7 @@ Run the tests with `python3 -m unittest discover -s tests -t .` (635 tests, abou
 | `test_play_hand.py` | Practice mode, alternative casts from hand and copying spells (`play/cards.py`). |
 | `test_play_veyran.py` | Practice mode, choices inside Veyran's spells. |
 | `test_play_marchesa.py` | Practice mode, cards first written for the Marchesa deck that other lists still run, and the sacrifice outlets. |
-| `test_play_server.py` | Practice mode's browser server and event stream. |
+| `test_play_server.py` | Practice mode's browser server, event stream and autosave. |
 | `test_play_lan.py` | Practice mode with two people on a network: seats, per-seat streams, agreed Undo, saved games. |
 | `test_determinism.py` | Seeded games independent of memory layout (hashing, no address reuse). |
 | `test_play_undo.py` | Practice mode's Undo by replay. |

@@ -13,6 +13,31 @@ export function el(tag, attrs = {}, ...kids) {
   return e;
 }
 
+// ------------------------------------------------------------------ icons
+// Drawn as SVG rather than emoji or symbol characters: some systems (the iPad app's web view) have no font for those
+// and show a box with a question mark instead. 24x24, in the text's colour.
+const SVG = 'http://www.w3.org/2000/svg';
+const ICONS = {
+  pause: '<path fill="currentColor" stroke="none" d="M6 4h4v16H6zM14 4h4v16h-4z"/>',
+  play: '<path fill="currentColor" stroke="none" d="M7 4l13 8-13 8z"/>',
+  hint: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.8 10.6c.6.6.8 1.4.8 2.4h6c0-1 .2-1.8.8-2.4A6 6 0 0 0 12 3z"/>',
+  undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  save: '<path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/>',
+  heart: '<path fill="currentColor" stroke="none" d="M12 21s-7.5-4.6-9.6-9.2A5.2 5.2 0 0 1 12 6.3a5.2 5.2 0 0 1 9.6 5.5C19.5 16.4 12 21 12 21z"/>',
+  hand: '<rect x="3.5" y="6" width="9.5" height="14" rx="1.5" transform="rotate(-12 8.25 13)"/><rect x="11" y="4" width="9.5" height="14" rx="1.5" transform="rotate(10 15.75 11)"/>',
+  library: '<rect x="5" y="3" width="12" height="16" rx="1.5"/><path d="M8 21.5h10.5a1.5 1.5 0 0 0 1.5-1.5V6.5"/>',
+  poison: '<path fill="currentColor" stroke="none" d="M12 2.5c3.2 4.6 6.5 8.3 6.5 11.7a6.5 6.5 0 0 1-13 0c0-3.4 3.3-7.1 6.5-11.7z"/>',
+  swords: '<path d="M4 4l11 11M20 4L9 15M13.5 17.5l4-4M10.5 17.5l-4-4M17 17l3.5 3.5M7 17l-3.5 3.5"/>',
+  treasure: '<path fill="currentColor" stroke="none" d="M12 3l7.5 9-7.5 9-7.5-9z"/>',
+};
+export function icon(name) {
+  const s = document.createElementNS(SVG, 'svg');
+  for (const [k, v] of Object.entries({ viewBox: '0 0 24 24', class: `icon icon-${name}`, 'aria-hidden': 'true', fill: 'none',
+    stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' })) s.setAttribute(k, v);
+  s.innerHTML = ICONS[name];
+  return s;
+}
+
 export const STEPS = [['start', 'Beginning'], ['main1', 'Main 1'], ['combat', 'Combat'], ['main2', 'Main 2'], ['end', 'End']];
 
 function filesFor(images, name) {
@@ -38,6 +63,26 @@ function showPreview(src, name, e, more = []) {
   preview.hidden = false;
 }
 function hidePreview() { if (preview) preview.hidden = true; }
+
+// touch (the iPad): a press held on a card enlarges it until the finger lifts; a tap still plays it. The tap's own
+// mouse events are ignored (they'd open the preview and leave it open), and the click that ends a hold is swallowed
+let lastPointer = 'mouse', holdTimer = null, held = false;
+document.addEventListener('pointerdown', (e) => { lastPointer = e.pointerType; }, true);
+document.addEventListener('click', (e) => { if (held) { held = false; e.stopPropagation(); e.preventDefault(); } }, true);
+for (const kind of ['pointerup', 'pointercancel']) {          // also when the card was redrawn under the finger
+  document.addEventListener(kind, (e) => { if (e.pointerType !== 'mouse') { clearTimeout(holdTimer); hidePreview(); } }, true);
+}
+function touchPreview(c, show) {
+  c.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse') return;
+    held = false; clearTimeout(holdTimer);
+    const at = { clientX: e.clientX, clientY: e.clientY };
+    holdTimer = setTimeout(() => { held = true; show(at); }, 350);
+  });
+  for (const kind of ['pointerup', 'pointercancel', 'pointerleave']) {
+    c.addEventListener(kind, (e) => { if (e.pointerType !== 'mouse') { clearTimeout(holdTimer); hidePreview(); } });
+  }
+}
 
 // ------------------------------------------------------------------ images kept between redraws
 // The table is redrawn after every action. New <img> elements would blank out until the browser decoded them again
@@ -71,8 +116,9 @@ export function card(images, name, o = {}) {
   const title = [name, o.pt, o.tapped ? 'tapped' : '', o.sick ? 'summoning sick' : '', o.attached_to ? `attached to ${o.attached_to}` : '']
     .filter(Boolean).join(' · ');
   const c = el('div', { class: cls, title, 'data-name': name, ...(o.attrs || {}) }, el('div', { class: 'face' }, face, badges));
-  c.addEventListener('mouseenter', (e) => showPreview(src, name, e, all));
+  c.addEventListener('mouseenter', (e) => { if (lastPointer === 'mouse') showPreview(src, name, e, all); });
   c.addEventListener('mouseleave', hidePreview);
+  touchPreview(c, (at) => showPreview(src, name, at, all));
   return c;
 }
 
@@ -94,13 +140,13 @@ function zoneList(title, names, images, attrs = () => ({})) {
 
 function stats(p, mine) {
   return el('div', { class: 'stats' },
-    el('span', { class: 'life', title: 'life' }, `♥ ${p.life}`),
-    p.poison ? el('span', { title: 'poison counters' }, `☠ ${p.poison}`) : null,
-    el('span', { title: 'cards in hand' }, `✋ ${p.hand_count}`),
-    el('span', { title: 'cards in library' }, `📚 ${p.library}`),
+    el('span', { class: 'life', title: 'life' }, icon('heart'), ` ${p.life}`),
+    p.poison ? el('span', { title: 'poison counters' }, icon('poison'), ` ${p.poison}`) : null,
+    el('span', { title: 'cards in hand' }, icon('hand'), ` ${p.hand_count}`),
+    el('span', { title: 'cards in library' }, icon('library'), ` ${p.library}`),
     p.treasures ? el('span', { title: 'Treasures', class: mine ? 'clickable' : '', 'data-treasure': mine ? '1' : null },
-      `◆ ${p.treasures} Treasure`) : null,
-    Object.entries(p.commander_damage || {}).map(([who, n]) => el('span', { title: `commander damage from ${who}` }, `⚔ ${who} ${n}`)));
+      icon('treasure'), ` ${p.treasures} Treasure`) : null,
+    Object.entries(p.commander_damage || {}).map(([who, n]) => el('span', { title: `commander damage from ${who}` }, icon('swords'), ` ${who} ${n}`)));
 }
 
 function battlefield(p, images, size, mine) {

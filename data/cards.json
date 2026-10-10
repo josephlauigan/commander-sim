@@ -23512,6 +23512,44 @@
    "spell_prio": false
   },
   {
+   "name": "Flickering Hound",
+   "types": "C",
+   "generic": 3,
+   "pips": "W",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "dog"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "python_hooks": [
+    "cast"
+   ],
+   "spell_prio": false
+  },
+  {
    "name": "Flickering Ward",
    "types": "E",
    "generic": 0,

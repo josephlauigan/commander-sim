@@ -11,7 +11,7 @@
   <h1>Commander Practice</h1>
   <nav id="steps" aria-label="Turn steps"></nav>
   <div id="playback" role="group" aria-label="Opponents' turns" hidden>
-    <button id="pb-pause" type="button">❚❚ Pause</button>
+    <button id="pb-pause" type="button">Pause</button>
     <button id="pb-next" type="button">Next action</button>
     <span class="speeds"><button type="button" data-speed="1">1×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="4">4×</button></span>
     <button id="pb-skip" type="button" title="Show everything up to your next decision">Skip ahead</button>
@@ -19,17 +19,20 @@
   <div id="status"></div>
   <span id="zoom" role="group" aria-label="Card size"><button type="button" data-zoom="-1" title="Smaller cards">A−</button><button type="button" data-zoom="1" title="Bigger cards">A+</button></span>
   <label id="autopass-box" hidden title="When the game stops to give you priority (from your next decision)">Stop <select id="autopass"><option value="respond">when I can respond</option><option value="stack">on every spell, ability and trigger</option><option value="all">at every step (full control)</option></select></label>
-  <button id="hint" type="button" hidden title="What would the AI do now?">💡 Hint</button>
-  <button id="undo" type="button" hidden title="Take back your last action">↶ Undo</button>
-  <button id="save" type="button" hidden title="Save this game (seed, table and your decisions) to replay later">💾 Save</button>
+  <button id="hint" type="button" hidden title="What would the AI do now?" data-icon="hint">Hint</button>
+  <button id="undo" type="button" hidden title="Take back your last action" data-icon="undo">Undo</button>
+  <button id="save" type="button" hidden title="Save this game (seed, table and your decisions) to replay later" data-icon="save">Save</button>
   <button id="to-setup" type="button" hidden>New game</button>
 </header>
 <section id="setup" aria-label="New game" hidden>
+  <div id="resume" class="resume" hidden></div>
   <form id="newgame">
+    <div id="players-pick">
     <h2>Players</h2>
     <div class="row">
       <label><input type="radio" name="players" value="one" checked> Just me, against three AI opponents</label>
       <label><input type="radio" name="players" value="two"> Me and a friend on another computer, against two AI opponents</label>
+    </div>
     </div>
     <p id="lan-note" class="help" hidden></p>
     <h2>Your deck</h2>
@@ -58,7 +61,7 @@
     <div class="row"><button type="submit" class="primary big">Start game</button> <span id="setup-error" class="error"></span></div>
   </form>
   <h2>Saved games</h2>
-  <div id="saves"><em>None yet: use 💾 Save during a game.</em></div>
+  <div id="saves"><em>None yet: use Save during a game.</em></div>
 </section>
 <section id="lobby" aria-label="Waiting for your friend" hidden></section>
 <section id="join" aria-label="Join a game" hidden></section>

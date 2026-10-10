@@ -1,5 +1,5 @@
 // The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
-import { el, card as cardOf, renderTable as drawTable, renderSteps, fitBoards } from './table.js';
+import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
 let liveFrom = 0;           // events up to this id are history replayed on load: no pop-up messages for them
@@ -381,7 +381,7 @@ function showControls() {
   const bar = $('#playback');
   const waiting = inbox.some(paced);
   bar.hidden = $('#game').hidden || !(theirTurn(lastView) || waiting);
-  $('#pb-pause').textContent = paused ? '▶ Play' : '❚❚ Pause';
+  $('#pb-pause').replaceChildren(icon(paused ? 'play' : 'pause'), paused ? ' Play' : ' Pause');
   $('#pb-next').disabled = !paused || !waiting;
   for (const b of bar.querySelectorAll('[data-speed]')) b.classList.toggle('on', +b.dataset.speed === speed);
 }
@@ -450,13 +450,26 @@ async function saveGame() {
 
 async function listSaves() {
   const r = await api('/api/saves');
-  if (!r.ok || !r.data.saves.length) return;
+  if (!r.ok) return;
+  showResume(r.data.autosave);
+  if (!r.data.saves.length) return;
   $('#saves').replaceChildren(el('table', { class: 'review' },
     el('thead', {}, el('tr', {}, ['Saved', 'Deck', 'Tier', 'Seed', 'Where', ''].map((h) => el('th', {}, h)))),
     el('tbody', {}, r.data.saves.map((x) => el('tr', {}, el('td', {}, x.saved_at || ''), el('td', {}, x.partner ? `${x.deck} + ${x.partner} (two players)` : x.deck),
       el('td', {}, (x.tier || '').toUpperCase()), el('td', {}, x.seed),
       el('td', {}, x.finished ? `finished, round ${x.round}` : `round ${x.round}`),
       el('td', {}, el('button', { onclick: () => loadGame(x.name) }, x.finished ? 'Open (review)' : 'Continue')))))));
+}
+
+// the game in progress when the page or the app was closed (the server saves it at each of your decisions)
+function showResume(x) {
+  const box = $('#resume');
+  box.hidden = !x || x.finished;
+  if (box.hidden) return;
+  const deck = catalog.decks.find((d) => d.key === x.deck);
+  box.replaceChildren(el('span', {}, el('strong', {}, 'Your last game: '),
+    `${deck ? deck.name : x.deck} at ${(x.tier || '').toUpperCase()}, round ${x.round}`, el('small', {}, ` (seed ${x.seed}, ${x.saved_at || ''})`)),
+  el('button', { class: 'primary big', onclick: () => loadGame('autosave.json') }, 'Continue'));
 }
 
 async function loadGame(name) {
@@ -654,7 +667,9 @@ function renderSetup() {
   $('#picks').replaceChildren(...tier.decks.map((x) => el('label', {},
     el('input', Object.assign({ type: 'checkbox', value: x.key }, prev.has(x.key) ? { checked: '' } : {})), ' ', x.name)));
   $('#picks').hidden = $('#newgame').opp.value !== 'pick';
-  const f = $('#newgame'), pair = f.players.value === 'two';
+  const f = $('#newgame');
+  if (catalog.app) { f.players.value = 'one'; $('#players-pick').hidden = true; }   // the iPad app: one player only
+  const pair = f.players.value === 'two';
   for (const x of document.querySelectorAll('.opp-n')) x.textContent = pair ? 'Two' : 'Three';
   for (const x of document.querySelectorAll('.opp-n-lc')) x.textContent = pair ? 'two' : 'three';
   document.querySelector('.seat-pick').hidden = pair;
@@ -705,6 +720,7 @@ function setZoom(z) {
 }
 
 async function init() {
+  for (const b of document.querySelectorAll('[data-icon]')) b.prepend(icon(b.dataset.icon), ' ');
   try { setZoom(parseFloat(localStorage.getItem('cardZoom')) || 1); } catch (e) { setZoom(1); }
   for (const b of document.querySelectorAll('#zoom button')) b.addEventListener('click', () => setZoom(zoom + 0.15 * +b.dataset.zoom));
   catalog = (await api('/api/options')).data;
