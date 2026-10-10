@@ -316,13 +316,112 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     decks::wipe_response(g, q, kind, caster)
 }
 
-/// PORT(M5): ais.seph_fill_resolve (Entomb, Buried Alive ...: what goes into the graveyard)
-pub fn seph_fill_resolve(_g: &mut Game, _p: PlayerId, _kind: Sym, _ctx: &Ctx) -> Res {
+/// ais.seph_fill_resolve: a spell that fills the graveyard resolves (Entomb, Buried Alive, Unmarked Grave, Grisly
+/// Salvage; Deadly Dispute's Treasure). HUMAN(phase 9): a person picks (hc.fill).
+pub fn seph_fill_resolve(g: &mut Game, p: PlayerId, kind: Sym, _ctx: &Ctx) -> Res {
+    use crate::engine::zones::{add_treasure, agent_for, agent_take};
+    use crate::tag::Tag;
+    let mut bombs: Vec<CardId> =
+        g.player(p).library.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 5).collect();
+    let val: Vec<f64> = bombs.iter().map(|&c| -seph_bval(g, p, c)).collect();
+    let mut keyed: Vec<(f64, CardId)> = val.into_iter().zip(bombs.iter().copied()).collect();
+    keyed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal)); // stable, as Python's sorted
+    bombs = keyed.into_iter().map(|x| x.1).collect();
+    let searches = matches!(kind, "entomb" | "buried" | "unmarked");
+    let take_from = |g: &mut Game, c: CardId| {
+        let lib = &mut g.player_mut(p).library;
+        if let Some(i) = lib.iter().position(|&x| x == c) {
+            lib.remove(i);
+        }
+    };
+    if searches && let Some(a) = agent_for(g, p) {
+        // Opposition Agent takes what they search for
+        let take: Vec<CardId> = if kind == "buried" {
+            bombs.iter().take(3).copied().collect()
+        } else {
+            bombs.iter().copied().filter(|&c| !g.db.get(c).tag(Tag::Leg) || kind == "entomb").take(1).collect()
+        };
+        for c in take {
+            take_from(g, c);
+            agent_take(g, a, p, c);
+        }
+        crate::engine::tutors::shuffle_library(g, p);
+        return Ok(());
+    }
+    match kind {
+        "entomb" => {
+            if let Some(&c) = bombs.first() {
+                take_from(g, c);
+                g.player_mut(p).gy.push(c);
+            }
+        }
+        "buried" => {
+            for &c in bombs.iter().take(3) {
+                take_from(g, c);
+                g.player_mut(p).gy.push(c);
+            }
+        }
+        "unmarked" => {
+            if let Some(&c) = bombs.iter().find(|&&c| !g.db.get(c).tag(Tag::Leg)) {
+                take_from(g, c);
+                g.player_mut(p).gy.push(c);
+            }
+        }
+        "grisly" => {
+            let n = g.player(p).library.len().min(5);
+            let mut top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
+            if let Some(i) = top.iter().position(|&c| g.db.get(c).land)
+                && g.player(p).lands.len() < 7
+            {
+                let l = top.remove(i);
+                g.player_mut(p).hand.push(l);
+            }
+            for c in top {
+                g.player_mut(p).gy.push(c);
+                if crate::engine::zones::KEYSPELL.iter().any(|&t| g.db.get(c).tag(t)) {
+                    g.player_mut(p).stat("key_milled", 1);
+                }
+            }
+        }
+        "dispute" => add_treasure(g, p, 1)?,
+        _ => {}
+    }
+    if searches {
+        crate::engine::tutors::shuffle_library(g, p);
+    }
     Ok(())
 }
 
-/// PORT(M5): ais.seph_rean_resolve (a reanimation spell resolves)
-pub fn seph_rean_resolve(_g: &mut Game, _p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res {
+/// ais.seph_rean_resolve: a reanimation spell resolves: its target (chosen now if it was cast by a generic path)
+/// enters under p's control
+pub fn seph_rean_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res {
+    use crate::tag::Tag;
+    let kind = g.db.get(c).tags.str(Tag::Rean).unwrap_or("animate").to_string();
+    let (cd, src) = match (ctx.rean_target, ctx.rean_src) {
+        (Some(cd), Some(src)) => (cd, src),
+        _ => {
+            let tg = decks::rean_targets(g, p, &kind);
+            let Some(&(_, cd, src)) = tg.first() else { return Ok(()) };
+            (cd, src)
+        }
+    };
+    let Some(i) = g.player(src).gy.iter().position(|&x| x == cd) else { return Ok(()) };
+    g.player_mut(src).gy.remove(i);
+    if kind == "reanimate" {
+        let mv = g.db.get(cd).cmc as i32;
+        crate::engine::life::lose_life(g, p, mv, Some(p), "life", None)?;
+    }
+    let was_removed = g.player(p).removed_bombs.contains(&cd);
+    let m =
+        crate::engine::zones::enter(g, p, cd, crate::engine::zones::Enter { orig: Some(src), ..Default::default() })?;
+    if kind == "persist" {
+        crate::engine::zones::minus_counter(g, m, 1);
+    }
+    if kind == "evil" {
+        g.perm_mut(m).plus += 2;
+    }
+    g.player_mut(p).stat("rean_resolved", 1);
+    note_bomb(g, p, cd, was_removed);
     Ok(())
 }
 
@@ -379,8 +478,109 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
     brain::main(g, p, post)
 }
 
-/// PORT(M5): ais.combo_interrupted (an opponent stops a combo with a counter or removal)
-pub fn combo_interrupted(_g: &mut Game, _p: PlayerId, _which: &str, _key: &[PermId]) -> Res<bool> {
+/// ais.combo_interrupted: p goes for a combo (`which`: 'veyran', 'sauron') whose key permanents are `key`; an opponent
+/// stops it with instant removal on a key piece, or (Veyran's spell loop) a counterspell. Seph's Tidebinder first.
+pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId]) -> Res<bool> {
+    use crate::engine::cast::cast_card;
+    use crate::engine::mana::{can_pay, pay};
+    use crate::engine::removal::legal_targets;
+    use crate::engine::stack::{cast_counter, free_counter, pick_counter};
+    use crate::tag::Tag;
+    let mut uncounterable = false;
+    if which == "veyran" {
+        // Mistrise Village: {U},{T}: the next spell can't be countered
+        let ml =
+            g.player(p).lands.iter().copied().find(|&l| g.db.get(g.land(l).cd).tag(Tag::Mistrise) && !g.land(l).tapped);
+        if let Some(l) = ml {
+            g.land_mut(l).tapped = true;
+            if can_pay(g, p, 0, "U", false) {
+                pay(g, p, 0, "U", false)?;
+                uncounterable = true;
+                crate::glog!(g, "    Mistrise Village: the loop spell can't be countered");
+            } else {
+                g.land_mut(l).tapped = false;
+            }
+        }
+    }
+    if tide_response(g, p, &format!("combo_{which}"), 10.0, None)? {
+        if which == "veyran" {
+            for m in crate::engine::values::find(g, p, Tag::Vkitten) {
+                g.perm_mut(m).neutered = true;
+            }
+        }
+        return Ok(true);
+    }
+    let qs: Vec<PlayerId> = g.after(p).collect();
+    for q in qs {
+        if !g.player(q).alive || q == p || g.over || crate::engine::values::silenced(g, q) {
+            continue;
+        }
+        if g.rng.random() > 0.95 {
+            continue;
+        }
+        for c in g.player(q).hand.clone() {
+            let d = g.db.get(c);
+            let Some(rem) = d.tags.str(Tag::Rem) else { continue };
+            if !d.instant {
+                continue;
+            }
+            let tgt = d.tags.str(Tag::Tgt).unwrap_or("c");
+            let tg: Vec<PermId> = legal_targets(g, q, rem, tgt, d.tag(Tag::Mv4), Some(c))
+                .into_iter()
+                .filter(|m| key.contains(m))
+                .collect();
+            let (generic, pips) = (d.generic, d.pips.to_string());
+            if tg.is_empty() || !can_pay(g, q, generic, &pips, false) {
+                continue;
+            }
+            pay(g, q, generic, &pips, false)?;
+            cast_card(g, q, c, "hand", Ctx { target: Some(tg[0]), ..Ctx::default() })?;
+            let x = g.perm(tg[0]);
+            if !x.on_bf || x.owner != p || x.phased {
+                g.player_mut(q).stat("combo_stops_removal", 1);
+                return Ok(true);
+            }
+            break;
+        }
+        if which == "veyran" && !uncounterable {
+            let ctrs: Vec<CardId> = g
+                .player(q)
+                .hand
+                .iter()
+                .copied()
+                .filter(|&c| matches!(g.db.get(c).tags.str(Tag::Ctr), Some("any" | "nc" | "ise")))
+                .collect();
+            for ctr in ctrs {
+                let d = g.db.get(ctr);
+                if !free_counter(g, q, ctr) && !can_pay(g, q, d.generic, &d.pips.to_string(), false) {
+                    continue;
+                }
+                if !cast_counter(g, q, ctr, None)? {
+                    continue;
+                }
+                if let Some(back) = pick_counter(g, p, ctr)
+                    && cast_counter(g, p, back, Some(ctr))?
+                {
+                    break;
+                }
+                g.player_mut(q).stat("combo_stops_counter", 1);
+                return Ok(true);
+            }
+        }
+    }
+    Ok(false)
+}
+
+/// ais.tide_response: Sephiroth's Tishana's Tidebinder counters an ability `actor` activates or triggers. No card has
+/// the `tide` tag now (the Tidebinder left Sephiroth's list), so it never fires; PORT(phase 6) if the card comes back
+/// (it needs `tide` in rust/tools/gen_tags.py's CODE_ONLY).
+pub fn tide_response(
+    _g: &mut Game,
+    _actor: PlayerId,
+    _what: &str,
+    _value: f64,
+    _victim: Option<PlayerId>,
+) -> Res<bool> {
     Ok(false)
 }
 
@@ -397,8 +597,26 @@ pub fn seph_bval(g: &Game, _p: PlayerId, c: CardId) -> f64 {
     }
 }
 
-/// PORT(phase 6): ais.note_bomb (Sephiroth's reports)
-pub fn note_bomb(_g: &mut Game, _p: PlayerId, _c: CardId, _was_removed: bool) {}
+/// ais.note_bomb: a bomb landed (the reports, and Sephiroth's plan turn)
+pub fn note_bomb(g: &mut Game, p: PlayerId, c: CardId, was_removed: bool) {
+    let d = g.db.get(c);
+    if d.bomb >= 6 || d.pow >= 6 {
+        let name = d.name.to_string();
+        crate::glog!(
+            g,
+            "    {name} hits the battlefield{}",
+            if was_removed { " (recovered after removal)" } else { "" }
+        );
+        let pl = g.player_mut(p);
+        pl.stat("bombs_landed", 1);
+        if pl.first_bomb.is_none() {
+            pl.first_bomb = Some(pl.turns);
+        }
+        if was_removed {
+            pl.stat("bomb_recovered", 1);
+        }
+    }
+}
 
 /// PORT(phase 6): ais.seph_dredge (Sephiroth dredges instead of drawing)
 pub fn seph_dredge(_g: &mut Game, _p: PlayerId) -> Res<bool> {
