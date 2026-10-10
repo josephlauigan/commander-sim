@@ -341,7 +341,7 @@ def run(g, p, e, src, ctx, spell, depth):
         f = e.get('filter') or {'type': 'creature'}
         for q in players(g, p, e.get('who', 'each_opponent'), ctx):
             for _ in range(num(g, p, e.get('n', 1), ctx, src)):
-                cs = [m for m in q.perms if matches(g, q, m, dict(f, controller=None))]
+                cs = [m for m in q.perms if matches(g, q, m, dict(f, controller=None)) and not E.no_sac(m)]
                 if cs: die(g, min(cs, key=lambda m: pval(g, m)), 'sac')
     elif d == 'add_mana': p.floatA += num(g, p, e.get('n'), ctx, src)
     elif d == 'extra_combat': p.extra_combats += 1
