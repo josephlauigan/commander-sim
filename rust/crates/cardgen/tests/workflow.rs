@@ -33,7 +33,14 @@ fn scratch(name: &str) -> Project {
 }
 
 fn card<'a>(cards: &'a J, name: &str) -> &'a J {
-    cards.get("cards").unwrap().as_arr().unwrap().iter().find(|c| c.s_or("name") == name).unwrap_or_else(|| panic!("no card {name}"))
+    cards
+        .get("cards")
+        .unwrap()
+        .as_arr()
+        .unwrap()
+        .iter()
+        .find(|c| c.s_or("name") == name)
+        .unwrap_or_else(|| panic!("no card {name}"))
 }
 
 fn append(p: &Project, file: &str, text: &str) {
@@ -119,7 +126,8 @@ fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let fixture = std::fs::read_to_string(p.root.join("tests/fixtures/my_decks_parsed.json")).unwrap();
     assert!(fixture.contains("\"Sol Ring\""));
     // a bad list stops before any file is touched
-    let o = run(&p, "jodah", &format!("{text}\n1 Sol Ring"), &Options { dry: false, log: None, offline: true }).unwrap();
+    let o =
+        run(&p, "jodah", &format!("{text}\n1 Sol Ring"), &Options { dry: false, log: None, offline: true }).unwrap();
     assert!(!o.ok);
     assert!(o.text.contains("101 cards, expected 100") && o.text.contains("not singleton: Sol Ring"), "{}", o.text);
     assert_eq!(std::fs::read_to_string(&path).unwrap(), after);

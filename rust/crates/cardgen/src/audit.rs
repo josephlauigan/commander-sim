@@ -52,7 +52,9 @@ pub struct AuditData {
 }
 
 fn strs(v: Option<&toml::Value>) -> Vec<String> {
-    v.and_then(|v| v.as_array()).map(|a| a.iter().filter_map(|x| x.as_str().map(|s| s.to_string())).collect()).unwrap_or_default()
+    v.and_then(|v| v.as_array())
+        .map(|a| a.iter().filter_map(|x| x.as_str().map(|s| s.to_string())).collect())
+        .unwrap_or_default()
 }
 
 fn status_note(v: &toml::Value) -> (String, String) {
@@ -103,7 +105,9 @@ fn main_audit(p: &Project) -> BTreeMap<String, (String, String)> {
     let mut st = BTreeMap::new();
     if let Ok(text) = read(&p.root.join("documents").join("card-audit.md")) {
         for line in text.lines() {
-            if let Some(m) = rmatch(r"^\| (.+?) \| (Modeled|Approximate|Partial|Not modeled|Unverified) \| (.*?) \|", line) {
+            if let Some(m) =
+                rmatch(r"^\| (.+?) \| (Modeled|Approximate|Partial|Not modeled|Unverified) \| (.*?) \|", line)
+            {
                 st.entry(m.gs(1).to_string()).or_insert((m.gs(2).to_string(), m.gs(3).to_string()));
             }
         }
@@ -123,7 +127,9 @@ pub fn rules_text(oracle: &str) -> String {
     let t = sub(r"\([^)]*\)", "", oracle);
     let keep: Vec<&str> = t
         .split('\n')
-        .filter(|l| !l.trim().is_empty() && !l.split(',').all(|w| SIMPLE_KW.contains(&w.trim().to_lowercase().as_str())))
+        .filter(|l| {
+            !l.trim().is_empty() && !l.split(',').all(|w| SIMPLE_KW.contains(&w.trim().to_lowercase().as_str()))
+        })
         .collect();
     keep.join(" / ")
 }
@@ -150,7 +156,8 @@ impl<'a> Audit<'a> {
     }
 
     fn deck_only(&self, cd: &Cd) -> Vec<String> {
-        let mut bad: Vec<String> = cd.tags.keys().filter(|k| self.data.deck_only_tags.contains(*k)).map(|k| k.to_string()).collect();
+        let mut bad: Vec<String> =
+            cd.tags.keys().filter(|k| self.data.deck_only_tags.contains(*k)).map(|k| k.to_string()).collect();
         for (k, ok) in &self.data.pool_ok {
             if let Some(v) = cd.tags.get(k) {
                 let v = v.py_str();
@@ -177,13 +184,26 @@ impl<'a> Audit<'a> {
         }
         let rec = self.inp.cache.get(name);
         let kws: BTreeSet<String> = rec
-            .map(|r| r.strs("keywords").iter().map(|k| k.to_lowercase()).filter(|k| self.data.unsupported_keywords.contains(k)).collect())
+            .map(|r| {
+                r.strs("keywords")
+                    .iter()
+                    .map(|k| k.to_lowercase())
+                    .filter(|k| self.data.unsupported_keywords.contains(k))
+                    .collect()
+            })
             .unwrap_or_default();
-        let kwnote = if kws.is_empty() { String::new() } else { format!("keywords not modeled: {}", kws.iter().cloned().collect::<Vec<_>>().join(", ")) };
+        let kwnote = if kws.is_empty() {
+            String::new()
+        } else {
+            format!("keywords not modeled: {}", kws.iter().cloned().collect::<Vec<_>>().join(", "))
+        };
         if cd.source == "manual" {
             let bad = self.deck_only(cd);
             if !bad.is_empty() && !mine {
-                return ("Unmodeled".into(), format!("hand tags ({}) are only acted on by the main decks' AI", bad.join(", ")));
+                return (
+                    "Unmodeled".into(),
+                    format!("hand tags ({}) are only acted on by the main decks' AI", bad.join(", ")),
+                );
             }
             let (s, note) = self.main.get(name).cloned().unwrap_or(("Modeled".into(), "hand-tagged".into()));
             let s = match s.as_str() {
@@ -197,14 +217,20 @@ impl<'a> Audit<'a> {
         if cd.land() {
             let util: Vec<String> = rec.map(|r| autotag(r).unparsed).unwrap_or_default();
             if !util.is_empty() {
-                return ("Partial".into(), format!("land utility ignored: {}", util.iter().map(|u| cut(u, 70)).collect::<Vec<_>>().join("; ")));
+                return (
+                    "Partial".into(),
+                    format!("land utility ignored: {}", util.iter().map(|u| cut(u, 70)).collect::<Vec<_>>().join("; ")),
+                );
             }
             return ("Full".into(), "mana only".into());
         }
         let mut functional: Vec<&str> = cd.tags.keys().filter(|k| !self.data.stat_tags.contains(*k)).collect();
         functional.sort();
         let abil_empty = cd.dsl.as_ref().is_none_or(|d| {
-            d.iter().all(|a| a.get("static").and_then(|s| s.as_str()) == Some("note") || a.get("type").and_then(|s| s.as_str()) == Some("additional_cost"))
+            d.iter().all(|a| {
+                a.get("static").and_then(|s| s.as_str()) == Some("note")
+                    || a.get("type").and_then(|s| s.as_str()) == Some("additional_cost")
+            })
         });
         let unparsed = &cd.unparsed;
         let oracle = {
@@ -212,7 +238,12 @@ impl<'a> Audit<'a> {
             if !o.is_empty() {
                 o
             } else {
-                rec.and_then(|r| r.get("card_faces")).and_then(|f| f.as_arr()).map(|f| f.iter().map(|x| x.s("oracle_text").unwrap_or("").to_string()).collect::<Vec<_>>().join(" ")).unwrap_or_default()
+                rec.and_then(|r| r.get("card_faces"))
+                    .and_then(|f| f.as_arr())
+                    .map(|f| {
+                        f.iter().map(|x| x.s("oracle_text").unwrap_or("").to_string()).collect::<Vec<_>>().join(" ")
+                    })
+                    .unwrap_or_default()
             }
         };
         let first3 = |n: usize| unparsed.iter().take(3).map(|u| cut(u, n)).collect::<Vec<_>>().join("; ");
@@ -241,7 +272,11 @@ impl<'a> Audit<'a> {
     }
 
     fn mech(&self, m: &str) -> (String, String) {
-        self.data.mechanics.get(m).cloned().unwrap_or(("Unmodeled".into(), format!("mechanic {m} is not in data/audit.toml")))
+        self.data
+            .mechanics
+            .get(m)
+            .cloned()
+            .unwrap_or(("Unmodeled".into(), format!("mechanic {m} is not in data/audit.toml")))
     }
 
     pub fn engine_status(&self, deck: &PoolDeck, cards: &[String], mechs: &[String]) -> (String, Vec<String>) {
@@ -286,12 +321,14 @@ pub fn audit_pool<'a>(a: &Audit, decks: &'a [PoolDeck]) -> Vec<Row<'a>> {
         let mut uniq: Vec<&String> = d.cards.iter().collect();
         uniq.sort();
         uniq.dedup();
-        let per: BTreeMap<String, (String, String)> = uniq.iter().map(|n| ((*n).clone(), a.card_status(n, false))).collect();
+        let per: BTreeMap<String, (String, String)> =
+            uniq.iter().map(|n| ((*n).clone(), a.card_status(n, false))).collect();
         let mut cnt: BTreeMap<String, usize> = BTreeMap::new();
         for (s, _) in per.values() {
             *cnt.entry(s.clone()).or_default() += 1;
         }
-        let engines: &[Engine] = a.data.engines.iter().find(|(k, _)| *k == d.key).map(|(_, e)| e.as_slice()).unwrap_or(&[]);
+        let engines: &[Engine] =
+            a.data.engines.iter().find(|(k, _)| *k == d.key).map(|(_, e)| e.as_slice()).unwrap_or(&[]);
         let eng = engines
             .iter()
             .map(|e| {
@@ -313,7 +350,8 @@ pub fn markdown(rows: &[Row]) -> String {
     for r in rows {
         let mut e: BTreeMap<String, usize> = BTreeMap::new();
         for (_, s, _) in &r.eng {
-            *e.entry(if rank(s) >= rank("Full-auto") { "full".to_string() } else { s.to_lowercase() }).or_default() += 1;
+            *e.entry(if rank(s) >= rank("Full-auto") { "full".to_string() } else { s.to_lowercase() }).or_default() +=
+                1;
         }
         let g = |k: &str| e.get(k).copied().unwrap_or(0);
         l.push(format!(
@@ -334,7 +372,10 @@ pub fn markdown(rows: &[Row]) -> String {
         l.push("| Engine | Status | What is missing |".into());
         l.push("|---|---|---|".into());
         for (label, s, notes) in &r.eng {
-            l.push(format!("| {label} | {s} | {} |", if notes.is_empty() { "-".to_string() } else { notes.join("; ") }));
+            l.push(format!(
+                "| {label} | {s} | {} |",
+                if notes.is_empty() { "-".to_string() } else { notes.join("; ") }
+            ));
         }
         l.push(String::new());
     }
@@ -344,7 +385,11 @@ pub fn markdown(rows: &[Row]) -> String {
 /// the summary table (default `cardgen audit` output)
 pub fn summary(rows: &[Row]) -> String {
     let mut out = String::new();
-    out.push_str(&format!("{:<34} {}   engines ok\n", "deck", STATUSES.iter().map(|s| format!("{:>9}", cut(s, 9))).collect::<Vec<_>>().join(" ")));
+    out.push_str(&format!(
+        "{:<34} {}   engines ok\n",
+        "deck",
+        STATUSES.iter().map(|s| format!("{:>9}", cut(s, 9))).collect::<Vec<_>>().join(" ")
+    ));
     let mut tot: BTreeMap<&str, usize> = BTreeMap::new();
     for r in rows {
         let ok = r.eng.iter().filter(|(_, s, _)| rank(s) >= rank("Full-auto")).count();
@@ -388,7 +433,8 @@ pub fn mine_report(a: &Audit) -> String {
     for (k, cards) in &a.inp.my_cards {
         let uniq: BTreeSet<&String> = cards.iter().collect();
         let per: Vec<(&String, (String, String))> = uniq.iter().map(|n| (*n, a.card_status(n, true))).collect();
-        let mut bad: Vec<(&String, &(String, String))> = per.iter().filter(|(_, sn)| rank(&sn.0) < rank("Full-auto")).map(|(n, sn)| (*n, sn)).collect();
+        let mut bad: Vec<(&String, &(String, String))> =
+            per.iter().filter(|(_, sn)| rank(&sn.0) < rank("Full-auto")).map(|(n, sn)| (*n, sn)).collect();
         out.push_str(&format!("== {k}: {} unique cards, {} not Full\n", per.len(), bad.len()));
         bad.sort_by_key(|(n, sn)| (rank(&sn.0), (*n).clone()));
         for (n, (s, note)) in bad {

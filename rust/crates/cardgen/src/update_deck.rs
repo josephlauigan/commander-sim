@@ -35,8 +35,18 @@ use std::path::{Path, PathBuf};
 use unicode_normalization::{UnicodeNormalization, char::canonical_combining_class};
 
 /// the groups of '## Decklist by type', in the order a new group is placed
-const GROUPS: [&str; 10] =
-    ["Commander", "Creatures", "Planeswalkers", "Battles", "Enchantments", "Artifacts", "Instants and sorceries", "Sorceries", "Instants", "Lands"];
+const GROUPS: [&str; 10] = [
+    "Commander",
+    "Creatures",
+    "Planeswalkers",
+    "Battles",
+    "Enchantments",
+    "Artifacts",
+    "Instants and sorceries",
+    "Sorceries",
+    "Instants",
+    "Lands",
+];
 
 // ------------------------------------------------------------------ reading the list
 /// [(count, name)] from a pasted list
@@ -56,7 +66,9 @@ pub fn parse_list(text: &str) -> Vec<(usize, String)> {
         match rmatch(r"(?i)^(\d+)\s*x?\s+(.+)$", &line) {
             Some(m) => out.push((m.gs(1).parse().unwrap_or(1), m.gs(2).trim().to_string())),
             None => {
-                if rmatch(r"(?i)^(commander|commanders|deck|main ?deck|mainboard|companion|about|name)\b.*$", &line).is_some() {
+                if rmatch(r"(?i)^(commander|commanders|deck|main ?deck|mainboard|companion|about|name)\b.*$", &line)
+                    .is_some()
+                {
                     continue;
                 }
                 out.push((1, line));
@@ -184,24 +196,33 @@ pub fn rewrite(
     key: SortKey,
 ) -> Result<String, String> {
     let count_of = |n: &str| counts.iter().find(|(x, _)| x == n).map(|(_, k)| *k).unwrap_or(0);
-    let singles = sorted_by(counts.iter().filter(|(n, _)| !BASICS.contains(&n.as_str())).map(|(n, _)| n.clone()).collect(), key);
+    let singles =
+        sorted_by(counts.iter().filter(|(n, _)| !BASICS.contains(&n.as_str())).map(|(n, _)| n.clone()).collect(), key);
     let import = r"(?ms)^## Import list \(\d+\)\s*\n\s*```\n(.*?)\n```";
     let m = search(import, text);
-    let was: Vec<String> =
-        m.as_ref().map(|m| m.gs(1).split('\n').filter(|l| l.contains(' ')).map(|l| l.split_once(' ').unwrap().1.to_string()).collect()).unwrap_or_default();
-    let mut basics: Vec<String> = counts.iter().filter(|(n, _)| BASICS.contains(&n.as_str())).map(|(n, _)| n.clone()).collect();
+    let was: Vec<String> = m
+        .as_ref()
+        .map(|m| {
+            m.gs(1).split('\n').filter(|l| l.contains(' ')).map(|l| l.split_once(' ').unwrap().1.to_string()).collect()
+        })
+        .unwrap_or_default();
+    let mut basics: Vec<String> =
+        counts.iter().filter(|(n, _)| BASICS.contains(&n.as_str())).map(|(n, _)| n.clone()).collect();
     basics.sort_by_key(|n| (was.iter().position(|w| w == n).unwrap_or(was.len()), n.clone()));
     let total: usize = counts.iter().map(|(_, k)| k).sum();
     // import list
-    let block: String = singles.iter().chain(basics.iter()).map(|n| format!("{} {n}", count_of(n))).collect::<Vec<_>>().join("\n");
+    let block: String =
+        singles.iter().chain(basics.iter()).map(|n| format!("{} {n}", count_of(n))).collect::<Vec<_>>().join("\n");
     let m = search(import, text).ok_or("the file has no \"## Import list\" block")?;
     let mut text = format!("{}## Import list ({total})\n\n```\n{block}\n```{}", &text[..m.start()], &text[m.end()..]);
     // decklist by type: replace the bold group lines, keep everything else in the section
     if let Some(m) = search(r"(?ms)^## Decklist by type \(\d+\)[ \t]*\n(.*?)(?=^## )", &text) {
         let body = m.gs(1).to_string();
         let lines: Vec<&str> = body.split('\n').collect();
-        let bold: Vec<usize> = (0..lines.len()).filter(|i| rmatch(r"^\*\*[^*]+ \(\d+\)\.\*\*", lines[*i]).is_some()).collect();
-        let labels: Vec<String> = bold.iter().map(|i| rmatch(r"^\*\*(.+?) \(\d+\)\.\*\*", lines[*i]).unwrap().gs(1).to_string()).collect();
+        let bold: Vec<usize> =
+            (0..lines.len()).filter(|i| rmatch(r"^\*\*[^*]+ \(\d+\)\.\*\*", lines[*i]).is_some()).collect();
+        let labels: Vec<String> =
+            bold.iter().map(|i| rmatch(r"^\*\*(.+?) \(\d+\)\.\*\*", lines[*i]).unwrap().gs(1).to_string()).collect();
         let mut groups: Vec<(String, Vec<String>)> = vec![];
         for n in singles.iter().chain(basics.iter()) {
             if n == commander {
@@ -214,13 +235,15 @@ pub fn rewrite(
             }
         }
         let show = |n: &str| if by_type_commas { n.to_string() } else { n.replace(',', "") };
-        let lands_lines = bold.iter().filter(|i| lines[**i].contains("Lands")).map(|i| lines[*i]).collect::<Vec<_>>().join(" ");
+        let lands_lines =
+            bold.iter().filter(|i| lines[**i].contains("Lands")).map(|i| lines[*i]).collect::<Vec<_>>().join(" ");
         let seen = findall(r"\b\d+ ([A-Z][\w-]*(?: [A-Z][\w-]*)*)", &lands_lines);
         let basic_rank = |n: &String| (seen.iter().position(|s| s == n).unwrap_or(seen.len()), n.clone());
         let has_group = |g: &str| groups.iter().any(|(k, _)| k == g);
         let mut order: Vec<String> = labels.iter().filter(|l| *l != "Commander").cloned().collect();
         order.extend(GROUPS.iter().filter(|g| has_group(g) && !labels.iter().any(|l| l == *g)).map(|g| g.to_string()));
-        let mut rest_groups: Vec<String> = groups.iter().map(|(k, _)| k.clone()).filter(|g| !GROUPS.contains(&g.as_str())).collect();
+        let mut rest_groups: Vec<String> =
+            groups.iter().map(|(k, _)| k.clone()).filter(|g| !GROUPS.contains(&g.as_str())).collect();
         rest_groups.sort();
         order.extend(rest_groups);
         let cmd_line = lines.iter().find(|l| l.starts_with("**Commander (1).**")).map(|l| l.to_string());
@@ -247,10 +270,18 @@ pub fn rewrite(
         text = format!("{}## Decklist by type ({total})\n{}{}", &text[..m.start()], body2.join("\n"), &text[m.end()..]);
     }
     // a pool deck's header lines
-    let gcs = sorted_by(counts.iter().filter(|(n, _)| recs[n].get("game_changer").is_some_and(|g| g.truthy())).map(|(n, _)| n.clone()).collect(), key);
+    let gcs = sorted_by(
+        counts
+            .iter()
+            .filter(|(n, _)| recs[n].get("game_changer").is_some_and(|g| g.truthy()))
+            .map(|(n, _)| n.clone())
+            .collect(),
+        key,
+    );
     if let Some(m) = search(r"(?m)^- \*\*Game Changers \(\d+\):\*\*\s*(.*)$", &text) {
         let claimed: usize = search(r"\((\d+)\)", m.all()).unwrap().gs(1).parse().unwrap_or(0);
-        let same = claimed == gcs.len() && gcs.iter().all(|n| m.gs(1).contains(n.as_str()) || m.gs(1).contains(n.split(" // ").next().unwrap()));
+        let same = claimed == gcs.len()
+            && gcs.iter().all(|n| m.gs(1).contains(n.as_str()) || m.gs(1).contains(n.split(" // ").next().unwrap()));
         if !same {
             // only when the set changed
             let list = if gcs.is_empty() { "none".to_string() } else { gcs.join(", ") };
@@ -357,7 +388,11 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
             continue;
         };
         let Some(name) = canonical(n, &rec, &known) else {
-            problems.push(format!("{} matched a different card on Scryfall ({}): check the spelling", py_repr(n), rec.s_or("name")));
+            problems.push(format!(
+                "{} matched a different card on Scryfall ({}): check the spelling",
+                py_repr(n),
+                rec.s_or("name")
+            ));
             continue;
         };
         match counts.iter_mut().find(|(x, _)| *x == name) {
@@ -367,7 +402,13 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         recs.insert(name, rec);
     }
     let in_pool = path.to_string_lossy().contains(&format!("{0}pool{0}", std::path::MAIN_SEPARATOR));
-    let tier = if in_pool { path.parent().and_then(|d| d.file_name()).map(|s| s.to_string_lossy().split('-').next().unwrap_or("").to_string()) } else { None };
+    let tier = if in_pool {
+        path.parent()
+            .and_then(|d| d.file_name())
+            .map(|s| s.to_string_lossy().split('-').next().unwrap_or("").to_string())
+    } else {
+        None
+    };
     let cards: Vec<String> = counts.iter().flat_map(|(n, k)| std::iter::repeat_n(n.clone(), *k)).collect();
     problems.extend(decks::structural_problems(&cards, &commander, 100)); // every problem at once, not only the first
     problems.extend(decks::card_problems(&cards, &commander, tier.as_deref(), None, &|n| recs.get(n).cloned()).0);
@@ -384,22 +425,42 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     uniq_old.sort();
     uniq_old.dedup();
     let out_cards = sorted_by(uniq_old.iter().filter(|n| count_of(n) == 0).cloned().collect(), SortKey::Plain);
-    let in_cards = sorted_by(counts.iter().filter(|(n, _)| old_count(n) == 0).map(|(n, _)| n.clone()).collect(), SortKey::Plain);
-    let moved = sorted_by(uniq_old.iter().filter(|n| count_of(n) > 0 && old_count(n) != count_of(n)).cloned().collect(), SortKey::Plain);
+    let in_cards =
+        sorted_by(counts.iter().filter(|(n, _)| old_count(n) == 0).map(|(n, _)| n.clone()).collect(), SortKey::Plain);
+    let moved = sorted_by(
+        uniq_old.iter().filter(|n| count_of(n) > 0 && old_count(n) != count_of(n)).cloned().collect(),
+        SortKey::Plain,
+    );
     let by_type = search(r"(?ms)^## Decklist by type.*?(?=^## )", &text);
-    let typed: String = by_type.map(|m| m.all().split('\n').filter(|l| !l.starts_with("**Commander")).collect::<Vec<_>>().join("\n")).unwrap_or_default();
+    let typed: String = by_type
+        .map(|m| m.all().split('\n').filter(|l| !l.starts_with("**Commander")).collect::<Vec<_>>().join("\n"))
+        .unwrap_or_default();
     let commas = uniq_old.iter().any(|n| n.contains(',') && typed.contains(n.as_str()) && *n != commander);
     let today = today();
     let note = opts.log.as_ref().map(|l| {
         let join = |v: &Vec<String>| if v.is_empty() { "nothing".to_string() } else { v.join(", ") };
-        format!("Out: {}. In: {}.{}", join(&out_cards), join(&in_cards), if l.is_empty() { String::new() } else { format!(" {l}") })
+        format!(
+            "Out: {}. In: {}.{}",
+            join(&out_cards),
+            join(&in_cards),
+            if l.is_empty() { String::new() } else { format!(" {l}") }
+        )
     });
-    let singles_old: Vec<String> = old.iter().filter(|n| !BASICS.contains(&n.as_str()) && old_count(n) == 1).cloned().collect();
+    let singles_old: Vec<String> =
+        old.iter().filter(|n| !BASICS.contains(&n.as_str()) && old_count(n) == 1).cloned().collect();
     let key = sort_key(&singles_old);
     let new_text = rewrite(&text, &commander, &counts, &recs, commas, &today, note.as_deref(), key)?;
 
-    let rel = path.strip_prefix(&project.root).map(|p| p.to_string_lossy().to_string()).unwrap_or(path.to_string_lossy().to_string());
-    say!("{rel}: {} out, {} in{}", out_cards.len(), in_cards.len(), if moved.is_empty() { String::new() } else { format!(", {} basic counts changed", moved.len()) });
+    let rel = path
+        .strip_prefix(&project.root)
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or(path.to_string_lossy().to_string());
+    say!(
+        "{rel}: {} out, {} in{}",
+        out_cards.len(),
+        in_cards.len(),
+        if moved.is_empty() { String::new() } else { format!(", {} basic counts changed", moved.len()) }
+    );
     if !out_cards.is_empty() {
         say!("  out: {}", out_cards.join(", "));
     }
@@ -409,14 +470,19 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     for n in &moved {
         say!("  {n}: {} -> {}", old_count(n), count_of(n));
     }
-    let gcs: Vec<&String> = counts.iter().map(|(n, _)| n).filter(|n| recs[*n].get("game_changer").is_some_and(|g| g.truthy())).collect();
+    let gcs: Vec<&String> =
+        counts.iter().map(|(n, _)| n).filter(|n| recs[*n].get("game_changer").is_some_and(|g| g.truthy())).collect();
     let mut gcs_sorted = gcs.clone();
     gcs_sorted.sort();
     say!(
         "  {} cards, {} Game Changers{}",
         counts.iter().map(|(_, k)| k).sum::<usize>(),
         gcs.len(),
-        if gcs.is_empty() { String::new() } else { format!(" ({})", gcs_sorted.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ")) }
+        if gcs.is_empty() {
+            String::new()
+        } else {
+            format!(" ({})", gcs_sorted.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", "))
+        }
     );
     if new_text == text {
         say!("Nothing to change.");
@@ -442,10 +508,16 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         say!("\nHow the simulator models the new cards:");
         for n in &in_cards {
             let (s, note) = a.card_status(n, mine);
-            say!("  {:<11} {n}{}", s, if s != "Full" && !note.is_empty() { format!(": {}", cut(&note, 110)) } else { String::new() });
+            say!(
+                "  {:<11} {n}{}",
+                s,
+                if s != "Full" && !note.is_empty() { format!(": {}", cut(&note, 110)) } else { String::new() }
+            );
         }
         if in_cards.iter().any(|n| audit::rank(&a.card_status(n, mine).0) < audit::rank("Full-auto")) {
-            say!("  Cards below Full-auto play weaker (or stronger) than the real card; worth modeling before measuring.");
+            say!(
+                "  Cards below Full-auto play weaker (or stronger) than the real card; worth modeling before measuring."
+            );
         }
     }
     let kept: Vec<String> = if path.exists() { decks::load(&path).unwrap_or_default() } else { vec![] };
@@ -458,7 +530,8 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         for n in &out_cards {
             let short = n.split(" // ").next().unwrap().split(',').next().unwrap();
             // a short name ("Kefka") only counts when no card still in the deck, and not the commander, shares it
-            let short_ok = short.chars().count() >= 6 && !cmd_line.contains(short) && !kept.iter().any(|k| k.contains(short));
+            let short_ok =
+                short.chars().count() >= 6 && !cmd_line.contains(short) && !kept.iter().any(|k| k.contains(short));
             if line.contains(n.as_str()) || line.contains(&n.replace(',', "")) || (short_ok && line.contains(short)) {
                 hits.push((i + 1, n.clone(), line.trim().to_string()));
             }
@@ -502,4 +575,3 @@ fn record_fixture(inp: &Inputs) -> Result<(), String> {
     let path = inp.project.root.join("tests").join("fixtures").join("my_decks_parsed.json");
     std::fs::write(&path, fixture_json(inp)?).map_err(|e| format!("{}: {e}", path.display()))
 }
-

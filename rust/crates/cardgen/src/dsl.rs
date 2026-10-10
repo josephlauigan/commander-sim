@@ -8,8 +8,35 @@ use crate::json::{J, Obj};
 
 /// the tags a hand-written or autotagged card keeps when abilities are compiled
 pub const SAFE_TAGS: [&str; 29] = [
-    "pow", "tgh", "fly", "dt", "vig", "lifelink", "haste", "trample", "reach", "flash", "convoke", "leg", "human", "warrior",
-    "shaman", "wizard", "c", "t", "ck", "f", "amt", "rock", "dork", "rite", "bomb", "fb", "perCreature", "noatk", "spectacle",
+    "pow",
+    "tgh",
+    "fly",
+    "dt",
+    "vig",
+    "lifelink",
+    "haste",
+    "trample",
+    "reach",
+    "flash",
+    "convoke",
+    "leg",
+    "human",
+    "warrior",
+    "shaman",
+    "wizard",
+    "c",
+    "t",
+    "ck",
+    "f",
+    "amt",
+    "rock",
+    "dork",
+    "rite",
+    "bomb",
+    "fb",
+    "perCreature",
+    "noatk",
+    "spectacle",
 ];
 
 fn s<'a>(o: &'a Obj, k: &str) -> Option<&'a str> {
@@ -104,11 +131,14 @@ pub fn hints(abilities: &[Obj], types: &str) -> Obj {
                 && sel_kind == Some("all")
                 && matches!(s(&filter, "type"), Some("creature" | "nonland" | "permanent"))
             {
-                h.set("wipe", match d.unwrap() {
-                    "destroy" => "destroy",
-                    "exile" => "exile",
-                    _ => "evac",
-                });
+                h.set(
+                    "wipe",
+                    match d.unwrap() {
+                        "destroy" => "destroy",
+                        "exile" => "exile",
+                        _ => "evac",
+                    },
+                );
             }
             if d == Some("pump") && sel_kind == Some("all") && int_or(e.get("tgh"), 0) <= -4 {
                 h.set("wipe", "minus");
@@ -142,13 +172,16 @@ pub fn hints(abilities: &[Obj], types: &str) -> Obj {
                 let f: Obj = e.get("filter").and_then(|v| v.as_obj().cloned()).unwrap_or_default();
                 let t = s(&f, "type");
                 if t != Some("land") {
-                    h.set("tut", match t {
-                        Some("creature") => "cre",
-                        Some("instant_or_sorcery") => "is",
-                        Some("artifact") => "art",
-                        Some("enchantment") => "ench",
-                        _ => "any",
-                    });
+                    h.set(
+                        "tut",
+                        match t {
+                            Some("creature") => "cre",
+                            Some("instant_or_sorcery") => "is",
+                            Some("artifact") => "art",
+                            Some("enchantment") => "ench",
+                            _ => "any",
+                        },
+                    );
                 }
             }
             if d == Some("reanimate") {
@@ -163,7 +196,14 @@ pub fn hints(abilities: &[Obj], types: &str) -> Obj {
 }
 
 /// CD for a card driven by the interpreter
-pub fn build_cd(name: &str, rec_types: &str, rec_cost: &str, autotags: &Obj, oracle: &str, loyalty: Option<&str>) -> Cd {
+pub fn build_cd(
+    name: &str,
+    rec_types: &str,
+    rec_cost: &str,
+    autotags: &Obj,
+    oracle: &str,
+    loyalty: Option<&str>,
+) -> Cd {
     let (abilities, unparsed) = compile_card(name, oracle, rec_types, loyalty);
     let mut base = Obj::new();
     for (k, v) in autotags.iter() {

@@ -17,9 +17,9 @@
 //! are ints or names ("X", "creatures_you_control", "cards_in_hand", ...).
 
 use crate::json::{J, Obj};
-use crate::{jo, obj};
 use crate::py;
 use crate::re::{M, findall, fullmatch, is, rmatch, search, split, sub};
+use crate::{jo, obj};
 use fancy_regex::Regex;
 use std::cell::RefCell;
 use std::sync::LazyLock;
@@ -246,7 +246,8 @@ pub fn num_expr(s: &str) -> J {
         r"^(?:the number of )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|vampires|spirits|faeries) (you control|on the battlefield)$",
         &s,
     ) {
-        return format!("{}{}", if tm.gs(2) == "you control" { "type_you:" } else { "type_all:" }, singular(tm.gs(1))).into();
+        return format!("{}{}", if tm.gs(2) == "you control" { "type_you:" } else { "type_all:" }, singular(tm.gs(1)))
+            .into();
     }
     if s.contains("card") && s.contains("hand") {
         return "cards_in_hand".into();
@@ -294,50 +295,62 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^(?:you )?draws? (a|an|one|two|three|four|five|six|seven|x|\d+) (?:additional )?cards?$", |m| {
         Some(eff(obj! {"do" => "draw", "n" => n_(m.gs(1)), "who" => "you"}))
     }),
-    (r"^(target player|each player|each opponent|target opponent|its controller|that player) draws? (a|one|two|three|x|\d+) cards?$", |m| {
-        Some(eff(obj! {"do" => "draw", "n" => n_(m.gs(2)), "who" => who(m.gs(1))}))
-    }),
+    (
+        r"^(target player|each player|each opponent|target opponent|its controller|that player) draws? (a|one|two|three|x|\d+) cards?$",
+        |m| Some(eff(obj! {"do" => "draw", "n" => n_(m.gs(2)), "who" => who(m.gs(1))})),
+    ),
     (r"^(?:you )?draw a card for each (.+)$", |m| {
         Some(eff(obj! {"do" => "draw", "n" => num_expr(m.gs(1)), "who" => "you"}))
     }),
-    (r"^(?:you )?draw (a|one|two|three|\d+) cards?(?:,)? (?:and|then) (?:you )?(?:lose|discard) (a|one|two|three|\d+) (life|cards?)$", |m| {
-        let mut e = eff(obj! {"do" => "draw", "n" => n_(m.gs(1)), "who" => "you"});
-        e.push(if m.gs(3) == "life" {
-            obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => "you"}
-        } else {
-            obj! {"do" => "discard", "n" => n_(m.gs(2)), "who" => "you"}
-        });
-        Some(e)
-    }),
+    (
+        r"^(?:you )?draw (a|one|two|three|\d+) cards?(?:,)? (?:and|then) (?:you )?(?:lose|discard) (a|one|two|three|\d+) (life|cards?)$",
+        |m| {
+            let mut e = eff(obj! {"do" => "draw", "n" => n_(m.gs(1)), "who" => "you"});
+            e.push(if m.gs(3) == "life" {
+                obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => "you"}
+            } else {
+                obj! {"do" => "discard", "n" => n_(m.gs(2)), "who" => "you"}
+            });
+            Some(e)
+        },
+    ),
     // damage
-    (r"^(?:~ )?deals? (\d+|x) damage to (any target|any other target|target creature or planeswalker|target creature|target player or planeswalker|target player|target opponent|each opponent|each creature your opponents control|each other creature|each creature|each player|each creature and each player)$", |m| {
-        let n = n_(m.gs(1));
-        let t = m.gs(2);
-        let to = if matches!(t, "any target" | "any other target" | "target player or planeswalker") {
-            obj! {"sel" => "any_target"}
-        } else if matches!(t, "target player" | "target opponent" | "each opponent" | "each player") {
-            obj! {"sel" => "player", "who" => who(t)}
-        } else if t == "each creature and each player" {
-            return Some(vec![
-                obj! {"do" => "damage", "n" => n.clone(), "to" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature"}}},
-                obj! {"do" => "damage", "n" => n, "to" => obj!{"sel" => "player", "who" => "each_player"}},
-            ]);
-        } else {
-            selector(t)
-        };
-        Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
-    }),
+    (
+        r"^(?:~ )?deals? (\d+|x) damage to (any target|any other target|target creature or planeswalker|target creature|target player or planeswalker|target player|target opponent|each opponent|each creature your opponents control|each other creature|each creature|each player|each creature and each player)$",
+        |m| {
+            let n = n_(m.gs(1));
+            let t = m.gs(2);
+            let to = if matches!(t, "any target" | "any other target" | "target player or planeswalker") {
+                obj! {"sel" => "any_target"}
+            } else if matches!(t, "target player" | "target opponent" | "each opponent" | "each player") {
+                obj! {"sel" => "player", "who" => who(t)}
+            } else if t == "each creature and each player" {
+                return Some(vec![
+                    obj! {"do" => "damage", "n" => n.clone(), "to" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature"}}},
+                    obj! {"do" => "damage", "n" => n, "to" => obj!{"sel" => "player", "who" => "each_player"}},
+                ]);
+            } else {
+                selector(t)
+            };
+            Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
+        },
+    ),
     // destroy / exile
-    (r"^(destroy|exile) (target|all|each|up to one target|another target|up to one other target|up to (?:one|two|three) target) ([^.]+?)(?:\. (?:they|it) can't be regenerated)?$", |m| {
-        let what = selector(&format!("{} {}", m.gs(2), m.gs(3)));
-        if m.gs(3).contains("card") && m.gs(3).contains("graveyard") {
-            return Some(eff(obj! {"do" => "exile_graveyard", "who" => if m.gs(3).contains("target") { "target_player" } else { "each_player" }}));
-        }
-        if m.gs(3).contains("graveyard") {
-            return Some(eff(obj! {"do" => "exile_graveyard", "who" => "each_player"}));
-        }
-        Some(eff(obj! {"do" => m.gs(1), "what" => what}))
-    }),
+    (
+        r"^(destroy|exile) (target|all|each|up to one target|another target|up to one other target|up to (?:one|two|three) target) ([^.]+?)(?:\. (?:they|it) can't be regenerated)?$",
+        |m| {
+            let what = selector(&format!("{} {}", m.gs(2), m.gs(3)));
+            if m.gs(3).contains("card") && m.gs(3).contains("graveyard") {
+                return Some(eff(
+                    obj! {"do" => "exile_graveyard", "who" => if m.gs(3).contains("target") { "target_player" } else { "each_player" }},
+                ));
+            }
+            if m.gs(3).contains("graveyard") {
+                return Some(eff(obj! {"do" => "exile_graveyard", "who" => "each_player"}));
+            }
+            Some(eff(obj! {"do" => m.gs(1), "what" => what}))
+        },
+    ),
     (r"^return (target|all|each|up to one target|another target) ([^.]+?) to (?:its|their) owners?'s? hands?$", |m| {
         let ph = m.gs(2);
         if ph.contains("card") && ph.contains("graveyard") {
@@ -345,73 +358,101 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         }
         Some(eff(obj! {"do" => "bounce", "what" => selector(&format!("{} {}", m.gs(1), ph))}))
     }),
-    (r"^(?:return|put) (?:target |up to one target |another target )?([^.]*?)cards? from (your|a|an opponent's|target player's) graveyard (?:to|onto) the battlefield(?: under your control)?(?: tapped)?(?: with (?:a|two|three) (?:additional )?\+1/\+1 counters? on it)?$", |m| {
-        let g1 = if m.gs(1).is_empty() { "creature" } else { m.gs(1) };
-        Some(eff(obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }}))
-    }),
-    (r"^return (?:target |up to one target |up to two target )?([^.]*?)cards? from your graveyard to your hand$", |m| {
-        let g1 = if m.gs(1).is_empty() { "card" } else { m.gs(1) };
-        Some(eff(obj! {"do" => "regrow", "filter" => filt(g1), "from" => "yours"}))
-    }),
+    (
+        r"^(?:return|put) (?:target |up to one target |another target )?([^.]*?)cards? from (your|a|an opponent's|target player's) graveyard (?:to|onto) the battlefield(?: under your control)?(?: tapped)?(?: with (?:a|two|three) (?:additional )?\+1/\+1 counters? on it)?$",
+        |m| {
+            let g1 = if m.gs(1).is_empty() { "creature" } else { m.gs(1) };
+            Some(eff(
+                obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }},
+            ))
+        },
+    ),
+    (
+        r"^return (?:target |up to one target |up to two target )?([^.]*?)cards? from your graveyard to your hand$",
+        |m| {
+            let g1 = if m.gs(1).is_empty() { "card" } else { m.gs(1) };
+            Some(eff(obj! {"do" => "regrow", "filter" => filt(g1), "from" => "yours"}))
+        },
+    ),
     // search
-    (r"^search your library for (an?|up to (?:one|two|three|x))\s?([^,]*?)\s?cards?(?: with [^,]*)?(?:,| and)? ?(?:reveal (?:it|them|those cards)(?:,| and)? ?)?(?:put (?:it|that card|them|those cards|one of them|one) (into your hand|onto the battlefield(?: tapped)?|into your graveyard|on top of your library)|then shuffle and put that card on top)?(.*)$", |m| {
-        let what = m.gs(2);
-        let rest = m.gs(4);
-        let dest = match m.g(3) {
-            Some(d) => d.to_string(),
-            None => {
-                if format!("{}{}", m.all(), ctx_line()).contains("on top") {
-                    "on top of your library".to_string()
-                } else {
-                    "into your hand".to_string()
+    (
+        r"^search your library for (an?|up to (?:one|two|three|x))\s?([^,]*?)\s?cards?(?: with [^,]*)?(?:,| and)? ?(?:reveal (?:it|them|those cards)(?:,| and)? ?)?(?:put (?:it|that card|them|those cards|one of them|one) (into your hand|onto the battlefield(?: tapped)?|into your graveyard|on top of your library)|then shuffle and put that card on top)?(.*)$",
+        |m| {
+            let what = m.gs(2);
+            let rest = m.gs(4);
+            let dest = match m.g(3) {
+                Some(d) => d.to_string(),
+                None => {
+                    if format!("{}{}", m.all(), ctx_line()).contains("on top") {
+                        "on top of your library".to_string()
+                    } else {
+                        "into your hand".to_string()
+                    }
                 }
+            };
+            let to = if dest.contains("hand") {
+                "hand"
+            } else if dest.contains("battlefield") {
+                "battlefield"
+            } else if dest.contains("graveyard") {
+                "graveyard"
+            } else {
+                "top"
+            };
+            let n = if m.gs(1).contains("two") { 2 } else { 1 };
+            let filter = if !what.is_empty() && what != "a" { filt(what) } else { Obj::new() };
+            let mut e = obj! {"do" => "search", "filter" => filter, "to" => to, "n" => n, "tapped" => dest.contains("tapped") || rest.contains("tapped")};
+            if what.contains("basic land") || search(r"\b(forest|plains|island|swamp|mountain|land)\b", what).is_some()
+            {
+                e.set("filter", obj! {"type" => "land", "basic" => what.contains("basic")});
             }
-        };
-        let to = if dest.contains("hand") {
-            "hand"
-        } else if dest.contains("battlefield") {
-            "battlefield"
-        } else if dest.contains("graveyard") {
-            "graveyard"
-        } else {
-            "top"
-        };
-        let n = if m.gs(1).contains("two") { 2 } else { 1 };
-        let filter = if !what.is_empty() && what != "a" { filt(what) } else { Obj::new() };
-        let mut e = obj! {"do" => "search", "filter" => filter, "to" => to, "n" => n, "tapped" => dest.contains("tapped") || rest.contains("tapped")};
-        if what.contains("basic land") || search(r"\b(forest|plains|island|swamp|mountain|land)\b", what).is_some() {
-            e.set("filter", obj! {"type" => "land", "basic" => what.contains("basic")});
-        }
-        let mut out = vec![];
-        if rest.contains("the other into your hand") {
-            e.set("n", 1);
-            out.push(e);
-            out.push(obj! {"do" => "search", "filter" => obj!{"type" => "land", "basic" => true}, "to" => "hand", "n" => 1});
-        } else {
-            out.push(e);
-        }
-        Some(out)
-    }),
+            let mut out = vec![];
+            if rest.contains("the other into your hand") {
+                e.set("n", 1);
+                out.push(e);
+                out.push(obj! {"do" => "search", "filter" => obj!{"type" => "land", "basic" => true}, "to" => "hand", "n" => 1});
+            } else {
+                out.push(e);
+            }
+            Some(out)
+        },
+    ),
     // tokens
-    (r"^create (a|an|one|two|three|four|five|x|that many|\d+) (\d+|x)/(\d+|x) ([^.]*?)creature tokens?(?: with ([a-z, ]+?))?(?: that'?s? tapped and attacking[^.]*| named [^.]*)?(?:\. they gain [a-z]+ until end of turn)?$", |m| {
-        let both = format!("{} {}", m.gs(4), m.gs(5));
-        let kws: Vec<J> = KW.iter().filter(|k| both.contains(*k)).map(|k| J::from(*k)).collect();
-        let types: Vec<J> = m
-            .gs(4)
-            .split_whitespace()
-            .filter(|w| {
-                !matches!(*w, "white" | "blue" | "black" | "red" | "green" | "colorless" | "and" | "artifact" | "enchantment" | "legendary" | "snow")
-            })
-            .map(J::from)
-            .collect();
-        Some(eff(obj! {
-            "do" => "token", "n" => n_(m.gs(1)),
-            "pow" => if m.gs(2) == "x" { 1 } else { int(m.gs(2)) },
-            "tgh" => if m.gs(3) == "x" { 1 } else { int(m.gs(3)) },
-            "keywords" => kws, "attacking" => m.all().contains("attacking"), "warrior" => m.gs(4).contains("warrior"),
-            "types" => types
-        }))
-    }),
+    (
+        r"^create (a|an|one|two|three|four|five|x|that many|\d+) (\d+|x)/(\d+|x) ([^.]*?)creature tokens?(?: with ([a-z, ]+?))?(?: that'?s? tapped and attacking[^.]*| named [^.]*)?(?:\. they gain [a-z]+ until end of turn)?$",
+        |m| {
+            let both = format!("{} {}", m.gs(4), m.gs(5));
+            let kws: Vec<J> = KW.iter().filter(|k| both.contains(*k)).map(|k| J::from(*k)).collect();
+            let types: Vec<J> = m
+                .gs(4)
+                .split_whitespace()
+                .filter(|w| {
+                    !matches!(
+                        *w,
+                        "white"
+                            | "blue"
+                            | "black"
+                            | "red"
+                            | "green"
+                            | "colorless"
+                            | "and"
+                            | "artifact"
+                            | "enchantment"
+                            | "legendary"
+                            | "snow"
+                    )
+                })
+                .map(J::from)
+                .collect();
+            Some(eff(obj! {
+                "do" => "token", "n" => n_(m.gs(1)),
+                "pow" => if m.gs(2) == "x" { 1 } else { int(m.gs(2)) },
+                "tgh" => if m.gs(3) == "x" { 1 } else { int(m.gs(3)) },
+                "keywords" => kws, "attacking" => m.all().contains("attacking"), "warrior" => m.gs(4).contains("warrior"),
+                "types" => types
+            }))
+        },
+    ),
     (r"^create (a|an|one|two|three|x|that many|\d+) (treasure|clue|food|blood) tokens?$", |m| {
         let k = m.gs(2);
         if k == "treasure" || k == "clue" {
@@ -420,108 +461,157 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         Some(eff(obj! {"do" => "noop"}))
     }),
     // life
-    (r"^(?:you )?gain (\d+|x|that much) life$", |m| Some(eff(obj! {"do" => "gain_life", "n" => n_(m.gs(1)), "who" => "you"}))),
-    (r"^(each opponent|target opponent|target player|each player|you|that player|its controller) (?:loses|lose) (\d+|x) life(?: and you gain (?:\d+|x|that much) life)?$", |m| {
-        let mut e = eff(obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => who(m.gs(1))});
-        if m.all().contains("you gain") {
-            e.push(obj! {"do" => "gain_life", "n" => n_(m.gs(2)), "who" => "you", "per_opponent" => m.gs(1) == "each opponent"});
-        }
-        Some(e)
+    (r"^(?:you )?gain (\d+|x|that much) life$", |m| {
+        Some(eff(obj! {"do" => "gain_life", "n" => n_(m.gs(1)), "who" => "you"}))
     }),
-    (r"^(?:its controller|that player|target player|you) gains? life equal to (?:its|that creature's) (power|toughness)$", |m| {
-        Some(eff(obj! {"do" => "gain_life", "n" => format!("target_{}", m.gs(1)), "who" => "target_controller"}))
-    }),
+    (
+        r"^(each opponent|target opponent|target player|each player|you|that player|its controller) (?:loses|lose) (\d+|x) life(?: and you gain (?:\d+|x|that much) life)?$",
+        |m| {
+            let mut e = eff(obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => who(m.gs(1))});
+            if m.all().contains("you gain") {
+                e.push(obj! {"do" => "gain_life", "n" => n_(m.gs(2)), "who" => "you", "per_opponent" => m.gs(1) == "each opponent"});
+            }
+            Some(e)
+        },
+    ),
+    (
+        r"^(?:its controller|that player|target player|you) gains? life equal to (?:its|that creature's) (power|toughness)$",
+        |m| Some(eff(obj! {"do" => "gain_life", "n" => format!("target_{}", m.gs(1)), "who" => "target_controller"})),
+    ),
     // counters, pump, grant
-    (r"^put (a|an|one|two|three|x|\d+) \+1/\+1 counters? on (each creature you control|each other creature you control|target creature|~|target creature you control|each of up to two target creatures|it)$", |m| {
-        Some(eff(obj! {"do" => "counters", "n" => n_(m.gs(1)), "what" => selector(m.gs(2))}))
-    }),
-    (r"^(creatures you control|other creatures you control|target creature|~|target creature you control|each creature you control|up to one target creature) gets? \+(\d+|x)/\+(\d+|x)(?: and gains? ([a-z, ]+?))? until end of turn$", |m| {
-        let mut e = eff(obj! {"do" => "pump", "pow" => n_(m.gs(2)), "tgh" => n_(m.gs(3)), "what" => selector(m.gs(1))});
-        if let Some(g4) = m.g(4) {
-            for k in KW {
-                if g4.contains(k) {
-                    e.push(obj! {"do" => "grant", "keyword" => k, "what" => selector(m.gs(1))});
+    (
+        r"^put (a|an|one|two|three|x|\d+) \+1/\+1 counters? on (each creature you control|each other creature you control|target creature|~|target creature you control|each of up to two target creatures|it)$",
+        |m| Some(eff(obj! {"do" => "counters", "n" => n_(m.gs(1)), "what" => selector(m.gs(2))})),
+    ),
+    (
+        r"^(creatures you control|other creatures you control|target creature|~|target creature you control|each creature you control|up to one target creature) gets? \+(\d+|x)/\+(\d+|x)(?: and gains? ([a-z, ]+?))? until end of turn$",
+        |m| {
+            let mut e =
+                eff(obj! {"do" => "pump", "pow" => n_(m.gs(2)), "tgh" => n_(m.gs(3)), "what" => selector(m.gs(1))});
+            if let Some(g4) = m.g(4) {
+                for k in KW {
+                    if g4.contains(k) {
+                        e.push(obj! {"do" => "grant", "keyword" => k, "what" => selector(m.gs(1))});
+                    }
                 }
             }
-        }
-        Some(e)
-    }),
-    (r"^(creatures you control|target creature|target creature you control|~|each creature you control|permanents you control|other permanents you control) gains? ([a-z, ]+?) until end of turn$", |m| {
-        let v: Fx = KW.iter().filter(|k| m.gs(2).contains(*k)).map(|k| obj! {"do" => "grant", "keyword" => *k, "what" => selector(m.gs(1))}).collect();
-        if v.is_empty() { None } else { Some(v) }
-    }),
+            Some(e)
+        },
+    ),
+    (
+        r"^(creatures you control|target creature|target creature you control|~|each creature you control|permanents you control|other permanents you control) gains? ([a-z, ]+?) until end of turn$",
+        |m| {
+            let v: Fx = KW
+                .iter()
+                .filter(|k| m.gs(2).contains(*k))
+                .map(|k| obj! {"do" => "grant", "keyword" => *k, "what" => selector(m.gs(1))})
+                .collect();
+            if v.is_empty() { None } else { Some(v) }
+        },
+    ),
     // counter
-    (r"^counter target ([a-z, ]*?)\s?spell(?: with mana value (\d+) or greater| that targets [^.]*)?(?: unless its controller pays \{(\d+)\})?$", |m| {
-        let g1 = m.gs(1);
-        let mut f = filt(&format!("{g1} spell"));
-        let t = if g1.contains("noncreature") {
-            "noncreature"
-        } else if g1.trim() == "creature" {
-            "creature"
-        } else if g1.contains("instant") || g1.contains("sorcery") {
-            "instant_or_sorcery"
-        } else {
-            "any"
-        };
-        f.set("type", t);
-        if let Some(g2) = m.g(2) {
-            f.set("min_mv", int(g2));
-        }
-        let mut e = obj! {"do" => "counter_spell", "filter" => f};
-        if let Some(g3) = m.g(3) {
-            e.set("unless", int(g3));
-        }
-        Some(eff(e))
+    (
+        r"^counter target ([a-z, ]*?)\s?spell(?: with mana value (\d+) or greater| that targets [^.]*)?(?: unless its controller pays \{(\d+)\})?$",
+        |m| {
+            let g1 = m.gs(1);
+            let mut f = filt(&format!("{g1} spell"));
+            let t = if g1.contains("noncreature") {
+                "noncreature"
+            } else if g1.trim() == "creature" {
+                "creature"
+            } else if g1.contains("instant") || g1.contains("sorcery") {
+                "instant_or_sorcery"
+            } else {
+                "any"
+            };
+            f.set("type", t);
+            if let Some(g2) = m.g(2) {
+                f.set("min_mv", int(g2));
+            }
+            let mut e = obj! {"do" => "counter_spell", "filter" => f};
+            if let Some(g3) = m.g(3) {
+                e.set("unless", int(g3));
+            }
+            Some(eff(e))
+        },
+    ),
+    (
+        r"^(each opponent|target opponent|target player|each player|you|that player) (discards?|mills?) (a|one|two|three|x|\d+) cards?$",
+        |m| {
+            Some(eff(
+                obj! {"do" => if m.gs(2).contains("discard") { "discard" } else { "mill" }, "n" => n_(m.gs(3)), "who" => who(m.gs(1))},
+            ))
+        },
+    ),
+    (r"^(?:you )?(discard|mill) (a|one|two|three|\d+) cards?$", |m| {
+        Some(eff(obj! {"do" => m.gs(1), "n" => n_(m.gs(2)), "who" => "you"}))
     }),
-    (r"^(each opponent|target opponent|target player|each player|you|that player) (discards?|mills?) (a|one|two|three|x|\d+) cards?$", |m| {
-        Some(eff(obj! {"do" => if m.gs(2).contains("discard") { "discard" } else { "mill" }, "n" => n_(m.gs(3)), "who" => who(m.gs(1))}))
-    }),
-    (r"^(?:you )?(discard|mill) (a|one|two|three|\d+) cards?$", |m| Some(eff(obj! {"do" => m.gs(1), "n" => n_(m.gs(2)), "who" => "you"}))),
-    (r"^(each other player|each opponent|target opponent|target player|each player|defending player) sacrifices? (a|an|two) ([a-z ,]+?)(?: of their choice| with the (?:least|greatest) power[^.]*)?$", |m| {
-        Some(eff(obj! {"do" => "sacrifice", "who" => who(m.gs(1)), "filter" => filt(m.gs(3)), "n" => n_(m.gs(2))}))
-    }),
-    (r"^(?:scry|surveil) (\d+|x)$|^investigate$|^proliferate$|^you may pay \{\d+\}$|^shuffle$|^then shuffle$|^shuffle and put that card on top$|^reveal (?:it|them)$", |m| {
-        let t = m.all();
-        if t == "investigate" {
-            return Some(eff(obj! {"do" => "clue", "n" => 1}));
-        }
-        if t == "proliferate" {
-            return Some(eff(obj! {"do" => "proliferate"}));
-        }
-        if (t.starts_with("scry") || t.starts_with("surveil")) && m.g(1).is_some() && m.g(1) != Some("x") {
-            return Some(eff(obj! {"do" => py::first(t, " "), "n" => int(m.gs(1))}));
-        }
-        Some(eff(obj! {"do" => "noop"}))
-    }),
+    (
+        r"^(each other player|each opponent|target opponent|target player|each player|defending player) sacrifices? (a|an|two) ([a-z ,]+?)(?: of their choice| with the (?:least|greatest) power[^.]*)?$",
+        |m| Some(eff(obj! {"do" => "sacrifice", "who" => who(m.gs(1)), "filter" => filt(m.gs(3)), "n" => n_(m.gs(2))})),
+    ),
+    (
+        r"^(?:scry|surveil) (\d+|x)$|^investigate$|^proliferate$|^you may pay \{\d+\}$|^shuffle$|^then shuffle$|^shuffle and put that card on top$|^reveal (?:it|them)$",
+        |m| {
+            let t = m.all();
+            if t == "investigate" {
+                return Some(eff(obj! {"do" => "clue", "n" => 1}));
+            }
+            if t == "proliferate" {
+                return Some(eff(obj! {"do" => "proliferate"}));
+            }
+            if (t.starts_with("scry") || t.starts_with("surveil")) && m.g(1).is_some() && m.g(1) != Some("x") {
+                return Some(eff(obj! {"do" => py::first(t, " "), "n" => int(m.gs(1))}));
+            }
+            Some(eff(obj! {"do" => "noop"}))
+        },
+    ),
     (r"^amass (?:orcs|zombies) (\d+|x)$", |m| Some(eff(obj! {"do" => "amass", "n" => n_(m.gs(1))}))),
-    (r"^untap (all creatures you control|target creature|all lands you control|~|all attacking creatures|up to (?:two|three|four|five) target lands|target permanent)$", |m| {
-        Some(eff(obj! {"do" => "untap", "what" => selector(m.gs(1))}))
-    }),
-    (r"^add ((?:\{[wubrgc]\})+|one mana of any color|two mana of any one color|three mana of any one color|x mana of any one color)$", |m| {
-        let s = m.gs(1);
-        let n = if s.contains('{') { s.matches('{').count() as i64 } else { return Some(eff(obj! {"do" => "add_mana", "n" => n_(py::first(s, " "))})) };
-        Some(eff(obj! {"do" => "add_mana", "n" => n}))
-    }),
-    (r"^(any number of target nonland permanents you control|target creature you control|target permanent you control|target creature|permanents you control) phases? out$", |m| {
-        Some(eff(obj! {"do" => "phase_out", "what" => selector(m.gs(1))}))
-    }),
-    (r"^exile (target creature you control|another target creature you control|up to one target creature you control|target nonland permanent you control)(?:,)? then return (?:it|that card) to the battlefield under (?:its owner's|your) control$", |m| {
-        Some(eff(obj! {"do" => "blink", "what" => selector(m.gs(1))}))
-    }),
-    (r"^blink (up to one target creature you (?:control|own)|target creature you (?:control|own)|another target creature you (?:control|own))$", |m| {
-        Some(eff(obj! {"do" => "blink", "what" => selector(&m.gs(1).replace("you own", "you control"))}))
-    }),
-    (r"^after this (?:main )?phase, there is an additional combat phase(?: followed by an additional main phase)?$|^there is an additional combat phase after this phase$", |_| {
-        Some(eff(obj! {"do" => "extra_combat"}))
-    }),
+    (
+        r"^untap (all creatures you control|target creature|all lands you control|~|all attacking creatures|up to (?:two|three|four|five) target lands|target permanent)$",
+        |m| Some(eff(obj! {"do" => "untap", "what" => selector(m.gs(1))})),
+    ),
+    (
+        r"^add ((?:\{[wubrgc]\})+|one mana of any color|two mana of any one color|three mana of any one color|x mana of any one color)$",
+        |m| {
+            let s = m.gs(1);
+            let n = if s.contains('{') {
+                s.matches('{').count() as i64
+            } else {
+                return Some(eff(obj! {"do" => "add_mana", "n" => n_(py::first(s, " "))}));
+            };
+            Some(eff(obj! {"do" => "add_mana", "n" => n}))
+        },
+    ),
+    (
+        r"^(any number of target nonland permanents you control|target creature you control|target permanent you control|target creature|permanents you control) phases? out$",
+        |m| Some(eff(obj! {"do" => "phase_out", "what" => selector(m.gs(1))})),
+    ),
+    (
+        r"^exile (target creature you control|another target creature you control|up to one target creature you control|target nonland permanent you control)(?:,)? then return (?:it|that card) to the battlefield under (?:its owner's|your) control$",
+        |m| Some(eff(obj! {"do" => "blink", "what" => selector(m.gs(1))})),
+    ),
+    (
+        r"^blink (up to one target creature you (?:control|own)|target creature you (?:control|own)|another target creature you (?:control|own))$",
+        |m| Some(eff(obj! {"do" => "blink", "what" => selector(&m.gs(1).replace("you own", "you control"))})),
+    ),
+    (
+        r"^after this (?:main )?phase, there is an additional combat phase(?: followed by an additional main phase)?$|^there is an additional combat phase after this phase$",
+        |_| Some(eff(obj! {"do" => "extra_combat"})),
+    ),
     (r"^the owner of target ([a-z ]+) shuffles it into their library$", |m| {
         Some(eff(obj! {"do" => "tuck", "what" => obj!{"sel" => "target", "filter" => filt(m.gs(1))}}))
     }),
     (r"^tap (target creature|up to one target creature|target permanent|all creatures your opponents control)$", |m| {
         Some(eff(obj! {"do" => "tap", "what" => selector(m.gs(1))}))
     }),
-    (r"^(?:its controller|that player) may search their library for a basic land card, put it onto the battlefield tapped$", |_| Some(eff(obj! {"do" => "opp_ramp"}))),
-    (r"^(?:its controller|that player) creates? a (\d+)/(\d+) [a-z ]+ creature token$", |m| Some(eff(obj! {"do" => "opp_token", "pow" => int(m.gs(1))}))),
+    (
+        r"^(?:its controller|that player) may search their library for a basic land card, put it onto the battlefield tapped$",
+        |_| Some(eff(obj! {"do" => "opp_ramp"})),
+    ),
+    (r"^(?:its controller|that player) creates? a (\d+)/(\d+) [a-z ]+ creature token$", |m| {
+        Some(eff(obj! {"do" => "opp_token", "pow" => int(m.gs(1))}))
+    }),
     (r"^(?:you )?lose (\d+|x) life$", |m| Some(eff(obj! {"do" => "lose_life", "n" => n_(m.gs(1)), "who" => "you"}))),
     (r"^all creatures get -(\d+|x)/-(\d+|x) until end of turn$", |m| {
         Some(eff(obj! {
@@ -533,45 +623,62 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     }),
     (r"^creatures your opponents control get -(\d+)/-(\d+) until end of turn$", |m| {
         Some(eff(obj! {"do" => "pump", "pow" => -int(m.gs(1)), "tgh" => -int(m.gs(2)),
-            "what" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature", "controller" => "opp"}}}))
+        "what" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature", "controller" => "opp"}}}))
     }),
-    (r"^(?:its controller|that player) may search their library for a basic land card, put it onto the battlefield(?: tapped)?$", |_| Some(eff(obj! {"do" => "opp_ramp"}))),
-    (r"^(?:its controller|that player) creates? (a|two|three) treasure tokens?$", |m| Some(eff(obj! {"do" => "opp_treasure", "n" => n_(m.gs(1))}))),
+    (
+        r"^(?:its controller|that player) may search their library for a basic land card, put it onto the battlefield(?: tapped)?$",
+        |_| Some(eff(obj! {"do" => "opp_ramp"})),
+    ),
+    (r"^(?:its controller|that player) creates? (a|two|three) treasure tokens?$", |m| {
+        Some(eff(obj! {"do" => "opp_treasure", "n" => n_(m.gs(1))}))
+    }),
     (r"^(?:its controller|that player) (?:may )?draws? (?:up to )?(a|one|two|three) cards?$", |m| {
         Some(eff(obj! {"do" => "draw", "n" => n_(m.gs(1)), "who" => "target_controller"}))
     }),
-    (r"^(?:you )?gain life equal to the life lost this way$", |_| Some(eff(obj! {"do" => "gain_life", "n" => "last_lost", "who" => "you"}))),
+    (r"^(?:you )?gain life equal to the life lost this way$", |_| {
+        Some(eff(obj! {"do" => "gain_life", "n" => "last_lost", "who" => "you"}))
+    }),
     (r"^(?:you )?gain (\d+|x) life for each (.+)$", |m| {
         Some(eff(obj! {"do" => "gain_life", "n" => num_expr(m.gs(2)), "who" => "you", "mult" => n_(m.gs(1))}))
     }),
-    (r"^(?:you )?lose life equal to (?:its|that permanent's|that creature's|the sacrificed creature's) (mana value|power)$", |m| {
-        Some(eff(obj! {"do" => "lose_life", "n" => if m.gs(1).contains("mana") { "target_mv" } else { "target_power" }, "who" => "you"}))
-    }),
-    (r"^~ deals damage equal to (?:that spell's mana value|its power|the number of [^.]+) to (any target|each opponent|target creature|target opponent)$", |m| {
-        let a = m.all();
-        let n = if a.contains("spell") {
-            "event_spell_mv"
-        } else if a.contains("its power") {
-            "source_power"
-        } else {
-            "X"
-        };
-        let g1 = m.gs(1);
-        let to = if g1 == "any target" {
-            obj! {"sel" => "any_target"}
-        } else if g1.contains("opponent") {
-            obj! {"sel" => "player", "who" => who(g1)}
-        } else {
-            selector(g1)
-        };
-        Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
-    }),
-    (r"^(?:until end of turn, )?creatures you control have base power and toughness x/x(?: and gain all creature types)?(?: until end of turn)?$", |_| {
-        Some(eff(obj! {"do" => "set_pt", "n" => "X"}))
-    }),
-    (r"^double the number of each kind of counter on (?:any number of target permanents|each permanent you control|target permanent)$", |_| {
-        Some(eff(obj! {"do" => "double_counters"}))
-    }),
+    (
+        r"^(?:you )?lose life equal to (?:its|that permanent's|that creature's|the sacrificed creature's) (mana value|power)$",
+        |m| {
+            Some(eff(
+                obj! {"do" => "lose_life", "n" => if m.gs(1).contains("mana") { "target_mv" } else { "target_power" }, "who" => "you"},
+            ))
+        },
+    ),
+    (
+        r"^~ deals damage equal to (?:that spell's mana value|its power|the number of [^.]+) to (any target|each opponent|target creature|target opponent)$",
+        |m| {
+            let a = m.all();
+            let n = if a.contains("spell") {
+                "event_spell_mv"
+            } else if a.contains("its power") {
+                "source_power"
+            } else {
+                "X"
+            };
+            let g1 = m.gs(1);
+            let to = if g1 == "any target" {
+                obj! {"sel" => "any_target"}
+            } else if g1.contains("opponent") {
+                obj! {"sel" => "player", "who" => who(g1)}
+            } else {
+                selector(g1)
+            };
+            Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
+        },
+    ),
+    (
+        r"^(?:until end of turn, )?creatures you control have base power and toughness x/x(?: and gain all creature types)?(?: until end of turn)?$",
+        |_| Some(eff(obj! {"do" => "set_pt", "n" => "X"})),
+    ),
+    (
+        r"^double the number of each kind of counter on (?:any number of target permanents|each permanent you control|target permanent)$",
+        |_| Some(eff(obj! {"do" => "double_counters"})),
+    ),
     (r"^(?:they|those creatures|it) gains? ([a-z, ]+?) until end of turn$", |m| {
         let v: Fx = KW
             .iter()
@@ -581,11 +688,14 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         if v.is_empty() { None } else { Some(v) }
     }),
     (r"^untap all attacking creatures$", |_| {
-        Some(eff(obj! {"do" => "untap", "what" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature", "controller" => "you"}}}))
+        Some(eff(
+            obj! {"do" => "untap", "what" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature", "controller" => "you"}}},
+        ))
     }),
-    (r"^(each player|each opponent|target player) discards? (?:their|his or her) hand(?:,)? (?:then|and) draws? (?:seven|that many|\w+) cards?$", |m| {
-        Some(eff(obj! {"do" => "wheel", "who" => who(m.gs(1))}))
-    }),
+    (
+        r"^(each player|each opponent|target player) discards? (?:their|his or her) hand(?:,)? (?:then|and) draws? (?:seven|that many|\w+) cards?$",
+        |m| Some(eff(obj! {"do" => "wheel", "who" => who(m.gs(1))})),
+    ),
     (r"^if a creature is destroyed this way, you gain life equal to its toughness$", |_| {
         Some(eff(obj! {"do" => "gain_life", "n" => "target_toughness", "who" => "you"}))
     }),
@@ -597,10 +707,13 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         };
         Some(eff(obj! {"do" => "draw", "n" => n, "who" => "you"}))
     }),
-    (r"^(?:you may |until (?:the )?end of (?:your next )?turn, you may )?(?:cast|play) (?:that card|those cards|it|them|the exiled cards?)(?: this turn| until the end of your next turn)?$", |_| {
-        Some(eff(obj! {"do" => "noop"}))
+    (
+        r"^(?:you may |until (?:the )?end of (?:your next )?turn, you may )?(?:cast|play) (?:that card|those cards|it|them|the exiled cards?)(?: this turn| until the end of your next turn)?$",
+        |_| Some(eff(obj! {"do" => "noop"})),
+    ),
+    (r"^(?:you may )?put (?:a|up to one) land card from your hand onto the battlefield(?: tapped)?$", |_| {
+        Some(eff(obj! {"do" => "put_land"}))
     }),
-    (r"^(?:you may )?put (?:a|up to one) land card from your hand onto the battlefield(?: tapped)?$", |_| Some(eff(obj! {"do" => "put_land"}))),
     (r"^if you don't, ~ deals (\d+) damage to each opponent$", |_| Some(eff(obj! {"do" => "noop"}))),
 ];
 
@@ -650,8 +763,11 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
     for sen in sents.iter_mut() {
         if let Some(sm) = rmatch(&format!("{SUBJ}(.+)$"), sen) {
             if sm.gs(2).contains(", ") {
-                let verbs: Vec<String> =
-                    split(r",? and |, ", sm.gs(2)).into_iter().map(|v| v.trim().to_string()).filter(|v| !v.is_empty()).collect();
+                let verbs: Vec<String> = split(r",? and |, ", sm.gs(2))
+                    .into_iter()
+                    .map(|v| v.trim().to_string())
+                    .filter(|v| !v.is_empty())
+                    .collect();
                 *sen = verbs.iter().map(|v| format!("{} {}", sm.gs(1), v)).collect::<Vec<_>>().join(". ");
             }
         }
@@ -727,27 +843,41 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
         vec![obj! {"event" => "dies", "source" => if m.g(1).is_some() { "you_creature" } else { "any_creature" }}]
     }),
     (r"^(a|another|one or more other|one or more) (nontoken )?creatures? you control (?:enters?|enter)$", |m, _| {
-        vec![obj! {"event" => "etb", "source" => "you_creature", "other" => m.gs(1).contains("other") || m.gs(1).contains("another")}]
+        vec![
+            obj! {"event" => "etb", "source" => "you_creature", "other" => m.gs(1).contains("other") || m.gs(1).contains("another")},
+        ]
     }),
-    (r"^(a|another) creature (enters)$", |m, _| vec![obj! {"event" => "etb", "source" => "any_creature", "other" => m.gs(1) == "another"}]),
+    (r"^(a|another) creature (enters)$", |m, _| {
+        vec![obj! {"event" => "etb", "source" => "any_creature", "other" => m.gs(1) == "another"}]
+    }),
     (r"^a creature an opponent controls enters$|^a creature enters under an opponent's control$", |_, _| {
         vec![obj! {"event" => "etb", "source" => "opp_creature"}]
     }),
     (r"^a land (?:you control )?enters(?: under your control)?$", |_, _| vec![obj! {"event" => "landfall"}]),
     (r"^(a|another) creature (you control )?dies$", |m, _| {
-        vec![obj! {"event" => "dies", "source" => if m.g(2).is_some() { "you_creature" } else { "any_creature" }, "other" => m.gs(1) == "another"}]
+        vec![
+            obj! {"event" => "dies", "source" => if m.g(2).is_some() { "you_creature" } else { "any_creature" }, "other" => m.gs(1) == "another"},
+        ]
     }),
     (r"^a creature an opponent controls dies$|^a creature your opponents control dies$", |_, _| {
         vec![obj! {"event" => "dies", "source" => "opp_creature"}]
     }),
-    (r"^you cast (?:or copy )?(a|an|your first|your second) ?(instant or sorcery|noncreature|creature|artifact|enchantment|legendary|historic|multicolored|)? ?spell(?: each turn)?$", |m, _| {
-        vec![obj! {"event" => "cast", "who" => "you", "spell" => cast_spell(m, 2),
+    (
+        r"^you cast (?:or copy )?(a|an|your first|your second) ?(instant or sorcery|noncreature|creature|artifact|enchantment|legendary|historic|multicolored|)? ?spell(?: each turn)?$",
+        |m, _| {
+            vec![obj! {"event" => "cast", "who" => "you", "spell" => cast_spell(m, 2),
             "nth" => if m.gs(1).contains("second") { J::Int(2) } else { J::Null }}]
-    }),
-    (r"^(an opponent|a player|another player) casts (a|an) ?(noncreature|creature|instant or sorcery|)? ?spell$", |m, _| {
-        vec![obj! {"event" => "cast", "who" => if m.gs(1).contains("opponent") || m.gs(1).contains("another") { "opponent" } else { "any" },
-            "spell" => cast_spell(m, 3)}]
-    }),
+        },
+    ),
+    (
+        r"^(an opponent|a player|another player) casts (a|an) ?(noncreature|creature|instant or sorcery|)? ?spell$",
+        |m, _| {
+            vec![
+                obj! {"event" => "cast", "who" => if m.gs(1).contains("opponent") || m.gs(1).contains("another") { "opponent" } else { "any" },
+                "spell" => cast_spell(m, 3)},
+            ]
+        },
+    ),
     (r"^you draw a card$|^you draw your second card each turn$", |_, _| vec![obj! {"event" => "draw", "who" => "you"}]),
     (r"^an opponent draws a card$", |_, _| vec![obj! {"event" => "draw", "who" => "opponent"}]),
     (r"^the beginning of your upkeep$", |_, _| vec![obj! {"event" => "upkeep", "who" => "you"}]),
@@ -755,9 +885,10 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^the beginning of each upkeep$", |_, _| vec![obj! {"event" => "upkeep", "who" => "any"}]),
     (r"^the beginning of your end step$", |_, _| vec![obj! {"event" => "end_step", "who" => "you"}]),
     (r"^the beginning of each end step$", |_, _| vec![obj! {"event" => "end_step", "who" => "any"}]),
-    (r"^the beginning of combat on your turn$|^the beginning of your precombat main phase$|^the beginning of your draw step$", |_, _| {
-        vec![obj! {"event" => "upkeep", "who" => "you"}]
-    }),
+    (
+        r"^the beginning of combat on your turn$|^the beginning of your precombat main phase$|^the beginning of your draw step$",
+        |_, _| vec![obj! {"event" => "upkeep", "who" => "you"}],
+    ),
     (r"^you attack(?: with one or more creatures)?$|^one or more creatures you control attack$", |_, _| {
         vec![obj! {"event" => "attack", "source" => "you_any"}]
     }),
@@ -770,13 +901,17 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^(?:a|one or more) creatures? you control deals? combat damage to a player$", |_, _| {
         vec![obj! {"event" => "combat_damage", "source" => "you_creature"}]
     }),
-    (r"^equipped creature deals combat damage to a player$", |_, _| vec![obj! {"event" => "combat_damage", "source" => "equipped"}]),
+    (r"^equipped creature deals combat damage to a player$", |_, _| {
+        vec![obj! {"event" => "combat_damage", "source" => "equipped"}]
+    }),
     (r"^equipped creature attacks$", |_, _| vec![obj! {"event" => "attack", "source" => "equipped"}]),
     (r"^equipped creature dies$", |_, _| vec![obj! {"event" => "dies", "source" => "equipped"}]),
     (r"^you gain life$", |_, _| vec![obj! {"event" => "gain_life", "who" => "you"}]),
     (r"^~ becomes tapped$", |_, _| vec![obj! {"event" => "attack", "source" => "self"}]),
     (r"^you cast your (third|second) spell each turn$", |m, _| {
-        vec![obj! {"event" => "cast", "who" => "you", "spell" => "any", "nth" => if m.gs(1) == "third" { 3 } else { 2 }}]
+        vec![
+            obj! {"event" => "cast", "who" => "you", "spell" => "any", "nth" => if m.gs(1) == "third" { 3 } else { 2 }},
+        ]
     }),
     (r"^you cast a spell$", |_, _| vec![obj! {"event" => "cast", "who" => "you", "spell" => "any"}]),
     (r"^a creature you control with power (\d+) or greater enters$", |m, _| {
@@ -785,7 +920,9 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^a warrior attacks$|^a (\w+) you control attacks$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "you_each", "subtype" => m.g(1).unwrap_or("warrior")}]
     }),
-    (r"^you attack with (?:two|three) or more creatures$", |_, _| vec![obj! {"event" => "attack", "source" => "you_any"}]),
+    (r"^you attack with (?:two|three) or more creatures$", |_, _| {
+        vec![obj! {"event" => "attack", "source" => "you_any"}]
+    }),
 ];
 
 pub fn parse_trigger(clause: &str) -> Option<Fx> {
@@ -852,40 +989,51 @@ static STATICS: &[(&str, StaticFn)] = &[
         if !m.gs(2).trim().is_empty() {
             filter.set("subtype", m.gs(2).trim());
         }
-        let mut v = vec![obj! {"type" => "static", "static" => "anthem", "filter" => filter, "pow" => int(m.gs(3)), "tgh" => int(m.gs(4))}];
+        let mut v = vec![
+            obj! {"type" => "static", "static" => "anthem", "filter" => filter, "pow" => int(m.gs(3)), "tgh" => int(m.gs(4))},
+        ];
         v.extend(kw_statics(m.g(5), |k| {
             obj! {"type" => "static", "static" => "keyword", "keyword" => k, "filter" => obj!{"type" => "creature", "controller" => "you"}}
         }));
         Some(v)
     }),
-    (r"^(other )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|angels|demons|dragons|merfolk|vampires|spirits|faeries) you control get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$", |m| {
-        let sub_ = singular(m.gs(2));
-        let mut v = vec![obj! {"type" => "static", "static" => "anthem",
+    (
+        r"^(other )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|angels|demons|dragons|merfolk|vampires|spirits|faeries) you control get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$",
+        |m| {
+            let sub_ = singular(m.gs(2));
+            let mut v = vec![obj! {"type" => "static", "static" => "anthem",
             "filter" => obj!{"type" => "creature", "controller" => "you", "other" => m.g(1).is_some(), "subtype" => sub_.clone()},
             "pow" => int(m.gs(3)), "tgh" => int(m.gs(4))}];
-        v.extend(kw_statics(m.g(5), |k| {
-            obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+            v.extend(kw_statics(m.g(5), |k| {
+                obj! {"type" => "static", "static" => "keyword", "keyword" => k,
                 "filter" => obj!{"type" => "creature", "controller" => "you", "subtype" => sub_.clone()}}
-        }));
-        Some(v)
-    }),
-    (r"^other (elf|goblin|zombie|human|ninja|soldier|warrior|knight|angel|demon|dragon|vampire|spirit|faerie) creatures get \+(\d+)/\+(\d+)(?: and have [a-z ]+)?$", |m| {
-        Some(eff(obj! {"type" => "static", "static" => "anthem",
+            }));
+            Some(v)
+        },
+    ),
+    (
+        r"^other (elf|goblin|zombie|human|ninja|soldier|warrior|knight|angel|demon|dragon|vampire|spirit|faerie) creatures get \+(\d+)/\+(\d+)(?: and have [a-z ]+)?$",
+        |m| {
+            Some(eff(obj! {"type" => "static", "static" => "anthem",
             "filter" => obj!{"type" => "creature", "other" => true, "subtype" => m.gs(1)}, "pow" => int(m.gs(2)), "tgh" => int(m.gs(3))}))
-    }),
+        },
+    ),
     (r"^creatures your opponents control get -(\d+)/-(\d+)$", |m| {
-        Some(eff(obj! {"type" => "static", "static" => "anthem", "filter" => obj!{"type" => "creature", "controller" => "opp"},
-            "pow" => -int(m.gs(1)), "tgh" => -int(m.gs(2))}))
+        Some(eff(
+            obj! {"type" => "static", "static" => "anthem", "filter" => obj!{"type" => "creature", "controller" => "opp"},
+            "pow" => -int(m.gs(1)), "tgh" => -int(m.gs(2))},
+        ))
     }),
     (r"^(other )?creatures you control have ([a-z, ]+)$", |m| {
         let v = kw_statics(m.g(2), |k| {
             obj! {"type" => "static", "static" => "keyword", "keyword" => k,
-                "filter" => obj!{"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()}}
+            "filter" => obj!{"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()}}
         });
         if v.is_empty() { None } else { Some(v) }
     }),
     (r"^equipped creature gets \+(\d+)/\+(\d+)(?: and has ([a-z, ]+))?$", |m| {
-        let mut v = vec![obj! {"type" => "static", "static" => "equip_bonus", "pow" => int(m.gs(1)), "tgh" => int(m.gs(2))}];
+        let mut v =
+            vec![obj! {"type" => "static", "static" => "equip_bonus", "pow" => int(m.gs(1)), "tgh" => int(m.gs(2))}];
         v.extend(kw_statics(m.g(3), |k| obj! {"type" => "static", "static" => "equip_keyword", "keyword" => k}));
         if let Some(g3) = m.g(3) {
             if g3.contains("protection from") {
@@ -898,32 +1046,46 @@ static STATICS: &[(&str, StaticFn)] = &[
         let v = kw_statics(m.g(1), |k| obj! {"type" => "static", "static" => "equip_keyword", "keyword" => k});
         if v.is_empty() { None } else { Some(v) }
     }),
-    (r"^(instant and sorcery|instant|sorcery|creature|noncreature|artifact|enchantment|legendary|)? ?spells you cast cost \{(\d+)\} less to cast$", |m| {
-        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you",
+    (
+        r"^(instant and sorcery|instant|sorcery|creature|noncreature|artifact|enchantment|legendary|)? ?spells you cast cost \{(\d+)\} less to cast$",
+        |m| {
+            Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you",
             "spell" => m.g(1).filter(|s| !s.is_empty()).unwrap_or("any").replace(' ', "_").replace("instant_and_sorcery", "instant_or_sorcery"),
             "amount" => -int(m.gs(2))}))
-    }),
+        },
+    ),
     (r"^(noncreature )?spells your opponents cast cost \{(\d+)\} more to cast$", |m| {
         Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "opponents",
-            "spell" => if m.g(1).is_some() { "noncreature" } else { "any" }, "amount" => int(m.gs(2))}))
+        "spell" => if m.g(1).is_some() { "noncreature" } else { "any" }, "amount" => int(m.gs(2))}))
     }),
-    (r"^your opponents can't gain life$", |_| Some(eff(obj! {"type" => "static", "static" => "no_lifegain", "who" => "opponents"}))),
+    (r"^your opponents can't gain life$", |_| {
+        Some(eff(obj! {"type" => "static", "static" => "no_lifegain", "who" => "opponents"}))
+    }),
     (r"^you have no maximum hand size$", |_| Some(eff(obj! {"type" => "static", "static" => "no_max_hand"}))),
     (r"^~ can't be blocked$", |_| Some(eff(obj! {"type" => "static", "static" => "unblockable"}))),
     (r"^~ can't block$", |_| Some(eff(obj! {"type" => "static", "static" => "cant_block"}))),
-    (r"^if an effect would create one or more tokens under your control, it creates twice that many of those tokens instead$", |_| {
-        Some(eff(obj! {"type" => "replacement", "replace" => "tokens", "multiplier" => 2}))
-    }),
-    (r"^if one or more \+1/\+1 counters would be put on (?:a creature|a permanent|an artifact or creature) you control, twice that many [^.]*instead$", |_| {
-        Some(eff(obj! {"type" => "replacement", "replace" => "counters", "multiplier" => 2}))
-    }),
+    (
+        r"^if an effect would create one or more tokens under your control, it creates twice that many of those tokens instead$",
+        |_| Some(eff(obj! {"type" => "replacement", "replace" => "tokens", "multiplier" => 2})),
+    ),
+    (
+        r"^if one or more \+1/\+1 counters would be put on (?:a creature|a permanent|an artifact or creature) you control, twice that many [^.]*instead$",
+        |_| Some(eff(obj! {"type" => "replacement", "replace" => "counters", "multiplier" => 2})),
+    ),
     (r"^(?:~|this creature) gets \+(\d+)/\+(\d+) for each (.+)$", |m| {
-        Some(eff(obj! {"type" => "static", "static" => "self_scaling", "pow" => int(m.gs(1)), "per" => num_expr(m.gs(3))}))
+        Some(eff(
+            obj! {"type" => "static", "static" => "self_scaling", "pow" => int(m.gs(1)), "per" => num_expr(m.gs(3))},
+        ))
     }),
-    (r"^~'s power is equal to the number of (.+)$|^~'s power and toughness are each equal to the number of (.+)$", |m| {
-        let g = m.g(1).or(m.g(2)).unwrap_or("");
-        Some(eff(obj! {"type" => "static", "static" => "self_scaling", "pow" => 1, "per" => num_expr(g), "base0" => true}))
-    }),
+    (
+        r"^~'s power is equal to the number of (.+)$|^~'s power and toughness are each equal to the number of (.+)$",
+        |m| {
+            let g = m.g(1).or(m.g(2)).unwrap_or("");
+            Some(eff(
+                obj! {"type" => "static", "static" => "self_scaling", "pow" => 1, "per" => num_expr(g), "base0" => true},
+            ))
+        },
+    ),
 ];
 
 pub fn prot_colors(text: &str) -> String {
@@ -1006,7 +1168,9 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
         if rmatch(r"^\{t\}(?:, [^:]*)?: add ", l).is_some() || rmatch(r"^~ deals 1 damage to you$", l).is_some() {
             continue; // mana abilities -> mana system
         }
-        if types.contains('L') && rmatch(r"^(\{[^}]+\}, )?\{t\}, sacrifice ~: search your library for a basic land", l).is_some() {
+        if types.contains('L')
+            && rmatch(r"^(\{[^}]+\}, )?\{t\}, sacrifice ~: search your library for a basic land", l).is_some()
+        {
             continue; // fetch lands -> land tags
         }
         if rmatch(r"^~ can't be countered$", l).is_some() {
@@ -1029,7 +1193,9 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             abil.push(obj! {"type" => "additional_cost", "text" => l});
             continue;
         }
-        if rmatch(r"^~ costs \{\d+\} less to cast for each", l).is_some() || rmatch(r"^~ enters (tapped|with)", l).is_some() {
+        if rmatch(r"^~ costs \{\d+\} less to cast for each", l).is_some()
+            || rmatch(r"^~ enters (tapped|with)", l).is_some()
+        {
             abil.push(obj! {"type" => "static", "static" => "note", "text" => l});
             continue;
         }
@@ -1047,7 +1213,7 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             };
             if !modes.is_empty() {
                 abil.push(obj! {"type" => if spell { "spell" } else { "triggered_modal" },
-                    "effects" => vec![jo!{"do" => "modal", "choose" => k, "modes" => modes}]});
+                "effects" => vec![jo!{"do" => "modal", "choose" => k, "modes" => modes}]});
             }
             continue;
         }
@@ -1056,7 +1222,9 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             if let Some(m) = rmatch(r"^([+−-]?\d+|0): (.+)$", l) {
                 let (e, b) = parse_effects(m.gs(2));
                 if !e.is_empty() {
-                    abil.push(obj! {"type" => "loyalty", "loyalty" => int(&m.gs(1).replace('−', "-")), "effects" => arr(e)});
+                    abil.push(
+                        obj! {"type" => "loyalty", "loyalty" => int(&m.gs(1).replace('−', "-")), "effects" => arr(e)},
+                    );
                 }
                 bad.extend(b);
                 continue;
@@ -1118,7 +1286,7 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
                 match cost {
                     Some(c) if !e.is_empty() => {
                         abil.push(obj! {"type" => "activated", "cost" => c, "effects" => arr(e),
-                            "sorcery" => m.gs(2).contains("as a sorcery"), "once" => m.gs(2).contains("once each turn")});
+                        "sorcery" => m.gs(2).contains("as a sorcery"), "once" => m.gs(2).contains("once each turn")});
                         if !b.is_empty() {
                             bad.push(format!("{raw}   [partly: {}]", b.join("; ")));
                         }

@@ -23,7 +23,9 @@ impl Project {
                 return Ok(Project { root: d });
             }
             if !d.pop() {
-                return Err("not inside the repository (no data/carddb.txt above the current directory); use --root".into());
+                return Err(
+                    "not inside the repository (no data/carddb.txt above the current directory); use --root".into()
+                );
             }
         }
     }
@@ -172,9 +174,18 @@ pub fn load_my_decks(p: &Project) -> Result<Vec<MyDeck>, String> {
     let mut out = vec![];
     for (key, v) in &t {
         let get = |f: &str| -> Result<String, String> {
-            v.get(f).and_then(|x| x.as_str()).map(|s| s.to_string()).ok_or(format!("{} [{key}]: missing {f}", path.display()))
+            v.get(f)
+                .and_then(|x| x.as_str())
+                .map(|s| s.to_string())
+                .ok_or(format!("{} [{key}]: missing {f}", path.display()))
         };
-        out.push(MyDeck { key: key.clone(), file: get("file")?, name: get("name")?, commander: get("commander")?, ident: get("ident")? });
+        out.push(MyDeck {
+            key: key.clone(),
+            file: get("file")?,
+            name: get("name")?,
+            commander: get("commander")?,
+            ident: get("ident")?,
+        });
     }
     Ok(out)
 }
@@ -196,7 +207,10 @@ pub fn load_hooks(p: &Project) -> Result<BTreeMap<String, Hooks>, String> {
         if f.len() != 3 {
             return Err(format!("python_hooks.txt: bad line {line:?}"));
         }
-        out.insert(f[0].to_string(), Hooks { events: f[1].split_whitespace().map(|s| s.to_string()).collect(), prio: f[2] == "prio" });
+        out.insert(
+            f[0].to_string(),
+            Hooks { events: f[1].split_whitespace().map(|s| s.to_string()).collect(), prio: f[2] == "prio" },
+        );
     }
     Ok(out)
 }

@@ -43,7 +43,8 @@ pub fn land_etb_fx(cache: &Cache, cd: &Cd) -> Vec<(String, i64)> {
 pub fn land_types(cache: &Cache, name: &str) -> (Vec<String>, bool) {
     let tl = rec(cache, name).and_then(|r| r.s("type_line")).unwrap_or("").to_lowercase();
     let sub = tl.split_once('—').map(|x| x.1).unwrap_or("");
-    let mut ts: Vec<String> = sub.split_whitespace().filter(|w| BASIC_TYPES.contains(w)).map(|w| w.to_string()).collect();
+    let mut ts: Vec<String> =
+        sub.split_whitespace().filter(|w| BASIC_TYPES.contains(w)).map(|w| w.to_string()).collect();
     ts.sort();
     ts.dedup();
     (ts, tl.starts_with("basic"))
@@ -84,7 +85,8 @@ pub fn enters_rule(cache: &Cache, cd: &Cd) -> Option<J> {
         } else if cond.contains("planeswalker") {
             return Some(J::Arr(vec![s("planeswalker")]));
         } else {
-            let ts: Vec<String> = findall(r"an? (\w+)", cond).into_iter().filter(|w| BASIC_TYPES.contains(&w.as_str())).collect();
+            let ts: Vec<String> =
+                findall(r"an? (\w+)", cond).into_iter().filter(|w| BASIC_TYPES.contains(&w.as_str())).collect();
             if cond.starts_with("you control") && !ts.is_empty() {
                 return Some(J::Arr(vec![s("control"), sorted(ts)]));
             }
@@ -95,7 +97,8 @@ pub fn enters_rule(cache: &Cache, cd: &Cd) -> Option<J> {
     } else if let Some(m) =
         search(r"you may reveal an? (\w+) or (\w+) card from your hand\. if you don.t, [^.]*enters tapped", &txt)
     {
-        let ts: Vec<String> = m.groups().into_iter().flatten().filter(|w| BASIC_TYPES.contains(w)).map(|w| w.to_string()).collect();
+        let ts: Vec<String> =
+            m.groups().into_iter().flatten().filter(|w| BASIC_TYPES.contains(w)).map(|w| w.to_string()).collect();
         Some(J::Arr(vec![s("reveal"), sorted(ts)]))
     } else {
         None

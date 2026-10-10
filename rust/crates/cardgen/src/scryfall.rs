@@ -93,8 +93,21 @@ impl Cache {
 pub fn slim(card: &J) -> J {
     let mut out = Obj::new();
     for k in [
-        "name", "mana_cost", "cmc", "type_line", "oracle_text", "power", "toughness", "loyalty", "colors", "color_identity",
-        "keywords", "produced_mana", "layout", "game_changer", "legalities",
+        "name",
+        "mana_cost",
+        "cmc",
+        "type_line",
+        "oracle_text",
+        "power",
+        "toughness",
+        "loyalty",
+        "colors",
+        "color_identity",
+        "keywords",
+        "produced_mana",
+        "layout",
+        "game_changer",
+        "legalities",
     ] {
         if let Some(v) = card.get(k) {
             out.set(k, v.clone());

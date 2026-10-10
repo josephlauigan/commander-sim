@@ -282,9 +282,10 @@ pub fn autotag(rec: &J) -> AutoTags {
         let l = py::rstrip(&lraw, ".");
         let mut hit = whole_hit.iter().any(|w| py::lstrip(l, "• ").starts_with(w)) || l.starts_with("choose ");
         let parts: Vec<&str> = l.split(',').map(|x| x.trim()).collect();
-        if parts.iter().all(|x| {
-            kw(x).is_some() || IGNORABLE_KEYWORDS.iter().any(|k| *x == *k || x.starts_with(&format!("{k} ")))
-        }) {
+        if parts
+            .iter()
+            .all(|x| kw(x).is_some() || IGNORABLE_KEYWORDS.iter().any(|k| *x == *k || x.starts_with(&format!("{k} "))))
+        {
             for x in parts {
                 if let Some(k) = kw(x) {
                     add!(k);
@@ -295,7 +296,8 @@ pub fn autotag(rec: &J) -> AutoTags {
         let etb = starts(r"(when|whenever) ~ enters", l);
         let activated = starts(r#"^[^"]*?\{[^}]*\}[^"]*?:"#, l) && !spell;
         let eff = spell || etb;
-        let upkeep = l.starts_with("at the beginning of your upkeep") || l.starts_with("at the beginning of your draw step");
+        let upkeep =
+            l.starts_with("at the beginning of your upkeep") || l.starts_with("at the beginning of your draw step");
         let castrig = starts(
             r"(magecraft — )?whenever you cast (or copy )?(an instant or sorcery|a noncreature|an? (instant|sorcery)) spell",
             l,
@@ -317,19 +319,20 @@ pub fn autotag(rec: &J) -> AutoTags {
                 } else if add_s.contains("any color") || l.contains("as long as") {
                     "C".into()
                 } else {
-                    let c: String =
-                        "wubrg".chars().filter(|c| add_s.contains(&format!("{{{c}}}"))).collect::<String>().to_uppercase();
+                    let c: String = "wubrg"
+                        .chars()
+                        .filter(|c| add_s.contains(&format!("{{{c}}}")))
+                        .collect::<String>()
+                        .to_uppercase();
                     if c.is_empty() { "C".into() } else { c }
                 };
-                let amt =
-                    if !add_s.contains(" or ") { findall(r"\{[wubrgc]\}", add_s).len() as i64 } else { 1 };
+                let amt = if !add_s.contains(" or ") { findall(r"\{[wubrgc]\}", add_s).len() as i64 } else { 1 };
                 if land {
                     let prev = mana_c.clone().unwrap_or_default();
                     mana_c = Some(if prev == "A" || cols == "A" {
                         "A".into()
                     } else {
-                        let s: String =
-                            "WUBRG".chars().filter(|c| prev.contains(*c) || cols.contains(*c)).collect();
+                        let s: String = "WUBRG".chars().filter(|c| prev.contains(*c) || cols.contains(*c)).collect();
                         if s.is_empty() { "C".into() } else { s }
                     });
                     if amt >= 2 {
@@ -346,7 +349,8 @@ pub fn autotag(rec: &J) -> AutoTags {
         }
         // --- draw
         let mut m = search(r"(?:^|[,.:—] |then |and |you )draw (a|one|two|three|four|five|x|\d+) cards?", l);
-        if m.is_some() && is(r"whenever (you|an opponent|a player|equipped)[^,]* draws?|opponent draws|player draws", l) {
+        if m.is_some() && is(r"whenever (you|an opponent|a player|equipped)[^,]* draws?|opponent draws|player draws", l)
+        {
             m = None;
         }
         if let Some(m) = m {
@@ -367,7 +371,10 @@ pub fn autotag(rec: &J) -> AutoTags {
             add!("eng", 1);
             hit = true;
         }
-        if let Some(m) = search(r"put (one|two|three) of them into your hand|you may play (those|that) cards?|draw a card for each", l) {
+        if let Some(m) = search(
+            r"put (one|two|three) of them into your hand|you may play (those|that) cards?|draw a card for each",
+            l,
+        ) {
             if eff && !tags.contains("draw") {
                 let two = matches!(m.g(1), Some("two") | Some("three")) || m.g(2) == Some("those");
                 add!("draw", if two { 2 } else { 1 });
@@ -444,7 +451,10 @@ pub fn autotag(rec: &J) -> AutoTags {
             r"return (up to one )?target (spell or permanent|nonland permanent|creature|permanent|artifact or creature)[^.]*? to (its|their) owner's hand",
             l,
         ) {
-            if eff && !text.to_lowercase().contains("overload") && !m.all().replace("you don't control", "").contains("you control") {
+            if eff
+                && !text.to_lowercase().contains("overload")
+                && !m.all().replace("you don't control", "").contains("you control")
+            {
                 add!("rem", "bounce");
                 add!("tgt", target_kind(m.gs(2)).unwrap_or("nl"));
                 if etb && !spell {
@@ -453,7 +463,10 @@ pub fn autotag(rec: &J) -> AutoTags {
                 hit = true;
             }
         }
-        if let Some(m) = search(r"deals (\d+|x) damage to (any target|target creature or planeswalker|target creature|any other target)", l) {
+        if let Some(m) = search(
+            r"deals (\d+|x) damage to (any target|target creature or planeswalker|target creature|any other target)",
+            l,
+        ) {
             if !castrig && eff {
                 let d = if m.gs(1) == "x" { 3 } else { m.gs(1).parse::<i64>().unwrap() };
                 add!("rem", format!("dmg{d}"));
@@ -523,7 +536,10 @@ pub fn autotag(rec: &J) -> AutoTags {
         } else if is(r"return all creatures to their owners' hands", l) {
             add!("wipe", "evac");
             hit = true;
-        } else if is(r"return all nonland permanents (you don't control|target player controls|your opponents control)", l) {
+        } else if is(
+            r"return all nonland permanents (you don't control|target player controls|your opponents control)",
+            l,
+        ) {
             add!("wipe", if l.contains("target player") { "rebuke" } else { "rift" });
             hit = true;
         }
@@ -632,7 +648,9 @@ pub fn autotag(rec: &J) -> AutoTags {
         }
         // --- spell-cast triggers
         if castrig {
-            if let Some(m) = search(r"deals? (\d+) damage to (each opponent|target opponent|any target|each of up to)", l) {
+            if let Some(m) =
+                search(r"deals? (\d+) damage to (each opponent|target opponent|any target|each of up to)", l)
+            {
                 add!("ping", m.gs(1).parse::<i64>().unwrap());
                 if !m.gs(2).contains("each opponent") {
                     add!("ral");

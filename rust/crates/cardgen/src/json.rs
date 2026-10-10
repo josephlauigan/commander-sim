@@ -404,7 +404,10 @@ mod tests {
     fn writes_like_python() {
         let v = parse(r#"{"b": [1, {"x": []}, {}], "a": "Mauhúr \"q\"", "f": 1.0, "n": null}"#).unwrap();
         assert_eq!(dumps(&v, None, false), r#"{"b": [1, {"x": []}, {}], "a": "Mauhúr \"q\"", "f": 1.0, "n": null}"#);
-        assert_eq!(dumps(&v, None, true), r#"{"b": [1, {"x": []}, {}], "a": "Mauh\u00far \"q\"", "f": 1.0, "n": null}"#);
+        assert_eq!(
+            dumps(&v, None, true),
+            r#"{"b": [1, {"x": []}, {}], "a": "Mauh\u00far \"q\"", "f": 1.0, "n": null}"#
+        );
         assert_eq!(dumps(&jo! {"a" => vec![J::Int(1)]}, Some(1), false), "{\n \"a\": [\n  1\n ]\n}");
         assert_eq!(py_float(1e16), "1e+16");
         assert_eq!(py_float(0.5), "0.5");

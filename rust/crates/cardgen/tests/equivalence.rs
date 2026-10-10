@@ -22,7 +22,8 @@ fn export_matches_committed_files() {
     let e = export(&inp).unwrap();
     let got_cards = json::parse(&e.cards_json).unwrap();
     let want_cards = read_json(&p, "cards.json");
-    let (g, w) = (got_cards.get("cards").unwrap().as_arr().unwrap(), want_cards.get("cards").unwrap().as_arr().unwrap());
+    let (g, w) =
+        (got_cards.get("cards").unwrap().as_arr().unwrap(), want_cards.get("cards").unwrap().as_arr().unwrap());
     let mut diffs = vec![];
     let names = |v: &Vec<J>| v.iter().map(|c| c.s_or("name").to_string()).collect::<Vec<_>>();
     if names(g) != names(w) {
@@ -44,7 +45,12 @@ fn export_matches_committed_files() {
             diffs.push(format!("{}: fields differ", b.s_or("name")));
         }
     }
-    assert!(diffs.is_empty(), "{} difference(s), e.g.:\n{}", diffs.len(), diffs.iter().take(10).cloned().collect::<Vec<_>>().join("\n"));
+    assert!(
+        diffs.is_empty(),
+        "{} difference(s), e.g.:\n{}",
+        diffs.len(),
+        diffs.iter().take(10).cloned().collect::<Vec<_>>().join("\n")
+    );
     assert_eq!(json::parse(&e.decks_json).unwrap(), read_json(&p, "decks.json"), "decks.json differs");
     // and byte for byte (key order, number formatting)
     assert_eq!(e.cards_json, std::fs::read_to_string(p.data("cards.json")).unwrap());

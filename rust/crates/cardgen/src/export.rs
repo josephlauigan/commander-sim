@@ -60,8 +60,13 @@ impl Inputs {
     pub fn uncached(&self) -> Vec<String> {
         let hand: BTreeSet<&str> = self.carddb.iter().map(|l| l.name.as_str()).collect();
         let w = self.wanted();
-        let mut v: Vec<String> =
-            w.played.iter().chain(w.extra.iter()).filter(|n| !hand.contains(n.as_str()) && !self.cache.contains(n)).cloned().collect();
+        let mut v: Vec<String> = w
+            .played
+            .iter()
+            .chain(w.extra.iter())
+            .filter(|n| !hand.contains(n.as_str()) && !self.cache.contains(n))
+            .cloned()
+            .collect();
         v.sort();
         v.dedup();
         v
@@ -129,12 +134,17 @@ pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
     keys.sort_by(|a, b| a.key.cmp(&b.key));
     for d in keys {
         let cards = &inp.my_cards.iter().find(|(k, _)| *k == d.key).unwrap().1;
-        mine.push(J::Obj(obj! {"key" => d.key.as_str(), "name" => d.name.as_str(), "commander" => d.commander.as_str(),
-            "ident" => ident_of(d.ident.chars()), "cards" => sorted_strs(cards)}));
+        mine.push(J::Obj(
+            obj! {"key" => d.key.as_str(), "name" => d.name.as_str(), "commander" => d.commander.as_str(),
+            "ident" => ident_of(d.ident.chars()), "cards" => sorted_strs(cards)},
+        ));
     }
     let mut pool = vec![];
     for d in &inp.pool {
-        let rec = inp.cache.get(&d.commander).ok_or(format!("pool deck {}: commander {} is not in the card cache", d.key, d.commander))?;
+        let rec = inp
+            .cache
+            .get(&d.commander)
+            .ok_or(format!("pool deck {}: commander {} is not in the card cache", d.key, d.commander))?;
         pool.push(J::Obj(obj! {"tier" => d.tier.as_str(), "key" => d.key.as_str(), "name" => decks::short_name(&d.commander),
             "commander" => d.commander.as_str(),
             "ident" => ident_of(rec.strs("color_identity").iter().flat_map(|s| s.chars()).collect::<Vec<_>>().into_iter()),
@@ -154,11 +164,15 @@ pub struct Exported {
 pub fn export(inp: &Inputs) -> Result<Exported, String> {
     let built = inp.build();
     if !built.missing.is_empty() {
-        return Err(format!("no Scryfall data for: {} (cardgen export fetches missing cards unless --offline)", built.missing.join(", ")));
+        return Err(format!(
+            "no Scryfall data for: {} (cardgen export fetches missing cards unless --offline)",
+            built.missing.join(", ")
+        ));
     }
     let cards: Vec<J> = built.cards.values().map(|cd| card_record(cd, &inp.cache, inp.hooks.get(&cd.name))).collect();
     let decks = decks_doc(inp)?;
-    let n_decks = decks.get("mine").and_then(|m| m.as_arr()).map_or(0, |a| a.len()) + decks.get("pool").and_then(|m| m.as_arr()).map_or(0, |a| a.len());
+    let n_decks = decks.get("mine").and_then(|m| m.as_arr()).map_or(0, |a| a.len())
+        + decks.get("pool").and_then(|m| m.as_arr()).map_or(0, |a| a.len());
     let doc = |body: J| format!("{}\n", json::dumps(&body, Some(1), false));
     let n_cards = cards.len();
     Ok(Exported {

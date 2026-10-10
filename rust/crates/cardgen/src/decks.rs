@@ -149,7 +149,11 @@ pub fn structural_problems(cards: &[String], commander: &str, size: usize) -> Ve
 
 /// Python's `repr()` of a card name (single quotes unless the name has one and no double quote)
 pub fn py_repr(s: &str) -> String {
-    if s.contains('\'') && !s.contains('"') { format!("\"{s}\"") } else { format!("'{}'", s.replace('\\', "\\\\").replace('\'', "\\'")) }
+    if s.contains('\'') && !s.contains('"') {
+        format!("\"{s}\"")
+    } else {
+        format!("'{}'", s.replace('\\', "\\\\").replace('\'', "\\'"))
+    }
 }
 
 /// Did Scryfall return the card we asked for (not a fuzzy near-miss)?
@@ -187,19 +191,25 @@ pub fn card_problems(
     }
     let fuzzy: Vec<String> = rec_of
         .iter()
-        .filter_map(|(n, r)| r.as_ref().filter(|r| !resolved_name_ok(n, r)).map(|r| format!("{n} -> {}", r.s_or("name"))))
+        .filter_map(|(n, r)| {
+            r.as_ref().filter(|r| !resolved_name_ok(n, r)).map(|r| format!("{n} -> {}", r.s_or("name")))
+        })
         .collect();
     if !fuzzy.is_empty() {
         probs.push(format!("resolved only by fuzzy match (check spelling): {}", fuzzy.join(", ")));
     }
     let cmd = recs(commander);
-    let ident: Option<Vec<String>> = cmd.as_ref().map(|c| c.strs("color_identity").iter().map(|s| s.to_string()).collect());
+    let ident: Option<Vec<String>> =
+        cmd.as_ref().map(|c| c.strs("color_identity").iter().map(|s| s.to_string()).collect());
     if let Some(c) = &cmd {
         let tl = c.s("type_line").unwrap_or("");
         let mut text = c.s("oracle_text").unwrap_or("").to_string();
         text.push(' ');
         text.push_str(
-            &c.get("card_faces").and_then(|f| f.as_arr()).map(|f| f.iter().map(|x| x.s("oracle_text").unwrap_or("").to_string()).collect::<Vec<_>>().join(" ")).unwrap_or_default(),
+            &c.get("card_faces")
+                .and_then(|f| f.as_arr())
+                .map(|f| f.iter().map(|x| x.s("oracle_text").unwrap_or("").to_string()).collect::<Vec<_>>().join(" "))
+                .unwrap_or_default(),
         );
         if !(tl.contains("Legendary") && tl.contains("Creature")) && !text.contains("can be your commander") {
             probs.push(format!("commander {commander} is not a legendary creature"));
@@ -212,11 +222,17 @@ pub fn card_problems(
             let id = v.concat();
             let off: Vec<&str> = rec_of
                 .iter()
-                .filter(|(_, r)| r.as_ref().is_some_and(|r| !r.strs("color_identity").iter().all(|c| i.iter().any(|x| x == c))))
+                .filter(|(_, r)| {
+                    r.as_ref().is_some_and(|r| !r.strs("color_identity").iter().all(|c| i.iter().any(|x| x == c)))
+                })
                 .map(|(n, _)| n.as_str())
                 .collect();
             if !off.is_empty() {
-                probs.push(format!("outside colour identity {}: {}", if id.is_empty() { "C" } else { &id }, off.join(", ")));
+                probs.push(format!(
+                    "outside colour identity {}: {}",
+                    if id.is_empty() { "C" } else { &id },
+                    off.join(", ")
+                ));
             }
             id
         }
@@ -224,14 +240,21 @@ pub fn card_problems(
     };
     let banned: Vec<&str> = rec_of
         .iter()
-        .filter(|(_, r)| r.as_ref().is_some_and(|r| r.get("legalities").and_then(|l| l.get("commander")).and_then(|c| c.as_str()) == Some("banned")))
+        .filter(|(_, r)| {
+            r.as_ref().is_some_and(|r| {
+                r.get("legalities").and_then(|l| l.get("commander")).and_then(|c| c.as_str()) == Some("banned")
+            })
+        })
         .map(|(n, _)| n.as_str())
         .collect();
     if !banned.is_empty() {
         probs.push(format!("banned in Commander: {}", banned.join(", ")));
     }
-    let gcs: Vec<String> =
-        rec_of.iter().filter(|(_, r)| r.as_ref().is_some_and(|r| r.get("game_changer").is_some_and(|g| g.truthy()))).map(|(n, _)| n.to_string()).collect();
+    let gcs: Vec<String> = rec_of
+        .iter()
+        .filter(|(_, r)| r.as_ref().is_some_and(|r| r.get("game_changer").is_some_and(|g| g.truthy())))
+        .map(|(n, _)| n.to_string())
+        .collect();
     if let Some((lo, hi)) = tier.and_then(gc_rules) {
         if !(lo <= gcs.len() && gcs.len() <= hi) {
             probs.push(format!("{} Game Changers, tier {} allows {lo}-{hi}", gcs.len(), tier.unwrap()));

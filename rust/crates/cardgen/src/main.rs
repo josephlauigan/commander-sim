@@ -97,7 +97,15 @@ fn validate(project: &Project, _args: &[String]) -> Result<(), String> {
     let mut bad = 0;
     for (d, probs, info) in &report {
         bad += !probs.is_empty() as usize;
-        println!("{} {} {:<40} {} [{}] GCs={}", if probs.is_empty() { "OK " } else { "ERR" }, d.tier, d.key, d.commander, info.identity, info.gcs.len());
+        println!(
+            "{} {} {:<40} {} [{}] GCs={}",
+            if probs.is_empty() { "OK " } else { "ERR" },
+            d.tier,
+            d.key,
+            d.commander,
+            info.identity,
+            info.gcs.len()
+        );
         for p in probs {
             println!("      - {p}");
         }
