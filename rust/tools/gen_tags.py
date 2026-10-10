@@ -5,7 +5,7 @@ card has yet (CODE_ONLY, with the kind of value they would take). Run after re-e
 import collections, json, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-CODE_ONLY = {'onering': 'Flag', 'narset': 'Flag', 'labyrinth': 'Flag', 'anth': 'Int', 'pstone': 'Flag', 'burn': 'Flag', 'ctrexile': 'Flag', 'drainetb': 'Int', 'dualcaster': 'Flag', 'edictetb': 'Flag', 'evil': 'Flag', 'exiledie': 'Flag', 'newonly': 'Flag', 'pumpall': 'Int', 'selfdmg': 'Int', 'verdict': 'Flag', 'upkprolif': 'Flag', 'pwdiscard': 'Flag'}
+CODE_ONLY = {'onering': 'Flag', 'narset': 'Flag', 'labyrinth': 'Flag', 'anth': 'Int', 'pstone': 'Flag', 'burn': 'Flag', 'ctrexile': 'Flag', 'drainetb': 'Int', 'dualcaster': 'Flag', 'edictetb': 'Flag', 'evil': 'Flag', 'exiledie': 'Flag', 'newonly': 'Flag', 'pumpall': 'Int', 'selfdmg': 'Int', 'verdict': 'Flag', 'upkprolif': 'Flag', 'pwdiscard': 'Flag', 'fastmana': 'Flag'}
 
 
 def variant(k):

@@ -421,6 +421,10 @@ pub struct Player {
     pub act_uses: IndexMap<(PermId, u16), (TurnStamp, u32)>,
     /// counters for reports (Python's `p.stats`)
     pub stats: IndexMap<Sym, i64>,
+    /// rebound spells (Ephemerate) cast again at the next upkeep
+    pub rebound: Vec<CardId>,
+    /// the turn count Jace's Archivist was last used on
+    pub arch_t: Option<u32>,
 }
 
 impl Player {
@@ -521,6 +525,8 @@ impl Player {
             elspeth_emblem: false,
             milestone: IndexMap::new(),
             act_uses: IndexMap::new(),
+            rebound: vec![],
+            arch_t: None,
             stats: IndexMap::new(),
         }
     }
@@ -574,6 +580,8 @@ pub struct Ctx {
     pub deluge_x: Option<i32>,
     /// Cyclonic Rift-style wipes of one player (rebuke): the player
     pub victim: Option<PlayerId>,
+    /// a reanimation spell's target is in this player's graveyard
+    pub rean_src: Option<PlayerId>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).
@@ -735,6 +743,13 @@ pub struct Game {
     pub log: Option<Vec<String>>,
     /// practice mode's people; a copy of the game never has any (see `control::Humans`)
     pub humans: Humans,
+    /// the X paid for the last X spell (card code that reads it: Walking Ballista ...)
+    pub last_x: i32,
+    /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
+    pub forced_attack: Option<(PlayerId, Sym)>,
+    /// look-ahead decisions taken in this game, and engine steps its playouts used (the per-game caps)
+    pub search_n: u32,
+    pub search_work: u64,
 }
 
 impl Game {
@@ -818,6 +833,10 @@ impl Game {
             in_search: false,
             log: None,
             humans: Humans::none(),
+            last_x: 0,
+            forced_attack: None,
+            search_n: 0,
+            search_work: 0,
         }
     }
 

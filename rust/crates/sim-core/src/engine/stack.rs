@@ -428,7 +428,7 @@ pub fn counterable(g: &Game, it: &StackItem) -> bool {
 }
 
 /// The AI with priority: counter the spell on top of the stack (or a counterspell aimed at its own spell), or pass.
-/// Python's `ai_respond` (the adaptive AI's branch; the look-ahead's choice comes in M4).
+/// Python's `ai_respond`.
 pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     let Some(top) = g.stack.last() else { return Ok(()) };
     if top.controller == q || top.passed.contains(&q) {
@@ -487,9 +487,15 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             thr += 1.5;
         }
     }
-    // PORT(M4): the look-ahead decides counters in the active player's main phase (search.choose_counter)
-    if g.rng.random() > ai::wants_counter(val, thr, nc) {
-        return Ok(());
+    // the look-ahead decides counters to the active player's spell in their main phase
+    match ai::search_counter(g, q, top.controller, c, top.generic) {
+        Some(false) => return Ok(()),
+        Some(true) => {}
+        None => {
+            if g.rng.random() > ai::wants_counter(val, thr, nc) {
+                return Ok(());
+            }
+        }
     }
     if top.imp >= 6.0 && crate::cardcode::hullbreaker_counter(g, q, c)? {
         g.bounced_spell = true;

@@ -84,6 +84,13 @@ pub fn table_with(keys: &[&str], seed: u64, life: i32) -> Game {
     g
 }
 
+/// switch a test game's AI (the heuristic alone, or with the look-ahead)
+pub fn set_ai(g: &mut Game, ai: AiMode) {
+    let mut s = (*g.settings).clone();
+    s.ai = ai;
+    g.settings = Arc::new(s);
+}
+
 /// The card out of p's library (its definition if the deck doesn't run it): Python's `take`.
 pub fn take(g: &mut Game, p: PlayerId, name: &str) -> CardId {
     let c = g.db.id(name).unwrap_or_else(|| panic!("{name:?} isn't in data/cards.json"));
@@ -139,10 +146,16 @@ pub fn seat_spec(key: &str) -> crate::engine::turn::Seat {
     }
 }
 
-/// a whole game with these decks seated in this order, from seed: setup, mulligans and up to 20 rounds
+/// a whole game with these decks seated in this order, from seed: setup, mulligans and up to 20 rounds (the
+/// heuristic AI alone)
 pub fn play(keys: &[&str], seed: u64, trace: bool) -> Game {
+    play_with(keys, seed, trace, AiMode::Adaptive)
+}
+
+/// a whole game as `play`, with this AI
+pub fn play_with(keys: &[&str], seed: u64, trace: bool, ai: AiMode) -> Game {
     let seats: Vec<_> = keys.iter().map(|k| seat_spec(k)).collect();
-    let settings = Arc::new(Settings::new(Profile::Loose, AiMode::Adaptive, 1.0));
+    let settings = Arc::new(Settings::new(Profile::Loose, ai, 1.0));
     let mut g = crate::engine::turn::setup_game(db(), registry(), settings, seed, &seats, trace);
     crate::engine::turn::run_rounds(&mut g, 20);
     g

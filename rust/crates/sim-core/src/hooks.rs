@@ -277,6 +277,13 @@ pub type UncounterableFn = fn(&Game, Src, PlayerId, CardId) -> bool;
 pub type ResolveFn = fn(&mut Game, PlayerId, CardId, &crate::state::Ctx) -> Res<Sym>;
 /// mana_tapped(g, src, p, m, n): p tapped permanent m for n mana (run at once)
 pub type ManaTappedFn = fn(&mut Game, Src, PlayerId, PermId, u32) -> Res;
+/// gy_options / hand_options (g, c, p, post): plays from a card in p's graveyard or hand (post: None at the end-of-turn
+/// window)
+pub type CardOptionsFn = fn(&mut Game, CardId, PlayerId, Option<bool>) -> Res<Vec<Opt>>;
+/// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
+pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
+/// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
+pub type SpellImpFn = fn(&Game, PlayerId, CardId) -> f64;
 
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
@@ -322,6 +329,14 @@ pub struct CardImpl {
     /// no_graveyard (Rest in Peace): a count over the hooked permanents
     pub no_graveyard: Option<PlayerCountFn>,
     pub resolve: Option<ResolveFn>,
+    pub gy_options: Option<CardOptionsFn>,
+    pub hand_options: Option<CardOptionsFn>,
+    /// the AI's cast priority for the card (Python's `CI.SPELL_PRIO`, a number or a function)
+    pub prio: Option<PrioFn>,
+    /// how much opponents want to counter it (Python's `CI.SPELL_IMP`)
+    pub spell_imp: Option<SpellImpFn>,
+    /// a fixed value of removing it (Python's `CI.PVAL`)
+    pub pval: Option<f64>,
     /// triggered-event hooks that run at once instead of going on the stack: Python's hooks without a
     /// `trigger_window` call (cardimpl `converted` is false). A bit per `Event`.
     pub at_once: u128,
@@ -381,6 +396,8 @@ impl CardImpl {
             Event::Uncounterable => self.uncounterable.is_some(),
             Event::NoGraveyard => self.no_graveyard.is_some(),
             Event::Resolve => self.resolve.is_some(),
+            Event::GyOptions => self.gy_options.is_some(),
+            Event::HandOptions => self.hand_options.is_some(),
             _ => false,
         }
     }
@@ -526,9 +543,40 @@ pub struct Opt {
 /// What an option does. Engine verbs are variants; card abilities name their card's function and arguments.
 #[derive(Debug, Clone)]
 pub enum Action {
+    /// brain.do_cast: zone None (hand or command zone), 'gy' (flashback), 'yawg' (Yawgmoth's Will)
     Cast {
         card: CardId,
-        zone: Sym,
+        zone: Option<Sym>,
+    },
+    /// brain.cast_removal: at one of `targets` (sampled by value as it's cast), kicked for `kick` more
+    Removal {
+        card: CardId,
+        targets: Vec<PermId>,
+        kick: u32,
+        kind: Option<Sym>,
+    },
+    /// a board wipe (victim: the player a one-player wipe hits)
+    Wipe {
+        card: CardId,
+        victim: Option<PlayerId>,
+    },
+    /// burn at player q's face (kick: the kicker paid)
+    Face {
+        card: CardId,
+        q: PlayerId,
+        kick: u32,
+    },
+    /// Crackle with Power for X
+    Crackle {
+        card: CardId,
+        x: u32,
+    },
+    /// crack a Clue
+    Clue,
+    /// a deck plan's play (its function and an argument: a card or permanent id, or 0)
+    Plan {
+        f: PlanFn,
+        arg: i64,
     },
     Ability {
         src: PermId,
@@ -555,6 +603,8 @@ pub enum Action {
 
 /// A card ability chosen from `options`: returns whether it did anything (Python's `fn()` returning a truth value).
 pub type AbilityFn = fn(&mut Game, PermId, PlayerId, i64) -> Res<bool>;
+/// A deck plan's play (Python's closures in the AI's option lists): returns whether it did anything.
+pub type PlanFn = fn(&mut Game, PlayerId, i64) -> Res<bool>;
 
 #[cfg(test)]
 mod tests {

@@ -1079,7 +1079,7 @@ pub fn etb_static(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let t = g.db.get(cd).tags.clone();
     if t.has(Tag::Flute) {
         // Disruptor Flute: choose a card name
-        if let Some(name) = ai::flute_pick(g, p) {
+        if let Some((name, _)) = ai::flute_pick(g, p) {
             g.flutes.push((m, name));
             g.player_mut(p).stat("flute_named", 1);
             crate::glog!(g, "    Disruptor Flute names {}", g.db.get(name).name);

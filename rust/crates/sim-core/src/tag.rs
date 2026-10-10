@@ -82,6 +82,7 @@ pub enum Tag {
     Face,
     Facebreaker,
     Fair,
+    Fastmana,
     Fb,
     Fbdraw,
     Fbgrant,
@@ -311,7 +312,7 @@ pub enum TagKind {
     Str,
 }
 
-pub const TAG_COUNT: usize = 295;
+pub const TAG_COUNT: usize = 296;
 
 /// (tag, its name in the Python code and the export, the kind of value it takes), in `Tag` order.
 pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
@@ -390,6 +391,7 @@ pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
     (Tag::Face, "face", TagKind::Flag),
     (Tag::Facebreaker, "facebreaker", TagKind::Flag),
     (Tag::Fair, "fair", TagKind::Flag),
+    (Tag::Fastmana, "fastmana", TagKind::Flag),
     (Tag::Fb, "fb", TagKind::Str),
     (Tag::Fbdraw, "fbdraw", TagKind::Int),
     (Tag::Fbgrant, "fbgrant", TagKind::Flag),

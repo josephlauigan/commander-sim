@@ -3,8 +3,11 @@
 //! The engine calls these exactly where the Python does. Each is a `PORT(Mx)` placeholder returning what a table
 //! without that card gives, until the card code is ported (M5 for Tier 1 and Sauron, phase 6 for the rest).
 
-use crate::ids::{LandId, PermId, PlayerId};
+use crate::flow::Res;
+use crate::hooks::Opt;
+use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::Game;
+use crate::sym::Sym;
 
 /// PORT(M5): Blood Moon / Magus of the Moon in play (nonbasic lands tap for R)
 pub fn blood_moon(_g: &Game) -> bool {
@@ -66,10 +69,11 @@ pub fn ult_pressure(_g: &Game, _m: PermId) -> f64 {
     0.0
 }
 
-/// PORT(M4): what a permanent is worth removing beyond its tags (cardimpl.threat_value: the per-card table and
-/// the combo pieces' value)
-pub fn threat_value(_g: &Game, _m: PermId) -> f64 {
-    0.0
+/// cardimpl.threat_value: what a permanent is worth removing beyond its tags (its card code and compiled abilities,
+/// and the value of a combo piece)
+pub fn threat_value(g: &Game, m: PermId) -> f64 {
+    let Some(c) = g.perm(m).cd else { return 0.0 };
+    crate::ai::pool::card_threat_value(g, c) + piece_threat(g, m)
 }
 
 /// PORT(M5): how much of m's value is left under the Auras locking it (zur.lock_factor)
@@ -102,10 +106,6 @@ pub fn self_cost(_g: &Game, _p: PlayerId, _c: crate::ids::CardId) -> i32 {
     0
 }
 
-use crate::flow::Res;
-use crate::ids::CardId;
-use crate::sym::Sym;
-
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control
 pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
     use crate::engine::values::{card_tag, has_type};
@@ -121,19 +121,47 @@ pub fn revolt(g: &Game, p: PlayerId) -> bool {
     g.player(p).left_turn == Some(g.turn_stamp())
 }
 
-/// PORT(M4): rules.tithe_unpaid, p pays Smothering Tithe's {2} only when it can spare it (ais.spare_after); true:
-/// unpaid, so the Tithe's owner gets a Treasure. Until then: pays whenever it can.
+/// rules.spare_after: can p pay a tax of n (Rhystic Study, Smothering Tithe) and still cast the most expensive spell
+/// it could cast now (any spell on its own turn, an instant or flash card on someone else's)? Cards it can't afford
+/// anyway don't stop it paying.
+pub fn spare_after(g: &Game, p: PlayerId, n: u32) -> bool {
+    use crate::engine::mana::{can_pay, cost_of, total_mana};
+    if !can_pay(g, p, n, "", false) {
+        return false;
+    }
+    let avail = total_mana(g, p, false);
+    let own = g.active == Some(p);
+    let need = g
+        .player(p)
+        .hand
+        .iter()
+        .filter(|&&c| {
+            let d = g.db.get(c);
+            !d.land && (own || d.instant || d.tag(crate::tag::Tag::Flash))
+        })
+        .map(|&c| {
+            let (gn, pips) = cost_of(g, p, c);
+            gn + pips.len() as u32
+        })
+        .filter(|&mv| mv <= avail)
+        .max()
+        .unwrap_or(0);
+    avail >= n + need
+}
+
+/// rules.tithe_unpaid: Smothering Tithe: p pays {2} when it can spare the mana; true: unpaid, so the Tithe's owner
+/// gets a Treasure. HUMAN(phase 9): a person decides.
 pub fn tithe_unpaid(g: &mut Game, p: PlayerId) -> Res<bool> {
-    if crate::engine::mana::can_pay(g, p, 2, "", false) {
+    if spare_after(g, p, 2) {
         crate::engine::mana::pay(g, p, 2, "", false)?;
         return Ok(false);
     }
     Ok(true)
 }
 
-/// PORT(M4): rules.rhystic_unpaid, as tithe_unpaid for Rhystic Study's {1}
+/// rules.rhystic_unpaid, as tithe_unpaid for Rhystic Study's {1}. HUMAN(phase 9): a person decides.
 pub fn rhystic_unpaid(g: &mut Game, p: PlayerId) -> Res<bool> {
-    if crate::engine::mana::can_pay(g, p, 1, "", false) {
+    if spare_after(g, p, 1) {
         crate::engine::mana::pay(g, p, 1, "", false)?;
         return Ok(false);
     }
@@ -254,7 +282,7 @@ pub fn tajic_protects(_g: &Game, _m: PermId) -> bool {
 /// PORT(M5): Skyclave Apparition remembers what it exiled
 pub fn apparition_note(_g: &mut Game, _src: PermId, _cd: Option<CardId>, _owner: PlayerId) {}
 
-/// PORT(M4): combos: a modeled combo is ready in p's hand and battlefield
+/// PORT(M5): combos: a modeled combo is ready in p's hand and battlefield
 pub fn combo_ready(_g: &Game, _p: PlayerId) -> bool {
     false
 }
@@ -470,4 +498,148 @@ pub fn attached_kw(_g: &Game, _m: PermId, _kw: &str) -> bool {
 /// PORT(M5): rules.ability_locked (Pithing Needle, Linvala ...)
 pub fn ability_locked(_g: &Game, _src: PermId, _p: PlayerId) -> bool {
     false
+}
+
+// ------------------------------------------------------------------ M4: what the AI reads from card code
+/// PORT(M5): combos.combo_imp: a combo piece's importance for counter decisions (9: completes a combo, 7: one short)
+pub fn combo_imp(_g: &Game, _p: PlayerId, _c: CardId) -> f64 {
+    0.0
+}
+
+/// PORT(M5): combos.PIECES: every card that is a piece of a modeled combo
+pub fn combo_pieces(_g: &Game) -> Vec<CardId> {
+    vec![]
+}
+
+/// PORT(M5): c is a piece of a modeled combo (Python: `c.name in impl_combos.PIECES`)
+pub fn is_combo_piece(_g: &Game, _c: CardId) -> bool {
+    false
+}
+
+/// PORT(M5): combos.missing_pieces: the pieces of p's closest combo it doesn't have yet (for tutors)
+pub fn missing_pieces(_g: &Game, _p: PlayerId) -> Vec<CardId> {
+    vec![]
+}
+
+/// PORT(M5): search.combo_progress: the share of q's closest combo that q holds, squared
+pub fn combo_progress(_g: &Game, _q: PlayerId) -> f64 {
+    0.0
+}
+
+/// PORT(M5): combos.piece_threat: extra value of m if it's a piece of a combo its controller nearly has
+pub fn piece_threat(_g: &Game, _m: PermId) -> f64 {
+    0.0
+}
+
+/// PORT(M5): combos.combo_options: go for a ready combo (ctr_risk: the chance a spell in it is countered)
+pub fn combo_options(_g: &mut Game, _p: PlayerId, _ctr_risk: f64, _post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): common.aristocrat_options (sacrifice outlets with a payoff out: Grave Pact, Blood Artist ...)
+pub fn aristocrat_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): lands.land_options (lands' activated abilities: Barad-dûr, Urza's Saga ...)
+pub fn land_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): ais.breach_gc_options: Underworld Breach escapes, Panoptic Mirror imprints, Lion's Eye Diamond,
+/// Bolas's Citadel
+pub fn breach_gc_options(_g: &mut Game, _p: PlayerId) -> Res<Vec<Opt>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): mine.breach_options: Sauron's Underworld Breach line
+pub fn breach_options(_g: &mut Game, _p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
+    Ok(vec![])
+}
+
+/// PORT(phase 6): mine.loop_need: the creature cards that complete one of Sephiroth's loops
+pub fn loop_need(_g: &Game, _p: PlayerId) -> Vec<CardId> {
+    vec![]
+}
+
+/// PORT(M5): common.sac_in_response: sacrifice the permanent for value before removal resolves
+pub fn sac_in_response(_g: &mut Game, _owner: PlayerId, _m: PermId, _kind: Sym) -> Res<bool> {
+    Ok(false)
+}
+
+/// PORT(M5): partials.regen_wipe: regenerate the board against a destroy wipe
+pub fn regen_wipe(_g: &mut Game, _q: PlayerId) -> Res<bool> {
+    Ok(false)
+}
+
+/// PORT(M5): the outside decks' card plays: common.adventure_options, t2.evoke_options,
+/// common.aristocrat_options, common.food_options, partials.miracle_options and incubator_options
+pub fn pool_card_options(_g: &mut Game, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(vec![])
+}
+
+/// PORT(M5): partials.aid_active (Sigarda's Aid: Auras at instant speed)
+pub fn aid_active(_g: &Game, _p: PlayerId) -> bool {
+    false
+}
+
+/// PORT(M5): t4.NINJUTSU, ninjutsu_cost: the ninjutsu costs of the Ninjas in p's hand
+pub fn ninjutsu_costs(_g: &Game, _p: PlayerId) -> Vec<(u32, String)> {
+    vec![]
+}
+
+/// PORT(M5): common.SAC_OUTLET
+pub fn is_sac_outlet(_name: &str) -> bool {
+    false
+}
+
+/// PORT(M5): CI.gy_response: an opponent answers a reanimation spell aimed at src's graveyard (Scavenger Grounds)
+pub fn gy_response(_g: &mut Game, _p: PlayerId, _value: f64, _src: PlayerId) -> Res<bool> {
+    Ok(false)
+}
+
+/// rules.tithe_prio: Smothering Tithe by the Treasures it will make over the next three rounds (likelier early,
+/// while opponents have few lands), worth more when your hand holds more spells than your mana can cast
+pub fn tithe_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let lands = if opps.is_empty() {
+        0.0
+    } else {
+        opps.iter().map(|&q| g.player(q).lands.len()).sum::<usize>() as f64 / opps.len() as f64
+    };
+    let unpaid = if lands <= 4.0 {
+        0.65
+    } else if lands <= 6.0 {
+        0.45
+    } else {
+        0.3
+    };
+    let treasures = 3.0 * opps.len() as f64 * unpaid;
+    let mana = crate::engine::mana::total_mana(g, p, false).max(1) as f64;
+    let backlog: f64 =
+        g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).map(|&x| g.db.get(x).cmc as f64).sum::<f64>()
+            / mana;
+    let need = if backlog >= 2.0 {
+        1.2
+    } else if backlog >= 1.0 {
+        1.0
+    } else {
+        0.7
+    };
+    (35.0 + 4.0 * treasures * need).clamp(15.0, 75.0) as i32
+}
+
+/// PORT(M5): t4.yuriko_wish
+pub fn yuriko_wish(_g: &Game, _p: PlayerId) -> Vec<CardId> {
+    vec![]
+}
+
+/// PORT(M5): t4.yuriko_prio
+pub fn yuriko_prio(_g: &Game, _p: PlayerId, _c: CardId) -> Option<i32> {
+    None
+}
+
+/// PORT(M5): t2.kaalia_prio
+pub fn kaalia_prio(_g: &Game, _p: PlayerId, _c: CardId) -> Option<i32> {
+    None
 }
