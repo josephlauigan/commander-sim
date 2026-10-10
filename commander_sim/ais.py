@@ -238,6 +238,7 @@ def seph_bval(g, p, cd):
     t = cd.tags
     if 'normgc' in t and any(q.key == 'najeela' for q in g.opps(p)): v += 2
     if 'mother' in t and any(q.key == 'sauron' for q in g.opps(p)): v += 1
+    if 'bahamut' in t: v += min(1.5, sum(m.cd.cmc for m in p.perms if m.cd is not None) / 15)   # Mega Flare's reach
     return v
 
 
@@ -2749,6 +2750,8 @@ def _step_start(g, p):
     check_state(g)
     if g.over or not p.alive: return
     E.step_priority(g, 'draw')
+    if g.over or not p.alive: return
+    if g.hooks: E.CI.fire(g, 'main1', p)               # at the beginning of your precombat main phase (Sagas' lore)
     if g.over or not p.alive: return
     nl = len(p.lands)
     p.lands_played = 0; p.extra_land_now = 0

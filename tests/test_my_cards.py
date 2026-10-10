@@ -721,6 +721,119 @@ class NewCards(unittest.TestCase):
         self.assertEqual(flux.plus, 2)
 
 
+class Bahamut(unittest.TestCase):
+    """Summon: Bahamut (tested for Sephiroth): "(As this Saga enters and after your draw step, add a lore counter.
+    Sacrifice after IV.) I, II - Destroy up to one target nonland permanent. III - Draw two cards. IV - Mega Flare -
+    This creature deals damage equal to the total mana value of other permanents you control to each opponent." 9/9
+    flying"""
+    B = 'Summon: Bahamut'
+
+    def bahamut(self, p):
+        return next(m for m in p.perms if m.cd is not None and m.cd.name == self.B)
+
+    def lore(self, g, p, n=1):
+        for _ in range(n): E.CI.fire(g, 'main1', p)
+
+    def test_chapter_one_destroys_the_biggest_threat(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        snipe = perm(g, v, 'Guttersnipe'); vey = perm(g, v, 'Veyran, Voice of Duality'); lands(v, 'Island', 1)
+        b = perm(g, s, self.B)
+        self.assertEqual(b.data['lore'], 1)
+        self.assertTrue(b.fly and (b.pow, b.tgh) == (9, 9))
+        self.assertEqual(v.perms, [snipe])                     # Veyran, not Guttersnipe; lands are never targets
+        self.assertEqual(len(v.lands), 1)
+
+    def test_chapter_two_after_your_draw_step(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); snipe = perm(g, v, 'Guttersnipe')
+        self.lore(g, v)                                        # an opponent's main phase adds nothing
+        self.assertEqual((b.data['lore'], v.perms), (1, [snipe]))
+        ais._step_start(g, s)                                  # upkeep, draw step, then the lore counter
+        self.assertEqual(b.data['lore'], 2)
+        self.assertEqual(v.perms, [])
+
+    def test_chapter_three_draws_two(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); self.lore(g, s)
+        n = len(s.hand)
+        self.lore(g, s)
+        self.assertEqual((b.data['lore'], len(s.hand)), (3, n + 2))
+
+    def test_mega_flare_then_sacrificed(self):
+        g = table('seph', 'veyran', 'sauron'); s, v, r = g.players
+        perm(g, s, 'Sol Ring'); perm(g, s, 'Grave Titan'); lands(s, 'Swamp', 3)   # 1 + 6 (Zombies and lands: 0)
+        b = perm(g, s, self.B); self.lore(g, s, 2)
+        self.lore(g, s)
+        self.assertEqual(lives(g), [40, 33, 33])
+        self.assertNotIn(b, s.perms)
+        self.assertIn(C[self.B], s.gy)                         # sacrificed: back in the graveyard to reanimate
+
+    def test_mega_flare_kills(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Grave Titan'); v.life = 6
+        perm(g, s, self.B); self.lore(g, s, 3)
+        self.assertFalse(v.alive)
+        self.assertTrue(g.over and g.winner is s)
+
+    def test_reanimated_at_chapter_one(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        lands(s, 'Swamp', 2); hand(s, 'Animate Dead')
+        s.gy += [C['Grave Titan'], card(self.B)]
+        self.assertEqual(ais.rean_targets(g, s, 'animate')[0][1].name, self.B)    # above Grave Titan
+        self.assertTrue(ais.seph_reanimate(g, s))
+        self.assertEqual(self.bahamut(s).data['lore'], 1)
+        self.assertNotIn(vey, v.perms)
+
+    def test_entomb_target(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        perm(g, s, 'Sol Ring'); s.library.append(card(self.B))
+        ais.seph_fill_resolve(g, s, 'entomb', {})
+        self.assertEqual(s.gy, [C['Archon of Cruelty']])       # the one bomb above it on a small board
+        s.gy = []                                              # then above the other 8s (Sheoldred, Elesh Norn)
+        ais.seph_fill_resolve(g, s, 'entomb', {})
+        self.assertEqual(s.gy, [C[self.B]])
+
+    def test_blink_restarts_at_chapter_one(self):
+        from commander_sim.cards.impl import mine
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); self.lore(g, s, 2)             # chapter III done: IV next
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        lands(s, 'Plains', 1); hand(s, 'Ephemerate')
+        self.assertTrue(mine.ephemerate_cast(g, s, b, 'value'))
+        n = self.bahamut(s)
+        self.assertIsNot(n, b)
+        self.assertEqual(n.data['lore'], 1)                    # a new object: chapter I again
+        self.assertNotIn(vey, v.perms)
+        self.lore(g, s, 2)
+        self.assertIn(n, s.perms)                              # not sacrificed: the count started over
+
+    def test_kitten_blinks_it_for_a_target(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        b = perm(g, s, self.B); perm(g, s, 'Displacer Kitten')
+        vey = perm(g, v, 'Veyran, Voice of Duality')
+        E.on_cast(g, s, card('Swords to Plowshares'))
+        self.assertNotIn(b, s.perms)
+        self.assertNotIn(vey, v.perms)
+
+    def test_no_blink_before_a_lethal_mega_flare(self):
+        from commander_sim.cards.impl import mine
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Grave Titan'); v.life = 6
+        b = perm(g, s, self.B); self.lore(g, s, 2)
+        perm(g, v, 'Veyran, Voice of Duality')
+        self.assertEqual(mine.blink_worth(g, s, b), 0.0)
+
+    def test_hardcast_needs_nine_mana(self):
+        g = table('seph', 'veyran'); s = g.players[0]
+        s.cmd_in_zone = False
+        hand(s, self.B); lands(s, 'Swamp', 8)
+        self.assertFalse(ais.seph_hardcast(g, s))
+        lands(s, 'Swamp', 1)
+        self.assertTrue(ais.seph_hardcast(g, s))
+        self.assertEqual(self.bahamut(s).data['lore'], 1)
+
+
 
 class SauronBreach(unittest.TestCase):
     """Underworld Breach + Brain Freeze / Grapeshot (storm: a copy per spell cast before it this turn)"""

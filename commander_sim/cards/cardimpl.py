@@ -10,6 +10,7 @@ Events the engine fires (fn signatures):
   blocks(g, src, p, atk, d, assign)     blockers declared (assign: attacker -> blocker); may change atk
   combat_damage(g, src, p, a, d, dmg)   attacker a dealt dmg combat damage to player d
   upkeep(g, src, p) / end_step(g, src, p)   p's upkeep / end step (every hooked permanent hears every player's)
+  main1(g, src, p) / main2(g, src, p)       the beginning of p's precombat / postcombat main phase
   draw(g, src, p)                       p drew a card
   landfall(g, src, p)                   a land entered under p's control
   sacrifice(g, src, p, what)            p sacrificed a permanent (what: Perm, or 'Treasure' / 'Food' / 'Clue')
