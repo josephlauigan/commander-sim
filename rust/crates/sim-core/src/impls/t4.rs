@@ -15,10 +15,10 @@ use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, etgh, has_type, once_per_turn, pval, threat, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, bounce, die, draw, enter, enter_token_copy, leave, make_artifact_tokens, make_tokens, max_by, min_by,
+    Enter, Tokens, bounce, die, draw, enter, enter_token_copy, leave, make_artifact_tokens, make_tokens, max_by,
 };
 use crate::flow::Res;
-use crate::hooks::{Action, Event, Opt, Registry, Sacrificed, Src};
+use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, WalkerAb, best_opp_creature, best_opp_nonland, walker};
 use crate::state::{Ctx, DataKey, Game, Val};
@@ -127,66 +127,12 @@ fn ability(utility: f64, label: String, src: PermId, f: crate::hooks::AbilityFn,
     Opt { utility, label, act: Some(Action::Ability { src, f, arg }) }
 }
 
-/// t3.sac_worst_permanent: sacrifice the least valuable permanent (Food / Clue / Treasure first). MERGE: a private
-/// copy until t3's is ported; then call it.
-fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -> Res {
-    use crate::engine::hooks::fire_trigger;
-    use crate::hooks::Call;
-    if g.player(p).foods > 0 {
-        crate::impls::common::sac_food(g, p, 1)?;
-        return Ok(());
-    }
-    for (kind, n) in [("Clue", g.player(p).clues), ("Treasure", g.player(p).treasures)] {
-        if n > 0 {
-            let pl = g.player_mut(p);
-            if kind == "Clue" {
-                pl.clues -= 1;
-            } else {
-                pl.treasures -= 1;
-            }
-            if !g.hooks.is_empty() {
-                fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Token(kind) })?;
-            }
-            return Ok(());
-        }
-    }
-    let cands: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| Some(m) != exclude && !g.perm(m).is_cmd && !g.perm(m).phased)
-        .collect();
-    if let Some(m) = min_by(&cands, |m| pval(g, m)) {
-        return die(g, m, "sac");
-    }
-    let ls = g.player(p).lands.clone();
-    if let Some(l) = first_min(&ls, |l| {
-        let x = g.land(l);
-        (!x.tapped, g.db.get(x.cd).tags.str(Tag::C).map_or(0, |s| s.chars().count()))
-    }) {
-        let cd = g.land(l).cd;
-        g.player_mut(p).lands.retain(|&x| x != l);
-        g.land_mut(l).on_bf = false;
-        g.player_mut(p).gy.push(cd);
-        if !g.hooks.is_empty() {
-            fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Card(cd) })?;
-            fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
-        }
-    }
-    Ok(())
-}
+use super::rules2::devotion;
+use super::t3::sac_worst_permanent as t3_sac_worst;
 
-/// rules2.devotion: p's devotion to a colour (pips among p's permanents, phased out ones excepted). MERGE: a private
-/// copy until rules2's is ported; then call it.
-fn devotion(g: &Game, p: PlayerId, col: char) -> usize {
-    g.player(p)
-        .perms
-        .iter()
-        .filter(|&&m| !g.perm(m).phased)
-        .filter_map(|&m| g.perm(m).cd)
-        .map(|c| g.db.get(c).pips.chars().filter(|&x| x == col).count())
-        .sum()
+/// t3.sac_worst_permanent, result unused
+fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -> Res {
+    t3_sac_worst(g, p, exclude).map(|_| ())
 }
 
 // ======================================================== Ninjutsu and Yuriko, the Tiger's Shadow
