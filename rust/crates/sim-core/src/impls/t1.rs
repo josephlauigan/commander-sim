@@ -1111,8 +1111,8 @@ fn ward_loop(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
     Ok(vec![ability(5.0, "Flickering Ward recast (Light-Paws)", src, ward_go)])
 }
 
-/// Python bug, ported as is: `leave` takes the Ward off the battlefield without putting the card in hand, so it is
-/// never recast (unless another copy is in hand) and the card is gone; the second {W} is paid anyway.
+/// {W}: return it to its owner's hand, then recast it for {W}. (Python's `leave` took the Ward off the battlefield
+/// without putting the card in hand, so it was never recast and the card was lost; fixed in Rust.)
 fn ward_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !controls(g, p, src) || !can_pay(g, p, 0, "WW", false) {
         return Ok(false);
@@ -1122,6 +1122,7 @@ fn ward_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(true);
     }
     leave(g, src)?;
+    crate::engine::zones::to_zone_card(g, src, crate::engine::zones::Zone::Hand);
     let c = g.perm(src).cd.unwrap();
     pay(g, p, 0, "W", false)?;
     if g.player(p).hand.contains(&c) {
@@ -1159,6 +1160,14 @@ fn selfpt_on(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
         g.selfpt = true;
     }
+    Ok(())
+}
+
+/// as a creature with its own size rule enters, before the state check sees a 0/0 (Eidolon of Countless Battles):
+/// Python's `AS_ENTERS` for Korlash and Sisay. (Python turned Eidolon's rule on only in its enters hook, so Eidolon
+/// cast alone died; fixed in Rust.)
+fn selfpt_as_enters(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
+    g.selfpt = true;
     Ok(())
 }
 
@@ -1538,12 +1547,17 @@ fn nissa_ra(g: &mut Game, src: Src, p: PlayerId) -> Res {
         false
     };
     if second {
-        let found =
-            g.player(p).library.iter().rev().copied().find(|&c| card_sub(g, c, "elf") || card_sub(g, c, "elemental"));
-        if let Some(c) = found {
+        // reveal from the top until an Elf or Elemental: it goes to hand, the rest revealed go to the bottom in a
+        // random order (Python left them on top; fixed in Rust)
+        let lib = &g.player(p).library;
+        let found = (0..lib.len()).rev().find(|&i| card_sub(g, lib[i], "elf") || card_sub(g, lib[i], "elemental"));
+        if let Some(i) = found {
+            let mut above = g.player_mut(p).library.split_off(i + 1);
+            let c = g.player_mut(p).library.pop().unwrap();
+            g.rng.shuffle(&mut above);
             let pl = g.player_mut(p);
-            remove_first(&mut pl.library, c); // Python's `list.remove`: the first copy from the bottom
             pl.hand.push(c);
+            pl.library.splice(0..0, above);
         }
     }
     Ok(())
@@ -1823,6 +1837,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     *c = c.at_once(Event::Etb);
     c.self_pt = Some(spiritdancer_pt);
     let c = r.card(db, "Eidolon of Countless Battles")?;
+    c.as_enters = Some(selfpt_as_enters);
     c.etb = Some(selfpt_on);
     *c = c.at_once(Event::Etb);
     c.self_pt = Some(eidolon_pt);
