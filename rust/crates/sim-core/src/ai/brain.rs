@@ -189,11 +189,23 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
             held(g, c) && !free_counter(g, p, c) && can_pay(g, p, d.generic, &d.pips, false)
         })
         .collect();
-    // PORT(phase 6): Jodah's protection mana (CI.jodah_hold)
+    if pl.key == "jodah" {
+        // Jodah out: the mana for a protection spell (cards/impl/jodah.py)
+        let (jc, jv) = crate::impls::jodah::jodah_hold(g, p);
+        if jc.is_some() && (held.is_empty() || jv > hold_of(g, p, s, &held).1) {
+            return (jc, jv);
+        }
+    }
     if held.is_empty() {
         return (None, 0.0);
     }
-    let c = min_by(&held, |c| g.db.get(c).cmc as f64).unwrap();
+    hold_of(g, p, s, &held)
+}
+
+/// brain._hold: the cheapest held card, and how much keeping its mana up is worth
+fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<CardId>, f64) {
+    let pl = g.player(p);
+    let c = min_by(held, |c| g.db.get(c).cmc as f64).unwrap();
     let caution = style(g, pl.key).caution;
     let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * s.combo_near as i32 as f64;
     if !is_main(pl.key) {
@@ -241,7 +253,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     let pl = g.player(p);
     let d = g.db.get(c);
     let main = is_main(pl.key);
-    let mut base = decks::deck_prio(g, p, c) as f64;
+    let mut base = decks::deck_prio_f(g, p, c);
     if !main && pl.library.len() < 8 && draws_cards(g, c) {
         return None; // don't draw yourself out
     }
@@ -256,7 +268,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
         return None; // a card put on top on your own turn waits a turn: tutor at the end of theirs
     }
     // its own priority said no (or it's kept for responses): keep it
-    let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some()) || plans::response_only(pl.key, c);
+    let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some()) || plans::response_only(g, pl.key, c);
     if base <= 0.0 && d.has_dsl() && !hand_written {
         base = crate::dsl::card_value(g, p, c) * 10.0;
     }
@@ -578,8 +590,10 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             x.instant && x.tag(Tag::Rem) && !x.creature
         })
         .collect();
-    // PORT(phase 6): Galadriel's permanents' answers (CI.galadriel_attack_answers)
-    if rem.is_empty() || atk.is_empty() {
+    // Galadriel's permanents' answers (Ballista Squad, Lawbringer, Lightbringer)
+    let answers =
+        if g.player(d).key == "galadriel" { crate::impls::galadriel::attack_answers(g, d, p, atk) } else { vec![] };
+    if (rem.is_empty() && answers.is_empty()) || atk.is_empty() {
         return Ok(false);
     }
     let incoming: i32 = atk
@@ -608,6 +622,17 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, m));
             }
+        }
+    }
+    if let Some(&(v2, a)) = answers.iter().fold(None, |b: Option<&(f64, _)>, x| match b {
+        Some(y) if y.0 >= x.0 => Some(y),
+        _ => Some(x),
+    }) && v2 + if danger { 3.0 } else { 0.0 } - 3.0 > 0.0
+        && best.is_none_or(|b| v2 >= b.0 - 1.0)
+    {
+        if crate::impls::galadriel::answer(g, d, a)? {
+            g.player_mut(d).stat("attack_removal", 1);
+            return Ok(true);
         }
     }
     let Some((v, c, m)) = best else { return Ok(false) };
@@ -714,8 +739,9 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
 pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> Res<Vec<Opt>> {
     match g.player(p).key {
         "sauron" => decks::sauron_options(g, p, s, post),
+        "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
         // PORT(phase 6): Sephiroth's (loops, reanimation, fill, tutors, hardcasts ...), Veyran's (the combo,
-        // Aetherflux, Mizzix's Mastery) and Jodah's plays
+        // Aetherflux, Mizzix's Mastery)
         _ => Ok(vec![]),
     }
 }

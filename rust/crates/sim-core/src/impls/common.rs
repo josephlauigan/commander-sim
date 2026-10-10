@@ -1296,12 +1296,12 @@ pub fn walker(r: &mut Registry, db: &CardDb, name: &str, abilities: &'static [Wa
     Ok(())
 }
 
-fn round_stamp(g: &Game, p: PlayerId) -> TurnStamp {
+pub(crate) fn round_stamp(g: &Game, p: PlayerId) -> TurnStamp {
     TurnStamp { round: g.round, active: Some(p) }
 }
 
 /// common._uses: loyalty abilities src used this round
-fn uses(g: &Game, p: PlayerId, src: PermId) -> i64 {
+pub(crate) fn uses(g: &Game, p: PlayerId, src: PermId) -> i64 {
     let x = g.perm(src);
     if x.loyalty_used != Some(round_stamp(g, p)) {
         return 0;
@@ -1310,15 +1310,14 @@ fn uses(g: &Game, p: PlayerId, src: PermId) -> i64 {
 }
 
 /// common._allowed: Oath of Teferi lets each planeswalker use two abilities a turn
-fn allowed(g: &Game, p: PlayerId) -> i64 {
+pub(crate) fn allowed(g: &Game, p: PlayerId) -> i64 {
     let oath = g.player(p).perms.iter().any(|&m| card_name(g, m) == "Oath of Teferi" && !g.perm(m).phased);
     if oath { 2 } else { 1 }
 }
 
-/// Carth the Lion: each loyalty ability costs an extra [+1] (CI.total(g, 'loyalty_extra', p)).
-/// PORT(phase 6): the loyalty_extra event has no CardImpl slot yet, so this is 0.
-fn loyalty_extra(_g: &Game, _p: PlayerId) -> i32 {
-    0
+/// Carth the Lion: each loyalty ability costs an extra [+1] (CI.total(g, 'loyalty_extra', p) if g.hooks else 0)
+fn loyalty_extra(g: &Game, p: PlayerId) -> i32 {
+    if g.hooks.is_empty() { 0 } else { crate::engine::hooks::total_count(g, Event::LoyaltyExtra, p) }
 }
 
 fn walker_abilities(g: &Game, src: PermId) -> &'static [WalkerAb] {
@@ -1488,7 +1487,7 @@ fn adventure_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// common.aristocrat_options, common.food_options, partials.miracle_options and partials.incubator_options
 pub fn pool_card_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let mut o = adventure_options(g, p, post)?;
-    // PORT(phase 6): o.extend(t2::evoke_options(g, p, post)?) — t2.evoke_options goes here
+    o.extend(super::t2::evoke_options(g, p, post)?);
     o.extend(aristocrat_options(g, p, post)?);
     o.extend(food_options(g, p, post)?);
     o.extend(super::partials::miracle_options(g, p, post)?);

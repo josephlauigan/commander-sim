@@ -49,9 +49,21 @@ fn has_static(g: &Game, c: CardId, kind: &str) -> bool {
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     match g.player(p).key {
         "sauron" => sauron_prio(g, p, c),
-        // PORT(phase 6): seph_prio, veyran_prio, galadriel_prio, yshtola_prio, alela_prio, jodah_prio. Until then
-        // your other decks cast by the outside decks' tag priority.
+        "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
+        "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
+        "alela" => crate::impls::alela::alela_prio(g, p, c),
+        "jodah" => crate::impls::jodah::jodah_prio(g, p, c),
+        // PORT(phase 6): seph_prio, veyran_prio. Until then those decks cast by the outside decks' tag priority.
         _ => pool::generic_prio(g, p, c),
+    }
+}
+
+/// ais.deck_prio as Python returns it: a float where a deck's priority isn't whole (Y'shtola's for a card taken from
+/// an opponent: its ability-language value)
+pub fn deck_prio_f(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    match g.player(p).key {
+        "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c),
+        _ => deck_prio(g, p, c) as f64,
     }
 }
 
@@ -666,7 +678,9 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     let pl = g.player(p);
     let held = |t: Tag| has(g, p, t) || in_hand_tag(g, p, t);
     match pl.key {
-        // PORT(phase 6): Sephiroth's (seph_tutor_target), Y'shtola's and Jodah's wish lists
+        // PORT(phase 6): Sephiroth's wish list (seph_tutor_target)
+        "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
+        "jodah" => crate::impls::jodah::jodah_tutor(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {
                 return first(&["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
@@ -769,7 +783,7 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
         return Some(c); // outside deck: its wish list
     }
     let prio = |c: CardId| -> f64 {
-        let v = deck_prio(g, p, c) as f64;
+        let v = deck_prio_f(g, p, c);
         if main || v != 0.0 {
             v
         } else if g.db.get(c).has_dsl() {
@@ -1216,8 +1230,11 @@ pub fn protect_response(
             }
             Ok(false)
         }
+        "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
+        "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
+        "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         // PORT(phase 6): Sephiroth (Ephemerate, Restoration Angel, Heroic Intervention, Galadriel's Dismissal,
-        // sacrifice in response), Veyran, Galadriel, Y'shtola, Jodah
+        // sacrifice in response), Veyran
         _ => Ok(false),
     }
 }
@@ -1231,7 +1248,15 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if !is_main(key) {
         return pool::wipe_response(g, q, kind, caster);
     }
-    // PORT(phase 6): Galadriel's, Y'shtola's and Jodah's answers
+    if key == "yshtola" {
+        return crate::impls::yshtola::yshtola_wipe_response(g, q, kind);
+    }
+    if key == "galadriel" {
+        return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
+    }
+    if key == "jodah" {
+        return crate::impls::jodah::jodah_wipe_response(g, q, kind, caster);
+    }
     if matches!(key, "galadriel" | "yshtola" | "jodah") {
         return Ok(None);
     }
