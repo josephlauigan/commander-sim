@@ -907,13 +907,41 @@ class SephFlicker(unittest.TestCase):
         self.assertIn(titan, s.perms)
         self.assertNotIn(archon, s.perms)                      # Archon's drain over Grave Titan's Zombies
 
+    def test_teleportation_circle_flickers_the_best_creature(self):
+        """Teleportation Circle: "At the beginning of your end step, exile up to one target artifact or creature you
+        control, then return that card to the battlefield under its owner's control." """
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Teleportation Circle'); perm(g, s, 'Grave Titan')
+        archon = perm(g, s, 'Archon of Cruelty')
+        E.CI.fire(g, 'end_step', v)                            # an opponent's end step: nothing
+        self.assertIn(archon, s.perms)
+        E.CI.fire(g, 'end_step', s)
+        self.assertNotIn(archon, s.perms)                      # Archon's drain over Grave Titan's Zombies
+        self.named(s, 'Archon of Cruelty')
+        self.assertEqual(s.stats['flicker Teleportation Circle'], 1)
+
+    def test_teleportation_circle_untaps_a_rock_with_no_creature_worth_it(self):
+        g = table('seph', 'veyran'); s, v = g.players
+        perm(g, s, 'Teleportation Circle')
+        rock = perm(g, s, 'Sol Ring'); rock.tapped = True
+        E.CI.fire(g, 'end_step', s)
+        self.assertNotIn(rock, s.perms)
+        self.assertFalse(self.named(s, 'Sol Ring').tapped)     # back untapped for the opponents' turns
+        g2 = table('seph', 'veyran'); s2, _ = g2.players
+        perm(g2, s2, 'Teleportation Circle'); rock2 = perm(g2, s2, 'Sol Ring')
+        E.CI.fire(g2, 'end_step', s2)
+        self.assertIn(rock2, s2.perms)                         # an untapped rock gains nothing: left alone
+
     def test_flicker_priorities(self):
         g = table('seph', 'veyran'); s, v = g.players
+        circle = card('Teleportation Circle')
+        self.assertEqual(ais.seph_prio(g, s, circle), 30)
         resto, closet = card('Restoration Angel'), card("Conjurer's Closet")
         self.assertEqual(ais.seph_prio(g, s, closet), 30)
         perm(g, s, 'Archon of Cruelty')
         self.assertEqual(ais.seph_prio(g, s, closet), 50)      # a creature worth flickering
-        self.assertEqual(ais.seph_prio(g, s, resto), 0)        # your own turn: wait for the end of an opponent's
+        self.assertEqual(ais.seph_prio(g, s, circle), 50)
+        self.assertEqual(ais.seph_prio(g, s, resto), 0)      # your own turn: wait for the end of an opponent's
         g.active = v
         self.assertEqual(ais.seph_prio(g, s, resto), 30 + 6 * 5)
         g2 = table('seph', 'veyran'); s2, v2 = g2.players; g2.active = v2

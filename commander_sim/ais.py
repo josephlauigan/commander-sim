@@ -593,7 +593,7 @@ def seph_prio(g, p, c):
     return 0
 
 
-FLICKERS = ('Soulherder', "Conjurer's Closet", 'Restoration Angel')
+FLICKERS = ('Soulherder', "Conjurer's Closet", 'Teleportation Circle', 'Restoration Angel')
 
 
 def flicker_prio(g, p, c):

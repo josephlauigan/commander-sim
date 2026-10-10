@@ -96,16 +96,22 @@ def flicker_worth(g, p, m):
     return blink_value(g, p, m)
 
 
-def end_step_flicker(g, src, p, other):
-    """Soulherder, Conjurer's Closet: at the beginning of your end step, you may exile a creature you control, then
-    return it: the one with the best enters-the-battlefield effect"""
+def end_step_flicker(g, src, p, other, rocks=False):
+    """Soulherder, Conjurer's Closet, Teleportation Circle: at the beginning of your end step, you may exile a creature
+    you control, then return it: the one with the best enters-the-battlefield effect. rocks (Teleportation Circle,
+    which takes an artifact too): with no creature worth it, a tapped mana rock, which comes back untapped for the
+    opponents' turns"""
     if p is not src.owner: return
     p.stats['flicker_chance ' + src.cd.name] += 1
     cands = [m for m in p.perms if (m is not src or not other) and m.creature and flicker_worth(g, p, m) > 0]
-    if not cands or not trigger_window(g, p, src, 'blink a creature'): return
+    if not cands and rocks:
+        cands = [m for m in p.perms if m.tapped and not m.token and m.cd is not None and 'rock' in m.cd.tags
+                 and not m.creature and m.orig is p]
+    if not cands or not trigger_window(g, p, src, 'blink a creature' if cands[0].creature else 'blink a mana rock'):
+        return
     cands = [m for m in cands if m in p.perms]
     if not cands: return
-    m = max(cands, key=lambda m: flicker_worth(g, p, m))
+    m = max(cands, key=lambda m: flicker_worth(g, p, m) if m.creature else E.pval(g, m))
     p.stats['flicker ' + src.cd.name] += 1; p.stats[f'flicker {src.cd.name} -> {m.name}'] += 1
     blink(g, p, m)
 
@@ -127,6 +133,13 @@ def _closet(g, src, p):
     end_step_flicker(g, src, p, False)
 card("Conjurer's Closet", '', types='A', dsl=[])
 note("Conjurer's Closet", 'Full', 'end step: blink the best ETB creature')
+
+
+@on('Teleportation Circle', 'end_step')
+def _teleport_circle(g, src, p):
+    end_step_flicker(g, src, p, False, rocks=True)
+card('Teleportation Circle', '', types='E', dsl=[])
+note('Teleportation Circle', 'Full', 'end step: blink the best ETB creature, else untap a tapped mana rock by blinking it')
 
 
 def _blink_option(name, cost_g, cost_p, other=True, label=None, needs_pair=False):
