@@ -302,10 +302,10 @@ pub fn attached_bonus(g: &Game, m: PermId) -> (i32, i32) {
     (dp, dt)
 }
 
-/// PORT(M5, partials): `IP.coat_bonus(g, m) + IP.lineage_bonus(g, m) + IP.bestow_bonus(g, m)` (Coat of Arms, Lord of
-/// Lineage, bestowed Eidolons): wire to partials' port at merge time. No pilot deck runs these cards.
-fn partials_bonus(_g: &Game, _m: PermId) -> i32 {
-    0
+/// `IP.coat_bonus(g, m) + IP.lineage_bonus(g, m) + IP.bestow_bonus(g, m)` (Coat of Arms, Lord of Lineage, bestowed
+/// Eidolons)
+fn partials_bonus(g: &Game, m: PermId) -> i32 {
+    super::partials::coat_bonus(g, m) + super::partials::lineage_bonus(g, m) + super::partials::bestow_bonus(g, m)
 }
 
 /// common.attached_kw: an Aura on m gives it keyword kw
@@ -1491,8 +1491,8 @@ pub fn pool_card_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<V
     // PORT(phase 6): o.extend(t2::evoke_options(g, p, post)?) — t2.evoke_options goes here
     o.extend(aristocrat_options(g, p, post)?);
     o.extend(food_options(g, p, post)?);
-    // PORT(M5, partials): o.extend(partials::miracle_options(g, p, post)?); then
-    // o.extend(partials::incubator_options(g, p, post)?) — partials' agent ports them
+    o.extend(super::partials::miracle_options(g, p, post)?);
+    o.extend(super::partials::incubator_options(g, p, post)?);
     Ok(o)
 }
 
