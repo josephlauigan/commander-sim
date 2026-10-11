@@ -54,7 +54,10 @@ fn test_hint() {
     let r = c.post("/api/hint", json!({}));
     assert_eq!(r.status, 200);
     assert!(r.json().get("text").is_some()); // mulligan: no hint for it yet
-    c.post("/api/new", json!({"deck": "sauron", "tier": "t2", "seed": 4, "ai": "adaptive", "images": false, "tools": {"hint": false}}));
+    c.post(
+        "/api/new",
+        json!({"deck": "sauron", "tier": "t2", "seed": 4, "ai": "adaptive", "images": false, "tools": {"hint": false}}),
+    );
     wait_for(&mut c, 0, is_request);
     let r = c.post("/api/hint", json!({}));
     assert_eq!(r.status, 409);
@@ -251,7 +254,12 @@ fn test_a_request_that_is_not_json() {
     let mut st = std::net::TcpStream::connect(&s.addr).unwrap();
     use std::io::{Read, Write};
     let body = "not json";
-    write!(st, "POST /api/answer HTTP/1.1\r\nHost: x\r\nConnection: close\r\nContent-Length: {}\r\n\r\n{body}", body.len()).unwrap();
+    write!(
+        st,
+        "POST /api/answer HTTP/1.1\r\nHost: x\r\nConnection: close\r\nContent-Length: {}\r\n\r\n{body}",
+        body.len()
+    )
+    .unwrap();
     let mut out = String::new();
     st.read_to_string(&mut out).unwrap();
     assert!(out.starts_with("HTTP/1.1 400"), "{out}");
@@ -263,11 +271,21 @@ fn test_picked_opponents_seat_and_tools() {
     let s = srv!();
     let mut c = s.client();
     let o = c.get("/api/options").json();
-    let t1: Vec<String> = o["tiers"][0]["decks"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap().to_string()).take(3).collect();
-    let r = c.post("/api/new", json!({"deck": "alela", "tier": "t1", "opponents": t1, "seat": 2, "ai": "adaptive", "images": false,
-                                      "tools": {"hint": false}}));
+    let t1: Vec<String> = o["tiers"][0]["decks"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|x| x["key"].as_str().unwrap().to_string())
+        .take(3)
+        .collect();
+    let r = c.post(
+        "/api/new",
+        json!({"deck": "alela", "tier": "t1", "opponents": t1, "seat": 2, "ai": "adaptive", "images": false,
+                                      "tools": {"hint": false}}),
+    );
     assert_eq!(r.status, 200);
-    let seats: Vec<String> = r.json()["seats"].as_array().unwrap().iter().map(|x| x.as_str().unwrap().to_string()).collect();
+    let seats: Vec<String> =
+        r.json()["seats"].as_array().unwrap().iter().map(|x| x.as_str().unwrap().to_string()).collect();
     assert_eq!(seats[1], "alela");
     let mut others: Vec<String> = seats[..1].iter().chain(&seats[2..]).cloned().collect();
     others.sort();
@@ -284,7 +302,10 @@ fn test_auto_pass() {
     let s = srv!();
     let mut c = s.client();
     assert_eq!(c.post("/api/new", json!({"deck": "yshtola", "tier": "t2", "autopass": "never"})).status, 400);
-    c.post("/api/new", json!({"deck": "yshtola", "tier": "t2", "seed": 3, "ai": "adaptive", "images": false, "autopass": "all"}));
+    c.post(
+        "/api/new",
+        json!({"deck": "yshtola", "tier": "t2", "seed": 3, "ai": "adaptive", "images": false, "autopass": "all"}),
+    );
     wait_for(&mut c, 0, is_request);
     assert_eq!(c.state()["game"]["autopass"], "all");
     assert_eq!(c.post("/api/autopass", json!({"mode": "stack"})).status, 200);

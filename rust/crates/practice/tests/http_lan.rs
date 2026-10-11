@@ -24,7 +24,13 @@ struct Browser {
 
 impl Browser {
     fn new(c: Client) -> Browser {
-        Browser { c, events: Arc::default(), requests: None, auto: Arc::new(AtomicBool::new(true)), stop: Arc::default() }
+        Browser {
+            c,
+            events: Arc::default(),
+            requests: None,
+            auto: Arc::new(AtomicBool::new(true)),
+            stop: Arc::default(),
+        }
     }
     fn call(&mut self, method: &str, path: &str, body: Option<Value>) -> Resp {
         self.c.call(method, path, body)
@@ -99,7 +105,10 @@ fn open_table(s: &Server) -> (Browser, Browser, String) {
     let mut friend = Browser::new(s.remote_client().unwrap());
     host.call("GET", "/", None);
     friend.call("GET", "/", None);
-    let r = host.post("/api/new", json!({"deck": "sauron", "tier": "t2", "seed": 7, "ai": "adaptive", "images": false, "two": true}));
+    let r = host.post(
+        "/api/new",
+        json!({"deck": "sauron", "tier": "t2", "seed": 7, "ai": "adaptive", "images": false, "two": true}),
+    );
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let j = r.json();
     assert!(j["addresses"].is_array());
@@ -175,7 +184,9 @@ fn test_each_seat_sees_its_own_game() {
     let played = Arc::new(Mutex::new(Vec::new()));
     host.listen(played.clone());
     friend.listen(played);
-    let round3 = |b: &Browser| b.events.lock().unwrap().iter().any(|e| e["kind"] == "turn" && e["view"]["round"].as_i64().unwrap_or(0) >= 3);
+    let round3 = |b: &Browser| {
+        b.events.lock().unwrap().iter().any(|e| e["kind"] == "turn" && e["view"]["round"].as_i64().unwrap_or(0) >= 3)
+    };
     assert!(wait_until(300, || round3(&host)), "no turn 3");
     host.stop.store(true, Ordering::Relaxed);
     friend.stop.store(true, Ordering::Relaxed);
@@ -269,7 +280,8 @@ fn test_undo_needs_the_other_persons_ok() {
     let r = friend.post("/api/undo", json!({"n": 1}));
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     assert!(wait_until(30, || host.count("proposal") >= 2));
-    let prop = host.events.lock().unwrap().iter().filter(|e| e["kind"] == "proposal").last().unwrap()["proposal"].clone();
+    let prop =
+        host.events.lock().unwrap().iter().filter(|e| e["kind"] == "proposal").last().unwrap()["proposal"].clone();
     assert_eq!(host.post("/api/approve", json!({"id": prop["id"], "yes": true})).status, 200);
     assert!(wait_until(120, || host.has("reset") && friend.has("reset")));
     host.stop.store(true, Ordering::Relaxed);
@@ -290,7 +302,8 @@ fn test_a_saved_two_player_game_waits_for_the_friend() {
     friend.auto.store(false, Ordering::Relaxed);
     let (hq, fq) = (host.requests.take().unwrap(), friend.requests.take().unwrap());
     // a decision is waiting, unanswered (the bot may have answered one in flight, so wait for a queued request)
-    assert!(wait_until(120, || host.get("/api/state")["pending"].is_object() || friend.get("/api/state")["pending"].is_object()));
+    assert!(wait_until(120, || host.get("/api/state")["pending"].is_object()
+        || friend.get("/api/state")["pending"].is_object()));
     let r = host.post("/api/save", json!({}));
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let name = r.json()["name"].as_str().unwrap().to_string();
@@ -303,7 +316,10 @@ fn test_a_saved_two_player_game_waits_for_the_friend() {
     let code2 = r2.json()["code"].as_str().unwrap().to_string();
     assert!(!code2.is_empty());
     let lb = friend.get("/api/state")["lobby"].clone();
-    assert_eq!((lb["deck"].as_str(), lb["partner"].as_str(), lb["loaded"].as_bool()), (Some("sauron"), Some("seph"), Some(true)));
+    assert_eq!(
+        (lb["deck"].as_str(), lb["partner"].as_str(), lb["loaded"].as_bool()),
+        (Some("sauron"), Some("seph"), Some(true))
+    );
     assert_eq!(join(&mut friend, &code2, "veyran"), 409);
     assert_eq!(join(&mut friend, &code2, "seph"), 200);
     assert_eq!(friend.get("/api/state")["game"]["you"], "seph");
@@ -337,4 +353,3 @@ fn test_one_player_undo_is_at_once() {
     host.stop.store(true, Ordering::Relaxed);
     host.post("/api/quit", json!({}));
 }
-

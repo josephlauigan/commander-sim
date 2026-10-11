@@ -63,12 +63,12 @@ pub fn server() -> Option<Server> {
         Ok(u) if !u.trim().is_empty() => Some(host_port(&u)),
         _ => lan_ip().map(|ip| format!("{ip}:{port}")),
     };
-    let saves = std::env::var("PRACTICE_SAVES").map(PathBuf::from).unwrap_or_else(|_| {
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/saves")
-    });
-    let images = std::env::var("PRACTICE_IMAGES").map(PathBuf::from).unwrap_or_else(|_| {
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/images")
-    });
+    let saves = std::env::var("PRACTICE_SAVES")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/saves"));
+    let images = std::env::var("PRACTICE_IMAGES")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/images"));
     let mut s = Server { addr, remote_addr, saves, images, rust, lan: false, _guard: guard };
     let mut c = s.client();
     c.quit(); // whatever an earlier test left
@@ -80,6 +80,8 @@ pub fn server() -> Option<Server> {
 /// its `host:port`. PORT(practice-server): `practice::server::start(Config { port: 0, lan: true, saves: tempdir, .. })`
 /// does not exist yet; until it does the suite needs `PRACTICE_URL`.
 fn start_rust() -> Option<String> {
+    // PORT(practice-server): before starting, `std::env::set_var("PRACTICE_SCRYFALL", fake::start())` (unsafe in 2024)
+    // so the image tests run offline against the fake Scryfall.
     None
 }
 
@@ -113,8 +115,9 @@ impl Resp {
         self.headers.iter().find(|(k, _)| k.eq_ignore_ascii_case(name)).map(|(_, v)| v.as_str())
     }
     pub fn json(&self) -> Value {
-        serde_json::from_slice(&self.body)
-            .unwrap_or_else(|e| panic!("status {} body is not JSON ({e}): {:?}", self.status, String::from_utf8_lossy(&self.body)))
+        serde_json::from_slice(&self.body).unwrap_or_else(|e| {
+            panic!("status {} body is not JSON ({e}): {:?}", self.status, String::from_utf8_lossy(&self.body))
+        })
     }
     pub fn error(&self) -> String {
         self.json()["error"].as_str().unwrap_or("").to_string()
@@ -130,7 +133,11 @@ pub struct Client {
 fn read_head(r: &mut impl BufRead) -> (u16, Vec<(String, String)>) {
     let mut line = String::new();
     r.read_line(&mut line).expect("response status line");
-    let status = line.split_whitespace().nth(1).and_then(|s| s.parse().ok()).unwrap_or_else(|| panic!("bad status line {line:?}"));
+    let status = line
+        .split_whitespace()
+        .nth(1)
+        .and_then(|s| s.parse().ok())
+        .unwrap_or_else(|| panic!("bad status line {line:?}"));
     let mut headers = Vec::new();
     loop {
         line.clear();
@@ -260,7 +267,11 @@ impl Client {
         self.remember_cookie(&headers);
         let chunked = header(&headers, "transfer-encoding").is_some_and(|v| v.to_ascii_lowercase().contains("chunked"));
         let ctype = header(&headers, "content-type").unwrap_or("").to_string();
-        Stream { status, content_type: ctype, body: BufReader::new(Body { r, chunked, left: if chunked { Some(0) } else { None } }) }
+        Stream {
+            status,
+            content_type: ctype,
+            body: BufReader::new(Body { r, chunked, left: if chunked { Some(0) } else { None } }),
+        }
     }
 
     // --- the common calls
@@ -332,7 +343,10 @@ impl Stream {
                 }
             }
         }
-        panic!("no matching event within {secs}s; saw kinds {:?}", seen.iter().map(|e| e["kind"].clone()).collect::<Vec<_>>());
+        panic!(
+            "no matching event within {secs}s; saw kinds {:?}",
+            seen.iter().map(|e| e["kind"].clone()).collect::<Vec<_>>()
+        );
     }
 }
 
@@ -368,7 +382,13 @@ pub fn bot(ev: &Value, played: &mut Vec<(String, i64)>) -> Value {
         let round = view["round"].as_i64().unwrap_or(0);
         let lands: Vec<usize> = me["hand_land"]
             .as_array()
-            .map(|a| a.iter().enumerate().filter(|(_, x)| x.as_bool().unwrap_or(false) || x.as_i64().unwrap_or(0) != 0).map(|(i, _)| i).collect())
+            .map(|a| {
+                a.iter()
+                    .enumerate()
+                    .filter(|(_, x)| x.as_bool().unwrap_or(false) || x.as_i64().unwrap_or(0) != 0)
+                    .map(|(i, _)| i)
+                    .collect()
+            })
             .unwrap_or_default();
         if let Some(&l) = lands.first() {
             if !played.contains(&(key.clone(), round)) {
@@ -389,25 +409,165 @@ pub fn frozen(ev: &Value) -> String {
     json!({"kind": r["kind"], "prompt": r["prompt"], "choices": r["choices"], "view": ev["view"]}).to_string()
 }
 
-/// Answer `n` requests with the bot, reading `c`'s own stream; returns the requests seen (frozen) and the last event id
-/// read. The next request is left waiting (and is in the returned list's tail, unanswered).
-pub fn play(c: &mut Client, n: usize, hints: bool) -> (Vec<String>, u64) {
+/// What `play_with` saw.
+pub struct Played {
+    /// every request seen, frozen (the last is the one waiting, unanswered)
+    pub seen: Vec<String>,
+    pub last_id: u64,
+    /// the hints asked for: (request kind, step, the hint JSON) for the 200 answers
+    pub hints: Vec<(String, String, Value)>,
+}
+
+/// Answer `n` requests with the bot, reading `c`'s own stream (asking for a hint before each priority/attack answer
+/// when `hints`). The request after them is left waiting and is the last of `seen`.
+pub fn play_with(c: &mut Client, n: usize, hints: bool) -> Played {
     let mut st = c.stream(0, None);
     let mut played = Vec::new();
-    let mut seen = Vec::new();
-    let mut last;
+    let mut out = Played { seen: Vec::new(), last_id: 0, hints: Vec::new() };
     loop {
         let ev = st.until(300, is_request).pop().unwrap();
-        last = ev["id"].as_u64().unwrap();
-        seen.push(frozen(&ev));
-        if seen.len() > n {
-            return (seen, last);
+        out.last_id = ev["id"].as_u64().unwrap();
+        out.seen.push(frozen(&ev));
+        if out.seen.len() > n {
+            return out;
         }
-        if hints && matches!(ev["request"]["kind"].as_str(), Some("priority" | "attack")) {
-            let _ = c.post("/api/hint", json!({}));
+        let kind = ev["request"]["kind"].as_str().unwrap_or("").to_string();
+        if hints && matches!(kind.as_str(), "priority" | "attack") {
+            let r = c.post("/api/hint", json!({}));
+            if r.status == 200 {
+                out.hints.push((kind, ev["view"]["step"].as_str().unwrap_or("").to_string(), r.json()));
+            }
         }
         let a = bot(&ev, &mut played);
-        let r = c.answer(last, a);
+        let r = c.answer(out.last_id, a);
         assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
+    }
+}
+
+pub fn play(c: &mut Client, n: usize, hints: bool) -> (Vec<String>, u64) {
+    let p = play_with(c, n, hints);
+    (p.seen, p.last_id)
+}
+
+/// Answer every request with the bot until the game ends; returns the final event ("over" or "error") and the
+/// number of decisions answered. Panics after `secs`.
+pub fn play_out(c: &mut Client, secs: u64) -> (Value, usize) {
+    let mut st = c.stream(0, None);
+    let mut played = Vec::new();
+    let end = Instant::now() + Duration::from_secs(secs);
+    let mut n = 0;
+    while Instant::now() < end {
+        let Some(ev) = st.next(Duration::from_secs(2)) else { continue };
+        match ev["kind"].as_str() {
+            Some("request") => {
+                let a = bot(&ev, &mut played);
+                assert_eq!(c.answer(ev["id"].as_u64().unwrap(), a).status, 200);
+                n += 1;
+            }
+            Some("over" | "error") => return (ev, n),
+            _ => {}
+        }
+    }
+    panic!("the game did not end within {secs}s ({n} decisions)");
+}
+
+// ---------------------------------------------------------------------------------------------- a fake Scryfall
+
+pub mod fake {
+    //! A local stand-in for Scryfall for the image tests: `POST /cards/collection` answers every requested name (or
+    //! token id) with a card whose image is `<base>/img/<id>.jpg`; the image's bytes are `jpg:<id>`. The first card of
+    //! each request makes one token (`tok-zombie`, named Zombie). Counts what was asked.
+    use serde_json::{Value, json};
+    use std::io::{BufRead, BufReader, Read, Write};
+    use std::net::TcpListener;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    pub static LOOKUPS: AtomicUsize = AtomicUsize::new(0);
+    pub static NAMES_ASKED: AtomicUsize = AtomicUsize::new(0);
+    pub static DOWNLOADS: AtomicUsize = AtomicUsize::new(0);
+
+    pub fn slug(name: &str) -> String {
+        let front = name.split(" // ").next().unwrap_or(name);
+        front.to_lowercase().chars().map(|c| if c.is_ascii_alphanumeric() { c } else { '-' }).collect()
+    }
+
+    /// start the listener (once); returns its base URL (what PRACTICE_SCRYFALL should be)
+    pub fn start() -> String {
+        static BASE: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+        BASE.get_or_init(|| {
+            let l = TcpListener::bind("127.0.0.1:0").unwrap();
+            let base = format!("http://127.0.0.1:{}", l.local_addr().unwrap().port());
+            let b2 = base.clone();
+            std::thread::spawn(move || {
+                for s in l.incoming().flatten() {
+                    let base = b2.clone();
+                    std::thread::spawn(move || handle(s, &base));
+                }
+            });
+            base
+        })
+        .clone()
+    }
+
+    fn card(id: &str, name: &str, base: &str, token: Option<&str>) -> Value {
+        let mut c = json!({"id": id, "name": name, "image_uris": {"normal": format!("{base}/img/{id}.jpg")},
+                           "type_line": "Artifact", "colors": [], "keywords": []});
+        if let Some(t) = token {
+            c["all_parts"] = json!([{"id": t, "component": "token", "name": "Zombie"}, {"id": id, "component": "combo_piece", "name": name}]);
+        }
+        c
+    }
+
+    fn handle(s: std::net::TcpStream, base: &str) {
+        let mut w = s.try_clone().unwrap();
+        let mut r = BufReader::new(s);
+        let mut line = String::new();
+        if r.read_line(&mut line).unwrap_or(0) == 0 {
+            return;
+        }
+        let (method, path) = {
+            let mut p = line.split_whitespace();
+            (p.next().unwrap_or("").to_string(), p.next().unwrap_or("").to_string())
+        };
+        let mut len = 0usize;
+        loop {
+            line.clear();
+            if r.read_line(&mut line).unwrap_or(0) == 0 || line.trim().is_empty() {
+                break;
+            }
+            if let Some((k, v)) = line.split_once(':') {
+                if k.eq_ignore_ascii_case("content-length") {
+                    len = v.trim().parse().unwrap_or(0);
+                }
+            }
+        }
+        let mut body = vec![0u8; len];
+        r.read_exact(&mut body).ok();
+        let (status, ctype, out): (&str, &str, Vec<u8>) = if method == "POST" && path.starts_with("/cards/collection") {
+            LOOKUPS.fetch_add(1, Ordering::Relaxed);
+            let req: Value = serde_json::from_slice(&body).unwrap_or(json!({}));
+            let mut data = Vec::new();
+            for (i, id) in req["identifiers"].as_array().cloned().unwrap_or_default().iter().enumerate() {
+                if let Some(name) = id["name"].as_str() {
+                    NAMES_ASKED.fetch_add(1, Ordering::Relaxed);
+                    data.push(card(&slug(name), name, base, (i == 0).then_some("tok-zombie")));
+                } else if let Some(t) = id["id"].as_str() {
+                    data.push(card(t, "Zombie", base, None));
+                }
+            }
+            ("200 OK", "application/json", json!({"object": "list", "data": data}).to_string().into_bytes())
+        } else if method == "GET" && path.starts_with("/img/") {
+            DOWNLOADS.fetch_add(1, Ordering::Relaxed);
+            let id = path.trim_start_matches("/img/").trim_end_matches(".jpg");
+            ("200 OK", "image/jpeg", format!("jpg:{id}").into_bytes())
+        } else {
+            ("404 Not Found", "application/json", b"{}".to_vec())
+        };
+        let _ = write!(
+            w,
+            "HTTP/1.1 {status}\r\nContent-Type: {ctype}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+            out.len()
+        );
+        let _ = w.write_all(&out);
     }
 }
