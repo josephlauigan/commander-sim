@@ -226,14 +226,14 @@ fn can_act_abilities(g: &mut Game, q: PlayerId) -> Res<bool> {
             continue;
         }
         let tapped = x.tapped;
-        let mut labels: Vec<String> = abilities::permanent_abilities(g, q, m).into_iter().map(|a| a.0).collect();
-        labels.extend(cards::abilities(g, q, m).unwrap_or_default().into_iter().map(|a| a.0));
+        let mut labels: Vec<String> = abilities::permanent_abilities(g, q, m).into_iter().map(|a| a.label).collect();
+        labels.extend(cards::abilities(g, q, m).unwrap_or_default().into_iter().map(|a| a.label));
         if usable(tapped, labels) {
             return Ok(true);
         }
     }
     for l in g.player(q).lands.clone() {
-        let labels: Vec<String> = abilities::land_abilities(g, q, l).into_iter().map(|a| a.0).collect();
+        let labels: Vec<String> = abilities::land_abilities(g, q, l).into_iter().map(|a| a.label).collect();
         if usable(g.land(l).tapped, labels) {
             return Ok(true);
         }
@@ -471,7 +471,7 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
 /// what an ability of a permanent does
 pub enum AbilityKind {
     Equip,
-    Extra(abilities::PermFn),
+    Extra(abilities::Act<PermId>),
     /// a card-code option the AI would also use
     Hook(Action),
 }
@@ -484,12 +484,12 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
         out.push((format!("Equip {{{n}}}"), AbilityKind::Equip));
     }
     let post = if g.active == Some(p) { Some(g.step == Step::Main2) } else { None }; // None: instant-speed only
-    for (label, f) in abilities::permanent_abilities(g, p, m) {
-        out.push((label, AbilityKind::Extra(f)));
+    for a in abilities::permanent_abilities(g, p, m) {
+        out.push((a.label, AbilityKind::Extra(a.act)));
     }
     if let Some(own) = cards::abilities(g, p, m) {
         // your deck's card: its abilities by the rules
-        out.extend(own.into_iter().map(|(label, f)| (label, AbilityKind::Extra(f))));
+        out.extend(own.into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
         return Ok(out);
     }
     if !g.hooks.is_empty() {
@@ -568,12 +568,12 @@ fn use_land(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<String>> {
     if abil.is_empty() {
         return Ok(Some(format!("{lname} has no ability to activate beyond mana (tap it for mana with tap).")));
     }
-    let labels: Vec<String> = abil.iter().map(|a| a.0.clone()).collect();
+    let labels: Vec<String> = abil.iter().map(|a| a.label.clone()).collect();
     let Some(k) = choices::choose(g, p, "choose", &format!("{lname}: which ability?"), &labels, Some("cancel"), None)?
     else {
         return Ok(None);
     };
-    (abil[k].1)(g, p, l)
+    (abil[k].act)(g, p, l)
 }
 
 // ------------------------------------------------------------------ casting

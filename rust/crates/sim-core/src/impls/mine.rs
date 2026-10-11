@@ -439,12 +439,12 @@ fn witch(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32
 
 // ======================================================== Vraska, Betrayal's Sting
 /// mine._pw_once: no loyalty ability used this turn
-fn pw_once(g: &Game, src: PermId) -> bool {
+pub fn pw_once(g: &Game, src: PermId) -> bool {
     !matches!(g.perm(src).data.get(DataKey::Act), Some(Val::Stamp(s)) if *s == g.turn_stamp())
 }
 
 /// mine._pw_use: pay the loyalty cost; at zero loyalty it goes to the graveyard
-fn pw_use(g: &mut Game, src: PermId, cost: i32) -> Res<bool> {
+pub fn pw_use(g: &mut Game, src: PermId, cost: i32) -> Res<bool> {
     let st = g.turn_stamp();
     let x = g.perm_mut(src);
     x.data.set(DataKey::Act, Val::Stamp(st));
@@ -2845,7 +2845,24 @@ fn prepared_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// engine.cast_copy: 'You may cast a copy of ...' (a back-face instant/sorcery): a real cast (magecraft, opponents'
 /// cast triggers, Thousand-Year Storm), no card moves. Named, it goes on the stack, where it can be countered.
 /// `effect` is the copy's effect (prepared_effect's number).
-pub fn cast_copy(g: &mut Game, p: PlayerId, effect: Option<u8>, name: Option<&str>, _instant: bool, imp: f64) -> Res {
+pub fn cast_copy(g: &mut Game, p: PlayerId, effect: Option<u8>, name: Option<&str>, instant: bool, imp: f64) -> Res {
+    cast_copy_with(g, p, effect, name, instant, imp, &mut |g| match effect {
+        Some(e) => prepared_effect(g, p, e),
+        None => Ok(()),
+    })
+}
+
+/// cast_copy with the copy's effect given as a closure (a person's chosen targets); `effect` is the number the
+/// Thousand-Year Storm hook copies, if the closure is one of prepared_effect's
+pub fn cast_copy_with(
+    g: &mut Game,
+    p: PlayerId,
+    effect: Option<u8>,
+    name: Option<&str>,
+    _instant: bool,
+    imp: f64,
+    run: &mut dyn FnMut(&mut Game) -> Res,
+) -> Res {
     if let Some(name) = name {
         crate::glog!(g, "  {} casts a copy of {name}", g.player(p).name);
         let c = g.db.id(name).expect("the back face is in the card data or made by the engine (cards::engine_made)");
@@ -2874,9 +2891,7 @@ pub fn cast_copy(g: &mut Game, p: PlayerId, effect: Option<u8>, name: Option<&st
             draw(g, q, 1, false)?;
         }
     }
-    if let Some(e) = effect {
-        prepared_effect(g, p, e)?;
-    }
+    run(g)?;
     check_state(g)
 }
 
@@ -3907,7 +3922,7 @@ pub const LOOPS: [Loop; 4] = [
 ];
 
 /// mine.LOOP_CARDS: every piece of a loop
-fn loop_card(name: &str) -> bool {
+pub fn loop_card(name: &str) -> bool {
     LOOPS.iter().any(|l| l.groups.iter().any(|grp| grp.contains(&name)))
 }
 
