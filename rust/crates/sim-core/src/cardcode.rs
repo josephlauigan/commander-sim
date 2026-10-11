@@ -653,7 +653,7 @@ pub fn defend_hooks(
             }
         }
     }
-    if !crate::ai::is_main(dk) || dk == "yawgmoth" {
+    if !crate::ai::is_main(dk) {
         if !g.hooks.is_empty() {
             for (src, imp) in hooks::hooked(g, Event::Defend) {
                 (imp.defend.unwrap())(g, src, d, p, atk, assign)?;

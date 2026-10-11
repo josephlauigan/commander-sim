@@ -289,7 +289,7 @@ fn scout_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// Follow the Lumarets, {1}{G}: look at the top four, reveal a creature or land card and put it into your hand (two if
 /// you gained life this turn); the rest go to the bottom in a random order
 fn lumarets(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    let k = if super::gix::gained_life(g, p) { 2 } else { 1 };
+    let k = if super::green_cards::gained_life(g, p) { 2 } else { 1 };
     super::t1::look_take(g, p, 4, &|g, c| g.db.get(c).creature || g.db.get(c).land, "hand", k)?;
     Ok(intern("gy"))
 }

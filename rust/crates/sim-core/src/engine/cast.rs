@@ -5,7 +5,7 @@ use crate::ai;
 use crate::cardcode;
 use crate::cards::Types;
 use crate::engine::hooks::{self, fire_trigger};
-use crate::engine::life::{check_state, gain, lose_life, ping_floor, torbran_plus};
+use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, apply_wipe, legal_targets};
 use crate::engine::stack::{counter_window, counterable, stack_window_keep, trigger_window};
@@ -508,7 +508,7 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
 
 /// burn: kill a worthwhile creature if possible, otherwise go face on the weakest opponent
 pub fn bolt_something(g: &mut Game, p: PlayerId, dmg: i32) -> Res {
-    let eff = dmg + torbran_plus(g, p); // what the damage will be (Torbran)
+    let eff = dmg;
     let tg: Vec<PermId> = g
         .opps(p)
         .flat_map(|q| g.player(q).perms.iter().copied())
@@ -516,10 +516,8 @@ pub fn bolt_something(g: &mut Game, p: PlayerId, dmg: i32) -> Res {
         .collect();
     let best = max_by(&tg, |m| pval(g, m));
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    if let Some(b) = best.filter(|&b| pval(g, b) >= ping_floor(g, p)) {
+    if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), None)
-    } else if let Some(s) = crate::impls::smaug::ping_target(g, p, eff) {
-        crate::impls::smaug::dealt_damage(g, s, dmg) // the smaug deck pings its own Smaug for Treasures
     } else if let Some(q) = min_by(&opps, |o| g.player(o).life as f64) {
         lose_life(g, q, dmg, Some(p), "burn", None)
     } else {
@@ -559,7 +557,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
             "seph" => 8.0,
             "veyran" => 5.0,
             "sauron" | "najeela" => 6.0,
-            "galadriel" | "yshtola" | "alela" | "jodah" | "kefka" | "zada" | "torbran" | "glissa" | "jenova" | "gix" | "yawgmoth" | "lordofpain" | "smaug" | "titania" => 7.0,
+            "galadriel" | "yshtola" | "alela" | "jodah" | "kefka" | "titania" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);
@@ -1040,7 +1038,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         // X = (mana spent - 2)/3; 5X to each of up to X targets
         let x = ctx.x.max(1);
         let dmg = 5 * x;
-        let eff = dmg + torbran_plus(g, p);
+        let eff = dmg;
         enum Tgt {
             Face(PlayerId),
             Perm(PermId),

@@ -340,8 +340,6 @@ pub struct Player {
     pub cmd_dmg: [i32; MAX_SEATS],
     pub treasures: u32,
     pub clues: u32,
-    /// Blood tokens (Restless Bloodseeker; impls/gix.rs)
-    pub bloods: u32,
     pub foods: u32,
     pub poison: u32,
     pub floating: Floating,
@@ -384,10 +382,6 @@ pub struct Player {
     /// noncombat damage was dealt to this player this turn / last turn (Command the Stage)
     pub nc_dmg_this: bool,
     pub nc_dmg_last: bool,
-    /// cards exiled by Glimpse the Impossible, not yet played
-    pub glimpse_exiled: Vec<CardId>,
-    /// creature cards the mana of a Generator Servant was spent on (they gain haste on entering)
-    pub haste_next: Vec<CardId>,
     /// once-per-turn flags (Python's `flag_turn`)
     pub flag_turn: IndexMap<Sym, TurnStamp>,
     /// the AI's memory of who hurt it (brain.note_damage)
@@ -577,7 +571,6 @@ impl Player {
             cmd_dmg: [0; MAX_SEATS],
             treasures: 0,
             clues: 0,
-            bloods: 0,
             foods: 0,
             poison: 0,
             floating: Floating::default(),
@@ -610,8 +603,6 @@ impl Player {
             gy_left: None,
             nc_dmg_this: false,
             nc_dmg_last: false,
-            glimpse_exiled: vec![],
-            haste_next: vec![],
             flag_turn: IndexMap::new(),
             grudge: IndexMap::new(),
             cast_names: IndexSet::new(),

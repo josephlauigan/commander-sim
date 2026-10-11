@@ -189,7 +189,7 @@ pub fn token_color(key: &str) -> Colors {
     Colors::from_letters(match key {
         "najeela" | "galadriel" | "yshtola" | "jodah" => "W",
         "seph" | "sauron" => "B",
-        "veyran" | "zada" => "R",
+        "veyran" => "R",
         "alela" => "U",
         _ => "",
     })
@@ -859,9 +859,6 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
         g.perm_mut(n).tapped = true;
         return Ok(());
     }
-    if !x.eot_kw.is_empty() && crate::impls::yawgmoth::returns_when_dies(g, &x, cause)? {
-        return Ok(()); // Presumed Dead, Perigee Beckoner: it returns to the battlefield
-    }
     to_zone_card(g, m, Zone::Gy);
     if !g.hooks.is_empty() && creature {
         fire_trigger(g, Event::CreatureToGy, Call::Leaves { m })?; // Nim Deathmantle
@@ -958,16 +955,12 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
-    let hasted = {
-        let pl = g.player_mut(p);
-        pl.haste_next.iter().position(|&h| h == cd).map(|i| pl.haste_next.remove(i)).is_some() // Generator Servant
-    };
     let born = g.enter_no;
     let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
     let scales = if plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
-    x.sick = how.sick && !haste && !hasted;
+    x.sick = how.sick && !haste;
     x.phys = phys;
     x.born = born;
     if let Some(l) = loyalty {
@@ -1407,9 +1400,6 @@ pub fn sac_worth(g: &Game, m: PermId) -> f64 {
     }
     if g.marchesa_on && g.is_creature(m) && !x.token && x.plus > 0 {
         return cardcode::marchesa_sac_worth(g, m, v);
-    }
-    if !x.ttypes.is_empty() && g.is_creature(m) {
-        return crate::impls::jenova::mutant_sac_worth(g, m, v); // a Mutant on its controller's turn (Jenova)
     }
     v
 }

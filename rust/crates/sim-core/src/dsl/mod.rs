@@ -418,7 +418,7 @@ fn run(
         }
         "damage" => {
             let dmg = n(g, ctx) + has(g, p, Tag::Thor) as i32;
-            let eff = if dmg > 0 { dmg + crate::engine::life::torbran_plus(g, p) } else { dmg }; // Torbran
+            let eff = dmg;
             let to = match &e.to {
                 Some(To::Sel(s)) => (**s).clone(),
                 _ => Sel::default(),
@@ -444,11 +444,9 @@ fn run(
                     let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= eff).collect();
                     if let Some(&q) = lethal.first() {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
-                    } else if let Some(b) = best.filter(|&b| pval(g, b) >= crate::engine::life::ping_floor(g, p)) {
+                    } else if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
                         snapshot(g, b, ctx);
                         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
-                    } else if g.player(p).key == "smaug" && let Some(s) = crate::impls::smaug::smaug_of(g, p) {
-                        crate::impls::smaug::dealt_damage(g, s, dmg)?; // the smaug deck pings its own Smaug for Treasures
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
                     }
@@ -466,9 +464,6 @@ fn run(
                             snapshot(g, m, ctx);
                         }
                         let amt = if g.perm(m).owner != p { eff } else { dmg };
-                        if !(to.sel.as_deref() == Some("target") && etgh(g, m) <= amt) {
-                            crate::impls::smaug::dealt_damage(g, m, amt)?; // Smaug (a lethal targeted hit goes through apply_removal)
-                        }
                         if etgh(g, m) <= amt {
                             if to.sel.as_deref() == Some("target") {
                                 apply_removal(g, Some(p), m, &format!("dmg{dmg}"), spell)?;
@@ -1835,27 +1830,11 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         if cands.is_empty() || !can_pay(g, p, n, "", false) {
             continue;
         }
-        // equipment that grants flying wants a creature that doesn't fly yet; one that pays off when its creature
-        // connects (a combat-damage trigger) wants an evasive one
-        let grants_fly = d
-            .abilities
-            .iter()
-            .any(|a| matches!(a, Ability::Static { kind, keyword, .. } if kind == "equip_keyword" && keyword.as_deref() == Some("flying")));
-        let pays_on_hit = d.abilities.iter().any(
-            |a| matches!(a, Ability::Triggered { source: Some(s), event, .. } if s == "equipped" && event == "combat_damage"),
-        );
-        let tuned = g.player(p).key == "gix"; // the candidate deck only: every other deck keeps the old scoring
         let score = |m: PermId| {
             let y = g.perm(m);
             let flies = y.fly || has_kw(g, m, "flying");
-            let evasive = flies || has_kw(g, m, "menace") || has_kw(g, m, "fear") || has_kw(g, m, "unblockable");
             (if y.army { 3.0 } else { 0.0 })
-                + if !tuned {
-                    if flies { 2.0 } else { 0.0 }
-                } else {
-                    (if flies && !grants_fly { 2.0 } else if flies { -1.0 } else { 0.0 })
-                        + (if pays_on_hit && evasive { 2.0 } else { 0.0 })
-                }
+                + if flies { 2.0 } else { 0.0 }
                 + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
         };

@@ -20,6 +20,11 @@
 //!   prepared (**Studious First-Year**): see their sections.
 
 use crate::cards::CardDb;
+use crate::engine::cast::parse_cost;
+use crate::engine::mana::cost_of;
+use crate::engine::mana::pay;
+use crate::engine::zones::{discard_cards, land_to_hand};
+use crate::tag::Tag;
 use crate::engine::mana::can_pay;
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{counter_window, trigger_window};
@@ -851,7 +856,7 @@ fn evolution_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 }
 
 /// Additive Evolution: at the beginning of combat on your turn, a +1/+1 counter on target creature you control, which
-/// gains vigilance until end of turn (the `crew` event is the start of the first combat, as for Jenova)
+/// gains vigilance until end of turn (the `crew` event is the start of the first combat)
 fn evolution_combat(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if g.perm(src).owner != p || g.active != Some(p) || !live(g, src) {
         return Ok(());
@@ -940,5 +945,95 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Studious First-Year")?;
     c.etb = Some(firstyear_etb);
     c.options = Some(firstyear_options);
+    let c = r.card(db, "Topiary Lecturer")?;
+    c.cast = Some(increment);
+    c.dyn_mana_perm = Some(lecturer_mana);
+    r.card(db, "Vinelasher Adept")?.hand_options = Some(adept_hand);
     Ok(())
+}
+
+// ================================================================== Topiary Lecturer and Vinelasher Adept
+/// +1/+1 counters on m, after doubling effects
+fn put_counters(g: &mut Game, p: PlayerId, m: PermId, n: i32) {
+    let k = n * crate::dsl::counter_mult(g, p);
+    crate::cardcode::add_counters(g, m, k);
+}
+
+/// mana spent on the spell being cast now (a flashback cost, or what the card costs now; a free cast spent none)
+fn mana_spent(g: &Game, p: PlayerId, c: CardId) -> u32 {
+    let Some((cc, ctx, zone)) = &g.cur_cast else { return 0 };
+    if *cc != c || ctx.paid_otherwise {
+        return 0;
+    }
+    if *zone == "gy" {
+        let fb = g.db.get(c).tags.str(Tag::Fb).unwrap_or("");
+        let (n, rest) = parse_cost(fb);
+        return n + rest.chars().count() as u32;
+    }
+    let (gn, pips) = cost_of(g, p, c);
+    gn + pips.chars().count() as u32
+}
+
+/// Increment: whenever you cast a spell, if the mana spent is greater than this creature's power or toughness (the
+/// smaller of the two), a +1/+1 counter on it
+fn increment(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let p = g.perm(src).owner;
+    if caster != p || g.perm(src).phased || g.perm(src).neutered {
+        return Ok(());
+    }
+    let low = epow(g, src).min(etgh(g, src));
+    if (mana_spent(g, p, c) as i32) <= low {
+        return Ok(());
+    }
+    if trigger_window(g, p, Some(src), "increment: a +1/+1 counter", None)? && g.perm(src).on_bf {
+        put_counters(g, p, src, 1);
+    }
+    Ok(())
+}
+
+/// Topiary Lecturer: {T}: add an amount of {G} equal to its power
+fn lecturer_mana(g: &Game, _p: PlayerId, m: PermId) -> u32 {
+    epow(g, m).max(0) as u32
+}
+
+
+/// Vinelasher Adept, basic landcycling {2}: when the hand has no land to play, or the Adept can't be cast soon
+fn adept_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if !can_pay(g, p, 2, "", false) || g.player(p).library.is_empty() {
+        return Ok(vec![]);
+    }
+    let lands_in_hand = g.player(p).hand.iter().filter(|&&x| g.db.get(x).land).count();
+    let on_bf = g.player(p).lands.len();
+    let u = if lands_in_hand == 0 && on_bf < 6 {
+        2.4
+    } else if on_bf < 5 && lands_in_hand < 2 {
+        1.2
+    } else if post.is_none() && on_bf < 8 {
+        0.6
+    } else {
+        return Ok(vec![]);
+    };
+    Ok(vec![Opt {
+        utility: u,
+        label: "Vinelasher Adept (basic landcycling)".into(),
+        act: Some(Action::Plan { f: adept_cycle, arg: c.0 as i64 }),
+    }])
+}
+
+fn adept_cycle(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, 2, "", false)?;
+    crate::glog!(g, "  {} basic landcycles Vinelasher Adept", pname(g, p));
+    discard_cards(g, p, &[c])?;
+    land_to_hand(g, p)?;
+    Ok(true)
+}
+
+/// did p gain life this turn (infusion; Follow the Lumarets)
+pub fn gained_life(g: &Game, p: PlayerId) -> bool {
+    let st = g.turn_stamp();
+    g.player(p).gained_turn.is_some_and(|x| x.0 == st && x.1 > 0)
 }

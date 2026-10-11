@@ -8,7 +8,7 @@ use crate::ai;
 use crate::cardcode;
 use crate::cards::Types;
 use crate::engine::hooks::{self, fire_trigger};
-use crate::engine::life::{check_state, gain, lose_life, prevents_damage, torbran_plus};
+use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, step_priority, trigger_window};
 use crate::engine::values::*;
@@ -595,7 +595,7 @@ fn resolve_combat_inner(
                     if cardcode::damage_prevented(g, b) {
                         a_dies = false;
                     }
-                    let mut b_dies = ((ap + if ap > 0 { torbran_plus(g, p) } else { 0 }) * fiery(g, p) >= bt || g.perm(a).dt)
+                    let mut b_dies = (ap * fiery(g, p) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
                         && !no_damage(g, b);
                     if cardcode::prot_vs(g, a, b) {
