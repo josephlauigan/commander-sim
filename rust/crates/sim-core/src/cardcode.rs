@@ -170,8 +170,12 @@ pub fn spare_after(g: &Game, p: PlayerId, n: u32) -> bool {
 }
 
 /// rules.tithe_unpaid: Smothering Tithe: p pays {2} when it can spare the mana; true: unpaid, so the Tithe's owner
-/// gets a Treasure. HUMAN(phase 9): a person decides.
+/// gets a Treasure.
 pub fn tithe_unpaid(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if crate::human::is_human(g, p) {
+        let paid = crate::human::choices::pay_tax(g, p, 2, "Smothering Tithe (or its owner gets a Treasure)")?;
+        return Ok(!paid);
+    }
     if spare_after(g, p, 2) {
         crate::engine::mana::pay(g, p, 2, "", false)?;
         return Ok(false);
@@ -179,8 +183,12 @@ pub fn tithe_unpaid(g: &mut Game, p: PlayerId) -> Res<bool> {
     Ok(true)
 }
 
-/// rules.rhystic_unpaid, as tithe_unpaid for Rhystic Study's {1}. HUMAN(phase 9): a person decides.
+/// rules.rhystic_unpaid, as tithe_unpaid for Rhystic Study's {1}.
 pub fn rhystic_unpaid(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if crate::human::is_human(g, p) {
+        let paid = crate::human::choices::pay_tax(g, p, 1, "Rhystic Study (or its owner draws a card)")?;
+        return Ok(!paid);
+    }
     if spare_after(g, p, 1) {
         crate::engine::mana::pay(g, p, 1, "", false)?;
         return Ok(false);

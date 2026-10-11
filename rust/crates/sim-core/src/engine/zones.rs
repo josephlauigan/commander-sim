@@ -119,10 +119,15 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
                 add_treasure(g, q, 1)?;
             }
             if extra && has(g, q, Tag::Bowmasters) {
-                // HUMAN(phase 9): each Bowmasters, the person's target (hc.deal_damage)
+                let human = crate::human::is_human(g, q);
                 for _ in find(g, q, Tag::Bowmasters) {
                     amass(g, q, 1)?;
-                    lose_life(g, p, 1, Some(q), "triggers", None)?;
+                    if human {
+                        // practice mode: each Bowmasters, your target
+                        crate::human::choices::deal_damage(g, q, 1, "Orcish Bowmasters", "triggers")?;
+                    } else {
+                        lose_life(g, p, 1, Some(q), "triggers", None)?;
+                    }
                 }
             }
         }
@@ -311,7 +316,42 @@ pub fn shards_trigger(g: &mut Game, p: PlayerId, k: i32) -> Res {
         return Ok(());
     }
     let reps = k * if has(g, p, Tag::Mother) { 2 } else { 1 };
-    // HUMAN(phase 9): you may destroy one, your pick (hc.choose)
+    if crate::human::is_human(g, p) {
+        // practice mode: you may destroy one, your pick
+        for _ in 0..reps {
+            let tg: Vec<PermId> = g
+                .players
+                .iter()
+                .filter(|q| q.alive)
+                .flat_map(|q| q.perms.iter().copied())
+                .filter(|&m| {
+                    let x = g.perm(m);
+                    x.cd.is_some_and(|c| {
+                        let d = g.db.get(c);
+                        d.types.has(crate::cards::Types::ARTIFACT) || d.types.has(crate::cards::Types::ENCHANTMENT)
+                    }) && !x.phased
+                        && !(x.owner != p && untargetable(g, m))
+                })
+                .collect();
+            if tg.is_empty() {
+                return Ok(());
+            }
+            let labels: Vec<String> = tg
+                .iter()
+                .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
+                .collect();
+            let prompt = "Aura Shards: destroy target artifact or enchantment?";
+            let Some(k2) = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("none"), None)? else {
+                return Ok(());
+            };
+            g.player_mut(p).stat("shards_kill", 1);
+            crate::engine::removal::apply_removal(g, Some(p), tg[k2], "destroy", None)?;
+            if g.over {
+                return Ok(());
+            }
+        }
+        return Ok(());
+    }
     for _ in 0..reps {
         let tg: Vec<PermId> = g
             .opps(p)
@@ -1193,16 +1233,19 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         }
     }
     if t.has(Tag::Bowmasters) && !opps.is_empty() {
-        // HUMAN(phase 9): the person's target (hc.deal_damage), then amass
-        let x1: Vec<PermId> = opps
-            .iter()
-            .flat_map(|&q| g.player(q).perms.iter().copied())
-            .filter(|&x| g.is_creature(x) && etgh(g, x) <= 1 && pval(g, x) >= 2.0 && !untargetable(g, x))
-            .collect();
-        if let Some(b) = max_by(&x1, |x| pval(g, x)) {
-            die(g, b, "destroy")?;
-        } else if let Some(q) = max_by(&opps, |o| threat(g, p, o)) {
-            lose_life(g, q, 1, Some(p), "triggers", None)?;
+        if crate::human::is_human(g, p) {
+            crate::human::choices::deal_damage(g, p, 1, "Orcish Bowmasters", "triggers")?;
+        } else {
+            let x1: Vec<PermId> = opps
+                .iter()
+                .flat_map(|&q| g.player(q).perms.iter().copied())
+                .filter(|&x| g.is_creature(x) && etgh(g, x) <= 1 && pval(g, x) >= 2.0 && !untargetable(g, x))
+                .collect();
+            if let Some(b) = max_by(&x1, |x| pval(g, x)) {
+                die(g, b, "destroy")?;
+            } else if let Some(q) = max_by(&opps, |o| threat(g, p, o)) {
+                lose_life(g, q, 1, Some(p), "triggers", None)?;
+            }
         }
         amass(g, p, 1)?;
     }
@@ -1306,7 +1349,11 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 
 /// Archon of Cruelty: an opponent sacrifices a creature, discards a card and loses 3 life; you gain 3 and draw
 pub fn archon_trig(g: &mut Game, p: PlayerId, q: Option<PlayerId>) -> Res {
-    // HUMAN(phase 9): the person picks the opponent (hc.target_opponent)
+    let q = if q.is_none() && crate::human::is_human(g, p) {
+        Some(crate::human::choices::target_opponent(g, p, "Archon of Cruelty")?) // the person picks the opponent
+    } else {
+        q
+    };
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let Some(q) = q.or_else(|| max_by(&opps, |o| threat(g, p, o))) else { return Ok(()) };
     edict(g, q, false)?;
@@ -1341,7 +1388,9 @@ pub fn edict(g: &mut Game, q: PlayerId, least_power: bool) -> Res {
         let lo = cr.iter().map(|&m| epow(g, m)).min().unwrap();
         cr.retain(|&m| epow(g, m) == lo);
     }
-    // HUMAN(phase 9): the person picks (hc.sacrifice_creature)
+    if crate::human::is_human(g, q) && !cr.is_empty() {
+        return crate::human::choices::sacrifice_creature(g, q, &cr, "Sacrifice a creature (edict)");
+    }
     if let Some(m) = min_by(&cr, |x| sac_worth(g, x)) {
         die(g, m, "sac")?;
     }
@@ -1357,8 +1406,16 @@ fn basics_in(g: &Game, p: PlayerId) -> Vec<CardId> {
 
 /// search for n basic lands and put them onto the battlefield (tapped or not)
 pub fn land_ramp(g: &mut Game, p: PlayerId, n: u32, tapped: bool) -> Res {
-    // HUMAN(phase 9): the person picks each basic (hc.pick_basic)
+    let human = crate::human::is_human(g, p);
     for _ in 0..n {
+        if human {
+            let prompt =
+                format!("Search for a basic land to put onto the battlefield{}", if tapped { " tapped" } else { "" });
+            let Some(c) = crate::human::choices::pick_basic(g, p, &prompt)? else { return Ok(()) };
+            g.add_land_entering(p, c, tapped);
+            landfall(g, p)?;
+            continue;
+        }
         let basics = basics_in(g, p);
         let Some(&c) = g.rng.choice(&basics) else { return Ok(()) };
         let lib = &mut g.player_mut(p).library;
@@ -1437,7 +1494,13 @@ fn landfall_once(g: &mut Game, p: PlayerId) -> Res {
 
 /// search for a basic land and put it into your hand
 pub fn land_to_hand(g: &mut Game, p: PlayerId) -> Res {
-    // HUMAN(phase 9): the person picks (hc.pick_basic), then the library is shuffled
+    if crate::human::is_human(g, p) {
+        if let Some(c) = crate::human::choices::pick_basic(g, p, "Search for a basic land to put into your hand")? {
+            g.player_mut(p).hand.push(c);
+        }
+        crate::human::choices::shuffle_library(g, p);
+        return Ok(());
+    }
     let basics = basics_in(g, p);
     if let Some(&c) = g.rng.choice(&basics) {
         let lib = &mut g.player_mut(p).library;

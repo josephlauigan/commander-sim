@@ -1107,7 +1107,7 @@ pub fn wipe_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
 
 /// ais.wipe_modes: Farewell's modes (any number) or Austere Command's (exactly two), by net value
 pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Vec<Sym> {
-    // HUMAN(phase 9): a person picks the modes
+    // (a person's modes: human::choices::wipe_modes, called by engine::removal)
     let val = |pred: &dyn Fn(PermId) -> bool| -> f64 {
         let mut v = 0.0;
         for q in g.players.iter().filter(|q| q.alive) {

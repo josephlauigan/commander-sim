@@ -13,7 +13,29 @@ use crate::tag::Tag;
 
 /// p searches for a card of this kind and puts it in hand ('any', 'cre2', 'art' ...): the deck's AI picks
 pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
-    // HUMAN(phase 9): hc.search
+    if crate::human::is_human(g, p) {
+        let kind = kind.to_string();
+        let found = crate::human::choices::search(
+            g,
+            p,
+            &|g: &Game, c: CardId| crate::ai::decks::tutor_ok(g, &kind, c),
+            1,
+            "Search your library",
+            true,
+        )?;
+        for c in found {
+            let pl = g.player_mut(p);
+            pl.hand.push(c);
+            pl.stat("tutored", 1);
+            pl.seen.insert(c);
+            g.log_secret(
+ p,
+                &format!("    {} tutors a card", g.player(p).name),
+                &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
+            );
+        }
+        return Ok(());
+    }
     let Some(name) = ai::tutor_pick(g, p, kind) else { return Ok(()) };
     let Some(c) = searchable(g, p).into_iter().find(|&c| c == name) else { return Ok(()) };
     let lib = &mut g.player_mut(p).library;
@@ -30,7 +52,11 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
     pl.hand.push(c);
     pl.stat("tutored", 1);
     pl.seen.insert(c);
-    crate::glog!(g, "    {} tutors {}", g.player(p).name, g.db.get(c).name); // PORT(phase 9): log_secret
+    g.log_secret(
+ p,
+        &format!("    {} tutors a card", g.player(p).name),
+        &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
+    );
     shuffle_library(g, p);
     Ok(())
 }
@@ -48,8 +74,10 @@ pub fn atraxa_reveal(g: &mut Game, p: PlayerId) -> Res {
     let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
     let mut free: Vec<char> = "ABCEILPS".chars().collect(); // artifact, battle, creature ... sorcery
     let mut taken = vec![];
-    // HUMAN(phase 9): hc.atraxa_pick
-    let mut order = top.clone();
+    if crate::human::is_human(g, p) {
+        taken = crate::human::choices::atraxa_pick(g, p, &top)?; // practice mode: your picks, type by type
+    }
+    let mut order = if taken.is_empty() && !crate::human::is_human(g, p) { top.clone() } else { vec![] };
     order.sort_by(|&a, &b| card_worth(g, p, b, false).total_cmp(&card_worth(g, p, a, false)));
     for c in order {
         let codes = type_codes(g, c);
@@ -177,7 +205,16 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
         }
         best.unwrap()
     };
-    // HUMAN(phase 9): the person picks the pile (hc.search); the opponent still splits it
+    if crate::human::is_human(g, p) {
+        // practice mode: you pick the cards; the opponent (the AI) still splits them
+        let prompt = format!("Search for up to {n} cards with different names");
+        let pile = crate::human::choices::search(g, p, &|_: &Game, _: CardId| true, n, &prompt, true)?;
+        if pile.is_empty() {
+            return Ok(());
+        }
+        let hand = if pile.len() > keep { result(&pile).1 } else { pile.clone() };
+        return finish_pile(g, p, opp, &pile, &hand, false);
+    }
     let mut best: Option<(f64, Vec<CardId>, Vec<CardId>)> = None;
     for pl in combinations(&pool, k) {
         let r = result(&pl);
@@ -198,7 +235,19 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
         shuffle_library(g, p);
         return Ok(());
     }
-    for &c in &pile {
+    finish_pile(g, p, opp, &pile, &hand, true)
+}
+
+/// the pile's cards (already out of the library) go to the hand or the graveyard
+fn finish_pile(
+    g: &mut Game,
+    p: PlayerId,
+    opp: Option<PlayerId>,
+    pile: &[CardId],
+    hand: &[CardId],
+    shuffle: bool,
+) -> Res {
+    for &c in pile {
         let pl = g.player_mut(p);
         if hand.contains(&c) {
             pl.hand.push(c);
@@ -208,7 +257,9 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
         }
     }
     g.player_mut(p).stat("tutored", 1);
-    shuffle_library(g, p);
+    if shuffle {
+        shuffle_library(g, p);
+    }
     let names = |v: &[CardId]| v.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ");
     let binned: Vec<CardId> = pile.iter().copied().filter(|c| !hand.contains(c)).collect();
     crate::glog!(
@@ -243,7 +294,9 @@ pub fn combinations<T: Copy>(xs: &[T], k: usize) -> Vec<Vec<T>> {
 /// Jeska's Will: add {R} for each card in target opponent's hand, and/or exile the top three cards of your library,
 /// playable this turn (both if you control your commander)
 pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res {
-    // HUMAN(phase 9): play/cards.jeskas_will
+    if crate::human::is_human(g, p) && crate::human::cards::jeskas_will(g, p)? {
+        return Ok(());
+    }
     let most = g.opps(p).map(|q| g.player(q).hand.len()).max().unwrap_or(0) as u32;
     let both = commander_out(g, p);
     let need: i64 =
@@ -313,7 +366,20 @@ pub fn chrome_imprint(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 /// Search for a card of this kind and put it on top of your library (Vampiric Tutor and Imperial Seal: any card,
 /// 2 life; Mystical Tutor: an instant or sorcery, no life)
 pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
-    // HUMAN(phase 9): hc.search
+    if crate::human::is_human(g, p) {
+        let kind = kind.to_string();
+        let prompt = "Search your library for a card to put on top";
+        let got = crate::human::choices::search(g, p, &|g: &Game, c: CardId| crate::ai::decks::tutor_ok(g, &kind, c), 1, prompt, true)?;
+        if life > 0 {
+            lose_life(g, p, life, Some(p), "other", None)?;
+        }
+        for c in got {
+            let pl = g.player_mut(p);
+            pl.library.push(c);
+            pl.stat("tutored", 1);
+        }
+        return Ok(());
+    }
     g.player_mut(p).to_top = true;
     let name = ai::tutor_pick(g, p, kind);
     g.player_mut(p).to_top = false;
@@ -334,7 +400,11 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
     let pl = g.player_mut(p);
     pl.library.push(c);
     pl.stat("tutored", 1);
-    crate::glog!(g, "    {} puts {} on top of their library", g.player(p).name, g.db.get(c).name);
+    g.log_secret(
+ p,
+        &format!("    {} puts a card on top of their library", g.player(p).name),
+        &format!("    {} puts {} on top of their library", g.player(p).name, g.db.get(c).name),
+    );
     Ok(())
 }
 

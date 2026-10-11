@@ -393,7 +393,11 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
 
 /// Archon of Cruelty's attack trigger
 pub fn archon_attack(g: &mut Game, p: PlayerId, d: PlayerId) -> Res {
-    // HUMAN(phase 9): the person picks the opponent (hc.target_opponent)
+    let d = if crate::human::is_human(g, p) {
+        crate::human::choices::target_opponent(g, p, "Archon of Cruelty attacks")? // the person picks the opponent
+    } else {
+        d
+    };
     edict(g, d, false)?;
     let n = g.player(d).hand.len() as u64;
     if n > 0 {
@@ -511,10 +515,14 @@ fn resolve_combat_inner(
     if g.over || !g.player(d).alive {
         return Ok(vec![]);
     }
-    // HUMAN(phase 9): a person declares their own blockers (play/combat.human_blocks)
-    let mut rng = std::mem::replace(&mut g.rng, crate::rng::Rng::from_u64(0));
-    let mut assign = ai_blocks(g, p, &atk, d, unbl, &mut rng);
-    g.rng = rng;
+    let mut assign = if crate::human::is_human(g, d) {
+        crate::human::combat::human_blocks(g, p, &atk, d, unbl)? // the person declares blockers
+    } else {
+        let mut rng = std::mem::replace(&mut g.rng, crate::rng::Rng::from_u64(0));
+        let assign = ai_blocks(g, p, &atk, d, unbl, &mut rng);
+        g.rng = rng;
+        assign
+    };
     cardcode::blocks_hooks(g, p, &atk, d, &mut assign)?; // card code that changes blocks
     for &(a, b) in &assign.clone() {
         // flanking: a blocker without flanking gets -1/-1
@@ -529,8 +537,11 @@ fn resolve_combat_inner(
     g.blocking = assign.iter().map(|x| x.1).collect();
     let ringblk: Vec<PermId> =
         assign.iter().filter(|&&(a, b)| cardcode::ring_blocked(g, p, a, b)).map(|x| x.1).collect();
-    let to_walker = walker_attacks(g, p, &atk, d, &assign);
+    let to_walker = if crate::human::is_human(g, p) { vec![] } else { walker_attacks(g, p, &atk, d, &assign) };
     cardcode::defend_hooks(g, p, &mut atk, d, &mut assign)?; // Aetherize, Yawgmoth, Kor Haven, ninjutsu ...
+    if g.humans.any() {
+        step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
+    }
     let blocker_of = |assign: &[(PermId, PermId)], a: PermId| assign.iter().find(|x| x.0 == a).map(|x| x.1);
     if !shielded(g, d)
         && !g.player(d).life_locked
@@ -831,52 +842,75 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         if !g.hooks.is_empty() && ncomb == 1 {
             fire_trigger(g, Event::Crew, Call::Player { p })?;
         }
-        // HUMAN(phase 9): a person declares their attackers (play/combat.human_attack)
-        let haste_all = g.player(p).haste_all;
-        let mut atk: Vec<PermId> = g
-            .player(p)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| {
-                let x = g.perm(m);
-                g.is_creature(m)
-                    && !x.tapped
-                    && !x.phased
-                    && (!x.sick || haste_all || has_haste(g, m))
-                    && (!x.noatk || epow(g, m) >= 3) // pumped mana dorks attack
-                    && epow(g, m) > 0
-                    && !crate::impls::mine::ring_loot_decks(g, p, m)
-            })
-            .collect();
-        if !g.auras.is_empty() {
-            atk.retain(|&m| !cardcode::locked(g, m, "pacify")); // Arrest
-        }
-        if chasm(g, p) {
-            atk.clear(); // Glacial Chasm: creatures you control can't attack
-        }
-        if atk.is_empty() {
-            break;
-        }
-        let plan = if ncomb == 1 { ai::choose_attack(g, p)? } else { None }; // the look-ahead's plan (M4)
-        if plan.is_some_and(|x| x.1 == "none") {
-            break;
-        }
-        let all_atk = atk.clone();
-        let mut d = match plan {
-            Some((i, _)) => i,
-            None => ai::choose_defender(g, p),
-        };
-        let mut groups = if plan.is_some_and(|x| x.1 == "all") {
-            vec![(d, all_atk)] // everything at one player
-        } else {
-            if ncomb == 1 {
-                atk = ai::filter_attackers(g, p, atk);
+        let human = crate::human::is_human(g, p);
+        let human_groups = if human {
+            // practice mode: the person declares attackers (they may attack several players)
+            match crate::human::combat::human_attack(g, p, ncomb)? {
+                None => break,
+                Some(r) => Some(r),
             }
-            let pre = atk.clone();
-            atk = ai::attack_filter(g, p, atk, d); // outside decks' own filter
-            let held: Vec<PermId> = pre.into_iter().filter(|m| !atk.contains(m)).collect();
-            split_attack(g, p, d, &atk, &held)
+        } else {
+            None
+        };
+        let (mut d, mut groups) = if let Some(gs) = human_groups {
+            // the main defending player (attack triggers name it)
+            let mut best = gs[0].0;
+            let mut n = 0;
+            for (q, xs) in &gs {
+                if xs.len() > n {
+                    n = xs.len();
+                    best = *q;
+                }
+            }
+            (best, gs)
+        } else {
+            let haste_all = g.player(p).haste_all;
+            let mut atk: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&m| {
+                    let x = g.perm(m);
+                    g.is_creature(m)
+                        && !x.tapped
+                        && !x.phased
+                        && (!x.sick || haste_all || has_haste(g, m))
+                        && (!x.noatk || epow(g, m) >= 3) // pumped mana dorks attack
+                        && epow(g, m) > 0
+                        && !crate::impls::mine::ring_loot_decks(g, p, m)
+                })
+                .collect();
+            if !g.auras.is_empty() {
+                atk.retain(|&m| !cardcode::locked(g, m, "pacify")); // Arrest
+            }
+            if chasm(g, p) {
+                atk.clear(); // Glacial Chasm: creatures you control can't attack
+            }
+            if atk.is_empty() {
+                break;
+            }
+            let plan = if ncomb == 1 { ai::choose_attack(g, p)? } else { None }; // the look-ahead's plan (M4)
+            if plan.is_some_and(|x| x.1 == "none") {
+                break;
+            }
+            let all_atk = atk.clone();
+            let d = match plan {
+                Some((i, _)) => i,
+                None => ai::choose_defender(g, p),
+            };
+            let groups = if plan.is_some_and(|x| x.1 == "all") {
+                vec![(d, all_atk)] // everything at one player
+            } else {
+                if ncomb == 1 {
+                    atk = ai::filter_attackers(g, p, atk);
+                }
+                let pre = atk.clone();
+                atk = ai::attack_filter(g, p, atk, d); // outside decks' own filter
+                let held: Vec<PermId> = pre.into_iter().filter(|m| !atk.contains(m)).collect();
+                split_attack(g, p, d, &atk, &held)
+            };
+            (d, groups)
         };
         let declared: Vec<PermId> = groups.iter().flat_map(|x| x.1.iter().copied()).collect();
         let mut kept = vec![];
@@ -937,6 +971,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             }
         }
         if let Some(a) = army
+            && !human
             && atk.contains(&a)
             && !unbl.contains(&a)
             && epow(g, a) >= 5
@@ -998,7 +1033,8 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         if g.over || !g.player(p).alive {
             return Ok(());
         }
-        if g.player(p).key == "sauron"
+        if !human
+            && g.player(p).key == "sauron"
             && has(g, p, Tag::Assault)
             && let Some(a) = army.filter(|&a| g.perm(a).on_bf)
             && !blocked(g, p, "Aggravated Assault")

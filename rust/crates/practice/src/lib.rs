@@ -10,6 +10,7 @@ pub mod server;
 pub mod advisor;
 pub mod session;
 pub mod shadow;
+pub mod text;
 pub mod view;
 
 use sim_core::run::{Engine, settings, summary};

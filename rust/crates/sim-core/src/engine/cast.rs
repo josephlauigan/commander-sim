@@ -292,9 +292,13 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         prowess(g, p);
     }
     if instant_or_sorcery {
-        // HUMAN(phase 9): a person copies in their own window, not here
-        cardcode::hand_cast(g, p, c)?; // Return the Favor copies your spell
+        if !crate::human::is_human(g, p) {
+            cardcode::hand_cast(g, p, c)?; // Return the Favor copies your spell
+        }
         for q in g.opps(p).collect::<Vec<_>>() {
+            if crate::human::is_human(g, q) {
+                continue; // the person copies it in their window
+            }
             cardcode::hand_opp_cast(g, q, c)?; // Dualcaster Mage copies anyone's
         }
     }
@@ -388,9 +392,13 @@ pub fn magecraft(g: &mut Game, p: PlayerId, c: Option<CardId>, copy: bool) -> Re
             }
             let dmg = (base + thor) * mult as i32;
             if t.has(Tag::Ral) {
-                // HUMAN(phase 9): the person's target (hc.deal_damage)
-                let tgt = max_by(&opps, |o| threat(g, p, o)).unwrap();
-                lose_life(g, tgt, dmg, Some(p), "burn", None)?;
+                if crate::human::is_human(g, p) {
+                    let mname = g.perm(m).name.to_string();
+                    crate::human::choices::deal_damage(g, p, dmg, &mname, "burn")?;
+                } else {
+                    let tgt = max_by(&opps, |o| threat(g, p, o)).unwrap();
+                    lose_life(g, tgt, dmg, Some(p), "burn", None)?;
+                }
             } else {
                 for &q in &opps {
                     lose_life(g, q, dmg, Some(p), "burn", None)?;
@@ -458,7 +466,9 @@ pub fn magecraft(g: &mut Game, p: PlayerId, c: Option<CardId>, copy: bool) -> Re
 
 /// p discards its n least useful cards (outside decks keep combo pieces and wished cards)
 pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
-    // HUMAN(phase 9): the person picks (hc.discard)
+    if crate::human::is_human(g, p) {
+        return crate::human::choices::discard(g, p, n as usize, "Discard a card");
+    }
     let keep = ai::discard_keep(g, p);
     for _ in 0..n {
         if g.player(p).hand.is_empty() {
@@ -702,7 +712,9 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             countered: false,
             countered_by: None,
         };
-        let human_near = g.humans.any(); // PORT(phase 9): _copy_window
+        let human_near = g.humans.any()
+            && (g.players.iter().any(|q| q.id != p && crate::human::is_human(g, q.id))
+                || crate::human::human::copy_window(g, p, Some(c)));
         if !(imp > 0.0 || !aff.is_empty() || human_near) || !counterable(g, &item) {
             return Ok(Some((true, None, ctx.clone()))); // nobody would answer it
         }
@@ -750,7 +762,9 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
 
 /// Flashback (the card): recast the best affordable instant/sorcery from your graveyard
 pub fn flashback_grant(g: &mut Game, p: PlayerId) -> Res {
-    // HUMAN(phase 9): play/cards.flashback_target
+    if crate::human::is_human(g, p) && crate::human::cards::flashback_target(g, p)? {
+        return Ok(());
+    }
     let cs: Vec<CardId> = g
         .player(p)
         .gy
@@ -1003,8 +1017,8 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     if t.has(Tag::Lh) && !t.has(Tag::Lr) {
         land_to_hand(g, p)?;
     }
-    if t.has(Tag::Crackle) {
-        // HUMAN(phase 9): play/cards.crackle. X = (mana spent - 2)/3; 5X to each of up to X targets
+    if t.has(Tag::Crackle) && !(crate::human::is_human(g, p) && crate::human::cards::crackle(g, p, c, &ctx)?) {
+        // X = (mana spent - 2)/3; 5X to each of up to X targets
         let x = ctx.x.max(1);
         let dmg = 5 * x;
         enum Tgt {
@@ -1060,13 +1074,20 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         cardcode::proliferate_all(g, p)?;
     }
     if t.has(Tag::Unearth) {
-        // HUMAN(phase 9): the person picks (hc.pick_cards)
         let cs: Vec<CardId> =
             g.player(p).gy.iter().copied().filter(|&x| g.db.get(x).creature && g.db.get(x).cmc <= 3).collect();
-        if let Some(x) = max_by(&cs, |x| {
-            let d = g.db.get(x);
-            d.tag(Tag::Bowmasters) as i32 as f64 * 5.0 + d.pow as f64 + ai::card_etb_value(g, p, x)
-        }) {
+        let pick = if cs.is_empty() {
+            None
+        } else if crate::human::is_human(g, p) {
+            let prompt = "Unearth: return which creature card (mana value 3 or less)?";
+            Some(crate::human::choices::pick_cards(g, p, &cs, 1, prompt, "choose")?[0])
+        } else {
+            max_by(&cs, |x| {
+                let d = g.db.get(x);
+                d.tag(Tag::Bowmasters) as i32 as f64 * 5.0 + d.pow as f64 + ai::card_etb_value(g, p, x)
+            })
+        };
+        if let Some(x) = pick {
             let pl = g.player_mut(p);
             let i = pl.gy.iter().position(|&y| y == x).unwrap();
             pl.gy.remove(i);
@@ -1128,7 +1149,6 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
 /// Fresh targets for a copy of spell c ("you may choose new targets for the copy"): the best opposing permanent for
 /// removal, the lowest life total for burn that kills nothing worthwhile.
 pub fn spell_targets(g: &Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>) -> Ctx {
-    // HUMAN(phase 9): hc.copy_targets
     let t = &g.db.get(c).tags;
     let mut ctx = ctx.cloned().unwrap_or_default();
     ctx.target = None;
@@ -1160,7 +1180,11 @@ pub fn copy_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>, cast:
         enter_token_copy(g, p, c)?;
         return Ok(());
     }
-    let ctx = spell_targets(g, p, c, ctx);
+    let ctx = if crate::human::is_human(g, p) {
+        crate::human::choices::copy_targets(g, p, c, &ctx.cloned().unwrap_or_default())?
+    } else {
+        spell_targets(g, p, c, ctx)
+    };
     if cast {
         let pl = g.player_mut(p);
         pl.spells_this_turn += 1;

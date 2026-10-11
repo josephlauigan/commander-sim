@@ -32,16 +32,30 @@
 - Python quirks kept: `FLOATS` omits the floating black unit (it shows up as a tappable source named "FB"); floating white mana is never
   gathered into the pool (no `floatW` in Python).
 
-## Next (in order)
-1. `human/human.rs` (port human.py: human_main with `Request{kind:"priority"}` + Answer::Action(json), apply, respond, stack_priority,
-   step_priority, can_act/can_respond, cast/_cast/cast_rean/cast_counterspell, use/use_land, autopass via `Human::autopass()`; the
-   request `data.view` is added by the Human impl, not here). `stack_view` too.
-2. `human/combat.rs` (combat.py: can_attack, attack_candidates, human_attack, human_blocks).
-3. Fill `HUMAN(phase 9)`/`PORT(phase 9)` sites in engine/*, ai/*, cardcode.rs, dsl/mod.rs (`grep -rn 'HUMAN(phase 9)' ... | grep -v impls`);
-   delete markers. Also the human mulligan: `engine::turn::mulligan` returns `()` and must become `Res` + call `choices::mulligan` first
-   (see Python `engine.mulligan`). `ais.py:2727` empty_pools between steps = `engine/turn.rs:749` PORT marker.
-4. practice/src/text.rs + `--text` flag in main.rs; tests play_{hand,mana,combat,choices,respond,turn}.rs (port tests/test_play_*.py).
-5. Checks in RULES.md + difftest 0 differences; report-practice-core.md.
+## Done since (agent 2; all committed; baseline checks re-run clean: tests, all_decks, difftest 0 AI / 0 build diffs)
+- `human/human.rs` complete (human_main, stack_view, autopass, stack_priority, step_priority, copy_window, can_act/can_respond,
+  respond, cast_counterspell, apply, abilities_of/use, cast/cast_inner/cast_rean, order_triggers). The `data.view` is the Human's job.
+- `human/combat.rs` complete (can_attack, attack_candidates, human_attack, human_blocks).
+- ALL non-impls `HUMAN(phase 9)`/`PORT(phase 9)` markers filled and deleted (engine/*, ai/*, cardcode.rs, dsl/mod.rs). Extras:
+  `turn::setup_game_for(.., human:&[&str]) -> (Game, Vec<(PlayerId, Rng)>)` (humans are shuffled, not mulliganed; session calls
+  `choices::mulligan(g,p,&mut rng)` with the returned rng), `Game.trig_orders`, `Game.secret_lines` + `engine::log_secret(g,p,public,msg)`
+  (MERGE NOTE: the session task added `Game::log_secret`; replace my engine::log_secret calls (tutors.rs x3, dsl/mod.rs) with it and drop mine),
+  `choices::wipe_modes`, `legal::what`. dsl `choose_target`/`select` cannot return Err: a cancelled pick yields None (next tick stops the game).
+- Stand-ins in `human/cards.rs` / `human/abilities.rs` for practice-cards (each marked PORT(practice-cards), returning "not handled" so the AI
+  path runs): abilities, copy_card, copy_in_response, hand_override/cast_from_hand, gy_override/cast_from_gy, cast_target, mastery_target,
+  needs, granted_flashback, pick_blue (real), dredge, jeskas_will, flashback_target, crackle; abilities::{permanent_abilities, land_abilities}.
+  The cards agent's real versions replace these (same names/signatures; `cards::abilities` returns Option<Vec<(String, PermFn)>>).
+- tithe_unpaid / rhystic_unpaid use choices::pay_tax for a human.
+
+## NOT done (in order)
+1. practice/src/text.rs + `--text` flag in main.rs (port play/text.py; `--deck sauron --tier t1 --ai adaptive`, scripted stdin to game end,
+   no panic vs three AI seats). Needs a Human impl (live() true, adds data.view? text client can skip views).
+2. Tests: port tests/test_play_{hand,mana,combat,choices,respond,turn}.py (71 tests) into sim-core/tests/play_*.rs with ScriptHuman
+   (use `setup_game_for` + `choices::mulligan` for human seats; see testkit.rs).
+3. Not verified at all yet: nothing exercises human.rs/combat.rs at run time (no human seat in any check). Expect bugs; the tests find them.
+4. report-practice-core.md (full report: engine changes list above, Python quirks, stubs), final RULES checks, commit message
+   "Rust port: the human seat's rules (priority, mana, combat, choices) and the text client".
+5. Not wired: `legal::set_token_guesser` (session), impls/* HUMAN sites (cards agent), Teferi's/Najeela-like Python quirks as ported.
 
 ## Gotchas
 - Python mixed Perm/Player lists -> `Target`. Python `describe_target` for tokens uses `view.guess_token` (images): hook `legal::set_token_guesser`.

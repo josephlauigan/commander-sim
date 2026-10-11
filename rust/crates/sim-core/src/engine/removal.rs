@@ -300,7 +300,9 @@ pub fn etb_removal(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 }
 
 fn etb_removal_pick(g: &mut Game, p: PlayerId, m: PermId) -> Res {
-    // HUMAN(phase 9): hc.etb_removal
+    if crate::human::is_human(g, p) {
+        return crate::human::choices::etb_removal(g, p, m);
+    }
     let cd = g.perm(m).cd.unwrap();
     let t = g.db.get(cd).tags.clone();
     let rem = t.str(Tag::Rem).unwrap_or("destroy");
@@ -353,7 +355,11 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
         lose_life(g, p, x, Some(p), "other", None)?;
     }
     let modes: Vec<Sym> = if matches!(kind, "farewell" | "austere2") {
-        let m = ai::wipe_modes(g, p, kind);
+        let m = if crate::human::is_human(g, p) {
+            crate::human::choices::wipe_modes(g, p, kind)?
+        } else {
+            ai::wipe_modes(g, p, kind)
+        };
         crate::glog!(g, "      modes: {:?}", m);
         m
     } else {

@@ -83,7 +83,9 @@ pub fn scry(g: &mut Game, p: PlayerId, n: i32, surveil: bool) -> Res {
     }
     let st = g.turn_stamp();
     g.player_mut(p).scry_turn = Some(st); // Desperate Futurescribe: you've scried or surveilled this turn
-    // HUMAN(phase 9): a person orders the cards (hc.scry)
+    if crate::human::is_human(g, p) {
+        return crate::human::choices::scry(g, p, n as usize, surveil);
+    }
     let top = look(g, p, n as usize);
     let (keep, rest): (Vec<CardId>, Vec<CardId>) = top.into_iter().partition(|&c| desire(g, p, c) >= KEEP);
     let pl = g.player_mut(p);
