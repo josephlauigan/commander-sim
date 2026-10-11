@@ -223,22 +223,32 @@ fn test_hint_is_for_the_seat_deciding() {
     let played = Arc::new(Mutex::new(Vec::new()));
     host.listen(played.clone());
     friend.listen(played);
-    // the mulligans come one after the other: while the host's waits, the friend has no decision
-    let h = host.next_request(120).expect("the host's mulligan");
-    let r = friend.post("/api/hint", json!({}));
+    // the mulligans come one after the other, in seating order (random with two players): while one person's waits,
+    // the other has no decision
+    let end = Instant::now() + Duration::from_secs(120);
+    let (mut first, mut second, req) = loop {
+        assert!(Instant::now() < end, "no mulligan came");
+        if let Some(r) = host.requests.as_ref().unwrap().recv_timeout(Duration::from_millis(300)).ok() {
+            break (host, friend, r);
+        }
+        if let Some(r) = friend.requests.as_ref().unwrap().recv_timeout(Duration::from_millis(300)).ok() {
+            break (friend, host, r);
+        }
+    };
+    let r = second.post("/api/hint", json!({}));
     assert_eq!(r.status, 409);
     assert!(r.error().contains("no decision"), "{}", r.error());
-    assert_eq!(host.post("/api/hint", json!({})).status, 200);
-    assert_eq!(host.post("/api/answer", json!({"id": h["id"], "answer": "keep"})).status, 200);
-    let f = friend.next_request(120).expect("the friend's mulligan");
-    let r = host.post("/api/hint", json!({}));
+    assert_eq!(first.post("/api/hint", json!({})).status, 200);
+    assert_eq!(first.post("/api/answer", json!({"id": req["id"], "answer": "keep"})).status, 200);
+    let f = second.next_request(120).expect("the second person's mulligan");
+    let r = first.post("/api/hint", json!({}));
     assert_eq!(r.status, 409);
     assert!(r.error().contains("no decision"), "{}", r.error());
-    assert_eq!(friend.post("/api/hint", json!({})).status, 200);
-    friend.post("/api/answer", json!({"id": f["id"], "answer": "keep"}));
-    host.stop.store(true, Ordering::Relaxed);
-    friend.stop.store(true, Ordering::Relaxed);
-    host.post("/api/quit", json!({}));
+    assert_eq!(second.post("/api/hint", json!({})).status, 200);
+    second.post("/api/answer", json!({"id": f["id"], "answer": "keep"}));
+    first.stop.store(true, Ordering::Relaxed);
+    second.stop.store(true, Ordering::Relaxed);
+    first.post("/api/quit", json!({}));
 }
 
 #[test]
