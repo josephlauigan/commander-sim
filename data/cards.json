@@ -43624,47 +43624,7 @@
    "pow": 1,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 2,
-       "tgh": 1,
-       "keywords": [
-        "trample",
-        "haste"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "elemental"
-       ]
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {},
-       "to": "hand",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -43675,10 +43635,8 @@
    "ward": 0,
    "identity": "BR",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "At the beginning of combat on your turn, create a 2/1 red Elemental creature token with trample and haste. Sacrifice it at the beginning of the next end step.   [partly: sacrifice it at the beginning of the next end step]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

@@ -55,6 +55,8 @@ pub enum DataKey {
     DruidClass,
     /// Mogg War Marshal's echo was dealt with ('done')
     Echo,
+    /// a token sacrificed at the beginning of the next end step (Lagomos, Hand of Hatred)
+    EotSac,
     /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
     Ferocity,
     /// oil counters (Armored Scrapgorger)
@@ -846,6 +848,12 @@ pub struct Game {
     pub dying: Option<PermId>,
     /// the last turn a creature died (Barad-dûr)
     pub died_turn: Option<TurnStamp>,
+    /// creatures that died this turn: (the turn, how many) (Lagomos, Hand of Hatred)
+    pub died_count: (Option<TurnStamp>, u32),
+    /// Treasure mana paid since the last payment began; the spell cast with it takes it (Kalain, Reclusive Painter)
+    pub treasure_paid: u32,
+    /// the last spell cast and the Treasure mana paid for it (Kalain, Reclusive Painter)
+    pub cast_treasure: Option<(CardId, u32)>,
     /// permanents entered, numbered in order (born)
     pub enter_no: u32,
     /// permanents that entered this turn
@@ -1025,6 +1033,9 @@ impl Game {
             returns: IndexMap::new(),
             dying: None,
             died_turn: None,
+            died_count: (None, 0),
+            treasure_paid: 0,
+            cast_treasure: None,
             enter_no: 0,
             entered: vec![],
             in_combat: vec![],

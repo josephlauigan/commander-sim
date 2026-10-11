@@ -669,6 +669,11 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::EndStep, Call::Player { p })?;
     }
+    for m in g.player(p).perms.clone() {
+        if g.perm(m).on_bf && g.perm(m).data.truthy(crate::state::DataKey::EotSac) {
+            die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
+        }
+    }
     for m in find(g, p, Tag::Breach) {
         // Underworld Breach: sacrifice it at the beginning of the end step
         if trigger_window(g, p, Some(m), "sacrifice it", None)? && g.perm(m).on_bf {

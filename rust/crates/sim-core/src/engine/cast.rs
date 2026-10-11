@@ -689,6 +689,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         g.db.get(c).name,
         ctx.target.map_or(String::new(), |t| format!(" -> {} ({})", g.perm(t).name, g.player(g.perm(t).owner).name))
     );
+    g.cast_treasure = Some((c, std::mem::take(&mut g.treasure_paid))); // Kalain: Treasure mana paid for this spell
     let prev = g.cur_cast.replace((c, ctx.clone(), zone)); // cast triggers see its targets and X
     let r = (|| -> Res<Option<(bool, Option<CardId>, Ctx)>> {
         on_cast(g, p, c)?;
