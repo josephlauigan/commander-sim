@@ -1,4 +1,4 @@
-# Handoff: zada-cards (agent 1 stopped at a clean point, context long)
+# Handoff: zada-cards (DONE: all cards Full, checks run; see report-zada-cards.md)
 
 ## Done (committed; 20 tests in rust/crates/sim-core/tests/cards_zada_cards.rs pass)
 Full in `cardgen audit --mine` now: Goblin Arsonist, Bomber Corps, Glitterfang, Goblin Rimerunner, Skilled Battlecarver,
