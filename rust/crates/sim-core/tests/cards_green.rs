@@ -462,8 +462,9 @@ fn spider_man_needs_a_tapped_creature_to_web_sling() {
 
 // ------------------------------------------------------------------ Greenbelt Radical
 #[test]
-fn greenbelt_radical_is_cast_face_down_with_ward() {
+fn greenbelt_radical_is_cast_face_down_and_turned_up_for_seven() {
     let mut g = game();
+    let wurm = perm(&mut g, P0, "Elfhame Wurm");
     lands(&mut g, P0, "Forest", 3, false);
     hand(&mut g, P0, &["Greenbelt Radical"]);
     assert!(take_option(&mut g, P0, false, "Greenbelt Radical (face down)"));
@@ -476,6 +477,16 @@ fn greenbelt_radical_is_cast_face_down_with_ward() {
         .unwrap();
     assert_eq!((epow(&g, r), etgh(&g, r)), (2, 2));
     assert_eq!(sim_core::cardcode::aura_ward(&g, r), 2, "ward {{2}}");
+    // seven lands: turn it up (a +1/+1 counter on each creature you control, and trample)
+    lands(&mut g, P0, "Forest", 4, false);
+    for l in g.player(P0).lands.clone() {
+        g.land_mut(l).tapped = false;
+    }
+    assert!(take_option(&mut g, P0, false, "Greenbelt Radical (turn face up)"));
+    assert_eq!((epow(&g, r), etgh(&g, r)), (4 + 1, 4 + 1), "a 4/4 with its own counter");
+    assert_eq!(g.perm(wurm).plus, 1, "a counter on each creature");
+    assert_eq!(sim_core::cardcode::aura_ward(&g, r), 0);
+    assert!(sim_core::engine::combat::kw(&g, wurm, "trample"));
 }
 
 // ------------------------------------------------------------------ Studious First-Year

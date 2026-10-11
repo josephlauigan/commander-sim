@@ -687,15 +687,17 @@ pub fn titania_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 
 /// the deck's own plays outside any card's slots (`ai::brain::special_options`): crack the fetch lands held back, now
 /// that Titania is out
-pub fn titania_special(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
+pub fn titania_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
+    let mut out = super::green_cards::radical_options(g, p, post); // Greenbelt Radical turned face up
     if g.active != Some(p) || titania_of(g, p).is_none() || fetch_lands(g, p).is_empty() {
-        return Ok(vec![]);
+        return Ok(out);
     }
-    Ok(vec![Opt {
+    out.push(Opt {
         utility: 25.0,
         label: "crack the fetch lands (Titania)".into(),
         act: Some(Action::Plan { f: crack_held, arg: 0 }),
-    }])
+    });
+    Ok(out)
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {

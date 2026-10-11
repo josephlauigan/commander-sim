@@ -688,6 +688,45 @@ fn is_face_down_radical(g: &Game, m: PermId) -> bool {
     live(g, m) && g.perm(m).data.truthy(DataKey::Facedown) && card_name(g, m) == Some(RADICAL)
 }
 
+/// turn a face-down Radical face up for {5}{G}{G}: a +1/+1 counter on each creature you control, which gain trample
+/// until end of turn
+fn radical_up(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let m = PermId(arg as u32);
+    if !is_face_down_radical(g, m) || !can_pay(g, p, 5, "GG", false) {
+        return Ok(false);
+    }
+    if !crate::engine::mana::pay(g, p, 5, "GG", false)? {
+        return Ok(false);
+    }
+    super::galadriel::turn_face_up(g, p, m);
+    g.perm_mut(m).neutered = false;
+    for x in creatures(g, p) {
+        crate::cardcode::add_counters(g, x, 1);
+        super::partials::eot_kw(g, x, "trample");
+    }
+    Ok(true)
+}
+
+/// Greenbelt Radical's turn-face-up option for p's own turn (a deck's `special_options` offers it)
+pub fn radical_options(g: &mut Game, p: PlayerId, post: bool) -> Vec<Opt> {
+    let mut out = vec![];
+    if g.active != Some(p) || !can_pay(g, p, 5, "GG", false) {
+        return out;
+    }
+    let n = creatures(g, p).len() as f64;
+    for m in g.player(p).perms.clone() {
+        if is_face_down_radical(g, m) {
+            let u = 1.2 + 0.7 * n + if post { 0.0 } else { 1.0 };
+            out.push(Opt {
+                utility: u,
+                label: "Greenbelt Radical (turn face up)".into(),
+                act: Some(Action::Plan { f: radical_up, arg: m.0 as i64 }),
+            });
+        }
+    }
+    out
+}
+
 /// extra ward on a permanent: a Royal Role's {1}, a face-down Radical's {2} (`cardcode::aura_ward`)
 pub fn extra_ward(g: &Game, m: PermId) -> u32 {
     let x = g.perm(m);
