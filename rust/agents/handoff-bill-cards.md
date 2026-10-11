@@ -16,6 +16,9 @@ doubling (options: EOT, or before combat when lethal), Boughside, Cactarantula, 
 Ghalta, Greenbelt Radical (disguise), Lifestream (foretell), Sample Collector (collect evidence), Silhana, Spider-Man
 (web-slinging), Studious First-Year (prepared), Venomous Brutalizer, Wildgrowth Archaic, Royal Treatment (real Role).
 
+## Status
+DONE; see report-bill-cards.md. (Old list below.)
+
 ## Next (in order)
 1. Check Retreat to Kazandu, Druid Class, Evolution Sage, Harrow, fetch lands for this deck (brief).
 2. AI plan leftovers: hold ramp/Harrow/fetch lands until Bill is out (fetch hold needs a land_options crack),
