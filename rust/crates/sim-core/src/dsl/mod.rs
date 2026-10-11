@@ -442,11 +442,15 @@ fn run(
                         .collect();
                     let best = max_by(&tg, |m| pval(g, m));
                     let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= eff).collect();
+                    // Kefka flipped with a draw-trigger engine out and a library too short for its loop: no face pings
+                    let guard = crate::impls::kefka::loop_guard(g, p);
                     if let Some(&q) = lethal.first() {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
-                    } else if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
+                    } else if let Some(b) = best.filter(|&b| guard || pval(g, b) >= 3.0) {
                         snapshot(g, b, ctx);
                         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
+                    } else if guard {
+                        // hold the ping: a face would draw a card and start the loop
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
                     }
