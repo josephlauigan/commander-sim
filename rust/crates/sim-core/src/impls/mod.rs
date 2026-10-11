@@ -28,8 +28,6 @@ pub mod t4;
 pub mod t5;
 pub mod topdeck;
 pub mod yshtola;
-pub mod zada;
-pub mod zada_cards;
 pub mod bites;
 pub mod green_cards;
 pub mod titania;
@@ -63,8 +61,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     alela::register(&mut r, db)?;
     jodah::register(&mut r, db)?;
     kefka::register(&mut r, db)?;
-    zada::register(&mut r, db)?;
-    zada_cards::register(&mut r, db)?;
     bites::register(&mut r, db)?;
     green_cards::register(&mut r, db)?;
     titania::register(&mut r, db)?;

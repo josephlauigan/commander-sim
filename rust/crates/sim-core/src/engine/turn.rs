@@ -703,16 +703,6 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     g.player_mut(p).impulse_long = keep;
-    g.player_mut(p).haste_next.clear();
-    for c in std::mem::take(&mut g.player_mut(p).glimpse_exiled) {
-        // Glimpse the Impossible: cards still exiled go to the graveyard, a 0/1 Eldrazi Spawn for each
-        let pl = g.player_mut(p);
-        if let Some(i) = pl.hand.iter().position(|&x| x == c) {
-            pl.hand.remove(i);
-            pl.gy.push(c);
-            crate::impls::zada_cards::glimpse_spawn(g, p)?;
-        }
-    }
     for c in std::mem::take(&mut g.player_mut(p).impulse) {
         // Jeska's Will: unplayed exiled cards stay in exile
         let pl = g.player_mut(p);

@@ -382,7 +382,7 @@ pub fn do_cast(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>) -> Res<b
     do_cast_with(g, p, c, zone, Ctx::default())
 }
 
-/// do_cast with the spell's choices made as it is cast (Zada's spells name their target here)
+/// do_cast with the spell's choices made as it is cast (a bite names its creature and target here)
 pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx0: Ctx) -> Res<bool> {
     let db = g.db.clone();
     let d = db.get(c);
@@ -751,7 +751,6 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "veyran" => super::veyran::options(g, p, s, post),
         "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
-        "zada" => Ok(crate::impls::zada::zada_options(g, p, post)),
         "titania" => crate::impls::titania::titania_special(g, p, post),
         _ => Ok(vec![]),
     }

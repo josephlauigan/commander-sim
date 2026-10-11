@@ -955,16 +955,12 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
-    let hasted = {
-        let pl = g.player_mut(p);
-        pl.haste_next.iter().position(|&h| h == cd).map(|i| pl.haste_next.remove(i)).is_some() // Generator Servant
-    };
     let born = g.enter_no;
     let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
     let scales = if plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
-    x.sick = how.sick && !haste && !hasted;
+    x.sick = how.sick && !haste;
     x.phys = phys;
     x.born = born;
     if let Some(l) = loyalty {

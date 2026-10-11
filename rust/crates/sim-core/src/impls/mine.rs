@@ -15,7 +15,7 @@ use crate::engine::cast::{
 use crate::engine::combat::blocked;
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, lose_life};
-use crate::engine::mana::{Source, can_pay, cost_of, mana_units, pay, total_mana};
+use crate::engine::mana::{Source, Unit, can_pay, cost_of, mana_units, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{
     abilities_answered, ability_window, ability_window_card, counter_window, equip_to, stack_window, trigger_window,
@@ -2754,15 +2754,13 @@ fn ral_go(g: &mut Game, src: PermId, p: PlayerId, minus: i64) -> Res<bool> {
 
 // ------------------------------------------------------------------ prepared back faces: cast a copy, paying its cost
 /// mine.PREPARED: (card, generic, pips, an instant, the back face)
-const PREPARED: [(&str, u32, &str, bool, &str); 7] = [
+const PREPARED: [(&str, u32, &str, bool, &str); 5] = [
     ("Blazing Firesinger // Seething Song", 2, "R", true, "Seething Song"),
     ("Emeritus of Ideation // Ancestral Recall", 0, "U", true, "Ancestral Recall"),
     ("Sanar, Unfinished Genius // Wild Idea", 3, "UR", false, "Wild Idea"),
     ("Emeritus of Conflict // Lightning Bolt", 0, "R", true, "Lightning Bolt"),
-    // the next three are the single-faced names the Kefka and Zada decks play (zada_cards.rs has their tests)
+    // the single-faced name the Kefka deck plays
     ("Blazing Firesinger", 2, "R", true, "Seething Song"),
-    ("Goblin Glasswright", 0, "R", false, "Craft with Pride"),
-    ("Strife Scholar", 5, "R", false, "Awaken the Ages"),
 ];
 /// mine.PAYOFF_TAGS
 const PAYOFF_TAGS: [Tag; 7] =
@@ -2778,13 +2776,6 @@ pub fn prepared_effect(g: &mut Game, p: PlayerId, effect: u8) -> Res {
         }
         1 => draw(g, p, 3, false),
         2 => crate::engine::tutors::tutor(g, p, "is"),
-        5 => crate::engine::zones::add_treasure(g, p, 1), // Craft with Pride
-        6 => {
-            // Awaken the Ages: two 2/2 red and white Spirits
-            let color = Some(crate::cards::Colors::from_letters("RW"));
-            let spec = Tokens { color, types: vec!["spirit"], ..Tokens::new(2, 2) };
-            make_tokens(g, p, spec).map(|_| ())
-        }
         _ => crate::engine::cast::bolt_something(g, p, 3),
     }
 }
@@ -2798,8 +2789,6 @@ fn prepared_value(g: &Game, p: PlayerId, i: usize) -> f64 {
             .filter(|&&m| g.perm(m).cd.is_some_and(|c| PAYOFF_TAGS.iter().any(|&k| g.db.get(c).tag(k))))
             .count() as f64;
     match i {
-        5 => 1.5, // Craft with Pride: a Treasure for {R}
-        6 => 4.0, // Awaken the Ages: two 2/2 Spirits
         0 | 4 => {
             // Seething Song: {2}{R} for five red, worth it to reach a spell
             let tot = total_mana(g, p, false);
@@ -4331,6 +4320,33 @@ fn ephemerate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ registry
+// ------------------------------------------------------------------ Relic of Legends
+/// Tap an untapped legendary creature you control: add one mana of any colour (summoning sickness doesn't matter).
+/// The AI offers a legend that is summoning sick, or any legend once combat is over or on the opponents' turns.
+fn relic_mana(g: &Game, src: Src, p: PlayerId, units: &[Unit]) -> Vec<Unit> {
+    if g.perm(src).owner != p {
+        return vec![];
+    }
+    let used: Vec<PermId> =
+        units.iter().filter_map(|w| if let Source::Perm(m) = w.src { Some(m) } else { None }).collect();
+    let free_now = g.active != Some(p) || matches!(g.step, crate::state::Step::Main2 | crate::state::Step::End);
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            !x.tapped
+                && !x.phased
+                && g.is_creature(m)
+                && !used.contains(&m)
+                && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg))
+                && (x.sick || free_now)
+        })
+        .map(|m| Unit { src: Source::Perm(m), cols: g.player(p).ident, amt: 1 })
+        .collect()
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Barad-dûr")?.land_options = Some(baraddur);
     r.card(db, "Bloodsoaked Insight // Sanguine Morass")?.hand_options = Some(insight);
@@ -4414,5 +4430,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     k.sba = Some(docent_latch); // (Rust only: keeps it transformed; see is_final)
     r.creature_pt.push(final_iteration);
     r.card(db, "Manamorphose")?.resolve = Some(manamorphose);
+    r.card(db, "Relic of Legends")?.extra_mana = Some(relic_mana);
     Ok(())
 }
