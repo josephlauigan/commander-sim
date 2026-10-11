@@ -1,7 +1,7 @@
 # Kefka, Court Mage — Grixis Discard
 
 2026-10-11
-**Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Bedevil took his slot there). Not yet in the simulator's measured decks: several cards still need modeling (see "Simulator status").
+**Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Not yet in the simulator's measured decks: several cards still need modeling (see "Simulator status").
 
 ## Strategy
 

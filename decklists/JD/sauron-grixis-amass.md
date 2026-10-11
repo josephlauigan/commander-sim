@@ -16,6 +16,7 @@
 **Updated 2026-10-06.** Out: Brush Off. In: Spell Pierce. Brush Off → Spell Pierce: one blue mana is easy to hold up on the Breach turn.
 **Updated 2026-10-07.** Out: Marchesa, the Black Rose. In: Talrand, Sky Summoner. Marchesa, the Black Rose → Talrand, Sky Summoner: a 2/2 flying Drake for every instant or sorcery, so the deck has bodies besides the Orc Army (it loses to combat in about three games in four). Tested even with Marchesa (0.0 points, fast AI, 1,000 pairs per tier).
 **Updated 2026-10-11.** Out: Kefka, Court Mage. In: Bedevil. JD's choice: Kefka leaves to become the commander of his own deck (decklists/JD/kefka-grixis-discard.md); Bedevil ({B}{B}{R} instant: destroy target artifact, creature or planeswalker), cut on 10-01, comes back from the binder for the slot. Measured −1.8 points on average (look-ahead, loose, 1,000 paired games per tier; Bedevil vs Kefka: T1 24.1 vs 26.9, T2 30.6 vs 32.2, T3 23.1 vs 23.4, T4 19.5 vs 22.4, T5 20.4 vs 21.9). Each tier is within its own noise (about ±3), but all five favour Kefka, so losing him costs Sauron about two points (audit/sauron/2026-10-11-kefka-bedevil/).
+**Updated 2026-10-11 (second change).** Out: Bedevil. In: Sephiroth, Planet's Heir. JD's choice, not measured: Sephiroth, Planet's Heir ({4}{U}{B}, 4/4 vigilance) gives opponents' creatures -2/-2 when he enters and grows as their creatures die, a board-control threat in Kefka's old slot.
 
 ## Strategy
 
@@ -49,7 +50,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Underworld Breach** is the deck's second engine. While it's out (it's sacrificed at the end of the turn), every nonland card in your graveyard can be cast again by paying its mana cost and exiling three other cards from your graveyard. Dark Ritual ({B} for {B}{B}{B}) and Lotus Petal ({0}, sacrifice for one mana of any colour) turn that into mana: each escape nets two black or one of any colour, and each one adds to the storm count. Brain Freeze ({1}{U}, storm) mills three cards per copy, so it fills your graveyard with fuel early in the turn and empties opponents' libraries late in it. Ritual and Petal also cast normally as fast mana, but they are in the deck for this line, and Brain Freeze does almost nothing without Breach.
 
-**Bedevil** is the catch-all answer: {B}{B}{R} at instant speed destroys an artifact, creature or planeswalker, so it handles the threats the Army can't fight (a planeswalker ticking up, an equipped commander, a combo artifact) and can be held up on an opponent's turn while Sauron's triggers do the work.
+**Sephiroth, Planet's Heir** ({4}{U}{B}, 4/4 vigilance) holds Kefka's old slot. When he enters, opponents' creatures get −2/−2 until end of turn, which clears tokens, mana creatures and small blockers in front of the Army, and he gets a +1/+1 counter whenever a creature an opponent controls dies, so the turn he lands he is usually a 6/6 or bigger. Vigilance lets him attack and still guard Sauron.
 
 ## Key lines
 
@@ -129,7 +130,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (16).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (17).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
@@ -137,7 +138,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Thought Vessel, Whispersilk Cloak
 
-**Instants and sorceries (27).** Arcane Denial, Bedevil, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -150,7 +151,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Arcane Denial
 1 Arcane Signet
 1 Barad-dûr
-1 Bedevil
 1 Bitter Triumph
 1 Blasphemous Act
 1 Blood Crypt
@@ -202,6 +202,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Sauron, the Necromancer
 1 Scarlet Witch, Chaotic Avenger
 1 Scavenger Grounds
+1 Sephiroth, Planet's Heir
 1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Slaughter Pact
@@ -260,5 +261,5 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 
 **New cards and cuts.**
 - **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage (left 10-11 to lead his own deck), Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
-- **Back from the binder**: Bedevil (10-11).
+- **From the bulk list**: Sephiroth, Planet's Heir (10-11; Bedevil held the slot briefly the same day and stays in the binder).
 - **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.
