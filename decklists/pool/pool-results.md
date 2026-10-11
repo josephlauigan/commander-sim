@@ -78,6 +78,37 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 
 ### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; 240 games per cell)
 
+**October 11 run of all nine decks on the Rust engine** (960 games per cell, intervals about ±3 points; over all
+five tiers 4,800 games, about ±1.3 points; seeds 500000-500959, `audit/overnight/2026-10-11-full/run.sh`, results in
+that folder). The code is branch `overnight-models` (3d0abf7): Kefka and Zada fully modeled, every deck on the same
+code. Lists: Sauron with Sephiroth, Planet's Heir in Kefka's old slot; Kefka with its untapped mana base; Jodah after
+its October 9 rework. Bold: above an even share (25%) by more than the interval. This table replaces the October 7-9
+one below as the current figures (that run was on the old Python engine, before the Jodah rework).
+
+| Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 | All tiers |
+|---|---|---|---|---|---|---|
+| Y'shtola | **45.4%** (42-49) | **53.6%** (51-57) | **42.1%** (39-45) | **37.4%** (34-41) | 23.1% (21-26) | **40.3%** |
+| Sephiroth | **41.1%** (38-44) | **47.5%** (44-51) | **37.2%** (34-40) | **31.7%** (29-35) | 22.1% (20-25) | **35.9%** |
+| Kefka | 25.4% (23-28) | **35.3%** (32-38) | 23.3% (21-26) | **28.4%** (26-31) | 20.8% (18-24) | **26.6%** |
+| Sauron | **28.2%** (26-31) | **31.0%** (28-34) | 23.3% (21-26) | 22.4% (20-25) | 22.2% (20-25) | 25.4% |
+| Veyran | 25.3% (23-28) | **29.5%** (27-32) | 25.0% (22-28) | 24.1% (22-27) | 14.6% (13-17) | 23.7% |
+| Jodah | 16.1% (14-19) | 13.8% (12-16) | 20.6% (18-23) | 15.0% (13-17) | 17.3% (15-20) | 16.6% |
+| Alela | 11.5% (10-14) | 15.7% (14-18) | 10.8% (9-13) | 14.7% (13-17) | 12.7% (11-15) | 13.1% |
+| Galadriel | 13.5% (12-16) | 14.6% (13-17) | 12.2% (10-14) | 10.9% (9-13) | 10.9% (9-13) | 12.4% |
+| Zada | 5.2% (4-7) | 7.4% (6-9) | 4.5% (3-6) | 8.8% (7-11) | 9.4% (8-11) | 7.1% |
+
+Against the October 7-9 run: Y'shtola (40.3, was 40.2), Sephiroth (35.9, was 37.1), Veyran (23.7, was 23.1), Alela
+(13.1, was 12.6) and Galadriel (12.4, was 13.9) are within about a point and a half: the Rust engine reproduces the
+Python numbers. Jodah is up 4.4 points (16.6, was 12.2), the size of its October 9 rework. Sauron is a point lower
+(25.4, was 26.6) with Kefka gone; the paired test put Kefka's loss at about 1.8 points
+(`audit/sauron/2026-10-11-kefka-bedevil/`), and Sephiroth, Planet's Heir in the slot isn't measured on its own.
+
+The new decks: **Kefka** (26.6%) is just above an even share, in Sauron's group, best against Tier 2 (35%) and
+Tier 4 (28%). **Zada** (7.1%) is the weakest deck measured. Its plan (the first spell copied by Zada) is online in
+only about a third of its games: the list has 12 Zada spells where such decks usually run 18 to 25, and it is a
+Bracket 2 list from bulk against Bracket 3-4 tiers. The heuristic AI alone does worse (2.7% against Tier 3, where
+Galadriel gets 10.3% on the same seeds), so the look-ahead isn't what holds it back.
+
 **October 7-9 run of all seven decks** (960 games per cell, intervals about ±3 points; over all five tiers 4,800
 games, about ±1.3 points; the old Python overnight script `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).
 The code is PR #37 (c02b10e, the Marchesa and Zur decks removed), before the Jodah audit fixes (PR #38). The lists

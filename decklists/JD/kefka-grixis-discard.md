@@ -3,7 +3,7 @@
 **Updated 2026-10-11 (mana base).** JD's rule: basics over slow lands. Out: Temple of Malice, Boiling Rock Prison, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Path of Ancestry, Evolving Wilds, Fabled Passage (everything that enters tapped or fetches a tapped basic). In: 5 Swamp, 3 Mountain, 3 Island (now 15 Swamp, 9 Mountain, 6 Island). The six untapped nonbasics stay. Still 36 lands; the cut lands go back to the bulk list.
 
 2026-10-11
-**Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Not yet in the simulator's measured decks: several cards still need modeling (see "Simulator status").
+**Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Fully modeled and measured on 2026-10-11: 26.6% over all tiers (see "Simulator status").
 
 ## Strategy
 
@@ -56,7 +56,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 ## Simulator status
 
-In `data/my_decks.toml` as deck key `kefka` (`commander-sim --deck kefka --pool t3`), but **not measured yet**: 26 of its 84 different cards aren't fully modeled (`cardgen audit --mine`). Unmodeled: Arcane Omens, Dark Inquiry, Decorum Dissertation, Demonic Embrace, Duress, Ichor Slick (madness), Inner Fire. Partial: Alpharael, Blazing Firesinger, Corroding Dragonstorm, Disintegrate, Extinguish the Light, Grab the Prize, Intellect Devourer, Postmortem Professor, Sawblade Scamp, Scarlet Spider (mayhem), Screeching Soulbreaker, Splatter Technique, Stadium Tidalmage, Stargaze, Susurian Voidborn, Twinned Vision (flashback), two lands; Garrison Excavator is approximate. Kefka himself is modeled (from Sauron). The deck also needs an AI plan: when to flip, what to discard to his trigger, and when the Crawler loop is safe.
+Deck key `kefka` (`commander-sim --deck kefka --pool t3`). **Fully modeled** since 2026-10-11 (every card Full in `cardgen audit --mine`; card code and AI plan in `rust/crates/sim-core/src/impls/kefka.rs`, tests in `tests/cards_kefka.rs`). The AI discards madness, mayhem and graveyard-castable cards to Kefka's trigger first, flips as soon as {8} is spare, and starts the Psychosis Crawler loop only when the library outlasts the highest opponent's life total (each card drawn costs every opponent 1 life).
+
+**Measured 2026-10-11** (look-ahead AI, loose profile, 960 games per tier, the same code as the other eight decks; `decklists/pool/pool-results.md` section 0d): T1 25.4%, T2 35.3%, T3 23.3%, T4 28.4%, T5 20.8%; **26.6% over all tiers**, just above an even share, in Sauron's group.
+
+Known simplifications: madness casts the card from the graveyard rather than from exile (so Garrison Excavator can see it leave); Garrison Excavator doesn't see an opponent exiling your graveyard.
 
 ## Where the cards come from
 
