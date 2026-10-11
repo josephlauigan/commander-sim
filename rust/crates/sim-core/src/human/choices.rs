@@ -702,3 +702,46 @@ pub fn atraxa_pick(g: &mut Game, p: PlayerId, top: &[CardId]) -> Res<Vec<CardId>
     }
     Ok(taken)
 }
+
+// ------------------------------------------------------------------ board wipes with modes
+fn wipe_mode_text(k: &str) -> &'static str {
+    match k {
+        "art" => "artifacts",
+        "ench" => "enchantments",
+        "cre" => "all creatures",
+        "gy" => "all graveyards",
+        "le3" => "creatures with mana value 3 or less",
+        _ => "creatures with mana value 4 or greater",
+    }
+}
+
+/// The person picks the modes of Farewell (any number) or Austere Command (exactly two) (`ais.wipe_modes`).
+pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Res<Vec<crate::sym::Sym>> {
+    let keys: [&'static str; 4] =
+        if kind == "farewell" { ["art", "ench", "cre", "gy"] } else { ["art", "ench", "le3", "ge4"] };
+    let verb = if kind == "farewell" { "exile" } else { "destroy" };
+    let mut picked: Vec<&'static str> = vec![];
+    loop {
+        let left: Vec<&'static str> = keys.iter().copied().filter(|k| !picked.contains(k)).collect();
+        if left.is_empty() || (kind == "austere2" && picked.len() == 2) {
+            break;
+        }
+        let done = if kind == "farewell" && !picked.is_empty() { Some("done") } else { None };
+        let mut so_far: Vec<&str> = picked.clone();
+        so_far.sort_unstable();
+        let chosen = if so_far.is_empty() {
+            "none".to_string()
+        } else {
+            so_far.iter().map(|k| wipe_mode_text(k)).collect::<Vec<_>>().join(", ")
+        };
+        let prompt = format!(
+            "{}: {verb} which? ({}; chosen: {chosen})",
+            if kind == "farewell" { "Farewell" } else { "Austere Command" },
+            if kind == "farewell" { "one or more" } else { "choose two" },
+        );
+        let labels: Vec<String> = left.iter().map(|k| wipe_mode_text(k).to_string()).collect();
+        let Some(k) = choose(g, p, "choose", &prompt, &labels, done, None)? else { break };
+        picked.push(left[k]);
+    }
+    Ok(picked)
+}

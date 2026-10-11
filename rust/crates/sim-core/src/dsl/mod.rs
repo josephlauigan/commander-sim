@@ -254,6 +254,31 @@ fn src_colors(g: &Game, src: Option<PermId>, spell: Option<CardId>) -> Colors {
     }
 }
 
+/// `_ask_target`: the person picks among cands. A cancelled session (an `Err` from the helper) picks nothing here:
+/// this function cannot return the error, and the next engine step stops the game (`tick`).
+fn ask_target(
+    g: &Game,
+    p: PlayerId,
+    cands: &[PermId],
+    sel: &Sel,
+    src: Option<PermId>,
+    spell: Option<CardId>,
+) -> Option<PermId> {
+    let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+        Some(c) => g.db.get(c).name.to_string(),
+        None => "An ability".to_string(),
+    };
+    let labels: Vec<String> = cands
+        .iter()
+        .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
+        .collect();
+    let cancel = if sel.upto == Some(true) { Some("no target") } else { None };
+    let k = crate::human::choices::choose(g, p, "target", &format!("{what}: choose a target"), &labels, cancel, None)
+        .ok()
+        .flatten()?;
+    Some(cands[k])
+}
+
 /// pick the most sensible legal target (or reuse the one chosen as the spell was cast)
 pub fn choose_target(
     g: &Game,
@@ -271,7 +296,6 @@ pub fn choose_target(
     {
         return Some(pre);
     }
-    // HUMAN(phase 9): a person picks their own targets (_ask_target)
     let cols = src_colors(g, src, spell);
     let cands: Vec<PermId> = g
         .players
@@ -282,6 +306,9 @@ pub fn choose_target(
             matches(g, p, m, f, src) && !(g.perm(m).owner != p && (untargetable(g, m) || protected_from(g, m, cols)))
         })
         .collect();
+    if crate::human::is_human(g, p) && !cands.is_empty() {
+        return ask_target(g, p, &cands, sel, src, spell); // practice mode: the person picks
+    }
     if harmful {
         let opp: Vec<PermId> = cands.iter().copied().filter(|&m| g.perm(m).owner != p).collect();
         if !opp.is_empty() {
@@ -371,9 +398,19 @@ fn run(
         }
         "draw" => {
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
-                // "you may draw": the AI doesn't deck itself (HUMAN(phase 9): a person chooses)
-                if e.optional == Some(true) && g.player(q).library.len() <= 12 {
-                    continue;
+                // "you may draw": a person chooses; the AI doesn't deck itself
+                if e.optional == Some(true) {
+                    if crate::human::is_human(g, q) {
+                        let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                            Some(c) => g.db.get(c).name.to_string(),
+                            None => "An effect".to_string(),
+                        };
+                        if !crate::human::choices::yes_no(g, q, &format!("{what}: draw?"))? {
+                            continue;
+                        }
+                    } else if g.player(q).library.len() <= 12 {
+                        continue;
+                    }
                 }
                 let k = n(g, ctx);
                 zones::draw(g, q, k.max(0) as u32, false)?;
@@ -386,8 +423,14 @@ fn run(
                 _ => Sel::default(),
             };
             match to.sel.as_deref() {
+                Some("any_target") if crate::human::is_human(g, p) => {
+                    let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                        Some(c) => g.db.get(c).name.to_string(),
+                        None => "Damage".to_string(),
+                    };
+                    crate::human::choices::deal_damage(g, p, dmg, &what, "triggers")?;
+                }
                 Some("any_target") => {
-                    // HUMAN(phase 9): the person's target (hc.deal_damage)
                     let cols = src_colors(g, src, spell);
                     let tg: Vec<PermId> = opps
                         .iter()
@@ -695,7 +738,6 @@ fn run(
             let sel = sel_or_empty(&e.what);
             let ms: Vec<PermId> = if sel.upto == Some(true) || sel.sel.as_deref() == Some("target") {
                 // only blink a nontoken creature that gets something from entering again
-                // (HUMAN(phase 9): a person picks any of theirs, or none)
                 let cmd = g.player(p).cmd;
                 let cands: Vec<PermId> = g
                     .player(p)
@@ -710,7 +752,24 @@ fn run(
                             && matches(g, p, m, sel.filter.as_ref(), src)
                     })
                     .collect();
-                max_by(&cands, |m| etb_value(g, g.perm(m).cd.unwrap()) as f64).into_iter().collect()
+                let mut ms: Vec<PermId> =
+                    max_by(&cands, |m| etb_value(g, g.perm(m).cd.unwrap()) as f64).into_iter().collect();
+                if crate::human::is_human(g, p) {
+                    // practice mode: any of yours, or none
+                    let mine: Vec<PermId> = g
+                        .player(p)
+                        .perms
+                        .iter()
+                        .copied()
+                        .filter(|&m| {
+                            g.is_creature(m) && !g.perm(m).phased && matches(g, p, m, sel.filter.as_ref(), src)
+                        })
+                        .collect();
+                    let up = Sel { upto: Some(true), ..sel.clone() };
+                    let t = if mine.is_empty() { None } else { ask_target(g, p, &mine, &up, src, spell) };
+                    ms = t.into_iter().collect();
+                }
+                ms
             } else {
                 select(g, p, &sel, false, ctx, src, spell)
             };
@@ -762,12 +821,22 @@ fn run(
         }
         "modal" => {
             let k = (e.choose.unwrap_or(1) as usize).min(e.modes.len());
-            // HUMAN(phase 9): a person picks the modes (hc.pick_modes)
-            let mut order: Vec<(usize, f64)> =
-                e.modes.iter().enumerate().map(|(i, ms)| (i, value_of(g, p, ms, spell))).collect();
-            order.sort_by(|a, b| b.1.total_cmp(&a.1)); // stable, best first
-            for &(i, _) in order.iter().take(k) {
-                execute(g, p, &e.modes[i], src, ctx, spell, depth + 1)?;
+            if crate::human::is_human(g, p) {
+                let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                    Some(c) => g.db.get(c).name.to_string(),
+                    None => "Choose".to_string(),
+                };
+                let picked = crate::human::choices::pick_modes(g, p, &e.modes, k, &what)?;
+                for i in picked {
+                    execute(g, p, &e.modes[i], src, ctx, spell, depth + 1)?;
+                }
+            } else {
+                let mut order: Vec<(usize, f64)> =
+                    e.modes.iter().enumerate().map(|(i, ms)| (i, value_of(g, p, ms, spell))).collect();
+                order.sort_by(|a, b| b.1.total_cmp(&a.1)); // stable, best first
+                for &(i, _) in order.iter().take(k) {
+                    execute(g, p, &e.modes[i], src, ctx, spell, depth + 1)?;
+                }
             }
         }
         "counter_spell" => {} // counterspells are cast through the engine's response window
@@ -863,10 +932,21 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
         if cands.is_empty() {
             return Ok(());
         }
-        // HUMAN(phase 9): a person searches (hc.search)
-        let pick = crate::ai::dsl_search_pick(g, p, &f, &cands);
-        let c =
-            pick.unwrap_or_else(|| max_by(&cands, |c| card_value(g, p, c) * 1000.0 + g.db.get(c).cmc as f64).unwrap());
+        let c = if crate::human::is_human(g, p) {
+            // practice mode: the person searches
+            let fc = f.clone();
+            let mut prompt = "Search your library".to_string();
+            if let Some(t) = f.kind.as_deref().filter(|t| *t != "any") {
+                prompt.push_str(&format!(" for {t} card"));
+            }
+            let got = crate::human::choices::search(g, p, &|g: &Game, x: CardId| card_matches(g, x, Some(&fc)), 1, &prompt, true)?;
+            let Some(&c) = got.first() else { return Ok(()) };
+            g.player_mut(p).library.push(c); // put back: removed below like the AI's pick
+            c
+        } else {
+            let pick = crate::ai::dsl_search_pick(g, p, &f, &cands);
+            pick.unwrap_or_else(|| max_by(&cands, |c| card_value(g, p, c) * 1000.0 + g.db.get(c).cmc as f64).unwrap())
+        };
         let lib = &mut g.player_mut(p).library;
         if let Some(i) = lib.iter().position(|&x| x == c) {
             lib.remove(i);
@@ -894,7 +974,17 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
             }
         }
         g.player_mut(p).stat("tutored", 1);
-        crate::glog!(g, "    {} searches for {}", g.player(p).name, g.db.get(c).name); // PORT(phase 9): log_secret
+        let (pn, cn) = (g.player(p).name, g.db.get(c).name.to_string());
+        if to == "hand" || to == "top" {
+            crate::engine::log_secret(
+                g,
+                p,
+                &format!("    {pn} searches for a card"),
+                &format!("    {pn} searches for {cn}"),
+            );
+        } else {
+            crate::glog!(g, "    {} searches for {}", pn, cn);
+        }
     }
     Ok(())
 }

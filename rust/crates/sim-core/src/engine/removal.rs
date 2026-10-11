@@ -355,7 +355,11 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
         lose_life(g, p, x, Some(p), "other", None)?;
     }
     let modes: Vec<Sym> = if matches!(kind, "farewell" | "austere2") {
-        let m = ai::wipe_modes(g, p, kind);
+        let m = if crate::human::is_human(g, p) {
+            crate::human::choices::wipe_modes(g, p, kind)?
+        } else {
+            ai::wipe_modes(g, p, kind)
+        };
         crate::glog!(g, "      modes: {:?}", m);
         m
     } else {

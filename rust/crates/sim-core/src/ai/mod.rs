@@ -319,10 +319,13 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
 }
 
 /// ais.seph_fill_resolve: a spell that fills the graveyard resolves (Entomb, Buried Alive, Unmarked Grave, Grisly
-/// Salvage; Deadly Dispute's Treasure). HUMAN(phase 9): a person picks (hc.fill).
+/// Salvage; Deadly Dispute's Treasure).
 pub fn seph_fill_resolve(g: &mut Game, p: PlayerId, kind: Sym, _ctx: &Ctx) -> Res {
     use crate::engine::zones::{add_treasure, agent_for, agent_take};
     use crate::tag::Tag;
+    if crate::human::is_human(g, p) {
+        return crate::human::choices::fill(g, p, kind);
+    }
     let mut bombs: Vec<CardId> =
         g.player(p).library.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 5).collect();
     let val: Vec<f64> = bombs.iter().map(|&c| -seph_bval(g, p, c)).collect();
