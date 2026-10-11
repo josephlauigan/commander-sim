@@ -58,7 +58,7 @@ In `data/my_decks.toml` as deck key `kefka` (`commander-sim --deck kefka --pool 
 
 ## Where the cards come from
 
-Every card except the commander and the basics comes from JD's bulk and binder lists (bulk-cards.txt, binder-cards.txt; Mystic Confluence and Rhystic Study are binder cards). Kefka comes out of Sauron. Remove the cards from the lists once the deck is built.
+Every card except the commander and the basics comes from JD's bulk and binder lists (bulk-cards.txt, binder-cards.txt; Mystic Confluence and Rhystic Study are binder cards). Kefka comes out of Sauron. The cards were taken off both lists on 2026-10-11 (one copy each; where a card was on both lists, the bulk copy).
 
 ## Decklist by type (100)
 
