@@ -88,7 +88,7 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 8] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "najeela"];
+const CTHRESH: [&str; 9] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "najeela"];
 
 /// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
 /// Summer (its spells can't be countered this turn, it draws a card)
