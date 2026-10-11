@@ -7,6 +7,10 @@
 pub mod catalog;
 pub mod images;
 pub mod server;
+pub mod advisor;
+pub mod session;
+pub mod shadow;
+pub mod view;
 
 use sim_core::run::{Engine, settings, summary};
 use std::ffi::{CStr, c_char};

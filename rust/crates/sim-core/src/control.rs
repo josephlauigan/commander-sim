@@ -55,6 +55,54 @@ pub trait Human: Send + Sync {
     }
 }
 
+/// Where the game's log lines go as they happen (practice mode's event stream). `secret` is set for a line only one
+/// seat may read (Python's `EventLog.secret`): the sink is handed `public` as `line` and the full line in `secret`.
+pub trait LogSink: Send + Sync {
+    fn line(&self, g: &Game, line: &str, secret: Option<(PlayerId, &str)>);
+}
+
+/// A running practice game's links to its session: the log sink and the abort flag (set when the session is closed
+/// or rewound: the next engine step stops the game with `Stop::Cancelled`). Cloning gives no links, like `Humans`:
+/// a look-ahead copy neither reports nor aborts.
+#[derive(Default)]
+pub struct Link {
+    pub sink: Option<Arc<dyn LogSink>>,
+    pub abort: Option<Arc<std::sync::atomic::AtomicBool>>,
+}
+
+impl Link {
+    pub fn aborted(&self) -> bool {
+        self.abort.as_ref().is_some_and(|a| a.load(std::sync::atomic::Ordering::Relaxed))
+    }
+}
+
+impl Clone for Link {
+    fn clone(&self) -> Link {
+        Link::default()
+    }
+}
+
+impl std::fmt::Debug for Link {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Link")
+    }
+}
+
+impl Game {
+    /// A log line naming a card only seat `p` may see (a card tutored to hand): the game's log keeps `line` whole;
+    /// `p` is shown `line`, the others `public` (Python's `g.log.secret(key, public, line)`).
+    pub fn log_secret(&mut self, p: PlayerId, public: &str, line: &str) {
+        let full = format!("R{:<2} {}", self.round, line);
+        if let Some(log) = self.log.as_mut() {
+            log.push(full.clone());
+        }
+        if let Some(s) = self.link.sink.clone() {
+            let public = format!("R{:<2} {}", self.round, public);
+            s.line(self, &public, Some((p, &full)));
+        }
+    }
+}
+
 type Seats = [Option<Arc<dyn Human>>; MAX_SEATS];
 
 /// The people at a table, by seat. Cloning gives an empty table (see the module comment).

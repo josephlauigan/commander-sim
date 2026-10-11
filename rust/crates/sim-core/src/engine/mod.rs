@@ -47,8 +47,11 @@ pub fn log_secret(g: &mut crate::state::Game, p: crate::ids::PlayerId, public: &
 #[macro_export]
 macro_rules! glog {
     ($g:expr, $($arg:tt)*) => {
-        if $g.log.is_some() {
+        if $g.log.is_some() || $g.link.sink.is_some() {
             let line = format!("R{:<2} {}", $g.round, format!($($arg)*));
+            if let Some(sink) = $g.link.sink.clone() {
+                sink.line(&$g, &line, None);
+            }
             if let Some(log) = $g.log.as_mut() {
                 log.push(line);
             }
