@@ -3,7 +3,7 @@
 //! The AI is asked on a copy of the game (as the look-ahead does), never the real one, so asking changes nothing.
 //! In the copy your seat has no mana pool; mana you have floating counts as mana of any colour there.
 //!
-//!     hint(g, p, req) -> {"text": one line, "detail": [lines], "choice": the AI's pick or null}
+//! `hint(g, p, req)` returns `{"text": one line, "detail": [lines], "choice": the AI's pick or null}`.
 
 use crate::view::seam::pool_total;
 use serde_json::{Value, json};

@@ -8,6 +8,10 @@
   `SessionHandle` implements the server's `SessionApi` (server/api.rs, NOT a separate session/api.rs); `RealSessions{engine}` is the `SessionFactory`.
   Wire it with `server::start_with(cfg, Arc::new(RealSessions{engine}))` (shell task).
 
+## Status
+All committed; tests pass (session_basic 8, session_shadow 3); all_decks adaptive 3 / lookahead 1 fine; difftest AI 0, build 0.
+Report: rust/agents/report-practice-session.md
+
 ## Next
 1. Tests `practice/tests/session_*.rs` (undo, save, hint, review, shadow, replay determinism, no thread left after close) -- need ScriptHuman-free
    driving: answer via `Session::answer` on `events_after` requests, `ai=adaptive`.
