@@ -119,6 +119,8 @@ pub enum DataKey {
     Ruin,
     Serenity,
     Stolen,
+    /// suspected (menace, can't block) until it leaves the battlefield
+    Suspect,
     TapOnReturn,
     Unblockable,
     /// Reconstructed Thopter came back by unearth (exiled at the end step)

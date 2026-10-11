@@ -1305,6 +1305,9 @@ pub fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
     if kw == "trample" && x.data.truthy(crate::state::DataKey::Role) {
         return true; // a Monster Role
     }
+    if matches!(kw, "menace" | "cant_block") && x.data.truthy(crate::state::DataKey::Suspect) {
+        return true; // suspected
+    }
     if kw == "flying" && g.is_creature(m) && g.player(x.owner).elspeth_emblem {
         return true; // Elspeth's emblem
     }

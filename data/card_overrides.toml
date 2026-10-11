@@ -5558,8 +5558,8 @@ note = "until end of turn: cast spells and play lands from the graveyard as it w
 ["Yawgmoth, Thran Physician"]
 tags = "leg human pow=2 tgh=4"
 dsl = []
-status = "Approximate"
-note = "pay 1 life, sacrifice: -1/-1 counter on an X/1 (tokens included) and draw, in your main phase and after blockers when attacked (unblocked X/1 attackers); BB discard: proliferate (the undying loop is a combo); protection from Humans not modeled"
+status = "Full"
+note = "pay 1 life, sacrifice another creature: a -1/-1 counter on up to one target creature (any opposing creature, a kill first) and draw a card, in your main phases and after blockers when attacked (the fodder is a blocker that dies anyway or cheap); BB, discard a card: proliferate (+1/+1 and -1/-1 counters, loyalty, lore counters; it kills the creatures at toughness 0); protection from Humans: no damage from Humans and Humans cannot block it (a Human creature's ability targeting it is not checked). Your yawgmoth deck uses the new plan; the opponent pool's Yawgmoth deck keeps the old one"
 
 ["Young Wolf"]
 status = "Full"
@@ -6213,3 +6213,64 @@ note = "increment; {T}: adds {G} equal to its power"
 ["Vinelasher Adept"]
 status = "Full"
 note = "reach; enters: three +1/+1 counters on the best creature (Jenova first); basic landcycling {2} when the hand lacks lands"
+
+["Braids's Frightful Return"]
+status = "Full"
+note = "read ahead: the AI starts on the chapter worth most (I: sacrifice a cheap creature, each opponent discards; II: the best creature card in the graveyard to hand; III: the opponent with the biggest board sacrifices a spare nonland nontoken permanent, or loses 2 life and you draw); lore counters after the draw step and from proliferate; sacrificed after III"
+
+["Presumed Dead"]
+status = "Full"
+note = "+2/+0 until end of turn and 'when this creature dies, return it to the battlefield under its owner's control and suspect it' (menace, can't block); the AI casts it before combat on a creature worth 2 or more"
+
+["Rewrite Regrets"]
+status = "Full"
+note = "returns the best creature card (mana value 6 or less) from your graveyard to the battlefield (a planeswalker card only when no creature is there); Empower Jace 2 (the Jace token, loyalty +2)"
+
+["Soul Enervation"]
+status = "Full"
+note = "flash; enters: -4/-4 until end of turn on the opposing creature it kills (most valuable) or shrinks most; whenever one or more creature cards leave your graveyard, each opponent loses 1 life and you gain 1 (seen as a state check of the graveyard, so it fires right after the card leaves)"
+
+["Arnim Zola, Bio-Fanatic"]
+status = "Full"
+note = "{3}, {T}: a tapped 2/1 black Villain token with menace, only with two or more creature cards in your graveyard"
+
+["Bloodsworn Squire"]
+dsl = []
+status = "Full"
+note = "{1}{B}, discard a card: indestructible until end of turn, tap it, and with four or more creature cards in your graveyard it transforms into Bloodsworn Knight (power and toughness each equal to the creature cards in your graveyard, same ability); the AI activates it to transform"
+
+["Catapult Fodder"]
+status = "Full"
+note = "at the beginning of combat on your turn, with three or more creatures that each have toughness greater than power, it transforms into Catapult Captain (2/6); {2}{B}, {T}, sacrifice another creature: target opponent loses life equal to its toughness"
+
+["Cheerful Osteomancer"]
+status = "Full"
+note = "enters prepared: a copy of Raise Dead ({B} sorcery: a creature card from your graveyard to your hand) can be cast once (the copy can't be countered)"
+
+["Dread Drone"]
+status = "Full"
+note = "enters: two 0/1 colorless Eldrazi Spawn tokens, each 'sacrifice this token: add {C}' (the mana code uses them)"
+
+["Festering Goblin"]
+status = "Full"
+note = "when it dies, target creature gets -1/-1 until end of turn: an opposing creature it kills, else the most valuable"
+
+["It Doesn't Add Up"]
+tags = ""
+dsl = []
+status = "Full"
+note = "instant: returns the best creature card from your graveyard to the battlefield and suspects it (menace, can't block)"
+
+["Perigee Beckoner"]
+status = "Full"
+note = "enters: another creature you control gets +2/+0 until end of turn and 'when this creature dies, return it to the battlefield tapped under its owner's control'; Warp {1}{B}: cast for the warp cost when the full cost can't be paid, exiled at the beginning of the next end step, castable from exile on a later turn for its mana cost"
+
+["Phyrexian Delver"]
+dsl = []
+status = "Full"
+note = "enters: the best creature card from your graveyard returns to the battlefield and you lose life equal to its mana value (never below 6 life)"
+
+["Send in the Pest"]
+dsl = []
+status = "Full"
+note = "each opponent discards a card (their choice: the worst); you create a 1/1 black and green Pest that gains you 1 life whenever it attacks"

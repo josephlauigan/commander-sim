@@ -7438,26 +7438,7 @@
    "pow": 3,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1B",
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "indestructible",
-       "what": {
-        "sel": "self"
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "transform"
@@ -7470,10 +7451,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}{B}, Discard a card: ~ gains indestructible until end of turn. Tap it. Then if there are four or more creature cards in your graveyard, transform ~.   [partly: tap it; if there are four or more creature cards in your graveyard, transform ~]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -39721,26 +39700,11 @@
    "types": "I",
    "generic": 3,
    "pips": "BB",
-   "tags": {
-    "rean": "evil"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "reanimate",
-       "filter": {
-        "type": "creature"
-       },
-       "from": "yours"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "suspect"
@@ -39750,10 +39714,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Return target creature card from your graveyard to the battlefield. Suspect it.   [partly: suspect it]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -55825,22 +55787,7 @@
    "pow": 3,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "reanimate",
-       "filter": {
-        "type": "creature"
-       },
-       "from": "yours"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -55851,10 +55798,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, return target creature card from your graveyard to the battlefield. You lose life equal to that card's mana value.   [partly: you lose life equal to that card's mana value]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -66341,18 +66286,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "discard",
-       "n": 1,
-       "who": "each_opponent"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -66360,10 +66294,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Each opponent discards a card. You create a 1/1 black and green Pest creature token with \"Whenever this token attacks, you gain 1 life.\"   [partly: you create a 1/1 black and green pest creature token with \"whenever this token attacks, you gain 1 life.\"]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

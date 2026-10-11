@@ -750,6 +750,7 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         "zada" => Ok(crate::impls::zada::zada_options(g, p, post)),
         "torbran" => crate::impls::torbran::torbran_options(g, p, s, post),
+        "yawgmoth" => crate::impls::yawgmoth::yawgmoth_options(g, p, post),
         _ => Ok(vec![]),
     }
 }
