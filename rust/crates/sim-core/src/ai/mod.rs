@@ -49,7 +49,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 10] = [
+const MAIN_STYLES: [(&str, Style); 11] = [
     ("seph", st(1.0, 0.55, 0.60)),
     ("veyran", st(1.0, 0.40, 0.80)),
     ("sauron", st(1.0, 0.55, 0.75)),
@@ -60,6 +60,7 @@ const MAIN_STYLES: [(&str, Style); 10] = [
     ("kefka", st(1.0, 0.65, 0.55)),
     ("najeela", st(1.0, 0.90, 0.30)),
     ("titania", st(1.0, 0.70, 0.50)),
+    ("sheoldred", st(1.0, 0.60, 0.60)),
 ];
 
 /// one of your decks (Python: `p.key in STYLE`, `p.key in MAIN`, `p.key in E.IDENT`), not an outside deck

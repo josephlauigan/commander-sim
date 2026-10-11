@@ -57,6 +57,7 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "jodah" => crate::impls::jodah::jodah_prio(g, p, c),
         "kefka" => crate::impls::kefka::kefka_prio(g, p, c),
         "titania" => crate::impls::titania::titania_prio(g, p, c),
+        "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -1254,6 +1255,7 @@ pub fn protect_response(
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
+        "sheoldred" => crate::impls::sheoldred::sheoldred_protect(g, owner, m, kind, actor, spell),
         // Deflecting Swat and Slip Out the Back for Kefka, the same responses as Veyran's (a no-op without them)
         "kefka" => crate::impls::mine::veyran_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),

@@ -54,3 +54,9 @@ file = "JD/titania-lands.md"
 name = "Titania"
 commander = "Titania, Protector of Argoth"
 ident = "G"
+
+[sheoldred]
+file = "JD/sheoldred-mono-black.md"
+name = "Sheoldred"
+commander = "Sheoldred, the Apocalypse"
+ident = "B"

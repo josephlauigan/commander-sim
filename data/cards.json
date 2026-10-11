@@ -19022,6 +19022,63 @@
    "spell_prio": false
   },
   {
+   "name": "Diary of Dreams",
+   "types": "A",
+   "generic": 2,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "5",
+      "tap": true
+     },
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "book"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever you cast an instant or sorcery spell, put a page counter on ~.",
+    "{5}, {T}: Draw a card. This ability costs {1} less to activate for each page counter on ~.   [partly: this ability costs {1} less to activate for each page counter on ~]"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Dictate of Erebos",
    "types": "E",
    "generic": 3,
@@ -44508,6 +44565,52 @@
    "spell_prio": false
   },
   {
+   "name": "Leech Collector // Bloodletting",
+   "types": "C",
+   "generic": 1,
+   "pips": "B",
+   "tags": {
+    "human": true,
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "prepared"
+   ],
+   "subtypes": [
+    "human",
+    "warlock"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever you gain life for the first time each turn, ~ becomes prepared.",
+    "[back face] Each opponent loses 2 life."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Legion Conquistador",
    "types": "C",
    "generic": 2,
@@ -48257,6 +48360,72 @@
    "spell_prio": false
   },
   {
+   "name": "Masterful Flourish",
+   "types": "I",
+   "generic": 0,
+   "pips": "B",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 1,
+       "tgh": 0,
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        },
+        "upto": false
+       }
+      },
+      {
+       "do": "grant",
+       "keyword": "indestructible",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Mauhúr, Uruk-hai Captain",
    "types": "C",
    "generic": 1,
@@ -50747,6 +50916,57 @@
     "instant": false,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Moseo, Vein's New Dean",
+   "types": "C",
+   "generic": 2,
+   "pips": "B",
+   "tags": {
+    "leg": true,
+    "pow": "2",
+    "tgh": "1",
+    "fly": true,
+    "tok": "1",
+    "tokp": "1"
+   },
+   "pow": 2,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "infusion"
+   ],
+   "subtypes": [
+    "bird",
+    "skeleton",
+    "warlock"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Infusion — At the beginning of your end step, if you gained life this turn, return up to one target creature card with mana value X or less from your graveyard to the battlefield, where X is the amount of life you gained this turn."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -81313,7 +81533,9 @@
    "dsl": null,
    "start_loyalty": null,
    "kws": [],
-   "subtypes": [],
+   "subtypes": [
+    "book"
+   ],
    "protfrom": "",
    "ward": 0,
    "identity": null,
