@@ -5970,3 +5970,67 @@ note = "taps for {C}; {3},{T}: draw a card while you control a creature with pow
 ["Generator Servant"]
 status = "Full"
 note = "{T}, sacrifice: add {C}{C} (the unspent half floats); a creature spell paid with it gains haste (Player.haste_next, read in zones::enter)"
+
+# ---- the jenova candidate deck (impls/jenova.rs)
+["Jenova, Ancient Calamity"]
+status = "Full"
+note = "beginning of combat on your turn (before attackers): counters equal to her power on the best other creature, which becomes a Mutant; a Mutant you control dying on your turn draws cards equal to its power; the AI sacrifices Mutants of power 3+ to outlets after combat. Only the first combat phase triggers"
+
+["Forced Adaptation"]
+status = "Full"
+note = "Aura: a +1/+1 counter on the enchanted creature at the beginning of its controller's upkeep"
+
+["Lion Umbra"]
+status = "Full"
+note = "Aura on a modified creature (counter, Equipment or Aura): +3/+3, reach, vigilance; umbra armor (also against lethal combat damage). It is a modification itself, so the host stays modified"
+
+["Adventurous Eater"]
+add_tags = ["prepare"]
+status = "Full"
+note = "enters prepared: a copy of Have a Bite ({B}: a +1/+1 counter on the best creature, gain 1 life) can be cast once; the copy can't be countered"
+
+["Ambitious Augmenter"]
+tags = "wizard pow=1 tgh=1"
+status = "Full"
+note = "increment (mana spent above the smaller of power and toughness: a +1/+1 counter; X not counted); dying with counters makes a 0/0 green and blue Fractal that carries them"
+
+["Dormant Grove"]
+tags = ""
+dsl = []
+status = "Full"
+note = "beginning of combat on your turn: a +1/+1 counter on the best creature, then at toughness 6+ it transforms into Gnarled Grovestrider (3/6 Treefolk, other creatures have vigilance)"
+
+["Edgar, Moonlit Sovereign"]
+status = "Full"
+note = "flash; two +1/+1 counters at your end step if you cast no spell; {4}{G}: a counter on each creature with one (3+ of them, spare mana)"
+
+["Efflorescence"]
+tags = ""
+dsl = []
+status = "Full"
+note = "two +1/+1 counters on the best creature (Jenova first); infusion: with life gained this turn it gains trample and indestructible until end of turn"
+
+["Essenceknit Scholar"]
+tags = "pow=3 tgh=1"
+status = "Full"
+note = "enters: a 1/1 black and green Pest that gains its controller 1 life when it attacks; your end step: draw a card if a creature died under your control this turn"
+
+["Hungry Graffalon"]
+status = "Full"
+note = "reach; increment (mana spent above the smaller of power and toughness: a +1/+1 counter; X not counted)"
+
+["Old-Growth Educator"]
+status = "Full"
+note = "reach, vigilance; infusion: enters with two +1/+1 counters if you gained life this turn"
+
+["Teacher's Pest"]
+status = "Full"
+note = "menace; gains 1 life when it attacks; {B}{G} from the graveyard: returns tapped (when a sacrifice outlet or Jenova is out)"
+
+["Topiary Lecturer"]
+status = "Full"
+note = "increment; {T}: adds {G} equal to its power"
+
+["Vinelasher Adept"]
+status = "Full"
+note = "reach; enters: three +1/+1 counters on the best creature (Jenova first); basic landcycling {2} when the hand lacks lands"

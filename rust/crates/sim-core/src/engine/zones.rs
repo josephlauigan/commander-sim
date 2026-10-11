@@ -643,7 +643,7 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
     if cause == "sac" && no_sac(g, m) {
         return Ok(());
     }
-    if cause == "destroy" && !g.auras.is_empty() && cardcode::umbra_save(g, m)? {
+    if matches!(cause, "destroy" | "combat") && !g.auras.is_empty() && cardcode::umbra_save(g, m)? {
         return Ok(());
     }
     let creature = g.is_creature(m);
@@ -671,6 +671,9 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
             to_zone_card(g, m, Zone::Exile);
         }
         return Ok(());
+    }
+    if creature {
+        g.player_mut(p).creature_died = Some(g.turn_stamp()); // Essenceknit Scholar
     }
     if creature && hushed(g) {
         // still a death (Python doesn't record it here): common.aura_fall returns Angelic Destiny for it
@@ -1380,6 +1383,9 @@ pub fn sac_worth(g: &Game, m: PermId) -> f64 {
     }
     if g.marchesa_on && g.is_creature(m) && !x.token && x.plus > 0 {
         return cardcode::marchesa_sac_worth(g, m, v);
+    }
+    if !x.ttypes.is_empty() && g.is_creature(m) {
+        return crate::impls::jenova::mutant_sac_worth(g, m, v); // a Mutant on its controller's turn (Jenova)
     }
     v
 }

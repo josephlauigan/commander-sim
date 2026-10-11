@@ -361,6 +361,8 @@ pub struct Player {
     /// life lost / gained this turn (Bloodsoaked Insight, Archfiend, Y'shtola)
     pub lost_turn: Option<(TurnStamp, i32)>,
     pub gained_turn: Option<(TurnStamp, i32)>,
+    /// the last turn a creature died under this player's control (Essenceknit Scholar)
+    pub creature_died: Option<TurnStamp>,
     /// emblems from planeswalker ultimates ('tamiyo', 'nissa' ...)
     pub emblems: Vec<Sym>,
     /// cards taken with Opposition Agent (castable with mana of any type)
@@ -590,6 +592,7 @@ impl Player {
             hit_turn: -1,
             lost_turn: None,
             gained_turn: None,
+            creature_died: None,
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,
