@@ -30,6 +30,7 @@ use crate::engine::zones::{
     leave, make_tokens, max_by, mill, min_by, to_zone_card,
 };
 use crate::flow::Res;
+use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
@@ -121,25 +122,43 @@ pub fn is_legendary(g: &Game, m: PermId) -> bool {
 
 /// mine.ring_tempt: the Ring tempts you: the emblem gains its next ability, you choose a Ring-bearer (the Army first:
 /// it is the threat, and legendary it turns Champion's Helm on), then the 'tempts you' / 'choose a Ring-bearer'
-/// triggers. HUMAN(phase 9): a person chooses the Ring-bearer and answers Call of the Ring and Sauron.
+/// triggers. A person chooses the Ring-bearer and answers Call of the Ring and Sauron.
 pub fn ring_tempt(g: &mut Game, p: PlayerId) -> Res {
     let lvl = (ring_level(g, p) + 1).min(4);
     g.player_mut(p).ring_level = lvl;
     let cr: Vec<PermId> =
         g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
+    let hum = human_of(g, p).is_some();
     if !cr.is_empty() {
-        let b = first_max(&cr, |m| (g.perm(m).army, epow(g, m) as f64 + 2.0 * etgh(g, m) as f64 / 5.0)).unwrap();
+        let b = if hum {
+            choices::ring_bearer(g, p, &cr)?
+        } else {
+            first_max(&cr, |m| (g.perm(m).army, epow(g, m) as f64 + 2.0 * etgh(g, m) as f64 / 5.0)).unwrap()
+        };
         g.player_mut(p).ring_bearer = Some(b);
         crate::glog!(g, "    The Ring tempts {} (level {lvl}): Ring-bearer {}", g.player(p).name, g.perm(b).name);
         for _ in find(g, p, Tag::Callring) {
             // Call of the Ring: you may pay 2 life to draw a card (not from an empty library)
-            if g.player(p).life > 10 && !g.player(p).library.is_empty() {
+            if hum {
+                if choices::yes_no(g, p, "Call of the Ring: pay 2 life to draw a card?")? {
+                    lose_life(g, p, 2, Some(p), "other", None)?;
+                    draw(g, p, 1, false)?;
+                }
+            } else if g.player(p).life > 10 && !g.player(p).library.is_empty() {
                 lose_life(g, p, 2, Some(p), "other", None)?;
                 draw(g, p, 1, false)?;
             }
         }
     }
-    if !find(g, p, Tag::Sauron).is_empty() && g.player(p).hand.len() <= 3 && g.player(p).library.len() >= 4 {
+    if hum && !find(g, p, Tag::Sauron).is_empty() {
+        let q = format!("Sauron: discard your hand ({} cards) and draw four?", g.player(p).hand.len());
+        if choices::yes_no(g, p, &q)? {
+            let hand = g.player(p).hand.clone();
+            discard_cards(g, p, &hand)?;
+            draw(g, p, 4, false)?;
+            crate::glog!(g, "    {} discards the hand and draws four (Sauron)", g.player(p).name);
+        }
+    } else if !find(g, p, Tag::Sauron).is_empty() && g.player(p).hand.len() <= 3 && g.player(p).library.len() >= 4 {
         // Sauron, the Dark Lord: you may discard your hand, then draw four (not when that would draw from an empty
         // library)
         let hand = g.player(p).hand.clone();
@@ -312,11 +331,14 @@ fn warmachine(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId)
 
 // ======================================================== Kaervek the Merciless
 /// mine.kaervek: an opponent casts a spell: damage equal to its mana value to any target (the best creature it kills,
-/// else the lowest life total). HUMAN(phase 9): a person picks the target.
+/// else the lowest life total). A person picks the target.
 pub fn kaervek(g: &mut Game, k: PlayerId, _caster: PlayerId, c: CardId) -> Res {
     let n = g.db.get(c).cmc as i32;
     if n <= 0 {
         return Ok(());
+    }
+    if human_of(g, k).is_some() {
+        return choices::deal_damage(g, k, n, "Kaervek the Merciless", "triggers");
     }
     let opps: Vec<PlayerId> = g.opps(k).collect();
     let cr: Vec<PermId> = opps
@@ -362,7 +384,7 @@ fn vision(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 
 // ======================================================== Scarlet Witch
 /// flying; combat damage to a player exiles the top two, then casts the best Hero or noncreature card exiled with her
-/// for free. HUMAN(phase 9): a person chooses the card (or none).
+/// for free. A person chooses the card (or none).
 fn witch(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
     if a != src {
         return Ok(());
@@ -396,7 +418,16 @@ fn witch(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32
         save(g, &held);
         return Ok(());
     }
-    let c = max_by(&ok, |c| card_worth(g, p, c, false)).unwrap();
+    let mut c = max_by(&ok, |c| card_worth(g, p, c, false)).unwrap();
+    if human_of(g, p).is_some() {
+        let labels: Vec<String> = ok.iter().map(|&x| g.db.get(x).name.to_string()).collect();
+        let prompt = "Scarlet Witch: cast a spell from among the cards exiled with her, free?";
+        let Some(k) = choices::choose(g, p, "choose", prompt, &labels, Some("cast nothing"), None)? else {
+            save(g, &held);
+            return Ok(());
+        };
+        c = ok[k];
+    }
     remove_card(&mut g.player_mut(p).exile, c);
     remove_card(&mut held, c);
     save(g, &held);
@@ -665,7 +696,7 @@ fn urabrask(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 // ======================================================== Kefka, Court Mage // Kefka, Ruler of Ruin
 /// mine._kefka_wheel: each player discards a card, then you draw a card for each card type among the discarded cards.
-/// HUMAN(phase 9): a person picks their discard.
+/// A person picks their discard.
 fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
     let mut discarded = vec![];
     let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
@@ -674,7 +705,11 @@ fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
             continue;
         }
         let hand = g.player(q).hand.clone();
-        let c = min_by(&hand, |x| card_worth(g, q, x, false)).unwrap(); // their least useful card
+        let c = if human_of(g, q).is_some() {
+            choices::pick_cards(g, q, &hand, 1, "Kefka: discard a card", "choose")?[0]
+        } else {
+            min_by(&hand, |x| card_worth(g, q, x, false)).unwrap() // their least useful card
+        };
         discard_cards(g, q, &[c])?;
         discarded.push(c);
     }
@@ -1885,7 +1920,7 @@ pub fn etb_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
 }
 
 /// each noncreature spell you cast flickers your permanent with the best enters-the-battlefield value (Atraxa, Grand
-/// Unifier, Eternal Witness ...); stolen permanents are left alone. HUMAN(phase 9): a person picks (up to one).
+/// Unifier, Eternal Witness ...); stolen permanents are left alone. A person picks (up to one).
 fn kitten(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     let p = g.perm(src).owner;
     let d = g.db.get(c);
@@ -1907,14 +1942,38 @@ fn kitten(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if cs.is_empty() {
         return Ok(());
     }
+    let hum = human_of(g, p).is_some();
     let best = first_max(&cs, |m| etb_value(g, p, m)).unwrap();
-    if etb_value(g, p, best) < 2.0 {
+    if !hum && etb_value(g, p, best) < 2.0 {
         return Ok(());
     }
     if !trigger_window(g, p, Some(src), "flicker a permanent", None)? {
         return Ok(());
     }
     let cs: Vec<PermId> = cs.into_iter().filter(|&m| on_bf_of(g, p, m)).collect();
+    if hum {
+        // practice mode: up to one, your pick
+        if cs.is_empty() {
+            return Ok(());
+        }
+        let Some(m) = cards::pick_perm(
+            g,
+            p,
+            "target",
+            "Displacer Kitten: flicker one of your nonland permanents?",
+            &cs,
+            Some("none"),
+        )?
+        else {
+            return Ok(());
+        };
+        let (cd, was_cmd) = (g.perm(m).cd.unwrap(), g.perm(m).is_cmd);
+        crate::glog!(g, "    Displacer Kitten flickers {}", g.perm(m).name);
+        leave(g, m)?;
+        let n = enter(g, p, cd, Enter { orig: Some(p), ..Enter::default() })?;
+        g.perm_mut(n).is_cmd = was_cmd;
+        return Ok(());
+    }
     let Some(m) = first_max(&cs, |m| etb_value(g, p, m)) else { return Ok(()) };
     if etb_value(g, p, m) < 2.0 {
         return Ok(());
@@ -1938,7 +1997,7 @@ fn marchesa_returns(g: &Game, cd: CardId) -> bool {
 }
 
 /// whenever a nontoken creature is put into your graveyard from the battlefield, you may pay {4}: return it and
-/// attach this Equipment to it (when it's worth it). HUMAN(phase 9): a person decides to pay.
+/// attach this Equipment to it (when it's worth it; a person decides to pay).
 fn nim_return(g: &mut Game, src: Src, m: PermId) -> Res {
     let p = g.perm(src).owner;
     let x = g.perm(m);
@@ -1949,11 +2008,28 @@ fn nim_return(g: &mut Game, src: Src, m: PermId) -> Res {
     if cd == g.player(p).cmd {
         return Ok(());
     }
-    if !can_pay(g, p, 4, "", false) || (pval(g, m) < 3.0 && etb_value(g, p, m) < 2.5) || marchesa_returns(g, cd) {
+    let hum = human_of(g, p).is_some();
+    if !hum
+        && (!can_pay(g, p, 4, "", false) || (pval(g, m) < 3.0 && etb_value(g, p, m) < 2.5) || marchesa_returns(g, cd))
+    {
         return Ok(());
     }
     let name = g.perm(m).name;
     if !trigger_window(g, p, Some(src), &format!("pay {{4}}: return {name}"), None)? {
+        return Ok(());
+    }
+    if hum {
+        // practice mode: you may pay {4}
+        if !choices::pay_tax(g, p, 4, &format!("Nim Deathmantle: return {name} and attach it"))? {
+            return Ok(());
+        }
+        if !g.player(p).gy.contains(&cd) {
+            return Ok(());
+        }
+        remove_card(&mut g.player_mut(p).gy, cd);
+        let n = enter(g, p, cd, Enter { orig: Some(p), ..Enter::default() })?;
+        g.perm_mut(src).attached = Some(n);
+        crate::glog!(g, "    {} pays 4: Nim Deathmantle returns {}", g.player(p).name, g.perm(n).name);
         return Ok(());
     }
     if cd == g.player(p).cmd || !can_pay(g, p, 4, "", false) {
@@ -2249,11 +2325,29 @@ pub fn bahamut_restart(g: &Game, p: PlayerId, m: PermId) -> f64 {
     1.0 + t.map_or(0.0, |t| 5.0f64.min(pval(g, t))) + (lo - 1) as f64
 }
 
-/// mine._bahamut_chapter. HUMAN(phase 9): a person picks the chapter I/II target (up to one).
+/// mine._bahamut_chapter. A person picks the chapter I/II target (up to one).
 fn bahamut_chapter(g: &mut Game, p: PlayerId, src: PermId, n: i64) -> Res {
     g.player_mut(p).stat("bahamut_chapters", 1);
     if n <= 2 {
-        if let Some(t) = bahamut_target(g, p) {
+        let t = if human_of(g, p).is_some() {
+            // practice mode: up to one target, your pick
+            let cands: Vec<PermId> = g
+                .players
+                .iter()
+                .filter(|q| q.alive)
+                .flat_map(|q| q.perms.iter().copied())
+                .filter(|&m| !g.perm(m).phased && !untargetable(g, m))
+                .collect();
+            if cands.is_empty() {
+                None
+            } else {
+                let prompt = format!("Summon: Bahamut, {}?", bahamut_ch(n));
+                cards::pick_perm(g, p, "target", &prompt, &cands, Some("none"))?
+            }
+        } else {
+            bahamut_target(g, p)
+        };
+        if let Some(t) = t {
             apply_removal(g, Some(p), t, "destroy", None)?;
         }
     } else if n == 3 {
@@ -2540,7 +2634,7 @@ fn casts_matching(g: &Game, p: PlayerId, pred: impl Fn(CardId) -> bool) -> usize
 /// your first instant and your first sorcery each turn (any turn): for each trigger (Veyran and Harmonic Prodigy add
 /// one each) you may have the least threatening opponent draw a card to copy the spell (not a counterspell); copies
 /// pick new targets and keep X. The 'first this turn' check counts spells cast before Alania was out too. The Otter
-/// clause is not modeled (no Otters in your decks). HUMAN(phase 9): a person picks the opponent or declines.
+/// clause is not modeled (no Otters in your decks). A person picks the opponent or declines.
 fn alania(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     let p = g.perm(src).owner;
     let d = g.db.get(c);
@@ -2553,12 +2647,13 @@ fn alania(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     }
     let ctx = cast_ctx(g, c);
     let name = g.db.get(c).name.to_string();
+    let hum = human_of(g, p).is_some();
     for _ in 0..alania_triggers(g, p) {
         let opps: Vec<PlayerId> = g.opps(p).collect();
         if opps.is_empty() || g.over {
             return Ok(());
         }
-        if alania_pick(g, p, c, &opps).is_none() {
+        if !hum && alania_pick(g, p, c, &opps).is_none() {
             return Ok(());
         }
         if !trigger_window(g, p, Some(src), &format!("copy {name}"), None)? {
@@ -2568,7 +2663,13 @@ fn alania(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         if opps.is_empty() {
             return Ok(());
         }
-        let Some(q) = alania_pick(g, p, c, &opps) else { return Ok(()) }; // the same answer for each trigger
+        let q = if hum { choices::alania(g, p, c, &opps)? } else { alania_pick(g, p, c, &opps) };
+        let Some(q) = q else {
+            if !hum {
+                return Ok(()); // the AI's answer is the same for each trigger
+            }
+            continue;
+        };
         draw(g, q, 1, false)?;
         crate::glog!(g, "    Alania: {} draws a card, {} copies {name}", g.player(q).name, g.player(p).name);
         crate::engine::cast::copy_spell(g, p, c, ctx.as_ref(), false)?;
@@ -2779,8 +2880,8 @@ pub fn cast_copy(g: &mut Game, p: PlayerId, effect: Option<u8>, name: Option<&st
     check_state(g)
 }
 
-/// whenever it attacks: exile eight cards from your graveyard to prepare it again. HUMAN(phase 9): a person picks
-/// the eight (or declines).
+/// whenever it attacks: exile eight cards from your graveyard to prepare it again. A person picks the eight (or
+/// declines).
 fn ideation_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if g.perm(src).owner != p
         || !atk.contains(&src)
@@ -2802,8 +2903,17 @@ fn ideation_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Play
         .map(|&c| ((g.db.get(c).instant || g.db.get(c).sorcery, card_worth(g, p, c, true)), c))
         .collect();
     ex.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    let mut ex: Vec<CardId> = ex.iter().take(8).map(|x| x.1).collect();
+    if human_of(g, p).is_some() {
+        let gy = g.player(p).gy.clone();
+        let prompt = "Emeritus of Ideation attacks: exile eight cards from your graveyard to prepare it?";
+        ex = cards::pick_exile(g, p, &gy, 8, prompt, &ex)?;
+        if ex.is_empty() {
+            return Ok(vec![]);
+        }
+    }
     let pl = g.player_mut(p);
-    for &(_, c) in ex.iter().take(8) {
+    for &c in &ex {
         remove_card(&mut pl.gy, c);
         pl.exile.push(c);
     }
@@ -2826,8 +2936,12 @@ fn by_desire(g: &Game, p: PlayerId, cs: Vec<CardId>) -> Vec<CardId> {
     k.into_iter().map(|x| x.1).collect()
 }
 
-/// top three: the best to hand, the next exiled and playable this turn, the last to the bottom. HUMAN(phase 9).
+/// top three: the best to hand, the next exiled and playable this turn, the last to the bottom (a person picks).
 fn iteration(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if human_of(g, p).is_some() {
+        cards::expressive_iteration(g, p)?;
+        return Ok("gy");
+    }
     let t = top(g, p, 3);
     let t = by_desire(g, p, t);
     if t.is_empty() {
@@ -2856,16 +2970,24 @@ fn look_and_take(g: &mut Game, p: PlayerId, n: usize, k: usize) {
 }
 
 /// top three: one to hand (two with an instant and a sorcery in the graveyard), the rest to the bottom.
-/// HUMAN(phase 9).
+/// (A person picks.)
 fn flow(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let gy = &g.player(p).gy;
     let k = if gy.iter().any(|&x| g.db.get(x).instant) && gy.iter().any(|&x| g.db.get(x).sorcery) { 2 } else { 1 };
+    if human_of(g, p).is_some() {
+        cards::look_and_take(g, p, 3, k, "Flow State")?;
+        return Ok("gy");
+    }
     look_and_take(g, p, 3, k);
     Ok("gy")
 }
 
-/// top five: the best two to hand, the rest to the bottom. HUMAN(phase 9).
+/// top five: the best two to hand, the rest to the bottom (a person picks).
 fn stock(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if human_of(g, p).is_some() {
+        cards::look_and_take(g, p, 5, 2, "Stock Up")?;
+        return Ok("gy");
+    }
     look_and_take(g, p, 5, 2);
     Ok("gy")
 }
@@ -2889,8 +3011,12 @@ fn betrayal(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 }
 
 /// the best of its three modes: ping one or two X/1s (or a player at 1), bounce an opposing commander or token, or
-/// surveil 2 and draw. HUMAN(phase 9).
+/// surveil 2 and draw (a person picks).
 fn charm(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if human_of(g, p).is_some() {
+        cards::prismari_charm(g, p, c)?;
+        return Ok("gy");
+    }
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let mut x1: Vec<(f64, PermId)> = opps
         .iter()
@@ -3458,16 +3584,30 @@ fn nazgul(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 }
 
 // ------------------------------------------------------------------ Palantír of Orthanc
-/// mine._palantir_target: the opponent to put the choice to: the one closest to dying. HUMAN(phase 9).
-fn palantir_target(g: &Game, o: PlayerId) -> Option<PlayerId> {
+/// mine._palantir_target: the opponent to put the choice to: the one closest to dying (a person picks).
+fn palantir_target(g: &Game, o: PlayerId) -> Res<Option<PlayerId>> {
     let opps: Vec<PlayerId> = g.opps(o).collect();
-    min_by(&opps, |q| g.player(q).life as f64)
+    if human_of(g, o).is_some() && opps.len() > 1 {
+        return Ok(Some(cards::pick_player(g, o, "target", "Palantír of Orthanc: target which opponent?", &opps)?));
+    }
+    Ok(min_by(&opps, |q| g.player(q).life as f64))
 }
 
 /// mine._palantir_lets_draw: the targeted opponent's choice: true = you draw a card, false = you mill x and they lose
 /// the total mana value. The AI takes the loss while it's small and hands over the card once the expected loss would
-/// really hurt. HUMAN(phase 9).
-fn palantir_lets_draw(g: &Game, q: PlayerId, o: PlayerId, x: i64) -> bool {
+/// really hurt (a person decides).
+fn palantir_lets_draw(g: &Game, q: PlayerId, o: PlayerId, x: i64) -> Res<bool> {
+    if human_of(g, q).is_some() {
+        return choices::yes_no(
+            g,
+            q,
+            &format!(
+                "Palantír of Orthanc: let {} draw a card? (If not, they mill {x} and you lose life equal to the total \
+                 mana value of those cards.)",
+                g.player(o).name
+            ),
+        );
+    }
     let lib = &g.player(o).library;
     let avg = if lib.is_empty() {
         0.0
@@ -3476,7 +3616,7 @@ fn palantir_lets_draw(g: &Game, q: PlayerId, o: PlayerId, x: i64) -> bool {
     };
     let expect = avg * x.min(lib.len() as i64) as f64;
     let life = g.player(q).life as f64;
-    expect >= life || expect > 6.0f64.max(life / 4.0)
+    Ok(expect >= life || expect > 6.0f64.max(life / 4.0))
 }
 
 /// end step: an influence counter and scry 2, then the targeted opponent lets you draw a card or takes life loss equal
@@ -3494,11 +3634,11 @@ fn palantir(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let x = g.perm(src).data.int(DataKey::Influence) + 1;
     g.perm_mut(src).data.set(DataKey::Influence, Val::Int(x));
     crate::cardcode::scry(g, o, 2, false)?;
-    let Some(q) = palantir_target(g, o) else { return Ok(()) };
+    let Some(q) = palantir_target(g, o)? else { return Ok(()) };
     if !g.player(q).alive {
         return Ok(());
     }
-    if palantir_lets_draw(g, q, o, x) {
+    if palantir_lets_draw(g, q, o, x)? {
         crate::glog!(g, "    Palantír: {} lets {} draw a card", g.player(q).name, g.player(o).name);
         draw(g, o, 1, false)?;
     } else {
@@ -3726,9 +3866,13 @@ fn final_fly(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 }
 
 // ------------------------------------------------------------------ Manamorphose
-/// add two mana in any combination of colours, draw a card. HUMAN(phase 9): a person's pool gets it.
+/// add two mana in any combination of colours, draw a card (a person's pool gets it).
 fn manamorphose(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    g.player_mut(p).floating.any += 2;
+    if human_of(g, p).is_some() {
+        g.player_mut(p).pool.add('A', 2);
+    } else {
+        g.player_mut(p).floating.any += 2;
+    }
     draw(g, p, 1, false)?;
     Ok("gy")
 }
