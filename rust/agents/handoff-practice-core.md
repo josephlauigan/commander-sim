@@ -22,10 +22,28 @@
 - Stubs still `unimplemented!`: `legal::spell_targets`, `mana::pay_tax`. Empty placeholder files: human.rs, mana.rs, combat.rs
   (core), cards.rs, abilities.rs (practice-cards).
 
+## Done since milestone A (all committed, `cargo build --release -p sim-core` clean)
+- `human/mana.rs` complete: `ManaPool` (stored as `Player.pool`, new additive field in state.rs), `sources`, `tap`, `cost_problem`
+  (read-only: floating mana is merged virtually), `pay_from_pool`, `pool_can_pay`, `empty_pools`, `pay_tax`, `Spending` (set
+  `g.player_mut(p).pool.spending = Some(..)` around a cast, like Python's `mana.SPENDING`). `engine/mana.rs` `can_pay`/`pay` use it for a human seat.
+- `human/legal.rs` complete: land/cast/equip/counter/gy checks (`Option<String>` = reason), `spell_targets`, `gy_mode`, `equip_cost`,
+  `target_extra_cost`, `phyrexian_ways`, `base_cost`. `check_cast` takes `&mut Game` (additional_cost dry run). New field `Game.responding: u32`.
+- `human/cards.rs` has two STUBS practice-cards must replace (merge note): `needs(g,p,c) -> Option<String>`, `granted_flashback`.
+- Python quirks kept: `FLOATS` omits the floating black unit (it shows up as a tappable source named "FB"); floating white mana is never
+  gathered into the pool (no `floatW` in Python).
+
 ## Next (in order)
-1. legal.rs full port; mana.rs (pool); human.rs (human_main, apply, respond, stack/step priority); combat.rs.
-2. Fill `HUMAN(phase 9)` sites in engine/*, ai/*, cardcode.rs, dsl/mod.rs (also hook the human mulligan: `engine::turn::mulligan` returns `()`, must become `Res`).
-3. text client (practice/src/text.rs), tests play_{hand,mana,combat,choices,respond,turn}.rs, checks.
+1. `human/human.rs` (port human.py: human_main with `Request{kind:"priority"}` + Answer::Action(json), apply, respond, stack_priority,
+   step_priority, can_act/can_respond, cast/_cast/cast_rean/cast_counterspell, use/use_land, autopass via `Human::autopass()`; the
+   request `data.view` is added by the Human impl, not here). `stack_view` too.
+2. `human/combat.rs` (combat.py: can_attack, attack_candidates, human_attack, human_blocks).
+3. Fill `HUMAN(phase 9)`/`PORT(phase 9)` sites in engine/*, ai/*, cardcode.rs, dsl/mod.rs (`grep -rn 'HUMAN(phase 9)' ... | grep -v impls`);
+   delete markers. Also the human mulligan: `engine::turn::mulligan` returns `()` and must become `Res` + call `choices::mulligan` first
+   (see Python `engine.mulligan`). `ais.py:2727` empty_pools between steps = `engine/turn.rs:749` PORT marker.
+4. practice/src/text.rs + `--text` flag in main.rs; tests play_{hand,mana,combat,choices,respond,turn}.rs (port tests/test_play_*.py).
+5. Checks in RULES.md + difftest 0 differences; report-practice-core.md.
 
 ## Gotchas
-- Python `Perm`/`Player` mixed lists -> `Target`.
+- Python mixed Perm/Player lists -> `Target`. Python `describe_target` for tokens uses `view.guess_token` (images): hook `legal::set_token_guesser`.
+- `human_of` returns a cloned `Arc<dyn Human>`; use `?` on all helpers (Res).
+- `gen` is a reserved word in Rust 2024: use `gn`.
