@@ -30,13 +30,10 @@ pub mod topdeck;
 pub mod yshtola;
 pub mod zada;
 pub mod zada_cards;
-pub mod torbran;
 pub mod glissa;
 pub mod jenova;
 pub mod gix;
 pub mod yawgmoth;
-pub mod lordofpain;
-pub mod smaug;
 pub mod green_cards;
 pub mod titania;
 pub mod zur;
@@ -71,13 +68,10 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     kefka::register(&mut r, db)?;
     zada::register(&mut r, db)?;
     zada_cards::register(&mut r, db)?;
-    torbran::register(&mut r, db)?;
     glissa::register(&mut r, db)?;
     jenova::register(&mut r, db)?;
     gix::register(&mut r, db)?;
     yawgmoth::register(&mut r, db)?;
-    lordofpain::register(&mut r, db)?;
-    smaug::register(&mut r, db)?;
     green_cards::register(&mut r, db)?;
     titania::register(&mut r, db)?;
     Ok(r)
