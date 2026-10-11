@@ -299,75 +299,6 @@ pub fn prismari_charm(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     crate::engine::removal::apply_removal(g, Some(p), t, "bounce", Some(c))
 }
 
-/// What card c needs before the person can cast it that `legal` doesn't know (Python's `cards.needs`): the reason
-/// it can't be cast, or None. PORT(practice-cards): stub, never blocks.
-pub fn needs(_g: &Game, _p: PlayerId, _c: CardId) -> Option<String> {
-    None
-}
-
-/// Does p's Flashback (the card) give graveyard card c flashback (Python's `cards.granted_flashback`).
-/// PORT(practice-cards): stub.
-pub fn granted_flashback(_g: &Game, _p: PlayerId, _c: CardId) -> bool {
-    false
-}
-
-// ---- stand-ins for Python's per-card tables (play/cards.py): PORT(practice-cards) replaces each body ----
-/// `cards.copy_card(c)`: Return the Favor, Dualcaster Mage (cast to copy a spell on the stack). PORT(practice-cards).
-pub fn copy_card(_g: &Game, _c: CardId) -> bool {
-    false
-}
-
-/// `cards.copy_in_response(g, p, c, spell, caster)`: None or why not. PORT(practice-cards): stub.
-pub fn copy_in_response(
-    _g: &mut Game,
-    _p: PlayerId,
-    _c: CardId,
-    _spell: Option<CardId>,
-    _caster: PlayerId,
-) -> Res<Option<String>> {
-    Ok(None)
-}
-
-/// `c.name in cards.HAND`: a hand card whose casting card code handles. PORT(practice-cards): stub.
-pub fn hand_override(_g: &Game, _c: CardId) -> bool {
-    false
-}
-
-/// `cards.cast_from_hand(g, p, c)`. PORT(practice-cards): stub.
-pub fn cast_from_hand(_g: &mut Game, _p: PlayerId, _c: CardId) -> Res<Option<String>> {
-    Ok(None)
-}
-
-/// `c.name in cards.GY`: a graveyard card whose casting card code handles. PORT(practice-cards): stub.
-pub fn gy_override(_g: &Game, _c: CardId) -> bool {
-    false
-}
-
-/// `cards.GY[c.name](g, p, c)`. PORT(practice-cards): stub.
-pub fn cast_from_gy(_g: &mut Game, _p: PlayerId, _c: CardId) -> Res<Option<String>> {
-    Ok(None)
-}
-
-/// The result of `cards.CAST_TARGET` (a tagless spell with a creature target, picked with `pick_creature`).
-pub enum CastTarget {
-    /// the card has no such target
-    NotNeeded,
-    /// the person cancelled
-    Cancelled,
-    Picked(PermId),
-}
-
-/// PORT(practice-cards): stub.
-pub fn cast_target(_g: &Game, _p: PlayerId, _c: CardId) -> Res<CastTarget> {
-    Ok(CastTarget::NotNeeded)
-}
-
-/// `cards.mastery_target(g, p, c)`: Mizzix's Mastery's one target; false = cancelled. PORT(practice-cards): stub
-/// (a person cannot cast Mastery for one target until this is ported).
-pub fn mastery_target(_g: &mut Game, _p: PlayerId, _c: CardId) -> Res<bool> {
-    Ok(false)
-}
-
 // ================================================================== abilities by the rules (cards.py ABILITIES, LANDS)
 /// a choice with the page's default 'cancel' (Python's `human.choose` default): the index, None if cancelled
 fn pick(g: &Game, p: PlayerId, kind: &str, prompt: &str, labels: &[String]) -> Res<Option<usize>> {
@@ -948,7 +879,7 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         "Sakura-Tribe Elder" => ste(g),
         "Nim Deathmantle" => vec![], // equip {4}: the Equip ability every equipment has
         n if PREPARED.iter().any(|x| x.0 == n) => prepared(g, m),
-        _ => return None,
+        n => return more_abilities(g, p, m, n),
     })
 }
 
@@ -1093,4 +1024,1375 @@ pub fn land_abilities(g: &Game, _p: PlayerId, l: LandId) -> Vec<LandAbility> {
         "Mistrise Village" => mistrise(g),
         _ => vec![],
     }
+}
+
+// ================================================================== casting from hand: modes the card code keeps for the AI
+/// cards._spell_cast: the steps of casting c from hand once it is paid for: on the stack, cast triggers, a window for
+/// opponents. True if it resolves (the caller carries out its effect and puts the card away)
+fn spell_cast(g: &mut Game, p: PlayerId, c: CardId, imp: f64, what: Option<&str>) -> Res<bool> {
+    if let Some(i) = g.player(p).hand.iter().position(|&x| x == c) {
+        g.player_mut(p).hand.remove(i);
+    }
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat(crate::sym::intern("spells_cast"), 1);
+    pl.cast_names.insert(c);
+    let shown = what.map_or_else(|| cname(g, c), str::to_string);
+    crate::glog!(g, "  {} casts {}", pname(g, p), shown);
+    crate::engine::cast::on_cast(g, p, c)?;
+    if g.over || !g.player(p).alive {
+        return Ok(false);
+    }
+    crate::engine::stack::counter_window(g, p, c, imp, vec![])
+}
+
+/// cards._cast_normally
+fn cast_normally(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = legal::check_cast(g, p, c, "hand") {
+        return Ok(Some(why));
+    }
+    super::human::cast(g, p, c, "hand")
+}
+
+/// cards._cycle(2)
+fn cycle2(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = super::mana::cost_problem(g, p, 2, "") {
+        return Ok(Some(format!("Can't cycle {}. {why}", cname(g, c))));
+    }
+    super::mana::pay_from_pool(g, p, 2, "");
+    let pl = g.player_mut(p);
+    if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+        pl.hand.remove(i);
+    }
+    pl.gy.push(c);
+    crate::glog!(g, "  {} cycles {}", pname(g, p), cname(g, c));
+    crate::engine::zones::draw(g, p, 1, false)?;
+    Ok(None)
+}
+
+fn gy_push(g: &mut Game, p: PlayerId, c: CardId) {
+    g.player_mut(p).gy.push(c);
+}
+
+fn my_creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect()
+}
+
+fn names_of(g: &Game, ms: &[PermId]) -> String {
+    ms.iter().map(|&m| g.perm(m).name.to_string()).collect::<Vec<_>>().join(", ")
+}
+
+/// cards._twinflame
+fn twinflame(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    use crate::engine::zones;
+    if let Some(why) = legal::check_cast(g, p, c, "hand") {
+        return Ok(Some(why));
+    }
+    let cre = my_creatures(g, p);
+    if cre.is_empty() {
+        return Ok(Some("Twinflame needs a creature you control to target.".into()));
+    }
+    let mut picked: Vec<PermId> = vec![];
+    loop {
+        let left: Vec<PermId> = cre.iter().copied().filter(|m| !picked.contains(m)).collect();
+        if left.is_empty() {
+            break;
+        }
+        let n = picked.len();
+        let prompt = format!(
+            "Twinflame: target creature #{} ({} in all)",
+            n + 1,
+            super::mana::cost_text(1 + 2 * n as u32, &"R".repeat(n + 1))
+        );
+        let cancel = if picked.is_empty() { "cancel" } else { "done" };
+        let Some(m) = pick_perm(g, p, "target", &prompt, &left, Some(cancel))? else { break };
+        picked.push(m);
+    }
+    if picked.is_empty() {
+        return Ok(None);
+    }
+    let extra = picked.len() - 1;
+    if let Some(why) = super::mana::pay_from_pool(g, p, 1 + 2 * extra as u32, &"R".repeat(extra + 1)) {
+        return Ok(Some(format!("Can't cast Twinflame on {} creatures. {why}", picked.len())));
+    }
+    let what = format!("Twinflame copying {}", names_of(g, &picked));
+    if !spell_cast(g, p, c, 3.0, Some(&what))? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    for m in picked {
+        if !g.player(p).perms.contains(&m) {
+            continue;
+        }
+        let cp = match g.perm(m).cd {
+            Some(cd) => zones::enter_token_copy(g, p, cd)?,
+            None => {
+                // a token with no card: the same creature token
+                let x = g.perm(m);
+                let mut spec = zones::Tokens::new(1, x.pow);
+                spec.tgh = Some(x.tgh);
+                spec.fly = x.fly;
+                spec.sick = false;
+                zones::make_tokens(g, p, spec)?.first().copied()
+            }
+        };
+        if let Some(cp) = cp {
+            let x = g.perm_mut(cp);
+            x.sick = false; // haste; exiled at the end step
+            x.temp = true;
+        }
+    }
+    gy_push(g, p, c);
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+/// cards._ephemerate
+fn ephemerate(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = legal::check_cast(g, p, c, "hand") {
+        return Ok(Some(why));
+    }
+    let cre = my_creatures(g, p);
+    if cre.is_empty() {
+        return Ok(Some("Ephemerate needs a creature you control to target.".into()));
+    }
+    let Some(m) = pick_perm(g, p, "target", "Ephemerate: exile and return which creature?", &cre, Some("cancel"))?
+    else {
+        return Ok(None);
+    };
+    super::mana::pay_from_pool(g, p, 0, "W");
+    let what = format!("Ephemerate on {}", g.perm(m).name);
+    if !spell_cast(g, p, c, 3.0, Some(&what))? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    let pl = g.player_mut(p);
+    pl.exile.push(c);
+    pl.rebound.push(c);
+    if g.player(p).perms.contains(&m) {
+        blink(g, p, m)?;
+    }
+    Ok(None)
+}
+
+/// cards._sokenzan
+fn sokenzan(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    use crate::tag::Tag;
+    let leg = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            g.is_creature(m) && g.perm(m).cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Leg)) && !g.perm(m).phased
+        })
+        .count() as i32;
+    let n = (3 - leg).max(0) as u32;
+    if let Some(why) = super::mana::cost_problem(g, p, n, "R") {
+        return Ok(Some(format!("Can't channel Sokenzan. {why}")));
+    }
+    super::mana::pay_from_pool(g, p, n, "R");
+    let pl = g.player_mut(p);
+    if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+        pl.hand.remove(i);
+    }
+    pl.gy.push(c);
+    crate::glog!(g, "  {} channels Sokenzan: two 1/1 Spirits with haste", pname(g, p));
+    let mut spec = crate::engine::zones::Tokens::new(2, 1);
+    spec.sick = false;
+    spec.types = vec!["spirit"];
+    crate::engine::zones::make_tokens(g, p, spec)?;
+    Ok(None)
+}
+
+/// cards._insight
+fn insight(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = legal::sorcery_timing(g, p) {
+        return Ok(Some(why.replace("do that", "cast Bloodsoaked Insight (a sorcery)")));
+    }
+    let gn = crate::impls::mine::insight_cost(g, p);
+    let Some(ok) = ["BB", "BR", "RR"].into_iter().find(|pp| super::mana::cost_problem(g, p, gn, pp).is_none()) else {
+        return Ok(Some(format!(
+            "Can't cast Bloodsoaked Insight. It costs {{{gn}}}{{B/R}}{{B/R}} ({{1}} less for each life your opponents lost this turn). {}",
+            super::mana::cost_problem(g, p, gn, "BB").unwrap_or_default()
+        )));
+    };
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    if opps.is_empty() {
+        return Ok(Some("There is no opponent to target.".into()));
+    }
+    let labels: Vec<String> = opps.iter().map(|&q| pname(g, q)).collect();
+    let Some(k) = pick(g, p, "target", "Bloodsoaked Insight: whose library?", &labels)? else { return Ok(None) };
+    let q = opps[k];
+    super::mana::pay_from_pool(g, p, gn, ok);
+    let what = format!("Bloodsoaked Insight on {}", pname(g, q));
+    if !spell_cast(g, p, c, 2.0, Some(&what))? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    let n = 3.min(g.player(q).library.len());
+    let top: Vec<CardId> = (0..n).map(|_| g.player_mut(q).library.pop().unwrap()).collect();
+    let until = g.player(p).turns + 1;
+    let pl = g.player_mut(p);
+    pl.hand.extend(top.iter().copied());
+    pl.impulse_long.extend(top.iter().map(|&x| (x, until)));
+    let names: Vec<String> = top.iter().map(|&x| cname(g, x)).collect();
+    crate::glog!(g, "    {} from {}: playable until the end of your next turn", names.join(", "), pname(g, q));
+    gy_push(g, p, c);
+    Ok(None)
+}
+
+type HandFn = fn(&mut Game, PlayerId, CardId) -> Res<Why>;
+
+/// cards.HAND: the ways to cast a hand card whose casting card code keeps for the AI: (label, fn)
+fn hand_ways(name: &str) -> Option<Vec<(&'static str, HandFn)>> {
+    Some(match name {
+        "Twinflame" => {
+            vec![("strive: token copies of creatures you control ({1}{R}, plus {2}{R} per extra target)", twinflame)]
+        }
+        "Ephemerate" => vec![("exile a creature you control, then return it (rebound)", ephemerate)],
+        "Sokenzan, Crucible of Defiance" => {
+            vec![("channel ({3}{R}, {1} less per legendary creature): two 1/1 Spirits with haste", sokenzan)]
+        }
+        "Bloodsoaked Insight // Sanguine Morass" => {
+            vec![("Bloodsoaked Insight: an opponent's top three, playable until the end of your next turn", insight)]
+        }
+        "Reconnaissance Mission" | "Unearth" => {
+            vec![("cast it", cast_normally), ("cycling {2}: discard it, draw a card", cycle2)]
+        }
+        "Clever Concealment" => vec![("phase out any number of your nonland permanents (convoke)", concealment)],
+        "Rootborn Defenses" => vec![("populate; your creatures gain indestructible until end of turn", rootborn)],
+        "Triplicate Spirits" => vec![("three 1/1 white flying Spirits (convoke)", triplicate)],
+        "Whipcorder" => vec![
+            ("cast it ({W}{W})", cast_normally),
+            ("cast it face down as a 2/2 creature for {3} (morph)", morph_cast),
+        ],
+        _ => return None,
+    })
+}
+
+/// `c.name in cards.HAND`: a hand card whose casting card code handles
+pub fn hand_override(g: &Game, c: CardId) -> bool {
+    hand_ways(&g.db.get(c).name).is_some()
+}
+
+/// cards.cast_from_hand: a card of yours whose casting the card code keeps for the AI: pick how (when there's a
+/// choice), then cast it
+pub fn cast_from_hand(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    let ways = hand_ways(&cname(g, c)).unwrap_or_default();
+    let mut k = 0;
+    if ways.len() > 1 {
+        let labels: Vec<String> = ways.iter().map(|w| w.0.to_string()).collect();
+        let Some(i) = pick(g, p, "choose", &format!("{}: which?", cname(g, c)), &labels)? else { return Ok(None) };
+        k = i;
+    }
+    (ways[k].1)(g, p, c)
+}
+
+/// `c.name in cards.GY`: Python's table is empty
+pub fn gy_override(_g: &Game, _c: CardId) -> bool {
+    false
+}
+
+/// `cards.GY[c.name](g, p, c)`: never reached (no card is listed)
+pub fn cast_from_gy(_g: &mut Game, _p: PlayerId, _c: CardId) -> Res<Why> {
+    Ok(None)
+}
+
+/// cards.needs: what c needs before it can be cast at all (the rules check asks this), or None
+pub fn needs(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let nm = cname(g, c);
+    let any_is = || {
+        g.player(p).gy.iter().any(|&x| {
+            let d = g.db.get(x);
+            d.instant || d.sorcery
+        })
+    };
+    match nm.as_str() {
+        "Twinflame" | "Ephemerate" => {
+            if my_creatures(g, p).is_empty() {
+                Some(format!("{nm} needs a creature you control to target."))
+            } else {
+                None
+            }
+        }
+        "Mizzix's Mastery" if !any_is() => {
+            Some("Mizzix's Mastery needs an instant or sorcery card in your graveyard to target.".into())
+        }
+        "Flashback" if !any_is() => {
+            Some("Flashback needs an instant or sorcery card in your graveyard to target.".into())
+        }
+        "Take Up the Shield" if creatures(g, p, false).is_empty() => {
+            Some("Take Up the Shield has no creature to target.".into())
+        }
+        _ => None,
+    }
+}
+
+// ------------------------------------------------------------------ cards first written for the Zur deck
+/// cards.convoke_pay: convoke: tap your creatures to help pay (each pays {1} or one coloured pip of its colour), the
+/// rest from your pool. None once paid, or why not (nothing is tapped or spent then)
+pub fn convoke_pay(g: &mut Game, p: PlayerId, c: CardId, gn: u32, pips: &str) -> Res<Why> {
+    let mut gn = gn;
+    let mut pips = pips.to_string();
+    let mut tapped_ms: Vec<PermId> = vec![];
+    while gn > 0 || !pips.is_empty() {
+        let left: Vec<PermId> = g
+            .player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| g.is_creature(m) && !g.perm(m).tapped && !g.perm(m).phased && !tapped_ms.contains(&m))
+            .collect();
+        if left.is_empty() {
+            break;
+        }
+        let prompt = format!(
+            "{} (convoke): tap a creature to help pay? Still to pay: {}",
+            cname(g, c),
+            super::mana::cost_text(gn, &pips)
+        );
+        let Some(m) = pick_perm(g, p, "choose", &prompt, &left, Some("pay the rest with mana"))? else { break };
+        let cols = crate::engine::values::colors_of(g, m);
+        if let Some(col) = pips.chars().find(|&x| cols.has(x)) {
+            let i = pips.find(col).unwrap();
+            pips.remove(i);
+        } else if gn > 0 {
+            gn -= 1;
+        } else {
+            continue;
+        }
+        tapped_ms.push(m);
+    }
+    if let Some(why) = super::mana::cost_problem(g, p, gn, &pips) {
+        return Ok(Some(format!("Can't cast {}. {why}", cname(g, c))));
+    }
+    for &m in &tapped_ms {
+        g.perm_mut(m).tapped = true;
+    }
+    super::mana::pay_from_pool(g, p, gn, &pips);
+    if !tapped_ms.is_empty() {
+        crate::glog!(g, "  {} taps {} to convoke {}", pname(g, p), names_of(g, &tapped_ms), cname(g, c));
+    }
+    Ok(None)
+}
+
+/// cards._timing
+fn timing(g: &Game, p: PlayerId, c: CardId) -> Why {
+    if crate::engine::values::silenced(g, p) {
+        return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
+    }
+    if !legal::instant_speed(g, c) {
+        if let Some(why) = legal::sorcery_timing(g, p) {
+            return Some(why.replace("do that", &format!("cast {}", cname(g, c))));
+        }
+    }
+    None
+}
+
+/// cards._concealment
+fn concealment(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = timing(g, p, c) {
+        return Ok(Some(why));
+    }
+    let mut picked: Vec<PermId> = vec![];
+    loop {
+        let left: Vec<PermId> = g
+            .player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| !g.perm(m).phased && !picked.contains(&m) && g.perm(m).attached.is_none())
+            .collect();
+        if left.is_empty() {
+            break;
+        }
+        let prompt = format!("Clever Concealment: phase out which of your permanents? ({} so far)", picked.len());
+        let cancel = if picked.is_empty() { "cancel" } else { "done" };
+        let Some(m) = pick_perm(g, p, "target", &prompt, &left, Some(cancel))? else { break };
+        picked.push(m);
+    }
+    if picked.is_empty() {
+        return Ok(None);
+    }
+    if let Some(why) = convoke_pay(g, p, c, 2, "WW")? {
+        return Ok(Some(why));
+    }
+    let what = format!("Clever Concealment on {}", names_of(g, &picked));
+    if !spell_cast(g, p, c, 4.0, Some(&what))? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    for &m in &picked {
+        if g.player(p).perms.contains(&m) {
+            g.perm_mut(m).phased = true;
+            let all: Vec<PermId> = g
+                .player(p)
+                .perms
+                .clone()
+                .into_iter()
+                .chain(g.players.iter().flat_map(|q| q.perms.clone()).collect::<Vec<_>>())
+                .collect();
+            for x in all {
+                if g.perm(x).attached == Some(m) {
+                    g.perm_mut(x).phased = true; // what's attached phases out with it
+                }
+            }
+        }
+    }
+    gy_push(g, p, c);
+    crate::glog!(g, "    {} phase out", names_of(g, &picked));
+    Ok(None)
+}
+
+/// cards._rootborn
+fn rootborn(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = timing(g, p, c).or_else(|| super::mana::cost_problem(g, p, 2, "W")) {
+        let keep =
+            (why.starts_with("You") || why.starts_with("Cast") || why.starts_with("It")) && !why.contains("costs");
+        return Ok(Some(if keep { why } else { format!("Can't cast {}. {why}", cname(g, c)) }));
+    }
+    super::mana::pay_from_pool(g, p, 2, "W");
+    if !spell_cast(g, p, c, 3.0, None)? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    crate::impls::zur::rootborn(g, p)?;
+    gy_push(g, p, c);
+    Ok(None)
+}
+
+/// cards._triplicate
+fn triplicate(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = timing(g, p, c) {
+        return Ok(Some(why));
+    }
+    if let Some(why) = convoke_pay(g, p, c, 4, "WW")? {
+        return Ok(Some(why));
+    }
+    if !spell_cast(g, p, c, 3.0, None)? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    let mut spec = crate::engine::zones::Tokens::new(3, 1);
+    spec.fly = true;
+    spec.color = Some(crate::cards::Colors::from_letters("W"));
+    spec.types = vec!["spirit"];
+    crate::engine::zones::make_tokens(g, p, spec)?;
+    gy_push(g, p, c);
+    Ok(None)
+}
+
+/// cards._morph_cast
+fn morph_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = timing(g, p, c).or_else(|| cost(g, p, 3, "", "cast it face down")) {
+        return Ok(Some(why.replace("Can't activate", "Can't cast")));
+    }
+    super::mana::pay_from_pool(g, p, 3, "");
+    if !spell_cast(g, p, c, 2.0, Some("a face-down creature (morph)"))? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    crate::impls::galadriel::enter_face_down(g, p, c)?;
+    Ok(None)
+}
+
+// ------------------------------------------------------------------ The Eternal Wanderer, Azorius Guildmage, Niv-Mizzet
+fn wanderer_plus(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    use crate::cards::Types;
+    let cands: Vec<PermId> = g
+        .players
+        .iter()
+        .filter(|q| q.alive)
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&x| {
+            !g.perm(x).phased
+                && (g.is_creature(x) || g.perm(x).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)))
+                && !(g.perm(x).owner != p && crate::engine::values::untargetable(g, x))
+        })
+        .collect();
+    let t = if cands.is_empty() {
+        None
+    } else {
+        pick_perm(
+            g,
+            p,
+            "target",
+            "The Eternal Wanderer +1: exile which artifact or creature until its owner's next end step?",
+            &cands,
+            Some("no target"),
+        )?
+    };
+    let Some(t) = t else { return go(|_| Ok(())) };
+    go(move |g| {
+        if g.perm(t).on_bf && g.player(g.perm(t).owner).perms.contains(&t) {
+            crate::impls::zur::wanderer_exile(g, p, t)?;
+        }
+        Ok(())
+    })
+}
+
+fn wanderer_zero(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(move |g| {
+        let mut spec = crate::engine::zones::Tokens::new(1, 2);
+        spec.color = Some(crate::cards::Colors::from_letters("W"));
+        spec.types = vec!["samurai"];
+        for x in crate::engine::zones::make_tokens(g, p, spec)? {
+            g.perm_mut(x).data.set(
+                crate::state::DataKey::Kws,
+                crate::state::Val::List(vec![crate::state::Val::Str("double strike")]),
+            );
+        }
+        Ok(())
+    })
+}
+
+fn wanderer_minus4(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    let mine = my_creatures(g, p);
+    let mut keep = None;
+    if !mine.is_empty() {
+        let labels = target_labels(g, p, &mine.iter().map(|&x| Target::Perm(x)).collect::<Vec<_>>());
+        let k = choices::choose_one(
+            g,
+            p,
+            "choose",
+            "The Eternal Wanderer -4: which of your creatures do you keep? (the rest are sacrificed)",
+            &labels,
+        )?;
+        keep = Some(mine[k]);
+    }
+    go(move |g| {
+        for q in g.players.iter().filter(|q| q.alive).map(|q| q.id).collect::<Vec<_>>() {
+            let k2 = if q == p { keep } else { crate::impls::zur::keep_one(g, q, p) };
+            let doomed: Vec<PermId> = g
+                .player(q)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&x| g.is_creature(x) && !g.perm(x).phased && Some(x) != k2)
+                .collect();
+            for x in doomed {
+                crate::engine::zones::die(g, x, "sac")?;
+            }
+        }
+        Ok(())
+    })
+}
+
+fn guildmage_tap(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = cost(g, p, 2, "W", "Azorius Guildmage") {
+        return Ok(Some(why));
+    }
+    let cre = creatures(g, p, false);
+    if cre.is_empty() {
+        return Ok(Some("There is no creature to tap.".into()));
+    }
+    let Some(t) = pick_perm(g, p, "target", "Azorius Guildmage: tap which creature?", &cre, Some("cancel"))? else {
+        return Ok(None);
+    };
+    super::mana::pay_from_pool(g, p, 2, "W");
+    crate::glog!(g, "  {} activates Azorius Guildmage: tap {}", pname(g, p), g.perm(t).name);
+    let what = format!("tap {}", g.perm(t).name);
+    if crate::engine::stack::ability_window(g, p, Some(m), &what, None, Some(t))? {
+        g.perm_mut(t).tapped = true;
+    }
+    Ok(None)
+}
+
+fn guildmage_counter(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    use crate::state::StackKind;
+    let abil: Vec<(u32, String, PlayerId)> = g
+        .stack
+        .iter()
+        .rev()
+        .filter(|it| it.kind == StackKind::Ability)
+        .map(|it| (it.id, it.name.clone(), it.controller))
+        .collect();
+    if abil.is_empty() {
+        return Ok(Some("There is no activated ability on the stack to counter.".into()));
+    }
+    if let Some(why) = cost(g, p, 2, "U", "Azorius Guildmage") {
+        return Ok(Some(why));
+    }
+    let mut k = 0;
+    if abil.len() > 1 {
+        let labels: Vec<String> = abil.iter().map(|(_, n, c)| format!("{n} ({})", pname(g, *c))).collect();
+        let Some(i) = pick(g, p, "target", "Azorius Guildmage: counter which ability?", &labels)? else {
+            return Ok(None);
+        };
+        k = i;
+    }
+    let (id, name, _) = abil[k].clone();
+    super::mana::pay_from_pool(g, p, 2, "U");
+    crate::glog!(g, "  {} activates Azorius Guildmage: counter {}", pname(g, p), name);
+    if crate::engine::stack::ability_window(g, p, Some(m), &format!("counter {name}"), None, None)? {
+        if let Some(it) = g.stack.iter_mut().find(|it| it.id == id) {
+            it.countered = true;
+        }
+    }
+    Ok(None)
+}
+
+fn guildmage(g: &Game) -> Vec<PermAbility> {
+    use crate::state::StackKind;
+    let mut out = vec![ability("{2}{W}: tap target creature", guildmage_tap)];
+    if g.stack.iter().any(|it| it.kind == StackKind::Ability) {
+        out.push(ability("{2}{U}: counter target activated ability", guildmage_counter));
+    }
+    out
+}
+
+fn niv_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = tapped(g, m, None) {
+        return Ok(Some(why));
+    }
+    if g.perm(m).sick {
+        return Ok(Some("Niv-Mizzet has summoning sickness (it came under your control this turn).".into()));
+    }
+    g.perm_mut(m).tapped = true;
+    crate::glog!(g, "  {} activates Niv-Mizzet, the Firemind: draw a card", pname(g, p));
+    if crate::engine::stack::ability_window(g, p, Some(m), "draw a card", None, None)? {
+        crate::engine::zones::draw(g, p, 1, false)?;
+    }
+    Ok(None)
+}
+
+// ------------------------------------------------------------------ copying a spell: Return the Favor, Dualcaster Mage
+/// cards.copy_card
+pub fn copy_card(g: &Game, c: CardId) -> bool {
+    matches!(&*g.db.get(c).name, "Return the Favor" | "Dualcaster Mage")
+}
+
+/// cards.copy_in_response: p casts Return the Favor or Dualcaster Mage at `spell` (cast by `caster`, on the stack
+/// now). None, or why not
+pub fn copy_in_response(g: &mut Game, p: PlayerId, c: CardId, spell: Option<CardId>, caster: PlayerId) -> Res<Why> {
+    let Some(spell) = spell else { return Ok(None) };
+    let sd = g.db.get(spell);
+    let (sname, s_is) = (sd.name.to_string(), sd.instant || sd.sorcery);
+    let ctx: Option<crate::state::Ctx> = match &g.cur_cast {
+        Some((cc, ctx, _)) if *cc == spell => Some(ctx.clone()),
+        _ => None,
+    };
+    if &*g.db.get(c).name == "Dualcaster Mage" {
+        if !s_is {
+            return Ok(Some(format!("Dualcaster Mage copies an instant or sorcery spell; {sname} is not one.")));
+        }
+        if let Some(why) = super::mana::cost_problem(g, p, 1, "RR") {
+            return Ok(Some(format!("Can't cast Dualcaster Mage. {why}")));
+        }
+        super::mana::pay_from_pool(g, p, 1, "RR");
+        crate::glog!(g, "  {} flashes in Dualcaster Mage to copy {}", pname(g, p), sname);
+        if crate::engine::cast::cast_card(g, p, c, "hand", Default::default())? && !g.over {
+            crate::engine::cast::copy_spell(g, p, spell, ctx.as_ref(), false)?;
+        }
+        return Ok(None);
+    }
+    let mut modes: Vec<(&str, String)> = vec![];
+    if s_is {
+        modes.push(("copy", format!("copy {sname} (you may choose new targets)")));
+    }
+    if ctx.as_ref().is_some_and(|x| x.target.is_some() || x.face.is_some()) {
+        modes.push(("redirect", format!("change the target of {sname}")));
+    }
+    if modes.is_empty() {
+        return Ok(Some(format!(
+            "Return the Favor has nothing to do to {sname} (not an instant or sorcery, and no single target)."
+        )));
+    }
+    let mut labels: Vec<String> = modes.iter().map(|(_, t)| format!("{t} (+{{1}})")).collect();
+    if modes.len() == 2 {
+        labels.push("both (+{2})".into());
+    }
+    let Some(k) = pick(g, p, "choose", "Return the Favor (spree): which modes?", &labels)? else { return Ok(None) };
+    let chosen: Vec<&str> = if k < modes.len() { vec![modes[k].0] } else { modes.iter().map(|m| m.0).collect() };
+    if let Some(why) = super::mana::cost_problem(g, p, chosen.len() as u32, "RR") {
+        return Ok(Some(format!("Can't cast Return the Favor. {why}")));
+    }
+    let mut new: Option<Target> = None;
+    if chosen.contains(&"redirect") {
+        let cx = ctx.clone().unwrap_or_default();
+        let tg: Vec<Target> = legal::spell_targets(g, caster, spell)
+            .unwrap_or_default()
+            .into_iter()
+            .filter(|x| match x {
+                Target::Perm(m) => cx.target != Some(*m),
+                Target::Player(q) => cx.face != Some(*q),
+            })
+            .collect();
+        if tg.is_empty() {
+            return Ok(Some(format!("{sname} has no other legal target.")));
+        }
+        let labels = target_labels(g, p, &tg);
+        let Some(j) = pick(g, p, "target", &format!("Return the Favor: the new target for {sname}"), &labels)? else {
+            return Ok(None);
+        };
+        new = Some(tg[j]);
+    }
+    super::mana::pay_from_pool(g, p, chosen.len() as u32, "RR");
+    let what = format!("Return the Favor ({}) at {}", chosen.join(" and "), sname);
+    if !spell_cast(g, p, c, 5.0, Some(&what))? {
+        gy_push(g, p, c);
+        return Ok(None);
+    }
+    let mut ctx = ctx;
+    if let (Some(n), Some(_)) = (new, ctx.as_ref()) {
+        // the live context of the spell on the stack changes with it
+        if let Some((_, live, _)) = g.cur_cast.as_mut() {
+            live.target = None;
+            live.face = None;
+            match n {
+                Target::Player(q) => live.face = Some(q),
+                Target::Perm(m) => live.target = Some(m),
+            }
+            ctx = Some(live.clone());
+        }
+        crate::glog!(g, "    {} now targets {}", sname, legal::describe_target(g, p, n));
+    }
+    if chosen.contains(&"copy") {
+        crate::engine::cast::copy_spell(g, p, spell, ctx.as_ref(), false)?;
+    }
+    gy_push(g, p, c);
+    Ok(None)
+}
+
+// ------------------------------------------------------------------ choices as your spells resolve (Veyran's deck)
+/// cards.jeskas_will: choose one (both if you control your commander): add {R} for each card in target opponent's
+/// hand; exile the top three cards of your library, you may play them this turn. True: handled
+pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let mut opts: Vec<String> = vec![
+        "add {R} for each card in target opponent's hand".into(),
+        "exile your top three cards: you may play them this turn".into(),
+    ];
+    if crate::engine::values::commander_out(g, p) {
+        opts.push("both".into());
+    }
+    let prompt = format!(
+        "Jeska's Will: choose one{}",
+        if opts.len() == 3 { " (or both: you control your commander)" } else { "" }
+    );
+    let k = choices::choose_one(g, p, "choose", &prompt, &opts)?;
+    if k == 0 || k == 2 {
+        let opps: Vec<PlayerId> = g.opps(p).collect();
+        if !opps.is_empty() {
+            let labels: Vec<String> =
+                opps.iter().map(|&q| format!("{} ({} cards)", pname(g, q), g.player(q).hand.len())).collect();
+            let j = choices::choose_one(g, p, "target", "Jeska's Will: which opponent's hand?", &labels)?;
+            let n = g.player(opps[j]).hand.len() as u32;
+            g.player_mut(p).pool.add('R', n);
+            crate::glog!(g, "    Jeska's Will adds {} red mana", n);
+        }
+    }
+    if k == 1 || k == 2 {
+        let top = look(g, p, 3);
+        for &x in &top {
+            let pl = g.player_mut(p);
+            pl.hand.push(x);
+            pl.seen.insert(x);
+        }
+        g.player_mut(p).impulse.extend(top.iter().copied());
+        let names: Vec<String> = top.iter().map(|&x| cname(g, x)).collect();
+        crate::glog!(g, "    Jeska's Will exiles {} (playable this turn)", names.join(", "));
+    }
+    Ok(true)
+}
+
+/// cards.crackle: 5X damage to each of up to X targets. True: handled
+pub fn crackle(g: &mut Game, p: PlayerId, _c: CardId, ctx: &crate::state::Ctx) -> Res<bool> {
+    let x = ctx.x;
+    if x <= 0 {
+        return Ok(true);
+    }
+    let mut tg = choices::damage_targets(g, p, crate::cards::Colors::from_letters("R"));
+    let mut picked: Vec<Target> = vec![];
+    while (picked.len() as i32) < x && !tg.is_empty() {
+        let labels = target_labels(g, p, &tg);
+        let prompt =
+            format!("Crackle with Power: {} damage to which target? ({} of up to {})", 5 * x, picked.len() + 1, x);
+        let cancel = if picked.is_empty() { None } else { Some("no more targets") };
+        let Some(k) = choices::choose(g, p, "target", &prompt, &labels, cancel, None)? else { break };
+        picked.push(tg.remove(k));
+    }
+    for t in picked {
+        damage(g, p, t, 5 * x, "Crackle with Power", "burn")?;
+    }
+    Ok(true)
+}
+
+/// cards.mastery_target: Mizzix's Mastery's target as it's cast: an instant or sorcery card in your graveyard (None:
+/// cancelled)
+pub fn mastery_target(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<CardId>> {
+    let cs: Vec<CardId> =
+        g.player(p).gy.iter().copied().filter(|&x| (g.db.get(x).instant || g.db.get(x).sorcery) && x != c).collect();
+    let labels: Vec<String> = cs.iter().map(|&x| choices::card_label(g, x)).collect();
+    let k = pick(g, p, "target", "Mizzix's Mastery: exile which instant or sorcery (you cast a copy free)?", &labels)?;
+    Ok(k.map(|k| cs[k]))
+}
+
+/// cards.flashback_target: Flashback (the card): target instant or sorcery card in your graveyard gains flashback
+/// this turn. True: handled
+pub fn flashback_target(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let cs: Vec<CardId> =
+        g.player(p).gy.iter().copied().filter(|&x| g.db.get(x).instant || g.db.get(x).sorcery).collect();
+    // (Python excludes the Flashback card itself, c; it's on the stack, not in the graveyard, so no difference)
+    if cs.is_empty() {
+        return Ok(true);
+    }
+    let labels: Vec<String> = cs.iter().map(|&x| choices::card_label(g, x)).collect();
+    let k = choices::choose_one(
+        g,
+        p,
+        "target",
+        "Flashback: which instant or sorcery gains flashback this turn (its mana cost)?",
+        &labels,
+    )?;
+    let st = g.turn_stamp();
+    let pl = g.player_mut(p);
+    if pl.fb_grant.as_ref().map(|x| x.0) != Some(st) {
+        pl.fb_grant = Some((st, vec![])); // last turn's grants have ended
+    }
+    pl.fb_grant.as_mut().unwrap().1.push(cs[k]);
+    crate::glog!(g, "    {} gains flashback this turn", cname(g, cs[k]));
+    Ok(true)
+}
+
+/// cards.granted_flashback
+pub fn granted_flashback(g: &Game, p: PlayerId, c: CardId) -> bool {
+    matches!(&g.player(p).fb_grant, Some((st, cs)) if *st == g.turn_stamp() && cs.contains(&c))
+}
+
+/// cards.dredge: your draw step: dredge a card in your graveyard instead of drawing? True if you did
+pub fn dredge(g: &mut Game, p: PlayerId) -> Res<bool> {
+    use crate::tag::Tag;
+    let imps: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).tag(Tag::Dredge)).collect();
+    if imps.is_empty() || g.player(p).library.len() < 5 {
+        return Ok(false);
+    }
+    let nm = cname(g, imps[0]);
+    if !choices::yes_no(
+        g,
+        p,
+        &format!("Draw step: dredge {nm} (mill five, return it to your hand) instead of drawing?"),
+    )? {
+        return Ok(false);
+    }
+    let pl = g.player_mut(p);
+    if let Some(i) = pl.gy.iter().position(|&x| x == imps[0]) {
+        pl.gy.remove(i);
+    }
+    pl.hand.push(imps[0]);
+    crate::engine::zones::mill(g, p, 5)?;
+    g.player_mut(p).stat(crate::sym::intern("dredged"), 1);
+    crate::glog!(g, "  {} dredges {} (mills five)", pname(g, p), nm);
+    Ok(true)
+}
+
+/// cards.CAST_TARGET: tagless spells with a creature target chosen as they're cast
+pub enum CastTarget {
+    /// the card has no such target
+    NotNeeded,
+    /// the person cancelled
+    Cancelled,
+    Picked(PermId),
+}
+
+/// cards.CAST_TARGET lookup + pick_creature(optional=True, keep=...): only Take Up the Shield is listed
+pub fn cast_target(g: &Game, p: PlayerId, c: CardId) -> Res<CastTarget> {
+    if &*g.db.get(c).name != "Take Up the Shield" {
+        return Ok(CastTarget::NotNeeded);
+    }
+    let keep =
+        |g: &Game, p: PlayerId, m: PermId| !(g.perm(m).owner == p && crate::impls::zur::untargetable_by_you(g, m));
+    let prompt = "Take Up the Shield: which creature gets a +1/+1 counter, lifelink and indestructible?";
+    Ok(match pick_creature(g, p, prompt, false, true, Some(&keep))? {
+        Some(t) => CastTarget::Picked(t),
+        None => CastTarget::Cancelled,
+    })
+}
+
+// ------------------------------------------------------------------ Galadriel's deck (Bant Rebels)
+fn creature_tap_ok(g: &Game, m: PermId) -> Why {
+    tapped(g, m, None).or_else(|| {
+        if g.perm(m).sick {
+            Some(format!("{} has summoning sickness (it came under your control this turn).", pm_name(g, m)))
+        } else {
+            None
+        }
+    })
+}
+
+/// cards._gal_pay: pay a creature's ability from your pool (Secluded Courtyard's mana may pay if it's of the named
+/// type). None once paid, or why not
+fn gal_pay(g: &mut Game, p: PlayerId, m: PermId, gn: u32, pips: &str, what: &str) -> Why {
+    use super::mana::Spending;
+    let prev = std::mem::replace(&mut g.player_mut(p).pool.spending, Some(Spending::Perm(m)));
+    let why = cost(g, p, gn, pips, what).or_else(|| {
+        super::mana::pay_from_pool(g, p, gn, pips);
+        None
+    });
+    g.player_mut(p).pool.spending = prev;
+    why
+}
+
+/// cards._pick_x: X for an ability, up to the mana in your pool
+fn pick_x(g: &Game, p: PlayerId, what: &str, lo: u32) -> Res<Option<u32>> {
+    let f = g.player(p).floating;
+    let n = g.player(p).pool.total() + f.u + f.b + f.r + f.g + f.c + f.any;
+    if n < lo {
+        return Ok(None);
+    }
+    let xs: Vec<u32> = (lo..=n).collect();
+    let labels: Vec<String> = xs.iter().map(|x| format!("X = {x}")).collect();
+    Ok(pick(g, p, "choose", &format!("{what}: X = ? (your pool has {n} mana)"), &labels)?.map(|k| xs[k]))
+}
+
+fn searcher(gn: u32, cap: u32) -> Vec<PermAbility> {
+    vec![ability(
+        format!(
+            "{{{gn}}}, {{T}}: search for a Rebel permanent card with mana value {cap} or less, put it onto the battlefield"
+        ),
+        move |g: &mut Game, p: PlayerId, m: PermId| {
+            if let Some(why) = creature_tap_ok(g, m).or_else(|| {
+                let nm = pm_name(g, m);
+                gal_pay(g, p, m, gn, "", &nm)
+            }) {
+                return Ok(Some(why));
+            }
+            g.perm_mut(m).tapped = true;
+            let nm = pm_name(g, m);
+            crate::glog!(g, "  {} activates {}", pname(g, p), nm);
+            if crate::engine::stack::ability_window(
+                g,
+                p,
+                Some(m),
+                &format!("search for a Rebel (mana value {cap} or less)"),
+                None,
+                None,
+            )? {
+                crate::impls::galadriel::put_rebel(g, p, &nm, cap, false)?;
+            }
+            Ok(None)
+        },
+    )]
+}
+
+fn lin_search(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = creature_tap_ok(g, m) {
+        return Ok(Some(why));
+    }
+    let Some(x) = pick_x(g, p, "Lin Sivvi", 0)? else { return Ok(None) };
+    if let Some(why) = gal_pay(g, p, m, x, "", "Lin Sivvi") {
+        return Ok(Some(why));
+    }
+    g.perm_mut(m).tapped = true;
+    crate::glog!(g, "  {} activates Lin Sivvi, X = {}", pname(g, p), x);
+    if crate::engine::stack::ability_window(
+        g,
+        p,
+        Some(m),
+        &format!("search for a Rebel (mana value {x} or less)"),
+        None,
+        None,
+    )? {
+        crate::impls::galadriel::put_rebel(g, p, "Lin Sivvi", x, false)?;
+    }
+    Ok(None)
+}
+
+fn lin_bottom(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let gy = g.player(p).gy.clone();
+    let mut cs = crate::impls::galadriel::rebel_cards(g, p, &gy, 99);
+    cs.extend(gy.iter().copied().filter(|&c| !g.db.get(c).perm && g.db.get(c).has_subtype("rebel")));
+    if cs.is_empty() {
+        return Ok(Some("There is no Rebel card in your graveyard.".into()));
+    }
+    let labels: Vec<String> = cs.iter().map(|&c| cname(g, c)).collect();
+    let Some(k) = pick(
+        g,
+        p,
+        "target",
+        "Lin Sivvi: put which Rebel card from your graveyard on the bottom of your library?",
+        &labels,
+    )?
+    else {
+        return Ok(None);
+    };
+    if let Some(why) = gal_pay(g, p, m, 3, "", "Lin Sivvi") {
+        return Ok(Some(why));
+    }
+    let c = cs[k];
+    crate::glog!(g, "  {} activates Lin Sivvi: {} to the bottom of the library", pname(g, p), cname(g, c));
+    if crate::engine::stack::ability_window(
+        g,
+        p,
+        Some(m),
+        &format!("put {} on the bottom of the library", cname(g, c)),
+        None,
+        None,
+    )? {
+        let pl = g.player_mut(p);
+        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+            pl.gy.remove(i);
+            pl.library.insert(0, c);
+        }
+    }
+    Ok(None)
+}
+
+fn revivalist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = creature_tap_ok(g, m) {
+        return Ok(Some(why));
+    }
+    let gy = g.player(p).gy.clone();
+    if crate::impls::galadriel::rebel_cards(g, p, &gy, 5).is_empty() {
+        return Ok(Some("There is no Rebel permanent card with mana value 5 or less in your graveyard.".into()));
+    }
+    if let Some(why) = gal_pay(g, p, m, 6, "", "Ramosian Revivalist") {
+        return Ok(Some(why));
+    }
+    g.perm_mut(m).tapped = true;
+    crate::glog!(g, "  {} activates Ramosian Revivalist", pname(g, p));
+    if crate::engine::stack::ability_window(g, p, Some(m), "return a Rebel from your graveyard", None, None)? {
+        crate::impls::galadriel::put_rebel(g, p, "Ramosian Revivalist", 5, true)?;
+    }
+    Ok(None)
+}
+
+fn bringer(colour: char, word: &'static str) -> Vec<PermAbility> {
+    let label = format!("{{T}}, sacrifice it: exile target {word} creature");
+    vec![ability(label, move |g: &mut Game, p: PlayerId, m: PermId| {
+        if let Some(why) = creature_tap_ok(g, m) {
+            return Ok(Some(why));
+        }
+        let w = crate::cards::Colors::from_letters("W");
+        let cre: Vec<PermId> = creatures(g, p, false)
+            .into_iter()
+            .filter(|&x| {
+                crate::engine::values::colors_of(g, x).has(colour) && !crate::engine::values::protected_from(g, x, w)
+            })
+            .collect();
+        if cre.is_empty() {
+            return Ok(Some(format!("There is no {word} creature to target.")));
+        }
+        let prompt = format!("{}: exile which {word} creature?", pm_name(g, m));
+        let Some(t) = pick_perm(g, p, "target", &prompt, &cre, Some("cancel"))? else { return Ok(None) };
+        crate::impls::galadriel::bringer_use(g, p, m, t)?;
+        Ok(None)
+    })]
+}
+
+fn ballista(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = creature_tap_ok(g, m) {
+        return Ok(Some(why));
+    }
+    let w = crate::cards::Colors::from_letters("W");
+    let mut fighting: Vec<PermId> = g.in_combat.clone();
+    for &x in &g.blocking {
+        if !fighting.contains(&x) {
+            fighting.push(x);
+        }
+    }
+    let cre: Vec<PermId> = fighting
+        .into_iter()
+        .filter(|&x| {
+            g.perm(x).on_bf
+                && g.player(g.perm(x).owner).perms.contains(&x)
+                && !(g.perm(x).owner != p && crate::engine::values::untargetable(g, x))
+                && !crate::engine::values::protected_from(g, x, w)
+        })
+        .collect();
+    if cre.is_empty() {
+        return Ok(Some("Ballista Squad needs an attacking or blocking creature to target.".into()));
+    }
+    let Some(t) = pick_perm(
+        g,
+        p,
+        "target",
+        "Ballista Squad: X damage to which attacking or blocking creature?",
+        &cre,
+        Some("cancel"),
+    )?
+    else {
+        return Ok(None);
+    };
+    let Some(x) = pick_x(g, p, "Ballista Squad (plus {W})", 0)? else { return Ok(None) };
+    if let Some(why) = gal_pay(g, p, m, x, "W", "Ballista Squad") {
+        return Ok(Some(why));
+    }
+    g.perm_mut(m).tapped = true;
+    let tn = g.perm(t).name;
+    crate::glog!(g, "  {} activates Ballista Squad: {} damage to {}", pname(g, p), x, tn);
+    if crate::engine::stack::ability_window(g, p, Some(m), &format!("{x} damage to {tn}"), None, Some(t))?
+        && g.player(g.perm(t).owner).perms.contains(&t)
+    {
+        if crate::engine::values::no_damage(g, t) {
+            crate::glog!(g, "    the damage to {} is prevented", tn);
+        } else if crate::engine::values::etgh(g, t) <= x as i32 {
+            crate::engine::removal::apply_removal(g, Some(p), t, &format!("dmg{x}"), None)?;
+        } else {
+            crate::glog!(g, "    {} survives", tn);
+        }
+    }
+    Ok(None)
+}
+
+fn tapper(gn: u32, pips: &'static str, tough: i32, label: &'static str) -> Vec<PermAbility> {
+    vec![ability(label, move |g: &mut Game, p: PlayerId, m: PermId| {
+        if let Some(why) = creature_tap_ok(g, m) {
+            return Ok(Some(why));
+        }
+        let cre: Vec<PermId> =
+            creatures(g, p, false).into_iter().filter(|&x| crate::engine::values::etgh(g, x) <= tough).collect();
+        if cre.is_empty() {
+            return Ok(Some("There is no creature it can tap.".into()));
+        }
+        let nm = pm_name(g, m);
+        let Some(t) = pick_perm(g, p, "target", &format!("{nm}: tap which creature?"), &cre, Some("cancel"))? else {
+            return Ok(None);
+        };
+        if let Some(why) = gal_pay(g, p, m, gn, pips, &nm) {
+            return Ok(Some(why));
+        }
+        g.perm_mut(m).tapped = true;
+        let tn = g.perm(t).name;
+        crate::glog!(g, "  {} activates {}: tap {}", pname(g, p), nm, tn);
+        if crate::engine::stack::ability_window(g, p, Some(m), &format!("tap {tn}"), None, Some(t))?
+            && g.player(g.perm(t).owner).perms.contains(&t)
+        {
+            g.perm_mut(t).tapped = true;
+        }
+        Ok(None)
+    })]
+}
+
+fn maskwood(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = tapped(g, m, None).or_else(|| cost(g, p, 3, "", "Maskwood Nexus")) {
+        return Ok(Some(why));
+    }
+    super::mana::pay_from_pool(g, p, 3, "");
+    g.perm_mut(m).tapped = true;
+    crate::glog!(g, "  {} activates Maskwood Nexus", pname(g, p));
+    if crate::engine::stack::ability_window(g, p, Some(m), "a 2/2 Shapeshifter with changeling", None, None)? {
+        crate::impls::galadriel::shapeshifter(g, p)?;
+    }
+    Ok(None)
+}
+
+fn mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let Some(x) = pick_x(g, p, "Mirror Entity", 0)? else { return Ok(None) };
+    if let Some(why) = gal_pay(g, p, m, x, "", "Mirror Entity") {
+        return Ok(Some(why));
+    }
+    crate::glog!(g, "  {} activates Mirror Entity, X = {}", pname(g, p), x);
+    if crate::engine::stack::ability_window(g, p, Some(m), &format!("your creatures become {x}/{x}"), None, None)? {
+        crate::impls::galadriel::mirror(g, p, x as i32)?;
+    }
+    Ok(None)
+}
+
+fn elspeth_plus(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(move |g| {
+        let mut spec = crate::engine::zones::Tokens::new(3, 1);
+        spec.color = Some(crate::cards::Colors::from_letters("W"));
+        spec.types = vec!["soldier"];
+        crate::engine::zones::make_tokens(g, p, spec)?;
+        Ok(())
+    })
+}
+
+fn elspeth_minus3(_g: &mut Game, _p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(|g| {
+        for q in g.players.iter().map(|q| q.id).collect::<Vec<_>>() {
+            for x in g.player(q).perms.clone() {
+                if g.is_creature(x) && !g.perm(x).phased && crate::engine::values::epow(g, x) >= 4 {
+                    crate::engine::zones::die(g, x, "destroy")?;
+                }
+            }
+        }
+        Ok(())
+    })
+}
+
+fn elspeth_minus7(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(move |g| {
+        crate::impls::galadriel::elspeth_emblem(g, p);
+        Ok(())
+    })
+}
+
+fn turn_up(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = cost(g, p, 0, "W", "turn Whipcorder face up") {
+        return Ok(Some(why));
+    }
+    super::mana::pay_from_pool(g, p, 0, "W");
+    crate::impls::galadriel::turn_face_up(g, p, m);
+    Ok(None)
+}
+
+// ------------------------------------------------------------------ Necropotence (Zur's deck)
+fn necro(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if crate::engine::combat::blocked(g, p, "Necropotence") {
+        return Ok(Some("Disruptor Flute names Necropotence: its ability can't be activated.".into()));
+    }
+    let most = (g.player(p).life.min(g.player(p).library.len() as i32)).min(30);
+    if most < 1 {
+        return Ok(Some("You have no life or no library to pay with.".into()));
+    }
+    let labels: Vec<String> = (1..=most).map(|n| format!("pay {n} life")).collect();
+    let prompt = format!(
+        "Necropotence: pay how much life? (you have {}; the cards come to your hand at your next end step)",
+        g.player(p).life
+    );
+    let Some(k) = pick(g, p, "choose", &prompt, &labels)? else { return Ok(None) };
+    let n = k as i32 + 1;
+    crate::engine::life::lose_life(g, p, n, Some(p), "other", None)?;
+    crate::glog!(g, "  {} pays {} life to Necropotence", pname(g, p), n);
+    if crate::engine::stack::ability_window(g, p, Some(m), &format!("exile the top {n} card(s) face down"), None, None)?
+        && !g.over
+    {
+        necro_exile(g, p, n as usize);
+    }
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+/// ais.necro_exile: Necropotence, activated n times by the person: the top n cards exiled face down until p's next end
+/// step (this turn's if it's p's turn before the end step, else the next)
+fn necro_exile(g: &mut Game, p: PlayerId, n: usize) {
+    let ready = if g.active == Some(p) && g.step != crate::state::Step::End {
+        g.player(p).turns
+    } else {
+        g.player(p).turns + 1
+    };
+    for _ in 0..n.min(g.player(p).library.len()) {
+        let c = g.player_mut(p).library.pop().unwrap();
+        g.player_mut(p).necro_wait.push((c, ready));
+    }
+}
+
+// ------------------------------------------------------------------ Y'shtola's deck (Esper Drain)
+/// cards._own_hand: the cards in your hand (not the ones taken from opponents, which are in exile)
+fn own_hand(g: &Game, p: PlayerId) -> Vec<CardId> {
+    g.player(p).hand.iter().copied().filter(|c| !g.player(p).stolen.contains_key(c)).collect()
+}
+
+fn syphon_mage(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let why = creature_tap_ok(g, m)
+        .or_else(|| if own_hand(g, p).is_empty() { Some("You have no card in hand to discard.".into()) } else { None })
+        .or_else(|| cost(g, p, 2, "B", "Urborg Syphon-Mage"));
+    if why.is_some() {
+        return Ok(why);
+    }
+    let cs = own_hand(g, p);
+    let labels: Vec<String> = cs.iter().map(|&c| choices::card_label(g, c)).collect();
+    let Some(k) = pick(g, p, "choose", "Urborg Syphon-Mage: discard which card?", &labels)? else { return Ok(None) };
+    super::mana::pay_from_pool(g, p, 2, "B");
+    g.perm_mut(m).tapped = true;
+    crate::engine::zones::discard_cards(g, p, &[cs[k]])?;
+    crate::impls::yshtola::syphon(g, p, m)?;
+    Ok(None)
+}
+
+fn inheritance(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = cost(g, p, 5, "B", "Ill-Gotten Inheritance") {
+        return Ok(Some(why));
+    }
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    if opps.is_empty() {
+        return Ok(Some("There is no opponent to target.".into()));
+    }
+    let labels: Vec<String> = opps.iter().map(|&q| format!("{} ({} life)", pname(g, q), g.player(q).life)).collect();
+    let Some(k) = pick(g, p, "target", "Ill-Gotten Inheritance: 4 damage to which opponent?", &labels)? else {
+        return Ok(None);
+    };
+    super::mana::pay_from_pool(g, p, 5, "B");
+    crate::impls::yshtola::inheritance_sac(g, p, m, opps[k])?;
+    Ok(None)
+}
+
+fn jesters_cap(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = tapped(g, m, None).or_else(|| cost(g, p, 2, "", "Jester's Cap")) {
+        return Ok(Some(why));
+    }
+    let ps: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+    let labels: Vec<String> =
+        ps.iter().map(|&q| format!("{}{}", pname(g, q), if q == p { " (you)" } else { "" })).collect();
+    let Some(k) = pick(g, p, "target", "Jester's Cap: search which player's library?", &labels)? else {
+        return Ok(None);
+    };
+    super::mana::pay_from_pool(g, p, 2, "");
+    crate::impls::yshtola::cap_use(g, p, m, ps[k])?;
+    Ok(None)
+}
+
+fn narset_minus2(_g: &mut Game, _p: PlayerId, m: PermId) -> Res<Ready> {
+    let p = _p;
+    go(move |g| crate::impls::common::narset_dig(g, p, m))
+}
+
+/// the rest of cards.ABILITIES (the decks added later in cards.py)
+fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<PermAbility>> {
+    let _ = p;
+    Some(match nm {
+        "Azorius Guildmage" => guildmage(g),
+        "The Eternal Wanderer" => walker(&[
+            (1, "exile up to one target artifact or creature until its owner's next end step", wanderer_plus),
+            (0, "create a 2/2 white Samurai with double strike", wanderer_zero),
+            (-4, "each player keeps one creature and sacrifices the rest", wanderer_minus4),
+        ]),
+        "Niv-Mizzet, the Firemind" => vec![ability("{T}: draw a card", niv_draw)],
+        "Ramosian Sergeant" => searcher(3, 2),
+        "Ramosian Lieutenant" => searcher(4, 3),
+        "Ramosian Captain" | "Defiant Vanguard" => searcher(5, 4),
+        "Ramosian Commander" => searcher(6, 5),
+        "Lin Sivvi, Defiant Hero" => vec![
+            ability(
+                "{X}, {T}: search for a Rebel permanent card with mana value X or less, put it onto the battlefield",
+                lin_search,
+            ),
+            ability("{3}: put target Rebel card from your graveyard on the bottom of your library", lin_bottom),
+        ],
+        "Ramosian Revivalist" => vec![ability(
+            "{6}, {T}: return a Rebel permanent card with mana value 5 or less from your graveyard to the battlefield",
+            revivalist,
+        )],
+        "Lawbringer" => bringer('R', "red"),
+        "Lightbringer" => bringer('B', "black"),
+        "Ballista Squad" => vec![ability("{X}{W}, {T}: X damage to target attacking or blocking creature", ballista)],
+        "Errant Doomsayers" => tapper(0, "", 2, "{T}: tap target creature with toughness 2 or less"),
+        "Whipcorder" => {
+            if g.perm(m).data.truthy(crate::state::DataKey::Facedown) {
+                vec![ability("turn it face up ({W})", turn_up)]
+            } else {
+                tapper(0, "W", 999, "{W}, {T}: tap target creature")
+            }
+        }
+        "Maskwood Nexus" => vec![ability("{3}, {T}: a 2/2 blue Shapeshifter with changeling", maskwood)],
+        "Mirror Entity" => vec![ability(
+            "{X}: until end of turn, your creatures have base power and toughness X/X and gain all creature types",
+            mirror,
+        )],
+        "Elspeth, Sun's Champion" => walker(&[
+            (1, "create three 1/1 white Soldiers", elspeth_plus),
+            (-3, "destroy all creatures with power 4 or greater", elspeth_minus3),
+            (-7, "emblem: your creatures get +2/+2 and have flying", elspeth_minus7),
+        ]),
+        "Necropotence" => vec![ability(
+            "pay 1 life (any number of times): exile the top card of your library face down; put it into your hand at the beginning of your next end step",
+            necro,
+        )],
+        "Urborg Syphon-Mage" => vec![ability(
+            "{2}{B}, {T}, discard a card: each other player loses 2 life; you gain the life lost this way",
+            syphon_mage,
+        )],
+        "Ill-Gotten Inheritance" => {
+            vec![ability("{5}{B}, sacrifice it: 4 damage to target opponent; you gain 4 life", inheritance)]
+        }
+        "Jester's Cap" => vec![ability(
+            "{2}, {T}, sacrifice it: search target player's library for three cards and exile them",
+            jesters_cap,
+        )],
+        "Narset, Parter of Veils" => {
+            walker(&[(-2, "look at the top four; take a noncreature, nonland card", narset_minus2)])
+        }
+        _ => return None,
+    })
 }

@@ -457,6 +457,10 @@ pub struct Player {
     pub stats: IndexMap<Sym, i64>,
     /// rebound spells (Ephemerate) cast again at the next upkeep
     pub rebound: Vec<CardId>,
+    /// Flashback (the card): the instants and sorceries in the graveyard that have flashback this turn (practice mode)
+    /// Necropotence (practice mode): cards exiled face down with the turn count they come to hand at
+    pub necro_wait: Vec<(CardId, u32)>,
+    pub fb_grant: Option<(TurnStamp, Vec<CardId>)>,
     /// the turn count Jace's Archivist was last used on
     pub arch_t: Option<u32>,
     /// the Ring's level (how many times it has tempted this player, at most 4) and the chosen Ring-bearer
@@ -619,6 +623,8 @@ impl Player {
             first_bomb: None,
             act_uses: IndexMap::new(),
             rebound: vec![],
+            fb_grant: None,
+            necro_wait: vec![],
             arch_t: None,
             ring_level: 0,
             ring_bearer: None,
@@ -712,6 +718,8 @@ pub struct Ctx {
     pub mode: Option<Sym>,
     /// the creature a spell is cast on without targeting it as removal (Hunter's Insight: `ctx['host']`)
     pub host: Option<PermId>,
+    /// Mizzix's Mastery: the graveyard card a person chose as it was cast (Python's `ctx['mastery_pick']`)
+    pub mastery_pick: Option<CardId>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).

@@ -612,7 +612,7 @@ fn baraddur_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ======================================================== Bloodsoaked Insight // Sanguine Morass
 /// mine.insight_cost: {5}, {1} less per life opponents lost this turn
-fn insight_cost(g: &Game, p: PlayerId) -> u32 {
+pub fn insight_cost(g: &Game, p: PlayerId) -> u32 {
     let st = g.turn_stamp();
     let lost: i32 = g.opps(p).filter_map(|q| g.player(q).lost_turn.filter(|x| x.0 == st).map(|x| x.1)).sum();
     (5 - lost).max(0) as u32

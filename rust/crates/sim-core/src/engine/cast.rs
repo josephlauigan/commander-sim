@@ -1097,7 +1097,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
             .copied()
             .filter(|&x| x != c && (g.db.get(x).instant || g.db.get(x).sorcery) && !g.db.get(x).tag(Tag::Ctr))
             .collect();
-        if !ctx.overload {
+        if let Some(pick) = ctx.mastery_pick {
+            // practice mode: the target chosen as it was cast
+            pool.retain(|&x| x == pick);
+            pool.truncate(1);
+        } else if !ctx.overload {
             pool.sort_by(|&a, &b| card_worth(g, p, b, true).total_cmp(&card_worth(g, p, a, true)));
             pool.truncate(1);
         }

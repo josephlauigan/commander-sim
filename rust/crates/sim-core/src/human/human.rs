@@ -691,8 +691,9 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
             gn = 5;
             pips = "RRR".into();
             ctx.overload = true;
-        } else if !cards::mastery_target(g, p, c)? {
-            return Ok(None);
+        } else {
+            let Some(pick) = cards::mastery_target(g, p, c)? else { return Ok(None) };
+            ctx.mastery_pick = Some(pick);
         }
     }
     match cards::cast_target(g, p, c)? {

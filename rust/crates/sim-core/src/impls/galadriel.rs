@@ -310,7 +310,7 @@ fn courtyard_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
 }
 
 /// galadriel.shapeshifter (Maskwood Nexus): a 2/2 blue Shapeshifter with changeling (every creature type)
-fn shapeshifter(g: &mut Game, p: PlayerId) -> Res {
+pub fn shapeshifter(g: &mut Game, p: PlayerId) -> Res {
     let spec = Tokens {
         tgh: Some(2),
         color: Some(Colors::from_letters("U")),
@@ -477,7 +477,7 @@ fn searcher(name: &str) -> Option<(u32, u32)> {
 }
 
 /// galadriel.rebel_cards: Rebel permanent cards with mana value cap or less
-fn rebel_cards(g: &Game, p: PlayerId, cards: &[CardId], cap: u32) -> Vec<CardId> {
+pub fn rebel_cards(g: &Game, p: PlayerId, cards: &[CardId], cap: u32) -> Vec<CardId> {
     cards
         .iter()
         .copied()
@@ -576,7 +576,7 @@ fn best_rebel(g: &Game, p: PlayerId, cap: u32, zone: Option<&[CardId]>) -> Optio
 
 /// galadriel.put_rebel: search (or, from the graveyard, return) a Rebel permanent card with mana value cap or less onto
 /// the battlefield: you pick; the AI takes the most useful one.
-fn put_rebel(g: &mut Game, p: PlayerId, src: &str, cap: u32, from_gy: bool) -> Res<Option<PermId>> {
+pub fn put_rebel(g: &mut Game, p: PlayerId, src: &str, cap: u32, from_gy: bool) -> Res<Option<PermId>> {
     let pool = if from_gy { g.player(p).gy.clone() } else { searchable(g, p) };
     let cs = rebel_cards(g, p, &pool, cap);
     let c = if human_of(g, p).is_some() {
