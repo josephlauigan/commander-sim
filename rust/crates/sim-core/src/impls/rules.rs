@@ -88,7 +88,7 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 10] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "najeela", "zada"];
+const CTHRESH: [&str; 10] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "najeela", "titania"];
 
 /// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
 /// Summer (its spells can't be countered this turn, it draws a card)
@@ -125,6 +125,13 @@ pub fn removal_taxes(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym
     let Some(a) = actor else { return Ok(true) };
     if name == "Terror of the Peaks" {
         lose_life(g, a, 3, Some(a), "other", None)?;
+    }
+    if name == "Forum Necroscribe" {
+        // ward: discard a card (a hand-less player can't pay: the removal is countered)
+        if g.player(a).hand.is_empty() {
+            return Ok(false);
+        }
+        crate::engine::cast::discard_worst(g, a, 1)?;
     }
     if name == "Strife Scholar" {
         // ward: pay 2 life (not paid at 2 life or less: the removal is countered)
@@ -446,11 +453,20 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
         }
         _ => {}
     }
+    if name_of(g, a) == "Paladin of Predation" && crate::engine::values::epow(g, b) <= 2 {
+        return true; // can't be blocked by creatures with power 2 or less
+    }
+    if crate::impls::green_cards::unblockable_by(g, b, a) {
+        return true; // Silhana Ledgewalker: only creatures with flying block it
+    }
     if g.perm(b).token && g.player(g.perm(a).owner).loyalist_turn == Some(g.turn_stamp()) {
         return true; // Legion Loyalist
     }
     if equipped(g, a, Tag::Nim) && !art_or('B') {
         return true; // intimidate
+    }
+    if crate::dsl::has_kw(g, a, "fear") && !art_or('B') {
+        return true; // fear: only artifact and black creatures can block
     }
     if crate::dsl::has_kw(g, a, "intimidate")
         && !of_type(g, b, Types::ARTIFACT)

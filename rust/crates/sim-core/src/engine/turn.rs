@@ -163,6 +163,7 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
     let cols = tag_cols(g, p, c);
     let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
     let mut s = new_cols * 2.0 + if land_enters_tapped(g, p, c) { 0.0 } else { 3.0 };
+    s += crate::impls::titania::land_adjust(g, p, c); // the titania deck: fetch lands while Titania is out or about to be
     if t.has(Tag::Chasm) {
         s += 10.0;
     }
@@ -251,7 +252,7 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
         }
     }
     landfall(g, p)?;
-    if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) {
+    if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) && !crate::impls::titania::hold_fetch(g, p) {
         crack_fetch(g, p, l)?;
     }
     if !g.hooks.is_empty() {
@@ -301,6 +302,13 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         }
     };
     if cands.is_empty() {
+        if g.player(p).key == "titania" {
+            // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)
+            remove_land(g, p, l);
+            let fetch = g.land(l).cd;
+            g.player_mut(p).gy.push(fetch);
+            fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
+        }
         return Ok(());
     }
     let have = colors_have(g, p, Some(l));
@@ -669,6 +677,11 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::EndStep, Call::Player { p })?;
     }
+    for m in g.player(p).perms.clone() {
+        if g.perm(m).on_bf && g.perm(m).data.truthy(crate::state::DataKey::EotSac) {
+            die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
+        }
+    }
     for m in find(g, p, Tag::Breach) {
         // Underworld Breach: sacrifice it at the beginning of the end step
         if trigger_window(g, p, Some(m), "sacrifice it", None)? && g.perm(m).on_bf {
@@ -690,16 +703,6 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     g.player_mut(p).impulse_long = keep;
-    g.player_mut(p).haste_next.clear();
-    for c in std::mem::take(&mut g.player_mut(p).glimpse_exiled) {
-        // Glimpse the Impossible: cards still exiled go to the graveyard, a 0/1 Eldrazi Spawn for each
-        let pl = g.player_mut(p);
-        if let Some(i) = pl.hand.iter().position(|&x| x == c) {
-            pl.hand.remove(i);
-            pl.gy.push(c);
-            crate::impls::zada_cards::glimpse_spawn(g, p)?;
-        }
-    }
     for c in std::mem::take(&mut g.player_mut(p).impulse) {
         // Jeska's Will: unplayed exiled cards stay in exile
         let pl = g.player_mut(p);
@@ -843,6 +846,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         y.phased = false;
         y.age += 1;
     }
+    crate::impls::titania::day_night_tick(g, p)?; // day and night: the turn before is judged as this one begins
     let pl = g.player_mut(p);
     pl.spells_this_turn = 0;
     pl.yawg = false;

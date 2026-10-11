@@ -56,7 +56,7 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "alela" => crate::impls::alela::alela_prio(g, p, c),
         "jodah" => crate::impls::jodah::jodah_prio(g, p, c),
         "kefka" => crate::impls::kefka::kefka_prio(g, p, c),
-        "zada" => crate::impls::zada::zada_prio(g, p, c),
+        "titania" => crate::impls::titania::titania_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -1253,6 +1253,7 @@ pub fn protect_response(
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
+        "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
     }
 }

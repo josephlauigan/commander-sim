@@ -316,7 +316,8 @@ pub fn can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
     if crate::human::is_human(g, p) {
         return crate::human::mana::pool_can_pay(g, p, generic, pips); // practice mode: from the person's pool
     }
-    plan_pay(g, &mana_units(g, p, convoke), generic, pips).is_some()
+    let u = mana_units(g, p, convoke);
+    plan_pay(g, &u, generic, pips).is_some()
 }
 
 /// p pays the cost; false (nothing paid) if it can't
@@ -324,6 +325,7 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
     if crate::human::is_human(g, p) {
         return Ok(crate::human::mana::pay_from_pool(g, p, generic, pips).is_none());
     }
+    g.treasure_paid = 0;
     let u = mana_units(g, p, convoke);
     let Some((used, col)) = plan_pay(g, &u, generic, pips) else { return Ok(false) };
     for (i, w) in u.iter().enumerate() {
@@ -340,6 +342,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
     match w.src {
         Source::Treasure => {
             let st = g.turn_stamp();
+            g.treasure_paid += 1;
             let pl = g.player_mut(p);
             // a trigger during the payment (Gilded Goose's Food sacrificed: Trail of Crumbs pays {1}) may have spent
             // the Treasure this plan counted on: Python's count goes negative, an unsigned one stays at 0

@@ -66,6 +66,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
 
 /// Glacial Chasm prevents all damage to you; The One Ring's protection prevents damage from opponents' sources
 pub fn prevents_damage(g: &Game, p: PlayerId, src: Option<PlayerId>) -> bool {
+    if g.unpreventable() {
+        return false; // Impractical Joke
+    }
     if chasm(g, p) {
         return true;
     }
@@ -88,12 +91,15 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
         return Ok(());
     }
     g.player_mut(p).life += n;
-    if !g.hooks.is_empty() {
-        hooks::fire_trigger(g, Event::GainLife, Call::Life { p, n })?;
+    // (recorded with no hooked permanent out too: infusion cards cast later this turn read it)
+    if n > 0 {
         let st = g.turn_stamp();
         let pl = g.player_mut(p);
         let before = pl.gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
         pl.gained_turn = Some((st, before + n));
+    }
+    if !g.hooks.is_empty() {
+        hooks::fire_trigger(g, Event::GainLife, Call::Life { p, n })?;
     }
     Ok(())
 }

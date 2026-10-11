@@ -227,7 +227,7 @@ pub fn has_type(g: &Game, m: PermId, t: &str) -> bool {
 // ------------------------------------------------------------------ protection and targeting
 /// all damage that would be dealt to m is prevented (Cho-Manno, Revolutionary)
 pub fn no_damage(g: &Game, m: PermId) -> bool {
-    card_tag(g, m, Tag::Nodmg) && !g.perm(m).neutered
+    card_tag(g, m, Tag::Nodmg) && !g.perm(m).neutered && !g.unpreventable()
 }
 
 /// Shadowspear's activation this turn, against a permanent of a player other than the active one

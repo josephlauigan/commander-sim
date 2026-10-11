@@ -49,8 +49,8 @@ name = "Kefka"
 commander = "Kefka, Court Mage // Kefka, Ruler of Ruin"
 ident = "UBR"
 
-[zada]
-file = "JD/zada-mono-red-go-wide.md"
-name = "Zada"
-commander = "Zada, Hedron Grinder"
-ident = "R"
+[titania]
+file = "JD/titania-lands.md"
+name = "Titania"
+commander = "Titania, Protector of Argoth"
+ident = "G"

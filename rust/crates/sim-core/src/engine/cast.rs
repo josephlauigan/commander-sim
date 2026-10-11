@@ -508,10 +508,11 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
 
 /// burn: kill a worthwhile creature if possible, otherwise go face on the weakest opponent
 pub fn bolt_something(g: &mut Game, p: PlayerId, dmg: i32) -> Res {
+    let eff = dmg;
     let tg: Vec<PermId> = g
         .opps(p)
         .flat_map(|q| g.player(q).perms.iter().copied())
-        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= dmg)
+        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= eff)
         .collect();
     let best = max_by(&tg, |m| pval(g, m));
     let opps: Vec<PlayerId> = g.opps(p).collect();
@@ -556,7 +557,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
             "seph" => 8.0,
             "veyran" => 5.0,
             "sauron" | "najeela" => 6.0,
-            "galadriel" | "yshtola" | "alela" | "jodah" | "kefka" | "zada" => 7.0,
+            "galadriel" | "yshtola" | "alela" | "jodah" | "kefka" | "titania" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);
@@ -688,6 +689,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         g.db.get(c).name,
         ctx.target.map_or(String::new(), |t| format!(" -> {} ({})", g.perm(t).name, g.player(g.perm(t).owner).name))
     );
+    g.cast_treasure = Some((c, std::mem::take(&mut g.treasure_paid))); // Kalain: Treasure mana paid for this spell
     let prev = g.cur_cast.replace((c, ctx.clone(), zone)); // cast triggers see its targets and X
     let r = (|| -> Res<Option<(bool, Option<CardId>, Ctx)>> {
         on_cast(g, p, c)?;
@@ -810,6 +812,9 @@ pub fn resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> Re
     r?;
     if g.resolving == 0 && !g.trig_queue.is_empty() {
         crate::engine::stack::flush_triggers(g)?;
+    }
+    if g.resolving == 0 {
+        g.cast_treasure = None; // Kalain has seen the Treasure mana paid for this spell
     }
     Ok(())
 }
@@ -1033,6 +1038,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         // X = (mana spent - 2)/3; 5X to each of up to X targets
         let x = ctx.x.max(1);
         let dmg = 5 * x;
+        let eff = dmg;
         enum Tgt {
             Face(PlayerId),
             Perm(PermId),
@@ -1040,14 +1046,14 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         let mut cands: Vec<(f64, Tgt)> = vec![];
         for q in g.opps(p).collect::<Vec<_>>() {
             let life = g.player(q).life;
-            let v = if life <= dmg { 100.0 + (60 - life) as f64 } else { 0.4 * dmg as f64 };
+            let v = if life <= eff { 100.0 + (60 - life) as f64 } else { 0.4 * dmg as f64 };
             cands.push((v, Tgt::Face(q)));
         }
         for q in g.opps(p).collect::<Vec<_>>() {
             for &m in &g.player(q).perms {
                 if g.is_creature(m)
                     && !g.perm(m).phased
-                    && etgh(g, m) <= dmg
+                    && etgh(g, m) <= eff
                     && pval(g, m) >= 3.0
                     && !untargetable(g, m)
                 {

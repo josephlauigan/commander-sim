@@ -189,7 +189,7 @@ pub fn token_color(key: &str) -> Colors {
     Colors::from_letters(match key {
         "najeela" | "galadriel" | "yshtola" | "jodah" => "W",
         "seph" | "sauron" => "B",
-        "veyran" | "zada" => "R",
+        "veyran" => "R",
         "alela" => "U",
         _ => "",
     })
@@ -297,6 +297,12 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
             }
             gain(g, p, k * opps.len() as i32)?;
         }
+    }
+    if k > 0 && !blank && has(g, p, Tag::Uprising) {
+        // Garruk's Uprising: a card for each token with power 4 or more ("whenever a creature with power 4 or
+        // greater you control enters" counts tokens; Titania's 5/3 Elementals)
+        let big = out.iter().filter(|&&m| epow(g, m) >= 4).count() as u32;
+        draw(g, p, big, false)?;
     }
     shards_trigger(g, p, k)?;
     if g.dsl_on {
@@ -643,7 +649,7 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
     if cause == "sac" && no_sac(g, m) {
         return Ok(());
     }
-    if cause == "destroy" && !g.auras.is_empty() && cardcode::umbra_save(g, m)? {
+    if matches!(cause, "destroy" | "combat") && !g.auras.is_empty() && cardcode::umbra_save(g, m)? {
         return Ok(());
     }
     let creature = g.is_creature(m);
@@ -671,6 +677,11 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
             to_zone_card(g, m, Zone::Exile);
         }
         return Ok(());
+    }
+    if creature {
+        g.player_mut(p).creature_died = Some(g.turn_stamp()); // Essenceknit Scholar
+        let st = g.turn_stamp();
+        g.died_count = if g.died_count.0 == Some(st) { (Some(st), g.died_count.1 + 1) } else { (Some(st), 1) }; // Lagomos
     }
     if creature && hushed(g) {
         // still a death (Python doesn't record it here): common.aura_fall returns Angelic Destiny for it
@@ -839,6 +850,15 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
             return Ok(());
         }
     }
+    if x.data.truthy(DataKey::Ferocity)
+        && returns_left(g, cd)
+        && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
+        && trigger_window(g, p, Some(m), "Ferocity of the Hunt: return it to the battlefield tapped", None)?
+    {
+        let n = enter(g, x.orig, cd, Enter::default())?;
+        g.perm_mut(n).tapped = true;
+        return Ok(());
+    }
     to_zone_card(g, m, Zone::Gy);
     if !g.hooks.is_empty() && creature {
         fire_trigger(g, Event::CreatureToGy, Call::Leaves { m })?; // Nim Deathmantle
@@ -935,14 +955,12 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
-    let hasted = {
-        let pl = g.player_mut(p);
-        pl.haste_next.iter().position(|&h| h == cd).map(|i| pl.haste_next.remove(i)).is_some() // Generator Servant
-    };
     let born = g.enter_no;
+    let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
+    let scales = if plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
-    x.sick = how.sick && !haste && !hasted;
+    x.sick = how.sick && !haste;
     x.phys = phys;
     x.born = born;
     if let Some(l) = loyalty {
@@ -952,8 +970,8 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         x.plus = 1; // returns with its +1/+1 counter (so it survives -X/-X effects)
         x.undying = true;
     }
-    if how.plus != 0 {
-        x.plus = how.plus; // enters with counters (persist: -1)
+    if plus != 0 {
+        x.plus = plus + scales; // enters with counters (persist: -1)
     }
     x.on_bf = true;
     if has_dsl {
@@ -1335,7 +1353,9 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         Some("wayfinder") => {
             let n = g.player(p).library.len().min(4);
             let mut top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
-            if let Some(i) = top.iter().position(|&c| g.db.get(c).land) {
+            // the titania deck leaves its fetch lands in the graveyard, where Titania returns them
+            let keep_fetch = g.player(p).key == "titania";
+            if let Some(i) = top.iter().position(|&c| g.db.get(c).land && !(keep_fetch && g.db.get(c).tag(Tag::F))) {
                 let l = top.remove(i);
                 g.player_mut(p).hand.push(l);
             }

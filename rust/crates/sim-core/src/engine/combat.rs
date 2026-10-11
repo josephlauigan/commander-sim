@@ -626,7 +626,7 @@ fn resolve_combat_inner(
                     dmg
                 }
             };
-            if dmg > 0 && g.fog == Some(g.turn_stamp()) {
+            if dmg > 0 && g.fog == Some(g.turn_stamp()) && !g.unpreventable() {
                 dmg = 0; // Spore Frog and other fogs
             }
             if dmg > 0

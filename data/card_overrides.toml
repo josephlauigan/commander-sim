@@ -4002,8 +4002,8 @@ note = ""
 types = "I"
 tags = "prot=jodah"
 dsl = []
-status = "Approximate"
-note = "hexproof until end of turn; the Royal Role is a +1/+1 counter (its ward {1} is not modeled); Jodah's AI casts it in response to removal aimed at Jodah"
+status = "Full"
+note = "hexproof until end of turn and a Royal Role on the creature (+1/+1 and ward {1}; a Role you control on it is replaced; it is not a counter, so Hardened Scales ignores it); Jodah's and the bill deck's AI cast it in response to removal aimed at a creature worth saving"
 
 ["Ruby Medallion"]
 status = "Full"
@@ -5558,8 +5558,8 @@ note = "until end of turn: cast spells and play lands from the graveyard as it w
 ["Yawgmoth, Thran Physician"]
 tags = "leg human pow=2 tgh=4"
 dsl = []
-status = "Approximate"
-note = "pay 1 life, sacrifice: -1/-1 counter on an X/1 (tokens included) and draw, in your main phase and after blockers when attacked (unblocked X/1 attackers); BB discard: proliferate (the undying loop is a combo); protection from Humans not modeled"
+status = "Full"
+note = "pay 1 life, sacrifice another creature: a -1/-1 counter on up to one target creature (any opposing creature, a kill first) and draw a card, in your main phases and after blockers when attacked (the fodder is a blocker that dies anyway or cheap); BB, discard a card: proliferate (+1/+1 and -1/-1 counters, loyalty, lore counters; it kills the creatures at toughness 0); protection from Humans: no damage from Humans and Humans cannot block it (a Human creature's ability targeting it is not checked). Your yawgmoth deck uses the new plan; the opponent pool's Yawgmoth deck keeps the old one"
 
 ["Young Wolf"]
 status = "Full"
@@ -5970,3 +5970,568 @@ note = "taps for {C}; {3},{T}: draw a card while you control a creature with pow
 ["Generator Servant"]
 status = "Full"
 note = "{T}, sacrifice: add {C}{C} (the unspent half floats); a creature spell paid with it gains haste (Player.haste_next, read in zones::enter)"
+
+# ---- cand-torbran (2026-10-11): the Torbran candidate deck; code in rust/crates/sim-core/src/impls/torbran.rs
+["Torbran, Thane of Red Fell"]
+types = "C"
+tags = "leg pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "engine replacement effect (life::torbran_plus): +2 on every damage the player's sources deal to an opponent or an opponent's creature (spells, abilities, combat, tokens); the deck is mono-red, so every source is red; not damage to you or your permanents"
+
+["Impractical Joke"]
+types = "S"
+tags = "rem=dmg3 tgt=cp"
+dsl = []
+status = "Full"
+note = "damage can't be prevented this turn (Game::no_prevent: Chasm, Solitary Confinement, Tajic, Dovin, Cho-Manno, fogs; not protection from red) and 3 damage to a creature; planeswalkers are never targeted by the AI's damage"
+
+["Borderland Marauder"]
+types = "C"
+tags = "human warrior pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "whenever it attacks, +2/+0 until end of turn"
+
+["Goblin Medics"]
+types = "C"
+tags = "shaman pow=1"
+dsl = []
+status = "Full"
+note = "whenever it becomes tapped (it attacks; nothing else taps it in the deck), 1 damage to any target: a creature worth killing, else the weakest opponent (a face with Torbran out)"
+
+["Godo's Irregulars"]
+types = "C"
+tags = "human warrior pow=1"
+dsl = []
+status = "Full"
+note = "{R}: 1 damage to the creature blocking it; the AI pays as many {R} as it takes to kill a blocker worth killing"
+
+["Karplusan Wolverine"]
+types = "C"
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "whenever it becomes blocked, 1 damage to any target"
+
+["Rift Bolt"]
+status = "Full"
+note = "3 damage to any target; suspend 1-{R} (the AI suspends it with spare mana after combat: cast free at the next upkeep)"
+# ---- cand-glissa (2026-10-11): the Glissa Sunslayer candidate deck (and cards the Jenova candidate shares);
+# code in rust/crates/sim-core/src/impls/glissa.rs, tests in tests/cards_glissa.rs
+["Bite Down"]
+status = "Full"
+note = "bite: your creature (a deathtouch creature first, else the most powerful) deals damage equal to its power to the biggest creature or planeswalker it kills; the AI casts it in a main phase"
+
+["Hard-Hitting Question"]
+status = "Full"
+note = "bite (as Bite Down) for {G} at sorcery speed"
+
+["Compel Brutality"]
+status = "Full"
+note = "mode 1: bite at a creature or planeswalker an opponent controls; mode 2: a planeswalker of yours deals damage equal to its loyalty (used only when it kills; the decks have no planeswalkers)"
+
+["Diplomatic Relations"]
+dsl = []
+status = "Full"
+note = "the creature gets +1/+0 and vigilance until end of turn, then bites a creature an opponent controls (the extra power counts when choosing the target)"
+
+["Burrog Barrage"]
+status = "Full"
+note = "+1/+0 first if you have cast another instant or sorcery this turn, then bites up to one creature an opponent controls (the AI casts it only at a target it kills)"
+
+["Knockout Maneuver"]
+dsl = []
+status = "Full"
+note = "a +1/+1 counter on your creature, then it bites a creature an opponent controls (the counter counts when choosing the target)"
+
+["Chelonian Tackle"]
+dsl = []
+status = "Full"
+note = "+0/+10 until end of turn, then your creature fights a creature an opponent controls: the victim hits back (a deathtouch creature kills it, so those are left alone); the AI casts it only at a target it kills"
+
+["Cost of Brilliance"]
+status = "Full"
+note = "you draw two cards and lose 2 life (cast at 7 or more life); the +1/+1 counter goes on your best creature"
+
+["Foolish Fate"]
+dsl = []
+status = "Full"
+note = "destroy target creature (the engine's removal choice); infusion: if you gained life this turn, its controller also loses 3 life"
+
+["Witherbloom Charm"]
+dsl = []
+tags = ""
+status = "Full"
+note = "the AI picks a mode when it casts it: destroy a nonland permanent with mana value 2 or less (tokens count as 0), sacrifice a Food, Clue, worthless token or spare Treasure to draw two, or gain 5 life (when life is 15 or less, better with Foolish Fate or Tenured Concocter)"
+
+["Culling Ritual"]
+dsl = []
+tags = ""
+status = "Full"
+note = "destroys each nonland permanent with mana value 2 or less (tokens, Treasure, Food and Clues of every player included), then adds {B} or {G} for each, split by what the hand needs; the AI casts it when the opponents lose clearly more than it does"
+
+["Track Down"]
+dsl = []
+status = "Full"
+note = "scry 3 (the engine's scry), then if the top card is a creature or land card you draw it"
+
+["Ferocity of the Hunt"]
+status = "Full"
+note = "the Aura gives +1/+0 and deathtouch (on the best creature, the commander first); when the creature dies its card returns to the battlefield tapped under its owner's control (zones::die_rest, once per creature card per turn)"
+
+["Armored Scrapgorger"]
+dsl = []
+status = "Full"
+note = "{T}: any color; whenever it becomes tapped (for mana) it exiles a card from a graveyard (an opponent's best creature card first, else your least useful) and gets an oil counter; +3/+0 with three or more oil counters. The AI keeps it home (noatk)"
+
+["Canyon Crawler"]
+dsl = []
+status = "Full"
+note = "6/6 deathtouch; a Food token as it enters; swampcycling {2} (the AI cycles it when it needs lands: at most 4 lands in play and none in hand)"
+
+["Forum Necroscribe"]
+status = "Full"
+note = "ward--discard a card (rules::removal_taxes: the spell's caster discards their worst card, or the spell is countered with an empty hand); repartee: returns your best creature card from the graveyard to the battlefield"
+
+["Hardbristle Bandit"]
+status = "Full"
+note = "{T}: any color; whenever you commit a crime (a spell, Mabel, Armored Scrapgorger or Vault Plunderer targeting an opponent or their things) it untaps, once each turn"
+
+["Hunter's Axe"]
+types = "A"
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 0 },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+0; whenever it attacks it gains deathtouch (trample when it already has deathtouch) until end of turn; equip {2}"
+
+["Lashwhip Predator"]
+status = "Full"
+note = "5/7 reach; costs {2} less while your opponents control three or more creatures between them"
+
+["Lecturing Scornmage"]
+status = "Full"
+note = "repartee: a +1/+1 counter whenever you cast an instant or sorcery that targets a creature (every bite does)"
+
+["Mabel, Bitter Recluse"]
+status = "Full"
+note = "deathtouch; when it enters, removes up to three counters from another target creature or planeswalker: +1/+1 counters off the best opposing creature, -1/-1 counters off one of yours, or loyalty off an opposing planeswalker"
+
+["Melancholic Poet"]
+status = "Full"
+note = "repartee: each opponent loses 1 life and you gain 1 whenever you cast an instant or sorcery that targets a creature"
+
+["Paladin of Predation"]
+status = "Full"
+note = "toxic 6 (six poison counters with its combat damage to a player, unless Melira); can't be blocked by creatures with power 2 or less (rules::evasion_blocked)"
+
+["Tenured Concocter"]
+status = "Full"
+note = "vigilance; +2/+0 while you have gained life this turn (infusion); you may draw a card whenever a spell or ability an opponent controls removes or damages it (engine::removal::apply_removal)"
+
+["Vault Plunderer"]
+status = "Full"
+note = "when it enters, you draw a card and lose 1 life (an opponent instead at 3 life or less)"
+
+["Writhing Necromass"]
+status = "Full"
+note = "5/5 deathtouch; costs {1} less for each creature card in your graveyard"
+
+["Bugenhagen, Wise Elder"]
+status = "Full"
+note = "reach; {T}: any color; at the beginning of your upkeep, if you control a creature with power 7 or greater, draw a card"
+
+["Noxious Newt"]
+status = "Full"
+note = "1/2 deathtouch; {T}: add {G} (the AI keeps it home as a blocker and mana source)"
+
+["Seymour Flux"]
+status = "Full"
+note = "5/5; at the beginning of your upkeep you pay 1 life (above 8 life) to draw a card and put a +1/+1 counter on it"
+# ---- the jenova candidate deck (impls/jenova.rs)
+["Jenova, Ancient Calamity"]
+status = "Full"
+note = "beginning of combat on your turn (before attackers): counters equal to her power on the best other creature, which becomes a Mutant; a Mutant you control dying on your turn draws cards equal to its power; the AI sacrifices Mutants of power 3+ to outlets after combat. Only the first combat phase triggers"
+
+["Forced Adaptation"]
+status = "Full"
+note = "Aura: a +1/+1 counter on the enchanted creature at the beginning of its controller's upkeep"
+
+["Lion Umbra"]
+status = "Full"
+note = "Aura on a modified creature (counter, Equipment or Aura): +3/+3, reach, vigilance; umbra armor (also against lethal combat damage). It is a modification itself, so the host stays modified"
+
+["Adventurous Eater"]
+add_tags = ["prepare"]
+status = "Full"
+note = "enters prepared: a copy of Have a Bite ({B}: a +1/+1 counter on the best creature, gain 1 life) can be cast once; the copy can't be countered"
+
+["Ambitious Augmenter"]
+tags = "wizard pow=1 tgh=1"
+status = "Full"
+note = "increment (mana spent above the smaller of power and toughness: a +1/+1 counter; X not counted); dying with counters makes a 0/0 green and blue Fractal that carries them"
+
+["Dormant Grove"]
+tags = ""
+dsl = []
+status = "Full"
+note = "beginning of combat on your turn: a +1/+1 counter on the best creature, then at toughness 6+ it transforms into Gnarled Grovestrider (3/6 Treefolk, other creatures have vigilance)"
+
+["Edgar, Moonlit Sovereign"]
+status = "Full"
+note = "flash; two +1/+1 counters at your end step if you cast no spell; {4}{G}: a counter on each creature with one (3+ of them, spare mana)"
+
+["Efflorescence"]
+tags = ""
+dsl = []
+status = "Full"
+note = "two +1/+1 counters on the best creature (Jenova first); infusion: with life gained this turn it gains trample and indestructible until end of turn"
+
+["Essenceknit Scholar"]
+tags = "pow=3 tgh=1"
+status = "Full"
+note = "enters: a 1/1 black and green Pest that gains its controller 1 life when it attacks; your end step: draw a card if a creature died under your control this turn"
+
+["Hungry Graffalon"]
+status = "Full"
+note = "reach; increment (mana spent above the smaller of power and toughness: a +1/+1 counter; X not counted)"
+
+["Old-Growth Educator"]
+status = "Full"
+note = "reach, vigilance; infusion: enters with two +1/+1 counters if you gained life this turn"
+
+["Teacher's Pest"]
+status = "Full"
+note = "menace; gains 1 life when it attacks; {B}{G} from the graveyard: returns tapped (when a sacrifice outlet or Jenova is out)"
+
+["Topiary Lecturer"]
+status = "Full"
+note = "increment; {T}: adds {G} equal to its power"
+
+["Vinelasher Adept"]
+status = "Full"
+note = "reach; enters: three +1/+1 counters on the best creature (Jenova first); basic landcycling {2} when the hand lacks lands"
+# ---- the gix candidate deck (rust/crates/sim-core/src/impls/gix.rs; tests in tests/cards_gix.rs); the shared cards are modeled here for the yawgmoth and B/R candidates too
+["Al Bhed Salvagers"]
+status = "Full"
+note = "when it or another creature or artifact you control dies (Clue, Treasure, Food and Blood tokens count when sacrificed), the weakest opponent loses 1 life and you gain 1"
+
+["Apex Witchstalker"]
+status = "Full"
+note = "menace; enters or dies: gain 2 life; basic landcycling {2} when the hand lacks lands"
+
+["Callous Inspector"]
+dsl = []
+status = "Full"
+note = "menace; when it dies it deals 1 damage to you and you create a Clue"
+
+["Corpulent Corpse"]
+status = "Full"
+note = "fear (only artifact and black creatures block it); suspend 5 for {B} in the main phase (the engine's suspend table), cast free with haste on the fifth upkeep; hard-cast for six only with eight lands"
+
+["Dark Matter Manipulator"]
+status = "Full"
+note = "enters: mill three cards; +2/+0 for every seven cards in your graveyard"
+
+["Gollum, Silent Slinker"]
+status = "Full"
+note = "menace 4/3; Meager Meal ({B} sorcery adventure): a +1/+1 counter on the creature that connects best and you gain 2 life (cast with a creature out, more eagerly with a lifegain payoff); the creature stays in the hand to cast later"
+
+["Grim Wanderer"]
+status = "Full"
+note = "5/3 flash; castable only if a creature died this turn (the AI's priority is 0 otherwise)"
+
+["Necrosquito"]
+dsl = []
+status = "Full"
+note = "flying; enters with two oil counters (+1/+1 each); another creature or artifact you control going to the graveyard (artifact tokens when sacrificed too) adds an oil counter"
+
+["Restless Bloodseeker"]
+status = "Full"
+note = "end step, if you gained life this turn: a Blood token; sacrifice two Blood tokens (sorcery speed) to transform into Bloodsoaked Reveler (3/3, {4}{B}: each opponent loses 2 life and you gain 2); Blood tokens are kept as a count and rummage ({1}, discard, sacrifice: draw) when the hand has a spare card"
+
+["Salvaged Manaworker"]
+status = "Full"
+note = "1/3 artifact creature; {1}: add one mana of any colour (once each turn) is a colour filter: when a colour is missing, one single mana pays as any colour of the deck's identity"
+
+["Sangrophage"]
+status = "Full"
+note = "3/3 for BB; at your upkeep it is tapped unless you pay 2 life (the AI pays above 14 life)"
+
+["Overkill"]
+tags = "rem=shrink9999 tgt=c"
+status = "Full"
+note = "-0/-9999: kills any creature (indestructible does not help)"
+
+["Depressurize"]
+tags = "rem=destroy tgt=c"
+status = "Full"
+note = "-3/-0, then destroy if its power is 0 or less: targets a creature of power 3 or less that is not indestructible (the bare -3/-0 trick is never cast)"
+
+["End of the Hunt"]
+tags = ""
+status = "Full"
+note = "the opponent whose greatest-mana-value creature or planeswalker is worth the most exiles one with the greatest mana value (the least valuable of those tied)"
+
+["Balustrade Spy"]
+status = "Full"
+note = "flying; enters: a player reveals cards until a land and mills them (yourself with Dark Matter Manipulator out, else the opponent with the biggest library)"
+
+["Deepcavern Imp"]
+status = "Full"
+note = "flying, haste; echo: at the first upkeep discard a card (the AI pays with a junk card or a full hand) or sacrifice it"
+
+["Gravblade Heavy"]
+status = "Full"
+note = "3/4; with an artifact (Clue, Treasure, Food and Blood tokens count) it gets +1/+0 and deathtouch"
+
+["Ulna Alley Shopkeep"]
+status = "Full"
+note = "menace; infusion: +2/+0 while you gained life this turn"
+
+["Key to the Side-Door"]
+dsl = []
+status = "Full"
+note = "{2}, {T}: target creature can't be blocked this turn (the AI uses it before combat on the best attacker a blocker could stop); the second ability needs a legendary card with the same name as a legendary permanent you control, which a singleton deck cannot hold, so it is not modeled"
+
+["Mask of Memory"]
+dsl = [
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "draw", n = 2, who = "you" }, { do = "discard", n = 1, who = "you" }] },
+  { type = "static", static = "equip_cost", mana = 1 },
+]
+status = "Full"
+note = "equip {1}, preferably on an evasive creature; when the equipped creature deals combat damage to a player, draw two cards then discard one"
+
+["Medic's Kitesail"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 1, tgh = 0 },
+  { type = "static", static = "equip_keyword", keyword = "flying" },
+  { type = "triggered", event = "attack", source = "equipped", effects = [{ do = "gain_life", n = 1, who = "you" }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equip {2} on the best ground attacker: +1/+0, flying, and it gains you 1 life whenever it attacks"
+
+["Braids's Frightful Return"]
+status = "Full"
+note = "read ahead: the AI starts on the chapter worth most (I: sacrifice a cheap creature, each opponent discards; II: the best creature card in the graveyard to hand; III: the opponent with the biggest board sacrifices a spare nonland nontoken permanent, or loses 2 life and you draw); lore counters after the draw step and from proliferate; sacrificed after III"
+
+["Presumed Dead"]
+status = "Full"
+note = "+2/+0 until end of turn and 'when this creature dies, return it to the battlefield under its owner's control and suspect it' (menace, can't block); the AI casts it before combat on a creature worth 2 or more"
+
+["Rewrite Regrets"]
+status = "Full"
+note = "returns the best creature card (mana value 6 or less) from your graveyard to the battlefield (a planeswalker card only when no creature is there); Empower Jace 2 (the Jace token, loyalty +2)"
+
+["Soul Enervation"]
+status = "Full"
+note = "flash; enters: -4/-4 until end of turn on the opposing creature it kills (most valuable) or shrinks most; whenever one or more creature cards leave your graveyard, each opponent loses 1 life and you gain 1 (seen as a state check of the graveyard, so it fires right after the card leaves)"
+
+["Arnim Zola, Bio-Fanatic"]
+status = "Full"
+note = "{3}, {T}: a tapped 2/1 black Villain token with menace, only with two or more creature cards in your graveyard"
+
+["Bloodsworn Squire"]
+dsl = []
+status = "Full"
+note = "{1}{B}, discard a card: indestructible until end of turn, tap it, and with four or more creature cards in your graveyard it transforms into Bloodsworn Knight (power and toughness each equal to the creature cards in your graveyard, same ability); the AI activates it to transform"
+
+["Catapult Fodder"]
+status = "Full"
+note = "at the beginning of combat on your turn, with three or more creatures that each have toughness greater than power, it transforms into Catapult Captain (2/6); {2}{B}, {T}, sacrifice another creature: target opponent loses life equal to its toughness"
+
+["Cheerful Osteomancer"]
+status = "Full"
+note = "enters prepared: a copy of Raise Dead ({B} sorcery: a creature card from your graveyard to your hand) can be cast once (the copy can't be countered)"
+
+["Dread Drone"]
+status = "Full"
+note = "enters: two 0/1 colorless Eldrazi Spawn tokens, each 'sacrifice this token: add {C}' (the mana code uses them)"
+
+["Festering Goblin"]
+status = "Full"
+note = "when it dies, target creature gets -1/-1 until end of turn: an opposing creature it kills, else the most valuable"
+
+["It Doesn't Add Up"]
+tags = ""
+dsl = []
+status = "Full"
+note = "instant: returns the best creature card from your graveyard to the battlefield and suspects it (menace, can't block)"
+
+["Perigee Beckoner"]
+status = "Full"
+note = "enters: another creature you control gets +2/+0 until end of turn and 'when this creature dies, return it to the battlefield tapped under its owner's control'; Warp {1}{B}: cast for the warp cost when the full cost can't be paid, exiled at the beginning of the next end step, castable from exile on a later turn for its mana cost"
+
+["Phyrexian Delver"]
+dsl = []
+status = "Full"
+note = "enters: the best creature card from your graveyard returns to the battlefield and you lose life equal to its mana value (never below 6 life)"
+
+["Send in the Pest"]
+dsl = []
+status = "Full"
+note = "each opponent discards a card (their choice: the worst); you create a 1/1 black and green Pest that gains you 1 life whenever it attacks"
+
+# ---- The Lord of Pain / Smaug candidate decks (rust/crates/sim-core/src/impls/lordofpain.rs, smaug.rs; tests/cards_rakdos.rs)
+["The Lord of Pain"]
+status = "Full"
+note = "opponents can't gain life (compiled static); each player's first spell each turn: the Lord deals damage equal to its mana value to another player (the opponent closest to dying, never the caster; its own controller only when no one else is left)"
+
+["Smaug the Impenetrable"]
+status = "Full"
+note = "noncombat damage dealt to Smaug (removal, burn, sweepers, its owner's pingers) makes that many Treasures; flying, haste, indestructible are keywords. The AI pings it with Viashino Fangtail and aims the deck's any-target damage at it when nothing better"
+
+["Charforger"]
+status = "Full"
+note = "token on enter (compiled); an oil counter whenever another creature or artifact (tokens, Treasure/Food/Clue included) you control goes to the graveyard; three counters: exile the top card, playable this turn (an option when it has three)"
+
+["Kalain, Reclusive Painter"]
+status = "Full"
+note = "Treasure on enter (compiled); other creatures you control enter with a +1/+1 counter per mana from a Treasure spent to cast them (the engine counts Treasure mana paid per spell; the AI doesn't plan Treasure spending around it)"
+
+["Lagomos, Hand of Hatred"]
+dsl = []
+status = "Full"
+note = "beginning of combat on your turn: a 2/1 red Elemental with trample and haste, sacrificed at the next end step; {T}: tutor any card, only when five or more creatures died this turn (counted from the start of the turn)"
+
+["Hero's Heirloom"]
+status = "Full"
+note = "equip {2}, +2/+1 (compiled); trample and haste while the equipped creature is legendary"
+
+["Ultimate Magic: Meteor"]
+status = "Full"
+note = "7 damage to each creature (compiled); foretell: {2} to exile it face down (kept in hand, marked), cast later for {5}{R}, and then it also destroys an artifact or land of each opponent (the AI foretells with spare mana and casts it when it kills more of theirs than of its own)"
+
+["Hardened Scales"]
+status = "Full"
+note = "every +1/+1 counter placement on a creature you control (landfall, proliferate, doubling, enters-with-counters, increment, Forced Adaptation ...) gets one more; two Scales stack (cardcode::scales)"
+
+["Bristly Bill, Spine Sower"]
+status = "Full"
+note = "landfall: a +1/+1 counter on target creature (compiled; the bill deck puts it on Silhana, then the biggest stack, then increment and mana creatures); {3}{G}{G}: double the counters on each creature you control, at instant speed (the end of the turn before yours with the mana free, or before combat when it makes the attack lethal; with 4 or more counters)"
+
+["Boughside Wanderers"]
+status = "Full"
+note = "enters: look at the top four, a permanent card to hand, the rest to the bottom at random; landfall +2/+2 until end of turn (compiled)"
+
+["Cactarantula"]
+status = "Full"
+note = "reach; draws a card when an opponent's spell or ability targets it. The {1} discount needs a Desert and the deck has none"
+
+["Carnivorous Canopy"]
+tags = "rem=destroy tgt=fae"
+dsl = []
+status = "Full"
+note = "destroy target artifact, enchantment or creature with flying; if its mana value was 3 or less, proliferate"
+
+["Freestrider Commando"]
+status = "Full"
+note = "plot {3}{G} (kept in hand, marked; cast free on a later turn); enters with two +1/+1 counters if it wasn't cast or was cast free from the plot"
+
+["Ghalta the Unstoppable"]
+status = "Full"
+note = "costs {X} less (X the greatest power among your creatures, never below {G}); trample, and other creatures you control have trample (compiled)"
+
+["Greenbelt Radical"]
+status = "Full"
+note = "disguise: cast face down for {3} as a 2/2 with ward {2} (the morph machinery), turned up for {5}{G}{G} at any time: a +1/+1 counter on each creature you control and they gain trample until end of turn. The normal cast is never made"
+
+["Lifestream's Blessing"]
+dsl = []
+status = "Full"
+note = "draw X cards, X the greatest power among your creatures (at resolution); foretell {2}, cast later for {4}{G}; cast from exile, gain twice X life"
+
+["Sample Collector"]
+status = "Full"
+note = "whenever it attacks, collect evidence 3 (exile cards worth 3 or more from the graveyard) and put a +1/+1 counter on a creature you control"
+
+["Silhana Ledgewalker"]
+status = "Full"
+note = "hexproof; can't be blocked except by creatures with flying"
+
+["Spider-Man, Brooklyn Visionary"]
+status = "Full"
+note = "enters: a basic land onto the battlefield tapped (compiled); web-slinging {2}{G}, returning a tapped creature, when the full cost is out of reach"
+
+["Studious First-Year"]
+status = "Full"
+note = "enters prepared: while prepared, pay {1}{G} to cast a copy of Rampant Growth (a basic land onto the battlefield tapped), which unprepares it"
+
+["Tumbleweed Rising"]
+dsl = []
+status = "Full"
+note = "an X/X green Elemental, X the greatest power among your creatures; plot {2}{G} (kept in hand, marked; cast free on a later turn)"
+
+["Venomous Brutalizer"]
+status = "Full"
+note = "toxic 3 (three poison counters with the combat damage); enters: pay {1}{G} to proliferate"
+
+["Wildgrowth Archaic"]
+cost = "GG"
+status = "Full"
+note = "{2/G}{2/G} is {G}{G} in a mono-green deck; reach, trample; converge: enters with a +1/+1 counter per color spent (one), and each creature spell you cast enters with that many more (one when it cost anything)"
+
+["Additive Evolution"]
+dsl = []
+status = "Full"
+note = "enters: a 0/0 green and blue Fractal with three +1/+1 counters; at the beginning of combat on your turn, a +1/+1 counter on target creature you control, which gains vigilance until end of turn"
+
+["Wild Hypothesis"]
+dsl = []
+status = "Full"
+note = "{X}{G}: a 0/0 green and blue Fractal with X +1/+1 counters, then surveil 2; the AI casts it with all the spare mana (X of two or more)"
+
+["Crushing Canopy"]
+tags = "rem=destroy tgt=fe"
+dsl = []
+status = "Full"
+note = "destroy target creature with flying or target enchantment; the AI casts it only at a legal target"
+
+["Follow the Lumarets"]
+tags = ""
+dsl = []
+status = "Full"
+note = "infusion: look at the top four, a creature or land card to your hand, two if you gained life this turn; the rest to the bottom in a random order"
+
+["Something Worth Saving"]
+tags = ""
+dsl = []
+status = "Full"
+note = "mill four, the best permanent card from among them to your hand (a fetch land stays in the graveyard for Titania), gain 1 life"
+
+["Scout the City"]
+tags = ""
+dsl = []
+status = "Full"
+note = "both modes: mill three, a permanent card to your hand and gain 3 life; or destroy target creature with flying (chosen when an opposing flier is worth 3 or more)"
+
+["Malevolent Rumble"]
+tags = ""
+dsl = []
+status = "Full"
+note = "reveal the top four, a permanent card to your hand, the rest to the graveyard, and a 0/1 colorless Eldrazi Spawn that can be sacrificed for {C}"
+
+["Glorious Decay"]
+tags = "rem=destroy tgt=fa"
+dsl = []
+status = "Full"
+note = "all three modes: destroy target artifact; 4 damage to target creature with flying; or exile a card from a graveyard and draw. The AI casts it at an artifact or a flier 4 damage kills (tgt=fa); with none it never casts it"
+
+["Annoyed Altisaur"]
+status = "Full"
+note = "reach, trample; cascade on cast (exile until a nonland card with lower mana value, cast it free), the rest to the bottom in a random order"
+
+["Arachnogenesis"]
+tags = ""
+dsl = []
+status = "Full"
+note = "X 1/2 green Spiders with reach, X the creatures attacking you, and no combat damage from non-Spiders this turn (Game::fog_spiders). The AI casts it when the attack takes a third of its life or more, at the declare-attackers priority so the Spiders can block"
+
+["Infestation Expert"]
+tags = "human pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "daybound and nightbound modeled (Game::day_night): the first daybound permanent makes it day; as each turn begins it becomes night after a turn with no spell cast, day after a turn with two or more; at night it is the 4/5 Infested Werewolf and makes two Insects instead of one"

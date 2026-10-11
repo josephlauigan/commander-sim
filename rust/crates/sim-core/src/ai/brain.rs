@@ -382,7 +382,7 @@ pub fn do_cast(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>) -> Res<b
     do_cast_with(g, p, c, zone, Ctx::default())
 }
 
-/// do_cast with the spell's choices made as it is cast (Zada's spells name their target here)
+/// do_cast with the spell's choices made as it is cast (a bite names its creature and target here)
 pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx0: Ctx) -> Res<bool> {
     let db = g.db.clone();
     let d = db.get(c);
@@ -585,6 +585,9 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
 /// brain.attack_response: d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with
 /// instant removal when it's worth the card (a valuable creature, or the attack is dangerous)
 pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
+    if g.player(d).key == "titania" && crate::impls::titania::attack_fog(g, d, p, atk)? {
+        return Ok(true);
+    }
     let rem: Vec<CardId> = g
         .player(d)
         .hand
@@ -748,7 +751,7 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "veyran" => super::veyran::options(g, p, s, post),
         "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
-        "zada" => Ok(crate::impls::zada::zada_options(g, p, post)),
+        "titania" => crate::impls::titania::titania_special(g, p, post),
         _ => Ok(vec![]),
     }
 }
@@ -857,7 +860,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 6] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "zada"];
+const GENERIC_PLAYS: [&str; 6] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "titania"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.

@@ -59,7 +59,7 @@ const MAIN_STYLES: [(&str, Style); 10] = [
     ("jodah", st(1.0, 0.90, 0.30)), // audit/jodah: holding back cost ~2 points
     ("kefka", st(1.0, 0.65, 0.55)),
     ("najeela", st(1.0, 0.90, 0.30)),
-    ("zada", st(1.0, 0.90, 0.30)),
+    ("titania", st(1.0, 0.70, 0.50)),
 ];
 
 /// one of your decks (Python: `p.key in STYLE`, `p.key in MAIN`, `p.key in E.IDENT`), not an outside deck

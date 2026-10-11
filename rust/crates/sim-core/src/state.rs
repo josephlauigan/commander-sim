@@ -55,6 +55,12 @@ pub enum DataKey {
     DruidClass,
     /// Mogg War Marshal's echo was dealt with ('done')
     Echo,
+    /// a token sacrificed at the beginning of the next end step (Lagomos, Hand of Hatred)
+    EotSac,
+    /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
+    Ferocity,
+    /// oil counters (Armored Scrapgorger)
+    Oil,
     /// Ragavan was cast for its dash cost (returned to hand at the end step)
     Dash,
     Elk,
@@ -115,6 +121,8 @@ pub enum DataKey {
     Ruin,
     Serenity,
     Stolen,
+    /// suspected (menace, can't block) until it leaves the battlefield
+    Suspect,
     TapOnReturn,
     Unblockable,
     /// Reconstructed Thopter came back by unearth (exiled at the end step)
@@ -361,6 +369,8 @@ pub struct Player {
     /// life lost / gained this turn (Bloodsoaked Insight, Archfiend, Y'shtola)
     pub lost_turn: Option<(TurnStamp, i32)>,
     pub gained_turn: Option<(TurnStamp, i32)>,
+    /// the last turn a creature died under this player's control (Essenceknit Scholar)
+    pub creature_died: Option<TurnStamp>,
     /// emblems from planeswalker ultimates ('tamiyo', 'nissa' ...)
     pub emblems: Vec<Sym>,
     /// cards taken with Opposition Agent (castable with mana of any type)
@@ -372,10 +382,6 @@ pub struct Player {
     /// noncombat damage was dealt to this player this turn / last turn (Command the Stage)
     pub nc_dmg_this: bool,
     pub nc_dmg_last: bool,
-    /// cards exiled by Glimpse the Impossible, not yet played
-    pub glimpse_exiled: Vec<CardId>,
-    /// creature cards the mana of a Generator Servant was spent on (they gain haste on entering)
-    pub haste_next: Vec<CardId>,
     /// once-per-turn flags (Python's `flag_turn`)
     pub flag_turn: IndexMap<Sym, TurnStamp>,
     /// the AI's memory of who hurt it (brain.note_damage)
@@ -590,14 +596,13 @@ impl Player {
             hit_turn: -1,
             lost_turn: None,
             gained_turn: None,
+            creature_died: None,
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,
             gy_left: None,
             nc_dmg_this: false,
             nc_dmg_last: false,
-            glimpse_exiled: vec![],
-            haste_next: vec![],
             flag_turn: IndexMap::new(),
             grudge: IndexMap::new(),
             cast_names: IndexSet::new(),
@@ -839,6 +844,12 @@ pub struct Game {
     pub dying: Option<PermId>,
     /// the last turn a creature died (Barad-dûr)
     pub died_turn: Option<TurnStamp>,
+    /// creatures that died this turn: (the turn, how many) (Lagomos, Hand of Hatred)
+    pub died_count: (Option<TurnStamp>, u32),
+    /// Treasure mana paid since the last payment began; the spell cast with it takes it (Kalain, Reclusive Painter)
+    pub treasure_paid: u32,
+    /// the last spell cast and the Treasure mana paid for it (Kalain, Reclusive Painter)
+    pub cast_treasure: Option<(CardId, u32)>,
     /// permanents entered, numbered in order (born)
     pub enter_no: u32,
     /// permanents that entered this turn
@@ -873,6 +884,14 @@ pub struct Game {
     pub blocking: Vec<PermId>,
     /// a fog this turn (Spore Frog): no combat damage
     pub fog: Option<TurnStamp>,
+    /// Arachnogenesis: combat damage from non-Spider creatures is prevented this turn
+    pub fog_spiders: Option<TurnStamp>,
+    /// day and night (Infestation Expert): 0 neither, 1 day, 2 night
+    pub day_night: u8,
+    /// the player whose turn began last (day and night look at the turn before)
+    pub dn_last: Option<PlayerId>,
+    /// Impractical Joke: damage can't be prevented this turn
+    pub no_prevent: Option<TurnStamp>,
     /// attacking creatures card code made during attack triggers (Python returns them from CI.fire)
     pub new_attackers: Vec<PermId>,
     /// the game ran out of engine steps (a runaway loop) and was stopped
@@ -1016,6 +1035,9 @@ impl Game {
             returns: IndexMap::new(),
             dying: None,
             died_turn: None,
+            died_count: (None, 0),
+            treasure_paid: 0,
+            cast_treasure: None,
             enter_no: 0,
             entered: vec![],
             in_combat: vec![],
@@ -1033,6 +1055,10 @@ impl Game {
             selfpt: false,
             blocking: vec![],
             fog: None,
+            fog_spiders: None,
+            day_night: 0,
+            dn_last: None,
+            no_prevent: None,
             new_attackers: vec![],
             stopped: false,
             goldfish: false,
@@ -1117,6 +1143,11 @@ impl Game {
     pub fn after(&self, p: PlayerId) -> impl Iterator<Item = PlayerId> + '_ {
         let n = self.players.len();
         (1..n).map(move |k| PlayerId(((p.index() + k) % n) as u8))
+    }
+
+    /// damage can't be prevented this turn (Impractical Joke)
+    pub fn unpreventable(&self) -> bool {
+        self.no_prevent == Some(self.turn_stamp())
     }
 
     pub fn turn_stamp(&self) -> TurnStamp {

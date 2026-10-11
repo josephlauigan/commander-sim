@@ -42,6 +42,21 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 "cna" => is_c && !ty.has(Types::ARTIFACT),
                 "ae" => ty.has(Types::ARTIFACT) || ty.has(Types::ENCHANTMENT),
                 "ac" => is_c || ty.has(Types::ARTIFACT),
+                "fe" => {
+                    // Crushing Canopy: an enchantment or a creature with flying
+                    ty.has(Types::ENCHANTMENT) || (is_c && (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")))
+                }
+                "fa" => {
+                    // Glorious Decay: an artifact, or a creature with flying that 4 damage kills
+                    ty.has(Types::ARTIFACT)
+                        || (is_c && (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")) && etgh(g, m) <= 4)
+                }
+                "fae" => {
+                    // Carnivorous Canopy: an artifact, an enchantment or a creature with flying
+                    ty.has(Types::ARTIFACT)
+                        || ty.has(Types::ENCHANTMENT)
+                        || (is_c && (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")))
+                }
                 _ => is_c,
             };
             if tgt == "blue" && !cd.is_some_and(|d| d.pips.contains('U')) {
@@ -62,6 +77,9 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
             if let (Some(s), Some(d)) = (st, cd) {
                 if &*s.name == "Fatal Push" && d.cmc > 2 && !cardcode::revolt(g, p) {
                     continue;
+                }
+                if &*s.name == "Depressurize" && crate::engine::values::epow(g, m) > 3 {
+                    continue; // -3/-0 must leave it at 0 power or less
                 }
                 if &*s.name == "Bloodchief's Thirst" && d.cmc > 2 && !can_pay(g, p, 2, "BB", false) {
                     continue;
@@ -131,12 +149,17 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
             .iter()
             .filter(|&&x| !g.perm(x).phased && card_name(g, x) == Some("Fiery Emancipation"))
             .count() as u32;
+        let n3 = n * 3i32.pow(k);
         if k > 0 {
-            kind = intern(&format!("dmg{}", n * 3i32.pow(k)));
+            kind = intern(&format!("dmg{n3}"));
         }
     }
     if !g.perm(m).on_bf || untargetable(g, m) {
         return Ok(());
+    }
+    if let Some(a) = actor.filter(|&a| a != owner) {
+        crate::impls::bites::becomes_target(g, m, a)?; // Tenured Concocter: "becomes the target of ... an opponent controls"
+        crate::impls::green_cards::becomes_target(g, m, a)?; // Cactarantula
     }
     if (kind == "destroy" || kind.starts_with("dmg")) && indestructible(g, m) {
         crate::glog!(g, "    {} ({}) is indestructible", g.perm(m).name, g.player(owner).name);

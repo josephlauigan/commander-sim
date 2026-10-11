@@ -418,6 +418,7 @@ fn run(
         }
         "damage" => {
             let dmg = n(g, ctx) + has(g, p, Tag::Thor) as i32;
+            let eff = dmg;
             let to = match &e.to {
                 Some(To::Sel(s)) => (**s).clone(),
                 _ => Sel::default(),
@@ -436,11 +437,11 @@ fn run(
                         .iter()
                         .flat_map(|&q| g.player(q).perms.iter().copied())
                         .filter(|&m| {
-                            g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= dmg && !protected_from(g, m, cols)
+                            g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= eff && !protected_from(g, m, cols)
                         })
                         .collect();
                     let best = max_by(&tg, |m| pval(g, m));
-                    let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= dmg).collect();
+                    let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= eff).collect();
                     if let Some(&q) = lethal.first() {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
                     } else if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
@@ -462,7 +463,8 @@ fn run(
                         if to.sel.as_deref() == Some("target") {
                             snapshot(g, m, ctx);
                         }
-                        if etgh(g, m) <= dmg {
+                        let amt = if g.perm(m).owner != p { eff } else { dmg };
+                        if etgh(g, m) <= amt {
                             if to.sel.as_deref() == Some("target") {
                                 apply_removal(g, Some(p), m, &format!("dmg{dmg}"), spell)?;
                             } else {
@@ -582,7 +584,10 @@ fn run(
             let k = n(g, ctx) * counter_mult(g, p);
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
-                g.perm_mut(m).plus += k;
+                // Hardened Scales: one more on a creature you control (before any doubling)
+                let extra =
+                    if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
+                g.perm_mut(m).plus += k + extra;
             }
         }
         "pump" => {
@@ -697,14 +702,16 @@ fn run(
         "proliferate" => {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    g.perm_mut(m).plus += 1;
+                    let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
+                    g.perm_mut(m).plus += 1 + extra; // Hardened Scales
                 }
             }
         }
         "double_counters" => {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    g.perm_mut(m).plus *= 2;
+                    let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
+                    g.perm_mut(m).plus = g.perm(m).plus * 2 + extra; // Hardened Scales
                 }
             }
         }
@@ -1301,8 +1308,11 @@ pub fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
     if x.eot_kw.contains(&kw) {
         return true;
     }
-    if kw == "trample" && x.data.truthy(crate::state::DataKey::Role) {
+    if kw == "trample" && x.data.get(crate::state::DataKey::Role) == Some(&crate::state::Val::Bool(true)) {
         return true; // a Monster Role
+    }
+    if matches!(kw, "menace" | "cant_block") && x.data.truthy(crate::state::DataKey::Suspect) {
+        return true; // suspected
     }
     if kw == "flying" && g.is_creature(m) && g.player(x.owner).elspeth_emblem {
         return true; // Elspeth's emblem
@@ -1822,8 +1832,9 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         }
         let score = |m: PermId| {
             let y = g.perm(m);
+            let flies = y.fly || has_kw(g, m, "flying");
             (if y.army { 3.0 } else { 0.0 })
-                + (if y.fly || has_kw(g, m, "flying") { 2.0 } else { 0.0 })
+                + if flies { 2.0 } else { 0.0 }
                 + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
         };
