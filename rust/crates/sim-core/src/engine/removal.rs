@@ -140,6 +140,9 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     if !g.perm(m).on_bf || untargetable(g, m) {
         return Ok(());
     }
+    if let Some(a) = actor.filter(|&a| a != owner) {
+        crate::impls::glissa::becomes_target(g, m, a)?; // Tenured Concocter: "becomes the target of ... an opponent controls"
+    }
     if (kind == "destroy" || kind.starts_with("dmg")) && indestructible(g, m) {
         crate::glog!(g, "    {} ({}) is indestructible", g.perm(m).name, g.player(owner).name);
         return Ok(());

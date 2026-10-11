@@ -6017,3 +6017,136 @@ note = "whenever it becomes blocked, 1 damage to any target"
 ["Rift Bolt"]
 status = "Full"
 note = "3 damage to any target; suspend 1-{R} (the AI suspends it with spare mana after combat: cast free at the next upkeep)"
+# ---- cand-glissa (2026-10-11): the Glissa Sunslayer candidate deck (and cards the Jenova candidate shares);
+# code in rust/crates/sim-core/src/impls/glissa.rs, tests in tests/cards_glissa.rs
+["Bite Down"]
+status = "Full"
+note = "bite: your creature (a deathtouch creature first, else the most powerful) deals damage equal to its power to the biggest creature or planeswalker it kills; the AI casts it in a main phase"
+
+["Hard-Hitting Question"]
+status = "Full"
+note = "bite (as Bite Down) for {G} at sorcery speed"
+
+["Compel Brutality"]
+status = "Full"
+note = "mode 1: bite at a creature or planeswalker an opponent controls; mode 2: a planeswalker of yours deals damage equal to its loyalty (used only when it kills; the decks have no planeswalkers)"
+
+["Diplomatic Relations"]
+dsl = []
+status = "Full"
+note = "the creature gets +1/+0 and vigilance until end of turn, then bites a creature an opponent controls (the extra power counts when choosing the target)"
+
+["Burrog Barrage"]
+status = "Full"
+note = "+1/+0 first if you have cast another instant or sorcery this turn, then bites up to one creature an opponent controls (the AI casts it only at a target it kills)"
+
+["Knockout Maneuver"]
+dsl = []
+status = "Full"
+note = "a +1/+1 counter on your creature, then it bites a creature an opponent controls (the counter counts when choosing the target)"
+
+["Chelonian Tackle"]
+dsl = []
+status = "Full"
+note = "+0/+10 until end of turn, then your creature fights a creature an opponent controls: the victim hits back (a deathtouch creature kills it, so those are left alone); the AI casts it only at a target it kills"
+
+["Cost of Brilliance"]
+status = "Full"
+note = "you draw two cards and lose 2 life (cast at 7 or more life); the +1/+1 counter goes on your best creature"
+
+["Foolish Fate"]
+dsl = []
+status = "Full"
+note = "destroy target creature (the engine's removal choice); infusion: if you gained life this turn, its controller also loses 3 life"
+
+["Witherbloom Charm"]
+dsl = []
+tags = ""
+status = "Full"
+note = "the AI picks a mode when it casts it: destroy a nonland permanent with mana value 2 or less (tokens count as 0), sacrifice a Food, Clue, worthless token or spare Treasure to draw two, or gain 5 life (when life is 15 or less, better with Foolish Fate or Tenured Concocter)"
+
+["Culling Ritual"]
+dsl = []
+tags = ""
+status = "Full"
+note = "destroys each nonland permanent with mana value 2 or less (tokens, Treasure, Food and Clues of every player included), then adds {B} or {G} for each, split by what the hand needs; the AI casts it when the opponents lose clearly more than it does"
+
+["Track Down"]
+dsl = []
+status = "Full"
+note = "scry 3 (the engine's scry), then if the top card is a creature or land card you draw it"
+
+["Ferocity of the Hunt"]
+status = "Full"
+note = "the Aura gives +1/+0 and deathtouch (on the best creature, the commander first); when the creature dies its card returns to the battlefield tapped under its owner's control (zones::die_rest, once per creature card per turn)"
+
+["Armored Scrapgorger"]
+dsl = []
+status = "Full"
+note = "{T}: any color; whenever it becomes tapped (for mana) it exiles a card from a graveyard (an opponent's best creature card first, else your least useful) and gets an oil counter; +3/+0 with three or more oil counters. The AI keeps it home (noatk)"
+
+["Canyon Crawler"]
+dsl = []
+status = "Full"
+note = "6/6 deathtouch; a Food token as it enters; swampcycling {2} (the AI cycles it when it needs lands: at most 4 lands in play and none in hand)"
+
+["Forum Necroscribe"]
+status = "Full"
+note = "ward--discard a card (rules::removal_taxes: the spell's caster discards their worst card, or the spell is countered with an empty hand); repartee: returns your best creature card from the graveyard to the battlefield"
+
+["Hardbristle Bandit"]
+status = "Full"
+note = "{T}: any color; whenever you commit a crime (a spell, Mabel, Armored Scrapgorger or Vault Plunderer targeting an opponent or their things) it untaps, once each turn"
+
+["Hunter's Axe"]
+types = "A"
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 0 },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+0; whenever it attacks it gains deathtouch (trample when it already has deathtouch) until end of turn; equip {2}"
+
+["Lashwhip Predator"]
+status = "Full"
+note = "5/7 reach; costs {2} less while your opponents control three or more creatures between them"
+
+["Lecturing Scornmage"]
+status = "Full"
+note = "repartee: a +1/+1 counter whenever you cast an instant or sorcery that targets a creature (every bite does)"
+
+["Mabel, Bitter Recluse"]
+status = "Full"
+note = "deathtouch; when it enters, removes up to three counters from another target creature or planeswalker: +1/+1 counters off the best opposing creature, -1/-1 counters off one of yours, or loyalty off an opposing planeswalker"
+
+["Melancholic Poet"]
+status = "Full"
+note = "repartee: each opponent loses 1 life and you gain 1 whenever you cast an instant or sorcery that targets a creature"
+
+["Paladin of Predation"]
+status = "Full"
+note = "toxic 6 (six poison counters with its combat damage to a player, unless Melira); can't be blocked by creatures with power 2 or less (rules::evasion_blocked)"
+
+["Tenured Concocter"]
+status = "Full"
+note = "vigilance; +2/+0 while you have gained life this turn (infusion); you may draw a card whenever a spell or ability an opponent controls removes or damages it (engine::removal::apply_removal)"
+
+["Vault Plunderer"]
+status = "Full"
+note = "when it enters, you draw a card and lose 1 life (an opponent instead at 3 life or less)"
+
+["Writhing Necromass"]
+status = "Full"
+note = "5/5 deathtouch; costs {1} less for each creature card in your graveyard"
+
+["Bugenhagen, Wise Elder"]
+status = "Full"
+note = "reach; {T}: any color; at the beginning of your upkeep, if you control a creature with power 7 or greater, draw a card"
+
+["Noxious Newt"]
+status = "Full"
+note = "1/2 deathtouch; {T}: add {G} (the AI keeps it home as a blocker and mana source)"
+
+["Seymour Flux"]
+status = "Full"
+note = "5/5; at the beginning of your upkeep you pay 1 life (above 8 life) to draw a card and put a +1/+1 counter on it"
