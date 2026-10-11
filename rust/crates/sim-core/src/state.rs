@@ -106,6 +106,8 @@ pub enum DataKey {
     Prevent,
     Prowess,
     Reflection,
+    /// a Monster Role (Monstrous Rage) is on the creature: +1/+1 and trample
+    Role,
     /// a hasty token copy made by Rionya, Fire Dancer (exiled at the end step)
     Rionya,
     Ruin,

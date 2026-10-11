@@ -3933,7 +3933,7 @@ note = "draw per non-Human power, or Humans +3/+3, whichever is bigger"
 
 ["Return the Favor"]
 status = "Full"
-note = "spree: copies your own big instant/sorcery ({1}{R}{R}), or turns a removal spell aimed at your permanent onto one of the caster's ({1}{R}{R})"
+note = "spree: copies your own big instant/sorcery or turns a removal spell aimed at your permanent onto one of the caster's ({1}{R}{R}); in Zada's deck it copies Zada's trigger (every creature gets two copies)"
 
 ["Return to Dust"]
 types = "I"
@@ -5127,7 +5127,7 @@ cost = "1R"
 tags = "twinflame"
 dsl = []
 status = "Full"
-note = "strive ({2}{R} per extra target): hasty token copies of your nonlegendary creatures, exiled at the end step; the AI copies magecraft creatures when spells are left to cast, ETB creatures (Venser) and attackers"
+note = "strive ({2}{R} per extra target): hasty token copies of your nonlegendary creatures, tokens included, exiled at the end step; the AI copies magecraft creatures when spells are left to cast, ETB creatures (Venser) and attackers; in Zada's deck it targets Zada alone and his copies make a token copy of every creature"
 
 ["Tymna the Weaver"]
 tags = "leg human pow=2 tgh=2 lifelink"
@@ -5593,3 +5593,75 @@ tags = "leg human wizard pow=1 tgh=4 fly"
 dsl = []
 status = "Full"
 note = "attacks: an enchantment with MV 3 or less onto the battlefield (Necropotence and armor Auras on Zur first)"
+
+["Zada, Hedron Grinder"]
+status = "Full"
+note = "an instant or sorcery you cast that targets only Zada is copied for each other creature you control, each copy aimed at a different one (not cast: no cast triggers, no storm); copies resolve before the original; Return the Favor doubles them"
+
+["Ancestral Anger"]
+dsl = []
+status = "Full"
+note = "+X/+0 (X = 1 plus the Ancestral Angers in your graveyard) and trample, draw a card; every Zada copy draws"
+
+["Monstrous Rage"]
+dsl = []
+status = "Full"
+note = "+2/+0 and a Monster Role (+1/+1 and trample; a second Role of the same kind changes nothing); every Zada copy gives one"
+
+["Bulk Up"]
+status = "Full"
+note = "doubles the target's power until end of turn; flashback {4}{R}{R} (the AI flashes it back on Zada as it attacks)"
+
+["Act of Treason"]
+dsl = []
+status = "Full"
+note = "gain control until end of turn, untap, haste; the AI casts it on Zada so fresh creatures can attack"
+
+["Into the Fray"]
+status = "Full"
+note = "the target attacks this turn if able; splice onto Arcane does nothing (the deck has no other Arcane spell)"
+
+["Blazing Crescendo"]
+dsl = []
+status = "Full"
+note = "+3/+1, then exile the top card of your library; you may play it until the end of your next turn; every Zada copy exiles one"
+
+["Sure Strike"]
+status = "Full"
+note = "+3/+0 and first strike on the chosen target; Zada's copies each take their own target"
+
+["Furious Bellow"]
+status = "Full"
+note = "+3/+0, first strike and scry 1 on the chosen target; Zada's copies each take their own target"
+
+["Smaug's Fury"]
+status = "Full"
+note = "+3/+0, reach and first strike on the chosen target; Zada's copies each take their own target"
+
+["Crowd's Favor"]
+status = "Full"
+note = "convoke; +1/+0 and first strike on the chosen target; Zada's copies each take their own target"
+
+["Speed, Young Avenger"]
+status = "Full"
+note = "noncreature spell cast: the AI pays {1} so its best untapped creature with haste can be blocked only by creatures with haste"
+
+["Expressive Firedancer"]
+status = "Full"
+note = "opus: +1/+1 on each instant or sorcery cast, double strike too when 5 or more mana was spent (flashback cost counts, a free cast spends none)"
+
+["Burning Prophet"]
+status = "Full"
+note = "noncreature spell cast: +1/+0 until end of turn, then scry 1"
+
+["Dreadhorde Arcanist"]
+status = "Full"
+note = "attacks: casts an instant or sorcery with mana value up to its power from the graveyard for free (Zada spells at Zada, a few untargeted spells), exiled instead of the graveyard"
+
+["Empty the Warrens"]
+status = "Full"
+note = "storm: a copy for each spell cast before it this turn (all players' spells; Zada's copies are not cast so they add none), two Goblins each"
+
+["Firebird, Blazing Ranger"]
+status = "Full"
+note = "attacks: other attackers get +X/+0, X = Firebird's power"

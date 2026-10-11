@@ -27,6 +27,7 @@ pub mod t4;
 pub mod t5;
 pub mod topdeck;
 pub mod yshtola;
+pub mod zada;
 pub mod zur;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
@@ -56,5 +57,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     yshtola::register(&mut r, db)?;
     alela::register(&mut r, db)?;
     jodah::register(&mut r, db)?;
+    zada::register(&mut r, db)?;
     Ok(r)
 }

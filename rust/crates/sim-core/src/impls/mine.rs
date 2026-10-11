@@ -3109,7 +3109,7 @@ fn reenact(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
 
 // ------------------------------------------------------------------ Return the Favor (spree)
 /// +{1}: copy target instant or sorcery spell: your own big spell
-fn rtf_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
+pub(crate) fn rtf_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
     let sd = g.db.get(spell);
     if g.in_rtf || !g.player(p).hand.contains(&c) || !(sd.instant || sd.sorcery) || spell == c {
         return Ok(());
@@ -3676,7 +3676,7 @@ const MAGECRAFT: [Tag; 6] = [Tag::Ping, Tag::Mystic, Tag::Spelldraw, Tag::Spellt
 
 /// mine.twinflame_value: what a hasty token copy of creature m (until the end step) is worth this turn; spells: the
 /// instants and sorceries still castable after Twinflame (each triggers a magecraft copy again)
-fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spells: Option<usize>) -> f64 {
+pub(crate) fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spells: Option<usize>) -> f64 {
     let x = g.perm(m);
     let Some(cd) = x.cd else { return 0.0 };
     if !g.is_creature(m) || x.phased || is_legendary(g, m) || x.owner != p {
@@ -3750,7 +3750,7 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
 
 /// Strive: {1}{R}, plus {2}{R} for each target beyond the first. Hasty token copies of any number of your creatures,
 /// exiled at the next end step. The AI copies the creatures worth copying that it can pay for, in its main phases.
-fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let Some(post) = post else { return Ok(vec![]) };
     if g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
         return Ok(vec![]);

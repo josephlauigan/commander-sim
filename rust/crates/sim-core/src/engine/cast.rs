@@ -546,7 +546,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
             "seph" => 8.0,
             "veyran" => 5.0,
             "sauron" | "najeela" => 6.0,
-            "galadriel" | "yshtola" | "alela" | "jodah" => 7.0,
+            "galadriel" | "yshtola" | "alela" | "jodah" | "zada" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);

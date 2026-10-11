@@ -189,7 +189,7 @@ pub fn token_color(key: &str) -> Colors {
     Colors::from_letters(match key {
         "najeela" | "galadriel" | "yshtola" | "jodah" => "W",
         "seph" | "sauron" => "B",
-        "veyran" => "R",
+        "veyran" | "zada" => "R",
         "alela" => "U",
         _ => "",
     })

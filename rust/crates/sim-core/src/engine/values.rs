@@ -73,6 +73,9 @@ pub fn static_bonus(g: &Game, m: PermId) -> i32 {
     let p = x.owner;
     let tagged = |t: Tag| card_tag(g, m, t);
     let mut b = 0;
+    if x.data.truthy(crate::state::DataKey::Role) {
+        b += 1; // a Monster Role
+    }
     if has(g, p, Tag::Anthem2) && !tagged(Tag::Anthem2) {
         b += 2; // Elesh Norn, Grand Cenobite
     }

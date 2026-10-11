@@ -96,6 +96,9 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
     if cardcode::evasion_blocked(g, b, a) {
         return false;
     }
+    if xa.eot_kw.contains(&"haste_blockers") && !has_haste(g, b) {
+        return false; // Speed, Young Avenger: only creatures with haste can block it
+    }
     if cardcode::granted_kw(g, a, "forestwalk")
         && g.player(xb.owner).lands.iter().any(|&l| {
             let d = g.db.get(g.land(l).cd);

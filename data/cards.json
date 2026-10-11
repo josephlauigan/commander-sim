@@ -391,24 +391,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "haste",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -416,10 +399,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn.   [partly: gain control of target creature until end of turn; untap that creature]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -1703,18 +1684,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -1722,10 +1692,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Target creature gains trample and gets +X/+0 until end of turn, where X is 1 plus the number of cards named ~ in your graveyard."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -6409,30 +6377,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 3,
-       "tgh": 1,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -6440,7 +6385,7 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -47224,25 +47169,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 2,
-       "tgh": 0,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "role token"
@@ -47252,10 +47179,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Target creature gets +2/+0 until end of turn. Create a Monster Role token attached to it.   [partly: create a monster role token attached to it]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
