@@ -22,6 +22,7 @@ use crate::engine::zones::{
     sac_worth, searchable, to_zone_card,
 };
 use crate::flow::Res;
+use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
@@ -164,6 +165,26 @@ pub fn aura_spec(g: &Game, c: CardId) -> Option<&'static AuraSpec> {
     g.registry.get(c)?.aura
 }
 
+/// common.human_aura_host: practice mode: the person picks the creature an Aura enchants (theirs, or any for an Aura
+/// that can go either way)
+pub fn human_aura_host(g: &Game, p: PlayerId, spec: &AuraSpec, a: PermId) -> Res<Option<PermId>> {
+    let cast = g.last_cast_etb && !g.aura_put;
+    let mut cands: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && m != a).collect();
+    if spec.target != "own" {
+        cands.extend(
+            g.opps(p)
+                .flat_map(|q| g.player(q).perms.iter().copied())
+                .filter(|&m| g.is_creature(m) && !g.perm(m).phased),
+        );
+    }
+    cands.retain(|&m| !(cast && g.perm(m).owner != p && untargetable(g, m)));
+    if cands.is_empty() {
+        return Ok(None);
+    }
+    cards::pick_perm(g, p, "target", &format!("{}: enchant which creature?", g.db.get(g.perm(a).cd.unwrap()).name), &cands, None)
+}
+
 fn spec_of(g: &Game, a: PermId) -> Option<&'static AuraSpec> {
     aura_spec(g, g.perm(a).cd?)
 }
@@ -209,11 +230,13 @@ fn aura_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let mut host = g.attach_to;
     if host.is_none_or(|h| !g.perm(h).on_bf) {
         host = None;
-        // HUMAN(phase 9): human_aura_host (the person picks the creature)
-        if let Some(f) = spec.host_pick {
+        let human = human_of(g, owner(g, src)).is_some();
+        if human {
+            host = human_aura_host(g, owner(g, src), spec, src)?;
+        } else if let Some(f) = spec.host_pick {
             host = f(g, owner(g, src), src)?;
         }
-        if host.is_none() {
+        if host.is_none() && !human {
             host = own_host(g, owner(g, src), spec, Some(src));
         }
     }
@@ -869,7 +892,9 @@ pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<b
     if !g.is_creature(m) || !matches!(kind, "exile" | "bounce" | "tuck") || g.perm(m).is_cmd {
         return Ok(false);
     }
-    // HUMAN(phase 9): a person's creature is not sacrificed for them
+    if human_of(g, p).is_some() {
+        return Ok(false); // a person's creature is not sacrificed for them
+    }
     let Some(&o) = outlets(g, p).iter().find(|&&o| o != m) else { return Ok(false) };
     sac_through(g, p, o, m)?;
     Ok(true)
@@ -1953,7 +1978,9 @@ fn blink(g: &mut Game, _p: PlayerId, m: PermId) -> Res<Option<PermId>> {
 /// common._ephemerate_rebound: cast it again from exile for free (a real cast) on the best enter-effect creature,
 /// then to the graveyard; with no creature to target it isn't cast and stays in exile
 fn ephemerate_rebound(g: &mut Game, p: PlayerId, c: CardId) -> Res {
-    // HUMAN(phase 9): play.cards.ephemerate_rebound (the person picks)
+    if human_of(g, p).is_some() {
+        return cards::ephemerate_rebound(g, p, c);
+    }
     let cands: Vec<PermId> = g
         .player(p)
         .perms
@@ -2149,7 +2176,9 @@ pub fn gy_response(g: &mut Game, reanimator: PlayerId, value: f64, src_player: P
         return Ok(false);
     }
     for (src, imp) in hooked(g, Event::GyHate) {
-        // HUMAN(phase 9): a person activates their own
+        if human_of(g, owner(g, src)).is_some() {
+            continue; // practice mode: the person activates their own
+        }
         if owner(g, src) != reanimator && (imp.gy_hate.unwrap())(g, src, reanimator, src_player)? {
             return Ok(true);
         }
@@ -2436,9 +2465,25 @@ pub fn narset_dig(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     for _ in 0..g.player(p).library.len().min(4) {
         top.push(g.player_mut(p).library.pop().unwrap());
     }
-    // HUMAN(phase 9): the person picks one (or nothing)
     let ok: Vec<usize> = (0..top.len()).filter(|&i| noncre(g.db.get(top[i]))).collect();
-    let pick = max_by(&ok, |i| card_worth(g, p, top[i], false));
+    let pick = if human_of(g, p).is_some() && !ok.is_empty() {
+        let names: Vec<String> = top.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+        let labels: Vec<String> = ok.iter().map(|&i| g.db.get(top[i]).name.to_string()).collect();
+        choices::choose(
+            g,
+            p,
+            "choose",
+            &format!("Narset: take a noncreature, nonland card? (top four: {})", names.join(", ")),
+            &labels,
+            Some("take nothing"),
+            None,
+        )?
+        .map(|k| ok[k])
+    } else if human_of(g, p).is_some() {
+        None
+    } else {
+        max_by(&ok, |i| card_worth(g, p, top[i], false))
+    };
     let mut rest: Vec<CardId> = (0..top.len()).filter(|&i| Some(i) != pick).map(|i| top[i]).collect();
     g.rng.shuffle(&mut rest);
     for c in rest {

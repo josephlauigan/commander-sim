@@ -11,7 +11,7 @@
 //!   Skycoach, Helping Hand, Daydream, Feather of Flight, Ajani Fells the Godsire and Venser, the Sojourner (Multiply
 //!   by Zero, Prophesied End, Sphinx's Approach, Page and Initiates of the Ebon Hand are tags: nothing to port).
 //!
-//! The person's choices (practice mode) are `HUMAN(phase 9)`. Daydream, Venser and Ray of Command use the stand-ins
+//! The person's choices (practice mode) are in `human/abilities.rs`. Daydream, Venser and Ray of Command use the stand-ins
 //! for t2.blink / blink_value and marchesa.best_steal / steal in `galadriel.rs`.
 
 use super::common::{
@@ -32,6 +32,7 @@ use crate::engine::values::{card_name, colors_of, epow, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, Zone, die, draw, enter, land_to_hand, leave, make_tokens, max_by, mill};
 use crate::engine::zones::{searchable, to_zone_card};
 use crate::flow::Res;
+use crate::human::human_of;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
@@ -551,10 +552,14 @@ fn opp_tap(g: &mut Game, q: PlayerId, tapper: PermId, what: Tapped, name: &str) 
 }
 
 /// Opposition, an opponent's upkeep: tap their mana (best rocks and lands), keeping a share of tappers for their
-/// attackers. HUMAN(phase 9): a person taps their own.
+/// attackers. A person taps their own (abilities.rs), so nothing here for their Opposition.
 fn opposition_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let q = g.perm(src).owner;
-    if p == q || !g.opps(q).any(|x| x == p) || named_as(g, q, "Opposition").first() != Some(&src) {
+    if p == q
+        || !g.opps(q).any(|x| x == p)
+        || human_of(g, q).is_some()
+        || named_as(g, q, "Opposition").first() != Some(&src)
+    {
         return Ok(());
     }
     let mut use_ = share(g, q, p);
@@ -622,9 +627,9 @@ pub fn opposition_precombat(g: &mut Game, q: PlayerId) -> Res {
 }
 
 /// Opposition, your beginning of combat: creatures that can't attack tap the opponents' fliers that could block.
-/// HUMAN(phase 9): a person taps their own.
+/// A person taps their own (abilities.rs).
 fn opposition_mine(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != g.perm(src).owner || named_as(g, p, "Opposition").first() != Some(&src) {
+    if p != g.perm(src).owner || human_of(g, p).is_some() || named_as(g, p, "Opposition").first() != Some(&src) {
         return Ok(());
     }
     let idle: Vec<PermId> = tappers(g, p)
@@ -1315,11 +1320,11 @@ static VENSER: [WalkerAb; 2] = [
     WalkerAb { delta: -8, label: "emblem", val: venser_emblem_v, eff: venser_emblem },
 ];
 
-/// -1 just before combat (it's a main-phase ability: used as the attack is about to start). HUMAN(phase 9): a person
-/// uses it in their own main phase.
+/// -1 just before combat (it's a main-phase ability: used as the attack is about to start). A person uses it in their
+/// own main phase.
 fn venser_minus(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let l = g.perm(src).loyalty;
-    if p != g.perm(src).owner || l.is_none_or(|l| l < 1) {
+    if p != g.perm(src).owner || human_of(g, p).is_some() || l.is_none_or(|l| l < 1) {
         return Ok(());
     }
     if uses(g, p, src) >= allowed(g, p) || venser_unbl_value(g, p) <= 4.0 {
