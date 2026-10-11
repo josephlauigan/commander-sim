@@ -14,7 +14,9 @@ use sim_core::sym::Sym;
 fn pick_target(g: &Game, p: PlayerId, x: Target) -> F {
     let label = legal::describe_target(g, p, x);
     Box::new(move |r| {
-        Answer::Pick(r.choices.iter().position(|c| *c == label).unwrap_or_else(|| panic!("{label:?} not in {:?}", r.choices)))
+        Answer::Pick(
+            r.choices.iter().position(|c| *c == label).unwrap_or_else(|| panic!("{label:?} not in {:?}", r.choices)),
+        )
     })
 }
 
