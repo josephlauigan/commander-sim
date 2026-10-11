@@ -1,22 +1,22 @@
-//! The bill deck (decklists/JD/bristly-bill-landfall.md): mono-green landfall counters under Bristly Bill, Spine Sower.
-//! Its card code and AI plan. The brief is rust/agents/bill-cards.md; the verdicts are in data/card_overrides.toml.
+//! Card code for the green counters and landfall cards (Hardened Scales, Bristly Bill, the Canopies, plot, foretell,
+//! disguise ...), keyed by card name so every deck that plays one of these cards gets it (the Titania deck above all).
+//! The verdicts are in data/card_overrides.toml; there is no deck-specific AI here.
 //!
 //! What is modeled here, card by card (the cards the compiled abilities already play are named where this file
 //! adds to them):
 //! - **Hardened Scales**: `cardcode::scales`, applied wherever the engine puts +1/+1 counters on a creature
 //!   (`cardcode::add_counters`, the ability language's counters / proliferate / doubling, `common::proliferate`,
 //!   enters-with-counters). Two Scales stack.
-//! - **Bristly Bill**: the landfall counter is the compiled ability; `counter_target` chooses where it goes (Silhana
-//!   first, then the creature with the most counters, increment and mana creatures) for this deck's player. The
-//!   {3}{G}{G} doubling is `bill_options` (an instant-speed ability: the end of the turn before yours with the mana
-//!   free, or before combat when it makes the attack lethal).
+//! - **Bristly Bill**: the landfall counter is the compiled ability (the engine picks the target); the {3}{G}{G}
+//!   doubling is `bill_options` (an instant-speed ability: the end of the turn before yours with the mana free, or
+//!   before combat when it makes the attack lethal through the blockers).
 //! - **Boughside Wanderers**, **Cactarantula** (draws when an opponent's spell or ability targets it; it costs {1} less
-//!   with a Desert, and this deck has none), **Carnivorous Canopy** (artifact, enchantment or flier; proliferate at
+//!   with a Desert, and the decks that play it have no Desert), **Carnivorous Canopy** (artifact, enchantment or flier; proliferate at
 //!   mana value 3 or less), **Ghalta**, **Silhana Ledgewalker**, **Venomous Brutalizer** (toxic 3, pay {1}{G} to
-//!   proliferate), **Wildgrowth Archaic** (converge: in a mono-green deck the colors spent are one when any mana is
+//!   proliferate), **Wildgrowth Archaic** (converge: in a mono-green deck, the colors spent are one when any mana is
 //!   spent), **Royal Treatment** (a real Royal Role: +1/+1 and ward {1}, not a counter).
 //! - Plot (**Freestrider Commando**, **Tumbleweed Rising**), foretell (**Lifestream's Blessing**), disguise (**Greenbelt
-//!   Radical**), collect evidence (**Sample Collector**), web-slinging (**Spider-Man, Brooklyn Visionary**) and
+//!   Radical**, face down only), collect evidence (**Sample Collector**), web-slinging (**Spider-Man, Brooklyn Visionary**) and
 //!   prepared (**Studious First-Year**): see their sections.
 
 use crate::cards::CardDb;
@@ -54,8 +54,8 @@ fn pname(g: &Game, p: PlayerId) -> Sym {
 }
 
 // ================================================================== where the counters go
-/// how much a +1/+1 counter is worth on this creature (the bill deck's choice for every "target creature you control"
-/// that grows: Bill's landfall, Retreat to Kazandu, Vinelasher Adept ...): Silhana Ledgewalker first (hexproof, only
+/// how much a +1/+1 counter is worth on this creature (the choice for every "target creature you control"
+/// that grows, here Additive Evolution and Sample Collector): Silhana Ledgewalker first (hexproof, only
 /// fliers block it); then the creature that already has the most counters (the doubling); an increment creature or
 /// mana creature (Topiary Lecturer taps for its power); Bugenhagen up to power 7. A creature that is about to die
 /// (toughness 1 or less after the counter, nothing to protect it) is the last resort.
@@ -80,23 +80,11 @@ fn counter_score(g: &Game, m: PermId) -> f64 {
     if etgh(g, m) <= 1 {
         v -= 4.0;
     }
-    if doomed(g, m) {
-        v -= 100.0; // removal is on the stack for it: the counters would be lost
-    }
     v
 }
 
-fn doomed_key(m: PermId) -> Sym {
-    intern(&format!("bill_doomed_{}", m.0))
-}
-
-fn doomed(g: &Game, m: PermId) -> bool {
-    let o = g.perm(m).owner;
-    g.player(o).flag_turn.get(&doomed_key(m)) == Some(&g.turn_stamp())
-}
-
-/// the creature a counter goes on, among `mine` (the bill deck's player only: `dsl::choose_target`)
-pub fn counter_target(g: &Game, mine: &[PermId]) -> Option<PermId> {
+/// the creature a +1/+1 counter goes on, among `mine`
+fn counter_target(g: &Game, mine: &[PermId]) -> Option<PermId> {
     max_by(mine, |m| counter_score(g, m))
 }
 
@@ -189,27 +177,6 @@ fn lethal_victim(g: &Game, p: PlayerId) -> Option<PlayerId> {
         .min_by_key(|&q| g.player(q).life)
 }
 
-/// set when the pre-combat doubling was taken for a lethal attack: the opponent to attack with everything
-fn lethal_flag(q: PlayerId) -> String {
-    format!("bill_lethal_{}", q.0)
-}
-
-/// the attack plan of a turn on which Bill doubled for a lethal attack: everything at that opponent
-pub fn forced_plan(g: &Game, p: PlayerId) -> Option<PlayerId> {
-    g.opps(p).find(|&q| g.player(q).alive && flag_set(g, p, &lethal_flag(q)))
-}
-
-fn double_lethal(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
-    let victim = lethal_victim(g, p);
-    if !double_go(g, src, p, arg)? {
-        return Ok(false);
-    }
-    if let Some(q) = victim {
-        set_flag(g, p, &lethal_flag(q));
-    }
-    Ok(true)
-}
-
 fn bill_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).owner != p || !live(g, src) || !can_pay(g, p, 3, "GG", false) {
         return Ok(vec![]);
@@ -223,11 +190,10 @@ fn bill_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     match post {
         // the end of the turn before yours, with the mana free
         None => Ok(vec![Opt { utility: 2.5 + (add as f64 / 6.0).min(3.0), label, act }]),
-        // before combat: only when it makes the attack lethal through the blockers; the attack is then forced
-        // (`forced_plan`), so the mana is never spent on an attack that doesn't happen
+        // before combat: only when it makes the attack lethal through the blockers
         Some(false) => {
             if lethal_victim(g, p).is_some() {
-                let act = Some(Action::Ability { src, f: double_lethal, arg: 0 });
+                let act = Some(Action::Ability { src, f: double_go, arg: 0 });
                 Ok(vec![Opt { utility: 9.0, label: format!("{label} (lethal attack)"), act }])
             } else {
                 Ok(vec![])
@@ -378,8 +344,6 @@ pub fn enters_with(g: &Game, p: PlayerId, cd: CardId, was_cast: bool) -> i32 {
 }
 
 // ================================================================== Royal Treatment
-const ROYAL: &str = "Royal Treatment";
-
 /// the Royal Role on m (`DataKey::Role` holding "royal"; a Monster Role is `Bool(true)`): ward {1}
 fn role_ward(g: &Game, m: PermId) -> u32 {
     if g.perm(m).data.get(DataKey::Role) == Some(&Val::Str(intern("royal"))) { 1 } else { 0 }
@@ -391,49 +355,6 @@ fn role_ward(g: &Game, m: PermId) -> u32 {
 pub fn royal_apply(g: &mut Game, m: PermId) {
     super::partials::eot_kw(g, m, "hexproof");
     g.perm_mut(m).data.set(DataKey::Role, Val::Str(intern("royal")));
-}
-
-/// the bill deck's answer to removal on its creature m (`ai::decks::protect_response`): Royal Treatment, when the
-/// creature is worth it
-pub fn bill_protect(
-    g: &mut Game,
-    p: PlayerId,
-    m: PermId,
-    kind: &str,
-    actor: Option<PlayerId>,
-    _spell: Option<CardId>,
-) -> Res<bool> {
-    if actor.is_none() || actor == Some(p) || g.perm(m).cd.is_none() || matches!(kind, "edict" | "wipe" | "sacrifice") {
-        return Ok(false);
-    }
-    harrow_in_response(g, p, m)?;
-    let worth = pval(g, m) + g.perm(m).plus.max(0) as f64 * 0.5;
-    if worth < 4.0 || !g.is_creature(m) {
-        return Ok(false);
-    }
-    let Some(c) = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == ROYAL) else { return Ok(false) };
-    if !can_pay(g, p, 0, "G", false) || !crate::engine::cast::castable(g, p, c, "hand") {
-        return Ok(false);
-    }
-    if !crate::engine::mana::pay(g, p, 0, "G", false)? {
-        return Ok(false);
-    }
-    let pl = g.player_mut(p);
-    if let Some(i) = pl.hand.iter().position(|&x| x == c) {
-        pl.hand.remove(i);
-    }
-    pl.spells_this_turn += 1;
-    pl.stat("spells_cast", 1);
-    pl.cast_names.insert(c);
-    crate::glog!(g, "  {} casts Royal Treatment -> {}", pname(g, p), g.perm(m).name);
-    crate::engine::cast::on_cast(g, p, c)?;
-    let ok = counter_window(g, p, c, 6.0, vec![])?;
-    g.player_mut(p).gy.push(c);
-    if !ok {
-        return Ok(false);
-    }
-    royal_apply(g, m);
-    Ok(true)
 }
 
 // ================================================================== plot and foretell
@@ -560,9 +481,9 @@ fn plot_free(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     clear_mark(g, p, c);
     crate::glog!(g, "  {} casts the plotted {} for free", pname(g, p), g.db.get(c).name);
-    set_flag(g, p, "bill_plot_free");
+    set_flag(g, p, "green_plot_free");
     let r = crate::engine::cast::cast_card(g, p, c, "hand", Ctx::default());
-    clear_flag(g, p, "bill_plot_free");
+    clear_flag(g, p, "green_plot_free");
     r?;
     Ok(true)
 }
@@ -573,7 +494,7 @@ fn freestrider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src || g.perm(m).owner != p {
         return Ok(());
     }
-    if flag_set(g, p, "bill_plot_free") || !g.last_cast_etb {
+    if flag_set(g, p, "green_plot_free") || !g.last_cast_etb {
         crate::glog!(g, "    Freestrider Commando enters with two +1/+1 counters");
         crate::cardcode::add_counters(g, m, 2);
     }
@@ -599,7 +520,7 @@ fn tumbleweed_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<
 /// Lifestream's Blessing: draw X cards, X the greatest power among your creatures; cast from exile, gain twice X life
 fn lifestream_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let x = greatest_power(g, p);
-    let from_exile = flag_set(g, p, "bill_foretold");
+    let from_exile = flag_set(g, p, "green_foretold");
     crate::glog!(g, "    Lifestream's Blessing: X = {x}");
     draw(g, p, x as u32, false)?;
     if from_exile {
@@ -655,9 +576,9 @@ fn lifestream_cast_foretold(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     clear_mark(g, p, c);
-    set_flag(g, p, "bill_foretold");
+    set_flag(g, p, "green_foretold");
     let r = crate::engine::cast::cast_card(g, p, c, "hand", Ctx::default());
-    clear_flag(g, p, "bill_foretold");
+    clear_flag(g, p, "green_foretold");
     r?;
     Ok(true)
 }
@@ -818,45 +739,6 @@ fn radical_down(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// turn a face-down Radical face up for {5}{G}{G}: a +1/+1 counter on each creature you control, which gain trample
-/// until end of turn
-fn radical_up(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let m = PermId(arg as u32);
-    if !is_face_down_radical(g, m) || !can_pay(g, p, 5, "GG", false) {
-        return Ok(false);
-    }
-    if !crate::engine::mana::pay(g, p, 5, "GG", false)? {
-        return Ok(false);
-    }
-    super::galadriel::turn_face_up(g, p, m);
-    g.perm_mut(m).neutered = false;
-    for x in creatures(g, p) {
-        crate::cardcode::add_counters(g, x, 1);
-        super::partials::eot_kw(g, x, "trample");
-    }
-    Ok(true)
-}
-
-/// the deck's own plays outside any card's slots (`ai::brain::special_options`): turning the Radical face up
-pub fn bill_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
-    let mut out = vec![];
-    if g.active != Some(p) || !can_pay(g, p, 5, "GG", false) {
-        return Ok(out);
-    }
-    let n = creatures(g, p).len() as f64;
-    for m in g.player(p).perms.clone() {
-        if is_face_down_radical(g, m) {
-            let u = 1.2 + 0.7 * n + if post { 0.0 } else { 1.0 };
-            out.push(Opt {
-                utility: u,
-                label: "Greenbelt Radical (turn face up)".into(),
-                act: Some(Action::Plan { f: radical_up, arg: m.0 as i64 }),
-            });
-        }
-    }
-    Ok(out)
-}
-
 // ================================================================== Studious First-Year (prepared)
 /// Studious First-Year enters prepared: while it is, you may cast a copy of its spell (Rampant Growth, {1}{G}),
 /// which unprepares it
@@ -985,104 +867,6 @@ fn hypothesis_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     crate::engine::cast::cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
     Ok(true)
-}
-
-// ================================================================== sequencing: lands and the finish
-/// The fetch lands (Evolving Wilds, Terramorphic Expanse, Fabled Passage) are two landfall triggers, the land and the
-/// land it finds, so they are played while Bill is out (`engine::turn::land_score`); while Bill is still in the
-/// command zone and could be cast this turn, a basic is played instead (the land drop comes before the spells, so the
-/// trigger it makes is lost either way: lose the cheaper one) and the fetch waits. With no Bill in reach the fetch is
-/// played for the land as normal.
-pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    if g.player(p).key != "bill" || !g.db.get(c).tag(crate::tag::Tag::F) {
-        return 0.0;
-    }
-    if bill_of(g, p).is_some() {
-        return 6.0;
-    }
-    let pl = g.player(p);
-    if pl.cmd_in_zone && !pl.hand.contains(&pl.cmd) {
-        let (gn, pips) = crate::engine::mana::cost_of(g, p, pl.cmd);
-        let need = gn + pips.chars().count() as u32;
-        let basic_in_hand = pl.hand.iter().any(|&x| g.db.get(x).land && !g.db.get(x).tag(crate::tag::Tag::F));
-        if basic_in_hand && crate::engine::mana::total_mana(g, p, false) + 1 >= need {
-            return -6.0;
-        }
-    }
-    0.0
-}
-
-/// the attackers that could swing this turn (not summoning sick, untapped, willing) and their total power, with
-/// `each` more on every one and `extra` more creatures of `extra_pow` that arrive with haste
-fn alpha_power(g: &Game, p: PlayerId, each: i32, extra: i32, extra_pow: i32) -> i32 {
-    let mut total = extra * (extra_pow + each);
-    for m in creatures(g, p) {
-        let x = g.perm(m);
-        if x.tapped || x.noatk || (x.sick && !crate::engine::combat::kw(g, m, "haste")) {
-            continue;
-        }
-        total += (epow(g, m) + each).max(0);
-    }
-    total
-}
-
-/// the fewest life points among p's opponents
-fn lowest_life(g: &Game, p: PlayerId) -> i32 {
-    g.opps(p).map(|q| g.player(q).life).min().unwrap_or(40)
-}
-
-/// Overwhelming Stampede and End-Raze Forerunners end the game: cast when the alpha strike they make is lethal or near
-/// it (four fifths of the lowest life), otherwise held. Blockers are ignored; both give trample.
-fn finisher_prio(g: &Game, p: PlayerId, name: &str, base: i32) -> i32 {
-    let life = lowest_life(g, p);
-    match name {
-        "Overwhelming Stampede" => {
-            let x = greatest_power(g, p);
-            if alpha_power(g, p, x, 0, 0) * 5 >= life * 4 { 92 } else { 0 }
-        }
-        "End-Raze Forerunners" => {
-            let others = creatures(g, p).len() as i32;
-            if alpha_power(g, p, 2, 1, 7) * 5 >= life * 4 && others >= 1 { 92 } else { base.min(30) }
-        }
-        _ => base,
-    }
-}
-
-// ================================================================== Harrow in response to removal on Bill
-/// Harrow ({2}{G} instant, sacrifice a land): two lands onto the battlefield, so two landfall triggers. The deck casts
-/// it in response to removal aimed at Bill while he is still on the battlefield and another creature can take the
-/// counters; it saves nothing, so `bill_protect` goes on to its other answers.
-fn harrow_in_response(g: &mut Game, p: PlayerId, m: PermId) -> Res<()> {
-    if card_name(g, m) != Some(BILL) || creatures(g, p).len() < 2 {
-        return Ok(());
-    }
-    let Some(c) = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == "Harrow") else { return Ok(()) };
-    let st = g.turn_stamp();
-    g.player_mut(p).flag_turn.insert(doomed_key(m), st); // the counters go to the others
-    if crate::ai::brain::do_cast_with(g, p, c, None, Ctx::default())? {
-        crate::glog!(g, "    {} casts Harrow in response", pname(g, p));
-    }
-    g.player_mut(p).flag_turn.shift_remove(&doomed_key(m));
-    Ok(())
-}
-
-// ================================================================== the AI's cast priorities
-/// bill's cast priority: Bill first the moment he can be cast (turn 2), then the generic plan; a plotted or foretold
-/// card, the face-down Radical's card and Royal Treatment are cast only by their own options
-pub fn bill_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let base = crate::ai::pool::generic_prio(g, p, c);
-    let pl = g.player(p);
-    if c == pl.cmd {
-        return if pl.turns >= 2 { (97 - 3 * pl.tax as i32).max(40) } else { 0 };
-    }
-    let name = &*g.db.get(c).name;
-    match name {
-        ROYAL | RADICAL | HYPOTHESIS => 0,
-        FREESTRIDER | TUMBLEWEED | LIFESTREAM if exiled_turn(g, p, c).is_some() => 0,
-        TUMBLEWEED if greatest_power(g, p) < 3 => base.min(15),
-        "Overwhelming Stampede" | "End-Raze Forerunners" => finisher_prio(g, p, name, base),
-        _ => base,
-    }
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {

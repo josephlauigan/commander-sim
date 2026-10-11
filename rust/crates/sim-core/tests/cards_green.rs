@@ -1,4 +1,4 @@
-//! The bill deck's cards (impls/bill.rs) on hand-built positions. Seat 0 plays the bill deck, seat 1 the seph deck.
+//! The green counters cards (impls/green_cards.rs) on hand-built positions. Seat 0 plays the titania deck, seat 1 the seph deck.
 
 use sim_core::ai::{act, brain};
 use sim_core::engine::combat::can_block;
@@ -14,7 +14,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn game() -> Game {
-    table(&["bill", "seph"])
+    table(&["titania", "seph"])
 }
 
 fn options(g: &mut Game, p: PlayerId, post: bool) -> Vec<Opt> {
@@ -139,30 +139,6 @@ fn doubling_before_combat_only_when_it_makes_the_attack_lethal() {
 }
 
 // ------------------------------------------------------------------ where the counters go
-#[test]
-fn landfall_counter_goes_to_silhana_first_then_the_biggest_stack() {
-    let mut g = game();
-    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
-    let big = perm(&mut g, P0, "Thrashing Brontodon");
-    g.perm_mut(big).plus = 3;
-    land_enters(&mut g, P0);
-    assert_eq!(g.perm(big).plus, 4, "the creature with the most counters");
-    let sil = perm(&mut g, P0, "Silhana Ledgewalker");
-    land_enters(&mut g, P0);
-    assert_eq!(g.perm(sil).plus, 1, "Silhana first");
-    assert_eq!(g.perm(bill).plus, 0);
-}
-
-#[test]
-fn landfall_counter_goes_to_the_lecturer_over_a_plain_body() {
-    let mut g = game();
-    perm(&mut g, P0, "Bristly Bill, Spine Sower");
-    let lec = perm(&mut g, P0, "Topiary Lecturer");
-    let newt = perm(&mut g, P0, "Noxious Newt");
-    land_enters(&mut g, P0);
-    assert_eq!((g.perm(lec).plus, g.perm(newt).plus), (1, 0));
-}
-
 // ------------------------------------------------------------------ the simple creatures
 #[test]
 fn boughside_wanderers_takes_a_permanent_from_the_top_four() {
@@ -323,30 +299,16 @@ fn archaic_costs_two_green() {
 
 // ------------------------------------------------------------------ Royal Treatment
 #[test]
-fn royal_treatment_saves_a_creature_and_gives_a_role_not_a_counter() {
+fn royal_role_is_plus_one_plus_one_and_ward_not_a_counter() {
     let mut g = game();
     perm(&mut g, P0, "Hardened Scales");
     let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
     g.perm_mut(bill).plus = 4;
-    lands(&mut g, P0, "Forest", 1, false);
-    hand(&mut g, P0, &["Royal Treatment"]);
     let (p0, t0) = (epow(&g, bill), etgh(&g, bill));
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), bill, "destroy", None).unwrap();
-    assert!(g.perm(bill).on_bf, "hexproof in response");
-    assert_eq!((epow(&g, bill), etgh(&g, bill)), (p0 + 1, t0 + 1), "the Role's +1/+1");
+    sim_core::impls::green_cards::royal_apply(&mut g, bill);
     assert_eq!(g.perm(bill).plus, 4, "not a counter: Hardened Scales added nothing");
     assert_eq!(sim_core::cardcode::aura_ward(&g, bill), 1, "ward {{1}}");
-    assert!(in_gy(&g, P0, "Royal Treatment"));
-}
-
-#[test]
-fn royal_treatment_is_not_cast_for_a_cheap_creature() {
-    let mut g = game();
-    let elf = perm(&mut g, P0, "Llanowar Elves");
-    lands(&mut g, P0, "Forest", 1, false);
-    hand(&mut g, P0, &["Royal Treatment"]);
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), elf, "destroy", None).unwrap();
-    assert!(!g.perm(elf).on_bf);
+    assert_eq!((epow(&g, bill), etgh(&g, bill)), (p0 + 1, t0 + 1), "the Role's +1/+1");
 }
 
 // ------------------------------------------------------------------ plot
@@ -385,15 +347,6 @@ fn freestrider_cast_for_its_cost_has_no_counters_and_scales_helps_the_free_one()
     take_option(&mut g, P0, false, "Freestrider Commando (plotted, free)");
     let f = on_bf(&g, P0, FREESTRIDER).unwrap();
     assert_eq!(g.perm(f).plus, 3, "two counters, plus one for Hardened Scales");
-}
-
-#[test]
-fn a_plotted_card_is_never_cast_the_normal_way() {
-    let mut g = game();
-    lands(&mut g, P0, "Forest", 4, false);
-    let c = hand(&mut g, P0, &[FREESTRIDER])[0];
-    take_option(&mut g, P0, true, "plot Freestrider Commando");
-    assert_eq!(sim_core::ai::deck_prio(&g, P0, c), 0.0);
 }
 
 #[test]
@@ -509,9 +462,8 @@ fn spider_man_needs_a_tapped_creature_to_web_sling() {
 
 // ------------------------------------------------------------------ Greenbelt Radical
 #[test]
-fn greenbelt_radical_is_cast_face_down_and_turned_up_for_seven() {
+fn greenbelt_radical_is_cast_face_down_with_ward() {
     let mut g = game();
-    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
     lands(&mut g, P0, "Forest", 3, false);
     hand(&mut g, P0, &["Greenbelt Radical"]);
     assert!(take_option(&mut g, P0, false, "Greenbelt Radical (face down)"));
@@ -524,23 +476,6 @@ fn greenbelt_radical_is_cast_face_down_and_turned_up_for_seven() {
         .unwrap();
     assert_eq!((epow(&g, r), etgh(&g, r)), (2, 2));
     assert_eq!(sim_core::cardcode::aura_ward(&g, r), 2, "ward {{2}}");
-    // seven lands: turn it up
-    lands(&mut g, P0, "Forest", 4, false);
-    for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
-    }
-    assert!(take_option(&mut g, P0, false, "Greenbelt Radical (turn face up)"));
-    assert_eq!((epow(&g, r), etgh(&g, r)), (4 + 1, 4 + 1), "a 4/4 with its own counter");
-    assert_eq!(g.perm(bill).plus, 1, "a counter on each creature");
-    assert_eq!(sim_core::cardcode::aura_ward(&g, r), 0);
-    assert!(sim_core::engine::combat::kw(&g, bill, "trample"));
-}
-
-#[test]
-fn greenbelt_radical_is_never_cast_the_normal_way() {
-    let mut g = game();
-    let c = hand(&mut g, P0, &["Greenbelt Radical"])[0];
-    assert_eq!(sim_core::ai::deck_prio(&g, P0, c), 0.0);
 }
 
 // ------------------------------------------------------------------ Studious First-Year
@@ -604,7 +539,10 @@ fn evolution_sage_proliferates_on_each_land_and_scales_adds_to_it() {
     let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
     g.perm_mut(bill).plus = 2;
     land_enters(&mut g, P0);
-    assert_eq!(g.perm(bill).plus, 2 + 1 + 1, "Bill's own counter on the best creature, and the proliferate");
+    let sage = on_bf(&g, P0, "Evolution Sage").unwrap();
+    // the landfall counter goes to one creature; the proliferate adds one per creature that has counters (4 or 5)
+    let total = g.perm(bill).plus + g.perm(sage).plus;
+    assert!((4..=5).contains(&total), "landfall counter plus proliferate: {total}");
 }
 
 #[test]
@@ -689,76 +627,7 @@ fn wild_hypothesis_is_not_cast_for_x_of_one() {
     assert_eq!(sim_core::ai::deck_prio(&g, P0, c), 0.0);
 }
 
-// ------------------------------------------------------------------ sequencing
-fn land_names(g: &Game, p: PlayerId) -> Vec<String> {
-    g.player(p).lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect()
-}
-
-#[test]
-fn a_basic_is_played_before_bill_and_the_fetch_waits_for_him() {
-    let mut g = game();
-    lands(&mut g, P0, "Forest", 1, false);
-    hand(&mut g, P0, &["Evolving Wilds", "Forest"]);
-    sim_core::engine::turn::play_land(&mut g, P0).unwrap();
-    assert_eq!(land_names(&g, P0), ["Forest", "Forest"], "Bill can be cast this turn: the basic goes down");
-    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Evolving Wilds"));
-}
-
-#[test]
-fn the_fetch_is_played_first_once_bill_is_out() {
-    let mut g = game();
-    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
-    lands(&mut g, P0, "Forest", 3, false);
-    hand(&mut g, P0, &["Evolving Wilds", "Forest"]);
-    sim_core::engine::turn::play_land(&mut g, P0).unwrap();
-    assert_eq!(g.perm(bill).plus, 2, "the Wilds and the land it found");
-    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Forest"));
-}
-
-#[test]
-fn harrow_answers_removal_on_bill_when_another_creature_can_take_the_counters() {
-    let mut g = game();
-    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
-    let other = perm(&mut g, P0, "Thrashing Brontodon");
-    lands(&mut g, P0, "Forest", 4, false);
-    hand(&mut g, P0, &["Harrow"]);
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), bill, "destroy", None).unwrap();
-    assert!(!g.perm(bill).on_bf, "Harrow saves nothing");
-    assert_eq!(g.perm(other).plus, 2, "but its two landfall triggers came first");
-    assert!(in_gy(&g, P0, "Harrow"));
-}
-
-#[test]
-fn harrow_is_not_wasted_when_bill_is_alone() {
-    let mut g = game();
-    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
-    lands(&mut g, P0, "Forest", 4, false);
-    hand(&mut g, P0, &["Harrow"]);
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), bill, "destroy", None).unwrap();
-    assert!(!in_gy(&g, P0, "Harrow"));
-}
-
-#[test]
-fn stampede_and_end_raze_are_held_until_the_alpha_strike_is_near_lethal() {
-    let mut g = game();
-    let a = perm(&mut g, P0, "Thrashing Brontodon");
-    let b = perm(&mut g, P0, "Noxious Newt");
-    let stampede = hand(&mut g, P0, &["Overwhelming Stampede"])[0];
-    g.player_mut(P1).life = 40;
-    g.perm_mut(a).plus = 5; // an 8 power attacker; Stampede adds +8/+8: 16 damage
-    assert_eq!(sim_core::ai::deck_prio(&g, P0, stampede), 0.0, "16 of 40: held");
-    g.player_mut(P1).life = 20;
-    assert_eq!(sim_core::ai::deck_prio(&g, P0, stampede), 92.0, "16 of 20 is near lethal");
-    let _ = b;
-}
-
-#[test]
-fn a_fetch_land_with_bill_out_of_reach_is_unchanged() {
-    let g = game();
-    let wilds = card(&g, "Evolving Wilds");
-    assert_eq!(sim_core::impls::bill::land_adjust(&g, P0, wilds), 0.0);
-}
-
+// ------------------------------------------------------------------ Crushing Canopy
 #[test]
 fn crushing_canopy_is_cast_only_at_a_flier_or_an_enchantment() {
     let mut g = game();
@@ -787,20 +656,4 @@ fn lethal_doubling_not_offered_when_chump_blockers_stop_the_attack() {
     assert!(doubles(&mut g), "no blockers: lethal");
     token(&mut g, P1, 1); // one chump blocker stops the lone attacker
     assert!(!doubles(&mut g), "the raw sum is lethal but the chump stops it");
-}
-
-#[test]
-fn lethal_doubling_taken_through_blockers_forces_the_attack() {
-    let mut g = game();
-    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
-    let b2 = token(&mut g, P0, 2);
-    let b3 = token(&mut g, P0, 2);
-    g.perm_mut(b2).plus = 4; // 6/6 -> 10
-    g.perm_mut(b3).plus = 4;
-    lands(&mut g, P0, "Forest", 5, false);
-    g.perm_mut(bill).plus = 6; // 8 -> 14
-    token(&mut g, P1, 1); // chumps Bill: 12 gets through, 20 after doubling
-    g.player_mut(P1).life = 18;
-    assert!(take_option(&mut g, P0, false, "Bristly Bill doubles"));
-    assert_eq!(sim_core::ai::choose_attack(&mut g, P0).unwrap(), Some((P1, "all")));
 }

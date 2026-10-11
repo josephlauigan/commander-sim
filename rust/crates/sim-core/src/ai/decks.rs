@@ -64,7 +64,6 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "yawgmoth" => crate::impls::yawgmoth::yawgmoth_prio(g, p, c),
         "lordofpain" => crate::impls::lordofpain::lordofpain_prio(g, p, c),
         "smaug" => crate::impls::smaug::smaug_prio(g, p, c),
-        "bill" => crate::impls::bill::bill_prio(g, p, c),
         "titania" => crate::impls::titania::titania_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
@@ -1262,7 +1261,6 @@ pub fn protect_response(
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
-        "bill" => crate::impls::bill::bill_protect(g, owner, m, kind, actor, spell),
         "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
     }

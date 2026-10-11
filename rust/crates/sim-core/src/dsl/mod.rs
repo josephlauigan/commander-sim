@@ -320,9 +320,6 @@ pub fn choose_target(
         return min_by(&cands, |m| pval(g, m)); // a cost on your own: the least valuable
     }
     let mine: Vec<PermId> = cands.iter().copied().filter(|&m| g.perm(m).owner == p).collect();
-    if !mine.is_empty() && g.player(p).key == "bill" {
-        return crate::impls::bill::counter_target(g, &mine); // the bill deck: where a counter gains most
-    }
     if !mine.is_empty() { max_by(&mine, |m| pval(g, m)) } else { max_by(&cands, |m| pval(g, m)) }
 }
 

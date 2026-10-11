@@ -37,7 +37,7 @@ pub mod gix;
 pub mod yawgmoth;
 pub mod lordofpain;
 pub mod smaug;
-pub mod bill;
+pub mod green_cards;
 pub mod titania;
 pub mod zur;
 
@@ -78,7 +78,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     yawgmoth::register(&mut r, db)?;
     lordofpain::register(&mut r, db)?;
     smaug::register(&mut r, db)?;
-    bill::register(&mut r, db)?;
+    green_cards::register(&mut r, db)?;
     titania::register(&mut r, db)?;
     Ok(r)
 }

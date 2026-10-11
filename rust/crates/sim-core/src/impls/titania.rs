@@ -560,7 +560,7 @@ pub fn titania_protect(
     if !is_titania && pval(g, m) < 5.0 {
         return Ok(false);
     }
-    if cast_protect(g, p, ROYAL, m, super::bill::royal_apply)? || cast_protect(g, p, BLOSSOM, m, blossom_apply)? {
+    if cast_protect(g, p, ROYAL, m, super::green_cards::royal_apply)? || cast_protect(g, p, BLOSSOM, m, blossom_apply)? {
         return Ok(true);
     }
     if is_titania {

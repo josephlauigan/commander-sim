@@ -754,7 +754,6 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "zada" => Ok(crate::impls::zada::zada_options(g, p, post)),
         "torbran" => crate::impls::torbran::torbran_options(g, p, s, post),
         "yawgmoth" => crate::impls::yawgmoth::yawgmoth_options(g, p, post),
-        "bill" => crate::impls::bill::bill_special(g, p, post),
         "titania" => crate::impls::titania::titania_special(g, p, post),
         _ => Ok(vec![]),
     }
@@ -864,7 +863,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 15] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "zada", "torbran", "glissa", "jenova", "gix", "yawgmoth", "lordofpain", "smaug", "bill", "titania"];
+const GENERIC_PLAYS: [&str; 14] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "zada", "torbran", "glissa", "jenova", "gix", "yawgmoth", "lordofpain", "smaug", "titania"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.
