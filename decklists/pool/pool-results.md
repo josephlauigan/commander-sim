@@ -107,7 +107,9 @@ The new decks: **Kefka** (26.6%) is just above an even share, in Sauron's group,
 Tier 4 (28%). **Zada** (7.1%) is the weakest deck measured. Its plan (the first spell copied by Zada) is online in
 only about a third of its games: the list has 12 Zada spells where such decks usually run 18 to 25, and it is a
 Bracket 2 list from bulk against Bracket 3-4 tiers. The heuristic AI alone does worse (2.7% against Tier 3, where
-Galadriel gets 10.3% on the same seeds), so the look-ahead isn't what holds it back.
+Galadriel gets 10.3% on the same seeds), so the look-ahead isn't what holds it back. **Zada was dropped on October 11**
+(its cards went back to the bulk list); seven candidates to replace it were tried against Tier 1 (the best, The Lord
+of Pain, at 17.2%) and dropped too. Titania, below, takes the slot.
 
 **October 11: Titania** (key `titania`; Titania, Arachnogenesis and Blossoming Defense are the only new cards),
 measured after the table above on branch `bill-deck` (efb17b5, `audit/titania/`) with the same settings (960 games per
