@@ -106,3 +106,15 @@ pub fn dredge(_g: &mut Game, _p: PlayerId) -> Res<bool> {
 pub fn jeskas_will(_g: &mut Game, _p: PlayerId) -> Res<bool> {
     Ok(false)
 }
+
+/// `cards.flashback_target(g, p, None)`: the person's Flashback (the card) pick; false = not handled (the AI's
+/// rule runs). PORT(practice-cards): stub.
+pub fn flashback_target(_g: &mut Game, _p: PlayerId) -> Res<bool> {
+    Ok(false)
+}
+
+/// `cards.crackle(g, p, c, ctx)`: the person's targets for Crackle with Power; false = not handled (the AI's rule
+/// runs). PORT(practice-cards): stub.
+pub fn crackle(_g: &mut Game, _p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<bool> {
+    Ok(false)
+}
