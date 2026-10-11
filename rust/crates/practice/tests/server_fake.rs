@@ -215,7 +215,7 @@ fn options_and_saves_shapes() {
     let (st, _, o) = call(r.h.port, "GET", "/api/options", None, None);
     assert_eq!(st, 200);
     assert_eq!((o["lan"].clone(), o["host"].clone(), o["app"].clone()), (json!(false), json!(true), json!(false)));
-    assert_eq!(o["decks"].as_array().unwrap().len(), 7);
+    assert_eq!(o["decks"].as_array().unwrap().len(), 8);
     assert_eq!(o["tiers"].as_array().unwrap().len(), 5);
     assert!(o["images"].is_object());
     let (_, _, s) = call(r.h.port, "GET", "/api/saves", None, None);
