@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Evolving Wilds -> Forest; Terramorphic Expanse -> Forest; Fabled Passage -> Forest
+
+=== Bristly Bill vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  12.8% ->  13.6%  (delta +0.8 pts, noise ±2.9, paired)   n=1000
+               eliminated by (variant): Lathril 15.1%  Teysa Karlov 14.6%  Light-Paws 24.9%  Isshin 17.8%  Tatyova 13.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(230s total)

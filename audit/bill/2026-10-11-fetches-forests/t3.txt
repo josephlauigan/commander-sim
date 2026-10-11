@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Evolving Wilds -> Forest; Terramorphic Expanse -> Forest; Fabled Passage -> Forest
+
+=== Bristly Bill vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  16.1% ->  15.4%  (delta -0.7 pts, noise ±2.9, paired)   n=1000
+               eliminated by (variant): Aurelia 24.6%  Tergrid 19.7%  Korvold 10.3%  Atraxa 12.2%  Marwyn 16.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(176s total)

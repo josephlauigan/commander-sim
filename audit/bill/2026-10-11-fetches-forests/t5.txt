@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Evolving Wilds -> Forest; Terramorphic Expanse -> Forest; Fabled Passage -> Forest
+
+=== Bristly Bill vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  16.6% ->  16.8%  (delta +0.2 pts, noise ±2.9, paired)   n=1000
+               eliminated by (variant): Urza 16.4%  Zur the Enchanter 13.0%  Winota 23.0%  Kinnan 21.7%  Yawgmoth 9.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(85s total)

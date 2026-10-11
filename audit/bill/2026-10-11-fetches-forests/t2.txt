@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Evolving Wilds -> Forest; Terramorphic Expanse -> Forest; Fabled Passage -> Forest
+
+=== Bristly Bill vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  16.6% ->  16.7%  (delta +0.1 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 13.5%  Sythis 23.2%  Lord Windgrace 13.0%  Brago 14.2%  Meren of Clan Nel Toth 16.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(244s total)
