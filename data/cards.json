@@ -501,64 +501,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 0,
-       "tgh": 0,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "fractal"
-       ]
-      },
-      {
-       "do": "counters",
-       "n": 3,
-       "what": {
-        "sel": "self"
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "counters",
-       "n": 1,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "grant",
-       "keyword": "vigilance",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -566,7 +509,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,
@@ -87494,36 +87437,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 0,
-       "tgh": 0,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "fractal"
-       ]
-      },
-      {
-       "do": "counters",
-       "n": "X",
-       "what": {
-        "sel": "self"
-       }
-      },
-      {
-       "do": "surveil",
-       "n": 2
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "surveil"
@@ -87533,7 +87447,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 1,

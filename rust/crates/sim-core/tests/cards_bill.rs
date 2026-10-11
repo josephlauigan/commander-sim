@@ -572,3 +572,110 @@ fn scales_adds_to_efflorescence_edgar_increment_and_the_hydra() {
     cast::cast_card(&mut g, P0, spell, "hand", Ctx::default()).unwrap();
     assert_eq!(g.perm(lec).plus, 2, "increment: one counter, plus one for Hardened Scales");
 }
+
+// ------------------------------------------------------------------ the cards the audit already called Full
+#[test]
+fn retreat_to_kazandu_puts_a_counter_on_a_creature_for_each_land() {
+    let mut g = game();
+    perm(&mut g, P0, "Retreat to Kazandu");
+    let t = perm(&mut g, P0, "Thrashing Brontodon");
+    let life = g.player(P0).life;
+    land_enters(&mut g, P0);
+    assert_eq!((g.perm(t).plus, g.player(P0).life), (1, life), "the counter mode while a creature can use it");
+    // with Hardened Scales the counter is two
+    perm(&mut g, P0, "Hardened Scales");
+    land_enters(&mut g, P0);
+    assert_eq!(g.perm(t).plus, 1 + 2);
+}
+
+#[test]
+fn evolution_sage_proliferates_on_each_land_and_scales_adds_to_it() {
+    let mut g = game();
+    perm(&mut g, P0, "Evolution Sage");
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    g.perm_mut(bill).plus = 2;
+    land_enters(&mut g, P0);
+    assert_eq!(g.perm(bill).plus, 2 + 1 + 1, "Bill's own counter on the best creature, and the proliferate");
+}
+
+#[test]
+fn harrow_is_two_landfall_triggers_and_a_land_sacrificed() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Harrow"]);
+    let n = g.player(P0).lands.len();
+    cast_harrow(&mut g);
+    assert_eq!(g.player(P0).lands.len(), n + 1, "sacrifice one, fetch two");
+    assert_eq!(g.perm(bill).plus, 2, "two landfall triggers");
+}
+
+fn cast_harrow(g: &mut Game) {
+    let c = card(g, "Harrow");
+    // the additional cost (sacrifice a land) is paid in `additional_cost` before the spell resolves
+    g.player_mut(P0).hand.retain(|&x| x != c);
+    let l = g.player(P0).lands[0];
+    sim_core::engine::turn::remove_land(g, P0, l);
+    let cd = g.land(l).cd;
+    g.player_mut(P0).gy.push(cd);
+    g.player_mut(P0).hand.push(c);
+    cast::cast_card(g, P0, c, "hand", Ctx::default()).unwrap();
+}
+
+#[test]
+fn a_fetch_land_is_two_landfall_triggers() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    let c = hand(&mut g, P0, &["Evolving Wilds"])[0];
+    let _ = c;
+    let before = g.player(P0).lands.len();
+    sim_core::engine::turn::play_land(&mut g, P0).unwrap();
+    assert_eq!(g.perm(bill).plus, 2, "the Wilds, and the Forest it finds");
+    assert_eq!(g.player(P0).lands.len(), before + 1);
+    assert!(g.player(P0).lands.iter().all(|&l| &*g.db.get(g.land(l).cd).name != "Evolving Wilds"));
+}
+
+#[test]
+fn additive_evolution_makes_a_fractal_with_three_counters() {
+    let mut g = game();
+    perm(&mut g, P0, "Hardened Scales");
+    cast_spell(&mut g, P0, "Additive Evolution");
+    let t = tokens_named(&g, P0, "fractal");
+    assert_eq!(t.len(), 1, "the Fractal survives");
+    assert_eq!(g.perm(t[0]).plus, 3 + 1, "three counters, plus one for Hardened Scales");
+}
+
+#[test]
+fn additive_evolution_grows_a_creature_each_combat() {
+    let mut g = game();
+    let big = perm(&mut g, P0, "Thrashing Brontodon");
+    cast_spell(&mut g, P0, "Additive Evolution");
+    let tk = tokens_named(&g, P0, "fractal")[0];
+    g.perm_mut(big).plus = 5;
+    hooks::fire_trigger(&mut g, Event::Crew, Call::Player { p: P0 }).unwrap();
+    assert_eq!(g.perm(big).plus, 6, "the biggest stack");
+    assert!(sim_core::engine::combat::kw(&g, big, "vigilance"));
+    assert!(!sim_core::engine::combat::kw(&g, tk, "vigilance"), "only the target");
+}
+
+#[test]
+fn wild_hypothesis_makes_an_x_fractal_for_the_spare_mana() {
+    let mut g = game();
+    perm(&mut g, P0, "Hardened Scales");
+    lands(&mut g, P0, "Forest", 5, false);
+    hand(&mut g, P0, &["Wild Hypothesis"]);
+    assert!(take_option(&mut g, P0, true, "Wild Hypothesis (X = 4)"));
+    let t = tokens_named(&g, P0, "fractal");
+    assert_eq!(t.len(), 1);
+    assert_eq!(g.perm(t[0]).plus, 4 + 1);
+    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
+}
+
+#[test]
+fn wild_hypothesis_is_not_cast_for_x_of_one() {
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 2, false);
+    let c = hand(&mut g, P0, &["Wild Hypothesis"])[0];
+    assert!(!has_option(&mut g, true, "Wild Hypothesis"));
+    assert_eq!(sim_core::ai::deck_prio(&g, P0, c), 0.0);
+}

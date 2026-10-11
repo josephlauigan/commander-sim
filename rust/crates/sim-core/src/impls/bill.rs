@@ -823,6 +823,94 @@ fn firstyear_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
     Ok(true)
 }
 
+// ================================================================== Additive Evolution and Wild Hypothesis (Fractals)
+/// a 0/0 green and blue Fractal token with n +1/+1 counters (made 1/1 first so that it is not put into the graveyard
+/// before the counters arrive); Hardened Scales adds one
+fn make_fractal(g: &mut Game, p: PlayerId, n: i32) -> Res {
+    let spec = crate::engine::zones::Tokens {
+        color: Some(crate::cards::Colors::from_letters("GU")),
+        types: vec!["fractal"],
+        tgh: Some(1),
+        ..crate::engine::zones::Tokens::new(1, 1)
+    };
+    let scales = if n > 0 { crate::cardcode::scales(g, p) } else { 0 };
+    for t in crate::engine::zones::make_tokens(g, p, spec)? {
+        let x = g.perm_mut(t);
+        x.pow = 0;
+        x.tgh = 0;
+        x.plus = n + scales;
+    }
+    Ok(())
+}
+
+const EVOLUTION: &str = "Additive Evolution";
+
+/// Additive Evolution: when it enters, a 0/0 Fractal with three +1/+1 counters
+fn evolution_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m == src && g.perm(m).owner == p {
+        make_fractal(g, p, 3)?;
+    }
+    Ok(())
+}
+
+/// Additive Evolution: at the beginning of combat on your turn, a +1/+1 counter on target creature you control, which
+/// gains vigilance until end of turn (the `crew` event is the start of the first combat, as for Jenova)
+fn evolution_combat(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if g.perm(src).owner != p || g.active != Some(p) || !live(g, src) {
+        return Ok(());
+    }
+    let mine = creatures(g, p);
+    let Some(t) = counter_target(g, &mine) else { return Ok(()) };
+    if trigger_window(g, p, Some(src), &format!("a +1/+1 counter on {}", g.perm(t).name), None)? && live(g, t) {
+        crate::cardcode::add_counters(g, t, 1);
+        super::partials::eot_kw(g, t, "vigilance");
+    }
+    Ok(())
+}
+
+const HYPOTHESIS: &str = "Wild Hypothesis";
+
+/// Wild Hypothesis ({X}{G}): a 0/0 Fractal with X +1/+1 counters, then surveil 2
+fn hypothesis_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    make_fractal(g, p, ctx.x.max(0))?;
+    crate::cardcode::scry(g, p, 2, true)?;
+    Ok(intern("gy"))
+}
+
+/// cast with all the spare mana but {G}: X is what is left (two or more), in either main phase
+fn hypothesis_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || g.active != Some(p) || !castable(g, p, c) {
+        return Ok(vec![]);
+    }
+    let x = hypothesis_x(g, p);
+    if x < 2 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: (0.6 + 0.35 * x as f64).min(4.0) + if post == Some(true) { 0.3 } else { 0.0 },
+        label: format!("Wild Hypothesis (X = {x})"),
+        act: Some(Action::Plan { f: hypothesis_go, arg: c.0 as i64 }),
+    }])
+}
+
+fn hypothesis_x(g: &Game, p: PlayerId) -> i32 {
+    let mana = crate::engine::mana::total_mana(g, p, false) as i32;
+    (mana - 1).max(0)
+}
+
+fn hypothesis_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let x = hypothesis_x(g, p);
+    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay(g, p, x as u32, "G", false) {
+        return Ok(false);
+    }
+    if !crate::engine::mana::pay(g, p, x as u32, "G", false)? {
+        return Ok(false);
+    }
+    crate::engine::cast::cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
+    Ok(true)
+}
+
 // ================================================================== the AI's cast priorities
 /// bill's cast priority: Bill first the moment he can be cast (turn 2), then the generic plan; a plotted or foretold
 /// card, the face-down Radical's card and Royal Treatment are cast only by their own options
@@ -834,7 +922,7 @@ pub fn bill_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     }
     let name = &*g.db.get(c).name;
     match name {
-        ROYAL | RADICAL => 0,
+        ROYAL | RADICAL | HYPOTHESIS => 0,
         FREESTRIDER | TUMBLEWEED | LIFESTREAM if exiled_turn(g, p, c).is_some() => 0,
         TUMBLEWEED if greatest_power(g, p) < 3 => base.min(15),
         _ => base,
@@ -863,6 +951,12 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Sample Collector")?.attack = Some(collector_attack);
     r.card(db, SPIDER)?.hand_options = Some(spider_options);
     r.card(db, RADICAL)?.hand_options = Some(radical_hand);
+    let c = r.card(db, EVOLUTION)?;
+    c.etb = Some(evolution_etb);
+    c.crew = Some(evolution_combat);
+    let c = r.card(db, HYPOTHESIS)?;
+    c.resolve = Some(hypothesis_resolve);
+    c.hand_options = Some(hypothesis_options);
     let c = r.card(db, "Studious First-Year")?;
     c.etb = Some(firstyear_etb);
     c.options = Some(firstyear_options);

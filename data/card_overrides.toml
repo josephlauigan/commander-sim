@@ -6473,3 +6473,13 @@ note = "toxic 3 (three poison counters with the combat damage); enters: pay {1}{
 cost = "GG"
 status = "Full"
 note = "{2/G}{2/G} is {G}{G} in a mono-green deck; reach, trample; converge: enters with a +1/+1 counter per color spent (one), and each creature spell you cast enters with that many more (one when it cost anything)"
+
+["Additive Evolution"]
+dsl = []
+status = "Full"
+note = "enters: a 0/0 green and blue Fractal with three +1/+1 counters; at the beginning of combat on your turn, a +1/+1 counter on target creature you control, which gains vigilance until end of turn"
+
+["Wild Hypothesis"]
+dsl = []
+status = "Full"
+note = "{X}{G}: a 0/0 green and blue Fractal with X +1/+1 counters, then surveil 2; the AI casts it with all the spare mana (X of two or more)"
