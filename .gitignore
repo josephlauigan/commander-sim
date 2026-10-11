@@ -4,3 +4,7 @@ data/images/
 data/saves/
 rust/target/
 commander_sim/rust_sim.so
+
+# Claude Code: share .claude/settings.json, not the agent worktrees
+.claude/worktrees/
+.claude/settings.local.json

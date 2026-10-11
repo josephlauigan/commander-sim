@@ -15,6 +15,8 @@
 **Updated 2026-10-05.** Out: Consecrated Sphinx. In: Fact or Fiction. Consecrated Sphinx → Fact or Fiction. Back to Bracket 3: three Game Changers (Underworld Breach, Cyclonic Rift, Orcish Bowmasters). Tested: no loss (+0.1 points on average, 1,000 paired games per tier, adaptive AI).
 **Updated 2026-10-06.** Out: Brush Off. In: Spell Pierce. Brush Off → Spell Pierce: one blue mana is easy to hold up on the Breach turn.
 **Updated 2026-10-07.** Out: Marchesa, the Black Rose. In: Talrand, Sky Summoner. Marchesa, the Black Rose → Talrand, Sky Summoner: a 2/2 flying Drake for every instant or sorcery, so the deck has bodies besides the Orc Army (it loses to combat in about three games in four). Tested even with Marchesa (0.0 points, fast AI, 1,000 pairs per tier).
+**Updated 2026-10-11.** Out: Kefka, Court Mage. In: Bedevil. JD's choice: Kefka leaves to become the commander of his own deck (decklists/JD/kefka-grixis-discard.md); Bedevil ({B}{B}{R} instant: destroy target artifact, creature or planeswalker), cut on 10-01, comes back from the binder for the slot. Measured −1.8 points on average (look-ahead, loose, 1,000 paired games per tier; Bedevil vs Kefka: T1 24.1 vs 26.9, T2 30.6 vs 32.2, T3 23.1 vs 23.4, T4 19.5 vs 22.4, T5 20.4 vs 21.9). Each tier is within its own noise (about ±3), but all five favour Kefka, so losing him costs Sauron about two points (audit/sauron/2026-10-11-kefka-bedevil/).
+**Updated 2026-10-11 (second change).** Out: Bedevil. In: Sephiroth, Planet's Heir. JD's choice, not measured: Sephiroth, Planet's Heir ({4}{U}{B}, 4/4 vigilance) gives opponents' creatures -2/-2 when he enters and grows as their creatures die, a board-control threat in Kefka's old slot.
 
 ## Strategy
 
@@ -48,7 +50,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Underworld Breach** is the deck's second engine. While it's out (it's sacrificed at the end of the turn), every nonland card in your graveyard can be cast again by paying its mana cost and exiling three other cards from your graveyard. Dark Ritual ({B} for {B}{B}{B}) and Lotus Petal ({0}, sacrifice for one mana of any colour) turn that into mana: each escape nets two black or one of any colour, and each one adds to the storm count. Brain Freeze ({1}{U}, storm) mills three cards per copy, so it fills your graveyard with fuel early in the turn and empties opponents' libraries late in it. Ritual and Petal also cast normally as fast mana, but they are in the deck for this line, and Brain Freeze does almost nothing without Breach.
 
-**Kefka, Court Mage** is the flexible five-drop. When it enters or attacks, each player discards a card, then you draw a card for each card type among the cards discarded — usually two or three for your one. Late, {8} at sorcery speed makes each opponent sacrifice a permanent of their choice and transforms it into **Kefka, Ruler of Ruin**, a 5/7 flyer that draws you a card for every point of life an opponent loses during your turn. Army hits, Bowmasters pings, Sheoldred on an Archivist wheel, and Kaervek all turn into cards. The draws aren't optional, so watch your library size before a big turn.
+**Sephiroth, Planet's Heir** ({4}{U}{B}, 4/4 vigilance) holds Kefka's old slot. When he enters, opponents' creatures get −2/−2 until end of turn, which clears tokens, mana creatures and small blockers in front of the Army, and he gets a +1/+1 counter whenever a creature an opponent controls dies, so the turn he lands he is usually a 6/6 or bigger. Vigilance lets him attack and still guard Sauron.
 
 ## Key lines
 
@@ -58,7 +60,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Three Swords on one Army.** Each Sword has its own hit trigger, so every connection with all three makes the defender discard and untaps your lands (Feast and Famine), flickers and ramps (Hearth and Home), and shoots 2 and draws a card (Fire and Ice). Equip costs add up ({2} each), so put Feast and Famine on first when the Aggravated Assault combo is live, and Fire and Ice first when the table is heavy on blue and red interaction.
 
-**Archivist wheel with Bowmasters and Sheoldred** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each lose about 15 life apiece between Bowmasters' pings and Sheoldred. Hold it for the turn it kills or the counters matter. With Kefka, Ruler of Ruin out and the wheel on your turn, every point of that life loss also draws you a card, so check your library first.
+**Archivist wheel with Bowmasters and Sheoldred** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each lose about 15 life apiece between Bowmasters' pings and Sheoldred. Hold it for the turn it kills or the counters matter.
 
 **Underworld Breach + Brain Freeze mills the table.** It's not a strict infinite: the fuel is your own graveyard and library, but it produces far more than it spends.
 1. Cast Underworld Breach ({1}{R}). Have Brain Freeze in hand or graveyard and at least a few other cards in the graveyard.
@@ -106,7 +108,7 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 ## Bracket and Rule 0
 
-Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx left on 10-05, at no measurable cost). Sheoldred, Kefka, Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
+Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx left on 10-05, at no measurable cost). Sheoldred, Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
 
 **The deck has two combos.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later. **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal as fuel) mills the table in one turn; it can come together as early as turn four with a tutor. The Sword line is a late-game combo; the Breach line can be early, so say so before the game at a Bracket 3 table.
 
@@ -128,7 +130,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (17).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Kefka Court Mage // Kefka Ruler of Ruin, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (17).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
@@ -183,7 +185,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Izzet Boilerworks
 1 Jace's Archivist
 1 Kaervek the Merciless
-1 Kefka, Court Mage // Kefka, Ruler of Ruin
 1 Lightning Greaves
 1 Lotus Petal
 1 Mauhúr, Uruk-hai Captain
@@ -201,6 +202,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Sauron, the Necromancer
 1 Scarlet Witch, Chaotic Avenger
 1 Scavenger Grounds
+1 Sephiroth, Planet's Heir
 1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Slaughter Pact
@@ -258,5 +260,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 **Scavenger Grounds hits your own graveyard too.** Fire it deliberately.
 
 **New cards and cuts.**
-- **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage, Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
+- **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage (left 10-11 to lead his own deck), Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
+- **From the bulk list**: Sephiroth, Planet's Heir (10-11; Bedevil held the slot briefly the same day and stays in the binder).
 - **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

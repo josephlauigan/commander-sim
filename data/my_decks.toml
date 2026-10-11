@@ -42,3 +42,9 @@ file = "JD/jodah-wubrg-legends.md"
 name = "Jodah"
 commander = "Jodah, the Unifier"
 ident = "WUBRG"
+
+[kefka]
+file = "JD/kefka-grixis-discard.md"
+name = "Kefka"
+commander = "Kefka, Court Mage // Kefka, Ruler of Ruin"
+ident = "UBR"

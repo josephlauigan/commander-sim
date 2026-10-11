@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Kefka, Court Mage // Kefka, Ruler of Ruin [pool] C 2UBR :: leg human wizard pow=4 tgh=5 kefka
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Bedevil -> Kefka, Court Mage // Kefka, Ruler of Ruin
+
+=== Sauron vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  20.4% ->  21.9%  (delta +1.5 pts, noise ±2.8, paired)   n=1000
+               eliminated by (variant): Urza 16.7%  Zur the Enchanter 14.4%  Winota 17.3%  Kinnan 21.1%  Yawgmoth 8.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(74s total)
