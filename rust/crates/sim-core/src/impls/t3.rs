@@ -1701,7 +1701,7 @@ fn gix(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -
     let o = g.perm(src).owner;
     if g.perm(a).owner == o
         && d != o
-        && g.player(p).life > 10
+        && g.player(p).life > 12
         && g.player(p).library.len() > 10
         && trigger_window(g, p, Some(src), "pay 1 life: draw a card", None)?
     {

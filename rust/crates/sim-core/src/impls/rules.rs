@@ -462,6 +462,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     if equipped(g, a, Tag::Nim) && !art_or('B') {
         return true; // intimidate
     }
+    if crate::dsl::has_kw(g, a, "fear") && !art_or('B') {
+        return true; // fear: only artifact and black creatures can block
+    }
     if crate::dsl::has_kw(g, a, "intimidate")
         && !of_type(g, b, Types::ARTIFACT)
         && !"WUBRG".chars().any(|ch| colors_of(g, a).has(ch) && colors_of(g, b).has(ch))

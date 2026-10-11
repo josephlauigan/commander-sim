@@ -6213,3 +6213,103 @@ note = "increment; {T}: adds {G} equal to its power"
 ["Vinelasher Adept"]
 status = "Full"
 note = "reach; enters: three +1/+1 counters on the best creature (Jenova first); basic landcycling {2} when the hand lacks lands"
+# ---- the gix candidate deck (rust/crates/sim-core/src/impls/gix.rs; tests in tests/cards_gix.rs); the shared cards are modeled here for the yawgmoth and B/R candidates too
+["Al Bhed Salvagers"]
+status = "Full"
+note = "when it or another creature or artifact you control dies (Clue, Treasure, Food and Blood tokens count when sacrificed), the weakest opponent loses 1 life and you gain 1"
+
+["Apex Witchstalker"]
+status = "Full"
+note = "menace; enters or dies: gain 2 life; basic landcycling {2} when the hand lacks lands"
+
+["Callous Inspector"]
+dsl = []
+status = "Full"
+note = "menace; when it dies it deals 1 damage to you and you create a Clue"
+
+["Corpulent Corpse"]
+status = "Full"
+note = "fear (only artifact and black creatures block it); suspend 5 for {B} in the main phase (the engine's suspend table), cast free with haste on the fifth upkeep; hard-cast for six only with eight lands"
+
+["Dark Matter Manipulator"]
+status = "Full"
+note = "enters: mill three cards; +2/+0 for every seven cards in your graveyard"
+
+["Gollum, Silent Slinker"]
+status = "Full"
+note = "menace 4/3; Meager Meal ({B} sorcery adventure): a +1/+1 counter on the creature that connects best and you gain 2 life (cast with a creature out, more eagerly with a lifegain payoff); the creature stays in the hand to cast later"
+
+["Grim Wanderer"]
+status = "Full"
+note = "5/3 flash; castable only if a creature died this turn (the AI's priority is 0 otherwise)"
+
+["Necrosquito"]
+dsl = []
+status = "Full"
+note = "flying; enters with two oil counters (+1/+1 each); another creature or artifact you control going to the graveyard (artifact tokens when sacrificed too) adds an oil counter"
+
+["Restless Bloodseeker"]
+status = "Full"
+note = "end step, if you gained life this turn: a Blood token; sacrifice two Blood tokens (sorcery speed) to transform into Bloodsoaked Reveler (3/3, {4}{B}: each opponent loses 2 life and you gain 2); Blood tokens are kept as a count and rummage ({1}, discard, sacrifice: draw) when the hand has a spare card"
+
+["Salvaged Manaworker"]
+status = "Full"
+note = "1/3 artifact creature; {1}: add one mana of any colour (once each turn) is a colour filter: when a colour is missing, one single mana pays as any colour of the deck's identity"
+
+["Sangrophage"]
+status = "Full"
+note = "3/3 for BB; at your upkeep it is tapped unless you pay 2 life (the AI pays above 14 life)"
+
+["Overkill"]
+tags = "rem=shrink9999 tgt=c"
+status = "Full"
+note = "-0/-9999: kills any creature (indestructible does not help)"
+
+["Depressurize"]
+tags = "rem=destroy tgt=c"
+status = "Full"
+note = "-3/-0, then destroy if its power is 0 or less: targets a creature of power 3 or less that is not indestructible (the bare -3/-0 trick is never cast)"
+
+["End of the Hunt"]
+tags = ""
+status = "Full"
+note = "the opponent whose greatest-mana-value creature or planeswalker is worth the most exiles one with the greatest mana value (the least valuable of those tied)"
+
+["Balustrade Spy"]
+status = "Full"
+note = "flying; enters: a player reveals cards until a land and mills them (yourself with Dark Matter Manipulator out, else the opponent with the biggest library)"
+
+["Deepcavern Imp"]
+status = "Full"
+note = "flying, haste; echo: at the first upkeep discard a card (the AI pays with a junk card or a full hand) or sacrifice it"
+
+["Gravblade Heavy"]
+status = "Full"
+note = "3/4; with an artifact (Clue, Treasure, Food and Blood tokens count) it gets +1/+0 and deathtouch"
+
+["Ulna Alley Shopkeep"]
+status = "Full"
+note = "menace; infusion: +2/+0 while you gained life this turn"
+
+["Key to the Side-Door"]
+dsl = []
+status = "Full"
+note = "{2}, {T}: target creature can't be blocked this turn (the AI uses it before combat on the best attacker a blocker could stop); the second ability needs a legendary card with the same name as a legendary permanent you control, which a singleton deck cannot hold, so it is not modeled"
+
+["Mask of Memory"]
+dsl = [
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "draw", n = 2, who = "you" }, { do = "discard", n = 1, who = "you" }] },
+  { type = "static", static = "equip_cost", mana = 1 },
+]
+status = "Full"
+note = "equip {1}, preferably on an evasive creature; when the equipped creature deals combat damage to a player, draw two cards then discard one"
+
+["Medic's Kitesail"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 1, tgh = 0 },
+  { type = "static", static = "equip_keyword", keyword = "flying" },
+  { type = "triggered", event = "attack", source = "equipped", effects = [{ do = "gain_life", n = 1, who = "you" }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equip {2} on the best ground attacker: +1/+0, flying, and it gains you 1 life whenever it attacks"

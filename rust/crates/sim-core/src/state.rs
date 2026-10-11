@@ -336,6 +336,8 @@ pub struct Player {
     pub cmd_dmg: [i32; MAX_SEATS],
     pub treasures: u32,
     pub clues: u32,
+    /// Blood tokens (Restless Bloodseeker; impls/gix.rs)
+    pub bloods: u32,
     pub foods: u32,
     pub poison: u32,
     pub floating: Floating,
@@ -571,6 +573,7 @@ impl Player {
             cmd_dmg: [0; MAX_SEATS],
             treasures: 0,
             clues: 0,
+            bloods: 0,
             foods: 0,
             poison: 0,
             floating: Floating::default(),
