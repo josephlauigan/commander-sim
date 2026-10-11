@@ -49,7 +49,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 19] = [
+const MAIN_STYLES: [(&str, Style); 18] = [
     ("seph", st(1.0, 0.55, 0.60)),
     ("veyran", st(1.0, 0.40, 0.80)),
     ("sauron", st(1.0, 0.55, 0.75)),
@@ -67,7 +67,6 @@ const MAIN_STYLES: [(&str, Style); 19] = [
     ("yawgmoth", st(1.0, 0.55, 0.60)),
     ("lordofpain", st(1.0, 0.55, 0.65)),
     ("smaug", st(1.0, 0.65, 0.55)),
-    ("bill", st(1.0, 0.70, 0.50)),
     ("titania", st(1.0, 0.70, 0.50)),
 ];
 
@@ -472,11 +471,6 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
 pub fn choose_attack(g: &mut Game, p: PlayerId) -> Res<Option<(PlayerId, Sym)>> {
     if let Some(plan) = g.forced_attack.take() {
         return Ok(Some(plan));
-    }
-    if g.player(p).key == "bill"
-        && let Some(q) = crate::impls::bill::forced_plan(g, p)
-    {
-        return Ok(Some((q, "all"))); // Bill doubled for a lethal attack: everything at that player
     }
     if !search::enabled(g, p) {
         return Ok(None);

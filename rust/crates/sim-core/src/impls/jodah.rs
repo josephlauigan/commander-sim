@@ -578,7 +578,7 @@ fn apply(
     grant(g, &scope, kws);
     match name {
         "Snakeskin Veil" => g.perm_mut(j).plus += 1, // the counter
-        "Royal Treatment" => super::bill::royal_apply(g, j), // the Royal Role: +1/+1 and ward {1}
+        "Royal Treatment" => super::green_cards::royal_apply(g, j), // the Royal Role: +1/+1 and ward {1}
         "Tamiyo's Safekeeping" => gain(g, p, 2)?,
         "Lazotep Plating" => amass(g, p, 1)?,
         "Loran's Escape" => crate::cardcode::scry(g, p, 1, false)?,
