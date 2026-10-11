@@ -163,6 +163,7 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
     let cols = tag_cols(g, p, c);
     let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
     let mut s = new_cols * 2.0 + if land_enters_tapped(g, p, c) { 0.0 } else { 3.0 };
+    s += crate::impls::bill::land_adjust(g, p, c); // the bill deck: fetch lands while Bill is out
     if t.has(Tag::Chasm) {
         s += 10.0;
     }

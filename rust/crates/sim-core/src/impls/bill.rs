@@ -80,7 +80,19 @@ fn counter_score(g: &Game, m: PermId) -> f64 {
     if etgh(g, m) <= 1 {
         v -= 4.0;
     }
+    if doomed(g, m) {
+        v -= 100.0; // removal is on the stack for it: the counters would be lost
+    }
     v
+}
+
+fn doomed_key(m: PermId) -> Sym {
+    intern(&format!("bill_doomed_{}", m.0))
+}
+
+fn doomed(g: &Game, m: PermId) -> bool {
+    let o = g.perm(m).owner;
+    g.player(o).flag_turn.get(&doomed_key(m)) == Some(&g.turn_stamp())
 }
 
 /// the creature a counter goes on, among `mine` (the bill deck's player only: `dsl::choose_target`)
@@ -329,6 +341,7 @@ pub fn bill_protect(
     if actor.is_none() || actor == Some(p) || g.perm(m).cd.is_none() || matches!(kind, "edict" | "wipe" | "sacrifice") {
         return Ok(false);
     }
+    harrow_in_response(g, p, m)?;
     let worth = pval(g, m) + g.perm(m).plus.max(0) as f64 * 0.5;
     if worth < 4.0 || !g.is_creature(m) {
         return Ok(false);
@@ -817,9 +830,7 @@ fn firstyear_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
         return Ok(false);
     }
     g.perm_mut(src).data.set(DataKey::Prepared, Val::Bool(false));
-    super::mine::cast_copy_with(g, p, None, None, false, 2.0, &mut |g| {
-        crate::engine::zones::land_ramp(g, p, 1, true)
-    })?;
+    super::mine::cast_copy_with(g, p, None, None, false, 2.0, &mut |g| crate::engine::zones::land_ramp(g, p, 1, true))?;
     Ok(true)
 }
 
@@ -911,6 +922,85 @@ fn hypothesis_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== sequencing: lands and the finish
+/// The fetch lands (Evolving Wilds, Terramorphic Expanse, Fabled Passage) are two landfall triggers, the land and the
+/// land it finds, so they are played while Bill is out (`engine::turn::land_score`); while Bill is still in the
+/// command zone and could be cast this turn, a basic is played instead (the land drop comes before the spells, so the
+/// trigger it makes is lost either way: lose the cheaper one) and the fetch waits. With no Bill in reach the fetch is
+/// played for the land as normal.
+pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    if g.player(p).key != "bill" || !g.db.get(c).tag(crate::tag::Tag::F) {
+        return 0.0;
+    }
+    if bill_of(g, p).is_some() {
+        return 6.0;
+    }
+    let pl = g.player(p);
+    if pl.cmd_in_zone && !pl.hand.contains(&pl.cmd) {
+        let (gn, pips) = crate::engine::mana::cost_of(g, p, pl.cmd);
+        let need = gn + pips.chars().count() as u32;
+        let basic_in_hand = pl.hand.iter().any(|&x| g.db.get(x).land && !g.db.get(x).tag(crate::tag::Tag::F));
+        if basic_in_hand && crate::engine::mana::total_mana(g, p, false) + 1 >= need {
+            return -6.0;
+        }
+    }
+    0.0
+}
+
+/// the attackers that could swing this turn (not summoning sick, untapped, willing) and their total power, with
+/// `each` more on every one and `extra` more creatures of `extra_pow` that arrive with haste
+fn alpha_power(g: &Game, p: PlayerId, each: i32, extra: i32, extra_pow: i32) -> i32 {
+    let mut total = extra * (extra_pow + each);
+    for m in creatures(g, p) {
+        let x = g.perm(m);
+        if x.tapped || x.noatk || (x.sick && !crate::engine::combat::kw(g, m, "haste")) {
+            continue;
+        }
+        total += (epow(g, m) + each).max(0);
+    }
+    total
+}
+
+/// the fewest life points among p's opponents
+fn lowest_life(g: &Game, p: PlayerId) -> i32 {
+    g.opps(p).map(|q| g.player(q).life).min().unwrap_or(40)
+}
+
+/// Overwhelming Stampede and End-Raze Forerunners end the game: cast when the alpha strike they make is lethal or near
+/// it (four fifths of the lowest life), otherwise held. Blockers are ignored; both give trample.
+fn finisher_prio(g: &Game, p: PlayerId, name: &str, base: i32) -> i32 {
+    let life = lowest_life(g, p);
+    match name {
+        "Overwhelming Stampede" => {
+            let x = greatest_power(g, p);
+            if alpha_power(g, p, x, 0, 0) * 5 >= life * 4 { 92 } else { 0 }
+        }
+        "End-Raze Forerunners" => {
+            let others = creatures(g, p).len() as i32;
+            if alpha_power(g, p, 2, 1, 7) * 5 >= life * 4 && others >= 1 { 92 } else { base.min(30) }
+        }
+        _ => base,
+    }
+}
+
+// ================================================================== Harrow in response to removal on Bill
+/// Harrow ({2}{G} instant, sacrifice a land): two lands onto the battlefield, so two landfall triggers. The deck casts
+/// it in response to removal aimed at Bill while he is still on the battlefield and another creature can take the
+/// counters; it saves nothing, so `bill_protect` goes on to its other answers.
+fn harrow_in_response(g: &mut Game, p: PlayerId, m: PermId) -> Res<()> {
+    if card_name(g, m) != Some(BILL) || creatures(g, p).len() < 2 {
+        return Ok(());
+    }
+    let Some(c) = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == "Harrow") else { return Ok(()) };
+    let st = g.turn_stamp();
+    g.player_mut(p).flag_turn.insert(doomed_key(m), st); // the counters go to the others
+    if crate::ai::brain::do_cast_with(g, p, c, None, Ctx::default())? {
+        crate::glog!(g, "    {} casts Harrow in response", pname(g, p));
+    }
+    g.player_mut(p).flag_turn.shift_remove(&doomed_key(m));
+    Ok(())
+}
+
 // ================================================================== the AI's cast priorities
 /// bill's cast priority: Bill first the moment he can be cast (turn 2), then the generic plan; a plotted or foretold
 /// card, the face-down Radical's card and Royal Treatment are cast only by their own options
@@ -925,6 +1015,7 @@ pub fn bill_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         ROYAL | RADICAL | HYPOTHESIS => 0,
         FREESTRIDER | TUMBLEWEED | LIFESTREAM if exiled_turn(g, p, c).is_some() => 0,
         TUMBLEWEED if greatest_power(g, p) < 3 => base.min(15),
+        "Overwhelming Stampede" | "End-Raze Forerunners" => finisher_prio(g, p, name, base),
         _ => base,
     }
 }

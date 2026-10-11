@@ -593,7 +593,8 @@ fn run(
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
                 // Hardened Scales: one more on a creature you control (before any doubling)
-                let extra = if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
+                let extra =
+                    if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
                 g.perm_mut(m).plus += k + extra;
             }
         }

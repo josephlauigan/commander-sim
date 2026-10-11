@@ -4,8 +4,8 @@ use sim_core::ai::{act, brain};
 use sim_core::engine::combat::can_block;
 use sim_core::engine::values::{epow, etgh};
 use sim_core::engine::{cast, hooks, zones};
-use sim_core::hooks::{Call, Event};
 use sim_core::hooks::Opt;
+use sim_core::hooks::{Call, Event};
 use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::state::{Ctx, Game};
 use sim_core::testkit::*;
@@ -76,7 +76,6 @@ fn scales_does_not_help_the_opponents_counters_or_other_permanents() {
     land_enters(&mut g, P0);
     assert_eq!(g.perm(bill).plus, 1, "the opponent's Scales is not mine");
 }
-
 
 /// the options the hook slots offer at the end of the turn before p's own (post None)
 fn eot_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
@@ -176,7 +175,11 @@ fn boughside_wanderers_takes_a_permanent_from_the_top_four() {
     g.player_mut(P0).library.push(c);
     let before = g.player(P0).library.len();
     perm(&mut g, P0, "Boughside Wanderers");
-    assert_eq!(g.player(P0).library.len(), before - 2, "the Wanderers leave the library, one card to hand, three to the bottom");
+    assert_eq!(
+        g.player(P0).library.len(),
+        before - 2,
+        "the Wanderers leave the library, one card to hand, three to the bottom"
+    );
     assert_eq!(g.player(P0).hand.len(), 1);
 }
 
@@ -512,7 +515,13 @@ fn greenbelt_radical_is_cast_face_down_and_turned_up_for_seven() {
     lands(&mut g, P0, "Forest", 3, false);
     hand(&mut g, P0, &["Greenbelt Radical"]);
     assert!(take_option(&mut g, P0, false, "Greenbelt Radical (face down)"));
-    let r = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).data.truthy(sim_core::state::DataKey::Facedown)).unwrap();
+    let r = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).data.truthy(sim_core::state::DataKey::Facedown))
+        .unwrap();
     assert_eq!((epow(&g, r), etgh(&g, r)), (2, 2));
     assert_eq!(sim_core::cardcode::aura_ward(&g, r), 2, "ward {{2}}");
     // seven lands: turn it up
@@ -678,4 +687,74 @@ fn wild_hypothesis_is_not_cast_for_x_of_one() {
     let c = hand(&mut g, P0, &["Wild Hypothesis"])[0];
     assert!(!has_option(&mut g, true, "Wild Hypothesis"));
     assert_eq!(sim_core::ai::deck_prio(&g, P0, c), 0.0);
+}
+
+// ------------------------------------------------------------------ sequencing
+fn land_names(g: &Game, p: PlayerId) -> Vec<String> {
+    g.player(p).lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect()
+}
+
+#[test]
+fn a_basic_is_played_before_bill_and_the_fetch_waits_for_him() {
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 1, false);
+    hand(&mut g, P0, &["Evolving Wilds", "Forest"]);
+    sim_core::engine::turn::play_land(&mut g, P0).unwrap();
+    assert_eq!(land_names(&g, P0), ["Forest", "Forest"], "Bill can be cast this turn: the basic goes down");
+    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Evolving Wilds"));
+}
+
+#[test]
+fn the_fetch_is_played_first_once_bill_is_out() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Evolving Wilds", "Forest"]);
+    sim_core::engine::turn::play_land(&mut g, P0).unwrap();
+    assert_eq!(g.perm(bill).plus, 2, "the Wilds and the land it found");
+    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Forest"));
+}
+
+#[test]
+fn harrow_answers_removal_on_bill_when_another_creature_can_take_the_counters() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    let other = perm(&mut g, P0, "Thrashing Brontodon");
+    lands(&mut g, P0, "Forest", 4, false);
+    hand(&mut g, P0, &["Harrow"]);
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), bill, "destroy", None).unwrap();
+    assert!(!g.perm(bill).on_bf, "Harrow saves nothing");
+    assert_eq!(g.perm(other).plus, 2, "but its two landfall triggers came first");
+    assert!(in_gy(&g, P0, "Harrow"));
+}
+
+#[test]
+fn harrow_is_not_wasted_when_bill_is_alone() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    lands(&mut g, P0, "Forest", 4, false);
+    hand(&mut g, P0, &["Harrow"]);
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), bill, "destroy", None).unwrap();
+    assert!(!in_gy(&g, P0, "Harrow"));
+}
+
+#[test]
+fn stampede_and_end_raze_are_held_until_the_alpha_strike_is_near_lethal() {
+    let mut g = game();
+    let a = perm(&mut g, P0, "Thrashing Brontodon");
+    let b = perm(&mut g, P0, "Noxious Newt");
+    let stampede = hand(&mut g, P0, &["Overwhelming Stampede"])[0];
+    g.player_mut(P1).life = 40;
+    g.perm_mut(a).plus = 5; // an 8 power attacker; Stampede adds +8/+8: 16 damage
+    assert_eq!(sim_core::ai::deck_prio(&g, P0, stampede), 0.0, "16 of 40: held");
+    g.player_mut(P1).life = 20;
+    assert_eq!(sim_core::ai::deck_prio(&g, P0, stampede), 92.0, "16 of 20 is near lethal");
+    let _ = b;
+}
+
+#[test]
+fn a_fetch_land_with_bill_out_of_reach_is_unchanged() {
+    let g = game();
+    let wilds = card(&g, "Evolving Wilds");
+    assert_eq!(sim_core::impls::bill::land_adjust(&g, P0, wilds), 0.0);
 }

@@ -133,8 +133,8 @@ pub fn scales(g: &Game, p: PlayerId) -> i32 {
     g.player(p).perms.iter().filter(|y| g.perm(**y).on_bf && !g.perm(**y).phased && named(y)).count() as i32
 }
 
-/// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control; Hardened Scales: one
-/// more on a creature you control
+/// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control; Hardened Scales:
+/// one more on a creature you control
 pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
     use crate::engine::values::{card_tag, has_type};
     let x = g.perm(m);
