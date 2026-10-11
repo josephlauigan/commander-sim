@@ -16,6 +16,10 @@ These rules replace `rust/agents/RULES.md`, which was written for the Python por
 - Toolchain: `export PATH=$HOME/.cargo/bin:$PATH`; build from `rust/`. In zsh, write commands out (a command stored in
   a variable isn't word-split).
 - Never let an unsigned counter go below zero (release builds have overflow checks).
+- **No wait loops.** Don't write `until ! pgrep -f "cargo build"; do sleep ...; done` or anything like it: `pgrep -f`
+  matches the loop's own command line, so it never ends, and other sessions' builds keep it going anyway. Run the
+  build or test in the foreground (with a long timeout), or in the background and wait for its notification. Leave
+  nothing running when you finish.
 - **Edit only the files your brief gives you.** Shared files (`cardcode.rs`, `state.rs`, `hooks.rs`, `engine/*`,
   `ai/*`, `impls/mod.rs`, `impls/common.rs`): only the smallest additive change, and list each one in your report.
   Other agents are editing the same shared files in parallel; keep your changes there small so merges stay easy.
