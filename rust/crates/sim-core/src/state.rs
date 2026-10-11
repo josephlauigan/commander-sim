@@ -329,6 +329,8 @@ pub struct Player {
     pub foods: u32,
     pub poison: u32,
     pub floating: Floating,
+    /// practice mode: the mana a person has made and not spent (Python's `p.pool`; inert for AI seats)
+    pub pool: crate::human::mana::ManaPool,
     pub extra_combats: u32,
     pub combat_no: u32,
     pub spells_this_turn: u32,
@@ -545,6 +547,7 @@ impl Player {
             foods: 0,
             poison: 0,
             floating: Floating::default(),
+            pool: Default::default(),
             extra_combats: 0,
             combat_no: 0,
             spells_this_turn: 0,
@@ -859,6 +862,8 @@ pub struct Game {
     /// permanents with hand-written card code, in entry order (Python's `g.hooks`)
     pub hooks: Vec<PermId>,
     pub stack: Vec<StackItem>,
+    /// practice mode: >0 while the person is responding with something on the stack (Python's `g.responding`)
+    pub responding: u32,
     /// items ever put on the stack: tells whether a player with priority did something; also the next item's id
     pub stack_pushes: u32,
     /// 'probe' while finding out which pending triggers really trigger (Python's `trig_mode`)
@@ -1005,6 +1010,7 @@ impl Game {
             cur_batch: None,
             hooks: vec![],
             stack: vec![],
+            responding: 0,
             stack_pushes: 0,
             trig_probe: false,
             trig_current: None,
