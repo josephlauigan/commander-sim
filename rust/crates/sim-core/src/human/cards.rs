@@ -94,3 +94,9 @@ pub fn pick_blue(g: &Game, p: PlayerId, blues: &[CardId], what: &str) -> Res<Car
         super::choices::choose_one(g, p, "choose", &format!("{what}: exile which blue card from your hand?"), &labels)?;
     Ok(blues[k])
 }
+
+/// `cards.dredge(g, p)`: the person may dredge instead of drawing; true if they did. PORT(practice-cards): stub
+/// (never dredges).
+pub fn dredge(_g: &mut Game, _p: PlayerId) -> Res<bool> {
+    Ok(false)
+}

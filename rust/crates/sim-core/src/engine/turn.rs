@@ -201,8 +201,12 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
         Some(EnterRule::Pay(n))
             if !(!g.hooks.is_empty() && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])) =>
         {
-            // HUMAN(phase 9): the person chooses (hc.yes_no)
-            let paid = pays_for_land(g, p, c, n);
+            let paid = if crate::human::is_human(g, p) {
+                let prompt = format!("{}: pay {n} life so it enters untapped?", g.db.get(c).name);
+                crate::human::choices::yes_no(g, p, &prompt)?
+            } else {
+                pays_for_land(g, p, c, n)
+            };
             if paid {
                 lose_life(g, p, n, Some(p), "other", None)?;
                 crate::glog!(g, "  {} pays {} life for an untapped {}", g.player(p).name, n, g.db.get(c).name);
@@ -559,9 +563,16 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
         }
         if t.has(Tag::SheoW) && trigger_window(g, p, Some(m), "return a creature; each opponent sacrifices", Some(6.0))?
         {
-            // HUMAN(phase 9): hc.pick_cards
             let cr: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&x| g.db.get(x).creature).collect();
-            if let Some(b) = max_by(&cr, |x| ai::seph_bval(g, p, x)) {
+            let pick = if cr.is_empty() {
+                None
+            } else if crate::human::is_human(g, p) {
+                let prompt = "Sheoldred, Whispering One: return a creature card";
+                Some(crate::human::choices::pick_cards(g, p, &cr, 1, prompt, "choose")?[0])
+            } else {
+                max_by(&cr, |x| ai::seph_bval(g, p, x))
+            };
+            if let Some(b) = pick {
                 let gy = &mut g.player_mut(p).gy;
                 let i = gy.iter().position(|&x| x == b).unwrap();
                 gy.remove(i);
@@ -702,7 +713,6 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             }
         }
     }
-    // HUMAN(phase 9): a person discards to hand size themselves (hc.discard_to_hand_size)
     let nomax = |g: &Game| {
         has(g, p, Tag::Nomax)
             || g.player(p).lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Nomax))
@@ -712,7 +722,11 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         let pl = g.player(p);
         pl.hand.iter().copied().filter(|c| !pl.stolen.contains_key(c) && !pl.agent_ids.contains(c)).collect()
     };
-    while held(g).len() > 7 && !nomax(g) {
+    let human = crate::human::is_human(g, p);
+    if human && !nomax(g) {
+        crate::human::choices::discard_to_hand_size(g, p, 7)?; // a person discards to hand size themselves
+    }
+    while !human && held(g).len() > 7 && !nomax(g) {
         if g.player(p).key == "seph" {
             let bombs: Vec<CardId> =
                 g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 6).collect();
@@ -746,7 +760,9 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
     let i = STEPS.iter().position(|&s| s == step).unwrap();
     for &st in &STEPS[i..] {
         g.step = st;
-        // PORT(phase 9): practice mode empties the mana pools between steps
+        if g.humans.any() {
+            crate::human::mana::empty_pools(g); // practice mode empties the mana pools between steps
+        }
         match st {
             Step::Start => step_start(g, p)?,
             Step::Main1 => step_main1(g, p)?,
@@ -848,8 +864,13 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     } else if loam_dredge(g, p)? || cardcode::dakmor_dredge(g, p)? || cardcode::skip_draw(g, p) {
         // Life from the Loam, Dakmor Salvage dredged; Solitary Confinement
     } else if !(g.player(p).key == "seph" && ai::seph_dredge(g, p)?) {
-        // HUMAN(phase 9): a person may dredge (play/cards.dredge)
-        draw(g, p, 1, true)?;
+        if crate::human::is_human(g, p) {
+            if !crate::human::cards::dredge(g, p)? {
+                draw(g, p, 1, true)?;
+            }
+        } else {
+            draw(g, p, 1, true)?;
+        }
     }
     check_state(g)?;
     if g.over || !g.player(p).alive {
@@ -869,7 +890,9 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     let pl = g.player_mut(p);
     pl.lands_played = 0;
     pl.extra_land_now = 0;
-    // HUMAN(phase 9): a person plays lands in the main phase
+    if crate::human::is_human(g, p) {
+        return Ok(()); // practice mode: the person plays lands in the main phase
+    }
     play_land(g, p)?;
     if !g.hooks.is_empty() {
         more_lands(g, p)?;
@@ -889,7 +912,9 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
 }
 
 fn step_main1(g: &mut Game, p: PlayerId) -> Res {
-    // HUMAN(phase 9): a person's main phase (play/human.human_main)
+    if crate::human::is_human(g, p) {
+        return crate::human::human::human_main(g, p, false);
+    }
     ai::main(g, p, false)?;
     if g.over || !g.player(p).alive {
         return Ok(());
@@ -906,6 +931,9 @@ fn step_main2(g: &mut Game, p: PlayerId) -> Res {
     }
     if g.over || !g.player(p).alive {
         return Ok(());
+    }
+    if crate::human::is_human(g, p) {
+        return crate::human::human::human_main(g, p, true);
     }
     ai::main(g, p, true)?;
     if g.player(p).key == "veyran" && has(g, p, Tag::Veyran) && ai::engine_payoff(g, p) {
@@ -983,6 +1011,21 @@ pub fn setup_game(
     seats: &[Seat],
     trace: bool,
 ) -> Game {
+    setup_game_for(db, registry, settings, seed, seats, trace, &[]).0
+}
+
+/// `setup_game` for practice mode (Python's `setup_pool_game(.., human=)`): the decks named in `human` are shuffled
+/// but not mulliganed; their shuffle generators (Python's `p.mull_rng`) are returned, for `human::choices::mulligan`.
+pub fn setup_game_for(
+    db: std::sync::Arc<crate::cards::CardDb>,
+    registry: std::sync::Arc<crate::hooks::Registry>,
+    settings: std::sync::Arc<crate::settings::Settings>,
+    seed: u64,
+    seats: &[Seat],
+    trace: bool,
+    human: &[&str],
+) -> (Game, Vec<(PlayerId, crate::rng::Rng)>) {
+    let mut mull_rngs = vec![];
     let players = seats
         .iter()
         .enumerate()
@@ -1001,11 +1044,15 @@ pub fn setup_game(
         let mut lib = std::mem::take(&mut g.player_mut(p).library);
         r.shuffle(&mut lib);
         g.player_mut(p).library = lib;
+        if human.contains(&&*g.player(p).key) {
+            mull_rngs.push((p, r));
+            continue;
+        }
         mulligan(&mut g, p, &mut r);
         let hand = g.player(p).hand.clone();
         g.player_mut(p).seen.extend(hand);
     }
-    g
+    (g, mull_rngs)
 }
 
 /// One seat: the deck key, its display name, the commander and the full list (commander included).
@@ -1033,8 +1080,8 @@ pub fn run_rounds(g: &mut Game, max_rounds: u32) {
                     continue;
                 }
                 if g.player(p).alive && !g.over {
-                    if r > 1 {
-                        ai::end_of_turn_window(g, p)?; // HUMAN(phase 9): not for a person's seat
+                    if r > 1 && !crate::human::is_human(g, p) {
+                        ai::end_of_turn_window(g, p)?; // not for a person's seat
                     }
                     if g.player(p).alive && !g.over {
                         take_turn(g, p)?;
