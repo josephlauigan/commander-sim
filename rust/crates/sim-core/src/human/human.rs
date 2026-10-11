@@ -21,6 +21,7 @@ use crate::engine::values::epow;
 use crate::engine::zones;
 use crate::engine::{self, cast, turn};
 use crate::flow::Res;
+use crate::flow::Stop;
 use crate::hooks::{Action, Event};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{Ctx, Game, StackItem, StackKind, Step};
@@ -76,7 +77,13 @@ pub fn human_main(g: &mut Game, p: PlayerId, _post: bool) -> Res {
     while !g.over && g.player(p).alive {
         let prompt = format!("{}: you have priority", step_name(g));
         let req = Request { kind: intern("priority"), prompt, choices: vec![], data: json!({}) };
-        let act = action_of(h.ask(g, p, req));
+        // a closed or rewound session answers Cancel: unwind the game (Python's ask raises Cancelled); treating it as an
+        // unknown action looped forever, telling "invalid" each time
+        let ans = h.ask(g, p, req);
+        if ans == Answer::Cancel {
+            return Err(Stop::Cancelled);
+        }
+        let act = action_of(ans);
         if do_of(&act) == "pass" {
             return Ok(());
         }
@@ -294,7 +301,13 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
                 "caster": caster.map(|c| name_of(g, c)),
             }),
         };
-        let act = action_of(h.ask(g, q, req));
+        // a closed or rewound session answers Cancel: unwind the game (Python's ask raises Cancelled); treating it as an
+        // unknown action looped forever, telling "invalid" each time
+        let ans = h.ask(g, q, req);
+        if ans == Answer::Cancel {
+            return Err(Stop::Cancelled);
+        }
+        let act = action_of(ans);
         if do_of(&act) == "pass" {
             return Ok(());
         }

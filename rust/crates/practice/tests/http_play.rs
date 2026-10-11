@@ -27,7 +27,6 @@ fn until_request(c: &mut Client) -> Vec<Value> {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_undo_asks_the_last_decision_again_with_the_same_table() {
     let s = srv!();
     let mut c = s.client();
@@ -42,7 +41,6 @@ fn test_undo_asks_the_last_decision_again_with_the_same_table() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_replayed_history_is_marked() {
     let s = srv!();
     let mut c = s.client();
@@ -85,7 +83,6 @@ fn test_undo_switched_off() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_a_saved_game_comes_back_the_same() {
     let s = srv!();
     let mut c = s.client();
@@ -113,7 +110,6 @@ fn test_a_saved_game_comes_back_the_same() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_hints_change_nothing() {
     let s = srv!();
     let mut c = s.client();
@@ -138,7 +134,6 @@ fn test_hints_change_nothing() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_comparisons_change_nothing_and_the_review_waits() {
     let s = srv!();
     let mut c = s.client();
@@ -154,7 +149,6 @@ fn test_comparisons_change_nothing_and_the_review_waits() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_review_and_try_it() {
     let s = srv!();
     let mut c = s.client();

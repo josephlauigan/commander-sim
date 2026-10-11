@@ -214,7 +214,6 @@ fn test_each_seat_sees_its_own_game() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_hint_is_for_the_seat_deciding() {
     let s = lan!();
     let (mut host, mut friend, code) = open_table(&s);
@@ -243,7 +242,6 @@ fn test_hint_is_for_the_seat_deciding() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_undo_needs_the_other_persons_ok() {
     let s = lan!();
     let (mut host, mut friend, code) = open_table(&s);
@@ -293,7 +291,6 @@ fn test_undo_needs_the_other_persons_ok() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_a_saved_two_player_game_waits_for_the_friend() {
     let s = lan!();
     let (mut host, mut friend, code) = open_table(&s);
@@ -341,7 +338,6 @@ fn test_a_saved_two_player_game_needs_lan() {
 }
 
 #[test]
-#[ignore = "needs practice-core: the human seat is asked only the mulligan, so no priority/choose request follows"]
 fn test_one_player_undo_is_at_once() {
     let Some(s) = server() else { return };
     let mut host = Browser::new(s.client());
