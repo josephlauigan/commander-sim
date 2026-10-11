@@ -35,7 +35,7 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, pval};
-use crate::engine::zones::{die, discard_cards, draw, exile_perm, land_to_hand, max_by, min_by, mill};
+use crate::engine::zones::{die, discard_cards, draw, exile_perm, land_to_hand, max_by, mill, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -86,9 +86,7 @@ pub fn artifact_count(g: &Game, p: PlayerId) -> i32 {
 /// a creature or artifact (a permanent that has just left the battlefield keeps its card)
 fn creature_or_artifact(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
-    g.is_creature(m)
-        || x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))
-        || x.ttypes.contains(&"artifact")
+    g.is_creature(m) || x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)) || x.ttypes.contains(&"artifact")
 }
 
 // ------------------------------------------------------------------ Al Bhed Salvagers
@@ -394,10 +392,7 @@ fn spy_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 
 // ------------------------------------------------------------------ Gollum: Meager Meal
 fn meal_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false)
-        || g.active != Some(p)
-        || g.player(p).adv_done.contains(&c)
-        || !can_pay(g, p, 0, "B", false)
+    if post != Some(false) || g.active != Some(p) || g.player(p).adv_done.contains(&c) || !can_pay(g, p, 0, "B", false)
     {
         return Ok(vec![]);
     }
@@ -405,8 +400,7 @@ fn meal_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
         return Ok(vec![]);
     }
     let payoff = g.player(p).perms.iter().any(|&m| {
-        on_bf(g, m)
-            && g.perm(m).cd.is_some_and(|cd| matches!(&*g.db.get(cd).name, BLOODSEEKER | "Ulna Alley Shopkeep"))
+        on_bf(g, m) && g.perm(m).cd.is_some_and(|cd| matches!(&*g.db.get(cd).name, BLOODSEEKER | "Ulna Alley Shopkeep"))
     });
     Ok(vec![Opt {
         utility: 1.4 + if payoff { 1.2 } else { 0.0 },
@@ -459,7 +453,11 @@ pub fn make_blood(g: &mut Game, p: PlayerId, n: i32) -> Res {
     }
     g.player_mut(p).bloods += n as u32;
     if !g.hooks.is_empty() {
-        crate::engine::hooks::fire_trigger(g, Event::TokenCreated, Call::ArtifactTokens { p, kinds: vec!["Blood"], n })?;
+        crate::engine::hooks::fire_trigger(
+            g,
+            Event::TokenCreated,
+            Call::ArtifactTokens { p, kinds: vec!["Blood"], n },
+        )?;
     }
     Ok(())
 }
@@ -735,18 +733,11 @@ fn evasive_card(g: &Game, c: CardId) -> bool {
 pub fn gix_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let d = g.db.get(c);
     let base = generic_prio(g, p, c);
-    if base <= 0 {
-        return base;
-    }
     match &*d.name {
         "Medic's Kitesail" | "Mask of Memory" | "Key to the Side-Door" => {
-            if g.player(p).perms.iter().any(|&m| on_bf(g, m) && g.is_creature(m)) {
-                base.max(46)
-            } else {
-                0
-            }
+            if g.player(p).perms.iter().any(|&m| on_bf(g, m) && g.is_creature(m)) { base.max(46) } else { 0 }
         }
-        _ if evasive_card(g, c) => base + 8,
+        _ if base > 0 && evasive_card(g, c) => base + 8,
         _ => base,
     }
 }
