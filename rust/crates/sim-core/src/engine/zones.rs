@@ -859,6 +859,9 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
         g.perm_mut(n).tapped = true;
         return Ok(());
     }
+    if !x.eot_kw.is_empty() && crate::impls::sheoldred::returns_when_dies(g, &x, cause)? {
+        return Ok(()); // Perigee Beckoner: it returns to the battlefield
+    }
     to_zone_card(g, m, Zone::Gy);
     if !g.hooks.is_empty() && creature {
         fire_trigger(g, Event::CreatureToGy, Call::Leaves { m })?; // Nim Deathmantle

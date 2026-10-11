@@ -81,9 +81,9 @@ pub fn dryad_colors(g: &Game, p: PlayerId) -> bool {
 }
 
 // ================================================================== tax payments
-/// rules.REPLACED_TAG_ENGINES: engines whose card code replaces the generic 'eng' upkeep draw
+/// rules.REPLACED_TAG_ENGINES: engines whose card code replaces the generic 'eng' upkeep draw; Seymour Flux: impls/sheoldred.rs
 pub fn replaced_tag_engine(name: &str) -> bool {
-    matches!(name, "Mystic Remora" | "Sylvan Library")
+    matches!(name, "Mystic Remora" | "Sylvan Library" | "Seymour Flux")
 }
 
 // ================================================================== counters
