@@ -1,9 +1,0 @@
-2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
-Swaps: Evolving Wilds -> Forest; Terramorphic Expanse -> Forest; Fabled Passage -> Forest
-
-=== Bristly Bill vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
-[loose       ] win  17.1% ->  18.3%  (delta +1.2 pts, noise ±3.2, paired)   n=1000
-               eliminated by (variant): Heliod 21.1%  Yuriko 17.1%  Krenko 17.8%  Chulane 13.5%  Prosper 12.2%
-VERDICT: NO CLEAR EFFECT (within noise)
-
-(163s total)
