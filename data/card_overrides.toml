@@ -5696,3 +5696,59 @@ tags = "pow=3 tgh=2 prepare"
 dsl = []
 status = "Full"
 note = "ward-pay 2 life (opposing spells that target it); enters prepared: a copy of Awaken the Ages ({5}{R}: two 2/2 red and white Spirits)"
+
+["Burn, Burn, Tree and Fern"]
+dsl = []
+status = "Full"
+note = "Saga: I 6 damage to the best opposing creature that dies to it, II destroy the best opposing artifact permanent (Treasure, Food and Clue tokens are counters in this engine, so they can't be targeted), III and IV add {R} (floats through the main phase); sacrificed after IV"
+
+["Ral and the Implicit Maze"]
+dsl = []
+status = "Full"
+note = "Saga: I 2 damage to each opposing creature and planeswalker (creatures it does not kill are not marked with damage; planeswalkers lose 2 loyalty), II discard the worst card (when the library has two) and exile the top two, playable until the end of your next turn, III a 2/2 red Spellgorger Weird that gets a +1/+1 counter per noncreature spell (engine/cast.rs on_cast); sacrificed after III"
+
+["Command the Stage"]
+dsl = []
+status = "Full"
+note = "a 2/2 colourless Wizard Soldier token, then +1/+1 on each other Wizard token; each upkeep, if an opponent was dealt noncombat damage last turn, it returns from the graveyard (hooks gy_upkeep, Player.nc_dmg_last); the token's name Cadet is not tracked"
+
+["Glimpse the Impossible"]
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles the top three (playable this turn); at the end step the unplayed ones go to the graveyard and each makes a 0/1 Eldrazi Spawn (Player.glimpse_exiled)"
+
+["Living History"]
+dsl = []
+status = "Full"
+note = "a 2/2 red and white Spirit on entry; whenever you attack, if a card left your graveyard this turn (cast from it, exiled by Heated Argument, Command the Stage returning), +2/+0 to the best attacker (Player.gy_left)"
+
+["Irascible Wolverine"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "enters: exile the top card, playable this turn; plot {2}{R} in the second main phase when the mana is spare (the plotted card stays in the hand, marked in impulse_long, and is cast free on a later turn)"
+
+["Lightning, Security Sergeant"]
+tags = "leg human pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "menace; combat damage to a player exiles the top card, playable (kept in the hand) while Lightning stays on the battlefield; when it leaves they are exiled for good"
+
+["Spawn-Gang Commander"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "devoid (no colour); casting it makes three 0/1 Eldrazi Spawn; {1}{C}, sacrifice an Eldrazi (the AI sacrifices a Spawn): 2 damage, {C} paid from a colourless source"
+
+["Relic of Legends"]
+status = "Full"
+note = "taps for any colour; tapping an untapped legendary creature also makes one mana of any colour (offered for a summoning-sick legend, or any legend after combat and on other turns, so the AI does not tap its attackers)"
+
+["Bonders' Enclave"]
+status = "Full"
+note = "taps for {C}; {3},{T}: draw a card while you control a creature with power 4 or more (used at the end of the turn)"
+
+["Generator Servant"]
+status = "Full"
+note = "{T}, sacrifice: add {C}{C} (the unspent half floats); a creature spell paid with it gains haste (Player.haste_next, read in zones::enter)"

@@ -370,6 +370,19 @@ pub fn gy_landfall(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
+/// each upkeep: cards in any graveyard see it (Command the Stage returns itself); f(g, card, owner)
+pub fn gy_upkeep(g: &mut Game) -> Res {
+    for q in 0..g.players.len() {
+        let q = PlayerId(q as u8);
+        for c in g.player(q).gy.clone() {
+            if let Some(f) = imp_of(g, c).and_then(|i| i.gy_upkeep) {
+                f(g, c, q)?;
+            }
+        }
+    }
+    Ok(())
+}
+
 /// CI.SELF_CAST: "when you cast this spell" (cascade)
 pub fn self_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     match imp_of(g, c).and_then(|i| i.self_cast) {
