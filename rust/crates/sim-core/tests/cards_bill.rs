@@ -771,3 +771,36 @@ fn crushing_canopy_is_cast_only_at_a_flier_or_an_enchantment() {
     assert!(!g.perm(rs).on_bf);
     assert!(g.perm(elf).on_bf);
 }
+
+// ------------------------------------------------------------------ the lethal doubling counts the blockers
+fn doubles(g: &mut Game) -> bool {
+    options(g, P0, false).iter().any(|o| o.label.starts_with("Bristly Bill doubles"))
+}
+
+#[test]
+fn lethal_doubling_not_offered_when_chump_blockers_stop_the_attack() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    lands(&mut g, P0, "Forest", 5, false);
+    g.perm_mut(bill).plus = 6; // an 8/8, 14 after doubling
+    g.player_mut(P1).life = 14;
+    assert!(doubles(&mut g), "no blockers: lethal");
+    token(&mut g, P1, 1); // one chump blocker stops the lone attacker
+    assert!(!doubles(&mut g), "the raw sum is lethal but the chump stops it");
+}
+
+#[test]
+fn lethal_doubling_taken_through_blockers_forces_the_attack() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    let b2 = token(&mut g, P0, 2);
+    let b3 = token(&mut g, P0, 2);
+    g.perm_mut(b2).plus = 4; // 6/6 -> 10
+    g.perm_mut(b3).plus = 4;
+    lands(&mut g, P0, "Forest", 5, false);
+    g.perm_mut(bill).plus = 6; // 8 -> 14
+    token(&mut g, P1, 1); // chumps Bill: 12 gets through, 20 after doubling
+    g.player_mut(P1).life = 18;
+    assert!(take_option(&mut g, P0, false, "Bristly Bill doubles"));
+    assert_eq!(sim_core::ai::choose_attack(&mut g, P0).unwrap(), Some((P1, "all")));
+}
