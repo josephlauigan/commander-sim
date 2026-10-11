@@ -72,3 +72,27 @@ file = "JD/candidates/jenova.md"
 name = "Jenova"
 commander = "Jenova, Ancient Calamity"
 ident = "BG"
+
+[gix]
+file = "JD/candidates/gix.md"
+name = "Gix"
+commander = "Gix, Yawgmoth Praetor"
+ident = "B"
+
+[yawgmoth]
+file = "JD/candidates/yawgmoth.md"
+name = "Yawgmoth"
+commander = "Yawgmoth, Thran Physician"
+ident = "B"
+
+[lordofpain]
+file = "JD/candidates/lordofpain.md"
+name = "The Lord of Pain"
+commander = "The Lord of Pain"
+ident = "BR"
+
+[smaug]
+file = "JD/candidates/smaug.md"
+name = "Smaug the Impenetrable"
+commander = "Smaug the Impenetrable"
+ident = "BR"

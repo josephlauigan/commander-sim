@@ -60,6 +60,10 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "torbran" => crate::impls::torbran::torbran_prio(g, p, c),
         "glissa" => crate::impls::glissa::glissa_prio(g, p, c),
         "jenova" => crate::impls::jenova::jenova_prio(g, p, c),
+        "gix" => crate::impls::gix::gix_prio(g, p, c),
+        "yawgmoth" => crate::impls::yawgmoth::yawgmoth_prio(g, p, c),
+        "lordofpain" => crate::impls::lordofpain::lordofpain_prio(g, p, c),
+        "smaug" => crate::impls::smaug::smaug_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }
