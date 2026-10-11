@@ -109,17 +109,22 @@ only about a third of its games: the list has 12 Zada spells where such decks us
 Bracket 2 list from bulk against Bracket 3-4 tiers. The heuristic AI alone does worse (2.7% against Tier 3, where
 Galadriel gets 10.3% on the same seeds), so the look-ahead isn't what holds it back.
 
-**October 11: Bristly Bill** (key `bill`), measured after the table above on branch `bill-deck` (3dfe55b), with the
-same settings (960 games per cell, seeds 500000-500959, `audit/bill/run.sh`, results in `audit/bill/`). The other
-nine decks weren't rerun on this code; the changes in between are the rework candidates' and Bill's card code (gated to
-those decks) and a few small rules fixes, so the nine rows above should still hold to within their intervals.
+**October 11: Bristly Bill** (key `bill`), measured after the table above on branch `bill-deck` with the same settings
+(960 games per cell, seeds 500000-500959). The other nine decks weren't rerun on this code; the changes in between are
+the rework candidates' and Bill's card code (gated to those decks) and a few small rules fixes, so the nine rows above
+should still hold to within their intervals. Current: the final list (37 Forest) and AI (24da72c, `audit/bill/final/`).
+First measurement: three fetch lands in the list and the first AI plan (3dfe55b, `audit/bill/`).
 
 | Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 | All tiers |
 |---|---|---|---|---|---|---|
-| Bristly Bill | 13.0% (11-15) | 16.7% (14-19) | 16.1% (14-19) | 17.3% (15-20) | 16.6% (14-19) | 15.9% |
+| Bristly Bill | 12.1% (10-14) | 16.6% (14-19) | 15.0% (13-17) | 15.7% (14-18) | 15.8% (14-18) | 15.0% |
+| Bill, first measurement | 13.0% (11-15) | 16.7% (14-19) | 16.1% (14-19) | 17.3% (15-20) | 16.6% (14-19) | 15.9% |
 
-Bill (15.9%) lands between Jodah (16.6%) and Alela (13.1%), even across Tiers 2-5 and weakest against Tier 1. Its
-wins come late (turn 12.8 on average, losses on turn 9.8).
+Bill (15.0%) sits between Alela (13.1%) and Jodah (16.6%), weakest against Tier 1. The two
+changes between the rows measured flat on their own: the fetch lands for Forests +0.3 points (paired,
+`audit/bill/2026-10-11-fetches-forests/`) and the AI fix (the doubling for a lethal attack counts blockers and is
+followed by the attack) 15.8% against 15.9% (`audit/bill/tune/`); the 0.9-point gap between the rows is noise
+(about ±1.4 between two unpaired runs). Its wins come late (turn 13.5 on average).
 
 **October 7-9 run of all seven decks** (960 games per cell, intervals about ±3 points; over all five tiers 4,800
 games, about ±1.3 points; the old Python overnight script `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).

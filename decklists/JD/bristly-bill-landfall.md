@@ -5,7 +5,7 @@ swap test found no effect (Forests +0.3 points over all tiers, within noise; `au
 JD's basics-over-tapped-lands rule decides it. The three go back to the lists (Evolving Wilds to the binder).
 
 **Added 2026-10-11.** Built from JD's bulk and binder around Bristly Bill, Spine Sower (bought, borderless Secret Lair
-printing), plus five cheap buys. Fully modeled and measured on 2026-10-11: 15.9% over all tiers (see "Simulator status").
+printing), plus five cheap buys. Fully modeled and measured on 2026-10-11: 15.0% over all tiers (see "Simulator status").
 
 ## Strategy
 
@@ -44,9 +44,16 @@ Noxious Newt, Hardbristle Bandit, Topiary Lecturer, Bugenhagen, plus nine land-r
 
 ## Simulator status
 
-**Measured 2026-10-11** (look-ahead AI, loose profile, 960 games per tier, the same settings as the other decks;
-`decklists/pool/pool-results.md` section 0d, results in `audit/bill/`): T1 13.0%, T2 16.7%, T3 16.1%, T4 17.3%,
-T5 16.6%; **15.9% over all tiers**, between Jodah (16.6%) and Alela (13.1%). Wins come late (turn 12.8 on average).
+**Measured 2026-10-11, final list and AI** (look-ahead AI, loose profile, 960 games per tier, the same settings as
+the other decks; `decklists/pool/pool-results.md` section 0d, results in `audit/bill/final/`): T1 12.1%, T2 16.6%,
+T3 15.0%, T4 15.7%, T5 15.8%; **15.0% over all tiers**, between Alela (13.1%) and Jodah (16.6%). Wins come late
+(turn 13.5 on average).
+
+How it got here: the first list (three fetch lands) measured 15.9% (`audit/bill/`). Swapping the fetch lands for
+Forests measured +0.3 points, paired (`audit/bill/2026-10-11-fetches-forests/`). An AI fix measured 15.8% against
+15.9%: traces showed Bill doubling "for a lethal attack" that chump blockers stopped, then not attacking, so the
+lethal check now counts blockers and a lethal doubling is followed by the attack (`audit/bill/tune/`). Neither
+change moved the number; the 0.9-point gap between the first and final runs is within noise.
 
 Known simplifications: Druid Class's level 3 land creature stops tapping for mana; Lifestream's Blessing reads X when
 it resolves, not when cast; Spider-Man's web-slinging only returns a creature that is already tapped.

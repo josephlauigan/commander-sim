@@ -1,0 +1,5 @@
+bill t1 exit 0 Win rate  12.1%   95% CI 10.2-14.3%   (even share 25%: -12.9 pts)
+bill t2 exit 0 Win rate  16.6%   95% CI 14.3-19.0%   (even share 25%: -8.4 pts)
+bill t3 exit 0 Win rate  15.0%   95% CI 12.9-17.4%   (even share 25%: -10.0 pts)
+bill t4 exit 0 Win rate  15.7%   95% CI 13.6-18.2%   (even share 25%: -9.3 pts)
+bill t5 exit 0 Win rate  15.8%   95% CI 13.7-18.3%   (even share 25%: -9.2 pts)
