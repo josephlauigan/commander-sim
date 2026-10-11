@@ -14,6 +14,7 @@ use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{has, pval};
 use crate::engine::zones::{Enter, die, enter, max_by, min_by, sac_worth};
 use crate::flow::Res;
+use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
@@ -185,7 +186,7 @@ pub fn steal(g: &mut Game, p: PlayerId, m: PermId, until_eot: bool) {
 
 // ================================================================== Coalition Relic
 /// at your end step, an untapped Relic taps for a charge counter unless held-up instants need the mana
-/// HUMAN(phase 9): a person's Relic is left to them (marchesa._you)
+/// A person's Relic is left to them (marchesa._you)
 fn relic_charge(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let x = g.perm(src);
     if p != x.owner || x.tapped || x.phased || g.humans.get(p).is_some() {
@@ -270,7 +271,7 @@ fn tyrant(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 // ================================================================== Accursed Marauder: each player's choice
 /// enters: each player sacrifices a nontoken creature of their choice (the one cheapest to lose: Marchesa's returns)
-/// HUMAN(phase 9): a person chooses their creature
+/// A person chooses their creature.
 fn marauder(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
@@ -291,7 +292,9 @@ fn marauder(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             .copied()
             .filter(|&x| g.is_creature(x) && !g.perm(x).phased && !g.perm(x).token)
             .collect();
-        if let Some(x) = min_by(&cr, |x| sac_worth(g, x)) {
+        if !cr.is_empty() && human_of(g, q).is_some() {
+            choices::sacrifice_creature(g, q, &cr, "Accursed Marauder: sacrifice a nontoken creature")?;
+        } else if let Some(x) = min_by(&cr, |x| sac_worth(g, x)) {
             die(g, x, "sac")?;
         }
     }

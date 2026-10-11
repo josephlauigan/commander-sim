@@ -27,6 +27,38 @@ pub fn pick_player(g: &Game, p: PlayerId, kind: &str, prompt: &str, opps: &[Play
     Ok(opps[choices::choose_one(g, p, kind, prompt, &labels)?])
 }
 
+/// cards._creatures: creatures p's spell or ability can target (opponents' hexproof and shroud respected)
+pub fn creatures(g: &Game, p: PlayerId, opp_only: bool) -> Vec<PermId> {
+    let mut out = vec![];
+    for q in g.players.iter().filter(|q| q.alive && !(opp_only && q.id == p)) {
+        for &m in &q.perms {
+            if g.is_creature(m)
+                && !g.perm(m).phased
+                && !(g.perm(m).owner != p && crate::engine::values::untargetable(g, m))
+            {
+                out.push(m);
+            }
+        }
+    }
+    out
+}
+
+/// cards.pick_creature: the creature the person picks (None: no target, or they decline an `optional` one)
+pub fn pick_creature(
+    g: &Game,
+    p: PlayerId,
+    prompt: &str,
+    opp_only: bool,
+    optional: bool,
+    keep: Option<&dyn Fn(&Game, PlayerId, PermId) -> bool>,
+) -> Res<Option<PermId>> {
+    let tg: Vec<PermId> = creatures(g, p, opp_only).into_iter().filter(|&m| keep.is_none_or(|f| f(g, p, m))).collect();
+    if tg.is_empty() {
+        return Ok(None);
+    }
+    pick_perm(g, p, "target", prompt, &tg, if optional { Some("no target") } else { None })
+}
+
 /// cards._blink: a token is exiled for good; else t2.blink
 pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if g.perm(m).token {

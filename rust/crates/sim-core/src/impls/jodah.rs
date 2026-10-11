@@ -33,6 +33,7 @@ use crate::engine::zones::{
     make_artifact_tokens, make_tokens, max_by, min_by, searchable, teferis_protection,
 };
 use crate::flow::Res;
+use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Assign, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
@@ -218,7 +219,7 @@ pub fn jodah_cascade(g: &mut Game, o: PlayerId, mv: u32) -> Res<bool> {
 /// jodah.cascade: Jodah's legend cascade (who 'Jodah') or plain cascade (Maelstrom Nexus, Maelstrom Wanderer): exile
 /// from the top until a nonland card (legendary, for Jodah) with mana value below mv; cast it free (you may: the AI
 /// passes on counterspells and on the protection it keeps for responses); the rest go to the bottom in a random
-/// order. HUMAN(phase 9): a person says whether to cast it.
+/// order. A person says whether to cast it.
 pub fn cascade(g: &mut Game, o: PlayerId, mv: u32, who: &str) -> Res<bool> {
     let jodah = who == "Jodah";
     let mut seen = vec![];
@@ -234,7 +235,12 @@ pub fn cascade(g: &mut Game, o: PlayerId, mv: u32, who: &str) -> Res<bool> {
     let mut cast = false;
     if let Some(h) = hit {
         let key = g.player(o).key;
-        let want = !g.db.get(h).tag(Tag::Ctr) && !crate::ai::plans::response_only(g, key, h);
+        let want = if human_of(g, o).is_some() {
+            let q = format!("{who}: cast {} without paying its mana cost?", cname(g, h));
+            choices::yes_no(g, o, &q)?
+        } else {
+            !g.db.get(h).tag(Tag::Ctr) && !crate::ai::plans::response_only(g, key, h)
+        };
         if want && castable(g, o, h, "lib") {
             g.last_x = 0; // cast free: X is 0
             if jodah {
@@ -1159,7 +1165,7 @@ fn tymna_hit(g: &mut Game, src: Src, p: PlayerId, _a: PermId, d: PlayerId, _dmg:
 
 /// at the beginning of your postcombat main phase: you may pay X life to draw X (X = opponents dealt combat damage
 /// this turn). The AI pays when the life left is at least Necropotence's floor (what the table could hit it for plus
-/// 6, at least 10) and the library has more than X cards. HUMAN(phase 9): a person decides.
+/// 6, at least 10) and the library has more than X cards. A person decides.
 fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let st = g.turn_stamp();
     if p != owner(g, src) || g.player(p).flag_turn.get("tymna") == Some(&st) {
@@ -1180,7 +1186,12 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if g.player(p).life < x || g.player(p).life_locked {
         return Ok(());
     }
-    if !(g.player(p).life - x >= crate::ai::necro_floor(g, p) && g.player(p).library.len() > x as usize) {
+    let pay_it = if human_of(g, p).is_some() {
+        choices::yes_no(g, p, &format!("Tymna the Weaver: pay {x} life to draw {x}?"))?
+    } else {
+        g.player(p).life - x >= crate::ai::necro_floor(g, p) && g.player(p).library.len() > x as usize
+    };
+    if !pay_it {
         return Ok(());
     }
     lose_life(g, p, x, Some(p), "other", None)?;
@@ -1207,18 +1218,24 @@ fn garland_pick(g: &Game, _p: PlayerId, q: PlayerId) -> Option<PermId> {
 }
 
 /// When Garland enters, target opponent becomes the monarch: the one whose best creature is most worth stealing
-/// (then the one with the smaller board, the less likely to lose the crown). HUMAN(phase 9): a person chooses.
+/// (then the one with the smaller board, the less likely to lose the crown). A person chooses.
 fn garland_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = owner(g, src);
     let opps: Vec<PlayerId> = g.opps(o).filter(|&q| g.player(q).alive && !player_hexproof(g, q)).collect();
-    let Some(q) = first_max(&opps, |q| {
-        let t = garland_pick(g, o, q);
-        (t.map_or(-1.0, |t| pval(g, t)), -board_power(g, q))
-    }) else {
+    if opps.is_empty() {
         return Ok(());
+    }
+    let q = if human_of(g, o).is_some() {
+        cards::pick_player(g, o, "target", "Garland: which opponent becomes the monarch?", &opps)?
+    } else {
+        first_max(&opps, |q| {
+            let t = garland_pick(g, o, q);
+            (t.map_or(-1.0, |t| pval(g, t)), -board_power(g, q))
+        })
+        .unwrap()
     };
     let label = format!("{} becomes the monarch", pname(g, q));
     if !trigger_window(g, o, Some(src), &label, Some(4.0))? || !g.player(q).alive {
@@ -1229,13 +1246,19 @@ fn garland_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 }
 
 /// Whenever an opponent becomes the monarch, gain control of target creature that player controls for as long as
-/// they're the monarch (garland_check ends it). HUMAN(phase 9): a person picks the creature.
+/// they're the monarch (garland_check ends it). A person picks the creature.
 fn garland_steal(g: &mut Game, src: Src, q: PlayerId) -> Res {
     let o = owner(g, src);
     if q == o || !g.player(q).alive {
         return Ok(());
     }
-    let Some(t) = garland_pick(g, o, q) else { return Ok(()) };
+    let t = if human_of(g, o).is_some() {
+        let prompt = format!("Garland: gain control of which of {}'s creatures?", g.player(q).name);
+        cards::pick_creature(g, o, &prompt, false, false, Some(&|g: &Game, _, m| g.perm(m).owner == q))?
+    } else {
+        garland_pick(g, o, q)
+    };
+    let Some(t) = t else { return Ok(()) };
     let label = format!("gain control of {}", g.perm(t).name);
     if !trigger_window(g, o, Some(src), &label, Some(6.0))? {
         return Ok(());
@@ -2190,7 +2213,7 @@ const MIRARI_WORTH: [&str; 5] =
     ["Fact or Fiction", "Invoke Despair", "Demonic Tutor", "Cartographer's Survey", "Experimental Augury"];
 
 /// Mirari: whenever you cast an instant or sorcery, pay {3} to copy it (the AI copies spells worth a second
-/// resolution: draw, removal and tutors). HUMAN(phase 9): a person decides.
+/// resolution: draw, removal and tutors). A person decides.
 fn mirari(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     let o = owner(g, src);
     let d = g.db.get(c);
@@ -2203,6 +2226,9 @@ fn mirari(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         return Ok(());
     }
     let label = format!("pay {{3}}: copy {}", d.name);
+    if human_of(g, o).is_some() && !choices::yes_no(g, o, &format!("Mirari: pay {{3}} to copy {}?", d.name))? {
+        return Ok(());
+    }
     if !trigger_window(g, o, Some(src), &label, None)? {
         return Ok(());
     }
