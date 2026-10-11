@@ -48,12 +48,12 @@ fn lan_ip() -> Option<String> {
 /// The server for this test, or `None` (with a note on stderr) when there is none to talk to yet.
 pub fn server() -> Option<Server> {
     let guard = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
-    let (addr, rust) = match std::env::var("PRACTICE_URL") {
-        Ok(u) if !u.trim().is_empty() => (host_port(&u), false),
+    let (addr, rust, rust_dirs) = match std::env::var("PRACTICE_URL") {
+        Ok(u) if !u.trim().is_empty() => (host_port(&u), false, None),
         _ => match start_rust() {
-            Some(a) => (a, true),
+            Some((a, sv, im)) => (a, true, Some((sv, im))),
             None => {
-                eprintln!("SKIPPED: set PRACTICE_URL (the Rust server does not exist yet)");
+                eprintln!("SKIPPED: set PRACTICE_URL");
                 return None;
             }
         },
@@ -63,12 +63,16 @@ pub fn server() -> Option<Server> {
         Ok(u) if !u.trim().is_empty() => Some(host_port(&u)),
         _ => lan_ip().map(|ip| format!("{ip}:{port}")),
     };
-    let saves = std::env::var("PRACTICE_SAVES")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/saves"));
-    let images = std::env::var("PRACTICE_IMAGES")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/images"));
+    let saves = rust_dirs.as_ref().map(|d| d.0.clone()).unwrap_or_else(|| {
+        std::env::var("PRACTICE_SAVES")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/saves"))
+    });
+    let images = rust_dirs.as_ref().map(|d| d.1.clone()).unwrap_or_else(|| {
+        std::env::var("PRACTICE_IMAGES")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data/images"))
+    });
     let mut s = Server { addr, remote_addr, saves, images, rust, lan: false, _guard: guard };
     let mut c = s.client();
     c.quit(); // whatever an earlier test left
@@ -76,13 +80,47 @@ pub fn server() -> Option<Server> {
     Some(s)
 }
 
-/// Start the Rust server in this process on port 0 with `lan: true`, a temp saves folder and `ai` adaptive, and return
-/// its `host:port`. PORT(practice-server): `practice::server::start(Config { port: 0, lan: true, saves: tempdir, .. })`
-/// does not exist yet; until it does the suite needs `PRACTICE_URL`.
-fn start_rust() -> Option<String> {
-    // PORT(practice-server): before starting, `std::env::set_var("PRACTICE_SCRYFALL", fake::start())` (unsafe in 2024)
-    // so the image tests run offline against the fake Scryfall.
-    None
+/// Start the Rust server in this process (once per test binary) on port 0 with `lan: true`, temp saves and images
+/// folders, the real card data (symlinked into a temp data folder) and the fake Scryfall (`PRACTICE_SCRYFALL`), and
+/// return its `host:port`, saves and images folders.
+fn start_rust() -> Option<(String, PathBuf, PathBuf)> {
+    use practice::server::{self, Config};
+    static RUST: std::sync::OnceLock<(String, PathBuf, PathBuf)> = std::sync::OnceLock::new();
+    Some(
+        RUST.get_or_init(|| {
+            let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
+            let real = root.join("data");
+            let tmp = std::env::temp_dir().join(format!("practice-test-{}", std::process::id()));
+            let _ = std::fs::remove_dir_all(&tmp);
+            let data = tmp.join("data");
+            std::fs::create_dir_all(data.join("images")).unwrap();
+            std::fs::create_dir_all(data.join("saves")).unwrap();
+            std::os::unix::fs::symlink(root.join("decklists"), tmp.join("decklists")).unwrap();
+            for e in std::fs::read_dir(&real).unwrap().flatten() {
+                let n = e.file_name();
+                if n != "images" && n != "saves" {
+                    std::os::unix::fs::symlink(e.path(), data.join(&n)).unwrap();
+                }
+            }
+            // SAFETY: set once, before the server (the only reader) starts, inside get_or_init
+            unsafe { std::env::set_var("PRACTICE_SCRYFALL", fake::start()) };
+            let engine = std::sync::Arc::new(sim_core::run::Engine::load(&data).expect("card data"));
+            let cfg = Config {
+                saves: data.join("saves"),
+                data: data.clone(),
+                static_dir: root.join("commander_sim/play/static"),
+                lan: true,
+                app: false,
+                port: 0,
+            };
+            let h = server::start_with(cfg, std::sync::Arc::new(practice::session::api_impl::RealSessions { engine }))
+                .expect("start the Rust server");
+            let addr = format!("127.0.0.1:{}", h.port);
+            std::mem::forget(h);
+            (addr, data.join("saves"), data.join("images"))
+        })
+        .clone(),
+    )
 }
 
 impl Server {
