@@ -48,7 +48,7 @@ In `data/my_decks.toml` as deck key `zada`, but **not measured yet**: 40 of its 
 
 ## Where the cards come from
 
-Every card except the commander and the basics comes from JD's bulk and binder lists (bulk-cards.txt, binder-cards.txt). They are still on the lists: take them off when the deck is built.
+Every card except the commander and the basics comes from JD's bulk and binder lists (bulk-cards.txt, binder-cards.txt). They were taken off both lists on 2026-10-11 (one copy each, bulk first where a card is on both lists).
 
 ## Decklist by type (100)
 
