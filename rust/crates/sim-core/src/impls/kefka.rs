@@ -1374,6 +1374,11 @@ pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         // three pings: each one is a card once Kefka is flipped
         return if flipped(g, p) { 74 } else if kefka_out(g, p) { 56 } else { generic_prio(g, p, c) };
     }
+    if name == "Rapturous Moment" {
+        // draw three, discard two (Kefka's fodder) and five red mana back: a free filter whenever the hand can spend it
+        let others = g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).count();
+        return if others >= 2 { 58 } else { generic_prio(g, p, c) };
+    }
     if (name == SCARLET_SPIDER || name == DEMONIC_EMBRACE) && kefka_out(g, p) && !flipped(g, p) {
         return 0; // kept in hand to be discarded to Kefka's trigger (mayhem / the graveyard cast)
     }
