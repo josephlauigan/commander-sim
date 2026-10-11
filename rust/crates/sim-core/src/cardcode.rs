@@ -513,6 +513,10 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
     use crate::state::DataKey;
     for &m in atk {
         let x = g.perm(m);
+        if x.token && x.ttypes.contains(&"pest") {
+            crate::engine::life::gain(g, p, 1)?; // a Pest token: whenever it attacks, you gain 1 life
+            continue;
+        }
         if !(x.token && x.data.get(DataKey::Land).is_some()) {
             continue;
         }

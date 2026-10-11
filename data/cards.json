@@ -684,7 +684,8 @@
    "tags": {
     "human": true,
     "pow": "3",
-    "tgh": "2"
+    "tgh": "2",
+    "prepare": true
    },
    "pow": 3,
    "tgh": 2,
@@ -1733,8 +1734,7 @@
    "tags": {
     "wizard": true,
     "pow": "1",
-    "tok": "1",
-    "tokp": "0"
+    "tgh": "1"
    },
    "pow": 1,
    "tgh": 1,
@@ -1752,10 +1752,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Increment"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -19615,33 +19613,11 @@
    "types": "E",
    "generic": 3,
    "pips": "G",
-   "tags": {
-    "vig": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "counters",
-       "n": 1,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "transform",
@@ -19652,10 +19628,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "At the beginning of combat on your turn, put a +1/+1 counter on target creature you control. Then if that creature has toughness 6 or greater, transform ~.   [partly: if that creature has toughness 6 or greater, transform ~]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -21132,24 +21106,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "counters",
-       "n": 2,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "infusion"
@@ -21159,10 +21116,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Infusion — If you gained life this turn, that creature also gains trample and indestructible until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -23591,9 +23546,7 @@
    "pips": "BBG",
    "tags": {
     "pow": "3",
-    "tgh": "1",
-    "tok": "1",
-    "tokp": "1"
+    "tgh": "1"
    },
    "pow": 3,
    "tgh": 1,
@@ -23609,10 +23562,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "At the beginning of your end step, if a creature died under your control this turn, draw a card."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
