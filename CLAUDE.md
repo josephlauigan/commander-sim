@@ -30,3 +30,9 @@ systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 <command>
 ```
 
 Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
+
+## No Python
+
+Never run Python here, not even a version check or a one-liner: use `jq`, shell tools, `cardgen`, `commander-sim` or a
+Rust test or example. A PreToolUse hook (`.claude/hooks/no-python.sh`, wired in `.claude/settings.json`) refuses any
+shell command that starts with `python`, `python3`, `pip`, `pipx` or `uv`, in every session and subagent.
