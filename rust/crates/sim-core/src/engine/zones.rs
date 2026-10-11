@@ -1405,9 +1405,6 @@ pub fn sac_worth(g: &Game, m: PermId) -> f64 {
     if g.marchesa_on && g.is_creature(m) && !x.token && x.plus > 0 {
         return cardcode::marchesa_sac_worth(g, m, v);
     }
-    if !x.ttypes.is_empty() && g.is_creature(m) {
-        return crate::impls::jenova::mutant_sac_worth(g, m, v); // a Mutant on its controller's turn (Jenova)
-    }
     v
 }
 

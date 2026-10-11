@@ -668,3 +668,46 @@ fn lethal_doubling_not_offered_when_chump_blockers_stop_the_attack() {
     token(&mut g, P1, 1); // one chump blocker stops the lone attacker
     assert!(!doubles(&mut g), "the raw sum is lethal but the chump stops it");
 }
+
+// ------------------------------------------------------------------ Topiary Lecturer and Vinelasher Adept
+#[test]
+fn increment_grows_the_lecturer_when_the_mana_spent_is_greater_than_its_smaller_stat() {
+    let mut g = game();
+    let lec = perm(&mut g, P0, "Topiary Lecturer"); // 1/2
+    cast_spell(&mut g, P0, "Rampant Growth"); // 2 mana
+    assert_eq!(g.perm(lec).plus, 1, "2 > 1");
+    cast_spell(&mut g, P0, "Cultivate"); // 3 mana: the Lecturer is now 2/3
+    assert_eq!(g.perm(lec).plus, 2, "3 > 2");
+    cast_spell(&mut g, P0, "Rampant Growth"); // 2 mana: not greater than 3? the Lecturer is 3/4 now
+    assert_eq!(g.perm(lec).plus, 2, "2 is not greater than 3");
+}
+
+#[test]
+fn increment_ignores_spells_cast_by_opponents() {
+    let mut g = game();
+    let lec = perm(&mut g, P0, "Topiary Lecturer");
+    let c = hand(&mut g, P1, &["Terror"])[0];
+    cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.perm(lec).plus, 0);
+}
+
+#[test]
+fn topiary_lecturer_taps_for_mana_equal_to_its_power() {
+    let mut g = game();
+    let lec = perm(&mut g, P0, "Topiary Lecturer");
+    assert_eq!(sim_core::cardcode::dyn_mana_perm(&g, P0, lec), Some(1));
+    g.perm_mut(lec).plus = 3;
+    assert_eq!(sim_core::cardcode::dyn_mana_perm(&g, P0, lec), Some(4));
+}
+
+#[test]
+fn vinelasher_adept_landcycles_for_two() {
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 2, false);
+    hand(&mut g, P0, &["Vinelasher Adept"]);
+    let lands_before = g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land).count();
+    assert!(take_option(&mut g, P0, false, "Vinelasher Adept (basic landcycling)"));
+    assert!(in_gy(&g, P0, "Vinelasher Adept"));
+    let basic = g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land && &*g.db.get(c).name == "Forest").count();
+    assert_eq!(basic, lands_before + 1);
+}
