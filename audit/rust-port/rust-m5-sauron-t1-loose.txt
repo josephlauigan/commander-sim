@@ -1,0 +1,27 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 22 worker processes: about 18 minutes
+  progress  10.0%  0m08s elapsed, ~1m20s left
+  progress  20.0%  0m15s elapsed, ~1m03s left
+  progress  30.0%  0m22s elapsed, ~0m52s left
+  progress  40.0%  0m29s elapsed, ~0m43s left
+  progress  50.0%  0m35s elapsed, ~0m35s left
+  progress  60.0%  0m41s elapsed, ~0m27s left
+  progress  70.0%  0m49s elapsed, ~0m21s left
+  progress  80.0%  0m55s elapsed, ~0m13s left
+  progress  90.0%  1m01s elapsed, ~0m06s left
+  progress 100.0%  1m10s elapsed, ~0m00s left
+
+=== Sauron vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 960 games] ===
+Win rate  30.9%   95% CI 28.1-33.9%   (even share 25%: +5.9 pts)
+Average turn (your own turn count) of wins 12.9, of losses 9.4
+Plan online (Sword + Assault combo attempted): 6.0% of games
+Wins by: damage 93%, combo 7%
+  Opponent                                    seated  won when seated  eliminated you
+  Teysa Karlov (teysa-orzhov-aristocrats)      61.2%            26.7%           13.9%
+  Lathril (lathril-golgari-elves)              61.2%            19.0%           13.2%
+  Isshin (isshin-mardu-attack-triggers)        59.5%            22.1%           15.7%
+  Light-Paws (light-paws-aura-voltron)         59.5%            31.3%           17.3%
+  Tatyova (tatyova-simic-landfall)             58.5%            15.8%            8.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(70s total)
+wall=70.30s cpu=1439.44s+0.22s

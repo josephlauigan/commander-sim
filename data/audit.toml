@@ -1,0 +1,665 @@
+# Data for `cardgen audit` (the tables of the former Python pool audit; edit here).
+#
+# unsupported_keywords  Scryfall keywords (lower case) the engine does not implement: a card with one is at best
+#                       Partial unless a [card_notes] entry or an override note says otherwise. Remove a keyword
+#                       when the engine implements it.
+# stat_tags             tags that only describe the body; any other tag counts as a role the AI acts on
+# deck_only_tags        hand tags whose behaviour lives in the four main decks' AI: an outside deck holding the card
+#                       never uses it. [pool_ok] lists the tag values the generic path handles.
+# [card_notes."Name"]   status + note for a card; wins over every automatic rule
+# [mechanics]           engine-level mechanics: status (Full / Full-auto / Approximate / Partial / Unmodeled) + note
+# [[engines.<deck key>]] the key engines of an outside deck (from its "## Sim modeling notes"): label, key cards,
+#                       mechanics (keys of [mechanics])
+
+unsupported_keywords = ["adapt", "affinity", "afterlife", "amplify", "annihilator", "backup", "basic landcycling", "bestow", "blitz", "bloodthirst", "bushido", "buyback", "cascade", "casualty", "channel", "cleave", "commander ninjutsu", "craft", "crew", "cycling", "dash", "daybound", "delve", "devour", "disturb", "dredge", "embalm", "emerge", "encore", "entwine", "escape", "eternalize", "evoke", "exploit", "extort", "fabricate", "fear", "flanking", "forage", "forestwalk", "foretell", "gift", "graft", "haunt", "horsemanship", "improvise", "infect", "intimidate", "islandwalk", "kicker", "landcycling", "landwalk", "living weapon", "madness", "modular", "monstrosity", "mountainwalk", "multikicker", "myriad", "nightbound", "ninjutsu", "offspring", "overload", "plainswalk", "plot", "prototype", "provoke", "prowess", "rampage", "rebound", "reconfigure", "riot", "shadow", "soulbond", "spectacle", "splice", "split second", "squad", "storm", "sunburst", "surge", "suspend", "swampwalk", "toxic", "training", "transmute", "unearth"]
+stat_tags = ["amt", "bomb", "c", "ck", "convoke", "dt", "f", "flash", "fly", "haste", "human", "leg", "lifelink", "noatk", "pow", "reach", "shaman", "t", "tgh", "trample", "vig", "warrior", "wizard"]
+deck_only_tags = ["avarice", "crackle", "mastery", "tide", "x", "yawg"]
+
+[pool_ok]
+fill = ["dispute", "stitcher", "wayfinder", "grisly"]
+rean = ["animate", "reanimate", "evil", "zombify"]
+prot = ["hi", "phase", "indes", "blink", "boots"]
+
+[card_notes]
+
+[mechanics]
+commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
+extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; max 4 combats a turn" }
+attack_triggers = { status = "Approximate", note = "attack triggers: hooks for the key cards, compiled text for the rest" }
+isshin_doubling = { status = "Full", note = "attack-caused triggers fire twice (hand tags, compiled triggers, hooks)" }
+teysa_doubling = { status = "Full", note = "death-caused triggers of your permanents fire twice" }
+ninjutsu = { status = "Full", note = "unblocked attacker swapped for a Ninja from hand (or Yuriko from the command zone); Satoru, Silver-Fur Master" }
+yuriko_reveal = { status = "Full", note = "reveal top card: to hand, each opponent loses its mana value" }
+cost_taxes = { status = "Full", note = "Thalia, Sphere, Thorn, Trinisphere, Glowrider, Vryn Wingmare, Tithe Taker, Aura of Silence, Dovin, GAA" }
+spell_limits = { status = "Full", note = "Rule of Law, Deafening Silence, Ethersworn Canonist, Archon of Emeria (per turn, any turn)" }
+drannith_lock = { status = "Full", note = "opponents cast only from hand (commanders, flashback, escape off)" }
+attack_taxes = { status = "Full", note = "Ghostly Prison, Propaganda, Sphere of Safety, Windborn Muse, Baird, Archangel of Tithes; Norn's Annex and Elephant Grass approximated" }
+attacker_caps = { status = "Approximate", note = "Crawlspace and Silent Arbiter attack caps; Silent Arbiter's block cap missing" }
+undying_persist = { status = "Full", note = "undying / persist keywords; Mikaeus-granted undying" }
+minus_counters = { status = "Full", note = "-1/-1 counters cancel +1/+1 (net counters)" }
+planeswalkers = { status = "Approximate", note = "hand-written walkers use one ability a turn; attackers go after valuable walkers (pool games); walkers without an implementation use compiled loyalty abilities" }
+proliferate = { status = "Full", note = "+1/+1, loyalty and other counters on yours, -1/-1 on opponents' creatures; Tekuthal doubles" }
+counter_doubling = { status = "Full", note = "Doubling Season: tokens, counters, walkers enter with double loyalty" }
+treasure = { status = "Full", note = "" }
+food = { status = "Approximate", note = "Food tokens: sacrifice fodder (Korvold, Trail of Crumbs, Goose mana, Savvy Hunter); eaten when low" }
+clue = { status = "Full", note = "" }
+discard = { status = "Approximate", note = "targeted discard picks the fullest hand; random discard at random; opponents choose their worst card for symmetric discard" }
+edicts = { status = "Approximate", note = "the victim sacrifices its lowest-value creature" }
+tergrid_steal = { status = "Full", note = "hand-coded (engine.tergrid_steal)" }
+aluren = { status = "Approximate", note = "free creature spells MV 3 or less; the Chulane loop is a combo" }
+kinnan_mana = { status = "Full", note = "nonland mana sources make one extra" }
+isochron_reversal = { status = "Approximate", note = "combo: needs 3+ mana from nonland permanents and a mana sink; loop abstracted" }
+power_artifact = { status = "Approximate", note = "combo with Basalt/Grim Monolith (Rings + Basalt too); loop abstracted" }
+thoracle_combo = { status = "Approximate", note = "combo: both spells cast through the counter window; win abstracted" }
+helm_of_the_host = { status = "Full", note = "hasty copy each combat; with Combat Celebrant a combo" }
+kiki_combo = { status = "Approximate", note = "combo: Kiki / Reflection + Conscripts / Felidar / Resto; loop abstracted" }
+auras = { status = "Approximate", note = "Auras attach to the best creature (the commander in voltron decks); bonuses, keywords, protection; hostile Auras modeled as exile" }
+totem_armor = { status = "Full", note = "umbra armor destroys the Aura instead" }
+enchantress_draw = { status = "Full", note = "cast triggers (compiled or hooked)" }
+put_attacking = { status = "Full", note = "Kaalia (hand) and Winota (top six) put creatures onto the battlefield attacking" }
+korvold_sac = { status = "Full", note = "every sacrifice incl. Treasure/Food/Clue: counter and a card" }
+blood_moon = { status = "Full", note = "Magus of the Moon: nonbasic lands tap for R" }
+graveyard_hate = { status = "Approximate", note = "Rest in Peace keeps graveyards empty, Bojuka Bog, Dauthi void exile, Crypt / Lantern in response to reanimation or proactively" }
+monarch = { status = "Full", note = "end-step draw; combat damage to the monarch takes it" }
+flicker = { status = "Approximate", note = "blink re-triggers ETBs (Brago, Soulherder, Closet, Displacer, Deadeye, Ephemerate, Resto); Deadeye soulbond read as a paid blink" }
+meren = { status = "Full", note = "experience counters; end-step return (battlefield or hand)" }
+recursion_ai = { status = "Approximate", note = "reanimation spells and Deadly Dispute usable by outside decks" }
+landfall = { status = "Full", note = "landfall triggers, fetch lands crack for a second trigger (pool games)" }
+extra_land_drops = { status = "Full", note = "Exploration, Azusa, Dryad, Oracle of Mul Daya, Aesi, Druid Class, Explore" }
+land_recursion = { status = "Approximate", note = "Crucible / Ramunap / Greenwarden land drops from the graveyard; Loam dredge when short on lands" }
+elf_mana = { status = "Full", note = "Priest, Archdruid, Channeler, Heritage, Circle of Dreams, Marwyn, Cradle, Nykthos (approx)" }
+craterhoof = { status = "Full", note = "X = creatures, trample, haste; cast / tutored when the board is wide" }
+creature_tutors = { status = "Approximate", note = "Natural Order, GSZ, Finale, Eldritch Evolution, Chord onto the battlefield; the target is the best card (Craterhoof on a wide board)" }
+krenko = { status = "Full", note = "tap: Goblins equal to Goblins you control" }
+etb_damage = { status = "Full", note = "Impact Tremors, Purphoros" }
+goblin_bombardment = { status = "Full", note = "sacrifice outlet dealing 1 (aristocrat AI decides when)" }
+thornbite_untap = { status = "Approximate", note = "combo: Krenko + Thornbite Staff + sacrifice outlet" }
+impulse_draw = { status = "Approximate", note = "exile-and-play cards go to hand until they expire" }
+prosper_treasure = { status = "Full", note = "Treasure whenever you play a card from exile" }
+citadel = { status = "Full", note = "hand-coded; outside decks cast it with life to spare" }
+sanguine_bond = { status = "Approximate", note = "combo: Sanguine Bond + Exquisite Blood; loop abstracted" }
+top_manipulation = { status = "Approximate", note = "Brainstorm puts back the two worst cards; Top / Scroll Rack / Ponder not modeled" }
+free_counters = { status = "Full", note = "Force of Will, Force of Negation (opponents' turns), Fierce Guardianship, Pact of Negation (upkeep payment), Mental Misstep" }
+counter_ai = { status = "Approximate", note = "counters by importance; spells that complete a combo count as critical" }
+yawgmoth = { status = "Full", note = "sacrifice / -1/-1 / draw and proliferate; the undying loop is a combo" }
+necro_adnaus = { status = "Full", note = "Necropotence end-step life payment; Ad Nauseam cast above 30 life" }
+gravecrawler_loop = { status = "Approximate", note = "combo with Phyrexian Altar, another Zombie and a death payoff" }
+zur = { status = "Full", note = "attack: enchantment MV 3 or less onto the battlefield" }
+survival_pod = { status = "Approximate", note = "Survival discards the worst creature for the best; Pod upgrades by one MV" }
+skullclamp = { status = "Full", note = "equip to an X/1 for two cards (outside decks too)" }
+protection_ai = { status = "Approximate", note = "outside decks answer targeted removal and wipes with their protection cards (and sacrifice creatures in response for value)" }
+light_paws = { status = "Full", note = "Aura cast -> Aura from library onto Light-Paws" }
+urza = { status = "Full", note = "Construct, artifacts tap for U, {5} free card" }
+artifact_mana = { status = "Approximate", note = "rocks and Monoliths tap for mana; untap loops are combos" }
+karn_lattice = { status = "Approximate", note = "Karn shuts off opponents' artifact mana; with Lattice a lock (no mana from permanents)" }
+chulane = { status = "Full", note = "" }
+winota = { status = "Full", note = "" }
+kaalia = { status = "Full", note = "" }
+windgrace = { status = "Full", note = "loyalty abilities incl. ultimate" }
+lathril = { status = "Full", note = "Elf tokens equal to combat damage" }
+teysa = { status = "Full", note = "tokens have vigilance and lifelink" }
+isshin = { status = "Full", note = "" }
+tatyova = { status = "Full", note = "landfall: 1 life and a card" }
+marwyn = { status = "Full", note = "" }
+aurelia = { status = "Full", note = "" }
+atraxa_pv = { status = "Full", note = "proliferate at end step" }
+gaa = { status = "Full", note = "" }
+sythis = { status = "Full-auto", note = "enchantment cast: gain 1, draw" }
+brago = { status = "Full", note = "combat damage blinks every permanent with a useful ETB" }
+lathril_tap10 = { status = "Full", note = "tap ten Elves: drain 10" }
+kinnan = { status = "Full", note = "" }
+
+[[engines.isshin-mardu-attack-triggers]]
+label = "Isshin's attack-trigger doubling"
+cards = ["Isshin, Two Heavens as One"]
+mechs = ["isshin_doubling"]
+
+[[engines.isshin-mardu-attack-triggers]]
+label = "token-on-attack creatures"
+cards = ["Adeline, Resplendent Cathar", "Hero of Bladehold", "Brimaz, King of Oreskos", "Legion Warboss", "Goblin Rabblemaster", "Tilonalli's Summoner"]
+mechs = ["attack_triggers"]
+
+[[engines.isshin-mardu-attack-triggers]]
+label = "Hellrider / Brutal Hordechief per-attacker damage"
+cards = ["Hellrider", "Brutal Hordechief"]
+mechs = ["attack_triggers"]
+
+[[engines.isshin-mardu-attack-triggers]]
+label = "extra combats"
+cards = ["Aurelia, the Warleader", "Karlach, Fury of Avernus", "Scourge of the Throne"]
+mechs = ["extra_combat"]
+
+[[engines.lathril-golgari-elves]]
+label = "Elf-scaling mana"
+cards = ["Priest of Titania", "Elvish Archdruid"]
+mechs = ["elf_mana"]
+
+[[engines.lathril-golgari-elves]]
+label = "Lathril's tokens and tap-ten drain"
+cards = ["Lathril, Blade of the Elves"]
+mechs = ["lathril", "lathril_tap10"]
+
+[[engines.lathril-golgari-elves]]
+label = "lords and overruns"
+cards = ["Elvish Archdruid", "Imperious Perfect", "Elvish Clancaller", "Overwhelming Stampede", "Ezuri, Renegade Leader", "Shaman of the Pack"]
+mechs = []
+
+[[engines.lathril-golgari-elves]]
+label = "Skullclamp"
+cards = ["Skullclamp"]
+mechs = ["skullclamp"]
+
+[[engines.light-paws-aura-voltron]]
+label = "Light-Paws Aura chain"
+cards = ["Light-Paws, Emperor's Voice"]
+mechs = ["light_paws", "auras"]
+
+[[engines.light-paws-aura-voltron]]
+label = "enchantress draw"
+cards = ["Sram, Senior Edificer", "Mesa Enchantress", "Kor Spiritdancer", "Eidolon of Countless Battles"]
+mechs = ["enchantress_draw"]
+
+[[engines.light-paws-aura-voltron]]
+label = "totem armor"
+cards = ["Hyena Umbra", "Mammoth Umbra", "Felidar Umbra"]
+mechs = ["totem_armor", "auras"]
+
+[[engines.light-paws-aura-voltron]]
+label = "commander damage"
+cards = []
+mechs = ["commander_damage"]
+
+[[engines.tatyova-simic-landfall]]
+label = "Tatyova landfall draw"
+cards = ["Tatyova, Benthic Druid"]
+mechs = ["tatyova"]
+
+[[engines.tatyova-simic-landfall]]
+label = "extra land drops"
+cards = ["Exploration", "Burgeoning", "Azusa, Lost but Seeking", "Dryad of the Ilysian Grove", "Oracle of Mul Daya"]
+mechs = ["extra_land_drops"]
+
+[[engines.tatyova-simic-landfall]]
+label = "landfall token output"
+cards = ["Avenger of Zendikar", "Scute Swarm", "Rampaging Baloths"]
+mechs = ["landfall"]
+
+[[engines.tatyova-simic-landfall]]
+label = "land recursion"
+cards = ["Crucible of Worlds", "Ramunap Excavator", "Life from the Loam", "Ancient Greenwarden"]
+mechs = ["land_recursion"]
+
+[[engines.teysa-orzhov-aristocrats]]
+label = "Teysa's death-trigger doubling"
+cards = ["Teysa Karlov"]
+mechs = ["teysa_doubling", "teysa"]
+
+[[engines.teysa-orzhov-aristocrats]]
+label = "drain payoffs"
+cards = ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Bastion of Remembrance", "Falkenrath Noble"]
+mechs = []
+
+[[engines.teysa-orzhov-aristocrats]]
+label = "forced sacrifice"
+cards = ["Grave Pact", "Dictate of Erebos", "Butcher of Malakir"]
+mechs = ["edicts"]
+
+[[engines.teysa-orzhov-aristocrats]]
+label = "Skullclamp"
+cards = ["Skullclamp"]
+mechs = ["skullclamp"]
+
+[[engines.brago-azorius-blink-control]]
+label = "flicker ETB re-use"
+cards = ["Brago, King Eternal", "Conjurer's Closet", "Soulherder", "Deadeye Navigator", "Eldrazi Displacer"]
+mechs = ["flicker", "brago"]
+
+[[engines.brago-azorius-blink-control]]
+label = "counterspell decisions"
+cards = ["Counterspell", "Absorb", "Cryptic Command", "Memory Lapse"]
+mechs = ["counter_ai"]
+
+[[engines.brago-azorius-blink-control]]
+label = "monarch"
+cards = ["Palace Jailer"]
+mechs = ["monarch"]
+
+[[engines.kaalia-mardu-creature-cheat]]
+label = "Kaalia's put-onto-battlefield-attacking"
+cards = ["Kaalia of the Vast"]
+mechs = ["put_attacking", "kaalia"]
+
+[[engines.kaalia-mardu-creature-cheat]]
+label = "commander protection"
+cards = ["Lightning Greaves", "Swiftfoot Boots", "Mother of Runes", "Giver of Runes", "Selfless Spirit", "Deflecting Swat"]
+mechs = ["protection_ai"]
+
+[[engines.kaalia-mardu-creature-cheat]]
+label = "big flier combat"
+cards = ["Baneslayer Angel", "Lyra Dawnbringer", "Thundermaw Hellkite", "Terror of the Peaks"]
+mechs = []
+
+[[engines.lord-windgrace-jund-lands]]
+label = "Windgrace loyalty and land recursion"
+cards = ["Lord Windgrace"]
+mechs = ["planeswalkers", "windgrace"]
+
+[[engines.lord-windgrace-jund-lands]]
+label = "landfall token makers"
+cards = ["Avenger of Zendikar", "Scute Swarm", "Rampaging Baloths", "Omnath, Locus of Rage", "Retreat to Kazandu"]
+mechs = ["landfall"]
+
+[[engines.lord-windgrace-jund-lands]]
+label = "Titania elementals"
+cards = ["Titania, Protector of Argoth"]
+mechs = []
+
+[[engines.lord-windgrace-jund-lands]]
+label = "Life from the Loam dredge"
+cards = ["Life from the Loam"]
+mechs = ["land_recursion"]
+
+[[engines.meren-golgari-recursion]]
+label = "Meren's end-step reanimation"
+cards = ["Meren of Clan Nel Toth"]
+mechs = ["meren"]
+
+[[engines.meren-golgari-recursion]]
+label = "ETB removal re-use"
+cards = ["Ravenous Chupacabra", "Shriekmaw", "Nekrataal", "Acidic Slime"]
+mechs = []
+
+[[engines.meren-golgari-recursion]]
+label = "sac outlets"
+cards = ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar"]
+mechs = []
+
+[[engines.meren-golgari-recursion]]
+label = "Grave Pact"
+cards = ["Grave Pact"]
+mechs = ["edicts"]
+
+[[engines.meren-golgari-recursion]]
+label = "Survival / Birthing Pod"
+cards = ["Survival of the Fittest", "Birthing Pod"]
+mechs = ["survival_pod"]
+
+[[engines.sythis-selesnya-enchantress]]
+label = "enchantress draw"
+cards = ["Argothian Enchantress", "Enchantress's Presence", "Mesa Enchantress", "Verduran Enchantress", "Satyr Enchanter", "Setessan Champion"]
+mechs = ["enchantress_draw"]
+
+[[engines.sythis-selesnya-enchantress]]
+label = "attack taxes and caps"
+cards = ["Ghostly Prison", "Sphere of Safety", "Norn's Annex", "Crawlspace", "Silent Arbiter", "Windborn Muse", "Baird, Steward of Argive"]
+mechs = ["attack_taxes", "attacker_caps"]
+
+[[engines.sythis-selesnya-enchantress]]
+label = "Sigil of the Empty Throne"
+cards = ["Sigil of the Empty Throne"]
+mechs = []
+
+[[engines.sythis-selesnya-enchantress]]
+label = "Starfield of Nyx"
+cards = ["Starfield of Nyx"]
+mechs = []
+
+[[engines.sythis-selesnya-enchantress]]
+label = "Sythis cast trigger"
+cards = ["Sythis, Harvest's Hand"]
+mechs = ["sythis"]
+
+[[engines.atraxa-superfriends]]
+label = "planeswalker loyalty and ultimates"
+cards = ["Jace, the Mind Sculptor", "Teferi, Hero of Dominaria", "Elspeth, Sun's Champion", "Karn Liberated", "Oko, Thief of Crowns"]
+mechs = ["planeswalkers"]
+
+[[engines.atraxa-superfriends]]
+label = "proliferate"
+cards = ["Atraxa, Praetors' Voice", "Evolution Sage", "Flux Channeler", "Tekuthal, Inquiry Dominus"]
+mechs = ["proliferate", "atraxa_pv"]
+
+[[engines.atraxa-superfriends]]
+label = "Doubling Season"
+cards = ["Doubling Season"]
+mechs = ["counter_doubling"]
+
+[[engines.atraxa-superfriends]]
+label = "attack taxes"
+cards = ["Ghostly Prison", "Propaganda"]
+mechs = ["attack_taxes"]
+
+[[engines.aurelia-boros-extra-combats]]
+label = "additional combat phases"
+cards = ["Aurelia, the Warleader", "Relentless Assault", "Seize the Day", "World at War", "Combat Celebrant", "Hellkite Charger", "Port Razer", "Karlach, Fury of Avernus", "Scourge of the Throne"]
+mechs = ["extra_combat", "aurelia"]
+
+[[engines.aurelia-boros-extra-combats]]
+label = "attack triggers per combat"
+cards = ["Hero of Bladehold", "Adeline, Resplendent Cathar", "Legion Warboss"]
+mechs = ["attack_triggers"]
+
+[[engines.aurelia-boros-extra-combats]]
+label = "equipment"
+cards = ["Embercleave", "Sword of Fire and Ice", "Shadowspear", "Sword of Hearth and Home"]
+mechs = []
+
+[[engines.aurelia-boros-extra-combats]]
+label = "Helm of the Host + Combat Celebrant"
+cards = ["Helm of the Host", "Combat Celebrant"]
+mechs = ["helm_of_the_host"]
+
+[[engines.korvold-jund-sacrifice]]
+label = "Korvold sacrifice draw"
+cards = ["Korvold, Fae-Cursed King"]
+mechs = ["korvold_sac"]
+
+[[engines.korvold-jund-sacrifice]]
+label = "Treasure / Food / Clue tokens"
+cards = ["Gilded Goose", "Trail of Crumbs", "Witch's Oven", "Tireless Provisioner"]
+mechs = ["treasure", "food", "clue"]
+
+[[engines.korvold-jund-sacrifice]]
+label = "per-sacrifice damage"
+cards = ["Mayhem Devil", "Goblin Bombardment", "Blood Artist", "Zulaport Cutthroat"]
+mechs = ["goblin_bombardment"]
+
+[[engines.korvold-jund-sacrifice]]
+label = "Gravecrawler + Phyrexian Altar loop"
+cards = ["Gravecrawler", "Phyrexian Altar"]
+mechs = ["gravecrawler_loop"]
+
+[[engines.marwyn-mono-green-elves]]
+label = "Elf-scaling mana"
+cards = ["Priest of Titania", "Elvish Archdruid", "Circle of Dreams Druid"]
+mechs = ["elf_mana", "marwyn"]
+
+[[engines.marwyn-mono-green-elves]]
+label = "Gaea's Cradle"
+cards = ["Gaea's Cradle"]
+mechs = ["elf_mana"]
+
+[[engines.marwyn-mono-green-elves]]
+label = "Craterhoof overrun"
+cards = ["Craterhoof Behemoth"]
+mechs = ["craterhoof"]
+
+[[engines.marwyn-mono-green-elves]]
+label = "creature tutors"
+cards = ["Natural Order", "Chord of Calling", "Green Sun's Zenith", "Finale of Devastation", "Eldritch Evolution"]
+mechs = ["creature_tutors"]
+
+[[engines.tergrid-mono-black-disruption]]
+label = "Tergrid's steal"
+cards = ["Tergrid, God of Fright // Tergrid's Lantern"]
+mechs = ["tergrid_steal"]
+
+[[engines.tergrid-mono-black-disruption]]
+label = "edicts"
+cards = ["Chainer's Edict", "Liliana's Triumph", "Sheoldred's Edict", "Innocent Blood", "Plaguecrafter", "Fleshbag Marauder"]
+mechs = ["edicts"]
+
+[[engines.tergrid-mono-black-disruption]]
+label = "discard"
+cards = ["Hymn to Tourach", "Mind Twist", "Liliana of the Veil", "Tinybones, Trinket Thief"]
+mechs = ["discard"]
+
+[[engines.tergrid-mono-black-disruption]]
+label = "Grave Pact / Dictate"
+cards = ["Grave Pact", "Dictate of Erebos"]
+mechs = ["edicts"]
+
+[[engines.tergrid-mono-black-disruption]]
+label = "Cabal Coffers + Urborg"
+cards = ["Cabal Coffers", "Urborg, Tomb of Yawgmoth"]
+mechs = []
+
+[[engines.chulane-bant-value-combo]]
+label = "Chulane cast trigger"
+cards = ["Chulane, Teller of Tales"]
+mechs = ["chulane"]
+
+[[engines.chulane-bant-value-combo]]
+label = "Aluren free casting"
+cards = ["Aluren"]
+mechs = ["aluren"]
+
+[[engines.chulane-bant-value-combo]]
+label = "self-bounce creatures"
+cards = ["Shrieking Drake", "Whitemane Lion", "Kor Skyfisher", "Man-o'-War"]
+mechs = []
+
+[[engines.chulane-bant-value-combo]]
+label = "creature tutors"
+cards = ["Chord of Calling", "Green Sun's Zenith", "Finale of Devastation", "Survival of the Fittest"]
+mechs = ["creature_tutors"]
+
+[[engines.gaa-azorius-stax-control]]
+label = "static cost increases"
+cards = ["Grand Arbiter Augustin IV", "Thalia, Guardian of Thraben", "Sphere of Resistance", "Thorn of Amethyst", "Glowrider", "Vryn Wingmare", "Lavinia, Azorius Renegade"]
+mechs = ["cost_taxes", "gaa"]
+
+[[engines.gaa-azorius-stax-control]]
+label = "one-spell-per-turn limits"
+cards = ["Rule of Law", "Deafening Silence", "Ethersworn Canonist", "Archon of Emeria"]
+mechs = ["spell_limits"]
+
+[[engines.gaa-azorius-stax-control]]
+label = "Drannith lock"
+cards = ["Drannith Magistrate"]
+mechs = ["drannith_lock"]
+
+[[engines.gaa-azorius-stax-control]]
+label = "Isochron + Reversal"
+cards = ["Isochron Scepter", "Dramatic Reversal"]
+mechs = ["isochron_reversal"]
+
+[[engines.gaa-azorius-stax-control]]
+label = "counterspells"
+cards = ["Counterspell", "Mana Drain", "Force of Will", "Flusterstorm", "Absorb"]
+mechs = ["counter_ai"]
+
+[[engines.krenko-mono-red-goblins]]
+label = "Krenko's token activation"
+cards = ["Krenko, Mob Boss"]
+mechs = ["krenko"]
+
+[[engines.krenko-mono-red-goblins]]
+label = "ETB damage"
+cards = ["Impact Tremors", "Purphoros, God of the Forge"]
+mechs = ["etb_damage"]
+
+[[engines.krenko-mono-red-goblins]]
+label = "Goblin Bombardment"
+cards = ["Goblin Bombardment"]
+mechs = ["goblin_bombardment"]
+
+[[engines.krenko-mono-red-goblins]]
+label = "Kiki-Jiki + Conscripts"
+cards = ["Kiki-Jiki, Mirror Breaker", "Zealous Conscripts", "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"]
+mechs = ["kiki_combo"]
+
+[[engines.krenko-mono-red-goblins]]
+label = "Thornbite Staff loop"
+cards = ["Thornbite Staff"]
+mechs = ["thornbite_untap"]
+
+[[engines.krenko-mono-red-goblins]]
+label = "Goblin tutors"
+cards = ["Goblin Lackey", "Goblin Recruiter", "Goblin Matron", "Muxus, Goblin Grandee"]
+mechs = ["creature_tutors"]
+
+[[engines.prosper-rakdos-exile-treasure]]
+label = "Prosper Treasure on exile-cast"
+cards = ["Prosper, Tome-Bound"]
+mechs = ["prosper_treasure"]
+
+[[engines.prosper-rakdos-exile-treasure]]
+label = "impulse draw"
+cards = ["Reckless Impulse", "Light Up the Stage", "Outpost Siege", "Valakut Exploration"]
+mechs = ["impulse_draw"]
+
+[[engines.prosper-rakdos-exile-treasure]]
+label = "Treasure payoffs"
+cards = ["Mayhem Devil", "Storm-Kiln Artist"]
+mechs = ["treasure"]
+
+[[engines.prosper-rakdos-exile-treasure]]
+label = "Bolas's Citadel"
+cards = ["Bolas's Citadel"]
+mechs = ["citadel"]
+
+[[engines.prosper-rakdos-exile-treasure]]
+label = "Sanguine Bond + Exquisite Blood"
+cards = ["Sanguine Bond", "Exquisite Blood"]
+mechs = ["sanguine_bond"]
+
+[[engines.yuriko-dimir-ninjas]]
+label = "ninjutsu"
+cards = ["Yuriko, the Tiger's Shadow", "Ink-Eyes, Servant of Oni", "Fallen Shinobi", "Silver-Fur Master", "Mistblade Shinobi", "Moon-Circuit Hacker"]
+mechs = ["ninjutsu"]
+
+[[engines.yuriko-dimir-ninjas]]
+label = "Yuriko reveal damage"
+cards = ["Yuriko, the Tiger's Shadow"]
+mechs = ["yuriko_reveal"]
+
+[[engines.yuriko-dimir-ninjas]]
+label = "top-of-library manipulation"
+cards = ["Brainstorm", "Scroll Rack", "Sensei's Divining Top", "Vampiric Tutor"]
+mechs = ["top_manipulation"]
+
+[[engines.yuriko-dimir-ninjas]]
+label = "free counterspells"
+cards = ["Fierce Guardianship", "Force of Negation"]
+mechs = ["free_counters"]
+
+[[engines.kinnan-simic-mana-combo]]
+label = "Kinnan's extra mana"
+cards = ["Kinnan, Bonder Prodigy"]
+mechs = ["kinnan_mana"]
+
+[[engines.kinnan-simic-mana-combo]]
+label = "Basalt / Freed / Pemmin loops"
+cards = ["Basalt Monolith", "Freed from the Real", "Pemmin's Aura"]
+mechs = ["kinnan_mana"]
+
+[[engines.kinnan-simic-mana-combo]]
+label = "Kinnan activation"
+cards = ["Kinnan, Bonder Prodigy"]
+mechs = ["kinnan"]
+
+[[engines.kinnan-simic-mana-combo]]
+label = "Isochron + Reversal"
+cards = ["Isochron Scepter", "Dramatic Reversal"]
+mechs = ["isochron_reversal"]
+
+[[engines.kinnan-simic-mana-combo]]
+label = "free counterspells"
+cards = ["Force of Will", "Fierce Guardianship", "Pact of Negation"]
+mechs = ["free_counters"]
+
+[[engines.urza-mono-blue-artifacts]]
+label = "artifact fast mana"
+cards = ["Mana Vault", "Grim Monolith", "Basalt Monolith", "Mox Opal", "Chrome Mox"]
+mechs = ["artifact_mana"]
+
+[[engines.urza-mono-blue-artifacts]]
+label = "Urza tapping artifacts, Construct"
+cards = ["Urza, Lord High Artificer"]
+mechs = ["urza"]
+
+[[engines.urza-mono-blue-artifacts]]
+label = "Isochron + Reversal"
+cards = ["Isochron Scepter", "Dramatic Reversal"]
+mechs = ["isochron_reversal"]
+
+[[engines.urza-mono-blue-artifacts]]
+label = "Power Artifact / Rings loops"
+cards = ["Power Artifact", "Rings of Brighthearth"]
+mechs = ["power_artifact"]
+
+[[engines.urza-mono-blue-artifacts]]
+label = "Karn + Lattice lock"
+cards = ["Karn, the Great Creator", "Mycosynth Lattice"]
+mechs = ["karn_lattice"]
+
+[[engines.urza-mono-blue-artifacts]]
+label = "taxing artifacts"
+cards = ["Sphere of Resistance", "Thorn of Amethyst", "Trinisphere"]
+mechs = ["cost_taxes"]
+
+[[engines.urza-mono-blue-artifacts]]
+label = "free counterspells"
+cards = ["Force of Will", "Fierce Guardianship", "Pact of Negation"]
+mechs = ["free_counters"]
+
+[[engines.winota-boros-humans-cheat]]
+label = "Winota's attack trigger"
+cards = ["Winota, Joiner of Forces"]
+mechs = ["put_attacking", "winota"]
+
+[[engines.winota-boros-humans-cheat]]
+label = "Kiki-Jiki copy combos"
+cards = ["Kiki-Jiki, Mirror Breaker", "Zealous Conscripts", "Felidar Guardian", "Restoration Angel"]
+mechs = ["kiki_combo"]
+
+[[engines.winota-boros-humans-cheat]]
+label = "stax Humans"
+cards = ["Thalia, Guardian of Thraben", "Thalia, Heretic Cathar", "Drannith Magistrate", "Magus of the Moon"]
+mechs = ["cost_taxes", "drannith_lock", "blood_moon"]
+
+[[engines.winota-boros-humans-cheat]]
+label = "protection spells"
+cards = ["Flawless Maneuver", "Teferi's Protection", "Deflecting Swat", "Selfless Spirit"]
+mechs = ["protection_ai"]
+
+[[engines.yawgmoth-mono-black-aristocrats]]
+label = "Yawgmoth sac / -1/-1 / draw"
+cards = ["Yawgmoth, Thran Physician"]
+mechs = ["yawgmoth", "minus_counters"]
+
+[[engines.yawgmoth-mono-black-aristocrats]]
+label = "undying and counter cancellation"
+cards = ["Mikaeus, the Unhallowed", "Geralf's Messenger", "Butcher Ghoul"]
+mechs = ["undying_persist", "minus_counters"]
+
+[[engines.yawgmoth-mono-black-aristocrats]]
+label = "death-trigger drains"
+cards = ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance", "Syr Konrad, the Grim"]
+mechs = []
+
+[[engines.yawgmoth-mono-black-aristocrats]]
+label = "Gravecrawler + Altar"
+cards = ["Gravecrawler", "Phyrexian Altar"]
+mechs = ["gravecrawler_loop"]
+
+[[engines.yawgmoth-mono-black-aristocrats]]
+label = "Necropotence / Ad Nauseam / Citadel"
+cards = ["Necropotence", "Ad Nauseam", "Bolas's Citadel"]
+mechs = ["necro_adnaus", "citadel"]
+
+[[engines.zur-esper-enchantment-control]]
+label = "Zur's attack trigger"
+cards = ["Zur the Enchanter"]
+mechs = ["zur"]
+
+[[engines.zur-esper-enchantment-control]]
+label = "Necropotence"
+cards = ["Necropotence"]
+mechs = ["necro_adnaus"]
+
+[[engines.zur-esper-enchantment-control]]
+label = "Thassa's Oracle + Consultation / Pact"
+cards = ["Thassa's Oracle", "Demonic Consultation", "Tainted Pact"]
+mechs = ["thoracle_combo"]
+
+[[engines.zur-esper-enchantment-control]]
+label = "free counterspells"
+cards = ["Force of Will", "Fierce Guardianship", "Pact of Negation", "Force of Negation"]
+mechs = ["free_counters"]
+
+[[engines.zur-esper-enchantment-control]]
+label = "graveyard exile"
+cards = ["Rest in Peace", "Dauthi Voidwalker"]
+mechs = ["graveyard_hate"]

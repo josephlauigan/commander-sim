@@ -9,7 +9,7 @@
 **Updated 2026-10-09.** Out: Secure the Wastes. In: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal. JD's choice: Venat draws a card the first time each turn you cast a legendary spell; its flip side ({7}: exile a nonland permanent) makes a creature indestructible each turn. Measured +0.1 ±0.8 for Secure the Wastes (adaptive, paired, 1,000 games per tier). Not a Game Changer.
 
 2026-10-03
-**Added 2026-10-03.** In the simulator as deck key `yshtola` (`python3 -m commander_sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. Zur the Enchanter is in the 99.
+**Added 2026-10-03.** In the simulator as deck key `yshtola` (`commander-sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. Zur the Enchanter is in the 99.
 
 ## Strategy
 

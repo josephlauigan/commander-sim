@@ -1,7 +1,7 @@
 # Alela, Artful Provocateur — Esper Faerie Flyers
 
 2026-10-05
-**Added 2026-10-05.** In the simulator as deck key `alela` (`python3 -m commander_sim --deck alela --pool t3`) and in practice mode.
+**Added 2026-10-05.** In the simulator as deck key `alela` (`commander-sim --deck alela --pool t3`) and in practice mode.
 
 ## Strategy
 

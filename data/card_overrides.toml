@@ -1,0 +1,5595 @@
+# Card overrides: one table per card, by exact card name. Edit by hand; then `cardgen export` (rust/crates/cardgen).
+# Extracted once from the old Python card code (since removed); this file is now the source.
+#
+# Keys (all optional):
+#   types, cost, tags, dsl   an override: the card is rebuilt from these (source "pool"); a missing key keeps the
+#                            card's own (types / cost / tags from Scryfall or carddb.txt). tags uses carddb.txt's
+#                            vocabulary; dsl is the card's compiled abilities (the ability language, see
+#                            cardgen's dsl_parse.rs); dsl = [] means none. An override with abilities also gets the
+#                            AI hint tags they imply. Your decks' hand-tagged cards (carddb.txt) ignore an
+#                            override: your decks' AI is built around their tags.
+#   kws, ward                keyword data: replace the card's keywords (lower case) / its ward cost
+#   loyalty                  a planeswalker's starting loyalty (a string, as printed)
+#   add_tags                 tags added once the cards are loaded ("noatk", "pain", "dork=A")
+#   pool_add_tags            the same, but not to cards in your decks
+#   pool_remove_tags         tags removed, but not from cards in your decks
+#                            (the three tag edits apply to the cards the decks play, not to cache-only cards)
+#   status, note             the audit's verdict (Full / Approximate / Partial / Unmodeled) and what is modeled
+
+["Abduction"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "steals the best opposing creature (untapped) while it stays attached; when it dies it returns to the battlefield under its owner's control; control returns if Abduction leaves"
+
+["Academy Manufactor"]
+types = "AC"
+tags = "pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = "Treasure / Food / Clue creation makes one of each instead"
+
+["Academy Ruins"]
+status = "Full"
+note = "{1}{U},{T}: the best artifact from the graveyard on top of the library"
+
+["Accursed Marauder"]
+types = "C"
+tags = "warrior pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "enters: each player sacrifices a nontoken creature of their choice (the one cheapest to lose; a Marchesa player gives up one she returns)"
+
+["Acidic Slime"]
+tags = "pow=2 dt"
+dsl = []
+status = "Full"
+note = "deathtouch; destroys the best opposing artifact or enchantment, else a nonbasic land"
+
+["Adarkar Wastes"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Admonition Angel"]
+tags = "pow=6 fly bomb=6"
+dsl = []
+status = "Full"
+note = "landfall: exile a nonland permanent until it leaves"
+
+["Aesi, Tyrant of Gyre Strait"]
+tags = "leg pow=5 bomb=5"
+dsl = []
+status = "Full"
+note = "1 additional land drop(s) each turn"
+
+["Aether Hub"]
+status = "Full"
+note = "{E} on entry; {T}: {C}, or pay {E} for any colour (energy that Static Prison needs is kept)"
+
+["Aetherize"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "cast when attacked by a big or token-heavy attack: returns all attacking creatures"
+
+["Airlift Chaplain"]
+tags = "pow=1 tgh=1 fly"
+dsl = []
+status = "Full"
+note = "flying; mill three on entry, keep a Plains or a creature card with MV 3 or less (else a +1/+1 counter)"
+
+["Ajani Fells the Godsire"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "I: exile an opposing creature with power 3+; II: a 2/1 Cat Warrior and a vigilance counter; III: double strike to your best attacker"
+
+["Ajani's Chosen"]
+tags = "pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "a 2/2 Cat per enchantment entering"
+
+["Alania, Divergent Storm"]
+types = "C"
+tags = "pow=3 tgh=5 leg noatk wizard alania"
+dsl = []
+status = "Full"
+note = "your first instant and first sorcery each turn: for each trigger (Veyran and Harmonic Prodigy add one each) you may have the least threatening opponent draw a card to copy the spell (not a counterspell); copies pick new targets and keep X. The Otter clause is not modeled (no Otters in your decks)"
+
+["Alela, Artful Provocateur"]
+tags = "leg pow=2 tgh=3 fly dt lifelink"
+dsl = [
+  { type = "static", static = "anthem", pow = 1, tgh = 0, filter = { type = "creature", controller = "you", other = true, keyword = "flying" } },
+]
+status = "Full"
+note = "flying, deathtouch, lifelink; your other fliers get +1/+0; each artifact or enchantment spell you cast makes a 1/1 blue Faerie with flying"
+
+["All That Glitters"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Allosaurus Shepherd"]
+tags = "pow=1 unc"
+dsl = []
+status = "Full"
+note = "can't be countered; your green spells can't be countered; Elves become 5/5 Dinosaurs"
+
+["Alseid of Life's Bounty"]
+status = "Full"
+note = "sacrificed for protection from a colour in response to removal"
+
+["Altar of Dementia"]
+status = "Full"
+note = "free sacrifice outlet; each sacrifice mills you for the creature's power while the library can spare it (reanimation targets)"
+
+["Aluren"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "creature spells with MV 3 or less are free (everyone; cast at sorcery timing)"
+
+["Amrou Seekers"]
+status = "Full"
+note = "can't be blocked except by artifact and/or white creatures"
+
+["Ancestral Mask"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Ancient Greenwarden"]
+tags = "pow=5 tgh=7 reach bomb=5"
+dsl = []
+status = "Full"
+note = "lands from the graveyard; landfall triggers twice"
+
+["Andúril, Flame of the West"]
+types = "A"
+tags = "leg"
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 3, tgh = 1 },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +3/+1; when it attacks, two tapped 1/1 flying Spirits (attacking if the creature is legendary, as the Ring-bearer Army is); equip {2}"
+
+["Angel of Serenity"]
+tags = "pow=5 tgh=6 fly bomb=6"
+dsl = []
+status = "Full"
+note = "exiles up to three opposing creatures until it leaves"
+
+["Angelic Destiny"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Anim Pakal, Thousandth Moon"]
+tags = "leg human pow=1 tgh=2"
+status = "Full"
+note = "counter, then X attacking Gnome tokens (X = its +1/+1 counters)"
+
+["Arbor Elf"]
+tags = "pow=1 dork=G noatk"
+dsl = []
+status = "Full"
+note = "untaps a Forest (mana)"
+
+["Arcane Denial"]
+status = "Full"
+note = "counter; the caster draws two and you draw one at the next upkeep"
+
+["Arcane Signet"]
+status = "Full"
+note = "one mana of any colour in your commander's identity"
+
+["Archangel Avacyn // Avacyn, the Purifier"]
+tags = "leg pow=4 fly vig flash"
+dsl = []
+status = "Full"
+note = "flash; team indestructible on entry; transforms at the next upkeep after a non-Angel creature of yours dies (3 damage to each other creature and each opponent; 6/5)"
+
+["Archangel of Tithes"]
+types = "C"
+tags = "pow=3 tgh=5 fly"
+dsl = []
+status = "Full"
+note = "flying; attack tax {1} while untapped; blocking tax {1} while it attacks"
+
+["Archfiend of Depravity"]
+tags = "pow=5 tgh=4 fly bomb=6"
+dsl = []
+status = "Full"
+note = "opponents keep only two creatures at their end step"
+
+["Archfiend of Despair"]
+tags = "pow=6 fly bomb=6"
+dsl = []
+status = "Full"
+note = ""
+
+["Archfiend of Sorrows"]
+tags = "pow=4 tgh=5 fly"
+dsl = [
+  { type = "triggered", event = "etb", source = "self", effects = [{ do = "pump", pow = -2, tgh = -2, what = { sel = "all", filter = { type = "creature", controller = "opp" } } }] },
+]
+status = "Full"
+note = "flying; opposing creatures -2/-2 on entry; unearth {3}{B}{B} when it would wipe small creatures (hasty, exiled at end of turn)"
+
+["Archon of Emeria"]
+types = "C"
+tags = "pow=2 tgh=3 fly"
+dsl = []
+status = "Full"
+note = "one spell per turn; opponents' nonbasic lands enter tapped"
+
+["Archon of Sun's Grace"]
+tags = "pow=3 tgh=4 fly lifelink"
+status = "Full"
+note = "constellation: 2/2 flying lifelink Pegasus"
+
+["Arrest"]
+types = "E"
+tags = "rem=arrest tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura: the creature can't attack or block, and its activated abilities can't be activated (mana abilities too)"
+
+["Ashnod's Altar"]
+status = "Full"
+note = "sacrifice a creature: {C}{C} (spent this turn)"
+
+["Atraxa, Grand Unifier"]
+status = "Full"
+note = "flying, vigilance, deathtouch, lifelink; enters: reveal ten, one card of each card type to hand (best first; a multi-type card fills its scarcest type), the rest on the bottom"
+
+["Atraxa, Praetors' Voice"]
+status = "Full"
+note = "flying, vigilance, deathtouch, lifelink; proliferate at your end step"
+
+["Aura of Silence"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "opponents' artifacts and enchantments cost {2} more; sacrifice: destroy a valuable one"
+
+["Aurelia, Exemplar of Justice"]
+tags = "leg pow=2 tgh=5 fly"
+kws = ["flying", "mentor"]
+dsl = []
+status = "Full"
+note = "mentor; +2/+0, trample and vigilance on the best attacker each combat"
+
+["Aurelia, the Warleader"]
+tags = "leg pow=3 tgh=4 fly vig haste"
+status = "Full"
+note = "first attack each turn: untap all creatures, one additional combat"
+
+["Avacyn's Pilgrim"]
+status = "Full"
+note = "mana dork: {T}: add {W}"
+
+["Aven Mindcensor"]
+tags = "pow=2 tgh=1 fly flash"
+dsl = []
+status = "Full"
+note = "flash, flying; opponents searching their library search only the top four cards"
+
+["Avenger of Zendikar"]
+tags = "pow=5 bomb=6"
+dsl = []
+status = "Full"
+note = "0/1 Plant per land; landfall: +1/+1 counter on each Plant"
+
+["Awakening Zone"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "a 0/1 Spawn each upkeep (sacrifice: {C})"
+
+["Azorius Guildmage"]
+tags = "wizard pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "{2}{W}: taps the creature that would block your attacker, before combat; {2}{U}: counters an opponent's important activated ability on the stack"
+
+["Azorius Signet"]
+pool_add_tags = ["rock=1:WU"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Azusa, Lost but Seeking"]
+tags = "leg human pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "2 additional land drop(s) each turn"
+
+["Baird, Steward of Argive"]
+types = "C"
+tags = "leg human pow=2 tgh=4 vig"
+dsl = []
+status = "Full"
+note = ""
+
+["Balefire Dragon"]
+tags = "pow=6 fly bomb=6"
+dsl = []
+status = "Full"
+note = ""
+
+["Ballista Squad"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{X}{W}, {T}: X damage to target attacking or blocking creature (the AI kills an attacker)"
+
+["Baneslayer Angel"]
+tags = "pow=5 fly lifelink bomb=5"
+dsl = []
+status = "Full"
+note = "flying, first strike, lifelink; protection from Demons and Dragons"
+
+["Banishing Betrayal"]
+status = "Full"
+note = "bounces a nonland permanent, then surveil 1"
+
+["Banishing Light"]
+types = "E"
+tags = "rem=exile tgt=nl"
+dsl = []
+status = "Full"
+note = ""
+
+["Barad-dûr"]
+status = "Full"
+note = "enters tapped without a legendary creature; {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died"
+
+["Basalt Monolith"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Bastion Protector"]
+tags = "human pow=3 tgh=3"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", subtype = "commander" }, pow = 2, tgh = 2 },
+  { type = "static", static = "keyword", keyword = "indestructible", filter = { type = "creature", controller = "you", subtype = "commander" } },
+]
+status = "Full"
+note = "commander creatures you control get +2/+2 and have indestructible"
+
+["Bastion of Remembrance"]
+types = "E"
+tags = ""
+dsl = [
+  { type = "triggered", effects = [{ do = "token", n = 1, pow = 1, tgh = 1, keywords = [], attacking = false, warrior = false, types = ["human", "soldier"] }], event = "etb", source = "self" },
+  { type = "triggered", effects = [{ do = "lose_life", n = 1, who = "each_opponent" }, { do = "gain_life", n = 1, who = "you", per_opponent = false }], event = "dies", source = "you_creature", other = false },
+]
+status = "Full"
+note = "Human Soldier on entry; each creature you control dying drains each opponent 1, you gain 1"
+
+["Battle Cry Goblin"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "{1}{R}: Goblins +1/+0 before a wide attack; pack tactics Goblin token"
+
+["Battle Hymn"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "R per creature you control"
+
+["Battle Mastery"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Battlefield Forge"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Beastmaster Ascension"]
+types = "E"
+tags = ""
+dsl = [
+  { type = "static", static = "bma_anthem" },
+]
+status = "Full"
+note = "quest counter per attacker; +5/+5 at seven"
+
+["Beetleback Chief"]
+tags = "pow=2 warrior"
+dsl = []
+status = "Full"
+note = ""
+
+["Benevolent Bodyguard"]
+status = "Full"
+note = "sacrificed for protection from a colour in response to removal"
+
+["Beseech the Mirror"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "tutor to hand; bargained (a token or spare artifact/enchantment sacrificed), a found card with MV 4 or less is cast free"
+
+["Birgi, God of Storytelling // Harnfel, Horn of Bounty"]
+status = "Full"
+note = "R per spell cast (the Harnfel face is never cast)"
+
+["Birthing Pod"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "sacrifice a creature for one with MV one higher, when it upgrades"
+
+["Black Market Connections"]
+types = "E"
+tags = ""
+status = "Full"
+note = "each precombat main: Treasure, plus a card or a 3/2 depending on life"
+
+["Blackblade Reforged"]
+types = "A"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "equipped creature +1/+1 per land you control; equip a legend {3}, anything else {7}"
+
+["Blazing Firesinger // Seething Song"]
+status = "Full"
+note = "enters prepared: a Seething Song copy ({2}{R}: five red) is cast when the mana reaches a spell or with magecraft payoffs out"
+
+["Blood Artist"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Bloodchief's Thirst"]
+status = "Full"
+note = "destroys a creature or planeswalker with MV 2 or less, or anything when kicked (kicked when the target needs it and the mana is there)"
+
+["Bloodghast"]
+tags = "pow=2 tgh=1 noblock"
+dsl = []
+status = "Full"
+note = "can't block; haste while an opponent is at 10 or less; returns on landfall"
+
+["Bloodgift Demon"]
+tags = "pow=5 tgh=4 fly bomb=5"
+dsl = []
+status = "Full"
+note = ""
+
+["Bloodline Keeper // Lord of Lineage"]
+tags = "pow=3 tgh=3 fly"
+dsl = []
+status = "Full"
+note = "{T}: 2/2 flying Vampire; {B}: transform with five Vampires (Lord of Lineage: other Vampires +2/+2, still makes Vampires)"
+
+["Bloodsoaked Insight // Sanguine Morass"]
+status = "Full"
+note = "a tapped B/R land, or (when opponents lost enough life this turn) the top three of an opponent's library, playable until the end of your next turn"
+
+["Bloom Tender"]
+tags = "pow=1 dork=A noatk"
+dsl = []
+status = "Full"
+note = "one mana per colour among your permanents"
+
+["Bojuka Bog"]
+status = "Full"
+note = "enters tapped; exiles the most dangerous graveyard"
+
+["Bolt Bend"]
+types = "I"
+tags = "prot=jodah"
+dsl = []
+status = "Full"
+note = "costs {3} less with a creature of power 4 or more ({R} with Jodah out); changes the target of a removal spell to an opponent's best permanent (Jodah's AI casts it in response to removal aimed at Jodah, or at a key legend while Jodah is not out)"
+
+["Boreal Druid"]
+status = "Full"
+note = "mana creature"
+
+["Boros Charm"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "permanents indestructible in response to removal and wipes, or 4 damage to a player at 4 or less"
+
+["Boros Signet"]
+pool_add_tags = ["rock=1:WR"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Boseiju, Who Endures"]
+status = "Full"
+note = "channel {1}{G} from hand: destroys a valuable artifact or enchantment"
+
+["Bound in Silence"]
+types = "E"
+tags = "rem=pacify tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura: the creature can't attack or block"
+
+["Brago, King Eternal"]
+tags = "leg pow=2 tgh=4 fly"
+dsl = []
+status = "Full"
+note = "combat damage: blink every nonland permanent with an ETB worth repeating (and tapped mana rocks)"
+
+["Braids, Arisen Nightmare"]
+tags = "leg pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "end step: sacrifice a spare creature; each opponent sacrifices a creature or loses 2 (you draw)"
+
+["Brain Freeze"]
+types = "I"
+cost = "1U"
+tags = "storm stormmill"
+dsl = []
+status = "Full"
+note = "storm (spells cast before it this turn, by anyone); each copy mills a player 3. Held for the Underworld Breach line, where it mills you for fuel, then the table"
+
+["Brainstorm"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "draw three, then put back the two least wanted cards (Yuriko: the two biggest, for the reveal)"
+
+["Brazen Borrower"]
+status = "Full"
+note = "Petty Theft bounces a threat, then the Faerie is cast from exile; flash, flying"
+
+["Bribery"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "the best creature in an opponent's library onto the battlefield under your control (you choose the opponent and the card)"
+
+["Brimaz, King of Oreskos"]
+tags = "leg pow=3 tgh=4 vig"
+status = "Full"
+note = "vigilance; a 1/1 Cat attacking with it, and one blocking with it"
+
+["Brush Off"]
+status = "Full"
+note = "counter target spell; {1}{U} against an instant or sorcery"
+
+["Brushland"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Brutal Hordechief"]
+tags = "pow=3 warrior"
+status = "Full"
+note = "each attacker drains 1; {3}{R/W}{R/W}: opponents block as you choose (their creatures block where they die without killing)"
+
+["Burgeoning"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Burglar Rat"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Burst Lightning"]
+status = "Full"
+note = "2 damage, or 4 kicked ({4} more) when that kills a better target or a player"
+
+["Butcher Ghoul"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Cabal Coffers"]
+status = "Full"
+note = "{2},{T}: B per Swamp"
+
+["Cabal Ritual"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "BBB (BBBBB with threshold) when mana is short"
+
+["Caesar, Legion's Emperor"]
+tags = "leg human pow=4"
+status = "Full"
+note = "attacks: sacrifice spare fodder for two tokens, damage or cards"
+
+["Call of the Ring"]
+status = "Full"
+note = "upkeep: the Ring tempts you (the four Ring abilities in order); choosing a Ring-bearer pays 2 life for a card"
+
+["Canopy Tactician"]
+tags = "pow=3 warrior dork=G"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = "Elf lord; taps for GGG"
+
+["Caparocti Sunborn"]
+tags = "leg pow=4 tgh=4"
+dsl = []
+status = "Full"
+note = "attacking: tap your two least valuable untapped artifacts or creatures to discover 3"
+
+["Carpet of Flowers"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "mana equal to an opponent's Islands in your main phase"
+
+["Carrier Thrall"]
+tags = "pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "a 1/1 Scion when it dies (sacrifice: {C})"
+
+["Carrion Feeder"]
+status = "Full"
+note = "free sacrifice outlet: +1/+1 counter each time; can't block"
+
+["Cartel Aristocrat"]
+status = "Full"
+note = "free sacrifice outlet: protection from a colour (used against removal)"
+
+["Carth the Lion"]
+tags = "leg pow=3 tgh=5"
+dsl = []
+status = "Full"
+note = "on entry and when your planeswalker dies, a planeswalker from the top seven to hand; your loyalty abilities cost an extra [+1]"
+
+["Cartographer's Survey"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "up to two lands from the top seven onto the battlefield tapped; the rest to the bottom"
+
+["Cartouche of Solidarity"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Cast Out"]
+types = "E"
+tags = "rem=exile tgt=nl flash"
+dsl = []
+status = "Full"
+note = "cycling not modeled"
+
+["Castle Embereth"]
+status = "Full"
+note = "{1}{R}{R},{T}: creatures +1/+0 before an attack with four or more"
+
+["Castle Locthwain"]
+status = "Full"
+note = "enters tapped without another land early; draws at end of turn when life allows"
+
+["Casualties of War"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "destroys the best opposing artifact, creature, enchantment, planeswalker and nonbasic land (each mode that has a target)"
+
+["Cathars' Crusade"]
+status = "Full"
+note = "a +1/+1 counter on each creature you control whenever a creature enters under your control"
+
+["Caves of Koilos"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Celestial Mantle"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "+3/+3; combat damage to a player doubles its controller's life total"
+
+["Chain of Vapor"]
+types = "I"
+tags = "rem=bounce tgt=nl"
+dsl = []
+status = "Full"
+note = "bounces a nonland permanent; its controller may sacrifice a land to copy it back at you"
+
+["Champion's Helm"]
+status = "Full"
+note = "equip {1}: +2/+2, hexproof while legendary; the AI equips the most valuable legendary creature (the Army once it is the Ring-bearer), else the Army"
+
+["Chandra, Torch of Defiance"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "both +1s, -3 for 4 damage, -7 emblem (5 damage per spell you cast)"
+
+["Changeling Outcast"]
+tags = "pow=1 noblock"
+dsl = [
+  { type = "static", static = "unblockable" },
+]
+status = "Full"
+note = "unblockable, every creature type (a Ninja for Yuriko)"
+
+["Chaos Warp"]
+status = "Full"
+note = "the target is shuffled away; a revealed permanent card enters for its owner"
+
+["Charcoal Diamond"]
+types = "A"
+tags = "rock=1:B"
+dsl = []
+status = "Full"
+note = "enters tapped; taps for {B}"
+
+["Charming Prince"]
+tags = "human pow=2"
+dsl = []
+status = "Full"
+note = "blinks your best ETB creature until the end step, else scry 2 / 3 life"
+
+["Chatterfang, Squirrel General"]
+tags = "leg pow=3 warrior"
+dsl = []
+status = "Full"
+note = "forestwalk; every token creation adds that many 1/1 Squirrels; {B}, sacrifice X Squirrels: +X/-X"
+
+["Chittering Rats"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = ""
+
+["Cho-Manno, Revolutionary"]
+tags = "leg human nodmg pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "all damage dealt to it is prevented (combat, burn, damage wipes)"
+
+["Chord of Calling"]
+types = "I"
+tags = "xtutor convoke"
+dsl = []
+status = "Full"
+note = "convoke; X = spare mana and creatures; a creature with mana value X or less onto the battlefield"
+
+["Chulane, Teller of Tales"]
+tags = "leg human pow=2 tgh=4 vig"
+dsl = []
+status = "Full"
+note = "creature spells: draw, then a land from hand onto the battlefield (the bounce activation is only part of the Aluren combo)"
+
+["Circle of Dreams Druid"]
+status = "Full"
+note = "G for each creature you control"
+
+["Coalition Relic"]
+types = "A"
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "{T}: one mana of any colour; untapped at your end step it takes a charge counter instead (unless held-up instants need it), released as extra mana on your next turn"
+
+["Coat of Arms"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "each creature +1/+1 per other creature sharing a creature type with it (everyone's)"
+
+["Coiling Oracle"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Coldsteel Heart"]
+types = "A"
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "enters tapped; taps for the chosen color (a color the deck needs)"
+
+["Collector Ouphe"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "activated abilities of artifacts can't be activated (mana rocks, Treasures and the rest)"
+
+["Combat Celebrant"]
+tags = "human warrior pow=4 tgh=1"
+dsl = []
+status = "Full"
+note = "exerts (not two turns running): untap the others, additional combat"
+
+["Command Beacon"]
+status = "Full"
+note = "{T}: {C}; {T}, sacrifice: your commander from the command zone to hand (cast from there without commander tax). The AI uses it when the tax is 4 or more, or 2 and it makes the commander castable now"
+
+["Conduit of Worlds"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "lands from the graveyard; {T}: casts the best permanent card from the graveyard (then no more spells that turn)"
+
+["Conjurer's Closet"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "end step: blink the best ETB creature"
+
+["Consecrated Sphinx"]
+tags = "pow=4 tgh=6 fly bomb=6 sphinx"
+dsl = []
+status = "Full"
+note = "flying; may draw two whenever an opponent draws"
+
+["Consider"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "surveil 1, then draw"
+
+["Conspicuous Snoop"]
+tags = "pow=2 tgh=2 rogue"
+dsl = []
+status = "Full"
+note = "casts Goblins from the top of the library; gains the activated abilities of a Goblin on top"
+
+["Contentious Plan"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Copy Enchantment"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "copies the best enchantment on the battlefield"
+
+["Council's Judgment"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "will of the council: each player votes for a nonland permanent they don't control (their biggest threat); every permanent with the most votes is exiled"
+
+["Courser of Kruphix"]
+tags = "pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = ""
+
+["Court of Ardenvale"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "you become the monarch; each upkeep, a permanent card with mana value 3 or less from your graveyard to hand, or onto the battlefield while you are the monarch"
+
+["Crackdown"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "nonwhite creatures with power 3 or greater don't untap during their controllers' untap steps"
+
+["Crackle with Power"]
+status = "Full"
+note = "X from spare mana (5X to each of X targets): lethal players first, then big creatures, then the lowest life"
+
+["Crackling Doom"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "2 damage to each opponent; each opponent sacrifices its greatest-power creature"
+
+["Craterhoof Behemoth"]
+tags = "pow=5 haste bomb=8"
+dsl = []
+status = "Full"
+note = "haste; creatures +X/+X and trample (X = creatures you control)"
+
+["Crawlspace"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Cromat"]
+tags = "leg pow=5 tgh=5"
+dsl = []
+status = "Approximate"
+note = "{B}{G} regenerate, {U}{R} flying before an attack the defenders can't block in the air, {R}{W} +1/+1 with spare mana; the blocker-destroy and top-of-library abilities are not used"
+
+["Crop Rotation"]
+types = "I"
+tags = ""
+dsl = []
+status = "Approximate"
+note = "sacrifices your least useful land (tapped first) for Gaea's Cradle with three or more creatures, or a fetch land when landfall payoffs are out; held otherwise"
+
+["Crucible of Worlds"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "land drops from the graveyard"
+
+["Cruel Celebrant"]
+dsl = []
+status = "Full"
+note = ""
+
+["Crypt Ghast"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "Swamps tap for an extra {B}; extort (paid with spare mana)"
+
+["Curiosity"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "whenever the enchanted creature deals damage to an opponent you draw (combat damage, and Y'shtola's trigger: one card for each opponent it hits); the AI puts it on Y'shtola"
+
+["Cursed Totem"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "activated abilities of creatures can't be activated (mana creatures and the rest)"
+
+["Dakkon, Shadow Slayer"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "enters with loyalty equal to your lands; +1 surveil 2, -3 exile the best opposing creature, -6 your best artifact from hand or graveyard onto the battlefield"
+
+["Dakmor Salvage"]
+status = "Full"
+note = "enters tapped; dredge 2 instead of drawing when out of lands in hand"
+
+["Danitha Capashen, Paragon"]
+status = "Full"
+note = ""
+
+["Dark Confidant"]
+tags = "human wizard pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Dark Endurance"]
+types = "I"
+tags = "prot=jodah"
+dsl = []
+status = "Full"
+note = "+2/+0 and indestructible until end of turn (the +2/+0 is not modeled) (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+
+["Dark Petition"]
+types = "S"
+tags = "tut=any"
+dsl = []
+status = "Full"
+note = "search for any card; spell mastery (two or more instants and sorceries in your graveyard) adds {B}{B}{B}"
+
+["Dark Prophecy"]
+dsl = []
+status = "Full"
+note = ""
+
+["Darksteel Mutation"]
+types = "E"
+tags = "rem=mutate tgt=c etb"
+dsl = []
+status = "Full"
+note = "the creature becomes a 0/1 indestructible Insect artifact with no abilities"
+
+["Dauthi Voidwalker"]
+tags = "pow=3 tgh=2"
+kws = ["unblockable_shadow"]
+dsl = []
+status = "Full"
+note = "shadow; opponents' cards going to the graveyard are exiled with void counters; sacrifice to play one free"
+
+["Daybreak Coronet"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Daydream"]
+types = "S"
+tags = "fb=2W"
+dsl = []
+status = "Full"
+note = "blinks your creature with the best entry ability (+1/+1 counter); flashback {2}{W}"
+
+["Deadeye Navigator"]
+tags = "pow=5 bomb=5"
+dsl = []
+status = "Full"
+note = "soulbond: {1}{U} blinks the paired ETB creature"
+
+["Deadly Dispute"]
+status = "Full"
+note = "sacrifice an artifact or creature: draw two and a Treasure"
+
+["Deadly Rollick"]
+types = "I"
+tags = "rem=exile tgt=c freecmd"
+dsl = []
+status = "Full"
+note = "free with your commander out"
+
+["Deafening Silence"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Deathrite Shaman"]
+tags = "shaman pow=1 tgh=2 dork=A"
+dsl = []
+status = "Full"
+note = "mana while a land card is in a graveyard (exiling it); drains 2 by exiling an instant/sorcery; exiles opposing creature cards for 2 life"
+
+["Debt to the Deathless"]
+types = "S"
+tags = "xdrain"
+dsl = []
+status = "Full"
+note = "each opponent loses twice X life and you gain the total; the AI casts it for a kill or a big X"
+
+["Deceiver Exarch"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Decimate"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "needs an artifact, a creature, an enchantment and a land to target; destroys the best of each"
+
+["Deep Analysis"]
+types = "S"
+tags = "draw=2 fb=1U fblife=3"
+dsl = []
+status = "Full"
+note = "draw two; flashback {1}{U} and 3 life"
+
+["Defiant Vanguard"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "when it blocks, at end of combat, it and the creature it blocked are destroyed (the AI blocks big attackers with it); {5}, {T}: a Rebel permanent card with mana value 4 or less onto the battlefield"
+
+["Deflecting Swat"]
+status = "Full"
+note = "free while you control your commander: changes the target of a removal spell aimed at your permanent to one of the caster's (Veyran's AI casts it in response)"
+
+["Delighted Halfling"]
+pool_add_tags = ["dork=C"]
+status = "Full"
+note = "{C}, or any colour for a legendary spell"
+
+["Demonic Consultation"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Demonlord Belzenlok"]
+tags = "leg pow=6 fly trample bomb=6"
+dsl = []
+status = "Full"
+note = "flying, trample; reveals until a nonland card (again for MV 4+)"
+
+["Desertion"]
+types = "I"
+tags = "ctr=any"
+dsl = []
+status = "Full"
+note = "counter target spell; a countered artifact or creature spell enters under your control"
+
+["Desolate Lighthouse"]
+status = "Full"
+note = "{T}: {C}; {1}{U}{R}, {T}: loot at the end of an opponent's turn with mana to spare"
+
+["Desperate Futurescribe"]
+tags = "pow=3 tgh=4 fly"
+dsl = []
+status = "Full"
+note = "flying; each combat on your turn another creature gets +1/+1 (a +1/+1 counter if you scried or surveilled this turn)"
+
+["Destiny Spinner"]
+tags = "pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "your creature and enchantment spells can't be countered; {3}{G}: a land becomes an X/X trample haste Elemental"
+
+["Detention Sphere"]
+types = "E"
+tags = "rem=exile tgt=nl"
+dsl = []
+status = "Full"
+note = "exiles a nonland permanent and every other one with its name (tokens are gone for good); they return when it leaves"
+
+["Dig Through Time"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "delve; look at the top seven, keep the best two, the rest on the bottom"
+
+["Dimir Signet"]
+pool_add_tags = ["rock=1:UB"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Disenchant"]
+tags = "rem=destroy tgt=ae"
+dsl = []
+status = "Full"
+note = "destroy target artifact or enchantment"
+
+["Displacer Kitten"]
+types = "C"
+tags = "pow=2 tgh=2 noatk"
+dsl = []
+status = "Full"
+note = "each noncreature spell you cast flickers your permanent with the best enters-the-battlefield value (Atraxa, Grand Unifier, Eternal Witness ...); stolen permanents are left alone"
+
+["Dissipate"]
+types = "I"
+tags = "ctr=any ctrexile"
+dsl = []
+status = "Full"
+note = "counter target spell; it is exiled instead of going to the graveyard"
+
+["Dive Down"]
+status = "Full"
+note = "+0/+3 and hexproof: Veyran's AI casts it in response to targeted removal on a key creature"
+
+["Docent of Perfection // Final Iteration"]
+status = "Full"
+note = "a 1/1 Human Wizard per instant or sorcery you cast; with three Wizards it transforms into Final Iteration: Wizards you control get +2/+1 and have flying"
+
+["Doom Blade"]
+add_tags = ["nonblack"]
+
+["Door of Destinies"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "names a creature type as it enters; a charge counter for each spell of that type you cast; creatures of that type get +1/+1 per counter"
+
+["Doubling Season"]
+types = "E"
+tags = ""
+dsl = [
+  { type = "replacement", replace = "tokens", multiplier = 2 },
+  { type = "replacement", replace = "counters", multiplier = 2 },
+]
+status = "Full"
+note = "tokens and counters doubled; planeswalkers enter with double loyalty; + abilities and proliferate add double"
+
+["Dovin, Hand of Control"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "opponents' artifact, instant and sorcery spells cost {1} more; -1 prevents damage to and from their best creature until your next turn"
+
+["Draco"]
+types = "AC"
+tags = "pow=9 tgh=9 fly bomb=9"
+dsl = []
+status = "Full"
+note = "costs {2} less per basic land type; upkeep: pay {10} minus {2} per type or sacrifice it (a Yuriko deck keeps it for the reveal)"
+
+["Dragon Tempest"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Dragonlord Dromoka"]
+tags = "leg pow=5 tgh=7 fly lifelink unc"
+dsl = []
+status = "Full"
+note = "can't be countered; flying, lifelink; opponents can't cast spells during your turn"
+
+["Drakuseth, Maw of Flames"]
+tags = "leg pow=7 fly bomb=7"
+dsl = []
+status = "Full"
+note = "flying; attacks: 4 damage and 3 and 3"
+
+["Dramatic Reversal"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Drannith Magistrate"]
+tags = "human pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = "opponents can't cast from anywhere but their hand: commanders, flashback, escape and graveyard casting are off"
+
+["Dream Trawler"]
+tags = "pow=3 tgh=5 fly lifelink bomb=5"
+dsl = []
+status = "Full"
+note = "flying, lifelink; draws on attack (+1/+0 per draw); discard for hexproof in response"
+
+["Druid Class"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "landfall: 1 life; level 2: an extra land each turn; level 3: a land becomes a hasty creature with P/T equal to your lands"
+
+["Dryad of the Ilysian Grove"]
+tags = "pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "an extra land each turn; your lands tap for any colour"
+
+["Dwynen's Elite"]
+tags = "pow=2 warrior"
+dsl = []
+status = "Full"
+note = ""
+
+["Eerie Interlude"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles any of your creatures; they return at the beginning of the next end step (the AI saves its board from a wipe or a creature from removal)"
+
+["Eidolon of Blossoms"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = ""
+
+["Eidolon of Countless Battles"]
+tags = "pow=0 tgh=0"
+status = "Full"
+note = "creature or bestow {2}{W}{W} on the best creature: +1/+1 per creature and Aura you control; falls off as a creature"
+
+["Elas il-Kor, Sadistic Pilgrim"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Elderfang Disciple"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Elderfang Ritualist"]
+tags = "pow=3 tgh=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Eldrazi Displacer"]
+tags = "pow=3"
+dsl = []
+status = "Full"
+note = "blinks your ETB creatures, or an opponent's token (gone) with {2}{C}"
+
+["Eldritch Evolution"]
+types = "S"
+tags = ""
+dsl = [
+  { type = "additional_cost", text = "as an additional cost to cast ~, sacrifice a creature" },
+]
+status = "Full"
+note = "sacrifice the lowest creature, fetch one with MV up to two more onto the battlefield"
+
+["Elephant Grass"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "attack tax {2} (not for black creatures); cumulative upkeep paid while it matters"
+
+["Elspeth, Sun's Champion"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 three Soldiers, -3 destroys power 4+, -7 emblem (+2/+2, flying)"
+
+["Elves of Deep Shadow"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {B}, 1 damage to you"
+
+["Elvish Archdruid"]
+tags = "pow=2 dork=G noatk"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = "other Elves you control get +1/+1; {T}: {G} for each Elf you control"
+
+["Elvish Champion"]
+tags = "pow=2"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = "other Elves +1/+1 and forestwalk"
+
+["Elvish Clancaller"]
+tags = "pow=1"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = "other Elves you control +1/+1; {4}{G}{G},{T}: a card named Elvish Clancaller onto the battlefield"
+
+["Elvish Harbinger"]
+tags = "pow=1 tgh=2 dork=A noatk"
+dsl = []
+status = "Full"
+note = "Elf to the top; taps for any colour"
+
+["Elvish Mystic"]
+status = "Full"
+note = "mana creature"
+
+["Elvish Promenade"]
+types = "S"
+tags = "mktok=1:1:0"
+dsl = [
+  { type = "spell", effects = [{ do = "token", n = "type_you:elf", pow = 1, tgh = 1, keywords = [], types = ["elf", "warrior"] }] },
+]
+status = "Full"
+note = "an Elf Warrior token for each Elf you control"
+
+["Elvish Rejuvenator"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Elvish Spirit Guide"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "exiled from hand for {G} when that mana is needed (never cast)"
+
+["Elvish Warmaster"]
+tags = "pow=2 warrior"
+dsl = []
+status = "Full"
+note = "Elf Warrior once a turn when Elves enter; pump before combat with a wide board"
+
+["Embercleave"]
+types = "A"
+tags = "leg flash"
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 1, tgh = 1 },
+  { type = "static", static = "equip_keyword", keyword = "double strike" },
+  { type = "static", static = "equip_keyword", keyword = "trample" },
+  { type = "static", static = "equip_cost", mana = 3 },
+]
+status = "Full"
+note = "flash during combat, {1} less per attacker; attaches to the best attacker: +1/+1, double strike, trample"
+
+["Emeria, the Sky Ruin"]
+status = "Full"
+note = "enters tapped; with seven Plains, each upkeep returns the best creature card"
+
+["Emeritus of Conflict // Lightning Bolt"]
+kws = ["first strike"]
+status = "Full"
+note = "first strike; prepared by your third spell each turn: a Lightning Bolt copy for {R} (lethal, or the best X/3 creature)"
+
+["Emeritus of Ideation // Ancestral Recall"]
+ward = 2
+status = "Full"
+note = "5/5 flying, ward {2}; enters prepared ({U}: draw three); attacking exiles eight graveyard cards to prepare it again"
+
+["Empyrial Armor"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Emry, Lurker of the Loch"]
+tags = "leg pow=1 tgh=2 wizard"
+dsl = []
+status = "Full"
+note = "affinity for artifacts; mill four on entry; {T}: cast an artifact card from your graveyard"
+
+["Encrust"]
+types = "E"
+tags = "rem=encrust tgt=ac etb"
+dsl = []
+status = "Full"
+note = "Aura on an artifact or creature: it doesn't untap during its controller's untap step, and its activated abilities can't be activated"
+
+["Enter the Infinite"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "draws the library, puts the best card for next turn on top, no maximum hand size until your next turn"
+
+["Ephemerate"]
+types = "I"
+tags = "prot=blink ephemerate"
+status = "Full"
+note = "instant {W}: blinks your creature, in response to targeted removal (the spell fizzles) or for its enter effect; rebound: cast again free at your next upkeep on the best enter-effect creature"
+
+["Eris, Roar of the Storm"]
+status = "Full"
+note = "costs {2} less per mana value among your graveyard instants/sorceries; flying, prowess; second spell each turn makes a 4/4 flying prowess Dragon (two with Veyran)"
+
+["Errant Doomsayers"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{T}: tap target creature with toughness 2 or less (your blockers' way out of an attack; the attacker an opponent would use)"
+
+["Esika's Chariot"]
+types = "A"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "two 2/2 Cats on entry; crew 4 (tapped creatures with power 4 or more); attacking copies a token"
+
+["Esper Sentinel"]
+tags = "human pow=1"
+status = "Full"
+note = "opponents pay X for their first noncreature spell only when they can spare it; otherwise you draw"
+
+["Ethereal Armor"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Etherium Sculptor"]
+status = "Full"
+note = ""
+
+["Ethersworn Canonist"]
+types = "AC"
+tags = "pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = ""
+
+["Everflowing Chalice"]
+types = "A"
+tags = "rock=1:C"
+dsl = []
+status = "Full"
+note = "multikicker {2} (as many kicks as the mana allows, up to three); taps for one per kick"
+
+["Evolution Sage"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "landfall: proliferate"
+
+["Evolutionary Leap"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "sacrifice spare creatures for the next creature card"
+
+["Experimental Augury"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "the best of the top three to hand, the rest to the bottom; proliferate"
+
+["Exploration"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "1 additional land drop(s) each turn"
+
+["Explore"]
+types = "S"
+tags = "draw=1 explore"
+status = "Full"
+note = "draw; one extra land drop this turn"
+
+["Expressive Iteration"]
+status = "Full"
+note = "top three: the best to hand, the next exiled and playable this turn, the last to the bottom"
+
+["Exquisite Blood"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "opponents' life loss gains you life; with Sanguine Bond a combo"
+
+["Exsanguinate"]
+types = "S"
+tags = "xdrain"
+dsl = []
+status = "Full"
+note = "each opponent loses X life and you gain the total; the AI casts it for a kill or a big X"
+
+["Eyeblight Cullers"]
+tags = "pow=3 warrior"
+dsl = []
+status = "Full"
+note = ""
+
+["Ezuri, Renegade Leader"]
+tags = "leg pow=2 warrior"
+dsl = []
+status = "Full"
+note = "{G}: regenerate another Elf (saves valuable Elves); overrun before combat with 4+ Elves"
+
+["Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"]
+types = "E"
+tags = "fable"
+dsl = []
+status = "Full"
+note = "I Goblin Shaman (Treasure on attack), II rummage two, III Reflection copies a nonlegendary creature each turn"
+
+["Fact or Fiction"]
+types = "I"
+tags = "draw=2"
+dsl = []
+status = "Full"
+note = "the most threatened opponent splits the five into the piles that leave you least; you take the better pile"
+
+["Faerie Mastermind"]
+tags = "pow=2 tgh=1 fly flash"
+dsl = []
+status = "Full"
+note = "flash, flying; draws when an opponent draws their second card each turn (the symmetric draw ability is never worth it and is not used)"
+
+["Falkenrath Noble"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Fallen Shinobi"]
+dsl = []
+status = "Full"
+note = "ninjutsu 2UB"
+
+["Farewell"]
+status = "Full"
+note = "modes by net value: artifacts, creatures, enchantments, and graveyards (theirs against yours, since your reanimation targets are there)"
+
+["Farseek"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "a Plains, Island, Swamp or Mountain card (duals included) onto the battlefield tapped"
+
+["Fatal Push"]
+types = "I"
+tags = "rem=destroy tgt=c mv4"
+dsl = []
+status = "Full"
+note = "destroys MV 2 or less, or MV 4 or less with revolt (a permanent of yours left the battlefield this turn)"
+
+["Fatehold Charm"]
+types = "I"
+tags = "ctr=any remand rem=bounce tgt=c"
+dsl = []
+status = "Approximate"
+note = "draw a card and empower Jace 2 at the end of the turn before yours, or held to return a spell (to its owner's hand) or an attacking creature; the +1/+2 team mode is not used"
+
+["Feather of Flight"]
+types = "E"
+tags = "aura flash"
+dsl = []
+status = "Full"
+note = "flash; draw a card; +1/+0 and flying (on a creature without flying)"
+
+["Feed the Cycle"]
+types = "I"
+cost = "1BB"
+tags = "rem=destroy tgt=cp"
+dsl = []
+status = "Approximate"
+note = "instant: destroy target creature or planeswalker; the additional cost is always paid as {B} (forage, exiling three cards from your graveyard, is not modeled), so it costs {1}{B}{B}"
+
+["Felidar Guardian"]
+tags = "pow=1 tgh=4"
+dsl = []
+status = "Full"
+note = "blinks your best ETB permanent (Kiki loop is a combo)"
+
+["Felidar Umbra"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "lifelink, umbra armor"
+
+["Fellwar Stone"]
+status = "Full"
+note = "one mana of a colour an opponent's land could produce"
+
+["Fertile Ground"]
+types = "E"
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "the enchanted land taps for an extra mana of any colour"
+
+["Fiery Emancipation"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "damage your sources deal to opponents and their permanents is tripled (pings, burn, combat)"
+
+["Finale of Devastation"]
+types = "S"
+tags = "xtutor"
+dsl = []
+status = "Full"
+note = "X = spare mana: a creature with MV X or less from library or graveyard onto the battlefield; X >= 10: creatures +X/+X and haste"
+
+["Fire Diamond"]
+types = "A"
+tags = "rock=1:R"
+dsl = []
+status = "Full"
+note = "enters tapped; taps for {R}"
+
+["Flawless Maneuver"]
+status = "Full"
+note = "free with your commander: your creatures indestructible (against destroy removal and wipes)"
+
+["Flicker"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles a nontoken permanent and returns it at once under its owner's control (the AI blinks its best enters-the-battlefield creature)"
+
+["Flickering Hound"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "whenever you cast a creature spell: blink your best ETB creature"
+
+["Flickering Ward"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "protection from a colour; returns to hand to reuse"
+
+["Flow State"]
+status = "Full"
+note = "top three: one to hand (two with an instant and a sorcery in the graveyard), the rest to the bottom"
+
+["Flusterstorm"]
+status = "Full"
+note = "counter unless its controller pays {1} per copy (storm: a copy per spell cast before it this turn)"
+
+["Flux Channeler"]
+status = "Full"
+note = "noncreature spell: proliferate (pool games)"
+
+["Force of Negation"]
+types = "I"
+tags = "ctr=nc fon"
+dsl = []
+status = "Full"
+note = "free on opponents' turns (exile a blue card)"
+
+["Foundry Inspector"]
+status = "Full"
+note = ""
+
+["Freed from the Real"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Freyalise, Llanowar's Fury"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 two 1/1 Elf Druids that tap for {G}; -2 destroy an artifact or enchantment; -6 draw per green creature"
+
+["Frost Titan"]
+tags = "pow=6 bomb=6"
+ward = 2
+dsl = []
+status = "Full"
+note = "ward {2}; taps a permanent on entry and attack; it doesn't untap during its controller's next untap step"
+
+["Fyndhorn Elder"]
+tags = "pow=1 tgh=1 dork=G"
+dsl = []
+status = "Full"
+note = "{T}: {G}{G}"
+
+["Fyndhorn Elves"]
+status = "Full"
+note = "mana creature"
+
+["Gaea's Cradle"]
+status = "Full"
+note = "G for each creature you control"
+
+["Galadriel's Dismissal"]
+types = "I"
+tags = "prot=phase kicker"
+dsl = []
+status = "Full"
+note = "{W}: your threatened bomb phases out; kicked ({2}{W} more): all your creatures phase out in answer to a sweeper"
+
+["Galadriel, Light of Valinor"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "Alliance: each other creature entering under your control picks a mode not chosen this turn: {G}{G}{G}, a +1/+1 counter on each creature you control, or scry 2 and draw (you choose; the AI weighs them)"
+
+["Galvanic Iteration"]
+types = "I"
+tags = "fb=1UR"
+dsl = []
+status = "Full"
+note = "copies your next instant or sorcery this turn (a copy: magecraft fires again); flashback {1}{U}{R}"
+
+["Gamble"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "tutor any card to hand, then discard a card at random"
+
+["Gandalf, Friend of the Shire"]
+status = "Full"
+note = "flash; sorceries at instant speed; the Ring trigger never happens (nothing in this list tempts)"
+
+["Garland, Royal Kidnapper"]
+tags = "leg human knight pow=3 tgh=4 garland"
+dsl = []
+status = "Full"
+note = "enters: target opponent becomes the monarch (the one whose best creature is most worth stealing); whenever an opponent becomes the monarch, gain control of their most valuable creature while they stay the monarch (it returns when they lose the crown or leave the game); creatures you control but don't own get +2/+2 and can't be sacrificed"
+
+["Garruk Wildspeaker"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = ""
+
+["Genesis Hydra"]
+types = "C"
+tags = "xtutor"
+dsl = []
+status = "Full"
+note = "X = spare mana: a nonland permanent with mana value X or less from the top X onto the battlefield, and X +1/+1 counters"
+
+["Geralf's Messenger"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Geth's Grimoire"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Ghost Quarter"]
+status = "Full"
+note = "T, sacrifice: destroys a key opposing land (its controller fetches a basic)"
+
+["Ghostly Prison"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Gilded Goose"]
+tags = "pow=0 tgh=2 fly dork=A noatk"
+dsl = []
+status = "Full"
+note = "flying; a Food on entry; {1}{G},{T}: Food (at end of turn); {T}, sacrifice a Food: any colour"
+
+["Gitaxian Probe"]
+types = "S"
+cost = "0"
+tags = ""
+dsl = []
+status = "Full"
+note = "{U} or 2 life; draw a card (looking at a hand has no effect in the sim)"
+
+["Giver of Runes"]
+status = "Full"
+note = "protection for another creature in response to targeted removal"
+
+["Gix, Yawgmoth Praetor"]
+tags = "leg pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "combat damage draws; {4}{B}{B}{B}, discard X junk cards: plays the top X of an opponent's library free"
+
+["Glimpse of Nature"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "this turn, each creature spell you cast draws a card"
+
+["Glorybringer"]
+tags = "pow=4 fly haste"
+dsl = []
+status = "Full"
+note = "flying, haste; exert for 4 damage to a creature"
+
+["Glowrider"]
+types = "C"
+tags = "pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Bombardment"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "sacrifice a creature: 1 damage to the weakest opponent (or a lethal one)"
+
+["Goblin Chainwhirler"]
+tags = "pow=3"
+kws = ["first strike"]
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Chieftain"]
+tags = "pow=2 haste"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "goblin" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = ""
+
+["Goblin Cratermaker"]
+tags = "pow=2 tgh=2 warrior"
+dsl = []
+status = "Full"
+note = "{1}, sacrifice: 2 damage to a creature or destroy a colorless nonland permanent"
+
+["Goblin Guide"]
+tags = "pow=2 haste"
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Instigator"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Lackey"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Matron"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Piledriver"]
+tags = "pow=1 tgh=2 warrior"
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Rabblemaster"]
+tags = "pow=2 warrior"
+dsl = []
+status = "Full"
+note = "a Goblin with haste each combat that must attack; other Goblins must attack; +1/+0 per other attacking Goblin"
+
+["Goblin Recruiter"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "stacks the best Goblins on top"
+
+["Goblin Ringleader"]
+tags = "pow=2 haste"
+dsl = []
+status = "Full"
+note = ""
+
+["Goblin Sharpshooter"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "untaps whenever a creature dies: 1 damage per death"
+
+["Goblin Trashmaster"]
+tags = "warrior pow=3"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "goblin" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = "other Goblins +1/+1; sacrifices a spare Goblin to destroy a valuable artifact"
+
+["Goblin Warchief"]
+tags = "pow=2 warrior"
+dsl = []
+status = "Full"
+note = "Goblin spells cost {1} less; Goblins have haste"
+
+["Gods Willing"]
+status = "Full"
+note = "protection from a colour in response to targeted removal"
+
+["Goldspan Dragon"]
+tags = "pow=4 tgh=4 fly haste bomb=6"
+dsl = []
+status = "Full"
+note = "flying, haste; a Treasure when it attacks; your Treasures tap for two mana"
+
+["Golgari Charm"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "modes: -1/-1 to all creatures (against tokens), destroy an enchantment, or regenerate your creatures in response to a destroy wipe"
+
+["Golgari Signet"]
+pool_add_tags = ["rock=1:BG"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Gonti, Lord of Luxury"]
+tags = "leg pow=2 tgh=3 dt"
+dsl = []
+status = "Full"
+note = "deathtouch; enters: the top four of an opponent's library, one exiled face down that you may cast with mana of any type, the rest on the bottom"
+
+["Grand Abolisher"]
+tags = "human pow=2"
+dsl = []
+status = "Full"
+note = "during your turn opponents can't cast spells or activate abilities of their permanents"
+
+["Grand Arbiter Augustin IV"]
+tags = "leg human pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "your white and blue spells cost {1} less each; opponents' spells cost {1} more"
+
+["Grand Coliseum"]
+add_tags = ["pain"]
+status = "Full"
+note = "enters tapped; {T}: {C}, or one mana of any colour for 1 damage"
+
+["Grapeshot"]
+types = "S"
+cost = "1R"
+tags = "storm stormburn"
+dsl = []
+status = "Full"
+note = "storm; each copy deals 1 damage to any target (lowest-life opponent first). Held for the Breach line"
+
+["Grasp of Fate"]
+types = "E"
+tags = "rem=exile tgt=nl"
+dsl = []
+status = "Full"
+note = ""
+
+["Gravecrawler"]
+tags = "pow=2 tgh=1 noblock"
+dsl = []
+status = "Full"
+note = "castable from the graveyard with a Zombie; the Phyrexian Altar loop is a combo (see combos)"
+
+["Greater Auramancy"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Green Sun's Zenith"]
+types = "S"
+tags = "xtutor"
+dsl = []
+status = "Full"
+note = "X = spare mana; green creature onto the battlefield"
+
+["Grim Haruspex"]
+dsl = []
+status = "Full"
+note = ""
+
+["Grim Hireling"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "two Treasures when your creatures connect; {B}, sacrifice X Treasures: -X/-X to a creature"
+
+["Grim Monolith"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Grisly Salvage"]
+status = "Full"
+note = "reveal five: a land (or creature) to hand, the rest to the graveyard"
+
+["Grist, the Hunger Tide"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 Insect and mill (repeats on a milled Insect), -2 sacrifice to destroy, -5 drain per creature card in the graveyard"
+
+["Grow from the Ashes"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "kicked when {2} more is available"
+
+["Gruul Signet"]
+pool_add_tags = ["rock=1:RG"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Gryff's Boon"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "+1/+0 and flying; {3}{W}: returns from the graveyard onto a creature"
+
+["Guardian Project"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Gudul Lurker"]
+tags = "pow=1"
+dsl = [
+  { type = "static", static = "unblockable" },
+]
+status = "Full"
+note = "can't be blocked"
+
+["Hallowed Haunting"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "a Spirit per enchantment cast; flying and vigilance at seven enchantments"
+
+["Hanweir Garrison"]
+tags = "pow=2 tgh=3"
+status = "Full"
+note = "two attacking Human tokens (meld ignored: its partner is not in the deck)"
+
+["Harald, King of Skemfar"]
+tags = "leg pow=3 tgh=2 warrior"
+dsl = []
+status = "Full"
+note = "menace; top five: an Elf/Warrior/Tyvar to hand"
+
+["Harmonic Prodigy"]
+status = "Full"
+note = "prowess; Shaman and Wizard triggers trigger an additional time"
+
+["Heartless Act"]
+status = "Full"
+note = "destroys a creature with no counters, or removes up to three counters (and kills it if that is lethal)"
+
+["Heliod's Pilgrim"]
+tags = "human pow=1 tgh=2"
+status = "Full"
+note = ""
+
+["Heliod, Sun-Crowned"]
+types = "E"
+tags = "leg"
+dsl = []
+status = "Approximate"
+note = "indestructible; a creature only with devotion to white 5+ (5/5); life gain puts a +1/+1 counter on your best creature; the {1}{W} lifelink grant is used for the Walking Ballista combo only"
+
+["Hellkite Charger"]
+tags = "pow=5 fly haste bomb=5"
+dsl = []
+status = "Full"
+note = "pays {5}{R}{R} for another combat when the attack is big enough"
+
+["Hellkite Tyrant"]
+status = "Full"
+note = "flying, trample; combat damage to a player takes all their artifacts; your upkeep with twenty or more artifacts (Treasures and Clues count): you win"
+
+["Hellrider"]
+tags = "pow=3 haste"
+status = "Full"
+note = "haste; 1 damage to the defending player per attacking creature"
+
+["Helm of Kaldra"]
+types = "A"
+tags = "leg"
+dsl = [
+  { type = "static", static = "equip_keyword", keyword = "first strike" },
+  { type = "static", static = "equip_keyword", keyword = "trample" },
+  { type = "static", static = "equip_keyword", keyword = "haste" },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "first strike, trample and haste; equip {2}; {1}: with all three Kaldra pieces, create Kaldra (legendary 4/4) wearing them"
+
+["Helm of the Host"]
+types = "A"
+tags = "leg"
+dsl = [
+  { type = "static", static = "equip_cost", mana = 5 },
+]
+status = "Full"
+note = "a hasty token copy of the equipped creature at the start of each combat"
+
+["Helping Hand"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "returns the best creature card with MV 3 or less from your graveyard, tapped"
+
+["Heritage Druid"]
+tags = "pow=1 dork=G noatk"
+status = "Full"
+note = "tap three untapped Elves: GGG"
+
+["Hero of Bladehold"]
+tags = "human pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "battle cry; two Soldiers tapped and attacking"
+
+["Hero of Iroas"]
+status = "Full"
+note = "Aura spells cost {1} less; heroic: +1/+1 counter when an Aura targets it"
+
+["Heroic Intervention"]
+status = "Full"
+note = "hexproof and indestructible for your permanents, cast in response to removal or wipes"
+
+["Higure, the Still Wind"]
+dsl = []
+status = "Full"
+note = "ninjutsu 2UU"
+
+["Hissing Quagmire"]
+status = "Full"
+note = "{1}BG: 2/2 deathtouch until end of turn (animated to attack when it has an open attack)"
+
+["Hive of the Eye Tyrant"]
+status = "Full"
+note = "{3}{B}: 3/3 menace until end of turn; exiles a card from the defender's graveyard when it attacks"
+
+["Hope of Ghirapur"]
+status = "Full"
+note = "flying; after it connects, sacrificed to stop that player casting noncreature spells until your next turn"
+
+["Hordeling Outburst"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Horizon Canopy"]
+status = "Full"
+note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
+
+["Hostage Taker"]
+tags = "human pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "enters: exiles the best other creature or artifact until it leaves; you may cast that card with mana of any type (if you haven't when the Taker leaves, it returns to the battlefield)"
+
+["Hour of Promise"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "two lands of a basic type onto the battlefield tapped"
+
+["Hour of Revelation"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "destroys all nonland permanents when that swings the board"
+
+["Hullbreaker Horror"]
+tags = "pow=7 tgh=8 flash unc bomb=7"
+dsl = []
+status = "Full"
+note = "flash, can't be countered; each of your spells bounces an opposing spell (as a counter) or nonland permanent"
+
+["Hunter's Insight"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "cast before combat on the creature most likely to connect: its combat damage to a player draws that many cards"
+
+["Hushbringer"]
+tags = "pow=1 tgh=2 fly lifelink"
+dsl = []
+status = "Full"
+note = "flying, lifelink; creatures entering or dying trigger nothing (everyone's)"
+
+["Hydro-Channeler"]
+status = "Full"
+note = "taps for {U} for instant and sorcery spells only (its {1}: any colour filter adds no mana and this list makes both colours)"
+
+["Hydroid Krasis"]
+tags = "pow=0 tgh=0 krasis fly trample"
+dsl = []
+status = "Full"
+note = "cast with all spare mana as X: draw and gain X/2, X counters, flying, trample"
+
+["Hyena Umbra"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Hymn to Tourach"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "two random discards from the fullest hand"
+
+["Ichormoon Gauntlet"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "planeswalkers have 0: proliferate; each noncreature spell you cast proliferates"
+
+["Ill-Gotten Inheritance"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "your upkeep: 1 damage to each opponent, gain 1; {5}{B}, sacrifice: 4 damage to an opponent, gain 4 (the AI uses it for a kill, or late at an opponent's end step)"
+
+["Impact Tremors"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Incubation Druid"]
+tags = "pow=0 tgh=2 dork=A noatk"
+dsl = []
+status = "Full"
+note = "taps for one mana of a colour a land could make; three once it has a counter; adapt 3 for {3}{G}{G}"
+
+["Inexorable Tide"]
+status = "Full"
+note = "every spell: proliferate (pool games)"
+
+["Ingenious Infiltrator"]
+dsl = []
+status = "Full"
+note = "ninjutsu 0UB"
+
+["Initiates of the Ebon Hand"]
+status = "Approximate"
+note = "1/1; its {1}: {B} filter is not modeled (it adds no mana, only fixes)"
+
+["Ink-Eyes, Servant of Oni"]
+dsl = []
+status = "Full"
+note = "ninjutsu 3BB"
+
+["Innocent Blood"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Invoke Despair"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "the most threatening opponent sacrifices a creature, an enchantment and a planeswalker (their least valuable); for each they can't, they lose 2 and you draw"
+
+["Iron Man, Armored Avenger"]
+status = "Full"
+note = "flying; a +1/+1 counter on the Army per card you draw; attacking gives your other attacking modified creatures flying"
+
+["Isochron Scepter"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "imprints Dramatic Reversal (combo) or the best removal / draw instant, and casts copies; held until the Reversal is in hand"
+
+["Isshin, Two Heavens as One"]
+status = "Full"
+note = "attack-caused triggers of your permanents fire twice (hand tags, compiled triggers and hooks); ETB of tokens entering attacking is not doubled, matching the card"
+
+["Izzet Signet"]
+pool_add_tags = ["rock=1:UR"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Jace Token"]
+tags = "tokpw"
+dsl = []
+status = "Full"
+note = "empower Jace: a Jace planeswalker token (-1 surveil 1, -3 draw a card) that Fatehold Charm, Keeper of the Quiet Hour and Plan for All Outcomes grow"
+
+["Jace's Archivist"]
+status = "Full"
+note = "{U}, {T}: everyone discards and draws the largest hand size (used with Orcish Bowmasters, or when your hand is much smaller)"
+
+["Jace, Wielder of Mysteries"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "drawing from an empty library wins; +1 mill two and draw; -8 draw seven and win with an empty library"
+
+["Jace, the Mind Sculptor"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 fateseal, 0 Brainstorm, -1 bounce, -12 exile a library (the hand becomes the library)"
+
+["Jackdaw Savior"]
+tags = "pow=3 tgh=1 fly"
+dsl = []
+status = "Full"
+note = "flying; when it or another flier of yours dies, return a creature card with lesser mana value from your graveyard to the battlefield"
+
+["Jagged-Scar Archers"]
+tags = "pow=0 tgh=0 reach"
+status = "Full"
+note = "P/T = Elves you control; {T}: damage equal to its power to a flier"
+
+["Jaspera Sentinel"]
+status = "Full"
+note = "reach; {T}, tap another untapped creature: any colour"
+
+["Jaxis, the Troublemaker"]
+status = "Full"
+note = "blitz {1}{R}; {R},{T}, discard: a hasty token copy of another creature (draws when it leaves at end of turn)"
+
+["Jester's Cap"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "{2}, {T}, sacrifice: exile three cards from a player's library (the AI: the most threatening opponent's combo pieces and best cards)"
+
+["Jet Medallion"]
+status = "Full"
+note = ""
+
+["Jhovall Queen"]
+status = "Full"
+note = "vigilance"
+
+["Jin-Gitaxias, Progress Tyrant"]
+status = "Full"
+note = "copies your first artifact/instant/sorcery each turn (a whole copy with new targets; artifacts as tokens); counters an opponent's first artifact/instant/sorcery each turn"
+
+["Jodah, the Unifier"]
+status = "Full"
+note = "legends you control get +X/+X (X = your legendary creatures); casting a legendary spell from hand cascades into a legendary nonland card with lesser mana value, cast free"
+
+["Joraga Treespeaker"]
+tags = "pow=1 tgh=1 dork=G"
+dsl = []
+status = "Full"
+note = "level up {1}{G}: level 1 taps for GG; level 5 every Elf taps for GG"
+
+["Journey to Nowhere"]
+types = "E"
+tags = "rem=exile tgt=c"
+dsl = []
+status = "Full"
+note = ""
+
+["Kaalia of the Vast"]
+tags = "leg human pow=2 fly"
+status = "Full"
+note = "attacks: best Angel/Demon/Dragon from hand onto the battlefield attacking (ETBs fire)"
+
+["Kaervek the Merciless"]
+status = "Full"
+note = "each opponent spell: damage equal to its mana value to any target (the best creature it kills, else the lowest life total)"
+
+["Kaervek's Purge"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "X = the target's mana value: destroys it and deals its power to its controller"
+
+["Kaito Shizuki"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "phases out the turn it enters; +1 draw, -2 unblockable Ninja, -7 emblem (combat damage puts a creature from your library onto the battlefield)"
+
+["Kappa Cannoneer"]
+tags = "pow=4 tgh=4"
+ward = 4
+dsl = []
+status = "Full"
+note = "ward {4}; +1/+1 and unblockable this turn when an artifact enters"
+
+["Karlach, Fury of Avernus"]
+tags = "leg pow=5 tgh=4"
+status = "Full"
+note = "first combat: attackers untap and gain first strike; additional combat"
+
+["Karmic Justice"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "when an opponent's spell or ability destroys a noncreature permanent you control (Karmic Justice itself too), destroy their best permanent"
+
+["Karn Liberated"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+4 exile a card from a hand, -3 exile a permanent, -14 restart the game with Karn's exiled cards (read as a win)"
+
+["Karn's Bastion"]
+status = "Full"
+note = "{4},{T}: proliferate (at end of turn, when it helps; in your main phase for a lore counter on Summon: Bahamut)"
+
+["Karn, the Great Creator"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "opponents' artifact abilities off; -2 wishes an artifact from exile (no sideboard)"
+
+["Karplusan Forest"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Kaya's Wrath"]
+status = "Full"
+note = "destroys all creatures; gain life for each of yours destroyed"
+
+["Keeper of the Quiet Hour"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "3/2; empower Jace 2 on entry"
+
+["Kefka, Court Mage // Kefka, Ruler of Ruin"]
+tags = "leg human wizard pow=4 tgh=5 kefka"
+dsl = []
+status = "Full"
+note = "enters or attacks: each player discards their least useful card, you draw one per card type discarded; {8} at sorcery speed: each opponent sacrifices their cheapest permanent (a token, else a land when they have lands to spare), then it transforms: 5/7 flying, and draws as many cards as an opponent loses life on your turn (stopping five short of an empty library)"
+
+["Kenrith's Transformation"]
+types = "E"
+tags = "rem=elk tgt=c etb draw=1"
+dsl = []
+status = "Full"
+note = "draw a card; the creature becomes a 3/3 Elk with no abilities"
+
+["Kiki-Jiki, Mirror Breaker"]
+tags = "leg shaman pow=2 haste"
+dsl = []
+status = "Full"
+note = "hasty copy of your best nonlegendary creature each turn (sacrificed at end); the infinite loops are combos"
+
+["Kindred Discovery"]
+status = "Full"
+note = "names a creature type as it enters (Orc for Sauron: Orc Armies count): draws whenever a creature of that type you control enters or attacks"
+
+["King Darien XLVIII"]
+tags = "leg pow=2 tgh=3"
+dsl = [
+  { type = "static", static = "anthem", pow = 1, tgh = 1, filter = { type = "creature", controller = "you", other = true } },
+]
+status = "Approximate"
+note = "other creatures +1/+1; {3}{G}{W} a +1/+1 counter and a 1/1 Soldier with spare mana; the sacrifice-for-protection ability is not used"
+
+["Kinnan, Bonder Prodigy"]
+tags = "leg human pow=2"
+dsl = []
+status = "Full"
+note = "nonland mana sources make one extra; {5}{G}{U}: a non-Human creature from the top five onto the battlefield"
+
+["Kitchen Finks"]
+status = "Full"
+note = "enters: gain 2 life; persist. Loops with Melira or Mikaeus and a free sacrifice outlet"
+
+["Knight of the Holy Nimbus"]
+status = "Full"
+note = "flanking (a blocker without flanking gets -1/-1); if it would be destroyed it regenerates, unless an opponent pays {2} (the AI pays when it can)"
+
+["Knight of the White Orchid"]
+tags = "pow=2 tgh=2"
+kws = ["first strike"]
+dsl = []
+status = "Full"
+note = "first strike; a Plains onto the battlefield if an opponent has more lands"
+
+["Kogla, the Titan Ape"]
+tags = "leg pow=7 tgh=6 bomb=7"
+dsl = []
+status = "Full"
+note = "fights on entry; destroys an artifact or enchantment on attack"
+
+["Kor Haven"]
+status = "Full"
+note = "{1}{W},{T}: prevents the combat damage of the biggest unblocked attacker (4+ power)"
+
+["Kor Skyfisher"]
+tags = "pow=2 tgh=3 fly"
+dsl = []
+status = "Full"
+note = "flying; returns your best ETB permanent (or itself) on entry"
+
+["Kor Spiritdancer"]
+tags = "pow=0 tgh=2 wizard"
+status = "Full"
+note = "+2/+2 per Aura on it; draw on Aura casts"
+
+["Korlash, Heir to Blackblade"]
+tags = "leg pow=0 tgh=0"
+dsl = []
+status = "Full"
+note = "power and toughness equal to your Swamps; {1}{B} regenerate; grandeur needs a second copy (never in a singleton deck)"
+
+["Korvold, Fae-Cursed King"]
+tags = "leg pow=4 fly"
+dsl = []
+status = "Full"
+note = "enters/attacks: sacrifice the least valuable permanent; every sacrifice (Treasure / Food / Clue spending included): +1/+1 counter and a card"
+
+["Krenko, Mob Boss"]
+tags = "leg warrior pow=3"
+dsl = []
+status = "Full"
+note = "tap: a Goblin per Goblin you control (haste from Warchief / Chieftain / Greaves)"
+
+["Krenko, Tin Street Kingpin"]
+tags = "leg pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = ""
+
+["Krosan Grip"]
+types = "I"
+tags = "rem=destroy tgt=ae unc"
+dsl = []
+status = "Full"
+note = "split second read as uncounterable"
+
+["Laelia, the Blade Reforged"]
+tags = "leg warrior pow=2 haste"
+status = "Full"
+note = "haste; attacking exiles the top card, castable this turn; grows on exile"
+
+["Lagrella, the Magpie"]
+tags = "leg pow=2 tgh=3 rem=exile tgt=c"
+dsl = []
+status = "Full"
+note = "exiles the best creature of each opponent until it leaves (yours aren't exiled, so the +1/+1 counters clause never applies)"
+
+["Land Tax"]
+types = "E"
+tags = ""
+status = "Full"
+note = ""
+
+["Last Gasp"]
+status = "Full"
+note = "target creature gets -3/-3 (kills an indestructible X/3)"
+
+["Lathril, Blade of the Elves"]
+tags = "leg pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "menace; Elf Warrior tokens equal to combat damage; tap ten Elves: drain 10"
+
+["Lavinia, Azorius Renegade"]
+tags = "leg human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "opponents can't cast noncreature spells above their land count; free spells are countered"
+
+["Lawbringer"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{T}, sacrifice it: exile target red creature (the AI on a red threat, or an attacker)"
+
+["Lazotep Plating"]
+types = "I"
+tags = "prot=jodah"
+dsl = []
+status = "Full"
+note = "amass Zombies 1; you and your permanents gain hexproof until end of turn (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+
+["Leaf-Crowned Visionary"]
+tags = "pow=1"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = "Elf lord; pays G to draw on Elf casts when it can"
+
+["Legion Loyalist"]
+tags = "pow=1 haste"
+dsl = []
+status = "Full"
+note = "battalion: attackers gain first strike and trample and can't be blocked by tokens"
+
+["Legion Warboss"]
+tags = "pow=2"
+kws = ["mentor"]
+dsl = []
+status = "Full"
+note = "a hasty Goblin each combat that must attack; mentor"
+
+["Legion's Landing // Adanto, the First Fort"]
+status = "Full"
+note = "a 1/1 lifelink token; flips with three attackers into a land that taps for W or makes more tokens"
+
+["Liesa, Shroud of Dusk"]
+tags = "leg pow=5 fly lifelink"
+dsl = []
+status = "Full"
+note = "can't be countered; flying, lifelink; commander tax paid in life; each spell costs its caster 2 life"
+
+["Life from the Loam"]
+types = "S"
+tags = "loam"
+dsl = []
+status = "Full"
+note = "returns up to three lands; dredge 3 when short on lands"
+
+["Light Up the Stage"]
+status = "Full"
+note = "spectacle {R}; exile the top two, playable until the end of your next turn"
+
+["Light-Paws, Emperor's Voice"]
+tags = "leg pow=2"
+status = "Full"
+note = "cast Aura -> fetch an Aura with lower or equal MV and a new name, onto Light-Paws"
+
+["Lightbringer"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{T}, sacrifice it: exile target black creature (the AI on a black threat, or an attacker)"
+
+["Lightning Greaves"]
+status = "Full"
+note = "equip {0}: shroud and haste (moved onto the commander / best creature)"
+
+["Liliana of the Veil"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 each player discards, -2 edict, -6 two piles (the opponent keeps the better one)"
+
+["Liliana's Caress"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Liliana's Triumph"]
+status = "Full"
+note = "each opponent sacrifices a creature; with a Liliana out, each discards too"
+
+["Liliana, Death's Majesty"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = ""
+
+["Liliana, Dreadhorde General"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "creatures dying draw; +1 Zombie, -4 each player sacrifices two creatures, -9 opponents keep one permanent of each type"
+
+["Lim-Dûl's Vault"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "digs five at a time for 1 life each until a wanted card turns up, then stacks it on top"
+
+["Lin Sivvi, Defiant Hero"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{X}, {T}: a Rebel permanent card with mana value X or less onto the battlefield; {3}: a Rebel card from your graveyard to the bottom of your library"
+
+["Llanowar Tribe"]
+tags = "pow=3 dork=G"
+status = "Full"
+note = "taps for its full scaling amount"
+
+["Llanowar Wastes"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Loran of the Third Path"]
+tags = "leg human pow=2 tgh=1 vig"
+dsl = []
+status = "Full"
+note = "destroys an artifact or enchantment on entry; {T}: you and the least threatening opponent each draw (at end of turn)"
+
+["Loran's Escape"]
+types = "I"
+tags = "prot=jodah"
+dsl = []
+status = "Full"
+note = "hexproof and indestructible until end of turn; scry 1 (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+
+["Lord Windgrace"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "loyalty abilities and ultimate (forestwalk on the Cats ignored)"
+
+["Lord of the Nazgûl"]
+tags = "leg pow=4 tgh=3 fly"
+dsl = []
+status = "Approximate"
+note = "flying; a 3/3 menace Wraith for each instant or sorcery you cast; nine or more Wraiths are 9/9 until end of turn (protection from Ring-bearers is not modeled)"
+
+["Lotus Petal"]
+status = "Full"
+note = "{T}, sacrifice: one mana of any colour"
+
+["Loyal Apprentice"]
+tags = "human pow=2 haste"
+status = "Full"
+note = "Thopter at the beginning of combat while you control your commander"
+
+["Luminous Bonds"]
+types = "E"
+tags = "rem=pacify tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura: the creature can't attack or block"
+
+["Lys Alana Huntmaster"]
+tags = "pow=3 warrior"
+dsl = []
+status = "Full"
+note = ""
+
+["Maelstrom Nexus"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "the first spell you cast each turn has cascade (it stacks with Jodah's legend cascade)"
+
+["Maelstrom Wanderer"]
+status = "Full"
+note = "creatures you control have haste; cascade, cascade"
+
+["Magus of the Moon"]
+tags = "pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "nonbasic lands tap for R only (engine mana check)"
+
+["Mahadi, Emporium Master"]
+tags = "leg pow=3"
+dsl = []
+status = "Full"
+note = "end step: a Treasure per creature that died this turn"
+
+["Malcator, Purity Overseer"]
+tags = "leg pow=1 tgh=1 wizard"
+dsl = []
+status = "Full"
+note = "a 3/3 Golem on entry; another at your end step if three or more artifacts entered under your control this turn (tokens count)"
+
+["Mammoth Umbra"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Man-o'-War"]
+tags = "pow=2 rem=bounce tgt=c etb"
+dsl = []
+status = "Full"
+note = "bounces the best opposing creature"
+
+["Mana Drain"]
+status = "Full"
+note = "counters a spell; its mana value in mana at your next main phase"
+
+["Manamorphose"]
+types = "I"
+tags = "draw=1"
+dsl = []
+status = "Full"
+note = "two mana of any colours and a card: mana-neutral, a free spell for storm and magecraft"
+
+["Mangara, the Diplomat"]
+dsl = []
+status = "Full"
+note = "lifelink; draws when an opponent attacks you with two or more creatures, and when an opponent casts their second spell each turn"
+
+["Marauding Blight-Priest"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "whenever you gain life, each opponent loses 1 life"
+
+["Marchesa, the Black Rose"]
+types = "C"
+tags = "leg human wizard pow=3 tgh=3 marchesa"
+kws = ["dethrone"]
+dsl = []
+status = "Full"
+note = "dethrone, and other creatures you control have dethrone; a creature you control with a +1/+1 counter that dies (a stolen one too, and those dying in the same wipe as Marchesa) returns under your control at the beginning of the next end step; she returns herself from the command zone the same way"
+
+["Mardu Charm"]
+status = "Full"
+note = "4 damage to a creature (removal), two first-strike Warriors at end of turn, or a noncreature card discarded"
+
+["Marwyn, the Nurturer"]
+tags = "leg pow=1 dork=G"
+dsl = []
+status = "Full"
+note = "+1/+1 counter per Elf; taps for G equal to its power"
+
+["Maskwood Nexus"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "your creatures, creature spells and creature cards are every creature type (the Rebel searches find any creature, the Banners and the Door count them all); {3}, {T}: a 2/2 blue Shapeshifter with changeling"
+
+["Massacre Girl"]
+status = "Full"
+note = "menace; -1/-1 to every other creature on entry, repeated for each creature that dies"
+
+["Master of Cruelties"]
+tags = "pow=1 tgh=4 dt"
+dsl = []
+status = "Full"
+note = "first strike, deathtouch; attacks alone; unblocked, the defender goes to 1 life"
+
+["Mauhúr, Uruk-hai Captain"]
+kws = ["menace"]
+status = "Full"
+note = "menace; every +1/+1 counter placement on an Army, Goblin or Orc you control gets one more"
+
+["Mayhem Devil"]
+tags = "pow=3"
+dsl = []
+status = "Full"
+note = "any player's sacrifice (Treasures included): 1 damage"
+
+["Megrim"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Melira, Sylvok Outcast"]
+status = "Full"
+note = "you can't get poison counters; your creatures can't get -1/-1 counters (persist returns them without one); no creature in the pools has infect, so the last clause never applies"
+
+["Memory Jar"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "{T}, sacrifice: every player sets their hand aside and draws seven; at the end step they discard and take the old hands back (cracked with a small hand and mana to use the seven)"
+
+["Mental Misstep"]
+types = "I"
+tags = "ctr=mv1 misstep"
+dsl = []
+status = "Full"
+note = "counters a mana-value-1 spell for 2 life"
+
+["Mentor of the Meek"]
+tags = "human pow=2"
+status = "Full"
+note = "pays {1} to draw when a small creature enters (if it can, hand not full)"
+
+["Merciless Executioner"]
+tags = "pow=3 tgh=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Meren of Clan Nel Toth"]
+tags = "leg human shaman pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "experience per creature death; end step: best creature back (battlefield if its MV fits the experience, else hand)"
+
+["Metallic Mimic"]
+status = "Full"
+note = "names Orc: each other Orc (and every new Orc Army) enters with an additional +1/+1 counter"
+
+["Midnight Reaper"]
+dsl = []
+status = "Full"
+note = ""
+
+["Mikaeus, the Unhallowed"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Mind Stone"]
+status = "Full"
+note = "taps for {C}; cracked for a card late (six or more lands)"
+
+["Mind Twist"]
+types = "S"
+tags = "xtutor"
+dsl = []
+status = "Full"
+note = "X = spare mana, random discards"
+
+["Mirari"]
+types = "A"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "whenever you cast an instant or sorcery, pay {3} to copy it (draw, removal and tutors)"
+
+["Mirkwood Bats"]
+tags = "pow=2 tgh=3 fly"
+dsl = []
+status = "Full"
+note = "flying; each token you create or sacrifice drains each opponent 1"
+
+["Mirri, Weatherlight Duelist"]
+tags = "leg pow=3 tgh=2 fs"
+dsl = [
+  { type = "static", static = "self_keyword", keyword = "first strike" },
+]
+status = "Full"
+note = "first strike; attacking: each opponent blocks with at most one creature; while tapped, no more than one creature can attack you"
+
+["Mirror Entity"]
+status = "Full"
+note = "changeling; {X}: until end of turn your creatures have base power and toughness X/X and every creature type (the AI pumps with its spare mana before combat)"
+
+["Mishra's Bauble"]
+types = "A"
+cost = "0"
+tags = ""
+dsl = []
+status = "Full"
+note = "{T}, sacrifice: draw at the beginning of the next upkeep (kept as an artifact for Urza)"
+
+["Mist-Syndicate Naga"]
+dsl = []
+status = "Full"
+note = "ninjutsu 2U"
+
+["Mistblade Shinobi"]
+dsl = []
+status = "Full"
+note = "ninjutsu 0U"
+
+["Mithril Coat"]
+types = "A"
+tags = "leg flash prot=coat"
+dsl = [
+  { type = "static", static = "self_keyword", keyword = "indestructible" },
+  { type = "static", static = "equip_keyword", keyword = "indestructible" },
+  { type = "static", static = "equip_cost", mana = 3 },
+]
+status = "Full"
+note = "flash; indestructible; attaches to your legendary creature as it enters (Jodah first); the equipped creature is indestructible; equip {3}. Jodah's AI casts it with Jodah out, or in response to destroy removal or a wipe"
+
+["Mizzix's Mastery"]
+status = "Full"
+note = "one instant/sorcery copied and cast free ({3}{R}), or overloaded ({5}{R}{R}{R}) for every instant/sorcery in the graveyard; the cards are exiled"
+
+["Mogg Fanatic"]
+tags = "pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "sacrifice: 1 damage to a valuable X/1 or a player at 1 life"
+
+["Mogg War Marshal"]
+tags = "pow=1 warrior"
+dsl = []
+status = "Full"
+note = "a Goblin on entry and on death; echo is left unpaid (sacrificed for the second Goblin)"
+
+["Moon-Circuit Hacker"]
+dsl = []
+status = "Full"
+note = "ninjutsu 0U"
+
+["Moonshaker Cavalry"]
+tags = "pow=6 fly bomb=6"
+status = "Full"
+note = "ETB: creatures gain flying and +X/+X"
+
+["Moraug, Fury of Akoum"]
+tags = "leg pow=6 bomb=6 warrior"
+dsl = []
+status = "Full"
+note = "creatures +1/+0 for each time they attacked this turn; landfall in your main phase: an additional combat"
+
+["Morbid Opportunist"]
+tags = "human pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = ""
+
+["Mordenkainen"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 draw two then put one on the bottom, -2 a Dog Illusion with power and toughness twice your hand size, -10 exchange hand and library (no maximum hand size)"
+
+["Mortuary Mire"]
+status = "Full"
+note = "enters tapped; the best creature card from the graveyard on top of the library"
+
+["Mosswort Bridge"]
+status = "Full"
+note = "hideaway 4 (keeps the best spell); {G},{T}: casts it free with 10 power on board"
+
+["Mother of Runes"]
+status = "Full"
+note = "protection from a colour in response to targeted removal"
+
+["Mox Amber"]
+status = "Full"
+note = "mana only while you control a legendary creature or planeswalker"
+
+["Mox Opal"]
+status = "Full"
+note = "metalcraft: mana only with three or more artifacts"
+
+["Muddle the Mixture"]
+types = "I"
+tags = "ctr=is"
+dsl = []
+status = "Full"
+note = "counter target instant or sorcery; transmute {1}{U}{U} for a two-mana card when that card is worth clearly more than the counter"
+
+["Mulch"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Muldrotha, the Gravetide"]
+tags = "pow=6 tgh=6 leg"
+dsl = []
+status = "Full"
+note = "during each of your turns, play a land and cast a permanent spell of each permanent type (artifact, creature, enchantment, planeswalker, battle) from your graveyard; a countered one goes back to the graveyard"
+
+["Mulldrifter"]
+tags = "pow=2 fly draw=2"
+dsl = []
+status = "Full"
+note = "flying; draw two on entry; evoke {2}{U} when the full cost is out of reach"
+
+["Multani, Yavimaya's Avatar"]
+tags = "leg pow=0 tgh=0 reach trample bomb=6"
+dsl = []
+status = "Full"
+note = "+1/+1 per land you control and land card in your graveyard; {1}{G}, return two lands: back to hand from the graveyard"
+
+["Multiply by Zero"]
+types = "I"
+tags = "rem=zero tgt=c"
+dsl = []
+status = "Full"
+note = "base power and toughness 0/0 until end of turn: kills a creature with no counters or pumps"
+
+["Mutavault"]
+status = "Full"
+note = "{1}: 2/2 with all creature types until end of turn (attacks when open)"
+
+["Muxus, Goblin Grandee"]
+tags = "leg pow=4"
+dsl = []
+status = "Full"
+note = "Goblins from the top six onto the battlefield; attacks with +1/+1 per other Goblin"
+
+["Mycosynth Lattice"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Mystic Remora"]
+pool_remove_tags = ["eng", "remora"]
+status = "Full"
+note = "cumulative upkeep {1} (kept three turns); draws when an opponent casts a noncreature spell unless they can spare {4}"
+
+["Mystic Sanctuary"]
+types = "L"
+tags = "c=U t"
+status = "Full"
+note = "enters untapped with three other Islands, then puts the best instant or sorcery from the graveyard on top"
+
+["Mystic Snake"]
+tags = "pow=2 flash ctr=any"
+dsl = []
+status = "Full"
+note = "flash; used as a counterspell (the Snake enters the battlefield)"
+
+["Narset, Parter of Veils"]
+tags = "leg narset"
+dsl = []
+status = "Full"
+note = "static: each opponent can't draw more than one card each turn (engine.draw, tag narset); −2: the best noncreature, nonland card of the top four"
+
+["Nath of the Gilt-Leaf"]
+tags = "leg pow=4 warrior"
+dsl = []
+status = "Full"
+note = "random discard each upkeep; Elf Warrior (deathtouch) whenever an opponent discards"
+
+["Natural Order"]
+status = "Full"
+note = "sacrifices a spare green creature for the best green creature (Craterhoof on a wide board)"
+
+["Nature's Claim"]
+types = "I"
+tags = "rem=destroy tgt=ae"
+dsl = []
+status = "Full"
+note = "destroys an artifact or enchantment; its controller gains 4 life"
+
+["Nature's Rhythm"]
+types = "S"
+tags = "xtutor"
+dsl = []
+status = "Full"
+note = "X = spare mana: a creature with MV X or less onto the battlefield; harmonize from the graveyard"
+
+["Necromancy"]
+status = "Full"
+note = "reanimates at sorcery speed (the aura is abstracted: the creature stays); flashed in at the end of an opponent's turn for an enters-the-battlefield creature, which is sacrificed at cleanup"
+
+["Needle Spires"]
+status = "Full"
+note = "{2}RW: 2/1 double strike until end of turn (animated to attack when it has an open attack)"
+
+["Nekrataal"]
+tags = "human pow=2 tgh=1 rem=destroy tgt=cna etb"
+kws = ["first strike"]
+dsl = []
+add_tags = ["nonblack"]
+status = "Full"
+note = "first strike; destroys a nonartifact, nonblack creature on entry"
+
+["Nether Traitor"]
+tags = "pow=1 haste"
+kws = ["haste", "unblockable_shadow"]
+dsl = []
+status = "Full"
+note = "shadow; returns for B when another creature of yours dies"
+
+["Nightwind Glider"]
+status = "Full"
+note = "flying, protection from black"
+
+["Nim Deathmantle"]
+types = "A"
+tags = "nim"
+dsl = []
+status = "Full"
+note = "equipped creature +2/+2, intimidate, black Zombie; returns your nontoken creatures that die for {4} (worth-it check) and re-attaches; equip {4}"
+
+["Nissa, Resurgent Animist"]
+tags = "leg pow=3"
+dsl = []
+status = "Full"
+note = "landfall mana; the second landfall each turn reveals until an Elf or Elemental (the rest to the bottom)"
+
+["Nissa, Who Shakes the World"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "Forests tap for an extra G; +1 animates a land 0/0 with three counters, haste; -8 every Forest from the library, lands indestructible"
+
+["Noble Hierarch"]
+status = "Full"
+note = "exalted; taps for {G}, {W} or {U}"
+
+["Norn's Annex"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "each attacker at you costs {W/P} ({W} or 2 life)"
+
+["Notion Thief"]
+tags = "human rogue pow=3 tgh=1 flash"
+dsl = []
+status = "Full"
+note = "opponents' extra draws become yours"
+
+["Nykthos, Shrine to Nyx"]
+status = "Full"
+note = "{2},{T}: mana equal to devotion"
+
+["Oath of Teferi"]
+status = "Full"
+note = "blinks a permanent with an ETB or a used planeswalker until the end step; planeswalkers activate twice each turn"
+
+["Ob Nixilis, the Adversary"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "casualty X (a spare creature: a token copy with loyalty X); +1 drain 2 or discard, -2 Devil, -7 draw seven and lose 7"
+
+["Oblivion Ring"]
+types = "E"
+tags = "rem=exile tgt=nl"
+dsl = []
+status = "Full"
+note = ""
+
+["Ogre Battledriver"]
+tags = "pow=3 warrior"
+status = "Full"
+note = "other creatures entering get +2/+0 and haste"
+
+["Oko, Thief of Crowns"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 Food, +1 the best opposing creature becomes a vanilla 3/3 Elk, -5 exchange a spare creature for their best creature with power 3 or less"
+
+["Old Fat Spider Can't See Me"]
+status = "Full"
+note = "I: your best creature has hexproof while it remains; II: all damage the biggest opposing creature would deal is prevented while it remains; III-IV: draw"
+
+["Old Gnawbone"]
+tags = "leg pow=7 fly bomb=7"
+dsl = []
+status = "Full"
+note = ""
+
+["Omnath, Locus of Rage"]
+tags = "leg pow=5 bomb=6"
+dsl = []
+status = "Full"
+note = ""
+
+["On Serra's Wings"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Ophiomancer"]
+tags = "human shaman pow=2"
+dsl = []
+status = "Full"
+note = "a deathtouch Snake each upkeep when you have none"
+
+["Opposition"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "untapped creatures tap opponents' rocks and lands in their upkeep and their attackers at their combat (split across the turns until yours), and on your turn the fliers that could block"
+
+["Opt"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "scry 1, then draw"
+
+["Oracle of Mul Daya"]
+tags = "pow=2 shaman"
+dsl = []
+status = "Full"
+note = "extra land drop; plays lands from the top of the library"
+
+["Oran-Rief, the Vastwood"]
+status = "Full"
+note = "enters tapped; {T}: +1/+1 counters on green creatures that entered this turn"
+
+["Orcish Bowmasters"]
+status = "Full"
+note = "1 damage on entry and per extra draw of an opponent, amassing an Orc Army"
+
+["Orzhov Signet"]
+pool_add_tags = ["rock=1:WB"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Otawara, Soaring City"]
+status = "Full"
+note = "land; channelled from hand to bounce a real threat"
+
+["Outlaws' Merriment"]
+types = "E"
+tags = ""
+status = "Full"
+note = "a random hasty token each upkeep"
+
+["Outpost Siege"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "Khans: an impulse card each upkeep"
+
+["Overgrowth"]
+types = "E"
+tags = "rock=2:G"
+dsl = []
+status = "Full"
+note = "the enchanted land taps for an extra GG"
+
+["Pact of Negation"]
+types = "I"
+tags = "ctr=any pact"
+dsl = []
+status = "Full"
+note = "free; {3}{U}{U} at the next upkeep or lose (only cast with five lands)"
+
+["Page, Loose Leaf"]
+status = "Full"
+note = "{T}: {C}; grandeur needs a second copy (never in a singleton deck)"
+
+["Painful Quandary"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "each opponent's spell: they discard a junk card (or any card when low on life), else lose 5"
+
+["Palace Jailer"]
+tags = "human pow=2"
+dsl = []
+status = "Full"
+note = "monarch (end-step draw, taken by combat damage); exiles a creature until an opponent becomes the monarch"
+
+["Palantír of Orthanc"]
+types = "A"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "end step: an influence counter and scry 2, then the targeted opponent lets you draw a card or takes life loss equal to the mana values of the cards you mill (one per counter); the AI takes small losses and hands over the card once the loss would hurt"
+
+["Panharmonicon"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade)"
+
+["Paradise Druid"]
+status = "Full"
+note = "hexproof while untapped; taps for any color"
+
+["Pashalik Mons"]
+tags = "leg pow=2 warrior"
+dsl = []
+status = "Full"
+note = "a Goblin of yours dying deals 1; {3}{R}, sacrifice a Goblin: two Goblin tokens"
+
+["Patchwork Banner"]
+types = "A"
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "names a creature type as it enters: those creatures get +1/+1; {T}: one mana of any colour"
+
+["Pawn of Ulamog"]
+dsl = []
+status = "Full"
+note = "a 0/1 Spawn when a nontoken creature of yours dies (sacrifice: {C})"
+
+["Pearl Medallion"]
+status = "Full"
+note = ""
+
+["Pemmin's Aura"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Pendelhaven"]
+status = "Full"
+note = "taps for {G}; {T}: a 1/1 attacker gets +1/+2 when the mana is not needed"
+
+["Pernicious Deed"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "{X}, sacrifice: destroys every artifact, creature and enchantment with mana value X or less; used when opponents lose clearly more"
+
+["Pestermite"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Phyrexian Altar"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "sacrifice a creature: one mana of any colour"
+
+["Phyrexian Obliterator"]
+tags = "pow=5 tgh=5 trample bomb=6"
+dsl = []
+status = "Full"
+note = "trample; each source dealing it damage costs its controller that many permanents"
+
+["Pia Nalaar"]
+tags = "leg human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "Thopter on entry; {1}, sacrifice an artifact: the biggest blocker can't block ({1}{R} pump for artifact creatures unused: rarely better)"
+
+["Pileated Provisioner"]
+tags = "pow=3 tgh=4 fly"
+dsl = []
+status = "Full"
+note = "flying; a +1/+1 counter on a creature of yours without flying on entry"
+
+["Plaguecrafter"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "each player sacrifices a creature or planeswalker, or discards a card if they can't"
+
+["Plan for All Outcomes"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "the best opposing nonland permanent goes on top of its owner's library (tokens are gone); empower Jace 1 on your first noncreature spell each turn"
+
+["Planar Genesis"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "top four: a land onto the battlefield tapped, or else a card into your hand; the rest to the bottom in a random order (the AI at an opponent's end step)"
+
+["Plaza of Heroes"]
+status = "Full"
+note = "{C}; any colour for legendary spells; colours among your legendary permanents; {3}, {T}, exile: hexproof and indestructible for a legend (Jodah's AI uses it on Jodah against removal and destroy wipes)"
+
+["Plea for Guidance"]
+types = "S"
+tags = "tut=ench"
+dsl = []
+status = "Full"
+note = "search for up to two enchantment cards (the AI: its two best for the board)"
+
+["Plumecreed Mentor"]
+tags = "pow=2 tgh=3 fly"
+dsl = []
+status = "Full"
+note = "flying; whenever it or another flier of yours enters (Faerie tokens too), a +1/+1 counter on a creature of yours without flying"
+
+["Poison-Tip Archer"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Polluted Bonds"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "whenever a land an opponent controls enters, that player loses 2 life and you gain 2"
+
+["Ponder"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "look at the top three: keep them in the best order, or shuffle if none is wanted; then draw"
+
+["Port Razer"]
+tags = "pow=4"
+dsl = []
+status = "Full"
+note = "combat damage: untap all, an additional combat (once per player hit)"
+
+["Power Artifact"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Prayer of Binding"]
+types = "E"
+tags = "flash"
+dsl = []
+status = "Full"
+note = "flash; exiles the best opposing nonland permanent until it leaves the battlefield; you gain 2"
+
+["Preordain"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "scry 2, then draw"
+
+["Priest of Forgotten Gods"]
+tags = "human pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "sacrifices two spare creatures: each opponent loses 2 and sacrifices, BB, draw"
+
+["Priest of Titania"]
+tags = "pow=1 dork=G noatk"
+status = "Full"
+note = "taps for its full scaling amount"
+
+["Primal Might"]
+types = "S"
+tags = "primalmight"
+dsl = []
+status = "Full"
+note = "X pump and fight: used as removal"
+
+["Prismari Charm"]
+status = "Full"
+note = "the best of its three modes: ping one or two X/1s (or a player at 1), bounce an opposing commander or token, or surveil 2 and draw"
+
+["Prison Sentence"]
+types = "E"
+tags = "rem=arrest tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura: scry 2; the creature can't attack or block, and its activated abilities can't be activated"
+
+["Privileged Position"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Profane Tutor"]
+types = "S"
+tags = "tut=any"
+dsl = []
+status = "Full"
+note = "suspend 2 for {1}{B}, then cast free: search for any card"
+
+["Propaganda"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Prophesied End"]
+types = "I"
+tags = "rem=destroy tgt=c enddraw"
+dsl = []
+status = "Full"
+note = "destroy target creature; its controller draws unless it was attacking (so it's best on an attacker)"
+
+["Prosper, Tome-Bound"]
+tags = "leg pow=1 tgh=4 dt"
+dsl = []
+status = "Full"
+note = "end step: exile the top card, playable until the end of your next turn; a Treasure whenever you play a card from exile (Prosper, Laelia, Valakut, Siege, Reckless Impulse ...)"
+
+["Prosperous Thief"]
+dsl = []
+status = "Full"
+note = "ninjutsu 1U"
+
+["Prowess of the Fair"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Purphoros, God of the Forge"]
+types = "E"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "indestructible; a creature only with devotion to red 5+ (6/5); 2 damage to each opponent per creature entering; {2}{R}: creatures +1/+0"
+
+["Pyroblast"]
+types = "I"
+tags = "ctr=blue rem=destroy tgt=blue"
+dsl = []
+status = "Full"
+note = "counter a blue spell or destroy a blue permanent"
+
+["Quirion Ranger"]
+status = "Full"
+note = "returns a Forest (replayed as the land drop) to untap the best mana creature, once a turn"
+
+["Rabble Rousing"]
+status = "Full"
+note = "a Citizen per attacker; hideaway 5, played free once you control ten creatures"
+
+["Ragavan, Nimble Pilferer"]
+tags = "leg pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "combat damage: a Treasure and the defender's top card (castable this turn); dash {1}{R}"
+
+["Raging Ravine"]
+status = "Full"
+note = "{2}{R}{G}: 3/3 until end of turn; a +1/+1 counter each time it attacks (kept on the land)"
+
+["Rakdos Signet"]
+pool_add_tags = ["rock=1:BR"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Ral Zarek, Guest Lecturer"]
+loyalty = "3"
+status = "Full"
+note = "loyalty 3: +1 surveil 2; -1 each opponent discards; -2 returns a creature (mana value 3 or less); -7 an opponent skips 0-5 turns (five coins)"
+
+["Ral, Storm Conduit"]
+loyalty = "4"
+status = "Full"
+note = "magecraft ping on each cast or copied instant/sorcery (doubled by Veyran); +2 scry 1; -2 copies your next instant/sorcery (used with a spell worth copying in hand)"
+
+["Ramosian Captain"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{5}, {T}: search for a Rebel permanent card with mana value 4 or less and put it onto the battlefield (the AI at an opponent's end step or in its second main phase)"
+
+["Ramosian Commander"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{6}, {T}: search for a Rebel permanent card with mana value 5 or less and put it onto the battlefield (the AI at an opponent's end step or in its second main phase)"
+
+["Ramosian Lieutenant"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{4}, {T}: search for a Rebel permanent card with mana value 3 or less and put it onto the battlefield (the AI at an opponent's end step or in its second main phase)"
+
+["Ramosian Revivalist"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{6}, {T}: return a Rebel permanent card with mana value 5 or less from your graveyard to the battlefield"
+
+["Ramosian Sergeant"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{3}, {T}: search for a Rebel permanent card with mana value 2 or less and put it onto the battlefield (the AI at an opponent's end step or in its second main phase)"
+
+["Ramunap Excavator"]
+tags = "pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "land drops from the graveyard"
+
+["Rancor"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Ranger-Captain of Eos"]
+status = "Full"
+note = "fetches a 1-drop creature; sacrificed before a combo to stop noncreature spells"
+
+["Rapid Hybridization"]
+status = "Full"
+note = "destroys a creature; its controller gets a 3/3 Frog Lizard"
+
+["Ray of Command"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "before combat: untap and take the best opposing creature until end of turn (haste) and attack with it; it is tapped when it goes back"
+
+["Razia, Boros Archangel"]
+tags = "leg pow=6 tgh=3 fly vig haste"
+dsl = []
+status = "Approximate"
+note = "flying, vigilance, haste; the redirect-3-damage ability is not used"
+
+["Reassembling Skeleton"]
+tags = "pow=1 warrior"
+dsl = []
+status = "Full"
+note = "recurs itself when there is a sacrifice outlet"
+
+["Reckless Fireweaver"]
+tags = "human pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = "each artifact (cast or token) entering under your control deals 1 to each opponent"
+
+["Reckless Impulse"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Reconnaissance Mission"]
+status = "Full"
+note = "draws for each creature of yours that deals combat damage to a player; cycling {2} with fewer than two creatures"
+
+["Reconstructed Thopter"]
+types = "AC"
+tags = "pow=2 tgh=1 fly"
+dsl = []
+status = "Full"
+note = "flying; unearth {2} once (hasty, exiled at end of turn)"
+
+["Recruiter of the Guard"]
+tags = "human pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Red Elemental Blast"]
+types = "I"
+tags = "ctr=blue rem=destroy tgt=blue"
+dsl = []
+status = "Full"
+note = ""
+
+["Reenact the Crime"]
+status = "Full"
+note = "exiles the best nonland card put into a graveyard this turn and casts a copy for free (cast only when there is one)"
+
+["Reflector Mage"]
+tags = "human wizard pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = ""
+
+["Reforge the Soul"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "wheel; miracle {1}{R} when it is the first card drawn in a turn"
+
+["Relentless Assault"]
+types = "S"
+tags = "combatspell"
+dsl = []
+status = "Full"
+note = ""
+
+["Reliquary Tower"]
+types = "L"
+tags = "c=C nomax"
+status = "Full"
+note = "no maximum hand size"
+
+["Requiem Angel"]
+dsl = []
+status = "Full"
+note = ""
+
+["Reshape"]
+types = "S"
+tags = "xtutor"
+dsl = []
+status = "Full"
+note = "sacrifices the least valuable artifact; X = spare mana; the best artifact with MV X or less onto the battlefield"
+
+["Resplendent Angel"]
+tags = "pow=3 fly"
+dsl = []
+status = "Full"
+note = "flying; a 4/4 Angel at end step after gaining 5+ life; {3}{W}{W}{W}: +2/+0 and lifelink"
+
+["Rest in Peace"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "graveyards exiled on entry; cards that would go to a graveyard are exiled (so nothing dies)"
+
+["Restoration Angel"]
+status = "Full"
+note = "flash 3/4 flier: cast at the end of an opponent's turn, blinking your best ETB non-Angel creature, or in answer to removal; combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Retreat to Coralhelm"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "landfall: untaps a tapped mana creature, else scry 1"
+
+["Retrofitter Foundry"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "Servo -> Thopter -> 4/4 Construct chain; untaps for {3} with spare mana"
+
+["Return of the Wildspeaker"]
+types = "I"
+tags = "rotw"
+status = "Full"
+note = "draw per non-Human power, or Humans +3/+3, whichever is bigger"
+
+["Return the Favor"]
+status = "Full"
+note = "spree: copies your own big instant/sorcery ({1}{R}{R}), or turns a removal spell aimed at your permanent onto one of the caster's ({1}{R}{R})"
+
+["Return to Dust"]
+types = "I"
+tags = "rem=exile tgt=ae"
+dsl = []
+status = "Full"
+note = "exile target artifact or enchantment; cast in your main phase, a second one too"
+
+["Revel in Riches"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Rhystic Study"]
+status = "Full"
+note = "opponents pay {1} per spell when they can spare it; otherwise you draw"
+
+["Rings of Brighthearth"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Ringsight"]
+status = "Full"
+note = "the Ring tempts you, then a black, blue or red card to hand"
+
+["Rionya, Fire Dancer"]
+tags = "leg human wizard pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "each combat: 1 + (instants and sorceries cast this turn) hasty token copies of a creature, exiled at end step"
+
+["Rishkar's Expertise"]
+types = "S"
+tags = "rishkar"
+dsl = []
+status = "Full"
+note = "draw equal to the greatest power, then cast a spell with MV 5 or less free"
+
+["Rishkar, Peema Renegade"]
+tags = "leg pow=2"
+dsl = []
+status = "Full"
+note = "+1/+1 counters on two of your creatures; creatures with counters tap for {G}"
+
+["Roil Elemental"]
+tags = "pow=3 tgh=2 fly"
+dsl = []
+status = "Full"
+note = "landfall: steal the best opposing creature while it stays"
+
+["Rootborn Defenses"]
+tags = "prot=indes populate"
+dsl = []
+status = "Full"
+note = "populate, and your creatures gain indestructible until end of turn (cast against a destroy wipe or removal on Zur)"
+
+["Rotting Regisaur"]
+tags = "pow=7 tgh=6 bomb=6"
+dsl = []
+status = "Full"
+note = ""
+
+["Royal Treatment"]
+types = "I"
+tags = "prot=jodah"
+dsl = []
+status = "Approximate"
+note = "hexproof until end of turn; the Royal Role is a +1/+1 counter (its ward {1} is not modeled); Jodah's AI casts it in response to removal aimed at Jodah"
+
+["Ruby Medallion"]
+status = "Full"
+note = ""
+
+["Rule of Law"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Sage's Reverie"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Sai, Master Thopterist"]
+tags = "leg human pow=1 tgh=4"
+dsl = []
+status = "Full"
+note = "a Thopter per artifact spell; {1}{U}, sacrifice two artifacts: draw (spare Thopters)"
+
+["Sakashima's Protege"]
+status = "Full"
+note = "flash; cascade; enters as a copy of the best permanent that entered this turn (the copy is made as a token copy)"
+
+["Sakura-Tribe Elder"]
+tags = "pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "blocks, then is sacrificed for a basic land (or at the end of an opponent's turn)"
+
+["Sanar, Unfinished Genius // Wild Idea"]
+status = "Full"
+note = "enters prepared (a Wild Idea copy for {3}{U}{R} finds an instant or sorcery); taps for a Treasure once you have cast an instant or sorcery that turn"
+
+["Sanctum Weaver"]
+pool_add_tags = ["dork=A"]
+status = "Full"
+note = "{T}: X mana of one colour, X = enchantments you control"
+
+["Sanguine Bond"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "your life gain drains the most threatening opponent; with Exquisite Blood a combo"
+
+["Satoru Umezawa"]
+tags = "leg human pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "every creature card in hand has ninjutsu {2}{U}{B}; ninjutsu digs three deep"
+
+["Sauron, the Dark Lord"]
+status = "Full"
+note = "ward (sacrifice a legendary artifact or creature); amass Orcs 1 per opponent spell; Army combat damage tempts you; each tempt may discard the hand for four cards (with three or fewer)"
+
+["Sauron, the Necromancer"]
+status = "Full"
+note = "menace; attacking exiles your best graveyard creature for a tapped attacking token copy (a 3/3 black Wraith with menace, its abilities kept), exiled at end step unless Sauron is Ring-bearer"
+
+["Savage Beating"]
+types = "I"
+tags = "combatspell"
+dsl = []
+status = "Full"
+note = "an additional combat (and double strike when entwined)"
+
+["Savvy Hunter"]
+tags = "human warrior pow=3"
+dsl = []
+status = "Full"
+note = ""
+
+["Scarlet Witch, Chaotic Avenger"]
+status = "Full"
+note = "flying; combat damage to a player exiles the top two, then casts the best Hero or noncreature card exiled with her for free"
+
+["Scourge of Valkas"]
+tags = "pow=4 fly"
+dsl = []
+status = "Full"
+note = "flying; Dragons entering deal damage equal to their power; {R}: +1/+0 before an open attack"
+
+["Scourge of the Throne"]
+tags = "pow=5 fly bomb=5"
+status = "Full"
+note = "dethrone; first attack at the highest life total: untap attackers, extra combat"
+
+["Scroll Rack"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "each upkeep: swaps the least wanted cards in hand for the top cards (Yuriko: puts the biggest cards on top for the reveal)"
+
+["Scute Swarm"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "landfall: Insect, or a copy of itself with six or more lands (token cap 250)"
+
+["Secluded Courtyard"]
+status = "Full"
+note = "names a creature type as it enters; {T}: {C}, or one mana of any colour spent on a creature spell of that type"
+
+["Seedborn Muse"]
+tags = "pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "untaps your permanents in each other player's untap step"
+
+["Seize the Day"]
+types = "S"
+tags = "combatspell fb=2RR"
+dsl = []
+status = "Full"
+note = "additional combat; flashback"
+
+["Selesnya Sanctuary"]
+types = "L"
+tags = "c=GW t bounceland amt=2"
+dsl = []
+status = "Full"
+note = "bounce land"
+
+["Selesnya Signet"]
+pool_add_tags = ["rock=1:WG"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Selfless Spirit"]
+status = "Full"
+note = "sacrificed to make your creatures indestructible against destroy effects"
+
+["Sensei's Divining Top"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "rearranges the top three each upkeep; taps to draw when the top card is a key piece or Bolas's Citadel can recast it (then Top goes on top)"
+
+["Sentinel's Eyes"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "+1/+1 and vigilance; escape {W} and two graveyard cards"
+
+["Serum Visions"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "draw, then scry 2"
+
+["Setessan Champion"]
+tags = "human warrior pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = ""
+
+["Shadowspear"]
+status = "Full"
+note = "equipped creature +1/+1, trample, lifelink; {1}: opponents lose hexproof and indestructible this turn"
+
+["Shalai, Voice of Plenty"]
+tags = "leg pow=3 tgh=4 fly"
+dsl = []
+status = "Full"
+note = "flying; you, your planeswalkers and your other creatures have hexproof (opponents' targeted removal, burn to the face and \"target player\" effects pass you by); {4}{G}{G}: a +1/+1 counter on each creature you control (used with mana left in the second main phase or at the end of the turn before yours)"
+
+["Shaman of the Pack"]
+tags = "pow=3 tgh=2 shaman"
+dsl = []
+status = "Full"
+note = ""
+
+["Shared Animosity"]
+types = "E"
+tags = ""
+status = "Full"
+note = "each attacker +1/+0 per other attacker sharing a creature type"
+
+["Sheltered by Ghosts"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "exiles an opposing nonland permanent until it leaves; +1/+0, lifelink and ward {2}"
+
+["Sheoldred, Whispering One"]
+status = "Full"
+note = "swampwalk; your upkeep reanimation, opponents' upkeep edict"
+
+["Shield of Kaldra"]
+types = "A"
+tags = "leg"
+dsl = [
+  { type = "static", static = "equip_keyword", keyword = "indestructible" },
+  { type = "static", static = "equip_cost", mana = 4 },
+]
+status = "Full"
+note = "equipped creature and the Kaldra equipment are indestructible; equip {4}"
+
+["Shielded by Faith"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "indestructible"
+
+["Shivan Reef"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Shrieking Drake"]
+tags = "pow=1 fly"
+dsl = []
+status = "Full"
+note = "flying; returns your best ETB creature (or itself) on entry"
+
+["Shriekmaw"]
+tags = "pow=3 tgh=2 rem=destroy tgt=cna etb"
+dsl = []
+add_tags = ["nonblack"]
+status = "Full"
+note = "fear; destroys a nonartifact, nonblack creature on entry; evoke {1}{B} when the full cost is out of reach"
+
+["Siege-Gang Commander"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage"
+
+["Sifter of Skulls"]
+dsl = []
+status = "Full"
+note = "a 1/1 Scion when a nontoken creature of yours dies (sacrifice: {C})"
+
+["Sigarda's Aid"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "Auras and Equipment at instant speed (Auras cast at end of turn); Equipment attaches free"
+
+["Sign in Blood"]
+types = "S"
+tags = "draw=2 lose=2"
+dsl = []
+status = "Full"
+note = "you draw two and lose 2"
+
+["Signal Pest"]
+tags = "pow=0 tgh=1"
+kws = ["battle cry"]
+dsl = []
+status = "Full"
+note = "battle cry; only creatures with flying or reach can block it"
+
+["Silent Arbiter"]
+tags = "pow=1 tgh=5"
+dsl = []
+status = "Full"
+note = "no more than one creature can attack or block each combat"
+
+["Silent Clearing"]
+status = "Full"
+note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
+
+["Silent-Blade Oni"]
+dsl = []
+status = "Full"
+note = "ninjutsu 4UB"
+
+["Silver-Fur Master"]
+tags = "pow=2"
+dsl = [
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "ninja" }, pow = 1, tgh = 1 },
+  { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "rogue" }, pow = 1, tgh = 1 },
+]
+status = "Full"
+note = "ninjutsu costs {1} less; other Ninjas and Rogues you control +1/+1"
+
+["Simic Growth Chamber"]
+types = "L"
+tags = "amt=2 c=UG t bounceland"
+status = "Full"
+note = "enters tapped, returns a land to hand, taps for {G}{U}"
+
+["Simic Signet"]
+pool_add_tags = ["rock=1:UG"]
+status = "Full"
+note = "{1},{T}: two mana of its colours (net one coloured mana)"
+
+["Siren Stormtamer"]
+pool_remove_tags = ["ctr"]
+status = "Full"
+note = "flying; {U}, sacrifice: counters a spell targeting you or one of your creatures"
+
+["Sisay's Ring"]
+types = "A"
+tags = "rock=2:C"
+dsl = []
+status = "Full"
+note = "{T}: {C}{C}"
+
+["Sisay, Weatherlight Captain"]
+tags = "leg human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "+1/+1 for each colour among your other legendary permanents; {W}{U}{B}{R}{G}: a legendary permanent card with mana value below Sisay's power onto the battlefield (the tutor wish list's pick, else the dearest legend; never while Jodah could be cast instead)"
+
+["Sisters of Stone Death"]
+tags = "leg pow=7 tgh=5"
+dsl = []
+status = "Approximate"
+note = "{B}{G} exiles a creature that blocks them; the lure and the {2}{B} reanimation of exiled creatures are not used"
+
+["Skemfar Avenger"]
+tags = "pow=3 tgh=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Skirk Prospector"]
+status = "Full"
+note = "sacrifice a Goblin: R"
+
+["Skullclamp"]
+status = "Full"
+note = "equip {1} onto 1-toughness creatures to draw two, up to twice a turn"
+
+["Skyclave Apparition"]
+status = "Full"
+note = "exiles a permanent with MV 4 or less; its owner gets an X/X Illusion when the Apparition leaves"
+
+["Slaughter Pact"]
+status = "Full"
+note = "destroy target nonblack creature for {0}; pay {2}{B} at your next upkeep or lose; the AI casts it only when it can pay that"
+
+["Smothering Tithe"]
+status = "Full"
+note = "opponents pay {2} per draw only when they can spare it; otherwise you get a Treasure"
+
+["Snake Umbra"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "+1/+1, draw on damage to an opponent (hook), umbra armor"
+
+["Snakeskin Veil"]
+types = "I"
+tags = "prot=jodah"
+dsl = []
+status = "Full"
+note = "a +1/+1 counter and hexproof until end of turn (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+
+["Snap"]
+status = "Full"
+note = "bounces a creature and untaps two lands"
+
+["Snuff Out"]
+types = "I"
+tags = "rem=destroy tgt=c snuff"
+dsl = []
+add_tags = ["nonblack"]
+status = "Full"
+note = "free for 4 life with a Swamp; destroys a nonblack creature"
+
+["Sokenzan, Crucible of Defiance"]
+status = "Full"
+note = "channel {3}{R} (less per legendary creature): two hasty 1/1s, when lands are plentiful"
+
+["Sol'kanar the Swamp King"]
+tags = "leg pow=5 tgh=5 swampwalk"
+dsl = []
+status = "Full"
+note = "swampwalk; you gain 1 life whenever any player casts a black spell"
+
+["Solitary Confinement"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "skip your draw step, prevent all damage to you, discard each upkeep (or sacrifice)"
+
+["Solitude"]
+tags = "pow=3 lifelink flash"
+dsl = []
+status = "Full"
+note = "flash, lifelink; exiles the best opposing creature on entry; evoke by exiling a white card (free)"
+
+["Song of the Dryads"]
+types = "E"
+tags = "rem=forest tgt=nl etb"
+dsl = []
+status = "Full"
+note = "the permanent becomes a Forest land"
+
+["Soul-Guide Lantern"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles a card from a graveyard on entry; sacrificed to exile a graveyard (reanimation) or for a card"
+
+["Soulherder"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "end step: blink the best ETB creature; grows when creatures are exiled"
+
+["Spark Double"]
+tags = "pow=0 tgh=0"
+dsl = []
+status = "Full"
+note = "enters as a copy of your best creature or planeswalker with a +1 counter"
+
+["Spectacle Summit"]
+status = "Full"
+note = "enters tapped; {T}: {U} or {R}; {2}{U}{R}, {T}: surveil 1 at the end of an opponent's turn"
+
+["Spectra Ward"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Spellseeker"]
+tags = "wizard pow=1"
+dsl = []
+status = "Full"
+note = ""
+
+["Sphere of Resistance"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Sphere of Safety"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Sphinx's Approach"]
+types = "I"
+tags = "draw=2"
+dsl = []
+status = "Full"
+note = "draw two (the five-copy Sphinx clause needs four more copies: not in a singleton deck)"
+
+["Spider Umbra"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = ""
+
+["Spire of Industry"]
+status = "Full"
+note = "{C}; any colour for 1 life while you control an artifact"
+
+["Spirit Link"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "you gain life equal to the enchanted creature's damage"
+
+["Spirit Mantle"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "+1/+1 and protection from creatures (unblockable; no damage from creatures)"
+
+["Spirit of the Labyrinth"]
+tags = "pow=3 tgh=1 narset"
+dsl = []
+add_tags = ["labyrinth"]
+pool_remove_tags = ["narset"]
+status = "Full"
+note = "each player (you too) can't draw more than one card each turn"
+
+["Spite // Malice"]
+types = "I"
+cost = "3U"
+tags = "ctr=nc noregen"
+dsl = []
+status = "Full"
+note = "Spite: held to counter a noncreature spell; Malice: destroys a nonblack creature (no regeneration) when the creature is worth more than holding the counter"
+
+["Spore Frog"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "sacrificed to fog a big attack"
+
+["Springbloom Druid"]
+tags = "pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "on entry: sacrifice a land for two basics tapped"
+
+["Springleaf Drum"]
+status = "Full"
+note = "{T}, tap an untapped creature you control: one mana of any colour"
+
+["Sram, Senior Edificer"]
+tags = "leg pow=2"
+status = "Full"
+note = ""
+
+["Starfield Mystic"]
+status = "Full"
+note = "enchantments cost {1} less; +1/+1 counter when one of your enchantments goes to the graveyard"
+
+["Starfield of Nyx"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "returns an enchantment each upkeep; with five enchantments the other non-Aura enchantments are creatures with P/T equal to their mana value"
+
+["Static Net"]
+status = "Full"
+note = "exiles an opponent's nonland permanent until it leaves; you gain 2 life and get a tapped Powerstone (mana for artifacts only)"
+
+["Static Prison"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles the best opposing nonland permanent until it leaves; {E}{E}; each turn pay {E} or sacrifice it (Aether Hub energy keeps it longer)"
+
+["Statute of Denial"]
+status = "Full"
+note = "counter target spell; if you control a blue creature, draw a card, then discard a card"
+
+["Sterling Grove"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "other enchantments have shroud; sacrificed late to put an enchantment on top"
+
+["Stern Scolding"]
+types = "I"
+tags = "ctr=cre2"
+dsl = []
+status = "Full"
+note = ""
+
+["Sticky Fingers"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "menace; a Treasure on combat damage; draw when the enchanted creature dies"
+
+["Stinkweed Imp"]
+status = "Full"
+note = "flying; combat damage to a creature destroys it (the same as deathtouch for a 1-power creature with no other damage); dredge 5 replaces the draw-step draw when a reanimation spell is available"
+
+["Stirring Hopesinger"]
+tags = "pow=1 tgh=3 fly lifelink"
+dsl = []
+status = "Full"
+note = "flying, lifelink; your instants and sorceries that target a creature (removal, blink, steal) put a +1/+1 counter on each creature you control"
+
+["Stock Up"]
+status = "Full"
+note = "top five: the best two to hand, the rest to the bottom"
+
+["Stoneforge Mystic"]
+tags = "pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "fetches an Equipment; {1}{W},{T}: puts an expensive Equipment from hand onto the battlefield"
+
+["Storm-Kiln Artist"]
+status = "Full"
+note = "a Treasure per instant/sorcery you cast or copy"
+
+["Strip Mine"]
+status = "Full"
+note = "{T}: {C}; {T}, sacrifice: destroy an opponent's key land (Cradle, Coffers, Urborg, Ancient Tomb ...)"
+
+["Strixhaven Skycoach"]
+types = "A"
+tags = "fly"
+dsl = []
+status = "Full"
+note = "a basic land to hand on entry; crew 2 with creatures that would not attack anyway: a 3/2 flier"
+
+["Sulfur Falls"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Sulfurous Springs"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Summon: Bahamut"]
+types = "EC"
+tags = "pow=9 tgh=9 fly bomb=8 bahamut"
+dsl = []
+status = "Full"
+note = "Saga: a lore counter as it enters (cast, reanimated or blinked: a new object at chapter I) and after your draw step; I, II destroy the most threatening opposing nonland permanent; III draw two; IV Mega Flare (the total mana value of your other permanents to each opponent), then it is sacrificed. Flying 9/9. Proliferate adds a lore counter (that chapter triggers) toward II or III, or to IV when Mega Flare kills or deals 10 or more"
+
+["Sunbaked Canyon"]
+status = "Full"
+note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
+
+["Sunfall"]
+status = "Full"
+note = "exiles all creatures; an Incubator with that many counters ({2}: an X/X artifact creature)"
+
+["Survival of the Fittest"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "discard a creature (the worst, or one Meren can return) for the best creature"
+
+["Swiftfoot Boots"]
+status = "Full"
+note = "equip {1}: hexproof and haste (on the commander / best creature)"
+
+["Sword of Fire and Ice"]
+status = "Full"
+note = "equipped creature +2/+2, protection from red and blue; on combat damage to a player: 2 damage to any target (a creature it kills, else a player) and draw a card; equip {2}"
+
+["Sword of Kaldra"]
+types = "A"
+tags = "leg"
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 5, tgh = 5 },
+  { type = "static", static = "equip_cost", mana = 4 },
+]
+status = "Full"
+note = "equipped creature +5/+5; exiles any creature it deals damage to; equip {4}"
+
+["Sword of Truth and Justice"]
+types = "A"
+tags = ""
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "WU" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "counters", n = 1, what = { sel = "target", filter = { type = "creature", controller = "you" } } }, { do = "proliferate" }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+2, protection from white and blue; on combat damage to a player: a +1/+1 counter on your best creature (the Army), then proliferate; equip {2}"
+
+["Sylvan Caryatid"]
+status = "Full"
+note = "mana creature"
+
+["Sylvan Library"]
+types = "E"
+tags = "eng=1"
+dsl = []
+status = "Full"
+note = "draws two extra each draw step; keeps a strong card for 4 life when above 24, puts the rest back in the best order"
+
+["Sylvan Messenger"]
+tags = "pow=2 trample"
+dsl = []
+status = "Full"
+note = ""
+
+["Syr Konrad, the Grim"]
+dsl = []
+status = "Full"
+note = "another creature dying, or a creature card milled or discarded, deals 1 to each opponent"
+
+["Szadek, Lord of Secrets"]
+tags = "leg pow=5 tgh=5 fly"
+dsl = []
+status = "Full"
+note = "flying; combat damage to a player becomes +1/+1 counters and that player mills as many"
+
+["Tainted Pact"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "cast only in the Thassa's Oracle combo (needs a library with no duplicate names); combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Tajic, Legion's Edge"]
+tags = "leg human pow=3 tgh=2 haste"
+kws = ["haste", "mentor"]
+dsl = []
+status = "Full"
+note = "haste, mentor; prevents noncombat damage to your other creatures; {R}{W}: first strike"
+
+["Take Up the Shield"]
+types = "I"
+tags = "prot=shield"
+dsl = []
+status = "Full"
+note = "a +1/+1 counter, lifelink and indestructible until end of turn: the AI casts it to save Y'shtola or another key creature from destruction or damage"
+
+["Talisman of Conviction"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:RW"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Talisman of Creativity"]
+status = "Full"
+note = "{T}: {C}, or {U}/{R} for 1 damage to you"
+
+["Talisman of Curiosity"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:GU"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Talisman of Dominance"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:UB"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Talisman of Hierarchy"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:WB"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Talisman of Impulse"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:RG"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Talisman of Indulgence"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:BR"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Talisman of Progress"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:WU"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Talisman of Resilience"]
+add_tags = ["pain"]
+pool_add_tags = ["rock=1:BG"]
+status = "Full"
+note = "{T}: {C}, or one of its colours for 1 damage"
+
+["Tamiyo's Safekeeping"]
+types = "I"
+tags = "prot=jodah"
+dsl = []
+status = "Full"
+note = "hexproof and indestructible until end of turn; you gain 2 life (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+
+["Tamiyo, Field Researcher"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 draws on combat damage, -2 freezes two permanents, -7 draw three and cast spells from hand for free"
+
+["Tavern Scoundrel"]
+tags = "human rogue pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = ""
+
+["Tectonic Edge"]
+status = "Full"
+note = "{1}, T, sacrifice: destroys a key nonbasic land of an opponent with four or more lands"
+
+["Teferi's Protection"]
+status = "Full"
+note = "until your next turn your life can't change and you have protection from everything (damage, drains and damage/drain combo wins are stopped; Thassa's Oracle, mill and Revel in Riches aren't); everything you control phases out, lands too; exiled. Cast against wipes, removal of key permanents, lethal combat damage and lethal combos"
+
+["Teferi, Hero of Dominaria"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 draw and untap two lands, -3 tuck, -8 emblem (exile an opposing permanent whenever you draw)"
+
+["Teferi, Time Raveler"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "opponents cast only at sorcery speed; -3 bounce and draw (+1 has no use here)"
+
+["Tekuthal, Inquiry Dominus"]
+tags = "leg pow=3 tgh=5 fly"
+dsl = []
+status = "Full"
+note = "flying; proliferate twice; removes three counters for an indestructible counter"
+
+["Teleportation Circle"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "end step: blink the best ETB creature, else untap a tapped mana rock by blinking it"
+
+["Tempt with Vengeance"]
+status = "Full"
+note = "X hasty Elementals (opponents decline the offer)"
+
+["Temur Sabertooth"]
+tags = "pow=4 tgh=3"
+dsl = []
+status = "Full"
+note = "{1}{G}: returns an ETB creature to recast it (Chulane: another trigger), gaining indestructible"
+
+["Tendershoot Dryad"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "a Saproling each upkeep; Saprolings +2/+2 with the city's blessing"
+
+["Tergrid, God of Fright // Tergrid's Lantern"]
+kws = ["menace"]
+status = "Full"
+note = "steals permanents opponents sacrifice or discard (hand-coded); the Lantern back face is not used"
+
+["Terror of the Peaks"]
+tags = "pow=5 tgh=4 fly bomb=6"
+dsl = []
+status = "Full"
+note = "flying; opponents' spells targeting it cost 3 life; damage equal to power when your creatures enter"
+
+["Tetsuko Umezawa, Fugitive"]
+tags = "leg human pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = ""
+
+["Teysa Karlov"]
+tags = "leg human pow=2 tgh=4"
+status = "Full"
+note = "death-caused triggers of your permanents fire twice; tokens have vigilance and lifelink"
+
+["Tezzeret the Seeker"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 untap two artifacts, -X artifact tutor onto the battlefield, -5 artifacts become 5/5 creatures this turn"
+
+["Tezzeret's Gambit"]
+status = "Full"
+note = "draw two, then proliferate (your creatures' +1/+1 counters, loyalty, opponents' -1/-1 and poison); {U/P} is paid with 2 life when blue is short"
+
+["Thalia, Guardian of Thraben"]
+tags = "human pow=2 tgh=1"
+kws = ["first strike"]
+dsl = []
+status = "Full"
+note = "first strike; noncreature spells cost {1} more (yours too)"
+
+["Thalia, Heretic Cathar"]
+tags = "leg human pow=3 tgh=2"
+kws = ["first strike"]
+dsl = []
+status = "Full"
+note = "first strike; opponents' creatures and nonbasic lands enter tapped"
+
+["Thassa's Oracle"]
+tags = "wizard pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = "ETB: look at the top X (devotion to blue), win if X is at least the library size; cast alone only when that wins, otherwise held for Demonic Consultation / Tainted Pact; combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["The Aetherspark"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 attach to your best creature with a +1/+1 counter, -5 draw two, -10 add ten mana; combat damage by the equipped creature on your turn adds that much loyalty"
+
+["The Eternal Wanderer"]
+types = "P"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1: exiles the best opposing artifact or creature until its owner's next end step; 0: a 2/2 double-strike Samurai; -4: each player keeps one creature (you keep Zur); only one creature can attack it"
+
+["The Gitrog Monster"]
+tags = "leg pow=6 dt bomb=6"
+dsl = []
+status = "Full"
+note = "upkeep land sacrifice, an extra land each turn, draws when lands go to the graveyard"
+
+["The One Ring"]
+types = "A"
+tags = "leg"
+kws = ["indestructible"]
+dsl = []
+status = "Full"
+note = "indestructible; protection from everything until your next turn when cast; {T}: burden counter, draw that many; upkeep life loss per burden"
+
+["The Wandering Emperor"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "flash: cast during an opponent's attack to exile a tapped attacker (-2); otherwise +1 counter and first strike, -1 2/2 Samurai"
+
+["Thermal Glider"]
+status = "Full"
+note = "flying, protection from red"
+
+["Thief of Sanity"]
+tags = "pow=2 tgh=2 fly"
+dsl = []
+status = "Full"
+note = "flying; combat damage to a player: their top three, one exiled face down that you may cast with mana of any type, the rest into their graveyard"
+
+["Thorn of Amethyst"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Thornbite Staff"]
+types = "A"
+tags = ""
+dsl = [
+  { type = "static", static = "equip_cost", mana = 4 },
+]
+status = "Full"
+note = "attaches to Krenko; the untap loop is a combo; combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Thousand-Faced Shadow"]
+dsl = []
+status = "Full"
+note = "ninjutsu 2UU"
+
+["Thousand-Year Storm"]
+types = "E"
+tags = "tys"
+dsl = []
+status = "Full"
+note = "each instant/sorcery you cast (or cast as a copy) is copied once per instant/sorcery cast before it this turn, twice with Veyran; copies pick new targets and keep X"
+
+["Three Dreams"]
+types = "S"
+tags = "threedreams"
+status = "Full"
+note = "three Auras with different names to hand"
+
+["Thrummingbird"]
+tags = "pow=1 fly"
+dsl = []
+status = "Full"
+note = ""
+
+["Thundermaw Hellkite"]
+tags = "pow=5 fly haste bomb=5"
+dsl = []
+status = "Full"
+note = ""
+
+["Tilonalli's Summoner"]
+tags = "human shaman pow=1"
+status = "Full"
+note = "attacks: X attacking Elementals (exiled at end of combat unless you have the city's blessing)"
+
+["Timberwatch Elf"]
+tags = "pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "taps to pump an attacker by the number of Elves"
+
+["Timely Ward"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "indestructible (flash on a commander)"
+
+["Tinybones, Trinket Thief"]
+tags = "leg pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "end step after an opponent discards: plays the best cheap permanent from their graveyard"
+
+["Tireless Provisioner"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "landfall: a Treasure (preferred to a Food)"
+
+["Tireless Tracker"]
+tags = "human pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = ""
+
+["Tishana's Tidebinder"]
+tags = "pow=3 tgh=2 flash"
+dsl = []
+status = "Full"
+note = "flash; counters an opponent's strong ETB trigger (that creature loses its abilities while Tidebinder stays) or a combo piece's ability"
+
+["Titania, Protector of Argoth"]
+tags = "leg pow=5 tgh=3 bomb=5"
+dsl = []
+status = "Full"
+note = "returns a land; 5/3 Elemental when a land goes to the graveyard (fetch lands, land sacrifices)"
+
+["Tithe Taker"]
+types = "C"
+tags = "human pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "spells cost {1} more during your turn; afterlife 1"
+
+["Tocasia's Welcome"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "once each turn, when one or more creatures with mana value 3 or less enter under your control, draw a card"
+
+["Tolaria West"]
+status = "Full"
+note = "enters tapped; transmute {1}{U}{U} for a mana-value-0 combo piece or key land"
+
+["Tolsimir Wolfblood"]
+tags = "leg pow=3 tgh=4"
+dsl = [
+  { type = "static", static = "anthem", pow = 1, tgh = 1, filter = { type = "creature", controller = "you", other = true, color = "G" } },
+  { type = "static", static = "anthem", pow = 1, tgh = 1, filter = { type = "creature", controller = "you", other = true, color = "W" } },
+]
+status = "Full"
+note = "your other green creatures +1/+1 and other white creatures +1/+1; {T}: Voja, a legendary 2/2 Wolf (one at a time)"
+
+["Tormod's Crypt"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles a graveyard in response to reanimation, or proactively when it holds real threats"
+
+["Tortured Existence"]
+status = "Full"
+note = "{B}, discard a creature: return a creature from your graveyard (bins a bomb for the reanimation spells and returns the best creature that isn't a reanimation target), once per turn"
+
+["Toxic Deluge"]
+status = "Full"
+note = "X = the biggest opposing toughness worth killing (max 10)"
+
+["Trail of Crumbs"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Transmute Artifact"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "sacrifice an artifact, search an artifact: onto the battlefield if you pay the difference in mana value"
+
+["Treasure Cruise"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "delve (exiles the least useful graveyard cards); draw three"
+
+["Tribute Mage"]
+tags = "human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = ""
+
+["Trinisphere"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "every spell costs at least three"
+
+["Triskelion"]
+types = "AC"
+tags = "pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "enters with three +1/+1 counters; removes counters to ping lethal players or X/1 creatures"
+
+["Trophy Mage"]
+tags = "human pow=2"
+dsl = []
+status = "Full"
+note = ""
+
+["Twinflame"]
+types = "S"
+cost = "1R"
+tags = "twinflame"
+dsl = []
+status = "Full"
+note = "strive ({2}{R} per extra target): hasty token copies of your nonlegendary creatures, exiled at the end step; the AI copies magecraft creatures when spells are left to cast, ETB creatures (Venser) and attackers"
+
+["Tymna the Weaver"]
+tags = "leg human pow=2 tgh=2 lifelink"
+dsl = []
+status = "Full"
+note = "lifelink; at the beginning of your postcombat main phase, pay X life to draw X (X = opponents dealt combat damage this turn): the AI pays while the life left stays at Necropotence's floor or above. Partner is ignored"
+
+["Tyvar the Bellicose"]
+tags = "leg pow=5 tgh=4 warrior"
+dsl = []
+status = "Full"
+note = "attacking Elves gain deathtouch; creatures that tap for mana get that many +1/+1 counters (once each turn)"
+
+["Ugin, the Spirit Dragon"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 3 damage, -X exiles coloured permanents (X chosen to hit the most opposing value), -10 gain 7, draw 7, seven permanents"
+
+["Unbreakable Formation"]
+status = "Full"
+note = "your creatures gain indestructible; cast in your main phase, also a +1/+1 counter and vigilance"
+
+["Unclaimed Territory"]
+status = "Full"
+note = "names the creature type most of your creatures share (Sauron: Orc; Jodah: Human): {C}, or any colour for a creature spell of that type"
+
+["Underground River"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Unearth"]
+status = "Full"
+note = "returns the best creature card with MV 3 or less; cycling {2} otherwise"
+
+["Unquestioned Authority"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "draw on entry; protection from creatures (unblockable; no damage from creatures)"
+
+["Urabrask, Heretic Praetor"]
+tags = "leg pow=4 tgh=4 haste"
+dsl = []
+status = "Full"
+note = "your upkeep: top card exiled, playable this turn; opponents: the next draw each upkeep is exiled instead and playable that turn (so it is not a draw); unplayed cards stay exiled"
+
+["Urborg Syphon-Mage"]
+tags = "human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "{2}{B}, {T}, discard a card: each other player loses 2 life and you gain the total (the AI: for a kill, a spare land, or at an opponent's end step)"
+
+["Urborg, Tomb of Yawgmoth"]
+status = "Full"
+note = "every land is a Swamp"
+
+["Uro, Titan of Nature's Wrath"]
+tags = "leg pow=6 bomb=6"
+dsl = []
+status = "Full"
+note = "enters: 3 life, draw, a land (sacrificed unless escaped); escape as a 6/6"
+
+["Urza's Bauble"]
+types = "A"
+cost = "0"
+tags = ""
+dsl = []
+status = "Full"
+note = "{T}, sacrifice: draw at the beginning of the next upkeep (kept as an artifact for Urza)"
+
+["Urza's Saga"]
+status = "Full"
+note = "taps for C; II makes Constructs; III tutors a 0/1-cost artifact, then it is sacrificed"
+
+["Urza, Lord High Artificer"]
+tags = "leg human pow=1 tgh=4"
+dsl = []
+status = "Full"
+note = "Construct token (+1/+1 per artifact); artifacts tap for U; {5}: a free card off the top"
+
+["Urza, Powerstone Prodigy"]
+tags = "leg pow=1 tgh=3 vig"
+dsl = []
+status = "Full"
+note = "vigilance; {1}, {T}: draw then discard; discarding an artifact makes a Powerstone (once a turn)"
+
+["Utopia Sprawl"]
+types = "E"
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "the enchanted Forest taps for an extra mana of the chosen colour"
+
+["Valakut Exploration"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "landfall: exile the top card, playable until end of turn; unplayed ones go to the graveyard at end step, 1 damage each to each opponent"
+
+["Valorous Stance"]
+status = "Full"
+note = "indestructible in response, or destroy toughness 4+"
+
+["Vanquisher's Banner"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "names a creature type as it enters: those creatures get +1/+1, and you draw a card for each creature spell of that type you cast"
+
+["Vault of the Archangel"]
+status = "Full"
+note = "deathtouch and lifelink for the team before an attack with three or more"
+
+["Veil of Summer"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "in response to a blue or black counterspell: your spells can't be countered this turn, draw a card"
+
+["Venat, Heart of Hydaelyn"]
+tags = "leg wizard pow=3 tgh=3"
+kws = []
+dsl = []
+status = "Full"
+note = "whenever you cast a legendary spell, draw a card (once each turn); {7}, {T}, as a sorcery: exile the best opposing nonland permanent (worth 3 or more; Jodah is cast first when it can be), then it transforms into Hydaelyn: a 4/4 indestructible that at the beginning of your combat puts a +1/+1 counter on another creature of yours (Jodah first, else the most valuable, legends preferred), which is indestructible until your next turn and draws a card if legendary"
+
+["Venser, Shaper Savant"]
+status = "Full"
+note = "flash; bounces a spell (as a counter, the spell returns to hand) or a permanent"
+
+["Venser, the Sojourner"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 blinks your permanent with the best entry ability (back at once, not at end step); -1 makes your creatures unblockable before a big attack; -8 emblem (exile a permanent per spell you cast)"
+
+["Veyran, Voice of Duality"]
+status = "Full"
+note = "magecraft +1/+1 (doubled by itself); instant/sorcery triggers of your permanents trigger an additional time"
+
+["Victimize"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "sacrifice a creature: the two best creature cards return tapped"
+
+["Vindictive Vampire"]
+dsl = []
+status = "Full"
+note = ""
+
+["Viscera Seer"]
+status = "Full"
+note = "free sacrifice outlet: scry 1 each time"
+
+["Vision, Synthezoid Avenger"]
+status = "Full"
+note = "flying; each spell cast outside its caster's turn: phases out if it threatens Vision, else a +1/+1 counter"
+
+["Visions of Beyond"]
+types = "I"
+tags = "draw=1"
+dsl = []
+status = "Full"
+note = "draws three when any graveyard has twenty or more cards, else one"
+
+["Vivid Crag"]
+types = "L"
+tags = "c=A t"
+dsl = []
+status = "Full"
+note = "enters tapped with two charge counters; {T}: {R}, or remove a counter for any colour"
+
+["Vivid Creek"]
+types = "L"
+tags = "c=A t"
+dsl = []
+status = "Full"
+note = "enters tapped with two charge counters; {T}: {U}, or remove a counter for any colour"
+
+["Vivid Grove"]
+types = "L"
+tags = "c=A t"
+dsl = []
+status = "Full"
+note = "enters tapped with two charge counters; {T}: {G}, or remove a counter for any colour"
+
+["Vivid Marsh"]
+types = "L"
+tags = "c=A t"
+dsl = []
+status = "Full"
+note = "enters tapped with two charge counters; {T}: {B}, or remove a counter for any colour"
+
+["Vivid Meadow"]
+types = "L"
+tags = "c=A t"
+dsl = []
+status = "Full"
+note = "enters tapped with two charge counters; {T}: {W}, or remove a counter for any colour"
+
+["Voice of Resurgence"]
+dsl = []
+status = "Full"
+note = "an Elemental token (its power and toughness are the number of creatures you control) when an opponent casts a spell during your turn and when it dies"
+
+["Voltaic Key"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "{1},{T}: untap an artifact (the best mana rock: net mana), also used in the Monolith loops"
+
+["Vraska, Betrayal's Sting"]
+loyalty = "6"
+status = "Full"
+note = "loyalty 6: 0 draws, costs 1 life and proliferates (opponents' poison included); -2 turns the best opposing creature into a Treasure; -9 sets a player to nine poison"
+
+["Vraska, Golgari Queen"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 sacrifice for a card, -3 destroy MV 3 or less, -9 emblem (combat damage makes a player lose)"
+
+["Vryn Wingmare"]
+types = "C"
+tags = "pow=2 tgh=1 fly"
+dsl = []
+status = "Full"
+note = ""
+
+["Walking Ballista"]
+types = "AC"
+tags = "pow=0 tgh=0 xtutor"
+dsl = []
+status = "Full"
+note = "X = spare mana; pings X/1 creatures or lethal players"
+
+["War Machine, Avenging Arsenal"]
+status = "Full"
+note = "flying; attacking gives your attacking modified creatures double strike"
+
+["War Room"]
+status = "Full"
+note = "{3},{T}, life = commander colors: draw (at end of an opponent's turn)"
+
+["Waste Not"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Waterlogged Grove"]
+status = "Full"
+note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
+
+["Weathered Wayfarer"]
+tags = "human pow=1"
+status = "Full"
+note = ""
+
+["Welcoming Vampire"]
+tags = "pow=2 tgh=3 fly"
+status = "Full"
+note = "draw once each turn when small creatures enter"
+
+["Wheel of Fortune"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "each player discards their hand and draws seven (cast when your hand is nearly empty)"
+
+["Whipcorder"]
+dsl = []
+add_tags = ["noatk"]
+status = "Full"
+note = "{W}, {T}: tap target creature; morph {W} (practice mode: cast it face down for {3}, turn it face up for {W})"
+
+["Whir of Invention"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "X = spare mana (improvise: untapped artifacts help pay); the best artifact with MV X or less"
+
+["Whirler Rogue"]
+tags = "human rogue pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "two flying Thopters; taps two artifacts to make an attacker (a Ninja first) unblockable"
+
+["Whispersilk Cloak"]
+status = "Full"
+note = "equipped creature can't be blocked and has shroud"
+
+["Whitemane Lion"]
+tags = "pow=2 flash"
+dsl = []
+status = "Full"
+note = "flash; returns your best ETB creature (or itself) on entry"
+
+["Wild Growth"]
+types = "E"
+tags = "rock=1:G"
+dsl = []
+status = "Full"
+note = "the enchanted land taps for an extra G"
+
+["Windborn Muse"]
+types = "C"
+tags = "pow=2 tgh=3 fly"
+dsl = []
+status = "Full"
+note = ""
+
+["Windfall"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = ""
+
+["Winds of Abandon"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles an opposing creature (its controller searches a basic), or overloaded for {4}{W}{W} every opposing creature"
+
+["Winota, Joiner of Forces"]
+tags = "leg human warrior pow=4"
+dsl = []
+status = "Full"
+note = "each non-Human attacker: a Human from the top six onto the battlefield attacking and indestructible (ETBs fire)"
+
+["Wirewood Channeler"]
+tags = "pow=2 dork=A noatk"
+status = "Full"
+note = "taps for its full scaling amount"
+
+["Wirewood Symbiote"]
+status = "Full"
+note = "returns a cheap Elf to untap the best mana creature, once a turn"
+
+["Wishclaw Talisman"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "three wishes: {1},{T} tutor (on your turn), then the most threatening opponent gains control and uses it on theirs"
+
+["Witch's Oven"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "sacrifice spare creatures for Food when the death is worth it"
+
+["Woe Strider"]
+tags = "pow=3 tgh=2"
+dsl = [
+  { type = "triggered", event = "etb", source = "self", effects = [{ do = "token", n = 1, pow = 0, tgh = 1, keywords = [], types = ["goat"] }] },
+]
+status = "Full"
+note = "Goat on entry; free sacrifice outlet with scry 1; escape"
+
+["World at War"]
+types = "S"
+tags = "combatspell"
+dsl = []
+status = "Full"
+note = "additional combat; rebound next turn"
+
+["Worldly Tutor"]
+types = "I"
+tags = "top"
+dsl = []
+status = "Full"
+note = "a creature on top of the library: the wish list first, cast at the end of the turn before yours"
+
+["Worn Powerstone"]
+types = "A"
+tags = "rock=2:C"
+dsl = []
+status = "Full"
+note = "enters tapped; taps for {C}{C}"
+
+["Wrenn and Six"]
+tags = "leg"
+dsl = []
+status = "Approximate"
+note = "+1 a land from graveyard to hand, -1 one damage (an X/1 or a player), -7 emblem (retrace recorded, not used)"
+
+["Xorn"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "Treasure creation makes one more"
+
+["Y'shtola, Night's Blessed"]
+tags = "leg pow=2 tgh=4 vig"
+dsl = []
+status = "Full"
+note = "vigilance; your noncreature spells with mana value 3 or more (X counts) deal 2 damage to each opponent and gain you 2 life; at each end step you draw if any player lost 4 or more life this turn"
+
+["Yavimaya Coast"]
+add_tags = ["pain"]
+status = "Full"
+note = "{T}: {C}, or a coloured mana for 1 damage"
+
+["Yavimaya Hollow"]
+status = "Full"
+note = "{G},{T}: regenerates a valuable creature that would be destroyed"
+
+["Yawgmoth's Will"]
+status = "Full"
+note = "until end of turn: cast spells and play lands from the graveyard as it was when it resolved (reanimation spells included); cards that reach your graveyard this turn are exiled"
+
+["Yawgmoth, Thran Physician"]
+tags = "leg human pow=2 tgh=4"
+dsl = []
+status = "Approximate"
+note = "pay 1 life, sacrifice: -1/-1 counter on an X/1 (tokens included) and draw, in your main phase and after blockers when attacked (unblocked X/1 attackers); BB discard: proliferate (the undying loop is a combo); protection from Humans not modeled"
+
+["Young Wolf"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Yuriko, the Tiger's Shadow"]
+tags = "leg human pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = "commander ninjutsu; each Ninja hit reveals the top card: to hand, each opponent loses its mana value"
+
+["Zealous Conscripts"]
+tags = "human warrior pow=3 haste"
+dsl = []
+status = "Full"
+note = "haste; steals the best opposing permanent until end of turn (untapped)"
+
+["Zendikar Resurgent"]
+types = "E"
+tags = ""
+dsl = []
+status = "Full"
+note = "lands tap for double; creature spells draw"
+
+["Zulaport Cutthroat"]
+status = "Full"
+note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
+
+["Zur the Enchanter"]
+tags = "leg human wizard pow=1 tgh=4 fly"
+dsl = []
+status = "Full"
+note = "attacks: an enchantment with MV 3 or less onto the battlefield (Necropotence and armor Auras on Zur first)"

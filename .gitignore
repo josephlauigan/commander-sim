@@ -2,3 +2,5 @@ __pycache__/
 *.tmp
 data/images/
 data/saves/
+rust/target/
+commander_sim/rust_sim.so

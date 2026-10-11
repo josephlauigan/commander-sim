@@ -1,0 +1,703 @@
+# FROZEN record of the old Python card code (October 2026, since removed): per card, the events its
+# Python implementation handled and "prio" when it had a hand-written cast priority. cardgen copies it into
+# cards.json (python_hooks, spell_prio): the work list for porting card code to Rust (cardgen audit
+# compares it with the Rust registry). New cards need no line.
+Abduction|dies etb leaves sba|
+Academy Manufactor||prio
+Academy Ruins|land_options|
+Accursed Marauder|etb|
+Acidic Slime|etb|
+Admonition Angel|landfall leaves|
+Aesi, Tyrant of Gyre Strait|extra_lands landfall|
+Aetherize|hand_defend|
+Airlift Chaplain|etb|
+Ajani Fells the Godsire|etb upkeep|prio
+Ajani's Chosen|etb|
+Alania, Divergent Storm|cast|
+Alela, Artful Provocateur|cast|
+All That Glitters|etb|
+Allosaurus Shepherd|options uncounterable|
+Aluren|cost|
+Ancestral Mask|etb|
+Ancient Greenwarden|lands_from_gy trigger_copies|
+Andúril, Flame of the West|attack|
+Angel of Serenity|etb leaves|
+Angelic Destiny|etb|
+Anim Pakal, Thousandth Moon|attack|
+Archangel Avacyn // Avacyn, the Purifier|dies etb upkeep|
+Archangel of Tithes|attack_tax blocks|
+Archfiend of Depravity|end_step|
+Archfiend of Despair|end_step no_lifegain|
+Archfiend of Sorrows|end_step gy_options|
+Archon of Emeria|can_cast|
+Archon of Sun's Grace|etb|
+Atraxa, Praetors' Voice|end_step|
+Aura of Silence|cost options|
+Aurelia, Exemplar of Justice|upkeep|
+Aurelia, the Warleader|attack|
+Aven Mindcensor|search_limit|
+Avenger of Zendikar|etb landfall|
+Awakening Zone|upkeep|
+Azorius Guildmage|options|
+Azusa, Lost but Seeking|extra_lands|
+Baird, Steward of Argive|attack_tax|
+Balefire Dragon|combat_damage|
+Banishing Betrayal|resolve|
+Banishing Light|etb leaves|
+Barad-dûr|land_options|
+Battle Cry Goblin|attack options|
+Battle Hymn|resolve|prio
+Battle Mastery|etb|
+Beastmaster Ascension|attack|
+Beetleback Chief|etb|
+Beseech the Mirror|resolve|prio
+Birthing Pod|options|
+Black Market Connections|upkeep|
+Blackblade Reforged|etb options|
+Blazing Firesinger // Seething Song|options|
+Bloodchief's Thirst|resolve|
+Bloodghast|etb gy_landfall|
+Bloodgift Demon|upkeep|
+Bloodline Keeper // Lord of Lineage|etb options|
+Bloodsoaked Insight // Sanguine Morass|hand_options|
+Boros Charm|hand_options|
+Boseiju, Who Endures|hand_options|
+Brago, King Eternal|combat_damage|
+Braids, Arisen Nightmare|end_step|
+Brain Freeze|resolve|
+Brainstorm|resolve|prio
+Bribery|resolve|
+Brimaz, King of Oreskos|attack blocks|
+Brutal Hordechief|attack blocks options|
+Burgeoning|land_play|
+Burglar Rat|etb|
+Cabal Ritual|resolve|prio
+Caesar, Legion's Emperor|attack|
+Caparocti Sunborn|attack|
+Carpet of Flowers|upkeep|
+Carrier Thrall|self_dies|
+Carth the Lion|dies etb loyalty_extra|
+Cartographer's Survey|resolve|prio
+Cartouche of Solidarity|etb|
+Cast Out|etb leaves|
+Castle Embereth|land_options|
+Castle Locthwain|land_options|
+Casualties of War|resolve|prio
+Celestial Mantle|combat_damage etb|
+Chain of Vapor|resolve|prio
+Champion's Helm|options|
+Chandra, Torch of Defiance|options|
+Chaos Warp|resolve|
+Charcoal Diamond|etb|
+Charming Prince|end_step etb|
+Chatterfang, Squirrel General|options token_created|
+Chittering Rats|etb|
+Chord of Calling|resolve|prio
+Chulane, Teller of Tales|cast|
+Coalition Relic|end_step upkeep|
+Coat of Arms|etb|
+Coiling Oracle|etb|
+Coldsteel Heart|etb|
+Collector Ouphe|no_artifact_mana|
+Combat Celebrant|attack|
+Command Beacon|land_options|
+Conduit of Worlds|can_cast lands_from_gy options|
+Conjurer's Closet|end_step|
+Consecrated Sphinx|draw|
+Consider|resolve|prio
+Conspicuous Snoop|options|
+Contentious Plan|resolve|prio
+Copy Enchantment|etb|
+Council's Judgment|resolve|prio
+Courser of Kruphix|landfall lands_from_top|
+Court of Ardenvale|etb upkeep|prio
+Crackdown|etb|
+Crackling Doom|resolve|prio
+Craterhoof Behemoth|etb|prio
+Crawlspace|attack_cap|
+Cromat|crew|
+Crop Rotation|resolve|prio
+Crucible of Worlds|lands_from_gy|
+Cruel Celebrant|dies|
+Crypt Ghast|cast land_mana|
+Curiosity|combat_damage etb|
+Cursed Totem|no_creature_mana|
+Dakkon, Shadow Slayer|options|
+Danitha Capashen, Paragon|cost|
+Dark Confidant|upkeep|
+Dark Petition|resolve|
+Dark Prophecy|dies|
+Dauthi Voidwalker|options sba|
+Daybreak Coronet|etb|
+Daydream|resolve|prio
+Deadeye Navigator|options|
+Deafening Silence|can_cast|
+Deathrite Shaman|options|
+Debt to the Deathless|hand_options resolve|
+Decimate|can_cast resolve|prio
+Defiant Vanguard|options|
+Demonlord Belzenlok|etb|
+Desolate Lighthouse|land_options|
+Desperate Futurescribe|crew|
+Destiny Spinner|options uncounterable|
+Detention Sphere|etb leaves|
+Dig Through Time|resolve|prio
+Displacer Kitten|cast|
+Docent of Perfection // Final Iteration|etb grant_kw|
+Door of Destinies|cast|
+Doubling Season|etb|
+Dovin, Hand of Control|cost options|
+Draco|upkeep|prio
+Dragon Tempest|etb|
+Dragonlord Dromoka|can_cast|
+Drakuseth, Maw of Flames|attack|
+Dramatic Reversal||prio
+Drannith Magistrate|can_cast|prio
+Dream Trawler|attack draw|
+Druid Class|extra_lands landfall options upkeep|
+Dryad of the Ilysian Grove|extra_lands|
+Dwynen's Elite|etb|
+Eerie Interlude|resolve|
+Eidolon of Blossoms|etb|
+Eidolon of Countless Battles|etb hand_options|
+Elderfang Disciple|etb|
+Elderfang Ritualist|self_dies|
+Eldrazi Displacer|options|
+Eldritch Evolution|resolve|prio
+Elephant Grass|attack_tax upkeep|
+Elspeth, Sun's Champion|options|
+Elvish Archdruid|etb|
+Elvish Champion|grant_kw|
+Elvish Clancaller|options|
+Elvish Harbinger|etb|
+Elvish Rejuvenator|etb|
+Elvish Spirit Guide||prio
+Elvish Warmaster|etb options|
+Embercleave|etb hand_attack|prio
+Emeria, the Sky Ruin|land_upkeep|
+Emeritus of Conflict // Lightning Bolt|options|
+Emeritus of Ideation // Ancestral Recall|attack options|
+Empyrial Armor|etb|
+Emry, Lurker of the Loch|etb options|
+Enter the Infinite|resolve|prio
+Ephemerate|hand_options rebound|
+Errant Doomsayers|options|
+Esika's Chariot|attack crew etb|
+Esper Sentinel|cast|
+Ethereal Armor|etb|
+Etherium Sculptor|cost|
+Ethersworn Canonist|can_cast|
+Everflowing Chalice|hand_options|prio
+Evolution Sage|landfall|
+Evolutionary Leap|options|
+Experimental Augury|resolve|prio
+Exploration|extra_lands|
+Expressive Iteration|resolve|
+Exquisite Blood|lose_life|
+Exsanguinate|hand_options resolve|
+Eyeblight Cullers|self_dies|
+Ezuri, Renegade Leader|options|
+Fable of the Mirror-Breaker // Reflection of Kiki-Jiki|attack etb upkeep|
+Fact or Fiction|resolve|prio
+Faerie Mastermind|draw|
+Fallen Shinobi|combat_damage|
+Farseek|resolve|prio
+Fatehold Charm|hand_options|
+Feather of Flight|etb|
+Felidar Guardian|etb|
+Felidar Umbra|etb|
+Fiery Emancipation|etb|
+Finale of Devastation|resolve|prio
+Fire Diamond|etb|
+Flicker|resolve|
+Flickering Hound|cast|
+Flickering Ward|etb options|
+Flow State|resolve|
+Flux Channeler|cast|
+Foundry Inspector|cost|
+Freyalise, Llanowar's Fury|options|
+Frost Titan|attack etb|
+Galadriel, Light of Valinor|etb|
+Galvanic Iteration|resolve|
+Gamble|resolve|prio
+Garland, Royal Kidnapper|combat_damage etb monarch|
+Garruk Wildspeaker|options|
+Genesis Hydra|etb|prio
+Geth's Grimoire|discard|
+Ghost Quarter|land_options|
+Ghostly Prison|attack_tax|
+Gilded Goose|etb options|
+Gitaxian Probe|resolve|prio
+Gix, Yawgmoth Praetor|combat_damage options|
+Glimpse of Nature|resolve|prio
+Glorybringer|attack|
+Glowrider|cost|
+Goblin Chainwhirler|etb|
+Goblin Chieftain|grant_kw|
+Goblin Cratermaker|options|
+Goblin Guide|attack|
+Goblin Instigator|etb|
+Goblin Lackey|combat_damage|
+Goblin Matron|etb|
+Goblin Piledriver|attack|
+Goblin Rabblemaster|attack upkeep|
+Goblin Recruiter|etb|
+Goblin Ringleader|etb|
+Goblin Sharpshooter|dies|
+Goblin Trashmaster|options|
+Goblin Warchief|cost grant_kw|
+Goldspan Dragon|attack treasure_bonus|
+Golgari Charm|hand_options resolve|prio
+Gonti, Lord of Luxury|etb|
+Grand Abolisher|can_cast|
+Grand Arbiter Augustin IV|cost|
+Grapeshot|resolve|
+Grasp of Fate|etb leaves|
+Gravecrawler|gy_options|
+Greater Auramancy|grant_kw|
+Green Sun's Zenith|resolve|prio
+Grim Haruspex|dies|
+Grim Hireling|combat_damage options|
+Grist, the Hunger Tide|options|
+Grow from the Ashes|resolve|prio
+Gryff's Boon|etb gy_options|
+Guardian Project|etb|
+Hallowed Haunting|cast grant_kw|
+Hanweir Garrison|attack|
+Harald, King of Skemfar|etb|
+Heartless Act|resolve|
+Heliod's Pilgrim|etb|
+Heliod, Sun-Crowned|etb gain_life grant_kw sba|
+Hellkite Charger|attack|
+Hellkite Tyrant|upkeep|
+Hellrider|attack|
+Helm of Kaldra|options|
+Helm of the Host|combat_start|
+Helping Hand|resolve|prio
+Hero of Bladehold|attack|
+Hero of Iroas|cost etb|
+Higure, the Still Wind|combat_damage|
+Hissing Quagmire|land_options|
+Hive of the Eye Tyrant|land_options|
+Hope of Ghirapur|combat_damage options|
+Hordeling Outburst|resolve|prio
+Horizon Canopy|land_options|
+Hostage Taker|etb leaves|
+Hour of Promise|resolve|prio
+Hour of Revelation|resolve|prio
+Hullbreaker Horror|cast|
+Hunter's Insight|hand_options resolve|prio
+Hyena Umbra|etb|
+Hymn to Tourach|resolve|prio
+Ichormoon Gauntlet|cast options|
+Ill-Gotten Inheritance|options upkeep|
+Impact Tremors|etb|
+Incubation Druid|options|
+Inexorable Tide|cast|
+Ingenious Infiltrator|combat_damage|
+Ink-Eyes, Servant of Oni|combat_damage|
+Innocent Blood|resolve|prio
+Invoke Despair|resolve|prio
+Iron Man, Armored Avenger|attack|
+Isochron Scepter|etb options|prio
+Isshin, Two Heavens as One|trigger_copies|
+Jace Token|options|
+Jace, Wielder of Mysteries|options|
+Jace, the Mind Sculptor|options|
+Jackdaw Savior|dies self_dies|
+Jagged-Scar Archers|options|
+Jaxis, the Troublemaker|end_step hand_options options self_dies|
+Jester's Cap|options|
+Jet Medallion|cost|
+Jodah, the Unifier|cast etb|
+Joraga Treespeaker|extra_mana options|
+Journey to Nowhere|etb leaves|
+Kaalia of the Vast|attack|
+Kaervek's Purge|hand_options|
+Kaito Shizuki|options|
+Kappa Cannoneer|etb|
+Karlach, Fury of Avernus|attack|
+Karmic Justice|dies self_dies|prio
+Karn Liberated|options|
+Karn's Bastion|land_options|
+Karn, the Great Creator|mana_lock no_artifact_mana options|
+Kaya's Wrath|resolve|
+Keeper of the Quiet Hour|etb|
+Kefka, Court Mage // Kefka, Ruler of Ruin|attack etb lose_life options|
+Kiki-Jiki, Mirror Breaker|options|
+Kindred Discovery|attack etb|
+King Darien XLVIII|options|
+Kinnan, Bonder Prodigy|nonland_mana_bonus options|
+Knight of the White Orchid|etb|
+Kogla, the Titan Ape|attack etb|
+Kor Haven|land_defend|
+Kor Skyfisher|etb|
+Kor Spiritdancer|cast etb|
+Korvold, Fae-Cursed King|attack etb sacrifice|
+Krenko, Mob Boss|options|
+Krenko, Tin Street Kingpin|attack|
+Laelia, the Blade Reforged|attack|
+Lagrella, the Magpie|etb leaves|
+Land Tax|upkeep|
+Lathril, Blade of the Elves|combat_damage options|
+Lavinia, Azorius Renegade|can_cast|
+Lawbringer|options|
+Leaf-Crowned Visionary|cast|
+Legion Loyalist|attack|
+Legion Warboss|upkeep|
+Legion's Landing // Adanto, the First Fort|attack land_options|
+Liesa, Shroud of Dusk|cast|
+Light-Paws, Emperor's Voice|etb|
+Lightbringer|options|
+Liliana of the Veil|options|
+Liliana's Caress|discard|
+Liliana's Triumph|resolve|
+Liliana, Death's Majesty|options|
+Liliana, Dreadhorde General|dies options|
+Lim-Dûl's Vault|resolve|prio
+Lin Sivvi, Defiant Hero|options|
+Loran of the Third Path|etb options|
+Lord Windgrace|options|
+Lord of the Nazgûl|cast|
+Loyal Apprentice|upkeep|
+Lys Alana Huntmaster|cast|
+Maelstrom Nexus|cast|prio
+Magus of the Moon|blood_moon|
+Mahadi, Emporium Master|dies end_step|
+Malcator, Purity Overseer|end_step etb token_created|
+Mammoth Umbra|etb|
+Mana Vault|upkeep|
+Manamorphose|resolve|
+Mangara, the Diplomat|attack cast|
+Marauding Blight-Priest|gain_life|
+Marchesa, the Black Rose|etb|
+Mardu Charm|hand_options resolve|
+Marwyn, the Nurturer|etb|
+Maskwood Nexus|options|
+Massacre Girl|etb|prio
+Master of Cruelties|blocks|
+Mayhem Devil|sacrifice|
+Megrim|discard|
+Memory Jar|options|prio
+Mentor of the Meek|etb|
+Merciless Executioner|etb|
+Meren of Clan Nel Toth|dies end_step|
+Metallic Mimic|etb|
+Midnight Reaper|dies|
+Mind Stone|options|
+Mind Twist|resolve|prio
+Mirari|cast|prio
+Mirkwood Bats|sacrifice token_created|
+Mirri, Weatherlight Duelist|attack_cap blocks|
+Mishra's Bauble|options|
+Mist-Syndicate Naga|combat_damage|
+Mistblade Shinobi|combat_damage|
+Mithril Coat|etb|
+Mogg Fanatic|options|
+Mogg War Marshal|etb self_dies upkeep|
+Moon-Circuit Hacker|combat_damage|
+Moonshaker Cavalry|etb|
+Moraug, Fury of Akoum|attack landfall|
+Morbid Opportunist|dies|
+Mordenkainen|options|
+Mosswort Bridge|land_options|
+Muddle the Mixture|hand_options|
+Mulch|resolve|prio
+Muldrotha, the Gravetide|options|
+Multani, Yavimaya's Avatar|etb gy_options|
+Mutavault|land_options|
+Muxus, Goblin Grandee|attack etb|
+Mystic Remora|cast upkeep|
+Narset, Parter of Veils|options|
+Nath of the Gilt-Leaf|discard upkeep|
+Natural Order|resolve|prio
+Nature's Claim|resolve|
+Nature's Rhythm|gy_options resolve|prio
+Necromancy|hand_options|
+Needle Spires|land_options|
+Nether Traitor|gy_dies|
+Nim Deathmantle|creature_to_gy options|
+Nissa, Resurgent Animist|landfall|
+Nissa, Who Shakes the World|land_mana options|
+Norn's Annex|attack_tax|
+Notion Thief|hand_options steal_draw|
+Oath of Teferi|end_step etb|
+Ob Nixilis, the Adversary|etb options|
+Oblivion Ring|etb leaves|
+Ogre Battledriver|etb|
+Oko, Thief of Crowns|options|
+Old Gnawbone|combat_damage|
+Omnath, Locus of Rage|dies landfall|
+On Serra's Wings|etb|
+Ophiomancer|upkeep|
+Opposition|crew upkeep|prio
+Opt|resolve|prio
+Oracle of Mul Daya|extra_lands lands_from_top|
+Oran-Rief, the Vastwood|land_options|
+Otawara, Soaring City|hand_options|
+Outlaws' Merriment|upkeep|
+Outpost Siege|upkeep|
+Painful Quandary|cast resolve|prio
+Palace Jailer|etb monarch|
+Palantír of Orthanc|end_step|
+Panharmonicon|trigger_copies|
+Paradise Druid|grant_kw|
+Pashalik Mons|dies options|
+Patchwork Banner|etb|
+Pawn of Ulamog|dies|
+Pearl Medallion|cost|
+Pendelhaven|land_options|
+Pernicious Deed|options|
+Phyrexian Obliterator|blocks|
+Pia Nalaar|etb options|
+Pileated Provisioner|etb|
+Plaguecrafter|etb|
+Plan for All Outcomes|cast etb|prio
+Planar Genesis|hand_options resolve|
+Plea for Guidance|resolve|
+Plumecreed Mentor|etb tokens_enter|
+Polluted Bonds|landfall|
+Ponder|resolve|prio
+Port Razer|combat_damage|
+Prayer of Binding|etb leaves|
+Preordain|resolve|prio
+Priest of Forgotten Gods|options|
+Primal Might|resolve|prio
+Prismari Charm|resolve|
+Privileged Position|grant_kw|
+Profane Tutor|hand_options resolve|prio
+Propaganda|attack_tax|
+Prosper, Tome-Bound|cast end_step|
+Prosperous Thief|combat_damage|
+Prowess of the Fair|dies|
+Purphoros, God of the Forge|etb grant_kw options|
+Quirion Ranger|extra_mana|
+Rabble Rousing|attack etb|
+Ragavan, Nimble Pilferer|combat_damage end_step hand_options|
+Raging Ravine|land_options|
+Ral Zarek, Guest Lecturer|options|
+Ral, Storm Conduit|options|
+Ramosian Captain|options|
+Ramosian Commander|options|
+Ramosian Lieutenant|options|
+Ramosian Revivalist|options|
+Ramosian Sergeant|options|
+Ramunap Excavator|lands_from_gy|
+Rancor|etb|
+Rapid Hybridization|resolve|
+Ray of Command|hand_options|
+Razia, Boros Archangel|options|
+Reassembling Skeleton|gy_options|
+Reckless Fireweaver|etb token_created|
+Reckless Impulse|resolve|prio
+Reconnaissance Mission|combat_damage hand_options|
+Reconstructed Thopter|end_step gy_options|
+Recruiter of the Guard|etb|
+Reenact the Crime|resolve|
+Reflector Mage|can_cast etb|
+Reforge the Soul|resolve|prio
+Relentless Assault|resolve|prio
+Requiem Angel|dies|
+Reshape|resolve|prio
+Resplendent Angel|end_step options|
+Rest in Peace|etb no_graveyard sba|
+Restoration Angel|etb hand_options|
+Retreat to Coralhelm|landfall|
+Retrofitter Foundry|options|
+Return the Favor|hand_cast|
+Return to Dust|resolve|
+Revel in Riches|dies upkeep|
+Rionya, Fire Dancer|combat_start end_step|
+Rishkar, Peema Renegade|etb extra_mana|
+Roil Elemental|landfall leaves|
+Rotting Regisaur|upkeep|
+Ruby Medallion|cost|
+Rule of Law|can_cast|
+Sage's Reverie|etb|
+Sai, Master Thopterist|cast options|
+Sakashima's Protege|etb|
+Sakura-Tribe Elder|blocks options|
+Sanar, Unfinished Genius // Wild Idea|options|
+Sanguine Bond|gain_life|
+Satoru Umezawa|ninjutsu|
+Savage Beating|resolve|prio
+Savvy Hunter|attack options|
+Scarlet Witch, Chaotic Avenger|combat_damage|
+Scourge of Valkas|etb options|
+Scourge of the Throne|attack|
+Scroll Rack|upkeep|
+Scute Swarm|landfall|
+Secluded Courtyard|etb|
+Seedborn Muse|upkeep|prio
+Seize the Day|resolve|prio
+Sensei's Divining Top|options upkeep|
+Sentinel's Eyes|etb gy_options|
+Serum Visions|resolve|prio
+Setessan Champion|etb|
+Shadowspear|options|
+Shalai, Voice of Plenty|grant_kw options player_hexproof|
+Shaman of the Pack|etb|
+Shared Animosity|attack|
+Sheltered by Ghosts|etb|
+Shielded by Faith|etb|
+Shrieking Drake|etb|
+Siege-Gang Commander|etb|
+Sifter of Skulls|dies|
+Sigarda's Aid|etb|
+Sign in Blood|resolve|prio
+Silent Arbiter|attack_cap blocks|
+Silent Clearing|land_options|
+Silent-Blade Oni|combat_damage|
+Sisay, Weatherlight Captain|options|
+Sisters of Stone Death|blocks|
+Skemfar Avenger|dies|
+Skyclave Apparition|leaves|
+Snake Umbra|combat_damage etb|
+Snap|resolve|
+Sokenzan, Crucible of Defiance|hand_options|
+Sol'kanar the Swamp King|cast|
+Solitary Confinement|prevent_damage skip_draw upkeep|
+Solitude|etb hand_options|
+Soul-Guide Lantern|etb gy_hate options|
+Soulherder|end_step exiled_from_bf|
+Spark Double|etb|
+Spectacle Summit|land_options|
+Spectra Ward|etb|
+Spellseeker|etb|
+Sphere of Resistance|cost|
+Sphere of Safety|attack_tax|
+Spider Umbra|etb|
+Spirit Link|combat_damage etb|
+Spirit Mantle|etb|
+Spite // Malice|hand_options|
+Spore Frog|blocks|
+Springbloom Druid|etb|
+Springleaf Drum|etb|
+Sram, Senior Edificer|cast|
+Starfield Mystic|cost dies|
+Starfield of Nyx|dies etb leaves upkeep|
+Static Net|etb|
+Static Prison|etb leaves upkeep|prio
+Sterling Grove|grant_kw options|
+Sticky Fingers|combat_damage dies etb|
+Stirring Hopesinger|cast|
+Stock Up|resolve|
+Stoneforge Mystic|etb options|
+Strip Mine|land_options|
+Strixhaven Skycoach|crew etb|
+Summon: Bahamut|etb main1|
+Sunbaked Canyon|land_options|
+Sunfall|resolve|
+Survival of the Fittest|options|
+Sylvan Library|draw|
+Sylvan Messenger|etb|
+Syr Konrad, the Grim|cards_to_gy dies|
+Tajic, Legion's Edge|attack|
+Take Up the Shield|resolve|
+Tamiyo, Field Researcher|options|
+Tavern Scoundrel|options|
+Tectonic Edge|land_options|
+Teferi, Hero of Dominaria|options|
+Teferi, Time Raveler|can_cast options|
+Tekuthal, Inquiry Dominus|grant_kw options proliferate_extra|
+Teleportation Circle|end_step|
+Temur Sabertooth|options|
+Tendershoot Dryad|upkeep|
+Terror of the Peaks|etb|
+Tetsuko Umezawa, Fugitive|grant_kw|
+Teysa Karlov|grant_kw trigger_copies|
+Tezzeret the Seeker|options|
+Thalia, Guardian of Thraben|cost|
+Thalia, Heretic Cathar|etb|
+Thassa's Oracle|etb|prio
+The Aetherspark|combat_damage options|
+The Eternal Wanderer|options|
+The Gitrog Monster|discard extra_lands land_gy upkeep|
+The One Ring|etb options upkeep|prio
+The Wandering Emperor|hand_defend options|
+Thief of Sanity|combat_damage|
+Thorn of Amethyst|cost|
+Thornbite Staff|etb|
+Thousand-Faced Shadow|ninjutsu|
+Thousand-Year Storm|cast copycast|
+Thrummingbird|combat_damage|
+Thundermaw Hellkite|etb|
+Tilonalli's Summoner|attack|
+Timberwatch Elf|options|
+Timely Ward|etb|
+Tinybones, Trinket Thief|end_step|
+Tireless Provisioner|landfall|
+Tireless Tracker|landfall sacrifice|
+Tishana's Tidebinder|etb leaves|
+Titania, Protector of Argoth|etb land_gy|
+Tithe Taker|cost self_dies|
+Tocasia's Welcome|etb|
+Tolaria West|hand_options|
+Tolsimir Wolfblood|options|
+Tormod's Crypt|gy_hate options|
+Trail of Crumbs|etb sacrifice|
+Transmute Artifact|resolve|prio
+Treasure Cruise|resolve|prio
+Tribute Mage|etb|
+Trinisphere|min_cost|
+Triskelion|etb options|
+Trophy Mage|etb|
+Twinflame|hand_options|
+Tymna the Weaver|combat_damage main2|
+Tyvar the Bellicose|attack mana_tapped|
+Ugin, the Spirit Dragon|options|
+Unbreakable Formation|resolve|
+Unearth|hand_options|
+Unquestioned Authority|etb|
+Urabrask, Heretic Praetor|upkeep|
+Urborg Syphon-Mage|options|
+Uro, Titan of Nature's Wrath|attack etb gy_options|
+Urza's Bauble|options|
+Urza, Lord High Artificer|etb extra_mana options|
+Urza, Powerstone Prodigy|options|
+Valakut Exploration|end_step landfall|
+Vanquisher's Banner|cast|
+Vault of the Archangel|land_options|
+Venat, Heart of Hydaelyn|cast crew grant_kw options|
+Venser, the Sojourner|crew options|
+Victimize|resolve|prio
+Vindictive Vampire|dies|
+Vision, Synthezoid Avenger|cast|
+Visions of Beyond|resolve|
+Voice of Resurgence|cast self_dies|
+Voltaic Key|extra_mana|
+Vraska, Betrayal's Sting|options|
+Vraska, Golgari Queen|options|
+Vryn Wingmare|cost|
+Walking Ballista|etb options|prio
+War Machine, Avenging Arsenal|attack|
+War Room|land_options|
+Waste Not|discard|
+Waterlogged Grove|land_options|
+Weathered Wayfarer|options|
+Welcoming Vampire|etb|
+Wheel of Fortune|resolve|prio
+Whipcorder|options|
+Whir of Invention|resolve|prio
+Whirler Rogue|attack etb|
+Whitemane Lion|etb|
+Windborn Muse|attack_tax|
+Windfall|resolve|prio
+Winds of Abandon|resolve|prio
+Winota, Joiner of Forces|attack|
+Wirewood Symbiote|extra_mana|
+Wishclaw Talisman|options|
+Witch's Oven|options|
+Woe Strider|gy_options|
+World at War|rebound resolve|prio
+Worldly Tutor|resolve|prio
+Worn Powerstone|etb|
+Wrenn and Six|options|
+Xorn|token_created|
+Y'shtola, Night's Blessed|cast end_step|
+Yavimaya Hollow|regenerate|
+Yawgmoth, Thran Physician|defend options|
+Yuriko, the Tiger's Shadow|combat_damage|
+Zealous Conscripts|etb|
+Zendikar Resurgent|cast land_mana|
+Zur the Enchanter|attack|
