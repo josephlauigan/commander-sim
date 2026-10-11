@@ -141,7 +141,7 @@ pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Optio
             v -= 100.0;
         }
         let new = card_types(g, c) & !pile;
-        v - 8.0 * new.count_ones() as f64
+        v - 30.0 * new.count_ones() as f64 // a new type is a card drawn
     };
     let cands: Vec<CardId> = hand.iter().copied().filter(|&c| !g.player(p).stolen.contains_key(&c)).collect();
     min_by(&cands, score)
@@ -694,7 +694,7 @@ fn disintegrate_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -
             });
         }
     }
-    let tg = legal_targets(g, p, "dmg3", "c", false, Some(c));
+    let tg = legal_targets(g, p, &format!("dmg{maxx}"), "c", false, Some(c));
     if let Some(m) = max_by(&tg, |m| pval(g, m).min(if etgh(g, m) as u32 <= maxx { 99.0 } else { 0.0 })) {
         let need = etgh(g, m).max(1) as u32;
         if need <= maxx && pval(g, m) >= 3.0 {
@@ -761,7 +761,9 @@ fn splatter(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
             continue;
         }
         if g.is_creature(m) {
-            apply_removal(g, Some(p), m, "dmg4", Some(c))?;
+            if etgh(g, m) <= 4 {
+                apply_removal(g, Some(p), m, "dmg4", Some(c))?;
+            }
         } else if g.perm(m).cd.is_some_and(|cd| g.db.get(cd).types.has(Types::PLANESWALKER)) {
             let l = g.perm(m).loyalty.unwrap_or(0) - 4;
             g.perm_mut(m).loyalty = Some(l.max(0));
@@ -1454,6 +1456,9 @@ fn disintegrate_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<
             lose_life(g, q, n, Some(p), "burn", Some(true))?;
         }
     } else if let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) {
+        if etgh(g, t) > n {
+            return Ok("gy"); // damage that doesn't kill leaves nothing lasting
+        }
         g.noregen = true;
         let r = apply_removal(g, Some(p), t, &format!("dmg{n}"), Some(c));
         g.noregen = false;
