@@ -1830,13 +1830,18 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         let pays_on_hit = d.abilities.iter().any(
             |a| matches!(a, Ability::Triggered { source: Some(s), event, .. } if s == "equipped" && event == "combat_damage"),
         );
+        let tuned = g.player(p).key == "gix"; // the candidate deck only: every other deck keeps the old scoring
         let score = |m: PermId| {
             let y = g.perm(m);
             let flies = y.fly || has_kw(g, m, "flying");
             let evasive = flies || has_kw(g, m, "menace") || has_kw(g, m, "fear") || has_kw(g, m, "unblockable");
             (if y.army { 3.0 } else { 0.0 })
-                + (if flies && !grants_fly { 2.0 } else if flies { -1.0 } else { 0.0 })
-                + (if pays_on_hit && evasive { 2.0 } else { 0.0 })
+                + if !tuned {
+                    if flies { 2.0 } else { 0.0 }
+                } else {
+                    (if flies && !grants_fly { 2.0 } else if flies { -1.0 } else { 0.0 })
+                        + (if pays_on_hit && evasive { 2.0 } else { 0.0 })
+                }
                 + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
         };
