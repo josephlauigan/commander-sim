@@ -382,11 +382,17 @@ pub fn prot_vs(g: &Game, m: PermId, other: PermId) -> bool {
     if super::rules::dovin_blocked(g, m) || super::rules::dovin_blocked(g, other) {
         return true; // Dovin: no damage to or from it
     }
+    if name_of(g, m) == "Yawgmoth, Thran Physician" && has_type(g, other, "human") {
+        return true; // protection from Humans
+    }
     name_of(g, m) == "Baneslayer Angel" && (has_type(g, other, "demon") || has_type(g, other, "dragon"))
 }
 
 /// rules2.prot_unblockable: Baneslayer Angel can't be blocked by Demons and Dragons
 pub fn prot_unblockable(g: &Game, b: PermId, a: PermId) -> bool {
+    if name_of(g, a) == "Yawgmoth, Thran Physician" && has_type(g, b, "human") {
+        return true; // protection from Humans: Humans can't block it
+    }
     name_of(g, a) == "Baneslayer Angel" && (has_type(g, b, "demon") || has_type(g, b, "dragon"))
 }
 

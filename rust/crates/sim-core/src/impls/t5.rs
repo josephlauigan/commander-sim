@@ -739,7 +739,7 @@ fn opp_creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 /// pay 1 life, sacrifice: -1/-1 counter on an X/1 (tokens included) and draw, in your main phase; BB discard:
 /// proliferate (the undying loop is a combo); protection from Humans not modeled
-fn yawg(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub fn yawg(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none() {
         return Ok(vec![]);
     }
@@ -808,7 +808,7 @@ fn yawg_prol(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 
 /// at instant speed, after blockers: pay 1 life and sacrifice fodder to put a -1/-1 counter on each unblocked X/1
 /// attacker (a Goblin token), drawing a card each time; while the fodder lasts and life stays above 8
-fn yawg_defend(g: &mut Game, src: Src, d: PlayerId, p: PlayerId, atk: &[PermId], assign: &mut Assign) -> Res {
+pub fn yawg_defend(g: &mut Game, src: Src, d: PlayerId, p: PlayerId, atk: &[PermId], assign: &mut Assign) -> Res {
     if owner(g, src) != d || !on(g, d, src) {
         return Ok(());
     }
