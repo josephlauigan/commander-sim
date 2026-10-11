@@ -1,6 +1,6 @@
 //! Python's play/cards.py. Ported by the practice-cards task.
 //! The per-card choices of the people's decks (targets, modes, tutors, pay-or-not, ordering), and the helpers the
-//! `HUMAN(phase 9)` sites in `impls/*` share.
+//! person's branches in `impls/*` share.
 
 use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, choices, legal};

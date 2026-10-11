@@ -349,3 +349,72 @@ mod tests {
         assert_eq!(entry(&c)["files"], json!(["dfc.jpg", "dfc-1.jpg"]));
     }
 }
+
+// ------------------------------------------------------------------ naming the tokens the engine doesn't name
+static GUESS_IMAGES: Mutex<Option<Images>> = Mutex::new(None);
+
+/// Register `view.guess_token` with the engine (`legal::token_name`): the image index of `images` names the tokens.
+pub fn register_token_guesser(images: &Images) {
+    *GUESS_IMAGES.lock().unwrap_or_else(|e| e.into_inner()) = Some(images.clone());
+    sim_core::human::legal::set_token_guesser(guess_token);
+}
+
+/// Python's `view.guess_token`: many cards make tokens the engine doesn't name (Krenko's Goblins): the token its
+/// owner's deck makes with the same power, toughness, colour and flying (then any deck at the table's, for tokens
+/// given to you: Beast Within)
+fn guess_token(g: &sim_core::state::Game, m: &sim_core::state::Perm) -> Option<String> {
+    let images = GUESS_IMAGES.lock().unwrap_or_else(|e| e.into_inner()).clone()?;
+    let names_of = |ps: &[sim_core::ids::PlayerId]| -> Vec<String> {
+        ps.iter().flat_map(|&q| g.player(q).deck_names.iter().map(|&c| g.db.get(c).name.to_string())).collect()
+    };
+    let all: Vec<_> = g.players.iter().map(|q| q.id).collect();
+    for names in [names_of(&[m.orig]), names_of(&all)] {
+        if let Some(n) = pick_token(&images.token_kinds(&names), m.pow, m.tgh, m.colors, m.fly) {
+            return Some(n);
+        }
+    }
+    None
+}
+
+/// the best token among `kinds` with this size: colour counts only when the permanent has one (the engine leaves
+/// many tokens colourless), then flying, then how many of the deck's cards make it
+fn pick_token(kinds: &[Value], pw: i32, tg: i32, colors: sim_core::cards::Colors, fly: bool) -> Option<String> {
+    let kinds: Vec<&Value> = kinds.iter().filter(|t| t["power"] == pw && t["toughness"] == tg).collect();
+    let count = |n: &Value| kinds.iter().filter(|t| &t["name"] == n).count() as f64;
+    let score = |t: &Value| {
+        let col = sim_core::cards::Colors::from_letters(t["colors"].as_str().unwrap_or(""));
+        (if colors.is_empty() { 0.0 } else { f64::from(u8::from(col == colors) * 2) })
+            + f64::from(u8::from(t["flying"].as_bool().unwrap_or(false) == fly))
+            + count(&t["name"]) / 100.0
+    };
+    let mut best: Option<(&Value, f64)> = None;
+    for t in &kinds {
+        let s = score(t);
+        if best.is_none_or(|b| s > b.1) {
+            best = Some((t, s)); // the first of equals, as Python's max
+        }
+    }
+    best.and_then(|b| b.0["name"].as_str().map(str::to_string))
+}
+
+#[cfg(test)]
+mod guess_tests {
+    use super::*;
+    use sim_core::cards::Colors;
+
+    #[test]
+    fn the_token_with_the_same_size_colour_and_flying() {
+        let k = vec![
+            json!({"name": "Goblin", "power": 1, "toughness": 1, "colors": "R", "flying": false}),
+            json!({"name": "Soldier", "power": 1, "toughness": 1, "colors": "W", "flying": false}),
+            json!({"name": "Spirit", "power": 1, "toughness": 1, "colors": "W", "flying": true}),
+            json!({"name": "Beast", "power": 3, "toughness": 3, "colors": "G", "flying": false}),
+        ];
+        assert_eq!(pick_token(&k, 1, 1, Colors::from_letters("R"), false).as_deref(), Some("Goblin"));
+        assert_eq!(pick_token(&k, 1, 1, Colors::from_letters("W"), true).as_deref(), Some("Spirit"));
+        // colourless: flying decides, then the first
+        assert_eq!(pick_token(&k, 1, 1, Colors::NONE, true).as_deref(), Some("Spirit"));
+        assert_eq!(pick_token(&k, 1, 1, Colors::NONE, false).as_deref(), Some("Goblin"));
+        assert_eq!(pick_token(&k, 9, 9, Colors::NONE, false), None);
+    }
+}

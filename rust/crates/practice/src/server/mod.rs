@@ -65,6 +65,7 @@ pub fn start_with(cfg: Config, factory: Arc<dyn SessionFactory>) -> Result<Serve
     let listener = TcpListener::bind((host, cfg.port)).map_err(|e| e.to_string())?;
     let addr = listener.local_addr().map_err(|e| e.to_string())?;
     let images = Images::new(cfg.data.join("images"));
+    crate::images::register_token_guesser(&images);
     let hub = Hub::new(cfg.lan, cfg.app, cfg.saves.clone(), images, factory);
     let site = Arc::new(Site::new(hub.clone(), cfg.data.clone(), cfg.static_dir.clone()));
     let h = hub.clone();

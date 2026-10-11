@@ -1,6 +1,6 @@
 //! Ordering the top of a library (Python's `cards/impl/topdeck.py`, the AI half): how much a player wants to draw
 //! each card next, and scry / surveil. The cards that use it (cantrips, Sensei's Divining Top, Scroll Rack, Sylvan
-//! Library) are card code: PORT(M5) and phase 6.
+//! Library) are card code in `impls/*`.
 //!
 //! desire(g, p, c) is how much p wants to draw c next:
 //!   - a missing combo piece or wish-list card beats everything,

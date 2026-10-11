@@ -1229,23 +1229,3 @@ pub fn cast_spell_copy(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>) 
     check_state(g)?;
     Ok(true)
 }
-
-/// "You may cast a copy of ..." (a back-face instant/sorcery): a real cast (magecraft, opponents' cast triggers,
-/// Thousand-Year Storm), no card moves. Named, it goes on the stack, where it can be countered. PORT(M5): its card
-/// effects come with the cards that use it (Emeritus of Conflict, Kefka).
-pub fn cast_copy_counted(g: &mut Game, p: PlayerId) -> Res {
-    let pl = g.player_mut(p);
-    pl.spells_this_turn += 1;
-    pl.stat("spells_cast", 1);
-    count_is_cast(g, p);
-    magecraft(g, p, None, false)?;
-    for q in g.opps(p).collect::<Vec<_>>() {
-        if has(g, q, Tag::Sauron) {
-            amass(g, q, 1)?;
-        }
-        if has(g, q, Tag::Rhystic) && cardcode::rhystic_unpaid(g, p)? {
-            draw(g, q, 1, false)?;
-        }
-    }
-    check_state(g)
-}

@@ -359,10 +359,12 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
                 let d2 = g.db.get(c);
                 if d2.instant || d2.sorcery {
                     let draws = d2.tags.int(Tag::Draw);
-                    crate::engine::cast::cast_copy_counted(g, p)?; // PORT(M5): a named copy goes on the stack
-                    if let Some(k) = draws {
-                        draw(g, p, k.max(0) as u32, false)?;
-                    }
+                    let (name, instant) = (d2.name.to_string(), d2.instant);
+                    // a named copy goes on the stack, where it can be countered (a counter skips the draw)
+                    crate::impls::mine::cast_copy_with(g, p, None, Some(&name), instant, 4.0, &mut |g| match draws {
+                        Some(k) => draw(g, p, k.max(0) as u32, false),
+                        None => Ok(()),
+                    })?;
                 }
                 g.player_mut(p).exile.push(c);
             }

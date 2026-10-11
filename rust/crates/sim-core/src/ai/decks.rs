@@ -1319,3 +1319,103 @@ pub fn sauron_grounds_response(g: &mut Game, seph: PlayerId, value: f64) -> Res<
     }
     Ok(false)
 }
+
+/// ais.necro_pay: Necropotence, pay 1 life per card (exiled face down, to hand at this end step); keep life at the
+/// floor (`necro_floor`: what the table could hit you for) and don't overshoot the hand size
+pub fn necro_pay(g: &mut Game, p: PlayerId, floor: Option<i32>) -> Res {
+    if blocked(g, p, "Necropotence") {
+        return Ok(());
+    }
+    let floor = floor.unwrap_or_else(|| super::necro_floor(g, p));
+    let pl = g.player(p);
+    let n = 0.max((pl.life - floor).min(8 - pl.hand.len() as i32).min(pl.library.len() as i32));
+    if n == 0 {
+        return Ok(());
+    }
+    crate::engine::life::lose_life(g, p, n, Some(p), "other", None)?;
+    for _ in 0..n {
+        let pl = g.player_mut(p);
+        let c = pl.library.pop().unwrap();
+        pl.hand.push(c);
+        pl.seen.insert(c);
+    }
+    g.player_mut(p).stat("necro_cards", n as i64);
+    crate::glog!(g, "  {} pays {n} life to Necropotence", g.player(p).name);
+    Ok(())
+}
+
+/// ais.necro_deliver: the beginning of p's end step: the cards Necropotence exiled for this end step (a person's,
+/// waiting in `necro_wait`) go to p's hand
+pub fn necro_deliver(g: &mut Game, p: PlayerId) -> Res {
+    let turns = g.player(p).turns;
+    let pl = g.player_mut(p);
+    if pl.necro_wait.is_empty() {
+        return Ok(());
+    }
+    let (now, later): (Vec<_>, Vec<_>) = std::mem::take(&mut pl.necro_wait).into_iter().partition(|&(_, r)| r <= turns);
+    pl.necro_wait = later;
+    if now.is_empty() {
+        return Ok(());
+    }
+    let cards: Vec<CardId> = now.iter().map(|x| x.0).collect();
+    pl.hand.extend(cards.iter().copied());
+    pl.seen.extend(cards.iter().copied());
+    pl.stat("necro_cards", cards.len() as i64);
+    let name = g.player(p).name.to_string();
+    let names: Vec<&str> = cards.iter().map(|&c| &*g.db.get(c).name).collect();
+    let (public, line) = (
+        format!("  {name} puts {} card(s) into their hand (Necropotence)", cards.len()),
+        format!("  {name} puts {} into their hand (Necropotence)", names.join(", ")),
+    );
+    g.log_secret(p, &public, &line);
+    Ok(())
+}
+
+/// ais.braids_sacrifice: Braids, Cabal Minion: at the beginning of each player's upkeep, that player sacrifices an
+/// artifact, creature, or land (the cheapest to lose)
+pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
+    enum X {
+        Perm(PermId),
+        Land(crate::ids::LandId),
+    }
+    let mut opts: Vec<(f64, X)> = vec![];
+    for &m in &g.player(p).perms {
+        if g.perm(m).phased {
+            continue;
+        }
+        if g.is_creature(m) {
+            opts.push((pval(g, m), X::Perm(m)));
+        } else if let Some(c) = g.perm(m).cd
+            && g.db.get(c).types.has(Types::ARTIFACT)
+        {
+            let v = if g.db.get(c).tag(Tag::Rock) { 2.5 } else { pval(g, m).max(1.0) };
+            opts.push((v, X::Perm(m)));
+        }
+    }
+    let nl = g.player(p).lands.len();
+    for &l in &g.player(p).lands {
+        opts.push((if nl >= 6 { 3.0 } else { 6.0 }, X::Land(l)));
+    }
+    let mut best: Option<usize> = None;
+    for (i, o) in opts.iter().enumerate() {
+        if best.is_none_or(|b| o.0 < opts[b].0) {
+            best = Some(i);
+        }
+    }
+    let Some(b) = best else { return Ok(()) };
+    match opts.swap_remove(b).1 {
+        X::Land(l) => {
+            let cd = g.land(l).cd;
+            crate::engine::turn::remove_land(g, p, l);
+            g.player_mut(p).gy.push(cd);
+            crate::engine::zones::tergrid_steal(g, p, cd, p)?;
+            crate::glog!(g, "    Braids: {} sacrifices {}", g.player(p).name, g.db.get(cd).name);
+        }
+        X::Perm(m) => {
+            crate::glog!(g, "    Braids: {} sacrifices {}", g.player(p).name, g.perm(m).name);
+            crate::engine::zones::die(g, m, "sac")?;
+        }
+    }
+    g.player_mut(p).stat("braids_sacs", 1);
+    Ok(())
+}

@@ -1,7 +1,6 @@
 //! Card code outside the hook table: Python's `cardimpl.py` dispatch helpers and the shared functions of
 //! `cards/impl/*.py` that the engine calls by name (Blood Moon, Plaza of Heroes, regeneration, Treasures ...).
-//! The engine calls these exactly where the Python does. Each is a `PORT(Mx)` placeholder returning what a table
-//! without that card gives, until the card code is ported (M5 for Tier 1 and Sauron, phase 6 for the rest).
+//! The engine calls these exactly where the Python does; each delegates to the ported card code (`impls/*`, `ai/*`).
 
 use crate::engine::hooks;
 use crate::flow::Res;
@@ -116,8 +115,8 @@ pub fn on_tap_perm(g: &mut Game, p: PlayerId, m: PermId, n: u32) -> crate::flow:
     }
 }
 
-/// engine.SELF_COST, a card's own cost change: Emry's affinity for artifacts. PORT(M5): Draco's domain, delve
-/// (partials), Embercleave (rules2)
+/// engine.SELF_COST, a card's own cost change: Emry's affinity for artifacts. Embercleave (rules2); Draco's domain and
+/// delve register `self_cost` on their cards (partials)
 pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
     match &*g.db.get(c).name {
         "Emry, Lurker of the Loch" => crate::impls::alela::emry_cost(g, p, c),
@@ -201,22 +200,10 @@ pub fn scry(g: &mut Game, p: PlayerId, n: i32, surveil: bool) -> Res {
     crate::ai::topdeck::scry(g, p, n, surveil)
 }
 
-macro_rules! port_res {
-    ($($(#[$doc:meta])* fn $name:ident($($arg:ident: $ty:ty),*);)*) => {$(
-        $(#[$doc])*
-        pub fn $name(_g: &mut Game, $($arg: $ty),*) -> Res {
-            $(let _ = $arg;)*
-            Ok(())
-        }
-    )*};
-}
-
 /// marchesa.marchesa_dies: creature m that p controlled died (Marchesa's return trigger)
 pub fn marchesa_dies(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     crate::impls::marchesa::marchesa_dies(g, p, m)
 }
-
-port_res! {}
 
 /// CI.apply_lock (zur.apply_lock: Arrest, Encrust ...): the entering lock Aura enchants m
 pub fn apply_lock(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym) -> Res {
@@ -425,9 +412,9 @@ pub fn marchesa_sac_worth(g: &Game, m: PermId, v: f64) -> f64 {
     crate::impls::marchesa::marchesa_sac_worth(g, m, v)
 }
 
-/// PORT(M5): CI.PROWESS (cards with prowess the keywords don't show)
-pub fn is_prowess_card(_g: &Game, _c: CardId) -> bool {
-    false
+/// CI.PROWESS: cards with prowess the keywords don't show (hand-tagged in Python's cardimpl)
+pub fn is_prowess_card(g: &Game, c: CardId) -> bool {
+    matches!(&*g.db.get(c).name, "Eris, Roar of the Storm" | "Harmonic Prodigy")
 }
 
 /// rules2.aura_ward: ward {2} from Sheltered by Ghosts
@@ -792,13 +779,19 @@ pub fn suspend_upkeep(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::jodah::suspend_upkeep(g, p)
 }
 
-port_res! {
-    /// PORT(M5): ais.braids_sacrifice
-    fn braids_sacrifice(p: PlayerId);
-    /// PORT(M5): ais.necro_deliver (Necropotence's cards at the end step)
-    fn necro_deliver(p: PlayerId);
-    /// PORT(M5): ais.necro_pay
-    fn necro_pay(p: PlayerId);
+/// ais.braids_sacrifice (Braids, Cabal Minion's upkeep sacrifice)
+pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
+    crate::ai::decks::braids_sacrifice(g, p)
+}
+
+/// ais.necro_deliver (Necropotence's cards at the end step)
+pub fn necro_deliver(g: &mut Game, p: PlayerId) -> Res {
+    crate::ai::decks::necro_deliver(g, p)
+}
+
+/// ais.necro_pay
+pub fn necro_pay(g: &mut Game, p: PlayerId) -> Res {
+    crate::ai::decks::necro_pay(g, p, None)
 }
 
 /// galadriel.precombat (CI.galadriel_precombat): Galadriel's tappers before another player's combat
@@ -1013,8 +1006,8 @@ pub fn regen_wipe(g: &mut Game, q: PlayerId) -> Res<bool> {
 }
 
 /// the outside decks' card plays: common.adventure_options, t2.evoke_options,
-/// common.aristocrat_options, common.food_options, partials.miracle_options and incubator_options (PORT(M5):
-/// partials, wired in impls::common::pool_card_options)
+/// common.aristocrat_options, common.food_options, partials.miracle_options and incubator_options (partials, wired in
+/// impls::common::pool_card_options)
 pub fn pool_card_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     crate::impls::common::pool_card_options(g, p, post)
 }

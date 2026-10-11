@@ -13,7 +13,7 @@
 //! - `topdeck`: how much a player wants each card next, and scry / surveil.
 //!
 //! This file has the decisions the engine calls inline. Deck-specific code for your other decks (Sephiroth, Veyran,
-//! Galadriel, Y'shtola, Alela, Jodah) waits for phase 6 (`PORT(phase 6)`), card code for M5 (`PORT(M5)`).
+//! Galadriel, Y'shtola, Alela, Jodah) lives in `impls/*` and `decks`.
 
 pub mod act;
 pub mod brain;
@@ -578,7 +578,7 @@ pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId])
 }
 
 /// ais.tide_response: Sephiroth's Tishana's Tidebinder counters an ability `actor` activates or triggers. No card has
-/// the `tide` tag now (the Tidebinder left Sephiroth's list), so it never fires; PORT(phase 6) if the card comes back
+/// the `tide` tag now (the Tidebinder left Sephiroth's list), so it never fires; port it if the card comes back
 /// (it needs `tide` in rust/tools/gen_tags.py's CODE_ONLY).
 pub fn tide_response(
     _g: &mut Game,
