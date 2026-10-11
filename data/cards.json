@@ -4140,6 +4140,41 @@
    "spell_prio": false
   },
   {
+   "name": "Awaken the Ages",
+   "types": "S",
+   "generic": 5,
+   "pips": "R",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Awaken the Inferno",
    "types": "S",
    "generic": 4,
@@ -6465,18 +6500,13 @@
    "pips": "R",
    "tags": {
     "pow": "2",
-    "tgh": "3"
+    "tgh": "3",
+    "prepare": true
    },
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters prepared"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "prepared"
@@ -6489,7 +6519,7 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -7456,10 +7486,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Battalion — Whenever ~ and at least two other creatures attack, ~ deals 1 damage to any target."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -13891,6 +13919,41 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Craft with Pride",
+   "types": "S",
+   "generic": 0,
+   "pips": "R",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -29318,10 +29381,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "At the beginning of the end step, return ~ to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -29530,10 +29591,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "When ~ dies, you may have it deal 1 damage to any target."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -29828,18 +29887,13 @@
    "generic": 1,
    "pips": "R",
    "tags": {
-    "pow": "2"
+    "pow": "2",
+    "prepare": true
    },
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters prepared"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "prepared",
@@ -29853,7 +29907,7 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -30275,23 +30329,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {},
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "haste",
-       "what": {
-        "sel": "self"
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -30302,10 +30340,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{T}: Target creature can't block this turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -33284,24 +33320,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "damage",
-       "n": 6,
-       "to": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -33309,10 +33328,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ deals 6 damage to target creature. You may exile a card from your graveyard. If you do, ~ also deals 2 damage to that creature's controller.   [partly: exile a card from your graveyard; if you do, ~ also deals 2 damage to that creature's controller]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -51303,23 +51320,16 @@
    "generic": 1,
    "pips": "RR",
    "tags": {
-    "draw": "1"
+    "rem": "dmg2",
+    "tgt": "c",
+    "face": true,
+    "draw": "1",
+    "selfdmg": "3"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -51327,10 +51337,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ deals 2 damage to any target and 3 damage to you."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -53194,30 +53202,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "5R"
-     },
-     "effects": [
-      {
-       "do": "pump",
-       "pow": "X",
-       "tgh": 0,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -53228,10 +53213,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When Pia enters, create a 1/1 colorless Thopter artifact creature token with flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -58384,24 +58367,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "damage",
-       "n": 3,
-       "to": {
-        "sel": "target",
-        "filter": {
-         "type": "cp"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "replicate"
@@ -58411,10 +58377,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Replicate—Pay {E}{E}{E}."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -62020,29 +61984,13 @@
    "pips": "R",
    "tags": {
     "rem": "dmg3",
-    "tgt": "cp"
+    "tgt": "cp",
+    "exiledie": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "damage",
-       "n": 3,
-       "to": {
-        "sel": "target",
-        "filter": {
-         "type": "cp"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -62050,10 +61998,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ deals 3 damage to target creature or planeswalker. If that creature or planeswalker would die this turn, exile it instead.   [partly: if that creature or planeswalker would die this turn, exile it instead]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -70150,18 +70096,13 @@
    "pips": "R",
    "tags": {
     "pow": "3",
-    "tgh": "2"
+    "tgh": "2",
+    "prepare": true
    },
    "pow": 3,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters prepared"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "prepared",
@@ -70175,7 +70116,7 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -70860,49 +70801,14 @@
    "pips": "R",
    "tags": {
     "rem": "dmg3",
-    "tgt": "c"
+    "tgt": "c",
+    "alsoart": true,
+    "exiledie": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "damage",
-          "n": 3,
-          "to": {
-           "sel": "target",
-           "filter": {
-            "type": "creature"
-           },
-           "upto": false
-          }
-         }
-        ],
-        [
-         {
-          "do": "exile",
-          "what": {
-           "sel": "target",
-           "filter": {
-            "type": "artifact"
-           },
-           "upto": false
-          }
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -70910,10 +70816,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• if that creature would die this turn, exile it instead"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -80879,24 +80783,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "damage",
-       "n": 6,
-       "to": {
-        "sel": "target",
-        "filter": {
-         "type": "cp"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "empower jace",
@@ -80907,10 +80794,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ deals 6 damage to target creature or planeswalker. If excess damage was dealt to that permanent this way, empower Jace X, where X is that excess damage.   [partly: if excess damage was dealt to that permanent this way, empower jace x]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -84062,24 +83947,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "damage",
-       "n": 4,
-       "to": {
-        "sel": "target",
-        "filter": {
-         "type": "cp"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -84087,10 +83955,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ costs {1} less to cast if you control a legendary creature."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

@@ -2741,11 +2741,15 @@ fn ral_go(g: &mut Game, src: PermId, p: PlayerId, minus: i64) -> Res<bool> {
 
 // ------------------------------------------------------------------ prepared back faces: cast a copy, paying its cost
 /// mine.PREPARED: (card, generic, pips, an instant, the back face)
-const PREPARED: [(&str, u32, &str, bool, &str); 4] = [
+const PREPARED: [(&str, u32, &str, bool, &str); 7] = [
     ("Blazing Firesinger // Seething Song", 2, "R", true, "Seething Song"),
     ("Emeritus of Ideation // Ancestral Recall", 0, "U", true, "Ancestral Recall"),
     ("Sanar, Unfinished Genius // Wild Idea", 3, "UR", false, "Wild Idea"),
     ("Emeritus of Conflict // Lightning Bolt", 0, "R", true, "Lightning Bolt"),
+    // the next three are the single-faced names the Kefka and Zada decks play (zada_cards.rs has their tests)
+    ("Blazing Firesinger", 2, "R", true, "Seething Song"),
+    ("Goblin Glasswright", 0, "R", false, "Craft with Pride"),
+    ("Strife Scholar", 5, "R", false, "Awaken the Ages"),
 ];
 /// mine.PAYOFF_TAGS
 const PAYOFF_TAGS: [Tag; 7] =
@@ -2755,12 +2759,19 @@ const PAYOFF_TAGS: [Tag; 7] =
 /// Ancestral Recall draws three, Wild Idea finds an instant or sorcery, Lightning Bolt burns
 pub fn prepared_effect(g: &mut Game, p: PlayerId, effect: u8) -> Res {
     match effect {
-        0 => {
+        0 | 4 => {
             g.player_mut(p).floating.r += 5;
             Ok(())
         }
         1 => draw(g, p, 3, false),
         2 => crate::engine::tutors::tutor(g, p, "is"),
+        5 => crate::engine::zones::add_treasure(g, p, 1), // Craft with Pride
+        6 => {
+            // Awaken the Ages: two 2/2 red and white Spirits
+            let color = Some(crate::cards::Colors::from_letters("RW"));
+            let spec = Tokens { color, types: vec!["spirit"], ..Tokens::new(2, 2) };
+            make_tokens(g, p, spec).map(|_| ())
+        }
         _ => crate::engine::cast::bolt_something(g, p, 3),
     }
 }
@@ -2774,7 +2785,9 @@ fn prepared_value(g: &Game, p: PlayerId, i: usize) -> f64 {
             .filter(|&&m| g.perm(m).cd.is_some_and(|c| PAYOFF_TAGS.iter().any(|&k| g.db.get(c).tag(k))))
             .count() as f64;
     match i {
-        0 => {
+        5 => 1.5, // Craft with Pride: a Treasure for {R}
+        6 => 4.0, // Awaken the Ages: two 2/2 Spirits
+        0 | 4 => {
             // Seething Song: {2}{R} for five red, worth it to reach a spell
             let tot = total_mana(g, p, false);
             let reach = g.player(p).hand.iter().any(|&c| {

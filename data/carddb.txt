@@ -352,3 +352,5 @@ Tergrid, God of Fright // Tergrid's Lantern|C|3BB|pow=4 tgh=5 leg tergrid
 Last Gasp|I|1B|rem=shrink3 tgt=c
 # a planeswalker token (Alela's empowered Jace): no card, it ceases to exist when it leaves
 Jace Token|P|0|tokpw
+Craft with Pride|S|R|
+Awaken the Ages|S|5R|
