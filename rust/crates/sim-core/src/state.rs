@@ -894,6 +894,8 @@ pub struct Game {
     pub humans: Humans,
     /// the X paid for the last X spell (card code that reads it: Walking Ballista ...)
     pub last_x: i32,
+    /// the order each person chose for their simultaneous triggers last time (practice mode; Python's `trig_orders`)
+    pub trig_orders: Vec<(Sym, Vec<String>)>,
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
     pub forced_attack: Option<(PlayerId, Sym)>,
     /// look-ahead decisions taken in this game, and engine steps its playouts used (the per-game caps)
@@ -1023,6 +1025,7 @@ impl Game {
             log: None,
             humans: Humans::none(),
             last_x: 0,
+            trig_orders: vec![],
             forced_attack: None,
             search_n: 0,
             search_work: 0,

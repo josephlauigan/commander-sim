@@ -82,3 +82,15 @@ pub fn cast_target(_g: &Game, _p: PlayerId, _c: CardId) -> Res<CastTarget> {
 pub fn mastery_target(_g: &mut Game, _p: PlayerId, _c: CardId) -> Res<bool> {
     Ok(false)
 }
+
+/// `cards.pick_blue`: an alternative cost that exiles a blue card from your hand (Force of Will, Force of
+/// Negation): which one.
+pub fn pick_blue(g: &Game, p: PlayerId, blues: &[CardId], what: &str) -> Res<CardId> {
+    if blues.len() == 1 {
+        return Ok(blues[0]);
+    }
+    let labels: Vec<String> = blues.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+    let k =
+        super::choices::choose_one(g, p, "choose", &format!("{what}: exile which blue card from your hand?"), &labels)?;
+    Ok(blues[k])
+}

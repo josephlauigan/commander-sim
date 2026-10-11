@@ -120,7 +120,7 @@ fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
             Ok(()) => {} // its guard failed: it doesn't trigger
         }
     }
-    // HUMAN(phase 9): the person orders their own simultaneous triggers (_order_triggers)
+    let real = crate::human::human::order_triggers(g, real)?; // a person orders their own simultaneous triggers
     let mut items = vec![];
     for t in real {
         let id = next_id(g);
@@ -395,8 +395,11 @@ fn take_priority(g: &mut Game, q: PlayerId, _id: u32) -> Res<bool> {
         return Ok(false);
     }
     let n = g.stack_pushes;
-    // HUMAN(phase 9): play/human.stack_priority for a person's seat
-    ai_respond(g, q)?;
+    if crate::human::is_human(g, q) {
+        crate::human::human::stack_priority(g, q)?;
+    } else {
+        ai_respond(g, q)?;
+    }
     Ok(g.stack_pushes != n)
 }
 
@@ -640,17 +643,22 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
         lose_life(g, q, 2, Some(q), "other", None)?;
         return Ok(true);
     }
-    let pitch = |g: &mut Game, blues: Vec<CardId>| {
-        // the least useful blue card (HUMAN(phase 9): the person picks, play/cards.pick_blue)
-        let x = crate::engine::zones::min_by(&blues, |c| crate::engine::tutors::card_worth(g, q, c, false)).unwrap();
+    let pitch = |g: &mut Game, blues: Vec<CardId>| -> Res {
+        // the least useful blue card (a person picks: play/cards.pick_blue)
+        let mut x = crate::engine::zones::min_by(&blues, |c| crate::engine::tutors::card_worth(g, q, c, false)).unwrap();
+        if crate::human::is_human(g, q) {
+            let what = g.db.get(ctr).name.to_string();
+            x = crate::human::cards::pick_blue(g, q, &blues, &what)?;
+        }
         let pl = g.player_mut(q);
         let i = pl.hand.iter().position(|&c| c == x).unwrap();
         pl.hand.remove(i);
         pl.exile.push(x);
+        Ok(())
     };
     if t.has(Tag::Fon) && g.active != Some(q) && !blue_in_hand(g, q, ctr).is_empty() {
         let b = blue_in_hand(g, q, ctr);
-        pitch(g, b);
+        pitch(g, b)?;
         return Ok(true);
     }
     let (cg, cp) = counter_cost(g, ctr, spell, Some(q));
@@ -659,7 +667,7 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
         if blues.is_empty() {
             return Ok(false);
         }
-        pitch(g, blues);
+        pitch(g, blues)?;
         lose_life(g, q, 1, Some(q), "other", None)?;
         return Ok(true);
     }
@@ -737,10 +745,18 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
             - 1;
     }
     if soft > 0 && can_pay(g, p, soft as u32, "", false) {
-        // Spell Pierce / Mystic Confluence: pay and it resolves (HUMAN(phase 9): the person may decline, hc.pay_tax)
-        pay(g, p, soft as u32, "", false)?;
-        crate::glog!(g, "    {} pays {}", g.player(p).name, soft);
-        return Ok(());
+        // Spell Pierce / Mystic Confluence: pay and it resolves (a person may decline)
+        let ctr_name = g.db.get(ctr).name.to_string();
+        let paid = if crate::human::is_human(g, p) {
+            crate::human::choices::pay_tax(g, p, soft as u32, &ctr_name)?
+        } else {
+            pay(g, p, soft as u32, "", false)?;
+            true
+        };
+        if paid {
+            crate::glog!(g, "    {} pays {}", g.player(p).name, soft);
+            return Ok(());
+        }
     }
     crate::glog!(g, "    {} counters {} with {}", g.player(q).name, g.db.get(c).name, g.db.get(ctr).name);
     counter_side_effects(g, q, p, ctr)?;
@@ -848,7 +864,11 @@ pub fn counter_side_effects(g: &mut Game, q: PlayerId, p: PlayerId, ctr: CardId)
         && g.player(q).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased && colors_of(g, m).has('U'))
     {
         draw(g, q, 1, false)?; // a blue creature: draw a card, then discard a card
-        discard_worst(g, q, 1)?; // HUMAN(phase 9): hc.discard
+        if crate::human::is_human(g, q) {
+            crate::human::choices::discard(g, q, 1, "Discard a card")?;
+        } else {
+            discard_worst(g, q, 1)?;
+        }
     }
     Ok(())
 }
@@ -891,13 +911,14 @@ pub fn step_priority(g: &mut Game, step: &str, defender: Option<PlayerId>, attac
         if !g.player(q).alive || g.over {
             continue;
         }
-        // HUMAN(phase 9): a person's step priority (play/human.step_priority)
-        if step == "attackers" && Some(q) == defender {
+        if crate::human::is_human(g, q) {
+            crate::human::human::step_priority(g, q, step, defender, attackers)?;
+        } else if step == "attackers" && Some(q) == defender {
             ai::attack_response(g, q, a, attackers)?;
         } else if step == "combat" && q != a && g.player(q).key == "galadriel" {
             crate::cardcode::galadriel_precombat(g, q)?; // tap the attacker it fears (Errant Doomsayers, Whipcorder)
         }
-        if step == "combat" && q != a && !g.hooks.is_empty() {
+        if step == "combat" && q != a && !g.hooks.is_empty() && !crate::human::is_human(g, q) {
             crate::cardcode::opposition_precombat(g, q)?; // Opposition: tap the attackers down
         }
     }

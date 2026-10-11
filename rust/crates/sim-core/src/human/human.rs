@@ -941,3 +941,73 @@ fn cast_rean(g: &mut Game, p: PlayerId, c: CardId, zone: &str, ctx: Ctx, flash_s
     engine::life::check_state(g)?;
     Ok(None)
 }
+
+// ------------------------------------------------------------------ simultaneous triggers
+fn trig_label(g: &Game, t: &crate::hooks::Trigger) -> String {
+    let n = match t.src {
+        Some(m) => g.perm(m).cd.map(|c| g.db.get(c).name.to_string()).unwrap_or_else(|| g.perm(m).name.to_string()),
+        None => String::new(),
+    };
+    format!("{n}: {}", t.name.unwrap_or("None"))
+}
+
+/// the person orders their own simultaneous triggers (which resolves first); the AI keeps the code's order
+/// (Python's `_order_triggers`)
+pub fn order_triggers(g: &mut Game, real: Vec<crate::hooks::Trigger>) -> Res<Vec<crate::hooks::Trigger>> {
+    if real.len() < 2 || !g.humans.any() {
+        return Ok(real);
+    }
+    let mut out = vec![];
+    let mut i = 0;
+    while i < real.len() {
+        let mut j = i;
+        while j < real.len() && real[j].controller == real[i].controller {
+            j += 1;
+        }
+        let mut group: Vec<crate::hooks::Trigger> = real[i..j].to_vec();
+        let q = group[0].controller;
+        if super::is_human(g, q) && group.len() > 1 {
+            let mut left = group.clone();
+            let mut first = vec![];
+            let key = g.player(q).key;
+            let last: Option<Vec<String>> = g.trig_orders.iter().find(|x| x.0 == key).map(|x| x.1.clone());
+            let mut same = last.as_ref().is_some_and(|l| {
+                let mut a = l.clone();
+                let mut b: Vec<String> = left.iter().map(|t| trig_label(g, t)).collect();
+                a.sort();
+                b.sort();
+                a == b
+            });
+            while left.len() > 1 {
+                let labels: Vec<String> = left.iter().map(|t| trig_label(g, t)).collect();
+                let extra: Vec<String> = match (&last, same) {
+                    (Some(l), true) => vec![format!("Same order as last time ({})", l.join(", then "))],
+                    _ => vec![],
+                };
+                let mut shown = extra.clone();
+                shown.extend(labels);
+                let k = choices::choose_one(g, q, "choose", "Your triggers: which resolves first?", &shown)?;
+                if same && k == 0 {
+                    for name in last.as_ref().unwrap() {
+                        let pos = left.iter().position(|t| &trig_label(g, t) == name).unwrap();
+                        first.push(left.remove(pos));
+                    }
+                    break;
+                }
+                first.push(left.remove(k - extra.len()));
+                same = false;
+            }
+            first.extend(left);
+            let labels: Vec<String> = first.iter().map(|t| trig_label(g, t)).collect();
+            match g.trig_orders.iter_mut().find(|x| x.0 == key) {
+                Some(e) => e.1 = labels,
+                None => g.trig_orders.push((key, labels)),
+            }
+            first.reverse(); // pushed in reverse: the first to resolve goes on top
+            group = first;
+        }
+        out.extend(group);
+        i = j;
+    }
+    Ok(out)
+}
