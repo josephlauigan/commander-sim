@@ -48,3 +48,9 @@ file = "JD/kefka-grixis-discard.md"
 name = "Kefka"
 commander = "Kefka, Court Mage // Kefka, Ruler of Ruin"
 ident = "UBR"
+
+[zada]
+file = "JD/zada-mono-red-go-wide.md"
+name = "Zada"
+commander = "Zada, Hedron Grinder"
+ident = "R"

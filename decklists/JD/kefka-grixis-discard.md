@@ -1,5 +1,7 @@
 # Kefka, Court Mage — Grixis Discard
 
+**Updated 2026-10-11 (mana base).** JD's rule: basics over slow lands. Out: Temple of Malice, Boiling Rock Prison, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Path of Ancestry, Evolving Wilds, Fabled Passage (everything that enters tapped or fetches a tapped basic). In: 5 Swamp, 3 Mountain, 3 Island (now 15 Swamp, 9 Mountain, 6 Island). The six untapped nonbasics stay. Still 36 lands; the cut lands go back to the bulk list.
+
 2026-10-11
 **Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Not yet in the simulator's measured decks: several cards still need modeling (see "Simulator status").
 
@@ -35,7 +37,7 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 ## Consistency
 
-- **Lands:** 36 (17 nonbasic: Blood Crypt, Haunted Ridge, Temple of Malice, Boiling Rock Prison, Underground River, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Command Tower, Path of Ancestry, Exotic Orchard, Evolving Wilds, Fabled Passage, Gemstone Mine; 10 Swamp, 6 Mountain, 3 Island). Black carries the deck (about 45 black pips, 24 red, 10 blue).
+- **Lands:** 36, none of which enters tapped (Haunted Ridge needs two other lands first): six untapped nonbasics (Blood Crypt, Haunted Ridge, Underground River, Command Tower, Exotic Orchard, Gemstone Mine) and 30 basics (15 Swamp, 9 Mountain, 6 Island). Counting Arcane Signet and Potioner's Trove, that's about 23 black sources, 16 red and 12 blue. Black carries the deck (about 45 black pips, 24 red, 10 blue), so the double-blue cards (Mystic Confluence, Splatter Technique) are late plays. The cost of an untapped-only base is fewer dual lands, so an early hand can be short a colour.
 - **Mana:** 11 rocks, Treasure makers and burst cards.
 - **Card draw:** Kefka, Rhystic Study, Night's Whisper, Stargaze, Skullclamp, Decorum Dissertation, the looters. **Tutors:** Diabolic Tutor, Grim Servant (devotion to black).
 - **Interaction:** Lightning Bolt, Pongify, Reality Shift, Chaos Warp, Feed the Swarm, Extinguish the Light, Deadly Embrace, Kaervek's Purge, Disintegrate, Contract Killing; counters Arcane Denial and Mystic Confluence; wipes Crux of Fate and Splatter Technique (4 to each creature, or draw four).
@@ -74,7 +76,7 @@ Every card except the commander and the basics comes from JD's bulk and binder l
 
 **Instants (10).** Arcane Denial, Big Score, Chaos Warp, Extinguish the Light, Lightning Bolt, Mystic Confluence, Pongify, Reality Shift, Thrill of Possibility, Twinned Vision
 
-**Lands (36).** Blood Crypt, Boiling Rock Prison, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Gemstone Mine, Haunted Ridge, Path of Ancestry, Sinister Hideout, Spectacle Summit, Temple of Deceit, Temple of Epiphany, Temple of Malice, Treno Dark City, Underground River, Vivid Marsh, 3 Island, 6 Mountain, 10 Swamp
+**Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Underground River, 6 Island, 9 Mountain, 15 Swamp
 
 ## Import list (100)
 
@@ -87,7 +89,6 @@ Every card except the commander and the basics comes from JD's bulk and binder l
 1 Blazing Firesinger
 1 Blightspeaker
 1 Blood Crypt
-1 Boiling Rock Prison
 1 Cackling Fiend
 1 Chaos Warp
 1 Command Tower
@@ -102,10 +103,8 @@ Every card except the commander and the basics comes from JD's bulk and binder l
 1 Disintegrate
 1 Duress
 1 Eternal Student
-1 Evolving Wilds
 1 Exotic Orchard
 1 Extinguish the Light
-1 Fabled Passage
 1 Feed the Swarm
 1 Garrison Excavator
 1 Gemstone Mine
@@ -123,7 +122,6 @@ Every card except the commander and the basics comes from JD's bulk and binder l
 1 Massacre Wurm
 1 Mystic Confluence
 1 Night's Whisper
-1 Path of Ancestry
 1 Pongify
 1 Postmortem Professor
 1 Potioner's Trove
@@ -138,29 +136,22 @@ Every card except the commander and the basics comes from JD's bulk and binder l
 1 Screeching Soulbreaker
 1 Seize the Spoils
 1 Shimmercreep
-1 Sinister Hideout
 1 Sisay's Ring
 1 Skullclamp
 1 Skullport Merchant
 1 Sneering Shadewriter
-1 Spectacle Summit
 1 Splatter Technique
 1 Stadium Tidalmage
 1 Stargaze
 1 Susurian Voidborn
 1 Swiftfoot Boots
-1 Temple of Deceit
-1 Temple of Epiphany
-1 Temple of Malice
 1 Thought Vessel
 1 Thrill of Possibility
-1 Treno, Dark City
 1 Triskelion
 1 Twinned Vision
 1 Underground River
 1 Viashino Fangtail
-1 Vivid Marsh
-3 Island
-6 Mountain
-10 Swamp
+6 Island
+9 Mountain
+15 Swamp
 ```
