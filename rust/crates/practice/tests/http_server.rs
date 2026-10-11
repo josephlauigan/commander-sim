@@ -220,7 +220,7 @@ fn test_options() {
     let d = r.json();
     let mut decks: Vec<&str> = d["decks"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     decks.sort();
-    assert_eq!(decks, ["alela", "galadriel", "gix", "glissa", "jenova", "jodah", "kefka", "lordofpain", "sauron", "seph", "smaug", "torbran", "veyran", "yawgmoth", "yshtola", "zada"]);
+    assert_eq!(decks, ["alela", "bill", "galadriel", "gix", "glissa", "jenova", "jodah", "kefka", "lordofpain", "sauron", "seph", "smaug", "torbran", "veyran", "yawgmoth", "yshtola", "zada"]);
     let tiers: Vec<&str> = d["tiers"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     assert_eq!(tiers, ["t1", "t2", "t3", "t4", "t5"]);
     assert_eq!(d["tiers"][2]["decks"].as_array().unwrap().len(), 5);

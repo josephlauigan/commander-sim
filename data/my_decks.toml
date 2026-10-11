@@ -96,3 +96,9 @@ file = "JD/candidates/smaug.md"
 name = "Smaug the Impenetrable"
 commander = "Smaug the Impenetrable"
 ident = "BR"
+
+[bill]
+file = "JD/bristly-bill-landfall.md"
+name = "Bristly Bill"
+commander = "Bristly Bill, Spine Sower"
+ident = "G"
