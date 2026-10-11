@@ -46,7 +46,11 @@ pub fn no() -> F {
 /// pick the first choice whose text contains `word`
 pub fn by_text(word: &'static str) -> F {
     Box::new(move |r| {
-        let i = r.choices.iter().position(|x| x.contains(word)).unwrap_or_else(|| panic!("no choice with {word:?} in {:?}", r.choices));
+        let i = r
+            .choices
+            .iter()
+            .position(|x| x.contains(word))
+            .unwrap_or_else(|| panic!("no choice with {word:?} in {:?}", r.choices));
         Answer::Pick(i)
     })
 }
