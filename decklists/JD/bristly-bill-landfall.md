@@ -1,7 +1,7 @@
 # Bristly Bill, Spine Sower — Mono-Green Landfall Counters
 
 **Added 2026-10-11.** Built from JD's bulk and binder around Bristly Bill, Spine Sower (bought, borderless Secret Lair
-printing), plus five cheap buys. Not yet measured (see "Simulator status").
+printing), plus five cheap buys. Fully modeled and measured on 2026-10-11: 15.9% over all tiers (see "Simulator status").
 
 ## Strategy
 
@@ -43,7 +43,12 @@ Noxious Newt, Hardbristle Bandit, Topiary Lecturer, Bugenhagen, plus nine land-r
 
 ## Simulator status
 
-Not yet modeled or measured.
+**Measured 2026-10-11** (look-ahead AI, loose profile, 960 games per tier, the same settings as the other decks;
+`decklists/pool/pool-results.md` section 0d, results in `audit/bill/`): T1 13.0%, T2 16.7%, T3 16.1%, T4 17.3%,
+T5 16.6%; **15.9% over all tiers**, between Jodah (16.6%) and Alela (13.1%). Wins come late (turn 12.8 on average).
+
+Known simplifications: Druid Class's level 3 land creature stops tapping for mana; Lifestream's Blessing reads X when
+it resolves, not when cast; Spider-Man's web-slinging only returns a creature that is already tapped.
 
 ## Where the cards come from
 

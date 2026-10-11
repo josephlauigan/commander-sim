@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+
+=== Bristly Bill vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  16.6%   95% CI 14.3-19.0%   (even share 25%: -8.4 pts)
+Average turn (your own turn count) of wins 12.0, of losses 6.7
+Plan online (): 0.0% of games
+Wins by: damage 97%, timeout 3%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.2%            20.6%           12.6%
+  Urza (urza-mono-blue-artifacts)              61.2%            29.3%           17.8%
+  Kinnan (kinnan-simic-mana-combo)             59.5%            37.7%           22.2%
+  Winota (winota-boros-humans-cheat)           59.5%            32.4%           19.6%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   58.5%            19.2%           11.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(39s total)
