@@ -583,14 +583,15 @@ impl Hub {
     /// the game, waiting on your decision, into autosave.json (a failure only skips this one)
     fn autosave(&self, sess: &Arc<dyn SessionApi>, no: u64) {
         let Ok(mut data) = sess.saved(Some(Duration::from_millis(500))) else { return };
-        {
-            let st = self.lock();
-            if st.game_no != no {
-                return;
-            }
-            data["tools"] = Value::Object(st.tools.clone());
-        }
         data["saved_at"] = json!(now("%Y-%m-%d %H:%M"));
+        // The state lock is held through the write: a quit, a new game or a load (which take it to end this game)
+        // either come before the check, so nothing is written, or after the rename, so their cleanup removes it.
+        // (Writing after the check, unlocked, could put a finished game's file back after Quit removed it.)
+        let st = self.lock();
+        if st.game_no != no || st.session.is_none() {
+            return;
+        }
+        data["tools"] = Value::Object(st.tools.clone());
         if std::fs::create_dir_all(&self.saves).is_err() {
             return;
         }
