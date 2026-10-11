@@ -4,6 +4,10 @@
 //! it shows the engine and its card data working on the device. The table, the JSON API, saving and the rest come
 //! with phases 9–13.
 
+pub mod catalog;
+pub mod images;
+pub mod server;
+
 use sim_core::run::{Engine, settings, summary};
 use std::ffi::{CStr, c_char};
 use std::io::{BufRead, BufReader, Write};
