@@ -12,6 +12,8 @@
 //! A copy is `Game::clone` (about 2 µs, where Python's deepcopy took 4 ms). Practice mode's tape (Undo replays a
 //! game's look-ahead decisions instead of searching again) comes with phase 9.
 
+use super::tape::{Taped, taped};
+pub use super::tape::{LAST_SCORES, Tape, TapeEntry, TapeSlot};
 use super::{act, brain};
 use crate::flow::{Res, Stop};
 use crate::hooks::Opt;
@@ -240,8 +242,31 @@ fn find(opts: &[Opt], label: &str, n: usize) -> Option<usize> {
 }
 
 // ------------------------------------------------------------------ main phase
-/// search.choose: pick a main-phase play by look-ahead (an index into opts); None to let the heuristic choose
+/// search.choose: pick a main-phase play by look-ahead (an index into opts); None to let the heuristic choose.
+/// In a practice game the result is recorded on the game's tape, or taken off it when the game is being replayed.
 pub fn choose(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<usize> {
+    if g.search_tape.0.is_none() {
+        return choose_inner(g, p, post, opts);
+    }
+    if !opts.iter().any(|o| o.act.is_some()) {
+        return None;
+    }
+    let parts = format!("{}:{}:{}", g.player(p).key, g.player(p).hand.len(), g.player(p).perms.len());
+    let (res, replayed) = taped(g, "main", |g| {
+        Taped::Main(choose_inner(g, p, post, opts).map(|i| {
+            (opts[i].label.clone(), opts[..i].iter().filter(|x| x.label == opts[i].label).count())
+        }))
+    });
+    if replayed {
+        decision_seed(g, &parts);
+    }
+    match res {
+        Taped::Main(Some((l, n))) => find(opts, &l, n),
+        _ => None,
+    }
+}
+
+fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<usize> {
     let mut real: Vec<usize> = (0..opts.len()).filter(|&i| opts[i].act.is_some()).collect();
     if real.is_empty() {
         return None;
@@ -269,6 +294,10 @@ pub fn choose(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<usi
             best = k;
         }
     }
+    let n = g.settings.search.rollouts as f64;
+    LAST_SCORES.with(|l| {
+        *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
+    });
     let top = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
     if keyed[best].0 != top {
         stat(|x| x.changed += 1);
@@ -278,7 +307,7 @@ pub fn choose(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<usi
 
 /// search.playout_main: one playout of main-phase option (label, n-th of that label) for p: copy r of the decision
 /// seeded base_seed. The score of the position it reaches (an option that can't be played: -50).
-fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize, base_seed: u64, r: u64) -> f64 {
+pub fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize, base_seed: u64, r: u64) -> f64 {
     let (mut g2, w0) = playout_copy(g, p, base_seed, r);
     let res = (|| -> Res<Option<f64>> {
         let opts = brain::main_options(&mut g2, p, post)?;
@@ -297,6 +326,7 @@ fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize, ba
         Ok(None) => false,
         Err(Stop::OutOfWork) => true,
         Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+        Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
     };
     let v = evaluate(&g2, p);
     done(g, &g2, w0, cut);
@@ -315,6 +345,25 @@ fn play_on_after_phase(g2: &mut Game, p2: PlayerId) -> Res {
 // ------------------------------------------------------------------ attacks
 /// search.choose_attack: at the first combat of p's turn: (defender, 'filtered' | 'all' | 'none') by look-ahead
 pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
+    if g.search_tape.0.is_none() {
+        return choose_attack_inner(g, p);
+    }
+    if g.opps(p).next().is_none() {
+        return None;
+    }
+    let (res, replayed) = taped(g, "attack", |g| Taped::Attack(choose_attack_inner(g, p)));
+    let Taped::Attack(res) = res else { unreachable!() };
+    if replayed {
+        let parts = format!("{}:atk", g.player(p).key);
+        decision_seed(g, &parts);
+        if let Some((d, how)) = res {
+            crate::glog!(g, "      [{} attack plan by search: {how} at {}]", g.player(p).name, g.player(d).name);
+        }
+    }
+    res
+}
+
+fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if opps.is_empty() {
         return None;
@@ -345,7 +394,7 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
 }
 
 /// search.playout_attack: one playout of attack plan c for p
-fn playout_attack(g: &mut Game, p: PlayerId, c: (PlayerId, Sym), base_seed: u64, r: u64) -> f64 {
+pub fn playout_attack(g: &mut Game, p: PlayerId, c: (PlayerId, Sym), base_seed: u64, r: u64) -> f64 {
     let (mut g2, w0) = playout_copy(g, p, base_seed, r);
     g2.forced_attack = Some(c);
     g2.step = Step::Combat;
@@ -353,6 +402,7 @@ fn playout_attack(g: &mut Game, p: PlayerId, c: (PlayerId, Sym), base_seed: u64,
         Ok(()) => false,
         Err(Stop::OutOfWork) => true,
         Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+        Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
     };
     let v = evaluate(&g2, p);
     done(g, &g2, w0, cut);
@@ -363,6 +413,18 @@ fn playout_attack(g: &mut Game, p: PlayerId, c: (PlayerId, Sym), base_seed: u64,
 /// search.choose_counter: q may counter p's spell c (the top of the stack, cast in p's main phase): true to counter,
 /// by look-ahead to the end of q's next turn
 pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool {
+    if g.search_tape.0.is_none() {
+        return choose_counter_inner(g, q, p, c);
+    }
+    let (res, replayed) = taped(g, "counter", |g| Taped::Counter(choose_counter_inner(g, q, p, c)));
+    if replayed {
+        let parts = format!("{}:ctr", g.player(q).key);
+        decision_seed(g, &parts);
+    }
+    matches!(res, Taped::Counter(true))
+}
+
+fn choose_counter_inner(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool {
     use crate::engine::stack::{cast_counter, counter_side_effects, pick_counter, settle_stack};
     let parts = format!("{}:ctr", g.player(q).key);
     let base_seed = decision_seed(g, &parts);
@@ -403,6 +465,7 @@ pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool
                 Ok(true) => false,
                 Err(Stop::OutOfWork) => true,
                 Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+                Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
             };
             scores[k] += evaluate(&g2, q);
             done(g, &g2, w0, cut);

@@ -313,13 +313,17 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
 }
 
 pub fn can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -> bool {
-    // PORT(phase 9): practice mode pays from the person's floating mana pool (play/mana.pool_can_pay)
+    if crate::human::is_human(g, p) {
+        return crate::human::mana::pool_can_pay(g, p, generic, pips); // practice mode: from the person's pool
+    }
     plan_pay(g, &mana_units(g, p, convoke), generic, pips).is_some()
 }
 
 /// p pays the cost; false (nothing paid) if it can't
 pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -> Res<bool> {
-    // PORT(phase 9): practice mode pays from the person's pool (play/mana.pay_from_pool)
+    if crate::human::is_human(g, p) {
+        return Ok(crate::human::mana::pay_from_pool(g, p, generic, pips).is_none());
+    }
     let u = mana_units(g, p, convoke);
     let Some((used, col)) = plan_pay(g, &u, generic, pips) else { return Ok(false) };
     for (i, w) in u.iter().enumerate() {

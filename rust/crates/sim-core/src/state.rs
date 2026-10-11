@@ -13,7 +13,7 @@
 //! - Card-specific state on a permanent (Python's `m.data` dict) is `PermData`: a short list of typed keys.
 
 use crate::cards::{CardDb, Colors};
-use crate::control::Humans;
+use crate::control::{Humans, Link};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::rng::Rng;
 use crate::settings::Settings;
@@ -329,6 +329,8 @@ pub struct Player {
     pub foods: u32,
     pub poison: u32,
     pub floating: Floating,
+    /// practice mode: the mana a person has made and not spent (Python's `p.pool`; inert for AI seats)
+    pub pool: crate::human::mana::ManaPool,
     pub extra_combats: u32,
     pub combat_no: u32,
     pub spells_this_turn: u32,
@@ -545,6 +547,7 @@ impl Player {
             foods: 0,
             poison: 0,
             floating: Floating::default(),
+            pool: Default::default(),
             extra_combats: 0,
             combat_no: 0,
             spells_this_turn: 0,
@@ -859,6 +862,8 @@ pub struct Game {
     /// permanents with hand-written card code, in entry order (Python's `g.hooks`)
     pub hooks: Vec<PermId>,
     pub stack: Vec<StackItem>,
+    /// practice mode: >0 while the person is responding with something on the stack (Python's `g.responding`)
+    pub responding: u32,
     /// items ever put on the stack: tells whether a player with priority did something; also the next item's id
     pub stack_pushes: u32,
     /// 'probe' while finding out which pending triggers really trigger (Python's `trig_mode`)
@@ -887,6 +892,10 @@ pub struct Game {
     pub log: Option<Vec<String>>,
     /// practice mode's people; a copy of the game never has any (see `control::Humans`)
     pub humans: Humans,
+    /// practice mode: the session's log sink and abort flag (a copy has none)
+    pub link: Link,
+    /// practice mode: the real game's look-ahead decisions, recorded and replayed (a copy has none)
+    pub search_tape: crate::ai::tape::TapeSlot,
     /// the X paid for the last X spell (card code that reads it: Walking Ballista ...)
     pub last_x: i32,
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
@@ -1001,6 +1010,7 @@ impl Game {
             cur_batch: None,
             hooks: vec![],
             stack: vec![],
+            responding: 0,
             stack_pushes: 0,
             trig_probe: false,
             trig_current: None,
@@ -1016,6 +1026,8 @@ impl Game {
             in_search: false,
             log: None,
             humans: Humans::none(),
+            link: Link::default(),
+            search_tape: Default::default(),
             last_x: 0,
             forced_attack: None,
             search_n: 0,
@@ -1080,6 +1092,9 @@ impl Game {
     /// One engine step (Python's `tick`): a game, or a look-ahead copy, that runs past its budget stops.
     pub fn tick(&mut self) -> crate::flow::Res {
         self.work += 1;
+        if self.link.abort.is_some() && self.link.aborted() {
+            return Err(crate::flow::Stop::Cancelled);
+        }
         if self.work > self.work_cap {
             return Err(crate::flow::Stop::OutOfWork);
         }

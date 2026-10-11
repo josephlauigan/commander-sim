@@ -33,6 +33,8 @@ pub enum Answer {
     Yes,
     No,
     Cancel,
+    /// the page's 'cancel' answer (a way out of a choice that has one); not the same as `Cancel`
+    Decline,
     /// an action on the human's own turn (tap, land, cast, use, pass), as the page sends it
     Action(serde_json::Value),
 }
@@ -42,6 +44,63 @@ pub trait Human: Send + Sync {
     fn ask(&self, g: &Game, seat: PlayerId, req: Request) -> Answer;
     /// Tell the person something that needs no answer ('info', 'warn' ...).
     fn tell(&self, seat: PlayerId, kind: Sym, text: &str);
+    /// Is a person watching (the browser, the terminal)? Python's `ctl.notify is not None`: only then do choices
+    /// carry `refs` (where each choice sits on the table) and the `view`. A `ScriptHuman` is not live.
+    fn live(&self) -> bool {
+        false
+    }
+    /// The seat's auto-pass setting: 'respond' (default), 'stack' or 'all' (Python's `ctl.autopass`).
+    fn autopass(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+/// Where the game's log lines go as they happen (practice mode's event stream). `secret` is set for a line only one
+/// seat may read (Python's `EventLog.secret`): the sink is handed `public` as `line` and the full line in `secret`.
+pub trait LogSink: Send + Sync {
+    fn line(&self, g: &Game, line: &str, secret: Option<(PlayerId, &str)>);
+}
+
+/// A running practice game's links to its session: the log sink and the abort flag (set when the session is closed
+/// or rewound: the next engine step stops the game with `Stop::Cancelled`). Cloning gives no links, like `Humans`:
+/// a look-ahead copy neither reports nor aborts.
+#[derive(Default)]
+pub struct Link {
+    pub sink: Option<Arc<dyn LogSink>>,
+    pub abort: Option<Arc<std::sync::atomic::AtomicBool>>,
+}
+
+impl Link {
+    pub fn aborted(&self) -> bool {
+        self.abort.as_ref().is_some_and(|a| a.load(std::sync::atomic::Ordering::Relaxed))
+    }
+}
+
+impl Clone for Link {
+    fn clone(&self) -> Link {
+        Link::default()
+    }
+}
+
+impl std::fmt::Debug for Link {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Link")
+    }
+}
+
+impl Game {
+    /// A log line naming a card only seat `p` may see (a card tutored to hand): the game's log keeps `line` whole;
+    /// `p` is shown `line`, the others `public` (Python's `g.log.secret(key, public, line)`).
+    pub fn log_secret(&mut self, p: PlayerId, public: &str, line: &str) {
+        let full = format!("R{:<2} {}", self.round, line);
+        if let Some(log) = self.log.as_mut() {
+            log.push(full.clone());
+        }
+        if let Some(s) = self.link.sink.clone() {
+            let public = format!("R{:<2} {}", self.round, public);
+            s.line(self, &public, Some((p, &full)));
+        }
+    }
 }
 
 type Seats = [Option<Arc<dyn Human>>; MAX_SEATS];
