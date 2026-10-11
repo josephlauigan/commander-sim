@@ -9,8 +9,8 @@ These rules replace `rust/agents/RULES.md`, which was written for the Python por
 ## Hard rules
 - **Never run Python.** No `python3`, no `rust/tools/difftest.py`, no old audit scripts, not even a helper one-liner.
   Use shell tools (`grep`, `sed`, `awk`, `jq`), `cardgen` and `commander-sim`, or a Rust test or example.
-- **Your worktree is your whole world.** `cd` into it for every command. Its branch was made from
-  `overnight-models`; don't merge anything else in, and don't push.
+- **Your worktree is your whole world.** `cd` into it for every command. Its branch was made from the
+  branch your brief names; don't merge anything else in, and don't push.
 - **Memory cap on every build, test and binary:** `systemd-run --user --scope -q -p MemoryMax=8G -p MemorySwapMax=0
   <command>`. Exit 137 means the cap was hit: that's a bug (something growing without bound), never a flake.
 - Toolchain: `export PATH=$HOME/.cargo/bin:$PATH`; build from `rust/`. In zsh, write commands out (a command stored in
