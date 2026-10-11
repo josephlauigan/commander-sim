@@ -16,7 +16,7 @@
 //!   tappers before an opponent's combat.
 //!
 //! Not ported: `galadriel_abilities` (it returns False, and only Python's old-mode main loop calls it; the Rust has no
-//! old mode). The person's choices (practice mode) are `HUMAN(phase 9)`. Other modules' functions it uses
+//! old mode). The person's choices (practice mode) are in `human/cards.rs` and the `human_of` branches. Other modules' functions it uses
 //! (marchesa.best_steal / steal, zur.guildmage_target / rootborn, t2.blink / blink_value) are re-exported at the end
 //! of this file.
 
@@ -396,8 +396,8 @@ pub fn alliance_value(g: &Game, p: PlayerId, mode: &str) -> f64 {
 }
 
 /// Alliance: whenever another creature you control enters, choose one that hasn't been chosen this turn: {G}{G}{G},
-/// a +1/+1 counter on each creature you control, or scry 2 and draw (the AI weighs them). HUMAN(phase 9): a person
-/// chooses the mode (and the mana goes to their pool).
+/// a +1/+1 counter on each creature you control, or scry 2 and draw (the AI weighs them). A person chooses the
+/// mode (and the mana goes to their pool).
 fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     if m == src || g.perm(m).owner != o || !g.is_creature(m) || !controls(g, o, src) || g.perm(src).phased {
@@ -414,7 +414,14 @@ fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if left.is_empty() {
         return Ok(());
     }
-    let mode = first_max(&left, |x| alliance_value(g, o, x)).unwrap();
+    let hum = human_of(g, o).is_some();
+    let mode = if hum {
+        let labels: Vec<String> = left.iter().map(|&x| mode_text(x).to_string()).collect();
+        let prompt = format!("Galadriel (Alliance, {} entered): choose one", g.perm(m).name);
+        left[choices::choose_one(g, o, "choose", &prompt, &labels)?]
+    } else {
+        first_max(&left, |x| alliance_value(g, o, x)).unwrap()
+    };
     let mut v = vec![Val::Stamp(g.turn_stamp())];
     v.extend(done.iter().map(|&x| Val::Str(x)));
     v.push(Val::Str(mode));
@@ -424,6 +431,7 @@ fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     g.player_mut(o).stat(intern(&format!("alliance_{mode}")), 1);
     crate::glog!(g, "    Galadriel (Alliance): {}", mode_text(mode));
     match mode {
+        "mana" if hum => g.player_mut(o).pool.add('G', 3),
         "mana" => g.player_mut(o).floating.g += 3,
         "counters" => {
             for x in g.player(o).perms.clone() {
@@ -567,11 +575,25 @@ fn best_rebel(g: &Game, p: PlayerId, cap: u32, zone: Option<&[CardId]>) -> Optio
 }
 
 /// galadriel.put_rebel: search (or, from the graveyard, return) a Rebel permanent card with mana value cap or less onto
-/// the battlefield: the AI takes the most useful one. HUMAN(phase 9): a person picks.
+/// the battlefield: you pick; the AI takes the most useful one.
 fn put_rebel(g: &mut Game, p: PlayerId, src: &str, cap: u32, from_gy: bool) -> Res<Option<PermId>> {
     let pool = if from_gy { g.player(p).gy.clone() } else { searchable(g, p) };
     let cs = rebel_cards(g, p, &pool, cap);
-    let c = first_max(&cs, |c| (rebel_value(g, p, c), g.db.get(c).cmc));
+    let c = if human_of(g, p).is_some() {
+        if cs.is_empty() {
+            crate::glog!(g, "    {}: no Rebel to find", src);
+            if !from_gy {
+                shuffle_library(g, p);
+            }
+            return Ok(None);
+        }
+        let labels: Vec<String> =
+            cs.iter().map(|&c| format!("{} (mana value {})", g.db.get(c).name, g.db.get(c).cmc)).collect();
+        let prompt = format!("{src}: put which Rebel (mana value {cap} or less) onto the battlefield?");
+        choices::choose(g, p, "search", &prompt, &labels, Some("find nothing"), None)?.map(|k| cs[k])
+    } else {
+        first_max(&cs, |c| (rebel_value(g, p, c), g.db.get(c).cmc))
+    };
     let Some(c) = c else {
         if !from_gy {
             shuffle_library(g, p);
@@ -950,7 +972,7 @@ pub fn vanguard_blocks(g: &mut Game, assign: &[(PermId, PermId)]) -> Res {
 }
 
 /// Knight of the Holy Nimbus (CI.SELF_REGEN): flanking; if it would be destroyed it regenerates, unless an opponent
-/// paid {2} this turn (the AI pays when it can). HUMAN(phase 9): a person decides whether to pay.
+/// paid {2} this turn (the AI pays when it can; a person decides whether to pay).
 fn nimbus_regen(g: &mut Game, m: PermId) -> Res<bool> {
     let p = g.perm(m).owner;
     let st = g.turn_stamp();
@@ -965,7 +987,12 @@ fn nimbus_regen(g: &mut Game, m: PermId) -> Res<bool> {
         if q == p || !g.player(q).alive {
             continue;
         }
-        if can_pay(g, q, 2, "", false) && pval(g, m) >= 1.5 {
+        if human_of(g, q).is_some() {
+            if choices::pay_tax(g, q, 2, "Knight of the Holy Nimbus (it can't regenerate this turn)")? {
+                g.perm_mut(m).data.set(DataKey::Noregen, Val::Stamp(st));
+                return Ok(false);
+            }
+        } else if can_pay(g, q, 2, "", false) && pval(g, m) >= 1.5 {
             pay(g, q, 2, "", false)?;
             crate::glog!(g, "    {} pays {{2}}: Knight of the Holy Nimbus can't regenerate", pname(g, q));
             g.perm_mut(m).data.set(DataKey::Noregen, Val::Stamp(st));
@@ -1083,12 +1110,16 @@ pub fn crackdown_holds(g: &Game, m: PermId) -> bool {
 
 // ================================================================== Abduction
 /// Abduction: enchant creature: you control it; it untaps as the Aura enters; when it dies, it returns to its owner.
-/// HUMAN(phase 9): a person picks the creature.
+/// A person picks the creature.
 fn abduction(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
-    let t = best_steal(g, p, g.perm(src).cd);
+    let t = if human_of(g, p).is_some() {
+        cards::pick_creature(g, p, "Abduction: enchant (and gain control of) which creature?", false, false, None)?
+    } else {
+        best_steal(g, p, g.perm(src).cd)
+    };
     let Some(t) = t else {
         leave(g, src)?;
         to_zone_card(g, src, Zone::Gy);
@@ -1175,13 +1206,34 @@ fn abduction_sba(g: &mut Game, src: Src) -> Res {
 }
 
 // ================================================================== spells
-/// Bribery: the best creature in an opponent's library onto the battlefield under your control. HUMAN(phase 9): a
-/// person chooses the opponent and the card.
+/// Bribery: the best creature in an opponent's library onto the battlefield under your control (a person chooses
+/// the opponent and the card).
 fn bribery(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if g.opps(p).next().is_none() {
         return Ok("gy");
     }
-    let (q, pick) = bribery_pick(g, p);
+    let (q, pick) = if human_of(g, p).is_some() {
+        let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive).collect();
+        let q = cards::pick_player(g, p, "target", "Bribery: search which opponent's library?", &opps)?;
+        let mut cs: Vec<CardId> = g.player(q).library.iter().copied().filter(|&x| g.db.get(x).creature).collect();
+        cs.sort_by(|&a, &b| {
+            let (da, db) = (g.db.get(a), g.db.get(b));
+            db.cmc.cmp(&da.cmc).then_with(|| da.name.cmp(&db.name))
+        });
+        let mut pick = None;
+        if !cs.is_empty() {
+            let labels: Vec<String> =
+                cs.iter().map(|&x| format!("{} (mana value {})", g.db.get(x).name, g.db.get(x).cmc)).collect();
+            let prompt = format!(
+                "Bribery: put which creature from {}'s library onto the battlefield under your control?",
+                pname(g, q)
+            );
+            pick = choices::choose(g, p, "search", &prompt, &labels, Some("find nothing"), None)?.map(|j| cs[j]);
+        }
+        (Some(q), pick)
+    } else {
+        bribery_pick(g, p)
+    };
     let Some(q) = q else { return Ok("gy") };
     if let Some(x) = pick {
         remove_first(&mut g.player_mut(q).library, x);
@@ -1259,12 +1311,26 @@ pub fn interlude(g: &mut Game, p: PlayerId, ms: &[PermId]) -> Res {
 }
 
 /// Eerie Interlude: exiles any of your creatures; they return at the beginning of the next end step (the AI saves its
-/// board from a wipe or a creature from removal). HUMAN(phase 9): a person's chosen targets (Python's
-/// `ctx['targets']`, which only practice mode sets).
+/// board from a wipe or a creature from removal). A person picks any of theirs (Python reads
+/// `ctx['targets']` first, which nothing sets).
 fn eerie(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let mine: Vec<PermId> =
         g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
-    let ms: Vec<PermId> = mine.into_iter().filter(|&m| !g.perm(m).token && etb_worth(g, p, m) > 0.0).collect();
+    let ms: Vec<PermId> = if human_of(g, p).is_some() {
+        let mut ms: Vec<PermId> = vec![];
+        loop {
+            let left: Vec<PermId> = mine.iter().copied().filter(|m| !ms.contains(m)).collect();
+            if left.is_empty() {
+                break;
+            }
+            let prompt = format!("Eerie Interlude: exile which of your creatures? ({} so far)", ms.len());
+            let Some(t) = cards::pick_perm(g, p, "target", &prompt, &left, Some("done"))? else { break };
+            ms.push(t);
+        }
+        ms
+    } else {
+        mine.into_iter().filter(|&m| !g.perm(m).token && etb_worth(g, p, m) > 0.0).collect()
+    };
     let ms: Vec<PermId> = ms.into_iter().filter(|&m| controls(g, p, m)).collect();
     interlude(g, p, &ms)?;
     Ok("gy")
@@ -1282,10 +1348,26 @@ pub fn etb_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
 }
 
 /// Flicker: exiles a nontoken permanent and returns it at once under its owner's control (the AI blinks its best
-/// enters-the-battlefield creature). HUMAN(phase 9): a person picks.
+/// enters-the-battlefield creature; a person picks).
 fn flicker(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let t = match ctx.target {
         Some(t) => Some(t),
+        None if human_of(g, p).is_some() => {
+            let cands: Vec<PermId> = g
+                .players
+                .iter()
+                .filter(|q| q.alive)
+                .flat_map(|q| q.perms.iter().copied())
+                .filter(|&m| {
+                    let x = g.perm(m);
+                    !x.token && !x.phased && x.cd.is_some() && !(x.owner != p && untargetable(g, m))
+                })
+                .collect();
+            if cands.is_empty() {
+                return Ok("gy");
+            }
+            cards::pick_perm(g, p, "target", "Flicker: exile and return which nontoken permanent?", &cands, None)?
+        }
         None => flicker_target(g, p),
     };
     let Some(t) = t.filter(|&t| on_bf(g, t)) else { return Ok("gy") };
@@ -1314,7 +1396,7 @@ pub fn flicker_target(g: &Game, p: PlayerId) -> Option<PermId> {
 }
 
 /// Planar Genesis: top four: a land onto the battlefield tapped, or else a card into your hand; the rest to the bottom
-/// in a random order. HUMAN(phase 9): a person picks.
+/// in a random order (a person picks).
 fn genesis(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let n = 4.min(g.player(p).library.len());
     let mut top = vec![];
@@ -1323,7 +1405,22 @@ fn genesis(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     }
     let lands: Vec<CardId> = top.iter().copied().filter(|&x| g.db.get(x).land).collect();
     let (mut land, mut take) = (None, None);
-    if !lands.is_empty() && g.player(p).lands.len() < 8 {
+    if human_of(g, p).is_some() {
+        if !lands.is_empty() {
+            let names: Vec<String> = top.iter().map(|&x| g.db.get(x).name.to_string()).collect();
+            let labels: Vec<String> = lands.iter().map(|&x| g.db.get(x).name.to_string()).collect();
+            let prompt = format!(
+                "Planar Genesis: put a land onto the battlefield tapped? (top four: {})",
+                names.join(", ")
+            );
+            land = choices::choose(g, p, "choose", &prompt, &labels, Some("no land"), None)?.map(|k| lands[k]);
+        }
+        if land.is_none() && !top.is_empty() {
+            let labels: Vec<String> = top.iter().map(|&x| g.db.get(x).name.to_string()).collect();
+            let k = choices::choose_one(g, p, "choose", "Planar Genesis: put which card into your hand?", &labels)?;
+            take = Some(top[k]);
+        }
+    } else if !lands.is_empty() && g.player(p).lands.len() < 8 {
         land = Some(lands[0]);
     } else {
         take = max_by(&top, |x| card_worth(g, p, x, false));
@@ -1375,8 +1472,8 @@ fn genesis_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// Return to Dust: exile target artifact or enchantment; cast in your main phase, a second one too. HUMAN(phase 9): a
-/// person picks the second.
+/// Return to Dust: exile target artifact or enchantment; cast in your main phase, a second one too (a person picks
+/// the second).
 fn dust(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let t = ctx.target;
     if let Some(t) = t
@@ -1404,8 +1501,22 @@ fn dust(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
             }
         }
     }
-    let theirs: Vec<PermId> = cands.into_iter().filter(|&m| g.perm(m).owner != p).collect();
-    let t2 = max_by(&theirs, |m| pval(g, m)).filter(|&m| pval(g, m) >= 1.0);
+    let t2 = if human_of(g, p).is_some() {
+        if cands.is_empty() {
+            return Ok("gy");
+        }
+        cards::pick_perm(
+            g,
+            p,
+            "target",
+            "Return to Dust (main phase): exile up to one other artifact or enchantment?",
+            &cands,
+            Some("no second target"),
+        )?
+    } else {
+        let theirs: Vec<PermId> = cands.into_iter().filter(|&m| g.perm(m).owner != p).collect();
+        max_by(&theirs, |m| pval(g, m)).filter(|&m| pval(g, m) >= 1.0)
+    };
     if let Some(t2) = t2 {
         apply_removal(g, Some(p), t2, "exile", Some(c))?;
     }
@@ -1474,10 +1585,17 @@ fn drum_mana(g: &Game, p: PlayerId, _m: PermId) -> u32 {
     !drum_creatures(g, p).is_empty() as u32
 }
 
-/// galadriel._drum_tap: tap an untapped creature you control as part of the cost: the AI taps one that won't attack.
-/// HUMAN(phase 9): a person chooses.
+/// galadriel._drum_tap: tap an untapped creature you control as part of the cost: the AI taps one that won't attack (a person
+/// chooses).
 fn drum_tap(g: &mut Game, p: PlayerId, _m: PermId, _used: u32) -> Res {
     let cs = drum_creatures(g, p);
+    if human_of(g, p).is_some() && cs.len() > 1 {
+        let x = cards::pick_perm(g, p, "choose", "Springleaf Drum: tap which creature?", &cs, None)?;
+        if let Some(x) = x {
+            g.perm_mut(x).tapped = true;
+        }
+        return Ok(());
+    }
     if let Some(x) = first_min(&cs, |x| {
         let y = g.perm(x);
         (!y.sick, !y.noatk, epow(g, x))
