@@ -205,3 +205,14 @@ fn rift_bolt_suspends_and_is_cast_at_the_next_upkeep() {
     assert!(g.player(P0).gy.contains(&c));
     assert_eq!(g.player(P1).life, 37);
 }
+
+#[test]
+fn torbran_adds_two_per_unblocked_attacker_in_combat() {
+    // added by the lead: the bonus is per source, so a wide attack gains 2 for every creature that connects
+    let mut g = game();
+    perm(&mut g, P0, "Torbran, Thane of Red Fell");
+    let atk: Vec<PermId> = (0..3).map(|_| token(&mut g, P0, 1)).collect();
+    let before = g.player(P1).life;
+    sim_core::engine::combat::resolve_combat(&mut g, P0, &atk, P1, &atk).unwrap();
+    assert_eq!(before - g.player(P1).life, 9, "three 1/1s deal 3 each with Torbran out");
+}
