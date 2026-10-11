@@ -32,7 +32,6 @@ pub mod zada;
 pub mod zada_cards;
 pub mod glissa;
 pub mod jenova;
-pub mod yawgmoth;
 pub mod green_cards;
 pub mod titania;
 pub mod zur;
@@ -69,7 +68,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     zada_cards::register(&mut r, db)?;
     glissa::register(&mut r, db)?;
     jenova::register(&mut r, db)?;
-    yawgmoth::register(&mut r, db)?;
     green_cards::register(&mut r, db)?;
     titania::register(&mut r, db)?;
     Ok(r)

@@ -752,7 +752,6 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         "zada" => Ok(crate::impls::zada::zada_options(g, p, post)),
-        "yawgmoth" => crate::impls::yawgmoth::yawgmoth_options(g, p, post),
         "titania" => crate::impls::titania::titania_special(g, p, post),
         _ => Ok(vec![]),
     }
