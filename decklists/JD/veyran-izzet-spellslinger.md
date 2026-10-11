@@ -12,6 +12,7 @@
 **Updated 2026-10-04.** Out: Twinflame. In: Crawlspace. Twinflame → Crawlspace: no more than two creatures can attack you each combat, against the creature decks that cause most of the deck's losses.
 **Updated 2026-10-05.** Out: Crawlspace. In: Propaganda. Crawlspace → Propaganda, the planned swap once Propaganda was found (it tested ahead of Crawlspace in the 10-04 rebuild).
 **Updated 2026-10-06.** Out: Mystical Tutor. In: Underworld Breach. Mystical Tutor → Underworld Breach: every escape is a cast, so the pingers, token makers and Storm-Kiln Artist trigger again, doubled by Veyran. Still three Game Changers (Bracket 3).
+**Updated 2026-10-11.** Out: Cyclonic Rift. In: Evacuation. Matched to JD's physical list: Cyclonic Rift is in Sauron, so Veyran plays Evacuation; two Game Changers now (Jeska's Will, Underworld Breach)
 
 ## Strategy
 
@@ -40,7 +41,7 @@ With one of these out, a four-spell turn leaves eight tokens. Unlike the command
 
 **Thousand-Year Storm** copies each instant or sorcery once for every other one you've cast before it this turn. Copies trigger magecraft (and Veyran doubles those) but aren't casts, so they don't trigger Guttersnipe, Kessig, Parun, or the token makers. Storm-Kiln Artist's magecraft does see them. The fourth spell of a turn becomes four spells' worth of magecraft.
 
-**Alania, Divergent Storm copies the first instant and the first sorcery you cast each turn** (yours and opponents' turns alike), if you have a target opponent draw a card for each copy. Each copy is optional, so take only the ones worth a card. Casting the spell is what triggers Alania, so **Veyran makes it trigger twice**, and Alania is a Wizard, so **Harmonic Prodigy adds a third**: with both out, your first instant and first sorcery each resolve up to four times. Like Thousand-Year Storm's, the copies trigger magecraft (Archmage Emeritus draws, Veyran grows) but aren't casts, so Guttersnipe, Kessig, Parun and the token makers see only the original, while Storm-Kiln Artist makes a Treasure for each copy. The best first spells: **Jeska's Will** (hand the cards to the opponent you'll count for mana, and each copy makes more), Ancestral Recall, Expressive Iteration, Seething Song (each copy is another five red), Crackle with Power (copies keep X), an overloaded Cyclonic Rift, and Lightning Bolt. A copied counterspell is rarely worth a card. Spells cast before Alania landed still count: if your first instant this turn came before Alania, the next one isn't copied.
+**Alania, Divergent Storm copies the first instant and the first sorcery you cast each turn** (yours and opponents' turns alike), if you have a target opponent draw a card for each copy. Each copy is optional, so take only the ones worth a card. Casting the spell is what triggers Alania, so **Veyran makes it trigger twice**, and Alania is a Wizard, so **Harmonic Prodigy adds a third**: with both out, your first instant and first sorcery each resolve up to four times. Like Thousand-Year Storm's, the copies trigger magecraft (Archmage Emeritus draws, Veyran grows) but aren't casts, so Guttersnipe, Kessig, Parun and the token makers see only the original, while Storm-Kiln Artist makes a Treasure for each copy. The best first spells: **Jeska's Will** (hand the cards to the opponent you'll count for mana, and each copy makes more), Ancestral Recall, Expressive Iteration, Seething Song (each copy is another five red), Crackle with Power (copies keep X), Evacuation, and Lightning Bolt. A copied counterspell is rarely worth a card. Spells cast before Alania landed still count: if your first instant this turn came before Alania, the next one isn't copied.
 
 **Protecting Veyran.** Three pieces, chosen from simulator testing:
 
@@ -96,7 +97,7 @@ The list is exactly 100 cards.
 
 - **Three ways to stop a spell:** Counterspell, An Offer You Can't Refuse and Venser. Deflecting Swat redirects a spell instead (free with Veyran out).
 - **Seven pieces of spot removal**, plus **Unsummon**, a one-mana bounce that also saves one of your own creatures.
-- **Three resets:** Blasphemous Act, River's Rebuke and Cyclonic Rift.
+- **Three resets:** Blasphemous Act, River's Rebuke and Evacuation (every creature back to its owner's hand, which also fills the hands Jeska's Will counts).
 
 Every one is also a magecraft trigger. Expect to hold up mana less often and win more by building a board.
 
@@ -122,13 +123,13 @@ Timing note: **Solve the Equation puts the card into your hand**, so you can cas
 
 ## Bracket and Rule 0
 
-Bracket 3, at the cap with **three** Game Changers: **Underworld Breach**, **Cyclonic Rift**, and **Jeska's Will** (Breach replaced Mystical Tutor on 10-06). A fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation, Deflecting Swat and Propaganda are all off-list.
+Bracket 3 with **two** Game Changers: **Underworld Breach** and **Jeska's Will** (Breach replaced Mystical Tutor on 10-06; Cyclonic Rift is in Sauron). One more still fits Bracket 3; a fourth moves the deck to Bracket 4. Imperial Recruiter, Thousand-Year Storm, both Niv-Mizzets, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation, Deflecting Swat and Propaganda are all off-list.
 
 **No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns. Twinflame, half of the Dualcaster Mage infinite, left on 10-04.
 
 Disclose before the game:
 
-- **Cyclonic Rift**, **Jeska's Will**, and **Underworld Breach** (the three Game Changers). Breach makes the big turn longer: it lets you cast your graveyard's instants and sorceries again, so mention it as a combo enabler.
+- **Jeska's Will** and **Underworld Breach** (the two Game Changers). Breach makes the big turn longer: it lets you cast your graveyard's instants and sorceries again, so mention it as a combo enabler.
 - **Aetherflux Reservoir** as a 50-damage finisher after a long turn.
 - **Thousand-Year Storm** and the pinger suite, which can turn one turn into a lot of damage to each opponent.
 - **Fiery Emancipation**, which triples all of your damage (a Guttersnipe with Veyran out deals 12 to each opponent per spell).
@@ -148,7 +149,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (6).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm, Underworld Breach
 
-**Instants (20).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Cyclonic Rift, Deduce, Deflecting Swat, Dreams of Laguna, Flashback, Lightning Bolt, Plunder the Trollshaws, Prismari Charm, Quick Study, Slip Out the Back, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
+**Instants (20).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Deflecting Swat, Dreams of Laguna, Evacuation, Flashback, Lightning Bolt, Plunder the Trollshaws, Prismari Charm, Quick Study, Slip Out the Back, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
 **Sorceries (11).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Jeska's Will, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Stock Up
 
@@ -173,7 +174,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Command Tower
 1 Counterspell
 1 Crackle with Power
-1 Cyclonic Rift
 1 Deduce
 1 Deflecting Swat
 1 Desolate Lighthouse
@@ -182,6 +182,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Emeritus of Conflict // Lightning Bolt
 1 Emeritus of Ideation // Ancestral Recall
 1 Eris, Roar of the Storm
+1 Evacuation
 1 Evolving Wilds
 1 Exotic Orchard
 1 Expressive Iteration
@@ -298,7 +299,7 @@ The tokens list was the only one ahead at every tier under both AIs. The engine 
 
 **Weakest remaining slots**, if you want to keep tuning: Visions of Beyond (a one-card cantrip for most of the game — the twenty-card graveyard is rare here, since Emeritus of Ideation and Eris both want the yard) is the softest spell. The curve is still top-heavy, so a cheap body or rock back in for a six-drop is worth simming. Since 10-04 the deck runs light on counters (three, plus Deflecting Swat); if the table punishes tapped-out big turns, that's the gap to look at, and Spell Pierce is the first card to bring back.
 
-**Game Changers — at the cap.** Three: Underworld Breach, Cyclonic Rift, Jeska's Will. A fourth moves the deck to Bracket 4.
+**Game Changers.** Two: Underworld Breach, Jeska's Will. One more still fits Bracket 3; a fourth moves the deck to Bracket 4.
 
 **Rules notes carried forward.** Veyran has no first strike, and magecraft gives +1/+1 until end of turn, not permanent counters. The doubling applies only when your casting or copying an instant or sorcery is what caused the trigger.
 
