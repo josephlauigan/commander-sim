@@ -15,7 +15,7 @@
 //!   protection and wipe responses (Take Up the Shield here; Clever Concealment, Rootborn Defenses and Restoration
 //!   Angel in zur.py).
 //!
-//! The person's choices (practice mode) are `HUMAN(phase 9)`: the AI's choice is used.
+//! The person's choices (practice mode) are the `human_of` branches.
 //!
 //! The zur.py functions this module calls (untargetable_by_you, the lock Auras' LOCKS / lock_host /
 //! lock_worth, zur_protect, zur_wipe_response) come from `impls/zur.rs`, through the small `zur` module at the end of
@@ -34,6 +34,7 @@ use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{card_name, epow, etgh, protected_from, pval, threat, untargetable};
 use crate::engine::zones::{Enter, die, discard_cards, draw, enter, max_by, min_by};
 use crate::flow::Res;
+use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, aura, aura_spec, auras_on};
@@ -158,7 +159,9 @@ fn ysh_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
 // ======================================================== Curiosity
 /// on Y'shtola (her trigger hits every opponent), else your best evasive creature
 fn curiosity_host(g: &mut Game, p: PlayerId, a: PermId) -> Res<Option<PermId>> {
-    // HUMAN(phase 9): a person picks the creature (common.human_aura_host)
+    if human_of(g, p).is_some() {
+        return Ok(None); // the person picks (common.human_aura_host)
+    }
     if let Some(y) = ysh_perm(g, p)
         && !zur::untargetable_by_you(g, y)
     {
@@ -547,9 +550,19 @@ pub fn stolen_worth(g: &Game, p: PlayerId, c: CardId) -> f64 {
 }
 
 /// yshtola.steal_pick: p looks at cards `top` from owner's library and exiles one: the best to cast
-pub fn steal_pick(g: &Game, p: PlayerId, top: &[CardId]) -> CardId {
-    // HUMAN(phase 9): the person picks (hc.choose)
-    max_by(top, |c| stolen_worth(g, p, c)).unwrap()
+pub fn steal_pick(g: &Game, p: PlayerId, top: &[CardId], why: &str) -> Res<CardId> {
+    if human_of(g, p).is_some() {
+        let labels: Vec<String> = top
+            .iter()
+            .map(|&c| {
+                let d = g.db.get(c);
+                format!("{}{}", d.name, if d.land { " (a land: it can't be cast)" } else { "" })
+            })
+            .collect();
+        let prompt = format!("{why}: exile which card face down? (you may cast it, with mana of any type)");
+        return Ok(top[choices::choose_one(g, p, "choose", &prompt, &labels)?]);
+    }
+    Ok(max_by(top, |c| stolen_worth(g, p, c)).unwrap())
 }
 
 /// yshtola.exile_for: a land is just exiled; anything else p may cast
@@ -579,11 +592,14 @@ fn gonti(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if opps.is_empty() {
         return Ok(());
     }
-    // HUMAN(phase 9): the person picks the opponent
-    let q = max_by(&opps, |q| threat(g, o, q)).unwrap();
+    let q = if human_of(g, o).is_some() && opps.len() > 1 {
+        cards::pick_player(g, o, "target", "Gonti: look at which opponent's library?", &opps)?
+    } else {
+        max_by(&opps, |q| threat(g, o, q)).unwrap()
+    };
     let n = 4.min(g.player(q).library.len());
     let top: Vec<CardId> = (0..n).map(|_| g.player_mut(q).library.pop().unwrap()).collect();
-    let pick = steal_pick(g, o, &top);
+    let pick = steal_pick(g, o, &top, "Gonti")?;
     // Python keeps `c is not pick`: other copies of the picked card are dropped too (cards are shared objects)
     let mut rest: Vec<CardId> = top.iter().copied().filter(|&c| c != pick).collect();
     g.rng.shuffle(&mut rest);
@@ -609,7 +625,7 @@ fn thief(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) 
     }
     let n = 3.min(g.player(d).library.len());
     let top: Vec<CardId> = (0..n).map(|_| g.player_mut(d).library.pop().unwrap()).collect();
-    let pick = steal_pick(g, p, &top);
+    let pick = steal_pick(g, p, &top, "Thief of Sanity")?;
     for &c in &top {
         if c != pick {
             g.player_mut(d).gy.push(c);
@@ -625,12 +641,29 @@ fn taker(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = g.perm(src).owner;
-    // HUMAN(phase 9): the person's target, asked once the trigger is committed
-    let Some(t) = taker_target(g, o, Some(src)) else { return Ok(()) };
-    let name = format!("exile {}", g.perm(t).name);
+    let hum = human_of(g, o).is_some();
+    let t = if hum { None } else { taker_target(g, o, Some(src)) };
+    if t.is_none() && (!hum || taker_cands(g, o, Some(src)).is_empty()) {
+        return Ok(());
+    }
+    let name = match t {
+        Some(t) => format!("exile {}", g.perm(t).name),
+        None => "exile a creature or artifact".to_string(),
+    };
     if !trigger_window(g, o, Some(src), &name, Some(5.0))? {
         return Ok(());
     }
+    let t = if hum {
+        // the person's target (asked once the trigger is committed)
+        let cands = taker_cands(g, o, Some(src));
+        if cands.is_empty() {
+            return Ok(());
+        }
+        cards::pick_perm(g, o, "target", "Hostage Taker: exile which other creature or artifact?", &cands, None)?
+            .unwrap()
+    } else {
+        t.unwrap()
+    };
     if !g.perm(t).on_bf || g.perm(t).phased {
         return Ok(());
     }
@@ -802,8 +835,28 @@ pub fn cap_use(g: &mut Game, p: PlayerId, src: PermId, q: PlayerId) -> Res {
     if !ability_window_card(g, p, cd, &name, Some(5.0), None)? {
         return Ok(());
     }
-    // HUMAN(phase 9): the person picks the three cards
-    let picks = cap_picks(g, p, q).0;
+    let picks = if human_of(g, p).is_some() {
+        let mut picks: Vec<CardId> = vec![];
+        for i in 0..3 {
+            let mut pool: Vec<CardId> = vec![];
+            for &c in &g.player(q).library {
+                if !picks.contains(&c) && !pool.iter().any(|&x| g.db.get(x).name == g.db.get(c).name) {
+                    pool.push(c);
+                }
+            }
+            pool.sort_by(|&a, &b| g.db.get(a).name.cmp(&g.db.get(b).name));
+            if pool.is_empty() {
+                break;
+            }
+            let labels: Vec<String> = pool.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+            let prompt = format!("Jester's Cap: exile which card from {}'s library? ({} of 3)", pname(g, q), i + 1);
+            let Some(k) = choices::choose(g, p, "search", &prompt, &labels, Some("stop"), None)? else { break };
+            picks.push(pool[k]);
+        }
+        picks
+    } else {
+        cap_picks(g, p, q).0
+    };
     for &c in &picks {
         let pl = g.player_mut(q);
         if remove_card(&mut pl.library, c) {
@@ -827,8 +880,11 @@ fn petition(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     tutor(g, p, "any")?;
     let n = g.player(p).gy.iter().filter(|&&x| g.db.get(x).instant || g.db.get(x).sorcery).count();
     if n >= 2 {
-        // HUMAN(phase 9): a person's mana pool gets the {B}{B}{B}
-        g.player_mut(p).floating.b += 3;
+        if human_of(g, p).is_some() {
+            g.player_mut(p).pool.add('B', 3);
+        } else {
+            g.player_mut(p).floating.b += 3;
+        }
         crate::glog!(g, "    spell mastery: Dark Petition adds {{B}}{{B}}{{B}}");
     }
     Ok("gy")
@@ -836,7 +892,17 @@ fn petition(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 
 /// search for up to two enchantment cards (the AI: its two best for the board)
 fn plea(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    // HUMAN(phase 9): the person searches (hc.search)
+    if human_of(g, p).is_some() {
+        let pred = |g: &Game, c: CardId| crate::ai::decks::tutor_ok(g, "ench", c);
+        let got = choices::search(g, p, &pred, 2, "Plea for Guidance: search for up to two enchantment cards", true)?;
+        for x in got {
+            let pl = g.player_mut(p);
+            pl.hand.push(x);
+            pl.stat("tutored", 1);
+            pl.seen.insert(x);
+        }
+        return Ok("gy");
+    }
     tutor(g, p, "ench")?;
     tutor(g, p, "ench")?;
     Ok("gy")
