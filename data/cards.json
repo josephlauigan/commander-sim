@@ -10066,19 +10066,7 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "clue",
-       "n": 1
-      }
-     ],
-     "event": "dies",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "menace"
@@ -10091,10 +10079,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ dies, it deals 1 damage to you. Create a Clue token.   [partly: it deals 1 damage to you]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -18438,7 +18424,10 @@
    "types": "I",
    "generic": 1,
    "pips": "B",
-   "tags": {},
+   "tags": {
+    "rem": "destroy",
+    "tgt": "c"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -18450,10 +18439,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Target creature gets -3/-0 until end of turn. Then if that creature's power is 0 or less, destroy it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -23659,10 +23646,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Target opponent exiles a creature or planeswalker they control with the greatest mana value among creatures and planeswalkers they control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -41958,25 +41943,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 2,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -41984,10 +41951,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{2}, {T}: Target creature can't be blocked this turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -47741,15 +47706,20 @@
    "dsl": [
     {
      "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
      "effects": [
       {
        "do": "draw",
        "n": 2,
        "who": "you"
+      },
+      {
+       "do": "discard",
+       "n": 1,
+       "who": "you"
       }
-     ],
-     "event": "combat_damage",
-     "source": "equipped"
+     ]
     },
     {
      "type": "static",
@@ -47768,10 +47738,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever equipped creature deals combat damage to a player, you may draw two cards. If you do, discard a card.   [partly: if you do, discard a card]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -48060,6 +48028,29 @@
    "dsl": [
     {
      "type": "static",
+     "static": "equip_bonus",
+     "pow": 1,
+     "tgh": 0
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "flying"
+    },
+    {
+     "type": "triggered",
+     "event": "attack",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you"
+      }
+     ]
+    },
+    {
+     "type": "static",
      "static": "equip_cost",
      "mana": 2
     }
@@ -48075,10 +48066,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature gets +1/+0 and has flying and \"Whenever ~ attacks, you gain 1 life.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -52052,19 +52041,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters with two oil counters on it"
-    },
-    {
-     "type": "static",
-     "static": "self_scaling",
-     "pow": 1,
-     "per": "X"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flying"
@@ -52077,10 +52054,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever another creature or artifact you control is put into a graveyard from the battlefield, put an oil counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -54526,7 +54501,10 @@
    "types": "I",
    "generic": 2,
    "pips": "B",
-   "tags": {},
+   "tags": {
+    "rem": "shrink9999",
+    "tgt": "c"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -54538,10 +54516,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Target creature gets -0/-9999 until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
