@@ -64,74 +64,106 @@ Known simplifications: madness casts the card from the graveyard rather than fro
 
 ## Where the cards come from
 
-The commander, **Kefka, Court Mage**, comes out of Sauron. The 30 basics (15 Swamp, 9 Mountain, 6 Island) are your own. Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists). Set codes are the printings the bulk list showed; where it names more than one, any of them.
+The commander, **Kefka, Court Mage**, comes out of Sauron. The 30 basics (15 Swamp, 9 Mountain, 6 Island) are your own. Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 9 from the binder, 60 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them.
 
-**From the binder (9):** Disintegrate, Duress, Kaervek's Purge, Lightning Bolt, Mystic Confluence, Rhystic Study, Sisay's Ring, Swiftfoot Boots, Triskelion.
+### Black (28)
 
-**From bulk (60):**
+| Card | From | Set |
+|---|---|---|
+| Arcane Omens | Bulk | sos |
+| Blightspeaker | Bulk | tsr |
+| Cackling Fiend | Bulk | dmr |
+| Contract Killing | Bulk | xln |
+| Corroding Dragonstorm | Bulk | tdm |
+| Crux of Fate | Bulk | fic |
+| Dark Inquiry | Bulk | rix |
+| Deadly Embrace | Bulk | fin |
+| Decorum Dissertation | Bulk | sos |
+| Demonic Embrace | Bulk | gn3 |
+| Diabolic Tutor | Bulk | m11 |
+| Duress | Binder | — |
+| Eternal Student | Bulk | sos |
+| Extinguish the Light | Bulk | dmu |
+| Feed the Swarm | Bulk | soa |
+| Grim Servant | Bulk | mh3 |
+| Ichor Slick | Bulk | tsr |
+| Intellect Devourer | Bulk | clb |
+| Massacre Wurm | Bulk | m21 |
+| Night's Whisper | Bulk | dmc |
+| Postmortem Professor | Bulk | sos |
+| Rank Rat | Bulk | fra |
+| Screeching Soulbreaker | Bulk | fra |
+| Shimmercreep | Bulk | ecl |
+| Skullport Merchant | Bulk | list |
+| Sneering Shadewriter | Bulk | sos |
+| Stargaze | Bulk | soa |
+| Susurian Voidborn | Bulk | eoe |
 
-| Card | Set |
-|---|---|
-| Alpharael, Dreaming Acolyte | eoe |
-| Arcane Denial | msc |
-| Arcane Omens | sos |
-| Arcane Signet | fic, msc |
-| Big Score | snc |
-| Blazing Firesinger | sos |
-| Blightspeaker | tsr |
-| Blood Crypt | rtr |
-| Cackling Fiend | dmr |
-| Chaos Warp | moc |
-| Command Tower | khc, fic |
-| Contract Killing | xln |
-| Corroding Dragonstorm | tdm |
-| Crux of Fate | fic |
-| Dark Inquiry | rix |
-| Deadly Embrace | fin |
-| Decorum Dissertation | sos |
-| Demonic Embrace | gn3 |
-| Diabolic Tutor | m11 |
-| Eternal Student | sos |
-| Exotic Orchard | fic |
-| Extinguish the Light | dmu |
-| Feed the Swarm | soa |
-| Garrison Excavator | sos |
-| Gemstone Mine | tsb |
-| Grab the Prize | dsk |
-| Grim Servant | mh3 |
-| Hallway Heckler | fra |
-| Haunted Ridge | fra |
-| Ichor Slick | tsr |
-| Inner Fire | sok |
-| Intellect Devourer | clb |
-| Lightning Greaves | fic |
-| Massacre Wurm | m21 |
-| Night's Whisper | dmc |
-| Pongify | 2xm |
-| Postmortem Professor | sos |
-| Potioner's Trove | sos |
-| Psychosis Crawler | c15 |
-| Rank Rat | fra |
-| Rapturous Moment | sos |
-| Reality Shift | moc |
-| Rummaging Goblin | cmr, m15, m13 |
-| Sawblade Scamp | one |
-| Scarlet Spider, Kaine | spm |
-| Screeching Soulbreaker | fra |
-| Seize the Spoils | sos |
-| Shimmercreep | ecl |
-| Skullclamp | fic |
-| Skullport Merchant | list |
-| Sneering Shadewriter | sos |
-| Splatter Technique | sos |
-| Stadium Tidalmage | sos |
-| Stargaze | soa |
-| Susurian Voidborn | eoe |
-| Thought Vessel | msc |
-| Thrill of Possibility | dmu |
-| Twinned Vision | fra |
-| Underground River | fic |
-| Viashino Fangtail | rav |
+### Red (14)
+
+| Card | From | Set |
+|---|---|---|
+| Big Score | Bulk | snc |
+| Blazing Firesinger | Bulk | sos |
+| Chaos Warp | Bulk | moc |
+| Disintegrate | Binder | — |
+| Garrison Excavator | Bulk | sos |
+| Grab the Prize | Bulk | dsk |
+| Hallway Heckler | Bulk | fra |
+| Inner Fire | Bulk | sok |
+| Lightning Bolt | Binder | — |
+| Rummaging Goblin | Bulk | cmr, m15, m13 |
+| Sawblade Scamp | Bulk | one |
+| Seize the Spoils | Bulk | sos |
+| Thrill of Possibility | Bulk | dmu |
+| Viashino Fangtail | Bulk | rav |
+
+### Blue (5)
+
+| Card | From | Set |
+|---|---|---|
+| Arcane Denial | Bulk | msc |
+| Mystic Confluence | Binder | — |
+| Pongify | Bulk | 2xm |
+| Reality Shift | Bulk | moc |
+| Rhystic Study | Binder | — |
+
+### Multicolor (7)
+
+| Card | Colors | From | Set |
+|---|---|---|---|
+| Alpharael, Dreaming Acolyte | U/B | Bulk | eoe |
+| Kaervek's Purge | B/R | Binder | — |
+| Rapturous Moment | U/R | Bulk | sos |
+| Scarlet Spider, Kaine | B/R | Bulk | spm |
+| Splatter Technique | U/R | Bulk | sos |
+| Stadium Tidalmage | U/R | Bulk | sos |
+| Twinned Vision | U/R | Bulk | fra |
+
+### Colorless artifacts (9)
+
+| Card | From | Set |
+|---|---|---|
+| Arcane Signet | Bulk | fic, msc |
+| Lightning Greaves | Bulk | fic |
+| Potioner's Trove | Bulk | sos |
+| Psychosis Crawler | Bulk | c15 |
+| Sisay's Ring | Binder | — |
+| Skullclamp | Bulk | fic |
+| Swiftfoot Boots | Binder | — |
+| Thought Vessel | Bulk | msc |
+| Triskelion | Binder | — |
+
+### Lands (6)
+
+| Card | From | Set |
+|---|---|---|
+| Blood Crypt | Bulk | rtr |
+| Command Tower | Bulk | khc, fic |
+| Exotic Orchard | Bulk | fic |
+| Gemstone Mine | Bulk | tsb |
+| Haunted Ridge | Bulk | fra |
+| Underground River | Bulk | fic |
 
 ## Decklist by type (100)
 
