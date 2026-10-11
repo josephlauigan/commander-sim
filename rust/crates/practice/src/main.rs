@@ -67,8 +67,8 @@ fn main() {
         std::process::exit(text_game(&data, &arg, step));
     }
     let static_dir = static_dir.unwrap_or_else(|| {
-        let near = data.join("../commander_sim/play/static");
-        if near.join("index.html").exists() { near } else { root.join("commander_sim/play/static") }
+        let near = data.join("../rust/crates/practice/static");
+        if near.join("index.html").exists() { near } else { root.join("rust/crates/practice/static") }
     });
     if !static_dir.join("index.html").exists() {
         die(&format!("no index.html in {} (use --static DIR)", static_dir.display()));

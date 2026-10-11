@@ -108,7 +108,7 @@ fn start_rust() -> Option<(String, PathBuf, PathBuf)> {
             let cfg = Config {
                 saves: data.join("saves"),
                 data: data.clone(),
-                static_dir: root.join("commander_sim/play/static"),
+                static_dir: root.join("rust/crates/practice/static"),
                 lan: true,
                 app: false,
                 port: 0,

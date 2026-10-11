@@ -40,7 +40,7 @@ cd rust && cargo build --release -p practice
 ```
 
 Serves the same page as `python3 -m commander_sim.play` (default data folder `data/`, saves in `data/saves/`, page
-files from `commander_sim/play/static/`) and opens it in the browser unless `--no-browser`. `--lan` listens on the
+files from `rust/crates/practice/static/`) and opens it in the browser unless `--no-browser`. `--lan` listens on the
 local network too for a two-player game and prints the addresses. The terminal table (`--text`) and its options are
 accepted but not ported yet. The human seat's full game needs the practice-core and practice-cards work; until then a
 person is only asked the mulligan.
