@@ -317,37 +317,7 @@ pub fn can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
         return crate::human::mana::pool_can_pay(g, p, generic, pips); // practice mode: from the person's pool
     }
     let u = mana_units(g, p, convoke);
-    plan_pay(g, &u, generic, pips).is_some() || fixed_plan(g, p, &u, generic, pips).is_some()
-}
-
-/// Salvaged Manaworker (impls/gix.rs): when a colour is missing, one single mana becomes any colour of the deck's
-/// identity ({1}: add one mana of any colour, once each turn). The units with that one changed, the plan, and the
-/// Manaworker.
-fn fixed_plan(
-    g: &Game,
-    p: PlayerId,
-    u: &[Unit],
-    generic: u32,
-    pips: &str,
-) -> Option<(Vec<Unit>, Vec<u32>, Vec<String>, PermId)> {
-    if pips.is_empty() || g.hooks.is_empty() {
-        return None;
-    }
-    let fixer = crate::impls::gix::mana_fixer(g, p)?;
-    let ident = g.player(p).ident;
-    for i in 0..u.len() {
-        if u[i].amt != 1 || u[i].cols == ident {
-            continue;
-        }
-        let mut u2 = u.to_vec();
-        u2[i].cols = ident;
-        if let Some((used, col)) = plan_pay(g, &u2, generic, pips)
-            && used[i] > 0
-        {
-            return Some((u2, used, col, fixer));
-        }
-    }
-    None
+    plan_pay(g, &u, generic, pips).is_some()
 }
 
 /// p pays the cost; false (nothing paid) if it can't
@@ -356,16 +326,8 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
         return Ok(crate::human::mana::pay_from_pool(g, p, generic, pips).is_none());
     }
     g.treasure_paid = 0;
-    let mut u = mana_units(g, p, convoke);
-    let (used, col) = match plan_pay(g, &u, generic, pips) {
-        Some(x) => x,
-        None => {
-            let Some((u2, used, col, fixer)) = fixed_plan(g, p, &u, generic, pips) else { return Ok(false) };
-            u = u2;
-            crate::impls::gix::mana_fixer_used(g, fixer);
-            (used, col)
-        }
-    };
+    let u = mana_units(g, p, convoke);
+    let Some((used, col)) = plan_pay(g, &u, generic, pips) else { return Ok(false) };
     for (i, w) in u.iter().enumerate() {
         if used[i] > 0 {
             spend_unit(g, p, *w, used[i], &col[i])?;

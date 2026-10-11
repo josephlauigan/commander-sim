@@ -1771,10 +1771,9 @@ fn prio_40(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 }
 
 // ======================================================== Gix, Yawgmoth Praetor
-/// the cards the ability discards: cards of little use, and every land in hand once seven lands are out
+/// the cards the ability discards: cards of little use
 fn gix_junk(g: &Game, p: PlayerId) -> Vec<CardId> {
-    let flood = g.player(p).key == "gix" && g.player(p).lands.len() >= 7; // the candidate deck only
-    g.player(p).hand.iter().copied().filter(|&c| (flood && g.db.get(c).land) || card_worth(g, p, c, false) < 35.0).collect()
+    g.player(p).hand.iter().copied().filter(|&c| card_worth(g, p, c, false) < 35.0).collect()
 }
 
 fn gix_target(g: &Game, p: PlayerId) -> Option<PlayerId> {
@@ -1783,8 +1782,7 @@ fn gix_target(g: &Game, p: PlayerId) -> Option<PlayerId> {
 
 /// Full: {4}{B}{B}{B}, discard X junk cards: plays the top X of an opponent's library free
 fn gix(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    // late: with seven lands out
-    if g.perm(src).owner != p || post != Some(false) || (g.player(p).key == "gix" && g.player(p).lands.len() < 7)
+    if g.perm(src).owner != p || post != Some(false)
         || !can_pay(g, p, 4, "BBB", false) {
         return Ok(vec![]);
     }
