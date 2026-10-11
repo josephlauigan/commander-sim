@@ -6483,3 +6483,9 @@ note = "enters: a 0/0 green and blue Fractal with three +1/+1 counters; at the b
 dsl = []
 status = "Full"
 note = "{X}{G}: a 0/0 green and blue Fractal with X +1/+1 counters, then surveil 2; the AI casts it with all the spare mana (X of two or more)"
+
+["Crushing Canopy"]
+tags = "rem=destroy tgt=fe"
+dsl = []
+status = "Full"
+note = "destroy target creature with flying or target enchantment; the AI casts it only at a legal target"

@@ -15832,49 +15832,12 @@
    "pips": "G",
    "tags": {
     "rem": "destroy",
-    "tgt": "c"
+    "tgt": "fe"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "destroy",
-          "what": {
-           "sel": "target",
-           "filter": {
-            "type": "creature",
-            "kw": "flying"
-           },
-           "upto": false
-          }
-         }
-        ],
-        [
-         {
-          "do": "destroy",
-          "what": {
-           "sel": "target",
-           "filter": {
-            "type": "enchantment"
-           },
-           "upto": false
-          }
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -15882,7 +15845,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,

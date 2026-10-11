@@ -758,3 +758,16 @@ fn a_fetch_land_with_bill_out_of_reach_is_unchanged() {
     let wilds = card(&g, "Evolving Wilds");
     assert_eq!(sim_core::impls::bill::land_adjust(&g, P0, wilds), 0.0);
 }
+
+#[test]
+fn crushing_canopy_is_cast_only_at_a_flier_or_an_enchantment() {
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Crushing Canopy"]);
+    let elf = perm(&mut g, P1, "Llanowar Elves");
+    assert!(!has_option(&mut g, false, "Crushing Canopy"), "not at a ground creature");
+    let rs = perm(&mut g, P1, "Rhystic Study");
+    assert!(take_option(&mut g, P0, false, "Crushing Canopy"));
+    assert!(!g.perm(rs).on_bf);
+    assert!(g.perm(elf).on_bf);
+}

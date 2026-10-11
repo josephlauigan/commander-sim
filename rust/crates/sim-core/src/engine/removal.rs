@@ -42,6 +42,10 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 "cna" => is_c && !ty.has(Types::ARTIFACT),
                 "ae" => ty.has(Types::ARTIFACT) || ty.has(Types::ENCHANTMENT),
                 "ac" => is_c || ty.has(Types::ARTIFACT),
+                "fe" => {
+                    // Crushing Canopy: an enchantment or a creature with flying
+                    ty.has(Types::ENCHANTMENT) || (is_c && (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")))
+                }
                 "fae" => {
                     // Carnivorous Canopy: an artifact, an enchantment or a creature with flying
                     ty.has(Types::ARTIFACT)

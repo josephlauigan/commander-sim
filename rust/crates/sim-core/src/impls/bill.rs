@@ -243,34 +243,47 @@ fn brutalizer_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-// ================================================================== Carnivorous Canopy
-/// an opposing artifact, enchantment or creature with flying that Canopy may destroy
-fn canopy_ok(g: &Game, m: PermId) -> bool {
+// ================================================================== Carnivorous Canopy and Crushing Canopy
+/// an opposing permanent a Canopy may destroy: Carnivorous Canopy takes an artifact, an enchantment or a creature with
+/// flying; Crushing Canopy an enchantment or a creature with flying
+fn canopy_ok(g: &Game, m: PermId, artifacts: bool) -> bool {
     let x = g.perm(m);
     if !x.on_bf || x.phased || crate::engine::values::untargetable(g, m) {
         return false;
     }
-    let Some(c) = x.cd else { return g.is_creature(m) && (x.fly || crate::dsl::has_kw(g, m, "flying")) };
+    let flier = g.is_creature(m) && (x.fly || crate::dsl::has_kw(g, m, "flying"));
+    let Some(c) = x.cd else { return flier };
     let d = g.db.get(c);
-    d.types.has(crate::cards::Types::ARTIFACT)
-        || d.types.has(crate::cards::Types::ENCHANTMENT)
-        || (g.is_creature(m) && (x.fly || crate::dsl::has_kw(g, m, "flying")))
+    flier || d.types.has(crate::cards::Types::ENCHANTMENT) || (artifacts && d.types.has(crate::cards::Types::ARTIFACT))
+}
+
+/// the permanent a Canopy destroys: the chosen target if it is still legal, else the best of theirs
+fn canopy_target(g: &Game, p: PlayerId, ctx: &Ctx, artifacts: bool) -> Option<PermId> {
+    ctx.target.filter(|&t| canopy_ok(g, t, artifacts)).or_else(|| {
+        let cands: Vec<PermId> =
+            g.opps(p).flat_map(|q| g.player(q).perms.clone()).filter(|&m| canopy_ok(g, m, artifacts)).collect();
+        max_by(&cands, |m| pval(g, m) + if g.is_creature(m) { 1.0 } else { 0.0 })
+    })
 }
 
 /// Carnivorous Canopy: destroy target artifact, enchantment or creature with flying; if its mana value was 3 or less,
 /// proliferate
 fn canopy_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let t = ctx.target.filter(|&t| canopy_ok(g, t)).or_else(|| {
-        let cands: Vec<PermId> =
-            g.opps(p).flat_map(|q| g.player(q).perms.clone()).filter(|&m| canopy_ok(g, m)).collect();
-        max_by(&cands, |m| pval(g, m) + if g.is_creature(m) { 1.0 } else { 0.0 })
-    });
-    if let Some(t) = t {
+    if let Some(t) = canopy_target(g, p, ctx, true) {
         let mv = g.perm(t).cd.map_or(0, |c| g.db.get(c).cmc);
         apply_removal(g, Some(p), t, "destroy", Some(c))?;
         if mv <= 3 {
             super::common::proliferate(g, p, 1)?;
         }
+    }
+    Ok(intern("gy"))
+}
+
+/// Crushing Canopy (instant): destroy target creature with flying, or target enchantment. The compiled spell would
+/// be cast at any creature and find no flier; this one is offered only with a legal target (`tgt=fe`).
+fn crushing_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if let Some(t) = canopy_target(g, p, ctx, false) {
+        apply_removal(g, Some(p), t, "destroy", Some(c))?;
     }
     Ok(intern("gy"))
 }
@@ -1028,6 +1041,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.combat_damage = Some(brutalizer_damage);
     c.etb = Some(brutalizer_etb);
     r.card(db, "Carnivorous Canopy")?.resolve = Some(canopy_resolve);
+    r.card(db, "Crushing Canopy")?.resolve = Some(crushing_resolve);
     let c = r.card(db, "Wildgrowth Archaic")?;
     c.cast = Some(archaic_cast);
     let c = r.card(db, FREESTRIDER)?;
