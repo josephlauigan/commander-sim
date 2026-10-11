@@ -620,57 +620,6 @@
    "spell_prio": false
   },
   {
-   "name": "Adventurous Eater",
-   "types": "C",
-   "generic": 2,
-   "pips": "B",
-   "tags": {
-    "human": true,
-    "pow": "3",
-    "tgh": "2",
-    "prepare": true
-   },
-   "pow": 3,
-   "tgh": 2,
-   "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters prepared"
-    }
-   ],
-   "start_loyalty": null,
-   "kws": [
-    "prepared"
-   ],
-   "subtypes": [
-    "human",
-    "warlock"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "B",
-   "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [],
-   "derived": {
-    "cmc": 3,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Adventurous Eater // Have a Bite",
    "types": "C",
    "generic": 2,
@@ -7455,48 +7404,6 @@
    "spell_prio": false
   },
   {
-   "name": "Bloodsworn Squire",
-   "types": "C",
-   "generic": 3,
-   "pips": "B",
-   "tags": {
-    "pow": "3"
-   },
-   "pow": 3,
-   "tgh": 3,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "transform"
-   ],
-   "subtypes": [
-    "soldier",
-    "vampire"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "B",
-   "game_changer": false,
-   "source": "pool",
-   "unparsed": [],
-   "derived": {
-    "cmc": 4,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Bloodsworn Squire // Bloodsworn Knight",
    "types": "C",
    "generic": 3,
@@ -11706,51 +11613,6 @@
    "spell_prio": true
   },
   {
-   "name": "Catapult Fodder",
-   "types": "C",
-   "generic": 2,
-   "pips": "B",
-   "tags": {
-    "pow": "1",
-    "tgh": "5"
-   },
-   "pow": 1,
-   "tgh": 5,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "transform"
-   ],
-   "subtypes": [
-    "zombie"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "B",
-   "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "At the beginning of combat on your turn, if you control three or more creatures that each have toughness greater than their power, transform ~.",
-    "[back face] {2}{B}, {T}, Sacrifice another creature: Target opponent loses life equal to the sacrificed creature's toughness."
-   ],
-   "derived": {
-    "cmc": 3,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Catapult Fodder // Catapult Captain",
    "types": "C",
    "generic": 2,
@@ -12827,55 +12689,6 @@
     "options",
     "token_created"
    ],
-   "spell_prio": false
-  },
-  {
-   "name": "Cheerful Osteomancer",
-   "types": "C",
-   "generic": 3,
-   "pips": "B",
-   "tags": {
-    "pow": "4",
-    "tgh": "2"
-   },
-   "pow": 4,
-   "tgh": 2,
-   "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters prepared"
-    }
-   ],
-   "start_loyalty": null,
-   "kws": [
-    "prepared"
-   ],
-   "subtypes": [
-    "orc",
-    "warlock"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "B",
-   "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [],
-   "derived": {
-    "cmc": 4,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -20484,44 +20297,6 @@
    "python_hooks": [
     "cast"
    ],
-   "spell_prio": false
-  },
-  {
-   "name": "Dormant Grove",
-   "types": "E",
-   "generic": 3,
-   "pips": "G",
-   "tags": {},
-   "pow": 0,
-   "tgh": 0,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "transform",
-    "vigilance"
-   ],
-   "subtypes": [],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "G",
-   "game_changer": false,
-   "source": "pool",
-   "unparsed": [],
-   "derived": {
-    "cmc": 4,
-    "land": false,
-    "creature": false,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -32025,50 +31800,6 @@
    "spell_prio": false
   },
   {
-   "name": "Goblin Glasswright",
-   "types": "C",
-   "generic": 1,
-   "pips": "R",
-   "tags": {
-    "pow": "2",
-    "prepare": true
-   },
-   "pow": 2,
-   "tgh": 2,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "prepared",
-    "treasure"
-   ],
-   "subtypes": [
-    "goblin",
-    "sorcerer"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "R",
-   "game_changer": false,
-   "source": "pool",
-   "unparsed": [],
-   "derived": {
-    "cmc": 2,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Goblin Glasswright // Craft with Pride",
    "types": "C",
    "generic": 1,
@@ -33093,52 +32824,6 @@
    "spell_prio": false
   },
   {
-   "name": "Gollum, Silent Slinker",
-   "types": "C",
-   "generic": 3,
-   "pips": "B",
-   "tags": {
-    "leg": true,
-    "pow": "4",
-    "tgh": "3"
-   },
-   "pow": 4,
-   "tgh": 3,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "menace"
-   ],
-   "subtypes": [
-    "halfling",
-    "horror"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "B",
-   "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "[back face] Put a +1/+1 counter on up to one target creature. Target player gains 2 life. (Then exile this card. You may cast the creature later from exile.)"
-   ],
-   "derived": {
-    "cmc": 4,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Gollum, Silent Slinker // Meager Meal",
    "types": "C",
    "generic": 3,
@@ -33507,7 +33192,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "manual",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -62662,52 +62347,6 @@
    "spell_prio": false
   },
   {
-   "name": "Restless Bloodseeker",
-   "types": "C",
-   "generic": 1,
-   "pips": "B",
-   "tags": {
-    "pow": "1",
-    "tgh": "3"
-   },
-   "pow": 1,
-   "tgh": 3,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "transform"
-   ],
-   "subtypes": [
-    "vampire"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "B",
-   "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "At the beginning of your end step, if you gained life this turn, create a Blood token.",
-    "Sacrifice two Blood tokens: Transform ~. Activate only as a sorcery.",
-    "[back face] At the beginning of your end step, if you gained life this turn, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\") / {4}{B}: Each opponent loses 2 life and you gain 2 life."
-   ],
-   "derived": {
-    "cmc": 2,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Restless Bloodseeker // Bloodsoaked Reveler",
    "types": "C",
    "generic": 1,
@@ -74421,51 +74060,6 @@
     "more",
     2
    ],
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
-   "name": "Strife Scholar",
-   "types": "C",
-   "generic": 2,
-   "pips": "R",
-   "tags": {
-    "pow": "3",
-    "tgh": "2",
-    "prepare": true
-   },
-   "pow": 3,
-   "tgh": 2,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "prepared",
-    "ward"
-   ],
-   "subtypes": [
-    "orc",
-    "sorcerer"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "R",
-   "game_changer": false,
-   "source": "pool",
-   "unparsed": [],
-   "derived": {
-    "cmc": 3,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
    "land_types": [],
    "basic": false,
    "python_hooks": [],
