@@ -552,3 +552,63 @@ fn noxious_newt_is_a_deathtouch_mana_dork() {
     assert!(brain::do_cast(&mut g, P0, elves, None).unwrap(), "the Newt pays G");
     assert!(g.perm(newt).tapped);
 }
+
+// ------------------------------------------------------------------ the AI plan
+fn glissa_hits(g: &mut Game, glissa: PermId) {
+    let fired = sim_core::dsl::Fired { attacker: Some(glissa), defender: Some(P1), ..Default::default() };
+    sim_core::dsl::fire(g, "combat_damage", fired).unwrap();
+}
+
+#[test]
+fn glissa_draws_a_card_unless_an_enchantment_matters_more() {
+    let mut g = game();
+    let glissa = perm(&mut g, P0, "Glissa Sunslayer");
+    let n = g.player(P0).hand.len();
+    glissa_hits(&mut g, glissa);
+    assert_eq!(g.player(P0).hand.len(), n + 1, "draw a card");
+    assert_eq!(g.player(P0).life, 39);
+    // an enchantment that shuts the deck down is worth more
+    let ench = perm(&mut g, P1, "Mystic Remora");
+    glissa_hits(&mut g, glissa);
+    let drew = g.player(P0).hand.len() == n + 2;
+    assert!(drew || !alive(&g, ench), "one mode or the other");
+}
+
+#[test]
+fn darksteel_plate_goes_on_glissa_first() {
+    let mut g = game();
+    let glissa = perm(&mut g, P0, "Glissa Sunslayer");
+    g.perm_mut(glissa).is_cmd = true;
+    perm(&mut g, P0, "Noxious Newt");
+    perm(&mut g, P0, "Darksteel Plate");
+    lands(&mut g, P0, "Forest", 3, false);
+    let opts = options(&mut g);
+    let o = opts.iter().max_by(|a, b| a.utility.total_cmp(&b.utility)).unwrap();
+    assert_eq!(o.label, "equip Darksteel Plate to Glissa");
+    assert!(take_option(&mut g, "equip Darksteel Plate to Glissa"));
+    let plate = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Darksteel Plate").unwrap();
+    assert_eq!(g.perm(plate).attached, Some(glissa));
+}
+
+#[test]
+fn champions_helm_goes_on_glissa() {
+    let mut g = game();
+    let glissa = perm(&mut g, P0, "Glissa Sunslayer");
+    g.perm_mut(glissa).is_cmd = true;
+    perm(&mut g, P0, "Llanowar Elves");
+    perm(&mut g, P0, "Champion's Helm");
+    lands(&mut g, P0, "Forest", 2, false);
+    assert!(take_option(&mut g, "equip Champion's Helm to Glissa Sunslayer"));
+}
+
+#[test]
+fn a_bite_is_not_wasted_on_a_trivial_creature() {
+    let mut g = game();
+    perm(&mut g, P0, "Noxious Newt");
+    token(&mut g, P1, 1);
+    lands(&mut g, P0, "Forest", 2, false);
+    hand(&mut g, P0, &["Bite Down"]);
+    assert!(!has_option(&mut g, "Bite Down"), "a 1/1 token is worth less than a spell");
+    token(&mut g, P1, 4);
+    assert!(has_option(&mut g, "Bite Down"));
+}

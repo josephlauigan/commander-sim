@@ -235,11 +235,9 @@ fn pick(g: &Game, p: PlayerId, c: CardId, bonus: i32, fight: bool, walkers: bool
         }
         let ok: Vec<PermId> =
             srcs.iter().copied().filter(|&s| kills(g, s, bite_power(g, s, bonus, walker_src), t, walker_src)).collect();
-        let s = ok
-            .iter()
-            .copied()
-            .find(|&s| deathtouch(g, s))
-            .or_else(|| max_by(&ok, |s| (bite_power(g, s, bonus, walker_src), pval(g, s)).0 as f64 * 100.0 - pval(g, s)));
+        let s = ok.iter().copied().find(|&s| deathtouch(g, s)).or_else(|| {
+            max_by(&ok, |s| (bite_power(g, s, bonus, walker_src), pval(g, s)).0 as f64 * 100.0 - pval(g, s))
+        });
         let Some(s) = s else { continue };
         let v = pval(g, t);
         if best.is_none_or(|b| v > b.v) {
@@ -255,7 +253,15 @@ fn untargetable_by_me(_g: &Game, _m: PermId) -> bool {
 }
 
 /// `src` deals `amount` damage to t (a creature or planeswalker)
-fn deal(g: &mut Game, p: PlayerId, src: PermId, t: PermId, amount: i32, spell: Option<CardId>, walker_src: bool) -> Res {
+fn deal(
+    g: &mut Game,
+    p: PlayerId,
+    src: PermId,
+    t: PermId,
+    amount: i32,
+    spell: Option<CardId>,
+    walker_src: bool,
+) -> Res {
     if !live(g, t) || amount <= 0 {
         return Ok(());
     }
@@ -298,10 +304,10 @@ fn bite_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
         if let Some(b) = pick(g, p, c, bonus, fight, walkers, walker_src) {
             (src, tgt) = (Some(b.src), Some(b.tgt));
         } else if src.is_none() {
-            src = max_by(
-                &g.player(p).perms.iter().copied().filter(|&m| live_creature(g, m)).collect::<Vec<_>>(),
-                |m| epow(g, m) as f64,
-            );
+            src =
+                max_by(&g.player(p).perms.iter().copied().filter(|&m| live_creature(g, m)).collect::<Vec<_>>(), |m| {
+                    epow(g, m) as f64
+                });
         }
     }
     let Some(s) = src.filter(|&s| live(g, s) && owner(g, s) == p) else { return Ok("gy") };
@@ -375,6 +381,9 @@ fn bite_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
         found = pick(g, p, c, 0, false, true, true);
     }
     let Some(b) = found else { return Ok(vec![]) };
+    if b.v < 1.2 {
+        return Ok(vec![]); // a spell is not spent on a trivial creature
+    }
     let d = g.db.get(c);
     let mut u = b.v - 3.5;
     if d.instant && post == Some(false) {
@@ -695,7 +704,13 @@ fn crawler_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
         return Ok(vec![]);
     }
     let hand_lands = pl.hand.iter().filter(|&&x| g.db.get(x).land).count();
-    let u = if lands <= 4 && hand_lands == 0 { 4.5 } else if lands <= 5 && hand_lands == 0 { 2.5 } else { return Ok(vec![]) };
+    let u = if lands <= 4 && hand_lands == 0 {
+        4.5
+    } else if lands <= 5 && hand_lands == 0 {
+        2.5
+    } else {
+        return Ok(vec![]);
+    };
     Ok(vec![Opt {
         utility: u,
         label: "Canyon Crawler (swampcycling)".into(),
@@ -922,6 +937,27 @@ fn axe_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId)
     Ok(vec![])
 }
 
+// ------------------------------------------------------------------ Darksteel Plate
+/// the AI plan: Glissa wears Darksteel Plate (indestructible, so her first strike and deathtouch never cost her the
+/// game): equip it to her ahead of the generic equip plays. (Champion's Helm: `yshtola::helm`, which also serves this deck.)
+fn plate_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src)
+        || g.player(p).key != "glissa"
+        || human(g, p)
+        || post.is_none()
+        || !can_pay(g, p, 2, "", false)
+    {
+        return Ok(vec![]);
+    }
+    let cmd = g.player(p).perms.iter().copied().find(|&m| live_creature(g, m) && g.perm(m).is_cmd);
+    let Some(t) = cmd.filter(|&t| g.perm(src).attached != Some(t)) else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: 4.5,
+        label: "equip Darksteel Plate to Glissa".into(),
+        act: Some(Action::Equip { src, target: t, n: 2 }),
+    }])
+}
+
 // ------------------------------------------------------------------ Ferocity of the Hunt
 /// Ferocity of the Hunt: when the enchanted creature dies, its card returns to the battlefield tapped (the mark is read
 /// by `zones::die_rest`)
@@ -989,6 +1025,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(selfpt_etb);
     r.card(db, "Paladin of Predation")?.combat_damage = Some(paladin_damage);
     r.card(db, "Hunter's Axe")?.attack = Some(axe_attack);
+    r.card(db, "Darksteel Plate")?.options = Some(plate_options);
     aura(r, db, "Ferocity of the Hunt", &FEROCITY)?;
     Ok(())
 }
