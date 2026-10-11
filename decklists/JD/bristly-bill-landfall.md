@@ -1,5 +1,9 @@
 # Bristly Bill, Spine Sower — Mono-Green Landfall Counters
 
+**Updated 2026-10-11 (mana base).** Out: Evolving Wilds, Fabled Passage, Terramorphic Expanse. In: 3 Forest (now 37). A paired
+swap test found no effect (Forests +0.3 points over all tiers, within noise; `audit/bill/2026-10-11-fetches-forests/`), so
+JD's basics-over-tapped-lands rule decides it. The three go back to the lists (Evolving Wilds to the binder).
+
 **Added 2026-10-11.** Built from JD's bulk and binder around Bristly Bill, Spine Sower (bought, borderless Secret Lair
 printing), plus five cheap buys. Fully modeled and measured on 2026-10-11: 15.9% over all tiers (see "Simulator status").
 
@@ -9,9 +13,8 @@ Every land you play puts a +1/+1 counter on a creature. Bill himself costs two, 
 the board, and his second ability ({3}{G}{G}) doubles the counters on every creature you control.
 
 - **More lands per turn, more triggers.** Ramp that puts lands onto the battlefield (Rampant Growth, Nature's Lore,
-  Cultivate, Skyshroud Claim, Harrow, Spider-Man), an extra land drop each turn (Druid Class), and three lands that
-  sacrifice to find another (Evolving Wilds, Terramorphic Expanse, Fabled Passage): each one is two triggers, the land
-  itself and the land it finds.
+  Cultivate, Skyshroud Claim, Harrow, Spider-Man) and an extra land drop each turn (Druid Class). Harrow is two
+  triggers at instant speed.
 - **Make every counter count more.** Hardened Scales adds one to each placement; Evolution Sage proliferates on
   every land; Venomous Brutalizer, Copper Longlegs, Thirsting Roots and Carnivorous Canopy proliferate too.
 - **Bodies to grow.** Silhana Ledgewalker (hexproof, only fliers block it) is the safest place for counters; Hungry
@@ -36,9 +39,7 @@ Bristly Bill, Spine Sower (borderless Secret Lair, $24.74) is the commander.
 
 ## Consistency
 
-37 lands: 34 Forest plus Evolving Wilds, Terramorphic Expanse and Fabled Passage. **An exception to JD's
-basics-over-tapped-lands rule:** the three fetch the basic tapped, but here each is two landfall triggers, which is
-what the deck runs on. A swap test (the three for Forests) can measure whether they earn the slot. Ramp: Llanowar Elves,
+37 lands, all Forest (JD's basics-over-tapped-lands rule; fetch lands measured no better). Ramp: Llanowar Elves,
 Noxious Newt, Hardbristle Bandit, Topiary Lecturer, Bugenhagen, plus nine land-ramp spells and creatures.
 
 ## Simulator status
@@ -52,12 +53,12 @@ it resolves, not when cast; Spider-Man's web-slinging only returns a creature th
 
 ## Where the cards come from
 
-The commander and the five buys above are new. The 34 Forests are your own. Every other card came off JD's lists on
+The commander and the five buys above are new. The 37 Forests are your own. Every other card came off JD's lists on
 2026-10-11, one copy each.
 
-**From the binder (2):** Evolving Wilds, Llanowar Elves.
+**From the binder (1):** Llanowar Elves.
 
-**From bulk (58):** everything else in the list below.
+**From bulk (56):** everything else in the list below.
 
 ## Decklist by type (100)
 
@@ -71,7 +72,7 @@ The commander and the five buys above are new. The 34 Forests are your own. Ever
 
 **Sorceries (15).** Carnivorous Canopy, Chelonian Tackle, Cultivate, Hard-Hitting Question, Harmonize, Knockout Maneuver, Nature's Lore, Overwhelming Stampede, Pick Your Poison, Rampant Growth, Shamanic Revelation, Skyshroud Claim, Thirsting Roots, Tumbleweed Rising, Wild Hypothesis
 
-**Lands (37).** Evolving Wilds, Fabled Passage, Terramorphic Expanse, 34 Forest
+**Lands (37).** 37 Forest
 
 ## Import list (100)
 
@@ -97,8 +98,6 @@ The commander and the five buys above are new. The 34 Forests are your own. Ever
 1 End-Raze Forerunners
 1 Environmental Scientist
 1 Evolution Sage
-1 Evolving Wilds
-1 Fabled Passage
 1 Forced Adaptation
 1 Freestrider Commando
 1 Garruk's Uprising
@@ -133,7 +132,6 @@ The commander and the five buys above are new. The 34 Forests are your own. Ever
 1 Skyshroud Claim
 1 Spider-Man, Brooklyn Visionary
 1 Studious First-Year
-1 Terramorphic Expanse
 1 Thirsting Roots
 1 Thrashing Brontodon
 1 Topiary Lecturer
@@ -142,5 +140,5 @@ The commander and the five buys above are new. The 34 Forests are your own. Ever
 1 Vinelasher Adept
 1 Wild Hypothesis
 1 Wildgrowth Archaic
-34 Forest
+37 Forest
 ```
