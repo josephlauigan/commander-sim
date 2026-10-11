@@ -2,8 +2,8 @@
 //! the lordofpain deck (Charforger, Kalain, Lagomos, Hero's Heirloom) are in `lordofpain.rs`.
 
 use crate::cards::CardDb;
-use crate::engine::zones::add_treasure;
 use crate::engine::mana::total_mana;
+use crate::engine::zones::add_treasure;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -66,6 +66,25 @@ fn smaug_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
         return Ok(vec![]);
     }
     let mut out = vec![];
+    // Orcish Cannonade: 2 damage to Smaug is two Treasures and a card, for 3 life
+    for &c in &g.player(p).hand {
+        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+        if &*g.db.get(c).name == "Orcish Cannonade"
+            && g.player(p).life > 15
+            && crate::engine::mana::can_pay(g, p, cg, &cp, false)
+        {
+            out.push(Opt {
+                utility: 2.0,
+                label: "Orcish Cannonade at Smaug (two Treasures, a card)".into(),
+                act: Some(Action::Removal {
+                    card: c,
+                    targets: vec![src],
+                    kick: 0,
+                    kind: Some(crate::sym::intern("dmg2")),
+                }),
+            });
+        }
+    }
     for &m in &g.player(p).perms {
         let x = g.perm(m);
         if x.on_bf
@@ -87,4 +106,13 @@ fn smaug_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, SMAUG)?.options = Some(smaug_options);
     Ok(())
+}
+
+/// the smaug deck's pings (Goblin Medics, Goblin Arsonist, Bomber Corps, burn with no creature worth killing) go to
+/// its own Smaug for Treasures instead of an opponent's face, unless the damage would be lethal there
+pub fn ping_target(g: &Game, p: PlayerId, eff: i32) -> Option<PermId> {
+    if g.player(p).key != "smaug" || g.opps(p).any(|q| g.player(q).life <= eff) {
+        return None;
+    }
+    smaug_of(g, p)
 }

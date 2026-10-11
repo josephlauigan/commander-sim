@@ -189,10 +189,10 @@ fn kalain_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m == src || !live(g, src) || p != owner(g, src) || !g.is_creature(m) {
         return Ok(());
     }
-    let (Some(c), Some((cc, k)), Some((cur, _, _))) = (g.perm(m).cd, g.cast_treasure, g.cur_cast.as_ref()) else {
+    let (Some(c), Some((cc, k))) = (g.perm(m).cd, g.cast_treasure) else {
         return Ok(());
     };
-    if c != cc || c != *cur || k == 0 {
+    if c != cc || k == 0 {
         return Ok(());
     }
     g.cast_treasure = None;
@@ -369,7 +369,7 @@ fn meteor_foretell(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-fn meteor_cast_foretold(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub fn meteor_cast_foretold(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || foretold_turn(g, p, c).is_none_or(|t| g.player(p).turns <= t) {
         return Ok(false);

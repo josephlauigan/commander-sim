@@ -518,6 +518,8 @@ pub fn bolt_something(g: &mut Game, p: PlayerId, dmg: i32) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if let Some(b) = best.filter(|&b| pval(g, b) >= ping_floor(g, p)) {
         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), None)
+    } else if let Some(s) = crate::impls::smaug::ping_target(g, p, eff) {
+        crate::impls::smaug::dealt_damage(g, s, dmg) // the smaug deck pings its own Smaug for Treasures
     } else if let Some(q) = min_by(&opps, |o| g.player(o).life as f64) {
         lose_life(g, q, dmg, Some(p), "burn", None)
     } else {
@@ -812,6 +814,9 @@ pub fn resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> Re
     r?;
     if g.resolving == 0 && !g.trig_queue.is_empty() {
         crate::engine::stack::flush_triggers(g)?;
+    }
+    if g.resolving == 0 {
+        g.cast_treasure = None; // Kalain has seen the Treasure mana paid for this spell
     }
     Ok(())
 }
