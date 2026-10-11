@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
-pub const FILES: [(&str, &str, &str); 9] = [
+pub const FILES: [(&str, &str, &str); 12] = [
     ("seph", "JD", "sephiroth-phyrexian-reanimator.md"),
     ("veyran", "JD", "veyran-izzet-spellslinger.md"),
     ("sauron", "JD", "sauron-grixis-amass.md"),
@@ -19,10 +19,13 @@ pub const FILES: [(&str, &str, &str); 9] = [
     ("jodah", "JD", "jodah-wubrg-legends.md"),
     ("kefka", "JD", "kefka-grixis-discard.md"),
     ("zada", "JD", "zada-mono-red-go-wide.md"),
+    ("torbran", "JD", "candidates/torbran.md"),
+    ("glissa", "JD", "candidates/glissa.md"),
+    ("jenova", "JD", "candidates/jenova.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 9] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "zada"];
+pub const MINE: [&str; 12] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "zada", "torbran", "glissa", "jenova"];
 
 pub const TIERS: [&str; 5] = ["t1", "t2", "t3", "t4", "t5"];
 
@@ -229,7 +232,7 @@ mod tests {
     fn the_repository_decks_load() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
         let mine = load_mine(&root).unwrap();
-        assert_eq!(mine.len(), 9);
+        assert_eq!(mine.len(), 12);
         for (k, v) in &mine {
             assert_eq!(v.len(), 100, "{k}");
         }
