@@ -320,6 +320,9 @@ pub fn choose_target(
         return min_by(&cands, |m| pval(g, m)); // a cost on your own: the least valuable
     }
     let mine: Vec<PermId> = cands.iter().copied().filter(|&m| g.perm(m).owner == p).collect();
+    if !mine.is_empty() && g.player(p).key == "bill" {
+        return crate::impls::bill::counter_target(g, &mine); // the bill deck: where a counter gains most
+    }
     if !mine.is_empty() { max_by(&mine, |m| pval(g, m)) } else { max_by(&cands, |m| pval(g, m)) }
 }
 
@@ -589,7 +592,9 @@ fn run(
             let k = n(g, ctx) * counter_mult(g, p);
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
-                g.perm_mut(m).plus += k;
+                // Hardened Scales: one more on a creature you control (before any doubling)
+                let extra = if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
+                g.perm_mut(m).plus += k + extra;
             }
         }
         "pump" => {
@@ -704,14 +709,16 @@ fn run(
         "proliferate" => {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    g.perm_mut(m).plus += 1;
+                    let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
+                    g.perm_mut(m).plus += 1 + extra; // Hardened Scales
                 }
             }
         }
         "double_counters" => {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    g.perm_mut(m).plus *= 2;
+                    let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
+                    g.perm_mut(m).plus = g.perm(m).plus * 2 + extra; // Hardened Scales
                 }
             }
         }
@@ -1308,7 +1315,7 @@ pub fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
     if x.eot_kw.contains(&kw) {
         return true;
     }
-    if kw == "trample" && x.data.truthy(crate::state::DataKey::Role) {
+    if kw == "trample" && x.data.get(crate::state::DataKey::Role) == Some(&crate::state::Val::Bool(true)) {
         return true; // a Monster Role
     }
     if matches!(kw, "menace" | "cant_block") && x.data.truthy(crate::state::DataKey::Suspect) {

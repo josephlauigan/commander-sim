@@ -125,13 +125,23 @@ pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
     }
 }
 
-/// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control
+/// Hardened Scales: how many extra +1/+1 counters each placement on one of p's creatures gets (one per Scales; they
+/// stack). The places that put counters on creatures call this (`add_counters`, the ability language's counters and
+/// proliferate, enters-with-counters).
+pub fn scales(g: &Game, p: PlayerId) -> i32 {
+    let named = |y: &PermId| crate::engine::values::card_name(g, *y) == Some("Hardened Scales");
+    g.player(p).perms.iter().filter(|y| g.perm(**y).on_bf && !g.perm(**y).phased && named(y)).count() as i32
+}
+
+/// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control; Hardened Scales: one
+/// more on a creature you control
 pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
     use crate::engine::values::{card_tag, has_type};
     let x = g.perm(m);
     let orcish = x.army || (x.cd.is_some() && (has_type(g, m, "orc") || has_type(g, m, "goblin")));
     let mauhur = g.player(x.owner).perms.iter().any(|&y| card_tag(g, y, crate::tag::Tag::Mauhur) && !g.perm(y).phased);
     let n = if n > 0 && orcish && mauhur { n + 1 } else { n };
+    let n = if n > 0 && g.is_creature(m) { n + scales(g, g.perm(m).owner) } else { n };
     g.perm_mut(m).plus += n;
 }
 
@@ -432,7 +442,7 @@ pub fn is_prowess_card(g: &Game, c: CardId) -> bool {
 
 /// rules2.aura_ward: ward {2} from Sheltered by Ghosts
 pub fn aura_ward(g: &Game, m: PermId) -> u32 {
-    crate::impls::rules2::aura_ward(g, m)
+    crate::impls::rules2::aura_ward(g, m) + crate::impls::bill::role_ward(g, m)
 }
 
 /// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal

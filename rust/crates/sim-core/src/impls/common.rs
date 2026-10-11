@@ -2536,7 +2536,8 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
                 continue;
             }
             if x.plus > 0 {
-                g.perm_mut(m).plus += dbl;
+                let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
+                g.perm_mut(m).plus += dbl + extra; // Hardened Scales
             }
             if card_is(g, m, Types::PLANESWALKER)
                 && let Some(l) = g.perm(m).loyalty

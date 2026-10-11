@@ -456,6 +456,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     if name_of(g, a) == "Paladin of Predation" && crate::engine::values::epow(g, b) <= 2 {
         return true; // can't be blocked by creatures with power 2 or less
     }
+    if crate::impls::bill::unblockable_by(g, b, a) {
+        return true; // Silhana Ledgewalker: only creatures with flying block it
+    }
     if g.perm(b).token && g.player(g.perm(a).owner).loyalist_turn == Some(g.turn_stamp()) {
         return true; // Legion Loyalist
     }
