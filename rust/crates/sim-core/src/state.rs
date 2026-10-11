@@ -329,6 +329,8 @@ pub struct Player {
     pub foods: u32,
     pub poison: u32,
     pub floating: Floating,
+    /// practice mode: the mana a person has made and not spent (Python's `p.pool`; inert for AI seats)
+    pub pool: crate::human::mana::ManaPool,
     pub extra_combats: u32,
     pub combat_no: u32,
     pub spells_this_turn: u32,
@@ -545,6 +547,7 @@ impl Player {
             foods: 0,
             poison: 0,
             floating: Floating::default(),
+            pool: Default::default(),
             extra_combats: 0,
             combat_no: 0,
             spells_this_turn: 0,
