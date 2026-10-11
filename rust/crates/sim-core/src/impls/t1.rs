@@ -12,6 +12,7 @@ use crate::engine::zones::{
     land_to_hand, landfall, leave, make_tokens, max_by, mill, searchable,
 };
 use crate::flow::Res;
+use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Sacrificed, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{DataKey, Game, PermData, Val};
@@ -383,7 +384,16 @@ fn mentor_meek(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m == src || g.perm(src).owner != p || !g.is_creature(m) || g.perm(m).owner != p || epow(g, m) > 2 {
         return Ok(());
     }
-    // HUMAN(phase 9): a person pays {1} or not as the trigger resolves (hc.pay_tax)
+    if human_of(g, p).is_some() {
+        // you may pay {1}: asked as it resolves
+        if !trigger_window(g, p, Some(src), "pay {1}: draw a card", None)? {
+            return Ok(());
+        }
+        if choices::pay_tax(g, p, 1, "Mentor of the Meek (draw a card)")? {
+            draw(g, p, 1, false)?;
+        }
+        return Ok(());
+    }
     if can_pay(g, p, 1, "", false)
         && g.player(p).hand.len() <= 6
         && trigger_window(g, p, Some(src), "pay {1}: draw a card", None)?
@@ -1250,7 +1260,19 @@ pub fn tutor_named(
     k: usize,
     to: &str,
 ) -> Res<Vec<CardId>> {
-    // HUMAN(phase 9): practice mode: the person picks (hc.search)
+    if human_of(g, p).is_some() {
+        // practice mode: the person picks
+        let got = choices::search(g, p, pred, k, "Search your library", true)?;
+        for &c in &got {
+            let pl = g.player_mut(p);
+            if to == "hand" {
+                pl.hand.push(c);
+                pl.seen.insert(c);
+            }
+            pl.stat("tutored", 1);
+        }
+        return Ok(got);
+    }
     let pl = g.player(p);
     let mut have: Vec<CardId> = pl.hand.clone();
     have.extend(pl.perms.iter().filter_map(|&m| g.perm(m).cd));

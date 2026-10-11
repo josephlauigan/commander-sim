@@ -18,6 +18,7 @@ use crate::engine::zones::{
     Enter, Tokens, bounce, die, draw, enter, enter_token_copy, leave, make_artifact_tokens, make_tokens, max_by,
 };
 use crate::flow::Res;
+use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, WalkerAb, best_opp_creature, best_opp_nonland, walker};
@@ -1019,8 +1020,12 @@ fn sphinx(g: &mut Game, src: Src, p: PlayerId) -> Res {
         && trigger_window(g, o, Some(src), "you may draw two cards", Some(4.0))?
         && once_per_turn(g, o, k)
     {
-        // HUMAN(phase 9): the person chooses whether to draw two (hc.yes_no)
-        if g.player(o).library.len() > 12 && g.sphinx_depth < 4 {
+        if human_of(g, o).is_some() {
+            let who = g.player(p).name;
+            if choices::yes_no(g, o, &format!("Consecrated Sphinx: {who} drew. Draw two cards?"))? {
+                draw(g, o, 2, false)?;
+            }
+        } else if g.player(o).library.len() > 12 && g.sphinx_depth < 4 {
             g.sphinx_depth += 1; // two Sphinxes feed each other: stop after a few rounds
             let r = draw(g, o, 2, false);
             g.sphinx_depth -= 1;
@@ -1346,7 +1351,7 @@ fn bond(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
             return Ok(());
         }
         g.bond_depth += 1;
-        let q = bond_target(g, p, n);
+        let q = bond_target(g, p, n)?;
         let r = lose_life(g, q, n, Some(p), "drain", None);
         g.bond_depth -= 1;
         r?;
@@ -1355,15 +1360,19 @@ fn bond(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
 }
 
 /// t4.bond_target: the opponent who loses the life: one it kills, else the most threatening
-pub fn bond_target(g: &Game, p: PlayerId, n: i32) -> PlayerId {
+pub fn bond_target(g: &Game, p: PlayerId, n: i32) -> Res<PlayerId> {
     let os = opps(g, p);
-    // HUMAN(phase 9): the person picks the opponent (hc.choose)
+    if human_of(g, p).is_some() && os.len() > 1 {
+        let labels: Vec<String> = os.iter().map(|&q| format!("{} ({} life)", g.player(q).name, g.player(q).life)).collect();
+        let k = choices::choose_one(g, p, "target", &format!("Sanguine Bond: which opponent loses {n} life?"), &labels)?;
+        return Ok(os[k]);
+    }
     let dead: Vec<PlayerId> =
         os.iter().copied().filter(|&q| g.player(q).life <= n && !g.player(q).life_locked).collect();
     if !dead.is_empty() {
-        return max_by(&dead, |q| threat(g, p, q)).unwrap();
+        return Ok(max_by(&dead, |q| threat(g, p, q)).unwrap());
     }
-    max_by(&os, |q| threat(g, p, q)).unwrap()
+    Ok(max_by(&os, |q| threat(g, p, q)).unwrap())
 }
 
 /// Exquisite Blood: opponents' life loss gains you life; with Sanguine Bond a combo

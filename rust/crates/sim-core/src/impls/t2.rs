@@ -19,6 +19,7 @@ use crate::engine::zones::{
     Enter, Tokens, die, discard_cards, draw, enter, land_ramp, landfall, leave, make_tokens, max_by, min_by, searchable,
 };
 use crate::flow::Res;
+use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
@@ -85,11 +86,14 @@ const NONE_ID: u32 = u32::MAX;
 
 // ------------------------------------------------------------------ shared
 /// t2.best_target_any: 'deals n damage to any target': kill the best creature it kills, else the most threatening
-/// opponent's face. HUMAN(phase 9): a person picks the target (hc.deal_damage).
+/// opponent's face.
 pub fn best_target_any(g: &mut Game, p: PlayerId, n: i32) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if opps.is_empty() {
         return Ok(());
+    }
+    if human_of(g, p).is_some() {
+        return choices::deal_damage(g, p, n, "Damage", "triggers");
     }
     if let Some(&q) = opps.iter().find(|&&q| g.player(q).life <= n) {
         return lose_life(g, q, n, Some(p), "triggers", None);
@@ -1425,8 +1429,7 @@ fn value_blink_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// when it enters: you may exile target non-Angel creature you control, then return it. HUMAN(phase 9): a person
-/// picks the creature (or none).
+/// when it enters: you may exile target non-Angel creature you control, then return it. A person picks the creature (or none).
 fn resto_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
@@ -1438,7 +1441,7 @@ fn resto_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     // the AI only puts it on the stack with a worthwhile blink
     let t = g.resto_target;
-    if t.is_none_or(|t| !ok(g, t) || !on(g, o, t)) {
+    if human_of(g, o).is_none() && t.is_none_or(|t| !ok(g, t) || !on(g, o, t)) {
         let best = g
             .player(o)
             .perms
@@ -1459,7 +1462,16 @@ fn resto_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let mut t = g.resto_target;
-    if t.is_none_or(|t| !cands.contains(&t)) {
+    if human_of(g, o).is_some() {
+        t = cards::pick_perm(
+            g,
+            o,
+            "target",
+            "Restoration Angel enters: exile and return which non-Angel creature of yours?",
+            &cands,
+            Some("none"),
+        )?;
+    } else if t.is_none_or(|t| !cands.contains(&t)) {
         let best = max_by(&cands, |x| flicker_worth(g, o, x));
         t = best.filter(|&b| flicker_worth(g, o, b) >= 3.0);
     }

@@ -23,6 +23,7 @@ use crate::engine::zones::{
     make_artifact_tokens, make_tokens, max_by, min_by, searchable,
 };
 use crate::flow::Res;
+use crate::human::{choices, human_of};
 use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
@@ -123,7 +124,9 @@ pub(crate) fn best_target_any(g: &mut Game, p: PlayerId, n: i32) -> Res {
     if opps.is_empty() {
         return Ok(());
     }
-    // HUMAN(phase 9): a person picks the target (hc.deal_damage)
+    if human_of(g, p).is_some() {
+        return choices::deal_damage(g, p, n, "Damage", "triggers");
+    }
     if let Some(&q) = opps.iter().find(|&&q| g.player(q).life <= n) {
         return lose_life(g, q, n, Some(p), "triggers", None);
     }

@@ -27,6 +27,7 @@ use crate::engine::zones::{
     searchable, to_zone_card,
 };
 use crate::flow::Res;
+use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
@@ -93,7 +94,7 @@ const CTHRESH: [&str; 8] = ["seph", "veyran", "sauron", "galadriel", "yshtola", 
 /// Summer (its spells can't be countered this turn, it draws a card)
 pub fn veil_response(g: &mut Game, p: PlayerId, _q: PlayerId, ctr: CardId) -> Res<bool> {
     if g.humans.get(p).is_some() {
-        return Ok(false); // HUMAN(phase 9): a person casts their own Veil
+        return Ok(false); // a person casts their own Veil
     }
     let d = g.db.get(ctr);
     let blue_black =
@@ -508,8 +509,8 @@ fn bats_make(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) -> Res
 /// the engine stores it at the cost the AI always pays, {2}{B}{B}: the {B} and the kicker. The removal code aims it
 /// at a creature or planeswalker with mana value 3 or more only when that mana is there (engine/removal.rs
 /// legal_targets), and the AI pays it whatever the target, so the kick is taken exactly when the target needs it:
-/// recorded here for the resolve. HUMAN(phase 9): a person pays the printed {B}, and the kicker only for such a
-/// target (play/legal.target_extra_cost).
+/// recorded here for the resolve. (A person pays the printed {B}, and the kicker only for such a target:
+/// play/legal.target_extra_cost.)
 fn thirst_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     let target = g.cur_cast.as_ref().filter(|x| x.0 == c).and_then(|x| x.1.target);
     let needs = target.is_some_and(|t| g.perm(t).cd.is_some_and(|x| g.db.get(x).cmc > 2));
@@ -585,8 +586,11 @@ fn remora(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if !trigger_window(g, o, Some(src), &name, None)? {
         return Ok(());
     }
-    // HUMAN(phase 9): a person decides whether to pay (hc.pay_tax)
-    if crate::cardcode::spare_after(g, caster, 4) {
+    if human_of(g, caster).is_some() {
+        if choices::pay_tax(g, caster, 4, "Mystic Remora (or its owner draws a card)")? {
+            return Ok(());
+        }
+    } else if crate::cardcode::spare_after(g, caster, 4) {
         pay(g, caster, 4, "", false)?;
         return Ok(());
     }
@@ -600,7 +604,16 @@ fn remora_age(g: &mut Game, src: Src, p: PlayerId) -> Res {
     }
     let age = g.perm(src).data.int(DataKey::Age) + 1;
     g.perm_mut(src).data.set(DataKey::Age, Val::Int(age));
-    // HUMAN(phase 9): a person pays the cumulative upkeep, or sacrifices it
+    if human_of(g, p).is_some() {
+        // practice mode: pay the cumulative upkeep, or sacrifice
+        if choices::pay_tax(g, p, age as u32, &format!("Mystic Remora (cumulative upkeep, {age} age counters)"))? {
+            return Ok(());
+        }
+        crate::glog!(g, "    {} sacrifices Mystic Remora (cumulative upkeep {})", pname(g, p), age);
+        leave(g, src)?;
+        to_zone_card(g, src, Zone::Gy);
+        return Ok(());
+    }
     if age <= 3 && can_pay(g, p, age as u32, "", false) {
         pay(g, p, age as u32, "", false)?;
     } else {
