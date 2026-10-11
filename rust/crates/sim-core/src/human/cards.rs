@@ -100,3 +100,9 @@ pub fn pick_blue(g: &Game, p: PlayerId, blues: &[CardId], what: &str) -> Res<Car
 pub fn dredge(_g: &mut Game, _p: PlayerId) -> Res<bool> {
     Ok(false)
 }
+
+/// `cards.jeskas_will(g, p)`: the person's choice of modes; false = not handled (the AI's rule runs).
+/// PORT(practice-cards): stub.
+pub fn jeskas_will(_g: &mut Game, _p: PlayerId) -> Res<bool> {
+    Ok(false)
+}

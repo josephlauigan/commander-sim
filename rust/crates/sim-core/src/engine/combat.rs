@@ -393,7 +393,11 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
 
 /// Archon of Cruelty's attack trigger
 pub fn archon_attack(g: &mut Game, p: PlayerId, d: PlayerId) -> Res {
-    // HUMAN(phase 9): the person picks the opponent (hc.target_opponent)
+    let d = if crate::human::is_human(g, p) {
+        crate::human::choices::target_opponent(g, p, "Archon of Cruelty attacks")? // the person picks the opponent
+    } else {
+        d
+    };
     edict(g, d, false)?;
     let n = g.player(d).hand.len() as u64;
     if n > 0 {
