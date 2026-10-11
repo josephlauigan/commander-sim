@@ -976,9 +976,8 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
         g.player_mut(p).stat("tutored", 1);
         let (pn, cn) = (g.player(p).name, g.db.get(c).name.to_string());
         if to == "hand" || to == "top" {
-            crate::engine::log_secret(
-                g,
-                p,
+            g.log_secret(
+ p,
                 &format!("    {pn} searches for a card"),
                 &format!("    {pn} searches for {cn}"),
             );

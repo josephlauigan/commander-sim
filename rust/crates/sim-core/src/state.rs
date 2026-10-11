@@ -900,8 +900,6 @@ pub struct Game {
     pub last_x: i32,
     /// the order each person chose for their simultaneous triggers last time (practice mode; Python's `trig_orders`)
     pub trig_orders: Vec<(Sym, Vec<String>)>,
-    /// practice mode: log lines only one seat may read, as (index in `log`, seat, the line the others see)
-    pub secret_lines: Vec<(usize, PlayerId, String)>,
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
     pub forced_attack: Option<(PlayerId, Sym)>,
     /// look-ahead decisions taken in this game, and engine steps its playouts used (the per-game caps)
@@ -1034,7 +1032,6 @@ impl Game {
             search_tape: Default::default(),
             last_x: 0,
             trig_orders: vec![],
-            secret_lines: vec![],
             forced_attack: None,
             search_n: 0,
             search_work: 0,

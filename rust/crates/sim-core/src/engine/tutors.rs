@@ -28,9 +28,8 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
             pl.hand.push(c);
             pl.stat("tutored", 1);
             pl.seen.insert(c);
-            crate::engine::log_secret(
-                g,
-                p,
+            g.log_secret(
+ p,
                 &format!("    {} tutors a card", g.player(p).name),
                 &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
             );
@@ -53,9 +52,8 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
     pl.hand.push(c);
     pl.stat("tutored", 1);
     pl.seen.insert(c);
-    crate::engine::log_secret(
-        g,
-        p,
+    g.log_secret(
+ p,
         &format!("    {} tutors a card", g.player(p).name),
         &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
     );
@@ -402,9 +400,8 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
     let pl = g.player_mut(p);
     pl.library.push(c);
     pl.stat("tutored", 1);
-    crate::engine::log_secret(
-        g,
-        p,
+    g.log_secret(
+ p,
         &format!("    {} puts a card on top of their library", g.player(p).name),
         &format!("    {} puts {} on top of their library", g.player(p).name, g.db.get(c).name),
     );
