@@ -111,7 +111,7 @@ pub fn assault(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 
 /// abilities.tortured: Tortured Existence: {B}, discard a creature card: return target creature card from your
 /// graveyard to your hand
-fn tortured(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+pub fn tortured(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let tg: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).creature).collect();
     let fodder: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).creature).collect();
     if tg.is_empty() {
