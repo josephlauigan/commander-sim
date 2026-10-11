@@ -1613,7 +1613,7 @@ fn tracker_clue(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
 }
 
 /// enters: return a land from the graveyard to the battlefield
-fn titania(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+pub fn titania(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     if m == src
         && g.player(o).gy.iter().any(|&c| g.db.get(c).land)

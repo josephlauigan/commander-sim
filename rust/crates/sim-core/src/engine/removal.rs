@@ -46,6 +46,11 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                     // Crushing Canopy: an enchantment or a creature with flying
                     ty.has(Types::ENCHANTMENT) || (is_c && (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")))
                 }
+                "fa" => {
+                    // Glorious Decay: an artifact, or a creature with flying that 4 damage kills
+                    ty.has(Types::ARTIFACT)
+                        || (is_c && (g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")) && etgh(g, m) <= 4)
+                }
                 "fae" => {
                     // Carnivorous Canopy: an artifact, an enchantment or a creature with flying
                     ty.has(Types::ARTIFACT)

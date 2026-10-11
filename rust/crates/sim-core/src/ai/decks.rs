@@ -1263,6 +1263,7 @@ pub fn protect_response(
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         "bill" => crate::impls::bill::bill_protect(g, owner, m, kind, actor, spell),
+        "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
     }
 }

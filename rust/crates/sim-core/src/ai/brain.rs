@@ -585,6 +585,9 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
 /// brain.attack_response: d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with
 /// instant removal when it's worth the card (a valuable creature, or the attack is dangerous)
 pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
+    if g.player(d).key == "titania" && crate::impls::titania::attack_fog(g, d, p, atk)? {
+        return Ok(true);
+    }
     let rem: Vec<CardId> = g
         .player(d)
         .hand
@@ -752,6 +755,7 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "torbran" => crate::impls::torbran::torbran_options(g, p, s, post),
         "yawgmoth" => crate::impls::yawgmoth::yawgmoth_options(g, p, post),
         "bill" => crate::impls::bill::bill_special(g, p, post),
+        "titania" => crate::impls::titania::titania_special(g, p, post),
         _ => Ok(vec![]),
     }
 }

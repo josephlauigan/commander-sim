@@ -164,6 +164,7 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
     let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
     let mut s = new_cols * 2.0 + if land_enters_tapped(g, p, c) { 0.0 } else { 3.0 };
     s += crate::impls::bill::land_adjust(g, p, c); // the bill deck: fetch lands while Bill is out
+    s += crate::impls::titania::land_adjust(g, p, c); // the titania deck: fetch lands while Titania is out or about to be
     if t.has(Tag::Chasm) {
         s += 10.0;
     }
@@ -252,7 +253,7 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
         }
     }
     landfall(g, p)?;
-    if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) {
+    if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) && !crate::impls::titania::hold_fetch(g, p) {
         crack_fetch(g, p, l)?;
     }
     if !g.hooks.is_empty() {
@@ -302,6 +303,13 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         }
     };
     if cands.is_empty() {
+        if g.player(p).key == "titania" {
+            // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)
+            remove_land(g, p, l);
+            let fetch = g.land(l).cd;
+            g.player_mut(p).gy.push(fetch);
+            fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
+        }
         return Ok(());
     }
     let have = colors_have(g, p, Some(l));
@@ -849,6 +857,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         y.phased = false;
         y.age += 1;
     }
+    crate::impls::titania::day_night_tick(g, p)?; // day and night: the turn before is judged as this one begins
     let pl = g.player_mut(p);
     pl.spells_this_turn = 0;
     pl.yawg = false;

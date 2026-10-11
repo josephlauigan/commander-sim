@@ -6489,3 +6489,49 @@ tags = "rem=destroy tgt=fe"
 dsl = []
 status = "Full"
 note = "destroy target creature with flying or target enchantment; the AI casts it only at a legal target"
+
+["Follow the Lumarets"]
+tags = ""
+dsl = []
+status = "Full"
+note = "infusion: look at the top four, a creature or land card to your hand, two if you gained life this turn; the rest to the bottom in a random order"
+
+["Something Worth Saving"]
+tags = ""
+dsl = []
+status = "Full"
+note = "mill four, the best permanent card from among them to your hand (a fetch land stays in the graveyard for Titania), gain 1 life"
+
+["Scout the City"]
+tags = ""
+dsl = []
+status = "Full"
+note = "both modes: mill three, a permanent card to your hand and gain 3 life; or destroy target creature with flying (chosen when an opposing flier is worth 3 or more)"
+
+["Malevolent Rumble"]
+tags = ""
+dsl = []
+status = "Full"
+note = "reveal the top four, a permanent card to your hand, the rest to the graveyard, and a 0/1 colorless Eldrazi Spawn that can be sacrificed for {C}"
+
+["Glorious Decay"]
+tags = "rem=destroy tgt=fa"
+dsl = []
+status = "Full"
+note = "all three modes: destroy target artifact; 4 damage to target creature with flying; or exile a card from a graveyard and draw. The AI casts it at an artifact or a flier 4 damage kills (tgt=fa); with none it never casts it"
+
+["Annoyed Altisaur"]
+status = "Full"
+note = "reach, trample; cascade on cast (exile until a nonland card with lower mana value, cast it free), the rest to the bottom in a random order"
+
+["Arachnogenesis"]
+tags = ""
+dsl = []
+status = "Full"
+note = "X 1/2 green Spiders with reach, X the creatures attacking you, and no combat damage from non-Spiders this turn (Game::fog_spiders). The AI casts it when the attack takes a third of its life or more, at the declare-attackers priority so the Spiders can block"
+
+["Infestation Expert"]
+tags = "human pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "daybound and nightbound modeled (Game::day_night): the first daybound permanent makes it day; as each turn begins it becomes night after a turn with no spell cast, day after a turn with two or more; at night it is the 4/5 Infested Werewolf and makes two Insects instead of one"

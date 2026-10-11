@@ -298,6 +298,12 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
             gain(g, p, k * opps.len() as i32)?;
         }
     }
+    if k > 0 && !blank && g.player(p).key == "titania" && has(g, p, Tag::Uprising) {
+        // Garruk's Uprising: a card for each token with power 4 or more (the 5/3 Elementals); gated to the titania
+        // deck, the only one measured with it so far
+        let big = out.iter().filter(|&&m| epow(g, m) >= 4).count() as u32;
+        draw(g, p, big, false)?;
+    }
     shards_trigger(g, p, k)?;
     if g.dsl_on {
         for &x in &out {
@@ -1354,7 +1360,9 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         Some("wayfinder") => {
             let n = g.player(p).library.len().min(4);
             let mut top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
-            if let Some(i) = top.iter().position(|&c| g.db.get(c).land) {
+            // the titania deck leaves its fetch lands in the graveyard, where Titania returns them
+            let keep_fetch = g.player(p).key == "titania";
+            if let Some(i) = top.iter().position(|&c| g.db.get(c).land && !(keep_fetch && g.db.get(c).tag(Tag::F))) {
                 let l = top.remove(i);
                 g.player_mut(p).hand.push(l);
             }

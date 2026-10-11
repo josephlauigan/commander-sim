@@ -2521,33 +2521,11 @@
    "types": "I",
    "generic": 2,
    "pips": "G",
-   "tags": {
-    "tokx": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "token",
-       "n": "X",
-       "pow": 1,
-       "tgh": 2,
-       "keywords": [
-        "reach"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "spider"
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -2555,10 +2533,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you. Prevent all combat damage that would be dealt this turn by non-Spider creatures.   [partly: prevent all combat damage that would be dealt this turn by non-spider creatures]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -28421,10 +28397,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Infusion — Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. If you gained life this turn, you may instead reveal two creature and/or land cards from among them and put them into your hand. Put the rest on the bottom of your library in a random order."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -31537,48 +31511,12 @@
    "pips": "G",
    "tags": {
     "rem": "destroy",
-    "tgt": "a",
-    "draw": "1"
+    "tgt": "fa"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "destroy",
-          "what": {
-           "sel": "target",
-           "filter": {
-            "type": "artifact"
-           },
-           "upto": false
-          }
-         }
-        ],
-        [
-         {
-          "do": "exile_graveyard",
-          "who": "each_player"
-         },
-         {
-          "do": "draw",
-          "n": 1,
-          "who": "you"
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -31586,10 +31524,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• ~ deals 4 damage to target creature with flying"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -39065,46 +39001,7 @@
    "pow": 3,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "insect"
-       ]
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "insect"
-       ]
-      }
-     ],
-     "event": "attack",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "daybound",
@@ -39119,10 +39016,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Daybound"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -47659,9 +47554,7 @@
    "types": "S",
    "generic": 1,
    "pips": "G",
-   "tags": {
-    "mktok": "1:0:0"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -47673,7 +47566,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -66382,26 +66275,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "gain_life",
-          "n": 3,
-          "who": "you"
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "bring down",
@@ -66413,12 +66287,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• look around — mill three cards",
-    "• put a permanent card from among them into your hand",
-    "• bring down — destroy target creature with flying"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -71794,18 +71664,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "gain_life",
-       "n": 1,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "mill"
@@ -71815,10 +71674,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Mill four cards. You may put a permanent card from among them into your hand. You gain 1 life.   [partly: mill four cards; put a permanent card from among them into your hand]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

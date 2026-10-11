@@ -893,6 +893,12 @@ pub struct Game {
     pub blocking: Vec<PermId>,
     /// a fog this turn (Spore Frog): no combat damage
     pub fog: Option<TurnStamp>,
+    /// Arachnogenesis: combat damage from non-Spider creatures is prevented this turn
+    pub fog_spiders: Option<TurnStamp>,
+    /// day and night (Infestation Expert): 0 neither, 1 day, 2 night
+    pub day_night: u8,
+    /// the player whose turn began last (day and night look at the turn before)
+    pub dn_last: Option<PlayerId>,
     /// Impractical Joke: damage can't be prevented this turn
     pub no_prevent: Option<TurnStamp>,
     /// attacking creatures card code made during attack triggers (Python returns them from CI.fire)
@@ -1058,6 +1064,9 @@ impl Game {
             selfpt: false,
             blocking: vec![],
             fog: None,
+            fog_spiders: None,
+            day_night: 0,
+            dn_last: None,
             no_prevent: None,
             new_attackers: vec![],
             stopped: false,
