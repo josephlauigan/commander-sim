@@ -292,15 +292,27 @@ pub fn necro_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 
 /// fixes.gamble_prio: Gamble by the chance its random discard misses the card it found
 pub fn gamble_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let rest: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
-    if rest.is_empty() {
+    thread_local! {
+        static IN_GAMBLE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    }
+    // Valuing the hand can come back here: Underworld Breach in hand values the graveyard, and a Gamble there asks
+    // for this priority again, without end (a stack overflow, sauron vs t4, seeds 500298 and 500841). Inside that
+    // loop Gamble is worth nothing.
+    if IN_GAMBLE.with(|f| f.replace(true)) {
         return 0;
     }
-    let keep = rest.len() as f64 / (rest.len() + 1) as f64;
-    let risk = rest.iter().filter(|&&x| !g.db.get(x).land).map(|&x| card_worth(g, p, x, false)).psum()
-        / rest.len().max(1) as f64
-        / 10.0;
-    (60.0 * keep - 8.0 * risk).max(0.0) as i32
+    let rest: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
+    let v = if rest.is_empty() {
+        0
+    } else {
+        let keep = rest.len() as f64 / (rest.len() + 1) as f64;
+        let risk = rest.iter().filter(|&&x| !g.db.get(x).land).map(|&x| card_worth(g, p, x, false)).psum()
+            / rest.len().max(1) as f64
+            / 10.0;
+        (60.0 * keep - 8.0 * risk).max(0.0) as i32
+    };
+    IN_GAMBLE.with(|f| f.set(false));
+    v
 }
 
 /// ais.breach_candidates: nonland cards in your graveyard castable with Underworld Breach's escape
