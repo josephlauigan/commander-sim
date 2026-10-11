@@ -883,6 +883,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Main1, Call::Player { p })?; // at the beginning of your precombat main phase (Sagas)
     }
+    crate::impls::kefka::paradigm(g, p)?; // Decorum Dissertation
     if g.over || !g.player(p).alive {
         return Ok(());
     }

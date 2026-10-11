@@ -742,6 +742,7 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "seph" => super::seph::options(g, p, s, post),
         "veyran" => super::veyran::options(g, p, s, post),
         "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
+        "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         _ => Ok(vec![]),
     }
 }

@@ -5593,3 +5593,150 @@ tags = "leg human wizard pow=1 tgh=4 fly"
 dsl = []
 status = "Full"
 note = "attacks: an enchantment with MV 3 or less onto the battlefield (Necropotence and armor Auras on Zur first)"
+
+# ---- Kefka, Court Mage deck (rust/crates/sim-core/src/impls/kefka.rs; tests in tests/cards_kefka.rs)
+["Alpharael, Dreaming Acolyte"]
+tags = "leg human pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "enters: draw two, then discard two cards unless you discard an artifact card (the AI bins the cheaper way); deathtouch on its controller's turn"
+
+["Arcane Omens"]
+tags = ""
+dsl = []
+status = "Full"
+note = "converge: the AI pays {4}{B} choosing sources of distinct colours; target opponent (the fullest hand) discards X cards, X the colours of mana spent, their choice"
+
+["Corroding Dragonstorm"]
+tags = ""
+dsl = []
+status = "Full"
+note = "enters: each opponent loses 2, you gain 2 once, surveil 2; a Dragon you control entering returns it to hand (no Dragon is in the deck, the clause works for any that enters)"
+
+["Dark Inquiry"]
+tags = ""
+dsl = []
+status = "Full"
+note = "an opponent with a nonland card reveals their hand; you take the best nonland card (by its worth to them) and they discard it"
+
+["Decorum Dissertation"]
+tags = ""
+dsl = []
+status = "Full"
+note = "target player draws two and loses 2 life (an opponent once Kefka, Ruler of Ruin is out, the lowest life; yourself before); Paradigm: exiled as it resolves, a free copy at the start of each of your first main phases"
+
+["Demonic Embrace"]
+tags = "aura"
+dsl = []
+status = "Full"
+note = "Aura: +3/+1 and flying on your creature (the Demon type is not tracked: nothing in these games reads it); may be cast from the graveyard for 3 life and a discard on top of its cost"
+
+["Disintegrate"]
+tags = "noregen exiledie"
+dsl = []
+status = "Full"
+note = "X damage to any target, X chosen by the AI (lethal for a creature worth killing, or an opponent's life); a creature damaged can't regenerate and is exiled if it would die"
+
+["Duress"]
+tags = ""
+dsl = []
+status = "Full"
+note = "an opponent with a noncreature, nonland card reveals their hand; you take the best one (by its worth to them) and they discard it"
+
+["Extinguish the Light"]
+tags = "rem=destroy tgt=cp"
+dsl = []
+status = "Full"
+note = "destroys the creature or planeswalker; you gain 3 life if its mana value was 3 or less (a token is 0)"
+
+["Garrison Excavator"]
+tags = "pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "menace; a 2/2 red and white Spirit whenever cards leave your graveyard: casting from it (mayhem, Demonic Embrace, flashback, madness not), Postmortem Professor's return. An opponent exiling your graveyard isn't seen (the engine has no one point for it)"
+
+["Gemstone Mine"]
+tags = "c=A"
+dsl = []
+status = "Full"
+note = "three mining counters (kept as the taps made); each tap makes one mana of any colour and removes one; sacrificed when the last is used"
+
+["Grab the Prize"]
+tags = ""
+dsl = []
+status = "Full"
+note = "additional cost: discard a card (the AI's discard policy); draw two; 2 damage to each opponent if the discarded card wasn't a land"
+
+["Ichor Slick"]
+tags = "rem=shrink3 tgt=c"
+dsl = []
+status = "Full"
+note = "-3/-3 until end of turn on the target creature; cycling {2}; madness {3}{B}: cast when discarded if there is a creature it kills"
+
+["Inner Fire"]
+tags = ""
+dsl = []
+status = "Full"
+note = "adds {R} for each card in your hand when it resolves (floats to the end of the turn); the AI casts it when the hand can spend the mana or it finishes the flip"
+
+["Intellect Devourer"]
+tags = "pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "enters: each opponent exiles their least useful card from hand until it leaves; you may play those cards (held in your hand, mana of any type); if it leaves, uncast cards go back to their owners' hands"
+
+["Postmortem Professor"]
+tags = "pow=2"
+dsl = [
+  { type = "static", static = "cant_block" },
+]
+status = "Full"
+note = "can't block; attacks: each opponent loses 1 life and you gain 1; {1}{B}, exile an instant or sorcery card from your graveyard: returns from the graveyard"
+
+["Sawblade Scamp"]
+tags = "pow=1 haste"
+dsl = []
+status = "Full"
+note = "haste; an oil counter whenever you cast a noncreature spell; {T}, remove a counter: 1 damage to each opponent"
+
+["Scarlet Spider, Kaine"]
+tags = "leg human pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "menace; enters: may discard a card for a +1/+1 counter (when it costs nothing); mayhem {B/R}: cast from the graveyard the turn it was discarded"
+
+["Screeching Soulbreaker"]
+tags = "pow=1 tgh=4 fly"
+dsl = []
+status = "Full"
+note = "flying; attacks: 1 damage to each opponent and you gain 1 life"
+
+["Splatter Technique"]
+tags = ""
+dsl = []
+status = "Full"
+note = "both modes: draw four, or 4 damage to each creature and planeswalker (the AI picks the wipe when it nets value)"
+
+["Stadium Tidalmage"]
+tags = "pow=4 tgh=4"
+dsl = []
+status = "Full"
+note = "enters or attacks: may draw a card, then discard a card (the deck's discard policy)"
+
+["Stargaze"]
+tags = ""
+dsl = []
+status = "Full"
+note = "X from the spare mana, life and library: look at 2X, X to hand (best by worth), the rest to the graveyard, lose X life"
+
+["Susurian Voidborn"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "a creature or artifact of yours dying (a Treasure, Clue or Food sacrificed counts) drains the lowest opponent for 1; Warp {B}: cast from hand, exiled at the next end step, castable from exile on a later turn"
+
+["Twinned Vision"]
+tags = "draw=1"
+dsl = []
+status = "Full"
+note = "draws a card; flashback {1}{U/R}{U/R} with a discard from the graveyard draws two instead"
