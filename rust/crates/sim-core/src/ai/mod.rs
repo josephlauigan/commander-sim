@@ -472,6 +472,11 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Res<Option<(PlayerId, Sym)>> 
     if let Some(plan) = g.forced_attack.take() {
         return Ok(Some(plan));
     }
+    if g.player(p).key == "bill"
+        && let Some(q) = crate::impls::bill::forced_plan(g, p)
+    {
+        return Ok(Some((q, "all"))); // Bill doubled for a lethal attack: everything at that player
+    }
     if !search::enabled(g, p) {
         return Ok(None);
     }

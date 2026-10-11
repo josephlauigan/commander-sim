@@ -136,21 +136,78 @@ fn doubling_gain(g: &Game, p: PlayerId) -> (i32, i32) {
     (total, add)
 }
 
-/// the power that could attack now and what the doubling adds to it
-fn attack_force(g: &Game, p: PlayerId) -> (i32, i32) {
+/// the damage p's untapped attackers get through to q, all-out at q: each blocker of q that can block chumps one
+/// of the biggest attackers it can legally block (menace takes two blockers); trample passes the excess over the
+/// blocker's toughness. `doubled`: after the doubling (each creature with counters gets as many again, plus Scales).
+fn damage_through(g: &Game, p: PlayerId, q: PlayerId, doubled: bool) -> i32 {
+    use crate::engine::combat::{can_block, kw};
     let sc = crate::cardcode::scales(g, p);
-    let (mut power, mut extra) = (0, 0);
+    let mut atk: Vec<(PermId, i32)> = vec![];
     for m in creatures(g, p) {
         let x = g.perm(m);
-        if x.sick && !crate::engine::combat::kw(g, m, "haste") || x.tapped || x.noatk {
+        if x.sick && !kw(g, m, "haste") || x.tapped || x.noatk {
             continue;
         }
-        power += epow(g, m).max(0);
-        if x.plus > 0 {
-            extra += x.plus + sc;
+        let mut pw = epow(g, m);
+        if doubled && x.plus > 0 {
+            pw += x.plus + sc;
+        }
+        if pw > 0 {
+            atk.push((m, pw));
         }
     }
-    (power, extra)
+    atk.sort_by_key(|a| -a.1);
+    let mut blockers: Vec<PermId> =
+        g.player(q).perms.iter().copied().filter(|&b| live(g, b) && g.is_creature(b) && !g.perm(b).tapped).collect();
+    let mut total = 0;
+    for (a, pw) in atk {
+        let mut cand: Vec<PermId> = blockers.iter().copied().filter(|&b| can_block(g, b, a)).collect();
+        let need = if kw(g, a, "menace") { 2 } else { 1 };
+        if cand.len() < need {
+            total += pw;
+            continue;
+        }
+        // use the blockers that can block the fewest of the remaining attackers' kind: the smallest first
+        cand.sort_by_key(|&b| etgh(g, b));
+        let used: Vec<PermId> = cand.into_iter().take(need).collect();
+        blockers.retain(|b| !used.contains(b));
+        if kw(g, a, "trample") {
+            let tough: i32 = used.iter().map(|&b| etgh(g, b).max(0)).sum();
+            total += (pw - tough).max(0);
+        }
+    }
+    total
+}
+
+/// the opponent the doubling makes dead through their blockers (the one with the least life)
+fn lethal_victim(g: &Game, p: PlayerId) -> Option<PlayerId> {
+    g.opps(p)
+        .filter(|&q| {
+            let life = g.player(q).life;
+            damage_through(g, p, q, false) < life && damage_through(g, p, q, true) >= life
+        })
+        .min_by_key(|&q| g.player(q).life)
+}
+
+/// set when the pre-combat doubling was taken for a lethal attack: the opponent to attack with everything
+fn lethal_flag(q: PlayerId) -> String {
+    format!("bill_lethal_{}", q.0)
+}
+
+/// the attack plan of a turn on which Bill doubled for a lethal attack: everything at that opponent
+pub fn forced_plan(g: &Game, p: PlayerId) -> Option<PlayerId> {
+    g.opps(p).find(|&q| g.player(q).alive && flag_set(g, p, &lethal_flag(q)))
+}
+
+fn double_lethal(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let victim = lethal_victim(g, p);
+    if !double_go(g, src, p, arg)? {
+        return Ok(false);
+    }
+    if let Some(q) = victim {
+        set_flag(g, p, &lethal_flag(q));
+    }
+    Ok(true)
 }
 
 fn bill_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -166,17 +223,12 @@ fn bill_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     match post {
         // the end of the turn before yours, with the mana free
         None => Ok(vec![Opt { utility: 2.5 + (add as f64 / 6.0).min(3.0), label, act }]),
-        // before combat: only when it makes the attack lethal (or much bigger)
+        // before combat: only when it makes the attack lethal through the blockers; the attack is then forced
+        // (`forced_plan`), so the mana is never spent on an attack that doesn't happen
         Some(false) => {
-            let (power, extra) = attack_force(g, p);
-            let lethal = g.opps(p).any(|q| {
-                let life = g.player(q).life;
-                power < life && power + extra >= life
-            });
-            if lethal {
+            if lethal_victim(g, p).is_some() {
+                let act = Some(Action::Ability { src, f: double_lethal, arg: 0 });
                 Ok(vec![Opt { utility: 9.0, label: format!("{label} (lethal attack)"), act }])
-            } else if extra >= 8 && power > 0 {
-                Ok(vec![Opt { utility: 3.0, label: format!("{label} (bigger attack)"), act }])
             } else {
                 Ok(vec![])
             }
