@@ -56,7 +56,7 @@ fn pay(g: &mut Game, p: PlayerId, gn: u32, pips: &str, what: &str) -> Why {
 // ------------------------------------------------------------------ permanents
 /// abilities.archivist: Jace's Archivist: {U}, {T}: each player discards their hand, then draws as many as the most
 /// discarded
-fn archivist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+pub fn archivist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = tap_ok(g, m, true).or_else(|| pay(g, p, 0, "U", "Jace's Archivist")) {
         return Ok(Some(why));
     }
@@ -85,7 +85,7 @@ fn archivist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 
 /// abilities.assault: Aggravated Assault: {3}{R}{R}: untap your creatures; after this main phase, an additional
 /// combat (followed by a main phase). Sorcery speed
-fn assault(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+pub fn assault(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = legal::sorcery_timing(g, p) {
         return Ok(Some(why.replace("do that", "activate Aggravated Assault")));
     }

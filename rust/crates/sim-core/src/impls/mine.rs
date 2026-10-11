@@ -697,7 +697,7 @@ fn urabrask(g: &mut Game, src: Src, p: PlayerId) -> Res {
 // ======================================================== Kefka, Court Mage // Kefka, Ruler of Ruin
 /// mine._kefka_wheel: each player discards a card, then you draw a card for each card type among the discarded cards.
 /// A person picks their discard.
-fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
+pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
     let mut discarded = vec![];
     let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     for q in alive {

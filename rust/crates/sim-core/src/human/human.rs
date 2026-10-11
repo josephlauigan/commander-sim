@@ -562,7 +562,7 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
 }
 
 /// an activated ability of land L (beyond tapping for mana)
-fn use_land(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<String>> {
+pub fn use_land(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<String>> {
     let abil = abilities::land_abilities(g, p, l);
     let lname = card_name(g, g.land(l).cd);
     if abil.is_empty() {

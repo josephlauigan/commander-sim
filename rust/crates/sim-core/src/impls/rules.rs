@@ -598,7 +598,7 @@ fn remora(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 }
 
 /// cumulative upkeep {1} (kept three turns)
-fn remora_age(g: &mut Game, src: Src, p: PlayerId) -> Res {
+pub fn remora_age(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p != g.perm(src).owner || !trigger_window(g, p, Some(src), "cumulative upkeep {1}", None)? {
         return Ok(());
     }
