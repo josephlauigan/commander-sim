@@ -21,6 +21,7 @@ use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::values::{epow, etgh, protected_from, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, Zone, die, enter, leave, make_tokens, max_by, searchable, to_zone_card};
 use crate::flow::Res;
+use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec};
@@ -522,8 +523,31 @@ fn prayer(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), "exile a permanent; gain 2 life", Some(5.0))? {
         return Ok(());
     }
-    // HUMAN(phase 9): the person picks the permanent (hc.choose over legal.describe_target)
-    crate::impls::common::oring_exile(g, src, o, |g, x| !g.perm(x).token || g.is_creature(x), false, false)?;
+    if human_of(g, o).is_some() {
+        let w = Colors::from_letters("W");
+        let cands: Vec<PermId> = g
+            .opps(o)
+            .flat_map(|q| g.player(q).perms.iter().copied())
+            .filter(|&x| !g.perm(x).phased && !untargetable(g, x) && !protected_from(g, x, w))
+            .collect();
+        let t = if cands.is_empty() {
+            None
+        } else {
+            cards::pick_perm(
+                g,
+                o,
+                "target",
+                "Prayer of Binding: exile which nonland permanent an opponent controls?",
+                &cands,
+                Some("no target"),
+            )?
+        };
+        if let Some(t) = t {
+            crate::impls::common::oring_exile(g, src, o, |_, x| x == t, false, false)?;
+        }
+    } else {
+        crate::impls::common::oring_exile(g, src, o, |g, x| !g.perm(x).token || g.is_creature(x), false, false)?;
+    }
     gain(g, o, 2)
 }
 
@@ -590,23 +614,58 @@ pub fn zur_fetch(g: &mut Game, src: PermId, p: PlayerId) -> Res {
     if cs.is_empty() {
         return Ok(());
     }
-    // HUMAN(phase 9): the person searches (hc.search)
-    let mut best: Option<(f64, CardId)> = None;
-    for &c in &cs {
-        let v = fetch_value(g, p, c, src);
-        if best.is_none_or(|b| v > b.0) {
-            best = Some((v, c));
+    let c = if human_of(g, p).is_some() {
+        let pred = |g: &Game, c: CardId| g.db.get(c).types.has(Types::ENCHANTMENT) && g.db.get(c).cmc <= 3;
+        let got = choices::search(
+            g,
+            p,
+            &pred,
+            1,
+            "Zur attacks: search for an enchantment with mana value 3 or less (it enters the battlefield)",
+            true,
+        )?;
+        let Some(&c) = got.first() else { return Ok(()) };
+        c
+    } else {
+        let mut best: Option<(f64, CardId)> = None;
+        for &c in &cs {
+            let v = fetch_value(g, p, c, src);
+            if best.is_none_or(|b| v > b.0) {
+                best = Some((v, c));
+            }
         }
-    }
-    let (v, c) = best.unwrap();
-    if v <= 0.0 {
-        return Ok(());
-    }
-    remove_first(&mut g.player_mut(p).library, c);
-    crate::engine::tutors::shuffle_library(g, p);
+        let (v, c) = best.unwrap();
+        if v <= 0.0 {
+            return Ok(());
+        }
+        remove_first(&mut g.player_mut(p).library, c);
+        crate::engine::tutors::shuffle_library(g, p);
+        c
+    };
     put_enchantment(g, p, c, src)?;
     crate::glog!(g, "    Zur fetches {}", g.db.get(c).name);
     Ok(())
+}
+
+/// zur.human_lock_host: the person picks the permanent a lock Aura put onto the battlefield enchants
+fn human_lock_host(g: &Game, p: PlayerId, name: &str) -> Res<Option<PermId>> {
+    let ok = |g: &Game, m: PermId| {
+        !g.perm(m).phased && (g.is_creature(m) || (name == "Encrust" && g.perm(m).cd.is_some() && is_artifact(g, m)))
+    };
+    let mut cands: Vec<PermId> =
+        g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| ok(g, m)).collect();
+    cands.extend(g.player(p).perms.iter().copied().filter(|&m| ok(g, m)));
+    if cands.is_empty() {
+        return Ok(None);
+    }
+    cards::pick_perm(
+        g,
+        p,
+        "target",
+        &format!("{name}: enchant which permanent? (it enters without targeting)"),
+        &cands,
+        None,
+    )
 }
 
 /// zur.put_enchantment: an enchantment put onto the battlefield (not cast): an Aura goes where it's needed, without
@@ -614,8 +673,11 @@ pub fn zur_fetch(g: &mut Game, src: PermId, p: PlayerId) -> Res {
 pub fn put_enchantment(g: &mut Game, p: PlayerId, c: CardId, _zur: PermId) -> Res {
     let name = g.db.get(c).name.clone();
     if lock_kind(&name).is_some() {
-        // HUMAN(phase 9): human_lock_host (the person picks the permanent)
-        let host = lock_host(g, p, &name, false, &[]);
+        let host = if human_of(g, p).is_some() {
+            human_lock_host(g, p, &name)?
+        } else {
+            lock_host(g, p, &name, false, &[])
+        };
         g.aura_put = true;
         let r = enter(g, p, c, Enter::default());
         g.aura_put = false;

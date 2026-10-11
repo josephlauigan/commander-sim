@@ -1116,7 +1116,7 @@ pub fn tidebinder_response(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
     }
     for q in g.after(p).collect::<Vec<_>>() {
         if g.humans.get(q).is_some() {
-            continue; // HUMAN(phase 9): a person casts their own Tidebinder
+            continue; // a person casts their own Tidebinder (tide_etb_you)
         }
         if q == p || !g.player(q).alive || crate::ai::is_main(g.player(q).key) {
             continue;
@@ -1201,8 +1201,7 @@ pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
     Ok(())
 }
 
-/// the bound permanent gets its abilities back when Tidebinder leaves. HUMAN(phase 9): a person's Tidebinder
-/// counters an ability on the stack as it enters (its enters hook does nothing for the AI).
+/// the bound permanent gets its abilities back when Tidebinder leaves.
 fn tide_free(g: &mut Game, _src: Src, m: PermId) -> Res {
     if let Some(&Val::Perm(b)) = g.perm(m).data.get(DataKey::Bound) {
         g.perm_mut(b).neutered = false;
@@ -2887,7 +2886,48 @@ fn tide_etb_you(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if g.humans.get(o).is_none() {
         return Ok(());
     }
-    // HUMAN(phase 9): the person picks an ability on the stack to counter (trigger_window 'counter an ability')
+    if !g.stack.iter().any(|it| it.kind != StackKind::Spell) {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "counter an ability", Some(5.0))? {
+        return Ok(());
+    }
+    let abil: Vec<u32> = g.stack.iter().rev().filter(|it| it.kind != StackKind::Spell).map(|it| it.id).collect();
+    if abil.is_empty() {
+        return Ok(());
+    }
+    let labels: Vec<String> = abil
+        .iter()
+        .map(|&id| {
+            let it = g.stack.iter().find(|x| x.id == id).unwrap();
+            format!("{} ({})", it.name, g.player(it.controller).name)
+        })
+        .collect();
+    let Some(k) = crate::human::choices::choose(
+        g,
+        o,
+        "target",
+        "Tishana's Tidebinder: counter which ability?",
+        &labels,
+        Some("none"),
+        None,
+    )?
+    else {
+        return Ok(());
+    };
+    let id = abil[k];
+    let (name, source) = {
+        let it = g.stack.iter_mut().find(|x| x.id == id).unwrap();
+        it.countered = true;
+        (it.name.clone(), it.ctx.source)
+    };
+    if let Some(s) = source
+        && g.perm(s).on_bf
+    {
+        g.perm_mut(src).data.set(DataKey::Bound, Val::Perm(s));
+        g.perm_mut(s).neutered = true;
+    }
+    crate::glog!(g, "    Tishana's Tidebinder counters {}", name);
     Ok(())
 }
 
