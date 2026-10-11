@@ -518,6 +518,8 @@ pub fn bolt_something(g: &mut Game, p: PlayerId, dmg: i32) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if let Some(b) = best.filter(|&b| pval(g, b) >= ping_floor(g, p)) {
         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), None)
+    } else if let Some(s) = crate::impls::smaug::ping_target(g, p, eff) {
+        crate::impls::smaug::dealt_damage(g, s, dmg) // the smaug deck pings its own Smaug for Treasures
     } else if let Some(q) = min_by(&opps, |o| g.player(o).life as f64) {
         lose_life(g, q, dmg, Some(p), "burn", None)
     } else {
@@ -689,6 +691,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         g.db.get(c).name,
         ctx.target.map_or(String::new(), |t| format!(" -> {} ({})", g.perm(t).name, g.player(g.perm(t).owner).name))
     );
+    g.cast_treasure = Some((c, std::mem::take(&mut g.treasure_paid))); // Kalain: Treasure mana paid for this spell
     let prev = g.cur_cast.replace((c, ctx.clone(), zone)); // cast triggers see its targets and X
     let r = (|| -> Res<Option<(bool, Option<CardId>, Ctx)>> {
         on_cast(g, p, c)?;
@@ -811,6 +814,9 @@ pub fn resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> Re
     r?;
     if g.resolving == 0 && !g.trig_queue.is_empty() {
         crate::engine::stack::flush_triggers(g)?;
+    }
+    if g.resolving == 0 {
+        g.cast_treasure = None; // Kalain has seen the Treasure mana paid for this spell
     }
     Ok(())
 }

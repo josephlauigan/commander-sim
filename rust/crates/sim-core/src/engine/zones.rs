@@ -674,6 +674,8 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
     }
     if creature {
         g.player_mut(p).creature_died = Some(g.turn_stamp()); // Essenceknit Scholar
+        let st = g.turn_stamp();
+        g.died_count = if g.died_count.0 == Some(st) { (Some(st), g.died_count.1 + 1) } else { (Some(st), 1) }; // Lagomos
     }
     if creature && hushed(g) {
         // still a death (Python doesn't record it here): common.aura_fall returns Angelic Destiny for it

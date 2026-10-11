@@ -6374,3 +6374,33 @@ note = "enters: the best creature card from your graveyard returns to the battle
 dsl = []
 status = "Full"
 note = "each opponent discards a card (their choice: the worst); you create a 1/1 black and green Pest that gains you 1 life whenever it attacks"
+
+# ---- The Lord of Pain / Smaug candidate decks (rust/crates/sim-core/src/impls/lordofpain.rs, smaug.rs; tests/cards_rakdos.rs)
+["The Lord of Pain"]
+status = "Full"
+note = "opponents can't gain life (compiled static); each player's first spell each turn: the Lord deals damage equal to its mana value to another player (the opponent closest to dying, never the caster; its own controller only when no one else is left)"
+
+["Smaug the Impenetrable"]
+status = "Full"
+note = "noncombat damage dealt to Smaug (removal, burn, sweepers, its owner's pingers) makes that many Treasures; flying, haste, indestructible are keywords. The AI pings it with Viashino Fangtail and aims the deck's any-target damage at it when nothing better"
+
+["Charforger"]
+status = "Full"
+note = "token on enter (compiled); an oil counter whenever another creature or artifact (tokens, Treasure/Food/Clue included) you control goes to the graveyard; three counters: exile the top card, playable this turn (an option when it has three)"
+
+["Kalain, Reclusive Painter"]
+status = "Full"
+note = "Treasure on enter (compiled); other creatures you control enter with a +1/+1 counter per mana from a Treasure spent to cast them (the engine counts Treasure mana paid per spell; the AI doesn't plan Treasure spending around it)"
+
+["Lagomos, Hand of Hatred"]
+dsl = []
+status = "Full"
+note = "beginning of combat on your turn: a 2/1 red Elemental with trample and haste, sacrificed at the next end step; {T}: tutor any card, only when five or more creatures died this turn (counted from the start of the turn)"
+
+["Hero's Heirloom"]
+status = "Full"
+note = "equip {2}, +2/+1 (compiled); trample and haste while the equipped creature is legendary"
+
+["Ultimate Magic: Meteor"]
+status = "Full"
+note = "7 damage to each creature (compiled); foretell: {2} to exile it face down (kept in hand, marked), cast later for {5}{R}, and then it also destroys an artifact or land of each opponent (the AI foretells with spare mana and casts it when it kills more of theirs than of its own)"

@@ -355,6 +355,7 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
     if crate::human::is_human(g, p) {
         return Ok(crate::human::mana::pay_from_pool(g, p, generic, pips).is_none());
     }
+    g.treasure_paid = 0;
     let mut u = mana_units(g, p, convoke);
     let (used, col) = match plan_pay(g, &u, generic, pips) {
         Some(x) => x,
@@ -379,6 +380,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
     match w.src {
         Source::Treasure => {
             let st = g.turn_stamp();
+            g.treasure_paid += 1;
             let pl = g.player_mut(p);
             // a trigger during the payment (Gilded Goose's Food sacrificed: Trail of Crumbs pays {1}) may have spent
             // the Treasure this plan counted on: Python's count goes negative, an unsigned one stays at 0

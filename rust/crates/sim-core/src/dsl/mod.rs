@@ -447,6 +447,8 @@ fn run(
                     } else if let Some(b) = best.filter(|&b| pval(g, b) >= crate::engine::life::ping_floor(g, p)) {
                         snapshot(g, b, ctx);
                         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
+                    } else if g.player(p).key == "smaug" && let Some(s) = crate::impls::smaug::smaug_of(g, p) {
+                        crate::impls::smaug::dealt_damage(g, s, dmg)?; // the smaug deck pings its own Smaug for Treasures
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
                     }
@@ -463,7 +465,11 @@ fn run(
                         if to.sel.as_deref() == Some("target") {
                             snapshot(g, m, ctx);
                         }
-                        if etgh(g, m) <= if g.perm(m).owner != p { eff } else { dmg } {
+                        let amt = if g.perm(m).owner != p { eff } else { dmg };
+                        if !(to.sel.as_deref() == Some("target") && etgh(g, m) <= amt) {
+                            crate::impls::smaug::dealt_damage(g, m, amt)?; // Smaug (a lethal targeted hit goes through apply_removal)
+                        }
+                        if etgh(g, m) <= amt {
                             if to.sel.as_deref() == Some("target") {
                                 apply_removal(g, Some(p), m, &format!("dmg{dmg}"), spell)?;
                             } else {
