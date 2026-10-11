@@ -1363,14 +1363,19 @@ fn disintegrate_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 /// the loop with the flipped Kefka would deck us
 pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let name = cname(g, c);
-    if name == CRAWLER && flipped(g, p) && !loop_safe(g, p) {
-        return 0; // the loop is mandatory: not until the library outlasts the table's life
+    if name == CRAWLER {
+        // every card drawn costs each opponent 1: Kefka's discard and loot draws ping the table even before the flip
+        if flipped(g, p) {
+            return if loop_safe(g, p) { 80 } else { 0 }; // the loop is mandatory: not until the library outlasts the table's life
+        }
+        return if kefka_out(g, p) { 84 } else { 70 };
+    }
+    if name == "Triskelion" {
+        // three pings: each one is a card once Kefka is flipped
+        return if flipped(g, p) { 74 } else if kefka_out(g, p) { 56 } else { generic_prio(g, p, c) };
     }
     if (name == SCARLET_SPIDER || name == DEMONIC_EMBRACE) && kefka_out(g, p) && !flipped(g, p) {
         return 0; // kept in hand to be discarded to Kefka's trigger (mayhem / the graveyard cast)
-    }
-    if name == CRAWLER && kefka_out(g, p) && !flipped(g, p) {
-        return 30; // flip first when the mana is there; the Crawler is the finisher
     }
     generic_prio(g, p, c)
 }
