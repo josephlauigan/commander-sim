@@ -1,6 +1,6 @@
-//! Loading the Python export (`commander_sim/tools/export_cards.py`): `data/cards.json` and `data/decks.json`.
+//! Loading the card export (written by `cardgen export`): `data/cards.json` and `data/decks.json`.
 //!
-//! These are the raw records, field for field as Python writes them. The engine's own card type (`CardDef`, M1)
+//! These are the raw records, field for field as cardgen writes them. The engine's own card type (`CardDef`, M1)
 //! is built from them; nothing here interprets tags or abilities.
 
 use indexmap::IndexMap;
