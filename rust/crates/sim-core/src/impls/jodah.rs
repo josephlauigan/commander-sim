@@ -2140,7 +2140,11 @@ fn purge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     pay(g, p, x, "BR", false)?;
     remove_card(&mut g.player_mut(p).hand, c);
-    g.player_mut(p).spells_this_turn += 1;
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c); // the card report counts a card as cast from this set
+    crate::glog!(g, "  {} casts Kaervek's Purge -> {} (X={x})", pname(g, p), g.perm(t).name);
     on_cast(g, p, c)?;
     let ok = counter_window(g, p, c, 4.0, vec![])?;
     g.player_mut(p).gy.push(c);
