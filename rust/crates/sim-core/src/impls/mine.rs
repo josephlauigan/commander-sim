@@ -701,8 +701,10 @@ pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
     let mut discarded = vec![];
     let mut alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     let own_plan = g.player(p).key == "kefka";
-    if own_plan {
-        alive.sort_by_key(|&q| q == p); // the Kefka deck picks last, knowing the pile (kefka.rs)
+    // CR 101.4: the players choose in APNAP order (the active player first, then in turn order); each sees the
+    // choices made before theirs, so the Kefka deck counts the pile only so far (kefka.rs)
+    if let Some(start) = g.active.and_then(|a| alive.iter().position(|&q| q == a)) {
+        alive.rotate_left(start);
     }
     for q in alive {
         if g.player(q).hand.is_empty() {
