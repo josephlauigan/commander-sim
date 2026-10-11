@@ -63,7 +63,7 @@ fn live_creature(g: &Game, m: PermId) -> bool {
 }
 
 fn deathtouch(g: &Game, m: PermId) -> bool {
-    crate::engine::combat::kw(g, m, "deathtouch")
+    g.perm(m).dt || crate::engine::combat::kw(g, m, "deathtouch")
 }
 
 fn is_walker(g: &Game, m: PermId) -> bool {
