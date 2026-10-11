@@ -7,6 +7,7 @@
 **Updated 2026-10-07.** Out: Statute of Denial. In: Polluted Bonds. Statute of Denial → Polluted Bonds: a five-mana enchantment that triggers her when cast, then drains an opponent 2 (and gains you 2, feeding Sanguine Bond and Marauding Blight-Priest) on every land they play. Statute was stuck in hand in about three quarters of the games it was drawn.
 **Updated 2026-10-07.** Out: Crux of Fate. In: Grand Arbiter Augustin IV. Crux of Fate → Grand Arbiter Augustin IV: your white and blue spells cost {1} less each, opponents' spells {1} more. Crux was stuck in hand in about six games in ten. Seven Game Changers (Bracket 4). Tested at −0.6 points (fast AI, 1,000 pairs per tier), within noise.
 **Updated 2026-10-09.** Out: Secure the Wastes. In: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal. JD's choice: Venat draws a card the first time each turn you cast a legendary spell; its flip side ({7}: exile a nonland permanent) makes a creature indestructible each turn. Measured +0.1 ±0.8 for Secure the Wastes (adaptive, paired, 1,000 games per tier). Not a Game Changer.
+**Updated 2026-10-11.** Out: Bastion Protector. In: Thought Vessel (from Sauron). JD's choice: no maximum hand size for the deck that draws the most each turn (Necropotence, Consecrated Sphinx, Notion Thief, Bolas's Citadel); Bastion Protector was a creature, so it never triggered Y'shtola. Not measured.
 
 2026-10-03
 **Added 2026-10-03.** In the simulator as deck key `yshtola` (`commander-sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. Zur the Enchanter is in the 99.
@@ -64,7 +65,7 @@ A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your
 - **Restoration Angel:** flash, and blinks Y'shtola out of an exile or steal effect.
 - **Counterspell:** Dovin's Veto stops the removal spell itself.
 - The protection instants (Take Up the Shield, Rootborn Defenses, Clever Concealment, Momentary Blink) left on 10-03: they were rarely cast, and removal does more against the creature decks that beat this one.
-- **Bastion Protector:** commanders get +2/+2 and indestructible.
+- **Thought Vessel:** no maximum hand size, so Necropotence, Consecrated Sphinx and Notion Thief never draw into a discard; also a two-mana rock (it doesn't trigger Y'shtola: mana value 2).
 
 ## Key lines
 
@@ -168,13 +169,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (16).** Bastion Protector, Consecrated Sphinx, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Windborn Muse, Zur the Enchanter
+**Creatures (15).** Consecrated Sphinx, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Windborn Muse, Zur the Enchanter
 
 **Planeswalkers (1).** The Eternal Wanderer
 
 **Enchantments (16).** Arrest, Bound in Silence, Curiosity, Encrust, Ill-Gotten Inheritance, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Sanguine Bond, Smothering Tithe, Static Net
 
-**Artifacts (8).** Arcane Signet, Bolas's Citadel, Champion's Helm, Chromatic Lantern, Coalition Relic, Lightning Greaves, Sol Ring, Talisman of Progress
+**Artifacts (9).** Arcane Signet, Bolas's Citadel, Champion's Helm, Chromatic Lantern, Coalition Relic, Lightning Greaves, Sol Ring, Talisman of Progress, Thought Vessel
 
 **Instants (8).** Anguished Unmaking, Dovin's Veto, Fatal Push, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Your Fate Ends Here
 
@@ -189,7 +190,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Arcane Signet
 1 Arrest
 1 Austere Command
-1 Bastion Protector
 1 Bolas's Citadel
 1 Bound in Silence
 1 Bribery
@@ -252,6 +252,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Tezzeret's Gambit
 1 The Eternal Wanderer
 1 Thief of Sanity
+1 Thought Vessel
 1 Triplicate Spirits
 1 Urborg Syphon-Mage
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
@@ -273,7 +274,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 **Weakest slots for this commander.**
 - **Fatal Push, Path to Exile, Dovin's Veto:** good cards, but mana value 1 or 2 doesn't trigger Y'shtola.
 - **Venat, Heart of Hydaelyn:** a creature, so no trigger, and its draw needs legendary spells, which the deck has few of. JD's pick (measured +0.1, neutral).
-- **Bastion Protector and Restoration Angel:** creatures, so no trigger.
+- **Restoration Angel:** a creature, so no trigger (Bastion Protector, the other, left on 10-11 for Thought Vessel).
 
 Replacements worth testing:
 - **Removal with mana value 3:** Mortify (instant) or Vindicate (sorcery).
