@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Sheoldred, the Apocalypse -> Bedevil
+
+=== Sauron vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.6% ->  30.8%  (delta -3.8 pts, noise ±3.6, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 17.8%  Sythis 16.7%  Lord Windgrace 10.1%  Brago 9.0%  Meren of Clan Nel Toth 13.6%
+VERDICT: WORSE under the loose profile (the only one run)
+
+(184s total)
