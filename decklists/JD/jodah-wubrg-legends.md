@@ -6,7 +6,7 @@
 **Updated 2026-10-09.** Out: Experimental Augury, Genesis Hydra, Lagrella, the Magpie, Sisters of Stone Death. In: Garland, Royal Kidnapper, Helm of Kaldra, Shield of Kaldra, Sword of Kaldra. JD's choice: the Kaldra pieces back (the deck's art theme) plus Garland, Royal Kidnapper, keeping the mana base and Razia. Measured -1.4 ±1.2 against the list before (adaptive, paired, 1,000 games per tier); the least costly of five ways to fit them. Garland alone measured +1.4.
 
 2026-10-07
-**Added 2026-10-07.** In the simulator as deck key `jodah` (`python3 -m commander_sim --deck jodah --pool t4`) and in practice mode.
+**Added 2026-10-07.** In the simulator as deck key `jodah` (`commander-sim --deck jodah --pool t4`) and in practice mode.
 
 ## Strategy
 

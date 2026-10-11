@@ -1,4 +1,4 @@
-# Data for `cardgen audit` (the tables of the former commander_sim/pool_audit.py; edit here).
+# Data for `cardgen audit` (the tables of the former Python pool audit; edit here).
 #
 # unsupported_keywords  Scryfall keywords (lower case) the engine does not implement: a card with one is at best
 #                       Partial unless a [card_notes] entry or an override note says otherwise. Remove a keyword

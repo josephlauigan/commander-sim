@@ -2,8 +2,8 @@
 
 This file reports how the main decks do against a fixed field: the 25 decks in `decklists/pool/`, five tiers of five.
 In each game, one of your decks faces three decks drawn from one tier, with seats shuffled.
-Games are seeded, so any cell can be reproduced with `python3 -m commander_sim --deck <d> --pool <tier> --games N`. Since September 2026
-the default AI is the look-ahead AI (`--ai lookahead`, see `commander_sim/ai/search.py`); section 0 has its results. Sections 1-3 were
+Games are seeded, so any cell can be reproduced with `commander-sim --deck <d> --pool <tier> --games N`. Since September 2026
+the default AI is the look-ahead AI (`--ai lookahead`, see `rust/crates/sim-core/src/ai/search.rs`); section 0 has its results. Sections 1-3 were
 measured with the heuristic AI alone (`--ai adaptive`) and are kept for comparison.
 
 Contents:
@@ -79,7 +79,7 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 ### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; 240 games per cell)
 
 **October 7-9 run of all seven decks** (960 games per cell, intervals about ±3 points; over all five tiers 4,800
-games, about ±1.3 points; `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).
+games, about ±1.3 points; the old Python overnight script `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).
 The code is PR #37 (c02b10e, the Marchesa and Zur decks removed), before the Jodah audit fixes (PR #38). The lists
 include the October 6-7 swaps: Sauron: Spell Pierce, Andúril and Talrand; Veyran: Underworld Breach for Mystical Tutor;
 Y'shtola: Mystical Tutor, Polluted Bonds and Grand Arbiter Augustin IV. The run extends the first 72 games per cell
@@ -104,12 +104,12 @@ mostly noise: it is flat at 11-12% through Tier 4 and 15.7% against Tier 5. 33,6
 Games averaged 0.5-0.7 minutes each with 22-24 at a time (21:44 October 7 to 07:56 October 8, and 20:00 October 8
 to 07:27 October 9), at a steady 4,600-4,900 MHz (`cpu.log`). The October 5-6 runs took 4-7 minutes a game on the same
 code: Sauron against Tier 2 (seed 500000) on the October 5 code plays the same game (Brago wins on turn 20) in 60 s
-now, against 879 s in that run, on the same hardware, kernel and Python, so those runs were slowed down, perhaps by
+now, against 879 s in that run, on the same hardware, and kernel, so those runs were slowed down, perhaps by
 throttling. A run of all seven decks at 72 games per cell now takes about an hour.
 
 The practice setup screen reads the first row for each deck in this section, so it shows these figures.
 
-**October 6 re-run of JD's four decks** (72 games per cell, intervals about ±10 points; `audit/overnight/run.py`,
+**October 6 re-run of JD's four decks** (72 games per cell, intervals about ±10 points; the old Python overnight script `audit/overnight/run.py`,
 seeds 500000-500071). Lists after the October bracket reshuffle (Y'shtola: Consecrated Sphinx, Bolas's Citadel,
 Smothering Tithe; Sephiroth: Phyrexian Arena for Citadel; Sauron: Fact or Fiction; Veyran: Propaganda) and the Game
 Changer audit (contextual priorities, modeling fixes). The last column is the share over all five tiers (360 games,
@@ -129,7 +129,7 @@ changes with AI and engine changes, so it doesn't say which caused what. 1,439 g
 games averaged 6-7 minutes each for every deck.
 
 **September 2026 (240 games per cell).** Lists as updated in September 2026 (Najeela no longer tracked), after a full modeling pass: every card in the three
-decks audits Full (`python3 -m commander_sim.pool_audit --mine`). Each game seats the deck against three decks of the tier;
+decks audits Full (`cardgen audit --mine`). Each game seats the deck against three decks of the tier;
 25% is an even share. Tiers 2, 3 and 5 were re-run after the six pool lists were tuned (0b); Tiers 1 and 4 did not
 change. Before the tuning those cells read: Sephiroth 49.6 / 38.8 / 22.5%, Veyran 25.0 / 17.5 / 14.2%, Sauron
 23.3 / 20.4 / 18.3% (T2 / T3 / T5).
@@ -156,7 +156,7 @@ loose profile has opponents counter and remove more freely than the conservative
 ## 1. Deck × tier matrix (heuristic AI)
 
 Each cell is 5,000 games: the win rate of the deck in that row against three decks of the column's tier, with a 95% interval.
-An even share is 25%. Generated with `python3 -m commander_sim --all-decks --pool all --games 5000`.
+An even share is 25%. Generated with `commander-sim --all-decks --pool all --games 5000`.
 
 **Noise band.** Each interval is about ±1.2 points at 25% and ±1.4 at 50%.
 Cells in the same column use the same seeds, so the opponents and seats match row to row.
@@ -187,7 +187,7 @@ The two profiles also share seeds, so differences under about 1.5 points are noi
 
 ## 2. Calibration (heuristic AI)
 
-Commands: `python3 -m commander_sim --calibrate all --games 2000` for both profiles.
+Commands: `commander-sim --calibrate all --games 2000` for both profiles.
 Per-deck intervals are about ±2 points (within tier) and ±2 points (ordering, 2,000 games per deck).
 
 ### 2a. Within-tier balance (conservative / loose; flag above 35% or below 15%)
@@ -257,7 +257,7 @@ The review of the compiled cards found and fixed real errors that had distorted 
 - Deathrite Shaman exiled all graveyards.
 - Doubling Season doubled planeswalker ability costs.
 
-**AI changes that helped.** These apply to every outside deck, or to one deck's play plan (`commander_sim/ai/deck_plans.py`).
+**AI changes that helped.** These apply to every outside deck, or to one deck's play plan (`rust/crates/sim-core/src/ai/plans.rs`).
 
 | Change | Effect (lone deck vs the tier below) |
 |---|---|
@@ -278,7 +278,7 @@ The review of the compiled cards found and fixed real errors that had distorted 
 - **Game Changers are cheap in the sim.** Replacing Prosper's six Game Changers with basic lands costs it 3 points.
 - **Damage output.** Chulane, GAA and Prosper deal 9–20 damage per game. A lone deck needs 120.
   They mostly win by combo (Chulane, Prosper) or not at all (GAA).
-- **Upgrading the lists does not fix it.** Tested with `commander_sim/tools/swaptest.py` (paired, 800 games, lone vs T3; the lists are unchanged):
+- **Upgrading the lists does not fix it.** Tested with `commander-sim swaptest` (paired, 800 games, lone vs T3; the lists are unchanged):
 
 | Deck | Swaps tested | Result |
 |---|---|---|
@@ -328,17 +328,17 @@ With Heliod in Tier 4, Tier 5 into Tier 4 is 22.7% (480 games per deck): Kinnan 
 
 ## 4. Old mode (removed)
 
-The original four-deck mode (the main decks against each other, `compare.py` without `--pool`) was removed in
+The original four-deck mode (the main decks against each other, the run without `--pool`) was removed in
 September 2026 at the user's request; its exact-replay fixture test went with it. The four deck files are still
-guarded: `tests/test_my_decks.py` checks that they parse to the recorded lists. Its last numbers (n=10,000 per
+guarded: the cardgen test `deck_guard_fixture_is_current` checks that they parse to the recorded lists. Its last numbers (n=10,000 per
 profile, conservative / loose): Sephiroth 46.9 / 47.5%, Najeela 24.9 / 24.2%, Sauron 18.2 / 18.4%, Veyran 10.0 / 9.8%.
 
 
 ## 5. Card coverage
 
-`python3 -m commander_sim.pool_audit` (or `--md <file>`) regenerates this. The statuses are:
+`cardgen audit` (or `--md <file>`) regenerates this. The statuses are:
 - **Full:** a hand implementation or reviewed override. For cards whose rules are complete but whose use is an AI choice, the note says how the AI uses it.
-- **Full-auto:** the ability compiler handles every clause. Each of these was checked against its Oracle text; wrong compilations were replaced (`commander_sim/cards/impl/fixes.py`).
+- **Full-auto:** the ability compiler handles every clause. Each of these was checked against its Oracle text; wrong compilations were replaced (`rust/crates/sim-core/src/impls/fixes.rs`).
 - **Approximate / Partial / Unmodeled:** none remain.
 
 Counts are per unique card per deck.
@@ -355,13 +355,13 @@ Counts are per unique card per deck.
 - Each opponent gets an instant-speed removal or Tidebinder response.
 - The loop then resolves as its end result: a win, or a lock.
 
-Where the modeling lives (in `commander_sim/cards/impl/` unless noted):
-- `topdeck.py`: scry, surveil and library manipulation.
-- `fixes.py`: corrected compiled cards.
-- `lands.py`: utility lands.
-- `partials.py`: formerly partial cards.
-- `rules.py` and `rules2.py`: exact rules for formerly approximated clauses.
-- `commander_sim/ai/deck_plans.py`: deck play plans.
+Where the modeling lives (in `rust/crates/sim-core/src/impls/` unless noted):
+- `topdeck.rs`: scry, surveil and library manipulation.
+- `fixes.rs`: corrected compiled cards.
+- `lands.rs`: utility lands.
+- `partials.rs`: formerly partial cards.
+- `rules.rs` and `rules2.rs`: exact rules for formerly approximated clauses.
+- `rust/crates/sim-core/src/ai/plans.rs`: deck play plans.
 
 | Tier | Deck | Full | Full-auto | Approximate | Partial | Unmodeled | Engines: full / approx. / partial / unmodeled |
 |---|---|---|---|---|---|---|---|

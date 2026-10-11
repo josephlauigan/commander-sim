@@ -1,7 +1,7 @@
 # commander-sim
 
-The simulator's command-line program: the run harness that was `python3 -m commander_sim` (compare.py, poolmode.py,
-pools.py, decks.py and the experiment tools), with the games played by sim-core on worker threads. No Python.
+The simulator's command-line program: it seats a deck against the opponent pools, with the games played by sim-core
+on worker threads.
 
 Build it from `rust/`:
 
@@ -10,7 +10,7 @@ cargo build --release -p sim-cli          # -> rust/target/release/commander-sim
 ```
 
 Run it from anywhere inside the repository (it finds the repository by looking for `decklists/` and `data/`; or set
-`COMMANDER_SIM_ROOT`). The options are the Python harness's, without `--engine`.
+`COMMANDER_SIM_ROOT`). 
 
 ```
 commander-sim --deck sauron --pool t1 --profile loose --games 960              # one deck against one tier
@@ -39,8 +39,7 @@ commander-sim --calibrate within|ordering|all --games 2000 --ai adaptive       #
 | `--jobs N` | worker threads (default: every core) |
 | `--quiet` | no progress bar |
 
-The reports, seats, seeds and statistics are the Python harness's: the same command gives the same numbers as
-`python3 -m commander_sim ... --engine rust` did. The progress bar and the estimate go to stderr, the report to stdout.
+Games are seeded, so the same command gives the same numbers. The progress bar and the estimate go to stderr, the report to stdout.
 
 Experiment tools:
 
@@ -54,4 +53,4 @@ Deck lists come from the deck files (`decklists/JD/`, `decklists/Avery/`, `deckl
 file order; the card definitions, commanders and colour identities from `data/cards.json` and `data/decks.json`.
 A card that isn't in `data/cards.json` can't be played: re-export the cards after adding one to a list.
 
-Not available: `--ai rigid` (the Rust engine has no rigid AI) and `--dsl-all` (it needs the Python card compiler).
+Not available: `--ai rigid` (there is no rigid AI) and `--dsl-all` (it needed the old Python card compiler).

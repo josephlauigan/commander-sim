@@ -35,7 +35,7 @@ trigger, and a counter war is one counterspell and one answer.
 
 ```
 StackItem: kind ('spell' | 'ability' | 'trigger'), controller, source (card or permanent), targets, ctx,
-           effect: a key into a registry + its arguments (not a Python closure), copy (bool), id
+           effect: a key into a registry + its arguments (not a closure), copy (bool), id
 g.stack: [StackItem]         top = last
 g.pending_triggers: [StackItem]   triggered since the last time a player would get priority
 ```
@@ -72,8 +72,8 @@ priority. Most passes are free: a player with no instant-speed action they can a
 ### Activated abilities
 
 Each ability is split into **cost** (paid when activated: tap, mana, sacrifice, loyalty) and **effect** (on
-resolution, rechecking its targets). The ~87 hand-written abilities in `cards/impl/`, the ability language's
-`activated` and `loyalty` abilities, and your decks' practice-mode abilities (`play/cards.py ABILITIES`) are converted
+resolution, rechecking its targets). The ~87 hand-written abilities in the card code, the ability language's
+`activated` and `loyalty` abilities, and your decks' practice-mode abilities (`rust/crates/sim-core/src/human/`) are converted
 to a small helper: `ability(cost=..., effect=..., targets=...)`. Mana abilities stay immediate (they don't use the
 stack). While converting, any ability not yet split resolves at once, as today.
 

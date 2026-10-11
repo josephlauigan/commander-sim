@@ -1,6 +1,5 @@
 # Card overrides: one table per card, by exact card name. Edit by hand; then `cardgen export` (rust/crates/cardgen).
-# Extracted once from the Python card code (cards/impl/*.py: card(), full(), note() and the tag edits run after
-# loading) by rust/tools/extract_card_data.py; this file is now the source.
+# Extracted once from the old Python card code (since removed); this file is now the source.
 #
 # Keys (all optional):
 #   types, cost, tags, dsl   an override: the card is rebuilt from these (source "pool"); a missing key keeps the

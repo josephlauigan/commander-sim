@@ -4,50 +4,37 @@ Measures a Commander deck against pools of outside decks in simulated four-playe
 confidence interval, and paired before/after comparisons for list changes. You can also play one of your decks by
 hand against the same AI opponents in your browser ([Practice mode](#practice-mode)).
 
-Pure Python 3 (3.9 or newer), standard library only. Nothing to install. Run every command from the repository
-root.
+It is a Rust project. Build it once, from `rust/`:
 
-For how it works inside, see [documents/architecture.md](documents/architecture.md).
+```
+cd rust && cargo build --release        # needs Rust via rustup (~/.cargo/bin)
+```
+
+That makes three programs in `rust/target/release/`: `commander-sim` (simulations), `commander-practice` (practice
+mode) and `cardgen` (card data and deck editing). Run them from anywhere inside the repository; they find `data/`
+and `decklists/` themselves (or set `COMMANDER_SIM_ROOT`). Run the tests with `cargo test --release` in `rust/`.
+
+For how it works inside, see [documents/architecture.md](documents/architecture.md) and
+[documents/practice-mode.md](documents/practice-mode.md).
 
 ## Repository layout
 
-Two ways to run it share one core. On this computer, `commander_sim/` runs as it is: the simulations, the overnight
-runs and practice mode in your browser. The iPad app in `ios/` packages a copy of the same package (practice mode
-only, offline) with the deck lists and card data; it changes nothing here.
-
 ```
-commander_sim/            the simulator and practice mode (a Python package): the shared core
-  compare.py              command line: python3 -m commander_sim ...
-  poolmode.py             runs against the pools: one tier, A/B, matrix, calibration, --analyze
-  pools.py                the pool decks: loading, validation, seating
-  decks.py                your decks (decklists/JD/, Avery/; deck_files.py says which is where)
-  update_deck.py          replace a deck's list with a pasted one
-  pool_audit.py           how faithfully each card is modeled
-  engine.py               game state and rules
-  ais.py                  the turn loop, combat, and your decks' play plans
-  ai/                     decision-making
-    brain.py              the heuristic AI
-    search.py             the look-ahead AI
-    pool_ai.py            the AI for pool decks, with pool_decks.py and deck_plans.py
-  cards/                  card data
-    carddb.py             hand-verified tags
-    sources.py            where each card's definition comes from
-    scryfall.py           Scryfall client
-    autotag.py            Oracle text to tags
-    dsl_parse.py, dsl.py  the card ability language (compiler and interpreter)
-    cardimpl.py           the Python hook registry
-    pool_cards.py         overrides for pool cards
-    impl/                 Python implementations of individual cards
-  play/                   practice mode: play a deck by hand (session, rules check, server, the browser page)
-  tools/                  searchtest.py, swaptest.py, linecov.py
-data/                     scryfall_cache.json, cards_dsl.example.json; images/ and saves/ (practice mode, not in git)
+rust/                     the Rust workspace (rust/README.md)
+  crates/sim-core/        the engine, rules, AI and card code (a library)
+  crates/sim-cli/         commander-sim: runs simulations (its README.md lists every option)
+  crates/practice/        commander-practice: practice mode's server and terminal client; the browser page is
+                          in crates/practice/static/
+  crates/cardgen/         cardgen: builds data/cards.json and data/decks.json, edits decks, audits cards
+data/                     the card data (below); images/ and saves/ (practice mode, not in git)
 decklists/JD/             JD's decks: Jodah, Sauron, Sephiroth, Veyran, Y'shtola
 decklists/Avery/          Avery's decks: Alela, Galadriel
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
-documents/                architecture.md, card-audit.md, practice-mode.md
-ios/                      the iPad app: Briefcase project, start-up code, stage.py (ios/README.md)
-tools/                    knight_dragon.py, app_icon.py (draw the loading animation and the iPad app's icon)
-tests/                    rule, card, AI and command tests (tests/README.md)
+documents/                architecture.md, practice-mode.md, card-audit.md and the design notes
+audit/                    results of the audit and overnight runs
+ios-shell/                the Swift shell for the iPad (coming; see Practice mode)
+ios/                      the old iPad app (Briefcase, legacy; ios/README.md)
+tools/                    app_icon.py (draws the iPad app's icon)
 ```
 
 ## Run
@@ -55,19 +42,19 @@ tests/                    rule, card, AI and command tests (tests/README.md)
 Each game seats one of your decks with three outside decks drawn from one tier of `decklists/pool/` (see
 `decklists/pool/README.md`), re-drawn every game, in a random seat order. Opponent draws, seats and every seat's
 opening shuffle depend only on the seed and the deck keys, so a `--swap` comparison faces identical opponents and
-draws (paired runs).
+draws (paired runs). `commander-sim` is `rust/target/release/commander-sim`.
 
 ```
-python3 -m commander_sim --deck seph --pool t3 --games 1500                       # one deck vs one tier
-python3 -m commander_sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"  # paired A/B vs that tier
-python3 -m commander_sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor" --ai adaptive --profile loose
-                                                                                  # the same, a quick read (seconds)
-python3 -m commander_sim --deck seph --pool all                                   # all five tiers
-python3 -m commander_sim --all-decks --pool all                                   # deck x tier matrix
-python3 -m commander_sim --deck seph --pool t4 --analyze                          # how it wins / loses there
-python3 -m commander_sim --deck seph --pool t2 --trace 7                          # play-by-play of game 7
-python3 -m commander_sim --calibrate within|ordering|all --games 240              # pool balance checks
-python3 -m commander_sim --deck veyran --cards                                    # every card: source, tags, unmodeled text
+commander-sim --deck seph --pool t3 --games 1500                       # one deck vs one tier
+commander-sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"  # paired A/B vs that tier
+commander-sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor" --ai adaptive --profile loose
+                                                                       # the same, a quick read (seconds)
+commander-sim --deck seph --pool all                                   # all five tiers
+commander-sim --all-decks --pool all                                   # deck x tier matrix
+commander-sim --deck seph --pool t4 --analyze                          # how it wins / loses there
+commander-sim --deck seph --pool t2 --trace 7                          # play-by-play of game 7
+commander-sim --calibrate within|ordering|all --games 240              # pool balance checks
+commander-sim --deck veyran --cards                                    # every card: tags, Game Changers
 ```
 
 Options:
@@ -77,17 +64,17 @@ Options:
 - `--swap`: `"Card Out=>Card In"`. Repeat it for several swaps.
 - `--games`: games per list per profile (default 1500). `--n` is the same.
 - `--seed`: the first seed (default 500000).
-- `--jobs`: worker processes (default: every CPU core).
+- `--jobs`: worker threads (default: every CPU core).
 - `--profiles`: `conservative,loose` (default both). `--profile` runs one. Loose opponents counter and remove more
   freely, so it is the worst case for your decks.
 - `--ai`: `lookahead` (default) or `adaptive`.
   - Look-ahead: every deck at the table chooses its main-phase plays, attacks and counterspells by trying the best
-    few candidates on copies of the game, and playing each copy forward to the end of its next turn. It costs about
-    20 s of CPU per game: 1500 games on 24 cores take about 20 minutes per profile.
-  - `adaptive`: the heuristic AI alone, about 100 times faster. Fine for quick checks, but it misplays some decks
+    few candidates on copies of the game, and playing each copy forward to the end of its next turn. It is slow: a full
+    matrix takes hours, so use `adaptive` for quick reads.
+  - `adaptive`: the heuristic AI alone, about 60 times faster. Fine for quick checks, but it misplays some decks
     badly (see `decklists/pool/pool-results.md`).
 - `--temp`: the heuristic AI's randomness multiplier (default 1.0; 0.5 is sharper, more predictable play; 2.0 is
-  looser). Per-deck play styles are at the top of `commander_sim/ai/brain.py`.
+  looser). Per-deck play styles are in `rust/crates/sim-core/src/ai/brain.rs`.
 - `--analyze`: a deep report instead of a win rate. It covers how the deck wins, how it loses (to whom and by what),
   game-plan timing, damage by source, and a card report. Add `--swap` to analyze a variant.
 - `--brief`: skip the per-axis breakdown (verdict only).
@@ -96,32 +83,33 @@ Options:
 Other commands:
 
 ```
-python3 -m commander_sim.pools [--validate]                              # list or check the pool decklists
-python3 -m commander_sim.pool_audit [--deck yuriko] [--mine] [--md FILE] # card coverage per deck
-python3 -m commander_sim.tools.swaptest <pool deck> <tier> 800 "Out>In; Out>In"   # pool list changes, without editing
-python3 -m commander_sim.tools.searchtest <pool deck> <tier> 240 6 5 all          # a pool deck with and without look-ahead
-python3 -m commander_sim.cards.autotag "Talrand, Sky Summoner"           # preview how a card is tagged
-python3 -m commander_sim.cards.dsl "Grave Pact"                          # show a card's compiled abilities
-python3 -m unittest discover -s tests -t .                               # the tests (see tests/README.md)
-python3 -m commander_sim.tools.linecov                                   # their line coverage
+commander-sim pools                                                         # list the pool decks
+commander-sim swaptest <pool deck> <tier> 800 "Out>In; Out>In"              # pool list changes, without editing
+commander-sim searchtest <pool deck> <tier> 240 6 5 all                     # a pool deck with and without look-ahead
+cardgen audit [--deck yuriko] [--mine] [--md FILE]                          # card coverage per deck
+cardgen validate                                                            # check the pool decklists
+cargo test --release                                                        # the tests (in rust/)
 ```
 
 ## Practice mode
 
 Play one of your decks by hand against three AI opponents from a tier, in your browser. The opponents are the same
 decks and AIs as the simulations. The game never suggests moves; it only tells you when a move isn't legal, and why.
-After the game, a review shows where your choices and the AI's differed. It is also an iPad app that plays offline:
-see [ios/README.md](ios/README.md).
+After the game, a review shows where your choices and the AI's differed.
 
 ```
-python3 -m commander_sim.play                                            # opens http://127.0.0.1:8765
-python3 -m commander_sim.play --port 9000 --no-browser                   # another port; open it yourself
-python3 -m commander_sim.play --text --deck sauron --tier t3             # the same game in the terminal
-python3 -m commander_sim.play --lan                                      # also lets a friend on your network join
+commander-practice                                            # opens http://127.0.0.1:8765
+commander-practice --port 9000 --no-browser                   # another port; open it yourself
+commander-practice --text --deck sauron --tier t3             # the same game in the terminal
+commander-practice --lan                                      # also lets a friend on your network join
 ```
 
 Stop the server with Ctrl+C. Without `--lan` it listens on this computer only (127.0.0.1), so it can't be reached
 from a phone or another machine.
+
+**On the iPad.** A Swift shell in `ios-shell/` (the same Rust server inside a native app, offline) is being built and
+is not finished. The Briefcase app in `ios/` is the legacy one; it still packages the old Python code and no longer
+matches this tree, so leave it until the shell works.
 
 **Setting up a game.** Pick your deck and a tier (each shows your simulated win rate against it), then the
 opponents (three drawn at random, or pick three), your seat, how much the opponents interact (loose or
@@ -210,17 +198,18 @@ The pool results and calibration are in `decklists/pool/pool-results.md`.
 
 The baseline is the list in each deck's `.md` file (the `## Import list` block), in its owner's folder:
 `decklists/JD/` (Jodah, Sauron, Sephiroth, Veyran, Y'shtola) and `decklists/Avery/` (Alela, Galadriel).
-`commander_sim/deck_files.py` maps each deck key to its folder and file; to add a deck or move one
-between folders, change it there. Point `SIM_DECKS` at another folder (flat, or with the same owner folders) to use
-lists kept elsewhere.
+`data/my_decks.toml` maps each deck key to its file, display name, commander and colour identity; to add a deck, add
+a table there. Point `SIM_DECKS` at another folder (flat, or with the same owner folders) to use lists kept elsewhere.
 
-To change a list, give the updater the whole new list, as copied from a deck site or typed one card per line:
+To change a list, edit the file or give `cardgen deck` the whole new list, as copied from a deck site or typed one
+card per line:
 
 ```
-python3 -m commander_sim.update_deck sauron new-list.txt --dry-run    # check it and show what would change
-python3 -m commander_sim.update_deck sauron new-list.txt              # write it
-python3 -m commander_sim.update_deck sauron -                         # or paste the list, then Ctrl-D
-python3 -m commander_sim.update_deck sauron new-list.txt --log "Why."  # also add an "Updated <date>" line
+cardgen deck sauron new-list.txt --dry-run    # check it and show what would change
+cardgen deck sauron new-list.txt              # write it
+cardgen deck sauron -                         # or paste the list, then Ctrl-D
+cardgen deck sauron new-list.txt --log "Why." # also add an "Updated <date>" line
+cardgen export                                # then rebuild the card data
 ```
 
 It checks the list first (100 cards, singleton, colour identity, bans, every name found on Scryfall) and changes
@@ -230,24 +219,23 @@ records the new list for the deck guard test. It also reports:
 - how completely the simulator models each new card;
 - which lines of your strategy text still mention cards that left (it doesn't rewrite prose).
 
-It also works for a pool deck (by its key), where it keeps the tier's Game Changer rule.
+It also works for a pool deck (by its key), where it keeps the tier's Game Changer rule. `cardgen` runs from
+anywhere in the repository; `rust/crates/cardgen/README.md` has everything it does.
 
 ## Cards
 
-Any card can go in a deck file or a `--swap`; no manual tagging is needed. Each card's definition comes from the
-first of these that has it:
+`data/cards.json` and `data/decks.json` hold every card the engine knows and every deck; the engine loads them, and
+`cardgen export` writes them. Any card can go in a deck file or a `--swap`, but the export must have run so the
+card is in `cards.json`. Each card's definition comes from the first of these that has it:
 
-1. **`data/cards_dsl.json`**: ability data you write for a card (see `data/cards_dsl.example.json`). It always wins,
-   and needs no code changes.
-2. **`commander_sim/cards/carddb.py`**: hand-verified tags, one line per card (`Name|types|cost|tags`, for example
+1. **`data/carddb.txt`**: hand-verified tags, one line per card (`Name|types|cost|tags`, for example
    `Grim Tutor|S|1BB|tut=any lose=3`).
-3. **Scryfall.** The card's Oracle text is compiled into the ability language, or, if nothing compiles, turned into
-   tags by regular expressions. The lookup needs an internet connection the first time a card is used, then it is
-   cached in `data/scryfall_cache.json`.
+2. **Scryfall** (`data/scryfall_cache.json`). The card's Oracle text is compiled into abilities, or, if nothing
+   compiles, turned into tags by regular expressions. The lookup needs an internet connection the first time a card
+   is used, then it is cached.
+3. **`data/card_overrides.toml`** then replaces a card's tags, types, cost or abilities, and holds the audit's verdict.
 
-Cards that need behaviour none of these can express get Python hooks in `commander_sim/cards/impl/` (your decks' cards
-in `mine.py`). `python3 -m commander_sim --deck veyran --cards` shows every card's source, tags, abilities and any
-Oracle text that isn't modeled; `python3 -m commander_sim.pool_audit --mine` lists your cards that aren't fully
-modeled. `documents/card-audit.md` records the hand check of your decks' cards against Oracle text.
-
-`--dsl-all` runs every card from its compiled Oracle text instead of hand tags, as a cross-check.
+Cards that need behaviour none of these can express get Rust card code in `rust/crates/sim-core/src/impls/` (your
+decks' cards in `mine.rs`; see `rust/PORTING_CARDS.md`). `commander-sim --deck veyran --cards` shows every card's
+tags and abilities; `cardgen audit --mine` lists your cards that aren't fully modeled.
+`documents/card-audit.md` records the hand check of your decks' cards against Oracle text.

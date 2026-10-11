@@ -1,4 +1,4 @@
-//! commander-practice: practice mode's server on a computer (Python's `python3 -m commander_sim.play`).
+//! commander-practice: practice mode on a computer (the browser page and server; `--text` plays in the terminal).
 //!     cargo run --release -p practice -- [--port 8765] [--no-browser] [--lan] [--data DIR] [--static DIR]
 //! `--text` plays in the terminal instead (--deck --tier --seed --seat --opponents --profile --ai --step).
 

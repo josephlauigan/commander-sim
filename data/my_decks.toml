@@ -1,5 +1,5 @@
 # Your decks: the deck key, its file under decklists/, the name the logs use, the commander the simulator
-# plays and the colour identity of the seat. Extracted once from deck_files.py, engine.py and ais.py.
+# plays and the colour identity of the seat. Extracted once from the old Python code; this file is now the source.
 
 [seph]
 file = "JD/sephiroth-phyrexian-reanimator.md"

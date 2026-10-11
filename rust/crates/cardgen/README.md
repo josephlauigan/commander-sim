@@ -1,4 +1,4 @@
-# cardgen: card data and deck lists without Python
+# cardgen: card data and deck lists
 
 `cardgen` builds the two files the engine loads, `data/cards.json` and `data/decks.json`, from files you can edit by
 hand, the Scryfall cache and the deck lists. It also edits deck lists (`cardgen deck`), checks the pool decks
@@ -27,7 +27,7 @@ Every card in the files is built in this order; the first source that has the ca
    and holds the audit's verdict (`status`, `note`). The file's header lists every key. Your decks' hand-tagged cards
    (those in `carddb.txt` that one of your decks plays) ignore an override's tags and abilities.
 
-`data/python_hooks.txt` is a frozen record of the events the old Python card code handled for each card; it is copied
+`data/python_hooks.txt` is a frozen record of the events the old Python card code (since removed) handled for each card; it is copied
 into cards.json (`python_hooks`, `spell_prio`) and `cardgen audit --hooks` compares it with sim-core's Rust card
 registry. `data/my_decks.toml` names your decks (file under `decklists/`, display name, commander, colour identity).
 `data/audit.toml` holds the audit's tables (keywords the engine lacks, the key engines of each pool deck).
@@ -97,7 +97,7 @@ cardgen audit                      # per pool deck: cards by status, key engines
 cardgen audit --deck yuriko        # every card of one deck (a key prefix is enough)
 cardgen audit --mine               # your decks: every card that is not Full
 cardgen audit --md FILE            # also write the tables as Markdown
-cardgen audit --hooks [--all]      # what is left to port: events the Python code handled that sim-core's registry
+cardgen audit --hooks [--all]      # what is left to port: events the old Python code handled that sim-core's registry
                                    # doesn't (cards the decks play, or every card)
 ```
 
@@ -106,26 +106,24 @@ Full-auto (every Oracle line compiled), Approximate, Partial, Unmodeled.
 
 ## Scryfall
 
-`data/scryfall_cache.json` keeps Python's format (lower-case name -> slim record), so it stays readable by both. Lookups
+`data/scryfall_cache.json` uses the format lower-case name -> slim record. Lookups
 follow Scryfall's API guidelines (User-Agent, at most 10 requests a second, batches of 75, everything cached) and only
 happen when a listed card is missing from the cache. The tests never use the network.
 
-## Equivalence with the Python exporter
+## Equivalence
 
-When the crate was written, `cardgen export` reproduced the Python exporter's `data/cards.json` and `data/decks.json`
-byte for byte (1,767 cards, 32 decks), and `cardgen audit`, `audit --mine`, `audit --deck` and `validate` printed what
-`commander_sim.pool_audit` and `commander_sim.pools --validate` printed. `cardgen deck` printed the same text and wrote
-the same files as `commander_sim.update_deck` on a pool deck and on one of your decks (only the closing "Next:" hint
-differs). `rust/tools/extract_card_data.py` and `rust/tools/extract_audit_data.py` made the data files from the Python
-once; they must not be run again.
+`cardgen export` once reproduced the old Python exporter's `data/cards.json` and `data/decks.json` byte for byte
+(1,767 cards, 32 decks); the test `tests/equivalence.rs` now checks that the committed files are what `export` writes
+(re-run `cardgen export` after editing data). The data files `carddb.txt`, `card_overrides.toml`, `audit.toml` and
+`my_decks.toml` were extracted from the Python code once and are now the source.
 
 ## Layout
 
 ```
 src/dsl_parse.rs   Oracle text -> abilities           src/autotag.rs   regex tagger (cards that don't compile)
-src/dsl.rs         AI hint tags, build a card         src/cd.rs        a card definition (Python's CD)
+src/dsl.rs         AI hint tags, build a card         src/cd.rs        a card definition (the card definition)
 src/sources.rs     the build order above              src/cardinfo.rs  Phyrexian mana, land enters rules / types
 src/export.rs      cards.json / decks.json            src/scryfall.rs  the cache and the client
 src/decks.rs       deck files, pool, validation       src/update_deck.rs, src/audit.rs
-src/json.rs, re.rs, py.rs   Python's json / re / str behaviour (ordered objects, byte-exact output)
+src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, byte-exact output)
 ```

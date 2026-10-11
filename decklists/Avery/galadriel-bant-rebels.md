@@ -1,7 +1,7 @@
 # Galadriel, Light of Valinor — Bant Rebels
 
 2026-10-02
-**Added 2026-10-02.** In the simulator as deck key `galadriel` (`python3 -m commander_sim --deck galadriel --pool t3`) and in practice mode. Every card is modeled.
+**Added 2026-10-02.** In the simulator as deck key `galadriel` (`commander-sim --deck galadriel --pool t3`) and in practice mode. Every card is modeled.
 
 ## Strategy
 

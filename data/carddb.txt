@@ -2,7 +2,7 @@
 #   types: L land, C creature, I instant, S sorcery, A artifact, E enchantment, P planeswalker (AC: an
 #          artifact creature); cost: generic then coloured pips ("2UU", "-" for a land, "0")
 #   tags:  the roles the AI reads (pow=4 fly leg rock=1:C ...); see rust/crates/sim-core/src/tag.rs
-# These win over Scryfall data. Extracted once from commander_sim/cards/carddb.py (DB_TEXT); this file is
+# These win over Scryfall data. Extracted once from the old Python code; this file is
 # now the source. A later line for the same name replaces an earlier one.
 Forest|L|-|c=G
 Island|L|-|c=U

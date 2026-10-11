@@ -1,4 +1,4 @@
-# FROZEN record of the Python card code (commander_sim/cards/impl, October 2026): per card, the events its
+# FROZEN record of the old Python card code (October 2026, since removed): per card, the events its
 # Python implementation handled and "prio" when it had a hand-written cast priority. cardgen copies it into
 # cards.json (python_hooks, spell_prio): the work list for porting card code to Rust (cardgen audit
 # compares it with the Rust registry). New cards need no line.
