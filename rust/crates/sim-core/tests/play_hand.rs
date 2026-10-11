@@ -2,8 +2,7 @@
 //! Return the Favor, and new targets for copies (Python's tests/test_play_hand.py). The AI never casts these for the
 //! human seat.
 //!
-//! Most of these need practice-cards' real `human::cards` (hand_override, copy_card ...): until it lands they are
-//! ignored.
+//! (They need the real `human::cards`.)
 
 mod play_common;
 use play_common::*;
@@ -15,7 +14,6 @@ fn count_tokens(g: &Game, p: PlayerId) -> usize {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn twinflame_two_targets() {
     let mut g = table(&["veyran", "seph"]);
     hand(&mut g, P0, &["Twinflame"]);
@@ -32,7 +30,6 @@ fn twinflame_two_targets() {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn twinflame_extra_target_needs_mana() {
     let mut g = table(&["veyran", "seph"]);
     let c = hand(&mut g, P0, &["Twinflame"])[0];
@@ -45,7 +42,6 @@ fn twinflame_extra_target_needs_mana() {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn twinflame_copies_a_token() {
     let mut g = table(&["veyran", "seph"]);
     hand(&mut g, P0, &["Twinflame"]);
@@ -60,7 +56,6 @@ fn twinflame_copies_a_token() {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn ephemerate_and_rebound() {
     let mut g = table(&["seph", "veyran"]);
     hand(&mut g, P0, &["Ephemerate"]);
@@ -78,7 +73,6 @@ fn ephemerate_and_rebound() {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn cycling_at_instant_speed() {
     let mut g = table(&["seph", "veyran"]);
     g.active = Some(P1);
@@ -93,7 +87,6 @@ fn cycling_at_instant_speed() {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn unearth_your_pick() {
     let mut g = table(&["seph", "veyran"]);
     hand(&mut g, P0, &["Unearth"]);
@@ -105,7 +98,6 @@ fn unearth_your_pick() {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn sokenzan_channel() {
     let mut g = table(&["veyran", "seph"]);
     hand(&mut g, P0, &["Sokenzan, Crucible of Defiance"]);
@@ -139,7 +131,6 @@ fn return_the_favor_needs_a_spell() {
 }
 
 #[test]
-#[ignore = "needs practice-cards: human::cards stand-ins"]
 fn return_the_favor_copies_your_bolt() {
     let mut g = table(&["veyran", "seph"]);
     hand(&mut g, P0, &["Lightning Bolt", "Return the Favor"]);
