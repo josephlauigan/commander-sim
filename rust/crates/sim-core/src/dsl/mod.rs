@@ -450,7 +450,8 @@ fn run(
                         snapshot(g, b, ctx);
                         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
                     } else if guard {
-                        // hold the ping: a face would draw a card and start the loop
+                        // the trigger is mandatory and an opponent's face would start the loop: ping yourself
+                        lose_life(g, p, dmg, Some(p), kind, None)?;
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
                     }

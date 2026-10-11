@@ -99,3 +99,20 @@ change against binary after: output byte for byte identical in all six runs.
 - `cardgen audit --mine`: kefka 73 unique cards, 0 not Full.
 - `--deck kefka --pool t3 --profile loose --games 48 --ai lookahead --jobs 8 --brief`: 27.1%, finished.
 - Not run: the look-ahead AI win-rate table (the tuning was measured with adaptive only, as the brief asks).
+
+## Lead's review (Opus)
+
+- With no creature to hit, the guarded ping now goes at yourself, not nowhere: the trigger is mandatory, and
+  the Kefka trigger counts only opponents (dsl/mod.rs).
+- Checked: 1,152 tests, 0 failed; no warnings. Fixed-seed invariance holds for Veyran, Sauron, Jodah, Sephiroth and
+  Y'shtola at t2 and t4.
+- The gain holds up on a fresh seed (510000, adaptive, 600 games per tier):
+
+  | Tier | Before | After |
+  |---|---|---|
+  | T1 | 17.0% | 25.2% |
+  | T2 | 22.2% | 31.3% |
+  | T3 | 15.0% | 18.5% |
+  | T4 | 22.5% | 27.8% |
+  | T5 | 27.7% | 31.2% |
+  | Mean | 20.9% | 26.8% |
