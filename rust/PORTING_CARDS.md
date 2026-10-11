@@ -1,3 +1,5 @@
+> Historical: written for the port from Python, whose code is now deleted (it is in git history). Still the best guide to the hook-slot pattern; ignore the Python-specific translation notes.
+
 # Porting card code
 
 How Python's hand-written card code (`commander_sim/cards/impl/*.py`) becomes Rust (`crates/sim-core/src/impls/`).

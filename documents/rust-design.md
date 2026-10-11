@@ -1,5 +1,7 @@
 # Rust port: the data model (M1)
 
+This is the design record of the data model; the Python it compares with has been deleted (it is in git history). `architecture.md` describes the finished code.
+
 This is the design the rest of the port builds on: how cards, game state, card code, people at the table and
 interruptions are represented in Rust, and why. It is the M1 milestone of `documents/rust-rewrite-scope.md`
 (section 10). The code is in `rust/crates/sim-core/src/`. Each module starts with a comment saying how it maps to the

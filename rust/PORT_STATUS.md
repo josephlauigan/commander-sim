@@ -1,3 +1,5 @@
+> Historical: the status of the port while Python was the reference. The port is finished (documents/rust-rewrite-scope.md).
+
 # Port status
 
 What's ported, what's waiting, and where each Python test went. The plan is `documents/rust-rewrite-scope.md`

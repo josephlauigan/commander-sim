@@ -1,10 +1,10 @@
 # Rust port: practice mode (phases 9-13)
 
-Design only. Sources: `documents/rust-rewrite-scope.md` (sections 5, 6 part 2, 7 items 5-6), `documents/rust-design.md`
+Design record for phases 9-13, kept for the reasons behind the choices. The code that came out of it is described in `practice-mode.md`; the Python it mentions (`commander_sim/play/`) has been deleted and is in git history. Sources: `documents/rust-rewrite-scope.md` (sections 5, 6 part 2, 7 items 5-6), `documents/rust-design.md`
 section 6 (`Humans`), `commander_sim/play/*.py` (frozen reference), `crates/sim-core/src/control.rs`, the 124
 `HUMAN(phase 9)` / `PORT(phase 9)` markers in `crates/sim-core`, `crates/practice` (the iOS proof) and `ios-shell/`.
-The browser page `commander_sim/play/static/` is not touched. Python is removed at the end (phase 13), so the Rust
-tests must carry everything the Python tests check.
+The browser page (now `rust/crates/practice/static/`) is not touched. Python was removed at the end (phase 13), so the Rust
+tests carry everything the Python tests checked.
 
 ## Contents
 1. Where code lives

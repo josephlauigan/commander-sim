@@ -137,7 +137,7 @@ fn run(sim: &Sim, mut a: Args) -> Result<(), String> {
         let auto: Vec<_> =
             swaps.iter().filter_map(|(_, b)| sim.raw_card(b)).filter(|c| c.source != "manual").collect();
         if !auto.is_empty() {
-            println!("Cards modeled from Scryfall text or cards_dsl.json (check the abilities below):");
+            println!("Cards modeled from Scryfall text (check the abilities below):");
             for c in auto {
                 println!("   {}", cardinfo::describe(c));
             }

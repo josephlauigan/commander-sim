@@ -1,6 +1,6 @@
 # Rust rewrite: scope of work
 
-This started as a scoping outline; the port is now under way on branch `rust-port`. The scope is **option B**: the
+This started as a scoping outline; the port was carried out on branch `rust-port` and finished on 10 October 2026 (see the status line under each phase in section 6). The Python code it refers to has been deleted; it remains in git history. The scope is **option B**: the
 simulation core *and* practice mode move to Rust (section 4). The document lays out what has to be ported, in what
 order, how to check the result, what could go wrong, and the decisions still open. Numbers are from the code as of
 10 October 2026 (branch `jodah-final`).
@@ -281,6 +281,8 @@ evaluation port as they are; the search tape comes along for Undo.
 
 #### Phase 6 — Card implementations (L, the biggest phase)
 
+**Status: done 10 Oct 2026.**
+
 Port the 658 hand-implemented cards, about 18,000 lines. Do it deck by deck so that results become usable step by
 step:
 
@@ -293,12 +295,16 @@ step:
 
 #### Phase 7 — Running experiments (S–M)
 
+**Status: done 10 Oct 2026, as the `commander-sim` program (`rust/crates/sim-cli/`) instead of a PyO3 bridge.**
+
 Build the PyO3 module and connect it to the run harness: `--engine rust`, parallel batches in Rust, per-game results
 back to `poolmode.py`'s statistics, `--trace` play-by-play, `--analyze`.
 
 - **Done when:** every simulation command in the README works with `--engine rust`.
 
 #### Phase 8 — Validating the simulation (M–L)
+
+**Status: skipped, by the user's decision (10 Oct 2026). Rust became the only engine without the full statistical comparison with Python.**
 
 Section 7, steps 1–4. This is where the time goes: finding and fixing every difference that moves a win rate.
 
@@ -307,6 +313,8 @@ Section 7, steps 1–4. This is where the time goes: finding and fixing every di
 ### Part 2: practice mode
 
 #### Phase 9 — The human seat's rules (L)
+
+**Status: done 10 Oct 2026.**
 
 Port the rules side of `play/`: `human.py` (priority, playing lands, casting, abilities, passing), `legal.py` (the
 legal-move checks and their reasons), `mana.py` (the human mana pool: tapping sources, paying from the pool,
@@ -321,6 +329,8 @@ rules). Then the human `Controller`, and the requests it sends at each of the 97
 
 #### Phase 10 — Sessions, Undo, Hint and the AI comparison (M)
 
+**Status: done 10 Oct 2026.**
+
 Port `session.py` (the game thread, events, one or two people's answers in order), `view.py`, Undo and saved games
 (replaying seed, answers and the search tape), `advisor.py` (Hint) and `shadow.py` (the AI comparison and the
 review), now on worker threads of its own.
@@ -329,6 +339,8 @@ review), now on worker threads of its own.
   pass in their Rust form, and a saved game replays to the same position every time.
 
 #### Phase 11 — The server and the setup screen (M)
+
+**Status: done 10 Oct 2026.**
 
 Port `server.py` (the routes, seats by cookie, the two-player lobby over `--lan`), `catalog.py` (decks, tiers,
 brackets and the results table for the setup screen) and `images.py` (card images from Scryfall, same cache
@@ -340,6 +352,8 @@ format). Serve `play/static/` unchanged.
 
 #### Phase 12 — The iPad app (M)
 
+**Status: pending (the Swift shell in `ios-shell/` is to be tested on the user's device on 11 Oct 2026).**
+
 Under B2 (section 4): a small Swift app with a web view that links the Rust library, calls one function to start
 the server, and shows the table. Bring over what the Briefcase app does today: the first-launch copy of card data
 into the app's writable folder, saved games that survive updates, *Continue* after iOS closes the app, the hidden
@@ -349,6 +363,8 @@ two-player option, and the true-black palette.
   reopened continues where it was.
 
 #### Phase 13 — Cutover (S)
+
+**Status: done 10 Oct 2026, except removing `ios/` (the Briefcase app stays until the Swift shell works on the device). Python (`commander_sim/`, `tests/`, the PyO3 bridge, the difftest harness and the audit scripts that needed the Python engine) is deleted; the browser page moved to `rust/crates/practice/static/`; the README, `architecture.md` and `practice-mode.md` describe the Rust code.**
 
 Make Rust the default for simulations and practice mode, retire the Python engine and `play/` (or keep them read-only
 for a while), retire the Briefcase app, and update `documents/architecture.md`, `documents/practice-mode.md`, the

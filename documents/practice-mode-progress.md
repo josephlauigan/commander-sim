@@ -1,6 +1,6 @@
 # Practice mode: progress
 
-Working log for the build in [practice-mode.md](practice-mode.md). Updated at every commit and checkpoint.
+Historical working log of the first (Python) build, 29 Sep to 2 Oct 2026; the Python code it names has been deleted. The current design is [practice-mode.md](practice-mode.md).
 
 ## Working rules
 
