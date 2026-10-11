@@ -522,8 +522,11 @@ pub fn take_card(g: &mut Game, p: PlayerId, c: CardId, owner: PlayerId, why: &st
     }
     pl.stolen.insert(c, owner);
     pl.stat("cards_stolen", 1);
-    // PORT(phase 9): log_secret (a practice table shows the others "exiles a card face down")
-    crate::glog!(g, "    {} exiles {} with {why}", pname(g, p), g.db.get(c).name);
+    let (public, line) = (
+        format!("    {} exiles a card face down ({why})", pname(g, p)),
+        format!("    {} exiles {} with {why}", pname(g, p), g.db.get(c).name),
+    );
+    g.log_secret(p, &public, &line);
 }
 
 /// yshtola.stolen_worth: how much p wants to cast opponent's card c (a land can't be cast)
@@ -569,8 +572,11 @@ pub fn steal_pick(g: &Game, p: PlayerId, top: &[CardId], why: &str) -> Res<CardI
 pub fn exile_for(g: &mut Game, p: PlayerId, pick: CardId, owner: PlayerId, why: &str) {
     if g.db.get(pick).land {
         g.player_mut(owner).exile.push(pick);
-        // PORT(phase 9): log_secret
-        crate::glog!(g, "    {} exiles {} with {why}", pname(g, p), g.db.get(pick).name);
+        let (public, line) = (
+            format!("    {} exiles a card face down ({why})", pname(g, p)),
+            format!("    {} exiles {} with {why}", pname(g, p), g.db.get(pick).name),
+        );
+        g.log_secret(p, &public, &line);
     } else {
         take_card(g, p, pick, owner, why);
     }

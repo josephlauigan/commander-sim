@@ -2396,39 +2396,3 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
         _ => return None,
     })
 }
-
-/// `cards.pick_blue`: an alternative cost that exiles a blue card from your hand (Force of Will, Force of
-/// Negation): which one.
-pub fn pick_blue(g: &Game, p: PlayerId, blues: &[CardId], what: &str) -> Res<CardId> {
-    if blues.len() == 1 {
-        return Ok(blues[0]);
-    }
-    let labels: Vec<String> = blues.iter().map(|&c| g.db.get(c).name.to_string()).collect();
-    let k =
-        super::choices::choose_one(g, p, "choose", &format!("{what}: exile which blue card from your hand?"), &labels)?;
-    Ok(blues[k])
-}
-
-/// `cards.dredge(g, p)`: the person may dredge instead of drawing; true if they did. PORT(practice-cards): stub
-/// (never dredges).
-pub fn dredge(_g: &mut Game, _p: PlayerId) -> Res<bool> {
-    Ok(false)
-}
-
-/// `cards.jeskas_will(g, p)`: the person's choice of modes; false = not handled (the AI's rule runs).
-/// PORT(practice-cards): stub.
-pub fn jeskas_will(_g: &mut Game, _p: PlayerId) -> Res<bool> {
-    Ok(false)
-}
-
-/// `cards.flashback_target(g, p, None)`: the person's Flashback (the card) pick; false = not handled (the AI's
-/// rule runs). PORT(practice-cards): stub.
-pub fn flashback_target(_g: &mut Game, _p: PlayerId) -> Res<bool> {
-    Ok(false)
-}
-
-/// `cards.crackle(g, p, c, ctx)`: the person's targets for Crackle with Power; false = not handled (the AI's rule
-/// runs). PORT(practice-cards): stub.
-pub fn crackle(_g: &mut Game, _p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<bool> {
-    Ok(false)
-}
