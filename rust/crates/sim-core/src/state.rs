@@ -890,7 +890,7 @@ pub struct Game {
     /// practice mode: the session's log sink and abort flag (a copy has none)
     pub link: Link,
     /// practice mode: the real game's look-ahead decisions, recorded and replayed (a copy has none)
-    pub search_tape: crate::ai::search::TapeSlot,
+    pub search_tape: crate::ai::tape::TapeSlot,
     /// the X paid for the last X spell (card code that reads it: Walking Ballista ...)
     pub last_x: i32,
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
