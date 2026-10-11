@@ -126,6 +126,19 @@ changes between the rows measured flat on their own: the fetch lands for Forests
 followed by the attack) 15.8% against 15.9% (`audit/bill/tune/`); the 0.9-point gap between the rows is noise
 (about ±1.4 between two unpaired runs). Its wins come late (turn 13.5 on average).
 
+**October 11: Titania** (key `titania`, the no-buy list: Titania, Arachnogenesis and Blossoming Defense are the only
+new cards), on branch `bill-deck` (025997a, `audit/titania/`), same settings. An alternative to the Bill deck; the two
+share most of their cards.
+
+| Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 | All tiers |
+|---|---|---|---|---|---|---|
+| Titania | 20.7% (18-23) | **26.9%** (24-30) | 24.5% (22-27) | 23.0% (21-26) | 17.1% (15-20) | 22.4% |
+
+Titania (22.4%) is 7.4 points above Bill (15.0%), near Veyran (23.7%). Most of the gap is her engine: each recast
+returns a fetch land, which she cracks again for a 5/3 Elemental and a card from Garruk's Uprising. Two smaller
+differences: she has Arachnogenesis and Blossoming Defense, which Bill's list doesn't, and Garruk's Uprising's draw
+for big tokens was fixed after Bill's run (his only big tokens come from Tumbleweed Rising).
+
 **October 7-9 run of all seven decks** (960 games per cell, intervals about ±3 points; over all five tiers 4,800
 games, about ±1.3 points; the old Python overnight script `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).
 The code is PR #37 (c02b10e, the Marchesa and Zur decks removed), before the Jodah audit fixes (PR #38). The lists

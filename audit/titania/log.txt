@@ -1,0 +1,5 @@
+titania t1 exit 0 Win rate  20.7%   95% CI 18.3-23.4%   (even share 25%: -4.3 pts)
+titania t2 exit 0 Win rate  26.9%   95% CI 24.2-29.8%   (even share 25%: +1.9 pts)
+titania t3 exit 0 Win rate  24.5%   95% CI 21.9-27.3%   (even share 25%: -0.5 pts)
+titania t4 exit 0 Win rate  23.0%   95% CI 20.5-25.8%   (even share 25%: -2.0 pts)
+titania t5 exit 0 Win rate  17.1%   95% CI 14.8-19.6%   (even share 25%: -7.9 pts)

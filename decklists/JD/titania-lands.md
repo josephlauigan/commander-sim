@@ -2,7 +2,7 @@
 
 **Added 2026-10-11.** An alternative to the Bristly Bill deck, built from JD's bulk and binder around Titania,
 Protector of Argoth (borderless Secret Lair printing, about $2.46) with **no other cards bought**, apart from
-Arachnogenesis and Blossoming Defense (already bought 2026-10-11). Not yet measured (see "Simulator status"). It shares
+Arachnogenesis and Blossoming Defense (already bought 2026-10-11). Measured 22.4% over all tiers (see "Simulator status"). It shares
 most of its cards with the Bill deck; only one of the two would be built.
 
 ## Strategy
@@ -32,7 +32,13 @@ Hardbristle Bandit, Topiary Lecturer, Silhana Starfletcher, Greenhouse Propagato
 
 ## Simulator status
 
-Not yet modeled or measured.
+**Measured 2026-10-11** (look-ahead AI, loose profile, 960 games per tier, the same settings as the other decks;
+`decklists/pool/pool-results.md` section 0d, results in `audit/titania/`): T1 20.7%, T2 26.9%, T3 24.5%, T4 23.0%,
+T5 17.1%; **22.4% over all tiers**, 7.4 points above the Bill deck (15.0%) and near Veyran (23.7%). Wins come late
+(turn 13.9 on average); she is often removed and recast, and each recast returns a fetch land for another 5/3.
+
+Known simplifications: several lands going to the graveyard at once make one 5/3, not one each; day and night
+(Infestation Expert) is modeled only as far as it changes that card.
 
 ## Where the cards come from
 
