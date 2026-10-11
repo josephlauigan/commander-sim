@@ -116,22 +116,59 @@ pub fn build_view(g: &Game, me: &str) -> Value {
     })
 }
 
-/// The pieces that wait on the human-rules modules (see the module comment). Python's values when there is nothing.
+/// The pieces that come from the human-rules modules. `hand_special` and `land_has_ability` wait on practice-cards
+/// (`human/cards.rs`, `human/abilities.rs`) and give Python's "nothing" until then.
 pub mod seam {
     use super::*;
+    use sim_core::human::legal::{GyKind, check_land_gy, gy_mode};
+    use sim_core::human::mana::sources;
     use sim_core::ids::{CardId, LandId};
 
     /// the human's mana pool as text ("WWU"); `mana.pool_of(p).text()`
-    pub fn mana_pool_text(_g: &Game, _p: PlayerId) -> String {
-        String::new()
+    pub fn mana_pool_text(g: &Game, p: PlayerId) -> String {
+        g.player(p).pool.text()
     }
     /// `mana.sources(g, p)`: what the person can still tap
-    pub fn mana_sources(_g: &Game, _p: PlayerId) -> Value {
-        json!([])
+    pub fn mana_sources(g: &Game, p: PlayerId) -> Value {
+        sources(g, p)
+            .into_iter()
+            .map(|s| {
+                let mut d = json!({"id": s.id, "name": s.name, "colours": s.colours, "amount": s.amount});
+                if let Some(r) = s.restricted {
+                    d["restricted"] = r.into();
+                }
+                if s.treasure {
+                    d["treasure"] = true.into();
+                }
+                if let Some(l) = s.land {
+                    d["land"] = l.into();
+                }
+                if let Some(m) = s.perm {
+                    d["perm"] = m.into();
+                }
+                d
+            })
+            .collect::<Vec<_>>()
+            .into()
     }
     /// graveyard cards the person may play: `[{i, name, how}]`
-    pub fn graveyard_playable(_g: &Game, _p: PlayerId) -> Value {
-        json!([])
+    pub fn graveyard_playable(g: &Game, p: PlayerId) -> Value {
+        let mut out = vec![];
+        for (i, &c) in g.player(p).gy.iter().enumerate() {
+            let how = match gy_mode(g, p, c) {
+                Some((k, _, _)) => match k {
+                    GyKind::Yawg => "yawg",
+                    GyKind::Flashback => "flashback",
+                    GyKind::Sac3 => "sac3",
+                    GyKind::Escape => "escape",
+                    GyKind::Muldrotha => "muldrotha",
+                },
+                None if g.db.get(c).land && check_land_gy(g, p, c).is_none() => "land",
+                None => continue,
+            };
+            out.push(json!({"i": i, "name": &*g.db.get(c).name, "how": how}));
+        }
+        out.into()
     }
     /// a land with a spell side or channel (`cards.HAND`)
     pub fn hand_special(_g: &Game, _c: CardId) -> bool {
@@ -141,8 +178,8 @@ pub mod seam {
     pub fn land_has_ability(_g: &Game, _p: PlayerId, _l: LandId) -> bool {
         false
     }
-    /// the mana the person has floating, counted as any colour for a copy of the game (`mana.pool_of(p).total()`)
-    pub fn pool_total(_g: &Game, _p: PlayerId) -> u32 {
-        0
+    /// the mana the person has in the pool, counted as any colour for a copy of the game (`mana.pool_of(p).total()`)
+    pub fn pool_total(g: &Game, p: PlayerId) -> u32 {
+        g.player(p).pool.total()
     }
 }

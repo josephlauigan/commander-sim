@@ -213,6 +213,7 @@ fn snapshot(g: &Game, p: PlayerId) -> Game {
     g2.trig_probe = false;
     g2.trig_current = None;
     g2.player_mut(p).floating.any += pool_total(g, p);
+    g2.player_mut(p).pool = Default::default();
     g2.search_n = 0;
     g2
 }

@@ -266,6 +266,10 @@ impl Session {
         }))
     }
 
+    pub fn answers_len(&self) -> usize {
+        self.st.lock().unwrap().answers.len()
+    }
+
     pub fn name_of(&self, key: &str) -> String {
         self.names.iter().find(|(k, _)| k == key).map_or(key.to_string(), |x| x.1.clone())
     }

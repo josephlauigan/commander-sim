@@ -19,6 +19,7 @@ pub fn copy(g: &mut Game, p: PlayerId) -> Game {
     let pool = pool_total(g, p);
     let mut g2 = search::clone(g);
     g2.player_mut(p).floating.any += pool;
+    g2.player_mut(p).pool = Default::default(); // the copy pays like the AI, from its lands
     g2
 }
 
@@ -122,6 +123,7 @@ fn counter(g: &mut Game, p: PlayerId, spell: sim_core::ids::CardId) -> Option<Va
     let mut g2 = search::clone(g); // asked on a copy: the real game's counters stay put
     g2.cur_cast = cast;
     g2.player_mut(p).floating.any += pool;
+    g2.player_mut(p).pool = Default::default(); // the copy pays like the AI, from its lands
     if !search::enabled(&mut g2, p) {
         return Some(json!({"text": format!("You could counter {sname} with {cname}; the hint needs the look-ahead AI to weigh it."),
                            "detail": [], "choice": null}));
