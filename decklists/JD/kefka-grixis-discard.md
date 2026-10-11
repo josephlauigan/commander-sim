@@ -64,7 +64,74 @@ Known simplifications: madness casts the card from the graveyard rather than fro
 
 ## Where the cards come from
 
-Every card except the commander and the basics comes from JD's bulk and binder lists (bulk-cards.txt, binder-cards.txt; Mystic Confluence and Rhystic Study are binder cards). Kefka comes out of Sauron. The cards were taken off both lists on 2026-10-11 (one copy each; where a card was on both lists, the bulk copy).
+The commander, **Kefka, Court Mage**, comes out of Sauron. The 30 basics (15 Swamp, 9 Mountain, 6 Island) are your own. Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists). Set codes are the printings the bulk list showed; where it names more than one, any of them.
+
+**From the binder (9):** Disintegrate, Duress, Kaervek's Purge, Lightning Bolt, Mystic Confluence, Rhystic Study, Sisay's Ring, Swiftfoot Boots, Triskelion.
+
+**From bulk (60):**
+
+| Card | Set |
+|---|---|
+| Alpharael, Dreaming Acolyte | eoe |
+| Arcane Denial | msc |
+| Arcane Omens | sos |
+| Arcane Signet | fic, msc |
+| Big Score | snc |
+| Blazing Firesinger | sos |
+| Blightspeaker | tsr |
+| Blood Crypt | rtr |
+| Cackling Fiend | dmr |
+| Chaos Warp | moc |
+| Command Tower | khc, fic |
+| Contract Killing | xln |
+| Corroding Dragonstorm | tdm |
+| Crux of Fate | fic |
+| Dark Inquiry | rix |
+| Deadly Embrace | fin |
+| Decorum Dissertation | sos |
+| Demonic Embrace | gn3 |
+| Diabolic Tutor | m11 |
+| Eternal Student | sos |
+| Exotic Orchard | fic |
+| Extinguish the Light | dmu |
+| Feed the Swarm | soa |
+| Garrison Excavator | sos |
+| Gemstone Mine | tsb |
+| Grab the Prize | dsk |
+| Grim Servant | mh3 |
+| Hallway Heckler | fra |
+| Haunted Ridge | fra |
+| Ichor Slick | tsr |
+| Inner Fire | sok |
+| Intellect Devourer | clb |
+| Lightning Greaves | fic |
+| Massacre Wurm | m21 |
+| Night's Whisper | dmc |
+| Pongify | 2xm |
+| Postmortem Professor | sos |
+| Potioner's Trove | sos |
+| Psychosis Crawler | c15 |
+| Rank Rat | fra |
+| Rapturous Moment | sos |
+| Reality Shift | moc |
+| Rummaging Goblin | cmr, m15, m13 |
+| Sawblade Scamp | one |
+| Scarlet Spider, Kaine | spm |
+| Screeching Soulbreaker | fra |
+| Seize the Spoils | sos |
+| Shimmercreep | ecl |
+| Skullclamp | fic |
+| Skullport Merchant | list |
+| Sneering Shadewriter | sos |
+| Splatter Technique | sos |
+| Stadium Tidalmage | sos |
+| Stargaze | soa |
+| Susurian Voidborn | eoe |
+| Thought Vessel | msc |
+| Thrill of Possibility | dmu |
+| Twinned Vision | fra |
+| Underground River | fic |
+| Viashino Fangtail | rav |
 
 ## Decklist by type (100)
 
