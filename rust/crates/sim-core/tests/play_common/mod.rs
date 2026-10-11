@@ -3,7 +3,7 @@
 #![allow(dead_code)]
 
 pub use serde_json::{Value, json};
-pub use sim_core::control::{Answer, Request};
+pub use sim_core::control::{Answer, Human, Request};
 pub use sim_core::human::script::ScriptHuman;
 pub use sim_core::ids::{PermId, PlayerId};
 pub use sim_core::state::Game;
@@ -95,4 +95,25 @@ pub fn has_perm(g: &Game, p: PlayerId, name: &str) -> bool {
 
 pub fn told_last(h: &ScriptHuman) -> String {
     h.told().last().map(|t| t.1.clone()).unwrap_or_default()
+}
+
+/// a ScriptHuman that says a person is at the browser (`live()`): combat and choice requests then carry `data.refs`
+pub struct Live(pub Arc<ScriptHuman>);
+
+impl sim_core::control::Human for Live {
+    fn ask(&self, g: &Game, seat: PlayerId, req: Request) -> Answer {
+        self.0.ask(g, seat, req)
+    }
+    fn tell(&self, seat: PlayerId, kind: sim_core::sym::Sym, text: &str) {
+        self.0.tell(seat, kind, text)
+    }
+    fn live(&self) -> bool {
+        true
+    }
+}
+
+pub fn seat_live(g: &mut Game, p: PlayerId, answers: Vec<F>) -> Arc<ScriptHuman> {
+    let h = Arc::new(ScriptHuman::from_funcs(answers));
+    g.humans.add(p, Arc::new(Live(h.clone())));
+    h
 }

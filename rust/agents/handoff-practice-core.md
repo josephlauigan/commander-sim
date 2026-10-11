@@ -47,15 +47,17 @@
   The cards agent's real versions replace these (same names/signatures; `cards::abilities` returns Option<Vec<(String, PermFn)>>).
 - tithe_unpaid / rhystic_unpaid use choices::pay_tax for a human.
 
-## NOT done (in order)
-1. practice/src/text.rs + `--text` flag in main.rs (port play/text.py; `--deck sauron --tier t1 --ai adaptive`, scripted stdin to game end,
-   no panic vs three AI seats). Needs a Human impl (live() true, adds data.view? text client can skip views).
-2. Tests: port tests/test_play_{hand,mana,combat,choices,respond,turn}.py (71 tests) into sim-core/tests/play_*.rs with ScriptHuman
-   (use `setup_game_for` + `choices::mulligan` for human seats; see testkit.rs).
-3. Not verified at all yet: nothing exercises human.rs/combat.rs at run time (no human seat in any check). Expect bugs; the tests find them.
-4. report-practice-core.md (full report: engine changes list above, Python quirks, stubs), final RULES checks, commit message
-   "Rust port: the human seat's rules (priority, mana, combat, choices) and the text client".
-5. Not wired: `legal::set_token_guesser` (session), impls/* HUMAN sites (cards agent), Teferi's/Najeela-like Python quirks as ported.
+## DONE (agent 3): practice-core is finished
+- Merged rust-port; `Game::log_secret` is the one facility (engine::log_secret and Game.secret_lines removed).
+- `practice/src/text.rs` + `--text` in main.rs (drives a `Session` by its JSON events; full games vs 3 AI seats checked on sauron/jodah/alela/seph).
+- All 71 tests ported: sim-core/tests/play_{mana 15,choices 10,respond 9,turn 8,hand 11,combat 17}.rs (+ play_common/mod.rs) and
+  practice/tests/play_bot_games.rs (8 bot games = Python's BotGames; in the practice crate because a game needs its seating).
+  8 of play_hand are `#[ignore = "needs practice-cards: ..."]` (they need the real human::cards). No bug turned up in human.rs / combat.rs.
+- RULES checks run: cargo test --release all green, build --all-targets no warnings, all_decks adaptive 3 / lookahead 1 fine, difftest AI 0 / build 0.
+
+## NOT done (for whoever merges practice-cards)
+- Remove the 8 `#[ignore]` in play_hand.rs once practice-cards' cards.rs/abilities.rs land, and fix what fails.
+- Not wired: `legal::set_token_guesser` (session task), impls/* HUMAN sites (cards agent).
 
 ## Gotchas
 - Python mixed Perm/Player lists -> `Target`. Python `describe_target` for tokens uses `view.guess_token` (images): hook `legal::set_token_guesser`.
