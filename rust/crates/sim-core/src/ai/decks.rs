@@ -57,7 +57,6 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "jodah" => crate::impls::jodah::jodah_prio(g, p, c),
         "kefka" => crate::impls::kefka::kefka_prio(g, p, c),
         "zada" => crate::impls::zada::zada_prio(g, p, c),
-        "glissa" => crate::impls::glissa::glissa_prio(g, p, c),
         "titania" => crate::impls::titania::titania_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }

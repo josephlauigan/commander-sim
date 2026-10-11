@@ -992,7 +992,7 @@ pub fn shield(g: &mut Game, m: PermId) {
 // ======================================================== Champion's Helm (the AI equips it on Y'shtola)
 fn helm(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if p != g.perm(src).owner
-        || !matches!(g.player(p).key, "yshtola" | "glissa")
+        || g.player(p).key != "yshtola"
         || human(g, p)
         || post.is_none()
         || !can_pay(g, p, 1, "", false)

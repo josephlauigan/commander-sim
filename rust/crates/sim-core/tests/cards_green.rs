@@ -506,13 +506,7 @@ fn first_year_casts_a_prepared_rampant_growth_once() {
 
 // ------------------------------------------------------------------ the shared cards Hardened Scales touches
 #[test]
-fn scales_adds_to_efflorescence_edgar_increment_and_the_hydra() {
-    let mut g = game();
-    perm(&mut g, P0, "Hardened Scales");
-    let t = perm(&mut g, P0, "Thrashing Brontodon");
-    let c = hand(&mut g, P0, &["Efflorescence"])[0];
-    cast::cast_card(&mut g, P0, c, "hand", Ctx { target: Some(t), ..Ctx::default() }).unwrap();
-    assert_eq!(g.perm(t).plus, 3, "two counters, plus one");
+fn scales_adds_to_increment_and_the_hydra() {
     // the Hydra enters with X counters (X = 3 here), plus one
     let mut g = game();
     perm(&mut g, P0, "Hardened Scales");
