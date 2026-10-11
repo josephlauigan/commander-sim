@@ -713,7 +713,8 @@ pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
             choices::pick_cards(g, q, &hand, 1, "Kefka: discard a card", "choose")?[0]
         } else if own_plan && q == p {
             let pile = discarded.iter().fold(0u8, |b, &x| b | crate::impls::kefka::card_types(g, x));
-            crate::impls::kefka::discard_choice(g, p, &hand, pile).unwrap()
+            let Some(c) = crate::impls::kefka::discard_choice(g, p, &hand, pile) else { continue }; // only cards held from an opponent
+            c
         } else {
             min_by(&hand, |x| card_worth(g, q, x, false)).unwrap() // their least useful card
         };
@@ -814,6 +815,8 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
             sac_last_land(g, q);
         }
     }
+    let t = g.player(p).turns;
+    g.player_mut(p).milestone.entry("kefka").or_insert(t);
     let x = g.perm_mut(src);
     x.data.set(DataKey::Ruin, Val::Bool(true));
     (x.pow, x.tgh, x.fly) = (5, 7, true);

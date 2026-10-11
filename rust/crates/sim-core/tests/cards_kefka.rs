@@ -337,8 +337,13 @@ fn garrison_excavator_makes_a_spirit_when_cards_leave_the_graveyard() {
     let sp = hand(&mut g, P0, &["Scarlet Spider, Kaine"])[0];
     zones::discard_cards(&mut g, P0, &[sp]).unwrap();
     assert!(take(&mut g, P0, "Scarlet Spider, Kaine (mayhem)"));
-    let spirits: Vec<PermId> =
-        g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).ttypes.iter().any(|t| &**t == "spirit")).collect();
+    let spirits: Vec<PermId> = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).token && g.perm(m).ttypes.iter().any(|t| &**t == "spirit"))
+        .collect();
     assert_eq!(spirits.len(), 1);
     assert_eq!((g.perm(spirits[0]).pow, g.perm(spirits[0]).tgh), (2, 2));
     assert!(g.perm(perm_named(&g, P0, "Garrison Excavator")).on_bf);
@@ -759,4 +764,25 @@ fn a_flipped_kefka_draws_for_each_life_lost_on_your_turn() {
     let n = g.player(P0).hand.len();
     lose_life(&mut g, P1, 3, Some(P0), "other", None).unwrap();
     assert_eq!(g.player(P0).hand.len(), n + 3);
+}
+
+#[test]
+fn the_discard_choice_keeps_a_held_crawler() {
+    let mut g = table2();
+    flipped_kefka(&mut g, P0);
+    fill_library(&mut g, P0, 10); // the loop is not safe: the Crawler's cast priority is 0
+    let h = hand(&mut g, P0, &["Psychosis Crawler", "Forest"]);
+    assert_eq!(kefka::discard_choice(&g, P0, &h, 0), Some(h[1]));
+}
+
+#[test]
+fn scarlet_spider_and_embrace_are_held_for_kefkas_trigger() {
+    let mut g = table2();
+    lands(&mut g, P0, "Mountain", 4, false);
+    lands(&mut g, P0, "Swamp", 4, false);
+    perm(&mut g, P0, KEFKA);
+    let sp = card(&g, "Scarlet Spider, Kaine");
+    assert_eq!(decks::deck_prio(&g, P0, sp), 0);
+    let g2 = table2();
+    assert!(decks::deck_prio(&g2, P0, card(&g2, "Scarlet Spider, Kaine")) > 0, "without Kefka it is a body");
 }

@@ -140,6 +140,9 @@ pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Optio
         if wants_gy(g, c) {
             v -= 100.0;
         }
+        if cname(g, c) == CRAWLER {
+            v += 60.0; // held for the loop, not worthless
+        }
         let new = card_types(g, c) & !pile;
         v - 30.0 * new.count_ones() as f64 // a new type is a card drawn
     };
@@ -383,7 +386,12 @@ fn omens(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 
 /// the colours of mana p would spend on {4}{B} from its untapped sources: the converge count of Arcane Omens, and the
 /// plan to pay it that way (each source pays one colour, distinct colours first)
-fn converge_plan(g: &Game, p: PlayerId, generic: u32, pip: char) -> Option<(Vec<(crate::engine::mana::Unit, u32, char)>, u32)> {
+fn converge_plan(
+    g: &Game,
+    p: PlayerId,
+    generic: u32,
+    pip: char,
+) -> Option<(Vec<(crate::engine::mana::Unit, u32, char)>, u32)> {
     use crate::engine::mana::{Source, mana_units};
     let units = mana_units(g, p, false);
     let mut used: Vec<(crate::engine::mana::Unit, u32, char)> = vec![];
@@ -617,7 +625,13 @@ fn stargaze(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
             .unwrap();
         hand_cards.push(left.remove(k));
     }
-    crate::glog!(g, "    Stargaze: {} takes {} card(s), {} to the graveyard", pname(g, p), hand_cards.len(), left.len());
+    crate::glog!(
+        g,
+        "    Stargaze: {} takes {} card(s), {} to the graveyard",
+        pname(g, p),
+        hand_cards.len(),
+        left.len()
+    );
     g.player_mut(p).hand.extend(hand_cards);
     g.player_mut(p).gy.extend(left);
     lose_life(g, p, x as i32, Some(p), "other", None)?;
@@ -750,12 +764,8 @@ fn splatter(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
         return Ok("gy");
     }
     crate::glog!(g, "    Splatter Technique: 4 damage to each creature and planeswalker");
-    let all: Vec<PermId> = g
-        .players
-        .iter()
-        .filter(|q| q.alive)
-        .flat_map(|q| q.perms.iter().copied().collect::<Vec<_>>())
-        .collect();
+    let all: Vec<PermId> =
+        g.players.iter().filter(|q| q.alive).flat_map(|q| q.perms.iter().copied().collect::<Vec<_>>()).collect();
     for m in all {
         if !g.perm(m).on_bf || g.perm(m).phased {
             continue;
@@ -885,7 +895,8 @@ fn spider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     let hand = g.player(o).hand.clone();
     // only when it costs nothing: a card that wants the graveyard, or a spare land
     let Some(d) = discard_choice(g, o, &hand, 0) else { return Ok(()) };
-    let spare = wants_gy(g, d) || (g.db.get(d).land && g.player(o).lands.len() >= 5) || card_worth(g, o, d, false) <= 6.0;
+    let spare =
+        wants_gy(g, d) || (g.db.get(d).land && g.player(o).lands.len() >= 5) || card_worth(g, o, d, false) <= 6.0;
     if !spare {
         return Ok(());
     }
@@ -985,7 +996,8 @@ fn professor_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     remove_card(&mut g.player_mut(p).gy, f);
     g.player_mut(p).exile.push(f);
     crate::glog!(g, "  {} exiles {} to return Postmortem Professor", pname(g, p), cname(g, f));
-    if trigger_window(g, p, None, "Postmortem Professor returns", Some(3.0))? && remove_card(&mut g.player_mut(p).gy, c) {
+    if trigger_window(g, p, None, "Postmortem Professor returns", Some(3.0))? && remove_card(&mut g.player_mut(p).gy, c)
+    {
         enter(g, p, c, Enter::default())?;
     }
     gy_left(g, p, 2)?;
@@ -1059,7 +1071,9 @@ fn tidalmage_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
 
 /// **Screeching Soulbreaker**: flying; whenever it attacks, it deals 1 damage to each opponent and you gain 1 life
 fn soulbreaker_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
-    if atk.contains(&src) && g.perm(src).owner == p && trigger_window(g, p, Some(src), "1 damage to each opponent", Some(3.0))?
+    if atk.contains(&src)
+        && g.perm(src).owner == p
+        && trigger_window(g, p, Some(src), "1 damage to each opponent", Some(3.0))?
     {
         for q in alive_opps(g, p) {
             lose_life(g, q, 1, Some(p), "burn", Some(true))?;
@@ -1351,6 +1365,9 @@ pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let name = cname(g, c);
     if name == CRAWLER && flipped(g, p) && !loop_safe(g, p) {
         return 0; // the loop is mandatory: not until the library outlasts the table's life
+    }
+    if (name == SCARLET_SPIDER || name == DEMONIC_EMBRACE) && kefka_out(g, p) && !flipped(g, p) {
+        return 0; // kept in hand to be discarded to Kefka's trigger (mayhem / the graveyard cast)
     }
     if name == CRAWLER && kefka_out(g, p) && !flipped(g, p) {
         return 30; // flip first when the mana is there; the Crawler is the finisher
