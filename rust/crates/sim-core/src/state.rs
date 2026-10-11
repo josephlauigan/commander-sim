@@ -13,7 +13,7 @@
 //! - Card-specific state on a permanent (Python's `m.data` dict) is `PermData`: a short list of typed keys.
 
 use crate::cards::{CardDb, Colors};
-use crate::control::Humans;
+use crate::control::{Humans, Link};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::rng::Rng;
 use crate::settings::Settings;
@@ -892,6 +892,10 @@ pub struct Game {
     pub log: Option<Vec<String>>,
     /// practice mode's people; a copy of the game never has any (see `control::Humans`)
     pub humans: Humans,
+    /// practice mode: the session's log sink and abort flag (a copy has none)
+    pub link: Link,
+    /// practice mode: the real game's look-ahead decisions, recorded and replayed (a copy has none)
+    pub search_tape: crate::ai::tape::TapeSlot,
     /// the X paid for the last X spell (card code that reads it: Walking Ballista ...)
     pub last_x: i32,
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
@@ -1022,6 +1026,8 @@ impl Game {
             in_search: false,
             log: None,
             humans: Humans::none(),
+            link: Link::default(),
+            search_tape: Default::default(),
             last_x: 0,
             forced_attack: None,
             search_n: 0,
@@ -1086,6 +1092,9 @@ impl Game {
     /// One engine step (Python's `tick`): a game, or a look-ahead copy, that runs past its budget stops.
     pub fn tick(&mut self) -> crate::flow::Res {
         self.work += 1;
+        if self.link.abort.is_some() && self.link.aborted() {
+            return Err(crate::flow::Stop::Cancelled);
+        }
         if self.work > self.work_cap {
             return Err(crate::flow::Stop::OutOfWork);
         }

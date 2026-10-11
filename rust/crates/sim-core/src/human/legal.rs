@@ -564,3 +564,21 @@ pub fn check_land_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     }
     None
 }
+
+/// `legal.WHAT`: how a spell's target kind reads in a prompt
+pub fn what(kind: &str) -> &'static str {
+    match kind {
+        "c" => "creature",
+        "cp" => "creature or planeswalker",
+        "cap" => "creature, artifact or planeswalker",
+        "ce" => "creature or enchantment",
+        "nl" => "nonland permanent",
+        "p" => "permanent",
+        "a" => "artifact",
+        "cna" => "nonartifact creature",
+        "ae" => "artifact or enchantment",
+        "blue" => "blue permanent",
+        "ac" => "artifact or creature",
+        _ => "target",
+    }
+}
