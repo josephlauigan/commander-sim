@@ -126,6 +126,13 @@ pub fn removal_taxes(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym
     if name == "Terror of the Peaks" {
         lose_life(g, a, 3, Some(a), "other", None)?;
     }
+    if name == "Forum Necroscribe" {
+        // ward: discard a card (a hand-less player can't pay: the removal is countered)
+        if g.player(a).hand.is_empty() {
+            return Ok(false);
+        }
+        crate::engine::cast::discard_worst(g, a, 1)?;
+    }
     if name == "Strife Scholar" {
         // ward: pay 2 life (not paid at 2 life or less: the removal is countered)
         if g.player(a).life <= 2 {
@@ -445,6 +452,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
             }
         }
         _ => {}
+    }
+    if name_of(g, a) == "Paladin of Predation" && crate::engine::values::epow(g, b) <= 2 {
+        return true; // can't be blocked by creatures with power 2 or less
     }
     if g.perm(b).token && g.player(g.perm(a).owner).loyalist_turn == Some(g.turn_stamp()) {
         return true; // Legion Loyalist

@@ -839,6 +839,15 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
             return Ok(());
         }
     }
+    if x.data.truthy(DataKey::Ferocity)
+        && returns_left(g, cd)
+        && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
+        && trigger_window(g, p, Some(m), "Ferocity of the Hunt: return it to the battlefield tapped", None)?
+    {
+        let n = enter(g, x.orig, cd, Enter::default())?;
+        g.perm_mut(n).tapped = true;
+        return Ok(());
+    }
     to_zone_card(g, m, Zone::Gy);
     if !g.hooks.is_empty() && creature {
         fire_trigger(g, Event::CreatureToGy, Call::Leaves { m })?; // Nim Deathmantle

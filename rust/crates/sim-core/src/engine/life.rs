@@ -90,7 +90,9 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
     g.player_mut(p).life += n;
     if !g.hooks.is_empty() {
         hooks::fire_trigger(g, Event::GainLife, Call::Life { p, n })?;
-        let st = g.turn_stamp();
+    }
+    if n > 0 {
+        let st = g.turn_stamp(); // "if you gained life this turn" (infusion) needs it without any hooked permanent
         let pl = g.player_mut(p);
         let before = pl.gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
         pl.gained_turn = Some((st, before + n));

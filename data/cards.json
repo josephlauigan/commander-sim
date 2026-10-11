@@ -3408,19 +3408,7 @@
    "pow": 0,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile_graveyard",
-       "who": "each_player"
-      }
-     ],
-     "event": "attack",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -3431,10 +3419,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ gets +3/+0 as long as it has three or more oil counters on it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -10036,11 +10022,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, create a Food token.",
-    "Swampcycling {2}"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -12173,26 +12156,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 0,
-       "tgh": 10,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "fight"
@@ -12202,10 +12166,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Target creature you control gets +0/+10 until end of turn. Then it fights up to one target creature an opponent controls.   [partly: it fights up to one target creature an opponent controls]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -15492,29 +15454,11 @@
    "types": "S",
    "generic": 2,
    "pips": "BG",
-   "tags": {
-    "wipe": "destroy"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "nonland",
-         "max_mv": 2
-        }
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -15522,10 +15466,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy each nonland permanent with mana value 2 or less. Add {B} or {G} for each permanent destroyed this way.   [partly: add {b} or {g} for each permanent destroyed this way]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -18619,38 +18561,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 1,
-       "tgh": 0,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "grant",
-       "keyword": "vigilance",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -18658,10 +18569,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Target creature you control gets +1/+0 and gains vigilance until end of turn. It deals damage equal to its power to target creature an opponent controls.   [partly: it deals damage equal to its power to target creature an opponent controls]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -27514,23 +27423,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "infusion"
@@ -27540,10 +27433,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Infusion — If you gained life this turn, that creature's controller loses 3 life."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -36494,6 +36385,12 @@
    "dsl": [
     {
      "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 0
+    },
+    {
+     "type": "static",
      "static": "equip_cost",
      "mana": 2
     }
@@ -36509,10 +36406,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature gets +2/+0 and has \"Whenever ~ attacks, it gains your choice of trample or deathtouch until end of turn.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -41717,25 +41612,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "counters",
-       "n": 1,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -41743,10 +41620,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Put a +1/+1 counter on target creature you control, then it deals damage equal to its power to target creature an opponent controls.   [partly: it deals damage equal to its power to target creature an opponent controls]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -79462,17 +79337,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "scry",
-       "n": 3
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "scry"
@@ -79482,10 +79347,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Scry 3, then reveal the top card of your library. If it's a creature or land card, draw a card.   [partly: reveal the top card of your library; if it's a creature or land card, draw a card]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -85824,46 +85687,11 @@
    "types": "I",
    "generic": 0,
    "pips": "BG",
-   "tags": {
-    "rem": "destroy",
-    "tgt": "nl"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "gain_life",
-          "n": 5,
-          "who": "you"
-         }
-        ],
-        [
-         {
-          "do": "destroy",
-          "what": {
-           "sel": "target",
-           "filter": {
-            "type": "nonland",
-            "max_mv": 2
-           },
-           "upto": false
-          }
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -85871,11 +85699,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• sacrifice a permanent",
-    "• if you do, draw two cards"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

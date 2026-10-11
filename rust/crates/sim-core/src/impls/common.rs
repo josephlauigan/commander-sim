@@ -134,6 +134,8 @@ pub struct AuraSpec {
     /// where it goes when it leaves: Some("always") back to hand (Rancor), Some("host_dies") (Angelic Destiny)
     pub back: Option<&'static str>,
     pub host_pick: Option<HostPickFn>,
+    /// runs when the enchanted creature dies, with the Aura already gone (Ferocity of the Hunt)
+    pub host_dies: Option<AuraEtbFn>,
 }
 
 /// common.aura's defaults
@@ -149,6 +151,7 @@ pub const AURA: AuraSpec = AuraSpec {
     host_ok: None,
     back: None,
     host_pick: None,
+    host_dies: None,
 };
 
 /// common.aura: register an Aura (its static effects, and the enter hook that attaches it)
@@ -369,6 +372,7 @@ pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
             // once m has left, so a 'host_dies' Aura (Angelic Destiny) went back to hand however its creature left
             // (bounced, exiled ...). It returns only when the creature died: engine.die records it in `g.dying`.
             let died = g.dying == Some(m);
+            let host_dies = spec_of(g, a).and_then(|s| s.host_dies);
             let Some(i) = g.auras.iter().position(|&x| x == a) else { continue };
             g.auras.remove(i);
             leave(g, a)?;
@@ -377,6 +381,9 @@ pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
                 g.player_mut(o).hand.push(cd);
             } else {
                 to_zone_card(g, a, Zone::Gy);
+            }
+            if died && let Some(f) = host_dies {
+                f(g, owner(g, a), a, m)?;
             }
         }
     }

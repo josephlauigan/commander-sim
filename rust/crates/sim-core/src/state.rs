@@ -55,6 +55,10 @@ pub enum DataKey {
     DruidClass,
     /// Mogg War Marshal's echo was dealt with ('done')
     Echo,
+    /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
+    Ferocity,
+    /// oil counters (Armored Scrapgorger)
+    Oil,
     /// Ragavan was cast for its dash cost (returned to hand at the end step)
     Dash,
     Elk,
