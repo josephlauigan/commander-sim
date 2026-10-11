@@ -860,7 +860,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 14] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "zada", "torbran", "glissa", "jenova", "gix", "yawgmoth", "lordofpain", "smaug", "bill"];
+const GENERIC_PLAYS: [&str; 15] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "zada", "torbran", "glissa", "jenova", "gix", "yawgmoth", "lordofpain", "smaug", "bill", "titania"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.

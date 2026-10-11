@@ -38,6 +38,7 @@ pub mod yawgmoth;
 pub mod lordofpain;
 pub mod smaug;
 pub mod bill;
+pub mod titania;
 pub mod zur;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
@@ -78,5 +79,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     lordofpain::register(&mut r, db)?;
     smaug::register(&mut r, db)?;
     bill::register(&mut r, db)?;
+    titania::register(&mut r, db)?;
     Ok(r)
 }

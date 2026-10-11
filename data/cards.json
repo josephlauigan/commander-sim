@@ -2317,6 +2317,55 @@
    "spell_prio": false
   },
   {
+   "name": "Annoyed Altisaur",
+   "types": "C",
+   "generic": 5,
+   "pips": "GG",
+   "tags": {
+    "pow": "6",
+    "tgh": "5",
+    "bomb": "6",
+    "reach": true,
+    "trample": true
+   },
+   "pow": 6,
+   "tgh": 5,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "cascade",
+    "reach",
+    "trample"
+   ],
+   "subtypes": [
+    "dinosaur"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Cascade"
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Antiquities on the Loose",
    "types": "S",
    "generic": 1,
@@ -2458,6 +2507,65 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Arachnogenesis",
+   "types": "I",
+   "generic": 2,
+   "pips": "G",
+   "tags": {
+    "tokx": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "token",
+       "n": "X",
+       "pow": 1,
+       "tgh": 2,
+       "keywords": [
+        "reach"
+       ],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "spider"
+       ]
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you. Prevent all combat damage that would be dealt this turn by non-Spider creatures.   [partly: prevent all combat damage that would be dealt this turn by non-spider creatures]"
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -22532,6 +22640,52 @@
    "spell_prio": false
   },
   {
+   "name": "Elfhame Wurm",
+   "types": "C",
+   "generic": 4,
+   "pips": "G",
+   "tags": {
+    "pow": "5",
+    "tgh": "4",
+    "bomb": "5",
+    "vig": true,
+    "trample": true
+   },
+   "pow": 5,
+   "tgh": 4,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "trample",
+    "vigilance"
+   ],
+   "subtypes": [
+    "wurm"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Elrond, Lord of Rivendell",
    "types": "C",
    "generic": 2,
@@ -28249,6 +28403,45 @@
    "spell_prio": false
   },
   {
+   "name": "Follow the Lumarets",
+   "types": "S",
+   "generic": 1,
+   "pips": "G",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "infusion"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Infusion — Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. If you gained life this turn, you may instead reveal two creature and/or land cards from among them and put them into your hand. Put the rest on the bottom of your library in a random order."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Foolish Fate",
    "types": "I",
    "generic": 2,
@@ -31328,6 +31521,82 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Glorious Decay",
+   "types": "I",
+   "generic": 1,
+   "pips": "G",
+   "tags": {
+    "rem": "destroy",
+    "tgt": "a",
+    "draw": "1"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "modal",
+       "choose": 1,
+       "modes": [
+        [
+         {
+          "do": "destroy",
+          "what": {
+           "sel": "target",
+           "filter": {
+            "type": "artifact"
+           },
+           "upto": false
+          }
+         }
+        ],
+        [
+         {
+          "do": "exile_graveyard",
+          "who": "each_player"
+         },
+         {
+          "do": "draw",
+          "n": 1,
+          "who": "you"
+         }
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "• ~ deals 4 damage to target creature with flying"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -38771,6 +39040,180 @@
     "cmc": 2,
     "land": false,
     "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Infestation Expert",
+   "types": "C",
+   "generic": 4,
+   "pips": "G",
+   "tags": {
+    "human": true,
+    "pow": "3",
+    "tgh": "4"
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "insect"
+       ]
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "insect"
+       ]
+      }
+     ],
+     "event": "attack",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "daybound",
+    "nightbound",
+    "transform"
+   ],
+   "subtypes": [
+    "human",
+    "werewolf"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Daybound"
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Infestation Expert // Infested Werewolf",
+   "types": "C",
+   "generic": 4,
+   "pips": "G",
+   "tags": {
+    "human": true,
+    "pow": "3",
+    "tgh": "4"
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "insect"
+       ]
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "insect"
+       ]
+      }
+     ],
+     "event": "attack",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "daybound",
+    "nightbound",
+    "transform"
+   ],
+   "subtypes": [
+    "human",
+    "werewolf"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Daybound"
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -47209,6 +47652,43 @@
     "etb",
     "token_created"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Malevolent Rumble",
+   "types": "S",
+   "generic": 1,
+   "pips": "G",
+   "tags": {
+    "mktok": "1:0:0"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -57535,6 +58015,68 @@
    "spell_prio": false
   },
   {
+   "name": "Pothole Mole",
+   "types": "C",
+   "generic": 2,
+   "pips": "G",
+   "tags": {
+    "pow": "2",
+    "tgh": "3"
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "mill",
+       "n": 3,
+       "who": "you"
+      },
+      {
+       "do": "regrow",
+       "filter": {
+        "type": "land"
+       },
+       "from": "yours"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "mill"
+   ],
+   "subtypes": [
+    "mole"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Potioner's Trove",
    "types": "A",
    "generic": 3,
@@ -65829,6 +66371,68 @@
    "python_hooks": [
     "attack"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Scout the City",
+   "types": "S",
+   "generic": 1,
+   "pips": "G",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "modal",
+       "choose": 1,
+       "modes": [
+        [
+         {
+          "do": "gain_life",
+          "n": 3,
+          "who": "you"
+         }
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "bring down",
+    "look around",
+    "mill"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "• look around — mill three cards",
+    "• put a permanent card from among them into your hand",
+    "• bring down — destroy target creature with flying"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {

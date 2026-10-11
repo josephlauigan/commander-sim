@@ -102,3 +102,9 @@ file = "JD/bristly-bill-landfall.md"
 name = "Bristly Bill"
 commander = "Bristly Bill, Spine Sower"
 ident = "G"
+
+[titania]
+file = "JD/titania-lands.md"
+name = "Titania"
+commander = "Titania, Protector of Argoth"
+ident = "G"

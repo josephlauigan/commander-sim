@@ -65,6 +65,7 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "lordofpain" => crate::impls::lordofpain::lordofpain_prio(g, p, c),
         "smaug" => crate::impls::smaug::smaug_prio(g, p, c),
         "bill" => crate::impls::bill::bill_prio(g, p, c),
+        "titania" => crate::impls::titania::titania_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }

@@ -73,7 +73,7 @@ impl Settings {
             Profile::Conservative => (7, 7, 2),
             Profile::Loose => (6, 6, 0),
         };
-        let mut cthresh: HashMap<String, i32> = ["veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "zada", "torbran", "glissa", "jenova", "gix", "yawgmoth", "lordofpain", "smaug", "bill"]
+        let mut cthresh: HashMap<String, i32> = ["veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "zada", "torbran", "glissa", "jenova", "gix", "yawgmoth", "lordofpain", "smaug", "bill", "titania"]
             .iter()
             .map(|k| (k.to_string(), mine))
             .collect();
