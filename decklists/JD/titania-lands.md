@@ -3,7 +3,7 @@
 **Added 2026-10-11.** JD's mono-green deck, built from the bulk and binder lists around Titania, Protector of Argoth
 (borderless Secret Lair printing, about $2.46), with no other buys apart from Arachnogenesis and Blossoming Defense
 (bought 2026-10-11). Chosen over a Bristly Bill landfall build of mostly the same cards, which measured 15.0%.
-Fully modeled and measured on 2026-10-11: **22.4% over all tiers** (see "Simulator status").
+Fully modeled and measured on 2026-10-11: **22.8% over all tiers** (see "Simulator status").
 
 ## Strategy
 
@@ -45,8 +45,8 @@ Bugenhagen, plus Rampant Growth, Nature's Lore, Cultivate, Skyshroud Claim and S
 ## Simulator status
 
 **Measured 2026-10-11** (look-ahead AI, loose profile, 960 games per tier, the same settings as the other decks;
-`decklists/pool/pool-results.md` section 0d, results in `audit/titania/`): T1 20.7%, T2 26.9%, T3 24.5%, T4 23.0%,
-T5 17.1%; **22.4% over all tiers**, near Veyran (23.7%). Wins come late (turn 13.9 on average); she is often removed
+`decklists/pool/pool-results.md` section 0d, results in `audit/titania/`): T1 21.0%, T2 27.0%, T3 24.8%, T4 23.6%,
+T5 17.6%; **22.8% over all tiers**, near Veyran (23.7%). Wins come late (turn 13.9 on average); she is often removed
 and recast, and each recast returns a fetch land for another 5/3.
 
 Known simplifications: several lands going to the graveyard at once make one 5/3, not one each; day and night

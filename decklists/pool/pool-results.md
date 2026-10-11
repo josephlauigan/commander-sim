@@ -110,18 +110,18 @@ Bracket 2 list from bulk against Bracket 3-4 tiers. The heuristic AI alone does 
 Galadriel gets 10.3% on the same seeds), so the look-ahead isn't what holds it back.
 
 **October 11: Titania** (key `titania`; Titania, Arachnogenesis and Blossoming Defense are the only new cards),
-measured after the table above on branch `bill-deck` (025997a, `audit/titania/`) with the same settings (960 games per
+measured after the table above on branch `bill-deck` (efb17b5, `audit/titania/`) with the same settings (960 games per
 cell, seeds 500000-500959). The other nine decks weren't rerun on this code; the changes in between are new decks'
 card code (gated to those decks) and a few small rules fixes, so the nine rows above should still hold to within
 their intervals.
 
 | Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 | All tiers |
 |---|---|---|---|---|---|---|
-| Titania | 20.7% (18-23) | 26.9% (24-30) | 24.5% (22-27) | 23.0% (21-26) | 17.1% (15-20) | 22.4% |
+| Titania | 21.0% (19-24) | 27.0% (24-30) | 24.8% (22-28) | 23.6% (21-26) | 17.6% (15-20) | 22.8% |
 
-Titania (22.4%) is near Veyran (23.7%), at about an even share against Tier 2 (26.9%). Her engine: each recast returns a fetch
+Titania (22.8%) is near Veyran (23.7%), at about an even share against Tier 2 (27.0%). Her engine: each recast returns a fetch
 land, which she cracks again for a 5/3 Elemental and a card from Garruk's Uprising. A Bristly Bill build of mostly the
-same cards measured 15.0% and was dropped.
+same cards measured 15.0% and was dropped. (A first run before Greenbelt Radical could turn face up gave 22.4%.)
 
 **October 7-9 run of all seven decks** (960 games per cell, intervals about ±3 points; over all five tiers 4,800
 games, about ±1.3 points; the old Python overnight script `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).
