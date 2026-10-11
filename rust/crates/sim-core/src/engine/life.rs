@@ -36,6 +36,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
         return Ok(());
     }
+    if damage && kind != "combat" {
+        g.player_mut(p).nc_dmg_this = true;
+    }
     let st = g.turn_stamp();
     let pl = g.player_mut(p);
     pl.life -= n;

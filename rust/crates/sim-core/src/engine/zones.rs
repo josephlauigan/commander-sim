@@ -189,7 +189,7 @@ pub fn token_color(key: &str) -> Colors {
     Colors::from_letters(match key {
         "najeela" | "galadriel" | "yshtola" | "jodah" => "W",
         "seph" | "sauron" => "B",
-        "veyran" => "R",
+        "veyran" | "zada" => "R",
         "alela" => "U",
         _ => "",
     })
@@ -935,10 +935,14 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
+    let hasted = {
+        let pl = g.player_mut(p);
+        pl.haste_next.iter().position(|&h| h == cd).map(|i| pl.haste_next.remove(i)).is_some() // Generator Servant
+    };
     let born = g.enter_no;
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
-    x.sick = how.sick && !haste;
+    x.sick = how.sick && !haste && !hasted;
     x.phys = phys;
     x.born = born;
     if let Some(l) = loyalty {
@@ -1609,6 +1613,7 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
     if !g.hooks.is_empty() && !necro {
         fire_trigger(g, Event::CardsToGy, Call::Cards { p: q, cards: done.clone() })?;
     }
+    crate::impls::kefka::discarded(g, q, &done)?; // mayhem / madness
     if !necro {
         for c in done {
             tergrid_steal(g, q, c, q)?;
@@ -1633,6 +1638,7 @@ pub fn discard_index(g: &mut Game, q: PlayerId, i: usize) -> Res {
         return Ok(());
     }
     g.player_mut(q).gy.push(c);
+    crate::impls::kefka::discarded(g, q, &[c])?; // mayhem / madness
     tergrid_steal(g, q, c, q)
 }
 

@@ -39,11 +39,13 @@ fn test_your_decks() {
 fn test_win_rates_from_the_results_table() {
     let s = srv!();
     let o = s.client().get("/api/options").json();
-    let sauron = o["decks"].as_array().unwrap().iter().find(|x| x["key"] == "sauron").unwrap();
-    let w = sauron["win_rates"].as_object().unwrap();
-    for t in ["t1", "t2", "t3", "t4", "t5"] {
-        let v = w[t].as_f64().unwrap_or_else(|| panic!("no win rate for {t}"));
-        assert!((0.0..=100.0).contains(&v), "{t}: {v}");
+    for key in ["sauron", "kefka", "zada"] {
+        let d = o["decks"].as_array().unwrap().iter().find(|x| x["key"] == key).unwrap();
+        let w = d["win_rates"].as_object().unwrap_or_else(|| panic!("no win rates for {key}"));
+        for t in ["t1", "t2", "t3", "t4", "t5"] {
+            let v = w[t].as_f64().unwrap_or_else(|| panic!("no {key} win rate for {t}"));
+            assert!((0.0..=100.0).contains(&v), "{key} {t}: {v}");
+        }
     }
 }
 

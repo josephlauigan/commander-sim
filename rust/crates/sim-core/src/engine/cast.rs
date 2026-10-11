@@ -264,6 +264,13 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         crate::dsl::fire(g, "cast", crate::dsl::Fired { caster: Some(p), spell: Some(c), ..Default::default() })?;
     }
     cardcode::self_cast(g, p, c)?; // "when you cast this spell" (cascade)
+    if !creature {
+        for m in g.player(p).perms.clone() {
+            if g.perm(m).on_bf && g.perm(m).data.truthy(DataKey::WeirdToken) {
+                g.perm_mut(m).plus += 1; // Spellgorger Weird made by Ral and the Implicit Maze
+            }
+        }
+    }
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Cast, Call::Cast { caster: p, c })?;
     }
@@ -469,6 +476,9 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
     if crate::human::is_human(g, p) {
         return crate::human::choices::discard(g, p, n as usize, "Discard a card");
     }
+    if g.player(p).key == "kefka" {
+        return crate::impls::kefka::discard_n(g, p, n);
+    }
     let keep = ai::discard_keep(g, p);
     for _ in 0..n {
         if g.player(p).hand.is_empty() {
@@ -546,7 +556,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
             "seph" => 8.0,
             "veyran" => 5.0,
             "sauron" | "najeela" => 6.0,
-            "galadriel" | "yshtola" | "alela" | "jodah" => 7.0,
+            "galadriel" | "yshtola" | "alela" | "jodah" | "kefka" | "zada" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);
@@ -635,9 +645,11 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             pl.hand.remove(i);
         }
         "gy" | "escape" | "mgy" => {
+            let st = g.turn_stamp();
             let pl = g.player_mut(p);
             if let Some(i) = pl.gy.iter().position(|&x| x == c) {
                 pl.gy.remove(i);
+                pl.gy_left = Some(st); // Living History
             }
             if zone == "mgy"
                 && let Some(t) = ctx.muld_type

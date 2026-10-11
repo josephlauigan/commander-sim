@@ -3933,7 +3933,7 @@ note = "draw per non-Human power, or Humans +3/+3, whichever is bigger"
 
 ["Return the Favor"]
 status = "Full"
-note = "spree: copies your own big instant/sorcery ({1}{R}{R}), or turns a removal spell aimed at your permanent onto one of the caster's ({1}{R}{R})"
+note = "spree: copies your own big instant/sorcery or turns a removal spell aimed at your permanent onto one of the caster's ({1}{R}{R}); in Zada's deck it copies Zada's trigger (every creature gets two copies)"
 
 ["Return to Dust"]
 types = "I"
@@ -5127,7 +5127,7 @@ cost = "1R"
 tags = "twinflame"
 dsl = []
 status = "Full"
-note = "strive ({2}{R} per extra target): hasty token copies of your nonlegendary creatures, exiled at the end step; the AI copies magecraft creatures when spells are left to cast, ETB creatures (Venser) and attackers"
+note = "strive ({2}{R} per extra target): hasty token copies of your nonlegendary creatures, tokens included, exiled at the end step; the AI copies magecraft creatures when spells are left to cast, ETB creatures (Venser) and attackers; in Zada's deck it targets Zada alone and his copies make a token copy of every creature"
 
 ["Tymna the Weaver"]
 tags = "leg human pow=2 tgh=2 lifelink"
@@ -5593,3 +5593,380 @@ tags = "leg human wizard pow=1 tgh=4 fly"
 dsl = []
 status = "Full"
 note = "attacks: an enchantment with MV 3 or less onto the battlefield (Necropotence and armor Auras on Zur first)"
+
+["Zada, Hedron Grinder"]
+status = "Full"
+note = "an instant or sorcery you cast that targets only Zada is copied for each other creature you control, each copy aimed at a different one (not cast: no cast triggers, no storm); copies resolve before the original; Return the Favor doubles them"
+
+["Ancestral Anger"]
+dsl = []
+status = "Full"
+note = "+X/+0 (X = 1 plus the Ancestral Angers in your graveyard) and trample, draw a card; every Zada copy draws"
+
+["Monstrous Rage"]
+dsl = []
+status = "Full"
+note = "+2/+0 and a Monster Role (+1/+1 and trample; a second Role of the same kind changes nothing); every Zada copy gives one"
+
+["Bulk Up"]
+status = "Full"
+note = "doubles the target's power until end of turn; flashback {4}{R}{R} (the AI flashes it back on Zada as it attacks)"
+
+["Act of Treason"]
+dsl = []
+status = "Full"
+note = "gain control until end of turn, untap, haste; the AI casts it on Zada so fresh creatures can attack"
+
+["Into the Fray"]
+status = "Full"
+note = "the target attacks this turn if able; splice onto Arcane does nothing (the deck has no other Arcane spell)"
+
+["Blazing Crescendo"]
+dsl = []
+status = "Full"
+note = "+3/+1, then exile the top card of your library; you may play it until the end of your next turn; every Zada copy exiles one"
+
+["Sure Strike"]
+status = "Full"
+note = "+3/+0 and first strike on the chosen target; Zada's copies each take their own target"
+
+["Furious Bellow"]
+status = "Full"
+note = "+3/+0, first strike and scry 1 on the chosen target; Zada's copies each take their own target"
+
+["Smaug's Fury"]
+status = "Full"
+note = "+3/+0, reach and first strike on the chosen target; Zada's copies each take their own target"
+
+["Crowd's Favor"]
+status = "Full"
+note = "convoke; +1/+0 and first strike on the chosen target; Zada's copies each take their own target"
+
+["Speed, Young Avenger"]
+status = "Full"
+note = "noncreature spell cast: the AI pays {1} so its best untapped creature with haste can be blocked only by creatures with haste"
+
+["Expressive Firedancer"]
+status = "Full"
+note = "opus: +1/+1 on each instant or sorcery cast, double strike too when 5 or more mana was spent (flashback cost counts, a free cast spends none)"
+
+["Burning Prophet"]
+status = "Full"
+note = "noncreature spell cast: +1/+0 until end of turn, then scry 1"
+
+["Dreadhorde Arcanist"]
+status = "Full"
+note = "attacks: casts an instant or sorcery with mana value up to its power from the graveyard for free (Zada spells at Zada, a few untargeted spells), exiled instead of the graveyard"
+
+["Empty the Warrens"]
+status = "Full"
+note = "storm: a copy for each spell cast before it this turn (all players' spells; Zada's copies are not cast so they add none), two Goblins each"
+
+["Firebird, Blazing Ranger"]
+status = "Full"
+note = "attacks: other attackers get +X/+0, X = Firebird's power"
+
+# ---- Kefka, Court Mage deck (rust/crates/sim-core/src/impls/kefka.rs; tests in tests/cards_kefka.rs)
+["Alpharael, Dreaming Acolyte"]
+tags = "leg human pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "enters: draw two, then discard two cards unless you discard an artifact card (the AI bins the cheaper way); deathtouch on its controller's turn"
+
+["Arcane Omens"]
+tags = ""
+dsl = []
+status = "Full"
+note = "converge: the AI pays {4}{B} choosing sources of distinct colours; target opponent (the fullest hand) discards X cards, X the colours of mana spent, their choice"
+
+["Corroding Dragonstorm"]
+tags = ""
+dsl = []
+status = "Full"
+note = "enters: each opponent loses 2, you gain 2 once, surveil 2; a Dragon you control entering returns it to hand (no Dragon is in the deck, the clause works for any that enters)"
+
+["Dark Inquiry"]
+tags = ""
+dsl = []
+status = "Full"
+note = "an opponent with a nonland card reveals their hand; you take the best nonland card (by its worth to them) and they discard it"
+
+["Decorum Dissertation"]
+tags = ""
+dsl = []
+status = "Full"
+note = "target player draws two and loses 2 life (an opponent once Kefka, Ruler of Ruin is out, the lowest life; yourself before); Paradigm: exiled as it resolves, a free copy at the start of each of your first main phases"
+
+["Demonic Embrace"]
+tags = "aura"
+dsl = []
+status = "Full"
+note = "Aura: +3/+1 and flying on your creature (the Demon type is not tracked: nothing in these games reads it); may be cast from the graveyard for 3 life and a discard on top of its cost"
+
+["Disintegrate"]
+tags = "noregen exiledie"
+dsl = []
+status = "Full"
+note = "X damage to any target, X chosen by the AI (lethal for a creature worth killing, or an opponent's life); a creature damaged can't regenerate and is exiled if it would die"
+
+["Duress"]
+tags = ""
+dsl = []
+status = "Full"
+note = "an opponent with a noncreature, nonland card reveals their hand; you take the best one (by its worth to them) and they discard it"
+
+["Extinguish the Light"]
+tags = "rem=destroy tgt=cp"
+dsl = []
+status = "Full"
+note = "destroys the creature or planeswalker; you gain 3 life if its mana value was 3 or less (a token is 0)"
+
+["Garrison Excavator"]
+tags = "pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "menace; a 2/2 red and white Spirit whenever cards leave your graveyard: casting from it (mayhem, Demonic Embrace, flashback, madness not), Postmortem Professor's return. An opponent exiling your graveyard isn't seen (the engine has no one point for it)"
+
+["Gemstone Mine"]
+tags = "c=A"
+dsl = []
+status = "Full"
+note = "three mining counters (kept as the taps made); each tap makes one mana of any colour and removes one; sacrificed when the last is used"
+
+["Grab the Prize"]
+tags = ""
+dsl = []
+status = "Full"
+note = "additional cost: discard a card (the AI's discard policy); draw two; 2 damage to each opponent if the discarded card wasn't a land"
+
+["Ichor Slick"]
+tags = "rem=shrink3 tgt=c"
+dsl = []
+status = "Full"
+note = "-3/-3 until end of turn on the target creature; cycling {2}; madness {3}{B}: cast when discarded if there is a creature it kills"
+
+["Inner Fire"]
+tags = ""
+dsl = []
+status = "Full"
+note = "adds {R} for each card in your hand when it resolves (floats to the end of the turn); the AI casts it when the hand can spend the mana or it finishes the flip"
+
+["Intellect Devourer"]
+tags = "pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "enters: each opponent exiles their least useful card from hand until it leaves; you may play those cards (held in your hand, mana of any type); if it leaves, uncast cards go back to their owners' hands"
+
+["Postmortem Professor"]
+tags = "pow=2"
+dsl = [
+  { type = "static", static = "cant_block" },
+]
+status = "Full"
+note = "can't block; attacks: each opponent loses 1 life and you gain 1; {1}{B}, exile an instant or sorcery card from your graveyard: returns from the graveyard"
+
+["Sawblade Scamp"]
+tags = "pow=1 haste"
+dsl = []
+status = "Full"
+note = "haste; an oil counter whenever you cast a noncreature spell; {T}, remove a counter: 1 damage to each opponent"
+
+["Scarlet Spider, Kaine"]
+tags = "leg human pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "menace; enters: may discard a card for a +1/+1 counter (when it costs nothing); mayhem {B/R}: cast from the graveyard the turn it was discarded"
+
+["Screeching Soulbreaker"]
+tags = "pow=1 tgh=4 fly"
+dsl = []
+status = "Full"
+note = "flying; attacks: 1 damage to each opponent and you gain 1 life"
+
+["Splatter Technique"]
+tags = ""
+dsl = []
+status = "Full"
+note = "both modes: draw four, or 4 damage to each creature and planeswalker (the AI picks the wipe when it nets value)"
+
+["Stadium Tidalmage"]
+tags = "pow=4 tgh=4"
+dsl = []
+status = "Full"
+note = "enters or attacks: may draw a card, then discard a card (the deck's discard policy)"
+
+["Stargaze"]
+tags = ""
+dsl = []
+status = "Full"
+note = "X from the spare mana, life and library: look at 2X, X to hand (best by worth), the rest to the graveyard, lose X life"
+
+["Susurian Voidborn"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "a creature or artifact of yours dying (a Treasure, Clue or Food sacrificed counts) drains the lowest opponent for 1; Warp {B}: cast from hand, exiled at the next end step, castable from exile on a later turn"
+
+["Twinned Vision"]
+tags = "draw=1"
+dsl = []
+status = "Full"
+note = "draws a card; flashback {1}{U/R}{U/R} with a discard from the graveyard draws two instead"
+# ---- zada-cards (2026-10-11): the Zada deck's supporting cards; code in rust/crates/sim-core/src/impls/zada_cards.rs
+["Goblin Arsonist"]
+tags = "shaman pow=1"
+dsl = []
+status = "Full"
+note = "when it dies, 1 damage to any target: a creature worth killing, else the weakest opponent"
+
+["Bomber Corps"]
+tags = "human pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "battalion: when it and at least two other creatures attack, 1 damage to any target"
+
+["Glitterfang"]
+tags = "pow=1 haste"
+dsl = []
+status = "Full"
+note = "haste; returns to its owner's hand at the beginning of the end step"
+
+["Goblin Rimerunner"]
+tags = "warrior pow=2"
+dsl = []
+status = "Full"
+note = "{T}: the best untapped creature that could block can't block this turn (used as it attacks); {S}: haste is never available (no snow mana in the deck)"
+
+["Skilled Battlecarver"]
+status = "Full"
+note = "first strike during your turn; {1}{R}: +1/+0 until end of turn (compiled)"
+
+["Rundvelt Hordemaster"]
+status = "Full"
+note = "other Goblins +1/+1 (compiled); when it or another Goblin you control dies, exile the top card: a Goblin creature card can be cast until the end of your next turn"
+
+["Pia, Determined Rebuilder"]
+tags = "leg human pow=2"
+dsl = []
+status = "Full"
+note = "a 1/1 flying Thopter artifact on entry; {5}{R}: +X/+0 to an attacker, X = artifacts you control (Treasure, Food and Clue tokens count), paid as it attacks when X is 2 or more"
+
+["Wrath of the Bloodmane"]
+tags = "rem=dmg4 tgt=cp"
+dsl = []
+status = "Full"
+note = "costs {1} less with a legendary creature; 4 damage to a creature (the engine's damage removal does not pick planeswalkers)"
+
+["Suplex"]
+tags = "rem=dmg3 tgt=c alsoart exiledie"
+dsl = []
+status = "Full"
+note = "3 damage to a creature, exiled instead if it would die; or exile a target artifact (when no creature is worth the burn)"
+
+["Heated Argument"]
+tags = "rem=dmg6 tgt=c"
+dsl = []
+status = "Full"
+note = "6 damage to a creature; exiles the least valuable card of your graveyard (if any) for 2 damage to that creature's controller"
+
+["Violent Echoes"]
+tags = "rem=dmg6 tgt=cp"
+dsl = []
+status = "Full"
+note = "6 damage to a creature; excess damage empowers Jace (the Jace token of the Alela deck's code)"
+
+["Orcish Cannonade"]
+tags = "rem=dmg2 tgt=c face draw=1 selfdmg=3"
+dsl = []
+status = "Full"
+note = "2 damage to a creature or an opponent, 3 damage to you, draw a card"
+
+["Scorching Dragonfire"]
+tags = "rem=dmg3 tgt=cp exiledie"
+dsl = []
+status = "Full"
+note = "3 damage to a creature; exiled instead if it would die"
+
+["Reiterating Bolt"]
+tags = "rem=dmg3 tgt=cp"
+dsl = []
+status = "Full"
+note = "3 damage to a creature; replicate costs {E}{E}{E} and the deck makes no energy, so it is never paid"
+
+["Krenko's Enforcer"]
+status = "Full"
+note = "intimidate: only artifact creatures and creatures sharing a colour can block it (rules::evasion_blocked)"
+
+["Blazing Firesinger"]
+tags = "pow=2 tgh=3 prepare"
+dsl = []
+status = "Full"
+note = "enters prepared: a copy of Seething Song ({2}{R}: five red mana) can be cast once, which unprepares it"
+
+["Goblin Glasswright"]
+tags = "pow=2 prepare"
+dsl = []
+status = "Full"
+note = "enters prepared: a copy of Craft with Pride ({R}: a Treasure) can be cast once, which unprepares it"
+
+["Strife Scholar"]
+tags = "pow=3 tgh=2 prepare"
+dsl = []
+status = "Full"
+note = "ward-pay 2 life (opposing spells that target it); enters prepared: a copy of Awaken the Ages ({5}{R}: two 2/2 red and white Spirits)"
+
+["Burn, Burn, Tree and Fern"]
+dsl = []
+status = "Full"
+note = "Saga: I 6 damage to the best opposing creature that dies to it, II destroy the best opposing artifact permanent (Treasure, Food and Clue tokens are counters in this engine, so they can't be targeted), III and IV add {R} (floats through the main phase); sacrificed after IV"
+
+["Ral and the Implicit Maze"]
+dsl = []
+status = "Full"
+note = "Saga: I 2 damage to each opposing creature and planeswalker (creatures it does not kill are not marked with damage; planeswalkers lose 2 loyalty), II discard the worst card (when the library has two) and exile the top two, playable until the end of your next turn, III a 2/2 red Spellgorger Weird that gets a +1/+1 counter per noncreature spell (engine/cast.rs on_cast); sacrificed after III"
+
+["Command the Stage"]
+dsl = []
+status = "Full"
+note = "a 2/2 colourless Wizard Soldier token, then +1/+1 on each other Wizard token; each upkeep, if an opponent was dealt noncombat damage last turn, it returns from the graveyard (hooks gy_upkeep, Player.nc_dmg_last); the token's name Cadet is not tracked"
+
+["Glimpse the Impossible"]
+tags = ""
+dsl = []
+status = "Full"
+note = "exiles the top three (playable this turn); at the end step the unplayed ones go to the graveyard and each makes a 0/1 Eldrazi Spawn (Player.glimpse_exiled)"
+
+["Living History"]
+dsl = []
+status = "Full"
+note = "a 2/2 red and white Spirit on entry; whenever you attack, if a card left your graveyard this turn (cast from it, exiled by Heated Argument, Command the Stage returning), +2/+0 to the best attacker (Player.gy_left)"
+
+["Irascible Wolverine"]
+tags = "pow=3 tgh=2"
+dsl = []
+status = "Full"
+note = "enters: exile the top card, playable this turn; plot {2}{R} in the second main phase when the mana is spare (the plotted card stays in the hand, marked in impulse_long, and is cast free on a later turn)"
+
+["Lightning, Security Sergeant"]
+tags = "leg human pow=2 tgh=3"
+dsl = []
+status = "Full"
+note = "menace; combat damage to a player exiles the top card, playable (kept in the hand) while Lightning stays on the battlefield; when it leaves they are exiled for good"
+
+["Spawn-Gang Commander"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "devoid (no colour); casting it makes three 0/1 Eldrazi Spawn; {1}{C}, sacrifice an Eldrazi (the AI sacrifices a Spawn): 2 damage, {C} paid from a colourless source"
+
+["Relic of Legends"]
+status = "Full"
+note = "taps for any colour; tapping an untapped legendary creature also makes one mana of any colour (offered for a summoning-sick legend, or any legend after combat and on other turns, so the AI does not tap its attackers)"
+
+["Bonders' Enclave"]
+status = "Full"
+note = "taps for {C}; {3},{T}: draw a card while you control a creature with power 4 or more (used at the end of the turn)"
+
+["Generator Servant"]
+status = "Full"
+note = "{T}, sacrifice: add {C}{C} (the unspent half floats); a creature spell paid with it gains haste (Player.haste_next, read in zones::enter)"

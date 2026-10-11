@@ -17,6 +17,7 @@
 **Updated 2026-10-07.** Out: Marchesa, the Black Rose. In: Talrand, Sky Summoner. Marchesa, the Black Rose → Talrand, Sky Summoner: a 2/2 flying Drake for every instant or sorcery, so the deck has bodies besides the Orc Army (it loses to combat in about three games in four). Tested even with Marchesa (0.0 points, fast AI, 1,000 pairs per tier).
 **Updated 2026-10-11.** Out: Kefka, Court Mage. In: Bedevil. JD's choice: Kefka leaves to become the commander of his own deck (decklists/JD/kefka-grixis-discard.md); Bedevil ({B}{B}{R} instant: destroy target artifact, creature or planeswalker), cut on 10-01, comes back from the binder for the slot. Measured −1.8 points on average (look-ahead, loose, 1,000 paired games per tier; Bedevil vs Kefka: T1 24.1 vs 26.9, T2 30.6 vs 32.2, T3 23.1 vs 23.4, T4 19.5 vs 22.4, T5 20.4 vs 21.9). Each tier is within its own noise (about ±3), but all five favour Kefka, so losing him costs Sauron about two points (audit/sauron/2026-10-11-kefka-bedevil/).
 **Updated 2026-10-11 (second change).** Out: Bedevil. In: Sephiroth, Planet's Heir. JD's choice, not measured: Sephiroth, Planet's Heir ({4}{U}{B}, 4/4 vigilance) gives opponents' creatures -2/-2 when he enters and grows as their creatures die, a board-control threat in Kefka's old slot.
+**Updated 2026-10-11 (third change).** Out: Thought Vessel. In: Relic of Legends. JD's choice: Thought Vessel moves to Y'shtola, whose draw engines (Necropotence, Consecrated Sphinx, Notion Thief) overflow the hand most. Relic of Legends (taken from the Zada deck, which is being taken apart) keeps a mana rock toward the six-mana commander (Arcane Signet is already in the deck); it taps for any colour, or tap a legendary creature for one more. Not measured.
 
 ## Strategy
 
@@ -75,7 +76,7 @@ Needs Breach, Brain Freeze and enough graveyard to start: Ritual and Petal make 
 
 ## Consistency
 
-The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Seven rocks: Sol Ring, Arcane Signet, Mind Stone, Thought Vessel (no maximum hand size), Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Dark Ritual and Lotus Petal are one-shot fast mana (and the Breach line's fuel). Sword of Hearth and Home ramps a basic every time the Army connects.
+The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Seven rocks: Sol Ring, Arcane Signet, Mind Stone, Relic of Legends (any colour, or tap a legendary creature for one more), Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Dark Ritual and Lotus Petal are one-shot fast mana (and the Breach line's fuel). Sword of Hearth and Home ramps a basic every time the Army connects.
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -136,7 +137,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (5).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Underworld Breach
 
-**Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Thought Vessel, Whispersilk Cloak
+**Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Relic of Legends, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
 
 **Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
 
@@ -196,6 +197,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Orcish Bowmasters
 1 Path of Ancestry
 1 Phyrexian Arena
+1 Relic of Legends
 1 Ringsight
 1 Rogue's Passage
 1 Sauron, the Dark Lord
@@ -218,7 +220,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Talrand, Sky Summoner
 1 Terminate
 1 The Ozolith
-1 Thought Vessel
 1 Toxic Deluge
 1 Treno, Dark City
 1 Undermine

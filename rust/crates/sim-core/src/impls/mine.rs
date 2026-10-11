@@ -699,7 +699,13 @@ fn urabrask(g: &mut Game, src: Src, p: PlayerId) -> Res {
 /// A person picks their discard.
 pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
     let mut discarded = vec![];
-    let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+    let mut alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+    let own_plan = g.player(p).key == "kefka";
+    // CR 101.4: the players choose in APNAP order (the active player first, then in turn order); each sees the
+    // choices made before theirs, so the Kefka deck counts the pile only so far (kefka.rs)
+    if let Some(start) = g.active.and_then(|a| alive.iter().position(|&q| q == a)) {
+        alive.rotate_left(start);
+    }
     for q in alive {
         if g.player(q).hand.is_empty() {
             continue;
@@ -707,6 +713,10 @@ pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
         let hand = g.player(q).hand.clone();
         let c = if human_of(g, q).is_some() {
             choices::pick_cards(g, q, &hand, 1, "Kefka: discard a card", "choose")?[0]
+        } else if own_plan && q == p {
+            let pile = discarded.iter().fold(0u8, |b, &x| b | crate::impls::kefka::card_types(g, x));
+            let Some(c) = crate::impls::kefka::discard_choice(g, p, &hand, pile) else { continue }; // only cards held from an opponent
+            c
         } else {
             min_by(&hand, |x| card_worth(g, q, x, false)).unwrap() // their least useful card
         };
@@ -775,8 +785,9 @@ fn kefka_ruin(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
     {
         return Ok(vec![]);
     }
+    let Some(utility) = crate::impls::kefka::flip_utility(g, p) else { return Ok(vec![]) };
     Ok(vec![Opt {
-        utility: 3.0 + 0.5 * g.opps(p).count() as f64,
+        utility,
         label: "Kefka: {8}, transform".into(),
         act: Some(Action::Ability { src, f: kefka_ruin_go, arg: 0 }),
     }])
@@ -806,6 +817,8 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
             sac_last_land(g, q);
         }
     }
+    let t = g.player(p).turns;
+    g.player_mut(p).milestone.entry("kefka").or_insert(t);
     let x = g.perm_mut(src);
     x.data.set(DataKey::Ruin, Val::Bool(true));
     (x.pow, x.tgh, x.fly) = (5, 7, true);
@@ -2741,11 +2754,15 @@ fn ral_go(g: &mut Game, src: PermId, p: PlayerId, minus: i64) -> Res<bool> {
 
 // ------------------------------------------------------------------ prepared back faces: cast a copy, paying its cost
 /// mine.PREPARED: (card, generic, pips, an instant, the back face)
-const PREPARED: [(&str, u32, &str, bool, &str); 4] = [
+const PREPARED: [(&str, u32, &str, bool, &str); 7] = [
     ("Blazing Firesinger // Seething Song", 2, "R", true, "Seething Song"),
     ("Emeritus of Ideation // Ancestral Recall", 0, "U", true, "Ancestral Recall"),
     ("Sanar, Unfinished Genius // Wild Idea", 3, "UR", false, "Wild Idea"),
     ("Emeritus of Conflict // Lightning Bolt", 0, "R", true, "Lightning Bolt"),
+    // the next three are the single-faced names the Kefka and Zada decks play (zada_cards.rs has their tests)
+    ("Blazing Firesinger", 2, "R", true, "Seething Song"),
+    ("Goblin Glasswright", 0, "R", false, "Craft with Pride"),
+    ("Strife Scholar", 5, "R", false, "Awaken the Ages"),
 ];
 /// mine.PAYOFF_TAGS
 const PAYOFF_TAGS: [Tag; 7] =
@@ -2755,12 +2772,19 @@ const PAYOFF_TAGS: [Tag; 7] =
 /// Ancestral Recall draws three, Wild Idea finds an instant or sorcery, Lightning Bolt burns
 pub fn prepared_effect(g: &mut Game, p: PlayerId, effect: u8) -> Res {
     match effect {
-        0 => {
+        0 | 4 => {
             g.player_mut(p).floating.r += 5;
             Ok(())
         }
         1 => draw(g, p, 3, false),
         2 => crate::engine::tutors::tutor(g, p, "is"),
+        5 => crate::engine::zones::add_treasure(g, p, 1), // Craft with Pride
+        6 => {
+            // Awaken the Ages: two 2/2 red and white Spirits
+            let color = Some(crate::cards::Colors::from_letters("RW"));
+            let spec = Tokens { color, types: vec!["spirit"], ..Tokens::new(2, 2) };
+            make_tokens(g, p, spec).map(|_| ())
+        }
         _ => crate::engine::cast::bolt_something(g, p, 3),
     }
 }
@@ -2774,7 +2798,9 @@ fn prepared_value(g: &Game, p: PlayerId, i: usize) -> f64 {
             .filter(|&&m| g.perm(m).cd.is_some_and(|c| PAYOFF_TAGS.iter().any(|&k| g.db.get(c).tag(k))))
             .count() as f64;
     match i {
-        0 => {
+        5 => 1.5, // Craft with Pride: a Treasure for {R}
+        6 => 4.0, // Awaken the Ages: two 2/2 Spirits
+        0 | 4 => {
             // Seething Song: {2}{R} for five red, worth it to reach a spell
             let tot = total_mana(g, p, false);
             let reach = g.player(p).hand.iter().any(|&c| {
@@ -3109,7 +3135,7 @@ fn reenact(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
 
 // ------------------------------------------------------------------ Return the Favor (spree)
 /// +{1}: copy target instant or sorcery spell: your own big spell
-fn rtf_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
+pub(crate) fn rtf_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
     let sd = g.db.get(spell);
     if g.in_rtf || !g.player(p).hand.contains(&c) || !(sd.instant || sd.sorcery) || spell == c {
         return Ok(());
@@ -3676,7 +3702,7 @@ const MAGECRAFT: [Tag; 6] = [Tag::Ping, Tag::Mystic, Tag::Spelldraw, Tag::Spellt
 
 /// mine.twinflame_value: what a hasty token copy of creature m (until the end step) is worth this turn; spells: the
 /// instants and sorceries still castable after Twinflame (each triggers a magecraft copy again)
-fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spells: Option<usize>) -> f64 {
+pub(crate) fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spells: Option<usize>) -> f64 {
     let x = g.perm(m);
     let Some(cd) = x.cd else { return 0.0 };
     if !g.is_creature(m) || x.phased || is_legendary(g, m) || x.owner != p {
@@ -3750,7 +3776,7 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
 
 /// Strive: {1}{R}, plus {2}{R} for each target beyond the first. Hasty token copies of any number of your creatures,
 /// exiled at the next end step. The AI copies the creatures worth copying that it can pay for, in its main phases.
-fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let Some(post) = post else { return Ok(vec![]) };
     if g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
         return Ok(vec![]);

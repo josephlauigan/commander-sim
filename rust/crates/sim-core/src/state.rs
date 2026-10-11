@@ -95,6 +95,8 @@ pub enum DataKey {
     /// the walker framework's loyalty activations this round (Python's third item of `loyalty_used`; Oath of Teferi)
     LoyaltyN,
     Lore,
+    /// a Spellgorger Weird token made by Ral and the Implicit Maze (+1/+1 counter per noncreature spell)
+    WeirdToken,
     Lure,
     /// Knight of the Holy Nimbus: an opponent paid {2}, it can't regenerate this turn
     Noregen,
@@ -106,6 +108,8 @@ pub enum DataKey {
     Prevent,
     Prowess,
     Reflection,
+    /// a Monster Role (Monstrous Rage) is on the creature: +1/+1 and trample
+    Role,
     /// a hasty token copy made by Rionya, Fire Dancer (exiled at the end step)
     Rionya,
     Ruin,
@@ -120,6 +124,8 @@ pub enum DataKey {
     Voice,
     Void,
     Voja,
+    /// Susurian Voidborn was cast for its warp cost (exiled at the next end step)
+    Warp,
     Wishes,
     Witch,
 }
@@ -361,6 +367,15 @@ pub struct Player {
     pub agent_ids: Vec<CardId>,
     /// the last turn a permanent of this player's left the battlefield (revolt)
     pub left_turn: Option<TurnStamp>,
+    /// the last turn a card left this player's graveyard (Living History)
+    pub gy_left: Option<TurnStamp>,
+    /// noncombat damage was dealt to this player this turn / last turn (Command the Stage)
+    pub nc_dmg_this: bool,
+    pub nc_dmg_last: bool,
+    /// cards exiled by Glimpse the Impossible, not yet played
+    pub glimpse_exiled: Vec<CardId>,
+    /// creature cards the mana of a Generator Servant was spent on (they gain haste on entering)
+    pub haste_next: Vec<CardId>,
     /// once-per-turn flags (Python's `flag_turn`)
     pub flag_turn: IndexMap<Sym, TurnStamp>,
     /// the AI's memory of who hurt it (brain.note_damage)
@@ -395,6 +410,8 @@ pub struct Player {
     pub lost_names: IndexMap<Sym, u32>,
     /// the last turn this player discarded
     pub discarded_turn: Option<TurnStamp>,
+    /// the cards of this player's with mayhem discarded this turn (kefka.rs)
+    pub discard_log: Option<(TurnStamp, Vec<CardId>)>,
     /// extra land drops this turn (Explore)
     pub extra_land_now: u32,
     /// Hope of Ghirapur: no noncreature spells until that player's turn count passes
@@ -576,6 +593,11 @@ impl Player {
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,
+            gy_left: None,
+            nc_dmg_this: false,
+            nc_dmg_last: false,
+            glimpse_exiled: vec![],
+            haste_next: vec![],
             flag_turn: IndexMap::new(),
             grudge: IndexMap::new(),
             cast_names: IndexSet::new(),
@@ -593,6 +615,7 @@ impl Player {
             borrowed: vec![],
             lost_names: IndexMap::new(),
             discarded_turn: None,
+            discard_log: None,
             extra_land_now: 0,
             hope_lock: None,
             mistrise_next: None,

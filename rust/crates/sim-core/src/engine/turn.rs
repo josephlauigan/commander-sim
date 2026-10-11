@@ -423,6 +423,10 @@ pub const ACTIVATED_ENGINES: [&str; 5] = [
 
 /// p's upkeep. Python's `ais.upkeep`.
 pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
+    for q in g.players.iter_mut() {
+        q.nc_dmg_last = q.nc_dmg_this; // "dealt noncombat damage last turn" (Command the Stage)
+        q.nc_dmg_this = false;
+    }
     cardcode::turn_start(g, p)?;
     if g.player(p).ring_prot {
         g.player_mut(p).ring_prot = false; // The One Ring's protection ends as its controller's turn starts
@@ -482,6 +486,7 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Upkeep, Call::Player { p })?;
     }
+    cardcode::gy_upkeep(g)?;
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
         let Some(c) = x.cd else { continue };
@@ -685,6 +690,16 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     g.player_mut(p).impulse_long = keep;
+    g.player_mut(p).haste_next.clear();
+    for c in std::mem::take(&mut g.player_mut(p).glimpse_exiled) {
+        // Glimpse the Impossible: cards still exiled go to the graveyard, a 0/1 Eldrazi Spawn for each
+        let pl = g.player_mut(p);
+        if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+            pl.hand.remove(i);
+            pl.gy.push(c);
+            crate::impls::zada_cards::glimpse_spawn(g, p)?;
+        }
+    }
     for c in std::mem::take(&mut g.player_mut(p).impulse) {
         // Jeska's Will: unplayed exiled cards stay in exile
         let pl = g.player_mut(p);
@@ -883,6 +898,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Main1, Call::Player { p })?; // at the beginning of your precombat main phase (Sagas)
     }
+    crate::impls::kefka::paradigm(g, p)?; // Decorum Dissertation
     if g.over || !g.player(p).alive {
         return Ok(());
     }

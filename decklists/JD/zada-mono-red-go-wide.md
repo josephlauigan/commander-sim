@@ -1,7 +1,7 @@
 # Zada, Hedron Grinder — Mono-Red Go-Wide
 
 2026-10-11
-**Added 2026-10-11.** Built from JD's bulk and binder around Zada, Hedron Grinder (a commander to buy, about $0.17). Not yet in the simulator's measured decks: Zada's own ability and many cards still need modeling (see "Simulator status").
+**Added 2026-10-11.** Built from JD's bulk and binder around Zada, Hedron Grinder (a commander to buy, about $0.17). Fully modeled and measured on 2026-10-11: 7.1% over all tiers (see "Simulator status").
 
 ## Strategy
 
@@ -44,7 +44,11 @@ Zada, Hedron Grinder ({3}{R}, 3/3 Goblin Ally) reads: *whenever you cast an inst
 
 ## Simulator status
 
-In `data/my_decks.toml` as deck key `zada`, but **not measured yet**: 40 of its 70 different cards aren't fully modeled (`cardgen audit --mine`), and Zada's own copy ability isn't modeled at all (body only). Unmodeled: Burn, Burn, Tree and Fern, Into the Fray, Ral and the Implicit Maze; Generator Servant is approximate; the rest are partial. Zada needs card code (copy a spell for each other creature it could target) and an AI plan: when to cast the Zada spells (with Zada and enough creatures out) instead of on other targets.
+Deck key `zada` (`commander-sim --deck zada --pool t3`). **Fully modeled** since 2026-10-11 (every card Full in `cardgen audit --mine`; Zada and the Zada spells in `rust/crates/sim-core/src/impls/zada.rs`, the rest in `impls/zada_cards.rs`, tests in `tests/cards_zada_core.rs` and `tests/cards_zada_cards.rs`). The AI goes wide first, casts a Zada spell on Zada once he has two other creatures, and puts the pump spells on him as the attack is declared.
+
+**Measured 2026-10-11** (look-ahead AI, loose profile, 960 games per tier, the same code as the other eight decks; `decklists/pool/pool-results.md` section 0d): T1 5.2%, T2 7.4%, T3 4.5%, T4 8.8%, T5 9.4%; **7.1% over all tiers**, the weakest deck measured. The plan (the first spell copied by Zada) is online in only about a third of the games: 12 Zada spells is too few to find one with Zada and two creatures out. The heuristic AI alone does worse (2.7% against Tier 3), so it's the list, not the look-ahead. The eight cheap commons under "Weak spots" are the first thing to try.
+
+Known simplifications: pump spells go on before blockers (the engine has no after-blockers window); Into the Fray's splice does nothing (no other Arcane spell); Twinflame never picks extra strive targets; Goblin Rimerunner's snow-mana haste and Reiterating Bolt's replicate are never used (no snow mana, no energy); Ral and the Implicit Maze's 2 damage only matters to the creatures it kills.
 
 ## Where the cards come from
 

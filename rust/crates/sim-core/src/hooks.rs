@@ -51,6 +51,7 @@ pub enum Event {
     GyDies,
     GyHate,
     GyLandfall,
+    GyUpkeep,
     GyOptions,
     HandAttack,
     HandCast,
@@ -102,7 +103,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 77] = [
+pub const EVENTS: [(Event, &str); 78] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -131,6 +132,7 @@ pub const EVENTS: [(Event, &str); 77] = [
     (Event::GyDies, "gy_dies"),
     (Event::GyHate, "gy_hate"),
     (Event::GyLandfall, "gy_landfall"),
+    (Event::GyUpkeep, "gy_upkeep"),
     (Event::GyOptions, "gy_options"),
     (Event::HandAttack, "hand_attack"),
     (Event::HandCast, "hand_cast"),
@@ -424,6 +426,7 @@ pub struct CardImpl {
     pub land_upkeep: Option<LandUpkeepFn>,
     pub gy_dies: Option<GyDiesFn>,
     pub gy_landfall: Option<GyPlayerFn>,
+    pub gy_upkeep: Option<GyPlayerFn>,
     pub hand_cast: Option<HandCastFn>,
     pub hand_opp_cast: Option<HandCastFn>,
     pub hand_blocks: Option<HandBlocksFn>,
@@ -565,6 +568,7 @@ impl CardImpl {
             Event::LandUpkeep => self.land_upkeep.is_some(),
             Event::GyDies => self.gy_dies.is_some(),
             Event::GyLandfall => self.gy_landfall.is_some(),
+            Event::GyUpkeep => self.gy_upkeep.is_some(),
             Event::HandCast => self.hand_cast.is_some(),
             Event::HandAttack => self.hand_attack.is_some(),
             Event::Ninjutsu => self.ninjutsu.is_some(),

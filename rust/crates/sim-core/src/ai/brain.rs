@@ -379,6 +379,11 @@ pub fn spare_creature(g: &Game, p: PlayerId) -> Option<PermId> {
 /// brain.do_cast: p casts c (from hand or the command zone; zone 'gy': its flashback; 'yawg': from the graveyard
 /// under Yawgmoth's Will). False if it can't now.
 pub fn do_cast(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>) -> Res<bool> {
+    do_cast_with(g, p, c, zone, Ctx::default())
+}
+
+/// do_cast with the spell's choices made as it is cast (Zada's spells name their target here)
+pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx0: Ctx) -> Res<bool> {
     let db = g.db.clone();
     let d = db.get(c);
     let main = is_main(g.player(p).key);
@@ -432,7 +437,7 @@ pub fn do_cast(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>) -> Res<b
     if !ok || !paid? {
         return Ok(false);
     }
-    let mut ctx = Ctx::default();
+    let mut ctx = ctx0;
     if d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) {
         // X spells of outside decks: X = all spare mana
         let x = total_mana(g, p, cv);
@@ -742,6 +747,8 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "seph" => super::seph::options(g, p, s, post),
         "veyran" => super::veyran::options(g, p, s, post),
         "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
+        "kefka" => crate::impls::kefka::kefka_options(g, p, post),
+        "zada" => Ok(crate::impls::zada::zada_options(g, p, post)),
         _ => Ok(vec![]),
     }
 }
@@ -850,7 +857,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 4] = ["galadriel", "yshtola", "alela", "jodah"];
+const GENERIC_PLAYS: [&str; 6] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "zada"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.

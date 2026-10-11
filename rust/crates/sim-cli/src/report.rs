@@ -60,6 +60,8 @@ pub fn plan_text(deck: &str) -> &'static str {
         "yshtola" => "first drain from Y'shtola's cast trigger",
         "alela" => "first Faerie made by Alela",
         "jodah" => "first legend cast free by Jodah",
+        "kefka" => "Kefka flipped into Ruler of Ruin",
+        "zada" => "first spell copied by Zada",
         "najeela" => "first WUBRG extra combat",
         _ => "",
     }
@@ -91,6 +93,8 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "yshtola" => ms("yshtola"),
         "alela" => ms("faerie"),
         "jodah" => ms("jodah"),
+        "kefka" => ms("kefka"),
+        "zada" => ms("zada"),
         _ => ms("combo"),
     };
     t.filter(|&t| t != 0)

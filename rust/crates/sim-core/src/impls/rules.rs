@@ -88,7 +88,7 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 8] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "najeela"];
+const CTHRESH: [&str; 10] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "najeela", "zada"];
 
 /// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
 /// Summer (its spells can't be countered this turn, it draws a card)
@@ -125,6 +125,13 @@ pub fn removal_taxes(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym
     let Some(a) = actor else { return Ok(true) };
     if name == "Terror of the Peaks" {
         lose_life(g, a, 3, Some(a), "other", None)?;
+    }
+    if name == "Strife Scholar" {
+        // ward: pay 2 life (not paid at 2 life or less: the removal is countered)
+        if g.player(a).life <= 2 {
+            return Ok(false);
+        }
+        lose_life(g, a, 2, Some(a), "other", None)?;
     }
     if name == "Phyrexian Obliterator" && kind.starts_with("dmg") {
         let n: i32 = kind[3..].parse().unwrap_or(0);
@@ -444,6 +451,12 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     }
     if equipped(g, a, Tag::Nim) && !art_or('B') {
         return true; // intimidate
+    }
+    if crate::dsl::has_kw(g, a, "intimidate")
+        && !of_type(g, b, Types::ARTIFACT)
+        && !"WUBRG".chars().any(|ch| colors_of(g, a).has(ch) && colors_of(g, b).has(ch))
+    {
+        return true; // intimidate: only artifact creatures and creatures sharing a colour can block
     }
     super::rules2::prot_unblockable(g, b, a)
 }
