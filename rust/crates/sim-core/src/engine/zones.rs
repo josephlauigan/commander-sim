@@ -298,9 +298,9 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
             gain(g, p, k * opps.len() as i32)?;
         }
     }
-    if k > 0 && !blank && g.player(p).key == "titania" && has(g, p, Tag::Uprising) {
-        // Garruk's Uprising: a card for each token with power 4 or more (the 5/3 Elementals); gated to the titania
-        // deck, the only one measured with it so far
+    if k > 0 && !blank && has(g, p, Tag::Uprising) {
+        // Garruk's Uprising: a card for each token with power 4 or more ("whenever a creature with power 4 or
+        // greater you control enters" counts tokens; Titania's 5/3 Elementals)
         let big = out.iter().filter(|&&m| epow(g, m) >= 4).count() as u32;
         draw(g, p, big, false)?;
     }
