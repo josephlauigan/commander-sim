@@ -37,6 +37,7 @@ use crate::engine::zones::{
     Enter, Tokens, Zone, die, draw, enter, landfall, leave, make_tokens, max_by, searchable, to_zone_card,
 };
 use crate::flow::Res;
+use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
@@ -157,11 +158,30 @@ fn type_counts(g: &Game, p: PlayerId) -> Vec<(Sym, i32)> {
 }
 
 /// galadriel.choose_type: the creature type a permanent names as it enters: the AI names its deck's main type (Orc
-/// for Sauron's Kindred Discovery). HUMAN(phase 9): a person chooses.
-pub fn choose_type(g: &Game, p: PlayerId, _what: &str) -> Sym {
+/// for Sauron's Kindred Discovery). A person chooses.
+pub fn choose_type(g: &Game, p: PlayerId, what: &str) -> Res<Sym> {
     let counts = type_counts(g, p);
+    if human_of(g, p).is_some() {
+        // Counter.most_common(12): by count, descending; ties keep the order first seen
+        let mut ts: Vec<Sym> = {
+            let mut v: Vec<&(Sym, i32)> = counts.iter().collect();
+            v.sort_by(|a, b| b.1.cmp(&a.1));
+            v.into_iter().take(12).map(|x| x.0).collect()
+        };
+        if ts.is_empty() {
+            ts.push("human");
+        }
+        if g.player(p).key == "sauron" && !ts.contains(&"orc") {
+            ts.insert(0, "orc");
+        }
+        let n = |t: Sym| counts.iter().find(|x| x.0 == t).map_or(0, |x| x.1);
+        let labels: Vec<String> =
+            ts.iter().map(|&t| format!("{} ({} of your creature cards)", title(t), n(t))).collect();
+        let k = choices::choose_one(g, p, "choose", &format!("{what}: choose a creature type"), &labels)?;
+        return Ok(ts[k]);
+    }
     if g.player(p).key == "sauron" {
-        return "orc";
+        return Ok("orc");
     }
     let mut on_bf: Vec<(Sym, i32)> = vec![];
     for &m in &g.player(p).perms {
@@ -181,7 +201,7 @@ pub fn choose_type(g: &Game, p: PlayerId, _what: &str) -> Sym {
         }
     }
     let bf = |t: Sym| on_bf.iter().find(|x| x.0 == t).map_or(0, |x| x.1);
-    first_max(&counts, |x| x.1 + 2 * bf(x.0)).map_or("human", |x| x.0)
+    Ok(first_max(&counts, |x| x.1 + 2 * bf(x.0)).map_or("human", |x| x.0))
 }
 
 /// galadriel.ctype: the creature type a permanent named
@@ -195,7 +215,7 @@ pub fn ctype(g: &Game, m: PermId) -> Option<Sym> {
 /// galadriel._name_type (AS_ENTERS of Kindred Discovery, Door of Destinies, Patchwork Banner, Vanquisher's Banner)
 fn name_type(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let name = g.perm(m).cd.map_or("", |c| &*g.db.get(c).name).to_string();
-    let t = choose_type(g, p, &name);
+    let t = choose_type(g, p, &name)?;
     g.perm_mut(m).data.set(DataKey::Ctype, Val::Str(t));
     crate::glog!(g, "    {} names {}", name, title(t));
     g.selfpt = true; // the Banners and the Door change creatures' size
@@ -283,7 +303,7 @@ fn courtyard_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
 
 /// Secluded Courtyard names a creature type as it enters
 fn courtyard_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
-    let t = choose_type(g, p, "Secluded Courtyard");
+    let t = choose_type(g, p, "Secluded Courtyard")?;
     g.land_mut(l).data.set(DataKey::Ctype, Val::Str(t));
     crate::glog!(g, "    Secluded Courtyard names {}", title(t));
     Ok(())
