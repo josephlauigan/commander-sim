@@ -957,7 +957,8 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         pl.haste_next.iter().position(|&h| h == cd).map(|i| pl.haste_next.remove(i)).is_some() // Generator Servant
     };
     let born = g.enter_no;
-    let scales = if how.plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
+    let plus = how.plus + crate::impls::bill::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
+    let scales = if plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
     x.sick = how.sick && !haste && !hasted;
@@ -970,8 +971,8 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         x.plus = 1; // returns with its +1/+1 counter (so it survives -X/-X effects)
         x.undying = true;
     }
-    if how.plus != 0 {
-        x.plus = how.plus + scales; // enters with counters (persist: -1)
+    if plus != 0 {
+        x.plus = plus + scales; // enters with counters (persist: -1)
     }
     x.on_bf = true;
     if has_dsl {

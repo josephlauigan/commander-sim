@@ -442,7 +442,7 @@ pub fn is_prowess_card(g: &Game, c: CardId) -> bool {
 
 /// rules2.aura_ward: ward {2} from Sheltered by Ghosts
 pub fn aura_ward(g: &Game, m: PermId) -> u32 {
-    crate::impls::rules2::aura_ward(g, m) + crate::impls::bill::role_ward(g, m)
+    crate::impls::rules2::aura_ward(g, m) + crate::impls::bill::extra_ward(g, m)
 }
 
 /// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal

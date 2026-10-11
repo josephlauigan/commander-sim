@@ -222,3 +222,353 @@ fn venomous_brutalizer_gives_three_poison_and_proliferates_for_a_price() {
     hooks::fire_trigger(&mut g, Event::CombatDamage, Call::CombatDamage { p: P0, a: b, d: P1, dmg: 4 }).unwrap();
     assert_eq!(g.player(P1).poison, 3, "toxic 3");
 }
+
+fn tokens_named(g: &Game, p: PlayerId, ty: &'static str) -> Vec<PermId> {
+    g.player(p).perms.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).ttypes.contains(&ty)).collect()
+}
+
+fn has_option(g: &mut Game, post: bool, prefix: &str) -> bool {
+    options(g, P0, post).iter().any(|o| o.label.starts_with(prefix))
+}
+
+// ------------------------------------------------------------------ Cactarantula
+#[test]
+fn cactarantula_draws_when_an_opponent_targets_it() {
+    let mut g = game();
+    let c = perm(&mut g, P0, "Cactarantula");
+    let before = g.player(P0).hand.len();
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), c, "bounce", None).unwrap();
+    assert_eq!(g.player(P0).hand.len(), before + 2, "the card drawn, and Cactarantula back in hand");
+}
+
+#[test]
+fn cactarantula_ignores_its_own_controllers_targeting() {
+    let mut g = game();
+    let c = perm(&mut g, P0, "Cactarantula");
+    let before = g.player(P0).hand.len();
+    sim_core::engine::removal::apply_removal(&mut g, Some(P0), c, "bounce", None).unwrap();
+    assert_eq!(g.player(P0).hand.len(), before + 1);
+}
+
+// ------------------------------------------------------------------ Carnivorous Canopy
+#[test]
+fn canopy_destroys_an_enchantment_and_proliferates_at_mana_value_three_or_less() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    g.perm_mut(bill).plus = 2;
+    let rs = perm(&mut g, P1, "Rhystic Study"); // mana value 3
+    cast_spell(&mut g, P0, "Carnivorous Canopy");
+    assert!(!g.perm(rs).on_bf);
+    assert_eq!(g.perm(bill).plus, 3, "proliferate");
+}
+
+#[test]
+fn canopy_at_mana_value_four_does_not_proliferate() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    g.perm_mut(bill).plus = 2;
+    let ds = perm(&mut g, P1, "Doubling Season"); // mana value 5
+    let c = hand(&mut g, P0, &["Carnivorous Canopy"])[0];
+    cast::cast_card(&mut g, P0, c, "hand", Ctx { target: Some(ds), ..Ctx::default() }).unwrap();
+    assert!(!g.perm(ds).on_bf);
+    assert_eq!(g.perm(bill).plus, 2);
+}
+
+#[test]
+fn canopy_kills_a_flier_and_leaves_a_ground_creature_alone() {
+    let mut g = game();
+    let ground = perm(&mut g, P1, "Llanowar Elves");
+    let flyer = perm(&mut g, P1, "Hornet Queen");
+    cast_spell(&mut g, P0, "Carnivorous Canopy");
+    assert!(g.perm(ground).on_bf);
+    assert!(!g.perm(flyer).on_bf);
+}
+
+#[test]
+fn canopy_is_offered_only_with_a_legal_target() {
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Carnivorous Canopy"]);
+    perm(&mut g, P1, "Llanowar Elves");
+    assert!(!has_option(&mut g, false, "Carnivorous Canopy"));
+    perm(&mut g, P1, "Rhystic Study");
+    assert!(has_option(&mut g, false, "Carnivorous Canopy"));
+}
+
+// ------------------------------------------------------------------ Wildgrowth Archaic
+#[test]
+fn archaic_enters_with_a_counter_and_gives_every_creature_spell_one() {
+    let mut g = game();
+    cast_spell(&mut g, P0, "Wildgrowth Archaic");
+    let a = on_bf(&g, P0, "Wildgrowth Archaic").unwrap();
+    assert_eq!(g.perm(a).plus, 1, "converge: one color of mana");
+    cast_spell(&mut g, P0, "Llanowar Elves");
+    let e = on_bf(&g, P0, "Llanowar Elves").unwrap();
+    assert_eq!(g.perm(e).plus, 1, "enters with an additional counter");
+    perm(&mut g, P0, "Hardened Scales");
+    cast_spell(&mut g, P0, "Noxious Newt");
+    let n = on_bf(&g, P0, "Noxious Newt").unwrap();
+    assert_eq!(g.perm(n).plus, 2, "Hardened Scales: that many plus one");
+}
+
+#[test]
+fn archaic_costs_two_green() {
+    let g = game();
+    let c = card(&g, "Wildgrowth Archaic");
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, c), (0, "GG".to_string()));
+}
+
+// ------------------------------------------------------------------ Royal Treatment
+#[test]
+fn royal_treatment_saves_a_creature_and_gives_a_role_not_a_counter() {
+    let mut g = game();
+    perm(&mut g, P0, "Hardened Scales");
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    g.perm_mut(bill).plus = 4;
+    lands(&mut g, P0, "Forest", 1, false);
+    hand(&mut g, P0, &["Royal Treatment"]);
+    let (p0, t0) = (epow(&g, bill), etgh(&g, bill));
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), bill, "destroy", None).unwrap();
+    assert!(g.perm(bill).on_bf, "hexproof in response");
+    assert_eq!((epow(&g, bill), etgh(&g, bill)), (p0 + 1, t0 + 1), "the Role's +1/+1");
+    assert_eq!(g.perm(bill).plus, 4, "not a counter: Hardened Scales added nothing");
+    assert_eq!(sim_core::cardcode::aura_ward(&g, bill), 1, "ward {{1}}");
+    assert!(in_gy(&g, P0, "Royal Treatment"));
+}
+
+#[test]
+fn royal_treatment_is_not_cast_for_a_cheap_creature() {
+    let mut g = game();
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    lands(&mut g, P0, "Forest", 1, false);
+    hand(&mut g, P0, &["Royal Treatment"]);
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), elf, "destroy", None).unwrap();
+    assert!(!g.perm(elf).on_bf);
+}
+
+// ------------------------------------------------------------------ plot
+#[test]
+fn freestrider_plots_then_enters_free_with_counters() {
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 4, false);
+    hand(&mut g, P0, &[FREESTRIDER]);
+    assert!(take_option(&mut g, P0, true, "plot Freestrider Commando"));
+    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "plot cost {{3}}{{G}}");
+    assert!(!has_option(&mut g, true, "Freestrider Commando (plotted"), "not on the turn it was plotted");
+    g.player_mut(P0).turns += 1;
+    for l in g.player(P0).lands.clone() {
+        g.land_mut(l).tapped = false;
+    }
+    assert!(take_option(&mut g, P0, false, "Freestrider Commando (plotted, free)"));
+    let f = on_bf(&g, P0, "Freestrider Commando").unwrap();
+    assert_eq!(g.perm(f).plus, 2);
+    assert!(g.player(P0).lands.iter().all(|&l| !g.land(l).tapped), "cast for free");
+}
+
+const FREESTRIDER: &str = "Freestrider Commando";
+
+#[test]
+fn freestrider_cast_for_its_cost_has_no_counters_and_scales_helps_the_free_one() {
+    let mut g = game();
+    cast_spell(&mut g, P0, FREESTRIDER);
+    let f = on_bf(&g, P0, FREESTRIDER).unwrap();
+    assert_eq!(g.perm(f).plus, 0);
+    let mut g = game();
+    perm(&mut g, P0, "Hardened Scales");
+    lands(&mut g, P0, "Forest", 4, false);
+    hand(&mut g, P0, &[FREESTRIDER]);
+    take_option(&mut g, P0, true, "plot Freestrider Commando");
+    g.player_mut(P0).turns += 1;
+    take_option(&mut g, P0, false, "Freestrider Commando (plotted, free)");
+    let f = on_bf(&g, P0, FREESTRIDER).unwrap();
+    assert_eq!(g.perm(f).plus, 3, "two counters, plus one for Hardened Scales");
+}
+
+#[test]
+fn a_plotted_card_is_never_cast_the_normal_way() {
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 4, false);
+    let c = hand(&mut g, P0, &[FREESTRIDER])[0];
+    take_option(&mut g, P0, true, "plot Freestrider Commando");
+    assert_eq!(sim_core::ai::deck_prio(&g, P0, c), 0.0);
+}
+
+#[test]
+fn tumbleweed_rising_makes_an_x_by_x_elemental_and_can_be_plotted() {
+    let mut g = game();
+    let big = perm(&mut g, P0, "Thrashing Brontodon");
+    g.perm_mut(big).plus = 2; // 5 power
+    cast_spell(&mut g, P0, "Tumbleweed Rising");
+    let t = tokens_named(&g, P0, "elemental");
+    assert_eq!(t.len(), 1);
+    assert_eq!((epow(&g, t[0]), etgh(&g, t[0])), (5, 5));
+    // plot {2}{G}, then free
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Tumbleweed Rising"]);
+    assert!(take_option(&mut g, P0, true, "plot Tumbleweed Rising"));
+    g.player_mut(P0).turns += 1;
+    assert!(take_option(&mut g, P0, false, "Tumbleweed Rising (plotted, free)"));
+    assert_eq!(tokens_named(&g, P0, "elemental").len(), 2);
+}
+
+// ------------------------------------------------------------------ Lifestream's Blessing
+#[test]
+fn lifestream_draws_x_and_gains_twice_x_from_exile_only() {
+    let mut g = game();
+    let big = perm(&mut g, P0, "Thrashing Brontodon");
+    g.perm_mut(big).plus = 1; // power 4
+    let (h, life) = (g.player(P0).hand.len(), g.player(P0).life);
+    cast_spell(&mut g, P0, LIFESTREAM);
+    assert_eq!(g.player(P0).hand.len(), h + 4, "X = the greatest power, not the number of creatures");
+    assert_eq!(g.player(P0).life, life, "cast from hand: no life");
+}
+
+const LIFESTREAM: &str = "Lifestream's Blessing";
+
+#[test]
+fn lifestream_foretells_and_is_cast_from_exile_for_five() {
+    let mut g = game();
+    let big = perm(&mut g, P0, "Thrashing Brontodon");
+    g.perm_mut(big).plus = 1;
+    lands(&mut g, P0, "Forest", 5, false);
+    hand(&mut g, P0, &[LIFESTREAM]);
+    assert!(take_option(&mut g, P0, true, "foretell Lifestream's Blessing"));
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 3, "foretell costs {{2}}");
+    g.player_mut(P0).turns += 1;
+    for l in g.player(P0).lands.clone() {
+        g.land_mut(l).tapped = false;
+    }
+    let (h, life) = (g.player(P0).hand.len(), g.player(P0).life);
+    assert!(take_option(&mut g, P0, false, "Lifestream's Blessing (foretold)"));
+    assert_eq!(g.player(P0).hand.len(), h - 1 + 4);
+    assert_eq!(g.player(P0).life, life + 8, "twice X");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 0, "{{4}}{{G}}");
+}
+
+// ------------------------------------------------------------------ Sample Collector
+#[test]
+fn sample_collector_collects_evidence_for_a_counter() {
+    let mut g = game();
+    let sc = perm(&mut g, P0, "Sample Collector");
+    let gy = hand(&mut g, P0, &["Cultivate", "Rampant Growth"]);
+    g.player_mut(P0).hand.clear();
+    g.player_mut(P0).gy.extend(gy);
+    hooks::fire_trigger(&mut g, Event::Attack, Call::Attack { p: P0, atk: vec![sc], d: P1 }).unwrap();
+    assert_eq!(g.perm(sc).plus, 1);
+    assert_eq!(g.player(P0).gy.len(), 1, "one card with enough mana value is exiled");
+    assert!(in_gy(&g, P0, "Rampant Growth"), "the smaller card stays");
+    assert_eq!(g.player(P0).exile.len(), 1);
+}
+
+#[test]
+fn sample_collector_needs_three_mana_value_in_the_graveyard() {
+    let mut g = game();
+    let sc = perm(&mut g, P0, "Sample Collector");
+    let gy = hand(&mut g, P0, &["Rampant Growth"]);
+    g.player_mut(P0).hand.clear();
+    g.player_mut(P0).gy.extend(gy);
+    hooks::fire_trigger(&mut g, Event::Attack, Call::Attack { p: P0, atk: vec![sc], d: P1 }).unwrap();
+    assert_eq!(g.perm(sc).plus, 0);
+    assert_eq!(g.player(P0).gy.len(), 1);
+    // two cards worth 2 + 2 do it
+    let more = hand(&mut g, P0, &["Nature's Lore"]);
+    g.player_mut(P0).hand.clear();
+    g.player_mut(P0).gy.extend(more);
+    hooks::fire_trigger(&mut g, Event::Attack, Call::Attack { p: P0, atk: vec![sc], d: P1 }).unwrap();
+    assert_eq!(g.perm(sc).plus, 1);
+    assert!(g.player(P0).gy.is_empty());
+}
+
+// ------------------------------------------------------------------ Spider-Man
+#[test]
+fn spider_man_web_slings_by_returning_a_tapped_creature() {
+    let mut g = game();
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(elf).tapped = true;
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Spider-Man, Brooklyn Visionary"]);
+    let n = g.player(P0).lands.len();
+    assert!(take_option(&mut g, P0, false, "Spider-Man, Brooklyn Visionary (web-slinging"));
+    assert!(on_bf(&g, P0, "Spider-Man, Brooklyn Visionary").is_some());
+    assert!(!g.perm(elf).on_bf);
+    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Llanowar Elves"));
+    assert_eq!(g.player(P0).lands.len(), n + 1, "the land from its enters trigger");
+}
+
+#[test]
+fn spider_man_needs_a_tapped_creature_to_web_sling() {
+    let mut g = game();
+    perm(&mut g, P0, "Llanowar Elves"); // untapped
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Spider-Man, Brooklyn Visionary"]);
+    assert!(!has_option(&mut g, false, "Spider-Man, Brooklyn Visionary (web"));
+}
+
+// ------------------------------------------------------------------ Greenbelt Radical
+#[test]
+fn greenbelt_radical_is_cast_face_down_and_turned_up_for_seven() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Greenbelt Radical"]);
+    assert!(take_option(&mut g, P0, false, "Greenbelt Radical (face down)"));
+    let r = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).data.truthy(sim_core::state::DataKey::Facedown)).unwrap();
+    assert_eq!((epow(&g, r), etgh(&g, r)), (2, 2));
+    assert_eq!(sim_core::cardcode::aura_ward(&g, r), 2, "ward {{2}}");
+    // seven lands: turn it up
+    lands(&mut g, P0, "Forest", 4, false);
+    for l in g.player(P0).lands.clone() {
+        g.land_mut(l).tapped = false;
+    }
+    assert!(take_option(&mut g, P0, false, "Greenbelt Radical (turn face up)"));
+    assert_eq!((epow(&g, r), etgh(&g, r)), (4 + 1, 4 + 1), "a 4/4 with its own counter");
+    assert_eq!(g.perm(bill).plus, 1, "a counter on each creature");
+    assert_eq!(sim_core::cardcode::aura_ward(&g, r), 0);
+    assert!(sim_core::engine::combat::kw(&g, bill, "trample"));
+}
+
+#[test]
+fn greenbelt_radical_is_never_cast_the_normal_way() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Greenbelt Radical"])[0];
+    assert_eq!(sim_core::ai::deck_prio(&g, P0, c), 0.0);
+}
+
+// ------------------------------------------------------------------ Studious First-Year
+#[test]
+fn first_year_casts_a_prepared_rampant_growth_once() {
+    let mut g = game();
+    let bill = perm(&mut g, P0, "Bristly Bill, Spine Sower");
+    let fy = perm(&mut g, P0, "Studious First-Year");
+    lands(&mut g, P0, "Forest", 2, false);
+    let n = g.player(P0).lands.len();
+    assert!(take_option(&mut g, P0, false, "Rampant Growth (Studious First-Year"));
+    assert_eq!(g.player(P0).lands.len(), n + 1);
+    assert!(g.player(P0).lands.last().is_some_and(|&l| g.land(l).tapped), "tapped");
+    assert_eq!(g.perm(bill).plus + g.perm(fy).plus, 1, "landfall");
+    assert!(!has_option(&mut g, false, "Rampant Growth (Studious First-Year"), "unprepared");
+}
+
+// ------------------------------------------------------------------ the shared cards Hardened Scales touches
+#[test]
+fn scales_adds_to_efflorescence_edgar_increment_and_the_hydra() {
+    let mut g = game();
+    perm(&mut g, P0, "Hardened Scales");
+    let t = perm(&mut g, P0, "Thrashing Brontodon");
+    let c = hand(&mut g, P0, &["Efflorescence"])[0];
+    cast::cast_card(&mut g, P0, c, "hand", Ctx { target: Some(t), ..Ctx::default() }).unwrap();
+    assert_eq!(g.perm(t).plus, 3, "two counters, plus one");
+    // the Hydra enters with X counters (X = 3 here), plus one
+    let mut g = game();
+    perm(&mut g, P0, "Hardened Scales");
+    g.last_x = 3;
+    let h = perm(&mut g, P0, "Genesis Hydra");
+    assert_eq!(g.perm(h).plus, 4);
+    // increment: a counter for a spell that cost more than its power or toughness
+    let mut g = game();
+    perm(&mut g, P0, "Hardened Scales");
+    let lec = perm(&mut g, P0, "Topiary Lecturer"); // 1/2
+    let spell = hand(&mut g, P0, &["Cultivate"])[0]; // three mana
+    cast::cast_card(&mut g, P0, spell, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.perm(lec).plus, 2, "increment: one counter, plus one for Hardened Scales");
+}

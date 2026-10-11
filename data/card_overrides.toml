@@ -4002,8 +4002,8 @@ note = ""
 types = "I"
 tags = "prot=jodah"
 dsl = []
-status = "Approximate"
-note = "hexproof until end of turn; the Royal Role is a +1/+1 counter (its ward {1} is not modeled); Jodah's AI casts it in response to removal aimed at Jodah"
+status = "Full"
+note = "hexproof until end of turn and a Royal Role on the creature (+1/+1 and ward {1}; a Role you control on it is replaced; it is not a counter, so Hardened Scales ignores it); Jodah's and the bill deck's AI cast it in response to removal aimed at a creature worth saving"
 
 ["Ruby Medallion"]
 status = "Full"
@@ -6404,3 +6404,72 @@ note = "equip {2}, +2/+1 (compiled); trample and haste while the equipped creatu
 ["Ultimate Magic: Meteor"]
 status = "Full"
 note = "7 damage to each creature (compiled); foretell: {2} to exile it face down (kept in hand, marked), cast later for {5}{R}, and then it also destroys an artifact or land of each opponent (the AI foretells with spare mana and casts it when it kills more of theirs than of its own)"
+
+["Hardened Scales"]
+status = "Full"
+note = "every +1/+1 counter placement on a creature you control (landfall, proliferate, doubling, enters-with-counters, increment, Forced Adaptation ...) gets one more; two Scales stack (cardcode::scales)"
+
+["Bristly Bill, Spine Sower"]
+status = "Full"
+note = "landfall: a +1/+1 counter on target creature (compiled; the bill deck puts it on Silhana, then the biggest stack, then increment and mana creatures); {3}{G}{G}: double the counters on each creature you control, at instant speed (the end of the turn before yours with the mana free, or before combat when it makes the attack lethal; with 4 or more counters)"
+
+["Boughside Wanderers"]
+status = "Full"
+note = "enters: look at the top four, a permanent card to hand, the rest to the bottom at random; landfall +2/+2 until end of turn (compiled)"
+
+["Cactarantula"]
+status = "Full"
+note = "reach; draws a card when an opponent's spell or ability targets it. The {1} discount needs a Desert and the deck has none"
+
+["Carnivorous Canopy"]
+tags = "rem=destroy tgt=fae"
+dsl = []
+status = "Full"
+note = "destroy target artifact, enchantment or creature with flying; if its mana value was 3 or less, proliferate"
+
+["Freestrider Commando"]
+status = "Full"
+note = "plot {3}{G} (kept in hand, marked; cast free on a later turn); enters with two +1/+1 counters if it wasn't cast or was cast free from the plot"
+
+["Ghalta the Unstoppable"]
+status = "Full"
+note = "costs {X} less (X the greatest power among your creatures, never below {G}); trample, and other creatures you control have trample (compiled)"
+
+["Greenbelt Radical"]
+status = "Full"
+note = "disguise: cast face down for {3} as a 2/2 with ward {2} (the morph machinery), turned up for {5}{G}{G} at any time: a +1/+1 counter on each creature you control and they gain trample until end of turn. The normal cast is never made"
+
+["Lifestream's Blessing"]
+dsl = []
+status = "Full"
+note = "draw X cards, X the greatest power among your creatures (at resolution); foretell {2}, cast later for {4}{G}; cast from exile, gain twice X life"
+
+["Sample Collector"]
+status = "Full"
+note = "whenever it attacks, collect evidence 3 (exile cards worth 3 or more from the graveyard) and put a +1/+1 counter on a creature you control"
+
+["Silhana Ledgewalker"]
+status = "Full"
+note = "hexproof; can't be blocked except by creatures with flying"
+
+["Spider-Man, Brooklyn Visionary"]
+status = "Full"
+note = "enters: a basic land onto the battlefield tapped (compiled); web-slinging {2}{G}, returning a tapped creature, when the full cost is out of reach"
+
+["Studious First-Year"]
+status = "Full"
+note = "enters prepared: while prepared, pay {1}{G} to cast a copy of Rampant Growth (a basic land onto the battlefield tapped), which unprepares it"
+
+["Tumbleweed Rising"]
+dsl = []
+status = "Full"
+note = "an X/X green Elemental, X the greatest power among your creatures; plot {2}{G} (kept in hand, marked; cast free on a later turn)"
+
+["Venomous Brutalizer"]
+status = "Full"
+note = "toxic 3 (three poison counters with the combat damage); enters: pay {1}{G} to proliferate"
+
+["Wildgrowth Archaic"]
+cost = "GG"
+status = "Full"
+note = "{2/G}{2/G} is {G}{G} in a mono-green deck; reach, trample; converge: enters with a +1/+1 counter per color spent (one), and each creature spell you cast enters with that many more (one when it cost anything)"

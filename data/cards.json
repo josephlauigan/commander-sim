@@ -10851,29 +10851,12 @@
    "pips": "G",
    "tags": {
     "rem": "destroy",
-    "tgt": "c"
+    "tgt": "fae"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "kw": "flying"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "proliferate"
@@ -10883,10 +10866,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy target artifact, enchantment, or creature with flying. If that permanent's mana value was 3 or less, proliferate.   [partly: if that permanent's mana value was 3 or less, proliferate]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -45045,18 +45026,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "draw",
-       "n": "creatures_you_control",
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "foretell"
@@ -45066,10 +45036,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Draw X cards, where X is the greatest power among creatures you controlled as you cast ~. If ~ was cast from exile, you gain twice X life.   [partly: if ~ was cast from exile, you gain twice x life]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -82368,25 +82336,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "elemental"
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "plot"
@@ -82396,10 +82346,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Plot {2}{G}"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -87606,8 +87554,8 @@
   {
    "name": "Wildgrowth Archaic",
    "types": "C",
-   "generic": 4,
-   "pips": "",
+   "generic": 0,
+   "pips": "GG",
    "tags": {
     "pow": "0",
     "tgh": "0",
@@ -87631,13 +87579,13 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [
     "Converge — This creature enters with a +1/+1 counter on it for each color of mana spent to cast it.",
     "Whenever you cast a creature spell, that creature enters with X additional +1/+1 counters on it, where X is the number of colors of mana spent to cast it."
    ],
    "derived": {
-    "cmc": 4,
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,
