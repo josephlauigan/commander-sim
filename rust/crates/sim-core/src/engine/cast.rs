@@ -5,7 +5,7 @@ use crate::ai;
 use crate::cardcode;
 use crate::cards::Types;
 use crate::engine::hooks::{self, fire_trigger};
-use crate::engine::life::{check_state, gain, lose_life};
+use crate::engine::life::{check_state, gain, lose_life, ping_floor, torbran_plus};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, apply_wipe, legal_targets};
 use crate::engine::stack::{counter_window, counterable, stack_window_keep, trigger_window};
@@ -508,14 +508,15 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
 
 /// burn: kill a worthwhile creature if possible, otherwise go face on the weakest opponent
 pub fn bolt_something(g: &mut Game, p: PlayerId, dmg: i32) -> Res {
+    let eff = dmg + torbran_plus(g, p); // what the damage will be (Torbran)
     let tg: Vec<PermId> = g
         .opps(p)
         .flat_map(|q| g.player(q).perms.iter().copied())
-        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= dmg)
+        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= eff)
         .collect();
     let best = max_by(&tg, |m| pval(g, m));
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
+    if let Some(b) = best.filter(|&b| pval(g, b) >= ping_floor(g, p)) {
         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), None)
     } else if let Some(q) = min_by(&opps, |o| g.player(o).life as f64) {
         lose_life(g, q, dmg, Some(p), "burn", None)
@@ -1033,6 +1034,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         // X = (mana spent - 2)/3; 5X to each of up to X targets
         let x = ctx.x.max(1);
         let dmg = 5 * x;
+        let eff = dmg + torbran_plus(g, p);
         enum Tgt {
             Face(PlayerId),
             Perm(PermId),
@@ -1040,14 +1042,14 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         let mut cands: Vec<(f64, Tgt)> = vec![];
         for q in g.opps(p).collect::<Vec<_>>() {
             let life = g.player(q).life;
-            let v = if life <= dmg { 100.0 + (60 - life) as f64 } else { 0.4 * dmg as f64 };
+            let v = if life <= eff { 100.0 + (60 - life) as f64 } else { 0.4 * dmg as f64 };
             cands.push((v, Tgt::Face(q)));
         }
         for q in g.opps(p).collect::<Vec<_>>() {
             for &m in &g.player(q).perms {
                 if g.is_creature(m)
                     && !g.perm(m).phased
-                    && etgh(g, m) <= dmg
+                    && etgh(g, m) <= eff
                     && pval(g, m) >= 3.0
                     && !untargetable(g, m)
                 {

@@ -5970,3 +5970,50 @@ note = "taps for {C}; {3},{T}: draw a card while you control a creature with pow
 ["Generator Servant"]
 status = "Full"
 note = "{T}, sacrifice: add {C}{C} (the unspent half floats); a creature spell paid with it gains haste (Player.haste_next, read in zones::enter)"
+
+# ---- cand-torbran (2026-10-11): the Torbran candidate deck; code in rust/crates/sim-core/src/impls/torbran.rs
+["Torbran, Thane of Red Fell"]
+types = "C"
+tags = "leg pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "engine replacement effect (life::torbran_plus): +2 on every damage the player's sources deal to an opponent or an opponent's creature (spells, abilities, combat, tokens); the deck is mono-red, so every source is red; not damage to you or your permanents"
+
+["Impractical Joke"]
+types = "S"
+tags = "rem=dmg3 tgt=cp"
+dsl = []
+status = "Full"
+note = "damage can't be prevented this turn (Game::no_prevent: Chasm, Solitary Confinement, Tajic, Dovin, Cho-Manno, fogs; not protection from red) and 3 damage to a creature; planeswalkers are never targeted by the AI's damage"
+
+["Borderland Marauder"]
+types = "C"
+tags = "human warrior pow=1 tgh=2"
+dsl = []
+status = "Full"
+note = "whenever it attacks, +2/+0 until end of turn"
+
+["Goblin Medics"]
+types = "C"
+tags = "shaman pow=1"
+dsl = []
+status = "Full"
+note = "whenever it becomes tapped (it attacks; nothing else taps it in the deck), 1 damage to any target: a creature worth killing, else the weakest opponent (a face with Torbran out)"
+
+["Godo's Irregulars"]
+types = "C"
+tags = "human warrior pow=1"
+dsl = []
+status = "Full"
+note = "{R}: 1 damage to the creature blocking it; the AI pays as many {R} as it takes to kill a blocker worth killing"
+
+["Karplusan Wolverine"]
+types = "C"
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "whenever it becomes blocked, 1 damage to any target"
+
+["Rift Bolt"]
+status = "Full"
+note = "3 damage to any target; suspend 1-{R} (the AI suspends it with spare mana after combat: cast free at the next upkeep)"

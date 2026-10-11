@@ -4,7 +4,7 @@
 use crate::ai;
 use crate::cardcode;
 use crate::cards::{Colors, Types};
-use crate::engine::life::{check_state, gain, lose_life};
+use crate::engine::life::{check_state, gain, lose_life, torbran_plus};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::values::*;
 use crate::engine::zones::*;
@@ -92,7 +92,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 continue;
             }
             if let Some(n) = dmg_amount(kind, "dmg")
-                && (!is_c || etgh(g, m) > n || no_damage(g, m))
+                && (!is_c || etgh(g, m) > n + if n > 0 { torbran_plus(g, p) } else { 0 } || no_damage(g, m))
             {
                 continue;
             }
@@ -131,8 +131,10 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
             .iter()
             .filter(|&&x| !g.perm(x).phased && card_name(g, x) == Some("Fiery Emancipation"))
             .count() as u32;
-        if k > 0 {
-            kind = intern(&format!("dmg{}", n * 3i32.pow(k)));
+        let n = n + if n > 0 { torbran_plus(g, a) } else { 0 }; // Torbran, Thane of Red Fell (before the tripling)
+        let n3 = n * 3i32.pow(k);
+        if k > 0 || n != dmg_amount(kind, "dmg").unwrap_or(n) {
+            kind = intern(&format!("dmg{n3}"));
         }
     }
     if !g.perm(m).on_bf || untargetable(g, m) {

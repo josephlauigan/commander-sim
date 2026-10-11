@@ -13,6 +13,25 @@ use crate::tag::Tag;
 /// damage (Orcish Bowmasters, Kaervek, the ability language's damage); Undermine passes damage = Some(false).
 pub const DAMAGE_KINDS: [&str; 4] = ["combat", "burn", "aether", "triggers"];
 
+/// Torbran, Thane of Red Fell: each of pl's Torbrans adds 2 to the damage its red sources deal to an opponent or an
+/// opponent's permanent. The deck is mono-red, so every source of the Torbran player is red (the colourless
+/// artifacts there deal no damage).
+pub fn torbran_plus(g: &Game, pl: PlayerId) -> i32 {
+    let k = g
+        .player(pl)
+        .perms
+        .iter()
+        .filter(|&&m| !g.perm(m).phased && crate::engine::values::card_name(g, m) == Some("Torbran, Thane of Red Fell"))
+        .count();
+    2 * k as i32
+}
+
+/// the value a creature must have for a ping to go at it rather than at an opponent's face: with Torbran out every ping
+/// is a 3-damage hit to the face, so only a real threat is worth it
+pub fn ping_floor(g: &Game, p: PlayerId) -> f64 {
+    if torbran_plus(g, p) > 0 { 5.0 } else { 3.0 }
+}
+
 /// p loses n life (or is dealt n damage) from src. Python's `lose_life`.
 pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind: Sym, damage: Option<bool>) -> Res {
     let pl = g.player(p);
@@ -22,6 +41,7 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     let damage = damage.unwrap_or(DAMAGE_KINDS.contains(&kind));
     let mut n = n;
     if damage && let Some(s) = src.filter(|&s| s != p) {
+        n += torbran_plus(g, s); // a replacement effect: it applies before Fiery Emancipation triples the damage
         // Fiery Emancipation: triple damage, once per copy
         let k = g
             .player(s)
@@ -66,6 +86,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
 
 /// Glacial Chasm prevents all damage to you; The One Ring's protection prevents damage from opponents' sources
 pub fn prevents_damage(g: &Game, p: PlayerId, src: Option<PlayerId>) -> bool {
+    if g.unpreventable() {
+        return false; // Impractical Joke
+    }
     if chasm(g, p) {
         return true;
     }

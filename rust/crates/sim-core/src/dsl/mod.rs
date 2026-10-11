@@ -418,6 +418,7 @@ fn run(
         }
         "damage" => {
             let dmg = n(g, ctx) + has(g, p, Tag::Thor) as i32;
+            let eff = if dmg > 0 { dmg + crate::engine::life::torbran_plus(g, p) } else { dmg }; // Torbran
             let to = match &e.to {
                 Some(To::Sel(s)) => (**s).clone(),
                 _ => Sel::default(),
@@ -436,14 +437,14 @@ fn run(
                         .iter()
                         .flat_map(|&q| g.player(q).perms.iter().copied())
                         .filter(|&m| {
-                            g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= dmg && !protected_from(g, m, cols)
+                            g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= eff && !protected_from(g, m, cols)
                         })
                         .collect();
                     let best = max_by(&tg, |m| pval(g, m));
-                    let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= dmg).collect();
+                    let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= eff).collect();
                     if let Some(&q) = lethal.first() {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
-                    } else if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
+                    } else if let Some(b) = best.filter(|&b| pval(g, b) >= crate::engine::life::ping_floor(g, p)) {
                         snapshot(g, b, ctx);
                         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
@@ -462,7 +463,7 @@ fn run(
                         if to.sel.as_deref() == Some("target") {
                             snapshot(g, m, ctx);
                         }
-                        if etgh(g, m) <= dmg {
+                        if etgh(g, m) <= if g.perm(m).owner != p { eff } else { dmg } {
                             if to.sel.as_deref() == Some("target") {
                                 apply_removal(g, Some(p), m, &format!("dmg{dmg}"), spell)?;
                             } else {

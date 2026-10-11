@@ -873,6 +873,8 @@ pub struct Game {
     pub blocking: Vec<PermId>,
     /// a fog this turn (Spore Frog): no combat damage
     pub fog: Option<TurnStamp>,
+    /// Impractical Joke: damage can't be prevented this turn
+    pub no_prevent: Option<TurnStamp>,
     /// attacking creatures card code made during attack triggers (Python returns them from CI.fire)
     pub new_attackers: Vec<PermId>,
     /// the game ran out of engine steps (a runaway loop) and was stopped
@@ -1033,6 +1035,7 @@ impl Game {
             selfpt: false,
             blocking: vec![],
             fog: None,
+            no_prevent: None,
             new_attackers: vec![],
             stopped: false,
             goldfish: false,
@@ -1117,6 +1120,11 @@ impl Game {
     pub fn after(&self, p: PlayerId) -> impl Iterator<Item = PlayerId> + '_ {
         let n = self.players.len();
         (1..n).map(move |k| PlayerId(((p.index() + k) % n) as u8))
+    }
+
+    /// damage can't be prevented this turn (Impractical Joke)
+    pub fn unpreventable(&self) -> bool {
+        self.no_prevent == Some(self.turn_stamp())
     }
 
     pub fn turn_stamp(&self) -> TurnStamp {

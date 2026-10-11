@@ -442,7 +442,7 @@ pub fn removal_taxes(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym
 
 /// partials.tajic_protects: Tajic prevents noncombat damage to its controller's other creatures
 pub fn tajic_protects(g: &Game, m: PermId) -> bool {
-    crate::impls::partials::tajic_protects(g, m)
+    !g.unpreventable() && crate::impls::partials::tajic_protects(g, m)
 }
 
 /// Skyclave Apparition remembers what it exiled (its owner gets an Illusion when it leaves: partials)
@@ -482,12 +482,12 @@ pub fn ring_blocked(g: &Game, p: PlayerId, a: PermId, b: PermId) -> bool {
 
 /// mine.damage_prevented (Old Fat Spider's chapter II)
 pub fn damage_prevented(g: &Game, m: PermId) -> bool {
-    crate::impls::mine::damage_prevented(g, m)
+    !g.unpreventable() && crate::impls::mine::damage_prevented(g, m)
 }
 
 /// rules.dovin_blocked: Dovin's -1: damage to and from m is prevented
 pub fn dovin_blocked(g: &Game, m: PermId) -> bool {
-    crate::impls::rules::dovin_blocked(g, m)
+    !g.unpreventable() && crate::impls::rules::dovin_blocked(g, m)
 }
 
 /// rules2.prot_vs (protection from creatures, from Demons and Dragons)

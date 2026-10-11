@@ -749,6 +749,7 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         "zada" => Ok(crate::impls::zada::zada_options(g, p, post)),
+        "torbran" => crate::impls::torbran::torbran_options(g, p, s, post),
         _ => Ok(vec![]),
     }
 }
@@ -823,7 +824,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
         if !d.tag(Tag::Face) || !r.starts_with("dmg") || !can_pay(g, p, d.generic, &d.pips, false) {
             continue;
         }
-        let dmg = r[3..].parse::<i32>().unwrap_or(0) + thor;
+        let dmg = r[3..].parse::<i32>().unwrap_or(0) + thor + crate::engine::life::torbran_plus(g, p);
         let kick = match d.tags.int(Tag::Kick) {
             Some(k) if can_pay(g, p, d.generic + k as u32, &d.pips, false) => k as u32,
             _ => 0,
