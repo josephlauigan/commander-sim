@@ -95,6 +95,8 @@ pub enum DataKey {
     /// the walker framework's loyalty activations this round (Python's third item of `loyalty_used`; Oath of Teferi)
     LoyaltyN,
     Lore,
+    /// a Spellgorger Weird token made by Ral and the Implicit Maze (+1/+1 counter per noncreature spell)
+    WeirdToken,
     Lure,
     /// Knight of the Holy Nimbus: an opponent paid {2}, it can't regenerate this turn
     Noregen,
@@ -365,6 +367,15 @@ pub struct Player {
     pub agent_ids: Vec<CardId>,
     /// the last turn a permanent of this player's left the battlefield (revolt)
     pub left_turn: Option<TurnStamp>,
+    /// the last turn a card left this player's graveyard (Living History)
+    pub gy_left: Option<TurnStamp>,
+    /// noncombat damage was dealt to this player this turn / last turn (Command the Stage)
+    pub nc_dmg_this: bool,
+    pub nc_dmg_last: bool,
+    /// cards exiled by Glimpse the Impossible, not yet played
+    pub glimpse_exiled: Vec<CardId>,
+    /// creature cards the mana of a Generator Servant was spent on (they gain haste on entering)
+    pub haste_next: Vec<CardId>,
     /// once-per-turn flags (Python's `flag_turn`)
     pub flag_turn: IndexMap<Sym, TurnStamp>,
     /// the AI's memory of who hurt it (brain.note_damage)
@@ -582,6 +593,11 @@ impl Player {
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,
+            gy_left: None,
+            nc_dmg_this: false,
+            nc_dmg_last: false,
+            glimpse_exiled: vec![],
+            haste_next: vec![],
             flag_turn: IndexMap::new(),
             grudge: IndexMap::new(),
             cast_names: IndexSet::new(),

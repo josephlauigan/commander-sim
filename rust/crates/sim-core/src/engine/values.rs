@@ -309,6 +309,7 @@ pub fn player_hexproof(g: &Game, q: PlayerId) -> bool {
 pub fn colors_of(g: &Game, m: PermId) -> Colors {
     let x = g.perm(m);
     match x.cd {
+        Some(c) if g.db.get(c).kws.iter().any(|k| &**k == "devoid") => Colors::NONE, // Spawn-Gang Commander
         Some(c) => g.db.get(c).colors,
         None => x.colors,
     }

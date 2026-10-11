@@ -264,6 +264,13 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         crate::dsl::fire(g, "cast", crate::dsl::Fired { caster: Some(p), spell: Some(c), ..Default::default() })?;
     }
     cardcode::self_cast(g, p, c)?; // "when you cast this spell" (cascade)
+    if !creature {
+        for m in g.player(p).perms.clone() {
+            if g.perm(m).on_bf && g.perm(m).data.truthy(DataKey::WeirdToken) {
+                g.perm_mut(m).plus += 1; // Spellgorger Weird made by Ral and the Implicit Maze
+            }
+        }
+    }
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Cast, Call::Cast { caster: p, c })?;
     }
@@ -638,9 +645,11 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             pl.hand.remove(i);
         }
         "gy" | "escape" | "mgy" => {
+            let st = g.turn_stamp();
             let pl = g.player_mut(p);
             if let Some(i) = pl.gy.iter().position(|&x| x == c) {
                 pl.gy.remove(i);
+                pl.gy_left = Some(st); // Living History
             }
             if zone == "mgy"
                 && let Some(t) = ctx.muld_type
