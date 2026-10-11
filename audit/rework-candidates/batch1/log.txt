@@ -1,0 +1,3 @@
+torbran t1 exit 0 Win rate   8.8%   95% CI 7.1-10.7%   (even share 25%: -16.2 pts)
+glissa t1 exit 0 Win rate  11.4%   95% CI 9.5-13.5%   (even share 25%: -13.6 pts)
+jenova t1 exit 0 Win rate   9.1%   95% CI 7.4-11.1%   (even share 25%: -15.9 pts)

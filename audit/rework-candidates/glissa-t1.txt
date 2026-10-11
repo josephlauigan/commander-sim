@@ -13,4 +13,4 @@ Wins by: damage 86%, timeout 14%
   Tatyova (tatyova-simic-landfall)             58.5%            25.6%           14.1%
   ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
 
-(116s total)
+(117s total)

@@ -13,7 +13,7 @@ Wins by: damage 95%, timeout 5%
   Tatyova (tatyova-simic-landfall)             58.5%            24.6%           14.4%
   ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
 
-(111s total)
+(112s total)
 
 WARNING: 1 game(s) hit an internal simulator error and were skipped (results use the rest).
   Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>

@@ -3,7 +3,7 @@
 # all on the same code. Zada's own Tier 1 figure (5.2%) is in audit/overnight/2026-10-11-full/.
 cd "$(dirname "$0")/../.."
 D=audit/rework-candidates
-for d in torbran glissa jenova; do
+for d in zada torbran glissa jenova gix yawgmoth lordofpain smaug; do
   systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 \
     ./rust/target/release/commander-sim --deck $d --pool t1 --profile loose --games 960 --seed 500000 \
     --ai lookahead --jobs 22 2>&1 | grep -v progress > $D/$d-t1.txt
