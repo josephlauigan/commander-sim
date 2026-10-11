@@ -1,7 +1,6 @@
 //! The sheoldred deck's cards (impls/sheoldred.rs) on hand-built positions. Seat 0 plays the sheoldred deck, seat 1
 //! the seph deck.
 
-use sim_core::ai::brain;
 use sim_core::engine::life::gain;
 use sim_core::engine::{cast, turn, values, zones};
 use sim_core::hooks::{Action, Opt};
