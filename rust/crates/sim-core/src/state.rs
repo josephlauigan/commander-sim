@@ -862,6 +862,8 @@ pub struct Game {
     /// permanents with hand-written card code, in entry order (Python's `g.hooks`)
     pub hooks: Vec<PermId>,
     pub stack: Vec<StackItem>,
+    /// practice mode: >0 while the person is responding with something on the stack (Python's `g.responding`)
+    pub responding: u32,
     /// items ever put on the stack: tells whether a player with priority did something; also the next item's id
     pub stack_pushes: u32,
     /// 'probe' while finding out which pending triggers really trigger (Python's `trig_mode`)
@@ -1004,6 +1006,7 @@ impl Game {
             cur_batch: None,
             hooks: vec![],
             stack: vec![],
+            responding: 0,
             stack_pushes: 0,
             trig_probe: false,
             trig_current: None,
