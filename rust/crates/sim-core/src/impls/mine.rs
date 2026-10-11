@@ -699,7 +699,13 @@ fn urabrask(g: &mut Game, src: Src, p: PlayerId) -> Res {
 /// A person picks their discard.
 pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
     let mut discarded = vec![];
-    let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+    let mut alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+    let own_plan = g.player(p).key == "kefka";
+    // CR 101.4: the players choose in APNAP order (the active player first, then in turn order); each sees the
+    // choices made before theirs, so the Kefka deck counts the pile only so far (kefka.rs)
+    if let Some(start) = g.active.and_then(|a| alive.iter().position(|&q| q == a)) {
+        alive.rotate_left(start);
+    }
     for q in alive {
         if g.player(q).hand.is_empty() {
             continue;
@@ -707,6 +713,10 @@ pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
         let hand = g.player(q).hand.clone();
         let c = if human_of(g, q).is_some() {
             choices::pick_cards(g, q, &hand, 1, "Kefka: discard a card", "choose")?[0]
+        } else if own_plan && q == p {
+            let pile = discarded.iter().fold(0u8, |b, &x| b | crate::impls::kefka::card_types(g, x));
+            let Some(c) = crate::impls::kefka::discard_choice(g, p, &hand, pile) else { continue }; // only cards held from an opponent
+            c
         } else {
             min_by(&hand, |x| card_worth(g, q, x, false)).unwrap() // their least useful card
         };
@@ -775,8 +785,9 @@ fn kefka_ruin(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
     {
         return Ok(vec![]);
     }
+    let Some(utility) = crate::impls::kefka::flip_utility(g, p) else { return Ok(vec![]) };
     Ok(vec![Opt {
-        utility: 3.0 + 0.5 * g.opps(p).count() as f64,
+        utility,
         label: "Kefka: {8}, transform".into(),
         act: Some(Action::Ability { src, f: kefka_ruin_go, arg: 0 }),
     }])
@@ -806,6 +817,8 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
             sac_last_land(g, q);
         }
     }
+    let t = g.player(p).turns;
+    g.player_mut(p).milestone.entry("kefka").or_insert(t);
     let x = g.perm_mut(src);
     x.data.set(DataKey::Ruin, Val::Bool(true));
     (x.pow, x.tgh, x.fly) = (5, 7, true);

@@ -1609,6 +1609,7 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
     if !g.hooks.is_empty() && !necro {
         fire_trigger(g, Event::CardsToGy, Call::Cards { p: q, cards: done.clone() })?;
     }
+    crate::impls::kefka::discarded(g, q, &done)?; // mayhem / madness
     if !necro {
         for c in done {
             tergrid_steal(g, q, c, q)?;
@@ -1633,6 +1634,7 @@ pub fn discard_index(g: &mut Game, q: PlayerId, i: usize) -> Res {
         return Ok(());
     }
     g.player_mut(q).gy.push(c);
+    crate::impls::kefka::discarded(g, q, &[c])?; // mayhem / madness
     tergrid_steal(g, q, c, q)
 }
 

@@ -14,6 +14,7 @@ pub mod common;
 pub mod fixes;
 pub mod galadriel;
 pub mod jodah;
+pub mod kefka;
 pub mod lands;
 pub mod marchesa;
 pub mod mine;
@@ -57,6 +58,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     yshtola::register(&mut r, db)?;
     alela::register(&mut r, db)?;
     jodah::register(&mut r, db)?;
+    kefka::register(&mut r, db)?;
     zada::register(&mut r, db)?;
     Ok(r)
 }

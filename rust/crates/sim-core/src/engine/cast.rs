@@ -469,6 +469,9 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
     if crate::human::is_human(g, p) {
         return crate::human::choices::discard(g, p, n as usize, "Discard a card");
     }
+    if g.player(p).key == "kefka" {
+        return crate::impls::kefka::discard_n(g, p, n);
+    }
     let keep = ai::discard_keep(g, p);
     for _ in 0..n {
         if g.player(p).hand.is_empty() {
@@ -546,7 +549,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
             "seph" => 8.0,
             "veyran" => 5.0,
             "sauron" | "najeela" => 6.0,
-            "galadriel" | "yshtola" | "alela" | "jodah" | "zada" => 7.0,
+            "galadriel" | "yshtola" | "alela" | "jodah" | "kefka" | "zada" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);

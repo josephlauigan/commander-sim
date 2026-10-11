@@ -49,7 +49,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 9] = [
+const MAIN_STYLES: [(&str, Style); 10] = [
     ("seph", st(1.0, 0.55, 0.60)),
     ("veyran", st(1.0, 0.40, 0.80)),
     ("sauron", st(1.0, 0.55, 0.75)),
@@ -57,6 +57,7 @@ const MAIN_STYLES: [(&str, Style); 9] = [
     ("yshtola", st(1.0, 0.50, 0.75)),
     ("alela", st(1.0, 0.70, 0.60)),
     ("jodah", st(1.0, 0.90, 0.30)), // audit/jodah: holding back cost ~2 points
+    ("kefka", st(1.0, 0.65, 0.55)),
     ("najeela", st(1.0, 0.90, 0.30)),
     ("zada", st(1.0, 0.90, 0.30)),
 ];

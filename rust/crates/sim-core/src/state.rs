@@ -122,6 +122,8 @@ pub enum DataKey {
     Voice,
     Void,
     Voja,
+    /// Susurian Voidborn was cast for its warp cost (exiled at the next end step)
+    Warp,
     Wishes,
     Witch,
 }
@@ -397,6 +399,8 @@ pub struct Player {
     pub lost_names: IndexMap<Sym, u32>,
     /// the last turn this player discarded
     pub discarded_turn: Option<TurnStamp>,
+    /// the cards of this player's with mayhem discarded this turn (kefka.rs)
+    pub discard_log: Option<(TurnStamp, Vec<CardId>)>,
     /// extra land drops this turn (Explore)
     pub extra_land_now: u32,
     /// Hope of Ghirapur: no noncreature spells until that player's turn count passes
@@ -595,6 +599,7 @@ impl Player {
             borrowed: vec![],
             lost_names: IndexMap::new(),
             discarded_turn: None,
+            discard_log: None,
             extra_land_now: 0,
             hope_lock: None,
             mistrise_next: None,
