@@ -33,6 +33,8 @@ pub enum Answer {
     Yes,
     No,
     Cancel,
+    /// the page's 'cancel' answer (a way out of a choice that has one); not the same as `Cancel`
+    Decline,
     /// an action on the human's own turn (tap, land, cast, use, pass), as the page sends it
     Action(serde_json::Value),
 }
@@ -42,6 +44,15 @@ pub trait Human: Send + Sync {
     fn ask(&self, g: &Game, seat: PlayerId, req: Request) -> Answer;
     /// Tell the person something that needs no answer ('info', 'warn' ...).
     fn tell(&self, seat: PlayerId, kind: Sym, text: &str);
+    /// Is a person watching (the browser, the terminal)? Python's `ctl.notify is not None`: only then do choices
+    /// carry `refs` (where each choice sits on the table) and the `view`. A `ScriptHuman` is not live.
+    fn live(&self) -> bool {
+        false
+    }
+    /// The seat's auto-pass setting: 'respond' (default), 'stack' or 'all' (Python's `ctl.autopass`).
+    fn autopass(&self) -> Option<&'static str> {
+        None
+    }
 }
 
 type Seats = [Option<Arc<dyn Human>>; MAX_SEATS];

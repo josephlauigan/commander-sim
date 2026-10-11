@@ -1054,6 +1054,11 @@ pub fn run_rounds(g: &mut Game, max_rounds: u32) {
             g.stopped = true;
         }
         Err(Stop::Probe(pr)) => panic!("a trigger probe escaped to the turn loop: {pr:?}"),
+        Err(Stop::Cancelled) => {
+            // the session was closed or rewound: the game is abandoned (the session knows)
+            g.stopped = true;
+            return;
+        }
     }
     if !g.over {
         let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();

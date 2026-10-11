@@ -10,6 +10,9 @@ use crate::ids::{PermId, PlayerId};
 pub enum Stop {
     /// The game (or a look-ahead playout) used up its engine steps (Python's `E.OutOfWork`).
     OutOfWork,
+    /// The session was closed (or rewound) while the engine waited for a person's answer (Python's
+    /// `controller.Cancelled`). Unwinds the whole game through `?`.
+    Cancelled,
     /// A hook reached its commit point while the engine was only probing whether it triggers (Python's
     /// `TriggerProbe`): who controls the trigger, its source, what it does and how much it matters.
     Probe(Probe),

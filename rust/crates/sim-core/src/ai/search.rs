@@ -297,6 +297,7 @@ fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize, ba
         Ok(None) => false,
         Err(Stop::OutOfWork) => true,
         Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+        Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
     };
     let v = evaluate(&g2, p);
     done(g, &g2, w0, cut);
@@ -353,6 +354,7 @@ fn playout_attack(g: &mut Game, p: PlayerId, c: (PlayerId, Sym), base_seed: u64,
         Ok(()) => false,
         Err(Stop::OutOfWork) => true,
         Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+        Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
     };
     let v = evaluate(&g2, p);
     done(g, &g2, w0, cut);
@@ -403,6 +405,7 @@ pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool
                 Ok(true) => false,
                 Err(Stop::OutOfWork) => true,
                 Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+                Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
             };
             scores[k] += evaluate(&g2, q);
             done(g, &g2, w0, cut);
