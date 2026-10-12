@@ -1631,10 +1631,11 @@ thread_local! {
     static DELVING: std::cell::RefCell<Vec<(PlayerId, CardId)>> = const { std::cell::RefCell::new(Vec::new()) };
 }
 
-/// partials.delve_count: the generic mana delve pays (the graveyard cards not worth keeping). Two delve cards in one
-/// graveyard price each other (card_worth -> deck prio -> cost_of -> delve_count), which recursed until the stack
-/// overflowed (Jodah vs T4, seed 500501): a card already being priced on this thread counts no delve. Only that
-/// endless case changes; every count that finished before is the same.
+/// partials.delve_count: the generic mana delve pays (the graveyard cards not worth keeping). A delve card in the
+/// graveyard of a deck whose priority asks cost_of (Jodah's) prices itself (card_worth -> deck prio -> cost_of ->
+/// delve_count -> card_worth of the same card), which recursed until the stack overflowed (Jodah vs T4, seed 500501,
+/// a Treasure Cruise Jodah cast with Yuriko's Dauthi Voidwalker in a search playout): a card already being priced on
+/// this thread counts no delve. Only that endless case changes; every count that finished before is the same.
 pub fn delve_count(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if DELVING.with(|s| s.borrow().contains(&(p, c))) {
         return 0;

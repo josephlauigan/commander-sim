@@ -1097,8 +1097,8 @@ fn marchesa_returns_herself_with_a_counter() {
     assert_eq!(stat(&g, P0, "marchesa_returns"), 1);
 }
 
-/// Two delve cards in Jodah's graveyard with Jodah castable: pricing one asks Jodah's priority for the other, whose
-/// cost asks its delve count, which priced the first again, until the stack overflowed (T4, seed 500501). The inner
+/// Delve cards in Jodah's graveyard with Jodah castable: pricing one asks Jodah's priority for each graveyard card,
+/// whose cost asks its delve count, which priced them again, until the stack overflowed (T4, seed 500501). The inner
 /// count now stops; the outer one still counts the junk that delve exiles.
 #[test]
 fn two_delve_cards_in_the_graveyard_dont_price_each_other_forever() {
