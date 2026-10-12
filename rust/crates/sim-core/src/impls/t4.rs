@@ -455,7 +455,7 @@ fn shinobi(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i3
         } else if def.instant || def.sorcery {
             remove_first(&mut g.player_mut(d).exile, c);
             g.player_mut(p).hand.push(c);
-            cast_card(g, p, c, "hand", Ctx::default())?;
+            cast_card(g, p, c, "hand", Ctx { owner: Some(d), ..Ctx::default() })?; // back to d's graveyard
         }
     }
     Ok(())
@@ -479,7 +479,7 @@ fn oni(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -
         enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;
     } else {
         g.player_mut(p).hand.push(c);
-        cast_card(g, p, c, "hand", Ctx::default())?;
+        cast_card(g, p, c, "hand", Ctx { owner: Some(d), ..Ctx::default() })?; // back to d's graveyard
     }
     Ok(())
 }

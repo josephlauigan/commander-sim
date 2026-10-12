@@ -2129,7 +2129,7 @@ fn dauthi_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         enter(g, p, c, Enter { orig: Some(q), ..Enter::default() })?;
     } else {
         g.player_mut(p).hand.push(c);
-        cast_card(g, p, c, "hand", Ctx::default())?;
+        cast_card(g, p, c, "hand", Ctx { owner: Some(q), ..Ctx::default() })?; // still q's: back to q's graveyard
     }
     Ok(true)
 }

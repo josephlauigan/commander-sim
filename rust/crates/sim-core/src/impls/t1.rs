@@ -1640,6 +1640,8 @@ fn titania_gy(g: &mut Game, src: Src, p: PlayerId, _c: CardId) -> Res {
             ..Tokens::new(1, 5)
         };
         make_tokens(g, p, spec)?;
+        let turns = g.player(p).turns;
+        g.player_mut(p).milestone.entry("titania").or_insert(turns); // the titania deck's plan online
     }
     Ok(())
 }

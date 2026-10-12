@@ -702,11 +702,8 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         let jin: Vec<PlayerId> = g.opps(p).filter(|&q| has(g, q, Tag::Jin)).collect();
         if jin_kind && !jin.is_empty() && once_per_turn(g, jin[0], "jincounter") {
             crate::glog!(g, "    Jin-Gitaxias counters {}", g.db.get(c).name);
-            if zone == "gy" {
-                g.player_mut(p).exile.push(c)
-            } else {
-                g.player_mut(p).gy.push(c)
-            }
+            // where it goes (its owner's graveyard, exile after flashback, the command zone): below, as for any
+            // countered spell. Moving it here too put a second copy in the graveyard.
             return Ok(Some((false, None, ctx.clone())));
         }
         g.last_counter = None;
@@ -740,31 +737,28 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
     let Some((ok, by, _)) = r? else { return Ok(false) };
     let ctx = ctx_now.unwrap_or(ctx);
     if !ok {
-        if by.is_none() && g.last_counter.is_none() && !g.player(p).gy.contains(&c) && !g.player(p).exile.contains(&c) {
-            // Jin-Gitaxias already moved it
-        }
         let last = by;
         g.last_counter = last;
         let lt = last.map(|x| g.db.get(x));
         let land = g.db.get(c).land;
+        let o = gy_of(&ctx, p); // its owner: a card cast from another player's deck goes back to their zones
         if c == g.player(p).cmd {
             g.player_mut(p).cmd_in_zone = true;
         } else if zone == "gy" || ctx.exile_after {
-            g.player_mut(p).exile.push(c);
+            g.player_mut(o).exile.push(c);
         } else if lt.is_some_and(|x| x.tag(Tag::Lapse)) && !land {
-            g.player_mut(p).library.push(c);
+            g.player_mut(o).library.push(c);
         } else if lt.is_some_and(|x| &*x.name == "Venser, Shaper Savant" || x.tag(Tag::Remand)) {
-            g.player_mut(p).hand.push(c); // Fatehold Charm: back to its owner's hand
+            g.player_mut(o).hand.push(c); // Fatehold Charm: back to its owner's hand
         } else if g.bounced_spell {
             g.bounced_spell = false;
-            g.player_mut(p).hand.push(c);
+            g.player_mut(o).hand.push(c);
         } else if let Some(q) = ctx.desert_to.filter(|&q| g.player(q).alive) {
-            enter(g, q, c, Enter { orig: Some(p), ..Enter::default() })?; // Desertion
+            enter(g, q, c, Enter { orig: Some(o), ..Enter::default() })?; // Desertion
             crate::glog!(g, "    {} enters under {}'s control (Desertion)", g.db.get(c).name, g.player(q).name);
         } else if lt.is_some_and(|x| x.tag(Tag::Ctrexile)) && !land {
-            g.player_mut(p).exile.push(c); // Dissipate
+            g.player_mut(o).exile.push(c); // Dissipate
         } else if !land {
-            let o = gy_of(&ctx, p);
             g.player_mut(o).gy.push(c);
         }
         return Ok(false);
@@ -824,10 +818,10 @@ fn to_gy_or_exile(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym, ex
     if zone == "copy" {
         return; // copies move no card
     }
+    let o = gy_of(ctx, p);
     if zone == "gy" || ctx.exile_after || exile {
-        g.player_mut(p).exile.push(c);
+        g.player_mut(o).exile.push(c);
     } else {
-        let o = gy_of(ctx, p);
         g.player_mut(o).gy.push(c);
     }
 }

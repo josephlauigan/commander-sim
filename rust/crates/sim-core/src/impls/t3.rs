@@ -1665,23 +1665,21 @@ fn tinybones(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !g.opps(p).any(|q| g.player(q).discarded_turn == now) {
         return Ok(());
     }
-    let cands = |g: &Game| -> Vec<CardId> {
+    // (owner, card): only permanents are played, and the card stays its owner's (back to their graveyard later)
+    let cands = |g: &Game| -> Vec<(PlayerId, CardId)> {
         g.opps(p)
-            .flat_map(|q| g.player(q).gy.iter().copied())
-            .filter(|&c| !g.db.get(c).land && g.db.get(c).cmc <= 4)
+            .flat_map(|q| g.player(q).gy.iter().map(move |&c| (q, c)))
+            .filter(|&(_, c)| g.db.get(c).perm && !g.db.get(c).land && g.db.get(c).cmc <= 4)
             .collect()
     };
     if cands(g).is_empty() || !trigger_window(g, p, Some(src), "play a card from an opponent's graveyard", None)? {
         return Ok(());
     }
     let cs = cands(g);
-    if let Some(c) = max_by(&cs, |c| card_worth(g, p, c, false)) {
-        for q in g.opps(p).collect::<Vec<_>>() {
-            remove_card(&mut g.player_mut(q).gy, c);
-        }
-        if g.db.get(c).perm {
-            enter(g, p, c, Enter::default())?;
-        }
+    if let Some((q, c)) = max_by(&cs, |(_, c)| card_worth(g, p, c, false))
+        && remove_card(&mut g.player_mut(q).gy, c)
+    {
+        enter(g, p, c, Enter { orig: Some(q), ..Enter::default() })?;
     }
     Ok(())
 }
