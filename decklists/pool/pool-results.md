@@ -125,6 +125,14 @@ Titania (22.8%) is near Veyran (23.7%), at about an even share against Tier 2 (2
 land, which she cracks again for a 5/3 Elemental and a card from Garruk's Uprising. A Bristly Bill build of mostly the
 same cards measured 15.0% and was dropped. (A first run before Greenbelt Radical could turn face up gave 22.4%.)
 
+**Kefka AI fix and the Veyran → Kefka trade (2026-10-11, branch `kefka-veyran-trade`).** Not a new 960-per-cell run:
+paired look-ahead tests, 1,000 games per tier, so the table above is out of date for these two decks until the next
+full run. Kefka's AI held Psychosis Crawler (and never cast Underworld Breach); after the fix Kefka measured 28.1%
+(T1 26.6, T2 38.1, T3 24.4, T4 29.4, T5 21.9). The trade moved Deflecting Swat, Slip Out the Back, Underworld
+Breach, Niv-Mizzet, the Firemind, Jin-Gitaxias and four blue-red duals from Veyran to Kefka, and Mystic Confluence,
+Splatter Technique and three bulk cards back: **Kefka 28.1% → 29.4%** (+1.3), **Veyran 22.9% → 24.5%** (+1.7).
+Details: `audit/kefka-veyran/2026-10-11-trade/` and both deck docs.
+
 **October 7-9 run of all seven decks** (960 games per cell, intervals about ±3 points; over all five tiers 4,800
 games, about ±1.3 points; the old Python overnight script `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).
 The code is PR #37 (c02b10e, the Marchesa and Zur decks removed), before the Jodah audit fixes (PR #38). The lists
