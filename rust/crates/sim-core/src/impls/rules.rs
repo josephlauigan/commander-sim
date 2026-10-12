@@ -81,14 +81,14 @@ pub fn dryad_colors(g: &Game, p: PlayerId) -> bool {
 }
 
 // ================================================================== tax payments
-/// rules.REPLACED_TAG_ENGINES: engines whose card code replaces the generic 'eng' upkeep draw
+/// rules.REPLACED_TAG_ENGINES: engines whose card code replaces the generic 'eng' upkeep draw; Seymour Flux: impls/sheoldred.rs
 pub fn replaced_tag_engine(name: &str) -> bool {
-    matches!(name, "Mystic Remora" | "Sylvan Library")
+    matches!(name, "Mystic Remora" | "Sylvan Library" | "Seymour Flux")
 }
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 10] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "najeela", "titania"];
+const CTHRESH: [&str; 11] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "najeela", "titania", "sheoldred"];
 
 /// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
 /// Summer (its spells can't be countered this turn, it draws a card)

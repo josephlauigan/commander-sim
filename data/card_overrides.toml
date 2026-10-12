@@ -6248,7 +6248,7 @@ dsl = []
 status = "Full"
 note = "flying; enters with two oil counters (+1/+1 each); another creature or artifact you control going to the graveyard (artifact tokens when sacrificed too) adds an oil counter"
 
-["Restless Bloodseeker"]
+["Restless Bloodseeker // Bloodsoaked Reveler"]
 status = "Full"
 note = "end step, if you gained life this turn: a Blood token; sacrifice two Blood tokens (sorcery speed) to transform into Bloodsoaked Reveler (3/3, {4}{B}: each opponent loses 2 life and you gain 2); Blood tokens are kept as a count and rummage ({1}, discard, sacrifice: draw) when the hand has a spare card"
 
@@ -6535,3 +6535,94 @@ tags = "human pow=3 tgh=4"
 dsl = []
 status = "Full"
 note = "daybound and nightbound modeled (Game::day_night): the first daybound permanent makes it day; as each turn begins it becomes night after a turn with no spell cast, day after a turn with two or more; at night it is the 4/5 Infested Werewolf and makes two Insects instead of one"
+
+["Locust Spray"]
+status = "Full"
+note = "-1/-1 until end of turn (a lethal one kills); the AI casts it at an opposing creature the -1/-1 kills, else cycles it for {B} after its other plays"
+
+["Ribskiff"]
+status = "Full"
+note = "draws a card entering; crew 3 (with creatures that would not attack, never Sheoldred) before combat makes it a 4/4 artifact creature; toxic 2 gives two poison counters with combat damage to a player"
+
+["Tome of Legends"]
+status = "Full"
+note = "enters with a page counter; +1 whenever your commander enters or attacks; {1}, {T}, remove a page counter: draw a card (the AI uses it when the hand has room, more eagerly with Sheoldred out)"
+
+["Diary of Dreams"]
+dsl = []
+status = "Full"
+note = "+1 page counter whenever you cast an instant or sorcery spell; {5}, {T}: draw a card, costing {1} less for each page counter"
+
+["Leech Collector // Bloodletting"]
+status = "Full"
+note = "the first time each turn you gain life it becomes prepared; at sorcery speed the AI pays {B} to cast a copy of Bloodletting (each opponent loses 2 life), which unprepares it"
+
+["Moseo, Vein's New Dean"]
+status = "Full"
+note = "flying; a Pest token entering; at your end step, if you gained life this turn, returns the best creature card with mana value at most the life gained from your graveyard"
+
+["Lethal Throwdown"]
+tags = ""
+dsl = []
+status = "Full"
+note = "the AI sacrifices a creature as the additional cost (a modified one with a counter or attached Equipment/Aura first), destroys the best target creature or planeswalker, and draws a card if the sacrificed creature was modified"
+
+["Seizan, Perverter of Truth"]
+dsl = []
+tags = "pow=6 tgh=5 leg"
+status = "Full"
+note = "at the beginning of each player's upkeep that player loses 2 life (life loss, not damage) and draws two cards; the draws fire Sheoldred and Underworld Dreams; the sheoldred deck casts it with Sheoldred out (or at high life when far behind on cards) and may put Champion's Helm on it once Darksteel Plate protects Sheoldred"
+
+["Underworld Dreams"]
+dsl = []
+tags = ""
+status = "Full"
+note = "whenever an opponent draws a card, 1 damage to that player (damage, so prevention applies; the draw happens first, so Sheoldred's loss comes before it); cast early by the sheoldred deck"
+
+["Dark Deal"]
+dsl = []
+tags = ""
+status = "Full"
+note = "each player discards their hand, then draws that many cards minus one (caster first); the sheoldred deck casts it with Sheoldred out when opponents hold 4 or more cards and its own hand is 2 or fewer"
+
+["Painful Lesson"]
+dsl = []
+tags = ""
+status = "Full"
+note = "target player draws two cards, then loses 2 life; the sheoldred deck aims it at the lowest-life opponent while Sheoldred is out, otherwise at itself (at more than 6 life)"
+
+["Howling Mine"]
+status = "Full"
+note = "at the beginning of each player's draw step, if it is untapped, that player draws an additional card (engine/turn.rs calls sheoldred::howling_mines); the sheoldred deck casts it only while a draw punisher (Sheoldred, Underworld Dreams, Fate Unraveler) is out"
+
+["Temple Bell"]
+dsl = []
+tags = ""
+status = "Full"
+note = "{T}: each player draws a card (active player first); the sheoldred deck taps it at the end of an opponent's turn, or in its own main phase when it kills, only while a draw punisher is out"
+
+["Fate Unraveler"]
+status = "Full"
+note = "whenever an opponent draws a card, 1 damage to that player (damage, so prevention applies)"
+
+["Peer into the Abyss"]
+status = "Full"
+note = "target player draws half their library (rounded up) and loses half their life (rounded up); the sheoldred deck aims it at the opponent it kills with Sheoldred out, else at itself only with a big library and high life"
+
+["Geier Reach Sanitarium"]
+dsl = []
+tags = "leg c=C"
+status = "Full"
+note = "{T}: add {C}. {2},{T}: each player draws a card, then discards a card; the sheoldred deck activates it only while a draw punisher is out, with spare mana"
+
+["Ambition's Cost"]
+dsl = []
+tags = "draw=3"
+status = "Full"
+note = "you draw three cards and lose 3 life"
+
+["Syphon Mind"]
+dsl = []
+tags = "draw=2"
+status = "Full"
+note = "each other player discards a card; you draw a card for each card discarded this way (discards happen in turn order, the drawn cards come after all discards)"

@@ -104,6 +104,7 @@ pub fn win_rates(text: &str) -> BTreeMap<String, Vec<f64>> {
             "jodah" => "jodah",
             "kefka" => "kefka",
             "titania" => "titania",
+            "sheoldred" => "sheoldred",
             _ => continue,
         };
         if cells.len() < 6 {

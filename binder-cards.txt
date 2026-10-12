@@ -1,5 +1,4 @@
 1x Arnim Zola, Bio-Fanatic
-1x Bedevil
 1x Crawlspace
 1x Deepwood Legate
 1x Desertion
@@ -16,7 +15,6 @@
 1x Love on the Battlefield
 1x Mystic Enforcer
 1x Phyrexian Boon
-1x Phyrexian Delver
 1x Pillage
 1x Radiant Kavu
 1x Solarium Sentry

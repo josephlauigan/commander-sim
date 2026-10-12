@@ -2252,12 +2252,14 @@ fn mirari_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// Memory Jar: {T}, sacrifice: everyone sets their hand aside and draws seven; at the end step they discard and get
 /// the old hands back. Used with a small hand and mana left to spend the seven
 fn jar(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != owner(g, src)
-        || post != Some(false)
-        || g.active != Some(p)
-        || g.player(p).hand.len() > 2
-        || total_mana(g, p, false) < 3
-    {
+    if p != owner(g, src) || post != Some(false) || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    // the sheoldred deck with Sheoldred out: seven cards for everyone is 14 life gained and 14 lost by each opponent
+    if g.player(p).key == "sheoldred" && super::sheoldred::sheoldred_out(g, p) {
+        return Ok(vec![ability(8.0, "Memory Jar (Sheoldred)".into(), src, jar_go, 0)]);
+    }
+    if g.player(p).hand.len() > 2 || total_mana(g, p, false) < 3 {
         return Ok(vec![]);
     }
     let u = 3.0 + 0.4 * (7.0 - g.player(p).hand.len() as f64);

@@ -18,6 +18,7 @@
 **Updated 2026-10-11.** Out: Kefka, Court Mage. In: Bedevil. JD's choice: Kefka leaves to become the commander of his own deck (decklists/JD/kefka-grixis-discard.md); Bedevil ({B}{B}{R} instant: destroy target artifact, creature or planeswalker), cut on 10-01, comes back from the binder for the slot. Measured −1.8 points on average (look-ahead, loose, 1,000 paired games per tier; Bedevil vs Kefka: T1 24.1 vs 26.9, T2 30.6 vs 32.2, T3 23.1 vs 23.4, T4 19.5 vs 22.4, T5 20.4 vs 21.9). Each tier is within its own noise (about ±3), but all five favour Kefka, so losing him costs Sauron about two points (audit/sauron/2026-10-11-kefka-bedevil/).
 **Updated 2026-10-11 (second change).** Out: Bedevil. In: Sephiroth, Planet's Heir. JD's choice, not measured: Sephiroth, Planet's Heir ({4}{U}{B}, 4/4 vigilance) gives opponents' creatures -2/-2 when he enters and grows as their creatures die, a board-control threat in Kefka's old slot.
 **Updated 2026-10-11 (third change).** Out: Thought Vessel. In: Relic of Legends. JD's choice: Thought Vessel moves to Y'shtola, whose draw engines (Necropotence, Consecrated Sphinx, Notion Thief) overflow the hand most. Relic of Legends (taken from the Zada deck, which is being taken apart) keeps a mana rock toward the six-mana commander (Arcane Signet is already in the deck); it taps for any colour, or tap a legendary creature for one more. Not measured.
+**Updated 2026-10-11 (fourth change).** Out: Sheoldred, the Apocalypse. In: Bedevil. JD's choice: Sheoldred leaves to lead her own mono-black deck (decklists/JD/sheoldred-mono-black.md); Bedevil comes back from the binder for the slot. Measured −2.1 points over all tiers (look-ahead, loose, 1,000 paired games per tier; Bedevil vs Sheoldred: T1 27.5 vs 28.9, T2 30.8 vs 34.6, T3 22.0 vs 25.5, T4 22.3 vs 24.2, T5 22.0 vs 22.1; audit/sauron/2026-10-11-sheoldred-bedevil/). No card in the deck was there mainly for her: Jace's Archivist's wheel still pays off with Orcish Bowmasters.
 
 ## Strategy
 
@@ -33,7 +34,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Grow it.** Orcish Bowmasters and Sauron, the Necromancer add counters on their own schedules. Iron Man adds a counter every time you draw, and Vision grows on off-turn casts. Barad-dûr is a late-game mana sink: it taps for black, and for {X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, Slaughter Pact, and three wipes is almost always.
 
-**Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. With **Sheoldred, the Apocalypse** out, each of those cards also costs its drawer 2 life — thirty more damage across the table. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and Kaervek. Without Bowmasters or Sheoldred it's just a symmetrical wheel that refuels the table, so hold the activation until a payoff is on board.
+**Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and Kaervek. Without Bowmasters it's just a symmetrical wheel that refuels the table, so hold the activation until a payoff is on board.
 
 **Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler and Inexorable Tide proliferate it upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
 
@@ -47,7 +48,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Two punishers on the same trigger.** Sauron amasses and **Kaervek the Merciless** throws a burn or removal bolt equal to the spell's mana value — both fire off the same event, an opponent casting a spell.
 
-**A punisher on every draw.** **Sheoldred, the Apocalypse** makes each opponent lose 2 life for every card they draw and gains you 2 for every card you draw — the Ring's discard-and-draw-four is 8 life. It turns the table's natural card flow, and every Jace's Archivist wheel, into your advantage. **Fact or Fiction** (in Consecrated Sphinx's old slot) is the instant-speed dig: cast it at the end of an opponent's turn for two of the five cards. One overlap to know: Urabrask exiles each opponent's first draw of their turn instead of letting them draw it, so Sheoldred doesn't see that card — it still sees every other draw.
+**Fact or Fiction** (in Consecrated Sphinx's old slot) is the instant-speed dig: cast it at the end of an opponent's turn for two of the five cards. **Bedevil** ({B}{B}{R} instant) destroys an artifact, creature or planeswalker: one more answer at instant speed.
 
 **Underworld Breach** is the deck's second engine. While it's out (it's sacrificed at the end of the turn), every nonland card in your graveyard can be cast again by paying its mana cost and exiling three other cards from your graveyard. Dark Ritual ({B} for {B}{B}{B}) and Lotus Petal ({0}, sacrifice for one mana of any colour) turn that into mana: each escape nets two black or one of any colour, and each one adds to the storm count. Brain Freeze ({1}{U}, storm) mills three cards per copy, so it fills your graveyard with fuel early in the turn and empties opponents' libraries late in it. Ritual and Petal also cast normally as fast mana, but they are in the deck for this line, and Brain Freeze does almost nothing without Breach.
 
@@ -61,7 +62,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Three Swords on one Army.** Each Sword has its own hit trigger, so every connection with all three makes the defender discard and untaps your lands (Feast and Famine), flickers and ramps (Hearth and Home), and shoots 2 and draws a card (Fire and Ice). Equip costs add up ({2} each), so put Feast and Famine on first when the Aggravated Assault combo is live, and Fire and Ice first when the table is heavy on blue and red interaction.
 
-**Archivist wheel with Bowmasters and Sheoldred** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each lose about 15 life apiece between Bowmasters' pings and Sheoldred. Hold it for the turn it kills or the counters matter.
+**Archivist wheel with Bowmasters** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each take about 5 pings apiece from Bowmasters, and the Army grows by about 15. Hold it for the turn it kills or the counters matter.
 
 **Underworld Breach + Brain Freeze mills the table.** It's not a strict infinite: the fuel is your own graveyard and library, but it produces far more than it spends.
 1. Cast Underworld Breach ({1}{R}). Have Brain Freeze in hand or graveyard and at least a few other cards in the graveyard.
@@ -72,7 +73,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 Needs Breach, Brain Freeze and enough graveyard to start: Ritual and Petal make it reliable rather than possible. Every cast can be countered, so go off into tapped-out opponents, ideally after Sauron has drawn the counterspells out. Breach goes away at the end of the turn, so start only when you can finish.
 
-**Sequencing.** Get Sauron down early, since every opponent spell after he lands is a free counter. Land The Ozolith before you commit a big Army, so removal only costs you tempo. Sheoldred and the Sphinx pay off from the turn they land, so cast them before a wheel, not after. Hold the counterspells for the turn you swing.
+**Sequencing.** Get Sauron down early, since every opponent spell after he lands is a free counter. Land The Ozolith before you commit a big Army, so removal only costs you tempo. Bowmasters pays off from the turn it lands, so cast it before a wheel, not after. Hold the counterspells for the turn you swing.
 
 ## Consistency
 
@@ -101,7 +102,6 @@ Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any ca
 - **Need protection for the swing → Ringsight for Not of This World.**
 - **One problem creature → Ringsight for Infernal Grasp** (or Slaughter Pact if you need it free on the combo turn).
 - **Pod is casting into you → Ringsight for Kaervek** or Urabrask.
-- **Opponents drawing a lot (or you're about to wheel) → Ringsight for Sheoldred, the Apocalypse.**
 - **Behind on board / need the reset → Ringsight for Toxic Deluge** or Blasphemous Act — ideally with The Ozolith out.
 - **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
 
@@ -109,7 +109,7 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 ## Bracket and Rule 0
 
-Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx left on 10-05, at no measurable cost). Sheoldred, Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
+Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx left on 10-05, at no measurable cost). Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
 
 **The deck has two combos.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later. **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal as fuel) mills the table in one turn; it can come together as early as turn four with a tutor. The Sword line is a late-game combo; the Breach line can be early, so say so before the game at a Bracket 3 table.
 
@@ -121,8 +121,7 @@ Disclose before the game:
 - **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal) mills the table out in one turn; all three tutors find Breach pieces.
 - **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (the three Game Changers).
 - **Sauron amasses off every spell an opponent casts**, and **Kaervek** punishes the same trigger.
-- **Sheoldred, the Apocalypse** punishes every card an opponent draws.
-- **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters or Sheoldred out it hurts for every card they draw.
+- **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters out it hurts for every card they draw.
 - **Urabrask** replaces each opponent's draw-step draw with an exile-and-play-it-now card.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
@@ -131,7 +130,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (17).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (16).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
@@ -139,7 +138,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Relic of Legends, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (27).** Arcane Denial, Bedevil, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -152,6 +151,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Arcane Denial
 1 Arcane Signet
 1 Barad-dûr
+1 Bedevil
 1 Bitter Triumph
 1 Blasphemous Act
 1 Blood Crypt
@@ -205,7 +205,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Scarlet Witch, Chaotic Avenger
 1 Scavenger Grounds
 1 Sephiroth, Planet's Heir
-1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Slaughter Pact
 1 Sol Ring
@@ -262,5 +261,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 
 **New cards and cuts.**
 - **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage (left 10-11 to lead his own deck), Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
-- **From the bulk list**: Sephiroth, Planet's Heir (10-11; Bedevil held the slot briefly the same day and stays in the binder).
+- **From the bulk list**: Sephiroth, Planet's Heir (10-11).
+- **From the binder**: Bedevil (10-11, for Sheoldred, the Apocalypse, who left to lead her own deck).
 - **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

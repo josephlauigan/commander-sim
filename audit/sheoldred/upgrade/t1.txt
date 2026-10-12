@@ -1,0 +1,14 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Seizan, Perverter of Truth [pool] C 3BB :: pow=6 tgh=5 leg
+   Painful Lesson [pool] S 2B :: (no tags)
+   Underworld Dreams [pool] E BBB :: (no tags)
+   Dark Deal [pool] S 2B :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Ribskiff -> Seizan, Perverter of Truth; Locust Spray -> Painful Lesson; Gravblade Heavy -> Underworld Dreams; Multiply by Zero -> Dark Deal
+
+=== Sheoldred vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  18.1% ->  22.0%  (delta +3.9 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Lathril 14.6%  Teysa Karlov 14.1%  Light-Paws 22.4%  Isshin 17.8%  Tatyova 8.3%
+VERDICT: BETTER under the loose profile (the only one run)
+
+(184s total)

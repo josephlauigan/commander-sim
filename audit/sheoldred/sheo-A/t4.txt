@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Memory Jar [pool] A 5 :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Carnage Altar -> Memory Jar
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.5% ->  24.1%  (delta +0.6 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Heliod 20.0%  Yuriko 15.5%  Krenko 17.9%  Chulane 11.0%  Prosper 11.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(255s total)

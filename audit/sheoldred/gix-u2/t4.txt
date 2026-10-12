@@ -1,0 +1,12 @@
+note: data/decks.json differs from the deck files for sheoldred (the games use the deck files; re-export the cards after changing a list)
+Cards modeled from Scryfall text (check the abilities below):
+   Gix, Yawgmoth Praetor [pool] C 1BB :: leg pow=3 tgh=3
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Hullcarver -> Gix, Yawgmoth Praetor
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.1% ->  33.1%  (delta +3.0 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Heliod 20.6%  Yuriko 10.6%  Krenko 17.4%  Chulane 7.6%  Prosper 10.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(118s total)

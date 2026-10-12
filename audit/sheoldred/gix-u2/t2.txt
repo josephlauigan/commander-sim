@@ -1,0 +1,12 @@
+note: data/decks.json differs from the deck files for sheoldred (the games use the deck files; re-export the cards after changing a list)
+Cards modeled from Scryfall text (check the abilities below):
+   Gix, Yawgmoth Praetor [pool] C 1BB :: leg pow=3 tgh=3
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Hullcarver -> Gix, Yawgmoth Praetor
+
+=== Sheoldred vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  42.3% ->  42.7%  (delta +0.4 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 12.1%  Sythis 12.1%  Lord Windgrace 9.4%  Brago 12.8%  Meren of Clan Nel Toth 10.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(178s total)
