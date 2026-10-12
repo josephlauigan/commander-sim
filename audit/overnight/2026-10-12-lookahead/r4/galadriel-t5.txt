@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Galadriel vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  11.9%   95% CI 10.0-14.1%   (even share 25%: -13.1 pts)
+Average turn (your own turn count) of wins 13.0, of losses 7.0
+Plan online (first Alliance trigger from Galadriel): 28.9% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Winota (winota-boros-humans-cheat)           62.2%            38.7%           24.5%
+  Urza (urza-mono-blue-artifacts)              61.5%            27.6%           16.7%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   60.3%            15.4%            9.4%
+  Kinnan (kinnan-simic-mana-combo)             58.9%            38.2%           22.4%
+  Zur the Enchanter (zur-esper-enchantment-c   57.2%            26.8%           15.1%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(41s total)

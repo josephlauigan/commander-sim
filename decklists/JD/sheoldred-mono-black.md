@@ -1,5 +1,7 @@
 # Sheoldred, the Apocalypse — Mono-Black Drain
 
+**Simulator, 2026-10-12:** **30.8% over all tiers** (±0.5; rank 3 of the ten decks): T1 26.5%, T2 39.7%, T3 32.5%, T4 30.9%, T5 24.4%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+
 **Added 2026-10-11.** JD's mono-black deck around Sheoldred, the Apocalypse, taken from Sauron (who measured −2.1 points
 without her; Bedevil from the binder took her slot). First built from the bulk and binder lists with no buys (20.9%),
 then given Memory Jar and Gix from Jodah and two upgrade packages (19 cards bought on 2026-10-11 for about $40, plus

@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sephiroth vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  52.2%   95% CI 49.0-55.3%   (even share 25%: +27.2 pts)
+Average turn (your own turn count) of wins 13.2, of losses 10.7
+Plan online (first 6+ power bomb on the battlefield): 90.1% of games
+Wins by: combo 62%, damage 37%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Lord Windgrace (lord-windgrace-jund-lands)   62.2%            12.1%            8.6%
+  Kaalia of the Vast (kaalia-mardu-creature-   61.5%            14.7%           12.1%
+  Meren of Clan Nel Toth (meren-golgari-recu   60.3%            13.1%            5.9%
+  Brago (brago-azorius-blink-control)          58.9%            15.8%            9.5%
+  Sythis (sythis-selesnya-enchantress)         57.2%            24.4%           10.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(87s total)

@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Veyran vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  21.6%   95% CI 19.1-24.3%   (even share 25%: -3.4 pts)
+Average turn (your own turn count) of wins 12.9, of losses 8.9
+Plan online (Veyran + a magecraft payoff on the battlefield): 58.0% of games
+Wins by: damage 98%, timeout 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Chulane (chulane-bant-value-combo)           63.2%            25.0%           15.0%
+  Prosper (prosper-rakdos-exile-treasure)      62.1%            21.5%           12.7%
+  Heliod (heliod-mono-white-stax)              61.2%            29.9%           18.2%
+  Yuriko (yuriko-dimir-ninjas)                 57.1%            28.8%           16.9%
+  Krenko (krenko-mono-red-goblins)             56.4%            25.7%           15.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(66s total)

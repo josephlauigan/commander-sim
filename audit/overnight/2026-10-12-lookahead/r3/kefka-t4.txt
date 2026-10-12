@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Kefka vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  30.3%   95% CI 27.5-33.3%   (even share 25%: +5.3 pts)
+Average turn (your own turn count) of wins 12.0, of losses 8.5
+Plan online (Kefka flipped into Ruler of Ruin): 32.5% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Chulane (chulane-bant-value-combo)           62.5%            17.8%           11.1%
+  Krenko (krenko-mono-red-goblins)             60.6%            24.1%           14.8%
+  Prosper (prosper-rakdos-exile-treasure)      59.9%            17.2%           11.0%
+  Yuriko (yuriko-dimir-ninjas)                 59.6%            30.8%           18.0%
+  Heliod (heliod-mono-white-stax)              57.4%            26.5%           14.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(68s total)

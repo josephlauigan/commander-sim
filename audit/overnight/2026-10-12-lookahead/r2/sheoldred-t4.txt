@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sheoldred vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  28.9%   95% CI 26.1-31.8%   (even share 25%: +3.9 pts)
+Average turn (your own turn count) of wins 11.4, of losses 8.1
+Plan online (): 0.0% of games
+Wins by: damage 100%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Chulane (chulane-bant-value-combo)           63.2%            15.8%            9.9%
+  Prosper (prosper-rakdos-exile-treasure)      62.1%            22.7%           12.8%
+  Heliod (heliod-mono-white-stax)              61.2%            34.4%           21.0%
+  Yuriko (yuriko-dimir-ninjas)                 57.1%            20.3%           11.7%
+  Krenko (krenko-mono-red-goblins)             56.4%            25.7%           15.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(54s total)

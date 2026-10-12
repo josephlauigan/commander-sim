@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Jodah vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  17.7%   95% CI 15.4-20.3%   (even share 25%: -7.3 pts)
+Average turn (your own turn count) of wins 14.0, of losses 11.5
+Plan online (first legend cast free by Jodah): 56.7% of games
+Wins by: damage 93%, timeout 7%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         62.9%            43.7%           19.5%
+  Meren of Clan Nel Toth (meren-golgari-recu   62.1%            23.5%           14.5%
+  Kaalia of the Vast (kaalia-mardu-creature-   60.6%            22.0%           19.9%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.8%            22.3%           13.6%
+  Brago (brago-azorius-blink-control)          55.6%            24.7%           14.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(124s total)

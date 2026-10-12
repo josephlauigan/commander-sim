@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Jodah vs Tier 3 (High B3) [loose, lookahead AI, 960 games] ===
+Win rate  17.8%   95% CI 15.5-20.4%   (even share 25%: -7.2 pts)
+Average turn (your own turn count) of wins 13.2, of losses 10.4
+Plan online (first legend cast free by Jodah): 58.6% of games
+Wins by: damage 92%, timeout 8%
+  Opponent                                    seated  won when seated  eliminated you
+  Atraxa (atraxa-superfriends)                 63.2%            32.3%           13.3%
+  Marwyn (marwyn-mono-green-elves)             62.1%            18.1%           14.5%
+  Aurelia (aurelia-boros-extra-combats)        61.2%            37.6%           25.3%
+  Tergrid (tergrid-mono-black-disruption)      57.1%            31.2%           18.2%
+  Korvold (korvold-jund-sacrifice)             56.4%            17.2%           10.3%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(96s total)

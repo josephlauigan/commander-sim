@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Galadriel vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  14.5%   95% CI 12.4-16.8%   (even share 25%: -10.5 pts)
+Average turn (your own turn count) of wins 15.7, of losses 12.6
+Plan online (first Alliance trigger from Galadriel): 64.0% of games
+Wins by: damage 84%, timeout 16%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         61.4%            42.3%           20.4%
+  Meren of Clan Nel Toth (meren-golgari-recu   60.9%            28.4%           15.1%
+  Brago (brago-azorius-blink-control)          60.7%            27.8%           15.9%
+  Kaalia of the Vast (kaalia-mardu-creature-   58.8%            19.3%           17.2%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.2%            24.2%           13.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(129s total)

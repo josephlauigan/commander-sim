@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Veyran vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  28.8%   95% CI 26.0-31.7%   (even share 25%: +3.7 pts)
+Average turn (your own turn count) of wins 14.4, of losses 12.6
+Plan online (Veyran + a magecraft payoff on the battlefield): 69.8% of games
+Wins by: damage 95%, timeout 5%
+  Opponent                                    seated  won when seated  eliminated you
+  Lord Windgrace (lord-windgrace-jund-lands)   61.6%            17.8%           12.7%
+  Sythis (sythis-selesnya-enchantress)         61.5%            40.5%           20.2%
+  Meren of Clan Nel Toth (meren-golgari-recu   59.9%            20.0%           11.0%
+  Brago (brago-azorius-blink-control)          59.0%            21.0%           10.7%
+  Kaalia of the Vast (kaalia-mardu-creature-   58.1%            19.0%           12.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(123s total)

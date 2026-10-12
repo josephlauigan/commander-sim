@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sheoldred vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  25.2%   95% CI 22.6-28.1%   (even share 25%: +0.2 pts)
+Average turn (your own turn count) of wins 10.4, of losses 6.5
+Plan online (): 0.0% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.4%            20.4%           12.4%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   60.9%            11.3%            6.6%
+  Kinnan (kinnan-simic-mana-combo)             60.7%            35.2%           21.6%
+  Urza (urza-mono-blue-artifacts)              58.8%            26.4%           15.3%
+  Winota (winota-boros-humans-cheat)           58.2%            31.8%           19.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(32s total)

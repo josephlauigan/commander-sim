@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Alela vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  12.9%   95% CI 10.9-15.2%   (even share 25%: -12.1 pts)
+Average turn (your own turn count) of wins 16.4, of losses 13.5
+Plan online (first Faerie made by Alela): 69.1% of games
+Wins by: damage 77%, timeout 23%
+  Opponent                                    seated  won when seated  eliminated you
+  Brago (brago-azorius-blink-control)          62.5%            25.5%           13.8%
+  Lord Windgrace (lord-windgrace-jund-lands)   60.6%            24.2%           15.6%
+  Meren of Clan Nel Toth (meren-golgari-recu   59.9%            28.2%           15.1%
+  Sythis (sythis-selesnya-enchantress)         59.6%            43.5%           21.2%
+  Kaalia of the Vast (kaalia-mardu-creature-   57.4%            23.8%           14.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(289s total)

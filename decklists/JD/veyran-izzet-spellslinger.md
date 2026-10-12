@@ -1,5 +1,7 @@
 # Veyran, Voice of Duality — Izzet Spellslinger
 
+**Simulator, 2026-10-12:** **23.4% over all tiers** (±0.4; rank 6 of the ten decks): T1 26.8%, T2 29.1%, T3 24.2%, T4 22.3%, T5 14.9%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+
 2026-09-17
 **Updated 2026-09-18 / 09-19 / 09-20** across earlier passes (trim to 100, Ral + Aetherflux, Force of Will + Steam Vents, tutor guide).
 **Updated 2026-09-21.** Terminal Moraine → Spirebluff Canal.

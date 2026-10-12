@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sauron vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  30.7%   95% CI 27.9-33.7%   (even share 25%: +5.7 pts)
+Average turn (your own turn count) of wins 13.8, of losses 11.8
+Plan online (Sword + Assault combo attempted): 6.9% of games
+Wins by: damage 92%, combo 4%, timeout 4%
+  Opponent                                    seated  won when seated  eliminated you
+  Lord Windgrace (lord-windgrace-jund-lands)   62.2%            18.4%           11.7%
+  Kaalia of the Vast (kaalia-mardu-creature-   61.5%            16.8%           15.2%
+  Meren of Clan Nel Toth (meren-golgari-recu   60.3%            23.3%           12.4%
+  Brago (brago-azorius-blink-control)          58.9%            20.9%           11.0%
+  Sythis (sythis-selesnya-enchantress)         57.2%            37.0%           16.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(84s total)

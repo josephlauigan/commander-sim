@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Titania vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  16.8%   95% CI 14.5-19.3%   (even share 25%: -8.2 pts)
+Average turn (your own turn count) of wins 12.2, of losses 6.8
+Plan online (): 0.0% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   62.9%            23.5%           14.5%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   62.1%            17.6%           11.1%
+  Urza (urza-mono-blue-artifacts)              60.6%            23.9%           14.3%
+  Winota (winota-boros-humans-cheat)           58.8%            36.9%           21.6%
+  Kinnan (kinnan-simic-mana-combo)             55.6%            38.4%           21.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(39s total)

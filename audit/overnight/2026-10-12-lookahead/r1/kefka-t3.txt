@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Kefka vs Tier 3 (High B3) [loose, lookahead AI, 960 games] ===
+Win rate  27.3%   95% CI 24.6-30.2%   (even share 25%: +2.3 pts)
+Average turn (your own turn count) of wins 13.1, of losses 10.1
+Plan online (Kefka flipped into Ruler of Ruin): 37.5% of games
+Wins by: damage 95%, timeout 5%
+  Opponent                                    seated  won when seated  eliminated you
+  Tergrid (tergrid-mono-black-disruption)      61.4%            38.5%           22.6%
+  Marwyn (marwyn-mono-green-elves)             60.9%            12.3%           10.7%
+  Atraxa (atraxa-superfriends)                 60.7%            23.2%            9.2%
+  Aurelia (aurelia-boros-extra-combats)        58.8%            35.1%           23.0%
+  Korvold (korvold-jund-sacrifice)             58.2%            11.6%            6.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(74s total)

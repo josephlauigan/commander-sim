@@ -1,0 +1,21 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Galadriel vs Tier 4 (Low B4) [loose, lookahead AI, 959 games] ===
+Win rate  11.4%   95% CI 9.5-13.5%   (even share 25%: -13.6 pts)
+Average turn (your own turn count) of wins 13.8, of losses 9.2
+Plan online (first Alliance trigger from Galadriel): 45.0% of games
+Wins by: damage 94%, timeout 6%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 61.4%            34.3%           21.8%
+  Prosper (prosper-rakdos-exile-treasure)      60.9%            19.0%           11.1%
+  Chulane (chulane-bant-value-combo)           60.7%            28.4%           17.1%
+  Heliod (heliod-mono-white-stax)              58.8%            33.0%           17.6%
+  Krenko (krenko-mono-red-goblins)             58.2%            33.3%           20.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(77s total)
+
+WARNING: 1 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501233  panic: called `Option::unwrap()` on a `None` value
+  Please send me that output so I can fix the cause.

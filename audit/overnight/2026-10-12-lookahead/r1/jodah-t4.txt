@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Jodah vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  14.0%   95% CI 11.9-16.3%   (even share 25%: -11.0 pts)
+Average turn (your own turn count) of wins 13.1, of losses 8.7
+Plan online (first legend cast free by Jodah): 42.5% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 61.4%            31.1%           18.2%
+  Prosper (prosper-rakdos-exile-treasure)      60.9%            20.7%           12.2%
+  Chulane (chulane-bant-value-combo)           60.7%            27.8%           16.6%
+  Heliod (heliod-mono-white-stax)              58.8%            32.1%           19.5%
+  Krenko (krenko-mono-red-goblins)             58.2%            32.0%           19.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(79s total)

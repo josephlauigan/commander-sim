@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Y'shtola vs Tier 3 (High B3) [loose, lookahead AI, 960 games] ===
+Win rate  45.5%   95% CI 42.4-48.7%   (even share 25%: +20.5 pts)
+Average turn (your own turn count) of wins 13.0, of losses 10.0
+Plan online (first drain from Y'shtola's cast trigger): 81.6% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Atraxa (atraxa-superfriends)                 62.5%            15.8%            7.5%
+  Korvold (korvold-jund-sacrifice)             60.6%             9.5%            5.8%
+  Marwyn (marwyn-mono-green-elves)             59.9%            14.6%            9.0%
+  Tergrid (tergrid-mono-black-disruption)      59.6%            24.8%           14.2%
+  Aurelia (aurelia-boros-extra-combats)        57.4%            26.7%           17.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(72s total)

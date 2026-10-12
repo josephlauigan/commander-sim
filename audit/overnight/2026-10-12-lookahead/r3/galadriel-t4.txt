@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Galadriel vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  12.1%   95% CI 10.2-14.3%   (even share 25%: -12.9 pts)
+Average turn (your own turn count) of wins 13.6, of losses 8.9
+Plan online (first Alliance trigger from Galadriel): 44.4% of games
+Wins by: damage 97%, timeout 3%
+  Opponent                                    seated  won when seated  eliminated you
+  Chulane (chulane-bant-value-combo)           62.5%            25.7%           15.4%
+  Krenko (krenko-mono-red-goblins)             60.6%            29.4%           19.7%
+  Prosper (prosper-rakdos-exile-treasure)      59.9%            21.2%           12.3%
+  Yuriko (yuriko-dimir-ninjas)                 59.6%            33.0%           19.9%
+  Heliod (heliod-mono-white-stax)              57.4%            37.7%           20.3%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(76s total)

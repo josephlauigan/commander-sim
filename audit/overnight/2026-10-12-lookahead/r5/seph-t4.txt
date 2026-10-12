@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sephiroth vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  33.5%   95% CI 30.6-36.6%   (even share 25%: +8.5 pts)
+Average turn (your own turn count) of wins 12.1, of losses 8.1
+Plan online (first 6+ power bomb on the battlefield): 74.2% of games
+Wins by: damage 53%, combo 47%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Krenko (krenko-mono-red-goblins)             61.6%            21.2%           14.9%
+  Yuriko (yuriko-dimir-ninjas)                 61.5%            26.8%           16.4%
+  Prosper (prosper-rakdos-exile-treasure)      59.9%            13.7%            7.7%
+  Chulane (chulane-bant-value-combo)           59.0%            20.5%           10.7%
+  Heliod (heliod-mono-white-stax)              58.1%            28.7%           16.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(61s total)

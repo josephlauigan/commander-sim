@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Y'shtola vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 960 games] ===
+Win rate  46.1%   95% CI 43.0-49.3%   (even share 25%: +21.1 pts)
+Average turn (your own turn count) of wins 12.7, of losses 9.5
+Plan online (first drain from Y'shtola's cast trigger): 79.5% of games
+Wins by: damage 100%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Isshin (isshin-mardu-attack-triggers)        62.5%            19.8%           13.3%
+  Light-Paws (light-paws-aura-voltron)         60.6%            23.5%           14.5%
+  Tatyova (tatyova-simic-landfall)             59.9%            16.0%            7.8%
+  Teysa Karlov (teysa-orzhov-aristocrats)      59.6%            14.2%            7.6%
+  Lathril (lathril-golgari-elves)              57.4%            16.0%            9.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(97s total)

@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Titania vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  24.4%   95% CI 21.8-27.2%   (even share 25%: -0.6 pts)
+Average turn (your own turn count) of wins 13.5, of losses 8.6
+Plan online (): 0.0% of games
+Wins by: damage 96%, timeout 4%
+  Opponent                                    seated  won when seated  eliminated you
+  Krenko (krenko-mono-red-goblins)             62.2%            25.1%           17.3%
+  Heliod (heliod-mono-white-stax)              61.5%            32.2%           19.5%
+  Prosper (prosper-rakdos-exile-treasure)      60.3%            22.5%           12.4%
+  Chulane (chulane-bant-value-combo)           58.9%            22.5%           12.9%
+  Yuriko (yuriko-dimir-ninjas)                 57.2%            23.5%           13.3%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(71s total)

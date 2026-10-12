@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sephiroth vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  22.0%   95% CI 19.5-24.7%   (even share 25%: -3.0 pts)
+Average turn (your own turn count) of wins 12.1, of losses 6.6
+Plan online (first 6+ power bomb on the battlefield): 53.3% of games
+Wins by: damage 64%, combo 36%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-simic-mana-combo)             63.2%            39.7%           25.5%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   62.1%            12.4%            7.3%
+  Urza (urza-mono-blue-artifacts)              61.2%            25.2%           15.0%
+  Zur the Enchanter (zur-esper-enchantment-c   57.1%            22.8%           12.6%
+  Winota (winota-boros-humans-cheat)           56.4%            29.8%           17.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(33s total)

@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Titania vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  29.2%   95% CI 26.4-32.1%   (even share 25%: +4.2 pts)
+Average turn (your own turn count) of wins 15.1, of losses 12.6
+Plan online (): 0.0% of games
+Wins by: damage 91%, timeout 9%
+  Opponent                                    seated  won when seated  eliminated you
+  Lord Windgrace (lord-windgrace-jund-lands)   62.2%            20.6%           12.3%
+  Kaalia of the Vast (kaalia-mardu-creature-   61.5%            18.0%           14.3%
+  Meren of Clan Nel Toth (meren-golgari-recu   60.3%            21.6%           11.6%
+  Brago (brago-azorius-blink-control)          58.9%            17.9%            8.2%
+  Sythis (sythis-selesnya-enchantress)         57.2%            41.0%           21.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(118s total)

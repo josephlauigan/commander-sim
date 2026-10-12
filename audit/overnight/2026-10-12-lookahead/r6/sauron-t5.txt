@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sauron vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  24.3%   95% CI 21.7-27.1%   (even share 25%: -0.7 pts)
+Average turn (your own turn count) of wins 12.2, of losses 6.9
+Plan online (Sword + Assault combo attempted): 2.4% of games
+Wins by: damage 98%, combo 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   62.9%            23.7%           14.6%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   62.1%            13.3%            8.2%
+  Urza (urza-mono-blue-artifacts)              60.6%            25.1%           14.8%
+  Winota (winota-boros-humans-cheat)           58.8%            29.3%           17.4%
+  Kinnan (kinnan-simic-mana-combo)             55.6%            36.3%           20.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(35s total)

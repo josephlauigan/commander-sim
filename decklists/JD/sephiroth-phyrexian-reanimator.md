@@ -1,5 +1,7 @@
 # Sephiroth, the Savior — Phyrexian Reanimator
 
+**Simulator, 2026-10-12:** **36.9% over all tiers** (±0.5; rank 2 of the ten decks): T1 41.4%, T2 50.0%, T3 39.3%, T4 32.2%, T5 21.3%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+
 2026-09-17
 **Rebuilt 2026-09-18** for consistency: lower curve, more early mana, a real graveyard-filling package.
 **Updated 2026-09-20.** Mana-base upgrade only — four tapped lands out, four untapped duals in (net land count unchanged at 37).
