@@ -169,9 +169,9 @@ pub fn equip_utility_bonus(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
     }
     let mut u = 0.0;
     if name_of(g, m) == CLOUD {
-        u += 2.0; // the plan: Cloud wears everything
+        u += 4.5; // the plan: Cloud wears everything, every turn
         if matches!(name_of(g, e), "Wrecking Ball Arm" | "Hulkbuster Armor" | "Colossus Hammer") {
-            u += 2.0;
+            u += 1.5; // the base or the size is worth more than the +N/+N the formula counts
         }
         if g.perm(e).cd.is_some_and(|c| {
             g.db.get(c).abilities.iter().any(|a| matches!(a, crate::dsl::model::Ability::Triggered { .. }))
@@ -795,8 +795,12 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.attack = Some(armory_attack);
     r.card(db, "Beatrix, Loyal General")?.combat_start = Some(beatrix_combat);
     r.card(db, "Puresteel Paladin")?.etb = Some(puresteel_etb);
-    r.card(db, "Magitek Scythe")?.etb = Some(scythe_etb);
-    r.card(db, "Squire's Lightblade")?.etb = Some(lightblade_etb);
+    let c = r.card(db, "Magitek Scythe")?;
+    c.etb = Some(scythe_etb);
+    c.prio = Some(body_prio);
+    let c = r.card(db, "Squire's Lightblade")?;
+    c.etb = Some(lightblade_etb);
+    c.prio = Some(body_prio);
     r.card(db, "White Mage's Staff")?.etb = Some(staff_etb);
     let c = r.card(db, "Cid, Freeflier Pilot")?;
     c.cost = Some(cid_cost);
@@ -844,13 +848,12 @@ fn kaldra_count(g: &Game, p: PlayerId) -> usize {
 /// triggers, then the rest); a Hero's Blade waits for Cloud to be recast; Zack Fair, the protection instants and
 /// Unfinished Business as the plan needs them
 pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let base = crate::ai::pool::generic_prio(g, p, c);
     let pl = g.player(p);
     if c == pl.cmd {
-        return if pl.turns >= 2 { (97 - 3 * pl.tax as i32).max(45) } else { 0 };
+        // well above anything else, so the sampled choice is Cloud (not a Page) on turn 2
+        return if pl.turns >= 2 { (130 - 3 * pl.tax as i32).max(70) } else { 0 };
     }
     let name = card_name(g, c);
-    let body = creatures_out(g, p) > 0;
     let cloud_out = cloud_of(g, p).is_some();
     let eq_hand = equipment_cards_in_hand(g, p);
     let eq_out = my_equipment(g, p).len();
@@ -888,20 +891,14 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         // attaches itself when a legend enters: best with Cloud still to come
         "Hero's Blade" => {
-            if cloud_waiting(g, p) {
+            if cloud_waiting(g, p) && crate::engine::mana::total_mana(g, p, false) >= 4 {
                 84
             } else {
                 58
             }
         }
         // the Equipment that attach as they enter need a body
-        "Magitek Scythe" | "Squire's Lightblade" => {
-            if body {
-                66
-            } else {
-                0
-            }
-        }
+        "Magitek Scythe" | "Squire's Lightblade" => body_prio(g, p, c),
         "White Mage's Staff" => 66, // brings its own Hero
         "Nim Deathmantle" => 48,
         // the creatures that work the Equipment
@@ -967,8 +964,14 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
                 0
             }
         }
-        _ => base,
+        _ => crate::ai::pool::generic_prio(g, p, c),
     }
+}
+
+/// the Equipment that attach as they enter: only with a creature to wear them (registered as the card's own `prio`,
+/// which also keeps the compiled value from casting them without one)
+fn body_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if creatures_out(g, p) > 0 { 66 } else { 0 }
 }
 
 /// worth saving when removal is aimed at it: Cloud and the commander above everything, then a creature wearing
@@ -1124,4 +1127,27 @@ pub fn reenter_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
         .map(|&e| 0.5 * g.perm(e).cd.map_or(0.0, |c| crate::engine::tutors::card_worth(g, p, c, false)))
         .sum();
     (found - worn).max(0.0)
+}
+
+/// who attacks: the generic outside-deck rule (a creature a good blocker would eat stays home; evasive ones, lethal
+/// swings and attacks with more attackers than good blockers go ahead), and Cloud himself only when he wears
+/// Equipment or no creature can block him: he is the engine, and a 2/1 that dies is a recast at a higher tax
+pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
+    let mut out = crate::ai::pool::attack_filter(g, p, atk, d);
+    let Some(cl) = cloud_of(g, p) else { return out };
+    if !out.contains(&cl) || !equipment_on(g, cl).is_empty() || crate::engine::values::indestructible(g, cl) {
+        return out;
+    }
+    let total: i32 = out.iter().map(|&m| epow(g, m)).sum();
+    if total >= g.player(d).life {
+        return out; // lethal: everyone goes
+    }
+    let blocked = g.player(d).perms.iter().any(|&b| {
+        live(g, b) && g.is_creature(b) && !g.perm(b).tapped && crate::engine::combat::can_block(g, b, cl)
+    });
+    if blocked {
+        out.retain(|&m| m != cl);
+        crate::glog!(g, "      [{} keeps Cloud home: nothing on him yet]", g.player(p).name);
+    }
+    out
 }

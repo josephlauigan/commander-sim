@@ -455,6 +455,9 @@ pub fn filter_attackers(g: &mut Game, p: PlayerId, atk: Vec<PermId>) -> Vec<Perm
 
 /// pool_ai.attack_filter (an outside deck's own attack rules)
 pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
+    if g.player(p).key == "cloud" {
+        return crate::impls::cloud::attack_filter(g, p, atk, d);
+    }
     if is_main(g.player(p).key) {
         return atk;
     }
