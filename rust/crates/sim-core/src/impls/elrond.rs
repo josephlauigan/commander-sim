@@ -255,11 +255,10 @@ fn defiler_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if caster != o || !blue || !live(g, src) {
         return Ok(());
     }
-    let paid = defiler_discount(g, o, c);
+    if defiler_discount(g, o, c) {
+        lose_life(g, o, 2, Some(o), "other", None)?; // the cost paid with the spell, even if the draw is countered
+    }
     if trigger_window(g, o, Some(src), "draw a card (blue permanent spell)", Some(3.0))? {
-        if paid {
-            lose_life(g, o, 2, Some(o), "other", None)?; // (paid with the spell; taken as its trigger resolves)
-        }
         draw(g, o, 1, false)?;
     }
     Ok(())
