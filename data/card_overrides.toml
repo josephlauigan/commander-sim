@@ -6615,6 +6615,12 @@ tags = "leg c=C"
 status = "Full"
 note = "{T}: add {C}. {2},{T}: each player draws a card, then discards a card; the sheoldred deck activates it only while a draw punisher is out, with spare mana"
 
+["Mikokoro, Center of the Sea"]
+dsl = []
+tags = "leg c=C"
+status = "Full"
+note = "{T}: add {C}. {2},{T}: each player draws a card (active player first); the sheoldred deck activates it only while a draw punisher is out, with spare mana"
+
 ["Ambition's Cost"]
 dsl = []
 tags = "draw=3"

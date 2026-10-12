@@ -18,6 +18,8 @@ noise, leaning positive); `audit/sheoldred/`. The cuts go back to bulk, Lash of 
 **Updated 2026-10-11 (third change).** No change to the list: Phyrexian Arena comes from Sauron instead of being bought
 (Sauron measured +0.6 with Cost of Brilliance in its slot, within noise; `audit/sauron/2026-10-11-arena-cost-of-brilliance/`).
 The buy list is 19 cards, $40.39.
+**Updated 2026-10-12.** Out: a Swamp. In: Mikokoro, Center of the Sea (JD's buy, $4.54): {2}, {T}: each player
+draws a card, so with Sheoldred out each opponent loses 2 and you gain 2. Not measured yet.
 
 ## Strategy
 
@@ -27,11 +29,11 @@ opponent draws a card, they lose 2 life.* Three opponents' draw steps drain 6 li
 
 - **Punish their draws.** Sheoldred (2 life a card), Underworld Dreams and Fate Unraveler (1 damage a card each): with
   all three out, every card an opponent draws costs them 4.
-- **Make them draw.** Howling Mine (a card more in every draw step), Temple Bell and Geier Reach Sanitarium (each
+- **Make them draw.** Howling Mine (a card more in every draw step), Temple Bell, Mikokoro and Geier Reach Sanitarium (each
   player draws, at will), Seizan (each player loses 2 and draws 2 in their upkeep), and the wheels: Memory Jar (seven
   cards each) and Dark Deal. Painful Lesson, Cost of Brilliance and Vault Plunderer hand one opponent cards; Peer into
   the Abyss makes one draw half their library, lethal with Sheoldred out. The AI holds the symmetric ones (the Mine,
-  the Bell, the Sanitarium, Seizan, the wheels) until a punisher is out, so they don't just refuel the table.
+  the Bell, Mikokoro, the Sanitarium, Seizan, the wheels) until a punisher is out, so they don't just refuel the table.
 - **Draw your own.** Each card is 2 life with her out: Phyrexian Arena, Read the Bones, Ambition's Cost, Syphon Mind,
   Phyrexian Rager, Skyscanner, Deadly Dispute, Cast Away Doubt, Seymour Flux, Castle Locthwain, Bonders' Enclave, and
   Gix (a card whenever one of your creatures hits an opponent).
@@ -57,8 +59,8 @@ opponent draws a card, they lose 2 life.* Three opponents' draw steps drain 6 li
 
 ## Consistency
 
-36 lands: 32 Swamp, Command Tower, Bonders' Enclave, Castle Locthwain (untapped with a Swamp out) and Geier Reach
-Sanitarium (colorless). Ramp: Arcane Signet, Fellwar Stone, Mind Stone, Charcoal Diamond, Commander's Sphere, Potioner's
+36 lands: 31 Swamp, Command Tower, Bonders' Enclave, Castle Locthwain (untapped with a Swamp out), Mikokoro and Geier Reach
+Sanitarium (both colorless). Ramp: Arcane Signet, Fellwar Stone, Mind Stone, Charcoal Diamond, Commander's Sphere, Potioner's
 Trove, Undercity Dire Rat (a Treasure when it dies).
 
 ## Simulator status
@@ -85,9 +87,10 @@ so opponents can't respond to them.
 
 Bracket 3, no Game Changers.
 
-## Buy list (19 cards, about $40)
+## Buy list (20 cards, about $45)
 
-Bought for the two upgrade packages (cheapest printing on Scryfall, 2026-10-11). Each is a new copy for this deck.
+Bought for the two upgrade packages (cheapest printing on Scryfall, 2026-10-11), plus Mikokoro (2026-10-12). Each is a
+new copy for this deck. Backup if Temple Bell can't be found: Otherworld Atlas (bought 2026-10-12, $1.68; not modeled).
 
 | Card | Price | Role |
 |---|---|---|
@@ -101,6 +104,7 @@ Bought for the two upgrade packages (cheapest printing on Scryfall, 2026-10-11).
 | Peer into the Abyss | $3.40 | Target player draws half their library and loses half their life |
 | Geier Reach Sanitarium | $2.42 | Land: each player draws, then discards |
 | Castle Locthwain | $4.31 | Land: draw a card |
+| Mikokoro, Center of the Sea | $4.54 | Land: each player draws a card (added 2026-10-12) |
 | Mind Stone | $0.21 | Ramp |
 | Commander's Sphere | $0.31 | Ramp |
 | Charcoal Diamond | $0.38 | Ramp |
@@ -110,12 +114,12 @@ Bought for the two upgrade packages (cheapest printing on Scryfall, 2026-10-11).
 | Exsanguinate | $0.40 | Finisher: X life from each opponent |
 | Gray Merchant of Asphodel | $4.47 | Finisher: drain by devotion to black |
 | Swiftfoot Boots | $1.51 | Hexproof for Sheoldred |
-| **Total** | **$40.39** | |
+| **Total** | **$44.93** | |
 
 ## Where the cards come from
 
 **From Sauron:** Sheoldred, the Apocalypse (the commander) and Phyrexian Arena. **From Jodah:** Memory Jar, Gix, Yawgmoth Praetor. **Bought:**
-the 19 cards above. **Basics:** 32 Swamp, your own. The rest come off JD's lists (2026-10-11), one copy each: 1 from the
+the 20 cards above. **Basics:** 31 Swamp, your own. The rest come off JD's lists (2026-10-11), one copy each: 1 from the
 binder (Phyrexian Delver), 44 from bulk. Set codes are the printings the bulk list shows; where it names more than one,
 any of them. Bulk's Arcane Signet and Fellwar Stone are spare copies.
 
@@ -196,7 +200,7 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 | Swiftfoot Boots | Artifact | Buy, $1.51 |  |
 | Temple Bell | Artifact | Buy, $6.69 |  |
 
-### Lands (4, plus 32 Swamp of your own)
+### Lands (5, plus 31 Swamp of your own)
 
 | Card | Type | From | Set |
 |---|---|---|---|
@@ -204,12 +208,13 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 | Castle Locthwain | Land | Buy, $4.31 |  |
 | Command Tower | Land | Bulk | khc, fic |
 | Geier Reach Sanitarium | Land | Buy, $2.42 |  |
+| Mikokoro, Center of the Sea | Land | Buy, $4.54 |  |
 
 ## Decklist by type (100)
 
 **Commander (1).** Sheoldred, the Apocalypse
 
-**Lands (36).** Bonders' Enclave, Castle Locthwain, Command Tower, Geier Reach Sanitarium, 32 Swamp
+**Lands (36).** Bonders' Enclave, Castle Locthwain, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 31 Swamp
 
 **Creatures (24).** Accursed Marauder, Al Bhed Salvagers, Apex Witchstalker, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Melancholic Poet, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Restless Bloodseeker // Bloodsoaked Reveler, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
 
@@ -260,6 +265,7 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 1 Masterful Flourish
 1 Melancholic Poet
 1 Memory Jar
+1 Mikokoro, Center of the Sea
 1 Mind Stone
 1 Overkill
 1 Painful Lesson
@@ -292,5 +298,5 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 1 Vanquish the Weak
 1 Vault Plunderer
 1 Wander Off
-32 Swamp
+31 Swamp
 ```

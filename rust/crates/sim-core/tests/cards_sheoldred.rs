@@ -965,6 +965,7 @@ const BELL: &str = "Temple Bell";
 const UNRAV: &str = "Fate Unraveler";
 const PEER: &str = "Peer into the Abyss";
 const GEIER: &str = "Geier Reach Sanitarium";
+const MIKOKORO: &str = "Mikokoro, Center of the Sea";
 
 fn hand_len(g: &Game, p: PlayerId) -> usize {
     g.player(p).hand.len()
@@ -1134,6 +1135,30 @@ fn geier_reach_sanitarium_taps_for_colourless_and_loots_everyone() {
     let sani = lands(&mut g, P0, GEIER, 1, false)[0];
     perm(&mut g, P0, UNRAV);
     assert!(f(&mut g, sani, P0, None).unwrap().is_empty(), "no spare mana for the {{2}}");
+}
+
+#[test]
+fn mikokoro_taps_for_colourless_and_makes_each_player_draw() {
+    let mut g = game();
+    let miko = lands(&mut g, P0, MIKOKORO, 1, false)[0];
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
+    lands(&mut g, P0, "Swamp", 2, false);
+    let f = g.registry.get(g.land(miko).cd).unwrap().land_options.unwrap();
+    assert!(f(&mut g, miko, P0, None).unwrap().is_empty(), "no draw punisher: no activation");
+    perm(&mut g, P0, SHEO);
+    let (h0, h1) = (hand_len(&g, P0), hand_len(&g, P1));
+    let o = f(&mut g, miko, P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(g.land(miko).tapped);
+    assert_eq!((hand_len(&g, P0), hand_len(&g, P1)), (h0 + 1, h1 + 1), "each drew one and kept it");
+    assert!(g.player(P0).gy.is_empty() && g.player(P1).gy.is_empty(), "no discards");
+    assert_eq!(life(&g, P1), 38, "Sheoldred: 2 for the opponent's draw");
+    assert_eq!(life(&g, P0), 42, "and 2 back for ours");
+    let mut g = game();
+    let miko = lands(&mut g, P0, MIKOKORO, 1, false)[0];
+    perm(&mut g, P0, SHEO);
+    assert!(f(&mut g, miko, P0, None).unwrap().is_empty(), "no spare mana for the {{2}}");
 }
 
 #[test]

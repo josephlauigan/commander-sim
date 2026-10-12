@@ -1765,6 +1765,7 @@ const BELL: &str = "Temple Bell";
 const UNRAVELER: &str = "Fate Unraveler";
 const PEER: &str = "Peer into the Abyss";
 const GEIER: &str = "Geier Reach Sanitarium";
+const MIKOKORO: &str = "Mikokoro, Center of the Sea";
 const BOOTS: &str = "Swiftfoot Boots";
 
 /// the untapped, phased-in permanents named `name` that p controls
@@ -1831,7 +1832,7 @@ fn bell_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// tap the Bell / use the Sanitarium: only while a draw punisher is out, at the end of an opponent's turn
+/// tap the Bell / use the Sanitarium or Mikokoro: only while a draw punisher is out, at the end of an opponent's turn
 /// (post: None), or in a main phase when it kills. None: don't.
 fn punish_window_utility(g: &Game, p: PlayerId, post: Option<bool>) -> Option<f64> {
     if g.player(p).key != "sheoldred" || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
@@ -1860,6 +1861,25 @@ fn bell_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 /// Geier Reach Sanitarium: {2}, {T}: each player draws a card, then discards a card (all the draws, then all the
 /// discards, the active player first)
 fn geier_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    draw_land_options(g, l, p, post, 0.2, "Geier Reach Sanitarium: each player draws, then discards", geier_go)
+}
+
+/// Mikokoro, Center of the Sea: {2}, {T}: each player draws a card (the active player first). Ranked just above the
+/// Sanitarium: the opponents keep the card.
+fn mikokoro_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    draw_land_options(g, l, p, post, 0.1, "Mikokoro, Center of the Sea: each player draws", mikokoro_go)
+}
+
+/// a {2}, {T} land whose activation makes each player draw: offered in the Bell's windows, with spare mana
+fn draw_land_options(
+    g: &mut Game,
+    l: LandId,
+    p: PlayerId,
+    post: Option<bool>,
+    below_bell: f64,
+    label: &str,
+    go: fn(&mut Game, PlayerId, i64) -> Res<bool>,
+) -> Res<Vec<Opt>> {
     if g.land(l).tapped || !g.player(p).lands.contains(&l) {
         return Ok(vec![]);
     }
@@ -1867,35 +1887,39 @@ fn geier_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Re
     if !can_pay_without(g, p, l, 2, "") {
         return Ok(vec![]);
     }
-    Ok(vec![Opt {
-        utility: u - 0.2,
-        label: "Geier Reach Sanitarium: each player draws, then discards".into(),
-        act: Some(Action::Plan { f: geier_go, arg: l.0 as i64 }),
-    }])
+    Ok(vec![Opt { utility: u - below_bell, label: label.into(), act: Some(Action::Plan { f: go, arg: l.0 as i64 }) }])
 }
 
 fn geier_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
+    draw_land_go(g, p, LandId(arg as u32), true)
+}
+
+fn mikokoro_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    draw_land_go(g, p, LandId(arg as u32), false)
+}
+
+/// pay {2}, tap the land, then each player draws a card (and with `loot`, all the draws, then each discards one)
+fn draw_land_go(g: &mut Game, p: PlayerId, l: LandId, loot: bool) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 2, "")? {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    crate::glog!(g, "  {} uses Geier Reach Sanitarium", pname(g, p));
-    if crate::engine::stack::ability_window_card(
-        g,
-        p,
-        g.land(l).cd,
-        "each player draws, then discards",
-        Some(3.0),
-        None,
-    )? {
+    let (name, what) = if loot {
+        (GEIER, "each player draws, then discards")
+    } else {
+        (MIKOKORO, "each player draws a card")
+    };
+    crate::glog!(g, "  {} uses {}", pname(g, p), name);
+    if crate::engine::stack::ability_window_card(g, p, g.land(l).cd, what, Some(3.0), None)? {
         let order = apnap(g, p);
         for &q in &order {
             draw(g, q, 1, false)?;
         }
-        for &q in &order {
-            if g.player(q).alive && !g.player(q).hand.is_empty() {
-                discard_worst(g, q, 1)?;
+        if loot {
+            for &q in &order {
+                if g.player(q).alive && !g.player(q).hand.is_empty() {
+                    discard_worst(g, q, 1)?;
+                }
             }
         }
     }
@@ -2007,6 +2031,7 @@ pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::partials::at_once(c, Event::Draw, true);
     r.card(db, BELL)?.options = Some(bell_options);
     r.card(db, GEIER)?.land_options = Some(geier_options);
+    r.card(db, MIKOKORO)?.land_options = Some(mikokoro_options);
     let c = r.card(db, PEER)?;
     c.resolve = Some(peer_resolve);
     c.hand_options = Some(peer_options);

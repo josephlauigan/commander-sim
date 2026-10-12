@@ -8,6 +8,7 @@
 #                 Lesson for Ribskiff, Gravblade Heavy, Multiply by Zero, Locust Spray
 #   upgrade2    : the first package plus the second (about $44 in all, 20 cards; see SU2)
 #   gix-u2      : Gix, Yawgmoth Praetor for Hullcarver, on the list with both packages applied
+#   mikokoro    : (2026-10-12, list with Mikokoro for a Swamp) Mikokoro back out for a Swamp; its value is minus the delta
 # Block A (wheel): Memory Jar.             Sheoldred cuts Carnage Altar;   Jodah gets Szadek, Lord of Secrets.
 # Block B (sweeper + removal): Toxic Deluge, Bitter Triumph.
 #                                          Sheoldred cuts Depressurize, Multiply by Zero;
@@ -74,6 +75,7 @@ for mode in "$@"; do
       ./rust/target/release/cardgen deck sheoldred $D/u2-list.txt --offline | grep -E "cards,|Game Changers"
       paired $mode sheoldred --swap "Hullcarver=>Gix, Yawgmoth Praetor"
       git checkout -- $F $X; trap - EXIT ;;
+    mikokoro) paired $mode sheoldred --swap "Mikokoro, Center of the Sea=>Swamp" ;;
     jodah-A) paired $mode jodah "${JA[@]}" ;;
     jodah-B) paired $mode jodah "${JB[@]}" ;;
     jodah-C) paired $mode jodah "${JC[@]}" ;;
