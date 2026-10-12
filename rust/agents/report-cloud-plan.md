@@ -37,3 +37,8 @@ doesn't defend. That is the AI's blocking, outside this brief.
 ## Shared-file edits (all small, gated to key cloud)
 `ai/search.rs` (bonus in choose_inner), `engine/zones.rs` (to_zone_card, commander to hand), `engine/combat.rs` (milestone
 call), `sim-cli/src/report.rs` (plan text and turn). Tests: 3 new in `tests/cards_cloud.rs`.
+
+**Lead check (2026-10-12, final commit 2697598).** Rerun on the final binary, lookahead, loose, 480 games, default
+seeds: t1 5.6%, t3 4.0%, t5 9.6% (average 6.4%), not the 9.8/7.3/9.6 in the table above (those rows appear to come
+from earlier builds). Runs are deterministic (two identical 96-game runs). Analysis at t3 (240 games): 12.6 damage
+dealt per game, eliminated in 95% of games (combat), Cloud removed 0.77 times per game, plan online in 50% of games.
