@@ -19,6 +19,7 @@
 **Updated 2026-10-11 (second change).** Out: Bedevil. In: Sephiroth, Planet's Heir. JD's choice, not measured: Sephiroth, Planet's Heir ({4}{U}{B}, 4/4 vigilance) gives opponents' creatures -2/-2 when he enters and grows as their creatures die, a board-control threat in Kefka's old slot.
 **Updated 2026-10-11 (third change).** Out: Thought Vessel. In: Relic of Legends. JD's choice: Thought Vessel moves to Y'shtola, whose draw engines (Necropotence, Consecrated Sphinx, Notion Thief) overflow the hand most. Relic of Legends (taken from the Zada deck, which is being taken apart) keeps a mana rock toward the six-mana commander (Arcane Signet is already in the deck); it taps for any colour, or tap a legendary creature for one more. Not measured.
 **Updated 2026-10-11 (fourth change).** Out: Sheoldred, the Apocalypse. In: Bedevil. JD's choice: Sheoldred leaves to lead her own mono-black deck (decklists/JD/sheoldred-mono-black.md); Bedevil comes back from the binder for the slot. Measured −2.1 points over all tiers (look-ahead, loose, 1,000 paired games per tier; Bedevil vs Sheoldred: T1 27.5 vs 28.9, T2 30.8 vs 34.6, T3 22.0 vs 25.5, T4 22.3 vs 24.2, T5 22.0 vs 22.1; audit/sauron/2026-10-11-sheoldred-bedevil/). No card in the deck was there mainly for her: Jace's Archivist's wheel still pays off with Orcish Bowmasters.
+**Updated 2026-10-11 (fifth change).** Out: Phyrexian Arena. In: Cost of Brilliance. JD's choice: Arena moves to the Sheoldred deck (saving a buy); Cost of Brilliance (bulk; {2}{B} sorcery: target player draws two and loses 2 life, and a +1/+1 counter on up to one creature, the Army) takes the slot. Measured +0.6 over all tiers, within noise (look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-11-arena-cost-of-brilliance/).
 
 ## Strategy
 
@@ -134,11 +135,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
-**Enchantments (5).** Aggravated Assault, Call of the Ring, Inexorable Tide, Phyrexian Arena, Underworld Breach
+**Enchantments (4).** Aggravated Assault, Call of the Ring, Inexorable Tide, Underworld Breach
 
 **Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Relic of Legends, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (27).** Arcane Denial, Bedevil, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (28).** Arcane Denial, Bedevil, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Cost of Brilliance, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -163,6 +164,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Chromatic Lantern
 1 Command Tower
 1 Conqueror's Flail
+1 Cost of Brilliance
 1 Counterspell
 1 Crumbling Necropolis
 1 Cyclonic Rift
@@ -196,7 +198,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Noxious Gearhulk
 1 Orcish Bowmasters
 1 Path of Ancestry
-1 Phyrexian Arena
 1 Relic of Legends
 1 Ringsight
 1 Rogue's Passage
@@ -261,6 +262,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 
 **New cards and cuts.**
 - **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage (left 10-11 to lead his own deck), Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
-- **From the bulk list**: Sephiroth, Planet's Heir (10-11).
+- **From the bulk list**: Sephiroth, Planet's Heir (10-11); Cost of Brilliance (10-11, for Phyrexian Arena, which went to the Sheoldred deck).
 - **From the binder**: Bedevil (10-11, for Sheoldred, the Apocalypse, who left to lead her own deck).
 - **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

@@ -1,0 +1,12 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Cost of Brilliance [scryfall] S 2B :: (no tags)
+      not modeled: Target player draws two cards and loses 2 life. Put a +1/+1 counter on up to one target creature.
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Phyrexian Arena -> Cost of Brilliance
+
+=== Sauron vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.2% ->  29.4%  (delta +0.2 pts, noise ±3.6, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 15.5%  Sythis 17.9%  Lord Windgrace 10.8%  Brago 11.1%  Meren of Clan Nel Toth 13.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(179s total)
