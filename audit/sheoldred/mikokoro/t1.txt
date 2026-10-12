@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Mikokoro, Center of the Sea -> Swamp
+
+=== Sheoldred vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.2% ->  30.0%  (delta +0.8 pts, noise ±1.5, paired)   n=1000
+               eliminated by (variant): Lathril 11.9%  Teysa Karlov 13.1%  Light-Paws 21.5%  Isshin 17.5%  Tatyova 6.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(173s total)

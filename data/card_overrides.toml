@@ -6601,6 +6601,12 @@ tags = ""
 status = "Full"
 note = "{T}: each player draws a card (active player first); the sheoldred deck taps it at the end of an opponent's turn, or in its own main phase when it kills, only while a draw punisher is out"
 
+["Otherworld Atlas"]
+dsl = []
+tags = ""
+status = "Full"
+note = "{T}: a charge counter. {T}: each player draws a card for each charge counter (active player first); the sheoldred deck adds a counter at an opponent's end step, and draws instead (in Temple Bell's windows) once it has 2 counters, or 1 that kills, while a draw punisher is out"
+
 ["Fate Unraveler"]
 status = "Full"
 note = "whenever an opponent draws a card, 1 damage to that player (damage, so prevention applies)"
@@ -6614,6 +6620,12 @@ dsl = []
 tags = "leg c=C"
 status = "Full"
 note = "{T}: add {C}. {2},{T}: each player draws a card, then discards a card; the sheoldred deck activates it only while a draw punisher is out, with spare mana"
+
+["Mikokoro, Center of the Sea"]
+dsl = []
+tags = "leg c=C"
+status = "Full"
+note = "{T}: add {C}. {2},{T}: each player draws a card (active player first); the sheoldred deck activates it only while a draw punisher is out, with spare mana"
 
 ["Ambition's Cost"]
 dsl = []

@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Mikokoro, Center of the Sea -> Swamp
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  32.4% ->  31.2%  (delta -1.2 pts, noise ±1.4, paired)   n=1000
+               eliminated by (variant): Aurelia 22.7%  Tergrid 17.2%  Korvold 6.0%  Atraxa 11.5%  Marwyn 11.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(143s total)

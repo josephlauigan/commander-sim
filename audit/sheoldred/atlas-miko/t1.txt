@@ -1,0 +1,15 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Temple Bell [pool] A 3 :: (no tags)
+   Castle Locthwain [scryfall+dsl] L  :: c=B ck
+      ability: static note -> 
+      ability: activated  -> draw
+      not modeled: {1}{B}{B}, {T}: Draw a card, then you lose life equal to the number of cards in your hand.   [partly: you lose life equal to the number of cards in your hand]
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Otherworld Atlas -> Temple Bell; Mikokoro, Center of the Sea -> Castle Locthwain
+
+=== Sheoldred vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  28.1% ->  27.7%  (delta -0.4 pts, noise ±3.0, paired)   n=1000
+               eliminated by (variant): Lathril 13.8%  Teysa Karlov 11.5%  Light-Paws 21.7%  Isshin 17.4%  Tatyova 7.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(169s total)
