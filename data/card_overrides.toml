@@ -6590,3 +6590,39 @@ dsl = []
 tags = ""
 status = "Full"
 note = "target player draws two cards, then loses 2 life; the sheoldred deck aims it at the lowest-life opponent while Sheoldred is out, otherwise at itself (at more than 6 life)"
+
+["Howling Mine"]
+status = "Full"
+note = "at the beginning of each player's draw step, if it is untapped, that player draws an additional card (engine/turn.rs calls sheoldred::howling_mines); the sheoldred deck casts it only while a draw punisher (Sheoldred, Underworld Dreams, Fate Unraveler) is out"
+
+["Temple Bell"]
+dsl = []
+tags = ""
+status = "Full"
+note = "{T}: each player draws a card (active player first); the sheoldred deck taps it at the end of an opponent's turn, or in its own main phase when it kills, only while a draw punisher is out"
+
+["Fate Unraveler"]
+status = "Full"
+note = "whenever an opponent draws a card, 1 damage to that player (damage, so prevention applies)"
+
+["Peer into the Abyss"]
+status = "Full"
+note = "target player draws half their library (rounded up) and loses half their life (rounded up); the sheoldred deck aims it at the opponent it kills with Sheoldred out, else at itself only with a big library and high life"
+
+["Geier Reach Sanitarium"]
+dsl = []
+tags = "leg c=C"
+status = "Full"
+note = "{T}: add {C}. {2},{T}: each player draws a card, then discards a card; the sheoldred deck activates it only while a draw punisher is out, with spare mana"
+
+["Ambition's Cost"]
+dsl = []
+tags = "draw=3"
+status = "Full"
+note = "you draw three cards and lose 3 life"
+
+["Syphon Mind"]
+dsl = []
+tags = "draw=2"
+status = "Full"
+note = "each other player discards a card; you draw a card for each card discarded this way (discards happen in turn order, the drawn cards come after all discards)"

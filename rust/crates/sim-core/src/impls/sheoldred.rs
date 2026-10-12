@@ -20,13 +20,14 @@ use crate::engine::zones::{
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
-use crate::ids::{CardId, PermId, PlayerId};
+use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Perm, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
 use super::bites::crime;
 pub use super::bites::gained_life;
+use super::lands::{can_pay_without, pay_without};
 use super::partials::remove_card;
 
 // ------------------------------------------------------------------ helpers
@@ -1332,6 +1333,7 @@ pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "Perigee Beckoner" => 52,
         SEIZAN => seizan_prio(g, p),
         "Underworld Dreams" => 90,
+        _ if pkg2_prio(g, p, &d.name).is_some() => pkg2_prio(g, p, &d.name).unwrap(),
         _ => generic_prio(g, p, c),
     }
 }
@@ -1360,6 +1362,8 @@ fn equip_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
         let x = g.perm(e);
         x.on_bf && x.attached == Some(sheo) && name_of_perm(g, e) == "Darksteel Plate"
     });
+    // Swiftfoot Boots follow Champion's Helm: only once no Helm waits in hand
+    let hand_has_helm = g.player(p).hand.iter().any(|&c| name_of(g, c) == "Champion's Helm");
     for e in g.player(p).perms.clone() {
         let x = g.perm(e);
         let mut host = sheo;
@@ -1372,13 +1376,14 @@ fn equip_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
         let (n, hexproof_plan) = match name_of_perm(g, e) {
             "Champion's Helm" => (1, true),
             "Darksteel Plate" => (2, false),
+            BOOTS if !hand_has_helm => (1, true),
             _ => continue,
         };
         if !can_pay(g, p, n, "", false) || (hexproof_plan && untargetable(g, host)) {
             continue;
         }
         out.push(Opt {
-            utility: 9.0 - 0.1 * n as f64,
+            utility: 9.0 - 0.1 * n as f64 - if name_of_perm(g, e) == BOOTS { 0.3 } else { 0.0 },
             label: format!("equip {} to {}", g.perm(e).name, if host == sheo { "Sheoldred" } else { SEIZAN }),
             act: Some(Action::Plan {
                 f: equip_sheoldred,
@@ -1752,6 +1757,236 @@ fn seizan_prio(g: &Game, p: PlayerId) -> i32 {
     if pl.life >= 30 && pl.hand.len() + 4 <= max_opp { 50 } else { 0 }
 }
 
+// ------------------------------------------------------------------ the second upgrade package (not in the list yet)
+// Howling Mine, Temple Bell, Fate Unraveler, Peer into the Abyss, Geier Reach Sanitarium, Ambition's Cost, Syphon
+// Mind; Swiftfoot Boots and Exsanguinate get their sheoldred plan here too. All plans are gated to the sheoldred seat.
+const MINE: &str = "Howling Mine";
+const BELL: &str = "Temple Bell";
+const UNRAVELER: &str = "Fate Unraveler";
+const PEER: &str = "Peer into the Abyss";
+const GEIER: &str = "Geier Reach Sanitarium";
+const BOOTS: &str = "Swiftfoot Boots";
+
+/// the untapped, phased-in permanents named `name` that p controls
+fn count_named(g: &Game, p: PlayerId, name: &str) -> i32 {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && &*g.perm(m).name == name).count()
+        as i32
+}
+
+/// what each card an opponent draws costs them while p's draw punishers are out: Sheoldred 2, Underworld Dreams 1,
+/// Fate Unraveler 1 (each copy)
+fn draw_toll(g: &Game, p: PlayerId) -> i32 {
+    (if sheoldred_out(g, p) { 2 } else { 0 }) + count_named(g, p, "Underworld Dreams") + count_named(g, p, UNRAVELER)
+}
+
+/// one more draw would kill an opponent
+fn draw_kills(g: &Game, p: PlayerId) -> bool {
+    let toll = draw_toll(g, p);
+    toll > 0 && g.opps(p).any(|q| g.player(q).life <= toll && !g.player(q).library.is_empty())
+}
+
+/// Howling Mine: at the beginning of each player's draw step, if it is untapped, that player draws an additional card.
+/// Called by the draw step (engine/turn.rs) for the active player p; every untapped Mine on the table counts.
+pub fn howling_mines(g: &mut Game, p: PlayerId) -> Res {
+    let mines: Vec<PermId> = g
+        .players
+        .iter()
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.tapped && !x.phased && &*x.name == MINE
+        })
+        .collect();
+    for m in mines {
+        if !g.player(p).alive {
+            break;
+        }
+        if on_bf(g, m) && !g.perm(m).tapped {
+            crate::glog!(g, "    Howling Mine: {} draws an additional card", pname(g, p));
+            draw(g, p, 1, false)?;
+        }
+    }
+    Ok(())
+}
+
+/// the players in turn order starting with the active player (or p)
+fn apnap(g: &Game, p: PlayerId) -> Vec<PlayerId> {
+    let n = g.players.len();
+    let a = g.active.unwrap_or(p).0 as usize;
+    (0..n).map(|k| PlayerId(((a + k) % n) as u8)).filter(|&q| g.player(q).alive).collect()
+}
+
+/// Temple Bell: {T}: each player draws a card (the active player first)
+fn bell_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).tapped || g.perm(src).phased {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    crate::glog!(g, "  {} taps Temple Bell: each player draws a card", pname(g, p));
+    if ability_window(g, p, Some(src), "each player draws a card", Some(3.0), None)? {
+        for q in apnap(g, p) {
+            draw(g, q, 1, false)?;
+        }
+    }
+    Ok(true)
+}
+
+/// tap the Bell / use the Sanitarium: only while a draw punisher is out, at the end of an opponent's turn
+/// (post: None), or in a main phase when it kills. None: don't.
+fn punish_window_utility(g: &Game, p: PlayerId, post: Option<bool>) -> Option<f64> {
+    if g.player(p).key != "sheoldred" || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
+        return None;
+    }
+    match post {
+        None => Some(3.0),
+        Some(_) if g.active == Some(p) && draw_kills(g, p) => Some(7.0),
+        Some(_) => None,
+    }
+}
+
+fn bell_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered {
+        return Ok(vec![]);
+    }
+    let Some(u) = punish_window_utility(g, p, post) else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: u,
+        label: "Temple Bell: each player draws".into(),
+        act: Some(Action::Ability { src, f: bell_go, arg: 0 }),
+    }])
+}
+
+/// Geier Reach Sanitarium: {2}, {T}: each player draws a card, then discards a card (all the draws, then all the
+/// discards, the active player first)
+fn geier_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.land(l).tapped || !g.player(p).lands.contains(&l) {
+        return Ok(vec![]);
+    }
+    let Some(u) = punish_window_utility(g, p, post) else { return Ok(vec![]) };
+    if !can_pay_without(g, p, l, 2, "") {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: u - 0.2,
+        label: "Geier Reach Sanitarium: each player draws, then discards".into(),
+        act: Some(Action::Plan { f: geier_go, arg: l.0 as i64 }),
+    }])
+}
+
+fn geier_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 2, "")? {
+        return Ok(false);
+    }
+    g.land_mut(l).tapped = true;
+    crate::glog!(g, "  {} uses Geier Reach Sanitarium", pname(g, p));
+    if crate::engine::stack::ability_window_card(
+        g,
+        p,
+        g.land(l).cd,
+        "each player draws, then discards",
+        Some(3.0),
+        None,
+    )? {
+        let order = apnap(g, p);
+        for &q in &order {
+            draw(g, q, 1, false)?;
+        }
+        for &q in &order {
+            if g.player(q).alive && !g.player(q).hand.is_empty() {
+                discard_worst(g, q, 1)?;
+            }
+        }
+    }
+    Ok(true)
+}
+
+/// Peer into the Abyss: the target draws half their library (rounded up) and loses half their life (rounded up,
+/// worked out after the draws)
+fn peer_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+    let n = g.player(q).library.len().div_ceil(2) as u32;
+    draw(g, q, n, false)?;
+    let life = g.player(q).life;
+    if g.player(q).alive && life > 0 {
+        lose_life(g, q, (life + 1) / 2, Some(p), "other", Some(false))?;
+    }
+    Ok("gy")
+}
+
+/// would Peer kill q: the draws cost `toll` life each, then half of what is left (rounded up) goes
+fn peer_kills(g: &Game, q: PlayerId, toll: i32) -> bool {
+    let draws = g.player(q).library.len().div_ceil(2) as i32;
+    g.player(q).life - draws * toll <= 1
+}
+
+fn peer_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.player(p).key != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+        return Ok(vec![]);
+    }
+    let toll = draw_toll(g, p);
+    if toll > 0 {
+        let victims: Vec<PlayerId> = g.opps(p).filter(|&q| peer_kills(g, q, toll)).collect();
+        if let Some(q) = min_by(&victims, |q| g.player(q).life as f64) {
+            return Ok(vec![Opt {
+                utility: 12.0,
+                label: format!("Peer into the Abyss ({} draws half their library and dies)", g.player(q).name),
+                act: Some(Action::Plan { f: lesson_plan, arg: c.0 as i64 | (((q.0 as i64) + 1) << 16) }),
+            }]);
+        }
+    }
+    // no kill: draw half our own library only with plenty of both library and life
+    let pl = g.player(p);
+    if pl.library.len() < 30 || pl.life < 30 || pl.hand.len() > 2 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 3.5,
+        label: "Peer into the Abyss (draw half our library)".into(),
+        act: Some(Action::Plan { f: lesson_plan, arg: c.0 as i64 }),
+    }])
+}
+
+/// Ambition's Cost: you draw three cards and lose 3 life
+fn ambition_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    draw(g, p, 3, false)?;
+    lose_life(g, p, 3, Some(p), "other", Some(false))?;
+    Ok("gy")
+}
+
+/// Syphon Mind: each other player discards a card (their choice); you draw a card for each one that did
+fn syphon_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let mut n = 0;
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let before = g.player(q).hand.len();
+        if before > 0 {
+            discard_worst(g, q, 1)?;
+            n += before.saturating_sub(g.player(q).hand.len());
+        }
+    }
+    if n > 0 {
+        draw(g, p, n as u32, false)?;
+    }
+    Ok("gy")
+}
+
+/// cast priorities of the package for the sheoldred seat; None: the card has no special rule
+fn pkg2_prio(g: &Game, p: PlayerId, name: &str) -> Option<i32> {
+    Some(match name {
+        MINE => {
+            if draw_toll(g, p) > 0 {
+                70
+            } else {
+                0
+            }
+        }
+        UNRAVELER => 88,
+        "Ambition's Cost" if g.player(p).life <= 6 => 0,
+        _ => return None,
+    })
+}
+
 pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, SEIZAN)?;
     c.upkeep = Some(seizan_upkeep);
@@ -1767,5 +2002,17 @@ pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.resolve = Some(lesson_resolve);
     c.hand_options = Some(lesson_options);
     c.prio = Some(zero_prio);
+    let c = r.card(db, UNRAVELER)?;
+    c.draw = Some(dreams_draw);
+    super::partials::at_once(c, Event::Draw, true);
+    r.card(db, BELL)?.options = Some(bell_options);
+    r.card(db, GEIER)?.land_options = Some(geier_options);
+    let c = r.card(db, PEER)?;
+    c.resolve = Some(peer_resolve);
+    c.hand_options = Some(peer_options);
+    c.prio = Some(zero_prio);
+    r.card(db, "Ambition's Cost")?.resolve = Some(ambition_resolve);
+    r.card(db, "Syphon Mind")?.resolve = Some(syphon_resolve);
+    r.card(db, MINE)?;
     Ok(())
 }

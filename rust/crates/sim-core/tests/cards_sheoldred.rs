@@ -958,3 +958,378 @@ fn the_four_upgrade_cards_resolve_from_the_card_data_not_a_bare_scryfall_body() 
         assert!(g.registry.get(c).is_some(), "{n} has card code");
     }
 }
+
+// ------------------------------------------------------------------ the second upgrade package
+const MINE: &str = "Howling Mine";
+const BELL: &str = "Temple Bell";
+const UNRAV: &str = "Fate Unraveler";
+const PEER: &str = "Peer into the Abyss";
+const GEIER: &str = "Geier Reach Sanitarium";
+
+fn hand_len(g: &Game, p: PlayerId) -> usize {
+    g.player(p).hand.len()
+}
+
+fn trim_library(g: &mut Game, p: PlayerId, n: usize) {
+    g.player_mut(p).library.truncate(n);
+}
+
+#[test]
+fn howling_mine_draws_an_extra_card_in_every_players_draw_step_while_untapped() {
+    // (the seph seat dredges instead of drawing, so the opponent here is veyran)
+    let game = || table(&["sheoldred", "veyran"]);
+    let mut g = game();
+    let mine = perm(&mut g, P0, MINE);
+    g.active = Some(P1);
+    let h = hand_len(&g, P1);
+    turn::step_start(&mut g, P1).unwrap();
+    assert_eq!(hand_len(&g, P1), h + 2, "the opponent's draw step: the normal draw and the Mine's");
+    g.perm_mut(mine).tapped = true;
+    let mut g2 = game();
+    let mine2 = perm(&mut g2, P0, MINE);
+    g2.perm_mut(mine2).tapped = true;
+    g2.active = Some(P1);
+    let h = hand_len(&g2, P1);
+    turn::step_start(&mut g2, P1).unwrap();
+    assert_eq!(hand_len(&g2, P1), h + 1, "a tapped Mine draws nothing");
+}
+
+#[test]
+fn every_opponent_draw_the_new_cards_cause_fires_sheoldred_dreams_and_fate_unraveler() {
+    let mut g = table(&["sheoldred", "veyran"]);
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P0, "Underworld Dreams");
+    perm(&mut g, P0, UNRAV);
+    perm(&mut g, P0, MINE);
+    g.active = Some(P1);
+    let before = life(&g, P1);
+    turn::step_start(&mut g, P1).unwrap();
+    assert_eq!(before - life(&g, P1), 8, "two draws, each costing 2 + 1 + 1");
+    // Temple Bell
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P0, "Underworld Dreams");
+    perm(&mut g, P0, UNRAV);
+    let bell = perm(&mut g, P0, BELL);
+    let o = perm_opts(&mut g, bell, P0, None);
+    assert_eq!(o.len(), 1);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(life(&g, P1), 36, "the Bell's draw cost the opponent 4");
+    assert_eq!(life(&g, P0), 42, "and our own draw gained 2");
+    // Geier Reach Sanitarium
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P0, UNRAV);
+    let l = lands(&mut g, P0, "Swamp", 2, false);
+    let sani = lands(&mut g, P0, GEIER, 1, false)[0];
+    let _ = l;
+    let f = g.registry.get(g.land(sani).cd).unwrap().land_options.unwrap();
+    let o = f(&mut g, sani, P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(life(&g, P1), 37, "Sheoldred 2 + Fate Unraveler 1");
+    // Peer into the Abyss on the opponent: 20 draws
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    trim_library(&mut g, P1, 10);
+    g.player_mut(P1).life = 40;
+    cast_spell(&mut g, P0, PEER, Ctx { face: Some(P1), ..Ctx::default() });
+    assert_eq!(life(&g, P1), 15, "five draws at 2 each: 30, then half of it");
+}
+
+#[test]
+fn fate_unraveler_pings_only_opponents_that_draw() {
+    let mut g = game3();
+    perm(&mut g, P0, UNRAV);
+    zones::draw(&mut g, P1, 1, false).unwrap();
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert_eq!((life(&g, P0), life(&g, P1), life(&g, P2)), (40, 39, 40));
+    let u = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == UNRAV).unwrap();
+    assert_eq!((values::epow(&g, u), values::etgh(&g, u)), (3, 4));
+}
+
+#[test]
+fn temple_bell_draws_for_every_player_and_the_ai_taps_it_only_with_a_punisher() {
+    let mut g = game3();
+    let bell = perm(&mut g, P0, BELL);
+    assert!(perm_opts(&mut g, bell, P0, None).is_empty(), "no draw punisher: leave it");
+    let (h0, h2) = (hand_len(&g, P0), hand_len(&g, P2));
+    // do it by hand anyway: the ability itself
+    let f = g.registry.get(g.perm(bell).cd.unwrap()).unwrap().options.unwrap();
+    perm(&mut g, P0, "Underworld Dreams");
+    let o = f(&mut g, bell, P0, None).unwrap();
+    assert_eq!(o.len(), 1, "with Underworld Dreams out: tap it at the end of an opponent's turn");
+    assert!(f(&mut g, bell, P0, Some(false)).unwrap().is_empty(), "main phase: only when it kills");
+    g.player_mut(P1).life = 1;
+    assert_eq!(f(&mut g, bell, P0, Some(false)).unwrap().len(), 1, "and now it kills");
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(g.perm(bell).tapped);
+    assert_eq!(hand_len(&g, P0), h0 + 1);
+    assert!(life(&g, P1) <= 0, "the draw killed the opponent at 1 life");
+    assert_eq!(hand_len(&g, P2), h2 + 1);
+    assert!(f(&mut g, bell, P0, None).unwrap().is_empty(), "tapped");
+}
+
+#[test]
+fn peer_into_the_abyss_draws_half_the_library_and_loses_half_the_life_rounding_up() {
+    let mut g = game();
+    trim_library(&mut g, P1, 11);
+    g.player_mut(P1).life = 21;
+    cast_spell(&mut g, P0, PEER, Ctx { face: Some(P1), ..Ctx::default() });
+    assert_eq!(hand_len(&g, P1), 6, "half of 11, rounded up");
+    assert_eq!(g.player(P1).library.len(), 5);
+    assert_eq!(life(&g, P1), 10, "21 - 11");
+    // yourself
+    let mut g = game();
+    trim_library(&mut g, P0, 20);
+    let h = hand_len(&g, P0);
+    cast_spell(&mut g, P0, PEER, Ctx::default());
+    assert_eq!(hand_len(&g, P0), h + 10);
+    assert_eq!(life(&g, P0), 20);
+}
+
+#[test]
+fn the_ai_aims_peer_into_the_abyss_at_the_opponent_it_kills_and_otherwise_mostly_holds_it() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 8, false);
+    let c = hand(&mut g, P0, &[PEER])[0];
+    trim_library(&mut g, P0, 10);
+    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "no Sheoldred, a small library: hold it");
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 8, false);
+    let c = hand(&mut g, P0, &[PEER])[0];
+    assert_eq!(card_opts(&mut g, c, P0, Some(false)).len(), 1, "a big library and high life: draw our own");
+    perm(&mut g, P0, SHEO);
+    trim_library(&mut g, P1, 10);
+    g.player_mut(P1).life = 10;
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert!(o[0].label.contains("dies"), "Sheoldred: 5 draws cost 10, so it kills: {}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.player(P1).alive);
+    assert!(in_gy(&g, P0, PEER));
+}
+
+#[test]
+fn geier_reach_sanitarium_taps_for_colourless_and_loots_everyone() {
+    let mut g = game();
+    let sani = lands(&mut g, P0, GEIER, 1, false)[0];
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
+    lands(&mut g, P0, "Swamp", 2, false);
+    let (h0, h1) = (hand_len(&g, P0), hand_len(&g, P1));
+    let (l0, l1) = (g.player(P0).library.len(), g.player(P1).library.len());
+    let f = g.registry.get(g.land(sani).cd).unwrap().land_options.unwrap();
+    assert!(f(&mut g, sani, P0, None).unwrap().is_empty(), "no draw punisher: no activation");
+    perm(&mut g, P0, "Underworld Dreams");
+    let o = f(&mut g, sani, P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(g.land(sani).tapped);
+    assert_eq!((hand_len(&g, P0), hand_len(&g, P1)), (h0, h1), "each drew and discarded one");
+    assert_eq!((g.player(P0).library.len(), g.player(P1).library.len()), (l0 - 1, l1 - 1));
+    assert_eq!(g.player(P0).gy.len(), 1);
+    assert_eq!(g.player(P1).gy.len(), 1);
+    assert_eq!(life(&g, P1), 39, "Underworld Dreams");
+    let mut g = game();
+    let sani = lands(&mut g, P0, GEIER, 1, false)[0];
+    perm(&mut g, P0, UNRAV);
+    assert!(f(&mut g, sani, P0, None).unwrap().is_empty(), "no spare mana for the {{2}}");
+}
+
+#[test]
+fn ambitions_cost_draws_three_and_loses_three() {
+    let mut g = game();
+    let h = hand_len(&g, P0);
+    cast_spell(&mut g, P0, "Ambition's Cost", Ctx::default());
+    assert_eq!(hand_len(&g, P0), h + 3);
+    assert_eq!(life(&g, P0), 37);
+    perm(&mut g, P0, SHEO);
+    cast_spell(&mut g, P0, "Ambition's Cost", Ctx::default());
+    assert_eq!(life(&g, P0), 37 - 3 + 6, "Sheoldred gains 2 per card");
+    let c = hand(&mut g, P0, &["Ambition's Cost"])[0];
+    g.player_mut(P0).life = 5;
+    let p = sim_core::impls::sheoldred::sheoldred_prio(&g, P0, c);
+    assert_eq!(p, 0, "not at 5 life");
+}
+
+#[test]
+fn syphon_mind_makes_each_other_player_discard_and_draws_for_each() {
+    let mut g = game3();
+    hand(&mut g, P1, &["Terror", "Terror"]);
+    hand(&mut g, P2, &["Terror"]);
+    let h = hand_len(&g, P0);
+    cast_spell(&mut g, P0, "Syphon Mind", Ctx::default());
+    assert_eq!((hand_len(&g, P1), hand_len(&g, P2)), (1, 0));
+    assert_eq!(hand_len(&g, P0), h + 2);
+    // an opponent with no hand discards nothing, so we draw nothing for them
+    let mut g = game3();
+    hand(&mut g, P1, &["Terror"]);
+    let h = hand_len(&g, P0);
+    cast_spell(&mut g, P0, "Syphon Mind", Ctx::default());
+    assert_eq!(hand_len(&g, P0), h + 1);
+}
+
+#[test]
+fn howling_mine_is_held_until_a_draw_punisher_is_out() {
+    let mut g = game();
+    let m = hand(&mut g, P0, &[MINE])[0];
+    let p = |g: &Game| sim_core::impls::sheoldred::sheoldred_prio(g, P0, m);
+    assert_eq!(p(&g), 0, "no punisher: hold it");
+    perm(&mut g, P0, "Underworld Dreams");
+    assert!(p(&g) > 50);
+    let mut g = game();
+    let m = hand(&mut g, P0, &[MINE])[0];
+    perm(&mut g, P0, SHEO);
+    assert!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, m) > 50);
+    let mut g = game();
+    let (m, u) = {
+        let h = hand(&mut g, P0, &[MINE, UNRAV]);
+        (h[0], h[1])
+    };
+    assert_eq!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, m), 0);
+    assert!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, u) >= 80, "the Unraveler is cast at once");
+    perm(&mut g, P0, UNRAV);
+    assert!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, m) > 50, "Fate Unraveler is a punisher too");
+}
+
+// the older cards the package leans on: each proven with a play in a sheoldred game
+#[test]
+fn mind_stone_commanders_sphere_and_charcoal_diamond_make_mana() {
+    for (name, tapped) in [("Mind Stone", false), ("Commander's Sphere", false), ("Charcoal Diamond", true)] {
+        let mut g = game();
+        let c = hand(&mut g, P0, &[name])[0];
+        cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+        let m = on_bf(&g, P0, name).unwrap_or_else(|| panic!("{name} is on the battlefield"));
+        assert_eq!(g.perm(m).tapped, tapped, "{name} entering tapped?");
+        g.perm_mut(m).tapped = false;
+        assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1, "{name} taps for one mana");
+    }
+    let mut g = game();
+    let d = perm(&mut g, P0, "Charcoal Diamond");
+    g.perm_mut(d).tapped = false;
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "B", false), "Charcoal Diamond makes black");
+    let mut g = game();
+    perm(&mut g, P0, "Commander's Sphere");
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "B", false), "the Sphere makes the commander's colour");
+}
+
+#[test]
+fn mind_stone_and_commanders_sphere_cash_in_for_a_card() {
+    let mut g = game();
+    let m = perm(&mut g, P0, "Mind Stone");
+    lands(&mut g, P0, "Swamp", 6, false);
+    let h = hand_len(&g, P0);
+    let o = perm_opts(&mut g, m, P0, Some(true));
+    assert_eq!(o.len(), 1, "crack Mind Stone with six lands");
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(hand_len(&g, P0), h + 1);
+    assert!(on_bf(&g, P0, "Mind Stone").is_none());
+    // Commander's Sphere: sacrifice itself to draw (the ability language)
+    let mut g = game();
+    let s = perm(&mut g, P0, "Commander's Sphere");
+    let h = hand_len(&g, P0);
+    let o = sim_core::dsl::ability_options(&mut g, P0, true).unwrap();
+    let o = o.iter().find(|o| o.label.contains("Commander's Sphere")).expect("Sphere's sacrifice is offered");
+    assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert_eq!(hand_len(&g, P0), h + 1);
+    assert!(!g.perm(s).on_bf);
+}
+
+#[test]
+fn castle_locthwain_draws_and_loses_life_for_the_hand() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let castle = lands(&mut g, P0, "Castle Locthwain", 1, false)[0];
+    hand(&mut g, P0, &["Terror"]);
+    let f = g.registry.get(g.land(castle).cd).unwrap().land_options.unwrap();
+    let o = f(&mut g, castle, P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(hand_len(&g, P0), 2);
+    assert_eq!(life(&g, P0), 38, "lost life equal to the two cards in hand");
+}
+
+#[test]
+fn phyrexian_arena_draws_in_upkeep_and_costs_a_life() {
+    let mut g = game();
+    perm(&mut g, P0, "Phyrexian Arena");
+    let h = hand_len(&g, P0);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!(hand_len(&g, P0), h + 1);
+    assert_eq!(life(&g, P0), 39);
+}
+
+#[test]
+fn read_the_bones_scries_draws_two_and_loses_two() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    let h = hand_len(&g, P0);
+    cast_spell(&mut g, P0, "Read the Bones", Ctx::default());
+    assert_eq!(hand_len(&g, P0), h + 2);
+    assert_eq!(life(&g, P0), 40 - 2 + 4, "Sheoldred gains 4 for the two cards");
+    assert!(in_gy(&g, P0, "Read the Bones"));
+}
+
+#[test]
+fn exsanguinate_drains_x_and_the_sheoldred_ai_casts_it_to_finish() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 5, false);
+    let c = hand(&mut g, P0, &["Exsanguinate"])[0];
+    g.player_mut(P1).life = 20;
+    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "X = 3 does not kill and it is early");
+    g.player_mut(P1).life = 3;
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1, "X = 3 kills");
+    g.player_mut(P0).life = 10;
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.player(P1).alive);
+    assert!(g.player(P0).life >= 13, "gained the life lost: {}", g.player(P0).life);
+}
+
+#[test]
+fn gray_merchant_counts_the_black_mana_symbols_of_your_permanents() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO); // {2}{B}{B}: 2
+    perm(&mut g, P0, "Arcane Signet"); // colourless: 0
+    perm(&mut g, P0, "Gray Merchant of Asphodel"); // {3}{B}{B}: 2
+    assert_eq!(life(&g, P1), 36, "devotion 4");
+    assert_eq!(life(&g, P0), 44);
+}
+
+#[test]
+fn swiftfoot_boots_go_on_sheoldred_unless_the_helm_comes_first() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 4, false);
+    let sheo = perm(&mut g, P0, SHEO);
+    let boots = perm(&mut g, P0, "Swiftfoot Boots");
+    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
+    let e = o.iter().find(|o| o.label.contains("Swiftfoot Boots")).expect("Boots offered");
+    assert!(run_plan(&mut g, P0, e));
+    assert_eq!(g.perm(boots).attached, Some(sheo));
+    assert!(values::untargetable(&g, sheo));
+    // with the Helm in hand, the Helm goes first and the Boots wait
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 4, false);
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P0, "Swiftfoot Boots");
+    hand(&mut g, P0, &["Champion's Helm"]);
+    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
+    assert!(!o.iter().any(|o| o.label.contains("Swiftfoot Boots")));
+    // with the Helm on the table, the Helm is chosen over the Boots
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 4, false);
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P0, "Swiftfoot Boots");
+    perm(&mut g, P0, "Champion's Helm");
+    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
+    let best = o.iter().max_by(|a, b| a.utility.partial_cmp(&b.utility).unwrap()).unwrap();
+    assert!(best.label.contains("Champion's Helm"));
+}
+
+#[test]
+fn the_second_package_has_card_code() {
+    let g = game();
+    for n in [MINE, BELL, UNRAV, PEER, GEIER, "Ambition's Cost", "Syphon Mind"] {
+        let c = card(&g, n);
+        assert!(g.registry.get(c).is_some() || n == MINE, "{n} has card code");
+    }
+}

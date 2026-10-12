@@ -340,7 +340,7 @@ fn x_drain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// yshtola._x_option: the drain X spell as a main-phase play (your turn, your deck's AI)
 fn x_option(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || !hand_has(g, p, c) || g.player(p).key != "yshtola" {
+    if post.is_none() || g.active != Some(p) || !hand_has(g, p, c) || !matches!(g.player(p).key, "yshtola" | "sheoldred") {
         return Ok(vec![]);
     }
     Ok(x_drain_option(g, p, c)
