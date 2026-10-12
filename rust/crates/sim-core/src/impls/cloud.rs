@@ -149,13 +149,8 @@ pub fn holder_score(g: &Game, m: PermId) -> f64 {
 
 /// p's best creature to wear Equipment
 pub fn best_holder(g: &Game, p: PlayerId) -> Option<PermId> {
-    let cs: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk)
-        .collect();
+    let cs: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk).collect();
     max_by(&cs, |m| holder_score(g, m))
 }
 
@@ -178,7 +173,9 @@ pub fn equip_utility_bonus(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
         if matches!(name_of(g, e), "Wrecking Ball Arm" | "Hulkbuster Armor" | "Colossus Hammer") {
             u += 2.0;
         }
-        if g.perm(e).cd.is_some_and(|c| g.db.get(c).abilities.iter().any(|a| matches!(a, crate::dsl::model::Ability::Triggered { .. }))) {
+        if g.perm(e).cd.is_some_and(|c| {
+            g.db.get(c).abilities.iter().any(|a| matches!(a, crate::dsl::model::Ability::Triggered { .. }))
+        }) {
             u += 1.5; // a trigger he doubles
         }
     }
@@ -264,7 +261,8 @@ pub fn force_blocks(g: &Game, d: PlayerId, atk: &[PermId], unbl: &[PermId], assi
         if !must_be_blocked(g, a) || unbl.contains(&a) || assign.iter().any(|x| x.0 == a) || !g.perm(a).on_bf {
             continue;
         }
-        let cands: Vec<PermId> = g.player(d)
+        let cands: Vec<PermId> = g
+            .player(d)
             .perms
             .iter()
             .copied()
@@ -280,11 +278,14 @@ pub fn force_blocks(g: &Game, d: PlayerId, atk: &[PermId], unbl: &[PermId], assi
 // ------------------------------------------------------------------ Cloud, Midgar Mercenary: the search
 /// the order the deck wants its Equipment found in, by need
 fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
-    let lib: Vec<CardId> = crate::engine::zones::searchable(g, p).into_iter().filter(|&c| is_equipment_card(g, c)).collect();
+    let lib: Vec<CardId> =
+        crate::engine::zones::searchable(g, p).into_iter().filter(|&c| is_equipment_card(g, c)).collect();
     if lib.is_empty() {
         return None;
     }
-    let out = |n: &str| creature_named(g, p, n).is_some() || g.player(p).perms.iter().any(|&m| live(g, m) && name_of(g, m) == n);
+    let out = |n: &str| {
+        creature_named(g, p, n).is_some() || g.player(p).perms.iter().any(|&m| live(g, m) && name_of(g, m) == n)
+    };
     let have = |n: &str| out(n) || in_hand(g, p, n);
     let first = |ns: &[&str]| -> Option<CardId> {
         ns.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c))
@@ -310,7 +311,14 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     } else if held == 1 {
         &["Sword of Kaldra", "Mask of Memory", "Wrecking Ball Arm", "Hero's Blade"]
     } else {
-        &["Mask of Memory", "Sword of Kaldra", "Colossus Hammer", "Hulkbuster Armor", "Shield of Kaldra", "Helm of Kaldra"]
+        &[
+            "Mask of Memory",
+            "Sword of Kaldra",
+            "Colossus Hammer",
+            "Hulkbuster Armor",
+            "Shield of Kaldra",
+            "Helm of Kaldra",
+        ]
     };
     if let Some(c) = first(order) {
         return Some(c);
@@ -436,7 +444,11 @@ fn beatrix_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
 /// Puresteel Paladin: whenever an Equipment you control enters, you may draw a card
 fn puresteel_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = owner(g, src);
-    if owner(g, m) == o && live(g, src) && is_equipment(g, m) && trigger_window(g, o, Some(src), "draw a card", Some(4.0))? {
+    if owner(g, m) == o
+        && live(g, src)
+        && is_equipment(g, m)
+        && trigger_window(g, o, Some(src), "draw a card", Some(4.0))?
+    {
         draw(g, o, 1, false)?;
     }
     Ok(())
@@ -481,7 +493,8 @@ fn staff_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), "job select", Some(5.0))? {
         return Ok(());
     }
-    let spec = Tokens { tgh: Some(1), color: Some(crate::cards::Colors::NONE), types: vec!["hero"], ..Tokens::new(1, 1) };
+    let spec =
+        Tokens { tgh: Some(1), color: Some(crate::cards::Colors::NONE), types: vec!["hero"], ..Tokens::new(1, 1) };
     if let Some(&hero) = make_tokens(g, o, spec)?.first() {
         attach(g, src, hero);
     }
@@ -587,9 +600,7 @@ fn shuriken_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: Playe
         .filter(|&m| live(g, m) && g.is_creature(m) && !crate::engine::values::untargetable(g, m))
         .collect();
     let gain = |g: &Game, m: PermId| (epow(g, m) - epow(g, me)).max(0) as f64;
-    let Some(t) = max_by(&cands, |m| {
-        (if g.perm(m).tapped { 0.0 } else { pval(g, m) }) + gain(g, m)
-    }) else {
+    let Some(t) = max_by(&cands, |m| (if g.perm(m).tapped { 0.0 } else { pval(g, m) }) + gain(g, m)) else {
         return Ok(vec![]);
     };
     if !trigger_window(g, p, Some(src), "tap a creature", Some(5.0))? || !live(g, t) || !live(g, me) {
@@ -693,41 +704,20 @@ fn zack_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-/// the creature Zack's sacrifice should save: Cloud first, else the best holder besides Zack
-fn zack_target(g: &Game, p: PlayerId, zack: PermId) -> Option<PermId> {
-    let cs: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| m != zack && live(g, m) && g.is_creature(m))
-        .collect();
-    max_by(&cs, |m| holder_score(g, m))
-}
-
 /// {1}, Sacrifice Zack Fair: target creature you control gains indestructible until end of turn; put Zack's counters
-/// on that creature and attach an Equipment that was attached to Zack to that creature
-fn zack_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != owner(g, src) || post.is_none() || !live(g, src) || !can_pay(g, p, 1, "", false) {
-        return Ok(vec![]);
-    }
-    // used on purpose when Cloud (or the Equipment wearer) is the target of removal: `cloud_protect`; on its own
-    // only when Zack is the one dying or nothing else needs him
-    Ok(vec![])
-}
-
+/// on that creature and attach an Equipment that was attached to Zack to that creature. Used by `cloud_protect`.
 pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Res<bool> {
     let t = PermId(target as u32);
     if !live(g, src) || !live(g, t) || t == src || owner(g, t) != p || !can_pay(g, p, 1, "", false) {
         return Ok(false);
     }
     pay(g, p, 1, "", false)?;
-    if !ability_window(g, p, Some(src), "sacrifice: indestructible", Some(8.0), Some(t))? {
-        return Ok(true);
-    }
     let counters = g.perm(src).plus.max(0);
     let worn = equipment_on(g, src);
     crate::engine::zones::die(g, src, intern("sac"))?; // Zack is sacrificed as a cost: it happens first
+    if !ability_window(g, p, Some(src), "sacrifice: indestructible", Some(8.0), Some(t))? {
+        return Ok(true);
+    }
     if live(g, t) {
         super::partials::eot_kw(g, t, "indestructible");
         g.perm_mut(t).plus += counters;
@@ -768,7 +758,8 @@ fn unfinished_business(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::stat
         .copied()
         .filter(|&e| {
             is_equipment_card(g, e)
-                || (g.db.get(e).has_subtype("aura") && g.registry.get(e).and_then(|i| i.aura).is_some_and(|a| a.target == "own"))
+                || (g.db.get(e).has_subtype("aura")
+                    && g.registry.get(e).and_then(|i| i.aura).is_some_and(|a| a.target == "own"))
         })
         .collect();
     cands.sort_by(|&a, &b| {
@@ -821,35 +812,316 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.combat_damage = Some(jocasta_damage);
     let c = r.card(db, "Zack Fair")?;
     c.as_enters = Some(zack_enters);
-    c.options = Some(zack_options);
     r.card(db, "Unfinished Business")?.resolve = Some(unfinished_business);
     Ok(())
 }
 
 // ------------------------------------------------------------------ the AI plan
-/// cloud's cast priority: the generic priorities for now
-pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    crate::ai::pool::generic_prio(g, p, c)
+fn creatures_out(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count()
 }
 
-/// cloud's own plays (brain.special_options): none yet
+fn equipment_cards_in_hand(g: &Game, p: PlayerId) -> usize {
+    g.player(p).hand.iter().filter(|&&c| is_equipment_card(g, c)).count()
+}
+
+/// Cloud is out of play and could be cast now or later: in the command zone, or in hand
+fn cloud_waiting(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    cloud_of(g, p).is_none() && (pl.cmd_in_zone || pl.hand.contains(&pl.cmd))
+}
+
+/// the Kaldra pieces already out or in hand
+fn kaldra_count(g: &Game, p: PlayerId) -> usize {
+    ["Sword of Kaldra", "Shield of Kaldra", "Helm of Kaldra"]
+        .iter()
+        .filter(|n| g.player(p).perms.iter().any(|&m| live(g, m) && name_of(g, m) == **n) || in_hand(g, p, n))
+        .count()
+}
+
+/// cloud's cast priority: Cloud on turn 2 (97, ahead of anything else he'd do); Cid and Puresteel Paladin first
+/// when Equipment waits in the hand; the Equipment by what it gives Cloud (the size or evasion pieces, the doubled
+/// triggers, then the rest); a Hero's Blade waits for Cloud to be recast; Zack Fair, the protection instants and
+/// Unfinished Business as the plan needs them
+pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let base = crate::ai::pool::generic_prio(g, p, c);
+    let pl = g.player(p);
+    if c == pl.cmd {
+        return if pl.turns >= 2 { (97 - 3 * pl.tax as i32).max(45) } else { 0 };
+    }
+    let name = card_name(g, c);
+    let body = creatures_out(g, p) > 0;
+    let cloud_out = cloud_of(g, p).is_some();
+    let eq_hand = equipment_cards_in_hand(g, p);
+    let eq_out = my_equipment(g, p).len();
+    match name {
+        // the Equipment
+        "Wrecking Ball Arm" => 78,
+        "Sword of Kaldra" => 76,
+        "Mask of Memory" => 72,
+        "Conformer Shuriken" => 68,
+        "Hulkbuster Armor" => 64,
+        "Medic's Kitesail" => 62,
+        "Veteran's Powerblade" => 58,
+        "Explorer's Scope" => 55,
+        "Trailblazer's Boots" => 50,
+        "Helm of Kaldra" => {
+            if kaldra_count(g, p) >= 2 {
+                70
+            } else {
+                56
+            }
+        }
+        "Shield of Kaldra" => {
+            if cloud_out && crate::ai::brain::removal_risk(g, p) >= 0.35 {
+                80
+            } else {
+                58
+            }
+        }
+        "Colossus Hammer" => {
+            if eq_out >= 1 {
+                52
+            } else {
+                36
+            }
+        }
+        // attaches itself when a legend enters: best with Cloud still to come
+        "Hero's Blade" => {
+            if cloud_waiting(g, p) {
+                84
+            } else {
+                58
+            }
+        }
+        // the Equipment that attach as they enter need a body
+        "Magitek Scythe" | "Squire's Lightblade" => {
+            if body {
+                66
+            } else {
+                0
+            }
+        }
+        "White Mage's Staff" => 66, // brings its own Hero
+        "Nim Deathmantle" => 48,
+        // the creatures that work the Equipment
+        "Cid, Freeflier Pilot" => {
+            if eq_hand > 0 {
+                82
+            } else {
+                56
+            }
+        }
+        "Puresteel Paladin" => {
+            if eq_hand > 0 {
+                81
+            } else {
+                58
+            }
+        }
+        "Armory Automaton" => {
+            if eq_out > 0 {
+                64
+            } else {
+                50
+            }
+        }
+        "Beatrix, Loyal General" => {
+            if eq_out > 0 {
+                70
+            } else {
+                55
+            }
+        }
+        "Helitrooper" => 56,
+        "Bastion Protector" => {
+            if cloud_out {
+                74
+            } else {
+                52
+            }
+        }
+        "Zack Fair" => {
+            if cloud_out {
+                66
+            } else {
+                54
+            }
+        }
+        "Magnetic Snuffler" => {
+            if pl.gy.iter().any(|&x| is_equipment_card(g, x)) {
+                70
+            } else {
+                44
+            }
+        }
+        "Jocasta, Automaton Avenger" => 52,
+        "Unfinished Business" => {
+            let best = pl.gy.iter().any(|&x| card_name(g, x) == CLOUD);
+            let any = pl.gy.iter().any(|&x| g.db.get(x).creature && g.db.get(x).bomb >= 3);
+            if best {
+                80
+            } else if any {
+                60
+            } else {
+                0
+            }
+        }
+        _ => base,
+    }
+}
+
+/// worth saving when removal is aimed at it: Cloud and the commander above everything, then a creature wearing
+/// Equipment
+fn worth_saving(g: &Game, m: PermId) -> bool {
+    if !g.is_creature(m) {
+        return false;
+    }
+    name_of(g, m) == CLOUD || g.perm(m).is_cmd || (!equipment_on(g, m).is_empty() && pval(g, m) >= 4.0)
+}
+
+/// cast an instant from the hand to answer removal; true if it resolved (the caller applies its effect)
+fn cast_instant(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
+    let (gn, pips) = (g.db.get(c).generic, g.db.get(c).pips.to_string());
+    if !g.player(p).hand.contains(&c)
+        || !can_pay(g, p, gn, &pips, false)
+        || !crate::engine::cast::castable(g, p, c, "hand")
+    {
+        return Ok(false);
+    }
+    crate::ai::decks::pay_card(g, p, c, 0)
+}
+
+/// a flash Aura cast on m in response to removal; it only counts as a save if m ends up out of reach (`proof`)
+fn cast_aura(g: &mut Game, p: PlayerId, c: CardId, m: PermId, proof: &dyn Fn(&Game) -> bool) -> Res<bool> {
+    let (gn, pips) = (g.db.get(c).generic, g.db.get(c).pips.to_string());
+    if !g.player(p).hand.contains(&c)
+        || !can_pay(g, p, gn, &pips, false)
+        || !crate::engine::cast::castable(g, p, c, "hand")
+    {
+        return Ok(false);
+    }
+    crate::ai::decks::remove_from_hand(g, p, c);
+    pay(g, p, gn, &pips, false)?;
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c);
+    crate::glog!(g, "  {} casts {} -> {}", g.player(p).name, card_name(g, c), g.perm(m).name);
+    crate::engine::cast::on_cast(g, p, c)?;
+    if !crate::engine::stack::counter_window(g, p, c, 6.0, vec![])? {
+        g.player_mut(p).gy.push(c);
+        return Ok(false);
+    }
+    g.attach_to = Some(m);
+    let r = enter(g, p, c, Enter { was_cast: true, ..Default::default() });
+    g.attach_to = None;
+    r?;
+    Ok(proof(g))
+}
+
+/// removal that destroys (or deals damage): indestructible answers it
+fn destroyish(kind: &str) -> bool {
+    kind == "destroy" || kind.starts_with("dmg")
+}
+
+/// cloud's responses to removal aimed at its permanents: Cloud (and a creature wearing Equipment) is saved by, in
+/// order: Shardmage's Rescue (hexproof the turn it enters, any kind of targeted removal), Take Up the Shield and Zack
+/// Fair's sacrifice (indestructible, against destroy and damage), Cho-Manno's Blessing (protection from the spell's
+/// colours), then the whole-board Unbreakable Formation, Rootborn Defenses and Ultimate Magic: Holy. Bastion
+/// Protector and Shield of Kaldra are static.
+pub fn cloud_protect(
+    g: &mut Game,
+    p: PlayerId,
+    m: PermId,
+    kind: &str,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if actor.is_none() || actor == Some(p) || !live(g, m) || owner(g, m) != p || !worth_saving(g, m) {
+        return Ok(false);
+    }
+    if matches!(kind, "edict" | "sacrifice") {
+        return Ok(false);
+    }
+    let targeted = kind != "wipe";
+    let hand = |g: &Game, n: &str| g.player(p).hand.iter().copied().find(|&c| card_name(g, c) == n);
+    // Shardmage's Rescue: hexproof, so the removal has no target left
+    if targeted && let Some(c) = hand(g, "Shardmage's Rescue") {
+        let proof = |g: &Game| crate::engine::values::untargetable(g, m);
+        if cast_aura(g, p, c, m, &proof)? {
+            return Ok(true);
+        }
+    }
+    if destroyish(kind) {
+        if let Some(c) = hand(g, "Take Up the Shield")
+            && cast_instant(g, p, c)?
+        {
+            g.perm_mut(m).plus += 1;
+            super::partials::eot_kw(g, m, "lifelink");
+            super::partials::eot_kw(g, m, "indestructible");
+            return Ok(true);
+        }
+        if let Some(z) = creature_named(g, p, "Zack Fair")
+            && z != m
+            && zack_sacrifice(g, z, p, m.0 as i64)?
+        {
+            return Ok(true);
+        }
+    }
+    // Cho-Manno's Blessing: protection from the colours of the spell that aims at m
+    if targeted
+        && let Some(sp) = spell
+        && let Some(c) = hand(g, "Cho-Manno's Blessing")
+    {
+        let cols = g.db.get(sp).pips.to_string();
+        if !cols.is_empty() {
+            let source = crate::cards::Colors::from_letters(&cols);
+            let proof = |g: &Game| crate::engine::values::protected_from(g, m, source);
+            if cast_aura(g, p, c, m, &proof)? {
+                return Ok(true);
+            }
+        }
+    }
+    if destroyish(kind) || kind == "wipe" {
+        for n in ["Unbreakable Formation", "Rootborn Defenses", "Ultimate Magic: Holy"] {
+            if let Some(c) = hand(g, n)
+                && cast_instant(g, p, c)?
+            {
+                let main =
+                    g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
+                for x in g.player(p).perms.clone() {
+                    if live(g, x) && (n == "Ultimate Magic: Holy" || g.is_creature(x)) {
+                        super::partials::eot_kw(g, x, "indestructible");
+                        if n == "Unbreakable Formation" && main && g.is_creature(x) {
+                            g.perm_mut(x).plus += 1;
+                            super::partials::eot_kw(g, x, "vigilance");
+                        }
+                    }
+                }
+                return Ok(true);
+            }
+        }
+    }
+    Ok(false)
+}
+
+/// cloud's own plays (brain.special_options): Cid's regrow and Zack's sacrifice are card options and the equip
+/// moves are the generic equip options (`dsl::equip_options`, with `holder_bonus`). Nothing else yet.
 pub fn cloud_special(_g: &mut Game, _p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
     Ok(vec![])
 }
 
-/// cloud's responses to removal aimed at its permanents: none yet
-pub fn cloud_protect(
-    _g: &mut Game,
-    _p: PlayerId,
-    _m: PermId,
-    _kind: &str,
-    _actor: Option<PlayerId>,
-    _spell: Option<CardId>,
-) -> Res<bool> {
-    Ok(false)
-}
-
-#[allow(dead_code)]
-fn _unused(_: Action, _: Sacrificed, _: Enter) {
-    let _ = (can_pay, pay, ability_window, pval, enter, intern("x"));
+/// what entering again is worth for Cloud (read by the blink choices in `common::blink_value` and
+/// `mine::etb_value`): his search finds an Equipment, but he lets go of what he wears. 0 for anything else.
+pub fn reenter_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    if name_of(g, m) != CLOUD || g.perm(m).phased {
+        return 0.0;
+    }
+    let found = cloud_pick(g, p).map_or(0.0, |c| crate::engine::tutors::card_worth(g, p, c, false));
+    let worn: f64 = equipment_on(g, m)
+        .iter()
+        .map(|&e| 0.5 * g.perm(e).cd.map_or(0.0, |c| crate::engine::tutors::card_worth(g, p, c, false)))
+        .sum();
+    (found - worn).max(0.0)
 }

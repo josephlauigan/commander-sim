@@ -1915,6 +1915,10 @@ fn on_bf_of(g: &Game, p: PlayerId, m: PermId) -> bool {
 
 /// mine.etb_value: what re-entering the battlefield is worth for permanent m (its enters-the-battlefield effects)
 pub fn etb_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    let cv = crate::impls::cloud::reenter_value(g, p, m);
+    if cv > 0.0 {
+        return cv; // Cloud, Midgar Mercenary: his search again
+    }
     let x = g.perm(m);
     let Some(cd) = x.cd else { return 0.0 };
     let d = g.db.get(cd);

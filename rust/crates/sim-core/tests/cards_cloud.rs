@@ -200,7 +200,12 @@ fn the_kaldra_pieces_work_on_cloud() {
     let o = options(&mut g, helm, P0, Some(false));
     assert!(!o.is_empty());
     assert!(run(&mut g, P0, &o[0]));
-    let k = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token && g.perm(m).name.contains("Kaldra") || g.perm(m).token && epow(&g, m) >= 4);
+    let k = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).token && g.perm(m).name.contains("Kaldra") || g.perm(m).token && epow(&g, m) >= 4);
     assert!(k.is_some(), "Kaldra");
     let _ = es;
 }
