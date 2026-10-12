@@ -33,3 +33,36 @@ Gravblade Heavy, Multiply by Zero and Locust Spray.
 
 Over all tiers the noise is about ±1.6 points, so +2.3 is a real gain; four of five tiers move up. The current list's
 24.3% here matches the 23.8% estimated from the block A run (within noise).
+
+## The second upgrade package (2026-10-11, buys, about $44 for all 20 cards, not yet decided)
+
+Both packages at once (`run.sh upgrade2`; raw output in `upgrade2/`, code 3e3e24d): the first package plus Howling
+Mine, Temple Bell, Fate Unraveler, Peer into the Abyss, Geier Reach Sanitarium, Castle Locthwain, Mind Stone,
+Commander's Sphere, Charcoal Diamond, Phyrexian Arena, Read the Bones, Ambition's Cost, Syphon Mind, Exsanguinate, Gray
+Merchant of Asphodel and Swiftfoot Boots, for Mabel, Moseo, Burglar Rat, Fathom Fleet Cutthroat, Canyon Crawler,
+Necrosquito, Rampart Hunter, Callous Inspector, Depressurize, End of the Hunt, Tome of Legends, Diary of Dreams, Dark
+Endurance, Lash of the Balrog and two Swamps.
+
+| | T1 | T2 | T3 | T4 | T5 | All tiers |
+|---|---|---|---|---|---|---|
+| Current list (with Memory Jar) | 18.1% | 27.1% | 24.9% | 27.5% | 23.9% | **24.3%** |
+| With both packages | 26.4% | 42.7% | 33.4% | 32.2% | 25.3% | **32.0%** |
+| Change | **+8.3** | **+15.6** | **+8.5** | **+4.7** | +1.4 | **+7.7** |
+
+Six traced games (Tier 2, adaptive AI) showed nothing suspicious: wins came from the drain plan (Underworld Dreams,
+Howling Mine and Sheoldred killed all three opponents in three turns) and from Exsanguinate (X = 12 on turn 11, with 14
+mana that checks out: a land from Path to Exile on Sheoldred, and Sheoldred turned into a Forest by Song of the Dryads).
+
+## Gix, Yawgmoth Praetor on the upgraded list
+
+Gix (from Jodah) for Hullcarver, measured on the list with both packages applied (`run.sh gix-u2`; the doc is rewritten
+for the run and restored; raw output in `gix-u2/`):
+
+| | T1 | T2 | T3 | T4 | T5 | All tiers |
+|---|---|---|---|---|---|---|
+| Upgraded list | 25.7% | 42.3% | 30.7% | 30.1% | 24.8% | **30.7%** |
+| With Gix | 27.8% | 42.7% | 32.5% | 33.1% | 23.6% | **31.9%** |
+| Change | +2.1 | +0.4 | +1.8 | +3.0 | -1.2 | **+1.2** |
+
+Within noise (about ±1.5 over all tiers), leaning positive in four tiers. The upgraded list's 30.7% here and 32.0% in
+the run above differ by about the noise.

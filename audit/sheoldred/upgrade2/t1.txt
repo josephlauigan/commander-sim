@@ -1,0 +1,34 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Seizan, Perverter of Truth [pool] C 3BB :: pow=6 tgh=5 leg
+   Painful Lesson [pool] S 2B :: (no tags)
+   Underworld Dreams [pool] E BBB :: (no tags)
+   Dark Deal [pool] S 2B :: (no tags)
+   Howling Mine [scryfall] A 2 :: (no tags)
+      not modeled: At the beginning of each player's draw step, if ~ is untapped, that player draws an additional card.
+   Temple Bell [pool] A 3 :: (no tags)
+   Fate Unraveler [scryfall] CE 3B :: pow=3 tgh=4
+      not modeled: Whenever an opponent draws a card, ~ deals 1 damage to that player.
+   Peer into the Abyss [scryfall] S 4BBB :: (no tags)
+      not modeled: Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time.
+   Commander's Sphere [scryfall+dsl] A 3 :: rock=1:A
+      ability: activated  -> draw
+   Charcoal Diamond [pool] A 2 :: rock=1:B
+   Read the Bones [scryfall+dsl] S 2B :: draw=2
+      ability: spell  -> scry, draw, lose_life
+   Ambition's Cost [pool] S 3B :: draw=3
+   Syphon Mind [pool] S 3B :: draw=2
+   Exsanguinate [pool] S BB :: xdrain
+   Geier Reach Sanitarium [pool] L  :: leg c=C
+   Castle Locthwain [scryfall+dsl] L  :: c=B ck
+      ability: static note -> 
+      ability: activated  -> draw
+      not modeled: {1}{B}{B}, {T}: Draw a card, then you lose life equal to the number of cards in your hand.   [partly: you lose life equal to the number of cards in your hand]
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Ribskiff -> Seizan, Perverter of Truth; Locust Spray -> Painful Lesson; Gravblade Heavy -> Underworld Dreams; Multiply by Zero -> Dark Deal; Mabel, Bitter Recluse -> Howling Mine; Moseo, Vein's New Dean -> Temple Bell; Burglar Rat -> Fate Unraveler; Fathom Fleet Cutthroat -> Peer into the Abyss; Canyon Crawler -> Mind Stone; Necrosquito -> Commander's Sphere; Rampart Hunter -> Charcoal Diamond; Callous Inspector -> Phyrexian Arena; Depressurize -> Read the Bones; End of the Hunt -> Ambition's Cost; Tome of Legends -> Syphon Mind; Diary of Dreams -> Exsanguinate; Dark Endurance -> Gray Merchant of Asphodel; Lash of the Balrog -> Swiftfoot Boots; Swamp -> Geier Reach Sanitarium; Swamp -> Castle Locthwain
+
+=== Sheoldred vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  18.1% ->  26.4%  (delta +8.3 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Lathril 12.3%  Teysa Karlov 14.5%  Light-Paws 23.4%  Isshin 16.0%  Tatyova 7.2%
+VERDICT: BETTER under the loose profile (the only one run)
+
+(186s total)

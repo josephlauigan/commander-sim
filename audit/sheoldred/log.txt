@@ -18,3 +18,13 @@ upgrade t2 exit 0 [loose       ] win  27.1% ->  31.2%  (delta +4.1 pts, noise ±
 upgrade t3 exit 0 [loose       ] win  24.9% ->  27.0%  (delta +2.1 pts, noise ±3.7, paired)   n=1000
 upgrade t4 exit 0 [loose       ] win  27.5% ->  29.5%  (delta +2.0 pts, noise ±3.6, paired)   n=1000
 upgrade t5 exit 0 [loose       ] win  23.9% ->  23.4%  (delta -0.5 pts, noise ±3.3, paired)   n=1000
+upgrade2 t1 exit 0 [loose       ] win  18.1% ->  26.4%  (delta +8.3 pts, noise ±3.5, paired)   n=1000
+upgrade2 t2 exit 0 [loose       ] win  27.1% ->  42.7%  (delta +15.6 pts, noise ±4.1, paired)   n=1000
+upgrade2 t3 exit 0 [loose       ] win  24.9% ->  33.4%  (delta +8.5 pts, noise ±3.7, paired)   n=1000
+upgrade2 t4 exit 0 [loose       ] win  27.5% ->  32.2%  (delta +4.7 pts, noise ±3.8, paired)   n=1000
+upgrade2 t5 exit 0 [loose       ] win  23.9% ->  25.3%  (delta +1.4 pts, noise ±3.6, paired)   n=1000
+gix-u2 t1 exit 0 [loose       ] win  25.7% ->  27.8%  (delta +2.1 pts, noise ±3.2, paired)   n=1000
+gix-u2 t2 exit 0 [loose       ] win  42.3% ->  42.7%  (delta +0.4 pts, noise ±3.8, paired)   n=1000
+gix-u2 t3 exit 0 [loose       ] win  30.7% ->  32.5%  (delta +1.8 pts, noise ±3.6, paired)   n=1000
+gix-u2 t4 exit 0 [loose       ] win  30.1% ->  33.1%  (delta +3.0 pts, noise ±3.4, paired)   n=1000
+gix-u2 t5 exit 0 [loose       ] win  24.8% ->  23.6%  (delta -1.2 pts, noise ±2.8, paired)   n=1000
