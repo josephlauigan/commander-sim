@@ -1,0 +1,21 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The One Ring [pool] A 4 :: leg
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m17s elapsed, ~2m34s left
+  progress  20.0%  0m35s elapsed, ~2m22s left
+  progress  30.0%  0m53s elapsed, ~2m04s left
+  progress  40.0%  1m10s elapsed, ~1m45s left
+  progress  50.0%  1m30s elapsed, ~1m30s left
+  progress  60.0%  1m47s elapsed, ~1m11s left
+  progress  70.0%  2m06s elapsed, ~0m54s left
+  progress  80.0%  2m25s elapsed, ~0m36s left
+  progress  90.0%  2m44s elapsed, ~0m18s left
+  progress 100.0%  3m05s elapsed, ~0m00s left
+Swaps: Otherworld Atlas -> The One Ring
+
+=== Sheoldred vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  28.1% ->  29.5%  (delta +1.4 pts, noise ±2.4, paired)   n=1000
+               eliminated by (variant): Lathril 12.0%  Teysa Karlov 11.7%  Light-Paws 22.4%  Isshin 17.6%  Tatyova 6.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(185s total)

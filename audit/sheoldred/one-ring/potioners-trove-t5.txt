@@ -1,0 +1,21 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The One Ring [pool] A 4 :: leg
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m06s elapsed, ~1m01s left
+  progress  20.0%  0m14s elapsed, ~0m59s left
+  progress  30.0%  0m22s elapsed, ~0m52s left
+  progress  40.0%  0m29s elapsed, ~0m43s left
+  progress  50.0%  0m37s elapsed, ~0m37s left
+  progress  60.0%  0m44s elapsed, ~0m29s left
+  progress  70.0%  0m52s elapsed, ~0m22s left
+  progress  80.0%  1m00s elapsed, ~0m15s left
+  progress  90.0%  1m07s elapsed, ~0m07s left
+  progress 100.0%  1m16s elapsed, ~0m00s left
+Swaps: Potioner's Trove -> The One Ring
+
+=== Sheoldred vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.6% ->  23.4%  (delta +0.8 pts, noise ±2.8, paired)   n=1000
+               eliminated by (variant): Urza 17.9%  Zur the Enchanter 12.4%  Winota 18.7%  Kinnan 19.7%  Yawgmoth 7.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(76s total)
