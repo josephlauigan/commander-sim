@@ -176,6 +176,9 @@ fn elrond_enters(g: &mut Game, src: Src) -> Res {
     x.data.set(DataKey::Resolved, Val::Int(n));
     crate::cardcode::scry(g, o, 1, false)?;
     if n == 2 {
+        g.player_mut(o).stat("ring_tempts", 1);
+        let turns = g.player(o).turns;
+        g.player_mut(o).milestone.entry("elrond").or_insert(turns); // the elrond deck's plan online
         crate::cardcode::ring_tempt(g, o)?;
     }
     Ok(())
@@ -757,13 +760,31 @@ pub fn elrond_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let base = generic_prio(g, p, c);
     let pl = g.player(p);
     if c == pl.cmd {
-        return if pl.turns >= 2 { (97 - 3 * pl.tax as i32).max(40) } else { 0 };
+        if pl.turns < 2 {
+            return 0;
+        }
+        if tempt_set(g, p).is_some_and(|s| s.contains(&c)) {
+            return 98; // Elrond and the entries that tempt the Ring this turn
+        }
+        // alone he is exposed for a whole round: wait for a turn that tempts while another entry is in hand
+        let spare = pl.hand.iter().any(|&x| entries_of(g, x) > 0 && cname(g, x) != FEAR);
+        if spare && pl.turns < SOLO_TURN + 2 * pl.tax as u32 {
+            return 0;
+        }
+        return if pl.tax == 0 { 97 } else { RECAST_PRIO };
     }
     let d = g.db.get(c);
     let name = &*d.name;
     let out = elrond_of(g, p);
     if name == FEAR {
         return fear_prio(g, p, c);
+    }
+    if d.creature || entries_of(g, c) > 0 {
+        if let Some(s) = tempt_set(g, p)
+            && s.contains(&c)
+        {
+            return 90;
+        }
     }
     if FLASHERS.contains(&name) {
         return flash_hold(g, p, c);
@@ -899,3 +920,79 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_cast = Some(fear_cost);
     Ok(())
 }
+
+// ================================================================== the entry planner
+/// how many creature entries (for Elrond's trigger) casting this card makes
+fn entries_of(g: &Game, c: CardId) -> u32 {
+    let d = g.db.get(c);
+    let name = &*d.name;
+    if name == "Coral Barrier" {
+        return 2;
+    }
+    if d.creature {
+        return 1;
+    }
+    if matches!(name, "Muse's Encouragement" | "Retrieve the Esper" | "Unfathomable Truths") {
+        return 1;
+    }
+    0
+}
+
+/// the cheapest set of (at most three) entry cards that makes `need` entries within `mana`: Elrond (not out yet) must be
+/// in it. Returns the cards.
+fn entry_set(g: &Game, p: PlayerId, need: u32, mana: u32, elrond_out: bool) -> Option<Vec<CardId>> {
+    let pl = g.player(p);
+    let mut cards: Vec<(CardId, u32, u32)> = Vec::new();
+    let mut add = |c: CardId| {
+        let n = entries_of(g, c);
+        if n == 0 || cname(g, c) == FEAR {
+            return;
+        }
+        let (gn, pips) = cost_of(g, p, c);
+        cards.push((c, gn + pips.chars().count() as u32, n));
+    };
+    for &c in &pl.hand {
+        add(c);
+    }
+    if pl.cmd_in_zone && !elrond_out {
+        add(pl.cmd);
+    }
+    let k = cards.len();
+    let mut best: Option<(u32, Vec<CardId>)> = None;
+    for mask in 1u32..(1 << k) {
+        if mask.count_ones() > 3 {
+            continue;
+        }
+        let (mut cost, mut ent, mut has_e) = (0, 0, elrond_out);
+        for (i, &(c, cc, n)) in cards.iter().enumerate() {
+            if mask >> i & 1 == 1 {
+                cost += cc;
+                ent += n;
+                has_e |= c == pl.cmd;
+            }
+        }
+        if ent < need || cost > mana || !has_e {
+            continue;
+        }
+        if best.as_ref().is_none_or(|(bc, _)| cost < *bc) {
+            best =
+                Some((cost, cards.iter().enumerate().filter(|(i, _)| mask >> i & 1 == 1).map(|(_, x)| x.0).collect()));
+        }
+    }
+    best.map(|b| b.1)
+}
+
+/// my turn: the plan to make the Ring tempt this turn, if mana allows
+fn tempt_set(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+    if g.active != Some(p) {
+        return None;
+    }
+    let out = elrond_of(g, p);
+    let n = out.map_or(0, |e| resolved_now(g, e)) as u32;
+    if n >= 2 {
+        return None;
+    }
+    entry_set(g, p, 2 - n, crate::engine::mana::total_mana(g, p, false), out.is_some())
+}
+const RECAST_PRIO: i32 = 45;
+const SOLO_TURN: u32 = 8;
