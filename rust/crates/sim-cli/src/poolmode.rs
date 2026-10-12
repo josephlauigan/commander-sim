@@ -406,7 +406,7 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     let matrix_mode = a.all_decks || (tiers.len() > 1 && swaps.is_empty() && !a.analyze);
     let (total, mut what) = if let Some(c) = &a.calibrate {
         let w = if c == "within" || c == "all" { TIERS.len() as u64 } else { 0 };
-        let o = if c == "ordering" || c == "all" { 20 } else { 0 };
+        let o = if c == "ordering" || c == "all" { 5 * (TIERS.len() as u64 - 1) } else { 0 };
         (k * (w + o), format!("calibration: {c}"))
     } else if matrix_mode {
         let nd = if a.all_decks { MINE.len() } else { 1 };

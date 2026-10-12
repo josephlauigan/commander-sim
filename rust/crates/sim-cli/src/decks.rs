@@ -27,10 +27,11 @@ pub const FILES: [(&str, &str, &str); 12] = [
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
 pub const MINE: [&str; 12] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah", "kefka", "titania", "sheoldred", "elrond", "cloud"];
 
-pub const TIERS: [&str; 5] = ["t1", "t2", "t3", "t4", "t5"];
+pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
 
 pub fn tier_label(t: &str) -> &str {
     match t {
+        "t0" => "Tier 0 (Bracket 2 precons)",
         "t1" => "Tier 1 (High B2 / Low B3)",
         "t2" => "Tier 2 (Mid B3)",
         "t3" => "Tier 3 (High B3)",
@@ -237,7 +238,7 @@ mod tests {
             assert_eq!(v.len(), 100, "{k}");
         }
         let pool = load_pool(&root).unwrap();
-        assert_eq!(pool.len(), 25);
+        assert_eq!(pool.len(), 30);
         for t in TIERS {
             assert_eq!(pool.iter().filter(|d| d.tier == t).count(), 5, "{t}");
         }

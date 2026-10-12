@@ -9,7 +9,7 @@ use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
-pub const TIERS: [&str; 5] = ["t1", "t2", "t3", "t4", "t5"];
+pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
 /// the decks the setup screen offers, in the order of Python's `poolmode.MINE` (error messages list them so)
 pub const MY_DECKS: [&str; 7] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah"];
 
@@ -182,7 +182,7 @@ pub fn catalog(data: &Path) -> Result<Value, String> {
         decks.push(json!({
             "key": key, "commander": commander, "name": display_name(&text).unwrap_or(commander.to_string()),
             "bracket": bracket, "game_changers": gcs,
-            "win_rates": r.map(|r| TIERS.iter().zip(r).map(|(t, v)| (t.to_string(), json!(v))).collect::<serde_json::Map<_, _>>()),
+            "win_rates": r.map(|r| TIERS[1..].iter().zip(r).map(|(t, v)| (t.to_string(), json!(v))).collect::<serde_json::Map<_, _>>()),
             "average": r.map(|r| round1(r.iter().sum::<f64>() / r.len() as f64)),
         }));
     }

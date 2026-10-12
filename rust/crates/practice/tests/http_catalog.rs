@@ -54,9 +54,10 @@ fn test_tiers() {
     let s = srv!();
     let o = s.client().get("/api/options").json();
     let tiers = o["tiers"].as_array().unwrap();
-    assert_eq!(tiers.iter().map(|t| t["key"].as_str().unwrap()).collect::<Vec<_>>(), ["t1", "t2", "t3", "t4", "t5"]);
+    assert_eq!(tiers.iter().map(|t| t["key"].as_str().unwrap()).collect::<Vec<_>>(), ["t0", "t1", "t2", "t3", "t4", "t5"]);
     assert!(tiers.iter().all(|t| t["decks"].as_array().unwrap().len() == 5));
-    assert_eq!(tiers[0]["label"], "T1 · High B2 / Low B3");
+    assert_eq!(tiers[0]["label"], "T0 · B2 Precons");
+    assert_eq!(tiers[1]["label"], "T1 · High B2 / Low B3");
     for t in tiers {
         for d in t["decks"].as_array().unwrap() {
             for k in ["key", "commander", "name"] {

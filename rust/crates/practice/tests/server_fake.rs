@@ -216,7 +216,7 @@ fn options_and_saves_shapes() {
     assert_eq!(st, 200);
     assert_eq!((o["lan"].clone(), o["host"].clone(), o["app"].clone()), (json!(false), json!(true), json!(false)));
     assert_eq!(o["decks"].as_array().unwrap().len(), 12);
-    assert_eq!(o["tiers"].as_array().unwrap().len(), 5);
+    assert_eq!(o["tiers"].as_array().unwrap().len(), 6);
     assert!(o["images"].is_object());
     let (_, _, s) = call(r.h.port, "GET", "/api/saves", None, None);
     assert_eq!(s, json!({"saves": [], "autosave": null}));
@@ -233,7 +233,7 @@ fn a_game_through_the_routes() {
     );
     assert_eq!(
         call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t9"}))).2["error"],
-        "tier: one of t1, t2, t3, t4, t5"
+        "tier: one of t0, t1, t2, t3, t4, t5"
     );
     assert_eq!(
         call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t1", "autopass": "x"}))).2["error"],

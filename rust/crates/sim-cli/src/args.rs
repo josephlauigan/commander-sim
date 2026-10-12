@@ -42,7 +42,7 @@ const OPTS: [Opt; 20] = [
     opt(
         "--pool",
         false,
-        &["t1", "t2", "t3", "t4", "t5", "all"],
+        &["t0", "t1", "t2", "t3", "t4", "t5", "all"],
         "",
         "play --deck against three outside decks drawn from this tier (see decklists/pool/)",
     ),

@@ -36,6 +36,11 @@ pub mod elrond;
 pub mod cloud;
 pub mod bulk_blue;
 pub mod bulk_white;
+pub mod t0_zurgo;
+pub mod t0_stella;
+pub mod t0_captain;
+pub mod t0_giada;
+pub mod t0_anikthea;
 pub mod zur;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
@@ -74,5 +79,10 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     cloud::register(&mut r, db)?;
     bulk_blue::register(&mut r, db)?;
     bulk_white::register(&mut r, db)?;
+    t0_zurgo::register(&mut r, db)?;
+    t0_stella::register(&mut r, db)?;
+    t0_captain::register(&mut r, db)?;
+    t0_giada::register(&mut r, db)?;
+    t0_anikthea::register(&mut r, db)?;
     Ok(r)
 }
