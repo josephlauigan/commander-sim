@@ -1053,8 +1053,8 @@ fn ribskiff_crew(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
-fn sheoldred_card(g: &Game, m: PermId) -> bool {
-    g.perm(m).cd.is_some_and(|c| name_of(g, c) == "Sheoldred, the Apocalypse")
+pub fn sheoldred_card(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| name_of(g, c) == SHEOLDRED)
 }
 
 /// toxic 2: two poison counters with the combat damage to a player
@@ -1314,7 +1314,13 @@ fn throwdown_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym
 /// back, Soul Enervation with a creature to kill
 pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let d = g.db.get(c);
+    let out = sheoldred_out(g, p);
     match &*d.name {
+        SHEOLDRED => 96,                                 // as early as the mana allows
+        "Arcane Signet" | "Fellwar Stone" if !out => 92, // rocks first: they get her out a turn sooner
+        "Champion's Helm" | "Darksteel Plate" if out => 78,
+        // answers held for removal aimed at her (the protect hook casts them)
+        "Masterful Flourish" | "Battle-Rage Blessing" | "Dark Endurance" => 0,
         DELVER => {
             let ok = rean_pick(g, p, 99, true).map_or(0.0, |x| cv(g, x)) >= 2.5 && g.player(p).life > 14;
             if ok { 74 } else { 36 }
@@ -1328,9 +1334,133 @@ pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     }
 }
 
-/// sheoldred's own plays (brain.special_options): the Beckoner's warp and its cast from exile
+/// sheoldred's own plays (brain.special_options): equip Champion's Helm or Darksteel Plate onto Sheoldred before
+/// anything else, then the Beckoner's warp and its cast from exile
 pub fn sheoldred_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
-    beckoner_options(g, p, post)
+    let mut out = equip_options(g, p);
+    out.extend(beckoner_options(g, p, post)?);
+    Ok(out)
+}
+
+const SHEOLDRED: &str = "Sheoldred, the Apocalypse";
+
+/// Champion's Helm (equip {1}: hexproof on a legendary creature) or Darksteel Plate (equip {2}: indestructible) onto
+/// Sheoldred, ahead of every other play of the turn
+fn equip_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
+    let mut out = vec![];
+    if human(g, p) || g.active != Some(p) {
+        return out;
+    }
+    let Some(sheo) = my_creatures(g, p).into_iter().find(|&m| sheoldred_card(g, m)) else { return out };
+    for e in g.player(p).perms.clone() {
+        let x = g.perm(e);
+        if !x.on_bf || x.phased || x.attached == Some(sheo) {
+            continue;
+        }
+        let (n, hexproof_plan) = match name_of_perm(g, e) {
+            "Champion's Helm" => (1, true),
+            "Darksteel Plate" => (2, false),
+            _ => continue,
+        };
+        if !can_pay(g, p, n, "", false) || (hexproof_plan && untargetable(g, sheo)) {
+            continue;
+        }
+        out.push(Opt {
+            utility: 9.0 - 0.1 * n as f64,
+            label: format!("equip {} to Sheoldred", g.perm(e).name),
+            act: Some(Action::Plan { f: equip_sheoldred, arg: e.0 as i64 | ((n as i64) << 40) }),
+        });
+    }
+    out
+}
+
+fn name_of_perm(g: &Game, m: PermId) -> &str {
+    g.perm(m).cd.map_or("", |c| name_of(g, c))
+}
+
+fn equip_sheoldred(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (e, n) = (PermId((arg & 0xff_ffff_ffff) as u32), (arg >> 40) as u32);
+    let Some(sheo) = my_creatures(g, p).into_iter().find(|&m| sheoldred_card(g, m)) else { return Ok(false) };
+    if !on_bf(g, e) || !can_pay(g, p, n, "", false) {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} equips {} to Sheoldred", pname(g, p), g.perm(e).name);
+    crate::engine::stack::equip_to(g, p, e, sheo, n)
+}
+
+// ------------------------------------------------------------------ protecting Sheoldred
+/// the protection instants: (name, generic, pips, power bonus). All give indestructible until end of turn.
+const SHIELDS: [(&str, u32, &str, i32); 3] =
+    [("Masterful Flourish", 0, "B", 1), ("Battle-Rage Blessing", 1, "B", 0), ("Dark Endurance", 1, "B", 2)];
+
+/// removal that indestructible stops: destroy and damage (not exile, -X/-X, sacrifice)
+fn indestructible_helps(kind: &str) -> bool {
+    kind == "destroy" || kind.starts_with("dmg")
+}
+
+/// the cheapest protection instant in p's hand that it can pay for
+fn shield_in_hand(g: &Game, p: PlayerId) -> Option<CardId> {
+    let cs: Vec<CardId> = g
+        .player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&c| {
+            SHIELDS.iter().any(|s| s.0 == name_of(g, c)) && {
+                let s = SHIELDS.iter().find(|s| s.0 == name_of(g, c)).unwrap();
+                can_pay(g, p, s.1, s.2, false) && castable(g, p, c, "hand")
+            }
+        })
+        .collect();
+    min_by(&cs, |c| g.db.get(c).cmc as f64)
+}
+
+/// removal aimed at Sheoldred: destroy-type removal is answered with a protection instant (Masterful Flourish, Battle-
+/// Rage Blessing, Dark Endurance); Champion's Helm's hexproof already stops targeted removal, and -X/-X or exile
+/// is not stopped by indestructible, so those get no response. True if she is safe.
+pub fn sheoldred_protect(
+    g: &mut Game,
+    p: PlayerId,
+    m: PermId,
+    kind: &str,
+    actor: Option<PlayerId>,
+    _spell: Option<CardId>,
+) -> Res<bool> {
+    if !sheoldred_card(g, m) || actor.is_none() || actor == Some(p) || !indestructible_helps(kind) {
+        return Ok(false);
+    }
+    let Some(c) = shield_in_hand(g, p) else { return Ok(false) };
+    let (_, gn, pips, bonus) = *SHIELDS.iter().find(|s| s.0 == name_of(g, c)).unwrap();
+    remove_card(&mut g.player_mut(p).hand, c);
+    pay(g, p, gn, pips, false)?;
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c);
+    crate::glog!(g, "  {} casts {} on Sheoldred", pname(g, p), name_of(g, c));
+    crate::engine::cast::on_cast(g, p, c)?;
+    let ok = crate::engine::stack::counter_window(g, p, c, 6.0, vec![])?;
+    g.player_mut(p).gy.push(c);
+    if ok && on_bf(g, m) {
+        super::partials::eot_kw(g, m, "indestructible");
+        let x = g.perm_mut(m);
+        x.eot_pt.0 += bonus;
+    }
+    Ok(ok)
+}
+
+/// brain.hold_value: with Sheoldred out and a protection instant in hand, keep its mana up (worth more the likelier an
+/// opponent holds instant removal) -- but not once she has hexproof, which only exile and -X/-X get past
+pub fn sheoldred_hold(g: &Game, p: PlayerId) -> (Option<CardId>, f64) {
+    if !sheoldred_out(g, p) {
+        return (None, 0.0);
+    }
+    let Some(c) = shield_in_hand(g, p) else { return (None, 0.0) };
+    let hexproof = my_creatures(g, p).into_iter().any(|m| sheoldred_card(g, m) && untargetable(g, m));
+    if hexproof {
+        return (None, 0.0);
+    }
+    (Some(c), 1.5 + 2.5 * crate::ai::brain::removal_risk(g, p))
 }
 
 /// the plays from the hand and exile: warp the Beckoner, and cast it from exile on a later turn
@@ -1365,18 +1495,6 @@ fn beckoner_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         }
     }
     Ok(out)
-}
-
-/// sheoldred's responses to removal aimed at its permanents: none yet
-pub fn sheoldred_protect(
-    _g: &mut Game,
-    _p: PlayerId,
-    _m: PermId,
-    _kind: &str,
-    _actor: Option<PlayerId>,
-    _spell: Option<CardId>,
-) -> Res<bool> {
-    Ok(false)
 }
 
 const BECKONER: &str = "Perigee Beckoner";

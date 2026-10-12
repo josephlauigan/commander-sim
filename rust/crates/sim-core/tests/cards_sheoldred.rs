@@ -717,3 +717,70 @@ fn korlash_is_as_big_as_your_swamps_and_regenerates() {
     assert!(g.perm(k).on_bf, "regenerated with {{1}}{{B}} open");
     assert!(g.perm(k).tapped);
 }
+
+// ------------------------------------------------------------------ the AI plan
+#[test]
+fn the_ai_equips_the_helm_and_the_plate_on_sheoldred_first() {
+    let mut g = game();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Swamp", 3, false);
+    let sheo = perm(&mut g, P0, SHEO);
+    let helm = perm(&mut g, P0, "Champion's Helm");
+    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
+    let eq = o.iter().find(|o| o.label.contains("Champion's Helm")).expect("equip offered");
+    assert!(eq.utility >= 8.0, "ahead of everything else");
+    assert!(run_plan(&mut g, P0, eq));
+    assert_eq!(g.perm(helm).attached, Some(sheo));
+    assert!(values::untargetable(&g, sheo), "legendary: hexproof from the Helm");
+    let plate = perm(&mut g, P0, "Darksteel Plate");
+    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
+    let eq = o.iter().find(|o| o.label.contains("Darksteel Plate")).expect("plate offered");
+    assert!(run_plan(&mut g, P0, eq));
+    assert_eq!(g.perm(plate).attached, Some(sheo));
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), sheo, "destroy", None).unwrap();
+    assert!(g.perm(sheo).on_bf, "indestructible with the Plate");
+}
+
+#[test]
+fn a_protection_instant_answers_destroy_removal_aimed_at_sheoldred_but_not_exile() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    let sheo = perm(&mut g, P0, SHEO);
+    hand(&mut g, P0, &["Dark Endurance"]);
+    let ex = sim_core::impls::sheoldred::sheoldred_protect(&mut g, P0, sheo, "exile", Some(P1), None).unwrap();
+    assert!(!ex, "indestructible does not stop exile");
+    assert!(in_hand(&g, P0, "Dark Endurance"));
+    let ok = sim_core::impls::sheoldred::sheoldred_protect(&mut g, P0, sheo, "destroy", Some(P1), None).unwrap();
+    assert!(ok);
+    assert!(in_gy(&g, P0, "Dark Endurance"));
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), sheo, "destroy", None).unwrap();
+    assert!(g.perm(sheo).on_bf, "indestructible until end of turn");
+    assert_eq!(values::epow(&g, sheo), 6, "Dark Endurance gives +2/+0");
+}
+
+#[test]
+fn a_real_destroy_spell_at_sheoldred_is_answered_in_play() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    let sheo = perm(&mut g, P0, SHEO);
+    hand(&mut g, P0, &["Masterful Flourish"]);
+    lands(&mut g, P1, "Swamp", 2, false);
+    let c = hand(&mut g, P1, &["Terror"])[0];
+    cast::cast_card(&mut g, P1, c, "hand", Ctx { target: Some(sheo), ..Ctx::default() }).unwrap();
+    assert!(g.perm(sheo).on_bf, "Masterful Flourish saved her");
+    assert!(in_gy(&g, P0, "Masterful Flourish"));
+}
+
+#[test]
+fn the_ai_holds_mana_for_a_protection_instant_and_rocks_come_before_creatures() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    lands(&mut g, P0, "Swamp", 2, false);
+    hand(&mut g, P0, &["Battle-Rage Blessing"]);
+    let (c, v) = sim_core::impls::sheoldred::sheoldred_hold(&g, P0);
+    assert!(c.is_some() && v > 1.0);
+    let mut g = game();
+    let sig = hand(&mut g, P0, &["Arcane Signet", "Hullcarver"]);
+    let p = |g: &Game, c| sim_core::impls::sheoldred::sheoldred_prio(g, P0, c);
+    assert!(p(&g, sig[0]) > p(&g, sig[1]), "the rock goes first while Sheoldred is not out");
+}
