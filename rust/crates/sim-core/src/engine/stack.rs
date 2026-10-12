@@ -797,12 +797,13 @@ pub fn settle_stack(g: &mut Game) -> Res {
                 continue;
             }
             let c = it.card.unwrap();
+            let o = it.ctx.owner.unwrap_or(p); // a card cast from another player's deck goes back to theirs
             if c == g.player(p).cmd {
                 g.player_mut(p).cmd_in_zone = true;
             } else if it.zone == "gy" || it.ctx.exile_after {
-                g.player_mut(p).exile.push(c);
+                g.player_mut(o).exile.push(c);
             } else if !g.db.get(c).land {
-                g.player_mut(p).gy.push(c);
+                g.player_mut(o).gy.push(c);
             }
             continue;
         }
@@ -822,7 +823,7 @@ pub fn settle_stack(g: &mut Game) -> Res {
                 x.countered = true;
                 x.countered_by = Some(c);
             }
-            g.player_mut(p).gy.push(c);
+            g.player_mut(it.ctx.owner.unwrap_or(p)).gy.push(c);
             continue;
         }
         if g.db.get(c).perm && !it.generic {

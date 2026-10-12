@@ -114,6 +114,8 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         for q in opps {
             if has(g, q, Tag::SheoA) {
                 lose_life(g, p, 2, Some(q), "drain", None)?; // Sheoldred, the Apocalypse: they lose 2
+                let turns = g.player(q).turns;
+                g.player_mut(q).milestone.entry("sheoldred").or_insert(turns); // the sheoldred deck's plan online
             }
             if has(g, q, Tag::Tithe) && cardcode::tithe_unpaid(g, p)? {
                 add_treasure(g, q, 1)?;

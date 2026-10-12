@@ -1800,7 +1800,9 @@ fn gix_target(g: &Game, p: PlayerId) -> Option<PlayerId> {
     first_max(&g.opps(p).collect::<Vec<_>>(), |q| g.player(q).library.len())
 }
 
-/// Full: {4}{B}{B}{B}, discard X junk cards: plays the top X of an opponent's library free
+/// Full: {4}{B}{B}{B}, discard X junk cards: plays the top X of an opponent's library free. The spells stay that
+/// opponent's (their graveyard afterwards); a land played this way counts as yours when it leaves (lands have one
+/// owner field, which is also their controller).
 fn gix(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).owner != p || post != Some(false)
         || !can_pay(g, p, 4, "BBB", false) {
@@ -1842,7 +1844,7 @@ fn gix_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         if d.land && g.player(p).lands.len() < 20 {
             g.add_land(p, c, false);
         } else if !d.land && castable(g, p, c, "hand") {
-            cast_card(g, p, c, "lib", Ctx::default())?;
+            cast_card(g, p, c, "lib", Ctx { owner: Some(q), ..Ctx::default() })?;
         } else {
             g.player_mut(q).exile.push(c);
         }
