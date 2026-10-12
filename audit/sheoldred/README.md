@@ -80,3 +80,19 @@ for a Swamp; raw output in `mikokoro/`), so the change below is the list with Mi
 
 Within noise, leaning positive (four tiers of five; T5 +1.8 against ±1.3). Eight traced games (Tier 3) showed it
 activated in two, both at the end of an opponent's turn with Sheoldred out; in one the draw set up the kill next turn.
+
+## Otherworld Atlas and Mikokoro for Temple Bell and Castle Locthwain (2026-10-12)
+
+JD couldn't find Temple Bell or Castle Locthwain and locked in the replacements: Otherworld Atlas ($1.68) for the Bell,
+Mikokoro ($4.54) for the Castle (back to 32 Swamps; the Mikokoro-for-a-Swamp list above is superseded). Measured the
+other way round (`run.sh atlas-miko`: both back out for the originals; raw output in `atlas-miko/`):
+
+| | T1 | T2 | T3 | T4 | T5 | All tiers |
+|---|---|---|---|---|---|---|
+| Temple Bell + Castle Locthwain | 27.7% | 39.3% | 32.7% | 31.2% | 23.8% | **30.9%** |
+| Otherworld Atlas + Mikokoro | 28.1% | 41.7% | 32.2% | 30.4% | 22.6% | **31.0%** |
+| Change | +0.4 | +2.4 | -0.5 | -0.8 | -1.2 | **+0.1** |
+
+No difference (noise about ±3 per tier: two cards change, so the paired games diverge more). The Atlas is slow: it
+takes two turns of counters before it draws with a punisher out (or one counter when the draw kills), and in about 190
+traced games it was destroyed or Sheoldred was gone before that more often than not; it drew in two of them.

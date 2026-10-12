@@ -8,7 +8,10 @@
 #                 Lesson for Ribskiff, Gravblade Heavy, Multiply by Zero, Locust Spray
 #   upgrade2    : the first package plus the second (about $44 in all, 20 cards; see SU2)
 #   gix-u2      : Gix, Yawgmoth Praetor for Hullcarver, on the list with both packages applied
-#   mikokoro    : (2026-10-12, list with Mikokoro for a Swamp) Mikokoro back out for a Swamp; its value is minus the delta
+#   mikokoro    : (ran 2026-10-12 on the list with Mikokoro for a Swamp) Mikokoro back out for a Swamp; its value is
+#                 minus the delta. On the later list (Mikokoro for Castle Locthwain) it adds a 33rd Swamp instead
+#   atlas-miko  : (2026-10-12) Otherworld Atlas and Mikokoro back out for Temple Bell and Castle Locthwain; the value of
+#                 the replacements is minus the delta
 # Block A (wheel): Memory Jar.             Sheoldred cuts Carnage Altar;   Jodah gets Szadek, Lord of Secrets.
 # Block B (sweeper + removal): Toxic Deluge, Bitter Triumph.
 #                                          Sheoldred cuts Depressurize, Multiply by Zero;
@@ -76,6 +79,7 @@ for mode in "$@"; do
       paired $mode sheoldred --swap "Hullcarver=>Gix, Yawgmoth Praetor"
       git checkout -- $F $X; trap - EXIT ;;
     mikokoro) paired $mode sheoldred --swap "Mikokoro, Center of the Sea=>Swamp" ;;
+    atlas-miko) paired $mode sheoldred --swap "Otherworld Atlas=>Temple Bell" --swap "Mikokoro, Center of the Sea=>Castle Locthwain" ;;
     jodah-A) paired $mode jodah "${JA[@]}" ;;
     jodah-B) paired $mode jodah "${JB[@]}" ;;
     jodah-C) paired $mode jodah "${JC[@]}" ;;

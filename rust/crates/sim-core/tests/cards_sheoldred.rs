@@ -5,7 +5,7 @@ use sim_core::engine::life::gain;
 use sim_core::engine::{cast, turn, values, zones};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
-use sim_core::state::{Ctx, Game};
+use sim_core::state::{Ctx, DataKey, Game, Val};
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
@@ -962,6 +962,7 @@ fn the_four_upgrade_cards_resolve_from_the_card_data_not_a_bare_scryfall_body() 
 // ------------------------------------------------------------------ the second upgrade package
 const MINE: &str = "Howling Mine";
 const BELL: &str = "Temple Bell";
+const ATLAS: &str = "Otherworld Atlas";
 const UNRAV: &str = "Fate Unraveler";
 const PEER: &str = "Peer into the Abyss";
 const GEIER: &str = "Geier Reach Sanitarium";
@@ -1135,6 +1136,53 @@ fn geier_reach_sanitarium_taps_for_colourless_and_loots_everyone() {
     let sani = lands(&mut g, P0, GEIER, 1, false)[0];
     perm(&mut g, P0, UNRAV);
     assert!(f(&mut g, sani, P0, None).unwrap().is_empty(), "no spare mana for the {{2}}");
+}
+
+fn charge(g: &Game, m: PermId) -> i64 {
+    g.perm(m).data.int(DataKey::Charge)
+}
+
+#[test]
+fn otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many() {
+    // no punisher: a counter at the end of an opponent's turn, never in our own turn
+    let mut g = game();
+    let atlas = perm(&mut g, P0, ATLAS);
+    g.active = Some(P0);
+    assert!(perm_opts(&mut g, atlas, P0, None).is_empty(), "nothing in our own turn");
+    g.active = Some(P1);
+    let o = perm_opts(&mut g, atlas, P0, None);
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("charge counter"), "{}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(g.perm(atlas).tapped);
+    assert_eq!(charge(&g, atlas), 1);
+    // Sheoldred out, one counter, no kill: grow it instead
+    g.perm_mut(atlas).tapped = false;
+    perm(&mut g, P0, SHEO);
+    let o = perm_opts(&mut g, atlas, P0, None);
+    assert!(o[0].label.contains("charge counter"), "{}", o[0].label);
+    // two counters: each player draws two
+    g.perm_mut(atlas).data.set(DataKey::Charge, Val::Int(2));
+    let (h0, h1) = (hand_len(&g, P0), hand_len(&g, P1));
+    let o = perm_opts(&mut g, atlas, P0, None);
+    assert!(o[0].label.contains("draws 2"), "{}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!((hand_len(&g, P0), hand_len(&g, P1)), (h0 + 2, h1 + 2));
+    assert_eq!(life(&g, P1), 36, "Sheoldred: 2 for each of the opponent's draws");
+    assert_eq!(life(&g, P0), 44, "and 2 back for each of ours");
+    assert_eq!(charge(&g, atlas), 2, "the counters stay");
+    // one counter that kills: draw in our own main phase
+    let mut g = game();
+    let atlas = perm(&mut g, P0, ATLAS);
+    perm(&mut g, P0, SHEO);
+    g.perm_mut(atlas).data.set(DataKey::Charge, Val::Int(1));
+    g.player_mut(P1).life = 2;
+    g.active = Some(P0);
+    let o = perm_opts(&mut g, atlas, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("draws 1"), "{}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(life(&g, P1) <= 0, "Sheoldred: 2 for the draw");
 }
 
 #[test]
