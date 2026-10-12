@@ -388,6 +388,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
         crate::dsl::fire(g, "attack", fired)?;
         new.append(&mut g.new_attackers); // attacking tokens its triggers made
     }
+    crate::impls::cloud::plan_milestone(g, p, atk); // the cloud deck's plan online
     new.extend(crate::impls::cloud::jocasta_attack(g, p, atk)?); // Jocasta returns from the graveyard attacking
     new.extend(cardcode::keyword_attack(g, p, atk, d)?);
     if !g.hooks.is_empty() {

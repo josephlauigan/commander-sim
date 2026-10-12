@@ -1157,3 +1157,13 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
 pub fn search_bonus(g: &Game, p: PlayerId, label: &str) -> f64 {
     if label == CLOUD && cloud_of(g, p).is_none() { 10.0 } else { 0.0 }
 }
+
+/// the plan milestone `cloud`: the first attack by an equipped Cloud (read by `report::plan_turn`)
+pub fn plan_milestone(g: &mut Game, p: PlayerId, atk: &[PermId]) {
+    if g.player(p).key == KEY
+        && atk.iter().any(|&m| name_of(g, m) == CLOUD && !equipment_on(g, m).is_empty())
+    {
+        let turns = g.player(p).turns;
+        g.player_mut(p).milestone.entry("cloud").or_insert(turns);
+    }
+}
