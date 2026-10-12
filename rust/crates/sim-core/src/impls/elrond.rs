@@ -176,6 +176,9 @@ fn elrond_enters(g: &mut Game, src: Src) -> Res {
     x.data.set(DataKey::Resolved, Val::Int(n));
     crate::cardcode::scry(g, o, 1, false)?;
     if n == 2 {
+        g.player_mut(o).stat("ring_tempts", 1);
+        let turns = g.player(o).turns;
+        g.player_mut(o).milestone.entry("elrond").or_insert(turns); // the elrond deck's plan online
         crate::cardcode::ring_tempt(g, o)?;
     }
     Ok(())
