@@ -1,5 +1,7 @@
 # Titania, Protector of Argoth — Mono-Green Lands to the Graveyard
 
+**Simulator, 2026-10-12:** **22.6% over all tiers** (±0.4; rank 7 of the ten decks): T1 19.5%, T2 27.5%, T3 24.2%, T4 24.3%, T5 17.5%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+
 **Added 2026-10-11.** JD's mono-green deck, built from the bulk and binder lists around Titania, Protector of Argoth
 (borderless Secret Lair printing, about $2.46), with no other buys apart from Arachnogenesis and Blossoming Defense
 (bought 2026-10-11). Chosen over a Bristly Bill landfall build of mostly the same cards, which measured 15.0%.

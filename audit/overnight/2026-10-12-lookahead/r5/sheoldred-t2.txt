@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sheoldred vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  42.9%   95% CI 39.8-46.1%   (even share 25%: +17.9 pts)
+Average turn (your own turn count) of wins 13.3, of losses 11.8
+Plan online (): 0.0% of games
+Wins by: damage 98%, timeout 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Lord Windgrace (lord-windgrace-jund-lands)   61.6%            14.2%            9.6%
+  Sythis (sythis-selesnya-enchantress)         61.5%            21.2%           11.1%
+  Meren of Clan Nel Toth (meren-golgari-recu   59.9%            20.0%           11.9%
+  Brago (brago-azorius-blink-control)          59.0%            19.6%           10.6%
+  Kaalia of the Vast (kaalia-mardu-creature-   58.1%            20.3%           13.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(87s total)

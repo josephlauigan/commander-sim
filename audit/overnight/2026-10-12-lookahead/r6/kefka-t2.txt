@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Kefka vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  37.2%   95% CI 34.2-40.3%   (even share 25%: +12.2 pts)
+Average turn (your own turn count) of wins 13.7, of losses 11.9
+Plan online (Kefka flipped into Ruler of Ruin): 51.6% of games
+Wins by: damage 97%, timeout 3%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         62.9%            35.6%           18.9%
+  Meren of Clan Nel Toth (meren-golgari-recu   62.1%            18.1%           10.3%
+  Kaalia of the Vast (kaalia-mardu-creature-   60.6%            13.4%           10.8%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.8%            17.6%           10.8%
+  Brago (brago-azorius-blink-control)          55.6%            19.3%           10.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(102s total)

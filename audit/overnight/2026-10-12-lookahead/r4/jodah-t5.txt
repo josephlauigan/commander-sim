@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Jodah vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  18.2%   95% CI 15.9-20.8%   (even share 25%: -6.8 pts)
+Average turn (your own turn count) of wins 11.8, of losses 6.8
+Plan online (first legend cast free by Jodah): 40.3% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Winota (winota-boros-humans-cheat)           62.2%            35.5%           22.3%
+  Urza (urza-mono-blue-artifacts)              61.5%            28.3%           16.9%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   60.3%            14.5%            9.2%
+  Kinnan (kinnan-simic-mana-combo)             58.9%            35.4%           20.9%
+  Zur the Enchanter (zur-esper-enchantment-c   57.2%            22.2%           12.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(43s total)

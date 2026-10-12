@@ -1,0 +1,5 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+thread '<unknown>' (1263077) has overflowed its stack
+fatal runtime error: stack overflow, aborting
+/usr/bin/timeout: the monitored command dumped core

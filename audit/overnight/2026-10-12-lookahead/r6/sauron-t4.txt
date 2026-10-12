@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Sauron vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  23.5%   95% CI 21.0-26.3%   (even share 25%: -1.5 pts)
+Average turn (your own turn count) of wins 12.5, of losses 8.8
+Plan online (Sword + Assault combo attempted): 3.4% of games
+Wins by: damage 96%, combo 4%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 62.9%            29.3%           19.0%
+  Prosper (prosper-rakdos-exile-treasure)      62.1%            17.8%           10.2%
+  Heliod (heliod-mono-white-stax)              60.6%            29.2%           17.0%
+  Krenko (krenko-mono-red-goblins)             58.8%            27.3%           17.8%
+  Chulane (chulane-bant-value-combo)           55.6%            23.8%           12.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(56s total)

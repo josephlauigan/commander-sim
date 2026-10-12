@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Jodah vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 960 games] ===
+Win rate  18.8%   95% CI 16.4-21.3%   (even share 25%: -6.2 pts)
+Average turn (your own turn count) of wins 13.0, of losses 9.6
+Plan online (first legend cast free by Jodah): 56.2% of games
+Wins by: damage 98%, timeout 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Isshin (isshin-mardu-attack-triggers)        63.2%            24.1%           17.7%
+  Tatyova (tatyova-simic-landfall)             62.1%            23.5%           14.5%
+  Lathril (lathril-golgari-elves)              61.2%            24.8%           15.4%
+  Teysa Karlov (teysa-orzhov-aristocrats)      57.1%            29.9%           15.1%
+  Light-Paws (light-paws-aura-voltron)         56.4%            34.0%           18.3%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(116s total)

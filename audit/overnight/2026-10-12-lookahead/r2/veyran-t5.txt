@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Veyran vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  15.5%   95% CI 13.4-17.9%   (even share 25%: -9.5 pts)
+Average turn (your own turn count) of wins 12.6, of losses 7.0
+Plan online (Veyran + a magecraft payoff on the battlefield): 43.4% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-simic-mana-combo)             63.2%            38.1%           24.0%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   62.1%            16.4%           10.1%
+  Urza (urza-mono-blue-artifacts)              61.2%            29.8%           18.3%
+  Zur the Enchanter (zur-esper-enchantment-c   57.1%            24.8%           14.1%
+  Winota (winota-boros-humans-cheat)           56.4%            31.6%           17.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(38s total)

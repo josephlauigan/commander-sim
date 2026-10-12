@@ -1,5 +1,7 @@
 # Sauron, the Dark Lord — Grixis Amass
 
+**Simulator, 2026-10-12:** **24.8% over all tiers** (±0.5; rank 5 of the ten decks): T1 26.4%, T2 31.1%, T3 22.5%, T4 22.8%, T5 21.3%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+
 2026-09-17
 **Updated 2026-09-18 / 09-19 / 09-20** across earlier passes (rebuild, Nibelheim Aflame, extra-combat + land upgrade, bracket correction).
 **Updated 2026-09-21.** Notion Thief → Rhystic Study, then Thrummingbird → Inexorable Tide.

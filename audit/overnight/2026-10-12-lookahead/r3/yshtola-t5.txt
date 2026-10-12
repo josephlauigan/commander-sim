@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  22.1%   95% CI 19.6-24.8%   (even share 25%: -2.9 pts)
+Average turn (your own turn count) of wins 11.4, of losses 6.6
+Plan online (first drain from Y'shtola's cast trigger): 52.1% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-simic-mana-combo)             62.5%            35.7%           22.3%
+  Winota (winota-boros-humans-cheat)           60.6%            33.7%           21.0%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.9%            11.3%            6.7%
+  Zur the Enchanter (zur-esper-enchantment-c   59.6%            19.6%           11.4%
+  Urza (urza-mono-blue-artifacts)              57.4%            29.2%           16.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(38s total)

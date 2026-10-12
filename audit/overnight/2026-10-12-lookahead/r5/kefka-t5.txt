@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Kefka vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate  23.2%   95% CI 20.7-26.0%   (even share 25%: -1.8 pts)
+Average turn (your own turn count) of wins 11.5, of losses 6.8
+Plan online (Kefka flipped into Ruler of Ruin): 23.6% of games
+Wins by: damage 100%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Winota (winota-boros-humans-cheat)           61.6%            36.9%           23.3%
+  Zur the Enchanter (zur-esper-enchantment-c   61.5%            16.8%            9.9%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.9%            15.5%            9.1%
+  Kinnan (kinnan-simic-mana-combo)             59.0%            36.9%           21.7%
+  Urza (urza-mono-blue-artifacts)              58.1%            21.9%           12.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(40s total)

@@ -1,5 +1,7 @@
 # Alela, Artful Provocateur — Esper Faerie Flyers
 
+**Simulator, 2026-10-12:** **13.1% over all tiers** (±0.4; tied with Galadriel for 9th of the ten decks): T1 12.1%, T2 14.8%, T3 11.7%, T4 14.9%, T5 11.8%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+
 2026-10-05
 **Added 2026-10-05.** In the simulator as deck key `alela` (`commander-sim --deck alela --pool t3`) and in practice mode.
 

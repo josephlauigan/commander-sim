@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Y'shtola vs Tier 2 (Mid B3) [loose, lookahead AI, 960 games] ===
+Win rate  54.8%   95% CI 51.6-57.9%   (even share 25%: +29.8 pts)
+Average turn (your own turn count) of wins 13.7, of losses 11.9
+Plan online (first drain from Y'shtola's cast trigger): 85.6% of games
+Wins by: damage 98%, timeout 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         61.4%            24.4%           14.3%
+  Meren of Clan Nel Toth (meren-golgari-recu   60.9%            13.3%            6.6%
+  Brago (brago-azorius-blink-control)          60.7%            13.7%            6.8%
+  Kaalia of the Vast (kaalia-mardu-creature-   58.8%            11.5%            8.9%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.2%            12.0%            6.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(100s total)

@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Galadriel vs Tier 3 (High B3) [loose, lookahead AI, 960 games] ===
+Win rate  11.9%   95% CI 10.0-14.1%   (even share 25%: -13.1 pts)
+Average turn (your own turn count) of wins 13.9, of losses 11.1
+Plan online (first Alliance trigger from Galadriel): 54.9% of games
+Wins by: damage 95%, timeout 5%
+  Opponent                                    seated  won when seated  eliminated you
+  Atraxa (atraxa-superfriends)                 63.2%            35.3%           15.8%
+  Marwyn (marwyn-mono-green-elves)             62.1%            21.6%           15.5%
+  Aurelia (aurelia-boros-extra-combats)        61.2%            39.3%           29.8%
+  Tergrid (tergrid-mono-black-disruption)      57.1%            28.1%           13.6%
+  Korvold (korvold-jund-sacrifice)             56.4%            21.8%           11.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(95s total)

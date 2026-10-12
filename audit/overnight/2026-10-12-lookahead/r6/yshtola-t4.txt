@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Y'shtola vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  42.4%   95% CI 39.3-45.5%   (even share 25%: +17.4 pts)
+Average turn (your own turn count) of wins 11.9, of losses 8.0
+Plan online (first drain from Y'shtola's cast trigger): 72.6% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 62.9%            20.0%           12.5%
+  Prosper (prosper-rakdos-exile-treasure)      62.1%            12.9%            7.5%
+  Heliod (heliod-mono-white-stax)              60.6%            28.0%           16.8%
+  Krenko (krenko-mono-red-goblins)             58.8%            20.2%           12.4%
+  Chulane (chulane-bant-value-combo)           55.6%            14.6%            8.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(67s total)

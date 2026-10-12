@@ -76,7 +76,47 @@ Look-ahead exposed rules and AI faults that the heuristic AI rarely hit; each wa
 - Yawgmoth: Geralf's Messenger as its own loop payoff, -1/-1 counters on X/1 tokens, instant-speed use after blockers
   (a new `defend` event for defending permanents), and a second loop once a payoff is drawn.
 
-### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; 240 games per cell)
+### 0d. Your decks against the tiers (look-ahead AI, loose profile: the most interactive opponents; games per cell with each table)
+
+**October 12 run of all ten decks on the same code** (6,720 games per cell: seven rounds of 960, seeds
+500000-506719; intervals about ±1.1 points per cell and ±0.5 over all five tiers; `audit/overnight/2026-10-12-lookahead/`:
+`run.sh`, `summary.sh`, `table.sh`, one folder per round). The code is main 66e43bf plus the delve fix (cdcb3e3): one
+Jodah vs Tier 4 game (seed 500501) overflowed the stack, and the fix changes no game that finished before it (identical
+output on 672 games of Jodah, Sheoldred and Sephiroth, before and after). The lists are the current ones: Kefka and
+Veyran after their trade, Sheoldred with Memory Jar, Gix and Phyrexian Arena, Sauron with Bedevil and Cost of
+Brilliance, Jodah with Szadek and Lagrella. In brackets: the 95% interval. Bold: the interval is above an even share
+(25%). This table replaces the October 11 tables and paired-test figures below as the current numbers.
+
+| Deck | T1 High B2/Low B3 | T2 Mid B3 | T3 High B3 | T4 Low B4 | T5 High B4 | All tiers |
+|---|---|---|---|---|---|---|
+| Y'shtola | **45.4%** (44.2-46.6) | **55.1%** (53.9-56.2) | **44.8%** (43.6-46.0) | **39.2%** (38.1-40.4) | 22.3% (21.3-23.3) | **41.4%** (±0.5) |
+| Sephiroth | **41.4%** (40.3-42.6) | **50.0%** (48.8-51.2) | **39.3%** (38.1-40.5) | **32.2%** (31.1-33.3) | 21.3% (20.3-22.3) | **36.9%** (±0.5) |
+| Sheoldred | **26.5%** (25.4-27.6) | **39.7%** (38.6-40.9) | **32.5%** (31.3-33.6) | **30.9%** (29.8-32.0) | 24.4% (23.4-25.5) | **30.8%** (±0.5) |
+| Kefka | **28.3%** (27.2-29.4) | **40.2%** (39.1-41.4) | **26.4%** (25.4-27.5) | **29.3%** (28.2-30.4) | 22.9% (21.9-23.9) | **29.4%** (±0.5) |
+| Sauron | **26.4%** (25.3-27.4) | **31.1%** (30.0-32.3) | 22.5% (21.5-23.5) | 22.8% (21.8-23.8) | 21.3% (20.3-22.3) | 24.8% (±0.5) |
+| Veyran | **26.8%** (25.8-27.9) | **29.1%** (28.0-30.2) | 24.2% (23.2-25.2) | 22.3% (21.3-23.3) | 14.9% (14.0-15.7) | 23.4% (±0.4) |
+| Titania | 19.5% (18.5-20.4) | **27.5%** (26.4-28.6) | 24.2% (23.1-25.2) | 24.3% (23.3-25.3) | 17.5% (16.5-18.4) | 22.6% (±0.4) |
+| Jodah | 17.3% (16.4-18.2) | 16.0% (15.2-16.9) | 17.9% (17.0-18.9) | 15.9% (15.0-16.8) | 19.1% (18.2-20.0) | 17.2% (±0.4) |
+| Galadriel | 13.1% (12.3-13.9) | 15.9% (15.0-16.7) | 12.3% (11.6-13.1) | 12.1% (11.3-12.9) | 12.6% (11.8-13.4) | 13.2% (±0.4) |
+| Alela | 12.1% (11.3-12.9) | 14.8% (13.9-15.6) | 11.7% (10.9-12.5) | 14.9% (14.0-15.8) | 11.8% (11.0-12.6) | 13.1% (±0.4) |
+
+Three groups, each well apart from the next: Y'shtola and Sephiroth on top (37-41%); Sheoldred, Kefka, Sauron,
+Veyran and Titania around an even share (23-31%); Jodah, Galadriel and Alela well below it (13-17%). Galadriel and
+Alela are tied (0.1 apart) and Veyran and Titania are at the edge (0.8); every other neighbouring pair is further apart
+than the ±0.7 that a gap between two averages needs, so the order is settled. The top seven decks are weakest against
+Tier 5; Jodah, Galadriel and Alela are about flat across the tiers (Jodah's best is Tier 5).
+
+Against the earlier figures:
+- **Unchanged lists** (October 11 table, 960 per cell, ±1.3): Y'shtola 41.4 (was 40.3), Sephiroth 36.9 (35.9),
+  Titania 22.6 (22.8), Galadriel 13.2 (12.4), Alela 13.1 (13.1). All within the old run's noise.
+- **Kefka** 29.4%: the same as the paired test after the AI fix and the Veyran trade (29.4%).
+- **Veyran** 23.4%: the paired test put him at 24.5% after the trade (+1.7). Here he is level with the October 11
+  table (23.7%, before the trade), so the trade's gain for Veyran looks smaller than measured, probably near zero.
+  Kefka's gain holds.
+- **Sheoldred** 30.8%: about a point below the paired runs (32.0%, then Gix +1.2 within noise). Those used other
+  seeds and 1,000 games per tier.
+- **Sauron** 24.8%: in line with the paired tests (24.9% after Bedevil, then +0.6 with Cost of Brilliance).
+- **Jodah** 17.2% (was 16.6): Szadek and Lagrella in place of Memory Jar and Gix cost nothing measurable.
 
 **October 11 run of all nine decks on the Rust engine** (960 games per cell, intervals about ±3 points; over all
 five tiers 4,800 games, about ±1.3 points; seeds 500000-500959, `audit/overnight/2026-10-11-full/run.sh`, results in

@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Alela vs Tier 5 (High B4) [loose, lookahead AI, 960 games] ===
+Win rate   9.8%   95% CI 8.1-11.8%   (even share 25%: -15.2 pts)
+Average turn (your own turn count) of wins 13.4, of losses 7.2
+Plan online (first Faerie made by Alela): 36.5% of games
+Wins by: damage 95%, timeout 5%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   62.9%            24.3%           15.0%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   62.1%            15.9%            9.9%
+  Urza (urza-mono-blue-artifacts)              60.6%            28.5%           16.7%
+  Winota (winota-boros-humans-cheat)           58.8%            42.9%           25.6%
+  Kinnan (kinnan-simic-mana-combo)             55.6%            40.4%           23.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(72s total)

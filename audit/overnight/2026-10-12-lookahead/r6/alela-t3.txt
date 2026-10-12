@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Alela vs Tier 3 (High B3) [loose, lookahead AI, 960 games] ===
+Win rate  12.0%   95% CI 10.1-14.2%   (even share 25%: -13.0 pts)
+Average turn (your own turn count) of wins 15.2, of losses 11.5
+Plan online (first Faerie made by Alela): 55.3% of games
+Wins by: damage 79%, timeout 21%
+  Opponent                                    seated  won when seated  eliminated you
+  Tergrid (tergrid-mono-black-disruption)      62.9%            35.3%           21.6%
+  Marwyn (marwyn-mono-green-elves)             62.1%            27.0%           17.3%
+  Aurelia (aurelia-boros-extra-combats)        60.6%            37.1%           25.7%
+  Korvold (korvold-jund-sacrifice)             58.8%            17.2%            8.8%
+  Atraxa (atraxa-superfriends)                 55.6%            29.6%           10.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(174s total)

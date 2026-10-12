@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Kefka vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 960 games] ===
+Win rate  29.7%   95% CI 26.9-32.7%   (even share 25%: +4.7 pts)
+Average turn (your own turn count) of wins 12.9, of losses 9.6
+Plan online (Kefka flipped into Ruler of Ruin): 43.3% of games
+Wins by: damage 98%, timeout 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Light-Paws (light-paws-aura-voltron)         62.2%            36.0%           21.8%
+  Lathril (lathril-golgari-elves)              61.5%            19.7%           12.6%
+  Tatyova (tatyova-simic-landfall)             60.3%            21.6%           11.7%
+  Isshin (isshin-mardu-attack-triggers)        58.9%            20.2%           13.3%
+  Teysa Karlov (teysa-orzhov-aristocrats)      57.2%            19.1%           10.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(91s total)

@@ -1,0 +1,16 @@
+960 games (1 tier, 960 per list per tier, profile loose), lookahead AI, 24 worker threads: about 2 minutes
+
+=== Alela vs Tier 4 (Low B4) [loose, lookahead AI, 960 games] ===
+Win rate  16.0%   95% CI 13.9-18.5%   (even share 25%: -9.0 pts)
+Average turn (your own turn count) of wins 13.5, of losses 9.2
+Plan online (first Faerie made by Alela): 55.0% of games
+Wins by: damage 94%, timeout 6%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 61.4%            30.6%           19.8%
+  Prosper (prosper-rakdos-exile-treasure)      60.9%            23.6%           13.3%
+  Chulane (chulane-bant-value-combo)           60.7%            23.7%           14.0%
+  Heliod (heliod-mono-white-stax)              58.8%            30.7%           16.6%
+  Krenko (krenko-mono-red-goblins)             58.2%            31.7%           19.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(174s total)

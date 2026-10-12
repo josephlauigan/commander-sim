@@ -1,5 +1,7 @@
 # Galadriel, Light of Valinor — Bant Rebels
 
+**Simulator, 2026-10-12:** **13.2% over all tiers** (±0.4; tied with Alela for 9th of the ten decks): T1 13.1%, T2 15.9%, T3 12.3%, T4 12.1%, T5 12.6%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+
 2026-10-02
 **Added 2026-10-02.** In the simulator as deck key `galadriel` (`commander-sim --deck galadriel --pool t3`) and in practice mode. Every card is modeled.
 
