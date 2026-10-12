@@ -115,103 +115,91 @@ the 20 cards above. **Basics:** 32 Swamp, your own. The rest come off JD's lists
 binder (Phyrexian Delver), 44 from bulk. Set codes are the printings the bulk list shows; where it names more than one,
 any of them. Bulk's Arcane Signet and Fellwar Stone are spare copies.
 
-### Creatures (25)
+The tables below list every card but the Swamps, grouped by color so you can pull them a color at a time; the "From"
+column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with its price).
 
-| Card | From | Set |
-|---|---|---|
-| Accursed Marauder | Bulk | mh3 |
-| Al Bhed Salvagers | Bulk | fin |
-| Apex Witchstalker | Bulk | fra |
-| Blood Artist | Bulk | ema |
-| Burrog Banemaker | Bulk | sos |
-| Fate Unraveler | Buy, $3.41 |  |
-| Fetid Imp | Bulk | m21 |
-| Gix, Yawgmoth Praetor | Jodah |  |
-| Gray Merchant of Asphodel | Buy, $4.47 |  |
-| Leech Collector // Bloodletting | Bulk | sos |
-| Melancholic Poet | Bulk | sos |
-| Perigee Beckoner | Bulk | eoe |
-| Phyrexian Delver | Binder |  |
-| Phyrexian Rager | Bulk | dd3 |
-| Restless Bloodseeker // Bloodsoaked Reveler | Bulk | vow |
-| Rooftop Assassin | Bulk | otj |
-| Screeching Soulbreaker | Bulk | fra |
-| Seizan, Perverter of Truth | Buy, $1.87 |  |
-| Seymour Flux | Bulk | fin |
-| Sheoldred, the Apocalypse | Sauron |  |
-| Skyscanner | Bulk | list |
-| Sneering Shadewriter | Bulk | sos |
-| Ulna Alley Shopkeep | Bulk | sos |
-| Undercity Dire Rat | Bulk | fin |
-| Vault Plunderer | Bulk | otj |
+### Black (51)
 
-### Artifacts (12)
+| Card | Type | From | Set |
+|---|---|---|---|
+| Accursed Marauder | Creature | Bulk | mh3 |
+| Al Bhed Salvagers | Creature | Bulk | fin |
+| Ambition's Cost | Sorcery | Buy, $0.34 |  |
+| Apex Witchstalker | Creature | Bulk | fra |
+| Battle-Rage Blessing | Instant | Bulk | dmu |
+| Blood Artist | Creature | Bulk | ema |
+| Burrog Banemaker | Creature | Bulk | sos |
+| Cast Away Doubt | Sorcery | Bulk | fra |
+| Cost of Brilliance | Sorcery | Bulk | sos |
+| Dark Deal | Sorcery | Buy, $2.35 |  |
+| Deadly Dispute | Instant | Bulk | j25 |
+| Disembowel | Instant | Bulk | rvr |
+| Exsanguinate | Sorcery | Buy, $0.40 |  |
+| Fate Unraveler | Creature | Buy, $3.41 |  |
+| Fetid Imp | Creature | Bulk | m21 |
+| Foolish Fate | Instant | Bulk | sos |
+| Gix, Yawgmoth Praetor | Creature | Jodah |  |
+| Gray Merchant of Asphodel | Creature | Buy, $4.47 |  |
+| Invoke Despair | Sorcery | Bulk | ump |
+| Last Gasp | Instant | Bulk | fra, sos |
+| Leech Collector // Bloodletting | Creature | Bulk | sos |
+| Lethal Throwdown | Sorcery | Bulk | mh3 |
+| Masterful Flourish | Instant | Bulk | sos |
+| Melancholic Poet | Creature | Bulk | sos |
+| Overkill | Instant | Bulk | fin |
+| Painful Lesson | Sorcery | Buy, $0.17 |  |
+| Peer into the Abyss | Sorcery | Buy, $3.40 |  |
+| Perigee Beckoner | Creature | Bulk | eoe |
+| Phyrexian Arena | Enchantment | Buy, $3.88 |  |
+| Phyrexian Delver | Creature | Binder |  |
+| Phyrexian Rager | Creature | Bulk | dd3 |
+| Read the Bones | Sorcery | Buy, $0.30 |  |
+| Restless Bloodseeker // Bloodsoaked Reveler | Creature | Bulk | vow |
+| Rooftop Assassin | Creature | Bulk | otj |
+| Screeching Soulbreaker | Creature | Bulk | fra |
+| Seizan, Perverter of Truth | Creature | Buy, $1.87 |  |
+| Sephiroth's Intervention | Instant | Bulk | fin |
+| Seymour Flux | Creature | Bulk | fin |
+| Sheoldred, the Apocalypse | Creature | Sauron |  |
+| Silence the Echo | Sorcery | Bulk | fra |
+| Sneering Shadewriter | Creature | Bulk | sos |
+| Soul Enervation | Enchantment | Bulk | mkm |
+| Stir Up Trouble | Sorcery | Bulk | hob |
+| Syphon Mind | Sorcery | Buy, $0.30 |  |
+| Terror | Instant | Bulk | dmr |
+| Ulna Alley Shopkeep | Creature | Bulk | sos |
+| Undercity Dire Rat | Creature | Bulk | fin |
+| Underworld Dreams | Enchantment | Buy, $2.02 |  |
+| Vanquish the Weak | Instant | Bulk | xln |
+| Vault Plunderer | Creature | Bulk | otj |
+| Wander Off | Instant | Bulk | sos |
 
-| Card | From | Set |
-|---|---|---|
-| Arcane Signet | Bulk | fic, msc |
-| Champion's Helm | Bulk | fic |
-| Charcoal Diamond | Buy, $0.38 |  |
-| Commander's Sphere | Buy, $0.31 |  |
-| Darksteel Plate | Bulk | fic |
-| Fellwar Stone | Bulk | msc, S.H.I.E.L.D. Spy Satellite printing |
-| Howling Mine | Buy, $5.53 |  |
-| Memory Jar | Jodah |  |
-| Mind Stone | Buy, $0.21 |  |
-| Potioner's Trove | Bulk | sos |
-| Swiftfoot Boots | Buy, $1.51 |  |
-| Temple Bell | Buy, $6.69 |  |
+### Colorless (13)
 
-### Enchantments (3)
-
-| Card | From | Set |
-|---|---|---|
-| Phyrexian Arena | Buy, $3.88 |  |
-| Soul Enervation | Bulk | mkm |
-| Underworld Dreams | Buy, $2.02 |  |
-
-### Instants (11)
-
-| Card | From | Set |
-|---|---|---|
-| Battle-Rage Blessing | Bulk | dmu |
-| Deadly Dispute | Bulk | j25 |
-| Disembowel | Bulk | rvr |
-| Foolish Fate | Bulk | sos |
-| Last Gasp | Bulk | fra, sos |
-| Masterful Flourish | Bulk | sos |
-| Overkill | Bulk | fin |
-| Sephiroth's Intervention | Bulk | fin |
-| Terror | Bulk | dmr |
-| Vanquish the Weak | Bulk | xln |
-| Wander Off | Bulk | sos |
-
-### Sorceries (13)
-
-| Card | From | Set |
-|---|---|---|
-| Ambition's Cost | Buy, $0.34 |  |
-| Cast Away Doubt | Bulk | fra |
-| Cost of Brilliance | Bulk | sos |
-| Dark Deal | Buy, $2.35 |  |
-| Exsanguinate | Buy, $0.40 |  |
-| Invoke Despair | Bulk | ump |
-| Lethal Throwdown | Bulk | mh3 |
-| Painful Lesson | Buy, $0.17 |  |
-| Peer into the Abyss | Buy, $3.40 |  |
-| Read the Bones | Buy, $0.30 |  |
-| Silence the Echo | Bulk | fra |
-| Stir Up Trouble | Bulk | hob |
-| Syphon Mind | Buy, $0.30 |  |
+| Card | Type | From | Set |
+|---|---|---|---|
+| Arcane Signet | Artifact | Bulk | fic, msc |
+| Champion's Helm | Artifact | Bulk | fic |
+| Charcoal Diamond | Artifact | Buy, $0.38 |  |
+| Commander's Sphere | Artifact | Buy, $0.31 |  |
+| Darksteel Plate | Artifact | Bulk | fic |
+| Fellwar Stone | Artifact | Bulk | msc, S.H.I.E.L.D. Spy Satellite printing |
+| Howling Mine | Artifact | Buy, $5.53 |  |
+| Memory Jar | Artifact | Jodah |  |
+| Mind Stone | Artifact | Buy, $0.21 |  |
+| Potioner's Trove | Artifact | Bulk | sos |
+| Skyscanner | Creature | Bulk | list |
+| Swiftfoot Boots | Artifact | Buy, $1.51 |  |
+| Temple Bell | Artifact | Buy, $6.69 |  |
 
 ### Lands (4, plus 32 Swamp of your own)
 
-| Card | From | Set |
-|---|---|---|
-| Bonders' Enclave | Bulk | fic |
-| Castle Locthwain | Buy, $4.31 |  |
-| Command Tower | Bulk | khc, fic |
-| Geier Reach Sanitarium | Buy, $2.42 |  |
+| Card | Type | From | Set |
+|---|---|---|---|
+| Bonders' Enclave | Land | Bulk | fic |
+| Castle Locthwain | Land | Buy, $4.31 |  |
+| Command Tower | Land | Bulk | khc, fic |
+| Geier Reach Sanitarium | Land | Buy, $2.42 |  |
 
 ## Decklist by type (100)
 
