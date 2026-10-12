@@ -32,6 +32,8 @@ pub mod bites;
 pub mod green_cards;
 pub mod titania;
 pub mod sheoldred;
+pub mod elrond;
+pub mod cloud;
 pub mod zur;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
@@ -66,5 +68,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     green_cards::register(&mut r, db)?;
     titania::register(&mut r, db)?;
     sheoldred::register(&mut r, db)?;
+    elrond::register(&mut r, db)?;
+    cloud::register(&mut r, db)?;
     Ok(r)
 }

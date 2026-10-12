@@ -164,6 +164,9 @@ pub fn matches(g: &Game, p: PlayerId, m: PermId, f: Option<&Filter>, src: Option
     if f.max_pow.is_some_and(|v| epow(g, m) > v) || f.min_pow.is_some_and(|v| epow(g, m) < v) {
         return false;
     }
+    if f.tapped == Some(true) && !x.tapped {
+        return false;
+    }
     if f.nontoken == Some(true) && x.token {
         return false;
     }

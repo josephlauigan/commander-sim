@@ -33,6 +33,8 @@ pub struct Filter {
     pub max_pow: Option<i32>,
     pub min_pow: Option<i32>,
     pub nontoken: Option<bool>,
+    /// "target tapped creature" (Peerless Ropemaster)
+    pub tapped: Option<bool>,
     /// (compiled for some cards, not read by the interpreter)
     pub color: Option<String>,
 }
