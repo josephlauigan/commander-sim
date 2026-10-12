@@ -309,7 +309,6 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     LAST_SCORES.with(|l| {
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
     });
-    if std::env::var("CLDBG").is_ok() && g.player(p).key == "cloud" { eprintln!("R{} scores: {:?}", g.round, keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), (s / n * 10.0).round() / 10.0)).collect::<Vec<_>>()); }
     let top = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
     if keyed[best].0 != top {
         stat(|x| x.changed += 1);
