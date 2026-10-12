@@ -515,6 +515,9 @@ pub enum Zone {
 
 /// a nontoken card that left goes to a zone of its owner's; a commander goes to the command zone
 pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
+    if zone == Zone::Exile {
+        crate::impls::bulk_white::note_exile(g, m); // Ennis: cards were put into exile this turn
+    }
     let x = g.perm(m);
     if x.token || x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Tokpw)) {
         return; // a token with a card face (the Jace token) just ceases to exist
@@ -884,8 +887,10 @@ pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
 }
 
 pub fn bounce(g: &mut Game, m: PermId) -> Res {
+    let note = crate::impls::bulk_white::bounce_note(g, m); // Stormfront Riders sees creatures return to hand
     leave(g, m)?;
     to_zone_card(g, m, Zone::Hand);
+    crate::impls::bulk_white::bounced(g, m, note)?;
     Ok(())
 }
 

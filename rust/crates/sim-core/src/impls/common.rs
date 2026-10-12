@@ -339,9 +339,10 @@ pub fn attached_kw(g: &Game, m: PermId, kw: &str) -> bool {
 
 /// common.attached_prot: the colours m's Auras give it protection from
 pub fn attached_prot(g: &Game, m: PermId) -> Colors {
-    auras_on_iter(g, m)
-        .filter_map(|a| spec_of(g, a))
-        .fold(Colors::NONE, |s, spec| s.union(Colors::from_letters(spec.prot)))
+    auras_on_iter(g, m).fold(Colors::NONE, |s, a| {
+        let fixed = spec_of(g, a).map_or(Colors::NONE, |spec| Colors::from_letters(spec.prot));
+        s.union(fixed).union(super::bulk_white::chosen_color(g, a)) // Cho-Manno's Blessing: the colour chosen
+    })
 }
 
 /// common.umbra_save: umbra armor: m would be destroyed: an umbra on it is destroyed instead

@@ -78,7 +78,10 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 if &*s.name == "Fatal Push" && d.cmc > 2 && !cardcode::revolt(g, p) {
                     continue;
                 }
-                if &*s.name == "Depressurize" && crate::engine::values::epow(g, m) > 3 {
+                if &*s.name == "Lay Down Arms" && d.cmc > crate::impls::bulk_white::plains(g, p) {
+                    continue; // mana value at most the Plains you control
+                }
+                if &*s.name == "Depressurize"&& crate::engine::values::epow(g, m) > 3 {
                     continue; // -3/-0 must leave it at 0 power or less
                 }
                 if &*s.name == "Bloodchief's Thirst" && d.cmc > 2 && !can_pay(g, p, 2, "BB", false) {

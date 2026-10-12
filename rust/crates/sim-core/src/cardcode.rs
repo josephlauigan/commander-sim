@@ -468,7 +468,7 @@ pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
 // ------------------------------------------------------------------ M3: combat and the turn
 /// rules.evasion_blocked: fear, intimidate, Signal Pest and kin: b can't block a
 pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
-    crate::impls::rules::evasion_blocked(g, b, a)
+    crate::impls::rules::evasion_blocked(g, b, a) || crate::impls::bulk_white::exit_blocked(g, b, a)
 }
 
 /// CI.granted_kw: a static keyword grant from a hooked permanent (Teysa: tokens have vigilance and lifelink)

@@ -881,6 +881,7 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
             o.extend(f(g, c, p, post)?);
         }
     }
+    o.extend(crate::impls::bulk_white::face_up_options(g, p, post)?); // face-down creatures turned face up
     for c in g.player(p).hand.clone() {
         if let Some(f) = g.registry.get(c).and_then(|i| i.hand_options) {
             o.extend(f(g, c, p, post)?);

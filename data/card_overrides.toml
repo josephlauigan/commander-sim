@@ -6638,3 +6638,113 @@ dsl = []
 tags = "draw=2"
 status = "Full"
 note = "each other player discards a card; you draw a card for each card discarded this way (discards happen in turn order, the drawn cards come after all discards)"
+
+# ---- white-rest: the cloud deck's face-down creatures, enter-again, recursion, protection and removal (impls/bulk_white.rs)
+["Exalted Angel"]
+tags = "pow=4 tgh=5 fly lifelink"
+dsl = []
+status = "Full"
+note = "flying; \"whenever this deals damage, you gain that much life\" is lifelink (the same life, from combat damage to creatures and players); morph {2}{W}{W}: cast face down for {3} as a 2/2 with no abilities (the AI does it when it can't pay {4}{W}{W}), turned face up for {2}{W}{W} at any time (the AI does it on its own turn)"
+
+["Forum Familiar"]
+tags = "pow=1 tgh=1"
+dsl = []
+ward = 0
+status = "Full"
+note = "disguise {1}{W}: face down for {3} as a 2/2 with ward {2} (face up it has no ward); when turned face up, return another permanent you control to its owner's hand and put a +1/+1 counter on it. The AI casts it face down when a permanent is worth returning (Cloud and other enters-the-battlefield effects) and turns it up for the same reason. Lands are never the target"
+
+["Unyielding Gatekeeper"]
+tags = "pow=3 tgh=2"
+dsl = []
+ward = 0
+status = "Full"
+note = "disguise {1}{W}: face down for {3} as a 2/2 with ward {2}; when turned face up, exile another target nonland permanent: yours returns tapped (a blink, a token is gone), an opponent's stays exiled and its controller creates a 2/2 white and blue Detective. The AI picks the best of its own enters-the-battlefield value and an opposing permanent worth more than the Detective"
+
+["Exit Specialist"]
+tags = "human pow=2 tgh=1"
+dsl = []
+ward = 0
+status = "Full"
+note = "can't be blocked by creatures with power 3 or greater (cardcode::evasion_blocked); disguise {1}{U}: face down for {3} as a 2/2 with ward {2}; when turned face up, return another target creature to its owner's hand (the best opposing creature, or one of its own with an enters-the-battlefield effect)"
+
+["Ennis, Debate Moderator"]
+tags = "leg human pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "when it enters, exile up to one other target creature you control (the best by bulk_white::reenter_value: Cloud first), back under its owner's control at the beginning of the next end step (a token is gone); at the beginning of your end step, if cards were put into exile this turn (a permanent leaving for exile, its own included), a +1/+1 counter on Ennis. Cards that go to exile from hand, graveyard or the stack (foretell, flashback) don't count"
+
+["Stormfront Riders"]
+tags = "human pow=4 tgh=3 fly"
+dsl = []
+status = "Full"
+note = "flying; when it enters, return two creatures you control to their owner's hand (the best by reenter_value, itself only if it must); whenever it or another creature is returned to your hand from the battlefield, a 1/1 white Soldier (one per Riders). A commander goes to the command zone and makes no Soldier. Counts every bounce through zones::bounce (Forum Familiar, Exit Specialist, opposing bounce)"
+
+["Call a Surprise Witness"]
+tags = ""
+dsl = []
+status = "Full"
+note = "return target creature card with mana value 3 or less from your graveyard to the battlefield with a flying counter (it flies; it is a Spirit); the AI casts it at sorcery speed on the best creature card there (enters-the-battlefield effects and Equipment-hunters first)"
+
+["Recommission"]
+tags = ""
+dsl = []
+status = "Full"
+note = "return target artifact or creature card with mana value 3 or less from your graveyard to the battlefield; a creature enters with an additional +1/+1 counter. Cast at sorcery speed on the best target (an Equipment counts as an engine piece)"
+
+["Cho-Manno's Blessing"]
+tags = "aura flash"
+dsl = []
+status = "Full"
+note = "flash Aura; as it enters, choose a colour: enchanted creature has protection from it (this doesn't remove the Aura). The AI holds it for a response to targeted removal and chooses the colour of the spell; cast otherwise it picks the opponents' most common colour"
+
+["Shardmage's Rescue"]
+tags = "aura flash"
+dsl = []
+status = "Full"
+note = "flash Aura on a creature you control: +1/+1, and hexproof as long as it entered this turn (grant_kw). The AI holds it for a response to targeted removal on a valuable creature"
+
+["Bronze Guardian"]
+tags = "pow=0 tgh=5"
+dsl = []
+status = "Full"
+note = "double strike; ward {2}; other artifacts you control have ward {2} (bulk_white::extra_ward, for each other Guardian); its power is the number of artifacts you control (Treasure, Food, Clue and Blood tokens included)"
+
+["Fate of the Sun-Cryst"]
+tags = "rem=destroy tgt=nl"
+dsl = []
+status = "Full"
+note = "destroy target nonland permanent; costs {2} less when it targets a tapped creature (a separate cast option for a tapped creature worth killing; the full-cost cast goes through the generic removal options)"
+
+["Harsh Annotation"]
+tags = "rem=destroy tgt=c"
+dsl = []
+status = "Full"
+note = "destroy target creature; its controller creates a 1/1 white and black Inkling with flying (also when the creature was indestructible; none if the target was gone or untargetable)"
+
+["Lay Down Arms"]
+tags = "rem=exile tgt=c"
+dsl = []
+status = "Full"
+note = "exile target creature with mana value at most the number of Plains you control (legal_targets filters it); its controller gains 3 life"
+
+["Patriot, Shield Wielder"]
+tags = "leg human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "{2},{T}: another target creature you control gets +2/+0 and hexproof until end of turn. The AI uses it before combat on its biggest attacker (power 3 or more), and in response to removal aimed at another valuable creature (cloud deck's protect_response)"
+
+["Recruitment Officer"]
+tags = "human pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "{3}{W}: look at the top four cards, may put a creature card with mana value 3 or less into your hand, the rest on the bottom in a random order. The AI uses it with spare mana after combat, or at the end of the turn before its own"
+
+["Repel the Darkness"]
+tags = ""
+dsl = []
+status = "Full"
+note = "tap up to two target creatures (the opponents' biggest untapped), draw a card. The AI casts it before combat to clear blockers for its attackers, or at the end of the turn before its own as a cantrip"
+
+["Ultimate Magic: Holy"]
+status = "Full"
+note = "permanents you control gain indestructible until end of turn; foretell {2} (after combat with mana to spare), cast later for {2}{W}: from exile it also prevents all damage to you this turn. Held for a response to destroy or damage removal, or a destroying wipe (the cloud deck's responses)"
