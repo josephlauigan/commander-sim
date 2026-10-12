@@ -234,6 +234,7 @@ pub fn strength(g: &Game, q: PlayerId) -> f64 {
         + 0.6 * pl.lands.len() as f64
         + 0.4 * pl.treasures as f64
         + g.settings.search.combo_w * crate::cardcode::combo_progress(g, q)
+        + if pl.key == "elrond" { crate::impls::elrond::progress(g, q) } else { 0.0 }
 }
 
 /// the n-th option labelled `label`
