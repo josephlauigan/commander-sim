@@ -13,3 +13,8 @@ sheo-C t2 exit 0 [loose       ] win  21.7% ->  24.0%  (delta +2.3 pts, noise ±2
 sheo-C t3 exit 0 [loose       ] win  20.5% ->  20.6%  (delta +0.1 pts, noise ±1.9, paired)   n=1000
 sheo-C t4 exit 0 [loose       ] win  23.5% ->  23.1%  (delta -0.4 pts, noise ±1.9, paired)   n=1000
 sheo-C t5 exit 0 [loose       ] win  22.0% ->  20.9%  (delta -1.1 pts, noise ±1.5, paired)   n=1000
+upgrade t1 exit 0 [loose       ] win  18.1% ->  22.0%  (delta +3.9 pts, noise ±3.4, paired)   n=1000
+upgrade t2 exit 0 [loose       ] win  27.1% ->  31.2%  (delta +4.1 pts, noise ±3.8, paired)   n=1000
+upgrade t3 exit 0 [loose       ] win  24.9% ->  27.0%  (delta +2.1 pts, noise ±3.7, paired)   n=1000
+upgrade t4 exit 0 [loose       ] win  27.5% ->  29.5%  (delta +2.0 pts, noise ±3.6, paired)   n=1000
+upgrade t5 exit 0 [loose       ] win  23.9% ->  23.4%  (delta -0.5 pts, noise ±3.3, paired)   n=1000

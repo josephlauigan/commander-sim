@@ -18,3 +18,18 @@ opponent draw seven (14 life each). B and C are within noise over all tiers.
 Not measured yet (JD, 10/11: later): what each block costs Jodah with its bulk refills (`run.sh jodah-A jodah-B
 jodah-C`), and all three blocks at once. The current list's 20.9% comes from these paired runs, not the section 0d
 seeds (500000-500959), so it is close to but not directly comparable with the pool-results table (Titania 22.8%).
+
+## The upgrade package (2026-10-11, buys, not yet decided)
+
+Paired, same settings (`run.sh upgrade`, 22 worker threads; raw output in `upgrade/`), on the list with Memory Jar
+(code 913c473). Seizan, Perverter of Truth, Underworld Dreams, Dark Deal and Painful Lesson (about $6.40) for Ribskiff,
+Gravblade Heavy, Multiply by Zero and Locust Spray.
+
+| | T1 | T2 | T3 | T4 | T5 | All tiers |
+|---|---|---|---|---|---|---|
+| Current list (with Memory Jar) | 18.1% | 27.1% | 24.9% | 27.5% | 23.9% | **24.3%** |
+| With the package | 22.0% | 31.2% | 27.0% | 29.5% | 23.4% | **26.6%** |
+| Change | **+3.9** | **+4.1** | +2.1 | +2.0 | -0.5 | **+2.3** |
+
+Over all tiers the noise is about ±1.6 points, so +2.3 is a real gain; four of five tiers move up. The current list's
+24.3% here matches the 23.8% estimated from the block A run (within noise).
