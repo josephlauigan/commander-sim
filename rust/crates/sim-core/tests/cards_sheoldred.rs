@@ -566,3 +566,154 @@ fn lethal_throwdown_with_an_unmodified_creature_draws_nothing() {
     assert!(!g.perm(fodder).on_bf && !g.perm(target).on_bf);
     assert_eq!(g.player(P0).hand.len(), n - 1);
 }
+
+// ------------------------------------------------------------------ cards handled by tags: they really work in a game
+fn removal(g: &mut Game, name: &str, target: PermId) -> bool {
+    let c = hand(g, P0, &[name])[0];
+    sim_core::ai::brain::cast_removal(g, P0, c, &[target], 0, None).unwrap()
+}
+
+#[test]
+fn hullcarver_has_deathtouch() {
+    let mut g = game();
+    let m = perm(&mut g, P0, "Hullcarver");
+    assert!(sim_core::dsl::has_kw(&g, m, "deathtouch") || g.perm(m).dt);
+}
+
+#[test]
+fn multiply_by_zero_kills_a_creature_without_counters() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    let t = perm(&mut g, P1, "Gravblade Heavy");
+    assert!(removal(&mut g, "Multiply by Zero", t));
+    assert!(!g.perm(t).on_bf, "base 0/0 and no counters: it dies");
+    assert!(in_gy(&g, P0, "Multiply by Zero"));
+}
+
+#[test]
+fn depressurize_kills_a_creature_of_power_three_or_less_only() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    let small = token(&mut g, P1, 3);
+    assert!(removal(&mut g, "Depressurize", small));
+    assert!(!g.perm(small).on_bf, "power 3 - 3 = 0: destroyed");
+    let big = perm(&mut g, P1, "Apex Witchstalker");
+    let c = hand(&mut g, P0, &["Depressurize"])[0];
+    assert!(
+        !sim_core::engine::removal::legal_targets(&g, P0, "destroy", "c", false, Some(c)).contains(&big),
+        "a power-4 creature is not a target worth the spell"
+    );
+}
+
+#[test]
+fn overkill_kills_any_creature() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let t = perm(&mut g, P1, "Gravblade Heavy");
+    assert!(removal(&mut g, "Overkill", t));
+    assert!(!g.perm(t).on_bf);
+}
+
+#[test]
+fn lash_of_the_balrog_sacrifices_a_creature_or_pays_four() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 1, false);
+    let t = perm(&mut g, P1, "Gravblade Heavy");
+    let f = token(&mut g, P0, 1);
+    assert!(removal(&mut g, "Lash of the Balrog", t));
+    assert!(!g.perm(t).on_bf, "destroyed");
+    assert!(!g.perm(f).on_bf, "the creature was sacrificed to pay");
+    // no creature to sacrifice: it needs {4} more, and one Swamp cannot pay
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 1, false);
+    let t = perm(&mut g, P1, "Gravblade Heavy");
+    assert!(!removal(&mut g, "Lash of the Balrog", t));
+    assert!(g.perm(t).on_bf);
+    lands(&mut g, P0, "Swamp", 4, false);
+    assert!(removal(&mut g, "Lash of the Balrog", t));
+    assert!(!g.perm(t).on_bf);
+}
+
+#[test]
+fn deadly_dispute_sacrifices_draws_two_and_makes_a_treasure() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    g.active = Some(P0);
+    let f = token(&mut g, P0, 1);
+    let c = hand(&mut g, P0, &["Deadly Dispute"])[0];
+    let s = sim_core::ai::brain::Situation::new(&g, P0);
+    let o = sim_core::ai::pool::spell_options(&g, P0, &s, Some(false));
+    let o = o.iter().find(|o| o.label == "Deadly Dispute").expect("the AI offers Deadly Dispute");
+    let n = g.player(P0).hand.len();
+    assert!(run_plan(&mut g, P0, o));
+    assert!(!g.perm(f).on_bf);
+    assert!(!in_hand(&g, P0, "Deadly Dispute") && in_gy(&g, P0, "Deadly Dispute"));
+    assert_eq!(g.player(P0).hand.len(), n - 1 + 2, "drew two");
+    assert_eq!(g.player(P0).treasures, 1);
+    let _ = c;
+}
+
+// ------------------------------------------------------------------ Part 2: Jodah's cards in a sheoldred game
+#[test]
+fn memory_jar_is_cracked_at_once_with_sheoldred_out_and_by_jodahs_rule_without() {
+    let mut g = game();
+    g.active = Some(P0);
+    let jar = perm(&mut g, P0, "Memory Jar");
+    hand(&mut g, P0, &["Hullcarver", "Locust Spray", "Ribskiff", "Diary of Dreams", "Tome of Legends"]);
+    assert!(perm_opts(&mut g, jar, P0, Some(false)).is_empty(), "five cards and no mana: Jodah's rule says no");
+    perm(&mut g, P0, SHEO);
+    let o = perm_opts(&mut g, jar, P0, Some(false));
+    assert_eq!(o.len(), 1, "with Sheoldred out it is cracked whatever the hand");
+    let (a, b) = (life(&g, P0), life(&g, P1));
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.perm(jar).on_bf);
+    assert_eq!(life(&g, P1), b - 14, "seven cards at 2 life each");
+    assert_eq!(life(&g, P0), a + 14);
+}
+
+#[test]
+fn toxic_deluge_takes_x_so_sheoldred_survives_and_pays_the_life() {
+    let mut g = game();
+    let sheo = perm(&mut g, P0, SHEO);
+    let big = perm(&mut g, P1, "Gravblade Heavy");
+    g.perm_mut(big).tgh = 9;
+    let small = perm(&mut g, P1, "Hullcarver");
+    let a = life(&g, P0);
+    cast_spell(&mut g, P0, "Toxic Deluge", Ctx::default());
+    assert!(g.perm(sheo).on_bf, "Sheoldred (toughness 5) survives X = 4");
+    assert!(!g.perm(small).on_bf, "the small creature dies");
+    assert!(g.perm(big).on_bf, "the 9-toughness one is out of reach at X = 4");
+    assert_eq!(life(&g, P0), a - 4, "X life is paid");
+}
+
+#[test]
+fn toxic_deluge_without_sheoldred_still_takes_the_biggest_toughness() {
+    let mut g = game();
+    let big = perm(&mut g, P1, "Gravblade Heavy");
+    let a = life(&g, P0);
+    cast_spell(&mut g, P0, "Toxic Deluge", Ctx::default());
+    assert!(!g.perm(big).on_bf);
+    assert_eq!(life(&g, P0), a - 4);
+}
+
+#[test]
+fn bitter_triumph_destroys_and_costs_three_life() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    let t = perm(&mut g, P1, "Gravblade Heavy");
+    let a = life(&g, P0);
+    assert!(removal(&mut g, "Bitter Triumph", t));
+    assert!(!g.perm(t).on_bf);
+    assert_eq!(life(&g, P0), a - 3);
+}
+
+#[test]
+fn korlash_is_as_big_as_your_swamps_and_regenerates() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 4, false);
+    let k = perm(&mut g, P0, "Korlash, Heir to Blackblade");
+    assert_eq!((values::epow(&g, k), values::etgh(&g, k)), (4, 4));
+    sim_core::engine::removal::apply_removal(&mut g, Some(P1), k, "destroy", None).unwrap();
+    assert!(g.perm(k).on_bf, "regenerated with {{1}}{{B}} open");
+    assert!(g.perm(k).tapped);
+}

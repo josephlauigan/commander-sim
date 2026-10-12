@@ -1089,6 +1089,7 @@ pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerI
                 "dmg13" => etgh(g, m) <= 13,
                 "austere" | "austere2" => cmc.is_some_and(|v| v >= 4),
                 "nib" => etgh(g, m) <= x,
+                "minus" => crate::impls::sheoldred::deluge_cap(g, p).is_none_or(|cap| etgh(g, m) <= cap),
                 _ => true, // destroy, minus, exile, evac
             };
             if !hit {

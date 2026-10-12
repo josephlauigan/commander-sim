@@ -1464,3 +1464,14 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(zero_prio);
     Ok(())
 }
+
+// ------------------------------------------------------------------ Toxic Deluge
+/// the largest X a -X/-X sweep (Toxic Deluge) may take while p's Sheoldred is out: her toughness minus one, and never
+/// more than the life it would leave p with. None: no limit (the sheoldred deck without her out, or any other deck).
+pub fn deluge_cap(g: &Game, p: PlayerId) -> Option<i32> {
+    if g.player(p).key != "sheoldred" || !sheoldred_out(g, p) {
+        return None;
+    }
+    let sheo = my_creatures(g, p).into_iter().filter(|&m| sheoldred_card(g, m)).map(|m| etgh(g, m)).min()?;
+    Some((sheo - 1).min(g.player(p).life - 1).max(0))
+}
