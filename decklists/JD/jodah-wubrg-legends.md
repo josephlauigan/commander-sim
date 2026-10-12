@@ -5,6 +5,7 @@
 **Updated 2026-10-09.** Out: Shalai, Voice of Plenty. In: Tymna the Weaver. JD's choice: Tymna draws a card for each opponent your creatures hit (paying that much life) after combat. In the Shalai slot she measured -0.7 ±0.8 against Shalai, within noise (adaptive, paired, 1,000 games per tier).
 **Updated 2026-10-09.** Out: Experimental Augury, Genesis Hydra, Lagrella, the Magpie, Sisters of Stone Death. In: Garland, Royal Kidnapper, Helm of Kaldra, Shield of Kaldra, Sword of Kaldra. JD's choice: the Kaldra pieces back (the deck's art theme) plus Garland, Royal Kidnapper, keeping the mana base and Razia. Measured -1.4 ±1.2 against the list before (adaptive, paired, 1,000 games per tier); the least costly of five ways to fit them. Garland alone measured +1.4.
 **Updated 2026-10-11.** Out: Memory Jar. In: Szadek, Lord of Secrets. JD's choice: Memory Jar moves to the Sheoldred deck, where it measured +2.9 points (with Sheoldred out it makes each opponent draw seven). Szadek (bulk; Donato Giancola art; in the list until 10-09) is a provisional refill, not yet measured; JD may pick another later.
+**Updated 2026-10-11 (second change).** Out: Gix, Yawgmoth Praetor. In: Lagrella, the Magpie. JD's choice: Gix moves to the Sheoldred deck. Lagrella (bulk; Donato Giancola art; in the list until 10-09, where the tests found her the card the deck could least afford to lose) is a 3-mana legend like Gix: when she enters, she exiles a creature from each of any number of players until she leaves. Not yet measured.
 
 2026-10-07
 **Added 2026-10-07.** In the simulator as deck key `jodah` (`commander-sim --deck jodah --pool t4`) and in practice mode.
@@ -13,7 +14,7 @@
 
 Jodah, the Unifier ({W}{U}{B}{R}{G}, 5/5) reads: *Legendary creatures you control get +X/+X, where X is the number of legendary creatures you control. Whenever you cast a legendary spell from your hand, exile cards from the top of your library until you exile a legendary nonland card with lesser mana value. You may cast that card without paying its mana cost. Put the rest on the bottom in a random order.*
 
-**Legend cascade.** 27 of the 59 spells are legendary, from Wrenn and Six at two mana up to Razia at eight; the Kaldra pieces count (each is a legendary artifact). With Jodah out, every legendary spell cast from hand brings a free legendary of lower mana value with it: Tolsimir (6) can bring Dragonlord Dromoka, Lyra (5) can bring Elenda, Tymna or Gix. The free card is cast, so Jodah triggers again only for spells cast from hand.
+**Legend cascade.** 28 of the 59 spells are legendary, from Wrenn and Six at two mana up to Razia at eight; the Kaldra pieces count (each is a legendary artifact). With Jodah out, every legendary spell cast from hand brings a free legendary of lower mana value with it: Tolsimir (6) can bring Dragonlord Dromoka, Lyra (5) can bring Elenda, Tymna or Lagrella. The free card is cast, so Jodah triggers again only for spells cast from hand.
 
 **Legends get big.** Each legendary creature gets +1/+1 for every legendary creature you control, Jodah included. Three legends on the battlefield makes each of them +3/+3; Elenda, Lyra and Kura become threats on their own.
 
@@ -25,7 +26,8 @@ Jodah, the Unifier ({W}{U}{B}{R}{G}, 5/5) reads: *Legendary creatures you contro
 - **Protection:** Privileged Position (hexproof for your other permanents), Grand Abolisher and Dragonlord Dromoka (opponents can't cast spells during your turn).
 - **Interaction:** Force of Will and Arcane Denial; Bitter Triumph, Darksteel Mutation, Skyclave Apparition, Disenchant; Toxic Deluge; Garland, Royal Kidnapper (makes an opponent the monarch and steals their best creature while they keep it).
 - **Kaldra:** Sword, Shield and Helm of Kaldra assemble Kaldra, a 4/4 legendary Avatar wearing all three (+5/+5, first strike, trample, haste, indestructible). The simulations found the pieces cost about 1.5 points as kept here (no mana cut for them); they stay for the deck's art theme.
-- **Card draw from combat:** Gix, Yawgmoth Praetor draws a card (for 1 life) whenever one of your creatures deals combat damage to an opponent; Tymna the Weaver draws a card (for 1 life each) for every opponent your creatures hit, after combat.
+- **Card draw from combat:** Tymna the Weaver draws a card (for 1 life each) for every opponent your creatures hit, after combat.
+- **Lagrella, the Magpie** (10-11): when she enters, exile any number of other creatures controlled by different players until she leaves: an opponent's best creature each, or one of your own to blink it (it comes back with two +1/+1 counters).
 
 ## Key lines
 
@@ -53,7 +55,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Jodah, the Unifier
 
-**Creatures (28).** Birds of Paradise, Caparocti Sunborn, Carth the Lion, Cromat, Dakkon Blackblade, Dragonlord Dromoka, Elenda, the Dusk Rose, Fyndhorn Elder, Garland, Royal Kidnapper, Gix, Yawgmoth Praetor, Grand Abolisher, King Darien XLVIII, Korlash, Heir to Blackblade, Kura, the Boundless Sky, Lyra Dawnbringer, Marchesa, the Black Rose, Mirri, Weatherlight Duelist, Paradise Druid, Razia, Boros Archangel, Skyclave Apparition, Sol'kanar the Swamp King, Solemn Simulacrum, Szadek, Lord of Secrets, Terror of the Peaks, Tireless Tracker, Tolsimir Wolfblood, Tymna the Weaver, Urza, Powerstone Prodigy
+**Creatures (28).** Birds of Paradise, Caparocti Sunborn, Carth the Lion, Cromat, Dakkon Blackblade, Dragonlord Dromoka, Elenda, the Dusk Rose, Fyndhorn Elder, Garland, Royal Kidnapper, Grand Abolisher, King Darien XLVIII, Korlash, Heir to Blackblade, Kura, the Boundless Sky, Lagrella, the Magpie, Lyra Dawnbringer, Marchesa, the Black Rose, Mirri, Weatherlight Duelist, Paradise Druid, Razia, Boros Archangel, Skyclave Apparition, Sol'kanar the Swamp King, Solemn Simulacrum, Szadek, Lord of Secrets, Terror of the Peaks, Tireless Tracker, Tolsimir Wolfblood, Tymna the Weaver, Urza, Powerstone Prodigy
 
 **Planeswalkers (4).** Dakkon, Shadow Slayer, Mordenkainen, The Aetherspark, Wrenn and Six
 
@@ -103,7 +105,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Frontier Bivouac
 1 Fyndhorn Elder
 1 Garland, Royal Kidnapper
-1 Gix, Yawgmoth Praetor
 1 Grand Abolisher
 1 Helm of Kaldra
 1 Jodah, the Unifier
@@ -112,6 +113,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 King Darien XLVIII
 1 Korlash, Heir to Blackblade
 1 Kura, the Boundless Sky
+1 Lagrella, the Magpie
 1 Llanowar Wastes
 1 Lyra Dawnbringer
 1 Marchesa, the Black Rose

@@ -125,14 +125,16 @@ Titania (22.8%) is near Veyran (23.7%), at about an even share against Tier 2 (2
 land, which she cracks again for a 5/3 Elemental and a card from Garruk's Uprising. A Bristly Bill build of mostly the
 same cards measured 15.0% and was dropped. (A first run before Greenbelt Radical could turn face up gave 22.4%.)
 
-**October 11: Sheoldred** (key `sheoldred`; mono-black, from bulk and binder, no buys), measured on branch
-`sheoldred-deck` (dfeb5ee, `audit/sheoldred/`) with paired swap runs (look-ahead, loose, 1,000 games per list per
-tier), not the section's seeds, so it is close to but not directly comparable with the rows above. The bulk-only list
-won 16.8 / 21.7 / 20.5 / 23.5 / 22.0% against Tiers 1-5 (**20.9%** over all tiers); with Memory Jar from Jodah in
-Carnage Altar's slot (+2.9, clear against Tiers 2 and 3) it is **about 23.8%**, near Veyran (23.7%) and Titania
-(22.8%). Sheoldred, the Apocalypse came out of Sauron for it (Bedevil in her slot), which measured −2.1 points for
-him (27.1% → 24.9% in the paired test, `audit/sauron/2026-10-11-sheoldred-bedevil/`); the Sauron row above predates
-that change. Jodah's refill for Memory Jar (Szadek, Lord of Secrets) is not measured yet.
+**October 11: Sheoldred** (key `sheoldred`; mono-black: bulk and binder cards, Memory Jar and Gix from Jodah, and two
+upgrade packages bought for about $44), measured on branch `sheoldred-deck` (`audit/sheoldred/`) with paired swap runs
+(look-ahead, loose, 1,000 games per list per tier), not the section's seeds, so it is close to but not directly
+comparable with the rows above. The bulk-only list won 16.8 / 21.7 / 20.5 / 23.5 / 22.0% against Tiers 1-5 (20.9%
+over all tiers); Memory Jar took it to 24.3%, and the two upgrade packages (Underworld Dreams, Fate Unraveler, Howling
+Mine, Temple Bell, Seizan, wheels, finishers and ramp) to 26.4 / 42.7 / 33.4 / 32.2 / 25.3%, **32.0%** over all tiers,
+between Sephiroth (35.9%) and Kefka (26.6%). Gix added +1.2 on top (within noise). Sheoldred, the Apocalypse came out
+of Sauron for it (Bedevil in her slot), which measured −2.1 points for him (27.1% → 24.9% in the paired test,
+`audit/sauron/2026-10-11-sheoldred-bedevil/`); the Sauron row above predates that change. Jodah's refills (Szadek for
+Memory Jar, Lagrella for Gix) are not measured yet.
 
 **October 7-9 run of all seven decks** (960 games per cell, intervals about ±3 points; over all five tiers 4,800
 games, about ±1.3 points; the old Python overnight script `audit/overnight/run.py`, seeds 500000-500959, results in `audit/overnight/2026-10-07-full/`).

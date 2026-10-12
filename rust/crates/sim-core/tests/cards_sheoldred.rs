@@ -1115,11 +1115,12 @@ fn geier_reach_sanitarium_taps_for_colourless_and_loots_everyone() {
     let sani = lands(&mut g, P0, GEIER, 1, false)[0];
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
     lands(&mut g, P0, "Swamp", 2, false);
-    let (h0, h1) = (hand_len(&g, P0), hand_len(&g, P1));
-    let (l0, l1) = (g.player(P0).library.len(), g.player(P1).library.len());
     let f = g.registry.get(g.land(sani).cd).unwrap().land_options.unwrap();
     assert!(f(&mut g, sani, P0, None).unwrap().is_empty(), "no draw punisher: no activation");
     perm(&mut g, P0, "Underworld Dreams");
+    // counted after Underworld Dreams is put out: it is in the deck list, so `perm` takes it from the library
+    let (h0, h1) = (hand_len(&g, P0), hand_len(&g, P1));
+    let (l0, l1) = (g.player(P0).library.len(), g.player(P1).library.len());
     let o = f(&mut g, sani, P0, None).unwrap();
     assert_eq!(o.len(), 1);
     assert!(run_plan(&mut g, P0, &o[0]));
