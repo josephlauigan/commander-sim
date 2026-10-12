@@ -468,6 +468,9 @@ pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
 // ------------------------------------------------------------------ M3: combat and the turn
 /// rules.evasion_blocked: fear, intimidate, Signal Pest and kin: b can't block a
 pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
+    if crate::impls::cloud::evasion_blocked(g, b, a) {
+        return true; // Wrecking Ball Arm, Trailblazer's Boots
+    }
     crate::impls::rules::evasion_blocked(g, b, a) || crate::impls::bulk_white::exit_blocked(g, b, a)
 }
 

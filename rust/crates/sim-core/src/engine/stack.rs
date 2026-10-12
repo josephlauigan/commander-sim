@@ -29,6 +29,9 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     for t in &mut entries {
         t.cast_etb = g.last_cast_etb;
     }
+    // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
+    let extra: Vec<Trigger> = entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
+    entries.extend(extra);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
 }
