@@ -6,6 +6,8 @@
 #   sheo-ABC, jodah-ABC : all three blocks at once
 #   upgrade     : the upgrade package (buys) in the list with Memory Jar: Seizan, Underworld Dreams, Dark Deal, Painful
 #                 Lesson for Ribskiff, Gravblade Heavy, Multiply by Zero, Locust Spray
+#   upgrade2    : the first package plus the second (about $44 in all, 20 cards; see SU2)
+#   gix-u2      : Gix, Yawgmoth Praetor for Hullcarver, on the list with both packages applied
 # Block A (wheel): Memory Jar.             Sheoldred cuts Carnage Altar;   Jodah gets Szadek, Lord of Secrets.
 # Block B (sweeper + removal): Toxic Deluge, Bitter Triumph.
 #                                          Sheoldred cuts Depressurize, Multiply by Zero;
@@ -22,6 +24,7 @@ SA=(--swap "Carnage Altar=>Memory Jar")
 SB=(--swap "Depressurize=>Toxic Deluge" --swap "Multiply by Zero=>Bitter Triumph")
 SC=(--swap "Gravblade Heavy=>Korlash, Heir to Blackblade")
 SU=(--swap "Ribskiff=>Seizan, Perverter of Truth" --swap "Locust Spray=>Painful Lesson" --swap "Gravblade Heavy=>Underworld Dreams" --swap "Multiply by Zero=>Dark Deal")
+SU2=(--swap "Mabel, Bitter Recluse=>Howling Mine" --swap "Moseo, Vein's New Dean=>Temple Bell" --swap "Burglar Rat=>Fate Unraveler" --swap "Fathom Fleet Cutthroat=>Peer into the Abyss" --swap "Canyon Crawler=>Mind Stone" --swap "Necrosquito=>Commander's Sphere" --swap "Rampart Hunter=>Charcoal Diamond" --swap "Callous Inspector=>Phyrexian Arena" --swap "Depressurize=>Read the Bones" --swap "End of the Hunt=>Ambition's Cost" --swap "Tome of Legends=>Syphon Mind" --swap "Diary of Dreams=>Exsanguinate" --swap "Dark Endurance=>Gray Merchant of Asphodel" --swap "Lash of the Balrog=>Swiftfoot Boots" --swap "Swamp=>Geier Reach Sanitarium" --swap "Swamp=>Castle Locthwain")
 JA=(--swap "Memory Jar=>Szadek, Lord of Secrets")
 JB=(--swap "Toxic Deluge=>Lagrella, the Magpie" --swap "Bitter Triumph=>Wander Off")
 JC=(--swap "Korlash, Heir to Blackblade=>Sisters of Stone Death")
@@ -50,6 +53,27 @@ for mode in "$@"; do
     sheo-C) paired $mode sheoldred "${SC[@]}" ;;
     sheo-ABC) paired $mode sheoldred "${SA[@]}" "${SB[@]}" "${SC[@]}" ;;
     upgrade) paired $mode sheoldred "${SU[@]}" ;;
+    upgrade2) paired $mode sheoldred "${SU[@]}" "${SU2[@]}" ;;
+    gix-u2)
+      # Gix, Yawgmoth Praetor (from Jodah) for Hullcarver, measured on the list with both upgrade packages: the doc
+      # is rewritten with them for the run (cardgen deck) and restored from git afterwards
+      F=decklists/JD/sheoldred-mono-black.md; X=tests/fixtures/my_decks_parsed.json
+      git diff --quiet -- $F $X || { echo "uncommitted changes in $F or $X: commit them first"; exit 2; }
+      trap 'git checkout -- $F $X' EXIT
+      awk '/^## Import list/{f=1;next} f&&/^```$/{n++; if(n==2) exit; next} f&&n==1' $F | sed \
+        -e 's/^1 Ribskiff$/1 Seizan, Perverter of Truth/' -e 's/^1 Locust Spray$/1 Painful Lesson/' \
+        -e 's/^1 Gravblade Heavy$/1 Underworld Dreams/' -e 's/^1 Multiply by Zero$/1 Dark Deal/' \
+        -e 's/^1 Mabel, Bitter Recluse$/1 Howling Mine/' -e "s/^1 Moseo, Vein's New Dean$/1 Temple Bell/" \
+        -e 's/^1 Burglar Rat$/1 Fate Unraveler/' -e 's/^1 Fathom Fleet Cutthroat$/1 Peer into the Abyss/' \
+        -e 's/^1 Canyon Crawler$/1 Mind Stone/' -e "s/^1 Necrosquito$/1 Commander's Sphere/" \
+        -e 's/^1 Rampart Hunter$/1 Charcoal Diamond/' -e 's/^1 Callous Inspector$/1 Phyrexian Arena/' \
+        -e 's/^1 Depressurize$/1 Read the Bones/' -e "s/^1 End of the Hunt$/1 Ambition's Cost/" \
+        -e 's/^1 Tome of Legends$/1 Syphon Mind/' -e 's/^1 Diary of Dreams$/1 Exsanguinate/' \
+        -e 's/^1 Dark Endurance$/1 Gray Merchant of Asphodel/' -e 's/^1 Lash of the Balrog$/1 Swiftfoot Boots/' \
+        -e 's/^34 Swamp$/32 Swamp\n1 Geier Reach Sanitarium\n1 Castle Locthwain/' > $D/u2-list.txt
+      ./rust/target/release/cardgen deck sheoldred $D/u2-list.txt --offline | grep -E "cards,|Game Changers"
+      paired $mode sheoldred --swap "Hullcarver=>Gix, Yawgmoth Praetor"
+      git checkout -- $F $X; trap - EXIT ;;
     jodah-A) paired $mode jodah "${JA[@]}" ;;
     jodah-B) paired $mode jodah "${JB[@]}" ;;
     jodah-C) paired $mode jodah "${JC[@]}" ;;
