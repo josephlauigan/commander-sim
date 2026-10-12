@@ -1280,6 +1280,10 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
             dt += tgh.unwrap_or(0);
         }
     }
+    if let Some((bp, bt)) = crate::impls::cloud::base_pt(g, m) {
+        dp += bp - x.pow; // Wrecking Ball Arm, Hulkbuster Armor: base power and toughness
+        dt += bt - x.tgh;
+    }
     for (_, src, ab, i) in statics(g, "equip_bonus") {
         if let Ability::Static { pow, tgh, .. } = &ab[i]
             && g.perm(src).attached == Some(m)
@@ -1313,6 +1317,9 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
 /// Does m have keyword kw (lower case)? Python's `dsl.has_kw`.
 pub fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
     let x = g.perm(m);
+    if kw == "flying" && crate::impls::cloud::loses_flying(g, m) {
+        return false; // Colossus Hammer
+    }
     if x.eot_kw.contains(&kw) {
         return true;
     }
@@ -1822,7 +1829,9 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         }) else {
             continue;
         };
-        if x.attached.is_some_and(|t| g.perm(t).on_bf && g.perm(t).owner == p && !g.perm(t).phased) {
+        if x.attached.is_some_and(|t| g.perm(t).on_bf && g.perm(t).owner == p && !g.perm(t).phased)
+            && !crate::impls::cloud::wants_move(g, p, src)
+        {
             continue;
         }
         if crate::engine::values::stopped(g, &d.name) {
@@ -1835,7 +1844,12 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .copied()
             .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m))
             .collect();
-        if cands.is_empty() || !can_pay(g, p, n, "", false) {
+        let base = n;
+        let cands: Vec<PermId> = cands
+            .into_iter()
+            .filter(|&m| can_pay(g, p, crate::impls::cloud::equip_cost(g, p, src, m, base), "", false))
+            .collect(); // equip cost changes (cloud.rs)
+        if cands.is_empty() {
             continue;
         }
         let score = |m: PermId| {
@@ -1845,8 +1859,10 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                 + if flies { 2.0 } else { 0.0 }
                 + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
+                + crate::impls::cloud::holder_bonus(g, p, m)
         };
         let best = max_by(&cands, score).unwrap();
+        let n = crate::impls::cloud::equip_cost(g, p, src, best, base);
         let bonus: i32 = d
             .abilities
             .iter()
@@ -1860,7 +1876,8 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .iter()
             .filter(|a| matches!(a, Ability::Triggered { source: Some(s), .. } if s == "equipped"))
             .count();
-        let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64;
+        let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64
+            + crate::impls::cloud::equip_utility_bonus(g, p, src, best);
         out.push(Opt {
             utility: u,
             label: format!("equip {}", d.name),

@@ -13510,24 +13510,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "regrow",
-       "filter": {},
-       "from": "yours"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "jump"
@@ -13541,11 +13524,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipment and Vehicle spells you cast cost {1} less to cast.",
-    "Jump — During your turn, Cid has flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -13868,22 +13848,7 @@
    "pow": 2,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "search",
-       "filter": {},
-       "to": "hand",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -13895,10 +13860,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "As long as ~ is equipped, if a triggered ability of ~ or an Equipment attached to it triggers, that ability triggers an additional time."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -14382,6 +14345,12 @@
    "dsl": [
     {
      "type": "static",
+     "static": "equip_bonus",
+     "pow": 10,
+     "tgh": 10
+    },
+    {
+     "type": "static",
      "static": "equip_cost",
      "mana": 8
     }
@@ -14397,10 +14366,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature gets +10/+10 and loses flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -38675,6 +38642,11 @@
    "dsl": [
     {
      "type": "static",
+     "static": "equip_keyword",
+     "keyword": "flying"
+    },
+    {
+     "type": "static",
      "static": "equip_cost",
      "mana": 6
     }
@@ -38690,10 +38662,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature has base power and toughness 9/9 and has flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -86826,26 +86796,11 @@
    "types": "S",
    "generic": 3,
    "pips": "WW",
-   "tags": {
-    "rean": "evil"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "reanimate",
-       "filter": {
-        "type": "creature"
-       },
-       "from": "yours"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -86853,10 +86808,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Return target creature card from your graveyard to the battlefield, then return up to two target Aura and/or Equipment cards from your graveyard to the battlefield attached to that creature.   [partly: return up to two target aura and/or equipment cards from your graveyard to the battlefield attached to that creature]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -91120,6 +91073,24 @@
    "dsl": [
     {
      "type": "static",
+     "static": "equip_bonus",
+     "pow": 1,
+     "tgh": 1
+    },
+    {
+     "type": "triggered",
+     "event": "attack",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you"
+      }
+     ]
+    },
+    {
+     "type": "static",
      "static": "equip_cost",
      "mana": 3
     }
@@ -91136,11 +91107,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Job select",
-    "Equipped creature gets +1/+1, has \"Whenever ~ attacks, you gain 1 life,\" and is a Cleric in addition to its other types."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -93466,36 +93434,7 @@
    "pow": 0,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters with a +1/+1 counter on it"
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "indestructible",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -93506,10 +93445,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}, Sacrifice ~: Target creature you control gains indestructible until end of turn. Put ~'s counters on that creature and attach an Equipment that was attached to ~ to that creature.   [partly: put ~'s counters on that creature and attach an equipment that was attached to ~ to that creature]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,

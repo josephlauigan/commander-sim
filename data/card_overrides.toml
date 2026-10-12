@@ -6638,3 +6638,102 @@ dsl = []
 tags = "draw=2"
 status = "Full"
 note = "each other player discards a card; you draw a card for each card discarded this way (discards happen in turn order, the drawn cards come after all discards)"
+
+# ---- cloud deck: cloud-core (impls/cloud.rs)
+["Cloud, Midgar Mercenary"]
+dsl = []
+status = "Full"
+note = "enter trigger: searches for the Equipment the deck needs (cloud_pick); while equipped, a trigger of Cloud or of an Equipment attached to him is queued twice (stack::queue_triggers)"
+
+["Hero's Blade"]
+status = "Full"
+note = "+3/+2, equip {4}; when a legendary creature you control enters, attaches to it if loose or the new legend is the better wearer"
+
+["Armory Automaton"]
+status = "Full"
+note = "enters or attacks: attaches every Equipment that is loose or on a worse wearer"
+
+["Beatrix, Loyal General"]
+status = "Full"
+note = "beginning of combat on your turn: attaches Equipment to the best wearer (Cloud first), taking those that are loose or on worse ones"
+
+["Puresteel Paladin"]
+status = "Full"
+note = "draws when an Equipment you control enters; with three artifacts, equip costs {0} (cloud::equip_cost)"
+
+["Magitek Scythe"]
+status = "Full"
+note = "enters: attaches to the best wearer, which gets first strike and must be blocked this turn if able (the AI's blocks are topped up by cloud::force_blocks); +2/+1, equip {2}"
+
+["Squire's Lightblade"]
+status = "Full"
+note = "flash; enters: attaches to the best wearer, which gains first strike until end of turn; +1/+0, equip {3}"
+
+["White Mage's Staff"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 1, tgh = 1 },
+  { type = "triggered", event = "attack", source = "equipped", effects = [{ do = "gain_life", n = 1, who = "you" }] },
+  { type = "static", static = "equip_cost", mana = 3 },
+]
+status = "Full"
+note = "job select: enters with a 1/1 colorless Hero token wearing it; +1/+1, gain 1 life when the wearer attacks, equip {3}. (The wearer also becomes a Cleric: the deck has no Cleric payoff, so it isn't tracked)"
+
+["Cid, Freeflier Pilot"]
+dsl = []
+status = "Full"
+note = "Equipment and Vehicle spells cost {1} less; flying on your turn; {2},{T}: returns the best Equipment or Vehicle card from the graveyard to hand"
+
+["Helitrooper"]
+status = "Full"
+note = "flying; when it attacks, the biggest other attacker without flying gains flying; equip costs aimed at it are {2} less (cloud::equip_cost)"
+
+["Colossus Hammer"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 10, tgh = 10 },
+  { type = "static", static = "equip_cost", mana = 8 },
+]
+status = "Full"
+note = "+10/+10 and the wearer loses flying (dsl::has_kw, combat::can_block); equip {8}"
+
+["Hulkbuster Armor"]
+dsl = [
+  { type = "static", static = "equip_keyword", keyword = "flying" },
+  { type = "static", static = "equip_cost", mana = 6 },
+]
+status = "Full"
+note = "wearer has base power and toughness 9/9 (cloud::base_pt, read by dsl::pt) and flying; equip Hero {3}, equip {6}"
+
+["Wrecking Ball Arm"]
+status = "Full"
+note = "wearer has base power and toughness 7/7 (cloud::base_pt) and can't be blocked by creatures with power 2 or less (cloud::evasion_blocked); equip legendary creature {3}, equip {7}"
+
+["Conformer Shuriken"]
+status = "Full"
+note = "when the wearer attacks, taps the best defending creature and puts +1/+1 counters on the wearer equal to the power it has over it; equip {2}"
+
+["Explorer's Scope"]
+status = "Full"
+note = "when the wearer attacks, looks at the top card and puts a land onto the battlefield tapped; equip {1}"
+
+["Trailblazer's Boots"]
+status = "Full"
+note = "nonbasic landwalk: can't be blocked while the defending player controls a nonbasic land (cloud::evasion_blocked); equip {2}"
+
+["Magnetic Snuffler"]
+status = "Full"
+note = "enters: returns the best Equipment card from the graveyard to the battlefield attached to it; a +1/+1 counter whenever you sacrifice an artifact (a Treasure, Food or Clue too)"
+
+["Jocasta, Automaton Avenger"]
+status = "Full"
+note = "flying; +1/+1 counter whenever your commander deals combat damage to a player; from the graveyard it returns tapped and attacking when your commander attacks (cloud::jocasta_attack, from combat)"
+
+["Zack Fair"]
+dsl = []
+status = "Full"
+note = "enters with a +1/+1 counter; {1}, sacrifice: another creature you control gains indestructible until end of turn, takes his counters and the Equipment he wore (an option for cloud_protect)"
+
+["Unfinished Business"]
+tags = ""
+dsl = []
+status = "Full"
+note = "returns the best creature card (Cloud first) from the graveyard, then up to two Equipment and own-creature Auras from the graveyard attached to it"

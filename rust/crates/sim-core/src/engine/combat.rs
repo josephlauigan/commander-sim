@@ -115,7 +115,8 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
         return false; // Sheoldred, Whispering One: swampwalk
     }
     let reach = cb.is_some_and(|d| d.tag(Tag::Reach));
-    if xa.fly && !xb.fly && !reach && !(g.player(xb.owner).elspeth_emblem && g.is_creature(b)) {
+    let (a_fly, b_fly) = (xa.fly && !crate::impls::cloud::loses_flying(g, a), xb.fly && !crate::impls::cloud::loses_flying(g, b));
+    if a_fly && !b_fly && !reach && !(g.player(xb.owner).elspeth_emblem && g.is_creature(b)) {
         return false;
     }
     if xa.eot_kw.contains(&"flying") && !(xb.fly || reach || xb.eot_kw.contains(&"flying")) {
@@ -387,6 +388,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
         crate::dsl::fire(g, "attack", fired)?;
         new.append(&mut g.new_attackers); // attacking tokens its triggers made
     }
+    new.extend(crate::impls::cloud::jocasta_attack(g, p, atk)?); // Jocasta returns from the graveyard attacking
     new.extend(cardcode::keyword_attack(g, p, atk, d)?);
     if !g.hooks.is_empty() {
         g.new_attackers.clear();
@@ -524,8 +526,9 @@ fn resolve_combat_inner(
         crate::human::combat::human_blocks(g, p, &atk, d, unbl)? // the person declares blockers
     } else {
         let mut rng = std::mem::replace(&mut g.rng, crate::rng::Rng::from_u64(0));
-        let assign = ai_blocks(g, p, &atk, d, unbl, &mut rng);
+        let mut assign = ai_blocks(g, p, &atk, d, unbl, &mut rng);
         g.rng = rng;
+        crate::impls::cloud::force_blocks(g, d, &atk, unbl, &mut assign); // Magitek Scythe: must be blocked if able
         assign
     };
     cardcode::blocks_hooks(g, p, &atk, d, &mut assign)?; // card code that changes blocks
