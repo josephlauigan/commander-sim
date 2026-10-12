@@ -2,8 +2,8 @@
 
 **Added 2026-10-11.** JD's mono-black deck around Sheoldred, the Apocalypse, taken from Sauron (who measured −2.1 points
 without her; Bedevil from the binder took her slot). First built from the bulk and binder lists with no buys (20.9%),
-then given Memory Jar and Gix from Jodah and two upgrade packages bought on 2026-10-11 (20 cards, about $44). Fully
-modeled; measured at **about 32% over all tiers** (see "Simulator status").
+then given Memory Jar and Gix from Jodah and two upgrade packages (19 cards bought on 2026-10-11 for about $40, plus
+Phyrexian Arena from Sauron). Fully modeled; measured at **about 32% over all tiers** (see "Simulator status").
 **Updated 2026-10-11.** Out: Carnage Altar. In: Memory Jar. JD's choice: Memory Jar moves from Jodah (Szadek, Lord of
 Secrets refills it there); with Sheoldred out it makes each opponent draw seven, 14 life each. Measured +2.9 points over
 all tiers (look-ahead, loose, 1,000 paired games per tier; `audit/sheoldred/`). Carnage Altar goes back to bulk.
@@ -13,6 +13,9 @@ Callous Inspector, Depressurize, End of the Hunt, Tome of Legends, Diary of Drea
 Hullcarver, 2 Swamp. In: the two upgrade packages (see "Buy list"), and Gix, Yawgmoth Praetor from Jodah (Lagrella, the
 Magpie refills it there). JD's choice: the packages measured +7.7 points (24.3% → 32.0%) and Gix +1.2 on top (within
 noise, leaning positive); `audit/sheoldred/`. The cuts go back to bulk, Lash of the Balrog to the binder.
+**Updated 2026-10-11 (third change).** No change to the list: Phyrexian Arena comes from Sauron instead of being bought
+(Sauron measured +0.6 with Cost of Brilliance in its slot, within noise; `audit/sauron/2026-10-11-arena-cost-of-brilliance/`).
+The buy list is 19 cards, $40.39.
 
 ## Strategy
 
@@ -80,7 +83,7 @@ so opponents can't respond to them.
 
 Bracket 3, no Game Changers.
 
-## Buy list (20 cards, about $44)
+## Buy list (19 cards, about $40)
 
 Bought for the two upgrade packages (cheapest printing on Scryfall, 2026-10-11). Each is a new copy for this deck.
 
@@ -99,19 +102,18 @@ Bought for the two upgrade packages (cheapest printing on Scryfall, 2026-10-11).
 | Mind Stone | $0.21 | Ramp |
 | Commander's Sphere | $0.31 | Ramp |
 | Charcoal Diamond | $0.38 | Ramp |
-| Phyrexian Arena | $3.88 | A card each upkeep |
 | Read the Bones | $0.30 | Draw 2 |
 | Ambition's Cost | $0.34 | Draw 3 |
 | Syphon Mind | $0.30 | Each other player discards; you draw for each |
 | Exsanguinate | $0.40 | Finisher: X life from each opponent |
 | Gray Merchant of Asphodel | $4.47 | Finisher: drain by devotion to black |
 | Swiftfoot Boots | $1.51 | Hexproof for Sheoldred |
-| **Total** | **$44.27** | |
+| **Total** | **$40.39** | |
 
 ## Where the cards come from
 
-**Commander:** Sheoldred, the Apocalypse, from Sauron. **From Jodah:** Memory Jar, Gix, Yawgmoth Praetor. **Bought:**
-the 20 cards above. **Basics:** 32 Swamp, your own. The rest come off JD's lists (2026-10-11), one copy each: 1 from the
+**From Sauron:** Sheoldred, the Apocalypse (the commander) and Phyrexian Arena. **From Jodah:** Memory Jar, Gix, Yawgmoth Praetor. **Bought:**
+the 19 cards above. **Basics:** 32 Swamp, your own. The rest come off JD's lists (2026-10-11), one copy each: 1 from the
 binder (Phyrexian Delver), 44 from bulk. Set codes are the printings the bulk list shows; where it names more than one,
 any of them. Bulk's Arcane Signet and Fellwar Stone are spare copies.
 
@@ -150,7 +152,7 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 | Painful Lesson | Sorcery | Buy, $0.17 |  |
 | Peer into the Abyss | Sorcery | Buy, $3.40 |  |
 | Perigee Beckoner | Creature | Bulk | eoe |
-| Phyrexian Arena | Enchantment | Buy, $3.88 |  |
+| Phyrexian Arena | Enchantment | Sauron |  |
 | Phyrexian Delver | Creature | Binder |  |
 | Phyrexian Rager | Creature | Bulk | dd3 |
 | Read the Bones | Sorcery | Buy, $0.30 |  |
