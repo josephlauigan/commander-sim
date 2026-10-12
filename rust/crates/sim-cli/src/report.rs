@@ -63,6 +63,7 @@ pub fn plan_text(deck: &str) -> &'static str {
         "kefka" => "Kefka flipped into Ruler of Ruin",
         "titania" => "first 5/3 Elemental from Titania",
         "sheoldred" => "first opponent drained by Sheoldred",
+        "cloud" => "first attack by an equipped Cloud",
         "najeela" => "first WUBRG extra combat",
         _ => "",
     }
@@ -97,6 +98,7 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "kefka" => ms("kefka"),
         "titania" => ms("titania"),
         "sheoldred" => ms("sheoldred"),
+        "cloud" => ms("cloud"),
         _ => ms("combo"),
     };
     t.filter(|&t| t != 0)

@@ -534,6 +534,10 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
     }
     let cd = x.cd.unwrap();
     if cd == g.player(owner).cmd {
+        if zone == Zone::Hand && crate::impls::cloud::cmd_stays_in_hand(g, owner) {
+            g.player_mut(owner).hand.push(cd); // rule 903.9b: the owner may leave the commander in hand (no tax)
+            return;
+        }
         g.player_mut(owner).cmd_in_zone = true;
         return;
     }

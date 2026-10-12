@@ -1142,12 +1142,36 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
     if total >= g.player(d).life {
         return out; // lethal: everyone goes
     }
-    let blocked = g.player(d).perms.iter().any(|&b| {
-        live(g, b) && g.is_creature(b) && !g.perm(b).tapped && crate::engine::combat::can_block(g, b, cl)
-    });
+    let blocked =
+        g.player(d).perms.iter().any(|&b| {
+            live(g, b) && g.is_creature(b) && !g.perm(b).tapped && crate::engine::combat::can_block(g, b, cl)
+        });
     if blocked {
         out.retain(|&m| m != cl);
         crate::glog!(g, "      [{} keeps Cloud home: nothing on him yet]", g.player(p).name);
     }
     out
+}
+
+/// look-ahead score bonus for a main-phase option of cloud (added to the rollout average in `search::choose_inner`):
+/// the position score can't see what Cloud's search for an Equipment is worth, so casting him gets a flat bonus
+pub fn search_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
+    match &o.act {
+        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => 10.0,
+        _ => 0.0,
+    }
+}
+
+/// the plan milestone `cloud`: the first attack by an equipped Cloud (read by `report::plan_turn`)
+pub fn plan_milestone(g: &mut Game, p: PlayerId, atk: &[PermId]) {
+    if g.player(p).key == KEY && atk.iter().any(|&m| name_of(g, m) == CLOUD && !equipment_on(g, m).is_empty()) {
+        let turns = g.player(p).turns;
+        g.player_mut(p).milestone.entry("cloud").or_insert(turns);
+    }
+}
+
+/// rule 903.9b: when Cloud would go to his owner's hand, the owner may leave him there, and casting him from the hand
+/// costs no commander tax
+pub fn cmd_stays_in_hand(g: &Game, owner: PlayerId) -> bool {
+    g.player(owner).key == KEY
 }

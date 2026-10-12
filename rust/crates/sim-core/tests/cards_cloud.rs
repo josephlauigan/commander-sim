@@ -669,3 +669,42 @@ fn an_edict_cannot_be_answered() {
     hand(&mut g, P0, &["Take Up the Shield"]);
     assert!(!cloud::cloud_protect(&mut g, P0, cl, "edict", Some(P1), None).unwrap());
 }
+
+// ------------------------------------------------------------------ the plan (cloud-plan)
+#[test]
+fn bounced_cloud_stays_in_hand_without_tax() {
+    let mut g = game();
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    g.player_mut(P0).cmd_in_zone = false;
+    zones::bounce(&mut g, cl).unwrap();
+    assert!(in_hand(&g, P0, "Cloud, Midgar Mercenary"), "903.9b: he stays in hand");
+    assert!(!g.player(P0).cmd_in_zone);
+    assert_eq!(g.player(P0).tax, 0);
+}
+
+#[test]
+fn search_bonus_favours_casting_cloud_only() {
+    use sim_core::hooks::Action;
+    let mut g = game();
+    let c = g.player(P0).cmd;
+    let cast =
+        Opt { utility: 5.0, label: "Cloud, Midgar Mercenary".into(), act: Some(Action::Cast { card: c, zone: None }) };
+    let stop = Opt { utility: 0.0, label: "stop".into(), act: None };
+    assert!(cloud::search_bonus(&g, P0, &cast) > 0.0);
+    assert_eq!(cloud::search_bonus(&g, P0, &stop), 0.0);
+    perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    assert_eq!(cloud::search_bonus(&g, P0, &cast), 0.0, "no bonus once he is out");
+}
+
+#[test]
+fn plan_milestone_needs_an_equipped_cloud() {
+    let mut g = game();
+    let (cl, _) = cloud_with(&mut g, &[]);
+    g.player_mut(P0).turns = 4;
+    cloud::plan_milestone(&mut g, P0, &[cl]);
+    assert!(g.player(P0).milestone.get("cloud").is_none(), "bare Cloud: not yet");
+    let e = perm(&mut g, P0, "Mask of Memory");
+    g.perm_mut(e).attached = Some(cl);
+    cloud::plan_milestone(&mut g, P0, &[cl]);
+    assert_eq!(g.player(P0).milestone.get("cloud"), Some(&4));
+}
