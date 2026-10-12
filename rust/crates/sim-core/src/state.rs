@@ -751,6 +751,8 @@ pub struct Ctx {
     pub host: Option<PermId>,
     /// Mizzix's Mastery: the graveyard card a person chose as it was cast (Python's `ctx['mastery_pick']`)
     pub mastery_pick: Option<CardId>,
+    /// the spell was cast from its owner's graveyard (flashback): set as it resolves (Retrieve the Esper)
+    pub from_gy: bool,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).

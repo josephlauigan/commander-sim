@@ -361,6 +361,7 @@ pub fn umbra_save(g: &mut Game, m: PermId) -> Res<bool> {
 pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
     for a in g.auras.clone() {
         if a == m {
+            crate::impls::bulk_blue::kasmina_detach(g, a); // Kasmina's Transmutation leaves: the creature is itself again
             if let Some(i) = g.auras.iter().position(|&x| x == a) {
                 g.auras.remove(i);
             }
