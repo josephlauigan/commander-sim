@@ -735,10 +735,11 @@ pub fn radical_options(g: &mut Game, p: PlayerId, post: bool) -> Vec<Opt> {
 /// extra ward on a permanent: a Royal Role's {1}, a face-down Radical's {2} (`cardcode::aura_ward`)
 pub fn extra_ward(g: &Game, m: PermId) -> u32 {
     let x = g.perm(m);
+    let more = super::bulk_white::extra_ward(g, m); // face-down disguise creatures, Bronze Guardian's artifacts
     if x.data.is_empty() {
-        return 0;
+        return more;
     }
-    role_ward(g, m) + if is_face_down_radical(g, m) { 2 } else { 0 }
+    more + role_ward(g, m) // a face-down disguise creature (Greenbelt Radical too) is in `more`
 }
 
 /// Disguise {5}{G}{G}: cast face down for {3} as a 2/2 with ward {2}. The AI does that with the mana to spare; the

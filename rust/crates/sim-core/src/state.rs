@@ -69,6 +69,10 @@ pub enum DataKey {
     Exiled,
     /// Whipcorder face down: its printed (power, toughness) (galadriel.enter_face_down)
     Facedown,
+    /// Cho-Manno's Blessing: the colour chosen as it entered (on the Aura); a colour waiting for the next such Aura (on its host)
+    ChosenColor,
+    /// Shardmage's Rescue: the turn it entered (a `Val::Stamp`)
+    Entered,
     FableGoblin,
     Final,
     Flip,

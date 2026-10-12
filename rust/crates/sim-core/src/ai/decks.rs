@@ -1215,6 +1215,9 @@ pub fn protect_response(
         }
         return Ok(false);
     }
+    if key == "cloud" && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)? {
+        return Ok(true); // Patriot, Shardmage's Rescue, Cho-Manno's Blessing, Ultimate Magic: Holy
+    }
     match key {
         "seph" => super::seph::protect(g, owner, m, kind, v),
         "veyran" => super::veyran::protect(g, owner, m, kind, actor, spell),
@@ -1284,6 +1287,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     }
     if key == "jodah" {
         return crate::impls::jodah::jodah_wipe_response(g, q, kind, caster);
+    }
+    if key == "cloud"
+        && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
+    {
+        return Ok(Some(r)); // Ultimate Magic: Holy
     }
     if matches!(key, "galadriel" | "yshtola" | "jodah") {
         return Ok(None);

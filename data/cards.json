@@ -9255,21 +9255,13 @@
    "generic": 4,
    "pips": "W",
    "tags": {
-    "pow": "1",
+    "pow": "0",
     "tgh": "5"
    },
-   "pow": 1,
+   "pow": 0,
    "tgh": 5,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "self_scaling",
-     "pow": 1,
-     "per": "X",
-     "base0": true
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "double strike",
@@ -9282,10 +9274,8 @@
    "ward": 2,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Other artifacts you control have ward {2}."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -10374,10 +10364,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Return target creature card with mana value 3 or less from your graveyard to the battlefield. Put a flying counter on it. It's a Spirit in addition to its other types."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -13177,18 +13165,13 @@
    "generic": 0,
    "pips": "WW",
    "tags": {
+    "aura": true,
     "flash": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "as ~ enters, choose a color"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "enchant",
@@ -13201,10 +13184,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Enchanted creature has protection from the chosen color. This effect doesn't remove ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -24544,32 +24525,13 @@
    "tags": {
     "leg": true,
     "human": true,
-    "pow": "1"
+    "pow": "1",
+    "tgh": "1"
    },
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you",
-         "other": true
-        },
-        "upto": true
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -24580,11 +24542,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, exile up to one other target creature you control. Return that card to the battlefield under its owner's control at the beginning of the next end step.   [partly: return that card to the battlefield under its owner's control at the beginning of the next end step]",
-    "At the beginning of your end step, if one or more cards were put into exile this turn, put a +1/+1 counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -25704,7 +25663,8 @@
    "tags": {
     "pow": "4",
     "tgh": "5",
-    "fly": true
+    "fly": true,
+    "lifelink": true
    },
    "pow": 4,
    "tgh": 5,
@@ -25722,11 +25682,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ deals damage, you gain that much life.",
-    "Morph {2}{W}{W}"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -25766,15 +25723,11 @@
     "human"
    ],
    "protfrom": "",
-   "ward": 2,
+   "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "This creature can't be blocked by creatures with power 3 or greater.",
-    "Disguise {1}{U}",
-    "When ~ is turned face up, return another target creature to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -27049,23 +27002,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "nonland"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -27073,10 +27010,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ costs {2} less to cast if it targets a tapped creature."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -29874,7 +29809,8 @@
    "generic": 0,
    "pips": "W",
    "tags": {
-    "pow": "1"
+    "pow": "1",
+    "tgh": "1"
    },
    "pow": 1,
    "tgh": 1,
@@ -29888,14 +29824,11 @@
     "cat"
    ],
    "protfrom": "",
-   "ward": 2,
+   "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Disguise {1}{W}",
-    "When ~ is turned face up, return another target permanent you control to its owner's hand and put a +1/+1 counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -36460,23 +36393,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -36484,10 +36401,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy target creature. Its controller creates a 1/1 white and black Inkling creature token with flying.   [partly: its controller creates a 1/1 white and black inkling creature token with flying]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -45737,24 +45652,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -45762,10 +45660,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Exile target creature with mana value less than or equal to the number of Plains you control. Its controller gains 3 life.   [partly: its controller gains 3 life]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -57577,7 +57473,8 @@
    "tags": {
     "leg": true,
     "human": true,
-    "pow": "2"
+    "pow": "2",
+    "tgh": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -57593,10 +57490,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{2}, {T}: Another target creature you control gets +2/+0 and gains hexproof until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -63803,10 +63698,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Return target artifact or creature card with mana value 3 or less from your graveyard to the battlefield. If a creature enters this way, it enters with an additional +1/+1 counter on it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -63977,10 +63870,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{3}{W}: Look at the top four cards of your library. You may reveal a creature card with mana value 3 or less from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -64578,24 +64469,11 @@
    "types": "I",
    "generic": 2,
    "pips": "W",
-   "tags": {
-    "draw": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -64603,10 +64481,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Tap up to two target creatures."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -70171,6 +70047,7 @@
    "generic": 0,
    "pips": "W",
    "tags": {
+    "aura": true,
     "flash": true
    },
    "pow": 0,
@@ -70189,11 +70066,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature you control",
-    "As long as this Aura entered this turn, enchanted creature has hexproof."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -76963,9 +76837,7 @@
     "human": true,
     "pow": "4",
     "tgh": "3",
-    "fly": true,
-    "tok": "1",
-    "tokp": "1"
+    "fly": true
    },
    "pow": 4,
    "tgh": 3,
@@ -76983,10 +76855,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, return two creatures you control to their owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -87048,14 +86918,11 @@
     "elephant"
    ],
    "protfrom": "",
-   "ward": 2,
+   "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Disguise {1}{W}",
-    "When ~ is turned face up, exile another target nonland permanent. If you controlled it, return it to the battlefield tapped. Otherwise, its controller creates a 2/2 white and blue Detective creature token."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
