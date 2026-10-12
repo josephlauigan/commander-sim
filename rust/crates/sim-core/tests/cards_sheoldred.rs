@@ -1407,3 +1407,28 @@ fn the_second_package_has_card_code() {
         assert!(g.registry.get(c).is_some() || n == MINE, "{n} has card code");
     }
 }
+
+fn creatures(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.is_creature(m)).count()
+}
+
+#[test]
+fn vona_s_hunger_one_creature_each_then_half_with_the_city_s_blessing() {
+    let mut g = game3();
+    lands(&mut g, P0, "Swamp", 3, false);
+    for _ in 0..3 {
+        token(&mut g, P1, 2);
+    }
+    token(&mut g, P2, 2);
+    cast_spell(&mut g, P0, "Vona's Hunger", Ctx::default());
+    assert_eq!((creatures(&g, P1), creatures(&g, P2)), (2, 0), "no blessing (3 permanents): one each");
+
+    let mut g = game3();
+    lands(&mut g, P0, "Swamp", 10, false);
+    for _ in 0..5 {
+        token(&mut g, P1, 2);
+    }
+    token(&mut g, P2, 2);
+    cast_spell(&mut g, P0, "Vona's Hunger", Ctx::default());
+    assert_eq!((creatures(&g, P1), creatures(&g, P2)), (2, 0), "the city's blessing: half of five rounded up is three");
+}

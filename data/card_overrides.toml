@@ -7012,3 +7012,7 @@ tags = ""
 dsl = []
 status = "Full"
 note = "returns the best creature card (Cloud first) from the graveyard, then up to two Equipment and own-creature Auras from the graveyard attached to it"
+
+["Vona's Hunger"]
+status = "Full"
+note = "ascend: with ten or more permanents as it resolves (the only ascend card in these lists), each opponent sacrifices half their creatures rounded up; otherwise one each"

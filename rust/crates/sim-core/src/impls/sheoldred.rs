@@ -212,6 +212,29 @@ fn fate_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+// ------------------------------------------------------------------ Vona's Hunger
+/// Vona's Hunger: ascend (the city's blessing with ten or more permanents as it resolves: no other ascend card in
+/// these lists, so the check at resolution is exact), then each opponent sacrifices a creature, or with the blessing
+/// half the creatures they control, rounded up
+fn vona_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let city = g.player(p).perms.len() + g.player(p).lands.len() >= 10;
+    if city {
+        crate::glog!(g, "    {} has the city's blessing", pname(g, p));
+    }
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let n = if city {
+            let cr = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count();
+            cr.div_ceil(2).max(1)
+        } else {
+            1
+        };
+        for _ in 0..n {
+            crate::engine::zones::edict(g, q, false)?;
+        }
+    }
+    Ok("gy")
+}
+
 // ------------------------------------------------------------------ Canyon Crawler
 /// Canyon Crawler: a Food token as it enters
 fn crawler_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
@@ -1539,6 +1562,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.hand_options = Some(cost_options);
     c.prio = Some(zero_prio);
     r.card(db, "Foolish Fate")?.resolve = Some(fate_resolve);
+    r.card(db, "Vona's Hunger")?.resolve = Some(vona_resolve);
     let c = r.card(db, "Canyon Crawler")?;
     c.etb = Some(crawler_etb);
     c.hand_options = Some(crawler_options);
@@ -1896,7 +1920,9 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let kills = toll > 0 && k > 0 && g.opps(p).any(|q| g.player(q).life as i64 <= toll * k);
     let safe = g.player(p).library.len() as i64 >= k + 4;
     if k > 0 && safe && (k >= 2 || kills) {
-        if let Some(u) = punish_window_utility(g, p, post).or(if kills && g.active == Some(p) { Some(7.0) } else { None }) {
+        if let Some(u) =
+            punish_window_utility(g, p, post).or(if kills && g.active == Some(p) { Some(7.0) } else { None })
+        {
             return Ok(vec![Opt {
                 utility: u,
                 label: format!("Otherworld Atlas: each player draws {k}"),
@@ -1960,11 +1986,8 @@ fn draw_land_go(g: &mut Game, p: PlayerId, l: LandId, loot: bool) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    let (name, what) = if loot {
-        (GEIER, "each player draws, then discards")
-    } else {
-        (MIKOKORO, "each player draws a card")
-    };
+    let (name, what) =
+        if loot { (GEIER, "each player draws, then discards") } else { (MIKOKORO, "each player draws a card") };
     crate::glog!(g, "  {} uses {}", pname(g, p), name);
     if crate::engine::stack::ability_window_card(g, p, g.land(l).cd, what, Some(3.0), None)? {
         let order = apnap(g, p);

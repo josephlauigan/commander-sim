@@ -1,0 +1,78 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 20 worker threads: about 72 seconds
+######## vs Tier 1 (High B2 / Low B3) ########
+=========== seph analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 41.2%   (4-player baseline 25%)   average rounds survived 10.4
+-- How it wins --
+  combo       65.2% of wins
+  damage      34.8% of wins
+  Opponents it eliminated: 1.04 per game, by
+    combo              55.9%
+    combat             27.8%
+    drain               6.6%
+    commander damage    4.4%
+    triggers            4.2%
+    decked              1.0%
+  Damage dealt per game: 29.6, from
+    combat              19.0  (64%)
+    drain                8.4  (29%)
+    triggers             2.1  (7%)
+-- How it loses --
+  Eliminated in 58.8% of games, on average in round 9.0
+    by Light-Paws via commander damage   13.1% of games
+    by Isshin   via combat             12.3% of games
+    by Lathril  via combat              7.5% of games
+    by Tatyova  via combat              6.7% of games
+    by Lathril  via drain               4.8% of games
+    by Light-Paws via combat              3.5% of games
+    by Teysa Karlov via drain               3.1% of games
+    by Teysa Karlov via combat              2.7% of games
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 4%  T4 14%  T5 28%  T6 48%  T7 64%  T8 73%  T9 76%  T10 78%  T11 79%  T12 80%
+  Online at all: 80.8% of games
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Unburial Rites                             cast in  22.5% of games, win rate when cast  82.4% (+41.2)
+    Reanimate                                  cast in  27.5% of games, win rate when cast  75.0% (+33.8)
+    Dread Return                               cast in  21.0% of games, win rate when cast  72.3% (+31.0)
+    Animate Dead                               cast in  25.6% of games, win rate when cast  71.5% (+30.3)
+    Ephemerate                                 cast in  22.1% of games, win rate when cast  70.8% (+29.5)
+    Smothering Tithe                           cast in  20.8% of games, win rate when cast  70.0% (+28.7)
+    Kitchen Finks                              cast in  24.6% of games, win rate when cast  69.5% (+28.2)
+    Necromancy                                 cast in  22.1% of games, win rate when cast  67.9% (+26.7)
+    Altar of Dementia                          cast in  33.5% of games, win rate when cast  66.5% (+25.2)
+    Skullclamp                                 cast in  31.0% of games, win rate when cast  66.4% (+25.2)
+  Lowest win rate when cast:
+    Chromatic Lantern                          cast in  22.9% of games, win rate when cast  52.7% (+11.5)
+    Birds of Paradise                          cast in  25.0% of games, win rate when cast  53.3% (+12.1)
+    Talisman of Hierarchy                      cast in  23.8% of games, win rate when cast  53.5% (+12.3)
+    Orzhov Signet                              cast in  25.4% of games, win rate when cast  54.1% (+12.8)
+    Zulaport Cutthroat                         cast in  24.8% of games, win rate when cast  54.6% (+13.4)
+    Anguished Unmaking                         cast in  22.5% of games, win rate when cast  54.6% (+13.4)
+    Sol Ring                                   cast in  30.0% of games, win rate when cast  55.6% (+14.3)
+    Atraxa, Grand Unifier                      cast in  66.0% of games, win rate when cast  56.5% (+15.2)
+    Demonic Tutor                              cast in  24.6% of games, win rate when cast  56.8% (+15.5)
+    Toxic Deluge                               cast in  21.5% of games, win rate when cast  57.3% (+16.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Summon: Bahamut                            cast   8.6% of the games it was drawn
+    Elesh Norn, Grand Cenobite                 cast  17.2% of the games it was drawn
+    Teferi's Protection                        cast  26.4% of the games it was drawn [reactive: only cast in response]
+    Sheoldred, Whispering One                  cast  32.5% of the games it was drawn
+    Yawgmoth's Will                            cast  39.1% of the games it was drawn
+    Buried Alive                               cast  42.7% of the games it was drawn
+    Elesh Norn, Mother of Machines             cast  49.2% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.38
+    Archon of Cruelty                          0.10
+    Summon: Bahamut                            0.06
+    Grave Pact                                 0.05
+    Nim Deathmantle                            0.05
+    Smothering Tithe                           0.05
+    Mind Stone                                 0.04
+    Elesh Norn, Mother of Machines             0.04
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+(46s total)

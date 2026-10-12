@@ -1,0 +1,74 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 20 worker threads: about 72 seconds
+######## vs Tier 1 (High B2 / Low B3) ########
+=========== sheoldred analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 29.6%   (4-player baseline 25%)   average rounds survived 10.9
+-- How it wins --
+  damage      97.9% of wins
+  timeout      2.1% of wins
+  Opponents it eliminated: 0.93 per game, by
+    drain              75.7%
+    combat             12.8%
+    triggers            4.3%
+    other               3.1%
+    burn                2.0%
+    decked              1.3%
+    commander damage    0.7%
+  Damage dealt per game: 59.6, from
+    drain               41.7  (70%)
+    combat              10.3  (17%)
+    triggers             6.1  (10%)
+    burn                 1.5  (2%)
+-- How it loses --
+  Eliminated in 70.0% of games, on average in round 10.0
+    by Light-Paws via commander damage   20.4% of games
+    by Isshin   via combat             14.4% of games
+    by Lathril  via combat              9.8% of games
+    by Tatyova  via combat              5.8% of games
+    by Teysa Karlov via drain               4.0% of games
+    by Teysa Karlov via combat              3.5% of games
+    by Lathril  via drain               2.9% of games
+    by Teysa Karlov via Revel in Riches     2.7% of games
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 3%  T4 20%  T5 35%  T6 53%  T7 70%  T8 79%  T9 84%  T10 88%  T11 90%  T12 90%
+  Online at all: 90.0% of games
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Restless Bloodseeker // Bloodsoaked Revele cast in  21.2% of games, win rate when cast  44.1% (+14.5)
+    Fate Unraveler                             cast in  21.5% of games, win rate when cast  40.8% (+11.2)
+    Blood Artist                               cast in  21.2% of games, win rate when cast  37.3% (+7.7)
+    Melancholic Poet                           cast in  24.2% of games, win rate when cast  36.2% (+6.6)
+    Skyscanner                                 cast in  21.9% of games, win rate when cast  36.2% (+6.6)
+    Burrog Banemaker                           cast in  23.3% of games, win rate when cast  35.7% (+6.1)
+    Sheoldred, the Apocalypse                  cast in  90.6% of games, win rate when cast  32.6% (+3.1)
+    Stir Up Trouble                            cast in  23.3% of games, win rate when cast  32.1% (+2.6)
+    Charcoal Diamond                           cast in  20.8% of games, win rate when cast  32.0% (+2.4)
+  Lowest win rate when cast:
+    Charcoal Diamond                           cast in  20.8% of games, win rate when cast  32.0% (+2.4)
+    Stir Up Trouble                            cast in  23.3% of games, win rate when cast  32.1% (+2.6)
+    Sheoldred, the Apocalypse                  cast in  90.6% of games, win rate when cast  32.6% (+3.1)
+    Burrog Banemaker                           cast in  23.3% of games, win rate when cast  35.7% (+6.1)
+    Skyscanner                                 cast in  21.9% of games, win rate when cast  36.2% (+6.6)
+    Melancholic Poet                           cast in  24.2% of games, win rate when cast  36.2% (+6.6)
+    Blood Artist                               cast in  21.2% of games, win rate when cast  37.3% (+7.7)
+    Fate Unraveler                             cast in  21.5% of games, win rate when cast  40.8% (+11.2)
+    Restless Bloodseeker // Bloodsoaked Revele cast in  21.2% of games, win rate when cast  44.1% (+14.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  15.2% of the games it was drawn
+    Apex Witchstalker                          cast  37.1% of the games it was drawn
+    Peer into the Abyss                        cast  37.2% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.80
+    Charcoal Diamond                           0.05
+    Phyrexian Arena                            0.04
+    Seymour Flux                               0.04
+    Melancholic Poet                           0.04
+    Fate Unraveler                             0.03
+    Mind Stone                                 0.03
+    Apex Witchstalker                          0.03
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+(46s total)
