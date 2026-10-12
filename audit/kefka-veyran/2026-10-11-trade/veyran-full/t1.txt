@@ -1,0 +1,13 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Splatter Technique [pool] S 1UURR :: (no tags)
+   Lightning Strike [scryfall+dsl] I 1R :: rem=dmg3 tgt=c face
+      ability: spell  -> damage
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Niv-Mizzet, the Firemind -> Mystic Confluence; Jin-Gitaxias, Progress Tyrant -> Splatter Technique; Underworld Breach -> Lightning Strike; Deflecting Swat -> Return the Favor; Slip Out the Back -> Spell Pierce; Steam Vents -> Island; Sulfur Falls -> Island; Spirebluff Canal -> Mountain; Stormcarved Coast -> Mountain
+
+=== Veyran vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  25.1% ->  29.7%  (delta +4.6 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Lathril 13.1%  Teysa Karlov 12.7%  Light-Paws 16.5%  Isshin 16.0%  Tatyova 10.9%
+VERDICT: BETTER under the loose profile (the only one run)
+
+(373s total)

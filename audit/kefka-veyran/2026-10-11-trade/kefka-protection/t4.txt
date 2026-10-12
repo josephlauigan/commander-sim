@@ -1,0 +1,13 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Deflecting Swat [scryfall] I 2R :: (no tags)
+      not modeled: If you control a commander, you may cast ~ without paying its mana cost.
+      not modeled: You may choose new targets for target spell or ability.
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Arcane Omens -> Deflecting Swat; Triskelion -> Slip Out the Back
+
+=== Kefka vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.4% ->  29.2%  (delta -0.2 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Heliod 14.3%  Yuriko 17.2%  Krenko 16.4%  Chulane 11.9%  Prosper 10.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(280s total)

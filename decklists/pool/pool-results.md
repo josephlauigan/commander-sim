@@ -125,13 +125,21 @@ Titania (22.8%) is near Veyran (23.7%), at about an even share against Tier 2 (2
 land, which she cracks again for a 5/3 Elemental and a card from Garruk's Uprising. A Bristly Bill build of mostly the
 same cards measured 15.0% and was dropped. (A first run before Greenbelt Radical could turn face up gave 22.4%.)
 
+**Kefka AI fix and the Veyran → Kefka trade (2026-10-11, branch `kefka-veyran-trade`).** Not a new 960-per-cell run:
+paired look-ahead tests, 1,000 games per tier, so the table above is out of date for these two decks until the next
+full run. Kefka's AI held Psychosis Crawler (and never cast Underworld Breach); after the fix Kefka measured 28.1%
+(T1 26.6, T2 38.1, T3 24.4, T4 29.4, T5 21.9). The trade moved Deflecting Swat, Slip Out the Back, Underworld
+Breach, Niv-Mizzet, the Firemind, Jin-Gitaxias and four blue-red duals from Veyran to Kefka, and Mystic Confluence,
+Splatter Technique and three bulk cards back: **Kefka 28.1% → 29.4%** (+1.3), **Veyran 22.9% → 24.5%** (+1.7).
+Details: `audit/kefka-veyran/2026-10-11-trade/` and both deck docs.
+
 **October 11: Sheoldred** (key `sheoldred`; mono-black: bulk and binder cards, Memory Jar and Gix from Jodah, and two
 upgrade packages bought for about $44), measured on branch `sheoldred-deck` (`audit/sheoldred/`) with paired swap runs
 (look-ahead, loose, 1,000 games per list per tier), not the section's seeds, so it is close to but not directly
 comparable with the rows above. The bulk-only list won 16.8 / 21.7 / 20.5 / 23.5 / 22.0% against Tiers 1-5 (20.9%
 over all tiers); Memory Jar took it to 24.3%, and the two upgrade packages (Underworld Dreams, Fate Unraveler, Howling
 Mine, Temple Bell, Seizan, wheels, finishers and ramp) to 26.4 / 42.7 / 33.4 / 32.2 / 25.3%, **32.0%** over all tiers,
-between Sephiroth (35.9%) and Kefka (26.6%). Gix added +1.2 on top (within noise). Sheoldred, the Apocalypse came out
+between Sephiroth (35.9%) and Kefka (29.4% after the trade above). Gix added +1.2 on top (within noise). Sheoldred, the Apocalypse came out
 of Sauron for it (Bedevil in her slot), which measured −2.1 points for him (27.1% → 24.9% in the paired test,
 `audit/sauron/2026-10-11-sheoldred-bedevil/`); the Sauron row above predates that change. Jodah's refills (Szadek for
 Memory Jar, Lagrella for Gix) are not measured yet.

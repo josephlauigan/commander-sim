@@ -2124,11 +2124,14 @@ fn purge(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
         .filter(|&m| g.perm(m).cd.is_some_and(|cd| can_pay(g, p, g.db.get(cd).cmc, "BR", false)))
         .collect();
     let Some(t) = max_by(&tg, |m| pval(g, m) + 0.2 * epow(g, m) as f64) else { return Ok(vec![]) };
-    if pval(g, t) < 3.0 {
+    // Kefka, Ruler of Ruin: the life lost on your turn draws that many cards, so the power it deals is card draw
+    let draws = if g.player(p).key == "kefka" && crate::impls::kefka::flipped(g, p) { epow(g, t).clamp(0, 6) } else { 0 };
+    if pval(g, t) < 3.0 && draws < 2 {
         return Ok(vec![]);
     }
     let label = format!("Kaervek's Purge on {}", g.perm(t).name);
-    Ok(vec![plan(pval(g, t) * 0.5 - 0.8, label, purge_go, pack(c.0 as u32, t.0))])
+    let u = pval(g, t) * 0.5 - 0.8 + 0.7 * draws as f64;
+    Ok(vec![plan(u, label, purge_go, pack(c.0 as u32, t.0))])
 }
 
 fn purge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
@@ -2140,7 +2143,11 @@ fn purge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     pay(g, p, x, "BR", false)?;
     remove_card(&mut g.player_mut(p).hand, c);
-    g.player_mut(p).spells_this_turn += 1;
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c); // the card report counts a card as cast from this set
+    crate::glog!(g, "  {} casts Kaervek's Purge -> {} (X={x})", pname(g, p), g.perm(t).name);
     on_cast(g, p, c)?;
     let ok = counter_window(g, p, c, 4.0, vec![])?;
     g.player_mut(p).gy.push(c);

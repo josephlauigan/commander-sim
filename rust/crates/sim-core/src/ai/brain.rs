@@ -1266,6 +1266,8 @@ fn confluence_draw(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let pl = g.player_mut(p);
     pl.gy.push(c);
     pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c); // the card report counts a card as cast from this set
     on_cast(g, p, c)?;
     draw(g, p, n as u32, false)?;
     Ok(true)
