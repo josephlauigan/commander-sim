@@ -296,7 +296,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     }
     if g.player(p).key == "cloud" {
         for (k, kk) in keyed.iter().enumerate() {
-            scores[k] += crate::impls::cloud::search_bonus(g, p, kk.1) * g.settings.search.rollouts as f64;
+            scores[k] += crate::impls::cloud::search_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
         }
         best = 0;
         for k in 1..keyed.len() {

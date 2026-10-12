@@ -1154,8 +1154,13 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
 
 /// look-ahead score bonus for a main-phase option of cloud (added to the rollout average in `search::choose_inner`):
 /// the position score can't see what Cloud's search for an Equipment is worth, so casting him gets a flat bonus
-pub fn search_bonus(g: &Game, p: PlayerId, label: &str) -> f64 {
-    if label == CLOUD && cloud_of(g, p).is_none() { 10.0 } else { 0.0 }
+pub fn search_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
+    let env = |k: &str, d: f64| std::env::var(k).ok().and_then(|s| s.parse().ok()).unwrap_or(d);
+    match &o.act {
+        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => env("CLB", 10.0),
+        Some(Action::Equip { target, .. }) if name_of(g, *target) == CLOUD => env("CEB", 0.0),
+        _ => 0.0,
+    }
 }
 
 /// the plan milestone `cloud`: the first attack by an equipped Cloud (read by `report::plan_turn`)
@@ -1166,4 +1171,10 @@ pub fn plan_milestone(g: &mut Game, p: PlayerId, atk: &[PermId]) {
         let turns = g.player(p).turns;
         g.player_mut(p).milestone.entry("cloud").or_insert(turns);
     }
+}
+
+/// rule 903.9b: when Cloud would go to his owner's hand, the owner may leave him there, and casting him from the hand
+/// costs no commander tax
+pub fn cmd_stays_in_hand(g: &Game, owner: PlayerId) -> bool {
+    g.player(owner).key == KEY
 }
