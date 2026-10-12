@@ -6248,7 +6248,7 @@ dsl = []
 status = "Full"
 note = "flying; enters with two oil counters (+1/+1 each); another creature or artifact you control going to the graveyard (artifact tokens when sacrificed too) adds an oil counter"
 
-["Restless Bloodseeker"]
+["Restless Bloodseeker // Bloodsoaked Reveler"]
 status = "Full"
 note = "end step, if you gained life this turn: a Blood token; sacrifice two Blood tokens (sorcery speed) to transform into Bloodsoaked Reveler (3/3, {4}{B}: each opponent loses 2 life and you gain 2); Blood tokens are kept as a count and rummage ({1}, discard, sacrifice: draw) when the hand has a spare card"
 
@@ -6535,3 +6535,34 @@ tags = "human pow=3 tgh=4"
 dsl = []
 status = "Full"
 note = "daybound and nightbound modeled (Game::day_night): the first daybound permanent makes it day; as each turn begins it becomes night after a turn with no spell cast, day after a turn with two or more; at night it is the 4/5 Infested Werewolf and makes two Insects instead of one"
+
+["Locust Spray"]
+status = "Full"
+note = "-1/-1 until end of turn (a lethal one kills); the AI casts it at an opposing creature the -1/-1 kills, else cycles it for {B} after its other plays"
+
+["Ribskiff"]
+status = "Full"
+note = "draws a card entering; crew 3 (with creatures that would not attack, never Sheoldred) before combat makes it a 4/4 artifact creature; toxic 2 gives two poison counters with combat damage to a player"
+
+["Tome of Legends"]
+status = "Full"
+note = "enters with a page counter; +1 whenever your commander enters or attacks; {1}, {T}, remove a page counter: draw a card (the AI uses it when the hand has room, more eagerly with Sheoldred out)"
+
+["Diary of Dreams"]
+dsl = []
+status = "Full"
+note = "+1 page counter whenever you cast an instant or sorcery spell; {5}, {T}: draw a card, costing {1} less for each page counter"
+
+["Leech Collector // Bloodletting"]
+status = "Full"
+note = "the first time each turn you gain life it becomes prepared; at sorcery speed the AI pays {B} to cast a copy of Bloodletting (each opponent loses 2 life), which unprepares it"
+
+["Moseo, Vein's New Dean"]
+status = "Full"
+note = "flying; a Pest token entering; at your end step, if you gained life this turn, returns the best creature card with mana value at most the life gained from your graveyard"
+
+["Lethal Throwdown"]
+tags = ""
+dsl = []
+status = "Full"
+note = "the AI sacrifices a creature as the additional cost (a modified one with a counter or attached Equipment/Aura first), destroys the best target creature or planeswalker, and draws a card if the sacrificed creature was modified"

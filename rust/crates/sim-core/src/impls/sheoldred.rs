@@ -10,10 +10,10 @@ use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, cost_of, pay};
-use crate::engine::removal::apply_removal;
+use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{etgh, pval, untargetable};
+use crate::engine::values::{epow, etgh, pval, untargetable};
 use crate::engine::zones::{
     Enter, Zone, discard_cards, draw, enter, exile_perm, land_to_hand, leave, make_artifact_tokens, max_by, min_by,
     returns_left, to_zone_card,
@@ -948,6 +948,367 @@ fn exile_cast_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// Arnim Zola, Bio-Fanatic: {3}, {T}: create a tapped 2/1 black Villain creature token with menace. Activate only if
 
+// ------------------------------------------------------------------ Locust Spray
+/// Locust Spray: target creature gets -1/-1 until end of turn
+fn spray_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if let Some(t) = ctx.target.filter(|&t| live_creature(g, t)) {
+        shrink(g, p, t, 1)?;
+    }
+    Ok("gy")
+}
+
+/// cast at an opposing creature the -1/-1 kills; otherwise cycle it ({B}) once the turn's real plays are made
+fn spray_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if human(g, p) || g.active != Some(p) || !affordable(g, p, c) {
+        return Ok(vec![]);
+    }
+    let tg: Vec<PermId> = legal_targets(g, p, "destroy", "c", false, Some(c))
+        .into_iter()
+        .filter(|&m| etgh(g, m) <= 1 && pval(g, m) >= 1.0)
+        .collect();
+    if let Some(t) = max_by(&tg, |m| pval(g, m)) {
+        return Ok(vec![Opt {
+            utility: pval(g, t) - 3.0,
+            label: format!("Locust Spray -> {}", g.perm(t).name),
+            act: Some(Action::Plan { f: spray_cast, arg: c.0 as i64 | ((t.0 as i64) << 16) }),
+        }]);
+    }
+    if post == Some(true) && !g.player(p).library.is_empty() {
+        return Ok(vec![Opt {
+            utility: 0.9,
+            label: "Locust Spray (cycling)".into(),
+            act: Some(Action::Plan { f: spray_cycle, arg: c.0 as i64 }),
+        }]);
+    }
+    Ok(vec![])
+}
+
+fn spray_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (c, t) = (CardId((arg & 0xffff) as u16), PermId((arg >> 16) as u32));
+    if !g.player(p).hand.contains(&c) || !live_creature(g, t) {
+        return Ok(false);
+    }
+    crate::ai::brain::do_cast_with(g, p, c, None, Ctx { target: Some(t), ..Ctx::default() })
+}
+
+fn spray_cycle(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "B", false) {
+        return Ok(false);
+    }
+    pay(g, p, 0, "B", false)?;
+    crate::glog!(g, "  {} cycles Locust Spray", pname(g, p));
+    discard_cards(g, p, &[c])?;
+    draw(g, p, 1, false)?;
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Ribskiff
+/// Ribskiff: when it enters, draw a card
+fn ribskiff_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = owner(g, src);
+    if m == src && trigger_window(g, o, Some(src), "draw a card", None)? {
+        draw(g, o, 1, false)?;
+    }
+    Ok(())
+}
+
+/// crew 3 with creatures that would not attack anyway (summoning sick, or weaker than the 4/4); never Sheoldred
+fn ribskiff_crew(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let x = g.perm(src);
+    if p != x.owner || x.tapped || x.sick || !x.on_bf || x.data.truthy(DataKey::Anim) {
+        return Ok(());
+    }
+    let mut cands: Vec<PermId> = my_creatures(g, p)
+        .into_iter()
+        .filter(|&m| !g.perm(m).tapped && m != src && !g.perm(m).is_cmd && !sheoldred_card(g, m))
+        .collect();
+    cands.sort_by(|&a, &b| {
+        (pval(g, a), -epow(g, a)).partial_cmp(&(pval(g, b), -epow(g, b))).unwrap_or(std::cmp::Ordering::Equal)
+    });
+    let (mut power, mut pick) = (0, vec![]);
+    for m in cands {
+        if power >= 3 {
+            break;
+        }
+        if g.perm(m).sick || g.perm(m).noatk || epow(g, m) < 4 {
+            pick.push(m);
+            power += epow(g, m);
+        }
+    }
+    if power < 3 || !super::lands::open_attack(g, p, 4, false) {
+        return Ok(());
+    }
+    for m in pick {
+        g.perm_mut(m).tapped = true;
+    }
+    let st = g.turn_stamp();
+    let s = g.perm_mut(src);
+    s.data.set(DataKey::Anim, Val::Bool(true));
+    s.data.set(DataKey::Crewed, Val::Stamp(st));
+    s.pow = 4;
+    s.tgh = 4;
+    g.bf_ver += 1;
+    crate::glog!(g, "  {} crews Ribskiff", pname(g, p));
+    Ok(())
+}
+
+fn sheoldred_card(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| name_of(g, c) == "Sheoldred, the Apocalypse")
+}
+
+/// toxic 2: two poison counters with the combat damage to a player
+fn ribskiff_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
+    if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
+        g.player_mut(d).poison += 2;
+        crate::glog!(g, "    {} gets 2 poison counters (toxic)", g.player(d).name);
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Tome of Legends and Diary of Dreams
+fn pages(g: &Game, m: PermId) -> i32 {
+    g.perm(m).data.int(DataKey::Counters) as i32
+}
+
+fn add_pages(g: &mut Game, m: PermId, n: i32) {
+    let k = g.perm(m).data.int(DataKey::Counters);
+    g.perm_mut(m).data.set(DataKey::Counters, Val::Int(k + n as i64));
+}
+
+/// Tome of Legends: it enters with a page counter, and gets one whenever your commander enters
+fn tome_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src {
+        add_pages(g, src, 1);
+    } else if g.perm(m).is_cmd && g.perm(m).owner == owner(g, src) && on_bf(g, src) {
+        add_pages(g, src, 1);
+    }
+    Ok(())
+}
+
+/// ... or attacks
+fn tome_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if p == owner(g, src) && on_bf(g, src) && atk.iter().any(|&m| g.perm(m).is_cmd) {
+        add_pages(g, src, 1);
+    }
+    Ok(vec![])
+}
+
+fn tome_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    38
+}
+
+/// a draw is worth more with Sheoldred out (it gains 2); a full hand wants nothing
+fn draw_utility(g: &Game, p: PlayerId) -> f64 {
+    let pl = g.player(p);
+    let mut u = 1.8 + if sheoldred_out(g, p) { 1.5 } else { 0.0 };
+    if pl.hand.len() >= 6 {
+        u -= 1.5;
+    }
+    u
+}
+
+fn tome_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered || post.is_none() {
+        return Ok(vec![]);
+    }
+    if pages(g, src) < 1 || !can_pay(g, p, 1, "", false) || g.player(p).library.is_empty() {
+        return Ok(vec![]);
+    }
+    let u = draw_utility(g, p);
+    if u <= 0.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: u,
+        label: "Tome of Legends: draw".into(),
+        act: Some(Action::Ability { src, f: tome_go, arg: 0 }),
+    }])
+}
+
+fn tome_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).tapped || pages(g, src) < 1 || !can_pay(g, p, 1, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, 1, "", false)?;
+    g.perm_mut(src).tapped = true;
+    add_pages(g, src, -1);
+    if ability_window(g, p, Some(src), "draw a card", Some(2.0), None)? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(true)
+}
+
+/// Diary of Dreams: a page counter whenever you cast an instant or sorcery spell
+fn diary_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let d = g.db.get(c);
+    if caster == owner(g, src) && on_bf(g, src) && (d.instant || d.sorcery) {
+        add_pages(g, src, 1);
+    }
+    Ok(())
+}
+
+/// {5}, {T}: draw a card; it costs {1} less for each page counter
+fn diary_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered || post.is_none() {
+        return Ok(vec![]);
+    }
+    let cost = (5 - pages(g, src)).max(0) as u32;
+    if !can_pay(g, p, cost, "", false) || g.player(p).library.is_empty() {
+        return Ok(vec![]);
+    }
+    let u = draw_utility(g, p) - 0.1 * cost as f64;
+    if u <= 0.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: u,
+        label: "Diary of Dreams: draw".into(),
+        act: Some(Action::Ability { src, f: diary_go, arg: 0 }),
+    }])
+}
+
+fn diary_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    let cost = (5 - pages(g, src)).max(0) as u32;
+    if !on_bf(g, src) || g.perm(src).tapped || !can_pay(g, p, cost, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, cost, "", false)?;
+    g.perm_mut(src).tapped = true;
+    if ability_window(g, p, Some(src), "draw a card", Some(2.0), None)? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Leech Collector // Bloodletting
+/// the first time each turn you gain life, it becomes prepared
+fn leech_gain(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
+    if n > 0 && p == owner(g, src) && on_bf(g, src) && crate::engine::values::once_per_turn(g, p, intern("leech_prep"))
+    {
+        g.perm_mut(src).data.set(DataKey::Prepared, Val::Bool(true));
+        crate::glog!(g, "    Leech Collector becomes prepared");
+    }
+    Ok(())
+}
+
+/// Bloodletting ({B}, sorcery): each opponent loses 2 life. Cast as a copy while Leech Collector is prepared.
+fn leech_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p
+        || !x.on_bf
+        || x.phased
+        || !x.data.truthy(DataKey::Prepared)
+        || post.is_none()
+        || g.active != Some(p)
+        || !can_pay(g, p, 0, "B", false)
+        || human(g, p)
+    {
+        return Ok(vec![]);
+    }
+    let opps = g.opps(p).filter(|&q| g.player(q).alive).count() as f64;
+    let near = g.opps(p).any(|q| g.player(q).alive && g.player(q).life <= 2);
+    Ok(vec![Opt {
+        utility: 1.4 + 0.5 * opps + if near { 6.0 } else { 0.0 },
+        label: "Bloodletting (prepared copy)".into(),
+        act: Some(Action::Ability { src, f: leech_go, arg: 0 }),
+    }])
+}
+
+fn leech_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !g.perm(src).data.truthy(DataKey::Prepared) || !can_pay(g, p, 0, "B", false) {
+        return Ok(false);
+    }
+    pay(g, p, 0, "B", false)?;
+    g.perm_mut(src).data.set(DataKey::Prepared, Val::Bool(false));
+    crate::impls::mine::cast_copy_with(g, p, None, None, false, 3.0, &mut |g| {
+        crate::glog!(g, "  {} casts a copy of Bloodletting", g.player(p).name);
+        for q in g.opps(p).collect::<Vec<_>>() {
+            lose_life(g, q, 2, Some(p), "drain", None)?;
+        }
+        Ok(())
+    })?;
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Moseo, Vein's New Dean
+/// Infusion: at the beginning of your end step, if you gained life this turn, return up to one creature card with
+/// mana value X or less from your graveyard to the battlefield, X being the life you gained this turn
+fn moseo_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != owner(g, src) || !on_bf(g, src) || !gained_life(g, p) {
+        return Ok(());
+    }
+    let x = g.player(p).gained_turn.map_or(0, |t| t.1);
+    let Some(c) = best_gy(g, p, |g, c| g.db.get(c).cmc as i32 <= x) else { return Ok(()) };
+    if trigger_window(g, p, Some(src), "return a creature card from your graveyard", Some(cv(g, c)))?
+        && g.player(p).gy.contains(&c)
+    {
+        reanimate(g, p, c)?;
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Lethal Throwdown
+/// the creature p would sacrifice to Lethal Throwdown: a modified one is best (the extra card), otherwise the cheapest
+fn throwdown_fodder(g: &Game, p: PlayerId, target: PermId) -> Option<PermId> {
+    let cands: Vec<PermId> = my_creatures(g, p)
+        .into_iter()
+        .filter(|&m| m != target && !g.perm(m).is_cmd && !crate::engine::values::no_sac(g, m))
+        .collect();
+    min_by(&cands, |m| crate::engine::zones::sac_worth(g, m) - if modified(g, p, m) { 1.5 } else { 0.0 })
+}
+
+/// a creature with a counter on it, or with Equipment or an Aura of yours attached
+fn modified(g: &Game, p: PlayerId, m: PermId) -> bool {
+    g.perm(m).plus != 0
+        || g.perm(m).data.int(DataKey::Counters) != 0
+        || g.player(p).perms.iter().any(|&a| a != m && g.perm(a).attached == Some(m))
+}
+
+fn throwdown_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+        return Ok(vec![]);
+    }
+    let tg = legal_targets(g, p, "destroy", "cp", false, Some(c));
+    let Some(t) = max_by(&tg, |m| pval(g, m)) else { return Ok(vec![]) };
+    let Some(f) = throwdown_fodder(g, p, t) else { return Ok(vec![]) };
+    let gain = pval(g, t) - crate::engine::zones::sac_worth(g, f) + if modified(g, p, f) { 1.5 } else { 0.0 };
+    if gain < 1.5 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: gain - 3.0,
+        label: format!("Lethal Throwdown -> {} (sacrifice {})", g.perm(t).name, g.perm(f).name),
+        act: Some(Action::Plan { f: throwdown_plan, arg: c.0 as i64 | ((t.0 as i64) << 16) }),
+    }])
+}
+
+/// pay the additional cost (sacrifice a creature, noting whether it was modified), then cast it at the target
+fn throwdown_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (c, t) = (CardId((arg & 0xffff) as u16), PermId((arg >> 16) as u32));
+    if !g.player(p).hand.contains(&c) || !on_bf(g, t) || !affordable(g, p, c) {
+        return Ok(false);
+    }
+    let Some(f) = throwdown_fodder(g, p, t) else { return Ok(false) };
+    let was_modified = modified(g, p, f);
+    crate::glog!(g, "  {} sacrifices {} to Lethal Throwdown", pname(g, p), g.perm(f).name);
+    crate::engine::zones::die(g, f, "sac")?;
+    crate::ai::brain::do_cast_with(g, p, c, None, Ctx { target: Some(t), x: was_modified as i32, ..Ctx::default() })
+}
+
+/// destroy target creature or planeswalker; if the sacrificed creature was modified, draw a card
+fn throwdown_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if let Some(t) = ctx.target.filter(|&t| on_bf(g, t)) {
+        apply_removal(g, Some(p), t, "destroy", Some(c))?;
+    }
+    if ctx.x == 1 {
+        draw(g, p, 1, false)?;
+    }
+    Ok("gy")
+}
+
 // ------------------------------------------------------------------ the AI plan
 /// sheoldred's cast priority: the generic priorities, the recursion creatures only with something worth bringing
 /// back, Soul Enervation with a creature to kill
@@ -1075,5 +1436,31 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, BECKONER)?;
     c.etb = Some(beckoner_etb);
     c.end_step = Some(beckoner_end);
+    let c = r.card(db, "Locust Spray")?;
+    c.resolve = Some(spray_resolve);
+    c.hand_options = Some(spray_options);
+    c.prio = Some(zero_prio);
+    let c = r.card(db, "Ribskiff")?;
+    c.etb = Some(ribskiff_etb);
+    c.crew = Some(ribskiff_crew);
+    super::partials::at_once(c, Event::Crew, true);
+    c.combat_damage = Some(ribskiff_damage);
+    let c = r.card(db, "Tome of Legends")?;
+    c.etb = Some(tome_etb);
+    c.attack = Some(tome_attack);
+    c.options = Some(tome_options);
+    c.prio = Some(tome_prio);
+    let c = r.card(db, "Diary of Dreams")?;
+    c.cast = Some(diary_cast);
+    c.options = Some(diary_options);
+    c.prio = Some(tome_prio);
+    let c = r.card(db, "Leech Collector // Bloodletting")?;
+    c.gain_life = Some(leech_gain);
+    c.options = Some(leech_options);
+    r.card(db, "Moseo, Vein's New Dean")?.end_step = Some(moseo_end);
+    let c = r.card(db, "Lethal Throwdown")?;
+    c.resolve = Some(throwdown_resolve);
+    c.hand_options = Some(throwdown_options);
+    c.prio = Some(zero_prio);
     Ok(())
 }

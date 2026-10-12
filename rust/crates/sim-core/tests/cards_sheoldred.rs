@@ -373,3 +373,196 @@ fn perigee_beckoner_pumps_another_creature_and_brings_it_back_when_it_dies() {
     assert!(g.perm(back).tapped, "tapped");
     assert!(!in_gy(&g, P0, "Gravblade Heavy"));
 }
+
+// ------------------------------------------------------------------ the last eight cards
+#[test]
+fn locust_spray_kills_a_one_toughness_creature_and_otherwise_cycles() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Locust Spray"])[0];
+    let t = perm(&mut g, P1, "Moseo, Vein's New Dean"); // a 2/1 flier
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert!(o[0].label.contains("Locust Spray ->"), "{:?}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.perm(t).on_bf, "the 1/1 died to -1/-1");
+    assert!(in_gy(&g, P0, "Locust Spray"));
+    // a 3/3 is not worth it: the spray is cycled after combat
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Locust Spray"])[0];
+    token(&mut g, P1, 3);
+    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "no cycling before the plays are made");
+    let o = card_opts(&mut g, c, P0, Some(true));
+    assert!(o[0].label.contains("cycling"));
+    let n = g.player(P0).hand.len();
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(in_gy(&g, P0, "Locust Spray"));
+    assert_eq!(g.player(P0).hand.len(), n, "discarded one, drew one");
+}
+
+#[test]
+fn locust_spray_shrinks_a_big_creature_until_end_of_turn() {
+    let mut g = game();
+    let t = token(&mut g, P1, 3);
+    cast_spell(&mut g, P0, "Locust Spray", Ctx { target: Some(t), ..Ctx::default() });
+    assert_eq!(values::epow(&g, t), 2);
+    assert!(g.perm(t).on_bf);
+}
+
+#[test]
+fn ribskiff_draws_crews_with_idle_creatures_and_gives_toxic() {
+    use sim_core::hooks::{Call, Event};
+    let mut g = game();
+    let n = g.player(P0).hand.len();
+    let m = perm(&mut g, P0, "Ribskiff");
+    assert_eq!(g.player(P0).hand.len(), n + 1, "draws a card entering");
+    assert!(!g.is_creature(m), "a Vehicle is not a creature until crewed");
+    // a creature that is summoning sick (power 3) crews it
+    let crew = token(&mut g, P0, 3);
+    g.perm_mut(crew).sick = true;
+    sim_core::engine::hooks::fire_trigger(&mut g, Event::Crew, Call::Player { p: P0 }).unwrap();
+    assert!(g.is_creature(m), "crewed: an artifact creature");
+    assert!(g.perm(crew).tapped);
+    assert_eq!((values::epow(&g, m), values::etgh(&g, m)), (4, 4));
+    // toxic 2
+    sim_core::engine::hooks::fire_trigger(
+        &mut g,
+        Event::CombatDamage,
+        Call::CombatDamage { p: P0, a: m, d: P1, dmg: 4 },
+    )
+    .unwrap();
+    assert_eq!(g.player(P1).poison, 2);
+}
+
+#[test]
+fn ribskiff_never_crews_with_sheoldred() {
+    use sim_core::hooks::{Call, Event};
+    let mut g = game();
+    let m = perm(&mut g, P0, "Ribskiff");
+    let s = perm(&mut g, P0, SHEO);
+    g.perm_mut(s).sick = true;
+    sim_core::engine::hooks::fire_trigger(&mut g, Event::Crew, Call::Player { p: P0 }).unwrap();
+    assert!(!g.is_creature(m));
+    assert!(!g.perm(s).tapped);
+}
+
+#[test]
+fn tome_of_legends_pages_and_draws() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let tome = perm(&mut g, P0, "Tome of Legends");
+    let pages = |g: &Game| g.perm(tome).data.int(sim_core::state::DataKey::Counters);
+    assert_eq!(pages(&g), 1, "enters with a page counter");
+    // a non-commander entering adds nothing; a commander entering or attacking does
+    perm(&mut g, P0, "Hullcarver");
+    assert_eq!(pages(&g), 1);
+    let cmd = perm(&mut g, P0, SHEO);
+    g.perm_mut(cmd).is_cmd = true;
+    sim_core::engine::hooks::fire_trigger(
+        &mut g,
+        sim_core::hooks::Event::Attack,
+        sim_core::hooks::Call::Attack { p: P0, atk: vec![cmd], d: P1 },
+    )
+    .unwrap();
+    assert_eq!(pages(&g), 2, "the commander attacked");
+    let o = perm_opts(&mut g, tome, P0, Some(false));
+    assert!(!o.is_empty());
+    let n = g.player(P0).hand.len();
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(pages(&g), 1);
+    assert!(g.perm(tome).tapped);
+    assert_eq!(g.player(P0).hand.len(), n + 1);
+}
+
+#[test]
+fn diary_of_dreams_counts_spells_and_gets_cheaper() {
+    let mut g = game();
+    let diary = perm(&mut g, P0, "Diary of Dreams");
+    let pages = |g: &Game| g.perm(diary).data.int(sim_core::state::DataKey::Counters);
+    let tg = token(&mut g, P1, 3);
+    cast_spell(&mut g, P0, "Locust Spray", Ctx { target: Some(tg), ..Ctx::default() });
+    assert_eq!(pages(&g), 1, "an instant adds a page");
+    perm(&mut g, P0, "Hullcarver");
+    assert_eq!(pages(&g), 1, "a creature spell does not");
+    assert!(perm_opts(&mut g, diary, P0, Some(false)).is_empty(), "no mana: the draw costs 4");
+    lands(&mut g, P0, "Swamp", 4, false);
+    let o = perm_opts(&mut g, diary, P0, Some(false));
+    assert_eq!(o.len(), 1, "{{5}} minus one page is 4");
+    let n = g.player(P0).hand.len();
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(g.player(P0).hand.len(), n + 1);
+    assert!(g.perm(diary).tapped);
+}
+
+#[test]
+fn leech_collector_prepares_on_the_first_lifegain_and_bloodletting_drains() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    g.active = Some(P0);
+    let m = perm(&mut g, P0, "Leech Collector // Bloodletting");
+    let prepared = |g: &Game| g.perm(m).data.truthy(sim_core::state::DataKey::Prepared);
+    assert!(!prepared(&g));
+    assert!(perm_opts(&mut g, m, P0, Some(false)).is_empty());
+    gain(&mut g, P0, 1).unwrap();
+    assert!(prepared(&g));
+    let o = perm_opts(&mut g, m, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    let b = life(&g, P1);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(life(&g, P1), b - 2);
+    assert!(!prepared(&g), "casting the copy unprepares it");
+    gain(&mut g, P0, 1).unwrap();
+    assert!(!prepared(&g), "only the first lifegain each turn prepares it");
+}
+
+#[test]
+fn moseo_returns_a_creature_up_to_the_life_gained() {
+    let mut g = game();
+    perm(&mut g, P0, "Moseo, Vein's New Dean");
+    let big = take(&mut g, P0, "Gravblade Heavy"); // mana value 4
+    g.player_mut(P0).gy.push(big);
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(on_bf(&g, P0, "Gravblade Heavy").is_none(), "no lifegain, no return");
+    gain(&mut g, P0, 2).unwrap();
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(on_bf(&g, P0, "Gravblade Heavy").is_none(), "2 life does not reach mana value 4");
+    gain(&mut g, P0, 2).unwrap();
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(on_bf(&g, P0, "Gravblade Heavy").is_some(), "4 life returns it");
+}
+
+#[test]
+fn lethal_throwdown_pays_its_sacrifice_and_draws_for_a_modified_creature() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Lethal Throwdown"])[0];
+    let target = perm(&mut g, P1, "Gravblade Heavy");
+    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "nothing to sacrifice");
+    let fodder = token(&mut g, P0, 1);
+    g.perm_mut(fodder).plus = 1; // a +1/+1 counter: a modified creature
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1, "{:?}", o.iter().map(|o| &o.label).collect::<Vec<_>>());
+    let n = g.player(P0).hand.len();
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.perm(fodder).on_bf, "the sacrifice is paid");
+    assert!(!g.perm(target).on_bf, "the target is destroyed");
+    assert_eq!(g.player(P0).hand.len(), n, "cast one, drew one for the modified creature");
+}
+
+#[test]
+fn lethal_throwdown_with_an_unmodified_creature_draws_nothing() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Lethal Throwdown"])[0];
+    let target = perm(&mut g, P1, "Gravblade Heavy");
+    let fodder = token(&mut g, P0, 1);
+    let o = card_opts(&mut g, c, P0, Some(false));
+    let n = g.player(P0).hand.len();
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.perm(fodder).on_bf && !g.perm(target).on_bf);
+    assert_eq!(g.player(P0).hand.len(), n - 1);
+}

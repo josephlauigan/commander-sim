@@ -238,7 +238,7 @@ Sword of the Animist|A|2|animist
 Talisman of Creativity|A|2|rock=1:UR pain
 Terminate|I|BR|rem=destroy tgt=c
 Tezzeret's Gambit|S|3U|draw=2 prolif1 phyU
-Tome of Legends|A|2|x
+Tome of Legends|A|2|
 The Ozolith|A|1|ozolith
 Unclaimed Territory|L|-|c=C
 Undermine|I|UUB|ctr=any undermine
