@@ -1682,27 +1682,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 2,
-       "modes": [
-        [
-         {
-          "do": "counter_spell",
-          "filter": {
-           "type": "any"
-          }
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -1710,10 +1690,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• tap one or two target creatures"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -22466,11 +22444,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Target player creates a token that's a copy of target creature you control.",
-    "Paradigm"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -39360,35 +39335,13 @@
    "generic": 1,
    "pips": "U",
    "tags": {
-    "ctr": "any",
+    "ctr": "crleg",
     "soft": "3"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "counter_spell",
-          "filter": {
-           "type": "any",
-           "legendary": true
-          },
-          "unless": 3
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -39396,10 +39349,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• target creature gets -5/-0 until end of turn"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -43344,7 +43295,11 @@
    "types": "E",
    "generic": 1,
    "pips": "U",
-   "tags": {},
+   "tags": {
+    "rem": "kasmina",
+    "tgt": "c",
+    "etb": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -43360,11 +43315,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature loses all abilities and has base power and toughness 1/1."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -58295,7 +58247,6 @@
    "generic": 0,
    "pips": "U",
    "tags": {
-    "mktok": "1:2:1",
     "ctr": "any",
     "soft": "2"
    },
@@ -58312,10 +58263,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Spree"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -64532,10 +64481,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Create a token that's a copy of target artifact, creature, or land."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -65194,26 +65141,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 3,
-       "tgh": 3,
-       "keywords": [],
-       "attacking": false,
-       "warrior": true,
-       "types": [
-        "robot",
-        "warrior"
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flashback"
@@ -65223,10 +65151,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Create a 3/3 blue Robot Warrior artifact creature token. Then if ~ was cast from a graveyard, put two +1/+1 counters on that token.   [partly: if ~ was cast from a graveyard, put two +1/+1 counters on that token]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -66397,29 +66323,13 @@
    "types": "E",
    "generic": 2,
    "pips": "U",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 2,
-       "who": "you"
-      },
-      {
-       "do": "discard",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "enchant"
@@ -66431,10 +66341,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Enchanted creature gets +1/+1 and has flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -77374,7 +77282,12 @@
    "types": "I",
    "generic": 2,
    "pips": "UU",
-   "tags": {},
+   "tags": {
+    "ctr": "any",
+    "lapse": true,
+    "rem": "topbot",
+    "tgt": "nl"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -77386,10 +77299,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "The owner of target spell or nonland permanent puts it on their choice of the top or bottom of their library."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -86781,10 +86692,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Devoid"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -87893,21 +87802,14 @@
    "types": "I",
    "generic": 3,
    "pips": "U",
-   "tags": {},
+   "tags": {
+    "rem": "topbot",
+    "tgt": "nl"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "surveil",
-       "n": 1
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "surveil"
@@ -87917,10 +87819,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Target nonland permanent's owner puts it on their choice of the top or bottom of their library. Surveil 1.   [partly: target nonland permanent's owner puts it on their choice of the top or bottom of their library]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -90734,18 +90634,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "draw",
-       "n": "X",
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -90753,10 +90642,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Draw X cards. If X is 5 or more, you may cast a Hero spell from your hand without paying its mana cost.   [partly: if x is 5 or more, you may cast a hero spell from your hand without paying its mana cost]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -91193,23 +91080,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "bounce",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "nonland"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "kicker"
@@ -91219,10 +91090,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Return target nonland permanent to its owner's hand. If ~ was kicked, draw a card.   [partly: if ~ was kicked, draw a card]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

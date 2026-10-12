@@ -6644,3 +6644,82 @@ tags = "leg"
 dsl = []
 status = "Full"
 note = "+1 empower Jace X (X = your Islands: loyalty on the Jace token, made if needed); -3 creatures attacking you get -5/-0 until end of turn, until your next turn; 0 exiles all but the bottom card of each opponent's library, only with 25 or more loyalty among your Jaces (the AI uses +1 mostly, -3 facing a big board)"
+
+["Relm's Sketching"]
+dsl = []
+status = "Full"
+note = "a token copy of the best creature or artifact on the table (best enter trigger first; legends are skipped, the legend rule would undo it), else of one of our lands while we have fewer than nine; the target is chosen as it resolves"
+
+["Echocasting Symposium"]
+dsl = []
+status = "Full"
+note = "the caster creates a token copy of their best creature; paradigm: exiled as it resolves, and at the start of each of their turns (the engine's rebound step, just before the first main phase) a copy is cast for free and can be countered"
+
+["Phantom Interference"]
+tags = "ctr=any soft=2"
+dsl = []
+status = "Full"
+note = "spree: {3} a 2/2 white flying Spirit at the end of an opponent's turn; {1} counter target spell unless its controller pays {2} ({1}{U}); in response with {3} to spare both modes (the Spirit enters before the counter resolves)"
+
+["Whoosh!"]
+dsl = []
+status = "Full"
+note = "returns target nonland permanent (the AI bounces its own creature with the best enter trigger at the end of an opponent's turn, or the best opposing permanent after combat); kicker {1}{U}: draw a card, paid whenever the mana is there"
+
+["Amazing Acrobatics"]
+tags = "ctr=any"
+dsl = []
+status = "Full"
+note = "counter target spell (and tap the two best untapped opposing creatures with it: both modes cost the same); as the attacker with a big attack it taps the defender's two best untapped creatures before blocks"
+
+["Icy Reception"]
+tags = "ctr=crleg soft=3"
+dsl = []
+status = "Full"
+note = "counter target creature or legendary spell unless its controller pays {3}; or as the defender, -5/-0 on the biggest unblocked attacker when that saves the game or a third of our life"
+
+["Sudden Setback"]
+tags = "ctr=any lapse rem=topbot tgt=nl"
+dsl = []
+status = "Full"
+note = "counters a spell (it goes on its owner's choice of the top or bottom of their library: top if they would cast it soon, else bottom) or tucks the best opposing nonland permanent the same way"
+
+["Vanish from Sight"]
+tags = "rem=topbot tgt=nl"
+dsl = []
+status = "Full"
+note = "the best opposing nonland permanent goes on its owner's choice of the top or bottom of their library (tokens cease to exist, a commander goes to the command zone); then we surveil 1"
+
+["Kasmina's Transmutation"]
+types = "E"
+tags = "rem=kasmina tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura on the best opposing creature (a zur.rs lock): it loses all abilities and has base power and toughness 1/1; it is itself again when the Aura leaves"
+
+["Retrieve the Esper"]
+tags = "fb=5U"
+dsl = []
+status = "Full"
+note = "a 3/3 blue Robot Warrior artifact creature token; flashback {5}{U} (cast from the graveyard: two +1/+1 counters on it)"
+
+["Rousing Read"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "Aura on our best creature: +1/+1 and flying; when it enters, draw two cards then discard one"
+
+["Unfathomable Truths"]
+dsl = []
+status = "Full"
+note = "draw three cards and create a 0/1 colourless Eldrazi Spawn (sacrifice for {C}); devoid only matters for permanents, and this is an instant"
+
+["West Coast Expansion"]
+dsl = []
+status = "Full"
+note = "draw X cards, X = all spare mana in our main phase once X is 3 (2 with a nearly empty hand); with X 5 or more, the best Hero spell in the hand is cast for free"
+
+["Sleight of Hand"]
+status = "Full"
+note = "look at the top two cards, the better one (by the deck's card worth) into the hand and the other on the bottom"

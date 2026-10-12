@@ -747,7 +747,9 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         } else if zone == "gy" || ctx.exile_after {
             g.player_mut(o).exile.push(c);
         } else if lt.is_some_and(|x| x.tag(Tag::Lapse)) && !land {
-            g.player_mut(o).library.push(c);
+            // Sudden Setback: its owner chooses the top or the bottom (bulk_blue.rs); Lapse of Certainty: the top
+            let choose = lt.is_some_and(|x| &*x.name == "Sudden Setback");
+            crate::impls::bulk_blue::spell_to_library(g, o, c, choose);
         } else if lt.is_some_and(|x| &*x.name == "Venser, Shaper Savant" || x.tag(Tag::Remand)) {
             g.player_mut(o).hand.push(c); // Fatehold Charm: back to its owner's hand
         } else if g.bounced_spell {
@@ -827,6 +829,13 @@ fn to_gy_or_exile(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym, ex
 }
 
 fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> Res {
+    let from_gy_ctx;
+    let ctx = if zone == "gy" && !ctx.from_gy {
+        from_gy_ctx = Ctx { from_gy: true, ..ctx.clone() };
+        &from_gy_ctx
+    } else {
+        ctx
+    };
     let d = g.db.get(c);
     let t = d.tags.clone();
     let (perm, has_dsl) = (d.perm, d.has_dsl());

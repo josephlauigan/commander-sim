@@ -256,6 +256,8 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         bounce(g, m)?;
     } else if kind == "tuck" {
         tuck(g, m)?;
+    } else if kind == "topbot" {
+        crate::impls::bulk_blue::top_or_bottom(g, m)?; // Sudden Setback, Vanish from Sight: its owner chooses
     } else if matches!(kind, "elk" | "mutate" | "forest") {
         cardcode::transform_away(g, m, kind)?;
     } else if LOCK_KINDS.contains(&kind) {

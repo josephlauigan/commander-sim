@@ -69,7 +69,8 @@ fn add_kw(g: &mut Game, m: PermId, kw: Sym) {
 
 // ================================================================== Auras that lock a permanent down
 /// zur.LOCKS, by its LOCK_KINDS key: the Aura's kind
-const LOCKS: [(&str, &str); 5] = [
+const LOCKS: [(&str, &str); 6] = [
+    ("Kasmina's Transmutation", "kasmina"),
     ("Arrest", "arrest"),
     ("Prison Sentence", "arrest"),
     ("Luminous Bonds", "pacify"),
@@ -150,6 +151,9 @@ pub fn lock_attach(g: &mut Game, a: PermId, host: PermId) -> Res<bool> {
     crate::glog!(g, "    {} enchants {} ({})", card_name(g, a), g.perm(host).name, pname(g, owner(g, host)));
     if card_name(g, a) == "Prison Sentence" {
         crate::cardcode::scry(g, owner(g, a), 2, false)?;
+    }
+    if card_name(g, a) == "Kasmina's Transmutation" {
+        crate::impls::bulk_blue::kasmina_attach(g, a, host); // loses all abilities, base 1/1 (bulk_blue.rs)
     }
     Ok(true)
 }
