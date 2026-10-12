@@ -1096,3 +1096,20 @@ fn marchesa_returns_herself_with_a_counter() {
     assert!(has_perm(&g, P0, MARCHESA));
     assert_eq!(stat(&g, P0, "marchesa_returns"), 1);
 }
+
+/// Two delve cards in Jodah's graveyard with Jodah castable: pricing one asks Jodah's priority for the other, whose
+/// cost asks its delve count, which priced the first again, until the stack overflowed (T4, seed 500501). The inner
+/// count now stops; the outer one still counts the junk that delve exiles.
+#[test]
+fn two_delve_cards_in_the_graveyard_dont_price_each_other_forever() {
+    let mut g = table(&["jodah", "veyran"]);
+    basics(&mut g, P0);
+    lands(&mut g, P0, "Plains", 2, false);
+    assert!(J::jodah_payable(&g, P0));
+    let cruise = card(&g, "Treasure Cruise");
+    let dig = card(&g, "Dig Through Time");
+    let junk = card(&g, "Cultivate");
+    g.player_mut(P0).gy = vec![cruise, dig, junk, junk];
+    let n = sim_core::impls::partials::delve_count(&g, P0, cruise);
+    assert!((2..=3).contains(&n), "delve count {n}");
+}
