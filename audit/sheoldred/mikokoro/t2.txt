@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Mikokoro, Center of the Sea -> Swamp
+
+=== Sheoldred vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  40.7% ->  40.5%  (delta -0.2 pts, noise ±1.5, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 11.9%  Sythis 13.2%  Lord Windgrace 9.6%  Brago 12.0%  Meren of Clan Nel Toth 11.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(183s total)

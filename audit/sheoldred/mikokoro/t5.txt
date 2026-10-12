@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Mikokoro, Center of the Sea -> Swamp
+
+=== Sheoldred vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.3% ->  22.5%  (delta -1.8 pts, noise ±1.3, paired)   n=1000
+               eliminated by (variant): Urza 17.0%  Zur the Enchanter 12.0%  Winota 21.0%  Kinnan 19.2%  Yawgmoth 8.3%
+VERDICT: WORSE under the loose profile (the only one run)
+
+(72s total)

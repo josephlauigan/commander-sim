@@ -19,7 +19,8 @@ noise, leaning positive); `audit/sheoldred/`. The cuts go back to bulk, Lash of 
 (Sauron measured +0.6 with Cost of Brilliance in its slot, within noise; `audit/sauron/2026-10-11-arena-cost-of-brilliance/`).
 The buy list is 19 cards, $40.39.
 **Updated 2026-10-12.** Out: a Swamp. In: Mikokoro, Center of the Sea (JD's buy, $4.54): {2}, {T}: each player
-draws a card, so with Sheoldred out each opponent loses 2 and you gain 2. Not measured yet.
+draws a card, so with Sheoldred out each opponent loses 2 and you gain 2. Measured +0.5 points over all tiers (within
+noise, leaning positive; look-ahead, loose, 1,000 paired games per tier; `audit/sheoldred/`).
 
 ## Strategy
 

@@ -66,3 +66,17 @@ for the run and restored; raw output in `gix-u2/`):
 
 Within noise (about ±1.5 over all tiers), leaning positive in four tiers. The upgraded list's 30.7% here and 32.0% in
 the run above differ by about the noise.
+
+## Mikokoro, Center of the Sea for a Swamp (2026-10-12)
+
+JD's buy ($4.54), in the list in place of a Swamp. Measured the other way round (`run.sh mikokoro`: Mikokoro back out
+for a Swamp; raw output in `mikokoro/`), so the change below is the list with Mikokoro minus the one without:
+
+| | T1 | T2 | T3 | T4 | T5 | All tiers |
+|---|---|---|---|---|---|---|
+| Without Mikokoro (a 32nd Swamp) | 30.0% | 40.5% | 31.2% | 31.8% | 22.5% | **31.2%** |
+| With Mikokoro | 29.2% | 40.7% | 32.4% | 32.1% | 24.3% | **31.7%** |
+| Change | -0.8 | +0.2 | +1.2 | +0.3 | +1.8 | **+0.5** |
+
+Within noise, leaning positive (four tiers of five; T5 +1.8 against ±1.3). Eight traced games (Tier 3) showed it
+activated in two, both at the end of an opponent's turn with Sheoldred out; in one the draw set up the kill next turn.
