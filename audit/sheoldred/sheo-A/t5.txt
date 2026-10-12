@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Memory Jar [pool] A 5 :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Carnage Altar -> Memory Jar
+
+=== Sheoldred vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.0% ->  21.4%  (delta -0.6 pts, noise ±2.9, paired)   n=1000
+               eliminated by (variant): Urza 17.5%  Zur the Enchanter 12.0%  Winota 21.2%  Kinnan 21.2%  Yawgmoth 6.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(136s total)

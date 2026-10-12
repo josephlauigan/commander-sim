@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Memory Jar [pool] A 5 :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Carnage Altar -> Memory Jar
+
+=== Sheoldred vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  16.8% ->  19.3%  (delta +2.5 pts, noise ±3.1, paired)   n=1000
+               eliminated by (variant): Lathril 15.4%  Teysa Karlov 15.6%  Light-Paws 20.6%  Isshin 19.5%  Tatyova 8.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(351s total)

@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Korlash, Heir to Blackblade [pool] C 2BB :: leg pow=0 tgh=0
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Gravblade Heavy -> Korlash, Heir to Blackblade
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.5% ->  23.1%  (delta -0.4 pts, noise ±1.9, paired)   n=1000
+               eliminated by (variant): Heliod 21.3%  Yuriko 15.3%  Krenko 19.5%  Chulane 9.1%  Prosper 11.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(228s total)

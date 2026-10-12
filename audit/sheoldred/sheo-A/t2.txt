@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Memory Jar [pool] A 5 :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Carnage Altar -> Memory Jar
+
+=== Sheoldred vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  21.7% ->  28.5%  (delta +6.8 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 14.6%  Sythis 15.7%  Lord Windgrace 11.1%  Brago 13.7%  Meren of Clan Nel Toth 13.4%
+VERDICT: BETTER under the loose profile (the only one run)
+
+(371s total)

@@ -1,0 +1,15 @@
+sheo-A t1 exit 0 [loose       ] win  16.8% ->  19.3%  (delta +2.5 pts, noise ±3.1, paired)   n=1000
+sheo-A t2 exit 0 [loose       ] win  21.7% ->  28.5%  (delta +6.8 pts, noise ±3.5, paired)   n=1000
+sheo-A t3 exit 0 [loose       ] win  20.5% ->  25.7%  (delta +5.2 pts, noise ±3.4, paired)   n=1000
+sheo-A t4 exit 0 [loose       ] win  23.5% ->  24.1%  (delta +0.6 pts, noise ±3.2, paired)   n=1000
+sheo-A t5 exit 0 [loose       ] win  22.0% ->  21.4%  (delta -0.6 pts, noise ±2.9, paired)   n=1000
+sheo-B t1 exit 0 [loose       ] win  16.8% ->  17.8%  (delta +1.0 pts, noise ±3.1, paired)   n=1000
+sheo-B t2 exit 0 [loose       ] win  21.7% ->  25.7%  (delta +4.0 pts, noise ±3.5, paired)   n=1000
+sheo-B t3 exit 0 [loose       ] win  20.5% ->  20.7%  (delta +0.2 pts, noise ±3.4, paired)   n=1000
+sheo-B t4 exit 0 [loose       ] win  23.5% ->  21.3%  (delta -2.2 pts, noise ±3.3, paired)   n=1000
+sheo-B t5 exit 0 [loose       ] win  22.0% ->  22.5%  (delta +0.5 pts, noise ±3.1, paired)   n=1000
+sheo-C t1 exit 0 [loose       ] win  16.8% ->  17.9%  (delta +1.1 pts, noise ±1.7, paired)   n=1000
+sheo-C t2 exit 0 [loose       ] win  21.7% ->  24.0%  (delta +2.3 pts, noise ±2.2, paired)   n=1000
+sheo-C t3 exit 0 [loose       ] win  20.5% ->  20.6%  (delta +0.1 pts, noise ±1.9, paired)   n=1000
+sheo-C t4 exit 0 [loose       ] win  23.5% ->  23.1%  (delta -0.4 pts, noise ±1.9, paired)   n=1000
+sheo-C t5 exit 0 [loose       ] win  22.0% ->  20.9%  (delta -1.1 pts, noise ±1.5, paired)   n=1000
