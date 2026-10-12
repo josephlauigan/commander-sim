@@ -6638,3 +6638,9 @@ dsl = []
 tags = "draw=2"
 status = "Full"
 note = "each other player discards a card; you draw a card for each card discarded this way (discards happen in turn order, the drawn cards come after all discards)"
+
+["Jace, Reality Sculptor"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 empower Jace X (X = your Islands: loyalty on the Jace token, made if needed); -3 creatures attacking you get -5/-0 until end of turn, until your next turn; 0 exiles all but the bottom card of each opponent's library, only with 25 or more loyalty among your Jaces (the AI uses +1 mostly, -3 facing a big board)"

@@ -41625,23 +41625,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 0,
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "opponent"
-        }
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "5",
    "kws": [
     "empower jace"
@@ -41653,12 +41637,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "empower ~ x",
-    "until your next turn, whenever a creature attacks you or a planeswalker you control, it gets -5/-0 until end of turn",
-    "activate only if there are twenty-five or more loyalty counters among ~s you control"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
