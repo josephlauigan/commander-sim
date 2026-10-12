@@ -121,6 +121,13 @@ pub enum DataKey {
     Ruin,
     Serenity,
     Stolen,
+    /// stun counters (the untap step removes one instead of untapping)
+    Stun,
+    /// creatures weakened until their caster's next turn: [caster, caster's turn count, power lost] (Mouth of the Storm)
+    Weaken,
+    /// Elrond, Lord of Rivendell: how many times his ability has resolved, and on which turn
+    Resolved,
+    ResolvedAt,
     /// suspected (menace, can't block) until it leaves the battlefield
     Suspect,
     TapOnReturn,

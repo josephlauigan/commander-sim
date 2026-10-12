@@ -938,7 +938,7 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
             zones::land_ramp(g, p, 1, tapped)?;
             continue;
         }
-        if f.kind.as_deref() == Some("land") {
+        if f.kind.as_deref() == Some("land") && to == "hand" {
             zones::land_to_hand(g, p)?;
             continue;
         }
