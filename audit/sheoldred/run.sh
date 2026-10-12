@@ -11,10 +11,11 @@
 #                                          Sheoldred cuts Depressurize, Multiply by Zero;
 #                                          Jodah gets Lagrella, the Magpie and a spare Wander Off.
 # Block C (body): Korlash, Heir to Blackblade. Sheoldred cuts Gravblade Heavy; Jodah gets Sisters of Stone Death.
-# 11 worker threads: another session shares the machine. Usage: run.sh <mode>...
+# 22 worker threads by default (JOBS=11 while another session runs sims). Usage: run.sh <mode>...
 cd "$(dirname "$0")/../.."
 D=audit/sheoldred
 SIM=./rust/target/release/commander-sim
+JOBS=${JOBS:-22}  # 11 while another session runs sims
 cap() { systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 "$@"; }
 
 SA=(--swap "Carnage Altar=>Memory Jar")
@@ -29,7 +30,7 @@ paired() { # name deck swaps...
   local name=$1 deck=$2; shift 2
   mkdir -p $D/$name
   for t in t1 t2 t3 t4 t5; do
-    cap $SIM --deck $deck --pool $t --profile loose --games 1000 --ai lookahead --jobs 11 --brief "$@" 2>&1 \
+    cap $SIM --deck $deck --pool $t --profile loose --games 1000 --ai lookahead --jobs $JOBS --brief "$@" 2>&1 \
       | grep -v progress > $D/$name/$t.txt
     echo "$name $t exit ${PIPESTATUS[0]} $(grep -m1 'delta' $D/$name/$t.txt)" | tee -a $D/log.txt
   done
@@ -40,7 +41,7 @@ for mode in "$@"; do
     base)
       mkdir -p $D/base
       for t in t1 t2 t3 t4 t5; do
-        cap $SIM --deck sheoldred --pool $t --profile loose --games 960 --seed 500000 --ai lookahead --jobs 11 2>&1 \
+        cap $SIM --deck sheoldred --pool $t --profile loose --games 960 --seed 500000 --ai lookahead --jobs $JOBS 2>&1 \
           | grep -v progress > $D/base/$t.txt
         echo "base $t exit ${PIPESTATUS[0]} $(grep -m1 '^Win rate' $D/base/$t.txt)" | tee -a $D/log.txt
       done ;;
