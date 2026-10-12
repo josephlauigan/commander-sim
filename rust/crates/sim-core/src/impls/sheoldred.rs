@@ -13,10 +13,10 @@ use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{epow, etgh, pval, untargetable};
+use crate::engine::values::{epow, etgh, no_sac, pval, untargetable};
 use crate::engine::zones::{
     Enter, Zone, discard_cards, draw, enter, exile_perm, land_to_hand, leave, make_artifact_tokens, max_by, min_by,
-    returns_left, to_zone_card,
+    returns_left, sac_worth, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
@@ -2062,9 +2062,152 @@ fn pkg2_prio(g: &Game, p: PlayerId, name: &str) -> Option<i32> {
             }
         }
         UNRAVELER => 88,
+        // only when the opponents lose more creatures than we do (and never Sheoldred among ours)
+        ZODIARK => {
+            let theirs: usize = g.opps(p).map(|q| zodiark_victims(g, q).len()).sum();
+            let ours = zodiark_victims(g, p);
+            if ours.iter().any(|&m| &*g.perm(m).name == SHEOLDRED) || theirs < ours.len() + 2 { 0 } else { 72 }
+        }
         "Ambition's Cost" if g.player(p).life <= 6 => 0,
         _ => return None,
     })
+}
+
+// ------------------------------------------------------------------ The Darkness Crystal (a candidate, 2026-10-12)
+const CRYSTAL: &str = "The Darkness Crystal";
+
+/// The Darkness Crystal: black spells you cast cost {1} less
+fn crystal_cost(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
+    if caster == owner(g, src) && g.db.get(c).pips.contains('B') { -1 } else { 0 }
+}
+
+/// Called by zones::die for a nontoken creature m that is about to die: if an opponent of its controller has The
+/// Darkness Crystal, m is exiled instead (the Crystal remembers the card) and that opponent gains 2 life. true: done.
+pub fn darkness_crystal(g: &mut Game, m: PermId) -> Res<bool> {
+    let ctl = g.perm(m).owner;
+    let opps: Vec<PlayerId> = g.opps(ctl).collect();
+    let Some(k) = opps.iter().flat_map(|&q| g.player(q).perms.iter().copied()).find(|&k| {
+        let x = g.perm(k);
+        x.on_bf && !x.phased && &*x.name == CRYSTAL
+    }) else {
+        return Ok(false);
+    };
+    let q = owner(g, k);
+    let (orig, card) = (g.perm(m).orig, g.perm(m).phys.or(g.perm(m).cd));
+    crate::glog!(g, "    {} is exiled instead of dying (The Darkness Crystal)", g.perm(m).name);
+    leave(g, m)?;
+    to_zone_card(g, m, Zone::Exile);
+    if let Some(c) = card
+        && g.player(orig).exile.last() == Some(&c)
+    {
+        let mut list = match g.perm(k).data.get(DataKey::Exiled) {
+            Some(Val::List(v)) => v.clone(),
+            _ => vec![],
+        };
+        list.push(Val::Card(c));
+        g.perm_mut(k).data.set(DataKey::Exiled, Val::List(list));
+    }
+    gain(g, q, 2)?;
+    Ok(true)
+}
+
+/// the creature cards the Crystal exiled that are still in exile: (their owner, the card)
+fn crystal_exiled(g: &Game, k: PermId) -> Vec<(PlayerId, CardId)> {
+    let Some(Val::List(v)) = g.perm(k).data.get(DataKey::Exiled) else { return vec![] };
+    v.iter()
+        .filter_map(|x| if let Val::Card(c) = x { Some(*c) } else { None })
+        .filter_map(|c| g.players.iter().find(|pl| pl.exile.contains(&c)).map(|pl| (pl.id, c)))
+        .collect()
+}
+
+/// {4}{B}{B}, {T}: the best creature card it exiled enters tapped under our control with two +1/+1 counters; in our
+/// own main phase, when it can be paid
+fn crystal_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered || human(g, p) {
+        return Ok(vec![]);
+    }
+    if post.is_none() || g.active != Some(p) || !can_pay(g, p, 4, "BB", false) {
+        return Ok(vec![]);
+    }
+    let cands = crystal_exiled(g, src);
+    let Some((_, c)) = max_by(&cands, |(_, c)| card_worth(g, p, c, false)) else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: 3.0 + (g.db.get(c).cmc as f64 / 4.0).min(2.0),
+        label: format!("The Darkness Crystal: {} enters under our control", g.db.get(c).name),
+        act: Some(Action::Ability { src, f: crystal_go, arg: 0 }),
+    }])
+}
+
+fn crystal_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).tapped || g.perm(src).phased {
+        return Ok(false);
+    }
+    let cands = crystal_exiled(g, src);
+    let Some((q, c)) = max_by(&cands, |(_, c)| card_worth(g, p, c, false)) else { return Ok(false) };
+    if !pay(g, p, 4, "BB", false)? {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    crate::glog!(g, "  {} uses The Darkness Crystal: {} enters under their control", pname(g, p), g.db.get(c).name);
+    if ability_window(g, p, Some(src), "put a creature card onto the battlefield", Some(4.0), None)?
+        && remove_card(&mut g.player_mut(q).exile, c)
+    {
+        let orig = if q == p { None } else { Some(q) };
+        let m = enter(g, p, c, Enter { orig, plus: 2, ..Enter::default() })?;
+        g.perm_mut(m).tapped = true;
+    }
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Zodiark, Umbral God (a candidate, 2026-10-12)
+const ZODIARK: &str = "Zodiark, Umbral God";
+
+fn is_god(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| g.db.get(c).subtypes.iter().any(|s| &**s == "god"))
+}
+
+/// the creatures q would sacrifice to Zodiark: half their non-God creatures (rounded down), the least worth first
+fn zodiark_victims(g: &Game, q: PlayerId) -> Vec<PermId> {
+    let mut cr: Vec<PermId> = g
+        .player(q)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !is_god(g, m) && !no_sac(g, m))
+        .collect();
+    let n = cr.len() / 2;
+    cr.sort_by(|a, b| sac_worth(g, *a).total_cmp(&sac_worth(g, *b)));
+    cr.truncate(n);
+    cr
+}
+
+/// Zodiark enters: each player sacrifices half the non-God creatures they control (all choose, then all sacrifice)
+fn zodiark_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src || !trigger_window(g, owner(g, src), Some(src), "each player sacrifices half their creatures", None)? {
+        return Ok(());
+    }
+    let order = apnap(g, owner(g, src));
+    let victims: Vec<PermId> = order.iter().flat_map(|&q| zodiark_victims(g, q)).collect();
+    crate::glog!(g, "    Zodiark: {} creatures are sacrificed", victims.len());
+    for v in victims {
+        if g.perm(v).on_bf {
+            crate::engine::zones::die(g, v, "sac")?;
+        }
+    }
+    Ok(())
+}
+
+/// whenever a player sacrifices another creature, a +1/+1 counter on Zodiark
+fn zodiark_sac(g: &mut Game, src: Src, _p: PlayerId, what: Sacrificed) -> Res {
+    if let Sacrificed::Perm(m) = what
+        && m != src
+        && on_bf(g, src)
+        && (g.perm(m).cd.is_some_and(|c| g.db.get(c).creature) || (g.perm(m).token && g.perm(m).tgh > 0))
+    {
+        g.perm_mut(src).plus += 1;
+    }
+    Ok(())
 }
 
 pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -2087,6 +2230,12 @@ pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::partials::at_once(c, Event::Draw, true);
     r.card(db, BELL)?.options = Some(bell_options);
     r.card(db, ATLAS)?.options = Some(atlas_options);
+    let c = r.card(db, CRYSTAL)?;
+    c.cost = Some(crystal_cost);
+    c.options = Some(crystal_options);
+    let c = r.card(db, ZODIARK)?;
+    c.etb = Some(zodiark_etb);
+    c.sacrifice = Some(zodiark_sac);
     r.card(db, GEIER)?.land_options = Some(geier_options);
     r.card(db, MIKOKORO)?.land_options = Some(mikokoro_options);
     let c = r.card(db, PEER)?;

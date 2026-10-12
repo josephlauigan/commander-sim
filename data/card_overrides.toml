@@ -6607,6 +6607,17 @@ tags = ""
 status = "Full"
 note = "{T}: a charge counter. {T}: each player draws a card for each charge counter (active player first); the sheoldred deck adds a counter at an opponent's end step, and draws instead (in Temple Bell's windows) once it has 2 counters, or 1 that kills, while a draw punisher is out"
 
+["The Darkness Crystal"]
+dsl = []
+tags = ""
+status = "Full"
+note = "black spells you cast cost {1} less; a nontoken creature an opponent controls that would die is exiled instead and you gain 2 life (engine/zones.rs die); {4}{B}{B},{T}: the best creature card it exiled enters tapped under your control with two +1/+1 counters (in your own main phase)"
+
+["Zodiark, Umbral God"]
+dsl = []
+status = "Full"
+note = "indestructible 5/5; enters: each player sacrifices half their non-God creatures (rounded down, the least worth first; all choose, then all sacrifice); a +1/+1 counter whenever a player sacrifices another creature (also when The Darkness Crystal exiles it instead); the sheoldred deck casts it only when the opponents lose at least two more creatures than it does, never Sheoldred"
+
 ["Fate Unraveler"]
 status = "Full"
 note = "whenever an opponent draws a card, 1 damage to that player (damage, so prevention applies)"

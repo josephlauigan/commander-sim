@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The Darkness Crystal [pool] A 2BB :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Accursed Marauder -> The Darkness Crystal
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.4% ->  31.1%  (delta +0.7 pts, noise ±3.3, paired)   n=1000
+               eliminated by (variant): Heliod 19.7%  Yuriko 10.2%  Krenko 18.9%  Chulane 8.6%  Prosper 11.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(124s total)

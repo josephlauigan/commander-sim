@@ -79675,6 +79675,41 @@
    "spell_prio": false
   },
   {
+   "name": "The Darkness Crystal",
+   "types": "A",
+   "generic": 2,
+   "pips": "BB",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "The Dawning Archaic",
    "types": "C",
    "generic": 10,
@@ -90550,6 +90585,49 @@
     "mountain",
     "swamp"
    ],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Zodiark, Umbral God",
+   "types": "C",
+   "generic": 0,
+   "pips": "BBBBB",
+   "tags": {
+    "leg": true,
+    "pow": "5",
+    "bomb": "5"
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "indestructible"
+   ],
+   "subtypes": [
+    "god"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
    "basic": false,
    "python_hooks": [],
    "spell_prio": false

@@ -1186,6 +1186,80 @@ fn otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many() {
 }
 
 #[test]
+fn the_darkness_crystal_discounts_black_spells_and_exiles_dying_opponent_creatures() {
+    let mut g = game();
+    let terror = hand(&mut g, P0, &["Terror"])[0];
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, terror), (1, "B".into()));
+    let crystal = perm(&mut g, P0, "The Darkness Crystal");
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, terror), (0, "B".into()), "{{1}} less");
+    // an opponent's creature is exiled instead of dying; ours still dies
+    let theirs = perm(&mut g, P1, "Blood Artist");
+    zones::die(&mut g, theirs, "destroy").unwrap();
+    assert!(g.player(P1).exile.iter().any(|&c| &*g.db.get(c).name == "Blood Artist"));
+    assert!(!in_gy(&g, P1, "Blood Artist"));
+    assert_eq!(life(&g, P0), 42);
+    let ours = perm(&mut g, P0, "Fetid Imp");
+    zones::die(&mut g, ours, "destroy").unwrap();
+    assert!(in_gy(&g, P0, "Fetid Imp"));
+    // {4}{B}{B}, {T}: it comes back on our side, tapped, with two +1/+1 counters
+    lands(&mut g, P0, "Swamp", 6, false);
+    g.active = Some(P0);
+    assert!(perm_opts(&mut g, crystal, P0, None).is_empty(), "only in our main phase");
+    let o = perm_opts(&mut g, crystal, P0, Some(true));
+    assert_eq!(o.len(), 1);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    let m = on_bf(&g, P0, "Blood Artist").expect("Blood Artist under our control");
+    assert!(g.perm(m).tapped);
+    assert_eq!(g.perm(m).plus, 2);
+    assert!(g.player(P1).exile.is_empty());
+    assert!(perm_opts(&mut g, crystal, P0, Some(true)).is_empty(), "nothing left, and it is tapped");
+}
+
+#[test]
+fn zodiark_makes_each_player_sacrifice_half_and_grows_on_each_sacrifice() {
+    let mut g = game();
+    for _ in 0..4 {
+        token(&mut g, P1, 2);
+    }
+    perm(&mut g, P0, SHEO);
+    token(&mut g, P0, 1);
+    let z = perm(&mut g, P0, "Zodiark, Umbral God");
+    let count = |g: &Game, p: PlayerId| g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count();
+    assert_eq!(count(&g, P1), 2, "four creatures: two sacrificed");
+    assert!(on_bf(&g, P0, SHEO).is_some(), "Sheoldred is worth more than the token");
+    assert_eq!(count(&g, P0), 2, "Sheoldred and Zodiark (a God: not counted, not sacrificed)");
+    assert_eq!(g.perm(z).plus, 3, "a counter for each of the three sacrifices");
+    // with The Darkness Crystal the opponent's creature is exiled instead, and still counts as sacrificed
+    let mut g = game();
+    perm(&mut g, P0, "The Darkness Crystal");
+    perm(&mut g, P1, "Blood Artist");
+    perm(&mut g, P1, "Fetid Imp");
+    let z = perm(&mut g, P0, "Zodiark, Umbral God");
+    assert_eq!(g.player(P1).exile.len(), 1);
+    assert_eq!(life(&g, P0), 42);
+    assert_eq!(g.perm(z).plus, 1);
+}
+
+#[test]
+fn black_market_connections_draws_at_low_life_only_with_sheoldred_out() {
+    // at 10 life: a Treasure (1 life), no card without Sheoldred
+    let mut g = game();
+    perm(&mut g, P0, "Black Market Connections");
+    g.player_mut(P0).life = 10;
+    let h = hand_len(&g, P0);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!((hand_len(&g, P0), life(&g, P0)), (h, 9));
+    // with her out the card costs 2 and gives 2 back
+    let mut g = game();
+    perm(&mut g, P0, "Black Market Connections");
+    perm(&mut g, P0, SHEO);
+    g.player_mut(P0).life = 10;
+    let h = hand_len(&g, P0);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!((hand_len(&g, P0), life(&g, P0)), (h + 1, 9));
+}
+
+#[test]
 fn mikokoro_taps_for_colourless_and_makes_each_player_draw() {
     let mut g = game();
     let miko = lands(&mut g, P0, MIKOKORO, 1, false)[0];

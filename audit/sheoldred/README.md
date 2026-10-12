@@ -96,3 +96,22 @@ other way round (`run.sh atlas-miko`: both back out for the originals; raw outpu
 No difference (noise about ±3 per tier: two cards change, so the paired games diverge more). The Atlas is slow: it
 takes two turns of counters before it draws with a punisher out (or one counter when the draw kills), and in about 190
 traced games it was destroyed or Sheoldred was gone before that more often than not; it drew in two of them.
+
+## Candidates: Black Market Connections, The Darkness Crystal, Zodiark (2026-10-12)
+
+Measured on the list with Otherworld Atlas and Mikokoro (`run.sh bmc`, `crystal`, `crystal-zod`; raw output in the
+folders of those names). The slots: Accursed Marauder (lowest win rate when cast in a Tier 3 `--analyze`, -6.3) and,
+for the package, Restless Bloodseeker (+0.7, a body for a body). None is in the list.
+
+| | T1 | T2 | T3 | T4 | T5 | All tiers |
+|---|---|---|---|---|---|---|
+| Current list | 28.1% | 41.7% | 32.1% | 30.4% | 22.6% | **31.0%** |
+| Black Market Connections for the Marauder | +0.9 | +0.3 | +0.1 | +2.3 | +0.8 | **+0.9** |
+| The Darkness Crystal for the Marauder | +1.1 | +1.4 | -0.7 | +0.7 | -0.8 | **+0.3** |
+| The Crystal + Zodiark, Umbral God (also for Restless Bloodseeker) | +1.0 | +2.3 | +0.2 | +1.4 | +1.9 | **+1.4** |
+
+All within noise (about ±3.5 per tier, about ±1.6 over all tiers). Black Market Connections and the package are up in
+all five tiers. Modeling: Black Market Connections takes a Treasure every turn, a card above 15 life (above 5 with
+Sheoldred out, 2026-10-12) and a 3/2 above 20. Forty traced Tier 2 games with the package: Zodiark resolved in 8
+(2-3 creatures sacrificed each time), the Crystal exiled opponents' creatures (commanders go to the command zone), and
+its {4}{B}{B} reanimation never came up.

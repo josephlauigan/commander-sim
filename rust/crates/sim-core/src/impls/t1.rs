@@ -460,14 +460,16 @@ fn merriment(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
-/// each turn: Treasure; plus a card above 15 life and a 3/2 above 20
+/// each turn: Treasure; plus a card above 15 life (above 5 with Sheoldred, the Apocalypse out: her 2 life pays for it)
+/// and a 3/2 above 20
 fn bmc(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if g.perm(src).owner != p || !trigger_window(g, p, Some(src), "choose modes", None)? {
         return Ok(());
     }
     add_treasure(g, p, 1)?;
     lose_life(g, p, 1, Some(p), "other", None)?;
-    if g.player(p).life > 15 {
+    let floor = if super::sheoldred::sheoldred_out(g, p) { 5 } else { 15 };
+    if g.player(p).life > floor {
         draw(g, p, 1, false)?;
         lose_life(g, p, 2, Some(p), "other", None)?;
     }

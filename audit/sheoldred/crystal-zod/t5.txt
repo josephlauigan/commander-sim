@@ -1,0 +1,12 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The Darkness Crystal [pool] A 2BB :: (no tags)
+   Zodiark, Umbral God [pool] C BBBBB :: leg pow=5 bomb=5
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Accursed Marauder -> The Darkness Crystal; Restless Bloodseeker // Bloodsoaked Reveler -> Zodiark, Umbral God
+
+=== Sheoldred vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.6% ->  24.5%  (delta +1.9 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Urza 16.8%  Zur the Enchanter 11.4%  Winota 18.6%  Kinnan 21.2%  Yawgmoth 7.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(68s total)

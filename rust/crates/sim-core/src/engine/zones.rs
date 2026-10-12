@@ -680,6 +680,13 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
         }
         return Ok(());
     }
+    if creature && !token && !g.hooks.is_empty() && crate::impls::sheoldred::darkness_crystal(g, m)? {
+        // The Darkness Crystal: exiled instead, so it never dies; a sacrifice is still a sacrifice (Zodiark)
+        if cause == "sac" {
+            fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Perm(m) })?;
+        }
+        return Ok(());
+    }
     if creature {
         g.player_mut(p).creature_died = Some(g.turn_stamp()); // Essenceknit Scholar
         let st = g.turn_stamp();

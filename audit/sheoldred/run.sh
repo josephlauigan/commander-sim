@@ -12,6 +12,9 @@
 #                 minus the delta. On the later list (Mikokoro for Castle Locthwain) it adds a 33rd Swamp instead
 #   atlas-miko  : (2026-10-12) Otherworld Atlas and Mikokoro back out for Temple Bell and Castle Locthwain; the value of
 #                 the replacements is minus the delta
+#   bmc         : (2026-10-12) Black Market Connections for Accursed Marauder (lowest win rate when cast, --analyze T3)
+#   crystal     : (2026-10-12) The Darkness Crystal for Accursed Marauder (the same slot as bmc)
+#   crystal-zod : (2026-10-12) The Darkness Crystal and Zodiark, Umbral God for Accursed Marauder and Restless Bloodseeker
 # Block A (wheel): Memory Jar.             Sheoldred cuts Carnage Altar;   Jodah gets Szadek, Lord of Secrets.
 # Block B (sweeper + removal): Toxic Deluge, Bitter Triumph.
 #                                          Sheoldred cuts Depressurize, Multiply by Zero;
@@ -80,6 +83,9 @@ for mode in "$@"; do
       git checkout -- $F $X; trap - EXIT ;;
     mikokoro) paired $mode sheoldred --swap "Mikokoro, Center of the Sea=>Swamp" ;;
     atlas-miko) paired $mode sheoldred --swap "Otherworld Atlas=>Temple Bell" --swap "Mikokoro, Center of the Sea=>Castle Locthwain" ;;
+    bmc) paired $mode sheoldred --swap "Accursed Marauder=>Black Market Connections" ;;
+    crystal) paired $mode sheoldred --swap "Accursed Marauder=>The Darkness Crystal" ;;
+    crystal-zod) paired $mode sheoldred --swap "Accursed Marauder=>The Darkness Crystal" --swap "Restless Bloodseeker // Bloodsoaked Reveler=>Zodiark, Umbral God" ;;
     jodah-A) paired $mode jodah "${JA[@]}" ;;
     jodah-B) paired $mode jodah "${JB[@]}" ;;
     jodah-C) paired $mode jodah "${JC[@]}" ;;

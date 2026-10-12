@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Black Market Connections [pool] E 2B :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Accursed Marauder -> Black Market Connections
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  32.1% ->  32.2%  (delta +0.1 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Aurelia 22.9%  Tergrid 16.5%  Korvold 6.3%  Atraxa 8.7%  Marwyn 13.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(140s total)

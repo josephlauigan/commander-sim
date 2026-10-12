@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Black Market Connections [pool] E 2B :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Accursed Marauder -> Black Market Connections
+
+=== Sheoldred vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  41.7% ->  42.0%  (delta +0.3 pts, noise ±3.6, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 13.1%  Sythis 12.2%  Lord Windgrace 7.7%  Brago 12.5%  Meren of Clan Nel Toth 12.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(176s total)
