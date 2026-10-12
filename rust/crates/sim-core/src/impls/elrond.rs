@@ -170,7 +170,8 @@ fn elrond_enters(g: &mut Game, src: Src) -> Res {
     }
     let st = g.turn_stamp();
     let x = g.perm_mut(src);
-    let n = if x.data.get(DataKey::ResolvedAt) == Some(&Val::Stamp(st)) { x.data.int(DataKey::Resolved) + 1 } else { 1 };
+    let n =
+        if x.data.get(DataKey::ResolvedAt) == Some(&Val::Stamp(st)) { x.data.int(DataKey::Resolved) + 1 } else { 1 };
     x.data.set(DataKey::ResolvedAt, Val::Stamp(st));
     x.data.set(DataKey::Resolved, Val::Int(n));
     crate::cardcode::scry(g, o, 1, false)?;
@@ -396,7 +397,11 @@ fn mage_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     let opp = super::common::best_opp_creature(g, p, |x| x != src);
     let pick = match (own, opp) {
         (Some((a, s)), Some(b)) => {
-            if pval(g, b) * 0.6 > s || s < 1.0 { b } else { a }
+            if pval(g, b) * 0.6 > s || s < 1.0 {
+                b
+            } else {
+                a
+            }
         }
         (Some((a, s)), None) if s >= 1.0 => a,
         (None, Some(b)) => b,
@@ -435,7 +440,9 @@ fn rescue_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if s < 0.5 {
         return Ok(());
     }
-    if trigger_window(g, p, Some(src), "return another artifact or creature you control to hand", Some(4.0))? && live(g, t) {
+    if trigger_window(g, p, Some(src), "return another artifact or creature you control to hand", Some(4.0))?
+        && live(g, t)
+    {
         let art = is_artifact(g, t);
         bounce(g, t)?;
         if art && live(g, src) {
@@ -529,7 +536,9 @@ fn mouth_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     for q in g.opps(p).collect::<Vec<_>>() {
         for x in my_creatures(g, q) {
             let prior = weakened(g, x) as i64;
-            g.perm_mut(x).data.set(DataKey::Weaken, Val::List(vec![Val::Player(p), Val::Int(turns), Val::Int(prior + 3)]));
+            g.perm_mut(x)
+                .data
+                .set(DataKey::Weaken, Val::List(vec![Val::Player(p), Val::Int(turns), Val::Int(prior + 3)]));
         }
     }
     Ok(())
@@ -757,31 +766,37 @@ pub fn elrond_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if name == FEAR {
         return fear_prio(g, p, c);
     }
+    if FLASHERS.contains(&name) {
+        return flash_hold(g, p, c);
+    }
     let Some(e) = out else { return base };
     if !d.creature || base <= 0 {
         return base;
     }
     let n = resolved_now(g, e);
-    let flash = FLASHERS.contains(&name);
-    if flash {
-        if g.active == Some(p) {
-            // my turn: the second entry now, else wait for an end step
-            return if n == 1 { base.max(75) } else { 0 };
-        }
-        // another player's turn: the second entry, or (with two to cast) the first
-        let spare = pl.hand.iter().filter(|&&x| x != c && FLASHERS.contains(&cname(g, x))).count();
-        return if n >= 1 {
-            base.max(80)
-        } else if spare > 0 {
-            base.max(60)
-        } else {
-            base.max(45)
-        };
-    }
     if n < 2 && g.active == Some(p) {
         return base + 10; // creatures first: each entry counts toward the Ring
     }
     base
+}
+
+/// the flash creatures (the registry's `prio` slot, so the compiled-ability value never revives a held card): cast as
+/// the second entry of a turn or at the end of another player's turn, else held; with Elrond out, a first entry on
+/// another player's turn only when a second flash creature can follow
+fn flash_hold(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let Some(e) = elrond_of(g, p) else { return 50 };
+    let n = resolved_now(g, e);
+    if g.active == Some(p) {
+        return if n == 1 { 75 } else { 0 };
+    }
+    let spare = g.player(p).hand.iter().filter(|&&x| x != c && FLASHERS.contains(&cname(g, x))).count();
+    if n >= 1 {
+        80
+    } else if spare > 0 {
+        60
+    } else {
+        45
+    }
 }
 
 /// elrond's own plays: warp, and the warped creatures from exile
@@ -873,6 +888,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.end_step = Some(warp_end);
     c.hand_options = Some(warp_hand);
     c.combat_damage = Some(winder_damage);
+    for n in FLASHERS {
+        r.card(db, n)?.prio = Some(flash_hold);
+    }
     r.card(db, TABULATOR)?.cast = Some(tabulator_cast);
     let c = r.card(db, WASP)?;
     c.etb = Some(wasp_etb);

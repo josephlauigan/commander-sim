@@ -32,7 +32,12 @@ fn has_perm(g: &Game, p: PlayerId, name: &str) -> bool {
 }
 
 fn perm_named(g: &Game, p: PlayerId, name: &str) -> PermId {
-    g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && g.perm(m).name == name).unwrap_or_else(|| panic!("no {name}"))
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).on_bf && g.perm(m).name == name)
+        .unwrap_or_else(|| panic!("no {name}"))
 }
 
 fn fill_library(g: &mut Game, p: PlayerId, n: usize) {
@@ -549,4 +554,79 @@ fn elrond_is_bounced_in_response_to_removal() {
     assert!(!g.perm(e).on_bf, "off the battlefield");
     assert!(gy_has(&g, P0, "Unsummon"), "saved by Unsummon, not killed");
     assert!(!gy_has(&g, P0, ELROND));
+}
+
+// ================================================================== the AI plan
+#[test]
+fn the_plan_casts_elrond_on_turn_three() {
+    let mut g = game();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Island", 3, false);
+    g.active = Some(P0);
+    g.player_mut(P0).turns = 3;
+    hand(&mut g, P0, &["Aven Fisher", "Ornithopter", "Quick Study"]);
+    let opts = opts_of(&mut g, P0, false);
+    let top = opts.iter().max_by(|a, b| a.utility.total_cmp(&b.utility)).unwrap();
+    assert_eq!(top.label, ELROND);
+}
+
+#[test]
+fn the_plan_holds_flash_creatures_for_the_second_entry_or_an_end_step() {
+    let mut g = game();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Island", 6, false);
+    g.active = Some(P0);
+    perm(&mut g, P0, ELROND); // his own entry: one resolution this turn
+    hand(&mut g, P0, &["Divining Duelist"]);
+    assert!(has_opt(&mut g, P0, "Divining Duelist"), "the second entry of the turn: cast it");
+    // next turn, nothing has entered yet: held
+    next_turn(&mut g);
+    assert!(!has_opt(&mut g, P0, "Divining Duelist"), "no entry yet: wait for an end step");
+    // at the end of another player's turn it is cast
+    g.active = Some(P1);
+    brain::end_of_turn_window(&mut g, P0).unwrap();
+    assert!(has_perm(&g, P0, "Divining Duelist"));
+}
+
+#[test]
+fn the_plan_creatures_come_before_other_spells_once_elrond_is_out() {
+    let mut g = game();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Island", 6, false);
+    g.active = Some(P0);
+    next_turn(&mut g);
+    perm(&mut g, P0, ELROND);
+    next_turn(&mut g);
+    hand(&mut g, P0, &["Aven Fisher", "Dreams of Laguna"]);
+    let opts = opts_of(&mut g, P0, false);
+    let top = opts.iter().max_by(|a, b| a.utility.total_cmp(&b.utility)).unwrap();
+    assert_eq!(top.label, "Aven Fisher");
+}
+
+#[test]
+fn hope_ender_coatl_is_cast_as_a_counter_and_then_enters() {
+    // the opponent casts a bomb into three open Islands and a Coatl: over some seeds the AI counters it at least once,
+    // the spell is countered (the caster cannot pay {1}) and the Coatl is on the battlefield afterwards
+    let mut countered = 0;
+    for seed in 0..40u64 {
+        let mut g = table_with(&["elrond", "seph"], seed, 40);
+        fill_library(&mut g, P0, 20);
+        lands(&mut g, P0, "Island", 3, false);
+        hand(&mut g, P0, &["Hope-Ender Coatl"]);
+        lands(&mut g, P1, "Mountain", 5, false);
+        let c = hand(&mut g, P1, &["Glorybringer"])[0];
+        g.active = Some(P1);
+        let (gn, pips) = cost_of(&g, P1, c);
+        pay(&mut g, P1, gn, &pips, false).unwrap();
+        for &l in &g.player(P1).lands.clone() {
+            g.land_mut(l).tapped = true; // nothing left to pay the {1}
+        }
+        cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap();
+        if has_perm(&g, P0, "Hope-Ender Coatl") {
+            assert!(!has_perm(&g, P1, "Glorybringer"), "countered unless they pay {{1}}");
+            assert!(gy_has(&g, P1, "Glorybringer"));
+            countered += 1;
+        }
+    }
+    assert!(countered > 0, "the Coatl was never cast as a counter");
 }
