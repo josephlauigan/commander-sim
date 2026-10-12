@@ -630,3 +630,35 @@ fn hope_ender_coatl_is_cast_as_a_counter_and_then_enters() {
     }
     assert!(countered > 0, "the Coatl was never cast as a counter");
 }
+
+// ================================================================== the entry planner
+#[test]
+fn the_planner_casts_the_pair_that_tempts_and_holds_elrond_alone() {
+    // Elrond out, 3 mana: Coral Barrier (card + token) is two entries, so it comes first
+    let mut g = game();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Island", 3, false);
+    g.active = Some(P0);
+    next_turn(&mut g);
+    perm(&mut g, P0, ELROND);
+    g.active = Some(P0);
+    let cs = hand(&mut g, P0, &["Coral Barrier", "Quicksilver Fisher"]);
+    assert_eq!(elrond::elrond_prio(&g, P0, cs[0]), 90);
+    assert!(elrond::elrond_prio(&g, P0, cs[1]) < 90);
+    // Elrond in the command zone, 3 mana, another entry in hand but no pair: he waits
+    let mut g = game();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Island", 3, false);
+    next_turn(&mut g);
+    next_turn(&mut g);
+    g.active = Some(P0);
+    g.player_mut(P0).turns = 4;
+    let cmd = g.player(P0).cmd;
+    let c = hand(&mut g, P0, &["Quicksilver Fisher"])[0];
+    assert_eq!(elrond::elrond_prio(&g, P0, cmd), 0, "alone he would be exposed for a round");
+    // with a free creature in hand he and it make the Ring tempt this turn
+    let o = hand(&mut g, P0, &["Ornithopter"])[0];
+    assert_eq!(elrond::elrond_prio(&g, P0, cmd), 98);
+    assert_eq!(elrond::elrond_prio(&g, P0, o), 90);
+    assert!(elrond::elrond_prio(&g, P0, c) < 90);
+}

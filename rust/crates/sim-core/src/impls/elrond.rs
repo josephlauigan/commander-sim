@@ -975,7 +975,8 @@ fn entry_set(g: &Game, p: PlayerId, need: u32, mana: u32, elrond_out: bool) -> O
             continue;
         }
         if best.as_ref().is_none_or(|(bc, _)| cost < *bc) {
-            best = Some((cost, cards.iter().enumerate().filter(|(i, _)| mask >> i & 1 == 1).map(|(_, x)| x.0).collect()));
+            best =
+                Some((cost, cards.iter().enumerate().filter(|(i, _)| mask >> i & 1 == 1).map(|(_, x)| x.0).collect()));
         }
     }
     best.map(|b| b.1)
@@ -994,4 +995,4 @@ fn tempt_set(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     entry_set(g, p, 2 - n, crate::engine::mana::total_mana(g, p, false), out.is_some())
 }
 const RECAST_PRIO: i32 = 45;
-const SOLO_TURN: u32 = 6;
+const SOLO_TURN: u32 = 8;

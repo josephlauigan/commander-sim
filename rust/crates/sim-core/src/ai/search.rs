@@ -272,6 +272,10 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
         return None;
     }
     real.sort_by(|&a, &b| opts[b].utility.partial_cmp(&opts[a].utility).unwrap_or(std::cmp::Ordering::Equal));
+    // the elrond deck's entry plan (impls/elrond.rs, utility 9+) is not second-guessed by a search that cannot see the Ring
+    if g.player(p).key == "elrond" && opts[real[0]].utility >= 8.9 {
+        return Some(real[0]);
+    }
     real.truncate(g.settings.search.top_k);
     let stop = opts.iter().position(|o| o.act.is_none())?;
     real.push(stop);
