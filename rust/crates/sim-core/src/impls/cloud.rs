@@ -1151,3 +1151,9 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
     }
     out
 }
+
+/// look-ahead score bonus for a main-phase option of cloud (added to the rollout average in `search::choose_inner`):
+/// the position score can't see what Cloud's search for an Equipment is worth, so casting him gets a flat bonus
+pub fn search_bonus(g: &Game, p: PlayerId, label: &str) -> f64 {
+    if label == CLOUD && cloud_of(g, p).is_none() { 10.0 } else { 0.0 }
+}
