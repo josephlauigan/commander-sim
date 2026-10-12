@@ -739,7 +739,7 @@ pub fn extra_ward(g: &Game, m: PermId) -> u32 {
     if x.data.is_empty() {
         return more;
     }
-    more + role_ward(g, m) + if is_face_down_radical(g, m) { 2 } else { 0 }
+    more + role_ward(g, m) // a face-down disguise creature (Greenbelt Radical too) is in `more`
 }
 
 /// Disguise {5}{G}{G}: cast face down for {3} as a 2/2 with ward {2}. The AI does that with the mana to spare; the
