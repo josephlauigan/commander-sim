@@ -1,0 +1,5 @@
+t1 exit 0 [loose       ] win  25.6% ->  27.8%  (delta +2.2 pts, noise ±3.2, paired)   n=1000
+t2 exit 0 [loose       ] win  29.2% ->  29.4%  (delta +0.2 pts, noise ±3.6, paired)   n=1000
+t3 exit 0 [loose       ] win  23.0% ->  22.9%  (delta -0.1 pts, noise ±3.2, paired)   n=1000
+t4 exit 0 [loose       ] win  21.2% ->  22.0%  (delta +0.8 pts, noise ±3.2, paired)   n=1000
+t5 exit 0 [loose       ] win  17.5% ->  17.2%  (delta -0.3 pts, noise ±2.5, paired)   n=1000

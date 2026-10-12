@@ -1,0 +1,12 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Cost of Brilliance [scryfall] S 2B :: (no tags)
+      not modeled: Target player draws two cards and loses 2 life. Put a +1/+1 counter on up to one target creature.
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Phyrexian Arena -> Cost of Brilliance
+
+=== Sauron vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  17.5% ->  17.2%  (delta -0.3 pts, noise ±2.5, paired)   n=1000
+               eliminated by (variant): Urza 18.1%  Zur the Enchanter 15.1%  Winota 19.3%  Kinnan 22.4%  Yawgmoth 7.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(68s total)
