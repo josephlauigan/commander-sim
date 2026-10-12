@@ -921,18 +921,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     Ok(())
 }
 
-// ================================================================== search evaluation
-/// what the look-ahead search adds to the elrond seat's position score: Elrond on the battlefield, and each Ring tempt
-/// so far (capped, the Ring stops growing at level 4), so a play that makes a second entry beats one that doesn't
-pub fn progress(g: &Game, q: PlayerId) -> f64 {
-    let pl = g.player(q);
-    let tempts = pl.stats.get("ring_tempts").copied().unwrap_or(0).min(6) as f64;
-    let e = if elrond_of(g, q).is_some() { PROGRESS_ELROND } else { 0.0 };
-    e + PROGRESS_TEMPT * tempts
-}
-const PROGRESS_ELROND: f64 = 4.0;
-const PROGRESS_TEMPT: f64 = 3.0;
-
 // ================================================================== the entry planner
 /// how many creature entries (for Elrond's trigger) casting this card makes
 fn entries_of(g: &Game, c: CardId) -> u32 {
