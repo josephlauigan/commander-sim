@@ -4,6 +4,8 @@
 #   sheo-A/B/C  : Jodah's cards into Sheoldred, paired, 1,000 games per list per tier
 #   jodah-A/B/C : the same cards out of Jodah, refilled from bulk, paired, 1,000 games per list per tier
 #   sheo-ABC, jodah-ABC : all three blocks at once
+#   upgrade     : the upgrade package (buys) in the list with Memory Jar: Seizan, Underworld Dreams, Dark Deal, Painful
+#                 Lesson for Ribskiff, Gravblade Heavy, Multiply by Zero, Locust Spray
 # Block A (wheel): Memory Jar.             Sheoldred cuts Carnage Altar;   Jodah gets Szadek, Lord of Secrets.
 # Block B (sweeper + removal): Toxic Deluge, Bitter Triumph.
 #                                          Sheoldred cuts Depressurize, Multiply by Zero;
@@ -18,6 +20,7 @@ cap() { systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 "$@"; 
 SA=(--swap "Carnage Altar=>Memory Jar")
 SB=(--swap "Depressurize=>Toxic Deluge" --swap "Multiply by Zero=>Bitter Triumph")
 SC=(--swap "Gravblade Heavy=>Korlash, Heir to Blackblade")
+SU=(--swap "Ribskiff=>Seizan, Perverter of Truth" --swap "Locust Spray=>Painful Lesson" --swap "Gravblade Heavy=>Underworld Dreams" --swap "Multiply by Zero=>Dark Deal")
 JA=(--swap "Memory Jar=>Szadek, Lord of Secrets")
 JB=(--swap "Toxic Deluge=>Lagrella, the Magpie" --swap "Bitter Triumph=>Wander Off")
 JC=(--swap "Korlash, Heir to Blackblade=>Sisters of Stone Death")
@@ -45,6 +48,7 @@ for mode in "$@"; do
     sheo-B) paired $mode sheoldred "${SB[@]}" ;;
     sheo-C) paired $mode sheoldred "${SC[@]}" ;;
     sheo-ABC) paired $mode sheoldred "${SA[@]}" "${SB[@]}" "${SC[@]}" ;;
+    upgrade) paired $mode sheoldred "${SU[@]}" ;;
     jodah-A) paired $mode jodah "${JA[@]}" ;;
     jodah-B) paired $mode jodah "${JB[@]}" ;;
     jodah-C) paired $mode jodah "${JC[@]}" ;;
