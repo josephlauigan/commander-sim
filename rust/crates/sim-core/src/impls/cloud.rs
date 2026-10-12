@@ -1106,7 +1106,8 @@ pub fn cloud_protect(
             }
         }
     }
-    Ok(false)
+    // the generic one-card answers the outside decks use (Gods Willing, Benevolent Bodyguard, Selfless Spirit, ...)
+    crate::ai::pool::protect(g, p, m, crate::sym::intern(kind), actor, spell)
 }
 
 /// cloud's own plays (brain.special_options): Cid's regrow and Zack's sacrifice are card options and the equip
