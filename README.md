@@ -4,15 +4,24 @@ Measures a Commander deck against pools of outside decks in simulated four-playe
 confidence interval, and paired before/after comparisons for list changes. You can also play one of your decks by
 hand against the same AI opponents in your browser ([Practice mode](#practice-mode)).
 
-It is a Rust project. Build it once, from `rust/`:
+It is a Rust project. From the repository root (macOS or Linux, with `make` and `curl`):
 
 ```
-cd rust && cargo build --release        # needs Rust via rustup (~/.cargo/bin)
+make setup                 # installs Rust (rustup) if it's missing, then the pinned compiler (rust/rust-toolchain.toml)
+make build                 # builds the three programs
+eval "$(make -s env)"      # "activates" the environment in this shell: the programs and cargo on PATH
+make test                  # the full test suite
 ```
 
-That makes three programs in `rust/target/release/`: `commander-sim` (simulations), `commander-practice` (practice
-mode) and `cardgen` (card data and deck editing). Run them from anywhere inside the repository; they find `data/`
-and `decklists/` themselves (or set `COMMANDER_SIM_ROOT`). Run the tests with `cargo test --release` in `rust/`.
+`make shell` opens a new shell with the environment active instead of `eval`, and `make` alone lists every target
+(`make sim`, `make practice`, `make cardgen`, `make clean`). There's nothing else to install: `rust/Cargo.lock` pins
+every dependency, and cargo fetches them on the first build. On Windows, install Rust from https://rustup.rs and run
+`cargo build --release` in `rust/`.
+
+The build makes three programs in `rust/target/release/`: `commander-sim` (simulations), `commander-practice`
+(practice mode) and `cardgen` (card data and deck editing). Run them from anywhere inside the repository; they find
+`data/` and `decklists/` themselves (or set `COMMANDER_SIM_ROOT`, which `make env` does). Without make: `cd rust &&
+cargo build --release`, and `cargo test --release` for the tests.
 
 For how it works inside, see [documents/architecture.md](documents/architecture.md) and
 [documents/practice-mode.md](documents/practice-mode.md).

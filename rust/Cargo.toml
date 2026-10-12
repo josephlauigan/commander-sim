@@ -4,6 +4,7 @@ members = ["crates/sim-core", "crates/practice", "crates/cardgen", "crates/sim-c
 
 [workspace.package]
 edition = "2024"
+rust-version = "1.85"  # edition 2024; the pinned toolchain is in rust-toolchain.toml
 version = "0.1.0"
 publish = false
 

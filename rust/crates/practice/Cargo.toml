@@ -2,6 +2,7 @@
 name = "practice"
 version = "0.1.0"
 edition = "2024"
+rust-version.workspace = true
 
 [lib]
 # staticlib: linked into the iPad app (ios-shell/); rlib: used by the commander-practice binary

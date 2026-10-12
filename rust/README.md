@@ -25,7 +25,8 @@ Running simulations: `cargo build --release -p sim-cli`, then `rust/target/relea
 (`--deck sauron --pool t1 --profile loose --games 960`, `--swap`, `--calibrate`, `--analyze`, `--trace` ...). See
 `crates/sim-cli/README.md`.
 
-Toolchain: Rust via rustup (`~/.cargo/bin`). Run the tests with `cargo test --release` from `rust/`.
+Toolchain: Rust via rustup (`~/.cargo/bin`), pinned in `rust-toolchain.toml` (rustup installs it on the first cargo
+command; `make setup` from the repository root does it all). Run the tests with `cargo test --release` from `rust/`.
 
 ## Practice mode
 

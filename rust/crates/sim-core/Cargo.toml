@@ -2,6 +2,7 @@
 name = "sim-core"
 version = "0.1.0"
 edition = "2024"
+rust-version.workspace = true
 
 [dependencies]
 indexmap = { version = "2.14.2", features = ["serde"] }

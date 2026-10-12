@@ -1,0 +1,6 @@
+# The Rust compiler this workspace is built and tested with. rustup reads this file and installs the toolchain on the
+# first cargo command run here (or `make setup` from the repository root).
+[toolchain]
+channel = "1.99.0"
+components = ["rustfmt"]
+profile = "minimal"
