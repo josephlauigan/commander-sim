@@ -4,6 +4,7 @@
 **Updated 2026-10-09.** Out: Blackblade Reforged, Desertion, Dismiss, Dissipate, Helm of Kaldra, Invoke Despair, Kaervek's Purge, Pillage, Shield of Kaldra, Sisay's Ring, Sword of Kaldra, Szadek, Lord of Secrets. In: Arcane Signet, Birds of Paradise, Chromatic Lantern, Fellwar Stone, Gix, Yawgmoth Praetor, Paradise Druid, Shalai, Voice of Plenty, Talisman of Hierarchy. The Jodah rework (audit/jodah, packages B-D): the Kaldra pieces cost 3-4 mana, did little alone and blocked a quarter of cascades, so three basics take their slots (+5 on their own); Birds of Paradise, Paradise Druid, Fellwar Stone, Talisman of Hierarchy, Chromatic Lantern and Arcane Signet get Jodah out a turn sooner and fix colours; Shalai gives Jodah hexproof and soaks up removal; Gix draws off combat damage. The recommended package measured +6.5 with the look-ahead AI. Off-theme picks (not Donato Giancola / Richard Kane Ferguson) were allowed for this measured gain.
 **Updated 2026-10-09.** Out: Shalai, Voice of Plenty. In: Tymna the Weaver. JD's choice: Tymna draws a card for each opponent your creatures hit (paying that much life) after combat. In the Shalai slot she measured -0.7 ±0.8 against Shalai, within noise (adaptive, paired, 1,000 games per tier).
 **Updated 2026-10-09.** Out: Experimental Augury, Genesis Hydra, Lagrella, the Magpie, Sisters of Stone Death. In: Garland, Royal Kidnapper, Helm of Kaldra, Shield of Kaldra, Sword of Kaldra. JD's choice: the Kaldra pieces back (the deck's art theme) plus Garland, Royal Kidnapper, keeping the mana base and Razia. Measured -1.4 ±1.2 against the list before (adaptive, paired, 1,000 games per tier); the least costly of five ways to fit them. Garland alone measured +1.4.
+**Updated 2026-10-11.** Out: Memory Jar. In: Szadek, Lord of Secrets. JD's choice: Memory Jar moves to the Sheoldred deck, where it measured +2.9 points (with Sheoldred out it makes each opponent draw seven). Szadek (bulk; Donato Giancola art; in the list until 10-09) is a provisional refill, not yet measured; JD may pick another later.
 
 2026-10-07
 **Added 2026-10-07.** In the simulator as deck key `jodah` (`commander-sim --deck jodah --pool t4`) and in practice mode.
@@ -17,7 +18,8 @@ Jodah, the Unifier ({W}{U}{B}{R}{G}, 5/5) reads: *Legendary creatures you contro
 **Legends get big.** Each legendary creature gets +1/+1 for every legendary creature you control, Jodah included. Three legends on the battlefield makes each of them +3/+3; Elenda, Lyra and Kura become threats on their own.
 
 **The pieces.**
-- **Card flow:** Fact or Fiction, Memory Jar, Mordenkainen, Tireless Tracker, Urza, Powerstone Prodigy, Court of Ardenvale (the monarch).
+- **Card flow:** Fact or Fiction, Mordenkainen, Tireless Tracker, Urza, Powerstone Prodigy, Court of Ardenvale (the monarch).
+- **Szadek, Lord of Secrets** (provisional, 10-11): a 5/5 flying legend for seven; when he would deal combat damage to a player, he gets that many +1/+1 counters and the player mills that many cards instead.
 - **Mana:** Birds of Paradise, Paradise Druid, Fyndhorn Elder, Arcane Signet, Fellwar Stone, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic, Moss Diamond, Star Compass, Solemn Simulacrum, Cartographer's Survey, Plaza of Heroes (any colour for legendary spells). The simulations found the deck short of mana: the ramp gets Jodah out by turn 4 about twice as often.
 - **Tutors:** Demonic, Vampiric, Enlightened, Mystical, Worldly and Profane Tutor find the legend or the answer the game needs.
 - **Protection:** Privileged Position (hexproof for your other permanents), Grand Abolisher and Dragonlord Dromoka (opponents can't cast spells during your turn).
@@ -51,11 +53,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Jodah, the Unifier
 
-**Creatures (27).** Birds of Paradise, Caparocti Sunborn, Carth the Lion, Cromat, Dakkon Blackblade, Dragonlord Dromoka, Elenda, the Dusk Rose, Fyndhorn Elder, Garland, Royal Kidnapper, Gix, Yawgmoth Praetor, Grand Abolisher, King Darien XLVIII, Korlash, Heir to Blackblade, Kura, the Boundless Sky, Lyra Dawnbringer, Marchesa, the Black Rose, Mirri, Weatherlight Duelist, Paradise Druid, Razia, Boros Archangel, Skyclave Apparition, Sol'kanar the Swamp King, Solemn Simulacrum, Terror of the Peaks, Tireless Tracker, Tolsimir Wolfblood, Tymna the Weaver, Urza, Powerstone Prodigy
+**Creatures (28).** Birds of Paradise, Caparocti Sunborn, Carth the Lion, Cromat, Dakkon Blackblade, Dragonlord Dromoka, Elenda, the Dusk Rose, Fyndhorn Elder, Garland, Royal Kidnapper, Gix, Yawgmoth Praetor, Grand Abolisher, King Darien XLVIII, Korlash, Heir to Blackblade, Kura, the Boundless Sky, Lyra Dawnbringer, Marchesa, the Black Rose, Mirri, Weatherlight Duelist, Paradise Druid, Razia, Boros Archangel, Skyclave Apparition, Sol'kanar the Swamp King, Solemn Simulacrum, Szadek, Lord of Secrets, Terror of the Peaks, Tireless Tracker, Tolsimir Wolfblood, Tymna the Weaver, Urza, Powerstone Prodigy
 
 **Planeswalkers (4).** Dakkon, Shadow Slayer, Mordenkainen, The Aetherspark, Wrenn and Six
 
-**Artifacts (12).** Arcane Signet, Chromatic Lantern, Coalition Relic, Fellwar Stone, Helm of Kaldra, Memory Jar, Mirari, Moss Diamond, Shield of Kaldra, Star Compass, Sword of Kaldra, Talisman of Hierarchy
+**Artifacts (11).** Arcane Signet, Chromatic Lantern, Coalition Relic, Fellwar Stone, Helm of Kaldra, Mirari, Moss Diamond, Shield of Kaldra, Star Compass, Sword of Kaldra, Talisman of Hierarchy
 
 **Enchantments (3).** Court of Ardenvale, Darksteel Mutation, Privileged Position
 
@@ -113,7 +115,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Llanowar Wastes
 1 Lyra Dawnbringer
 1 Marchesa, the Black Rose
-1 Memory Jar
 1 Mirari
 1 Mirri, Weatherlight Duelist
 1 Mordenkainen
@@ -141,6 +142,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Star Compass
 1 Sulfurous Springs
 1 Sword of Kaldra
+1 Szadek, Lord of Secrets
 1 Talisman of Hierarchy
 1 Terror of the Peaks
 1 The Aetherspark

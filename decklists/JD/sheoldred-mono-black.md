@@ -1,10 +1,11 @@
 # Sheoldred, the Apocalypse — Mono-Black Drain
 
-**Updated 2026-10-11.** Out: nothing. In: Accursed Marauder, Al Bhed Salvagers, Apex Witchstalker, Arcane Signet, Battle-Rage Blessing, Blood Artist, Bonders' Enclave, Burglar Rat, Burrog Banemaker, Callous Inspector, Canyon Crawler, Carnage Altar, Cast Away Doubt, Champion's Helm, Command Tower, Cost of Brilliance, Dark Endurance, Darksteel Plate, Deadly Dispute, Depressurize, Diary of Dreams, Disembowel, End of the Hunt, Fathom Fleet Cutthroat, Fellwar Stone, Fetid Imp, Foolish Fate, Gravblade Heavy, Hullcarver, Invoke Despair, Lash of the Balrog, Last Gasp, Leech Collector // Bloodletting, Lethal Throwdown, Locust Spray, Mabel, Bitter Recluse, Masterful Flourish, Melancholic Poet, Moseo, Vein's New Dean, Multiply by Zero, Necrosquito, Overkill, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Potioner's Trove, Rampart Hunter, Restless Bloodseeker // Bloodsoaked Reveler, Ribskiff, Rooftop Assassin, Screeching Soulbreaker, Sephiroth's Intervention, Seymour Flux, Silence the Echo, Skyscanner, Sneering Shadewriter, Soul Enervation, Stir Up Trouble, Swamp, Terror, Tome of Legends, Ulna Alley Shopkeep, Undercity Dire Rat, Vanquish the Weak, Vault Plunderer, Wander Off. Draft list from the bulk and binder lists, no buys.
-
-**Draft 2026-10-11.** JD's mono-black deck around Sheoldred, the Apocalypse (taken from Sauron), built from the bulk
-and binder lists with no buys. Not yet measured; Sheoldred leaving Sauron costs him about 2.1 points
-(`audit/sauron/2026-10-11-sheoldred-bedevil/`).
+**Added 2026-10-11.** JD's mono-black deck around Sheoldred, the Apocalypse, taken from Sauron (who measured −2.1 points
+without her; Bedevil from the binder took her slot). Built from the bulk and binder lists with no buys, plus Memory Jar
+from Jodah. Fully modeled; measured 2026-10-11 at **about 23.8% over all tiers** with Memory Jar (see "Simulator status").
+**Updated 2026-10-11.** Out: Carnage Altar. In: Memory Jar. JD's choice: Memory Jar moves from Jodah (Szadek, Lord of
+Secrets refills it there); with Sheoldred out it makes each opponent draw seven, 14 life each. Measured +2.9 points over
+all tiers (look-ahead, loose, 1,000 paired games per tier; `audit/sheoldred/`). Carnage Altar goes back to bulk.
 
 ## Strategy
 
@@ -15,9 +16,10 @@ opponent draws a card, they lose 2 life.* Three opponents' draw steps drain 6 li
 - **Protect her.** Champion's Helm (hexproof on a legend), Darksteel Plate, Masterful Flourish, Battle-Rage Blessing,
   Dark Endurance and Perigee Beckoner (she comes back if she dies).
 - **Draw cards.** Each card is 2 life with her out: Phyrexian Rager, Skyscanner, Deadly Dispute, Cast Away Doubt,
-  Seymour Flux, Tome of Legends, Diary of Dreams, Carnage Altar, Ribskiff, Callous Inspector, Locust Spray,
-  Bonders' Enclave (she has power 4).
-- **Make opponents draw.** Vault Plunderer and Cost of Brilliance hand an opponent cards at 2 life each with her out.
+  Seymour Flux, Tome of Legends, Diary of Dreams, Ribskiff, Callous Inspector, Locust Spray, Bonders' Enclave (she has
+  power 4).
+- **Make opponents draw.** Memory Jar is the big one: with Sheoldred out, crack it at once and each opponent draws
+  seven (14 life each). Vault Plunderer and Cost of Brilliance hand an opponent cards at 2 life each.
 - **Remove threats.** 17 removal spells, from Terror and Last Gasp to Invoke Despair; Melancholic Poet drains each
   opponent for every one that targets a creature.
 - **Gain life, use it.** Sheoldred gains life on every one of your draws, which turns on Ulna Alley Shopkeep, Foolish
@@ -27,9 +29,9 @@ opponent draws a card, they lose 2 life.* Three opponents' draw steps drain 6 li
 
 - **Turns 1-3:** a rock (Arcane Signet, Fellwar Stone, Potioner's Trove) and a cheap blocker; Sheoldred on turn 3 or 4.
 - **With Sheoldred out:** equip Champion's Helm or Darksteel Plate first, then draw and remove threats; hold a
-  protection instant for removal aimed at her.
+  protection instant for removal aimed at her. Crack Memory Jar the turn she's safe.
 - **Without her:** removal and drain creatures (Blood Artist, Al Bhed Salvagers, Sneering Shadewriter, Screeching
-  Soulbreaker) keep the pressure on until she comes back.
+  Soulbreaker) keep the pressure on until she comes back. Hold Memory Jar: without her it refills the table.
 
 ## Consistency
 
@@ -38,11 +40,124 @@ Potioner's Trove, Undercity Dire Rat (a Treasure when it dies).
 
 ## Simulator status
 
-Not yet measured.
+**Measured 2026-10-11** (look-ahead AI, loose profile, 1,000 paired games per tier, `audit/sheoldred/`). The bulk-only
+list (Carnage Altar in Memory Jar's slot) won 16.8%, 21.7%, 20.5%, 23.5% and 22.0% against Tiers 1-5, **20.9% over
+all tiers**. Memory Jar added +2.5, +6.8, +5.2, +0.6 and −0.6 (clear against Tiers 2 and 3): **about 23.8%** with it.
+These come from paired runs, not the section 0d seeds of `decklists/pool/pool-results.md`, so they are close to but not
+directly comparable with that table (Titania 22.8%, Veyran 23.7%).
+
+Two other Jodah blocks were tried and not taken, both within noise: Toxic Deluge + Bitter Triumph (+0.7) and Korlash,
+Heir to Blackblade (+0.4).
+
+Modeling: every card is Full. Sheoldred's drain fires on every opponent draw (draw steps, extra draws, wheels) and her
+lifegain on every card you draw.
 
 ## Bracket
 
 Bracket 3, no Game Changers.
+
+## Where the cards come from
+
+**Commander:** Sheoldred, the Apocalypse, from Sauron. **From Jodah:** Memory Jar. **Basics:** 34 Swamp, your own.
+Every other card comes off JD's lists (2026-10-11), one copy each: 2 from the binder (Lash of the Balrog, Phyrexian
+Delver), 62 from bulk. Set codes are the printings the bulk list shows; where it names more than one, any of them.
+Bulk's Arcane Signet and Fellwar Stone are spare copies (other decks keep their own).
+
+### Creatures (31)
+
+| Card | From | Set |
+|---|---|---|
+| Accursed Marauder | Bulk | mh3 |
+| Al Bhed Salvagers | Bulk | fin |
+| Apex Witchstalker | Bulk | fra |
+| Blood Artist | Bulk | ema |
+| Burglar Rat | Bulk | j22 |
+| Burrog Banemaker | Bulk | sos |
+| Callous Inspector | Bulk | tla |
+| Canyon Crawler | Bulk | tla |
+| Fathom Fleet Cutthroat | Bulk | xln |
+| Fetid Imp | Bulk | m21 |
+| Gravblade Heavy | Bulk | eoe |
+| Hullcarver | Bulk | eoe |
+| Leech Collector // Bloodletting | Bulk | sos |
+| Mabel, Bitter Recluse | Bulk | fra |
+| Melancholic Poet | Bulk | sos |
+| Moseo, Vein's New Dean | Bulk | sos |
+| Necrosquito | Bulk | one |
+| Perigee Beckoner | Bulk | eoe |
+| Phyrexian Delver | Binder |  |
+| Phyrexian Rager | Bulk | dd3 |
+| Rampart Hunter | Bulk | fra |
+| Restless Bloodseeker // Bloodsoaked Reveler | Bulk | vow |
+| Rooftop Assassin | Bulk | otj |
+| Screeching Soulbreaker | Bulk | fra |
+| Seymour Flux | Bulk | fin |
+| Sheoldred, the Apocalypse | Sauron |  |
+| Skyscanner | Bulk | list |
+| Sneering Shadewriter | Bulk | sos |
+| Ulna Alley Shopkeep | Bulk | sos |
+| Undercity Dire Rat | Bulk | fin |
+| Vault Plunderer | Bulk | otj |
+
+### Artifacts (9)
+
+| Card | From | Set |
+|---|---|---|
+| Arcane Signet | Bulk | fic, msc |
+| Champion's Helm | Bulk | fic |
+| Darksteel Plate | Bulk | fic |
+| Diary of Dreams | Bulk | sos |
+| Fellwar Stone | Bulk | msc, S.H.I.E.L.D. Spy Satellite printing |
+| Memory Jar | Jodah |  |
+| Potioner's Trove | Bulk | sos |
+| Ribskiff | Bulk | one |
+| Tome of Legends | Bulk | msc |
+
+### Enchantments (1)
+
+| Card | From | Set |
+|---|---|---|
+| Soul Enervation | Bulk | mkm |
+
+### Instants (15)
+
+| Card | From | Set |
+|---|---|---|
+| Battle-Rage Blessing | Bulk | dmu |
+| Dark Endurance | Bulk | eoe |
+| Deadly Dispute | Bulk | j25 |
+| Depressurize | Bulk | eoe |
+| Disembowel | Bulk | rvr |
+| Foolish Fate | Bulk | sos |
+| Last Gasp | Bulk | fra, sos |
+| Locust Spray | Bulk | soa |
+| Masterful Flourish | Bulk | sos |
+| Multiply by Zero | Bulk | fra |
+| Overkill | Bulk | fin |
+| Sephiroth's Intervention | Bulk | fin |
+| Terror | Bulk | dmr |
+| Vanquish the Weak | Bulk | xln |
+| Wander Off | Bulk | sos |
+
+### Sorceries (8)
+
+| Card | From | Set |
+|---|---|---|
+| Cast Away Doubt | Bulk | fra |
+| Cost of Brilliance | Bulk | sos |
+| End of the Hunt | Bulk | sos |
+| Invoke Despair | Bulk | ump |
+| Lash of the Balrog | Binder |  |
+| Lethal Throwdown | Bulk | mh3 |
+| Silence the Echo | Bulk | fra |
+| Stir Up Trouble | Bulk | hob |
+
+### Lands (2, plus 34 Swamp of your own)
+
+| Card | From | Set |
+|---|---|---|
+| Bonders' Enclave | Bulk | fic |
+| Command Tower | Bulk | khc, fic |
 
 ## Decklist by type (100)
 
@@ -54,7 +169,7 @@ Bracket 3, no Game Changers.
 
 **Enchantments (1).** Soul Enervation
 
-**Artifacts (9).** Arcane Signet, Carnage Altar, Champion's Helm, Darksteel Plate, Diary of Dreams, Fellwar Stone, Potioner's Trove, Ribskiff, Tome of Legends
+**Artifacts (9).** Arcane Signet, Champion's Helm, Darksteel Plate, Diary of Dreams, Fellwar Stone, Memory Jar, Potioner's Trove, Ribskiff, Tome of Legends
 
 **Sorceries (8).** Cast Away Doubt, Cost of Brilliance, End of the Hunt, Invoke Despair, Lash of the Balrog, Lethal Throwdown, Silence the Echo, Stir Up Trouble
 
@@ -74,7 +189,6 @@ Bracket 3, no Game Changers.
 1 Burrog Banemaker
 1 Callous Inspector
 1 Canyon Crawler
-1 Carnage Altar
 1 Cast Away Doubt
 1 Champion's Helm
 1 Command Tower
@@ -101,6 +215,7 @@ Bracket 3, no Game Changers.
 1 Mabel, Bitter Recluse
 1 Masterful Flourish
 1 Melancholic Poet
+1 Memory Jar
 1 Moseo, Vein's New Dean
 1 Multiply by Zero
 1 Necrosquito
