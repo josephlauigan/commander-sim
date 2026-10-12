@@ -205,9 +205,10 @@ fn the_kaldra_pieces_work_on_cloud() {
         .perms
         .iter()
         .copied()
-        .find(|&m| g.perm(m).token && g.perm(m).name.contains("Kaldra") || g.perm(m).token && epow(&g, m) >= 4);
-    assert!(k.is_some(), "Kaldra");
-    let _ = es;
+        .find(|&m| g.perm(m).token && g.perm(m).data.truthy(sim_core::state::DataKey::Kaldra))
+        .expect("the Kaldra token");
+    assert_eq!(g.perm(es[0]).attached, Some(k), "the Sword moved onto Kaldra");
+    assert!(g.perm(cl).on_bf, "Cloud is untouched");
 }
 
 // ------------------------------------------------------------------ Hero's Blade, Armory Automaton, Beatrix
@@ -529,4 +530,142 @@ fn unfinished_business_returns_cloud_with_two_equipment() {
 fn the_deck_plays_a_game_to_the_end() {
     let g = play(&["cloud", "seph"], 3, false);
     assert!(g.over || g.round > 0);
+}
+
+// ------------------------------------------------------------------ White Mage's Staff, Veteran's Powerblade
+#[test]
+fn white_mage_s_staff_gains_life_when_the_wearer_attacks_twice_on_cloud() {
+    let mut g = game();
+    let (cl, _) = cloud_with(&mut g, &["White Mage's Staff"]);
+    // Cloud wears the Staff too (the Hero token arrived with it): two copies of the attack trigger
+    let staff = on_bf(&g, P0, "White Mage's Staff").unwrap();
+    g.perm_mut(staff).attached = Some(cl);
+    let life = g.player(P0).life;
+    attack_triggers(&mut g, P0, &[cl], P1);
+    assert_eq!(g.player(P0).life, life + 2);
+    assert_eq!((epow(&g, cl), etgh(&g, cl)), (3, 2), "+1/+1");
+}
+
+// ------------------------------------------------------------------ the plan
+#[test]
+fn cloud_is_the_play_on_turn_two() {
+    let mut g = game();
+    g.player_mut(P0).turns = 2;
+    lands(&mut g, P0, "Plains", 2, false);
+    hand(&mut g, P0, &["Thalia, the Survivor", "Helitrooper", "Squire's Lightblade"]);
+    let o = brain::main_options(&mut g, P0, false).unwrap();
+    let cloud =
+        o.iter().find(|x| x.label == "Cloud, Midgar Mercenary").expect("Cloud is castable from the command zone");
+    let best = o.iter().map(|x| x.utility).fold(f64::MIN, f64::max);
+    assert!((cloud.utility - best).abs() < 1e-9, "Cloud has the highest utility");
+    assert!(o.iter().all(|x| x.utility < cloud.utility - 3.0 || x.label == cloud.label), "by a wide margin");
+}
+
+#[test]
+fn an_equipment_that_attaches_on_entering_waits_for_a_creature() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 4, false);
+    hand(&mut g, P0, &["Squire's Lightblade", "Magitek Scythe"]);
+    let o = brain::main_options(&mut g, P0, false).unwrap();
+    assert!(!o.iter().any(|x| x.label == "Squire's Lightblade" || x.label == "Magitek Scythe"), "no body, no cast");
+    perm(&mut g, P0, "Thalia, the Survivor");
+    let o = brain::main_options(&mut g, P0, false).unwrap();
+    assert!(o.iter().any(|x| x.label == "Squire's Lightblade"));
+}
+
+#[test]
+fn an_unequipped_cloud_stays_home_when_he_can_be_blocked_and_goes_when_equipped() {
+    let mut g = game();
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    g.perm_mut(cl).sick = false;
+    token(&mut g, P1, 1);
+    let out = cloud::attack_filter(&mut g, P0, vec![cl], P1);
+    assert!(out.is_empty(), "a bare 2/1 against a blocker stays home");
+    let e = perm(&mut g, P0, "Medic's Kitesail");
+    g.perm_mut(e).attached = Some(cl);
+    let out = cloud::attack_filter(&mut g, P0, vec![cl], P1);
+    assert_eq!(out, vec![cl]);
+}
+
+#[test]
+fn an_unequipped_cloud_attacks_into_an_empty_board() {
+    let mut g = game();
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    g.perm_mut(cl).sick = false;
+    assert_eq!(cloud::attack_filter(&mut g, P0, vec![cl], P1), vec![cl]);
+}
+
+#[test]
+fn entering_again_is_worth_more_to_a_bare_cloud_than_a_laden_one() {
+    let mut g = game();
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    let bare = cloud::reenter_value(&g, P0, cl);
+    assert!(bare > 0.0, "his search finds an Equipment");
+    for n in ["Sword of Kaldra", "Mask of Memory", "Colossus Hammer"] {
+        let e = perm(&mut g, P0, n);
+        g.perm_mut(e).attached = Some(cl);
+    }
+    assert!(cloud::reenter_value(&g, P0, cl) < bare, "he lets go of what he wears");
+    let other = perm(&mut g, P0, "Helitrooper");
+    assert_eq!(cloud::reenter_value(&g, P0, other), 0.0, "only Cloud");
+}
+
+// ------------------------------------------------------------------ protecting Cloud
+fn destroy(g: &mut Game, m: PermId) {
+    sim_core::engine::removal::apply_removal(g, Some(P1), m, "destroy", None).unwrap();
+}
+
+#[test]
+fn take_up_the_shield_saves_cloud_from_a_destroy_spell() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 2, false);
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    hand(&mut g, P0, &["Take Up the Shield"]);
+    destroy(&mut g, cl);
+    assert!(g.perm(cl).on_bf, "indestructible");
+    assert_eq!(g.perm(cl).plus, 1, "and a +1/+1 counter");
+    assert!(in_gy(&g, P0, "Take Up the Shield"));
+}
+
+#[test]
+fn zack_fair_saves_cloud_and_gives_him_the_equipment_and_counters() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 2, false);
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    let z = perm(&mut g, P0, "Zack Fair");
+    let e = perm(&mut g, P0, "Mask of Memory");
+    g.perm_mut(e).attached = Some(z);
+    destroy(&mut g, cl);
+    assert!(g.perm(cl).on_bf && !g.perm(z).on_bf);
+    assert_eq!(g.perm(e).attached, Some(cl));
+}
+
+#[test]
+fn a_creature_that_is_not_worth_it_is_left_to_die() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 2, false);
+    let t = perm(&mut g, P0, "Thalia, the Survivor");
+    hand(&mut g, P0, &["Take Up the Shield"]);
+    destroy(&mut g, t);
+    assert!(!g.perm(t).on_bf);
+    assert!(in_hand(&g, P0, "Take Up the Shield"));
+}
+
+#[test]
+fn unbreakable_formation_answers_a_destroy_spell_when_nothing_cheaper_is_there() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    hand(&mut g, P0, &["Unbreakable Formation"]);
+    destroy(&mut g, cl);
+    assert!(g.perm(cl).on_bf);
+}
+
+#[test]
+fn an_edict_cannot_be_answered() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    hand(&mut g, P0, &["Take Up the Shield"]);
+    assert!(!cloud::cloud_protect(&mut g, P0, cl, "edict", Some(P1), None).unwrap());
 }
