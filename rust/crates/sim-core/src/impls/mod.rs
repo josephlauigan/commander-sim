@@ -34,6 +34,8 @@ pub mod titania;
 pub mod sheoldred;
 pub mod elrond;
 pub mod cloud;
+pub mod bulk_blue;
+pub mod bulk_white;
 pub mod zur;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
@@ -70,5 +72,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     sheoldred::register(&mut r, db)?;
     elrond::register(&mut r, db)?;
     cloud::register(&mut r, db)?;
+    bulk_blue::register(&mut r, db)?;
+    bulk_white::register(&mut r, db)?;
     Ok(r)
 }
