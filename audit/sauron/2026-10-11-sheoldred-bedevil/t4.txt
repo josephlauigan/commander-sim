@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Sheoldred, the Apocalypse -> Bedevil
+
+=== Sauron vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.2% ->  22.3%  (delta -1.9 pts, noise ±3.1, paired)   n=1000
+               eliminated by (variant): Heliod 19.7%  Yuriko 19.1%  Krenko 16.4%  Chulane 13.1%  Prosper 9.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(118s total)

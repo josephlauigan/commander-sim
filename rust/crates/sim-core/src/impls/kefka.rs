@@ -43,6 +43,7 @@ const VOIDBORN: &str = "Susurian Voidborn";
 const DECORUM: &str = "Decorum Dissertation";
 const EXCAVATOR: &str = "Garrison Excavator";
 const CRAWLER: &str = "Psychosis Crawler";
+const NIV: &str = "Niv-Mizzet, the Firemind";
 const KEFKA: &str = "Kefka, Court Mage // Kefka, Ruler of Ruin";
 
 /// **Madness**: cards that may be cast for this cost (generic, pips) when they are discarded.
@@ -85,6 +86,10 @@ fn crawler_out(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == CRAWLER)
 }
 
+fn niv_out(g: &Game, p: PlayerId) -> bool {
+    g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == NIV)
+}
+
 fn alive_opps(g: &Game, p: PlayerId) -> Vec<PlayerId> {
     g.opps(p).filter(|&q| g.player(q).alive).collect()
 }
@@ -98,6 +103,21 @@ pub fn loop_safe(g: &Game, p: PlayerId) -> bool {
     let opps = alive_opps(g, p);
     let Some(most) = opps.iter().map(|&q| g.player(q).life).max() else { return true };
     g.player(p).library.len() as i32 > most + 1
+}
+
+/// **Niv-Mizzet, the Firemind with the flipped Kefka**: each card drawn is 1 damage to one target, each life lost on
+/// your turn draws a card, so pinging a face runs until the table is dead or the library is. One ping takes 1 life from
+/// one opponent, so the loop kills the table only when the library holds more cards than all their life together.
+pub fn niv_safe(g: &Game, p: PlayerId) -> bool {
+    let total: i32 = alive_opps(g, p).iter().map(|&q| g.player(q).life.max(0)).sum();
+    g.player(p).library.len() as i32 > total + 1
+}
+
+/// **Hold the face damage**: Kefka is flipped, a draw-trigger engine (the Crawler, Niv-Mizzet) is out and its mandatory
+/// loop would deck us. Damage that comes off a draw trigger then goes at a creature (or finishes a player) rather than
+/// at a player's face. Used by the engine's 'any target' damage for the kefka deck.
+pub fn loop_guard(g: &Game, p: PlayerId) -> bool {
+    is_kefka(g, p) && flipped(g, p) && ((crawler_out(g, p) && !loop_safe(g, p)) || (niv_out(g, p) && !niv_safe(g, p)))
 }
 
 // ------------------------------------------------------------------ the discard choice
@@ -140,7 +160,7 @@ pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Optio
         if wants_gy(g, c) {
             v -= 100.0;
         }
-        if cname(g, c) == CRAWLER {
+        if cname(g, c) == CRAWLER || cname(g, c) == NIV {
             v += 60.0; // held for the loop, not worthless
         }
         let new = card_types(g, c) & !pile;
@@ -1363,14 +1383,36 @@ fn disintegrate_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 /// the loop with the flipped Kefka would deck us
 pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let name = cname(g, c);
-    if name == CRAWLER && flipped(g, p) && !loop_safe(g, p) {
-        return 0; // the loop is mandatory: not until the library outlasts the table's life
+    if name == CRAWLER || name == NIV {
+        // every card drawn costs the table life: Kefka's discard and loot draws ping it even before the flip
+        if flipped(g, p) {
+            // the Crawler's loop is mandatory; Niv's pings are aimed (loop_guard), so he is never held
+            return if name == NIV || loop_safe(g, p) { 80 } else { 0 };
+        }
+        return if kefka_out(g, p) { 84 } else { 70 };
+    }
+    if name == "Underworld Breach" {
+        // the graveyard Kefka fills (discards, looting) is the fuel: escape what was binned, once there is mana for it
+        let k = crate::ai::decks::breach_candidates(g, p, false).len();
+        return if k >= 2 && total_mana(g, p, false) >= 5 { 56 } else { 0 };
+    }
+    if name == "Triskelion" {
+        // three pings: each one is a card once Kefka is flipped
+        return if flipped(g, p) {
+            74
+        } else if kefka_out(g, p) {
+            56
+        } else {
+            generic_prio(g, p, c)
+        };
+    }
+    if name == "Rapturous Moment" {
+        // draw three, discard two (Kefka's fodder) and five red mana back: a free filter whenever the hand can spend it
+        let others = g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).count();
+        return if others >= 2 { 58 } else { generic_prio(g, p, c) };
     }
     if (name == SCARLET_SPIDER || name == DEMONIC_EMBRACE) && kefka_out(g, p) && !flipped(g, p) {
         return 0; // kept in hand to be discarded to Kefka's trigger (mayhem / the graveyard cast)
-    }
-    if name == CRAWLER && kefka_out(g, p) && !flipped(g, p) {
-        return 30; // flip first when the mana is there; the Crawler is the finisher
     }
     generic_prio(g, p, c)
 }

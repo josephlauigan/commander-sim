@@ -1,0 +1,16 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Deflecting Swat [scryfall] I 2R :: (no tags)
+      not modeled: If you control a commander, you may cast ~ without paying its mana cost.
+      not modeled: You may choose new targets for target spell or ability.
+   Niv-Mizzet, the Firemind [scryfall+dsl] C 2UURR :: leg wizard pow=4 fly
+      ability: triggered draw -> damage
+      ability: activated  -> draw
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Arcane Omens -> Deflecting Swat; Triskelion -> Slip Out the Back; Inner Fire -> Underworld Breach; Mystic Confluence -> Niv-Mizzet, the Firemind; Splatter Technique -> Jin-Gitaxias, Progress Tyrant; Mountain -> Steam Vents; Mountain -> Sulfur Falls; Mountain -> Spirebluff Canal; Mountain -> Stormcarved Coast
+
+=== Kefka vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  38.1% ->  39.8%  (delta +1.7 pts, noise ±4.0, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 13.8%  Sythis 17.7%  Lord Windgrace 9.5%  Brago 10.0%  Meren of Clan Nel Toth 8.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(397s total)

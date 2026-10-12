@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Sheoldred, the Apocalypse -> Bedevil
+
+=== Sauron vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  28.9% ->  27.5%  (delta -1.4 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Lathril 11.6%  Teysa Karlov 13.9%  Light-Paws 18.7%  Isshin 17.7%  Tatyova 10.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(163s total)

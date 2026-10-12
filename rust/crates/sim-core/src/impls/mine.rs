@@ -1557,6 +1557,10 @@ fn breach_escape(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         remove_card(&mut pl.gy, x);
         pl.exile.push(x);
     }
+    let kefka = g.player(p).key == "kefka";
+    if kefka {
+        crate::impls::kefka::gy_left(g, p, 3)?; // Garrison Excavator: the three exiled to the escape cost
+    }
     let mut ctx = Ctx::default();
     if g.db.get(c).tag(Tag::Rem)
         && let Some(t) = best_target(g, p, c)
@@ -1566,6 +1570,9 @@ fn breach_escape(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::glog!(g, "  {} escapes {} with Underworld Breach", g.player(p).name, g.db.get(c).name);
     g.player_mut(p).stat("breach_escapes", 1);
     cast_card(g, p, c, "escape", ctx)?;
+    if kefka {
+        crate::impls::kefka::gy_left(g, p, 1)?; // and the escaped card itself leaving the graveyard
+    }
     Ok(true)
 }
 

@@ -1,0 +1,9 @@
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Sheoldred, the Apocalypse -> Bedevil
+
+=== Sauron vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.1% ->  22.0%  (delta -0.1 pts, noise ±2.8, paired)   n=1000
+               eliminated by (variant): Urza 17.4%  Zur the Enchanter 13.9%  Winota 17.9%  Kinnan 19.6%  Yawgmoth 9.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(71s total)

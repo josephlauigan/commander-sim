@@ -1254,6 +1254,8 @@ pub fn protect_response(
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
+        // Deflecting Swat and Slip Out the Back for Kefka, the same responses as Veyran's (a no-op without them)
+        "kefka" => crate::impls::mine::veyran_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
     }
 }

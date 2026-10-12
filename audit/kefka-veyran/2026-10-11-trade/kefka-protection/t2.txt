@@ -1,0 +1,13 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Deflecting Swat [scryfall] I 2R :: (no tags)
+      not modeled: If you control a commander, you may cast ~ without paying its mana cost.
+      not modeled: You may choose new targets for target spell or ability.
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 9 minutes
+Swaps: Arcane Omens -> Deflecting Swat; Triskelion -> Slip Out the Back
+
+=== Kefka vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  38.1% ->  38.1%  (delta +0.0 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 11.2%  Sythis 17.1%  Lord Windgrace 11.3%  Brago 11.4%  Meren of Clan Nel Toth 9.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(388s total)
