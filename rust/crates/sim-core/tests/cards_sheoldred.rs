@@ -784,3 +784,177 @@ fn the_ai_holds_mana_for_a_protection_instant_and_rocks_come_before_creatures() 
     let p = |g: &Game, c| sim_core::impls::sheoldred::sheoldred_prio(g, P0, c);
     assert!(p(&g, sig[0]) > p(&g, sig[1]), "the rock goes first while Sheoldred is not out");
 }
+
+// ------------------------------------------------------------------ the upgrade package (swap-tested)
+const SEIZAN: &str = "Seizan, Perverter of Truth";
+
+#[test]
+fn seizan_makes_each_player_lose_two_and_draw_two_at_their_upkeep() {
+    let mut g = game();
+    perm(&mut g, P0, SEIZAN);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!((life(&g, P0), g.player(P0).hand.len()), (38, 2), "the owner too");
+    turn::upkeep(&mut g, P1).unwrap();
+    assert_eq!((life(&g, P1), g.player(P1).hand.len()), (38, 2));
+}
+
+#[test]
+fn seizans_draws_fire_sheoldred_for_both_sides_and_underworld_dreams() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P0, SEIZAN);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!(life(&g, P0), 40 - 2 + 4, "loses 2 to Seizan, gains 2 per draw from her own Sheoldred");
+    turn::upkeep(&mut g, P1).unwrap();
+    assert_eq!(life(&g, P1), 40 - 2 - 4, "Seizan's 2 and Sheoldred's 2 per card drawn");
+
+    let mut g = game();
+    perm(&mut g, P0, "Underworld Dreams");
+    perm(&mut g, P0, SEIZAN);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!(life(&g, P0), 38, "the owner's own draws are not an opponent's");
+    turn::upkeep(&mut g, P1).unwrap();
+    assert_eq!(life(&g, P1), 40 - 2 - 2, "Seizan's 2 and 1 damage per card");
+}
+
+#[test]
+fn underworld_dreams_pings_an_opponent_per_draw_but_not_its_owner() {
+    let mut g = game();
+    perm(&mut g, P0, "Underworld Dreams");
+    zones::draw(&mut g, P0, 3, false).unwrap();
+    assert_eq!(life(&g, P0), 40);
+    zones::draw(&mut g, P1, 3, false).unwrap();
+    assert_eq!(life(&g, P1), 37);
+    assert_eq!(g.player(P1).last_kind, "triggers", "damage, so prevention can stop it");
+    g.player_mut(P1).life = 40;
+    g.player_mut(P1).ring_prot = true; // The One Ring: no damage from opponents' sources
+    zones::draw(&mut g, P1, 2, false).unwrap();
+    assert_eq!(life(&g, P1), 40, "prevented like damage");
+}
+
+#[test]
+fn dark_deal_discards_every_hand_and_draws_one_fewer() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let d = hand(&mut g, P0, &["Dark Deal", "Terror", "Terror", "Terror"])[0];
+    hand(&mut g, P1, &["Terror", "Terror", "Terror", "Terror", "Terror"]);
+    hand(&mut g, P1, &["Terror"]);
+    cast::cast_card(&mut g, P0, d, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P0).hand.len(), 2, "3 cards left in hand, draws 3 - 1");
+    assert_eq!(g.player(P1).hand.len(), 5, "6 cards, draws 5");
+    assert!(in_gy(&g, P0, "Dark Deal"));
+    assert_eq!(g.player(P0).gy.len(), 3 + 1 - 1 + 1, "the discarded Terrors and the spell");
+}
+
+#[test]
+fn dark_deal_with_one_card_or_none_draws_nothing_and_feeds_sheoldred_otherwise() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    lands(&mut g, P0, "Swamp", 3, false);
+    let d = hand(&mut g, P0, &["Dark Deal"])[0];
+    hand(&mut g, P1, &["Terror"]);
+    cast::cast_card(&mut g, P0, d, "hand", Ctx::default()).unwrap();
+    assert_eq!((g.player(P0).hand.len(), g.player(P1).hand.len()), (0, 0));
+    assert_eq!(life(&g, P1), 40);
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    lands(&mut g, P0, "Swamp", 3, false);
+    let d = hand(&mut g, P0, &["Dark Deal"])[0];
+    hand(&mut g, P1, &["Terror", "Terror", "Terror", "Terror"]);
+    cast::cast_card(&mut g, P0, d, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P1).hand.len(), 3);
+    assert_eq!(life(&g, P1), 40 - 6, "Sheoldred drains 2 per redrawn card");
+}
+
+#[test]
+fn painful_lesson_draws_two_then_loses_two() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let c = hand(&mut g, P0, &["Painful Lesson"])[0];
+    cast::cast_card(&mut g, P0, c, "hand", Ctx { face: Some(P1), ..Ctx::default() }).unwrap();
+    assert_eq!((g.player(P1).hand.len(), life(&g, P1)), (2, 38));
+    assert_eq!(life(&g, P0), 40);
+}
+
+#[test]
+fn the_ai_aims_painful_lesson_at_the_weakest_opponent_with_sheoldred_and_at_itself_without() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let c = hand(&mut g, P0, &["Painful Lesson"])[0];
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    run_plan(&mut g, P0, &o[0]);
+    assert_eq!((life(&g, P0), life(&g, P1)), (38, 40));
+
+    let mut g = game3();
+    perm(&mut g, P0, SHEO);
+    lands(&mut g, P0, "Swamp", 3, false);
+    g.player_mut(P2).life = 20;
+    let c = hand(&mut g, P0, &["Painful Lesson"])[0];
+    let o = card_opts(&mut g, c, P0, Some(false));
+    run_plan(&mut g, P0, &o[0]);
+    assert_eq!(life(&g, P2), 20 - 4 - 2, "two Sheoldred triggers and the spell");
+    assert_eq!(life(&g, P1), 40);
+}
+
+#[test]
+fn the_ai_casts_dark_deal_only_with_sheoldred_out_and_many_opposing_cards() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let c = hand(&mut g, P0, &["Dark Deal"])[0];
+    hand(&mut g, P1, &["Terror", "Terror", "Terror", "Terror", "Terror"]);
+    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "no Sheoldred: held");
+    perm(&mut g, P0, SHEO);
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    g.player_mut(P1).hand.truncate(3);
+    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "too few opposing cards to matter");
+}
+
+#[test]
+fn the_ai_casts_underworld_dreams_early_and_seizan_only_with_sheoldred() {
+    let mut g = game();
+    let h = hand(&mut g, P0, &["Underworld Dreams", SEIZAN, "Sheoldred, the Apocalypse"]);
+    let p = |g: &Game, c| sim_core::impls::sheoldred::sheoldred_prio(g, P0, c);
+    assert!(p(&g, h[0]) > 80 && p(&g, h[0]) < p(&g, h[2]), "a high priority after Sheoldred");
+    assert_eq!(p(&g, h[1]), 0, "Seizan waits for Sheoldred");
+    perm(&mut g, P0, SHEO);
+    assert!(p(&g, h[1]) > 60);
+    let mut g = game();
+    let z = hand(&mut g, P0, &[SEIZAN])[0];
+    hand(&mut g, P1, &["Terror", "Terror", "Terror", "Terror", "Terror"]);
+    assert!(p(&g, z) > 0, "high life and far behind on cards");
+    g.player_mut(P0).life = 20;
+    assert_eq!(p(&g, z), 0);
+}
+
+#[test]
+fn champions_helm_goes_on_seizan_once_the_plate_protects_sheoldred() {
+    let mut g = game();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Swamp", 4, false);
+    let sheo = perm(&mut g, P0, SHEO);
+    let z = perm(&mut g, P0, SEIZAN);
+    let helm = perm(&mut g, P0, "Champion's Helm");
+    let plate = perm(&mut g, P0, "Darksteel Plate");
+    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
+    assert!(o.iter().any(|o| o.label.contains("Champion's Helm to Sheoldred")), "no Plate yet: Helm on her");
+    let eq = o.iter().find(|o| o.label.contains("Darksteel Plate")).unwrap();
+    assert!(run_plan(&mut g, P0, eq));
+    assert_eq!(g.perm(plate).attached, Some(sheo));
+    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
+    let eq = o.iter().find(|o| o.label.contains("Champion's Helm")).expect("helm offered");
+    assert!(eq.label.contains("Seizan"));
+    assert!(run_plan(&mut g, P0, eq));
+    assert_eq!(g.perm(helm).attached, Some(z));
+    assert!(values::untargetable(&g, z));
+}
+
+#[test]
+fn the_four_upgrade_cards_resolve_from_the_card_data_not_a_bare_scryfall_body() {
+    let g = game();
+    for n in [SEIZAN, "Underworld Dreams", "Dark Deal", "Painful Lesson"] {
+        let c = card(&g, n);
+        assert!(g.registry.get(c).is_some(), "{n} has card code");
+    }
+}

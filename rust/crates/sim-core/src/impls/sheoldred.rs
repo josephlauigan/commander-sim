@@ -1330,6 +1330,8 @@ pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             if kill { 66 } else { 34 }
         }
         "Perigee Beckoner" => 52,
+        SEIZAN => seizan_prio(g, p),
+        "Underworld Dreams" => 90,
         _ => generic_prio(g, p, c),
     }
 }
@@ -1352,9 +1354,19 @@ fn equip_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
         return out;
     }
     let Some(sheo) = my_creatures(g, p).into_iter().find(|&m| sheoldred_card(g, m)) else { return out };
+    // Seizan (not in the list yet) takes Champion's Helm once Darksteel Plate already protects Sheoldred
+    let seizan = my_creatures(g, p).into_iter().find(|&m| name_of_perm(g, m) == SEIZAN);
+    let plated = g.player(p).perms.iter().any(|&e| {
+        let x = g.perm(e);
+        x.on_bf && x.attached == Some(sheo) && name_of_perm(g, e) == "Darksteel Plate"
+    });
     for e in g.player(p).perms.clone() {
         let x = g.perm(e);
-        if !x.on_bf || x.phased || x.attached == Some(sheo) {
+        let mut host = sheo;
+        if let Some(z) = seizan.filter(|_| plated && name_of_perm(g, e) == "Champion's Helm") {
+            host = z;
+        }
+        if !x.on_bf || x.phased || x.attached == Some(host) {
             continue;
         }
         let (n, hexproof_plan) = match name_of_perm(g, e) {
@@ -1362,13 +1374,16 @@ fn equip_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
             "Darksteel Plate" => (2, false),
             _ => continue,
         };
-        if !can_pay(g, p, n, "", false) || (hexproof_plan && untargetable(g, sheo)) {
+        if !can_pay(g, p, n, "", false) || (hexproof_plan && untargetable(g, host)) {
             continue;
         }
         out.push(Opt {
             utility: 9.0 - 0.1 * n as f64,
-            label: format!("equip {} to Sheoldred", g.perm(e).name),
-            act: Some(Action::Plan { f: equip_sheoldred, arg: e.0 as i64 | ((n as i64) << 40) }),
+            label: format!("equip {} to {}", g.perm(e).name, if host == sheo { "Sheoldred" } else { SEIZAN }),
+            act: Some(Action::Plan {
+                f: equip_sheoldred,
+                arg: e.0 as i64 | ((n as i64) << 40) | if host == sheo { 0 } else { 1 << 56 },
+            }),
         });
     }
     out
@@ -1379,12 +1394,24 @@ fn name_of_perm(g: &Game, m: PermId) -> &str {
 }
 
 fn equip_sheoldred(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (e, n) = (PermId((arg & 0xff_ffff_ffff) as u32), (arg >> 40) as u32);
-    let Some(sheo) = my_creatures(g, p).into_iter().find(|&m| sheoldred_card(g, m)) else { return Ok(false) };
+    let (e, n) = (PermId((arg & 0xff_ffff_ffff) as u32), ((arg >> 40) & 0xffff) as u32);
+    let want_seizan = arg >> 56 != 0;
+    let Some(sheo) = my_creatures(g, p)
+        .into_iter()
+        .find(|&m| if want_seizan { name_of_perm(g, m) == SEIZAN } else { sheoldred_card(g, m) })
+    else {
+        return Ok(false);
+    };
     if !on_bf(g, e) || !can_pay(g, p, n, "", false) {
         return Ok(false);
     }
-    crate::glog!(g, "  {} equips {} to Sheoldred", pname(g, p), g.perm(e).name);
+    crate::glog!(
+        g,
+        "  {} equips {} to {}",
+        pname(g, p),
+        g.perm(e).name,
+        if want_seizan { SEIZAN } else { "Sheoldred" }
+    );
     crate::engine::stack::equip_to(g, p, e, sheo, n)
 }
 
@@ -1580,7 +1607,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.resolve = Some(throwdown_resolve);
     c.hand_options = Some(throwdown_options);
     c.prio = Some(zero_prio);
-    Ok(())
+    register_upgrade(r, db)
 }
 
 // ------------------------------------------------------------------ Toxic Deluge
@@ -1592,4 +1619,153 @@ pub fn deluge_cap(g: &Game, p: PlayerId) -> Option<i32> {
     }
     let sheo = my_creatures(g, p).into_iter().filter(|&m| sheoldred_card(g, m)).map(|m| etgh(g, m)).min()?;
     Some((sheo - 1).min(g.player(p).life - 1).max(0))
+}
+
+// ------------------------------------------------------------------ the upgrade package (not in the list yet)
+// Seizan, Perverter of Truth; Underworld Dreams; Dark Deal; Painful Lesson. JD may buy them; they are tested with
+// `--swap`, so their plan is gated to the sheoldred deck's seat.
+const SEIZAN: &str = "Seizan, Perverter of Truth";
+
+/// Seizan: at the beginning of each player's upkeep, that player loses 2 life and draws two cards (life loss, not
+/// damage; the draws fire Sheoldred, Underworld Dreams and every other draw hook)
+fn seizan_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if !on_bf(g, src) || !g.player(p).alive {
+        return Ok(());
+    }
+    lose_life(g, p, 2, Some(owner(g, src)), "other", Some(false))?;
+    if g.player(p).alive {
+        draw(g, p, 2, false)?;
+    }
+    Ok(())
+}
+
+/// Underworld Dreams: whenever an opponent draws a card, 1 damage to that player (damage: Glacial Chasm and the
+/// other prevention in `lose_life` apply, since the kind "triggers" is a damage kind)
+fn dreams_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = owner(g, src);
+    if p != o && on_bf(g, src) && g.player(p).alive {
+        lose_life(g, p, 1, Some(o), "triggers", Some(true))?;
+    }
+    Ok(())
+}
+
+/// Painful Lesson: the target player draws two cards, then loses 2 life
+fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+    draw(g, q, 2, false)?;
+    if g.player(q).alive {
+        lose_life(g, q, 2, Some(p), "other", Some(false))?;
+    }
+    Ok("gy")
+}
+
+fn lesson_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.player(p).key != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+        return Ok(vec![]);
+    }
+    if let Some(q) = drain_target(g, p, 2) {
+        let u = 4.8 + if g.player(q).life <= 6 { 3.0 } else { 0.0 };
+        return Ok(vec![Opt {
+            utility: u,
+            label: format!("Painful Lesson ({} draws two)", g.player(q).name),
+            act: Some(Action::Plan { f: lesson_plan, arg: c.0 as i64 | (((q.0 as i64) + 1) << 16) }),
+        }]);
+    }
+    let pl = g.player(p);
+    if pl.life <= 6 || pl.library.len() < 6 {
+        return Ok(vec![]);
+    }
+    let mut u = 3.0 + if pl.hand.len() <= 2 { 1.2 } else { 0.0 } - if pl.life < 12 { 1.0 } else { 0.0 };
+    if pl.hand.len() >= 6 {
+        u -= 1.5;
+    }
+    Ok(vec![Opt {
+        utility: u,
+        label: "Painful Lesson (draw two)".into(),
+        act: Some(Action::Plan { f: lesson_plan, arg: c.0 as i64 }),
+    }])
+}
+
+fn lesson_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId((arg & 0xffff) as u16);
+    let face = match arg >> 16 {
+        0 => p,
+        k => PlayerId((k - 1) as u8),
+    };
+    crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), ..Ctx::default() })
+}
+
+/// Dark Deal: each player discards their whole hand, then draws that many cards minus one (discards first, for all,
+/// then the draws, starting with the caster)
+fn deal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let n = g.players.len();
+    let order: Vec<PlayerId> =
+        (0..n).map(|k| PlayerId(((p.0 as usize + k) % n) as u8)).filter(|&q| g.player(q).alive).collect();
+    let mut counts = vec![];
+    for &q in &order {
+        let hand = g.player(q).hand.clone();
+        counts.push(hand.len());
+        discard_cards(g, q, &hand)?;
+    }
+    for (&q, &k) in order.iter().zip(&counts) {
+        if k > 1 {
+            draw(g, q, (k - 1) as u32, false)?;
+        }
+    }
+    Ok("gy")
+}
+
+/// the cards in the live opponents' hands
+fn opp_hand_total(g: &Game, p: PlayerId) -> usize {
+    g.opps(p).filter(|&q| g.player(q).alive).map(|q| g.player(q).hand.len()).sum()
+}
+
+fn deal_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.player(p).key != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+        return Ok(vec![]);
+    }
+    // each card an opponent redraws costs them 2; keep it for when they hold plenty and we hold little
+    let mine = g.player(p).hand.len().saturating_sub(1);
+    let theirs = opp_hand_total(g, p);
+    if !sheoldred_out(g, p) || theirs < 4 || mine > 2 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 5.0 + (theirs as f64 - 4.0) * 0.3,
+        label: "Dark Deal".into(),
+        act: Some(Action::Plan { f: deal_plan, arg: c.0 as i64 }),
+    }])
+}
+
+fn deal_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    crate::ai::brain::do_cast_with(g, p, CardId((arg & 0xffff) as u16), None, Ctx::default())
+}
+
+/// Seizan comes down with Sheoldred out (without her it hands every opponent two cards a turn), or when our life is
+/// high and we are far behind on cards
+fn seizan_prio(g: &Game, p: PlayerId) -> i32 {
+    let pl = g.player(p);
+    if sheoldred_out(g, p) {
+        return 80;
+    }
+    let max_opp = g.opps(p).filter(|&q| g.player(q).alive).map(|q| g.player(q).hand.len()).max().unwrap_or(0);
+    if pl.life >= 30 && pl.hand.len() + 4 <= max_opp { 50 } else { 0 }
+}
+
+pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, SEIZAN)?;
+    c.upkeep = Some(seizan_upkeep);
+    super::partials::at_once(c, Event::Upkeep, true);
+    let c = r.card(db, "Underworld Dreams")?;
+    c.draw = Some(dreams_draw);
+    super::partials::at_once(c, Event::Draw, true);
+    let c = r.card(db, "Dark Deal")?;
+    c.resolve = Some(deal_resolve);
+    c.hand_options = Some(deal_options);
+    c.prio = Some(zero_prio);
+    let c = r.card(db, "Painful Lesson")?;
+    c.resolve = Some(lesson_resolve);
+    c.hand_options = Some(lesson_options);
+    c.prio = Some(zero_prio);
+    Ok(())
 }

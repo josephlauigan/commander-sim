@@ -6566,3 +6566,27 @@ tags = ""
 dsl = []
 status = "Full"
 note = "the AI sacrifices a creature as the additional cost (a modified one with a counter or attached Equipment/Aura first), destroys the best target creature or planeswalker, and draws a card if the sacrificed creature was modified"
+
+["Seizan, Perverter of Truth"]
+dsl = []
+tags = "pow=6 tgh=5 leg"
+status = "Full"
+note = "at the beginning of each player's upkeep that player loses 2 life (life loss, not damage) and draws two cards; the draws fire Sheoldred and Underworld Dreams; the sheoldred deck casts it with Sheoldred out (or at high life when far behind on cards) and may put Champion's Helm on it once Darksteel Plate protects Sheoldred"
+
+["Underworld Dreams"]
+dsl = []
+tags = ""
+status = "Full"
+note = "whenever an opponent draws a card, 1 damage to that player (damage, so prevention applies; the draw happens first, so Sheoldred's loss comes before it); cast early by the sheoldred deck"
+
+["Dark Deal"]
+dsl = []
+tags = ""
+status = "Full"
+note = "each player discards their hand, then draws that many cards minus one (caster first); the sheoldred deck casts it with Sheoldred out when opponents hold 4 or more cards and its own hand is 2 or fewer"
+
+["Painful Lesson"]
+dsl = []
+tags = ""
+status = "Full"
+note = "target player draws two cards, then loses 2 life; the sheoldred deck aims it at the lowest-life opponent while Sheoldred is out, otherwise at itself (at more than 6 life)"
