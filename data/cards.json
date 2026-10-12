@@ -18942,25 +18942,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 1,
-       "tgh": 1,
-       "what": {
-        "sel": "self"
-       }
-      }
-     ],
-     "event": "cast",
-     "who": "you",
-     "spell": "instant_or_sorcery",
-     "nth": null
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "opus"
@@ -18973,11 +18955,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, tap target creature an opponent controls and put a stun counter on it.",
-    "Opus — Whenever you cast an instant or sorcery spell, ~ gets +1/+1 until end of turn. If five or more mana was spent to cast that spell, ~ gets +2/+2 until end of turn instead.   [partly: if five or more mana was spent to cast that spell, ~ gets +2/+2 until end of turn instead]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -23264,10 +23243,11 @@
    "pips": "U",
    "tags": {
     "pow": "3",
+    "tgh": "2",
     "leg": true
    },
    "pow": 3,
-   "tgh": 3,
+   "tgh": 2,
    "bomb": 0,
    "dsl": null,
    "start_loyalty": null,
@@ -38327,7 +38307,8 @@
     "pow": "2",
     "fly": true,
     "flash": true,
-    "ctr": "any"
+    "ctr": "any",
+    "soft": "1"
    },
    "pow": 2,
    "tgh": 2,
@@ -63165,28 +63146,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "tap",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -63194,10 +63154,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Tap target creature. If it's your turn, put a stun counter on it.   [partly: if it's your turn, put a stun counter on it]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

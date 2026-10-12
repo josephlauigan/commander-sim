@@ -129,6 +129,7 @@ pub fn epow(g: &Game, m: PermId) -> i32 {
         v -= 2;
     }
     v += dsl::pt(g, m).0;
+    v -= crate::impls::elrond::weakened(g, m); // Mouth of the Storm
     let pl = g.player(p);
     let cre = g.is_creature(m);
     if pl.pump != 0 && cre {

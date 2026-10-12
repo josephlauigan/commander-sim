@@ -1814,7 +1814,7 @@ note = "tutor any card to hand, then discard a card at random"
 
 ["Gandalf, Friend of the Shire"]
 status = "Full"
-note = "flash; sorceries at instant speed; the Ring trigger never happens (nothing in this list tempts)"
+note = "flash; you may cast sorcery spells as though they had flash; whenever the Ring tempts you and you chose a creature other than Gandalf as your Ring-bearer, draw a card (elrond.rs gandalf_draw, called by mine::ring_tempt)"
 
 ["Garland, Royal Kidnapper"]
 tags = "leg human knight pow=3 tgh=4 garland"
@@ -6638,3 +6638,86 @@ dsl = []
 tags = "draw=2"
 status = "Full"
 note = "each other player discards a card; you draw a card for each card discarded this way (discards happen in turn order, the drawn cards come after all discards)"
+
+["Elrond, Lord of Rivendell"]
+status = "Full"
+note = "whenever Elrond or another creature (card or token) you control enters, on any turn: scry 1, one trigger per creature; the second resolution each turn makes the Ring tempt you (not the third); the Ring-bearer is the best evasive attacker, never Gandalf while another creature is out"
+
+["Cloudfin Raptor"]
+status = "Full"
+note = "flying; evolve: a +1/+1 counter when a creature with greater power or toughness enters under your control (checked on entering and on resolution; tokens too)"
+
+["Defiler of Dreams"]
+status = "Full"
+note = "flying; whenever you cast a blue permanent spell, draw a card; as an additional cost to cast blue permanent spells you may pay 2 life for {U} less (the AI pays with 15 or more life; the life is taken as the draw trigger resolves, the {U} is taken off in mana::cost_of); a spell cast for its warp cost pays no life"
+
+["Deluge Virtuoso"]
+dsl = []
+status = "Full"
+note = "when it enters, tap target creature an opponent controls and put a stun counter on it; opus: +1/+1 until end of turn when you cast an instant or sorcery, +2/+2 if five or more mana was spent on it (mana spent is the spell's cost as paid)"
+
+["Rapier Wit"]
+dsl = []
+status = "Full"
+note = "tap target creature; if it's your turn, a stun counter on it; draw a card (the target is the cast's own or the best untapped creature an opponent controls)"
+
+["Matterbending Mage"]
+status = "Full"
+note = "when it enters, return up to one other target creature to its owner's hand (an opponent's threat, or the AI's best enter-the-battlefield creature); a spell with {X} in its cost makes it unblockable that turn"
+
+["Mindseeker Oculus"]
+status = "Full"
+note = "when it enters, empower Jace 4 (alela::empower: a Jace token with surveil 1 / draw a card, or four more loyalty on yours)"
+
+["Mouth of the Storm"]
+status = "Full"
+note = "flying, ward {2}; when it enters, creatures your opponents control get -3/-0 until your next turn (DataKey::Weaken, read by values::epow; creatures that enter later are not affected)"
+
+["Orysa, Tide Choreographer"]
+status = "Full"
+note = "costs {3} less if creatures you control have total toughness 10 or greater (self_cost); when it enters, draw two cards (compiled)"
+
+["Professor Hulk"]
+status = "Full"
+note = "trample; whenever it deals combat damage to a player, draw that many cards"
+
+["Rescue, Pepper Potts"]
+status = "Full"
+note = "flash, flying; when it enters, return up to one other artifact or creature you control to its owner's hand (the best enter-the-battlefield one); a +1/+1 counter on Rescue if it was an artifact"
+
+["Silver Deputy"]
+status = "Full"
+note = "when it enters, you may search for a basic land card or a Desert and put it on top (compiled: the deck holds no Desert, so a basic land); {T}: target creature you control gets +1/+0 until end of turn, as a sorcery (compiled)"
+
+["Soul of the Rapids"]
+status = "Full"
+note = "flying, hexproof (opponents' spells and abilities cannot target it)"
+
+["Starbreach Whale"]
+status = "Full"
+note = "flying; surveil 2 when it enters (compiled); warp {1}{U}: cast from hand for the warp cost, exiled at the beginning of the next end step, cast from exile for its mana cost on a later turn (the AI warps when the full cost is out of reach before combat, or as the turn's second entry for Elrond)"
+
+["Starwinder"]
+status = "Full"
+note = "whenever a creature you control deals combat damage to a player, you may draw that many cards (the AI does, keeping a few cards in the library); warp {2}{U}{U} as Starbreach Whale"
+
+["Textbook Tabulator"]
+status = "Full"
+note = "increment: a +1/+1 counter when the mana spent on a spell you cast is greater than its power or toughness; surveil 2 when it enters (compiled)"
+
+["The Wasp, Winsome Avenger"]
+status = "Full"
+note = "flash, flying; when it enters, target Hero gains hexproof until end of turn (the Ring-bearer if a Hero, else the best Hero); whenever it attacks, tap target creature defending player controls"
+
+["Hope-Ender Coatl"]
+add_tags = ["soft=1"]
+status = "Full"
+note = "devoid, flash, flying; when you cast it, counter target spell an opponent controls unless they pay {1} (cast as a counterspell with the soft tag; Mystic Snake pattern), then it enters"
+
+["Dune Mover"]
+status = "Full"
+note = "toxic 1 (a poison counter with the combat damage); when it enters, search for a basic land and put it on top (compiled)"
+
+["Fear of Isolation"]
+status = "Full"
+note = "flying; as an additional cost, return a permanent you control to its owner's hand (a creature worth re-entering, else a land tapped for the spell; not castable with nothing to return)"

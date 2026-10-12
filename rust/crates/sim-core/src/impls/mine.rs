@@ -132,11 +132,14 @@ pub fn ring_tempt(g: &mut Game, p: PlayerId) -> Res {
     if !cr.is_empty() {
         let b = if hum {
             choices::ring_bearer(g, p, &cr)?
+        } else if g.player(p).key == "elrond" {
+            crate::impls::elrond::ring_pick(g, p, &cr)
         } else {
             first_max(&cr, |m| (g.perm(m).army, epow(g, m) as f64 + 2.0 * etgh(g, m) as f64 / 5.0)).unwrap()
         };
         g.player_mut(p).ring_bearer = Some(b);
         crate::glog!(g, "    The Ring tempts {} (level {lvl}): Ring-bearer {}", g.player(p).name, g.perm(b).name);
+        crate::impls::elrond::gandalf_draw(g, p, b)?; // Gandalf, Friend of the Shire
         for _ in find(g, p, Tag::Callring) {
             // Call of the Ring: you may pay 2 life to draw a card (not from an empty library)
             if hum {
