@@ -1,0 +1,85 @@
+
+######## vs Tier 3 (High B3) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 960 games] ===========
+Win rate 29.9%   (4-player baseline 25%)   average rounds survived 11.4
+
+-- How it wins --
+  damage      97.9% of wins
+  timeout      2.1% of wins
+  Opponents it eliminated: 0.94 per game, by
+    drain              78.8%
+    combat              8.7%
+    triggers            6.2%
+    other               4.6%
+    burn                1.4%
+    decked              0.3%
+  Damage dealt per game: 53.8, from
+    drain               37.8  (70%)
+    combat               7.4  (14%)
+    triggers             7.1  (13%)
+    burn                 1.4  (3%)
+
+-- How it loses --
+  Eliminated in 69.4% of games, on average in round 10.8
+    by Aurelia  via combat             17.0% of games
+    by Tergrid  via combat             13.8% of games
+    by Marwyn   via combat             13.4% of games
+    by Atraxa   via combat              8.0% of games
+    by Aurelia  via commander damage    4.7% of games
+    by Korvold  via commander damage    2.1% of games
+    by Korvold  via drain               2.0% of games
+    by Korvold  via combat              1.5% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 2%  T4 16%  T5 32%  T6 51%  T7 65%  T8 76%  T9 82%  T10 86%  T11 88%  T12 90%
+  Online at all: 90.8% of games
+  Commander resolves on turn: median 6.0, mean 6.5 (over the 91.7% of games it resolves)
+  Commander resolved by turn:  T4 17%  T5 33%  T6 52%  T7 66%  T8 77%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Memory Jar                                 cast in  16.0% of games, win rate when cast  61.7% (+31.8)
+    Exsanguinate                               cast in  14.1% of games, win rate when cast  48.9% (+19.0)
+    Underworld Dreams                          cast in  21.5% of games, win rate when cast  46.1% (+16.2)
+    Howling Mine                               cast in  13.8% of games, win rate when cast  44.7% (+14.8)
+    Syphon Mind                                cast in  16.4% of games, win rate when cast  41.4% (+11.5)
+    Otherworld Atlas                           cast in  16.9% of games, win rate when cast  40.7% (+10.8)
+    Invoke Despair                             cast in  15.6% of games, win rate when cast  40.0% (+10.1)
+    Ambition's Cost                            cast in  13.9% of games, win rate when cast  39.8% (+10.0)
+    Swiftfoot Boots                            cast in  17.9% of games, win rate when cast  39.5% (+9.6)
+    Vault Plunderer                            cast in  17.9% of games, win rate when cast  39.5% (+9.6)
+  Lowest win rate when cast:
+    Ulna Alley Shopkeep                        cast in  19.4% of games, win rate when cast  27.4% (-2.5)
+    Sephiroth's Intervention                   cast in  16.4% of games, win rate when cast  28.0% (-1.9)
+    Overkill                                   cast in  17.8% of games, win rate when cast  29.2% (-0.7)
+    Last Gasp                                  cast in  20.4% of games, win rate when cast  29.6% (-0.3)
+    Carnage Altar                              cast in  18.8% of games, win rate when cast  30.0% (+0.1)
+    Vanquish the Weak                          cast in  17.9% of games, win rate when cast  30.2% (+0.3)
+    Rooftop Assassin                           cast in  18.3% of games, win rate when cast  30.7% (+0.8)
+    Restless Bloodseeker // Bloodsoaked Revele cast in  21.2% of games, win rate when cast  30.9% (+1.0)
+    Soul Enervation                            cast in  17.5% of games, win rate when cast  31.5% (+1.7)
+    Gix, Yawgmoth Praetor                      cast in  17.9% of games, win rate when cast  32.0% (+2.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  14.3% of the games it was drawn
+    Peer into the Abyss                        cast  35.8% of the games it was drawn
+    Apex Witchstalker                          cast  37.0% of the games it was drawn
+    Seizan, Perverter of Truth                 cast  37.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.73
+    Phyrexian Arena                            0.04
+    Seymour Flux                               0.04
+    Charcoal Diamond                           0.03
+    Leech Collector // Bloodletting            0.03
+    Apex Witchstalker                          0.03
+    Perigee Beckoner                           0.03
+    Vault Plunderer                            0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(182s total)
