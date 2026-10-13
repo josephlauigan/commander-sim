@@ -427,7 +427,7 @@ pub fn seph_rean_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res
         crate::engine::zones::minus_counter(g, m, 1);
     }
     if kind == "evil" {
-        g.perm_mut(m).plus += 2;
+        crate::cardcode::put_plus(g, m, 2);
     }
     g.player_mut(p).stat("rean_resolved", 1);
     note_bomb(g, p, cd, was_removed);

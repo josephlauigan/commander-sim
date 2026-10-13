@@ -133,6 +133,27 @@ pub fn scales(g: &Game, p: PlayerId) -> i32 {
     g.player(p).perms.iter().filter(|y| g.perm(**y).on_bf && !g.perm(**y).phased && named(y)).count() as i32
 }
 
+/// Vorinclex, Monstrous Raider: `n` counters (negative: -1/-1 counters) that `actor` would put on a permanent or
+/// player. Each Vorinclex its controller runs doubles them; each one an opponent runs halves them, rounded down.
+pub fn vorinclex(g: &Game, actor: PlayerId, n: i32) -> i32 {
+    let mut k = n.abs();
+    for pl in &g.players {
+        for &y in &pl.perms {
+            let x = g.perm(y);
+            if x.on_bf && !x.phased && crate::engine::values::card_name(g, y) == Some("Vorinclex, Monstrous Raider") {
+                k = if pl.id == actor { k * 2 } else { k / 2 };
+            }
+        }
+    }
+    k * n.signum()
+}
+
+/// put `n` +1/+1 counters (negative: -1/-1) on m, as its owner would (Vorinclex)
+pub fn put_plus(g: &mut Game, m: PermId, n: i32) {
+    let n = vorinclex(g, g.perm(m).owner, n);
+    g.perm_mut(m).plus += n;
+}
+
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control; Hardened Scales:
 /// one more on a creature you control
 pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
@@ -142,7 +163,7 @@ pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
     let mauhur = g.player(x.owner).perms.iter().any(|&y| card_tag(g, y, crate::tag::Tag::Mauhur) && !g.perm(y).phased);
     let n = if n > 0 && orcish && mauhur { n + 1 } else { n };
     let n = if n > 0 && g.is_creature(m) { n + scales(g, g.perm(m).owner) } else { n };
-    g.perm_mut(m).plus += n;
+    put_plus(g, m, n);
 }
 
 /// rules.revolt: a permanent of p's left the battlefield this turn
@@ -540,7 +561,7 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
             continue;
         }
         if x.name == "Raging Ravine" {
-            g.perm_mut(m).plus += 1;
+            put_plus(g, m, 1);
         } else if x.name == "Hive of the Eye Tyrant" && !g.player(d).gy.is_empty() {
             let mut best: Option<(CardId, (bool, u32))> = None;
             for &c in &g.player(d).gy {
@@ -597,7 +618,7 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
                 .filter(|&x| x != m && g.perm(x).on_bf && g.perm(x).owner == p && epow(g, x) < pm)
                 .collect();
             if let Some(x) = crate::engine::zones::max_by(&lesser, |x| epow(g, x) as f64) {
-                g.perm_mut(x).plus += 1;
+                put_plus(g, x, 1);
             }
         }
         if dethrone && leader {

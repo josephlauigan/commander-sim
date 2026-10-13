@@ -716,7 +716,7 @@ fn outlet(text: &'static str, effect: OutletEffect) -> Vec<PermAbility> {
 
 fn feeder(g: &mut Game, p: PlayerId, m: PermId, _pw: i32) -> Res {
     if g.player(p).perms.contains(&m) {
-        g.perm_mut(m).plus += 1;
+        crate::cardcode::put_plus(g, m, 1);
     }
     Ok(())
 }

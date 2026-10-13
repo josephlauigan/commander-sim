@@ -181,7 +181,7 @@ pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
             a
         }
     };
-    g.perm_mut(a).plus += n + bonus;
+    crate::cardcode::put_plus(g, a, n + bonus);
     Ok(())
 }
 
@@ -809,7 +809,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
                 }
             }
             for h in find(g, q, Tag::Heir) {
-                g.perm_mut(h).plus += 1; // Sephiroth, Planet's Heir
+                crate::cardcode::put_plus(g, h, 1); // Sephiroth, Planet's Heir
             }
         }
     }
@@ -978,20 +978,24 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let born = g.enter_no;
     let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
     let scales = if plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
+    let (v_loy, v_undying, v_plus) = { // Vorinclex
+        let v = |n: i32| crate::cardcode::vorinclex(g, p, n);
+        (v(loyalty.map_or(0, |l| if doubling { l * 2 } else { l })), v(1), v(plus + scales))
+    };
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
     x.sick = how.sick && !haste;
     x.phys = phys;
     x.born = born;
-    if let Some(l) = loyalty {
-        x.loyalty = Some(if doubling { l * 2 } else { l }); // Doubling Season: twice the loyalty
+    if loyalty.is_some() {
+        x.loyalty = Some(v_loy); // Doubling Season: twice the loyalty; Vorinclex
     }
     if how.undying {
-        x.plus = 1; // returns with its +1/+1 counter (so it survives -X/-X effects)
+        x.plus = v_undying; // returns with its +1/+1 counter (so it survives -X/-X effects)
         x.undying = true;
     }
     if plus != 0 {
-        x.plus = plus + scales; // enters with counters (persist: -1)
+        x.plus = v_plus; // enters with counters (persist: -1)
     }
     x.on_bf = true;
     if has_dsl {
@@ -1187,7 +1191,7 @@ pub fn etb_static(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         for &x in &toks {
             die(g, x, "sac")?;
         }
-        g.perm_mut(m).plus += 2 * toks.len() as i32;
+        crate::cardcode::put_plus(g, m, 2 * toks.len() as i32);
     }
     if t.has(Tag::Endraze) {
         let pl = g.player_mut(p);

@@ -1,0 +1,78 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m12s elapsed, ~1m51s left
+  progress  20.0%  0m22s elapsed, ~1m28s left
+  progress  30.0%  0m31s elapsed, ~1m12s left
+  progress  40.0%  0m41s elapsed, ~1m01s left
+  progress  50.0%  0m50s elapsed, ~0m50s left
+  progress  60.0%  1m01s elapsed, ~0m40s left
+  progress  70.0%  1m11s elapsed, ~0m30s left
+  progress  80.0%  1m22s elapsed, ~0m20s left
+  progress  90.0%  1m34s elapsed, ~0m10s left
+  progress 100.0%  1m44s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 32.8%   (4-player baseline 25%)   average rounds survived 11.9
+
+-- How it wins --
+  damage      97.1% of wins
+  timeout      2.9% of wins
+  Opponents it eliminated: 0.99 per game, by
+    combat             58.0%
+    drain              20.2%
+    burn               11.7%
+    commander damage    5.4%
+    triggers            4.7%
+  Damage dealt per game: 46.0, from
+    combat              31.8  (69%)
+    drain                7.1  (15%)
+    burn                 4.4  (10%)
+    triggers             2.7  (6%)
+
+-- How it loses --
+  Eliminated in 65.6% of games, on average in round 10.9
+    by Aurelia  via combat             17.5% of games
+    by Tergrid  via combat             11.2% of games
+    by Marwyn   via combat             10.3% of games
+    by Atraxa   via combat              9.4% of games
+    by Tergrid  via drain               3.1% of games
+    by Korvold  via drain               2.8% of games
+    by Tergrid  via triggers            2.5% of games
+    by Aurelia  via commander damage    1.9% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 4%  T4 9%  T5 18%  T6 26%  T7 33%  T8 41%  T9 46%  T10 50%  T11 53%  T12 58%
+  Online at all: 63.4% of games
+  Commander resolves on turn: median 6.0, mean 6.7 (over the 83.4% of games it resolves)
+  Commander resolved by turn:  T4 9%  T5 25%  T6 46%  T7 58%  T8 66%
+  Army power at the start of turn  6: mean 1.5, median 0.0, 10+ in 2.5% of games
+  Army power at the start of turn  8: mean 2.4, median 0.0, 10+ in 8.4% of games
+  Army power at the start of turn 10: mean 2.4, median 0.0, 10+ in 8.4% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Aggravated Assault                         cast in  37.2% of games, win rate when cast  41.2% (+8.4)
+    Sauron, the Dark Lord                      cast in  84.7% of games, win rate when cast  38.4% (+5.6)
+  Lowest win rate when cast:
+    Sauron, the Dark Lord                      cast in  84.7% of games, win rate when cast  38.4% (+5.6)
+    Aggravated Assault                         cast in  37.2% of games, win rate when cast  41.2% (+8.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.44
+    Vraska, Betrayal's Sting                   0.07
+    Inferno Titan                              0.05
+    Grave Titan                                0.05
+    Aggravated Assault                         0.04
+    Scarlet Witch, Chaotic Avenger             0.04
+    Mind Stone                                 0.03
+    Whispersilk Cloak                          0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(104s total)

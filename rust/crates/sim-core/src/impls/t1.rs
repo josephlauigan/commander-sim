@@ -227,7 +227,7 @@ fn anim_pakal(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId)
     if !trigger_window(g, p, Some(src), "a +1/+1 counter, then X attacking Gnomes", None)? {
         return Ok(vec![]);
     }
-    g.perm_mut(src).plus += 1;
+    crate::cardcode::put_plus(g, src, 1);
     let n = g.perm(src).plus.max(0) as u32;
     let made = attacking_tokens(g, p, n, 1, "")?;
     for &m in &made {
@@ -437,7 +437,7 @@ fn laelia(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> 
             pl.impulse.push(c);
             pl.seen.insert(c);
         }
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(vec![])
 }
@@ -945,7 +945,7 @@ fn allosaurus_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
 /// quest counter per attacker; +5/+5 at seven (the anthem is the ability language's bma_anthem)
 fn bma(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if g.perm(src).owner == p && trigger_window(g, p, Some(src), &format!("{} quest counter(s)", atk.len()), None)? {
-        g.perm_mut(src).plus += atk.len() as i32;
+        crate::cardcode::put_plus(g, src, atk.len() as i32);
     }
     Ok(vec![])
 }
@@ -1468,7 +1468,7 @@ fn avenger_lf(g: &mut Game, src: Src, p: PlayerId) -> Res {
     {
         for m in g.player(p).perms.clone() {
             if plant(g, m) {
-                g.perm_mut(m).plus += 1;
+                crate::cardcode::put_plus(g, m, 1);
             }
         }
     }
@@ -1607,7 +1607,7 @@ fn tracker_clue(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
         && what == Sacrificed::Token("Clue")
         && trigger_window(g, p, Some(src), "+1/+1 counter", None)?
     {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }

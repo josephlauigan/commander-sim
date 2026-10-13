@@ -1,0 +1,78 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m18s elapsed, ~2m43s left
+  progress  20.0%  0m33s elapsed, ~2m15s left
+  progress  30.0%  0m45s elapsed, ~1m47s left
+  progress  40.0%  1m04s elapsed, ~1m36s left
+  progress  50.0%  1m24s elapsed, ~1m24s left
+  progress  60.0%  1m39s elapsed, ~1m06s left
+  progress  70.0%  1m53s elapsed, ~0m48s left
+  progress  80.0%  2m09s elapsed, ~0m32s left
+  progress  90.0%  2m30s elapsed, ~0m16s left
+  progress 100.0%  2m47s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== veyran analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 23.4%   (4-player baseline 25%)   average rounds survived 11.5
+
+-- How it wins --
+  damage      94.7% of wins
+  timeout      5.3% of wins
+  Opponents it eliminated: 0.64 per game, by
+    combat             44.2%
+    burn               29.1%
+    aether             11.7%
+    triggers           10.2%
+    decked              4.4%
+    commander damage    0.5%
+  Damage dealt per game: 38.7, from
+    combat              19.3  (50%)
+    burn                13.6  (35%)
+    aether               4.4  (11%)
+    triggers             1.5  (4%)
+
+-- How it loses --
+  Eliminated in 75.9% of games, on average in round 10.7
+    by Tatyova  via combat             13.8% of games
+    by Light-Paws via commander damage   12.2% of games
+    by Isshin   via combat             11.6% of games
+    by Lathril  via combat             10.3% of games
+    by Teysa Karlov via drain               7.5% of games
+    by Light-Paws via combat              3.8% of games
+    by Teysa Karlov via Revel in Riches     3.8% of games
+    by Lathril  via drain               3.8% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 4%  T4 13%  T5 24%  T6 32%  T7 39%  T8 48%  T9 53%  T10 57%  T11 60%  T12 64%
+  Online at all: 68.4% of games
+  Commander resolves on turn: median 4.0, mean 5.0 (over the 90.0% of games it resolves)
+  Commander resolved by turn:  T4 49%  T5 60%  T6 70%  T7 76%  T8 81%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 6.2% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Blazing Firesinger // Seething Song        cast in  34.7% of games, win rate when cast  34.2% (+10.8)
+    Veyran, Voice of Duality                   cast in  90.0% of games, win rate when cast  26.0% (+2.6)
+  Lowest win rate when cast:
+    Veyran, Voice of Duality                   cast in  90.0% of games, win rate when cast  26.0% (+2.6)
+    Blazing Firesinger // Seething Song        cast in  34.7% of games, win rate when cast  34.2% (+10.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.77
+    Ral, Storm Conduit                         0.13
+    Aetherflux Reservoir                       0.10
+    Propaganda                                 0.07
+    Guttersnipe                                0.06
+    Blazing Firesinger // Seething Song        0.05
+    Rite of the Dragoncaller                   0.03
+    Docent of Perfection // Final Iteration    0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(167s total)

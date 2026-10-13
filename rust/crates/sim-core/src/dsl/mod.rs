@@ -595,7 +595,8 @@ fn run(
                 // Hardened Scales: one more on a creature you control (before any doubling)
                 let extra =
                     if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
-                g.perm_mut(m).plus += k + extra;
+                let tot = crate::cardcode::vorinclex(g, p, k + extra);
+                g.perm_mut(m).plus += tot; // Vorinclex
             }
         }
         "pump" => {
@@ -711,7 +712,7 @@ fn run(
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
                     let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
-                    g.perm_mut(m).plus += 1 + extra; // Hardened Scales
+                    crate::cardcode::put_plus(g, m, 1 + extra); // Hardened Scales, Vorinclex
                 }
             }
         }
@@ -719,7 +720,7 @@ fn run(
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
                     let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
-                    g.perm_mut(m).plus = g.perm(m).plus * 2 + extra; // Hardened Scales
+                    crate::cardcode::put_plus(g, m, g.perm(m).plus + extra); // doubling puts that many more (Hardened Scales, Vorinclex)
                 }
             }
         }
@@ -1808,6 +1809,7 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     if g.perm(src).loyalty_used == Some(stamp) || !g.perm(src).on_bf {
         return Ok(false);
     }
+    let loyalty = if *loyalty > 0 { crate::cardcode::vorinclex(g, p, *loyalty) } else { *loyalty }; // Vorinclex
     let x = g.perm_mut(src);
     x.loyalty_used = Some(stamp);
     x.loyalty = Some(x.loyalty.unwrap_or(0) + loyalty);

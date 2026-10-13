@@ -1,0 +1,75 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m04s elapsed, ~0m38s left
+  progress  20.0%  0m08s elapsed, ~0m34s left
+  progress  30.0%  0m13s elapsed, ~0m30s left
+  progress  40.0%  0m17s elapsed, ~0m26s left
+  progress  50.0%  0m22s elapsed, ~0m22s left
+  progress  60.0%  0m27s elapsed, ~0m18s left
+  progress  70.0%  0m32s elapsed, ~0m13s left
+  progress  80.0%  0m36s elapsed, ~0m09s left
+  progress  90.0%  0m42s elapsed, ~0m04s left
+  progress 100.0%  0m47s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 27.2%   (4-player baseline 25%)   average rounds survived 8.1
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.81 per game, by
+    combat             69.5%
+    burn               11.6%
+    drain               9.7%
+    triggers            5.8%
+    commander damage    3.5%
+  Damage dealt per game: 34.7, from
+    combat              28.1  (81%)
+    drain                2.9  (8%)
+    burn                 2.2  (6%)
+    triggers             1.5  (4%)
+
+-- How it loses --
+  Eliminated in 72.8% of games, on average in round 6.9
+    by Kinnan   via combo              20.6% of games
+    by Urza     via combo              16.6% of games
+    by Zur the Enchanter via combo              11.2% of games
+    by Winota   via combo               7.8% of games
+    by Yawgmoth via combo               5.0% of games
+    by Winota   via combat              5.0% of games
+    by Winota   via burn                1.2% of games
+    by Zur the Enchanter via commander damage    1.2% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 5%  T4 11%  T5 20%  T6 31%  T7 37%  T8 41%  T9 44%  T10 47%  T11 49%  T12 49%
+  Online at all: 49.7% of games
+  Commander resolves on turn: median 6.0, mean 6.2 (over the 55.0% of games it resolves)
+  Commander resolved by turn:  T4 9%  T5 25%  T6 37%  T7 42%  T8 47%
+  Army power at the start of turn  6: mean 1.5, median 0.0, 10+ in 3.8% of games
+  Army power at the start of turn  8: mean 2.5, median 0.0, 10+ in 11.2% of games
+  Army power at the start of turn 10: mean 2.6, median 0.0, 10+ in 10.9% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Sauron, the Dark Lord                      cast in  55.6% of games, win rate when cast  48.3% (+21.1)
+  Lowest win rate when cast:
+    Sauron, the Dark Lord                      cast in  55.6% of games, win rate when cast  48.3% (+21.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.07
+    Iron Man, Armored Avenger                  0.02
+    Orcish Bowmasters                          0.02
+    Grave Titan                                0.02
+    Mauhúr, Uruk-hai Captain                   0.01
+    Scarlet Witch, Chaotic Avenger             0.01
+    Vraska, Betrayal's Sting                   0.01
+    Aggravated Assault                         0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(48s total)

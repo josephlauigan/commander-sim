@@ -534,7 +534,7 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
             }
             if t.has(Tag::Upkprolif) {
                 if let Some(a) = army_of(g, p) {
-                    g.perm_mut(a).plus += 1;
+                    crate::cardcode::put_plus(g, a, 1);
                 }
                 lose_life(g, p, 1, Some(p), "other", None)?;
             }
@@ -726,7 +726,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         if trigger_window(g, p, Some(src), "proliferate", None)? {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    g.perm_mut(m).plus += 1;
+                    crate::cardcode::put_plus(g, m, 1);
                 }
             }
         }

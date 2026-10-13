@@ -570,7 +570,7 @@ fn rishkar(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     // Python sorts by (x is src, -pval) with reverse=True: Rishkar first, then the least valuable (stable)
     cs.sort_by(|a, b| (b.0, b.1).partial_cmp(&(a.0, a.1)).unwrap_or(std::cmp::Ordering::Equal));
     for &(_, _, x) in cs.iter().take(2) {
-        g.perm_mut(x).plus += 1;
+        crate::cardcode::put_plus(g, x, 1);
     }
     Ok(())
 }

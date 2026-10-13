@@ -765,7 +765,7 @@ fn oran_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if ability_window_card(g, p, g.land(l).cd, "+1/+1 counters", None, None)? {
         for m in new {
             if g.perm(m).on_bf && g.perm(m).owner == p {
-                g.perm_mut(m).plus += 1;
+                crate::cardcode::put_plus(g, m, 1);
             }
         }
     }

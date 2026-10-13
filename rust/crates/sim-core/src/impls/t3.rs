@@ -215,7 +215,7 @@ fn korvold_sac(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
         if !trigger_window(g, p, Some(src), "a +1/+1 counter and draw a card", None)? {
             return Ok(());
         }
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
         if g.player(p).library.len() > 10 {
             draw(g, p, 1, false)?;
         }
@@ -557,7 +557,7 @@ fn marwyn(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && has_type(g, m, "elf")
         && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(1.0))?
     {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }

@@ -526,7 +526,7 @@ fn hero_heroic(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && g.perm(m).attached == Some(src)
         && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(2.0))?
     {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -1046,7 +1046,7 @@ fn mystic_grow(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
         && of_type(g, m, Types::ENCHANTMENT)
         && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(2.0))?
     {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -1213,7 +1213,7 @@ fn tide_free(g: &mut Game, _src: Src, m: PermId) -> Res {
 /// creatures that tap for mana get that many +1/+1 counters (once each turn)
 fn tyvar(g: &mut Game, src: Src, p: PlayerId, m: PermId, amt: u32) -> Res {
     if g.perm(src).owner == p && g.is_creature(m) && once_per_turn(g, p, intern(&format!("tyvar{}", m.0))) {
-        g.perm_mut(m).plus += amt as i32;
+        crate::cardcode::put_plus(g, m, amt as i32);
     }
     Ok(())
 }

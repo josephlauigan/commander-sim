@@ -1084,7 +1084,8 @@ pub fn sheoldred_card(g: &Game, m: PermId) -> bool {
 /// toxic 2: two poison counters with the combat damage to a player
 fn ribskiff_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
     if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        g.player_mut(d).poison += 2;
+        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 2); // Vorinclex
+        g.player_mut(d).poison += k as u32;
         crate::glog!(g, "    {} gets 2 poison counters (toxic)", g.player(d).name);
     }
     Ok(())

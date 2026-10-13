@@ -628,7 +628,7 @@ fn retrieve_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym
     };
     for t in make_tokens(g, p, spec)? {
         if ctx.from_gy {
-            g.perm_mut(t).plus += 2;
+            crate::cardcode::put_plus(g, t, 2);
         }
     }
     Ok("gy")

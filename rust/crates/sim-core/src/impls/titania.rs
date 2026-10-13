@@ -674,6 +674,12 @@ pub fn titania_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
                 0
             }
         }
+        // ramp and landfall in one card (two lands from the top seven, tapped): early, before the threats
+        "Cartographer's Survey" => {
+            if pl.lands.len() <= 7 { 74 } else { base.max(40) }
+        }
+        // a 6/6 trampling haste threat that doubles every counter the deck makes: ahead of the other top-end cards
+        "Vorinclex, Monstrous Raider" => base.max(62),
         UPRISING => {
             if out || creatures(g, p).iter().any(|&m| epow(g, m) >= 4) {
                 70

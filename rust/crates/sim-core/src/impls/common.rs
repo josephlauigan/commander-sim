@@ -708,7 +708,7 @@ fn bombard(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
 }
 
 fn feeder(g: &mut Game, _p: PlayerId, src: PermId, _m: PermId) -> Res {
-    g.perm_mut(src).plus += 1;
+    crate::cardcode::put_plus(g, src, 1);
     Ok(())
 }
 
@@ -1493,7 +1493,9 @@ fn walker_go(g: &mut Game, src: PermId, p: PlayerId, i: i64) -> Res<bool> {
     let x = g.perm_mut(src);
     x.loyalty_used = Some(stamp);
     x.data.set(DataKey::LoyaltyN, Val::Int(n));
-    x.loyalty = Some(x.loyalty.unwrap_or(0) + delta); // loyalty costs aren't doubled (Doubling Season doubles effects)
+    let delta = if delta > 0 { crate::cardcode::vorinclex(g, p, delta) } else { delta }; // Vorinclex
+    let x = g.perm_mut(src);
+    x.loyalty = Some(x.loyalty.unwrap_or(0) + delta); // Doubling Season leaves loyalty costs alone
     crate::glog!(g, "  {} uses {} ({:+}): {}", player_name(g, p), card_name(g, src), delta, ab.label);
     let dead = g.perm(src).loyalty.unwrap_or(0) <= 0; // state-based: at 0 loyalty it goes before its ability resolves
     if dead {
@@ -2636,12 +2638,12 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
             }
             if x.plus > 0 {
                 let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
-                g.perm_mut(m).plus += dbl + extra; // Hardened Scales
+                crate::cardcode::put_plus(g, m, dbl + extra); // Hardened Scales
             }
             if card_is(g, m, Types::PLANESWALKER)
                 && let Some(l) = g.perm(m).loyalty
             {
-                g.perm_mut(m).loyalty = Some(l + dbl);
+                g.perm_mut(m).loyalty = Some(l + crate::cardcode::vorinclex(g, p, dbl));
             }
             if g.perm(m).data.get(DataKey::Lore).is_some()
                 && let Some(saga) = g.perm(m).cd.and_then(|c| g.registry.get(c)).and_then(|i| i.saga)
@@ -2682,7 +2684,11 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         for q in opps(g, p) {
             for m in g.player(q).perms.clone() {
                 if g.is_creature(m) && g.perm(m).plus < 0 {
-                    g.perm_mut(m).plus -= 1;
+                    let k = crate::cardcode::vorinclex(g, p, -1); // Vorinclex: doubled for its controller, halved for opponents
+                    if k == 0 {
+                        continue;
+                    }
+                    g.perm_mut(m).plus += k;
                     if etgh(g, m) <= 0 {
                         die(g, m, "sba")?;
                     }
@@ -2690,8 +2696,9 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
             }
             // the fix: opponents' poison counters
             if g.player(q).poison > 0 && !melira(g, q) {
-                g.player_mut(q).poison += 1;
-                poisoned = true;
+                let k = crate::cardcode::vorinclex(g, p, 1);
+                g.player_mut(q).poison += k as u32;
+                poisoned |= k > 0;
             }
         }
         if poisoned {
@@ -2867,7 +2874,7 @@ fn thalia_hc(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn ballista(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
         let x = g.last_x;
-        g.perm_mut(src).plus += x.div_euclid(2);
+        crate::cardcode::put_plus(g, src, x.div_euclid(2));
         g.last_x = 0;
     }
     Ok(())

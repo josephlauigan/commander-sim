@@ -1,0 +1,65 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m05s elapsed, ~0m53s left
+  progress  20.0%  0m11s elapsed, ~0m47s left
+  progress  30.0%  0m17s elapsed, ~0m40s left
+  progress  40.0%  0m24s elapsed, ~0m37s left
+  progress  50.0%  0m31s elapsed, ~0m31s left
+  progress  60.0%  0m37s elapsed, ~0m24s left
+  progress  70.0%  0m41s elapsed, ~0m17s left
+  progress  80.0%  0m46s elapsed, ~0m11s left
+  progress  90.0%  0m53s elapsed, ~0m05s left
+  progress 100.0%  0m59s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== titania analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 16.6%   (4-player baseline 25%)   average rounds survived 8.2
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.41 per game, by
+    combat            100.0%
+  Damage dealt per game: 20.3, from
+    combat              20.3  (100%)
+
+-- How it loses --
+  Eliminated in 83.4% of games, on average in round 7.2
+    by Kinnan   via combo              23.1% of games
+    by Urza     via combo              15.6% of games
+    by Winota   via combo              13.8% of games
+    by Zur the Enchanter via combo              11.6% of games
+    by Yawgmoth via combo               7.2% of games
+    by Winota   via combat              7.2% of games
+    by Zur the Enchanter via commander damage    1.2% of games
+    by Yawgmoth via drain               0.9% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 9%  T6 17%  T7 20%  T8 23%  T9 26%  T10 28%  T11 29%  T12 30%
+  Online at all: 30.6% of games
+  Commander resolves on turn: median 6.0, mean 6.3 (over the 58.1% of games it resolves)
+  Commander resolved by turn:  T4 10%  T5 26%  T6 38%  T7 46%  T8 50%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Titania, Protector of Argoth               cast in  59.1% of games, win rate when cast  28.0% (+11.5)
+  Lowest win rate when cast:
+    Titania, Protector of Argoth               cast in  59.1% of games, win rate when cast  28.0% (+11.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               0.20
+    Hardbristle Bandit                         0.03
+    Studious First-Year                        0.03
+    Topiary Lecturer                           0.03
+    Bugenhagen, Wise Elder                     0.02
+    Lashwhip Predator                          0.02
+    Elfhame Wurm                               0.02
+    Ghalta the Unstoppable                     0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(59s total)

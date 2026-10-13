@@ -209,7 +209,7 @@ pub fn alela_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 fn counter_nonflier(g: &mut Game, p: PlayerId, src: PermId) {
     let cs: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| !flier(g, m)).collect();
     let Some(t) = first_max(&cs, |m| (g.perm(m).is_cmd, !g.perm(m).noatk, pval(g, m))) else { return };
-    g.perm_mut(t).plus += 1;
+    crate::cardcode::put_plus(g, t, 1);
     crate::glog!(g, "    {}: +1/+1 counter on {}", name_of(g, src), name_of(g, t));
 }
 
@@ -748,7 +748,7 @@ fn chaplain(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         g.player_mut(o).hand.push(c);
         crate::glog!(g, "    Airlift Chaplain: {} puts {} into hand", pname(g, o), g.db.get(c).name);
     } else if controls(g, o, src) {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -848,7 +848,7 @@ fn hopesinger(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         return Ok(());
     }
     for m in creatures(g, o) {
-        g.perm_mut(m).plus += 1;
+        crate::cardcode::put_plus(g, m, 1);
     }
     Ok(())
 }
@@ -870,7 +870,7 @@ fn futurescribe(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     if g.player(p).scry_turn == Some(g.turn_stamp()) {
-        g.perm_mut(t).plus += 1;
+        crate::cardcode::put_plus(g, t, 1);
     } else {
         g.perm_mut(t).eot_pt.0 += 1;
         g.perm_mut(t).eot_pt.1 += 1;
@@ -1164,7 +1164,7 @@ fn daydream_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 pub fn daydream(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let Some(t) = daydream_target(g, p) else { return Ok("gy") };
     if let Some(n) = blink(g, p, t)? {
-        g.perm_mut(n).plus += 1;
+        crate::cardcode::put_plus(g, n, 1);
     }
     Ok("gy")
 }

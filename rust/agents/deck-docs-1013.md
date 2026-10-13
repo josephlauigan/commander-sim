@@ -24,6 +24,6 @@ the top of your doc, and `audit/sauron/2026-10-12-weakness/README.md` for the me
 - Grep your doc for each cut card and each new card, and recount any number you change from the Import list.
 
 ## Done
-Commit (`git add decklists/JD/<doc> && git commit -m "..." -m "Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"`),
+Commit (`git add decklists/JD/<doc> && git commit -m "..."`, no Co-Authored-By line),
 never push. Final report at most 15 lines: line 1 DONE, line 2 your model ID, commit hash, what sections changed, any
 count you could not check.

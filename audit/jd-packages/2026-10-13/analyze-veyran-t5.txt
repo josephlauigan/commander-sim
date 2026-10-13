@@ -1,0 +1,73 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m07s elapsed, ~1m04s left
+  progress  20.0%  0m13s elapsed, ~0m55s left
+  progress  30.0%  0m21s elapsed, ~0m49s left
+  progress  40.0%  0m27s elapsed, ~0m41s left
+  progress  50.0%  0m33s elapsed, ~0m33s left
+  progress  60.0%  0m37s elapsed, ~0m25s left
+  progress  70.0%  0m43s elapsed, ~0m18s left
+  progress  80.0%  0m48s elapsed, ~0m12s left
+  progress  90.0%  0m52s elapsed, ~0m05s left
+  progress 100.0%  0m58s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== veyran analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 14.1%   (4-player baseline 25%)   average rounds survived 8.1
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.43 per game, by
+    combat             47.8%
+    burn               32.6%
+    triggers           14.5%
+    aether              5.1%
+  Damage dealt per game: 17.2, from
+    combat               9.6  (56%)
+    burn                 5.4  (31%)
+    aether               1.4  (8%)
+    triggers             0.8  (5%)
+
+-- How it loses --
+  Eliminated in 85.9% of games, on average in round 7.3
+    by Kinnan   via combo              24.1% of games
+    by Urza     via combo              16.9% of games
+    by Zur the Enchanter via combo              11.9% of games
+    by Winota   via combo              10.6% of games
+    by Winota   via combat             10.3% of games
+    by Yawgmoth via combo               7.2% of games
+    by Zur the Enchanter via commander damage    1.2% of games
+    by Zur the Enchanter via combat              0.9% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 1%  T4 9%  T5 17%  T6 23%  T7 28%  T8 31%  T9 34%  T10 36%  T11 38%  T12 38%
+  Online at all: 39.7% of games
+  Commander resolves on turn: median 4.0, mean 4.7 (over the 68.8% of games it resolves)
+  Commander resolved by turn:  T4 42%  T5 51%  T6 57%  T7 62%  T8 65%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 1.6% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Veyran, Voice of Duality                   cast in  69.7% of games, win rate when cast  19.3% (+5.2)
+  Lowest win rate when cast:
+    Veyran, Voice of Duality                   cast in  69.7% of games, win rate when cast  19.3% (+5.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.35
+    Guttersnipe                                0.04
+    Emeritus of Conflict // Lightning Bolt     0.04
+    Aetherflux Reservoir                       0.03
+    Blazing Firesinger // Seething Song        0.02
+    Ral, Storm Conduit                         0.02
+    Alania, Divergent Storm                    0.02
+    Docent of Perfection // Final Iteration    0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(58s total)

@@ -1,0 +1,15 @@
+16:48 seph t1 exit 0 Win rate 38.4%   (4-player baseline 25%)   average rounds survived 10.4
+16:49 seph t3 exit 0 Win rate 34.7%   (4-player baseline 25%)   average rounds survived 11.2
+16:49 seph t5 exit 0 Win rate 24.1%   (4-player baseline 25%)   average rounds survived 8.3
+16:51 seph t1 exit 0 [loose       ] win  37.8% ->  39.8%  (delta +2.0 pts, noise ±5.3, paired)   n=500
+16:53 seph t2 exit 0 [loose       ] win  45.2% ->  47.6%  (delta +2.4 pts, noise ±5.7, paired)   n=500
+16:55 seph t3 exit 0 [loose       ] win  34.6% ->  35.6%  (delta +1.0 pts, noise ±5.5, paired)   n=500
+16:56 seph t4 exit 0 [loose       ] win  30.0% ->  28.0%  (delta -2.0 pts, noise ±5.2, paired)   n=500
+16:57 seph t5 exit 0 [loose       ] win  23.2% ->  21.8%  (delta -1.4 pts, noise ±4.3, paired)   n=500
+16:57 DONE seph
+17:08 seph t1 exit 0 [loose       ] win  37.8% ->  38.8%  (delta +1.0 pts, noise ±5.4, paired)   n=500
+17:10 seph t2 exit 0 [loose       ] win  45.2% ->  48.4%  (delta +3.2 pts, noise ±6.0, paired)   n=500
+17:12 seph t3 exit 0 [loose       ] win  34.6% ->  36.8%  (delta +2.2 pts, noise ±5.6, paired)   n=500
+17:13 seph t4 exit 0 [loose       ] win  30.0% ->  27.4%  (delta -2.6 pts, noise ±5.3, paired)   n=500
+17:14 seph t5 exit 0 [loose       ] win  23.2% ->  20.8%  (delta -2.4 pts, noise ±4.3, paired)   n=500
+17:14 DONE seph3

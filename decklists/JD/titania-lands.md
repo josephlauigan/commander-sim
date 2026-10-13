@@ -1,6 +1,10 @@
 # Titania, Protector of Argoth — Mono-Green Lands to the Graveyard
 
-**Simulator, 2026-10-12:** **22.6% over all tiers** (±0.4; rank 7 of the ten decks): T1 19.5%, T2 27.5%, T3 24.2%, T4 24.3%, T5 17.5%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+**Updated 2026-10-13.** Out: Cactarantula, Elfhame Wurm, Penumbra Spider, Yavimaya Wurm. In: Cartographer's Survey, Kura, the Boundless Sky, Tireless Tracker, Vorinclex, Monstrous Raider. JD's package D (landfall value): Yavimaya Wurm, Elfhame Wurm, Cactarantula and Penumbra Spider out (to bulk); Vorinclex, Monstrous Raider (JD's own copy), Kura, the Boundless Sky, Tireless Tracker and Cartographer's Survey (binder, from the retired Jodah) in. Measured +1.8 over all tiers (T1 -3.2, T2 +4.2, T3 +0.4, T4 +4.8, T5 +2.8; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/).
+
+**Simulator, 2026-10-13:** the landfall package (Vorinclex, Kura, Tireless Tracker and Cartographer's Survey in; four green Wurms and Spiders out) measured **+1.8 over all tiers** in a paired test (T1 -3.2, T2 +4.2, T3 +0.4, T4 +4.8, T5 +2.8; look-ahead, loose, 500 games per list per tier; up in four of five tiers). A pool run is pending.
+
+**Previous list's figures, 2026-10-12:** **22.6% over all tiers** (±0.4; rank 7 of the ten decks): T1 19.5%, T2 27.5%, T3 24.2%, T4 24.3%, T5 17.5%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 
 **Added 2026-10-11.** JD's mono-green deck, built from the bulk and binder lists around Titania, Protector of Argoth
 (borderless Secret Lair printing, about $2.46), with no other buys apart from Arachnogenesis and Blossoming Defense
@@ -20,7 +24,8 @@ enters, she returns a land from your graveyard to the battlefield.
   Titania rather than taking them to hand.
 - **Cash it in.** Garruk's Uprising draws a card for each 5/3 (power 4 or more) and gives them trample; Overwhelming
   Stampede and End-Raze Forerunners turn a pile of 5/3s into a lethal attack. Big green creatures (Ghalta, Hornet
-  Queen, Paladin of Predation, Yavimaya Wurm) carry the deck when the engine is slow.
+  Queen, Paladin of Predation, Vorinclex) carry the deck when the engine is slow.
+- **Landfall value (2026-10-13).** Tireless Tracker makes a Clue for every land drop and every land that Titania returns; Cartographer's Survey puts two lands from the top seven onto the battlefield; Kura, the Boundless Sky (flying, deathtouch) fetches three lands when she dies or, late, leaves an X/X Spirit for the lands you control. Vorinclex, Monstrous Raider (trample, haste) doubles the counters you put on things (Tracker, Topiary Lecturer, Vinelasher Adept, Knockout Maneuver, Thirsting Roots' proliferate) and halves the opponents'.
 - **Stay alive.** Arachnogenesis (a fog plus a 1/2 reach Spider for each attacker), Blossoming Defense and Royal
   Treatment to protect Titania, and bite and fight spells (Bite Down, Hard-Hitting Question, Knockout Maneuver and
   friends) as removal.
@@ -58,8 +63,8 @@ Known simplifications: several lands going to the graveyard at once make one 5/3
 
 **New (3):** Titania, Protector of Argoth (the commander, borderless Secret Lair), Arachnogenesis and Blossoming
 Defense (both bought 2026-10-11). **Basics:** 35 Forest, your own. Every other card comes off JD's lists (2026-10-11),
-one copy each, grouped by color so you can pull them a color at a time: 2 from the binder (Llanowar Elves, Evolving
-Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it names more than one, any of them.
+one copy each, grouped by color so you can pull them a color at a time: 5 from the binder (Llanowar Elves, Evolving
+Wilds, plus Kura, Tireless Tracker and Cartographer's Survey, the retired Jodah deck's leftovers), 56 from bulk and 1 of JD's own (Vorinclex, Monstrous Raider). Cactarantula, Elfhame Wurm, Penumbra Spider and Yavimaya Wurm went to bulk on 2026-10-13. Set codes are the printings the bulk list shows; where it names more than one, any of them.
 
 ### Green (59)
 
@@ -70,14 +75,13 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 | Bite Down | Instant | Bulk | j25 |
 | Boughside Wanderers | Creature | Bulk | hob |
 | Bugenhagen, Wise Elder | Creature | Bulk | fic |
-| Cactarantula | Creature | Bulk | otj |
 | Carnivorous Canopy | Sorcery | Bulk | one |
 | Chelonian Tackle | Sorcery | Bulk | sos |
 | Compel Brutality | Instant | Bulk | fra |
 | Crushing Canopy | Instant | Bulk | xln |
+| Cartographer's Survey | Sorcery | Binder | — |
 | Cultivate | Sorcery | Bulk | fic, ump |
 | Diplomatic Relations | Instant | Bulk | eoe |
-| Elfhame Wurm | Creature | Bulk | dmu |
 | End-Raze Forerunners | Creature | Bulk | blc |
 | Environmental Scientist | Creature | Bulk | sos |
 | Follow the Lumarets | Sorcery | Bulk | sos |
@@ -95,13 +99,13 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 | Knockout Maneuver | Sorcery | Bulk | soa |
 | Lashwhip Predator | Creature | Bulk | eoe |
 | Lifestream's Blessing | Instant | Bulk | fic |
+| Kura, the Boundless Sky | Creature | Binder | — |
 | Llanowar Elves | Creature | Binder | — |
 | Malevolent Rumble | Sorcery | Bulk | mh3 |
 | Nature's Lore | Sorcery | Bulk | fic |
 | Noxious Newt | Creature | Bulk | sos |
 | Overwhelming Stampede | Sorcery | Bulk | msc |
 | Paladin of Predation | Creature | Bulk | one |
-| Penumbra Spider | Creature | Bulk | tsr |
 | Pick Your Poison | Sorcery | Bulk | soa |
 | Pothole Mole | Creature | Bulk | dft |
 | Rampant Growth | Sorcery | Bulk | fic |
@@ -119,11 +123,12 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 | Tenured Concocter | Creature | Bulk | sos |
 | Thirsting Roots | Sorcery | Bulk | one |
 | Thrashing Brontodon | Creature | Bulk | list |
+| Tireless Tracker | Creature | Binder | — |
 | Topiary Lecturer | Creature | Bulk | sos |
 | Track Down | Sorcery | Bulk | m21 |
 | Tumbleweed Rising | Sorcery | Bulk | otj |
 | Vinelasher Adept | Creature | Bulk | fra |
-| Yavimaya Wurm | Creature | Bulk | m11 |
+| Vorinclex, Monstrous Raider | Creature | JD's own | — |
 
 ### Lands (3, colorless)
 
@@ -137,13 +142,13 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 
 **Commander (1).** Titania, Protector of Argoth
 
-**Creatures (30).** Annoyed Altisaur, Boughside Wanderers, Bugenhagen Wise Elder, Cactarantula, Elfhame Wurm, End-Raze Forerunners, Environmental Scientist, Genesis Hydra, Ghalta the Unstoppable, Greenbelt Radical, Greenhouse Propagator, Hardbristle Bandit, Hornet Queen, Infestation Expert, Lashwhip Predator, Llanowar Elves, Noxious Newt, Paladin of Predation, Penumbra Spider, Pothole Mole, Satyr Wayfinder, Silhana Starfletcher, Spider-Man Brooklyn Visionary, Studious First-Year, Symbiotic Beast, Tenured Concocter, Thrashing Brontodon, Topiary Lecturer, Vinelasher Adept, Yavimaya Wurm
+**Creatures (29).** Annoyed Altisaur, Boughside Wanderers, Bugenhagen Wise Elder, End-Raze Forerunners, Environmental Scientist, Genesis Hydra, Ghalta the Unstoppable, Greenbelt Radical, Greenhouse Propagator, Hardbristle Bandit, Hornet Queen, Infestation Expert, Kura the Boundless Sky, Lashwhip Predator, Llanowar Elves, Noxious Newt, Paladin of Predation, Pothole Mole, Satyr Wayfinder, Silhana Starfletcher, Spider-Man Brooklyn Visionary, Studious First-Year, Symbiotic Beast, Tenured Concocter, Thrashing Brontodon, Tireless Tracker, Topiary Lecturer, Vinelasher Adept, Vorinclex Monstrous Raider
 
 **Enchantments (1).** Garruk's Uprising
 
 **Instants (11).** Arachnogenesis, Bite Down, Blossoming Defense, Compel Brutality, Crushing Canopy, Diplomatic Relations, Glorious Decay, Lifestream's Blessing, Rending Vines, Royal Treatment, Something Worth Saving
 
-**Sorceries (19).** Bestial Incursion, Carnivorous Canopy, Chelonian Tackle, Cultivate, Follow the Lumarets, Hard-Hitting Question, Harmonize, Knockout Maneuver, Malevolent Rumble, Nature's Lore, Overwhelming Stampede, Pick Your Poison, Rampant Growth, Scout the City, Shamanic Revelation, Skyshroud Claim, Thirsting Roots, Track Down, Tumbleweed Rising
+**Sorceries (20).** Bestial Incursion, Carnivorous Canopy, Cartographer's Survey, Chelonian Tackle, Cultivate, Follow the Lumarets, Hard-Hitting Question, Harmonize, Knockout Maneuver, Malevolent Rumble, Nature's Lore, Overwhelming Stampede, Pick Your Poison, Rampant Growth, Scout the City, Shamanic Revelation, Skyshroud Claim, Thirsting Roots, Track Down, Tumbleweed Rising
 
 **Lands (38).** Evolving Wilds, Fabled Passage, Terramorphic Expanse, 35 Forest
 
@@ -157,14 +162,13 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 1 Blossoming Defense
 1 Boughside Wanderers
 1 Bugenhagen, Wise Elder
-1 Cactarantula
 1 Carnivorous Canopy
+1 Cartographer's Survey
 1 Chelonian Tackle
 1 Compel Brutality
 1 Crushing Canopy
 1 Cultivate
 1 Diplomatic Relations
-1 Elfhame Wurm
 1 End-Raze Forerunners
 1 Environmental Scientist
 1 Evolving Wilds
@@ -182,6 +186,7 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 1 Hornet Queen
 1 Infestation Expert
 1 Knockout Maneuver
+1 Kura, the Boundless Sky
 1 Lashwhip Predator
 1 Lifestream's Blessing
 1 Llanowar Elves
@@ -190,7 +195,6 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 1 Noxious Newt
 1 Overwhelming Stampede
 1 Paladin of Predation
-1 Penumbra Spider
 1 Pick Your Poison
 1 Pothole Mole
 1 Rampant Growth
@@ -209,11 +213,12 @@ Wilds), 60 from bulk. Set codes are the printings the bulk list shows; where it 
 1 Terramorphic Expanse
 1 Thirsting Roots
 1 Thrashing Brontodon
+1 Tireless Tracker
 1 Titania, Protector of Argoth
 1 Topiary Lecturer
 1 Track Down
 1 Tumbleweed Rising
 1 Vinelasher Adept
-1 Yavimaya Wurm
+1 Vorinclex, Monstrous Raider
 35 Forest
 ```

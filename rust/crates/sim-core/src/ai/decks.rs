@@ -134,7 +134,7 @@ pub fn sauron_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
     }
     if t.has(Tag::Archivist) {
-        return if has(g, p, Tag::Bowmasters) { 50 } else { 20 };
+        return if has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) { 50 } else { 20 };
     }
     for (k, v) in [(Tag::Callring, 55), (Tag::Kindred, 50)] {
         if t.has(k) {
@@ -487,7 +487,7 @@ pub fn helm_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// much smaller
 pub fn archivist_worth(g: &Game, p: PlayerId) -> bool {
     let most = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0);
-    has(g, p, Tag::Bowmasters) || (g.player(p).hand.len() <= 1 && most >= 4)
+    has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) || (g.player(p).hand.len() <= 1 && most >= 4) // Sheoldred: every opponent draw costs 2 life
 }
 
 /// ais.sauron_archivist: Jace's Archivist: everyone discards their hand and draws the largest hand size
@@ -734,7 +734,14 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             if !st {
                 return first(&["Brain Freeze", "Grapeshot"]);
             }
-            first(&["Dark Ritual", "Lotus Petal", "Cabal Ritual"])
+            first(&["Dark Ritual", "Lotus Petal", "Cabal Ritual", "Yawgmoth's Will"])
+        }
+        "kefka" if kind == "is" && super::decks::deck_has_storm(g, p) => {
+            // Mystical Tutor: the storm card for a Breach that waits for one (Breach itself is no instant or sorcery)
+            if breach_out(g, p) && !storm_held(g, p) {
+                return first(&["Brain Freeze", "Grapeshot"]);
+            }
+            None
         }
         "sauron" => {
             let sw = held(Tag::Sword);
@@ -1564,6 +1571,9 @@ fn storm_kills(g: &Game, p: PlayerId, c: CardId) -> bool {
 /// Breach, the rituals for Breach and a storm card, and Breach itself for a storm card; None when the line has no
 /// claim on the card (it keeps its usual priority, so a deck without the storm card plays Breach as before)
 pub fn breach_hold_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    if g.player(p).yawg {
+        return None; // Yawgmoth's Will is the storm turn: the line cards replayed from the graveyard are cast on their usual priority
+    }
     let t = &g.db.get(c).tags;
     if t.has(Tag::Breach) {
         return storm_held(g, p).then_some(0);

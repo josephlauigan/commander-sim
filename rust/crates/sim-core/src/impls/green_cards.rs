@@ -244,7 +244,8 @@ pub fn unblockable_by(g: &Game, b: PermId, a: PermId) -> bool {
 /// Venomous Brutalizer: toxic 3 (three poison counters with the combat damage)
 fn brutalizer_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
     if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        g.player_mut(d).poison += 3;
+        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 3); // Vorinclex
+        g.player_mut(d).poison += k as u32;
         crate::glog!(g, "    {} gets 3 poison counters (toxic)", g.player(d).name);
     }
     Ok(())
@@ -950,6 +951,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.cast = Some(increment);
     c.dyn_mana_perm = Some(lecturer_mana);
     r.card(db, "Vinelasher Adept")?.hand_options = Some(adept_hand);
+    r.card(db, KURA)?.self_dies = Some(kura_dies);
     Ok(())
 }
 
@@ -1037,4 +1039,55 @@ fn adept_cycle(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 pub fn gained_life(g: &Game, p: PlayerId) -> bool {
     let st = g.turn_stamp();
     g.player(p).gained_turn.is_some_and(|x| x.0 == st && x.1 > 0)
+}
+
+// ================================================================== Kura, the Boundless Sky
+const KURA: &str = "Kura, the Boundless Sky";
+
+/// Kura, the Boundless Sky: flying, deathtouch. When it dies, choose one: up to three land cards from the library to
+/// the hand (the Titania deck turns each one into a landfall), or an X/X green Spirit, X = lands you control. The AI
+/// takes the lands while it still has land drops to make (fewer than two lands in hand and under seven on the
+/// battlefield) and the library has lands; the Spirit once the lands are down.
+fn kura_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
+    let p = g.perm(m).owner;
+    if !g.player(p).alive {
+        return Ok(());
+    }
+    let lib_lands = g.player(p).library.iter().filter(|&&c| g.db.get(c).land).count();
+    let in_hand = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
+    let on_bf = g.player(p).lands.len();
+    let lands_mode = lib_lands > 0 && in_hand < 2 && on_bf < 7;
+    let label = if lands_mode { "search for up to three lands" } else { "an X/X Spirit (X = lands)" };
+    if !trigger_window(g, p, Some(m), label, None)? {
+        return Ok(());
+    }
+    if lands_mode {
+        // nonbasic lands first (they are the deck's best), then basics
+        let mut found = 0;
+        for basic in [false, true] {
+            while found < 3 {
+                let pick = g.player(p).library.iter().position(|&c| {
+                    let d = g.db.get(c);
+                    d.land && is_basic_name(&d.name) == basic
+                });
+                let Some(i) = pick else { break };
+                let c = g.player_mut(p).library.remove(i);
+                g.player_mut(p).hand.push(c);
+                found += 1;
+            }
+        }
+        crate::engine::tutors::shuffle_library(g, p);
+    } else {
+        let x = g.player(p).lands.len() as i32;
+        let mut spec = crate::engine::zones::Tokens::new(1, x);
+        spec.tgh = Some(x);
+        spec.color = Some(crate::cards::Colors::from_letters("G"));
+        spec.types = vec![intern("spirit")];
+        crate::engine::zones::make_tokens(g, p, spec)?;
+    }
+    Ok(())
+}
+
+fn is_basic_name(n: &str) -> bool {
+    matches!(n, "Forest" | "Island" | "Mountain" | "Plains" | "Swamp")
 }

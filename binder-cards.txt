@@ -9,7 +9,6 @@
 1x Call of the Ring
 1x Caparocti Sunborn
 1x Carth the Lion
-1x Cartographer's Survey
 1x Caves of Koilos
 1x Chromatic Lantern
 1x Command Tower
@@ -43,7 +42,6 @@
 1x Karplusan Forest
 1x King Darien XLVIII
 1x Korlash, Heir to Blackblade
-1x Kura, the Boundless Sky
 1x Lagrella, the Magpie
 1x Lash of the Balrog
 1x Latulla's Orders
@@ -57,7 +55,6 @@
 1x Moss Diamond
 1x Mystic Enforcer
 1x Mystic Monastery
-1x Mystical Tutor
 1x Nomad Outpost
 1x Oboro Breezecaller
 1x Opulent Palace
@@ -84,14 +81,12 @@
 1x Talisman of Hierarchy
 1x Terror of the Peaks
 1x The Aetherspark
-1x Tireless Tracker
 1x Tolsimir Wolfblood
 1x Toxic Deluge
 1x Triskelion
 1x Tymna the Weaver
 1x Unclaimed Territory
 1x Urza, Powerstone Prodigy
-1x Vampiric Tutor
 1x Vivid Creek
 1x Worldly Tutor
 1x Wrenn and Six

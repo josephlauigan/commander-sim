@@ -1,0 +1,68 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m14s elapsed, ~2m12s left
+  progress  20.0%  0m34s elapsed, ~2m17s left
+  progress  30.0%  0m45s elapsed, ~1m47s left
+  progress  40.0%  1m06s elapsed, ~1m39s left
+  progress  50.0%  1m24s elapsed, ~1m24s left
+  progress  60.0%  1m37s elapsed, ~1m05s left
+  progress  70.0%  1m52s elapsed, ~0m48s left
+  progress  80.0%  2m05s elapsed, ~0m31s left
+  progress  90.0%  2m25s elapsed, ~0m16s left
+  progress 100.0%  2m39s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== titania analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 21.2%   (4-player baseline 25%)   average rounds survived 11.1
+
+-- How it wins --
+  damage      98.5% of wins
+  timeout      1.5% of wins
+  Opponents it eliminated: 0.57 per game, by
+    combat             95.6%
+    decked              3.3%
+    commander damage    1.1%
+  Damage dealt per game: 36.0, from
+    combat              36.0  (100%)
+
+-- How it loses --
+  Eliminated in 78.4% of games, on average in round 10.3
+    by Light-Paws via commander damage   22.2% of games
+    by Tatyova  via combat             12.2% of games
+    by Isshin   via combat             10.3% of games
+    by Lathril  via combat              7.2% of games
+    by Lathril  via drain               5.3% of games
+    by Teysa Karlov via drain               5.0% of games
+    by Light-Paws via combat              4.1% of games
+    by Teysa Karlov via combat              4.1% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 11%  T6 19%  T7 28%  T8 33%  T9 38%  T10 43%  T11 45%  T12 48%
+  Online at all: 51.2% of games
+  Commander resolves on turn: median 6.0, mean 6.8 (over the 87.8% of games it resolves)
+  Commander resolved by turn:  T4 10%  T5 28%  T6 46%  T7 61%  T8 70%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Titania, Protector of Argoth               cast in  87.8% of games, win rate when cast  24.2% (+2.9)
+  Lowest win rate when cast:
+    Titania, Protector of Argoth               cast in  87.8% of games, win rate when cast  24.2% (+2.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               0.57
+    Ghalta the Unstoppable                     0.08
+    Annoyed Altisaur                           0.07
+    Elfhame Wurm                               0.05
+    Paladin of Predation                       0.05
+    Lashwhip Predator                          0.04
+    Topiary Lecturer                           0.04
+    Yavimaya Wurm                              0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(160s total)

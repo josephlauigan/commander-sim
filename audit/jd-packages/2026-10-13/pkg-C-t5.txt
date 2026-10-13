@@ -1,0 +1,55 @@
+Swaps: Bedevil -> Sheoldred, the Apocalypse
+
+=== Sauron vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.2% ->  26.4%  (delta +0.2 pts, noise ±4.1, paired)   n=500
+               eliminated by (variant): Urza 16.4%  Zur the Enchanter 12.2%  Winota 15.8%  Kinnan 22.8%  Yawgmoth 5.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.2% ->  26.4%  +0.2pt   ±5.6 
+    Rounds survived (or game length)                   8.28 ->   8.31   +0.02  ±0.41 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.56 ->   0.56   +0.01  ±0.10 
+    Mana available on your turn 4                      4.17 ->   4.17   +0.00  ±0.19 
+    Mana available on your turn 6                      5.90 ->   5.97   +0.07  ±0.23 
+
+  Speed
+    Games where the game plan came online             51.0% ->  49.0%  -2.0pt   ±6.3 
+    Turn the game plan came online                     6.34 ->   6.35   +0.01  ±0.40 
+    Turn the commander first resolved                  6.12 ->   6.09   -0.03  ±0.33 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.44 ->  12.43   -0.00  ±1.18 
+    Tutors resolved per game                           0.25 ->   0.27   +0.02  ±0.07 
+    Spells cast per game                               8.04 ->   8.09   +0.06  ±0.69 
+
+  Interaction
+    Counterspells cast                                 0.55 ->   0.55   +0.00  ±0.09 
+    Spot removal cast                                  1.32 ->   1.26   -0.06  ±0.15 
+    Board wipes cast                                   0.21 ->   0.22   +0.01  ±0.06 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.01  ±0.01 
+    Your key permanents removed by opponents           0.25 ->   0.28   +0.03  ±0.07 
+    Your spells countered                              0.49 ->   0.46   -0.03  ±0.10 
+
+  Threat & pressure
+    Damage dealt to opponents per game                35.00 ->  34.42   -0.58  ±5.96 
+      ...of which combat damage                       28.03 ->  26.13   -1.90  ±4.99 
+      ...of which magecraft / burn                     2.17 ->   2.46   +0.29  ±1.01 
+      ...of which drain triggers                       3.17 ->   3.89   +0.71  ±1.07 
+      ...of which other triggers                       1.62 ->   1.95   +0.32  ±0.77 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(117s total)
