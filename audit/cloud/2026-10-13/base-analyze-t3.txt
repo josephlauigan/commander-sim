@@ -1,0 +1,84 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 8 worker threads: about 3 minutes
+  progress  10.0%  0m13s elapsed, ~1m58s left
+  progress  20.0%  0m22s elapsed, ~1m30s left
+  progress  30.0%  0m35s elapsed, ~1m22s left
+  progress  40.0%  0m47s elapsed, ~1m11s left
+  progress  50.0%  0m58s elapsed, ~0m58s left
+  progress  60.0%  1m09s elapsed, ~0m46s left
+  progress  70.0%  1m20s elapsed, ~0m34s left
+  progress  80.0%  1m33s elapsed, ~0m23s left
+  progress  90.0%  1m44s elapsed, ~0m11s left
+  progress 100.0%  1m58s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 4.0%   (4-player baseline 25%)   average rounds survived 10.5
+
+-- How it wins --
+  damage      89.5% of wins
+  timeout     10.5% of wins
+  Opponents it eliminated: 0.14 per game, by
+    combat             61.2%
+    commander damage   37.3%
+    decked              1.5%
+  Damage dealt per game: 11.6, from
+    combat              11.6  (100%)
+
+-- How it loses --
+  Eliminated in 95.4% of games, on average in round 10.3
+    by Aurelia  via combat             29.4% of games
+    by Marwyn   via combat             17.9% of games
+    by Tergrid  via combat             17.9% of games
+    by Atraxa   via combat              9.0% of games
+    by Korvold  via combat              4.6% of games
+    by Korvold  via drain               3.8% of games
+    by Aurelia  via commander damage    2.5% of games
+    by Korvold  via commander damage    2.1% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 5%  T4 12%  T5 23%  T6 29%  T7 38%  T8 41%  T9 43%  T10 45%  T11 47%  T12 48%
+  Online at all: 49.6% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 100.0% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Helm of Kaldra                             cast in  22.3% of games, win rate when cast   9.3% (+5.4)
+    Colossus Hammer                            cast in  42.1% of games, win rate when cast   6.4% (+2.5)
+    Wrecking Ball Arm                          cast in  35.0% of games, win rate when cast   5.4% (+1.4)
+    Sword of Kaldra                            cast in  48.5% of games, win rate when cast   5.2% (+1.2)
+    Mask of Memory                             cast in  71.0% of games, win rate when cast   5.0% (+1.0)
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast   4.0% (+0.0)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast   4.0% (+0.0)
+    Mask of Memory                             cast in  71.0% of games, win rate when cast   5.0% (+1.0)
+    Sword of Kaldra                            cast in  48.5% of games, win rate when cast   5.2% (+1.2)
+    Wrecking Ball Arm                          cast in  35.0% of games, win rate when cast   5.4% (+1.4)
+    Colossus Hammer                            cast in  42.1% of games, win rate when cast   6.4% (+2.5)
+    Helm of Kaldra                             cast in  22.3% of games, win rate when cast   9.3% (+5.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Take Up the Shield                         cast   2.0% of the games it was drawn
+    Cho-Manno's Blessing                       cast   9.4% of the games it was drawn
+    Repel the Darkness                         cast  39.2% of the games it was drawn
+    Shield of Kaldra                           cast  41.5% of the games it was drawn
+    Hulkbuster Armor                           cast  42.2% of the games it was drawn
+    Exalted Angel                              cast  43.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.71
+    Mask of Memory                             0.07
+    Helm of Kaldra                             0.06
+    White Mage's Staff                         0.06
+    Sword of Kaldra                            0.05
+    Colossus Hammer                            0.05
+    Armory Automaton                           0.04
+    Cid, Freeflier Pilot                       0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(119s total)

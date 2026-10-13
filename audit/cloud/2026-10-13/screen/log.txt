@@ -1,0 +1,30 @@
+09:47 D1 t1 exit 0 [loose       ] win  34.0% ->  35.6%  (delta +1.6 pts, noise ±5.5, paired)   n=500
+09:50 D1 t2 exit 0 [loose       ] win  40.8% ->  37.4%  (delta -3.4 pts, noise ±5.9, paired)   n=500
+09:53 D1 t3 exit 0 [loose       ] win  30.8% ->  29.6%  (delta -1.2 pts, noise ±5.2, paired)   n=500
+09:53 D1 t4 exit 0 
+09:53 D1 t5 exit 0 
+09:53 D2 t1 exit 0 
+09:53 D2 t2 exit 0 
+09:53 D2 t3 exit 0 
+09:53 D2 t4 exit 0 
+09:53 D2 t5 exit 0 
+09:53 D3 t1 exit 0 
+09:53 D3 t2 exit 0 
+09:53 D3 t3 exit 0 
+09:53 D3 t4 exit 0 
+09:53 D3 t5 exit 0 
+09:53 DONE D1 D2 D3
+09:55 NOTE: the 09:53 lines with no result failed (old binary, Elrond doc removed by a merge mid-run); rerun with a rebuilt binary
+09:54 D1 t4 exit 0 
+09:56 D1 t5 exit 0 [loose       ] win  30.2% ->  26.6%  (delta -3.6 pts, noise ±5.1, paired)   n=500
+09:59 D2 t1 exit 0 [loose       ] win  41.4% ->  37.4%  (delta -4.0 pts, noise ±5.3, paired)   n=500
+10:03 D2 t2 exit 0 [loose       ] win  47.6% ->  46.2%  (delta -1.4 pts, noise ±5.4, paired)   n=500
+10:05 D2 t3 exit 0 [loose       ] win  37.4% ->  41.2%  (delta +3.8 pts, noise ±5.3, paired)   n=500
+10:08 D2 t4 exit 0 [loose       ] win  33.4% ->  29.6%  (delta -3.8 pts, noise ±4.7, paired)   n=500
+10:09 D2 t5 exit 0 [loose       ] win  24.4% ->  20.6%  (delta -3.8 pts, noise ±4.1, paired)   n=500
+10:12 D3 t1 exit 0 [loose       ] win  29.6% ->  27.4%  (delta -2.2 pts, noise ±4.4, paired)   n=500
+10:16 D3 t2 exit 0 [loose       ] win  41.4% ->  40.0%  (delta -1.4 pts, noise ±5.0, paired)   n=500
+10:18 D3 t3 exit 0 [loose       ] win  31.8% ->  34.8%  (delta +3.0 pts, noise ±5.1, paired)   n=500
+10:20 D3 t4 exit 0 [loose       ] win  32.2% ->  30.6%  (delta -1.6 pts, noise ±4.2, paired)   n=500
+10:22 D3 t5 exit 0 [loose       ] win  23.2% ->  22.6%  (delta -0.6 pts, noise ±3.5, paired)   n=500
+10:22 DONE D1 D2 D3

@@ -1,0 +1,63 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Momentary Blink [scryfall+dsl] I 1W :: fb=3U
+      ability: spell  -> blink
+Swaps: Smothering Tithe -> Momentary Blink
+
+=== Sephiroth vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  37.4% ->  41.2%  (delta +3.8 pts, noise ±5.3, paired)   n=500
+               eliminated by (variant): Aurelia 18.2%  Tergrid 15.0%  Korvold 6.8%  Atraxa 7.6%  Marwyn 11.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          37.4% ->  41.2%  +3.8pt   ±6.2 
+    Rounds survived (or game length)                  11.09 ->  11.44   +0.35  ±0.41 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.65 ->   0.65   +0.00  ±0.10 
+    Mana available on your turn 4                      4.34 ->   4.25   -0.09  ±0.16 
+    Mana available on your turn 6                      6.17 ->   5.80   -0.37  ±0.25*
+
+  Speed
+    Games where the game plan came online             86.0% ->  82.2%  -3.8pt   ±4.6 
+    Turn the game plan came online                     6.42 ->   6.52   +0.09  ±0.30 
+    Turn the commander first resolved                  7.90 ->   8.27   +0.36  ±0.37 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.15 ->  15.90   +0.75  ±1.16 
+    Tutors resolved per game                           0.52 ->   0.50   -0.01  ±0.08 
+    Spells cast per game                              14.42 ->  14.91   +0.49  ±1.14 
+
+  Interaction
+    Counterspells cast                                 0.37 ->   0.39   +0.02  ±0.07 
+    Spot removal cast                                  1.13 ->   1.13   +0.00  ±0.13 
+    Board wipes cast                                   0.33 ->   0.38   +0.05  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.15 ->   0.12   -0.03  ±0.06 
+    Your key permanents removed by opponents           0.96 ->   0.92   -0.04  ±0.16 
+    Your spells countered                              0.12 ->   0.13   +0.01  ±0.05 
+    Removed bombs brought back                         0.38 ->   0.45   +0.07  ±0.11 
+
+  Threat & pressure
+    Bombs put on the battlefield                       3.29 ->   3.53   +0.24  ±0.38 
+    Damage dealt to opponents per game                25.03 ->  29.06   +4.03  ±4.32 
+      ...of which combat damage                       14.71 ->  17.21   +2.50  ±2.91 
+      ...of which drain triggers                       8.09 ->   9.37   +1.27  ±1.63 
+      ...of which other triggers                       2.22 ->   2.48   +0.26  ±1.43 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(167s total)

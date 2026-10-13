@@ -7133,7 +7133,7 @@ status = "Full"
 note = "rock: {T}: {C}{C}{C} (mana.rs, tag rock=3:C)"
 
 ["Prismatic Lens"]
-status = "Full"
+status = "Approximate"
 note = "rock: {T}: {C}. The filter ability ({1},{T}: one mana of any color) is not modeled: it only turns one mana into a coloured one, the deck needs only {W} and plays 31 Plains plus fetches, so it never decides a game"
 
 ["Kor Outfitter"]
