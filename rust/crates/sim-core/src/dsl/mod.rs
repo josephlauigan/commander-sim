@@ -1845,7 +1845,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .perms
             .iter()
             .copied()
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m))
+            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m) && x.attached != Some(m))
             .collect();
         let base = n;
         let cands: Vec<PermId> = cands
