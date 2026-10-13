@@ -7033,3 +7033,29 @@ note = "3/3; enters or attacks: sacrifice a creature (the AI: only fodder worth 
 dsl = []
 status = "Full"
 note = "your upkeep: each player exiles their top card; you play your own card and every other exiled card of lesser mana value free, at once in the upkeep, highest first (lands only while a land drop is left; no Auras or counterspells); opponents' cards stay theirs"
+
+["Crippling Fear"]
+tags = "wipe=fear"
+dsl = []
+status = "Full"
+note = "sorcery wipe (impls/sweepers.rs): the creature type is chosen as it resolves, the one that costs the caster least (Orc for Sauron: the Army counts as an Orc); creatures not of that type get -3/-3, so those with toughness 3 or less die"
+
+["Widespread Brutality"]
+tags = "wipe=brutal"
+dsl = []
+status = "Full"
+note = "sorcery wipe (impls/sweepers.rs): amass 2 (the engine's Army is an Orc Army; the Zombie type is not tracked), then the Army deals damage equal to its power to each non-Army creature, the caster's own included; damage that does not kill is not tracked"
+
+["Chandra's Ignition"]
+tags = "wipe=ignite"
+dsl = []
+status = "Full"
+note = "sorcery wipe (impls/sweepers.rs): the caster's highest-power creature deals damage equal to its power to each other creature (the caster's own included) and each opponent; damage that does not kill a creature is not tracked"
+
+["Inferno Titan"]
+status = "Full"
+note = "firebreathing is the DSL ability; when it enters or attacks, 3 damage divided among up to three targets (impls/sweepers.rs): all at a player when that is lethal, else the best set of opposing creatures and planeswalkers it can kill, the rest to a planeswalker or the weakest opponent"
+
+["Massacre Wurm"]
+status = "Full"
+note = "when it enters, each creature your opponents control with toughness 2 or less dies (-2/-2; the caster's side is untouched, tested in cards_sauron_sweepers.rs); whenever an opposing creature dies, that player loses 2 life (wurmdrain)"

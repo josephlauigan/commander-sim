@@ -946,13 +946,16 @@ pub struct WipeRule {
     biggest: Option<PermId>,
     x: i32,
     victim: Option<PlayerId>,
+    /// the sweepers of impls/sweepers.rs (Crippling Fear, Widespread Brutality, Chandra's Ignition)
+    ext: Option<crate::impls::sweepers::Sweep>,
 }
 
 impl WipeRule {
     pub fn new(g: &Game, caster: PlayerId, kind: &str) -> WipeRule {
         let kind = crate::sym::intern(kind);
-        let mut r = WipeRule { kind, caster, modes: vec![], biggest: None, x: 0, victim: None };
+        let mut r = WipeRule { kind, caster, modes: vec![], biggest: None, x: 0, victim: None, ext: None };
         match kind {
+            k if crate::impls::sweepers::is_kind(k) => r.ext = Some(crate::impls::sweepers::Sweep::new(g, caster, k, false)),
             "farewell" | "austere2" => r.modes = wipe_modes(g, caster, kind),
             "rebuke" => r.victim = wipe_eval(g, caster, kind).2,
             "nib" => {
@@ -971,6 +974,9 @@ impl WipeRule {
     pub fn hits(&self, g: &Game, m: PermId, q: PlayerId) -> bool {
         let x = g.perm(m);
         let cd = x.cd.map(|c| g.db.get(c));
+        if let Some(s) = &self.ext {
+            return s.hits(g, m);
+        }
         match self.kind {
             "farewell" | "austere2" => mode_hit(g, &self.modes, m),
             "vandal" => q != self.caster && cd.is_some_and(|d| d.types.has(Types::ARTIFACT)),
@@ -1029,6 +1035,9 @@ pub fn wipe_loss(g: &Game, q: PlayerId, kind: &str, caster: PlayerId) -> f64 {
 
 /// ais.wipe_eval: (what the opponents lose, what p loses, the one player a one-player wipe hits)
 pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerId>) {
+    if crate::impls::sweepers::is_kind(kind) {
+        return crate::impls::sweepers::eval(g, p, kind);
+    }
     let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     if matches!(kind, "farewell" | "austere2") {
         let modes = wipe_modes(g, p, kind);

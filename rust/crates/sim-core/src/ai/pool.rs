@@ -888,7 +888,7 @@ const PROTECTORS: [Protector; 17] = [
     ("Cartel Aristocrat", Where::BfSacOther, None, How::Color, Scope::Selfish, false),       // rules2.py
 ];
 
-const WIPE_INDES: [&str; 6] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal"];
+const WIPE_INDES: [&str; 8] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal", "brutal", "ignite"];
 
 fn destroyish(kind: &str) -> bool {
     kind == "destroy" || kind.starts_with("dmg")

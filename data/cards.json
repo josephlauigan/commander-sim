@@ -14262,6 +14262,43 @@
    "spell_prio": false
   },
   {
+   "name": "Chandra's Ignition",
+   "types": "S",
+   "generic": 3,
+   "pips": "RR",
+   "tags": {
+    "wipe": "ignite"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Chandra, Torch of Defiance",
    "types": "P",
    "generic": 2,
@@ -18159,6 +18196,43 @@
    "python_hooks": [
     "attack_cap"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Crippling Fear",
+   "types": "S",
+   "generic": 2,
+   "pips": "BB",
+   "tags": {
+    "wipe": "fear"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -45390,6 +45464,67 @@
     "cmc": 2,
     "land": false,
     "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Inferno Titan",
+   "types": "C",
+   "generic": 4,
+   "pips": "RR",
+   "tags": {
+    "pow": "6",
+    "bomb": "6"
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "R"
+     },
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 1,
+       "tgh": 0,
+       "what": {
+        "sel": "self"
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "giant"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever ~ enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -101973,6 +102108,45 @@
     "creature": false,
     "instant": true,
     "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Widespread Brutality",
+   "types": "S",
+   "generic": 1,
+   "pips": "BRR",
+   "tags": {
+    "wipe": "brutal"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "amass"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BR",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
     "perm": false
    },
    "phyrexian": "",

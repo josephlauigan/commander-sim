@@ -362,6 +362,9 @@ pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ct
 
 fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
     crate::glog!(g, "    board wipe resolves ({})", kind);
+    if crate::impls::sweepers::is_kind(kind) {
+        return crate::impls::sweepers::resolve(g, p, kind);
+    }
     let mut victims: Vec<PlayerId> = match kind {
         "rift" | "vandal" => g.opps(p).collect(),
         "rebuke" => ctx.victim.filter(|&v| g.player(v).alive).into_iter().collect(),

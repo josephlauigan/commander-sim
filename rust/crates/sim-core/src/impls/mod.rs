@@ -34,6 +34,7 @@ pub mod titania;
 pub mod sheoldred;
 pub mod elrond;
 pub mod cloud;
+pub mod sweepers;
 pub mod bulk_blue;
 pub mod bulk_white;
 pub mod t0_zurgo;
@@ -77,6 +78,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     sheoldred::register(&mut r, db)?;
     elrond::register(&mut r, db)?;
     cloud::register(&mut r, db)?;
+    sweepers::register(&mut r, db)?;
     bulk_blue::register(&mut r, db)?;
     bulk_white::register(&mut r, db)?;
     t0_zurgo::register(&mut r, db)?;
