@@ -1,0 +1,59 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Phyrexian Tower [pool] L  :: leg c=C
+   Phyrexian Altar [pool] A 3 :: (no tags)
+Swaps: Swamp -> Phyrexian Tower; Mind Stone -> Phyrexian Altar
+
+=== Sephiroth vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.6% ->  35.6%  (delta +1.0 pts, noise ±5.5, paired)   n=500
+               eliminated by (variant): Aurelia 19.6%  Tergrid 16.0%  Korvold 7.2%  Atraxa 7.8%  Marwyn 13.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.6% ->  35.6%  +1.0pt   ±6.0 
+    Rounds survived (or game length)                  11.01 ->  10.98   -0.03  ±0.41 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.64 ->   0.61   -0.03  ±0.10 
+    Mana available on your turn 4                      4.28 ->   4.23   -0.05  ±0.15 
+    Mana available on your turn 6                      5.70 ->   5.70   -0.00  ±0.21 
+
+  Speed
+    Games where the game plan came online             80.4% ->  80.2%  -0.2pt   ±5.0 
+    Turn the game plan came online                     6.65 ->   6.60   -0.05  ±0.32 
+    Turn the commander first resolved                  8.30 ->   8.58   +0.28  ±0.41 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.49 ->  14.76   +0.27  ±1.06 
+    Tutors resolved per game                           0.50 ->   0.49   -0.01  ±0.08 
+    Spells cast per game                              13.53 ->  13.28   -0.25  ±1.08 
+
+  Interaction
+    Counterspells cast                                 0.33 ->   0.31   -0.02  ±0.07 
+    Spot removal cast                                  1.10 ->   1.08   -0.02  ±0.12 
+    Board wipes cast                                   0.34 ->   0.35   +0.00  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.14 ->   0.13   -0.01  ±0.06 
+    Your key permanents removed by opponents           0.79 ->   0.74   -0.05  ±0.13 
+    Your spells countered                              0.11 ->   0.11   -0.01  ±0.05 
+    Removed bombs brought back                         0.39 ->   0.37   -0.02  ±0.09 
+
+  Threat & pressure
+    Bombs put on the battlefield                       2.96 ->   3.01   +0.05  ±0.35 
+    Damage dealt to opponents per game                23.97 ->  25.29   +1.31  ±4.65 
+      ...of which combat damage                       13.75 ->  15.67   +1.92  ±3.42 
+      ...of which drain triggers                       8.30 ->   8.00   -0.30  ±1.64 
+      ...of which other triggers                       1.93 ->   1.62   -0.30  ±1.31 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(89s total)

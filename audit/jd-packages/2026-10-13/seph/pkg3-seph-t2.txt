@@ -1,0 +1,60 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Phyrexian Tower [pool] L  :: leg c=C
+   Phyrexian Altar [pool] A 3 :: (no tags)
+   Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel [pool] C 2B :: leg human pow=3 tgh=3 bomb=4
+Swaps: Swamp -> Phyrexian Tower; Mind Stone -> Phyrexian Altar; Flickering Hound -> Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
+
+=== Sephiroth vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  45.2% ->  48.4%  (delta +3.2 pts, noise ±6.0, paired)   n=500
+               eliminated by (variant): Kaalia of the Vast 14.6%  Sythis 11.2%  Lord Windgrace 9.4%  Brago 10.0%  Meren of Clan Nel Toth 5.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          45.2% ->  48.4%  +3.2pt   ±6.3 
+    Rounds survived (or game length)                  12.30 ->  12.40   +0.10  ±0.41 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.60 ->   0.63   +0.03  ±0.10 
+    Mana available on your turn 4                      4.28 ->   4.24   -0.03  ±0.15 
+    Mana available on your turn 6                      5.87 ->   5.72   -0.14  ±0.20 
+
+  Speed
+    Games where the game plan came online             89.4% ->  88.2%  -1.2pt   ±4.0 
+    Turn the game plan came online                     6.63 ->   6.73   +0.10  ±0.30 
+    Turn the commander first resolved                  8.57 ->   8.72   +0.15  ±0.37 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.02 ->  17.90   +0.88  ±1.25 
+    Tutors resolved per game                           0.60 ->   0.64   +0.04  ±0.10 
+    Spells cast per game                              17.59 ->  17.13   -0.47  ±1.22 
+
+  Interaction
+    Counterspells cast                                 0.48 ->   0.45   -0.03  ±0.08 
+    Spot removal cast                                  1.34 ->   1.39   +0.05  ±0.14 
+    Board wipes cast                                   0.42 ->   0.42   +0.00  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.41 ->   0.35   -0.05  ±0.11 
+    Your key permanents removed by opponents           1.59 ->   1.49   -0.10  ±0.20 
+    Your spells countered                              0.31 ->   0.30   -0.01  ±0.08 
+    Removed bombs brought back                         0.44 ->   0.41   -0.03  ±0.10 
+
+  Threat & pressure
+    Bombs put on the battlefield                       3.99 ->   3.91   -0.08  ±0.39 
+    Damage dealt to opponents per game                30.66 ->  33.51   +2.85  ±4.62 
+      ...of which combat damage                       17.65 ->  20.04   +2.39  ±2.94 
+      ...of which drain triggers                      10.16 ->  11.35   +1.19  ±1.82 
+      ...of which other triggers                       2.85 ->   2.12   -0.73  ±1.41 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(111s total)
