@@ -260,3 +260,20 @@ fn sauron_table() -> Game {
     set_ai(&mut g, AiMode::Lookahead);
     g
 }
+
+// ---- fix 5: no ping-pong
+#[test]
+fn worn_equipment_moves_only_to_a_clearly_better_holder() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 4, false);
+    let cl = perm(&mut g, P0, CLOUD);
+    g.perm_mut(cl).noatk = true; // out of the picture as a holder, but on the battlefield: moves are wanted
+    let kd = perm(&mut g, P0, "Kor Duelist");
+    let bg = perm(&mut g, P0, "Bronze Guardian");
+    let mask = perm(&mut g, P0, "Mask of Memory");
+    g.perm_mut(mask).attached = Some(kd);
+    let offered = |g: &Game| sim_core::dsl::equip_options(g, P0).iter().any(|o| o.label == "equip Mask of Memory");
+    assert!(!offered(&g), "equal holders: no move");
+    g.perm_mut(bg).plus += 8;
+    assert!(offered(&g), "a much bigger holder: move");
+}
