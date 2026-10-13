@@ -26,8 +26,8 @@ a card, Feast and Famine makes a player discard and untaps your lands, Hearth an
 Mask of Memory (draw four, discard two), White Mage's Staff (life), Explorer's Scope (two looks for
 a land) and Sword of Kaldra. Hero's Blade attaches itself whenever Cloud (or another legend) enters.
 
-**Free equips.** Ardenn attaches an Aura or Equipment each combat, Kor Outfitter attaches one when it enters, Auriok
-Steelshaper makes Equipment cost {1} less, and Puresteel Paladin (equip {0} with three artifacts) and Cid make the big
+**Free equips.** Ardenn moves any number of Equipment onto one creature at the start of each combat, Kor Outfitter attaches one when it enters, Auriok
+Steelshaper makes every equip cost {1} less, and Puresteel Paladin (equip {0} with three artifacts) and Cid make the big
 equip costs payable. Helitrooper and Armory Automaton also carry gear.
 
 **Making a 2/1 lethal.** Wrecking Ball Arm equips a legend for {3} (base 7/7, can't be blocked by power 2 or less);
@@ -38,9 +38,9 @@ equips a Soldier for {W}. With all three Kaldra pieces out, Helm of Kaldra makes
 the Swords just as well, and Beatrix, Thalia the Survivor and Zack Fair give the team something to attach to.
 
 **Keeping Cloud alive.** Champion's Helm (hexproof on a legend) and Swiftfoot Boots (hexproof and haste), Giver of Runes
-(protection for another creature), Grand Abolisher (nothing happens on your turn), Plaza of Heroes (legendary spells
-can't be countered), Bastion Protector (commander +2/+2 and indestructible), Shield of
-Kaldra, Patriot, and the protection instants: Unbreakable Formation, Rootborn Defenses, Stand Up for Yourself.
+(protection for another creature), Grand Abolisher (opponents can't cast spells or activate artifact, creature or enchantment abilities on your turn), Plaza of Heroes ({3}, exile it: a legend gains
+hexproof and indestructible until end of turn), Bastion Protector (commander +2/+2 and indestructible), Shield of
+Kaldra, Patriot, and the protection instants Unbreakable Formation and Rootborn Defenses (the team gains indestructible). Removal: Lay Down Arms, Stand Up for Yourself, Fate of the Sun-Cryst, Skyclave Apparition, Citizen's Arrest, Secure the Scene, Austere Command, Disenchant.
 
 ## Bracket
 
@@ -60,6 +60,7 @@ from the other decks, the binder and the retired Jodah deck. Everything else is 
 | Arcane Signet, Fellwar Stone, Coalition Relic, Solemn Simulacrum, Enlightened Tutor, Grand Abolisher, Skyclave Apparition, Court of Ardenvale, Plaza of Heroes, Sword of Kaldra, Shield of Kaldra, Helm of Kaldra | Retired Jodah deck |
 | Exalted Angel, Disenchant | Binder |
 | Giver of Runes, 28 Plains | JD's own (not on the lists) |
+
 **To buy (11 cards, about $33.26; Scryfall, cheapest printing, 2026-10-13):** Cloud, Midgar Mercenary ($22.33), Knight of
 the White Orchid ($3.90), Ardenn, Intrepid Archaeologist ($2.86), Sol Ring ($1.42), Auriok Steelshaper ($0.83), Loyal
 Warhound ($0.64), Armored Skyhunter ($0.44), Balan, Wandering Knight ($0.40), Mind Stone ($0.20), Kor Outfitter ($0.19),

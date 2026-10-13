@@ -192,7 +192,7 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 | Card | Type | From | Set |
 |---|---|---|---|
 | Arcane Signet | Artifact | Bulk | fic, msc |
-| Carnage Altar | Artifact | Bulk | — |
+| Carnage Altar | Artifact | Bulk | c13 |
 | Charcoal Diamond | Artifact | Buy, $0.38 |  |
 | Commander's Sphere | Artifact | Buy, $0.31 |  |
 | Darksteel Plate | Artifact | Bulk | fic |
