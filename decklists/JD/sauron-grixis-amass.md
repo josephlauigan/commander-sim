@@ -1,6 +1,6 @@
 # Sauron, the Dark Lord — Grixis Amass
 
-**Simulator, 2026-10-12:** **24.8% over all tiers** (±0.5; rank 5 of the ten decks): T1 26.4%, T2 31.1%, T3 22.5%, T4 22.8%, T5 21.3%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+**Simulator, 2026-10-13 (paired test, pool run pending):** **32.6% over all tiers** against 24.3% for the previous list (1,000 paired games per tier, every tier up by more than its noise of about ±3.4 to ±4.0): T1 33.7%, T2 39.5%, T3 32.1%, T4 30.7%, T5 27.0%. Look-ahead AI, loose profile. That figure was measured with Torment of Hailfire in Comet Storm's slot; Comet Storm for Torment then measured −0.6, within noise. A pool run of the ten decks on this list has not been done yet. The previous list's pool figure was 24.8% (10-12, rank 5 of ten; `decklists/pool/pool-results.md` section 0d).
 
 2026-09-17
 **Updated 2026-09-18 / 09-19 / 09-20** across earlier passes (rebuild, Nibelheim Aflame, extra-combat + land upgrade, bracket correction).
@@ -26,7 +26,7 @@
 
 ## Strategy
 
-Let the whole table feed one enormous Orc Army, multiply its counters, suit it up, and grind the pod behind a Grixis control shell. A second, faster way to win sits alongside it: an **Underworld Breach** combo with **Brain Freeze**, fuelled by **Dark Ritual** and **Lotus Petal**, that mills the whole table out in one turn (see Key lines). The Army is the plan most games; the Breach line is the answer to a Bracket 4 table that is racing you.
+Let the whole table feed one enormous Orc Army, multiply its counters, suit it up, and grind the pod behind a Grixis control shell. The 10-13 rebuild made it faster and kinder to the Army: **Dreadhorde Invasion** and **Lazotep Reaver** start an Army before Sauron lands (the first Army hit comes about a turn earlier), eleven rocks back the six-mana commander, and the symmetric wipes became one-sided ones, so the Army survives what clears the table. **Exsanguinate** and **Comet Storm** are the X-spell finishers; the **Sword of Feast and Famine + Aggravated Assault** combo is the only combo (see Key lines). The old Underworld Breach line is gone.
 
 Sauron does the work for free. He is a 7/6 with ward (sacrifice a legendary artifact or legendary creature, which most opponents simply cannot pay), and:
 
@@ -36,17 +36,23 @@ Sauron does the work for free. He is a 7/6 with ward (sacrifice a legendary arti
 
 Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then every later amass piles more +1/+1 counters onto that same creature. Three opponents casting two spells a turn means six counters a turn cycle that cost you nothing.
 
-**Grow it.** Orcish Bowmasters and Sauron, the Necromancer add counters on their own schedules. Iron Man adds a counter every time you draw, and Vision grows on off-turn casts. Barad-dûr is a late-game mana sink: it taps for black, and for {X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, Slaughter Pact, and three wipes is almost always.
+**Grow it.** Orcish Bowmasters and Sauron, the Necromancer add counters on their own schedules. Iron Man adds a counter every time you draw, and Vision grows on off-turn casts. Barad-dûr is a late-game mana sink: it taps for black, and for {X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, Slaughter Pact, and Massacre Wurm, Ral, Inferno Titan and Comet Storm killing opposing creatures is almost always.
+
+**Start it early.** **Dreadhorde Invasion** ({1}{B} enchantment) loses you 1 life and amasses Zombies 1 every upkeep, and **Lazotep Reaver** ({1}{B}) amasses Zombies 1 when it enters. Both put counters on an Army you control (it is also a Zombie) or make one if you have none, so the Army exists before Sauron lands and every later amass piles onto it. A Zombie token Army with power 6 or greater gains lifelink when it attacks.
 
 **Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and Kaervek. Without Bowmasters it's just a symmetrical wheel that refuels the table, so hold the activation until a payoff is on board.
 
-**Multiply it.** Deepglow Skate doubles every counter on your board at once, which on a fat Army is the single most backbreaking card in the deck. Flux Channeler and Inexorable Tide proliferate it upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
+**Multiply it.** Inexorable Tide proliferates the Army upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
 
-**Talrand, Sky Summoner** (10-07, in Marchesa's slot) makes a 2/2 flying Drake whenever you cast an instant or sorcery. The deck runs 26 of them, so Talrand turns counterspells, removal and draw spells into a second army of fliers: blockers against the creature decks that cause most losses, and attackers that don't depend on the Orc Army.
+**Talrand, Sky Summoner** (10-07, in Marchesa's slot) makes a 2/2 flying Drake whenever you cast an instant or sorcery. The deck runs 25 of them, so Talrand turns counterspells, removal and draw spells into a second army of fliers: blockers against the creature decks that cause most losses, and attackers that don't depend on the Orc Army.
 
-**Keep it.** **The Ozolith** is new insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with counters on it, those counters move onto The Ozolith, and at the beginning of combat on your turn you can put them all onto a target creature. A spot-removed, bounced, or swept Army no longer resets you to zero — the next amass makes a fresh Army and The Ozolith hands it the old pile (or put it straight onto Sauron). It also catches the counters when you wipe the board yourself with Blasphemous Act or Toxic Deluge.
+**Keep it.** **The Ozolith** is insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with counters on it, those counters move onto The Ozolith, and at the beginning of combat on your turn you can put them all onto a target creature. A spot-removed, bounced, or swept Army no longer resets you to zero — the next amass makes a fresh Army and The Ozolith hands it the old pile (or put it straight onto Sauron). It also catches the counters if one of your own sweeps (Nibelheim Aflame, Chandra's Ignition) takes a counter-carrying creature with it.
 
-**Cash it in.** Sword of Feast and Famine, Sword of Hearth and Home, Sword of Fire and Ice, and Conqueror's Flail turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard and untaps all your lands, and War Machine gives your modified creatures double strike. **Sword of Hearth and Home** is +2/+2 and protection from green and white, and every hit flickers a creature you own and ramps a basic: re-buy Orcish Bowmasters (another ping and amass), Noxious Gearhulk (another kill), Grave Titan (two more Zombies), or — best — Deepglow Skate, which doubles the Army's counters again on every connection. **Sword of Fire and Ice** is +2/+2 and protection from blue and red, which blanks most of the burn and bounce aimed at the Army, and every hit deals 2 damage to any target (a blocker it kills, a planeswalker, or a player) and draws you a card. Whispersilk Cloak and Rogue's Passage push the Army through. Aggravated Assault is the closer: an extra combat each time you pay {3}{R}{R}, and with Sword of Feast and Famine it's an infinite (see Key lines). Every connection tempts the Ring, and Scarlet Witch turns attacks into more cards.
+**Cash it in.** Sword of Feast and Famine and Sword of Hearth and Home turn the Army into a kill. Sword of Feast and Famine is the headline: +2/+2, protection from black and green, and every hit makes the defender discard and untaps all your lands, and War Machine gives your modified creatures double strike. **Sword of Hearth and Home** is +2/+2 and protection from green and white, and every hit flickers a creature you own and ramps a basic: re-buy Orcish Bowmasters (another ping and amass), Noxious Gearhulk (another kill), Grave Titan (two more Zombies), Massacre Wurm (another −2/−2), Inferno Titan (3 more damage) or Lazotep Reaver (another amass). Whispersilk Cloak and Rogue's Passage push the Army through. Aggravated Assault is the closer: an extra combat each time you pay {3}{R}{R}, and with Sword of Feast and Famine it's an infinite (see Key lines). Every connection tempts the Ring, and Scarlet Witch turns attacks into more cards.
+
+**Clear the table, keep the Army.** The 10-13 swaps replaced Toxic Deluge, Blasphemous Act and Chaos Warp with one-sided answers. **Massacre Wurm** ({3}{B}{B}{B}) gives opponents' creatures −2/−2 when it enters, and each opponent loses 2 life whenever one of their creatures dies. **Ral and the Implicit Maze** ({3}{R}{R} Saga) deals 2 damage to each creature and planeswalker your opponents control (chapter I), lets you discard a card to exile the top two and play them through your next turn (II), and makes a Spellgorger Weird (III). **Inferno Titan** deals 3 damage divided among up to three targets when it enters and whenever it attacks. **Chandra's Ignition** ({3}{R}{R}) has a creature you control, the Army, deal damage equal to its power to each other creature and each opponent: it also hits your own other creatures, like Nibelheim Aflame, so cast it when the Army is the only body that matters. **Comet Storm** ({X}{R}{R} instant, multikicker {1}) deals X to any target and to one more for each kick: removal at instant speed or a spread-out finisher.
+
+**Exsanguinate** ({X}{B}{B} sorcery) makes each opponent lose X life and you gain that much: with Sauron's mana and rocks, it finishes a table that the Army has already thinned or that is racing you.
 
 **Urabrask, Heretic Praetor** is a top-end threat: a hasty 4/4 that turns your upkeep into an extra card and turns each opponent's draw step into "exile the top card, play it this turn or lose it." It strips their ability to sandbag, and every card they rush out is still a cast that feeds Sauron and Kaervek.
 
@@ -54,7 +60,6 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Fact or Fiction** (in Consecrated Sphinx's old slot) is the instant-speed dig: cast it at the end of an opponent's turn for two of the five cards. **Bedevil** ({B}{B}{R} instant) destroys an artifact, creature or planeswalker: one more answer at instant speed.
 
-**Underworld Breach** is the deck's second engine. While it's out (it's sacrificed at the end of the turn), every nonland card in your graveyard can be cast again by paying its mana cost and exiling three other cards from your graveyard. Dark Ritual ({B} for {B}{B}{B}) and Lotus Petal ({0}, sacrifice for one mana of any colour) turn that into mana: each escape nets two black or one of any colour, and each one adds to the storm count. Brain Freeze ({1}{U}, storm) mills three cards per copy, so it fills your graveyard with fuel early in the turn and empties opponents' libraries late in it. Ritual and Petal also cast normally as fast mana, but they are in the deck for this line, and Brain Freeze does almost nothing without Breach.
 
 **Sephiroth, Planet's Heir** ({4}{U}{B}, 4/4 vigilance) holds Kefka's old slot. When he enters, opponents' creatures get −2/−2 until end of turn, which clears tokens, mana creatures and small blockers in front of the Army, and he gets a +1/+1 counter whenever a creature an opponent controls dies, so the turn he lands he is usually a 6/6 or bigger. Vigilance lets him attack and still guard Sauron.
 
@@ -62,26 +67,19 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Sword of Feast and Famine + Aggravated Assault is infinite combat.** Equip the Army, make it unblockable (Whispersilk Cloak or Rogue's Passage), and attack. The Sword's hit untaps all your lands, which pays for Aggravated Assault's {3}{R}{R} again, which untaps the Army for another combat. Each hit also tempts the Ring and makes the defender discard. Needs five lands; realistically turn five or later.
 
-**Deepglow Skate on Sword of Hearth and Home.** With both Swords on the Army, each connection flickers Skate and doubles every counter. Even without Aggravated Assault, one hit usually ends a player.
-
-**Three Swords on one Army.** Each Sword has its own hit trigger, so every connection with all three makes the defender discard and untaps your lands (Feast and Famine), flickers and ramps (Hearth and Home), and shoots 2 and draws a card (Fire and Ice). Equip costs add up ({2} each), so put Feast and Famine on first when the Aggravated Assault combo is live, and Fire and Ice first when the table is heavy on blue and red interaction.
+**Sword of Hearth and Home re-buys a sweeper.** Each connection flickers Massacre Wurm, Inferno Titan, Orcish Bowmasters or Noxious Gearhulk for a second enter trigger, which clears blockers in front of the Army while it keeps attacking.
 
 **Archivist wheel with Bowmasters** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each take about 5 pings apiece from Bowmasters, and the Army grows by about 15. Hold it for the turn it kills or the counters matter.
 
-**Underworld Breach + Brain Freeze mills the table.** It's not a strict infinite: the fuel is your own graveyard and library, but it produces far more than it spends.
-1. Cast Underworld Breach ({1}{R}). Have Brain Freeze in hand or graveyard and at least a few other cards in the graveyard.
-2. Cast Brain Freeze targeting yourself. Each copy mills you three, so even a small storm count fills the graveyard.
-3. Escape Dark Ritual and Lotus Petal again and again (each exiles three other cards): each Ritual nets {B}{B}, each Petal one mana of any colour (your {U} for Brain Freeze), and each cast adds one to storm.
-4. Escape Brain Freeze, still at yourself while you need fuel. Every escape costs three cards, but each Brain Freeze mills many times that, and the storm count climbs with every spell.
-5. Once storm is high, point the copies at the opponents (each copy can target a different player). They lose when they next draw from an empty library.
+**The early Army.** Dreadhorde Invasion on turn two, or Lazotep Reaver, with a rock to follow (eleven in the deck), builds an Army before Sauron arrives. Then the first hit comes sooner, and Massacre Wurm, Ral or Inferno Titan clear the way for it.
 
-Needs Breach, Brain Freeze and enough graveyard to start: Ritual and Petal make it reliable rather than possible. Every cast can be countered, so go off into tapped-out opponents, ideally after Sauron has drawn the counterspells out. Breach goes away at the end of the turn, so start only when you can finish.
+**Finish with X.** Once the Army has connected or opponents are low, Exsanguinate drains every opponent for X, and Comet Storm spreads X damage over as many targets as you kick. Both are better after a sweeper has already thinned the table.
 
-**Sequencing.** Get Sauron down early, since every opponent spell after he lands is a free counter. Land The Ozolith before you commit a big Army, so removal only costs you tempo. Bowmasters pays off from the turn it lands, so cast it before a wheel, not after. Hold the counterspells for the turn you swing.
+**Sequencing.** Get Sauron down early, since every opponent spell after he lands is a free counter. Land Dreadhorde Invasion early, and The Ozolith before you commit a big Army, so removal only costs you tempo. Bowmasters pays off from the turn it lands, so cast it before a wheel, not after. Hold the counterspells for the turn you swing.
 
 ## Consistency
 
-The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Seven rocks: Sol Ring, Arcane Signet, Mind Stone, Relic of Legends (any colour, or tap a legendary creature for one more), Talisman of Creativity, Talisman of Dominance, and Chromatic Lantern. Dark Ritual and Lotus Petal are one-shot fast mana (and the Breach line's fuel). Sword of Hearth and Home ramps a basic every time the Army connects.
+The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Eleven rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Relic of Legends (any colour, or tap a legendary creature for one more), Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern. Sword of Hearth and Home ramps a basic every time the Army connects.
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -92,38 +90,36 @@ The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Sw
 
 **Haunted Ridge → the Unclaimed Territory slot.** Unclaimed Territory only made coloured mana for Orc creature spells; Haunted Ridge is a real B/R dual.
 
-**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Chaos Warp) plus Noxious Gearhulk and Vraska; five counters (Counterspell, Arcane Denial, Undermine, **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more, and **Spell Pierce**, a one-mana soft counter for noncreature spells that's easy to hold up on the Breach turn); four resets in Blasphemous Act, Toxic Deluge, Nibelheim Aflame, and Cyclonic Rift; and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
+**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Bedevil) plus Noxious Gearhulk and Vraska; four counters (Counterspell, Arcane Denial, Undermine, and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
 
 ## Tutor targets by board state
 
-Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any card to hand for {1}{B}, plus a creature sacrificed as a cost), and **Ringsight** (a blue, black, or red card, tempting the Ring on the way). Ringsight reaches every Breach piece except Lotus Petal: Underworld Breach (red), Brain Freeze (blue) and Dark Ritual (black). Diabolic Intent only wants spare bodies: a Zombie from Grave Titan, a used-up Flux Channeler, a creature about to die anyway. Never feed it the Army. If every creature you have is working, hold it.
+Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any card to hand for {1}{B}, plus a creature sacrificed as a cost), and **Ringsight** (a blue, black, or red card, tempting the Ring on the way). Ringsight reaches Massacre Wurm, Inferno Titan, Exsanguinate, Comet Storm, Aggravated Assault and most of the rest of the deck; the colourless pieces (the Swords, The Ozolith, the rocks) need a Diabolic. Diabolic Intent only wants spare bodies: a Zombie from Grave Titan, a Lazotep Reaver that has already amassed, a creature about to die anyway. Never feed it the Army. If every creature you have is working, hold it.
 
-- **Army is huge, need to break through → the unblockable enabler.** Diabolic Tutor for Whispersilk Cloak or Rogue's Passage. If you already have evasion, Ringsight → Deepglow Skate for the doubling turn.
+- **Army is huge, need to break through → the unblockable enabler.** Diabolic Tutor for Whispersilk Cloak or Rogue's Passage. If you already have evasion, Ringsight → Exsanguinate or Comet Storm for the kill.
 - **Missing one combo piece → Diabolic Tutor or Diabolic Intent for Sword of Feast and Famine** (colourless — Ringsight can't reach it), **or Ringsight for Aggravated Assault**. Save a Diabolic for the Sword.
 - **Opponents holding removal for the Army → Diabolic Tutor for The Ozolith** before you commit.
 - **Bowmasters on board, hand running dry → Ringsight for Jace's Archivist**, then wheel the table.
-- **Holding one Breach piece, table tapped low → Ringsight for the other** (Underworld Breach or Brain Freeze); Diabolic Tutor for Lotus Petal if mana is the gap.
+- **Need to close the game → Ringsight for Exsanguinate or Comet Storm** once the Army is connecting.
 - **Need protection for the swing → Ringsight for Not of This World.**
 - **One problem creature → Ringsight for Infernal Grasp** (or Slaughter Pact if you need it free on the combo turn).
 - **Pod is casting into you → Ringsight for Kaervek** or Urabrask.
-- **Behind on board / need the reset → Ringsight for Toxic Deluge** or Blasphemous Act — ideally with The Ozolith out.
+- **Behind on board / need the reset → Ringsight for Massacre Wurm or Inferno Titan**, or Ral and the Implicit Maze when you can wait a turn for the Army to stay safe; Cyclonic Rift if it is the whole table. The Ozolith out helps if you cast Nibelheim Aflame or Chandra's Ignition.
+- **Slow start, no mana → Diabolic Tutor for Sol Ring.**
 - **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
 
-Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic Tutor and Diabolic Intent for the colourless pieces nothing else can find (the Swords, Lotus Petal, The Ozolith).
+Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic Tutor and Diabolic Intent for the colourless pieces nothing else can find (the Swords, The Ozolith, the rocks).
 
 ## Bracket and Rule 0
 
-Bracket 3 by Game Changers, at the cap with **three**: **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (Consecrated Sphinx left on 10-05, at no measurable cost). Spell Pierce, Talisman of Dominance, Diabolic Intent, Fact or Fiction, the Swords, Brain Freeze, Dark Ritual, and Lotus Petal are all off-list. The Breach combo is the one thing to raise in the pregame talk: it can come together early with a tutor, which Bracket 3 expects combos not to do.
+Bracket 3 by Game Changers, with **two**, one under the cap of three: **Cyclonic Rift** and **Orcish Bowmasters**. Underworld Breach, the third, left on 10-13. Diabolic Intent, Fact or Fiction, Talisman of Dominance, Exsanguinate, Comet Storm and the Swords are all off-list.
 
-**The deck has two combos.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later. **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal as fuel) mills the table in one turn; it can come together as early as turn four with a tutor. The Sword line is a late-game combo; the Breach line can be early, so say so before the game at a Bracket 3 table.
-
-In the simulator, against the tables a Bracket 4 deck sits at, the Breach version did about as well as the old Bracket 3 list (look-ahead AI, 800 games per tier: +2.9 points against Tier 4, −0.1 against Tier 5). The combo went off in 2–6% of games, against under 1% before. It traded some strength against softer Bracket 3 tables for that speed.
+**The deck has one combo.** **Sword of Feast and Famine + Aggravated Assault** is unlimited combat phases with an unblockable carrier; it needs five lands and realistically assembles turn five or later, a late-game combo that fits Bracket 3. No early or infinite combo remains. Exsanguinate and Comet Storm are X-spell finishers, not combos.
 
 Disclose before the game:
 
 - **Sword of Feast and Famine + Aggravated Assault is an infinite-combat combo**, and Diabolic Tutor, Diabolic Intent, and Ringsight can each find a piece.
-- **Underworld Breach + Brain Freeze** (with Dark Ritual and Lotus Petal) mills the table out in one turn; all three tutors find Breach pieces.
-- **Cyclonic Rift**, **Orcish Bowmasters**, and **Underworld Breach** (the three Game Changers).
+- **Cyclonic Rift** and **Orcish Bowmasters** (the two Game Changers).
 - **Sauron amasses off every spell an opponent casts**, and **Kaervek** punishes the same trigger.
 - **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters out it hurts for every card they draw.
 - **Urabrask** replaces each opponent's draw-step draw with an exile-and-play-it-now card.
@@ -259,11 +255,13 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 
 **The 10-01 change — the Underworld Breach package.** Bedevil → Underworld Breach, Slip Out the Back → Brain Freeze, Metallic Mimic → Dark Ritual, Feed the Swarm → Lotus Petal. The four cuts were the softest removal, the protection spell, and the Army's least important growth card. Tested in the simulator before the change (look-ahead AI, loose profile): over all five tiers it was about even with the old list (−1.3 points, within noise), better against the Bracket 4 tiers and worse against Bracket 3 ones; a confirming 800-game run against Tiers 4 and 5 found +2.9 and −0.1. Of the three Breach versions tried (with Grapeshot, a lighter package without rituals, and this one), this was the best. Breach is a fourth Game Changer: the deck is now Bracket 4.
 
-**Weakest remaining inclusions.** Plaza of Heroes, the softest land, left on 10-02 for Thought Vessel; Diabolic Intent if you find you never have a spare creature to feed it. Brain Freeze and Dark Ritual are weak on their own, which is the cost of the Breach line: if you go back to Bracket 3, the whole package comes out together (Breach is the Game Changer). Bedevil, Feed the Swarm, and Tezzeret's Gambit are the natural cards to bring back.
+**Weakest remaining inclusions.** Diabolic Intent if you find you never have a spare creature to feed it; Vandalblast on tables without artifacts. The 10-13 rebuild removed the softest cards (the Breach package, the symmetric wipes, Deepglow Skate and the Swords that never connected).
+
 
 **Scavenger Grounds hits your own graveyard too.** Fire it deliberately.
 
 **New cards and cuts.**
+- **10-13 rebuild** (the lists below this line record earlier changes, and several of those cards are gone now): out, Underworld Breach, Brain Freeze, Dark Ritual, Lotus Petal, Deepglow Skate, Flux Channeler, Sword of Fire and Ice, Conqueror's Flail, Toxic Deluge, Blasphemous Act, Chaos Warp, Spell Pierce; in, Ral and the Implicit Maze, Massacre Wurm, Chandra's Ignition, Inferno Titan, Talisman of Indulgence, Rakdos Signet, Dreadhorde Invasion, Lazotep Reaver, Exsanguinate, Comet Storm, Fellwar Stone, Dimir Signet.
 - **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage (left 10-11 to lead his own deck), Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
 - **From the bulk list**: Sephiroth, Planet's Heir (10-11); Cost of Brilliance (10-11, for Phyrexian Arena, which went to the Sheoldred deck).
 - **From the binder**: Bedevil (10-11, for Sheoldred, the Apocalypse, who left to lead her own deck).
