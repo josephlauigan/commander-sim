@@ -1286,6 +1286,9 @@ fn deed_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
             }
             if deed_hit(g, m, x) && on(g, m, q) {
                 die(g, m, "destroy")?;
+                if !g.perm(m).on_bf {
+                    crate::glog!(g, "    {} ({}) is destroyed (Pernicious Deed)", g.perm(m).name, g.player(q).name);
+                }
             }
         }
     }

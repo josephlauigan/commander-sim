@@ -699,6 +699,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     match pl.key {
         "seph" => super::seph::seph_tutor_target(g, p).and_then(|n| g.db.id(n)).filter(|c| okn.contains(c)),
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
+        "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
         "veyran" => {
             if kind == "art" {
                 return first(&["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
@@ -1307,6 +1308,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
         && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
     {
         return Ok(Some(r)); // Ultimate Magic: Holy
+    }
+    if key == "cloud"
+        && let Some(r) = crate::impls::cloud::cloud_wipe_response(g, q, kind, caster)?
+    {
+        return Ok(Some(r)); // Unbreakable Formation, Rootborn Defenses
     }
     if matches!(key, "galadriel" | "yshtola") {
         return Ok(None);
