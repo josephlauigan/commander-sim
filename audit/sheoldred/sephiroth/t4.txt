@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel [pool] C 2B :: leg human pow=3 tgh=3 bomb=4
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 10 minutes
+Swaps: Dark Deal -> Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.4% ->  33.5%  (delta +3.1 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Heliod 19.7%  Yuriko 12.5%  Krenko 17.3%  Chulane 7.3%  Prosper 9.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(244s total)
