@@ -32,3 +32,10 @@
 10:33 C3 t2 exit 0 [loose       ] win   3.0% ->   8.0%  (delta +5.0 pts, noise ±2.9, paired)   n=500
 10:38 C3 t3 exit 0 [loose       ] win   3.8% ->   4.4%  (delta +0.6 pts, noise ±2.6, paired)   n=499
 10:45 NOTE: JD stopped all sims; C3 t4/t5 not run. C3 was measured on the Cloud AI before the cloud-ai-fix branch (Champion's Helm and SoFF could not be equipped by Cloud).
+14:03 C4REV t1 exit 0 [loose       ] win  14.0% ->   4.6%  (delta -9.4 pts, noise ±3.5, paired)   n=500
+14:09 C4REV t2 exit 0 [loose       ] win   9.8% ->   6.0%  (delta -3.8 pts, noise ±3.3, paired)   n=500
+14:13 C4REV t3 exit 0 [loose       ] win   7.4% ->   2.8%  (delta -4.6 pts, noise ±2.7, paired)   n=500
+14:17 C4REV t4 exit 0 [loose       ] win   9.4% ->   3.8%  (delta -5.6 pts, noise ±3.0, paired)   n=500
+14:19 C4REV t5 exit 0 [loose       ] win  13.8% ->   8.4%  (delta -5.4 pts, noise ±3.7, paired)   n=500
+14:19 DONE C4REV
+14:20 NOTE: C4REV runs the C4 list (now the deck) against the old list (reversed swaps): read deltas negated, C4 = +5.8 avg.
