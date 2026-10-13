@@ -16,6 +16,7 @@
 **Updated 2026-10-06.** Out: Mystical Tutor. In: Underworld Breach. Mystical Tutor → Underworld Breach: every escape is a cast, so the pingers, token makers and Storm-Kiln Artist trigger again, doubled by Veyran. Still three Game Changers (Bracket 3).
 **Updated 2026-10-11.** Out: Cyclonic Rift. In: Evacuation. Matched to JD's physical list: Cyclonic Rift is in Sauron, so Veyran plays Evacuation; two Game Changers now (Jeska's Will, Underworld Breach)
 **Updated 2026-10-11 (trade with Kefka, moved as functional blocks).** Out to Kefka: Deflecting Swat, Slip Out the Back, Underworld Breach, Niv-Mizzet, the Firemind, Jin-Gitaxias, Progress Tyrant, Steam Vents, Sulfur Falls, Spirebluff Canal, Stormcarved Coast. In: Mystic Confluence and Splatter Technique (from Kefka), Return the Favor, Spell Pierce and Lightning Strike (from bulk), 2 Island and 2 Mountain. Paired look-ahead test, 1,000 games per tier: **+1.7 points** (22.9% -> 24.5%). One Game Changer now (Jeska's Will).
+**Updated 2026-10-12.** Out: Return the Favor (to bulk). In: Triple Triad (new). JD's choice: each upkeep, every player exiles their top card; you may play yours and every cheaper one free, and free instants and sorceries still trigger Veyran. A partial test (Tiers 1-3, 1,000 paired games each: +0.5, +0.9, -2.1, all within noise) was stopped early.
 
 ## Strategy
 
@@ -49,7 +50,7 @@ With one of these out, a four-spell turn leaves eight tokens. Unlike the command
 **Protecting Veyran.** Three pieces (since the 10-11 trade with Kefka):
 
 - **Lightning Greaves** gives shroud and haste, and its equip is {0}, so you can move it to a new threat for free.
-- **Return the Favor** ({R}{R} plus {1} per mode, spree) redirects a removal spell or counterspell to a new target, or copies your own instant or sorcery. The copy is a magecraft trigger, so Veyran doubles what it sets off, and it can copy a triggered ability too.
+- **Triple Triad** ({3}{R}{R}{R}) gives a free card every upkeep: each player exiles their top card, and you may play yours and every exiled card with lower mana value free. Free instants and sorceries are still cast, so they trigger Veyran and the magecraft cards.
 - **Spell Pierce** ({U}) counters a noncreature spell unless its controller pays {2}: a cheap answer to the removal spell aimed at Veyran, or the counter aimed at your big turn.
 
 Veyran is still removed about once a game in the simulator, which is the other reason the token makers matter.
@@ -98,7 +99,7 @@ The list is exactly 100 cards.
 
 **Interaction.** The 10-04 rebuild traded interaction for engines (Spell Pierce, Pongify, Reality Shift, Mystic Confluence and Return the Favor out); the 10-11 trade with Kefka brought Spell Pierce, Mystic Confluence and Return the Favor back. The deck has:
 
-- **Five ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Venser, Spell Pierce and Mystic Confluence. Return the Favor redirects a spell instead.
+- **Five ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Venser, Spell Pierce and Mystic Confluence.
 - **Eight pieces of spot removal** (Lightning Strike joined on 10-11), plus **Unsummon**, a one-mana bounce that also saves one of your own creatures.
 - **Four resets:** Blasphemous Act, River's Rebuke, Evacuation (every creature back to its owner's hand, which also fills the hands Jeska's Will counts) and Splatter Technique (4 damage to each creature and planeswalker, when you don't need its draw-four).
 
@@ -114,7 +115,7 @@ Three tutors, each pointing somewhere different. **Solve the Equation only finds
 - **Need a board → Imperial Recruiter for Talrand or Young Pyromancer.**
 - **Need mana for the chain → Imperial Recruiter for Storm-Kiln Artist.**
 - **Need more cards → Imperial Recruiter for Archmage Emeritus.**
-- **Veyran keeps dying → Fabricate for Lightning Greaves**, or Solve the Equation for Return the Favor or Spell Pierce.
+- **Veyran keeps dying → Fabricate for Lightning Greaves**, or Solve the Equation for Spell Pierce.
 - **A creature deck is attacking you → cast Propaganda early.** It's an enchantment, so no tutor here finds it.
 - **Setting up a finish → Fabricate for Aetherflux Reservoir** before the long turn.
 - **Need to protect a big turn → Solve the Equation for a counter.**
@@ -149,9 +150,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (5).** Aetherflux Reservoir, Arcane Signet, Fellwar Stone, Lightning Greaves, Sol Ring
 
-**Enchantments (5).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm
+**Enchantments (6).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm, Triple Triad
 
-**Instants (22).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Dreams of Laguna, Evacuation, Flashback, Lightning Bolt, Lightning Strike, Mystic Confluence, Plunder the Trollshaws, Prismari Charm, Quick Study, Return the Favor, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
+**Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Dreams of Laguna, Evacuation, Flashback, Lightning Bolt, Lightning Strike, Mystic Confluence, Plunder the Trollshaws, Prismari Charm, Quick Study, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
 **Sorceries (12).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Jeska's Will, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Splatter Technique, Stock Up
 
@@ -214,7 +215,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Propaganda
 1 Quick Study
 1 Ral, Storm Conduit
-1 Return the Favor
 1 Rite of the Dragoncaller
 1 River's Rebuke
 1 Sanar, Unfinished Genius // Wild Idea
@@ -235,6 +235,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Third Path Iconoclast
 1 Thor, Asgard's Avenger
 1 Thousand-Year Storm
+1 Triple Triad
 1 Unsummon
 1 Venser, Shaper Savant
 1 Veyran, Voice of Duality

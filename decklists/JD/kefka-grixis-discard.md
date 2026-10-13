@@ -4,6 +4,7 @@
 
 **Updated 2026-10-11 (mana base).** JD's rule: basics over slow lands. Out: Temple of Malice, Boiling Rock Prison, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Path of Ancestry, Evolving Wilds, Fabled Passage (everything that enters tapped or fetches a tapped basic). In: 5 Swamp, 3 Mountain, 3 Island (now 15 Swamp, 9 Mountain, 6 Island). The six untapped nonbasics stay. Still 36 lands; the cut lands go back to the bulk list.
 **Updated 2026-10-11 (trade with Veyran, moved as functional blocks).** In from Veyran: Deflecting Swat and Slip Out the Back (protection), Underworld Breach (graveyard), Niv-Mizzet, the Firemind (a second draw-to-damage kill with the flipped Kefka), Jin-Gitaxias, Progress Tyrant, and Steam Vents, Sulfur Falls, Spirebluff Canal and Stormcarved Coast (for 4 Mountains). Out: Mystic Confluence and Splatter Technique (to Veyran), Arcane Omens and Inner Fire (to bulk), Triskelion (to the binder). Paired look-ahead test, 1,000 games per tier: **+1.3 points** (28.1% -> 29.4%). Two Game Changers now (Rhystic Study, Underworld Breach).
+**Updated 2026-10-12.** Out: Stargaze (to bulk). In: Twinflame (binder). JD's choice, not simulated: hasty token copies of your creatures for a turn (a second Massacre Wurm, Jin-Gitaxias or Intellect Devourer); Stargaze was cast in only 11-12% of the games it was drawn (diagnostic, audit/kefka/diag).
 
 2026-10-11
 **Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Fully modeled and measured on 2026-10-11: 26.6% over all tiers (see "Simulator status").
@@ -45,9 +46,9 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 ## Consistency
 
-- **Lands:** 36: ten nonbasics (Blood Crypt, Haunted Ridge, Underground River, Command Tower, Exotic Orchard, Gemstone Mine, and from Veyran Steam Vents, Sulfur Falls, Spirebluff Canal, Stormcarved Coast) and 26 basics (15 Swamp, 5 Mountain, 6 Island). Counting Arcane Signet and Potioner's Trove, that's about 23 black sources, 16 red and 16 blue (blue was 12 before the trade, which held back the double-blue cards). Steam Vents is untapped (2 life); the other three new duals are conditional: Sulfur Falls needs an Island or Mountain out, Spirebluff Canal enters tapped once you have three other lands, Stormcarved Coast enters tapped on turns one and two.
+- **Lands:** 36 (10 nonbasic + 26 basic)
 - **Mana:** 11 rocks, Treasure makers and burst cards.
-- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Stargaze, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Diabolic Tutor, Grim Servant (devotion to black). **Graveyard:** Underworld Breach.
+- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Diabolic Tutor, Grim Servant (devotion to black). **Graveyard:** Underworld Breach.
 - **Interaction:** Lightning Bolt, Pongify, Reality Shift, Chaos Warp, Feed the Swarm, Extinguish the Light, Deadly Embrace, Kaervek's Purge, Disintegrate, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
 - **Protection:** Lightning Greaves and Swiftfoot Boots (both give haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
@@ -108,7 +109,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Shimmercreep | Bulk | ecl |
 | Skullport Merchant | Bulk | list |
 | Sneering Shadewriter | Bulk | sos |
-| Stargaze | Bulk | soa |
+| Twinflame | Binder |  |
 | Susurian Voidborn | Bulk | eoe |
 
 ### Red (15)
@@ -192,7 +193,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 
 **Artifacts (7).** Arcane Signet, Lightning Greaves, Potioner's Trove, Sisay's Ring, Skullclamp, Swiftfoot Boots, Thought Vessel
 
-**Sorceries (16).** Contract Killing, Crux of Fate, Dark Inquiry, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Disintegrate, Duress, Feed the Swarm, Grab the Prize, Ichor Slick, Kaervek's Purge, Night's Whisper, Rapturous Moment, Seize the Spoils, Stargaze
+**Sorceries (16).** Contract Killing, Crux of Fate, Dark Inquiry, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Disintegrate, Duress, Feed the Swarm, Grab the Prize, Ichor Slick, Kaervek's Purge, Night's Whisper, Rapturous Moment, Seize the Spoils, Twinflame
 
 **Instants (11).** Arcane Denial, Big Score, Chaos Warp, Deflecting Swat, Extinguish the Light, Lightning Bolt, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
@@ -263,7 +264,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Sneering Shadewriter
 1 Spirebluff Canal
 1 Stadium Tidalmage
-1 Stargaze
 1 Steam Vents
 1 Stormcarved Coast
 1 Sulfur Falls
@@ -271,6 +271,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Swiftfoot Boots
 1 Thought Vessel
 1 Thrill of Possibility
+1 Twinflame
 1 Twinned Vision
 1 Underground River
 1 Underworld Breach

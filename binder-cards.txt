@@ -1,5 +1,7 @@
 1x Arnim Zola, Bio-Fanatic
+1x Call of the Ring
 1x Crawlspace
+1x Dark Ritual
 1x Deepwood Legate
 1x Desertion
 1x Disenchant
@@ -22,6 +24,5 @@
 1x Spirit Link
 1x Stinkweed Imp
 1x Triskelion
-1x Twinflame
 1x Duress
 3x Underground River
