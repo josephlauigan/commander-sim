@@ -1174,7 +1174,7 @@ status = "Full"
 note = "delve; look at the top seven, keep the best two, the rest on the bottom"
 
 ["Dimir Signet"]
-pool_add_tags = ["rock=1:UB"]
+add_tags = ["rock=1:UB"]  # in JD's decks too: the autotag reads {1},{T}: Add {U}{B} as two mana
 status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
@@ -1814,7 +1814,7 @@ note = "tutor any card to hand, then discard a card at random"
 
 ["Gandalf, Friend of the Shire"]
 status = "Full"
-note = "flash; sorceries at instant speed; the Ring trigger never happens (nothing in this list tempts)"
+note = "flash; you may cast sorcery spells as though they had flash; whenever the Ring tempts you and you chose a creature other than Gandalf as your Ring-bearer, draw a card (elrond.rs gandalf_draw, called by mine::ring_tempt)"
 
 ["Garland, Royal Kidnapper"]
 tags = "leg human knight pow=3 tgh=4 garland"
@@ -3731,7 +3731,7 @@ status = "Full"
 note = "{2}{R}{G}: 3/3 until end of turn; a +1/+1 counter each time it attacks (kept on the land)"
 
 ["Rakdos Signet"]
-pool_add_tags = ["rock=1:BR"]
+add_tags = ["rock=1:BR"]  # in JD's decks too: the autotag reads {1},{T}: Add {B}{R} as two mana
 status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
@@ -4758,8 +4758,7 @@ status = "Full"
 note = "{T}: {C}, or one of its colours for 1 damage"
 
 ["Talisman of Indulgence"]
-add_tags = ["pain"]
-pool_add_tags = ["rock=1:BR"]
+add_tags = ["pain", "rock=1:BR"]  # in JD's decks too: the autotag sees only {T}: Add {C}
 status = "Full"
 note = "{T}: {C}, or one of its colours for 1 damage"
 
@@ -6638,3 +6637,462 @@ dsl = []
 tags = "draw=2"
 status = "Full"
 note = "each other player discards a card; you draw a card for each card discarded this way (discards happen in turn order, the drawn cards come after all discards)"
+
+["Jace, Reality Sculptor"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+1 empower Jace X (X = your Islands: loyalty on the Jace token, made if needed); -3 creatures attacking you get -5/-0 until end of turn, until your next turn; 0 exiles all but the bottom card of each opponent's library, only with 25 or more loyalty among your Jaces (the AI uses +1 mostly, -3 facing a big board)"
+
+["Relm's Sketching"]
+dsl = []
+status = "Full"
+note = "a token copy of the best creature or artifact on the table (best enter trigger first; legends are skipped, the legend rule would undo it), else of one of our lands while we have fewer than nine; the target is chosen as it resolves"
+
+["Echocasting Symposium"]
+dsl = []
+status = "Full"
+note = "the caster creates a token copy of their best creature; paradigm: exiled as it resolves, and at the start of each of their turns (the engine's rebound step, just before the first main phase) a copy is cast for free and can be countered"
+
+["Phantom Interference"]
+tags = "ctr=any soft=2"
+dsl = []
+status = "Full"
+note = "spree: {3} a 2/2 white flying Spirit at the end of an opponent's turn; {1} counter target spell unless its controller pays {2} ({1}{U}); in response with {3} to spare both modes (the Spirit enters before the counter resolves)"
+
+["Whoosh!"]
+dsl = []
+status = "Full"
+note = "returns target nonland permanent (the AI bounces its own creature with the best enter trigger at the end of an opponent's turn, or the best opposing permanent after combat); kicker {1}{U}: draw a card, paid whenever the mana is there"
+
+["Amazing Acrobatics"]
+tags = "ctr=any"
+dsl = []
+status = "Full"
+note = "counter target spell (and tap the two best untapped opposing creatures with it: both modes cost the same); as the attacker with a big attack it taps the defender's two best untapped creatures before blocks"
+
+["Icy Reception"]
+tags = "ctr=crleg soft=3"
+dsl = []
+status = "Full"
+note = "counter target creature or legendary spell unless its controller pays {3}; or as the defender, -5/-0 on the biggest unblocked attacker when that saves the game or a third of our life"
+
+["Sudden Setback"]
+tags = "ctr=any lapse rem=topbot tgt=nl"
+dsl = []
+status = "Full"
+note = "counters a spell (it goes on its owner's choice of the top or bottom of their library: top if they would cast it soon, else bottom) or tucks the best opposing nonland permanent the same way"
+
+["Vanish from Sight"]
+tags = "rem=topbot tgt=nl"
+dsl = []
+status = "Full"
+note = "the best opposing nonland permanent goes on its owner's choice of the top or bottom of their library (tokens cease to exist, a commander goes to the command zone); then we surveil 1"
+
+["Kasmina's Transmutation"]
+types = "E"
+tags = "rem=kasmina tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura on the best opposing creature (a zur.rs lock): it loses all abilities and has base power and toughness 1/1; it is itself again when the Aura leaves"
+
+["Retrieve the Esper"]
+tags = "fb=5U"
+dsl = []
+status = "Full"
+note = "a 3/3 blue Robot Warrior artifact creature token; flashback {5}{U} (cast from the graveyard: two +1/+1 counters on it)"
+
+["Rousing Read"]
+types = "E"
+tags = "aura"
+dsl = []
+status = "Full"
+note = "Aura on our best creature: +1/+1 and flying; when it enters, draw two cards then discard one"
+
+["Unfathomable Truths"]
+dsl = []
+status = "Full"
+note = "draw three cards and create a 0/1 colourless Eldrazi Spawn (sacrifice for {C}); devoid only matters for permanents, and this is an instant"
+
+["West Coast Expansion"]
+dsl = []
+status = "Full"
+note = "draw X cards, X = all spare mana in our main phase once X is 3 (2 with a nearly empty hand); with X 5 or more, the best Hero spell in the hand is cast for free"
+
+["Sleight of Hand"]
+status = "Full"
+note = "look at the top two cards, the better one (by the deck's card worth) into the hand and the other on the bottom"
+["Elrond, Lord of Rivendell"]
+status = "Full"
+note = "whenever Elrond or another creature (card or token) you control enters, on any turn: scry 1, one trigger per creature; the second resolution each turn makes the Ring tempt you (not the third); the Ring-bearer is the best evasive attacker, never Gandalf while another creature is out"
+
+["Cloudfin Raptor"]
+status = "Full"
+note = "flying; evolve: a +1/+1 counter when a creature with greater power or toughness enters under your control (checked on entering and on resolution; tokens too)"
+
+["Defiler of Dreams"]
+status = "Full"
+note = "flying; whenever you cast a blue permanent spell, draw a card; as an additional cost to cast blue permanent spells you may pay 2 life for {U} less (the AI pays with 15 or more life; the life is taken as the draw trigger resolves, the {U} is taken off in mana::cost_of); a spell cast for its warp cost pays no life"
+
+["Deluge Virtuoso"]
+dsl = []
+status = "Full"
+note = "when it enters, tap target creature an opponent controls and put a stun counter on it; opus: +1/+1 until end of turn when you cast an instant or sorcery, +2/+2 if five or more mana was spent on it (mana spent is the spell's cost as paid)"
+
+["Rapier Wit"]
+dsl = []
+status = "Full"
+note = "tap target creature; if it's your turn, a stun counter on it; draw a card (the target is the cast's own or the best untapped creature an opponent controls)"
+
+["Matterbending Mage"]
+status = "Full"
+note = "when it enters, return up to one other target creature to its owner's hand (an opponent's threat, or the AI's best enter-the-battlefield creature); a spell with {X} in its cost makes it unblockable that turn"
+
+["Mindseeker Oculus"]
+status = "Full"
+note = "when it enters, empower Jace 4 (alela::empower: a Jace token with surveil 1 / draw a card, or four more loyalty on yours)"
+
+["Mouth of the Storm"]
+status = "Full"
+note = "flying, ward {2}; when it enters, creatures your opponents control get -3/-0 until your next turn (DataKey::Weaken, read by values::epow; creatures that enter later are not affected)"
+
+["Orysa, Tide Choreographer"]
+status = "Full"
+note = "costs {3} less if creatures you control have total toughness 10 or greater (self_cost); when it enters, draw two cards (compiled)"
+
+["Professor Hulk"]
+status = "Full"
+note = "trample; whenever it deals combat damage to a player, draw that many cards"
+
+["Rescue, Pepper Potts"]
+status = "Full"
+note = "flash, flying; when it enters, return up to one other artifact or creature you control to its owner's hand (the best enter-the-battlefield one); a +1/+1 counter on Rescue if it was an artifact"
+
+["Silver Deputy"]
+status = "Full"
+note = "when it enters, you may search for a basic land card or a Desert and put it on top (compiled: the deck holds no Desert, so a basic land); {T}: target creature you control gets +1/+0 until end of turn, as a sorcery (compiled)"
+
+["Soul of the Rapids"]
+status = "Full"
+note = "flying, hexproof (opponents' spells and abilities cannot target it)"
+
+["Starbreach Whale"]
+status = "Full"
+note = "flying; surveil 2 when it enters (compiled); warp {1}{U}: cast from hand for the warp cost, exiled at the beginning of the next end step, cast from exile for its mana cost on a later turn (the AI warps when the full cost is out of reach before combat, or as the turn's second entry for Elrond)"
+
+["Starwinder"]
+status = "Full"
+note = "whenever a creature you control deals combat damage to a player, you may draw that many cards (the AI does, keeping a few cards in the library); warp {2}{U}{U} as Starbreach Whale"
+
+["Textbook Tabulator"]
+status = "Full"
+note = "increment: a +1/+1 counter when the mana spent on a spell you cast is greater than its power or toughness; surveil 2 when it enters (compiled)"
+
+["The Wasp, Winsome Avenger"]
+status = "Full"
+note = "flash, flying; when it enters, target Hero gains hexproof until end of turn (the Ring-bearer if a Hero, else the best Hero); whenever it attacks, tap target creature defending player controls"
+
+["Hope-Ender Coatl"]
+add_tags = ["soft=1"]
+status = "Full"
+note = "devoid, flash, flying; when you cast it, counter target spell an opponent controls unless they pay {1} (cast as a counterspell with the soft tag; Mystic Snake pattern), then it enters"
+
+["Dune Mover"]
+status = "Full"
+note = "toxic 1 (a poison counter with the combat damage); when it enters, search for a basic land and put it on top (compiled)"
+
+["Fear of Isolation"]
+status = "Full"
+note = "flying; as an additional cost, return a permanent you control to its owner's hand (a creature worth re-entering, else a land tapped for the spell; not castable with nothing to return)"
+# ---- white-rest: the cloud deck's face-down creatures, enter-again, recursion, protection and removal (impls/bulk_white.rs)
+["Exalted Angel"]
+tags = "pow=4 tgh=5 fly lifelink"
+dsl = []
+status = "Full"
+note = "flying; \"whenever this deals damage, you gain that much life\" is lifelink (the same life, from combat damage to creatures and players); morph {2}{W}{W}: cast face down for {3} as a 2/2 with no abilities (the AI does it when it can't pay {4}{W}{W}), turned face up for {2}{W}{W} at any time (the AI does it on its own turn)"
+
+["Forum Familiar"]
+tags = "pow=1 tgh=1"
+dsl = []
+ward = 0
+status = "Full"
+note = "disguise {1}{W}: face down for {3} as a 2/2 with ward {2} (face up it has no ward); when turned face up, return another permanent you control to its owner's hand and put a +1/+1 counter on it. The AI casts it face down when a permanent is worth returning (Cloud and other enters-the-battlefield effects) and turns it up for the same reason. Lands are never the target"
+
+["Unyielding Gatekeeper"]
+tags = "pow=3 tgh=2"
+dsl = []
+ward = 0
+status = "Full"
+note = "disguise {1}{W}: face down for {3} as a 2/2 with ward {2}; when turned face up, exile another target nonland permanent: yours returns tapped (a blink, a token is gone), an opponent's stays exiled and its controller creates a 2/2 white and blue Detective. The AI picks the best of its own enters-the-battlefield value and an opposing permanent worth more than the Detective"
+
+["Exit Specialist"]
+tags = "human pow=2 tgh=1"
+dsl = []
+ward = 0
+status = "Full"
+note = "can't be blocked by creatures with power 3 or greater (cardcode::evasion_blocked); disguise {1}{U}: face down for {3} as a 2/2 with ward {2}; when turned face up, return another target creature to its owner's hand (the best opposing creature, or one of its own with an enters-the-battlefield effect)"
+
+["Ennis, Debate Moderator"]
+tags = "leg human pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "when it enters, exile up to one other target creature you control (the best by bulk_white::reenter_value: Cloud first), back under its owner's control at the beginning of the next end step (a token is gone); at the beginning of your end step, if cards were put into exile this turn (a permanent leaving for exile, its own included), a +1/+1 counter on Ennis. Cards that go to exile from hand, graveyard or the stack (foretell, flashback) don't count"
+
+["Stormfront Riders"]
+tags = "human pow=4 tgh=3 fly"
+dsl = []
+status = "Full"
+note = "flying; when it enters, return two creatures you control to their owner's hand (the best by reenter_value, itself only if it must); whenever it or another creature is returned to your hand from the battlefield, a 1/1 white Soldier (one per Riders). A commander goes to the command zone and makes no Soldier. Counts every bounce through zones::bounce (Forum Familiar, Exit Specialist, opposing bounce)"
+
+["Call a Surprise Witness"]
+tags = ""
+dsl = []
+status = "Full"
+note = "return target creature card with mana value 3 or less from your graveyard to the battlefield with a flying counter (it flies; it is a Spirit); the AI casts it at sorcery speed on the best creature card there (enters-the-battlefield effects and Equipment-hunters first)"
+
+["Recommission"]
+tags = ""
+dsl = []
+status = "Full"
+note = "return target artifact or creature card with mana value 3 or less from your graveyard to the battlefield; a creature enters with an additional +1/+1 counter. Cast at sorcery speed on the best target (an Equipment counts as an engine piece)"
+
+["Cho-Manno's Blessing"]
+tags = "aura flash"
+dsl = []
+status = "Full"
+note = "flash Aura; as it enters, choose a colour: enchanted creature has protection from it (this doesn't remove the Aura). The AI holds it for a response to targeted removal and chooses the colour of the spell; cast otherwise it picks the opponents' most common colour"
+
+["Shardmage's Rescue"]
+tags = "aura flash"
+dsl = []
+status = "Full"
+note = "flash Aura on a creature you control: +1/+1, and hexproof as long as it entered this turn (grant_kw). The AI holds it for a response to targeted removal on a valuable creature"
+
+["Bronze Guardian"]
+tags = "pow=0 tgh=5"
+dsl = []
+status = "Full"
+note = "double strike; ward {2}; other artifacts you control have ward {2} (bulk_white::extra_ward, for each other Guardian); its power is the number of artifacts you control (Treasure, Food, Clue and Blood tokens included)"
+
+["Fate of the Sun-Cryst"]
+tags = "rem=destroy tgt=nl"
+dsl = []
+status = "Full"
+note = "destroy target nonland permanent; costs {2} less when it targets a tapped creature (a separate cast option for a tapped creature worth killing; the full-cost cast goes through the generic removal options)"
+
+["Harsh Annotation"]
+tags = "rem=destroy tgt=c"
+dsl = []
+status = "Full"
+note = "destroy target creature; its controller creates a 1/1 white and black Inkling with flying (also when the creature was indestructible; none if the target was gone or untargetable)"
+
+["Lay Down Arms"]
+tags = "rem=exile tgt=c"
+dsl = []
+status = "Full"
+note = "exile target creature with mana value at most the number of Plains you control (legal_targets filters it); its controller gains 3 life"
+
+["Patriot, Shield Wielder"]
+tags = "leg human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "{2},{T}: another target creature you control gets +2/+0 and hexproof until end of turn. The AI uses it before combat on its biggest attacker (power 3 or more), and in response to removal aimed at another valuable creature (cloud deck's protect_response)"
+
+["Recruitment Officer"]
+tags = "human pow=2 tgh=1"
+dsl = []
+status = "Full"
+note = "{3}{W}: look at the top four cards, may put a creature card with mana value 3 or less into your hand, the rest on the bottom in a random order. The AI uses it with spare mana after combat, or at the end of the turn before its own"
+
+["Repel the Darkness"]
+tags = ""
+dsl = []
+status = "Full"
+note = "tap up to two target creatures (the opponents' biggest untapped), draw a card. The AI casts it before combat to clear blockers for its attackers, or at the end of the turn before its own as a cantrip"
+
+["Ultimate Magic: Holy"]
+status = "Full"
+note = "permanents you control gain indestructible until end of turn; foretell {2} (after combat with mana to spare), cast later for {2}{W}: from exile it also prevents all damage to you this turn. Held for a response to destroy or damage removal, or a destroying wipe (the cloud deck's responses)"
+# ---- cloud deck: cloud-core (impls/cloud.rs)
+["Cloud, Midgar Mercenary"]
+dsl = []
+status = "Full"
+note = "enter trigger: searches for the Equipment the deck needs (cloud_pick); while equipped, a trigger of Cloud or of an Equipment attached to him is queued twice (stack::queue_triggers)"
+
+["Hero's Blade"]
+status = "Full"
+note = "+3/+2, equip {4}; when a legendary creature you control enters, attaches to it if loose or the new legend is the better wearer"
+
+["Armory Automaton"]
+status = "Full"
+note = "enters or attacks: attaches every Equipment that is loose or on a worse wearer"
+
+["Beatrix, Loyal General"]
+status = "Full"
+note = "beginning of combat on your turn: attaches Equipment to the best wearer (Cloud first), taking those that are loose or on worse ones"
+
+["Puresteel Paladin"]
+status = "Full"
+note = "draws when an Equipment you control enters; with three artifacts, equip costs {0} (cloud::equip_cost)"
+
+["Magitek Scythe"]
+status = "Full"
+note = "enters: attaches to the best wearer, which gets first strike and must be blocked this turn if able (the AI's blocks are topped up by cloud::force_blocks); +2/+1, equip {2}"
+
+["Squire's Lightblade"]
+status = "Full"
+note = "flash; enters: attaches to the best wearer, which gains first strike until end of turn; +1/+0, equip {3}"
+
+["White Mage's Staff"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 1, tgh = 1 },
+  { type = "triggered", event = "attack", source = "equipped", effects = [{ do = "gain_life", n = 1, who = "you" }] },
+  { type = "static", static = "equip_cost", mana = 3 },
+]
+status = "Full"
+note = "job select: enters with a 1/1 colorless Hero token wearing it; +1/+1, gain 1 life when the wearer attacks, equip {3}. (The wearer also becomes a Cleric: the deck has no Cleric payoff, so it isn't tracked)"
+
+["Cid, Freeflier Pilot"]
+dsl = []
+status = "Full"
+note = "Equipment and Vehicle spells cost {1} less; flying on your turn; {2},{T}: returns the best Equipment or Vehicle card from the graveyard to hand"
+
+["Helitrooper"]
+status = "Full"
+note = "flying; when it attacks, the biggest other attacker without flying gains flying; equip costs aimed at it are {2} less (cloud::equip_cost)"
+
+["Colossus Hammer"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 10, tgh = 10 },
+  { type = "static", static = "equip_cost", mana = 8 },
+]
+status = "Full"
+note = "+10/+10 and the wearer loses flying (dsl::has_kw, combat::can_block); equip {8}"
+
+["Hulkbuster Armor"]
+dsl = [
+  { type = "static", static = "equip_keyword", keyword = "flying" },
+  { type = "static", static = "equip_cost", mana = 6 },
+]
+status = "Full"
+note = "wearer has base power and toughness 9/9 (cloud::base_pt, read by dsl::pt) and flying; equip Hero {3}, equip {6}"
+
+["Wrecking Ball Arm"]
+status = "Full"
+note = "wearer has base power and toughness 7/7 (cloud::base_pt) and can't be blocked by creatures with power 2 or less (cloud::evasion_blocked); equip legendary creature {3}, equip {7}"
+
+["Conformer Shuriken"]
+status = "Full"
+note = "when the wearer attacks, taps the best defending creature and puts +1/+1 counters on the wearer equal to the power it has over it; equip {2}"
+
+["Explorer's Scope"]
+status = "Full"
+note = "when the wearer attacks, looks at the top card and puts a land onto the battlefield tapped; equip {1}"
+
+["Trailblazer's Boots"]
+status = "Full"
+note = "nonbasic landwalk: can't be blocked while the defending player controls a nonbasic land (cloud::evasion_blocked); equip {2}"
+
+["Magnetic Snuffler"]
+status = "Full"
+note = "enters: returns the best Equipment card from the graveyard to the battlefield attached to it; a +1/+1 counter whenever you sacrifice an artifact (a Treasure, Food or Clue too)"
+
+["Jocasta, Automaton Avenger"]
+status = "Full"
+note = "flying; +1/+1 counter whenever your commander deals combat damage to a player; from the graveyard it returns tapped and attacking when your commander attacks (cloud::jocasta_attack, from combat)"
+
+["Zack Fair"]
+dsl = []
+status = "Full"
+note = "enters with a +1/+1 counter; {1}, sacrifice: another creature you control gains indestructible until end of turn, takes his counters and the Equipment he wore (an option for cloud_protect)"
+
+["Unfinished Business"]
+tags = ""
+dsl = []
+status = "Full"
+note = "returns the best creature card (Cloud first) from the graveyard, then up to two Equipment and own-creature Auras from the graveyard attached to it"
+
+["Vona's Hunger"]
+status = "Full"
+note = "ascend: with ten or more permanents as it resolves (the only ascend card in these lists), each opponent sacrifices half their creatures rounded up; otherwise one each"
+
+["Latulla's Orders"]
+status = "Full"
+note = "flash Aura on your best creature; when that creature deals combat damage to the defending player, destroy that player's most valuable targetable artifact"
+
+# ---- Sephiroth, Fabled SOLDIER and Triple Triad (rust/crates/sim-core/src/impls/sheoldred.rs and mine.rs; tests in tests/cards_seph_triad.rs)
+["Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"]
+tags = "leg human pow=3 tgh=3 bomb=4"
+dsl = []
+kws = []
+status = "Full"
+note = "3/3; enters or attacks: sacrifice a creature (the AI: only fodder worth under 2.2, never the commander or Sheoldred), draw a card; whenever another creature dies, the opponent with the least life loses 1 and you gain 1, and the fourth time that resolves in a turn it transforms into One-Winged Angel (5/5 flying): you get an emblem (whenever a creature dies, the same drain) and its attack trigger sacrifices all the fodder, a card for each. Back face is the same permanent with a flag; its name stays the front's"
+
+["Triple Triad"]
+dsl = []
+status = "Full"
+note = "your upkeep: each player exiles their top card; you play your own card and every other exiled card of lesser mana value free, at once in the upkeep, highest first (lands only while a land drop is left; no Auras or counterspells); opponents' cards stay theirs"
+
+["Crippling Fear"]
+tags = "wipe=fear"
+dsl = []
+status = "Full"
+note = "sorcery wipe (impls/sweepers.rs): the creature type is chosen as it resolves, the one that costs the caster least (Orc for Sauron: the Army counts as an Orc); creatures not of that type get -3/-3, so those with toughness 3 or less die"
+
+["Widespread Brutality"]
+tags = "wipe=brutal"
+dsl = []
+status = "Full"
+note = "sorcery wipe (impls/sweepers.rs): amass 2 (the engine's Army is an Orc Army; the Zombie type is not tracked), then the Army deals damage equal to its power to each non-Army creature, the caster's own included; damage that does not kill is not tracked"
+
+["Chandra's Ignition"]
+tags = "wipe=ignite"
+dsl = []
+status = "Full"
+note = "sorcery wipe (impls/sweepers.rs): the caster's highest-power creature deals damage equal to its power to each other creature (the caster's own included) and each opponent; damage that does not kill a creature is not tracked"
+
+["Inferno Titan"]
+status = "Full"
+note = "firebreathing is the DSL ability; when it enters or attacks, 3 damage divided among up to three targets (impls/sweepers.rs): all at a player when that is lethal, else the best set of opposing creatures and planeswalkers it can kill, the rest to a planeswalker or the weakest opponent"
+
+["Massacre Wurm"]
+status = "Full"
+note = "when it enters, each creature your opponents control with toughness 2 or less dies (-2/-2; the caster's side is untouched, tested in cards_sauron_sweepers.rs); whenever an opposing creature dies, that player loses 2 life (wurmdrain)"
+
+["Lazotep Reaver"]
+status = "Full"
+note = "enters: amass Zombies 1 (counters on the Army you already control, whatever its type; else a 0/0 Army token first)"
+
+["Grim Initiate"]
+status = "Full"
+note = "first strike; when it dies, amass Zombies 1 (counters on the Army you already control, whatever its type)"
+
+["Torment of Hailfire"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "{X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows"
+
+["Dualcaster Mage"]
+tags = "human wizard pow=2 tgh=2 flash"
+dsl = []
+status = "Full"
+note = "flash 2/2; enters: copy target instant or sorcery spell (the AI flashes it in over a spell worth copying: an X drain or Torment of Hailfire at X >= 3, burn, draw; the copy keeps X); no combo detection (JD: no infinite combos in Sauron); with nothing worth copying the AI casts it as a plain 2/2 late"
+
+["Dreadhorde Invasion"]
+status = "Full"
+note = "upkeep: lose 1 life and amass Zombies 1; a Zombie token you control with power 6 or greater gains lifelink as it attacks (the Army counts as a Zombie while Invasion is out)"
+
+["Grishnákh, Brash Instigator"]
+tags = "leg pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "enters: amass Orcs 2, then gain control of the best nonlegendary creature an opponent controls with power at most the Army's until end of turn, untapped and hasty (it returns at the end step)"
+
+["Comet Storm"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "{X}{R}{R} instant, multikicker {1}: X damage to each of 1 + kicks distinct targets (opponents, creatures, planeswalkers; the AI picks them as it resolves: lethal faces first, then killable permanents worth 1.5+, then the rest of the faces); the AI splits all its mana between X and kicks for the best result and casts it when it kills an opponent (main phase, or the end of an opponent's turn) or late at X >= 4 when it hits every opponent"

@@ -58,6 +58,8 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "kefka" => crate::impls::kefka::kefka_prio(g, p, c),
         "titania" => crate::impls::titania::titania_prio(g, p, c),
         "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
+        "elrond" => crate::impls::elrond::elrond_prio(g, p, c),
+        "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -84,6 +86,9 @@ pub fn sauron_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     }
     if t.has(Tag::Rock) {
         return if pl.turns <= 5 { 80 } else { 40 };
+    }
+    if let Some(v) = crate::impls::threats::sauron_extra_prio(g, p, c) {
+        return v; // the speed and backup-win cards (amass creatures, Dreadhorde Invasion, Grishnákh, Dualcaster Mage)
     }
     if t.has(Tag::Rhystic) {
         return plans::rhystic_prio(g, p, c);
@@ -722,6 +727,17 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             }
             first(&["Stock Up", "Flow State", "Quick Study", "Crackle with Power"])
         }
+        "kefka" if kind == "any" && super::decks::deck_has_storm(g, p) => {
+            // Diabolic Tutor for the Breach line: the missing half first
+            let st = storm_held(g, p);
+            if !breach_out(g, p) {
+                return first(&["Underworld Breach"]);
+            }
+            if !st {
+                return first(&["Brain Freeze", "Grapeshot"]);
+            }
+            first(&["Dark Ritual", "Lotus Petal", "Cabal Ritual"])
+        }
         "sauron" => {
             let sw = held(Tag::Sword);
             let asl = held(Tag::Assault);
@@ -944,13 +960,16 @@ pub struct WipeRule {
     biggest: Option<PermId>,
     x: i32,
     victim: Option<PlayerId>,
+    /// the sweepers of impls/sweepers.rs (Crippling Fear, Widespread Brutality, Chandra's Ignition)
+    ext: Option<crate::impls::sweepers::Sweep>,
 }
 
 impl WipeRule {
     pub fn new(g: &Game, caster: PlayerId, kind: &str) -> WipeRule {
         let kind = crate::sym::intern(kind);
-        let mut r = WipeRule { kind, caster, modes: vec![], biggest: None, x: 0, victim: None };
+        let mut r = WipeRule { kind, caster, modes: vec![], biggest: None, x: 0, victim: None, ext: None };
         match kind {
+            k if crate::impls::sweepers::is_kind(k) => r.ext = Some(crate::impls::sweepers::Sweep::new(g, caster, k, false)),
             "farewell" | "austere2" => r.modes = wipe_modes(g, caster, kind),
             "rebuke" => r.victim = wipe_eval(g, caster, kind).2,
             "nib" => {
@@ -969,6 +988,9 @@ impl WipeRule {
     pub fn hits(&self, g: &Game, m: PermId, q: PlayerId) -> bool {
         let x = g.perm(m);
         let cd = x.cd.map(|c| g.db.get(c));
+        if let Some(s) = &self.ext {
+            return s.hits(g, m);
+        }
         match self.kind {
             "farewell" | "austere2" => mode_hit(g, &self.modes, m),
             "vandal" => q != self.caster && cd.is_some_and(|d| d.types.has(Types::ARTIFACT)),
@@ -1027,6 +1049,9 @@ pub fn wipe_loss(g: &Game, q: PlayerId, kind: &str, caster: PlayerId) -> f64 {
 
 /// ais.wipe_eval: (what the opponents lose, what p loses, the one player a one-player wipe hits)
 pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerId>) {
+    if crate::impls::sweepers::is_kind(kind) {
+        return crate::impls::sweepers::eval(g, p, kind);
+    }
     let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     if matches!(kind, "farewell" | "austere2") {
         let modes = wipe_modes(g, p, kind);
@@ -1213,6 +1238,9 @@ pub fn protect_response(
         }
         return Ok(false);
     }
+    if key == "cloud" && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)? {
+        return Ok(true); // Patriot, Shardmage's Rescue, Cho-Manno's Blessing, Ultimate Magic: Holy
+    }
     match key {
         "seph" => super::seph::protect(g, owner, m, kind, v),
         "veyran" => super::veyran::protect(g, owner, m, kind, actor, spell),
@@ -1257,6 +1285,8 @@ pub fn protect_response(
         "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         "sheoldred" => crate::impls::sheoldred::sheoldred_protect(g, owner, m, kind, actor, spell),
+        "elrond" => crate::impls::elrond::elrond_protect(g, owner, m, kind, actor, spell),
+        "cloud" => crate::impls::cloud::cloud_protect(g, owner, m, kind, actor, spell),
         // Deflecting Swat and Slip Out the Back for Kefka, the same responses as Veyran's (a no-op without them)
         "kefka" => crate::impls::mine::veyran_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
@@ -1280,6 +1310,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     }
     if key == "jodah" {
         return crate::impls::jodah::jodah_wipe_response(g, q, kind, caster);
+    }
+    if key == "cloud"
+        && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
+    {
+        return Ok(Some(r)); // Ultimate Magic: Holy
     }
     if matches!(key, "galadriel" | "yshtola" | "jodah") {
         return Ok(None);
@@ -1438,4 +1473,89 @@ pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     }
     g.player_mut(p).stat("braids_sacs", 1);
     Ok(())
+}
+
+// ------------------------------------------------------------------ the Breach line outside Sauron
+/// a card of the Underworld Breach line other than Breach itself: a storm card (Brain Freeze, Grapeshot) or a ritual
+fn is_storm_card(g: &Game, c: CardId) -> bool {
+    matches!(&*g.db.get(c).name, "Brain Freeze" | "Grapeshot")
+}
+
+fn is_ritual_card(g: &Game, c: CardId) -> bool {
+    matches!(&*g.db.get(c).name, "Dark Ritual" | "Cabal Ritual" | "Lotus Petal" | "Lion's Eye Diamond" | "Jeska's Will")
+}
+
+/// Underworld Breach in hand or on the battlefield
+pub fn breach_out(g: &Game, p: PlayerId) -> bool {
+    has(g, p, Tag::Breach) || in_hand_tag(g, p, Tag::Breach)
+}
+
+/// a storm card in hand or graveyard (the graveyard one is escaped by the Breach)
+pub fn storm_held(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    pl.hand.iter().chain(pl.gy.iter()).any(|&c| is_storm_card(g, c))
+}
+
+/// the cheap test for the line: Breach out and a storm card in hand or graveyard
+pub fn breach_pieces(g: &Game, p: PlayerId) -> bool {
+    breach_out(g, p) && storm_held(g, p)
+}
+
+/// a deck that carries the line's storm card (so its tutors and Breach plan for it)
+pub fn deck_has_storm(g: &Game, p: PlayerId) -> bool {
+    ["Brain Freeze", "Grapeshot"].iter().any(|n| g.db.id(n).is_some_and(|c| g.player(p).deck_names.contains(&c)))
+}
+
+/// Underworld Breach out, or still in the library
+pub fn breach_reachable(g: &Game, p: PlayerId) -> bool {
+    breach_out(g, p) || g.player(p).library.iter().any(|&c| g.db.get(c).tag(Tag::Breach))
+}
+
+/// casting this storm card now (Brain Freeze: three cards milled per copy; Grapeshot: a damage per copy) finishes an
+/// opponent
+fn storm_kills(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let copies = g.players.iter().map(|q| crate::engine::cast::casts_this_turn(g, q.id)).sum::<i32>() + 1;
+    let freeze = &*g.db.get(c).name == "Brain Freeze";
+    g.opps(p).any(|q| {
+        let q = g.player(q);
+        q.alive && if freeze { q.library.len() as i64 <= 3 * copies as i64 } else { q.life <= copies }
+    })
+}
+
+/// the cast priority of a line card for a deck that isn't built around the line (Kefka): the storm cards wait for
+/// Breach, the rituals for Breach and a storm card, and Breach itself for a storm card; None when the line has no
+/// claim on the card (it keeps its usual priority, so a deck without the storm card plays Breach as before)
+pub fn breach_hold_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    let t = &g.db.get(c).tags;
+    if t.has(Tag::Breach) {
+        return storm_held(g, p).then_some(0);
+    }
+    if is_storm_card(g, c) {
+        // held while Breach is out or still reachable (in the library; a tutor in hand finds it there), unless casting
+        // it now kills an opponent
+        return (breach_reachable(g, p) && !storm_kills(g, p, c)).then_some(0);
+    }
+    if t.has(Tag::Led) {
+        return breach_out(g, p).then_some(0);
+    }
+    if is_ritual_card(g, c) {
+        return breach_pieces(g, p).then_some(0);
+    }
+    None
+}
+
+/// worth added to a line card's discard score: Breach, a storm card or a ritual that the other half of the line is
+/// waiting for isn't thrown away (a storm card with no Breach in sight goes to the graveyard happily: it is escaped)
+pub fn breach_keep_bonus(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    let t = &g.db.get(c).tags;
+    let keep = if t.has(Tag::Breach) {
+        storm_held(g, p)
+    } else if is_storm_card(g, c) || t.has(Tag::Led) {
+        has(g, p, Tag::Breach) || g.player(p).hand.iter().any(|&x| x != c && g.db.get(x).tag(Tag::Breach))
+    } else if is_ritual_card(g, c) {
+        breach_pieces(g, p)
+    } else {
+        false
+    };
+    if keep { 80.0 } else { 0.0 }
 }

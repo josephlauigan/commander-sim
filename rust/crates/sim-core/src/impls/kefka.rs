@@ -157,6 +157,7 @@ fn wants_gy(g: &Game, c: CardId) -> bool {
 pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Option<CardId> {
     let score = |c: CardId| -> f64 {
         let mut v = card_worth(g, p, c, false);
+        v += crate::ai::decks::breach_keep_bonus(g, p, c);
         if wants_gy(g, c) {
             v -= 100.0;
         }
@@ -1236,6 +1237,7 @@ fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// the warped Voidborn in exile: cast from there on a later turn, for its mana cost
 pub fn kefka_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let mut out = vec![];
+    out.extend(crate::cardcode::breach_options(g, p, post)?);
     if post.then_some(()).is_some() || true {
         let st = g.turn_stamp();
         let later = g.player(p).flag_turn.get(&intern("voidborn_warped")).is_none_or(|s| *s != st);
@@ -1390,6 +1392,9 @@ pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             return if name == NIV || loop_safe(g, p) { 80 } else { 0 };
         }
         return if kefka_out(g, p) { 84 } else { 70 };
+    }
+    if let Some(v) = crate::ai::decks::breach_hold_prio(g, p, c) {
+        return v; // the Breach line holds Breach, the storm cards and the rituals for itself
     }
     if name == "Underworld Breach" {
         // the graveyard Kefka fills (discards, looting) is the fuel: escape what was binned, once there is mana for it

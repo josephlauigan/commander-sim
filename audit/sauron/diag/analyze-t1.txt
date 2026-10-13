@@ -1,0 +1,80 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 20 worker threads: about 72 seconds
+######## vs Tier 1 (High B2 / Low B3) ########
+=========== sauron analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 25.8%   (4-player baseline 25%)   average rounds survived 10.9
+-- How it wins --
+  damage      92.7% of wins
+  combo        5.6% of wins
+  timeout      1.6% of wins
+  Opponents it eliminated: 0.78 per game, by
+    combat             55.6%
+    drain              18.1%
+    triggers            8.8%
+    commander damage    7.7%
+    decked              6.1%
+    combo               3.7%
+  Damage dealt per game: 39.3, from
+    combat              33.6  (86%)
+    triggers             3.0  (8%)
+    drain                2.7  (7%)
+-- How it loses --
+  Eliminated in 74.0% of games, on average in round 10.1
+    by Light-Paws via commander damage   14.0% of games
+    by Isshin   via combat             13.8% of games
+    by Tatyova  via combat             12.1% of games
+    by Lathril  via combat              7.9% of games
+    by Teysa Karlov via drain               7.1% of games
+    by Light-Paws via combat              5.8% of games
+    by Teysa Karlov via combat              4.4% of games
+    by Lathril  via drain               3.3% of games
+-- Game plan timing --
+  Plan: Sword + Assault combo attempted
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 1%  T7 1%  T8 2%  T9 2%  T10 2%  T11 3%  T12 4%
+  Online at all: 5.6% of games
+  Combo attempted in 1.5% of games
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Sol Ring                                   cast in  24.0% of games, win rate when cast  42.6% (+16.8)
+    Lotus Petal                                cast in  25.0% of games, win rate when cast  41.7% (+15.8)
+    Aggravated Assault                         cast in  32.1% of games, win rate when cast  41.6% (+15.7)
+    Conqueror's Flail                          cast in  22.1% of games, win rate when cast  39.6% (+13.8)
+    Sword of Feast and Famine                  cast in  37.5% of games, win rate when cast  38.9% (+13.1)
+    Slaughter Pact                             cast in  22.7% of games, win rate when cast  38.5% (+12.7)
+    Talisman of Creativity                     cast in  22.5% of games, win rate when cast  35.2% (+9.4)
+    Mind Stone                                 cast in  21.7% of games, win rate when cast  34.6% (+8.8)
+    The Ozolith                                cast in  23.1% of games, win rate when cast  33.3% (+7.5)
+    Terminate                                  cast in  21.2% of games, win rate when cast  32.4% (+6.5)
+  Lowest win rate when cast:
+    Flux Channeler                             cast in  21.2% of games, win rate when cast  25.5% (-0.3)
+    Sauron, the Dark Lord                      cast in  79.6% of games, win rate when cast  31.9% (+6.1)
+    Terminate                                  cast in  21.2% of games, win rate when cast  32.4% (+6.5)
+    The Ozolith                                cast in  23.1% of games, win rate when cast  33.3% (+7.5)
+    Mind Stone                                 cast in  21.7% of games, win rate when cast  34.6% (+8.8)
+    Talisman of Creativity                     cast in  22.5% of games, win rate when cast  35.2% (+9.4)
+    Slaughter Pact                             cast in  22.7% of games, win rate when cast  38.5% (+12.7)
+    Sword of Feast and Famine                  cast in  37.5% of games, win rate when cast  38.9% (+13.1)
+    Conqueror's Flail                          cast in  22.1% of games, win rate when cast  39.6% (+13.8)
+    Aggravated Assault                         cast in  32.1% of games, win rate when cast  41.6% (+15.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Brain Freeze                               cast  13.6% of the games it was drawn
+    Deepglow Skate                             cast  29.6% of the games it was drawn
+    Not of This World                          cast  33.1% of the games it was drawn [reactive: only cast in response]
+    Undermine                                  cast  34.2% of the games it was drawn [reactive: only cast in response]
+    Kaervek the Merciless                      cast  45.9% of the games it was drawn
+    Underworld Breach                          cast  46.3% of the games it was drawn
+    Disdainful Stroke                          cast  48.4% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.38
+    Sword of Fire and Ice                      0.08
+    Sword of Feast and Famine                  0.07
+    Vraska, Betrayal's Sting                   0.07
+    Sword of Hearth and Home                   0.06
+    Aggravated Assault                         0.05
+    Mind Stone                                 0.04
+    Iron Man, Armored Avenger                  0.04
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+(46s total)

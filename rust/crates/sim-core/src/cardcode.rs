@@ -231,6 +231,11 @@ pub fn emblem_draw(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::rules::emblem_draw(g, p)
 }
 
+/// sheoldred.seph_emblem_dies: Sephiroth's emblem drains whenever any creature dies
+pub fn emblem_dies(g: &mut Game) -> Res {
+    crate::impls::sheoldred::seph_emblem_dies(g)
+}
+
 /// rules2.chatterfang_squirrels: Chatterfang makes that many Squirrels whenever p makes tokens
 pub fn chatterfang_squirrels(g: &mut Game, p: PlayerId, n: i32) -> Res {
     crate::impls::rules2::chatterfang_squirrels(g, p, n)
@@ -468,7 +473,10 @@ pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
 // ------------------------------------------------------------------ M3: combat and the turn
 /// rules.evasion_blocked: fear, intimidate, Signal Pest and kin: b can't block a
 pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
-    crate::impls::rules::evasion_blocked(g, b, a)
+    if crate::impls::cloud::evasion_blocked(g, b, a) {
+        return true; // Wrecking Ball Arm, Trailblazer's Boots
+    }
+    crate::impls::rules::evasion_blocked(g, b, a) || crate::impls::bulk_white::exit_blocked(g, b, a)
 }
 
 /// CI.granted_kw: a static keyword grant from a hooked permanent (Teysa: tokens have vigilance and lifelink)
@@ -649,6 +657,14 @@ pub fn defend_hooks(
             if &*g.db.get(c).name == "Aetherize"
                 && let Some(f) = imp_of(g, c).and_then(|i| i.hand_defend)
             {
+                f(g, c, d, p, atk, assign)?;
+            }
+        }
+    }
+    if dk == "elrond" {
+        // the elrond deck's instant-speed answers to an attack (Icy Reception's -5/-0; bulk_blue.rs)
+        for c in g.player(d).hand.clone() {
+            if let Some(f) = imp_of(g, c).and_then(|i| i.hand_defend) {
                 f(g, c, d, p, atk, assign)?;
             }
         }

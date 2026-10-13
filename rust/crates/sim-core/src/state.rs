@@ -69,6 +69,10 @@ pub enum DataKey {
     Exiled,
     /// Whipcorder face down: its printed (power, toughness) (galadriel.enter_face_down)
     Facedown,
+    /// Cho-Manno's Blessing: the colour chosen as it entered (on the Aura); a colour waiting for the next such Aura (on its host)
+    ChosenColor,
+    /// Shardmage's Rescue: the turn it entered (a `Val::Stamp`)
+    Entered,
     FableGoblin,
     Final,
     Flip,
@@ -120,7 +124,16 @@ pub enum DataKey {
     Rionya,
     Ruin,
     Serenity,
+    /// Sephiroth, Fabled SOLDIER: [turn stamp, times its drain has resolved that turn]
+    SephTimes,
     Stolen,
+    /// stun counters (the untap step removes one instead of untapping)
+    Stun,
+    /// creatures weakened until their caster's next turn: [caster, caster's turn count, power lost] (Mouth of the Storm)
+    Weaken,
+    /// Elrond, Lord of Rivendell: how many times his ability has resolved, and on which turn
+    Resolved,
+    ResolvedAt,
     /// suspected (menace, can't block) until it leaves the battlefield
     Suspect,
     TapOnReturn,
@@ -751,6 +764,10 @@ pub struct Ctx {
     pub host: Option<PermId>,
     /// Mizzix's Mastery: the graveyard card a person chose as it was cast (Python's `ctx['mastery_pick']`)
     pub mastery_pick: Option<CardId>,
+    /// the spell was cast from its owner's graveyard (flashback): set as it resolves (Retrieve the Esper)
+    pub from_gy: bool,
+    /// Multikicker: how many times the spell was kicked (Comet Storm)
+    pub kicks: u32,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).

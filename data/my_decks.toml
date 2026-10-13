@@ -60,3 +60,15 @@ file = "JD/sheoldred-mono-black.md"
 name = "Sheoldred"
 commander = "Sheoldred, the Apocalypse"
 ident = "B"
+
+[elrond]
+file = "JD/elrond-ring-tempts.md"
+name = "Elrond"
+commander = "Elrond, Lord of Rivendell"
+ident = "U"
+
+[cloud]
+file = "JD/cloud-midgar-equipment.md"
+name = "Cloud"
+commander = "Cloud, Midgar Mercenary"
+ident = "W"

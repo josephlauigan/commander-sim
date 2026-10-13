@@ -1,0 +1,10 @@
+08:08 S-cloud t1 exit 0 [loose       ] win   5.6% ->   5.6%  (delta +0.0 pts, noise ±2.8, paired)   n=500
+08:11 S-cloud t2 exit 0 [loose       ] win   3.0% ->   6.6%  (delta +3.6 pts, noise ±2.6, paired)   n=500
+08:13 S-cloud t3 exit 0 [loose       ] win   3.8% ->   4.4%  (delta +0.6 pts, noise ±2.4, paired)   n=500
+08:17 V-flux t1 exit 0 [loose       ] win  28.0% ->  24.1%  (delta -3.9 pts, noise ±3.2, paired)   n=1000
+08:22 V-flux t2 exit 0 [loose       ] win  30.0% ->  25.5%  (delta -4.5 pts, noise ±3.5, paired)   n=1000
+08:25 V-flux t3 exit 0 [loose       ] win  23.7% ->  23.3%  (delta -0.4 pts, noise ±2.9, paired)   n=1000
+08:27 V-flux t4 exit 0 [loose       ] win  23.7% ->  22.8%  (delta -0.9 pts, noise ±2.9, paired)   n=1000
+08:28 V-flux t5 exit 0 [loose       ] win  14.8% ->  14.0%  (delta -0.8 pts, noise ±2.2, paired)   n=1000
+08:28 V-flux DONE: tiers -3.9 -4.5 -0.4 -0.9 -0.8 avg -2.1
+08:28 FLUX DONE

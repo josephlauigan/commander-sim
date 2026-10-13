@@ -588,6 +588,10 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     if g.player(d).key == "titania" && crate::impls::titania::attack_fog(g, d, p, atk)? {
         return Ok(true);
     }
+    let gand = has(g, d, Tag::Gandalf); // Gandalf: sorceries at instant speed
+    if gand && gandalf_wipe_response(g, d, p, atk)? {
+        return Ok(true);
+    }
     let rem: Vec<CardId> = g
         .player(d)
         .hand
@@ -595,7 +599,7 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         .copied()
         .filter(|&c| {
             let x = g.db.get(c);
-            x.instant && x.tag(Tag::Rem) && !x.creature
+            (x.instant || (gand && x.sorcery)) && x.tag(Tag::Rem) && !x.creature
         })
         .collect();
     // Galadriel's permanents' answers (Ballista Squad, Lawbringer, Lightbringer)
@@ -705,7 +709,7 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
     for &c in &g.player(p).hand {
         let d = g.db.get(c);
         let Some(kind) = d.tags.str(Tag::Wipe) else { continue };
-        if eot && !d.instant {
+        if eot && !d.instant && !(d.sorcery && has(g, p, Tag::Gandalf)) {
             continue;
         }
         let (cg, cp) = decks::wipe_cost(g, p, c);
@@ -753,6 +757,8 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         "titania" => crate::impls::titania::titania_special(g, p, post),
         "sheoldred" => crate::impls::sheoldred::sheoldred_special(g, p, post),
+        "elrond" => crate::impls::elrond::elrond_special(g, p, post),
+        "cloud" => crate::impls::cloud::cloud_special(g, p, post),
         _ => Ok(vec![]),
     }
 }
@@ -861,7 +867,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 7] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "titania", "sheoldred"];
+const GENERIC_PLAYS: [&str; 9] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "titania", "sheoldred", "elrond", "cloud"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.
@@ -879,6 +885,7 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
             o.extend(f(g, c, p, post)?);
         }
     }
+    o.extend(crate::impls::bulk_white::face_up_options(g, p, post)?); // face-down creatures turned face up
     for c in g.player(p).hand.clone() {
         if let Some(f) = g.registry.get(c).and_then(|i| i.hand_options) {
             o.extend(f(g, c, p, post)?);
@@ -896,6 +903,34 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
     o.extend(crate::cardcode::land_options(g, p, post)?);
     o.extend(crate::cardcode::combo_options(g, p, s.ctr_risk, post)?);
     Ok(o)
+}
+
+/// Gandalf, Friend of the Shire: flexible sorceries (card draw, tutors, token makers, targeted removal) with no
+/// main-phase reason to be cast now wait for the end-of-turn window (`end_of_turn_window`), which casts sorceries at
+/// instant speed, and the mana stays open for instants and flash meanwhile. Not held: ramp, creatures, wipes,
+/// protection, removal when the board is dangerous, and draw or tutors while a land drop is still needed.
+pub fn gandalf_hold(g: &Game, p: PlayerId, s: &Situation, opts: &mut [Opt]) {
+    if !has(g, p, Tag::Gandalf) {
+        return;
+    }
+    for o in opts.iter_mut() {
+        let (Some(Action::Cast { card, .. }) | Some(Action::Removal { card, .. })) = &o.act else { continue };
+        let d = g.db.get(*card);
+        let t = &d.tags;
+        if !d.sorcery || d.creature || d.land || t.has(Tag::Wipe) || t.has(Tag::Prot) {
+            continue;
+        }
+        let rem = t.has(Tag::Rem);
+        let flex = rem || t.has(Tag::Draw) || t.has(Tag::Tokx) || t.has(Tag::Tut) || t.has(Tag::Xtutor) || t.has(Tag::Top);
+        if !flex || t.has(Tag::Rock) || t.has(Tag::Dork) || t.has(Tag::Lr) || special(g, *card) {
+            continue;
+        }
+        let needs_land = s.lands_in_hand == 0 && s.turn <= 5;
+        if (rem && s.danger >= 0.8) || (!rem && needs_land) {
+            continue;
+        }
+        o.utility -= 3.0;
+    }
 }
 
 /// brain.main_options: every legal main-phase play for p right now; the last is "stop" (act None)
@@ -962,6 +997,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         opts.extend(crate::dsl::ability_options(g, p, true)?);
     }
     opts.extend(hook_options(g, p, &s, Some(post))?);
+    gandalf_hold(g, p, &s, &mut opts);
     let mut stop_u = if hold_card.is_some() { hold_v } else { -3.0 };
     if rsv.is_some() {
         stop_u = stop_u.max(4.5); // ninjutsu window: go to combat, cast after
@@ -1219,7 +1255,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         let caution = style(g, g.player(p).key).caution;
         for mut o in removal_options(g, p, &s) {
             if let Some(Action::Removal { card, kick: 0, .. }) = &o.act
-                && g.db.get(*card).instant
+                && (g.db.get(*card).instant || (gand && g.db.get(*card).sorcery))
             {
                 o.utility += 1.2 * caution;
                 opts.push(o);
@@ -1270,5 +1306,45 @@ fn confluence_draw(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     pl.cast_names.insert(c); // the card report counts a card as cast from this set
     on_cast(g, p, c)?;
     draw(g, p, n as u32, false)?;
+    Ok(true)
+}
+
+/// Gandalf, Friend of the Shire, defend step: a wipe sorcery cast after attackers are declared when it kills more
+/// opposing value (the attackers included) than ours and the attack would cost us a lot (a big share of our life, or
+/// commander damage). Returns whether it was cast.
+fn gandalf_wipe_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
+    let incoming: i32 = atk
+        .iter()
+        .filter(|&&m| g.perm(m).on_bf && g.perm(m).owner == p)
+        .map(|&m| epow(g, m) * if double_strike(g, m) { 2 } else { 1 })
+        .sum();
+    if incoming <= 0 || (incoming as f64) < g.player(d).life as f64 * 0.3 {
+        return Ok(false); // the attack is no big deal
+    }
+    let s = Situation::new(g, d);
+    let mut best: Option<(f64, CardId, Option<PlayerId>)> = None;
+    for &c in &g.player(d).hand {
+        let x = g.db.get(c);
+        let Some(kind) = x.tags.str(Tag::Wipe) else { continue };
+        if !x.sorcery {
+            continue; // instants already have their own paths
+        }
+        let (cg, cp) = decks::wipe_cost(g, d, c);
+        if !can_pay(g, d, cg, &cp, false) {
+            continue;
+        }
+        let (ol, ml, victim) = decks::wipe_eval(g, d, kind);
+        // wipe_eval counts the attackers as board value; the attack we avoid is worth extra
+        let swing = ol - 1.2 * ml + 0.5 * incoming as f64;
+        if ol > ml && swing / 2.2 - 2.5 + 2.0 * s.danger.min(1.5) > 0.0 && best.is_none_or(|b| swing > b.0) {
+            best = Some((swing, c, victim));
+        }
+    }
+    let Some((_, c, victim)) = best else { return Ok(false) };
+    crate::glog!(g, "  {} wipes the board after the attack: {}", g.player(d).name, g.db.get(c).name);
+    if !cast_wipe(g, d, c, victim)? {
+        return Ok(false);
+    }
+    g.player_mut(d).stat("attack_removal", 1);
     Ok(true)
 }

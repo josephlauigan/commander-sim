@@ -1,0 +1,83 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dark Ritual [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> add_mana
+   Lotus Petal [scryfall] A  :: rock=1:A
+   Grapeshot [pool] S 1R :: storm stormburn
+Swaps: Duress -> Brain Freeze; Dark Inquiry -> Dark Ritual; Potioner's Trove -> Lotus Petal; Ichor Slick -> Grapeshot; Thought Vessel -> Grim Tutor; Chaos Warp -> Diabolic Intent; Postmortem Professor -> Jeska's Will
+
+=== Kefka vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  40.8% ->  41.4%  (delta +0.6 pts, noise ±4.2, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 11.9%  Sythis 14.9%  Lord Windgrace 9.8%  Brago 10.3%  Meren of Clan Nel Toth 11.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          40.8% ->  41.4%  +0.6pt   ±4.4 
+    Rounds survived (or game length)                  12.99 ->  12.17   -0.82  ±0.29*
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.51 ->   0.48   -0.02  ±0.07 
+    Mana available on your turn 4                      4.06 ->   3.99   -0.07  ±0.07 
+    Mana available on your turn 6                      5.70 ->   5.57   -0.12  ±0.11*
+
+  Speed
+    Games where the game plan came online             53.2% ->  47.7%  -5.5pt   ±4.5*
+    Turn the game plan came online                    11.49 ->  11.10   -0.39  ±0.35*
+    Turn the commander first resolved                  6.36 ->   6.11   -0.24  ±0.21*
+
+  Card flow
+    Cards drawn per game (incl. draw step)            45.95 ->  40.57   -5.39  ±2.17*
+    Tutors resolved per game                           0.68 ->   1.17   +0.49  ±0.09*
+    Spells cast per game                              19.65 ->  20.17   +0.52  ±0.94 
+
+  Interaction
+    Counterspells cast                                 0.28 ->   0.25   -0.03  ±0.04 
+    Spot removal cast                                  2.01 ->   1.58   -0.42  ±0.12*
+    Board wipes cast                                   0.12 ->   0.09   -0.03  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.97 ->   0.83   -0.14  ±0.09*
+    Your spells countered                              0.31 ->   0.28   -0.03  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                52.50 ->  44.53   -7.97  ±3.34*
+      ...of which combat damage                       21.82 ->  18.67   -3.15  ±1.50*
+      ...of which magecraft / burn                     3.50 ->   4.18   +0.69  ±0.55*
+      ...of which drain triggers                      21.92 ->  17.32   -4.60  ±2.30*
+      ...of which other triggers                       4.97 ->   4.16   -0.81  ±1.01 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Games where the game plan came online (both profiles)
+    better - Turn the game plan came online (both profiles)
+    better - Turn the commander first resolved (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+    worse  - Board wipes cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    better - Your key permanents removed by opponents (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (both profiles)
+    worse  -   ...of which combat damage (both profiles)
+    better -   ...of which magecraft / burn (both profiles)
+    worse  -   ...of which drain triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(225s total)

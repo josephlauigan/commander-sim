@@ -1,0 +1,6 @@
+00:03 final t1 exit 0 [loose       ] win  26.9% ->  33.7%  (delta +6.8 pts, noise ±3.8, paired)   n=1000
+00:06 final t2 exit 0 [loose       ] win  30.7% ->  39.5%  (delta +8.8 pts, noise ±4.0, paired)   n=1000
+00:09 final t3 exit 0 [loose       ] win  22.1% ->  32.1%  (delta +10.0 pts, noise ±3.8, paired)   n=1000
+00:11 final t4 exit 0 [loose       ] win  20.8% ->  30.7%  (delta +9.9 pts, noise ±3.7, paired)   n=1000
+00:12 final t5 exit 0 [loose       ] win  21.2% ->  27.0%  (delta +5.8 pts, noise ±3.4, paired)   n=1000
+00:12 FINAL DONE: tiers +6.8 +8.8 +10.0 +9.9 +5.8 avg +8.3

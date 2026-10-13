@@ -27,6 +27,7 @@ pub struct RunTally {
     pub win_turns: u64,
     pub loss_turns: u64,
     pub plan: u64,
+    pub tempts: u64,
     pub seated: Counter<String>,
     pub opp_won: Counter<String>,
     pub killed_me: Counter<String>,
@@ -44,6 +45,7 @@ impl RunTally {
             win_turns: 0,
             loss_turns: 0,
             plan: 0,
+            tempts: 0,
             seated: Counter::new(),
             opp_won: Counter::new(),
             killed_me: Counter::new(),
@@ -84,6 +86,7 @@ impl RunTally {
             for (k, x) in report::axis_values(g, pi, me) {
                 self.axes.entry(k).or_default().add(x);
             }
+            self.tempts += p.stat("ring_tempts") as u64;
             if report::plan_turn(p, me).is_some() {
                 self.plan += 1;
             }
@@ -186,6 +189,9 @@ impl Ctx<'_> {
         println!("Average turn (your own turn count) of wins {wt}, of losses {lt}");
         if is_mine(me) {
             println!("Plan online ({}): {:.1}% of games", report::plan_text(me), (100 * r.plan) as f64 / nf);
+            if me == "elrond" {
+                println!("Ring tempts per game: {:.2}", r.tempts as f64 / nf);
+            }
         }
         if !r.wintype.is_empty() {
             let parts: Vec<String> =
@@ -400,7 +406,7 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     let matrix_mode = a.all_decks || (tiers.len() > 1 && swaps.is_empty() && !a.analyze);
     let (total, mut what) = if let Some(c) = &a.calibrate {
         let w = if c == "within" || c == "all" { TIERS.len() as u64 } else { 0 };
-        let o = if c == "ordering" || c == "all" { 20 } else { 0 };
+        let o = if c == "ordering" || c == "all" { 5 * (TIERS.len() as u64 - 1) } else { 0 };
         (k * (w + o), format!("calibration: {c}"))
     } else if matrix_mode {
         let nd = if a.all_decks { MINE.len() } else { 1 };

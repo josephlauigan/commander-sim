@@ -1,0 +1,21 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The One Ring [pool] A 4 :: leg
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m14s elapsed, ~2m06s left
+  progress  20.0%  0m28s elapsed, ~1m55s left
+  progress  30.0%  0m43s elapsed, ~1m41s left
+  progress  40.0%  0m58s elapsed, ~1m27s left
+  progress  50.0%  1m14s elapsed, ~1m14s left
+  progress  60.0%  1m29s elapsed, ~0m59s left
+  progress  70.0%  1m45s elapsed, ~0m45s left
+  progress  80.0%  2m00s elapsed, ~0m30s left
+  progress  90.0%  2m15s elapsed, ~0m15s left
+  progress 100.0%  2m34s elapsed, ~0m00s left
+Swaps: Commander's Sphere -> The One Ring
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  32.2% ->  31.9%  (delta -0.3 pts, noise ±3.3, paired)   n=1000
+               eliminated by (variant): Aurelia 24.0%  Tergrid 16.2%  Korvold 5.5%  Atraxa 9.8%  Marwyn 12.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(155s total)

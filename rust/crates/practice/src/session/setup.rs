@@ -11,7 +11,7 @@ use std::sync::Arc;
 
 /// the decks people can play (poolmode.MINE)
 pub const MY_DECKS: [&str; 7] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah"];
-pub const TIERS: [&str; 5] = ["t1", "t2", "t3", "t4", "t5"];
+pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
 
 /// the pool decks of a tier, sorted by key
 pub fn pool_keys(e: &Engine, tier: &str) -> Vec<String> {

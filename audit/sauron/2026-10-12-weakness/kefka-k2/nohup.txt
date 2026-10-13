@@ -1,0 +1,6 @@
+07:15 K2 t1 exit 0 [loose       ] win  28.6% ->  30.1%  (delta +1.5 pts, noise ±3.8, paired)   n=1000
+07:19 K2 t2 exit 0 [loose       ] win  40.8% ->  42.5%  (delta +1.7 pts, noise ±4.2, paired)   n=1000
+07:22 K2 t3 exit 0 [loose       ] win  27.7% ->  28.0%  (delta +0.3 pts, noise ±3.7, paired)   n=1000
+07:24 K2 t4 exit 0 [loose       ] win  30.1% ->  31.8%  (delta +1.7 pts, noise ±3.8, paired)   n=1000
+07:26 K2 t5 exit 0 [loose       ] win  22.9% ->  21.9%  (delta -1.0 pts, noise ±3.3, paired)   n=1000
+07:26 K2 CONFIRM DONE: tiers +1.5 +1.7 +0.3 +1.7 -1.0 avg +0.8

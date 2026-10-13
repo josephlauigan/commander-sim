@@ -1,0 +1,92 @@
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== kefka analysis [loose profile, lookahead AI, 960 games] ===========
+Win rate 28.0%   (4-player baseline 25%)   average rounds survived 10.7
+
+-- How it wins --
+  damage      98.5% of wins
+  timeout      1.5% of wins
+  Opponents it eliminated: 0.80 per game, by
+    drain              39.8%
+    combat             23.8%
+    triggers           21.1%
+    burn                8.6%
+    decked              3.3%
+    commander damage    2.5%
+    other               0.9%
+  Damage dealt per game: 41.3, from
+    drain               18.1  (44%)
+    combat              17.2  (42%)
+    triggers             3.5  (9%)
+    burn                 2.5  (6%)
+
+-- How it loses --
+  Eliminated in 71.8% of games, on average in round 9.8
+    by Light-Paws via commander damage   17.6% of games
+    by Isshin   via combat             12.1% of games
+    by Tatyova  via combat              9.8% of games
+    by Lathril  via combat              8.2% of games
+    by Light-Paws via combat              5.5% of games
+    by Teysa Karlov via drain               4.9% of games
+    by Teysa Karlov via combat              3.2% of games
+    by Lathril  via drain               2.9% of games
+
+-- Game plan timing --
+  Plan: Kefka flipped into Ruler of Ruin
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 1%  T7 4%  T8 9%  T9 17%  T10 25%  T11 30%  T12 34%
+  Online at all: 42.7% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Niv-Mizzet, the Firemind                   cast in  24.7% of games, win rate when cast  53.6% (+25.6)
+    Massacre Wurm                              cast in  18.4% of games, win rate when cast  53.1% (+25.1)
+    Psychosis Crawler                          cast in  29.1% of games, win rate when cast  53.0% (+25.0)
+    Demonic Embrace                            cast in  17.0% of games, win rate when cast  48.5% (+20.4)
+    Decorum Dissertation                       cast in  11.7% of games, win rate when cast  45.5% (+17.5)
+    Jin-Gitaxias, Progress Tyrant              cast in  12.6% of games, win rate when cast  45.5% (+17.4)
+    Arcane Denial                              cast in  19.0% of games, win rate when cast  42.9% (+14.8)
+    Night's Whisper                            cast in  27.7% of games, win rate when cast  42.9% (+14.8)
+    Eternal Student                            cast in  20.4% of games, win rate when cast  42.3% (+14.3)
+    Feed the Swarm                             cast in  21.8% of games, win rate when cast  42.1% (+14.1)
+  Lowest win rate when cast:
+    Sisay's Ring                               cast in  12.4% of games, win rate when cast  28.6% (+0.6)
+    Duress                                     cast in  23.3% of games, win rate when cast  31.7% (+3.7)
+    Chaos Warp                                 cast in  18.5% of games, win rate when cast  32.0% (+4.0)
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  86.8% of games, win rate when cast  32.1% (+4.0)
+    Dark Inquiry                               cast in  15.7% of games, win rate when cast  32.5% (+4.4)
+    Thought Vessel                             cast in  23.8% of games, win rate when cast  32.9% (+4.9)
+    Intellect Devourer                         cast in  21.2% of games, win rate when cast  33.3% (+5.3)
+    Postmortem Professor                       cast in  17.7% of games, win rate when cast  33.5% (+5.5)
+    Crux of Fate                               cast in  21.4% of games, win rate when cast  34.1% (+6.1)
+    Swiftfoot Boots                            cast in  20.1% of games, win rate when cast  34.2% (+6.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Deflecting Swat                            cast   4.1% of the games it was drawn
+    Slip Out the Back                          cast   6.6% of the games it was drawn [reactive: only cast in response]
+    Stargaze                                   cast  11.8% of the games it was drawn
+    Kaervek's Purge                            cast  14.9% of the games it was drawn
+    Underworld Breach                          cast  18.2% of the games it was drawn
+    Decorum Dissertation                       cast  26.2% of the games it was drawn
+    Sisay's Ring                               cast  28.7% of the games it was drawn
+    Jin-Gitaxias, Progress Tyrant              cast  30.5% of the games it was drawn
+    Disintegrate                               cast  30.6% of the games it was drawn
+    Ichor Slick                                cast  30.8% of the games it was drawn
+    Rapturous Moment                           cast  31.1% of the games it was drawn
+    Extinguish the Light                       cast  31.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  0.24
+    Rhystic Study                              0.08
+    Psychosis Crawler                          0.05
+    Postmortem Professor                       0.04
+    Corroding Dragonstorm                      0.04
+    Massacre Wurm                              0.03
+    Sawblade Scamp                             0.03
+    Potioner's Trove                           0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(219s total)

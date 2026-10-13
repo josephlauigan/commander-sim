@@ -1,0 +1,99 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dark Ritual [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> add_mana
+   Lotus Petal [scryfall] A  :: rock=1:A
+Analyzing the variant list: Duress -> Brain Freeze; Dark Inquiry -> Dark Ritual; Potioner's Trove -> Lotus Petal
+
+######## vs Tier 3 (High B3) ########
+
+=========== kefka analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 25.2%   (4-player baseline 25%)   average rounds survived 10.8
+
+-- How it wins --
+  damage      98.3% of wins
+  timeout      1.7% of wins
+  Opponents it eliminated: 0.69 per game, by
+    drain              31.2%
+    combat             30.0%
+    triggers           19.8%
+    burn                9.6%
+    decked              8.4%
+    commander damage    0.6%
+    other               0.3%
+  Damage dealt per game: 33.9, from
+    drain               14.8  (44%)
+    combat              14.0  (41%)
+    triggers             2.8  (8%)
+    burn                 2.3  (7%)
+
+-- How it loses --
+  Eliminated in 74.8% of games, on average in round 10.3
+    by Aurelia  via combat             16.7% of games
+    by Tergrid  via combat             15.4% of games
+    by Marwyn   via combat             11.7% of games
+    by Atraxa   via combat              7.3% of games
+    by Tergrid  via drain               4.0% of games
+    by Korvold  via combat              3.3% of games
+    by Korvold  via drain               2.5% of games
+    by Tergrid  via triggers            2.5% of games
+
+-- Game plan timing --
+  Plan: Kefka flipped into Ruler of Ruin
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 1%  T7 4%  T8 7%  T9 13%  T10 19%  T11 25%  T12 30%
+  Online at all: 36.2% of games
+  Commander resolves on turn: median 5.0, mean 6.0 (over the 85.0% of games it resolves)
+  Commander resolved by turn:  T4 17%  T5 43%  T6 58%  T7 67%  T8 76%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Niv-Mizzet, the Firemind                   cast in  22.5% of games, win rate when cast  49.1% (+23.9)
+    Psychosis Crawler                          cast in  24.2% of games, win rate when cast  46.6% (+21.3)
+    Grim Servant                               cast in  21.5% of games, win rate when cast  42.7% (+17.5)
+    Garrison Excavator                         cast in  24.4% of games, win rate when cast  40.2% (+15.0)
+    Seize the Spoils                           cast in  22.1% of games, win rate when cast  39.6% (+14.4)
+    Arcane Signet                              cast in  23.3% of games, win rate when cast  38.4% (+13.2)
+    Stadium Tidalmage                          cast in  22.7% of games, win rate when cast  37.6% (+12.4)
+    Lightning Bolt                             cast in  26.0% of games, win rate when cast  36.8% (+11.6)
+    Lotus Petal                                cast in  35.2% of games, win rate when cast  36.7% (+11.5)
+    Sneering Shadewriter                       cast in  24.0% of games, win rate when cast  36.5% (+11.3)
+  Lowest win rate when cast:
+    Chaos Warp                                 cast in  22.5% of games, win rate when cast  25.9% (+0.7)
+    Rhystic Study                              cast in  24.4% of games, win rate when cast  26.5% (+1.3)
+    Skullclamp                                 cast in  33.1% of games, win rate when cast  28.9% (+3.7)
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  85.4% of games, win rate when cast  29.0% (+3.8)
+    Night's Whisper                            cast in  26.5% of games, win rate when cast  29.1% (+3.9)
+    Eternal Student                            cast in  22.1% of games, win rate when cast  29.2% (+4.0)
+    Reality Shift                              cast in  24.0% of games, win rate when cast  29.6% (+4.4)
+    Swiftfoot Boots                            cast in  21.2% of games, win rate when cast  30.4% (+5.2)
+    Thought Vessel                             cast in  23.5% of games, win rate when cast  31.0% (+5.8)
+    Alpharael, Dreaming Acolyte                cast in  26.9% of games, win rate when cast  31.0% (+5.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Deflecting Swat                            cast   2.9% of the games it was drawn
+    Slip Out the Back                          cast   4.1% of the games it was drawn [reactive: only cast in response]
+    Twinflame                                  cast   5.5% of the games it was drawn
+    Brain Freeze                               cast  12.4% of the games it was drawn
+    Kaervek's Purge                            cast  16.2% of the games it was drawn
+    Underworld Breach                          cast  23.4% of the games it was drawn
+    Decorum Dissertation                       cast  25.0% of the games it was drawn
+    Ichor Slick                                cast  27.0% of the games it was drawn
+    Disintegrate                               cast  29.6% of the games it was drawn
+    Sisay's Ring                               cast  32.2% of the games it was drawn
+    Demonic Embrace                            cast  33.3% of the games it was drawn
+    Crux of Fate                               cast  34.4% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  0.24
+    Rhystic Study                              0.07
+    Psychosis Crawler                          0.06
+    Postmortem Professor                       0.05
+    Sawblade Scamp                             0.04
+    Massacre Wurm                              0.04
+    Scarlet Spider, Kaine                      0.03
+    Susurian Voidborn                          0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(44s total)

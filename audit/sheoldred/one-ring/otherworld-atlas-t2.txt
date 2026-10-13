@@ -1,0 +1,21 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The One Ring [pool] A 4 :: leg
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m20s elapsed, ~3m04s left
+  progress  20.0%  0m39s elapsed, ~2m38s left
+  progress  30.0%  0m57s elapsed, ~2m14s left
+  progress  40.0%  1m17s elapsed, ~1m56s left
+  progress  50.0%  1m36s elapsed, ~1m36s left
+  progress  60.0%  1m57s elapsed, ~1m18s left
+  progress  70.0%  2m17s elapsed, ~0m58s left
+  progress  80.0%  2m36s elapsed, ~0m39s left
+  progress  90.0%  2m55s elapsed, ~0m19s left
+  progress 100.0%  3m13s elapsed, ~0m00s left
+Swaps: Otherworld Atlas -> The One Ring
+
+=== Sheoldred vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  41.7% ->  45.2%  (delta +3.5 pts, noise ±2.9, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 11.9%  Sythis 10.9%  Lord Windgrace 8.0%  Brago 11.4%  Meren of Clan Nel Toth 11.5%
+VERDICT: BETTER under the loose profile (the only one run)
+
+(194s total)

@@ -1,0 +1,42 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Soul Shatter [scryfall+dsl] I 2B :: (no tags)
+      ability: spell  -> sacrifice
+   Sheoldred's Edict [scryfall+dsl] I 1B :: (no tags)
+      ability: spell  -> modal
+   Chainer's Edict [scryfall+dsl] S 1B :: fb=5BB
+      ability: spell  -> sacrifice
+   Diabolic Edict [scryfall+dsl] I 1B :: (no tags)
+      ability: spell  -> sacrifice
+   Vona's Hunger [scryfall+dsl] I 2B :: (no tags)
+      ability: spell  -> sacrifice
+      not modeled: Ascend
+      not modeled: Each opponent sacrifices a creature of their choice. If you have the city's blessing, instead each opponent sacrifices half the creatures they control of their choice, rounded up.   [partly: if you have the city's blessing, instead each opponent sacrifices half the creatures they control of their choice, rounded up]
+   Heartless Act [scryfall+dsl] I 1B :: rem=destroy tgt=c
+      ability: spell  -> modal
+      not modeled: • remove up to three counters from target creature
+   Hero's Downfall [scryfall+dsl] I 1BB :: rem=destroy tgt=cp
+      ability: spell  -> destroy
+   Power Word Kill [scryfall+dsl] I 1B :: rem=destroy tgt=c
+      ability: spell  -> destroy
+   Vampire Nighthawk [scryfall] C 1BB :: shaman pow=2 tgh=3 dt fly lifelink
+   Typhoid Rats [scryfall] C B :: pow=1 dt
+   Crawlspace [pool] A 3 :: (no tags)
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m20s elapsed, ~3m04s left
+  progress  20.0%  0m38s elapsed, ~2m35s left
+  progress  30.0%  0m57s elapsed, ~2m13s left
+  progress  40.0%  1m16s elapsed, ~1m54s left
+  progress  50.0%  1m35s elapsed, ~1m35s left
+  progress  60.0%  1m56s elapsed, ~1m17s left
+  progress  70.0%  2m16s elapsed, ~0m58s left
+  progress  80.0%  2m34s elapsed, ~0m38s left
+  progress  90.0%  2m54s elapsed, ~0m19s left
+  progress 100.0%  3m29s elapsed, ~0m00s left
+Swaps: Dark Deal -> Soul Shatter; Peer into the Abyss -> Sheoldred's Edict; Apex Witchstalker -> Chainer's Edict; Al Bhed Salvagers -> Diabolic Edict; Phyrexian Rager -> Vona's Hunger; Undercity Dire Rat -> Heartless Act; Ulna Alley Shopkeep -> Hero's Downfall; Sneering Shadewriter -> Power Word Kill; Screeching Soulbreaker -> Vampire Nighthawk; Perigee Beckoner -> Typhoid Rats; Charcoal Diamond -> Crawlspace
+
+=== Sheoldred vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  41.7% ->  40.1%  (delta -1.6 pts, noise ±4.1, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 12.6%  Sythis 10.8%  Lord Windgrace 7.9%  Brago 12.2%  Meren of Clan Nel Toth 14.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(209s total)

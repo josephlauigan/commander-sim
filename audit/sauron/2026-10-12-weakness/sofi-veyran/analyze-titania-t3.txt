@@ -1,0 +1,78 @@
+
+######## vs Tier 3 (High B3) ########
+
+=========== titania analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 25.4%   (4-player baseline 25%)   average rounds survived 12.2
+
+-- How it wins --
+  damage      93.4% of wins
+  timeout      6.6% of wins
+  Opponents it eliminated: 0.65 per game, by
+    combat             99.7%
+    commander damage    0.3%
+  Damage dealt per game: 34.2, from
+    combat              34.2  (100%)
+
+-- How it loses --
+  Eliminated in 74.0% of games, on average in round 11.4
+    by Aurelia  via combat             19.2% of games
+    by Marwyn   via combat             13.5% of games
+    by Tergrid  via combat             12.7% of games
+    by Atraxa   via combat              8.5% of games
+    by Aurelia  via commander damage    2.9% of games
+    by Tergrid  via drain               2.5% of games
+    by Korvold  via commander damage    2.5% of games
+    by Korvold  via drain               2.3% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 10%  T6 19%  T7 28%  T8 34%  T9 41%  T10 45%  T11 49%  T12 50%
+  Online at all: 53.5% of games
+  Commander resolves on turn: median 7.0, mean 6.9 (over the 92.7% of games it resolves)
+  Commander resolved by turn:  T4 11%  T5 29%  T6 45%  T7 60%  T8 72%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Ghalta the Unstoppable                     cast in  21.9% of games, win rate when cast  44.8% (+19.3)
+    Greenhouse Propagator                      cast in  23.5% of games, win rate when cast  43.4% (+17.9)
+    Cactarantula                               cast in  22.9% of games, win rate when cast  41.8% (+16.4)
+    Follow the Lumarets                        cast in  22.1% of games, win rate when cast  41.5% (+16.1)
+    Genesis Hydra                              cast in  22.9% of games, win rate when cast  40.9% (+15.5)
+    Hornet Queen                               cast in  22.5% of games, win rate when cast  38.0% (+12.5)
+    Tenured Concocter                          cast in  22.7% of games, win rate when cast  37.6% (+12.2)
+    Something Worth Saving                     cast in  23.3% of games, win rate when cast  37.5% (+12.1)
+    Studious First-Year                        cast in  24.0% of games, win rate when cast  37.4% (+12.0)
+    Topiary Lecturer                           cast in  25.6% of games, win rate when cast  35.8% (+10.4)
+  Lowest win rate when cast:
+    Silhana Starfletcher                       cast in  22.3% of games, win rate when cast  24.3% (-1.1)
+    Pick Your Poison                           cast in  23.5% of games, win rate when cast  25.7% (+0.2)
+    Hardbristle Bandit                         cast in  23.3% of games, win rate when cast  26.8% (+1.4)
+    Titania, Protector of Argoth               cast in  92.7% of games, win rate when cast  27.4% (+2.0)
+    Malevolent Rumble                          cast in  25.4% of games, win rate when cast  28.7% (+3.3)
+    Llanowar Elves                             cast in  24.0% of games, win rate when cast  29.6% (+4.1)
+    Spider-Man, Brooklyn Visionary             cast in  25.2% of games, win rate when cast  30.6% (+5.2)
+    Bugenhagen, Wise Elder                     cast in  20.8% of games, win rate when cast  31.0% (+5.6)
+    Scout the City                             cast in  22.5% of games, win rate when cast  31.5% (+6.1)
+    Pothole Mole                               cast in  21.5% of games, win rate when cast  32.0% (+6.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Royal Treatment                            cast  32.5% of the games it was drawn
+    Tumbleweed Rising                          cast  38.0% of the games it was drawn
+    Arachnogenesis                             cast  38.1% of the games it was drawn
+    Overwhelming Stampede                      cast  44.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               0.65
+    Ghalta the Unstoppable                     0.07
+    Studious First-Year                        0.05
+    Hardbristle Bandit                         0.05
+    Cactarantula                               0.04
+    Lashwhip Predator                          0.04
+    Yavimaya Wurm                              0.04
+    Boughside Wanderers                        0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(45s total)

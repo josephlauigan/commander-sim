@@ -1,0 +1,6 @@
+09:03 comet t1 exit 0 [loose       ] win  39.1% ->  39.0%  (delta -0.1 pts, noise ±2.9, paired)   n=1000
+09:06 comet t2 exit 0 [loose       ] win  44.0% ->  40.3%  (delta -3.7 pts, noise ±3.1, paired)   n=1000
+09:09 comet t3 exit 0 [loose       ] win  33.2% ->  35.0%  (delta +1.8 pts, noise ±2.7, paired)   n=1000
+09:11 comet t4 exit 0 [loose       ] win  32.4% ->  32.3%  (delta -0.1 pts, noise ±2.7, paired)   n=1000
+09:12 comet t5 exit 0 [loose       ] win  26.5% ->  25.4%  (delta -1.1 pts, noise ±1.9, paired)   n=1000
+09:12 COMET DONE: tiers -0.1 -3.7 +1.8 -0.1 -1.1 avg -0.6

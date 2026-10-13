@@ -2,7 +2,7 @@
 //! prefix of an option's name also works (`--gam 960`), --swap repeats, and a bad value is an error naming the
 //! option (exit code 2).
 
-pub const DECK_KEYS: [&str; 10] = crate::decks::MINE;
+pub const DECK_KEYS: [&str; 12] = crate::decks::MINE;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Args {
@@ -42,7 +42,7 @@ const OPTS: [Opt; 20] = [
     opt(
         "--pool",
         false,
-        &["t1", "t2", "t3", "t4", "t5", "all"],
+        &["t0", "t1", "t2", "t3", "t4", "t5", "all"],
         "",
         "play --deck against three outside decks drawn from this tier (see decklists/pool/)",
     ),

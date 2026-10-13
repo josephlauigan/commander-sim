@@ -157,6 +157,9 @@ fn niv_mizzet_is_cast_like_the_crawler_and_never_held() {
 fn triskelion_and_rapturous_moment_priorities() {
     let mut g = table2();
     hand(&mut g, P0, &["Triskelion", "Rapturous Moment", "Duress", "Forest"]);
+    // Kefka's enter trigger redraws what it discards: a fixed library keeps the test off the decklist's shuffle
+    let duress = card(&g, "Duress");
+    g.player_mut(P0).library = vec![duress; 30];
     let t0 = prio(&g, P0, "Triskelion");
     kefka_out(&mut g, P0, false);
     assert!(prio(&g, P0, "Triskelion") > t0);

@@ -78,7 +78,10 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 if &*s.name == "Fatal Push" && d.cmc > 2 && !cardcode::revolt(g, p) {
                     continue;
                 }
-                if &*s.name == "Depressurize" && crate::engine::values::epow(g, m) > 3 {
+                if &*s.name == "Lay Down Arms" && d.cmc > crate::impls::bulk_white::plains(g, p) {
+                    continue; // mana value at most the Plains you control
+                }
+                if &*s.name == "Depressurize"&& crate::engine::values::epow(g, m) > 3 {
                     continue; // -3/-0 must leave it at 0 power or less
                 }
                 if &*s.name == "Bloodchief's Thirst" && d.cmc > 2 && !can_pay(g, p, 2, "BB", false) {
@@ -256,6 +259,8 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         bounce(g, m)?;
     } else if kind == "tuck" {
         tuck(g, m)?;
+    } else if kind == "topbot" {
+        crate::impls::bulk_blue::top_or_bottom(g, m)?; // Sudden Setback, Vanish from Sight: its owner chooses
     } else if matches!(kind, "elk" | "mutate" | "forest") {
         cardcode::transform_away(g, m, kind)?;
     } else if LOCK_KINDS.contains(&kind) {
@@ -357,6 +362,9 @@ pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ct
 
 fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
     crate::glog!(g, "    board wipe resolves ({})", kind);
+    if crate::impls::sweepers::is_kind(kind) {
+        return crate::impls::sweepers::resolve(g, p, kind);
+    }
     let mut victims: Vec<PlayerId> = match kind {
         "rift" | "vandal" => g.opps(p).collect(),
         "rebuke" => ctx.victim.filter(|&v| g.player(v).alive).into_iter().collect(),

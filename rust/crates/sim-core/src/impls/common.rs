@@ -339,9 +339,10 @@ pub fn attached_kw(g: &Game, m: PermId, kw: &str) -> bool {
 
 /// common.attached_prot: the colours m's Auras give it protection from
 pub fn attached_prot(g: &Game, m: PermId) -> Colors {
-    auras_on_iter(g, m)
-        .filter_map(|a| spec_of(g, a))
-        .fold(Colors::NONE, |s, spec| s.union(Colors::from_letters(spec.prot)))
+    auras_on_iter(g, m).fold(Colors::NONE, |s, a| {
+        let fixed = spec_of(g, a).map_or(Colors::NONE, |spec| Colors::from_letters(spec.prot));
+        s.union(fixed).union(super::bulk_white::chosen_color(g, a)) // Cho-Manno's Blessing: the colour chosen
+    })
 }
 
 /// common.umbra_save: umbra armor: m would be destroyed: an umbra on it is destroyed instead
@@ -361,6 +362,7 @@ pub fn umbra_save(g: &mut Game, m: PermId) -> Res<bool> {
 pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
     for a in g.auras.clone() {
         if a == m {
+            crate::impls::bulk_blue::kasmina_detach(g, a); // Kasmina's Transmutation leaves: the creature is itself again
             if let Some(i) = g.auras.iter().position(|&x| x == a) {
                 g.auras.remove(i);
             }
@@ -1897,6 +1899,9 @@ fn trawler_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
 /// t2.blink_value: how much re-entering is worth for p's permanent m. A copy of t2.py's (t2.rs is ported
 /// separately): MERGE: call t2's.
 fn blink_value(g: &Game, _p: PlayerId, m: PermId) -> f64 {
+    if g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::cloud::CLOUD) {
+        return crate::impls::cloud::reenter_value(g, _p, m); // Cloud, Midgar Mercenary: his search again
+    }
     let x = g.perm(m);
     let Some(cd) = x.cd else { return 0.0 };
     if x.token || x.is_cmd {

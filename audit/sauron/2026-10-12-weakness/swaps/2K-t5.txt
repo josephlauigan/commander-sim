@@ -1,0 +1,59 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dark Ritual [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> add_mana
+   Lotus Petal [scryfall] A  :: rock=1:A
+Swaps: Duress -> Brain Freeze; Dark Inquiry -> Dark Ritual; Potioner's Trove -> Lotus Petal
+
+=== Kefka vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.4% ->  19.8%  (delta -3.6 pts, noise ±4.5, paired)   n=500
+               eliminated by (variant): Urza 18.0%  Zur the Enchanter 10.2%  Winota 22.2%  Kinnan 20.2%  Yawgmoth 9.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.4% ->  19.8%  -3.6pt   ±5.2 
+    Rounds survived (or game length)                   8.46 ->   8.18   -0.29  ±0.41 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.40 ->   0.40   -0.01  ±0.09 
+    Mana available on your turn 4                      4.09 ->   4.05   -0.04  ±0.10 
+    Mana available on your turn 6                      5.68 ->   5.62   -0.05  ±0.18 
+
+  Speed
+    Games where the game plan came online             22.8% ->  21.2%  -1.6pt   ±5.2 
+    Turn the game plan came online                    10.11 ->   9.98   -0.12  ±0.58 
+    Turn the commander first resolved                  6.12 ->   5.88   -0.24  ±0.33 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            22.71 ->  21.90   -0.81  ±2.60 
+    Tutors resolved per game                           0.27 ->   0.22   -0.05  ±0.07 
+    Spells cast per game                               9.18 ->   9.23   +0.05  ±0.87 
+
+  Interaction
+    Counterspells cast                                 0.15 ->   0.15   +0.00  ±0.05 
+    Spot removal cast                                  1.13 ->   1.12   -0.01  ±0.15 
+    Board wipes cast                                   0.04 ->   0.03   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.01 
+    Your key permanents removed by opponents           0.17 ->   0.15   -0.02  ±0.05 
+    Your spells countered                              0.45 ->   0.46   +0.01  ±0.09 
+
+  Threat & pressure
+    Damage dealt to opponents per game                24.02 ->  22.92   -1.10  ±3.46 
+      ...of which combat damage                       12.02 ->  11.62   -0.40  ±1.90 
+      ...of which magecraft / burn                     1.74 ->   1.68   -0.06  ±0.47 
+      ...of which drain triggers                       8.63 ->   8.04   -0.58  ±1.74 
+      ...of which other triggers                       1.53 ->   1.46   -0.07  ±0.84 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(47s total)

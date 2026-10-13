@@ -140,7 +140,7 @@ fn the_audit_runs_on_the_scratch_data() {
     let built = inp.build();
     let au = cardgen::audit::Audit::new(&inp, &built.cards).unwrap();
     let rows = cardgen::audit::audit_pool(&au, &inp.pool);
-    assert_eq!(rows.len(), 25);
+    assert_eq!(rows.len(), 30);
     assert_eq!(au.card_status("Island", false).0, "Full");
     let (s, _) = au.card_status("Sol Ring", true);
     assert_eq!(s, "Full");

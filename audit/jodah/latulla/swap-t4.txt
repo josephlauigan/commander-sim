@@ -1,0 +1,23 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Latulla's Orders [scryfall] E 1R :: flash
+      not modeled: Enchant creature
+      not modeled: Whenever enchanted creature deals combat damage to defending player, you may destroy target artifact that player controls.
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 12 worker threads: about 8 minutes
+  progress  10.0%  0m27s elapsed, ~4m10s left
+  progress  20.0%  0m55s elapsed, ~3m43s left
+  progress  30.0%  1m25s elapsed, ~3m18s left
+  progress  40.0%  1m52s elapsed, ~2m48s left
+  progress  50.0%  2m20s elapsed, ~2m20s left
+  progress  60.0%  2m48s elapsed, ~1m52s left
+  progress  70.0%  3m16s elapsed, ~1m24s left
+  progress  80.0%  3m45s elapsed, ~0m56s left
+  progress  90.0%  4m13s elapsed, ~0m28s left
+  progress 100.0%  4m47s elapsed, ~0m00s left
+Swaps: Coalition Relic -> Latulla's Orders
+
+=== Jodah vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  14.4% ->  16.3%  (delta +1.9 pts, noise ±2.7, paired)   n=1000
+               eliminated by (variant): Heliod 19.9%  Yuriko 18.7%  Krenko 19.8%  Chulane 14.3%  Prosper 10.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(287s total)

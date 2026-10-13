@@ -29,6 +29,9 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     for t in &mut entries {
         t.cast_etb = g.last_cast_etb;
     }
+    // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
+    let extra: Vec<Trigger> = entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
+    entries.extend(extra);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
 }
@@ -546,6 +549,7 @@ pub fn counter_ok(g: &Game, ctr: CardId, c: CardId) -> bool {
         Some("mv1") => d.cmc == 1,                                // Mental Misstep
         Some("cre2") => d.creature && (d.pow <= 2 || d.tgh <= 2), // Stern Scolding
         Some("blue") => d.pips.contains('U'),                     // Pyroblast / Red Elemental Blast
+        Some("crleg") => d.creature || d.tag(Tag::Leg),           // Icy Reception: creature or legendary spell
         _ => false,
     }
 }
@@ -556,6 +560,9 @@ pub fn counter_cost(g: &Game, ctr: CardId, spell: Option<CardId>, q: Option<Play
     let d = g.db.get(ctr);
     if d.tag(Tag::Brushoff) && spell.is_some_and(|s| g.db.get(s).instant || g.db.get(s).sorcery) {
         return (1, "U".into());
+    }
+    if &*d.name == "Phantom Interference" {
+        return (1, "U".into()); // spree: the counter mode costs {1} more (the Spirit mode: bulk_blue::spree_extra)
     }
     if &*d.name == "Wizard's Retort"
         && let Some(q) = q
@@ -687,6 +694,7 @@ pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -
     if !pay_counter(g, q, ctr, t.card)? {
         return Ok(false);
     }
+    let spree = crate::impls::bulk_blue::spree_extra(g, q, ctr)?; // Phantom Interference: the Spirit mode too
     let pl = g.player_mut(q);
     let i = pl.hand.iter().position(|&c| c == ctr).unwrap();
     pl.hand.remove(i);
@@ -713,6 +721,9 @@ pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -
         name,
     );
     if stack_window(g, q, it)? {
+        if spree {
+            crate::impls::bulk_blue::spirit_token(g, q)?;
+        }
         resolve_counter(g, q, ctr, target)?;
         if g.db.get(ctr).creature {
             // Mystic Snake / Venser: the counter is a creature
@@ -860,6 +871,9 @@ pub fn counter_side_effects(g: &mut Game, q: PlayerId, p: PlayerId, ctr: CardId)
     }
     if name == "Absorb" {
         gain(g, q, 3)?;
+    }
+    if name == "Amazing Acrobatics" {
+        crate::impls::bulk_blue::acrobatics_tap(g, q)?; // its other mode: tap one or two creatures
     }
     if name == "Statute of Denial"
         && g.player(q).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased && colors_of(g, m).has('U'))

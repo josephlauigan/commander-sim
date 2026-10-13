@@ -30,8 +30,8 @@ use crate::engine::zones::{
     leave, make_tokens, max_by, mill, min_by, to_zone_card,
 };
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
+use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
@@ -132,11 +132,14 @@ pub fn ring_tempt(g: &mut Game, p: PlayerId) -> Res {
     if !cr.is_empty() {
         let b = if hum {
             choices::ring_bearer(g, p, &cr)?
+        } else if g.player(p).key == "elrond" {
+            crate::impls::elrond::ring_pick(g, p, &cr)
         } else {
             first_max(&cr, |m| (g.perm(m).army, epow(g, m) as f64 + 2.0 * etgh(g, m) as f64 / 5.0)).unwrap()
         };
         g.player_mut(p).ring_bearer = Some(b);
         crate::glog!(g, "    The Ring tempts {} (level {lvl}): Ring-bearer {}", g.player(p).name, g.perm(b).name);
+        crate::impls::elrond::gandalf_draw(g, p, b)?; // Gandalf, Friend of the Shire
         for _ in find(g, p, Tag::Callring) {
             // Call of the Ring: you may pay 2 life to draw a card (not from an empty library)
             if hum {
@@ -1286,6 +1289,22 @@ fn zone_sym(w: Wh) -> Sym {
     if w == Wh::Gy { "escape" } else { "hand" }
 }
 
+/// diagnostics: why a dry run fell short, as a code the report reads (1 mana, 2 blue mana, 3 graveyard fuel, 4 storm
+/// count / anything else); a rough first-fit reading of the position, never used to decide anything
+fn line_shortfall(st: &LineState) -> i64 {
+    let mana = st.land + st.float;
+    let no_blue = st.u == 0 && st.w(GRAPESHOT).is_none() && st.w(PETAL).is_none() && !st.led_bf && st.w(LED).is_none();
+    if mana < 3 {
+        1
+    } else if no_blue {
+        2
+    } else if st.fuel < 3 {
+        3
+    } else {
+        4
+    }
+}
+
 /// mine._dry_run: would the line finish every opponent if nobody interacts? Played for real on a copy of the game
 /// with the opponents' hands removed (so it neither cheats nor fears their counters); cached for the position. Inside
 /// a look-ahead playout (itself a copy) it reuses the real game's answer for this turn (the copy carries it).
@@ -1310,6 +1329,7 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     {
         return Ok(*ok);
     }
+    let real = !g.in_search;
     let island = g.db.id("Island").unwrap();
     let (mut ok, mut no_setup) = (false, false);
     for ns in [false, true] {
@@ -1328,15 +1348,28 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
         }
     }
     g.line_no_setup = ok && no_setup; // the real line follows the plan that worked
+    if real {
+        let code = if ok { 0 } else { line_shortfall(&line_state(g, p)) };
+        let st = &mut g.player_mut(p).stats;
+        st.insert("bl_dry", 1);
+        if ok {
+            st.insert("bl_pass", 1);
+        } else {
+            st.insert("bl_short", code); // the latest failed dry run
+        }
+    }
     g.breach_dry = Some((stamp, key, ok));
     Ok(ok)
 }
 
-/// mine.breach_line: Sauron's Breach line. Dry run (execute false): does it finish every opponent (burned to 0 or
-/// milled out) if nobody interacts? Execute: cast it for real, one spell at a time (each can be countered).
+/// mine.breach_line: the Underworld Breach line (Sauron's; any deck holding Breach and a storm card runs it). Dry run
+/// (execute false): does it finish every opponent (burned to 0 or milled out) if nobody interacts? Execute: cast it for real, one spell at a time (each can be countered).
 pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
-    if g.player(p).key != "sauron" || g.opps(p).next().is_none() {
+    if g.opps(p).next().is_none() {
         return Ok(false);
+    }
+    if g.player(p).key != "sauron" && !crate::ai::decks::breach_pieces(g, p) {
+        return Ok(false); // any deck holding the pieces may run the line (cheap check first)
     }
     let st = line_state(g, p);
     if !st.breach && !st.breach_hand {
@@ -1469,6 +1502,9 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
         }
     }
     check_state(g)?;
+    if g.opps(p).all(|q| !g.player(q).alive || g.player(q).library.is_empty()) {
+        g.player_mut(p).stats.insert("bl_won", 1); // every opponent dead or decked (--analyze)
+    }
     Ok(true)
 }
 
@@ -1503,6 +1539,9 @@ fn line_led(g: &mut Game, p: PlayerId, st: &LineState) -> Res<bool> {
 
 /// mine.breach_options: the AI's main-phase option: go for the Breach line when the dry run finishes the table
 pub fn breach_options(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
+    if g.active == Some(p) && !g.in_search && crate::ai::decks::breach_pieces(g, p) {
+        g.player_mut(p).stats.insert("bl_held", 1); // diagnostics only (--analyze)
+    }
     if g.active != Some(p) || !breach_line(g, p, false)? {
         return Ok(vec![]);
     }
@@ -1915,6 +1954,10 @@ fn on_bf_of(g: &Game, p: PlayerId, m: PermId) -> bool {
 
 /// mine.etb_value: what re-entering the battlefield is worth for permanent m (its enters-the-battlefield effects)
 pub fn etb_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    let cv = crate::impls::cloud::reenter_value(g, p, m);
+    if cv > 0.0 {
+        return cv; // Cloud, Midgar Mercenary: his search again
+    }
     let x = g.perm(m);
     let Some(cd) = x.cd else { return 0.0 };
     let d = g.db.get(cd);
@@ -4354,7 +4397,35 @@ fn relic_mana(g: &Game, src: Src, p: PlayerId, units: &[Unit]) -> Vec<Unit> {
         .collect()
 }
 
+// ------------------------------------------------------------------ Latulla's Orders
+/// Latulla's Orders: a flash Aura on your best creature (common.own_host)
+static LATULLA_SPEC: super::common::AuraSpec = super::common::AURA;
+
+/// whenever the enchanted creature deals combat damage to the defending player, you may destroy target artifact that
+/// player controls: their most valuable one you can target
+fn latulla_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -> Res {
+    if !g.perm(src).on_bf || g.perm(src).attached != Some(a) {
+        return Ok(());
+    }
+    let o = g.perm(src).owner;
+    let arts: Vec<PermId> = g
+        .player(d)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| !g.perm(m).phased && super::t5::is_artifact(g, m) && !crate::engine::values::untargetable(g, m))
+        .collect();
+    let Some(t) = first_max(&arts, |m| crate::engine::values::pval(g, m)) else { return Ok(()) };
+    if trigger_window(g, o, Some(src), "destroy an artifact", None)? {
+        apply_removal(g, Some(o), t, "destroy", None)?;
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    super::common::aura(r, db, "Latulla's Orders", &LATULLA_SPEC)?;
+    r.card(db, "Triple Triad")?.upkeep = Some(triad_upkeep);
+    r.card(db, "Latulla's Orders")?.combat_damage = Some(latulla_hit);
     r.card(db, "Barad-dûr")?.land_options = Some(baraddur);
     r.card(db, "Bloodsoaked Insight // Sanguine Morass")?.hand_options = Some(insight);
     r.card(db, BRAIN_FREEZE)?.resolve = Some(brain_freeze);
@@ -4439,4 +4510,90 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Manamorphose")?.resolve = Some(manamorphose);
     r.card(db, "Relic of Legends")?.extra_mana = Some(relic_mana);
     Ok(())
+}
+
+// ======================================================== Triple Triad
+/// Triple Triad ({3}{R}{R}{R} enchantment): at the beginning of your upkeep, each player exiles the top card of their
+/// library; until end of turn you may play the card you own exiled this way and each other card exiled this way with
+/// lesser mana value than it, without paying their mana costs.
+///
+/// Modeled whole, with two simplifications: the cards are played at once, in the upkeep, highest mana value first (a
+/// sorcery-speed card would wait for the main phase), and the AI plays every card it can use: lands only while a land
+/// drop is left, never an Aura (no host to choose) or a counterspell (nothing to counter at upkeep). A card taken
+/// from an opponent stays theirs (it goes back to their graveyard or exile); a card not played stays in exile.
+fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != g.perm(src).owner
+        || !g.perm(src).on_bf
+        || !trigger_window(g, p, Some(src), "each player exiles the top card of their library", Some(6.0))?
+    {
+        return Ok(());
+    }
+    let mut exiled: Vec<(CardId, PlayerId)> = vec![];
+    for i in 0..g.players.len() {
+        let q = PlayerId(i as u8);
+        if !g.player(q).alive {
+            continue;
+        }
+        if let Some(c) = g.player_mut(q).library.pop() {
+            g.player_mut(q).exile.push(c);
+            crate::glog!(g, "    Triple Triad exiles {} from {}'s library", g.db.get(c).name, g.player(q).name);
+            exiled.push((c, q));
+        }
+    }
+    let Some(&(mine, _)) = exiled.iter().find(|&&(_, q)| q == p) else { return Ok(()) };
+    let top = g.db.get(mine).cmc;
+    let mut playable: Vec<(CardId, PlayerId)> =
+        exiled.into_iter().filter(|&(c, q)| (q == p && c == mine) || g.db.get(c).cmc < top).collect();
+    playable.sort_by_key(|&(c, _)| std::cmp::Reverse(g.db.get(c).cmc));
+    for (c, d) in playable {
+        if g.over || !g.player(p).alive {
+            break;
+        }
+        let Some(i) = g.player(d).exile.iter().position(|&x| x == c) else { continue };
+        let def = g.db.get(c);
+        let (land, perm, spell) = (def.land, def.perm, def.instant || def.sorcery);
+        if (def.has_subtype("aura") && !land) || def.tag(Tag::Ctr) || !(land || perm || spell) {
+            continue;
+        }
+        if land {
+            if g.player(p).lands_played >= 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now {
+                continue;
+            }
+            g.player_mut(d).exile.remove(i);
+            crate::engine::turn::play_land_card(g, p, c, "plays")?; // Triple Triad: a land drop
+        } else if perm {
+            g.player_mut(d).exile.remove(i);
+            enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;
+        } else if castable(g, p, c, "hand") {
+            g.player_mut(d).exile.remove(i);
+            g.player_mut(p).hand.push(c);
+            let ctx = Ctx { owner: Some(d), ..Ctx::default() };
+            cast_card(g, p, c, "hand", ctx)?; // back to d's graveyard
+            if let Some(j) = g.player(p).hand.iter().position(|&x| x == c) {
+                g.player_mut(p).hand.remove(j); // not cast after all: still d's, in exile
+                g.player_mut(d).exile.push(c);
+            }
+        }
+    }
+    Ok(())
+}
+
+/// speed metrics (reports): the Sauron plan milestone `army_hit`, the first combat damage to a player by an Army
+/// (set for every deck; only the sauron report reads it)
+pub fn army_hit_milestone(g: &mut Game, p: PlayerId) {
+    let turns = g.player(p).turns;
+    g.player_mut(p).milestone.entry("army_hit").or_insert(turns);
+}
+
+/// speed metrics (reports): at the start of Sauron's turns 6, 8 and 10, the Army's power as the milestone `army_p<turn>`
+/// (no entry when there is no Army; the report counts that as 0)
+pub fn army_power_snapshot(g: &mut Game, p: PlayerId) {
+    let t = g.player(p).turns;
+    if !matches!(t, 6 | 8 | 10) || g.player(p).key != "sauron" {
+        return;
+    }
+    if let Some(a) = crate::engine::values::army_of(g, p) {
+        let pw = crate::engine::values::epow(g, a).max(0) as u32;
+        g.player_mut(p).milestone.insert(crate::sym::intern(&format!("army_p{t}")), pw);
+    }
 }

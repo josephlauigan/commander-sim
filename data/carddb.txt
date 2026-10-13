@@ -259,7 +259,7 @@ Clever Concealment|I|2WW|prot=phase convoke
 Coalition Relic|A|3|rock=1:A
 Dispatch|I|W|rem=exile tgt=c needart3
 Duty Beyond Death|I|1W|prot=indes
-Elrond, Lord of Rivendell|C|2U|pow=3 leg
+Elrond, Lord of Rivendell|C|2U|pow=3 tgh=2 leg
 Emmara, Soul of the Accord|C|2W|pow=2 tokatk=1 leg
 End-Raze Forerunners|C|5GGG|pow=7 haste vig trample endraze
 Ephemerate|I|W|prot=blink

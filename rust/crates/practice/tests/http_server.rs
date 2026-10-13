@@ -220,9 +220,9 @@ fn test_options() {
     let d = r.json();
     let mut decks: Vec<&str> = d["decks"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     decks.sort();
-    assert_eq!(decks, ["alela", "galadriel", "jodah", "kefka", "sauron", "seph", "sheoldred", "titania", "veyran", "yshtola"]);
+    assert_eq!(decks, ["alela", "cloud", "elrond", "galadriel", "jodah", "kefka", "sauron", "seph", "sheoldred", "titania", "veyran", "yshtola"]);
     let tiers: Vec<&str> = d["tiers"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
-    assert_eq!(tiers, ["t1", "t2", "t3", "t4", "t5"]);
+    assert_eq!(tiers, ["t0", "t1", "t2", "t3", "t4", "t5"]);
     assert_eq!(d["tiers"][2]["decks"].as_array().unwrap().len(), 5);
     assert!(d.get("images").is_some());
     for k in ["lan", "host", "app"] {
@@ -271,7 +271,7 @@ fn test_picked_opponents_seat_and_tools() {
     let s = srv!();
     let mut c = s.client();
     let o = c.get("/api/options").json();
-    let t1: Vec<String> = o["tiers"][0]["decks"]
+    let t1: Vec<String> = o["tiers"][1]["decks"]
         .as_array()
         .unwrap()
         .iter()

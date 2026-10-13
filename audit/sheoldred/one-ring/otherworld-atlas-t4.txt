@@ -1,0 +1,21 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The One Ring [pool] A 4 :: leg
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m13s elapsed, ~1m59s left
+  progress  20.0%  0m26s elapsed, ~1m45s left
+  progress  30.0%  0m39s elapsed, ~1m32s left
+  progress  40.0%  0m51s elapsed, ~1m17s left
+  progress  50.0%  1m08s elapsed, ~1m08s left
+  progress  60.0%  1m21s elapsed, ~0m54s left
+  progress  70.0%  1m35s elapsed, ~0m40s left
+  progress  80.0%  1m49s elapsed, ~0m27s left
+  progress  90.0%  2m02s elapsed, ~0m13s left
+  progress 100.0%  2m19s elapsed, ~0m00s left
+Swaps: Otherworld Atlas -> The One Ring
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.4% ->  30.3%  (delta -0.1 pts, noise ±2.2, paired)   n=1000
+               eliminated by (variant): Heliod 18.9%  Yuriko 13.4%  Krenko 18.9%  Chulane 8.8%  Prosper 9.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(139s total)

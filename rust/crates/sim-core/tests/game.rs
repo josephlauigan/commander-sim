@@ -7,7 +7,7 @@ use sim_core::testkit::*;
 fn every_deck_finishes_games_at_every_tier() {
     let mine: Vec<&str> = decks().iter().filter(|d| d.tier.is_none()).map(|d| &*d.key).collect();
     let mut played = 0;
-    for t in ["t1", "t2", "t3", "t4", "t5"] {
+    for t in ["t0", "t1", "t2", "t3", "t4", "t5"] {
         let pool = tier(t);
         for (i, me) in mine.iter().enumerate() {
             let seed = 900_000 + i as u64;
@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 50);
+    assert_eq!(played, 72);
 }
 
 #[test]

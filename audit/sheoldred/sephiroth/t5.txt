@@ -1,0 +1,11 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel [pool] C 2B :: leg human pow=3 tgh=3 bomb=4
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 10 minutes
+Swaps: Dark Deal -> Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
+
+=== Sheoldred vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.6% ->  22.5%  (delta -0.1 pts, noise ±2.9, paired)   n=1000
+               eliminated by (variant): Urza 17.0%  Zur the Enchanter 12.7%  Winota 19.9%  Kinnan 19.5%  Yawgmoth 8.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(158s total)

@@ -118,7 +118,7 @@ pub const BASICS: [&str; 11] = [
 /// Game Changer rules per tier (decklists/pool/README.md): (min, max); None = unrestricted
 pub fn gc_rules(tier: &str) -> Option<(usize, usize)> {
     match tier {
-        "t1" => Some((0, 0)),
+        "t0" | "t1" => Some((0, 0)),
         "t2" => Some((1, 2)),
         "t3" => Some((3, 3)),
         _ => None,

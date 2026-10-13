@@ -1,0 +1,81 @@
+
+######## vs Tier 3 (High B3) ########
+
+=========== alela analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 10.0%   (4-player baseline 25%)   average rounds survived 12.6
+
+-- How it wins --
+  damage      85.4% of wins
+  timeout     14.6% of wins
+  Opponents it eliminated: 0.28 per game, by
+    combat             95.6%
+    drain               2.9%
+    commander damage    0.7%
+    decked              0.7%
+  Damage dealt per game: 18.7, from
+    combat              17.9  (95%)
+    drain                0.9  (5%)
+
+-- How it loses --
+  Eliminated in 85.6% of games, on average in round 11.9
+    by Aurelia  via combat             25.6% of games
+    by Marwyn   via combat             17.3% of games
+    by Tergrid  via combat             15.6% of games
+    by Atraxa   via combat              8.1% of games
+    by Korvold  via drain               3.8% of games
+    by Aurelia  via commander damage    2.9% of games
+    by Korvold  via combat              2.5% of games
+    by Tergrid  via drain               2.3% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 3%  T5 14%  T6 21%  T7 30%  T8 38%  T9 44%  T10 48%  T11 51%  T12 52%
+  Online at all: 56.2% of games
+  Commander resolves on turn: median 5.0, mean 5.6 (over the 87.9% of games it resolves)
+  Commander resolved by turn:  T4 36%  T5 51%  T6 64%  T7 72%  T8 78%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Unsummon                                   cast in  21.0% of games, win rate when cast  17.8% (+7.8)
+    Sol Ring                                   cast in  24.2% of games, win rate when cast  16.4% (+6.4)
+    Ethersworn Canonist                        cast in  20.8% of games, win rate when cast  16.0% (+6.0)
+    Strixhaven Skycoach                        cast in  20.8% of games, win rate when cast  15.0% (+5.0)
+    Airlift Chaplain                           cast in  22.1% of games, win rate when cast  14.2% (+4.2)
+    Jackdaw Savior                             cast in  22.1% of games, win rate when cast  14.2% (+4.2)
+    Short Bow                                  cast in  31.7% of games, win rate when cast  12.5% (+2.5)
+    Multiply by Zero                           cast in  22.3% of games, win rate when cast  12.1% (+2.1)
+    Alela, Artful Provocateur                  cast in  88.1% of games, win rate when cast  11.3% (+1.3)
+    Static Prison                              cast in  22.5% of games, win rate when cast  10.2% (+0.2)
+  Lowest win rate when cast:
+    Page, Loose Leaf                           cast in  22.9% of games, win rate when cast  10.0% (+0.0)
+    Static Prison                              cast in  22.5% of games, win rate when cast  10.2% (+0.2)
+    Alela, Artful Provocateur                  cast in  88.1% of games, win rate when cast  11.3% (+1.3)
+    Multiply by Zero                           cast in  22.3% of games, win rate when cast  12.1% (+2.1)
+    Short Bow                                  cast in  31.7% of games, win rate when cast  12.5% (+2.5)
+    Jackdaw Savior                             cast in  22.1% of games, win rate when cast  14.2% (+4.2)
+    Airlift Chaplain                           cast in  22.1% of games, win rate when cast  14.2% (+4.2)
+    Strixhaven Skycoach                        cast in  20.8% of games, win rate when cast  15.0% (+5.0)
+    Ethersworn Canonist                        cast in  20.8% of games, win rate when cast  16.0% (+6.0)
+    Sol Ring                                   cast in  24.2% of games, win rate when cast  16.4% (+6.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Clever Concealment                         cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Ray of Command                             cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Spite // Malice                            cast  20.3% of the games it was drawn [reactive: only cast in response]
+    Statute of Denial                          cast  49.2% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.43
+    Short Bow                                  0.13
+    Venser, the Sojourner                      0.11
+    Ethersworn Canonist                        0.07
+    Windborn Muse                              0.06
+    Rhystic Study                              0.05
+    Airlift Chaplain                           0.05
+    Notion Thief                               0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(93s total)

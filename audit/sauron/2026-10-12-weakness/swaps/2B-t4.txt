@@ -1,0 +1,74 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Grishnákh, Brash Instigator [pool] C 2R :: leg pow=1 tgh=1
+   Inferno Titan [scryfall+dsl] C 4RR :: pow=6 bomb=6
+      ability: activated  -> pump
+      not modeled: Whenever ~ enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.
+   Lazotep Reaver [scryfall+dsl] C 1B :: pow=1 tgh=2
+      ability: triggered etb -> amass
+   Grim Initiate [scryfall+dsl] C R :: warrior pow=1
+      ability: triggered dies -> amass
+Swaps: Underworld Breach -> Grishnákh, Brash Instigator; Brain Freeze -> Inferno Titan; Dark Ritual -> Lazotep Reaver; Lotus Petal -> Grim Initiate
+
+=== Sauron vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  19.8% ->  23.4%  (delta +3.6 pts, noise ±4.5, paired)   n=500
+               eliminated by (variant): Heliod 20.4%  Yuriko 16.0%  Krenko 16.2%  Chulane 11.8%  Prosper 12.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          19.8% ->  23.4%  +3.6pt   ±5.2 
+    Rounds survived (or game length)                   9.79 ->  10.01   +0.22  ±0.42 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.57 ->   0.58   +0.01  ±0.10 
+    Mana available on your turn 4                      4.03 ->   3.96   -0.07  ±0.17 
+    Mana available on your turn 6                      5.70 ->   5.69   -0.00  ±0.19 
+
+  Speed
+    Games where the game plan came online             45.4% ->  56.0% +10.6pt   ±6.3*
+    Turn the game plan came online                     7.90 ->   7.37   -0.53  ±0.52*
+    Turn the commander first resolved                  6.52 ->   6.79   +0.28  ±0.30 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.66 ->  15.27   +0.61  ±1.18 
+    Tutors resolved per game                           0.37 ->   0.38   +0.01  ±0.08 
+    Spells cast per game                              10.61 ->  10.44   -0.17  ±0.80 
+
+  Interaction
+    Counterspells cast                                 0.64 ->   0.68   +0.04  ±0.10 
+    Spot removal cast                                  1.54 ->   1.53   -0.01  ±0.16 
+    Board wipes cast                                   0.45 ->   0.43   -0.02  ±0.08 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.01   +0.01  ±0.01 
+    Your key permanents removed by opponents           0.68 ->   0.61   -0.07  ±0.12 
+    Your spells countered                              0.33 ->   0.38   +0.06  ±0.08 
+
+  Threat & pressure
+    Damage dealt to opponents per game                27.44 ->  32.55   +5.10  ±5.16 
+      ...of which combat damage                       23.52 ->  27.51   +3.99  ±4.61 
+      ...of which magecraft / burn                     0.00 ->   0.24   +0.24  ±0.11*
+      ...of which drain triggers                       1.34 ->   1.73   +0.39  ±0.61 
+      ...of which other triggers                       2.58 ->   3.06   +0.48  ±0.88 
+
+  Speed
+    Games with a combo attempt                         1.0% ->   0.6%  -0.4pt   ±1.1 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    better - Games where the game plan came online (both profiles)
+    better - Turn the game plan came online (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(64s total)

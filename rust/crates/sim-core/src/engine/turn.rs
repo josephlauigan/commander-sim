@@ -818,6 +818,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.extra_combats = 0;
     pl.combat_no = 0;
     pl.turns += 1;
+    crate::impls::mine::army_power_snapshot(g, p);
     for l in g.player(p).lands.clone() {
         g.land_mut(l).tapped = false;
     }
@@ -828,6 +829,16 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
             // Frost Titan, Tamiyo
             let f = x.data.int(crate::state::DataKey::Frozen);
             g.perm_mut(m).data.set(crate::state::DataKey::Frozen, crate::state::Val::Int(f - 1));
+            continue;
+        }
+        if x.tapped && x.data.int(crate::state::DataKey::Stun) > 0 {
+            // a stun counter: it stays tapped and loses a counter instead of untapping
+            let n = x.data.int(crate::state::DataKey::Stun);
+            let y = g.perm_mut(m);
+            y.data.set(crate::state::DataKey::Stun, crate::state::Val::Int(n - 1));
+            y.sick = false;
+            y.phased = false;
+            y.age += 1;
             continue;
         }
         if crack && x.tapped && cardcode::crackdown_holds(g, m) {

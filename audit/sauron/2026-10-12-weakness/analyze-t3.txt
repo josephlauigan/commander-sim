@@ -1,0 +1,86 @@
+
+######## vs Tier 3 (High B3) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 960 games] ===========
+Win rate 22.1%   (4-player baseline 25%)   average rounds survived 11.6
+
+-- How it wins --
+  damage      89.6% of wins
+  combo        5.7% of wins
+  timeout      4.7% of wins
+  Opponents it eliminated: 0.64 per game, by
+    combat             63.1%
+    drain              13.5%
+    triggers           10.1%
+    commander damage    7.0%
+    decked              3.6%
+    combo               2.8%
+  Damage dealt per game: 31.0, from
+    combat              26.1  (84%)
+    triggers             3.2  (10%)
+    drain                1.6  (5%)
+
+-- How it loses --
+  Eliminated in 77.3% of games, on average in round 11.1
+    by Aurelia  via combat             20.3% of games
+    by Marwyn   via combat             13.4% of games
+    by Atraxa   via combat             11.7% of games
+    by Tergrid  via combat             11.7% of games
+    by Korvold  via combat              3.6% of games
+    by Tergrid  via drain               2.8% of games
+    by Korvold  via drain               2.4% of games
+    by Tergrid  via triggers            2.1% of games
+
+-- Game plan timing --
+  Plan: Sword + Assault combo attempted
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 1%  T8 1%  T9 2%  T10 2%  T11 2%  T12 3%
+  Online at all: 4.4% of games
+  Combo attempted in 1.4% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Underworld Breach                          cast in  11.5% of games, win rate when cast  50.0% (+27.9)
+    Nibelheim Aflame                           cast in  15.0% of games, win rate when cast  45.1% (+23.1)
+    Kaervek the Merciless                      cast in  12.6% of games, win rate when cast  41.3% (+19.2)
+    Grave Titan                                cast in  16.8% of games, win rate when cast  40.4% (+18.3)
+    Bloodchief's Thirst                        cast in  18.0% of games, win rate when cast  38.2% (+16.1)
+    Vraska, Betrayal's Sting                   cast in  18.3% of games, win rate when cast  38.1% (+16.0)
+    Sol Ring                                   cast in  25.3% of games, win rate when cast  37.4% (+15.4)
+    Sephiroth, Planet's Heir                   cast in  14.5% of games, win rate when cast  36.0% (+13.9)
+    Noxious Gearhulk                           cast in  15.1% of games, win rate when cast  35.2% (+13.1)
+    War Machine, Avenging Arsenal              cast in  16.4% of games, win rate when cast  34.4% (+12.3)
+  Lowest win rate when cast:
+    Slaughter Pact                             cast in  18.8% of games, win rate when cast  20.0% (-2.1)
+    Terminate                                  cast in  21.2% of games, win rate when cast  21.6% (-0.5)
+    Spell Pierce                               cast in  15.8% of games, win rate when cast  21.7% (-0.4)
+    Toxic Deluge                               cast in  14.7% of games, win rate when cast  22.0% (-0.1)
+    Bedevil                                    cast in  15.1% of games, win rate when cast  22.1% (-0.0)
+    Chaos Warp                                 cast in  20.4% of games, win rate when cast  23.5% (+1.4)
+    Relic of Legends                           cast in  18.3% of games, win rate when cast  24.4% (+2.3)
+    Jace's Archivist                           cast in  16.5% of games, win rate when cast  24.7% (+2.6)
+    Arcane Denial                              cast in  18.1% of games, win rate when cast  24.7% (+2.6)
+    Vandalblast                                cast in  21.0% of games, win rate when cast  24.8% (+2.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Brain Freeze                               cast  12.3% of the games it was drawn
+    Deepglow Skate                             cast  20.2% of the games it was drawn
+    Not of This World                          cast  27.3% of the games it was drawn [reactive: only cast in response]
+    Diabolic Intent                            cast  38.2% of the games it was drawn
+    Undermine                                  cast  39.7% of the games it was drawn [reactive: only cast in response]
+    Underworld Breach                          cast  42.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.44
+    Vraska, Betrayal's Sting                   0.09
+    Sword of Fire and Ice                      0.08
+    Sword of Hearth and Home                   0.06
+    Grave Titan                                0.05
+    Sword of Feast and Famine                  0.05
+    Aggravated Assault                         0.04
+    Flux Channeler                             0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(87s total)
