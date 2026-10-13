@@ -7178,3 +7178,17 @@ tags = "pow=1 tgh=1"
 dsl = []
 status = "Full"
 note = "double strike while equipped (bulk_white::duelist_kw)"
+
+["Phyrexian Tower"]
+types = "L"
+tags = "leg c=C"
+status = "Full"
+note = "{T}: add {C}; the {T}, sacrifice a creature: {B}{B} mode is a land option (card code in impls/sheoldred.rs), used when a death payoff makes the sacrifice worth it or the extra mana puts a spell in hand in reach"
+
+["Carnage Altar"]
+status = "Full"
+note = "{3}, sacrifice a creature: draw a card (compiled ability; the AI sacrifices tokens and cheap creatures, never the commander, a death payoff or a no-sacrifice creature)"
+
+["Common Crook"]
+status = "Full"
+note = "when it dies, create a Treasure (compiled trigger)"

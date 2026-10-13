@@ -658,6 +658,9 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
     if cause == "sac" && no_sac(g, m) {
         return Ok(());
     }
+    if cause == "sac" && g.is_creature(m) {
+        g.player_mut(p).stat("creatures_sacrificed", 1);
+    }
     if matches!(cause, "destroy" | "combat") && !g.auras.is_empty() && cardcode::umbra_save(g, m)? {
         return Ok(());
     }

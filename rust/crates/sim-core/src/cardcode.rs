@@ -1063,6 +1063,16 @@ pub fn is_sac_outlet(name: &str) -> bool {
     crate::impls::common::is_sac_outlet(name)
 }
 
+/// common.outlets: p's free sacrifice outlets
+pub fn outlets_of(g: &Game, p: PlayerId) -> Vec<PermId> {
+    crate::impls::common::outlets(g, p)
+}
+
+/// common.sac_before_wipe: sacrifice creatures a wipe will kill anyway through p's free outlets
+pub fn sac_before_wipe(g: &mut Game, p: PlayerId, victims: &[PermId]) -> Res<usize> {
+    crate::impls::common::sac_before_wipe(g, p, victims)
+}
+
 /// CI.gy_response: an opponent answers a reanimation spell aimed at src's graveyard (Tormod's Crypt, Soul-Guide
 /// Lantern: common.py's gy_hate hooks)
 pub fn gy_response(g: &mut Game, p: PlayerId, value: f64, src: PlayerId) -> Res<bool> {
