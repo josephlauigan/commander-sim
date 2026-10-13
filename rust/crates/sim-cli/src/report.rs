@@ -20,7 +20,7 @@ const fn m(key: &'static str, label: &'static str, axis: &'static str, up: bool,
 }
 
 /// compare.METRICS: (key, label, axis, which direction is better, applies to)
-pub const METRICS: [Metric; 27] = [
+pub const METRICS: [Metric; 28] = [
     m("win", "Win rate", "Outcome", true, None),
     m("survived", "Rounds survived (or game length)", "Outcome", true, None),
     m("mulls", "Extra mulligans per game", "Mana & consistency", false, None),
@@ -29,6 +29,7 @@ pub const METRICS: [Metric; 27] = [
     m("mana_T6", "Mana available on your turn 6", "Mana & consistency", true, None),
     m("plan_reached", "Games where the game plan came online", "Speed", true, None),
     m("plan_turn", "Turn the game plan came online", "Speed", false, None),
+    m("cmd_turn", "Turn the commander first resolved", "Speed", false, None),
     m("cards_drawn", "Cards drawn per game (incl. draw step)", "Card flow", true, None),
     m("tutored", "Tutors resolved per game", "Card flow", true, None),
     m("spells_cast", "Spells cast per game", "Card flow", true, None),
@@ -55,7 +56,7 @@ pub fn plan_text(deck: &str) -> &'static str {
     match deck {
         "seph" => "first 6+ power bomb on the battlefield",
         "veyran" => "Veyran + a magecraft payoff on the battlefield",
-        "sauron" => "Sword + Assault combo attempted",
+        "sauron" => "first combat damage to a player by an Army",
         "galadriel" => "first Alliance trigger from Galadriel",
         "yshtola" => "first drain from Y'shtola's cast trigger",
         "alela" => "first Faerie made by Alela",
@@ -92,6 +93,7 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "seph" => me.first_bomb,
         "veyran" => ms("engine"),
         "najeela" => ms("act"),
+        "sauron" => ms("army_hit"),
         "galadriel" => ms("alliance"),
         "yshtola" => ms("yshtola"),
         "alela" => ms("faerie"),
@@ -150,6 +152,9 @@ pub fn axis_values(g: &GameOut, me: usize, deck: &str) -> Vec<(&'static str, f64
     v.push(("plan_reached", if plan.is_some() { 1.0 } else { 0.0 }));
     if let Some(t) = plan {
         v.push(("plan_turn", t as f64));
+    }
+    if let Some(&t) = p.milestone.get("cmd_cast") {
+        v.push(("cmd_turn", t as f64));
     }
     v
 }
@@ -224,12 +229,7 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
             let f = |x: f64| if pctfmt { format!("{:5.1}%", 100.0 * x) } else { format!("{x:6.2}") };
             let dd = if pctfmt { format!("{:+.1}pt", 100.0 * d) } else { format!("{d:+.2}") };
             let nz = if pctfmt { format!("±{:.1}", 200.0 * se) } else { format!("±{:.2}", 2.0 * se) };
-            cells.push(format!(
-                "{} -> {} {dd:>7} {nz:>6}{}",
-                f(ab.mean()),
-                f(av.mean()),
-                if sig { "*" } else { " " }
-            ));
+            cells.push(format!("{} -> {} {dd:>7} {nz:>6}{}", f(ab.mean()), f(av.mean()), if sig { "*" } else { " " }));
             if sig {
                 let good = (d > 0.0) == mt.up;
                 let key = (mt.axis, mt.label, good);
@@ -247,7 +247,11 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
     }
     println!("\n--- Reading it ---");
     if moved.is_empty() {
-        let wh = if pairs.len() > 1 { "under either profile".to_string() } else { format!("under the {} profile", pairs[0].0) };
+        let wh = if pairs.len() > 1 {
+            "under either profile".to_string()
+        } else {
+            format!("under the {} profile", pairs[0].0)
+        };
         let more = format!(
             "about 4x the games halves the noise{}",
             if lookahead { " (--ai adaptive makes that cheap)" } else { "" }
@@ -266,7 +270,8 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
     for (axis, items) in &by_axis {
         println!("  {axis}: {}", axis_note(axis));
         for (label, good, ps) in items {
-            let wh = if ps.len() == profs.len() { "both profiles".to_string() } else { format!("{} profile only", ps[0]) };
+            let wh =
+                if ps.len() == profs.len() { "both profiles".to_string() } else { format!("{} profile only", ps[0]) };
             println!("    {:6} - {label} ({wh})", if *good { "better" } else { "worse" });
         }
     }
@@ -277,7 +282,8 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
 }
 
 // ------------------------------------------------------------------ deck analysis (--analyze)
-pub const KINDS: [&str; 9] = ["combat", "burn", "drain", "aether", "triggers", "combo", "commander damage", "decked", "other"];
+pub const KINDS: [&str; 9] =
+    ["combat", "burn", "drain", "aether", "triggers", "combo", "commander damage", "decked", "other"];
 const DMG_KINDS: [&str; 5] = ["combat", "burn", "drain", "aether", "triggers"];
 
 /// compare.analysis_record
@@ -293,6 +299,10 @@ pub struct Analysis {
     pub survived: i64,
     pub plan: Counter<u32>,
     pub combo: i64,
+    /// the turn the commander first resolved
+    pub cmd: Counter<u32>,
+    /// Sauron: the Army's power at the start of turns 6, 8 and 10, one entry per game (0: no Army)
+    pub army: [Vec<u32>; 3],
     pub aether: i64,
     pub seen: Counter<String>,
     pub cast: Counter<String>,
@@ -329,6 +339,14 @@ impl Analysis {
         self.survived += elim;
         if let Some(t) = plan_turn(me, deck) {
             self.plan.add(t, 1);
+        }
+        if let Some(&t) = me.milestone.get("cmd_cast") {
+            self.cmd.add(t, 1);
+        }
+        if deck == "sauron" {
+            for (i, k) in ["army_p6", "army_p8", "army_p10"].into_iter().enumerate() {
+                self.army[i].push(me.milestone.get(k).copied().unwrap_or(0));
+            }
         }
         self.combo += (me.stat("combo_attempt") != 0) as i64;
         self.aether += (me.stat("aether_shots") != 0) as i64;
@@ -426,6 +444,7 @@ pub fn print_analysis(
     }
     println!("  Online by turn:  {}", line.join("  "));
     println!("  Online at all: {:.1}% of games", (100 * pn) as f64 / n);
+    print_speed(r, deck);
     if matches!(deck, "veyran" | "sauron") {
         println!("  Combo attempted in {:.1}% of games", (100 * r.combo) as f64 / n);
     }
@@ -546,5 +565,56 @@ mod tests {
         assert_eq!(b, ["+0.2", "+0.3", "+2.5", "-0.0", "+1.1", "+0.1", "+12.3", "+1.2"]);
         assert_eq!(format!("{:+.1}", -0.0f64), "-0.0");
         assert_eq!((format!("{:.0}", 0.5), format!("{:.0}", 1.5)), ("0".into(), "2".into()));
+    }
+}
+
+/// the median of a sorted list (mean of the middle two for an even length)
+fn median(v: &[u32]) -> f64 {
+    match v.len() {
+        0 => 0.0,
+        n if n % 2 == 1 => v[n / 2] as f64,
+        n => (v[n / 2 - 1] + v[n / 2]) as f64 / 2.0,
+    }
+}
+
+/// the commander timing lines (every deck) and the Army growth lines (Sauron)
+fn print_speed(r: &Analysis, deck: &str) {
+    let n = r.n as f64;
+    let resolved = r.cmd.total();
+    if resolved != 0 {
+        let mut ts: Vec<u32> =
+            r.cmd.most_common().into_iter().flat_map(|(t, k)| std::iter::repeat_n(t, k as usize)).collect();
+        ts.sort_unstable();
+        let mean = ts.iter().sum::<u32>() as f64 / ts.len() as f64;
+        println!(
+            "  Commander resolves on turn: median {:.1}, mean {:.1} (over the {:.1}% of games it resolves)",
+            median(&ts),
+            mean,
+            (100 * resolved) as f64 / n
+        );
+        let mut cum = 0;
+        let mut line = vec![];
+        for t in 2..9u32 {
+            cum += r.cmd.get(&t);
+            if t >= 4 {
+                line.push(format!("T{t} {:.0}%", (100 * cum) as f64 / n));
+            }
+        }
+        println!("  Commander resolved by turn:  {}", line.join("  "));
+    } else {
+        println!("  Commander never resolved");
+    }
+    if deck == "sauron" && r.army[0].len() as i64 == r.n {
+        for (i, t) in [6, 8, 10].into_iter().enumerate() {
+            let mut v = r.army[i].clone();
+            v.sort_unstable();
+            let mean = v.iter().sum::<u32>() as f64 / n;
+            let big = v.iter().filter(|&&x| x >= 10).count();
+            println!(
+                "  Army power at the start of turn {t:2}: mean {mean:.1}, median {:.1}, 10+ in {:.1}% of games",
+                median(&v),
+                (100 * big) as f64 / n
+            );
+        }
     }
 }
