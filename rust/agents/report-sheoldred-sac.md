@@ -44,3 +44,8 @@ Commit: see `git log` on branch sheoldred-sac (code commit de8972a plus the repo
 `ai/brain.rs` (outlet condition), `ai/decks.rs` (protect_response wrapper, wipe sacrifice), `cardcode.rs` (two
 wrappers), `dsl/mod.rs` (fodder filter), `engine/zones.rs` (stat), `impls/common.rs` (above), `sim-cli/src/report.rs`
 (two counters + one line), `data/card_overrides.toml` and `data/cards.json` (Tower, Carnage Altar, Common Crook).
+
+## Lead review fix (pool decks unchanged)
+All new aristocrat/dsl/sac_in_response behaviour is gated by `ai::is_main(key)`; pool decks take the old code path
+(outs[0], old fodder filter, per = death_value). Verified against the fdbe491 binary on --pool t4: veyran, sauron and
+kefka `--games 200 --seed 500000 --ai adaptive --brief` identical; veyran traces 0..40 identical.

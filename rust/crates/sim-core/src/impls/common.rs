@@ -908,6 +908,7 @@ pub fn outlet_gain(g: &Game, p: PlayerId, o: PermId) -> f64 {
 /// common.aristocrat_options: sacrifice fodder when the death triggers are worth more than the creature, or are
 /// lethal (or an outlet's own mana is needed now)
 pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let main = crate::ai::is_main(g.player(p).key);
     let outs = outlets(g, p);
     if outs.is_empty() {
         return Ok(vec![]);
@@ -922,22 +923,21 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
                 let cr = g.is_creature(m);
                 ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(card_name(g, m)))
                     || (cr && x.token && !x.phased))
-                    && !x.is_cmd
-                    && !crate::engine::values::no_sac(g, m)
-                    && !is_payoff(g, m)
+                    && (!main || (!x.is_cmd && !crate::engine::values::no_sac(g, m) && !is_payoff(g, m)))
             })
             .collect()
     };
     // the outlet to use: a mana outlet when its mana is needed now, else the one with the best side effect
-    let src = *outs
-        .iter()
-        .max_by(|&&a, &&b| outlet_gain(g, p, a).partial_cmp(&outlet_gain(g, p, b)).unwrap())
-        .unwrap();
+    let src = if main {
+        *outs.iter().max_by(|&&a, &&b| outlet_gain(g, p, a).partial_cmp(&outlet_gain(g, p, b)).unwrap()).unwrap()
+    } else {
+        outs[0]
+    };
     let fod = fod_for(g, src);
     if fod.is_empty() {
         return Ok(vec![]);
     }
-    let per = death_value(g, p, None) + outlet_gain(g, p, src);
+    let per = death_value(g, p, None) + if main { outlet_gain(g, p, src) } else { 0.0 };
     let pl = g.player(p);
     let mut drain_per =
         pl.perms.iter().filter(|&&x| g.perm(x).cd.is_some()).map(|&x| lookup(&DEATH_DRAIN, card_name(g, x))).psum()
@@ -962,7 +962,7 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
 /// ("destroy", damage): sacrifice it for value instead. A creature that dies anyway only goes when an outlet gives
 /// something by itself.
 pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
-    let dying = matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg");
+    let dying = crate::ai::is_main(g.player(p).key) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
     if !g.is_creature(m) || !(dying || matches!(kind, "exile" | "bounce" | "tuck")) || g.perm(m).is_cmd {
         return Ok(false);
     }
