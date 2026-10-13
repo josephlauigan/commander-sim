@@ -1,0 +1,7 @@
+15:38 old t1 Win rate  13.0%   95% CI 11.1-15.2%   (even share 25%: -12.0 pts)
+15:45 new t1 Win rate  13.1%   95% CI 11.1-15.3%   (even share 25%: -11.9 pts)
+15:53 old t2 Win rate  11.1%   95% CI 9.3-13.2%   (even share 25%: -13.9 pts)
+16:01 new t2 Win rate  12.8%   95% CI 10.9-15.0%   (even share 25%: -12.2 pts)
+16:06 old t3 Win rate   8.8%   95% CI 7.2-10.7%   (even share 25%: -16.2 pts)
+16:11 new t3 Win rate   8.4%   95% CI 6.8-10.3%   (even share 25%: -16.6 pts)
+16:15 STOPPED by JD after t3 (t4/t5 not run)
