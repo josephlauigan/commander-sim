@@ -1174,7 +1174,7 @@ status = "Full"
 note = "delve; look at the top seven, keep the best two, the rest on the bottom"
 
 ["Dimir Signet"]
-pool_add_tags = ["rock=1:UB"]
+add_tags = ["rock=1:UB"]  # in JD's decks too: the autotag reads {1},{T}: Add {U}{B} as two mana
 status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
@@ -3731,7 +3731,7 @@ status = "Full"
 note = "{2}{R}{G}: 3/3 until end of turn; a +1/+1 counter each time it attacks (kept on the land)"
 
 ["Rakdos Signet"]
-pool_add_tags = ["rock=1:BR"]
+add_tags = ["rock=1:BR"]  # in JD's decks too: the autotag reads {1},{T}: Add {B}{R} as two mana
 status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
@@ -4758,8 +4758,7 @@ status = "Full"
 note = "{T}: {C}, or one of its colours for 1 damage"
 
 ["Talisman of Indulgence"]
-add_tags = ["pain"]
-pool_add_tags = ["rock=1:BR"]
+add_tags = ["pain", "rock=1:BR"]  # in JD's decks too: the autotag sees only {T}: Add {C}
 status = "Full"
 note = "{T}: {C}, or one of its colours for 1 damage"
 

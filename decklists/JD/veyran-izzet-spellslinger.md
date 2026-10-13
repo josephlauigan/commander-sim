@@ -17,6 +17,7 @@
 **Updated 2026-10-11.** Out: Cyclonic Rift. In: Evacuation. Matched to JD's physical list: Cyclonic Rift is in Sauron, so Veyran plays Evacuation; two Game Changers now (Jeska's Will, Underworld Breach)
 **Updated 2026-10-11 (trade with Kefka, moved as functional blocks).** Out to Kefka: Deflecting Swat, Slip Out the Back, Underworld Breach, Niv-Mizzet, the Firemind, Jin-Gitaxias, Progress Tyrant, Steam Vents, Sulfur Falls, Spirebluff Canal, Stormcarved Coast. In: Mystic Confluence and Splatter Technique (from Kefka), Return the Favor, Spell Pierce and Lightning Strike (from bulk), 2 Island and 2 Mountain. Paired look-ahead test, 1,000 games per tier: **+1.7 points** (22.9% -> 24.5%). One Game Changer now (Jeska's Will).
 **Updated 2026-10-12.** Out: Return the Favor (to bulk). In: Triple Triad (new). JD's choice: each upkeep, every player exiles their top card; you may play yours and every cheaper one free, and free instants and sorceries still trigger Veyran. A partial test (Tiers 1-3, 1,000 paired games each: +0.5, +0.9, -2.1, all within noise) was stopped early.
+**Updated 2026-10-13.** Out: Jeska's Will. In: Flux Channeler. JD's choice: Jeska's Will moves to Kefka; Flux Channeler (from Sauron) takes the slot. Measured -2.1 over all tiers (T1 -3.9, T2 -4.5, T3 -0.4, T4 -0.9, T5 -0.8; look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-12-weakness/sofi-veyran/). No Game Changers left.
 
 ## Strategy
 
@@ -146,7 +147,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (1).** Ral Storm Conduit
 
-**Creatures (20).** Alania Divergent Storm, Archmage Emeritus, Blazing Firesinger // Seething Song, Docent of Perfection // Final Iteration, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Guttersnipe, Harmonic Prodigy, Imperial Recruiter, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Sanar Unfinished Genius // Wild Idea, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Thor Asgard's Avenger, Venser Shaper Savant, Young Pyromancer
+**Creatures (21).** Alania Divergent Storm, Archmage Emeritus, Blazing Firesinger // Seething Song, Docent of Perfection // Final Iteration, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Flux Channeler, Guttersnipe, Harmonic Prodigy, Imperial Recruiter, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Sanar Unfinished Genius // Wild Idea, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Thor Asgard's Avenger, Venser Shaper Savant, Young Pyromancer
 
 **Artifacts (5).** Aetherflux Reservoir, Arcane Signet, Fellwar Stone, Lightning Greaves, Sol Ring
 
@@ -154,7 +155,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Dreams of Laguna, Evacuation, Flashback, Lightning Bolt, Lightning Strike, Mystic Confluence, Plunder the Trollshaws, Prismari Charm, Quick Study, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
-**Sorceries (12).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Jeska's Will, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Splatter Technique, Stock Up
+**Sorceries (11).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Splatter Technique, Stock Up
 
 **Lands (34).** Ash Barrens, Coastal Peak, Command Tower, Desolate Lighthouse, Evolving Wilds, Exotic Orchard, Mistrise Village, Mystic Sanctuary, Path of Ancestry, Scorched Geyser, Shivan Reef, Sokenzan Crucible of Defiance, Spectacle Summit, Temple of Epiphany, Terramorphic Expanse, 11 Island, 8 Mountain
 
@@ -193,10 +194,10 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Fiery Emancipation
 1 Flashback
 1 Flow State
+1 Flux Channeler
 1 Guttersnipe
 1 Harmonic Prodigy
 1 Imperial Recruiter
-1 Jeska's Will
 1 Kessig Flamebreather
 1 Light Up the Stage
 1 Lightning Bolt

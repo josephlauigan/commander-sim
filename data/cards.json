@@ -38833,7 +38833,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "pool",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 2,

@@ -22,6 +22,7 @@
 **Updated 2026-10-11 (third change).** Out: Thought Vessel. In: Relic of Legends. JD's choice: Thought Vessel moves to Y'shtola, whose draw engines (Necropotence, Consecrated Sphinx, Notion Thief) overflow the hand most. Relic of Legends (taken from the Zada deck, which is being taken apart) keeps a mana rock toward the six-mana commander (Arcane Signet is already in the deck); it taps for any colour, or tap a legendary creature for one more. Not measured.
 **Updated 2026-10-11 (fourth change).** Out: Sheoldred, the Apocalypse. In: Bedevil. JD's choice: Sheoldred leaves to lead her own mono-black deck (decklists/JD/sheoldred-mono-black.md); Bedevil comes back from the binder for the slot. Measured −2.1 points over all tiers (look-ahead, loose, 1,000 paired games per tier; Bedevil vs Sheoldred: T1 27.5 vs 28.9, T2 30.8 vs 34.6, T3 22.0 vs 25.5, T4 22.3 vs 24.2, T5 22.0 vs 22.1; audit/sauron/2026-10-11-sheoldred-bedevil/). No card in the deck was there mainly for her: Jace's Archivist's wheel still pays off with Orcish Bowmasters.
 **Updated 2026-10-11 (fifth change).** Out: Phyrexian Arena. In: Cost of Brilliance. JD's choice: Arena moves to the Sheoldred deck (saving a buy); Cost of Brilliance (bulk; {2}{B} sorcery: target player draws two and loses 2 life, and a +1/+1 counter on up to one creature, the Army) takes the slot. Measured +0.6 over all tiers, within noise (look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-11-arena-cost-of-brilliance/).
+**Updated 2026-10-13.** Out: Blasphemous Act, Brain Freeze, Chaos Warp, Conqueror's Flail, Dark Ritual, Deepglow Skate, Flux Channeler, Lotus Petal, Spell Pierce, Sword of Fire and Ice, Toxic Deluge, Underworld Breach. In: Chandra's Ignition, Comet Storm, Dimir Signet, Dreadhorde Invasion, Exsanguinate, Fellwar Stone, Inferno Titan, Lazotep Reaver, Massacre Wurm, Rakdos Signet, Ral and the Implicit Maze, Talisman of Indulgence. JD's choice, from the 2026-10-12/13 audit (audit/sauron/2026-10-12-weakness/): one-sided removal in place of the symmetric wipes, a faster start (rocks, Dreadhorde Invasion, Lazotep Reaver), and the Underworld Breach package replaced by Exsanguinate, Comet Storm and two rocks. Measured +8.3 over all tiers with Torment of Hailfire in Comet Storm's slot (24.3% -> 32.6%; T1 +6.8, T2 +8.8, T3 +10.0, T4 +9.9, T5 +5.8; look-ahead, loose, 1,000 paired games per tier); Comet Storm for Torment then measured -0.6, within noise. Brain Freeze, Dark Ritual and Lotus Petal go to Kefka, Flux Channeler to Veyran. Two Game Changers now (Cyclonic Rift, Orcish Bowmasters).
 
 ## Strategy
 
@@ -133,15 +134,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (16).** Deepglow Skate, Flux Channeler, Grave Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (17).** Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
-**Enchantments (4).** Aggravated Assault, Call of the Ring, Inexorable Tide, Underworld Breach
+**Enchantments (5).** Aggravated Assault, Call of the Ring, Dreadhorde Invasion, Inexorable Tide, Ral and the Implicit Maze
 
-**Artifacts (15).** Arcane Signet, Chromatic Lantern, Conqueror's Flail, Lightning Greaves, Lotus Petal, Mind Stone, Relic of Legends, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, The Ozolith, Whispersilk Cloak
+**Artifacts (16).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Relic of Legends, Sol Ring, Sword of Feast and Famine, Sword of Hearth and Home, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (28).** Arcane Denial, Bedevil, Bitter Triumph, Blasphemous Act, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Brain Freeze, Chaos Warp, Cost of Brilliance, Counterspell, Cyclonic Rift, Dark Ritual, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Toxic Deluge, Undermine, Vandalblast
+**Instants and sorceries (25).** Arcane Denial, Bedevil, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Terminate, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -156,29 +157,28 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Barad-dûr
 1 Bedevil
 1 Bitter Triumph
-1 Blasphemous Act
 1 Blood Crypt
 1 Bloodchief's Thirst
 1 Bloodsoaked Insight // Sanguine Morass
-1 Brain Freeze
 1 Call of the Ring
-1 Chaos Warp
+1 Chandra's Ignition
 1 Chromatic Lantern
+1 Comet Storm
 1 Command Tower
-1 Conqueror's Flail
 1 Cost of Brilliance
 1 Counterspell
 1 Crumbling Necropolis
 1 Cyclonic Rift
-1 Dark Ritual
-1 Deepglow Skate
 1 Diabolic Intent
 1 Diabolic Tutor
+1 Dimir Signet
 1 Disdainful Stroke
+1 Dreadhorde Invasion
 1 Drowned Catacomb
 1 Exotic Orchard
+1 Exsanguinate
 1 Fact or Fiction
-1 Flux Channeler
+1 Fellwar Stone
 1 Foreboding Ruins
 1 Frostboil Snarl
 1 Go for the Throat
@@ -186,12 +186,14 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Haunted Ridge
 1 Inexorable Tide
 1 Infernal Grasp
+1 Inferno Titan
 1 Iron Man, Armored Avenger
 1 Izzet Boilerworks
 1 Jace's Archivist
 1 Kaervek the Merciless
+1 Lazotep Reaver
 1 Lightning Greaves
-1 Lotus Petal
+1 Massacre Wurm
 1 Mauhúr, Uruk-hai Captain
 1 Mind Stone
 1 Nibelheim Aflame
@@ -200,6 +202,8 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Noxious Gearhulk
 1 Orcish Bowmasters
 1 Path of Ancestry
+1 Rakdos Signet
+1 Ral and the Implicit Maze
 1 Relic of Legends
 1 Ringsight
 1 Rogue's Passage
@@ -211,21 +215,18 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Shivan Reef
 1 Slaughter Pact
 1 Sol Ring
-1 Spell Pierce
 1 Steam Vents
 1 Sulfur Falls
 1 Sword of Feast and Famine
-1 Sword of Fire and Ice
 1 Sword of Hearth and Home
 1 Talisman of Creativity
 1 Talisman of Dominance
+1 Talisman of Indulgence
 1 Talrand, Sky Summoner
 1 Terminate
 1 The Ozolith
-1 Toxic Deluge
 1 Treno, Dark City
 1 Undermine
-1 Underworld Breach
 1 Urabrask, Heretic Praetor
 1 Vandalblast
 1 Vision, Synthezoid Avenger

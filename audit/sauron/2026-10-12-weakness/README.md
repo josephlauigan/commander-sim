@@ -85,3 +85,16 @@ AI for it and the line diagnostic, and new cards modeled: Crippling Fear, Widesp
 Inferno Titan, Lazotep Reaver, Grim Initiate, Torment of Hailfire; Ral and the Implicit Maze restored; Dualcaster Mage,
 Dreadhorde Invasion and Grishnákh finished. 1,448 tests pass. No decklist is changed here; branch `sauron-1d3` holds a
 test-only list and is not for merging.
+
+## Applied 2026-10-13 (JD's choices)
+
+The decklists on this branch now have the swaps: Sauron's twelve (Comet Storm in Torment of Hailfire's slot), Kefka's
+seven (K3), and Veyran's Jeska's Will -> Flux Channeler. `bulk-cards.txt` has the sixteen cuts; Ral and the Implicit
+Maze and Grapeshot left it.
+
+**Data fix found while applying:** `pool_add_tags` in `data/card_overrides.toml` only apply to cards outside JD's
+decks, so once Rakdos Signet and Dimir Signet were in Sauron's list the autotag made them two-mana rocks (`rock=2`) and
+Talisman of Indulgence a colourless-only rock. Their tags are now `add_tags` (applied everywhere); every card's tags
+are identical to before the list change. The screens, the +8.3 confirmation, K2/K3 and the Veyran test were on the old
+lists with the correct tags. The B1/B2 and Comet Storm tests (test-only list on `sauron-1d3`) had the wrong tags in both
+arms, so their differences should hold but their absolute win rates are a little off.

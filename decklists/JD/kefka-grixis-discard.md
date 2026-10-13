@@ -5,6 +5,7 @@
 **Updated 2026-10-11 (mana base).** JD's rule: basics over slow lands. Out: Temple of Malice, Boiling Rock Prison, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Path of Ancestry, Evolving Wilds, Fabled Passage (everything that enters tapped or fetches a tapped basic). In: 5 Swamp, 3 Mountain, 3 Island (now 15 Swamp, 9 Mountain, 6 Island). The six untapped nonbasics stay. Still 36 lands; the cut lands go back to the bulk list.
 **Updated 2026-10-11 (trade with Veyran, moved as functional blocks).** In from Veyran: Deflecting Swat and Slip Out the Back (protection), Underworld Breach (graveyard), Niv-Mizzet, the Firemind (a second draw-to-damage kill with the flipped Kefka), Jin-Gitaxias, Progress Tyrant, and Steam Vents, Sulfur Falls, Spirebluff Canal and Stormcarved Coast (for 4 Mountains). Out: Mystic Confluence and Splatter Technique (to Veyran), Arcane Omens and Inner Fire (to bulk), Triskelion (to the binder). Paired look-ahead test, 1,000 games per tier: **+1.3 points** (28.1% -> 29.4%). Two Game Changers now (Rhystic Study, Underworld Breach).
 **Updated 2026-10-12.** Out: Stargaze (to bulk). In: Twinflame (binder). JD's choice, not simulated: hasty token copies of your creatures for a turn (a second Massacre Wurm, Jin-Gitaxias or Intellect Devourer); Stargaze was cast in only 11-12% of the games it was drawn (diagnostic, audit/kefka/diag).
+**Updated 2026-10-13.** Out: Chaos Warp, Dark Inquiry, Duress, Ichor Slick, Postmortem Professor, Potioner's Trove, Thought Vessel. In: Brain Freeze, Dark Ritual, Diabolic Intent, Grapeshot, Grim Tutor, Jeska's Will, Lotus Petal. JD's choice: Sauron's Underworld Breach package (Brain Freeze, Dark Ritual, Lotus Petal) with Grapeshot (bulk), Grim Tutor, Diabolic Intent and Jeska's Will (from Veyran), to run the Breach + storm line alongside Kefka's own Underworld Breach. Measured +0.5 over all tiers, within noise (T1 +3.3, T2 +0.6, T3 -0.5, T4 -0.7, T5 -0.3; look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-12-weakness/kefka-k3/). Three Game Changers now (Rhystic Study, Underworld Breach, Jeska's Will).
 
 2026-10-11
 **Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Fully modeled and measured on 2026-10-11: 26.6% over all tiers (see "Simulator status").
@@ -187,15 +188,15 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (25).** Alpharael Dreaming Acolyte, Blazing Firesinger, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Hallway Heckler, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Massacre Wurm, Niv-Mizzet the Firemind, Postmortem Professor, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Susurian Voidborn, Viashino Fangtail
+**Creatures (24).** Alpharael Dreaming Acolyte, Blazing Firesinger, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Hallway Heckler, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Susurian Voidborn, Viashino Fangtail
 
 **Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Rhystic Study, Underworld Breach
 
-**Artifacts (7).** Arcane Signet, Lightning Greaves, Potioner's Trove, Sisay's Ring, Skullclamp, Swiftfoot Boots, Thought Vessel
+**Artifacts (6).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp, Swiftfoot Boots
 
-**Sorceries (16).** Contract Killing, Crux of Fate, Dark Inquiry, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Disintegrate, Duress, Feed the Swarm, Grab the Prize, Ichor Slick, Kaervek's Purge, Night's Whisper, Rapturous Moment, Seize the Spoils, Twinflame
+**Sorceries (17).** Contract Killing, Crux of Fate, Deadly Embrace, Decorum Dissertation, Diabolic Intent, Diabolic Tutor, Disintegrate, Feed the Swarm, Grab the Prize, Grapeshot, Grim Tutor, Jeska's Will, Kaervek's Purge, Night's Whisper, Rapturous Moment, Seize the Spoils, Twinflame
 
-**Instants (11).** Arcane Denial, Big Score, Chaos Warp, Deflecting Swat, Extinguish the Light, Lightning Bolt, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
+**Instants (12).** Arcane Denial, Big Score, Brain Freeze, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
 **Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Underground River, 6 Island, 5 Mountain, 15 Swamp
 
@@ -209,20 +210,20 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Blazing Firesinger
 1 Blightspeaker
 1 Blood Crypt
+1 Brain Freeze
 1 Cackling Fiend
-1 Chaos Warp
 1 Command Tower
 1 Contract Killing
 1 Corroding Dragonstorm
 1 Crux of Fate
-1 Dark Inquiry
+1 Dark Ritual
 1 Deadly Embrace
 1 Decorum Dissertation
 1 Deflecting Swat
 1 Demonic Embrace
+1 Diabolic Intent
 1 Diabolic Tutor
 1 Disintegrate
-1 Duress
 1 Eternal Student
 1 Exotic Orchard
 1 Extinguish the Light
@@ -230,22 +231,23 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Garrison Excavator
 1 Gemstone Mine
 1 Grab the Prize
+1 Grapeshot
 1 Grim Servant
+1 Grim Tutor
 1 Hallway Heckler
 1 Haunted Ridge
-1 Ichor Slick
 1 Intellect Devourer
+1 Jeska's Will
 1 Jin-Gitaxias, Progress Tyrant
 1 Kaervek's Purge
 1 Kefka, Court Mage // Kefka, Ruler of Ruin
 1 Lightning Bolt
 1 Lightning Greaves
+1 Lotus Petal
 1 Massacre Wurm
 1 Night's Whisper
 1 Niv-Mizzet, the Firemind
 1 Pongify
-1 Postmortem Professor
-1 Potioner's Trove
 1 Psychosis Crawler
 1 Rank Rat
 1 Rapturous Moment
@@ -269,7 +271,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Sulfur Falls
 1 Susurian Voidborn
 1 Swiftfoot Boots
-1 Thought Vessel
 1 Thrill of Possibility
 1 Twinflame
 1 Twinned Vision
