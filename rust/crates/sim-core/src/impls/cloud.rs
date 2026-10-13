@@ -323,7 +323,8 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         .filter(|&&m| live(g, m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(crate::tag::Tag::Rock)))
         .count();
     let mana = g.player(p).lands.iter().filter(|&&l| g.land(l).on_bf).count() as u32 + 1 + rocks as u32;
-    // cast + equip cost of a card, as the pieces are played (Cid and Puresteel Paladin are ignored)
+    let (free_equips, shapers) = equip_engine(g, p);
+    // cast + equip cost of a card (Cid is in the cast cost; free-equip engines and Steelshapers lower the equip cost)
     let total = |c: CardId| -> u32 {
         let cast = crate::engine::mana::cost_of(g, p, c).0;
         let d = g.db.get(c);
@@ -340,8 +341,18 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
                 "Champion's Helm" => 1,
                 _ => 2, // Sword of Feast and Famine
             });
-        cast + eq
+        cast + if free_equips { 0 } else { eq.saturating_sub(shapers) }
     };
+    if free_equips {
+        // equips are (nearly) free: the biggest payoff the mana can cast
+        let big = ["Sword of Kaldra", "Helm of Kaldra", "Shield of Kaldra", "Wrecking Ball Arm", "Colossus Hammer"];
+        let cast = |c: CardId| crate::engine::mana::cost_of(g, p, c).0;
+        if let Some(c) =
+            big.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && cast(*c) <= mana)
+        {
+            return Some(c);
+        }
+    }
     let exposed = crate::ai::brain::removal_risk(g, p) >= 0.3;
     let mut order: Vec<&str> = vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"];
     if exposed && held >= 1 {
@@ -1527,4 +1538,22 @@ fn precombat_cloud(g: &Game, p: PlayerId) -> f64 {
     } else {
         0.0
     }
+}
+
+/// what makes equipping cheap for p right now: (equips are about free, Auriok Steelshapers out). Puresteel Paladin
+/// with metalcraft (counting the piece about to be cast), Ardenn on the battlefield (re-attaches every combat) and
+/// Kor Outfitter in hand (attaches on entering) make equips free.
+fn equip_engine(g: &Game, p: PlayerId) -> (bool, u32) {
+    let artifacts = g.player(p).perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count();
+    let puresteel = creature_named(g, p, "Puresteel Paladin").is_some() && artifacts + 1 >= 3;
+    let ardenn = creature_named(g, p, "Ardenn, Intrepid Archaeologist").is_some();
+    let outfitter = in_hand(g, p, "Kor Outfitter");
+    let shapers = g.player(p).perms.iter().filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER).count() as u32;
+    (puresteel || ardenn || outfitter, shapers)
+}
+
+/// the Equipment Cloud's deck fetches with a tutor of this kind (Enlightened Tutor and friends): the same pick as
+/// Cloud's own search
+pub fn tutor_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
+    cloud_pick(g, p).filter(|c| okn.contains(c))
 }
