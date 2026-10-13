@@ -22,8 +22,11 @@ use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
+use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{card_name, epow, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, bounce, draw, enter, exile_perm, leave, make_tokens, max_by};
+use crate::engine::zones::{
+    Enter, Tokens, bounce, draw, enter, exile_perm, landfall, leave, make_tokens, max_by, searchable,
+};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -1127,6 +1130,155 @@ fn selfpt_as(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
     Ok(())
 }
 
+// ================================================================== the catch-up ramp
+// Keeper of the Accord, Loyal Warhound, Gift of Estates, Archaeomancer's Map, Oreskos Explorer. "More lands" counts
+// the lands on the battlefield (`lands.len()`); each condition is checked when the ability triggers and again when it
+// resolves (an intervening "if"), and Oreskos Explorer counts at resolution.
+const KEEPER: &str = "Keeper of the Accord";
+const WARHOUND: &str = "Loyal Warhound";
+const GIFT: &str = "Gift of Estates";
+const MAP: &str = "Archaeomancer's Map";
+const EXPLORER: &str = "Oreskos Explorer";
+
+/// the opponents of p that control more lands than p
+fn land_leaders(g: &Game, p: PlayerId) -> u32 {
+    let n = g.player(p).lands.len();
+    g.opps(p).filter(|&q| g.player(q).lands.len() > n).count() as u32
+}
+
+fn behind_on_lands(g: &Game, p: PlayerId) -> bool {
+    land_leaders(g, p) > 0
+}
+
+/// Search p's library for up to `n` Plains cards (`basic`: only basic Plains), then shuffle. They go to the hand
+/// (revealed) or onto the battlefield, tapped. Returns how many were found.
+fn fetch_plains(g: &mut Game, p: PlayerId, n: u32, basic: bool, to_hand: bool) -> Res<u32> {
+    let mut found = 0;
+    for _ in 0..n {
+        let Some(c) = searchable(g, p).into_iter().find(|&c| {
+            let d = g.db.get(c);
+            d.land && d.has_subtype("plains") && (!basic || d.basic)
+        }) else {
+            break;
+        };
+        let lib = &mut g.player_mut(p).library;
+        let i = lib.iter().position(|&x| x == c).unwrap();
+        lib.remove(i);
+        found += 1;
+        if to_hand {
+            g.player_mut(p).hand.push(c);
+            g.player_mut(p).seen.insert(c);
+        } else {
+            g.add_land_entering(p, c, true);
+            landfall(g, p)?;
+        }
+    }
+    shuffle_library(g, p);
+    Ok(found)
+}
+
+/// Loyal Warhound: when it enters, if an opponent controls more lands than you, search for a basic Plains, put it
+/// onto the battlefield tapped
+fn warhound_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if behind_on_lands(g, o)
+        && trigger_window(g, o, Some(src), "search for a basic Plains", Some(4.0))?
+        && behind_on_lands(g, o)
+    {
+        fetch_plains(g, o, 1, true, false)?;
+    }
+    Ok(())
+}
+
+/// Oreskos Explorer: when it enters, search for up to X Plains cards (X = the players who control more lands than
+/// you, counted as it resolves), into your hand
+fn explorer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if !trigger_window(g, o, Some(src), "search for Plains", Some(4.0))? {
+        return Ok(());
+    }
+    let x = land_leaders(g, o);
+    fetch_plains(g, o, x, false, true)?;
+    Ok(())
+}
+
+/// Gift of Estates: if an opponent controls more lands than you, search for up to three Plains cards into your hand
+fn gift_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if behind_on_lands(g, p) {
+        fetch_plains(g, p, 3, false, true)?;
+    }
+    Ok(intern("gy"))
+}
+
+/// Keeper of the Accord: at each opponent's end step, if they control more creatures than you, a 1/1 white Soldier;
+/// then if they control more lands than you, you may search for a basic Plains onto the battlefield tapped
+fn keeper_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = owner(g, src);
+    if o == p || !live(g, src) || !g.player(p).alive {
+        return Ok(());
+    }
+    let fewer = |g: &Game| creatures(g, p).len() > creatures(g, o).len();
+    if fewer(g) && trigger_window(g, o, Some(src), "create a Soldier", Some(4.0))? && fewer(g) {
+        let spec = Tokens { color: Some(Colors::from_letters("W")), types: vec!["soldier"], ..Tokens::new(1, 1) };
+        make_tokens(g, o, spec)?;
+    }
+    let smaller = |g: &Game| g.player(p).lands.len() > g.player(o).lands.len();
+    if smaller(g) && trigger_window(g, o, Some(src), "search for a basic Plains", Some(4.0))? && smaller(g) {
+        fetch_plains(g, o, 1, true, false)?;
+    }
+    Ok(())
+}
+
+/// Archaeomancer's Map: when it enters, search for up to two basic Plains cards into your hand
+fn map_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if trigger_window(g, o, Some(src), "search for two basic Plains", Some(4.0))? {
+        fetch_plains(g, o, 2, true, true)?;
+    }
+    Ok(())
+}
+
+/// Archaeomancer's Map: whenever a land an opponent controls enters, if that player controls more lands than you, you
+/// may put a land card from your hand onto the battlefield (a Plains, else one that doesn't enter tapped)
+fn map_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = owner(g, src);
+    if o == p || !live(g, src) || !g.player(p).alive {
+        return Ok(());
+    }
+    let ahead = |g: &Game| g.player(p).lands.len() > g.player(o).lands.len();
+    let pick = |g: &Game| {
+        g.player(o)
+            .hand
+            .iter()
+            .copied()
+            .filter(|&c| g.db.get(c).land)
+            .max_by_key(|&c| (g.db.get(c).has_subtype("plains") as i32 * 2) + !g.db.get(c).tag(Tag::T) as i32)
+    };
+    if !ahead(g) || pick(g).is_none() {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "put a land onto the battlefield", Some(4.0))? || !ahead(g) {
+        return Ok(());
+    }
+    if let Some(c) = pick(g) {
+        let hand = &mut g.player_mut(o).hand;
+        let i = hand.iter().position(|&x| x == c).unwrap();
+        hand.remove(i);
+        g.add_land_entering(o, c, false);
+        landfall(g, o)?;
+    }
+    Ok(())
+}
+
 // ================================================================== registry
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // face down
@@ -1175,5 +1327,13 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(selfpt_etb);
     c.as_enters = Some(selfpt_as);
     c.self_pt = Some(guardian_pt);
+    // the catch-up ramp
+    r.card(db, WARHOUND)?.etb = Some(warhound_etb);
+    r.card(db, EXPLORER)?.etb = Some(explorer_etb);
+    r.card(db, GIFT)?.resolve = Some(gift_resolve);
+    r.card(db, KEEPER)?.end_step = Some(keeper_end);
+    let c = r.card(db, MAP)?;
+    c.etb = Some(map_etb);
+    c.landfall = Some(map_landfall);
     Ok(())
 }

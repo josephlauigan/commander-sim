@@ -1284,6 +1284,9 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
         dp += bp - x.pow; // Wrecking Ball Arm, Hulkbuster Armor: base power and toughness
         dt += bt - x.tgh;
     }
+    let shaped = crate::impls::cloud::steelshaper_bonus(g, m); // Auriok Steelshaper
+    dp += shaped;
+    dt += shaped;
     for (_, src, ab, i) in statics(g, "equip_bonus") {
         if let Ability::Static { pow, tgh, .. } = &ab[i]
             && g.perm(src).attached == Some(m)
