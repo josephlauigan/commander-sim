@@ -348,16 +348,16 @@ fn probe_m_immediate_shield() {
     );
 }
 
-/// DEMONSTRATES A BUG (ignored until fixed): these three Equipment of the deck get no equip option at all, so once
+/// (fixed in cloud-ai-fix) these three Equipment of the deck get no equip option at all, so once
 /// cast they never attach (Champion's Helm and Sword of Feast and Famine only have the Sauron deck's hand-written
 /// equip plan; Magitek Scythe attaches on entering only, its Equip {2} is not modeled).
 #[test]
-#[ignore]
 fn bug_helm_feast_and_famine_and_scythe_have_no_equip_option() {
     for n in ["Champion's Helm", "Sword of Feast and Famine", "Magitek Scythe"] {
         let mut g = game();
         cloud_board(&mut g, 9);
-        perm(&mut g, P0, n);
+        let e = perm(&mut g, P0, n);
+        g.perm_mut(e).attached = None; // Scythe attaches on entering; the probe wants it loose
         let opts = brain::main_options(&mut g, P0, false).unwrap();
         assert!(opts.iter().any(|o| o.label.starts_with("equip") && o.label.contains(n)), "{n}: no equip option");
     }
