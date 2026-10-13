@@ -206,6 +206,12 @@ pub fn equip_cost(g: &Game, p: PlayerId, e: PermId, m: PermId, base: u32) -> u32
     if name_of(g, m) == "Helitrooper" {
         n = n.saturating_sub(2); // Equip abilities that target Helitrooper cost {2} less
     }
+    // Auriok Steelshaper: equip costs you pay cost {1} less each (generic only: Veteran's Powerblade's {W} stays)
+    let colored = name_of(g, e) == "Veteran's Powerblade" && has_type(g, m, "soldier");
+    if !colored {
+        let shapers = g.player(p).perms.iter().filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER).count() as u32;
+        n = n.saturating_sub(shapers);
+    }
     n
 }
 
@@ -438,6 +444,90 @@ fn beatrix_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
         attach(g, e, to);
     }
     Ok(vec![])
+}
+
+// ------------------------------------------------------------------ Kor Outfitter, Brass Squire, Auriok Steelshaper
+const STEELSHAPER: &str = "Auriok Steelshaper";
+
+/// the Equipment p most wants moved onto `to`: loose ones first, then by what it gives the wearer
+fn best_pull(g: &Game, p: PlayerId, to: PermId) -> Option<PermId> {
+    let es: Vec<PermId> = pullable(g, p, to).into_iter().filter(|&e| g.perm(e).attached != Some(to)).collect();
+    max_by(&es, |e| {
+        let loose = g.perm(e).attached.is_none_or(|t| !live(g, t));
+        (if loose { 10.0 } else { 0.0 }) + equip_utility_bonus(g, p, e, to)
+    })
+}
+
+/// Kor Outfitter: when it enters, you may attach target Equipment you control to target creature you control (the
+/// best holder, Cloud when he is out; a loose Equipment, or one worn by a worse creature)
+fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    let Some(to) = best_holder(g, o) else { return Ok(()) };
+    if best_pull(g, o, to).is_none() || !trigger_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
+        return Ok(());
+    }
+    // targets are chosen again as it resolves: the same choice, if still legal
+    if let Some(to) = best_holder(g, o)
+        && let Some(e) = best_pull(g, o, to)
+    {
+        attach(g, e, to);
+    }
+    Ok(())
+}
+
+/// Brass Squire's Equipment and the creature to put it on: the best holder other than Squire itself
+fn squire_target(g: &Game, p: PlayerId, src: PermId) -> Option<(PermId, PermId)> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| m != src && live(g, m) && g.is_creature(m) && !g.perm(m).noatk)
+        .collect();
+    let to = max_by(&cs, |m| holder_score(g, m))?;
+    Some((best_pull(g, p, to)?, to))
+}
+
+/// {T}: attach target Equipment you control to target creature you control
+fn squire_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || g.perm(src).tapped || g.perm(src).sick {
+        return Ok(false);
+    }
+    let Some((e, to)) = squire_target(g, p, src) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    if ability_window(g, p, Some(src), "attach Equipment", Some(5.0), Some(to))? && live(g, e) && live(g, to) {
+        attach(g, e, to);
+    }
+    Ok(true)
+}
+
+/// before combat on your turn, Brass Squire moves an Equipment onto the best holder (a free equip, no sorcery timing)
+fn squire_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p || !live(g, src) || x.tapped || x.sick || post != Some(false) || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let Some((e, to)) = squire_target(g, p, src) else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: 5.5 + if name_of(g, to) == CLOUD { 1.5 } else { 0.0 },
+        label: format!("Brass Squire: attach {} to {}", name_of(g, e), name_of(g, to)),
+        act: Some(Action::Ability { src, f: squire_go, arg: 0 }),
+    }])
+}
+
+/// Auriok Steelshaper: as long as it is equipped, each Soldier and Knight you control gets +1/+1 (read by `dsl::pt`)
+pub fn steelshaper_bonus(g: &Game, m: PermId) -> i32 {
+    if !(has_type(g, m, "soldier") || has_type(g, m, "knight")) {
+        return 0;
+    }
+    g.player(owner(g, m))
+        .perms
+        .iter()
+        .filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER && !equipment_on(g, s).is_empty())
+        .count() as i32
 }
 
 // ------------------------------------------------------------------ Puresteel Paladin
@@ -807,6 +897,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.grant_kw = Some(cid_flying);
     c.options = Some(cid_options);
     r.card(db, "Helitrooper")?.attack = Some(helitrooper_attack);
+    r.card(db, "Kor Outfitter")?.etb = Some(outfitter_etb);
+    r.card(db, "Brass Squire")?.options = Some(squire_options);
     r.card(db, "Conformer Shuriken")?.attack = Some(shuriken_attack);
     r.card(db, "Explorer's Scope")?.attack = Some(scope_attack);
     let c = r.card(db, "Magnetic Snuffler")?;
@@ -953,6 +1045,45 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             }
         }
         "Jocasta, Automaton Avenger" => 52,
+        // the catch-up ramp: worth casting once an opponent has more lands
+        "Gift of Estates" => {
+            if g.opps(p).any(|q| g.player(q).lands.len() > pl.lands.len()) {
+                64
+            } else {
+                0
+            }
+        }
+        "Loyal Warhound" | "Oreskos Explorer" => {
+            if g.opps(p).any(|q| g.player(q).lands.len() > pl.lands.len()) {
+                60
+            } else {
+                36
+            }
+        }
+        "Archaeomancer's Map" => 58,
+        "Keeper of the Accord" => 56,
+        // the creatures that move Equipment
+        "Kor Outfitter" => {
+            if eq_out > 0 && cloud_out {
+                66
+            } else {
+                46
+            }
+        }
+        "Brass Squire" => {
+            if eq_out > 0 {
+                60
+            } else {
+                44
+            }
+        }
+        "Auriok Steelshaper" => {
+            if eq_out > 0 {
+                58
+            } else {
+                46
+            }
+        }
         "Unfinished Business" => {
             let best = pl.gy.iter().any(|&x| card_name(g, x) == CLOUD);
             let any = pl.gy.iter().any(|&x| g.db.get(x).creature && g.db.get(x).bomb >= 3);

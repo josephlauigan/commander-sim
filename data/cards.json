@@ -3614,25 +3614,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": true
-       },
-       "to": "hand",
-       "n": 2,
-       "tapped": false
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -3640,10 +3622,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a land an opponent controls enters, if that player controls more lands than you, you may put a land card from your hand onto the battlefield."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -5157,7 +5137,8 @@
    "pips": "W",
    "tags": {
     "human": true,
-    "pow": "1"
+    "pow": "1",
+    "tgh": "1"
    },
    "pow": 1,
    "tgh": 1,
@@ -5173,10 +5154,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "As long as ~ is equipped, each creature you control that's a Soldier or a Knight gets +1/+1."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -10567,10 +10546,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{T}: Attach target Equipment you control to target creature you control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -36202,9 +36179,7 @@
    "types": "S",
    "generic": 1,
    "pips": "W",
-   "tags": {
-    "lh": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -36216,7 +36191,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -49683,11 +49658,7 @@
    "tags": {
     "human": true,
     "pow": "3",
-    "tgh": "4",
-    "tok": "1",
-    "tokp": "1",
-    "lr": "1",
-    "lrt": true
+    "tgh": "4"
    },
    "pow": 3,
    "tgh": 4,
@@ -49703,7 +49674,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -51120,7 +51091,8 @@
    "generic": 0,
    "pips": "WW",
    "tags": {
-    "pow": "2"
+    "pow": "2",
+    "tgh": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -51136,10 +51108,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, you may attach target Equipment you control to target creature you control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -55067,9 +55037,7 @@
    "tags": {
     "pow": "3",
     "tgh": "1",
-    "vig": true,
-    "lr": "1",
-    "lrt": true
+    "vig": true
    },
    "pow": 3,
    "tgh": 1,
@@ -55086,7 +55054,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -64903,30 +64871,13 @@
    "generic": 1,
    "pips": "W",
    "tags": {
-    "pow": "2"
+    "pow": "2",
+    "tgh": "2"
    },
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": false
-       },
-       "to": "hand",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -64937,10 +64888,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, search your library for up to X Plains cards, where X is the number of players who control more lands than you. Reveal those cards, put them into your hand, then shuffle.   [partly: reveal those cards, put them into your hand]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
