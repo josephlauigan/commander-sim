@@ -668,3 +668,22 @@ fn a_finished_breach_line_is_not_offered() {
     hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
     assert_eq!(line(&mut g), 0);
 }
+
+#[test]
+fn latulla_s_orders_destroys_an_artifact_when_its_creature_connects() {
+    use sim_core::hooks::{Call, Event};
+    let mut g = table(&["sauron", "seph"]);
+    let host = token(&mut g, P0, 4);
+    let aura = perm(&mut g, P0, "Latulla's Orders");
+    assert_eq!(g.perm(aura).attached, Some(host), "it goes on your creature");
+    let other = token(&mut g, P0, 1);
+    let art = perm(&mut g, P1, "Sol Ring");
+    let hit = |g: &mut Game, a: PermId| {
+        sim_core::engine::hooks::fire_trigger(g, Event::CombatDamage, Call::CombatDamage { p: P0, a, d: P1, dmg: 2 })
+            .unwrap()
+    };
+    hit(&mut g, other);
+    assert!(g.perm(art).on_bf, "another creature's damage does nothing");
+    hit(&mut g, host);
+    assert!(!g.perm(art).on_bf, "the enchanted creature's damage destroys their artifact");
+}

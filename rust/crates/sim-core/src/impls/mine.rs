@@ -30,8 +30,8 @@ use crate::engine::zones::{
     leave, make_tokens, max_by, mill, min_by, to_zone_card,
 };
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
+use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
@@ -4361,7 +4361,34 @@ fn relic_mana(g: &Game, src: Src, p: PlayerId, units: &[Unit]) -> Vec<Unit> {
         .collect()
 }
 
+// ------------------------------------------------------------------ Latulla's Orders
+/// Latulla's Orders: a flash Aura on your best creature (common.own_host)
+static LATULLA_SPEC: super::common::AuraSpec = super::common::AURA;
+
+/// whenever the enchanted creature deals combat damage to the defending player, you may destroy target artifact that
+/// player controls: their most valuable one you can target
+fn latulla_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -> Res {
+    if !g.perm(src).on_bf || g.perm(src).attached != Some(a) {
+        return Ok(());
+    }
+    let o = g.perm(src).owner;
+    let arts: Vec<PermId> = g
+        .player(d)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| !g.perm(m).phased && super::t5::is_artifact(g, m) && !crate::engine::values::untargetable(g, m))
+        .collect();
+    let Some(t) = first_max(&arts, |m| crate::engine::values::pval(g, m)) else { return Ok(()) };
+    if trigger_window(g, o, Some(src), "destroy an artifact", None)? {
+        apply_removal(g, Some(o), t, "destroy", None)?;
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    super::common::aura(r, db, "Latulla's Orders", &LATULLA_SPEC)?;
+    r.card(db, "Latulla's Orders")?.combat_damage = Some(latulla_hit);
     r.card(db, "Barad-dûr")?.land_options = Some(baraddur);
     r.card(db, "Bloodsoaked Insight // Sanguine Morass")?.hand_options = Some(insight);
     r.card(db, BRAIN_FREEZE)?.resolve = Some(brain_freeze);

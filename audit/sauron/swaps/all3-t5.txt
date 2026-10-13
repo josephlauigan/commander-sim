@@ -1,0 +1,24 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Twinflame [pool] S 1R :: twinflame
+   Latulla's Orders [scryfall] E 1R :: flash
+      not modeled: Enchant creature
+      not modeled: Whenever enchanted creature deals combat damage to defending player, you may destroy target artifact that player controls.
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m08s elapsed, ~1m16s left
+  progress  20.0%  0m16s elapsed, ~1m06s left
+  progress  30.0%  0m24s elapsed, ~0m57s left
+  progress  40.0%  0m31s elapsed, ~0m47s left
+  progress  50.0%  0m39s elapsed, ~0m39s left
+  progress  60.0%  0m47s elapsed, ~0m31s left
+  progress  70.0%  0m56s elapsed, ~0m24s left
+  progress  80.0%  1m04s elapsed, ~0m16s left
+  progress  90.0%  1m11s elapsed, ~0m07s left
+  progress 100.0%  1m20s elapsed, ~0m00s left
+Swaps: Night's Whisper -> Gandalf, Friend of the Shire; Kaervek the Merciless -> Twinflame; Undermine -> Latulla's Orders
+
+=== Sauron vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  21.2% ->  22.1%  (delta +0.9 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Urza 16.7%  Zur the Enchanter 13.3%  Winota 17.5%  Kinnan 21.3%  Yawgmoth 8.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(80s total)
