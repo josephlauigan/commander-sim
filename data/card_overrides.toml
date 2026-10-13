@@ -7090,3 +7090,10 @@ tags = "leg pow=1 tgh=1"
 dsl = []
 status = "Full"
 note = "enters: amass Orcs 2, then gain control of the best nonlegendary creature an opponent controls with power at most the Army's until end of turn, untapped and hasty (it returns at the end step)"
+
+["Comet Storm"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "{X}{R}{R} instant, multikicker {1}: X damage to each of 1 + kicks distinct targets (opponents, creatures, planeswalkers; the AI picks them as it resolves: lethal faces first, then killable permanents worth 1.5+, then the rest of the faces); the AI splits all its mana between X and kicks for the best result and casts it when it kills an opponent (main phase, or the end of an opponent's turn) or late at X >= 4 when it hits every opponent"

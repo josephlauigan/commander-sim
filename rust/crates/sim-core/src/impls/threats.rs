@@ -26,7 +26,8 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::card_worth;
-use crate::engine::values::{army_of, epow, pval, untargetable};
+use crate::engine::removal::apply_removal;
+use crate::engine::values::{army_of, epow, etgh, no_damage, pval, untargetable};
 use crate::engine::zones::{amass, die, discard_cards, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -262,6 +263,160 @@ fn torment_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Comet Storm
+pub const COMET: &str = "Comet Storm";
+
+/// one Comet Storm target: an opponent, or one of their creatures / planeswalkers
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Tgt {
+    Face(PlayerId),
+    Perm(PermId),
+}
+
+/// what X damage to `t` is worth to p (<= 0: not worth a target), and whether it kills an opponent
+fn comet_score(g: &Game, p: PlayerId, t: Tgt, x: i32) -> (f64, bool) {
+    match t {
+        Tgt::Face(q) => {
+            let pl = g.player(q);
+            if !pl.alive || pl.life_locked || crate::engine::life::prevents_damage(g, q, Some(p)) {
+                (0.0, false)
+            } else if pl.life <= x {
+                (100.0, true)
+            } else {
+                (0.5 * x as f64 * (25.0 / pl.life.max(1) as f64).min(2.0), false)
+            }
+        }
+        Tgt::Perm(m) => {
+            let pm = g.perm(m);
+            if !pm.on_bf || pm.phased || untargetable(g, m) || (g.is_creature(m) && no_damage(g, m)) {
+                return (0.0, false);
+            }
+            let dies = match pm.loyalty {
+                Some(l) if !g.is_creature(m) => l <= x,
+                _ => g.is_creature(m) && etgh(g, m) <= x,
+            };
+            if dies && pval(g, m) >= 1.5 { (pval(g, m), false) } else { (0.0, false) }
+        }
+    }
+}
+
+/// the best `n` distinct targets for X damage: (target, score) in descending score, only worthwhile ones
+fn comet_targets(g: &Game, p: PlayerId, x: i32, n: usize) -> Vec<(Tgt, f64, bool)> {
+    let mut all: Vec<(Tgt, f64, bool)> = vec![];
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let (s, k) = comet_score(g, p, Tgt::Face(q), x);
+        if s > 0.0 {
+            all.push((Tgt::Face(q), s, k));
+        }
+        for &m in &g.player(q).perms {
+            let (s, k) = comet_score(g, p, Tgt::Perm(m), x);
+            if s > 0.0 {
+                all.push((Tgt::Perm(m), s, k));
+            }
+        }
+    }
+    all.sort_by(|a, b| b.1.total_cmp(&a.1));
+    all.truncate(n);
+    all
+}
+
+/// Multikicker {1}: choose any target, then another for each kick; X damage to each of them
+fn comet_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let x = ctx.x.max(0);
+    let n = 1 + ctx.kicks as usize;
+    crate::glog!(g, "    Comet Storm (X = {x}, {} kick(s))", ctx.kicks);
+    // the AI picks its targets; with none worth hitting the first opponent still takes it
+    let mut tg = comet_targets(g, p, x, n);
+    if tg.is_empty() {
+        if let Some(q) = g.opps(p).find(|&q| g.player(q).alive) {
+            tg.push((Tgt::Face(q), 0.0, false));
+        }
+    }
+    for (t, _, _) in tg {
+        if g.over {
+            break;
+        }
+        match t {
+            Tgt::Face(q) => {
+                if g.player(q).alive && x > 0 {
+                    crate::glog!(g, "      {} takes {x}", g.player(q).name);
+                    lose_life(g, q, x, Some(p), "burn", None)?;
+                }
+            }
+            Tgt::Perm(m) if g.perm(m).on_bf && g.is_creature(m) => {
+                apply_removal(g, Some(p), m, &format!("dmg{x}"), None)?;
+            }
+            Tgt::Perm(m) if g.perm(m).on_bf => {
+                let l = g.perm(m).loyalty.unwrap_or(0) - x;
+                g.perm_mut(m).loyalty = Some(l.max(0));
+                if l <= 0 {
+                    die(g, m, "sba")?;
+                }
+            }
+            Tgt::Perm(_) => {}
+        }
+    }
+    crate::engine::life::check_state(g)?;
+    Ok("gy")
+}
+
+/// the AI's (X, kicks) for Comet Storm with all its mana: the split that scores best (kills first), ties to more X
+fn comet_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(i32, u32, f64, i32)> {
+    let (gn, pips) = cost_of(g, p, c);
+    if !can_pay(g, p, gn, &pips, false) {
+        return None;
+    }
+    let spare = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let mut best: Option<(i32, u32, f64, i32)> = None;
+    for k in 0..spare.max(0) {
+        let x = spare - k;
+        let tg = comet_targets(g, p, x, 1 + k as usize);
+        let score: f64 = tg.iter().map(|t| t.1).sum();
+        let kills = tg.iter().filter(|t| t.2).count() as i32;
+        if best.is_none_or(|b| score > b.2) {
+            best = Some((x, k as u32, score, kills));
+        }
+    }
+    best
+}
+
+/// Comet Storm for any deck holding it: on your turn (main phase) or at the end of an opponent's turn (so the mana is
+/// free again): when it kills an opponent, or late when X >= 4 and it hits every opponent
+fn comet_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let own = post.is_some() && g.active == Some(p);
+    let eot = post.is_none() && g.active != Some(p);
+    if !(own || eot) || !g.player(p).hand.contains(&c) {
+        return Ok(vec![]);
+    }
+    let Some((x, k, score, kills)) = comet_plan(g, p, c) else { return Ok(vec![]) };
+    let opps = g.opps(p).filter(|&q| g.player(q).alive).count();
+    let all = comet_targets(g, p, x, 1 + k as usize).iter().filter(|t| matches!(t.0, Tgt::Face(_))).count() >= opps;
+    if kills == 0 && (eot || x < 4 || !all || !late(g, p)) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.5 + 0.1 * score.min(100.0) + 7.0 * kills as f64,
+        label: format!("Comet Storm (X = {x}, {k} kick(s))"),
+        act: Some(Action::Plan { f: comet_go, arg: c.0 as i64 }),
+    }])
+}
+
+fn comet_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) {
+        return Ok(false);
+    }
+    let Some((x, k, _, _)) = comet_plan(g, p, c) else { return Ok(false) };
+    let (gn, pips) = cost_of(g, p, c);
+    let tot = gn + (x as u32) + k;
+    if !can_pay(g, p, tot, &pips, false) {
+        return Ok(false);
+    }
+    pay(g, p, tot, &pips, false)?;
+    cast_card(g, p, c, "hand", Ctx { x, kicks: k, ..Ctx::default() })?;
+    Ok(true)
+}
+
 // ================================================================== Dualcaster Mage
 fn dualcaster_perm(g: &Game, p: PlayerId, cd: CardId) -> Option<PermId> {
     g.player(p).perms.iter().rev().copied().find(|&m| g.perm(m).cd == Some(cd) && g.perm(m).on_bf)
@@ -374,6 +529,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, TORMENT)?;
     c.resolve = Some(torment_resolve);
     c.hand_options = Some(torment_options);
+    let c = r.card(db, COMET)?;
+    c.resolve = Some(comet_resolve);
+    c.hand_options = Some(comet_options);
     let c = r.card(db, DUALCASTER)?;
     c.hand_cast = Some(dualcaster_copy);
     c.hand_opp_cast = Some(dualcaster_copy);

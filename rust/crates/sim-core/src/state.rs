@@ -766,6 +766,8 @@ pub struct Ctx {
     pub mastery_pick: Option<CardId>,
     /// the spell was cast from its owner's graveyard (flashback): set as it resolves (Retrieve the Esper)
     pub from_gy: bool,
+    /// Multikicker: how many times the spell was kicked (Comet Storm)
+    pub kicks: u32,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).
