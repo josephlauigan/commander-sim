@@ -64,7 +64,7 @@ from the other decks, the binder and the retired Jodah deck. Everything else is 
 **To buy (11 cards, about $33.26; Scryfall, cheapest printing, 2026-10-13):** Cloud, Midgar Mercenary ($22.33), Knight of
 the White Orchid ($3.90), Ardenn, Intrepid Archaeologist ($2.86), Sol Ring ($1.42), Auriok Steelshaper ($0.83), Loyal
 Warhound ($0.64), Armored Skyhunter ($0.44), Balan, Wandering Knight ($0.40), Mind Stone ($0.20), Kor Outfitter ($0.19),
-Kor Duelist ($0.05). **Everything else:** bulk. Sauron's own Fellwar Stone (added 10-13) is a buy on Sauron's list;
+Kor Duelist ($0.05). **Everything else:** bulk. Sauron's own Fellwar Stone (added 10-13) is a separate copy JD got on 10-13;
 Cloud's comes from the retired Jodah deck.
 
 ## Decklist by type (100)

@@ -1172,7 +1172,7 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
                 50
             }
         }
-        "Benevolent Bodyguard" => {
+        "Benevolent Bodyguard" | "Giver of Runes" => {
             if cloud_out {
                 64
             } else {
