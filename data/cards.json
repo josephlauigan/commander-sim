@@ -2133,6 +2133,43 @@
    "spell_prio": false
   },
   {
+   "name": "Ancient Den",
+   "types": "LA",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "W"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ancient Greenwarden",
    "types": "C",
    "generic": 4,
@@ -3556,6 +3593,61 @@
     "cmc": 4,
     "land": false,
     "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Archaeomancer's Map",
+   "types": "A",
+   "generic": 2,
+   "pips": "W",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "land",
+        "basic": true
+       },
+       "to": "hand",
+       "n": 2,
+       "tapped": false
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever a land an opponent controls enters, if that player controls more lands than you, you may put a land card from your hand onto the battlefield."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -5056,6 +5148,49 @@
    "python_hooks": [
     "attack"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Auriok Steelshaper",
+   "types": "C",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "human": true,
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "soldier"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "As long as ~ is equipped, each creature you control that's a Soldier or a Knight gets +1/+1."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -10411,6 +10546,48 @@
    "spell_prio": false
   },
   {
+   "name": "Brass Squire",
+   "types": "AC",
+   "generic": 3,
+   "pips": "",
+   "tags": {
+    "pow": "1",
+    "tgh": "3"
+   },
+   "pow": 1,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "myr"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{T}: Attach target Equipment you control to target creature you control."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Brazen Borrower",
    "types": "C",
    "generic": 1,
@@ -11310,6 +11487,67 @@
     "Riot",
     "Whenever ~ attacks, you may discard a card. If you do, draw a card.   [partly: if you do, draw a card]"
    ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Burnished Hart",
+   "types": "AC",
+   "generic": 3,
+   "pips": "",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "3",
+      "sac": "self"
+     },
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "land",
+        "basic": true
+       },
+       "to": "battlefield",
+       "n": 2,
+       "tapped": true
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "elk"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -27196,6 +27434,64 @@
    "spell_prio": false
   },
   {
+   "name": "Emeria's Call // Emeria, Shattered Skyclave",
+   "types": "S",
+   "generic": 4,
+   "pips": "WWW",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "token",
+       "n": 2,
+       "pow": 4,
+       "tgh": 4,
+       "keywords": [
+        "flying"
+       ],
+       "attacking": false,
+       "warrior": true,
+       "types": [
+        "angel",
+        "warrior"
+       ]
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Create two 4/4 white Angel Warrior creature tokens with flying. Non-Angel creatures you control gain indestructible until your next turn.   [partly: non-angel creatures you control gain indestructible until your next turn]"
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Emeria, the Sky Ruin",
    "types": "L",
    "generic": 0,
@@ -32079,6 +32375,49 @@
    "spell_prio": false
   },
   {
+   "name": "Fighter Class",
+   "types": "E",
+   "generic": 0,
+   "pips": "RW",
+   "tags": {
+    "tut": "any"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "class"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "RW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{1}{R}{W}: Level 2",
+    "{3}{R}{W}: Level 3",
+    "Whenever a creature you control attacks, up to one target creature blocks it this combat if able."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Finale of Devastation",
    "types": "S",
    "generic": 0,
@@ -35849,6 +36188,43 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Gift of Estates",
+   "types": "S",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "lh": "1"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -49301,6 +49677,52 @@
    "spell_prio": false
   },
   {
+   "name": "Keeper of the Accord",
+   "types": "C",
+   "generic": 3,
+   "pips": "W",
+   "tags": {
+    "human": true,
+    "pow": "3",
+    "tgh": "4",
+    "tok": "1",
+    "tokp": "1",
+    "lr": "1",
+    "lrt": true
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "soldier"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Keeper of the Quiet Hour",
    "types": "AC",
    "generic": 3,
@@ -50579,6 +51001,64 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Kor Cartographer",
+   "types": "C",
+   "generic": 3,
+   "pips": "W",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "land",
+        "basic": false
+       },
+       "to": "battlefield",
+       "n": 1,
+       "tapped": true
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "kor",
+    "scout"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
     "land": false,
     "creature": true,
     "instant": false,
@@ -53554,6 +54034,67 @@
    "spell_prio": false
   },
   {
+   "name": "Lion Sash",
+   "types": "AC",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "W"
+     },
+     "effects": [
+      {
+       "do": "exile_graveyard",
+       "who": "each_player"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "reconfigure"
+   ],
+   "subtypes": [
+    "cat",
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{W}: Exile target card from a graveyard. If it was a permanent card, put a +1/+1 counter on ~.   [partly: if it was a permanent card, put a +1/+1 counter on ~]",
+    "Equipped creature gets +1/+1 for each +1/+1 counter on ~.",
+    "Reconfigure {2}"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Lion Umbra",
    "types": "E",
    "generic": 0,
@@ -53619,6 +54160,45 @@
    "unparsed": [],
    "derived": {
     "cmc": 0,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Liquimetal Torque",
+   "types": "A",
+   "generic": 2,
+   "pips": "",
+   "tags": {
+    "rock": "1:C"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{T}: Target nonland permanent becomes an artifact in addition to its other types until end of turn."
+   ],
+   "derived": {
+    "cmc": 2,
     "land": false,
     "creature": false,
     "instant": false,
@@ -54478,6 +55058,51 @@
    "python_hooks": [
     "upkeep"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Loyal Warhound",
+   "types": "C",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "pow": "3",
+    "tgh": "1",
+    "vig": true,
+    "lr": "1",
+    "lrt": true
+   },
+   "pow": 3,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "vigilance"
+   ],
+   "subtypes": [
+    "dog"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -55589,6 +56214,57 @@
     "instant": true,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Mana Geode",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {
+    "rock": "1:A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "scry",
+       "n": 1
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "scry"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -64223,6 +64899,66 @@
    "spell_prio": false
   },
   {
+   "name": "Oreskos Explorer",
+   "types": "C",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "land",
+        "basic": false
+       },
+       "to": "hand",
+       "n": 1,
+       "tapped": false
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cat",
+    "scout"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ enters, search your library for up to X Plains cards, where X is the number of players who control more lands than you. Reveal those cards, put them into your hand, then shuffle.   [partly: reveal those cards, put them into your hand]"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ornithopter",
    "types": "AC",
    "generic": 0,
@@ -66959,6 +67695,66 @@
    "python_hooks": [
     "etb"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Pilgrim's Eye",
+   "types": "AC",
+   "generic": 3,
+   "pips": "",
+   "tags": {
+    "pow": "1",
+    "fly": true
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "land",
+        "basic": true
+       },
+       "to": "hand",
+       "n": 1,
+       "tapped": false
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "thopter"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -93959,6 +94755,43 @@
    "spell_prio": false
   },
   {
+   "name": "Thran Dynamo",
+   "types": "A",
+   "generic": 4,
+   "pips": "",
+   "tags": {
+    "rock": "3:C"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Thrashing Brontodon",
    "types": "C",
    "generic": 1,
@@ -94812,6 +95645,59 @@
     "etb",
     "land_gy"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Tithe",
+   "types": "I",
+   "generic": 0,
+   "pips": "W",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "land",
+        "basic": false
+       },
+       "to": "hand",
+       "n": 1,
+       "tapped": false
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Search your library for a Plains card. If target opponent controls more lands than you, you may search your library for an additional Plains card. Reveal those cards, put them into your hand, then shuffle.   [partly: if target opponent controls more lands than you, you may search your library for an additional plains card; reveal those cards, put them into your hand]"
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
