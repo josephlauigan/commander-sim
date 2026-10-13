@@ -283,7 +283,7 @@ fn comet_score(g: &Game, p: PlayerId, t: Tgt, x: i32) -> (f64, bool) {
             } else if pl.life <= x {
                 (100.0, true)
             } else {
-                (0.5 * x as f64 * (25.0 / pl.life.max(1) as f64).min(2.0), false)
+                (0.25 * x as f64 * (25.0 / pl.life.max(1) as f64).min(2.0), false)
             }
         }
         Tgt::Perm(m) => {
