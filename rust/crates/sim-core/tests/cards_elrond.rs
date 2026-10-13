@@ -662,3 +662,97 @@ fn the_planner_casts_the_pair_that_tempts_and_holds_elrond_alone() {
     assert_eq!(elrond::elrond_prio(&g, P0, o), 90);
     assert!(elrond::elrond_prio(&g, P0, c) < 90);
 }
+
+// ================================================================== Gandalf: the AI uses sorceries at instant speed
+fn gandalf_table() -> Game {
+    table(&["sauron", "seph"])
+}
+
+fn utility_of(opts: &[Opt], label: &str) -> f64 {
+    opts.iter().find(|o| o.label.starts_with(label)).unwrap_or_else(|| panic!("no option {label}")).utility
+}
+
+#[test]
+fn gandalf_holds_a_flexible_sorcery_for_the_end_of_turn_window() {
+    let mut without = gandalf_table();
+    fill_library(&mut without, P0, 20);
+    lands(&mut without, P0, "Swamp", 6, false);
+    hand(&mut without, P0, &["Night's Whisper", "Swamp"]);
+    let mut with = gandalf_table();
+    fill_library(&mut with, P0, 20);
+    lands(&mut with, P0, "Swamp", 6, false);
+    hand(&mut with, P0, &["Night's Whisper", "Swamp"]);
+    perm(&mut with, P0, "Gandalf, Friend of the Shire");
+    let u0 = utility_of(&brain::main_options(&mut without, P0, false).unwrap(), "Night's Whisper");
+    let u1 = utility_of(&brain::main_options(&mut with, P0, false).unwrap(), "Night's Whisper");
+    assert!((u0 - u1 - 3.0).abs() < 1e-9, "held by 3.0: {u0} vs {u1}");
+    // a creature is not held
+    let mut g = gandalf_table();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &["Grave Titan", "Swamp"]);
+    let before = utility_of(&brain::main_options(&mut g, P0, false).unwrap(), "Grave Titan");
+    perm(&mut g, P0, "Gandalf, Friend of the Shire");
+    assert_eq!(utility_of(&brain::main_options(&mut g, P0, false).unwrap(), "Grave Titan"), before);
+    // and with no land to play yet, card draw is not held
+    let mut g = gandalf_table();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Swamp", 3, false);
+    hand(&mut g, P0, &["Night's Whisper"]);
+    g.player_mut(P0).turns = 3;
+    let before = utility_of(&brain::main_options(&mut g, P0, false).unwrap(), "Night's Whisper");
+    perm(&mut g, P0, "Gandalf, Friend of the Shire");
+    assert_eq!(utility_of(&brain::main_options(&mut g, P0, false).unwrap(), "Night's Whisper"), before);
+}
+
+#[test]
+fn gandalf_casts_removal_sorceries_at_the_end_of_the_turn_before_yours() {
+    let mut g = gandalf_table();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &["Bloodchief's Thirst"]);
+    let t = perm(&mut g, P1, "Grave Titan");
+    g.active = Some(P1);
+    brain::end_of_turn_window(&mut g, P0).unwrap();
+    assert!(g.perm(t).on_bf, "no Gandalf: the sorcery stays in hand");
+    perm(&mut g, P0, "Gandalf, Friend of the Shire");
+    brain::end_of_turn_window(&mut g, P0).unwrap();
+    assert!(!g.perm(t).on_bf, "Gandalf: the sorcery kills the Titan at instant speed");
+}
+
+#[test]
+fn gandalf_kills_the_biggest_attacker_with_a_removal_sorcery() {
+    let mut g = gandalf_table();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &["Bloodchief's Thirst"]);
+    let t = perm(&mut g, P1, "Grave Titan");
+    // without Gandalf the sorcery can't answer the attack
+    assert!(!brain::attack_response(&mut g, P0, P1, &[t]).unwrap());
+    assert!(g.perm(t).on_bf);
+    perm(&mut g, P0, "Gandalf, Friend of the Shire");
+    assert!(brain::attack_response(&mut g, P0, P1, &[t]).unwrap());
+    assert!(!g.perm(t).on_bf);
+    assert!(gy_has(&g, P0, "Bloodchief's Thirst"));
+}
+
+#[test]
+fn gandalf_wipes_the_board_after_a_big_attack() {
+    let mut g = gandalf_table();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Plains", 6, false);
+    hand(&mut g, P0, &["Wrath of God"]);
+    let a: Vec<PermId> = (0..3).map(|_| perm(&mut g, P1, "Grave Titan")).collect();
+    assert!(!brain::attack_response(&mut g, P0, P1, &a).unwrap(), "no Gandalf: no instant-speed wipe");
+    perm(&mut g, P0, "Gandalf, Friend of the Shire");
+    assert!(brain::attack_response(&mut g, P0, P1, &a).unwrap());
+    assert!(a.iter().all(|&m| !g.perm(m).on_bf));
+    // a small attack does not trigger the wipe
+    let mut g = gandalf_table();
+    fill_library(&mut g, P0, 20);
+    lands(&mut g, P0, "Plains", 6, false);
+    hand(&mut g, P0, &["Wrath of God"]);
+    perm(&mut g, P0, "Gandalf, Friend of the Shire");
+    let s = perm(&mut g, P1, "Llanowar Elves");
+    assert!(!brain::attack_response(&mut g, P0, P1, &[s]).unwrap());
+}
