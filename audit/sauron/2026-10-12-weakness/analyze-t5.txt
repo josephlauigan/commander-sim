@@ -1,0 +1,92 @@
+
+######## vs Tier 5 (High B4) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 960 games] ===========
+Win rate 21.5%   (4-player baseline 25%)   average rounds survived 8.3
+
+-- How it wins --
+  damage      97.6% of wins
+  combo        1.9% of wins
+  timeout      0.5% of wins
+  Opponents it eliminated: 0.61 per game, by
+    combat             76.0%
+    drain               8.4%
+    triggers            8.4%
+    commander damage    4.1%
+    decked              2.2%
+    combo               0.9%
+  Damage dealt per game: 25.5, from
+    combat              22.9  (90%)
+    triggers             1.6  (6%)
+    drain                1.1  (4%)
+
+-- How it loses --
+  Eliminated in 78.5% of games, on average in round 7.2
+    by Kinnan   via combo              20.9% of games
+    by Urza     via combo              16.5% of games
+    by Zur the Enchanter via combo              12.6% of games
+    by Winota   via combat              8.2% of games
+    by Winota   via combo               7.9% of games
+    by Yawgmoth via combo               4.9% of games
+    by Urza     via combat              1.2% of games
+    by Zur the Enchanter via commander damage    1.2% of games
+
+-- Game plan timing --
+  Plan: Sword + Assault combo attempted
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 1%  T9 1%  T10 1%  T11 2%  T12 2%
+  Online at all: 2.3% of games
+  Combo attempted in 0.4% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Whispersilk Cloak                          cast in  13.1% of games, win rate when cast  45.2% (+23.8)
+    Sol Ring                                   cast in  17.8% of games, win rate when cast  43.3% (+21.8)
+    Aggravated Assault                         cast in  20.7% of games, win rate when cast  42.7% (+21.3)
+    Ringsight                                  cast in  12.3% of games, win rate when cast  42.4% (+20.9)
+    Talisman of Creativity                     cast in  15.3% of games, win rate when cast  42.2% (+20.7)
+    Mind Stone                                 cast in  16.1% of games, win rate when cast  41.3% (+19.8)
+    Night's Whisper                            cast in  13.0% of games, win rate when cast  40.8% (+19.3)
+    Cost of Brilliance                         cast in  11.8% of games, win rate when cast  40.7% (+19.2)
+    Flux Channeler                             cast in  13.3% of games, win rate when cast  40.6% (+19.2)
+    Vision, Synthezoid Avenger                 cast in  11.6% of games, win rate when cast  40.5% (+19.1)
+  Lowest win rate when cast:
+    Toxic Deluge                               cast in  10.6% of games, win rate when cast  24.5% (+3.1)
+    Talisman of Dominance                      cast in  15.9% of games, win rate when cast  30.7% (+9.3)
+    Spell Pierce                               cast in  12.9% of games, win rate when cast  31.5% (+10.0)
+    Chaos Warp                                 cast in  14.5% of games, win rate when cast  31.7% (+10.2)
+    Infernal Grasp                             cast in  14.4% of games, win rate when cast  31.9% (+10.4)
+    Terminate                                  cast in  15.0% of games, win rate when cast  31.9% (+10.5)
+    Relic of Legends                           cast in  13.1% of games, win rate when cast  33.3% (+11.9)
+    Arcane Denial                              cast in  14.3% of games, win rate when cast  33.6% (+12.1)
+    Call of the Ring                           cast in  13.2% of games, win rate when cast  33.9% (+12.4)
+    The Ozolith                                cast in  18.4% of games, win rate when cast  33.9% (+12.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Brain Freeze                               cast  10.1% of the games it was drawn
+    Not of This World                          cast  11.2% of the games it was drawn [reactive: only cast in response]
+    Deepglow Skate                             cast  22.0% of the games it was drawn
+    Underworld Breach                          cast  27.6% of the games it was drawn
+    Noxious Gearhulk                           cast  35.7% of the games it was drawn
+    Kaervek the Merciless                      cast  35.7% of the games it was drawn
+    Diabolic Intent                            cast  37.8% of the games it was drawn
+    Nibelheim Aflame                           cast  38.3% of the games it was drawn
+    Inexorable Tide                            cast  38.7% of the games it was drawn
+    Sephiroth, Planet's Heir                   cast  40.4% of the games it was drawn
+    Undermine                                  cast  40.4% of the games it was drawn [reactive: only cast in response]
+    Sauron, the Necromancer                    cast  42.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.13
+    Sword of Hearth and Home                   0.04
+    Sword of Fire and Ice                      0.03
+    Vraska, Betrayal's Sting                   0.03
+    Flux Channeler                             0.02
+    Sword of Feast and Famine                  0.02
+    Mind Stone                                 0.01
+    Grave Titan                                0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(35s total)
