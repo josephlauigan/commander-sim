@@ -1,0 +1,85 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m07s elapsed, ~1m09s left
+  progress  20.0%  0m13s elapsed, ~0m52s left
+  progress  30.0%  0m20s elapsed, ~0m48s left
+  progress  40.0%  0m26s elapsed, ~0m39s left
+  progress  50.0%  0m32s elapsed, ~0m32s left
+  progress  60.0%  0m40s elapsed, ~0m26s left
+  progress  70.0%  0m45s elapsed, ~0m19s left
+  progress  80.0%  0m50s elapsed, ~0m12s left
+  progress  90.0%  0m56s elapsed, ~0m06s left
+  progress 100.0%  1m04s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== kefka analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 20.6%   (4-player baseline 25%)   average rounds survived 8.2
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.61 per game, by
+    drain              39.0%
+    combat             34.4%
+    triggers           13.8%
+    burn                9.2%
+    other               1.5%
+    commander damage    1.0%
+    decked              1.0%
+  Damage dealt per game: 24.1, from
+    combat              12.0  (50%)
+    drain                8.7  (36%)
+    burn                 1.8  (8%)
+    triggers             1.5  (6%)
+
+-- How it loses --
+  Eliminated in 79.4% of games, on average in round 7.5
+    by Kinnan   via combo              22.2% of games
+    by Urza     via combo              13.1% of games
+    by Winota   via combat             12.2% of games
+    by Winota   via combo               8.4% of games
+    by Yawgmoth via combo               8.1% of games
+    by Zur the Enchanter via combo               7.2% of games
+    by Urza     via combat              2.8% of games
+    by Yawgmoth via drain               1.6% of games
+
+-- Game plan timing --
+  Plan: Kefka flipped into Ruler of Ruin
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 1%  T7 2%  T8 7%  T9 11%  T10 14%  T11 18%  T12 20%
+  Online at all: 22.2% of games
+  Commander resolves on turn: median 5.0, mean 6.0 (over the 58.8% of games it resolves)
+  Commander resolved by turn:  T4 12%  T5 31%  T6 42%  T7 46%  T8 52%
+  Breach line: Breach and a storm card held on our turn in 14.4% of games
+    dry run tried in 12.8%, passed in 1.6%, executed in 1.6%, won (table dead or decked) in 1.6%
+    last failed dry run fell short of: mana 2.8%, blue mana 1.2%, graveyard fuel 3.8%, storm count / other 4.4% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  60.9% of games, win rate when cast  33.8% (+13.2)
+  Lowest win rate when cast:
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  60.9% of games, win rate when cast  33.8% (+13.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Underworld Breach                          cast   6.6% of the games it was drawn
+    Rapturous Moment                           cast  25.7% of the games it was drawn
+    Jin-Gitaxias, Progress Tyrant              cast  26.0% of the games it was drawn
+    Niv-Mizzet, the Firemind                   cast  32.1% of the games it was drawn
+    Alpharael, Dreaming Acolyte                cast  43.9% of the games it was drawn
+    Rummaging Goblin                           cast  45.3% of the games it was drawn
+    Shimmercreep                               cast  46.1% of the games it was drawn
+    Lightning Greaves                          cast  47.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  0.08
+    Psychosis Crawler                          0.03
+    Alpharael, Dreaming Acolyte                0.02
+    Susurian Voidborn                          0.02
+    Intellect Devourer                         0.02
+    Rhystic Study                              0.02
+    Scarlet Spider, Kaine                      0.02
+    Eternal Student                            0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(64s total)

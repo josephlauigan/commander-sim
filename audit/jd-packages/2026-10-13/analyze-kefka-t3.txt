@@ -1,0 +1,90 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m12s elapsed, ~1m55s left
+  progress  20.0%  0m24s elapsed, ~1m39s left
+  progress  30.0%  0m36s elapsed, ~1m26s left
+  progress  40.0%  0m48s elapsed, ~1m12s left
+  progress  50.0%  1m00s elapsed, ~1m00s left
+  progress  60.0%  1m11s elapsed, ~0m47s left
+  progress  70.0%  1m22s elapsed, ~0m35s left
+  progress  80.0%  1m33s elapsed, ~0m23s left
+  progress  90.0%  1m45s elapsed, ~0m11s left
+  progress 100.0%  1m58s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== kefka analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 27.5%   (4-player baseline 25%)   average rounds survived 11.0
+
+-- How it wins --
+  damage      98.9% of wins
+  timeout      1.1% of wins
+  Opponents it eliminated: 0.69 per game, by
+    combat             31.4%
+    drain              29.1%
+    burn               13.2%
+    triggers           12.7%
+    decked             12.7%
+    commander damage    0.5%
+    other               0.5%
+  Damage dealt per game: 31.1, from
+    drain               13.6  (44%)
+    combat              12.7  (41%)
+    burn                 3.0  (10%)
+    triggers             1.9  (6%)
+
+-- How it loses --
+  Eliminated in 72.5% of games, on average in round 10.5
+    by Aurelia  via combat             17.8% of games
+    by Tergrid  via combat             13.1% of games
+    by Marwyn   via combat             10.6% of games
+    by Atraxa   via combat              9.1% of games
+    by Tergrid  via drain               5.9% of games
+    by Tergrid  via triggers            2.8% of games
+    by Korvold  via combat              2.5% of games
+    by Korvold  via drain               2.2% of games
+
+-- Game plan timing --
+  Plan: Kefka flipped into Ruler of Ruin
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 2%  T8 9%  T9 13%  T10 18%  T11 22%  T12 28%
+  Online at all: 35.0% of games
+  Commander resolves on turn: median 6.0, mean 6.1 (over the 86.9% of games it resolves)
+  Commander resolved by turn:  T4 18%  T5 42%  T6 55%  T7 68%  T8 75%
+  Breach line: Breach and a storm card held on our turn in 28.8% of games
+    dry run tried in 25.0%, passed in 10.0%, executed in 9.7%, won (table dead or decked) in 9.4%
+    last failed dry run fell short of: mana 4.1%, blue mana 0.3%, graveyard fuel 1.9%, storm count / other 14.7% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  87.5% of games, win rate when cast  30.7% (+3.2)
+  Lowest win rate when cast:
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  87.5% of games, win rate when cast  30.7% (+3.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Deflecting Swat                            cast   0.8% of the games it was drawn
+    Slip Out the Back                          cast   3.8% of the games it was drawn [reactive: only cast in response]
+    Twinflame                                  cast   4.5% of the games it was drawn
+    Grapeshot                                  cast  11.1% of the games it was drawn
+    Decorum Dissertation                       cast  17.8% of the games it was drawn
+    Underworld Breach                          cast  19.7% of the games it was drawn
+    Kaervek's Purge                            cast  21.2% of the games it was drawn
+    Brain Freeze                               cast  21.4% of the games it was drawn
+    Profane Tutor                              cast  25.9% of the games it was drawn
+    Crux of Fate                               cast  29.2% of the games it was drawn
+    Disintegrate                               cast  31.2% of the games it was drawn
+    Jin-Gitaxias, Progress Tyrant              cast  35.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  0.33
+    Sawblade Scamp                             0.06
+    Massacre Wurm                              0.05
+    Rhystic Study                              0.04
+    Scarlet Spider, Kaine                      0.04
+    Susurian Voidborn                          0.04
+    Corroding Dragonstorm                      0.03
+    Psychosis Crawler                          0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(118s total)

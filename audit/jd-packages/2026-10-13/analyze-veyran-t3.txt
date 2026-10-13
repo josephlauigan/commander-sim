@@ -1,0 +1,77 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m15s elapsed, ~2m23s left
+  progress  20.0%  0m29s elapsed, ~1m57s left
+  progress  30.0%  0m39s elapsed, ~1m31s left
+  progress  40.0%  0m51s elapsed, ~1m16s left
+  progress  50.0%  1m04s elapsed, ~1m04s left
+  progress  60.0%  1m15s elapsed, ~0m50s left
+  progress  70.0%  1m28s elapsed, ~0m37s left
+  progress  80.0%  1m40s elapsed, ~0m25s left
+  progress  90.0%  1m53s elapsed, ~0m12s left
+  progress 100.0%  2m13s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== veyran analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 24.4%   (4-player baseline 25%)   average rounds survived 12.0
+
+-- How it wins --
+  damage      94.9% of wins
+  timeout      5.1% of wins
+  Opponents it eliminated: 0.63 per game, by
+    combat             42.8%
+    burn               37.8%
+    aether             10.9%
+    triggers            7.5%
+    commander damage    1.0%
+  Damage dealt per game: 30.8, from
+    combat              13.5  (44%)
+    burn                12.6  (41%)
+    aether               3.9  (13%)
+    triggers             0.8  (3%)
+
+-- How it loses --
+  Eliminated in 74.7% of games, on average in round 11.4
+    by Aurelia  via combat             20.0% of games
+    by Tergrid  via combat             13.4% of games
+    by Marwyn   via combat             10.6% of games
+    by Atraxa   via combat              9.4% of games
+    by Korvold  via combat              3.1% of games
+    by Tergrid  via triggers            2.5% of games
+    by Aurelia  via commander damage    2.5% of games
+    by Korvold  via drain               1.9% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 2%  T4 15%  T5 24%  T6 34%  T7 42%  T8 48%  T9 52%  T10 57%  T11 61%  T12 63%
+  Online at all: 68.1% of games
+  Commander resolves on turn: median 4.0, mean 5.1 (over the 91.9% of games it resolves)
+  Commander resolved by turn:  T4 47%  T5 60%  T6 72%  T7 79%  T8 84%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 5.9% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Blazing Firesinger // Seething Song        cast in  35.3% of games, win rate when cast  33.6% (+9.3)
+    Veyran, Voice of Duality                   cast in  92.2% of games, win rate when cast  26.1% (+1.7)
+  Lowest win rate when cast:
+    Veyran, Voice of Duality                   cast in  92.2% of games, win rate when cast  26.1% (+1.7)
+    Blazing Firesinger // Seething Song        cast in  35.3% of games, win rate when cast  33.6% (+9.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.70
+    Ral, Storm Conduit                         0.12
+    Aetherflux Reservoir                       0.07
+    Blazing Firesinger // Seething Song        0.06
+    Propaganda                                 0.05
+    Guttersnipe                                0.04
+    Emeritus of Conflict // Lightning Bolt     0.04
+    Sanar, Unfinished Genius // Wild Idea      0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(133s total)

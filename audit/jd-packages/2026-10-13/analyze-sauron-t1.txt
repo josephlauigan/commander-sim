@@ -1,0 +1,79 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+  progress  10.0%  0m11s elapsed, ~1m43s left
+  progress  20.0%  0m23s elapsed, ~1m34s left
+  progress  30.0%  0m33s elapsed, ~1m17s left
+  progress  40.0%  0m43s elapsed, ~1m04s left
+  progress  50.0%  0m55s elapsed, ~0m55s left
+  progress  60.0%  1m04s elapsed, ~0m43s left
+  progress  70.0%  1m19s elapsed, ~0m34s left
+  progress  80.0%  1m31s elapsed, ~0m22s left
+  progress  90.0%  1m43s elapsed, ~0m11s left
+  progress 100.0%  1m54s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 35.0%   (4-player baseline 25%)   average rounds survived 11.0
+
+-- How it wins --
+  damage      97.3% of wins
+  timeout      2.7% of wins
+  Opponents it eliminated: 0.97 per game, by
+    combat             51.8%
+    drain              18.3%
+    burn               12.2%
+    commander damage   11.3%
+    triggers            5.1%
+    decked              1.3%
+  Damage dealt per game: 52.3, from
+    combat              37.3  (71%)
+    drain                7.6  (14%)
+    burn                 4.0  (8%)
+    triggers             3.3  (6%)
+
+-- How it loses --
+  Eliminated in 64.7% of games, on average in round 9.9
+    by Light-Paws via commander damage   13.4% of games
+    by Isshin   via combat             10.9% of games
+    by Lathril  via combat             10.6% of games
+    by Tatyova  via combat              8.4% of games
+    by Teysa Karlov via combat              5.6% of games
+    by Light-Paws via combat              4.7% of games
+    by Teysa Karlov via drain               3.8% of games
+    by Lathril  via drain               2.5% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 3%  T4 10%  T5 18%  T6 31%  T7 41%  T8 48%  T9 54%  T10 58%  T11 60%  T12 63%
+  Online at all: 65.0% of games
+  Commander resolves on turn: median 6.0, mean 6.4 (over the 85.3% of games it resolves)
+  Commander resolved by turn:  T4 12%  T5 31%  T6 49%  T7 68%  T8 75%
+  Army power at the start of turn  6: mean 1.8, median 0.0, 10+ in 3.8% of games
+  Army power at the start of turn  8: mean 3.1, median 0.0, 10+ in 10.9% of games
+  Army power at the start of turn 10: mean 3.2, median 0.0, 10+ in 14.1% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Aggravated Assault                         cast in  37.5% of games, win rate when cast  48.3% (+13.3)
+    Sauron, the Dark Lord                      cast in  86.2% of games, win rate when cast  40.6% (+5.6)
+  Lowest win rate when cast:
+    Sauron, the Dark Lord                      cast in  86.2% of games, win rate when cast  40.6% (+5.6)
+    Aggravated Assault                         cast in  37.5% of games, win rate when cast  48.3% (+13.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.39
+    Vraska, Betrayal's Sting                   0.07
+    Mind Stone                                 0.05
+    Grave Titan                                0.04
+    Aggravated Assault                         0.04
+    Sephiroth, Planet's Heir                   0.04
+    Whispersilk Cloak                          0.04
+    Inferno Titan                              0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(115s total)

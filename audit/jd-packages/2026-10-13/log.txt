@@ -1,0 +1,13 @@
+14:56 kefka t1 exit 0 Win rate 30.9%   (4-player baseline 25%)   average rounds survived 10.6
+14:58 kefka t3 exit 0 Win rate 27.5%   (4-player baseline 25%)   average rounds survived 11.0
+14:59 kefka t5 exit 0 Win rate 20.6%   (4-player baseline 25%)   average rounds survived 8.2
+15:02 veyran t1 exit 0 Win rate 23.4%   (4-player baseline 25%)   average rounds survived 11.5
+15:04 veyran t3 exit 0 Win rate 24.4%   (4-player baseline 25%)   average rounds survived 12.0
+15:05 veyran t5 exit 0 Win rate 14.1%   (4-player baseline 25%)   average rounds survived 8.1
+15:07 sauron t1 exit 0 Win rate 35.0%   (4-player baseline 25%)   average rounds survived 11.0
+15:08 sauron t3 exit 0 Win rate 32.8%   (4-player baseline 25%)   average rounds survived 11.9
+15:09 sauron t5 exit 0 Win rate 27.2%   (4-player baseline 25%)   average rounds survived 8.1
+15:12 titania t1 exit 0 Win rate 21.2%   (4-player baseline 25%)   average rounds survived 11.1
+15:14 titania t3 exit 0 Win rate 25.9%   (4-player baseline 25%)   average rounds survived 12.2
+15:15 titania t5 exit 0 Win rate 16.6%   (4-player baseline 25%)   average rounds survived 8.2
+15:15 DONE
