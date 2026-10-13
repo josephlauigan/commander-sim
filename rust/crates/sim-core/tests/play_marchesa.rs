@@ -10,7 +10,7 @@ use sim_core::state::DataKey;
 // ------------------------------------------------------------------ Spells
 #[test]
 fn accursed_marauder_you_choose_your_sacrifice() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = table(&["galadriel", "veyran"]);
     hand(&mut g, P0, &["Accursed Marauder"]);
     let keep = perm(&mut g, P0, "Hellkite Tyrant");
     perm(&mut g, P1, "Guttersnipe");
@@ -66,7 +66,7 @@ fn ashnods_altar_makes_colourless() {
 
 #[test]
 fn coalition_relic_charge() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = table(&["galadriel", "veyran"]);
     let cr = perm(&mut g, P0, "Coalition Relic");
     main(&mut g, P0, vec![act(json!({"do": "use", "perm": 0})), pick(0)]);
     assert_eq!((g.perm(cr).data.int(DataKey::Charge), g.perm(cr).tapped), (1, true));

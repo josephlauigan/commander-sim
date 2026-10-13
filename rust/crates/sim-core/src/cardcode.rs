@@ -62,9 +62,9 @@ pub fn attached_prot(g: &Game, m: PermId) -> crate::cards::Colors {
     crate::impls::common::attached_prot(g, m)
 }
 
-/// CI.garland_check (jodah.garland_check): Garland's steals end when their player loses the crown or leaves
+/// CI.garland_check (legends.garland_check): Garland's steals end when their player loses the crown or leaves
 pub fn garland_check(g: &mut Game) {
-    crate::impls::jodah::garland_check(g)
+    crate::impls::legends::garland_check(g)
 }
 
 /// your own Auras on m (common.auras_on, excluding locks: CI.LOCKS)
@@ -514,9 +514,9 @@ pub fn prot_vs(g: &Game, m: PermId, from: PermId) -> bool {
     crate::impls::rules2::prot_vs(g, m, from)
 }
 
-/// CI.kaldra_exile (jodah.kaldra_exile: Sword of Kaldra exiles what it damages): true if it exiled
+/// CI.kaldra_exile (legends.kaldra_exile: Sword of Kaldra exiles what it damages): true if it exiled
 pub fn kaldra_exile(g: &mut Game, src: PermId, m: PermId) -> Res<bool> {
-    crate::impls::jodah::kaldra_exile(g, src, m)
+    crate::impls::legends::kaldra_exile(g, src, m)
 }
 
 /// mine.necromancer_attack (an attacking token copy of a graveyard creature)
@@ -810,9 +810,9 @@ pub fn lands_from_gy(g: &Game, p: PlayerId) -> bool {
     !g.hooks.is_empty() && hooks::total_count(g, Event::LandsFromGy, p) > 0
 }
 
-/// CI.suspend_upkeep (jodah.suspend_upkeep): a time counter off each suspended card; at zero it's cast free
+/// CI.suspend_upkeep (legends.suspend_upkeep): a time counter off each suspended card; at zero it's cast free
 pub fn suspend_upkeep(g: &mut Game, p: PlayerId) -> Res {
-    crate::impls::jodah::suspend_upkeep(g, p)
+    crate::impls::legends::suspend_upkeep(g, p)
 }
 
 /// ais.braids_sacrifice (Braids, Cabal Minion's upkeep sacrifice)
@@ -841,7 +841,7 @@ pub fn opposition_precombat(g: &mut Game, q: PlayerId) -> Res {
 }
 
 /// the delayed end-step effects, in Python's order: Marchesa's returns, The Eternal Wanderer (zur.zur_end_step),
-/// Eerie Interlude (galadriel.eot_returns), Memory Jar (jodah.jar_end)
+/// Eerie Interlude (galadriel.eot_returns), Memory Jar (legends.jar_end)
 pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     if !g.marchesa_due.is_empty() {
         crate::impls::marchesa::marchesa_return(g)?; // Marchesa: 'at the beginning of the next end step'
@@ -851,7 +851,7 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     }
     crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
     if !g.jar_due.is_empty() {
-        crate::impls::jodah::jar_end(g)?; // Memory Jar
+        crate::impls::legends::jar_end(g)?; // Memory Jar
     }
     Ok(())
 }

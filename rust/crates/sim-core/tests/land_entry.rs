@@ -59,7 +59,7 @@ fn snarl_reveals_from_hand() {
 
 #[test]
 fn battle_bond_and_sanctuary() {
-    let mut g = table(&["sauron", "veyran", "seph", "jodah"]);
+    let mut g = table(&["sauron", "veyran", "seph", "galadriel"]);
     assert!(!tapped(&g, P0, "Luxury Suite")); // three opponents
     lands(&mut g, P0, "Island", 1, false);
     assert!(tapped(&g, P0, "Sunken Hollow")); // two or more basic lands

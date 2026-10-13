@@ -503,10 +503,10 @@ note = "enters tapped; exiles the most dangerous graveyard"
 
 ["Bolt Bend"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=swat"
 dsl = []
 status = "Full"
-note = "costs {3} less with a creature of power 4 or more ({R} with Jodah out); changes the target of a removal spell to an opponent's best permanent (Jodah's AI casts it in response to removal aimed at Jodah, or at a key legend while Jodah is not out)"
+note = "costs {3} less with a creature of power 4 or more; changes the target of a removal spell to an opponent's best permanent"
 
 ["Boreal Druid"]
 status = "Full"
@@ -1011,10 +1011,10 @@ note = ""
 
 ["Dark Endurance"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=ind"
 dsl = []
 status = "Full"
-note = "+2/+0 and indestructible until end of turn (the +2/+0 is not modeled) (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "+2/+0 and indestructible until end of turn (the +2/+0 is not modeled)"
 
 ["Dark Petition"]
 types = "S"
@@ -2700,10 +2700,10 @@ note = "{T}, sacrifice it: exile target red creature (the AI on a red threat, or
 
 ["Lazotep Plating"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hex"
 dsl = []
 status = "Full"
-note = "amass Zombies 1; you and your permanents gain hexproof until end of turn (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "amass Zombies 1; you and your permanents gain hexproof until end of turn"
 
 ["Leaf-Crowned Visionary"]
 tags = "pow=1"
@@ -2822,10 +2822,10 @@ note = "destroys an artifact or enchantment on entry; {T}: you and the least thr
 
 ["Loran's Escape"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hexind"
 dsl = []
 status = "Full"
-note = "hexproof and indestructible until end of turn; scry 1 (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "hexproof and indestructible until end of turn; scry 1"
 
 ["Lord Windgrace"]
 tags = "leg"
@@ -2866,7 +2866,7 @@ types = "E"
 tags = ""
 dsl = []
 status = "Full"
-note = "the first spell you cast each turn has cascade (it stacks with Jodah's legend cascade)"
+note = "the first spell you cast each turn has cascade"
 
 ["Maelstrom Wanderer"]
 status = "Full"
@@ -3089,7 +3089,7 @@ dsl = [
   { type = "static", static = "equip_cost", mana = 3 },
 ]
 status = "Full"
-note = "flash; indestructible; attaches to your legendary creature as it enters (Jodah first); the equipped creature is indestructible; equip {3}. Jodah's AI casts it with Jodah out, or in response to destroy removal or a wipe"
+note = "flash; indestructible; attaches to your legendary creature as it enters; the equipped creature is indestructible; equip {3}"
 
 ["Mizzix's Mastery"]
 status = "Full"
@@ -3566,7 +3566,7 @@ note = "top four: a land onto the battlefield tapped, or else a card into your h
 
 ["Plaza of Heroes"]
 status = "Full"
-note = "{C}; any colour for legendary spells; colours among your legendary permanents; {3}, {T}, exile: hexproof and indestructible for a legend (Jodah's AI uses it on Jodah against removal and destroy wipes)"
+note = "{C}; any colour for legendary spells; colours among your legendary permanents; {3}, {T}, exile: hexproof and indestructible for a legend"
 
 ["Plea for Guidance"]
 types = "S"
@@ -4000,10 +4000,10 @@ note = ""
 
 ["Royal Treatment"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hex"
 dsl = []
 status = "Full"
-note = "hexproof until end of turn and a Royal Role on the creature (+1/+1 and ward {1}; a Role you control on it is replaced; it is not a counter, so Hardened Scales ignores it); Jodah's and the bill deck's AI cast it in response to removal aimed at a creature worth saving"
+note = "hexproof until end of turn and a Royal Role on the creature (+1/+1 and ward {1}; a Role you control on it is replaced; it is not a counter, so Hardened Scales ignores it); Titania's AI casts it in response to removal aimed at a creature worth saving"
 
 ["Ruby Medallion"]
 status = "Full"
@@ -4321,7 +4321,7 @@ note = "{T}: {C}{C}"
 tags = "leg human pow=2 tgh=2"
 dsl = []
 status = "Full"
-note = "+1/+1 for each colour among your other legendary permanents; {W}{U}{B}{R}{G}: a legendary permanent card with mana value below Sisay's power onto the battlefield (the tutor wish list's pick, else the dearest legend; never while Jodah could be cast instead)"
+note = "+1/+1 for each colour among your other legendary permanents; {W}{U}{B}{R}{G}: a legendary permanent card with mana value below Sisay's power onto the battlefield (the dearest legendary creature, else the dearest legend)"
 
 ["Sisters of Stone Death"]
 tags = "leg pow=7 tgh=5"
@@ -4364,10 +4364,10 @@ note = "+1/+1, draw on damage to an opponent (hook), umbra armor"
 
 ["Snakeskin Veil"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hex"
 dsl = []
 status = "Full"
-note = "a +1/+1 counter and hexproof until end of turn (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "a +1/+1 counter and hexproof until end of turn"
 
 ["Snap"]
 status = "Full"
@@ -4776,10 +4776,10 @@ note = "{T}: {C}, or one of its colours for 1 damage"
 
 ["Tamiyo's Safekeeping"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hexind"
 dsl = []
 status = "Full"
-note = "hexproof and indestructible until end of turn; you gain 2 life (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "hexproof and indestructible until end of turn; you gain 2 life"
 
 ["Tamiyo, Field Researcher"]
 tags = "leg"
@@ -5152,7 +5152,7 @@ note = "your creatures gain indestructible; cast in your main phase, also a +1/+
 
 ["Unclaimed Territory"]
 status = "Full"
-note = "names the creature type most of your creatures share (Sauron: Orc; Jodah: Human): {C}, or any colour for a creature spell of that type"
+note = "names the creature type most of your creatures share (Sauron: Orc): {C}, or any colour for a creature spell of that type"
 
 ["Underground River"]
 add_tags = ["pain"]

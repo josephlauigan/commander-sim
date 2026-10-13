@@ -290,16 +290,6 @@ fn crackling_doom_takes_the_greatest_power() {
     assert_eq!((g.player(P1).life, g.player(P2).life), (38, 38));
 }
 
-// ------------------------------------------------------------------ jodah: Mother of Runes stays home for Jodah
-#[test]
-fn mother_of_runes_stays_home_only_for_jodah() {
-    let mut g = table(&["jodah", "sauron"]);
-    let m = perm(&mut g, P0, "Mother of Runes");
-    assert!(g.perm(m).noatk);
-    let mut g = table(&["light-paws-aura-voltron", "sauron"]);
-    let m = perm(&mut g, P0, "Mother of Runes");
-    assert!(!g.perm(m).noatk);
-}
 
 // ------------------------------------------------------------------ rules: the rest
 #[test]

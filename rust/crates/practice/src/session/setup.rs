@@ -10,7 +10,7 @@ use sim_core::state::{Game, Player};
 use std::sync::Arc;
 
 /// the decks people can play (poolmode.MINE)
-pub const MY_DECKS: [&str; 7] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah"];
+pub const MY_DECKS: [&str; 6] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela"];
 pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
 
 /// the pool decks of a tier, sorted by key

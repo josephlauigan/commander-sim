@@ -37,12 +37,6 @@ name = "Alela"
 commander = "Alela, Artful Provocateur"
 ident = "WUB"
 
-[jodah]
-file = "JD/jodah-wubrg-legends.md"
-name = "Jodah"
-commander = "Jodah, the Unifier"
-ident = "WUBRG"
-
 [kefka]
 file = "JD/kefka-grixis-discard.md"
 name = "Kefka"
