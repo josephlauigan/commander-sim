@@ -912,6 +912,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 None => ai::choose_defender(g, p),
             };
             let groups = if plan.is_some_and(|x| x.1 == "all") {
+                let all_atk = if g.player(p).key == "cloud" { crate::impls::cloud::all_out_trim(g, p, all_atk, d) } else { all_atk };
                 vec![(d, all_atk)] // everything at one player
             } else {
                 if ncomb == 1 {

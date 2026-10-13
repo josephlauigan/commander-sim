@@ -11,7 +11,7 @@ pub struct Metric {
     pub axis: &'static str,
     /// is a higher value better?
     pub up: bool,
-    /// None: every deck; Some("combo"): Veyran and Sauron; Some(deck): that deck only
+    /// None: every deck; Some("combo"): Veyran (Sauron's Sword + Assault combo left with the Swords, 2026-10-13); Some(deck): that deck only
     pub only: Option<&'static str>,
 }
 
@@ -60,12 +60,10 @@ pub fn plan_text(deck: &str) -> &'static str {
         "galadriel" => "first Alliance trigger from Galadriel",
         "yshtola" => "first drain from Y'shtola's cast trigger",
         "alela" => "first Faerie made by Alela",
-        "jodah" => "first legend cast free by Jodah",
         "kefka" => "Kefka flipped into Ruler of Ruin",
         "titania" => "first 5/3 Elemental from Titania",
         "sheoldred" => "first opponent drained by Sheoldred",
         "cloud" => "first attack by an equipped Cloud",
-        "elrond" => "first Ring tempt from Elrond",
         "najeela" => "first WUBRG extra combat",
         _ => "",
     }
@@ -97,12 +95,10 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "galadriel" => ms("alliance"),
         "yshtola" => ms("yshtola"),
         "alela" => ms("faerie"),
-        "jodah" => ms("jodah"),
         "kefka" => ms("kefka"),
         "titania" => ms("titania"),
         "sheoldred" => ms("sheoldred"),
         "cloud" => ms("cloud"),
-        "elrond" => ms("elrond"),
         _ => ms("combo"),
     };
     t.filter(|&t| t != 0)
@@ -200,7 +196,7 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
     let mut moved: Vec<((&str, &str, bool), Vec<String>)> = vec![];
     let mut cur_axis: Option<&str> = None;
     for mt in &METRICS {
-        if mt.only == Some("combo") && !matches!(deck, "veyran" | "sauron") {
+        if mt.only == Some("combo") && deck != "veyran" {
             continue;
         }
         if let Some(o) = mt.only
@@ -453,7 +449,7 @@ pub fn print_analysis(
     println!("  Online by turn:  {}", line.join("  "));
     println!("  Online at all: {:.1}% of games", (100 * pn) as f64 / n);
     print_speed(r, deck);
-    if matches!(deck, "veyran" | "sauron") {
+    if deck == "veyran" {
         println!("  Combo attempted in {:.1}% of games", (100 * r.combo) as f64 / n);
     }
     let has = |n: &str| cards.iter().any(|c| c.name == n);

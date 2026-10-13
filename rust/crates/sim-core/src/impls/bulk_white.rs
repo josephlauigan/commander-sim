@@ -2,7 +2,7 @@
 //! Filled in by the white-rest agent (rust/agents/white-rest.md).
 //!
 //! - **Face down** (morph, disguise): **Exalted Angel**, **Forum Familiar**, **Unyielding Gatekeeper**, **Exit
-//!   Specialist** (the Elrond deck's). A face-down creature is the galadriel module's 2/2 with no abilities (`neutered`);
+//!   Specialist**. A face-down creature is the galadriel module's 2/2 with no abilities (`neutered`);
 //!   a disguise creature also has ward {2} while face down (`extra_ward`). `down_options` casts one face down for {3},
 //!   `face_up_options` (called by `brain::hook_options` for every deck) turns one face up for its cost and runs its
 //!   "when turned face up" ability.
@@ -22,8 +22,11 @@ use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
+use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{card_name, epow, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, bounce, draw, enter, exile_perm, leave, make_tokens, max_by};
+use crate::engine::zones::{
+    Enter, Tokens, bounce, draw, enter, exile_perm, landfall, leave, make_tokens, max_by, searchable,
+};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -114,7 +117,7 @@ fn flag_is_now(g: &Game, p: PlayerId, key: &str) -> bool {
 /// **What it is worth to p to have the permanent m leave and come back** (a blink, a bounce and recast): the enter
 /// effects it would run again (`t2::blink_value`), Cloud, Midgar Mercenary's search for an Equipment above all, less
 /// what falls off it (each Equipment attached). A token is gone for good: 0. The deck plans of the cloud deck (and
-/// the Elrond deck) may add to this; Ennis, Stormfront Riders, Forum Familiar, Unyielding Gatekeeper and Exit
+/// the Ring-and-entries creatures) may add to this; Ennis, Stormfront Riders, Forum Familiar, Unyielding Gatekeeper and Exit
 /// Specialist all choose their targets by it.
 pub fn reenter_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
     let x = g.perm(m);
@@ -1127,6 +1130,155 @@ fn selfpt_as(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
     Ok(())
 }
 
+// ================================================================== the catch-up ramp
+// Keeper of the Accord, Loyal Warhound, Gift of Estates, Archaeomancer's Map, Oreskos Explorer. "More lands" counts
+// the lands on the battlefield (`lands.len()`); each condition is checked when the ability triggers and again when it
+// resolves (an intervening "if"), and Oreskos Explorer counts at resolution.
+const KEEPER: &str = "Keeper of the Accord";
+const WARHOUND: &str = "Loyal Warhound";
+const GIFT: &str = "Gift of Estates";
+const MAP: &str = "Archaeomancer's Map";
+const EXPLORER: &str = "Oreskos Explorer";
+
+/// the opponents of p that control more lands than p
+fn land_leaders(g: &Game, p: PlayerId) -> u32 {
+    let n = g.player(p).lands.len();
+    g.opps(p).filter(|&q| g.player(q).lands.len() > n).count() as u32
+}
+
+fn behind_on_lands(g: &Game, p: PlayerId) -> bool {
+    land_leaders(g, p) > 0
+}
+
+/// Search p's library for up to `n` Plains cards (`basic`: only basic Plains), then shuffle. They go to the hand
+/// (revealed) or onto the battlefield, tapped. Returns how many were found.
+fn fetch_plains(g: &mut Game, p: PlayerId, n: u32, basic: bool, to_hand: bool) -> Res<u32> {
+    let mut found = 0;
+    for _ in 0..n {
+        let Some(c) = searchable(g, p).into_iter().find(|&c| {
+            let d = g.db.get(c);
+            d.land && d.has_subtype("plains") && (!basic || d.basic)
+        }) else {
+            break;
+        };
+        let lib = &mut g.player_mut(p).library;
+        let i = lib.iter().position(|&x| x == c).unwrap();
+        lib.remove(i);
+        found += 1;
+        if to_hand {
+            g.player_mut(p).hand.push(c);
+            g.player_mut(p).seen.insert(c);
+        } else {
+            g.add_land_entering(p, c, true);
+            landfall(g, p)?;
+        }
+    }
+    shuffle_library(g, p);
+    Ok(found)
+}
+
+/// Loyal Warhound: when it enters, if an opponent controls more lands than you, search for a basic Plains, put it
+/// onto the battlefield tapped
+fn warhound_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if behind_on_lands(g, o)
+        && trigger_window(g, o, Some(src), "search for a basic Plains", Some(4.0))?
+        && behind_on_lands(g, o)
+    {
+        fetch_plains(g, o, 1, true, false)?;
+    }
+    Ok(())
+}
+
+/// Oreskos Explorer: when it enters, search for up to X Plains cards (X = the players who control more lands than
+/// you, counted as it resolves), into your hand
+fn explorer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if !trigger_window(g, o, Some(src), "search for Plains", Some(4.0))? {
+        return Ok(());
+    }
+    let x = land_leaders(g, o);
+    fetch_plains(g, o, x, false, true)?;
+    Ok(())
+}
+
+/// Gift of Estates: if an opponent controls more lands than you, search for up to three Plains cards into your hand
+fn gift_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if behind_on_lands(g, p) {
+        fetch_plains(g, p, 3, false, true)?;
+    }
+    Ok(intern("gy"))
+}
+
+/// Keeper of the Accord: at each opponent's end step, if they control more creatures than you, a 1/1 white Soldier;
+/// then if they control more lands than you, you may search for a basic Plains onto the battlefield tapped
+fn keeper_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = owner(g, src);
+    if o == p || !live(g, src) || !g.player(p).alive {
+        return Ok(());
+    }
+    let fewer = |g: &Game| creatures(g, p).len() > creatures(g, o).len();
+    if fewer(g) && trigger_window(g, o, Some(src), "create a Soldier", Some(4.0))? && fewer(g) {
+        let spec = Tokens { color: Some(Colors::from_letters("W")), types: vec!["soldier"], ..Tokens::new(1, 1) };
+        make_tokens(g, o, spec)?;
+    }
+    let smaller = |g: &Game| g.player(p).lands.len() > g.player(o).lands.len();
+    if smaller(g) && trigger_window(g, o, Some(src), "search for a basic Plains", Some(4.0))? && smaller(g) {
+        fetch_plains(g, o, 1, true, false)?;
+    }
+    Ok(())
+}
+
+/// Archaeomancer's Map: when it enters, search for up to two basic Plains cards into your hand
+fn map_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if trigger_window(g, o, Some(src), "search for two basic Plains", Some(4.0))? {
+        fetch_plains(g, o, 2, true, true)?;
+    }
+    Ok(())
+}
+
+/// Archaeomancer's Map: whenever a land an opponent controls enters, if that player controls more lands than you, you
+/// may put a land card from your hand onto the battlefield (a Plains, else one that doesn't enter tapped)
+fn map_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = owner(g, src);
+    if o == p || !live(g, src) || !g.player(p).alive {
+        return Ok(());
+    }
+    let ahead = |g: &Game| g.player(p).lands.len() > g.player(o).lands.len();
+    let pick = |g: &Game| {
+        g.player(o)
+            .hand
+            .iter()
+            .copied()
+            .filter(|&c| g.db.get(c).land)
+            .max_by_key(|&c| (g.db.get(c).has_subtype("plains") as i32 * 2) + !g.db.get(c).tag(Tag::T) as i32)
+    };
+    if !ahead(g) || pick(g).is_none() {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "put a land onto the battlefield", Some(4.0))? || !ahead(g) {
+        return Ok(());
+    }
+    if let Some(c) = pick(g) {
+        let hand = &mut g.player_mut(o).hand;
+        let i = hand.iter().position(|&x| x == c).unwrap();
+        hand.remove(i);
+        g.add_land_entering(o, c, false);
+        landfall(g, o)?;
+    }
+    Ok(())
+}
+
 // ================================================================== registry
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // face down
@@ -1175,5 +1327,146 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(selfpt_etb);
     c.as_enters = Some(selfpt_as);
     c.self_pt = Some(guardian_pt);
+    // the catch-up ramp
+    r.card(db, WARHOUND)?.etb = Some(warhound_etb);
+    r.card(db, EXPLORER)?.etb = Some(explorer_etb);
+    r.card(db, GIFT)?.resolve = Some(gift_resolve);
+    r.card(db, KEEPER)?.end_step = Some(keeper_end);
+    let c = r.card(db, MAP)?;
+    c.etb = Some(map_etb);
+    c.landfall = Some(map_landfall);
+    register_equip(r, db)
+}
+
+// ================================================================== free-equip and backup carriers (cloud-equip-cards)
+// Ardenn, Intrepid Archaeologist (Full: the beginning-of-combat attach moves Equipment; the AI never moves Auras, which
+// it may legally choose to leave; partner is unused with a single commander), Balan, Wandering Knight (Full), Armored
+// Skyhunter (Full), Kor Duelist (Full).
+const ARDENN: &str = "Ardenn, Intrepid Archaeologist";
+const BALAN: &str = "Balan, Wandering Knight";
+const SKYHUNTER: &str = "Armored Skyhunter";
+const DUELIST: &str = "Kor Duelist";
+
+/// Ardenn: at the beginning of combat on your turn, attach Equipment you control to the best holder (Cloud first),
+/// taking the loose ones and those worn by worse creatures
+fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
+    if owner(g, src) != p || !live(g, src) {
+        return Ok(vec![]);
+    }
+    let Some(to) = super::cloud::best_holder(g, p) else { return Ok(vec![]) };
+    let es = super::cloud::pullable(g, p, to);
+    if es.is_empty() || !trigger_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
+        return Ok(vec![]);
+    }
+    for e in es {
+        super::cloud::attach(g, e, to);
+    }
+    Ok(vec![])
+}
+
+/// Balan has double strike as long as two or more Equipment are attached to it
+fn balan_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+    m == src && kw == "double strike" && super::cloud::equipment_on(g, m).len() >= 2
+}
+
+/// Kor Duelist has double strike as long as it is equipped
+fn duelist_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+    m == src && kw == "double strike" && !super::cloud::equipment_on(g, m).is_empty()
+}
+
+/// Equipment Balan would pull onto itself: all of p's, other than the ones already on it
+fn balan_pull(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+    super::cloud::my_equipment(g, p).into_iter().filter(|&e| g.perm(e).attached != Some(src)).collect()
+}
+
+/// {1}{W}: attach all Equipment you control to Balan
+fn balan_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || !can_pay(g, p, 1, "W", false) || balan_pull(g, p, src).is_empty() {
+        return Ok(false);
+    }
+    pay(g, p, 1, "W", false)?;
+    if ability_window(g, p, Some(src), "attach all Equipment", Some(5.0), Some(src))? && live(g, src) {
+        for e in balan_pull(g, p, src) {
+            super::cloud::attach(g, e, src);
+        }
+    }
+    Ok(true)
+}
+
+/// before combat on your turn, when Cloud is not out (or can't attack) and Balan can attack, gather the Equipment
+fn balan_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p
+        || !live(g, src)
+        || post != Some(false)
+        || g.active != Some(p)
+        || x.sick
+        || x.noatk
+        || x.tapped
+    {
+        return Ok(vec![]);
+    }
+    if super::cloud::cloud_of(g, p).is_some_and(|c| !g.perm(c).noatk && !g.perm(c).tapped) {
+        return Ok(vec![]); // Cloud first
+    }
+    if balan_pull(g, p, src).is_empty() || !can_pay(g, p, 1, "W", false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 5.6,
+        label: "Balan: attach all Equipment".into(),
+        act: Some(Action::Ability { src, f: balan_go, arg: 0 }),
+    }])
+}
+
+/// Armored Skyhunter: whenever it attacks, look at the top six; you may put an Aura or Equipment card from among them
+/// onto the battlefield (an Equipment goes onto the best holder, an Aura onto the best creature); the rest go on the
+/// bottom in a random order
+fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if owner(g, src) != p || !atk.contains(&src) || !live(g, src) {
+        return Ok(vec![]);
+    }
+    let n = g.player(p).library.len().min(6);
+    let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
+    let can_aura = |g: &Game, c: CardId| {
+        g.db.get(c).has_subtype("aura") && g.registry.get(c).and_then(|i| i.aura).is_some_and(|a| a.target == "own")
+    };
+    let cands: Vec<CardId> =
+        top.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment") || can_aura(g, c)).collect();
+    let pick = max_by(&cands, |c| crate::engine::tutors::card_worth(g, p, c, false));
+    let mut rest: Vec<CardId> = top.iter().copied().filter(|&c| Some(c) != pick).collect();
+    g.rng.shuffle(&mut rest);
+    for c in rest {
+        g.player_mut(p).library.insert(0, c); // the bottom
+    }
+    let Some(c) = pick else { return Ok(vec![]) };
+    if !trigger_window(g, p, Some(src), "put an Aura or Equipment onto the battlefield", Some(5.0))? {
+        g.player_mut(p).library.insert(0, c);
+        return Ok(vec![]);
+    }
+    g.player_mut(p).seen.insert(c);
+    if g.db.get(c).has_subtype("equipment") {
+        let em = enter(g, p, c, Enter { sick: false, ..Default::default() })?;
+        if let Some(to) = super::cloud::best_holder(g, p) {
+            super::cloud::attach(g, em, to);
+        }
+    } else if let Some(to) = super::cloud::best_holder(g, p) {
+        g.attach_to = Some(to);
+        let r = enter(g, p, c, Enter::default());
+        g.attach_to = None;
+        r?;
+    } else {
+        g.player_mut(p).library.insert(0, c);
+    }
+    Ok(vec![])
+}
+
+pub fn register_equip(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, ARDENN)?.combat_start = Some(ardenn_combat);
+    let c = r.card(db, BALAN)?;
+    c.grant_kw = Some(balan_kw);
+    c.options = Some(balan_options);
+    r.card(db, SKYHUNTER)?.attack = Some(skyhunter_attack);
+    r.card(db, DUELIST)?.grant_kw = Some(duelist_kw);
     Ok(())
 }

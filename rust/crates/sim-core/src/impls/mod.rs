@@ -13,9 +13,9 @@ pub mod combos;
 pub mod common;
 pub mod fixes;
 pub mod galadriel;
-pub mod jodah;
 pub mod kefka;
 pub mod lands;
+pub mod legends;
 pub mod marchesa;
 pub mod mine;
 pub mod partials;
@@ -32,7 +32,7 @@ pub mod bites;
 pub mod green_cards;
 pub mod titania;
 pub mod sheoldred;
-pub mod elrond;
+pub mod blue_cards;
 pub mod cloud;
 pub mod sweepers;
 pub mod bulk_blue;
@@ -46,7 +46,7 @@ pub mod zur;
 pub mod threats;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
-/// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, jodah): a later module's slot
+/// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
 /// replaces an earlier one's for the same card and event, as a later `@on(name, event)` does in Python (partials' and
 /// rules' Druid Class and Ezuri options replace t1's, rules2's Goblin Rabblemaster and Legion Warboss upkeeps replace
 /// t1's ...)
@@ -71,13 +71,13 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     galadriel::register(&mut r, db)?;
     yshtola::register(&mut r, db)?;
     alela::register(&mut r, db)?;
-    jodah::register(&mut r, db)?;
+    legends::register(&mut r, db)?;
     kefka::register(&mut r, db)?;
     bites::register(&mut r, db)?;
     green_cards::register(&mut r, db)?;
     titania::register(&mut r, db)?;
     sheoldred::register(&mut r, db)?;
-    elrond::register(&mut r, db)?;
+    blue_cards::register(&mut r, db)?;
     cloud::register(&mut r, db)?;
     sweepers::register(&mut r, db)?;
     bulk_blue::register(&mut r, db)?;

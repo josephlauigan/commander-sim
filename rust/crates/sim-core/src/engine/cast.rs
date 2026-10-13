@@ -557,7 +557,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
             "seph" => 8.0,
             "veyran" => 5.0,
             "sauron" | "najeela" => 6.0,
-            "galadriel" | "yshtola" | "alela" | "jodah" | "kefka" | "titania" | "sheoldred" | "elrond" | "cloud" => 7.0,
+            "galadriel" | "yshtola" | "alela" | "kefka" | "titania" | "sheoldred" | "cloud" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);

@@ -16,6 +16,12 @@ fn game() -> Game {
     table(&["cloud", "seph"])
 }
 
+/// the library is exactly these cards (so the tests don't depend on the Cloud deck list)
+fn set_library(g: &mut Game, p: PlayerId, names: &[&str]) {
+    let cs: Vec<_> = names.iter().map(|n| card(g, n)).collect();
+    g.player_mut(p).library = cs;
+}
+
 fn run(g: &mut Game, p: PlayerId, o: &Opt) -> bool {
     act::perform(g, p, o.act.as_ref().unwrap()).unwrap()
 }
@@ -68,23 +74,56 @@ fn fire_attack(g: &mut Game, atk: &[PermId]) {
 
 // ------------------------------------------------------------------ Cloud, Midgar Mercenary
 #[test]
-fn cloud_finds_wrecking_ball_arm_when_no_equipment_is_out() {
+fn cloud_finds_a_cheap_sword_when_no_equipment_is_out() {
+    // (the tutor now ranks by what the mana allows: cast + equip by next turn; the cheap Swords come first)
     let mut g = game();
+    set_library(
+        &mut g,
+        P0,
+        &[
+            "Sword of Fire and Ice",
+            "Sword of Hearth and Home",
+            "Sword of Feast and Famine",
+            "Champion's Helm",
+            "Colossus Hammer",
+            "Shield of Kaldra",
+            "Wrecking Ball Arm",
+        ],
+    );
+    lands(&mut g, P0, "Plains", 3, false);
     perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    assert_eq!(equipment_in_hand(&g, P0), vec!["Wrecking Ball Arm"]);
+    assert_eq!(equipment_in_hand(&g, P0), vec!["Sword of Fire and Ice"]);
 }
 
 #[test]
-fn cloud_finds_hero_blade_after_the_arm_and_sword_or_mask_with_one_out() {
+fn cloud_finds_the_next_piece_with_one_out() {
     let mut g = game();
-    hand(&mut g, P0, &["Wrecking Ball Arm"]);
+    set_library(
+        &mut g,
+        P0,
+        &[
+            "Sword of Fire and Ice",
+            "Sword of Hearth and Home",
+            "Sword of Feast and Famine",
+            "Champion's Helm",
+            "Colossus Hammer",
+            "Shield of Kaldra",
+            "Wrecking Ball Arm",
+        ],
+    );
+    lands(&mut g, P0, "Plains", 7, false);
+    hand(&mut g, P0, &["Sword of Fire and Ice"]);
     perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    assert!(equipment_in_hand(&g, P0).contains(&"Sword of Kaldra".to_string()), "one out: Sword of Kaldra");
+    assert!(
+        equipment_in_hand(&g, P0).contains(&"Sword of Hearth and Home".to_string()),
+        "one out: the next cheap Sword"
+    );
 }
 
 #[test]
 fn cloud_finds_the_third_kaldra_piece() {
     let mut g = game();
+    set_library(&mut g, P0, &["Shield of Kaldra", "Wrecking Ball Arm", "Colossus Hammer"]);
     perm(&mut g, P0, "Sword of Kaldra");
     perm(&mut g, P0, "Helm of Kaldra");
     perm(&mut g, P0, "Cloud, Midgar Mercenary");

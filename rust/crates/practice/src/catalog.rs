@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
 /// the decks the setup screen offers, in the order of Python's `poolmode.MINE` (error messages list them so)
-pub const MY_DECKS: [&str; 7] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "jodah"];
+pub const MY_DECKS: [&str; 6] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela"];
 
 fn read(path: &Path) -> Option<String> {
     std::fs::read_to_string(path).ok()
@@ -101,11 +101,9 @@ pub fn win_rates(text: &str) -> BTreeMap<String, Vec<f64>> {
             "galadriel" => "galadriel",
             "y'shtola" | "yshtola" => "yshtola",
             "alela" => "alela",
-            "jodah" => "jodah",
             "kefka" => "kefka",
             "titania" => "titania",
             "sheoldred" => "sheoldred",
-            "elrond" => "elrond",
             "cloud" => "cloud",
             _ => continue,
         };
@@ -249,9 +247,9 @@ mod tests {
     #[test]
     fn results_table() {
         let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Sephiroth | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
-                 | Sephiroth | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Jodah | 1% | 1% | 1% | 1% | 1% |\n";
+                 | Sephiroth | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
         let r = win_rates(t);
         assert_eq!(r["seph"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
-        assert!(!r.contains_key("alela") && !r.contains_key("jodah"));
+        assert!(!r.contains_key("alela") && !r.contains_key("najeela"));
     }
 }

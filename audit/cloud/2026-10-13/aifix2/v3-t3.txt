@@ -1,0 +1,26 @@
+1,000 games (1 tier, 1,000 per list per tier, profile loose), lookahead AI, 11 worker threads: about 5 minutes
+  progress  10.0%  0m24s elapsed, ~3m37s left
+  progress  20.0%  0m47s elapsed, ~3m09s left
+  progress  30.0%  1m09s elapsed, ~2m43s left
+  progress  40.0%  1m31s elapsed, ~2m16s left
+  progress  50.0%  1m51s elapsed, ~1m51s left
+  progress  60.0%  2m14s elapsed, ~1m29s left
+  progress  70.0%  2m34s elapsed, ~1m06s left
+  progress  80.0%  2m55s elapsed, ~0m43s left
+  progress  90.0%  3m18s elapsed, ~0m22s left
+  progress 100.0%  3m39s elapsed, ~0m00s left
+
+=== Cloud vs Tier 3 (High B3) [loose, lookahead AI, 1000 games] ===
+Win rate   8.4%   95% CI 6.8-10.3%   (even share 25%: -16.6 pts)
+Average turn (your own turn count) of wins 13.4, of losses 9.8
+Plan online (first attack by an equipped Cloud): 67.3% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Aurelia (aurelia-boros-extra-combats)        61.3%            42.1%           31.7%
+  Tergrid (tergrid-mono-black-disruption)      60.9%            32.2%           17.8%
+  Korvold (korvold-jund-sacrifice)             59.8%            15.9%           11.7%
+  Atraxa (atraxa-superfriends)                 59.4%            34.3%           13.2%
+  Marwyn (marwyn-mono-green-elves)             58.6%            27.8%           16.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(220s total)

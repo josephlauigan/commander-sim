@@ -37,12 +37,6 @@ name = "Alela"
 commander = "Alela, Artful Provocateur"
 ident = "WUB"
 
-[jodah]
-file = "JD/jodah-wubrg-legends.md"
-name = "Jodah"
-commander = "Jodah, the Unifier"
-ident = "WUBRG"
-
 [kefka]
 file = "JD/kefka-grixis-discard.md"
 name = "Kefka"
@@ -60,12 +54,6 @@ file = "JD/sheoldred-mono-black.md"
 name = "Sheoldred"
 commander = "Sheoldred, the Apocalypse"
 ident = "B"
-
-[elrond]
-file = "JD/elrond-ring-tempts.md"
-name = "Elrond"
-commander = "Elrond, Lord of Rivendell"
-ident = "U"
 
 [cloud]
 file = "JD/cloud-midgar-equipment.md"

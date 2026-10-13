@@ -12,7 +12,7 @@
 //! The temperature sets how human the AI is: low is near-optimal and predictable, high is looser. Each deck also has
 //! a play style (aggression, caution) that shifts the utilities.
 
-use super::{act, decks, explain, gumbel_order, is_main, plans, pool, sample, search, sig, style, temp};
+use super::{act, decks, explain, gumbel_order, is_main, pool, sample, search, sig, style, temp};
 use crate::cards::Types;
 use crate::engine::cast::{additional_cost, cast_card, castable, on_cast, pact_affordable, parse_cost};
 use crate::engine::combat::double_strike;
@@ -189,13 +189,6 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
             held(g, c) && !free_counter(g, p, c) && can_pay(g, p, d.generic, &d.pips, false)
         })
         .collect();
-    if pl.key == "jodah" {
-        // Jodah out: the mana for a protection spell (cards/impl/jodah.py)
-        let (jc, jv) = crate::impls::jodah::jodah_hold(g, p);
-        if jc.is_some() && (held.is_empty() || jv > hold_of(g, p, s, &held).1) {
-            return (jc, jv);
-        }
-    }
     if held.is_empty() {
         return (None, 0.0);
     }
@@ -254,6 +247,9 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     let d = g.db.get(c);
     let main = is_main(pl.key);
     let mut base = decks::deck_prio_f(g, p, c);
+    if pl.key == "cloud" && crate::impls::cloud::strands_equipment(g, p, c) {
+        return None; // hold the Equipment until a creature can carry it
+    }
     if !main && pl.library.len() < 8 && draws_cards(g, c) {
         return None; // don't draw yourself out
     }
@@ -268,7 +264,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
         return None; // a card put on top on your own turn waits a turn: tutor at the end of theirs
     }
     // its own priority said no (or it's kept for responses): keep it
-    let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some()) || plans::response_only(g, pl.key, c);
+    let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());
     if base <= 0.0 && d.has_dsl() && !hand_written {
         base = crate::dsl::card_value(g, p, c) * 10.0;
     }
@@ -753,11 +749,9 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "sauron" => decks::sauron_options(g, p, s, post),
         "seph" => super::seph::options(g, p, s, post),
         "veyran" => super::veyran::options(g, p, s, post),
-        "jodah" => Ok(crate::impls::jodah::jodah_options(g, p, post)),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         "titania" => crate::impls::titania::titania_special(g, p, post),
         "sheoldred" => crate::impls::sheoldred::sheoldred_special(g, p, post),
-        "elrond" => crate::impls::elrond::elrond_special(g, p, post),
         "cloud" => crate::impls::cloud::cloud_special(g, p, post),
         _ => Ok(vec![]),
     }
@@ -867,7 +861,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 9] = ["galadriel", "yshtola", "alela", "jodah", "kefka", "titania", "sheoldred", "elrond", "cloud"];
+const GENERIC_PLAYS: [&str; 7] = ["galadriel", "yshtola", "alela", "kefka", "titania", "sheoldred", "cloud"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.

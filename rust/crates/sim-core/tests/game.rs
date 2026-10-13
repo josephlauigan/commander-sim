@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 72);
+    assert_eq!(played, 60);
 }
 
 #[test]

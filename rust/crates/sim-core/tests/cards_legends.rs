@@ -1,25 +1,37 @@
-//! Jodah's deck on hand-built positions: Python's tests/test_jodah.py (Jodah's anthem and legend cascade, Kaldra,
-//! the legends with abilities, the spells, the audit's protection and plan, the rework and swap candidates) and
-//! tests/test_my_cards.py's Marchesa class (marchesa.py's cards), plus tests of Jodah's plan choices.
+//! Legendary-card code on hand-built positions: Python's tests/test_jodah.py (Jodah's anthem and legend cascade,
+//! Kaldra, the legends with abilities, the spells, the rework and swap candidates) and tests/test_my_cards.py's
+//! Marchesa class (marchesa.py's cards). The tests seat the card on a plain table (`jodah_table`): no deck's own AI is
+//! under test here.
 //!
 //! Skipped: the VenatTymna class's Venat tests (Venat, Heart of Hydaelyn is not in data/cards.json: no list runs it,
 //! and the Python fetches its card data on demand), the Marchesa class's Nim Deathmantle tests (Sephiroth's card code,
 //! mine.py, ported with Sephiroth) and its Tezzeret's Gambit / Last Gasp tests (tag-only cards of the Y'shtola and
-//! Alela decks, not Jodah's). The Burglar Rat's second enter trigger (Marchesa's return) waits for t3.py's port
+//! Alela decks). The Burglar Rat's second enter trigger (Marchesa's return) waits for t3.py's port
 //! (ignored). One assertion is left out: Unclaimed Territory's named type cached on the land
 //! (`L.data['ctype']`), which the Rust works out each time instead.
 
-use sim_core::ai::{act, brain, decks};
+use sim_core::ai::{act, brain};
 use sim_core::engine::{cast, combat, hooks, life, mana, removal, turn, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
-use sim_core::impls::{jodah as J, marchesa as M};
+use sim_core::impls::{legends as J, marchesa as M};
 use sim_core::state::{Ctx, DataKey, Game};
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
+
+/// a table whose first seat plays Jodah, the Unifier (WUBRG) as its commander; the opponent is Veyran's deck
+fn jodah_table() -> Game {
+    let mut g = table(&["alela", "veyran"]);
+    let c = card(&g, "Jodah, the Unifier");
+    let p = g.player_mut(P0);
+    p.cmd = c;
+    p.cmd_in_zone = true;
+    p.ident = sim_core::cards::Colors::from_letters("WUBRG");
+    g
+}
 
 /// Jodah from the command zone onto the battlefield (summoning sick, as Python's `enter`)
 fn jodah(g: &mut Game, p: PlayerId) -> PermId {
@@ -99,7 +111,7 @@ fn pt(g: &Game, m: PermId) -> (i32, i32) {
 // ======================================================== Jodah
 #[test]
 fn anthem_counts_legends() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let j = jodah(&mut g, P0);
     perm(&mut g, P0, "Lyra Dawnbringer");
     assert_eq!(values::epow(&g, j), 5 + 2); // two legends: +2/+2 each
@@ -109,7 +121,7 @@ fn anthem_counts_legends() {
 
 #[test]
 fn cascade_from_hand_finds_a_cheaper_legend() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     jodah(&mut g, P0);
     set_library(&mut g, P0, &["Island", "Lyra Dawnbringer", "Mind Stone", "King Darien XLVIII"]);
     lands(&mut g, P0, "Plains", 3, false);
@@ -124,7 +136,7 @@ fn cascade_from_hand_finds_a_cheaper_legend() {
 
 #[test]
 fn a_cascade_that_finds_nothing_says_so() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     jodah(&mut g, P0);
     set_library(&mut g, P0, &["Island", "Lyra Dawnbringer", "Mind Stone"]); // no legend below mana value 2
     g.log = Some(vec![]);
@@ -138,7 +150,7 @@ fn a_cascade_that_finds_nothing_says_so() {
 
 #[test]
 fn no_cascade_from_a_free_cast() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     jodah(&mut g, P0);
     set_library(&mut g, P0, &["Mirri, Weatherlight Duelist", "King Darien XLVIII"]);
     let lyra = card(&g, "Lyra Dawnbringer");
@@ -149,7 +161,7 @@ fn no_cascade_from_a_free_cast() {
 // ======================================================== Kaldra
 #[test]
 fn helm_assembles_kaldra() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     lands(&mut g, P0, "Plains", 2, false);
     let pieces: Vec<PermId> =
         ["Sword of Kaldra", "Shield of Kaldra", "Helm of Kaldra"].iter().map(|n| perm(&mut g, P0, n)).collect();
@@ -169,7 +181,7 @@ fn helm_assembles_kaldra() {
 
 #[test]
 fn sword_exiles_what_it_damages() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let sw = perm(&mut g, P0, "Sword of Kaldra");
     let a = perm(&mut g, P0, "Lyra Dawnbringer");
     g.perm_mut(sw).attached = Some(a);
@@ -181,7 +193,7 @@ fn sword_exiles_what_it_damages() {
 
 #[test]
 fn shield_makes_the_kaldra_pieces_indestructible() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let sw = perm(&mut g, P0, "Sword of Kaldra");
     zones::die(&mut g, sw, "destroy").unwrap();
     assert!(!g.perm(sw).on_bf); // no Shield: the Sword is destroyed
@@ -194,7 +206,7 @@ fn shield_makes_the_kaldra_pieces_indestructible() {
 // ======================================================== the legends
 #[test]
 fn blackblade_counts_lands() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     lands(&mut g, P0, "Plains", 5, false);
     let bb = perm(&mut g, P0, "Blackblade Reforged");
     let m = perm(&mut g, P0, "Lyra Dawnbringer");
@@ -204,7 +216,7 @@ fn blackblade_counts_lands() {
 
 #[test]
 fn blackblade_equips_a_legend_for_three() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     lands(&mut g, P0, "Plains", 3, false);
     let bb = perm(&mut g, P0, "Blackblade Reforged");
     let m = perm(&mut g, P0, "Lyra Dawnbringer");
@@ -217,7 +229,7 @@ fn blackblade_equips_a_legend_for_three() {
 
 #[test]
 fn korlash_counts_swamps() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     lands(&mut g, P0, "Swamp", 2, false);
     lands(&mut g, P0, "Plains", 2, false);
     let k = perm(&mut g, P0, "Korlash, Heir to Blackblade");
@@ -226,7 +238,7 @@ fn korlash_counts_swamps() {
 
 #[test]
 fn szadek_mills_instead_of_damage() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let s = perm(&mut g, P0, "Szadek, Lord of Secrets");
     g.perm_mut(s).sick = false;
     let (lib, life) = (g.player(P1).library.len(), g.player(P1).life);
@@ -238,7 +250,7 @@ fn szadek_mills_instead_of_damage() {
 
 #[test]
 fn dromoka_stops_opponents_on_your_turn() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, "Dragonlord Dromoka");
     let bolt = card(&g, "Lightning Bolt");
     g.active = Some(P0);
@@ -249,7 +261,7 @@ fn dromoka_stops_opponents_on_your_turn() {
 
 #[test]
 fn mirri_tapped_caps_attackers() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let m = perm(&mut g, P0, "Mirri, Weatherlight Duelist");
     g.perm_mut(m).tapped = true;
     let f = g.registry.get(card(&g, "Mirri, Weatherlight Duelist")).unwrap().attack_cap.unwrap();
@@ -258,7 +270,7 @@ fn mirri_tapped_caps_attackers() {
 
 #[test]
 fn mirri_lets_each_opponent_block_with_one_creature() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let m = perm(&mut g, P0, "Mirri, Weatherlight Duelist");
     let a = token(&mut g, P0, 4);
     let (b1, b2) = (token(&mut g, P1, 1), token(&mut g, P1, 2));
@@ -270,7 +282,7 @@ fn mirri_lets_each_opponent_block_with_one_creature() {
 
 #[test]
 fn carth_adds_loyalty() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, "Carth the Lion");
     let w = perm(&mut g, P0, "Mordenkainen");
     let o = options(&mut g, w, P0, Some(false));
@@ -282,7 +294,7 @@ fn carth_adds_loyalty() {
 
 #[test]
 fn caparocti_taps_two_to_discover() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let c = perm(&mut g, P0, "Caparocti Sunborn");
     let a = perm(&mut g, P0, "Mind Stone");
     let b = perm(&mut g, P0, "Arcane Signet");
@@ -296,7 +308,7 @@ fn caparocti_taps_two_to_discover() {
 // ======================================================== the spells
 #[test]
 fn memory_jar_wheels_and_returns() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     lands(&mut g, P0, "Plains", 3, false);
     let jar = perm(&mut g, P0, "Memory Jar");
     hand(&mut g, P0, &["Lyra Dawnbringer"]);
@@ -309,7 +321,7 @@ fn memory_jar_wheels_and_returns() {
 
 #[test]
 fn profane_tutor_suspend_then_free() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     lands(&mut g, P0, "Swamp", 2, false);
     let c = hand(&mut g, P0, &["Profane Tutor"])[0];
     let o = hand_options(&mut g, c, P0, Some(false));
@@ -324,7 +336,7 @@ fn profane_tutor_suspend_then_free() {
 
 #[test]
 fn dissipate_exiles_and_desertion_steals() {
-    let g = table(&["jodah", "veyran"]);
+    let g = jodah_table();
     let (dis, des) = (g.db.get(card(&g, "Dissipate")), g.db.get(card(&g, "Desertion")));
     assert!(dis.tag(sim_core::tag::Tag::Ctrexile));
     assert_eq!(des.tags.str(sim_core::tag::Tag::Ctr), Some("any"));
@@ -332,7 +344,7 @@ fn dissipate_exiles_and_desertion_steals() {
 
 #[test]
 fn court_returns_a_permanent() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, "Court of Ardenvale");
     assert_eq!(g.monarch, Some(P0));
     let ms = card(&g, "Mind Stone");
@@ -343,14 +355,14 @@ fn court_returns_a_permanent() {
 
 #[test]
 fn fyndhorn_elder_makes_two() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, "Fyndhorn Elder");
     assert_eq!(mana::total_mana(&g, P0, false), 2);
 }
 
 #[test]
 fn cartographers_survey_puts_two_lands_in() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     set_library(&mut g, P0, &["Lyra Dawnbringer", "Forest", "Command Tower", "Mind Stone", "Plains"]);
     let c = card(&g, "Cartographer's Survey");
     let f = g.registry.get(c).unwrap().resolve.unwrap();
@@ -362,10 +374,10 @@ fn cartographers_survey_puts_two_lands_in() {
     assert_eq!(g.player(P0).library.len(), 3);
 }
 
-// ======================================================== the audit: Plaza of Heroes, Jodah first, the wish list
+// ======================================================== Plaza of Heroes
 #[test]
 fn plaza_any_colour_for_legendary_spells_only() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     for n in ["Frontier Bivouac", "Forest", "Plaza of Heroes", "Sandsteppe Citadel", "Crumbling Necropolis"] {
         lands(&mut g, P0, n, 1, false);
     }
@@ -376,59 +388,11 @@ fn plaza_any_colour_for_legendary_spells_only() {
     g.pay_for = None;
 }
 
-#[test]
-fn jodah_before_legends() {
-    let mut g = table(&["jodah", "veyran"]);
-    g.active = Some(P0);
-    basics(&mut g, P0);
-    let lyra = hand(&mut g, P0, &["Lyra Dawnbringer"])[0];
-    assert!(J::jodah_prio(&g, P0, lyra) <= 15); // cast Jodah first, then Lyra cascades
-    let cmd = g.player(P0).cmd;
-    assert!(J::jodah_prio(&g, P0, cmd) > 80);
-    jodah(&mut g, P0);
-    assert!(J::jodah_prio(&g, P0, lyra) > 40);
-    assert_eq!(decks::deck_prio(&g, P0, lyra), J::jodah_prio(&g, P0, lyra)); // the deck's priority is Jodah's
-}
-
-#[test]
-fn tutor_finds_fixing_early_and_a_big_legend_later() {
-    let mut g = table(&["jodah", "veyran"]);
-    lands(&mut g, P0, "Forest", 2, false);
-    for n in ["Coalition Relic", "Sisay's Ring", "Razia, Boros Archangel"] {
-        let c = card(&g, n);
-        g.player_mut(P0).library.push(c);
-    }
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Coalition Relic")));
-    lands(&mut g, P0, "Plains", 3, false);
-    jodah(&mut g, P0);
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Razia, Boros Archangel")));
-}
-
-#[test]
-fn instant_tutors_find_toxic_deluge_under_pressure() {
-    let mut g = table(&["jodah", "veyran"]);
-    jodah(&mut g, P0);
-    set_library(&mut g, P0, &["Toxic Deluge", "Demonic Tutor", "Force of Will"]);
-    assert_eq!(decks::tutor_pick(&g, P0, "is"), Some(card(&g, "Demonic Tutor")));
-    token(&mut g, P1, 8);
-    token(&mut g, P1, 7);
-    assert_eq!(decks::tutor_pick(&g, P0, "is"), Some(card(&g, "Toxic Deluge"))); // 15 power across the table
-}
-
-#[test]
-fn the_third_kaldra_piece_comes_first() {
-    let mut g = table(&["jodah", "veyran"]);
-    perm(&mut g, P0, "Sword of Kaldra");
-    hand(&mut g, P0, &["Shield of Kaldra"]);
-    lands(&mut g, P0, "Plains", 5, false);
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Helm of Kaldra")));
-}
-
 // ======================================================== lands
 #[test]
 fn unclaimed_territory_names_the_commonest_creature_type() {
-    let mut g = table(&["jodah", "veyran"]);
-    assert_eq!(J::territory_type(&g, P0), "human"); // Jodah, Grand Abolisher, Mirri ... are Humans
+    let mut g = table(&["winota-boros-humans-cheat", "veyran"]);
+    assert_eq!(J::territory_type(&g, P0), "human"); // Winota's Humans
     let gs = table(&["sauron", "veyran"]);
     assert_eq!(J::territory_type(&gs, P0), "orc"); // Sauron's deck keeps naming Orc
     for n in ["Unclaimed Territory", "Island", "Swamp"] {
@@ -446,7 +410,7 @@ fn unclaimed_territory_names_the_commonest_creature_type() {
 
 #[test]
 fn vivid_creek_makes_any_colour_twice() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let l = lands(&mut g, P0, "Vivid Creek", 1, false)[0];
     for _ in 0..2 {
         assert!(mana::can_pay(&g, P0, 0, "R", false));
@@ -459,183 +423,20 @@ fn vivid_creek_makes_any_colour_twice() {
     assert_eq!(g.land(l).data.int(DataKey::Charge), 0);
 }
 
-// ======================================================== protecting Jodah (audit/jodah, 10-09)
-/// Jodah on the battlefield, the opponent's turn
-fn protection_table() -> (Game, PermId) {
-    let mut g = table(&["jodah", "veyran"]);
+// ======================================================== Mithril Coat
+#[test]
+fn mithril_coat_attaches_to_jodah_as_it_enters() {
+    let mut g = jodah_table();
     let j = jodah(&mut g, P0);
-    g.active = Some(P1);
-    (g, j)
-}
-
-#[test]
-fn heroic_intervention_answers_targeted_removal() {
-    let (mut g, j) = protection_table();
-    lands(&mut g, P0, "Forest", 2, false);
-    hand(&mut g, P0, &["Heroic Intervention"]);
-    let s = swords(&g);
-    removal::apply_removal(&mut g, Some(P1), j, "exile", s).unwrap();
-    assert!(on(&g, P0, j));
-    assert!(values::untargetable(&g, j)); // hexproof for the rest of the turn
-    assert_eq!(stat(&g, P0, "jprot_Heroic Intervention"), 1);
-}
-
-#[test]
-fn flawless_maneuver_is_free_but_only_stops_destroy() {
-    let (mut g, j) = protection_table();
-    hand(&mut g, P0, &["Flawless Maneuver"]);
-    let s = swords(&g);
-    removal::apply_removal(&mut g, Some(P1), j, "exile", s).unwrap();
-    assert!(!on(&g, P0, j)); // indestructible doesn't stop exile
-    let j = jodah(&mut g, P0);
-    removal::apply_removal(&mut g, Some(P1), j, "destroy", s).unwrap();
-    assert!(on(&g, P0, j)); // no lands: cast free with Jodah out
-    assert_eq!(stat(&g, P0, "jprot_Flawless Maneuver"), 1);
-}
-
-#[test]
-fn protection_is_held_not_cast_for_value() {
-    let (mut g, _) = protection_table();
-    lands(&mut g, P0, "Plains", 3, false);
-    for n in ["Flawless Maneuver", "Tamiyo's Safekeeping", "Teferi's Protection"] {
-        let c = hand(&mut g, P0, &[n])[0];
-        let s = brain::Situation::new(&g, P0);
-        assert_eq!(brain::card_utility(&g, P0, &s, c), None, "{n}");
-    }
-}
-
-#[test]
-fn safekeeping_keeps_jodah_through_a_wrath() {
-    let (mut g, j) = protection_table();
-    let other = perm(&mut g, P0, "Lyra Dawnbringer");
-    lands(&mut g, P0, "Forest", 1, false);
-    hand(&mut g, P0, &["Tamiyo's Safekeeping"]);
-    assert_eq!(sim_core::ai::wipe_response(&mut g, P0, "destroy", P1).unwrap(), None); // Jodah alone is indestructible
-    for m in g.player(P0).perms.clone() {
-        zones::die(&mut g, m, "destroy").unwrap();
-    }
-    assert!(on(&g, P0, j));
-    assert!(!on(&g, P0, other));
-    assert_eq!(stat(&g, P0, "jprot_wipe_Tamiyo's Safekeeping"), 1);
-}
-
-#[test]
-fn teferis_protection_against_an_exile_wipe() {
-    let (mut g, _) = protection_table();
-    lands(&mut g, P0, "Plains", 3, false);
-    hand(&mut g, P0, &["Teferi's Protection"]);
-    assert_eq!(sim_core::ai::wipe_response(&mut g, P0, "exile", P1).unwrap(), Some("all"));
-}
-
-#[test]
-fn plaza_of_heroes_saves_jodah() {
-    let (mut g, j) = protection_table();
-    lands(&mut g, P0, "Plaza of Heroes", 1, false);
-    lands(&mut g, P0, "Swamp", 3, false);
-    let s = swords(&g);
-    removal::apply_removal(&mut g, Some(P1), j, "destroy", s).unwrap();
-    assert!(on(&g, P0, j));
-    let plaza = card(&g, "Plaza of Heroes");
-    assert!(!g.player(P0).lands.iter().any(|&l| g.land(l).cd == plaza));
-    assert!(g.player(P0).exile.contains(&plaza));
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
-}
-
-#[test]
-fn runes_and_swat() {
-    let (mut g, j) = protection_table();
-    perm(&mut g, P0, "Giver of Runes");
-    let s = swords(&g);
-    removal::apply_removal(&mut g, Some(P1), j, "exile", s).unwrap();
-    assert!(on(&g, P0, j));
-    let t = perm(&mut g, P1, "Grave Titan");
-    hand(&mut g, P0, &["Deflecting Swat"]);
-    removal::apply_removal(&mut g, Some(P1), j, "exile", s).unwrap(); // Giver is tapped: Swat, free, sends it back
-    assert!(on(&g, P0, j));
-    assert!(!on(&g, P1, t));
-}
-
-#[test]
-fn equipment_goes_to_jodah() {
-    let (mut g, j) = protection_table();
-    g.active = Some(P0);
-    lands(&mut g, P0, "Plains", 3, false);
-    let other = perm(&mut g, P0, "Lyra Dawnbringer");
-    let boots = perm(&mut g, P0, "Swiftfoot Boots");
-    g.perm_mut(boots).attached = Some(other);
-    let o = J::jodah_options(&mut g, P0, false);
-    assert_eq!(labels(&o), ["equip Swiftfoot Boots to Jodah"]);
-    run(&mut g, P0, &o[0]);
-    assert_eq!(g.perm(boots).attached, Some(j));
-    assert!(values::untargetable(&g, j));
-    let coat = perm(&mut g, P0, "Mithril Coat"); // attaches to Jodah as it enters
+    let coat = perm(&mut g, P0, "Mithril Coat");
     assert_eq!(g.perm(coat).attached, Some(j));
     assert!(values::indestructible(&g, j));
-    // the plan offers the move in the main phase
-    let o = brain::main_options(&mut g, P0, false).unwrap();
-    assert!(!o.iter().any(|x| x.label.starts_with("equip Swiftfoot Boots to Jodah"))); // already there
-}
-
-#[test]
-fn bolt_bend_costs_r_with_power_four_and_redirects() {
-    let (mut g, j) = protection_table();
-    assert_eq!(J::prot_cost(&g, P0, "Bolt Bend"), (0, "R")); // Jodah is a 5/5
-    zones::leave(&mut g, j).unwrap();
-    perm(&mut g, P0, "Mirri, Weatherlight Duelist");
-    assert_eq!(J::prot_cost(&g, P0, "Bolt Bend"), (3, "R")); // a 3/2 only: full price
-    let j = jodah(&mut g, P0);
-    let t = perm(&mut g, P1, "Grave Titan");
-    lands(&mut g, P0, "Mountain", 1, false);
-    let bend = hand(&mut g, P0, &["Bolt Bend"])[0];
-    let s = swords(&g);
-    removal::apply_removal(&mut g, Some(P1), j, "exile", s).unwrap();
-    assert!(on(&g, P0, j));
-    assert!(!on(&g, P1, t)); // the Swords hit the caster's Titan
-    assert!(g.player(P0).gy.contains(&bend));
-    let l = g.player(P0).lands[0];
-    assert!(g.land(l).tapped); // paid {R}
-    assert_eq!(stat(&g, P0, "jprot_Bolt Bend"), 1);
-}
-
-#[test]
-fn bolt_bend_guards_a_key_legend_while_jodah_is_away() {
-    let (mut g, j) = protection_table();
-    zones::leave(&mut g, j).unwrap();
-    g.player_mut(P0).cmd_in_zone = true;
-    let wanderer = perm(&mut g, P0, "Maelstrom Wanderer"); // a 7/5 bomb
-    let t = perm(&mut g, P1, "Grave Titan");
-    lands(&mut g, P0, "Mountain", 1, false);
-    hand(&mut g, P0, &["Bolt Bend"]);
-    let s = swords(&g);
-    removal::apply_removal(&mut g, Some(P1), wanderer, "destroy", s).unwrap();
-    assert!(on(&g, P0, wanderer));
-    assert!(!on(&g, P1, t));
-    assert_eq!(stat(&g, P0, "jprot_Bolt Bend (legend)"), 1);
-}
-
-#[test]
-fn no_protection_against_shrink_from_indestructible_only_cards() {
-    // -X/-X: indestructible doesn't help, so Flawless Maneuver stays in hand
-    let (mut g, j) = protection_table();
-    hand(&mut g, P0, &["Flawless Maneuver"]);
-    let s = swords(&g);
-    assert!(!J::jodah_protect(&mut g, P0, j, "shrink6", Some(P1), s).unwrap());
-    assert_eq!(g.player(P0).hand.len(), 1);
-}
-
-#[test]
-fn holding_mana_for_protection_is_off_by_default() {
-    // jodah_hold is switch 'hold' (JODAH_AI): the default set ('first,tutor') leaves it off
-    let (mut g, _) = protection_table();
-    lands(&mut g, P0, "Forest", 2, false);
-    hand(&mut g, P0, &["Heroic Intervention"]);
-    assert_eq!(J::jodah_hold(&g, P0), (None, 0.0));
 }
 
 // ======================================================== the rework candidates
 #[test]
 fn command_beacon_puts_jodah_in_hand_and_skips_the_tax() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     for n in ["Plains", "Island", "Swamp", "Mountain", "Forest", "Command Beacon"] {
         lands(&mut g, P0, n, 1, false);
     }
@@ -658,7 +459,7 @@ fn command_beacon_puts_jodah_in_hand_and_skips_the_tax() {
 
 #[test]
 fn command_beacon_waits_while_the_tax_is_small() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     for n in ["Plains", "Island", "Swamp", "Mountain", "Forest", "Forest", "Forest", "Command Beacon"] {
         lands(&mut g, P0, n, 1, false);
     }
@@ -670,7 +471,7 @@ fn command_beacon_waits_while_the_tax_is_small() {
 
 #[test]
 fn a_discarded_commander_goes_to_the_command_zone() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let cmd = g.player(P0).cmd;
     g.player_mut(P0).cmd_in_zone = false;
     g.player_mut(P0).hand.push(cmd);
@@ -681,7 +482,7 @@ fn a_discarded_commander_goes_to_the_command_zone() {
 
 #[test]
 fn nexus_cascades_the_first_spell_only() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, "Maelstrom Nexus");
     set_library(&mut g, P0, &["Fact or Fiction", "Island", "Arcane Signet"]);
     cast_from_hand(&mut g, P0, "Coalition Relic"); // mana value 3: Arcane Signet (2), not the 4
@@ -693,7 +494,7 @@ fn nexus_cascades_the_first_spell_only() {
 
 #[test]
 fn nexus_passes_on_a_counterspell() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, "Maelstrom Nexus");
     set_library(&mut g, P0, &["Arcane Denial"]);
     cast_from_hand(&mut g, P0, "Coalition Relic");
@@ -702,7 +503,7 @@ fn nexus_passes_on_a_counterspell() {
 
 #[test]
 fn nexus_and_jodah_both_cascade_a_legend_from_hand() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     jodah(&mut g, P0);
     perm(&mut g, P0, "Maelstrom Nexus");
     set_library(&mut g, P0, &["Moss Diamond", "King Darien XLVIII"]); // Jodah finds the legend, Nexus the rock
@@ -714,7 +515,7 @@ fn nexus_and_jodah_both_cascade_a_legend_from_hand() {
 
 #[test]
 fn wanderer_cascades_twice() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     set_library(&mut g, P0, &["Moss Diamond", "Island", "Lyra Dawnbringer"]);
     cast_from_hand(&mut g, P0, "Maelstrom Wanderer");
     assert!(has_perm(&g, P0, "Lyra Dawnbringer"));
@@ -724,7 +525,7 @@ fn wanderer_cascades_twice() {
 
 #[test]
 fn sisay_grows_with_colours_and_fetches_below_its_power() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let s = perm(&mut g, P0, "Sisay, Weatherlight Captain");
     assert_eq!(values::epow(&g, s), 2);
     perm(&mut g, P0, "Dakkon Blackblade"); // white, blue, black: +3/+3
@@ -741,7 +542,7 @@ fn sisay_grows_with_colours_and_fetches_below_its_power() {
 
 #[test]
 fn sisay_waits_while_jodah_is_castable() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let s = perm(&mut g, P0, "Sisay, Weatherlight Captain");
     set_library(&mut g, P0, &["Blackblade Reforged"]);
     basics(&mut g, P0);
@@ -750,7 +551,7 @@ fn sisay_waits_while_jodah_is_castable() {
 
 #[test]
 fn shalai_gives_hexproof_to_jodah_and_you_but_not_herself() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let j = jodah(&mut g, P0);
     let w = perm(&mut g, P0, "Teferi, Hero of Dominaria");
     let sh = perm(&mut g, P0, "Shalai, Voice of Plenty");
@@ -774,7 +575,7 @@ fn shalai_gives_hexproof_to_jodah_and_you_but_not_herself() {
 
 #[test]
 fn shalai_counters_with_mana_left_late() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let j = jodah(&mut g, P0);
     let sh = perm(&mut g, P0, "Shalai, Voice of Plenty");
     lands(&mut g, P0, "Forest", 2, false);
@@ -790,7 +591,7 @@ fn shalai_counters_with_mana_left_late() {
 
 #[test]
 fn feed_the_cycle_costs_1bb_and_answers_an_attack() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let c = g.db.get(card(&g, "Feed the Cycle"));
     assert_eq!((c.generic, &*c.pips), (1, "BB"));
     assert_eq!(c.tags.str(sim_core::tag::Tag::Rem), Some("destroy"));
@@ -808,7 +609,7 @@ fn feed_the_cycle_costs_1bb_and_answers_an_attack() {
 // ======================================================== Tymna the Weaver
 #[test]
 fn tymna_pays_a_life_per_opponent_hit() {
-    let mut g = table(&["jodah", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "veyran", "seph"]);
     let t = perm(&mut g, P0, "Tymna the Weaver");
     let a = token(&mut g, P0, 3);
     let n = g.player(P0).hand.len();
@@ -825,7 +626,7 @@ fn tymna_pays_a_life_per_opponent_hit() {
 
 #[test]
 fn tymna_keeps_low_life() {
-    let mut g = table(&["jodah", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "veyran", "seph"]);
     perm(&mut g, P0, "Tymna the Weaver");
     let a = token(&mut g, P0, 3);
     combat::resolve_combat(&mut g, P0, &[a], P1, &[]).unwrap();
@@ -840,7 +641,7 @@ const GARLAND: &str = "Garland, Royal Kidnapper";
 
 #[test]
 fn garland_crowns_the_opponent_with_the_best_creature_and_steals_it() {
-    let mut g = table(&["jodah", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "veyran", "seph"]);
     let lyra = perm(&mut g, P1, "Lyra Dawnbringer");
     let s = perm(&mut g, P2, "Solemn Simulacrum");
     assert_eq!(pt(&g, lyra), (5, 5));
@@ -855,7 +656,7 @@ fn garland_crowns_the_opponent_with_the_best_creature_and_steals_it() {
 
 #[test]
 fn garland_control_returns_when_that_opponent_loses_the_monarch() {
-    let mut g = table(&["jodah", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "veyran", "seph"]);
     let lyra = perm(&mut g, P1, "Lyra Dawnbringer");
     perm(&mut g, P0, GARLAND);
     let a = token(&mut g, P2, 2);
@@ -869,7 +670,7 @@ fn garland_control_returns_when_that_opponent_loses_the_monarch() {
 
 #[test]
 fn garland_an_opponent_taking_the_monarch_from_you_triggers_a_steal() {
-    let mut g = table(&["jodah", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "veyran", "seph"]);
     perm(&mut g, P0, GARLAND); // no creatures yet: nothing to take
     assert_eq!(g.monarch, Some(P1));
     sim_core::cardcode::become_monarch(&mut g, P0).unwrap(); // (you take it back: no trigger for you)
@@ -884,7 +685,7 @@ fn garland_an_opponent_taking_the_monarch_from_you_triggers_a_steal() {
 
 #[test]
 fn garland_stolen_creatures_cant_be_sacrificed() {
-    let mut g = table(&["jodah", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "veyran", "seph"]);
     let t = token(&mut g, P1, 1);
     let gar = perm(&mut g, P0, GARLAND);
     assert!(on(&g, P0, t));
@@ -902,7 +703,7 @@ fn garland_stolen_creatures_cant_be_sacrificed() {
 
 #[test]
 fn garland_the_steal_outlasts_garland_and_ends_with_the_owner() {
-    let mut g = table(&["jodah", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "veyran", "seph"]);
     let lyra = perm(&mut g, P1, "Lyra Dawnbringer");
     let gar = perm(&mut g, P0, GARLAND);
     zones::die(&mut g, gar, "destroy").unwrap();
@@ -918,7 +719,7 @@ const MARCHESA: &str = "Marchesa, the Black Rose";
 
 #[test]
 fn marchesa_dethrone_on_the_life_leader() {
-    let mut g = table(&["jodah", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "veyran", "sauron"]);
     let a = perm(&mut g, P0, MARCHESA);
     let b = perm(&mut g, P0, "Burglar Rat");
     g.player_mut(P1).life = 41;
@@ -930,7 +731,7 @@ fn marchesa_dethrone_on_the_life_leader() {
 
 #[test]
 fn marchesa_a_countered_creature_returns_at_the_next_end_step() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     hand(&mut g, P1, &["Island", "Island"]);
     perm(&mut g, P0, MARCHESA);
     let rat = perm(&mut g, P0, "Burglar Rat"); // enters: each opponent discards
@@ -945,7 +746,7 @@ fn marchesa_a_countered_creature_returns_at_the_next_end_step() {
 
 #[test]
 fn marchesa_a_returning_creature_enters_again() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     hand(&mut g, P1, &["Island", "Island"]);
     perm(&mut g, P0, MARCHESA);
     let rat = perm(&mut g, P0, "Burglar Rat");
@@ -957,7 +758,7 @@ fn marchesa_a_returning_creature_enters_again() {
 
 #[test]
 fn marchesa_no_counter_no_return() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, MARCHESA);
     let rat = perm(&mut g, P0, "Burglar Rat");
     zones::die(&mut g, rat, "destroy").unwrap();
@@ -967,7 +768,7 @@ fn marchesa_no_counter_no_return() {
 
 #[test]
 fn marchesa_exiled_creatures_do_not_return() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, MARCHESA);
     let rat = perm(&mut g, P0, "Burglar Rat");
     g.perm_mut(rat).plus = 2;
@@ -981,7 +782,7 @@ fn marchesa_exiled_creatures_do_not_return() {
 #[test]
 fn marchesa_a_wipe_returns_everything_with_counters_marchesa_included() {
     // the creatures die at the same time as Marchesa, so her ability sees them all
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let a = perm(&mut g, P0, MARCHESA);
     let rat = perm(&mut g, P0, "Burglar Rat");
     let bird = perm(&mut g, P0, "Thrummingbird");
@@ -1003,7 +804,7 @@ fn marchesa_a_wipe_returns_everything_with_counters_marchesa_included() {
 
 #[test]
 fn marchesa_a_stolen_creature_returns_under_your_control() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, MARCHESA);
     let snipe = perm(&mut g, P1, "Guttersnipe");
     M::steal(&mut g, P0, snipe, true);
@@ -1020,7 +821,7 @@ fn marchesa_a_stolen_creature_returns_under_your_control() {
 #[test]
 fn accursed_marauder() {
     // 2/1: "each player sacrifices a nontoken creature of their choice" - Marchesa's player gives up one she returns
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     perm(&mut g, P0, MARCHESA);
     let rat = perm(&mut g, P0, "Burglar Rat");
     g.perm_mut(rat).plus = 1;
@@ -1060,7 +861,7 @@ fn notion_thief_flashes_in_at_the_end_of_an_opponents_turn() {
 
 #[test]
 fn coalition_relic_charge() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let relic = perm(&mut g, P0, "Coalition Relic");
     fire(&mut g, Event::EndStep, P0);
     assert!(g.perm(relic).tapped);
@@ -1072,7 +873,7 @@ fn coalition_relic_charge() {
 
 #[test]
 fn marchesa_makes_a_returning_creature_cheap_to_sacrifice() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let rat = perm(&mut g, P0, "Burglar Rat");
     g.perm_mut(rat).plus = 1;
     let full = zones::sac_worth(&g, rat);
@@ -1086,7 +887,7 @@ fn marchesa_makes_a_returning_creature_cheap_to_sacrifice() {
 
 #[test]
 fn marchesa_returns_herself_with_a_counter() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     let a = perm(&mut g, P0, MARCHESA);
     assert!(g.marchesa_on); // the engine checks deaths for her trigger from here on
     g.perm_mut(a).plus = 1;
@@ -1102,7 +903,7 @@ fn marchesa_returns_herself_with_a_counter() {
 /// count now stops; the outer one still counts the junk that delve exiles.
 #[test]
 fn two_delve_cards_in_the_graveyard_dont_price_each_other_forever() {
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = jodah_table();
     basics(&mut g, P0);
     lands(&mut g, P0, "Plains", 2, false);
     assert!(J::jodah_payable(&g, P0));

@@ -189,7 +189,7 @@ pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
 /// default colour of a deck's tokens
 pub fn token_color(key: &str) -> Colors {
     Colors::from_letters(match key {
-        "najeela" | "galadriel" | "yshtola" | "jodah" => "W",
+        "najeela" | "galadriel" | "yshtola" => "W",
         "seph" | "sauron" => "B",
         "veyran" => "R",
         "alela" => "U",
@@ -1433,7 +1433,11 @@ pub fn edict(g: &mut Game, q: PlayerId, least_power: bool) -> Res {
         return crate::human::choices::sacrifice_creature(g, q, &cr, "Sacrifice a creature (edict)");
     }
     if let Some(m) = min_by(&cr, |x| sac_worth(g, x)) {
+        let name = g.perm(m).name.to_string();
         die(g, m, "sac")?;
+        if !g.perm(m).on_bf {
+            crate::glog!(g, "    {} sacrifices {} (edict)", g.player(q).name, name);
+        }
     }
     Ok(())
 }

@@ -1284,6 +1284,9 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
         dp += bp - x.pow; // Wrecking Ball Arm, Hulkbuster Armor: base power and toughness
         dt += bt - x.tgh;
     }
+    let shaped = crate::impls::cloud::steelshaper_bonus(g, m); // Auriok Steelshaper
+    dp += shaped;
+    dt += shaped;
     for (_, src, ab, i) in statics(g, "equip_bonus") {
         if let Ability::Static { pow, tgh, .. } = &ab[i]
             && g.perm(src).attached == Some(m)
@@ -1812,6 +1815,9 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     Ok(true)
 }
 
+/// how much better (in `equip_options` score) a creature must be to take an Equipment off its current holder
+const MOVE_MARGIN: f64 = 2.0;
+
 /// attach unattached auto-modeled equipment ("Equip {N}") to the creature that will use it best
 pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
     use crate::hooks::{Action, Opt};
@@ -1842,7 +1848,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .perms
             .iter()
             .copied()
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m))
+            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m) && x.attached != Some(m))
             .collect();
         let base = n;
         let cands: Vec<PermId> = cands
@@ -1862,6 +1868,12 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                 + crate::impls::cloud::holder_bonus(g, p, m)
         };
         let best = max_by(&cands, score).unwrap();
+        // moving a worn piece: only to a clearly better holder (else it ping-pongs between equals)
+        if let Some(cur) = x.attached.filter(|&t| g.perm(t).on_bf && g.perm(t).owner == p && !g.perm(t).phased)
+            && score(best) < score(cur) + MOVE_MARGIN
+        {
+            continue;
+        }
         let n = crate::impls::cloud::equip_cost(g, p, src, best, base);
         let bonus: i32 = d
             .abilities

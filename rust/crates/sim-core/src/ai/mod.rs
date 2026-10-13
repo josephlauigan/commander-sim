@@ -13,7 +13,7 @@
 //! - `topdeck`: how much a player wants each card next, and scry / surveil.
 //!
 //! This file has the decisions the engine calls inline. Deck-specific code for your other decks (Sephiroth, Veyran,
-//! Galadriel, Y'shtola, Alela, Jodah) lives in `impls/*` and `decks`.
+//! Galadriel, Y'shtola, Alela) lives in `impls/*` and `decks`.
 
 pub mod act;
 pub mod brain;
@@ -49,19 +49,17 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 13] = [
+const MAIN_STYLES: [(&str, Style); 11] = [
     ("seph", st(1.0, 0.55, 0.60)),
     ("veyran", st(1.0, 0.40, 0.80)),
     ("sauron", st(1.0, 0.55, 0.75)),
     ("galadriel", st(1.0, 0.70, 0.55)),
     ("yshtola", st(1.0, 0.50, 0.75)),
     ("alela", st(1.0, 0.70, 0.60)),
-    ("jodah", st(1.0, 0.90, 0.30)), // audit/jodah: holding back cost ~2 points
     ("kefka", st(1.0, 0.65, 0.55)),
     ("najeela", st(1.0, 0.90, 0.30)),
     ("titania", st(1.0, 0.70, 0.50)),
     ("sheoldred", st(1.0, 0.60, 0.60)),
-    ("elrond", st(1.0, 0.55, 0.65)),
     ("cloud", st(1.0, 0.75, 0.45)),
 ];
 

@@ -1,13 +1,11 @@
-//! The elrond deck (decklists/JD/elrond-ring-tempts.md): mono-blue, the Ring tempting you through a second creature
-//! entering each turn. Its creatures' card code and AI plan. The brief is rust/agents/elrond-core.md; the verdicts are
-//! in data/card_overrides.toml.
+//! Card code for the mono-blue creatures and spells (the Ring and enter-the-battlefield matters, warp, stun counters,
+//! opus). Every model here is keyed by card name; no deck owns it. Verdicts are in data/card_overrides.toml.
 //!
 //! Cards modeled here (a compiled ability is kept where it is exact):
 //! - **Elrond, Lord of Rivendell**: scry 1 for him and each other creature that enters under your control, on any
 //!   turn (cards through `Etb`, tokens through `TokensEnter`, one trigger each); the second resolution of the turn
 //!   makes the Ring tempt you, the third and later only scry (`DataKey::Resolved` / `ResolvedAt` on his permanent).
-//!   The Ring-bearer the AI picks here is the best evasive attacker (`ring_pick`), never Gandalf while another
-//!   creature is out; **Gandalf, Friend of the Shire** draws when the Ring tempts you and the bearer is another
+//!   **Gandalf, Friend of the Shire** draws when the Ring tempts you and the bearer is another
 //!   creature (`gandalf_draw`, called from `mine::ring_tempt`).
 //! - **Cloudfin Raptor** (evolve), **Defiler of Dreams** (draw on a blue permanent spell; pay 2 life for {U} less,
 //!   `defiler_discount` reads in `mana::cost_of`), **Deluge Virtuoso** (tap + stun counter; opus), **Rapier Wit**,
@@ -18,20 +16,15 @@
 //!
 //! Stun counters (`DataKey::Stun`) are removed by the untap step in `turn::step_start` instead of untapping.
 //!
-//! The AI plan: Elrond as soon as three mana allows; with him out, creature spells first, flash creatures held for
-//! the other players' end steps (or as the second entry of a turn), creatures that return a creature (Matterbending
-//! Mage, Rescue, Fear of Isolation) pick the best enter-the-battlefield creature (`best_own_etb`) unless an
-//! opponent's creature is the better target, and warp when that makes a second entry or the full cost is out of
-//! reach. Counterspells are kept up by the generic hold logic (`brain::hold_value`); `elrond_protect` counters the
-//! removal spell or bounces Elrond and the Ring-bearer.
+//! Creatures that return a creature (Matterbending Mage, Rescue, Fear of Isolation) pick the best
+//! enter-the-battlefield creature (`best_own_etb`) unless an opponent's creature is the better target.
 
-use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay};
-use crate::engine::stack::{cast_counter, counter_window, pick_counter, trigger_window};
-use crate::engine::values::{card_name, card_tag, epow, etgh, pval};
+use crate::engine::stack::trigger_window;
+use crate::engine::values::{card_name, epow, etgh, pval};
 use crate::engine::zones::{bounce, draw, exile_perm, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -56,13 +49,8 @@ const WHALE: &str = "Starbreach Whale";
 const WINDER: &str = "Starwinder";
 const TABULATOR: &str = "Textbook Tabulator";
 const WASP: &str = "The Wasp, Winsome Avenger";
-const COATL: &str = "Hope-Ender Coatl";
 const MOVER: &str = "Dune Mover";
 const FEAR: &str = "Fear of Isolation";
-
-/// the flash creatures the plan holds for end steps
-const FLASHERS: [&str; 5] = ["Divining Duelist", COATL, RESCUE, WASP, GANDALF];
-
 // ================================================================== helpers
 fn live(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
@@ -75,14 +63,6 @@ fn my_creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 fn cname(g: &Game, c: CardId) -> &str {
     &g.db.get(c).name
-}
-
-fn pname(g: &Game, m: PermId) -> &str {
-    card_name(g, m).unwrap_or("")
-}
-
-fn in_hand(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
-    g.player(p).hand.iter().copied().find(|&c| cname(g, c) == name)
 }
 
 /// p's Elrond, if he is out
@@ -115,34 +95,6 @@ fn counter_mult(g: &Game, m: PermId) -> i32 {
 }
 
 // ================================================================== the Ring
-/// the Ring-bearer the elrond deck chooses: the attacker that is hardest to block (flying, hexproof), then the
-/// biggest; Gandalf (which never attacks) only when he is the only creature, so his own draw trigger stays on
-pub fn ring_pick(g: &Game, p: PlayerId, cr: &[PermId]) -> PermId {
-    let score = |m: PermId| -> f64 {
-        let mut s = epow(g, m) as f64 + 0.4 * etgh(g, m) as f64;
-        if g.perm(m).noatk || card_tag(g, m, Tag::Noatk) {
-            s -= 100.0;
-        }
-        if crate::dsl::has_kw(g, m, "flying") {
-            s += 6.0;
-        }
-        if crate::dsl::has_kw(g, m, "hexproof") {
-            s += 3.0;
-        }
-        if g.perm(m).data.truthy(DataKey::Unblockable) {
-            s += 6.0;
-        }
-        if g.perm(m).token {
-            s -= 0.5;
-        }
-        if Some(m) == g.player(p).ring_bearer {
-            s += 0.5; // keep the bearer it has
-        }
-        s
-    };
-    max_by(cr, score).unwrap()
-}
-
 /// Gandalf, Friend of the Shire: whenever the Ring tempts you, if you chose a creature other than Gandalf as your
 /// Ring-bearer, draw a card (`mine::ring_tempt`, once the bearer is chosen)
 pub fn gandalf_draw(g: &mut Game, p: PlayerId, bearer: PermId) -> Res {
@@ -177,8 +129,6 @@ fn elrond_enters(g: &mut Game, src: Src) -> Res {
     crate::cardcode::scry(g, o, 1, false)?;
     if n == 2 {
         g.player_mut(o).stat("ring_tempts", 1);
-        let turns = g.player(o).turns;
-        g.player_mut(o).milestone.entry("elrond").or_insert(turns); // the elrond deck's plan online
         crate::cardcode::ring_tempt(g, o)?;
     }
     Ok(())
@@ -495,17 +445,6 @@ fn fear_cost(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     Ok(())
 }
 
-/// Fear of Isolation can't be cast without a permanent to return
-fn fear_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let pl = g.player(p);
-    let any = !pl.lands.is_empty() || pl.perms.iter().any(|&m| live(g, m) && g.perm(m).cd.is_some());
-    // a spare land is cheap, but each return costs a land drop: only with lands to spare
-    if !any || (pl.lands.len() < 4 && !my_creatures(g, p).iter().any(|&m| etb_score(g, p, m) >= 4.0)) {
-        return 0;
-    }
-    generic_prio(g, p, c)
-}
-
 // ================================================================== the rest of the creatures
 /// Mindseeker Oculus: when it enters, empower Jace 4
 fn oculus_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
@@ -715,171 +654,6 @@ fn warp_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// the warped creatures in exile: cast on a later turn for the mana cost
-fn exile_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
-    let mut out = vec![];
-    if g.active != Some(p) {
-        return out;
-    }
-    let st = g.turn_stamp();
-    for c in g.player(p).exile.clone() {
-        if !is_warper(g, c) || g.player(p).flag_turn.get(&warped_key(cname(g, c))) == Some(&st) {
-            continue;
-        }
-        let (cg, cp) = cost_of(g, p, c);
-        if can_pay(g, p, cg, &cp, false) {
-            out.push(Opt {
-                utility: 4.5,
-                label: format!("{} (from exile)", cname(g, c)),
-                act: Some(Action::Plan { f: exile_go, arg: c.0 as i64 }),
-            });
-        }
-    }
-    out
-}
-
-fn exile_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let c = CardId(arg as u16);
-    let (cg, cp) = cost_of(g, p, c);
-    let Some(i) = g.player(p).exile.iter().position(|&x| x == c) else { return Ok(false) };
-    if !can_pay(g, p, cg, &cp, false) {
-        return Ok(false);
-    }
-    pay(g, p, cg, &cp, false)?;
-    g.player_mut(p).exile.remove(i);
-    let key = warped_key(cname(g, c));
-    g.player_mut(p).flag_turn.shift_remove(&key);
-    cast_card(g, p, c, "exile", Ctx::default())?;
-    Ok(true)
-}
-
-// ================================================================== the AI plan
-/// elrond's cast priority: Elrond first; with him out, creature spells before the rest and the flash creatures held
-/// for the other players' end steps (or as the turn's second entry); Fear of Isolation only with something to return
-pub fn elrond_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let base = generic_prio(g, p, c);
-    let pl = g.player(p);
-    if c == pl.cmd {
-        if pl.turns < 2 {
-            return 0;
-        }
-        if tempt_set(g, p).is_some_and(|s| s.contains(&c)) {
-            return 98; // Elrond and the entries that tempt the Ring this turn
-        }
-        // alone he is exposed for a whole round: wait for a turn that tempts while another entry is in hand
-        let spare = pl.hand.iter().any(|&x| entries_of(g, x) > 0 && cname(g, x) != FEAR);
-        if spare && pl.turns < SOLO_TURN + 2 * pl.tax as u32 {
-            return 0;
-        }
-        return if pl.tax == 0 { 97 } else { RECAST_PRIO };
-    }
-    let d = g.db.get(c);
-    let name = &*d.name;
-    let out = elrond_of(g, p);
-    if name == FEAR {
-        return fear_prio(g, p, c);
-    }
-    if d.creature || entries_of(g, c) > 0 {
-        if let Some(s) = tempt_set(g, p)
-            && s.contains(&c)
-        {
-            return 90;
-        }
-    }
-    if FLASHERS.contains(&name) {
-        return flash_hold(g, p, c);
-    }
-    let Some(e) = out else { return base };
-    if !d.creature || base <= 0 {
-        return base;
-    }
-    let n = resolved_now(g, e);
-    if n < 2 && g.active == Some(p) {
-        return base + 10; // creatures first: each entry counts toward the Ring
-    }
-    base
-}
-
-/// the flash creatures (the registry's `prio` slot, so the compiled-ability value never revives a held card): cast as
-/// the second entry of a turn or at the end of another player's turn, else held; with Elrond out, a first entry on
-/// another player's turn only when a second flash creature can follow
-fn flash_hold(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let Some(e) = elrond_of(g, p) else { return 50 };
-    let n = resolved_now(g, e);
-    if g.active == Some(p) {
-        return if n == 1 { 75 } else { 0 };
-    }
-    let spare = g.player(p).hand.iter().filter(|&&x| x != c && FLASHERS.contains(&cname(g, x))).count();
-    if n >= 1 {
-        80
-    } else if spare > 0 {
-        60
-    } else {
-        45
-    }
-}
-
-/// elrond's own plays: warp, and the warped creatures from exile
-pub fn elrond_special(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
-    Ok(exile_options(g, p))
-}
-
-/// removal aimed at Elrond (or the Ring-bearer, or another creature worth 6 or more): counter the removal spell, else
-/// bounce the creature with Unsummon or Whoosh! (not against bounce itself, and not against a wipe or an edict)
-pub fn elrond_protect(
-    g: &mut Game,
-    p: PlayerId,
-    m: PermId,
-    kind: &str,
-    actor: Option<PlayerId>,
-    spell: Option<CardId>,
-) -> Res<bool> {
-    if actor.is_none() || actor == Some(p) || g.perm(m).cd.is_none() || !g.is_creature(m) {
-        return Ok(false);
-    }
-    if matches!(kind, "edict" | "wipe" | "sacrifice") {
-        return Ok(false);
-    }
-    let is_elrond = card_name(g, m) == Some(ELROND);
-    let bearer = crate::impls::mine::ring_bearer(g, p) == Some(m);
-    if !is_elrond && !bearer && pval(g, m) < 6.0 {
-        return Ok(false);
-    }
-    if let Some(s) = spell
-        && let Some(ctr) = pick_counter(g, p, s)
-        && cast_counter(g, p, ctr, Some(s))?
-    {
-        crate::glog!(g, "    {} counters {}", g.player(p).name, cname(g, s));
-        return Ok(true);
-    }
-    if kind == "bounce" {
-        return Ok(false);
-    }
-    for name in ["Unsummon", "Whoosh!"] {
-        let Some(c) = in_hand(g, p, name) else { continue };
-        let (cg, cp) = cost_of(g, p, c);
-        if !can_pay(g, p, cg, &cp, false) {
-            continue;
-        }
-        pay(g, p, cg, &cp, false)?;
-        let pl = g.player_mut(p);
-        let i = pl.hand.iter().position(|&x| x == c).unwrap();
-        pl.hand.remove(i);
-        pl.spells_this_turn += 1;
-        pl.stat("spells_cast", 1);
-        pl.cast_names.insert(c);
-        crate::glog!(g, "  {} casts {} on {}", g.player(p).name, name, pname(g, m));
-        crate::engine::cast::on_cast(g, p, c)?;
-        let ok = counter_window(g, p, c, 6.0, vec![])?;
-        g.player_mut(p).gy.push(c);
-        if ok && live(g, m) {
-            bounce(g, m)?;
-        }
-        return Ok(ok);
-    }
-    Ok(false)
-}
-
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, ELROND)?;
@@ -908,9 +682,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.end_step = Some(warp_end);
     c.hand_options = Some(warp_hand);
     c.combat_damage = Some(winder_damage);
-    for n in FLASHERS {
-        r.card(db, n)?.prio = Some(flash_hold);
-    }
     r.card(db, TABULATOR)?.cast = Some(tabulator_cast);
     let c = r.card(db, WASP)?;
     c.etb = Some(wasp_etb);
@@ -920,79 +691,3 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_cast = Some(fear_cost);
     Ok(())
 }
-
-// ================================================================== the entry planner
-/// how many creature entries (for Elrond's trigger) casting this card makes
-fn entries_of(g: &Game, c: CardId) -> u32 {
-    let d = g.db.get(c);
-    let name = &*d.name;
-    if name == "Coral Barrier" {
-        return 2;
-    }
-    if d.creature {
-        return 1;
-    }
-    if matches!(name, "Muse's Encouragement" | "Retrieve the Esper" | "Unfathomable Truths") {
-        return 1;
-    }
-    0
-}
-
-/// the cheapest set of (at most three) entry cards that makes `need` entries within `mana`: Elrond (not out yet) must be
-/// in it. Returns the cards.
-fn entry_set(g: &Game, p: PlayerId, need: u32, mana: u32, elrond_out: bool) -> Option<Vec<CardId>> {
-    let pl = g.player(p);
-    let mut cards: Vec<(CardId, u32, u32)> = Vec::new();
-    let mut add = |c: CardId| {
-        let n = entries_of(g, c);
-        if n == 0 || cname(g, c) == FEAR {
-            return;
-        }
-        let (gn, pips) = cost_of(g, p, c);
-        cards.push((c, gn + pips.chars().count() as u32, n));
-    };
-    for &c in &pl.hand {
-        add(c);
-    }
-    if pl.cmd_in_zone && !elrond_out {
-        add(pl.cmd);
-    }
-    let k = cards.len();
-    let mut best: Option<(u32, Vec<CardId>)> = None;
-    for mask in 1u32..(1 << k) {
-        if mask.count_ones() > 3 {
-            continue;
-        }
-        let (mut cost, mut ent, mut has_e) = (0, 0, elrond_out);
-        for (i, &(c, cc, n)) in cards.iter().enumerate() {
-            if mask >> i & 1 == 1 {
-                cost += cc;
-                ent += n;
-                has_e |= c == pl.cmd;
-            }
-        }
-        if ent < need || cost > mana || !has_e {
-            continue;
-        }
-        if best.as_ref().is_none_or(|(bc, _)| cost < *bc) {
-            best =
-                Some((cost, cards.iter().enumerate().filter(|(i, _)| mask >> i & 1 == 1).map(|(_, x)| x.0).collect()));
-        }
-    }
-    best.map(|b| b.1)
-}
-
-/// my turn: the plan to make the Ring tempt this turn, if mana allows
-fn tempt_set(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
-    if g.active != Some(p) {
-        return None;
-    }
-    let out = elrond_of(g, p);
-    let n = out.map_or(0, |e| resolved_now(g, e)) as u32;
-    if n >= 2 {
-        return None;
-    }
-    entry_set(g, p, 2 - n, crate::engine::mana::total_mana(g, p, false), out.is_some())
-}
-const RECAST_PRIO: i32 = 45;
-const SOLO_TURN: u32 = 8;

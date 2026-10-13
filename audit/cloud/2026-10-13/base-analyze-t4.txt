@@ -1,0 +1,78 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 8 worker threads: about 3 minutes
+  progress  10.0%  0m12s elapsed, ~1m53s left
+  progress  20.0%  0m20s elapsed, ~1m20s left
+  progress  30.0%  0m29s elapsed, ~1m08s left
+  progress  40.0%  0m39s elapsed, ~0m59s left
+  progress  50.0%  0m47s elapsed, ~0m47s left
+  progress  60.0%  0m58s elapsed, ~0m38s left
+  progress  70.0%  1m08s elapsed, ~0m29s left
+  progress  80.0%  1m17s elapsed, ~0m19s left
+  progress  90.0%  1m26s elapsed, ~0m09s left
+  progress 100.0%  1m39s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 6.9%   (4-player baseline 25%)   average rounds survived 9.1
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.23 per game, by
+    combat             73.0%
+    commander damage   27.0%
+  Damage dealt per game: 13.6, from
+    combat              13.6  (100%)
+
+-- How it loses --
+  Eliminated in 93.1% of games, on average in round 8.7
+    by Heliod   via combo              19.0% of games
+    by Krenko   via combat             15.6% of games
+    by Yuriko   via triggers           11.5% of games
+    by Chulane  via combo               9.4% of games
+    by Yuriko   via combat              9.2% of games
+    by Chulane  via combat              7.3% of games
+    by Prosper  via combo               6.9% of games
+    by Krenko   via combo               3.3% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 7%  T4 13%  T5 24%  T6 32%  T7 37%  T8 40%  T9 42%  T10 43%  T11 45%  T12 45%
+  Online at all: 47.9% of games
+  Commander resolves on turn: median 2.0, mean 2.2 (over the 99.2% of games it resolves)
+  Commander resolved by turn:  T4 98%  T5 98%  T6 99%  T7 99%  T8 99%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Colossus Hammer                            cast in  31.2% of games, win rate when cast  14.7% (+7.8)
+    Wrecking Ball Arm                          cast in  28.8% of games, win rate when cast  13.8% (+6.9)
+    Sword of Kaldra                            cast in  36.0% of games, win rate when cast  12.7% (+5.8)
+    Mask of Memory                             cast in  57.3% of games, win rate when cast  10.2% (+3.3)
+    Cloud, Midgar Mercenary                    cast in  99.2% of games, win rate when cast   6.9% (+0.1)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  99.2% of games, win rate when cast   6.9% (+0.1)
+    Mask of Memory                             cast in  57.3% of games, win rate when cast  10.2% (+3.3)
+    Sword of Kaldra                            cast in  36.0% of games, win rate when cast  12.7% (+5.8)
+    Wrecking Ball Arm                          cast in  28.8% of games, win rate when cast  13.8% (+6.9)
+    Colossus Hammer                            cast in  31.2% of games, win rate when cast  14.7% (+7.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Shield of Kaldra                           cast  32.3% of the games it was drawn
+    Bronze Guardian                            cast  33.3% of the games it was drawn
+    Hulkbuster Armor                           cast  38.3% of the games it was drawn
+    Sword of Kaldra                            cast  44.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.83
+    Mask of Memory                             0.09
+    Shield of Kaldra                           0.07
+    Colossus Hammer                            0.06
+    Armory Automaton                           0.06
+    Cid, Freeflier Pilot                       0.05
+    Helm of Kaldra                             0.05
+    Recruitment Officer                        0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(99s total)

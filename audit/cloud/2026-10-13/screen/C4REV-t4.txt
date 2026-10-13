@@ -1,0 +1,122 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Take Up the Shield [pool] I 1W :: prot=shield
+   Cho-Manno's Blessing [pool] E WW :: aura flash
+   Hulkbuster Armor [pool] A 4 :: leg
+      ability: static equip_keyword -> 
+      ability: static equip_cost -> 
+   Repel the Darkness [pool] I 2W :: (no tags)
+   Argivian Find [scryfall+dsl] I W :: (no tags)
+      ability: spell  -> regrow
+   Magnetic Snuffler [scryfall] AC 5 :: pow=4
+      not modeled: When ~ enters, return target Equipment card from your graveyard to the battlefield attached to ~.
+      not modeled: Whenever you sacrifice an artifact, put a +1/+1 counter on ~.
+   Harsh Annotation [pool] I 1W :: rem=destroy tgt=c
+   Rapier Wit [pool] I 1W :: draw=1
+   White Auracite [scryfall+dsl] A 2WW :: rock=1:W
+      ability: triggered etb -> exile
+   Potioner's Trove [scryfall+dsl] A 3 :: rock=1:A
+      ability: activated  -> gain_life
+   Memory Trap [scryfall+dsl] E 2W :: (no tags)
+      ability: triggered etb -> exile
+   Hero's Heirloom [scryfall+dsl] A 2 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_cost -> 
+      not modeled: As long as equipped creature is legendary, it has trample and haste.
+   Squire's Lightblade [scryfall+dsl] A W :: flash
+      ability: static equip_bonus -> 
+      ability: static equip_cost -> 
+      not modeled: When ~ enters, attach it to target creature you control. That creature gains first strike until end of turn.
+   Essence Reliquary [scryfall+dsl] A 2W :: (no tags)
+      ability: activated  -> bounce
+   Make Your Move [scryfall+dsl] I 2W :: rem=destroy tgt=c
+      ability: spell  -> destroy
+   Medic's Kitesail [pool] A 2 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_keyword -> 
+      ability: triggered attack -> gain_life
+      ability: static equip_cost -> 
+   Shardmage's Rescue [pool] E W :: aura flash
+   Magitek Scythe [scryfall+dsl] A 4 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_cost -> 
+      not modeled: A Test of Your Reflexes! — When ~ enters, you may attach it to target creature you control. If you do, that creature gains first strike until end of turn and must be blocked this turn if able.
+   Conformer Shuriken [scryfall+dsl] A 2 :: leg
+      ability: static equip_cost -> 
+      not modeled: Equipped creature has "Whenever ~ attacks, tap target creature defending player controls. If that creature has greater power than ~, put a number of +1/+1 counters on ~ equal to the difference."
+   Trailblazer's Boots [scryfall+dsl] A 2 :: (no tags)
+      ability: static equip_cost -> 
+      not modeled: Equipped creature has nonbasic landwalk.
+   Recruitment Officer [pool] C W :: human pow=2 tgh=1
+   Call a Surprise Witness [pool] S 1W :: (no tags)
+Swaps: Sword of Fire and Ice -> Take Up the Shield; Sword of Feast and Famine -> Cho-Manno's Blessing; Sword of Hearth and Home -> Hulkbuster Armor; Champion's Helm -> Repel the Darkness; Smothering Tithe -> Argivian Find; Sol Ring -> Magnetic Snuffler; Arcane Signet -> Harsh Annotation; Fellwar Stone -> Rapier Wit; Mind Stone -> White Auracite; Coalition Relic -> Potioner's Trove; Thought Vessel -> Memory Trap; Solemn Simulacrum -> Hero's Heirloom; Knight of the White Orchid -> Squire's Lightblade; Loyal Warhound -> Essence Reliquary; Enlightened Tutor -> Make Your Move; Grand Abolisher -> Medic's Kitesail; Skyclave Apparition -> Plains; Court of Ardenvale -> Plains; Plaza of Heroes -> Plains; Ardenn, Intrepid Archaeologist -> Shardmage's Rescue; Balan, Wandering Knight -> Magitek Scythe; Kor Outfitter -> Conformer Shuriken; Auriok Steelshaper -> Tome of Legends; Swiftfoot Boots -> Trailblazer's Boots; Armored Skyhunter -> Recruitment Officer; Giver of Runes -> Ultimate Magic: Holy; Kor Duelist -> Call a Surprise Witness
+
+=== Cloud vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win   9.4% ->   3.8%  (delta -5.6 pts, noise ±3.0, paired)   n=500
+               eliminated by (variant): Heliod 20.4%  Yuriko 21.8%  Krenko 26.0%  Chulane 15.8%  Prosper 12.0%
+VERDICT: WORSE under the loose profile (the only one run)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                           9.4% ->   3.8%  -5.6pt   ±3.1*
+    Rounds survived (or game length)                   9.24 ->   9.11   -0.13  ±0.38 
+
+  Mana & consistency
+    Extra mulligans per game                           0.12 ->   0.08   -0.04  ±0.06 
+    Missed land drops, turns 1-5                       0.89 ->   0.72   -0.16  ±0.11*
+    Mana available on your turn 4                      3.85 ->   3.65   -0.20  ±0.11*
+    Mana available on your turn 6                      5.61 ->   4.97   -0.63  ±0.25*
+
+  Speed
+    Games where the game plan came online             62.4% ->  63.0%  +0.6pt   ±6.1 
+    Turn the game plan came online                     5.83 ->   5.12   -0.71  ±0.33*
+    Turn the commander first resolved                  2.20 ->   2.16   -0.04  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.32 ->  13.44   +1.12  ±0.91*
+    Tutors resolved per game                           2.53 ->   2.44   -0.09  ±0.17 
+    Spells cast per game                              12.08 ->  10.57   -1.51  ±0.75*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.51 ->   0.58   +0.07  ±0.10 
+    Board wipes cast                                   0.05 ->   0.03   -0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.87 ->   0.48   -0.39  ±0.11*
+    Your spells countered                              0.27 ->   0.26   -0.01  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                21.32 ->  12.77   -8.55  ±2.54*
+      ...of which combat damage                       19.46 ->  12.77   -6.69  ±2.36*
+      ...of which other triggers                       1.86 ->   0.00   -1.86  ±0.33*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Win rate (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Missed land drops, turns 1-5 (both profiles)
+    worse  - Mana available on your turn 4 (both profiles)
+    worse  - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    better - Turn the game plan came online (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    worse  - Spells cast per game (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    better - Your key permanents removed by opponents (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (both profiles)
+    worse  -   ...of which combat damage (both profiles)
+    worse  -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(234s total)

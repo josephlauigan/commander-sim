@@ -31,7 +31,7 @@ fn in_gy(g: &Game, p: PlayerId, c: CardId) -> usize {
 
 #[test]
 fn dauthi_voidwalker_casts_an_opponents_card_and_it_goes_back_to_their_graveyard() {
-    let mut g = table(&["yuriko-dimir-ninjas", "jodah", "sheoldred"]);
+    let mut g = table(&["yuriko-dimir-ninjas", "galadriel", "sheoldred"]);
     let dauthi = perm(&mut g, P0, "Dauthi Voidwalker");
     let cruise = card(&g, "Treasure Cruise");
     g.player_mut(P1).gy.push(cruise);
@@ -40,13 +40,13 @@ fn dauthi_voidwalker_casts_an_opponents_card_and_it_goes_back_to_their_graveyard
     assert!(g.player(P1).exile.contains(&cruise));
     let a = option_with(&mut g, dauthi, P0, Some(false), "Treasure Cruise");
     assert!(perform(&mut g, P0, &a).unwrap());
-    assert_eq!(in_gy(&g, P1, cruise), 1, "Treasure Cruise is Jodah's player's card");
+    assert_eq!(in_gy(&g, P1, cruise), 1, "Treasure Cruise is the second player's card");
     assert_eq!(in_gy(&g, P0, cruise), 0);
 }
 
 #[test]
 fn fallen_shinobi_casts_the_damaged_players_spells_into_their_graveyard() {
-    let mut g = table(&["yuriko-dimir-ninjas", "jodah", "sheoldred"]);
+    let mut g = table(&["yuriko-dimir-ninjas", "galadriel", "sheoldred"]);
     let shinobi = perm(&mut g, P0, "Fallen Shinobi");
     let (bs, po) = (card(&g, "Brainstorm"), card(&g, "Ponder"));
     let mut lib = g.player(P1).library.clone();
@@ -61,14 +61,14 @@ fn fallen_shinobi_casts_the_damaged_players_spells_into_their_graveyard() {
 
 #[test]
 fn gix_casts_an_opponents_library_cards_into_their_graveyard() {
-    let mut g = table(&["sheoldred", "jodah", "yuriko-dimir-ninjas"]);
+    let mut g = table(&["sheoldred", "galadriel", "yuriko-dimir-ninjas"]);
     let gix = perm(&mut g, P0, "Gix, Yawgmoth Praetor");
     lands(&mut g, P0, "Swamp", 7, false);
     g.player_mut(P0).hand.clear();
     hand(&mut g, P0, &["Swamp", "Swamp"]);
     let (bs, po) = (card(&g, "Brainstorm"), card(&g, "Ponder"));
     g.player_mut(P1).library = vec![card(&g, "Sol Ring"), card(&g, "Lightning Bolt"), bs, po];
-    g.player_mut(P2).library.truncate(2); // Gix picks the longest library: Jodah's player's
+    g.player_mut(P2).library.truncate(2); // Gix picks the longest library: the second player's
     let a = option_with(&mut g, gix, P0, Some(false), "Gix");
     assert!(perform(&mut g, P0, &a).unwrap());
     assert_eq!((in_gy(&g, P1, bs), in_gy(&g, P1, po)), (1, 1));
@@ -77,7 +77,7 @@ fn gix_casts_an_opponents_library_cards_into_their_graveyard() {
 
 #[test]
 fn tinybones_takes_one_permanent_from_one_graveyard_and_it_stays_its_owners() {
-    let mut g = table(&["tergrid-mono-black-disruption", "sauron", "jodah"]);
+    let mut g = table(&["tergrid-mono-black-disruption", "sauron", "galadriel"]);
     let t = perm(&mut g, P0, "Tinybones, Trinket Thief");
     let (ring, bolt) = (card(&g, "Sol Ring"), card(&g, "Lightning Bolt"));
     g.player_mut(P1).gy.extend([ring, bolt]);
@@ -95,7 +95,7 @@ fn tinybones_takes_one_permanent_from_one_graveyard_and_it_stays_its_owners() {
 
 #[test]
 fn a_spell_jin_gitaxias_counters_goes_to_its_owners_graveyard() {
-    let mut g = table(&["yuriko-dimir-ninjas", "jodah", "veyran"]);
+    let mut g = table(&["yuriko-dimir-ninjas", "galadriel", "veyran"]);
     perm(&mut g, P2, "Jin-Gitaxias, Progress Tyrant");
     let bs = card(&g, "Brainstorm");
     g.player_mut(P0).hand.push(bs);
@@ -106,7 +106,7 @@ fn a_spell_jin_gitaxias_counters_goes_to_its_owners_graveyard() {
 
 #[test]
 fn titania_and_sheoldred_mark_their_plans() {
-    let mut g = table(&["titania", "sheoldred", "jodah"]);
+    let mut g = table(&["titania", "sheoldred", "galadriel"]);
     let t = perm(&mut g, P0, "Titania, Protector of Argoth");
     let f = g.registry.get(card(&g, "Titania, Protector of Argoth")).unwrap().land_gy.unwrap();
     let forest = card(&g, "Forest");

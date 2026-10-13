@@ -28,6 +28,11 @@ use crate::sym::intern;
 
 pub const CLOUD: &str = "Cloud, Midgar Mercenary";
 const KEY: &str = "cloud";
+const PLAZA: &str = "Plaza of Heroes";
+
+/// A/B switch for the lead: with it on, Cloud waits a turn for a protection piece (Giver of Runes, Swiftfoot Boots,
+/// Champion's Helm) when removal is likely, and a recast after a death waits until protection can follow
+pub const PROTECT_FIRST: bool = true;
 
 // ------------------------------------------------------------------ small helpers
 fn live(g: &Game, m: PermId) -> bool {
@@ -138,6 +143,9 @@ pub fn holder_score(g: &Game, m: PermId) -> f64 {
     if x.fly || crate::dsl::has_kw(g, m, "flying") {
         s += 2.0;
     }
+    if matches!(name_of(g, m), "Balan, Wandering Knight" | "Kor Duelist") {
+        s += 3.0; // double strike when equipped: the backup carriers while Cloud is away
+    }
     if x.sick {
         s -= 1.0;
     }
@@ -205,6 +213,12 @@ pub fn equip_cost(g: &Game, p: PlayerId, e: PermId, m: PermId, base: u32) -> u32
     }
     if name_of(g, m) == "Helitrooper" {
         n = n.saturating_sub(2); // Equip abilities that target Helitrooper cost {2} less
+    }
+    // Auriok Steelshaper: equip costs you pay cost {1} less each (generic only: Veteran's Powerblade's {W} stays)
+    let colored = name_of(g, e) == "Veteran's Powerblade" && has_type(g, m, "soldier");
+    if !colored {
+        let shapers = g.player(p).perms.iter().filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER).count() as u32;
+        n = n.saturating_sub(shapers);
     }
     n
 }
@@ -306,33 +320,65 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     {
         return Some(c); // Cloud is threatened
     }
-    let order: &[&str] = if held == 0 {
-        &["Wrecking Ball Arm", "Hero's Blade", "Sword of Kaldra", "Mask of Memory"]
-    } else if held == 1 {
-        &["Sword of Kaldra", "Mask of Memory", "Wrecking Ball Arm", "Hero's Blade"]
-    } else {
-        &[
-            "Mask of Memory",
-            "Sword of Kaldra",
-            "Colossus Hammer",
-            "Hulkbuster Armor",
-            "Shield of Kaldra",
-            "Helm of Kaldra",
-        ]
+    // mana the next turn can spend: the lands out, a land drop, the mana rocks
+    let rocks = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| live(g, m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(crate::tag::Tag::Rock)))
+        .count();
+    let mana = g.player(p).lands.iter().filter(|&&l| g.land(l).on_bf).count() as u32 + 1 + rocks as u32;
+    let (free_equips, shapers) = equip_engine(g, p);
+    // cast + equip cost of a card (Cid is in the cast cost; free-equip engines and Steelshapers lower the equip cost)
+    let total = |c: CardId| -> u32 {
+        let cast = crate::engine::mana::cost_of(g, p, c).0;
+        let d = g.db.get(c);
+        let eq = d
+            .abilities
+            .iter()
+            .find_map(|a| match a {
+                crate::dsl::model::Ability::Static { kind, mana, .. } if kind == "equip_cost" => {
+                    Some(mana.unwrap_or(2))
+                }
+                _ => None,
+            })
+            .unwrap_or(match &*d.name {
+                "Champion's Helm" => 1,
+                _ => 2, // Sword of Feast and Famine
+            });
+        cast + if free_equips { 0 } else { eq.saturating_sub(shapers) }
     };
-    if let Some(c) = first(order) {
+    if free_equips {
+        // equips are (nearly) free: the biggest payoff the mana can cast
+        let big = ["Sword of Kaldra", "Helm of Kaldra", "Shield of Kaldra", "Wrecking Ball Arm", "Colossus Hammer"];
+        let cast = |c: CardId| cast_cost(g, p, c);
+        if let Some(c) =
+            big.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && cast(*c) <= mana)
+        {
+            return Some(c);
+        }
+    }
+    let exposed = crate::ai::brain::removal_risk(g, p) >= 0.3;
+    let mut order: Vec<&str> = vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"];
+    if exposed && held >= 1 {
+        order.insert(0, "Champion's Helm"); // hexproof for the legend
+    } else {
+        order.push("Champion's Helm");
+    }
+    if held == 0 {
+        order.extend(["Wrecking Ball Arm", "Hero's Blade", "Sword of Kaldra", "Mask of Memory"]);
+    } else {
+        order.extend(["Mask of Memory", "Sword of Kaldra", "Wrecking Ball Arm", "Hero's Blade"]);
+    }
+    order.extend(["Colossus Hammer", "Hulkbuster Armor", "Shield of Kaldra", "Helm of Kaldra"]);
+    // the first piece that can be cast next turn and equipped within a turn after (cast + equip <= mana + 2), in order
+    let ready =
+        order.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && total(*c) <= mana + 2);
+    if let Some(c) = ready {
         return Some(c);
     }
-    const REST: [&str; 18] = [
-        "Mask of Memory",
-        "Sword of Kaldra",
-        "Wrecking Ball Arm",
-        "Hulkbuster Armor",
-        "Colossus Hammer",
+    const REST: [&str; 14] = [
         "Conformer Shuriken",
-        "Shield of Kaldra",
-        "Helm of Kaldra",
-        "Hero's Blade",
         "Medic's Kitesail",
         "Magitek Scythe",
         "White Mage's Staff",
@@ -342,8 +388,20 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         "Squire's Lightblade",
         "Nim Deathmantle",
         "Hero's Heirloom",
+        "Hulkbuster Armor",
+        "Wrecking Ball Arm",
+        "Sword of Kaldra",
+        "Mask of Memory",
     ];
-    first(&REST).or_else(|| lib.iter().copied().find(|&c| !have(card_name(g, c))))
+    if let Some(c) =
+        REST.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && total(*c) <= mana + 2)
+    {
+        return Some(c);
+    }
+    // nothing fits: the cheapest piece to cast and equip
+    let mut left: Vec<CardId> = lib.iter().copied().filter(|&c| !have(card_name(g, c))).collect();
+    left.sort_by_key(|&c| total(c));
+    left.first().copied()
 }
 
 /// When Cloud enters, search your library for an Equipment card, reveal it, put it into your hand, then shuffle.
@@ -386,7 +444,7 @@ fn blade_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 }
 
 /// Equipment worth taking onto `to`: loose, or on a creature that is a worse holder
-fn pullable(g: &Game, p: PlayerId, to: PermId) -> Vec<PermId> {
+pub(crate) fn pullable(g: &Game, p: PlayerId, to: PermId) -> Vec<PermId> {
     my_equipment(g, p)
         .into_iter()
         .filter(|&e| match g.perm(e).attached.filter(|&t| live(g, t)) {
@@ -438,6 +496,90 @@ fn beatrix_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
         attach(g, e, to);
     }
     Ok(vec![])
+}
+
+// ------------------------------------------------------------------ Kor Outfitter, Brass Squire, Auriok Steelshaper
+const STEELSHAPER: &str = "Auriok Steelshaper";
+
+/// the Equipment p most wants moved onto `to`: loose ones first, then by what it gives the wearer
+fn best_pull(g: &Game, p: PlayerId, to: PermId) -> Option<PermId> {
+    let es: Vec<PermId> = pullable(g, p, to).into_iter().filter(|&e| g.perm(e).attached != Some(to)).collect();
+    max_by(&es, |e| {
+        let loose = g.perm(e).attached.is_none_or(|t| !live(g, t));
+        (if loose { 10.0 } else { 0.0 }) + equip_utility_bonus(g, p, e, to)
+    })
+}
+
+/// Kor Outfitter: when it enters, you may attach target Equipment you control to target creature you control (the
+/// best holder, Cloud when he is out; a loose Equipment, or one worn by a worse creature)
+fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    let Some(to) = best_holder(g, o) else { return Ok(()) };
+    if best_pull(g, o, to).is_none() || !trigger_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
+        return Ok(());
+    }
+    // targets are chosen again as it resolves: the same choice, if still legal
+    if let Some(to) = best_holder(g, o)
+        && let Some(e) = best_pull(g, o, to)
+    {
+        attach(g, e, to);
+    }
+    Ok(())
+}
+
+/// Brass Squire's Equipment and the creature to put it on: the best holder other than Squire itself
+fn squire_target(g: &Game, p: PlayerId, src: PermId) -> Option<(PermId, PermId)> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| m != src && live(g, m) && g.is_creature(m) && !g.perm(m).noatk)
+        .collect();
+    let to = max_by(&cs, |m| holder_score(g, m))?;
+    Some((best_pull(g, p, to)?, to))
+}
+
+/// {T}: attach target Equipment you control to target creature you control
+fn squire_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || g.perm(src).tapped || g.perm(src).sick {
+        return Ok(false);
+    }
+    let Some((e, to)) = squire_target(g, p, src) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    if ability_window(g, p, Some(src), "attach Equipment", Some(5.0), Some(to))? && live(g, e) && live(g, to) {
+        attach(g, e, to);
+    }
+    Ok(true)
+}
+
+/// before combat on your turn, Brass Squire moves an Equipment onto the best holder (a free equip, no sorcery timing)
+fn squire_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p || !live(g, src) || x.tapped || x.sick || post != Some(false) || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let Some((e, to)) = squire_target(g, p, src) else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: 5.5 + if name_of(g, to) == CLOUD { 1.5 } else { 0.0 },
+        label: format!("Brass Squire: attach {} to {}", name_of(g, e), name_of(g, to)),
+        act: Some(Action::Ability { src, f: squire_go, arg: 0 }),
+    }])
+}
+
+/// Auriok Steelshaper: as long as it is equipped, each Soldier and Knight you control gets +1/+1 (read by `dsl::pt`)
+pub fn steelshaper_bonus(g: &Game, m: PermId) -> i32 {
+    if !(has_type(g, m, "soldier") || has_type(g, m, "knight")) {
+        return 0;
+    }
+    g.player(owner(g, m))
+        .perms
+        .iter()
+        .filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER && !equipment_on(g, s).is_empty())
+        .count() as i32
 }
 
 // ------------------------------------------------------------------ Puresteel Paladin
@@ -807,6 +949,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.grant_kw = Some(cid_flying);
     c.options = Some(cid_options);
     r.card(db, "Helitrooper")?.attack = Some(helitrooper_attack);
+    r.card(db, "Kor Outfitter")?.etb = Some(outfitter_etb);
+    r.card(db, "Brass Squire")?.options = Some(squire_options);
     r.card(db, "Conformer Shuriken")?.attack = Some(shuriken_attack);
     r.card(db, "Explorer's Scope")?.attack = Some(scope_attack);
     let c = r.card(db, "Magnetic Snuffler")?;
@@ -860,6 +1004,40 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     match name {
         // the Equipment
         "Wrecking Ball Arm" => 78,
+        // the cheap Swords (cast 3, equip 2): triggers he doubles, protection and size; the Feast and Famine and the
+        // Helm have no compiled value to fall back on
+        "Sword of Fire and Ice" => 80,
+        "Sword of Feast and Famine" => 78,
+        "Sword of Hearth and Home" => 76,
+        "Champion's Helm" => {
+            if cloud_out {
+                62 // hexproof for the legend Cloud
+            } else {
+                52
+            }
+        }
+        // ramp and card flow before the 4-mana Equipment: the equip costs get paid
+        "Solemn Simulacrum" => {
+            if pl.turns <= 5 && eq_hand > 0 {
+                68
+            } else {
+                56
+            }
+        }
+        "Court of Ardenvale" => {
+            if pl.lands.len() >= 6 {
+                64 // monarch: a card a turn; the upkeep returns an Equipment or a dead Cloud
+            } else {
+                50
+            }
+        }
+        "Knight of the White Orchid" => {
+            if g.opps(p).any(|q| g.player(q).lands.len() > pl.lands.len()) {
+                62 // the land, then a body
+            } else {
+                46
+            }
+        }
         "Sword of Kaldra" => 76,
         "Mask of Memory" => 72,
         "Conformer Shuriken" => 68,
@@ -953,6 +1131,79 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             }
         }
         "Jocasta, Automaton Avenger" => 52,
+        // the catch-up ramp: worth casting once an opponent has more lands
+        "Gift of Estates" => {
+            if g.opps(p).any(|q| g.player(q).lands.len() > pl.lands.len()) {
+                64
+            } else {
+                0
+            }
+        }
+        "Loyal Warhound" | "Oreskos Explorer" => {
+            if g.opps(p).any(|q| g.player(q).lands.len() > pl.lands.len()) {
+                60
+            } else {
+                36
+            }
+        }
+        "Archaeomancer's Map" => 58,
+        "Keeper of the Accord" => 56,
+        // the creatures that move Equipment
+        "Kor Outfitter" => {
+            if eq_out + eq_hand > 0 {
+                66
+            } else {
+                46
+            }
+        }
+        "Brass Squire" => {
+            if eq_out > 0 {
+                60
+            } else {
+                44
+            }
+        }
+        "Auriok Steelshaper" => {
+            if eq_out + eq_hand > 0 {
+                66
+            } else {
+                46
+            }
+        }
+        // C4 additions. Ardenn and the Equipment movers early when Equipment waits (in hand or out)
+        "Ardenn, Intrepid Archaeologist" => {
+            if eq_out + eq_hand > 0 {
+                72
+            } else {
+                54
+            }
+        }
+        // Cloud's protection: Boots (hexproof) once he is out or removal is likely; the Bodyguard is a flash answer
+        "Swiftfoot Boots" => {
+            if cloud_out {
+                74
+            } else if crate::ai::brain::removal_risk(g, p) >= 0.35 {
+                70
+            } else {
+                50
+            }
+        }
+        "Benevolent Bodyguard" | "Giver of Runes" => {
+            if cloud_out {
+                64
+            } else {
+                40
+            }
+        }
+        // backup carriers: behind Cloud (130), good once Equipment is out and Cloud is not
+        "Balan, Wandering Knight" | "Kor Duelist" | "Armored Skyhunter" => {
+            let base = match name {
+                "Balan, Wandering Knight" => 58,
+                "Kor Duelist" => 54,
+                _ => 52,
+            };
+            if eq_out + eq_hand > 0 && !cloud_out { base + 8 } else { base }
+        }
         "Unfinished Business" => {
             let best = pl.gy.iter().any(|&x| card_name(g, x) == CLOUD);
             let any = pl.gy.iter().any(|&x| g.db.get(x).creature && g.db.get(x).bomb >= 3);
@@ -1086,34 +1337,119 @@ pub fn cloud_protect(
             }
         }
     }
-    if destroyish(kind) || kind == "wipe" {
-        for n in ["Unbreakable Formation", "Rootborn Defenses", "Ultimate Magic: Holy"] {
-            if let Some(c) = hand(g, n)
-                && cast_instant(g, p, c)?
-            {
-                let main =
-                    g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
-                for x in g.player(p).perms.clone() {
-                    if live(g, x) && (n == "Ultimate Magic: Holy" || g.is_creature(x)) {
-                        super::partials::eot_kw(g, x, "indestructible");
-                        if n == "Unbreakable Formation" && main && g.is_creature(x) {
-                            g.perm_mut(x).plus += 1;
-                            super::partials::eot_kw(g, x, "vigilance");
-                        }
-                    }
-                }
-                return Ok(true);
-            }
-        }
+    if (destroyish(kind) || kind == "wipe")
+        && cast_team_indestructible(g, p, &["Unbreakable Formation", "Rootborn Defenses", "Ultimate Magic: Holy"])?
+    {
+        return Ok(true);
     }
     // the generic one-card answers the outside decks use (Gods Willing, Benevolent Bodyguard, Selfless Spirit, ...)
-    crate::ai::pool::protect(g, p, m, crate::sym::intern(kind), actor, spell)
+    if crate::ai::pool::protect(g, p, m, crate::sym::intern(kind), actor, spell)? {
+        return Ok(true);
+    }
+    // Plaza of Heroes (the last resort: it costs {3} and the land)
+    if (targeted || destroyish(kind)) && plaza_protect(g, p, m)? {
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// Plaza of Heroes: {3}, {T}, exile it: target legendary creature gains hexproof and indestructible until end of turn
+fn plaza_protect(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
+    if !g.is_creature(m) || !crate::cardcode::is_legendary(g, m) {
+        return Ok(false);
+    }
+    let Some(l) = g.player(p).lands.iter().copied().find(|&l| {
+        let x = g.land(l);
+        x.on_bf && !x.tapped && *g.db.get(x.cd).name == *PLAZA
+    }) else {
+        return Ok(false);
+    };
+    if !crate::impls::lands::can_pay_without(g, p, l, 3, "") {
+        return Ok(false);
+    }
+    let cd = g.land(l).cd;
+    crate::engine::turn::remove_land(g, p, l); // tapped and exiled as the cost: the other lands pay the {3}
+    if !pay(g, p, 3, "", false)? {
+        g.player_mut(p).lands.push(l);
+        g.land_mut(l).on_bf = true;
+        return Ok(false);
+    }
+    g.player_mut(p).exile.push(cd);
+    super::partials::eot_kw(g, m, "hexproof");
+    super::partials::eot_kw(g, m, "indestructible");
+    g.player_mut(p).stat("protection_used", 1);
+    crate::glog!(
+        g,
+        "    {} exiles Plaza of Heroes: {} gains hexproof and indestructible",
+        g.player(p).name,
+        g.perm(m).name
+    );
+    Ok(true)
 }
 
 /// cloud's own plays (brain.special_options): Cid's regrow and Zack's sacrifice are card options and the equip
-/// moves are the generic equip options (`dsl::equip_options`, with `holder_bonus`). Nothing else yet.
-pub fn cloud_special(_g: &mut Game, _p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// moves of the compiled Equipment are the generic equip options (`dsl::equip_options`, with `holder_bonus`). The
+/// two hand-tagged Equipment (no compiled data: their stats live in `values.rs`) get theirs here: Champion's Helm
+/// (equip {1}) and Sword of Feast and Famine (equip {2}).
+pub fn cloud_special(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
+    let mut out = vec![];
+    if g.player(p).key != KEY || crate::human::is_human(g, p) {
+        return Ok(out);
+    }
+    for e in g.player(p).perms.clone() {
+        let x = g.perm(e);
+        if !x.on_bf || x.phased {
+            continue;
+        }
+        let (base, bonus) = match name_of(g, e) {
+            "Champion's Helm" => (1, 2.0),
+            "Sword of Feast and Famine" => (2, 4.0), // +2/+2, protection from black and green, untaps lands
+            _ => continue,
+        };
+        if x.attached.is_some_and(|t| live(g, t) && g.perm(t).owner == p) && !wants_move(g, p, e) {
+            continue;
+        }
+        if crate::engine::values::stopped(g, name_of(g, e)) {
+            continue; // Disruptor Flute
+        }
+        let cands: Vec<PermId> = g
+            .player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                live(g, m)
+                    && g.is_creature(m)
+                    && !g.perm(m).noatk
+                    && g.perm(e).attached != Some(m)
+                    && can_pay(g, p, equip_cost(g, p, e, m, base), "", false)
+            })
+            .collect();
+        let Some(best) = max_by(&cands, |m| holder_score(g, m) + holder_bonus(g, p, m)) else { continue };
+        let n = equip_cost(g, p, e, best, base);
+        out.push(Opt {
+            utility: 2.5 + 0.5 * bonus - 0.3 * n as f64 + equip_utility_bonus(g, p, e, best),
+            label: format!("equip {} to {}", name_of(g, e), name_of(g, best)),
+            act: Some(Action::Plan { f: equip_plan, arg: e.0 as i64 | ((best.0 as i64) << 32) }),
+        });
+    }
+    Ok(out)
+}
+
+/// the plan behind an equip option of `cloud_special`: arg = equipment | target << 32; the cost is worked out again
+fn equip_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let e = PermId((arg & 0xffff_ffff) as u32);
+    let m = PermId((arg >> 32) as u32);
+    if !g.perm(e).on_bf || !g.perm(m).on_bf || g.perm(m).owner != p {
+        return Ok(false);
+    }
+    let base = if name_of(g, e) == "Champion's Helm" { 1 } else { 2 };
+    let n = equip_cost(g, p, e, m, base);
+    if !can_pay(g, p, n, "", false) {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} equips {} to {}", g.player(p).name, g.perm(e).name, g.perm(m).name);
+    crate::engine::stack::equip_to(g, p, e, m, n)
 }
 
 /// what entering again is worth for Cloud (read by the blink choices in `common::blink_value` and
@@ -1134,9 +1470,18 @@ pub fn reenter_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
 /// swings and attacks with more attackers than good blockers go ahead), and Cloud himself only when he wears
 /// Equipment or no creature can block him: he is the engine, and a 2/1 that dies is a recast at a higher tax
 pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
-    let mut out = crate::ai::pool::attack_filter(g, p, atk, d);
+    let out = crate::ai::pool::attack_filter(g, p, atk, d);
+    keep_cloud_home(g, p, out, d)
+}
+
+/// the look-ahead's "all" plan (combat.rs) skips the filters above; Cloud with nothing real on him still stays home
+pub fn all_out_trim(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
+    keep_cloud_home(g, p, atk, d)
+}
+
+fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
     let Some(cl) = cloud_of(g, p) else { return out };
-    if !out.contains(&cl) || !equipment_on(g, cl).is_empty() || crate::engine::values::indestructible(g, cl) {
+    if !out.contains(&cl) || strong_gear(g, cl) || crate::engine::values::indestructible(g, cl) {
         return out;
     }
     let total: i32 = out.iter().map(|&m| epow(g, m)).sum();
@@ -1155,10 +1500,36 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
 }
 
 /// look-ahead score bonus for a main-phase option of cloud (added to the rollout average in `search::choose_inner`):
-/// the position score can't see what Cloud's search for an Equipment is worth, so casting him gets a flat bonus
+/// the position score can't see what Cloud's search for an Equipment is worth, so casting him gets a flat bonus; nor
+/// can it see protection, hexproof, card draw or the triggers of the Equipment he wears (it counts only +N/+N), so
+/// equipping those to Cloud gets one too (else a pass that casts more in the second main phase always outscores
+/// the equip)
 pub fn search_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     match &o.act {
-        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => 10.0,
+        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => {
+            10.0 + precombat_cloud(g, p) - if PROTECT_FIRST { cloud_into_open_removal(g, p) } else { 0.0 }
+        }
+        Some(Action::Cast { .. }) if PROTECT_FIRST && protect_piece_first(g, p, &o.label) => 14.0,
+        Some(Action::Equip { src, target, .. }) if cloud_of(g, p) == Some(*target) => equip_search_value(g, *src),
+        Some(Action::Plan { .. }) if cloud_of(g, p).is_some() && o.label.ends_with(&format!("to {CLOUD}")) => {
+            let name = o.label.strip_prefix("equip ").and_then(|s| s.strip_suffix(&format!(" to {CLOUD}")));
+            name.map_or(0.0, |n| match n {
+                "Champion's Helm" | "Sword of Feast and Famine" => 7.0,
+                _ => 0.0,
+            })
+        }
+        _ => 0.0,
+    }
+}
+
+/// what wearing Equipment e is worth to Cloud beyond the +N/+N the position score counts
+fn equip_search_value(g: &Game, e: PermId) -> f64 {
+    match name_of(g, e) {
+        "Shield of Kaldra" | "Helm of Kaldra" | "Mask of Memory" => 8.0, // protection, haste and trample, 4 cards
+        "Sword of Fire and Ice" | "Sword of Hearth and Home" => 6.0,     // triggers he doubles
+        "Explorer's Scope" | "Conformer Shuriken" | "Medic's Kitesail" | "Trailblazer's Boots" | "Swiftfoot Boots" => {
+            4.0
+        }
         _ => 0.0,
     }
 }
@@ -1175,4 +1546,206 @@ pub fn plan_milestone(g: &mut Game, p: PlayerId, atk: &[PermId]) {
 /// costs no commander tax
 pub fn cmd_stays_in_hand(g: &Game, owner: PlayerId) -> bool {
     g.player(owner).key == KEY
+}
+
+/// Equipment on m that makes it worth attacking: real size (power 4 or more), or a piece that gets past blockers
+/// (Explorer's Scope and the like alone do not)
+fn strong_gear(g: &Game, m: PermId) -> bool {
+    epow(g, m) >= 4
+        || equipment_on(g, m).iter().any(|&e| {
+            matches!(name_of(g, e), "Wrecking Ball Arm" | "Trailblazer's Boots" | "Hulkbuster Armor" | "Helm of Kaldra")
+        })
+}
+
+/// extra pull to recast Cloud in the first main phase: Equipment is out (or comes with haste: Helm of Kaldra,
+/// Swiftfoot Boots), so he can wear it and attack, or carry it, this turn
+fn precombat_cloud(g: &Game, p: PlayerId) -> f64 {
+    if g.step != crate::state::Step::Main1 {
+        return 0.0;
+    }
+    let gear = my_equipment(g, p);
+    let hasty = gear.iter().any(|&e| matches!(name_of(g, e), "Helm of Kaldra" | "Swiftfoot Boots"));
+    if hasty {
+        8.0
+    } else if !gear.is_empty() {
+        4.0
+    } else {
+        0.0
+    }
+}
+
+/// what makes equipping cheap for p right now: (equips are about free, Auriok Steelshapers out). Puresteel Paladin
+/// with metalcraft (counting the piece about to be cast), Ardenn on the battlefield (re-attaches every combat) and
+/// Kor Outfitter in hand (attaches on entering) make equips free.
+fn equip_engine(g: &Game, p: PlayerId) -> (bool, u32) {
+    let artifacts = g.player(p).perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count();
+    let puresteel = creature_named(g, p, "Puresteel Paladin").is_some() && artifacts + 1 >= 3;
+    let ardenn = creature_named(g, p, "Ardenn, Intrepid Archaeologist").is_some();
+    let outfitter = in_hand(g, p, "Kor Outfitter");
+    let shapers = g.player(p).perms.iter().filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER).count() as u32;
+    (puresteel || ardenn || outfitter, shapers)
+}
+
+/// the Equipment Cloud's deck fetches with a tutor of this kind (Enlightened Tutor and friends): the same pick as
+/// Cloud's own search
+pub fn tutor_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
+    cloud_pick(g, p).filter(|c| okn.contains(c))
+}
+
+/// mana value of casting c now (generic plus coloured pips, after cost changes)
+fn cast_cost(g: &Game, p: PlayerId, c: CardId) -> u32 {
+    let (n, pips) = crate::engine::mana::cost_of(g, p, c);
+    n + pips.chars().filter(|ch| ch.is_ascii_alphabetic()).count() as u32
+}
+
+/// Equipment that attaches itself or brings its own body: never stranded
+fn carries_itself(name: &str) -> bool {
+    matches!(name, "Magitek Scythe" | "Squire's Lightblade" | "Hero's Blade" | "White Mage's Staff" | "Open the Armory")
+}
+
+/// Don't strand Equipment: casting the Equipment card c now would leave it on the battlefield with no creature to
+/// carry it, and no creature to cast with it this turn. Not when it is the only use of the mana (nothing else in the
+/// hand can be cast with it).
+pub fn strands_equipment(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if g.player(p).key != KEY || !is_equipment_card(g, c) || carries_itself(card_name(g, c)) {
+        return false;
+    }
+    if creatures_out(g, p) > 0 {
+        return false; // a carrier is out: equip next turn at the latest
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let cost = cast_cost(g, p, c);
+    let pl = g.player(p);
+    // a creature (or Cloud) cast with it this turn carries it
+    let carrier = pl
+        .hand
+        .iter()
+        .copied()
+        .chain(pl.cmd_in_zone.then_some(pl.cmd))
+        .filter(|&x| x != c && g.db.get(x).creature)
+        .any(|x| cost + cast_cost(g, p, x) <= mana);
+    if carrier {
+        return false;
+    }
+    // the only use of the mana: no other non-land card in hand fits
+    let other_use = pl.hand.iter().any(|&x| x != c && !g.db.get(x).land && cast_cost(g, p, x) <= mana);
+    other_use
+}
+
+/// cast the first of these instants in p's hand that makes the creatures indestructible (Unbreakable Formation also
+/// gives +1/+1 and vigilance in a main phase; Ultimate Magic: Holy all permanents)
+fn cast_team_indestructible(g: &mut Game, p: PlayerId, names: &[&str]) -> Res<bool> {
+    for n in names {
+        let Some(c) = g.player(p).hand.iter().copied().find(|&c| card_name(g, c) == *n) else { continue };
+        if !cast_instant(g, p, c)? {
+            continue;
+        }
+        let main = g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
+        for x in g.player(p).perms.clone() {
+            if live(g, x) && (*n == "Ultimate Magic: Holy" || g.is_creature(x)) {
+                super::partials::eot_kw(g, x, "indestructible");
+                if *n == "Unbreakable Formation" && main && g.is_creature(x) {
+                    g.perm_mut(x).plus += 1;
+                    super::partials::eot_kw(g, x, "vigilance");
+                }
+            }
+        }
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// a board wipe that destroys (or deals damage) is about to hit p: Unbreakable Formation or Rootborn Defenses make
+/// the creatures indestructible, when the wipe would cost the board a real loss and Cloud or an equipped creature
+/// is among the victims. 'indes' if cast.
+pub fn cloud_wipe_response(g: &mut Game, q: PlayerId, kind: &str, caster: PlayerId) -> Res<Option<crate::sym::Sym>> {
+    const DESTROY_WIPES: [&str; 6] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal"];
+    if !DESTROY_WIPES.contains(&kind) || q == caster {
+        return Ok(None);
+    }
+    let worth = g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m) && worth_saving(g, m));
+    if !worth || crate::ai::decks::wipe_loss(g, q, kind, caster) < 6.0 {
+        return Ok(None);
+    }
+    Ok(cast_team_indestructible(g, q, &["Rootborn Defenses", "Unbreakable Formation"])?
+        .then(|| crate::sym::intern("indes")))
+}
+
+const PROTECT_PIECES: [&str; 3] = ["Giver of Runes", "Swiftfoot Boots", "Champion's Helm"];
+
+/// can protection follow a Cloud cast that leaves `left` mana: Giver untapped, Grand Abolisher out, Plaza of Heroes
+/// with {3}, Swiftfoot Boots or Champion's Helm worn (or castable and equipped) for what is left
+fn protection_follows(g: &Game, p: PlayerId, left: u32) -> bool {
+    let pl = g.player(p);
+    let on_bf = |n: &str| pl.perms.iter().any(|&m| live(g, m) && name_of(g, m) == n);
+    if pl.perms.iter().any(|&m| live(g, m) && name_of(g, m) == "Giver of Runes" && !g.perm(m).tapped && !g.perm(m).sick)
+        || on_bf("Grand Abolisher")
+    {
+        return true;
+    }
+    let plaza =
+        pl.lands.iter().any(|&l| g.land(l).on_bf && !g.land(l).tapped && *g.db.get(g.land(l).cd).name == *PLAZA);
+    if plaza && left >= 3 {
+        return true;
+    }
+    for n in ["Swiftfoot Boots", "Champion's Helm"] {
+        let equip = 1; // both equip for {1}
+        if on_bf(n) && left >= equip {
+            return true;
+        }
+        if let Some(c) = pl.hand.iter().copied().find(|&c| card_name(g, c) == n)
+            && left >= cast_cost(g, p, c) + equip
+        {
+            return true;
+        }
+    }
+    false
+}
+
+/// the penalty (subtracted from the bonus for casting Cloud) when he would walk into open removal with nothing
+/// behind him: first cast with a protection piece in hand that fits now (Cloud follows within a turn), and a recast
+/// after he died once while protection could not follow
+fn cloud_into_open_removal(g: &Game, p: PlayerId) -> f64 {
+    let pl = g.player(p);
+    if crate::ai::brain::removal_risk(g, p) < 0.3 {
+        return 0.0;
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let cloud_cost = cast_cost(g, p, pl.cmd);
+    if pl.tax > 0 {
+        let left = mana.saturating_sub(cloud_cost);
+        return if protection_follows(g, p, left) || mana >= 3 * cloud_cost { 0.0 } else { 12.0 };
+    }
+    // first cast: a piece that fits now, and Cloud plus the piece fit next turn, delays him by one turn
+    let piece =
+        pl.hand.iter().copied().find(|&c| PROTECT_PIECES.contains(&card_name(g, c)) && cast_cost(g, p, c) <= mana);
+    let Some(piece) = piece else { return 0.0 };
+    if cast_cost(g, p, piece) + cloud_cost > mana && pl.lands.len() as u32 + 1 >= cast_cost(g, p, piece) + cloud_cost {
+        12.0
+    } else {
+        0.0
+    }
+}
+
+/// casting this protection piece now is the better first play (see `cloud_into_open_removal`)
+fn protect_piece_first(g: &Game, p: PlayerId, label: &str) -> bool {
+    PROTECT_PIECES.contains(&label) && cloud_of(g, p).is_none() && cloud_into_open_removal(g, p) > 0.0 && {
+        let pl = g.player(p);
+        pl.tax == 0
+    }
+}
+
+/// Cloud's keep: 3 to 5 lands, or 2 lands with a mana rock or a creature that costs two or less (Cloud himself is a
+/// {2}{W}-ish commander: two lands and a way to get to him). 0-1 landers and 6-7 landers go back.
+pub fn keep_hand(g: &Game, p: PlayerId) -> bool {
+    let hand = &g.player(p).hand;
+    let n = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    match n {
+        3..=5 => true,
+        2 => hand.iter().any(|&c| {
+            let d = g.db.get(c);
+            !d.land && ((d.creature && d.cmc <= 2) || d.tag(crate::tag::Tag::Rock) || d.tag(crate::tag::Tag::Dork))
+        }),
+        _ => false,
+    }
 }

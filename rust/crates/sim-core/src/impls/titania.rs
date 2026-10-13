@@ -351,7 +351,7 @@ fn decay_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// cascade: exile cards from the top until a nonland card that costs less (mana value 7 here), cast it free
 fn altisaur_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     let mv = g.db.get(c).cmc;
-    super::jodah::cascade(g, p, mv, "Annoyed Altisaur")?;
+    super::legends::cascade(g, p, mv, "Annoyed Altisaur")?;
     Ok(())
 }
 

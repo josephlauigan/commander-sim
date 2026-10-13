@@ -503,10 +503,10 @@ note = "enters tapped; exiles the most dangerous graveyard"
 
 ["Bolt Bend"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=swat"
 dsl = []
 status = "Full"
-note = "costs {3} less with a creature of power 4 or more ({R} with Jodah out); changes the target of a removal spell to an opponent's best permanent (Jodah's AI casts it in response to removal aimed at Jodah, or at a key legend while Jodah is not out)"
+note = "costs {3} less with a creature of power 4 or more; changes the target of a removal spell to an opponent's best permanent"
 
 ["Boreal Druid"]
 status = "Full"
@@ -1011,10 +1011,10 @@ note = ""
 
 ["Dark Endurance"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=ind"
 dsl = []
 status = "Full"
-note = "+2/+0 and indestructible until end of turn (the +2/+0 is not modeled) (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "+2/+0 and indestructible until end of turn (the +2/+0 is not modeled)"
 
 ["Dark Petition"]
 types = "S"
@@ -1814,7 +1814,7 @@ note = "tutor any card to hand, then discard a card at random"
 
 ["Gandalf, Friend of the Shire"]
 status = "Full"
-note = "flash; you may cast sorcery spells as though they had flash; whenever the Ring tempts you and you chose a creature other than Gandalf as your Ring-bearer, draw a card (elrond.rs gandalf_draw, called by mine::ring_tempt)"
+note = "flash; you may cast sorcery spells as though they had flash; whenever the Ring tempts you and you chose a creature other than Gandalf as your Ring-bearer, draw a card (blue_cards.rs gandalf_draw, called by mine::ring_tempt)"
 
 ["Garland, Royal Kidnapper"]
 tags = "leg human knight pow=3 tgh=4 garland"
@@ -2700,10 +2700,10 @@ note = "{T}, sacrifice it: exile target red creature (the AI on a red threat, or
 
 ["Lazotep Plating"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hex"
 dsl = []
 status = "Full"
-note = "amass Zombies 1; you and your permanents gain hexproof until end of turn (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "amass Zombies 1; you and your permanents gain hexproof until end of turn"
 
 ["Leaf-Crowned Visionary"]
 tags = "pow=1"
@@ -2822,10 +2822,10 @@ note = "destroys an artifact or enchantment on entry; {T}: you and the least thr
 
 ["Loran's Escape"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hexind"
 dsl = []
 status = "Full"
-note = "hexproof and indestructible until end of turn; scry 1 (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "hexproof and indestructible until end of turn; scry 1"
 
 ["Lord Windgrace"]
 tags = "leg"
@@ -2866,7 +2866,7 @@ types = "E"
 tags = ""
 dsl = []
 status = "Full"
-note = "the first spell you cast each turn has cascade (it stacks with Jodah's legend cascade)"
+note = "the first spell you cast each turn has cascade"
 
 ["Maelstrom Wanderer"]
 status = "Full"
@@ -3089,7 +3089,7 @@ dsl = [
   { type = "static", static = "equip_cost", mana = 3 },
 ]
 status = "Full"
-note = "flash; indestructible; attaches to your legendary creature as it enters (Jodah first); the equipped creature is indestructible; equip {3}. Jodah's AI casts it with Jodah out, or in response to destroy removal or a wipe"
+note = "flash; indestructible; attaches to your legendary creature as it enters; the equipped creature is indestructible; equip {3}"
 
 ["Mizzix's Mastery"]
 status = "Full"
@@ -3566,7 +3566,7 @@ note = "top four: a land onto the battlefield tapped, or else a card into your h
 
 ["Plaza of Heroes"]
 status = "Full"
-note = "{C}; any colour for legendary spells; colours among your legendary permanents; {3}, {T}, exile: hexproof and indestructible for a legend (Jodah's AI uses it on Jodah against removal and destroy wipes)"
+note = "{C}; any colour for legendary spells; colours among your legendary permanents; {3}, {T}, exile: hexproof and indestructible for a legend"
 
 ["Plea for Guidance"]
 types = "S"
@@ -4000,10 +4000,10 @@ note = ""
 
 ["Royal Treatment"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hex"
 dsl = []
 status = "Full"
-note = "hexproof until end of turn and a Royal Role on the creature (+1/+1 and ward {1}; a Role you control on it is replaced; it is not a counter, so Hardened Scales ignores it); Jodah's and the bill deck's AI cast it in response to removal aimed at a creature worth saving"
+note = "hexproof until end of turn and a Royal Role on the creature (+1/+1 and ward {1}; a Role you control on it is replaced; it is not a counter, so Hardened Scales ignores it); Titania's AI casts it in response to removal aimed at a creature worth saving"
 
 ["Ruby Medallion"]
 status = "Full"
@@ -4321,7 +4321,7 @@ note = "{T}: {C}{C}"
 tags = "leg human pow=2 tgh=2"
 dsl = []
 status = "Full"
-note = "+1/+1 for each colour among your other legendary permanents; {W}{U}{B}{R}{G}: a legendary permanent card with mana value below Sisay's power onto the battlefield (the tutor wish list's pick, else the dearest legend; never while Jodah could be cast instead)"
+note = "+1/+1 for each colour among your other legendary permanents; {W}{U}{B}{R}{G}: a legendary permanent card with mana value below Sisay's power onto the battlefield (the dearest legendary creature, else the dearest legend)"
 
 ["Sisters of Stone Death"]
 tags = "leg pow=7 tgh=5"
@@ -4364,10 +4364,10 @@ note = "+1/+1, draw on damage to an opponent (hook), umbra armor"
 
 ["Snakeskin Veil"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hex"
 dsl = []
 status = "Full"
-note = "a +1/+1 counter and hexproof until end of turn (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "a +1/+1 counter and hexproof until end of turn"
 
 ["Snap"]
 status = "Full"
@@ -4776,10 +4776,10 @@ note = "{T}: {C}, or one of its colours for 1 damage"
 
 ["Tamiyo's Safekeeping"]
 types = "I"
-tags = "prot=jodah"
+tags = "prot=hexind"
 dsl = []
 status = "Full"
-note = "hexproof and indestructible until end of turn; you gain 2 life (Jodah's AI casts it in response to removal aimed at Jodah or a wipe)"
+note = "hexproof and indestructible until end of turn; you gain 2 life"
 
 ["Tamiyo, Field Researcher"]
 tags = "leg"
@@ -5152,7 +5152,7 @@ note = "your creatures gain indestructible; cast in your main phase, also a +1/+
 
 ["Unclaimed Territory"]
 status = "Full"
-note = "names the creature type most of your creatures share (Sauron: Orc; Jodah: Human): {C}, or any colour for a creature spell of that type"
+note = "names the creature type most of your creatures share (Sauron: Orc): {C}, or any colour for a creature spell of that type"
 
 ["Underground River"]
 add_tags = ["pain"]
@@ -6724,7 +6724,7 @@ status = "Full"
 note = "look at the top two cards, the better one (by the deck's card worth) into the hand and the other on the bottom"
 ["Elrond, Lord of Rivendell"]
 status = "Full"
-note = "whenever Elrond or another creature (card or token) you control enters, on any turn: scry 1, one trigger per creature; the second resolution each turn makes the Ring tempt you (not the third); the Ring-bearer is the best evasive attacker, never Gandalf while another creature is out"
+note = "whenever Elrond or another creature (card or token) you control enters, on any turn: scry 1, one trigger per creature; the second resolution each turn makes the Ring tempt you (not the third)"
 
 ["Cloudfin Raptor"]
 status = "Full"
@@ -6778,7 +6778,7 @@ note = "flying, hexproof (opponents' spells and abilities cannot target it)"
 
 ["Starbreach Whale"]
 status = "Full"
-note = "flying; surveil 2 when it enters (compiled); warp {1}{U}: cast from hand for the warp cost, exiled at the beginning of the next end step, cast from exile for its mana cost on a later turn (the AI warps when the full cost is out of reach before combat, or as the turn's second entry for Elrond)"
+note = "flying; surveil 2 when it enters (compiled); warp {1}{U}: cast from hand for the warp cost, exiled at the beginning of the next end step, cast from exile for its mana cost on a later turn"
 
 ["Starwinder"]
 status = "Full"
@@ -7096,3 +7096,85 @@ tags = ""
 dsl = []
 status = "Full"
 note = "{X}{R}{R} instant, multikicker {1}: X damage to each of 1 + kicks distinct targets (opponents, creatures, planeswalkers; the AI picks them as it resolves: lethal faces first, then killable permanents worth 1.5+, then the rest of the faces); the AI splits all its mana between X and kicks for the best result and casts it when it kills an opponent (main phase, or the end of an opponent's turn) or late at X >= 4 when it hits every opponent"
+
+["Keeper of the Accord"]
+tags = "human pow=3 tgh=4"
+dsl = []
+status = "Full"
+note = "each opponent's end step: if that player controls more creatures than you, a 1/1 white Soldier; if they control more lands, you may search for a basic Plains onto the battlefield tapped (bulk_white::keeper_end; each condition checked on trigger and resolution)"
+
+["Loyal Warhound"]
+tags = "pow=3 tgh=1 vig"
+dsl = []
+status = "Full"
+note = "vigilance; enters: if an opponent controls more lands than you, a basic Plains from the library onto the battlefield tapped (bulk_white::warhound_etb)"
+
+["Gift of Estates"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "if an opponent controls more lands than you, up to three Plains cards from the library into your hand, then shuffle (bulk_white::gift_resolve); cast only when behind (cloud_prio)"
+
+["Archaeomancer's Map"]
+tags = ""
+dsl = []
+status = "Full"
+note = "enters: up to two basic Plains into your hand; whenever an opponent's land enters and they control more lands than you, you may put a land card from your hand onto the battlefield (bulk_white::map_etb, map_landfall)"
+
+["Oreskos Explorer"]
+tags = "pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "enters: up to X Plains cards into your hand, X = the opponents who control more lands than you as it resolves (bulk_white::explorer_etb)"
+
+["Thran Dynamo"]
+status = "Full"
+note = "rock: {T}: {C}{C}{C} (mana.rs, tag rock=3:C)"
+
+["Prismatic Lens"]
+status = "Approximate"
+note = "rock: {T}: {C}. The filter ability ({1},{T}: one mana of any color) is not modeled: it only turns one mana into a coloured one, the deck needs only {W} and plays 31 Plains plus fetches, so it never decides a game"
+
+["Kor Outfitter"]
+tags = "pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "enters: attaches the best loose (or worse-worn) Equipment to the best holder, Cloud when he is out (cloud::outfitter_etb)"
+
+["Auriok Steelshaper"]
+tags = "human pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "equip costs you pay are {1} less each (cloud::equip_cost; the {W} cost of Veteran's Powerblade keeps it); while it is equipped, your Soldiers and Knights get +1/+1 (cloud::steelshaper_bonus, read by dsl::pt)"
+
+["Brass Squire"]
+types = "AC"
+tags = "pow=1 tgh=3"
+dsl = []
+status = "Full"
+note = "{T}: attaches an Equipment you control to the best holder, Cloud when he is out, before combat on your turn (cloud::squire_options); no sorcery timing needed"
+
+["Ardenn, Intrepid Archaeologist"]
+tags = "leg pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "beginning of combat on your turn: attaches Equipment to the best holder, Cloud first (bulk_white::ardenn_combat); the AI never moves Auras (leaving them is a legal choice); partner is unused with one commander"
+
+["Balan, Wandering Knight"]
+tags = "leg pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "first strike; double strike with two or more Equipment on it (bulk_white::balan_kw); {1}{W}: attaches all your Equipment to it, used when Cloud is not out or can't attack (balan_options)"
+
+["Armored Skyhunter"]
+tags = "fly pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "attacks: looks at the top six, puts the best Aura or Equipment onto the battlefield (Equipment onto the best holder, Aura onto the best own creature), the rest on the bottom in random order (bulk_white::skyhunter_attack)"
+
+["Kor Duelist"]
+tags = "pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "double strike while equipped (bulk_white::duelist_kw)"

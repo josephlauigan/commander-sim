@@ -1,5 +1,5 @@
-//! The elrond deck's creatures (impls/elrond.rs) on hand-built positions, with each Oracle text as the expectation.
-//! Seat 0 plays the elrond deck, seat 1 the seph deck.
+//! The blue creatures (impls/blue_cards.rs) on hand-built positions, with each Oracle text as the expectation.
+//! Seat 0 plays a stand-in deck (the cards are keyed by name), seat 1 the seph deck.
 
 use sim_core::ai::{act, brain};
 use sim_core::engine::mana::{cost_of, pay};
@@ -7,7 +7,7 @@ use sim_core::engine::values::{epow, etgh, untargetable};
 use sim_core::engine::{cast, hooks, turn, zones};
 use sim_core::hooks::{Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
-use sim_core::impls::{alela, elrond, mine};
+use sim_core::impls::{alela, mine};
 use sim_core::state::{Ctx, DataKey, Game, Val};
 use sim_core::testkit::*;
 
@@ -16,7 +16,7 @@ const P1: PlayerId = PlayerId(1);
 const ELROND: &str = "Elrond, Lord of Rivendell";
 
 fn game() -> Game {
-    table(&["elrond", "seph"])
+    table(&["sheoldred", "seph"])
 }
 
 fn gy_has(g: &Game, p: PlayerId, name: &str) -> bool {
@@ -134,30 +134,11 @@ fn creatures_that_enter_under_an_opponent_do_not_count() {
 }
 
 #[test]
-fn the_ring_bearer_is_the_evasive_attacker_not_gandalf() {
-    let mut g = game();
-    fill_library(&mut g, P0, 20);
-    perm(&mut g, P0, "Gandalf, Friend of the Shire");
-    perm(&mut g, P0, "Page, Loose Leaf");
-    perm(&mut g, P0, "Aven Fisher");
-    perm(&mut g, P0, "Professor Hulk");
-    mine::ring_tempt(&mut g, P0).unwrap();
-    let b = mine::ring_bearer(&g, P0).unwrap();
-    assert_ne!(g.perm(b).name, "Gandalf, Friend of the Shire");
-    assert!(g.perm(b).name == "Aven Fisher" || g.perm(b).name == "Professor Hulk");
-    // alone, Gandalf is the bearer
-    let mut g = game();
-    perm(&mut g, P0, "Gandalf, Friend of the Shire");
-    mine::ring_tempt(&mut g, P0).unwrap();
-    assert_eq!(g.perm(mine::ring_bearer(&g, P0).unwrap()).name, "Gandalf, Friend of the Shire");
-}
-
-#[test]
 fn gandalf_draws_when_the_ring_tempts_and_the_bearer_is_another_creature() {
     let mut g = game();
     fill_library(&mut g, P0, 20);
     perm(&mut g, P0, "Gandalf, Friend of the Shire");
-    perm(&mut g, P0, "Aven Fisher");
+    perm(&mut g, P0, "Glorybringer");
     let n = g.player(P0).hand.len();
     mine::ring_tempt(&mut g, P0).unwrap();
     assert_eq!(g.player(P0).hand.len(), n + 1, "drew a card");
@@ -347,10 +328,6 @@ fn fear_of_isolation_returns_a_permanent_as_a_cost() {
     cast_paid(&mut g, P0, "Fear of Isolation");
     assert!(!g.perm(o).on_bf);
     assert_eq!(g.player(P0).lands.len(), 4);
-    // nothing to return: not worth casting
-    let mut g = game();
-    let c = hand(&mut g, P0, &["Fear of Isolation"])[0];
-    assert_eq!(elrond::elrond_prio(&g, P0, c), 0);
 }
 
 // ================================================================== the rest of the creatures
@@ -478,7 +455,7 @@ fn silver_deputy_puts_a_land_on_top_and_pumps_at_sorcery_speed() {
 
 // ================================================================== warp
 #[test]
-fn starbreach_whale_warps_is_exiled_at_the_end_step_and_is_cast_later() {
+fn starbreach_whale_warps_is_exiled_at_the_end_step() {
     let mut g = game();
     fill_library(&mut g, P0, 20);
     g.active = Some(P0);
@@ -491,16 +468,6 @@ fn starbreach_whale_warps_is_exiled_at_the_end_step_and_is_cast_later() {
     f(&mut g, m, P0).unwrap();
     assert!(!g.perm(m).on_bf);
     assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Starbreach Whale"));
-    // not on the same turn
-    lands(&mut g, P0, "Island", 3, false);
-    assert!(!has_opt(&mut g, P0, "Starbreach Whale (from exile)"));
-    next_turn(&mut g);
-    for &l in &g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
-    }
-    assert!(do_opt(&mut g, P0, "Starbreach Whale (from exile)"));
-    assert!(has_perm(&g, P0, "Starbreach Whale"));
-    assert!(!g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Starbreach Whale"));
 }
 
 #[test]
@@ -536,71 +503,10 @@ fn hope_ender_coatl_counters_a_spell_unless_its_controller_pays_one() {
     lands(&mut g, P0, "Island", 3, false);
     let spell = card(&g, "Glorybringer");
     assert_eq!(sim_core::engine::stack::pick_counter(&g, P0, spell), Some(coatl));
-    assert_eq!(g.db.get(coatl).tags.int(sim_core::tag::Tag::Soft), Some(1));
+    // (the override's soft=1 tag is applied by cardgen only to cards some deck plays: no deck plays the Coatl now)
     // devoid: colorless
     let d = g.db.get(coatl);
     assert!(d.kws.iter().any(|k| &**k == "devoid"));
-}
-
-// ================================================================== Elrond's protection
-#[test]
-fn elrond_is_bounced_in_response_to_removal() {
-    let mut g = game();
-    let e = perm(&mut g, P0, ELROND);
-    lands(&mut g, P0, "Island", 2, false);
-    hand(&mut g, P0, &["Unsummon"]);
-    let spell = card(&g, "Go for the Throat");
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), e, "destroy", Some(spell)).unwrap();
-    assert!(!g.perm(e).on_bf, "off the battlefield");
-    assert!(gy_has(&g, P0, "Unsummon"), "saved by Unsummon, not killed");
-    assert!(!gy_has(&g, P0, ELROND));
-}
-
-// ================================================================== the AI plan
-#[test]
-fn the_plan_casts_elrond_on_turn_three() {
-    let mut g = game();
-    fill_library(&mut g, P0, 20);
-    lands(&mut g, P0, "Island", 3, false);
-    g.active = Some(P0);
-    g.player_mut(P0).turns = 3;
-    hand(&mut g, P0, &["Aven Fisher", "Ornithopter", "Quick Study"]);
-    let opts = opts_of(&mut g, P0, false);
-    let top = opts.iter().max_by(|a, b| a.utility.total_cmp(&b.utility)).unwrap();
-    assert_eq!(top.label, ELROND);
-}
-
-#[test]
-fn the_plan_holds_flash_creatures_for_the_second_entry_or_an_end_step() {
-    let mut g = game();
-    fill_library(&mut g, P0, 20);
-    lands(&mut g, P0, "Island", 6, false);
-    g.active = Some(P0);
-    perm(&mut g, P0, ELROND); // his own entry: one resolution this turn
-    hand(&mut g, P0, &["Divining Duelist"]);
-    assert!(has_opt(&mut g, P0, "Divining Duelist"), "the second entry of the turn: cast it");
-    // next turn, nothing has entered yet: held
-    next_turn(&mut g);
-    assert!(!has_opt(&mut g, P0, "Divining Duelist"), "no entry yet: wait for an end step");
-    // at the end of another player's turn it is cast
-    g.active = Some(P1);
-    brain::end_of_turn_window(&mut g, P0).unwrap();
-    assert!(has_perm(&g, P0, "Divining Duelist"));
-}
-
-#[test]
-fn the_plan_creatures_come_before_other_spells_once_elrond_is_out() {
-    let mut g = game();
-    fill_library(&mut g, P0, 20);
-    lands(&mut g, P0, "Island", 6, false);
-    g.active = Some(P0);
-    next_turn(&mut g);
-    perm(&mut g, P0, ELROND);
-    next_turn(&mut g);
-    hand(&mut g, P0, &["Aven Fisher", "Dreams of Laguna"]);
-    let opts = opts_of(&mut g, P0, false);
-    let top = opts.iter().max_by(|a, b| a.utility.total_cmp(&b.utility)).unwrap();
-    assert_eq!(top.label, "Aven Fisher");
 }
 
 #[test]
@@ -609,7 +515,7 @@ fn hope_ender_coatl_is_cast_as_a_counter_and_then_enters() {
     // the spell is countered (the caster cannot pay {1}) and the Coatl is on the battlefield afterwards
     let mut countered = 0;
     for seed in 0..40u64 {
-        let mut g = table_with(&["elrond", "seph"], seed, 40);
+        let mut g = table_with(&["sheoldred", "seph"], seed, 40);
         fill_library(&mut g, P0, 20);
         lands(&mut g, P0, "Island", 3, false);
         hand(&mut g, P0, &["Hope-Ender Coatl"]);
@@ -629,38 +535,6 @@ fn hope_ender_coatl_is_cast_as_a_counter_and_then_enters() {
         }
     }
     assert!(countered > 0, "the Coatl was never cast as a counter");
-}
-
-// ================================================================== the entry planner
-#[test]
-fn the_planner_casts_the_pair_that_tempts_and_holds_elrond_alone() {
-    // Elrond out, 3 mana: Coral Barrier (card + token) is two entries, so it comes first
-    let mut g = game();
-    fill_library(&mut g, P0, 20);
-    lands(&mut g, P0, "Island", 3, false);
-    g.active = Some(P0);
-    next_turn(&mut g);
-    perm(&mut g, P0, ELROND);
-    g.active = Some(P0);
-    let cs = hand(&mut g, P0, &["Coral Barrier", "Quicksilver Fisher"]);
-    assert_eq!(elrond::elrond_prio(&g, P0, cs[0]), 90);
-    assert!(elrond::elrond_prio(&g, P0, cs[1]) < 90);
-    // Elrond in the command zone, 3 mana, another entry in hand but no pair: he waits
-    let mut g = game();
-    fill_library(&mut g, P0, 20);
-    lands(&mut g, P0, "Island", 3, false);
-    next_turn(&mut g);
-    next_turn(&mut g);
-    g.active = Some(P0);
-    g.player_mut(P0).turns = 4;
-    let cmd = g.player(P0).cmd;
-    let c = hand(&mut g, P0, &["Quicksilver Fisher"])[0];
-    assert_eq!(elrond::elrond_prio(&g, P0, cmd), 0, "alone he would be exposed for a round");
-    // with a free creature in hand he and it make the Ring tempt this turn
-    let o = hand(&mut g, P0, &["Ornithopter"])[0];
-    assert_eq!(elrond::elrond_prio(&g, P0, cmd), 98);
-    assert_eq!(elrond::elrond_prio(&g, P0, o), 90);
-    assert!(elrond::elrond_prio(&g, P0, c) < 90);
 }
 
 // ================================================================== Gandalf: the AI uses sorceries at instant speed

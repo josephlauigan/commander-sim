@@ -1,0 +1,75 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 8 worker threads: about 3 minutes
+  progress  10.0%  0m06s elapsed, ~1m01s left
+  progress  20.0%  0m15s elapsed, ~1m02s left
+  progress  30.0%  0m24s elapsed, ~0m56s left
+  progress  40.0%  0m32s elapsed, ~0m49s left
+  progress  50.0%  0m38s elapsed, ~0m38s left
+  progress  60.0%  0m44s elapsed, ~0m29s left
+  progress  70.0%  0m53s elapsed, ~0m23s left
+  progress  80.0%  1m00s elapsed, ~0m15s left
+  progress  90.0%  1m08s elapsed, ~0m07s left
+  progress 100.0%  1m19s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 13.8%   (4-player baseline 25%)   average rounds survived 7.9
+
+-- How it wins --
+  damage      98.5% of wins
+  timeout      1.5% of wins
+  Opponents it eliminated: 0.40 per game, by
+    combat             50.0%
+    commander damage   31.4%
+    triggers           18.6%
+  Damage dealt per game: 21.1, from
+    combat              19.3  (92%)
+    triggers             1.8  (8%)
+
+-- How it loses --
+  Eliminated in 86.0% of games, on average in round 7.2
+    by Kinnan   via combo              23.3% of games
+    by Urza     via combo              15.0% of games
+    by Winota   via combat             11.2% of games
+    by Winota   via combo              10.6% of games
+    by Zur the Enchanter via combo              10.6% of games
+    by Yawgmoth via combo               8.5% of games
+    by Urza     via combat              2.9% of games
+    by Zur the Enchanter via commander damage    1.9% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 18%  T5 30%  T6 37%  T7 42%  T8 45%  T9 47%  T10 48%  T11 48%  T12 49%
+  Online at all: 49.2% of games
+  Commander resolves on turn: median 2.0, mean 2.3 (over the 96.0% of games it resolves)
+  Commander resolved by turn:  T4 94%  T5 95%  T6 95%  T7 95%  T8 96%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Sword of Hearth and Home                   cast in  32.3% of games, win rate when cast  29.7% (+15.9)
+    Sword of Fire and Ice                      cast in  61.0% of games, win rate when cast  21.8% (+8.1)
+    Cloud, Midgar Mercenary                    cast in  96.9% of games, win rate when cast  14.2% (+0.4)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  96.9% of games, win rate when cast  14.2% (+0.4)
+    Sword of Fire and Ice                      cast in  61.0% of games, win rate when cast  21.8% (+8.1)
+    Sword of Hearth and Home                   cast in  32.3% of games, win rate when cast  29.7% (+15.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Shield of Kaldra                           cast  25.7% of the games it was drawn
+    Sword of Kaldra                            cast  35.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.43
+    Sword of Fire and Ice                      0.13
+    Sword of Hearth and Home                   0.03
+    Cid, Freeflier Pilot                       0.03
+    Grand Abolisher                            0.02
+    Kor Duelist                                0.02
+    White Mage's Staff                         0.02
+    Helm of Kaldra                             0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(79s total)

@@ -1,22 +1,19 @@
-//! Python's `cards/impl/jodah.py`: Jodah, the Unifier (JD's WUBRG Legends deck, key `jodah`) and its 99.
+//! Card code for legendary and multicolour cards that decks of any kind may play: Jodah, the Unifier (the card) and
+//! cards that were first modeled for a legends list (Garland, Tymna, the Kaldra pieces, Dakkon, Mordenkainen, Wrenn and
+//! Six, Memory Jar, Profane Tutor and suspend, ...). Everything here is keyed by card name; no deck's own AI lives here.
 //!
 //! - Jodah: legendary creatures you control get +X/+X (X = the legendary creatures you control); whenever you cast a
 //!   legendary spell from your hand, exile from the top until a legendary nonland card with lesser mana value, cast it
 //!   free, the rest to the bottom in a random order.
-//! - The AI: the outside decks' generic priorities, with legendary spells first while Jodah is out (the more
-//!   expensive, the more the cascade can find); Jodah's protection (audit/jodah, 10-09); the tutor wish list.
-//! - The rework candidates and swap candidates (Command Beacon, Maelstrom Nexus and Wanderer, Sisay, Shalai, Venat,
-//!   Tymna, Garland) and the 99's cards that need code.
+//! - Command Beacon, Maelstrom Nexus and Wanderer, Sisay, Shalai, Venat, Tymna, Garland, and the rest of the cards that
+//!   need code.
 //!
 //! Plaza of Heroes' and Unclaimed Territory's colours (Python's mine.plaza_colors and territory_colors, which
-//! engine._land_cols calls by name) are here too: only Jodah's list runs them.
-
-use std::sync::OnceLock;
+//! engine._land_cols calls by name) are here too.
 
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, oring_exile, oring_return, walker};
-use super::lands::{can_pay_without, pay_without, sac_land};
+use super::lands::{can_pay_without, sac_land};
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
-use crate::ai::brain::removal_risk;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, copy_spell, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
@@ -25,23 +22,21 @@ use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, equip_to, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{
-    board_power, colors_of, commander_out, epow, etgh, indestructible, once_per_turn, player_hexproof, protected_from,
-    pval, threat, untargetable,
+    board_power, colors_of, epow, etgh, once_per_turn, player_hexproof, protected_from, pval, threat, untargetable,
 };
 use crate::engine::zones::{
-    Enter, Tokens, agent_for, agent_take, amass, die, discard_cards, draw, enter, exile_perm, landfall, leave,
-    make_artifact_tokens, make_tokens, max_by, min_by, searchable, teferis_protection,
+    Enter, Tokens, agent_for, agent_take, die, discard_cards, draw, enter, exile_perm, landfall, leave,
+    make_artifact_tokens, make_tokens, max_by, min_by, searchable,
 };
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Assign, Event, Opt, Registry, Src};
+use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
 pub const JODAH: &str = "Jodah, the Unifier";
-const TEFERIS_PROTECTION: &str = "Teferi's Protection";
 
 // ------------------------------------------------------------------ helpers
 /// a permanent's card name ("" for a token)
@@ -117,11 +112,6 @@ fn best_legend(g: &Game, p: PlayerId) -> Option<PermId> {
     first_max(&cs, |m| (!g.perm(m).sick, pval(g, m)))
 }
 
-/// the cards of a list (names not in the card database are left out)
-fn ids(g: &Game, names: &[&str]) -> Vec<CardId> {
-    names.iter().filter_map(|n| g.db.id(n)).collect()
-}
-
 /// put cards at the bottom of p's library (Python's `p.library[:0] = cards`)
 fn to_bottom(g: &mut Game, p: PlayerId, cards: Vec<CardId>) {
     let lib = &mut g.player_mut(p).library;
@@ -142,27 +132,6 @@ fn ability(utility: f64, label: String, src: PermId, f: crate::hooks::AbilityFn,
 
 fn plan(utility: f64, label: String, f: crate::hooks::PlanFn, arg: i64) -> Opt {
     Opt { utility, label, act: Some(Action::Plan { f, arg }) }
-}
-
-// ------------------------------------------------------------------ the A/B switches (audit/jodah)
-/// jodah._AI: the AI fixes switched on (environment JODAH_AI, default 'first,tutor')
-fn ai_on(name: &str) -> bool {
-    static AI: OnceLock<Vec<String>> = OnceLock::new();
-    AI.get_or_init(|| {
-        std::env::var("JODAH_AI").unwrap_or_else(|_| "first,tutor".into()).split(',').map(String::from).collect()
-    })
-    .iter()
-    .any(|x| x == name)
-}
-
-/// jodah.HOLD (environment JODAH_HOLD, default '3,6')
-fn hold_weights() -> (f64, f64) {
-    static HOLD: OnceLock<(f64, f64)> = OnceLock::new();
-    *HOLD.get_or_init(|| {
-        let s = std::env::var("JODAH_HOLD").unwrap_or_else(|_| "3,6".into());
-        let v: Vec<f64> = s.split(',').map(|x| x.trim().parse().unwrap_or(0.0)).collect();
-        (v.first().copied().unwrap_or(3.0), v.get(1).copied().unwrap_or(6.0))
-    })
 }
 
 // ================================================================== Jodah
@@ -234,18 +203,15 @@ pub fn cascade(g: &mut Game, o: PlayerId, mv: u32, who: &str) -> Res<bool> {
     }
     let mut cast = false;
     if let Some(h) = hit {
-        let key = g.player(o).key;
         let want = if human_of(g, o).is_some() {
             let q = format!("{who}: cast {} without paying its mana cost?", cname(g, h));
             choices::yes_no(g, o, &q)?
         } else {
-            !g.db.get(h).tag(Tag::Ctr) && !crate::ai::plans::response_only(g, key, h)
+            !g.db.get(h).tag(Tag::Ctr)
         };
         if want && castable(g, o, h, "lib") {
             g.last_x = 0; // cast free: X is 0
             if jodah {
-                let t = g.player(o).turns;
-                g.player_mut(o).milestone.entry("jodah").or_insert(t);
                 stat(g, o, "jodah_cascades", 1);
             } else {
                 stat(g, o, "jr_cascade_hits", 1);
@@ -291,532 +257,7 @@ pub fn jodah_payable(g: &Game, p: PlayerId) -> bool {
     can_pay(g, p, gn, &pips, false)
 }
 
-/// jodah.jodah_prio: the generic priorities; with Jodah out, legendary spells first, the dearer the better (more to
-/// cascade into). With Jodah castable now, Jodah comes first: a legend cast before it gives up its cascade, and any
-/// other spell that leaves too little mana for Jodah puts it off a turn.
-pub fn jodah_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let d = g.db.get(c);
-    let leg = legend_card(g, c);
-    let out = jodahs(g, p) > 0;
-    if prot(&d.name).is_some() && !(leg && out) {
-        return 0; // kept for removal and wipes
-    }
-    let mut v = crate::ai::pool::generic_prio(g, p, c);
-    let cmd = g.player(p).cmd;
-    if c == cmd {
-        return v.max(86);
-    }
-    if v == 0 && d.has_dsl() {
-        v = (crate::dsl::card_value(g, p, c) * 10.0) as i32;
-    }
-    if leg && out {
-        v = v.max(40) + 4 + (2 * d.cmc as i32).min(16);
-    } else if leg && d.creature {
-        v = v.max(35);
-    }
-    if ai_on("first") && v > 15 && jodah_payable(g, p) {
-        let (gn, pips) = cost_of(g, p, cmd);
-        let (cg, cp) = cost_of(g, p, c);
-        if leg || !can_pay(g, p, gn + cg, &format!("{pips}{cp}"), false) {
-            v = 15;
-        }
-    }
-    v.min(90)
-}
-
 const KALDRA: [&str; 3] = ["Sword of Kaldra", "Shield of Kaldra", "Helm of Kaldra"];
-
-/// jodah.jodah_tutor: the card a tutor finds: before Jodah, the mana that casts it (Coalition Relic fixes, Sisay's
-/// Ring doesn't); with Jodah out or on the way, the dearest legend not already in hand (its cascade can find any
-/// cheaper legend); the third Kaldra piece; Toxic Deluge or Force of Will under pressure (instant and sorcery tutors).
-/// `okn`: the cards this tutor may find.
-pub fn jodah_tutor(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<CardId> {
-    if !ai_on("tutor") {
-        return None;
-    }
-    let pl = g.player(p);
-    let have: Vec<CardId> = pl.perms.iter().filter_map(|&m| g.perm(m).cd).collect();
-    let hand = &pl.hand;
-    let mana = pl.lands.len()
-        + pl.perms
-            .iter()
-            .filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock) || g.db.get(c).tag(Tag::Dork)))
-            .count();
-    let out = jodahs(g, p) > 0;
-    let mut order: Vec<CardId> = vec![];
-    if (ai_on("ptutor") || ai_on("ptutorall"))
-        && out
-        && !hand.iter().any(|&c| PROTECTION_ORDER.contains(&cname(g, c)))
-        && the_jodah(g, p).is_some_and(|j| !untargetable(g, j))
-        && (ai_on("ptutorall") || removal_risk(g, p) >= 0.3)
-    {
-        // Jodah out and exposed: protect it
-        order.extend(ids(g, &PROTECTION_ORDER).into_iter().filter(|c| !have.contains(c)));
-    }
-    if !out && pl.cmd_in_zone && mana < 4 {
-        order.extend(ids(g, &["Coalition Relic", "Star Compass", "Moss Diamond", "Fyndhorn Elder"]));
-    }
-    let kaldra: Vec<CardId> = ids(g, &KALDRA).into_iter().filter(|c| !have.contains(c) && !hand.contains(c)).collect();
-    if kaldra.len() == 1 {
-        order.extend(kaldra);
-    }
-    let mut big: Vec<CardId> = searchable(g, p)
-        .into_iter()
-        .filter(|&c| legend_card(g, c) && g.db.get(c).creature && !hand.iter().any(|&h| cname(g, h) == cname(g, c)))
-        .collect();
-    big.sort_by(|&a, &b| g.db.get(b).cmc.cmp(&g.db.get(a).cmc).then_with(|| cname(g, a).cmp(cname(g, b))));
-    if !hand.iter().any(|&c| legend_card(g, c) && g.db.get(c).cmc >= 6) {
-        order.extend(big.iter().copied().filter(|&c| g.db.get(c).cmc >= 6 && cname(g, c) != "Szadek, Lord of Secrets"));
-    }
-    if kind == "is" {
-        let power: i32 = g
-            .opps(p)
-            .flat_map(|q| g.player(q).perms.iter().copied())
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased)
-            .map(|m| epow(g, m))
-            .sum();
-        if power >= 15 {
-            order.extend(ids(g, &["Toxic Deluge"]));
-        }
-        order.extend(ids(g, &["Demonic Tutor", "Force of Will"]));
-    }
-    if matches!(kind, "art" | "ench" | "ae") {
-        order.extend(ids(g, &["Blackblade Reforged", "Privileged Position", "Coalition Relic", "Court of Ardenvale"]));
-    }
-    order.into_iter().find(|c| okn.contains(c))
-}
-
-// ================================================================== protecting Jodah (audit/jodah, 10-09)
-/// A protection card the AI keeps for removal aimed at Jodah or a wipe that would hit it (jodah.PROTECT): its cost,
-/// whether it is free while Jodah is out, what it stops ('tgt' targeted removal, 'destroy' destroy and damage
-/// (targeted or a wipe), 'both', 'all' anything), and what it does: grant hexproof ('hex') and/or indestructible
-/// ('ind') to Jodah or (_all) to every creature (Flawless Maneuver, Unbreakable Formation) or permanent (Heroic
-/// Intervention, Lazotep Plating) until end of turn; 'swat' sends the removal at an opponent's permanent (the 'swat'
-/// cards also guard a key legend, see jodah_protect); 'coat' puts Mithril Coat on Jodah; 'phase' is Teferi's
-/// Protection. Listed cheapest first: free ones, then by mana (Bolt Bend: {R} with a creature of power 4 or more, as
-/// with Jodah out); Teferi's Protection last.
-#[derive(Debug, Clone, Copy)]
-pub struct Prot {
-    pub name: &'static str,
-    pub cost: (u32, &'static str),
-    pub free: bool,
-    pub stops: &'static str,
-    pub does: &'static str,
-}
-
-const fn pr(
-    name: &'static str,
-    cost: (u32, &'static str),
-    free: bool,
-    stops: &'static str,
-    does: &'static str,
-) -> Prot {
-    Prot { name, cost, free, stops, does }
-}
-
-pub const PROTECT: [Prot; 13] = [
-    pr("Flawless Maneuver", (2, "W"), true, "destroy", "ind_all"),
-    pr("Deflecting Swat", (2, "R"), true, "tgt", "swat"),
-    pr("Bolt Bend", (3, "R"), false, "tgt", "swat"),
-    pr("Tamiyo's Safekeeping", (0, "G"), false, "both", "hexind"),
-    pr("Loran's Escape", (0, "W"), false, "both", "hexind"),
-    pr("Snakeskin Veil", (0, "G"), false, "tgt", "hex"),
-    pr("Royal Treatment", (0, "G"), false, "tgt", "hex"),
-    pr("Dark Endurance", (1, "B"), false, "destroy", "ind"),
-    pr("Heroic Intervention", (1, "G"), false, "both", "hexind_all"),
-    pr("Lazotep Plating", (1, "U"), false, "tgt", "hex_all"),
-    pr("Unbreakable Formation", (2, "W"), false, "destroy", "ind_all"),
-    pr("Mithril Coat", (3, ""), false, "destroy", "coat"),
-    pr("Teferi's Protection", (2, "W"), false, "all", "phase"),
-];
-
-/// a card's PROTECT entry
-pub fn prot(name: &str) -> Option<&'static Prot> {
-    PROTECT.iter().find(|x| x.name == name)
-}
-
-/// wipes that indestructible survives
-const WIPE_DESTROY: [&str; 5] = ["destroy", "dmg13", "austere", "austere2", "nib"];
-
-/// what the tutors find (switch ptutor), best first
-const PROTECTION_ORDER: [&str; 17] = [
-    "Lightning Greaves",
-    "Swiftfoot Boots",
-    "Mithril Coat",
-    "Giver of Runes",
-    "Mother of Runes",
-    "Flawless Maneuver",
-    "Deflecting Swat",
-    "Bolt Bend",
-    "Heroic Intervention",
-    "Tamiyo's Safekeeping",
-    "Loran's Escape",
-    "Teferi's Protection",
-    "Snakeskin Veil",
-    "Royal Treatment",
-    "Lazotep Plating",
-    "Unbreakable Formation",
-    "Dark Endurance",
-];
-
-/// CI.RESPONSE_ONLY['jodah']: never cast for their interpreter value (brain.card_utility)
-pub fn response_only(name: &str) -> bool {
-    prot(name).is_some()
-}
-
-/// jodah._grant: keywords until end of turn
-fn grant(g: &mut Game, ms: &[PermId], kws: &[&'static str]) {
-    for &m in ms {
-        for &k in kws {
-            eot_kw(g, m, k);
-        }
-    }
-}
-
-/// jodah._saved: the reports' count of saves
-fn saved(g: &mut Game, p: PlayerId, name: &str, wipe: bool) {
-    stat(g, p, "jprot_saves", 1);
-    stat(g, p, &format!("jprot_{}{name}", if wipe { "wipe_" } else { "" }), 1);
-}
-
-/// jodah.prot_cost: a protection card's mana cost now: Bolt Bend costs {3} less with a creature of power 4 or more
-pub fn prot_cost(g: &Game, p: PlayerId, name: &str) -> (u32, &'static str) {
-    let (mut gn, pips) = prot(name).unwrap().cost;
-    if name == "Bolt Bend"
-        && g.player(p).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased && epow(g, m) >= 4)
-    {
-        gn = 0;
-    }
-    (gn, pips)
-}
-
-/// jodah._cast_protection: cast protection card c from hand in response (free if it can be): true if it resolves
-fn cast_protection(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
-    let name = g.db.get(c).name.clone();
-    let (gn, pips) = prot_cost(g, p, &name);
-    let free = prot(&name).unwrap().free && commander_out(g, p);
-    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !(free || can_pay(g, p, gn, pips, false)) {
-        return Ok(false);
-    }
-    remove_card(&mut g.player_mut(p).hand, c);
-    if !free {
-        pay(g, p, gn, pips, false)?;
-    }
-    let pl = g.player_mut(p);
-    pl.spells_this_turn += 1;
-    pl.stat("spells_cast", 1);
-    pl.cast_names.insert(c);
-    crate::glog!(g, "  {} casts {}{}", pname(g, p), name, if free { " (free)" } else { "" });
-    on_cast(g, p, c)?;
-    let ok = counter_window(g, p, c, 6.0, vec![])?;
-    if &*name == "Mithril Coat" && ok {
-        let e = enter(g, p, c, Enter::default())?;
-        let to = the_jodah(g, p).or_else(|| best_legend(g, p));
-        g.perm_mut(e).attached = to;
-    } else if &*name == TEFERIS_PROTECTION {
-        g.player_mut(p).exile.push(c);
-    } else {
-        g.player_mut(p).gy.push(c);
-    }
-    Ok(ok)
-}
-
-/// jodah._swat_targets: where Deflecting Swat or Bolt Bend can send the removal: any opponent's permanent it can target
-fn swat_targets(g: &Game, p: PlayerId, kind: &str) -> Vec<PermId> {
-    g.opps(p)
-        .flat_map(|q| g.player(q).perms.iter().copied())
-        .filter(|&x| !g.perm(x).phased && !untargetable(g, x) && (g.is_creature(x) || !kind.starts_with("dmg")))
-        .collect()
-}
-
-/// jodah._apply: the protection's effect on Jodah j (and the rest of p's board); false if it found nothing to do
-/// (Deflecting Swat with no new target left)
-#[allow(clippy::too_many_arguments)]
-fn apply(
-    g: &mut Game,
-    p: PlayerId,
-    j: PermId,
-    name: &str,
-    does: &str,
-    spell: Option<CardId>,
-    actor: Option<PlayerId>,
-    kind: &str,
-) -> Res<bool> {
-    if does == "phase" {
-        teferis_protection(g, p);
-        return Ok(true);
-    }
-    if does == "swat" {
-        let alt = swat_targets(g, p, kind);
-        let Some(t) = first_max(&alt, |x| (pval(g, x), Some(owner(g, x)) == actor)) else { return Ok(false) };
-        crate::glog!(
-            g,
-            "    {name}: {} now targets {} ({})",
-            spell.map_or("", |s| cname(g, s)),
-            g.perm(t).name,
-            pname(g, owner(g, t))
-        );
-        apply_removal(g, actor, t, kind, spell)?;
-        return Ok(true);
-    }
-    let kws: &[&'static str] = match does.split('_').next().unwrap_or("") {
-        "hex" => &["hexproof"],
-        "ind" => &["indestructible"],
-        "hexind" => &["hexproof", "indestructible"],
-        _ => &[],
-    };
-    let scope: Vec<PermId> = if does.ends_with("_all") {
-        g.player(p)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| !g.perm(m).phased && (g.is_creature(m) || does != "ind_all"))
-            .collect()
-    } else {
-        vec![j]
-    };
-    grant(g, &scope, kws);
-    match name {
-        "Snakeskin Veil" => g.perm_mut(j).plus += 1, // the counter
-        "Royal Treatment" => super::green_cards::royal_apply(g, j), // the Royal Role: +1/+1 and ward {1}
-        "Tamiyo's Safekeeping" => gain(g, p, 2)?,
-        "Lazotep Plating" => amass(g, p, 1)?,
-        "Loran's Escape" => crate::cardcode::scry(g, p, 1, false)?,
-        _ => {}
-    }
-    Ok(true)
-}
-
-/// jodah._stops: does protection that stops `stops` stop removal (or a wipe) of this kind?
-fn stops_it(stops: &str, kind: &str, targeted: bool) -> bool {
-    let destroyish = kind == "destroy" || kind.starts_with("dmg") || (!targeted && WIPE_DESTROY.contains(&kind));
-    stops == "all"
-        || (matches!(stops, "tgt" | "both") && targeted)
-        || (matches!(stops, "destroy" | "both") && destroyish)
-}
-
-/// jodah._rune_save: Giver of Runes (another creature: anything) or Mother of Runes (a coloured spell): tap for
-/// protection
-fn rune_save(g: &mut Game, p: PlayerId, j: PermId, spell: Option<CardId>) -> Option<&'static str> {
-    for name in ["Giver of Runes", "Mother of Runes"] {
-        for m in mine_named(g, p, name) {
-            let x = g.perm(m);
-            if m == j || x.tapped || x.sick {
-                continue;
-            }
-            if name == "Mother of Runes"
-                && !spell.is_some_and(|s| g.db.get(s).pips.chars().any(|ch| "WUBRG".contains(ch)))
-            {
-                continue;
-            }
-            g.perm_mut(m).tapped = true;
-            crate::glog!(g, "    {} taps {name}: Jodah gains protection", pname(g, p));
-            return Some(name);
-        }
-    }
-    None
-}
-
-/// jodah._plaza_save: Plaza of Heroes: {3}, {T}, exile it: a legendary creature gains hexproof and indestructible until
-/// end of turn
-fn plaza_save(g: &mut Game, p: PlayerId, j: PermId) -> Res<bool> {
-    if ai_on("noplaza") {
-        return Ok(false); // audit/jodah A/B: as before 10-09
-    }
-    let plazas: Vec<LandId> = g
-        .player(p)
-        .lands
-        .iter()
-        .copied()
-        .filter(|&l| cname(g, g.land(l).cd) == "Plaza of Heroes" && !g.land(l).tapped)
-        .collect();
-    for l in plazas {
-        if !can_pay_without(g, p, l, 3, "") || !pay_without(g, p, l, 3, "")? {
-            continue;
-        }
-        let cd = g.land(l).cd;
-        crate::engine::turn::remove_land(g, p, l);
-        g.player_mut(p).exile.push(cd);
-        crate::glog!(g, "    {} exiles Plaza of Heroes: Jodah gains hexproof and indestructible", pname(g, p));
-        if ability_window_card(g, p, cd, "hexproof and indestructible for Jodah", None, None)? {
-            grant(g, &[j], &["hexproof", "indestructible"]);
-            return Ok(true);
-        }
-        return Ok(false);
-    }
-    Ok(false)
-}
-
-/// jodah.key_legend: a legendary creature other than Jodah worth a redirect (Deflecting Swat, Bolt Bend) while Jodah
-/// is not out to need it: value 5 or more (a bomb, or power 8 or more)
-fn key_legend(g: &Game, p: PlayerId, m: PermId) -> bool {
-    g.is_creature(m)
-        && legendary(g, m)
-        && g.perm(m).cd.is_some()
-        && name_of(g, m) != JODAH
-        && jodahs(g, p) == 0
-        && pval(g, m) >= 5.0
-}
-
-/// jodah.jodah_protect: removal aimed at Jodah: the cheapest answer that stops it (free spells, Giver or Mother of
-/// Runes, then by mana, Plaza of Heroes, Teferi's Protection last). Aimed at a key legend: a redirect only. True if it
-/// is safe.
-pub fn jodah_protect(
-    g: &mut Game,
-    p: PlayerId,
-    m: PermId,
-    kind: &str,
-    actor: Option<PlayerId>,
-    spell: Option<CardId>,
-) -> Res<bool> {
-    if g.perm(m).cd.is_none() || matches!(kind, "edict" | "wipe") || actor.is_none() || actor == Some(p) {
-        return Ok(false);
-    }
-    let other = name_of(g, m) != JODAH;
-    if other && !key_legend(g, p, m) {
-        return Ok(false);
-    }
-    let shrink = kind.starts_with("shrink") || kind == "zero"; // -X/-X: indestructible doesn't help
-    if !other && let Some(n) = rune_save(g, p, m, spell) {
-        saved(g, p, n, false);
-        return Ok(true);
-    }
-    for pt in PROTECT.iter() {
-        let Some(c) = g.player(p).hand.iter().copied().find(|&c| cname(g, c) == pt.name) else { continue };
-        if !stops_it(pt.stops, kind, true) || (shrink && pt.stops == "destroy") || (other && pt.does != "swat") {
-            continue;
-        }
-        if pt.does == "swat" && (spell.is_none() || swat_targets(g, p, kind).is_empty()) {
-            continue;
-        }
-        if pt.name == TEFERIS_PROTECTION && g.player(p).life_locked {
-            continue;
-        }
-        if !cast_protection(g, p, c)? || !apply(g, p, m, pt.name, pt.does, spell, actor, kind)? {
-            return Ok(false);
-        }
-        let label = format!("{}{}", pt.name, if other { " (legend)" } else { "" });
-        saved(g, p, &label, false);
-        return Ok(true);
-    }
-    if !other && plaza_save(g, p, m)? {
-        saved(g, p, "Plaza of Heroes", false);
-        return Ok(true);
-    }
-    Ok(false)
-}
-
-/// jodah.jodah_wipe_response: a wipe that would take Jodah: indestructible (destroy and damage wipes) or Teferi's
-/// Protection. 'all', 'indes' (the whole board is indestructible) or None (Jodah alone may be safe)
-pub fn jodah_wipe_response(g: &mut Game, p: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
-    let Some(j) = the_jodah(g, p) else { return Ok(None) };
-    if caster == p || !crate::ai::decks::WipeRule::new(g, caster, kind).hits(g, j, p) {
-        return Ok(None);
-    }
-    for pt in PROTECT.iter() {
-        if pt.does == "swat" || !stops_it(pt.stops, kind, false) {
-            continue;
-        }
-        let Some(c) = g.player(p).hand.iter().copied().find(|&c| cname(g, c) == pt.name) else { continue };
-        if pt.name == TEFERIS_PROTECTION && g.player(p).life_locked {
-            continue;
-        }
-        if !cast_protection(g, p, c)? {
-            return Ok(None);
-        }
-        apply(g, p, j, pt.name, pt.does, None, None, "")?;
-        saved(g, p, pt.name, true);
-        return Ok(match pt.does {
-            "phase" => Some("all"),
-            "ind_all" | "hexind_all" => Some("indes"),
-            _ => None,
-        });
-    }
-    if WIPE_DESTROY.contains(&kind) && plaza_save(g, p, j)? {
-        saved(g, p, "Plaza of Heroes", true);
-    }
-    Ok(None)
-}
-
-/// jodah.jodah_hold: (card, value) of keeping mana up for a protection spell while Jodah is out (switch hold): worth
-/// more the likelier an opponent holds instant removal; free spells (Flawless Maneuver, Deflecting Swat) need nothing
-/// kept
-pub fn jodah_hold(g: &Game, p: PlayerId) -> (Option<CardId>, f64) {
-    if !ai_on("hold") || jodahs(g, p) == 0 {
-        return (None, 0.0);
-    }
-    let cs: Vec<CardId> = g
-        .player(p)
-        .hand
-        .iter()
-        .copied()
-        .filter(|&c| {
-            let Some(pt) = prot(cname(g, c)) else { return false };
-            let (gn, pips) = prot_cost(g, p, pt.name);
-            !(pt.free && commander_out(g, p)) && can_pay(g, p, gn, pips, false)
-        })
-        .collect();
-    let Some(c) = first_min(&cs, |c| {
-        let (gn, pips) = prot_cost(g, p, cname(g, c));
-        gn + pips.chars().count() as u32
-    }) else {
-        return (None, 0.0);
-    };
-    let (a, b) = hold_weights();
-    (Some(c), a + b * removal_risk(g, p))
-}
-
-/// jodah.jodah_options: main phase: Swiftfoot Boots, Lightning Greaves or Mithril Coat onto Jodah when they are
-/// elsewhere (the generic equip only moves unattached equipment)
-pub fn jodah_options(g: &mut Game, p: PlayerId, _post: bool) -> Vec<Opt> {
-    let Some(j) = the_jodah(g, p) else { return vec![] };
-    let mut o = vec![];
-    for e in g.player(p).perms.clone() {
-        let x = g.perm(e);
-        if x.cd.is_none() || x.phased || x.attached == Some(j) {
-            continue;
-        }
-        let name = name_of(g, e);
-        let Some(n) = equip_cost(name) else { continue };
-        if !can_pay(g, p, n, "", false) || (name != "Mithril Coat" && untargetable(g, j)) {
-            continue;
-        }
-        if name == "Mithril Coat" && indestructible(g, j) {
-            continue;
-        }
-        let label = format!("equip {name} to Jodah");
-        o.push(plan(4.0 + 0.2 * pval(g, j) - 0.5 * n as f64, label, jodah_equip, pack(e.0, j.0)));
-    }
-    o
-}
-
-fn equip_cost(name: &str) -> Option<u32> {
-    match name {
-        "Swiftfoot Boots" => Some(1),
-        "Lightning Greaves" => Some(0),
-        "Mithril Coat" => Some(3),
-        _ => None,
-    }
-}
-
-fn jodah_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (e, j) = unpack(arg);
-    let (e, j) = (PermId(e), PermId(j));
-    let n = equip_cost(name_of(g, e)).unwrap_or(0);
-    if !on(g, p, j) || !can_pay(g, p, n, "", false) {
-        return Ok(false);
-    }
-    equip_to(g, p, e, j, n)
-}
-
-/// jodah._runes_home: Jodah's AI keeps Mother and Giver of Runes home (untapped, to protect Jodah) instead of
-/// attacking with them; other decks attack with them as usual
-fn runes_home(g: &mut Game, p: PlayerId, m: PermId) -> Res {
-    if g.player(p).key == "jodah" {
-        g.perm_mut(m).noatk = true;
-    }
-    Ok(())
-}
 
 /// Mithril Coat: attach it to a legendary creature you control as it enters: Jodah first
 fn coat_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
@@ -928,8 +369,8 @@ fn sisay_pt(g: &Game, p: PlayerId, m: PermId) -> (i32, i32) {
     (n, n)
 }
 
-/// jodah.sisay_pick: a legendary permanent card with mana value below Sisay's power: the tutor wish list's pick (the
-/// third Kaldra piece, the dearest legendary creature), else the dearest legend
+/// jodah.sisay_pick: a legendary permanent card with mana value below Sisay's power: the dearest legendary creature, else
+/// the dearest legend
 pub fn sisay_pick(g: &Game, p: PlayerId, power: i32) -> Option<CardId> {
     let ok: Vec<CardId> = searchable(g, p)
         .into_iter()
@@ -940,11 +381,6 @@ pub fn sisay_pick(g: &Game, p: PlayerId, power: i32) -> Option<CardId> {
         .collect();
     if ok.is_empty() {
         return None;
-    }
-    if let Some(n) = jodah_tutor(g, p, "leg", &ok)
-        && let Some(&c) = ok.iter().find(|&&c| c == n)
-    {
-        return Some(c);
     }
     first_max(&ok, |c| {
         let d = g.db.get(c);
@@ -2125,7 +1561,8 @@ fn purge(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
         .collect();
     let Some(t) = max_by(&tg, |m| pval(g, m) + 0.2 * epow(g, m) as f64) else { return Ok(vec![]) };
     // Kefka, Ruler of Ruin: the life lost on your turn draws that many cards, so the power it deals is card draw
-    let draws = if g.player(p).key == "kefka" && crate::impls::kefka::flipped(g, p) { epow(g, t).clamp(0, 6) } else { 0 };
+    let draws =
+        if g.player(p).key == "kefka" && crate::impls::kefka::flipped(g, p) { epow(g, t).clamp(0, 6) } else { 0 };
     if pval(g, t) < 3.0 && draws < 2 {
         return Ok(vec![]);
     }
@@ -2431,9 +1868,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::Etb, true);
     c.cast = Some(jodah_cast);
     c.self_cast = Some(jodah_from_hand);
-    for name in ["Mother of Runes", "Giver of Runes"] {
-        r.card(db, name)?.as_enters = Some(runes_home);
-    }
     let c = r.card(db, "Mithril Coat")?;
     c.etb = Some(coat_etb);
     at_once(c, Event::Etb, true);

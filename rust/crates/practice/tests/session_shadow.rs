@@ -18,7 +18,7 @@ use std::sync::atomic::AtomicBool;
 
 fn main_phase_game(ai: &str) -> (Game, PlayerId) {
     let e = engine();
-    let seats: Vec<String> = ["sauron", "seph", "veyran", "jodah"].iter().map(|s| s.to_string()).collect();
+    let seats: Vec<String> = ["sauron", "seph", "veyran", "galadriel"].iter().map(|s| s.to_string()).collect();
     let (mut g, _) = build_game(&e, settings("loose", ai, 1.0).unwrap(), 77, &seats, &[]).unwrap();
     let p = PlayerId(0);
     g.round = 3;
