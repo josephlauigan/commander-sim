@@ -1506,6 +1506,22 @@ pub fn deck_has_storm(g: &Game, p: PlayerId) -> bool {
     ["Brain Freeze", "Grapeshot"].iter().any(|n| g.db.id(n).is_some_and(|c| g.player(p).deck_names.contains(&c)))
 }
 
+/// Underworld Breach out, or still in the library
+pub fn breach_reachable(g: &Game, p: PlayerId) -> bool {
+    breach_out(g, p) || g.player(p).library.iter().any(|&c| g.db.get(c).tag(Tag::Breach))
+}
+
+/// casting this storm card now (Brain Freeze: three cards milled per copy; Grapeshot: a damage per copy) finishes an
+/// opponent
+fn storm_kills(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let copies = g.players.iter().map(|q| crate::engine::cast::casts_this_turn(g, q.id)).sum::<i32>() + 1;
+    let freeze = &*g.db.get(c).name == "Brain Freeze";
+    g.opps(p).any(|q| {
+        let q = g.player(q);
+        q.alive && if freeze { q.library.len() as i64 <= 3 * copies as i64 } else { q.life <= copies }
+    })
+}
+
 /// the cast priority of a line card for a deck that isn't built around the line (Kefka): the storm cards wait for
 /// Breach, the rituals for Breach and a storm card, and Breach itself for a storm card; None when the line has no
 /// claim on the card (it keeps its usual priority, so a deck without the storm card plays Breach as before)
@@ -1514,7 +1530,12 @@ pub fn breach_hold_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
     if t.has(Tag::Breach) {
         return storm_held(g, p).then_some(0);
     }
-    if is_storm_card(g, c) || t.has(Tag::Led) {
+    if is_storm_card(g, c) {
+        // held while Breach is out or still reachable (in the library; a tutor in hand finds it there), unless casting
+        // it now kills an opponent
+        return (breach_reachable(g, p) && !storm_kills(g, p, c)).then_some(0);
+    }
+    if t.has(Tag::Led) {
         return breach_out(g, p).then_some(0);
     }
     if is_ritual_card(g, c) {

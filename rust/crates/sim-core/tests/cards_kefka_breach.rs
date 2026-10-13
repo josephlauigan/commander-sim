@@ -67,6 +67,8 @@ fn kefka_holds_the_line_cards_while_breach_is_reachable() {
     }
     // Brain Freeze with no Breach anywhere is not held by the line (it keeps its usual priority)
     let mut g = board(5, 4, 30, 8);
+    let b = card(&g, "Underworld Breach");
+    g.player_mut(P0).library.retain(|&c| c != b);
     hand(&mut g, P0, &["Brain Freeze", "Dark Ritual"]);
     assert!(decks::breach_hold_prio(&g, P0, card(&g, "Brain Freeze")).is_none());
     assert!(decks::breach_hold_prio(&g, P0, card(&g, "Dark Ritual")).is_none());
@@ -113,4 +115,35 @@ fn diabolic_tutor_fetches_the_missing_half_of_the_line() {
     g.player_mut(P0).library.retain(|&c| c != ub);
     let pick = decks::tutor_pick(&g, P0, "any").unwrap();
     assert_eq!(&*g.db.get(pick).name, "Brain Freeze");
+}
+
+#[test]
+fn storm_cards_wait_while_breach_is_in_the_library() {
+    let mut g = board(5, 4, 30, 8);
+    hand(&mut g, P0, &["Brain Freeze"]);
+    let b = card(&g, "Underworld Breach");
+    g.player_mut(P0).library.push(b);
+    assert_eq!(prio(&g, "Brain Freeze"), 0, "Breach can still be drawn or tutored");
+    // Breach gone from the library, hand and battlefield: Brain Freeze is just a spell again
+    g.player_mut(P0).library.retain(|&c| c != b);
+    assert!(decks::breach_hold_prio(&g, P0, card(&g, "Brain Freeze")).is_none());
+}
+
+#[test]
+fn storm_card_is_not_held_when_it_kills_now() {
+    // the opponent has 3 cards left: one plain Brain Freeze copy mills them out
+    let mut g = board(5, 4, 3, 8);
+    hand(&mut g, P0, &["Brain Freeze"]);
+    let b = card(&g, "Underworld Breach");
+    g.player_mut(P0).library.push(b);
+    assert!(decks::breach_hold_prio(&g, P0, card(&g, "Brain Freeze")).is_none());
+}
+
+#[test]
+fn sauron_already_holds_storm_cards_without_breach_out() {
+    let mut g = table(&["sauron", "veyran"]);
+    hand(&mut g, P0, &["Brain Freeze", "Grapeshot"]);
+    for n in ["Brain Freeze", "Grapeshot"] {
+        assert_eq!(decks::sauron_prio(&g, P0, card(&g, n)), 0, "{n} is never cast plainly by Sauron");
+    }
 }
