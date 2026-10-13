@@ -1582,7 +1582,8 @@ fn snoop(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt
         let label = format!("Snoop: cast {}", d.name);
         o.push(opt_ability(2.0 + card_worth(g, p, top, false) / 20.0, label, src, snoop_go, top.0 as i64));
     }
-    if goblin && let Some(f) = g.registry.get(top).and_then(|i| i.options) {
+    // a Snoop on top has no other abilities than this one (borrowing it would call snoop on itself forever)
+    if goblin && &*d.name != "Conspicuous Snoop" && let Some(f) = g.registry.get(top).and_then(|i| i.options) {
         o.extend(f(g, src, p, post)?);
     }
     Ok(o)
