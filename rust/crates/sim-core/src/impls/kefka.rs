@@ -923,7 +923,7 @@ fn spider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     discard_cards(g, o, &[d])?;
     if g.perm(src).on_bf {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }

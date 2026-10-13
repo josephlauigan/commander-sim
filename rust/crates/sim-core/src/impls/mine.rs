@@ -378,7 +378,7 @@ fn vision(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if caster != o && (target == Some(src) || g.db.get(c).tag(Tag::Wipe)) {
         g.perm_mut(src).phased = true;
     } else {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -563,7 +563,8 @@ pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
     }
     for q in g.opps(p).collect::<Vec<_>>() {
         if g.player(q).poison > 0 && !melira(g, q) {
-            g.player_mut(q).poison += 1;
+            let k = crate::cardcode::vorinclex(g, p, 1); // Vorinclex
+            g.player_mut(q).poison += k as u32;
         }
         for m in g.player(q).perms.clone() {
             if g.is_creature(m) && g.perm(m).plus < 0 {
@@ -2158,7 +2159,7 @@ fn nim_equip_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// enters with three +1/+1 counters
 fn trisk_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
-        g.perm_mut(src).plus += 3;
+        crate::cardcode::put_plus(g, src, 3);
     }
     Ok(())
 }

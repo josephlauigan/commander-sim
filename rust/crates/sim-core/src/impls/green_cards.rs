@@ -244,7 +244,8 @@ pub fn unblockable_by(g: &Game, b: PermId, a: PermId) -> bool {
 /// Venomous Brutalizer: toxic 3 (three poison counters with the combat damage)
 fn brutalizer_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
     if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        g.player_mut(d).poison += 3;
+        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 3); // Vorinclex
+        g.player_mut(d).poison += k as u32;
         crate::glog!(g, "    {} gets 3 poison counters (toxic)", g.player(d).name);
     }
     Ok(())

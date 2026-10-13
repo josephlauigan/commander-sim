@@ -862,7 +862,7 @@ fn battle_cry(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId)
 fn kingpin(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src) && trigger_window(g, p, Some(src), "a +1/+1 counter, then Goblins equal to its power", None)?
     {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
         let n = epow(g, src);
         goblins(g, p, n.max(0) as u32)?;
     }
@@ -1427,7 +1427,7 @@ fn heliod_gain(g: &mut Game, src: Src, p: PlayerId, _n: i32) -> Res {
     let cs = cre(g);
     let t = cs.iter().copied().find(|&m| card_name(g, m) == "Walking Ballista").or_else(|| max_by(&cs, |m| pval(g, m)));
     if let Some(t) = t {
-        g.perm_mut(t).plus += 1;
+        crate::cardcode::put_plus(g, t, 1);
     }
     Ok(())
 }

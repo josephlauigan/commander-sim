@@ -759,7 +759,7 @@ fn krasis(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::engine::life::gain(g, p, x / 2)?;
     draw(g, p, (x / 2) as u32, false)?;
     let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
-    g.perm_mut(m).plus += x;
+    crate::cardcode::put_plus(g, m, x);
     Ok(true)
 }
 

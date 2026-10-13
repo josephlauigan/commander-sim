@@ -284,7 +284,7 @@ fn soulherder(g: &mut Game, src: Src, p: PlayerId) -> Res {
 fn soulherder_grow(g: &mut Game, src: Src, m: PermId) -> Res {
     let o = owner(g, src);
     if g.is_creature(m) && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(1.0))? {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -1251,7 +1251,7 @@ fn constellation(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && trigger_window(g, o, Some(src), "constellation: draw a card", None)?
     {
         if cname(g, src) == "Setessan Champion" {
-            g.perm_mut(src).plus += 1; // and a +1/+1 counter
+            crate::cardcode::put_plus(g, src, 1); // and a +1/+1 counter
         }
         draw(g, o, 1, false)?;
     }

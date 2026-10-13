@@ -102409,6 +102409,54 @@
    "spell_prio": false
   },
   {
+   "name": "Vorinclex, Monstrous Raider",
+   "types": "C",
+   "generic": 4,
+   "pips": "GG",
+   "tags": {
+    "leg": true,
+    "pow": "6",
+    "tgh": "6",
+    "haste": true,
+    "trample": true,
+    "bomb": "6"
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "haste",
+    "trample"
+   ],
+   "subtypes": [
+    "phyrexian",
+    "praetor"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Vraska, Betrayal's Sting",
    "types": "P",
    "generic": 4,

@@ -736,7 +736,7 @@ fn shuriken_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: Playe
     let diff = epow(g, t) - epow(g, me);
     crate::glog!(g, "    Conformer Shuriken taps {}", g.perm(t).name);
     if diff > 0 {
-        g.perm_mut(me).plus += diff;
+        crate::cardcode::put_plus(g, me, diff);
         crate::glog!(g, "    {} gets {} +1/+1 counter(s)", g.perm(me).name, diff);
     }
     Ok(vec![])
@@ -792,7 +792,7 @@ fn snuffler_sacrifice(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> 
         Sacrificed::Card(_) => false,
     };
     if artifact {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -800,7 +800,7 @@ fn snuffler_sacrifice(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> 
 /// Jocasta: whenever your commander deals combat damage to a player, put a +1/+1 counter on Jocasta
 fn jocasta_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, dmg: i32) -> Res {
     if p == owner(g, src) && dmg > 0 && live(g, src) && g.perm(a).is_cmd && owner(g, a) == p {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -826,7 +826,7 @@ pub fn jocasta_attack(g: &mut Game, p: PlayerId, atk: &[PermId]) -> Res<Vec<Perm
 
 /// Zack Fair enters with a +1/+1 counter on it
 fn zack_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
-    g.perm_mut(m).plus += 1;
+    crate::cardcode::put_plus(g, m, 1);
     Ok(())
 }
 
@@ -846,7 +846,7 @@ pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Re
     }
     if live(g, t) {
         super::partials::eot_kw(g, t, "indestructible");
-        g.perm_mut(t).plus += counters;
+        crate::cardcode::put_plus(g, t, counters);
         for e in worn {
             attach(g, e, t);
         }
@@ -1295,7 +1295,7 @@ pub fn cloud_protect(
         if let Some(c) = hand(g, "Take Up the Shield")
             && cast_instant(g, p, c)?
         {
-            g.perm_mut(m).plus += 1;
+            crate::cardcode::put_plus(g, m, 1);
             super::partials::eot_kw(g, m, "lifelink");
             super::partials::eot_kw(g, m, "indestructible");
             return Ok(true);
@@ -1332,7 +1332,7 @@ pub fn cloud_protect(
                     if live(g, x) && (n == "Ultimate Magic: Holy" || g.is_creature(x)) {
                         super::partials::eot_kw(g, x, "indestructible");
                         if n == "Unbreakable Formation" && main && g.is_creature(x) {
-                            g.perm_mut(x).plus += 1;
+                            crate::cardcode::put_plus(g, x, 1);
                             super::partials::eot_kw(g, x, "vigilance");
                         }
                     }

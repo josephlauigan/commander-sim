@@ -246,7 +246,7 @@ fn kappa(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         if !trigger_window(g, o, Some(src), "a +1/+1 counter, can't be blocked", Some(2.0))? {
             return Ok(());
         }
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
         eot_kw(g, src, "unblockable");
     }
     Ok(())

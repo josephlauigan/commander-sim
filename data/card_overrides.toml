@@ -6408,6 +6408,12 @@ note = "7 damage to each creature (compiled); foretell: {2} to exile it face dow
 status = "Full"
 note = "every +1/+1 counter placement on a creature you control (landfall, proliferate, doubling, enters-with-counters, increment, Forced Adaptation ...) gets one more; two Scales stack (cardcode::scales)"
 
+["Vorinclex, Monstrous Raider"]
+tags = "leg pow=6 tgh=6 haste trample bomb=6"
+dsl = []
+status = "Full"
+note = "trample, haste; counters its controller would put on a permanent or player are doubled, an opponent's halved (rounded down): +1/+1 and -1/-1 counters (cardcode::vorinclex / put_plus, the ability language's counters, proliferate, doubling, amass, enters-with-counters incl. persist and undying), planeswalker loyalty (entering, loyalty-ability costs, proliferate), poison (toxic, proliferate); two of them stack. Not routed: the few engine counters kept outside +1/+1 and loyalty (lands' charge, Incubator, Ozolith, lore) and Crusade-style bulk pumps"
+
 ["Bristly Bill, Spine Sower"]
 status = "Full"
 note = "landfall: a +1/+1 counter on target creature (compiled; the bill deck puts it on Silhana, then the biggest stack, then increment and mana creatures); {3}{G}{G}: double the counters on each creature you control, at instant speed (the end of the turn before yours with the mana free, or before combat when it makes the attack lethal; with 4 or more counters)"

@@ -397,7 +397,8 @@ pub fn becomes_target(g: &mut Game, m: PermId, _by: PlayerId) -> Res {
 /// power 2 or less: `rules::evasion_blocked`.
 fn paladin_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
     if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        g.player_mut(d).poison += 6;
+        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 6); // Vorinclex
+        g.player_mut(d).poison += k as u32;
         crate::glog!(g, "    {} gets 6 poison counters (toxic)", g.player(d).name);
     }
     Ok(())
