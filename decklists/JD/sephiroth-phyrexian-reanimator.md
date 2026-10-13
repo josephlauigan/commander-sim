@@ -16,6 +16,7 @@
 **Updated 2026-10-05.** Out: Bolas's Citadel. In: Phyrexian Arena. Bolas's Citadel → Phyrexian Arena. Tested: no loss (0.0 points on average, 1,000 paired games per tier, adaptive AI). Eight Game Changers; still Bracket 4.
 **Updated 2026-10-10 — a flicker package.** Five swaps: **Stinkweed Imp → Teleportation Circle**, **Lash of the Balrog → Conjurer's Closet**, **Grisly Salvage → Restoration Angel**, **Llanowar Elves → Summon: Bahamut**, and **Llanowar Wastes → Karn's Bastion**. None is a Game Changer, so the count stays at eight; still Bracket 4, 100 cards and 37 lands.
 **Updated 2026-10-10 (second pass).** **Avacyn's Pilgrim → Flickering Hound**: the Pilgrim only made {W}, and the Hound turns every creature you cast (Muldrotha's recasts included) into another flicker. Still eight Game Changers, Bracket 4, 100 cards and 37 lands.
+**Updated 2026-10-13.** Out: Smothering Tithe. In: Momentary Blink. Out: Smothering Tithe (to the Cloud deck). In: Momentary Blink (bulk).
 
 ## Strategy
 
@@ -130,13 +131,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (23).** Archon of Cruelty, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Flickering Hound, Grand Abolisher, Grave Titan, Kitchen Finks, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Triskelion, Viscera Seer, Zulaport Cutthroat
 
-**Enchantments (8).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Smothering Tithe, Teleportation Circle, Tortured Existence
+**Enchantments (7).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Teleportation Circle, Tortured Existence
 
 **Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
 
 **Sorceries (9).** Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
 
-**Instants (11).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection
+**Instants (12).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection
 
 **Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Karn's Bastion, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
 
@@ -192,6 +193,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Melira, Sylvok Outcast
 1 Mikaeus, the Unhallowed
 1 Mind Stone
+1 Momentary Blink
 1 Muldrotha, the Gravetide
 1 Necromancy
 1 Nim Deathmantle
@@ -205,7 +207,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sheoldred, the Apocalypse
 1 Sheoldred, Whispering One
 1 Skullclamp
-1 Smothering Tithe
 1 Sol Ring
 1 Stitcher's Supplier
 1 Strip Mine

@@ -19,6 +19,7 @@ noise, leaning positive); `audit/sheoldred/`. The cuts go back to bulk, Lash of 
 (Sauron measured +0.6 with Cost of Brilliance in its slot, within noise; `audit/sauron/2026-10-11-arena-cost-of-brilliance/`).
 The buy list is 19 cards, $40.39.
 **Updated 2026-10-12.** Out: Temple Bell, Castle Locthwain. In: Otherworld Atlas, Mikokoro, Center of the Sea. JD's
+**Updated 2026-10-13.** Out: Champion's Helm. In: Carnage Altar. Out: Champion's Helm (to the Cloud deck). In: Carnage Altar (bulk).
 choice: neither of the first two could be found, so the replacements were bought instead ($1.68 and $4.54). The Atlas
 taps for a charge counter or to make each player draw one card per counter; Mikokoro makes each player draw for {2}.
 Both make opponents draw, so with Sheoldred out each card costs them 2. Measured +0.1 points over all tiers against the
@@ -223,7 +224,7 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 
 **Enchantments (3).** Phyrexian Arena, Soul Enervation, Underworld Dreams
 
-**Artifacts (12).** Arcane Signet, Champion's Helm, Charcoal Diamond, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots
+**Artifacts (12).** Arcane Signet, Carnage Altar, Charcoal Diamond, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots
 
 **Sorceries (13).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Read the Bones, Silence the Echo, Stir Up Trouble, Syphon Mind
 
@@ -241,8 +242,8 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 1 Blood Artist
 1 Bonders' Enclave
 1 Burrog Banemaker
+1 Carnage Altar
 1 Cast Away Doubt
-1 Champion's Helm
 1 Charcoal Diamond
 1 Command Tower
 1 Commander's Sphere
