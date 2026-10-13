@@ -1,0 +1,80 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 12 worker threads: about 80 seconds
+  progress  10.0%  0m04s elapsed, ~0m38s left
+  progress  20.0%  0m08s elapsed, ~0m32s left
+  progress  30.0%  0m11s elapsed, ~0m26s left
+  progress  40.0%  0m14s elapsed, ~0m22s left
+  progress  50.0%  0m19s elapsed, ~0m19s left
+  progress  60.0%  0m22s elapsed, ~0m15s left
+  progress  70.0%  0m26s elapsed, ~0m11s left
+  progress  80.0%  0m30s elapsed, ~0m07s left
+  progress  90.0%  0m34s elapsed, ~0m03s left
+  progress 100.0%  0m39s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== seph analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 34.7%   (4-player baseline 25%)   average rounds survived 11.2
+
+-- How it wins --
+  combo       55.9% of wins
+  damage      43.2% of wins
+  timeout      0.9% of wins
+  Opponents it eliminated: 0.89 per game, by
+    combo              49.5%
+    combat             33.0%
+    drain               8.1%
+    triggers            6.0%
+    commander damage    3.2%
+    decked              0.4%
+  Damage dealt per game: 23.7, from
+    combat              13.8  (58%)
+    drain                8.0  (34%)
+    triggers             1.9  (8%)
+
+-- How it loses --
+  Eliminated in 65.0% of games, on average in round 10.2
+    by Tergrid  via combat             16.2% of games
+    by Aurelia  via combat             13.8% of games
+    by Marwyn   via combat             11.2% of games
+    by Atraxa   via combat              6.9% of games
+    by Tergrid  via drain               4.1% of games
+    by Tergrid  via triggers            3.1% of games
+    by Korvold  via drain               1.9% of games
+    by Atraxa   via triggers            1.2% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 4%  T4 14%  T5 27%  T6 41%  T7 55%  T8 66%  T9 72%  T10 78%  T11 80%  T12 81%
+  Online at all: 81.6% of games
+  Commander resolves on turn: median 8.0, mean 8.3 (over the 60.9% of games it resolves)
+  Commander resolved by turn:  T4 2%  T5 7%  T6 13%  T7 22%  T8 38%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Stitcher's Supplier                        cast in  31.6% of games, win rate when cast  57.4% (+22.7)
+    Tortured Existence                         cast in  32.2% of games, win rate when cast  54.4% (+19.7)
+    Atraxa, Grand Unifier                      cast in  62.2% of games, win rate when cast  49.7% (+15.1)
+  Lowest win rate when cast:
+    Atraxa, Grand Unifier                      cast in  62.2% of games, win rate when cast  49.7% (+15.1)
+    Tortured Existence                         cast in  32.2% of games, win rate when cast  54.4% (+19.7)
+    Stitcher's Supplier                        cast in  31.6% of games, win rate when cast  57.4% (+22.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Mikaeus, the Unhallowed                    cast  47.1% of the games it was drawn
+    Entomb                                     cast  47.3% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.32
+    Archon of Cruelty                          0.12
+    Sheoldred, the Apocalypse                  0.06
+    Summon: Bahamut                            0.05
+    Elesh Norn, Mother of Machines             0.05
+    Mind Stone                                 0.05
+    Sakura-Tribe Elder                         0.05
+    Sheoldred, Whispering One                  0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(40s total)

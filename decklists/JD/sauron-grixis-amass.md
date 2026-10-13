@@ -24,6 +24,7 @@
 **Updated 2026-10-11 (fifth change).** Out: Phyrexian Arena. In: Cost of Brilliance. JD's choice: Arena moves to the Sheoldred deck (saving a buy); Cost of Brilliance (bulk; {2}{B} sorcery: target player draws two and loses 2 life, and a +1/+1 counter on up to one creature, the Army) takes the slot. Measured +0.6 over all tiers, within noise (look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-11-arena-cost-of-brilliance/).
 **Updated 2026-10-13.** Out: Blasphemous Act, Brain Freeze, Chaos Warp, Conqueror's Flail, Dark Ritual, Deepglow Skate, Flux Channeler, Lotus Petal, Spell Pierce, Sword of Fire and Ice, Toxic Deluge, Underworld Breach. In: Chandra's Ignition, Comet Storm, Dimir Signet, Dreadhorde Invasion, Exsanguinate, Fellwar Stone, Inferno Titan, Lazotep Reaver, Massacre Wurm, Rakdos Signet, Ral and the Implicit Maze, Talisman of Indulgence. JD's choice, from the 2026-10-12/13 audit (audit/sauron/2026-10-12-weakness/): one-sided removal in place of the symmetric wipes, a faster start (rocks, Dreadhorde Invasion, Lazotep Reaver), and the Underworld Breach package replaced by Exsanguinate, Comet Storm and two rocks. Measured +8.3 over all tiers with Torment of Hailfire in Comet Storm's slot (24.3% -> 32.6%; T1 +6.8, T2 +8.8, T3 +10.0, T4 +9.9, T5 +5.8; look-ahead, loose, 1,000 paired games per tier); Comet Storm for Torment then measured -0.6, within noise. Brain Freeze, Dark Ritual and Lotus Petal go to Kefka, Flux Channeler to Veyran. Two Game Changers now (Cyclonic Rift, Orcish Bowmasters).
 **Updated 2026-10-13.** Out: Sword of Feast and Famine, Sword of Hearth and Home. In: Chaos Warp, Spell Pierce. JD's choice: both Swords go to the Cloud deck; Chaos Warp and Spell Pierce come back from bulk (both had been cut earlier on 10-13) as answers. Paired test, look-ahead, 500 games per tier: -1.7 over four tiers (t1 +1.6, t2 -3.4, t3 -1.2, t5 -3.6; t4 was blocked by a Conspicuous Snoop crash, since fixed); `audit/cloud/2026-10-13/screen/D1-*`. The Sword of Feast and Famine + Aggravated Assault combo is gone. Game Changers unchanged (2).
+**Updated 2026-10-13.** Out: Bedevil. In: Sheoldred, the Apocalypse. JD's package C: Bedevil out (to bulk), Sheoldred, the Apocalypse in (JD's spare copy): every opponent draw from Jace's Archivist's wheel costs 2 life. Measured +2.7 over all tiers (T1 +5.0, T2 +4.8, T3 +0.6, T4 +2.8, T5 +0.2; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Not a Game Changer: still two, Bracket 3.
 
 ## Strategy
 
@@ -128,7 +129,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (17).** Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (18).** Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
@@ -136,7 +137,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (14).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Relic of Legends, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (27).** Arcane Denial, Bedevil, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Undermine, Vandalblast
+**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -149,7 +150,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Arcane Denial
 1 Arcane Signet
 1 Barad-dûr
-1 Bedevil
 1 Bitter Triumph
 1 Blood Crypt
 1 Bloodchief's Thirst
@@ -207,6 +207,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Scarlet Witch, Chaotic Avenger
 1 Scavenger Grounds
 1 Sephiroth, Planet's Heir
+1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Slaughter Pact
 1 Sol Ring

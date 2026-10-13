@@ -56,6 +56,7 @@
 1x Bastion Protector (msc)
 1x Battle Rampart (roe)
 1x Battlefield Forge (fic)
+1x Bedevil
 1x Behemoth Sledge (fic)
 1x Berta, Wise Extrapolator (sos)
 1x Bespoke Battlewagon (mh3)
@@ -89,6 +90,7 @@
 1x Burning-Tree Vandal (rna)
 2x Burrog Banemaker (sos)
 4x Burrog Barrage (sos)
+1x Cactarantula
 1x Caged Zombie (m21)
 1x Cait Sith, Fortune Teller (fic)
 1x Call a Surprise Witness (mkm)
@@ -180,6 +182,7 @@
 1x Director Nick Fury (msc)
 1x Discerning Peddler (otj)
 1x Disdainful Stroke (soa)
+1x Disintegrate
 1x Dismantling Wave (msc)
 1x Dispatch (fic)
 1x Disposal Mummy (hou)
@@ -216,6 +219,7 @@
 1x Eidolon of Countless Battles (bng)
 2x Elemental Mascot (sos)
 1x Elena, Turk Recruit (fic)
+1x Elfhame Wurm
 2x Elite Interceptor (sos)
 1x Ember Beast (dmr)
 2x Embrace the Paradox (sos)
@@ -396,6 +400,7 @@
 1x Jungle Creeper (rix)
 1x Jungle Hollow (tdm)
 1x Jungle Shrine (fic)
+1x Kaervek's Purge
 1x Kalain, Reclusive Painter (afr)
 3x Karplusan Wolverine (csp)
 1x Kasmina's Transmutation (rvr)
@@ -510,6 +515,7 @@
 1x Path of Ancestry (fic, msc)
 4x Path of Anger's Flame (sok)
 1x Peerless Ropemaster (otj)
+1x Penumbra Spider
 2x Perilous Landscape (tdc, mh3)
 2x Pest Mascot (sos)
 1x Peter Parker's Camera (spm)
@@ -806,6 +812,7 @@
 2x Treno, Dark City (fin)
 1x Trial of Agony (dsk)
 1x Trostani's Summoner (mic)
+1x Twinflame
 2x Twisted Fates (fra)
 1x Twisted Riddlekeeper (mh3)
 1x Two-Headed Sliver (tsr)
@@ -880,6 +887,7 @@
 1x Yargle, Glutton of Urborg (fra)
 1x Yargle, Goliath of Otaria (fra)
 1x Yavimaya Iconoclast (dmu)
+1x Yavimaya Wurm
 1x Yuffie, Materia Hunter (fic)
 1x Zealous Display (eoe)
 2x Zealous Lorecaster (sos)

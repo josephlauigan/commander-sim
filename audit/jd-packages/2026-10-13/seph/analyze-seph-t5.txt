@@ -1,0 +1,73 @@
+note: data/decks.json differs from the deck files for kefka, sauron, titania (the games use the deck files; re-export the cards after changing a list)
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 12 worker threads: about 80 seconds
+  progress  10.0%  0m02s elapsed, ~0m22s left
+  progress  20.0%  0m04s elapsed, ~0m17s left
+  progress  30.0%  0m06s elapsed, ~0m14s left
+  progress  40.0%  0m08s elapsed, ~0m12s left
+  progress  50.0%  0m10s elapsed, ~0m10s left
+  progress  60.0%  0m12s elapsed, ~0m08s left
+  progress  70.0%  0m14s elapsed, ~0m06s left
+  progress  80.0%  0m16s elapsed, ~0m04s left
+  progress  90.0%  0m18s elapsed, ~0m02s left
+  progress 100.0%  0m21s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== seph analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 24.1%   (4-player baseline 25%)   average rounds survived 8.3
+
+-- How it wins --
+  damage      62.3% of wins
+  combo       37.7% of wins
+  Opponents it eliminated: 0.61 per game, by
+    combat             41.2%
+    combo              30.9%
+    drain              16.5%
+    triggers            7.7%
+    commander damage    3.6%
+  Damage dealt per game: 19.4, from
+    combat              13.5  (70%)
+    drain                5.3  (27%)
+    triggers             0.6  (3%)
+
+-- How it loses --
+  Eliminated in 75.9% of games, on average in round 7.2
+    by Kinnan   via combo              20.3% of games
+    by Urza     via combo              15.9% of games
+    by Zur the Enchanter via combo              11.6% of games
+    by Winota   via combo               9.1% of games
+    by Winota   via combat              8.8% of games
+    by Yawgmoth via combo               5.9% of games
+    by Kinnan   via combat              1.6% of games
+    by Zur the Enchanter via commander damage    0.9% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 3%  T4 9%  T5 20%  T6 31%  T7 37%  T8 47%  T9 52%  T10 54%  T11 55%  T12 56%
+  Online at all: 55.9% of games
+  Commander resolves on turn: median 8.0, mean 7.8 (over the 38.1% of games it resolves)
+  Commander resolved by turn:  T4 2%  T5 5%  T6 12%  T7 17%  T8 23%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Atraxa, Grand Unifier                      cast in  39.1% of games, win rate when cast  52.0% (+27.9)
+  Lowest win rate when cast:
+    Atraxa, Grand Unifier                      cast in  39.1% of games, win rate when cast  52.0% (+27.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.07
+    Phyrexian Arena                            0.03
+    Restoration Angel                          0.03
+    Consecrated Sphinx                         0.02
+    Sakura-Tribe Elder                         0.02
+    Summon: Bahamut                            0.02
+    Elesh Norn, Mother of Machines             0.02
+    Grand Abolisher                            0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(22s total)
