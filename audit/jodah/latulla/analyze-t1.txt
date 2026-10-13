@@ -1,0 +1,69 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 12 worker threads: about 2 minutes
+######## vs Tier 1 (High B2 / Low B3) ########
+=========== jodah analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 15.4%   (4-player baseline 25%)   average rounds survived 10.5
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.50 per game, by
+    combat             85.3%
+    commander damage    7.6%
+    decked              3.8%
+    triggers            3.4%
+  Damage dealt per game: 35.5, from
+    combat              35.2  (99%)
+    triggers             0.3  (1%)
+    drain                0.0  (0%)
+-- How it loses --
+  Eliminated in 84.4% of games, on average in round 10.0
+    by Light-Paws via commander damage   16.0% of games
+    by Isshin   via combat             12.9% of games
+    by Tatyova  via combat             12.7% of games
+    by Lathril  via combat             10.0% of games
+    by Teysa Karlov via drain               7.5% of games
+    by Lathril  via drain               6.9% of games
+    by Light-Paws via combat              5.6% of games
+    by Teysa Karlov via combat              4.4% of games
+-- Game plan timing --
+  Plan: first legend cast free by Jodah
+  Online by turn:  T2 0%  T3 0%  T4 1%  T5 10%  T6 23%  T7 33%  T8 42%  T9 47%  T10 53%  T11 55%  T12 56%
+  Online at all: 58.1% of games
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Razia, Boros Archangel                     cast in  24.6% of games, win rate when cast  40.7% (+25.3)
+    Mirri, Weatherlight Duelist                cast in  25.2% of games, win rate when cast  36.4% (+20.9)
+    Tymna the Weaver                           cast in  26.5% of games, win rate when cast  36.2% (+20.8)
+    Dakkon, Shadow Slayer                      cast in  26.7% of games, win rate when cast  35.2% (+19.7)
+    King Darien XLVIII                         cast in  23.5% of games, win rate when cast  31.9% (+16.4)
+    Lagrella, the Magpie                       cast in  25.4% of games, win rate when cast  30.3% (+14.9)
+    Urza, Powerstone Prodigy                   cast in  26.2% of games, win rate when cast  30.2% (+14.7)
+    Wrenn and Six                              cast in  41.9% of games, win rate when cast  29.9% (+14.4)
+    Carth the Lion                             cast in  21.9% of games, win rate when cast  25.7% (+10.3)
+    Helm of Kaldra                             cast in  26.9% of games, win rate when cast  24.0% (+8.6)
+  Lowest win rate when cast:
+    Coalition Relic                            cast in  34.0% of games, win rate when cast  14.7% (-0.7)
+    Jodah, the Unifier                         cast in  90.6% of games, win rate when cast  17.0% (+1.6)
+    Demonic Tutor                              cast in  25.0% of games, win rate when cast  21.7% (+6.2)
+    Skyclave Apparition                        cast in  22.7% of games, win rate when cast  22.9% (+7.5)
+    Helm of Kaldra                             cast in  26.9% of games, win rate when cast  24.0% (+8.6)
+    Carth the Lion                             cast in  21.9% of games, win rate when cast  25.7% (+10.3)
+    Wrenn and Six                              cast in  41.9% of games, win rate when cast  29.9% (+14.4)
+    Urza, Powerstone Prodigy                   cast in  26.2% of games, win rate when cast  30.2% (+14.7)
+    Lagrella, the Magpie                       cast in  25.4% of games, win rate when cast  30.3% (+14.9)
+    King Darien XLVIII                         cast in  23.5% of games, win rate when cast  31.9% (+16.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Privileged Position                        cast  48.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Jodah, the Unifier                         0.64
+    Wrenn and Six                              0.25
+    Dakkon, Shadow Slayer                      0.13
+    The Aetherspark                            0.09
+    Coalition Relic                            0.07
+    Helm of Kaldra                             0.07
+    Mordenkainen                               0.06
+    Terror of the Peaks                        0.06
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+(126s total)

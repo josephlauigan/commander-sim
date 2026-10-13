@@ -1,0 +1,68 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 12 worker threads: about 2 minutes
+######## vs Tier 3 (High B3) ########
+=========== jodah analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 16.7%   (4-player baseline 25%)   average rounds survived 11.0
+-- How it wins --
+  damage      97.5% of wins
+  timeout      2.5% of wins
+  Opponents it eliminated: 0.51 per game, by
+    combat             88.9%
+    commander damage    6.1%
+    triggers            4.9%
+  Damage dealt per game: 30.2, from
+    combat              29.7  (98%)
+    triggers             0.4  (1%)
+    drain                0.1  (0%)
+-- How it loses --
+  Eliminated in 82.7% of games, on average in round 10.5
+    by Aurelia  via combat             22.5% of games
+    by Marwyn   via combat             17.1% of games
+    by Tergrid  via combat             13.1% of games
+    by Atraxa   via combat              7.9% of games
+    by Korvold  via combat              5.0% of games
+    by Tergrid  via triggers            2.9% of games
+    by Tergrid  via drain               2.7% of games
+    by Aurelia  via commander damage    2.5% of games
+-- Game plan timing --
+  Plan: first legend cast free by Jodah
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 9%  T6 22%  T7 32%  T8 42%  T9 48%  T10 51%  T11 53%  T12 55%
+  Online at all: 56.9% of games
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Dakkon, Shadow Slayer                      cast in  25.0% of games, win rate when cast  40.8% (+24.2)
+    Mirri, Weatherlight Duelist                cast in  24.2% of games, win rate when cast  39.7% (+23.0)
+    Razia, Boros Archangel                     cast in  25.2% of games, win rate when cast  38.8% (+22.2)
+    Tymna the Weaver                           cast in  27.1% of games, win rate when cast  34.6% (+17.9)
+    Wrenn and Six                              cast in  41.7% of games, win rate when cast  34.0% (+17.3)
+    Lagrella, the Magpie                       cast in  26.5% of games, win rate when cast  33.9% (+17.2)
+    King Darien XLVIII                         cast in  23.3% of games, win rate when cast  32.1% (+15.5)
+    Helm of Kaldra                             cast in  28.8% of games, win rate when cast  31.9% (+15.2)
+    Urza, Powerstone Prodigy                   cast in  22.5% of games, win rate when cast  31.5% (+14.8)
+    Carth the Lion                             cast in  21.9% of games, win rate when cast  28.6% (+11.9)
+  Lowest win rate when cast:
+    Star Compass                               cast in  20.8% of games, win rate when cast  17.0% (+0.3)
+    Coalition Relic                            cast in  35.0% of games, win rate when cast  18.5% (+1.8)
+    Jodah, the Unifier                         cast in  89.2% of games, win rate when cast  18.7% (+2.0)
+    Demonic Tutor                              cast in  25.4% of games, win rate when cast  23.0% (+6.3)
+    Carth the Lion                             cast in  21.9% of games, win rate when cast  28.6% (+11.9)
+    Urza, Powerstone Prodigy                   cast in  22.5% of games, win rate when cast  31.5% (+14.8)
+    Helm of Kaldra                             cast in  28.8% of games, win rate when cast  31.9% (+15.2)
+    King Darien XLVIII                         cast in  23.3% of games, win rate when cast  32.1% (+15.5)
+    Lagrella, the Magpie                       cast in  26.5% of games, win rate when cast  33.9% (+17.2)
+    Wrenn and Six                              cast in  41.7% of games, win rate when cast  34.0% (+17.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Jodah, the Unifier                         0.52
+    Wrenn and Six                              0.24
+    Dakkon, Shadow Slayer                      0.13
+    The Aetherspark                            0.08
+    Helm of Kaldra                             0.07
+    Mordenkainen                               0.06
+    Coalition Relic                            0.04
+    Terror of the Peaks                        0.04
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+(112s total)
