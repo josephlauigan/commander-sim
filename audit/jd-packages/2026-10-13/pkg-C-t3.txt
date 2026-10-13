@@ -1,0 +1,59 @@
+Swaps: Bedevil -> Sheoldred, the Apocalypse
+
+=== Sauron vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  28.6% ->  29.2%  (delta +0.6 pts, noise ±4.9, paired)   n=500
+               eliminated by (variant): Aurelia 22.8%  Tergrid 15.2%  Korvold 8.2%  Atraxa 12.8%  Marwyn 11.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          28.6% ->  29.2%  +0.6pt   ±5.7 
+    Rounds survived (or game length)                  11.78 ->  11.52   -0.26  ±0.44 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.69 ->   0.70   +0.01  ±0.11 
+    Mana available on your turn 4                      4.11 ->   4.10   -0.01  ±0.19 
+    Mana available on your turn 6                      5.94 ->   5.92   -0.02  ±0.21 
+
+  Speed
+    Games where the game plan came online             63.4% ->  63.2%  -0.2pt   ±6.1 
+    Turn the game plan came online                     7.74 ->   7.47   -0.27  ±0.50 
+    Turn the commander first resolved                  6.66 ->   6.67   +0.01  ±0.31 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            18.22 ->  17.64   -0.58  ±1.22 
+    Tutors resolved per game                           0.45 ->   0.41   -0.04  ±0.08 
+    Spells cast per game                              12.82 ->  12.51   -0.30  ±0.75 
+
+  Interaction
+    Counterspells cast                                 0.77 ->   0.71   -0.06  ±0.11 
+    Spot removal cast                                  1.96 ->   1.78   -0.18  ±0.17*
+    Board wipes cast                                   0.42 ->   0.39   -0.03  ±0.08 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.71   -0.03  ±0.13 
+    Your spells countered                              0.15 ->   0.14   -0.01  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                43.88 ->  42.61   -1.27  ±5.38 
+      ...of which combat damage                       29.67 ->  27.83   -1.84  ±4.14 
+      ...of which magecraft / burn                     4.40 ->   4.30   -0.10  ±1.30 
+      ...of which drain triggers                       6.90 ->   7.76   +0.86  ±1.44 
+      ...of which other triggers                       2.91 ->   2.71   -0.20  ±0.84 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(213s total)

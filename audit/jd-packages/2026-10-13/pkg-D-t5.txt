@@ -1,0 +1,62 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Vorinclex, Monstrous Raider [pool] C 4GG :: leg pow=6 tgh=6 haste trample bomb=6
+   Kura, the Boundless Sky [pool] C 3GG :: leg pow=4 tgh=4 fly dt
+   Tireless Tracker [pool] C 2G :: human pow=3 tgh=2
+   Cartographer's Survey [pool] S 3G :: (no tags)
+Swaps: Yavimaya Wurm -> Vorinclex, Monstrous Raider; Elfhame Wurm -> Kura, the Boundless Sky; Cactarantula -> Tireless Tracker; Penumbra Spider -> Cartographer's Survey
+
+=== Titania vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  16.4% ->  19.2%  (delta +2.8 pts, noise ±4.0, paired)   n=500
+               eliminated by (variant): Urza 16.2%  Zur the Enchanter 14.0%  Winota 20.0%  Kinnan 23.6%  Yawgmoth 6.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (titania) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for titania: first 5/3 Elemental from Titania
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          16.4% ->  19.2%  +2.8pt   ±4.8 
+    Rounds survived (or game length)                   8.22 ->   8.24   +0.02  ±0.44 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.28 ->   0.33   +0.05  ±0.08 
+    Mana available on your turn 4                      4.45 ->   4.41   -0.04  ±0.11 
+    Mana available on your turn 6                      6.56 ->   6.64   +0.08  ±0.24 
+
+  Speed
+    Games where the game plan came online             29.6% ->  33.8%  +4.2pt   ±5.9 
+    Turn the game plan came online                     7.15 ->   6.96   -0.19  ±0.55 
+    Turn the commander first resolved                  6.28 ->   6.08   -0.20  ±0.33 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            10.09 ->  10.20   +0.12  ±0.84 
+    Tutors resolved per game                           0.01 ->   0.01   +0.01  ±0.01 
+    Spells cast per game                               8.57 ->   8.64   +0.07  ±0.75 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.41 ->   0.42   +0.01  ±0.08 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.29 ->   0.25   -0.04  ±0.07 
+    Your spells countered                              0.34 ->   0.33   -0.01  ±0.08 
+
+  Threat & pressure
+    Damage dealt to opponents per game                20.13 ->  25.05   +4.92  ±4.14*
+      ...of which combat damage                       20.13 ->  25.05   +4.92  ±4.14*
+
+--- Reading it ---
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(49s total)

@@ -1,0 +1,61 @@
+Swaps: Twinflame -> Yawgmoth's Will; Kaervek's Purge -> Vampiric Tutor; Disintegrate -> Mystical Tutor
+
+=== Kefka vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  19.0% ->  21.8%  (delta +2.8 pts, noise ±4.4, paired)   n=500
+               eliminated by (variant): Urza 19.0%  Zur the Enchanter 10.8%  Winota 18.6%  Kinnan 23.4%  Yawgmoth 6.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          19.0% ->  21.8%  +2.8pt   ±5.1 
+    Rounds survived (or game length)                   8.23 ->   8.14   -0.09  ±0.41 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.46 ->   0.50   +0.04  ±0.10 
+    Mana available on your turn 4                      3.95 ->   3.92   -0.03  ±0.10 
+    Mana available on your turn 6                      5.60 ->   5.40   -0.20  ±0.19*
+
+  Speed
+    Games where the game plan came online             20.8% ->  19.2%  -1.6pt   ±5.1 
+    Turn the game plan came online                     9.94 ->  10.03   +0.09  ±0.58 
+    Turn the commander first resolved                  5.93 ->   5.83   -0.09  ±0.32 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            21.69 ->  21.32   -0.37  ±2.57 
+    Tutors resolved per game                           0.45 ->   0.78   +0.34  ±0.11*
+    Spells cast per game                               9.40 ->   9.57   +0.18  ±0.98 
+
+  Interaction
+    Counterspells cast                                 0.15 ->   0.17   +0.02  ±0.05 
+    Spot removal cast                                  1.11 ->   1.09   -0.02  ±0.14 
+    Board wipes cast                                   0.04 ->   0.04   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.14 ->   0.11   -0.03  ±0.05 
+    Your spells countered                              0.44 ->   0.47   +0.03  ±0.10 
+
+  Threat & pressure
+    Damage dealt to opponents per game                23.45 ->  22.71   -0.75  ±3.53 
+      ...of which combat damage                       11.91 ->  11.23   -0.68  ±1.92 
+      ...of which magecraft / burn                     1.86 ->   1.78   -0.09  ±0.51 
+      ...of which drain triggers                       8.14 ->   8.03   -0.12  ±1.85 
+      ...of which other triggers                       1.40 ->   1.62   +0.22  ±0.92 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Tutors resolved per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(142s total)

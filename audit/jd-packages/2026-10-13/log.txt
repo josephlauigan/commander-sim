@@ -11,3 +11,24 @@
 15:14 titania t3 exit 0 Win rate 25.9%   (4-player baseline 25%)   average rounds survived 12.2
 15:15 titania t5 exit 0 Win rate 16.6%   (4-player baseline 25%)   average rounds survived 8.2
 15:15 DONE
+15:37 C sauron t1 jobs 7 exit 0 [loose       ] win  34.6% ->  39.6%  (delta +5.0 pts, noise ±4.8, paired)   n=500
+15:41 C sauron t2 jobs 7 exit 0 [loose       ] win  35.2% ->  40.0%  (delta +4.8 pts, noise ±5.1, paired)   n=500
+15:45 C sauron t3 jobs 7 exit 0 [loose       ] win  28.6% ->  29.2%  (delta +0.6 pts, noise ±4.9, paired)   n=500
+15:48 C sauron t4 jobs 7 exit 0 [loose       ] win  31.0% ->  33.8%  (delta +2.8 pts, noise ±4.7, paired)   n=500
+15:50 C sauron t5 jobs 7 exit 0 [loose       ] win  26.2% ->  26.4%  (delta +0.2 pts, noise ±4.1, paired)   n=500
+15:55 A kefka t1 jobs 7 exit 0 [loose       ] win  32.2% ->  29.0%  (delta -3.2 pts, noise ±5.4, paired)   n=500
+16:01 A kefka t2 jobs 7 exit 0 [loose       ] win  41.6% ->  43.0%  (delta +1.4 pts, noise ±5.5, paired)   n=500
+16:05 A kefka t3 jobs 7 exit 0 [loose       ] win  27.6% ->  29.2%  (delta +1.6 pts, noise ±5.2, paired)   n=500
+16:09 A kefka t4 jobs 7 exit 0 [loose       ] win  31.4% ->  33.6%  (delta +2.2 pts, noise ±5.2, paired)   n=500
+16:11 A kefka t5 jobs 7 exit 0 [loose       ] win  19.0% ->  21.8%  (delta +2.8 pts, noise ±4.4, paired)   n=500
+16:16 B veyran t1 jobs 7 exit 0 [loose       ] win  25.4% ->  23.4%  (delta -2.0 pts, noise ±4.9, paired)   n=500
+16:20 B veyran t2 jobs 18 exit 0 [loose       ] win  27.8% ->  22.8%  (delta -5.0 pts, noise ±5.2, paired)   n=500
+16:23 B veyran t3 jobs 11 exit 0 [loose       ] win  23.2% ->  21.6%  (delta -1.6 pts, noise ±4.7, paired)   n=500
+16:27 B veyran t4 jobs 7 exit 0 [loose       ] win  19.8% ->  23.2%  (delta +3.4 pts, noise ±4.5, paired)   n=500
+16:28 B veyran t5 jobs 14 exit 0 [loose       ] win  13.8% ->  12.4%  (delta -1.4 pts, noise ±4.0, paired)   n=500
+16:32 D titania t1 jobs 10 exit 0 [loose       ] win  21.2% ->  18.0%  (delta -3.2 pts, noise ±4.3, paired)   n=500
+16:37 D titania t2 jobs 10 exit 0 [loose       ] win  26.2% ->  30.4%  (delta +4.2 pts, noise ±5.2, paired)   n=500
+16:40 D titania t3 jobs 10 exit 0 [loose       ] win  25.0% ->  25.4%  (delta +0.4 pts, noise ±5.0, paired)   n=500
+16:42 D titania t4 jobs 21 exit 0 [loose       ] win  24.8% ->  29.6%  (delta +4.8 pts, noise ±4.9, paired)   n=500
+16:43 D titania t5 jobs 21 exit 0 [loose       ] win  16.4% ->  19.2%  (delta +2.8 pts, noise ±4.0, paired)   n=500
+16:43 DONE C A B D
