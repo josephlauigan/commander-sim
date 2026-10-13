@@ -82640,6 +82640,43 @@
    "spell_prio": false
   },
   {
+   "name": "Triple Triad",
+   "types": "E",
+   "generic": 3,
+   "pips": "RRR",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "At the beginning of your upkeep, each player exiles the top card of their library. Until end of turn, you may play the card you own exiled this way and each other card exiled this way with lesser mana value than it without paying their mana costs."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Triplicate Spirits",
    "types": "S",
    "generic": 4,
