@@ -1289,6 +1289,22 @@ fn zone_sym(w: Wh) -> Sym {
     if w == Wh::Gy { "escape" } else { "hand" }
 }
 
+/// diagnostics: why a dry run fell short, as a code the report reads (1 mana, 2 blue mana, 3 graveyard fuel, 4 storm
+/// count / anything else); a rough first-fit reading of the position, never used to decide anything
+fn line_shortfall(st: &LineState) -> i64 {
+    let mana = st.land + st.float;
+    let no_blue = st.u == 0 && st.w(GRAPESHOT).is_none() && st.w(PETAL).is_none() && !st.led_bf && st.w(LED).is_none();
+    if mana < 3 {
+        1
+    } else if no_blue {
+        2
+    } else if st.fuel < 3 {
+        3
+    } else {
+        4
+    }
+}
+
 /// mine._dry_run: would the line finish every opponent if nobody interacts? Played for real on a copy of the game
 /// with the opponents' hands removed (so it neither cheats nor fears their counters); cached for the position. Inside
 /// a look-ahead playout (itself a copy) it reuses the real game's answer for this turn (the copy carries it).
@@ -1313,6 +1329,7 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     {
         return Ok(*ok);
     }
+    let real = !g.in_search;
     let island = g.db.id("Island").unwrap();
     let (mut ok, mut no_setup) = (false, false);
     for ns in [false, true] {
@@ -1331,6 +1348,16 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
         }
     }
     g.line_no_setup = ok && no_setup; // the real line follows the plan that worked
+    if real {
+        let code = if ok { 0 } else { line_shortfall(&line_state(g, p)) };
+        let st = &mut g.player_mut(p).stats;
+        st.insert("bl_dry", 1);
+        if ok {
+            st.insert("bl_pass", 1);
+        } else {
+            st.insert("bl_short", code); // the latest failed dry run
+        }
+    }
     g.breach_dry = Some((stamp, key, ok));
     Ok(ok)
 }
@@ -1475,6 +1502,9 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
         }
     }
     check_state(g)?;
+    if g.opps(p).all(|q| !g.player(q).alive || g.player(q).library.is_empty()) {
+        g.player_mut(p).stats.insert("bl_won", 1); // every opponent dead or decked (--analyze)
+    }
     Ok(true)
 }
 
@@ -1509,6 +1539,9 @@ fn line_led(g: &mut Game, p: PlayerId, st: &LineState) -> Res<bool> {
 
 /// mine.breach_options: the AI's main-phase option: go for the Breach line when the dry run finishes the table
 pub fn breach_options(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
+    if g.active == Some(p) && !g.in_search && crate::ai::decks::breach_pieces(g, p) {
+        g.player_mut(p).stats.insert("bl_held", 1); // diagnostics only (--analyze)
+    }
     if g.active != Some(p) || !breach_line(g, p, false)? {
         return Ok(vec![]);
     }

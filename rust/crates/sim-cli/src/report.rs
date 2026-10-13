@@ -304,6 +304,10 @@ pub struct Analysis {
     /// Sauron: the Army's power at the start of turns 6, 8 and 10, one entry per game (0: no Army)
     pub army: [Vec<u32>; 3],
     pub aether: i64,
+    /// the Underworld Breach line: games with the pieces held / dry run tried / passed / executed / won, and the
+    /// shortfall of the last failed dry run (index: none, mana, blue, fuel, storm)
+    pub bl: [i64; 5],
+    pub bl_short: [i64; 5],
     pub seen: Counter<String>,
     pub cast: Counter<String>,
     pub win_seen: Counter<String>,
@@ -350,6 +354,10 @@ impl Analysis {
         }
         self.combo += (me.stat("combo_attempt") != 0) as i64;
         self.aether += (me.stat("aether_shots") != 0) as i64;
+        for (i, k) in ["bl_held", "bl_dry", "bl_pass", "breach_line", "bl_won"].into_iter().enumerate() {
+            self.bl[i] += (me.stat(k) != 0) as i64;
+        }
+        self.bl_short[me.stat("bl_short").clamp(0, 4) as usize] += 1;
         let mut seen: HashSet<&str> = me.seen.iter().map(|s| s.as_str()).collect();
         seen.extend(me.cast.iter().map(|s| s.as_str()));
         for n in seen {
@@ -447,6 +455,27 @@ pub fn print_analysis(
     print_speed(r, deck);
     if matches!(deck, "veyran" | "sauron") {
         println!("  Combo attempted in {:.1}% of games", (100 * r.combo) as f64 / n);
+    }
+    let has = |n: &str| cards.iter().any(|c| c.name == n);
+    if has("Underworld Breach") && (has("Brain Freeze") || has("Grapeshot")) {
+        let [held, dry, pass, exec, won] = r.bl;
+        let pc = |v: i64| (100 * v) as f64 / n;
+        println!("  Breach line: Breach and a storm card held on our turn in {:.1}% of games", pc(held));
+        println!(
+            "    dry run tried in {:.1}%, passed in {:.1}%, executed in {:.1}%, won (table dead or decked) in {:.1}%",
+            pc(dry),
+            pc(pass),
+            pc(exec),
+            pc(won)
+        );
+        let [_, m, b, f, s] = r.bl_short;
+        println!(
+            "    last failed dry run fell short of: mana {:.1}%, blue mana {:.1}%, graveyard fuel {:.1}%, storm count / other {:.1}% of games",
+            pc(m),
+            pc(b),
+            pc(f),
+            pc(s)
+        );
     }
     if deck == "veyran" {
         println!("  Aetherflux fired in {:.1}% of games", (100 * r.aether) as f64 / n);
