@@ -1,0 +1,26 @@
+1,000 games (1 tier, 1,000 per list per tier, profile loose), lookahead AI, 7 worker threads: about 7 minutes
+  progress  10.0%  0m47s elapsed, ~7m07s left
+  progress  20.0%  1m35s elapsed, ~6m20s left
+  progress  30.0%  2m17s elapsed, ~5m21s left
+  progress  40.0%  3m02s elapsed, ~4m34s left
+  progress  50.0%  3m48s elapsed, ~3m48s left
+  progress  60.0%  4m41s elapsed, ~3m07s left
+  progress  70.0%  5m29s elapsed, ~2m21s left
+  progress  80.0%  6m19s elapsed, ~1m34s left
+  progress  90.0%  7m04s elapsed, ~0m47s left
+  progress 100.0%  7m55s elapsed, ~0m00s left
+
+=== Cloud vs Tier 2 (Mid B3) [loose, lookahead AI, 1000 games] ===
+Win rate  11.1%   95% CI 9.3-13.2%   (even share 25%: -13.9 pts)
+Average turn (your own turn count) of wins 14.4, of losses 11.0
+Plan online (first attack by an equipped Cloud): 75.5% of games
+Wins by: damage 96%, timeout 4%
+  Opponent                                    seated  won when seated  eliminated you
+  Kaalia of the Vast (kaalia-mardu-creature-   61.3%            20.1%           19.4%
+  Sythis (sythis-selesnya-enchantress)         60.9%            43.3%           21.2%
+  Lord Windgrace (lord-windgrace-jund-lands)   59.8%            20.1%           13.4%
+  Brago (brago-azorius-blink-control)          59.4%            29.1%           16.7%
+  Meren of Clan Nel Toth (meren-golgari-recu   58.6%            35.7%           17.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(475s total)
