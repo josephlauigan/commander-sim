@@ -818,7 +818,7 @@ pub fn death_value(g: &Game, p: PlayerId, m: Option<PermId>) -> f64 {
         }
     }
     let n = g.opps(p).count() as f64;
-    copies as f64 * (drain * n * 0.8 + draw_ * 1.5 + k * edict_v)
+    copies as f64 * (drain * n * 0.8 + draw_ * 1.5 + k * edict_v) + super::sheoldred::seph_flip_bonus(g, p)
 }
 
 /// common.outlets: p's free sacrifice outlets
@@ -854,27 +854,90 @@ fn sac_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+/// a creature whose own death or presence is the point of the sacrifice engine: never fodder
+pub fn is_payoff(g: &Game, m: PermId) -> bool {
+    let n = card_name(g, m);
+    lookup(&DEATH_DRAIN, n) > 0.0
+        || lookup(&DEATH_DRAW, n) > 0.0
+        || n.starts_with("Sephiroth, Fabled SOLDIER")
+        || def(g, m).is_some_and(|d| d.tag(Tag::Bartist) || d.tag(Tag::Drain))
+}
+
+/// the mana an outlet makes per sacrifice (Phyrexian Altar, Skirk Prospector: 1; Ashnod's Altar: 2)
+fn outlet_mana(name: &str) -> u32 {
+    match name {
+        "Phyrexian Altar" | "Skirk Prospector" => 1,
+        "Ashnod's Altar" => 2,
+        _ => 0,
+    }
+}
+
+/// does p hold a spell it can't pay for now but could with `extra` more mana?
+pub fn mana_needed_now(g: &Game, p: PlayerId, extra: u32) -> bool {
+    if extra == 0 {
+        return false;
+    }
+    let have = total_mana(g, p, false);
+    g.player(p).hand.iter().any(|&c| {
+        let d = g.db.get(c);
+        if d.land {
+            return false;
+        }
+        let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+        let n = gn + pips.len() as u32;
+        n > have && n <= have + extra
+    })
+}
+
+/// what one sacrifice through outlet `o` is worth by itself, beyond the death: a scry, a ping, a counter, or mana when
+/// it's p's own turn and a spell in hand waits on it
+pub fn outlet_gain(g: &Game, p: PlayerId, o: PermId) -> f64 {
+    let n = card_name(g, o);
+    let mana = outlet_mana(n);
+    if mana > 0 {
+        return if g.active == Some(p) && mana_needed_now(g, p, mana) { 2.0 } else { 0.0 };
+    }
+    match n {
+        "Viscera Seer" | "Woe Strider" => 0.3,
+        "Goblin Bombardment" => 1.0,
+        "Carrion Feeder" => 0.3,
+        _ => 0.0,
+    }
+}
+
 /// common.aristocrat_options: sacrifice fodder when the death triggers are worth more than the creature, or are
-/// lethal
+/// lethal (or an outlet's own mana is needed now)
 pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let outs = outlets(g, p);
-    let Some(&src) = outs.first() else { return Ok(vec![]) };
-    let fod: Vec<PermId> = g
-        .player(p)
-        .perms
+    if outs.is_empty() {
+        return Ok(vec![]);
+    }
+    let fod_for = |g: &Game, src: PermId| -> Vec<PermId> {
+        g.player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                let cr = g.is_creature(m);
+                ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(card_name(g, m)))
+                    || (cr && x.token && !x.phased))
+                    && !x.is_cmd
+                    && !crate::engine::values::no_sac(g, m)
+                    && !is_payoff(g, m)
+            })
+            .collect()
+    };
+    // the outlet to use: a mana outlet when its mana is needed now, else the one with the best side effect
+    let src = *outs
         .iter()
-        .copied()
-        .filter(|&m| {
-            let x = g.perm(m);
-            let cr = g.is_creature(m);
-            (cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(card_name(g, m)))
-                || (cr && x.token && !x.phased)
-        })
-        .collect();
+        .max_by(|&&a, &&b| outlet_gain(g, p, a).partial_cmp(&outlet_gain(g, p, b)).unwrap())
+        .unwrap();
+    let fod = fod_for(g, src);
     if fod.is_empty() {
         return Ok(vec![]);
     }
-    let per = death_value(g, p, None);
+    let per = death_value(g, p, None) + outlet_gain(g, p, src);
     let pl = g.player(p);
     let mut drain_per =
         pl.perms.iter().filter(|&&x| g.perm(x).cd.is_some()).map(|&x| lookup(&DEATH_DRAIN, card_name(g, x))).psum()
@@ -895,18 +958,46 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
     }])
 }
 
-/// common.sac_in_response: a creature of p's is about to be exiled / bounced / stolen: sacrifice it for value
-/// instead
+/// common.sac_in_response: a creature of p's is about to be exiled / bounced / stolen, or to die to removal or a wipe
+/// ("destroy", damage): sacrifice it for value instead. A creature that dies anyway only goes when an outlet gives
+/// something by itself.
 pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
-    if !g.is_creature(m) || !matches!(kind, "exile" | "bounce" | "tuck") || g.perm(m).is_cmd {
+    let dying = matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg");
+    if !g.is_creature(m) || !(dying || matches!(kind, "exile" | "bounce" | "tuck")) || g.perm(m).is_cmd {
         return Ok(false);
     }
     if human_of(g, p).is_some() {
         return Ok(false); // a person's creature is not sacrificed for them
     }
-    let Some(&o) = outlets(g, p).iter().find(|&&o| o != m) else { return Ok(false) };
+    let outs: Vec<PermId> = outlets(g, p).into_iter().filter(|&o| o != m).collect();
+    let o = if dying {
+        let Some(&o) = outs.iter().find(|&&o| outlet_gain(g, p, o) > 0.0) else { return Ok(false) };
+        o
+    } else {
+        let Some(&o) = outs.first() else { return Ok(false) };
+        o
+    };
     sac_through(g, p, o, m)?;
     Ok(true)
+}
+
+/// a wipe of `kind` is about to hit q: sacrifice what it will kill through q's free outlets first (q's commander and
+/// anything the wipe spares stay). Returns how many went.
+pub fn sac_before_wipe(g: &mut Game, q: PlayerId, victims: &[PermId]) -> Res<usize> {
+    let mut n = 0;
+    for &m in victims {
+        if !g.perm(m).on_bf || !g.is_creature(m) || g.perm(m).is_cmd || g.perm(m).phased {
+            continue;
+        }
+        let outs: Vec<PermId> = outlets(g, q).into_iter().filter(|&o| o != m).collect();
+        let Some(&o) = outs.iter().max_by(|&&a, &&b| outlet_gain(g, q, a).partial_cmp(&outlet_gain(g, q, b)).unwrap())
+        else {
+            break;
+        };
+        sac_through(g, q, o, m)?;
+        n += 1;
+    }
+    Ok(n)
 }
 
 // ======================================================== simple death-trigger creatures

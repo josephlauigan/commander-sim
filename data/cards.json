@@ -68191,8 +68191,7 @@
    "pips": "",
    "tags": {
     "leg": true,
-    "amt": "2",
-    "c": "B"
+    "c": "C"
    },
    "pow": 0,
    "tgh": 0,
@@ -68205,7 +68204,7 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,

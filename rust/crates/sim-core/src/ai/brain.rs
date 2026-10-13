@@ -888,7 +888,8 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
     } else if g.player(p).perms.iter().any(|&m| {
         let x = g.perm(m);
         !x.phased && x.cd.is_some_and(|c| &*g.db.get(c).name == "Grave Pact")
-    }) {
+    }) || (key != "seph" && !crate::cardcode::outlets_of(g, p).is_empty())
+    {
         o.extend(crate::cardcode::aristocrat_options(g, p, post)?); // Grave Pact: sacrifice for edicts
     }
     o.extend(crate::cardcode::land_options(g, p, post)?);
