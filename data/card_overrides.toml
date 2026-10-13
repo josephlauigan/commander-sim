@@ -6404,6 +6404,12 @@ note = "equip {2}, +2/+1 (compiled); trample and haste while the equipped creatu
 status = "Full"
 note = "7 damage to each creature (compiled); foretell: {2} to exile it face down (kept in hand, marked), cast later for {5}{R}, and then it also destroys an artifact or land of each opponent (the AI foretells with spare mana and casts it when it kills more of theirs than of its own)"
 
+["Kura, the Boundless Sky"]
+tags = "leg pow=4 tgh=4 fly dt"
+dsl = []
+status = "Full"
+note = "flying, deathtouch; dies: the AI chooses up to three lands from the library to hand (nonbasics first) while it has land drops to make (fewer than two lands in hand or under five on the battlefield), otherwise an X/X green Spirit, X = lands you control (impls/green_cards.rs kura_dies; the compiled mode took one nonbasic and a 1/1)"
+
 ["Hardened Scales"]
 status = "Full"
 note = "every +1/+1 counter placement on a creature you control (landfall, proliferate, doubling, enters-with-counters, increment, Forced Adaptation ...) gets one more; two Scales stack (cardcode::scales)"

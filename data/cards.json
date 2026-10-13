@@ -52379,53 +52379,14 @@
    "tags": {
     "leg": true,
     "pow": "4",
-    "dt": true,
-    "fly": true
+    "tgh": "4",
+    "fly": true,
+    "dt": true
    },
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "search",
-          "filter": {
-           "type": "land",
-           "basic": false
-          },
-          "to": "hand",
-          "n": 1,
-          "tapped": false
-         }
-        ],
-        [
-         {
-          "do": "token",
-          "n": 1,
-          "pow": 1,
-          "tgh": 1,
-          "keywords": [],
-          "attacking": false,
-          "warrior": false,
-          "types": [
-           "spirit"
-          ]
-         }
-        ]
-       ]
-      }
-     ],
-     "event": "dies",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "deathtouch",
@@ -52439,7 +52400,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,

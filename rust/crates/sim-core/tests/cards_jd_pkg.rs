@@ -107,3 +107,30 @@ fn jaces_archivist_wheel_is_worth_it_with_sheoldred_out() {
     perm(&mut g, P0, "Sheoldred, the Apocalypse");
     assert!(sim_core::ai::decks::archivist_worth(&g, P0), "each opponent draw costs 2 life");
 }
+
+// ------------------------------------------------------------------ Titania: Kura, the Boundless Sky
+#[test]
+fn kura_dies_into_three_lands_while_there_are_land_drops_to_make() {
+    let mut g = table(&["titania", "seph"]);
+    let before = g.player(P0).hand.len();
+    lands(&mut g, P0, "Forest", 3, false);
+    let k = perm(&mut g, P0, "Kura, the Boundless Sky");
+    sim_core::engine::zones::die(&mut g, k, "destroy").unwrap();
+    let h = &g.player(P0).hand;
+    assert_eq!(h.len() - before, 3);
+    assert!(h.iter().rev().take(3).all(|&c| g.db.get(c).land));
+    assert!(g.player(P0).perms.iter().all(|&m| !g.perm(m).token));
+}
+
+#[test]
+fn kura_dies_into_a_big_spirit_once_the_lands_are_down() {
+    let mut g = table(&["titania", "seph"]);
+    lands(&mut g, P0, "Forest", 6, false);
+    hand(&mut g, P0, &["Forest", "Forest"]);
+    let before = g.player(P0).hand.len();
+    let k = perm(&mut g, P0, "Kura, the Boundless Sky");
+    sim_core::engine::zones::die(&mut g, k, "destroy").unwrap();
+    assert_eq!(g.player(P0).hand.len(), before, "no cards fetched");
+    let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).expect("a Spirit");
+    assert_eq!((sim_core::engine::values::epow(&g, t), sim_core::engine::values::etgh(&g, t)), (6, 6));
+}
