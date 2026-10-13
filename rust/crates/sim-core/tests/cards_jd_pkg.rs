@@ -139,6 +139,18 @@ fn kura_dies_into_a_big_spirit_once_the_lands_are_down() {
 }
 
 #[test]
+fn kura_late_game_makes_the_spirit_even_with_an_empty_hand() {
+    let mut g = table(&["titania", "seph"]);
+    lands(&mut g, P0, "Forest", 9, false);
+    let before = g.player(P0).hand.len();
+    let k = perm(&mut g, P0, "Kura, the Boundless Sky");
+    sim_core::engine::zones::die(&mut g, k, "destroy").unwrap();
+    assert_eq!(g.player(P0).hand.len(), before, "no lands fetched with nine on the battlefield");
+    let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).expect("a Spirit");
+    assert_eq!(sim_core::engine::values::epow(&g, t), 9);
+}
+
+#[test]
 fn titania_casts_survey_early_and_vorinclex_as_a_top_end_threat() {
     let mut g = table(&["titania", "seph"]);
     lands(&mut g, P0, "Forest", 3, false);

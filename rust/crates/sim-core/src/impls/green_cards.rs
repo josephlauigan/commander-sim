@@ -1046,7 +1046,7 @@ const KURA: &str = "Kura, the Boundless Sky";
 
 /// Kura, the Boundless Sky: flying, deathtouch. When it dies, choose one: up to three land cards from the library to
 /// the hand (the Titania deck turns each one into a landfall), or an X/X green Spirit, X = lands you control. The AI
-/// takes the lands while it still has land drops to make (fewer than two lands in hand, or under five on the
+/// takes the lands while it still has land drops to make (fewer than two lands in hand and under seven on the
 /// battlefield) and the library has lands; the Spirit once the lands are down.
 fn kura_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
     let p = g.perm(m).owner;
@@ -1056,7 +1056,7 @@ fn kura_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
     let lib_lands = g.player(p).library.iter().filter(|&&c| g.db.get(c).land).count();
     let in_hand = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
     let on_bf = g.player(p).lands.len();
-    let lands_mode = lib_lands > 0 && (in_hand < 2 || on_bf < 5);
+    let lands_mode = lib_lands > 0 && in_hand < 2 && on_bf < 7;
     let label = if lands_mode { "search for up to three lands" } else { "an X/X Spirit (X = lands)" };
     if !trigger_window(g, p, Some(m), label, None)? {
         return Ok(());
