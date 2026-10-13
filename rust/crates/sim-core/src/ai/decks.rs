@@ -54,7 +54,6 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
         "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
         "alela" => crate::impls::alela::alela_prio(g, p, c),
-        "jodah" => crate::impls::jodah::jodah_prio(g, p, c),
         "kefka" => crate::impls::kefka::kefka_prio(g, p, c),
         "titania" => crate::impls::titania::titania_prio(g, p, c),
         "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
@@ -700,7 +699,6 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     match pl.key {
         "seph" => super::seph::seph_tutor_target(g, p).and_then(|n| g.db.id(n)).filter(|c| okn.contains(c)),
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
-        "jodah" => crate::impls::jodah::jodah_tutor(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {
                 return first(&["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
@@ -1281,7 +1279,6 @@ pub fn protect_response(
         }
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
-        "jodah" => crate::impls::jodah::jodah_protect(g, owner, m, kind, actor, spell),
         "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         "sheoldred" => crate::impls::sheoldred::sheoldred_protect(g, owner, m, kind, actor, spell),
         "cloud" => crate::impls::cloud::cloud_protect(g, owner, m, kind, actor, spell),
@@ -1306,15 +1303,12 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if key == "galadriel" {
         return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
     }
-    if key == "jodah" {
-        return crate::impls::jodah::jodah_wipe_response(g, q, kind, caster);
-    }
     if key == "cloud"
         && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
     {
         return Ok(Some(r)); // Ultimate Magic: Holy
     }
-    if matches!(key, "galadriel" | "yshtola" | "jodah") {
+    if matches!(key, "galadriel" | "yshtola") {
         return Ok(None);
     }
     let loss = wipe_loss(g, q, kind, caster);

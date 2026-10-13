@@ -653,14 +653,14 @@ fn deadly_dispute_sacrifices_draws_two_and_makes_a_treasure() {
     let _ = c;
 }
 
-// ------------------------------------------------------------------ Part 2: Jodah's cards in a sheoldred game
+// ------------------------------------------------------------------ Part 2: Memory Jar in a sheoldred game
 #[test]
-fn memory_jar_is_cracked_at_once_with_sheoldred_out_and_by_jodahs_rule_without() {
+fn memory_jar_is_cracked_at_once_with_sheoldred_out_and_by_its_own_rule_without() {
     let mut g = game();
     g.active = Some(P0);
     let jar = perm(&mut g, P0, "Memory Jar");
     hand(&mut g, P0, &["Hullcarver", "Locust Spray", "Ribskiff", "Diary of Dreams", "Tome of Legends"]);
-    assert!(perm_opts(&mut g, jar, P0, Some(false)).is_empty(), "five cards and no mana: Jodah's rule says no");
+    assert!(perm_opts(&mut g, jar, P0, Some(false)).is_empty(), "five cards and no mana: Memory Jar's own rule says no");
     perm(&mut g, P0, SHEO);
     let o = perm_opts(&mut g, jar, P0, Some(false));
     assert_eq!(o.len(), 1, "with Sheoldred out it is cracked whatever the hand");

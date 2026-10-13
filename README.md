@@ -36,7 +36,7 @@ rust/                     the Rust workspace (rust/README.md)
                           in crates/practice/static/
   crates/cardgen/         cardgen: builds data/cards.json and data/decks.json, edits decks, audits cards
 data/                     the card data (below); images/ and saves/ (practice mode, not in git)
-decklists/JD/             JD's decks: Jodah, Sauron, Sephiroth, Veyran, Y'shtola
+decklists/JD/             JD's decks: Sauron, Sephiroth, Veyran, Y'shtola
 decklists/Avery/          Avery's decks: Alela, Galadriel
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
 documents/                architecture.md, practice-mode.md, card-audit.md and the design notes
@@ -68,7 +68,7 @@ commander-sim --deck veyran --cards                                    # every c
 
 Options:
 
-- `--deck`: `seph`, `veyran`, `sauron`, `yshtola`, `jodah`, `galadriel` or `alela`.
+- `--deck`: `seph`, `veyran`, `sauron`, `yshtola`, `galadriel` or `alela`.
 - `--pool`: `t1` to `t5`, or `all`. Required, unless you use `--all-decks` or `--calibrate`.
 - `--swap`: `"Card Out=>Card In"`. Repeat it for several swaps.
 - `--games`: games per list per profile (default 1500). `--n` is the same.
@@ -206,7 +206,7 @@ The pool results and calibration are in `decklists/pool/pool-results.md`.
 ## Your decks
 
 The baseline is the list in each deck's `.md` file (the `## Import list` block), in its owner's folder:
-`decklists/JD/` (Jodah, Sauron, Sephiroth, Veyran, Y'shtola) and `decklists/Avery/` (Alela, Galadriel).
+`decklists/JD/` (Sauron, Sephiroth, Veyran, Y'shtola) and `decklists/Avery/` (Alela, Galadriel).
 `data/my_decks.toml` maps each deck key to its file, display name, commander and colour identity; to add a deck, add
 a table there. Point `SIM_DECKS` at another folder (flat, or with the same owner folders) to use lists kept elsewhere.
 

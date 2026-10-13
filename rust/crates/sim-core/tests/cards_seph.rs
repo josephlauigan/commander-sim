@@ -774,7 +774,7 @@ fn bastion_proliferates_bahamut_and_the_loop_counters() {
 #[test]
 fn nim_deathmantle_leaves_marchesa_returns_alone() {
     // Nim Deathmantle doesn't pay {4} for a creature Marchesa returns for free
-    let mut g = table(&["jodah", "veyran"]);
+    let mut g = table(&["galadriel", "veyran"]);
     lands(&mut g, P0, "Swamp", 4, false);
     perm(&mut g, P0, "Marchesa, the Black Rose");
     perm(&mut g, P0, "Nim Deathmantle");

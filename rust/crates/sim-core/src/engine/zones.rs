@@ -189,7 +189,7 @@ pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
 /// default colour of a deck's tokens
 pub fn token_color(key: &str) -> Colors {
     Colors::from_letters(match key {
-        "najeela" | "galadriel" | "yshtola" | "jodah" => "W",
+        "najeela" | "galadriel" | "yshtola" => "W",
         "seph" | "sauron" => "B",
         "veyran" => "R",
         "alela" => "U",

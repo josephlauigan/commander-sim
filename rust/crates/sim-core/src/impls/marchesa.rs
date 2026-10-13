@@ -1,5 +1,5 @@
 //! Python's `cards/impl/marchesa.py`: card rules first written for the Marchesa deck (removed 2026-10-07), kept for
-//! the cards other lists still run: Marchesa, the Black Rose (Jodah's 99), Coalition Relic, Notion Thief's flash,
+//! the cards other lists still run: Marchesa, the Black Rose (a legends list's 99), Coalition Relic, Notion Thief's flash,
 //! Hellkite Tyrant's alternate win, Accursed Marauder, and the shared helpers other modules use (best_steal and steal,
 //! card_etb_value). Deep Analysis, Last Gasp and Tezzeret's Gambit are tags only (data/cards.json).
 

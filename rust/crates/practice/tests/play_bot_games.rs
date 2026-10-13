@@ -171,6 +171,6 @@ fn alela_t3() {
     play("alela", "t3", 2);
 }
 #[test]
-fn jodah_t4() {
-    play("jodah", "t4", 2);
+fn seph_t4() {
+    play("seph", "t4", 2);
 }

@@ -9659,7 +9659,7 @@
    "generic": 3,
    "pips": "R",
    "tags": {
-    "prot": "jodah"
+    "prot": "swat"
    },
    "pow": 0,
    "tgh": 0,
@@ -20317,7 +20317,7 @@
    "generic": 1,
    "pips": "B",
    "tags": {
-    "prot": "jodah"
+    "prot": "ind"
    },
    "pow": 0,
    "tgh": 0,
@@ -49895,8 +49895,7 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "RG",
-    "pain": true
+    "c": "RG"
    },
    "pow": 0,
    "tgh": 0,
@@ -53195,7 +53194,7 @@
    "generic": 1,
    "pips": "U",
    "tags": {
-    "prot": "jodah"
+    "prot": "hex"
    },
    "pow": 0,
    "tgh": 0,
@@ -55355,7 +55354,7 @@
    "generic": 0,
    "pips": "W",
    "tags": {
-    "prot": "jodah"
+    "prot": "hexind"
    },
    "pow": 0,
    "tgh": 0,
@@ -76716,7 +76715,7 @@
    "generic": 0,
    "pips": "G",
    "tags": {
-    "prot": "jodah"
+    "prot": "hex"
    },
    "pow": 0,
    "tgh": 0,
@@ -84835,7 +84834,7 @@
    "generic": 0,
    "pips": "G",
    "tags": {
-    "prot": "jodah"
+    "prot": "hex"
    },
    "pow": 0,
    "tgh": 0,
@@ -91841,7 +91840,7 @@
    "generic": 0,
    "pips": "G",
    "tags": {
-    "prot": "jodah"
+    "prot": "hexind"
    },
    "pow": 0,
    "tgh": 0,

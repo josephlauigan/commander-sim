@@ -19,13 +19,13 @@ commander-sim --deck seph --pool all --profile loose                           #
 commander-sim --all-decks --pool all --profile loose --games 960               # your decks x tiers matrix
 commander-sim --deck seph --pool t3 --analyze                                  # how it wins and loses, card report
 commander-sim --deck seph --pool t3 --trace 12                                 # play-by-play of game 12 (seed 500012)
-commander-sim --deck jodah --cards                                             # the cards, tags and Game Changers
+commander-sim --deck seph --cards                                             # the cards, tags and Game Changers
 commander-sim --calibrate within|ordering|all --games 2000 --ai adaptive       # pool balance checks
 ```
 
 | option | |
 |---|---|
-| `--deck KEY` | seph, veyran, sauron, galadriel, yshtola, alela, jodah |
+| `--deck KEY` | seph, veyran, sauron, galadriel, yshtola, alela |
 | `--swap "OUT=>IN"` | repeat for several; a paired run of the list and the variant (same seeds, seats and draws) |
 | `--pool t1..t5\|all` | the tier the three opponents are drawn from |
 | `--all-decks` | every deck of yours against `--pool` (default all) |
