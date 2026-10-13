@@ -344,7 +344,7 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     };
     let exposed = crate::ai::brain::removal_risk(g, p) >= 0.3;
     let mut order: Vec<&str> = vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"];
-    if exposed {
+    if exposed && held >= 1 {
         order.insert(0, "Champion's Helm"); // hexproof for the legend
     } else {
         order.push("Champion's Helm");
@@ -355,9 +355,9 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         order.extend(["Mask of Memory", "Sword of Kaldra", "Wrecking Ball Arm", "Hero's Blade"]);
     }
     order.extend(["Colossus Hammer", "Hulkbuster Armor", "Shield of Kaldra", "Helm of Kaldra"]);
-    // the first piece that can be cast and equipped by next turn, in this order; else the cheapest in all
+    // the first piece that can be cast next turn and equipped within a turn after (cast + equip <= mana + 2), in order
     let ready =
-        order.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && total(*c) <= mana);
+        order.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && total(*c) <= mana + 2);
     if let Some(c) = ready {
         return Some(c);
     }
@@ -378,7 +378,7 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         "Mask of Memory",
     ];
     if let Some(c) =
-        REST.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && total(*c) <= mana)
+        REST.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && total(*c) <= mana + 2)
     {
         return Some(c);
     }
@@ -1428,7 +1428,16 @@ pub fn reenter_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
 /// swings and attacks with more attackers than good blockers go ahead), and Cloud himself only when he wears
 /// Equipment or no creature can block him: he is the engine, and a 2/1 that dies is a recast at a higher tax
 pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
-    let mut out = crate::ai::pool::attack_filter(g, p, atk, d);
+    let out = crate::ai::pool::attack_filter(g, p, atk, d);
+    keep_cloud_home(g, p, out, d)
+}
+
+/// the look-ahead's "all" plan (combat.rs) skips the filters above; Cloud with nothing real on him still stays home
+pub fn all_out_trim(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
+    keep_cloud_home(g, p, atk, d)
+}
+
+fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
     let Some(cl) = cloud_of(g, p) else { return out };
     if !out.contains(&cl) || strong_gear(g, cl) || crate::engine::values::indestructible(g, cl) {
         return out;
