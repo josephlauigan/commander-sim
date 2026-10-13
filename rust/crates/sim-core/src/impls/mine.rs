@@ -1335,11 +1335,14 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     Ok(ok)
 }
 
-/// mine.breach_line: Sauron's Breach line. Dry run (execute false): does it finish every opponent (burned to 0 or
-/// milled out) if nobody interacts? Execute: cast it for real, one spell at a time (each can be countered).
+/// mine.breach_line: the Underworld Breach line (Sauron's; any deck holding Breach and a storm card runs it). Dry run
+/// (execute false): does it finish every opponent (burned to 0 or milled out) if nobody interacts? Execute: cast it for real, one spell at a time (each can be countered).
 pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
-    if g.player(p).key != "sauron" || g.opps(p).next().is_none() {
+    if g.opps(p).next().is_none() {
         return Ok(false);
+    }
+    if g.player(p).key != "sauron" && !crate::ai::decks::breach_pieces(g, p) {
+        return Ok(false); // any deck holding the pieces may run the line (cheap check first)
     }
     let st = line_state(g, p);
     if !st.breach && !st.breach_hand {

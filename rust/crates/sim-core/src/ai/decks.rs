@@ -724,6 +724,17 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             }
             first(&["Stock Up", "Flow State", "Quick Study", "Crackle with Power"])
         }
+        "kefka" if kind == "any" && super::decks::deck_has_storm(g, p) => {
+            // Diabolic Tutor for the Breach line: the missing half first
+            let st = storm_held(g, p);
+            if !breach_out(g, p) {
+                return first(&["Underworld Breach"]);
+            }
+            if !st {
+                return first(&["Brain Freeze", "Grapeshot"]);
+            }
+            first(&["Dark Ritual", "Lotus Petal", "Cabal Ritual"])
+        }
         "sauron" => {
             let sw = held(Tag::Sword);
             let asl = held(Tag::Assault);
@@ -1450,4 +1461,68 @@ pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     }
     g.player_mut(p).stat("braids_sacs", 1);
     Ok(())
+}
+
+// ------------------------------------------------------------------ the Breach line outside Sauron
+/// a card of the Underworld Breach line other than Breach itself: a storm card (Brain Freeze, Grapeshot) or a ritual
+fn is_storm_card(g: &Game, c: CardId) -> bool {
+    matches!(&*g.db.get(c).name, "Brain Freeze" | "Grapeshot")
+}
+
+fn is_ritual_card(g: &Game, c: CardId) -> bool {
+    matches!(&*g.db.get(c).name, "Dark Ritual" | "Cabal Ritual" | "Lotus Petal" | "Lion's Eye Diamond" | "Jeska's Will")
+}
+
+/// Underworld Breach in hand or on the battlefield
+pub fn breach_out(g: &Game, p: PlayerId) -> bool {
+    has(g, p, Tag::Breach) || in_hand_tag(g, p, Tag::Breach)
+}
+
+/// a storm card in hand or graveyard (the graveyard one is escaped by the Breach)
+pub fn storm_held(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    pl.hand.iter().chain(pl.gy.iter()).any(|&c| is_storm_card(g, c))
+}
+
+/// the cheap test for the line: Breach out and a storm card in hand or graveyard
+pub fn breach_pieces(g: &Game, p: PlayerId) -> bool {
+    breach_out(g, p) && storm_held(g, p)
+}
+
+/// a deck that carries the line's storm card (so its tutors and Breach plan for it)
+pub fn deck_has_storm(g: &Game, p: PlayerId) -> bool {
+    ["Brain Freeze", "Grapeshot"].iter().any(|n| g.db.id(n).is_some_and(|c| g.player(p).deck_names.contains(&c)))
+}
+
+/// the cast priority of a line card for a deck that isn't built around the line (Kefka): the storm cards wait for
+/// Breach, the rituals for Breach and a storm card, and Breach itself for a storm card; None when the line has no
+/// claim on the card (it keeps its usual priority, so a deck without the storm card plays Breach as before)
+pub fn breach_hold_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    let t = &g.db.get(c).tags;
+    if t.has(Tag::Breach) {
+        return storm_held(g, p).then_some(0);
+    }
+    if is_storm_card(g, c) || t.has(Tag::Led) {
+        return breach_out(g, p).then_some(0);
+    }
+    if is_ritual_card(g, c) {
+        return breach_pieces(g, p).then_some(0);
+    }
+    None
+}
+
+/// worth added to a line card's discard score: Breach, a storm card or a ritual that the other half of the line is
+/// waiting for isn't thrown away (a storm card with no Breach in sight goes to the graveyard happily: it is escaped)
+pub fn breach_keep_bonus(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    let t = &g.db.get(c).tags;
+    let keep = if t.has(Tag::Breach) {
+        storm_held(g, p)
+    } else if is_storm_card(g, c) || t.has(Tag::Led) {
+        has(g, p, Tag::Breach) || g.player(p).hand.iter().any(|&x| x != c && g.db.get(x).tag(Tag::Breach))
+    } else if is_ritual_card(g, c) {
+        breach_pieces(g, p)
+    } else {
+        false
+    };
+    if keep { 80.0 } else { 0.0 }
 }
