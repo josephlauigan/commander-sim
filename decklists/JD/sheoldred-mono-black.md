@@ -19,7 +19,7 @@ noise, leaning positive); `audit/sheoldred/`. The cuts go back to bulk, Lash of 
 (Sauron measured +0.6 with Cost of Brilliance in its slot, within noise; `audit/sauron/2026-10-11-arena-cost-of-brilliance/`).
 The buy list is 19 cards, $40.39.
 **Updated 2026-10-12.** Out: Temple Bell, Castle Locthwain. In: Otherworld Atlas, Mikokoro, Center of the Sea. JD's
-**Updated 2026-10-13.** Out: Champion's Helm. In: Carnage Altar. Out: Champion's Helm (to the Cloud deck). In: Carnage Altar (bulk).
+**Updated 2026-10-13.** Out: Champion's Helm. In: Carnage Altar. JD's choice: Champion's Helm goes to the Cloud deck; Carnage Altar comes back from bulk (it was in the deck until 10-11). Paired test, 500 games per tier: -0.6 (t1 -2.2, t2 -1.4, t3 +3.0, t4 -1.6, t5 -0.6); `audit/cloud/2026-10-13/screen/D3-*`. Her protection equipment is now Swiftfoot Boots (hexproof) and Darksteel Plate (indestructible).
 choice: neither of the first two could be found, so the replacements were bought instead ($1.68 and $4.54). The Atlas
 taps for a charge counter or to make each player draw one card per counter; Mikokoro makes each player draw for {2}.
 Both make opponents draw, so with Sheoldred out each card costs them 2. Measured +0.1 points over all tiers against the
@@ -44,7 +44,7 @@ opponent draws a card, they lose 2 life.* Three opponents' draw steps drain 6 li
   Phyrexian Rager, Skyscanner, Deadly Dispute, Cast Away Doubt, Seymour Flux, Bonders' Enclave, and
   Gix (a card whenever one of your creatures hits an opponent).
 - **Finish.** Exsanguinate (X life from each opponent) and Gray Merchant of Asphodel (devotion to black).
-- **Protect her.** Champion's Helm (hexproof on a legend), Swiftfoot Boots, Darksteel Plate, Masterful Flourish,
+- **Protect her.** Swiftfoot Boots (hexproof), Darksteel Plate (indestructible), Masterful Flourish,
   Battle-Rage Blessing and Perigee Beckoner (she comes back if she dies).
 - **Remove threats.** 13 removal spells, from Terror and Last Gasp to Invoke Despair; Melancholic Poet drains each
   opponent for every one that targets a creature.
@@ -55,7 +55,7 @@ opponent draws a card, they lose 2 life.* Three opponents' draw steps drain 6 li
 
 - **Turns 1-3:** a rock (Arcane Signet, Fellwar Stone, Mind Stone, Charcoal Diamond, Commander's Sphere, Potioner's
   Trove) and a cheap blocker; Sheoldred on turn 3 or 4. Underworld Dreams is a fine turn-3 play on its own.
-- **With Sheoldred out:** equip Champion's Helm or Swiftfoot Boots first, then the draw engines: Howling Mine, Seizan,
+- **With Sheoldred out:** equip Swiftfoot Boots or Darksteel Plate first, then the draw engines: Howling Mine, Seizan,
   Mikokoro and Otherworld Atlas at each opponent's end step, Memory Jar the turn she's safe. Hold a protection instant
   for removal aimed at her.
 - **Without her:** removal, Underworld Dreams, Fate Unraveler and the drain creatures (Blood Artist, Al Bhed Salvagers,
@@ -192,7 +192,7 @@ column says where each comes from (Bulk, Binder, Jodah, Sauron, or a buy with it
 | Card | Type | From | Set |
 |---|---|---|---|
 | Arcane Signet | Artifact | Bulk | fic, msc |
-| Champion's Helm | Artifact | Bulk | fic |
+| Carnage Altar | Artifact | Bulk | — |
 | Charcoal Diamond | Artifact | Buy, $0.38 |  |
 | Commander's Sphere | Artifact | Buy, $0.31 |  |
 | Darksteel Plate | Artifact | Bulk | fic |

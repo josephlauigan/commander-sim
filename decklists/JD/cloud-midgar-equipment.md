@@ -1,6 +1,6 @@
 # Cloud, Midgar Mercenary — Mono-White Equipment
 
-**Updated 2026-10-13.** Out: Argivian Find, Call a Surprise Witness, Cho-Manno's Blessing, Conformer Shuriken, Essence Reliquary, Harsh Annotation, Hero's Heirloom, Hulkbuster Armor, Magitek Scythe, Magnetic Snuffler, Make Your Move, Medic's Kitesail, Memory Trap, Potioner's Trove, Rapier Wit, Recruitment Officer, Repel the Darkness, Shardmage's Rescue, Squire's Lightblade, Take Up the Shield, Tome of Legends, Trailblazer's Boots, Ultimate Magic: Holy, White Auracite. In: Arcane Signet, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Auriok Steelshaper, Balan, Wandering Knight, Champion's Helm, Coalition Relic, Court of Ardenvale, Enlightened Tutor, Fellwar Stone, Giver of Runes, Grand Abolisher, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Mind Stone, Plaza of Heroes, Skyclave Apparition, Smothering Tithe, Sol Ring, Solemn Simulacrum, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel. C3 + C4: 27 swaps (mana, swords, Jodah pieces, free equips, backup carriers, protection).
+**Updated 2026-10-13.** JD committed to the C3 + C4 list: 27 swaps. Out: Argivian Find, Call a Surprise Witness, Cho-Manno's Blessing, Conformer Shuriken, Essence Reliquary, Harsh Annotation, Hero's Heirloom, Hulkbuster Armor, Magitek Scythe, Magnetic Snuffler, Make Your Move, Medic's Kitesail, Memory Trap, Potioner's Trove, Rapier Wit, Recruitment Officer, Repel the Darkness, Shardmage's Rescue, Squire's Lightblade, Take Up the Shield, Tome of Legends, Trailblazer's Boots, Ultimate Magic: Holy, White Auracite. In, by group: **mana** (Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Coalition Relic, Thought Vessel, Smothering Tithe, Solemn Simulacrum, Knight of the White Orchid, Loyal Warhound; 33 lands with Plaza of Heroes); **swords and protection** (Sword of Fire and Ice, Sword of Feast and Famine, Sword of Hearth and Home, Champion's Helm, Swiftfoot Boots, Giver of Runes, Grand Abolisher); **free equips and backup carriers** (Ardenn, Auriok Steelshaper, Kor Outfitter, Balan, Armored Skyhunter, Kor Duelist); **others from the retired Jodah deck** (Enlightened Tutor, Skyclave Apparition, Court of Ardenvale). Not measured yet: C3 alone, before the AI fixes, was t1 +2.6, t2 +5.0, t3 +0.6 (`audit/cloud/2026-10-13/`).
 
 **Added 2026-10-12.** JD's candidate for a last deck with no black or green (no Swamps or Forests left). Built from the
 bulk and binder lists, the Kaldra pieces from Jodah (if this deck is chosen, Jodah gives them up), and one buy: Cloud,
@@ -12,28 +12,59 @@ Cloud, Midgar Mercenary ({W}{W}, 2/1 Human Soldier Mercenary) reads: *When Cloud
 Equipment card, reveal it, put it into your hand, then shuffle. As long as Cloud is equipped, if a triggered ability of
 Cloud or an Equipment attached to it triggers, that ability triggers an additional time.*
 
-**A two-mana tutor that comes back.** Every time Cloud enters he finds an Equipment. He's cheap to recast from the
-command zone, and Ennis, Forum Familiar, Unyielding Gatekeeper, Stormfront Riders and Essence Reliquary make him enter
-again; Recommission, Call a Surprise Witness and Unfinished Business bring him back from the graveyard.
+**Ramp to four or five mana.** Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic and Thought Vessel,
+plus Solemn Simulacrum, Knight of the White Orchid, Loyal Warhound and Smothering Tithe, with 33 lands. The deck wants
+Cloud out on turn two and a Sword or two equips paid by turn four.
 
-**Doubled triggers.** Equipped, Cloud doubles Mask of Memory (draw four, discard two), Conformer Shuriken (tap two
-blockers), Medic's Kitesail and White Mage's Staff (life), Explorer's Scope (two looks for a land) and Sword of Kaldra.
-Hero's Blade attaches itself whenever Cloud (or another legend) enters.
+**Cloud tutors first.** Every time Cloud enters he finds an Equipment, and he is cheap to recast from the command zone.
+The first search is a cheap Sword (Fire and Ice, Feast and Famine, Hearth and Home) or Champion's Helm; Enlightened
+Tutor finds the next piece. Ennis, Forum Familiar, Unyielding Gatekeeper and Stormfront Riders make him enter again;
+Recommission and Unfinished Business bring him back from the graveyard.
+
+**Doubled triggers.** Equipped, Cloud doubles every Equipment trigger: the Swords (Fire and Ice deals 2 damage and draws
+a card, Feast and Famine makes a player discard and untaps your lands, Hearth and Home blinks a creature you own),
+Mask of Memory (draw four, discard two), White Mage's Staff (life), Explorer's Scope (two looks for
+a land) and Sword of Kaldra. Hero's Blade attaches itself whenever Cloud (or another legend) enters.
+
+**Free equips.** Ardenn attaches an Aura or Equipment each combat, Kor Outfitter attaches one when it enters, Auriok
+Steelshaper makes Equipment cost {1} less, and Puresteel Paladin (equip {0} with three artifacts) and Cid make the big
+equip costs payable. Helitrooper and Armory Automaton also carry gear.
 
 **Making a 2/1 lethal.** Wrecking Ball Arm equips a legend for {3} (base 7/7, can't be blocked by power 2 or less);
-Sword of Kaldra +5/+5; Colossus Hammer +10/+10; Hulkbuster Armor base 9/9 and flying; Helm of Kaldra first strike,
-trample and haste; Veteran's Powerblade equips a Soldier for {W}. Puresteel Paladin (equip {0} with three artifacts),
-Cid (Equipment cost {1} less), Helitrooper, Armory Automaton and Beatrix make the big equip costs payable. With all three
-Kaldra pieces out, Helm of Kaldra makes a Kaldra token wearing them.
+Sword of Kaldra +5/+5; Colossus Hammer +10/+10; Helm of Kaldra first strike, trample and haste; Veteran's Powerblade
+equips a Soldier for {W}. With all three Kaldra pieces out, Helm of Kaldra makes a Kaldra token wearing them.
 
-**Keeping him alive.** Bastion Protector (commander +2/+2 and indestructible), Shield of Kaldra, Patriot, Zack Fair,
-Take Up the Shield, Unbreakable Formation, Shardmage's Rescue, Cho-Manno's Blessing, Ultimate Magic: Holy, Rootborn
-Defenses.
+**Backup carriers when Cloud is dead.** Balan, Kor Duelist, Armored Skyhunter, Bronze Guardian and Exalted Angel carry
+the Swords just as well, and Beatrix, Thalia the Survivor and Zack Fair give the team something to attach to.
+
+**Keeping Cloud alive.** Champion's Helm (hexproof on a legend) and Swiftfoot Boots (hexproof and haste), Giver of Runes
+(protection for another creature), Grand Abolisher (nothing happens on your turn), Plaza of Heroes (legendary spells
+can't be countered), Bastion Protector (commander +2/+2 and indestructible), Shield of
+Kaldra, Patriot, and the protection instants: Unbreakable Formation, Rootborn Defenses, Stand Up for Yourself.
+
+## Bracket
+
+**Bracket 3,** with two Game Changers: **Smothering Tithe** and **Enlightened Tutor**.
 
 ## Where the cards come from
 
-**To buy:** Cloud, Midgar Mercenary. **From Jodah:** Sword of Kaldra, Shield of Kaldra, Helm of Kaldra. **From the
-binder:** Exalted Angel, Disenchant. **Everything else:** bulk, plus 31 Plains of your own.
+Eleven cards are bought (listed below); 28 Plains and Giver of Runes are your own; the cards below come
+from the other decks, the binder and the retired Jodah deck. Everything else is bulk.
+
+| Card | From |
+|---|---|
+| Sword of Feast and Famine, Sword of Hearth and Home | Sauron |
+| Smothering Tithe | Sephiroth |
+| Champion's Helm | Sheoldred |
+| Swiftfoot Boots | Kefka |
+| Arcane Signet, Fellwar Stone, Coalition Relic, Solemn Simulacrum, Enlightened Tutor, Grand Abolisher, Skyclave Apparition, Court of Ardenvale, Plaza of Heroes, Sword of Kaldra, Shield of Kaldra, Helm of Kaldra | Retired Jodah deck |
+| Exalted Angel, Disenchant | Binder |
+| Giver of Runes, 28 Plains | JD's own (not on the lists) |
+**To buy (11 cards, about $33.26; Scryfall, cheapest printing, 2026-10-13):** Cloud, Midgar Mercenary ($22.33), Knight of
+the White Orchid ($3.90), Ardenn, Intrepid Archaeologist ($2.86), Sol Ring ($1.42), Auriok Steelshaper ($0.83), Loyal
+Warhound ($0.64), Armored Skyhunter ($0.44), Balan, Wandering Knight ($0.40), Mind Stone ($0.20), Kor Outfitter ($0.19),
+Kor Duelist ($0.05). **Everything else:** bulk. Sauron's own Fellwar Stone (added 10-13) is a buy on Sauron's list;
+Cloud's comes from the retired Jodah deck.
 
 ## Decklist by type (100)
 
