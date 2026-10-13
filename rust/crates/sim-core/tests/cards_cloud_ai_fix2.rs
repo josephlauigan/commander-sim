@@ -277,3 +277,74 @@ fn worn_equipment_moves_only_to_a_clearly_better_holder() {
     g.perm_mut(bg).plus += 8;
     assert!(offered(&g), "a much bigger holder: move");
 }
+
+// ---- fix 6: mulligan#[test]
+fn cloud_keeps_only_playable_hands() {
+    let (mut kept, mut sent_back) = (0, 0);
+    for seed in 0..300u64 {
+        let mut g = table(&["cloud", "seph"]);
+        let mut r = sim_core::rng::Rng::from_u64(seed);
+        sim_core::engine::turn::mulligan(&mut g, P0, &mut r);
+        let pl = g.player(P0);
+        if pl.stats.contains_key("mulls") {
+            sent_back += 1;
+            continue;
+        }
+        kept += 1;
+        let lands = pl.hand.iter().filter(|&&c| g.db.get(c).land).count();
+        assert!((2..=5).contains(&lands), "kept {lands} lands");
+        assert!(sim_core::impls::cloud::keep_hand(&g, P0));
+    }
+    assert!(kept > 100 && sent_back > 0, "{kept} kept, {sent_back} mulliganed");
+}
+
+#[test]
+fn keep_rule_by_hand() {
+    let mut g = game();
+    let keep = |g: &mut Game, names: &[&str]| {
+        g.player_mut(P0).hand.clear();
+        hand(g, P0, names);
+        sim_core::impls::cloud::keep_hand(g, P0)
+    };
+    assert!(keep(
+        &mut g,
+        &["Plains", "Plains", "Plains", "Swords to Plowshares", "Sol Ring", "Sword of Fire and Ice", "Kor Duelist"]
+    ));
+    assert!(keep(
+        &mut g,
+        &[
+            "Plains",
+            "Plains",
+            "Sol Ring",
+            "Sword of Fire and Ice",
+            "Sword of Hearth and Home",
+            "Champion's Helm",
+            "Kor Duelist"
+        ]
+    ));
+    assert!(!keep(
+        &mut g,
+        &[
+            "Plains",
+            "Plains",
+            "Sword of Fire and Ice",
+            "Sword of Hearth and Home",
+            "Champion's Helm",
+            "Sword of Kaldra",
+            "Colossus Hammer"
+        ]
+    ));
+    assert!(!keep(
+        &mut g,
+        &[
+            "Plains",
+            "Sol Ring",
+            "Sword of Fire and Ice",
+            "Sword of Hearth and Home",
+            "Champion's Helm",
+            "Kor Duelist",
+            "Colossus Hammer"
+        ]
+    ));
+    assert!(!keep(&mut g, &["Plains", "Plains", "Plains", "Plains", "Plains", "Plains", "Sol Ring"]));
+}

@@ -1734,3 +1734,18 @@ fn protect_piece_first(g: &Game, p: PlayerId, label: &str) -> bool {
         pl.tax == 0
     }
 }
+
+/// Cloud's keep: 3 to 5 lands, or 2 lands with a mana rock or a creature that costs two or less (Cloud himself is a
+/// {2}{W}-ish commander: two lands and a way to get to him). 0-1 landers and 6-7 landers go back.
+pub fn keep_hand(g: &Game, p: PlayerId) -> bool {
+    let hand = &g.player(p).hand;
+    let n = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    match n {
+        3..=5 => true,
+        2 => hand.iter().any(|&c| {
+            let d = g.db.get(c);
+            !d.land && ((d.creature && d.cmc <= 2) || d.tag(crate::tag::Tag::Rock) || d.tag(crate::tag::Tag::Dork))
+        }),
+        _ => false,
+    }
+}
