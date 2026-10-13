@@ -713,6 +713,7 @@ fn resolve_combat_inner(
                     g.player_mut(d).cmd_dmg[p.index()] += dmg;
                 }
                 if g.perm(a).army && has(g, p, Tag::Sauron) {
+                    crate::impls::mine::army_hit_milestone(g, p);
                     cardcode::ring_tempt(g, p)?; // Sauron: an Army's combat damage tempts
                 }
                 cardcode::ring_damage(g, p, a, d)?; // the Ring, level 4: each opponent loses 3

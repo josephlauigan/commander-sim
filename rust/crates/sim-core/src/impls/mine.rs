@@ -4541,3 +4541,22 @@ fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     }
     Ok(())
 }
+
+/// speed metrics (reports): the Sauron plan milestone `army_hit`, the first combat damage to a player by an Army
+pub fn army_hit_milestone(g: &mut Game, p: PlayerId) {
+    let turns = g.player(p).turns;
+    g.player_mut(p).milestone.entry("army_hit").or_insert(turns);
+}
+
+/// speed metrics (reports): at the start of Sauron's turns 6, 8 and 10, the Army's power as the milestone `army_p<turn>`
+/// (no entry when there is no Army; the report counts that as 0)
+pub fn army_power_snapshot(g: &mut Game, p: PlayerId) {
+    let t = g.player(p).turns;
+    if !matches!(t, 6 | 8 | 10) || g.player(p).key != "sauron" {
+        return;
+    }
+    if let Some(a) = crate::engine::values::army_of(g, p) {
+        let pw = crate::engine::values::epow(g, a).max(0) as u32;
+        g.player_mut(p).milestone.insert(crate::sym::intern(&format!("army_p{t}")), pw);
+    }
+}
