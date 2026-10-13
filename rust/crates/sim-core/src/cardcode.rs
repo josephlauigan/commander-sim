@@ -661,14 +661,6 @@ pub fn defend_hooks(
             }
         }
     }
-    if dk == "elrond" {
-        // the elrond deck's instant-speed answers to an attack (Icy Reception's -5/-0; bulk_blue.rs)
-        for c in g.player(d).hand.clone() {
-            if let Some(f) = imp_of(g, c).and_then(|i| i.hand_defend) {
-                f(g, c, d, p, atk, assign)?;
-            }
-        }
-    }
     if !crate::ai::is_main(dk) {
         if !g.hooks.is_empty() {
             for (src, imp) in hooks::hooked(g, Event::Defend) {

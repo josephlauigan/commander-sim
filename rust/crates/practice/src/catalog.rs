@@ -105,7 +105,6 @@ pub fn win_rates(text: &str) -> BTreeMap<String, Vec<f64>> {
             "kefka" => "kefka",
             "titania" => "titania",
             "sheoldred" => "sheoldred",
-            "elrond" => "elrond",
             "cloud" => "cloud",
             _ => continue,
         };

@@ -189,9 +189,6 @@ impl Ctx<'_> {
         println!("Average turn (your own turn count) of wins {wt}, of losses {lt}");
         if is_mine(me) {
             println!("Plan online ({}): {:.1}% of games", report::plan_text(me), (100 * r.plan) as f64 / nf);
-            if me == "elrond" {
-                println!("Ring tempts per game: {:.2}", r.tempts as f64 / nf);
-            }
         }
         if !r.wintype.is_empty() {
             let parts: Vec<String> =
