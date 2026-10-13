@@ -1335,11 +1335,14 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     Ok(ok)
 }
 
-/// mine.breach_line: Sauron's Breach line. Dry run (execute false): does it finish every opponent (burned to 0 or
-/// milled out) if nobody interacts? Execute: cast it for real, one spell at a time (each can be countered).
+/// mine.breach_line: the Underworld Breach line (Sauron's; any deck holding Breach and a storm card runs it). Dry run
+/// (execute false): does it finish every opponent (burned to 0 or milled out) if nobody interacts? Execute: cast it for real, one spell at a time (each can be countered).
 pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
-    if g.player(p).key != "sauron" || g.opps(p).next().is_none() {
+    if g.opps(p).next().is_none() {
         return Ok(false);
+    }
+    if g.player(p).key != "sauron" && !crate::ai::decks::breach_pieces(g, p) {
+        return Ok(false); // any deck holding the pieces may run the line (cheap check first)
     }
     let st = line_state(g, p);
     if !st.breach && !st.breach_hand {
@@ -4540,4 +4543,24 @@ fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
         }
     }
     Ok(())
+}
+
+/// speed metrics (reports): the Sauron plan milestone `army_hit`, the first combat damage to a player by an Army
+/// (set for every deck; only the sauron report reads it)
+pub fn army_hit_milestone(g: &mut Game, p: PlayerId) {
+    let turns = g.player(p).turns;
+    g.player_mut(p).milestone.entry("army_hit").or_insert(turns);
+}
+
+/// speed metrics (reports): at the start of Sauron's turns 6, 8 and 10, the Army's power as the milestone `army_p<turn>`
+/// (no entry when there is no Army; the report counts that as 0)
+pub fn army_power_snapshot(g: &mut Game, p: PlayerId) {
+    let t = g.player(p).turns;
+    if !matches!(t, 6 | 8 | 10) || g.player(p).key != "sauron" {
+        return;
+    }
+    if let Some(a) = crate::engine::values::army_of(g, p) {
+        let pw = crate::engine::values::epow(g, a).max(0) as u32;
+        g.player_mut(p).milestone.insert(crate::sym::intern(&format!("army_p{t}")), pw);
+    }
 }

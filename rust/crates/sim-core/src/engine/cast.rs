@@ -881,6 +881,8 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         let m = r?;
         if c == g.player(p).cmd {
             g.perm_mut(m).is_cmd = true;
+            let turns = g.player(p).turns;
+            g.player_mut(p).milestone.entry("cmd_cast").or_insert(turns); // reports: the commander resolved
         }
         if let Some(n) = t.int(Tag::Lr) {
             land_ramp(g, p, n.max(0) as u32, t.has(Tag::Lrt))?;
