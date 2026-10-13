@@ -197,3 +197,66 @@ fn giver_of_runes_answers_removal_on_cloud() {
     assert!(saved, "Giver of Runes should answer");
     assert!(g.perm(gv).tapped);
 }
+
+// ---- fix 4: Cloud into open removal mana
+fn open_removal(g: &mut Game) {
+    let _ = &g;
+    lands(g, P1, "Swamp", 4, false);
+    // a full hand of unknowns
+    for _ in 0..7 {
+        let c = g.player_mut(P1).library.pop().unwrap();
+        g.player_mut(P1).hand.push(c);
+    }
+}
+
+fn cloud_bonus(g: &mut Game) -> f64 {
+    let opts = sim_core::ai::brain::main_options(g, P0, false).unwrap();
+    let o = opts.iter().find(|o| o.label == CLOUD).expect("Cloud castable");
+    sim_core::impls::cloud::search_bonus(g, P0, o)
+}
+
+#[test]
+fn giver_goes_first_into_open_removal() {
+    assert!(sim_core::impls::cloud::PROTECT_FIRST);
+    let mut g = sauron_table();
+    open_removal(&mut g);
+    assert!(sim_core::ai::brain::removal_risk(&g, P0) >= 0.3, "setup: removal likely");
+    lands(&mut g, P0, "Plains", 2, false);
+    hand(&mut g, P0, &["Giver of Runes"]);
+    g.player_mut(P0).turns = 2;
+    let plain = {
+        // the same board with no Giver in hand
+        let mut h = sauron_table();
+        open_removal(&mut h);
+        lands(&mut h, P0, "Plains", 2, false);
+        h.player_mut(P0).turns = 2;
+        cloud_bonus(&mut h)
+    };
+    let with_giver = cloud_bonus(&mut g);
+    assert!(with_giver < plain, "Cloud waits for Giver: {with_giver} vs {plain}");
+    let opts = sim_core::ai::brain::main_options(&mut g, P0, false).unwrap();
+    let o = opts.iter().find(|o| o.label == "Giver of Runes").expect("Giver castable");
+    assert!(sim_core::impls::cloud::search_bonus(&g, P0, o) > with_giver);
+}
+
+#[test]
+fn recast_waits_for_protection_after_a_death() {
+    let mut g = sauron_table();
+    open_removal(&mut g);
+    lands(&mut g, P0, "Plains", 5, false);
+    g.player_mut(P0).turns = 6;
+    g.player_mut(P0).tax = 2;
+    let bare = cloud_bonus(&mut g);
+    // Giver untapped: protection can follow
+    let gv = perm(&mut g, P0, "Giver of Runes");
+    g.perm_mut(gv).sick = false;
+    let boots = cloud_bonus(&mut g);
+    assert!(boots > bare, "{boots} vs {bare}");
+}
+
+fn sauron_table() -> Game {
+    let mut g = table(&["cloud", "sauron"]);
+    g.player_mut(P0).hand.clear();
+    set_ai(&mut g, AiMode::Lookahead);
+    g
+}

@@ -30,6 +30,10 @@ pub const CLOUD: &str = "Cloud, Midgar Mercenary";
 const KEY: &str = "cloud";
 const PLAZA: &str = "Plaza of Heroes";
 
+/// A/B switch for the lead: with it on, Cloud waits a turn for a protection piece (Giver of Runes, Swiftfoot Boots,
+/// Champion's Helm) when removal is likely, and a recast after a death waits until protection can follow
+pub const PROTECT_FIRST: bool = true;
+
 // ------------------------------------------------------------------ small helpers
 fn live(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
@@ -1502,7 +1506,10 @@ fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId)
 /// the equip)
 pub fn search_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     match &o.act {
-        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => 10.0 + precombat_cloud(g, p),
+        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => {
+            10.0 + precombat_cloud(g, p) - if PROTECT_FIRST { cloud_into_open_removal(g, p) } else { 0.0 }
+        }
+        Some(Action::Cast { .. }) if PROTECT_FIRST && protect_piece_first(g, p, &o.label) => 14.0,
         Some(Action::Equip { src, target, .. }) if cloud_of(g, p) == Some(*target) => equip_search_value(g, *src),
         Some(Action::Plan { .. }) if cloud_of(g, p).is_some() && o.label.ends_with(&format!("to {CLOUD}")) => {
             let name = o.label.strip_prefix("equip ").and_then(|s| s.strip_suffix(&format!(" to {CLOUD}")));
@@ -1662,4 +1669,68 @@ pub fn cloud_wipe_response(g: &mut Game, q: PlayerId, kind: &str, caster: Player
     }
     Ok(cast_team_indestructible(g, q, &["Rootborn Defenses", "Unbreakable Formation"])?
         .then(|| crate::sym::intern("indes")))
+}
+
+const PROTECT_PIECES: [&str; 3] = ["Giver of Runes", "Swiftfoot Boots", "Champion's Helm"];
+
+/// can protection follow a Cloud cast that leaves `left` mana: Giver untapped, Grand Abolisher out, Plaza of Heroes
+/// with {3}, Swiftfoot Boots or Champion's Helm worn (or castable and equipped) for what is left
+fn protection_follows(g: &Game, p: PlayerId, left: u32) -> bool {
+    let pl = g.player(p);
+    let on_bf = |n: &str| pl.perms.iter().any(|&m| live(g, m) && name_of(g, m) == n);
+    if pl.perms.iter().any(|&m| live(g, m) && name_of(g, m) == "Giver of Runes" && !g.perm(m).tapped && !g.perm(m).sick)
+        || on_bf("Grand Abolisher")
+    {
+        return true;
+    }
+    let plaza =
+        pl.lands.iter().any(|&l| g.land(l).on_bf && !g.land(l).tapped && *g.db.get(g.land(l).cd).name == *PLAZA);
+    if plaza && left >= 3 {
+        return true;
+    }
+    for n in ["Swiftfoot Boots", "Champion's Helm"] {
+        let equip = 1; // both equip for {1}
+        if on_bf(n) && left >= equip {
+            return true;
+        }
+        if let Some(c) = pl.hand.iter().copied().find(|&c| card_name(g, c) == n)
+            && left >= cast_cost(g, p, c) + equip
+        {
+            return true;
+        }
+    }
+    false
+}
+
+/// the penalty (subtracted from the bonus for casting Cloud) when he would walk into open removal with nothing
+/// behind him: first cast with a protection piece in hand that fits now (Cloud follows within a turn), and a recast
+/// after he died once while protection could not follow
+fn cloud_into_open_removal(g: &Game, p: PlayerId) -> f64 {
+    let pl = g.player(p);
+    if crate::ai::brain::removal_risk(g, p) < 0.3 {
+        return 0.0;
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let cloud_cost = cast_cost(g, p, pl.cmd);
+    if pl.tax > 0 {
+        let left = mana.saturating_sub(cloud_cost);
+        return if protection_follows(g, p, left) || mana >= 3 * cloud_cost { 0.0 } else { 12.0 };
+    }
+    // first cast: a piece that fits now, and Cloud plus the piece fit next turn, delays him by one turn
+    let piece =
+        pl.hand.iter().copied().find(|&c| PROTECT_PIECES.contains(&card_name(g, c)) && cast_cost(g, p, c) <= mana);
+    let Some(piece) = piece else { return 0.0 };
+    if cast_cost(g, p, piece) + cloud_cost > mana && pl.lands.len() as u32 + 1 >= cast_cost(g, p, piece) + cloud_cost {
+        12.0
+    } else {
+        0.0
+    }
+}
+
+/// casting this protection piece now is the better first play (see `cloud_into_open_removal`)
+fn protect_piece_first(g: &Game, p: PlayerId, label: &str) -> bool {
+    PROTECT_PIECES.contains(&label) && cloud_of(g, p).is_none() && cloud_into_open_removal(g, p) > 0.0 && {
+        let pl = g.player(p);
+        pl.tax == 0
+    }
 }
