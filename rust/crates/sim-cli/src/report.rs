@@ -300,6 +300,9 @@ pub struct Analysis {
     /// Sauron: the Army's power at the start of turns 6, 8 and 10, one entry per game (0: no Army)
     pub army: [Vec<u32>; 3],
     pub aether: i64,
+    /// creatures sacrificed (all games) and games in which Sephiroth flipped
+    pub sacs: i64,
+    pub flips: i64,
     /// the Underworld Breach line: games with the pieces held / dry run tried / passed / executed / won, and the
     /// shortfall of the last failed dry run (index: none, mana, blue, fuel, storm)
     pub bl: [i64; 5],
@@ -350,6 +353,8 @@ impl Analysis {
         }
         self.combo += (me.stat("combo_attempt") != 0) as i64;
         self.aether += (me.stat("aether_shots") != 0) as i64;
+        self.sacs += me.stat("creatures_sacrificed");
+        self.flips += (me.stat("seph_flips") != 0) as i64;
         for (i, k) in ["bl_held", "bl_dry", "bl_pass", "breach_line", "bl_won"].into_iter().enumerate() {
             self.bl[i] += (me.stat(k) != 0) as i64;
         }
@@ -471,6 +476,13 @@ pub fn print_analysis(
             pc(b),
             pc(f),
             pc(s)
+        );
+    }
+    if has("Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel") {
+        println!(
+            "  Sacrifices: {:.2} creatures per game; Sephiroth flipped to One-Winged Angel in {:.1}% of games",
+            r.sacs as f64 / n,
+            (100 * r.flips) as f64 / n
         );
     }
     if deck == "veyran" {
