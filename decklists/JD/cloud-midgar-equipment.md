@@ -48,7 +48,7 @@ Kaldra, Patriot, and the protection instants Unbreakable Formation and Rootborn 
 
 ## Where the cards come from
 
-Eleven cards are bought (listed below); 28 Plains and Giver of Runes are your own; the cards below come
+Eleven cards were bought on 2026-10-13 (listed below); 28 Plains and Giver of Runes are your own; the cards below come
 from the other decks, the binder and the retired Jodah deck. Everything else is bulk.
 
 | Card | From |
@@ -61,7 +61,7 @@ from the other decks, the binder and the retired Jodah deck. Everything else is 
 | Exalted Angel, Disenchant | Binder |
 | Giver of Runes, 28 Plains | JD's own (not on the lists) |
 
-**To buy (11 cards, about $33.26; Scryfall, cheapest printing, 2026-10-13):** Cloud, Midgar Mercenary ($22.33), Knight of
+**Bought 2026-10-13 (11 cards, about $33.26 at Scryfall's cheapest printing):** Cloud, Midgar Mercenary ($22.33), Knight of
 the White Orchid ($3.90), Ardenn, Intrepid Archaeologist ($2.86), Sol Ring ($1.42), Auriok Steelshaper ($0.83), Loyal
 Warhound ($0.64), Armored Skyhunter ($0.44), Balan, Wandering Knight ($0.40), Mind Stone ($0.20), Kor Outfitter ($0.19),
 Kor Duelist ($0.05). **Everything else:** bulk. Sauron's own Fellwar Stone (added 10-13) is a separate copy JD got on 10-13;
