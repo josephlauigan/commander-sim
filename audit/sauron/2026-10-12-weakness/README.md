@@ -79,3 +79,6 @@ AI for it and the line diagnostic, and new cards modeled: Crippling Fear, Widesp
 Inferno Titan, Lazotep Reaver, Grim Initiate, Torment of Hailfire; Ral and the Implicit Maze restored; Dualcaster Mage,
 Dreadhorde Invasion and Grishnákh finished. 1,448 tests pass. No decklist is changed here; branch `sauron-1d3` holds a
 test-only list and is not for merging.
+- **K3 (1,000 paired games per tier; `kefka-k3/`):** the Breach package + Grapeshot + Grim Tutor + Diabolic Intent +
+  Jeska's Will (for Duress, Dark Inquiry, Potioner's Trove, Ichor Slick, Thought Vessel, Chaos Warp, Postmortem
+  Professor): **+0.5** (+3.3, +0.6, -0.5, -0.7, -0.3), within noise. Better tutors don't rescue the line in Kefka.
