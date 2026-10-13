@@ -26,7 +26,7 @@
 
 ## Strategy
 
-Let the whole table feed one enormous Orc Army, multiply its counters, suit it up, and grind the pod behind a Grixis control shell. The 10-13 rebuild made it faster and kinder to the Army: **Dreadhorde Invasion** and **Lazotep Reaver** start an Army before Sauron lands, eleven rocks get him down sooner, and the symmetric wipes became one-sided ones, so the Army survives what clears the table. **Exsanguinate** and **Comet Storm** are the X-spell finishers; the **Sword of Feast and Famine + Aggravated Assault** combo is the only combo (see Key lines). The old Underworld Breach line is gone.
+Let the whole table feed one enormous Orc Army, multiply its counters, suit it up, and grind the pod behind a Grixis control shell. The 10-13 rebuild made it faster and kinder to the Army: **Dreadhorde Invasion** and **Lazotep Reaver** start an Army before Sauron lands (the first Army hit comes about a turn earlier), eleven rocks back the six-mana commander, and the symmetric wipes became one-sided ones, so the Army survives what clears the table. **Exsanguinate** and **Comet Storm** are the X-spell finishers; the **Sword of Feast and Famine + Aggravated Assault** combo is the only combo (see Key lines). The old Underworld Breach line is gone.
 
 Sauron does the work for free. He is a 7/6 with ward (sacrifice a legendary artifact or legendary creature, which most opponents simply cannot pay), and:
 
