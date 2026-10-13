@@ -43,6 +43,7 @@ pub mod t0_captain;
 pub mod t0_giada;
 pub mod t0_anikthea;
 pub mod zur;
+pub mod threats;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, jodah): a later module's slot
@@ -86,5 +87,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t0_captain::register(&mut r, db)?;
     t0_giada::register(&mut r, db)?;
     t0_anikthea::register(&mut r, db)?;
+    threats::register(&mut r, db)?;
     Ok(r)
 }
