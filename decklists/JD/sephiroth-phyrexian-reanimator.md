@@ -16,7 +16,7 @@
 **Updated 2026-10-05.** Out: Bolas's Citadel. In: Phyrexian Arena. Bolas's Citadel → Phyrexian Arena. Tested: no loss (0.0 points on average, 1,000 paired games per tier, adaptive AI). Eight Game Changers; still Bracket 4.
 **Updated 2026-10-10 — a flicker package.** Five swaps: **Stinkweed Imp → Teleportation Circle**, **Lash of the Balrog → Conjurer's Closet**, **Grisly Salvage → Restoration Angel**, **Llanowar Elves → Summon: Bahamut**, and **Llanowar Wastes → Karn's Bastion**. None is a Game Changer, so the count stays at eight; still Bracket 4, 100 cards and 37 lands.
 **Updated 2026-10-10 (second pass).** **Avacyn's Pilgrim → Flickering Hound**: the Pilgrim only made {W}, and the Hound turns every creature you cast (Muldrotha's recasts included) into another flicker. Still eight Game Changers, Bracket 4, 100 cards and 37 lands.
-**Updated 2026-10-13.** Out: Smothering Tithe. In: Momentary Blink. Out: Smothering Tithe (to the Cloud deck). In: Momentary Blink (bulk).
+**Updated 2026-10-13.** Out: Smothering Tithe. In: Momentary Blink. JD's choice: Smothering Tithe goes to the Cloud deck; Momentary Blink (bulk) is a second Ephemerate-style blink for the Kitten. Paired test, 500 games per tier: -1.8 (t1 -4.0, t2 -1.4, t3 +3.8, t4 -3.8, t5 -3.8); `audit/cloud/2026-10-13/screen/D2-*`. Game Changers 8 -> 7, still Bracket 4.
 
 ## Strategy
 
@@ -24,7 +24,7 @@ Fill the graveyard, cheat a Phyrexian bomb onto the battlefield three or four tu
 
 Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, and appears under that name in the list below. A 7/7 with flying, vigilance, deathtouch, and lifelink whose ETB looks at the top ten cards and takes one of each card type. She is both a castable bomb and the best reanimation target in the deck.
 
-**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana, with **Smothering Tithe** as the four-drop that keeps paying. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
+**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
 
 **Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
 
@@ -35,18 +35,18 @@ Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, an
 **Muldrotha, the Gravetide turns the graveyard into a second hand.** During each of your turns you may play a land and cast one permanent spell of each permanent type from your graveyard: a creature, an artifact, and an enchantment. In this deck that means:
 - **A reanimation spell every turn.** Animate Dead and Necromancy are enchantments, so once one is in the graveyard Muldrotha recasts it each turn for another reanimation.
 - **Loop pieces back after removal.** Triskelion (as the artifact or the creature), Kitchen Finks, Nim Deathmantle, Ashnod's Altar, or Viscera Seer, so one answer no longer breaks a combo.
-- **Engines back after a wipe.** Aura Shards, Smothering Tithe, Phyrexian Arena, or Skullclamp.
+- **Engines back after a wipe.** Aura Shards, Phyrexian Arena, or Skullclamp.
 - **A land from the graveyard each turn.** Replay Evolving Wilds or Fabled Passage for a basic every turn, or Strip Mine for land destruction every turn (say so before the game).
 
 She is a 6/6 for six and a fine reanimation target herself, and she takes Massacre Wurm's slot: the deck trades a one-shot wipe for a grind engine.
 
-**Ephemerate is protection and a second Kitten in one card.** For {W} at instant speed, exile your creature and return it. In response to a removal spell, theft, or any other targeted effect, the spell fizzles because the creature is a new object — so a reanimated bomb survives the first answer the table throws at it. With nothing to protect, blink Archon of Cruelty, Grave Titan, or Sephiroth for their enter triggers. Either way, rebound casts it again for free at your next upkeep: a second drain-and-edict from Archon or two more Zombies from Titan. It can only target creatures, so it can't save Aura Shards or Smothering Tithe.
+**Ephemerate is protection and a second Kitten in one card.** For {W} at instant speed, exile your creature and return it. In response to a removal spell, theft, or any other targeted effect, the spell fizzles because the creature is a new object — so a reanimated bomb survives the first answer the table throws at it. With nothing to protect, blink Archon of Cruelty, Grave Titan, or Sephiroth for their enter triggers. Either way, rebound casts it again for free at your next upkeep: a second drain-and-edict from Archon or two more Zombies from Titan. It can only target creatures, so it can't save Aura Shards. **Momentary Blink** is a second one for the Kitten: {1}{W} at instant speed (or flashback for {3}{U}), so a blink is available again after the first has been used.
 
 **The flicker package re-buys enter triggers every turn.** **Teleportation Circle** and **Conjurer's Closet** each exile a creature you control at the beginning of your end step and return it: Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Grave Titan for two more Zombies. Teleportation Circle can take an artifact instead, so with no creature worth it, flicker a tapped Sol Ring or Signet and it comes back untapped for the opponents' turns. **Restoration Angel** is a 3/4 flash flier that does the same once at instant speed: at the end of an opponent's turn for value, or in response to removal or theft aimed at a bomb (the spell fizzles, as with Ephemerate). It can't flicker an Angel, so not Sephiroth herself. **Flickering Hound** does it on your turn instead: whenever you cast a creature spell (Muldrotha's recasts count), it flickers another creature you control, Sephiroth included. Don't flicker a creature carrying +1/+1 counters or Equipment unless its enter trigger is worth more than what it loses.
 
 **Summon: Bahamut** is a 9/9 flying Saga creature for {9}, and a reanimation target as much as a spell. Its chapters I and II each destroy a nonland permanent, III draws two, and IV, **Mega Flare**, deals damage equal to the total mana value of your other permanents to each opponent before it's sacrificed. Flickering it starts it over at chapter I with two more destroys. **Karn's Bastion** ({4}, {T}: proliferate) moves Bahamut's lore toward Mega Flare and grows +1/+1 counters, such as Triskelion's.
 
-**The stax layer is what makes it unfair.** Elesh Norn, Grand Cenobite shrinks every opposing creature by 2/2. Elesh Norn, Mother of Machines doubles your own ETB triggers and blanks theirs. Sheoldred, the Apocalypse taxes their draw steps, and Smothering Tithe taxes them again on the same draw. **Aura Shards** destroys an artifact or enchantment every time a creature enters under your control — every reanimation, Grave Titan Zombie, and Kitten blink is removal.
+**The stax layer is what makes it unfair.** Elesh Norn, Grand Cenobite shrinks every opposing creature by 2/2. Elesh Norn, Mother of Machines doubles your own ETB triggers and blanks theirs. Sheoldred, the Apocalypse taxes their draw steps. **Aura Shards** destroys an artifact or enchantment every time a creature enters under your control — every reanimation, Grave Titan Zombie, and Kitten blink is removal.
 
 **The protection layer.** **Force of Will** counters anything for free (exile a blue card from hand and pay 1 life), so it can protect a combo turn with no mana up. **Teferi's Protection** is the answer to a wipe or a lethal swing: until your next turn your life can't change and you have protection from everything, and all your permanents phase out, so a board wipe misses them and they come back on your untap. It also phases out your lands, so cast it only when it saves the game or your board.
 
@@ -86,7 +86,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The land changes since 09-22 are **Blossoming Sands → Arcane Sanctum** (one tapped land for another, but with blue for Force of Will and Consecrated Sphinx in place of green) and, on 10-10, **Llanowar Wastes → Karn's Bastion**: one fewer green and black source, for a land that proliferates.
 
-Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), two creatures (Birds of Paradise, Sakura-Tribe Elder), and Smothering Tithe. Llanowar Elves left on 10-10 for Summon: Bahamut, and Avacyn's Pilgrim for Flickering Hound. Cultivate left on 10-02 for Grave Pact. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
+Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), and two creatures (Birds of Paradise, Sakura-Tribe Elder). Llanowar Elves left on 10-10 for Summon: Bahamut, and Avacyn's Pilgrim for Flickering Hound. Cultivate left on 10-02 for Grave Pact. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
 
 **Graveyard fill is thinner.** Satyr Wayfinder is out; Gifts Ungiven partly covers it. Unmarked Grave left for Ephemerate on 09-28, and Grisly Salvage and Stinkweed Imp left for the flicker package on 10-10. Stitcher's Supplier, Buried Alive, Entomb, and Tortured Existence remain.
 
@@ -110,12 +110,12 @@ Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also
 
 ## Bracket and Rule 0
 
-**Bracket 4.** Eight Game Changers: **Demonic Tutor**, **Smothering Tithe**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection** (Bolas's Citadel left on 10-05). Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
+**Bracket 4.** Seven Game Changers: **Demonic Tutor**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection** (Bolas's Citadel left on 10-05, Smothering Tithe on 10-13). Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
 
 Disclose before the game:
 
 - **Four infinite loops:** Mikaeus + Triskelion (infinite damage, no outlet needed); Mikaeus or Melira + Kitchen Finks + a sac outlet (infinite life and deaths); Nim Deathmantle + Ashnod's Altar + Grave Titan (infinite mana, ETBs, and deaths).
-- The eight Game Changers above, especially **Smothering Tithe** (changes every opponent's draw step), **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
+- The seven Game Changers above, especially **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
 - **Grand Abolisher**, which shuts off their interaction on your turn.
 - **Yawgmoth's Will**, which can produce a long turn out of nowhere.
 - **Farewell**, and that you may include graveyards.
