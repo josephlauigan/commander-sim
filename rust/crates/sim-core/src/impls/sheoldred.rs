@@ -2113,6 +2113,7 @@ pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, ATLAS)?.options = Some(atlas_options);
     r.card(db, GEIER)?.land_options = Some(geier_options);
     r.card(db, MIKOKORO)?.land_options = Some(mikokoro_options);
+    r.card(db, TOWER)?.land_options = Some(tower_options);
     let c = r.card(db, PEER)?;
     c.resolve = Some(peer_resolve);
     c.hand_options = Some(peer_options);
@@ -2133,6 +2134,7 @@ fn seph_fodder(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
         .into_iter()
         .filter(|&m| {
             m != src
+                && !super::common::is_sac_outlet(&g.perm(m).name)
                 && !g.perm(m).is_cmd
                 && !sheoldred_perm(g, m)
                 && !crate::engine::values::no_sac(g, m)
@@ -2219,6 +2221,7 @@ fn seph_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     g.perm_mut(src).data.set(DataKey::SephTimes, Val::List(vec![Val::Stamp(st), Val::Int(n)]));
     if n == 4 && on_bf(g, src) {
         g.perm_mut(src).data.set(DataKey::Flipped, Val::Bool(true));
+        g.player_mut(p).stat("seph_flips", 1);
         g.player_mut(p).emblems.push("seph");
         g.selfpt = true;
         crate::glog!(
@@ -2251,6 +2254,86 @@ fn seph_pt(g: &Game, _p: PlayerId, m: PermId) -> (i32, i32) {
 
 fn seph_kw(g: &Game, src: Src, m: PermId, k: Sym) -> bool {
     m == src && k == "flying" && flipped(g, src)
+}
+
+/// what the next creature death is worth beyond common's table: Sephiroth's drain (every death once he is out, one
+/// per emblem after he flips) and the turn the fourth drain is next, which flips him
+pub fn seph_flip_bonus(g: &Game, p: PlayerId) -> f64 {
+    let emblems = g.player(p).emblems.iter().filter(|&&e| e == "seph").count() as f64;
+    let seph = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == SEPH) && !g.perm(m).phased && !flipped(g, m));
+    let drains = emblems + if seph.is_some() { 1.0 } else { 0.0 };
+    let mut v = drains * g.opps(p).count() as f64 * 0.8;
+    if let Some(s) = seph {
+        let st = g.turn_stamp();
+        let n = match g.perm(s).data.get(DataKey::SephTimes) {
+            Some(Val::List(l)) if matches!(l.first(), Some(Val::Stamp(x)) if *x == st) => l.get(1).map_or(0, Val::int),
+            _ => 0,
+        };
+        v += match n {
+            3 => 3.0, // the next death flips him: the emblem drains on every death from then on
+            2 => 0.5,
+            _ => 0.0,
+        };
+    }
+    v
+}
+
+// ------------------------------------------------------------------ Phyrexian Tower
+const TOWER: &str = "Phyrexian Tower";
+
+/// the creature p would sacrifice to the Tower: the cheapest that isn't the commander, a death payoff or worth more
+/// than a card
+fn tower_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
+    let v: Vec<PermId> = my_creatures(g, p)
+        .into_iter()
+        .filter(|&m| {
+            !g.perm(m).is_cmd
+                && !sheoldred_perm(g, m)
+                && !super::common::is_payoff(g, m)
+                && !crate::engine::values::no_sac(g, m)
+                && crate::engine::zones::sac_worth(g, m) < 2.2
+        })
+        .collect();
+    min_by(&v, |m| crate::engine::zones::sac_worth(g, m))
+}
+
+/// {T}, Sacrifice a creature: Add {B}{B}. Offered when a death payoff makes the sacrifice worth it (the same test as
+/// common's outlets), or on p's own turn when the extra mana puts a spell in hand within reach
+fn tower_options(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.land(l).tapped || !g.player(p).lands.contains(&l) || human(g, p) {
+        return Ok(vec![]);
+    }
+    let Some(m) = tower_fodder(g, p) else { return Ok(vec![]) };
+    let worth = crate::engine::zones::sac_worth(g, m);
+    let payoff = super::common::death_value(g, p, None) - 1.5 * worth;
+    let mana = g.active == Some(p) && worth < 1.5 && super::common::mana_needed_now(g, p, 1);
+    let u = if mana { 2.0f64.max(1.0 + payoff) } else { 1.0 + payoff };
+    if !mana && payoff < 1.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: u,
+        label: format!("Phyrexian Tower: sacrifice {} for {{B}}{{B}}", g.perm(m).name),
+        act: Some(Action::Plan { f: tower_go, arg: l.0 as i64 }),
+    }])
+}
+
+fn tower_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if g.land(l).tapped || !g.player(p).lands.contains(&l) {
+        return Ok(false);
+    }
+    let Some(m) = tower_fodder(g, p) else { return Ok(false) };
+    g.land_mut(l).tapped = true;
+    crate::glog!(g, "  {} sacrifices {} to Phyrexian Tower", pname(g, p), g.perm(m).name);
+    crate::engine::zones::die(g, m, "sac")?;
+    g.player_mut(p).floating.b += 2;
+    Ok(true)
 }
 
 fn register_seph(r: &mut Registry, db: &CardDb) -> Result<(), String> {

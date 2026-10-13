@@ -1640,7 +1640,15 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
             .perms
             .iter()
             .copied()
-            .filter(|&m| m != src && matches(g, p, m, Some(&f), None) && (g.perm(m).token || pval(g, m) < 3.0))
+            .filter(|&m| {
+                m != src
+                    && matches(g, p, m, Some(&f), None)
+                    && (g.perm(m).token || pval(g, m) < 3.0)
+                    && (!crate::ai::is_main(g.player(p).key)
+                        || (!g.perm(m).is_cmd
+                            && !crate::engine::values::no_sac(g, m)
+                            && !crate::impls::common::is_payoff(g, m)))
+            })
             .collect();
         let Some(f0) = min_by(&fods, |m| pval(g, m)) else { return Ok(false) };
         fod = Some(f0);

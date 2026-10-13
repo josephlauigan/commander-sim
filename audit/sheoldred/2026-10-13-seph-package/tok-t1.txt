@@ -1,0 +1,67 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel [pool] C 2B :: leg human pow=3 tgh=3 bomb=4
+   Phyrexian Altar [pool] A 3 :: (no tags)
+   Ophiomancer [pool] C 2B :: human shaman pow=2
+   Pawn of Ulamog [pool] C 1BB :: shaman pow=2 tok=1 tokp=0
+   Carrier Thrall [pool] C 1B :: pow=2 tgh=1
+   Phyrexian Tower [pool] L  :: leg c=C
+Swaps: Dark Deal -> Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel; Apex Witchstalker -> Phyrexian Altar; Masterful Flourish -> Ophiomancer; Commander's Sphere -> Pawn of Ulamog; Potioner's Trove -> Carrier Thrall; Swamp -> Phyrexian Tower
+
+=== Sheoldred vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  28.6% ->  29.2%  (delta +0.6 pts, noise ±5.0, paired)   n=500
+               eliminated by (variant): Lathril 14.2%  Teysa Karlov 10.2%  Light-Paws 24.4%  Isshin 15.0%  Tatyova 6.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          28.6% ->  29.2%  +0.6pt   ±5.7 
+    Rounds survived (or game length)                  10.70 ->  10.67   -0.03  ±0.38 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.51 ->   0.56   +0.05  ±0.10 
+    Mana available on your turn 4                      4.18 ->   4.11   -0.07  ±0.09 
+    Mana available on your turn 6                      5.77 ->   5.62   -0.15  ±0.16 
+
+  Speed
+    Games where the game plan came online             90.2% ->  87.4%  -2.8pt   ±4.0 
+    Turn the game plan came online                     6.20 ->   6.51   +0.32  ±0.27*
+    Turn the commander first resolved                  6.12 ->   6.43   +0.32  ±0.26*
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.24 ->  16.56   -0.68  ±1.11 
+    Tutors resolved per game                           0.00 ->   0.00   +0.00  ±0.00 
+    Spells cast per game                              13.43 ->  13.18   -0.25  ±0.78 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.25 ->   1.17   -0.08  ±0.14 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.90 ->   0.91   +0.01  ±0.12 
+    Your spells countered                              0.15 ->   0.17   +0.02  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                61.53 ->  60.70   -0.84  ±5.99 
+      ...of which combat damage                       10.71 ->  10.33   -0.38  ±1.40 
+      ...of which magecraft / burn                     1.50 ->   1.49   -0.02  ±0.40 
+      ...of which drain triggers                      40.71 ->  40.54   -0.16  ±4.76 
+      ...of which other triggers                       6.85 ->   6.67   -0.18  ±1.78 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Turn the game plan came online (both profiles)
+    worse  - Turn the commander first resolved (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(280s total)

@@ -1216,8 +1216,31 @@ pub fn remove_from_hand(g: &mut Game, p: PlayerId, c: CardId) {
     }
 }
 
-/// ais.protect_response: targeted removal of kind `kind` is aimed at owner's permanent m: respond if it's worth it
+/// ais.protect_response: targeted removal of kind `kind` is aimed at owner's permanent m: respond if it's worth it; a
+/// creature that can't be saved is sacrificed to a free outlet when that gains something
 pub fn protect_response(
+    g: &mut Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if protect_main(g, owner, m, kind, actor, spell)? {
+        return Ok(true);
+    }
+    if g.humans.get(owner).is_some()
+        || !is_main(g.player(owner).key)
+        || g.player(owner).key == "seph"
+        || silenced(g, owner)
+        || !g.perm(m).on_bf
+    {
+        return Ok(false); // (the pools sacrifice in pool::protect)
+    }
+    crate::cardcode::sac_in_response(g, owner, m, kind)
+}
+
+fn protect_main(
     g: &mut Game,
     owner: PlayerId,
     m: PermId,
@@ -1323,6 +1346,23 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     }
     if matches!(key, "galadriel" | "yshtola") {
         return Ok(None);
+    }
+    if key != "seph"
+        && !g.marchesa_on // (her return counts the creatures that die together)
+        && !matches!(kind, "rift" | "evac" | "rebuke" | "vandal")
+        && !crate::cardcode::outlets_of(g, q).is_empty()
+    {
+        // the wipe will kill these anyway: sacrifice them to a free outlet first
+        let rule = WipeRule::new(g, caster, kind);
+        let mut doomed: Vec<PermId> = g
+            .player(q)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && rule.hits(g, m, q))
+            .collect();
+        doomed.sort_by(|&a, &b| crate::engine::zones::sac_worth(g, a).total_cmp(&crate::engine::zones::sac_worth(g, b)));
+        crate::cardcode::sac_before_wipe(g, q, &doomed)?;
     }
     let loss = wipe_loss(g, q, kind, caster);
     if loss < 6.0 {

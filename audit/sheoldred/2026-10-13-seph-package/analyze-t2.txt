@@ -1,0 +1,86 @@
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 960 games] ===========
+Win rate 39.9%   (4-player baseline 25%)   average rounds survived 12.7
+
+-- How it wins --
+  damage      97.9% of wins
+  timeout      2.1% of wins
+  Opponents it eliminated: 1.22 per game, by
+    drain              74.7%
+    combat             11.8%
+    triggers            8.1%
+    other               3.5%
+    burn                1.4%
+    decked              0.5%
+    commander damage    0.1%
+  Damage dealt per game: 65.0, from
+    drain               43.4  (67%)
+    combat              11.4  (18%)
+    triggers             8.5  (13%)
+    burn                 1.7  (3%)
+
+-- How it loses --
+  Eliminated in 59.3% of games, on average in round 12.1
+    by Brago    via combat             13.4% of games
+    by Kaalia of the Vast via combat             10.1% of games
+    by Lord Windgrace via combat              9.8% of games
+    by Meren of Clan Nel Toth via combat              8.0% of games
+    by Sythis   via combat              6.8% of games
+    by Sythis   via commander damage    5.3% of games
+    by Meren of Clan Nel Toth via triggers            2.0% of games
+    by Meren of Clan Nel Toth via drain               1.4% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 1%  T4 12%  T5 26%  T6 40%  T7 55%  T8 71%  T9 81%  T10 86%  T11 91%  T12 92%
+  Online at all: 94.3% of games
+  Commander resolves on turn: median 7.0, mean 7.1 (over the 94.7% of games it resolves)
+  Commander resolved by turn:  T4 13%  T5 27%  T6 41%  T7 56%  T8 72%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Peer into the Abyss                        cast in  11.5% of games, win rate when cast  74.5% (+34.6)
+    Seizan, Perverter of Truth                 cast in  11.9% of games, win rate when cast  59.6% (+19.8)
+    Exsanguinate                               cast in  19.6% of games, win rate when cast  59.6% (+19.7)
+    Memory Jar                                 cast in  20.4% of games, win rate when cast  57.1% (+17.2)
+    Swiftfoot Boots                            cast in  22.6% of games, win rate when cast  54.4% (+14.5)
+    Howling Mine                               cast in  16.2% of games, win rate when cast  53.8% (+14.0)
+    Gray Merchant of Asphodel                  cast in  21.4% of games, win rate when cast  52.2% (+12.3)
+    Fate Unraveler                             cast in  24.7% of games, win rate when cast  51.9% (+12.0)
+    Cost of Brilliance                         cast in  19.0% of games, win rate when cast  51.6% (+11.8)
+    Cast Away Doubt                            cast in  18.8% of games, win rate when cast  51.1% (+11.2)
+  Lowest win rate when cast:
+    Carnage Altar                              cast in  21.7% of games, win rate when cast  34.6% (-5.3)
+    Apex Witchstalker                          cast in  10.6% of games, win rate when cast  35.3% (-4.6)
+    Masterful Flourish                         cast in  21.4% of games, win rate when cast  37.6% (-2.3)
+    Read the Bones                             cast in  23.4% of games, win rate when cast  37.8% (-2.1)
+    Silence the Echo                           cast in  25.3% of games, win rate when cast  39.1% (-0.8)
+    Last Gasp                                  cast in  24.0% of games, win rate when cast  39.6% (-0.3)
+    Phyrexian Arena                            cast in  21.4% of games, win rate when cast  40.0% (+0.1)
+    Perigee Beckoner                           cast in  20.9% of games, win rate when cast  40.3% (+0.4)
+    Overkill                                   cast in  22.2% of games, win rate when cast  40.4% (+0.5)
+    Lethal Throwdown                           cast in  17.5% of games, win rate when cast  40.5% (+0.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  21.7% of the games it was drawn
+    Apex Witchstalker                          cast  37.5% of the games it was drawn
+    Seizan, Perverter of Truth                 cast  42.9% of the games it was drawn
+    Peer into the Abyss                        cast  44.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  1.18
+    Charcoal Diamond                           0.10
+    Phyrexian Arena                            0.10
+    Mind Stone                                 0.09
+    Seymour Flux                               0.08
+    Melancholic Poet                           0.08
+    Gix, Yawgmoth Praetor                      0.07
+    Darksteel Plate                            0.07
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(213s total)
