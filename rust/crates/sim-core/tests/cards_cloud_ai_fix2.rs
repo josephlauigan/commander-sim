@@ -278,7 +278,8 @@ fn worn_equipment_moves_only_to_a_clearly_better_holder() {
     assert!(offered(&g), "a much bigger holder: move");
 }
 
-// ---- fix 6: mulligan#[test]
+// ---- fix 6: mulligan
+#[test]
 fn cloud_keeps_only_playable_hands() {
     let (mut kept, mut sent_back) = (0, 0);
     for seed in 0..300u64 {
@@ -347,4 +348,29 @@ fn keep_rule_by_hand() {
         ]
     ));
     assert!(!keep(&mut g, &["Plains", "Plains", "Plains", "Plains", "Plains", "Plains", "Sol Ring"]));
+}
+
+// ---- fix 7: wipes and edicts are logged
+fn log_of(g: &mut Game, f: impl FnOnce(&mut Game)) -> Vec<String> {
+    g.log = Some(vec![]);
+    f(g);
+    g.log.take().unwrap_or_default()
+}
+
+#[test]
+fn wipes_and_edicts_name_what_dies() {
+    let mut g = game();
+    let cl = perm(&mut g, P0, CLOUD);
+    let kd = perm(&mut g, P0, "Kor Duelist");
+    let _ = (cl, kd);
+    let l = log_of(&mut g, |g| {
+        sim_core::engine::removal::apply_wipe(g, P1, "destroy".into(), None, &Default::default()).unwrap();
+    });
+    assert!(l.iter().any(|x| x.contains(CLOUD) && x.contains("removed by the wipe")), "{l:?}");
+    assert!(l.iter().any(|x| x.contains("Kor Duelist") && x.contains("removed by the wipe")), "{l:?}");
+    // an edict
+    let mut g = game();
+    perm(&mut g, P0, "Kor Duelist");
+    let l = log_of(&mut g, |g| sim_core::engine::zones::edict(g, P0, false).unwrap());
+    assert!(l.iter().any(|x| x.contains("sacrifices Kor Duelist (edict)")), "{l:?}");
 }
