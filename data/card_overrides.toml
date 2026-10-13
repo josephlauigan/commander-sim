@@ -1814,7 +1814,7 @@ note = "tutor any card to hand, then discard a card at random"
 
 ["Gandalf, Friend of the Shire"]
 status = "Full"
-note = "flash; you may cast sorcery spells as though they had flash; whenever the Ring tempts you and you chose a creature other than Gandalf as your Ring-bearer, draw a card (elrond.rs gandalf_draw, called by mine::ring_tempt)"
+note = "flash; you may cast sorcery spells as though they had flash; whenever the Ring tempts you and you chose a creature other than Gandalf as your Ring-bearer, draw a card (blue_cards.rs gandalf_draw, called by mine::ring_tempt)"
 
 ["Garland, Royal Kidnapper"]
 tags = "leg human knight pow=3 tgh=4 garland"
@@ -6724,7 +6724,7 @@ status = "Full"
 note = "look at the top two cards, the better one (by the deck's card worth) into the hand and the other on the bottom"
 ["Elrond, Lord of Rivendell"]
 status = "Full"
-note = "whenever Elrond or another creature (card or token) you control enters, on any turn: scry 1, one trigger per creature; the second resolution each turn makes the Ring tempt you (not the third); the Ring-bearer is the best evasive attacker, never Gandalf while another creature is out"
+note = "whenever Elrond or another creature (card or token) you control enters, on any turn: scry 1, one trigger per creature; the second resolution each turn makes the Ring tempt you (not the third)"
 
 ["Cloudfin Raptor"]
 status = "Full"
@@ -6778,7 +6778,7 @@ note = "flying, hexproof (opponents' spells and abilities cannot target it)"
 
 ["Starbreach Whale"]
 status = "Full"
-note = "flying; surveil 2 when it enters (compiled); warp {1}{U}: cast from hand for the warp cost, exiled at the beginning of the next end step, cast from exile for its mana cost on a later turn (the AI warps when the full cost is out of reach before combat, or as the turn's second entry for Elrond)"
+note = "flying; surveil 2 when it enters (compiled); warp {1}{U}: cast from hand for the warp cost, exiled at the beginning of the next end step, cast from exile for its mana cost on a later turn"
 
 ["Starwinder"]
 status = "Full"

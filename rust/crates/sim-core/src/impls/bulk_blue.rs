@@ -1,4 +1,4 @@
-//! Card code for the blue spells of the elrond deck (decklists/JD/elrond-ring-tempts.md).
+//! Card code for the blue spells (keyed by card name; no deck owns it).
 //! Written by the blue-spells agent (rust/agents/blue-spells.md).
 //!
 //! - Jace, Reality Sculptor (walker framework + the empower Jace token of `alela.rs`).

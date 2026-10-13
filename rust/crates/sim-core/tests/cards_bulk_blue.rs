@@ -1,5 +1,5 @@
-//! The elrond deck's blue spells (impls/bulk_blue.rs) on hand-built positions. Seat 0 plays the elrond deck, seat 1
-//! the seph deck.
+//! The blue spells (impls/bulk_blue.rs) on hand-built positions. Seat 0 plays a stand-in deck (the cards are keyed by
+//! name), seat 1 the seph deck.
 
 use sim_core::ai::act;
 use sim_core::engine::hooks::fire_trigger;
@@ -13,7 +13,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn game() -> Game {
-    table(&["elrond", "seph"])
+    table(&["sheoldred", "seph"])
 }
 
 fn cast_spell(g: &mut Game, p: PlayerId, name: &str, ctx: Ctx) -> CardId {

@@ -459,7 +459,7 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
     gn = (gn + crate::dsl::cost_delta(g, p, c)).max(0);
     if !g.hooks.is_empty() {
         gn = (gn + hooks::total_cost(g, p, c)).max(0);
-        if crate::impls::elrond::defiler_discount(g, p, c) {
+        if crate::impls::blue_cards::defiler_discount(g, p, c) {
             pips = pips.replacen('U', "", 1); // Defiler of Dreams: pay 2 life for {U} less
         }
         let floor = hooks::max_min_cost(g, p, c); // Trinisphere

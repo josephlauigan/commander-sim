@@ -65,7 +65,6 @@ pub fn plan_text(deck: &str) -> &'static str {
         "titania" => "first 5/3 Elemental from Titania",
         "sheoldred" => "first opponent drained by Sheoldred",
         "cloud" => "first attack by an equipped Cloud",
-        "elrond" => "first Ring tempt from Elrond",
         "najeela" => "first WUBRG extra combat",
         _ => "",
     }
@@ -102,7 +101,6 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "titania" => ms("titania"),
         "sheoldred" => ms("sheoldred"),
         "cloud" => ms("cloud"),
-        "elrond" => ms("elrond"),
         _ => ms("combo"),
     };
     t.filter(|&t| t != 0)

@@ -2,7 +2,7 @@
 //! Filled in by the white-rest agent (rust/agents/white-rest.md).
 //!
 //! - **Face down** (morph, disguise): **Exalted Angel**, **Forum Familiar**, **Unyielding Gatekeeper**, **Exit
-//!   Specialist** (the Elrond deck's). A face-down creature is the galadriel module's 2/2 with no abilities (`neutered`);
+//!   Specialist**. A face-down creature is the galadriel module's 2/2 with no abilities (`neutered`);
 //!   a disguise creature also has ward {2} while face down (`extra_ward`). `down_options` casts one face down for {3},
 //!   `face_up_options` (called by `brain::hook_options` for every deck) turns one face up for its cost and runs its
 //!   "when turned face up" ability.
@@ -114,7 +114,7 @@ fn flag_is_now(g: &Game, p: PlayerId, key: &str) -> bool {
 /// **What it is worth to p to have the permanent m leave and come back** (a blink, a bounce and recast): the enter
 /// effects it would run again (`t2::blink_value`), Cloud, Midgar Mercenary's search for an Equipment above all, less
 /// what falls off it (each Equipment attached). A token is gone for good: 0. The deck plans of the cloud deck (and
-/// the Elrond deck) may add to this; Ennis, Stormfront Riders, Forum Familiar, Unyielding Gatekeeper and Exit
+/// the Ring-and-entries creatures) may add to this; Ennis, Stormfront Riders, Forum Familiar, Unyielding Gatekeeper and Exit
 /// Specialist all choose their targets by it.
 pub fn reenter_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
     let x = g.perm(m);
