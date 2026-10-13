@@ -134,3 +134,14 @@ fn kura_dies_into_a_big_spirit_once_the_lands_are_down() {
     let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).expect("a Spirit");
     assert_eq!((sim_core::engine::values::epow(&g, t), sim_core::engine::values::etgh(&g, t)), (6, 6));
 }
+
+
+#[test]
+fn titania_casts_survey_early_and_vorinclex_as_a_top_end_threat() {
+    let mut g = table(&["titania", "seph"]);
+    lands(&mut g, P0, "Forest", 3, false);
+    let hs = hand(&mut g, P0, &["Cartographer's Survey", "Tireless Tracker", "Vorinclex, Monstrous Raider"]);
+    let pr = |g: &Game, c| sim_core::ai::decks::deck_prio(g, P0, c);
+    assert!(pr(&g, hs[0]) > pr(&g, hs[1]), "Survey before Tracker");
+    assert!(pr(&g, hs[2]) >= 62);
+}
