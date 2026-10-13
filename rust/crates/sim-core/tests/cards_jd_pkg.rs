@@ -66,3 +66,32 @@ fn kefkas_mystical_tutor_finds_the_storm_card_for_a_waiting_breach() {
 fn g_card_ids(g: &mut Game, names: &[&str]) -> Vec<sim_core::ids::CardId> {
     names.iter().map(|n| card(g, n)).collect()
 }
+
+// ------------------------------------------------------------------ Veyran: Terror of the Peaks, Mirari
+const P1: PlayerId = PlayerId(1);
+
+fn cast_free(g: &mut Game, p: PlayerId, name: &str, ctx: sim_core::state::Ctx) {
+    let c = hand(g, p, &[name])[0];
+    sim_core::engine::cast::cast_card(g, p, c, "hand", ctx).unwrap();
+}
+
+#[test]
+fn terror_of_the_peaks_hits_for_each_token_a_maker_creates() {
+    let mut g = table(&["veyran", "seph"]);
+    perm(&mut g, P0, "Terror of the Peaks");
+    perm(&mut g, P0, "Young Pyromancer");
+    let before = g.player(P1).life;
+    cast_free(&mut g, P0, "Lightning Bolt", sim_core::state::Ctx { face: Some(P1), ..Default::default() });
+    // Bolt: 3 damage, then the Pyromancer's 1/1 Elemental enters: Terror deals 1 more
+    assert_eq!(g.player(P1).life, before - 3 - 1, "Bolt plus a 1-damage Terror trigger");
+}
+
+#[test]
+fn mirari_copies_burn_and_the_copy_counts_as_a_cast_for_magecraft() {
+    let mut g = table(&["veyran", "seph"]);
+    lands(&mut g, P0, "Island", 6, false);
+    perm(&mut g, P0, "Mirari");
+    let before = g.player(P1).life;
+    cast_free(&mut g, P0, "Lightning Bolt", sim_core::state::Ctx { face: Some(P1), ..Default::default() });
+    assert_eq!(g.player(P1).life, before - 6, "Mirari: pay {{3}}, the Bolt resolves twice");
+}
