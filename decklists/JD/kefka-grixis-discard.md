@@ -82,32 +82,31 @@ Known simplifications: madness casts the card from the graveyard rather than fro
 
 ## Where the cards come from
 
-The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them.
+The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Grim Tutor and Diabolic Intent are bought (marked "Buy").
 
-### Black (27)
+### Black (26)
 
 | Card | From | Set |
 |---|---|---|
 | Blightspeaker | Bulk | tsr |
 | Cackling Fiend | Bulk | dmr |
+| Dark Ritual | Sauron | — |
 | Contract Killing | Bulk | xln |
 | Corroding Dragonstorm | Bulk | tdm |
 | Crux of Fate | Bulk | fic |
-| Dark Inquiry | Bulk | rix |
 | Deadly Embrace | Bulk | fin |
 | Decorum Dissertation | Bulk | sos |
 | Demonic Embrace | Bulk | gn3 |
+| Diabolic Intent | Buy | — |
 | Diabolic Tutor | Bulk | m11 |
-| Duress | Binder | — |
 | Eternal Student | Bulk | sos |
 | Extinguish the Light | Bulk | dmu |
 | Feed the Swarm | Bulk | soa |
+| Grim Tutor | Buy | — |
 | Grim Servant | Bulk | mh3 |
-| Ichor Slick | Bulk | tsr |
 | Intellect Devourer | Bulk | clb |
 | Massacre Wurm | Bulk | m21 |
 | Night's Whisper | Bulk | dmc |
-| Postmortem Professor | Bulk | sos |
 | Rank Rat | Bulk | fra |
 | Screeching Soulbreaker | Bulk | fra |
 | Shimmercreep | Bulk | ecl |
@@ -116,18 +115,19 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Twinflame | Binder |  |
 | Susurian Voidborn | Bulk | eoe |
 
-### Red (15)
+### Red (16)
 
 | Card | From | Set |
 |---|---|---|
 | Big Score | Bulk | snc |
 | Blazing Firesinger | Bulk | sos |
-| Chaos Warp | Bulk | moc |
 | Deflecting Swat | Veyran | — |
 | Disintegrate | Binder | — |
 | Garrison Excavator | Bulk | sos |
+| Grapeshot | Bulk | tsr |
 | Grab the Prize | Bulk | dsk |
 | Hallway Heckler | Bulk | fra |
+| Jeska's Will | Veyran | — |
 | Lightning Bolt | Binder | — |
 | Rummaging Goblin | Bulk | cmr, m15, m13 |
 | Sawblade Scamp | Bulk | one |
@@ -136,11 +136,12 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Underworld Breach | Veyran | — |
 | Viashino Fangtail | Bulk | rav |
 
-### Blue (6)
+### Blue (7)
 
 | Card | From | Set |
 |---|---|---|
 | Arcane Denial | Bulk | msc |
+| Brain Freeze | Sauron | — |
 | Jin-Gitaxias, Progress Tyrant | Veyran | — |
 | Pongify | Bulk | 2xm |
 | Reality Shift | Bulk | moc |
@@ -159,18 +160,17 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Stadium Tidalmage | U/R | Bulk | sos |
 | Twinned Vision | U/R | Bulk | fra |
 
-### Colorless artifacts (8)
+### Colorless artifacts (7)
 
 | Card | From | Set |
 |---|---|---|
 | Arcane Signet | Bulk | fic, msc |
 | Lightning Greaves | Bulk | fic |
-| Potioner's Trove | Bulk | sos |
+| Lotus Petal | Sauron | — |
 | Psychosis Crawler | Bulk | c15 |
 | Sisay's Ring | Binder | — |
 | Skullclamp | Bulk | fic |
 | Swiftfoot Boots | Binder | — |
-| Thought Vessel | Bulk | msc |
 
 ### Lands (10)
 

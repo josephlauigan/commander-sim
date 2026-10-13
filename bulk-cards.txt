@@ -168,7 +168,7 @@
 3x Curtain of Light (sok)
 1x Cut Propulsion (eoe)
 1x Dark Endurance (eoe)
-1x Dark Inquiry
+1x Dark Inquiry (rix)
 1x Dark Matter Manipulator (fra)
 1x Deadapult (dmr)
 1x Deadeye Duelist (otj)
@@ -371,7 +371,7 @@
 4x Hydro-Channeler (sos)
 1x Icatian Javelineers (dmr)
 8x Icefall (csp)
-1x Ichor Slick
+1x Ichor Slick (tsr)
 1x Icy Reception (fra)
 3x Il Mheg Pixie (fin)
 3x Imperious Inkmage (sos)
@@ -547,7 +547,7 @@
 1x Plummet (list)
 1x Pompous Gadabout (mkm)
 1x Port Town (msc)
-1x Postmortem Professor
+1x Postmortem Professor (sos)
 2x Potioner's Trove (sos)
 1x Practiced Offense (sos)
 2x Precise Redaction (fra)
@@ -810,7 +810,7 @@
 1x The Wasp, Winsome Avenger (msc)
 1x Thermal Glider (mmq)
 1x Thornfist Striker (sos)
-1x Thought Vessel
+1x Thought Vessel (msc)
 1x Thraben Charm (mh3)
 1x Thriving Skyclaw (mh3)
 1x Thrummingbird (one)
