@@ -733,7 +733,14 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             if !st {
                 return first(&["Brain Freeze", "Grapeshot"]);
             }
-            first(&["Dark Ritual", "Lotus Petal", "Cabal Ritual"])
+            first(&["Dark Ritual", "Lotus Petal", "Cabal Ritual", "Yawgmoth's Will"])
+        }
+        "kefka" if kind == "is" && super::decks::deck_has_storm(g, p) => {
+            // Mystical Tutor: the storm card for a Breach that waits for one (Breach itself is no instant or sorcery)
+            if breach_out(g, p) && !storm_held(g, p) {
+                return first(&["Brain Freeze", "Grapeshot"]);
+            }
+            None
         }
         "sauron" => {
             let sw = held(Tag::Sword);

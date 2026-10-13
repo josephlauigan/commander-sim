@@ -51,3 +51,18 @@ fn kefka_casts_yawgmoths_will_for_three_cheap_spells() {
     to_gy(&mut g, P0, &["Duress", "Dark Ritual", "Lotus Petal"]);
     assert!(labels(&mut g, P0).iter().any(|l| l.starts_with("Yawgmoth's Will")));
 }
+
+#[test]
+fn kefkas_mystical_tutor_finds_the_storm_card_for_a_waiting_breach() {
+    use sim_core::ai::decks::tutor_pick_named;
+    let mut g = table(&["kefka", "seph"]);
+    perm(&mut g, P0, "Underworld Breach");
+    let bf = g_card_ids(&mut g, &["Brain Freeze", "Grapeshot"]);
+    g.player_mut(P0).library.extend(bf);
+    let c = tutor_pick_named(&g, P0, "is").expect("a pick");
+    assert!(matches!(&*g.db.get(c).name, "Brain Freeze" | "Grapeshot"));
+}
+
+fn g_card_ids(g: &mut Game, names: &[&str]) -> Vec<sim_core::ids::CardId> {
+    names.iter().map(|n| card(g, n)).collect()
+}
