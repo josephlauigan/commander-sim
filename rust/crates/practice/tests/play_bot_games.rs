@@ -144,7 +144,7 @@ fn play(deck: &str, tier: &str, seed: u64) {
 
 #[test]
 fn sauron_t2() {
-    play("sauron", "t2", 1);
+    play("sauron", "t2", 2); // seed 1 deals the 10-13 list a round-4 loss with 3 cards drawn: too short a game to test
 }
 #[test]
 fn sauron_t4() {
