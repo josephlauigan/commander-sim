@@ -1284,6 +1284,9 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
         dp += bp - x.pow; // Wrecking Ball Arm, Hulkbuster Armor: base power and toughness
         dt += bt - x.tgh;
     }
+    let shaped = crate::impls::cloud::steelshaper_bonus(g, m); // Auriok Steelshaper
+    dp += shaped;
+    dt += shaped;
     for (_, src, ab, i) in statics(g, "equip_bonus") {
         if let Ability::Static { pow, tgh, .. } = &ab[i]
             && g.perm(src).attached == Some(m)
@@ -1842,7 +1845,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .perms
             .iter()
             .copied()
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m))
+            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m) && x.attached != Some(m))
             .collect();
         let base = n;
         let cands: Vec<PermId> = cands

@@ -1,0 +1,89 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 6 worker threads: about 4 minutes
+  progress  10.0%  0m24s elapsed, ~3m43s left
+  progress  20.0%  0m48s elapsed, ~3m14s left
+  progress  30.0%  1m11s elapsed, ~2m47s left
+  progress  40.0%  1m28s elapsed, ~2m13s left
+  progress  50.0%  1m47s elapsed, ~1m47s left
+  progress  60.0%  2m10s elapsed, ~1m27s left
+  progress  70.0%  2m27s elapsed, ~1m03s left
+  progress  80.0%  2m45s elapsed, ~0m41s left
+  progress  90.0%  3m02s elapsed, ~0m20s left
+  progress 100.0%  3m24s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 7.1%   (4-player baseline 25%)   average rounds survived 9.5
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.24 per game, by
+    combat             46.0%
+    commander damage   45.1%
+    triggers            5.3%
+    decked              3.5%
+  Damage dealt per game: 17.0, from
+    combat              16.7  (98%)
+    triggers             0.3  (2%)
+
+-- How it loses --
+  Eliminated in 92.9% of games, on average in round 9.2
+    by Light-Paws via commander damage   18.3% of games
+    by Isshin   via combat             16.9% of games
+    by Tatyova  via combat             13.1% of games
+    by Lathril  via combat             11.9% of games
+    by Light-Paws via combat              7.3% of games
+    by Teysa Karlov via drain               7.3% of games
+    by Teysa Karlov via combat              6.5% of games
+    by Lathril  via drain               4.8% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 18%  T5 30%  T6 39%  T7 49%  T8 55%  T9 59%  T10 60%  T11 61%  T12 61%
+  Online at all: 63.3% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 99.8% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Helm of Kaldra                             cast in  21.2% of games, win rate when cast  16.7% (+9.6)
+    Forum Familiar                             cast in  21.0% of games, win rate when cast  11.9% (+4.8)
+    Sword of Hearth and Home                   cast in  22.9% of games, win rate when cast  11.8% (+4.7)
+    Colossus Hammer                            cast in  44.6% of games, win rate when cast  11.7% (+4.6)
+    Sword of Kaldra                            cast in  40.6% of games, win rate when cast  11.3% (+4.2)
+    Wrecking Ball Arm                          cast in  33.8% of games, win rate when cast   9.9% (+2.8)
+    Mask of Memory                             cast in  74.4% of games, win rate when cast   8.7% (+1.6)
+    Cloud, Midgar Mercenary                    cast in  99.8% of games, win rate when cast   7.1% (+0.0)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  99.8% of games, win rate when cast   7.1% (+0.0)
+    Mask of Memory                             cast in  74.4% of games, win rate when cast   8.7% (+1.6)
+    Wrecking Ball Arm                          cast in  33.8% of games, win rate when cast   9.9% (+2.8)
+    Sword of Kaldra                            cast in  40.6% of games, win rate when cast  11.3% (+4.2)
+    Colossus Hammer                            cast in  44.6% of games, win rate when cast  11.7% (+4.6)
+    Sword of Hearth and Home                   cast in  22.9% of games, win rate when cast  11.8% (+4.7)
+    Forum Familiar                             cast in  21.0% of games, win rate when cast  11.9% (+4.8)
+    Helm of Kaldra                             cast in  21.2% of games, win rate when cast  16.7% (+9.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Shardmage's Rescue                         cast  22.0% of the games it was drawn
+    Shield of Kaldra                           cast  36.9% of the games it was drawn
+    Solemn Simulacrum                          cast  37.0% of the games it was drawn
+    Court of Ardenvale                         cast  42.2% of the games it was drawn
+    Champion's Helm                            cast  43.4% of the games it was drawn
+    Sword of Kaldra                            cast  46.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.72
+    Mask of Memory                             0.10
+    Sword of Hearth and Home                   0.09
+    Sword of Fire and Ice                      0.07
+    Helm of Kaldra                             0.06
+    White Mage's Staff                         0.05
+    Sword of Kaldra                            0.05
+    Colossus Hammer                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(205s total)

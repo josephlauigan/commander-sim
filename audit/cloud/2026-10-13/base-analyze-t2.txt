@@ -1,0 +1,97 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 8 worker threads: about 3 minutes
+  progress  10.0%  0m23s elapsed, ~3m31s left
+  progress  20.0%  0m43s elapsed, ~2m52s left
+  progress  30.0%  0m57s elapsed, ~2m15s left
+  progress  40.0%  1m16s elapsed, ~1m54s left
+  progress  50.0%  1m31s elapsed, ~1m31s left
+  progress  60.0%  1m48s elapsed, ~1m12s left
+  progress  70.0%  2m05s elapsed, ~0m53s left
+  progress  80.0%  2m21s elapsed, ~0m35s left
+  progress  90.0%  2m38s elapsed, ~0m17s left
+  progress 100.0%  2m56s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 2.7%   (4-player baseline 25%)   average rounds survived 11.4
+
+-- How it wins --
+  damage      92.3% of wins
+  timeout      7.7% of wins
+  Opponents it eliminated: 0.17 per game, by
+    combat             70.2%
+    commander damage   29.8%
+  Damage dealt per game: 17.0, from
+    combat              17.0  (100%)
+
+-- How it loses --
+  Eliminated in 96.9% of games, on average in round 11.2
+    by Brago    via combat             19.4% of games
+    by Kaalia of the Vast via combat             17.7% of games
+    by Lord Windgrace via combat             15.0% of games
+    by Sythis   via combat             14.2% of games
+    by Meren of Clan Nel Toth via combat             10.4% of games
+    by Sythis   via commander damage    9.0% of games
+    by Meren of Clan Nel Toth via drain               4.4% of games
+    by Kaalia of the Vast via drain               2.3% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 8%  T4 16%  T5 27%  T6 37%  T7 42%  T8 48%  T9 52%  T10 54%  T11 55%  T12 56%
+  Online at all: 57.7% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 99.8% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Shield of Kaldra                           cast in  22.7% of games, win rate when cast   5.5% (+2.8)
+    Forum Familiar                             cast in  23.3% of games, win rate when cast   5.4% (+2.6)
+    Wrecking Ball Arm                          cast in  41.0% of games, win rate when cast   5.1% (+2.4)
+    Adelbert Steiner                           cast in  22.1% of games, win rate when cast   4.7% (+2.0)
+    Hero's Blade                               cast in  22.9% of games, win rate when cast   4.5% (+1.8)
+    Colossus Hammer                            cast in  51.2% of games, win rate when cast   4.5% (+1.8)
+    Helm of Kaldra                             cast in  27.1% of games, win rate when cast   3.8% (+1.1)
+    Mask of Memory                             cast in  78.8% of games, win rate when cast   3.2% (+0.5)
+    Sword of Kaldra                            cast in  54.4% of games, win rate when cast   3.1% (+0.4)
+    Cloud, Midgar Mercenary                    cast in  99.8% of games, win rate when cast   2.7% (+0.0)
+  Lowest win rate when cast:
+    Explorer's Scope                           cast in  23.1% of games, win rate when cast   1.8% (-0.9)
+    Cloud, Midgar Mercenary                    cast in  99.8% of games, win rate when cast   2.7% (+0.0)
+    Sword of Kaldra                            cast in  54.4% of games, win rate when cast   3.1% (+0.4)
+    Mask of Memory                             cast in  78.8% of games, win rate when cast   3.2% (+0.5)
+    Helm of Kaldra                             cast in  27.1% of games, win rate when cast   3.8% (+1.1)
+    Colossus Hammer                            cast in  51.2% of games, win rate when cast   4.5% (+1.8)
+    Hero's Blade                               cast in  22.9% of games, win rate when cast   4.5% (+1.8)
+    Adelbert Steiner                           cast in  22.1% of games, win rate when cast   4.7% (+2.0)
+    Wrecking Ball Arm                          cast in  41.0% of games, win rate when cast   5.1% (+2.4)
+    Forum Familiar                             cast in  23.3% of games, win rate when cast   5.4% (+2.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rootborn Defenses                          cast   1.0% of the games it was drawn [reactive: only cast in response]
+    Unbreakable Formation                      cast   1.8% of the games it was drawn [reactive: only cast in response]
+    Take Up the Shield                         cast   6.1% of the games it was drawn
+    Ultimate Magic: Holy                       cast   9.5% of the games it was drawn [reactive: only cast in response]
+    Cho-Manno's Blessing                       cast  16.5% of the games it was drawn
+    Bronze Guardian                            cast  34.6% of the games it was drawn
+    Exalted Angel                              cast  37.9% of the games it was drawn
+    Hulkbuster Armor                           cast  44.1% of the games it was drawn
+    Magitek Scythe                             cast  44.1% of the games it was drawn
+    Magnetic Snuffler                          cast  44.7% of the games it was drawn
+    Fate of the Sun-Cryst                      cast  45.0% of the games it was drawn
+    Shield of Kaldra                           cast  45.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    1.30
+    Mask of Memory                             0.23
+    Helm of Kaldra                             0.16
+    Sword of Kaldra                            0.16
+    Colossus Hammer                            0.15
+    White Mage's Staff                         0.11
+    Cid, Freeflier Pilot                       0.09
+    Medic's Kitesail                           0.08
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(177s total)

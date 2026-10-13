@@ -1,0 +1,94 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Sword of Fire and Ice [scryfall+dsl] A 3 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_protection -> 
+      ability: triggered combat_damage -> damage, draw
+      ability: static equip_cost -> 
+   Sword of Hearth and Home [scryfall+dsl] A 3 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_protection -> 
+      ability: triggered combat_damage -> blink, search
+      ability: static equip_cost -> 
+   Solemn Simulacrum [scryfall+dsl] AC 4 :: pow=2
+      ability: triggered etb -> search
+      ability: triggered dies -> draw
+   Knight of the White Orchid [pool] C WW :: pow=2 tgh=2
+   Loyal Warhound [pool] C 1W :: pow=3 tgh=1 vig
+   Enlightened Tutor [scryfall+dsl] I W :: tut=any
+      ability: spell  -> search
+   Grand Abolisher [pool] C WW :: human pow=2
+   Court of Ardenvale [pool] E 2WW :: (no tags)
+Swaps: Take Up the Shield -> Sword of Fire and Ice; Cho-Manno's Blessing -> Sword of Feast and Famine; Hulkbuster Armor -> Sword of Hearth and Home; Repel the Darkness -> Champion's Helm; Argivian Find -> Smothering Tithe; Magnetic Snuffler -> Sol Ring; Harsh Annotation -> Arcane Signet; Rapier Wit -> Fellwar Stone; White Auracite -> Mind Stone; Potioner's Trove -> Coalition Relic; Memory Trap -> Thought Vessel; Hero's Heirloom -> Solemn Simulacrum; Squire's Lightblade -> Knight of the White Orchid; Essence Reliquary -> Loyal Warhound; Make Your Move -> Enlightened Tutor; Medic's Kitesail -> Grand Abolisher; Plains -> Skyclave Apparition; Plains -> Court of Ardenvale; Plains -> Plaza of Heroes
+
+=== Cloud vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win   3.0% ->   8.0%  (delta +5.0 pts, noise ±2.9, paired)   n=500
+               eliminated by (variant): Kaalia of the Vast 19.2%  Sythis 22.8%  Lord Windgrace 17.4%  Brago 16.4%  Meren of Clan Nel Toth 15.0%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                           3.0% ->   8.0%  +5.0pt   ±2.9*
+    Rounds survived (or game length)                  11.40 ->  11.55   +0.15  ±0.40 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.14   +0.04  ±0.07 
+    Missed land drops, turns 1-5                       0.87 ->   0.93   +0.06  ±0.11 
+    Mana available on your turn 4                      3.66 ->   3.98   +0.31  ±0.12*
+    Mana available on your turn 6                      4.88 ->   5.59   +0.72  ±0.20*
+
+  Speed
+    Games where the game plan came online             58.2% ->  62.8%  +4.6pt   ±6.2 
+    Turn the game plan came online                     6.18 ->   6.71   +0.53  ±0.45*
+    Turn the commander first resolved                  2.14 ->   2.15   +0.01  ±0.06 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.28 ->  15.33   +1.05  ±0.87*
+    Tutors resolved per game                           3.06 ->   3.72   +0.65  ±0.19*
+    Spells cast per game                              14.34 ->  16.35   +2.02  ±0.81*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.84 ->   0.53   -0.30  ±0.10*
+    Board wipes cast                                   0.09 ->   0.09   +0.00  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.92 ->   1.36   +0.44  ±0.17*
+    Your spells countered                              0.27 ->   0.24   -0.03  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                17.24 ->  21.84   +4.60  ±2.54*
+      ...of which combat damage                       17.24 ->  21.55   +4.31  ±2.52*
+      ...of which other triggers                       0.00 ->   0.29   +0.29  ±0.12*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Mana available on your turn 4 (both profiles)
+    better - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Turn the game plan came online (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+    better -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(348s total)

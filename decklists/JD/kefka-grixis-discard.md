@@ -6,6 +6,7 @@
 **Updated 2026-10-11 (trade with Veyran, moved as functional blocks).** In from Veyran: Deflecting Swat and Slip Out the Back (protection), Underworld Breach (graveyard), Niv-Mizzet, the Firemind (a second draw-to-damage kill with the flipped Kefka), Jin-Gitaxias, Progress Tyrant, and Steam Vents, Sulfur Falls, Spirebluff Canal and Stormcarved Coast (for 4 Mountains). Out: Mystic Confluence and Splatter Technique (to Veyran), Arcane Omens and Inner Fire (to bulk), Triskelion (to the binder). Paired look-ahead test, 1,000 games per tier: **+1.3 points** (28.1% -> 29.4%). Two Game Changers now (Rhystic Study, Underworld Breach).
 **Updated 2026-10-12.** Out: Stargaze (to bulk). In: Twinflame (binder). JD's choice, not simulated: hasty token copies of your creatures for a turn (a second Massacre Wurm, Jin-Gitaxias or Intellect Devourer); Stargaze was cast in only 11-12% of the games it was drawn (diagnostic, audit/kefka/diag).
 **Updated 2026-10-13.** Out: Chaos Warp, Dark Inquiry, Duress, Ichor Slick, Postmortem Professor, Potioner's Trove, Thought Vessel. In: Brain Freeze, Dark Ritual, Diabolic Intent, Grapeshot, Grim Tutor, Jeska's Will, Lotus Petal. JD's choice: Sauron's Underworld Breach package (Brain Freeze, Dark Ritual, Lotus Petal) with Grapeshot (bulk), Grim Tutor, Diabolic Intent and Jeska's Will (from Veyran), to run the Breach + storm line alongside Kefka's own Underworld Breach. Measured +0.5 over all tiers, within noise (T1 +3.3, T2 +0.6, T3 -0.5, T4 -0.7, T5 -0.3; look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-12-weakness/kefka-k3/). Three Game Changers now (Rhystic Study, Underworld Breach, Jeska's Will).
+**Updated 2026-10-13 (second change).** Out: Grim Tutor, Diabolic Intent, Swiftfoot Boots. In: Profane Tutor, Demonic Tutor, Chaos Warp. JD's choice, not simulated: the two tutors come from the retired Jodah deck instead of being bought (Profane Tutor is suspended for {1}{B} and finds any card two turns later; Demonic Tutor is a Game Changer, so the deck moves to Bracket 4). Swiftfoot Boots goes to the Cloud deck (Kefka keeps Lightning Greaves for haste); Chaos Warp comes back from bulk.
 
 2026-10-11
 **Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Fully modeled and measured on 2026-10-11: 26.6% over all tiers (see "Simulator status").
@@ -33,11 +34,11 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 **The second kill: Niv-Mizzet, the Firemind + Kefka, Ruler of Ruin.** Each card you draw deals 1 damage to any target; damage to an opponent on your turn draws you a card, which pings again. One ping hits one opponent, so the loop needs a library larger than the opponents' life added together, but you choose every target: when the library is short, aim the pings at creatures (or at yourself) and stop. Niv also taps to draw, which starts it.
 
-**Jin-Gitaxias, Progress Tyrant** copies the first artifact, instant or sorcery you cast each turn (a second Grim Tutor, Night's Whisper or Lightning Bolt) and counters the first one each opponent casts.
+**Jin-Gitaxias, Progress Tyrant** copies the first artifact, instant or sorcery you cast each turn (a second Demonic Tutor, Night's Whisper or Lightning Bolt) and counters the first one each opponent casts.
 
 ## Key lines
 
-**Kefka with haste.** Lightning Greaves or Swiftfoot Boots on the turn he lands means two triggers in one turn: the enter trigger and the attack trigger, two discards for the table and two rounds of draws for you.
+**Kefka with haste.** Lightning Greaves on the turn he lands means two triggers in one turn: the enter trigger and the attack trigger, two discards for the table and two rounds of draws for you.
 
 **Discard into value.** With Kefka's trigger on the stack, keep Scarlet Spider or Demonic Embrace in hand to discard: Scarlet Spider for {B/R} from the graveyard this turn, and Demonic Embrace any time later.
 
@@ -51,16 +52,16 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 - **Lands:** 36 (10 nonbasic + 26 basic)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.
-- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Diabolic Tutor, Diabolic Intent, Grim Tutor, Grim Servant (devotion to black). **Graveyard:** Underworld Breach.
+- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach.
 - **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Kaervek's Purge, Disintegrate, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
-- **Protection:** Lightning Greaves and Swiftfoot Boots (both give haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
+- **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with three Game Changers: **Rhystic Study**, **Underworld Breach** and **Jeska's Will**. No two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Four tutors (Diabolic Tutor, Diabolic Intent, Grim Tutor, Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
+**Bracket 4,** with four Game Changers: **Rhystic Study**, **Underworld Breach**, **Jeska's Will** and **Demonic Tutor**. No two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Four tutors (Demonic Tutor, Diabolic Tutor, Profane Tutor, Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
 
 Disclose before the game:
-- **Rhystic Study**, **Underworld Breach** and **Jeska's Will** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
+- **Rhystic Study**, **Underworld Breach**, **Jeska's Will** and **Demonic Tutor** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
 - **The Crawler and Niv-Mizzet loops** with Kefka, Ruler of Ruin.
 - **The Breach + Brain Freeze line**, which can mill an opponent out in one turn (Dark Ritual, Lotus Petal and Grapeshot feed the storm count).
 - **Jin-Gitaxias, Progress Tyrant**, which counters the first artifact, instant or sorcery each opponent casts each turn.
@@ -82,7 +83,7 @@ Known simplifications: madness casts the card from the graveyard rather than fro
 
 ## Where the cards come from
 
-The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Grim Tutor and Diabolic Intent are bought (marked "Buy").
+The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Profane Tutor and Demonic Tutor come from the retired Jodah deck (marked "Jodah") and Chaos Warp from bulk (2026-10-13). Nothing to buy.
 
 ### Black (26)
 
@@ -97,16 +98,16 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Deadly Embrace | Bulk | fin |
 | Decorum Dissertation | Bulk | sos |
 | Demonic Embrace | Bulk | gn3 |
-| Diabolic Intent | Buy | — |
+| Demonic Tutor | Jodah | — |
 | Diabolic Tutor | Bulk | m11 |
 | Eternal Student | Bulk | sos |
 | Extinguish the Light | Bulk | dmu |
 | Feed the Swarm | Bulk | soa |
-| Grim Tutor | Buy | — |
 | Grim Servant | Bulk | mh3 |
 | Intellect Devourer | Bulk | clb |
 | Massacre Wurm | Bulk | m21 |
 | Night's Whisper | Bulk | dmc |
+| Profane Tutor | Jodah | — |
 | Rank Rat | Bulk | fra |
 | Screeching Soulbreaker | Bulk | fra |
 | Shimmercreep | Bulk | ecl |
@@ -115,12 +116,13 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Twinflame | Binder |  |
 | Susurian Voidborn | Bulk | eoe |
 
-### Red (16)
+### Red (17)
 
 | Card | From | Set |
 |---|---|---|
 | Big Score | Bulk | snc |
 | Blazing Firesinger | Bulk | sos |
+| Chaos Warp | Bulk | — |
 | Deflecting Swat | Veyran | — |
 | Disintegrate | Binder | — |
 | Garrison Excavator | Bulk | sos |
@@ -160,7 +162,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Stadium Tidalmage | U/R | Bulk | sos |
 | Twinned Vision | U/R | Bulk | fra |
 
-### Colorless artifacts (7)
+### Colorless artifacts (6)
 
 | Card | From | Set |
 |---|---|---|
@@ -170,7 +172,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Psychosis Crawler | Bulk | c15 |
 | Sisay's Ring | Binder | — |
 | Skullclamp | Bulk | fic |
-| Swiftfoot Boots | Binder | — |
 
 ### Lands (10)
 
@@ -195,11 +196,11 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 
 **Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Rhystic Study, Underworld Breach
 
-**Artifacts (6).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp, Swiftfoot Boots
+**Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
 
-**Sorceries (17).** Contract Killing, Crux of Fate, Deadly Embrace, Decorum Dissertation, Diabolic Intent, Diabolic Tutor, Disintegrate, Feed the Swarm, Grab the Prize, Grapeshot, Grim Tutor, Jeska's Will, Kaervek's Purge, Night's Whisper, Rapturous Moment, Seize the Spoils, Twinflame
+**Sorceries (17).** Contract Killing, Crux of Fate, Deadly Embrace, Decorum Dissertation, Demonic Tutor, Diabolic Tutor, Disintegrate, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Kaervek's Purge, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Twinflame
 
-**Instants (12).** Arcane Denial, Big Score, Brain Freeze, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
+**Instants (13).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
 **Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Underground River, 6 Island, 5 Mountain, 15 Swamp
 
@@ -215,6 +216,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Blood Crypt
 1 Brain Freeze
 1 Cackling Fiend
+1 Chaos Warp
 1 Command Tower
 1 Contract Killing
 1 Corroding Dragonstorm
@@ -224,7 +226,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Decorum Dissertation
 1 Deflecting Swat
 1 Demonic Embrace
-1 Diabolic Intent
+1 Demonic Tutor
 1 Diabolic Tutor
 1 Disintegrate
 1 Eternal Student
@@ -236,7 +238,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Grab the Prize
 1 Grapeshot
 1 Grim Servant
-1 Grim Tutor
 1 Hallway Heckler
 1 Haunted Ridge
 1 Intellect Devourer
@@ -251,6 +252,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Night's Whisper
 1 Niv-Mizzet, the Firemind
 1 Pongify
+1 Profane Tutor
 1 Psychosis Crawler
 1 Rank Rat
 1 Rapturous Moment
@@ -273,7 +275,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Stormcarved Coast
 1 Sulfur Falls
 1 Susurian Voidborn
-1 Swiftfoot Boots
 1 Thrill of Possibility
 1 Twinflame
 1 Twinned Vision

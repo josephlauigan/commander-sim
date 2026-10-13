@@ -1,0 +1,58 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Carnage Altar [scryfall+dsl] A 2 :: (no tags)
+      ability: activated  -> draw
+Swaps: Champion's Helm -> Carnage Altar
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  31.8% ->  34.8%  (delta +3.0 pts, noise ±5.1, paired)   n=500
+               eliminated by (variant): Aurelia 26.4%  Tergrid 11.2%  Korvold 6.2%  Atraxa 7.8%  Marwyn 12.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          31.8% ->  34.8%  +3.0pt   ±6.0 
+    Rounds survived (or game length)                  11.29 ->  11.45   +0.16  ±0.40 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.52 ->   0.52   +0.00  ±0.10 
+    Mana available on your turn 4                      4.19 ->   4.19   +0.00  ±0.10 
+    Mana available on your turn 6                      5.63 ->   5.63   +0.00  ±0.16 
+
+  Speed
+    Games where the game plan came online             93.0% ->  91.0%  -2.0pt   ±3.4 
+    Turn the game plan came online                     6.43 ->   6.44   +0.01  ±0.27 
+    Turn the commander first resolved                  6.37 ->   6.42   +0.05  ±0.26 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.25 ->  17.67   +0.41  ±0.98 
+    Tutors resolved per game                           0.00 ->   0.00   -0.00  ±0.00 
+    Spells cast per game                              13.37 ->  13.66   +0.30  ±0.73 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.33 ->   1.35   +0.03  ±0.14 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.83   +0.08  ±0.12 
+    Your spells countered                              0.12 ->   0.15   +0.03  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                58.58 ->  57.12   -1.45  ±5.17 
+      ...of which combat damage                        8.19 ->   8.31   +0.11  ±1.10 
+      ...of which magecraft / burn                     1.52 ->   1.50   -0.02  ±0.36 
+      ...of which drain triggers                      40.55 ->  38.54   -2.01  ±4.23 
+      ...of which other triggers                       7.02 ->   7.50   +0.47  ±1.78 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(153s total)

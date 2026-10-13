@@ -525,3 +525,128 @@ fn recruitment_officer_finds_a_cheap_creature_in_the_top_four() {
     assert!(in_hand(&g, P0, "Helitrooper"));
     assert_eq!(g.player(P0).library.len(), len - 1, "the rest went to the bottom");
 }
+
+// ------------------------------------------------------------------ free-equip and backup carriers
+fn ready(g: &mut Game, m: PermId) -> PermId {
+    g.perm_mut(m).sick = false;
+    m
+}
+
+fn wearing(g: &Game, e: PermId, m: PermId) -> bool {
+    g.perm(e).attached == Some(m)
+}
+
+#[test]
+fn ardenn_moves_every_equipment_onto_cloud_at_combat() {
+    let mut g = game();
+    g.active = Some(P0);
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    ready(&mut g, cl);
+    let _ard = perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
+    let bear = perm(&mut g, P0, "Kor Duelist");
+    let a = perm(&mut g, P0, "Hero's Blade");
+    let b = perm(&mut g, P0, "Mask of Memory");
+    g.perm_mut(b).attached = Some(bear);
+    sim_core::cardcode::combat_start(&mut g, P0).unwrap();
+    assert!(wearing(&g, a, cl) && wearing(&g, b, cl));
+}
+
+#[test]
+fn balan_has_double_strike_only_with_two_equipment() {
+    let mut g = game();
+    let bal = perm(&mut g, P0, "Balan, Wandering Knight");
+    let a = perm(&mut g, P0, "Hero's Blade");
+    let b = perm(&mut g, P0, "Mask of Memory");
+    assert!(sim_core::engine::combat::first_strike(&g, bal));
+    assert!(!sim_core::engine::combat::double_strike(&g, bal));
+    g.perm_mut(a).attached = Some(bal);
+    assert!(!sim_core::engine::combat::double_strike(&g, bal));
+    g.perm_mut(b).attached = Some(bal);
+    assert!(sim_core::engine::combat::double_strike(&g, bal));
+}
+
+#[test]
+fn balan_attaches_all_equipment_for_two_mana_when_cloud_is_away() {
+    let mut g = game();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Plains", 2, false);
+    let bal = rperm(&mut g, "Balan, Wandering Knight");
+    let other = perm(&mut g, P0, "Kor Duelist");
+    let a = perm(&mut g, P0, "Hero's Blade");
+    let b = perm(&mut g, P0, "Mask of Memory");
+    g.perm_mut(b).attached = Some(other);
+    let o = option_labels(&mut g, false);
+    assert!(o.iter().any(|l| l == "Balan: attach all Equipment"), "{o:?}");
+    do_option(&mut g, "Balan: attach all Equipment", false);
+    assert!(wearing(&g, a, bal) && wearing(&g, b, bal));
+    assert!(sim_core::engine::combat::double_strike(&g, bal));
+}
+
+#[test]
+fn balan_leaves_the_equipment_for_cloud_when_he_can_attack() {
+    let mut g = game();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Plains", 2, false);
+    rperm(&mut g, "Cloud, Midgar Mercenary");
+    rperm(&mut g, "Balan, Wandering Knight");
+    perm(&mut g, P0, "Hero's Blade");
+    let o = option_labels(&mut g, false);
+    assert!(!o.iter().any(|l| l.starts_with("Balan")), "{o:?}");
+}
+
+#[test]
+fn kor_duelist_has_double_strike_when_equipped() {
+    let mut g = game();
+    let d = perm(&mut g, P0, "Kor Duelist");
+    let e = perm(&mut g, P0, "Hero's Blade");
+    assert!(!sim_core::engine::combat::double_strike(&g, d));
+    g.perm_mut(e).attached = Some(d);
+    assert!(sim_core::engine::combat::double_strike(&g, d));
+}
+
+fn skyhunter_attack(g: &mut Game, sky: PermId) {
+    sim_core::engine::hooks::fire_trigger(
+        g,
+        sim_core::hooks::Event::Attack,
+        sim_core::hooks::Call::Attack { p: P0, atk: vec![sky], d: P1 },
+    )
+    .unwrap();
+}
+
+#[test]
+fn armored_skyhunter_puts_an_equipment_from_the_top_six_onto_the_best_holder() {
+    let mut g = game();
+    g.active = Some(P0);
+    let cl = rperm(&mut g, "Cloud, Midgar Mercenary");
+    let sky = rperm(&mut g, "Armored Skyhunter");
+    let before = g.player(P0).library.len();
+    let top: Vec<CardId> = ["Swamp", "Plains", "Plains", "Hero's Blade", "Plains", "Plains", "Plains"]
+        .iter()
+        .map(|n| card(&g, n))
+        .collect();
+    g.player_mut(P0).library.extend(top);
+    skyhunter_attack(&mut g, sky);
+    let e = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Hero's Blade").expect("on battlefield");
+    assert!(wearing(&g, e, cl));
+    // six looked at, five went to the bottom, the seventh card is still on top
+    assert_eq!(g.player(P0).library.len(), before + 6);
+    assert_eq!(&*g.db.get(*g.player(P0).library.last().unwrap()).name, "Swamp");
+}
+
+#[test]
+fn armored_skyhunter_with_nothing_to_take_bottoms_all_six() {
+    let mut g = game();
+    g.active = Some(P0);
+    let sky = rperm(&mut g, "Armored Skyhunter");
+    let before = g.player(P0).library.len();
+    let top: Vec<CardId> = (0..6).map(|_| card(&g, "Plains")).collect();
+    g.player_mut(P0).library.extend(top);
+    skyhunter_attack(&mut g, sky);
+    assert_eq!(g.player(P0).library.len(), before + 6);
+    assert_eq!(&*g.db.get(g.player(P0).library[0]).name, "Plains");
+}
+
+fn rperm(g: &mut Game, name: &str) -> PermId {
+    let m = perm(g, P0, name);
+    ready(g, m)
+}

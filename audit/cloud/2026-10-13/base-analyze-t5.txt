@@ -1,0 +1,77 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 8 worker threads: about 3 minutes
+  progress  10.0%  0m06s elapsed, ~0m56s left
+  progress  20.0%  0m13s elapsed, ~0m52s left
+  progress  30.0%  0m19s elapsed, ~0m45s left
+  progress  40.0%  0m25s elapsed, ~0m38s left
+  progress  50.0%  0m30s elapsed, ~0m30s left
+  progress  60.0%  0m36s elapsed, ~0m24s left
+  progress  70.0%  0m42s elapsed, ~0m18s left
+  progress  80.0%  0m49s elapsed, ~0m12s left
+  progress  90.0%  0m55s elapsed, ~0m06s left
+  progress 100.0%  1m03s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 9.6%   (4-player baseline 25%)   average rounds survived 8.2
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.28 per game, by
+    combat             75.0%
+    commander damage   25.0%
+  Damage dealt per game: 15.5, from
+    combat              15.5  (100%)
+
+-- How it loses --
+  Eliminated in 90.4% of games, on average in round 7.5
+    by Kinnan   via combo              24.0% of games
+    by Urza     via combo              16.2% of games
+    by Winota   via combat             13.1% of games
+    by Winota   via combo              11.9% of games
+    by Zur the Enchanter via combo              11.5% of games
+    by Yawgmoth via combo               6.2% of games
+    by Zur the Enchanter via commander damage    2.3% of games
+    by Yawgmoth via combat              1.0% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 11%  T5 19%  T6 27%  T7 32%  T8 34%  T9 36%  T10 37%  T11 38%  T12 40%
+  Online at all: 40.2% of games
+  Commander resolves on turn: median 2.0, mean 2.3 (over the 96.7% of games it resolves)
+  Commander resolved by turn:  T4 95%  T5 95%  T6 96%  T7 96%  T8 96%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Colossus Hammer                            cast in  25.8% of games, win rate when cast  23.4% (+13.8)
+    Sword of Kaldra                            cast in  26.0% of games, win rate when cast  18.4% (+8.8)
+    Wrecking Ball Arm                          cast in  22.3% of games, win rate when cast  16.8% (+7.2)
+    Mask of Memory                             cast in  53.5% of games, win rate when cast  15.6% (+6.0)
+    Cloud, Midgar Mercenary                    cast in  97.3% of games, win rate when cast   9.9% (+0.3)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  97.3% of games, win rate when cast   9.9% (+0.3)
+    Mask of Memory                             cast in  53.5% of games, win rate when cast  15.6% (+6.0)
+    Wrecking Ball Arm                          cast in  22.3% of games, win rate when cast  16.8% (+7.2)
+    Sword of Kaldra                            cast in  26.0% of games, win rate when cast  18.4% (+8.8)
+    Colossus Hammer                            cast in  25.8% of games, win rate when cast  23.4% (+13.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Hulkbuster Armor                           cast  26.2% of the games it was drawn
+    Shield of Kaldra                           cast  28.9% of the games it was drawn
+    Sword of Kaldra                            cast  35.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.44
+    Recruitment Officer                        0.03
+    White Mage's Staff                         0.03
+    Adelbert Steiner                           0.03
+    Cid, Freeflier Pilot                       0.03
+    Colossus Hammer                            0.03
+    Explorer's Scope                           0.02
+    Mask of Memory                             0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(63s total)
