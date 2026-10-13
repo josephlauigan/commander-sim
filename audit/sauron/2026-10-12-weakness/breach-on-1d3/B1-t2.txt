@@ -1,0 +1,66 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exsanguinate [pool] S BB :: xdrain
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Dimir Signet [scryfall] A 2 :: rock=1:UB
+Swaps: Underworld Breach -> Exsanguinate; Brain Freeze -> Torment of Hailfire; Dark Ritual -> Fellwar Stone; Lotus Petal -> Dimir Signet
+
+=== Sauron vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  38.0% ->  42.6%  (delta +4.6 pts, noise ±5.7, paired)   n=500
+               eliminated by (variant): Kaalia of the Vast 15.6%  Sythis 13.6%  Lord Windgrace 7.6%  Brago 8.2%  Meren of Clan Nel Toth 12.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          38.0% ->  42.6%  +4.6pt   ±6.2 
+    Rounds survived (or game length)                  12.39 ->  12.51   +0.12  ±0.42 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.66 ->   0.66   -0.00  ±0.11 
+    Mana available on your turn 4                      4.26 ->   4.36   +0.09  ±0.18 
+    Mana available on your turn 6                      5.90 ->   6.09   +0.19  ±0.22 
+
+  Speed
+    Games where the game plan came online             79.8% ->  80.6%  +0.8pt   ±5.0 
+    Turn the game plan came online                     7.46 ->   7.44   -0.02  ±0.42 
+    Turn the commander first resolved                  6.49 ->   6.49   +0.01  ±0.30 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            20.74 ->  20.58   -0.16  ±1.21 
+    Tutors resolved per game                           0.58 ->   0.55   -0.03  ±0.09 
+    Spells cast per game                              15.88 ->  15.07   -0.81  ±0.86 
+
+  Interaction
+    Counterspells cast                                 0.70 ->   0.67   -0.03  ±0.10 
+    Spot removal cast                                  1.82 ->   1.86   +0.03  ±0.16 
+    Board wipes cast                                   0.46 ->   0.49   +0.03  ±0.08 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.01 
+    Your key permanents removed by opponents           1.60 ->   1.52   -0.08  ±0.19 
+    Your spells countered                              0.31 ->   0.32   +0.01  ±0.09 
+
+  Threat & pressure
+    Damage dealt to opponents per game                55.89 ->  60.62   +4.73  ±5.96 
+      ...of which combat damage                       42.62 ->  41.17   -1.44  ±4.86 
+      ...of which magecraft / burn                     3.37 ->   4.09   +0.73  ±1.17 
+      ...of which drain triggers                       5.14 ->  10.24   +5.10  ±1.53*
+      ...of which other triggers                       4.76 ->   5.11   +0.35  ±1.31 
+
+  Speed
+    Games with a combo attempt                         0.8% ->   2.2%  +1.4pt   ±1.5 
+
+--- Reading it ---
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which drain triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(110s total)

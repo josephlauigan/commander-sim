@@ -44,3 +44,9 @@
 23:35 1D3 t4 exit 0 jobs 22 [loose       ] win  19.8% ->  32.2%  (delta +12.4 pts, noise ±5.1, paired)   n=500
 23:35 1D3 t5 exit 0 jobs 22 [loose       ] win  23.4% ->  24.2%  (delta +0.8 pts, noise ±4.7, paired)   n=500
 23:35 1D3 DONE
+23:53 K2 t1 exit 0 [loose       ] win  28.6% ->  29.8%  (delta +1.2 pts, noise ±5.6, paired)   n=500
+23:56 K2 t2 exit 0 [loose       ] win  41.0% ->  44.2%  (delta +3.2 pts, noise ±5.9, paired)   n=500
+23:57 K2 t3 exit 0 [loose       ] win  26.0% ->  29.0%  (delta +3.0 pts, noise ±5.4, paired)   n=500
+23:59 K2 t4 exit 0 [loose       ] win  31.4% ->  34.0%  (delta +2.6 pts, noise ±5.3, paired)   n=500
+23:59 K2 t5 exit 0 [loose       ] win  23.4% ->  23.6%  (delta +0.2 pts, noise ±4.9, paired)   n=500
+23:59 K2 DONE: tiers +1.2 +3.2 +3.0 +2.6 +0.2 avg +2.0

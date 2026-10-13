@@ -1,0 +1,70 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dark Ritual [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> add_mana
+   Lotus Petal [scryfall] A  :: rock=1:A
+   Grapeshot [pool] S 1R :: storm stormburn
+   Gamble [pool] S R :: (no tags)
+Swaps: Duress -> Brain Freeze; Dark Inquiry -> Dark Ritual; Potioner's Trove -> Lotus Petal; Ichor Slick -> Grapeshot; Thought Vessel -> Gamble; Chaos Warp -> Jeska's Will
+
+=== Kefka vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  31.4% ->  34.0%  (delta +2.6 pts, noise ±5.3, paired)   n=500
+               eliminated by (variant): Heliod 15.6%  Yuriko 12.2%  Krenko 17.2%  Chulane 10.8%  Prosper 10.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          31.4% ->  34.0%  +2.6pt   ±5.9 
+    Rounds survived (or game length)                   9.80 ->   9.72   -0.09  ±0.39 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.44 ->   0.42   -0.02  ±0.09 
+    Mana available on your turn 4                      4.13 ->   4.00   -0.13  ±0.09*
+    Mana available on your turn 6                      5.80 ->   5.58   -0.21  ±0.17*
+
+  Speed
+    Games where the game plan came online             35.2% ->  34.4%  -0.8pt   ±6.0 
+    Turn the game plan came online                    10.14 ->  10.08   -0.06  ±0.45 
+    Turn the commander first resolved                  5.87 ->   5.93   +0.06  ±0.27 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            31.30 ->  30.31   -0.99  ±2.92 
+    Tutors resolved per game                           0.39 ->   0.57   +0.17  ±0.09*
+    Spells cast per game                              12.04 ->  12.94   +0.90  ±1.01 
+
+  Interaction
+    Counterspells cast                                 0.16 ->   0.17   +0.01  ±0.05 
+    Spot removal cast                                  1.37 ->   1.14   -0.22  ±0.16*
+    Board wipes cast                                   0.05 ->   0.04   -0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.36 ->   0.35   -0.01  ±0.08 
+    Your spells countered                              0.35 ->   0.31   -0.05  ±0.08 
+
+  Threat & pressure
+    Damage dealt to opponents per game                36.24 ->  34.50   -1.75  ±4.14 
+      ...of which combat damage                       16.46 ->  16.32   -0.14  ±2.06 
+      ...of which magecraft / burn                     2.16 ->   2.62   +0.46  ±0.60 
+      ...of which drain triggers                      14.24 ->  12.95   -1.29  ±2.36 
+      ...of which other triggers                       3.24 ->   2.54   -0.70  ±1.22 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 4 (both profiles)
+    worse  - Mana available on your turn 6 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(87s total)

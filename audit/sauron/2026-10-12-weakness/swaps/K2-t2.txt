@@ -1,0 +1,76 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dark Ritual [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> add_mana
+   Lotus Petal [scryfall] A  :: rock=1:A
+   Grapeshot [pool] S 1R :: storm stormburn
+   Gamble [pool] S R :: (no tags)
+Swaps: Duress -> Brain Freeze; Dark Inquiry -> Dark Ritual; Potioner's Trove -> Lotus Petal; Ichor Slick -> Grapeshot; Thought Vessel -> Gamble; Chaos Warp -> Jeska's Will
+
+=== Kefka vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  41.0% ->  44.2%  (delta +3.2 pts, noise ±5.9, paired)   n=500
+               eliminated by (variant): Kaalia of the Vast 11.2%  Sythis 13.8%  Lord Windgrace 10.0%  Brago 11.0%  Meren of Clan Nel Toth 9.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          41.0% ->  44.2%  +3.2pt   ±6.3 
+    Rounds survived (or game length)                  12.97 ->  12.22   -0.75  ±0.40*
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.47 ->   0.47   +0.00  ±0.10 
+    Mana available on your turn 4                      4.12 ->   4.03   -0.09  ±0.10 
+    Mana available on your turn 6                      5.83 ->   5.64   -0.19  ±0.16*
+
+  Speed
+    Games where the game plan came online             55.6% ->  50.4%  -5.2pt   ±6.3 
+    Turn the game plan came online                    11.49 ->  11.10   -0.39  ±0.47 
+    Turn the commander first resolved                  6.24 ->   6.12   -0.13  ±0.28 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            46.80 ->  43.31   -3.49  ±3.16*
+    Tutors resolved per game                           0.71 ->   0.92   +0.21  ±0.12*
+    Spells cast per game                              20.02 ->  20.50   +0.48  ±1.37 
+
+  Interaction
+    Counterspells cast                                 0.27 ->   0.26   -0.00  ±0.06 
+    Spot removal cast                                  2.01 ->   1.60   -0.40  ±0.18*
+    Board wipes cast                                   0.12 ->   0.11   -0.01  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.01 
+    Your key permanents removed by opponents           1.00 ->   0.82   -0.18  ±0.13*
+    Your spells countered                              0.29 ->   0.29   +0.00  ±0.08 
+
+  Threat & pressure
+    Damage dealt to opponents per game                51.79 ->  50.06   -1.73  ±4.77 
+      ...of which combat damage                       21.97 ->  20.44   -1.53  ±2.13 
+      ...of which magecraft / burn                     3.40 ->   4.48   +1.08  ±0.78*
+      ...of which drain triggers                      20.69 ->  20.33   -0.35  ±3.29 
+      ...of which other triggers                       5.46 ->   4.46   -1.00  ±1.51 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    better - Your key permanents removed by opponents (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(132s total)

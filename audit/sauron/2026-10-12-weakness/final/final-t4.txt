@@ -1,0 +1,95 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Ral and the Implicit Maze [pool] E 3RR :: (no tags)
+   Chandra's Ignition [pool] S 3RR :: wipe=ignite
+   Inferno Titan [scryfall+dsl] C 4RR :: pow=6 bomb=6
+      ability: activated  -> pump
+      not modeled: Whenever ~ enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.
+   Talisman of Indulgence [scryfall] A 2 :: rock=1:BR pain
+   Rakdos Signet [scryfall] A 2 :: rock=1:BR
+   Dreadhorde Invasion [scryfall+dsl] E 1B :: (no tags)
+      ability: triggered upkeep -> lose_life, amass
+      not modeled: Whenever a Zombie token you control with power 6 or greater attacks, it gains lifelink until end of turn.
+   Lazotep Reaver [scryfall+dsl] C 1B :: pow=1 tgh=2
+      ability: triggered etb -> amass
+   Exsanguinate [pool] S BB :: xdrain
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Dimir Signet [scryfall] A 2 :: rock=1:UB
+Swaps: Toxic Deluge -> Ral and the Implicit Maze; Blasphemous Act -> Massacre Wurm; Chaos Warp -> Chandra's Ignition; Spell Pierce -> Inferno Titan; Deepglow Skate -> Talisman of Indulgence; Conqueror's Flail -> Rakdos Signet; Sword of Fire and Ice -> Dreadhorde Invasion; Flux Channeler -> Lazotep Reaver; Underworld Breach -> Exsanguinate; Brain Freeze -> Torment of Hailfire; Dark Ritual -> Fellwar Stone; Lotus Petal -> Dimir Signet
+
+=== Sauron vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  20.8% ->  30.7%  (delta +9.9 pts, noise ±3.7, paired)   n=1000
+               eliminated by (variant): Heliod 18.7%  Yuriko 12.5%  Krenko 15.7%  Chulane 11.9%  Prosper 10.3%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          20.8% ->  30.7%  +9.9pt   ±3.9*
+    Rounds survived (or game length)                   9.82 ->   9.85   +0.03  ±0.30 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.61 ->   0.61   +0.00  ±0.07 
+    Mana available on your turn 4                      4.01 ->   4.26   +0.26  ±0.12*
+    Mana available on your turn 6                      5.68 ->   6.01   +0.33  ±0.15*
+
+  Speed
+    Games where the game plan came online             46.9% ->  59.4% +12.5pt   ±4.4*
+    Turn the game plan came online                     7.67 ->   7.05   -0.63  ±0.36*
+    Turn the commander first resolved                  6.49 ->   6.35   -0.15  ±0.22 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.71 ->  15.28   +0.57  ±0.85 
+    Tutors resolved per game                           0.36 ->   0.38   +0.02  ±0.05 
+    Spells cast per game                              10.56 ->  10.70   +0.13  ±0.57 
+
+  Interaction
+    Counterspells cast                                 0.62 ->   0.50   -0.13  ±0.07*
+    Spot removal cast                                  1.59 ->   1.43   -0.17  ±0.11*
+    Board wipes cast                                   0.42 ->   0.29   -0.14  ±0.05*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.65 ->   0.67   +0.02  ±0.08 
+    Your spells countered                              0.34 ->   0.41   +0.07  ±0.06*
+
+  Threat & pressure
+    Damage dealt to opponents per game                27.97 ->  40.71  +12.74  ±3.78*
+      ...of which combat damage                       23.72 ->  28.70   +4.98  ±3.14*
+      ...of which magecraft / burn                     0.00 ->   2.37   +2.37  ±0.54*
+      ...of which drain triggers                       1.36 ->   6.99   +5.63  ±0.88*
+      ...of which other triggers                       2.88 ->   2.65   -0.24  ±0.66 
+
+  Speed
+    Games with a combo attempt                         0.8% ->   0.6%  -0.2pt   ±0.7 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Mana available on your turn 4 (both profiles)
+    better - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    better - Games where the game plan came online (both profiles)
+    better - Turn the game plan came online (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (both profiles)
+    worse  - Spot removal cast (both profiles)
+    worse  - Board wipes cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your spells countered (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+    better -   ...of which magecraft / burn (both profiles)
+    better -   ...of which drain triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(127s total)
