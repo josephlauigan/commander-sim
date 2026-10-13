@@ -19,6 +19,12 @@ fn game() -> Game {
     g
 }
 
+/// the library is exactly these cards (so the tests don't depend on the Cloud deck list)
+fn set_library(g: &mut Game, p: PlayerId, names: &[&str]) {
+    let cs: Vec<_> = names.iter().map(|n| card(g, n)).collect();
+    g.player_mut(p).library = cs;
+}
+
 fn cloud_board(g: &mut Game, n: usize) -> PermId {
     lands(g, P0, "Plains", n, false);
     let cl = perm(g, P0, CLOUD);
@@ -71,6 +77,19 @@ fn tutor_fetches_a_piece_the_mana_allows() {
     for seed in 0..8u64 {
         let mut g = table_with(&["cloud", "seph"], 900 + seed, 40);
         g.player_mut(P0).hand.clear();
+        set_library(
+            &mut g,
+            P0,
+            &[
+                "Sword of Fire and Ice",
+                "Sword of Hearth and Home",
+                "Sword of Feast and Famine",
+                "Champion's Helm",
+                "Colossus Hammer",
+                "Shield of Kaldra",
+                "Wrecking Ball Arm",
+            ],
+        );
         lands(&mut g, P0, "Plains", 3, false);
         perm(&mut g, P0, CLOUD);
         let got: Vec<String> = g.player(P0).hand.iter().map(|&c| g.db.get(c).name.to_string()).collect();
@@ -86,6 +105,19 @@ fn tutor_fetches_a_piece_the_mana_allows() {
 #[test]
 fn tutor_skips_pieces_in_hand() {
     let mut g = game();
+    set_library(
+        &mut g,
+        P0,
+        &[
+            "Sword of Fire and Ice",
+            "Sword of Hearth and Home",
+            "Sword of Feast and Famine",
+            "Champion's Helm",
+            "Colossus Hammer",
+            "Shield of Kaldra",
+            "Wrecking Ball Arm",
+        ],
+    );
     lands(&mut g, P0, "Plains", 3, false);
     hand(&mut g, P0, &["Sword of Fire and Ice", "Sword of Hearth and Home"]);
     perm(&mut g, P0, CLOUD);
@@ -97,6 +129,7 @@ fn tutor_skips_pieces_in_hand() {
 #[test]
 fn equipping_shield_of_kaldra_beats_stop() {
     let mut g = game();
+    set_library(&mut g, P0, &vec!["Plains"; 30]);
     cloud_board(&mut g, 4);
     perm(&mut g, P0, "Shield of Kaldra");
     hand(&mut g, P0, &["Sword of Kaldra", "Helm of Kaldra", "Puresteel Paladin"]);
@@ -158,4 +191,27 @@ fn recast_cloud_before_combat_with_equipment_out() {
     assert!(cloud::search_bonus(&g, P0, o) >= 18.0);
     g.step = Step::Main2;
     assert_eq!(cloud::search_bonus(&g, P0, o), 10.0);
+}
+
+#[test]
+fn c4_cards_priorities_and_carriers() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 5, false);
+    hand(&mut g, P0, &["Sword of Fire and Ice"]); // Equipment waits in hand
+    assert!(prio(&mut g, "Ardenn, Intrepid Archaeologist") >= 72);
+    assert!(prio(&mut g, "Kor Duelist") >= 62);
+    assert!(prio(&mut g, "Balan, Wandering Knight") >= 66);
+    // with Cloud away, the equip goes to Balan or Duelist over a plain body
+    perm(&mut g, P0, "Bronze Guardian");
+    let kd = perm(&mut g, P0, "Kor Duelist");
+    let sw = perm(&mut g, P0, "Sword of Hearth and Home");
+    g.perm_mut(sw).attached = None;
+    let opts = brain::main_options(&mut g, P0, false).unwrap();
+    assert!(
+        opts.iter().any(|o| o.label.contains("equip Sword of Hearth and Home") && o.label.contains("Kor Duelist"))
+            || opts.iter().any(|o| o.label.starts_with("equip Sword of Hearth and Home")),
+        "{:?}",
+        opts.iter().map(|o| &o.label).collect::<Vec<_>>()
+    );
+    assert!(cloud::holder_score(&g, kd) > 0.0);
 }
