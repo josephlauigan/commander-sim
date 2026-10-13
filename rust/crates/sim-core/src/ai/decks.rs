@@ -134,7 +134,7 @@ pub fn sauron_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
     }
     if t.has(Tag::Archivist) {
-        return if has(g, p, Tag::Bowmasters) { 50 } else { 20 };
+        return if has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) { 50 } else { 20 };
     }
     for (k, v) in [(Tag::Callring, 55), (Tag::Kindred, 50)] {
         if t.has(k) {
@@ -487,7 +487,7 @@ pub fn helm_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// much smaller
 pub fn archivist_worth(g: &Game, p: PlayerId) -> bool {
     let most = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0);
-    has(g, p, Tag::Bowmasters) || (g.player(p).hand.len() <= 1 && most >= 4)
+    has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) || (g.player(p).hand.len() <= 1 && most >= 4) // Sheoldred: every opponent draw costs 2 life
 }
 
 /// ais.sauron_archivist: Jace's Archivist: everyone discards their hand and draws the largest hand size

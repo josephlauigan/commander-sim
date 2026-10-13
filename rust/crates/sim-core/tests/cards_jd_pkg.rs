@@ -95,3 +95,15 @@ fn mirari_copies_burn_and_the_copy_counts_as_a_cast_for_magecraft() {
     cast_free(&mut g, P0, "Lightning Bolt", sim_core::state::Ctx { face: Some(P1), ..Default::default() });
     assert_eq!(g.player(P1).life, before - 6, "Mirari: pay {{3}}, the Bolt resolves twice");
 }
+
+// ------------------------------------------------------------------ Sauron: Sheoldred, the Apocalypse
+#[test]
+fn jaces_archivist_wheel_is_worth_it_with_sheoldred_out() {
+    let mut g = table(&["sauron", "seph"]);
+    perm(&mut g, P0, "Jace's Archivist");
+    hand(&mut g, P0, &["Sol Ring", "Mana Vault", "Island"]);
+    hand(&mut g, P1, &["Forest", "Forest", "Forest"]);
+    assert!(!sim_core::ai::decks::archivist_worth(&g, P0), "no payoff: the wheel only helps the opponents");
+    perm(&mut g, P0, "Sheoldred, the Apocalypse");
+    assert!(sim_core::ai::decks::archivist_worth(&g, P0), "each opponent draw costs 2 life");
+}
