@@ -38,3 +38,9 @@
 23:18 3 t4 exit 0 jobs 22 [loose       ] win  19.8% ->  24.2%  (delta +4.4 pts, noise ±4.6, paired)   n=500
 23:18 3 t5 exit 0 jobs 22 [loose       ] win  23.4% ->  22.6%  (delta -0.8 pts, noise ±4.6, paired)   n=500
 23:18 ALL DONE
+23:31 1D3 t1 exit 0 jobs 8 [loose       ] win  25.8% ->  32.4%  (delta +6.6 pts, noise ±5.3, paired)   n=500
+23:32 1D3 t2 exit 0 jobs 22 [loose       ] win  29.4% ->  35.6%  (delta +6.2 pts, noise ±5.3, paired)   n=500
+23:34 1D3 t3 exit 0 jobs 22 [loose       ] win  20.4% ->  26.6%  (delta +6.2 pts, noise ±5.2, paired)   n=500
+23:35 1D3 t4 exit 0 jobs 22 [loose       ] win  19.8% ->  32.2%  (delta +12.4 pts, noise ±5.1, paired)   n=500
+23:35 1D3 t5 exit 0 jobs 22 [loose       ] win  23.4% ->  24.2%  (delta +0.8 pts, noise ±4.7, paired)   n=500
+23:35 1D3 DONE
