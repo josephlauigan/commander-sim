@@ -4543,6 +4543,7 @@ fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
 }
 
 /// speed metrics (reports): the Sauron plan milestone `army_hit`, the first combat damage to a player by an Army
+/// (set for every deck; only the sauron report reads it)
 pub fn army_hit_milestone(g: &mut Game, p: PlayerId) {
     let turns = g.player(p).turns;
     g.player_mut(p).milestone.entry("army_hit").or_insert(turns);

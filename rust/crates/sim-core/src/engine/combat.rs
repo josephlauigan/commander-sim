@@ -712,9 +712,11 @@ fn resolve_combat_inner(
                 if g.perm(a).is_cmd {
                     g.player_mut(d).cmd_dmg[p.index()] += dmg;
                 }
-                if g.perm(a).army && has(g, p, Tag::Sauron) {
-                    crate::impls::mine::army_hit_milestone(g, p);
-                    cardcode::ring_tempt(g, p)?; // Sauron: an Army's combat damage tempts
+                if g.perm(a).army {
+                    crate::impls::mine::army_hit_milestone(g, p); // reports: with or without Sauron out
+                    if has(g, p, Tag::Sauron) {
+                        cardcode::ring_tempt(g, p)?; // Sauron: an Army's combat damage tempts
+                    }
                 }
                 cardcode::ring_damage(g, p, a, d)?; // the Ring, level 4: each opponent loses 3
                 if equipped(g, a, Tag::Sword) {
