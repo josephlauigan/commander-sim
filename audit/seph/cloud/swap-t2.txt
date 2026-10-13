@@ -1,0 +1,21 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Cloud, Midgar Mercenary [pool] C WW :: leg human pow=2 tgh=1
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 5 minutes
+  progress  10.0%  0m19s elapsed, ~2m59s left
+  progress  20.0%  0m39s elapsed, ~2m38s left
+  progress  30.0%  0m59s elapsed, ~2m19s left
+  progress  40.0%  1m18s elapsed, ~1m58s left
+  progress  50.0%  1m43s elapsed, ~1m43s left
+  progress  60.0%  2m01s elapsed, ~1m21s left
+  progress  70.0%  2m23s elapsed, ~1m01s left
+  progress  80.0%  2m43s elapsed, ~0m40s left
+  progress  90.0%  3m02s elapsed, ~0m20s left
+  progress 100.0%  3m27s elapsed, ~0m00s left
+Swaps: Zulaport Cutthroat -> Cloud, Midgar Mercenary
+
+=== Sephiroth vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  47.6% ->  49.2%  (delta +1.6 pts, noise ±3.6, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 11.3%  Sythis 11.9%  Lord Windgrace 9.4%  Brago 9.0%  Meren of Clan Nel Toth 8.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+(208s total)
