@@ -89,3 +89,46 @@ fn enlightened_tutor_uses_the_same_pick() {
     let want = sim_core::ai::tutor_pick(&g, P0, "ae").map(|c| g.db.get(c).name.to_string());
     assert_eq!(want.as_deref(), Some("Sword of Feast and Famine"), "skips the piece on the battlefield");
 }
+
+// ---- fix 2: don't strand equipment
+fn cast_labels(g: &mut Game) -> Vec<String> {
+    sim_core::ai::brain::main_options(g, P0, false).unwrap().iter().map(|o| o.label.clone()).collect()
+}
+
+#[test]
+fn equipment_is_held_without_a_carrier() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    hand(&mut g, P0, &["Sword of Fire and Ice", "Mind Stone"]);
+    g.player_mut(P0).turns = 3;
+    // Cloud (2) + the Sword (3) don't fit in 3 mana: the Sword waits
+    let l = cast_labels(&mut g);
+    assert!(!l.iter().any(|x| x.contains("Sword of Fire and Ice")), "{l:?}");
+    assert!(l.iter().any(|x| x.contains("Mind Stone")), "{l:?}");
+}
+
+#[test]
+fn equipment_is_cast_with_a_carrier_or_as_the_only_use() {
+    // Cloud and the Sword fit together
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 6, false);
+    hand(&mut g, P0, &["Sword of Fire and Ice", "Mind Stone"]);
+    g.player_mut(P0).turns = 3;
+    let l = cast_labels(&mut g);
+    assert!(l.iter().any(|x| x.contains("Sword of Fire and Ice")), "{l:?}");
+    // a creature is out
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    perm(&mut g, P0, "Kor Duelist");
+    hand(&mut g, P0, &["Sword of Fire and Ice", "Mind Stone"]);
+    g.player_mut(P0).turns = 3;
+    let l = cast_labels(&mut g);
+    assert!(l.iter().any(|x| x.contains("Sword of Fire and Ice")), "{l:?}");
+    // nothing else to do with the mana
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    hand(&mut g, P0, &["Sword of Fire and Ice"]);
+    g.player_mut(P0).turns = 3;
+    let l = cast_labels(&mut g);
+    assert!(l.iter().any(|x| x.contains("Sword of Fire and Ice")), "{l:?}");
+}

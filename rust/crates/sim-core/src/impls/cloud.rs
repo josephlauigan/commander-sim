@@ -346,7 +346,7 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     if free_equips {
         // equips are (nearly) free: the biggest payoff the mana can cast
         let big = ["Sword of Kaldra", "Helm of Kaldra", "Shield of Kaldra", "Wrecking Ball Arm", "Colossus Hammer"];
-        let cast = |c: CardId| crate::engine::mana::cost_of(g, p, c).0;
+        let cast = |c: CardId| cast_cost(g, p, c);
         if let Some(c) =
             big.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && cast(*c) <= mana)
         {
@@ -1556,4 +1556,44 @@ fn equip_engine(g: &Game, p: PlayerId) -> (bool, u32) {
 /// Cloud's own search
 pub fn tutor_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
     cloud_pick(g, p).filter(|c| okn.contains(c))
+}
+
+/// mana value of casting c now (generic plus coloured pips, after cost changes)
+fn cast_cost(g: &Game, p: PlayerId, c: CardId) -> u32 {
+    let (n, pips) = crate::engine::mana::cost_of(g, p, c);
+    n + pips.chars().filter(|ch| ch.is_ascii_alphabetic()).count() as u32
+}
+
+/// Equipment that attaches itself or brings its own body: never stranded
+fn carries_itself(name: &str) -> bool {
+    matches!(name, "Magitek Scythe" | "Squire's Lightblade" | "Hero's Blade" | "White Mage's Staff" | "Open the Armory")
+}
+
+/// Don't strand Equipment: casting the Equipment card c now would leave it on the battlefield with no creature to
+/// carry it, and no creature to cast with it this turn. Not when it is the only use of the mana (nothing else in the
+/// hand can be cast with it).
+pub fn strands_equipment(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if g.player(p).key != KEY || !is_equipment_card(g, c) || carries_itself(card_name(g, c)) {
+        return false;
+    }
+    if creatures_out(g, p) > 0 {
+        return false; // a carrier is out: equip next turn at the latest
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let cost = cast_cost(g, p, c);
+    let pl = g.player(p);
+    // a creature (or Cloud) cast with it this turn carries it
+    let carrier = pl
+        .hand
+        .iter()
+        .copied()
+        .chain(pl.cmd_in_zone.then_some(pl.cmd))
+        .filter(|&x| x != c && g.db.get(x).creature)
+        .any(|x| cost + cast_cost(g, p, x) <= mana);
+    if carrier {
+        return false;
+    }
+    // the only use of the mana: no other non-land card in hand fits
+    let other_use = pl.hand.iter().any(|&x| x != c && !g.db.get(x).land && cast_cost(g, p, x) <= mana);
+    other_use
 }
