@@ -23,3 +23,7 @@ No clear effect, leaning slightly worse. Why (`analyze-pkg-t3.txt`, 480 games): 
 and Sephiroth flipped in 4.6% of games. The deck has no token makers, so the outlets have little to eat; the cuts
 (two rocks, Witchstalker's life and landcycling, Dark Deal, Masterful Flourish) cost about what the drains add.
 Not applied.
+
+A second version with token makers (Ophiomancer, Pawn of Ulamog, Carrier Thrall in place of Carrion Feeder, Common Crook and
+Callous Inspector; `run-tokens.sh`, 500 games per tier) was stopped by JD after Tier 1 (+0.6, noise ±5.0): not worth
+pursuing.

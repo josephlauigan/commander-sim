@@ -1,0 +1,1 @@
+16:21 tok t1 exit 0 [loose       ] win  28.6% ->  29.2%  (delta +0.6 pts, noise ±5.0, paired)   n=500

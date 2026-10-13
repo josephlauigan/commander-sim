@@ -4,3 +4,4 @@
 16:05 pkg t4 exit 0 [loose       ] win  31.7% ->  29.4%  (delta -2.3 pts, noise ±3.8, paired)   n=1000
 16:08 pkg t5 exit 0 [loose       ] win  24.6% ->  23.8%  (delta -0.8 pts, noise ±3.5, paired)   n=1000
 16:08 PKG DONE: tiers -3.0 -2.6 +2.0 -2.3 -0.8 avg -1.3
+16:21 tok t1 exit 0 [loose       ] win  28.6% ->  29.2%  (delta +0.6 pts, noise ±5.0, paired)   n=500
