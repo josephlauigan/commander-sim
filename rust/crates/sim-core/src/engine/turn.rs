@@ -985,7 +985,7 @@ fn step_end(g: &mut Game, p: PlayerId) -> Res {
 }
 
 // ------------------------------------------------------------------ a game
-/// Python's `mulligan`: keep 2 to 5 lands; after two mulligans, bottom one or two cards.
+/// Python's `mulligan`: keep 2 to 5 lands (Cloud's deck has its own keep, `cloud::keep_hand`); after two mulligans, bottom one or two cards.
 pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
     let draw7 = |g: &mut Game, rng: &mut crate::rng::Rng| {
         let pl = g.player_mut(p);
@@ -999,6 +999,9 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
     };
     let ok = |g: &Game| {
         let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
+        if g.player(p).key == "cloud" {
+            return crate::impls::cloud::keep_hand(g, p);
+        }
         (2..=5).contains(&n)
     };
     draw7(g, rng);

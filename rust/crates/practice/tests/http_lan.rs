@@ -107,7 +107,9 @@ fn open_table(s: &Server) -> (Browser, Browser, String) {
     friend.call("GET", "/", None);
     let r = host.post(
         "/api/new",
-        json!({"deck": "sauron", "tier": "t2", "seed": 7, "ai": "adaptive", "images": false, "two": true}),
+        // seed 8: with the 10-13 Sauron and Seph lists, seed 7 kills both human seats early and the AIs finish the game
+        // before the test can pause the bots (the save test then waits for a decision that never comes)
+        json!({"deck": "sauron", "tier": "t2", "seed": 8, "ai": "adaptive", "images": false, "two": true}),
     );
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let j = r.json();

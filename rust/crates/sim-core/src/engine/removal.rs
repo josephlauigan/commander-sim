@@ -432,6 +432,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
             let ty = g.perm(m).cd.map_or(Types::CREATURE, |c| g.db.get(c).types);
             let cre = g.is_creature(m);
             let cmc = g.perm(m).cd.map(|c| g.db.get(c).cmc);
+            let wiped = g.perm(m).name.to_string();
             match kind {
                 "vandal" => {
                     if ty.has(Types::ARTIFACT) {
@@ -480,6 +481,9 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
                 }
                 "nib" if Some(m) != biggest && etgh(g, m) <= x_dmg && !no_damage(g, m) => die(g, m, "destroy")?,
                 _ => {}
+            }
+            if !g.perm(m).on_bf && !g.perm(m).phased {
+                crate::glog!(g, "      {} ({}) is removed by the wipe ({})", wiped, g.player(q).name, kind);
             }
         }
     }
