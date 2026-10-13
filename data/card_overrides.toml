@@ -7033,3 +7033,34 @@ note = "3/3; enters or attacks: sacrifice a creature (the AI: only fodder worth 
 dsl = []
 status = "Full"
 note = "your upkeep: each player exiles their top card; you play your own card and every other exiled card of lesser mana value free, at once in the upkeep, highest first (lands only while a land drop is left; no Auras or counterspells); opponents' cards stay theirs"
+
+["Lazotep Reaver"]
+status = "Full"
+note = "enters: amass Zombies 1 (counters on the Army you already control, whatever its type; else a 0/0 Army token first)"
+
+["Grim Initiate"]
+status = "Full"
+note = "first strike; when it dies, amass Zombies 1 (counters on the Army you already control, whatever its type)"
+
+["Torment of Hailfire"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "{X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows"
+
+["Dualcaster Mage"]
+tags = "human wizard pow=2 tgh=2 flash"
+dsl = []
+status = "Full"
+note = "flash 2/2; enters: copy target instant or sorcery spell (the AI flashes it in over a spell worth copying: an X drain or Torment of Hailfire at X >= 3, burn, draw; the copy keeps X); no combo detection (JD: no infinite combos in Sauron); with nothing worth copying the AI casts it as a plain 2/2 late"
+
+["Dreadhorde Invasion"]
+status = "Full"
+note = "upkeep: lose 1 life and amass Zombies 1; a Zombie token you control with power 6 or greater gains lifelink as it attacks (the Army counts as a Zombie while Invasion is out)"
+
+["Grishnákh, Brash Instigator"]
+tags = "leg pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "enters: amass Orcs 2, then gain control of the best nonlegendary creature an opponent controls with power at most the Army's until end of turn, untapped and hasty (it returns at the end step)"

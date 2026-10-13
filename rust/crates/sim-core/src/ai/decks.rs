@@ -87,6 +87,9 @@ pub fn sauron_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if t.has(Tag::Rock) {
         return if pl.turns <= 5 { 80 } else { 40 };
     }
+    if let Some(v) = crate::impls::threats::sauron_extra_prio(g, p, c) {
+        return v; // the speed and backup-win cards (amass creatures, Dreadhorde Invasion, Grishnákh, Dualcaster Mage)
+    }
     if t.has(Tag::Rhystic) {
         return plans::rhystic_prio(g, p, c);
     }
