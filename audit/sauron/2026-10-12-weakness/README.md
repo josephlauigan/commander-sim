@@ -29,6 +29,9 @@ more games; Sauron himself lands about 0.1-0.5 turns earlier.
 | Dark Ritual | Fellwar Stone | Breach slots |
 | Lotus Petal | Dimir Signet | Breach slots |
 
+**Comet Storm for Torment of Hailfire** ($4 vs $36; 1,000 paired games per tier on the proposed list; `comet/`): -0.6
+(-0.1, -3.7, +1.8, -0.1, -1.1), within noise (about ±1.4): no measurable difference, so the cheaper card is fine.
+
 **To buy (11):** Massacre Wurm, Chandra's Ignition, Inferno Titan, Talisman of Indulgence, Rakdos Signet, Dreadhorde
 Invasion, Lazotep Reaver, Exsanguinate, Torment of Hailfire, Fellwar Stone, Dimir Signet. (Massacre Wurm, Exsanguinate
 and Fellwar Stone are in other decks already; Sauron needs his own copies.) Ral and the Implicit Maze is in bulk.
