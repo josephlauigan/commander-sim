@@ -1,5 +1,7 @@
 # Sauron weakness audit and rebuild (2026-10-12/13)
 
+Quick reference of every swap, buy and bulk move: [`SWAPS.md`](SWAPS.md).
+
 ## Recommendation: twelve swaps, +8.3 points
 
 Confirmed at 1,000 paired games per tier (look-ahead AI, loose profile, Tiers 1-5; `final/`):
