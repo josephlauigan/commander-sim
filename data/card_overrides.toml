@@ -7154,3 +7154,27 @@ tags = "pow=1 tgh=3"
 dsl = []
 status = "Full"
 note = "{T}: attaches an Equipment you control to the best holder, Cloud when he is out, before combat on your turn (cloud::squire_options); no sorcery timing needed"
+
+["Ardenn, Intrepid Archaeologist"]
+tags = "leg pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "beginning of combat on your turn: attaches Equipment to the best holder, Cloud first (bulk_white::ardenn_combat); the AI never moves Auras (leaving them is a legal choice); partner is unused with one commander"
+
+["Balan, Wandering Knight"]
+tags = "leg pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "first strike; double strike with two or more Equipment on it (bulk_white::balan_kw); {1}{W}: attaches all your Equipment to it, used when Cloud is not out or can't attack (balan_options)"
+
+["Armored Skyhunter"]
+tags = "fly pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "attacks: looks at the top six, puts the best Aura or Equipment onto the battlefield (Equipment onto the best holder, Aura onto the best own creature), the rest on the bottom in random order (bulk_white::skyhunter_attack)"
+
+["Kor Duelist"]
+tags = "pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "double strike while equipped (bulk_white::duelist_kw)"

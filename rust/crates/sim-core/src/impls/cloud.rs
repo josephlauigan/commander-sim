@@ -392,7 +392,7 @@ fn blade_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 }
 
 /// Equipment worth taking onto `to`: loose, or on a creature that is a worse holder
-fn pullable(g: &Game, p: PlayerId, to: PermId) -> Vec<PermId> {
+pub(crate) fn pullable(g: &Game, p: PlayerId, to: PermId) -> Vec<PermId> {
     my_equipment(g, p)
         .into_iter()
         .filter(|&e| match g.perm(e).attached.filter(|&t| live(g, t)) {

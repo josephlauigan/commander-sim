@@ -1335,5 +1335,138 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, MAP)?;
     c.etb = Some(map_etb);
     c.landfall = Some(map_landfall);
+    register_equip(r, db)
+}
+
+// ================================================================== free-equip and backup carriers (cloud-equip-cards)
+// Ardenn, Intrepid Archaeologist (Full: the beginning-of-combat attach moves Equipment; the AI never moves Auras, which
+// it may legally choose to leave; partner is unused with a single commander), Balan, Wandering Knight (Full), Armored
+// Skyhunter (Full), Kor Duelist (Full).
+const ARDENN: &str = "Ardenn, Intrepid Archaeologist";
+const BALAN: &str = "Balan, Wandering Knight";
+const SKYHUNTER: &str = "Armored Skyhunter";
+const DUELIST: &str = "Kor Duelist";
+
+/// Ardenn: at the beginning of combat on your turn, attach Equipment you control to the best holder (Cloud first),
+/// taking the loose ones and those worn by worse creatures
+fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
+    if owner(g, src) != p || !live(g, src) {
+        return Ok(vec![]);
+    }
+    let Some(to) = super::cloud::best_holder(g, p) else { return Ok(vec![]) };
+    let es = super::cloud::pullable(g, p, to);
+    if es.is_empty() || !trigger_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
+        return Ok(vec![]);
+    }
+    for e in es {
+        super::cloud::attach(g, e, to);
+    }
+    Ok(vec![])
+}
+
+/// Balan has double strike as long as two or more Equipment are attached to it
+fn balan_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+    m == src && kw == "double strike" && super::cloud::equipment_on(g, m).len() >= 2
+}
+
+/// Kor Duelist has double strike as long as it is equipped
+fn duelist_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+    m == src && kw == "double strike" && !super::cloud::equipment_on(g, m).is_empty()
+}
+
+/// Equipment Balan would pull onto itself: all of p's, other than the ones already on it
+fn balan_pull(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+    super::cloud::my_equipment(g, p).into_iter().filter(|&e| g.perm(e).attached != Some(src)).collect()
+}
+
+/// {1}{W}: attach all Equipment you control to Balan
+fn balan_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || !can_pay(g, p, 1, "W", false) || balan_pull(g, p, src).is_empty() {
+        return Ok(false);
+    }
+    pay(g, p, 1, "W", false)?;
+    if ability_window(g, p, Some(src), "attach all Equipment", Some(5.0), Some(src))? && live(g, src) {
+        for e in balan_pull(g, p, src) {
+            super::cloud::attach(g, e, src);
+        }
+    }
+    Ok(true)
+}
+
+/// before combat on your turn, when Cloud is not out (or can't attack) and Balan can attack, gather the Equipment
+fn balan_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p
+        || !live(g, src)
+        || post != Some(false)
+        || g.active != Some(p)
+        || x.sick
+        || x.noatk
+        || x.tapped
+    {
+        return Ok(vec![]);
+    }
+    if super::cloud::cloud_of(g, p).is_some_and(|c| !g.perm(c).noatk && !g.perm(c).tapped) {
+        return Ok(vec![]); // Cloud first
+    }
+    if balan_pull(g, p, src).is_empty() || !can_pay(g, p, 1, "W", false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 5.6,
+        label: "Balan: attach all Equipment".into(),
+        act: Some(Action::Ability { src, f: balan_go, arg: 0 }),
+    }])
+}
+
+/// Armored Skyhunter: whenever it attacks, look at the top six; you may put an Aura or Equipment card from among them
+/// onto the battlefield (an Equipment goes onto the best holder, an Aura onto the best creature); the rest go on the
+/// bottom in a random order
+fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if owner(g, src) != p || !atk.contains(&src) || !live(g, src) {
+        return Ok(vec![]);
+    }
+    let n = g.player(p).library.len().min(6);
+    let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
+    let can_aura = |g: &Game, c: CardId| {
+        g.db.get(c).has_subtype("aura") && g.registry.get(c).and_then(|i| i.aura).is_some_and(|a| a.target == "own")
+    };
+    let cands: Vec<CardId> =
+        top.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment") || can_aura(g, c)).collect();
+    let pick = max_by(&cands, |c| crate::engine::tutors::card_worth(g, p, c, false));
+    let mut rest: Vec<CardId> = top.iter().copied().filter(|&c| Some(c) != pick).collect();
+    g.rng.shuffle(&mut rest);
+    for c in rest {
+        g.player_mut(p).library.insert(0, c); // the bottom
+    }
+    let Some(c) = pick else { return Ok(vec![]) };
+    if !trigger_window(g, p, Some(src), "put an Aura or Equipment onto the battlefield", Some(5.0))? {
+        g.player_mut(p).library.insert(0, c);
+        return Ok(vec![]);
+    }
+    g.player_mut(p).seen.insert(c);
+    if g.db.get(c).has_subtype("equipment") {
+        let em = enter(g, p, c, Enter { sick: false, ..Default::default() })?;
+        if let Some(to) = super::cloud::best_holder(g, p) {
+            super::cloud::attach(g, em, to);
+        }
+    } else if let Some(to) = super::cloud::best_holder(g, p) {
+        g.attach_to = Some(to);
+        let r = enter(g, p, c, Enter::default());
+        g.attach_to = None;
+        r?;
+    } else {
+        g.player_mut(p).library.insert(0, c);
+    }
+    Ok(vec![])
+}
+
+pub fn register_equip(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, ARDENN)?.combat_start = Some(ardenn_combat);
+    let c = r.card(db, BALAN)?;
+    c.grant_kw = Some(balan_kw);
+    c.options = Some(balan_options);
+    r.card(db, SKYHUNTER)?.attack = Some(skyhunter_attack);
+    r.card(db, DUELIST)?.grant_kw = Some(duelist_kw);
     Ok(())
 }
