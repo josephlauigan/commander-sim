@@ -231,6 +231,11 @@ pub fn emblem_draw(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::rules::emblem_draw(g, p)
 }
 
+/// sheoldred.seph_emblem_dies: Sephiroth's emblem drains whenever any creature dies
+pub fn emblem_dies(g: &mut Game) -> Res {
+    crate::impls::sheoldred::seph_emblem_dies(g)
+}
+
 /// rules2.chatterfang_squirrels: Chatterfang makes that many Squirrels whenever p makes tokens
 pub fn chatterfang_squirrels(g: &mut Game, p: PlayerId, n: i32) -> Res {
     crate::impls::rules2::chatterfang_squirrels(g, p, n)

@@ -765,6 +765,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
             hand_tag_death(g, q, p, m, creature)?;
         }
     }
+    if creature && g.players.iter().any(|pl| pl.emblems.contains(&"seph")) {
+        cardcode::emblem_dies(g)?; // Sephiroth, One-Winged Angel's emblem
+    }
     if card_tag_str(g, m, Tag::Fill) == Some("stitcher") {
         mill(g, p, 3)?;
     }

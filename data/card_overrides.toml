@@ -7020,3 +7020,16 @@ note = "ascend: with ten or more permanents as it resolves (the only ascend card
 ["Latulla's Orders"]
 status = "Full"
 note = "flash Aura on your best creature; when that creature deals combat damage to the defending player, destroy that player's most valuable targetable artifact"
+
+# ---- Sephiroth, Fabled SOLDIER and Triple Triad (rust/crates/sim-core/src/impls/sheoldred.rs and mine.rs; tests in tests/cards_seph_triad.rs)
+["Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"]
+tags = "leg human pow=3 tgh=3 bomb=4"
+dsl = []
+kws = []
+status = "Full"
+note = "3/3; enters or attacks: sacrifice a creature (the AI: only fodder worth under 2.2, never the commander or Sheoldred), draw a card; whenever another creature dies, the opponent with the least life loses 1 and you gain 1, and the fourth time that resolves in a turn it transforms into One-Winged Angel (5/5 flying): you get an emblem (whenever a creature dies, the same drain) and its attack trigger sacrifices all the fodder, a card for each. Back face is the same permanent with a flag; its name stays the front's"
+
+["Triple Triad"]
+dsl = []
+status = "Full"
+note = "your upkeep: each player exiles their top card; you play your own card and every other exiled card of lesser mana value free, at once in the upkeep, highest first (lands only while a land drop is left; no Auras or counterspells); opponents' cards stay theirs"

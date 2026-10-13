@@ -2119,5 +2119,146 @@ pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Ambition's Cost")?.resolve = Some(ambition_resolve);
     r.card(db, "Syphon Mind")?.resolve = Some(syphon_resolve);
     r.card(db, MINE)?;
+    register_seph(r, db)?;
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Sephiroth, Fabled SOLDIER // One-Winged Angel
+pub const SEPH: &str = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel";
+
+/// the creatures p would sacrifice to Sephiroth: never the commander, nothing worth more than a card and a drain
+fn seph_fodder(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+    let mut v: Vec<PermId> = my_creatures(g, p)
+        .into_iter()
+        .filter(|&m| {
+            m != src
+                && !g.perm(m).is_cmd
+                && !sheoldred_perm(g, m)
+                && !crate::engine::values::no_sac(g, m)
+                && crate::engine::zones::sac_worth(g, m) < 2.2
+        })
+        .collect();
+    v.sort_by(|&a, &b| {
+        crate::engine::zones::sac_worth(g, a).partial_cmp(&crate::engine::zones::sac_worth(g, b)).unwrap()
+    });
+    v
+}
+
+fn sheoldred_perm(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.has(Tag::SheoA))
+}
+
+/// Whenever Sephiroth enters or attacks, you may sacrifice another creature (any number, once it is One-Winged Angel);
+/// draw a card for each
+fn seph_sacrifice(g: &mut Game, src: PermId) -> Res {
+    let p = owner(g, src);
+    if human(g, p) || g.player(p).library.is_empty() {
+        return Ok(());
+    }
+    let fodder = seph_fodder(g, p, src);
+    let n = if flipped(g, src) { fodder.len() } else { fodder.len().min(1) };
+    if n == 0 || !trigger_window(g, p, Some(src), "sacrifice creatures to draw", Some(2.0))? {
+        return Ok(());
+    }
+    let mut done = 0;
+    for &m in fodder.iter().take(n) {
+        if on_bf(g, m) {
+            crate::glog!(g, "    {} sacrifices {} to Sephiroth", pname(g, p), g.perm(m).name);
+            crate::engine::zones::die(g, m, "sac")?;
+            done += 1;
+        }
+    }
+    if done > 0 && g.player(p).alive {
+        draw(g, p, done, false)?;
+    }
+    Ok(())
+}
+
+fn seph_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src {
+        g.selfpt = true;
+        if on_bf(g, src) {
+            seph_sacrifice(g, src)?;
+        }
+    }
+    Ok(())
+}
+
+fn seph_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if p == owner(g, src) && on_bf(g, src) && atk.contains(&src) {
+        seph_sacrifice(g, src)?;
+    }
+    Ok(vec![])
+}
+
+/// target opponent (the one with the least life) loses 1 life and p gains 1
+fn seph_drain(g: &mut Game, p: PlayerId) -> Res {
+    if let Some(q) = weakest_opp(g, p) {
+        lose_life(g, q, 1, Some(p), "drain", Some(false))?;
+    }
+    gain(g, p, 1)
+}
+
+/// Whenever another creature dies, drain 1; the fourth time that resolves in a turn, Sephiroth transforms and its
+/// controller gets the emblem
+fn seph_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    if m == src || !g.is_creature(m) || flipped(g, src) || !on_bf(g, src) {
+        return Ok(());
+    }
+    let p = owner(g, src);
+    if !trigger_window(g, p, Some(src), "drain 1", Some(1.0))? {
+        return Ok(());
+    }
+    seph_drain(g, p)?;
+    let st = g.turn_stamp();
+    let n = match g.perm(src).data.get(DataKey::SephTimes) {
+        Some(Val::List(l)) if matches!(l.first(), Some(Val::Stamp(s)) if *s == st) => l.get(1).map_or(0, Val::int),
+        _ => 0,
+    } + 1;
+    g.perm_mut(src).data.set(DataKey::SephTimes, Val::List(vec![Val::Stamp(st), Val::Int(n)]));
+    if n == 4 && on_bf(g, src) {
+        g.perm_mut(src).data.set(DataKey::Flipped, Val::Bool(true));
+        g.player_mut(p).emblems.push("seph");
+        g.selfpt = true;
+        crate::glog!(
+            g,
+            "  Sephiroth transforms into One-Winged Angel; {} gets an emblem (creature dies: drain 1)",
+            pname(g, p)
+        );
+    }
+    Ok(())
+}
+
+/// the emblem: whenever a creature dies, its owner's controller drains 1 for each Sephiroth emblem (run from
+/// engine::zones::die_triggers through cardcode::emblem_dies)
+pub fn seph_emblem_dies(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        let p = PlayerId(i as u8);
+        let n = g.player(p).emblems.iter().filter(|&&e| e == "seph").count();
+        for _ in 0..n {
+            if g.player(p).alive {
+                seph_drain(g, p)?;
+            }
+        }
+    }
+    Ok(())
+}
+
+fn seph_pt(g: &Game, _p: PlayerId, m: PermId) -> (i32, i32) {
+    if flipped(g, m) { (2, 2) } else { (0, 0) }
+}
+
+fn seph_kw(g: &Game, src: Src, m: PermId, k: Sym) -> bool {
+    m == src && k == "flying" && flipped(g, src)
+}
+
+fn register_seph(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, SEPH)?;
+    c.etb = Some(seph_etb);
+    c.as_enters = Some(selfpt_as);
+    c.attack = Some(seph_attack);
+    c.dies = Some(seph_dies);
+    c.self_pt = Some(seph_pt);
+    c.grant_kw = Some(seph_kw);
     Ok(())
 }
