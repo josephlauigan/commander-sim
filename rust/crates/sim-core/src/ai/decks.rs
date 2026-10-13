@@ -1518,6 +1518,9 @@ fn storm_kills(g: &Game, p: PlayerId, c: CardId) -> bool {
 /// Breach, the rituals for Breach and a storm card, and Breach itself for a storm card; None when the line has no
 /// claim on the card (it keeps its usual priority, so a deck without the storm card plays Breach as before)
 pub fn breach_hold_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    if g.player(p).yawg {
+        return None; // Yawgmoth's Will is the storm turn: the line cards replayed from the graveyard are cast on their usual priority
+    }
     let t = &g.db.get(c).tags;
     if t.has(Tag::Breach) {
         return storm_held(g, p).then_some(0);
