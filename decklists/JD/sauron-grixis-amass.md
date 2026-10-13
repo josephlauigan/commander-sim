@@ -1,6 +1,6 @@
 # Sauron, the Dark Lord — Grixis Amass
 
-**Simulator, 2026-10-13 (paired test, pool run pending):** **32.6% over all tiers** against 24.3% for the previous list (1,000 paired games per tier, every tier up by more than its noise of about ±3.4 to ±4.0): T1 33.7%, T2 39.5%, T3 32.1%, T4 30.7%, T5 27.0%. Look-ahead AI, loose profile. That figure was measured with Torment of Hailfire in Comet Storm's slot; Comet Storm for Torment then measured −0.6, within noise. A pool run of the ten decks on this list has not been done yet. The previous list's pool figure was 24.8% (10-12, rank 5 of ten; `decklists/pool/pool-results.md` section 0d).
+**Simulator, 2026-10-13 (paired tests, pool run pending):** the Sheoldred, the Apocalypse swap (Bedevil out, Sheoldred in) measured **+2.7 over all tiers** (T1 +5.0, T2 +4.8, T3 +0.6, T4 +2.8, T5 +0.2; look-ahead, loose, 500 paired games per list per tier). A pool run of the ten decks on this list has not been done yet. Earlier figures are the previous list's: **32.6% over all tiers** against 24.3% for the list before it (1,000 paired games per tier, every tier up by more than its noise of about ±3.4 to ±4.0): T1 33.7%, T2 39.5%, T3 32.1%, T4 30.7%, T5 27.0%, measured with Torment of Hailfire in Comet Storm's slot (Comet Storm for Torment then measured −0.6, within noise). The pool figure before that was 24.8% (10-12, rank 5 of ten; `decklists/pool/pool-results.md` section 0d).
 
 2026-09-17
 **Updated 2026-09-18 / 09-19 / 09-20** across earlier passes (rebuild, Nibelheim Aflame, extra-combat + land upgrade, bracket correction).
@@ -44,6 +44,8 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Jace's Archivist turns Bowmasters into an Army engine.** {U}, {T}: each player discards their hand and draws that many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with Mauhúr out. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and Kaervek. Without Bowmasters it's just a symmetrical wheel that refuels the table, so hold the activation until a payoff is on board.
 
+**Sheoldred, the Apocalypse** ({2}{B}{B}, 4/5 deathtouch) gains you 2 life whenever you draw and costs each opponent 2 life whenever they draw. With Jace's Archivist's wheel and Orcish Bowmasters every opponent draw now costs life: three opponents redrawing five cards each lose 10 life apiece to Sheoldred on top of the Bowmasters pings, and your own draws (Iron Man, Night's Whisper, Fact or Fiction) pay you back.
+
 **Multiply it.** Inexorable Tide proliferates the Army upward with every noncreature spell you cast. Mauhúr, Uruk-hai Captain is a Hardened Scales for your Army: every counter placement on an Army, Orc, or Goblin you control gets one more.
 
 **Talrand, Sky Summoner** (10-07, in Marchesa's slot) makes a 2/2 flying Drake whenever you cast an instant or sorcery. The deck runs 25 of them, so Talrand turns counterspells, removal and draw spells into a second army of fliers: blockers against the creature decks that cause most losses, and attackers that don't depend on the Orc Army.
@@ -60,7 +62,7 @@ Amass stacks. If you control no Army it makes a single 0/0 Orc Army token, then 
 
 **Two punishers on the same trigger.** Sauron amasses and **Kaervek the Merciless** throws a burn or removal bolt equal to the spell's mana value — both fire off the same event, an opponent casting a spell.
 
-**Fact or Fiction** (in Consecrated Sphinx's old slot) is the instant-speed dig: cast it at the end of an opponent's turn for two of the five cards. **Bedevil** ({B}{B}{R} instant) destroys an artifact, creature or planeswalker: one more answer at instant speed.
+**Fact or Fiction** (in Consecrated Sphinx's old slot) is the instant-speed dig: cast it at the end of an opponent's turn for two of the five cards. 
 
 
 **Sephiroth, Planet's Heir** ({4}{U}{B}, 4/4 vigilance) holds Kefka's old slot. When he enters, opponents' creatures get −2/−2 until end of turn, which clears tokens, mana creatures and small blockers in front of the Army, and he gets a +1/+1 counter whenever a creature an opponent controls dies, so the turn he lands he is usually a 6/6 or bigger. Vigilance lets him attack and still guard Sauron.
@@ -90,7 +92,7 @@ The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Sw
 
 **Haunted Ridge → the Unclaimed Territory slot.** Unclaimed Territory only made coloured mana for Orc creature spells; Haunted Ridge is a real B/R dual.
 
-**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate, Bedevil) plus Noxious Gearhulk and Vraska; four counters (Counterspell, Arcane Denial, Undermine, and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
+**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate) plus Noxious Gearhulk and Vraska; four counters (Counterspell, Arcane Denial, Undermine, and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables. Slaughter Pact is free now and {2}{B} next upkeep — make sure you can pay it, and remember it can't hit black creatures.
 
 ## Tutor targets by board state
 
@@ -264,4 +266,5 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 - **New singles**: Disdainful Stroke (10-03); Marchesa, the Black Rose (10-03; see above); Thought Vessel (10-02); since 09-26: Brush Off, Kefka, Court Mage (left 10-11 to lead his own deck), Talisman of Dominance, Sword of Fire and Ice; on 10-01, Underworld Breach, Brain Freeze, Dark Ritual, and Lotus Petal.
 - **From the bulk list**: Sephiroth, Planet's Heir (10-11); Cost of Brilliance (10-11, for Phyrexian Arena, which went to the Sheoldred deck).
 - **From the binder**: Bedevil (10-11, for Sheoldred, the Apocalypse, who left to lead her own deck).
+- **2026-10-13 package C**: Sheoldred, the Apocalypse is JD's own spare copy; Bedevil went to bulk.
 - **To the binder**: Reconnaissance Mission, Ral Zarek, Guest Lecturer (10-03); Plaza of Heroes (10-02); Bedevil, Feed the Swarm, Metallic Mimic, Slip Out the Back (10-01); Champion's Helm, Kindred Discovery, Rhystic Study, Sword of the Animist, Unearth, Tezzeret's Gambit, Big Score; from earlier passes, Erebos, God of the Dead, Hellkite Tyrant, Witch-king, Bringer of Ruin, Memory Lapse, Tome of Legends, and Unclaimed Territory.

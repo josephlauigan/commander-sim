@@ -1,6 +1,6 @@
 # Kefka, Court Mage — Grixis Discard
 
-**Simulator, 2026-10-13:** **+0.5 over all tiers, within noise,** for the Breach + storm swaps (T1 +3.3, T2 +0.6, T3 -0.5, T4 -0.7, T5 -0.3; look-ahead, loose, 1,000 paired games per tier). A pool run is pending. Previous list, 2026-10-12: 29.4% over all tiers (±0.5; rank 4 of the ten decks), 6,720 games per tier; `decklists/pool/pool-results.md` section 0d.
+**Simulator, 2026-10-13:** the Yawgmoth's Will + tutor package (Will, Vampiric Tutor and Mystical Tutor in; Twinflame, Kaervek's Purge and Disintegrate out) measured **+1.0 over all tiers, within noise,** in a paired test (T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8; look-ahead, loose, 500 games per list per tier); the gain grows with tier strength. A pool run is pending. Previous list's figures: +0.5 for the Breach + storm swaps (1,000 paired games per tier), and 29.4% over all tiers on 2026-10-12 (±0.5; rank 4 of the ten decks, 6,720 games per tier; `decklists/pool/pool-results.md` section 0d).
 
 **Updated 2026-10-11 (mana base).** JD's rule: basics over slow lands. Out: Temple of Malice, Boiling Rock Prison, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Path of Ancestry, Evolving Wilds, Fabled Passage (everything that enters tapped or fetches a tapped basic). In: 5 Swamp, 3 Mountain, 3 Island (now 15 Swamp, 9 Mountain, 6 Island). The six untapped nonbasics stay. Still 36 lands; the cut lands go back to the bulk list.
 **Updated 2026-10-11 (trade with Veyran, moved as functional blocks).** In from Veyran: Deflecting Swat and Slip Out the Back (protection), Underworld Breach (graveyard), Niv-Mizzet, the Firemind (a second draw-to-damage kill with the flipped Kefka), Jin-Gitaxias, Progress Tyrant, and Steam Vents, Sulfur Falls, Spirebluff Canal and Stormcarved Coast (for 4 Mountains). Out: Mystic Confluence and Splatter Technique (to Veyran), Arcane Omens and Inner Fire (to bulk), Triskelion (to the binder). Paired look-ahead test, 1,000 games per tier: **+1.3 points** (28.1% -> 29.4%). Two Game Changers now (Rhystic Study, Underworld Breach).
@@ -28,7 +28,7 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 **Back face: life loss on your turn is card draw.** Each opponent who loses life during your turn draws you that many cards:
 - **Repeatable pings:** Sawblade Scamp, Viashino Fangtail, Blightspeaker, Screeching Soulbreaker, Susurian Voidborn (each Treasure you crack drains one opponent).
-- **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter, Corroding Dragonstorm, Grab the Prize, Decorum Dissertation (aimed at an opponent: they draw two, but they lose 2 and you draw 2), Kaervek's Purge, Lightning Bolt, Disintegrate, and Massacre Wurm (2 for each of their creatures that dies).
+- **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter, Corroding Dragonstorm, Grab the Prize, Decorum Dissertation (aimed at an opponent: they draw two, but they lose 2 and you draw 2), Lightning Bolt and Massacre Wurm (2 for each of their creatures that dies).
 - **Combat:** a flying 5/7 that hits for 5 draws you 5.
 
 **The kill: Psychosis Crawler + Kefka, Ruler of Ruin.** Each card you draw makes each opponent lose 1; each opponent's loss draws you a card. In a four-player game every card drawn draws three more, so the loop runs until the table is dead or your library is. It is mandatory: count your library against the highest life total before starting it, and play the Crawler after the flip, not before, when your library is short. Before the flip the Crawler is still worth casting early: Kefka's own draws and the looters ping the whole table with it.
@@ -47,22 +47,24 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 **Underworld Breach + storm.** Breach (cast it for {1}{R}) also works as a second kill, with **Brain Freeze**, **Dark Ritual**, **Lotus Petal** and **Grapeshot**. Cast Brain Freeze on yourself to fill the graveyard (storm: one copy for each spell cast earlier in the turn, three cards milled per copy), then escape Dark Ritual and Lotus Petal again and again for mana and storm count (each escape exiles three other cards), escape Brain Freeze and point the copies at the opponents, who lose when they next draw from an empty library. Grapeshot is the same storm count as damage: one ping per copy to any target. Breach is sacrificed at your end step, so start only when you can finish, ideally into tapped-out opponents. Measured neutral: +0.5 over all tiers, within noise (look-ahead, 1,000 paired games per tier).
 
+**Yawgmoth's Will: a second storm turn.** With Kefka's discards and the looters filling the graveyard, Will (cast it for {2}{B}) lets you cast cards from the graveyard this turn, so it replays **Dark Ritual**, **Lotus Petal**, **Brain Freeze** and **Grapeshot** from the pile. Vampiric Tutor and Mystical Tutor find Will, Breach or the missing piece (Mystical Tutor finds an instant or sorcery: Brain Freeze, Grapeshot, Dark Ritual). Measured +1.0 over all tiers, within noise, and better against stronger tables (T4 +2.2, T5 +2.8).
+
 **Rhystic Study and Skullclamp** keep the hand full between Kefka triggers. Discard down to seven is the limit to watch after a flip turn.
 
 ## Consistency
 
 - **Lands:** 36 (10 nonbasic + 26 basic)
-- **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.
-- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach.
-- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Kaervek's Purge, Disintegrate, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
+- **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
+- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
+- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with four Game Changers: **Rhystic Study**, **Underworld Breach**, **Jeska's Will** and **Demonic Tutor**. No two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Four tutors (Demonic Tutor, Diabolic Tutor, Profane Tutor, Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
+**Bracket 4,** with six Game Changers: **Demonic Tutor**, **Jeska's Will**, **Mystical Tutor**, **Rhystic Study**, **Underworld Breach** and **Vampiric Tutor**. No two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Six tutors (Demonic, Vampiric, Mystical, Diabolic and Profane Tutor, and Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
 
 Disclose before the game:
-- **Rhystic Study**, **Underworld Breach**, **Jeska's Will** and **Demonic Tutor** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
+- **Demonic Tutor**, **Jeska's Will**, **Mystical Tutor**, **Rhystic Study**, **Underworld Breach** and **Vampiric Tutor** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
 - **The Crawler and Niv-Mizzet loops** with Kefka, Ruler of Ruin.
 - **The Breach + Brain Freeze line**, which can mill an opponent out in one turn (Dark Ritual, Lotus Petal and Grapeshot feed the storm count).
 - **Jin-Gitaxias, Progress Tyrant**, which counters the first artifact, instant or sorcery each opponent casts each turn.
@@ -84,9 +86,9 @@ Known simplifications: madness casts the card from the graveyard rather than fro
 
 ## Where the cards come from
 
-The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Profane Tutor and Demonic Tutor come from the retired Jodah deck (marked "Jodah") and Chaos Warp from bulk (2026-10-13). Nothing to buy.
+The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Profane Tutor and Demonic Tutor come from the retired Jodah deck (marked "Jodah") and Chaos Warp from bulk (2026-10-13). The 2026-10-13 Will package: Vampiric Tutor and Mystical Tutor are binder cards (the retired Jodah deck's leftovers), Yawgmoth's Will is JD's own copy; Twinflame, Kaervek's Purge and Disintegrate went to bulk. Nothing to buy.
 
-### Black (26)
+### Black (27)
 
 | Card | From | Set |
 |---|---|---|
@@ -114,10 +116,11 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Shimmercreep | Bulk | ecl |
 | Skullport Merchant | Bulk | list |
 | Sneering Shadewriter | Bulk | sos |
-| Twinflame | Binder |  |
 | Susurian Voidborn | Bulk | eoe |
+| Vampiric Tutor | Binder | — |
+| Yawgmoth's Will | JD's own | — |
 
-### Red (17)
+### Red (16)
 
 | Card | From | Set |
 |---|---|---|
@@ -125,7 +128,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Blazing Firesinger | Bulk | sos |
 | Chaos Warp | Bulk | — |
 | Deflecting Swat | Veyran | — |
-| Disintegrate | Binder | — |
 | Garrison Excavator | Bulk | sos |
 | Grapeshot | Bulk | tsr |
 | Grab the Prize | Bulk | dsk |
@@ -139,7 +141,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Underworld Breach | Veyran | — |
 | Viashino Fangtail | Bulk | rav |
 
-### Blue (7)
+### Blue (8)
 
 | Card | From | Set |
 |---|---|---|
@@ -150,13 +152,13 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Reality Shift | Bulk | moc |
 | Rhystic Study | Binder | — |
 | Slip Out the Back | Veyran | — |
+| Mystical Tutor | Binder | — |
 
-### Multicolor (7)
+### Multicolor (6)
 
 | Card | Colors | From | Set |
 |---|---|---|---|
 | Alpharael, Dreaming Acolyte | U/B | Bulk | eoe |
-| Kaervek's Purge | B/R | Binder | — |
 | Niv-Mizzet, the Firemind | U/R | Veyran | — |
 | Rapturous Moment | U/R | Bulk | sos |
 | Scarlet Spider, Kaine | B/R | Bulk | spm |
