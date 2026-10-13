@@ -36,7 +36,10 @@ fn kefka_casts_yawgmoths_will_for_a_storm_card_and_replays_the_line() {
     hand(&mut g, P0, &["Yawgmoth's Will"]);
     to_gy(&mut g, P0, &["Brain Freeze", "Dark Ritual", "Lotus Petal"]);
     let o = brain::main_options(&mut g, P0, false).unwrap();
-    let w = o.iter().find(|o| o.label.starts_with("Yawgmoth's Will")).expect("Will is offered with a storm card in the yard");
+    let w = o
+        .iter()
+        .find(|o| o.label.starts_with("Yawgmoth's Will"))
+        .expect("Will is offered with a storm card in the yard");
     sim_core::ai::act::perform(&mut g, P0, w.act.as_ref().unwrap()).unwrap();
     assert!(g.player(P0).yawg, "Will resolved");
     let l = labels(&mut g, P0);
@@ -135,7 +138,6 @@ fn kura_dies_into_a_big_spirit_once_the_lands_are_down() {
     assert_eq!((sim_core::engine::values::epow(&g, t), sim_core::engine::values::etgh(&g, t)), (6, 6));
 }
 
-
 #[test]
 fn titania_casts_survey_early_and_vorinclex_as_a_top_end_threat() {
     let mut g = table(&["titania", "seph"]);
@@ -144,4 +146,16 @@ fn titania_casts_survey_early_and_vorinclex_as_a_top_end_threat() {
     let pr = |g: &Game, c| sim_core::ai::decks::deck_prio(g, P0, c);
     assert!(pr(&g, hs[0]) > pr(&g, hs[1]), "Survey before Tracker");
     assert!(pr(&g, hs[2]) >= 62);
+}
+
+#[test]
+fn veyran_still_escapes_spells_with_underworld_breach() {
+    let mut g = table(&["veyran", "seph"]);
+    lands(&mut g, P0, "Island", 3, false);
+    lands(&mut g, P0, "Mountain", 3, false);
+    perm(&mut g, P0, "Underworld Breach");
+    perm(&mut g, P1, "Orcish Bowmasters"); // a creature worth burning
+    to_gy(&mut g, P0, &["Lightning Bolt", "Counterspell", "Opt", "Brainstorm", "Island"]);
+    let l = labels(&mut g, P0);
+    assert!(l.iter().any(|l| l == "escape Lightning Bolt"), "{l:?}");
 }
