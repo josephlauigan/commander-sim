@@ -1823,6 +1823,9 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     Ok(true)
 }
 
+/// how much better (in `equip_options` score) a creature must be to take an Equipment off its current holder
+const MOVE_MARGIN: f64 = 2.0;
+
 /// attach unattached auto-modeled equipment ("Equip {N}") to the creature that will use it best
 pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
     use crate::hooks::{Action, Opt};
@@ -1873,6 +1876,12 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                 + crate::impls::cloud::holder_bonus(g, p, m)
         };
         let best = max_by(&cands, score).unwrap();
+        // moving a worn piece: only to a clearly better holder (else it ping-pongs between equals)
+        if let Some(cur) = x.attached.filter(|&t| g.perm(t).on_bf && g.perm(t).owner == p && !g.perm(t).phased)
+            && score(best) < score(cur) + MOVE_MARGIN
+        {
+            continue;
+        }
         let n = crate::impls::cloud::equip_cost(g, p, src, best, base);
         let bonus: i32 = d
             .abilities

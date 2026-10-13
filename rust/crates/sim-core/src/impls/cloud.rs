@@ -28,6 +28,11 @@ use crate::sym::intern;
 
 pub const CLOUD: &str = "Cloud, Midgar Mercenary";
 const KEY: &str = "cloud";
+const PLAZA: &str = "Plaza of Heroes";
+
+/// A/B switch for the lead: with it on, Cloud waits a turn for a protection piece (Giver of Runes, Swiftfoot Boots,
+/// Champion's Helm) when removal is likely, and a recast after a death waits until protection can follow
+pub const PROTECT_FIRST: bool = true;
 
 // ------------------------------------------------------------------ small helpers
 fn live(g: &Game, m: PermId) -> bool {
@@ -323,7 +328,8 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         .filter(|&&m| live(g, m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(crate::tag::Tag::Rock)))
         .count();
     let mana = g.player(p).lands.iter().filter(|&&l| g.land(l).on_bf).count() as u32 + 1 + rocks as u32;
-    // cast + equip cost of a card, as the pieces are played (Cid and Puresteel Paladin are ignored)
+    let (free_equips, shapers) = equip_engine(g, p);
+    // cast + equip cost of a card (Cid is in the cast cost; free-equip engines and Steelshapers lower the equip cost)
     let total = |c: CardId| -> u32 {
         let cast = crate::engine::mana::cost_of(g, p, c).0;
         let d = g.db.get(c);
@@ -340,8 +346,18 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
                 "Champion's Helm" => 1,
                 _ => 2, // Sword of Feast and Famine
             });
-        cast + eq
+        cast + if free_equips { 0 } else { eq.saturating_sub(shapers) }
     };
+    if free_equips {
+        // equips are (nearly) free: the biggest payoff the mana can cast
+        let big = ["Sword of Kaldra", "Helm of Kaldra", "Shield of Kaldra", "Wrecking Ball Arm", "Colossus Hammer"];
+        let cast = |c: CardId| cast_cost(g, p, c);
+        if let Some(c) =
+            big.iter().filter(|n| !have(n)).filter_map(|n| g.db.id(n)).find(|c| lib.contains(c) && cast(*c) <= mana)
+        {
+            return Some(c);
+        }
+    }
     let exposed = crate::ai::brain::removal_risk(g, p) >= 0.3;
     let mut order: Vec<&str> = vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"];
     if exposed && held >= 1 {
@@ -1321,28 +1337,54 @@ pub fn cloud_protect(
             }
         }
     }
-    if destroyish(kind) || kind == "wipe" {
-        for n in ["Unbreakable Formation", "Rootborn Defenses", "Ultimate Magic: Holy"] {
-            if let Some(c) = hand(g, n)
-                && cast_instant(g, p, c)?
-            {
-                let main =
-                    g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
-                for x in g.player(p).perms.clone() {
-                    if live(g, x) && (n == "Ultimate Magic: Holy" || g.is_creature(x)) {
-                        super::partials::eot_kw(g, x, "indestructible");
-                        if n == "Unbreakable Formation" && main && g.is_creature(x) {
-                            g.perm_mut(x).plus += 1;
-                            super::partials::eot_kw(g, x, "vigilance");
-                        }
-                    }
-                }
-                return Ok(true);
-            }
-        }
+    if (destroyish(kind) || kind == "wipe")
+        && cast_team_indestructible(g, p, &["Unbreakable Formation", "Rootborn Defenses", "Ultimate Magic: Holy"])?
+    {
+        return Ok(true);
     }
     // the generic one-card answers the outside decks use (Gods Willing, Benevolent Bodyguard, Selfless Spirit, ...)
-    crate::ai::pool::protect(g, p, m, crate::sym::intern(kind), actor, spell)
+    if crate::ai::pool::protect(g, p, m, crate::sym::intern(kind), actor, spell)? {
+        return Ok(true);
+    }
+    // Plaza of Heroes (the last resort: it costs {3} and the land)
+    if (targeted || destroyish(kind)) && plaza_protect(g, p, m)? {
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// Plaza of Heroes: {3}, {T}, exile it: target legendary creature gains hexproof and indestructible until end of turn
+fn plaza_protect(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
+    if !g.is_creature(m) || !crate::cardcode::is_legendary(g, m) {
+        return Ok(false);
+    }
+    let Some(l) = g.player(p).lands.iter().copied().find(|&l| {
+        let x = g.land(l);
+        x.on_bf && !x.tapped && *g.db.get(x.cd).name == *PLAZA
+    }) else {
+        return Ok(false);
+    };
+    if !crate::impls::lands::can_pay_without(g, p, l, 3, "") {
+        return Ok(false);
+    }
+    let cd = g.land(l).cd;
+    crate::engine::turn::remove_land(g, p, l); // tapped and exiled as the cost: the other lands pay the {3}
+    if !pay(g, p, 3, "", false)? {
+        g.player_mut(p).lands.push(l);
+        g.land_mut(l).on_bf = true;
+        return Ok(false);
+    }
+    g.player_mut(p).exile.push(cd);
+    super::partials::eot_kw(g, m, "hexproof");
+    super::partials::eot_kw(g, m, "indestructible");
+    g.player_mut(p).stat("protection_used", 1);
+    crate::glog!(
+        g,
+        "    {} exiles Plaza of Heroes: {} gains hexproof and indestructible",
+        g.player(p).name,
+        g.perm(m).name
+    );
+    Ok(true)
 }
 
 /// cloud's own plays (brain.special_options): Cid's regrow and Zack's sacrifice are card options and the equip
@@ -1464,7 +1506,10 @@ fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId)
 /// the equip)
 pub fn search_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     match &o.act {
-        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => 10.0 + precombat_cloud(g, p),
+        Some(Action::Cast { .. }) if o.label == CLOUD && cloud_of(g, p).is_none() => {
+            10.0 + precombat_cloud(g, p) - if PROTECT_FIRST { cloud_into_open_removal(g, p) } else { 0.0 }
+        }
+        Some(Action::Cast { .. }) if PROTECT_FIRST && protect_piece_first(g, p, &o.label) => 14.0,
         Some(Action::Equip { src, target, .. }) if cloud_of(g, p) == Some(*target) => equip_search_value(g, *src),
         Some(Action::Plan { .. }) if cloud_of(g, p).is_some() && o.label.ends_with(&format!("to {CLOUD}")) => {
             let name = o.label.strip_prefix("equip ").and_then(|s| s.strip_suffix(&format!(" to {CLOUD}")));
@@ -1526,5 +1571,181 @@ fn precombat_cloud(g: &Game, p: PlayerId) -> f64 {
         4.0
     } else {
         0.0
+    }
+}
+
+/// what makes equipping cheap for p right now: (equips are about free, Auriok Steelshapers out). Puresteel Paladin
+/// with metalcraft (counting the piece about to be cast), Ardenn on the battlefield (re-attaches every combat) and
+/// Kor Outfitter in hand (attaches on entering) make equips free.
+fn equip_engine(g: &Game, p: PlayerId) -> (bool, u32) {
+    let artifacts = g.player(p).perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count();
+    let puresteel = creature_named(g, p, "Puresteel Paladin").is_some() && artifacts + 1 >= 3;
+    let ardenn = creature_named(g, p, "Ardenn, Intrepid Archaeologist").is_some();
+    let outfitter = in_hand(g, p, "Kor Outfitter");
+    let shapers = g.player(p).perms.iter().filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER).count() as u32;
+    (puresteel || ardenn || outfitter, shapers)
+}
+
+/// the Equipment Cloud's deck fetches with a tutor of this kind (Enlightened Tutor and friends): the same pick as
+/// Cloud's own search
+pub fn tutor_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
+    cloud_pick(g, p).filter(|c| okn.contains(c))
+}
+
+/// mana value of casting c now (generic plus coloured pips, after cost changes)
+fn cast_cost(g: &Game, p: PlayerId, c: CardId) -> u32 {
+    let (n, pips) = crate::engine::mana::cost_of(g, p, c);
+    n + pips.chars().filter(|ch| ch.is_ascii_alphabetic()).count() as u32
+}
+
+/// Equipment that attaches itself or brings its own body: never stranded
+fn carries_itself(name: &str) -> bool {
+    matches!(name, "Magitek Scythe" | "Squire's Lightblade" | "Hero's Blade" | "White Mage's Staff" | "Open the Armory")
+}
+
+/// Don't strand Equipment: casting the Equipment card c now would leave it on the battlefield with no creature to
+/// carry it, and no creature to cast with it this turn. Not when it is the only use of the mana (nothing else in the
+/// hand can be cast with it).
+pub fn strands_equipment(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if g.player(p).key != KEY || !is_equipment_card(g, c) || carries_itself(card_name(g, c)) {
+        return false;
+    }
+    if creatures_out(g, p) > 0 {
+        return false; // a carrier is out: equip next turn at the latest
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let cost = cast_cost(g, p, c);
+    let pl = g.player(p);
+    // a creature (or Cloud) cast with it this turn carries it
+    let carrier = pl
+        .hand
+        .iter()
+        .copied()
+        .chain(pl.cmd_in_zone.then_some(pl.cmd))
+        .filter(|&x| x != c && g.db.get(x).creature)
+        .any(|x| cost + cast_cost(g, p, x) <= mana);
+    if carrier {
+        return false;
+    }
+    // the only use of the mana: no other non-land card in hand fits
+    let other_use = pl.hand.iter().any(|&x| x != c && !g.db.get(x).land && cast_cost(g, p, x) <= mana);
+    other_use
+}
+
+/// cast the first of these instants in p's hand that makes the creatures indestructible (Unbreakable Formation also
+/// gives +1/+1 and vigilance in a main phase; Ultimate Magic: Holy all permanents)
+fn cast_team_indestructible(g: &mut Game, p: PlayerId, names: &[&str]) -> Res<bool> {
+    for n in names {
+        let Some(c) = g.player(p).hand.iter().copied().find(|&c| card_name(g, c) == *n) else { continue };
+        if !cast_instant(g, p, c)? {
+            continue;
+        }
+        let main = g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
+        for x in g.player(p).perms.clone() {
+            if live(g, x) && (*n == "Ultimate Magic: Holy" || g.is_creature(x)) {
+                super::partials::eot_kw(g, x, "indestructible");
+                if *n == "Unbreakable Formation" && main && g.is_creature(x) {
+                    g.perm_mut(x).plus += 1;
+                    super::partials::eot_kw(g, x, "vigilance");
+                }
+            }
+        }
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// a board wipe that destroys (or deals damage) is about to hit p: Unbreakable Formation or Rootborn Defenses make
+/// the creatures indestructible, when the wipe would cost the board a real loss and Cloud or an equipped creature
+/// is among the victims. 'indes' if cast.
+pub fn cloud_wipe_response(g: &mut Game, q: PlayerId, kind: &str, caster: PlayerId) -> Res<Option<crate::sym::Sym>> {
+    const DESTROY_WIPES: [&str; 6] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal"];
+    if !DESTROY_WIPES.contains(&kind) || q == caster {
+        return Ok(None);
+    }
+    let worth = g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m) && worth_saving(g, m));
+    if !worth || crate::ai::decks::wipe_loss(g, q, kind, caster) < 6.0 {
+        return Ok(None);
+    }
+    Ok(cast_team_indestructible(g, q, &["Rootborn Defenses", "Unbreakable Formation"])?
+        .then(|| crate::sym::intern("indes")))
+}
+
+const PROTECT_PIECES: [&str; 3] = ["Giver of Runes", "Swiftfoot Boots", "Champion's Helm"];
+
+/// can protection follow a Cloud cast that leaves `left` mana: Giver untapped, Grand Abolisher out, Plaza of Heroes
+/// with {3}, Swiftfoot Boots or Champion's Helm worn (or castable and equipped) for what is left
+fn protection_follows(g: &Game, p: PlayerId, left: u32) -> bool {
+    let pl = g.player(p);
+    let on_bf = |n: &str| pl.perms.iter().any(|&m| live(g, m) && name_of(g, m) == n);
+    if pl.perms.iter().any(|&m| live(g, m) && name_of(g, m) == "Giver of Runes" && !g.perm(m).tapped && !g.perm(m).sick)
+        || on_bf("Grand Abolisher")
+    {
+        return true;
+    }
+    let plaza =
+        pl.lands.iter().any(|&l| g.land(l).on_bf && !g.land(l).tapped && *g.db.get(g.land(l).cd).name == *PLAZA);
+    if plaza && left >= 3 {
+        return true;
+    }
+    for n in ["Swiftfoot Boots", "Champion's Helm"] {
+        let equip = 1; // both equip for {1}
+        if on_bf(n) && left >= equip {
+            return true;
+        }
+        if let Some(c) = pl.hand.iter().copied().find(|&c| card_name(g, c) == n)
+            && left >= cast_cost(g, p, c) + equip
+        {
+            return true;
+        }
+    }
+    false
+}
+
+/// the penalty (subtracted from the bonus for casting Cloud) when he would walk into open removal with nothing
+/// behind him: first cast with a protection piece in hand that fits now (Cloud follows within a turn), and a recast
+/// after he died once while protection could not follow
+fn cloud_into_open_removal(g: &Game, p: PlayerId) -> f64 {
+    let pl = g.player(p);
+    if crate::ai::brain::removal_risk(g, p) < 0.3 {
+        return 0.0;
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let cloud_cost = cast_cost(g, p, pl.cmd);
+    if pl.tax > 0 {
+        let left = mana.saturating_sub(cloud_cost);
+        return if protection_follows(g, p, left) || mana >= 3 * cloud_cost { 0.0 } else { 12.0 };
+    }
+    // first cast: a piece that fits now, and Cloud plus the piece fit next turn, delays him by one turn
+    let piece =
+        pl.hand.iter().copied().find(|&c| PROTECT_PIECES.contains(&card_name(g, c)) && cast_cost(g, p, c) <= mana);
+    let Some(piece) = piece else { return 0.0 };
+    if cast_cost(g, p, piece) + cloud_cost > mana && pl.lands.len() as u32 + 1 >= cast_cost(g, p, piece) + cloud_cost {
+        12.0
+    } else {
+        0.0
+    }
+}
+
+/// casting this protection piece now is the better first play (see `cloud_into_open_removal`)
+fn protect_piece_first(g: &Game, p: PlayerId, label: &str) -> bool {
+    PROTECT_PIECES.contains(&label) && cloud_of(g, p).is_none() && cloud_into_open_removal(g, p) > 0.0 && {
+        let pl = g.player(p);
+        pl.tax == 0
+    }
+}
+
+/// Cloud's keep: 3 to 5 lands, or 2 lands with a mana rock or a creature that costs two or less (Cloud himself is a
+/// {2}{W}-ish commander: two lands and a way to get to him). 0-1 landers and 6-7 landers go back.
+pub fn keep_hand(g: &Game, p: PlayerId) -> bool {
+    let hand = &g.player(p).hand;
+    let n = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    match n {
+        3..=5 => true,
+        2 => hand.iter().any(|&c| {
+            let d = g.db.get(c);
+            !d.land && ((d.creature && d.cmc <= 2) || d.tag(crate::tag::Tag::Rock) || d.tag(crate::tag::Tag::Dork))
+        }),
+        _ => false,
     }
 }

@@ -1,0 +1,82 @@
+480 games (analysis, 480 per list per tier, profile loose), lookahead AI, 8 worker threads: about 3 minutes
+  progress  10.0%  0m15s elapsed, ~2m16s left
+  progress  20.0%  0m24s elapsed, ~1m37s left
+  progress  30.0%  0m36s elapsed, ~1m25s left
+  progress  40.0%  0m48s elapsed, ~1m13s left
+  progress  50.0%  1m00s elapsed, ~1m00s left
+  progress  60.0%  1m14s elapsed, ~0m49s left
+  progress  70.0%  1m24s elapsed, ~0m36s left
+  progress  80.0%  1m34s elapsed, ~0m23s left
+  progress  90.0%  1m45s elapsed, ~0m11s left
+  progress 100.0%  1m59s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 480 games] ===========
+Win rate 9.0%   (4-player baseline 25%)   average rounds survived 9.2
+
+-- How it wins --
+  damage      97.7% of wins
+  timeout      2.3% of wins
+  Opponents it eliminated: 0.35 per game, by
+    combat             50.3%
+    commander damage   29.9%
+    triggers           19.8%
+  Damage dealt per game: 20.7, from
+    combat              18.9  (92%)
+    triggers             1.8  (8%)
+
+-- How it loses --
+  Eliminated in 90.8% of games, on average in round 8.9
+    by Heliod   via combo              17.7% of games
+    by Krenko   via combat             14.6% of games
+    by Yuriko   via triggers           11.5% of games
+    by Yuriko   via combat             10.6% of games
+    by Prosper  via combo               7.7% of games
+    by Chulane  via combat              7.3% of games
+    by Chulane  via combo               5.8% of games
+    by Krenko   via combo               3.8% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 17%  T5 33%  T6 42%  T7 51%  T8 56%  T9 59%  T10 60%  T11 60%  T12 61%
+  Online at all: 61.7% of games
+  Commander resolves on turn: median 2.0, mean 2.2 (over the 99.6% of games it resolves)
+  Commander resolved by turn:  T4 97%  T5 98%  T6 99%  T7 99%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Champion's Helm                            cast in  22.5% of games, win rate when cast  17.6% (+8.6)
+    Sword of Feast and Famine                  cast in  28.5% of games, win rate when cast  17.5% (+8.6)
+    Mask of Memory                             cast in  22.3% of games, win rate when cast  16.8% (+7.9)
+    Sword of Hearth and Home                   cast in  50.6% of games, win rate when cast  14.8% (+5.9)
+    Sword of Fire and Ice                      cast in  76.0% of games, win rate when cast  11.2% (+2.3)
+    Cloud, Midgar Mercenary                    cast in  99.6% of games, win rate when cast   9.0% (+0.0)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  99.6% of games, win rate when cast   9.0% (+0.0)
+    Sword of Fire and Ice                      cast in  76.0% of games, win rate when cast  11.2% (+2.3)
+    Sword of Hearth and Home                   cast in  50.6% of games, win rate when cast  14.8% (+5.9)
+    Mask of Memory                             cast in  22.3% of games, win rate when cast  16.8% (+7.9)
+    Sword of Feast and Famine                  cast in  28.5% of games, win rate when cast  17.5% (+8.6)
+    Champion's Helm                            cast in  22.5% of games, win rate when cast  17.6% (+8.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Stormfront Riders                          cast  28.8% of the games it was drawn
+    Shield of Kaldra                           cast  32.5% of the games it was drawn
+    Sword of Kaldra                            cast  40.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.86
+    Sword of Fire and Ice                      0.33
+    Sword of Hearth and Home                   0.14
+    Cid, Freeflier Pilot                       0.05
+    Adelbert Steiner                           0.04
+    White Mage's Staff                         0.04
+    Helm of Kaldra                             0.03
+    Explorer's Scope                           0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(119s total)

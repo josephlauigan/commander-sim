@@ -247,6 +247,9 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     let d = g.db.get(c);
     let main = is_main(pl.key);
     let mut base = decks::deck_prio_f(g, p, c);
+    if pl.key == "cloud" && crate::impls::cloud::strands_equipment(g, p, c) {
+        return None; // hold the Equipment until a creature can carry it
+    }
     if !main && pl.library.len() < 8 && draws_cards(g, c) {
         return None; // don't draw yourself out
     }
