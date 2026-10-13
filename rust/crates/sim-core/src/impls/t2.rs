@@ -284,7 +284,7 @@ fn soulherder(g: &mut Game, src: Src, p: PlayerId) -> Res {
 fn soulherder_grow(g: &mut Game, src: Src, m: PermId) -> Res {
     let o = owner(g, src);
     if g.is_creature(m) && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(1.0))? {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -430,6 +430,17 @@ fn terror(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     {
         let n = epow(g, m);
         best_target_any(g, o, n)?;
+    }
+    Ok(())
+}
+
+/// Terror of the Peaks for tokens (Young Pyromancer, Talrand, Murmuring Mystic ...): they enter through `make_tokens`, which
+/// fires `tokens_enter` instead of the creature `etb` hook; one trigger per token
+fn terror_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
+    for &t in toks {
+        if p == owner(g, src) && g.perm(src).on_bf && g.perm(t).on_bf {
+            terror(g, src, p, t)?;
+        }
     }
     Ok(())
 }
@@ -1251,7 +1262,7 @@ fn constellation(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && trigger_window(g, o, Some(src), "constellation: draw a card", None)?
     {
         if cname(g, src) == "Setessan Champion" {
-            g.perm_mut(src).plus += 1; // and a +1/+1 counter
+            crate::cardcode::put_plus(g, src, 1); // and a +1/+1 counter
         }
         draw(g, o, 1, false)?;
     }
@@ -1513,7 +1524,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Deadeye Navigator")?.options = Some(blink_option);
     // Kaalia of the Vast
     r.card(db, "Kaalia of the Vast")?.attack = Some(kaalia);
-    r.card(db, "Terror of the Peaks")?.etb = Some(terror);
+    let c = r.card(db, "Terror of the Peaks")?;
+    c.etb = Some(terror);
+    c.tokens_enter = Some(terror_tokens);
     r.card(db, "Scourge of Valkas")?.etb = Some(valkas);
     r.card(db, "Dragon Tempest")?.etb = Some(tempest);
     r.card(db, "Drakuseth, Maw of Flames")?.attack = Some(drakuseth);

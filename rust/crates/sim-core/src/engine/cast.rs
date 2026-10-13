@@ -267,7 +267,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if !creature {
         for m in g.player(p).perms.clone() {
             if g.perm(m).on_bf && g.perm(m).data.truthy(DataKey::WeirdToken) {
-                g.perm_mut(m).plus += 1; // Spellgorger Weird made by Ral and the Implicit Maze
+                crate::cardcode::put_plus(g, m, 1); // Spellgorger Weird made by Ral and the Implicit Maze
             }
         }
     }
@@ -329,7 +329,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         if trigger_window(g, p, Some(src), "counters on your Army", None)?
             && let Some(a) = army_of(g, p)
         {
-            g.perm_mut(a).plus += find(g, p, Tag::Prolifall).len() as i32;
+            crate::cardcode::put_plus(g, a, find(g, p, Tag::Prolifall).len() as i32);
         }
     }
     if has(g, p, Tag::Birgi) {

@@ -923,7 +923,7 @@ fn spider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     discard_cards(g, o, &[d])?;
     if g.perm(src).on_bf {
-        g.perm_mut(src).plus += 1;
+        crate::cardcode::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -1238,6 +1238,7 @@ fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 pub fn kefka_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let mut out = vec![];
     out.extend(crate::cardcode::breach_options(g, p, post)?);
+    out.extend(will_options(g, p));
     if post.then_some(()).is_some() || true {
         let st = g.turn_stamp();
         let later = g.player(p).flag_turn.get(&intern("voidborn_warped")).is_none_or(|s| *s != st);
@@ -1529,4 +1530,62 @@ fn disintegrate_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<
         r?;
     }
     Ok("gy")
+}
+
+// ======================================================== Yawgmoth's Will (the Kefka storm/Breach package)
+const WILL: &str = "Yawgmoth's Will";
+
+/// is the graveyard worth replaying? Returns the option's utility: a storm card (Brain Freeze, Grapeshot) with the
+/// mana to cast it after the Will, or three cheap castable spells that fit in the mana left; never into an empty yard
+fn will_value(g: &Game, p: PlayerId) -> Option<f64> {
+    let pl = g.player(p);
+    if pl.yawg || g.active != Some(p) || !can_pay(g, p, 2, "B", false) {
+        return None;
+    }
+    let left = total_mana(g, p, false).saturating_sub(3);
+    let cost = |c: CardId| {
+        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+        cg + cp.chars().count() as u32
+    };
+    let rituals = pl
+        .gy
+        .iter()
+        .filter(|&&c| matches!(&*g.db.get(c).name, "Dark Ritual" | "Cabal Ritual" | "Lotus Petal" | "Jeska's Will"))
+        .count() as u32;
+    let storm = pl.gy.iter().any(|&c| matches!(&*g.db.get(c).name, "Brain Freeze" | "Grapeshot"));
+    if storm && left + 2 * rituals >= 2 {
+        return Some(7.0);
+    }
+    let mut costs: Vec<u32> = pl
+        .gy
+        .iter()
+        .filter(|&&c| {
+            let d = g.db.get(c);
+            !d.land && !d.tag(Tag::Rean) && !d.tag(Tag::Fill) && !d.tag(Tag::Yawg)
+        })
+        .map(|&c| cost(c))
+        .collect();
+    costs.sort_unstable();
+    (costs.len() >= 3 && costs.iter().take(3).sum::<u32>() <= left).then_some(5.0)
+}
+
+fn will_go(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
+    let Some(w) = g.player(p).hand.iter().copied().find(|&c| cname(g, c) == WILL) else { return Ok(false) };
+    if will_value(g, p).is_none() {
+        return Ok(false);
+    }
+    pay(g, p, 2, "B", false)?;
+    cast_card(g, p, w, "hand", Ctx::default())?;
+    Ok(true)
+}
+
+/// Yawgmoth's Will for a deck that isn't built around it: only with a yard that pays for itself
+pub fn will_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
+    if !g.player(p).hand.iter().any(|&c| cname(g, c) == WILL) {
+        return vec![];
+    }
+    will_value(g, p)
+        .map(|u| Opt { utility: u, label: "Yawgmoth's Will (replay the graveyard)".into(), act: Some(Action::Plan { f: will_go, arg: 0 }) })
+        .into_iter()
+        .collect()
 }

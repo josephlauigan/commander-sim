@@ -705,3 +705,93 @@ fn vinelasher_adept_landcycles_for_two() {
     let basic = g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land && &*g.db.get(c).name == "Forest").count();
     assert_eq!(basic, lands_before + 1);
 }
+
+// ------------------------------------------------------------------ Vorinclex, Monstrous Raider
+const VORINCLEX: &str = "Vorinclex, Monstrous Raider";
+
+fn enter_with(g: &mut Game, p: PlayerId, name: &str, plus: i32) -> PermId {
+    let c = take(g, p, name);
+    zones::enter(g, p, c, zones::Enter { sick: false, plus, ..Default::default() }).unwrap()
+}
+
+#[test]
+fn vorinclex_doubles_mine_and_halves_the_opponents_rounded_down() {
+    let mut g = game();
+    perm(&mut g, P0, VORINCLEX);
+    let a = enter_with(&mut g, P0, "Llanowar Elves", 3);
+    assert_eq!(g.perm(a).plus, 6, "enters with 3: twice that");
+    let b = enter_with(&mut g, P1, "Llanowar Elves", 3);
+    assert_eq!(g.perm(b).plus, 1, "an opponent's 3 become 1 (rounded down)");
+    let c = enter_with(&mut g, P1, "Birds of Paradise", 1);
+    assert_eq!(g.perm(c).plus, 0, "an opponent's 1 becomes 0");
+    // Vinelasher Adept (compiled ETB: three counters on the best creature): six
+    let mut g = game();
+    perm(&mut g, P0, VORINCLEX);
+    let before: i32 = g.player(P0).perms.iter().map(|&m| g.perm(m).plus).sum();
+    perm(&mut g, P0, "Vinelasher Adept");
+    let after: i32 = g.player(P0).perms.iter().map(|&m| g.perm(m).plus).sum();
+    assert_eq!(after - before, 6);
+    // without Vorinclex nothing changes
+    let mut g = game();
+    let a = enter_with(&mut g, P0, "Llanowar Elves", 3);
+    assert_eq!(g.perm(a).plus, 3);
+}
+
+#[test]
+fn two_vorinclex_both_apply_and_scales_comes_first() {
+    let mut g = game();
+    perm(&mut g, P0, VORINCLEX);
+    perm(&mut g, P0, VORINCLEX);
+    let a = enter_with(&mut g, P0, "Llanowar Elves", 3);
+    assert_eq!(g.perm(a).plus, 12);
+    let mut g = game();
+    perm(&mut g, P0, VORINCLEX);
+    perm(&mut g, P0, "Hardened Scales");
+    let a = enter_with(&mut g, P0, "Llanowar Elves", 3);
+    assert_eq!(g.perm(a).plus, 8, "(3 + 1) doubled");
+}
+
+#[test]
+fn vorinclex_doubles_planeswalker_loyalty_on_entering_and_proliferate() {
+    let mut g = game();
+    perm(&mut g, P0, VORINCLEX);
+    let w = perm(&mut g, P0, "Wrenn and Six");
+    assert_eq!(g.perm(w).loyalty, Some(6), "enters with 3 loyalty: twice that");
+    sim_core::impls::common::proliferate(&mut g, P0, 1).unwrap();
+    assert_eq!(g.perm(w).loyalty, Some(8), "proliferate adds one: doubled");
+}
+
+#[test]
+fn vorinclex_doubles_proliferate_and_a_persist_counter_and_halves_the_opponents() {
+    let mut g = game();
+    perm(&mut g, P0, VORINCLEX);
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(elf).plus = 1;
+    sim_core::impls::common::proliferate(&mut g, P0, 1).unwrap();
+    assert_eq!(g.perm(elf).plus, 3, "proliferate: +1 doubled");
+    // a -1/-1 counter on an opponent's creature: proliferate puts two (doubled for me, the proliferator)
+    let bird = perm(&mut g, P1, "Birds of Paradise");
+    g.perm_mut(bird).plus = -1;
+    sim_core::impls::common::proliferate(&mut g, P0, 1).unwrap();
+    assert_eq!(g.perm(bird).plus, -3, "-1 doubled to -2 more");
+    // persist: the -1/-1 counter on return is doubled
+    let c = enter_with(&mut g, P0, "Llanowar Elves", -1);
+    assert_eq!(g.perm(c).plus, -2);
+    // an opponent's Vorinclex halves my proliferate: -1 -> 0 more
+    let mut g = game();
+    perm(&mut g, P1, VORINCLEX);
+    let bird = perm(&mut g, P1, "Birds of Paradise");
+    g.perm_mut(bird).plus = -1;
+    sim_core::impls::common::proliferate(&mut g, P0, 1).unwrap();
+    assert_eq!(g.perm(bird).plus, -1, "half of one is nothing");
+}
+
+#[test]
+fn vorinclex_helper_math() {
+    let mut g = game();
+    assert_eq!(sim_core::cardcode::vorinclex(&g, P0, 3), 3);
+    perm(&mut g, P1, VORINCLEX);
+    assert_eq!(sim_core::cardcode::vorinclex(&g, P0, 3), 1);
+    assert_eq!(sim_core::cardcode::vorinclex(&g, P1, 3), 6);
+    assert_eq!(sim_core::cardcode::vorinclex(&g, P0, -3), -1);
+}

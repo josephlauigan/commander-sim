@@ -461,7 +461,7 @@ fn shalai_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     for m in g.player(p).perms.clone() {
         if g.is_creature(m) && !g.perm(m).phased {
-            g.perm_mut(m).plus += 1;
+            crate::cardcode::put_plus(g, m, 1);
         }
     }
     stat(g, p, "jr_shalai_counters", 1);
@@ -1055,7 +1055,7 @@ fn spark_attach(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     });
     if let Some(t) = t {
         g.perm_mut(src).attached = Some(t);
-        g.perm_mut(t).plus += 1;
+        crate::cardcode::put_plus(g, t, 1);
     }
     Ok(())
 }
@@ -1444,7 +1444,7 @@ fn darien_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), "a counter and a Soldier", None, None)? {
         return Ok(true);
     }
-    g.perm_mut(src).plus += 1;
+    crate::cardcode::put_plus(g, src, 1);
     let spec =
         Tokens { tgh: Some(1), color: Some(Colors::from_letters("W")), types: vec!["soldier"], ..Tokens::new(1, 1) };
     make_tokens(g, p, spec)?;

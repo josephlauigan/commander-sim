@@ -572,7 +572,8 @@ fn wasp_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId)
 /// Dune Mover: toxic 1 (a poison counter with the combat damage)
 fn mover_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
     if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        g.player_mut(d).poison += 1;
+        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 1); // Vorinclex
+        g.player_mut(d).poison += k as u32;
         crate::glog!(g, "    {} gets a poison counter (toxic)", g.player(d).name);
     }
     Ok(())

@@ -665,7 +665,7 @@ fn resolve_combat_inner(
             }
             if dmg > 0 && card_name(g, a) == Some("Szadek, Lord of Secrets") {
                 // instead: +1/+1 counters, and they mill that many
-                g.perm_mut(a).plus += dmg;
+                crate::cardcode::put_plus(g, a, dmg);
                 mill(g, d, dmg as usize)?;
                 conn.push(a);
                 crate::glog!(g, "    Szadek: {} +1/+1 counters, {} mills {}", dmg, g.player(d).name, dmg);
@@ -830,7 +830,7 @@ pub fn ozolith_move(g: &mut Game, p: PlayerId) {
     }
     let tgt = army_of(g, p)
         .unwrap_or_else(|| max_by(&cr, |m| if g.perm(m).noatk { 0.0 } else { 1000.0 } + epow(g, m) as f64).unwrap());
-    g.perm_mut(tgt).plus += k;
+    crate::cardcode::put_plus(g, tgt, k);
     g.player_mut(p).ozolith_counters = 0;
     g.player_mut(p).stat("ozolith_moves", 1);
     crate::glog!(g, "  The Ozolith moves {} counters onto {}", k, g.perm(tgt).name);

@@ -52379,53 +52379,14 @@
    "tags": {
     "leg": true,
     "pow": "4",
-    "dt": true,
-    "fly": true
+    "tgh": "4",
+    "fly": true,
+    "dt": true
    },
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "search",
-          "filter": {
-           "type": "land",
-           "basic": false
-          },
-          "to": "hand",
-          "n": 1,
-          "tapped": false
-         }
-        ],
-        [
-         {
-          "do": "token",
-          "n": 1,
-          "pow": 1,
-          "tgh": 1,
-          "keywords": [],
-          "attacking": false,
-          "warrior": false,
-          "types": [
-           "spirit"
-          ]
-         }
-        ]
-       ]
-      }
-     ],
-     "event": "dies",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "deathtouch",
@@ -52439,7 +52400,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,
@@ -102399,6 +102360,54 @@
     "instant": true,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Vorinclex, Monstrous Raider",
+   "types": "C",
+   "generic": 4,
+   "pips": "GG",
+   "tags": {
+    "leg": true,
+    "pow": "6",
+    "tgh": "6",
+    "haste": true,
+    "trample": true,
+    "bomb": "6"
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "haste",
+    "trample"
+   ],
+   "subtypes": [
+    "phyrexian",
+    "praetor"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
