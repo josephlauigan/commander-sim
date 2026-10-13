@@ -4076,6 +4076,52 @@
    "spell_prio": false
   },
   {
+   "name": "Ardenn, Intrepid Archaeologist",
+   "types": "C",
+   "generic": 2,
+   "pips": "W",
+   "tags": {
+    "leg": true,
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "partner"
+   ],
+   "subtypes": [
+    "kor",
+    "scout"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "At the beginning of combat on your turn, you may attach any number of Auras and Equipment you control to target permanent or player.",
+    "Partner"
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Argivian Cavalier",
    "types": "C",
    "generic": 2,
@@ -6623,6 +6669,71 @@
    "spell_prio": false
   },
   {
+   "name": "Batterskull",
+   "types": "A",
+   "generic": 5,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 4,
+     "tgh": 4
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "vigilance"
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "lifelink"
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 5
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "living weapon"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Living weapon",
+    "{3}: Return ~ to its owner's hand."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Battle Cry Goblin",
    "types": "C",
    "generic": 1,
@@ -8253,6 +8364,71 @@
    "spell_prio": false
   },
   {
+   "name": "Bladed Ambassador",
+   "types": "C",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "pow": "3",
+    "tgh": "1"
+   },
+   "pow": 3,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters with an oil counter on it"
+    },
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "1",
+      "other": "remove an oil counter from ~"
+     },
+     "effects": [
+      {
+       "do": "grant",
+       "keyword": "indestructible",
+       "what": {
+        "sel": "self"
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "phyrexian",
+    "soldier"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Blasphemous Act",
    "types": "S",
    "generic": 8,
@@ -8789,6 +8965,59 @@
    "python_hooks": [
     "resolve"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Bloodforged Battle-Axe",
+   "types": "A",
+   "generic": 1,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 0
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever equipped creature deals combat damage to a player, create a token that's a copy of ~."
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -9711,6 +9940,55 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Bonehoard",
+   "types": "A",
+   "generic": 4,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "living weapon"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Living weapon",
+    "Equipped creature gets +X/+X, where X is the number of creature cards in all graveyards."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -32709,6 +32987,56 @@
    "spell_prio": false
   },
   {
+   "name": "Fireshrieker",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "double strike"
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Fissure Vent",
    "types": "S",
    "generic": 3,
@@ -32904,6 +33232,60 @@
     "instant": true,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Flayer Husk",
+   "types": "A",
+   "generic": 1,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 1,
+     "tgh": 1
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "living weapon"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Living weapon"
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -33816,6 +34198,57 @@
     "forest"
    ],
    "basic": true,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Forge Anew",
+   "types": "E",
+   "generic": 2,
+   "pips": "W",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "reanimate",
+       "filter": {},
+       "from": "yours"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "During your turn, you may activate equip abilities any time you could cast an instant.",
+    "You may pay {0} rather than pay the equip cost of the first equip ability you activate during each of your turns."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
    "python_hooks": [],
    "spell_prio": false
   },
@@ -38966,6 +39399,59 @@
    "spell_prio": false
   },
   {
+   "name": "Grafted Wargear",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 3,
+     "tgh": 2
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 0
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever ~ becomes unattached from a permanent, sacrifice that permanent."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Grand Abolisher",
    "types": "C",
    "generic": 0,
@@ -41021,6 +41507,66 @@
     "cmc": 3,
     "land": false,
     "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Hammer of Nazahn",
+   "types": "A",
+   "generic": 4,
+   "pips": "",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 0
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "indestructible"
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 4
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever ~ or another Equipment you control enters, you may attach that Equipment to target creature you control."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -49005,6 +49551,58 @@
    "spell_prio": false
   },
   {
+   "name": "Kaldra Compleat",
+   "types": "A",
+   "generic": 7,
+   "pips": "",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 7
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "indestructible",
+    "living weapon"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Living weapon",
+    "Equipped creature gets +5/+5 and has first strike, trample, indestructible, haste, and \"Whenever ~ deals combat damage to a creature, exile that creature.\""
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Kappa Cannoneer",
    "types": "AC",
    "generic": 5,
@@ -49868,6 +50466,105 @@
     "cmc": 4,
     "land": false,
     "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Kemba's Skyguard",
+   "types": "C",
+   "generic": 1,
+   "pips": "WW",
+   "tags": {
+    "pow": "2",
+    "fly": true
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": 2,
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "cat",
+    "knight"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Kemba, Kha Regent",
+   "types": "C",
+   "generic": 1,
+   "pips": "WW",
+   "tags": {
+    "leg": true,
+    "pow": "2",
+    "tgh": "4",
+    "tokup": "1"
+   },
+   "pow": 2,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cat",
+    "cleric"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -51029,6 +51726,48 @@
    "unparsed": [],
    "derived": {
     "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Kor Duelist",
+   "types": "C",
+   "generic": 0,
+   "pips": "W",
+   "tags": {
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "kor",
+    "soldier"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "As long as ~ is equipped, it has double strike."
+   ],
+   "derived": {
+    "cmc": 1,
     "land": false,
     "creature": true,
     "instant": false,
@@ -52916,6 +53655,48 @@
     "attack",
     "land_options"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Leonin Shikari",
+   "types": "C",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cat",
+    "soldier"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "You may activate equip abilities any time you could cast an instant."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -61663,6 +62444,71 @@
    "spell_prio": false
   },
   {
+   "name": "Nahiri, the Lithomancer",
+   "types": "P",
+   "generic": 3,
+   "pips": "WW",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 2,
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "kor",
+        "soldier"
+       ]
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "3",
+   "kws": [],
+   "subtypes": [
+    "nahiri"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "attach an equipment you control to it",
+    "put an equipment card from your hand or graveyard onto the battlefield",
+    "create a colorless equipment artifact token named stoneforged blade",
+    "it has indestructible, \"equipped creature gets +5/+5 and has double strike,\" and equip {0}",
+    "~ can be your commander."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Najeela, the Blade-Blossom",
    "types": "C",
    "generic": 2,
@@ -62481,6 +63327,55 @@
    "python_hooks": [
     "gy_dies"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Nettlecyst",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "living weapon"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Living weapon",
+    "Equipped creature gets +1/+1 for each artifact and/or enchantment you control."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -82241,6 +83136,52 @@
    "spell_prio": false
   },
   {
+   "name": "Silverblade Paladin",
+   "types": "C",
+   "generic": 1,
+   "pips": "WW",
+   "tags": {
+    "human": true,
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "soulbond"
+   ],
+   "subtypes": [
+    "human",
+    "knight"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Soulbond",
+    "As long as ~ is paired with another creature, both creatures have double strike."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Simic Growth Chamber",
    "types": "L",
    "generic": 0,
@@ -90210,6 +91151,48 @@
     "instant": false,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Taj-Nar Swordsmith",
+   "types": "C",
+   "generic": 3,
+   "pips": "W",
+   "tags": {
+    "pow": "2",
+    "tgh": "3",
+    "tut": "any"
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cat",
+    "soldier"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -99300,6 +100283,63 @@
     "end_step",
     "landfall"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Valiant Knight",
+   "types": "C",
+   "generic": 3,
+   "pips": "W",
+   "tags": {
+    "human": true,
+    "pow": "3",
+    "tgh": "4"
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": true,
+      "subtype": "knight"
+     },
+     "pow": 1,
+     "tgh": 1
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "knight"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{3}{W}{W}: Knights you control gain double strike until end of turn."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
