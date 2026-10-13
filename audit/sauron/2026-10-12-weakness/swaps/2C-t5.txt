@@ -1,0 +1,70 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Talisman of Indulgence [scryfall] A 2 :: rock=1:BR pain
+   Rakdos Signet [scryfall] A 2 :: rock=1:BR
+   Dreadhorde Invasion [scryfall+dsl] E 1B :: (no tags)
+      ability: triggered upkeep -> lose_life, amass
+      not modeled: Whenever a Zombie token you control with power 6 or greater attacks, it gains lifelink until end of turn.
+Swaps: Underworld Breach -> Talisman of Indulgence; Brain Freeze -> Rakdos Signet; Dark Ritual -> Fellwar Stone; Lotus Petal -> Dreadhorde Invasion
+
+=== Sauron vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.4% ->  25.8%  (delta +2.4 pts, noise ±5.1, paired)   n=500
+               eliminated by (variant): Urza 15.6%  Zur the Enchanter 12.6%  Winota 18.0%  Kinnan 20.2%  Yawgmoth 7.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.4% ->  25.8%  +2.4pt   ±5.4 
+    Rounds survived (or game length)                   8.40 ->   8.39   -0.01  ±0.42 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.55 ->   0.55   +0.00  ±0.10 
+    Mana available on your turn 4                      3.99 ->   4.16   +0.18  ±0.17*
+    Mana available on your turn 6                      5.65 ->   5.88   +0.23  ±0.23*
+
+  Speed
+    Games where the game plan came online             38.0% ->  44.8%  +6.8pt   ±6.2*
+    Turn the game plan came online                     7.23 ->   7.30   +0.08  ±0.50 
+    Turn the commander first resolved                  6.49 ->   6.42   -0.06  ±0.34 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.13 ->  12.66   +0.54  ±1.15 
+    Tutors resolved per game                           0.31 ->   0.30   -0.02  ±0.07 
+    Spells cast per game                               8.58 ->   8.30   -0.28  ±0.78 
+
+  Interaction
+    Counterspells cast                                 0.54 ->   0.47   -0.07  ±0.09 
+    Spot removal cast                                  1.30 ->   1.34   +0.05  ±0.16 
+    Board wipes cast                                   0.32 ->   0.32   +0.00  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.30 ->   0.27   -0.03  ±0.08 
+    Your spells countered                              0.48 ->   0.49   +0.00  ±0.10 
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.41 ->  28.52   +2.11  ±5.23 
+      ...of which combat damage                       23.36 ->  25.53   +2.17  ±4.80 
+      ...of which drain triggers                       1.25 ->   1.04   -0.21  ±0.53 
+      ...of which other triggers                       1.79 ->   1.94   +0.15  ±0.68 
+
+  Speed
+    Games with a combo attempt                         0.8% ->   0.4%  -0.4pt   ±1.0 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Mana available on your turn 4 (both profiles)
+    better - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    better - Games where the game plan came online (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(39s total)

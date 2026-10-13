@@ -1,0 +1,70 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Talisman of Indulgence [scryfall] A 2 :: rock=1:BR pain
+   Rakdos Signet [scryfall] A 2 :: rock=1:BR
+   Dreadhorde Invasion [scryfall+dsl] E 1B :: (no tags)
+      ability: triggered upkeep -> lose_life, amass
+      not modeled: Whenever a Zombie token you control with power 6 or greater attacks, it gains lifelink until end of turn.
+   Lazotep Reaver [scryfall+dsl] C 1B :: pow=1 tgh=2
+      ability: triggered etb -> amass
+Swaps: Deepglow Skate -> Talisman of Indulgence; Conqueror's Flail -> Rakdos Signet; Sword of Fire and Ice -> Dreadhorde Invasion; Flux Channeler -> Lazotep Reaver
+
+=== Sauron vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.4% ->  22.6%  (delta -0.8 pts, noise ±4.6, paired)   n=500
+               eliminated by (variant): Urza 18.2%  Zur the Enchanter 13.8%  Winota 15.8%  Kinnan 21.8%  Yawgmoth 7.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.4% ->  22.6%  -0.8pt   ±5.3 
+    Rounds survived (or game length)                   8.40 ->   8.22   -0.17  ±0.43 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.55 ->   0.56   +0.01  ±0.10 
+    Mana available on your turn 4                      3.99 ->   4.10   +0.11  ±0.17 
+    Mana available on your turn 6                      5.65 ->   5.81   +0.16  ±0.22 
+
+  Speed
+    Games where the game plan came online             38.0% ->  49.2% +11.2pt   ±6.2*
+    Turn the game plan came online                     7.23 ->   6.54   -0.68  ±0.50*
+    Turn the commander first resolved                  6.49 ->   6.21   -0.27  ±0.33 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.13 ->  12.56   +0.43  ±1.18 
+    Tutors resolved per game                           0.31 ->   0.32   +0.01  ±0.07 
+    Spells cast per game                               8.58 ->   8.61   +0.03  ±0.85 
+
+  Interaction
+    Counterspells cast                                 0.54 ->   0.51   -0.02  ±0.09 
+    Spot removal cast                                  1.30 ->   1.31   +0.02  ±0.16 
+    Board wipes cast                                   0.32 ->   0.29   -0.03  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.30 ->   0.25   -0.05  ±0.07 
+    Your spells countered                              0.48 ->   0.45   -0.03  ±0.09 
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.41 ->  27.67   +1.27  ±5.22 
+      ...of which combat damage                       23.36 ->  24.32   +0.96  ±4.78 
+      ...of which drain triggers                       1.25 ->   1.54   +0.28  ±0.58 
+      ...of which other triggers                       1.79 ->   1.82   +0.03  ±0.67 
+
+  Speed
+    Games with a combo attempt                         0.8% ->   1.0%  +0.2pt   ±1.2 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    better - Games where the game plan came online (both profiles)
+    better - Turn the game plan came online (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(37s total)
