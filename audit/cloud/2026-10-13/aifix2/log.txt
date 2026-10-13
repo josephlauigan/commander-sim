@@ -5,3 +5,6 @@
 16:06 old t3 Win rate   8.8%   95% CI 7.2-10.7%   (even share 25%: -16.2 pts)
 16:11 new t3 Win rate   8.4%   95% CI 6.8-10.3%   (even share 25%: -16.6 pts)
 16:15 STOPPED by JD after t3 (t4/t5 not run)
+16:28 v3 (no PROTECT_FIRST, generic mulligan) t1 Win rate  13.6%   95% CI 11.6-15.9%   (even share 25%: -11.4 pts)
+16:34 v3 (no PROTECT_FIRST, generic mulligan) t2 Win rate  13.1%   95% CI 11.1-15.3%   (even share 25%: -11.9 pts)
+16:37 v3 (no PROTECT_FIRST, generic mulligan) t3 Win rate   8.4%   95% CI 6.8-10.3%   (even share 25%: -16.6 pts)

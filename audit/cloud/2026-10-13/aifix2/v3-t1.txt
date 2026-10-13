@@ -1,0 +1,26 @@
+1,000 games (1 tier, 1,000 per list per tier, profile loose), lookahead AI, 7 worker threads: about 7 minutes
+  progress  10.0%  0m47s elapsed, ~7m05s left
+  progress  20.0%  1m28s elapsed, ~5m52s left
+  progress  30.0%  2m05s elapsed, ~4m53s left
+  progress  40.0%  2m46s elapsed, ~4m10s left
+  progress  50.0%  3m23s elapsed, ~3m23s left
+  progress  60.0%  4m05s elapsed, ~2m43s left
+  progress  70.0%  4m45s elapsed, ~2m02s left
+  progress  80.0%  5m24s elapsed, ~1m21s left
+  progress  90.0%  6m00s elapsed, ~0m40s left
+  progress 100.0%  6m42s elapsed, ~0m00s left
+
+=== Cloud vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 1000 games] ===
+Win rate  13.6%   95% CI 11.6-15.9%   (even share 25%: -11.4 pts)
+Average turn (your own turn count) of wins 12.6, of losses 8.9
+Plan online (first attack by an equipped Cloud): 73.3% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Lathril (lathril-golgari-elves)              61.3%            28.9%           18.2%
+  Teysa Karlov (teysa-orzhov-aristocrats)      60.9%            28.7%           16.2%
+  Light-Paws (light-paws-aura-voltron)         59.8%            33.3%           21.5%
+  Isshin (isshin-mardu-attack-triggers)        59.4%            31.0%           20.0%
+  Tatyova (tatyova-simic-landfall)             58.6%            22.0%           10.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(402s total)
