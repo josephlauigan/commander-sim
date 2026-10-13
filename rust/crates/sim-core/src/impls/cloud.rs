@@ -28,6 +28,7 @@ use crate::sym::intern;
 
 pub const CLOUD: &str = "Cloud, Midgar Mercenary";
 const KEY: &str = "cloud";
+const PLAZA: &str = "Plaza of Heroes";
 
 // ------------------------------------------------------------------ small helpers
 fn live(g: &Game, m: PermId) -> bool {
@@ -1332,28 +1333,54 @@ pub fn cloud_protect(
             }
         }
     }
-    if destroyish(kind) || kind == "wipe" {
-        for n in ["Unbreakable Formation", "Rootborn Defenses", "Ultimate Magic: Holy"] {
-            if let Some(c) = hand(g, n)
-                && cast_instant(g, p, c)?
-            {
-                let main =
-                    g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
-                for x in g.player(p).perms.clone() {
-                    if live(g, x) && (n == "Ultimate Magic: Holy" || g.is_creature(x)) {
-                        super::partials::eot_kw(g, x, "indestructible");
-                        if n == "Unbreakable Formation" && main && g.is_creature(x) {
-                            g.perm_mut(x).plus += 1;
-                            super::partials::eot_kw(g, x, "vigilance");
-                        }
-                    }
-                }
-                return Ok(true);
-            }
-        }
+    if (destroyish(kind) || kind == "wipe")
+        && cast_team_indestructible(g, p, &["Unbreakable Formation", "Rootborn Defenses", "Ultimate Magic: Holy"])?
+    {
+        return Ok(true);
     }
     // the generic one-card answers the outside decks use (Gods Willing, Benevolent Bodyguard, Selfless Spirit, ...)
-    crate::ai::pool::protect(g, p, m, crate::sym::intern(kind), actor, spell)
+    if crate::ai::pool::protect(g, p, m, crate::sym::intern(kind), actor, spell)? {
+        return Ok(true);
+    }
+    // Plaza of Heroes (the last resort: it costs {3} and the land)
+    if (targeted || destroyish(kind)) && plaza_protect(g, p, m)? {
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// Plaza of Heroes: {3}, {T}, exile it: target legendary creature gains hexproof and indestructible until end of turn
+fn plaza_protect(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
+    if !g.is_creature(m) || !crate::cardcode::is_legendary(g, m) {
+        return Ok(false);
+    }
+    let Some(l) = g.player(p).lands.iter().copied().find(|&l| {
+        let x = g.land(l);
+        x.on_bf && !x.tapped && *g.db.get(x.cd).name == *PLAZA
+    }) else {
+        return Ok(false);
+    };
+    if !crate::impls::lands::can_pay_without(g, p, l, 3, "") {
+        return Ok(false);
+    }
+    let cd = g.land(l).cd;
+    crate::engine::turn::remove_land(g, p, l); // tapped and exiled as the cost: the other lands pay the {3}
+    if !pay(g, p, 3, "", false)? {
+        g.player_mut(p).lands.push(l);
+        g.land_mut(l).on_bf = true;
+        return Ok(false);
+    }
+    g.player_mut(p).exile.push(cd);
+    super::partials::eot_kw(g, m, "hexproof");
+    super::partials::eot_kw(g, m, "indestructible");
+    g.player_mut(p).stat("protection_used", 1);
+    crate::glog!(
+        g,
+        "    {} exiles Plaza of Heroes: {} gains hexproof and indestructible",
+        g.player(p).name,
+        g.perm(m).name
+    );
+    Ok(true)
 }
 
 /// cloud's own plays (brain.special_options): Cid's regrow and Zack's sacrifice are card options and the equip
@@ -1596,4 +1623,43 @@ pub fn strands_equipment(g: &Game, p: PlayerId, c: CardId) -> bool {
     // the only use of the mana: no other non-land card in hand fits
     let other_use = pl.hand.iter().any(|&x| x != c && !g.db.get(x).land && cast_cost(g, p, x) <= mana);
     other_use
+}
+
+/// cast the first of these instants in p's hand that makes the creatures indestructible (Unbreakable Formation also
+/// gives +1/+1 and vigilance in a main phase; Ultimate Magic: Holy all permanents)
+fn cast_team_indestructible(g: &mut Game, p: PlayerId, names: &[&str]) -> Res<bool> {
+    for n in names {
+        let Some(c) = g.player(p).hand.iter().copied().find(|&c| card_name(g, c) == *n) else { continue };
+        if !cast_instant(g, p, c)? {
+            continue;
+        }
+        let main = g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
+        for x in g.player(p).perms.clone() {
+            if live(g, x) && (*n == "Ultimate Magic: Holy" || g.is_creature(x)) {
+                super::partials::eot_kw(g, x, "indestructible");
+                if *n == "Unbreakable Formation" && main && g.is_creature(x) {
+                    g.perm_mut(x).plus += 1;
+                    super::partials::eot_kw(g, x, "vigilance");
+                }
+            }
+        }
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// a board wipe that destroys (or deals damage) is about to hit p: Unbreakable Formation or Rootborn Defenses make
+/// the creatures indestructible, when the wipe would cost the board a real loss and Cloud or an equipped creature
+/// is among the victims. 'indes' if cast.
+pub fn cloud_wipe_response(g: &mut Game, q: PlayerId, kind: &str, caster: PlayerId) -> Res<Option<crate::sym::Sym>> {
+    const DESTROY_WIPES: [&str; 6] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal"];
+    if !DESTROY_WIPES.contains(&kind) || q == caster {
+        return Ok(None);
+    }
+    let worth = g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m) && worth_saving(g, m));
+    if !worth || crate::ai::decks::wipe_loss(g, q, kind, caster) < 6.0 {
+        return Ok(None);
+    }
+    Ok(cast_team_indestructible(g, q, &["Rootborn Defenses", "Unbreakable Formation"])?
+        .then(|| crate::sym::intern("indes")))
 }

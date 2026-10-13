@@ -1309,6 +1309,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     {
         return Ok(Some(r)); // Ultimate Magic: Holy
     }
+    if key == "cloud"
+        && let Some(r) = crate::impls::cloud::cloud_wipe_response(g, q, kind, caster)?
+    {
+        return Ok(Some(r)); // Unbreakable Formation, Rootborn Defenses
+    }
     if matches!(key, "galadriel" | "yshtola") {
         return Ok(None);
     }

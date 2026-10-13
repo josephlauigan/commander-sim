@@ -132,3 +132,68 @@ fn equipment_is_cast_with_a_carrier_or_as_the_only_use() {
     let l = cast_labels(&mut g);
     assert!(l.iter().any(|x| x.contains("Sword of Fire and Ice")), "{l:?}");
 }
+
+// ---- fix 3: protection
+const P1: PlayerId = PlayerId(1);
+
+#[test]
+fn plaza_of_heroes_protects_cloud() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    let pl = lands(&mut g, P0, "Plaza of Heroes", 1, false)[0];
+    let cl = perm(&mut g, P0, CLOUD);
+    let saved = sim_core::impls::cloud::cloud_protect(&mut g, P0, cl, "exile", Some(P1), None).unwrap();
+    assert!(saved);
+    assert!(sim_core::engine::values::untargetable(&g, cl));
+    assert!(sim_core::engine::values::indestructible(&g, cl));
+    assert!(!g.land(pl).on_bf && !g.player(P0).lands.contains(&pl));
+    assert!(g.player(P0).exile.contains(&g.land(pl).cd));
+    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "paid {{3}} with the other lands");
+}
+
+#[test]
+fn plaza_needs_three_other_mana() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 2, false);
+    let pl = lands(&mut g, P0, "Plaza of Heroes", 1, false)[0];
+    let cl = perm(&mut g, P0, CLOUD);
+    let saved = sim_core::impls::cloud::cloud_protect(&mut g, P0, cl, "exile", Some(P1), None).unwrap();
+    assert!(!saved);
+    assert!(g.land(pl).on_bf);
+}
+
+#[test]
+fn formation_answers_a_destroy_wipe() {
+    for n in ["Unbreakable Formation", "Rootborn Defenses"] {
+        let mut g = game();
+        lands(&mut g, P0, "Plains", 3, false);
+        let cl = perm(&mut g, P0, CLOUD);
+        let k = perm(&mut g, P0, "Kor Duelist");
+        let e = perm(&mut g, P0, "Sword of Fire and Ice");
+        g.perm_mut(e).attached = Some(k);
+        hand(&mut g, P0, &[n]);
+        let r = sim_core::ai::wipe_response(&mut g, P0, "destroy".into(), P1).unwrap();
+        assert_eq!(r.as_deref(), Some("indes"), "{n}");
+        assert!(sim_core::engine::values::indestructible(&g, cl), "{n}");
+        assert!(!g.player(P0).hand.iter().any(|&c| *g.db.get(c).name == *n), "{n} was cast");
+        // an exile wipe is not answered by indestructible
+        let mut g = game();
+        lands(&mut g, P0, "Plains", 3, false);
+        perm(&mut g, P0, CLOUD);
+        hand(&mut g, P0, &[n]);
+        assert!(sim_core::ai::wipe_response(&mut g, P0, "exile".into(), P1).unwrap().is_none());
+    }
+}
+
+#[test]
+fn giver_of_runes_answers_removal_on_cloud() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    let cl = perm(&mut g, P0, CLOUD);
+    g.perm_mut(cl).is_cmd = true;
+    let gv = perm(&mut g, P0, "Giver of Runes");
+    let sp = card(&g, "Swords to Plowshares");
+    let saved = sim_core::impls::cloud::cloud_protect(&mut g, P0, cl, "exile", Some(P1), Some(sp)).unwrap();
+    assert!(saved, "Giver of Runes should answer");
+    assert!(g.perm(gv).tapped);
+}
