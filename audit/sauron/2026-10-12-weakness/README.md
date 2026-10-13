@@ -67,7 +67,10 @@ Bracket 3. No infinite combo is added (JD's rule); Sword of Feast and Famine + A
   together in only about 18% of games, and half the attempts fall short on storm count or mana.
 - K2, the same plus Grapeshot (bulk), Gamble and Jeska's Will for Ichor Slick, Thought Vessel and Chaos Warp: **+2.0**
   (+1.2, +3.2, +3.0, +2.6, +0.2), at the edge of the screen's noise. Brain Freeze, Dark Ritual and Lotus Petal would
-  come from Sauron's cuts; Gamble and Jeska's Will would be bought. Worth a 1,000-game confirmation before buying.
+  come from Sauron's cuts; Gamble and Jeska's Will would be bought.
+- **K2 confirmation (1,000 paired games per tier, code 649adf3 with the hold fix; `kefka-k2/`): +0.8** (+1.5, +1.7,
+  +0.3, +1.7, -1.0; about ±1.4 over all tiers). Not a real gain: the screen's +2.0 was mostly noise. Not recommended;
+  nothing to buy for Kefka.
 
 ## Simulator changes on this branch (`sauron-weakness`)
 

@@ -1,0 +1,73 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dark Ritual [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> add_mana
+   Lotus Petal [scryfall] A  :: rock=1:A
+   Grapeshot [pool] S 1R :: storm stormburn
+   Gamble [pool] S R :: (no tags)
+Swaps: Duress -> Brain Freeze; Dark Inquiry -> Dark Ritual; Potioner's Trove -> Lotus Petal; Ichor Slick -> Grapeshot; Thought Vessel -> Gamble; Chaos Warp -> Jeska's Will
+
+=== Kefka vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.9% ->  21.9%  (delta -1.0 pts, noise ±3.3, paired)   n=1000
+               eliminated by (variant): Urza 17.6%  Zur the Enchanter 10.9%  Winota 21.1%  Kinnan 20.5%  Yawgmoth 8.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          22.9% ->  21.9%  -1.0pt   ±3.7 
+    Rounds survived (or game length)                   8.31 ->   7.81   -0.50  ±0.29*
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.42 ->   0.43   +0.01  ±0.07 
+    Mana available on your turn 4                      4.02 ->   3.90   -0.11  ±0.07*
+    Mana available on your turn 6                      5.58 ->   5.39   -0.19  ±0.14*
+
+  Speed
+    Games where the game plan came online             21.1% ->  19.6%  -1.5pt   ±3.6 
+    Turn the game plan came online                    10.12 ->  10.07   -0.05  ±0.41 
+    Turn the commander first resolved                  6.13 ->   5.93   -0.20  ±0.24 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            21.98 ->  20.18   -1.80  ±1.78*
+    Tutors resolved per game                           0.27 ->   0.41   +0.14  ±0.06*
+    Spells cast per game                               8.89 ->   8.63   -0.26  ±0.59 
+
+  Interaction
+    Counterspells cast                                 0.15 ->   0.14   -0.02  ±0.03 
+    Spot removal cast                                  1.13 ->   0.88   -0.25  ±0.10*
+    Board wipes cast                                   0.04 ->   0.03   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.14 ->   0.13   -0.02  ±0.03 
+    Your spells countered                              0.43 ->   0.42   -0.01  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                23.48 ->  22.65   -0.83  ±2.47 
+      ...of which combat damage                       11.59 ->  11.09   -0.50  ±1.32 
+      ...of which magecraft / burn                     1.65 ->   1.67   +0.02  ±0.35 
+      ...of which drain triggers                       8.82 ->   8.50   -0.31  ±1.29 
+      ...of which other triggers                       1.35 ->   1.33   -0.03  ±0.57 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 4 (both profiles)
+    worse  - Mana available on your turn 6 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(81s total)
