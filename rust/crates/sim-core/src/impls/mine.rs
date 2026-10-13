@@ -4388,6 +4388,7 @@ fn latulla_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dm
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::common::aura(r, db, "Latulla's Orders", &LATULLA_SPEC)?;
+    r.card(db, "Triple Triad")?.upkeep = Some(triad_upkeep);
     r.card(db, "Latulla's Orders")?.combat_damage = Some(latulla_hit);
     r.card(db, "Barad-dûr")?.land_options = Some(baraddur);
     r.card(db, "Bloodsoaked Insight // Sanguine Morass")?.hand_options = Some(insight);
@@ -4472,5 +4473,71 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.creature_pt.push(final_iteration);
     r.card(db, "Manamorphose")?.resolve = Some(manamorphose);
     r.card(db, "Relic of Legends")?.extra_mana = Some(relic_mana);
+    Ok(())
+}
+
+// ======================================================== Triple Triad
+/// Triple Triad ({3}{R}{R}{R} enchantment): at the beginning of your upkeep, each player exiles the top card of their
+/// library; until end of turn you may play the card you own exiled this way and each other card exiled this way with
+/// lesser mana value than it, without paying their mana costs.
+///
+/// Modeled whole, with two simplifications: the cards are played at once, in the upkeep, highest mana value first (a
+/// sorcery-speed card would wait for the main phase), and the AI plays every card it can use: lands only while a land
+/// drop is left, never an Aura (no host to choose) or a counterspell (nothing to counter at upkeep). A card taken
+/// from an opponent stays theirs (it goes back to their graveyard or exile); a card not played stays in exile.
+fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != g.perm(src).owner
+        || !g.perm(src).on_bf
+        || !trigger_window(g, p, Some(src), "each player exiles the top card of their library", Some(6.0))?
+    {
+        return Ok(());
+    }
+    let mut exiled: Vec<(CardId, PlayerId)> = vec![];
+    for i in 0..g.players.len() {
+        let q = PlayerId(i as u8);
+        if !g.player(q).alive {
+            continue;
+        }
+        if let Some(c) = g.player_mut(q).library.pop() {
+            g.player_mut(q).exile.push(c);
+            crate::glog!(g, "    Triple Triad exiles {} from {}'s library", g.db.get(c).name, g.player(q).name);
+            exiled.push((c, q));
+        }
+    }
+    let Some(&(mine, _)) = exiled.iter().find(|&&(_, q)| q == p) else { return Ok(()) };
+    let top = g.db.get(mine).cmc;
+    let mut playable: Vec<(CardId, PlayerId)> =
+        exiled.into_iter().filter(|&(c, q)| (q == p && c == mine) || g.db.get(c).cmc < top).collect();
+    playable.sort_by_key(|&(c, _)| std::cmp::Reverse(g.db.get(c).cmc));
+    for (c, d) in playable {
+        if g.over || !g.player(p).alive {
+            break;
+        }
+        let Some(i) = g.player(d).exile.iter().position(|&x| x == c) else { continue };
+        let def = g.db.get(c);
+        let (land, perm, spell) = (def.land, def.perm, def.instant || def.sorcery);
+        if (def.has_subtype("aura") && !land) || def.tag(Tag::Ctr) || !(land || perm || spell) {
+            continue;
+        }
+        if land {
+            if g.player(p).lands_played >= 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now {
+                continue;
+            }
+            g.player_mut(d).exile.remove(i);
+            crate::engine::turn::play_land_card(g, p, c, "plays")?; // Triple Triad: a land drop
+        } else if perm {
+            g.player_mut(d).exile.remove(i);
+            enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;
+        } else if castable(g, p, c, "hand") {
+            g.player_mut(d).exile.remove(i);
+            g.player_mut(p).hand.push(c);
+            let ctx = Ctx { owner: Some(d), ..Ctx::default() };
+            cast_card(g, p, c, "hand", ctx)?; // back to d's graveyard
+            if let Some(j) = g.player(p).hand.iter().position(|&x| x == c) {
+                g.player_mut(p).hand.remove(j); // not cast after all: still d's, in exile
+                g.player_mut(d).exile.push(c);
+            }
+        }
+    }
     Ok(())
 }

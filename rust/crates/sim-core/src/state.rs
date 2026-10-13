@@ -124,6 +124,8 @@ pub enum DataKey {
     Rionya,
     Ruin,
     Serenity,
+    /// Sephiroth, Fabled SOLDIER: [turn stamp, times its drain has resolved that turn]
+    SephTimes,
     Stolen,
     /// stun counters (the untap step removes one instead of untapping)
     Stun,
