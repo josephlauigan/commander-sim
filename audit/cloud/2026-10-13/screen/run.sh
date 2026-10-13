@@ -10,7 +10,7 @@ declare -A DECK SW
 DECK[D1]=sauron;    SW[D1]='Sword of Feast and Famine=>Chaos Warp|Sword of Hearth and Home=>Spell Pierce'
 DECK[D2]=seph;      SW[D2]='Smothering Tithe=>Momentary Blink'
 DECK[D3]=sheoldred; SW[D3]="Champion's Helm=>Carnage Altar"
-[ -f $D/c3.swaps ] && { DECK[C3]=cloud; SW[C3]=$(paste -sd'|' $D/c3.swaps); }
+for x in c3 c4; do X=${x^^}; [ -f $D/$x.swaps ] && { DECK[$X]=cloud; SW[$X]=$(paste -sd"|" $D/$x.swaps); }; done
 tests=("$@"); [ ${#tests[@]} -eq 0 ] && tests=(D1 D2 D3)
 for k in "${tests[@]}"; do
   args=(); IFS='|' read -ra parts <<< "${SW[$k]}"; for s in "${parts[@]}"; do args+=(--swap "$s"); done
