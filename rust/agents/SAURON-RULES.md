@@ -64,8 +64,7 @@ brief (`rust/agents/<task>.md`), then your handoff file `rust/agents/handoff-<ta
 5. The smoke run your brief names finishes.
 
 ## Keeping context small
-- **Commit often** (`git add -A rust/ data/ && git commit -m "..." -m "Co-Authored-By: Claude Sonnet 5.5
-  <noreply@anthropic.com>"`), at least after each finished card group. Never push.
+- **Commit often** (`git add -A rust/ data/ && git commit -m "..."`, no Co-Authored-By line), at least after each finished card group. Never push.
 - Keep `rust/agents/handoff-<task>.md` up to date (done / next in order / gotchas) and commit it with your work.
 - Grep, then read the parts you need; keep command output short (`| tail`, `| grep`).
 - **When your context gets long** (about 60 or more tool calls, or you notice you're re-reading things), stop at a

@@ -28,8 +28,7 @@ You are one of several agents porting a Python Magic: The Gathering Commander si
   alone).
 
 ## Keeping context small (important)
-- **Commit often** (standalone `git add -A rust/ && git commit -m "..." -m "Co-Authored-By: Claude Sonnet 5.5
-  <noreply@anthropic.com>"`), at least after each finished piece. Don't push.
+- **Commit often** (standalone `git add -A rust/ && git commit -m "..."`, no Co-Authored-By line), at least after each finished piece. Don't push.
 - Keep **`rust/agents/handoff-<task>.md`** in your worktree up to date: what's done, what's next (in order), and
   gotchas you found. Commit it with your work.
 - Don't read huge files whole: grep, then read the parts you need. Keep command output short (`| tail`, `grep`).
