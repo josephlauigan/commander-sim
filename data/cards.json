@@ -45127,8 +45127,7 @@
     "pow": "2",
     "fly": true,
     "flash": true,
-    "ctr": "any",
-    "soft": "1"
+    "ctr": "any"
    },
    "pow": 2,
    "tgh": 2,
@@ -92617,7 +92616,7 @@
    "generic": 2,
    "pips": "",
    "tags": {
-    "rock": "1:C",
+    "rock": "1:RW",
     "pain": true
    },
    "pow": 0,

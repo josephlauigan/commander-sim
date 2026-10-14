@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 84); // fourteen decks of yours (the Tymna partner decks, garland and sephfs included) x six tiers
+    assert_eq!(played, 66); // eleven decks of yours x six tiers
 }
 
 #[test]

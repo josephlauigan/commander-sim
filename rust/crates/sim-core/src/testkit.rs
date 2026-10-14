@@ -28,12 +28,33 @@ pub fn db() -> Arc<CardDb> {
     DB.get_or_init(|| Arc::new(CardDb::load(&data_dir().join("cards.json")).unwrap())).clone()
 }
 
-/// Every deck in decks.json (yours, then the pools), loaded once.
+/// Decks that used to be registered (thrasios, kraum, garland) and now exist only for tests of their engine and card
+/// code: the real commanders and colour identity, a library of basic lands. The deck AI keys on the seat key alone,
+/// so these seats still run the key-gated code.
+fn retired_decks() -> Vec<RawDeck> {
+    let lib = |cmds: &[&str], basics: &[&str]| -> Vec<String> { cmds.iter().map(|c| c.to_string()).chain((0..100 - cmds.len()).map(|i| basics[i % basics.len()].to_string())).collect() };
+    let mk = |key: &str, name: &str, c1: &str, c2: Option<&str>, ident: &str, basics: &[&str]| RawDeck {
+        tier: Some("retired".into()),
+        key: key.into(),
+        name: name.into(),
+        commander: c1.into(),
+        commander2: c2.map(String::from),
+        ident: Some(ident.into()),
+        cards: lib(&[c1, c2.unwrap_or("")][..if c2.is_some() { 2 } else { 1 }], basics),
+    };
+    vec![
+        mk("thrasios", "Tymna/Thrasios", "Tymna the Weaver", Some("Thrasios, Triton Hero"), "WUBG", &["Plains", "Island", "Swamp", "Forest"]),
+        mk("kraum", "Tymna/Kraum", "Tymna the Weaver", Some("Kraum, Ludevic's Opus"), "WUBR", &["Plains", "Island", "Swamp", "Mountain"]),
+        mk("garland", "Garland", "Garland, Royal Kidnapper", None, "UB", &["Island", "Swamp"]),
+    ]
+}
+
+/// Every deck in decks.json (yours, then the pools), then the retired test decks, loaded once.
 pub fn decks() -> &'static [RawDeck] {
     static D: OnceLock<Vec<RawDeck>> = OnceLock::new();
     D.get_or_init(|| {
         let f = load_decks(&data_dir().join("decks.json")).unwrap();
-        f.mine.into_iter().chain(f.pool).collect()
+        f.mine.into_iter().chain(f.pool).chain(retired_decks()).collect()
     })
 }
 
