@@ -1,0 +1,109 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m36s elapsed, ~5m26s left
+  progress  20.0%  1m08s elapsed, ~4m34s left
+  progress  30.0%  1m41s elapsed, ~3m57s left
+  progress  40.0%  2m14s elapsed, ~3m21s left
+  progress  50.0%  2m46s elapsed, ~2m46s left
+  progress  60.0%  3m20s elapsed, ~2m13s left
+  progress  70.0%  3m53s elapsed, ~1m40s left
+  progress  80.0%  4m27s elapsed, ~1m06s left
+  progress  90.0%  5m00s elapsed, ~0m33s left
+  progress 100.0%  5m35s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== garland analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 10.8%   (4-player baseline 25%)   average rounds survived 14.0
+
+-- How it wins --
+  damage      71.4% of wins
+  timeout     28.6% of wins
+  Opponents it eliminated: 0.36 per game, by
+    combat             85.3%
+    drain               6.4%
+    decked              5.2%
+    triggers            2.2%
+    commander damage    0.8%
+  Damage dealt per game: 22.7, from
+    combat              20.3  (90%)
+    drain                1.9  (8%)
+    triggers             0.5  (2%)
+
+-- Garland --
+  Garland entries per game 2.47 (cast 2.37, token copies 0.10)
+  Steals per game 3.07; a steal lasts 0.88 rounds on average; steals ended by the crown moving 1.41 per game
+  Crown changes per game 5.66; we became the monarch 0.64 times per game
+  Damage by stolen creatures per game 3.34 (a stolen creature hit a player 0.53 times per game)
+  steals ended because the creature left: 1.62 per game; took the crown back (ended steals): 0.27 per game
+    stole Meren of Clan Nel Toth 0.35 per game
+    stole Brago, King Eternal 0.28 per game
+    stole Kaalia of the Vast 0.24 per game
+    stole Sythis, Harvest's Hand 0.22 per game
+    stole Token 0.11 per game
+    stole Grave Titan 0.07 per game
+    stole Razaketh, the Foulblooded 0.05 per game
+    stole Bloodgift Demon 0.04 per game
+
+-- How it loses --
+  Eliminated in 84.8% of games, on average in round 13.3
+    by Sythis   via combat             16.0% of games
+    by Brago    via combat             14.9% of games
+    by Lord Windgrace via combat             14.4% of games
+    by Kaalia of the Vast via combat             12.4% of games
+    by Sythis   via commander damage    8.8% of games
+    by Meren of Clan Nel Toth via combat              5.8% of games
+    by Meren of Clan Nel Toth via triggers            3.5% of games
+    by Kaalia of the Vast via drain               2.5% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 7.0, mean 7.1 (over the 92.9% of games it resolves)
+  Commander resolved by turn:  T4 16%  T5 31%  T6 44%  T7 56%  T8 67%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Echocasting Symposium                      cast in   9.3% of games, win rate when cast  30.1% (+19.3)
+    Mordenkainen                               cast in  16.8% of games, win rate when cast  21.7% (+10.9)
+    Ultimecia, Temporal Threat                 cast in  16.4% of games, win rate when cast  20.1% (+9.2)
+    Wander Off                                 cast in  21.8% of games, win rate when cast  18.9% (+8.0)
+    Specimen Freighter                         cast in  16.5% of games, win rate when cast  18.8% (+7.9)
+    Essence Scatter                            cast in  19.2% of games, win rate when cast  18.8% (+7.9)
+    Peerless Ropemaster                        cast in  19.4% of games, win rate when cast  18.6% (+7.8)
+    Sneering Shadewriter                       cast in  23.5% of games, win rate when cast  18.5% (+7.7)
+    Sephiroth's Intervention                   cast in  20.7% of games, win rate when cast  18.4% (+7.5)
+    Hope-Ender Coatl                           cast in  21.3% of games, win rate when cast  17.8% (+7.0)
+  Lowest win rate when cast:
+    Chase Inspiration                          cast in  22.8% of games, win rate when cast  11.2% (+0.3)
+    Force of Will                              cast in  24.8% of games, win rate when cast  11.3% (+0.5)
+    Star Compass                               cast in  22.9% of games, win rate when cast  11.3% (+0.5)
+    Toxic Deluge                               cast in  21.2% of games, win rate when cast  11.6% (+0.7)
+    Garland, Royal Kidnapper                   cast in  93.2% of games, win rate when cast  11.6% (+0.8)
+    Strixhaven Skycoach                        cast in  25.2% of games, win rate when cast  12.3% (+1.4)
+    Masterful Flourish                         cast in  24.1% of games, win rate when cast  12.7% (+1.8)
+    Unsummon                                   cast in  25.9% of games, win rate when cast  12.7% (+1.9)
+    Urza, Powerstone Prodigy                   cast in  22.6% of games, win rate when cast  13.1% (+2.2)
+    Mana Leak                                  cast in  20.2% of games, win rate when cast  13.3% (+2.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Desertion                                  cast  33.0% of the games it was drawn [reactive: only cast in response]
+    Echocasting Symposium                      cast  34.3% of the games it was drawn
+    Statute of Denial                          cast  38.7% of the games it was drawn [reactive: only cast in response]
+    Dismiss                                    cast  45.4% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Garland, Royal Kidnapper                   0.83
+    Crawlspace                                 0.17
+    The Aetherspark                            0.15
+    Mordenkainen                               0.12
+    Xande, Dark Mage                           0.11
+    Rescue, Pepper Potts                       0.10
+    Professor Hulk                             0.10
+    Star Compass                               0.10
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(336s total)

@@ -1,0 +1,110 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m28s elapsed, ~4m13s left
+  progress  20.0%  0m56s elapsed, ~3m47s left
+  progress  30.0%  1m27s elapsed, ~3m23s left
+  progress  40.0%  1m57s elapsed, ~2m56s left
+  progress  50.0%  2m26s elapsed, ~2m26s left
+  progress  60.0%  2m54s elapsed, ~1m56s left
+  progress  70.0%  3m23s elapsed, ~1m27s left
+  progress  80.0%  3m52s elapsed, ~0m58s left
+  progress  90.0%  4m20s elapsed, ~0m28s left
+  progress 100.0%  4m52s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== garland analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 10.5%   (4-player baseline 25%)   average rounds survived 11.9
+
+-- How it wins --
+  damage      92.4% of wins
+  timeout      7.6% of wins
+  Opponents it eliminated: 0.31 per game, by
+    combat             79.5%
+    decked              9.6%
+    commander damage    6.7%
+    drain               4.0%
+    triggers            0.2%
+  Damage dealt per game: 22.0, from
+    combat              20.7  (94%)
+    drain                1.2  (6%)
+    triggers             0.1  (0%)
+
+-- Garland --
+  Garland entries per game 2.01 (cast 1.92, token copies 0.09)
+  Steals per game 3.12; a steal lasts 0.78 rounds on average; steals ended by the crown moving 1.72 per game
+  Crown changes per game 5.09; we became the monarch 0.63 times per game
+  Damage by stolen creatures per game 3.81 (a stolen creature hit a player 0.54 times per game)
+  steals ended because the creature left: 1.38 per game; took the crown back (ended steals): 0.33 per game
+    stole Light-Paws, Emperor's Voice 0.34 per game
+    stole Lathril, Blade of the Elves 0.30 per game
+    stole Teysa Karlov 0.28 per game
+    stole Isshin, Two Heavens as One 0.27 per game
+    stole Tatyova, Benthic Druid 0.21 per game
+    stole Token 0.17 per game
+    stole Aurelia, the Warleader 0.03 per game
+    stole Uro, Titan of Nature's Wrath 0.03 per game
+
+-- How it loses --
+  Eliminated in 87.6% of games, on average in round 11.3
+    by Isshin   via combat             15.8% of games
+    by Light-Paws via commander damage   12.8% of games
+    by Tatyova  via combat             12.2% of games
+    by Lathril  via combat             11.8% of games
+    by Teysa Karlov via drain               8.8% of games
+    by Lathril  via drain               5.5% of games
+    by Light-Paws via combat              5.5% of games
+    by Teysa Karlov via combat              5.0% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 6.0, mean 6.3 (over the 89.1% of games it resolves)
+  Commander resolved by turn:  T4 23%  T5 40%  T6 55%  T7 65%  T8 75%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Echocasting Symposium                      cast in   7.0% of games, win rate when cast  29.5% (+18.9)
+    Ultimecia, Temporal Threat                 cast in  13.4% of games, win rate when cast  26.9% (+16.3)
+    Reconnaissance Mission                     cast in  12.5% of games, win rate when cast  23.2% (+12.7)
+    Mordenkainen                               cast in  12.6% of games, win rate when cast  22.7% (+12.2)
+    Szadek, Lord of Secrets                    cast in  10.7% of games, win rate when cast  22.5% (+12.0)
+    Sneering Shadewriter                       cast in  18.1% of games, win rate when cast  22.4% (+11.8)
+    Specimen Freighter                         cast in  12.0% of games, win rate when cast  22.1% (+11.5)
+    Soul of the Rapids                         cast in  14.8% of games, win rate when cast  21.9% (+11.3)
+    Unfathomable Truths                        cast in  14.5% of games, win rate when cast  21.0% (+10.5)
+    Skycoach Conductor // All Aboard           cast in  22.8% of games, win rate when cast  20.4% (+9.9)
+  Lowest win rate when cast:
+    Garland, Royal Kidnapper                   cast in  89.5% of games, win rate when cast  11.7% (+1.2)
+    Toxic Deluge                               cast in  18.9% of games, win rate when cast  12.4% (+1.9)
+    Mana Leak                                  cast in  17.2% of games, win rate when cast  12.8% (+2.2)
+    Overkill                                   cast in  20.1% of games, win rate when cast  13.5% (+2.9)
+    Arcane Denial                              cast in  20.6% of games, win rate when cast  13.6% (+3.1)
+    Potioner's Trove                           cast in  19.9% of games, win rate when cast  14.0% (+3.5)
+    Divining Duelist                           cast in  19.1% of games, win rate when cast  14.4% (+3.9)
+    Sudden Setback                             cast in  18.6% of games, win rate when cast  14.6% (+4.0)
+    Chase Inspiration                          cast in  20.7% of games, win rate when cast  14.7% (+4.2)
+    Force of Will                              cast in  22.9% of games, win rate when cast  14.8% (+4.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Echocasting Symposium                      cast  29.1% of the games it was drawn
+    Desertion                                  cast  31.6% of the games it was drawn [reactive: only cast in response]
+    Statute of Denial                          cast  35.1% of the games it was drawn [reactive: only cast in response]
+    Dismiss                                    cast  39.6% of the games it was drawn [reactive: only cast in response]
+    Szadek, Lord of Secrets                    cast  45.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Garland, Royal Kidnapper                   0.40
+    The Aetherspark                            0.12
+    Crawlspace                                 0.08
+    Mordenkainen                               0.07
+    Rescue, Pepper Potts                       0.06
+    Star Compass                               0.05
+    Strixhaven Skycoach                        0.05
+    Xande, Dark Mage                           0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(292s total)

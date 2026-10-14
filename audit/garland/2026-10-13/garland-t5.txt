@@ -1,0 +1,120 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m08s elapsed, ~1m20s left
+  progress  20.0%  0m21s elapsed, ~1m25s left
+  progress  30.0%  0m31s elapsed, ~1m13s left
+  progress  40.0%  0m42s elapsed, ~1m03s left
+  progress  50.0%  0m51s elapsed, ~0m51s left
+  progress  60.0%  1m01s elapsed, ~0m40s left
+  progress  70.0%  1m10s elapsed, ~0m30s left
+  progress  80.0%  1m20s elapsed, ~0m20s left
+  progress  90.0%  1m31s elapsed, ~0m10s left
+  progress 100.0%  1m43s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== garland analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 8.8%   (4-player baseline 25%)   average rounds survived 8.9
+
+-- How it wins --
+  damage      90.9% of wins
+  timeout      8.5% of wins
+  combo        0.6% of wins
+  Opponents it eliminated: 0.28 per game, by
+    combat             91.2%
+    drain               5.6%
+    commander damage    1.8%
+    triggers            0.7%
+    combo               0.4%
+    decked              0.2%
+    other               0.2%
+  Damage dealt per game: 14.4, from
+    combat              13.5  (94%)
+    drain                0.9  (6%)
+    triggers             0.1  (0%)
+
+-- Garland --
+  Garland entries per game 1.02 (cast 0.97, token copies 0.05)
+  Steals per game 1.44; a steal lasts 1.10 rounds on average; steals ended by the crown moving 0.76 per game
+  Crown changes per game 2.10; we became the monarch 0.31 times per game
+  Damage by stolen creatures per game 2.26 (a stolen creature hit a player 0.37 times per game)
+  steals ended because the creature left: 0.67 per game; took the crown back (ended steals): 0.17 per game
+    stole Urza, Lord High Artificer 0.16 per game
+    stole Zur the Enchanter 0.16 per game
+    stole Winota, Joiner of Forces 0.14 per game
+    stole Kinnan, Bonder Prodigy 0.14 per game
+    stole Yawgmoth, Thran Physician 0.11 per game
+    stole Token 0.07 per game
+    stole Mikaeus, the Unhallowed 0.03 per game
+    stole Esper Sentinel 0.03 per game
+
+-- How it loses --
+  Eliminated in 91.2% of games, on average in round 8.3
+    by Kinnan   via combo              23.7% of games
+    by Urza     via combo              16.9% of games
+    by Zur the Enchanter via combo              13.3% of games
+    by Winota   via combat             12.3% of games
+    by Winota   via combo              11.2% of games
+    by Yawgmoth via combo               6.8% of games
+    by Urza     via combat              2.1% of games
+    by Zur the Enchanter via commander damage    0.8% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.2% of games
+  Commander resolves on turn: median 5.0, mean 6.0 (over the 65.3% of games it resolves)
+  Commander resolved by turn:  T4 19%  T5 34%  T6 45%  T7 53%  T8 57%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Mordenkainen                               cast in   6.2% of games, win rate when cast  37.9% (+29.1)
+    Professor Hulk                             cast in   7.7% of games, win rate when cast  33.1% (+24.3)
+    Specimen Freighter                         cast in   5.7% of games, win rate when cast  28.3% (+19.5)
+    Reconnaissance Mission                     cast in   7.2% of games, win rate when cast  27.8% (+19.0)
+    Dismiss                                    cast in   5.0% of games, win rate when cast  27.7% (+18.9)
+    Sneering Shadewriter                       cast in  10.3% of games, win rate when cast  27.5% (+18.7)
+    Coerced to Kill                            cast in  11.8% of games, win rate when cast  27.2% (+18.4)
+    Amphin Pathmage                            cast in   9.8% of games, win rate when cast  26.7% (+17.9)
+    Soul of the Rapids                         cast in   8.1% of games, win rate when cast  25.9% (+17.1)
+    Ultimecia, Temporal Threat                 cast in   6.2% of games, win rate when cast  25.6% (+16.8)
+  Lowest win rate when cast:
+    Mana Leak                                  cast in  11.8% of games, win rate when cast  11.4% (+2.6)
+    Toxic Deluge                               cast in  10.4% of games, win rate when cast  12.9% (+4.1)
+    Garland, Royal Kidnapper                   cast in  67.0% of games, win rate when cast  13.1% (+4.3)
+    Force of Will                              cast in  16.9% of games, win rate when cast  14.2% (+5.4)
+    Last Gasp                                  cast in  14.0% of games, win rate when cast  15.0% (+6.2)
+    Star Compass                               cast in  14.6% of games, win rate when cast  15.1% (+6.3)
+    Kasmina's Transmutation                    cast in  15.2% of games, win rate when cast  15.4% (+6.6)
+    Chase Inspiration                          cast in  14.2% of games, win rate when cast  15.4% (+6.6)
+    Essence Scatter                            cast in  12.4% of games, win rate when cast  16.5% (+7.7)
+    Chromatic Lantern                          cast in  12.2% of games, win rate when cast  16.9% (+8.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Echocasting Symposium                      cast  15.1% of the games it was drawn
+    Desertion                                  cast  15.8% of the games it was drawn [reactive: only cast in response]
+    Statute of Denial                          cast  25.1% of the games it was drawn [reactive: only cast in response]
+    Szadek, Lord of Secrets                    cast  27.9% of the games it was drawn
+    Dismiss                                    cast  28.3% of the games it was drawn [reactive: only cast in response]
+    Specimen Freighter                         cast  29.6% of the games it was drawn
+    Mirari                                     cast  33.2% of the games it was drawn
+    Mordenkainen                               cast  34.3% of the games it was drawn
+    Ultimecia, Temporal Threat                 cast  35.5% of the games it was drawn
+    Unfathomable Truths                        cast  37.4% of the games it was drawn
+    Reconnaissance Mission                     cast  39.6% of the games it was drawn
+    Professor Hulk                             cast  41.3% of the games it was drawn
+  Most often removed by opponents (per game):
+    Garland, Royal Kidnapper                   0.12
+    The Aetherspark                            0.05
+    Rescue, Pepper Potts                       0.03
+    The Wasp, Winsome Avenger                  0.03
+    Lazav, Wearer of Faces                     0.03
+    Deluge Virtuoso                            0.02
+    Crawlspace                                 0.02
+    Xande, Dark Mage                           0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(104s total)

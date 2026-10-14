@@ -1,0 +1,12 @@
+00:24 build warnings: 0
+00:25 tests passed/failed: 1607 0
+00:25 same-seed sauron: identical
+00:25 same-seed cloud: identical
+00:25 same-seed thrasios: identical
+00:25 merged garland into tymna-thrasios: ccca2ff
+00:30 garland t1 exit 0 Win rate 10.5%   (4-player baseline 25%)   average rounds survived 11.9
+00:36 garland t2 exit 0 Win rate 10.8%   (4-player baseline 25%)   average rounds survived 14.0
+00:40 garland t3 exit 0 Win rate 10.0%   (4-player baseline 25%)   average rounds survived 12.8
+00:43 garland t4 exit 0 Win rate 7.5%   (4-player baseline 25%)   average rounds survived 10.6
+00:44 garland t5 exit 0 Win rate 8.8%   (4-player baseline 25%)   average rounds survived 8.9
+00:44 DONE
