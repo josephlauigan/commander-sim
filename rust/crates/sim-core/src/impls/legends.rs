@@ -614,6 +614,8 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
             q != p && g.player(q).alive && g.player(p).flag_turn.get(&*format!("hit{i}")) == Some(&st)
         })
         .count() as i32;
+    stat(g, p, "ty_tymna_turns", 1);
+    stat(g, p, "ty_opps_hit", x as i64);
     if x == 0 {
         return Ok(());
     }
@@ -642,7 +644,7 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
 const GARLAND: &str = "Garland, Royal Kidnapper";
 
 /// jodah.garland_pick: q's creature Garland's trigger takes: the most valuable one p can target
-fn garland_pick(g: &Game, _p: PlayerId, q: PlayerId) -> Option<PermId> {
+pub fn garland_pick(g: &Game, _p: PlayerId, q: PlayerId) -> Option<PermId> {
     let ub = Colors::from_letters("UB");
     let cs: Vec<PermId> = g
         .player(q)
@@ -661,7 +663,13 @@ fn garland_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
-    let opps: Vec<PlayerId> = g.opps(o).filter(|&q| g.player(q).alive && !player_hexproof(g, q)).collect();
+    crate::impls::garland::entered(g, o, src);
+    let mut opps: Vec<PlayerId> = g.opps(o).filter(|&q| g.player(q).alive && !player_hexproof(g, q)).collect();
+    if opps.len() > 1 {
+        if g.player(o).key == crate::impls::garland::KEY {
+            opps.retain(|&q| g.monarch != Some(q)); // crowning the monarch changes nothing: no new steal
+        }
+    }
     if opps.is_empty() {
         return Ok(());
     }
@@ -1828,7 +1836,7 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
     }
     let pl = g.player(p);
     let perms = pl.perms.iter().filter_map(|&m| g.perm(m).cd);
-    let cards = pl.library.iter().chain(&pl.hand).chain(&pl.gy).chain(&pl.exile).copied().chain(perms).chain([pl.cmd]);
+    let cards = pl.library.iter().chain(&pl.hand).chain(&pl.gy).chain(&pl.exile).copied().chain(perms).chain(pl.commanders());
     let mut n: Vec<(&str, i32)> = vec![];
     for c in cards {
         let d = g.db.get(c);

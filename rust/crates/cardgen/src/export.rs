@@ -51,6 +51,7 @@ impl Inputs {
             played.extend(d.cards.iter().cloned());
         }
         let mut extra: BTreeSet<String> = self.my.iter().map(|d| d.commander.clone()).collect();
+        extra.extend(self.my.iter().filter_map(|d| d.commander2.clone()));
         extra.extend(self.pool.iter().map(|d| d.commander.clone()));
         extra.extend(self.cache.names());
         Wanted { main, played, extra }
@@ -134,10 +135,13 @@ pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
     keys.sort_by(|a, b| a.key.cmp(&b.key));
     for d in keys {
         let cards = &inp.my_cards.iter().find(|(k, _)| *k == d.key).unwrap().1;
-        mine.push(J::Obj(
-            obj! {"key" => d.key.as_str(), "name" => d.name.as_str(), "commander" => d.commander.as_str(),
-            "ident" => ident_of(d.ident.chars()), "cards" => sorted_strs(cards)},
-        ));
+        let mut o = obj! {"key" => d.key.as_str(), "name" => d.name.as_str(), "commander" => d.commander.as_str()};
+        if let Some(c2) = &d.commander2 {
+            o.0.push(("commander2".to_string(), J::from(c2.as_str()))); // only decks with two commanders carry it
+        }
+        o.0.push(("ident".to_string(), J::from(ident_of(d.ident.chars()))));
+        o.0.push(("cards".to_string(), J::from(sorted_strs(cards))));
+        mine.push(J::Obj(o));
     }
     let mut pool = vec![];
     for d in &inp.pool {

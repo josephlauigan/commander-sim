@@ -69,8 +69,9 @@ fn add_kw(g: &mut Game, m: PermId, kw: Sym) {
 
 // ================================================================== Auras that lock a permanent down
 /// zur.LOCKS, by its LOCK_KINDS key: the Aura's kind
-const LOCKS: [(&str, &str); 6] = [
+const LOCKS: [(&str, &str); 7] = [
     ("Kasmina's Transmutation", "kasmina"),
+    ("Coerced to Kill", "coerce"),
     ("Arrest", "arrest"),
     ("Prison Sentence", "arrest"),
     ("Luminous Bonds", "pacify"),
@@ -86,6 +87,7 @@ fn lock_kinds(kind: &str) -> &'static [&'static str] {
         "pacify" => &["pacify"],
         "encrust" => &["frozen", "noact"],
         "kasmina" => &["neuter"],
+        "coerce" => &[], // (control, not a lock: Coerced to Kill is in garland_cards.rs)
         _ => &[],
     }
 }
@@ -155,6 +157,9 @@ pub fn lock_attach(g: &mut Game, a: PermId, host: PermId) -> Res<bool> {
     if card_name(g, a) == "Kasmina's Transmutation" {
         crate::impls::bulk_blue::kasmina_attach(g, a, host); // loses all abilities, base 1/1 (bulk_blue.rs)
     }
+    if card_name(g, a) == "Coerced to Kill" {
+        crate::impls::garland_cards::coerce_attach(g, a, host); // you control it; base 1/1, deathtouch (garland_cards.rs)
+    }
     Ok(true)
 }
 
@@ -174,7 +179,7 @@ pub fn apply_lock(g: &mut Game, _actor: Option<PlayerId>, m: PermId, _kind: Sym)
 pub fn lock_host(g: &Game, p: PlayerId, name: &str, targeted: bool, exclude: &[PermId]) -> Option<PermId> {
     let kind = lock_kind(name)?;
     let ok_art = name == "Encrust";
-    let col = Colors::from_letters(if name != "Encrust" && name != "Kasmina's Transmutation" { "W" } else { "U" });
+    let col = Colors::from_letters(if name == "Coerced to Kill" { "UB" } else if name != "Encrust" && name != "Kasmina's Transmutation" { "W" } else { "U" });
     let (mut best, mut bv) = (None, 0.0);
     for q in g.opps(p) {
         for &m in &g.player(q).perms {
@@ -221,6 +226,12 @@ pub fn lock_worth(g: &Game, _p: PlayerId, m: PermId, kind: &str) -> f64 {
             } else {
                 0.0
             }
+        }
+        "coerce" => {
+            if !g.is_creature(m) {
+                return 0.0;
+            }
+            v * 1.6 // it is ours: its value to them and to us
         }
         "kasmina" => {
             if !g.is_creature(m) {
@@ -440,7 +451,7 @@ pub fn wanderer_exile(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         && !g.perm(m).on_bf
         && !g.perm(m).token
         && g.player(o).exile.contains(&cd)
-        && cd != g.player(o).cmd
+        && !g.player(o).is_commander(cd)
     {
         g.zur_due.push((o, cd));
     }

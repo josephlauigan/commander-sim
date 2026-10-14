@@ -1,0 +1,110 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m08s elapsed, ~1m13s left
+  progress  20.0%  0m16s elapsed, ~1m07s left
+  progress  30.0%  0m25s elapsed, ~0m59s left
+  progress  40.0%  0m35s elapsed, ~0m52s left
+  progress  50.0%  0m45s elapsed, ~0m45s left
+  progress  60.0%  0m55s elapsed, ~0m36s left
+  progress  70.0%  1m03s elapsed, ~0m27s left
+  progress  80.0%  1m12s elapsed, ~0m18s left
+  progress  90.0%  1m21s elapsed, ~0m09s left
+  progress 100.0%  1m32s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 14.6%   (4-player baseline 25%)   average rounds survived 9.9
+
+-- How it wins --
+  damage      98.6% of wins
+  timeout      1.4% of wins
+  Opponents it eliminated: 0.46 per game, by
+    combat             87.9%
+    triggers            5.7%
+    burn                4.2%
+    commander damage    1.1%
+    drain               0.7%
+    decked              0.4%
+  Damage dealt per game: 22.8, from
+    combat              22.0  (96%)
+    drain                0.4  (2%)
+    triggers             0.4  (2%)
+    burn                 0.1  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 1.74; Tymna turns per game 2.73; opponents hit per Tymna turn 0.76
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 5.04 (in 84% of games)
+  Kraum lands on turn 6.89 (in 63% of games)
+
+-- How it loses --
+  Eliminated in 85.1% of games, on average in round 9.3
+    by Heliod   via combo              19.2% of games
+    by Krenko   via combat             13.1% of games
+    by Yuriko   via triggers           11.7% of games
+    by Chulane  via combo               7.9% of games
+    by Yuriko   via combat              7.8% of games
+    by Chulane  via combat              7.0% of games
+    by Prosper  via combo               6.7% of games
+    by Krenko   via combo               2.6% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 4.0, mean 4.6 (over the 89.9% of games it resolves)
+  Commander resolved by turn:  T4 55%  T5 70%  T6 80%  T7 85%  T8 88%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Terror of the Peaks                        cast in  13.2% of games, win rate when cast  36.4% (+21.8)
+    Elemental Mascot                           cast in  17.4% of games, win rate when cast  34.5% (+19.9)
+    Nightveil Predator                         cast in  12.7% of games, win rate when cast  33.9% (+19.3)
+    Marchesa, the Black Rose                   cast in  13.4% of games, win rate when cast  33.6% (+19.0)
+    Lyra Dawnbringer                           cast in  13.6% of games, win rate when cast  33.1% (+18.5)
+    Chromatic Lantern                          cast in  14.6% of games, win rate when cast  32.2% (+17.6)
+    Bedevil                                    cast in  11.2% of games, win rate when cast  32.1% (+17.5)
+    Make Your Move                             cast in  15.3% of games, win rate when cast  32.0% (+17.4)
+    Vibrant Outburst                           cast in  14.4% of games, win rate when cast  31.9% (+17.3)
+    Bastion Protector                          cast in  17.9% of games, win rate when cast  31.8% (+17.2)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  86.4% of games, win rate when cast  16.8% (+2.2)
+    Force of Will                              cast in  20.7% of games, win rate when cast  18.8% (+4.2)
+    Silverquill Charm                          cast in  15.7% of games, win rate when cast  20.4% (+5.8)
+    Toxic Deluge                               cast in  12.6% of games, win rate when cast  20.6% (+6.0)
+    Moseo, Vein's New Dean                     cast in  19.6% of games, win rate when cast  20.9% (+6.3)
+    Talisman of Hierarchy                      cast in  18.5% of games, win rate when cast  21.1% (+6.5)
+    Disenchant                                 cast in  14.2% of games, win rate when cast  21.1% (+6.5)
+    Kraum, Ludevic's Opus                      cast in  66.6% of games, win rate when cast  21.6% (+7.0)
+    Garland, Royal Kidnapper                   cast in  16.1% of games, win rate when cast  21.7% (+7.1)
+    Exit Specialist                            cast in  20.9% of games, win rate when cast  22.5% (+7.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Shardmage's Rescue                         cast   0.4% of the games it was drawn
+    Ultimate Magic: Holy                       cast   0.9% of the games it was drawn [reactive: only cast in response]
+    Desertion                                  cast  11.7% of the games it was drawn [reactive: only cast in response]
+    Dakkon Blackblade                          cast  21.9% of the games it was drawn
+    Mordenkainen                               cast  23.6% of the games it was drawn
+    Razia, Boros Archangel                     cast  25.8% of the games it was drawn
+    Dissipate                                  cast  29.1% of the games it was drawn [reactive: only cast in response]
+    Reconnaissance Mission                     cast  30.5% of the games it was drawn
+    Fact or Fiction                            cast  34.7% of the games it was drawn
+    Twisted Fates                              cast  35.8% of the games it was drawn
+    Quick Study                                cast  48.5% of the games it was drawn
+    Sol'kanar the Swamp King                   cast  48.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.34
+    Kraum, Ludevic's Opus                      0.24
+    The Aetherspark                            0.07
+    Dakkon, Shadow Slayer                      0.06
+    Laelia, the Blade Reforged                 0.05
+    The Wasp, Winsome Avenger                  0.05
+    Terror of the Peaks                        0.04
+    Star Compass                               0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(92s total)

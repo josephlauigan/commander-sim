@@ -165,6 +165,8 @@ pub struct MyDeck {
     /// the name logs use
     pub name: String,
     pub commander: String,
+    /// a second commander with plain Partner (decks with two commanders only)
+    pub commander2: Option<String>,
     pub ident: String,
 }
 
@@ -184,6 +186,7 @@ pub fn load_my_decks(p: &Project) -> Result<Vec<MyDeck>, String> {
             file: get("file")?,
             name: get("name")?,
             commander: get("commander")?,
+            commander2: v.get("commander2").and_then(|x| x.as_str()).map(|s| s.to_string()),
             ident: get("ident")?,
         });
     }

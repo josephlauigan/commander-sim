@@ -631,7 +631,7 @@ note = "attacks: sacrifice spare fodder for two tokens, damage or cards"
 
 ["Call of the Ring"]
 status = "Full"
-note = "upkeep: the Ring tempts you (the four Ring abilities in order); choosing a Ring-bearer pays 2 life for a card"
+note = "upkeep: the Ring tempts you (the four Ring abilities in order); choosing a Ring-bearer pays 2 life for a card; cast as a value enchantment (prio 50 in impls/sephfs.rs); the upkeep tempt is the engine's ring_tempt"
 
 ["Canopy Tactician"]
 tags = "pow=3 warrior dork=G"
@@ -1579,7 +1579,7 @@ types = "S"
 tags = "xdrain"
 dsl = []
 status = "Full"
-note = "each opponent loses X life and you gain the total; the AI casts it for a kill or a big X"
+note = "each opponent loses X life and you gain the total; the AI casts it for a kill or a big X (sephfs: option in impls/sephfs.rs, X = all spare mana, when lethal or X >= 4 and the board is safe; plan from impls/yshtola.rs x_drain_go)"
 
 ["Eyeblight Cullers"]
 tags = "pow=3 warrior"
@@ -2577,14 +2577,6 @@ note = "hasty copy of your best nonlegendary creature each turn (sacrificed at e
 ["Kindred Discovery"]
 status = "Full"
 note = "names a creature type as it enters (Orc for Sauron: Orc Armies count): draws whenever a creature of that type you control enters or attacks"
-
-["King Darien XLVIII"]
-tags = "leg pow=2 tgh=3"
-dsl = [
-  { type = "static", static = "anthem", pow = 1, tgh = 1, filter = { type = "creature", controller = "you", other = true } },
-]
-status = "Approximate"
-note = "other creatures +1/+1; {3}{G}{W} a +1/+1 counter and a 1/1 Soldier with spare mana; the sacrifice-for-protection ability is not used"
 
 ["Kinnan, Bonder Prodigy"]
 tags = "leg human pow=2"
@@ -3802,12 +3794,6 @@ tags = ""
 dsl = []
 status = "Full"
 note = "before combat: untap and take the best opposing creature until end of turn (haste) and attack with it; it is tapped when it goes back"
-
-["Razia, Boros Archangel"]
-tags = "leg pow=6 tgh=3 fly vig haste"
-dsl = []
-status = "Approximate"
-note = "flying, vigilance, haste; the redirect-3-damage ability is not used"
 
 ["Reassembling Skeleton"]
 tags = "pow=1 warrior"
@@ -6315,15 +6301,15 @@ note = "equip {2} on the best ground attacker: +1/+0, flying, and it gains you 1
 
 ["Braids's Frightful Return"]
 status = "Full"
-note = "read ahead: the AI starts on the chapter worth most (I: sacrifice a cheap creature, each opponent discards; II: the best creature card in the graveyard to hand; III: the opponent with the biggest board sacrifices a spare nonland nontoken permanent, or loses 2 life and you draw); lore counters after the draw step and from proliferate; sacrificed after III"
+note = "read ahead: the AI starts on the chapter worth most (I: sacrifice a cheap creature, each opponent discards; II: the best creature card in the graveyard to hand; III: the opponent with the biggest board sacrifices a spare nonland nontoken permanent, or loses 2 life and you draw); lore counters after the draw step and from proliferate; sacrificed after III (code: impls/sephfs_cards.rs: starts on II with a creature worth returning, I with spare fodder and cards in an opponent hand, else III; counters added at upkeep, not after the draw; the opponent sacrifices only a mana value 0-1 permanent; no proliferate)"
 
 ["Presumed Dead"]
 status = "Full"
-note = "+2/+0 until end of turn and 'when this creature dies, return it to the battlefield under its owner's control and suspect it' (menace, can't block); the AI casts it before combat on a creature worth 2 or more"
+note = "+2/+0 until end of turn and 'when this creature dies, return it to the battlefield under its owner's control and suspect it' (menace, can't block); the AI casts it before combat on a creature worth 2 or more; also cast in response to destroy / damage removal on Sephiroth or a creature worth 2+ (code: impls/sephfs_cards.rs; the return itself is sheoldred::returns_when_dies)"
 
 ["Rewrite Regrets"]
 status = "Full"
-note = "returns the best creature card (mana value 6 or less) from your graveyard to the battlefield (a planeswalker card only when no creature is there); Empower Jace 2 (the Jace token, loyalty +2)"
+note = "returns the best creature card (mana value 6 or less) from your graveyard to the battlefield (a planeswalker card only when no creature is there); Empower Jace 2 (the Jace token, loyalty +2) (code: impls/sephfs_cards.rs; Jace via alela::empower)"
 
 ["Soul Enervation"]
 status = "Full"
@@ -7204,3 +7190,227 @@ note = "{3}, sacrifice a creature: draw a card (compiled ability; the AI sacrifi
 ["Common Crook"]
 status = "Full"
 note = "when it dies, create a Treasure (compiled trigger)"
+
+["King Darien XLVIII"]
+tags = "leg pow=2 tgh=3"
+dsl = [
+  { type = "static", static = "anthem", pow = 1, tgh = 1, filter = { type = "creature", controller = "you", other = true } },
+]
+status = "Full"
+note = "other creatures +1/+1; {3}{G}{W} a +1/+1 counter and a 1/1 Soldier with spare mana; sacrifice it in response to removal aimed at a token worth more than the King, or to a destroy sweeper that would kill tokens worth more (tokens gain hexproof and indestructible until end of turn)"
+
+["Razia, Boros Archangel"]
+tags = "leg pow=6 tgh=3 fly vig haste"
+dsl = []
+status = "Approximate"
+note = "flying, vigilance, haste; {T}: redirects burn of 3 or less aimed at a creature of ours that would die to it onto the opposing creature it hurts most; combat damage is not redirected (an 8-mana top end that rarely lives to use it)"
+
+["Thrasios, Triton Hero"]
+dsl = []
+status = "Full"
+note = "{4}: scry 1, reveal the top card: a land goes onto the battlefield tapped, anything else is drawn; the AI activates it as often as it can at the end of the turn before its own and, last, in its second main phase; partner is the engine's"
+
+["Kraum, Ludevic's Opus"]
+status = "Full"
+note = "flying, haste; draws a card whenever an opponent casts their second spell each turn; partner is the engine's"
+
+["Black Widow, Agile Avenger"]
+status = "Full"
+note = "menace; whenever an opponent draws their second card each turn: a +1/+1 counter on her and you draw a card"
+
+["Abigale, Poet Laureate"]
+status = "Full"
+note = "flying; becomes prepared whenever you cast a creature spell; while prepared, pay {1}{W/B} to cast a copy of Heroic Stanza (a +1/+1 counter on target creature, the AI picks its best evasive attacker) at sorcery speed, which unprepares her"
+
+["Abigale, Poet Laureate // Heroic Stanza"]
+status = "Full"
+note = "flying; becomes prepared whenever you cast a creature spell; while prepared, pay {1}{W/B} to cast a copy of Heroic Stanza (a +1/+1 counter on target creature, the AI picks its best evasive attacker) at sorcery speed, which unprepares her"
+
+["Cuboid Colony"]
+status = "Full"
+note = "flash, flying, trample; increment: a +1/+1 counter whenever you cast a spell whose mana value is greater than its power or toughness (an X spell's X is not counted)"
+
+["Elemental Mascot"]
+status = "Full"
+note = "flying, vigilance; opus: +1/+0 until end of turn per instant or sorcery you cast (compiled); with a mana value of 5 or more the top card of the library is exiled and playable until the end of your next turn"
+
+["Falcon and Redwing"]
+tags = "leg human pow=1 tgh=2 fly"
+dsl = []
+status = "Full"
+note = "flying; whenever it deals combat damage to a player: that many 1/1 white flying Bird tokens, then a +1/+1 counter on it"
+
+["Photon, Mighty Marvel"]
+status = "Full"
+note = "flying; whenever it deals combat damage to a player: that much mana of the colour most of the hand wants (colourless if the hand has no coloured spell), floating until end of turn"
+
+["Faeburrow Elder"]
+tags = "pow=0 tgh=0 vig"
+dsl = []
+status = "Full"
+note = "vigilance; +1/+1 for each colour among permanents you control (0/0 base); {T}: one mana of each colour among permanents you control, from one source (using any tap taps it)"
+
+["Paradox Surveyor"]
+status = "Full"
+note = "reach; enters: look at the top five, a land card or a card with {X} in its cost to the hand (the AI takes the best, a land when it has under six), the rest to the bottom in random order"
+
+["Spectral Lynx"]
+status = "Full"
+note = "protection from green; {B}: regenerate, paid by the AI whenever it would die and has {B}"
+
+["Nightveil Predator"]
+status = "Full"
+note = "flying, deathtouch, hexproof (all engine keywords; hexproof stops opposing targeting)"
+
+["Sphinx of New Prahv"]
+dsl = []
+ward = 2
+status = "Full"
+note = "flying, vigilance; spells opponents cast that target it cost {2} more: modeled as ward {2} (paid when the spell targets; the AI won't aim a spell it can't pay for)"
+
+["Twisted Fates"]
+dsl = []
+status = "Full"
+note = "destroys the target nonland permanent, then a +1/+1 counter on each creature we control (the second target player is always the caster)"
+
+["Dakkon Blackblade"]
+tags = "leg human warrior pow=0 tgh=0"
+dsl = []
+status = "Full"
+note = "power and toughness each equal the number of lands you control (a 0/0 base plus the land count)"
+
+["Star Compass"]
+status = "Full"
+note = "enters tapped (card code); {T}: one mana of a colour a basic land you control could produce (engine/mana.rs reads the colours; none with no basic land)"
+
+["Embrace the Paradox"]
+tags = "draw=3"
+dsl = []
+status = "Full"
+note = "draw three, then a land card from the hand onto the battlefield tapped (the AI always does)"
+
+["Elenda, the Dusk Rose"]
+tags = "leg pow=1 lifelink"
+dsl = [
+  { type = "triggered", effects = [{ do = "counters", n = 1, what = { sel = "self" } }], event = "dies", source = "any_creature", other = true },
+]
+status = "Full"
+note = "lifelink; a +1/+1 counter whenever another creature dies; when she dies, X 1/1 lifelink Vampires, X her power (the compiled death trigger always made three)"
+
+["Moss Diamond"]
+status = "Full"
+note = "enters tapped (card code); {T}: {G}"
+
+["Silverquill Charm"]
+types = "I"
+cost = "WB"
+tags = ""
+dsl = []
+status = "Full"
+note = "instant, three modes chosen by the AI each time it looks for a play: two +1/+1 counters on its best creature, exile their best creature with power 2 or less, or drain 3 (opponents lose 3 each, we gain 3 once)"
+
+["Coerced to Kill"]
+types = "E"
+tags = "rem=coerce tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura on the best opposing creature (a zur.rs lock kind): you control it, it has base power and toughness 1/1 and deathtouch (Assassin is only a type); when the Aura leaves the creature is itself again and goes back to its owner; with Garland out it is 3/3 (+2/+2, unsacrificeable)"
+
+["Skycoach Conductor // All Aboard"]
+dsl = []
+status = "Full"
+note = "flash, flying, vigilance; enters prepared; while prepared {U} casts a copy of All Aboard (exile a non-Pilot creature of ours and return it: the AI picks the creature with the best enter trigger, Garland most of all) and unprepares it"
+
+["Specimen Freighter"]
+dsl = []
+status = "Full"
+note = "enters: return up to two non-Spacecraft creatures (our best enter trigger, Garland to crown again, and the opposing creature worth most); station (tap creatures after combat, charge counters equal to their power) until 9: then a 4/7 flying artifact creature that mills the defending player four whenever it attacks"
+
+["Tragic Lesson"]
+tags = "draw=2"
+dsl = []
+status = "Full"
+note = "draw two, then discard a card unless a land is returned to hand (a tapped land, when the land drop is still there and the hand lacks lands or there are six lands); otherwise the worst card is discarded"
+
+["Amphin Pathmage"]
+dsl = []
+status = "Full"
+note = "3/2; {2}{U}: target creature can't be blocked this turn (before combat, on the biggest non-flying attacker, a stolen creature first, when the opponents have untapped blockers)"
+
+["Lazav, Wearer of Faces"]
+dsl = []
+status = "Approximate"
+note = "whenever it attacks, exile the best card from a graveyard (an opponent's creature first) and investigate; whenever we sacrifice a Clue it becomes a copy of the best creature card exiled with it until end of turn: only that card's power, toughness and basic keywords, not its other abilities"
+
+["Sneering Shadewriter"]
+dsl = [
+  { type = "triggered", effects = [ { do = "lose_life", n = 2, who = "each_opponent" }, { do = "gain_life", n = 2, who = "you" } ], event = "etb", source = "self" },
+]
+status = "Full"
+note = "flying; when it enters each opponent loses 2 life and you gain 2 life (the compiled text gained 2 per opponent)"
+
+["Xande, Dark Mage"]
+tags = "leg human wizard pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "menace; +1/+1 for each noncreature, nonland card in your graveyard (card code: a dynamic power and toughness)"
+
+["Potioner's Trove"]
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "{T}: one mana of any colour; {T}: gain 2 life only if we cast an instant or sorcery this turn (card code: the AI gains the life at the end of the turn when the mana was not needed)"
+
+["Extinction Event"]
+tags = "wipe=parity"
+dsl = []
+status = "Full"
+note = "choose odd or even (the AI picks the parity that costs it least, never the one that exiles our unflipped Sephiroth), exile each creature of that mana value (a token is mana value 0, even); nobody dies, so no drain (card code in impls/sephfs_cards.rs)"
+
+["Necromantic Selection"]
+tags = "wipe=destroy"
+dsl = []
+status = "Full"
+note = "destroy all creatures (an unflipped Sephiroth last, so he drains for the others), then the best creature card put into a graveyard this way returns under our control; the spell is exiled. The black Zombie type is not tracked (card code in impls/sephfs_cards.rs)"
+
+["Blood on the Snow"]
+tags = "wipe=destroy"
+dsl = []
+status = "Full"
+note = "destroy all creatures (the AI never takes the planeswalker mode); X is the snow mana spent, and nothing in this deck is snow, so X = 0 and the return clause finds a card only at mana value 0 (card code in impls/sephfs_cards.rs)"
+
+["Living Death"]
+tags = "wipe=living"
+dsl = []
+status = "Full"
+note = "each player exiles the creature cards in their graveyard, then sacrifices all their creatures (an unflipped Sephiroth last), then puts the exiled cards onto the battlefield; the AI casts it when the graveyards favour it (card code in impls/sephfs_cards.rs)"
+
+["Rabid Attack"]
+dsl = []
+status = "Full"
+note = "until end of turn all our creatures get +1/+0 and 'when this creature dies, draw a card' (the AI targets every creature; the draw is run from engine/zones.rs die_triggers)"
+
+["Pestilence"]
+dsl = []
+status = "Full"
+note = "{B}: 1 damage to each creature and each player, activated up to eight times at once (a creature dies at the activation that reaches its toughness; damage stays on it for the turn); the AI keeps an unflipped Sephiroth alive. At the beginning of any end step with no creature on the battlefield it is sacrificed (card code in impls/sephfs_cards.rs)"
+
+["Grave Betrayal"]
+dsl = []
+status = "Full"
+note = "whenever a creature we don't control dies, its card returns under our control with a +1/+1 counter at the beginning of the next end step (kept on the enchantment: lost if it leaves first; tokens and commanders in the command zone cannot return). The black Zombie type is not tracked"
+
+["Dread Slaver"]
+dsl = []
+status = "Full"
+note = "3/5; a creature it killed in combat returns under our control when it dies (combat.rs marks the victim). Damage that does not kill is not tracked by the engine, so only the creatures its damage kills count"
+
+["Kaya's Ghostform"]
+dsl = []
+status = "Full"
+note = "Aura: when the enchanted creature dies or is exiled its card returns to the battlefield under our control (a commander returns from the command zone); the AI puts it on an unflipped Sephiroth first"
+
+["Grave Researcher // Reanimate"]
+dsl = []
+status = "Full"
+note = "3/3; upkeep: surveil 1, then with three or more creature cards in our graveyard it becomes prepared; prepared, {B} casts a copy of Reanimate on the best creature card in any graveyard (not below 8 life after the loss) (card code in impls/sephfs_cards.rs)"

@@ -1064,9 +1064,7 @@ pub fn setup_game_for(
     let players = seats
         .iter()
         .enumerate()
-        .map(|(i, s)| {
-            crate::state::Player::new(PlayerId(i as u8), s.key, s.name, s.ident, s.commander, s.cards.clone())
-        })
+        .map(|(i, s)| s.player(PlayerId(i as u8)))
         .collect();
     let mut g = Game::new(db, registry, settings, players, crate::rng::Rng::named(&format!("play:{seed}")));
     if trace {
@@ -1096,9 +1094,20 @@ pub struct Seat {
     pub key: Sym,
     pub name: Sym,
     pub commander: CardId,
+    /// a second commander with Partner (the Tymna decks); None for every other seat
+    pub commander2: Option<CardId>,
     /// the colour identity (Python's IDENT / SEATS): Command Tower, Arcane Signet and Chromatic Lantern make these
     pub ident: crate::cards::Colors,
     pub cards: std::sync::Arc<[CardId]>,
+}
+
+impl Seat {
+    /// the player for this seat: the commander (or the pair) in the command zone, the rest of the deck as the library
+    pub fn player(&self, id: PlayerId) -> crate::state::Player {
+        let mut p = crate::state::Player::new(id, self.key, self.name, self.ident, self.commander, self.cards.clone());
+        p.set_partner(self.commander2);
+        p
+    }
 }
 
 /// play rounds until someone wins or max_rounds pass; a game still going then is won by the strongest player

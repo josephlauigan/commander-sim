@@ -1,0 +1,101 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m20s elapsed, ~3m01s left
+  progress  20.0%  0m40s elapsed, ~2m40s left
+  progress  30.0%  0m58s elapsed, ~2m17s left
+  progress  40.0%  1m20s elapsed, ~2m00s left
+  progress  50.0%  1m41s elapsed, ~1m41s left
+  progress  60.0%  2m01s elapsed, ~1m20s left
+  progress  70.0%  2m21s elapsed, ~1m00s left
+  progress  80.0%  2m39s elapsed, ~0m39s left
+  progress  90.0%  2m58s elapsed, ~0m19s left
+  progress 100.0%  3m20s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== sephfs analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 41.0%   (4-player baseline 25%)   average rounds survived 12.6
+
+-- How it wins --
+  damage      93.2% of wins
+  timeout      6.8% of wins
+  Opponents it eliminated: 1.21 per game, by
+    drain              70.3%
+    combat             18.6%
+    burn                6.6%
+    decked              3.4%
+    commander damage    0.9%
+    triggers            0.1%
+    other               0.0%
+  Damage dealt per game: 58.8, from
+    drain               35.8  (61%)
+    combat              18.8  (32%)
+    burn                 4.1  (7%)
+    triggers             0.1  (0%)
+
+-- Sephiroth --
+  Flips per game 0.727 (games with a flip 56.0%); first flip on round 8.23 on average
+  Emblem drains per game 18.26; cards drawn by Sephiroth per game 1.97; creatures sacrificed per game 5.11
+  Wipes cast per game 0.64 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 1.58
+  Creatures stolen per game 0.79: reanimation spells 0.39, Grave Betrayal 0.54, Dread Slaver 0.04, prepared Reanimate 0.09; Kaya's Ghostform returns 0.15; Rabid Attack draws 0.06
+
+-- How it loses --
+  Eliminated in 56.3% of games, on average in round 10.7
+    by Light-Paws via commander damage   15.3% of games
+    by Isshin   via combat              9.8% of games
+    by Tatyova  via combat              8.8% of games
+    by Lathril  via combat              7.5% of games
+    by Teysa Karlov via Revel in Riches     3.5% of games
+    by Light-Paws via combat              2.9% of games
+    by Teysa Karlov via drain               2.1% of games
+    by Lathril  via drain               1.9% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 4.0, mean 4.7 (over the 97.0% of games it resolves)
+  Commander resolved by turn:  T4 53%  T5 70%  T6 81%  T7 89%  T8 93%
+  Sacrifices: 5.11 creatures per game; Sephiroth flipped to One-Winged Angel in 56.0% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Exsanguinate                               cast in  12.5% of games, win rate when cast  68.8% (+27.8)
+    Butcher of Malakir                         cast in  17.7% of games, win rate when cast  63.0% (+22.0)
+    Grave Betrayal                             cast in  15.3% of games, win rate when cast  62.7% (+21.7)
+    Massacre Girl                              cast in  17.6% of games, win rate when cast  62.6% (+21.6)
+    Rewrite Regrets                            cast in  17.8% of games, win rate when cast  62.1% (+21.1)
+    Pestilence                                 cast in  21.2% of games, win rate when cast  62.0% (+21.0)
+    Fleshbag Marauder                          cast in  21.1% of games, win rate when cast  60.0% (+19.0)
+    Necromantic Selection                      cast in  14.9% of games, win rate when cast  59.4% (+18.4)
+    Living Death                               cast in  17.5% of games, win rate when cast  57.7% (+16.7)
+    Accursed Marauder                          cast in  22.1% of games, win rate when cast  56.9% (+15.9)
+  Lowest win rate when cast:
+    Sephiroth, Fabled SOLDIER // Sephiroth, On cast in  97.0% of games, win rate when cast  42.2% (+1.2)
+    Last Gasp                                  cast in  22.1% of games, win rate when cast  45.4% (+4.4)
+    Mind Stone                                 cast in  24.6% of games, win rate when cast  45.8% (+4.8)
+    Toxic Deluge                               cast in  19.9% of games, win rate when cast  46.6% (+5.6)
+    End of the Hunt                            cast in  22.9% of games, win rate when cast  46.7% (+5.7)
+    Arcane Signet                              cast in  21.2% of games, win rate when cast  46.9% (+5.9)
+    Masterful Flourish                         cast in  19.6% of games, win rate when cast  46.9% (+5.9)
+    Carrion Feeder                             cast in  24.8% of games, win rate when cast  47.5% (+6.5)
+    Tome of Legends                            cast in  23.8% of games, win rate when cast  47.9% (+6.9)
+    Kaya's Ghostform                           cast in  21.9% of games, win rate when cast  48.1% (+7.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rabid Attack                               cast  21.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 0.84
+    Phyrexian Altar                            0.09
+    Ral Zarek, Guest Lecturer                  0.07
+    Bastion of Remembrance                     0.07
+    Mind Stone                                 0.05
+    Star Compass                               0.05
+    Massacre Girl                              0.04
+    Tome of Legends                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(201s total)

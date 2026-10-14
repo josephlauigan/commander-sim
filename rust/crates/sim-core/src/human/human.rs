@@ -467,7 +467,7 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
     }
     if d == "cast" {
         let zone = if zone == Some("cmd") { "cmd" } else { "hand" };
-        let c = if zone == "cmd" { Some(g.player(p).cmd) } else { hand_card(g, p, act) };
+        let c = if zone == "cmd" { g.player(p).cmds_in_zone().next().or(Some(g.player(p).cmd)) } else { hand_card(g, p, act) };
         let Some(c) = c else { return Ok(Some("There is no such card in your hand.".into())) };
         if zone == "hand" && cards::hand_override(g, c) {
             return cards::cast_from_hand(g, p, c);

@@ -552,7 +552,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
         return (ctx.rean_value, vec![]);
     }
     let key = g.player(p).key;
-    if c == g.player(p).cmd {
+    if g.player(p).is_commander(c) {
         let v = match key {
             "seph" => 8.0,
             "veyran" => 5.0,
@@ -659,13 +659,13 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             }
         }
         "cmd" => {
-            if &*g.db.get(c).name == "Liesa, Shroud of Dusk" && g.player(p).tax > 0 {
-                let tax = g.player(p).tax as i32;
+            if &*g.db.get(c).name == "Liesa, Shroud of Dusk" && g.player(p).tax_of(c) > 0 {
+                let tax = g.player(p).tax_of(c) as i32;
                 lose_life(g, p, tax, Some(p), "other", None)?;
             }
             let pl = g.player_mut(p);
-            pl.cmd_in_zone = false;
-            pl.tax += 2;
+            pl.set_cmd_zone(c, false);
+            pl.add_tax(c);
         }
         _ => {} // 'lib': Bolas's Citadel, already off the top of the library
     }
@@ -742,8 +742,8 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         let lt = last.map(|x| g.db.get(x));
         let land = g.db.get(c).land;
         let o = gy_of(&ctx, p); // its owner: a card cast from another player's deck goes back to their zones
-        if c == g.player(p).cmd {
-            g.player_mut(p).cmd_in_zone = true;
+        if g.player(p).is_commander(c) {
+            g.player_mut(p).set_cmd_zone(c, true);
         } else if zone == "gy" || ctx.exile_after {
             g.player_mut(o).exile.push(c);
         } else if lt.is_some_and(|x| x.tag(Tag::Lapse)) && !land {
@@ -879,7 +879,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         let r = enter(g, p, c, Enter { was_cast: true, orig: ctx.owner, ..Enter::default() });
         g.cast_target = prev;
         let m = r?;
-        if c == g.player(p).cmd {
+        if g.player(p).is_commander(c) {
             g.perm_mut(m).is_cmd = true;
             let turns = g.player(p).turns;
             g.player_mut(p).milestone.entry("cmd_cast").or_insert(turns); // reports: the commander resolved

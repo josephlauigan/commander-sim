@@ -86,10 +86,11 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if let Some(f) = imp.and_then(|i| i.prio) {
         return f(g, p, c);
     }
-    if c == pl.cmd {
+    if pl.is_commander(c) {
         let dflt = if imp.is_some_and(|i| i.live()) { 85 } else { 75 }; // an engine commander comes first
+        let cheaper_first = if pl.cmd2.is_some() { d.cmc as i32 } else { 0 }; // two commanders: the cheaper first
         return if pl.turns >= cfg.cmd_turn.unwrap_or(2) {
-            40.max(cfg.cmd_prio.unwrap_or(dflt) - 3 * pl.tax as i32)
+            40.max(cfg.cmd_prio.unwrap_or(dflt) - 3 * pl.tax_of(c) as i32) - cheaper_first
         } else {
             0
         };
@@ -736,6 +737,18 @@ fn reanimate(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(true);
     }
     let ctx = Ctx { rean_target: Some(cd), rean_src: Some(src), rean_value: v, ..Ctx::default() };
+    if g.player(p).key == "sephfs" && g.db.get(c).perm {
+        // Animate Dead and the like as the effect only (as the seph deck models them): the card goes to the graveyard
+        decks::remove_from_hand(g, p, c);
+        g.player_mut(p).gy.push(c);
+        g.player_mut(p).spells_this_turn += 1;
+        crate::engine::cast::on_cast(g, p, c)?;
+        crate::ai::seph_rean_resolve(g, p, c, &ctx)?;
+        let pl = g.player_mut(p);
+        pl.stat("spells_cast", 1);
+        pl.cast_names.insert(c);
+        return Ok(true);
+    }
     crate::engine::cast::cast_card(g, p, c, "hand", ctx)?;
     Ok(true)
 }

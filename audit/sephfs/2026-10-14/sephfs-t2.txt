@@ -1,0 +1,101 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m22s elapsed, ~3m21s left
+  progress  20.0%  0m43s elapsed, ~2m53s left
+  progress  30.0%  1m05s elapsed, ~2m32s left
+  progress  40.0%  1m27s elapsed, ~2m10s left
+  progress  50.0%  1m49s elapsed, ~1m49s left
+  progress  60.0%  2m08s elapsed, ~1m25s left
+  progress  70.0%  2m30s elapsed, ~1m04s left
+  progress  80.0%  2m51s elapsed, ~0m42s left
+  progress  90.0%  3m12s elapsed, ~0m21s left
+  progress 100.0%  3m38s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== sephfs analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 43.7%   (4-player baseline 25%)   average rounds survived 14.6
+
+-- How it wins --
+  damage      88.9% of wins
+  timeout     11.1% of wins
+  Opponents it eliminated: 1.27 per game, by
+    drain              68.5%
+    combat             22.1%
+    burn                7.5%
+    decked              0.9%
+    triggers            0.7%
+    commander damage    0.3%
+    other               0.1%
+  Damage dealt per game: 57.9, from
+    drain               33.2  (57%)
+    combat              19.5  (34%)
+    burn                 4.8  (8%)
+    triggers             0.4  (1%)
+
+-- Sephiroth --
+  Flips per game 0.646 (games with a flip 51.6%); first flip on round 9.18 on average
+  Emblem drains per game 14.93; cards drawn by Sephiroth per game 1.99; creatures sacrificed per game 5.39
+  Wipes cast per game 0.75 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 1.78
+  Creatures stolen per game 1.19: reanimation spells 0.42, Grave Betrayal 0.88, Dread Slaver 0.03, prepared Reanimate 0.12; Kaya's Ghostform returns 0.17; Rabid Attack draws 0.11
+
+-- How it loses --
+  Eliminated in 51.1% of games, on average in round 13.3
+    by Lord Windgrace via combat              9.8% of games
+    by Sythis   via commander damage    9.4% of games
+    by Brago    via combat              8.1% of games
+    by Kaalia of the Vast via combat              7.4% of games
+    by Sythis   via combat              7.2% of games
+    by Meren of Clan Nel Toth via combat              4.8% of games
+    by Kaalia of the Vast via drain               1.6% of games
+    by Meren of Clan Nel Toth via triggers            0.9% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 5.0, mean 5.1 (over the 98.2% of games it resolves)
+  Commander resolved by turn:  T4 47%  T5 66%  T6 78%  T7 85%  T8 90%
+  Sacrifices: 5.39 creatures per game; Sephiroth flipped to One-Winged Angel in 51.6% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Rabid Attack                               cast in   6.5% of games, win rate when cast  72.1% (+28.4)
+    Exsanguinate                               cast in  16.9% of games, win rate when cast  63.1% (+19.4)
+    Grave Betrayal                             cast in  19.4% of games, win rate when cast  59.4% (+15.7)
+    Rewrite Regrets                            cast in  21.1% of games, win rate when cast  58.4% (+14.7)
+    Stargaze                                   cast in  21.9% of games, win rate when cast  57.6% (+13.9)
+    Pestilence                                 cast in  24.6% of games, win rate when cast  57.4% (+13.7)
+    Woe Strider                                cast in  28.6% of games, win rate when cast  55.3% (+11.6)
+    Zombify                                    cast in  24.6% of games, win rate when cast  54.7% (+11.0)
+    Moseo, Vein's New Dean                     cast in  26.1% of games, win rate when cast  53.8% (+10.1)
+    Carrier Thrall                             cast in  26.9% of games, win rate when cast  53.8% (+10.1)
+  Lowest win rate when cast:
+    Masterful Flourish                         cast in  22.8% of games, win rate when cast  43.4% (-0.3)
+    Last Gasp                                  cast in  23.1% of games, win rate when cast  44.3% (+0.6)
+    Toxic Deluge                               cast in  24.2% of games, win rate when cast  44.3% (+0.6)
+    Sephiroth, Fabled SOLDIER // Sephiroth, On cast in  98.2% of games, win rate when cast  44.5% (+0.8)
+    Star Compass                               cast in  25.2% of games, win rate when cast  44.8% (+1.1)
+    Dark Ritual                                cast in  23.1% of games, win rate when cast  44.9% (+1.2)
+    Extinction Event                           cast in  21.4% of games, win rate when cast  45.2% (+1.5)
+    Crux of Fate                               cast in  21.2% of games, win rate when cast  45.4% (+1.7)
+    Fellwar Stone                              cast in  24.1% of games, win rate when cast  45.5% (+1.8)
+    End of the Hunt                            cast in  27.1% of games, win rate when cast  45.8% (+2.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rabid Attack                               cast  26.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 1.45
+    Phyrexian Altar                            0.17
+    Bastion of Remembrance                     0.14
+    Ral Zarek, Guest Lecturer                  0.12
+    Star Compass                               0.11
+    Tome of Legends                            0.11
+    Mind Stone                                 0.10
+    Woe Strider                                0.08
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(219s total)

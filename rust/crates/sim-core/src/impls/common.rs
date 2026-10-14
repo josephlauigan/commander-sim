@@ -136,6 +136,8 @@ pub struct AuraSpec {
     pub host_pick: Option<HostPickFn>,
     /// runs when the enchanted creature dies, with the Aura already gone (Ferocity of the Hunt)
     pub host_dies: Option<AuraEtbFn>,
+    /// `host_dies` also runs when the enchanted creature is exiled (Kaya's Ghostform)
+    pub host_exiled: bool,
 }
 
 /// common.aura's defaults
@@ -152,6 +154,7 @@ pub const AURA: AuraSpec = AuraSpec {
     back: None,
     host_pick: None,
     host_dies: None,
+    host_exiled: false,
 };
 
 /// common.aura: register an Aura (its static effects, and the enter hook that attaches it)
@@ -363,6 +366,7 @@ pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
     for a in g.auras.clone() {
         if a == m {
             crate::impls::bulk_blue::kasmina_detach(g, a); // Kasmina's Transmutation leaves: the creature is itself again
+            crate::impls::garland_cards::coerce_detach(g, a); // Coerced to Kill leaves: control goes back
             if let Some(i) = g.auras.iter().position(|&x| x == a) {
                 g.auras.remove(i);
             }
@@ -384,7 +388,8 @@ pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
             } else {
                 to_zone_card(g, a, Zone::Gy);
             }
-            if died && let Some(f) = host_dies {
+            let exiled = g.exiling == Some(m) && spec_of(g, a).is_some_and(|s| s.host_exiled);
+            if (died || exiled) && let Some(f) = host_dies {
                 f(g, owner(g, a), a, m)?;
             }
         }
@@ -579,7 +584,7 @@ pub fn oring_exile(
         let x = g.perm(m);
         if !on(g, m, o) && !x.token {
             let cd = x.phys.or(x.cd).unwrap();
-            if cd != g.player(o).cmd && g.player(x.orig).exile.contains(&cd) {
+            if !g.player(o).is_commander(cd) && g.player(x.orig).exile.contains(&cd) {
                 exiled.push(Val::List(vec![Val::Card(cd), Val::Player(x.orig)]));
             }
         }
@@ -1995,6 +2000,9 @@ fn trawler_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
 /// t2.blink_value: how much re-entering is worth for p's permanent m. A copy of t2.py's (t2.rs is ported
 /// separately): MERGE: call t2's.
 fn blink_value(g: &Game, _p: PlayerId, m: PermId) -> f64 {
+    if crate::impls::garland::is_my_garland(g, m) {
+        return crate::impls::garland::recrown_value(g, _p);
+    }
     if g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::cloud::CLOUD) {
         return crate::impls::cloud::reenter_value(g, _p, m); // Cloud, Midgar Mercenary: his search again
     }

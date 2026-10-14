@@ -1,0 +1,112 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m08s elapsed, ~1m14s left
+  progress  20.0%  0m16s elapsed, ~1m05s left
+  progress  30.0%  0m23s elapsed, ~0m55s left
+  progress  40.0%  0m33s elapsed, ~0m49s left
+  progress  50.0%  0m41s elapsed, ~0m41s left
+  progress  60.0%  0m49s elapsed, ~0m33s left
+  progress  70.0%  0m57s elapsed, ~0m24s left
+  progress  80.0%  1m05s elapsed, ~0m16s left
+  progress  90.0%  1m14s elapsed, ~0m08s left
+  progress 100.0%  1m23s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== sephfs analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 21.4%   (4-player baseline 25%)   average rounds survived 8.7
+
+-- How it wins --
+  damage      97.4% of wins
+  timeout      2.1% of wins
+  combo        0.5% of wins
+  Opponents it eliminated: 0.62 per game, by
+    drain              58.8%
+    combat             30.8%
+    burn                9.0%
+    commander damage    0.6%
+    triggers            0.4%
+    combo               0.2%
+    other               0.2%
+  Damage dealt per game: 26.1, from
+    combat              12.4  (47%)
+    drain               11.5  (44%)
+    burn                 2.1  (8%)
+    triggers             0.1  (0%)
+
+-- Sephiroth --
+  Flips per game 0.271 (games with a flip 24.6%); first flip on round 7.85 on average
+  Emblem drains per game 3.05; cards drawn by Sephiroth per game 1.08; creatures sacrificed per game 2.39
+  Wipes cast per game 0.27 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 0.81
+  Creatures stolen per game 0.29: reanimation spells 0.19, Grave Betrayal 0.19, Dread Slaver 0.02, prepared Reanimate 0.03; Kaya's Ghostform returns 0.07; Rabid Attack draws 0.03
+
+-- How it loses --
+  Eliminated in 78.5% of games, on average in round 7.5
+    by Kinnan   via combo              23.9% of games
+    by Urza     via combo              16.4% of games
+    by Zur the Enchanter via combo              11.9% of games
+    by Winota   via combo               8.9% of games
+    by Yawgmoth via combo               7.0% of games
+    by Winota   via combat              6.8% of games
+    by Urza     via combat              0.8% of games
+    by Kinnan   via combat              0.7% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.1% of games
+  Commander resolves on turn: median 4.0, mean 4.4 (over the 80.3% of games it resolves)
+  Commander resolved by turn:  T4 51%  T5 64%  T6 71%  T7 75%  T8 78%
+  Sacrifices: 2.39 creatures per game; Sephiroth flipped to One-Winged Angel in 24.6% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Exsanguinate                               cast in   6.6% of games, win rate when cast  66.7% (+45.3)
+    Rewrite Regrets                            cast in   7.6% of games, win rate when cast  64.5% (+43.1)
+    Butcher of Malakir                         cast in   7.2% of games, win rate when cast  62.9% (+41.5)
+    Pestilence                                 cast in  12.8% of games, win rate when cast  58.4% (+37.0)
+    Grave Betrayal                             cast in   6.3% of games, win rate when cast  57.9% (+36.5)
+    Necromantic Selection                      cast in   5.8% of games, win rate when cast  53.0% (+31.6)
+    Presumed Dead                              cast in   7.8% of games, win rate when cast  51.0% (+29.6)
+    Sneering Shadewriter                       cast in  11.3% of games, win rate when cast  48.2% (+26.8)
+    Massacre Girl                              cast in   9.9% of games, win rate when cast  47.2% (+25.8)
+    Living Death                               cast in   7.8% of games, win rate when cast  46.5% (+25.1)
+  Lowest win rate when cast:
+    Sephiroth, Fabled SOLDIER // Sephiroth, On cast in  81.5% of games, win rate when cast  26.2% (+4.8)
+    Masterful Flourish                         cast in  13.8% of games, win rate when cast  30.7% (+9.3)
+    Dark Ritual                                cast in  13.2% of games, win rate when cast  31.1% (+9.7)
+    Bitter Triumph                             cast in  15.6% of games, win rate when cast  31.5% (+10.1)
+    Callous Inspector                          cast in  15.9% of games, win rate when cast  32.0% (+10.6)
+    Blood Artist                               cast in  15.3% of games, win rate when cast  32.4% (+11.0)
+    Mind Stone                                 cast in  17.4% of games, win rate when cast  32.4% (+11.0)
+    Carrier Thrall                             cast in  13.6% of games, win rate when cast  32.7% (+11.3)
+    Arcane Signet                              cast in  14.1% of games, win rate when cast  33.3% (+11.9)
+    Toxic Deluge                               cast in  10.2% of games, win rate when cast  33.7% (+12.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rabid Attack                               cast  16.7% of the games it was drawn
+    Necromantic Selection                      cast  30.2% of the games it was drawn
+    Grave Betrayal                             cast  34.9% of the games it was drawn
+    Blood on the Snow                          cast  35.3% of the games it was drawn
+    Butcher of Malakir                         cast  38.0% of the games it was drawn
+    Exsanguinate                               cast  39.5% of the games it was drawn
+    Rewrite Regrets                            cast  41.1% of the games it was drawn
+    Living Death                               cast  42.6% of the games it was drawn
+    Presumed Dead                              cast  42.9% of the games it was drawn
+    Crux of Fate                               cast  45.4% of the games it was drawn
+    Dread Slaver                               cast  45.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 0.32
+    Ral Zarek, Guest Lecturer                  0.03
+    Phyrexian Altar                            0.02
+    Ophiomancer                                0.01
+    Mind Stone                                 0.01
+    Moseo, Vein's New Dean                     0.01
+    Star Compass                               0.01
+    Accursed Marauder                          0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(83s total)

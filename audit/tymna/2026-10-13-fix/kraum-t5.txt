@@ -1,0 +1,109 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m04s elapsed, ~0m40s left
+  progress  20.0%  0m09s elapsed, ~0m37s left
+  progress  30.0%  0m14s elapsed, ~0m33s left
+  progress  40.0%  0m19s elapsed, ~0m28s left
+  progress  50.0%  0m24s elapsed, ~0m24s left
+  progress  60.0%  0m29s elapsed, ~0m19s left
+  progress  70.0%  0m35s elapsed, ~0m15s left
+  progress  80.0%  0m40s elapsed, ~0m10s left
+  progress  90.0%  0m44s elapsed, ~0m04s left
+  progress 100.0%  0m50s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 16.1%   (4-player baseline 25%)   average rounds survived 8.6
+
+-- How it wins --
+  damage      98.1% of wins
+  timeout      1.9% of wins
+  Opponents it eliminated: 0.45 per game, by
+    combat             87.9%
+    triggers            4.9%
+    burn                3.4%
+    commander damage    3.1%
+    drain               0.7%
+  Damage dealt per game: 20.3, from
+    combat              19.7  (97%)
+    drain                0.3  (2%)
+    triggers             0.2  (1%)
+    burn                 0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.19; Tymna turns per game 3.41; opponents hit per Tymna turn 0.71
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.87 (in 87% of games)
+  Kraum lands on turn 6.19 (in 60% of games)
+
+-- How it loses --
+  Eliminated in 83.9% of games, on average in round 7.7
+    by Kinnan   via combo              22.3% of games
+    by Urza     via combo              14.1% of games
+    by Zur the Enchanter via combo              11.7% of games
+    by Winota   via combat             11.1% of games
+    by Winota   via combo               9.9% of games
+    by Yawgmoth via combo               7.2% of games
+    by Yawgmoth via drain               1.5% of games
+    by Urza     via combat              1.2% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.8 (over the 88.8% of games it resolves)
+  Commander resolved by turn:  T4 70%  T5 80%  T6 85%  T7 87%  T8 88%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Elemental Mascot                           cast in  12.3% of games, win rate when cast  48.0% (+31.9)
+    Nightwind Glider                           cast in  12.3% of games, win rate when cast  43.9% (+27.8)
+    Expressive Iteration                       cast in  11.6% of games, win rate when cast  43.1% (+27.0)
+    Garland, Royal Kidnapper                   cast in  11.2% of games, win rate when cast  42.9% (+26.8)
+    Dakkon, Shadow Slayer                      cast in  11.7% of games, win rate when cast  42.7% (+26.6)
+    Bastion Protector                          cast in  13.1% of games, win rate when cast  42.0% (+25.9)
+    Moseo, Vein's New Dean                     cast in  13.7% of games, win rate when cast  40.9% (+24.8)
+    Memory Trap                                cast in  12.4% of games, win rate when cast  40.3% (+24.2)
+    Falcon and Redwing                         cast in  13.4% of games, win rate when cast  39.6% (+23.5)
+    Black Widow, Agile Avenger                 cast in  13.5% of games, win rate when cast  39.3% (+23.2)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  88.8% of games, win rate when cast  18.1% (+2.0)
+    Toxic Deluge                               cast in  10.1% of games, win rate when cast  18.8% (+2.7)
+    Talisman of Hierarchy                      cast in  15.5% of games, win rate when cast  22.6% (+6.5)
+    Chromatic Lantern                          cast in  11.0% of games, win rate when cast  24.5% (+8.4)
+    Force of Will                              cast in  19.4% of games, win rate when cast  24.7% (+8.6)
+    Kraum, Ludevic's Opus                      cast in  61.7% of games, win rate when cast  25.6% (+9.5)
+    Star Compass                               cast in  17.0% of games, win rate when cast  27.6% (+11.5)
+    Harsh Annotation                           cast in  17.1% of games, win rate when cast  28.1% (+12.0)
+    Talisman of Conviction                     cast in  14.0% of games, win rate when cast  29.3% (+13.2)
+    The Wasp, Winsome Avenger                  cast in  18.0% of games, win rate when cast  29.4% (+13.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Ultimate Magic: Holy                       cast   1.4% of the games it was drawn [reactive: only cast in response]
+    Desertion                                  cast  10.5% of the games it was drawn [reactive: only cast in response]
+    Shardmage's Rescue                         cast  13.1% of the games it was drawn
+    Razia, Boros Archangel                     cast  13.8% of the games it was drawn
+    Dakkon Blackblade                          cast  14.0% of the games it was drawn
+    Mordenkainen                               cast  22.1% of the games it was drawn
+    Sol'kanar the Swamp King                   cast  25.0% of the games it was drawn
+    Reconnaissance Mission                     cast  27.1% of the games it was drawn
+    Fact or Fiction                            cast  27.1% of the games it was drawn
+    Dissipate                                  cast  28.3% of the games it was drawn [reactive: only cast in response]
+    Lyra Dawnbringer                           cast  33.0% of the games it was drawn
+    Marchesa, the Black Rose                   cast  34.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.24
+    Kraum, Ludevic's Opus                      0.13
+    Dakkon, Shadow Slayer                      0.05
+    The Aetherspark                            0.04
+    The Wasp, Winsome Avenger                  0.03
+    Spectral Lynx                              0.01
+    Black Widow, Agile Avenger                 0.01
+    Mordenkainen                               0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(51s total)

@@ -60,3 +60,9 @@ file = "JD/cloud-midgar-equipment.md"
 name = "Cloud"
 commander = "Cloud, Midgar Mercenary"
 ident = "W"
+
+[sephfs]
+file = "JD/sephiroth-fs-wipe-steal.md"
+name = "Sephiroth FS"
+commander = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
+ident = "B"

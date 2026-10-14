@@ -568,7 +568,7 @@ fn resolve_combat_inner(
             .map(|a| (a, epow(g, a) * if double_strike(g, a) { 2 } else { 1 }))
             .collect();
         let lethal = unbl_dmg.iter().map(|x| x.1).sum::<i32>() >= g.player(d).life
-            || unbl_dmg.iter().any(|&(a, x)| g.perm(a).is_cmd && g.player(d).cmd_dmg[p.index()] + x >= 21);
+            || unbl_dmg.iter().any(|&(a, x)| g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + x >= 21);
         if lethal {
             last_chance(g, d)?; // lethal coming: Teferi's Protection
         }
@@ -622,9 +622,11 @@ fn resolve_combat_inner(
                         a_dies = false;
                     }
                     if b_dies {
+                        crate::impls::sephfs_cards::slaver_mark(g, a, b);
                         die(g, b, "destroy")?;
                     }
                     if a_dies {
+                        crate::impls::sephfs_cards::slaver_mark(g, b, a);
                         die(g, a, "destroy")?;
                     }
                     dmg
@@ -710,7 +712,7 @@ fn resolve_combat_inner(
                     gain(g, p, dmg)?;
                 }
                 if g.perm(a).is_cmd {
-                    g.player_mut(d).cmd_dmg[p.index()] += dmg;
+                    crate::engine::values::add_cmd_dmg(g, d, p, a, dmg);
                 }
                 if g.perm(a).army {
                     crate::impls::mine::army_hit_milestone(g, p); // reports: with or without Sauron out
@@ -907,6 +909,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 break;
             }
             let all_atk = atk.clone();
+            let pool = all_atk.clone(); // every creature that could attack (Tymna's spread)
             let d = match plan {
                 Some((i, _)) => i,
                 None => ai::choose_defender(g, p),
@@ -923,6 +926,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 let held: Vec<PermId> = pre.into_iter().filter(|m| !atk.contains(m)).collect();
                 split_attack(g, p, d, &atk, &held)
             };
+            let groups = crate::impls::tymna_partners::spread(g, p, groups, &pool); // thrasios, kraum only
             (d, groups)
         };
         let declared: Vec<PermId> = groups.iter().flat_map(|x| x.1.iter().copied()).collect();

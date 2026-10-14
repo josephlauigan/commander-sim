@@ -103,10 +103,10 @@ pub fn determinize(g2: &mut Game, me: PlayerId, rng: &mut Rng) {
         if q.id == me {
             rng.shuffle(&mut q.library);
         } else if q.alive {
-            let cmd = q.cmd;
+            let (cmd, cmd2) = (q.cmd, q.cmd2);
             // a commander put into hand (Command Beacon) is known
-            let keep: Vec<CardId> = q.hand.iter().copied().filter(|&c| c == cmd).collect();
-            let mut pool: Vec<CardId> = q.hand.iter().copied().filter(|&c| c != cmd).collect();
+            let keep: Vec<CardId> = q.hand.iter().copied().filter(|&c| c == cmd || Some(c) == cmd2).collect();
+            let mut pool: Vec<CardId> = q.hand.iter().copied().filter(|&c| c != cmd && Some(c) != cmd2).collect();
             pool.append(&mut q.library);
             rng.shuffle(&mut pool);
             let n = q.hand.len() - keep.len();
@@ -271,6 +271,9 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     if real.is_empty() {
         return None;
     }
+    if let Some(i) = crate::impls::tymna_partners::commander_first(g, p, opts) {
+        return Some(i); // thrasios, kraum: the commander comes down when it is the best play (no search)
+    }
     real.sort_by(|&a, &b| opts[b].utility.partial_cmp(&opts[a].utility).unwrap_or(std::cmp::Ordering::Equal));
     real.truncate(g.settings.search.top_k);
     let stop = opts.iter().position(|o| o.act.is_none())?;
@@ -375,7 +378,10 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
 }
 
 fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
-    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let mut opps: Vec<PlayerId> = g.opps(p).collect();
+    if g.player(p).key == crate::impls::garland::KEY {
+        opps = crate::impls::garland::attack_targets(g, p, opps); // never the monarch while we hold a steal
+    }
     if opps.is_empty() {
         return None;
     }

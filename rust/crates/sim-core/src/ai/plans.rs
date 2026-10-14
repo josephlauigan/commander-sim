@@ -487,7 +487,7 @@ pub fn shards_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// Drannith Magistrate: worth the opponents' commanders still in the command zone and their graveyard engines
 pub fn drannith_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     use crate::tag::Tag;
-    let mut k = g.opps(p).filter(|&q| g.player(q).cmd_in_zone).count() as i32;
+    let mut k = g.opps(p).filter(|&q| g.player(q).any_cmd_in_zone()).count() as i32;
     k += g
         .opps(p)
         .filter(|&q| g.player(q).perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Breach))))

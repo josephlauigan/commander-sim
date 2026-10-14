@@ -330,6 +330,9 @@ pub fn kasmina_detach(g: &mut Game, a: PermId) {
 fn copy_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
     let Some(cd) = g.perm(m).cd else { return 0.0 };
     let d = g.db.get(cd);
+    if super::garland::is_garland(g, m) && g.perm(m).owner == p && g.player(p).key == super::garland::KEY {
+        return super::garland::recrown_value(g, p) + 1.0; // a copy of Garland enters and crowns again; the legend rule keeps one
+    }
     if d.tag(Tag::Leg) || !on_bf(g, m) || (g.perm(m).owner != p && untargetable(g, m)) {
         return 0.0; // the legend rule would put one of them straight back
     }
@@ -371,7 +374,11 @@ fn land_copy_value(g: &Game, p: PlayerId) -> f64 {
 fn token_copy(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let Some(cd) = g.perm(m).cd else { return Ok(()) };
     crate::glog!(g, "    {} creates a token copy of {}", pname(g, p), g.perm(m).name);
-    enter_token_copy(g, p, cd)?;
+    let tok = enter_token_copy(g, p, cd)?;
+    if let Some(t) = tok.filter(|&t| super::garland::is_my_garland(g, t) && super::garland::garland_of(g, p).is_some_and(|o| o != t)) {
+        // the legend rule: one Garland stays (the card); his enter trigger has been put on the stack by the copy
+        crate::engine::zones::leave(g, t)?;
+    }
     Ok(())
 }
 
@@ -487,6 +494,13 @@ fn whoosh_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
             out.push(plan(v, format!("Whoosh! (bounce {})", g.perm(t).name), whoosh_go, pack(c, Some(t))));
         }
     }
+    if post == Some(true)
+        && can_pay(g, p, gn, &pips, false)
+        && let Some(m) = super::garland::own_turn_recrown(g, p, gn + pips.len() as u32)
+    {
+        // Garland's crown has stalled: bounce him after combat and cast him again (no kicker: the mana is for Garland)
+        out.push(plan(super::garland::recrown_value(g, p), "Whoosh! (bounce Garland, crown stalled)".into(), whoosh_go, pack(c, Some(m))));
+    }
     if post == Some(true) && kick_ok {
         let tg = legal_targets(g, p, "bounce", "nl", false, Some(c));
         if let Some(b) = max_by(&tg, |m| pval(g, m))
@@ -509,7 +523,8 @@ fn whoosh_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     };
     let (gn, pips) = cost_of(g, p, c);
-    let kick = can_pay(g, p, gn + 1, &format!("{pips}U"), false);
+    let spare = g.active == Some(p) && super::garland::own_turn_recrown(g, p, gn + 2 + pips.len() as u32).is_none() && g.player(p).key == super::garland::KEY && g.perm(t).owner == p && super::garland::is_my_garland(g, t);
+    let kick = !spare && can_pay(g, p, gn + 1, &format!("{pips}U"), false);
     let ctx = Ctx { target: Some(t), mode: kick.then_some("kick"), ..Ctx::default() };
     cast_paid(g, p, c, if kick { 1 } else { 0 }, if kick { "U" } else { "" }, ctx)
 }

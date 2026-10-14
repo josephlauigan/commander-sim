@@ -1,0 +1,115 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m17s elapsed, ~2m34s left
+  progress  20.0%  0m35s elapsed, ~2m23s left
+  progress  30.0%  0m56s elapsed, ~2m11s left
+  progress  40.0%  1m12s elapsed, ~1m49s left
+  progress  50.0%  1m31s elapsed, ~1m31s left
+  progress  60.0%  1m50s elapsed, ~1m13s left
+  progress  70.0%  2m08s elapsed, ~0m54s left
+  progress  80.0%  2m28s elapsed, ~0m37s left
+  progress  90.0%  2m45s elapsed, ~0m18s left
+  progress 100.0%  3m08s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== garland analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 7.5%   (4-player baseline 25%)   average rounds survived 10.6
+
+-- How it wins --
+  damage      95.4% of wins
+  timeout      4.6% of wins
+  Opponents it eliminated: 0.28 per game, by
+    combat             88.0%
+    triggers            5.0%
+    drain               4.1%
+    decked              2.9%
+  Damage dealt per game: 17.9, from
+    combat              15.9  (89%)
+    drain                1.1  (6%)
+    triggers             0.9  (5%)
+
+-- Garland --
+  Garland entries per game 1.56 (cast 1.50, token copies 0.06)
+  Steals per game 2.22; a steal lasts 0.85 rounds on average; steals ended by the crown moving 1.23 per game
+  Crown changes per game 3.62; we became the monarch 0.45 times per game
+  Damage by stolen creatures per game 1.81 (a stolen creature hit a player 0.36 times per game)
+  steals ended because the creature left: 0.99 per game; took the crown back (ended steals): 0.22 per game
+    stole Yuriko, the Tiger's Shadow 0.41 per game
+    stole Prosper, Tome-Bound 0.19 per game
+    stole Chulane, Teller of Tales 0.15 per game
+    stole Krenko, Mob Boss 0.14 per game
+    stole Heliod, Sun-Crowned 0.07 per game
+    stole Token 0.07 per game
+    stole Kiki-Jiki, Mirror Breaker 0.03 per game
+    stole Orc Army 0.03 per game
+
+-- How it loses --
+  Eliminated in 91.8% of games, on average in round 10.1
+    by Heliod   via combo              19.6% of games
+    by Krenko   via combat             15.1% of games
+    by Yuriko   via combat             10.1% of games
+    by Prosper  via combo               8.3% of games
+    by Yuriko   via triggers            8.2% of games
+    by Chulane  via combat              7.9% of games
+    by Chulane  via combo               7.4% of games
+    by Krenko   via combo               3.6% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 6.0, mean 6.4 (over the 80.0% of games it resolves)
+  Commander resolved by turn:  T4 18%  T5 34%  T6 47%  T7 58%  T8 67%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Echocasting Symposium                      cast in   5.6% of games, win rate when cast  31.2% (+23.7)
+    Ultimecia, Temporal Threat                 cast in  10.4% of games, win rate when cast  25.8% (+18.3)
+    Mordenkainen                               cast in   9.5% of games, win rate when cast  20.0% (+12.5)
+    Professor Hulk                             cast in  10.9% of games, win rate when cast  19.6% (+12.1)
+    Szadek, Lord of Secrets                    cast in   9.2% of games, win rate when cast  19.0% (+11.5)
+    Unfathomable Truths                        cast in  10.2% of games, win rate when cast  18.5% (+11.0)
+    Statute of Denial                          cast in   6.0% of games, win rate when cast  18.3% (+10.8)
+    Korlash, Heir to Blackblade                cast in  13.1% of games, win rate when cast  18.3% (+10.8)
+    Xande, Dark Mage                           cast in  17.4% of games, win rate when cast  18.1% (+10.5)
+    Desertion                                  cast in   5.1% of games, win rate when cast  17.6% (+10.1)
+  Lowest win rate when cast:
+    Garland, Royal Kidnapper                   cast in  81.0% of games, win rate when cast   9.3% (+1.8)
+    Chase Inspiration                          cast in  17.6% of games, win rate when cast  10.2% (+2.6)
+    Hydro-Channeler                            cast in  17.4% of games, win rate when cast  10.9% (+3.4)
+    Chromatic Lantern                          cast in  15.5% of games, win rate when cast  11.3% (+3.7)
+    Bitter Triumph                             cast in  20.1% of games, win rate when cast  11.5% (+3.9)
+    Toxic Deluge                               cast in  14.3% of games, win rate when cast  11.5% (+4.0)
+    Overkill                                   cast in  18.5% of games, win rate when cast  11.6% (+4.1)
+    Unsummon                                   cast in  20.6% of games, win rate when cast  11.9% (+4.3)
+    Necrosquito                                cast in  15.8% of games, win rate when cast  12.0% (+4.4)
+    Mirari                                     cast in   8.6% of games, win rate when cast  12.2% (+4.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Desertion                                  cast  22.8% of the games it was drawn [reactive: only cast in response]
+    Echocasting Symposium                      cast  25.1% of the games it was drawn
+    Statute of Denial                          cast  27.5% of the games it was drawn [reactive: only cast in response]
+    Dismiss                                    cast  33.2% of the games it was drawn [reactive: only cast in response]
+    Mirari                                     cast  37.8% of the games it was drawn
+    Szadek, Lord of Secrets                    cast  40.1% of the games it was drawn
+    Specimen Freighter                         cast  40.3% of the games it was drawn
+    Mordenkainen                               cast  44.3% of the games it was drawn
+    Reconnaissance Mission                     cast  44.6% of the games it was drawn
+    Unfathomable Truths                        cast  46.0% of the games it was drawn
+    Ultimecia, Temporal Threat                 cast  49.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Garland, Royal Kidnapper                   0.34
+    Rescue, Pepper Potts                       0.08
+    The Aetherspark                            0.08
+    The Wasp, Winsome Avenger                  0.07
+    Crawlspace                                 0.06
+    Lazav, Wearer of Faces                     0.05
+    Star Compass                               0.05
+    Xande, Dark Mage                           0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(189s total)

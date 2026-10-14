@@ -817,7 +817,7 @@ pub fn returns_when_dies(g: &mut Game, x: &Perm, _cause: Sym) -> Res<bool> {
     Ok(true)
 }
 
-fn grant_eot(g: &mut Game, m: PermId, kind: &str) {
+pub fn grant_eot(g: &mut Game, m: PermId, kind: &str) {
     let k = intern(kind);
     let x = g.perm_mut(m);
     if !x.eot_kw.contains(&k) {
@@ -2172,6 +2172,7 @@ fn seph_sacrifice(g: &mut Game, src: PermId) -> Res {
         }
     }
     if done > 0 && g.player(p).alive {
+        g.player_mut(p).stat("sf_seph_draws", done as i64);
         draw(g, p, done, false)?;
     }
     Ok(())
@@ -2222,6 +2223,12 @@ fn seph_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     if n == 4 && on_bf(g, src) {
         g.perm_mut(src).data.set(DataKey::Flipped, Val::Bool(true));
         g.player_mut(p).stat("seph_flips", 1);
+        if g.player(p).stats.get("sf_flips").copied().unwrap_or(0) == 0 {
+            g.player_mut(p).stat("sf_first_flips", 1);
+            let round = g.round as i64;
+            g.player_mut(p).stat("sf_first_flip_round", round);
+        }
+        g.player_mut(p).stat("sf_flips", 1);
         g.player_mut(p).emblems.push("seph");
         g.selfpt = true;
         crate::glog!(
@@ -2241,6 +2248,7 @@ pub fn seph_emblem_dies(g: &mut Game) -> Res {
         let n = g.player(p).emblems.iter().filter(|&&e| e == "seph").count();
         for _ in 0..n {
             if g.player(p).alive {
+                g.player_mut(p).stat("sf_emblem_drains", 1);
                 seph_drain(g, p)?;
             }
         }

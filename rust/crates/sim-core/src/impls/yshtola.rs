@@ -323,7 +323,7 @@ pub fn x_drain_option(g: &Game, p: PlayerId, c: CardId) -> Option<(f64, String)>
 }
 
 /// x_drain_option's play: cast the drain spell (arg) for the largest X the mana allows
-fn x_drain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub fn x_drain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !hand_has(g, p, c) {
         return Ok(false);

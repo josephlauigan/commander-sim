@@ -1,0 +1,110 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m15s elapsed, ~2m16s left
+  progress  20.0%  0m29s elapsed, ~1m56s left
+  progress  30.0%  0m44s elapsed, ~1m42s left
+  progress  40.0%  0m57s elapsed, ~1m26s left
+  progress  50.0%  1m13s elapsed, ~1m13s left
+  progress  60.0%  1m32s elapsed, ~1m01s left
+  progress  70.0%  1m47s elapsed, ~0m46s left
+  progress  80.0%  2m02s elapsed, ~0m30s left
+  progress  90.0%  2m18s elapsed, ~0m15s left
+  progress 100.0%  2m34s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 16.5%   (4-player baseline 25%)   average rounds survived 13.0
+
+-- How it wins --
+  damage      86.1% of wins
+  timeout     13.9% of wins
+  Opponents it eliminated: 0.52 per game, by
+    combat             86.5%
+    burn                3.7%
+    triggers            3.5%
+    commander damage    2.7%
+    decked              2.3%
+    drain               1.4%
+  Damage dealt per game: 30.3, from
+    combat              29.1  (96%)
+    drain                0.8  (3%)
+    triggers             0.4  (1%)
+    burn                 0.1  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.66; Tymna turns per game 5.10; opponents hit per Tymna turn 0.64
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.85 (in 99% of games)
+  Kraum lands on turn 6.17 (in 93% of games)
+
+-- How it loses --
+  Eliminated in 81.1% of games, on average in round 12.2
+    by Sythis   via combat             14.6% of games
+    by Brago    via combat             13.7% of games
+    by Lord Windgrace via combat             13.3% of games
+    by Kaalia of the Vast via combat             10.9% of games
+    by Sythis   via commander damage    7.6% of games
+    by Meren of Clan Nel Toth via combat              6.0% of games
+    by Meren of Clan Nel Toth via triggers            4.4% of games
+    by Meren of Clan Nel Toth via drain               3.3% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.8 (over the 99.1% of games it resolves)
+  Commander resolved by turn:  T4 81%  T5 90%  T6 95%  T7 97%  T8 98%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Dakkon, Shadow Slayer                      cast in  21.1% of games, win rate when cast  37.0% (+20.5)
+    Mordenkainen                               cast in  11.8% of games, win rate when cast  36.4% (+19.9)
+    Marchesa, the Black Rose                   cast in  16.9% of games, win rate when cast  36.1% (+19.6)
+    Twisted Fates                              cast in  12.3% of games, win rate when cast  35.8% (+19.3)
+    Bedevil                                    cast in  18.0% of games, win rate when cast  32.2% (+15.7)
+    Terror of the Peaks                        cast in  16.1% of games, win rate when cast  31.7% (+15.2)
+    Wander Off                                 cast in  16.7% of games, win rate when cast  31.1% (+14.6)
+    Razia, Boros Archangel                     cast in  11.5% of games, win rate when cast  29.6% (+13.1)
+    Vibrant Outburst                           cast in  18.3% of games, win rate when cast  29.5% (+13.0)
+    Elemental Mascot                           cast in  25.9% of games, win rate when cast  29.3% (+12.8)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  99.0% of games, win rate when cast  16.7% (+0.2)
+    Kraum, Ludevic's Opus                      cast in  93.5% of games, win rate when cast  17.6% (+1.1)
+    Toxic Deluge                               cast in  20.3% of games, win rate when cast  19.2% (+2.7)
+    Caparocti Sunborn                          cast in  17.9% of games, win rate when cast  20.1% (+3.6)
+    Talisman of Hierarchy                      cast in  26.2% of games, win rate when cast  20.6% (+4.1)
+    Harsh Annotation                           cast in  26.9% of games, win rate when cast  20.8% (+4.3)
+    Mana Leak                                  cast in  16.9% of games, win rate when cast  21.3% (+4.8)
+    Talisman of Conviction                     cast in  23.3% of games, win rate when cast  21.5% (+5.0)
+    Darksteel Mutation                         cast in  29.6% of games, win rate when cast  21.6% (+5.1)
+    Star Compass                               cast in  27.1% of games, win rate when cast  22.5% (+6.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Desertion                                  cast  13.1% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  14.0% of the games it was drawn [reactive: only cast in response]
+    Dakkon Blackblade                          cast  25.9% of the games it was drawn
+    Dissipate                                  cast  33.1% of the games it was drawn [reactive: only cast in response]
+    Razia, Boros Archangel                     cast  34.0% of the games it was drawn
+    Mordenkainen                               cast  36.4% of the games it was drawn
+    Twisted Fates                              cast  38.2% of the games it was drawn
+    Shardmage's Rescue                         cast  38.9% of the games it was drawn
+    Reconnaissance Mission                     cast  39.8% of the games it was drawn
+    Fact or Fiction                            cast  40.3% of the games it was drawn
+    Fate of the Sun-Cryst                      cast  42.6% of the games it was drawn
+    Sol'kanar the Swamp King                   cast  48.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.84
+    Kraum, Ludevic's Opus                      0.84
+    Dakkon, Shadow Slayer                      0.14
+    The Aetherspark                            0.11
+    Star Compass                               0.09
+    Terror of the Peaks                        0.09
+    Lyra Dawnbringer                           0.09
+    The Wasp, Winsome Avenger                  0.07
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(154s total)

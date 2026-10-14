@@ -529,7 +529,7 @@ pub fn deck_combos(g: &Game, q: PlayerId) -> Vec<usize> {
     }
     let pl = g.player(q);
     let mut names: Vec<&str> = pl.deck_names.iter().map(|&c| name_of(g, c)).collect();
-    names.push(name_of(g, pl.cmd)); // `| {q.cmd.name}`
+    names.extend(pl.commanders().map(|c| name_of(g, c))); // `| {q.cmd.name}`
     let v: Vec<usize> = COMBOS
         .iter()
         .enumerate()
@@ -556,8 +556,8 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
         .chain(pl.hand.iter().copied())
         .map(|c| name_of(g, c))
         .collect();
-    if pl.cmd_in_zone {
-        have.push(name_of(g, pl.cmd));
+    for c in pl.cmds_in_zone() {
+        have.push(name_of(g, c));
     }
     let mut best = f64::NEG_INFINITY;
     for i in cmbs {

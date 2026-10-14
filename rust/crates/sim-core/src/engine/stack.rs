@@ -809,8 +809,8 @@ pub fn settle_stack(g: &mut Game) -> Res {
             }
             let c = it.card.unwrap();
             let o = it.ctx.owner.unwrap_or(p); // a card cast from another player's deck goes back to theirs
-            if c == g.player(p).cmd {
-                g.player_mut(p).cmd_in_zone = true;
+            if g.player(p).is_commander(c) {
+                g.player_mut(p).set_cmd_zone(c, true);
             } else if it.zone == "gy" || it.ctx.exile_after {
                 g.player_mut(o).exile.push(c);
             } else if !g.db.get(c).land {
@@ -874,6 +874,9 @@ pub fn counter_side_effects(g: &mut Game, q: PlayerId, p: PlayerId, ctr: CardId)
     }
     if name == "Amazing Acrobatics" {
         crate::impls::bulk_blue::acrobatics_tap(g, q)?; // its other mode: tap one or two creatures
+    }
+    if name == "Dismiss" {
+        draw(g, q, 1, false)?; // Dismiss: counter target spell. Draw a card.
     }
     if name == "Statute of Denial"
         && g.player(q).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased && colors_of(g, m).has('U'))

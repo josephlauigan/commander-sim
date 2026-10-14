@@ -485,7 +485,12 @@ fn run(
         }
         "destroy" | "exile" | "bounce" | "tuck" => {
             let sel = sel_or_empty(&e.what);
-            let ms = select(g, p, &sel, true, ctx, src, spell);
+            let mut ms = select(g, p, &sel, true, ctx, src, spell);
+            if e.kind == "bounce"
+                && let Some(t) = src.and_then(|s| crate::impls::garland::ropemaster_target(g, p, s))
+            {
+                ms = vec![t]; // Peerless Ropemaster re-crowns: our tapped Garland is the target
+            }
             if sel.sel.as_deref() == Some("all") {
                 let wipe_kind: Sym = match e.kind.as_str() {
                     "exile" => "exile",
@@ -754,7 +759,8 @@ fn run(
             let sel = sel_or_empty(&e.what);
             let ms: Vec<PermId> = if sel.upto == Some(true) || sel.sel.as_deref() == Some("target") {
                 // only blink a nontoken creature that gets something from entering again
-                let cmd = g.player(p).cmd;
+                let pl_c = g.player(p);
+                let (cmd, cmd2) = (pl_c.cmd, pl_c.cmd2);
                 let cands: Vec<PermId> = g
                     .player(p)
                     .perms
@@ -763,7 +769,7 @@ fn run(
                     .filter(|&m| {
                         let x = g.perm(m);
                         g.is_creature(m)
-                            && x.cd.is_some_and(|c| c != cmd && etb_value(g, c) > 0)
+                            && x.cd.is_some_and(|c| c != cmd && Some(c) != cmd2 && etb_value(g, c) > 0)
                             && !x.phased
                             && matches(g, p, m, sel.filter.as_ref(), src)
                     })

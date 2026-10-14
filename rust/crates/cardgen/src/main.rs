@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 const USAGE: &str = "usage:
   cardgen export [--out DIR] [--offline]        write data/cards.json and data/decks.json
-  cardgen audit [--deck KEY | --mine | --md FILE | --hooks [--all]]
+  cardgen audit [--deck KEY | --cards FILE | --mine | --md FILE | --hooks [--all]]
                                                 how faithfully the cards are modeled; what is left to port
   cardgen validate                              check every pool deck (size, singleton, colours, bans, Game Changers)
   cardgen deck KEY LIST|- [--dry-run] [--log TEXT] [--offline]
@@ -63,11 +63,23 @@ fn run(args: &[String]) -> Result<(), String> {
 
 fn audit(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     use cardgen::audit as a;
-    let inp = cardgen::export::Inputs::load(project)?;
-    let built = inp.build();
+    let mut inp = cardgen::export::Inputs::load(project)?;
     let md = opt(args, "--md")?;
     let deck = opt(args, "--deck")?;
+    let cards_file = opt(args, "--cards")?;
+    let fetch = flag(args, "--fetch");
     let mine = flag(args, "--mine");
+    if let (Some(f), true) = (&cards_file, fetch) {
+        let text = std::fs::read_to_string(f).map_err(|e| format!("{f}: {e}"))?;
+        let names: Vec<String> =
+            text.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#')).map(String::from).collect();
+        let lost = cardgen::scryfall::fetch(&mut inp.cache, &names, true);
+        inp.cache.save()?;
+        if !lost.is_empty() {
+            eprintln!("not found on Scryfall: {}", lost.join(", "));
+        }
+    }
+    let built = inp.build();
     let hooks = flag(args, "--hooks");
     let all = flag(args, "--all");
     if hooks {
@@ -75,6 +87,14 @@ fn audit(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
         return Ok(());
     }
     let au = a::Audit::new(&inp, &built.cards)?;
+    if let Some(f) = cards_file {
+        let text = std::fs::read_to_string(&f).map_err(|e| format!("{f}: {e}"))?;
+        for name in text.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#')) {
+            let (s, n) = au.card_status(name, true);
+            println!("{s} | {name} | {n}");
+        }
+        return Ok(());
+    }
     if mine {
         print!("{}", a::mine_report(&au));
         return Ok(());
@@ -102,7 +122,10 @@ fn validate(project: &Project, _args: &[String]) -> Result<(), String> {
             if probs.is_empty() { "OK " } else { "ERR" },
             d.tier,
             d.key,
-            d.commander,
+            match &d.commander2 {
+                Some(c2) => format!("{} + {c2}", d.commander),
+                None => d.commander.clone(),
+            },
             info.identity,
             info.gcs.len()
         );

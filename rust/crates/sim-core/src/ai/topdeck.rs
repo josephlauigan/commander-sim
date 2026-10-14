@@ -22,7 +22,7 @@ pub fn mv_mode(g: &Game, p: PlayerId) -> bool {
     if plans::config(pl.key).top_pref != Some("mv") {
         return false;
     }
-    pl.cmd_in_zone || pl.perms.iter().any(|&m| g.perm(m).is_cmd)
+    pl.any_cmd_in_zone() || pl.perms.iter().any(|&m| g.perm(m).is_cmd)
 }
 
 /// topdeck.land_need: 2 when short on lands, 1 when a few more would do, 0 when there are enough

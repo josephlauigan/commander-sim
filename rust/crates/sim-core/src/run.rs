@@ -36,13 +36,23 @@ impl Engine {
         let card =
             |n: &str| self.db.id(n).ok_or_else(|| format!("{n:?} isn't in data/cards.json (re-export the cards)"));
         let commander = card(commander)?;
+        let commander2 = match self.decks.get(key).and_then(|d| d.commander2.as_deref()) {
+            Some(n) => Some(card(n)?),
+            None => None,
+        };
         let ident = match self.decks.get(key).and_then(|d| d.ident.as_deref()) {
             Some(s) => Colors::from_letters(s),
-            None => self.db.get(commander).identity.unwrap_or_default(),
+            None => {
+                let mut i = self.db.get(commander).identity.unwrap_or_default();
+                if let Some(c2) = commander2 {
+                    i = i.union(self.db.get(c2).identity.unwrap_or_default());
+                }
+                i
+            }
         };
         let name = self.decks.get(key).map_or(key, |d| d.name.as_str());
         let cards: Arc<[CardId]> = cards.iter().map(|n| card(n)).collect::<Result<_, _>>()?;
-        Ok(Seat { key: intern(key), name: intern(name), commander, ident, cards })
+        Ok(Seat { key: intern(key), name: intern(name), commander, commander2, ident, cards })
     }
 
     /// ais.play_pool_game: a game with this seat order, from seed: setup, mulligans and up to max_rounds rounds

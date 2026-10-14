@@ -1,0 +1,16 @@
+09:21 build warnings: 0
+09:22 tests passed/failed: 1638 0
+09:22 same-seed sauron: identical
+09:22 same-seed cloud: identical
+09:22 same-seed thrasios: identical
+09:23 same-seed garland: identical
+09:23 same-seed seph: identical
+09:23 same-seed sheoldred: identical
+09:23 same-seed yshtola: identical
+09:23 merged sephfs into tymna-thrasios: 93eef7a
+09:27 sephfs t1 exit 0 Win rate 41.0%   (4-player baseline 25%)   average rounds survived 12.6
+09:30 sephfs t2 exit 0 Win rate 43.7%   (4-player baseline 25%)   average rounds survived 14.6
+09:33 sephfs t3 exit 0 Win rate 35.9%   (4-player baseline 25%)   average rounds survived 12.9
+09:35 sephfs t4 exit 0 Win rate 31.2%   (4-player baseline 25%)   average rounds survived 10.4
+09:37 sephfs t5 exit 0 Win rate 21.4%   (4-player baseline 25%)   average rounds survived 8.7
+09:37 DONE

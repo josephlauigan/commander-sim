@@ -533,12 +533,12 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
         return;
     }
     let cd = x.cd.unwrap();
-    if cd == g.player(owner).cmd {
+    if g.player(owner).is_commander(cd) {
         if zone == Zone::Hand && crate::impls::cloud::cmd_stays_in_hand(g, owner) {
             g.player_mut(owner).hand.push(cd); // rule 903.9b: the owner may leave the commander in hand (no tax)
             return;
         }
-        g.player_mut(owner).cmd_in_zone = true;
+        g.player_mut(owner).set_cmd_zone(cd, true);
         return;
     }
     match zone {
@@ -768,6 +768,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
             hand_tag_death(g, q, p, m, creature)?;
         }
     }
+    if creature && g.perm(m).data.get(DataKey::Rabid) == Some(&Val::Stamp(g.turn_stamp())) {
+        crate::impls::sephfs_cards::rabid_dies(g, g.perm(m).owner)?; // Rabid Attack: draw a card
+    }
     if creature && g.players.iter().any(|pl| pl.emblems.contains(&"seph")) {
         cardcode::emblem_dies(g)?; // Sephiroth, One-Winged Angel's emblem
     }
@@ -827,7 +830,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     if d.bomb != 0 && x.orig == p && !g.player(p).removed_bombs.contains(&cd) {
         g.player_mut(p).removed_bombs.push(cd);
     }
-    let is_cmd_card = cd == g.player(p).cmd;
+    let is_cmd_card = g.player(p).is_commander(cd);
     // undying from Mikaeus
     if has(g, p, Tag::Mikaeus)
         && d.creature
@@ -865,6 +868,13 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
             return Ok(());
         }
     }
+    if let Some(Val::Player(q)) = x.data.get(DataKey::Ghostform).cloned()
+        && returns_left(g, cd)
+        && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
+        && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
+    {
+        return Ok(()); // Kaya's Ghostform: it returns to the battlefield under its Aura's controller
+    }
     if x.data.truthy(DataKey::Ferocity)
         && returns_left(g, cd)
         && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
@@ -891,7 +901,15 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
 }
 
 pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
-    leave(g, m)?;
+    let prev = g.exiling.replace(m); // Kaya's Ghostform sees the exile
+    let r = leave(g, m);
+    g.exiling = prev;
+    r?;
+    if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned()
+        && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
+    {
+        return Ok(());
+    }
     to_zone_card(g, m, Zone::Exile);
     Ok(())
 }
@@ -959,7 +977,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
                 let y = g.perm(x);
                 y.cd.is_some_and(|c| {
                     let d = g.db.get(c);
-                    c != g.player(y.owner).cmd
+                    !g.player(y.owner).is_commander(c)
                         && (g.is_creature(x) || d.types.has(crate::cards::Types::ARTIFACT))
                         && !d.tag(Tag::Clone)
                 })
@@ -1118,7 +1136,7 @@ pub const ETB_TRIGGER_TAGS: [Tag; 18] = [
 ];
 pub const ETB_SCRYFALL_TAGS: [Tag; 4] = [Tag::Tut, Tag::Treas, Tag::Drainetb, Tag::Edictetb];
 /// removal kinds that are Auras locking the target down
-pub const LOCK_KINDS: [&str; 4] = ["arrest", "pacify", "encrust", "kasmina"];
+pub const LOCK_KINDS: [&str; 5] = ["arrest", "pacify", "encrust", "kasmina", "coerce"];
 
 pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
     let d = g.db.get(cd);
@@ -1644,8 +1662,8 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
         let Some(i) = pl.hand.iter().position(|&x| x == c) else { continue }; // paid away meanwhile
         pl.hand.remove(i);
         done.push(c);
-        if c == pl.cmd {
-            pl.cmd_in_zone = true; // a commander in hand (Command Beacon): to the command zone
+        if pl.is_commander(c) {
+            pl.set_cmd_zone(c, true); // a commander in hand (Command Beacon): to the command zone
             continue;
         }
         if necro {
@@ -1673,8 +1691,8 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
 /// q discards the card at position i in hand (random discards)
 pub fn discard_index(g: &mut Game, q: PlayerId, i: usize) -> Res {
     let c = g.player_mut(q).hand.remove(i);
-    if c == g.player(q).cmd {
-        g.player_mut(q).cmd_in_zone = true;
+    if g.player(q).is_commander(c) {
+        g.player_mut(q).set_cmd_zone(c, true);
         return Ok(());
     }
     if !g.hooks.is_empty() {

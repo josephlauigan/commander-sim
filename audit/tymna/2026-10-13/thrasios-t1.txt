@@ -1,0 +1,105 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m14s elapsed, ~2m08s left
+  progress  20.0%  0m28s elapsed, ~1m54s left
+  progress  30.0%  0m43s elapsed, ~1m40s left
+  progress  40.0%  0m57s elapsed, ~1m26s left
+  progress  50.0%  1m11s elapsed, ~1m11s left
+  progress  60.0%  1m26s elapsed, ~0m57s left
+  progress  70.0%  1m46s elapsed, ~0m45s left
+  progress  80.0%  2m00s elapsed, ~0m30s left
+  progress  90.0%  2m15s elapsed, ~0m15s left
+  progress 100.0%  2m36s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== thrasios analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 10.2%   (4-player baseline 25%)   average rounds survived 11.0
+
+-- How it wins --
+  damage      95.1% of wins
+  timeout      4.9% of wins
+  Opponents it eliminated: 0.30 per game, by
+    combat             91.7%
+    decked              6.0%
+    commander damage    1.3%
+    drain               0.7%
+    triggers            0.3%
+  Damage dealt per game: 23.4, from
+    combat              22.9  (98%)
+    drain                0.5  (2%)
+    triggers             0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.06; Tymna turns per game 3.55; opponents hit per Tymna turn 0.79
+  Thrasios activations per game 0.59
+  Tymna_the_Weaver lands on turn 5.14 (in 89% of games)
+  Thrasios lands on turn 4.42 (in 91% of games)
+
+-- How it loses --
+  Eliminated in 89.1% of games, on average in round 10.5
+    by Isshin   via combat             16.5% of games
+    by Light-Paws via commander damage   13.2% of games
+    by Lathril  via combat             11.6% of games
+    by Tatyova  via combat             11.5% of games
+    by Teysa Karlov via drain               8.3% of games
+    by Lathril  via drain               6.5% of games
+    by Light-Paws via combat              6.2% of games
+    by Teysa Karlov via combat              5.1% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.5 (over the 97.2% of games it resolves)
+  Commander resolved by turn:  T4 79%  T5 88%  T6 93%  T7 95%  T8 96%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Mordenkainen                               cast in  12.9% of games, win rate when cast  30.2% (+20.0)
+    Dragonlord Dromoka                         cast in  15.0% of games, win rate when cast  28.0% (+17.8)
+    Tolsimir Wolfblood                         cast in  15.0% of games, win rate when cast  27.3% (+17.1)
+    Privileged Position                        cast in  11.1% of games, win rate when cast  27.0% (+16.8)
+    Dakkon, Shadow Slayer                      cast in  18.3% of games, win rate when cast  26.2% (+16.0)
+    Reconnaissance Mission                     cast in  11.5% of games, win rate when cast  26.1% (+15.9)
+    Embrace the Paradox                        cast in  12.8% of games, win rate when cast  25.8% (+15.6)
+    Bastion Protector                          cast in  20.6% of games, win rate when cast  25.7% (+15.5)
+    Paradox Surveyor                           cast in  17.9% of games, win rate when cast  25.1% (+14.9)
+    Elenda, the Dusk Rose                      cast in  16.4% of games, win rate when cast  24.4% (+14.2)
+  Lowest win rate when cast:
+    Thrasios, Triton Hero                      cast in  91.4% of games, win rate when cast  11.2% (+1.0)
+    Tymna the Weaver                           cast in  89.7% of games, win rate when cast  11.4% (+1.2)
+    Mana Leak                                  cast in  12.3% of games, win rate when cast  13.0% (+2.8)
+    Toxic Deluge                               cast in  16.1% of games, win rate when cast  13.0% (+2.8)
+    Birds of Paradise                          cast in  27.0% of games, win rate when cast  13.3% (+3.1)
+    Star Compass                               cast in  22.8% of games, win rate when cast  14.9% (+4.7)
+    Exit Specialist                            cast in  24.5% of games, win rate when cast  15.5% (+5.3)
+    Paradise Druid                             cast in  21.0% of games, win rate when cast  15.7% (+5.5)
+    Talisman of Hierarchy                      cast in  18.9% of games, win rate when cast  15.9% (+5.7)
+    Bitter Triumph                             cast in  21.3% of games, win rate when cast  16.4% (+6.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Lagrella, the Magpie                       cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Shardmage's Rescue                         cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Ultimate Magic: Holy                       cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Witherbloom Charm                          cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Desertion                                  cast  18.6% of the games it was drawn [reactive: only cast in response]
+    Dissipate                                  cast  37.1% of the games it was drawn [reactive: only cast in response]
+    Dakkon Blackblade                          cast  46.4% of the games it was drawn
+    Reconnaissance Mission                     cast  46.7% of the games it was drawn
+    Privileged Position                        cast  47.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Thrasios, Triton Hero                      0.33
+    Tymna the Weaver                           0.28
+    Dakkon, Shadow Slayer                      0.11
+    The Aetherspark                            0.10
+    Mordenkainen                               0.05
+    Lyra Dawnbringer                           0.04
+    Mirri, Weatherlight Duelist                0.04
+    Moss Diamond                               0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(156s total)

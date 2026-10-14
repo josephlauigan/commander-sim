@@ -501,7 +501,7 @@ fn went_to_hand(g: &Game, m: PermId) -> bool {
         return true;
     }
     let o = x.orig;
-    !(x.cd == Some(g.player(o).cmd) && g.player(o).cmd_in_zone)
+    !x.cd.is_some_and(|c| g.player(o).cmd_zone_of(c))
 }
 
 /// after a creature went to the hand: a 1/1 Soldier for each Stormfront Riders its controller had

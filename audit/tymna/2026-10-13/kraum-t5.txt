@@ -1,0 +1,108 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m04s elapsed, ~0m43s left
+  progress  20.0%  0m09s elapsed, ~0m38s left
+  progress  30.0%  0m15s elapsed, ~0m35s left
+  progress  40.0%  0m20s elapsed, ~0m31s left
+  progress  50.0%  0m25s elapsed, ~0m25s left
+  progress  60.0%  0m30s elapsed, ~0m20s left
+  progress  70.0%  0m36s elapsed, ~0m15s left
+  progress  80.0%  0m41s elapsed, ~0m10s left
+  progress  90.0%  0m46s elapsed, ~0m05s left
+  progress 100.0%  0m52s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 17.2%   (4-player baseline 25%)   average rounds survived 8.6
+
+-- How it wins --
+  damage      98.3% of wins
+  timeout      1.7% of wins
+  Opponents it eliminated: 0.46 per game, by
+    combat             90.4%
+    burn                3.3%
+    triggers            3.3%
+    commander damage    3.1%
+  Damage dealt per game: 20.2, from
+    combat              19.8  (98%)
+    drain                0.2  (1%)
+    triggers             0.2  (1%)
+    burn                 0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 1.72; Tymna turns per game 2.28; opponents hit per Tymna turn 0.83
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 4.74 (in 70% of games)
+  Kraum lands on turn 6.72 (in 50% of games)
+
+-- How it loses --
+  Eliminated in 82.8% of games, on average in round 7.6
+    by Kinnan   via combo              22.4% of games
+    by Zur the Enchanter via combo              13.7% of games
+    by Urza     via combo              13.5% of games
+    by Winota   via combat             11.6% of games
+    by Winota   via combo               9.9% of games
+    by Yawgmoth via combo               6.1% of games
+    by Urza     via combat              1.0% of games
+    by Yawgmoth via combat              0.9% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 4.0, mean 4.5 (over the 78.3% of games it resolves)
+  Commander resolved by turn:  T4 48%  T5 62%  T6 70%  T7 74%  T8 76%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Elemental Mascot                           cast in  13.1% of games, win rate when cast  49.6% (+32.4)
+    Expressive Iteration                       cast in  11.4% of games, win rate when cast  48.2% (+31.0)
+    Tocasia's Welcome                          cast in  11.2% of games, win rate when cast  47.3% (+30.1)
+    Nightwind Glider                           cast in  13.4% of games, win rate when cast  46.3% (+29.1)
+    Abigale, Poet Laureate // Heroic Stanza    cast in  12.4% of games, win rate when cast  46.0% (+28.8)
+    Quick Study                                cast in  11.0% of games, win rate when cast  44.5% (+27.3)
+    Dakkon, Shadow Slayer                      cast in  13.0% of games, win rate when cast  43.8% (+26.6)
+    Bastion Protector                          cast in  13.8% of games, win rate when cast  43.5% (+26.3)
+    Falcon and Redwing                         cast in  13.6% of games, win rate when cast  43.4% (+26.2)
+    Firebird, Blazing Ranger                   cast in  11.6% of games, win rate when cast  42.2% (+25.0)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  72.8% of games, win rate when cast  23.4% (+6.2)
+    Talisman of Hierarchy                      cast in  15.2% of games, win rate when cast  24.3% (+7.1)
+    Spectral Lynx                              cast in  18.1% of games, win rate when cast  27.1% (+9.9)
+    Force of Will                              cast in  18.2% of games, win rate when cast  28.6% (+11.4)
+    Star Compass                               cast in  17.2% of games, win rate when cast  30.2% (+13.0)
+    Mana Leak                                  cast in  10.9% of games, win rate when cast  30.3% (+13.1)
+    Arcane Denial                              cast in  13.4% of games, win rate when cast  31.3% (+14.1)
+    Exit Specialist                            cast in  17.6% of games, win rate when cast  31.8% (+14.6)
+    Harsh Annotation                           cast in  16.6% of games, win rate when cast  31.9% (+14.7)
+    Bitter Triumph                             cast in  18.0% of games, win rate when cast  32.2% (+15.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Ultimate Magic: Holy                       cast   0.5% of the games it was drawn [reactive: only cast in response]
+    Shardmage's Rescue                         cast   0.5% of the games it was drawn
+    Desertion                                  cast   6.9% of the games it was drawn [reactive: only cast in response]
+    Dakkon Blackblade                          cast  14.1% of the games it was drawn
+    Razia, Boros Archangel                     cast  18.2% of the games it was drawn
+    Mordenkainen                               cast  25.7% of the games it was drawn
+    Reconnaissance Mission                     cast  25.7% of the games it was drawn
+    Dissipate                                  cast  26.2% of the games it was drawn [reactive: only cast in response]
+    Fact or Fiction                            cast  30.4% of the games it was drawn
+    Sol'kanar the Swamp King                   cast  33.3% of the games it was drawn
+    Urza, Powerstone Prodigy                   cast  37.9% of the games it was drawn
+    Twisted Fates                              cast  38.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.19
+    Kraum, Ludevic's Opus                      0.11
+    Dakkon, Shadow Slayer                      0.04
+    The Aetherspark                            0.04
+    The Wasp, Winsome Avenger                  0.03
+    Terror of the Peaks                        0.02
+    Bastion Protector                          0.02
+    Laelia, the Blade Reforged                 0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(53s total)

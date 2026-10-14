@@ -2067,7 +2067,7 @@ fn nim_return(g: &mut Game, src: Src, m: PermId) -> Res {
     if !on_bf_of(g, p, src) || g.perm(src).phased || x.token || x.orig != p || !g.player(p).gy.contains(&cd) {
         return Ok(());
     }
-    if cd == g.player(p).cmd {
+    if g.player(p).is_commander(cd) {
         return Ok(());
     }
     let hum = human_of(g, p).is_some();
@@ -2094,7 +2094,7 @@ fn nim_return(g: &mut Game, src: Src, m: PermId) -> Res {
         crate::glog!(g, "    {} pays 4: Nim Deathmantle returns {}", g.player(p).name, g.perm(n).name);
         return Ok(());
     }
-    if cd == g.player(p).cmd || !can_pay(g, p, 4, "", false) {
+    if g.player(p).is_commander(cd) || !can_pay(g, p, 4, "", false) {
         return Ok(());
     }
     if marchesa_returns(g, cd) {

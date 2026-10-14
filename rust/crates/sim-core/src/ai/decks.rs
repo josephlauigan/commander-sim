@@ -58,6 +58,10 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "titania" => crate::impls::titania::titania_prio(g, p, c),
         "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
         "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
+        "thrasios" => crate::impls::tymna_partners::thrasios_prio(g, p, c),
+        "kraum" => crate::impls::tymna_partners::kraum_prio(g, p, c),
+        "garland" => crate::impls::garland::garland_prio(g, p, c),
+        "sephfs" => crate::impls::sephfs::sephfs_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -598,6 +602,9 @@ pub fn flute_pick(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
             add(ql.cmd, 9.0 + threat(g, p, q) * 0.05); // WUBRG extra combats + recast tax
         } else {
             add(ql.cmd, if ql.cmd_in_zone { 4.0 } else { 1.5 } + if ql.tax >= 2 { 1.0 } else { 0.0 });
+            if let Some(c2) = ql.cmd2 {
+                add(c2, if ql.cmd2_in_zone { 4.0 } else { 1.5 } + if ql.tax2 >= 2 { 1.0 } else { 0.0 });
+            }
         }
         for &m in &ql.perms {
             let x = g.perm(m);
@@ -908,6 +915,9 @@ pub fn has_rean_access(g: &Game, p: PlayerId) -> bool {
 
 /// ais.rean_targets: (value, card, whose graveyard), best first
 pub fn rean_targets(g: &Game, p: PlayerId, kind: &str) -> Vec<(f64, CardId, PlayerId)> {
+    if g.player(p).key == "sephfs" {
+        return crate::impls::sephfs::rean_targets(g, p, kind);
+    }
     let mut res = vec![];
     let need = crate::cardcode::loop_need(g, p);
     for &c in &g.player(p).gy {
@@ -1226,6 +1236,9 @@ pub fn protect_response(
     actor: Option<PlayerId>,
     spell: Option<CardId>,
 ) -> Res<bool> {
+    if crate::impls::tymna_cards::protect(g, owner, m, kind)? {
+        return Ok(true); // Razia redirects burn, King Darien saves tokens
+    }
     if protect_main(g, owner, m, kind, actor, spell)? {
         return Ok(true);
     }
@@ -1255,6 +1268,14 @@ fn protect_main(
     if !is_main(key) {
         if silenced(g, owner) {
             return Ok(false);
+        }
+        if key == "sephfs" && crate::impls::sephfs_cards::presumed_protect(g, owner, m, kind)? {
+            return Ok(false); // Presumed Dead: the removal goes through, the creature comes back (suspected)
+        }
+        if matches!(key, "thrasios" | "kraum")
+            && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)?
+        {
+            return Ok(true); // Shardmage's Rescue, Ultimate Magic: Holy for Tymna and the partners
         }
         return pool::protect(g, owner, m, kind, actor, spell);
     }
@@ -1321,11 +1342,17 @@ fn protect_main(
 
 /// ais.wipe_response: q's answer to a board wipe about to hit it: 'all' (everything saved), 'indes', or none
 pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
+    crate::impls::tymna_cards::darien_wipe(g, q, kind, caster)?; // King Darien: tokens survive a destroy sweeper
     if q == caster || silenced(g, q) || g.humans.get(q).is_some() {
         return Ok(None);
     }
     let key = g.player(q).key;
     if !is_main(key) {
+        if matches!(key, "thrasios" | "kraum")
+            && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
+        {
+            return Ok(Some(r)); // Ultimate Magic: Holy
+        }
         return pool::wipe_response(g, q, kind, caster);
     }
     if key == "yshtola" {
