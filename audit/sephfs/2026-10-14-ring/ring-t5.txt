@@ -1,0 +1,74 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The One Ring [pool] A 4 :: leg
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m08s elapsed, ~1m12s left
+  progress  20.0%  0m16s elapsed, ~1m06s left
+  progress  30.0%  0m24s elapsed, ~0m56s left
+  progress  40.0%  0m33s elapsed, ~0m49s left
+  progress  50.0%  0m42s elapsed, ~0m42s left
+  progress  60.0%  0m50s elapsed, ~0m33s left
+  progress  70.0%  0m59s elapsed, ~0m25s left
+  progress  80.0%  1m07s elapsed, ~0m16s left
+  progress  90.0%  1m16s elapsed, ~0m08s left
+  progress 100.0%  1m25s elapsed, ~0m00s left
+Swaps: Caged Zombie -> The One Ring
+
+=== Sephiroth FS vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  21.0% ->  19.8%  (delta -1.2 pts, noise ±2.7, paired)   n=1000
+               eliminated by (variant): Kinnan 24.8%  Zur the Enchanter 13.6%  Urza 18.7%  Winota 15.8%  Yawgmoth 7.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sephfs) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sephfs: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          21.0% ->  19.8%  -1.2pt   ±3.6 
+    Rounds survived (or game length)                   8.61 ->   8.52   -0.09  ±0.34 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.55 ->   0.54   -0.02  ±0.07 
+    Mana available on your turn 4                      4.11 ->   4.10   -0.01  ±0.09 
+    Mana available on your turn 6                      5.62 ->   5.66   +0.04  ±0.16 
+
+  Speed
+    Games where the game plan came online              0.1% ->   0.2%  +0.1pt   ±0.3 
+    Turn the game plan came online                    11.00 ->   8.50   -2.50  ±0.71*
+    Turn the commander first resolved                  4.32 ->   4.30   -0.02  ±0.18 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            11.15 ->  12.12   +0.97  ±0.75*
+    Tutors resolved per game                           0.04 ->   0.05   +0.01  ±0.02 
+    Spells cast per game                               9.61 ->   9.74   +0.14  ±0.59 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.01 
+    Spot removal cast                                  0.44 ->   0.45   +0.01  ±0.06 
+    Board wipes cast                                   0.46 ->   0.46   -0.00  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.41 ->   0.39   -0.02  ±0.06 
+    Your spells countered                              0.43 ->   0.46   +0.03  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                24.76 ->  24.60   -0.16  ±2.53 
+      ...of which combat damage                       12.32 ->  11.93   -0.40  ±1.35 
+      ...of which magecraft / burn                     1.96 ->   1.87   -0.09  ±0.51 
+      ...of which drain triggers                      10.36 ->  10.69   +0.34  ±1.32 
+      ...of which other triggers                       0.10 ->   0.10   +0.00  ±0.11 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    better - Turn the game plan came online (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(85s total)
