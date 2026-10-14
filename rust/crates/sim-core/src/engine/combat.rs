@@ -907,6 +907,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 break;
             }
             let all_atk = atk.clone();
+            let pool = all_atk.clone(); // every creature that could attack (Tymna's spread)
             let d = match plan {
                 Some((i, _)) => i,
                 None => ai::choose_defender(g, p),
@@ -923,6 +924,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 let held: Vec<PermId> = pre.into_iter().filter(|m| !atk.contains(m)).collect();
                 split_attack(g, p, d, &atk, &held)
             };
+            let groups = crate::impls::tymna_partners::spread(g, p, groups, &pool); // thrasios, kraum only
             (d, groups)
         };
         let declared: Vec<PermId> = groups.iter().flat_map(|x| x.1.iter().copied()).collect();
