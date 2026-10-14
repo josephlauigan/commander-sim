@@ -15250,6 +15250,72 @@
    "spell_prio": false
   },
   {
+   "name": "Chase Inspiration",
+   "types": "I",
+   "generic": 0,
+   "pips": "U",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 0,
+       "tgh": 3,
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        },
+        "upto": false
+       }
+      },
+      {
+       "do": "grant",
+       "keyword": "hexproof",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Chatterfang, Squirrel General",
    "types": "C",
    "generic": 2,
@@ -16634,6 +16700,49 @@
    "python_hooks": [
     "etb"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Coerced to Kill",
+   "types": "E",
+   "generic": 3,
+   "pips": "UB",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "enchant"
+   ],
+   "subtypes": [
+    "aura"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Enchant creature",
+    "You control enchanted creature.",
+    "Enchanted creature has base power and toughness 1/1, has deathtouch, and is an Assassin in addition to its other types."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -44884,7 +44993,8 @@
     "pow": "2",
     "fly": true,
     "flash": true,
-    "ctr": "any"
+    "ctr": "any",
+    "soft": "1"
    },
    "pow": 2,
    "tgh": 2,
@@ -84855,6 +84965,61 @@
    "spell_prio": false
   },
   {
+   "name": "Skycoach Conductor // All Aboard",
+   "types": "C",
+   "generic": 2,
+   "pips": "U",
+   "tags": {
+    "pow": "2",
+    "tgh": "3",
+    "fly": true,
+    "vig": true,
+    "flash": true
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters prepared"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flash",
+    "flying",
+    "prepared",
+    "vigilance"
+   ],
+   "subtypes": [
+    "bird",
+    "pilot"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Skycoach Waypoint",
    "types": "L",
    "generic": 0,
@@ -86606,6 +86771,51 @@
     "cmc": 1,
     "land": false,
     "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Specimen Freighter",
+   "types": "A",
+   "generic": 5,
+   "pips": "U",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "mill",
+    "station"
+   ],
+   "subtypes": [
+    "spacecraft"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When this Spacecraft enters, return up to two target non-Spacecraft creatures to their owners' hands.",
+    "Station",
+    "9+ | Flying",
+    "Whenever this Spacecraft attacks, defending player mills four cards."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -98272,6 +98482,56 @@
    "spell_prio": false
   },
   {
+   "name": "Tragic Lesson",
+   "types": "I",
+   "generic": 2,
+   "pips": "U",
+   "tags": {
+    "draw": "2"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 2,
+       "who": "you"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Draw two cards. Then discard a card unless you return a land you control to its owner's hand.   [partly: discard a card unless you return a land you control to its owner's hand]"
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Tragic Slip",
    "types": "I",
    "generic": 0,
@@ -107045,6 +107305,58 @@
    "unparsed": [],
    "derived": {
     "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Xande, Dark Mage",
+   "types": "C",
+   "generic": 2,
+   "pips": "UB",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "wizard": true,
+    "pow": "3"
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "self_scaling",
+     "pow": 1,
+     "per": "X"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "menace"
+   ],
+   "subtypes": [
+    "human",
+    "wizard"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
     "land": false,
     "creature": true,
     "instant": false,

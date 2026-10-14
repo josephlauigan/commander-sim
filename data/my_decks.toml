@@ -75,3 +75,9 @@ name = "Tymna/Kraum"
 commander = "Tymna the Weaver"
 commander2 = "Kraum, Ludevic's Opus"
 ident = "WUBR"
+
+[garland]
+file = "JD/garland-dimir-kidnapper.md"
+name = "Garland"
+commander = "Garland, Royal Kidnapper"
+ident = "UB"
