@@ -330,6 +330,9 @@ pub fn kasmina_detach(g: &mut Game, a: PermId) {
 fn copy_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
     let Some(cd) = g.perm(m).cd else { return 0.0 };
     let d = g.db.get(cd);
+    if super::garland::is_garland(g, m) && g.perm(m).owner == p && g.player(p).key == super::garland::KEY {
+        return super::garland::recrown_value(g, p) + 1.0; // a copy of Garland enters and crowns again; the legend rule keeps one
+    }
     if d.tag(Tag::Leg) || !on_bf(g, m) || (g.perm(m).owner != p && untargetable(g, m)) {
         return 0.0; // the legend rule would put one of them straight back
     }
@@ -371,7 +374,11 @@ fn land_copy_value(g: &Game, p: PlayerId) -> f64 {
 fn token_copy(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let Some(cd) = g.perm(m).cd else { return Ok(()) };
     crate::glog!(g, "    {} creates a token copy of {}", pname(g, p), g.perm(m).name);
-    enter_token_copy(g, p, cd)?;
+    let tok = enter_token_copy(g, p, cd)?;
+    if let Some(t) = tok.filter(|&t| super::garland::is_garland(g, t) && super::garland::garland_of(g, p).is_some_and(|o| o != t)) {
+        // the legend rule: one Garland stays (the card); his enter trigger has been put on the stack by the copy
+        crate::engine::zones::leave(g, t)?;
+    }
     Ok(())
 }
 

@@ -1059,6 +1059,9 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
     if opps.is_empty() {
         opps = g.opps(p).collect(); // combat damage to a protected player is prevented
     }
+    if g.player(p).key == crate::impls::garland::KEY {
+        opps = crate::impls::garland::attack_targets(g, p, opps); // never the monarch: the hit would end the steals
+    }
     let my: i32 = g
         .player(p)
         .perms

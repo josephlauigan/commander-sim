@@ -644,7 +644,7 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
 const GARLAND: &str = "Garland, Royal Kidnapper";
 
 /// jodah.garland_pick: q's creature Garland's trigger takes: the most valuable one p can target
-fn garland_pick(g: &Game, _p: PlayerId, q: PlayerId) -> Option<PermId> {
+pub fn garland_pick(g: &Game, _p: PlayerId, q: PlayerId) -> Option<PermId> {
     let ub = Colors::from_letters("UB");
     let cs: Vec<PermId> = g
         .player(q)
@@ -663,7 +663,11 @@ fn garland_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
-    let opps: Vec<PlayerId> = g.opps(o).filter(|&q| g.player(q).alive && !player_hexproof(g, q)).collect();
+    crate::impls::garland::entered(g, o, src);
+    let mut opps: Vec<PlayerId> = g.opps(o).filter(|&q| g.player(q).alive && !player_hexproof(g, q)).collect();
+    if opps.len() > 1 {
+        opps.retain(|&q| g.monarch != Some(q)); // crowning the monarch changes nothing: no new steal
+    }
     if opps.is_empty() {
         return Ok(());
     }

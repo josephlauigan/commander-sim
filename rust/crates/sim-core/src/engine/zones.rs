@@ -1118,7 +1118,7 @@ pub const ETB_TRIGGER_TAGS: [Tag; 18] = [
 ];
 pub const ETB_SCRYFALL_TAGS: [Tag; 4] = [Tag::Tut, Tag::Treas, Tag::Drainetb, Tag::Edictetb];
 /// removal kinds that are Auras locking the target down
-pub const LOCK_KINDS: [&str; 4] = ["arrest", "pacify", "encrust", "kasmina"];
+pub const LOCK_KINDS: [&str; 5] = ["arrest", "pacify", "encrust", "kasmina", "coerce"];
 
 pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
     let d = g.db.get(cd);

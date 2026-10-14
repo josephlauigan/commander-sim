@@ -7308,3 +7308,36 @@ tags = ""
 dsl = []
 status = "Full"
 note = "instant, three modes chosen by the AI each time it looks for a play: two +1/+1 counters on its best creature, exile their best creature with power 2 or less, or drain 3 (opponents lose 3 each, we gain 3 once)"
+
+["Coerced to Kill"]
+types = "E"
+tags = "rem=coerce tgt=c etb"
+dsl = []
+status = "Full"
+note = "Aura on the best opposing creature (a zur.rs lock kind): you control it, it has base power and toughness 1/1 and deathtouch (Assassin is only a type); when the Aura leaves the creature is itself again and goes back to its owner; with Garland out it is 3/3 (+2/+2, unsacrificeable)"
+
+["Skycoach Conductor // All Aboard"]
+dsl = []
+status = "Full"
+note = "flash, flying, vigilance; enters prepared; while prepared {U} casts a copy of All Aboard (exile a non-Pilot creature of ours and return it: the AI picks the creature with the best enter trigger, Garland most of all) and unprepares it"
+
+["Specimen Freighter"]
+dsl = []
+status = "Full"
+note = "enters: return up to two non-Spacecraft creatures (our best enter trigger, Garland to crown again, and the opposing creature worth most); station (tap creatures after combat, charge counters equal to their power) until 9: then a 4/7 flying artifact creature that mills the defending player four whenever it attacks"
+
+["Tragic Lesson"]
+tags = "draw=2"
+dsl = []
+status = "Full"
+note = "draw two, then discard a card unless a land is returned to hand (a tapped land, when the land drop is still there and the hand lacks lands or there are six lands); otherwise the worst card is discarded"
+
+["Amphin Pathmage"]
+dsl = []
+status = "Full"
+note = "3/2; {2}{U}: target creature can't be blocked this turn (before combat, on the biggest non-flying attacker, a stolen creature first, when the opponents have untapped blockers)"
+
+["Lazav, Wearer of Faces"]
+dsl = []
+status = "Approximate"
+note = "whenever it attacks, exile the best card from a graveyard (an opponent's creature first) and investigate; whenever we sacrifice a Clue it becomes a copy of the best creature card exiled with it until end of turn: only that card's power, toughness and basic keywords, not its other abilities"

@@ -60,6 +60,7 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
         "thrasios" => crate::impls::tymna_partners::thrasios_prio(g, p, c),
         "kraum" => crate::impls::tymna_partners::kraum_prio(g, p, c),
+        "garland" => crate::impls::garland::garland_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }

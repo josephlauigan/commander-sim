@@ -1545,7 +1545,7 @@ pub fn plan_milestone(g: &mut Game, p: PlayerId, atk: &[PermId]) {
 /// rule 903.9b: when Cloud would go to his owner's hand, the owner may leave him there, and casting him from the hand
 /// costs no commander tax
 pub fn cmd_stays_in_hand(g: &Game, owner: PlayerId) -> bool {
-    g.player(owner).key == KEY
+    g.player(owner).key == KEY || g.player(owner).key == crate::impls::garland::KEY
 }
 
 /// Equipment on m that makes it worth attacking: real size (power 4 or more), or a piece that gets past blockers

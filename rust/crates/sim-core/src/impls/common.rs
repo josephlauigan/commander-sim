@@ -363,6 +363,7 @@ pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
     for a in g.auras.clone() {
         if a == m {
             crate::impls::bulk_blue::kasmina_detach(g, a); // Kasmina's Transmutation leaves: the creature is itself again
+            crate::impls::garland_cards::coerce_detach(g, a); // Coerced to Kill leaves: control goes back
             if let Some(i) = g.auras.iter().position(|&x| x == a) {
                 g.auras.remove(i);
             }
@@ -1995,6 +1996,9 @@ fn trawler_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
 /// t2.blink_value: how much re-entering is worth for p's permanent m. A copy of t2.py's (t2.rs is ported
 /// separately): MERGE: call t2's.
 fn blink_value(g: &Game, _p: PlayerId, m: PermId) -> f64 {
+    if crate::impls::garland::is_garland(g, m) {
+        return crate::impls::garland::recrown_value(g, _p);
+    }
     if g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::cloud::CLOUD) {
         return crate::impls::cloud::reenter_value(g, _p, m); // Cloud, Midgar Mercenary: his search again
     }
