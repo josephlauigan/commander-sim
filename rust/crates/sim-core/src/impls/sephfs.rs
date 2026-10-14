@@ -29,9 +29,12 @@ fn name(g: &Game, c: CardId) -> &str {
 
 /// p's Sephiroth on the battlefield and how many drains have resolved this turn (4 flips him)
 fn seph_state(g: &Game, p: PlayerId) -> Option<(PermId, i64, bool)> {
-    let m = g.player(p).perms.iter().copied().find(|&m| {
-        g.perm(m).on_bf && !g.perm(m).phased && is_seph(g, m) && g.perm(m).owner == p
-    })?;
+    let m = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).on_bf && !g.perm(m).phased && is_seph(g, m) && g.perm(m).owner == p)?;
     let st = g.turn_stamp();
     let n = match g.perm(m).data.get(DataKey::SephTimes) {
         Some(Val::List(l)) if matches!(l.first(), Some(Val::Stamp(s)) if *s == st) => l.get(1).map_or(0, Val::int),
@@ -82,6 +85,7 @@ pub fn sephfs_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return if times + deaths >= 4 { 92 } else { 20 };
     }
     match n {
+        "Rabid Attack" => return 0, // cast through `options`, ahead of a sweeper
         "Massacre Girl" => return massacre_prio(g, p, base),
         "Pestilence" => {
             return if seph.is_some() || g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && g.is_creature(m)) {
@@ -101,7 +105,11 @@ pub fn sephfs_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "Phyrexian Altar" | "Viscera Seer" | "Woe Strider" | "Carrion Feeder" | "Yahenni, Undying Partisan" => {
             return if seph.is_some() { base.max(72) } else { base.max(55) };
         }
-        "Blood Artist" | "Zulaport Cutthroat" | "Bastion of Remembrance" | "Butcher of Malakir" | "Pitiless Plunderer" => {
+        "Blood Artist"
+        | "Zulaport Cutthroat"
+        | "Bastion of Remembrance"
+        | "Butcher of Malakir"
+        | "Pitiless Plunderer" => {
             return base.max(56);
         }
         _ => {}
@@ -113,11 +121,7 @@ pub fn sephfs_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 fn massacre_prio(g: &Game, p: PlayerId, base: i32) -> i32 {
     let theirs: f64 = all_creatures(g).iter().filter(|&&(q, _)| q != p).map(|&(_, m)| pval(g, m)).sum();
     let ours: f64 = all_creatures(g).iter().filter(|&&(q, _)| q == p).map(|&(_, m)| pval(g, m)).sum();
-    if opp_creatures(g, p) >= 3 && theirs > 1.2 * ours + 3.0 {
-        88
-    } else {
-        base.min(20)
-    }
+    if opp_creatures(g, p) >= 3 && theirs > 1.2 * ours + 3.0 { 88 } else { base.min(20) }
 }
 
 /// the utility of casting wipe card c of kind `kind` (None: don't), on brain.wipe_options' scale
@@ -191,4 +195,43 @@ pub fn cmc(g: &Game, m: PermId) -> u32 {
 pub fn register(_r: &mut Registry, _db: &CardDb) -> Result<(), String> {
     let _ = Tag::Wipe;
     Ok(())
+}
+
+/// the sweepers p could cast this turn after Rabid Attack ({1}{B}): the cheapest cost among wipes in hand, plus
+/// Pestilence on the battlefield (it needs {B} per activation)
+fn follow_up_cost(g: &Game, p: PlayerId) -> Option<u32> {
+    let mut best: Option<u32> = None;
+    for &c in &g.player(p).hand {
+        let d = g.db.get(c);
+        if d.tags.str(Tag::Wipe).is_some() || EDICTS.contains(&&*d.name) {
+            let cost = d.generic + d.pips.len() as u32;
+            best = Some(best.map_or(cost, |b| b.min(cost)));
+        }
+    }
+    if g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).name == "Pestilence") {
+        best = Some(best.map_or(3, |b| b.min(3)));
+    }
+    best
+}
+
+/// the plays the deck adds: Rabid Attack (+1/+0 and "draw a card when this dies" for our creatures) ahead of a
+/// wipe, an edict or Pestilence that kills several of them, with the mana for both
+pub fn options(g: &mut Game, p: PlayerId, post: bool) -> crate::flow::Res<Vec<crate::hooks::Opt>> {
+    use crate::hooks::Opt;
+    let _ = post;
+    let Some(&c) = g.player(p).hand.iter().find(|&&c| &*g.db.get(c).name == "Rabid Attack") else { return Ok(vec![]) };
+    if g.active != Some(p) || !crate::engine::cast::castable(g, p, c, "hand") {
+        return Ok(vec![]);
+    }
+    let d = g.db.get(c);
+    let Some(follow) = follow_up_cost(g, p) else { return Ok(vec![]) };
+    let mine = all_creatures(g).iter().filter(|&&(q, m)| q == p && !is_seph(g, m)).count();
+    if mine < 2 || !crate::engine::mana::can_pay(g, p, d.generic + follow, &d.pips, false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 7.0 + mine as f64 * 0.5,
+        label: format!("Rabid Attack ({mine} creatures, ahead of a sweep)"),
+        act: Some(crate::hooks::Action::Cast { card: c, zone: None }),
+    }])
 }

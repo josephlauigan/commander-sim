@@ -737,6 +737,15 @@ fn reanimate(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(true);
     }
     let ctx = Ctx { rean_target: Some(cd), rean_src: Some(src), rean_value: v, ..Ctx::default() };
+    if g.player(p).key == "sephfs" && g.db.get(c).perm {
+        // Animate Dead and the like as the effect only (as the seph deck models them): the card goes to the graveyard
+        decks::remove_from_hand(g, p, c);
+        g.player_mut(p).gy.push(c);
+        g.player_mut(p).spells_this_turn += 1;
+        crate::engine::cast::on_cast(g, p, c)?;
+        crate::ai::seph_rean_resolve(g, p, c, &ctx)?;
+        return Ok(true);
+    }
     crate::engine::cast::cast_card(g, p, c, "hand", ctx)?;
     Ok(true)
 }
