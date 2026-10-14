@@ -1,6 +1,7 @@
 # Cloud, Midgar Mercenary — Mono-White Equipment
 
 **Updated 2026-10-13.** JD committed to the C3 + C4 list: 27 swaps. Out: Argivian Find, Call a Surprise Witness, Cho-Manno's Blessing, Conformer Shuriken, Essence Reliquary, Harsh Annotation, Hero's Heirloom, Hulkbuster Armor, Magitek Scythe, Magnetic Snuffler, Make Your Move, Medic's Kitesail, Memory Trap, Potioner's Trove, Rapier Wit, Recruitment Officer, Repel the Darkness, Shardmage's Rescue, Squire's Lightblade, Take Up the Shield, Tome of Legends, Trailblazer's Boots, Ultimate Magic: Holy, White Auracite. In, by group: **mana** (Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Coalition Relic, Thought Vessel, Smothering Tithe, Solemn Simulacrum, Knight of the White Orchid, Loyal Warhound; 33 lands with Plaza of Heroes); **swords and protection** (Sword of Fire and Ice, Sword of Feast and Famine, Sword of Hearth and Home, Champion's Helm, Swiftfoot Boots, Giver of Runes, Grand Abolisher); **free equips and backup carriers** (Ardenn, Auriok Steelshaper, Kor Outfitter, Balan, Armored Skyhunter, Kor Duelist); **others from the retired Jodah deck** (Enlightened Tutor, Skyclave Apparition, Court of Ardenvale). Measured on the fixed Cloud AI (paired, look-ahead, loose, 500 games per tier, against the old list): **10.9% over all tiers against 5.1%** (T1 14.0, T2 9.8, T3 7.4, T4 9.4, T5 13.8; +5.8, every tier above its noise); `audit/cloud/2026-10-13/screen/C4REV-*`.
+**Updated 2026-10-13 (later).** Out: Patriot, Shield Wielder (JD couldn't find the card). In: Ultimate Magic: Holy (bulk; in the list until C4 made room for Giver of Runes): permanents you control gain indestructible until end of turn. Not simulated.
 
 **Added 2026-10-12.** JD's candidate for a last deck with no black or green (no Swamps or Forests left). Built from the
 bulk and binder lists, the Kaldra pieces from Jodah (if this deck is chosen, Jodah gives them up), and one buy: Cloud,
@@ -40,7 +41,7 @@ the Swords just as well, and Beatrix, Thalia the Survivor and Zack Fair give the
 **Keeping Cloud alive.** Champion's Helm (hexproof on a legend) and Swiftfoot Boots (hexproof and haste), Giver of Runes
 (protection for another creature), Grand Abolisher (opponents can't cast spells or activate artifact, creature or enchantment abilities on your turn), Plaza of Heroes ({3}, exile it: a legend gains
 hexproof and indestructible until end of turn), Bastion Protector (commander +2/+2 and indestructible), Shield of
-Kaldra, Patriot, and the protection instants Unbreakable Formation and Rootborn Defenses (the team gains indestructible). Removal: Lay Down Arms, Stand Up for Yourself, Fate of the Sun-Cryst, Skyclave Apparition, Citizen's Arrest, Secure the Scene, Austere Command, Disenchant.
+Kaldra, and the protection instants Unbreakable Formation, Rootborn Defenses and Ultimate Magic: Holy (the team gains indestructible; Holy covers every permanent you control). Removal: Lay Down Arms, Stand Up for Yourself, Fate of the Sun-Cryst, Skyclave Apparition, Citizen's Arrest, Secure the Scene, Austere Command, Disenchant.
 
 ## Bracket
 
@@ -71,7 +72,7 @@ Cloud's comes from the retired Jodah deck.
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (30).** Adelbert Steiner, Ardenn Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Balan Wandering Knight, Bastion Protector, Beatrix Loyal General, Bronze Guardian, Cid Freeflier Pilot, Ennis Debate Moderator, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page Loose Leaf, Patriot Shield Wielder, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Stormfront Riders, Thalia the Survivor, Unyielding Gatekeeper, Zack Fair
+**Creatures (29).** Adelbert Steiner, Ardenn Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Balan Wandering Knight, Bastion Protector, Beatrix Loyal General, Bronze Guardian, Cid Freeflier Pilot, Ennis Debate Moderator, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Stormfront Riders, Thalia the Survivor, Unyielding Gatekeeper, Zack Fair
 
 **Enchantments (3).** Citizen's Arrest, Court of Ardenvale, Smothering Tithe
 
@@ -79,7 +80,7 @@ Cloud's comes from the retired Jodah deck.
 
 **Sorceries (5).** Austere Command, Lay Down Arms, Recommission, Secure the Scene, Unfinished Business
 
-**Instants (6).** Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Rootborn Defenses, Stand Up for Yourself, Unbreakable Formation
+**Instants (7).** Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Rootborn Defenses, Stand Up for Yourself, Ultimate Magic: Holy, Unbreakable Formation
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -130,7 +131,6 @@ Cloud's comes from the retired Jodah deck.
 1 Nim Deathmantle
 1 Page, Loose Leaf
 1 Path of Ancestry
-1 Patriot, Shield Wielder
 1 Plaza of Heroes
 1 Puresteel Paladin
 1 Recommission
@@ -151,6 +151,7 @@ Cloud's comes from the retired Jodah deck.
 1 Terminal Moraine
 1 Thalia, the Survivor
 1 Thought Vessel
+1 Ultimate Magic: Holy
 1 Unbreakable Formation
 1 Unfinished Business
 1 Unyielding Gatekeeper
