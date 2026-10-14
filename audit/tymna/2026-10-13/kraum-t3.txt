@@ -1,0 +1,106 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m12s elapsed, ~1m53s left
+  progress  20.0%  0m22s elapsed, ~1m31s left
+  progress  30.0%  0m33s elapsed, ~1m17s left
+  progress  40.0%  0m43s elapsed, ~1m05s left
+  progress  50.0%  0m53s elapsed, ~0m53s left
+  progress  60.0%  1m05s elapsed, ~0m43s left
+  progress  70.0%  1m16s elapsed, ~0m32s left
+  progress  80.0%  1m27s elapsed, ~0m21s left
+  progress  90.0%  1m36s elapsed, ~0m10s left
+  progress 100.0%  1m49s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 17.0%   (4-player baseline 25%)   average rounds survived 12.1
+
+-- How it wins --
+  damage      90.0% of wins
+  timeout     10.0% of wins
+  Opponents it eliminated: 0.46 per game, by
+    combat             88.6%
+    burn                3.9%
+    commander damage    3.9%
+    triggers            3.1%
+    drain               0.4%
+  Damage dealt per game: 26.0, from
+    combat              25.0  (96%)
+    drain                0.7  (3%)
+    triggers             0.3  (1%)
+    burn                 0.1  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 1.79; Tymna turns per game 3.44; opponents hit per Tymna turn 0.64
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 5.11 (in 93% of games)
+  Kraum lands on turn 6.96 (in 82% of games)
+
+-- How it loses --
+  Eliminated in 81.5% of games, on average in round 11.3
+    by Aurelia  via combat             22.9% of games
+    by Marwyn   via combat             14.9% of games
+    by Tergrid  via combat             12.1% of games
+    by Atraxa   via combat             10.0% of games
+    by Korvold  via drain               5.2% of games
+    by Tergrid  via drain               3.0% of games
+    by Korvold  via triggers            2.2% of games
+    by Tergrid  via triggers            1.9% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 4.0, mean 4.6 (over the 96.8% of games it resolves)
+  Commander resolved by turn:  T4 55%  T5 75%  T6 85%  T7 91%  T8 93%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Razia, Boros Archangel                     cast in  12.0% of games, win rate when cast  40.0% (+23.0)
+    Twisted Fates                              cast in  16.7% of games, win rate when cast  38.3% (+21.3)
+    Dissipate                                  cast in  10.7% of games, win rate when cast  36.4% (+19.4)
+    Reconnaissance Mission                     cast in  10.0% of games, win rate when cast  35.0% (+18.0)
+    Elemental Mascot                           cast in  23.0% of games, win rate when cast  33.9% (+16.9)
+    Lyra Dawnbringer                           cast in  19.2% of games, win rate when cast  33.9% (+16.9)
+    The Aetherspark                            cast in  18.1% of games, win rate when cast  33.7% (+16.7)
+    Elenda, the Dusk Rose                      cast in  19.0% of games, win rate when cast  33.2% (+16.2)
+    Sphinx of New Prahv                        cast in  17.6% of games, win rate when cast  32.4% (+15.4)
+    Nightveil Predator                         cast in  16.5% of games, win rate when cast  32.1% (+15.1)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  93.3% of games, win rate when cast  18.2% (+1.2)
+    Toxic Deluge                               cast in  18.1% of games, win rate when cast  20.4% (+3.4)
+    Kraum, Ludevic's Opus                      cast in  82.6% of games, win rate when cast  20.5% (+3.5)
+    Exit Specialist                            cast in  25.8% of games, win rate when cast  20.9% (+3.9)
+    Star Compass                               cast in  23.6% of games, win rate when cast  22.9% (+5.9)
+    Arcane Denial                              cast in  20.1% of games, win rate when cast  22.9% (+5.9)
+    Disenchant                                 cast in  19.1% of games, win rate when cast  23.0% (+6.0)
+    Force of Will                              cast in  22.0% of games, win rate when cast  24.1% (+7.1)
+    Garland, Royal Kidnapper                   cast in  21.4% of games, win rate when cast  24.3% (+7.3)
+    Mana Leak                                  cast in  13.5% of games, win rate when cast  24.4% (+7.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Ultimate Magic: Holy                       cast   0.4% of the games it was drawn [reactive: only cast in response]
+    Shardmage's Rescue                         cast   1.2% of the games it was drawn
+    Desertion                                  cast  13.0% of the games it was drawn [reactive: only cast in response]
+    Dakkon Blackblade                          cast  34.3% of the games it was drawn
+    Mordenkainen                               cast  36.1% of the games it was drawn
+    Dissipate                                  cast  36.4% of the games it was drawn [reactive: only cast in response]
+    Razia, Boros Archangel                     cast  39.0% of the games it was drawn
+    Reconnaissance Mission                     cast  39.7% of the games it was drawn
+    Fact or Fiction                            cast  47.4% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.35
+    Kraum, Ludevic's Opus                      0.33
+    Dakkon, Shadow Slayer                      0.12
+    The Aetherspark                            0.11
+    Terror of the Peaks                        0.07
+    Mordenkainen                               0.05
+    Lyra Dawnbringer                           0.04
+    The Wasp, Winsome Avenger                  0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(109s total)
