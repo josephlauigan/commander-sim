@@ -3,17 +3,92 @@
 //! zone with the generic commander priority. The decks' own AI plans are written later: for now both use the
 //! default priority.
 
+use crate::engine::values::card_name;
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
+use crate::tag::Tag;
 
-/// ai/decks.rs `deck_prio` for the thrasios seat (the default until the plan is written)
-pub fn thrasios_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    crate::ai::pool::generic_prio(g, p, c)
+const TYMNA: &str = "Tymna the Weaver";
+const THRASIOS: &str = "Thrasios, Triton Hero";
+const KRAUM: &str = "Kraum, Ludevic's Opus";
+const BASTION: &str = "Bastion Protector";
+
+/// a creature that is hard to block: a flier, menace, shadow, or one of the deck's named evasive creatures
+fn evasive_card(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    d.creature
+        && (d.tag(Tag::Fly)
+            || d.has_kw("flying")
+            || d.has_kw("menace")
+            || d.has_kw("unblockable_shadow")
+            || matches!(&*d.name, "Silhana Ledgewalker" | "Exit Specialist" | "Spectral Lynx" | "Nightveil Predator"))
 }
 
-/// ai/decks.rs `deck_prio` for the kraum seat (the default until the plan is written)
+/// evasive creatures p has on the battlefield
+fn evasive_out(g: &Game, p: PlayerId) -> usize {
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && g.is_creature(m) && x.cd.is_some_and(|c| evasive_card(g, c)) && !x.is_cmd
+        })
+        .count()
+}
+
+fn out(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && card_name(g, m) == Some(name))
+}
+
+/// the shared plan of the two Tymna decks (cast priority 0-90). The ramp and the commanders come first, then the
+/// evasive creatures until every opponent can be hit, then the generic order (the finishers).
+fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let pl = g.player(p);
+    let d = g.db.get(c);
+    let base = crate::ai::pool::generic_prio(g, p, c);
+    let t = &d.tags;
+    if pl.is_commander(c) {
+        let tax = 3 * pl.tax_of(c) as i32;
+        return match &*d.name {
+            TYMNA => 91 - tax,    // as soon as she can be cast (turn 3)
+            THRASIOS => 86 - tax, // the cheap engine: turn 2 after a one-mana ramp spell
+            KRAUM => 84 - tax,    // five mana: haste, so precombat (the AI casts in the first main phase)
+            _ => base,
+        };
+    }
+    let ramp = t.has(Tag::Rock) || t.has(Tag::Dork) || t.has(Tag::Lr) || t.has(Tag::Fastmana);
+    if ramp && pl.turns <= 5 {
+        // one-mana ramp first, then two-mana ramp (turns 1-2: mana creatures and rocks)
+        return if d.cmc <= 1 {
+            89
+        } else if d.cmc == 2 {
+            87 - (pl.turns > 3) as i32 * 4
+        } else {
+            82
+        };
+    }
+    if d.creature && evasive_card(g, c) {
+        let opps = g.opps(p).filter(|&q| g.player(q).alive).count();
+        if evasive_out(g, p) < opps && d.cmc <= 4 {
+            return 78 + (4 - d.cmc as i32).max(0) / 2 - 2 * (d.pow >= 4) as i32; // a cheap one for each opponent
+        }
+        return base.max(66);
+    }
+    if &*d.name == BASTION {
+        let both = out(g, p, TYMNA) && (out(g, p, THRASIOS) || out(g, p, KRAUM));
+        return if both { 74 } else { 40 };
+    }
+    base
+}
+
+/// ai/decks.rs `deck_prio` for the thrasios seat
+pub fn thrasios_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    partner_prio(g, p, c)
+}
+
+/// ai/decks.rs `deck_prio` for the kraum seat
 pub fn kraum_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    crate::ai::pool::generic_prio(g, p, c)
+    partner_prio(g, p, c)
 }
 
 // ------------------------------------------------------------------ measurement
@@ -24,7 +99,8 @@ fn landed(g: &mut Game, src: crate::hooks::Src, _p: PlayerId, m: crate::ids::Per
         return Ok(());
     }
     let o = g.perm(src).owner;
-    let name = crate::engine::values::card_name(g, src).unwrap_or("?").split(',').next().unwrap_or("?").replace(' ', "_");
+    let name =
+        crate::engine::values::card_name(g, src).unwrap_or("?").split(',').next().unwrap_or("?").replace(' ', "_");
     let turns = g.player(o).turns as i64;
     let pl = g.player_mut(o);
     let key = crate::sym::intern(&format!("ty_tn_{name}"));
@@ -48,7 +124,7 @@ pub fn register(r: &mut crate::hooks::Registry, db: &crate::cards::CardDb) -> Re
 
 // ------------------------------------------------------------------ spreading the attack
 use crate::engine::combat::{attack_restrictions, can_block, double_strike, fiery, kw};
-use crate::engine::values::{card_name, epow, pval, shielded};
+use crate::engine::values::{epow, pval, shielded};
 use crate::ids::PermId;
 
 /// Tymna's draw (or Reconnaissance Mission's / The Aetherspark's) is waiting on the battlefield
