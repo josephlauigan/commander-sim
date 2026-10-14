@@ -70277,23 +70277,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "gain_life",
-       "n": 2,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -70301,7 +70285,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -85858,8 +85842,7 @@
       {
        "do": "gain_life",
        "n": 2,
-       "who": "you",
-       "per_opponent": true
+       "who": "you"
       }
      ],
      "event": "etb",
@@ -85878,7 +85861,7 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,
@@ -107284,19 +107267,13 @@
     "leg": true,
     "human": true,
     "wizard": true,
-    "pow": "3"
+    "pow": "3",
+    "tgh": "3"
    },
    "pow": 3,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "self_scaling",
-     "pow": 1,
-     "per": "X"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "menace"
@@ -107309,7 +107286,7 @@
    "ward": 0,
    "identity": "BU",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,

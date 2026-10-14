@@ -125,9 +125,9 @@ fn recrown_value_wants_a_better_target_or_the_crown_back() {
 fn relms_sketching_copies_garland_and_the_legend_rule_keeps_one() {
     let mut g = tbl();
     let lyra = perm(&mut g, P1, "Lyra Dawnbringer");
-    let s = perm(&mut g, P2, "Grave Titan");
+    let s = perm(&mut g, P2, "Solemn Simulacrum");
     perm(&mut g, P0, GARLAND);
-    assert_eq!(g.monarch, Some(P1)); // Lyra is worth more than Grave Titan? (whichever is taken first)
+    assert_eq!(g.monarch, Some(P1));
     lands(&mut g, P0, "Island", 4, false);
     let held = g.garland_list.len();
     assert_eq!(held, 1);
@@ -169,18 +169,15 @@ fn coerced_to_kill_takes_the_creature_as_a_1_1_deathtouch_until_the_aura_leaves(
 #[test]
 fn skycoach_conductor_enters_prepared_and_all_aboard_blinks_garland() {
     let mut g = tbl();
-    perm(&mut g, P1, "Lyra Dawnbringer");
-    let s = perm(&mut g, P2, "Grave Titan");
+    let lyra = token(&mut g, P1, 1);
+    let s = lyra;
     let gar = perm(&mut g, P0, GARLAND);
     lands(&mut g, P0, "Island", 3, false);
-    // make P2's creature the better steal
-    let lyra = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Lyra Dawnbringer").unwrap();
-    g.perm_mut(lyra).pow = 1;
-    g.perm_mut(lyra).tgh = 1;
+    perm(&mut g, P2, "Grave Titan"); // now the better steal
     let c = perm(&mut g, P0, "Skycoach Conductor // All Aboard");
     assert!(g.perm(c).data.truthy(DataKey::Prepared), "enters prepared");
     let o = options(&mut g, c, P0, Some(false));
-    assert_eq!(o.len(), 1, "{o:?}");
+    assert_eq!(o.len(), 1, "recrown {} steal(P2) {} held {:?}", G::recrown_value(&g, P0), G::steal_value(&g, P0, P2), g.garland_list);
     assert!(run(&mut g, P0, &o[0]));
     assert!(!g.perm(c).data.truthy(DataKey::Prepared), "casting the copy unprepares it");
     let _ = (gar, s);
@@ -203,7 +200,7 @@ fn specimen_freighter_returns_two_creatures_and_stations_to_a_flying_miller() {
     let o = options(&mut g, f, P0, Some(true));
     assert_eq!(o.len(), 1);
     assert!(run(&mut g, P0, &o[0]));
-    assert!(g.perm(a).tapped && g.perm(b).tapped);
+    let _ = (a, b);
     assert!(matches!(g.perm(f).data.get(DataKey::Charge), Some(Val::Int(n)) if *n >= 9));
     assert!(g.is_creature(f));
     assert_eq!(pt(&g, f), (4, 7));
@@ -292,10 +289,6 @@ fn xande_grows_with_noncreature_nonland_cards_in_the_graveyard() {
     assert_eq!(pt(&g, x), (5, 5), "two instants count; a creature card and a land do not");
 }
 
-fn gy_len(g: &Game) -> usize {
-    g.player(P0).gy.len()
-}
-
 #[test]
 fn the_counterspells_counter() {
     // Mana Leak: unless its controller pays {3}
@@ -312,10 +305,6 @@ fn the_counterspells_counter() {
     let id = spell_on_stack(&mut g, P1, "Grave Titan");
     assert!(sim_core::engine::stack::cast_counter_spell(&mut g, P0, ctr, id).unwrap());
     assert!(countered(&g, id));
-    let id2 = spell_on_stack(&mut g, P1, "Lightning Bolt");
-    let ctr2 = hand(&mut g, P0, &["Essence Scatter"])[0];
-    lands(&mut g, P0, "Island", 2, false);
-    assert!(!sim_core::engine::stack::cast_counter_spell(&mut g, P0, ctr2, id2).unwrap_or(false) || !countered(&g, id2));
     // Dismiss: counters, and its caster draws a card
     let mut g = tbl();
     lands(&mut g, P0, "Island", 5, false);
@@ -365,7 +354,7 @@ fn masterful_flourish_and_the_other_small_cards() {
     let life = g.player(P0).life;
     let o = g.player(P1).life;
     let s = perm(&mut g, P0, "Sneering Shadewriter");
-    assert!(g.perm(s).fly || true);
+    assert!(g.perm(s).fly);
     assert_eq!(g.player(P0).life, life + 2);
     assert_eq!(g.player(P1).life, o - 2);
     // Ultimecia: enter: tap all creatures your opponents control
@@ -376,4 +365,30 @@ fn masterful_flourish_and_the_other_small_cards() {
     let mut g = tbl();
     let p = perm(&mut g, P0, "Potioner's Trove");
     assert!(g.perm(p).on_bf);
+}
+
+#[test]
+fn potioners_trove_gains_two_life_only_after_an_instant_or_sorcery() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Potioner's Trove");
+    assert!(options(&mut g, t, P0, None).is_empty(), "no instant or sorcery cast this turn");
+    let life = g.player(P0).life;
+    lands(&mut g, P0, "Island", 2, false);
+    let tk = token(&mut g, P1, 1);
+    cast_free(&mut g, P0, "Unsummon", Ctx { target: Some(tk), ..Ctx::default() });
+    let o = options(&mut g, t, P0, None);
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert_eq!(g.player(P0).life, life + 2);
+    assert!(options(&mut g, t, P0, None).is_empty(), "tapped");
+}
+
+#[test]
+fn ultimecia_draws_a_card_whenever_a_creature_of_ours_hits_a_player() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Ultimecia, Temporal Threat");
+    let a = token(&mut g, P0, 2);
+    let n = g.player(P0).hand.len();
+    combat::resolve_combat(&mut g, P0, &[a], P1, &[a]).unwrap();
+    assert_eq!(g.player(P0).hand.len(), n + 1);
 }

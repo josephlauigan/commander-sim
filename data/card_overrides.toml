@@ -7341,3 +7341,22 @@ note = "3/2; {2}{U}: target creature can't be blocked this turn (before combat, 
 dsl = []
 status = "Approximate"
 note = "whenever it attacks, exile the best card from a graveyard (an opponent's creature first) and investigate; whenever we sacrifice a Clue it becomes a copy of the best creature card exiled with it until end of turn: only that card's power, toughness and basic keywords, not its other abilities"
+
+["Sneering Shadewriter"]
+dsl = [
+  { type = "triggered", effects = [ { do = "lose_life", n = 2, who = "each_opponent" }, { do = "gain_life", n = 2, who = "you" } ], event = "etb", source = "self" },
+]
+status = "Full"
+note = "flying; when it enters each opponent loses 2 life and you gain 2 life (the compiled text gained 2 per opponent)"
+
+["Xande, Dark Mage"]
+tags = "leg human wizard pow=3 tgh=3"
+dsl = []
+status = "Full"
+note = "menace; +1/+1 for each noncreature, nonland card in your graveyard (card code: a dynamic power and toughness)"
+
+["Potioner's Trove"]
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "{T}: one mana of any colour; {T}: gain 2 life only if we cast an instant or sorcery this turn (card code: the AI gains the life at the end of the turn when the mana was not needed)"

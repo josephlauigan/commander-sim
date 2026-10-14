@@ -261,7 +261,7 @@ fn pathmage_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     if post != Some(false) || p != owner(g, src) || g.active != Some(p) || g.perm(src).phased {
         return Ok(vec![]);
     }
-    if !can_pay(g, p, 3, "U", false) || pathmage_target(g, p).is_none() {
+    if !can_pay(g, p, 2, "U", false) || pathmage_target(g, p).is_none() {
         return Ok(vec![]);
     }
     Ok(vec![ability(2.0, "Unblockable (Amphin Pathmage)", src, pathmage_go, 0)])
@@ -290,7 +290,7 @@ fn pathmage_target(g: &Game, p: PlayerId) -> Option<PermId> {
 
 fn pathmage_go(g: &mut Game, _src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let Some(t) = pathmage_target(g, p) else { return Ok(false) };
-    if !pay(g, p, 3, "U", false)? {
+    if !pay(g, p, 2, "U", false)? {
         return Ok(false);
     }
     let st = g.turn_stamp();
@@ -383,5 +383,65 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Lazav, Wearer of Faces")?;
     c.attack = Some(lazav_attack);
     c.sacrifice = Some(lazav_sacrifice);
+    Ok(())
+}
+
+// ================================================================== Xande, Dark Mage
+/// **Xande** (menace): +1/+1 for each noncreature, nonland card in its owner's graveyard
+fn xande_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
+    let n = g.player(p).gy.iter().filter(|&&c| !g.db.get(c).creature && !g.db.get(c).land).count() as i32;
+    (n, n)
+}
+
+fn xande_enters(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
+    g.selfpt = true;
+    Ok(())
+}
+
+fn xande_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src {
+        g.selfpt = true;
+    }
+    Ok(())
+}
+
+// ================================================================== Potioner's Trove
+/// **Potioner's Trove**: {T}: any colour of mana (the rock tag); {T}: gain 2 life, only if we cast an instant or
+/// sorcery this turn. The AI gains the life at the end of the turn, when the mana was not needed.
+fn trove_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    if caster == owner(g, src) && (g.db.get(c).instant || g.db.get(c).sorcery) {
+        let st = g.turn_stamp();
+        g.perm_mut(src).data.set(DataKey::Hit, Val::Stamp(st));
+    }
+    Ok(())
+}
+
+fn trove_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let st = g.turn_stamp();
+    if p != owner(g, src) || g.perm(src).tapped || g.perm(src).phased || g.perm(src).data.get(DataKey::Hit) != Some(&Val::Stamp(st)) {
+        return Ok(vec![]);
+    }
+    let u = if post.is_none() { 1.5 } else { 0.4 };
+    Ok(vec![ability(u, "gain 2 life (Potioner's Trove)", src, trove_go, 0)])
+}
+
+fn trove_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    let st = g.turn_stamp();
+    if g.perm(src).tapped || g.perm(src).data.get(DataKey::Hit) != Some(&Val::Stamp(st)) {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    crate::engine::life::gain(g, p, 2)?;
+    Ok(true)
+}
+
+pub fn register_more(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, "Xande, Dark Mage")?;
+    c.self_pt = Some(xande_pt);
+    c.as_enters = Some(xande_enters);
+    c.etb = Some(xande_etb);
+    let c = r.card(db, "Potioner's Trove")?;
+    c.cast = Some(trove_cast);
+    c.options = Some(trove_options);
     Ok(())
 }

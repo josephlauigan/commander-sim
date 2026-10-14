@@ -95,5 +95,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     tymna_cards::register(&mut r, db)?;
     garland::register(&mut r, db)?;
     garland_cards::register(&mut r, db)?;
+    garland_cards::register_more(&mut r, db)?;
     Ok(r)
 }
