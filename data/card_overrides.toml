@@ -7360,3 +7360,57 @@ tags = "rock=1:A"
 dsl = []
 status = "Full"
 note = "{T}: one mana of any colour; {T}: gain 2 life only if we cast an instant or sorcery this turn (card code: the AI gains the life at the end of the turn when the mana was not needed)"
+
+["Extinction Event"]
+tags = "wipe=parity"
+dsl = []
+status = "Full"
+note = "choose odd or even (the AI picks the parity that costs it least, never the one that exiles our unflipped Sephiroth), exile each creature of that mana value (a token is mana value 0, even); nobody dies, so no drain (card code in impls/sephfs_cards.rs)"
+
+["Necromantic Selection"]
+tags = "wipe=destroy"
+dsl = []
+status = "Full"
+note = "destroy all creatures (an unflipped Sephiroth last, so he drains for the others), then the best creature card put into a graveyard this way returns under our control; the spell is exiled. The black Zombie type is not tracked (card code in impls/sephfs_cards.rs)"
+
+["Blood on the Snow"]
+tags = "wipe=destroy"
+dsl = []
+status = "Full"
+note = "destroy all creatures (the AI never takes the planeswalker mode); X is the snow mana spent, and nothing in this deck is snow, so X = 0 and the return clause finds a card only at mana value 0 (card code in impls/sephfs_cards.rs)"
+
+["Living Death"]
+tags = "wipe=living"
+dsl = []
+status = "Full"
+note = "each player exiles the creature cards in their graveyard, then sacrifices all their creatures (an unflipped Sephiroth last), then puts the exiled cards onto the battlefield; the AI casts it when the graveyards favour it (card code in impls/sephfs_cards.rs)"
+
+["Rabid Attack"]
+dsl = []
+status = "Full"
+note = "until end of turn all our creatures get +1/+0 and 'when this creature dies, draw a card' (the AI targets every creature; the draw is run from engine/zones.rs die_triggers)"
+
+["Pestilence"]
+dsl = []
+status = "Full"
+note = "{B}: 1 damage to each creature and each player, activated up to eight times at once (a creature dies at the activation that reaches its toughness; damage stays on it for the turn); the AI keeps an unflipped Sephiroth alive. At the beginning of any end step with no creature on the battlefield it is sacrificed (card code in impls/sephfs_cards.rs)"
+
+["Grave Betrayal"]
+dsl = []
+status = "Full"
+note = "whenever a creature we don't control dies, its card returns under our control with a +1/+1 counter at the beginning of the next end step (kept on the enchantment: lost if it leaves first; tokens and commanders in the command zone cannot return). The black Zombie type is not tracked"
+
+["Dread Slaver"]
+dsl = []
+status = "Full"
+note = "3/5; a creature it killed in combat returns under our control when it dies (combat.rs marks the victim). Damage that does not kill is not tracked by the engine, so only the creatures its damage kills count"
+
+["Kaya's Ghostform"]
+dsl = []
+status = "Full"
+note = "Aura: when the enchanted creature dies or is exiled its card returns to the battlefield under our control (a commander returns from the command zone); the AI puts it on an unflipped Sephiroth first"
+
+["Grave Researcher // Reanimate"]
+dsl = []
+status = "Full"
+note = "3/3; upkeep: surveil 1, then with three or more creature cards in our graveyard it becomes prepared; prepared, {B} casts a copy of Reanimate on the best creature card in any graveyard (not below 8 life after the loss) (card code in impls/sephfs_cards.rs)"

@@ -720,6 +720,12 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
         }
         let swing = ol - 1.2 * ml;
         let mut u = swing / 2.2 - 2.5 + 2.0 * s.danger.min(1.5);
+        if g.player(p).key == "sephfs" {
+            match crate::impls::sephfs::wipe_utility(g, p, c, kind, s.danger) {
+                Some(v) => u = v,
+                None => continue,
+            }
+        }
         if d.instant && !eot && s.danger < 0.8 {
             u -= 1.5; // held: at the end of the turn before yours it sticks
         }

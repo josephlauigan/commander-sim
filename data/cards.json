@@ -8980,41 +8980,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "destroy",
-          "what": {
-           "sel": "all",
-           "filter": {
-            "type": "creature"
-           }
-          }
-         }
-        ],
-        [
-         {
-          "do": "destroy",
-          "what": {
-           "sel": "all",
-           "filter": {
-            "type": "planeswalker"
-           }
-          }
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -9022,10 +8988,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Then return a creature or planeswalker card with mana value X or less from your graveyard to the battlefield, where X is the amount of {S} spent to cast ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -25609,10 +25573,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever a creature dealt damage by ~ this turn dies, return it to the battlefield under your control. That creature is a black Zombie in addition to its other colors and types."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -30787,27 +30749,12 @@
    "generic": 3,
    "pips": "B",
    "tags": {
-    "wipe": "exile"
+    "wipe": "parity"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature"
-        }
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -30815,10 +30762,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Choose odd or even. Exile each creature with mana value of the chosen quality.   [partly: choose odd or even]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -40562,10 +40507,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever a creature you don't control dies, return it to the battlefield under your control with an additional +1/+1 counter on it at the beginning of the next end step. That creature is a black Zombie in addition to its other colors and types."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -40645,19 +40588,7 @@
    "pow": 3,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "surveil",
-       "n": 1
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "prepared",
@@ -40671,10 +40602,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "At the beginning of your upkeep, surveil 1. Then if there are three or more creature cards in your graveyard, ~ becomes prepared.   [partly: if there are three or more creature cards in your graveyard, ~ becomes prepared]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -50821,11 +50750,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature or planeswalker you control",
-    "When enchanted permanent dies or is put into exile, return that card to the battlefield under your control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -55745,7 +55671,9 @@
    "types": "S",
    "generic": 3,
    "pips": "BB",
-   "tags": {},
+   "tags": {
+    "wipe": "living"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -55757,10 +55685,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Each player exiles all creature cards from their graveyard, then sacrifices all creatures they control, then puts all cards they exiled this way onto the battlefield."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -63770,22 +63696,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature"
-        }
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -63793,10 +63704,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy all creatures, then return a creature card put into a graveyard this way to the battlefield under your control. It's a black Zombie in addition to its other colors and types. Exile ~.   [partly: return a creature card put into a graveyard this way to the battlefield under your control; it's a black zombie in addition to its other colors and types; exile ~]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -68619,36 +68528,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "B"
-     },
-     "effects": [
-      {
-       "do": "damage",
-       "n": 1,
-       "to": {
-        "sel": "all",
-        "filter": {
-         "type": "creature"
-        }
-       }
-      },
-      {
-       "do": "damage",
-       "n": 1,
-       "to": {
-        "sel": "player",
-        "who": "each_player"
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -68656,10 +68536,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "At the beginning of the end step, if no creatures are on the battlefield, sacrifice ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -72870,7 +72748,7 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,

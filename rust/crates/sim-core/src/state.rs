@@ -59,6 +59,14 @@ pub enum DataKey {
     EotSac,
     /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
     Ferocity,
+    /// Kaya's Ghostform was on the creature as it left: its card returns under this player (a `Val::Player`)
+    Ghostform,
+    /// Rabid Attack: the turn (a `Val::Stamp`) the creature draws a card when it dies
+    Rabid,
+    /// Dread Slaver damaged the creature (a `Val::Player`, the Slaver's controller)
+    Slaver,
+    /// Grave Betrayal: the creatures to return at the next end step, as [card, owner] pairs
+    Betrayed,
     /// oil counters (Armored Scrapgorger)
     Oil,
     /// Ragavan was cast for its dash cost (returned to hand at the end step)
@@ -932,6 +940,8 @@ pub struct Game {
     pub returns: IndexMap<CardId, u32>,
     /// the permanent dying now (Auras that care how their creature left)
     pub dying: Option<PermId>,
+    /// the permanent being exiled now (Kaya's Ghostform)
+    pub exiling: Option<PermId>,
     /// the last turn a creature died (Barad-dûr)
     pub died_turn: Option<TurnStamp>,
     /// creatures that died this turn: (the turn, how many) (Lagomos, Hand of Hatred)
@@ -1124,6 +1134,7 @@ impl Game {
             returns_turn: None,
             returns: IndexMap::new(),
             dying: None,
+            exiling: None,
             died_turn: None,
             died_count: (None, 0),
             treasure_paid: 0,

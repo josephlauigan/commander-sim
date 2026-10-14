@@ -622,9 +622,11 @@ fn resolve_combat_inner(
                         a_dies = false;
                     }
                     if b_dies {
+                        crate::impls::sephfs_cards::slaver_mark(g, a, b);
                         die(g, b, "destroy")?;
                     }
                     if a_dies {
+                        crate::impls::sephfs_cards::slaver_mark(g, b, a);
                         die(g, a, "destroy")?;
                     }
                     dmg

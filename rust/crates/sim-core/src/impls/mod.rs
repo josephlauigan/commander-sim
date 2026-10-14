@@ -15,6 +15,8 @@ pub mod fixes;
 pub mod galadriel;
 pub mod garland;
 pub mod garland_cards;
+pub mod sephfs;
+pub mod sephfs_cards;
 pub mod kefka;
 pub mod lands;
 pub mod legends;
@@ -96,5 +98,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     garland::register(&mut r, db)?;
     garland_cards::register(&mut r, db)?;
     garland_cards::register_more(&mut r, db)?;
+    sephfs_cards::register(&mut r, db)?;
+    sephfs::register(&mut r, db)?;
     Ok(r)
 }

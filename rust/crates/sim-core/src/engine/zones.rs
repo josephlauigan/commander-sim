@@ -768,6 +768,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
             hand_tag_death(g, q, p, m, creature)?;
         }
     }
+    if creature && g.perm(m).data.get(DataKey::Rabid) == Some(&Val::Stamp(g.turn_stamp())) {
+        crate::impls::sephfs_cards::rabid_dies(g, g.perm(m).owner)?; // Rabid Attack: draw a card
+    }
     if creature && g.players.iter().any(|pl| pl.emblems.contains(&"seph")) {
         cardcode::emblem_dies(g)?; // Sephiroth, One-Winged Angel's emblem
     }
@@ -865,6 +868,13 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
             return Ok(());
         }
     }
+    if let Some(Val::Player(q)) = x.data.get(DataKey::Ghostform).cloned()
+        && returns_left(g, cd)
+        && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
+        && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
+    {
+        return Ok(()); // Kaya's Ghostform: it returns to the battlefield under its Aura's controller
+    }
     if x.data.truthy(DataKey::Ferocity)
         && returns_left(g, cd)
         && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
@@ -891,7 +901,15 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
 }
 
 pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
-    leave(g, m)?;
+    let prev = g.exiling.replace(m); // Kaya's Ghostform sees the exile
+    let r = leave(g, m);
+    g.exiling = prev;
+    r?;
+    if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned()
+        && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
+    {
+        return Ok(());
+    }
     to_zone_card(g, m, Zone::Exile);
     Ok(())
 }

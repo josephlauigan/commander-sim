@@ -136,6 +136,8 @@ pub struct AuraSpec {
     pub host_pick: Option<HostPickFn>,
     /// runs when the enchanted creature dies, with the Aura already gone (Ferocity of the Hunt)
     pub host_dies: Option<AuraEtbFn>,
+    /// `host_dies` also runs when the enchanted creature is exiled (Kaya's Ghostform)
+    pub host_exiled: bool,
 }
 
 /// common.aura's defaults
@@ -152,6 +154,7 @@ pub const AURA: AuraSpec = AuraSpec {
     back: None,
     host_pick: None,
     host_dies: None,
+    host_exiled: false,
 };
 
 /// common.aura: register an Aura (its static effects, and the enter hook that attaches it)
@@ -385,7 +388,8 @@ pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
             } else {
                 to_zone_card(g, a, Zone::Gy);
             }
-            if died && let Some(f) = host_dies {
+            let exiled = g.exiling == Some(m) && spec_of(g, a).is_some_and(|s| s.host_exiled);
+            if (died || exiled) && let Some(f) = host_dies {
                 f(g, owner(g, a), a, m)?;
             }
         }
