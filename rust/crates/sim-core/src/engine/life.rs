@@ -64,7 +64,7 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     Ok(())
 }
 
-/// Glacial Chasm prevents all damage to you; The One Ring's protection prevents damage from opponents' sources
+/// Glacial Chasm prevents all damage to you; The One Ring's protection prevents damage from any source, the controller's own too
 pub fn prevents_damage(g: &Game, p: PlayerId, src: Option<PlayerId>) -> bool {
     if g.unpreventable() {
         return false; // Impractical Joke
@@ -78,7 +78,8 @@ pub fn prevents_damage(g: &Game, p: PlayerId, src: Option<PlayerId>) -> bool {
     if !g.hooks.is_empty() && src != Some(p) && hooks::any_prevent_damage(g, p) {
         return true; // Solitary Confinement
     }
-    g.player(p).ring_prot && src.is_some_and(|s| s != p)
+    // protection from everything stops damage from every source, our own included (Pestilence, Ancient Tomb)
+    g.player(p).ring_prot
 }
 
 /// p gains n life. Python's `gain`.
@@ -214,7 +215,7 @@ mod tests {
     }
 
     #[test]
-    fn the_one_rings_protection_stops_damage_from_opponents_only() {
+    fn the_one_rings_protection_stops_damage_from_every_source() {
         let mut g = table(&["sauron", "veyran"]);
         let (s, v) = (PlayerId(0), PlayerId(1));
         g.player_mut(v).ring_prot = true;
@@ -222,7 +223,11 @@ mod tests {
         assert_eq!(g.player(v).life, 40);
         lose_life(&mut g, v, 4, Some(s), "drain", None).unwrap(); // life loss, not damage
         assert_eq!(g.player(v).life, 36);
-        lose_life(&mut g, v, 2, Some(v), "other", Some(true)).unwrap(); // its own Ancient Tomb
+        lose_life(&mut g, v, 2, Some(v), "other", Some(true)).unwrap(); // its own Ancient Tomb: damage, so prevented too
+        assert_eq!(g.player(v).life, 36);
+        lose_life(&mut g, v, 1, Some(v), "burn", None).unwrap(); // its own Pestilence
+        assert_eq!(g.player(v).life, 36);
+        lose_life(&mut g, v, 2, Some(v), "other", Some(false)).unwrap(); // paying life is not damage
         assert_eq!(g.player(v).life, 34);
     }
 }
