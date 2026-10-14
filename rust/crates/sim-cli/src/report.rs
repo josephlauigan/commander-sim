@@ -313,6 +313,8 @@ pub struct Analysis {
     pub win_cast: Counter<String>,
     pub lost: Counter<String>,
     pub dmg: Counter<&'static str>,
+    /// the partner decks' `ty_` counters, summed over games
+    pub ty: std::collections::BTreeMap<String, i64>,
 }
 
 impl Analysis {
@@ -331,6 +333,11 @@ impl Analysis {
         }
         for k in DMG_KINDS {
             self.dmg.add(k, me.stat(&format!("dmgk_{k}")));
+        }
+        for (k, v) in &me.stats {
+            if k.starts_with("ty_") || *k == "jr_tymna_draws" {
+                *self.ty.entry(k.to_string()).or_insert(0) += v;
+            }
         }
         let elim = me.stats.get("elim_round").copied().unwrap_or(g.round as i64);
         if !me.alive {
@@ -424,6 +431,19 @@ pub fn print_analysis(
         for (k, v) in r.dmg.most_common() {
             if v != 0 {
                 println!("    {k:17} {:6.1}  ({:.0}%)", v as f64 / n, (100 * v) as f64 / td as f64);
+            }
+        }
+    }
+
+    if !r.ty.is_empty() {
+        println!("\n-- Partner decks (Tymna) --");
+        let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
+        println!("  Tymna cards drawn per game {:.2}; Tymna turns per game {:.2}; opponents hit per Tymna turn {:.2}", get("jr_tymna_draws") / n, get("ty_tymna_turns") / n, get("ty_opps_hit") / get("ty_tymna_turns").max(1.0));
+        println!("  Thrasios activations per game {:.2}", get("ty_thrasios_acts") / n);
+        for who in ["Tymna_the_Weaver", "Thrasios", "Kraum"] {
+            let c = get(&format!("ty_tn_{who}"));
+            if c > 0.0 {
+                println!("  {who} lands on turn {:.2} (in {:.0}% of games)", get(&format!("ty_tt_{who}")) / c, 100.0 * c / n);
             }
         }
     }

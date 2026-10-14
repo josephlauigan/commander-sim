@@ -614,6 +614,8 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
             q != p && g.player(q).alive && g.player(p).flag_turn.get(&*format!("hit{i}")) == Some(&st)
         })
         .count() as i32;
+    stat(g, p, "ty_tymna_turns", 1);
+    stat(g, p, "ty_opps_hit", x as i64);
     if x == 0 {
         return Ok(());
     }

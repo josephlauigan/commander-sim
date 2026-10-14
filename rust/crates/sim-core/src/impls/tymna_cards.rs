@@ -83,6 +83,7 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !g.perm(src).on_bf || !can_pay(g, p, 4, "", false) || g.player(p).library.len() < 3 {
         return Ok(false);
     }
+    g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
     pay(g, p, 4, "", false)?;
     if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
         return Ok(true);
@@ -497,6 +498,7 @@ fn card_if<'a>(r: &'a mut Registry, db: &CardDb, name: &str) -> Result<Option<&'
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    crate::impls::tymna_partners::register(r, db)?;
     if let Some(c) = card_if(r, db, THRASIOS)? {
         c.options = Some(thrasios_options);
     }
