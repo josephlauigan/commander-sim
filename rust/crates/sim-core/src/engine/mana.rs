@@ -165,6 +165,12 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or_else(|| a.parse().unwrap_or(1));
             let mut cols = tag_colors(col, ident);
+            if &*d.name == "Star Compass" {
+                cols = crate::impls::tymna_cards::star_compass_cols(g, p);
+                if cols.is_empty() {
+                    continue; // no basic land to copy
+                }
+            }
             if &*d.name == "Fellwar Stone" {
                 cols = Colors::NONE;
                 for q in g.opps(p) {

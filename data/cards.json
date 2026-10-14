@@ -20093,20 +20093,13 @@
     "leg": true,
     "human": true,
     "warrior": true,
-    "pow": "1"
+    "pow": "0",
+    "tgh": "0"
    },
-   "pow": 1,
-   "tgh": 1,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "self_scaling",
-     "pow": 1,
-     "per": "X",
-     "base0": true
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -20117,7 +20110,7 @@
    "ward": 0,
    "identity": "BUW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 6,
@@ -26788,27 +26781,6 @@
      "event": "dies",
      "source": "any_creature",
      "other": true
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": "X",
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [
-        "lifelink"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "vampire"
-       ]
-      }
-     ],
-     "event": "dies",
-     "source": "self"
     }
    ],
    "start_loyalty": null,
@@ -26823,7 +26795,7 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -27796,21 +27768,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 3,
-       "who": "you"
-      },
-      {
-       "do": "put_land"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -27818,7 +27776,7 @@
    "ward": 0,
    "identity": "GU",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,
@@ -83958,65 +83916,11 @@
    "types": "I",
    "generic": 0,
    "pips": "WB",
-   "tags": {
-    "rem": "exile",
-    "tgt": "c"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "counters",
-          "n": 2,
-          "what": {
-           "sel": "target",
-           "filter": {
-            "type": "creature"
-           },
-           "upto": false
-          }
-         }
-        ],
-        [
-         {
-          "do": "exile",
-          "what": {
-           "sel": "target",
-           "filter": {
-            "type": "creature",
-            "max_pow": 2
-           },
-           "upto": false
-          }
-         }
-        ],
-        [
-         {
-          "do": "lose_life",
-          "n": 3,
-          "who": "each_opponent"
-         },
-         {
-          "do": "gain_life",
-          "n": 3,
-          "who": "you",
-          "per_opponent": true
-         }
-        ]
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -84024,7 +83928,7 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -87325,13 +87229,11 @@
     "sphinx"
    ],
    "protfrom": "",
-   "ward": 0,
+   "ward": 2,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Spells your opponents cast that target ~ cost {2} more to cast."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

@@ -1,0 +1,121 @@
+Full | Abigale, Poet Laureate | flying; becomes prepared whenever you cast a creature spell; while prepared, pay {1}{W/B} to cast a copy of Heroic Stanza (a +1/+1 counter on target creature, the AI picks its best evasive attacker) at sorcery speed, which unprepares her
+Full | Adarkar Wastes | {T}: {C}, or a coloured mana for 1 damage
+Full | Arcane Denial | counter; the caster draws two and you draw one at the next upkeep
+Full | Arcane Sanctum | tags: `c=WUB t`
+Full | Aven Mindcensor | flash, flying; opponents searching their library search only the top four cards
+Full | Bastion Protector | commander creatures you control get +2/+2 and have indestructible
+Full | Battlefield Forge | {T}: {C}, or a coloured mana for 1 damage
+Full | Bedevil | tags: `rem=destroy tgt=cap`
+Full | Birds of Paradise | tags: `dork=A noatk fly`
+Full | Bitter Triumph | tags: `rem=destroy tgt=cp lose=3`
+Full | Black Widow, Agile Avenger | menace; whenever an opponent draws their second card each turn: a +1/+1 counter on her and you draw a card
+Full | Brushland | {T}: {C}, or a coloured mana for 1 damage
+Full | Canopy Vista | mana only
+Full | Caparocti Sunborn | attacking: tap your two least valuable untapped artifacts or creatures to discover 3
+Full | Caves of Koilos | {T}: {C}, or a coloured mana for 1 damage
+Full | Chromatic Lantern | tags: `rock=1:A lantern`
+Full | Clifftop Retreat | mana only
+Full | Coiling Oracle | 
+Full | Command Tower | tags: `c=A`
+Full | Crumbling Necropolis | tags: `c=UBR t`
+Full | Cuboid Colony | flash, flying, trample; increment: a +1/+1 counter whenever you cast a spell whose mana value is greater than its power or toughness (an X spell's X is not counted)
+Full | Cultivate | tags: `lr=1 lrt lh=1`
+Full | Dakkon Blackblade | power and toughness each equal the number of lands you control (a 0/0 base plus the land count)
+Full | Dakkon, Shadow Slayer | enters with loyalty equal to your lands; +1 surveil 2, -3 exile the best opposing creature, -6 your best artifact from hand or graveyard onto the battlefield
+Full | Darksteel Mutation | the creature becomes a 0/1 indestructible Insect artifact with no abilities
+Full | Deathcap Glade | mana only
+Full | Desertion | counter target spell; a countered artifact or creature spell enters under your control
+Full | Disenchant | destroy target artifact or enchantment
+Full | Dissipate | counter target spell; it is exiled instead of going to the graveyard
+Full | Dragonlord Dromoka | can't be countered; flying, lifelink; opponents can't cast spells during your turn
+Full | Elemental Mascot | flying, vigilance; opus: +1/+0 until end of turn per instant or sorcery you cast (compiled); with a mana value of 5 or more the top card of the library is exiled and playable until the end of your next turn
+Full | Elenda, the Dusk Rose | lifelink; a +1/+1 counter whenever another creature dies; when she dies, X 1/1 lifelink Vampires, X her power (the compiled death trigger always made three)
+Full | Embrace the Paradox | draw three, then a land card from the hand onto the battlefield tapped (the AI always does)
+Full | Exit Specialist | can't be blocked by creatures with power 3 or greater (cardcode::evasion_blocked); disguise {1}{U}: face down for {3} as a 2/2 with ward {2}; when turned face up, return another target creature to its owner's hand (the best opposing creature, or one of its own with an enters-the-battlefield effect)
+Full | Exotic Orchard | tags: `c=A`
+Full | Expressive Iteration | top three: the best to hand, the next exiled and playable this turn, the last to the bottom
+Full | Fact or Fiction | the most threatened opponent splits the five into the piles that leave you least; you take the better pile
+Full | Faeburrow Elder | vigilance; +1/+1 for each colour among permanents you control (0/0 base); {T}: one mana of each colour among permanents you control, from one source (using any tap taps it)
+Full | Falcon and Redwing | flying; whenever it deals combat damage to a player: that many 1/1 white flying Bird tokens, then a +1/+1 counter on it
+Full | Fate of the Sun-Cryst | destroy target nonland permanent; costs {2} less when it targets a tapped creature (a separate cast option for a tapped creature worth killing; the full-cost cast goes through the generic removal options)
+Full | Firebird, Blazing Ranger | attacks: other attackers get +X/+0, X = Firebird's power
+Full | Force of Will | tags: `ctr=any free`
+Full | Fortified Village | mana only
+Full | Furycalm Snarl | mana only
+Full | Fyndhorn Elder | {T}: {G}{G}
+Full | Garland, Royal Kidnapper | enters: target opponent becomes the monarch (the one whose best creature is most worth stealing); whenever an opponent becomes the monarch, gain control of their most valuable creature while they stay the monarch (it returns when they lose the crown or leave the game); creatures you control but don't own get +2/+2 and can't be sacrificed
+Full | Glacial Fortress | tags: `c=WU ck`
+Full | Harsh Annotation | destroy target creature; its controller creates a 1/1 white and black Inkling with flying (also when the creature was indestructible; none if the target was gone or untargetable)
+Full | King Darien XLVIII | other creatures +1/+1; {3}{G}{W} a +1/+1 counter and a 1/1 Soldier with spare mana; sacrifice it in response to removal aimed at a token worth more than the King, or to a destroy sweeper that would kill tokens worth more (tokens gain hexproof and indestructible until end of turn)
+Full | Kraum, Ludevic's Opus | flying, haste; draws a card whenever an opponent casts their second spell each turn; partner is the engine's
+Full | Laelia, the Blade Reforged | haste; attacking exiles the top card, castable this turn; grows on exile
+Full | Lagrella, the Magpie | exiles the best creature of each opponent until it leaves (yours aren't exiled, so the +1/+1 counters clause never applies)
+Full | Lightning, Security Sergeant | menace; combat damage to a player exiles the top card, playable (kept in the hand) while Lightning stays on the battlefield; when it leaves they are exiled for good
+Full | Llanowar Wastes | {T}: {C}, or a coloured mana for 1 damage
+Full-auto | Lyra Dawnbringer | compiled from Oracle text
+Full-auto | Make Your Move | compiled from Oracle text
+Full-auto | Mana Leak | compiled from Oracle text
+Full | Marchesa, the Black Rose | dethrone, and other creatures you control have dethrone; a creature you control with a +1/+1 counter that dies (a stolen one too, and those dying in the same wipe as Marchesa) returns under your control at the beginning of the next end step; she returns herself from the command zone the same way
+Full-auto | Memory Trap | compiled from Oracle text
+Full | Mirri, Weatherlight Duelist | first strike; attacking: each opponent blocks with at most one creature; while tapped, no more than one creature can attack you
+Full | Mordenkainen | +2 draw two then put one on the bottom, -2 a Dog Illusion with power and toughness twice your hand size, -10 exchange hand and library (no maximum hand size)
+Full | Moseo, Vein's New Dean | flying; a Pest token entering; at your end step, if you gained life this turn, returns the best creature card with mana value at most the life gained from your graveyard
+Full | Moss Diamond | enters tapped (card code); {T}: {G}
+Full | Mystic Monastery | mana only
+Full | Nightveil Predator | flying, deathtouch, hexproof (all engine keywords; hexproof stops opposing targeting)
+Full | Nightwind Glider | flying, protection from black
+Full | Nomad Outpost | mana only
+Full | Opulent Palace | mana only
+Full | Overgrown Farmland | mana only
+Full | Paradise Druid | hexproof while untapped; taps for any color
+Full | Paradox Surveyor | reach; enters: look at the top five, a land card or a card with {X} in its cost to the hand (the AI takes the best, a land when it has under six), the rest to the bottom in random order
+Full | Path of Ancestry | tags: `c=A t`
+Full | Photon, Mighty Marvel | flying; whenever it deals combat damage to a player: that much mana of the colour most of the hand wants (colourless if the hand has no coloured spell), floating until end of turn
+Full | Port Town | mana only
+Full-auto | Potioner's Trove | compiled from Oracle text
+Full | Privileged Position | 
+Full | Quick Study | tags: `draw=2`
+Approximate | Razia, Boros Archangel | flying, vigilance, haste; {T}: redirects burn of 3 or less aimed at a creature of ours that would die to it onto the opposing creature it hurts most; combat damage is not redirected (an 8-mana top end that rarely lives to use it)
+Full | Reconnaissance Mission | draws for each creature of yours that deals combat damage to a player; cycling {2} with fewer than two creatures
+Full | Rugged Prairie | mana only
+Full | Sandsteppe Citadel | mana only
+Full | Scorching Dragonfire | 3 damage to a creature; exiled instead if it would die
+Full | Seaside Citadel | tags: `c=GWU t`
+Full | Shardmage's Rescue | flash Aura on a creature you control: +1/+1, and hexproof as long as it entered this turn (grant_kw). The AI holds it for a response to targeted removal on a valuable creature
+Full | Shattered Sanctum | mana only
+Full | Shivan Reef | {T}: {C}, or a coloured mana for 1 damage
+Full | Silhana Ledgewalker | hexproof; can't be blocked except by creatures with flying
+Full | Silverquill Charm | instant, three modes chosen by the AI each time it looks for a play: two +1/+1 counters on its best creature, exile their best creature with power 2 or less, or drain 3 (opponents lose 3 each, we gain 3 once)
+Full | Sol'kanar the Swamp King | swampwalk; you gain 1 life whenever any player casts a black spell
+Full | Spectator Seating | tags: `c=A`
+Full | Spectral Lynx | protection from green; {B}: regenerate, paid by the AI whenever it would die and has {B}
+Full | Sphinx of New Prahv | flying, vigilance; spells opponents cast that target it cost {2} more: modeled as ward {2} (paid when the spell targets; the AI won't aim a spell it can't pay for)
+Full | Star Compass | enters tapped (card code); {T}: one mana of a colour a basic land you control could produce (engine/mana.rs reads the colours; none with no basic land)
+Full | Sulfurous Springs | {T}: {C}, or a coloured mana for 1 damage
+Full | Talisman of Conviction | {T}: {C}, or one of its colours for 1 damage
+Full | Talisman of Hierarchy | {T}: {C}, or one of its colours for 1 damage
+Full | Temple of Deceit | mana only
+Full | Temple of Epiphany | tags: `c=UR t`
+Full | Temple of Malady | mana only
+Full | Temple of Malice | mana only
+Full | Temple of Mystery | mana only
+Full | Terror of the Peaks | flying; opponents' spells targeting it cost 3 life; damage equal to power when your creatures enter
+Full | The Aetherspark | +1 attach to your best creature with a +1/+1 counter, -5 draw two, -10 add ten mana; combat damage by the equipped creature on your turn adds that much loyalty
+Full | The Wasp, Winsome Avenger | flash, flying; when it enters, target Hero gains hexproof until end of turn (the Ring-bearer if a Hero, else the best Hero); whenever it attacks, tap target creature defending player controls
+Full | Thrasios, Triton Hero | {4}: scry 1, reveal the top card: a land goes onto the battlefield tapped, anything else is drawn; the AI activates it as often as it can at the end of the turn before its own and, last, in its second main phase; partner is the engine's
+Full | Tocasia's Welcome | once each turn, when one or more creatures with mana value 3 or less enter under your control, draw a card
+Full | Tolsimir Wolfblood | your other green creatures +1/+1 and other white creatures +1/+1; {T}: Voja, a legendary 2/2 Wolf (one at a time)
+Full | Toxic Deluge | X = the biggest opposing toughness worth killing (max 10)
+Full | Twisted Fates | destroys the target nonland permanent, then a +1/+1 counter on each creature we control (the second target player is always the caster)
+Full | Tymna the Weaver | lifelink; at the beginning of your postcombat main phase, pay X life to draw X (X = opponents dealt combat damage this turn): the AI pays while the life left stays at Necropotence's floor or above. Partner is ignored
+Full | Ultimate Magic: Holy | permanents you control gain indestructible until end of turn; foretell {2} (after combat with mana to spare), cast later for {2}{W}: from exile it also prevents all damage to you this turn. Held for a response to destroy or damage removal, or a destroying wipe (the cloud deck's responses)
+Full | Unclaimed Territory | names the creature type most of your creatures share (Sauron: Orc): {C}, or any colour for a creature spell of that type
+Full | Underground River | {T}: {C}, or a coloured mana for 1 damage
+Full | Urza, Powerstone Prodigy | vigilance; {1}, {T}: draw then discard; discarding an artifact makes a Powerstone (once a turn)
+Full | Vanish from Sight | the best opposing nonland permanent goes on its owner's choice of the top or bottom of their library (tokens cease to exist, a commander goes to the command zone); then we surveil 1
+Full | Vibrant Outburst | tags: `rem=dmg3 tgt=c face`
+Full | Vivid Creek | enters tapped with two charge counters; {T}: {U}, or remove a counter for any colour
+Full-auto | Wander Off | compiled from Oracle text
+Full | Witherbloom Charm | the AI picks a mode when it casts it: destroy a nonland permanent with mana value 2 or less (tokens count as 0), sacrifice a Food, Clue, worthless token or spare Treasure to draw two, or gain 5 life (when life is 15 or less, better with Foolish Fate or Tenured Concocter)
+Full | Worldly Tutor | a creature on top of the library: the wish list first, cast at the end of the turn before yours
+Full | Yavimaya Coast | {T}: {C}, or a coloured mana for 1 damage

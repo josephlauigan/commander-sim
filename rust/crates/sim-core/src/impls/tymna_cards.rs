@@ -539,5 +539,201 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if let Some(c) = card_if(r, db, FATES)? {
         c.resolve = Some(fates_resolve);
     }
+    register_more(r, db)?;
+    register_rocks(r, db)?;
+    register_charm(r, db)?;
+    Ok(())
+}
+
+// ================================================================== Dakkon Blackblade, Star Compass, Embrace the Paradox
+pub const DAKKON: &str = "Dakkon Blackblade";
+pub const COMPASS: &str = "Star Compass";
+pub const EMBRACE: &str = "Embrace the Paradox";
+
+/// **Dakkon Blackblade**: power and toughness each equal the number of lands you control (a 0/0 base in the card data)
+fn dakkon_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
+    let n = g.player(p).lands.len() as i32;
+    (n, n)
+}
+
+/// **Star Compass**: `{T}`: one mana of any colour a basic land you control could produce (engine/mana.rs asks for the
+/// colours; it enters tapped, which is the compiled note)
+pub fn star_compass_cols(g: &Game, p: PlayerId) -> Colors {
+    let mut s = Colors::NONE;
+    for &l in &g.player(p).lands {
+        let letter = match &*g.db.get(g.land(l).cd).name {
+            "Plains" | "Snow-Covered Plains" => "W",
+            "Island" | "Snow-Covered Island" => "U",
+            "Swamp" | "Snow-Covered Swamp" => "B",
+            "Mountain" | "Snow-Covered Mountain" => "R",
+            "Forest" | "Snow-Covered Forest" => "G",
+            _ => continue,
+        };
+        s = s.union(Colors::from_letters(letter));
+    }
+    s
+}
+
+/// **Embrace the Paradox**: draw three cards, then you may put a land card from your hand onto the battlefield tapped
+/// (the AI always does: the land making the most colours, a fetch land breaking ties)
+fn embrace_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<Sym> {
+    draw(g, p, 3, false)?;
+    let ls: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
+    let pick = max_by(&ls, |c| {
+        let t = &g.db.get(c).tags;
+        t.str(Tag::C).map_or(0, |s| s.chars().count()) as f64 * 10.0 + t.has(Tag::F) as i32 as f64
+    });
+    if let Some(c) = pick {
+        super::partials::remove_card(&mut g.player_mut(p).hand, c);
+        let l = g.add_land(p, c, true);
+        landfall(g, p)?;
+        if g.db.get(c).tag(Tag::F) && g.player(p).lands.last() == Some(&l) {
+            crate::engine::turn::crack_fetch(g, p, l)?;
+        }
+    }
+    Ok("gy")
+}
+
+pub fn register_more(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, DAKKON)? {
+        c.self_pt = Some(dakkon_pt);
+        c.as_enters = Some(elder_enters);
+        c.etb = Some(elder_etb);
+    }
+    if let Some(c) = card_if(r, db, EMBRACE)? {
+        c.resolve = Some(embrace_resolve);
+    }
+    Ok(())
+}
+
+// ================================================================== Elenda, the Dusk Rose; rocks that enter tapped
+pub const ELENDA: &str = "Elenda, the Dusk Rose";
+
+/// **Elenda, the Dusk Rose**: when she dies, X 1/1 white Vampire tokens with lifelink, X her power. (The counter she
+/// gets whenever another creature dies is the compiled ability; the compiled death trigger made a fixed three.)
+fn elenda_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
+    let o = g.perm(m).owner;
+    let x = epow(g, m).max(0);
+    if x == 0 || !trigger_window(g, o, Some(m), &format!("{x} Vampire tokens"), None)? {
+        return Ok(());
+    }
+    let spec = Tokens {
+        tgh: Some(1),
+        lifelink: true,
+        color: Some(Colors::from_letters("W")),
+        types: vec!["vampire"],
+        ..Tokens::new(x as u32, 1)
+    };
+    make_tokens(g, o, spec)?;
+    Ok(())
+}
+
+/// the artifact enters tapped (Moss Diamond, Star Compass; the engine keeps "enters tapped" on artifacts as a note)
+fn enters_tapped(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src {
+        g.perm_mut(m).tapped = true;
+    }
+    Ok(())
+}
+
+pub fn register_rocks(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    for name in ["Moss Diamond", COMPASS] {
+        if let Some(c) = card_if(r, db, name)? {
+            c.etb = Some(enters_tapped);
+        }
+    }
+    if let Some(c) = card_if(r, db, ELENDA)? {
+        c.self_dies = Some(elenda_dies);
+    }
+    Ok(())
+}
+
+// ================================================================== Silverquill Charm
+pub const CHARM: &str = "Silverquill Charm";
+
+/// the modes the AI would pick now: (utility, mode 1-3, target). Mode 1: two +1/+1 counters on target creature (our
+/// best); 2: exile target creature with power 2 or less (their best); 3: each opponent loses 3 life and we gain 3.
+fn charm_modes(g: &Game, p: PlayerId) -> Vec<(f64, i64, Option<PermId>)> {
+    let mut out = vec![];
+    if let Some(t) = counter_target(g, p) {
+        out.push((1.0 + 0.2 * epow(g, t) as f64, 1, Some(t)));
+    }
+    let victims: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&x| g.perm(x).on_bf && g.is_creature(x) && epow(g, x) <= 2 && !untargetable(g, x))
+        .collect();
+    if let Some(v) = max_by(&victims, |x| pval(g, x)) {
+        out.push((0.9 + 0.5 * pval(g, v), 2, Some(v)));
+    }
+    let opps = g.opps(p).filter(|&q| g.player(q).alive).count() as f64;
+    out.push((0.8 + 0.3 * opps + if g.player(p).life < 15 { 0.6 } else { 0.0 }, 3, None));
+    out
+}
+
+fn charm_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+    if !can_pay(g, p, cg, &cp, false) || !crate::engine::cast::castable(g, p, c, "hand") {
+        return Ok(vec![]);
+    }
+    let label = |m: i64| match m {
+        1 => "Silverquill Charm: two +1/+1 counters",
+        2 => "Silverquill Charm: exile a creature",
+        _ => "Silverquill Charm: drain 3",
+    };
+    let eot = if post.is_none() { -0.4 } else { 0.0 };
+    Ok(charm_modes(g, p)
+        .into_iter()
+        .map(|(u, mode, t)| {
+            let arg = c.0 as i64 | (mode << 32) | (t.map_or(0, |m| m.0 as i64 + 1) << 40);
+            Opt { utility: u + eot, label: label(mode).into(), act: Some(Action::Plan { f: charm_go, arg }) }
+        })
+        .collect())
+}
+
+fn charm_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId((arg & 0xffff_ffff) as u16);
+    let mode = (arg >> 32) & 0xff;
+    let t = (arg >> 40) as u32;
+    let target = (t > 0).then(|| PermId(t - 1));
+    let ctx = crate::state::Ctx { x: mode as i32, target, ..Default::default() };
+    crate::ai::brain::do_cast_with(g, p, c, None, ctx)
+}
+
+fn charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) -> Res<Sym> {
+    let (mode, target) = if (1..=3).contains(&ctx.x) {
+        (ctx.x as i64, ctx.target)
+    } else {
+        let best = charm_modes(g, p).into_iter().max_by(|a, b| a.0.total_cmp(&b.0));
+        best.map_or((3, None), |(_, m, t)| (m, t))
+    };
+    match (mode, target) {
+        (1, Some(t)) if g.perm(t).on_bf => crate::cardcode::add_counters(g, t, 2),
+        (2, Some(t)) if g.perm(t).on_bf && g.is_creature(t) && epow(g, t) <= 2 => {
+            apply_removal(g, Some(p), t, "exile", Some(c))?;
+        }
+        (3, _) => {
+            for q in g.opps(p).collect::<Vec<_>>() {
+                if g.player(q).alive {
+                    crate::engine::life::lose_life(g, q, 3, Some(p), "drain", None)?;
+                }
+            }
+            crate::engine::life::gain(g, p, 3)?;
+        }
+        _ => {}
+    }
+    Ok(intern("gy"))
+}
+
+fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
+}
+
+pub fn register_charm(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, CHARM)? {
+        c.resolve = Some(charm_resolve);
+        c.hand_options = Some(charm_options);
+        c.prio = Some(zero_prio);
+    }
     Ok(())
 }
