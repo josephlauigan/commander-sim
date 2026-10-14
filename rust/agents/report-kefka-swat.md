@@ -20,3 +20,4 @@ Measurement (kefka, t3, loose, lookahead, 320 games, seed default, jobs 8):
 - Win rate 30.3% -> 25.0%: within noise for 320 games (SE ~2.5 points) but not a gain; trajectories differ after the
   first diverging discard. Re-run with more games before drawing any conclusion on strength.
 Full cargo test --release -j 8 passes, no warnings. Shared files: none.
+Note: practice/tests/http_play.rs test_review_and_try_it failed once in a full run, then passed in two reruns (unrelated, HTTP timing).
