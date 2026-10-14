@@ -1,0 +1,72 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 22 worker threads: about 44 seconds
+  progress  10.0%  0m01s elapsed, ~0m16s left
+  progress  20.0%  0m03s elapsed, ~0m12s left
+  progress  30.0%  0m04s elapsed, ~0m10s left
+  progress  40.0%  0m06s elapsed, ~0m09s left
+  progress  50.0%  0m07s elapsed, ~0m07s left
+  progress  60.0%  0m08s elapsed, ~0m05s left
+  progress  70.0%  0m10s elapsed, ~0m04s left
+  progress  80.0%  0m11s elapsed, ~0m02s left
+  progress  90.0%  0m12s elapsed, ~0m01s left
+  progress 100.0%  0m15s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== yshtola analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 22.2%   (4-player baseline 25%)   average rounds survived 8.1
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.60 per game, by
+    drain              56.0%
+    combat             20.9%
+    triggers           15.7%
+    other               5.2%
+    burn                2.1%
+  Damage dealt per game: 26.2, from
+    triggers            11.6  (44%)
+    combat               7.5  (29%)
+    drain                6.5  (25%)
+    burn                 0.7  (3%)
+
+-- How it loses --
+  Eliminated in 77.8% of games, on average in round 7.2
+    by Kinnan   via combo              25.3% of games
+    by Urza     via combo              15.6% of games
+    by Winota   via combo              10.9% of games
+    by Zur the Enchanter via combo               9.7% of games
+    by Winota   via combat              7.8% of games
+    by Yawgmoth via combo               5.0% of games
+    by Zur the Enchanter via commander damage    0.9% of games
+    by Urza     via combat              0.6% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 6%  T5 20%  T6 32%  T7 40%  T8 46%  T9 48%  T10 50%  T11 52%  T12 52%
+  Online at all: 52.5% of games
+  Commander resolves on turn: median 5.0, mean 5.2 (over the 67.2% of games it resolves)
+  Commander resolved by turn:  T4 30%  T5 45%  T6 53%  T7 60%  T8 63%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Y'shtola, Night's Blessed                  cast in  67.8% of games, win rate when cast  32.3% (+10.1)
+  Lowest win rate when cast:
+    Y'shtola, Night's Blessed                  cast in  67.8% of games, win rate when cast  32.3% (+10.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.13
+    Sanguine Bond                              0.05
+    Grand Arbiter Augustin IV                  0.04
+    Smothering Tithe                           0.03
+    Esper Sentinel                             0.02
+    Mystic Remora                              0.02
+    Necropotence                               0.02
+    The Eternal Wanderer                       0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(15s total)

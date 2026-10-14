@@ -1,0 +1,58 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dakkon, Shadow Slayer [pool] P WUB :: leg
+   Adarkar Wastes [scryfall] L  :: c=WU pain
+Swaps: Triplicate Spirits -> Dakkon, Shadow Slayer; Swamp -> Underground River; Island -> Adarkar Wastes
+
+=== Y'shtola vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  41.4% ->  41.6%  (delta +0.2 pts, noise ±5.4, paired)   n=500
+               eliminated by (variant): Lathril 11.8%  Teysa Karlov 9.0%  Light-Paws 14.8%  Isshin 13.6%  Tatyova 7.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (yshtola) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yshtola: first drain from Y'shtola's cast trigger
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          41.4% ->  41.6%  +0.2pt   ±6.2 
+    Rounds survived (or game length)                  11.04 ->  11.08   +0.04  ±0.40 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.53 ->   0.54   +0.01  ±0.11 
+    Mana available on your turn 4                      4.21 ->   4.18   -0.03  ±0.17 
+    Mana available on your turn 6                      6.14 ->   6.08   -0.07  ±0.23 
+
+  Speed
+    Games where the game plan came online             79.0% ->  78.6%  -0.4pt   ±5.2 
+    Turn the game plan came online                     6.71 ->   6.67   -0.04  ±0.30 
+    Turn the commander first resolved                  5.08 ->   4.98   -0.10  ±0.23 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            22.02 ->  22.23   +0.22  ±1.57 
+    Tutors resolved per game                           0.88 ->   0.88   -0.01  ±0.11 
+    Spells cast per game                              15.12 ->  15.66   +0.53  ±1.07 
+
+  Interaction
+    Counterspells cast                                 0.14 ->   0.12   -0.02  ±0.04 
+    Spot removal cast                                  1.65 ->   1.81   +0.15  ±0.18 
+    Board wipes cast                                   0.13 ->   0.16   +0.03  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.70 ->   0.69   -0.01  ±0.11 
+    Your spells countered                              0.24 ->   0.22   -0.02  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                57.11 ->  55.81   -1.30  ±6.54 
+      ...of which combat damage                       13.14 ->  13.55   +0.41  ±1.88 
+      ...of which magecraft / burn                     0.89 ->   0.96   +0.06  ±0.26 
+      ...of which drain triggers                      20.96 ->  19.31   -1.65  ±4.29 
+      ...of which other triggers                      21.68 ->  21.45   -0.23  ±2.33 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(114s total)

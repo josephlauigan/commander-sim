@@ -1,0 +1,69 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 22 worker threads: about 44 seconds
+  progress  10.0%  0m03s elapsed, ~0m35s left
+  progress  20.0%  0m07s elapsed, ~0m30s left
+  progress  30.0%  0m12s elapsed, ~0m28s left
+  progress  40.0%  0m16s elapsed, ~0m24s left
+  progress  50.0%  0m20s elapsed, ~0m20s left
+  progress  60.0%  0m24s elapsed, ~0m16s left
+  progress  70.0%  0m27s elapsed, ~0m11s left
+  progress  80.0%  0m31s elapsed, ~0m07s left
+  progress  90.0%  0m36s elapsed, ~0m04s left
+  progress 100.0%  0m43s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== galadriel analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 15.0%   (4-player baseline 25%)   average rounds survived 10.9
+
+-- How it wins --
+  damage      95.8% of wins
+  timeout      4.2% of wins
+  Opponents it eliminated: 0.38 per game, by
+    combat             91.7%
+    commander damage    5.0%
+    decked              3.3%
+  Damage dealt per game: 25.8, from
+    combat              25.8  (100%)
+    drain                0.0  (0%)
+
+-- How it loses --
+  Eliminated in 83.4% of games, on average in round 10.2
+    by Isshin   via combat             19.4% of games
+    by Light-Paws via commander damage   18.1% of games
+    by Tatyova  via combat             10.0% of games
+    by Lathril  via combat             10.0% of games
+    by Teysa Karlov via combat              5.3% of games
+    by Teysa Karlov via drain               4.7% of games
+    by Light-Paws via combat              4.4% of games
+    by Lathril  via drain               3.8% of games
+
+-- Game plan timing --
+  Plan: first Alliance trigger from Galadriel
+  Online by turn:  T2 0%  T3 0%  T4 3%  T5 9%  T6 17%  T7 28%  T8 39%  T9 45%  T10 47%  T11 52%  T12 55%
+  Online at all: 57.5% of games
+  Commander resolves on turn: median 6.0, mean 6.5 (over the 76.6% of games it resolves)
+  Commander resolved by turn:  T4 16%  T5 30%  T6 44%  T7 53%  T8 62%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Galadriel, Light of Valinor                cast in  76.9% of games, win rate when cast  19.1% (+4.1)
+  Lowest win rate when cast:
+    Galadriel, Light of Valinor                cast in  76.9% of games, win rate when cast  19.1% (+4.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Galadriel, Light of Valinor                0.21
+    Elspeth, Sun's Champion                    0.12
+    Cathars' Crusade                           0.07
+    Adeline, Resplendent Cathar                0.07
+    Ramosian Sergeant                          0.06
+    Springleaf Drum                            0.04
+    Panharmonicon                              0.03
+    Lin Sivvi, Defiant Hero                    0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(43s total)

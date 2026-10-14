@@ -1,0 +1,81 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 22 worker threads: about 44 seconds
+  progress  10.0%  0m01s elapsed, ~0m14s left
+  progress  20.0%  0m02s elapsed, ~0m11s left
+  progress  30.0%  0m04s elapsed, ~0m09s left
+  progress  40.0%  0m05s elapsed, ~0m08s left
+  progress  50.0%  0m06s elapsed, ~0m06s left
+  progress  60.0%  0m08s elapsed, ~0m05s left
+  progress  70.0%  0m09s elapsed, ~0m04s left
+  progress  80.0%  0m11s elapsed, ~0m02s left
+  progress  90.0%  0m13s elapsed, ~0m01s left
+  progress 100.0%  0m16s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== kefka analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 21.9%   (4-player baseline 25%)   average rounds survived 8.1
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.60 per game, by
+    combat             47.1%
+    drain              26.7%
+    triggers           13.6%
+    burn                8.9%
+    decked              2.1%
+    other               1.6%
+  Damage dealt per game: 23.6, from
+    combat              12.7  (54%)
+    drain                7.7  (33%)
+    burn                 1.6  (7%)
+    triggers             1.6  (7%)
+
+-- How it loses --
+  Eliminated in 78.1% of games, on average in round 7.2
+    by Kinnan   via combo              21.6% of games
+    by Urza     via combo              15.3% of games
+    by Winota   via combo              10.3% of games
+    by Winota   via combat             10.0% of games
+    by Zur the Enchanter via combo               6.9% of games
+    by Yawgmoth via combo               5.6% of games
+    by Yawgmoth via combat              1.9% of games
+    by Zur the Enchanter via commander damage    1.9% of games
+
+-- Game plan timing --
+  Plan: Kefka flipped into Ruler of Ruin
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 2%  T8 5%  T9 11%  T10 14%  T11 16%  T12 18%
+  Online at all: 21.2% of games
+  Commander resolves on turn: median 5.0, mean 6.0 (over the 54.4% of games it resolves)
+  Commander resolved by turn:  T4 7%  T5 28%  T6 39%  T7 45%  T8 49%
+  Breach line: Breach and a storm card held on our turn in 16.6% of games
+    dry run tried in 14.4%, passed in 3.4%, executed in 3.1%, won (table dead or decked) in 3.1%
+    last failed dry run fell short of: mana 4.1%, blue mana 0.3%, graveyard fuel 2.5%, storm count / other 7.2% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  56.6% of games, win rate when cast  38.1% (+16.2)
+  Lowest win rate when cast:
+    Kefka, Court Mage // Kefka, Ruler of Ruin  cast in  56.6% of games, win rate when cast  38.1% (+16.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Underworld Breach                          cast  12.6% of the games it was drawn
+    Diabolic Tutor                             cast  40.7% of the games it was drawn
+    Deadly Embrace                             cast  45.6% of the games it was drawn
+    Contract Killing                           cast  46.2% of the games it was drawn
+    Blazing Firesinger                         cast  49.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  0.08
+    Psychosis Crawler                          0.03
+    Susurian Voidborn                          0.03
+    Sawblade Scamp                             0.03
+    Massacre Wurm                              0.02
+    Rhystic Study                              0.02
+    Scarlet Spider, Kaine                      0.02
+    Hallway Heckler                            0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(16s total)

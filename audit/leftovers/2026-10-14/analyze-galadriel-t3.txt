@@ -1,0 +1,67 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 22 worker threads: about 44 seconds
+  progress  10.0%  0m03s elapsed, ~0m32s left
+  progress  20.0%  0m06s elapsed, ~0m27s left
+  progress  30.0%  0m09s elapsed, ~0m22s left
+  progress  40.0%  0m12s elapsed, ~0m18s left
+  progress  50.0%  0m15s elapsed, ~0m15s left
+  progress  60.0%  0m18s elapsed, ~0m12s left
+  progress  70.0%  0m22s elapsed, ~0m09s left
+  progress  80.0%  0m25s elapsed, ~0m06s left
+  progress  90.0%  0m29s elapsed, ~0m03s left
+  progress 100.0%  0m40s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== galadriel analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 13.1%   (4-player baseline 25%)   average rounds survived 11.8
+
+-- How it wins --
+  damage      95.2% of wins
+  timeout      4.8% of wins
+  Opponents it eliminated: 0.33 per game, by
+    combat             96.3%
+    commander damage    3.7%
+  Damage dealt per game: 20.7, from
+    combat              20.7  (100%)
+
+-- How it loses --
+  Eliminated in 85.6% of games, on average in round 11.2
+    by Aurelia  via combat             23.1% of games
+    by Marwyn   via combat             15.9% of games
+    by Atraxa   via combat             12.2% of games
+    by Tergrid  via combat             11.2% of games
+    by Korvold  via combat              3.4% of games
+    by Aurelia  via commander damage    2.5% of games
+    by Korvold  via drain               2.5% of games
+    by Atraxa   via triggers            2.5% of games
+
+-- Game plan timing --
+  Plan: first Alliance trigger from Galadriel
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 11%  T6 22%  T7 30%  T8 37%  T9 42%  T10 45%  T11 47%  T12 51%
+  Online at all: 53.8% of games
+  Commander resolves on turn: median 6.0, mean 6.5 (over the 80.0% of games it resolves)
+  Commander resolved by turn:  T4 15%  T5 32%  T6 49%  T7 59%  T8 66%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Galadriel, Light of Valinor                cast in  80.6% of games, win rate when cast  15.9% (+2.8)
+  Lowest win rate when cast:
+    Galadriel, Light of Valinor                cast in  80.6% of games, win rate when cast  15.9% (+2.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Galadriel, Light of Valinor                0.30
+    Elspeth, Sun's Champion                    0.11
+    Cathars' Crusade                           0.05
+    Mirror Entity                              0.05
+    Ramosian Sergeant                          0.05
+    Adeline, Resplendent Cathar                0.04
+    Errant Doomsayers                          0.04
+    Ramosian Captain                           0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(41s total)

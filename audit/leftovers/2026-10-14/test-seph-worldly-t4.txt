@@ -1,0 +1,58 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Worldly Tutor [pool] I G :: top
+Swaps: Orzhov Signet -> Worldly Tutor
+
+=== Sephiroth vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.0% ->  29.0%  (delta -1.0 pts, noise ±4.8, paired)   n=500
+               eliminated by (variant): Heliod 18.0%  Yuriko 14.6%  Krenko 18.4%  Chulane 11.2%  Prosper 8.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.0% ->  29.0%  -1.0pt   ±5.8 
+    Rounds survived (or game length)                   9.79 ->   9.81   +0.03  ±0.42 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.57 ->   0.58   +0.01  ±0.10 
+    Mana available on your turn 4                      4.29 ->   4.18   -0.11  ±0.15 
+    Mana available on your turn 6                      5.85 ->   5.75   -0.10  ±0.22 
+
+  Speed
+    Games where the game plan came online             73.0% ->  71.4%  -1.6pt   ±5.7 
+    Turn the game plan came online                     6.39 ->   6.41   +0.02  ±0.30 
+    Turn the commander first resolved                  8.13 ->   8.19   +0.05  ±0.39 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.86 ->  13.89   +0.03  ±1.28 
+    Tutors resolved per game                           0.39 ->   0.40   +0.02  ±0.08 
+    Spells cast per game                              11.92 ->  11.36   -0.56  ±1.08 
+
+  Interaction
+    Counterspells cast                                 0.33 ->   0.33   +0.01  ±0.07 
+    Spot removal cast                                  0.95 ->   0.92   -0.02  ±0.12 
+    Board wipes cast                                   0.31 ->   0.27   -0.05  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.17 ->   0.13   -0.04  ±0.06 
+    Your key permanents removed by opponents           0.67 ->   0.72   +0.05  ±0.13 
+    Your spells countered                              0.41 ->   0.38   -0.03  ±0.09 
+    Removed bombs brought back                         0.25 ->   0.18   -0.07  ±0.07 
+
+  Threat & pressure
+    Bombs put on the battlefield                       2.57 ->   2.44   -0.14  ±0.34 
+    Damage dealt to opponents per game                23.23 ->  21.72   -1.51  ±3.77 
+      ...of which combat damage                       14.55 ->  13.78   -0.76  ±2.60 
+      ...of which drain triggers                       7.37 ->   6.65   -0.72  ±1.44 
+      ...of which other triggers                       1.31 ->   1.29   -0.02  ±0.98 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(84s total)
