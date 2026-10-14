@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 60);
+    assert_eq!(played, 72); // twelve decks of yours (the two Tymna partner decks included) x six tiers
 }
 
 #[test]

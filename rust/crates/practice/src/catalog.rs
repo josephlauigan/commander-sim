@@ -29,6 +29,9 @@ fn my_deck_files(data: &Path) -> Vec<(String, String)> {
             && let Some(last) = out.last_mut()
         {
             last.1 = v.trim().trim_matches('"').to_string();
+        } else if line.starts_with("commander2") {
+            // two commanders (Partner): the practice setup screen shows one commander per deck, so not these yet
+            out.pop();
         }
     }
     out
