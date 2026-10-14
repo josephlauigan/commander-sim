@@ -528,6 +528,7 @@ fn sisay_grows_with_colours_and_fetches_below_its_power() {
     let mut g = jodah_table();
     let s = perm(&mut g, P0, "Sisay, Weatherlight Captain");
     assert_eq!(values::epow(&g, s), 2);
+    lands(&mut g, P0, "Plains", 1, false); // (Dakkon is as big as your lands: a 0/0 without one)
     perm(&mut g, P0, "Dakkon Blackblade"); // white, blue, black: +3/+3
     assert_eq!(values::epow(&g, s), 5);
     set_library(&mut g, P0, &["Lyra Dawnbringer", "Mirri, Weatherlight Duelist", "Caparocti Sunborn"]);
