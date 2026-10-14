@@ -13,6 +13,6 @@
   (usage: seed.sh <binary> <outprefix>; compare ignoring timing lines "(Ns total)").
 
 ## Next
-1. report.rs "Garland" section (gl_* + jr_garland_* stats), full cargo test, warnings, all_decks adaptive 3 / lookahead 1.
+1. report.rs "Garland" section was edited (sim-cli/src/report.rs, UNCOMPILED: check it builds); then full cargo test (first run killed unfinished), warnings, all_decks adaptive 3 / lookahead 1.
 2. same-seed check vs baseline; 200-game run `--deck garland --pool t3 --analyze --seed 1013`; no "never cast" cards.
 3. Tuning if steals last <1 round; Desertion/Coerced priorities; report-garland.md.

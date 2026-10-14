@@ -335,7 +335,7 @@ impl Analysis {
             self.dmg.add(k, me.stat(&format!("dmgk_{k}")));
         }
         for (k, v) in &me.stats {
-            if k.starts_with("ty_") || *k == "jr_tymna_draws" {
+            if k.starts_with("ty_") || k.starts_with("gl_") || k.starts_with("jr_garland") || *k == "jr_tymna_draws" {
                 *self.ty.entry(k.to_string()).or_insert(0) += v;
             }
         }
@@ -435,7 +435,22 @@ pub fn print_analysis(
         }
     }
 
-    if !r.ty.is_empty() {
+    if deck_is_garland(r) {
+        let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
+        println!("\n-- Garland --");
+        println!("  Garland entries per game {:.2} (cast {:.2}, token copies {:.2})", get("gl_entries") / n, get("gl_casts") / n, get("gl_copies") / n);
+        println!("  Steals per game {:.2}; a steal lasts {:.2} rounds on average; steals ended by the crown moving {:.2} per game", get("jr_garland_steals") / n, get("jr_garland_rounds") / get("jr_garland_back").max(1.0), get("jr_garland_back") / n);
+        println!("  Crown changes per game {:.2}; we became the monarch {:.2} times per game ({:.0}% of games)", get("gl_crown_changes") / n, get("gl_we_monarch") / n, 100.0 * (get("gl_we_monarch") / n).min(1.0));
+        println!("  Damage by stolen creatures per game {:.2} (a stolen creature hit a player {:.2} times per game)", get("jr_garland_dmg") / n, get("jr_garland_hit") / n);
+        println!("  steals ended because the creature left: {:.2} per game; took the crown back (ended steals): {:.2} per game", get("jr_garland_gone") / n, get("jr_garland_back_me") / n);
+        let mut took: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("jr_garland_took:")).collect();
+        took.sort_by(|a, b| b.1.cmp(a.1));
+        for (k, v) in took.into_iter().take(8) {
+            println!("    stole {} {:.2} per game", &k["jr_garland_took:".len()..], *v as f64 / n);
+        }
+    }
+
+    if !r.ty.is_empty() && !deck_is_garland(r) {
         println!("\n-- Partner decks (Tymna) --");
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
         println!("  Tymna cards drawn per game {:.2}; Tymna turns per game {:.2}; opponents hit per Tymna turn {:.2}", get("jr_tymna_draws") / n, get("ty_tymna_turns") / n, get("ty_opps_hit") / get("ty_tymna_turns").max(1.0));
@@ -679,4 +694,9 @@ fn print_speed(r: &Analysis, deck: &str) {
             );
         }
     }
+}
+
+/// does this analysis hold Garland counters (the deck's own `gl_` stats)?
+fn deck_is_garland(r: &Analysis) -> bool {
+    r.ty.keys().any(|k| k.starts_with("gl_"))
 }
