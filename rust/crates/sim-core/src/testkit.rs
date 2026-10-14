@@ -32,7 +32,12 @@ pub fn db() -> Arc<CardDb> {
 /// code: the real commanders and colour identity, a library of basic lands. The deck AI keys on the seat key alone,
 /// so these seats still run the key-gated code.
 fn retired_decks() -> Vec<RawDeck> {
-    let lib = |cmds: &[&str], basics: &[&str]| -> Vec<String> { cmds.iter().map(|c| c.to_string()).chain((0..100 - cmds.len()).map(|i| basics[i % basics.len()].to_string())).collect() };
+    let lib = |cmds: &[&str], basics: &[&str]| -> Vec<String> {
+        cmds.iter()
+            .map(|c| c.to_string())
+            .chain((0..100 - cmds.len()).map(|i| basics[i % basics.len()].to_string()))
+            .collect()
+    };
     let mk = |key: &str, name: &str, c1: &str, c2: Option<&str>, ident: &str, basics: &[&str]| RawDeck {
         tier: Some("retired".into()),
         key: key.into(),
@@ -43,8 +48,22 @@ fn retired_decks() -> Vec<RawDeck> {
         cards: lib(&[c1, c2.unwrap_or("")][..if c2.is_some() { 2 } else { 1 }], basics),
     };
     vec![
-        mk("thrasios", "Tymna/Thrasios", "Tymna the Weaver", Some("Thrasios, Triton Hero"), "WUBG", &["Plains", "Island", "Swamp", "Forest"]),
-        mk("kraum", "Tymna/Kraum", "Tymna the Weaver", Some("Kraum, Ludevic's Opus"), "WUBR", &["Plains", "Island", "Swamp", "Mountain"]),
+        mk(
+            "thrasios",
+            "Tymna/Thrasios",
+            "Tymna the Weaver",
+            Some("Thrasios, Triton Hero"),
+            "WUBG",
+            &["Plains", "Island", "Swamp", "Forest"],
+        ),
+        mk(
+            "kraum",
+            "Tymna/Kraum",
+            "Tymna the Weaver",
+            Some("Kraum, Ludevic's Opus"),
+            "WUBR",
+            &["Plains", "Island", "Swamp", "Mountain"],
+        ),
         mk("garland", "Garland", "Garland, Royal Kidnapper", None, "UB", &["Island", "Swamp"]),
     ]
 }
