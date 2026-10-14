@@ -3,7 +3,7 @@
 **Added 2026-10-14.** JD's mono-black control deck with Sephiroth, Fabled SOLDIER as commander and JD's new Phyrexian
 Tower and Phyrexian Altar. Not JD's Atraxa deck (`sephiroth-phyrexian-reanimator.md`, also called Sephiroth): that
 one reanimates its own creatures for combos; this one wipes the board, drains on every death and takes opponents' dead.
-**30 buys, about $62.50** (about $34.50 without Sephiroth).
+**31 buys, about $69.79** (about $41.79 without Sephiroth). Crux of Fate and Animate Dead are second copies: JD's first copies stay in the Kefka and Atraxa decks.
 
 **Not measured yet.**
 
@@ -42,7 +42,7 @@ this is the fourth time this ability has resolved this turn, transform Sephiroth
 
 ## Where the cards come from
 
-**Buys (30, about $62.50):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
+**Buys (31, about $69.79):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
 **JD's own, new (2):** Phyrexian Tower, Phyrexian Altar (not on the bulk/binder lists yet). **Basics (32 Swamp):** your
 own. Everything else comes off JD's lists (main, 2026-10-14).
 
@@ -100,7 +100,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 
 | Card | From | Set |
 |---|---|---|
-| Animate Dead | JD's own |  |
+| Animate Dead | **Buy** ($7.29; a second copy: JD's first is in the Atraxa deck) |  |
 | Bastion of Remembrance | **Buy** ($0.33) |  |
 | Braids's Frightful Return | Bulk | dmu |
 | Call of the Ring | Binder |  |
