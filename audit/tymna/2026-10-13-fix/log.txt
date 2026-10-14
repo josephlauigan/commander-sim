@@ -1,0 +1,11 @@
+20:46 thrasios t1 exit 0
+20:48 kraum t1 exit 0
+20:51 thrasios t2 exit 0
+20:53 kraum t2 exit 0
+20:55 thrasios t3 exit 0
+20:57 kraum t3 exit 0
+20:59 thrasios t4 exit 0
+21:00 kraum t4 exit 0
+21:01 thrasios t5 exit 0
+21:02 kraum t5 exit 0
+21:02 DONE
