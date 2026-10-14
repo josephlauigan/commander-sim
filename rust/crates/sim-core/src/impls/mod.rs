@@ -44,6 +44,7 @@ pub mod t0_giada;
 pub mod t0_anikthea;
 pub mod zur;
 pub mod threats;
+pub mod tymna_partners;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot

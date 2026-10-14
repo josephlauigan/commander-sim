@@ -533,12 +533,12 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
         return;
     }
     let cd = x.cd.unwrap();
-    if cd == g.player(owner).cmd {
+    if g.player(owner).is_commander(cd) {
         if zone == Zone::Hand && crate::impls::cloud::cmd_stays_in_hand(g, owner) {
             g.player_mut(owner).hand.push(cd); // rule 903.9b: the owner may leave the commander in hand (no tax)
             return;
         }
-        g.player_mut(owner).cmd_in_zone = true;
+        g.player_mut(owner).set_cmd_zone(cd, true);
         return;
     }
     match zone {
@@ -827,7 +827,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     if d.bomb != 0 && x.orig == p && !g.player(p).removed_bombs.contains(&cd) {
         g.player_mut(p).removed_bombs.push(cd);
     }
-    let is_cmd_card = cd == g.player(p).cmd;
+    let is_cmd_card = g.player(p).is_commander(cd);
     // undying from Mikaeus
     if has(g, p, Tag::Mikaeus)
         && d.creature
@@ -959,7 +959,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
                 let y = g.perm(x);
                 y.cd.is_some_and(|c| {
                     let d = g.db.get(c);
-                    c != g.player(y.owner).cmd
+                    !g.player(y.owner).is_commander(c)
                         && (g.is_creature(x) || d.types.has(crate::cards::Types::ARTIFACT))
                         && !d.tag(Tag::Clone)
                 })
@@ -1644,8 +1644,8 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
         let Some(i) = pl.hand.iter().position(|&x| x == c) else { continue }; // paid away meanwhile
         pl.hand.remove(i);
         done.push(c);
-        if c == pl.cmd {
-            pl.cmd_in_zone = true; // a commander in hand (Command Beacon): to the command zone
+        if pl.is_commander(c) {
+            pl.set_cmd_zone(c, true); // a commander in hand (Command Beacon): to the command zone
             continue;
         }
         if necro {
@@ -1673,8 +1673,8 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
 /// q discards the card at position i in hand (random discards)
 pub fn discard_index(g: &mut Game, q: PlayerId, i: usize) -> Res {
     let c = g.player_mut(q).hand.remove(i);
-    if c == g.player(q).cmd {
-        g.player_mut(q).cmd_in_zone = true;
+    if g.player(q).is_commander(c) {
+        g.player_mut(q).set_cmd_zone(c, true);
         return Ok(());
     }
     if !g.hooks.is_empty() {

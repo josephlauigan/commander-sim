@@ -568,7 +568,7 @@ fn resolve_combat_inner(
             .map(|a| (a, epow(g, a) * if double_strike(g, a) { 2 } else { 1 }))
             .collect();
         let lethal = unbl_dmg.iter().map(|x| x.1).sum::<i32>() >= g.player(d).life
-            || unbl_dmg.iter().any(|&(a, x)| g.perm(a).is_cmd && g.player(d).cmd_dmg[p.index()] + x >= 21);
+            || unbl_dmg.iter().any(|&(a, x)| g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + x >= 21);
         if lethal {
             last_chance(g, d)?; // lethal coming: Teferi's Protection
         }
@@ -710,7 +710,7 @@ fn resolve_combat_inner(
                     gain(g, p, dmg)?;
                 }
                 if g.perm(a).is_cmd {
-                    g.player_mut(d).cmd_dmg[p.index()] += dmg;
+                    crate::engine::values::add_cmd_dmg(g, d, p, a, dmg);
                 }
                 if g.perm(a).army {
                     crate::impls::mine::army_hit_milestone(g, p); // reports: with or without Sauron out

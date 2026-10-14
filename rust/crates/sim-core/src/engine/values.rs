@@ -371,6 +371,23 @@ pub fn commander_out(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| g.perm(m).is_cmd && !g.perm(m).phased)
 }
 
+/// is `m` the second commander (Partner) of its controller `p`?
+fn is_second_cmd(g: &Game, p: PlayerId, m: PermId) -> bool {
+    g.perm(m).cd.is_some() && g.perm(m).cd == g.player(p).cmd2
+}
+
+/// the commander damage defender `d` has taken from the commander permanent `a` that `p` controls (per commander)
+pub fn cmd_dmg_by(g: &Game, d: PlayerId, p: PlayerId, a: PermId) -> i32 {
+    let pl = g.player(d);
+    if is_second_cmd(g, p, a) { pl.cmd2_dmg[p.index()] } else { pl.cmd_dmg[p.index()] }
+}
+
+pub fn add_cmd_dmg(g: &mut Game, d: PlayerId, p: PlayerId, a: PermId, dmg: i32) {
+    let second = is_second_cmd(g, p, a);
+    let pl = g.player_mut(d);
+    if second { pl.cmd2_dmg[p.index()] += dmg } else { pl.cmd_dmg[p.index()] += dmg }
+}
+
 /// Melira, Sylvok Outcast: p can't get poison counters, and p's creatures can't have -1/-1 counters put on them
 pub fn melira(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| card_tag(g, m, Tag::Melira) && !g.perm(m).phased)

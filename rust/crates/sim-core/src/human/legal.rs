@@ -194,7 +194,7 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
     if zone == "hand" && !pl.hand.contains(&c) {
         return Some(format!("{name} isn't in your hand."));
     }
-    if zone == "cmd" && !(c == pl.cmd && pl.cmd_in_zone) {
+    if zone == "cmd" && !pl.cmd_zone_of(c) {
         return Some("Your commander is not in the command zone.".into());
     }
     if d.land {

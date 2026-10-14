@@ -579,7 +579,7 @@ pub fn oring_exile(
         let x = g.perm(m);
         if !on(g, m, o) && !x.token {
             let cd = x.phys.or(x.cd).unwrap();
-            if cd != g.player(o).cmd && g.player(x.orig).exile.contains(&cd) {
+            if !g.player(o).is_commander(cd) && g.player(x.orig).exile.contains(&cd) {
                 exiled.push(Val::List(vec![Val::Card(cd), Val::Player(x.orig)]));
             }
         }

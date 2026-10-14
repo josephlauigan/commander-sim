@@ -472,8 +472,8 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
     if crate::engine::values::stopped(g, &d.name) {
         gn += 3; // Disruptor Flute tax
     }
-    if c == pl.cmd && !pl.hand.contains(&c) && &*d.name != "Liesa, Shroud of Dusk" {
-        gn += pl.tax as i32; // no tax from hand
+    if pl.is_commander(c) && !pl.hand.contains(&c) && &*d.name != "Liesa, Shroud of Dusk" {
+        gn += pl.tax_of(c) as i32; // no tax from hand
     }
     if pl.agent_ids.contains(&c) {
         // Opposition Agent: spend mana as though it were mana of any type

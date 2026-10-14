@@ -809,8 +809,8 @@ pub fn settle_stack(g: &mut Game) -> Res {
             }
             let c = it.card.unwrap();
             let o = it.ctx.owner.unwrap_or(p); // a card cast from another player's deck goes back to theirs
-            if c == g.player(p).cmd {
-                g.player_mut(p).cmd_in_zone = true;
+            if g.player(p).is_commander(c) {
+                g.player_mut(p).set_cmd_zone(c, true);
             } else if it.zone == "gy" || it.ctx.exile_after {
                 g.player_mut(o).exile.push(c);
             } else if !g.db.get(c).land {

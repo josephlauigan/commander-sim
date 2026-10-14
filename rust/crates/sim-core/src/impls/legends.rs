@@ -1828,7 +1828,7 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
     }
     let pl = g.player(p);
     let perms = pl.perms.iter().filter_map(|&m| g.perm(m).cd);
-    let cards = pl.library.iter().chain(&pl.hand).chain(&pl.gy).chain(&pl.exile).copied().chain(perms).chain([pl.cmd]);
+    let cards = pl.library.iter().chain(&pl.hand).chain(&pl.gy).chain(&pl.exile).copied().chain(perms).chain(pl.commanders());
     let mut n: Vec<(&str, i32)> = vec![];
     for c in cards {
         let d = g.db.get(c);

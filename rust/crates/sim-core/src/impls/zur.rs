@@ -440,7 +440,7 @@ pub fn wanderer_exile(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         && !g.perm(m).on_bf
         && !g.perm(m).token
         && g.player(o).exile.contains(&cd)
-        && cd != g.player(o).cmd
+        && !g.player(o).is_commander(cd)
     {
         g.zur_due.push((o, cd));
     }

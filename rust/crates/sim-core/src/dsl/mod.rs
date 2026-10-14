@@ -754,7 +754,8 @@ fn run(
             let sel = sel_or_empty(&e.what);
             let ms: Vec<PermId> = if sel.upto == Some(true) || sel.sel.as_deref() == Some("target") {
                 // only blink a nontoken creature that gets something from entering again
-                let cmd = g.player(p).cmd;
+                let pl_c = g.player(p);
+                let (cmd, cmd2) = (pl_c.cmd, pl_c.cmd2);
                 let cands: Vec<PermId> = g
                     .player(p)
                     .perms
@@ -763,7 +764,7 @@ fn run(
                     .filter(|&m| {
                         let x = g.perm(m);
                         g.is_creature(m)
-                            && x.cd.is_some_and(|c| c != cmd && etb_value(g, c) > 0)
+                            && x.cd.is_some_and(|c| c != cmd && Some(c) != cmd2 && etb_value(g, c) > 0)
                             && !x.phased
                             && matches(g, p, m, sel.filter.as_ref(), src)
                     })

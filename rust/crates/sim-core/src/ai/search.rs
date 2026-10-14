@@ -103,10 +103,10 @@ pub fn determinize(g2: &mut Game, me: PlayerId, rng: &mut Rng) {
         if q.id == me {
             rng.shuffle(&mut q.library);
         } else if q.alive {
-            let cmd = q.cmd;
+            let (cmd, cmd2) = (q.cmd, q.cmd2);
             // a commander put into hand (Command Beacon) is known
-            let keep: Vec<CardId> = q.hand.iter().copied().filter(|&c| c == cmd).collect();
-            let mut pool: Vec<CardId> = q.hand.iter().copied().filter(|&c| c != cmd).collect();
+            let keep: Vec<CardId> = q.hand.iter().copied().filter(|&c| c == cmd || Some(c) == cmd2).collect();
+            let mut pool: Vec<CardId> = q.hand.iter().copied().filter(|&c| c != cmd && Some(c) != cmd2).collect();
             pool.append(&mut q.library);
             rng.shuffle(&mut pool);
             let n = q.hand.len() - keep.len();

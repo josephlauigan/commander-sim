@@ -125,7 +125,7 @@ pub fn check_state(g: &mut Game) -> Res {
     }
     for i in 0..g.players.len() {
         let pl = &g.players[i];
-        if pl.alive && (pl.life <= 0 || pl.decked || pl.cmd_dmg.iter().any(|&d| d >= 21) || pl.poison >= 10) {
+        if pl.alive && (pl.life <= 0 || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) {
             eliminate(g, PlayerId(i as u8));
         }
     }
@@ -146,7 +146,7 @@ pub fn eliminate(g: &mut Game, p: PlayerId) {
     let pl = g.player_mut(p);
     pl.alive = false;
     pl.killer = pl.last_src;
-    pl.death_kind = if pl.cmd_dmg.iter().any(|&d| d >= 21) {
+    pl.death_kind = if pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) {
         "commander damage"
     } else if pl.decked {
         "decked"

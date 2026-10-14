@@ -93,6 +93,9 @@ pub struct RawDeck {
     /// the name shown in logs ('Sauron', 'Krenko')
     pub name: String,
     pub commander: String,
+    /// a second commander with Partner (decks with two commanders only)
+    #[serde(default)]
+    pub commander2: Option<String>,
     /// the seat's colour identity ("UBR"), as the Python engine sets it: a commander's card doesn't always record one
     #[serde(default)]
     pub ident: Option<String>,

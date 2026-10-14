@@ -6,7 +6,7 @@ use sim_core::ids::PlayerId;
 use sim_core::rng::Rng;
 use sim_core::run::Engine;
 use sim_core::settings::Settings;
-use sim_core::state::{Game, Player};
+use sim_core::state::Game;
 use std::sync::Arc;
 
 /// the decks people can play (poolmode.MINE)
@@ -128,7 +128,7 @@ pub fn build_game(
     let players = specs
         .iter()
         .enumerate()
-        .map(|(i, s)| Player::new(PlayerId(i as u8), s.key, s.name, s.ident, s.commander, s.cards.clone()))
+        .map(|(i, s)| s.player(PlayerId(i as u8)))
         .collect();
     let mut g = Game::new(e.db.clone(), e.registry.clone(), Arc::new(settings), players, Rng::named(&format!("play:{seed}")));
     let mut mull = vec![];

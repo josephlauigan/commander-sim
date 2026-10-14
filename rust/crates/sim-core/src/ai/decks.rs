@@ -58,6 +58,8 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "titania" => crate::impls::titania::titania_prio(g, p, c),
         "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
         "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
+        "thrasios" => crate::impls::tymna_partners::thrasios_prio(g, p, c),
+        "kraum" => crate::impls::tymna_partners::kraum_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
     }
 }
@@ -598,6 +600,9 @@ pub fn flute_pick(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
             add(ql.cmd, 9.0 + threat(g, p, q) * 0.05); // WUBRG extra combats + recast tax
         } else {
             add(ql.cmd, if ql.cmd_in_zone { 4.0 } else { 1.5 } + if ql.tax >= 2 { 1.0 } else { 0.0 });
+            if let Some(c2) = ql.cmd2 {
+                add(c2, if ql.cmd2_in_zone { 4.0 } else { 1.5 } + if ql.tax2 >= 2 { 1.0 } else { 0.0 });
+            }
         }
         for &m in &ql.perms {
             let x = g.perm(m);

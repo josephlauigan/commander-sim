@@ -336,6 +336,8 @@ pub struct Player {
     pub name: Sym,
     pub ident: Colors,
     pub cmd: CardId,
+    /// the second commander of a Partner pair (None for every single-commander seat); `cmd` is the first
+    pub cmd2: Option<CardId>,
     pub deck_names: Arc<[CardId]>,
     /// top card last, as in Python
     pub library: Vec<CardId>,
@@ -351,6 +353,10 @@ pub struct Player {
     pub tax: u32,
     /// commander damage taken, by the seat whose commander dealt it
     pub cmd_dmg: [i32; MAX_SEATS],
+    /// the second commander: in the command zone, its own tax (+2 per cast from there), the damage it dealt
+    pub cmd2_in_zone: bool,
+    pub tax2: u32,
+    pub cmd2_dmg: [i32; MAX_SEATS],
     pub treasures: u32,
     pub clues: u32,
     /// Blood tokens (Restless Bloodseeker; impls/sheoldred.rs)
@@ -571,6 +577,7 @@ impl Player {
             name,
             ident,
             cmd,
+            cmd2: None,
             deck_names: cards,
             library,
             hand: vec![],
@@ -584,6 +591,9 @@ impl Player {
             cmd_in_zone: true,
             tax: 0,
             cmd_dmg: [0; MAX_SEATS],
+            cmd2_in_zone: false,
+            tax2: 0,
+            cmd2_dmg: [0; MAX_SEATS],
             treasures: 0,
             clues: 0,
             bloods: 0,
@@ -701,6 +711,66 @@ impl Player {
             marchesa_batch: None,
             stats: IndexMap::new(),
         }
+    }
+
+    /// seat a second commander (Partner): it starts in the command zone, with its own tax and its own damage
+    pub fn set_partner(&mut self, c2: Option<CardId>) {
+        self.cmd2 = c2;
+        self.cmd2_in_zone = c2.is_some();
+        if let Some(c) = c2 {
+            self.library.retain(|&x| x != c);
+        }
+    }
+
+    /// is `c` one of this seat's commanders?
+    pub fn is_commander(&self, c: CardId) -> bool {
+        c == self.cmd || self.cmd2 == Some(c)
+    }
+
+    /// this seat's commanders: one, or two with Partner (the first is `cmd`)
+    pub fn commanders(&self) -> impl Iterator<Item = CardId> {
+        std::iter::once(self.cmd).chain(self.cmd2)
+    }
+
+    /// is this commander card in the command zone?
+    pub fn cmd_zone_of(&self, c: CardId) -> bool {
+        if c == self.cmd { self.cmd_in_zone } else { self.cmd2 == Some(c) && self.cmd2_in_zone }
+    }
+
+    /// is any commander in the command zone?
+    pub fn any_cmd_in_zone(&self) -> bool {
+        self.cmd_in_zone || (self.cmd2.is_some() && self.cmd2_in_zone)
+    }
+
+    /// the commanders now in the command zone
+    pub fn cmds_in_zone(&self) -> impl Iterator<Item = CardId> {
+        self.commanders().filter(|&c| self.cmd_zone_of(c))
+    }
+
+    pub fn set_cmd_zone(&mut self, c: CardId, v: bool) {
+        if c == self.cmd {
+            self.cmd_in_zone = v;
+        } else if self.cmd2 == Some(c) {
+            self.cmd2_in_zone = v;
+        }
+    }
+
+    /// the commander tax of this commander card (+2 for each earlier cast from the command zone)
+    pub fn tax_of(&self, c: CardId) -> u32 {
+        if c == self.cmd { self.tax } else if self.cmd2 == Some(c) { self.tax2 } else { 0 }
+    }
+
+    pub fn add_tax(&mut self, c: CardId) {
+        if c == self.cmd {
+            self.tax += 2;
+        } else if self.cmd2 == Some(c) {
+            self.tax2 += 2;
+        }
+    }
+
+    /// the most commander damage any one commander of seat `from` has dealt this seat
+    pub fn cmd_dmg_from(&self, from: usize) -> i32 {
+        self.cmd_dmg[from].max(self.cmd2_dmg[from])
     }
 
     pub fn stat(&mut self, name: Sym, n: i64) {

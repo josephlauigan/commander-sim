@@ -39,8 +39,10 @@ pub fn prob_holding(g: &Game, q: PlayerId, pred: impl Fn(CardId) -> bool) -> f64
         return 0.0;
     }
     let mut total = pl.deck_names.iter().filter(|&&c| pred(c)).count();
-    if !pl.deck_names.contains(&pl.cmd) && pred(pl.cmd) {
-        total += 1;
+    for c in pl.commanders() {
+        if !pl.deck_names.contains(&c) && pred(c) {
+            total += 1;
+        }
     }
     let seen = pl.gy.iter().chain(pl.exile.iter()).filter(|&&c| pred(c)).count()
         + pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(&pred)).count();
@@ -290,8 +292,8 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     if d.creature && d.pow >= 2 && s.danger > 0.5 {
         u += 0.8; // bodies to block
     }
-    if c == pl.cmd && !pl.hand.contains(&c) {
-        u -= 0.35 * pl.tax as f64; // recasting gets pricier each time (no tax from hand)
+    if pl.is_commander(c) && !pl.hand.contains(&c) {
+        u -= 0.35 * pl.tax_of(c) as f64; // recasting gets pricier each time (no tax from hand)
     }
     if (d.instant || d.sorcery) && pl.key == "veyran" {
         // each spell fires every magecraft payoff (doubled by Veyran): casting is value in itself
@@ -307,10 +309,10 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
             .count();
         u += 0.9 * n_pay as f64 * if has(g, p, Tag::Veyran) { 2.0 } else { 1.0 };
     }
-    if (d.bomb >= 5 || c == pl.cmd || base >= 70.0) && !d.land {
+    if (d.bomb >= 5 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
     }
-    if pl.key == "veyran" && c != pl.cmd {
+    if pl.key == "veyran" && !pl.is_commander(c) {
         u += veyran_sequence(g, p, c);
     }
     Some(u)
@@ -395,13 +397,13 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     }
     let pl = g.player(p);
     let in_hand = pl.hand.contains(&c);
-    if matches!(zone, None | Some("hand")) && !in_hand && !(c == pl.cmd && pl.cmd_in_zone) {
+    if matches!(zone, None | Some("hand")) && !in_hand && !pl.cmd_zone_of(c) {
         return Ok(false);
     }
     if zone == Some("yawg") && !pl.gy.contains(&c) {
         return Ok(false);
     }
-    let zone: Sym = zone.unwrap_or(if c == pl.cmd && !in_hand { "cmd" } else { "hand" });
+    let zone: Sym = zone.unwrap_or(if pl.is_commander(c) && !in_hand { "cmd" } else { "hand" });
     let cast_zone: Sym = if zone == "yawg" { "gy" } else { zone };
     if !g.hooks.is_empty() && !castable(g, p, c, cast_zone) {
         return Ok(false);
@@ -611,7 +613,7 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         .sum();
     let dl = g.player(d).life;
     let danger = incoming as f64 >= dl as f64 * 0.5
-        || atk.iter().any(|&m| g.perm(m).is_cmd && g.player(d).cmd_dmg[p.index()] + epow(g, m) >= 21);
+        || atk.iter().any(|&m| g.perm(m).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, m) + epow(g, m) >= 21);
     let mut best: Option<(f64, CardId, PermId)> = None;
     for &c in &rem {
         let x = g.db.get(c);
@@ -937,9 +939,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let main = is_main(key);
     let rsv = if !main && !post { pool::combat_reserve(g, p) } else { None };
     let mut cands: Vec<CardId> = g.player(p).hand.clone();
-    if g.player(p).cmd_in_zone {
-        cands.push(g.player(p).cmd);
-    }
+    let mut zoned: Vec<CardId> = g.player(p).cmds_in_zone().collect();
+    zoned.sort_by_key(|&c| g.db.get(c).cmc); // two commanders: the cheaper first
+    cands.extend(zoned);
     for c in cands {
         let d = g.db.get(c);
         if d.land {
@@ -959,7 +961,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         {
             u -= 6.0; // outside decks: mana kept for combat (ninjutsu)
         }
-        if d.creature && d.tag(Tag::Flash) && c != g.player(p).cmd && s.danger < 0.8 {
+        if d.creature && d.tag(Tag::Flash) && !g.player(p).is_commander(c) && s.danger < 0.8 {
             u -= 1.5; // flash: better at the end of the turn before yours
         }
         opts.push(Opt { utility: u, label: d.name.to_string(), act: Some(Action::Cast { card: c, zone: None }) });

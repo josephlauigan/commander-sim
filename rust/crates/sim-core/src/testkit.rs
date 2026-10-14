@@ -53,6 +53,7 @@ pub fn seat(db: &CardDb, i: usize, key: &str, seed: u64) -> Player {
     let ids: Arc<[CardId]> = d.cards.iter().map(|n| db.id(n).unwrap()).collect();
     let cmd = db.id(&d.commander).unwrap();
     let mut p = Player::new(PlayerId(i as u8), intern(&d.key), intern(&d.name), ident(db, d), cmd, ids);
+    p.set_partner(d.commander2.as_ref().map(|n| db.id(n).unwrap()));
     Rng::named(&format!("lib:{seed}:{key}")).shuffle(&mut p.library);
     p
 }
@@ -143,6 +144,7 @@ pub fn seat_spec(key: &str) -> crate::engine::turn::Seat {
         key: intern(&d.key),
         name: intern(&d.name),
         commander: db.id(&d.commander).unwrap(),
+        commander2: d.commander2.as_ref().map(|n| db.id(n).unwrap()),
         ident: ident(&db, d),
         cards: d.cards.iter().map(|n| db.id(n).unwrap()).collect(),
     }
