@@ -81,3 +81,9 @@ file = "JD/garland-dimir-kidnapper.md"
 name = "Garland"
 commander = "Garland, Royal Kidnapper"
 ident = "UB"
+
+[sephfs]
+file = "JD/sephiroth-fs-wipe-steal.md"
+name = "Sephiroth FS"
+commander = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
+ident = "B"
