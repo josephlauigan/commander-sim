@@ -1,6 +1,6 @@
 # Y'shtola, Night's Blessed — Esper Drain
 
-**Simulator, 2026-10-12:** **41.4% over all tiers** (±0.5; rank 1 of the ten decks): T1 45.4%, T2 55.1%, T3 44.8%, T4 39.2%, T5 22.3%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+**Simulator, 2026-10-14:** the leftovers swap (Triplicate Spirits for Dakkon, Shadow Slayer; a Swamp for Underground River; an Island for Adarkar Wastes) measured **-0.7 over all tiers, within noise,** in a paired test (T1 +0.2, T2 -4.2, T3 -1.8, T4 +2.2, T5 0.0; look-ahead, loose, 500 games per list per tier); JD chose to apply it. A pool run is pending. Previous list's figures: **41.4% over all tiers** on 2026-10-12 (±0.5; rank 1 of the ten decks): T1 45.4%, T2 55.1%, T3 44.8%, T4 39.2%, T5 22.3%, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 
 **Updated 2026-10-03.** Out: Clever Concealment, Disdainful Stroke, Momentary Blink, Rootborn Defenses, Take Up the Shield. In: Cast Away Doubt, Memory Trap, Static Net, Statute of Denial, Your Fate Ends Here. Five rarely cast cards (each cast in 5% or less of the games it was drawn, or mana value 2) out for spells of mana value 3 or more that trigger Y'shtola: Static Net (exile, 2 life, a Powerstone), Cast Away Doubt (draw two; with her trigger each opponent loses 4), Your Fate Ends Here (instant removal), Memory Trap (exile) and Statute of Denial (a counter that triggers her).
 **Updated 2026-10-04.** Out: Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, Temple of Deceit, Temple of Enlightenment, Temple of Silence, Vivid Creek, Vivid Marsh, Vivid Meadow. In: 4 Island, 3 Plains, 3 Swamp. The ten lands that always entered tapped became basics. Tested: about +1.2 points on average (1,000 paired games per tier, adaptive AI), positive in four of five tiers; Y'shtola wants to land on turn 3 or 4 with a spell to follow, and no land now always enters tapped.
@@ -60,8 +60,10 @@ A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your
 **Keep the table off you.** Y'shtola is a 2/4, and the deck wins slowly.
 - **Pillowfort:** Propaganda and Windborn Muse tax every attacker {2}.
 - **Locks:** Arrest, Prison Sentence, Luminous Bonds, Bound in Silence and Encrust shut down threats (and each triggers Y'shtola as you cast it).
-- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Skyclave Apparition, Prayer of Binding and The Eternal Wanderer.
+- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Skyclave Apparition, Prayer of Binding, The Eternal Wanderer and Dakkon, Shadow Slayer (-3: exile target creature).
 - **Wipe:** Austere Command. Massacre Wurm is a one-sided sweeper of small creatures that drains 2 for each one that dies.
+
+**Dakkon, Shadow Slayer** ({W}{U}{B}) is a noncreature spell with mana value 3, so casting it triggers Y'shtola. He enters with loyalty equal to the number of lands you control, surveils 2 with his +1 and exiles a creature with his -3, and his -6 can put an artifact from your hand or graveyard onto the battlefield.
 
 **Protect Y'shtola.**
 - **Equipment:** Lightning Greaves (shroud) and Champion's Helm (+2/+2, hexproof on a legend).
@@ -97,23 +99,23 @@ Zur can find Arrest, Bound in Silence, Curiosity, Encrust, Luminous Bonds, Mysti
 
 The list is exactly 100 cards.
 
-37 lands (11 nonbasic, 8 Plains, 8 Island, 10 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic.
+37 lands (13 nonbasic, 8 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic.
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| White lands | 14 | 8 Plains plus Caves of Koilos, Command Tower, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum |
-| Blue lands | 11 | 8 Island plus Command Tower, Glacial Fortress, Prairie Stream |
-| Black lands | 14 | 10 Swamp plus Caves of Koilos, Command Tower, Isolated Chapel, Shattered Sanctum |
+| White lands | 15 | 8 Plains plus Adarkar Wastes, Caves of Koilos, Command Tower, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum |
+| Blue lands | 12 | 7 Island plus Adarkar Wastes, Command Tower, Glacial Fortress, Prairie Stream, Underground River |
+| Black lands | 14 | 9 Swamp plus Caves of Koilos, Command Tower, Isolated Chapel, Shattered Sanctum, Underground River |
 | Any colour, with a condition | 2 | Exotic Orchard (an opponent's land), Spire of Industry (1 life, with an artifact) |
-| No mana the turn they land | 3 | Evolving Wilds, Terramorphic Expanse, Fabled Passage (each finds any basic, now one of 26) |
+| No mana the turn they land | 3 | Evolving Wilds, Terramorphic Expanse, Fabled Passage (each finds any basic, now one of 24) |
 | Always enter tapped | 0 | the ten that did (Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, three Temples, three Vivid lands) became basics on 10-04 |
-| Sometimes enter tapped | 4 | Glacial Fortress, Isolated Chapel (need a basic type), Prairie Stream (two basics), Shattered Sanctum (two other lands); with 26 basics they rarely do |
+| Sometimes enter tapped | 4 | Glacial Fortress, Isolated Chapel (need a basic type), Prairie Stream (two basics), Shattered Sanctum (two other lands); with 24 basics they rarely do |
 
 Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so Swamps outnumber the other basics. Blue has the fewest sources. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception.
 
-**Curve.** One-drops 8, two-drops 7, three-drops 22, four-drops 15, five 4, six 6. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
+**Curve.** One-drops 8, two-drops 7, three-drops 23, four-drops 15, five 4, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
-**Card types.** 14 creatures, 15 enchantments, 8 artifacts, 9 instants, 15 sorceries, 1 planeswalker.
+**Card types.** 15 creatures (plus Y'shtola), 16 enchantments, 9 artifacts, 8 instants, 12 sorceries, 2 planeswalkers.
 
 **Finding cards.**
 - **Engines:** Necropotence, Consecrated Sphinx, Bolas's Citadel, Mystic Remora, Esper Sentinel, Notion Thief, Curiosity on Y'shtola, and her own end-step draw.
@@ -125,7 +127,7 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 **Interaction.**
 - **Counterspell (one):** Dovin's Veto.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
-- **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap, The Eternal Wanderer, Massacre Wurm.
+- **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap, The Eternal Wanderer, Dakkon, Shadow Slayer, Massacre Wurm.
 - **Removal Auras (five):** Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust.
 - **Theft:** Bribery.
 - **Board wipe (one):** Austere Command.
@@ -272,7 +274,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 ## Flags and tuning levers
 
-**Tapped lands were the biggest cost, and are gone.** The ten lands that always entered tapped became basics on 10-04 (about +1.2 points in testing). Four duals still sometimes enter tapped (Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum); with 26 basics they rarely do. To add fixing back without tapped lands: Drowned Catacomb, Godless Shrine, Watery Grave, Hallowed Fountain.
+**Tapped lands were the biggest cost, and are gone.** The ten lands that always entered tapped became basics on 10-04 (about +1.2 points in testing). Four duals still sometimes enter tapped (Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum); with 24 basics they rarely do. To add fixing back without tapped lands: Drowned Catacomb, Godless Shrine, Watery Grave, Hallowed Fountain.
 
 **Two triggers a turn is the target.** Her draw needs 4 life lost by one player, which one trigger alone never does. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
 
@@ -285,6 +287,6 @@ Replacements worth testing:
 - **Removal with mana value 3:** Mortify (instant) or Vindicate (sorcery).
 - **More lifegain payoffs:** Vito, Thorn of the Dusk Rose; Exquisite Blood. Exquisite Blood with Sanguine Bond is an infinite combo and moves the deck toward Bracket 4.
 
-**Life is still a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Spire of Industry and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
+**Life is still a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, Spire of Industry and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
 
 **Mystic Remora's upkeep grows.** Pay it for a turn or two at most, then let it go.

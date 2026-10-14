@@ -2,7 +2,7 @@
 
 **Updated 2026-10-14.** Out: Flicker. In: Dragonlord Dromoka. Flicker (back to Avery) for Dragonlord Dromoka (JD's, from the retired Jodah deck's leftovers). Measured +1.1 over all tiers (T1 +0.8, T2 +3.0, T3 -0.8, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier).
 
-**Simulator, 2026-10-12:** **13.2% over all tiers** (±0.4; tied with Alela for 9th of the ten decks): T1 13.1%, T2 15.9%, T3 12.3%, T4 12.1%, T5 12.6%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+**Simulator, 2026-10-14:** swapping Flicker for Dragonlord Dromoka measured **+1.1 over all tiers, within noise,** in a paired test (T1 +0.8, T2 +3.0, T3 -0.8, T4 +2.2, T5 +0.4; look-ahead, loose, 500 games per list per tier). A pool run is pending. Previous list's figures: **13.2% over all tiers** on 2026-10-12 (±0.4; tied with Alela for 9th of the ten decks): T1 13.1%, T2 15.9%, T3 12.3%, T4 12.1%, T5 12.6%, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 
 2026-10-02
 **Added 2026-10-02.** In the simulator as deck key `galadriel` (`commander-sim --deck galadriel --pool t3`) and in practice mode. Every card is modeled.
@@ -45,6 +45,7 @@ Each searcher finds a bigger one, so one early searcher becomes the whole chain:
 - **Panharmonicon:** every enters trigger of your permanents happens twice: Galadriel (two modes per creature), Cathars' Crusade (two counters each), Welcoming Vampire, Tocasia's Welcome, Mentor of the Meek, Kindred Discovery, Recruiter of the Guard and Farhaven Elf.
 - **Card draw:** Welcoming Vampire (power 2 or less, once a turn), Tocasia's Welcome (mana value 3 or less, once a turn), Mentor of the Meek (pay {1} per small creature), Kindred Discovery (enters or attacks), Beast Whisperer and Vanquisher's Banner (creature spells).
 - **Bodies:** Adeline makes a 1/1 for each opponent whenever you attack, Elspeth makes three Soldiers a turn, and Voice of Resurgence leaves an Elemental as big as your creature count.
+- **Dragonlord Dromoka** ({4}{G}{W}, 5/7 flying, lifelink) is the top end, a big body that also triggers Galadriel's Alliance like any other creature. It can't be countered, and your opponents can't cast spells during your turn. The new card is JD's, from his binder.
 
 **Name a type.** Kindred Discovery, Door of Destinies, Patchwork Banner, Vanquisher's Banner and Secluded Courtyard each name a creature type as they enter.
 - **Human (19 creatures) or Rebel (18 plus Mirror Entity)** are the two to choose between. Rebels enter mostly by being fetched, which is what Kindred Discovery and the Banners' +1/+1 want. Door of Destinies and Vanquisher's Banner's draw count *spells cast*, and the Humans are cast more often (Adeline, Mentor, Recruiter, Mangara, Cartographer).
@@ -55,7 +56,7 @@ Each searcher finds a bigger one, so one early searcher becomes the whole chain:
 - **Spot removal:** Swords to Plowshares, Path to Exile, Generous Gift, Beast Within, Return to Dust (two artifacts or enchantments in your main phase), plus Lawbringer, Lightbringer and Ballista Squad on the battlefield.
 - **Theft:** Abduction (an opponent's creature, which goes home when it dies) and Bribery (the best creature in an opponent's library).
 - **Board control:** Austere Command (choose creatures with mana value 4 or more and artifacts, and your small creatures live), Farewell, Cyclonic Rift, River's Rebuke, Elspeth's −3 (power 4 or more) and Crackdown (big nonwhite creatures stop untapping; your own green creatures too once Crusade grows them).
-- **Protection:** Unbreakable Formation, Make a Stand and Rootborn Defenses make your team indestructible against a destroy wipe. Eerie Interlude exiles your creatures and returns them at the next end step, which beats exile and -X/-X wipes too, and re-triggers every enters payoff. Counterspell for the rest.
+- **Protection:** Unbreakable Formation, Make a Stand and Rootborn Defenses make your team indestructible against a destroy wipe. Eerie Interlude exiles your creatures and returns them at the next end step, which beats exile and -X/-X wipes too, and re-triggers every enters payoff. Counterspell for the rest. Dragonlord Dromoka can't be countered, and while she is out opponents can't cast spells on your turn, so they can't answer your attack or your Rebel chain at instant speed.
 
 ## Key lines
 
@@ -94,9 +95,9 @@ The list is exactly 100 cards.
 
 **The mana base is light.** 29 lands is few for a deck whose commander costs five, so the ramp spells and mana creatures are load-bearing: keep a hand with three lands, or two lands and a mana creature. Farseek finds a Plains or Island card, including Prairie Stream and Temple Garden.
 
-**Curve.** One-drops 8, two-drops 13, three-drops 27, four-drops 11, five 5, six 5, and Reya Dawnbringer at nine. Average mana value 3.2 for the 70 other spells.
+**Curve.** One-drops 8, two-drops 12, three-drops 27, four-drops 11, five 5, six 6, and Reya Dawnbringer at nine. Average mana value 3.2 for the 70 other spells.
 
-**Card types.** 34 creatures, 1 planeswalker, 5 enchantments, 9 artifacts, 12 instants, 9 sorceries.
+**Card types.** 35 creatures, 1 planeswalker, 5 enchantments, 9 artifacts, 12 instants, 8 sorceries.
 
 **Creature types.** 18 Rebels (plus Mirror Entity, a changeling), 19 Humans, 7 Elves (Galadriel included).
 

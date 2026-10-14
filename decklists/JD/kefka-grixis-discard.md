@@ -1,6 +1,6 @@
 # Kefka, Court Mage — Grixis Discard
 
-**Simulator, 2026-10-13:** the Yawgmoth's Will + tutor package (Will, Vampiric Tutor and Mystical Tutor in; Twinflame, Kaervek's Purge and Disintegrate out) measured **+1.0 over all tiers, within noise,** in a paired test (T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8; look-ahead, loose, 500 games per list per tier); the gain grows with tier strength. A pool run is pending. Previous list's figures: +0.5 for the Breach + storm swaps (1,000 paired games per tier), and 29.4% over all tiers on 2026-10-12 (±0.5; rank 4 of the ten decks, 6,720 games per tier; `decklists/pool/pool-results.md` section 0d).
+**Simulator, 2026-10-14:** the leftovers swap (Decorum Dissertation for Bitter Triumph; two Swamps for Sulfurous Springs and Shivan Reef) measured **-1.9 over all tiers, within noise,** in a paired test (T1 -6.0, T2 -3.4, T3 -2.6, T4 +2.2, T5 +0.4; look-ahead, loose, 500 games per list per tier); JD chose to apply it. A pool run is pending. Previous list's figures: +1.0 for the Yawgmoth's Will + tutor package (paired, 500 games per list per tier; T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8), +0.5 for the Breach + storm swaps (1,000 paired games per tier), and 29.4% over all tiers on 2026-10-12 (±0.5; rank 4 of the ten decks, 6,720 games per tier; `decklists/pool/pool-results.md` section 0d).
 
 **Updated 2026-10-11 (mana base).** JD's rule: basics over slow lands. Out: Temple of Malice, Boiling Rock Prison, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Path of Ancestry, Evolving Wilds, Fabled Passage (everything that enters tapped or fetches a tapped basic). In: 5 Swamp, 3 Mountain, 3 Island (now 15 Swamp, 9 Mountain, 6 Island). The six untapped nonbasics stay. Still 36 lands; the cut lands go back to the bulk list.
 **Updated 2026-10-11 (trade with Veyran, moved as functional blocks).** In from Veyran: Deflecting Swat and Slip Out the Back (protection), Underworld Breach (graveyard), Niv-Mizzet, the Firemind (a second draw-to-damage kill with the flipped Kefka), Jin-Gitaxias, Progress Tyrant, and Steam Vents, Sulfur Falls, Spirebluff Canal and Stormcarved Coast (for 4 Mountains). Out: Mystic Confluence and Splatter Technique (to Veyran), Arcane Omens and Inner Fire (to bulk), Triskelion (to the binder). Paired look-ahead test, 1,000 games per tier: **+1.3 points** (28.1% -> 29.4%). Two Game Changers now (Rhystic Study, Underworld Breach).
@@ -29,7 +29,7 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 **Back face: life loss on your turn is card draw.** Each opponent who loses life during your turn draws you that many cards:
 - **Repeatable pings:** Sawblade Scamp, Viashino Fangtail, Blightspeaker, Screeching Soulbreaker, Susurian Voidborn (each Treasure you crack drains one opponent).
-- **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter, Corroding Dragonstorm, Grab the Prize, Decorum Dissertation (aimed at an opponent: they draw two, but they lose 2 and you draw 2), Lightning Bolt and Massacre Wurm (2 for each of their creatures that dies).
+- **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter, Corroding Dragonstorm, Grab the Prize, Lightning Bolt and Massacre Wurm (2 for each of their creatures that dies).
 - **Combat:** a flying 5/7 that hits for 5 draws you 5.
 
 **The kill: Psychosis Crawler + Kefka, Ruler of Ruin.** Each card you draw makes each opponent lose 1; each opponent's loss draws you a card. In a four-player game every card drawn draws three more, so the loop runs until the table is dead or your library is. It is mandatory: count your library against the highest life total before starting it, and play the Crawler after the flip, not before, when your library is short. Before the flip the Crawler is still worth casting early: Kefka's own draws and the looters ping the whole table with it.
@@ -50,14 +50,16 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 **Yawgmoth's Will: a second storm turn.** With Kefka's discards and the looters filling the graveyard, Will (cast it for {2}{B}) lets you cast cards from the graveyard this turn, so it replays **Dark Ritual**, **Lotus Petal**, **Brain Freeze** and **Grapeshot** from the pile. Vampiric Tutor and Mystical Tutor find Will, Breach or the missing piece (Mystical Tutor finds an instant or sorcery: Brain Freeze, Grapeshot, Dark Ritual). Measured +1.0 over all tiers, within noise, and better against stronger tables (T4 +2.2, T5 +2.8).
 
+**Bitter Triumph feeds the graveyard.** Its additional cost is to discard a card (or pay 3 life): discarding a card puts it where Breach and Yawgmoth's Will can use it, so cast it with a spare Dark Ritual, Lotus Petal or Brain Freeze in hand to line up the storm turn while it removes a creature or planeswalker.
+
 **Rhystic Study and Skullclamp** keep the hand full between Kefka triggers. Discard down to seven is the limit to watch after a flip turn.
 
 ## Consistency
 
-- **Lands:** 36 (12 nonbasic + 24 basic)
+- **Lands:** 36 (12 nonbasic + 24 basic); Shivan Reef and Sulfurous Springs are painlands (1 damage to you when tapped for colour)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
-- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
-- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
+- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
+- **Interaction:** Lightning Bolt, Bitter Triumph (destroys a creature or planeswalker for {1}{B}; the cost is a discard or 3 life), Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
@@ -87,12 +89,13 @@ Known simplifications: madness casts the card from the graveyard rather than fro
 
 ## Where the cards come from
 
-The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Profane Tutor and Demonic Tutor come from the retired Jodah deck (marked "Jodah") and Chaos Warp from bulk (2026-10-13). The 2026-10-13 Will package: Vampiric Tutor and Mystical Tutor are binder cards (the retired Jodah deck's leftovers), Yawgmoth's Will is JD's own copy; Twinflame, Kaervek's Purge and Disintegrate went to bulk. Nothing to buy.
+The commander, **Kefka, Court Mage**, comes out of Sauron. The 24 basics (13 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Profane Tutor and Demonic Tutor come from the retired Jodah deck (marked "Jodah") and Chaos Warp from bulk (2026-10-13). The 2026-10-13 Will package: Vampiric Tutor and Mystical Tutor are binder cards (the retired Jodah deck's leftovers), Yawgmoth's Will is JD's own copy; Twinflame, Kaervek's Purge and Disintegrate went to bulk. The 2026-10-14 leftovers swap: Bitter Triumph, Shivan Reef and Sulfurous Springs are binder cards (the retired Jodah deck's leftovers); Decorum Dissertation went to bulk and two Swamps went back to the basics. Nothing to buy.
 
 ### Black (27)
 
 | Card | From | Set |
 |---|---|---|
+| Bitter Triumph | Binder | — |
 | Blightspeaker | Bulk | tsr |
 | Cackling Fiend | Bulk | dmr |
 | Dark Ritual | Sauron | — |
@@ -100,7 +103,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Corroding Dragonstorm | Bulk | tdm |
 | Crux of Fate | Bulk | fic |
 | Deadly Embrace | Bulk | fin |
-| Decorum Dissertation | Bulk | sos |
 | Demonic Embrace | Bulk | gn3 |
 | Demonic Tutor | Jodah | — |
 | Diabolic Tutor | Bulk | m11 |
@@ -177,7 +179,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Sisay's Ring | Binder | — |
 | Skullclamp | Bulk | fic |
 
-### Lands (10)
+### Lands (12)
 
 | Card | From | Set |
 |---|---|---|
@@ -186,10 +188,12 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 | Exotic Orchard | Bulk | fic |
 | Gemstone Mine | Bulk | tsb |
 | Haunted Ridge | Bulk | fra |
+| Shivan Reef | Binder | — |
 | Spirebluff Canal | Veyran | — |
 | Steam Vents | Veyran | — |
 | Stormcarved Coast | Veyran | — |
 | Sulfur Falls | Veyran | — |
+| Sulfurous Springs | Binder | — |
 | Underground River | Bulk | fic |
 
 ## Decklist by type (100)

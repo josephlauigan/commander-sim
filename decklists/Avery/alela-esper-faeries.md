@@ -2,7 +2,7 @@
 
 **Updated 2026-10-14.** Out: Gravedigger. In: Exotic Orchard, Shattered Sanctum, Tymna the Weaver. Gravedigger (back to Avery) for Tymna the Weaver; two Plains for Exotic Orchard and Shattered Sanctum (all three JD's, from the retired Jodah deck's leftovers). Measured +0.1 over all tiers (T1 +1.2, T2 +2.2, T3 -0.6, T4 +1.4, T5 -3.8; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier).
 
-**Simulator, 2026-10-12:** **13.1% over all tiers** (±0.4; tied with Galadriel for 9th of the ten decks): T1 12.1%, T2 14.8%, T3 11.7%, T4 14.9%, T5 11.8%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+**Simulator, 2026-10-14:** the leftovers swap (Gravedigger for Tymna the Weaver; two Plains for Exotic Orchard and Shattered Sanctum) measured **+0.1 over all tiers, within noise,** in a paired test (T1 +1.2, T2 +2.2, T3 -0.6, T4 +1.4, T5 -3.8; look-ahead, loose, 500 games per list per tier). A pool run is pending. Previous list's figures: **13.1% over all tiers** on 2026-10-12 (±0.4; tied with Galadriel for 9th of the ten decks): T1 12.1%, T2 14.8%, T3 11.7%, T4 14.9%, T5 11.8%, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 
 2026-10-05
 **Added 2026-10-05.** In the simulator as deck key `alela` (`commander-sim --deck alela --pool t3`) and in practice mode.
@@ -11,7 +11,7 @@
 
 Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and lifelink. *Other creatures you control with flying get +1/+0. Whenever you cast an artifact or enchantment spell, create a 1/1 blue Faerie creature token with flying.* The deck runs about 21 artifact and enchantment spells, so a normal turn adds one or two flying attackers, and each Faerie hits for 2 with Alela out.
 
-**Early turns (1–3).** Play cheap artifacts and enchantments to start the Faerie stream: Sol Ring, Mind Stone, Short Bow, Page, Loose Leaf, Feather of Flight, Unquestioned Authority and Karmic Justice. Initiates of the Ebon Hand and Dark Ritual help cast Alela on turn 3. Rhystic Study and Night's Whisper keep the hand full.
+**Early turns (1–3).** Play cheap artifacts and enchantments to start the Faerie stream: Sol Ring, Mind Stone, Short Bow, Page, Loose Leaf, Feather of Flight, Unquestioned Authority and Karmic Justice. Initiates of the Ebon Hand and Dark Ritual help cast Alela on turn 3. Rhystic Study and Night's Whisper keep the hand full. **Tymna the Weaver** adds a draw to the attack: at the start of each of your postcombat main phases you may pay X life, where X is the number of opponents dealt combat damage that turn, and draw X cards. The flying Faeries are the ones that connect, so a wide air force turns into cards as well as damage. The new cards (Tymna, Exotic Orchard and Shattered Sanctum) are JD's, from his binder.
 
 **Removal doubles as Faerie fuel.** Arrest, Luminous Bonds, Static Prison, Ajani Fells the Godsire and Plan for All Outcomes are all enchantments, so each one also makes a Faerie. The instant-speed answers are Prophesied End, Repel Calamity, Last Gasp, Multiply by Zero, Vanquish the Weak and Spite // Malice.
 
@@ -29,6 +29,8 @@ Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and li
 **Jace token mini-package.** Keeper of the Quiet Hour, Plan for All Outcomes and Fatehold Charm each "empower Jace", making a Jace planeswalker token that surveils or draws. With it out, Fatehold Annex, Theorix Annex and Meticulous Commons enter untapped.
 
 **Blink value.** Daydream (with flashback) or Venser, the Sojourner blink Cavalier of Dawn or Meteor Golem for a second removal, or Inspiring Overseer for another card.
+
+**Mana base.** 36 lands: 11 nonbasic and 25 basic (9 Plains, 9 Island, 7 Swamp). Shattered Sanctum is a white-and-black dual, and Exotic Orchard taps for any colour an opponent's land could produce, which helps the three-colour Alela and Tymna. Shattered Sanctum enters tapped unless you control two or more other lands. Gravedigger left on 10-14 (it goes back to you).
 
 ## Key lines
 

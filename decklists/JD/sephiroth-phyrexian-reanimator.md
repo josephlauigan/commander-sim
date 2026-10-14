@@ -1,6 +1,6 @@
 # Sephiroth, the Savior — Phyrexian Reanimator
 
-**Simulator, 2026-10-12:** **36.9% over all tiers** (±0.5; rank 2 of the ten decks): T1 41.4%, T2 50.0%, T3 39.3%, T4 32.2%, T5 21.3%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+**Simulator, 2026-10-14:** swapping Orzhov Signet for Worldly Tutor measured **-0.1 over all tiers, within noise,** in a paired test (T1 -2.0, T2 +0.8, T3 +2.2, T4 -1.0, T5 -0.4; look-ahead, loose, 500 games per list per tier); JD chose to keep it. A pool run is pending. Previous list's figures: **36.9% over all tiers** on 2026-10-12 (±0.5; rank 2 of the ten decks): T1 41.4%, T2 50.0%, T3 39.3%, T4 32.2%, T5 21.3%, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 
 2026-09-17
 **Rebuilt 2026-09-18** for consistency: lower curve, more early mana, a real graveyard-filling package.
@@ -25,7 +25,7 @@ Fill the graveyard, cheat a Phyrexian bomb onto the battlefield three or four tu
 
 Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, and appears under that name in the list below. A 7/7 with flying, vigilance, deathtouch, and lifelink whose ETB looks at the top ten cards and takes one of each card type. She is both a castable bomb and the best reanimation target in the deck.
 
-**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
+**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana. **Worldly Tutor** (an instant for {G}) can put Birds of Paradise or Sakura-Tribe Elder on top of the library for the next turn, or whichever creature the board calls for. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a new yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
 
 **Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
 
@@ -87,7 +87,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The land changes since 09-22 are **Blossoming Sands → Arcane Sanctum** (one tapped land for another, but with blue for Force of Will and Consecrated Sphinx in place of green) and, on 10-10, **Llanowar Wastes → Karn's Bastion**: one fewer green and black source, for a land that proliferates.
 
-Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), and two creatures (Birds of Paradise, Sakura-Tribe Elder). Llanowar Elves left on 10-10 for Summon: Bahamut, and Avacyn's Pilgrim for Flickering Hound. Cultivate left on 10-02 for Grave Pact. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
+Mana: five rocks (Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), and two creatures (Birds of Paradise, Sakura-Tribe Elder). Orzhov Signet left on 10-14 for Worldly Tutor. Llanowar Elves left on 10-10 for Summon: Bahamut, and Avacyn's Pilgrim for Flickering Hound. Cultivate left on 10-02 for Grave Pact. Cryptolith Rite is gone, so the deck has one fewer ramp piece than before; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
 
 **Graveyard fill is thinner.** Satyr Wayfinder is out; Gifts Ungiven partly covers it. Unmarked Grave left for Ephemerate on 09-28, and Grisly Salvage and Stinkweed Imp left for the flicker package on 10-10. Stitcher's Supplier, Buried Alive, Entomb, and Tortured Existence remain.
 
@@ -97,7 +97,7 @@ Mana: six rocks (Sol Ring, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, 
 
 ## Tutor targets by board state
 
-Three tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), and **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard).
+Four tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard), and **Worldly Tutor** (a creature card to the top of the library, for {G} at instant speed).
 
 - **One combo piece away → tutor it.** With Mikaeus out, Demonic Tutor for Triskelion (no outlet needed), or for Kitchen Finks if a sac outlet is out too. With Melira and an outlet out, tutor Finks. With Ashnod's Altar and Grave Titan out, tutor Nim Deathmantle. Resolve Grand Abolisher first if you can.
 - **Empty yard, reanimation spell already in hand → tutor Entomb (or Buried Alive).** Demonic Tutor into Entomb on turn two sets up Reanimate on turn three.
@@ -111,12 +111,12 @@ Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also
 
 ## Bracket and Rule 0
 
-**Bracket 4.** Seven Game Changers: **Demonic Tutor**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection** (Bolas's Citadel left on 10-05, Smothering Tithe on 10-13). Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
+**Bracket 4.** Eight Game Changers: **Demonic Tutor**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, **Teferi's Protection**, and **Worldly Tutor** (Bolas's Citadel left on 10-05, Smothering Tithe on 10-13; Worldly Tutor came in on 10-14). Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
 
 Disclose before the game:
 
 - **Four infinite loops:** Mikaeus + Triskelion (infinite damage, no outlet needed); Mikaeus or Melira + Kitchen Finks + a sac outlet (infinite life and deaths); Nim Deathmantle + Ashnod's Altar + Grave Titan (infinite mana, ETBs, and deaths).
-- The seven Game Changers above, especially **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
+- The eight Game Changers above, especially **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
 - **Grand Abolisher**, which shuts off their interaction on your turn.
 - **Yawgmoth's Will**, which can produce a long turn out of nowhere.
 - **Farewell**, and that you may include graveyards.
@@ -293,6 +293,7 @@ Chosen for flavour more than strength. In the simulator (adaptive AI, loose prof
 
 **New cards and cuts.**
 - **Got (10-10)**: all six: Teleportation Circle, Conjurer's Closet, Restoration Angel, Summon: Bahamut, Karn's Bastion, Flickering Hound.
-- **New singles**: Grave Pact (10-02); Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
+- **New singles**: Worldly Tutor (10-14, from the binder); Grave Pact (10-02); Muldrotha, the Gravetide (10-01); Avacyn's Pilgrim, Kitchen Finks, Melira, Sylvok Outcast, Dread Return, Teferi's Protection, Arcane Sanctum, Ephemerate; from 09-26, Aura Shards, Gifts Ungiven, Assassin's Trophy, Galadriel's Dismissal, Bolas's Citadel, Grand Abolisher, Triskelion, Nim Deathmantle.
+- **To bulk (10-14)**: Orzhov Signet.
 - **To bulk (10-10)**: Stinkweed Imp, Lash of the Balrog, Grisly Salvage, Llanowar Elves, Llanowar Wastes, Avacyn's Pilgrim.
 - **To the binder**: Cultivate (10-02); Massacre Wurm (10-01); Carrion Feeder, Gray Merchant of Asphodel, Sephiroth, Planet's Heir, Persist, Dovin's Veto, Blossoming Sands, Unmarked Grave; from 09-26, Phyrexian Metamorph, Deadly Dispute, Evil Reawakened, Satyr Wayfinder, Wrath of God, Cryptolith Rite.
