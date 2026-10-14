@@ -1,0 +1,11 @@
+11:38 base t1 Win rate 32.9%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 4.0% of the games it was drawn
+11:40 fix t1 Win rate 30.9%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 8.6% of the games it was drawn
+11:42 base t2 Win rate 41.6%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 7.0% of the games it was drawn
+11:44 fix t2 Win rate 40.7%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 15.6% of the games it was drawn
+11:45 base t3 Win rate 31.2%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 1.8% of the games it was drawn
+11:47 fix t3 Win rate 29.2%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 4.7% of the games it was drawn
+11:48 base t4 Win rate 28.6%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 6.0% of the games it was drawn
+11:50 fix t4 Win rate 29.0%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 11.7% of the games it was drawn
+11:50 base t5 Win rate 22.0%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 2.6% of the games it was drawn
+11:51 fix t5 Win rate 23.0%   (4-player baseline 25%)   average rounds su | swat  Deflecting Swat cast 4.6% of the games it was drawn
+11:51 DONE

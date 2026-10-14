@@ -15,3 +15,11 @@ deck (key `seph`), not the new Seph FS deck.
 | Galadriel (Avery) | Flicker => Dragonlord Dromoka | +0.8 | +3.0 | -0.8 | +2.2 | +0.4 | **+1.1** | |
 
 Found on the way: the simulator never casts Kefka's Deflecting Swat (untagged; 0-5% of the games it is drawn).
+
+## Deflecting Swat fix (Kefka)
+
+The simulator's Kefka discarded Deflecting Swat to its own wheel and looters (the card is untagged, so it was valued
+at 0); the fix (`kefka::discard_choice`, +40 like other protection) keeps it for the response. Same seeds, 1,000
+games per tier, base vs fix (`swat/`): Swat cast in 4.0/7.0/1.8/6.0/2.6% -> 8.6/15.6/4.7/11.7/4.6% of the games it
+is drawn (T1-T5); win rate 32.9/41.6/31.2/28.6/22.0% -> 30.9/40.7/29.2/29.0/23.0% (**-0.7** on average, within the
+about ±0.9 noise of this unpaired comparison). A modeling fix, not a strength change.

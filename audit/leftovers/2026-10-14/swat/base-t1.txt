@@ -1,0 +1,107 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m09s elapsed, ~1m28s left
+  progress  20.0%  0m19s elapsed, ~1m18s left
+  progress  30.0%  0m29s elapsed, ~1m08s left
+  progress  40.0%  0m40s elapsed, ~1m01s left
+  progress  50.0%  0m50s elapsed, ~0m50s left
+  progress  60.0%  1m01s elapsed, ~0m40s left
+  progress  70.0%  1m11s elapsed, ~0m30s left
+  progress  80.0%  1m21s elapsed, ~0m20s left
+  progress  90.0%  1m31s elapsed, ~0m10s left
+  progress 100.0%  1m50s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== kefka analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 32.9%   (4-player baseline 25%)   average rounds survived 10.6
+
+-- How it wins --
+  damage      99.7% of wins
+  timeout      0.3% of wins
+  Opponents it eliminated: 0.85 per game, by
+    drain              31.9%
+    combat             23.2%
+    decked             18.5%
+    triggers           15.2%
+    burn               10.2%
+    commander damage    1.1%
+  Damage dealt per game: 37.2, from
+    combat              16.4  (44%)
+    drain               14.8  (40%)
+    burn                 3.0  (8%)
+    triggers             3.0  (8%)
+
+-- How it loses --
+  Eliminated in 66.8% of games, on average in round 10.0
+    by Light-Paws via commander damage   14.9% of games
+    by Isshin   via combat             12.3% of games
+    by Lathril  via combat              9.2% of games
+    by Tatyova  via combat              7.3% of games
+    by Light-Paws via combat              4.4% of games
+    by Teysa Karlov via drain               4.4% of games
+    by Teysa Karlov via combat              4.0% of games
+    by Lathril  via drain               3.1% of games
+
+-- Game plan timing --
+  Plan: Kefka flipped into Ruler of Ruin
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 1%  T7 3%  T8 7%  T9 14%  T10 21%  T11 26%  T12 30%
+  Online at all: 39.5% of games
+  Commander resolves on turn: median 5.0, mean 5.8 (over the 84.3% of games it resolves)
+  Commander resolved by turn:  T4 15%  T5 46%  T6 63%  T7 72%  T8 78%
+  Breach line: Breach and a storm card held on our turn in 36.1% of games
+    dry run tried in 33.2%, passed in 13.7%, executed in 12.2%, won (table dead or decked) in 12.0%
+    last failed dry run fell short of: mana 6.0%, blue mana 0.5%, graveyard fuel 2.0%, storm count / other 20.6% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Brain Freeze                               cast in  11.0% of games, win rate when cast  92.7% (+59.8)
+    Underworld Breach                          cast in  17.7% of games, win rate when cast  77.4% (+44.5)
+    Massacre Wurm                              cast in  19.4% of games, win rate when cast  57.2% (+24.3)
+    Niv-Mizzet, the Firemind                   cast in  20.2% of games, win rate when cast  55.0% (+22.1)
+    Psychosis Crawler                          cast in  25.8% of games, win rate when cast  53.9% (+21.0)
+    Lotus Petal                                cast in  33.6% of games, win rate when cast  50.9% (+18.0)
+    Rapturous Moment                           cast in  14.1% of games, win rate when cast  49.6% (+16.7)
+    Dark Ritual                                cast in  30.4% of games, win rate when cast  49.3% (+16.4)
+    Grim Servant                               cast in  17.9% of games, win rate when cast  46.9% (+14.0)
+    Diabolic Tutor                             cast in  17.1% of games, win rate when cast  46.8% (+13.9)
+  Lowest win rate when cast:
+    Hallway Heckler                            cast in  22.2% of games, win rate when cast  31.5% (-1.4)
+    Blazing Firesinger                         cast in  21.7% of games, win rate when cast  32.3% (-0.6)
+    Rummaging Goblin                           cast in  16.3% of games, win rate when cast  32.5% (-0.4)
+    Night's Whisper                            cast in  27.0% of games, win rate when cast  33.7% (+0.8)
+    Bitter Triumph                             cast in  22.1% of games, win rate when cast  33.9% (+1.0)
+    Garrison Excavator                         cast in  23.1% of games, win rate when cast  34.6% (+1.7)
+    Chaos Warp                                 cast in  21.4% of games, win rate when cast  35.0% (+2.1)
+    Eternal Student                            cast in  19.1% of games, win rate when cast  35.6% (+2.7)
+    Cackling Fiend                             cast in  17.9% of games, win rate when cast  35.8% (+2.9)
+    Seize the Spoils                           cast in  19.1% of games, win rate when cast  36.6% (+3.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Deflecting Swat                            cast   4.0% of the games it was drawn
+    Slip Out the Back                          cast   7.4% of the games it was drawn [reactive: only cast in response]
+    Grapeshot                                  cast  10.6% of the games it was drawn
+    Yawgmoth's Will                            cast  13.1% of the games it was drawn
+    Profane Tutor                              cast  21.9% of the games it was drawn
+    Brain Freeze                               cast  23.1% of the games it was drawn
+    Underworld Breach                          cast  23.3% of the games it was drawn
+    Jin-Gitaxias, Progress Tyrant              cast  27.5% of the games it was drawn
+    Rapturous Moment                           cast  32.4% of the games it was drawn
+    Extinguish the Light                       cast  36.1% of the games it was drawn
+    Diabolic Tutor                             cast  36.4% of the games it was drawn
+    Sisay's Ring                               cast  36.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  0.28
+    Rhystic Study                              0.07
+    Psychosis Crawler                          0.05
+    Massacre Wurm                              0.04
+    Sawblade Scamp                             0.04
+    Corroding Dragonstorm                      0.03
+    Blazing Firesinger                         0.03
+    Screeching Soulbreaker                     0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(110s total)
