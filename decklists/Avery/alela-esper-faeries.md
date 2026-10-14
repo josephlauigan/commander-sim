@@ -1,5 +1,7 @@
 # Alela, Artful Provocateur — Esper Faerie Flyers
 
+**Updated 2026-10-14.** Out: Gravedigger. In: Exotic Orchard, Shattered Sanctum, Tymna the Weaver. Gravedigger (back to Avery) for Tymna the Weaver; two Plains for Exotic Orchard and Shattered Sanctum (all three JD's, from the retired Jodah deck's leftovers). Measured +0.1 over all tiers (T1 +1.2, T2 +2.2, T3 -0.6, T4 +1.4, T5 -3.8; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier).
+
 **Simulator, 2026-10-12:** **13.1% over all tiers** (±0.4; tied with Galadriel for 9th of the ten decks): T1 12.1%, T2 14.8%, T3 11.7%, T4 14.9%, T5 11.8%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 
 2026-10-05
@@ -47,7 +49,7 @@ Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and li
 
 **Commander (1).** Alela, Artful Provocateur
 
-**Creatures (27).** Aven Fogbringer, Airlift Chaplain, Cavalier of Dawn, Desperate Futurescribe, Dockside Chef, Emry, Lurker of the Loch, Ethersworn Canonist, Gravedigger, Imperious Inkmage, Initiates of the Ebon Hand, Inspiring Overseer, Jackdaw Savior, Judge's Familiar, Keeper of the Quiet Hour, Lieutenant Kirtar, Malcator, Purity Overseer, Meteor Golem, Notion Thief, Page, Loose Leaf, Pileated Provisioner, Plumecreed Mentor, Reconstructed Thopter, Shatterwing Pegasus, Stirring Hopesinger, Tetsuko Umezawa, Fugitive, Windborn Muse, Wispdrinker Vampire
+**Creatures (27).** Airlift Chaplain, Aven Fogbringer, Cavalier of Dawn, Desperate Futurescribe, Dockside Chef, Emry, Lurker of the Loch, Ethersworn Canonist, Imperious Inkmage, Initiates of the Ebon Hand, Inspiring Overseer, Jackdaw Savior, Judge's Familiar, Keeper of the Quiet Hour, Lieutenant Kirtar, Malcator, Purity Overseer, Meteor Golem, Notion Thief, Page, Loose Leaf, Pileated Provisioner, Plumecreed Mentor, Reconstructed Thopter, Shatterwing Pegasus, Stirring Hopesinger, Tetsuko Umezawa, Fugitive, Tymna the Weaver, Windborn Muse, Wispdrinker Vampire
 
 **Planeswalkers (1).** Venser, the Sojourner
 
@@ -55,19 +57,19 @@ Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and li
 
 **Artifacts (4).** Mind Stone, Short Bow, Sol Ring, Strixhaven Skycoach
 
-**Instants (14).** Clever Concealment, Essence Scatter, Fatehold Charm, Last Gasp, Muddle the Mixture, Multiply by Zero, Negate, Prophesied End, Ray of Command, Repel Calamity, Sphinx's Approach, Spite // Malice, Statute of Denial, Unsummon
+**Instants (16).** Clever Concealment, Dark Ritual, Essence Scatter, Fatehold Charm, Last Gasp, Muddle the Mixture, Multiply by Zero, Negate, Prophesied End, Ray of Command, Repel Calamity, Sphinx's Approach, Spite // Malice, Statute of Denial, Unsummon, Vanquish the Weak
 
-**Sorceries (6).** Dark Ritual, Daydream, Helping Hand, Hymn to Tourach, Night's Whisper, Vanquish the Weak
+**Sorceries (4).** Daydream, Helping Hand, Hymn to Tourach, Night's Whisper
 
-**Lands (36).** Aether Hub, Fatehold Annex, Ghost Quarter, Hidden Grotto, Isolated Chapel, Meticulous Commons, Path of Ancestry, Tainted Field, Theorix Annex, 11 Plains, 9 Island, 7 Swamp
+**Lands (36).** Aether Hub, Exotic Orchard, Fatehold Annex, Ghost Quarter, Hidden Grotto, Isolated Chapel, Meticulous Commons, Path of Ancestry, Shattered Sanctum, Tainted Field, Theorix Annex, 9 Plains, 9 Island, 7 Swamp
 
 ## Import list (100)
 
 ```
-1 Alela, Artful Provocateur
 1 Aether Hub
 1 Airlift Chaplain
 1 Ajani Fells the Godsire
+1 Alela, Artful Provocateur
 1 Arrest
 1 Aven Fogbringer
 1 Cavalier of Dawn
@@ -79,12 +81,12 @@ Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and li
 1 Emry, Lurker of the Loch
 1 Essence Scatter
 1 Ethersworn Canonist
+1 Exotic Orchard
 1 Fatehold Annex
 1 Fatehold Charm
 1 Feather of Flight
 1 Felidar Retreat
 1 Ghost Quarter
-1 Gravedigger
 1 Helping Hand
 1 Hidden Grotto
 1 Hymn to Tourach
@@ -119,6 +121,7 @@ Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and li
 1 Reconstructed Thopter
 1 Repel Calamity
 1 Rhystic Study
+1 Shattered Sanctum
 1 Shatterwing Pegasus
 1 Short Bow
 1 Sol Ring
@@ -131,13 +134,14 @@ Alela, Artful Provocateur ({1}{W}{U}{B}) is a 2/3 with flying, deathtouch and li
 1 Tainted Field
 1 Tetsuko Umezawa, Fugitive
 1 Theorix Annex
+1 Tymna the Weaver
 1 Unquestioned Authority
 1 Unsummon
 1 Vanquish the Weak
 1 Venser, the Sojourner
 1 Windborn Muse
 1 Wispdrinker Vampire
-11 Plains
+9 Plains
 9 Island
 7 Swamp
 ```

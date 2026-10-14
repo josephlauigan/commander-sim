@@ -17,6 +17,7 @@
 **Updated 2026-10-10 — a flicker package.** Five swaps: **Stinkweed Imp → Teleportation Circle**, **Lash of the Balrog → Conjurer's Closet**, **Grisly Salvage → Restoration Angel**, **Llanowar Elves → Summon: Bahamut**, and **Llanowar Wastes → Karn's Bastion**. None is a Game Changer, so the count stays at eight; still Bracket 4, 100 cards and 37 lands.
 **Updated 2026-10-10 (second pass).** **Avacyn's Pilgrim → Flickering Hound**: the Pilgrim only made {W}, and the Hound turns every creature you cast (Muldrotha's recasts included) into another flicker. Still eight Game Changers, Bracket 4, 100 cards and 37 lands.
 **Updated 2026-10-13.** Out: Smothering Tithe. In: Momentary Blink. JD's choice: Smothering Tithe goes to the Cloud deck; Momentary Blink (bulk) is a second Ephemerate-style blink for the Kitten. Paired test, 500 games per tier: -1.8 (t1 -4.0, t2 -1.4, t3 +3.8, t4 -3.8, t5 -3.8); `audit/cloud/2026-10-13/screen/D2-*`. Game Changers 8 -> 7, still Bracket 4.
+**Updated 2026-10-14.** Out: Orzhov Signet. In: Worldly Tutor. Orzhov Signet (to bulk) for Worldly Tutor (binder, from the retired Jodah deck). Measured -0.1 over all tiers (T1 -2.0, T2 +0.8, T3 +2.2, T4 -1.0, T5 -0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice to keep it. Eight Game Changers, Bracket 4.
 
 ## Strategy
 
@@ -133,11 +134,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (7).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Teleportation Circle, Tortured Existence
 
-**Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Orzhov Signet, Skullclamp, Sol Ring, Talisman of Hierarchy
+**Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Skullclamp, Sol Ring, Talisman of Hierarchy
 
 **Sorceries (9).** Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
 
-**Instants (12).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection
+**Instants (13).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection, Worldly Tutor
 
 **Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Karn's Bastion, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
 
@@ -197,7 +198,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Muldrotha, the Gravetide
 1 Necromancy
 1 Nim Deathmantle
-1 Orzhov Signet
 1 Overgrown Tomb
 1 Path to Exile
 1 Phyrexian Arena
@@ -227,6 +227,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Viscera Seer
 1 Watery Grave
 1 Woodland Cemetery
+1 Worldly Tutor
 1 Yavimaya Coast
 1 Yawgmoth's Will
 1 Zulaport Cutthroat

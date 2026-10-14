@@ -1,10 +1,8 @@
-1x Adarkar Wastes
 1x Arcane Denial
 1x Arcane Sanctum
 1x Arnim Zola, Bio-Fanatic
 1x Battlefield Forge
 1x Birds of Paradise
-1x Bitter Triumph
 1x Brushland
 1x Call of the Ring
 1x Caparocti Sunborn
@@ -16,7 +14,6 @@
 1x Cromat
 1x Crumbling Necropolis
 1x Dakkon Blackblade
-1x Dakkon, Shadow Slayer
 1x Dark Ritual
 1x Darksteel Mutation
 1x Deepwood Legate
@@ -24,11 +21,9 @@
 1x Disenchant
 1x Dismiss
 1x Dissipate
-1x Dragonlord Dromoka
 1x Duress
 1x Elenda, the Dusk Rose
 1x Elrond, Lord of Rivendell
-1x Exotic Orchard
 1x Fact or Fiction
 1x Force of Will
 1x Frontier Bivouac
@@ -69,14 +64,11 @@
 1x Sandsteppe Citadel
 1x Savage Lands
 1x Seaside Citadel
-1x Shattered Sanctum
-1x Shivan Reef
 1x Sol'kanar the Swamp King
 1x Solarium Sentry
 1x Spirit Link
 1x Star Compass
 1x Stinkweed Imp
-1x Sulfurous Springs
 1x Szadek, Lord of Secrets
 1x Talisman of Hierarchy
 1x Terror of the Peaks
@@ -84,11 +76,9 @@
 1x Tolsimir Wolfblood
 1x Toxic Deluge
 1x Triskelion
-1x Tymna the Weaver
 1x Unclaimed Territory
 1x Urza, Powerstone Prodigy
 1x Vivid Creek
-1x Worldly Tutor
 1x Wrenn and Six
 1x Yavimaya Coast
-3x Underground River
+2x Underground River

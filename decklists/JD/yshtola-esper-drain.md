@@ -10,6 +10,7 @@
 **Updated 2026-10-07.** Out: Crux of Fate. In: Grand Arbiter Augustin IV. Crux of Fate → Grand Arbiter Augustin IV: your white and blue spells cost {1} less each, opponents' spells {1} more. Crux was stuck in hand in about six games in ten. Seven Game Changers (Bracket 4). Tested at −0.6 points (fast AI, 1,000 pairs per tier), within noise.
 **Updated 2026-10-09.** Out: Secure the Wastes. In: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal. JD's choice: Venat draws a card the first time each turn you cast a legendary spell; its flip side ({7}: exile a nonland permanent) makes a creature indestructible each turn. Measured +0.1 ±0.8 for Secure the Wastes (adaptive, paired, 1,000 games per tier). Not a Game Changer.
 **Updated 2026-10-11.** Out: Bastion Protector. In: Thought Vessel (from Sauron). JD's choice: no maximum hand size for the deck that draws the most each turn (Necropotence, Consecrated Sphinx, Notion Thief, Bolas's Citadel); Bastion Protector was a creature, so it never triggered Y'shtola. Not measured.
+**Updated 2026-10-14.** Out: Triplicate Spirits. In: Adarkar Wastes, Dakkon, Shadow Slayer, Underground River. Triplicate Spirits (to bulk) for Dakkon, Shadow Slayer; a Swamp and an Island for Underground River and Adarkar Wastes (all three from the binder, the retired Jodah deck's leftovers). Measured -0.7 over all tiers (T1 +0.2, T2 -4.2, T3 -1.8, T4 +2.2, T5 0.0; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice.
 
 2026-10-03
 **Added 2026-10-03.** In the simulator as deck key `yshtola` (`commander-sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. Zur the Enchanter is in the 99.
@@ -173,7 +174,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (15).** Consecrated Sphinx, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Windborn Muse, Zur the Enchanter
 
-**Planeswalkers (1).** The Eternal Wanderer
+**Planeswalkers (2).** Dakkon, Shadow Slayer, The Eternal Wanderer
 
 **Enchantments (16).** Arrest, Bound in Silence, Curiosity, Encrust, Ill-Gotten Inheritance, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Sanguine Bond, Smothering Tithe, Static Net
 
@@ -181,13 +182,14 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (8).** Anguished Unmaking, Dovin's Veto, Fatal Push, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Your Fate Ends Here
 
-**Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit, Triplicate Spirits
+**Sorceries (12).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit
 
-**Lands (37).** Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum, Spire of Industry, Terramorphic Expanse, 8 Plains, 8 Island, 10 Swamp
+**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum, Spire of Industry, Terramorphic Expanse, Underground River, 8 Plains, 7 Island, 9 Swamp
 
 ## Import list (100)
 
 ```
+1 Adarkar Wastes
 1 Anguished Unmaking
 1 Arcane Signet
 1 Arrest
@@ -203,6 +205,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Command Tower
 1 Consecrated Sphinx
 1 Curiosity
+1 Dakkon, Shadow Slayer
 1 Dark Petition
 1 Debt to the Deathless
 1 Deep Analysis
@@ -255,16 +258,16 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 The Eternal Wanderer
 1 Thief of Sanity
 1 Thought Vessel
-1 Triplicate Spirits
+1 Underground River
 1 Urborg Syphon-Mage
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
 1 Windborn Muse
 1 Y'shtola, Night's Blessed
 1 Your Fate Ends Here
 1 Zur the Enchanter
-8 Island
+7 Island
 8 Plains
-10 Swamp
+9 Swamp
 ```
 
 ## Flags and tuning levers

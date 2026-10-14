@@ -1,5 +1,7 @@
 # Galadriel, Light of Valinor — Bant Rebels
 
+**Updated 2026-10-14.** Out: Flicker. In: Dragonlord Dromoka. Flicker (back to Avery) for Dragonlord Dromoka (JD's, from the retired Jodah deck's leftovers). Measured +1.1 over all tiers (T1 +0.8, T2 +3.0, T3 -0.8, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier).
+
 **Simulator, 2026-10-12:** **13.2% over all tiers** (±0.4; tied with Alela for 9th of the ten decks): T1 13.1%, T2 15.9%, T3 12.3%, T4 12.1%, T5 12.6%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 
 2026-10-02
@@ -78,7 +80,7 @@ The list is exactly 100 cards.
 29 lands (15 nonbasic, 7 Plains, 4 Island, 3 Forest) plus a lot of ramp:
 - **Mana creatures:** Llanowar Elves, Fyndhorn Elves, Elvish Mystic, Elvish Archdruid ({G} for each Elf).
 - **Rocks:** Sol Ring, Arcane Signet, Chromatic Lantern, Patchwork Banner, Springleaf Drum (tap a creature for any colour).
-- **Lands:** Cultivate, Farseek, Shared Roots, Sakura-Tribe Elder, Farhaven Elf, Planar Genesis.
+- **Lands:** 29 (15 nonbasic + 14 basic)
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -121,7 +123,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Galadriel, Light of Valinor
 
-**Creatures (34).** Adeline, Resplendent Cathar, Amrou Seekers, Ballista Squad, Beast Whisperer, Cartographer, Cho-Manno, Revolutionary, Defiant Vanguard, Elvish Archdruid, Elvish Mystic, Errant Doomsayers, Farhaven Elf, Fyndhorn Elves, Jhovall Queen, Knight of the Holy Nimbus, Lawbringer, Lightbringer, Lin Sivvi, Defiant Hero, Llanowar Elves, Mangara, the Diplomat, Mentor of the Meek, Mirror Entity, Nightwind Glider, Ramosian Captain, Ramosian Commander, Ramosian Lieutenant, Ramosian Revivalist, Ramosian Sergeant, Recruiter of the Guard, Reya Dawnbringer, Sakura-Tribe Elder, Thermal Glider, Voice of Resurgence, Welcoming Vampire, Whipcorder
+**Creatures (35).** Adeline, Resplendent Cathar, Amrou Seekers, Ballista Squad, Beast Whisperer, Cartographer, Cho-Manno, Revolutionary, Defiant Vanguard, Dragonlord Dromoka, Elvish Archdruid, Elvish Mystic, Errant Doomsayers, Farhaven Elf, Fyndhorn Elves, Jhovall Queen, Knight of the Holy Nimbus, Lawbringer, Lightbringer, Lin Sivvi, Defiant Hero, Llanowar Elves, Mangara, the Diplomat, Mentor of the Meek, Mirror Entity, Nightwind Glider, Ramosian Captain, Ramosian Commander, Ramosian Lieutenant, Ramosian Revivalist, Ramosian Sergeant, Recruiter of the Guard, Reya Dawnbringer, Sakura-Tribe Elder, Thermal Glider, Voice of Resurgence, Welcoming Vampire, Whipcorder
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -131,7 +133,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (12).** Beast Within, Counterspell, Cyclonic Rift, Eerie Interlude, Generous Gift, Make a Stand, Path to Exile, Planar Genesis, Return to Dust, Rootborn Defenses, Swords to Plowshares, Unbreakable Formation
 
-**Sorceries (9).** Austere Command, Bribery, Cultivate, Farewell, Farseek, Flicker, River's Rebuke, Shamanic Revelation, Shared Roots
+**Sorceries (8).** Austere Command, Bribery, Cultivate, Farewell, Farseek, River's Rebuke, Shamanic Revelation, Shared Roots
 
 **Lands (29).** Command Tower, Exotic Orchard, Fabled Passage, Glacial Fortress, Grand Coliseum, Hinterland Harbor, Prairie Stream, Rogue's Passage, Seaside Citadel, Secluded Courtyard, Sunpetal Grove, Temple Garden, Temple of Mystery, Temple of Plenty, Yavimaya Coast, 7 Plains, 4 Island, 3 Forest
 
@@ -158,6 +160,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Cyclonic Rift
 1 Defiant Vanguard
 1 Door of Destinies
+1 Dragonlord Dromoka
 1 Eerie Interlude
 1 Elspeth, Sun's Champion
 1 Elvish Archdruid
@@ -168,15 +171,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Farewell
 1 Farhaven Elf
 1 Farseek
-1 Flicker
-3 Forest
 1 Fyndhorn Elves
 1 Galadriel, Light of Valinor
 1 Generous Gift
 1 Glacial Fortress
 1 Grand Coliseum
 1 Hinterland Harbor
-4 Island
 1 Jhovall Queen
 1 Kindred Discovery
 1 Knight of the Holy Nimbus
@@ -193,7 +193,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Panharmonicon
 1 Patchwork Banner
 1 Path to Exile
-7 Plains
 1 Planar Genesis
 1 Prairie Stream
 1 Ramosian Captain
@@ -227,4 +226,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Welcoming Vampire
 1 Whipcorder
 1 Yavimaya Coast
+3 Forest
+4 Island
+7 Plains
 ```

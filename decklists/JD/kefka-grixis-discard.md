@@ -8,6 +8,7 @@
 **Updated 2026-10-13.** Out: Chaos Warp, Dark Inquiry, Duress, Ichor Slick, Postmortem Professor, Potioner's Trove, Thought Vessel. In: Brain Freeze, Dark Ritual, Diabolic Intent, Grapeshot, Grim Tutor, Jeska's Will, Lotus Petal. JD's choice: Sauron's Underworld Breach package (Brain Freeze, Dark Ritual, Lotus Petal) with Grapeshot (bulk), Grim Tutor, Diabolic Intent and Jeska's Will (from Veyran), to run the Breach + storm line alongside Kefka's own Underworld Breach. Measured +0.5 over all tiers, within noise (T1 +3.3, T2 +0.6, T3 -0.5, T4 -0.7, T5 -0.3; look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-12-weakness/kefka-k3/). Three Game Changers now (Rhystic Study, Underworld Breach, Jeska's Will).
 **Updated 2026-10-13 (second change).** Out: Grim Tutor, Diabolic Intent, Swiftfoot Boots. In: Profane Tutor, Demonic Tutor, Chaos Warp. JD's choice, not simulated: the two tutors come from the retired Jodah deck instead of being bought (Profane Tutor is suspended for {1}{B} and finds any card two turns later; Demonic Tutor is a Game Changer, so the deck moves to Bracket 4). Swiftfoot Boots goes to the Cloud deck (Kefka keeps Lightning Greaves for haste); Chaos Warp comes back from bulk.
 **Updated 2026-10-13.** Out: Disintegrate, Kaervek's Purge, Twinflame. In: Mystical Tutor, Vampiric Tutor, Yawgmoth's Will. JD's package A (Yawgmoth's Will storm turn): Twinflame, Kaervek's Purge and Disintegrate out (to bulk); Yawgmoth's Will (JD's spare copy), Vampiric Tutor and Mystical Tutor (binder, from the retired Jodah) in. Measured +1.0 over all tiers (T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Six Game Changers, still Bracket 4. Jin-Gitaxias stays (JD).
+**Updated 2026-10-14.** Out: Decorum Dissertation. In: Bitter Triumph, Shivan Reef, Sulfurous Springs. Decorum Dissertation (to bulk) for Bitter Triumph; two Swamps for Sulfurous Springs and Shivan Reef (all three from the binder, the retired Jodah deck's leftovers). Measured -1.9 over all tiers (T1 -6.0, T2 -3.4, T3 -2.6, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice.
 
 2026-10-11
 **Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Fully modeled and measured on 2026-10-11: 26.6% over all tiers (see "Simulator status").
@@ -53,7 +54,7 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 ## Consistency
 
-- **Lands:** 36 (10 nonbasic + 26 basic)
+- **Lands:** 36 (12 nonbasic + 24 basic)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
 - **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Decorum Dissertation, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
 - **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
@@ -201,11 +202,11 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 
 **Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
 
-**Sorceries (15).** Contract Killing, Crux of Fate, Deadly Embrace, Decorum Dissertation, Demonic Tutor, Diabolic Tutor, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Yawgmoth's Will
+**Sorceries (14).** Contract Killing, Crux of Fate, Deadly Embrace, Demonic Tutor, Diabolic Tutor, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Yawgmoth's Will
 
-**Instants (15).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mystical Tutor, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision, Vampiric Tutor
+**Instants (16).** Arcane Denial, Big Score, Bitter Triumph, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mystical Tutor, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision, Vampiric Tutor
 
-**Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Underground River, 6 Island, 5 Mountain, 15 Swamp
+**Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Underground River, 6 Island, 5 Mountain, 13 Swamp
 
 ## Import list (100)
 
@@ -214,6 +215,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Arcane Denial
 1 Arcane Signet
 1 Big Score
+1 Bitter Triumph
 1 Blazing Firesinger
 1 Blightspeaker
 1 Blood Crypt
@@ -226,7 +228,6 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Crux of Fate
 1 Dark Ritual
 1 Deadly Embrace
-1 Decorum Dissertation
 1 Deflecting Swat
 1 Demonic Embrace
 1 Demonic Tutor
@@ -266,6 +267,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Screeching Soulbreaker
 1 Seize the Spoils
 1 Shimmercreep
+1 Shivan Reef
 1 Sisay's Ring
 1 Skullclamp
 1 Skullport Merchant
@@ -276,6 +278,7 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Steam Vents
 1 Stormcarved Coast
 1 Sulfur Falls
+1 Sulfurous Springs
 1 Susurian Voidborn
 1 Thrill of Possibility
 1 Twinned Vision
@@ -286,5 +289,5 @@ The commander, **Kefka, Court Mage**, comes out of Sauron. The 26 basics (15 Swa
 1 Yawgmoth's Will
 6 Island
 5 Mountain
-15 Swamp
+13 Swamp
 ```
