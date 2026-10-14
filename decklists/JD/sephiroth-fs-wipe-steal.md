@@ -1,9 +1,11 @@
 # Sephiroth, Fabled SOLDIER — Mono-Black Wipe, Drain and Steal the Dead
 
+**Updated 2026-10-14.** Out: Ophiomancer, Sneering Shadewriter. In: Grave Titan, Pawn of Ulamog. JD's package (2026-10-14): Grave Titan for Sneering Shadewriter, Pawn of Ulamog for Ophiomancer. Measured +0.3 ±1.6 over all tiers (paired, 1,000 games per tier; audit/sephfs/2026-10-14-pkg/): neutral; JD is buying both.
+
 **Added 2026-10-14.** JD's mono-black control deck with Sephiroth, Fabled SOLDIER as commander and JD's new Phyrexian
 Tower and Phyrexian Altar. Not JD's Atraxa deck (`sephiroth-phyrexian-reanimator.md`, also called Sephiroth): that
 one reanimates its own creatures for combos; this one wipes the board, drains on every death and takes opponents' dead.
-**31 buys, about $69.79** (about $41.79 without Sephiroth). Crux of Fate and Animate Dead are second copies: JD's first copies stay in the Kefka and Atraxa decks.
+**32 buys, about $69.50** (about $41.50 without Sephiroth). Crux of Fate and Animate Dead are second copies: JD's first copies stay in the Kefka and Atraxa decks.
 
 **Not measured yet.**
 
@@ -42,7 +44,7 @@ this is the fourth time this ability has resolved this turn, transform Sephiroth
 
 ## Where the cards come from
 
-**Buys (31, about $69.79):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
+**Buys (32, about $69.50):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
 **JD's own, new (2):** Phyrexian Tower, Phyrexian Altar (not on the bulk/binder lists yet). **Basics (32 Swamp):** your
 own. Everything else comes off JD's lists (main, 2026-10-14).
 
@@ -67,11 +69,11 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 | Grave Researcher // Reanimate | Bulk | sos |
 | Massacre Girl | **Buy** ($0.53) |  |
 | Moseo, Vein's New Dean | Bulk | sos |
-| Ophiomancer | **Buy** ($1.17) |  |
+| Pawn of Ulamog | **Buy** ($0.55) |  |
 | Pitiless Plunderer | **Buy** ($5.00) |  |
 | Plaguecrafter | **Buy** ($0.39) |  |
 | Reassembling Skeleton | **Buy** ($0.32) |  |
-| Sneering Shadewriter | Bulk | sos |
+| Grave Titan | **Buy** ($0.33; a second copy: the Atraxa deck has one) |  |
 | Undercity Dire Rat | Bulk | fin |
 | Viscera Seer | **Buy** ($0.48) |  |
 | Woe Strider | **Buy** ($0.28) |  |
@@ -182,6 +184,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Gonti, Lord of Luxury
 1 Grave Betrayal
 1 Grave Researcher // Reanimate
+1 Grave Titan
 1 Kaya's Ghostform
 1 Last Gasp
 1 Living Death
@@ -190,8 +193,8 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Mind Stone
 1 Moseo, Vein's New Dean
 1 Necromantic Selection
-1 Ophiomancer
 1 Path of Ancestry
+1 Pawn of Ulamog
 1 Pestilence
 1 Phyrexian Altar
 1 Phyrexian Tower
@@ -205,7 +208,6 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Rewrite Regrets
 1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Sephiroth's Intervention
-1 Sneering Shadewriter
 1 Sol Ring
 1 Star Compass
 1 Stargaze
