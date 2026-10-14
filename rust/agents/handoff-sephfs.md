@@ -46,3 +46,5 @@ not modeled, Blood on the Snow X = 0, Pestilence applies activations in one acti
 - Never run Python (the hook blocks even a stray line in a multi-command call).
 - Tests: perm() runs ETBs (Plaguecrafter/Fleshbag sacrifice themselves, Sephiroth sacrifices an existing token): order setup accordingly.
 - cargo test stops at the first failing target: use --no-fail-fast.
+
+## Agent 3: DONE. All items finished; see report-sephfs.md. Nothing left.
