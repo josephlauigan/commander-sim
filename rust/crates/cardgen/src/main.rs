@@ -102,7 +102,10 @@ fn validate(project: &Project, _args: &[String]) -> Result<(), String> {
             if probs.is_empty() { "OK " } else { "ERR" },
             d.tier,
             d.key,
-            d.commander,
+            match &d.commander2 {
+                Some(c2) => format!("{} + {c2}", d.commander),
+                None => d.commander.clone(),
+            },
             info.identity,
             info.gcs.len()
         );

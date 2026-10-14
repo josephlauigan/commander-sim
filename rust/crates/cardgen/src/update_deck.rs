@@ -106,6 +106,20 @@ pub fn canonical(requested: &str, rec: &J, known: &dyn Fn(&str) -> bool) -> Opti
 }
 
 // ------------------------------------------------------------------ the deck file
+/// a `**Commander (1).**` or `**Commanders (2).**` line
+fn is_cmd_line(l: &str) -> bool {
+    l.starts_with("**Commander (1).**") || l.starts_with("**Commanders (2).**")
+}
+
+/// the second commander of one of your two-commander decks
+pub fn commander2_of(inp: &Inputs, path: &Path) -> Option<String> {
+    let base = path.file_name().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
+    inp.my
+        .iter()
+        .find(|d| Path::new(&d.file).file_name().is_some_and(|f| f.to_string_lossy() == base))
+        .and_then(|d| d.commander2.clone())
+}
+
 pub fn commander_of(inp: &Inputs, path: &Path, text: &str) -> Result<String, String> {
     let base = path.file_name().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
     for d in &inp.my {
@@ -188,6 +202,7 @@ fn sorted_by(mut v: Vec<String>, key: SortKey) -> Vec<String> {
 pub fn rewrite(
     text: &str,
     commander: &str,
+    commander2: Option<&str>,
     counts: &[(String, usize)],
     recs: &BTreeMap<String, J>,
     by_type_commas: bool,
@@ -225,7 +240,7 @@ pub fn rewrite(
             bold.iter().map(|i| rmatch(r"^\*\*(.+?) \(\d+\)\.\*\*", lines[*i]).unwrap().gs(1).to_string()).collect();
         let mut groups: Vec<(String, Vec<String>)> = vec![];
         for n in singles.iter().chain(basics.iter()) {
-            if n == commander {
+            if n == commander || Some(n.as_str()) == commander2 {
                 continue;
             }
             let g = group_of(&recs[n], &labels);
@@ -246,8 +261,11 @@ pub fn rewrite(
             groups.iter().map(|(k, _)| k.clone()).filter(|g| !GROUPS.contains(&g.as_str())).collect();
         rest_groups.sort();
         order.extend(rest_groups);
-        let cmd_line = lines.iter().find(|l| l.starts_with("**Commander (1).**")).map(|l| l.to_string());
-        let mut new = vec![cmd_line.unwrap_or(format!("**Commander (1).** {commander}"))]; // an existing line is kept as written
+        let cmd_line = lines.iter().find(|l| is_cmd_line(l)).map(|l| l.to_string());
+        let mut new = vec![cmd_line.unwrap_or(match commander2 {
+            Some(c2) => format!("**Commanders (2).** {commander}, {c2}"),
+            None => format!("**Commander (1).** {commander}"),
+        })]; // an existing line is kept as written
         for g in &order {
             let Some((_, cards)) = groups.iter().find(|(k, _)| k == g) else { continue };
             if cards.is_empty() {
@@ -358,6 +376,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let path = deck_file(&inp, which)?;
     let text = read(&path)?;
     let commander = commander_of(&inp, &path, &text)?;
+    let commander2 = commander2_of(&inp, &path);
     let entries = parse_list(list_text);
     if entries.is_empty() {
         return Err("the list is empty".into());
@@ -365,6 +384,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     if !opts.offline {
         let mut names: Vec<String> = entries.iter().map(|(_, n)| n.clone()).collect();
         names.push(commander.clone());
+        names.extend(commander2.clone());
         scryfall::fetch(&mut inp.cache, &names, false);
         inp.cache.save()?;
     }
@@ -381,6 +401,9 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     }
     if let Some(r) = inp.cache.get(&commander) {
         recs.insert(commander.clone(), r.clone());
+    }
+    if let Some(c2) = &commander2 && let Some(r) = inp.cache.get(c2) {
+        recs.insert(c2.clone(), r.clone());
     }
     for (k, n) in &entries {
         let Some(rec) = inp.cache.get(n).cloned() else {
@@ -410,8 +433,9 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         None
     };
     let cards: Vec<String> = counts.iter().flat_map(|(n, k)| std::iter::repeat_n(n.clone(), *k)).collect();
-    problems.extend(decks::structural_problems(&cards, &commander, 100)); // every problem at once, not only the first
-    problems.extend(decks::card_problems(&cards, &commander, tier.as_deref(), None, &|n| recs.get(n).cloned()).0);
+    let cmds: Vec<&str> = std::iter::once(commander.as_str()).chain(commander2.as_deref()).collect();
+    problems.extend(decks::structural_problems(&cards, &cmds, 100)); // every problem at once, not only the first
+    problems.extend(decks::card_problems(&cards, &cmds, tier.as_deref(), None, &|n| recs.get(n).cloned()).0);
     if !problems.is_empty() {
         say!("Not updated: the new list for {} has problems:", path.file_name().unwrap().to_string_lossy());
         for p in &problems {
@@ -435,7 +459,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let typed: String = by_type
         .map(|m| m.all().split('\n').filter(|l| !l.starts_with("**Commander")).collect::<Vec<_>>().join("\n"))
         .unwrap_or_default();
-    let commas = uniq_old.iter().any(|n| n.contains(',') && typed.contains(n.as_str()) && *n != commander);
+    let commas = uniq_old.iter().any(|n| n.contains(',') && typed.contains(n.as_str()) && *n != commander && Some(n.as_str()) != commander2.as_deref());
     let today = today();
     let note = opts.log.as_ref().map(|l| {
         let join = |v: &Vec<String>| if v.is_empty() { "nothing".to_string() } else { v.join(", ") };
@@ -449,7 +473,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let singles_old: Vec<String> =
         old.iter().filter(|n| !BASICS.contains(&n.as_str()) && old_count(n) == 1).cloned().collect();
     let key = sort_key(&singles_old);
-    let new_text = rewrite(&text, &commander, &counts, &recs, commas, &today, note.as_deref(), key)?;
+    let new_text = rewrite(&text, &commander, commander2.as_deref(), &counts, &recs, commas, &today, note.as_deref(), key)?;
 
     let rel = path
         .strip_prefix(&project.root)
@@ -521,7 +545,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         }
     }
     let kept: Vec<String> = if path.exists() { decks::load(&path).unwrap_or_default() } else { vec![] };
-    let cmd_line = text.split('\n').find(|l| l.starts_with("**Commander (1).**")).unwrap_or("").to_string();
+    let cmd_line = text.split('\n').find(|l| is_cmd_line(l)).unwrap_or("").to_string();
     let mut hits: Vec<(usize, String, String)> = vec![];
     for (i, line) in text.split('\n').enumerate() {
         if rmatch(r"^(## (Import list|Decklist by type)|\*\*[^*]+ \(\d+\)\.\*\*|\d+ )", line).is_some() {

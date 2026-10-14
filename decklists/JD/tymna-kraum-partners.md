@@ -197,7 +197,7 @@ Dissipate) and 46 from bulk. Set codes are the printings the bulk list shows; th
 ## Import list (100)
 
 ```
-1 Abigale, Poet Laureate
+1 Abigale, Poet Laureate // Heroic Stanza
 1 Adarkar Wastes
 1 Arcane Denial
 1 Arcane Sanctum

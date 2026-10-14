@@ -214,7 +214,7 @@ the bulk list shows; where it names more than one, any of them. The binder list 
 ## Import list (100)
 
 ```
-1 Abigale, Poet Laureate
+1 Abigale, Poet Laureate // Heroic Stanza
 1 Adarkar Wastes
 1 Arcane Denial
 1 Arcane Sanctum

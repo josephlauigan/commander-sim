@@ -60,3 +60,18 @@ file = "JD/cloud-midgar-equipment.md"
 name = "Cloud"
 commander = "Cloud, Midgar Mercenary"
 ident = "W"
+
+# Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
+[thrasios]
+file = "JD/tymna-thrasios-partners.md"
+name = "Tymna/Thrasios"
+commander = "Tymna the Weaver"
+commander2 = "Thrasios, Triton Hero"
+ident = "WUBG"
+
+[kraum]
+file = "JD/tymna-kraum-partners.md"
+name = "Tymna/Kraum"
+commander = "Tymna the Weaver"
+commander2 = "Kraum, Ludevic's Opus"
+ident = "WUBR"

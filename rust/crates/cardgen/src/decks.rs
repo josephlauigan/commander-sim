@@ -2,7 +2,7 @@
 //! (`decklists/pool/<tier folder>/<deck>.md`, the five power tiers). A deck file's cards are its `## Import list`
 //! block ("1 Sol Ring" lines); a pool deck's commander is its `**Commander:**` line.
 
-use crate::data::{MyDeck, Project, read};
+use crate::data::{self, MyDeck, Project, read};
 use crate::json::J;
 use crate::py;
 use crate::re::{rmatch, search};
@@ -49,6 +49,8 @@ pub struct PoolDeck {
     pub tier: String,
     pub key: String,
     pub commander: String,
+    /// a second commander (your two-commander decks, validated here too; never a pool deck)
+    pub commander2: Option<String>,
     pub cards: Vec<String>,
     /// the file's first line without its '#'
     pub title: String,
@@ -87,7 +89,7 @@ pub fn load_pool_deck(path: &Path) -> Result<PoolDeck, String> {
         .ok_or(format!("{}: no **Commander:** line", path.display()))?;
     let title = py::strip(txt.lines().next().unwrap_or(""), "# ").to_string();
     let gc_claimed = search(r"\*\*Game Changers \((\d+)\)", &txt).and_then(|m| m.gs(1).parse().ok());
-    Ok(PoolDeck { path: path.to_path_buf(), tier, key, commander, cards: load(path)?, title, gc_claimed })
+    Ok(PoolDeck { path: path.to_path_buf(), tier, key, commander, commander2: None, cards: load(path)?, title, gc_claimed })
 }
 
 /// the name logs use for a pool deck: its commander's first name part
@@ -126,15 +128,18 @@ pub fn gc_rules(tier: &str) -> Option<(usize, usize)> {
 }
 
 /// Checks that need no card data: size, singleton, commander present.
-pub fn structural_problems(cards: &[String], commander: &str, size: usize) -> Vec<String> {
+pub fn structural_problems(cards: &[String], commanders: &[&str], size: usize) -> Vec<String> {
     let mut probs = vec![];
     if cards.len() != size {
         probs.push(format!("{} cards, expected {size}", cards.len()));
     }
-    if commander.is_empty() {
+    if commanders.iter().all(|c| c.is_empty()) {
         probs.push("no **Commander:** line".into());
-    } else if !cards.iter().any(|c| c == commander) {
-        probs.push(format!("commander {} is not in the import list", py_repr(commander)));
+    }
+    for commander in commanders.iter().filter(|c| !c.is_empty()) {
+        if !cards.iter().any(|c| c == commander) {
+            probs.push(format!("commander {} is not in the import list", py_repr(commander)));
+        }
     }
     let mut count: BTreeMap<&str, usize> = BTreeMap::new();
     for c in cards {
@@ -175,7 +180,7 @@ pub struct DeckInfo {
 /// Checks that need Scryfall data. `recs`: requested name -> record (Python's slim records).
 pub fn card_problems(
     cards: &[String],
-    commander: &str,
+    commanders: &[&str],
     tier: Option<&str>,
     gc_claimed: Option<usize>,
     recs: &dyn Fn(&str) -> Option<J>,
@@ -198,11 +203,8 @@ pub fn card_problems(
     if !fuzzy.is_empty() {
         probs.push(format!("resolved only by fuzzy match (check spelling): {}", fuzzy.join(", ")));
     }
-    let cmd = recs(commander);
-    let ident: Option<Vec<String>> =
-        cmd.as_ref().map(|c| c.strs("color_identity").iter().map(|s| s.to_string()).collect());
-    if let Some(c) = &cmd {
-        let tl = c.s("type_line").unwrap_or("");
+    let cmds: Vec<(&str, Option<J>)> = commanders.iter().filter(|c| !c.is_empty()).map(|c| (*c, recs(c))).collect();
+    let oracle_of = |c: &J| {
         let mut text = c.s("oracle_text").unwrap_or("").to_string();
         text.push(' ');
         text.push_str(
@@ -211,10 +213,44 @@ pub fn card_problems(
                 .map(|f| f.iter().map(|x| x.s("oracle_text").unwrap_or("").to_string()).collect::<Vec<_>>().join(" "))
                 .unwrap_or_default(),
         );
-        if !(tl.contains("Legendary") && tl.contains("Creature")) && !text.contains("can be your commander") {
-            probs.push(format!("commander {commander} is not a legendary creature"));
+        text
+    };
+    for (commander, cmd) in &cmds {
+        if let Some(c) = cmd {
+            let tl = c.s("type_line").unwrap_or("");
+            let text = oracle_of(c);
+            if !(tl.contains("Legendary") && tl.contains("Creature")) && !text.contains("can be your commander") {
+                probs.push(format!("commander {commander} is not a legendary creature"));
+            }
+            // two commanders: each needs plain Partner (not "Partner with", not Friends forever)
+            if cmds.len() == 2 {
+                let plain = c.s("oracle_text").unwrap_or("").lines().any(|l| {
+                    let l = l.trim();
+                    l == "Partner" || l.starts_with("Partner (You can have two commanders")
+                });
+                if !plain {
+                    probs.push(format!("commander {commander} does not have plain Partner"));
+                }
+            }
         }
     }
+    if cmds.len() > 2 {
+        probs.push(format!("{} commanders (at most 2)", cmds.len()));
+    }
+    // the deck's colour identity: the union of its commanders'
+    let ident: Option<Vec<String>> = if !cmds.is_empty() && cmds.iter().all(|(_, c)| c.is_some()) {
+        let mut u: Vec<String> = vec![];
+        for (_, c) in &cmds {
+            for s in c.as_ref().unwrap().strs("color_identity") {
+                if !u.iter().any(|x| x == s) {
+                    u.push(s.to_string());
+                }
+            }
+        }
+        Some(u)
+    } else {
+        None
+    };
     let identity = match &ident {
         Some(i) => {
             let mut v: Vec<&str> = i.iter().map(|s| s.as_str()).collect();
@@ -272,8 +308,28 @@ pub fn card_problems(
 pub fn validate_all(p: &Project, cache: &Cache) -> Result<Vec<(PoolDeck, Vec<String>, DeckInfo)>, String> {
     let mut out = vec![];
     for d in load_pool(p)? {
-        let mut probs = structural_problems(&d.cards, &d.commander, 100);
-        let (p2, info) = card_problems(&d.cards, &d.commander, Some(&d.tier), d.gc_claimed, &|n| cache.get(n).cloned());
+        let cmds: Vec<&str> = std::iter::once(d.commander.as_str()).chain(d.commander2.as_deref()).collect();
+        let mut probs = structural_problems(&d.cards, &cmds, 100);
+        let (p2, info) = card_problems(&d.cards, &cmds, Some(&d.tier), d.gc_claimed, &|n| cache.get(n).cloned());
+        probs.extend(p2);
+        out.push((d, probs, info));
+    }
+    // your decks with two commanders: 100 cards, both with Partner, the union of their colours
+    for m in data::load_my_decks(p)?.into_iter().filter(|m| m.commander2.is_some()) {
+        let path = deck_path(p, &m);
+        let d = PoolDeck {
+            path: path.clone(),
+            tier: "mine".into(),
+            key: m.key.clone(),
+            commander: m.commander.clone(),
+            commander2: m.commander2.clone(),
+            cards: load(&path)?,
+            title: String::new(),
+            gc_claimed: None,
+        };
+        let cmds: Vec<&str> = vec![d.commander.as_str(), m.commander2.as_deref().unwrap()];
+        let mut probs = structural_problems(&d.cards, &cmds, 100);
+        let (p2, info) = card_problems(&d.cards, &cmds, None, None, &|n| cache.get(n).cloned());
         probs.extend(p2);
         out.push((d, probs, info));
     }
