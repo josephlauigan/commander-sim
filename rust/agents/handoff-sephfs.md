@@ -1,48 +1,48 @@
-# Handoff: sephfs (agent 1 stopped after ~70 tool calls)
+# Handoff: sephfs (agent 2 stopped after ~65 tool calls)
 
-Branch `sephfs`, worktree .claude/worktrees/sephfs. Commits: c4fc267 (registration), 654219c (card code + plan, WIP).
-Baseline binary for same-seed checks (registration only, no card code): /tmp/claude-1000/-home-joseph-projects-mtg-sims/
-291e1f60-a736-4dbc-bd9b-964e999afb88/scratchpad/base-sim (if gone: `git worktree`/checkout c4fc267 into a scratch dir and build).
+Branch `sephfs`, worktree .claude/worktrees/sephfs. Baseline binary for same-seed checks: /tmp/claude-1000/-home-joseph-projects-mtg-sims/
+291e1f60-a736-4dbc-bd9b-964e999afb88/scratchpad/base-sim (else rebuild from c4fc267).
 
-## Done
-- Deck registered (decks.rs FILES/MINE 14, args.rs, my_decks.toml with the full DFC commander name, fixture, game.rs 84,
-  practice catalog tests); `cardgen export` + `validate` OK.
-- Card code `impls/sephfs_cards.rs`: Extinction Event, Necromantic Selection, Blood on the Snow, Living Death (resolve hooks),
-  Grave Betrayal, Dread Slaver, Rabid Attack, Kaya's Ghostform (aura, host_dies/host_exiled), Pestilence (options + end step),
-  Grave Researcher // Reanimate (upkeep + prepared copy). Overrides added to data/card_overrides.toml (all Full).
-  `cardgen audit --cards rust/agents/sephfs-cards.list`: every card is Full or Full-auto.
-- Plan `impls/sephfs.rs`: sephfs_prio (edicts held until the flip is reachable, outlets/payoffs, Ghostform, Betrayal,
-  Massacre Girl), wipe_utility (drain per death, parity, Living Death), rean_targets (any graveyard).
-- Shared-file changes so far (all additive, gated to the deck/cards): state.rs (DataKey Ghostform/Rabid/Slaver/Betrayed,
-  Game.exiling), common.rs (AuraSpec.host_exiled + aura_fall calls host_dies on exile), zones.rs (exile_perm and die_rest
-  return a Ghostform host; die_triggers draws for Rabid Attack), combat.rs (slaver_mark before the two die() calls),
-  ai/brain.rs (wipe_options uses sephfs::wipe_utility for key sephfs), ai/decks.rs (deck_prio arm, rean_targets gate),
-  impls/mod.rs, practice tests (deck lists), sim-cli decks.rs/args.rs.
-- Smoke: 48 games seed 7 t3 lookahead: 37.5% win (noise +-14), runs clean.
+## Done (agent 2)
+- tests/cards_sephfs.rs: 21 tests, all pass (the 10 new cards, Sephiroth flip/emblem/draw, Blood Artist/Zulaport/Butcher, edicts,
+  Massacre Girl, Animate Dead/Reanimate from an opponent's yard, Altar, Tower, Yahenni, Rabid Attack option).
+- Rabid Attack cast path: `sephfs::options` (brain::special_options arm "sephfs"); sephfs_prio returns 0 for it.
+- Animate Dead was cast as a real Aura by pool.rs `reanimate` (never reanimated): for key sephfs it is now the effect only
+  (pool.rs, gated like the seph deck's model). Shared-file changes: ai/brain.rs (arm), ai/pool.rs (gated block),
+  impls/sheoldred.rs (stat counters only: sf_seph_draws, sf_flips, sf_first_flips, sf_first_flip_round, sf_emblem_drains),
+  sim-cli report.rs ("Sephiroth" section, ty collects sf_*), practice/tests/server_fake.rs (11 -> 12 decks).
+- Full `cargo test --release` passes (no failures, http_play ok); build --all-targets no warnings; all_decks adaptive 3 and
+  lookahead 1 run clean.
+- Same-seed (seed 7, 48 games, lookahead, loose) vs base-sim: sauron t3, cloud t5, thrasios t3, garland t3, seph t3 all IDENTICAL.
+- 1,000 games (--deck sephfs --pool t3 --profile loose --ai lookahead --analyze --seed 1013 --jobs 16; output in scratchpad
+  sephfs-1000.txt): win 31.7%; flips 0.639/game (52.6% of games flip), first flip round 8.0 on average; emblem drains 14.16/game;
+  wipes 0.65/game, Pestilence activations 1.72; steals 0.94/game (reanimation spells 0.56, Grave Betrayal 0.74, Slaver 0.02,
+  prepared Reanimate 0.05), Ghostform returns 0.17, Rabid draws 0.06; sacrifices 5.18/game; Seph draws 1.64/game; Sephiroth removed 0.75/game.
 
-## Next, in order
-1. tests/cards_sephfs.rs (nothing written yet): one test per new card (the 11 above) + Sephiroth as commander (tests exist in
-   cards_seph_triad.rs for: ETB sacrifice+draw, fourth drain flips, emblem outlives him, own death no drain, back-face attack
-   sacrifices all; add: flip needs Sephiroth alive, emblem drains once per death, Sephiroth + wipe) + hand-checks of Altar,
-   Tower, Viscera Seer, Yahenni, Woe Strider, Massacre Girl, Pestilence, Butcher, Blood Artist, Zulaport, Plaguecrafter,
-   Fleshbag, Accursed Marauder, Reanimate / Animate Dead on an opponent's graveyard. Likely bugs to look for: Ghostform on
-   the commander (cmd zone flag), Pestilence end-step sacrifice, Grave Betrayal timing (EndStep hook runs per active player).
-2. Rabid Attack has no cast path yet (sephfs_prio should return 0 for it; add a special option in
-   `brain::special_options` arm "sephfs" -> sephfs::options: cast before a wipe/edict when mana allows).
-3. Plan gaps from the brief: stolen/token creatures to Altar/Tower for mana only when the mana is used (check common outlets
-   do it), Grave Betrayal before a wipe (prio), Exsanguinate timing, hold Living Death until graveyards favour us (done in
-   wipe_utility, verify by test).
-4. Stats + report: add `sf_*` counters (sf_wipes, sf_steals, sf_betrayals, sf_slaver, sf_reanimate, sf_ghostform,
-   sf_pestilence, sf_rabid_draws exist; still missing: flips per game and turn of first flip (`seph_flips` stat and the
-   milestone exist in sheoldred.rs), emblem drains per game, sacrifices (`creatures_sacrificed`), cards drawn by Sephiroth) and a
-   "Sephiroth" section in sim-cli/src/report.rs (copy the garland section).
-5. Checks: cargo test --release (all), cargo build --release --all-targets no warnings, all_decks adaptive 3 / lookahead 1,
-   same-seed (seed 7, 48 games, lookahead, loose) vs base-sim for sauron t3, cloud t5, thrasios t3, garland t3, seph t3 (if one
-   differs, find the cause and gate it); 1,000-game `--deck sephfs --pool t3 --analyze --seed 1013` with no card "never cast
-   by the sim" (--jobs 16, nice 19, MemoryMax=16G).
-6. Write rust/agents/report-sephfs.md, commit, final 15-line report.
+## Left (blocking: "never cast by the sim" in the 1,000-game run)
+Never cast: Animate Dead (the effect-only path in pool.rs `reanimate` does not set `cast_names` / stat spells_cast; copy what
+seph.rs ~l.448-455 does), Exsanguinate, Presumed Dead, Rewrite Regrets, Braids's Frightful Return, Call of the Ring.
+FOUND: the card_overrides.toml "Full" notes for Rewrite Regrets, Presumed Dead, Braids's Frightful Return, Exsanguinate and Call of the
+Ring come from the Yawgmoth candidate; the CODE for most is missing in this lineage (grep shows only the die_rest
+`returns_when_dies` mechanism for Presumed Dead's `ret_dies_suspect` grant in sheoldred.rs, `grant_eot`, `yshtola::x_drain_option` /
+`x_drain_go` for Exsanguinate (call them from sephfs::options as yshtola's x_option does), and `cardcode::ring_tempt` in turn.rs for
+Call of the Ring). To do, in sephfs_cards.rs / sephfs.rs:
+ 1. Exsanguinate: option via yshtola::x_drain_option (+ Action::Plan to x_drain_go if public) when lethal or late.
+ 2. Call of the Ring: sephfs_prio ~ 50 (an enchantment: just needs a prio so it is cast; check ring_tempt fires on upkeep for it).
+ 3. Rewrite Regrets: resolve hook: best creature (cmc<=6) from own graveyard to the battlefield (sheoldred.rs rean_pick / best_gy
+    are private: write own using steal_value over own gy); skip Empower Jace or model the Jace token (note it); prio when a good target.
+ 4. Presumed Dead (instant): option before combat/in response to a wipe: +2/+0 and grant_eot "ret_dies_suspect" on a creature worth >=2
+    (grant_eot is private in sheoldred.rs; make it pub or copy). Cast in response to removal if easy.
+ 5. Braids's Frightful Return (read-ahead saga): chapters I sac+discard, II gy creature to hand, III opponent sacrifices or loses 2 + draw.
+    Check whether any Saga machinery exists (`grep -rn lore src`); otherwise model as a one-shot: choose chapter II or III effect
+    on entering (document it) so it is cast and has value; update the override note honestly.
+ 6. Update the override notes of the five cards to say where the code lives. Add tests for each. Rerun the 1,000-game run; no card may be
+    "never cast"; Sephiroth flips in 52.6% of games already (no AI fix needed; first flip round 8 is a table round count).
+Then: re-run full cargo test --release, same-seed check again (any shared change), write rust/agents/report-sephfs.md (sections:
+cards and how modeled, plan, shared-file changes above, numbers above, caveats: Animate Dead effect-only, "black Zombie" clauses
+not modeled, Blood on the Snow X = 0, Pestilence applies activations in one action), commit, final 15-line report.
 
 ## Gotchas
-- Never run Python (not even --version): the hook blocks it.
-- `cardgen deck` only records the fixture when the list changes; it was done once (fixture has sephfs).
-- Damage that does not kill is not tracked by the engine: Pestilence applies its activations in one action.
+- Never run Python (the hook blocks even a stray line in a multi-command call).
+- Tests: perm() runs ETBs (Plaguecrafter/Fleshbag sacrifice themselves, Sephiroth sacrifices an existing token): order setup accordingly.
+- cargo test stops at the first failing target: use --no-fail-fast.
