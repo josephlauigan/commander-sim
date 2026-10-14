@@ -167,6 +167,7 @@
 2x Death Cultist (roe)
 1x Deathcap Glade (sos)
 1x Decimate (fic)
+1x Decorum Dissertation
 3x Dedicated Commons (fra)
 1x Deepcavern Imp (mma)
 2x Deepglow Skate (cmm)
@@ -506,6 +507,7 @@
 1x Orcish Cannonade (tsr)
 1x Ornithopter (m11)
 1x Orysa, Tide Choreographer (sos)
+1x Orzhov Signet
 1x Outlaw Medic (otj)
 1x Overkill (fin)
 2x Owlin Historian (sos)
@@ -811,6 +813,7 @@
 1x Traxos, Scourge Eternal (fra)
 2x Treno, Dark City (fin)
 1x Trial of Agony (dsk)
+1x Triplicate Spirits
 1x Trostani's Summoner (mic)
 1x Twinflame
 2x Twisted Fates (fra)

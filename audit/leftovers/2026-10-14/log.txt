@@ -1,0 +1,44 @@
+10:11 analyze yshtola t1 jobs 6 exit 0 Win rate 42.8%   (4-player baseline 25%)   average rounds survived 10.9
+10:12 analyze yshtola t3 jobs 6 exit 0 Win rate 42.2%   (4-player baseline 25%)   average rounds survived 11.6
+10:12 analyze yshtola t5 jobs 22 exit 0 Win rate 22.2%   (4-player baseline 25%)   average rounds survived 8.1
+10:13 analyze kefka t1 jobs 22 exit 0 Win rate 31.9%   (4-player baseline 25%)   average rounds survived 10.5
+10:13 analyze kefka t3 jobs 22 exit 0 Win rate 30.6%   (4-player baseline 25%)   average rounds survived 11.1
+10:14 analyze kefka t5 jobs 22 exit 0 Win rate 21.9%   (4-player baseline 25%)   average rounds survived 8.1
+10:15 analyze alela t1 jobs 22 exit 0 Win rate 10.0%   (4-player baseline 25%)   average rounds survived 11.7
+10:16 analyze alela t3 jobs 22 exit 0 Win rate 11.6%   (4-player baseline 25%)   average rounds survived 12.5
+10:16 analyze alela t5 jobs 22 exit 0 Win rate 15.3%   (4-player baseline 25%)   average rounds survived 8.5
+10:17 analyze galadriel t1 jobs 22 exit 0 Win rate 15.0%   (4-player baseline 25%)   average rounds survived 10.9
+10:18 analyze galadriel t3 jobs 22 exit 0 Win rate 13.1%   (4-player baseline 25%)   average rounds survived 11.8
+10:18 analyze galadriel t5 jobs 22 exit 0 Win rate 11.6%   (4-player baseline 25%)   average rounds survived 8.2
+10:20 test sauron-river (sauron) t1 jobs 22 exit 0 [loose       ] win  35.6% ->  34.4%  (delta -1.2 pts, noise ±2.9, paired)   n=500
+10:21 test sauron-river (sauron) t2 jobs 22 exit 0 [loose       ] win  42.4% ->  40.0%  (delta -2.4 pts, noise ±3.7, paired)   n=500
+10:23 test sauron-river (sauron) t3 jobs 22 exit 0 [loose       ] win  32.6% ->  28.6%  (delta -4.0 pts, noise ±3.8, paired)   n=500
+10:24 test sauron-river (sauron) t4 jobs 22 exit 0 [loose       ] win  33.6% ->  32.6%  (delta -1.0 pts, noise ±3.4, paired)   n=500
+10:25 test sauron-river (sauron) t5 jobs 22 exit 0 [loose       ] win  25.8% ->  25.8%  (delta +0.0 pts, noise ±3.3, paired)   n=500
+10:26 test seph-worldly (seph) t1 jobs 22 exit 0 [loose       ] win  37.8% ->  35.8%  (delta -2.0 pts, noise ±5.1, paired)   n=500
+10:28 test seph-worldly (seph) t2 jobs 22 exit 0 [loose       ] win  45.2% ->  46.0%  (delta +0.8 pts, noise ±5.6, paired)   n=500
+10:30 test seph-worldly (seph) t3 jobs 22 exit 0 [loose       ] win  34.6% ->  36.8%  (delta +2.2 pts, noise ±5.1, paired)   n=500
+10:31 test seph-worldly (seph) t4 jobs 22 exit 0 [loose       ] win  30.0% ->  29.0%  (delta -1.0 pts, noise ±4.8, paired)   n=500
+10:32 test seph-worldly (seph) t5 jobs 22 exit 0 [loose       ] win  23.2% ->  22.8%  (delta -0.4 pts, noise ±4.3, paired)   n=500
+10:32 QUEUE DONE: analyze:yshtola analyze:kefka analyze:alela analyze:galadriel test:sauron-river:sauron:Mountain=>Underground River test:seph-worldly:seph:Orzhov Signet=>Worldly Tutor
+10:34 test yshtola-pkg (yshtola) t1 jobs 22 exit 0 [loose       ] win  41.4% ->  41.6%  (delta +0.2 pts, noise ±5.4, paired)   n=500
+10:36 test yshtola-pkg (yshtola) t2 jobs 22 exit 0 [loose       ] win  56.8% ->  52.6%  (delta -4.2 pts, noise ±5.8, paired)   n=500
+10:37 test yshtola-pkg (yshtola) t3 jobs 22 exit 0 [loose       ] win  43.2% ->  41.4%  (delta -1.8 pts, noise ±5.5, paired)   n=500
+10:38 test yshtola-pkg (yshtola) t4 jobs 22 exit 0 [loose       ] win  39.4% ->  41.6%  (delta +2.2 pts, noise ±5.0, paired)   n=500
+10:39 test yshtola-pkg (yshtola) t5 jobs 22 exit 0 [loose       ] win  22.8% ->  22.8%  (delta +0.0 pts, noise ±4.3, paired)   n=500
+10:41 test kefka-pkg (kefka) t1 jobs 22 exit 0 [loose       ] win  33.4% ->  27.4%  (delta -6.0 pts, noise ±5.2, paired)   n=500
+10:43 test kefka-pkg (kefka) t2 jobs 22 exit 0 [loose       ] win  45.6% ->  42.2%  (delta -3.4 pts, noise ±5.9, paired)   n=500
+10:45 test kefka-pkg (kefka) t3 jobs 22 exit 0 [loose       ] win  31.0% ->  28.4%  (delta -2.6 pts, noise ±5.0, paired)   n=500
+10:46 test kefka-pkg (kefka) t4 jobs 22 exit 0 [loose       ] win  28.6% ->  30.8%  (delta +2.2 pts, noise ±4.9, paired)   n=500
+10:47 test kefka-pkg (kefka) t5 jobs 22 exit 0 [loose       ] win  21.8% ->  22.2%  (delta +0.4 pts, noise ±4.5, paired)   n=500
+10:50 test alela-pkg (alela) t1 jobs 22 exit 0 [loose       ] win  10.8% ->  12.0%  (delta +1.2 pts, noise ±3.6, paired)   n=500
+10:53 test alela-pkg (alela) t2 jobs 22 exit 0 [loose       ] win  13.0% ->  15.2%  (delta +2.2 pts, noise ±4.0, paired)   n=500
+10:55 test alela-pkg (alela) t3 jobs 22 exit 0 [loose       ] win  11.8% ->  11.2%  (delta -0.6 pts, noise ±3.5, paired)   n=500
+10:57 test alela-pkg (alela) t4 jobs 22 exit 0 [loose       ] win  14.2% ->  15.6%  (delta +1.4 pts, noise ±4.3, paired)   n=500
+10:58 test alela-pkg (alela) t5 jobs 22 exit 0 [loose       ] win  15.8% ->  12.0%  (delta -3.8 pts, noise ±3.8, paired)   n=500
+11:00 test galadriel-dromoka (galadriel) t1 jobs 22 exit 0 [loose       ] win  15.4% ->  16.2%  (delta +0.8 pts, noise ±3.6, paired)   n=500
+11:03 test galadriel-dromoka (galadriel) t2 jobs 22 exit 0 [loose       ] win  15.4% ->  18.4%  (delta +3.0 pts, noise ±4.0, paired)   n=500
+11:06 test galadriel-dromoka (galadriel) t3 jobs 22 exit 0 [loose       ] win  12.4% ->  11.6%  (delta -0.8 pts, noise ±3.4, paired)   n=500
+11:07 test galadriel-dromoka (galadriel) t4 jobs 22 exit 0 [loose       ] win  12.2% ->  14.4%  (delta +2.2 pts, noise ±3.5, paired)   n=500
+11:08 test galadriel-dromoka (galadriel) t5 jobs 22 exit 0 [loose       ] win  12.2% ->  12.6%  (delta +0.4 pts, noise ±2.8, paired)   n=500
+11:08 QUEUE DONE: test:yshtola-pkg:yshtola:Triplicate Spirits=>Dakkon, Shadow Slayer|Swamp=>Underground River|Island=>Adarkar Wastes test:kefka-pkg:kefka:Decorum Dissertation=>Bitter Triumph|Swamp=>Sulfurous Springs|Swamp=>Shivan Reef test:alela-pkg:alela:Gravedigger=>Tymna the Weaver|Plains=>Exotic Orchard|Plains=>Shattered Sanctum test:galadriel-dromoka:galadriel:Flicker=>Dragonlord Dromoka

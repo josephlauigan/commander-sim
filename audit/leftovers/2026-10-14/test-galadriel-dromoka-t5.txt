@@ -1,0 +1,55 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dragonlord Dromoka [pool] C 4GW :: leg pow=5 tgh=7 fly lifelink unc
+Swaps: Flicker -> Dragonlord Dromoka
+
+=== Galadriel vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  12.2% ->  12.6%  (delta +0.4 pts, noise ±2.8, paired)   n=500
+               eliminated by (variant): Urza 17.2%  Zur the Enchanter 11.8%  Winota 20.6%  Kinnan 26.8%  Yawgmoth 10.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (galadriel) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for galadriel: first Alliance trigger from Galadriel
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          12.2% ->  12.6%  +0.4pt   ±4.2 
+    Rounds survived (or game length)                   8.30 ->   8.25   -0.05  ±0.46 
+
+  Mana & consistency
+    Extra mulligans per game                           0.27 ->   0.27   +0.00  ±0.10 
+    Missed land drops, turns 1-5                       0.86 ->   0.86   -0.00  ±0.12 
+    Mana available on your turn 4                      4.07 ->   4.07   -0.00  ±0.16 
+    Mana available on your turn 6                      5.40 ->   5.44   +0.04  ±0.25 
+
+  Speed
+    Games where the game plan came online             28.8% ->  27.0%  -1.8pt   ±5.7 
+    Turn the game plan came online                     7.63 ->   7.74   +0.11  ±0.62 
+    Turn the commander first resolved                  6.55 ->   6.59   +0.04  ±0.50 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            10.22 ->  10.09   -0.13  ±1.00 
+    Tutors resolved per game                           0.16 ->   0.15   -0.01  ±0.05 
+    Spells cast per game                               7.55 ->   7.46   -0.09  ±0.77 
+
+  Interaction
+    Counterspells cast                                 0.08 ->   0.06   -0.01  ±0.03 
+    Spot removal cast                                  0.65 ->   0.64   -0.01  ±0.10 
+    Board wipes cast                                   0.16 ->   0.18   +0.01  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.11 ->   0.09   -0.02  ±0.04 
+    Your spells countered                              0.39 ->   0.38   -0.01  ±0.09 
+
+  Threat & pressure
+    Damage dealt to opponents per game                16.13 ->  16.56   +0.43  ±4.51 
+      ...of which combat damage                       15.81 ->  16.35   +0.53  ±4.48 
+      ...of which drain triggers                       0.31 ->   0.21   -0.10  ±0.39 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+(51s total)

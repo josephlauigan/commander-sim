@@ -1,0 +1,69 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 22 worker threads: about 44 seconds
+  progress  10.0%  0m06s elapsed, ~1m00s left
+  progress  20.0%  0m12s elapsed, ~0m50s left
+  progress  30.0%  0m17s elapsed, ~0m41s left
+  progress  40.0%  0m25s elapsed, ~0m37s left
+  progress  50.0%  0m31s elapsed, ~0m31s left
+  progress  60.0%  0m36s elapsed, ~0m24s left
+  progress  70.0%  0m42s elapsed, ~0m18s left
+  progress  80.0%  0m48s elapsed, ~0m12s left
+  progress  90.0%  0m54s elapsed, ~0m06s left
+  progress 100.0%  1m01s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== alela analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 11.6%   (4-player baseline 25%)   average rounds survived 12.5
+
+-- How it wins --
+  damage      73.0% of wins
+  timeout     27.0% of wins
+  Opponents it eliminated: 0.33 per game, by
+    combat             95.3%
+    drain               3.8%
+    commander damage    0.9%
+  Damage dealt per game: 18.9, from
+    combat              18.2  (96%)
+    drain                0.7  (4%)
+
+-- How it loses --
+  Eliminated in 84.1% of games, on average in round 11.6
+    by Aurelia  via combat             25.6% of games
+    by Marwyn   via combat             18.4% of games
+    by Tergrid  via combat             15.3% of games
+    by Atraxa   via combat             10.3% of games
+    by Korvold  via drain               3.1% of games
+    by Aurelia  via commander damage    1.9% of games
+    by Tergrid  via drain               1.6% of games
+    by Korvold  via combat              1.2% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 1%  T3 2%  T4 3%  T5 11%  T6 20%  T7 28%  T8 35%  T9 38%  T10 43%  T11 47%  T12 48%
+  Online at all: 55.6% of games
+  Commander resolves on turn: median 5.0, mean 5.8 (over the 87.8% of games it resolves)
+  Commander resolved by turn:  T4 38%  T5 52%  T6 62%  T7 70%  T8 77%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Alela, Artful Provocateur                  cast in  87.8% of games, win rate when cast  13.2% (+1.6)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  87.8% of games, win rate when cast  13.2% (+1.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.47
+    Short Bow                                  0.12
+    Venser, the Sojourner                      0.12
+    Ethersworn Canonist                        0.08
+    Notion Thief                               0.06
+    Rhystic Study                              0.06
+    Tetsuko Umezawa, Fugitive                  0.05
+    Jackdaw Savior                             0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(61s total)
