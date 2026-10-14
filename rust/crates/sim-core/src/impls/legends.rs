@@ -666,7 +666,9 @@ fn garland_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     crate::impls::garland::entered(g, o, src);
     let mut opps: Vec<PlayerId> = g.opps(o).filter(|&q| g.player(q).alive && !player_hexproof(g, q)).collect();
     if opps.len() > 1 {
-        opps.retain(|&q| g.monarch != Some(q)); // crowning the monarch changes nothing: no new steal
+        if g.player(o).key == crate::impls::garland::KEY {
+            opps.retain(|&q| g.monarch != Some(q)); // crowning the monarch changes nothing: no new steal
+        }
     }
     if opps.is_empty() {
         return Ok(());

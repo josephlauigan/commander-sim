@@ -278,7 +278,7 @@ fn wit_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// what re-entering is worth for permanent m of p (a creature that is out): its enter trigger, plus the entry itself
 /// for Elrond, less what it costs to cast again
 pub fn etb_score(g: &Game, p: PlayerId, m: PermId) -> f64 {
-    if super::garland::is_garland(g, m) {
+    if super::garland::is_my_garland(g, m) {
         return super::garland::recrown_value(g, p); // Garland: entering again crowns another opponent
     }
     let Some(cd) = g.perm(m).cd else { return -9.0 };
@@ -333,7 +333,7 @@ pub fn best_own_etb(g: &Game, p: PlayerId, exclude: Option<PermId>, artifacts: b
             live(g, m)
                 && Some(m) != exclude
                 && g.perm(m).cd.is_some()
-                && (!g.perm(m).is_cmd || super::garland::is_garland(g, m))
+                && (!g.perm(m).is_cmd || super::garland::is_my_garland(g, m))
                 && (g.is_creature(m) || (artifacts && is_artifact(g, m)))
         })
         .collect();

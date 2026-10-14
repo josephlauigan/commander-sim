@@ -375,7 +375,7 @@ fn token_copy(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let Some(cd) = g.perm(m).cd else { return Ok(()) };
     crate::glog!(g, "    {} creates a token copy of {}", pname(g, p), g.perm(m).name);
     let tok = enter_token_copy(g, p, cd)?;
-    if let Some(t) = tok.filter(|&t| super::garland::is_garland(g, t) && super::garland::garland_of(g, p).is_some_and(|o| o != t)) {
+    if let Some(t) = tok.filter(|&t| super::garland::is_my_garland(g, t) && super::garland::garland_of(g, p).is_some_and(|o| o != t)) {
         // the legend rule: one Garland stays (the card); his enter trigger has been put on the stack by the copy
         crate::engine::zones::leave(g, t)?;
     }

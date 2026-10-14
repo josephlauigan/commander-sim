@@ -144,7 +144,7 @@ fn blink_inner(g: &mut Game, _p: PlayerId, m: PermId) -> Res<PermId> {
 
 /// t2.blink_value: how much re-entering is worth for p's permanent m
 pub fn blink_value(g: &Game, _p: PlayerId, m: PermId) -> i32 {
-    if crate::impls::garland::is_garland(g, m) {
+    if crate::impls::garland::is_my_garland(g, m) {
         return crate::impls::garland::recrown_value(g, _p).round() as i32;
     }
     let x = g.perm(m);

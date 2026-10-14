@@ -203,3 +203,8 @@ pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), Strin
     r.card(db, "Unsummon")?.hand_options = Some(unsummon_options);
     Ok(())
 }
+
+/// m is a Garland under the Garland deck's seat (other decks that happen to run the card keep their old behaviour)
+pub fn is_my_garland(g: &Game, m: PermId) -> bool {
+    is_garland(g, m) && g.player(g.perm(m).owner).key == KEY
+}
