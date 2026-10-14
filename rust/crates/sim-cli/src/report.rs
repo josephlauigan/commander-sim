@@ -335,7 +335,7 @@ impl Analysis {
             self.dmg.add(k, me.stat(&format!("dmgk_{k}")));
         }
         for (k, v) in &me.stats {
-            if k.starts_with("ty_") || k.starts_with("gl_") || k.starts_with("jr_garland") || *k == "jr_tymna_draws" {
+            if k.starts_with("ty_") || k.starts_with("gl_") || k.starts_with("jr_garland") || *k == "jr_tymna_draws" || k.starts_with("sf_") || *k == "creatures_sacrificed" || *k == "rean_resolved" || *k == "rean_cast" {
                 *self.ty.entry(k.to_string()).or_insert(0) += v;
             }
         }
@@ -450,7 +450,16 @@ pub fn print_analysis(
         }
     }
 
-    if !r.ty.is_empty() && !deck_is_garland(r) {
+    if deck_is_sephfs(r) {
+        let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
+        println!("\n-- Sephiroth --");
+        println!("  Flips per game {:.3} (games with a flip {:.1}%); first flip on round {:.2} on average", get("sf_flips") / n, 100.0 * get("sf_first_flips") / n, get("sf_first_flip_round") / get("sf_first_flips").max(1.0));
+        println!("  Emblem drains per game {:.2}; cards drawn by Sephiroth per game {:.2}; creatures sacrificed per game {:.2}", get("sf_emblem_drains") / n, get("sf_seph_draws") / n, get("creatures_sacrificed") / n);
+        println!("  Wipes cast per game {:.2} (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations {:.2}", get("sf_wipes") / n, get("sf_pestilence") / n);
+        println!("  Creatures stolen per game {:.2}: reanimation spells {:.2}, Grave Betrayal {:.2}, Dread Slaver {:.2}, prepared Reanimate {:.2}; Kaya's Ghostform returns {:.2}; Rabid Attack draws {:.2}", get("sf_steals") / n, get("rean_resolved") / n, get("sf_betrayals") / n, get("sf_slaver") / n, get("sf_reanimate") / n, get("sf_ghostform") / n, get("sf_rabid_draws") / n);
+    }
+
+    if r.ty.keys().any(|k| !k.starts_with("sf_") && k != "creatures_sacrificed" && !k.starts_with("rean_")) && !deck_is_garland(r) {
         println!("\n-- Partner decks (Tymna) --");
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
         println!("  Tymna cards drawn per game {:.2}; Tymna turns per game {:.2}; opponents hit per Tymna turn {:.2}", get("jr_tymna_draws") / n, get("ty_tymna_turns") / n, get("ty_opps_hit") / get("ty_tymna_turns").max(1.0));
@@ -699,4 +708,9 @@ fn print_speed(r: &Analysis, deck: &str) {
 /// does this analysis hold Garland counters (the deck's own `gl_` stats)?
 fn deck_is_garland(r: &Analysis) -> bool {
     r.ty.keys().any(|k| k.starts_with("gl_"))
+}
+
+/// does this analysis hold the Sephiroth FS deck's counters?
+fn deck_is_sephfs(r: &Analysis) -> bool {
+    r.ty.keys().any(|k| k.starts_with("sf_"))
 }
