@@ -1,0 +1,543 @@
+//! Cards of the two four-colour partner decks (Tymna the Weaver with Thrasios, Triton Hero or Kraum, Ludevic's Opus):
+//! the ones the compiled Oracle text and the engine's tags don't cover. The audit verdicts are in
+//! data/card_overrides.toml; each function's doc comment says how the card is modeled and what is left out.
+//!
+//! - Thrasios, Kraum, Black Widow, Abigale, Cuboid Colony, Elemental Mascot, Falcon and Redwing, Photon, Faeburrow
+//!   Elder, Paradox Surveyor, Spectral Lynx, Twisted Fates: a hook slot each (see `register`).
+//! - Sphinx of New Prahv's tax is ward {2} in the card data (the engine charges ward when a spell targets, and the
+//!   AI won't aim a spell it can't pay the ward for), which is the same as "costs {2} more" for spells.
+//! - Razia and King Darien answer removal and wipes through `protect` and `darien_wipe`, called from the top of
+//!   `ai::decks::protect_response` / `wipe_response`.
+//! - Tymna the Weaver herself is in `legends.rs`.
+
+use super::partials::eot_kw;
+use crate::cards::{CardDb, Colors};
+use crate::engine::cast::casts_this_turn;
+use crate::engine::mana::{Source, Unit, can_pay, pay};
+use crate::engine::removal::apply_removal;
+use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::tutors::card_worth;
+use crate::engine::values::{colors_of, epow, etgh, once_per_turn, pval, untargetable};
+use crate::engine::zones::{Tokens, die, draw, landfall, make_tokens, max_by};
+use crate::flow::Res;
+use crate::hooks::{Action, Opt, Registry, Src};
+use crate::ids::{CardId, PermId, PlayerId};
+use crate::state::{DataKey, Game, Val};
+use crate::sym::{Sym, intern};
+use crate::tag::Tag;
+
+pub const THRASIOS: &str = "Thrasios, Triton Hero";
+pub const KRAUM: &str = "Kraum, Ludevic's Opus";
+pub const BLACK_WIDOW: &str = "Black Widow, Agile Avenger";
+pub const ABIGALE: [&str; 2] = ["Abigale, Poet Laureate", "Abigale, Poet Laureate // Heroic Stanza"];
+pub const COLONY: &str = "Cuboid Colony";
+pub const MASCOT: &str = "Elemental Mascot";
+pub const FALCON: &str = "Falcon and Redwing";
+pub const PHOTON: &str = "Photon, Mighty Marvel";
+pub const ELDER: &str = "Faeburrow Elder";
+pub const SURVEYOR: &str = "Paradox Surveyor";
+pub const LYNX: &str = "Spectral Lynx";
+pub const FATES: &str = "Twisted Fates";
+pub const RAZIA: &str = "Razia, Boros Archangel";
+pub const DARIEN: &str = "King Darien XLVIII";
+
+fn owner(g: &Game, m: PermId) -> PlayerId {
+    g.perm(m).owner
+}
+
+fn name_of(g: &Game, m: PermId) -> &str {
+    g.perm(m).cd.map_or("", |c| &g.db.get(c).name)
+}
+
+fn on_bf_named(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == name)
+        .collect()
+}
+
+fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn, arg: i64) -> Opt {
+    Opt { utility, label: label.into(), act: Some(Action::Ability { src, f, arg }) }
+}
+
+// ================================================================== Thrasios, Triton Hero
+/// **Thrasios**: {4}: scry 1, then reveal the top card of your library; a land goes onto the battlefield tapped,
+/// anything else is drawn. The AI activates it as often as it can afford at the end of the turn before its own (the
+/// end-of-turn window, `post` None: the mana would untap anyway), and in its second main phase after everything else
+/// it wanted to do (a low utility, above "stop"). Never when the library is nearly empty.
+fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src) || g.perm(src).phased || !can_pay(g, p, 4, "", false) || g.player(p).library.len() < 3 {
+        return Ok(vec![]);
+    }
+    let u = match post {
+        None => 3.0,
+        Some(true) if g.active == Some(p) => -2.0,
+        _ => return Ok(vec![]),
+    };
+    Ok(vec![ability(u, "Thrasios: scry 1, a land or a card", src, thrasios_go, 0)])
+}
+
+fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !g.perm(src).on_bf || !can_pay(g, p, 4, "", false) || g.player(p).library.len() < 3 {
+        return Ok(false);
+    }
+    pay(g, p, 4, "", false)?;
+    if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
+        return Ok(true);
+    }
+    crate::cardcode::scry(g, p, 1, false)?;
+    let Some(&top) = g.player(p).library.last() else { return Ok(true) };
+    if g.db.get(top).land {
+        crate::glog!(g, "    Thrasios reveals {}: onto the battlefield tapped", g.db.get(top).name);
+        g.player_mut(p).library.pop();
+        g.player_mut(p).seen.insert(top);
+        let l = g.add_land(p, top, true);
+        landfall(g, p)?;
+        if g.db.get(top).tag(Tag::F) && g.player(p).lands.last() == Some(&l) {
+            crate::engine::turn::crack_fetch(g, p, l)?;
+        }
+    } else {
+        crate::glog!(g, "    Thrasios reveals {}: drawn", g.db.get(top).name);
+        draw(g, p, 1, false)?;
+    }
+    Ok(true)
+}
+
+// ================================================================== Kraum, Ludevic's Opus
+/// **Kraum**: whenever an opponent casts their second spell each turn, you draw a card (flying, haste and partner
+/// are keywords; partner is the engine's)
+fn kraum_cast(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
+    let o = owner(g, src);
+    if caster == o || !g.player(o).alive || casts_this_turn(g, caster) != 2 {
+        return Ok(());
+    }
+    if trigger_window(g, o, Some(src), "draw a card", None)? {
+        draw(g, o, 1, false)?;
+    }
+    Ok(())
+}
+
+// ================================================================== Black Widow, Agile Avenger
+/// **Black Widow**: whenever an opponent draws their second card each turn, a +1/+1 counter on her and you draw a
+/// card (menace is a keyword)
+fn widow_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = owner(g, src);
+    if p == o || !g.player(p).alive || g.player(p).draw_n != 2 {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "a counter and a card", None)? {
+        return Ok(());
+    }
+    let key = intern(&format!("widow{}{}", src.0, g.player(p).key));
+    if once_per_turn(g, o, key) {
+        crate::cardcode::add_counters(g, src, 1);
+        draw(g, o, 1, false)?;
+    }
+    Ok(())
+}
+
+// ================================================================== Abigale, Poet Laureate // Heroic Stanza
+/// **Abigale**: whenever you cast a creature spell, she becomes prepared. While prepared, {1}{W/B} casts a copy of
+/// Heroic Stanza (a +1/+1 counter on target creature) and unprepares her. Sorcery speed; the AI puts the counter on
+/// the creature it most wants bigger (an evasive one first) in its first main phase, or its second if it has to.
+fn abigale_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    if caster == owner(g, src) && g.db.get(c).creature {
+        g.perm_mut(src).data.set(DataKey::Prepared, Val::Bool(true));
+    }
+    Ok(())
+}
+
+/// the colour of the hybrid symbol the AI can pay with
+fn stanza_pip(g: &Game, p: PlayerId) -> Option<&'static str> {
+    ["W", "B"].into_iter().find(|pip| can_pay(g, p, 1, pip, false))
+}
+
+/// the creature a counter helps most: evasion first, then power
+fn counter_target(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m))
+        .collect();
+    max_by(&cs, |m| {
+        let ev = ["flying", "menace", "trample"].iter().filter(|k| crate::dsl::has_kw(g, m, k)).count() as f64;
+        ev * 3.0 + epow(g, m) as f64 + if g.perm(m).sick { 0.0 } else { 1.0 }
+    })
+}
+
+fn abigale_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none()
+        || p != owner(g, src)
+        || g.active != Some(p)
+        || g.perm(src).phased
+        || !g.perm(src).data.truthy(DataKey::Prepared)
+        || stanza_pip(g, p).is_none()
+        || counter_target(g, p).is_none()
+    {
+        return Ok(vec![]);
+    }
+    let u = if post == Some(false) { 1.6 } else { 1.0 };
+    Ok(vec![ability(u, "Heroic Stanza (Abigale, prepared copy)", src, abigale_go, 0)])
+}
+
+fn abigale_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    let Some(pip) = stanza_pip(g, p) else { return Ok(false) };
+    let Some(t) = counter_target(g, p) else { return Ok(false) };
+    if !g.perm(src).data.truthy(DataKey::Prepared) || !pay(g, p, 1, pip, false)? {
+        return Ok(false);
+    }
+    g.perm_mut(src).data.set(DataKey::Prepared, Val::Bool(false));
+    super::mine::cast_copy_with(g, p, None, None, false, 2.0, &mut |g| {
+        if g.perm(t).on_bf {
+            crate::glog!(g, "    Heroic Stanza: a +1/+1 counter on {}", g.perm(t).name);
+            crate::cardcode::add_counters(g, t, 1);
+        }
+        Ok(())
+    })?;
+    Ok(true)
+}
+
+// ================================================================== Cuboid Colony
+/// **Cuboid Colony** (flash, flying, trample): increment, a +1/+1 counter whenever you cast a spell with more mana
+/// spent than its power or toughness. The mana spent is the spell's mana value (an X spell's X is not counted).
+fn colony_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    if caster != owner(g, src) {
+        return Ok(());
+    }
+    let spent = g.db.get(c).cmc as i32;
+    if spent > epow(g, src).min(etgh(g, src)) && trigger_window(g, caster, Some(src), "increment", None)? {
+        crate::cardcode::add_counters(g, src, 1);
+    }
+    Ok(())
+}
+
+// ================================================================== Elemental Mascot
+/// **Elemental Mascot** (flying, vigilance): opus. The +1/+0 for an instant or sorcery is the compiled ability; this
+/// is the rest: with five or more mana spent (the spell's mana value), exile the top card of your library, playable
+/// until the end of your next turn.
+fn mascot_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let d = g.db.get(c);
+    if caster != owner(g, src) || !(d.instant || d.sorcery) || d.cmc < 5 || g.player(caster).library.is_empty() {
+        return Ok(());
+    }
+    if !trigger_window(g, caster, Some(src), "exile the top card", None)? {
+        return Ok(());
+    }
+    let Some(top) = g.player_mut(caster).library.pop() else { return Ok(()) };
+    crate::glog!(g, "    Elemental Mascot exiles {} (playable until the end of your next turn)", g.db.get(top).name);
+    let pl = g.player_mut(caster);
+    pl.seen.insert(top);
+    pl.hand.push(top);
+    let until = pl.turns + 1;
+    pl.impulse_long.push((top, until));
+    Ok(())
+}
+
+// ================================================================== Falcon and Redwing
+/// **Falcon and Redwing** (flying): whenever it deals combat damage to a player, that many 1/1 white Bird tokens with
+/// flying, then a +1/+1 counter on it
+fn falcon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
+    if a != src || p != owner(g, src) || d == p || dmg <= 0 || !g.perm(src).on_bf {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), &format!("{dmg} Birds and a counter"), None)? {
+        return Ok(());
+    }
+    let spec = Tokens {
+        fly: true,
+        tgh: Some(1),
+        color: Some(Colors::from_letters("W")),
+        types: vec!["bird"],
+        ..Tokens::new(dmg as u32, 1)
+    };
+    make_tokens(g, p, spec)?;
+    crate::cardcode::add_counters(g, src, 1);
+    Ok(())
+}
+
+// ================================================================== Photon, Mighty Marvel
+/// **Photon** (flying): whenever it deals combat damage to a player, add that much mana of any one colour, which
+/// doesn't empty until end of turn. Floating mana lasts to the end of the turn here too. The AI picks the colour
+/// most of its hand wants.
+fn photon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
+    if a != src || p != owner(g, src) || d == p || dmg <= 0 {
+        return Ok(());
+    }
+    let mut want = [0u32; 5];
+    for &c in &g.player(p).hand {
+        let cd = g.db.get(c);
+        if cd.land {
+            continue;
+        }
+        for (i, col) in ['W', 'U', 'B', 'R', 'G'].into_iter().enumerate() {
+            want[i] += cd.pips.chars().filter(|&x| x == col).count() as u32;
+        }
+    }
+    let best = (0..5).max_by_key(|&i| (want[i], std::cmp::Reverse(i))).unwrap_or(0);
+    let n = dmg as u32;
+    let f = &mut g.player_mut(p).floating;
+    if want[best] == 0 {
+        f.c += n; // nothing coloured to cast: colourless is as good
+    } else {
+        match best {
+            0 => f.w += n,
+            1 => f.u += n,
+            2 => f.b += n,
+            3 => f.r += n,
+            _ => f.g += n,
+        }
+    }
+    crate::glog!(g, "    Photon adds {n} mana");
+    Ok(())
+}
+
+// ================================================================== Faeburrow Elder
+/// the colours among the permanents p controls
+fn colors_among(g: &Game, p: PlayerId) -> Colors {
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased)
+        .fold(Colors::NONE, |acc, &m| acc.union(colors_of(g, m)))
+}
+
+/// **Faeburrow Elder** (vigilance): +1/+1 for each colour among permanents you control (base 0/0)
+fn elder_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
+    let n = colors_among(g, p).count() as i32;
+    (n, n)
+}
+
+fn elder_enters(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
+    g.selfpt = true;
+    Ok(())
+}
+
+fn elder_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src {
+        g.selfpt = true;
+    }
+    Ok(())
+}
+
+/// **Faeburrow Elder**: {T}: for each colour among permanents you control, add one mana of that colour. One unit of
+/// mana per colour, all from the same untapped source (using any of them taps it, so the others are lost).
+fn elder_mana(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
+    let x = g.perm(src);
+    if x.owner != p || x.tapped || x.sick || x.phased || !x.on_bf {
+        return vec![];
+    }
+    let cols = colors_among(g, p);
+    ['W', 'U', 'B', 'R', 'G']
+        .into_iter()
+        .filter(|&c| cols.has(c))
+        .map(|c| Unit { src: Source::Perm(src), cols: Colors::from_letters(&c.to_string()), amt: 1 })
+        .collect()
+}
+
+// ================================================================== Paradox Surveyor
+/// does c have {X} in its mana cost (the `x` tag)?
+fn has_x(g: &Game, c: CardId) -> bool {
+    g.db.get(c).tag(Tag::X)
+}
+
+/// **Paradox Surveyor** (reach): when it enters, look at the top five cards; you may reveal a land card or a card with
+/// {X} in its cost from among them and put it in your hand; the rest go to the bottom in a random order. The AI takes
+/// the best such card by `card_worth` (a land when it has few).
+fn surveyor_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m != src || owner(g, m) != p {
+        return Ok(());
+    }
+    let n = g.player(p).library.len().min(5);
+    let mut top: Vec<CardId> = (0..n).filter_map(|_| g.player_mut(p).library.pop()).collect();
+    for &c in &top {
+        g.player_mut(p).seen.insert(c);
+    }
+    let lands_out = g.player(p).lands.len() + g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
+    let eligible: Vec<CardId> = top.iter().copied().filter(|&c| g.db.get(c).land || has_x(g, c)).collect();
+    let pick = max_by(&eligible, |c| {
+        let base = card_worth(g, p, c, false);
+        if g.db.get(c).land && lands_out < 6 { base + 100.0 } else { base }
+    });
+    if let Some(c) = pick {
+        top.retain(|&x| x != c);
+        g.player_mut(p).hand.push(c);
+        crate::glog!(g, "    Paradox Surveyor puts {} into the hand", g.db.get(c).name);
+    }
+    let mut rest = top;
+    g.rng.shuffle(&mut rest);
+    g.player_mut(p).library.splice(0..0, rest);
+    Ok(())
+}
+
+// ================================================================== Spectral Lynx
+/// **Spectral Lynx**: protection from green is the card data's; {B}: regenerate (the AI pays when it can)
+fn lynx_regen(g: &mut Game, m: PermId) -> Res<bool> {
+    let p = owner(g, m);
+    if !can_pay(g, p, 0, "B", false) {
+        return Ok(false);
+    }
+    pay(g, p, 0, "B", false)?;
+    g.perm_mut(m).tapped = true;
+    crate::glog!(g, "    {} regenerates", g.perm(m).name);
+    Ok(true)
+}
+
+// ================================================================== Twisted Fates
+/// **Twisted Fates**: destroy target nonland permanent; put a +1/+1 counter on each creature target player controls.
+/// The player is always the caster (the counters never help an opponent).
+fn fates_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) -> Res<Sym> {
+    if let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) {
+        apply_removal(g, Some(p), t, "destroy", Some(c))?;
+    }
+    for m in g.player(p).perms.clone() {
+        if g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m) {
+            crate::cardcode::add_counters(g, m, 1);
+        }
+    }
+    Ok("gy")
+}
+
+// ================================================================== Razia and King Darien: answers to removal
+/// Razia, Boros Archangel: {T}: the next 3 damage that would be dealt to target creature you control this turn is
+/// dealt to another target creature instead. The AI uses it against burn of 3 or less aimed at its creature that
+/// would die to it (all of the damage moves, to the opposing creature it hurts most); damage from combat and burn
+/// of more than 3 is not redirected.
+fn razia_redirect(g: &mut Game, owner_p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
+    let Some(n) = kind.strip_prefix("dmg").and_then(|s| s.parse::<i32>().ok()) else { return Ok(false) };
+    if !(1..=3).contains(&n) || etgh(g, m) > n || !g.is_creature(m) {
+        return Ok(false);
+    }
+    let Some(r) = on_bf_named(g, owner_p, RAZIA).into_iter().find(|&r| !g.perm(r).tapped && r != m) else {
+        return Ok(false);
+    };
+    let victims: Vec<PermId> = g
+        .opps(owner_p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&x| g.perm(x).on_bf && g.is_creature(x) && !untargetable(g, x))
+        .collect();
+    let Some(v) = max_by(&victims, |x| pval(g, x) + if etgh(g, x) <= n { 100.0 } else { 0.0 }) else {
+        return Ok(false);
+    };
+    g.perm_mut(r).tapped = true;
+    crate::glog!(g, "    Razia redirects {n} damage from {} to {}", g.perm(m).name, g.perm(v).name);
+    apply_removal(g, Some(owner_p), v, &format!("dmg{n}"), None)?;
+    Ok(true)
+}
+
+/// King Darien XLVIII: sacrifice it and creature tokens you control gain hexproof and indestructible until end of
+/// turn. The AI does it when removal is aimed at a token worth more than the King, or when a destroy sweeper would
+/// kill tokens worth more than the King (the tokens then survive it).
+fn darien_save(g: &mut Game, owner_p: PlayerId, worth: f64) -> Res<bool> {
+    let Some(&k) = on_bf_named(g, owner_p, DARIEN).first() else { return Ok(false) };
+    if worth <= pval(g, k) + 0.5 {
+        return Ok(false);
+    }
+    if !ability_window(g, owner_p, Some(k), "creature tokens gain hexproof and indestructible", None, None)? {
+        return Ok(false);
+    }
+    crate::glog!(g, "    King Darien is sacrificed: tokens gain hexproof and indestructible");
+    die(g, k, "sac")?;
+    for m in g.player(owner_p).perms.clone() {
+        if g.perm(m).on_bf && g.perm(m).token && g.is_creature(m) {
+            eot_kw(g, m, intern("hexproof"));
+            eot_kw(g, m, intern("indestructible"));
+        }
+    }
+    Ok(true)
+}
+
+/// `ai::decks::protect_response`, first thing: removal of `kind` is aimed at `owner_p`'s permanent m
+pub fn protect(g: &mut Game, owner_p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
+    if g.hooks.is_empty() || !g.perm(m).on_bf || g.humans.get(owner_p).is_some() {
+        return Ok(false);
+    }
+    if razia_redirect(g, owner_p, m, kind)? {
+        return Ok(true);
+    }
+    if g.perm(m).token && g.is_creature(m) && kind != "bounce" {
+        let w = pval(g, m);
+        return darien_save(g, owner_p, w);
+    }
+    Ok(false)
+}
+
+/// `ai::decks::wipe_response`, first thing: a sweeper of `kind` is about to hit q's board
+pub fn darien_wipe(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res {
+    if q == caster || g.hooks.is_empty() || g.humans.get(q).is_some() {
+        return Ok(());
+    }
+    if !matches!(kind, "destroy" | "dmg13" | "austere" | "nib" | "austere2" | "vandal") {
+        return Ok(());
+    }
+    let w: f64 = g
+        .player(q)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && g.perm(m).token && g.is_creature(m) && !g.perm(m).phased)
+        .map(|m| pval(g, m))
+        .sum();
+    if w > 0.0 {
+        darien_save(g, q, w)?;
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ registration
+/// the card's code slots, if the card data has the card (Abigale has two names, and the data may lack a card)
+fn card_if<'a>(r: &'a mut Registry, db: &CardDb, name: &str) -> Result<Option<&'a mut crate::hooks::CardImpl>, String> {
+    if db.id(name).is_none() {
+        return Ok(None);
+    }
+    Ok(Some(r.card(db, name)?))
+}
+
+pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, THRASIOS)? {
+        c.options = Some(thrasios_options);
+    }
+    if let Some(c) = card_if(r, db, KRAUM)? {
+        c.cast = Some(kraum_cast);
+    }
+    if let Some(c) = card_if(r, db, BLACK_WIDOW)? {
+        c.draw = Some(widow_draw);
+    }
+    for name in ABIGALE {
+        if let Some(c) = card_if(r, db, name)? {
+            c.cast = Some(abigale_cast);
+            c.options = Some(abigale_options);
+        }
+    }
+    if let Some(c) = card_if(r, db, COLONY)? {
+        c.cast = Some(colony_cast);
+    }
+    if let Some(c) = card_if(r, db, MASCOT)? {
+        c.cast = Some(mascot_cast);
+    }
+    if let Some(c) = card_if(r, db, FALCON)? {
+        c.combat_damage = Some(falcon_damage);
+    }
+    if let Some(c) = card_if(r, db, PHOTON)? {
+        c.combat_damage = Some(photon_damage);
+    }
+    if let Some(c) = card_if(r, db, ELDER)? {
+        c.self_pt = Some(elder_pt);
+        c.as_enters = Some(elder_enters);
+        c.etb = Some(elder_etb);
+        c.extra_mana = Some(elder_mana);
+    }
+    if let Some(c) = card_if(r, db, SURVEYOR)? {
+        c.etb = Some(surveyor_etb);
+    }
+    if let Some(c) = card_if(r, db, LYNX)? {
+        c.self_regen = Some(lynx_regen);
+    }
+    if let Some(c) = card_if(r, db, FATES)? {
+        c.resolve = Some(fates_resolve);
+    }
+    Ok(())
+}

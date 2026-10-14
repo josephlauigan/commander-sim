@@ -1226,6 +1226,9 @@ pub fn protect_response(
     actor: Option<PlayerId>,
     spell: Option<CardId>,
 ) -> Res<bool> {
+    if crate::impls::tymna_cards::protect(g, owner, m, kind)? {
+        return Ok(true); // Razia redirects burn, King Darien saves tokens
+    }
     if protect_main(g, owner, m, kind, actor, spell)? {
         return Ok(true);
     }
@@ -1321,6 +1324,7 @@ fn protect_main(
 
 /// ais.wipe_response: q's answer to a board wipe about to hit it: 'all' (everything saved), 'indes', or none
 pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
+    crate::impls::tymna_cards::darien_wipe(g, q, kind, caster)?; // King Darien: tokens survive a destroy sweeper
     if q == caster || silenced(g, q) || g.humans.get(q).is_some() {
         return Ok(None);
     }

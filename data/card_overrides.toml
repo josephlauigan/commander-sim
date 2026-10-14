@@ -2578,14 +2578,6 @@ note = "hasty copy of your best nonlegendary creature each turn (sacrificed at e
 status = "Full"
 note = "names a creature type as it enters (Orc for Sauron: Orc Armies count): draws whenever a creature of that type you control enters or attacks"
 
-["King Darien XLVIII"]
-tags = "leg pow=2 tgh=3"
-dsl = [
-  { type = "static", static = "anthem", pow = 1, tgh = 1, filter = { type = "creature", controller = "you", other = true } },
-]
-status = "Approximate"
-note = "other creatures +1/+1; {3}{G}{W} a +1/+1 counter and a 1/1 Soldier with spare mana; the sacrifice-for-protection ability is not used"
-
 ["Kinnan, Bonder Prodigy"]
 tags = "leg human pow=2"
 dsl = []
@@ -3802,12 +3794,6 @@ tags = ""
 dsl = []
 status = "Full"
 note = "before combat: untap and take the best opposing creature until end of turn (haste) and attack with it; it is tapped when it goes back"
-
-["Razia, Boros Archangel"]
-tags = "leg pow=6 tgh=3 fly vig haste"
-dsl = []
-status = "Approximate"
-note = "flying, vigilance, haste; the redirect-3-damage ability is not used"
 
 ["Reassembling Skeleton"]
 tags = "pow=1 warrior"
@@ -7204,3 +7190,84 @@ note = "{3}, sacrifice a creature: draw a card (compiled ability; the AI sacrifi
 ["Common Crook"]
 status = "Full"
 note = "when it dies, create a Treasure (compiled trigger)"
+
+["King Darien XLVIII"]
+tags = "leg pow=2 tgh=3"
+dsl = [
+  { type = "static", static = "anthem", pow = 1, tgh = 1, filter = { type = "creature", controller = "you", other = true } },
+]
+status = "Full"
+note = "other creatures +1/+1; {3}{G}{W} a +1/+1 counter and a 1/1 Soldier with spare mana; sacrifice it in response to removal aimed at a token worth more than the King, or to a destroy sweeper that would kill tokens worth more (tokens gain hexproof and indestructible until end of turn)"
+
+["Razia, Boros Archangel"]
+tags = "leg pow=6 tgh=3 fly vig haste"
+dsl = []
+status = "Approximate"
+note = "flying, vigilance, haste; {T}: redirects burn of 3 or less aimed at a creature of ours that would die to it onto the opposing creature it hurts most; combat damage is not redirected (an 8-mana top end that rarely lives to use it)"
+
+["Thrasios, Triton Hero"]
+dsl = []
+status = "Full"
+note = "{4}: scry 1, reveal the top card: a land goes onto the battlefield tapped, anything else is drawn; the AI activates it as often as it can at the end of the turn before its own and, last, in its second main phase; partner is the engine's"
+
+["Kraum, Ludevic's Opus"]
+status = "Full"
+note = "flying, haste; draws a card whenever an opponent casts their second spell each turn; partner is the engine's"
+
+["Black Widow, Agile Avenger"]
+status = "Full"
+note = "menace; whenever an opponent draws their second card each turn: a +1/+1 counter on her and you draw a card"
+
+["Abigale, Poet Laureate"]
+status = "Full"
+note = "flying; becomes prepared whenever you cast a creature spell; while prepared, pay {1}{W/B} to cast a copy of Heroic Stanza (a +1/+1 counter on target creature, the AI picks its best evasive attacker) at sorcery speed, which unprepares her"
+
+["Abigale, Poet Laureate // Heroic Stanza"]
+status = "Full"
+note = "flying; becomes prepared whenever you cast a creature spell; while prepared, pay {1}{W/B} to cast a copy of Heroic Stanza (a +1/+1 counter on target creature, the AI picks its best evasive attacker) at sorcery speed, which unprepares her"
+
+["Cuboid Colony"]
+status = "Full"
+note = "flash, flying, trample; increment: a +1/+1 counter whenever you cast a spell whose mana value is greater than its power or toughness (an X spell's X is not counted)"
+
+["Elemental Mascot"]
+status = "Full"
+note = "flying, vigilance; opus: +1/+0 until end of turn per instant or sorcery you cast (compiled); with a mana value of 5 or more the top card of the library is exiled and playable until the end of your next turn"
+
+["Falcon and Redwing"]
+tags = "leg human pow=1 tgh=2 fly"
+dsl = []
+status = "Full"
+note = "flying; whenever it deals combat damage to a player: that many 1/1 white flying Bird tokens, then a +1/+1 counter on it"
+
+["Photon, Mighty Marvel"]
+status = "Full"
+note = "flying; whenever it deals combat damage to a player: that much mana of the colour most of the hand wants (colourless if the hand has no coloured spell), floating until end of turn"
+
+["Faeburrow Elder"]
+tags = "pow=0 tgh=0 vig"
+dsl = []
+status = "Full"
+note = "vigilance; +1/+1 for each colour among permanents you control (0/0 base); {T}: one mana of each colour among permanents you control, from one source (using any tap taps it)"
+
+["Paradox Surveyor"]
+status = "Full"
+note = "reach; enters: look at the top five, a land card or a card with {X} in its cost to the hand (the AI takes the best, a land when it has under six), the rest to the bottom in random order"
+
+["Spectral Lynx"]
+status = "Full"
+note = "protection from green; {B}: regenerate, paid by the AI whenever it would die and has {B}"
+
+["Nightveil Predator"]
+status = "Full"
+note = "flying, deathtouch, hexproof (all engine keywords; hexproof stops opposing targeting)"
+
+["Sphinx of New Prahv"]
+ward = 2
+status = "Full"
+note = "flying, vigilance; spells opponents cast that target it cost {2} more: modeled as ward {2} (paid when the spell targets; the AI won't aim a spell it can't pay for)"
+
+["Twisted Fates"]
+dsl = []
+status = "Full"
+note = "destroys the target nonland permanent, then a +1/+1 counter on each creature we control (the second target player is always the caster)"
