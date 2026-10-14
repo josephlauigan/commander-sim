@@ -68,14 +68,37 @@ fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn, a
 /// end-of-turn window, `post` None: the mana would untap anyway), and in its second main phase after everything else
 /// it wanted to do (a low utility, above "stop"). Never when the library is nearly empty.
 fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != owner(g, src) || g.perm(src).phased || !can_pay(g, p, 4, "", false) || g.player(p).library.len() < 3 {
+    if p != owner(g, src) || g.perm(src).phased {
         return Ok(vec![]);
     }
-    let u = match post {
-        None => 3.0,
-        Some(true) if g.active == Some(p) => -2.0,
+    let (u, when) = match post {
+        None => (3.0, "eot"),
+        Some(true) if g.active == Some(p) => (-2.0, "main2"),
         _ => return Ok(vec![]),
     };
+    if crate::engine::values::once_per_turn(g, p, crate::sym::intern(&format!("ty_th_f_{when}"))) {
+        g.player_mut(p).stat(crate::sym::intern(&format!("ty_th_turns_{when}")), 1);
+    }
+    if !can_pay(g, p, 4, "", false) || g.player(p).library.len() < 3 {
+        return Ok(vec![]);
+    }
+    if when == "main2" {
+        // keep the mana for the cheapest counterspell held (a Mana Leak up beats a scry), spend the rest
+        let keep = g
+            .player(p)
+            .hand
+            .iter()
+            .filter(|&&c| g.db.get(c).tag(Tag::Ctr) && !g.db.get(c).creature)
+            .map(|&c| g.db.get(c).cmc)
+            .min()
+            .unwrap_or(0);
+        if crate::engine::mana::total_mana(g, p, false) < 4 + keep {
+            return Ok(vec![]);
+        }
+    }
+    if crate::engine::values::once_per_turn(g, p, crate::sym::intern(&format!("ty_th_g_{when}"))) {
+        g.player_mut(p).stat(crate::sym::intern(&format!("ty_th_spare4_{when}")), 1);
+    }
     Ok(vec![ability(u, "Thrasios: scry 1, a land or a card", src, thrasios_go, 0)])
 }
 
@@ -544,6 +567,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     register_more(r, db)?;
     register_rocks(r, db)?;
     register_charm(r, db)?;
+    register_witherbloom(r, db)?;
     Ok(())
 }
 
@@ -735,6 +759,109 @@ pub fn register_charm(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if let Some(c) = card_if(r, db, CHARM)? {
         c.resolve = Some(charm_resolve);
         c.hand_options = Some(charm_options);
+        c.prio = Some(zero_prio);
+    }
+    Ok(())
+}
+
+// ================================================================== Witherbloom Charm
+pub const WITHERBLOOM: &str = "Witherbloom Charm";
+
+/// the permanent mode 1 would sacrifice: a token worth next to nothing (Treasure, Food, Clue, a spare 1/1)
+fn witherbloom_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).token && pval(g, m) <= 1.5)
+        .collect();
+    cs.iter().copied().min_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)))
+}
+
+/// the opposing nonland permanent with mana value 2 or less (a token counts 0) that is worth the most
+fn witherbloom_victim(g: &Game, p: PlayerId) -> Option<PermId> {
+    let vs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&x| {
+            let y = g.perm(x);
+            y.on_bf
+                && !y.phased
+                && !y.is_cmd
+                && !untargetable(g, x)
+                && !y.cd.is_some_and(|c| g.db.get(c).land)
+                && y.cd.is_none_or(|c| g.db.get(c).cmc <= 2)
+        })
+        .collect();
+    max_by(&vs, |x| pval(g, x))
+}
+
+/// the modes the AI would pick now: (utility, mode 1-3, target). Mode 1: sacrifice a worthless token, draw two; 2: gain
+/// 5 life; 3: destroy their best nonland permanent with mana value 2 or less.
+fn witherbloom_modes(g: &Game, p: PlayerId) -> Vec<(f64, i64, Option<PermId>)> {
+    let mut out = vec![];
+    if witherbloom_fodder(g, p).is_some() {
+        out.push((1.6, 1, None));
+    }
+    if let Some(v) = witherbloom_victim(g, p).filter(|&v| pval(g, v) >= 2.0) {
+        out.push((0.9 + 0.5 * pval(g, v), 3, Some(v)));
+    }
+    if g.player(p).life <= 20 {
+        out.push((0.3 + if g.player(p).life < 15 { 1.0 } else { 0.0 }, 2, None));
+    }
+    out
+}
+
+fn witherbloom_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+    if !can_pay(g, p, cg, &cp, false) || !crate::engine::cast::castable(g, p, c, "hand") {
+        return Ok(vec![]);
+    }
+    let label = |m: i64| match m {
+        1 => "Witherbloom Charm: sacrifice a token, draw two",
+        2 => "Witherbloom Charm: gain 5 life",
+        _ => "Witherbloom Charm: destroy a permanent",
+    };
+    let eot = if post.is_none() { -0.4 } else { 0.0 };
+    Ok(witherbloom_modes(g, p)
+        .into_iter()
+        .map(|(u, mode, t)| {
+            let arg = c.0 as i64 | (mode << 32) | (t.map_or(0, |m| m.0 as i64 + 1) << 40);
+            Opt { utility: u + eot, label: label(mode).into(), act: Some(Action::Plan { f: charm_go, arg }) }
+        })
+        .collect())
+}
+
+/// **Witherbloom Charm**: all three modes. Mode 1 sacrifices the cheapest worthless token (the AI never sacrifices a
+/// real permanent for it); the mode is chosen as the spell is cast (`Ctx::x`), as for Silverquill Charm.
+fn witherbloom_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) -> Res<Sym> {
+    let (mode, target) = if (1..=3).contains(&ctx.x) {
+        (ctx.x as i64, ctx.target)
+    } else {
+        let best = witherbloom_modes(g, p).into_iter().max_by(|a, b| a.0.total_cmp(&b.0));
+        best.map_or((2, None), |(_, m, t)| (m, t))
+    };
+    match (mode, target) {
+        (1, _) => {
+            if let Some(f) = witherbloom_fodder(g, p) {
+                die(g, f, "sac")?;
+                draw(g, p, 2, false)?;
+            }
+        }
+        (2, _) => crate::engine::life::gain(g, p, 5)?,
+        (3, Some(t)) if g.perm(t).on_bf && g.perm(t).cd.is_none_or(|c| g.db.get(c).cmc <= 2) => {
+            apply_removal(g, Some(p), t, "destroy", Some(c))?;
+        }
+        _ => {}
+    }
+    Ok(intern("gy"))
+}
+
+pub fn register_witherbloom(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, WITHERBLOOM)? {
+        c.resolve = Some(witherbloom_resolve);
+        c.hand_options = Some(witherbloom_options);
         c.prio = Some(zero_prio);
     }
     Ok(())

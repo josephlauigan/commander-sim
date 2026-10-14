@@ -12,6 +12,7 @@ const TYMNA: &str = "Tymna the Weaver";
 const THRASIOS: &str = "Thrasios, Triton Hero";
 const KRAUM: &str = "Kraum, Ludevic's Opus";
 const BASTION: &str = "Bastion Protector";
+const LAGRELLA: &str = "Lagrella, the Magpie";
 
 /// a creature that is hard to block: a flier, menace, shadow, or one of the deck's named evasive creatures
 fn evasive_card(g: &Game, c: CardId) -> bool {
@@ -73,6 +74,23 @@ fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             return 78 + (4 - d.cmc as i32).max(0) / 2 - 2 * (d.pow >= 4) as i32; // a cheap one for each opponent
         }
         return base.max(66);
+    }
+    if &*d.name == LAGRELLA {
+        // its enters trigger exiles the best creature of every opponent; the compiled tags lack the `etb` tag the
+        // generic priority needs for an enters-removal creature, so it was valued 0 and never cast
+        let worth: f64 = g
+            .opps(p)
+            .filter(|&q| g.player(q).alive)
+            .filter_map(|q| {
+                g.player(q)
+                    .perms
+                    .iter()
+                    .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m))
+                    .map(|&m| pval(g, m))
+                    .fold(None, |a: Option<f64>, v| Some(a.map_or(v, |x| x.max(v))))
+            })
+            .sum();
+        return if worth >= 2.0 { 45 + (4.0 * worth).min(30.0) as i32 } else { 35 };
     }
     if &*d.name == BASTION {
         let both = out(g, p, TYMNA) && (out(g, p, THRASIOS) || out(g, p, KRAUM));
@@ -215,4 +233,32 @@ pub fn spread(
     }
     groups.retain(|x| !x.1.is_empty());
     groups
+}
+
+// ------------------------------------------------------------------ commanders come down on time
+/// `ai::search::choose_inner`, thrasios and kraum seats only: when the heuristic's best play is casting a commander
+/// from the command zone, it is made without the look-ahead. The search's position score doesn't value the commanders
+/// (Tymna's draw, Thrasios's mana sink) and was putting a ramp spell or a creature ahead of them, which landed
+/// Thrasios on turn 4.4-4.7, Tymna on 5.0-5.2 and Kraum on 6.8-7.1 when each was castable about 1.3 turns earlier.
+/// `opts` are the main-phase options; returns the index of the commander cast.
+pub fn commander_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
+    if !matches!(g.player(p).key, "thrasios" | "kraum") {
+        return None;
+    }
+    let (i, o) = opts
+        .iter()
+        .enumerate()
+        .filter(|(_, o)| o.act.is_some())
+        .max_by(|a, b| a.1.utility.total_cmp(&b.1.utility))?;
+    match o.act {
+        Some(crate::hooks::Action::Cast { card, .. })
+            if g.player(p).is_commander(card) && !g.player(p).hand.contains(&card) =>
+        {
+            Some(i)
+        }
+        // Thrasios's {4} when nothing else is worth doing: the search's score doesn't count the card or land it
+        // gives, and it kept choosing "stop" with the mana unspent (0.4-0.6 activations a game)
+        Some(crate::hooks::Action::Ability { .. }) if o.label.starts_with("Thrasios:") => Some(i),
+        _ => None,
+    }
 }

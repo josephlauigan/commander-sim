@@ -1264,6 +1264,11 @@ fn protect_main(
         if silenced(g, owner) {
             return Ok(false);
         }
+        if matches!(key, "thrasios" | "kraum")
+            && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)?
+        {
+            return Ok(true); // Shardmage's Rescue, Ultimate Magic: Holy for Tymna and the partners
+        }
         return pool::protect(g, owner, m, kind, actor, spell);
     }
     let v = pval(g, m);
@@ -1335,6 +1340,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     }
     let key = g.player(q).key;
     if !is_main(key) {
+        if matches!(key, "thrasios" | "kraum")
+            && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
+        {
+            return Ok(Some(r)); // Ultimate Magic: Holy
+        }
         return pool::wipe_response(g, q, kind, caster);
     }
     if key == "yshtola" {

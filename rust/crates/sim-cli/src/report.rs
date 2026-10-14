@@ -440,6 +440,11 @@ pub fn print_analysis(
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
         println!("  Tymna cards drawn per game {:.2}; Tymna turns per game {:.2}; opponents hit per Tymna turn {:.2}", get("jr_tymna_draws") / n, get("ty_tymna_turns") / n, get("ty_opps_hit") / get("ty_tymna_turns").max(1.0));
         println!("  Thrasios activations per game {:.2}", get("ty_thrasios_acts") / n);
+        let mut th: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("ty_th_")).collect();
+        th.sort();
+        for (k, v) in th {
+            println!("    {k} per game {:.2}", *v as f64 / n);
+        }
         for who in ["Tymna_the_Weaver", "Thrasios", "Kraum"] {
             let c = get(&format!("ty_tn_{who}"));
             if c > 0.0 {

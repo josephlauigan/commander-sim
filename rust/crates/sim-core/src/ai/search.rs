@@ -271,6 +271,9 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     if real.is_empty() {
         return None;
     }
+    if let Some(i) = crate::impls::tymna_partners::commander_first(g, p, opts) {
+        return Some(i); // thrasios, kraum: the commander comes down when it is the best play (no search)
+    }
     real.sort_by(|&a, &b| opts[b].utility.partial_cmp(&opts[a].utility).unwrap_or(std::cmp::Ordering::Equal));
     real.truncate(g.settings.search.top_k);
     let stop = opts.iter().position(|o| o.act.is_none())?;
