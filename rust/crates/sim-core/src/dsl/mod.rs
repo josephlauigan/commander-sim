@@ -485,7 +485,12 @@ fn run(
         }
         "destroy" | "exile" | "bounce" | "tuck" => {
             let sel = sel_or_empty(&e.what);
-            let ms = select(g, p, &sel, true, ctx, src, spell);
+            let mut ms = select(g, p, &sel, true, ctx, src, spell);
+            if e.kind == "bounce"
+                && let Some(t) = src.and_then(|s| crate::impls::garland::ropemaster_target(g, p, s))
+            {
+                ms = vec![t]; // Peerless Ropemaster re-crowns: our tapped Garland is the target
+            }
             if sel.sel.as_deref() == Some("all") {
                 let wipe_kind: Sym = match e.kind.as_str() {
                     "exile" => "exile",

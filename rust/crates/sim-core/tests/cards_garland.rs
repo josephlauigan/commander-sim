@@ -392,3 +392,25 @@ fn ultimecia_draws_a_card_whenever_a_creature_of_ours_hits_a_player() {
     combat::resolve_combat(&mut g, P0, &[a], P1, &[a]).unwrap();
     assert_eq!(g.player(P0).hand.len(), n + 1);
 }
+
+#[test]
+fn peerless_ropemaster_bounces_our_tapped_garland_to_crown_again() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Lyra Dawnbringer");
+    perm(&mut g, P2, "Grave Titan");
+    let gar = perm(&mut g, P0, GARLAND);
+    sim_core::cardcode::become_monarch(&mut g, P0).unwrap(); // the crown is ours: entering again is worth a lot
+    g.perm_mut(gar).tapped = true; // he attacked
+    lands(&mut g, P0, "Island", 5, false);
+    assert!(cast_free(&mut g, P0, "Peerless Ropemaster", Ctx::default()));
+    assert!(!g.perm(gar).on_bf, "Garland went back to hand");
+    assert!(g.player(P0).hand.contains(&card(&g, GARLAND)));
+    // untapped Garland is left alone (the trigger needs a tapped creature)
+    let mut g = tbl();
+    perm(&mut g, P2, "Grave Titan");
+    let gar = perm(&mut g, P0, GARLAND);
+    sim_core::cardcode::become_monarch(&mut g, P0).unwrap();
+    lands(&mut g, P0, "Island", 5, false);
+    assert!(cast_free(&mut g, P0, "Peerless Ropemaster", Ctx::default()));
+    assert!(g.perm(gar).on_bf);
+}

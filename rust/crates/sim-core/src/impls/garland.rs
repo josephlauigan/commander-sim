@@ -127,6 +127,7 @@ pub fn garland_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             | "Whoosh!"
             | "Unsummon"
             | "Skycoach Conductor // All Aboard"
+            | "Peerless Ropemaster"
     );
     if !recrown || garland_of(g, p).is_none() {
         return base;
@@ -134,6 +135,9 @@ pub fn garland_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let v = recrown_value(g, p);
     match &*d.name {
         // the creatures are bodies in their own right: a floor of the generic order, more when Garland re-enters
+        "Peerless Ropemaster" => {
+            if v >= 2.5 && garland_of(g, p).is_some_and(|m| g.perm(m).tapped) { base.max(70) } else { base }
+        }
         "Rescue, Pepper Potts" | "Matterbending Mage" | "Specimen Freighter" | "Skycoach Conductor // All Aboard" => {
             if v >= 2.0 { base.max(70) } else { base }
         }
@@ -146,7 +150,24 @@ pub fn garland_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 
 /// Unsummon (and the like) aimed at our own Garland at the end of an opponent's turn, to cast him again
 pub fn unsummon_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.player(p).key != KEY || post.is_some() || g.active == Some(p) {
+    if g.player(p).key != KEY {
+        return Ok(vec![]);
+    }
+    if g.active == Some(p) {
+        // our own turn, after combat: a stalled crown is moved on
+        let (gn, pips) = cost_of(g, p, c);
+        if post != Some(true) || !can_pay(g, p, gn, &pips, false) {
+            return Ok(vec![]);
+        }
+        let Some(_) = own_turn_recrown(g, p, gn + pips.len() as u32) else { return Ok(vec![]) };
+        let v = recrown_value(g, p);
+        return Ok(vec![Opt {
+            utility: v,
+            label: format!("{} (bounce Garland, crown stalled)", g.db.get(c).name),
+            act: Some(Action::Plan { f: unsummon_go, arg: c.0 as i64 }),
+        }]);
+    }
+    if post.is_some() {
         return Ok(vec![]);
     }
     let Some(m) = garland_of(g, p) else { return Ok(vec![]) };
@@ -207,4 +228,29 @@ pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), Strin
 /// m is a Garland under the Garland deck's seat (other decks that happen to run the card keep their old behaviour)
 pub fn is_my_garland(g: &Game, m: PermId) -> bool {
     is_garland(g, m) && g.player(g.perm(m).owner).key == KEY
+}
+
+/// Peerless Ropemaster's enter trigger ("return up to one target tapped creature") in the Garland deck: our own Garland,
+/// tapped from attacking, when entering again is worth it; None leaves the usual choice (an opposing tapped creature)
+pub fn ropemaster_target(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
+    if g.player(p).key != KEY || g.perm(src).cd.is_none_or(|c| &*g.db.get(c).name != "Peerless Ropemaster") {
+        return None;
+    }
+    let m = garland_of(g, p).filter(|&m| g.perm(m).tapped && !g.perm(m).token)?;
+    (recrown_value(g, p) >= 2.5).then_some(m)
+}
+
+/// after combat on our own turn: the crown has sat with one holder for a full round (the steals are stale), entering
+/// again is worth it, and the mana for the bounce spell (`spell_mana`) and Garland's own cost is there. Returns Garland.
+pub fn own_turn_recrown(g: &Game, p: PlayerId, spell_mana: u32) -> Option<PermId> {
+    if g.player(p).key != KEY || g.active != Some(p) {
+        return None;
+    }
+    let m = garland_of(g, p).filter(|&m| !g.perm(m).token)?;
+    let stalled = g.garland_list.iter().any(|x| x.0 == p && g.round > x.3);
+    if !stalled || recrown_value(g, p) < 2.5 {
+        return None;
+    }
+    let cost = g.perm(m).cd.map_or(4, |c| g.db.get(c).cmc);
+    (crate::engine::mana::total_mana(g, p, false) >= spell_mana + cost).then_some(m)
 }

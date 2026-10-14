@@ -494,6 +494,13 @@ fn whoosh_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
             out.push(plan(v, format!("Whoosh! (bounce {})", g.perm(t).name), whoosh_go, pack(c, Some(t))));
         }
     }
+    if post == Some(true)
+        && can_pay(g, p, gn, &pips, false)
+        && let Some(m) = super::garland::own_turn_recrown(g, p, gn + pips.len() as u32)
+    {
+        // Garland's crown has stalled: bounce him after combat and cast him again (no kicker: the mana is for Garland)
+        out.push(plan(super::garland::recrown_value(g, p), "Whoosh! (bounce Garland, crown stalled)".into(), whoosh_go, pack(c, Some(m))));
+    }
     if post == Some(true) && kick_ok {
         let tg = legal_targets(g, p, "bounce", "nl", false, Some(c));
         if let Some(b) = max_by(&tg, |m| pval(g, m))
@@ -516,7 +523,8 @@ fn whoosh_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     };
     let (gn, pips) = cost_of(g, p, c);
-    let kick = can_pay(g, p, gn + 1, &format!("{pips}U"), false);
+    let spare = g.active == Some(p) && super::garland::own_turn_recrown(g, p, gn + 2 + pips.len() as u32).is_none() && g.player(p).key == super::garland::KEY && g.perm(t).owner == p && super::garland::is_my_garland(g, t);
+    let kick = !spare && can_pay(g, p, gn + 1, &format!("{pips}U"), false);
     let ctx = Ctx { target: Some(t), mode: kick.then_some("kick"), ..Ctx::default() };
     cast_paid(g, p, c, if kick { 1 } else { 0 }, if kick { "U" } else { "" }, ctx)
 }
