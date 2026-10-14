@@ -378,7 +378,10 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
 }
 
 fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
-    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let mut opps: Vec<PlayerId> = g.opps(p).collect();
+    if g.player(p).key == crate::impls::garland::KEY {
+        opps = crate::impls::garland::attack_targets(g, p, opps); // never the monarch while we hold a steal
+    }
     if opps.is_empty() {
         return None;
     }

@@ -440,7 +440,7 @@ pub fn print_analysis(
         println!("\n-- Garland --");
         println!("  Garland entries per game {:.2} (cast {:.2}, token copies {:.2})", get("gl_entries") / n, get("gl_casts") / n, get("gl_copies") / n);
         println!("  Steals per game {:.2}; a steal lasts {:.2} rounds on average; steals ended by the crown moving {:.2} per game", get("jr_garland_steals") / n, get("jr_garland_rounds") / get("jr_garland_back").max(1.0), get("jr_garland_back") / n);
-        println!("  Crown changes per game {:.2}; we became the monarch {:.2} times per game ({:.0}% of games)", get("gl_crown_changes") / n, get("gl_we_monarch") / n, 100.0 * (get("gl_we_monarch") / n).min(1.0));
+        println!("  Crown changes per game {:.2}; we became the monarch {:.2} times per game", get("gl_crown_changes") / n, get("gl_we_monarch") / n);
         println!("  Damage by stolen creatures per game {:.2} (a stolen creature hit a player {:.2} times per game)", get("jr_garland_dmg") / n, get("jr_garland_hit") / n);
         println!("  steals ended because the creature left: {:.2} per game; took the crown back (ended steals): {:.2} per game", get("jr_garland_gone") / n, get("jr_garland_back_me") / n);
         let mut took: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("jr_garland_took:")).collect();
