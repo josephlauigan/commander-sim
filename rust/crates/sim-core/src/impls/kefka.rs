@@ -161,6 +161,9 @@ pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Optio
         if wants_gy(g, c) {
             v -= 100.0;
         }
+        if cname(g, c) == "Deflecting Swat" {
+            v += 40.0; // untagged, so card_worth gives 0: held for the response like any other protection (Prot is 40)
+        }
         if cname(g, c) == CRAWLER || cname(g, c) == NIV {
             v += 60.0; // held for the loop, not worthless
         }

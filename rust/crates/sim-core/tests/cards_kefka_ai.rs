@@ -340,3 +340,36 @@ fn mystic_confluence_draw_three_is_offered_at_the_end_of_an_opponents_turn_and_c
     assert!(g.player(P0).cast_names.contains(&c), "counted as cast in the card report");
 }
 
+#[test]
+fn the_wheel_keeps_deflecting_swat_over_a_land() {
+    // Swat has no tag, so it was worth 0 to the discard choice and went to Kefka's trigger before anything else
+    let mut g = table(&["kefka", "seph"]);
+    lands(&mut g, P0, "Swamp", 3, false);
+    kefka_out(&mut g, P0, false);
+    hand(&mut g, P0, &["Deflecting Swat", "Cabal Coffers"]);
+    fill_library(&mut g, P0, 10);
+    sim_core::impls::mine::kefka_wheel(&mut g, P0).unwrap();
+    assert!(g.player(P0).hand.contains(&card(&g, "Deflecting Swat")), "the Swat stays in hand");
+    assert!(gy_has(&g, P0, "Cabal Coffers"));
+}
+
+#[test]
+fn deflecting_swat_redirects_destroy_and_shuffle_removal_and_fizzles_without_a_target() {
+    for (spell, kind) in [("Murder", "destroy"), ("Chaos Warp", "tuck")] {
+        let mut g = table(&["kefka", "seph"]);
+        let archon = perm(&mut g, P1, "Archon of Cruelty");
+        let k = kefka_out(&mut g, P0, false);
+        hand(&mut g, P0, &["Deflecting Swat"]);
+        let s = card(&g, spell);
+        removal::apply_removal(&mut g, Some(P1), k, kind, Some(s)).unwrap();
+        assert!(g.perm(k).on_bf, "{spell}: Kefka survives");
+        assert!(!g.perm(archon).on_bf, "{spell}: the caster's creature takes it");
+    }
+    // the caster has no permanent to aim at: no Swat, the spell resolves
+    let mut g = table(&["kefka", "seph"]);
+    let k = kefka_out(&mut g, P0, false);
+    hand(&mut g, P0, &["Deflecting Swat"]);
+    let s = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P1), k, "destroy", Some(s)).unwrap();
+    assert!(!g.perm(k).on_bf);
+}
