@@ -884,6 +884,7 @@
     "Butcher of Malakir",
     "Caged Zombie",
     "Call of the Ring",
+    "Callous Inspector",
     "Carrier Thrall",
     "Carrion Feeder",
     "Cast Away Doubt",
@@ -914,7 +915,6 @@
     "Path of Ancestry",
     "Pestilence",
     "Phyrexian Altar",
-    "Phyrexian Arena",
     "Phyrexian Tower",
     "Pitiless Plunderer",
     "Plaguecrafter",
@@ -922,7 +922,6 @@
     "Pull from the Grave",
     "Rabid Attack",
     "Ral Zarek, Guest Lecturer",
-    "Reanimate",
     "Reassembling Skeleton",
     "Rewrite Regrets",
     "Sephiroth's Intervention",
@@ -971,6 +970,7 @@
     "Wander Off",
     "Woe Strider",
     "Yahenni, Undying Partisan",
+    "Zombify",
     "Zulaport Cutthroat"
    ]
   },

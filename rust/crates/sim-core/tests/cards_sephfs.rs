@@ -300,7 +300,7 @@ fn massacre_girl_wipes_the_board_once_something_dies() {
 
 #[test]
 fn animate_dead_and_reanimate_take_from_an_opponents_graveyard() {
-    for (spell, loses) in [("Animate Dead", false), ("Reanimate", true)] {
+    for (spell, loses) in [("Animate Dead", false)] {
         let mut g = game();
         lands(&mut g, P0, "Swamp", 4, false);
         g.player_mut(P0).life = 40;
@@ -310,6 +310,7 @@ fn animate_dead_and_reanimate_take_from_an_opponents_graveyard() {
         let o = opt(&mut g, P0, spell).unwrap_or_else(|| panic!("the AI offers {spell}"));
         assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
         assert!(has(&g, P0, "Massacre Wurm"), "{spell} takes it from an opponent's graveyard");
+        assert!(g.player(P0).cast_names.contains(&card(&g, spell)), "the cast stat counts {spell}");
         if loses {
             assert!(g.player(P0).life <= 40 - 6, "Reanimate: lose life equal to its mana value");
         }
@@ -328,6 +329,7 @@ fn phyrexian_altar_and_tower_turn_a_sacrifice_into_mana() {
     perm(&mut g, P0, "Blood Artist"); // payoffs make the Tower worth using
     lands(&mut g, P0, "Phyrexian Tower", 1, false);
     perm(&mut g, P0, SEPH);
+    perm(&mut g, P0, "Blood Artist"); // a second payoff: Sephiroth's enter-sacrifice may take the first
     let t = token(&mut g, P0, 1);
     let o = sim_core::cardcode::land_options(&mut g, P0, Some(true))
         .unwrap()
@@ -365,4 +367,131 @@ fn rabid_attack_is_cast_ahead_of_a_sweep_and_not_otherwise() {
     assert!(opt(&mut g, P0, "Rabid Attack").is_none(), "no sweep to follow it: held");
     hand(&mut g, P0, &["Toxic Deluge"]);
     assert!(opt(&mut g, P0, "Rabid Attack").is_some(), "with a sweeper in hand it goes first");
+}
+
+// ================================================================== the six cards the 1,000-game run never cast
+#[test]
+fn exsanguinate_drains_for_all_spare_mana_when_x_is_large_and_the_board_is_safe() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 10, false);
+    g.active = Some(P0);
+    g.player_mut(P1).life = 40;
+    g.player_mut(P0).life = 30;
+    hand(&mut g, P0, &["Exsanguinate"]);
+    let o = opt(&mut g, P0, "Exsanguinate").expect("the AI offers Exsanguinate");
+    assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert_eq!(g.player(P1).life, 32, "X = 8: ten lands less {{B}}{{B}}");
+    assert_eq!(g.player(P0).life, 38, "we gain the life lost");
+}
+
+#[test]
+fn exsanguinate_is_held_when_x_is_small_and_nothing_dies() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 4, false);
+    g.active = Some(P0);
+    g.player_mut(P1).life = 40;
+    hand(&mut g, P0, &["Exsanguinate"]);
+    assert!(opt(&mut g, P0, "Exsanguinate").is_none());
+}
+
+#[test]
+fn presumed_dead_gives_plus_two_and_returns_the_creature_suspected_when_it_dies() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    let m = perm(&mut g, P0, "Dread Slaver");
+    let c = hand(&mut g, P0, &["Presumed Dead"])[0];
+    let base = sim_core::engine::values::epow(&g, m);
+    cast::cast_card(&mut g, P0, c, "hand", Ctx { target: Some(m), ..Ctx::default() }).unwrap();
+    assert_eq!(sim_core::engine::values::epow(&g, m), base + 2);
+    zones::die(&mut g, m, "destroy").unwrap();
+    assert!(has(&g, P0, "Dread Slaver"), "it returns to the battlefield");
+    let n = g.player(P0).perms.iter().copied().find(|&x| g.perm(x).on_bf && g.perm(x).name == "Dread Slaver").unwrap();
+    assert!(g.perm(n).data.truthy(DataKey::Suspect), "and is suspected");
+}
+
+#[test]
+fn presumed_dead_answers_removal_aimed_at_a_key_creature() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 2, false);
+    let m = perm(&mut g, P0, "Dread Slaver");
+    hand(&mut g, P0, &["Presumed Dead"]);
+    assert!(sim_core::impls::sephfs_cards::presumed_protect(&mut g, P0, m, "destroy".into()).unwrap());
+    zones::die(&mut g, m, "destroy").unwrap();
+    assert!(has(&g, P0, "Dread Slaver"), "the creature came back");
+    assert!(in_gy(&g, P0, "Presumed Dead"));
+}
+
+#[test]
+fn rewrite_regrets_returns_the_best_creature_from_our_graveyard_and_empowers_jace() {
+    let mut g = game();
+    bury(&mut g, P0, "Viscera Seer");
+    bury(&mut g, P0, "Massacre Wurm");
+    bury(&mut g, P1, "Dread Slaver");
+    let c = hand(&mut g, P0, &["Rewrite Regrets"])[0];
+    let pr = sim_core::impls::sephfs::sephfs_prio(&g, P0, c);
+    assert!(pr > 0, "the AI casts it with a good target");
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert!(has(&g, P0, "Massacre Wurm"), "the best of our own graveyard (cmc 6)");
+    assert!(!has(&g, P0, "Dread Slaver"), "not an opponent's");
+    let j = g.player(P0).perms.iter().copied().find(|&x| g.perm(x).name == "Jace Token").expect("a Jace token");
+    assert_eq!(g.perm(j).loyalty, Some(2), "Empower Jace 2");
+}
+
+#[test]
+fn rewrite_regrets_is_held_without_a_target() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Rewrite Regrets"])[0];
+    assert_eq!(sim_core::impls::sephfs::sephfs_prio(&g, P0, c), 0);
+}
+
+#[test]
+fn braids_frightful_return_reads_ahead_to_chapter_two_then_three_and_is_sacrificed() {
+    let mut g = game();
+    g.active = Some(P0);
+    bury(&mut g, P0, "Massacre Wurm");
+    let c = hand(&mut g, P0, &["Braids's Frightful Return"])[0];
+    assert!(sim_core::impls::sephfs::sephfs_prio(&g, P0, c) > 0);
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert!(g.player(P0).hand.iter().any(|&x| &*g.db.get(x).name == "Massacre Wurm"), "chapter II returns it to hand");
+    assert!(has(&g, P0, "Braids's Frightful Return"));
+    let life = g.player(P1).life;
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!(g.player(P1).life, life - 2, "chapter III: no spare permanent, so they lose 2");
+    assert!(!has(&g, P0, "Braids's Frightful Return"), "sacrificed after III");
+}
+
+#[test]
+fn braids_frightful_return_skips_to_chapter_three_with_nothing_to_return() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Braids's Frightful Return"])[0];
+    let life = g.player(P1).life;
+    let cards = g.player(P0).hand.len();
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P1).life, life - 2);
+    assert_eq!(g.player(P0).hand.len(), cards, "cast one (-1), drew one (+1)");
+    assert!(!has(&g, P0, "Braids's Frightful Return"));
+}
+
+#[test]
+fn call_of_the_ring_is_cast_and_tempts_at_upkeep() {
+    let mut g = game();
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Call of the Ring"])[0];
+    assert!(sim_core::impls::sephfs::sephfs_prio(&g, P0, c) > 0);
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    perm(&mut g, P0, "Dread Slaver");
+    turn::upkeep(&mut g, P0).unwrap();
+    assert!(g.player(P0).ring_level >= 1, "the Ring tempted us");
+}
+
+#[test]
+fn zombify_returns_a_creature_from_our_graveyard() {
+    let mut g = game();
+    bury(&mut g, P0, "Massacre Wurm");
+    bury(&mut g, P1, "Dread Slaver");
+    let c = hand(&mut g, P0, &["Zombify"])[0];
+    assert!(sim_core::impls::sephfs::sephfs_prio(&g, P0, c) > 0);
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert!(has(&g, P0, "Massacre Wurm"));
+    assert!(!has(&g, P0, "Dread Slaver"));
 }

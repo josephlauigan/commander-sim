@@ -744,6 +744,9 @@ fn reanimate(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         g.player_mut(p).spells_this_turn += 1;
         crate::engine::cast::on_cast(g, p, c)?;
         crate::ai::seph_rean_resolve(g, p, c, &ctx)?;
+        let pl = g.player_mut(p);
+        pl.stat("spells_cast", 1);
+        pl.cast_names.insert(c);
         return Ok(true);
     }
     crate::engine::cast::cast_card(g, p, c, "hand", ctx)?;

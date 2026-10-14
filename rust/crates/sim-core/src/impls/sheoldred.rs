@@ -817,7 +817,7 @@ pub fn returns_when_dies(g: &mut Game, x: &Perm, _cause: Sym) -> Res<bool> {
     Ok(true)
 }
 
-fn grant_eot(g: &mut Game, m: PermId, kind: &str) {
+pub fn grant_eot(g: &mut Game, m: PermId, kind: &str) {
     let k = intern(kind);
     let x = g.perm_mut(m);
     if !x.eot_kw.contains(&k) {

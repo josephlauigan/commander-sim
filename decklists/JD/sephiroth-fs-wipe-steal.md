@@ -3,7 +3,7 @@
 **Added 2026-10-14.** JD's mono-black control deck with Sephiroth, Fabled SOLDIER as commander and JD's new Phyrexian
 Tower and Phyrexian Altar. Not JD's Atraxa deck (`sephiroth-phyrexian-reanimator.md`, also called Sephiroth): that
 one reanimates its own creatures for combos; this one wipes the board, drains on every death and takes opponents' dead.
-**33 buys, about $84** (about $56 without Sephiroth; $39 without Sephiroth, Reanimate and Animate Dead).
+**30 buys, about $62.50** (about $34.50 without Sephiroth).
 
 **Not measured yet.**
 
@@ -24,7 +24,7 @@ this is the fourth time this ability has resolved this turn, transform Sephiroth
    Snow, Crux of Fate, Toxic Deluge, Living Death, Necromantic Selection. Blood Artist, Zulaport Cutthroat, Bastion of
    Remembrance, Butcher of Malakir and Pitiless Plunderer add to each death.
 3. **Their dead fight for you.** Grave Betrayal (opponents' creatures that die return under your control), Dread
-   Slaver, Necromantic Selection, Reanimate, Animate Dead and Grave Researcher (any graveyard), Gonti (their library).
+   Slaver, Necromantic Selection, Zombify, Animate Dead and Grave Researcher (any graveyard), Gonti (their library).
 4. **And fuel you.** Stolen creatures go to Tower (BB) and Altar (any colour) for mana and to Sephiroth for cards;
    every death drains again. Finish with Exsanguinate or a 5/5 flying Sephiroth sacrificing the army as he attacks.
 
@@ -42,11 +42,11 @@ this is the fourth time this ability has resolved this turn, transform Sephiroth
 
 ## Where the cards come from
 
-**Buys (33, about $84):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
+**Buys (30, about $62.50):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
 **JD's own, new (2):** Phyrexian Tower, Phyrexian Altar (not on the bulk/binder lists yet). **Basics (32 Swamp):** your
 own. Everything else comes off JD's lists (main, 2026-10-14).
 
-### Creatures (26)
+### Creatures (27)
 
 | Card | From | Set |
 |---|---|---|
@@ -55,6 +55,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 | Blood Artist | **Buy** ($2.73) |  |
 | Butcher of Malakir | **Buy** ($0.35) |  |
 | Caged Zombie | Bulk | m21 |
+| Callous Inspector | Bulk | tla |
 | Carrier Thrall | **Buy** ($0.21) |  |
 | Carrion Feeder | Bulk | fdc |
 | Common Crook | Bulk | spm |
@@ -95,18 +96,17 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 | Star Compass | Binder (Jodah) |  |
 | Tome of Legends | Bulk | msc |
 
-### Enchantments (8)
+### Enchantments (7)
 
 | Card | From | Set |
 |---|---|---|
-| Animate Dead | **Buy** ($7.29) |  |
+| Animate Dead | JD's own |  |
 | Bastion of Remembrance | **Buy** ($0.33) |  |
 | Braids's Frightful Return | Bulk | dmu |
 | Call of the Ring | Binder |  |
 | Grave Betrayal | **Buy** ($3.29) |  |
 | Kaya's Ghostform | **Buy** ($1.74) |  |
 | Pestilence | **Buy** ($0.61) |  |
-| Phyrexian Arena | **Buy** ($4.48) |  |
 
 ### Instants (8)
 
@@ -134,10 +134,10 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 | Living Death | **Buy** ($6.64) |  |
 | Necromantic Selection | **Buy** ($0.31) |  |
 | Pull from the Grave | Bulk | sos |
-| Reanimate | **Buy** ($10.03) |  |
 | Rewrite Regrets | Bulk | fra |
 | Stargaze | Bulk | soa |
 | Toxic Deluge | Binder (Jodah) |  |
+| Zombify | Bulk | soa |
 
 ### Lands (4); plus 32 Swamp
 
@@ -163,6 +163,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Butcher of Malakir
 1 Caged Zombie
 1 Call of the Ring
+1 Callous Inspector
 1 Carrier Thrall
 1 Carrion Feeder
 1 Cast Away Doubt
@@ -193,7 +194,6 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Path of Ancestry
 1 Pestilence
 1 Phyrexian Altar
-1 Phyrexian Arena
 1 Phyrexian Tower
 1 Pitiless Plunderer
 1 Plaguecrafter
@@ -201,7 +201,6 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Pull from the Grave
 1 Rabid Attack
 1 Ral Zarek, Guest Lecturer
-1 Reanimate
 1 Reassembling Skeleton
 1 Rewrite Regrets
 1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
@@ -218,6 +217,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Wander Off
 1 Woe Strider
 1 Yahenni, Undying Partisan
+1 Zombify
 1 Zulaport Cutthroat
 32 Swamp
 ```

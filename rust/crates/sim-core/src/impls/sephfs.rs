@@ -8,11 +8,11 @@
 //! - **Wipes** (`wipe_utility`): valued with the drain for every creature that dies; an unflipped Sephiroth is spared
 //!   unless the wipe's own deaths flip him first; Extinction Event picks its parity (`sephfs_cards::parity_choice`);
 //!   Living Death by what each graveyard gives back.
-//! - **Steals**: Reanimate, Animate Dead and the prepared Reanimate take the best creature card from any graveyard
+//! - **Steals**: Zombify (own graveyard), Animate Dead and the prepared Reanimate take the best creature card from any graveyard
 //!   (`rean_targets`).
 //! - Stats for `--analyze`: `sf_*` counters (flips, wipes, steals by card, sacrifices, cards drawn by Sephiroth).
 
-use super::sephfs_cards::{all_creatures, cmc_of, flipped, is_seph, parity_choice, steal_targets};
+use super::sephfs_cards::{all_creatures, cmc_of, flipped, is_seph, parity_choice, steal_targets, steal_value};
 use crate::ai::pool::generic_prio;
 use crate::cards::CardDb;
 use crate::engine::values::pval;
@@ -86,6 +86,18 @@ pub fn sephfs_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     }
     match n {
         "Rabid Attack" => return 0, // cast through `options`, ahead of a sweeper
+        "Presumed Dead" => return 0, // cast through `options` or in response to removal
+        "Rewrite Regrets" => {
+            return match super::sephfs_cards::regrets_target(g, p) {
+                Some(t) if steal_value(g, t) >= 3.0 => 64,
+                _ => 0,
+            };
+        }
+        "Zombify" => {
+            return if g.player(p).gy.iter().any(|&c| steal_value(g, c) >= 3.0) { 64 } else { 0 };
+        }
+        "Call of the Ring" => return 50,
+        "Braids's Frightful Return" => return 52,
         "Massacre Girl" => return massacre_prio(g, p, base),
         "Pestilence" => {
             return if seph.is_some() || g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && g.is_creature(m)) {
@@ -219,19 +231,46 @@ fn follow_up_cost(g: &Game, p: PlayerId) -> Option<u32> {
 pub fn options(g: &mut Game, p: PlayerId, post: bool) -> crate::flow::Res<Vec<crate::hooks::Opt>> {
     use crate::hooks::Opt;
     let _ = post;
-    let Some(&c) = g.player(p).hand.iter().find(|&&c| &*g.db.get(c).name == "Rabid Attack") else { return Ok(vec![]) };
+    let mut out: Vec<Opt> = vec![];
+    out.extend(super::sephfs_cards::presumed_option(g, p));
+    out.extend(exsanguinate_option(g, p));
+    out.extend(rabid_option(g, p));
+    Ok(out)
+}
+
+/// Exsanguinate with all spare mana: when the drain is lethal (`x_drain_option` scores a kill), or when X is large (4+)
+/// and the opposing boards are no threat to us (their total power under a third of our life)
+fn exsanguinate_option(g: &Game, p: PlayerId) -> Option<crate::hooks::Opt> {
+    if g.active != Some(p) {
+        return None;
+    }
+    let c = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == "Exsanguinate")?;
+    if !crate::engine::cast::castable(g, p, c, "hand") {
+        return None;
+    }
+    let (u, label) = super::yshtola::x_drain_option(g, p, c)?;
+    let threat: i32 = g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| g.perm(m).on_bf && g.is_creature(m)).map(|m| crate::engine::values::epow(g, m)).sum();
+    if u < 7.0 && threat * 3 >= g.player(p).life {
+        return None;
+    }
+    Some(crate::hooks::Opt { utility: u, label, act: Some(crate::hooks::Action::Plan { f: super::yshtola::x_drain_go, arg: c.0 as i64 }) })
+}
+
+fn rabid_option(g: &mut Game, p: PlayerId) -> Option<crate::hooks::Opt> {
+    use crate::hooks::Opt;
+    let c = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == "Rabid Attack")?;
     if g.active != Some(p) || !crate::engine::cast::castable(g, p, c, "hand") {
-        return Ok(vec![]);
+        return None;
     }
     let d = g.db.get(c);
-    let Some(follow) = follow_up_cost(g, p) else { return Ok(vec![]) };
+    let follow = follow_up_cost(g, p)?;
     let mine = all_creatures(g).iter().filter(|&&(q, m)| q == p && !is_seph(g, m)).count();
     if mine < 2 || !crate::engine::mana::can_pay(g, p, d.generic + follow, &d.pips, false) {
-        return Ok(vec![]);
+        return None;
     }
-    Ok(vec![Opt {
+    Some(Opt {
         utility: 7.0 + mine as f64 * 0.5,
         label: format!("Rabid Attack ({mine} creatures, ahead of a sweep)"),
         act: Some(crate::hooks::Action::Cast { card: c, zone: None }),
-    }])
+    })
 }

@@ -631,7 +631,7 @@ note = "attacks: sacrifice spare fodder for two tokens, damage or cards"
 
 ["Call of the Ring"]
 status = "Full"
-note = "upkeep: the Ring tempts you (the four Ring abilities in order); choosing a Ring-bearer pays 2 life for a card"
+note = "upkeep: the Ring tempts you (the four Ring abilities in order); choosing a Ring-bearer pays 2 life for a card; cast as a value enchantment (prio 50 in impls/sephfs.rs); the upkeep tempt is the engine's ring_tempt"
 
 ["Canopy Tactician"]
 tags = "pow=3 warrior dork=G"
@@ -1579,7 +1579,7 @@ types = "S"
 tags = "xdrain"
 dsl = []
 status = "Full"
-note = "each opponent loses X life and you gain the total; the AI casts it for a kill or a big X"
+note = "each opponent loses X life and you gain the total; the AI casts it for a kill or a big X (sephfs: option in impls/sephfs.rs, X = all spare mana, when lethal or X >= 4 and the board is safe; plan from impls/yshtola.rs x_drain_go)"
 
 ["Eyeblight Cullers"]
 tags = "pow=3 warrior"
@@ -6301,15 +6301,15 @@ note = "equip {2} on the best ground attacker: +1/+0, flying, and it gains you 1
 
 ["Braids's Frightful Return"]
 status = "Full"
-note = "read ahead: the AI starts on the chapter worth most (I: sacrifice a cheap creature, each opponent discards; II: the best creature card in the graveyard to hand; III: the opponent with the biggest board sacrifices a spare nonland nontoken permanent, or loses 2 life and you draw); lore counters after the draw step and from proliferate; sacrificed after III"
+note = "read ahead: the AI starts on the chapter worth most (I: sacrifice a cheap creature, each opponent discards; II: the best creature card in the graveyard to hand; III: the opponent with the biggest board sacrifices a spare nonland nontoken permanent, or loses 2 life and you draw); lore counters after the draw step and from proliferate; sacrificed after III (code: impls/sephfs_cards.rs: starts on II with a creature worth returning, I with spare fodder and cards in an opponent hand, else III; counters added at upkeep, not after the draw; the opponent sacrifices only a mana value 0-1 permanent; no proliferate)"
 
 ["Presumed Dead"]
 status = "Full"
-note = "+2/+0 until end of turn and 'when this creature dies, return it to the battlefield under its owner's control and suspect it' (menace, can't block); the AI casts it before combat on a creature worth 2 or more"
+note = "+2/+0 until end of turn and 'when this creature dies, return it to the battlefield under its owner's control and suspect it' (menace, can't block); the AI casts it before combat on a creature worth 2 or more; also cast in response to destroy / damage removal on Sephiroth or a creature worth 2+ (code: impls/sephfs_cards.rs; the return itself is sheoldred::returns_when_dies)"
 
 ["Rewrite Regrets"]
 status = "Full"
-note = "returns the best creature card (mana value 6 or less) from your graveyard to the battlefield (a planeswalker card only when no creature is there); Empower Jace 2 (the Jace token, loyalty +2)"
+note = "returns the best creature card (mana value 6 or less) from your graveyard to the battlefield (a planeswalker card only when no creature is there); Empower Jace 2 (the Jace token, loyalty +2) (code: impls/sephfs_cards.rs; Jace via alela::empower)"
 
 ["Soul Enervation"]
 status = "Full"

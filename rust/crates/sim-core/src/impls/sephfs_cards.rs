@@ -518,6 +518,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Blood on the Snow")?.resolve = Some(blood_resolve);
     r.card(db, "Living Death")?.resolve = Some(living_resolve);
     r.card(db, "Rabid Attack")?.resolve = Some(rabid_resolve);
+    r.card(db, "Rewrite Regrets")?.resolve = Some(regrets_resolve);
+    r.card(db, "Presumed Dead")?.resolve = Some(presumed_resolve);
+    let c = r.card(db, BRAIDS)?;
+    c.etb = Some(braids_etb);
+    c.upkeep = Some(braids_lore);
     let c = r.card(db, "Grave Betrayal")?;
     c.dies = Some(betrayal_dies);
     c.end_step = Some(betrayal_end);
@@ -538,4 +543,229 @@ pub fn slaver_mark(g: &mut Game, killer: PermId, victim: PermId) {
         let p = owner(g, killer);
         g.perm_mut(victim).data.set(DataKey::Slaver, Val::Player(p));
     }
+}
+
+// ================================================================== Rewrite Regrets
+/// the best card p's graveyard gives back to Rewrite Regrets: a creature (mana value 6 or less), else a planeswalker
+pub fn regrets_target(g: &Game, p: PlayerId) -> Option<CardId> {
+    let gy = &g.player(p).gy;
+    let best = gy
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).creature && g.db.get(c).cmc <= 6)
+        .max_by(|&a, &b| steal_value(g, a).total_cmp(&steal_value(g, b)));
+    best.or_else(|| {
+        gy.iter().copied().find(|&c| {
+            let d = g.db.get(c);
+            d.types.has(crate::cards::Types::PLANESWALKER) && d.cmc <= 6
+        })
+    })
+}
+
+/// **Rewrite Regrets**: return the best creature (else planeswalker) card with mana value 6 or less from your
+/// graveyard to the battlefield, then Empower Jace 2 (the Jace token of the Alela deck: +2 loyalty, created first
+/// when you have none; its -1 and -3 are not used by this deck's plan, so it is only a body that soaks attacks).
+fn regrets_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if let Some(c) = regrets_target(g, p)
+        && let Some(m) = take_from_gy(g, p, c, p)?
+    {
+        crate::glog!(g, "    Rewrite Regrets returns {}", g.perm(m).name);
+        stat(g, p, "sf_regrets", 1);
+    }
+    if g.db.id(super::alela::JACE).is_some() {
+        super::alela::empower(g, p, 2);
+    }
+    Ok("gy")
+}
+
+// ================================================================== Presumed Dead
+/// **Presumed Dead**: until end of turn the target creature gets +2/+0 and "when this creature dies, return it to the
+/// battlefield under its owner's control and suspect it" (`ret_dies_suspect`, run by `sheoldred::returns_when_dies`
+/// from `zones::die_rest`). The target comes in `ctx.target`.
+fn presumed_resolve(g: &mut Game, _p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if let Some(t) = ctx.target.filter(|&t| live(g, t) && g.is_creature(t)) {
+        g.perm_mut(t).eot_pt.0 += 2;
+        super::sheoldred::grant_eot(g, t, "ret_dies_suspect");
+        crate::glog!(g, "    Presumed Dead on {}", g.perm(t).name);
+    }
+    Ok("gy")
+}
+
+const PRESUMED: &str = "Presumed Dead";
+
+fn cast_presumed(g: &mut Game, p: PlayerId, t: PermId) -> Res<bool> {
+    let Some(c) = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == PRESUMED) else { return Ok(false) };
+    if !crate::engine::cast::castable(g, p, c, "hand") || !can_pay(g, p, 1, "B", false) || !pay(g, p, 1, "B", false)? {
+        return Ok(false);
+    }
+    crate::engine::cast::cast_card(g, p, c, "hand", Ctx { target: Some(t), ..Ctx::default() })?;
+    stat(g, p, "sf_presumed", 1);
+    Ok(true)
+}
+
+/// in response to destroy / damage removal (or a wipe) aimed at p's creature m: Presumed Dead when it is Sephiroth
+/// or worth 2 or more. The removal still resolves; the creature comes back suspected (menace, can't block).
+pub fn presumed_protect(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
+    if !(kind == "destroy" || kind.starts_with("dmg") || kind.starts_with("shrink") || kind == "sac")
+        || !live(g, m)
+        || !g.is_creature(m)
+        || g.perm(m).token
+        || g.perm(m).eot_kw.contains(&"ret_dies_suspect")
+        || (!is_seph(g, m) && pval(g, m) < 2.0)
+    {
+        return Ok(false);
+    }
+    cast_presumed(g, p, m)
+}
+
+/// the main-phase play: Presumed Dead before combat on the creature that attacks best (menace, +2 power, and it
+/// survives a block), when an opposing creature could kill it. Plan arg: the permanent.
+fn presumed_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let t = PermId(arg as u32);
+    if !live(g, t) || !g.is_creature(t) {
+        return Ok(false);
+    }
+    cast_presumed(g, p, t)
+}
+
+pub fn presumed_option(g: &Game, p: PlayerId) -> Option<Opt> {
+    let c = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == PRESUMED)?;
+    if g.active != Some(p) || !crate::engine::cast::castable(g, p, c, "hand") || !can_pay(g, p, 1, "B", false) {
+        return None;
+    }
+    if !g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m))) {
+        return None; // nothing blocks: no need
+    }
+    let t = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            live(g, m) && g.is_creature(m) && !g.perm(m).tapped && !g.perm(m).sick && !is_seph(g, m) && !g.perm(m).token
+        })
+        .max_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)))?;
+    (pval(g, t) >= 2.5).then(|| Opt {
+        utility: 4.0 + pval(g, t) * 0.3,
+        label: format!("Presumed Dead on {}", g.perm(t).name),
+        act: Some(Action::Plan { f: presumed_go, arg: t.0 as i64 }),
+    })
+}
+
+// ================================================================== Braids's Frightful Return
+pub const BRAIDS: &str = "Braids's Frightful Return";
+
+/// a creature p would sacrifice to chapter I: a token, else a creature worth under 1.8 that is not the commander
+fn braids_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).is_cmd && !is_seph(g, m) && pval(g, m) < 1.8)
+        .min_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)))
+}
+
+/// the chapter read ahead starts on: II when the graveyard holds a creature worth returning, I with spare fodder and
+/// cards in an opponent's hand, otherwise III (which sacrifices the Saga at once)
+fn braids_start(g: &Game, p: PlayerId) -> i64 {
+    if g.player(p).gy.iter().any(|&c| steal_value(g, c) >= 3.0) {
+        2
+    } else if braids_fodder(g, p).is_some() && g.opps(p).any(|q| !g.player(q).hand.is_empty()) {
+        1
+    } else {
+        3
+    }
+}
+
+/// one chapter of Braids's Frightful Return (the trigger window is the chapter's commit point)
+fn braids_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
+    match n {
+        1 => {
+            // you may sacrifice a creature; if you do, each opponent discards a card
+            if let Some(f) = braids_fodder(g, p)
+                && crate::engine::stack::trigger_window(g, p, Some(src), "chapter I: sacrifice, each opponent discards", Some(3.0))?
+                && live(g, f)
+            {
+                die(g, f, "sac")?;
+                for q in g.opps(p).collect::<Vec<_>>() {
+                    crate::engine::cast::discard_worst(g, q, 1)?;
+                }
+            }
+        }
+        2 => {
+            let best = g
+                .player(p)
+                .gy
+                .iter()
+                .copied()
+                .filter(|&c| g.db.get(c).creature)
+                .max_by(|&a, &b| steal_value(g, a).total_cmp(&steal_value(g, b)));
+            if let Some(c) = best
+                && crate::engine::stack::trigger_window(g, p, Some(src), "chapter II: creature card to hand", Some(3.0))?
+                && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
+            {
+                g.player_mut(p).gy.remove(i);
+                g.player_mut(p).hand.push(c);
+                crate::glog!(g, "    Braids's Frightful Return returns {} to hand", g.db.get(c).name);
+                stat(g, p, "sf_braids_returns", 1);
+            }
+        }
+        _ => {
+            // target opponent (the one with the most nonland, nontoken permanents) may sacrifice one; if not, loses 2 and you draw
+            let spare = |g: &Game, q: PlayerId| -> Option<PermId> {
+                g.player(q)
+                    .perms
+                    .iter()
+                    .copied()
+                    .filter(|&m| live(g, m) && !g.perm(m).token && g.perm(m).cd.is_some_and(|c| !g.db.get(c).land))
+                    .min_by_key(|&m| cmc_of(g, m))
+            };
+            let count = |g: &Game, q: PlayerId| g.player(q).perms.iter().filter(|&&m| live(g, m) && !g.perm(m).token).count();
+            let Some(q) = g.opps(p).filter(|&q| g.player(q).alive).max_by_key(|&q| count(g, q)) else { return Ok(()) };
+            if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter III: sacrifice or lose 2 and they draw", Some(3.0))? {
+                return Ok(());
+            }
+            // the opponent gives up a mana-value 0 or 1 permanent, not a better one
+            match spare(g, q).filter(|&m| cmc_of(g, m) <= 1) {
+                Some(m) => die(g, m, "sac")?,
+                None => {
+                    lose_life(g, q, 2, Some(p), "other", None)?;
+                    draw(g, p, 1, false)?;
+                    stat(g, p, "sf_braids_drains", 1);
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+/// **Braids's Frightful Return** (read ahead Saga): enters on the chapter `braids_start` picks, with that many lore
+/// counters; skipped chapters don't trigger. Sacrificed after III. Lore counters are added at the upkeep (`braids_lore`)
+/// rather than after the draw step, and proliferate does not add one (a rare case in this deck).
+fn braids_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = g.perm(src).owner;
+    let n = braids_start(g, o);
+    g.perm_mut(src).data.set(DataKey::Lore, Val::Int(n));
+    crate::glog!(g, "    {} reads ahead to chapter {n}", g.perm(src).name);
+    braids_chapter(g, src, o, n)?;
+    if n >= 3 && live(g, src) {
+        die(g, src, "sac")?;
+    }
+    Ok(())
+}
+
+fn braids_lore(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != g.perm(src).owner || !live(g, src) || g.perm(src).data.get(DataKey::Lore).is_none() {
+        return Ok(());
+    }
+    let n = g.perm(src).data.int(DataKey::Lore) + 1;
+    g.perm_mut(src).data.set(DataKey::Lore, Val::Int(n));
+    braids_chapter(g, src, p, n)?;
+    if n >= 3 && live(g, src) {
+        die(g, src, "sac")?;
+    }
+    Ok(())
 }
