@@ -1,0 +1,7 @@
+15:25 built 628abe5
+15:29 t1 exit 0 [loose       ] win  41.6% ->  40.0%  (delta -1.6 pts, noise ±3.7, paired)   n=1000
+15:33 t2 exit 0 [loose       ] win  46.2% ->  45.5%  (delta -0.7 pts, noise ±3.9, paired)   n=1000
+15:36 t3 exit 0 [loose       ] win  35.6% ->  34.8%  (delta -0.8 pts, noise ±3.6, paired)   n=1000
+15:38 t4 exit 0 [loose       ] win  30.9% ->  34.0%  (delta +3.1 pts, noise ±3.3, paired)   n=1000
+15:40 t5 exit 0 [loose       ] win  19.7% ->  21.1%  (delta +1.4 pts, noise ±2.8, paired)   n=1000
+15:40 DONE
