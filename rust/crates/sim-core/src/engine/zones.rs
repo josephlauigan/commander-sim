@@ -499,6 +499,20 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
             }
         }
     }
+    if on {
+        for s in crate::impls::t0_giada::sleuths_for(g, m) {
+            let t = Trigger {
+                controller: g.perm(s).owner,
+                src: Some(s),
+                act: TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } },
+                name: None,
+                known: false,
+                imp: None,
+                cast_etb: false,
+            };
+            queue_triggers(g, vec![t])?; // Angelic Sleuth: another permanent of yours with counters left
+        }
+    }
     Ok(())
 }
 

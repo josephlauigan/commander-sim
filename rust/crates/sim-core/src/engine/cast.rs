@@ -167,6 +167,9 @@ fn sac_phrase(t: &str) -> Option<String> {
 /// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)
 pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
     let d = g.db.get(c);
+    if crate::impls::t0_giada::cast_locked(g, p, c) {
+        return false; // Serra Avenger: not on your first three turns
+    }
     if !d.creature && !d.land {
         if let Some((q, t)) = g.player(p).hope_lock
             && g.player(q).alive

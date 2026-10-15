@@ -183,6 +183,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
         } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick) {
+            if &*d.name == "Giada, Font of Hope" && !g.pay_for.is_some_and(|c| g.db.get(c).has_subtype("angel")) {
+                continue; // spend this mana only to cast an Angel spell
+            }
             if &*d.name == "Hydro-Channeler" && !g.pay_for.is_some_and(|c| g.db.get(c).instant || g.db.get(c).sorcery) {
                 continue;
             }

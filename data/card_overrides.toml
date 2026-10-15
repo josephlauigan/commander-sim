@@ -7414,3 +7414,138 @@ note = "Aura: when the enchanted creature dies or is exiled its card returns to 
 dsl = []
 status = "Full"
 note = "3/3; upkeep: surveil 1, then with three or more creature cards in our graveyard it becomes prepared; prepared, {B} casts a copy of Reanimate on the best creature card in any graveyard (not below 8 life after the loss) (card code in impls/sephfs_cards.rs)"
+
+["Giada, Font of Hope"]
+status = "Full"
+note = "flying, vigilance; each other Angel (and Angel token) enters with a +1/+1 counter per Angel already controlled; {T}: {W} only for Angel spells (impls/t0_giada.rs, engine/mana.rs)"
+
+["Search the Premises"]
+status = "Full"
+note = "whenever a creature attacks you, investigate (one Clue per attacker; attackers sent at your planeswalkers are not counted, and a split attack counts by its main defender)"
+
+["Secret Rendezvous"]
+tags = "draw=3"
+dsl = []
+status = "Full"
+note = "you and the opponent with the weakest board each draw three cards"
+
+["Angel of Vitality"]
+status = "Full"
+note = "flying; every life gain is +1 (engine/life.rs gain); +2/+2 at 25 or more life"
+
+["Angel of the Ruins"]
+dsl = []
+status = "Full"
+note = "flying; enters: exile up to two of the opponents' artifacts/enchantments (best first); Plainscycling {2} at the end of the turn before yours when short of lands (a person's card is cycled by the AI only)"
+
+["Angelic Field Marshal"]
+status = "Full"
+note = "flying; lieutenant: with your commander out it is +2/+2 and your creatures have vigilance"
+
+["Angelic Sleuth"]
+status = "Full"
+note = "flying; another permanent of yours leaving with counters (+1/+1, -1/-1, loyalty, lore) investigates"
+
+["Court of Grace"]
+dsl = []
+status = "Full"
+note = "enters: you become the monarch; upkeep: a 1/1 flying Spirit, or a 4/4 flying Angel token if you're the monarch"
+
+["Cut a Deal"]
+status = "Full"
+note = "each opponent draws a card, then you draw a card for each opponent who did (compiled; checked against the Oracle text)"
+
+["Defy Death"]
+dsl = []
+status = "Full"
+note = "returns the best creature card from your graveyard; an Angel gets two +1/+1 counters (Exemplar of Light draws)"
+
+["Emeria Shepherd"]
+dsl = []
+status = "Full"
+note = "flying; landfall: the best nonland permanent card from your graveyard to hand, or to the battlefield if the land is a Plains"
+
+["Exemplar of Light"]
+dsl = []
+status = "Full"
+note = "flying; gaining life puts a +1/+1 counter on it; counters on it (also from Defy Death and proliferate) draw a card once each turn"
+
+["Fateful Absence"]
+dsl = []
+status = "Full"
+note = "destroys the target creature or planeswalker; its controller investigates"
+
+["Firemane Commando"]
+dsl = []
+status = "Full"
+note = "flying; you attacking with two or more creatures draws a card; another player attacking with two or more creatures draws if none attacked you (judged by the attack's main defender)"
+
+["Herald of Eternal Dawn"]
+status = "Full"
+note = "flash, flying; its controller can't lose the game (engine/life.rs check_state), so no opponent can win while it lives"
+
+["Herald of War"]
+dsl = []
+status = "Full"
+note = "flying; attacking puts a +1/+1 counter on it; your Angel and Human spells cost {1} less per counter on it"
+
+["Heraldic Banner"]
+tags = "rock=1:W"
+dsl = []
+status = "Full"
+note = "the colour chosen is white (an all-white deck): {T}: {W}, your white creatures get +1/+0 per Banner"
+
+["Merchant of Truth"]
+status = "Full"
+note = "flying; a nontoken creature of yours dying (itself too) investigates; with Clues you control, attacking alone gives +1/+1 per Clue (exalted)"
+
+["Metropolis Reformer"]
+status = "Full"
+note = "flying, vigilance; you have hexproof; damage dealt to it (combat or a damage spell) gains you that much life"
+
+["Norn's Choirmaster"]
+status = "Full"
+note = "flying, first strike; your commander entering or attacking proliferates"
+
+["Righteous Valkyrie"]
+tags = "pow=2 tgh=4 fly"
+status = "Full"
+note = "flying; another Angel or Cleric of yours entering (token too) gains life equal to its toughness; creatures you control get +2/+2 while you have 47 or more life"
+
+["Sephara, Sky's Blade"]
+status = "Full"
+note = "flying, lifelink; other flyers of yours are indestructible; may be cast for {W} and tapping four untapped flyers (when the mana cost is out of reach)"
+
+["Seraph of the Sword"]
+status = "Full"
+note = "flying; all combat damage that would be dealt to it is prevented (burn is not)"
+
+["Serra Avenger"]
+status = "Full"
+note = "flying, vigilance; can't be cast on your first three turns (engine/cast.rs castable)"
+
+["Starnheim Aspirant"]
+status = "Full"
+note = "your Angel spells cost {2} less"
+
+["Vanguard Seraph"]
+status = "Full"
+note = "flying; the first time each turn you gain life, surveil 1"
+
+["Wojek Investigator"]
+status = "Full"
+note = "flying, vigilance; upkeep: investigate once per opponent with more cards in hand than you"
+
+["Youthful Valkyrie"]
+status = "Full"
+note = "flying; another Angel of yours entering (token too) puts a +1/+1 counter on it"
+
+["Bishop of Wings"]
+tags = "human pow=1 tgh=4"
+status = "Full"
+note = "an Angel of yours entering (token too) gains you 4 life; an Angel of yours dying makes a 1/1 flying Spirit"
+
+["Linvala, the Preserver"]
+tags = "leg pow=5 bomb=5 fly"
+status = "Full"
+note = "flying; enters: gain 5 life if an opponent has more life, and a 3/3 flying Angel if an opponent controls more creatures"

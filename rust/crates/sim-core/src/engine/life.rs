@@ -94,6 +94,7 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
     if crate::dsl::no_lifegain(g, p) || (!g.hooks.is_empty() && hooks::any_no_lifegain(g, p)) {
         return Ok(());
     }
+    let n = n + crate::impls::t0_giada::gain_bonus(g, p, n); // Angel of Vitality: plus 1
     g.player_mut(p).life += n;
     // (recorded with no hooked permanent out too: infusion cards cast later this turn read it)
     if n > 0 {
@@ -126,7 +127,7 @@ pub fn check_state(g: &mut Game) -> Res {
     }
     for i in 0..g.players.len() {
         let pl = &g.players[i];
-        if pl.alive && (pl.life <= 0 || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) {
+        if pl.alive && (pl.life <= 0 || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8)) {
             eliminate(g, PlayerId(i as u8));
         }
     }

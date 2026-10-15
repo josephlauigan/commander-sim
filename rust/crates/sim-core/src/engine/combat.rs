@@ -593,15 +593,18 @@ fn resolve_combat_inner(
                 }
                 Some(b) => {
                     let bt = etgh(g, b);
+                    let t0 = crate::impls::t0_giada::combat_proof;
                     let mut a_dies = (epow(g, b) * fiery(g, d) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
-                        && !no_damage(g, a);
+                        && !no_damage(g, a)
+                        && !t0(g, a);
                     if cardcode::damage_prevented(g, b) {
                         a_dies = false;
                     }
                     let mut b_dies = (ap * fiery(g, p) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
-                        && !no_damage(g, b);
+                        && !no_damage(g, b)
+                        && !t0(g, b);
                     if cardcode::prot_vs(g, a, b) {
                         a_dies = false; // protection from creatures / Demons and Dragons
                     }
@@ -620,6 +623,12 @@ fn resolve_combat_inner(
                     }
                     if epow(g, b) > 0 && g.perm(a).on_bf && cardcode::kaldra_exile(g, b, a)? {
                         a_dies = false;
+                    }
+                    if ap > 0 && !no_damage(g, b) && !t0(g, b) && !cardcode::damage_prevented(g, b) {
+                        crate::impls::t0_giada::damaged(g, b, ap)?; // Metropolis Reformer
+                    }
+                    if epow(g, b) > 0 && !no_damage(g, a) && !t0(g, a) && !cardcode::damage_prevented(g, a) {
+                        crate::impls::t0_giada::damaged(g, a, epow(g, b))?;
                     }
                     if b_dies {
                         crate::impls::sephfs_cards::slaver_mark(g, a, b);
