@@ -128,6 +128,9 @@ fn free_worth(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
     if !(d.instant || d.sorcery) || SKIP.iter().any(|&k| t.has(k)) {
         return None;
     }
+    if [SWINE, EXPERIMENT, PROMISE, REVELATION].contains(&&*d.name) {
+        return None; // X spells cast free have X = 0
+    }
     if t.has(Tag::Rem) {
         let ctx = spell_targets(g, p, c, None);
         if ctx.target.is_none() && ctx.face.is_none() {
@@ -476,8 +479,18 @@ fn torrent_resolve(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym>
             .filter(|&m| g.perm(m).on_bf && (g.is_creature(m) || g.perm(m).loyalty.is_some()))
             .collect();
         for m in victims {
-            if g.perm(m).on_bf {
-                apply_removal(g, Some(p), m, &kind, Some(c))?;
+            if !g.perm(m).on_bf {
+                continue;
+            }
+            if g.is_creature(m) {
+                if crate::engine::values::etgh(g, m) <= x {
+                    apply_removal(g, Some(p), m, &kind, Some(c))?; // damage that kills; smaller damage wears off
+                }
+            } else if let Some(l) = g.perm(m).loyalty {
+                g.perm_mut(m).loyalty = Some(l - x);
+                if l - x <= 0 {
+                    crate::engine::zones::die(g, m, "sba")?;
+                }
             }
         }
     }
