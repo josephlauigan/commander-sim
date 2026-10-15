@@ -1,0 +1,10 @@
+
+=== Within-tier balance [loose, n=2000 games per tier; each deck is seated in ~80%] ===
+  Tier 2 (Mid B3): avg game 15.2 rounds, timeouts 10.3%
+    Brago                         22.1% (20.1-24.2)
+    Kaalia of the Vast            17.8% (16.0-19.7)
+    Lord Windgrace                20.6% (18.7-22.6)
+    Meren of Clan Nel Toth        23.2% (21.1-25.3)
+    Sythis                        41.3% (38.9-43.7)  HIGH
+
+(741s total)

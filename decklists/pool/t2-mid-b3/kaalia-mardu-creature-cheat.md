@@ -2,6 +2,8 @@
 
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Fast threats / combat.
 
+Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Black Market Connections, Faithless Looting and Night's Whisper made way for Sheoldred, the Apocalypse, Inferno Titan and Skyclave Apparition (a faster clock and removal behind the cheat). Within Tier 2 (conservative): 19.3% before, 24.4% after.
+
 - **Commander:** Kaalia of the Vast
 - **Color identity:** White, Black, Red
 - **Game Changers (2):** Smothering Tithe, Demonic Tutor
@@ -26,13 +28,13 @@ Kaalia's put-onto-battlefield-attacking trigger (ETBs still fire; cast triggers 
 
 **Commander (1).** Kaalia of the Vast
 
-**Creatures (27).** Admonition Angel, Angel of Serenity, Archangel Avacyn // Avacyn, the Purifier, Archfiend of Despair, Archfiend of Sorrows, Aurelia, Exemplar of Justice, Balefire Dragon, Baneslayer Angel, Bloodgift Demon, Demonlord Belzenlok, Drakuseth, Maw of Flames, Esper Sentinel, Giver of Runes, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Liesa, Shroud of Dusk, Lyra Dawnbringer, Master of Cruelties, Mother of Runes, Razaketh, the Foulblooded, Resplendent Angel, Rune-Scarred Demon, Scourge of Valkas, Selfless Spirit, Terror of the Peaks, Thundermaw Hellkite
+**Creatures (30).** Admonition Angel, Angel of Serenity, Archangel Avacyn // Avacyn, the Purifier, Archfiend of Despair, Archfiend of Sorrows, Aurelia, Exemplar of Justice, Balefire Dragon, Baneslayer Angel, Bloodgift Demon, Demonlord Belzenlok, Drakuseth, Maw of Flames, Esper Sentinel, Giver of Runes, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Inferno Titan, Liesa, Shroud of Dusk, Lyra Dawnbringer, Master of Cruelties, Mother of Runes, Razaketh, the Foulblooded, Resplendent Angel, Rune-Scarred Demon, Scourge of Valkas, Selfless Spirit, Sheoldred, the Apocalypse, Skyclave Apparition, Terror of the Peaks, Thundermaw Hellkite
 
-**Enchantments (4).** Black Market Connections, Dragon Tempest, Phyrexian Arena, Smothering Tithe
+**Enchantments (3).** Dragon Tempest, Phyrexian Arena, Smothering Tithe
 
 **Artifacts (12).** Arcane Signet, Boros Signet, Fellwar Stone, Lightning Greaves, Orzhov Signet, Rakdos Signet, Sol Ring, Swiftfoot Boots, Talisman of Conviction, Talisman of Hierarchy, Talisman of Indulgence, Whispersilk Cloak
 
-**Sorceries (7).** Blasphemous Act, Demonic Tutor, Diabolic Intent, Faithless Looting, Night's Whisper, Sign in Blood, Vindicate
+**Sorceries (5).** Blasphemous Act, Demonic Tutor, Diabolic Intent, Sign in Blood, Vindicate
 
 **Instants (12).** Anguished Unmaking, Boros Charm, Chaos Warp, Crackling Doom, Deflecting Swat, Despark, Flawless Maneuver, Generous Gift, Kolaghan's Command, Path to Exile, Swords to Plowshares, Terminate
 
@@ -53,7 +55,6 @@ Kaalia's put-onto-battlefield-attacking trigger (ETBs still fire; cast triggers 
 1 Balefire Dragon
 1 Baneslayer Angel
 1 Battlefield Forge
-1 Black Market Connections
 1 Blasphemous Act
 1 Blood Crypt
 1 Bloodgift Demon
@@ -75,7 +76,6 @@ Kaalia's put-onto-battlefield-attacking trigger (ETBs still fire; cast triggers 
 1 Drakuseth, Maw of Flames
 1 Esper Sentinel
 1 Exotic Orchard
-1 Faithless Looting
 1 Fellwar Stone
 1 Flawless Maneuver
 1 Generous Gift
@@ -84,6 +84,7 @@ Kaalia's put-onto-battlefield-attacking trigger (ETBs still fire; cast triggers 
 1 Godless Shrine
 1 Goldspan Dragon
 1 Hellkite Tyrant
+1 Inferno Titan
 1 Isolated Chapel
 1 Kaalia of the Vast
 1 Kolaghan's Command
@@ -93,7 +94,6 @@ Kaalia's put-onto-battlefield-attacking trigger (ETBs still fire; cast triggers 
 1 Marsh Flats
 1 Master of Cruelties
 1 Mother of Runes
-1 Night's Whisper
 1 Nomad Outpost
 1 Orzhov Signet
 1 Path of Ancestry
@@ -108,7 +108,9 @@ Kaalia's put-onto-battlefield-attacking trigger (ETBs still fire; cast triggers 
 1 Savai Triome
 1 Scourge of Valkas
 1 Selfless Spirit
+1 Sheoldred, the Apocalypse
 1 Sign in Blood
+1 Skyclave Apparition
 1 Smothering Tithe
 1 Sol Ring
 1 Sulfurous Springs

@@ -235,10 +235,13 @@ impl Ctx<'_> {
             let seats = sim.seats_for(s, me, None, opp_keys, k);
             GameOut::from_game(&sim.play(s, &seats, &st, false), false)
         });
-        let mut c = Calib { seated: Counter::new(), won: Counter::new(), rounds: 0, timeouts: 0, n };
+        let mut c = Calib { seated: Counter::new(), won: Counter::new(), rounds: 0, timeouts: 0, timeout_won: Counter::new(), n };
         for (_, g) in &games {
             c.rounds += g.round as u64;
             c.timeouts += (g.wintype == Some("timeout")) as u64;
+            if let (Some(w), Some("timeout")) = (g.winner, g.wintype) {
+                c.timeout_won.add(g.players[w].key.to_string(), 1);
+            }
             for (qi, q) in g.players.iter().enumerate() {
                 c.seated.add(q.key.to_string(), 1);
                 c.won.add(q.key.to_string(), (g.winner == Some(qi)) as i64);
@@ -420,11 +423,12 @@ impl Ctx<'_> {
                             ""
                         };
                         println!(
-                            "    {:28} {:5.1}% ({:.1}-{:.1}){flag}",
+                            "    {:28} {:5.1}% ({:.1}-{:.1}){flag}  [{:.1} pts from round-cap wins]",
                             sim.name_of(k),
                             (100 * w) as f64 / s as f64,
                             100.0 * lo,
-                            100.0 * hi
+                            100.0 * hi,
+                            100.0 * r.timeout_won.get(k) as f64 / s as f64
                         );
                     }
                 }
@@ -474,6 +478,8 @@ pub struct Calib {
     pub won: Counter<String>,
     pub rounds: u64,
     pub timeouts: u64,
+    /// wins by round-cap tiebreak (life + 2 x board power), per deck
+    pub timeout_won: Counter<String>,
     /// games planned (errors included, as Python counted len(seeds))
     pub n: u64,
 }
