@@ -1,0 +1,5 @@
+17:47 FIX t1 old 20.7% -> fix 21.4%
+17:47 fix t2 skipped (t1 20.7 -> 21.4)
+17:57 M-on-fix t1 [loose       ] win  21.4% ->  22.6%  (delta +1.2 pts, noise ±2.5, paired)   n=2000
+17:57 M t2 skipped (t1 +1.2)
+17:57 ALL DONE

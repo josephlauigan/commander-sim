@@ -40,10 +40,13 @@ Win rate: **T1 20.6%, T2 18.2%** (was 14.0 / 11.9 on the morning of 10/15). Fair
 | **M-lite mana** (Worn Powerstone, Foundry Inspector, Burnished Hart for Formation, Holy, Secure the Scene) | -0.1 / — | Cuts were dead cards, but the new mana is **cast late** (Powerstone avg round 6.8, stuck 28%; Hart 8.8, stuck 35%): turn-4 mana +0.07 only, plan timing unchanged. |
 | **M mana** (M-lite + Weathered Wayfarer, Stoneforge Mystic) | +1.8 / — | Within noise. **Stoneforge Mystic first cast at avg round 7.1** (a turn-2 tutor); turn-4 mana unchanged, plan by turn 4 25.4% (-1.6). |
 | M without Stoneforge | +1.0 / — | Within noise. |
+| **AI ramp fix** (look-ahead bonus for rocks/ramp/tutors on turns 1-6; cloud only) | +0.7 / — | Rocks now come down early (turn-4 mana 3.98 -> 4.23) but **the plan comes online no sooner** (by turn 4: 27% -> 24%): turns 2-3 spent on a rock are turns not spent on Cloud + the first Sword. |
+| **M mana on the fixed AI** | +1.2 / — | Stoneforge now cast earlier (stuck 15% -> 9%), turn-8 mana +0.4, but plan by turn 4 falls again (24% -> 21%). Extra mana helps a little late; it doesn't make the deck faster. |
 | Sun Titan for Ultimate Magic: Holy | -0.4 / — | Not broken down; a 6-drop in a mana-starved deck. |
 | Kor Haven for a Plains | -2.5 / — | Not broken down; colourless land in a {W}{W} deck, and its ability ties up {1}{W}. |
 
 ## What this suggests next (untested)
+- **Mana is not the lever (10-15, confirmed):** casting ramp early (AI fix) and adding ramp (M, M-lite) both left the plan's timing unchanged or slower. The plan's total cost (Cloud {W}{W} + Equipment + equip) on turns 2-4 is the real limit; ramp competes with it for the same early turns. Cloud looks close to its ceiling (~21-22% at T1) with this design; defense (Package D) was the one big lever.
 - **Check the AI's play order first (10-15):** two mana packages showed cheap ramp and tutors (Worn Powerstone, Stoneforge Mystic) first cast around round 7. If the AI plays Equipment and creatures before ramp, more mana cards can't help until ramp is cast early. Confirm in traces (time from draw to cast), then fix priorities.
 - **More mana, not more cards:** the dead slots (Unbreakable Formation, Ultimate Magic: Holy) are the cheapest place to
   add ramp (mana rocks / land ramp), so Equipment can be cast and equipped sooner.
