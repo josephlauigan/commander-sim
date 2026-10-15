@@ -666,23 +666,23 @@ mod tier_tests {
         assert_eq!(tier_range(&v(&["t1"])), "t1");
     }
 
-    /// the table in the brief, as data/decks.json carries it
+    /// the matched tiers JD approved on 2026-10-15 (audit/pool/2026-10-14-full), as data/decks.json carries them
     #[test]
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
         let want: [(&str, &[&str]); 11] = [
-            ("yshtola", &["t4", "t5"]),
-            ("seph", &["t4", "t5"]),
-            ("sheoldred", &["t3", "t4"]),
-            ("sauron", &["t2", "t3", "t4"]),
-            ("kefka", &["t2", "t3", "t4"]),
-            ("sephfs", &["t1", "t2", "t3"]),
-            ("veyran", &["t1", "t2", "t3"]),
+            ("yshtola", &["t5"]),
+            ("seph", &["t4"]),
+            ("sheoldred", &["t3", "t4", "t5"]),
+            ("sauron", &["t3", "t4", "t5"]),
+            ("kefka", &["t3", "t4", "t5"]),
+            ("sephfs", &["t4", "t5"]),
+            ("veyran", &["t1", "t2", "t3", "t4"]),
             ("cloud", &["t1", "t2"]),
-            ("titania", &["t1", "t2"]),
+            ("titania", &["t2", "t3", "t4"]),
             ("alela", &["t1"]),
-            ("galadriel", &["t1"]),
+            ("galadriel", &["t1", "t2"]),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t) in want {

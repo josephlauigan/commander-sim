@@ -230,7 +230,8 @@
    "commander": "Galadriel, Light of Valinor",
    "ident": "WUG",
    "tiers": [
-    "t1"
+    "t1",
+    "t2"
    ],
    "cards": [
     "Abduction",
@@ -341,9 +342,9 @@
    "commander": "Kefka, Court Mage // Kefka, Ruler of Ruin",
    "ident": "UBR",
    "tiers": [
-    "t2",
     "t3",
-    "t4"
+    "t4",
+    "t5"
    ],
    "cards": [
     "Alpharael, Dreaming Acolyte",
@@ -454,9 +455,9 @@
    "commander": "Sauron, the Dark Lord",
    "ident": "UBR",
    "tiers": [
-    "t2",
     "t3",
-    "t4"
+    "t4",
+    "t5"
    ],
    "cards": [
     "Aggravated Assault",
@@ -567,8 +568,7 @@
    "commander": "Atraxa, Grand Unifier",
    "ident": "WUBG",
    "tiers": [
-    "t4",
-    "t5"
+    "t4"
    ],
    "cards": [
     "Altar of Dementia",
@@ -679,9 +679,8 @@
    "commander": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
    "ident": "B",
    "tiers": [
-    "t1",
-    "t2",
-    "t3"
+    "t4",
+    "t5"
    ],
    "cards": [
     "Accursed Marauder",
@@ -793,7 +792,8 @@
    "ident": "B",
    "tiers": [
     "t3",
-    "t4"
+    "t4",
+    "t5"
    ],
    "cards": [
     "Accursed Marauder",
@@ -904,8 +904,9 @@
    "commander": "Titania, Protector of Argoth",
    "ident": "G",
    "tiers": [
-    "t1",
-    "t2"
+    "t2",
+    "t3",
+    "t4"
    ],
    "cards": [
     "Annoyed Altisaur",
@@ -1018,7 +1019,8 @@
    "tiers": [
     "t1",
     "t2",
-    "t3"
+    "t3",
+    "t4"
    ],
    "cards": [
     "Abrade",
@@ -1129,7 +1131,6 @@
    "commander": "Y'shtola, Night's Blessed",
    "ident": "WUB",
    "tiers": [
-    "t4",
     "t5"
    ],
    "cards": [
