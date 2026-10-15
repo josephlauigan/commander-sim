@@ -1086,6 +1086,8 @@ pub struct Game {
     pub resto_target: Option<PermId>,
     /// Eerie Interlude: (player, card) exiled until the beginning of the next end step (Python's `g.eot_returns`)
     pub eot_returns: Vec<(PlayerId, CardId)>,
+    /// the Captain America precon's bookkeeping (impls/t0_captain.rs)
+    pub t0c: crate::impls::t0_captain::T0c,
 }
 
 impl Game {
@@ -1208,6 +1210,7 @@ impl Game {
             zur_due: vec![],
             resto_target: None,
             eot_returns: vec![],
+            t0c: Default::default(),
         }
     }
 

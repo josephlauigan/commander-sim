@@ -152,6 +152,7 @@ pub fn vorinclex(g: &Game, actor: PlayerId, n: i32) -> i32 {
 pub fn put_plus(g: &mut Game, m: PermId, n: i32) {
     let n = vorinclex(g, g.perm(m).owner, n);
     g.perm_mut(m).plus += n;
+    crate::impls::t0_captain::counters_put(g, m, n); // Captain Marvel copies counters
 }
 
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control; Hardened Scales:
@@ -494,6 +495,9 @@ pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
 // ------------------------------------------------------------------ M3: combat and the turn
 /// rules.evasion_blocked: fear, intimidate, Signal Pest and kin: b can't block a
 pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
+    if crate::impls::t0_captain::evasion_blocked(g, b, a) {
+        return true; // Ant-Man: not by creatures with greater power
+    }
     if crate::impls::cloud::evasion_blocked(g, b, a) {
         return true; // Wrecking Ball Arm, Trailblazer's Boots
     }
@@ -872,6 +876,7 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
         crate::impls::zur::zur_end_step(g, p)?; // The Eternal Wanderer
     }
     crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
+    crate::impls::t0_captain::end_returns(g)?; // Gift of Immortality
     if !g.jar_due.is_empty() {
         crate::impls::legends::jar_end(g)?; // Memory Jar
     }
@@ -918,6 +923,7 @@ pub fn skip_draw(g: &Game, p: PlayerId) -> bool {
 pub fn turn_start(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::lands::revert_animated(g)?;
     crate::impls::rules2::uncrew(g, p);
+    crate::impls::t0_captain::turn_start(g, p);
     let drain = std::mem::take(&mut g.player_mut(p).drain_mana);
     g.player_mut(p).floating.c += drain; // Mana Drain: the countered spell's mana value, colourless
     for q in 0..g.players.len() {

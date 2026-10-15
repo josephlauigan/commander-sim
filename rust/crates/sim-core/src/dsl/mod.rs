@@ -1671,6 +1671,7 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     pay(g, p, gn, &pips, false)?;
     if cost.tap == Some(true) {
         g.perm_mut(src).tapped = true;
+        crate::impls::t0_captain::became_tapped(g, src); // Captain America, Living Legend
     }
     if let Some(l) = cost.life {
         lose_life(g, p, l, Some(p), "other", None)?;

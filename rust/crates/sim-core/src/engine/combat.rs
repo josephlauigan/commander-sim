@@ -301,6 +301,7 @@ fn attack_imp(t: &crate::cards::Tags) -> f64 {
 
 /// p attacked d with atk: attack triggers (once per copy: Isshin). Returns the new attacking creatures.
 pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
+    crate::impls::t0_captain::note_attack(g, p, d); // Avenge, Heroic Return
     let copies = 1 + hooks::total_trigger_copies(g, p, "attack", None); // Isshin
     let mut new = vec![];
     for _ in 0..copies {
@@ -608,6 +609,9 @@ fn resolve_combat_inner(
                     if cardcode::prot_vs(g, b, a) {
                         b_dies = false;
                     }
+                    if b_dies && crate::impls::t0_captain::sac_creature(g, d, b, ap) {
+                        b_dies = false; // Heroic Sacrifice: the damage goes to the chosen creature
+                    }
                     let (fa, fb) = (first_strike(g, a), first_strike(g, b));
                     if fa && !fb && b_dies {
                         a_dies = false; // first strike kills the blocker first
@@ -621,6 +625,7 @@ fn resolve_combat_inner(
                     if epow(g, b) > 0 && g.perm(a).on_bf && cardcode::kaldra_exile(g, b, a)? {
                         a_dies = false;
                     }
+                    crate::impls::t0_captain::pair_mark(g, a, b); // Hawkeye
                     if b_dies {
                         crate::impls::sephfs_cards::slaver_mark(g, a, b);
                         die(g, b, "destroy")?;
@@ -629,6 +634,7 @@ fn resolve_combat_inner(
                         crate::impls::sephfs_cards::slaver_mark(g, b, a);
                         die(g, a, "destroy")?;
                     }
+                    crate::impls::t0_captain::pair_after(g, a, b); // Hercules
                     dmg
                 }
             };
@@ -652,6 +658,9 @@ fn resolve_combat_inner(
                     *g.player_mut(d).lost_names.entry(name).or_insert(0) += 1;
                 }
                 dmg = 0;
+            }
+            if dmg > 0 && crate::impls::t0_captain::sac_player(g, d, dmg) {
+                dmg = 0; // Heroic Sacrifice
             }
             if dmg > 0 && prevents_damage(g, d, Some(p)) {
                 // protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
@@ -738,6 +747,7 @@ fn resolve_combat_inner(
                 die(g, b, "sac")?; // the Ring, level 3: blockers are sacrificed
             }
         }
+        crate::impls::t0_captain::sac_finish(g)?; // Heroic Sacrifice
         cardcode::vanguard_blocks(g, &assign)?; // Defiant Vanguard: at end of combat
         g.blocking.clear();
         if !conn.is_empty() && has(g, p, Tag::Facebreaker) {
@@ -1021,6 +1031,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         for &m in &atk {
             if !(g.perm(m).vig || kw(g, m, "vigilance")) {
                 g.perm_mut(m).tapped = true;
+                crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
             }
         }
         let new = attack_triggers(g, p, &atk, d)?; // once for the whole attack, naming the main defender
