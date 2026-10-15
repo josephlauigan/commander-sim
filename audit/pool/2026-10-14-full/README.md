@@ -63,4 +63,4 @@ the clear steps are T2 → T3 → T5. Details: `audit/pool/2026-10-14-t0/`, `aud
 | Galadriel | below every tier | (T1-T2 for now) | t1 | 8-17% everywhere. |
 | Alela | below every tier | (T1 for now) | t1 | 6-15% everywhere. |
 
-`data/my_decks.toml` is **not** changed here: these are recommendations for JD to accept or edit.
+Applied to `data/my_decks.toml` on 2026-10-15 (JD approved all of them).
