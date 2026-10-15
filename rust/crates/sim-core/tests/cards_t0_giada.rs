@@ -544,3 +544,22 @@ fn a_whole_game_with_the_deck_plays_to_the_end() {
     assert!(g.round >= 1);
     let _ = turn::run_rounds;
 }
+
+#[test]
+fn speaker_of_the_heavens_needs_47_life_and_makes_a_4_4_angel() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    let s = perm(&mut g, P0, "Speaker of the Heavens");
+    g.perm_mut(s).sick = false;
+    let hook = *g.registry.get(card(&g, "Speaker of the Heavens")).unwrap();
+    g.player_mut(P0).life = 40;
+    assert!((hook.options.unwrap())(&mut g, s, P0, None).unwrap().is_empty(), "40 life: not allowed");
+    g.player_mut(P0).life = 47;
+    let opts = (hook.options.unwrap())(&mut g, s, P0, None).unwrap();
+    let Some(sim_core::hooks::Action::Ability { src, f, arg }) = opts.into_iter().next().unwrap().act else { panic!() };
+    assert!(f(&mut g, src, P0, arg).unwrap());
+    assert!(g.perm(s).tapped);
+    let angels = named(&g, P0, "Token");
+    assert_eq!(angels.len(), 1);
+    assert_eq!(pt(&g, angels[0]), (4, 4));
+}

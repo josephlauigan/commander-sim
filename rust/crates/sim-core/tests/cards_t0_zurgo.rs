@@ -578,3 +578,81 @@ fn zurgo_is_cast_from_a_trace_board() {
     let c = card(&g, "Zurgo Stormrender");
     assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap());
 }
+
+// ------------------------------------------------------------------ Bone Devourer, Thalisse
+#[test]
+fn bone_devourer_enters_with_counters_for_deaths_and_draws_that_many() {
+    let mut g = pod();
+    g.died_count = (Some(g.turn_stamp()), 3);
+    let c = take(&mut g, P0, "Bone Devourer");
+    let m = zones::enter(&mut g, P0, c, zones::Enter::default()).unwrap();
+    assert_eq!(g.perm(m).plus, 3, "one counter per creature that died this turn");
+    let (hand0, life0) = (g.player(P0).hand.len(), g.player(P0).life);
+    zones::die(&mut g, m, "destroy").unwrap();
+    assert_eq!(g.player(P0).hand.len(), hand0 + 3, "draws X");
+    assert_eq!(g.player(P0).life, life0 - 3, "loses X");
+}
+
+#[test]
+fn bone_devourer_with_no_deaths_enters_plain_and_dies_for_nothing() {
+    let mut g = pod();
+    g.died_count = (None, 0);
+    let c = take(&mut g, P0, "Bone Devourer");
+    let m = zones::enter(&mut g, P0, c, zones::Enter::default()).unwrap();
+    assert_eq!(g.perm(m).plus, 0);
+    let hand0 = g.player(P0).hand.len();
+    zones::die(&mut g, m, "destroy").unwrap();
+    assert_eq!(g.player(P0).hand.len(), hand0);
+}
+
+#[test]
+fn thalisse_makes_one_spirit_per_token_created_this_turn() {
+    let mut g = pod();
+    let t = perm(&mut g, P0, "Thalisse, Reverent Medium");
+    let spec = zones::Tokens { fly: true, types: vec!["spirit"], ..zones::Tokens::new(2, 1) };
+    zones::make_tokens(&mut g, P0, spec).unwrap();
+    zones::make_artifact_tokens(&mut g, P0, "Treasure", 1).unwrap();
+    assert_eq!(g.player(P0).tok_made.1, 3);
+    let before = tokens(&g, P0).len();
+    run_hook(&mut g, t, Event::EndStep, &Call::Player { p: P1 }).unwrap();
+    assert_eq!(tokens(&g, P0).len(), before + 3, "X = 3 tokens created, whoever's end step it is");
+    // an opponent's tokens don't count
+    assert_eq!(g.player(P1).tok_made.1, 0);
+}
+
+#[test]
+fn filter_lands_need_a_matching_land_and_the_temple_needs_five_lands() {
+    use sim_core::engine::mana::{land_colors_now, mana_units};
+    let mut g = pod();
+    let fh = lands(&mut g, P0, "Fetid Heath", 1, false)[0];
+    assert_eq!(land_colors_now(&g, P0, fh).count(), 0, "alone it makes colourless only");
+    lands(&mut g, P0, "Plains", 1, false);
+    let c = land_colors_now(&g, P0, fh);
+    assert!(c.has('W') && c.has('B'), "with a Plains to pay the filter cost");
+    let mut g = pod();
+    let t = lands(&mut g, P0, "Temple of the False God", 1, false)[0];
+    lands(&mut g, P0, "Plains", 3, false);
+    let amt = |g: &Game| {
+        mana_units(g, P0, false).iter().find(|u| u.src == sim_core::engine::mana::Source::Land(t)).unwrap().amt
+    };
+    assert_eq!(amt(&g), 0, "four lands");
+    lands(&mut g, P0, "Plains", 1, false);
+    assert_eq!(amt(&g), 2, "five lands");
+}
+
+#[test]
+fn idol_of_oblivion_draws_only_after_a_token_was_created_this_turn() {
+    let mut g = pod();
+    g.active = Some(P0);
+    let idol = perm(&mut g, P0, "Idol of Oblivion");
+    let hook = card_hook(&g, "Idol of Oblivion");
+    assert!((hook.options.unwrap())(&mut g, idol, P0, Some(true)).unwrap().is_empty(), "no token yet");
+    token(&mut g, P0, 1);
+    zones::note_tokens(&mut g, P0, 1);
+    let opts = (hook.options.unwrap())(&mut g, idol, P0, Some(true)).unwrap();
+    let Some(Action::Ability { src, f, arg }) = opts.into_iter().next().unwrap().act else { panic!() };
+    let hand0 = g.player(P0).hand.len();
+    assert!(f(&mut g, src, P0, arg).unwrap());
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1);
+    assert!(g.perm(idol).tapped);
+}

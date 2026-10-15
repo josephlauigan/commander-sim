@@ -1182,6 +1182,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Windbrisk Heights")?;
     c.land_etb = Some(windbrisk_etb);
     c.land_options = Some(windbrisk_options);
+    register_x_cards(r, db)?;
+    register_heath(r, db)?;
+    register_idol(r, db)?;
     Ok(())
 }
 
@@ -1198,4 +1201,134 @@ pub fn tokens_carry_board(g: &Game, q: PlayerId) -> bool {
         }
     }
     n >= 2 && tokens >= 0.75 * all
+}
+
+// ================================================================== Bone Devourer, Thalisse
+/// **Bone Devourer**: enters with a +1/+1 counter for each creature that died this turn (an enters-with replacement:
+/// runs at once)
+fn devourer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let n = if g.died_count.0 == Some(g.turn_stamp()) { g.died_count.1 as i32 } else { 0 };
+    if n > 0 {
+        crate::cardcode::add_counters(g, m, n);
+    }
+    Ok(())
+}
+
+/// Bone Devourer dies: you draw X cards and lose X life, X the number of +1/+1 counters on it
+fn devourer_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let x = g.perm(m).plus.max(0);
+    let o = owner(g, m);
+    if x > 0 && trigger_window(g, o, Some(src), "draw X cards, lose X life", Some(3.0))? {
+        draw(g, o, x as u32, false)?;
+        lose_life(g, o, x, Some(o), "life", None)?;
+    }
+    Ok(())
+}
+
+/// **Thalisse, Reverent Medium**: at the beginning of each end step, X 1/1 white Spirits with flying, X the number of
+/// tokens you created this turn
+fn thalisse_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
+    let o = owner(g, src);
+    let x = if g.player(o).tok_made.0 == Some(g.turn_stamp()) { g.player(o).tok_made.1 } else { 0 };
+    if x > 0 && on_bf(g, src) && trigger_window(g, o, Some(src), "X 1/1 Spirits with flying", Some(4.0))? {
+        let spec =
+            Tokens { fly: true, color: Some(Colors::from_letters("W")), types: vec!["spirit"], ..Tokens::new(x, 1) };
+        make_tokens(g, o, spec)?;
+    }
+    Ok(())
+}
+
+pub fn register_x_cards(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, "Bone Devourer")?;
+    c.etb = Some(devourer_etb);
+    c.self_dies = Some(devourer_dies);
+    *c = c.at_once(crate::hooks::Event::Etb);
+    r.card(db, "Thalisse, Reverent Medium")?.end_step = Some(thalisse_end);
+    Ok(())
+}
+
+// ================================================================== Fetid Heath
+/// **Fetid Heath, Cascade Bluffs**: {T}: Add {C}. {W/B},{T}: Add {W}{W}, {W}{B} or {B}{B}. A filter land: it makes coloured mana only
+/// when another land of the player can make {W} or {B} to pay for it (no other source, colourless only)
+fn heath_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
+    let ident = g.player(p).ident;
+    let mine = Colors::from_letters(g.db.get(g.land(l).cd).tags.str(Tag::C).unwrap_or("C"));
+    let fed = g.player(p).lands.iter().any(|&x| {
+        if x == l {
+            return false;
+        }
+        let theirs = match g.db.get(g.land(x).cd).tags.str(Tag::C) {
+            Some("A") => ident,
+            Some(s) => Colors::from_letters(s),
+            None => Colors::NONE,
+        };
+        "WUBRG".chars().any(|ch| mine.has(ch) && theirs.has(ch))
+    });
+    if fed { mine } else { Colors::NONE }
+}
+
+pub fn register_heath(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Fetid Heath")?.land_cols = Some(heath_cols);
+    r.card(db, "Cascade Bluffs")?.land_cols = Some(heath_cols);
+    Ok(())
+}
+
+// ================================================================== Idol of Oblivion
+/// **Idol of Oblivion**: {T}: draw a card, only if you created a token this turn (the AI draws at its main phase after
+/// the token makers have run, or at the end of the turn). {8},{T}, sacrifice: a 10/10 colorless Eldrazi token.
+fn idol_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if owner(g, src) != p || !on_bf(g, src) || g.perm(src).tapped {
+        return Ok(vec![]);
+    }
+    let mut out = vec![];
+    if g.player(p).tok_made.0 == Some(g.turn_stamp()) && g.player(p).tok_made.1 > 0 && post != Some(false) {
+        out.push(Opt {
+            utility: 2.0,
+            label: "Idol of Oblivion: draw a card".into(),
+            act: Some(Action::Ability { src, f: idol_draw, arg: 0 }),
+        });
+    }
+    if post.is_none() && g.active == Some(p) && can_pay(g, p, 8, "", false) {
+        out.push(Opt {
+            utility: 3.0,
+            label: "Idol of Oblivion: a 10/10 Eldrazi".into(),
+            act: Some(Action::Ability { src, f: idol_eldrazi, arg: 0 }),
+        });
+    }
+    Ok(out)
+}
+
+fn idol_draw(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).tapped || g.player(p).tok_made.0 != Some(g.turn_stamp()) {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    if ability_window(g, p, Some(src), "draw a card", None, None)? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(true)
+}
+
+fn idol_eldrazi(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).tapped || !pay(g, p, 8, "", false)? {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    die(g, src, "sac")?;
+    if ability_window(g, p, Some(src), "a 10/10 Eldrazi", None, None)? {
+        let spec = Tokens { color: Some(Colors::NONE), types: vec!["eldrazi"], ..Tokens::new(1, 10) };
+        make_tokens(g, p, spec)?;
+    }
+    Ok(true)
+}
+
+pub fn register_idol(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Idol of Oblivion")?.options = Some(idol_options);
+    Ok(())
 }

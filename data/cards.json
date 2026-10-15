@@ -9812,30 +9812,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters with a number of +1/+1 counters on it equal to the number of creatures that died this turn"
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": "X",
-       "who": "you"
-      },
-      {
-       "do": "lose_life",
-       "n": "X",
-       "who": "you"
-      }
-     ],
-     "event": "dies",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flash",
@@ -9848,7 +9825,7 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -32351,7 +32328,6 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "amt": "2",
     "c": "UR"
    },
    "pow": 0,
@@ -32365,7 +32341,7 @@
    "ward": 0,
    "identity": "RU",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -45926,47 +45902,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "8",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 10,
-       "tgh": 10,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "eldrazi"
-       ]
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -45974,7 +45910,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -86396,32 +86332,7 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 4,
-       "tgh": 4,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "angel"
-       ]
-      }
-     ],
-     "sorcery": true,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "lifelink",
@@ -86435,7 +86346,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 1,
@@ -90214,7 +90125,6 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "amt": "2",
     "c": "WG"
    },
    "pow": 0,
@@ -90228,7 +90138,7 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -94899,29 +94809,7 @@
    "pow": 3,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": "X",
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "spirit"
-       ]
-      }
-     ],
-     "event": "end_step",
-     "who": "any"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -94932,7 +94820,7 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,

@@ -539,3 +539,34 @@ fn calix_minus_seven_returns_every_enchantment_card() {
     assert!(n.contains(&"Sandwurm Convergence".to_string()) && n.contains(&"Mirari's Wake".to_string()));
     assert!(g.player(P0).gy.contains(&card(&g, "Forest")), "the land stays");
 }
+
+#[test]
+fn a_bounceland_played_with_no_other_land_returns_itself() {
+    let mut g = tbl();
+    let c = take(&mut g, P0, "Orzhov Basilica");
+    sim_core::engine::turn::play_land_card(&mut g, P0, c, "plays").unwrap();
+    assert!(g.player(P0).lands.is_empty(), "it must return a land, and it is the only one");
+    assert!(g.player(P0).hand.contains(&c));
+    // with another land out, that land goes back instead of the bounceland
+    lands(&mut g, P0, "Forest", 1, false);
+    let c2 = g.player_mut(P0).hand.iter().copied().find(|&x| x == c).unwrap();
+    g.player_mut(P0).hand.retain(|&x| x != c2);
+    sim_core::engine::turn::play_land_card(&mut g, P0, c2, "plays").unwrap();
+    assert_eq!(g.player(P0).lands.len(), 1);
+    assert_eq!(&*g.db.get(g.land(g.player(P0).lands[0]).cd).name, "Orzhov Basilica");
+}
+
+#[test]
+fn tainted_field_needs_a_swamp_for_coloured_mana_and_sungrass_prairie_is_one_mana() {
+    use sim_core::engine::mana::land_colors_now;
+    let mut g = tbl();
+    let tf = lands(&mut g, P0, "Tainted Field", 1, false)[0];
+    assert!(land_colors_now(&g, P0, tf).count() == 0, "no Swamp: colourless only");
+    lands(&mut g, P0, "Swamp", 1, false);
+    let c = land_colors_now(&g, P0, tf);
+    assert!(c.has('W') && c.has('B'));
+    let sp = lands(&mut g, P0, "Sungrass Prairie", 1, false)[0];
+    let u = sim_core::engine::mana::mana_units(&g, P0, false);
+    let unit = u.iter().find(|x| x.src == sim_core::engine::mana::Source::Land(sp)).unwrap();
+    assert_eq!(unit.amt, 1, "{{1}},{{T}}: add {{G}}{{W}} nets one mana");
+}

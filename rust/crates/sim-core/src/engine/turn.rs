@@ -245,11 +245,11 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
             .copied()
             .filter(|&x| g.land(x).cd != c && !g.db.get(g.land(x).cd).tag(Tag::Bounceland))
             .collect();
-        if let Some(x) = min_by(&others, |x| land_colors_now(g, p, x).count() as f64) {
-            remove_land(g, p, x);
-            let cd = g.land(x).cd;
-            g.player_mut(p).hand.push(cd);
-        }
+        // with no other land to return it returns itself (a first-turn bounceland is a wasted land drop)
+        let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64).unwrap_or(l);
+        remove_land(g, p, x);
+        let cd = g.land(x).cd;
+        g.player_mut(p).hand.push(cd);
     }
     landfall(g, p)?;
     if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) && !crate::impls::titania::hold_fetch(g, p) {

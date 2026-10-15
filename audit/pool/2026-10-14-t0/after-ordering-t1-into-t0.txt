@@ -1,0 +1,10 @@
+
+=== Tier ordering: each deck alone against three decks of the tier below [conservative, n=1000] ===
+  Tier 1 (High B2 / Low B3) into Tier 0 (Bracket 2 precons): 23.4% overall
+    Isshin                        21.4% (19.0-24.0)  (not above 25%)
+    Lathril                       20.2% (17.8-22.8)  (not above 25%)
+    Light-Paws                    37.7% (34.7-40.7)
+    Tatyova                       15.0% (12.9-17.3)  (not above 25%)
+    Teysa Karlov                  22.7% (20.2-25.4)  (not above 25%)
+
+(3092s total)
