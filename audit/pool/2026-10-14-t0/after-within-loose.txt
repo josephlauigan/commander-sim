@@ -1,0 +1,2 @@
+
+=== Within-tier balance [loose, n=2000 games per tier; each deck is seated in ~80%] ===
