@@ -1094,8 +1094,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// **Ghoulish Impetus** (Aura): enchanted creature gets +1/+1 and has deathtouch (the `AuraSpec`); when it dies, the Aura
 /// returns to the battlefield at the beginning of the next end step (`host_dies` queues it on `g.eot_returns`, which
 /// `galadriel::eot_returns` also serves from the graveyard; the returned Aura picks a new host).
-/// **Goad is not modeled** (Partial): it is t0-zurgo's mechanic and the lead wires it in after merging. The AI puts it on
-/// the best opposing creature (the card's purpose), where until goad lands it only helps that creature.
+/// Goad: `t0_zurgo::goaded_by` treats the enchanted creature as goaded by the Aura's controller while it is attached.
+/// The AI puts it on the best opposing creature (the card's purpose).
 fn impetus_dies(g: &mut Game, p: PlayerId, a: PermId, _host: PermId) -> Res {
     if let Some(cd) = g.perm(a).cd {
         let o = g.perm(a).owner;

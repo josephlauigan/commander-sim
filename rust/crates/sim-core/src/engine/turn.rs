@@ -711,6 +711,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             pl.exile.push(c);
         }
     }
+    crate::impls::t0_zurgo::end_cleanup(g, p); // t0-zurgo: Neriv's cards go back to exile, Grenzo's are gone
     if has(g, p, Tag::Necro) && g.humans.get(p).is_none() {
         cardcode::necro_pay(g, p)?; // the person pays with the ability
     }
@@ -802,6 +803,7 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
 /// the start of p's turn: untap, upkeep, draw, the land drop (Python's `_step_start`)
 pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     g.active = Some(p);
+    g.turn_enter = g.enter_no; // t0-zurgo: tokens born after this entered this turn
     for m in &mut g.perms {
         m.eot_pt = (0, 0);
         m.eot_kw.clear();

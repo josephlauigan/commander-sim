@@ -434,6 +434,31 @@ fn ghoulish_impetus_pumps_and_returns_when_the_creature_dies() {
 }
 
 #[test]
+fn ghoulish_impetus_goads_while_attached() {
+    let mut g = tbl();
+    let victim = perm(&mut g, P1, "Grave Titan");
+    g.perm_mut(victim).sick = false;
+    let a = perm(&mut g, P0, "Ghoulish Impetus");
+    assert_eq!(g.perm(a).attached, Some(victim));
+    // it must attack, and not the Aura's controller, even if the AI would keep it home
+    let mut groups: Vec<(PlayerId, Vec<PermId>)> = vec![];
+    sim_core::impls::t0_zurgo::goad_attackers(&mut g, P1, &mut groups, P0).unwrap();
+    assert_eq!(groups.len(), 1);
+    assert_ne!(groups[0].0, P0, "a player other than the goader");
+    assert_eq!(groups[0].1, vec![victim]);
+    // the goad lasts as long as the Aura stays, across the goader's turns
+    g.player_mut(P0).turns += 2;
+    let mut groups: Vec<(PlayerId, Vec<PermId>)> = vec![(P0, vec![victim])];
+    sim_core::impls::t0_zurgo::goad_attackers(&mut g, P1, &mut groups, P0).unwrap();
+    assert!(groups.iter().all(|(q, _)| *q != P0), "redirected away from the goader");
+    // without the Aura it is free again
+    sim_core::engine::zones::die(&mut g, a, "destroy").unwrap();
+    let mut groups: Vec<(PlayerId, Vec<PermId>)> = vec![];
+    sim_core::impls::t0_zurgo::goad_attackers(&mut g, P1, &mut groups, P0).unwrap();
+    assert!(groups.is_empty());
+}
+
+#[test]
 fn demon_casts_an_enchantment_for_life_once_a_turn() {
     let mut g = tbl();
     g.active = Some(P0);

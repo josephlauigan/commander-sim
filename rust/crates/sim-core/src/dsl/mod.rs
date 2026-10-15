@@ -1487,10 +1487,11 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
 
 /// token doublers
 pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
+    let kaya = crate::impls::t0_zurgo::kaya_mult(g, p); // Kaya, Geist Hunter -2: twice as many this turn
     if !active(g) {
-        return 1;
+        return kaya;
     }
-    let mut k = 1;
+    let mut k = kaya;
     for (q, _, ab, i) in statics(g, "tokens") {
         if let Ability::Replacement { multiplier, .. } = &ab[i]
             && q == p
