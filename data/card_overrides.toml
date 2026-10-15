@@ -2158,6 +2158,9 @@ note = "menace; top five: an Elf/Warrior/Tyvar to hand"
 status = "Full"
 note = "prowess; Shaman and Wizard triggers trigger an additional time"
 
+["Haughty Djinn"]
+tags = "pow=0 tgh=4 fly"
+
 ["Heartless Act"]
 status = "Full"
 note = "destroys a creature with no counters, or removes up to three counters (and kills it if that is lethal)"
@@ -2617,6 +2620,7 @@ note = "flying; returns your best ETB permanent (or itself) on entry"
 
 ["Kor Spiritdancer"]
 tags = "pow=0 tgh=2 wizard"
+dsl = []
 status = "Full"
 note = "+2/+2 per Aura on it; draw on Aura casts"
 
