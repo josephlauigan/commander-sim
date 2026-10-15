@@ -18,7 +18,8 @@
 //!     bans, and (pool decks) the tier's Game Changer rule; any problem stops it before a file is touched;
 //!  2. rewrites '## Import list' and the card lines of '## Decklist by type' (keeping the file's own groups and any
 //!     notes after them), and the Game Changers / Lands lines of a pool deck's header;
-//!  3. with --log, adds an '**Updated <date>.**' line naming the cards out and in;
+//!  3. with --log, adds a dated line naming the cards out and in: to decklists/CHANGELOG.md (under the deck's title) for
+//!     your decks, as an '**Updated <date>.**' line at the top of the file for a pool deck;
 //!  4. for your decks, records the new list in tests/fixtures/my_decks_parsed.json (the deck guard test);
 //!  5. reports what changed, how completely the simulator models the new cards, and where the rest of the file still
 //!     mentions cards that left (strategy text isn't rewritten).
@@ -335,6 +336,49 @@ pub fn add_log(text: &str, today: &str, line: &str) -> String {
     lines.join("\n")
 }
 
+/// the history of your decks, under decklists/
+pub const CHANGELOG: &str = "CHANGELOG.md";
+
+/// a '- **<date>.** <line>' bullet at the top of the deck's '### Changes' list in decklists/CHANGELOG.md (the section
+/// is the deck file's title); a missing section, Changes list or file is made
+pub fn add_changelog(log: &str, title: &str, key: &str, file: &str, today: &str, line: &str) -> String {
+    let entry = format!("- **{today}.** {line}").trim_end().to_string();
+    let mut lines: Vec<String> = log.trim_end().split('\n').map(|s| s.to_string()).collect();
+    if log.trim().is_empty() {
+        lines = vec!["# Deck changelog".into()];
+    }
+    let head = format!("## {title}");
+    let Some(at) = lines.iter().position(|l| l.trim_end() == head) else {
+        lines.extend([
+            String::new(),
+            head,
+            String::new(),
+            format!("Deck key `{key}`, `decklists/{file}`."),
+            String::new(),
+            "### Changes".into(),
+            String::new(),
+            entry,
+        ]);
+        return lines.join("\n") + "\n";
+    };
+    let end = (at + 1..lines.len()).find(|i| lines[*i].starts_with("## ")).unwrap_or(lines.len());
+    match (at + 1..end).find(|i| lines[*i].trim_end() == "### Changes") {
+        Some(c) => {
+            let first = (c + 1..end).find(|i| !lines[*i].trim().is_empty()).unwrap_or(end);
+            if first == end || !lines[first].starts_with("- ") {
+                lines.splice(first..first, [entry, String::new()]);
+            } else {
+                lines.insert(first, entry);
+            }
+        }
+        None => {
+            let first = (at + 1..end).find(|i| lines[*i].starts_with("### ")).unwrap_or(end);
+            lines.splice(first..first, ["### Changes".into(), String::new(), entry, String::new()]);
+        }
+    }
+    lines.join("\n") + "\n"
+}
+
 fn today() -> String {
     chrono::Local::now().format("%Y-%m-%d").to_string()
 }
@@ -402,7 +446,9 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     if let Some(r) = inp.cache.get(&commander) {
         recs.insert(commander.clone(), r.clone());
     }
-    if let Some(c2) = &commander2 && let Some(r) = inp.cache.get(c2) {
+    if let Some(c2) = &commander2
+        && let Some(r) = inp.cache.get(c2)
+    {
         recs.insert(c2.clone(), r.clone());
     }
     for (k, n) in &entries {
@@ -459,7 +505,9 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let typed: String = by_type
         .map(|m| m.all().split('\n').filter(|l| !l.starts_with("**Commander")).collect::<Vec<_>>().join("\n"))
         .unwrap_or_default();
-    let commas = uniq_old.iter().any(|n| n.contains(',') && typed.contains(n.as_str()) && *n != commander && Some(n.as_str()) != commander2.as_deref());
+    let commas = uniq_old.iter().any(|n| {
+        n.contains(',') && typed.contains(n.as_str()) && *n != commander && Some(n.as_str()) != commander2.as_deref()
+    });
     let today = today();
     let note = opts.log.as_ref().map(|l| {
         let join = |v: &Vec<String>| if v.is_empty() { "nothing".to_string() } else { v.join(", ") };
@@ -473,7 +521,14 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let singles_old: Vec<String> =
         old.iter().filter(|n| !BASICS.contains(&n.as_str()) && old_count(n) == 1).cloned().collect();
     let key = sort_key(&singles_old);
-    let new_text = rewrite(&text, &commander, commander2.as_deref(), &counts, &recs, commas, &today, note.as_deref(), key)?;
+    // your decks keep their history in decklists/CHANGELOG.md; a pool deck's log line stays in its own file
+    let my_deck = inp
+        .my
+        .iter()
+        .find(|d| std::fs::canonicalize(decks::deck_path(project, d)).ok().as_deref() == Some(path.as_path()))
+        .cloned();
+    let file_note = if my_deck.is_some() { None } else { note.as_deref() };
+    let new_text = rewrite(&text, &commander, commander2.as_deref(), &counts, &recs, commas, &today, file_note, key)?;
 
     let rel = path
         .strip_prefix(&project.root)
@@ -517,6 +572,18 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     } else {
         std::fs::write(&path, &new_text).map_err(|e| format!("{}: {e}", path.display()))?;
         say!("Wrote {rel}.");
+    }
+    if let (Some(d), Some(note)) = (&my_deck, &note) {
+        let log_path = project.decklists().join(CHANGELOG);
+        let log = if log_path.exists() { read(&log_path)? } else { String::new() };
+        let title = text.split('\n').find_map(|l| l.strip_prefix("# ")).unwrap_or(&d.name).trim();
+        let new_log = add_changelog(&log, title, &d.key, &d.file, &today, note);
+        if opts.dry {
+            say!("(--dry-run: would add to decklists/{CHANGELOG}: - **{today}.** {note})");
+        } else {
+            std::fs::write(&log_path, new_log).map_err(|e| format!("{}: {e}", log_path.display()))?;
+            say!("Logged the change in decklists/{CHANGELOG}.");
+        }
     }
     // how well the new cards are modeled, and where the file still mentions cards that left
     let inp2 = Inputs::load(project)?; // the lists as written now (the cache was saved above)
@@ -598,4 +665,41 @@ pub fn fixture_json(inp: &Inputs) -> Result<String, String> {
 fn record_fixture(inp: &Inputs) -> Result<(), String> {
     let path = inp.project.root.join("tests").join("fixtures").join("my_decks_parsed.json");
     std::fs::write(&path, fixture_json(inp)?).map_err(|e| format!("{}: {e}", path.display()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::add_changelog;
+
+    #[test]
+    fn changelog_entries_go_first_in_the_decks_changes_list() {
+        // no file yet: header, then the deck's section
+        let a = add_changelog("", "Kefka — Discard", "kefka", "JD/k.md", "2026-10-14", "Out: A. In: B.");
+        assert_eq!(
+            a,
+            "# Deck changelog\n\n## Kefka — Discard\n\nDeck key `kefka`, `decklists/JD/k.md`.\n\n### Changes\n\n- **2026-10-14.** Out: A. In: B.\n"
+        );
+        // the newest entry goes first; other decks' sections are untouched
+        let b = add_changelog(&a, "Sauron — Amass", "sauron", "JD/s.md", "2026-10-14", "Out: C. In: D.");
+        let c = add_changelog(&b, "Kefka — Discard", "kefka", "JD/k.md", "2026-10-15", "Out: B. In: A.");
+        let kefka = c.split("## Kefka — Discard\n").nth(1).unwrap().split("\n## ").next().unwrap();
+        assert!(
+            kefka.contains("### Changes\n\n- **2026-10-15.** Out: B. In: A.\n- **2026-10-14.** Out: A. In: B."),
+            "{c}"
+        );
+        assert!(c.ends_with("### Changes\n\n- **2026-10-14.** Out: C. In: D.\n"), "{c}");
+        // a section without a Changes list gets one, before its other subsections
+        let d = add_changelog(
+            "# Deck changelog\n\n## X\n\nIntro.\n\n### Tuning notes\n\nNote.\n",
+            "X",
+            "x",
+            "JD/x.md",
+            "2026-10-15",
+            "Out: E. In: F.",
+        );
+        assert_eq!(
+            d,
+            "# Deck changelog\n\n## X\n\nIntro.\n\n### Changes\n\n- **2026-10-15.** Out: E. In: F.\n\n### Tuning notes\n\nNote.\n"
+        );
+    }
 }

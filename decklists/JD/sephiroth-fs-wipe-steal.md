@@ -1,35 +1,129 @@
 # Sephiroth, Fabled SOLDIER — Mono-Black Wipe, Drain and Steal the Dead
 
-**Updated 2026-10-14.** Out: Ophiomancer, Sneering Shadewriter. In: Grave Titan, Pawn of Ulamog. JD's package (2026-10-14): Grave Titan for Sneering Shadewriter, Pawn of Ulamog for Ophiomancer. Measured +0.3 ±1.6 over all tiers (paired, 1,000 games per tier; audit/sephfs/2026-10-14-pkg/): neutral; JD is buying both.
-**Updated 2026-10-14.** Out: Caged Zombie. In: The One Ring. JD's choice: The One Ring for Caged Zombie. Measured +1.8 ±0.8 over all tiers and +2.8 ±1.0 against Tiers 1-3, the tiers this deck plays (paired, 4,000 games per tier; audit/sephfs/2026-10-14-ring4k/). The deck's first Game Changer: Bracket 3.
+A mono-black control deck. Sephiroth, Fabled SOLDIER drains one life for every creature that dies, so the deck makes
+creatures die on purpose: sacrifice outlets, edicts and board wipes. Once Sephiroth has flipped, the emblem keeps the
+drain going for the rest of the game, and the deck takes opponents' dead creatures for itself with Grave Betrayal,
+Necromantic Selection and the reanimation spells. It wins by draining the table, by Exsanguinate, or by a 5/5 flying
+Sephiroth sacrificing a whole army as he attacks. It is weak to graveyard hate, to exile removal on Sephiroth before he
+flips, and to opponents who simply have no creatures to die.
 
-**Added 2026-10-14.** JD's mono-black control deck with Sephiroth, Fabled SOLDIER as commander and JD's new Phyrexian
-Tower and Phyrexian Altar. Not JD's Atraxa deck (`sephiroth-phyrexian-reanimator.md`, also called Sephiroth): that
-one reanimates its own creatures for combos; this one wipes the board, drains on every death and takes opponents' dead.
-**34 buys, about $183.38** (about $155.38 without Sephiroth; The One Ring is $113.59 of it). Crux of Fate and Animate Dead are second copies: JD's first copies stay in the Kefka and Atraxa decks.
+This is the Sephiroth, Fabled SOLDIER deck (sim key `sephfs`), not the Seph/Atraxa deck (`seph`).
 
-**Not measured yet.**
+| | |
+|---|---|
+| **Commander** | Sephiroth, Fabled SOLDIER ({2}{B}, 3/3, black) // Sephiroth, One-Winged Angel (5/5 flying) |
+| **Bracket** | 3 (1 Game Changer: The One Ring) |
+| **Simulator** | deck key `sephfs`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
 
+### The commander
 **Sephiroth, Fabled SOLDIER** ({2}{B}, 3/3): *Whenever Sephiroth enters or attacks, you may sacrifice another
 creature. If you do, draw a card. Whenever another creature dies, target opponent loses 1 life and you gain 1 life. If
-this is the fourth time this ability has resolved this turn, transform Sephiroth.* **Sephiroth, One-Winged Angel**
-(5/5 flying): *as he transforms you get an emblem: "Whenever a creature dies, target opponent loses 1 life and you gain
-1 life." Whenever Sephiroth attacks, you may sacrifice any number of other creatures; draw that many cards.*
+this is the fourth time this ability has resolved this turn, transform Sephiroth.*
 
-1. **Flip Sephiroth (turns 3-5).** Four deaths in one turn with Sephiroth alive: sacrifices to Phyrexian Altar,
-   Phyrexian Tower, Viscera Seer, Yahenni, Woe Strider or Carrier Thrall's chain; or a table-wide edict
-   (**Plaguecrafter, Fleshbag Marauder, Accursed Marauder**: every player sacrifices at once, four deaths). The emblem
-   stays for the rest of the game, even if Sephiroth dies.
-2. **Wipe the board.** With the emblem, every wipe drains once per creature: Massacre Girl (chains), Pestilence (one
-   point at a time; spares a 3/3 Sephiroth early), Extinction Event (choose even: Sephiroth survives), Blood on the
-   Snow, Crux of Fate, Toxic Deluge, Living Death, Necromantic Selection. Blood Artist, Zulaport Cutthroat, Bastion of
-   Remembrance, Butcher of Malakir and Pitiless Plunderer add to each death.
-3. **Their dead fight for you.** Grave Betrayal (opponents' creatures that die return under your control), Dread
-   Slaver, Necromantic Selection, Zombify, Animate Dead and Grave Researcher (any graveyard), Gonti (their library).
-4. **And fuel you.** Stolen creatures go to Tower (BB) and Altar (any colour) for mana and to Sephiroth for cards;
-   every death drains again. Finish with Exsanguinate or a 5/5 flying Sephiroth sacrificing the army as he attacks.
+**Sephiroth, One-Winged Angel** (5/5, flying): *As he transforms you get an emblem: "Whenever a creature dies, target
+opponent loses 1 life and you gain 1 life." Whenever Sephiroth attacks, you may sacrifice any number of other
+creatures. If you do, draw that many cards.*
+
+In practice: every death is a drain, and the fourth death in one turn flips him. The emblem is permanent, so it stays
+even if Sephiroth dies, and it triggers on every creature, including tokens and Sephiroth himself. He also turns spare
+bodies into cards: sacrifice one when he enters or attacks to draw, or a whole team when he attacks as the angel.
+What breaks him: exile and bounce while he is still the 3/3, and a wipe that kills him before the fourth death (he has
+to be on the battlefield when the fourth drain resolves to flip).
+
+### Game plan
+- **Turns 1-3:** play cheap creatures that are happy to die (Viscera Seer, Carrier Thrall, Undercity Dire Rat, Common
+  Crook, Callous Inspector, Reassembling Skeleton, Woe Strider, Yahenni, Carrion Feeder) and a mana rock. Sephiroth on
+  turn 3, ideally with a sacrifice outlet already on the board. **Dark Ritual** can speed the start.
+- **Turns 3-5: flip him.** Get four deaths in one turn with Sephiroth alive. Sacrifice to Phyrexian Altar, Phyrexian
+  Tower, Viscera Seer, Yahenni, Woe Strider or Carrion Feeder; or play an edict (**Plaguecrafter**, **Fleshbag
+  Marauder**, **Accursed Marauder**: every player sacrifices at once, so up to four deaths in a four-player game).
+- **Middle game:** with the emblem out, wipe the board when opponents are ahead. Every creature that dies drains, and
+  yours come back from your reanimation and steal effects.
+- **Late game:** keep draining, take their best dead creatures, and finish with Exsanguinate or an attacking angel.
+
+### Sacrifice outlets and fodder
+- **Outlets:** **Phyrexian Altar** (any color) and **Phyrexian Tower** (BB, a land) turn each sacrifice into mana;
+  **Viscera Seer** (free, scry 1), **Woe Strider** (scry 1; also brings a Goat token; escapes from the graveyard),
+  **Carrion Feeder** (+1/+1 counter, can't block), **Yahenni, Undying Partisan** (haste; gets bigger when an
+  opponent's creature dies; sacrifice another creature for indestructible). Sephiroth himself is an outlet when he
+  enters or attacks.
+- **Fodder that pays you back:** **Carrier Thrall** (an Eldrazi Scion on death), **Undercity Dire Rat** and **Common
+  Crook** (Treasure on death), **Callous Inspector** (menace; a Clue on death, 1 damage to you), **Dread Drone** (two
+  Eldrazi Spawn tokens), **Pawn of Ulamog** (an Eldrazi Spawn when a nontoken creature of yours dies), **Eternal
+  Student** ({1}{B}, exile it from the graveyard: two 1/1 flying Inklings), **Reassembling Skeleton** ({1}{B}: back from the
+  graveyard tapped), **Grave Titan** (two 2/2 Zombies on entering and attacking, deathtouch), **Pitiless Plunderer** (a
+  Treasure when another creature of yours dies).
+- **Do the flip with an outlet:** the Spawn and Scion tokens are also fodder, and the Treasure and Scion mana helps pay
+  for the next turn.
+
+### Drain on every death
+**Blood Artist**, **Zulaport Cutthroat**, **Al Bhed Salvagers** (also counts artifacts of yours dying),
+**Bastion of Remembrance** (and a 1/1 token) and **Butcher of Malakir** (each opponent sacrifices a creature whenever
+yours die) add to every death on top of Sephiroth, so a single wipe can be game ending. **Moseo, Vein's New Dean** (a flying
+body with a Pest token) uses the life you gain from the drains: at your end step it returns a creature card to the
+battlefield with mana value up to the life you gained that turn.
+
+### Wipes and edicts
+With the emblem, every wipe drains once per creature:
+- **Massacre Girl** (each other creature gets -1/-1, and again for each death that turn, so it chains), **Pestilence**
+  (pings {B} at a time; also hits players, including you, but the drain gains it back), **Blood on the Snow**,
+  **Crux of Fate**, **Toxic Deluge**, **Living Death** (wipes the board, then everyone's graveyard creatures come back;
+  best when your graveyard is the fuller one) and **Necromantic Selection** (wipes and steals the best creature that died).
+- **Extinction Event** exiles instead, so it drains nothing; choose odd or even so Sephiroth (mana value 3) and your
+  best creatures stay and the opponents' lose. **End of the Hunt** exiles an opponent's biggest creature or
+  planeswalker (also no drain).
+- Only wipe **after the flip**, or when Sephiroth survives it. Massacre Girl shrinks Sephiroth too: cast it when he is
+  already the 5/5. Pestilence spares a 3/3 Sephiroth for the first two points.
+
+### Their dead fight for you
+**Grave Betrayal** (a creature you don't control that dies comes back under your control at the next end step, with a
++1/+1 counter), **Dread Slaver** (a creature it damaged that dies comes back), **Necromantic Selection**, **Animate
+Dead** and **Grave Researcher // Reanimate** (any graveyard), **Gonti, Lord of Luxury** (steals a card from the top four
+of an opponent's library; deathtouch) and **Zombify**, **Rewrite Regrets**, **Pull from the Grave**, **Ral Zarek, Guest
+Lecturer** (-2 returns a creature of mana value 3 or less) and **Braids's Frightful Return** (chapter II returns a
+creature card to hand) for your own. Stolen creatures go to Phyrexian Tower or Altar for mana, to Sephiroth for cards,
+and every death drains again.
+
+### Protecting Sephiroth
+**Kaya's Ghostform** (he comes back if he dies or is exiled, and his enter trigger fires again), **Masterful Flourish**
+(indestructible against your own wipes and theirs), **Presumed Dead** (a creature that dies comes back suspected: use it
+on Sephiroth, or on a creature you are about to sacrifice, which can then be sacrificed again), and the sacrifice
+outlets in response to removal. **The One Ring** gives protection from everything until your next turn when you cast it.
+
+### Removal
+**Bitter Triumph**, **Last Gasp**, **Sephiroth's Intervention** (destroy, gain 2), **Wander Off** (exile) and **End of the
+Hunt** are the spot answers. **Rabid Attack** gives your creatures "when this dies, draw a card" until end of turn:
+cast it before a sacrifice turn or a wipe.
+
+### Card flow and mana
+**The One Ring** (draw more each turn; the burden counters cost life, and the drain gains it back), **Call of the Ring**
+(a Ring-bearer and a card for 2 life), **Tome of Legends** (a page counter whenever Sephiroth enters or attacks; {1}, {T}, remove one: draw), **Cast Away Doubt**
+(draw two; 2 damage to every player), **Stargaze** (X cards to hand, the rest into the graveyard where reanimation uses
+them), **Sol Ring**, **Arcane Signet**, **Fellwar Stone**, **Mind Stone**, **Star Compass** and **Dark Ritual**.
+
+### How it wins
+- **The wipe turn.** With the emblem out, a wipe in a four-player game drains once per creature on the board. A board of
+  ten creatures is ten life across the table and ten gained, and Blood Artist, Zulaport, Bastion and Al Bhed Salvagers
+  add to it.
+- **Exsanguinate.** Sacrifice into Phyrexian Altar, Phyrexian Tower and Treasures first for the mana, then drain every
+  opponent for X at once.
+- **The angel.** The 5/5 flier sacrifices the army as he attacks, drawing a card each and draining as each dies.
+- **A loop.** **Phyrexian Altar**, **Reassembling Skeleton** and **Pawn of Ulamog** make a loop: sacrifice the Skeleton to
+  Altar for a mana, Pawn makes a Spawn that adds one more, and that pays {1}{B} to bring the Skeleton back. Each pass
+  is a death, so with Sephiroth or any drain creature on board it is a chain of drains. See "Bracket and Rule 0".
+
+### Weak spots and how to play around them
+- **Graveyard hate** (effects that exile graveyards) stops the stealing and reanimating. The sacrifice
+  and drain plan still works.
+- **Exile or bounce on Sephiroth before the flip.** Play him with an outlet, keep Kaya's Ghostform or Masterful Flourish
+  ready, and flip as soon as possible. If he is removed, keep going: the drain creatures and Pestilence still work.
+- **Few creatures on the table.** Edicts and wipes do little against a deck that plays no creatures; use removal and
+  Exsanguinate instead.
+- **A wipe before the flip** kills Sephiroth. Use an edict or four sacrifices first.
+- **Lifegain decks.** The drain is slower against them; Exsanguinate and Butcher of Malakir (an edict for each of your
+  creatures that dies) do not depend on life totals.
 
 ## Key lines
 
@@ -37,119 +131,45 @@ this is the fourth time this ability has resolved this turn, transform Sephiroth
 - **Flip before wiping:** a wipe that kills Sephiroth doesn't flip him. Use an edict or four sacrifices first.
 - **Wipe when opponents are ahead on board**, after the flip; keep a steal effect (Grave Betrayal) out first when you
   can.
+- **Turn 4 flip:** Sephiroth, Viscera Seer and three cheap creatures: sacrifice the three to the Seer, then the Seer
+  itself, for four deaths and the emblem.
+- **Mulligan:** keep hands with a mana rock or a Treasure source, two or three lands, and a cheap creature or two;
+  send back hands with no creatures.
 - **Weak spots:** graveyard hate stops the stealing; exile removal on Sephiroth before he flips.
+
+## Mana and consistency
+
+36 lands: 32 Swamp, Command Tower and Path of Ancestry (both make black here), Vivid Marsh (enters tapped, makes black)
+and Phyrexian Tower (colorless, or sacrifice a creature for {B}{B}). Ramp: Sol Ring, Arcane Signet, Fellwar Stone,
+Mind Stone, Star Compass and Phyrexian Altar, plus Dark Ritual, Treasure and the Eldrazi tokens. Card draw: The One
+Ring, Call of the Ring, Tome of Legends, Cast Away Doubt, Stargaze, Sephiroth's own sacrifice. Interaction: five spot
+removal spells and seven wipes (Crux of Fate, Toxic Deluge, Blood on the Snow, Massacre Girl, Extinction
+Event, Living Death, Necromantic Selection).
 
 ## Bracket and Rule 0
 
-**Bracket 3:** one Game Changer, **The One Ring**; no two-card combos, no mass land destruction, no extra turns.
+**Bracket 3:** one Game Changer, **The One Ring**; no extra turns and no mass land destruction. Say at the table that
+the deck wipes the board and takes dead creatures, and that the Phyrexian Altar, Reassembling Skeleton and Pawn of
+Ulamog loop makes unlimited deaths and drains (it needs three specific cards and a drain source). Say that The One
+Ring is in the deck.
 
-## Where the cards come from
+## Decklist by type (100)
 
-**Buys (34, about $183.38):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
-**JD's own, new (2):** Phyrexian Tower, Phyrexian Altar (not on the bulk/binder lists yet). **Basics (32 Swamp):** your
-own. Everything else comes off JD's lists (main, 2026-10-14).
+**Commander (1).** Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 
-### Creatures (26)
+**Lands (36).** Command Tower, Path of Ancestry, Phyrexian Tower, Vivid Marsh, 32 Swamp
 
-| Card | From | Set |
-|---|---|---|
-| Accursed Marauder | Bulk | mh3 |
-| Al Bhed Salvagers | Bulk | fin |
-| Blood Artist | **Buy** ($2.73) |  |
-| Butcher of Malakir | **Buy** ($0.35) |  |
-| Callous Inspector | Bulk | tla |
-| Carrier Thrall | **Buy** ($0.21) |  |
-| Carrion Feeder | Bulk | fdc |
-| Common Crook | Bulk | spm |
-| Dread Drone | Bulk | mm2 |
-| Dread Slaver | **Buy** ($0.27) |  |
-| Eternal Student | Bulk | sos |
-| Fleshbag Marauder | **Buy** ($0.27) |  |
-| Gonti, Lord of Luxury | **Buy** ($0.37) |  |
-| Grave Researcher // Reanimate | Bulk | sos |
-| Massacre Girl | **Buy** ($0.53) |  |
-| Moseo, Vein's New Dean | Bulk | sos |
-| Pawn of Ulamog | **Buy** ($0.55) |  |
-| Pitiless Plunderer | **Buy** ($5.00) |  |
-| Plaguecrafter | **Buy** ($0.39) |  |
-| Reassembling Skeleton | **Buy** ($0.32) |  |
-| Grave Titan | **Buy** ($0.33; a second copy: the Atraxa deck has one) |  |
-| Undercity Dire Rat | Bulk | fin |
-| Viscera Seer | **Buy** ($0.48) |  |
-| Woe Strider | **Buy** ($0.28) |  |
-| Yahenni, Undying Partisan | **Buy** ($0.29) |  |
-| Zulaport Cutthroat | **Buy** ($1.27) |  |
+**Creatures (26).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Butcher of Malakir, Callous Inspector, Carrier Thrall, Carrion Feeder, Common Crook, Dread Drone, Dread Slaver, Eternal Student, Fleshbag Marauder, Gonti Lord of Luxury, Grave Researcher // Reanimate, Grave Titan, Massacre Girl, Moseo Vein's New Dean, Pawn of Ulamog, Pitiless Plunderer, Plaguecrafter, Reassembling Skeleton, Undercity Dire Rat, Viscera Seer, Woe Strider, Yahenni Undying Partisan, Zulaport Cutthroat
 
-### Planeswalkers (1)
+**Planeswalkers (1).** Ral Zarek Guest Lecturer
 
-| Card | From | Set |
-|---|---|---|
-| Ral Zarek, Guest Lecturer | Bulk | sos |
+**Artifacts (8).** Arcane Signet, Fellwar Stone, Mind Stone, Phyrexian Altar, Sol Ring, Star Compass, The One Ring, Tome of Legends
 
-### Artifacts (8)
+**Enchantments (7).** Animate Dead, Bastion of Remembrance, Braids's Frightful Return, Call of the Ring, Grave Betrayal, Kaya's Ghostform, Pestilence
 
-| Card | From | Set |
-| The One Ring | **Buy** ($113.59; Game Changer) |  |
-|---|---|---|
-| Arcane Signet | **Buy** ($0.62) |  |
-| Fellwar Stone | **Buy** ($0.60) |  |
-| Mind Stone | **Buy** ($0.50) |  |
-| Phyrexian Altar | JD's own (new) |  |
-| Sol Ring | **Buy** ($1.55) |  |
-| Star Compass | Binder (Jodah) |  |
-| Tome of Legends | Bulk | msc |
+**Instants (8).** Bitter Triumph, Dark Ritual, Last Gasp, Masterful Flourish, Presumed Dead, Rabid Attack, Sephiroth's Intervention, Wander Off
 
-### Enchantments (7)
-
-| Card | From | Set |
-|---|---|---|
-| Animate Dead | **Buy** ($7.29; a second copy: JD's first is in the Atraxa deck) |  |
-| Bastion of Remembrance | **Buy** ($0.33) |  |
-| Braids's Frightful Return | Bulk | dmu |
-| Call of the Ring | Binder |  |
-| Grave Betrayal | **Buy** ($3.29) |  |
-| Kaya's Ghostform | **Buy** ($1.74) |  |
-| Pestilence | **Buy** ($0.61) |  |
-
-### Instants (8)
-
-| Card | From | Set |
-|---|---|---|
-| Bitter Triumph | **Buy** ($0.29; the Jodah copy went to Kefka, #65) |  |
-| Dark Ritual | Binder |  |
-| Last Gasp | Bulk | fra, sos |
-| Masterful Flourish | Bulk | sos |
-| Presumed Dead | Bulk | mkm |
-| Rabid Attack | Bulk | sos |
-| Sephiroth's Intervention | Bulk | fin |
-| Wander Off | Bulk | sos |
-
-### Sorceries (13)
-
-| Card | From | Set |
-|---|---|---|
-| Blood on the Snow | **Buy** ($0.28) |  |
-| Cast Away Doubt | Bulk | fra |
-| Crux of Fate | **Buy** ($3.32) |  |
-| End of the Hunt | Bulk | sos |
-| Exsanguinate | **Buy** ($0.43) |  |
-| Extinction Event | **Buy** ($0.35) |  |
-| Living Death | **Buy** ($6.64) |  |
-| Necromantic Selection | **Buy** ($0.31) |  |
-| Pull from the Grave | Bulk | sos |
-| Rewrite Regrets | Bulk | fra |
-| Stargaze | Bulk | soa |
-| Toxic Deluge | Binder (Jodah) |  |
-| Zombify | Bulk | soa |
-
-### Lands (4); plus 32 Swamp
-
-| Card | From | Set |
-|---|---|---|
-| Command Tower | Binder (Jodah) |  |
-| Path of Ancestry | Binder (Jodah) |  |
-| Phyrexian Tower | JD's own (new) |  |
-| Vivid Marsh | Bulk | lrw |
+**Sorceries (13).** Blood on the Snow, Cast Away Doubt, Crux of Fate, End of the Hunt, Exsanguinate, Extinction Event, Living Death, Necromantic Selection, Pull from the Grave, Rewrite Regrets, Stargaze, Toxic Deluge, Zombify
 
 ## Import list (100)
 

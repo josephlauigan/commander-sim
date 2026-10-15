@@ -1,42 +1,131 @@
 # Kefka, Court Mage — Grixis Discard
 
-**Simulator, 2026-10-14:** the leftovers swap (Decorum Dissertation for Bitter Triumph; two Swamps for Sulfurous Springs and Shivan Reef) measured **-1.9 over all tiers, within noise,** in a paired test (T1 -6.0, T2 -3.4, T3 -2.6, T4 +2.2, T5 +0.4; look-ahead, loose, 500 games per list per tier); JD chose to apply it. A pool run is pending. Previous list's figures: +1.0 for the Yawgmoth's Will + tutor package (paired, 500 games per list per tier; T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8), +0.5 for the Breach + storm swaps (1,000 paired games per tier), and 29.4% over all tiers on 2026-10-12 (±0.5; rank 4 of the ten decks, 6,720 games per tier; `decklists/pool/pool-results.md` section 0d).
+A Grixis (blue-black-red) discard-and-draw deck. Kefka makes every player discard and draws you a card for each card
+type in the pile; the deck is full of cards that want to be discarded, so the symmetry costs you little. Once Kefka
+has flipped, every point of life the table loses on your turn is a card for you, and Psychosis Crawler or
+Niv-Mizzet, the Firemind turns that into a two-card win. A second plan, Underworld Breach with a storm count, kills
+from the graveyard. It is weak to graveyard hate, to fast pressure that kills you before the flip, and to wipes that
+take Kefka with them.
 
-**Updated 2026-10-11 (mana base).** JD's rule: basics over slow lands. Out: Temple of Malice, Boiling Rock Prison, Sinister Hideout, Temple of Deceit, Treno, Dark City, Spectacle Summit, Temple of Epiphany, Vivid Marsh, Path of Ancestry, Evolving Wilds, Fabled Passage (everything that enters tapped or fetches a tapped basic). In: 5 Swamp, 3 Mountain, 3 Island (now 15 Swamp, 9 Mountain, 6 Island). The six untapped nonbasics stay. Still 36 lands; the cut lands go back to the bulk list.
-**Updated 2026-10-11 (trade with Veyran, moved as functional blocks).** In from Veyran: Deflecting Swat and Slip Out the Back (protection), Underworld Breach (graveyard), Niv-Mizzet, the Firemind (a second draw-to-damage kill with the flipped Kefka), Jin-Gitaxias, Progress Tyrant, and Steam Vents, Sulfur Falls, Spirebluff Canal and Stormcarved Coast (for 4 Mountains). Out: Mystic Confluence and Splatter Technique (to Veyran), Arcane Omens and Inner Fire (to bulk), Triskelion (to the binder). Paired look-ahead test, 1,000 games per tier: **+1.3 points** (28.1% -> 29.4%). Two Game Changers now (Rhystic Study, Underworld Breach).
-**Updated 2026-10-12.** Out: Stargaze (to bulk). In: Twinflame (binder). JD's choice, not simulated: hasty token copies of your creatures for a turn (a second Massacre Wurm, Jin-Gitaxias or Intellect Devourer); Stargaze was cast in only 11-12% of the games it was drawn (diagnostic, audit/kefka/diag).
-**Updated 2026-10-13.** Out: Chaos Warp, Dark Inquiry, Duress, Ichor Slick, Postmortem Professor, Potioner's Trove, Thought Vessel. In: Brain Freeze, Dark Ritual, Diabolic Intent, Grapeshot, Grim Tutor, Jeska's Will, Lotus Petal. JD's choice: Sauron's Underworld Breach package (Brain Freeze, Dark Ritual, Lotus Petal) with Grapeshot (bulk), Grim Tutor, Diabolic Intent and Jeska's Will (from Veyran), to run the Breach + storm line alongside Kefka's own Underworld Breach. Measured +0.5 over all tiers, within noise (T1 +3.3, T2 +0.6, T3 -0.5, T4 -0.7, T5 -0.3; look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-12-weakness/kefka-k3/). Three Game Changers now (Rhystic Study, Underworld Breach, Jeska's Will).
-**Updated 2026-10-13 (second change).** Out: Grim Tutor, Diabolic Intent, Swiftfoot Boots. In: Profane Tutor, Demonic Tutor, Chaos Warp. JD's choice, not simulated: the two tutors come from the retired Jodah deck instead of being bought (Profane Tutor is suspended for {1}{B} and finds any card two turns later; Demonic Tutor is a Game Changer, so the deck moves to Bracket 4). Swiftfoot Boots goes to the Cloud deck (Kefka keeps Lightning Greaves for haste); Chaos Warp comes back from bulk.
-**Updated 2026-10-13.** Out: Disintegrate, Kaervek's Purge, Twinflame. In: Mystical Tutor, Vampiric Tutor, Yawgmoth's Will. JD's package A (Yawgmoth's Will storm turn): Twinflame, Kaervek's Purge and Disintegrate out (to bulk); Yawgmoth's Will (JD's spare copy), Vampiric Tutor and Mystical Tutor (binder, from the retired Jodah) in. Measured +1.0 over all tiers (T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Six Game Changers, still Bracket 4. Jin-Gitaxias stays (JD).
-**Updated 2026-10-14.** Out: Decorum Dissertation. In: Bitter Triumph, Shivan Reef, Sulfurous Springs. Decorum Dissertation (to bulk) for Bitter Triumph; two Swamps for Sulfurous Springs and Shivan Reef (all three from the binder, the retired Jodah deck's leftovers). Measured -1.9 over all tiers (T1 -6.0, T2 -3.4, T3 -2.6, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice.
-
-2026-10-11
-**Added 2026-10-11.** Built from JD's bulk and binder around Kefka, Court Mage, who leaves Sauron for the job (Sephiroth, Planet's Heir took his slot there). Fully modeled and measured on 2026-10-11: 26.6% over all tiers (see "Simulator status").
+| | |
+|---|---|
+| **Commander** | Kefka, Court Mage ({2}{U}{B}{R}, 4/5, Grixis) // Kefka, Ruler of Ruin (5/7 flying) |
+| **Bracket** | 4 (6 Game Changers: Demonic Tutor, Jeska's Will, Mystical Tutor, Rhystic Study, Underworld Breach, Vampiric Tutor) |
+| **Simulator** | deck key `kefka`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
 
-Make everyone discard, draw more than they do, then flip Kefka and turn every point of life the table loses on your turn into cards — until Psychosis Crawler turns those cards back into life loss and the loop ends the game.
+### The commander
+**Kefka, Court Mage** ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, each player discards a card.
+Then you draw a card for each card type among cards discarded this way. {8}: each opponent sacrifices a permanent of
+their choice. Transform Kefka. Activate only as a sorcery.* The back face, **Kefka, Ruler of Ruin** (5/7, flying),
+reads: *whenever an opponent loses life during your turn, you draw that many cards.*
 
-Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, each player discards a card. Then you draw a card for each card type among cards discarded this way. {8}: each opponent sacrifices a permanent of their choice. Transform Kefka. Activate only as a sorcery.* The back face, **Kefka, Ruler of Ruin** (5/7, flying), reads: *whenever an opponent loses life during your turn, you draw that many cards.*
+Every player loses a card, and you draw one for each card type in the pile: an artifact creature counts twice, a
+land and an instant three different types. Two to four cards for your one is normal. Kefka triggers on entering and
+on every attack, so he is a draw engine even before he flips. The flip costs {8}, is sorcery speed and makes every
+opponent sacrifice a permanent. After it, Kefka turns the whole table's life loss into cards. He is a 4/5 that must
+survive to attack, so protect him (see Protection), and note that he is always available from the command zone if he
+is removed.
 
-**Front face: a symmetric discard that you win.** Every player loses a card, and you draw one for each card type in the pile: an artifact creature counts twice, a land and an instant three different types. Two to four cards for your one is normal. The deck makes the discard cost you nothing:
-- **Cards that want to be discarded.** Scarlet Spider, Kaine (mayhem: cast from the graveyard for {B/R} the turn you discard it), Demonic Embrace (cast from the graveyard by paying 3 life and discarding another card), Twinned Vision (flashback draws two), Eternal Student (exile from the graveyard for two flying Inklings). Garrison Excavator makes a 2/2 Spirit every time cards leave your graveyard, so each of those becomes a body too.
-- **Underworld Breach turns the discard pile into a second hand.** Every nonland card in your graveyard gains escape: cast it for its mana cost plus exiling three other cards. Kefka's discards and the looters fill the graveyard, so on the flip turn Breach recasts Lightning Bolt, Grab the Prize and the other one-shots, and every point of life lost is still a card. Each escape is two Garrison Excavator Spirits: one for the three exiled cards, one for the escaped card leaving. Breach is sacrificed at your end step, so cast it on the turn you use it.
-- **Outlets and looting.** Rummaging Goblin, Hallway Heckler, Thrill of Possibility, Grab the Prize (2 to each opponent if the discard isn't a land), Stadium Tidalmage, Alpharael, Rapturous Moment, Big Score and Seize the Spoils. They pick the right card to bin before Kefka's trigger and fix the hand after it.
-- **Pressure on their hands.** Rank Rat, Cackling Fiend and Intellect Devourer (each opponent exiles a card from hand, and you may play those cards). Opponents low on cards discard their best one to Kefka.
+### Game plan
+- **Turns 1 to 3.** Develop cheap looters and discard fodder (Rummaging Goblin, Sawblade Scamp, Rank Rat, Blightspeaker),
+  play mana rocks (Arcane Signet, Sisay's Ring, Lotus Petal) and a land every turn. Cast Rhystic Study when you can.
+  Keep the cards that want to be discarded in hand rather than playing them out.
+- **Turns 4 to 6.** Land Kefka (with Lightning Greaves for two triggers in one turn), keep attacking when it is
+  safe, and use each trigger to bin madness, mayhem and graveyard-castable cards. Build toward {8}: Treasure,
+  rocks, Dark Ritual and burst mana. Hold Psychosis Crawler until after the flip unless your library is short.
+- **Late game.** Flip, then cast pingers and one-shots in the same main phase so every point of life lost draws you
+  a card. Finish with the Crawler or Niv-Mizzet loop, or with the Breach and storm line.
 
-**The flip costs {8}.** Treasure (Big Score, Seize the Spoils, Contract Killing, Skullport Merchant), the rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will and the burst cards get there: Blazing Firesinger's prepared spell makes {R}{R}{R}{R}{R}, and Rapturous Moment refunds five. The flip itself is an edict on every opponent.
+### Cards that want to be discarded
+- **Scarlet Spider, Kaine** (mayhem: cast from the graveyard for {B/R} the turn you discard it), **Demonic Embrace**
+  (cast from the graveyard by paying 3 life and discarding another card), **Twinned Vision** (flashback draws two)
+  and **Eternal Student** (exile from the graveyard for two flying Inklings).
+- **Garrison Excavator** makes a 2/2 Spirit every time cards leave your graveyard, so each of those becomes a body too.
+- **Underworld Breach** turns the discard pile into a second hand. Every nonland card in your graveyard gains escape:
+  cast it for its mana cost plus exiling three other cards. Kefka's discards and the looters fill the graveyard, so
+  on the flip turn Breach recasts Lightning Bolt, Grab the Prize and the other one-shots, and every point of life
+  lost is still a card. Each escape is two Garrison Excavator Spirits: one for the three exiled cards, one for the
+  escaped card leaving. Breach is sacrificed at your end step, so cast it on the turn you use it.
+- **Bitter Triumph** ({1}{B} instant, destroys a creature or planeswalker; the extra cost is a discard or 3 life)
+  feeds the graveyard while it removes a threat.
 
-**Back face: life loss on your turn is card draw.** Each opponent who loses life during your turn draws you that many cards:
-- **Repeatable pings:** Sawblade Scamp, Viashino Fangtail, Blightspeaker, Screeching Soulbreaker, Susurian Voidborn (each Treasure you crack drains one opponent).
-- **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter, Corroding Dragonstorm, Grab the Prize, Lightning Bolt and Massacre Wurm (2 for each of their creatures that dies).
+### Outlets and looting
+Rummaging Goblin, Hallway Heckler, Thrill of Possibility, Grab the Prize (2 damage to each opponent if the discard
+isn't a land), Stadium Tidalmage, Alpharael, Rapturous Moment, Big Score and Seize the Spoils. They pick the right
+card to bin before Kefka's trigger and fix the hand after it. Rapturous Moment, Big Score and Seize the Spoils also
+make mana or Treasure toward the {8}. Hallway Heckler's prepared spell is a one-damage ping at an opponent, so it
+counts as life loss after the flip. **Skullclamp** and **Rhystic Study** keep the hand full between triggers.
+
+### Pressure on their hands
+**Rank Rat** and **Cackling Fiend** each make every opponent discard a card when they enter. **Intellect Devourer**
+makes each opponent exile a card from hand and lets you play it, spending mana as though it were any colour.
+Opponents low on cards discard their best one to Kefka.
+
+### Ramp and the {8}
+Treasure (Big Score, Seize the Spoils, Contract Killing, Skullport Merchant), the rocks (Arcane Signet, Sisay's Ring,
+Lotus Petal), **Dark Ritual**, **Jeska's Will** (red mana for each card in an opponent's hand, or exile the top three
+cards and play them; with a commander on the battlefield you may do both) and the burst cards get you there:
+**Blazing Firesinger**'s prepared spell makes {R}{R}{R}{R}{R}, and Rapturous Moment refunds five.
+
+### Making them lose life
+- **Repeatable pings:** Sawblade Scamp, Viashino Fangtail, Blightspeaker, Screeching Soulbreaker, Susurian Voidborn
+  (each creature or artifact of yours that dies drains one opponent, and Treasure you crack counts).
+- **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter,
+  Corroding Dragonstorm, Grab the Prize, Lightning Bolt and Massacre Wurm (2 for each of their creatures that dies).
 - **Combat:** a flying 5/7 that hits for 5 draws you 5.
 
-**The kill: Psychosis Crawler + Kefka, Ruler of Ruin.** Each card you draw makes each opponent lose 1; each opponent's loss draws you a card. In a four-player game every card drawn draws three more, so the loop runs until the table is dead or your library is. It is mandatory: count your library against the highest life total before starting it, and play the Crawler after the flip, not before, when your library is short. Before the flip the Crawler is still worth casting early: Kefka's own draws and the looters ping the whole table with it.
+### Tutors
+**Demonic Tutor**, **Vampiric Tutor**, **Mystical Tutor** (instant or sorcery only), **Diabolic Tutor**, **Profane
+Tutor** (suspended for {1}{B}, it finds any card two turns later) and **Grim Servant** (a card with mana value up to
+your devotion to black; you lose 3 life). Use them to find the Crawler or Niv-Mizzet, Underworld Breach or Yawgmoth's
+Will, whichever the board needs.
 
-**The second kill: Niv-Mizzet, the Firemind + Kefka, Ruler of Ruin.** Each card you draw deals 1 damage to any target; damage to an opponent on your turn draws you a card, which pings again. One ping hits one opponent, so the loop needs a library larger than the opponents' life added together, but you choose every target: when the library is short, aim the pings at creatures (or at yourself) and stop. Niv also taps to draw, which starts it.
+### Removal, counters and wipes
+**Lightning Bolt**, **Bitter Triumph**, **Pongify** (they get a 3/3 Ape), **Reality Shift** (they manifest the top
+card), **Feed the Swarm** (you lose life equal to the mana value), **Extinguish the Light**, **Deadly Embrace**
+(draws a card for each creature that died this turn), **Contract Killing** (two Treasure) and **Chaos Warp**
+(the owner shuffles the permanent away and may get a permanent from the top of the library, so use it on the
+biggest threat). **Arcane Denial** counters a spell (its controller may draw up to two cards next upkeep, and you draw one); **Crux of
+Fate** is the wipe, which also kills Kefka, so cast it when you are behind.
 
-**Jin-Gitaxias, Progress Tyrant** copies the first artifact, instant or sorcery you cast each turn (a second Demonic Tutor, Night's Whisper or Lightning Bolt) and counters the first one each opponent casts.
+### Protection
+**Lightning Greaves** gives haste and shroud with a free equip. **Deflecting Swat** is free while you control a
+commander and gives a spell or ability new targets, so it redirects removal or a counter. **Slip Out the Back**
+({U}) puts a +1/+1 counter on a creature and phases it out.
+
+### Graveyard and storm
+**Underworld Breach**, **Brain Freeze**, **Dark Ritual**, **Lotus Petal**, **Grapeshot** and **Yawgmoth's Will**
+(see Key lines).
+
+### How it wins
+**Psychosis Crawler + Kefka, Ruler of Ruin.** Each card you draw makes each opponent lose 1; each opponent's loss
+draws you a card. In a four-player game every card drawn draws three more, so the loop runs until the table is dead
+or your library is. It is mandatory: count your library against the highest life total before starting it, and play
+the Crawler after the flip, not before, when your library is short. Before the flip the Crawler is still worth
+casting early: Kefka's own draws and the looters ping the whole table with it.
+
+**Niv-Mizzet, the Firemind + Kefka, Ruler of Ruin.** Each card you draw deals 1 damage to any target; damage to an
+opponent on your turn draws you a card, which pings again. One ping hits one opponent, so the loop needs a library
+larger than the opponents' life added together, but you choose every target: when the library is short, aim the
+pings at creatures (or at yourself) and stop. Niv also taps to draw, which starts it.
+
+**Underworld Breach + storm.** See Key lines. It is a mill, not a two-card infinite.
+
+**Jin-Gitaxias, Progress Tyrant** copies the first artifact, instant or sorcery you cast each turn (a second
+Demonic Tutor, Night's Whisper or Lightning Bolt) and counters the first one each opponent casts. **Night's
+Whisper** is a plain two-card draw.
+
+### Weak spots and how to play around them
+- **Graveyard hate** hurts Breach, Yawgmoth's Will and every cast-from-graveyard card. Without them, Kefka still
+  draws and the Crawler loop still works.
+- **Removal before the flip.** Kefka is a 4/5 that has to attack or survive a turn cycle. Hold Deflecting Swat,
+  Slip Out the Back or Lightning Greaves mana, and remember he can be recast from the command zone.
+- **Short library.** Never start the Crawler or Niv loop without counting your library against the highest life total.
+- **Hand size.** Discard down to seven is the limit to watch after a flip turn.
+- **Fast pressure and large creatures.** You win late. Spend removal on the threats that would kill you first, and
+  use **Massacre Wurm**, **Crux of Fate** or Arcane Denial and Jin-Gitaxias to buy time.
 
 ## Key lines
 
@@ -46,20 +135,22 @@ Kefka, Court Mage ({2}{U}{B}{R}, 4/5) reads: *whenever Kefka enters or attacks, 
 
 **The flip turn.** Flip at sorcery speed, then play pingers and one-shots in the same main phase: every point of life the table loses before your turn ends is a card. Massacre Wurm after the flip is often 6 to 12 cards.
 
-**Underworld Breach + storm.** Breach (cast it for {1}{R}) also works as a second kill, with **Brain Freeze**, **Dark Ritual**, **Lotus Petal** and **Grapeshot**. Cast Brain Freeze on yourself to fill the graveyard (storm: one copy for each spell cast earlier in the turn, three cards milled per copy), then escape Dark Ritual and Lotus Petal again and again for mana and storm count (each escape exiles three other cards), escape Brain Freeze and point the copies at the opponents, who lose when they next draw from an empty library. Grapeshot is the same storm count as damage: one ping per copy to any target. Breach is sacrificed at your end step, so start only when you can finish, ideally into tapped-out opponents. Measured neutral: +0.5 over all tiers, within noise (look-ahead, 1,000 paired games per tier).
+**Underworld Breach + storm.** Breach (cast it for {1}{R}) also works as a second kill, with **Brain Freeze**, **Dark Ritual**, **Lotus Petal** and **Grapeshot**. Cast Brain Freeze on yourself to fill the graveyard (storm: one copy for each spell cast earlier in the turn, three cards milled per copy), then escape Dark Ritual and Lotus Petal again and again for mana and storm count (each escape exiles three other cards), escape Brain Freeze and point the copies at the opponents, who lose when they next draw from an empty library. Grapeshot is the same storm count as damage: one ping per copy to any target. Breach is sacrificed at your end step, so start only when you can finish, ideally into tapped-out opponents.
 
-**Yawgmoth's Will: a second storm turn.** With Kefka's discards and the looters filling the graveyard, Will (cast it for {2}{B}) lets you cast cards from the graveyard this turn, so it replays **Dark Ritual**, **Lotus Petal**, **Brain Freeze** and **Grapeshot** from the pile. Vampiric Tutor and Mystical Tutor find Will, Breach or the missing piece (Mystical Tutor finds an instant or sorcery: Brain Freeze, Grapeshot, Dark Ritual). Measured +1.0 over all tiers, within noise, and better against stronger tables (T4 +2.2, T5 +2.8).
+**Yawgmoth's Will: a second storm turn.** With Kefka's discards and the looters filling the graveyard, Will (cast it for {2}{B}) lets you cast cards from the graveyard this turn, so it replays **Dark Ritual**, **Lotus Petal**, **Brain Freeze** and **Grapeshot** from the pile. Vampiric Tutor and Mystical Tutor find Will, Breach or the missing piece (Mystical Tutor finds an instant or sorcery: Brain Freeze, Grapeshot, Dark Ritual). Cards that would go to the graveyard this turn are exiled instead, so Will is a one-time engine.
 
 **Bitter Triumph feeds the graveyard.** Its additional cost is to discard a card (or pay 3 life): discarding a card puts it where Breach and Yawgmoth's Will can use it, so cast it with a spare Dark Ritual, Lotus Petal or Brain Freeze in hand to line up the storm turn while it removes a creature or planeswalker.
 
-**Rhystic Study and Skullclamp** keep the hand full between Kefka triggers. Discard down to seven is the limit to watch after a flip turn.
+**Rhystic Study and Skullclamp** keep the hand full between Kefka triggers.
 
-## Consistency
+**Mulligan.** Keep hands with lands, a rock or a cheap looter and a piece of interaction or card flow. A hand of only expensive spells and no way to discard them is slow; Kefka and the looters turn spare cards into new ones.
 
-- **Lands:** 36 (12 nonbasic + 24 basic); Shivan Reef and Sulfurous Springs are painlands (1 damage to you when tapped for colour)
+## Mana and consistency
+
+- **Lands:** 36 (12 nonbasic + 24 basic: 13 Swamp, 6 Island, 5 Mountain); Shivan Reef, Sulfurous Springs and Underground River are painlands (1 damage to you when tapped for colour). The other nonbasics are Command Tower, Exotic Orchard (colours an opponent's land could make), Gemstone Mine (three uses, then it is sacrificed), the shocklands Blood Crypt and Steam Vents, and the fast and check lands Haunted Ridge, Spirebluff Canal, Stormcarved Coast and Sulfur Falls, which usually enter untapped.
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
 - **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
-- **Interaction:** Lightning Bolt, Bitter Triumph (destroys a creature or planeswalker for {1}{B}; the cost is a discard or 3 life), Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
+- **Interaction:** Lightning Bolt, Bitter Triumph (destroys a creature or planeswalker for {1}{B}; the cost is a discard or 3 life), Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
@@ -74,127 +165,6 @@ Disclose before the game:
 - **Symmetric discard** every time Kefka enters or attacks.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
-
-## Simulator status
-
-Deck key `kefka` (`commander-sim --deck kefka --pool t3`). **Fully modeled** since 2026-10-11 (every card Full in `cardgen audit --mine`; card code and AI plan in `rust/crates/sim-core/src/impls/kefka.rs`, tests in `tests/cards_kefka.rs`). The AI discards madness, mayhem and graveyard-castable cards to Kefka's trigger first, flips as soon as {8} is spare, and starts the Psychosis Crawler loop only when the library outlasts the highest opponent's life total (each card drawn costs every opponent 1 life).
-
-**Measured 2026-10-11** (look-ahead AI, loose profile, 960 games per tier, the same code as the other eight decks; `decklists/pool/pool-results.md` section 0d): T1 25.4%, T2 35.3%, T3 23.3%, T4 28.4%, T5 20.8%; **26.6% over all tiers**, just above an even share, in Sauron's group.
-
-**AI fix, 2026-10-11** (`rust/agents/report-kefka-ai-fix.md`): the AI held Psychosis Crawler too long (cast in about 22% of the games it was drawn, now about 65%); it now casts Underworld Breach, aims Niv-Mizzet's pings so a short library is never drawn out, and gives Garrison Excavator its Spirits on Breach escapes. Fast AI on a fresh seed: 20.9% -> 26.8%. Look-ahead after the fix, before the trade: T1 26.6%, T2 38.1%, T3 24.4%, T4 29.4%, T5 21.9% (**28.1%**).
-
-**The Veyran trade, 2026-10-11** (`audit/kefka-veyran/2026-10-11-trade/`, look-ahead, 1,000 paired games per tier): T1 27.7%, T2 39.8%, T3 27.8%, T4 29.3%, T5 22.4%: **29.4%**, +1.3 points, no tier worse. Deflecting Swat and Slip Out the Back alone were +0.6 of it.
-
-Known simplifications: madness casts the card from the graveyard rather than from exile (so Garrison Excavator can see it leave); Garrison Excavator doesn't see an opponent exiling your graveyard.
-
-## Where the cards come from
-
-The commander, **Kefka, Court Mage**, comes out of Sauron. The 24 basics (13 Swamp, 5 Mountain, 6 Island) are your own. Nine cards come from Veyran in the 2026-10-11 trade (marked "Veyran" below). Every other card came off JD's lists on 2026-10-11, one copy each (bulk first where a card was on both lists): 7 from the binder, 57 from bulk. They're grouped by card color below so you can pull them a color at a time. Set codes are the printings the bulk list showed; where it names more than one, any of them. The 2026-10-13 Breach package: Brain Freeze, Dark Ritual and Lotus Petal come from Sauron, Jeska's Will from Veyran and Grapeshot from bulk; Profane Tutor and Demonic Tutor come from the retired Jodah deck (marked "Jodah") and Chaos Warp from bulk (2026-10-13). The 2026-10-13 Will package: Vampiric Tutor and Mystical Tutor are binder cards (the retired Jodah deck's leftovers), Yawgmoth's Will is JD's own copy; Twinflame, Kaervek's Purge and Disintegrate went to bulk. The 2026-10-14 leftovers swap: Bitter Triumph, Shivan Reef and Sulfurous Springs are binder cards (the retired Jodah deck's leftovers); Decorum Dissertation went to bulk and two Swamps went back to the basics. Nothing to buy.
-
-### Black (27)
-
-| Card | From | Set |
-|---|---|---|
-| Bitter Triumph | Binder | — |
-| Blightspeaker | Bulk | tsr |
-| Cackling Fiend | Bulk | dmr |
-| Dark Ritual | Sauron | — |
-| Contract Killing | Bulk | xln |
-| Corroding Dragonstorm | Bulk | tdm |
-| Crux of Fate | Bulk | fic |
-| Deadly Embrace | Bulk | fin |
-| Demonic Embrace | Bulk | gn3 |
-| Demonic Tutor | Jodah | — |
-| Diabolic Tutor | Bulk | m11 |
-| Eternal Student | Bulk | sos |
-| Extinguish the Light | Bulk | dmu |
-| Feed the Swarm | Bulk | soa |
-| Grim Servant | Bulk | mh3 |
-| Intellect Devourer | Bulk | clb |
-| Massacre Wurm | Bulk | m21 |
-| Night's Whisper | Bulk | dmc |
-| Profane Tutor | Jodah | — |
-| Rank Rat | Bulk | fra |
-| Screeching Soulbreaker | Bulk | fra |
-| Shimmercreep | Bulk | ecl |
-| Skullport Merchant | Bulk | list |
-| Sneering Shadewriter | Bulk | sos |
-| Susurian Voidborn | Bulk | eoe |
-| Vampiric Tutor | Binder | — |
-| Yawgmoth's Will | JD's own | — |
-
-### Red (16)
-
-| Card | From | Set |
-|---|---|---|
-| Big Score | Bulk | snc |
-| Blazing Firesinger | Bulk | sos |
-| Chaos Warp | Bulk | — |
-| Deflecting Swat | Veyran | — |
-| Garrison Excavator | Bulk | sos |
-| Grapeshot | Bulk | tsr |
-| Grab the Prize | Bulk | dsk |
-| Hallway Heckler | Bulk | fra |
-| Jeska's Will | Veyran | — |
-| Lightning Bolt | Binder | — |
-| Rummaging Goblin | Bulk | cmr, m15, m13 |
-| Sawblade Scamp | Bulk | one |
-| Seize the Spoils | Bulk | sos |
-| Thrill of Possibility | Bulk | dmu |
-| Underworld Breach | Veyran | — |
-| Viashino Fangtail | Bulk | rav |
-
-### Blue (8)
-
-| Card | From | Set |
-|---|---|---|
-| Arcane Denial | Bulk | msc |
-| Brain Freeze | Sauron | — |
-| Jin-Gitaxias, Progress Tyrant | Veyran | — |
-| Pongify | Bulk | 2xm |
-| Reality Shift | Bulk | moc |
-| Rhystic Study | Binder | — |
-| Slip Out the Back | Veyran | — |
-| Mystical Tutor | Binder | — |
-
-### Multicolor (6)
-
-| Card | Colors | From | Set |
-|---|---|---|---|
-| Alpharael, Dreaming Acolyte | U/B | Bulk | eoe |
-| Niv-Mizzet, the Firemind | U/R | Veyran | — |
-| Rapturous Moment | U/R | Bulk | sos |
-| Scarlet Spider, Kaine | B/R | Bulk | spm |
-| Stadium Tidalmage | U/R | Bulk | sos |
-| Twinned Vision | U/R | Bulk | fra |
-
-### Colorless artifacts (6)
-
-| Card | From | Set |
-|---|---|---|
-| Arcane Signet | Bulk | fic, msc |
-| Lightning Greaves | Bulk | fic |
-| Lotus Petal | Sauron | — |
-| Psychosis Crawler | Bulk | c15 |
-| Sisay's Ring | Binder | — |
-| Skullclamp | Bulk | fic |
-
-### Lands (12)
-
-| Card | From | Set |
-|---|---|---|
-| Blood Crypt | Bulk | rtr |
-| Command Tower | Bulk | khc, fic |
-| Exotic Orchard | Bulk | fic |
-| Gemstone Mine | Bulk | tsb |
-| Haunted Ridge | Bulk | fra |
-| Shivan Reef | Binder | — |
-| Spirebluff Canal | Veyran | — |
-| Steam Vents | Veyran | — |
-| Stormcarved Coast | Veyran | — |
-| Sulfur Falls | Veyran | — |
-| Sulfurous Springs | Binder | — |
-| Underground River | Bulk | fic |
 
 ## Decklist by type (100)
 
