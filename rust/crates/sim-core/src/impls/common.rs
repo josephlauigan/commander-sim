@@ -2311,6 +2311,7 @@ fn pillowfort_tax(g: &Game, src: Src, attacker: PlayerId, d: PlayerId) -> Option
     }
     Some(match card_name(g, src) {
         "Ghostly Prison" | "Propaganda" | "Windborn Muse" | "Elephant Grass" => 2,
+        "Archon of Absolution" => 1,
         "Baird, Steward of Argive" => 1,
         // Approximate: {W/P} per attacker read as {1} (rules2.py's Norn's Annex replaces it)
         "Norn's Annex" => 1,
@@ -3186,6 +3187,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         "Ghostly Prison",
         "Propaganda",
         "Windborn Muse",
+        "Archon of Absolution",
         "Baird, Steward of Argive",
         "Sphere of Safety",
         // "Norn's Annex": rules2.py replaces common's tax with its own (0: the {W/P} is rules2.annex_life's), so
