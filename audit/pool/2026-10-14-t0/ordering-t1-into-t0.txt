@@ -1,0 +1,21 @@
+5,000 games (calibration: ordering, 1,000 per list per tier, profile conservative), lookahead AI, 10 worker threads: about 25 minutes
+
+=== Tier ordering: each deck alone against three decks of the tier below [conservative, n=1000] ===
+  progress  10.0%  2m04s elapsed, ~18m41s left
+  progress  20.0%  3m57s elapsed, ~15m48s left
+  progress  30.0%  6m10s elapsed, ~14m24s left
+  progress  40.0%  8m20s elapsed, ~12m31s left
+  progress  50.0%  10m50s elapsed, ~10m50s left
+  progress  60.0%  12m58s elapsed, ~8m39s left
+  progress  70.0%  17m35s elapsed, ~7m32s left
+  progress  80.0%  22m01s elapsed, ~5m30s left
+  progress  90.0%  25m08s elapsed, ~2m47s left
+  progress 100.0%  27m54s elapsed, ~0m00s left
+  Tier 1 (High B2 / Low B3) into Tier 0 (Bracket 2 precons): 19.7% overall
+    Isshin                        17.9% (15.6-20.4)  (not above 25%)
+    Lathril                       15.2% (13.1-17.6)  (not above 25%)
+    Light-Paws                    33.6% (30.7-36.6)
+    Tatyova                       10.8% (9.0-12.9)  (not above 25%)
+    Teysa Karlov                  20.8% (18.4-23.4)  (not above 25%)
+
+(1675s total)

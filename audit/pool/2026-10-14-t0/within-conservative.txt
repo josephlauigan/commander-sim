@@ -1,0 +1,21 @@
+2,000 games (calibration: within, 2,000 per list per tier, profile conservative), lookahead AI, 10 worker threads: about 10 minutes
+
+=== Within-tier balance [conservative, n=2000 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  1m02s elapsed, ~9m20s left
+  progress  20.0%  1m58s elapsed, ~7m53s left
+  progress  30.0%  3m00s elapsed, ~7m02s left
+  progress  40.0%  3m51s elapsed, ~5m47s left
+  progress  50.0%  4m42s elapsed, ~4m42s left
+  progress  60.0%  5m35s elapsed, ~3m43s left
+  progress  70.0%  6m30s elapsed, ~2m47s left
+  progress  80.0%  7m19s elapsed, ~1m49s left
+  progress  90.0%  8m09s elapsed, ~0m54s left
+  progress 100.0%  9m02s elapsed, ~0m00s left
+  Tier 0 (Bracket 2 precons): avg game 11.8 rounds, timeouts 0.4%
+    Anikthea                      33.1% (30.9-35.5)
+    Captain America               19.5% (17.7-21.5)
+    Giada                         31.7% (29.5-34.0)
+    Stella Lee                    15.8% (14.0-17.6)
+    Zurgo Stormrender             24.6% (22.5-26.7)
+
+(542s total)
