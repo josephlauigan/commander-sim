@@ -66,7 +66,7 @@ the file's `## Import list` block. Either edit the file, or paste a whole new li
 
 ```
 cardgen deck sauron new-list.txt --dry-run         # what would change, nothing written
-cardgen deck sauron new-list.txt --log "Why."      # rewrite the file; adds an "Updated <date>" line
+cardgen deck sauron new-list.txt --log "Why."      # rewrite the file; logs "Out: … In: … Why." in decklists/CHANGELOG.md
 cardgen deck yuriko-dimir-ninjas -                 # paste the list on stdin
 ```
 

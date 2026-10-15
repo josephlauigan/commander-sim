@@ -1,24 +1,57 @@
 # Galadriel, Light of Valinor — Bant Rebels
 
-**Updated 2026-10-14.** Out: Flicker. In: Dragonlord Dromoka. Flicker (back to Avery) for Dragonlord Dromoka (JD's, from the retired Jodah deck's leftovers). Measured +1.1 over all tiers (T1 +0.8, T2 +3.0, T3 -0.8, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier).
+Galadriel pays you every time a creature enters: mana, a bigger team, or a card. The deck fills the battlefield with
+cheap creatures and a chain of Mercadian Masques Rebels, whose searchers put a creature onto the battlefield every
+turn without spending cards, and then grows the whole team with counters until it overruns the table. It is weak when
+it fails to find a searcher or a draw engine, to fast decks that kill it before the chain starts, and to a board wipe
+cast after it has overcommitted.
 
-**Simulator, 2026-10-14:** swapping Flicker for Dragonlord Dromoka measured **+1.1 over all tiers, within noise,** in a paired test (T1 +0.8, T2 +3.0, T3 -0.8, T4 +2.2, T5 +0.4; look-ahead, loose, 500 games per list per tier). A pool run is pending. Previous list's figures: **13.2% over all tiers** on 2026-10-12 (±0.4; tied with Alela for 9th of the ten decks): T1 13.1%, T2 15.9%, T3 12.3%, T4 12.1%, T5 12.6%, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
-
-2026-10-02
-**Added 2026-10-02.** In the simulator as deck key `galadriel` (`commander-sim --deck galadriel --pool t3`) and in practice mode. Every card is modeled.
+| | |
+|---|---|
+| **Commander** | Galadriel, Light of Valinor ({2}{G}{W}{U}, 3/3, green-white-blue) |
+| **Bracket** | 3 (2 Game Changers: Cyclonic Rift, Farewell) |
+| **Simulator** | deck key `galadriel`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
 
-Flood the battlefield with creatures, and get paid for each one. Galadriel turns every creature entering into mana, a bigger team or a card, and a chain of Mercadian Masques Rebels puts creatures onto the battlefield every turn without spending cards.
+### The commander
 
-Galadriel, Light of Valinor ({2}{G}{W}{U}) reads: *Alliance — whenever another creature you control enters, choose one that hasn't been chosen this turn: add {G}{G}{G}; put a +1/+1 counter on each creature you control; or scry 2, then draw a card.*
+Galadriel, Light of Valinor ({2}{G}{W}{U}) reads: *Alliance — whenever another creature you control enters, choose one
+that hasn't been chosen this turn: add {G}{G}{G}; put a +1/+1 counter on each creature you control; or scry 2, then draw
+a card.*
+
+Each mode can be chosen once per turn, so the best turn is one with three creatures entering. The trigger works on any
+creature entering, whether cast, fetched, made as a token or put in by a blink effect. Galadriel herself is an Elf, so
+the Elf mana creatures and Elvish Archdruid count her. If she dies, the engine stops, but the searchers, the card-draw
+payoffs and Cathars' Crusade keep working.
+
+### Game plan
+
+**Early turns (1–3).** Play a one-mana Elf or Sol Ring on turn 1, a searcher or a ramp spell on turn 2, and a
+three-drop payoff on turn 3 (Welcoming Vampire, Tocasia's Welcome, Mentor of the Meek, Adeline). Look for a Rebel
+searcher in the first hand. The deck's result depends on finding one, because a searcher turns every spare mana into a
+creature each turn; without one, the deck is a pile of small creatures and ramp. Recruiter of the Guard finds the
+Sergeant, Lieutenant or Captain, so it counts as an extra searcher.
+
+**Middle turns (4–6).** Galadriel lands on turn 4 or 5, with the help of mana creatures. Now each creature that enters
+pays out. Use the searchers at the end of an opponent's turn (so that the scry-and-draw mode is available at instant
+speed) and spend your own turn on creature spells, the mana mode and the counters. Add Cathars' Crusade, Panharmonicon
+and the card-draw engines as the mana allows.
+
+**Late game.** The team is large and grows every time something enters. Finish with Adeline, Mirror Entity, Elspeth,
+Rogue's Passage or the counters, and keep a protection spell for the board wipe.
+
+### Three creatures a turn
 
 **Three creatures a turn is the target.** Each mode can be chosen once per turn, so the first three creatures to enter each turn each pay out, and the fourth gets nothing. Order them:
 - **Mana first** in your main phase when it lets you cast something else this turn. {G}{G}{G} from the first creature often pays for the second.
 - **Counters** before combat with a wide board. With six creatures out, it's six counters.
 - **Scry 2 and draw** any other time, and always at instant speed (a Rebel fetched at an opponent's end step).
 
-**The Rebel chain.** A searcher pays mana and taps to put a Rebel permanent card straight from your library onto the battlefield. A fetched Rebel isn't cast, so counterspells can't stop it, and it still triggers Galadriel, Cathars' Crusade and every other enters payoff.
+
+### The Rebel chain
+
+A searcher pays mana and taps to put a Rebel permanent card straight from your library onto the battlefield. A fetched Rebel isn't cast, so counterspells can't stop it, and it still triggers Galadriel, Cathars' Crusade and every other enters payoff.
 
 | Searcher | Its mana value | Activation | Finds a Rebel with mana value |
 | --- | --- | --- | --- |
@@ -31,32 +64,77 @@ Galadriel, Light of Valinor ({2}{G}{W}{U}) reads: *Alliance — whenever another
 
 Each searcher finds a bigger one, so one early searcher becomes the whole chain: Sergeant finds Lieutenant, Lieutenant finds Lin Sivvi or Captain, Captain finds Commander. Ramosian Revivalist ({6}, {T}) returns a Rebel with mana value 5 or less from your graveyard, and Lin Sivvi's {3} puts a dead Rebel back on the bottom of your library to be found again. Mirror Entity is a changeling, so every searcher can find it.
 
-**The eighteen Rebels and what to fetch.**
+### Which Rebels to fetch
+
 - **Searchers first** while you have fewer than two: they turn spare mana into a creature every turn.
 - **Lawbringer and Lightbringer** exile a red or a black creature (tap and sacrifice). Fetch one when an opponent's best threat is that colour.
-- **Ballista Squad** shoots an attacking or blocking creature for X. **Errant Doomsayers** and **Whipcorder** tap a creature: an opponent's attacker before their combat, or your opponent's blocker before yours.
+- **Ballista Squad** shoots an attacking or blocking creature for X. **Errant Doomsayers** taps a creature with toughness 2 or less and **Whipcorder** taps any creature: tap an opponent's attacker before their combat, or their blocker before yours.
 - **Cho-Manno** takes no damage, **Defiant Vanguard** kills whatever it blocks, and **Knight of the Holy Nimbus** regenerates unless an opponent pays {2}.
 - **Nightwind Glider** (protection from black) and **Thermal Glider** (protection from red) are evasive bodies. **Amrou Seekers** can only be blocked by white or artifact creatures. **Jhovall Queen** is a 4/7 vigilance wall (Lin Sivvi with X = 6).
 
+### Maskwood Nexus
+
 **Maskwood Nexus makes everything a Rebel.** Your creatures, creature spells and creature cards are every creature type, so the searchers can find any creature in your library (Adeline, Mentor of the Meek, Reya Dawnbringer with Lin Sivvi at X = 9). Every type-matters card counts every creature too. Its {3}, {T} makes a 2/2 changeling Shapeshifter.
+
+### More payoffs for creatures entering
 
 **More payoffs for creatures entering.**
 - **Cathars' Crusade:** a +1/+1 counter on each creature you control every time a creature enters.
 - **Panharmonicon:** every enters trigger of your permanents happens twice: Galadriel (two modes per creature), Cathars' Crusade (two counters each), Welcoming Vampire, Tocasia's Welcome, Mentor of the Meek, Kindred Discovery, Recruiter of the Guard and Farhaven Elf.
 - **Card draw:** Welcoming Vampire (power 2 or less, once a turn), Tocasia's Welcome (mana value 3 or less, once a turn), Mentor of the Meek (pay {1} per small creature), Kindred Discovery (enters or attacks), Beast Whisperer and Vanquisher's Banner (creature spells).
 - **Bodies:** Adeline makes a 1/1 for each opponent whenever you attack, Elspeth makes three Soldiers a turn, and Voice of Resurgence leaves an Elemental as big as your creature count.
-- **Dragonlord Dromoka** ({4}{G}{W}, 5/7 flying, lifelink) is the top end, a big body that also triggers Galadriel's Alliance like any other creature. It can't be countered, and your opponents can't cast spells during your turn. The new card is JD's, from his binder.
+- **Dragonlord Dromoka** ({4}{G}{W}, 5/7 flying, lifelink) is the top end, a big body that also triggers Galadriel's Alliance like any other creature. It can't be countered, and your opponents can't cast spells during your turn.
+
+### Name a type
 
 **Name a type.** Kindred Discovery, Door of Destinies, Patchwork Banner, Vanquisher's Banner and Secluded Courtyard each name a creature type as they enter.
 - **Human (19 creatures) or Rebel (18 plus Mirror Entity)** are the two to choose between. Rebels enter mostly by being fetched, which is what Kindred Discovery and the Banners' +1/+1 want. Door of Destinies and Vanquisher's Banner's draw count *spells cast*, and the Humans are cast more often (Adeline, Mentor, Recruiter, Mangara, Cartographer).
 - **With Maskwood Nexus out, the choice doesn't matter:** every creature counts.
 - **Secluded Courtyard's** coloured mana only casts creature spells of its type (or pays for those creatures' abilities), so name the type you cast the most.
 
-**Interaction.**
+### Interaction and protection
+
 - **Spot removal:** Swords to Plowshares, Path to Exile, Generous Gift, Beast Within, Return to Dust (two artifacts or enchantments in your main phase), plus Lawbringer, Lightbringer and Ballista Squad on the battlefield.
 - **Theft:** Abduction (an opponent's creature, which goes home when it dies) and Bribery (the best creature in an opponent's library).
 - **Board control:** Austere Command (choose creatures with mana value 4 or more and artifacts, and your small creatures live), Farewell, Cyclonic Rift, River's Rebuke, Elspeth's −3 (power 4 or more) and Crackdown (big nonwhite creatures stop untapping; your own green creatures too once Crusade grows them).
 - **Protection:** Unbreakable Formation, Make a Stand and Rootborn Defenses make your team indestructible against a destroy wipe. Eerie Interlude exiles your creatures and returns them at the next end step, which beats exile and -X/-X wipes too, and re-triggers every enters payoff. Counterspell for the rest. Dragonlord Dromoka can't be countered, and while she is out opponents can't cast spells on your turn, so they can't answer your attack or your Rebel chain at instant speed.
+
+### Ramp and land search
+
+The deck needs mana for a five-drop commander and for the searcher activations. **Llanowar Elves**, **Fyndhorn Elves**
+and **Elvish Mystic** start on turn 1, and **Elvish Archdruid** taps for {G} for each Elf you control (Galadriel
+counts) and pumps the other Elves. **Sol Ring**, **Arcane Signet**, **Chromatic Lantern** (all your lands tap for any
+colour), **Patchwork Banner** and **Springleaf Drum** are the rocks. The land spells are **Farseek** (a Plains, Island,
+Swamp or Mountain card, so also the dual lands with those types), **Cultivate**, **Shared Roots**, **Farhaven Elf** and
+**Sakura-Tribe Elder**, which can chump block and then be sacrificed for a land. Every creature that enters is a trigger,
+so Farhaven Elf and Sakura-Tribe Elder double as Galadriel fodder. **Cartographer** returns a land from the graveyard
+(use it after Sakura-Tribe Elder or a Fabled Passage), and **Planar Genesis** (look at four, put a land onto the
+battlefield or a card into your hand) is a cheap instant that does either.
+
+### How it wins
+
+Through the counters and a very wide board. With Galadriel, Cathars' Crusade and one searcher, each Rebel that enters puts
+two or three counters on everything. **Adeline**'s power equals your creature count, and she makes a 1/1 for each
+opponent whenever you attack, so a board of eight creatures is an attack for 8 or more from her alone. **Mirror
+Entity** turns every creature into an X/X with leftover mana, and **Elspeth, Sun's Champion** adds three Soldiers a turn
+(and her emblem gives +2/+2 and flying). **Rogue's Passage** makes the biggest creature unblockable. **Reya
+Dawnbringer** brings back a creature every upkeep, if the game goes that long. **Dragonlord Dromoka** is a 5/7 flying
+lifelinker that no one can answer on your turn.
+
+### Weak spots and how to play around them
+
+- **No searcher.** The deck is much weaker without one, and a fair share of games see none by the time Galadriel lands. Value a hand with a searcher or Recruiter of
+  the Guard, and dig with the draw engines and Shamanic Revelation. Keep the first searcher safe, and use
+  Lin Sivvi's {3} ability to put a dead Rebel back into the library.
+- **Slow start.** Galadriel is a five-drop, so the first payoffs are the three-drops. Keep a hand with three lands, or two
+  lands and a mana creature, and play the engine pieces first.
+- **Board wipes.** Hold **Unbreakable Formation**, **Make a Stand**, **Rootborn Defenses** or **Eerie Interlude**, and
+  don't overcommit when you can win with the cards already out. Austere Command, Farewell and Cyclonic Rift give you
+  your own reset.
+- **Fast decks and big threats.** Use Swords to Plowshares and Path to Exile, and the Rebel creatures that tap or exile
+  (Whipcorder, Lawbringer, Lightbringer, Ballista Squad), early. Crackdown stops big nonwhite creatures from untapping.
+- **Counterspells.** Fetched Rebels aren't cast, so the searchers, Maskwood Nexus' tokens and Elspeth's Soldiers dodge
+  them. Dragonlord Dromoka can't be countered and stops opponents from casting spells on your turn.
 
 ## Key lines
 
@@ -70,11 +148,7 @@ Each searcher finds a bigger one, so one early searcher becomes the whole chain:
 
 **Wipe on your terms.** Austere Command with "artifacts" and "creatures with mana value 4 or more" leaves your 1-, 2- and 3-drop creatures standing. Hold Unbreakable Formation or Eerie Interlude for an opponent's wipe.
 
-## What the simulator found
-
-Against the opponent pools with the look-ahead AI (loose profile, 120 games per tier) the deck won 15.0% against Tier 1, 11.7% against Tier 2, 8.3% against Tier 3, 12.5% against Tier 4 and 8.3% against Tier 5; an even share is 25%. The deck's result depends on finding a searcher. In games where one appears, the AI puts about three Rebels onto the battlefield per game, and one game in nine reaches eight or more. With six searchers in 99 cards (plus Recruiter of the Guard, which finds the Sergeant, Lieutenant or Captain), about 40% of games see none. Galadriel's first Alliance trigger comes on turn 6 in a typical game; the AI chooses counters most often, then mana, then the draw.
-
-## Consistency
+## Mana and consistency
 
 The list is exactly 100 cards.
 

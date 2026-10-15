@@ -120,7 +120,18 @@ fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     assert!(o.ok, "{}", o.text);
     let after = std::fs::read_to_string(&path).unwrap();
     assert!(after.contains("1 Sol Ring\n") && !after.contains("1 Arcane Signet\n"));
-    assert!(after.contains("Out: Arcane Signet. In: Sol Ring. Test."));
+    // the log line goes to the changelog, under the deck's title, not into the deck file
+    assert!(!after.contains("Out: Arcane Signet. In: Sol Ring. Test."));
+    let log = std::fs::read_to_string(p.decklists().join("CHANGELOG.md")).unwrap();
+    let title = before.lines().find_map(|l| l.strip_prefix("# ")).unwrap();
+    let section =
+        log.split(&format!("## {title}\n")).nth(1).expect("the deck's section").split("\n## ").next().unwrap();
+    let changes = section.split("### Changes\n\n").nth(1).expect("a Changes list");
+    assert!(
+        changes.starts_with("- **")
+            && changes.lines().next().unwrap().ends_with("Out: Arcane Signet. In: Sol Ring. Test."),
+        "{section}"
+    );
     let new_list = cardgen::decks::load(&path).unwrap();
     assert_eq!(new_list.len(), 100);
     let fixture = std::fs::read_to_string(p.root.join("tests/fixtures/my_decks_parsed.json")).unwrap();

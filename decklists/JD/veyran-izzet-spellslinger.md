@@ -1,72 +1,121 @@
 # Veyran, Voice of Duality — Izzet Spellslinger
 
-**Simulator, 2026-10-13:** **−2.1 over all tiers** against the previous list in a paired test (T1 −3.9, T2 −4.5, T3 −0.4, T4 −0.9, T5 −0.8; look-ahead AI, loose profile, 1,000 paired games per tier; `audit/sauron/2026-10-12-weakness/sofi-veyran/`). The previous list's pool figure, not this list's, was 23.4% over all tiers (±0.4; rank 6 of the ten decks; 6,720 games per tier, `decklists/pool/pool-results.md` section 0d).
+Chain cheap instants and sorceries, and let Veyran make every cast-trigger fire twice. The deck turns those doubled
+triggers into damage, cards, Treasure and a stream of creature tokens, and ends the game with a big turn: Aetherflux
+Reservoir, Crackle with Power, Rite of the Dragoncaller, or a board of tokens. It is weak to creature decks that attack
+before the engine is online, to board wipes while the tokens are out, and to a removal spell on Veyran before the
+chain starts.
 
-2026-09-17
-**Updated 2026-09-18 / 09-19 / 09-20** across earlier passes (trim to 100, Ral + Aetherflux, Force of Will + Steam Vents, tutor guide).
-**Updated 2026-09-21.** Terminal Moraine → Spirebluff Canal.
-**Updated 2026-09-22.** Scavenger Grounds → Stormcarved Coast.
-**Updated 2026-09-26.** Seven swaps: **Displacer Kitten → Niv-Mizzet, Parun**, **Kylox, Visionary Inventor → Niv-Mizzet, the Firemind**, **Burning Prophet → Kessig Flamebreather**, **Muse Seeker → Imperial Recruiter**, **Dualcaster Mage → Thousand-Year Storm**, **Disruptor Flute → Swiftfoot Boots**, and **Sleight of Hand → Visions of Beyond**. **Losing Displacer Kitten ends the Kitten + Blazing Firesinger infinite** — the deck no longer has a two-card combo, and Aetherflux Reservoir is now a big-turn finisher rather than an infinite kill. None of the new cards is a Game Changer; the deck stays at 100, 34 lands, and three GCs (Bracket 3, at the cap).
-**Updated 2026-09-26 (second pass).** Disdainful Stroke → **Unsummon**.
-**Updated 2026-09-27.** **Force of Will → Jeska's Will** (Jeska's Will takes its Game Changer slot, so the deck stays at three) and **Reenact the Crime → Twinflame**.
-**Updated 2026-10-02.** **Hydro-Channeler → Alania, Divergent Storm**: your first instant and your first sorcery each turn are copied, each copy costing an opponent a free card, and Veyran and Harmonic Prodigy each add a copy. Not a Game Changer; the deck stays at 100 and three GCs (Bracket 3).
-**Updated 2026-10-04.** Out: Gandalf, Friend of the Shire, Mystic Confluence, Pongify, Reality Shift, Return the Favor, Spell Pierce, Swiftfoot Boots, Thought Vessel, Thunderdrum Soloist. In: Deflecting Swat, Docent of Perfection // Final Iteration, Fiery Emancipation, Lightning Greaves, Slip Out the Back, Storm-Kiln Artist, Talrand, Sky Summoner, Third Path Iconoclast, Young Pyromancer. The tokens rebuild: spells now leave creatures behind, Fiery Emancipation triples every ping, and the protection package is Deflecting Swat, Lightning Greaves and Slip Out the Back.
-**Updated 2026-10-04.** Out: Twinflame. In: Crawlspace. Twinflame → Crawlspace: no more than two creatures can attack you each combat, against the creature decks that cause most of the deck's losses.
-**Updated 2026-10-05.** Out: Crawlspace. In: Propaganda. Crawlspace → Propaganda, the planned swap once Propaganda was found (it tested ahead of Crawlspace in the 10-04 rebuild).
-**Updated 2026-10-06.** Out: Mystical Tutor. In: Underworld Breach. Mystical Tutor → Underworld Breach: every escape is a cast, so the pingers, token makers and Storm-Kiln Artist trigger again, doubled by Veyran. Still three Game Changers (Bracket 3).
-**Updated 2026-10-11.** Out: Cyclonic Rift. In: Evacuation. Matched to JD's physical list: Cyclonic Rift is in Sauron, so Veyran plays Evacuation; two Game Changers now (Jeska's Will, Underworld Breach)
-**Updated 2026-10-11 (trade with Kefka, moved as functional blocks).** Out to Kefka: Deflecting Swat, Slip Out the Back, Underworld Breach, Niv-Mizzet, the Firemind, Jin-Gitaxias, Progress Tyrant, Steam Vents, Sulfur Falls, Spirebluff Canal, Stormcarved Coast. In: Mystic Confluence and Splatter Technique (from Kefka), Return the Favor, Spell Pierce and Lightning Strike (from bulk), 2 Island and 2 Mountain. Paired look-ahead test, 1,000 games per tier: **+1.7 points** (22.9% -> 24.5%). One Game Changer now (Jeska's Will).
-**Updated 2026-10-12.** Out: Return the Favor (to bulk). In: Triple Triad (new). JD's choice: each upkeep, every player exiles their top card; you may play yours and every cheaper one free, and free instants and sorceries still trigger Veyran. A partial test (Tiers 1-3, 1,000 paired games each: +0.5, +0.9, -2.1, all within noise) was stopped early.
-**Updated 2026-10-13.** Out: Jeska's Will. In: Flux Channeler. JD's choice: Jeska's Will moves to Kefka; Flux Channeler (from Sauron) takes the slot. Measured -2.1 over all tiers (T1 -3.9, T2 -4.5, T3 -0.4, T4 -0.9, T5 -0.8; look-ahead, loose, 1,000 paired games per tier; audit/sauron/2026-10-12-weakness/sofi-veyran/). No Game Changers left.
+| | |
+|---|---|
+| **Commander** | Veyran, Voice of Duality ({1}{U}{R}, 2/2, blue-red) |
+| **Bracket** | 3 (no Game Changers) |
+| **Simulator** | deck key `veyran`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
 
-Chain cheap instants and sorceries, let Veyran make every cast-trigger fire twice, and convert those doubled triggers into damage, cards, Treasure, and creature tokens.
+### The commander
 
-Veyran ({1}{U}{R}, 2/2) reads: magecraft gives it +1/+1 until end of turn, and *if you casting or copying an instant or sorcery causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time*.
+Veyran ({1}{U}{R}, 2/2) reads: *Magecraft — whenever you cast or copy an instant or sorcery spell, Veyran gets +1/+1 until end of turn. If you casting or copying an instant or sorcery spell causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.*
 
-The scope matters. Veyran doubles magecraft and "whenever you cast an instant or sorcery" abilities. It does **not** double attack triggers, combat-damage triggers, ETB triggers, or draw triggers — so the Emeritus attack triggers and Niv-Mizzet, Parun's "whenever you draw" pings fire once per draw.
+The scope matters. Veyran doubles magecraft and "whenever you cast an instant or sorcery" abilities. It does **not** double attack triggers, combat-damage triggers, ETB triggers, or draw triggers, so the Emeritus attack triggers and Niv-Mizzet, Parun's "whenever you draw" pings fire once per draw. Veyran has no first strike, and magecraft gives +1/+1 until end of turn, not permanent counters. The doubling applies only when your casting or copying an instant or sorcery is what caused the trigger.
 
-**Pingers.** Guttersnipe and **Kessig Flamebreather** each hit every opponent when you cast, and Veyran doubles both. Ral, Storm Conduit adds another. Both pingers are Shamans, so Harmonic Prodigy adds a third trigger.
+Veyran is a fragile engine, and he is removed often. The token makers keep working at half strength without him, so the deck does not stop when he dies, but every engine below is twice as good with him out.
 
-**Spells make creatures.** Four token makers trigger when you cast an instant or sorcery, and Veyran doubles each one:
+### Game plan
+
+**Early turns (1–3).** Play a cheap engine: **Young Pyromancer** or **Third Path Iconoclast** on turn 2, **Guttersnipe** or **Kessig Flamebreather** on turn 2 or 3, **Harmonic Prodigy**, and a rock (**Sol Ring**, **Arcane Signet**, **Fellwar Stone**). Veyran on turn 3 is fine if you can protect him; otherwise build the board first and let the cheap spells (cantrips, burn, counters) trigger the engines at half strength. Keep a counterspell or **Spell Pierce** up when you can.
+
+**Middle turns (4–6).** Deploy the engines before the chain: **Storm-Kiln Artist**, **Talrand, Sky Summoner**, **Murmuring Mystic**, **Archmage Emeritus**, **Ral, Storm Conduit**, **Alania, Divergent Storm**, and **Veyran** himself if he is not out yet, with **Lightning Greaves** down first. Cast cheap spells at the end of the turn to build tokens, and keep **Propaganda** and a counter ready against creature decks.
+
+**Late game.** The big turn: pingers or token makers down, Veyran protected, **Fiery Emancipation** out if you have it, then chain. **Thousand-Year Storm** copies each spell once for each earlier spell, **Seething Song** and **Treasure** from Storm-Kiln Artist pay for it, and **Aetherflux Reservoir**, **Crackle with Power** or the token board end the game.
+
+### Pingers
+
+**Guttersnipe** and **Kessig Flamebreather** each hit every opponent when you cast, and Veyran doubles both. Ral, Storm Conduit adds another ping on every cast or copy. Both pingers are Shamans, so **Harmonic Prodigy** adds a third trigger. **Thor, Asgard's Avenger** (a 4/4 flier) adds 1 to all the damage your other sources deal to opponents and their permanents, so each doubled ping hits harder.
+
+### Spells make creatures
+
+Five token makers trigger when you cast an instant or sorcery, and Veyran doubles each one:
 
 - **Young Pyromancer** ({1}{R}): a 1/1 red Elemental. It's a Shaman, so Harmonic Prodigy adds a third token.
 - **Third Path Iconoclast** ({U}{R}): a 1/1 Soldier artifact creature. It triggers on any noncreature spell, but only instants and sorceries are doubled.
 - **Talrand, Sky Summoner** ({2}{U}{U}): a 2/2 flying Drake. It's a Wizard, so Harmonic Prodigy adds a third.
-- **Docent of Perfection** ({3}{U}{U}, 5/4 flier): a 1/1 Wizard. Once you control three Wizards it transforms into **Final Iteration**, which gives your Wizards +2/+1 and flying, so the Wizard tokens become 3/2 fliers.
+- **Murmuring Mystic** ({3}{U}): a 1/1 flying Bird Illusion. It's a Wizard, so Harmonic Prodigy adds a third.
+- **Docent of Perfection** ({3}{U}{U}, 5/4 flier): a 1/1 Wizard. Once you control three Wizards it transforms into **Final Iteration**, which gives your Wizards +2/+1 and flying, so the Wizard tokens become 3/2 fliers. The Wizards you already have (Talrand, Murmuring Mystic, Archmage Emeritus, Flux Channeler, Alania, Venser, Harmonic Prodigy and the Emeritus creatures) count.
+- **Rite of the Dragoncaller** (an enchantment) makes a 5/5 flying Dragon for each instant or sorcery, doubled by Veyran.
 
-With one of these out, a four-spell turn leaves eight tokens. Unlike the commander, the token makers keep working when Veyran is gone, just at half strength, so losing Veyran no longer stops the deck. On turns you can't go off, cheap spells build a board you can attack with.
+With one of these out, a four-spell turn leaves eight tokens. The token makers keep working when Veyran is gone, just at half strength. On turns you can't go off, cheap spells build a board you can attack with. Tokens are poor blockers in practice: they are often tapped or not yet on the board when the big attack comes, so don't count on them to protect Veyran.
 
-**Storm-Kiln Artist pays for the chain.** Its magecraft makes a Treasure whenever you cast or copy an instant or sorcery. Veyran doubles it, and it's a Shaman, so Harmonic Prodigy adds a third. It gets +1/+0 for each artifact you control; Treasures and Iconoclast's Soldiers both count. Because it's magecraft, it also triggers on copies from Thousand-Year Storm and Alania.
+### Treasure and mana
+
+**Storm-Kiln Artist pays for the chain.** Its magecraft makes a Treasure whenever you cast or copy an instant or sorcery. Veyran doubles it, and it's a Shaman, so Harmonic Prodigy adds a third. It gets +1/+0 for each artifact you control; Treasures and Iconoclast's Soldiers both count. Because it's magecraft, it also triggers on copies from Thousand-Year Storm and Alania. **Sanar, Unfinished Genius // Wild Idea** also makes a Treasure when you tap it after casting an instant or sorcery, and its prepared spell tutors an instant or sorcery. **Blazing Firesinger // Seething Song** enters prepared and gives {R}{R}{R}{R}{R} mid-chain.
+
+### Fiery Emancipation
 
 **Fiery Emancipation triples everything.** If a source you control would deal damage, it deals triple instead. With Veyran out, a Guttersnipe trigger pair becomes 12 damage to each opponent per spell. Every 1/1 token attacks for 3, a Drake for 6, and Crackle with Power and Aetherflux Reservoir hit three times as hard. It costs six ({3}{R}{R}{R}), so it usually lands the turn before the big turn. It is not a Game Changer.
 
-**Niv-Mizzet, Parun turns cards into damage.** Parun draws a card whenever *any* player casts an instant or sorcery (your casts doubled by Veyran), and pings for every card you draw. **Harmonic Prodigy doubles both** (Parun is a Wizard). Archmage Emeritus draws on every magecraft trigger, so one spell with Parun, Emeritus, and Veyran out can draw four and ping four. (Niv-Mizzet, the Firemind went to Kefka on 10-11, where it is a second kill with Kefka's flipped side.)
+### Cards into damage
+
+**Niv-Mizzet, Parun turns cards into damage.** Parun ({U}{U}{U}{R}{R}{R}, 5/5 flier, can't be countered) draws a card whenever *any* player casts an instant or sorcery (your casts doubled by Veyran), and pings for every card you draw. **Harmonic Prodigy doubles both** (Parun is a Wizard). **Archmage Emeritus** draws on every magecraft trigger, so one spell with Parun, Emeritus, and Veyran out can draw four and ping four.
+
+### Copy engines
 
 **Thousand-Year Storm** copies each instant or sorcery once for every other one you've cast before it this turn. Copies trigger magecraft (and Veyran doubles those) but aren't casts, so they don't trigger Guttersnipe, Kessig, Parun, or the token makers. Storm-Kiln Artist's magecraft does see them. The fourth spell of a turn becomes four spells' worth of magecraft.
 
 **Alania, Divergent Storm copies the first instant and the first sorcery you cast each turn** (yours and opponents' turns alike), if you have a target opponent draw a card for each copy. Each copy is optional, so take only the ones worth a card. Casting the spell is what triggers Alania, so **Veyran makes it trigger twice**, and Alania is a Wizard, so **Harmonic Prodigy adds a third**: with both out, your first instant and first sorcery each resolve up to four times. Like Thousand-Year Storm's, the copies trigger magecraft (Archmage Emeritus draws, Veyran grows) but aren't casts, so Guttersnipe, Kessig, Parun and the token makers see only the original, while Storm-Kiln Artist makes a Treasure for each copy. The best first spells: Ancestral Recall, Expressive Iteration, Seething Song (each copy is another five red), Crackle with Power (copies keep X), Evacuation, and Lightning Bolt. A copied counterspell is rarely worth a card. Spells cast before Alania landed still count: if your first instant this turn came before Alania, the next one isn't copied.
 
-**Protecting Veyran.** Three pieces (since the 10-11 trade with Kefka):
+**Mizzix's Mastery** copies an instant or sorcery from your graveyard and casts it free (so Veyran sees a cast): the single-card blowout on River's Rebuke or a large Crackle with Power. **Flashback** gives an instant or sorcery in your graveyard flashback for its mana cost.
+
+### Protecting Veyran
 
 - **Lightning Greaves** gives shroud and haste, and its equip is {0}, so you can move it to a new threat for free.
 - **Triple Triad** ({3}{R}{R}{R}) gives a free card every upkeep: each player exiles their top card, and you may play yours and every exiled card with lower mana value free. Free instants and sorceries are still cast, so they trigger Veyran and the magecraft cards.
 - **Spell Pierce** ({U}) counters a noncreature spell unless its controller pays {2}: a cheap answer to the removal spell aimed at Veyran, or the counter aimed at your big turn.
+- **Old Fat Spider Can't See Me** (a Saga) gives a creature of yours hexproof while it stays (chapter I), later prevents a creature's damage, and draws two cards on chapters III and IV.
+- **Unsummon**, **Banishing Betrayal** and **Venser, Shaper Savant** can save your own creature from removal by returning it to your hand (Venser returns a spell or a permanent), and **Counterspell**, **An Offer You Can't Refuse** and **Mystic Confluence** stop the removal itself.
 
-Veyran is still removed about once a game in the simulator, which is the other reason the token makers matter.
+### Protecting yourself from creature decks
 
-Eris is the reward for a full graveyard: it costs {2} less per *different* mana value among instants and sorceries there.
+**Propaganda taxes the attacks on you.** Each creature that attacks you costs its controller {2}. The deck's losses come mostly from decks full of creatures, and the tokens rarely protect you because they aren't on the board when the big attack comes. Propaganda works from the turn it lands and doesn't affect your own attacks. Cast it early when a creature deck is across the table. It's an enchantment, so no tutor in the deck finds it. **Evacuation** (every creature back to its owner's hand), **Blasphemous Act** (13 damage to each creature) and **Splatter Technique** (4 damage to each creature and planeswalker) reset the board; **River's Rebuke** returns all of one player's nonland permanents.
 
-**Flux Channeler is a small Wizard with a proliferate trigger.** Whenever you cast a noncreature spell, it proliferates: you may add another counter of each kind already on any permanents and players you choose, such as Ral's loyalty. It is a Wizard, so it counts toward Docent's three Wizards. It took the slot of Jeska's Will, which moved to Kefka on 10-13 (JD's choice); the paired test measured the change at −2.1, so the deck lost some big-turn fuel (Jeska's Will gave four to seven mana and three more spells for one card) and gained a cheap body.
+### Interaction and burn
 
-**Propaganda taxes the attacks on you.** Each creature that attacks you costs its controller {2}. Most of the deck's losses are to creature decks (Lord Windgrace, Brago, Kaalia, Sythis, Aurelia), and the tokens rarely protect you because they aren't on the board when the big attack comes. Propaganda works from the turn it lands and doesn't affect your own attacks. It took the slot Twinflame left (Crawlspace held it from 10-04 until Propaganda was found on 10-05; Propaganda tested ahead of it).
+- **Five ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Venser, Spell Pierce and Mystic Confluence (counter unless its controller pays {3}, bounce a creature, or draw: choose three).
+- **Spot removal:** Abrade (3 damage to a creature, or destroy an artifact), Burst Lightning, Lightning Bolt, Lightning Strike, Vibrant Outburst (3 damage and a tap), Chaos Warp, Banishing Betrayal and Prismari Charm.
+- **Unsummon**: a one-mana bounce that also saves one of your own creatures.
+
+Every one is also a magecraft trigger, so expect to hold up mana less often and win more by building a board.
+
+### Other cards
+
+- **Eris, Roar of the Storm** is the reward for a full graveyard: it costs {2} less per *different* mana value among instants and sorceries there. It is a 4/4 flier with prowess, and whenever you cast your second spell each turn it makes a 4/4 flying Dragon Elemental. 
+- **Flux Channeler** is a small Wizard with a proliferate trigger: whenever you cast a noncreature spell, it proliferates (add another counter of each kind already on permanents and players you choose, such as Ral's loyalty). It counts toward Docent's three Wizards and is a cheap body.
+- **Imperial Recruiter**, **Solve the Equation** and **Fabricate** are the tutors (see the section below).
+- **Cantrips** keep the chain going and fill the graveyard: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws and Visions of Beyond.
+- **Emeritus of Ideation // Ancestral Recall** and **Emeritus of Conflict // Lightning Bolt** are creatures with a prepared spell on the back (see Mana and consistency).
+
+### How it wins
+
+- **The big turn:** with a pinger or two, a token maker and Veyran out, a chain of four to six spells deals most of the damage by itself. Fiery Emancipation triples it.
+- **Aetherflux Reservoir** gains 1 life for the first spell, 2 for the second, and so on, and pays 50 life to deal 50 to one player. It is a finisher after a long turn, especially one extended by Thousand-Year Storm copies of cantrips.
+- **Rite of the Dragoncaller** makes a 5/5 flier per instant or sorcery, doubled by Veyran.
+- **Crackle with Power** deals five times X damage to each of up to X targets, and **Mizzix's Mastery** can recast it free from the graveyard.
+- **Going wide:** without a big turn, cast cheap spells to build a token board and attack. Under Fiery Emancipation every 1/1 hits for 3.
+
+### Weak spots and how to play around them
+
+- **Creature decks.** The deck loses most to decks that attack with many creatures. Land Propaganda early, hold Evacuation or Blasphemous Act, and keep the cheap interaction for the biggest attacker.
+- **Board wipes.** The tokens die to them. Rebuild with the next few spells, and keep Spell Pierce up for the wipe when you can.
+- **Veyran removed.** Put Lightning Greaves down before or with Veyran, not after he has already eaten removal, and keep the engines that don't need him in play.
+- **Graveyard hate.** Eris, Mizzix's Mastery, Emeritus of Ideation and Flashback all want the graveyard. If an opponent exiles it, lean on the pingers, the token makers and the cards in hand instead.
+- **Slow or clunky hands.** The list is top-heavy and has only three rocks. Keep hands with lands and a cheap engine (a pinger, Young Pyromancer, Third Path Iconoclast), and don't keep a hand of six-drops.
 
 ## Key lines
 
-**The big turn.** Pingers or token makers down, Veyran protected, Fiery Emancipation out if you have it, then chain. Thousand-Year Storm plus a mid-turn Seething Song (Blazing Firesinger's prepared spell), or Mizzix's Mastery on a full yard is the most explosive line the deck has left.
+**The big turn.** Pingers or token makers down, Veyran protected, Fiery Emancipation out if you have it, then chain. Thousand-Year Storm plus a mid-turn Seething Song (Blazing Firesinger's prepared spell), or Mizzix's Mastery on a full yard is the most explosive line the deck has.
 
-**Aetherflux Reservoir** gains 1 life for the first spell, 2 for the second, and so on, and pays 50 life to deal 50 to one player. It's no longer tied to an infinite, but a long turn — especially one extended by Thousand-Year Storm copies of cantrips — still gets you there.
+**Aetherflux Reservoir** gains 1 life for the first spell, 2 for the second, and so on, and pays 50 life to deal 50 to one player. A long turn, especially one extended by Thousand-Year Storm copies of cantrips, still gets you there.
 
 **Rite of the Dragoncaller** makes a 5/5 flier per instant or sorcery, doubled by Veyran.
 
@@ -76,41 +125,11 @@ Eris is the reward for a full graveyard: it costs {2} less per *different* mana 
 
 **Deck-out warning.** Niv-Mizzet, Parun's draw is not optional, and it triggers off opponents' spells too. With Parun, Archmage Emeritus, Veyran, and Harmonic Prodigy all out, a long turn can draw a lot of cards. Watch your library.
 
-**Sequencing.** Deploy pingers, token makers and Storm-Kiln Artist before Veyran and before the chain, not in the middle of it. Put Lightning Greaves down before or with Veyran, not after it has already eaten removal. Ral and Aetherflux both want to be down before the spell-dense turn. Emeritus of Ideation wants to exile eight cards from your graveyard on attack, which competes with Eris and Mizzix's Mastery for the same yard, so feed it lands and spent cantrips.
-
-## Consistency
-
-The list is exactly 100 cards.
-
-34 lands (15 nonbasic, 11 Island, 8 Mountain) plus three rocks: Sol Ring, Arcane Signet, Fellwar Stone. Storm-Kiln Artist's Treasures add mana once spells start. (Aetherflux Reservoir and Lightning Greaves are artifacts but not mana sources.)
-
-| Measure | Count | Note |
-| --- | --- | --- |
-| Blue lands | 22 | 11 Island plus the duals, Command Tower, Exotic Orchard, Path of Ancestry (Steam Vents, Sulfur Falls, Spirebluff Canal and Stormcarved Coast went to Kefka on 10-11) |
-| Red lands | 18 | 8 Mountain plus the duals and Sokenzan |
-| Colorless-only lands | 0 | — |
-| No mana the turn they land | 3 | Ash Barrens, Evolving Wilds, Terramorphic Expanse |
-| Usually enter tapped | 5 | Coastal Peak, Temple of Epiphany, Path of Ancestry, Scorched Geyser, Mistrise Village |
-
-**Curve pressure.** Niv-Mizzet, Parun and Thousand-Year Storm cost six (Parun is {U}{U}{U}{R}{R}{R}); the 10-11 trade took out a seven-drop and a six-drop (Jin-Gitaxias, Niv-Mizzet, the Firemind) for cheap spells, but the deck is still top-heavy, and Alania (five mana) replaced a two-drop. Parun's triple-pip cost in both colours is the hardest cast in the list. The 10-04 rebuild adds Talrand and Storm-Kiln Artist (four), Docent of Perfection (five) and Fiery Emancipation (six). The cheap additions are Young Pyromancer and Third Path Iconoclast (two each), and Thought Vessel left, so the deck is down to three rocks.
-
-**Spell density.** 32 instants and sorceries (21 instants, 11 sorceries), plus four prepare cards whose backs are castable spells: Emeritus of Ideation // Ancestral Recall, Emeritus of Conflict // Lightning Bolt, Blazing Firesinger // Seething Song, Sanar // Wild Idea.
-
-**Finding cards.** Archmage Emeritus and Niv-Mizzet, Parun are repeatable draw; Mystic Confluence (draw three at an opponent's end step) and Splatter Technique (draw four) refill (and Alania's copies of a cantrip draw again); Muse Seeker is gone. Cantrips: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws, and **Visions of Beyond** (draws three instead of one once any graveyard has twenty cards).
-
-**Interaction.** The 10-04 rebuild traded interaction for engines (Spell Pierce, Pongify, Reality Shift, Mystic Confluence and Return the Favor out); the 10-11 trade with Kefka brought Spell Pierce, Mystic Confluence and Return the Favor back. The deck has:
-
-- **Five ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Venser, Spell Pierce and Mystic Confluence.
-- **Eight pieces of spot removal** (Lightning Strike joined on 10-11), plus **Unsummon**, a one-mana bounce that also saves one of your own creatures.
-- **Four resets:** Blasphemous Act, River's Rebuke, Evacuation (every creature back to its owner's hand) and Splatter Technique (4 damage to each creature and planeswalker, when you don't need its draw-four).
-
-Every one is also a magecraft trigger. Expect to hold up mana less often and win more by building a board.
-
-**Redundancy.** Three recurring damage-on-cast sources (Guttersnipe, Kessig Flamebreather, Ral), a draw-to-damage Niv-Mizzet, and four token makers. Losing Veyran or any one engine doesn't turn the deck off.
+**Sequencing.** Deploy pingers, token makers and Storm-Kiln Artist before Veyran and before the chain, not in the middle of it. Put Lightning Greaves down before or with Veyran, not after he has already eaten removal. Ral and Aetherflux both want to be down before the spell-dense turn. Emeritus of Ideation wants to exile eight cards from your graveyard on attack, which competes with Eris and Mizzix's Mastery for the same yard, so feed it lands and spent cantrips.
 
 ## Tutor targets by board state
 
-Three tutors, each pointing somewhere different. **Solve the Equation only finds instants and sorceries**, **Fabricate finds artifacts**, and **Imperial Recruiter finds a creature with power 2 or less**. (Underworld Breach, the graveyard rebuy, went to Kefka on 10-11; Mizzix's Mastery is the remaining one.)
+Three tutors, each pointing somewhere different. **Solve the Equation only finds instants and sorceries**, **Fabricate finds artifacts**, and **Imperial Recruiter finds a creature with power 2 or less**. (Mizzix's Mastery is the graveyard rebuy.) Sanar's prepared spell, Wild Idea, is a fourth, for an instant or sorcery.
 
 - **Need a damage engine → Imperial Recruiter for Guttersnipe or Kessig Flamebreather.** Or Harmonic Prodigy when a Niv-Mizzet, Talrand or a Shaman engine is already out.
 - **Need a board → Imperial Recruiter for Talrand or Young Pyromancer.**
@@ -125,11 +144,36 @@ Three tutors, each pointing somewhere different. **Solve the Equation only finds
 
 Timing note: **Solve the Equation puts the card into your hand**, so you can cast it the same turn. Venser can bounce Imperial Recruiter to your hand for a second search.
 
+## Mana and consistency
+
+The list is exactly 100 cards.
+
+34 lands (15 nonbasic, 11 Island, 8 Mountain) plus three rocks: Sol Ring, Arcane Signet, Fellwar Stone. Storm-Kiln Artist's Treasures add mana once spells start. (Aetherflux Reservoir and Lightning Greaves are artifacts but not mana sources.)
+
+| Measure | Count | Note |
+| --- | --- | --- |
+| Blue sources | 21 | 11 Island plus Command Tower, Exotic Orchard, Coastal Peak, Mistrise Village, Mystic Sanctuary, Path of Ancestry, Scorched Geyser, Shivan Reef, Spectacle Summit, Temple of Epiphany |
+| Red sources | 17 | 8 Mountain plus Command Tower, Exotic Orchard, Coastal Peak, Path of Ancestry, Scorched Geyser, Shivan Reef, Spectacle Summit, Sokenzan, Temple of Epiphany |
+| Colorless-only lands | 1 | Desolate Lighthouse (a looter: {1}{U}{R}, {T}: draw, then discard) |
+| No mana the turn they land | 3 | Ash Barrens, Evolving Wilds, Terramorphic Expanse (they find a basic land) |
+| Always enter tapped | 4 | Coastal Peak, Temple of Epiphany, Path of Ancestry, Spectacle Summit |
+| Sometimes enter tapped | 3 | Scorched Geyser, Mistrise Village, Mystic Sanctuary |
+
+**Curve pressure.** Niv-Mizzet, Parun, Thousand-Year Storm, Fiery Emancipation, Triple Triad and Rite of the Dragoncaller cost six (Parun is {U}{U}{U}{R}{R}{R}), and Alania, Docent of Perfection, Emeritus of Ideation, Mystic Confluence, Evacuation and Splatter Technique cost five. Parun's triple-pip cost in both colours is the hardest cast in the list. The cheap engines are Young Pyromancer, Third Path Iconoclast, Guttersnipe, Kessig Flamebreather and Harmonic Prodigy (two or three mana each), and the deck has only three rocks, so a cheap body or a rock matters more than a fifth six-drop.
+
+**Spell density.** 32 instants and sorceries (21 instants, 11 sorceries), plus four prepare cards whose backs are castable spells: Emeritus of Ideation // Ancestral Recall, Emeritus of Conflict // Lightning Bolt, Blazing Firesinger // Seething Song, Sanar // Wild Idea.
+
+**Finding cards.** Archmage Emeritus and Niv-Mizzet, Parun are repeatable draw; Mystic Confluence (draw three at an opponent's end step) and Splatter Technique (draw four) refill, and Alania's copies of a cantrip draw again. Cantrips: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws, and **Visions of Beyond** (draws three instead of one once any graveyard has twenty cards). Desolate Lighthouse and Mystic Sanctuary (puts a spell from the graveyard on top of the library) also help.
+
+**Interaction.** Five ways to stop a spell, eight pieces of spot removal, Unsummon, and four resets: Blasphemous Act, River's Rebuke, Evacuation and Splatter Technique.
+
+**Redundancy.** Three recurring damage-on-cast sources (Guttersnipe, Kessig Flamebreather, Ral), a draw-to-damage Niv-Mizzet, and five token makers. Losing Veyran or any one engine doesn't turn the deck off.
+
 ## Bracket and Rule 0
 
-Bracket 3 with **no** Game Changers (Jeska's Will moved to Kefka on 10-13, Underworld Breach went to Kefka on 10-11, and Cyclonic Rift is in Sauron). Three would still fit Bracket 3; a fourth moves the deck to Bracket 4. Flux Channeler, Imperial Recruiter, Thousand-Year Storm, Niv-Mizzet, Parun, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation and Propaganda are all off-list.
+Bracket 3 with **no** Game Changers. Up to three Game Changers fit Bracket 3; a fourth moves the deck to Bracket 4. Flux Channeler, Imperial Recruiter, Thousand-Year Storm, Niv-Mizzet, Parun, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation and Propaganda are all off-list.
 
-**No two-card combo.** With Displacer Kitten gone, the Kitten + Blazing Firesinger infinite is out of the deck. The deck still produces large, non-infinite turns. Twinflame, half of the Dualcaster Mage infinite, left on 10-04.
+**No two-card combo.** The deck produces large, non-infinite turns.
 
 Disclose before the game:
 
@@ -245,91 +289,3 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 11 Island
 8 Mountain
 ```
-
-## Flags and tuning levers
-
-**The 10-11 change — the trade with Kefka, 9 out, 9 in.** Moved as functional blocks: the cards Kefka's engines use better go there, and Veyran refills only from Kefka's cuts and the bulk list.
-
-| Out (to Kefka) | In | What it does |
-| --- | --- | --- |
-| Deflecting Swat | Return the Favor (bulk) | A free redirect → a copy-or-redirect for {R}{R} plus {1} per mode; copies are magecraft triggers. |
-| Slip Out the Back | Spell Pierce (bulk) | A one-mana phase-out → a one-mana soft counter. |
-| Underworld Breach | Lightning Strike (bulk) | The graveyard rebuy (a Game Changer) → a two-mana instant burn spell. |
-| Niv-Mizzet, the Firemind | Mystic Confluence (from Kefka) | A six-mana draw-to-damage body → a six-mana instant that picks three modes (counter unless {3} is paid, bounce a creature, draw a card), usually draw three at an opponent's end step. |
-| Jin-Gitaxias, Progress Tyrant | Splatter Technique (from Kefka) | A seven-mana copy-and-tax body → draw four, or 4 damage to each creature and planeswalker. |
-| Steam Vents, Sulfur Falls, Spirebluff Canal, Stormcarved Coast | 2 Island, 2 Mountain | Kefka needed the blue more; colours stay balanced here. |
-
-**Simulator results for the 10-11 change** (look-ahead AI, loose profile, 1,000 paired games per tier; `audit/kefka-veyran/2026-10-11-trade/`):
-
-| Tier | Before | After | Change |
-| --- | --- | --- | --- |
-| T1 | 25.1% | 29.7% | +4.6 |
-| T2 | 28.6% | 28.5% | −0.1 |
-| T3 | 22.8% | 27.8% | +5.0 |
-| T4 | 22.6% | 23.7% | +1.1 |
-| T5 | 15.2% | 12.9% | −2.3 (noise ±2.9) |
-| All | 22.9% | 24.5% | **+1.7** |
-
-Kefka gained 1.3 points from the same trade (28.1% → 29.4%), so both decks came out ahead.
-
-**The 10-04 change — the tokens rebuild plus Crawlspace, 10 out, 10 in.**
-
-| Out | In | What it does |
-| --- | --- | --- |
-| Return the Favor | Deflecting Swat | A copy-or-redirect for {R}{R} → a free redirect while you control a commander. |
-| Mystic Confluence | Lightning Greaves | Five-mana flexibility → zero-cost shroud and haste for Veyran. |
-| Swiftfoot Boots | Slip Out the Back | Greaves takes the equipment slot; the one-mana phase-out also dodges board wipes. |
-| Spell Pierce | Young Pyromancer | A soft counter → a 1/1 per instant or sorcery, doubled by Veyran. |
-| Pongify | Third Path Iconoclast | Spot removal → a 1/1 artifact Soldier per noncreature spell. |
-| Reality Shift | Talrand, Sky Summoner | Spot removal → a 2/2 flying Drake per instant or sorcery. |
-| Thunderdrum Soloist | Storm-Kiln Artist | A pinger → a Treasure per instant or sorcery cast or copied. |
-| Gandalf, Friend of the Shire | Docent of Perfection | A utility Wizard → a 5/4 flier that makes Wizard tokens; flips into Final Iteration, which pumps them. |
-| Thought Vessel | Fiery Emancipation | A rock → triple damage from every source you control. |
-| Twinflame | Crawlspace | Copies of your engines → no more than two creatures can attack you each combat. A stand-in: **Propaganda** tested better and takes this slot once found. |
-
-**Simulator results for the 10-04 change** (loose profile, paired games against all five opponent tiers):
-
-| List | Adaptive (1,000 per tier) | Look-ahead (240 per tier) |
-| --- | --- | --- |
-| These nine swaps plus Fellwar Stone → Birgi, God of Storytelling | +3.0 points | +3.3 (+5.0, +3.8, +3.3, +2.5, +2.1) |
-| These nine swaps (Fellwar Stone kept) | +2.2 | not run |
-| A middle list keeping Spell Pierce, Pongify and Reality Shift | +3.7 | +0.9 |
-| A storm rebuild (rituals, cantrips, Grapeshot, Galvanic Iteration) | +1.1 | −2.4 |
-| Then Twinflame → Propaganda (attack tax of {2}) | +2.2 (5,000 per tier) | +1.2 |
-
-The tokens list was the only one ahead at every tier under both AIs. The engine (Veyran plus a payoff) came online in 8–13 points more games under look-ahead. Birgi was worth about +0.8 points and was left out to save a purchase. Tokens turned out to be poor blockers: in the simulator Veyran had untapped tokens in only about a quarter of the attacks that killed it. Of the attack deterrents, Propaganda tested well, Aetherize was rarely castable (Veyran is usually tapped out on opponents' turns), and Crawlspace was chosen without a full test.
-
-
-**The 09-26 change — 7 out, 7 in.**
-
-| Out | In | What it does |
-| --- | --- | --- |
-| Displacer Kitten | Niv-Mizzet, Parun | Ends the Firesinger infinite; Parun turns every instant/sorcery (anyone's) into a card and a ping. |
-| Kylox, Visionary Inventor | Niv-Mizzet, the Firemind | Swaps a token-sacrifice free-spell turn for a draw-to-damage engine that stacks with Parun. |
-| Burning Prophet | Kessig Flamebreather | Scry-on-cast body → a third each-opponent pinger, doubled by Veyran. |
-| Muse Seeker | Imperial Recruiter | A draw body → a creature tutor for the pingers, Archmage Emeritus, or Harmonic Prodigy. |
-| Dualcaster Mage | Thousand-Year Storm | Value-only copy body → a turn-long copy engine. |
-| Disruptor Flute | Swiftfoot Boots | Proactive tax → hexproof and haste for Veyran. |
-| Sleight of Hand | Visions of Beyond | Cantrip → cantrip that becomes draw-three late. |
-
-**The 09-26 and 09-27 changes — 3 out, 3 in.**
-
-| Out | In | What it does |
-| --- | --- | --- |
-| Disdainful Stroke | Unsummon | A narrow counter → a one-mana bounce (tempo, or a save for your own creature). |
-| Force of Will | Jeska's Will | Free protection → fuel: mana plus three cards for the big turn. Keeps the Game Changer count at three. In the simulator the trade came out about even (+1.5 points with the fast AI, −0.7 with look-ahead, both within noise). |
-| Reenact the Crime | Twinflame | A conditional recast → hasty copies of your pingers and value creatures for a turn. |
-
-**Weakest remaining slots**, if you want to keep tuning: Visions of Beyond (a one-card cantrip for most of the game — the twenty-card graveyard is rare here, since Emeritus of Ideation and Eris both want the yard) is the softest spell. The curve is still top-heavy, so a cheap body or rock back in for a six-drop is worth simming. The 10-11 trade brought Spell Pierce and Mystic Confluence back, so there are five counters now. The soft spot it left is T5 (−2.3, within noise): against the strongest tables, Deflecting Swat and Breach may have mattered more.
-
-**Game Changers.** None. Three would still fit Bracket 3; a fourth moves the deck to Bracket 4.
-
-**Rules notes carried forward.** Veyran has no first strike, and magecraft gives +1/+1 until end of turn, not permanent counters. The doubling applies only when your casting or copying an instant or sorcery is what caused the trigger.
-
-**New cards and cuts.**
-- **New singles (10-04)**: Crawlspace, Deflecting Swat, Young Pyromancer, Third Path Iconoclast, Talrand, Sky Summoner, Storm-Kiln Artist, Docent of Perfection, Fiery Emancipation, Lightning Greaves. **Slip Out the Back** comes from the binder.
-- **Propaganda (10-05)** is a new single. Crawlspace went to bulk.
-- **The 10-11 trade with Kefka**: Mystic Confluence and Splatter Technique come from Kefka; Return the Favor, Spell Pierce and Lightning Strike from bulk; the four basics are your own. Deflecting Swat, Slip Out the Back, Underworld Breach, Niv-Mizzet, the Firemind, Jin-Gitaxias and the four duals go to Kefka.
-- **The 10-13 swap**: Flux Channeler comes from Sauron; Jeska's Will goes to Kefka.
-- **Earlier singles**: Jeska's Will, Twinflame, Unsummon; from 09-26, Niv-Mizzet, Parun; Niv-Mizzet, the Firemind; Kessig Flamebreather; Imperial Recruiter; Thousand-Year Storm; Swiftfoot Boots; Visions of Beyond.
-- **To the binder**: Return the Favor, Mystic Confluence, Swiftfoot Boots, Spell Pierce, Pongify, Reality Shift, Thunderdrum Soloist, Gandalf, Friend of the Shire, Thought Vessel, Twinflame (10-04); Disdainful Stroke, Reenact the Crime; from 09-26, Burning Prophet, Dualcaster Mage, Kylox, Muse Seeker, Disruptor Flute, Sleight of Hand.
