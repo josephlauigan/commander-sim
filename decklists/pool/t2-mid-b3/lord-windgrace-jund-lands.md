@@ -1,5 +1,7 @@
 # Lord Windgrace — Jund Lands
 
+**Updated 2026-10-14.** Out: Hour of Promise, Skyshroud Claim, Toxic Deluge. In: Glissa Sunslayer, Hornet Queen, Wurmcoil Engine. y
+
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Lands / ramp value.
 
 - **Commander:** Lord Windgrace
@@ -26,13 +28,13 @@ Windgrace planeswalker loyalty and land recursion; landfall token makers; Titani
 
 **Commander (1).** Lord Windgrace
 
-**Creatures (21).** Ancient Greenwarden, Avenger of Zendikar, Azusa, Lost but Seeking, Courser of Kruphix, Dryad of the Ilysian Grove, Lotus Cobra, Moraug, Fury of Akoum, Multani, Yavimaya's Avatar, Omnath, Locus of Rage, Oracle of Mul Daya, Rampaging Baloths, Ramunap Excavator, Sakura-Tribe Elder, Scute Swarm, Springbloom Druid, The Gitrog Monster, Tireless Provisioner, Tireless Tracker, Titania, Protector of Argoth, Wood Elves, World Shaper
+**Creatures (24).** Ancient Greenwarden, Avenger of Zendikar, Azusa, Lost but Seeking, Courser of Kruphix, Dryad of the Ilysian Grove, Glissa Sunslayer, Hornet Queen, Lotus Cobra, Moraug, Fury of Akoum, Multani, Yavimaya's Avatar, Omnath, Locus of Rage, Oracle of Mul Daya, Rampaging Baloths, Ramunap Excavator, Sakura-Tribe Elder, Scute Swarm, Springbloom Druid, The Gitrog Monster, Tireless Provisioner, Tireless Tracker, Titania, Protector of Argoth, Wood Elves, World Shaper, Wurmcoil Engine
 
 **Enchantments (6).** Burgeoning, Exploration, Pernicious Deed, Retreat to Kazandu, Sylvan Library, Zendikar Resurgent
 
 **Artifacts (5).** Arcane Signet, Conduit of Worlds, Crucible of Worlds, Lightning Greaves, Sol Ring
 
-**Sorceries (17).** Blasphemous Act, Cultivate, Decimate, Demonic Tutor, Farseek, Grow from the Ashes, Harmonize, Hour of Promise, Kodama's Reach, Life from the Loam, Mulch, Nature's Lore, Rampant Growth, Skyshroud Claim, Splendid Reclamation, Three Visits, Toxic Deluge
+**Sorceries (14).** Blasphemous Act, Cultivate, Decimate, Demonic Tutor, Farseek, Grow from the Ashes, Harmonize, Kodama's Reach, Life from the Loam, Mulch, Nature's Lore, Rampant Growth, Splendid Reclamation, Three Visits
 
 **Instants (9).** Assassin's Trophy, Beast Within, Chaos Warp, Crop Rotation, Harrow, Heroic Intervention, Kolaghan's Command, Putrefy, Terminate
 
@@ -72,12 +74,13 @@ Windgrace planeswalker loyalty and land recursion; landfall token makers; Titani
 1 Fabled Passage
 1 Farseek
 1 Ghost Quarter
+1 Glissa Sunslayer
 1 Grow from the Ashes
 1 Harmonize
 1 Harrow
 1 Heroic Intervention
 1 Hissing Quagmire
-1 Hour of Promise
+1 Hornet Queen
 1 Kodama's Reach
 1 Kolaghan's Command
 1 Life from the Loam
@@ -105,7 +108,6 @@ Windgrace planeswalker loyalty and land recursion; landfall token makers; Titani
 1 Sakura-Tribe Elder
 1 Savage Lands
 1 Scute Swarm
-1 Skyshroud Claim
 1 Sol Ring
 1 Splendid Reclamation
 1 Springbloom Druid
@@ -119,12 +121,12 @@ Windgrace planeswalker loyalty and land recursion; landfall token makers; Titani
 1 Tireless Provisioner
 1 Tireless Tracker
 1 Titania, Protector of Argoth
-1 Toxic Deluge
 1 Verdant Catacombs
 1 Windswept Heath
 1 Wood Elves
 1 Wooded Foothills
 1 World Shaper
+1 Wurmcoil Engine
 1 Zendikar Resurgent
 1 Ziatora's Proving Ground
 6 Forest
