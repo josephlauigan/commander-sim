@@ -7414,3 +7414,36 @@ note = "Aura: when the enchanted creature dies or is exiled its card returns to 
 dsl = []
 status = "Full"
 note = "3/3; upkeep: surveil 1, then with three or more creature cards in our graveyard it becomes prepared; prepared, {B} casts a copy of Reanimate on the best creature card in any graveyard (not below 8 life after the loss) (card code in impls/sephfs_cards.rs)"
+
+# ---- t0-anikthea: the Anikthea precon (card code in impls/t0_anikthea.rs, tests in tests/cards_t0_anikthea.rs)
+["Battle at the Helvault"]
+tags = ""
+status = "Full"
+note = "Saga frame (lore on entering and after the draw step, sacrificed after III): I and II exile each opponent's best non-Saga, nonland permanent until it leaves (the AI exiles none of its own: 'up to one'), III an 8/8 legendary Angel with flying, vigilance, indestructible"
+
+["The Binding of the Titans"]
+status = "Full"
+note = "Saga: I each player mills three, II exile up to two cards from graveyards (opponents' creature cards first, never its own) and gain 1 life per creature card, III the best creature or land card from your graveyard to hand"
+
+["The Eldest Reborn"]
+status = "Full"
+note = "Saga: I each opponent sacrifices the creature or planeswalker it values least, II each opponent discards a card, III the best creature or planeswalker card from any graveyard onto the battlefield under your control"
+
+["The Mending of Dominaria"]
+status = "Full"
+note = "Saga: I and II mill two then return the best creature card to hand, III every land card in the graveyard onto the battlefield (landfall for each), then the graveyard is shuffled into the library"
+
+["Battle for Bretagard"]
+tags = ""
+status = "Full"
+note = "Saga: I a 1/1 white Human Warrior, II a 1/1 green Elf Warrior, III one more of each creature token with a different name (types and colours) and one more of each kind of artifact token (Treasure, Food, Clue: counters in this engine)"
+
+["Binding the Old Gods"]
+tags = ""
+status = "Full"
+note = "Saga: I destroys the opponent's best nonland permanent, II fetches the best Forest-typed land tapped, III gives your creatures deathtouch until end of turn"
+
+["Love Song of Night and Day"]
+tags = ""
+status = "Full"
+note = "Saga with read ahead (the AI starts at II, or III with three creatures): I you and the weakest opponent draw two, II a 1/1 white Bird with flying, III +1/+1 counters on your two best creatures"

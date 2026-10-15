@@ -6968,9 +6968,7 @@
    "types": "E",
    "generic": 4,
    "pips": "WW",
-   "tags": {
-    "vig": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -6986,11 +6984,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "I, II — For each player, exile up to one target non-Saga, nonland permanent that player controls until this Saga leaves the battlefield.",
-    "III — Create Avacyn, a legendary 8/8 white Angel creature token with flying, vigilance, and indestructible."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -7012,10 +7007,7 @@
    "types": "E",
    "generic": 1,
    "pips": "GW",
-   "tags": {
-    "tok": "1",
-    "tokp": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -7029,10 +7021,8 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "III — Choose any number of artifact tokens and/or creature tokens you control with different names. For each of them, create a token that's a copy of it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -7710,10 +7700,7 @@
    "types": "E",
    "generic": 2,
    "pips": "BG",
-   "tags": {
-    "lr": "1",
-    "lrt": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -7727,11 +7714,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "I — Destroy target nonland permanent an opponent controls.",
-    "III — Creatures you control gain deathtouch until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -56362,11 +56346,7 @@
    "types": "E",
    "generic": 2,
    "pips": "W",
-   "tags": {
-    "tok": "1",
-    "tokp": "1",
-    "tokfly": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -56382,12 +56362,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Read ahead",
-    "I — You and target opponent each draw two cards.",
-    "III — Put a +1/+1 counter on each of up to two target creatures."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
