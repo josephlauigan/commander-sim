@@ -8050,3 +8050,16 @@ note = "{T}: a 4/4 flying Angel, only with 47+ life and only at sorcery speed (t
 dsl = []
 status = "Full"
 note = "{T}: draw a card only if you created a token this turn (the compiled ability had no condition); {8},{T}, sacrifice: a 10/10 Eldrazi"
+
+# ---- cloud-pkg2 package B: backup carriers whose whole text is a printed keyword (engine reads kws / protfrom)
+["Fencing Ace"]
+tags = "human pow=1 tgh=1"
+dsl = []
+status = "Full"
+note = "double strike (the engine reads the printed keyword in combat); nothing else on the card (tested in cards_cloud_pkg2)"
+
+["Mirran Crusader"]
+tags = "human pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "double strike; protection from black and from green (protfrom BG: can't be blocked by, damaged by or targeted by black or green sources); tested in cards_cloud_pkg2"

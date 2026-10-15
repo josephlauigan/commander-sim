@@ -48,3 +48,58 @@ commander-sim --deck cloud --pool t1 --profile loose --games 1000 --ai lookahead
 
 Neither package adds a Game Changer, so Cloud stays Bracket 3. If D + R together still fall well short of 25%, the
 likely conclusion is that a 2/1 voltron commander can't reach T1/T2 parity in this pool.
+
+---
+
+# 2026-10-15: Package D applied; packages S, C, B designed (not tested)
+
+Package D was applied to the real list on 2026-10-15 (JD's choice; `d-defense.swaps` is kept as the record). Measured on
+the AI-fixed Cloud, look-ahead, 2,000 games per tier, paired: T1 15.8 -> 22.2 (+6.4), T2 13.8 -> 20.1 (+6.3). Package R
+was -1.9 / -1.1 (cutting creatures and Equipment for removal spells hurt). The three packages below are built **on top of
+the D list** (every "Out" is in it), use disjoint cuts so they can be combined, and keep the creature count up (S +3,
+C +3, B +2 creatures, since the cuts are mostly rocks, reactive instants and lands). Every "In" card is Full in
+`cardgen audit` (Wall of Omens is Full-auto, a plain "enters, draw a card"). None of the cards is owned: JD's Lightning
+Greaves is in Kefka and Skullclamp is in Kefka and Seph, and decks never share cards, so all are buys (Scryfall
+cheapest printing, 2026-10-15). None is a Game Changer; Cloud stays Bracket 3.
+
+## Package S: speed, Equipment costs mana once (`s-speed.swaps`, 5 swaps, $52.01; $5.70 without Sigarda's Aid and Stoneforge Mystic)
+| Out | In | Price | Why |
+|---|---|---|---|
+| Fellwar Stone | Brass Squire | $1.20 | {T}: attach an Equipment for free every turn (modeled to attach to Cloud before combat) |
+| Thought Vessel | Lightning Greaves | $3.75 | equip {0}: Cloud gets haste and shroud and the Sword moves for free |
+| Unbreakable Formation | Danitha Capashen, Paragon | $0.75 | Equipment (and Aura) spells cost {1} less; first strike, vigilance, lifelink carrier. Formation was cast 2% of the games it was drawn |
+| Ultimate Magic: Holy | Sigarda's Aid | $16.88 | flash Equipment, and a new Equipment attaches to a creature for free: cast and equip in one |
+| Secure the Scene | Stoneforge Mystic | $29.43 | fetches the Sword on turn 2 and puts a big Equipment (Kaldra pieces, Hammer, Arm) onto the battlefield for {1}{W} |
+The "lite" version is the first three swaps. Stonehewer Giant (4/4, {1}{W},{T}: Equipment from the library onto the
+battlefield) was rejected: its compiled text fetched a non-Equipment artifact (Sol Ring) in a test, so it is not Full.
+
+## Package C: card draw (`c-draw.swaps`, 5 swaps, $14.93)
+| Out | In | Price | Why |
+|---|---|---|---|
+| Nim Deathmantle | Sram, Senior Edificer | $1.73 | draws a card for each of the 14 Equipment cast |
+| Citizen's Arrest | Mentor of the Meek | $4.72 | pays {1} to draw when a power-2-or-less creature enters |
+| Mind Stone | Welcoming Vampire | $3.15 | 2/3 flier; draws a card (once a turn) when a small creature enters |
+| Terminal Moraine | Skullclamp | $5.04 | equip {1} on Cloud (toughness 1) draws two, and Cloud re-enters from the command zone and tutors again |
+| Page, Loose Leaf | Wall of Omens | $0.29 | 0/4 blocker that replaces itself |
+The hand holds 5.5-6 cards at round 4, so this is as much about spending the hand as about drawing more. Lands go from
+33 to 32 and rocks from 6 to 5; the audit found mana on curve. Esper Sentinel ($55) was left out for price.
+
+## Package B: backup carriers (`b-carriers.swaps`, 5 swaps, $4.73)
+| Out | In | Price | Why |
+|---|---|---|---|
+| Helitrooper | Fencing Ace | $0.14 | {1}{W} double strike: a Sword of Fire and Ice on it triggers on both damage steps |
+| Loyal Warhound | Mirran Crusader | $0.42 | double strike, protection from black and green (blocked by, damaged by neither) |
+| Evolving Wilds | Kor Skyfisher | $0.63 | 2/3 flier for {1}{W}; can bounce Cloud himself to retutor, or a Sword to recast |
+| Disenchant | Selfless Spirit | $0.45 | 2/1 flier carrier; sacrifice makes the team indestructible against the wipes |
+| Forum Familiar | Adeline, Resplendent Cathar | $3.09 | legendary (Hero's Blade attaches), vigilance, makes a Human for each opponent when she attacks |
+Fencing Ace and Mirran Crusader were Partial (printed keywords only) and are now Full with tests in
+`cards_cloud_pkg2.rs`. Creatures replace creatures or low-use cards: the count rises from 28 to 30.
+
+## Test plan (needs JD's go; look-ahead, loose, paired against the D list)
+- Runs: S, C, B each alone at T1 and T2 (6 runs), then the best combination (and S-lite if S alone is positive but the
+  gain does not cover $52). 2,000 games per tier is about 5 minutes at 22 threads: 6 runs about 30 minutes, the best
+  combination about 10 minutes more, so roughly 40-45 minutes in all. At 7 threads multiply by three.
+- Combining all three removes 4 rocks and 2 lands (6 -> 2 mana rocks and 31 lands): if the full combination loses,
+  rerun it keeping Mind Stone and Evolving Wilds.
+- Command per tier, one `--swap` per line of each file:
+  `commander-sim --deck cloud --pool t1 --profile loose --games 2000 --ai lookahead --jobs 22 --swap "OUT=>IN" ...`
