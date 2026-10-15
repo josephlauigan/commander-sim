@@ -54484,24 +54484,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "mill",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "mill"
@@ -54511,11 +54494,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}, {T}: Mill a card. You may put an instant or sorcery card milled this way into your hand.   [partly: put an instant or sorcery card milled this way into your hand]",
-    "Tap an untapped legendary creature you control: Untap ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -82306,31 +82286,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "shark"
-       ]
-      }
-     ],
-     "event": "cast",
-     "who": "you",
-     "spell": "noncreature",
-     "nth": null
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "cycling"
@@ -82340,10 +82296,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When you cycle ~, create an X/X blue Shark creature token with flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -85768,15 +85722,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "self_scaling",
-     "pow": 1,
-     "per": "X",
-     "base0": true
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "crew"
@@ -85788,10 +85734,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever this Vehicle attacks, the next instant spell and the next sorcery spell you cast this turn each have cascade."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -89160,22 +89104,7 @@
    "pow": 2,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "cast",
-     "who": "you",
-     "spell": "any",
-     "nth": 2
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -89186,10 +89115,8 @@
    "ward": 0,
    "identity": "RU",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy. Activate only if you've cast three or more spells this turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -105967,6 +105894,11 @@
      "type": "static",
      "static": "equip_cost",
      "mana": 1
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "flying"
     }
    ],
    "start_loyalty": null,
@@ -105980,10 +105912,8 @@
    "ward": 4,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature has flying and ward {4}."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

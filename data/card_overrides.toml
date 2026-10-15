@@ -7414,3 +7414,117 @@ note = "Aura: when the enchanted creature dies or is exiled its card returns to 
 dsl = []
 status = "Full"
 note = "3/3; upkeep: surveil 1, then with three or more creature cards in our graveyard it becomes prepared; prepared, {B} casts a copy of Reanimate on the best creature card in any graveyard (not below 8 life after the loss) (card code in impls/sephfs_cards.rs)"
+
+# ---- Tier 0 Stella Lee precon (card code in impls/t0_stella.rs) ----
+
+["Arcane Bombardment"]
+status = "Full"
+note = "your first instant or sorcery each turn: exile a random instant/sorcery from the graveyard, then cast copies of every card exiled with it (free; counterspells, wipes and spells with no target skipped)"
+
+["Baral's Expertise"]
+status = "Full"
+note = "returns up to three of the opponents' best artifacts/creatures (worth 2+), then casts the best spell of mana value 4 or less from hand free"
+
+["Bloodthirsty Adversary"]
+status = "Full"
+note = "haste; enters: pays {2}{R} as often as it can use (one per good instant/sorcery of mana value 3 or less in the graveyard), +1/+1 counters, exiles those cards and casts copies of them free"
+
+["Crackling Spellslinger"]
+status = "Full"
+note = "flash; enters if cast: the next instant or sorcery spell this turn has storm (copies for each spell cast before it)"
+
+["Cursed Mirror"]
+status = "Full"
+note = "{T}: add {R}; as it enters it becomes a copy of the best creature on the battlefield until end of turn with haste (stats and flying, deathtouch, vigilance, lifelink; the copied creature's own triggered abilities are not copied)"
+
+["Curse of the Swine"]
+status = "Full"
+note = "X chosen by the AI: exiles up to X of the opponents' creatures worth 3+, a 2/2 green Boar for each controller"
+
+["Elemental Eruption"]
+status = "Full"
+note = "a 4/4 red flying Dragon Elemental with prowess; storm (a copy for each earlier spell this turn)"
+
+["Epic Experiment"]
+status = "Full"
+note = "X chosen by the AI (3 to 7): exiles the top X, casts the instants and sorceries of mana value X or less free (counterspells, wipes and targetless spells skipped), the rest to the graveyard"
+
+["Finale of Promise"]
+status = "Full"
+note = "X is the smallest that reaches the best instant and the best sorcery in the graveyard it can afford; casts them free, exiled afterwards; X of 10 or more: two copies of each"
+
+["Finale of Revelation"]
+status = "Full"
+note = "X chosen by the AI; draws X, exiled afterwards; X of 10 or more: graveyard shuffled in, draw X, untap up to five lands, no maximum hand size for the rest of the game"
+
+["Forger's Foundry"]
+status = "Full"
+note = "{T}: add {U}; an instant or sorcery of mana value 3 or less it paid for is exiled with it as it resolves (always taken); {3}{U}{U},{T} at sorcery speed casts the exiled spells free"
+
+["Kaza, Roil Chaser"]
+status = "Full"
+note = "flying, haste; {T}: the next instant or sorcery this turn costs {X} less, X your Wizards as it resolves (used when a spell in hand has generic mana to save)"
+
+["Leyline Dowser"]
+dsl = []
+status = "Full"
+note = "{1},{T}: mill a card, an instant or sorcery milled goes to hand; tap an untapped legendary creature: untap it (up to three uses, when the creature is not needed)"
+
+["Lock and Load"]
+status = "Full"
+note = "draws one, plus one for each other instant or sorcery cast this turn; plot {3}{U} (after combat, free on a later turn when it draws 3+)"
+
+["Midnight Clock"]
+status = "Full"
+note = "{T}: add {U}; {2}{U}: hour counter (the AI winds it with a nearly empty hand); an hour counter at each upkeep; the twelfth shuffles hand and graveyard into the library, draws seven and exiles it"
+
+["Octavia, Living Thesis"]
+status = "Full"
+note = "costs {8} less with eight or more instants and sorceries in the graveyard; ward 8; whenever you cast or copy an instant or sorcery, one of your creatures has base 8/8 until end of turn"
+
+["Pteramander"]
+status = "Full"
+note = "flying; {7}{U}: adapt 4, {1} less for each instant and sorcery in the graveyard"
+
+["Pyretic Charge"]
+status = "Full"
+note = "discard the hand, draw four, creatures get +1/+0 per card discarded; plot {3}{R}; cast hard only with 0-1 other spells in hand"
+
+["Radical Idea"]
+status = "Full"
+note = "draws a card; jump-start (cast from the graveyard for {1}{U} and a discarded card, then exiled)"
+
+["Rousing Refrain"]
+status = "Full"
+note = "adds {R} for each card in the fullest opposing hand (kept through the turn) and exiles itself with three time counters; suspend 3 for {1}{R} when opponents hold 3+ cards"
+
+["Shark Typhoon"]
+dsl = []
+status = "Full"
+note = "each noncreature spell you cast makes an X/X flying Shark, X its mana value; cycling {X}{1}{U} makes an X/X Shark (X = spare mana, at an opponent's end step or after combat)"
+
+["Smoldering Stagecoach"]
+dsl = []
+status = "Full"
+note = "power = instants and sorceries in the graveyard, toughness 5; crew 2 before combat with summoning-sick creatures first; when it attacks the next instant and the next sorcery this turn have cascade"
+
+["Stella Lee, Wild Card"]
+dsl = []
+status = "Full"
+note = "your second spell each turn exiles the top card, playable until the end of your next turn; {T}: copies your instant or sorcery as you cast the third or later spell this turn"
+
+["Thunderclap Drake"]
+status = "Full"
+note = "flying; instants and sorceries cost {1} less; {2}{U}, sacrifice: your next instant or sorcery this turn is copied once per commander cast (used with a good spell and the mana for it)"
+
+["Volcanic Torrent"]
+status = "Full"
+note = "cascade; X damage to each creature and planeswalker the opponents control, X the spells you've cast this turn"
+
+["Winged Boots"]
+dsl = [
+  { type = "static", static = "equip_cost", mana = 1 },
+  { type = "static", static = "equip_keyword", keyword = "flying" },
+]
+status = "Full"
+note = "equip {1}; the creature has flying and ward {4}"
