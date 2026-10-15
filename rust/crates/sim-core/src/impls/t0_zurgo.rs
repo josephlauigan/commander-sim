@@ -1235,7 +1235,8 @@ fn thalisse_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
     let o = owner(g, src);
     let x = if g.player(o).tok_made.0 == Some(g.turn_stamp()) { g.player(o).tok_made.1 } else { 0 };
     if x > 0 && on_bf(g, src) && trigger_window(g, o, Some(src), "X 1/1 Spirits with flying", Some(4.0))? {
-        let spec = Tokens { fly: true, color: Some(Colors::from_letters("W")), types: vec!["spirit"], ..Tokens::new(x, 1) };
+        let spec =
+            Tokens { fly: true, color: Some(Colors::from_letters("W")), types: vec!["spirit"], ..Tokens::new(x, 1) };
         make_tokens(g, o, spec)?;
     }
     Ok(())
