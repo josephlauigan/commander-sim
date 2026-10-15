@@ -212,6 +212,9 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         return Ok(());
     }
     crate::glog!(g, "    {} ({}) is removed: {}", g.perm(m).name, g.player(owner).name, kind);
+    if let Some(n) = dmg_amount(kind, "dmg") {
+        crate::impls::t0_giada::damaged(g, m, n)?; // Metropolis Reformer
+    }
     g.last_removed = Some((g.perm(m).cd, owner, kind, actor));
     if kind == "exile"
         && let Some(src) = g.rem_src

@@ -1,0 +1,101 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m40s elapsed, ~6m04s left
+  progress  20.0%  1m18s elapsed, ~5m15s left
+  progress  30.0%  1m58s elapsed, ~4m36s left
+  progress  40.0%  2m40s elapsed, ~4m01s left
+  progress  50.0%  3m21s elapsed, ~3m21s left
+  progress  60.0%  4m01s elapsed, ~2m40s left
+  progress  70.0%  4m39s elapsed, ~1m59s left
+  progress  80.0%  5m19s elapsed, ~1m19s left
+  progress  90.0%  5m59s elapsed, ~0m39s left
+  progress 100.0%  6m42s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== sephfs analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 41.6%   (4-player baseline 25%)   average rounds survived 12.1
+
+-- How it wins --
+  damage      98.6% of wins
+  timeout      1.4% of wins
+  Opponents it eliminated: 1.30 per game, by
+    drain              76.0%
+    combat             17.0%
+    burn                6.3%
+    triggers            0.2%
+    decked              0.2%
+    other               0.2%
+    commander damage    0.1%
+  Damage dealt per game: 56.6, from
+    drain               34.9  (62%)
+    combat              17.4  (31%)
+    burn                 4.2  (8%)
+    triggers             0.1  (0%)
+
+-- Sephiroth --
+  Flips per game 0.778 (games with a flip 58.9%); first flip on round 7.84 on average
+  Emblem drains per game 17.53; cards drawn by Sephiroth per game 1.97; creatures sacrificed per game 4.92
+  Wipes cast per game 0.65 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 1.63
+  Creatures stolen per game 0.89: reanimation spells 0.48, Grave Betrayal 0.64, Dread Slaver 0.02, prepared Reanimate 0.10; Kaya's Ghostform returns 0.18; Rabid Attack draws 0.13
+
+-- How it loses --
+  Eliminated in 57.8% of games, on average in round 11.1
+    by Giada    via combat             14.3% of games
+    by Captain America via combat             12.3% of games
+    by Anikthea via combat             10.5% of games
+    by Zurgo Stormrender via combat             10.0% of games
+    by Stella Lee via combat              4.7% of games
+    by Zurgo Stormrender via drain               1.8% of games
+    by Captain America via commander damage    1.3% of games
+    by Stella Lee via triggers            1.1% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 5.0, mean 5.2 (over the 96.9% of games it resolves)
+  Commander resolved by turn:  T4 41%  T5 60%  T6 75%  T7 85%  T8 91%
+  Sacrifices: 4.92 creatures per game; Sephiroth flipped to One-Winged Angel in 58.9% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Rabid Attack                               cast in   7.3% of games, win rate when cast  80.1% (+38.5)
+    Exsanguinate                               cast in  14.9% of games, win rate when cast  69.6% (+28.1)
+    Grave Titan                                cast in  19.1% of games, win rate when cast  64.3% (+22.7)
+    Pestilence                                 cast in  21.9% of games, win rate when cast  60.8% (+19.2)
+    Grave Betrayal                             cast in  15.5% of games, win rate when cast  60.5% (+19.0)
+    Living Death                               cast in  18.9% of games, win rate when cast  59.9% (+18.4)
+    Rewrite Regrets                            cast in  19.3% of games, win rate when cast  59.0% (+17.4)
+    Moseo, Vein's New Dean                     cast in  25.2% of games, win rate when cast  58.2% (+16.6)
+    Bastion of Remembrance                     cast in  26.4% of games, win rate when cast  57.8% (+16.2)
+    Butcher of Malakir                         cast in  16.2% of games, win rate when cast  57.7% (+16.1)
+  Lowest win rate when cast:
+    Extinction Event                           cast in  17.1% of games, win rate when cast  41.6% (+0.1)
+    Sephiroth, Fabled SOLDIER // Sephiroth, On cast in  97.0% of games, win rate when cast  42.9% (+1.3)
+    Sephiroth's Intervention                   cast in  20.9% of games, win rate when cast  44.5% (+2.9)
+    Wander Off                                 cast in  18.8% of games, win rate when cast  46.2% (+4.6)
+    Masterful Flourish                         cast in  20.6% of games, win rate when cast  46.8% (+5.2)
+    Last Gasp                                  cast in  21.1% of games, win rate when cast  46.9% (+5.4)
+    Toxic Deluge                               cast in  22.0% of games, win rate when cast  47.5% (+5.9)
+    Dark Ritual                                cast in  23.2% of games, win rate when cast  47.7% (+6.1)
+    Star Compass                               cast in  24.4% of games, win rate when cast  47.8% (+6.2)
+    Crux of Fate                               cast in  18.2% of games, win rate when cast  47.9% (+6.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rabid Attack                               cast  28.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 0.84
+    Phyrexian Altar                            0.10
+    Grave Titan                                0.09
+    Ral Zarek, Guest Lecturer                  0.07
+    The One Ring                               0.07
+    Bastion of Remembrance                     0.07
+    Star Compass                               0.06
+    Mind Stone                                 0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(402s total)

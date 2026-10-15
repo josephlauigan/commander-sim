@@ -1,0 +1,106 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 20 minutes
+  progress  10.0%  1m10s elapsed, ~10m36s left
+  progress  20.0%  2m20s elapsed, ~9m22s left
+  progress  30.0%  3m24s elapsed, ~7m56s left
+  progress  40.0%  4m20s elapsed, ~6m30s left
+  progress  50.0%  5m15s elapsed, ~5m15s left
+  progress  60.0%  6m13s elapsed, ~4m08s left
+  progress  70.0%  7m10s elapsed, ~3m04s left
+  progress  80.0%  8m05s elapsed, ~2m01s left
+  progress  90.0%  9m01s elapsed, ~1m00s left
+  progress 100.0%  10m00s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== yshtola analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 39.3%   (4-player baseline 25%)   average rounds survived 9.8
+
+-- How it wins --
+  damage      99.4% of wins
+  timeout      0.5% of wins
+  Revel in Riches   0.1% of wins
+  Opponents it eliminated: 1.02 per game, by
+    drain              55.6%
+    triggers           24.7%
+    combat             15.4%
+    other               2.5%
+    burn                1.4%
+    decked              0.3%
+    commander damage    0.0%
+  Damage dealt per game: 39.8, from
+    triggers            16.0  (40%)
+    drain               13.5  (34%)
+    combat               9.5  (24%)
+    burn                 0.8  (2%)
+
+-- How it loses --
+  Eliminated in 60.6% of games, on average in round 8.5
+    by Heliod   via combo              17.2% of games
+    by Krenko   via combat              8.7% of games
+    by Yuriko   via triggers            6.4% of games
+    by Prosper  via combo               6.1% of games
+    by Chulane  via combo               5.2% of games
+    by Yuriko   via combat              4.3% of games
+    by Chulane  via combat              4.3% of games
+    by Krenko   via combo               2.6% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 5%  T5 22%  T6 38%  T7 50%  T8 57%  T9 63%  T10 65%  T11 68%  T12 69%
+  Online at all: 70.1% of games
+  Commander resolves on turn: median 5.0, mean 5.2 (over the 84.2% of games it resolves)
+  Commander resolved by turn:  T4 38%  T5 57%  T6 68%  T7 75%  T8 79%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Debt to the Deathless                      cast in  20.2% of games, win rate when cast  87.2% (+47.9)
+    Exsanguinate                               cast in  16.3% of games, win rate when cast  80.9% (+41.5)
+    Massacre Wurm                              cast in  12.6% of games, win rate when cast  73.6% (+34.2)
+    Dark Petition                              cast in  10.4% of games, win rate when cast  72.7% (+33.4)
+    The Eternal Wanderer                       cast in  11.6% of games, win rate when cast  69.4% (+30.1)
+    Polluted Bonds                             cast in  11.3% of games, win rate when cast  69.2% (+29.9)
+    Sanguine Bond                              cast in  26.4% of games, win rate when cast  66.1% (+26.8)
+    Deep Analysis                              cast in  12.9% of games, win rate when cast  65.5% (+26.2)
+    Bolas's Citadel                            cast in   9.2% of games, win rate when cast  65.1% (+25.8)
+    Austere Command                            cast in   8.7% of games, win rate when cast  64.8% (+25.4)
+  Lowest win rate when cast:
+    Y'shtola, Night's Blessed                  cast in  85.1% of games, win rate when cast  46.1% (+6.8)
+    Talisman of Progress                       cast in  17.5% of games, win rate when cast  47.3% (+8.0)
+    Fatal Push                                 cast in  20.8% of games, win rate when cast  48.1% (+8.8)
+    Path to Exile                              cast in  22.2% of games, win rate when cast  49.2% (+9.9)
+    Mystic Remora                              cast in  18.7% of games, win rate when cast  50.0% (+10.7)
+    Your Fate Ends Here                        cast in  20.1% of games, win rate when cast  50.8% (+11.5)
+    Zur the Enchanter                          cast in  16.5% of games, win rate when cast  51.2% (+11.9)
+    Night's Whisper                            cast in  17.8% of games, win rate when cast  51.4% (+12.1)
+    Restoration Angel                          cast in  13.8% of games, win rate when cast  51.5% (+12.2)
+    Go for the Throat                          cast in  20.0% of games, win rate when cast  51.7% (+12.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dakkon, Shadow Slayer                      cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Consecrated Sphinx                         cast  32.7% of the games it was drawn
+    Austere Command                            cast  34.8% of the games it was drawn
+    Bolas's Citadel                            cast  35.1% of the games it was drawn
+    Dark Petition                              cast  40.2% of the games it was drawn
+    Polluted Bonds                             cast  42.8% of the games it was drawn
+    Dovin's Veto                               cast  43.3% of the games it was drawn [reactive: only cast in response]
+    Necropotence                               cast  43.3% of the games it was drawn
+    The Eternal Wanderer                       cast  45.0% of the games it was drawn
+    Gonti, Lord of Luxury                      cast  46.4% of the games it was drawn
+    Notion Thief                               cast  46.9% of the games it was drawn
+    Massacre Wurm                              cast  47.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.34
+    Zur the Enchanter                          0.07
+    Grand Arbiter Augustin IV                  0.07
+    Esper Sentinel                             0.06
+    Sanguine Bond                              0.06
+    Restoration Angel                          0.05
+    Windborn Muse                              0.04
+    Champion's Helm                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(600s total)

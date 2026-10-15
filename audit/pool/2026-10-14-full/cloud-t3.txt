@@ -1,0 +1,99 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m56s elapsed, ~8m31s left
+  progress  20.0%  1m50s elapsed, ~7m20s left
+  progress  30.0%  2m45s elapsed, ~6m26s left
+  progress  40.0%  3m40s elapsed, ~5m30s left
+  progress  50.0%  4m37s elapsed, ~4m37s left
+  progress  60.0%  5m31s elapsed, ~3m40s left
+  progress  70.0%  6m29s elapsed, ~2m47s left
+  progress  80.0%  7m23s elapsed, ~1m50s left
+  progress  90.0%  8m20s elapsed, ~0m55s left
+  progress 100.0%  9m17s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 9.4%   (4-player baseline 25%)   average rounds survived 10.6
+
+-- How it wins --
+  damage      97.1% of wins
+  timeout      2.9% of wins
+  Opponents it eliminated: 0.36 per game, by
+    combat             48.4%
+    commander damage   39.5%
+    triggers           11.9%
+    decked              0.3%
+  Damage dealt per game: 22.3, from
+    combat              20.2  (91%)
+    triggers             2.1  (9%)
+
+-- How it loses --
+  Eliminated in 90.1% of games, on average in round 10.2
+    by Aurelia  via combat             24.9% of games
+    by Tergrid  via combat             16.8% of games
+    by Marwyn   via combat             15.9% of games
+    by Atraxa   via combat             10.8% of games
+    by Korvold  via combat              4.0% of games
+    by Tergrid  via drain               3.0% of games
+    by Korvold  via drain               2.9% of games
+    by Aurelia  via commander damage    2.6% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 25%  T5 43%  T6 54%  T7 60%  T8 64%  T9 66%  T10 68%  T11 69%  T12 70%
+  Online at all: 70.8% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 100.0% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Austere Command                            cast in   8.7% of games, win rate when cast  27.6% (+18.2)
+    Bronze Guardian                            cast in   8.1% of games, win rate when cast  23.9% (+14.5)
+    Shield of Kaldra                           cast in  13.7% of games, win rate when cast  23.8% (+14.4)
+    Nim Deathmantle                            cast in  13.4% of games, win rate when cast  23.5% (+14.1)
+    Sword of Kaldra                            cast in  20.7% of games, win rate when cast  21.6% (+12.2)
+    Armored Skyhunter                          cast in  11.5% of games, win rate when cast  21.3% (+11.9)
+    Fate of the Sun-Cryst                      cast in   8.9% of games, win rate when cast  21.1% (+11.7)
+    Secure the Scene                           cast in   9.5% of games, win rate when cast  20.8% (+11.4)
+    Beatrix, Loyal General                     cast in   7.7% of games, win rate when cast  20.7% (+11.3)
+    Thalia, the Survivor                       cast in  10.2% of games, win rate when cast  20.4% (+11.0)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast   9.4% (+0.0)
+    Sword of Fire and Ice                      cast in  78.6% of games, win rate when cast  11.3% (+1.9)
+    Explorer's Scope                           cast in  18.0% of games, win rate when cast  13.0% (+3.6)
+    Zack Fair                                  cast in  20.3% of games, win rate when cast  13.6% (+4.1)
+    Kor Duelist                                cast in  18.2% of games, win rate when cast  13.9% (+4.5)
+    Giver of Runes                             cast in  19.3% of games, win rate when cast  14.1% (+4.7)
+    Sword of Hearth and Home                   cast in  56.2% of games, win rate when cast  14.2% (+4.8)
+    Knight of the White Orchid                 cast in  17.6% of games, win rate when cast  14.4% (+5.0)
+    Lay Down Arms                              cast in  17.6% of games, win rate when cast  15.0% (+5.6)
+    Loyal Warhound                             cast in  16.6% of games, win rate when cast  15.5% (+6.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unfinished Business                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Unbreakable Formation                      cast   1.9% of the games it was drawn [reactive: only cast in response]
+    Rootborn Defenses                          cast   3.8% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  11.3% of the games it was drawn [reactive: only cast in response]
+    Beatrix, Loyal General                     cast  37.5% of the games it was drawn
+    Bronze Guardian                            cast  40.6% of the games it was drawn
+    Shield of Kaldra                           cast  41.9% of the games it was drawn
+    Austere Command                            cast  43.8% of the games it was drawn
+    Secure the Scene                           cast  44.9% of the games it was drawn
+    Stormfront Riders                          cast  46.2% of the games it was drawn
+    Fate of the Sun-Cryst                      cast  47.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.68
+    Sword of Fire and Ice                      0.27
+    Sword of Hearth and Home                   0.15
+    Helm of Kaldra                             0.05
+    Cid, Freeflier Pilot                       0.04
+    Grand Abolisher                            0.03
+    White Mage's Staff                         0.03
+    Kor Duelist                                0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(558s total)

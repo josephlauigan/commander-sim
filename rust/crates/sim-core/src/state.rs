@@ -55,6 +55,10 @@ pub enum DataKey {
     DruidClass,
     /// Mogg War Marshal's echo was dealt with ('done')
     Echo,
+    /// t0-zurgo: goaded (a `Val::List` of the goader and the goader's turn count)
+    Goaded,
+    /// t0-zurgo: a myriad token copy, exiled at end of combat
+    MyriadTok,
     /// a token sacrificed at the beginning of the next end step (Lagomos, Hand of Hatred)
     EotSac,
     /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
@@ -157,6 +161,10 @@ pub enum DataKey {
     Warp,
     Wishes,
     Witch,
+    /// Tier 0 Stella deck cards: Midnight Clock's hour counters (Int), Octavia's base 8/8 mark (Stamp)
+    T0Stella,
+    /// Calix, Destiny's Hand: this enchantment holds a -3 exile (DataKey::Oring) that returns when it leaves
+    CalixLink,
 }
 
 /// A value in per-card state.
@@ -400,6 +408,8 @@ pub struct Player {
     pub gained_turn: Option<(TurnStamp, i32)>,
     /// the last turn a creature died under this player's control (Essenceknit Scholar)
     pub creature_died: Option<TurnStamp>,
+    /// tokens this player created this turn: (the turn, how many) (Thalisse, Reverent Medium)
+    pub tok_made: (Option<TurnStamp>, u32),
     /// emblems from planeswalker ultimates ('tamiyo', 'nissa' ...)
     pub emblems: Vec<Sym>,
     /// cards taken with Opposition Agent (castable with mana of any type)
@@ -485,8 +495,16 @@ pub struct Player {
     pub gy_start: Vec<CardId>,
     /// Glacial Chasm's age counters (cumulative upkeep)
     pub chasm_age: i32,
+    /// t0-zurgo: the most creatures this player attacked with this turn, and the turn it last attacked with a commander
+    pub atk_count: (Option<TurnStamp>, u32),
+    pub cmd_atk: Option<TurnStamp>,
+    /// t0-zurgo (Neriv): cards exiled by Neriv, playable on turns this player attacked with a commander (in exile, or in
+    /// hand for the turn)
+    pub neriv: Vec<CardId>,
     /// suspended cards (Profane Tutor)
     pub suspended: Vec<(CardId, u32)>,
+    /// the Stella precon's one-shot effects (impls/t0_stella.rs)
+    pub t0s: crate::impls::t0_stella::StellaState,
     /// cards playable until the end of a later turn (Prosper): (card, the turn count it lasts to)
     pub impulse_long: Vec<(CardId, u32)>,
     /// Erebos's draw this turn
@@ -631,6 +649,7 @@ impl Player {
             lost_turn: None,
             gained_turn: None,
             creature_died: None,
+            tok_made: (None, 0),
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,
@@ -675,6 +694,10 @@ impl Player {
             gy_start: vec![],
             chasm_age: 0,
             suspended: vec![],
+            t0s: Default::default(),
+            atk_count: (None, 0),
+            cmd_atk: None,
+            neriv: vec![],
             impulse_long: vec![],
             erebos_t: None,
             nomax_turn: None,
@@ -994,6 +1017,10 @@ pub struct Game {
     pub no_prevent: Option<TurnStamp>,
     /// attacking creatures card code made during attack triggers (Python returns them from CI.fire)
     pub new_attackers: Vec<PermId>,
+    /// t0-zurgo: every attacking creature and the player it attacks (set when attackers are declared; new attackers add theirs)
+    pub atk_targets: Vec<(PermId, PlayerId)>,
+    /// t0-zurgo: `enter_no` when the current turn began (tokens with a larger `born` entered this turn)
+    pub turn_enter: u32,
     /// the game ran out of engine steps (a runaway loop) and was stopped
     pub stopped: bool,
     /// a game with one player and no opponents to beat (Python's `goldfish`)
@@ -1086,6 +1113,8 @@ pub struct Game {
     pub resto_target: Option<PermId>,
     /// Eerie Interlude: (player, card) exiled until the beginning of the next end step (Python's `g.eot_returns`)
     pub eot_returns: Vec<(PlayerId, CardId)>,
+    /// the Captain America precon's bookkeeping (impls/t0_captain.rs)
+    pub t0c: crate::impls::t0_captain::T0c,
 }
 
 impl Game {
@@ -1161,6 +1190,8 @@ impl Game {
             dn_last: None,
             no_prevent: None,
             new_attackers: vec![],
+            atk_targets: vec![],
+            turn_enter: 0,
             stopped: false,
             goldfish: false,
             garland: false,
@@ -1208,6 +1239,7 @@ impl Game {
             zur_due: vec![],
             resto_target: None,
             eot_returns: vec![],
+            t0c: Default::default(),
         }
     }
 

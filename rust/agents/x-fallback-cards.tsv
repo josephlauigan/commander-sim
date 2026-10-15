@@ -1,0 +1,16 @@
+Adelbert Steiner	scryfall+dsl	[{"type":"static","static":"self_scaling","pow":1,"per":"X"}]
+Ant-Man, Elusive Avenger	scryfall+dsl	[{"type":"triggered","effects":[{"do":"treasure","n":"X"}],"event":"combat_damage","source":"self"}]
+Avenge	scryfall+dsl	[{"type":"spell","effects":[{"do":"destroy","what":{"sel":"all","filter":{"type":"creature"}}},{"do":"gain_life","n":"X","who":"you","mult":
+Bone Devourer	scryfall+dsl	[{"type":"static","static":"note","text":"~ enters with a number of +1/+1 counters on it equal to the number of creatures that died this tur
+Crypt Rats	scryfall+dsl	[{"type":"activated","cost":{},"effects":[{"do":"damage","n":"X","to":{"sel":"all","filter":{"type":"creature"}}},{"do":"damage","n":"X","to
+Deadly Embrace	scryfall+dsl	[{"type":"spell","effects":[{"do":"destroy","what":{"sel":"target","filter":{"type":"creature","controller":"opp"},"upto":false}},{"do":"dra
+Demon of Fate's Design	scryfall+dsl	[{"type":"activated","cost":{"mana":"2B","sac":"enchantment"},"effects":[{"do":"pump","pow":"X","tgh":0,"what":{"sel":"self"}}],"sorcery":fa
+Finale of Revelation	scryfall+dsl	[{"type":"spell","effects":[{"do":"draw","n":"X","who":"you"}]}]
+Fumigate	scryfall+dsl	[{"type":"spell","effects":[{"do":"destroy","what":{"sel":"all","filter":{"type":"creature"}}},{"do":"gain_life","n":"X","who":"you","mult":
+Gandalf's Sanction	scryfall+dsl	[{"type":"spell","effects":[{"do":"damage","n":"X","to":{"sel":"target","filter":{"type":"creature"},"upto":false}}]}]
+Grand Crescendo	scryfall+dsl	[{"type":"spell","effects":[{"do":"token","n":"X","pow":1,"tgh":1,"keywords":[],"attacking":false,"warrior":false,"types":["citizen"]},{"do"
+Haughty Djinn	scryfall+dsl	[{"type":"static","static":"self_scaling","pow":1,"per":"X","base0":true},{"type":"static","static":"cost","who":"you","spell":"instant_or_s
+Kor Spiritdancer	pool	[{"type":"static","static":"self_scaling","pow":2,"per":"X"}]
+Lock and Load	scryfall+dsl	[{"type":"spell","effects":[{"do":"draw","n":1,"who":"you"},{"do":"draw","n":"X","who":"you"}]}]
+Shimmercreep	scryfall+dsl	[{"type":"triggered","effects":[{"do":"lose_life","n":"X","who":"each_opponent"},{"do":"gain_life","n":"X","who":"you","per_opponent":true}]
+Thalisse, Reverent Medium	scryfall+dsl	[{"type":"triggered","effects":[{"do":"token","n":"X","pow":1,"tgh":1,"keywords":["flying"],"attacking":false,"warrior":false,"types":["spir

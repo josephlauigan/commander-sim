@@ -1,0 +1,97 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m37s elapsed, ~5m40s left
+  progress  20.0%  1m14s elapsed, ~4m59s left
+  progress  30.0%  1m51s elapsed, ~4m20s left
+  progress  40.0%  2m28s elapsed, ~3m42s left
+  progress  50.0%  3m05s elapsed, ~3m05s left
+  progress  60.0%  3m42s elapsed, ~2m28s left
+  progress  70.0%  4m21s elapsed, ~1m52s left
+  progress  80.0%  4m59s elapsed, ~1m14s left
+  progress  90.0%  5m38s elapsed, ~0m37s left
+  progress 100.0%  6m18s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 27.3%   (4-player baseline 25%)   average rounds survived 10.7
+
+-- How it wins --
+  damage      98.8% of wins
+  timeout      1.2% of wins
+  Opponents it eliminated: 0.90 per game, by
+    drain              75.7%
+    combat             11.0%
+    triggers            5.3%
+    other               4.2%
+    burn                2.0%
+    decked              1.7%
+    commander damage    0.2%
+  Damage dealt per game: 57.4, from
+    drain               39.6  (69%)
+    combat               9.7  (17%)
+    triggers             6.7  (12%)
+    burn                 1.4  (2%)
+
+-- How it loses --
+  Eliminated in 72.4% of games, on average in round 9.9
+    by Light-Paws via commander damage   19.2% of games
+    by Isshin   via combat             12.7% of games
+    by Lathril  via combat              9.9% of games
+    by Tatyova  via combat              6.8% of games
+    by Teysa Karlov via combat              4.9% of games
+    by Teysa Karlov via drain               4.7% of games
+    by Lathril  via drain               4.0% of games
+    by Light-Paws via combat              3.6% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 4%  T4 19%  T5 37%  T6 55%  T7 68%  T8 78%  T9 84%  T10 86%  T11 88%  T12 88%
+  Online at all: 88.9% of games
+  Commander resolves on turn: median 6.0, mean 6.1 (over the 89.5% of games it resolves)
+  Commander resolved by turn:  T4 20%  T5 38%  T6 56%  T7 70%  T8 79%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Peer into the Abyss                        cast in   8.9% of games, win rate when cast  69.0% (+41.7)
+    Seizan, Perverter of Truth                 cast in  11.0% of games, win rate when cast  53.3% (+26.0)
+    Dark Deal                                  cast in   4.0% of games, win rate when cast  53.2% (+25.8)
+    Exsanguinate                               cast in  14.1% of games, win rate when cast  51.8% (+24.4)
+    Memory Jar                                 cast in  16.2% of games, win rate when cast  49.5% (+22.2)
+    Howling Mine                               cast in  13.9% of games, win rate when cast  44.8% (+17.5)
+    Cost of Brilliance                         cast in  16.0% of games, win rate when cast  42.7% (+15.4)
+    Gray Merchant of Asphodel                  cast in  17.8% of games, win rate when cast  42.4% (+15.1)
+    Ambition's Cost                            cast in  14.2% of games, win rate when cast  41.7% (+14.4)
+    Painful Lesson                             cast in  14.3% of games, win rate when cast  41.6% (+14.3)
+  Lowest win rate when cast:
+    Carnage Altar                              cast in  18.5% of games, win rate when cast  30.2% (+2.9)
+    Sheoldred, the Apocalypse                  cast in  89.8% of games, win rate when cast  30.4% (+3.1)
+    Battle-Rage Blessing                       cast in  15.2% of games, win rate when cast  31.3% (+4.0)
+    Mind Stone                                 cast in  19.6% of games, win rate when cast  31.3% (+4.0)
+    Restless Bloodseeker // Bloodsoaked Revele cast in  19.2% of games, win rate when cast  31.4% (+4.1)
+    Foolish Fate                               cast in  17.8% of games, win rate when cast  31.6% (+4.3)
+    Leech Collector // Bloodletting            cast in  18.8% of games, win rate when cast  31.7% (+4.4)
+    Undercity Dire Rat                         cast in  18.8% of games, win rate when cast  32.3% (+5.0)
+    Masterful Flourish                         cast in  20.3% of games, win rate when cast  32.6% (+5.2)
+    Vault Plunderer                            cast in  17.3% of games, win rate when cast  32.7% (+5.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  17.2% of the games it was drawn
+    Apex Witchstalker                          cast  35.1% of the games it was drawn
+    Peer into the Abyss                        cast  36.7% of the games it was drawn
+    Seizan, Perverter of Truth                 cast  46.2% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.82
+    Seymour Flux                               0.04
+    Phyrexian Arena                            0.04
+    Charcoal Diamond                           0.04
+    Potioner's Trove                           0.04
+    Mind Stone                                 0.04
+    Fate Unraveler                             0.03
+    Restless Bloodseeker // Bloodsoaked Revele 0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(379s total)

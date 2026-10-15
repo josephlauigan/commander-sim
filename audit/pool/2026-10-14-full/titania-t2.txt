@@ -1,0 +1,86 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  1m04s elapsed, ~9m40s left
+  progress  20.0%  2m10s elapsed, ~8m40s left
+  progress  30.0%  3m18s elapsed, ~7m43s left
+  progress  40.0%  4m21s elapsed, ~6m32s left
+  progress  50.0%  5m28s elapsed, ~5m28s left
+  progress  60.0%  6m28s elapsed, ~4m19s left
+  progress  70.0%  7m32s elapsed, ~3m13s left
+  progress  80.0%  8m38s elapsed, ~2m09s left
+  progress  90.0%  9m38s elapsed, ~1m04s left
+  progress 100.0%  10m53s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== titania analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 30.3%   (4-player baseline 25%)   average rounds survived 13.7
+
+-- How it wins --
+  damage      91.9% of wins
+  timeout      8.1% of wins
+  Opponents it eliminated: 0.86 per game, by
+    combat             97.6%
+    decked              2.0%
+    commander damage    0.4%
+  Damage dealt per game: 47.5, from
+    combat              47.5  (100%)
+
+-- How it loses --
+  Eliminated in 66.7% of games, on average in round 12.8
+    by Lord Windgrace via combat             14.0% of games
+    by Brago    via combat             11.9% of games
+    by Kaalia of the Vast via combat             10.7% of games
+    by Sythis   via combat              8.2% of games
+    by Meren of Clan Nel Toth via combat              6.1% of games
+    by Sythis   via commander damage    5.3% of games
+    by Meren of Clan Nel Toth via triggers            3.0% of games
+    by Kaalia of the Vast via drain               2.7% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 3%  T5 11%  T6 22%  T7 31%  T8 38%  T9 44%  T10 49%  T11 53%  T12 56%
+  Online at all: 63.1% of games
+  Commander resolves on turn: median 7.0, mean 7.1 (over the 95.1% of games it resolves)
+  Commander resolved by turn:  T4 9%  T5 27%  T6 45%  T7 60%  T8 73%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Overwhelming Stampede                      cast in  16.6% of games, win rate when cast  62.8% (+32.5)
+    End-Raze Forerunners                       cast in  23.8% of games, win rate when cast  51.1% (+20.8)
+    Shamanic Revelation                        cast in  21.6% of games, win rate when cast  44.7% (+14.4)
+    Hornet Queen                               cast in  27.4% of games, win rate when cast  44.2% (+13.9)
+    Garruk's Uprising                          cast in  26.4% of games, win rate when cast  43.9% (+13.6)
+    Kura, the Boundless Sky                    cast in  29.2% of games, win rate when cast  43.3% (+13.1)
+    Tumbleweed Rising                          cast in  16.9% of games, win rate when cast  41.4% (+11.1)
+    Harmonize                                  cast in  23.5% of games, win rate when cast  41.0% (+10.7)
+    Lifestream's Blessing                      cast in  21.3% of games, win rate when cast  41.0% (+10.7)
+    Infestation Expert                         cast in  27.9% of games, win rate when cast  40.8% (+10.5)
+  Lowest win rate when cast:
+    Arachnogenesis                             cast in  14.1% of games, win rate when cast  28.4% (-1.9)
+    Titania, Protector of Argoth               cast in  95.2% of games, win rate when cast  31.5% (+1.2)
+    Hardbristle Bandit                         cast in  27.3% of games, win rate when cast  33.8% (+3.5)
+    Crushing Canopy                            cast in  25.2% of games, win rate when cast  34.6% (+4.3)
+    Noxious Newt                               cast in  27.8% of games, win rate when cast  34.7% (+4.4)
+    Cultivate                                  cast in  25.4% of games, win rate when cast  34.9% (+4.7)
+    Silhana Starfletcher                       cast in  26.1% of games, win rate when cast  35.0% (+4.7)
+    Llanowar Elves                             cast in  27.9% of games, win rate when cast  35.1% (+4.8)
+    Nature's Lore                              cast in  25.7% of games, win rate when cast  35.7% (+5.4)
+    Greenhouse Propagator                      cast in  27.4% of games, win rate when cast  35.7% (+5.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               1.41
+    Ghalta the Unstoppable                     0.16
+    Vorinclex, Monstrous Raider                0.13
+    Annoyed Altisaur                           0.13
+    Lashwhip Predator                          0.12
+    Paladin of Predation                       0.11
+    Genesis Hydra                              0.11
+    Hardbristle Bandit                         0.10
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(654s total)

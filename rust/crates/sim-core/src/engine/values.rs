@@ -95,7 +95,8 @@ pub fn static_bonus(g: &Game, m: PermId) -> i32 {
             && let Some(c) = y.cd
             && let Some(a) = g.db.get(c).tags.int(Tag::Anth)
         {
-            b += a; // auto-tagged anthems
+            // auto-tagged anthems (Commander's Insignia: +1/+1 for each time the commander was cast from the command zone)
+            b += if &*g.db.get(c).name == "Commander's Insignia" { crate::impls::t0_zurgo::command_casts(g, p) } else { a };
         }
     }
     if equipped(g, m, Tag::Flail) {

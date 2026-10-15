@@ -159,6 +159,7 @@ pub fn attack_restrictions(g: &Game, p: PlayerId, d: PlayerId) -> (i32, Option<i
 pub fn attack_limits(g: &mut Game, p: PlayerId, d: PlayerId, atk: Vec<PermId>) -> Res<Vec<PermId>> {
     let (tax, cap) = attack_restrictions(g, p, d);
     let mut atk = atk;
+    atk.retain(|&a| !crate::impls::t0_anikthea::flyer_barred(g, a, d)); // Sandwurm Convergence
     atk.sort_by_key(|&m| -epow(g, m)); // stable
     let moc: Vec<PermId> = atk.iter().copied().filter(|&m| card_name(g, m) == Some("Master of Cruelties")).collect();
     if let Some(&mc) = moc.first()
@@ -301,6 +302,7 @@ fn attack_imp(t: &crate::cards::Tags) -> f64 {
 
 /// p attacked d with atk: attack triggers (once per copy: Isshin). Returns the new attacking creatures.
 pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
+    crate::impls::t0_captain::note_attack(g, p, d); // Avenge, Heroic Return
     let copies = 1 + hooks::total_trigger_copies(g, p, "attack", None); // Isshin
     let mut new = vec![];
     for _ in 0..copies {
@@ -391,6 +393,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
     crate::impls::cloud::plan_milestone(g, p, atk); // the cloud deck's plan online
     new.extend(crate::impls::cloud::jocasta_attack(g, p, atk)?); // Jocasta returns from the graveyard attacking
     new.extend(cardcode::keyword_attack(g, p, atk, d)?);
+    new.extend(crate::impls::t0_zurgo::attack_keywords(g, p, atk, d)?); // t0-zurgo: myriad, attack counts
     if !g.hooks.is_empty() {
         g.new_attackers.clear();
         fire_trigger(g, Event::Attack, Call::Attack { p, atk: atk.to_vec(), d })?;
@@ -593,20 +596,26 @@ fn resolve_combat_inner(
                 }
                 Some(b) => {
                     let bt = etgh(g, b);
+                    let t0 = crate::impls::t0_giada::combat_proof;
                     let mut a_dies = (epow(g, b) * fiery(g, d) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
-                        && !no_damage(g, a);
+                        && !no_damage(g, a)
+                        && !t0(g, a);
                     if cardcode::damage_prevented(g, b) {
                         a_dies = false;
                     }
                     let mut b_dies = (ap * fiery(g, p) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
-                        && !no_damage(g, b);
+                        && !no_damage(g, b)
+                        && !t0(g, b);
                     if cardcode::prot_vs(g, a, b) {
                         a_dies = false; // protection from creatures / Demons and Dragons
                     }
                     if cardcode::prot_vs(g, b, a) {
                         b_dies = false;
+                    }
+                    if b_dies && crate::impls::t0_captain::sac_creature(g, d, b, ap) {
+                        b_dies = false; // Heroic Sacrifice: the damage goes to the chosen creature
                     }
                     let (fa, fb) = (first_strike(g, a), first_strike(g, b));
                     if fa && !fb && b_dies {
@@ -621,6 +630,13 @@ fn resolve_combat_inner(
                     if epow(g, b) > 0 && g.perm(a).on_bf && cardcode::kaldra_exile(g, b, a)? {
                         a_dies = false;
                     }
+                    if ap > 0 && !no_damage(g, b) && !t0(g, b) && !cardcode::damage_prevented(g, b) {
+                        crate::impls::t0_giada::damaged(g, b, ap)?; // Metropolis Reformer
+                    }
+                    if epow(g, b) > 0 && !no_damage(g, a) && !t0(g, a) && !cardcode::damage_prevented(g, a) {
+                        crate::impls::t0_giada::damaged(g, a, epow(g, b))?;
+                    }
+                    crate::impls::t0_captain::pair_mark(g, a, b); // Hawkeye
                     if b_dies {
                         crate::impls::sephfs_cards::slaver_mark(g, a, b);
                         die(g, b, "destroy")?;
@@ -629,6 +645,7 @@ fn resolve_combat_inner(
                         crate::impls::sephfs_cards::slaver_mark(g, b, a);
                         die(g, a, "destroy")?;
                     }
+                    crate::impls::t0_captain::pair_after(g, a, b); // Hercules
                     dmg
                 }
             };
@@ -652,6 +669,9 @@ fn resolve_combat_inner(
                     *g.player_mut(d).lost_names.entry(name).or_insert(0) += 1;
                 }
                 dmg = 0;
+            }
+            if dmg > 0 && crate::impls::t0_captain::sac_player(g, d, dmg) {
+                dmg = 0; // Heroic Sacrifice
             }
             if dmg > 0 && prevents_damage(g, d, Some(p)) {
                 // protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
@@ -738,6 +758,7 @@ fn resolve_combat_inner(
                 die(g, b, "sac")?; // the Ring, level 3: blockers are sacrificed
             }
         }
+        crate::impls::t0_captain::sac_finish(g)?; // Heroic Sacrifice
         cardcode::vanguard_blocks(g, &assign)?; // Defiant Vanguard: at end of combat
         g.blocking.clear();
         if !conn.is_empty() && has(g, p, Tag::Facebreaker) {
@@ -951,12 +972,14 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             }
         }
         groups = kept;
+        crate::impls::t0_zurgo::goad_attackers(g, p, &mut groups, d)?; // t0-zurgo: goaded creatures attack
         if !groups.iter().any(|x| x.0 == d)
             && let Some(first) = groups.first()
         {
             d = first.0;
         }
         let mut atk: Vec<PermId> = groups.iter().flat_map(|x| x.1.iter().copied()).collect();
+        g.atk_targets = groups.iter().flat_map(|(q, xs)| xs.iter().map(move |&m| (m, *q))).collect(); // t0-zurgo
         if !g.hooks.is_empty() && !atk.is_empty() {
             // beginning of combat (Helm of the Host)
             let new = cardcode::combat_start(g, p)?;
@@ -966,6 +989,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                     if let Some(gr) = groups.iter_mut().find(|x| x.0 == d) {
                         gr.1.push(m);
                     }
+                    g.atk_targets.push((m, d));
                 }
             }
         }
@@ -1021,13 +1045,12 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         for &m in &atk {
             if !(g.perm(m).vig || kw(g, m, "vigilance")) {
                 g.perm_mut(m).tapped = true;
+                crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
             }
         }
         let new = attack_triggers(g, p, &atk, d)?; // once for the whole attack, naming the main defender
         atk.extend(&new);
-        if let Some(gr) = groups.iter_mut().find(|x| x.0 == d) {
-            gr.1.extend(&new);
-        }
+        crate::impls::t0_zurgo::route_new_attackers(g, p, &atk, &new, d, &mut groups)?; // t0-zurgo: tokens attack their own player
         cardcode::ring_attack(g, p, &atk)?; // the Ring, level 2: loot
         cardcode::hand_attack(g, p, &atk, d)?;
         if g.over || !groups.iter().any(|x| g.player(x.0).alive) {
@@ -1045,6 +1068,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             }
             Ok(())
         })();
+        let r = r.and_then(|_| crate::impls::t0_zurgo::end_of_combat(g, p)); // t0-zurgo: myriad tokens are exiled
         g.in_combat.clear();
         r?;
         if g.over || !g.player(p).alive {

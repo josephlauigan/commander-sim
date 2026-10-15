@@ -245,11 +245,11 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
             .copied()
             .filter(|&x| g.land(x).cd != c && !g.db.get(g.land(x).cd).tag(Tag::Bounceland))
             .collect();
-        if let Some(x) = min_by(&others, |x| land_colors_now(g, p, x).count() as f64) {
-            remove_land(g, p, x);
-            let cd = g.land(x).cd;
-            g.player_mut(p).hand.push(cd);
-        }
+        // with no other land to return it returns itself (a first-turn bounceland is a wasted land drop)
+        let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64).unwrap_or(l);
+        remove_land(g, p, x);
+        let cd = g.land(x).cd;
+        g.player_mut(p).hand.push(cd);
     }
     landfall(g, p)?;
     if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) && !crate::impls::titania::hold_fetch(g, p) {
@@ -711,6 +711,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             pl.exile.push(c);
         }
     }
+    crate::impls::t0_zurgo::end_cleanup(g, p); // t0-zurgo: Neriv's cards go back to exile, Grenzo's are gone
     if has(g, p, Tag::Necro) && g.humans.get(p).is_none() {
         cardcode::necro_pay(g, p)?; // the person pays with the ability
     }
@@ -735,6 +736,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         has(g, p, Tag::Nomax)
             || g.player(p).lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Nomax))
             || g.player(p).nomax_turn == Some(g.player(p).turns)
+            || g.player(p).t0s.nomax
     };
     let held = |g: &Game| -> Vec<CardId> {
         let pl = g.player(p);
@@ -801,6 +803,7 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
 /// the start of p's turn: untap, upkeep, draw, the land drop (Python's `_step_start`)
 pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     g.active = Some(p);
+    g.turn_enter = g.enter_no; // t0-zurgo: tokens born after this entered this turn
     for m in &mut g.perms {
         m.eot_pt = (0, 0);
         m.eot_kw.clear();

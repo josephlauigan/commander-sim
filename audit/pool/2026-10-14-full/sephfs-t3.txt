@@ -1,0 +1,104 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 20 minutes
+  progress  10.0%  1m06s elapsed, ~10m00s left
+  progress  20.0%  2m10s elapsed, ~8m43s left
+  progress  30.0%  3m14s elapsed, ~7m33s left
+  progress  40.0%  4m20s elapsed, ~6m30s left
+  progress  50.0%  5m25s elapsed, ~5m25s left
+  progress  60.0%  6m31s elapsed, ~4m20s left
+  progress  70.0%  7m34s elapsed, ~3m14s left
+  progress  80.0%  8m38s elapsed, ~2m09s left
+  progress  90.0%  9m48s elapsed, ~1m05s left
+  progress 100.0%  10m58s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== sephfs analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 38.7%   (4-player baseline 25%)   average rounds survived 12.5
+
+-- How it wins --
+  damage      94.9% of wins
+  timeout      5.1% of wins
+  Opponents it eliminated: 1.17 per game, by
+    drain              73.9%
+    combat             19.7%
+    burn                5.7%
+    triggers            0.3%
+    decked              0.2%
+    commander damage    0.1%
+    other               0.1%
+  Damage dealt per game: 51.3, from
+    drain               32.0  (62%)
+    combat              15.5  (30%)
+    burn                 3.6  (7%)
+    triggers             0.1  (0%)
+
+-- Sephiroth --
+  Flips per game 0.721 (games with a flip 57.0%); first flip on round 8.14 on average
+  Emblem drains per game 15.24; cards drawn by Sephiroth per game 1.81; creatures sacrificed per game 5.79
+  Wipes cast per game 0.55 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 1.33
+  Creatures stolen per game 0.87: reanimation spells 0.39, Grave Betrayal 0.66, Dread Slaver 0.02, prepared Reanimate 0.08; Kaya's Ghostform returns 0.17; Rabid Attack draws 0.09
+
+-- How it loses --
+  Eliminated in 60.1% of games, on average in round 11.5
+    by Aurelia  via combat             14.0% of games
+    by Tergrid  via combat              9.1% of games
+    by Marwyn   via combat              8.3% of games
+    by Atraxa   via combat              7.4% of games
+    by Aurelia  via commander damage    6.2% of games
+    by Korvold  via commander damage    2.6% of games
+    by Tergrid  via drain               1.8% of games
+    by Korvold  via combat              1.4% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 5.0, mean 4.9 (over the 97.3% of games it resolves)
+  Commander resolved by turn:  T4 47%  T5 66%  T6 79%  T7 88%  T8 92%
+  Sacrifices: 5.79 creatures per game; Sephiroth flipped to One-Winged Angel in 57.0% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Rabid Attack                               cast in   5.7% of games, win rate when cast  77.9% (+39.2)
+    Exsanguinate                               cast in  13.2% of games, win rate when cast  65.3% (+26.6)
+    Pestilence                                 cast in  20.2% of games, win rate when cast  60.1% (+21.4)
+    Grave Titan                                cast in  18.4% of games, win rate when cast  59.6% (+20.9)
+    Grave Betrayal                             cast in  15.0% of games, win rate when cast  58.0% (+19.3)
+    Living Death                               cast in  16.0% of games, win rate when cast  55.3% (+16.6)
+    Butcher of Malakir                         cast in  15.3% of games, win rate when cast  55.0% (+16.3)
+    Rewrite Regrets                            cast in  17.9% of games, win rate when cast  55.0% (+16.3)
+    Presumed Dead                              cast in  12.6% of games, win rate when cast  54.8% (+16.1)
+    Stargaze                                   cast in  17.5% of games, win rate when cast  54.6% (+15.9)
+  Lowest win rate when cast:
+    Sephiroth, Fabled SOLDIER // Sephiroth, On cast in  97.5% of games, win rate when cast  39.7% (+1.0)
+    Extinction Event                           cast in  15.1% of games, win rate when cast  41.3% (+2.6)
+    Crux of Fate                               cast in  15.7% of games, win rate when cast  41.5% (+2.8)
+    Last Gasp                                  cast in  18.9% of games, win rate when cast  42.3% (+3.6)
+    Mind Stone                                 cast in  25.1% of games, win rate when cast  42.3% (+3.6)
+    Blood on the Snow                          cast in  13.0% of games, win rate when cast  43.1% (+4.4)
+    Dark Ritual                                cast in  22.3% of games, win rate when cast  43.2% (+4.5)
+    Masterful Flourish                         cast in  20.5% of games, win rate when cast  43.6% (+4.9)
+    Star Compass                               cast in  23.9% of games, win rate when cast  43.9% (+5.2)
+    Phyrexian Altar                            cast in  24.7% of games, win rate when cast  44.0% (+5.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rabid Attack                               cast  22.7% of the games it was drawn
+    Necromantic Selection                      cast  46.3% of the games it was drawn
+    Presumed Dead                              cast  48.2% of the games it was drawn
+    Blood on the Snow                          cast  48.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 0.70
+    Grave Titan                                0.08
+    Ral Zarek, Guest Lecturer                  0.07
+    Phyrexian Altar                            0.06
+    Bastion of Remembrance                     0.04
+    The One Ring                               0.04
+    Star Compass                               0.03
+    Moseo, Vein's New Dean                     0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(658s total)

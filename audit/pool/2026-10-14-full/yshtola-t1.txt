@@ -1,0 +1,99 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m46s elapsed, ~6m55s left
+  progress  20.0%  1m33s elapsed, ~6m14s left
+  progress  30.0%  2m19s elapsed, ~5m25s left
+  progress  40.0%  3m05s elapsed, ~4m38s left
+  progress  50.0%  3m53s elapsed, ~3m53s left
+  progress  60.0%  4m36s elapsed, ~3m04s left
+  progress  70.0%  5m25s elapsed, ~2m19s left
+  progress  80.0%  6m11s elapsed, ~1m32s left
+  progress  90.0%  6m59s elapsed, ~0m46s left
+  progress 100.0%  7m55s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== yshtola analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 44.4%   (4-player baseline 25%)   average rounds survived 11.3
+
+-- How it wins --
+  damage      99.2% of wins
+  timeout      0.8% of wins
+  Opponents it eliminated: 1.16 per game, by
+    drain              54.5%
+    triggers           21.2%
+    combat             17.8%
+    other               3.0%
+    decked              2.5%
+    burn                0.9%
+    commander damage    0.1%
+  Damage dealt per game: 58.4, from
+    triggers            22.2  (38%)
+    drain               21.1  (36%)
+    combat              14.0  (24%)
+    burn                 1.1  (2%)
+
+-- How it loses --
+  Eliminated in 54.8% of games, on average in round 9.8
+    by Light-Paws via commander damage   11.6% of games
+    by Isshin   via combat             10.5% of games
+    by Tatyova  via combat              8.4% of games
+    by Lathril  via combat              7.7% of games
+    by Teysa Karlov via drain               4.0% of games
+    by Teysa Karlov via combat              2.8% of games
+    by Light-Paws via combat              2.5% of games
+    by Lathril  via drain               2.5% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 6%  T5 25%  T6 42%  T7 55%  T8 64%  T9 70%  T10 74%  T11 76%  T12 78%
+  Online at all: 80.2% of games
+  Commander resolves on turn: median 5.0, mean 5.2 (over the 92.2% of games it resolves)
+  Commander resolved by turn:  T4 41%  T5 62%  T6 75%  T7 83%  T8 87%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Debt to the Deathless                      cast in  26.4% of games, win rate when cast  85.1% (+40.8)
+    Exsanguinate                               cast in  21.9% of games, win rate when cast  76.0% (+31.6)
+    Massacre Wurm                              cast in  17.1% of games, win rate when cast  72.7% (+28.4)
+    The Eternal Wanderer                       cast in  18.7% of games, win rate when cast  71.8% (+27.4)
+    Dark Petition                              cast in  16.4% of games, win rate when cast  68.3% (+23.9)
+    Consecrated Sphinx                         cast in  12.6% of games, win rate when cast  68.2% (+23.8)
+    Necropotence                               cast in  14.9% of games, win rate when cast  67.5% (+23.2)
+    Bolas's Citadel                            cast in  12.5% of games, win rate when cast  66.7% (+22.3)
+    Diabolic Tutor                             cast in  20.4% of games, win rate when cast  66.1% (+21.8)
+    Sanguine Bond                              cast in  37.8% of games, win rate when cast  65.5% (+21.1)
+  Lowest win rate when cast:
+    Y'shtola, Night's Blessed                  cast in  92.5% of games, win rate when cast  47.9% (+3.6)
+    Fatal Push                                 cast in  25.9% of games, win rate when cast  52.1% (+7.8)
+    Urborg Syphon-Mage                         cast in  20.6% of games, win rate when cast  52.2% (+7.8)
+    Path to Exile                              cast in  26.6% of games, win rate when cast  52.4% (+8.0)
+    Go for the Throat                          cast in  24.4% of games, win rate when cast  53.0% (+8.7)
+    Gonti, Lord of Luxury                      cast in  17.4% of games, win rate when cast  53.9% (+9.5)
+    Generous Gift                              cast in  20.5% of games, win rate when cast  54.9% (+10.5)
+    Anguished Unmaking                         cast in  20.6% of games, win rate when cast  54.9% (+10.6)
+    Curiosity                                  cast in  27.3% of games, win rate when cast  55.0% (+10.6)
+    Mystic Remora                              cast in  23.4% of games, win rate when cast  55.3% (+10.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dakkon, Shadow Slayer                      cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Bolas's Citadel                            cast  40.5% of the games it was drawn
+    Consecrated Sphinx                         cast  42.3% of the games it was drawn
+    Dovin's Veto                               cast  42.6% of the games it was drawn [reactive: only cast in response]
+    Austere Command                            cast  44.6% of the games it was drawn
+    Necropotence                               cast  48.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.37
+    Sanguine Bond                              0.15
+    Zur the Enchanter                          0.09
+    Propaganda                                 0.07
+    Grand Arbiter Augustin IV                  0.07
+    Smothering Tithe                           0.07
+    The Eternal Wanderer                       0.07
+    Esper Sentinel                             0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(475s total)

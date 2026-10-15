@@ -76,6 +76,9 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             g.player_mut(p).decked = true;
             return Ok(());
         }
+        if !g.hooks.is_empty() && crate::impls::t0_anikthea::abundance_draw(g, p)? {
+            continue; // Abundance: a land or a nonland card instead of the draw
+        }
         if g.player(p).urabrask == Some(g.turn_stamp()) {
             // Urabrask, Heretic Praetor: exiled instead, playable this turn (no draw, so no draw triggers)
             let pl = g.player_mut(p);
@@ -235,7 +238,7 @@ impl Tokens {
 }
 
 /// p creates tokens; returns the ones that stayed on the battlefield. Python's `make_tokens`.
-pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> {
+pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermId>> {
     let mut out = vec![];
     let mut n = spec.n * crate::dsl::token_mult(g, p);
     let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
@@ -247,6 +250,18 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
     let (mut pw, mut tg, mut sick) = (spec.pow, spec.tgh, spec.sick);
     if has(g, p, Tag::Jinnie) && pw < 2 && !spec.attacking {
         (pw, tg, sick) = (2, Some(2), false); // Jinnie Fay: 2/2 Cats with haste instead
+    }
+    let angels = crate::impls::t0_zurgo::divine_visitation(g, p);
+    if angels {
+        // Divine Visitation: 4/4 white Angels with flying and vigilance instead
+        (pw, tg) = (4, Some(4));
+        spec.fly = true;
+        spec.warrior = false;
+        spec.lifelink = false;
+        spec.dt = false;
+        spec.color = Some(Colors::from_letters("W"));
+        spec.types = vec!["angel"];
+        spec.data = PermData::default();
     }
     let color = spec.color.unwrap_or_else(|| token_color(g.player(p).key));
     for _ in 0..n {
@@ -260,7 +275,11 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
         x.colors = color;
         x.ttypes = spec.types.clone();
         x.data = spec.data.clone();
+        x.vig = angels;
         x.on_bf = true;
+        g.enter_no += 1;
+        g.perm_mut(m).born = g.enter_no;
+        let x = g.perm_mut(m);
         if spec.attacking {
             x.tapped = true;
         }
@@ -272,6 +291,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
         out.push(m);
     }
     let k = out.len() as i32;
+    note_tokens(g, p, k as u32);
     if k > 0 && !g.no_fang {
         cardcode::chatterfang_squirrels(g, p, k)?;
     }
@@ -498,6 +518,26 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
                 queue_triggers(g, vec![t])?; // "when it leaves" (Oblivion Ring)
             }
         }
+    }
+    if on {
+        for s in crate::impls::t0_giada::sleuths_for(g, m) {
+            let t = Trigger {
+                controller: g.perm(s).owner,
+                src: Some(s),
+                act: TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } },
+                name: None,
+                known: false,
+                imp: None,
+                cast_etb: false,
+            };
+            queue_triggers(g, vec![t])?; // Angelic Sleuth: another permanent of yours with counters left
+        }
+    }
+    if on && g.perm(m).token {
+        crate::impls::t0_zurgo::token_left(g, p, m)?; // t0-zurgo: Zurgo Stormrender, Twilight Drover
+    }
+    if on {
+        crate::impls::t0_anikthea::calix_link_left(g, m)?; // Calix's -3 link
     }
     Ok(())
 }
@@ -1077,6 +1117,7 @@ pub fn enter_token_copy(g: &mut Game, p: PlayerId, cd: CardId) -> Res<Option<Per
     }
     let m = enter(g, p, cd, Enter::default())?;
     g.perm_mut(m).token = true;
+    note_tokens(g, p, 1);
     Ok(Some(m))
 }
 
@@ -1620,6 +1661,7 @@ pub fn make_artifact_tokens(g: &mut Game, p: PlayerId, kind: Sym, n: i32) -> Res
             _ => pl.clues += n as u32,
         }
     }
+    note_tokens(g, p, (n * kinds.len() as i32) as u32);
     if !g.hooks.is_empty() {
         let total = n * kinds.len() as i32;
         fire_trigger(g, Event::TokenCreated, Call::ArtifactTokens { p, kinds, n: total })?;
@@ -1758,4 +1800,11 @@ pub fn agent_take(g: &mut Game, a: PlayerId, p: PlayerId, c: CardId) {
         g.db.get(c).name,
         g.player(p).name
     );
+}
+
+/// p created k tokens: counted for "the number of tokens you created this turn" (Thalisse, Reverent Medium)
+pub fn note_tokens(g: &mut Game, p: PlayerId, k: u32) {
+    let st = g.turn_stamp();
+    let pl = g.player_mut(p);
+    pl.tok_made = if pl.tok_made.0 == Some(st) { (Some(st), pl.tok_made.1 + k) } else { (Some(st), k) };
 }

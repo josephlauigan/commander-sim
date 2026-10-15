@@ -1,0 +1,10 @@
+
+=== Tier ordering: each deck alone against three decks of the tier below [conservative, n=1000] ===
+  Tier 2 (Mid B3) into Tier 1 (High B2 / Low B3): 25.9% overall
+    Brago                         25.9% (23.3-28.7)
+    Kaalia of the Vast            18.0% (15.7-20.5)  (not above 25%)
+    Lord Windgrace                21.8% (19.4-24.5)  (not above 25%)
+    Meren of Clan Nel Toth        22.4% (19.9-25.1)  (not above 25%)
+    Sythis                        41.2% (38.2-44.3)
+
+(1846s total)

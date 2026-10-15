@@ -1,0 +1,102 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m46s elapsed, ~7m00s left
+  progress  20.0%  1m33s elapsed, ~6m13s left
+  progress  30.0%  2m26s elapsed, ~5m41s left
+  progress  40.0%  3m15s elapsed, ~4m52s left
+  progress  50.0%  4m02s elapsed, ~4m02s left
+  progress  60.0%  4m50s elapsed, ~3m13s left
+  progress  70.0%  5m37s elapsed, ~2m24s left
+  progress  80.0%  6m27s elapsed, ~1m36s left
+  progress  90.0%  7m14s elapsed, ~0m48s left
+  progress 100.0%  8m04s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== seph analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 46.8%   (4-player baseline 25%)   average rounds survived 12.5
+
+-- How it wins --
+  combo       57.4% of wins
+  damage      39.6% of wins
+  timeout      3.0% of wins
+  Opponents it eliminated: 1.21 per game, by
+    combo              48.2%
+    combat             34.2%
+    drain              10.4%
+    triggers            5.3%
+    commander damage    1.1%
+    decked              0.8%
+    burn                0.0%
+  Damage dealt per game: 32.8, from
+    combat              20.0  (61%)
+    drain               10.5  (32%)
+    triggers             2.3  (7%)
+    burn                 0.0  (0%)
+
+-- How it loses --
+  Eliminated in 52.4% of games, on average in round 11.3
+    by Brago    via combat             10.7% of games
+    by Lord Windgrace via combat             10.4% of games
+    by Kaalia of the Vast via combat              8.5% of games
+    by Sythis   via combat              5.8% of games
+    by Meren of Clan Nel Toth via combat              4.5% of games
+    by Kaalia of the Vast via drain               3.2% of games
+    by Meren of Clan Nel Toth via triggers            2.1% of games
+    by Kaalia of the Vast via burn                1.9% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 3%  T4 11%  T5 26%  T6 43%  T7 58%  T8 71%  T9 78%  T10 83%  T11 85%  T12 87%
+  Online at all: 88.2% of games
+  Commander resolves on turn: median 8.0, mean 8.9 (over the 73.1% of games it resolves)
+  Commander resolved by turn:  T4 1%  T5 4%  T6 12%  T7 25%  T8 37%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Yawgmoth's Will                            cast in  12.1% of games, win rate when cast  80.0% (+33.2)
+    Summon: Bahamut                            cast in   3.9% of games, win rate when cast  78.3% (+31.5)
+    Mikaeus, the Unhallowed                    cast in  20.5% of games, win rate when cast  77.2% (+30.4)
+    Dread Return                               cast in  26.9% of games, win rate when cast  74.7% (+27.9)
+    Unburial Rites                             cast in  29.1% of games, win rate when cast  74.2% (+27.4)
+    Archon of Cruelty                          cast in   4.2% of games, win rate when cast  74.1% (+27.3)
+    Elesh Norn, Grand Cenobite                 cast in   5.7% of games, win rate when cast  74.0% (+27.2)
+    Sheoldred, Whispering One                  cast in   6.3% of games, win rate when cast  72.7% (+25.9)
+    Reanimate                                  cast in  34.5% of games, win rate when cast  70.8% (+24.0)
+    Kitchen Finks                              cast in  31.0% of games, win rate when cast  70.7% (+23.9)
+  Lowest win rate when cast:
+    Teferi's Protection                        cast in   6.2% of games, win rate when cast  24.9% (-21.9)
+    Toxic Deluge                               cast in  24.8% of games, win rate when cast  50.0% (+3.2)
+    Elesh Norn, Mother of Machines             cast in  16.1% of games, win rate when cast  51.9% (+5.1)
+    Restoration Angel                          cast in  16.4% of games, win rate when cast  53.4% (+6.6)
+    Anguished Unmaking                         cast in  27.0% of games, win rate when cast  53.5% (+6.7)
+    Displacer Kitten                           cast in  19.5% of games, win rate when cast  53.7% (+6.9)
+    Flickering Hound                           cast in  24.5% of games, win rate when cast  54.4% (+7.6)
+    Conjurer's Closet                          cast in  21.4% of games, win rate when cast  55.6% (+8.8)
+    Swan Song                                  cast in  25.6% of games, win rate when cast  56.1% (+9.3)
+    Grand Abolisher                            cast in  23.1% of games, win rate when cast  56.4% (+9.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Worldly Tutor                              cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Summon: Bahamut                            cast  14.0% of the games it was drawn
+    Elesh Norn, Grand Cenobite                 cast  19.6% of the games it was drawn
+    Archon of Cruelty                          cast  22.1% of the games it was drawn
+    Sheoldred, Whispering One                  cast  22.5% of the games it was drawn
+    Teferi's Protection                        cast  24.5% of the games it was drawn [reactive: only cast in response]
+    Yawgmoth's Will                            cast  43.4% of the games it was drawn
+    Buried Alive                               cast  43.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.56
+    Archon of Cruelty                          0.20
+    Summon: Bahamut                            0.11
+    Grave Pact                                 0.10
+    Nim Deathmantle                            0.09
+    Phyrexian Arena                            0.09
+    Sheoldred, the Apocalypse                  0.08
+    Displacer Kitten                           0.08
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(485s total)

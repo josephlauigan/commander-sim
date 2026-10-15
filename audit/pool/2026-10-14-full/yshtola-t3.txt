@@ -1,0 +1,97 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 20 minutes
+  progress  10.0%  1m33s elapsed, ~14m04s left
+  progress  20.0%  3m11s elapsed, ~12m46s left
+  progress  30.0%  4m51s elapsed, ~11m20s left
+  progress  40.0%  6m23s elapsed, ~9m35s left
+  progress  50.0%  8m05s elapsed, ~8m05s left
+  progress  60.0%  9m37s elapsed, ~6m25s left
+  progress  70.0%  11m15s elapsed, ~4m49s left
+  progress  80.0%  12m49s elapsed, ~3m12s left
+  progress  90.0%  14m31s elapsed, ~1m36s left
+  progress 100.0%  16m20s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== yshtola analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 43.6%   (4-player baseline 25%)   average rounds survived 11.7
+
+-- How it wins --
+  damage      98.0% of wins
+  timeout      2.0% of wins
+  Opponents it eliminated: 1.11 per game, by
+    drain              58.2%
+    triggers           20.2%
+    combat             17.9%
+    other               2.4%
+    burn                0.9%
+    decked              0.4%
+  Damage dealt per game: 50.8, from
+    triggers            20.2  (40%)
+    drain               18.6  (37%)
+    combat              10.9  (21%)
+    burn                 1.1  (2%)
+
+-- How it loses --
+  Eliminated in 55.5% of games, on average in round 10.5
+    by Aurelia  via combat             16.4% of games
+    by Marwyn   via combat              9.7% of games
+    by Tergrid  via combat              8.6% of games
+    by Atraxa   via combat              5.2% of games
+    by Tergrid  via drain               2.7% of games
+    by Aurelia  via commander damage    1.9% of games
+    by Korvold  via drain               1.7% of games
+    by Korvold  via combat              1.5% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 5%  T5 22%  T6 40%  T7 53%  T8 61%  T9 68%  T10 72%  T11 75%  T12 77%
+  Online at all: 79.8% of games
+  Commander resolves on turn: median 5.0, mean 5.4 (over the 93.1% of games it resolves)
+  Commander resolved by turn:  T4 37%  T5 60%  T6 73%  T7 81%  T8 86%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Debt to the Deathless                      cast in  25.5% of games, win rate when cast  86.2% (+42.6)
+    Exsanguinate                               cast in  19.4% of games, win rate when cast  73.8% (+30.2)
+    Dark Petition                              cast in  15.8% of games, win rate when cast  68.5% (+24.9)
+    The Eternal Wanderer                       cast in  17.9% of games, win rate when cast  67.1% (+23.5)
+    Massacre Wurm                              cast in  15.8% of games, win rate when cast  65.5% (+21.9)
+    Diabolic Tutor                             cast in  18.4% of games, win rate when cast  64.4% (+20.9)
+    Polluted Bonds                             cast in  16.0% of games, win rate when cast  64.2% (+20.6)
+    Bolas's Citadel                            cast in  12.1% of games, win rate when cast  62.6% (+19.0)
+    Consecrated Sphinx                         cast in  12.4% of games, win rate when cast  61.8% (+18.2)
+    Deep Analysis                              cast in  17.7% of games, win rate when cast  61.0% (+17.4)
+  Lowest win rate when cast:
+    Y'shtola, Night's Blessed                  cast in  93.2% of games, win rate when cast  46.6% (+3.0)
+    Restoration Angel                          cast in  16.5% of games, win rate when cast  49.2% (+5.7)
+    Mystic Remora                              cast in  23.2% of games, win rate when cast  49.5% (+5.9)
+    Windborn Muse                              cast in  19.5% of games, win rate when cast  49.6% (+6.0)
+    Fatal Push                                 cast in  25.2% of games, win rate when cast  50.8% (+7.2)
+    Your Fate Ends Here                        cast in  28.7% of games, win rate when cast  50.9% (+7.3)
+    Path to Exile                              cast in  27.0% of games, win rate when cast  51.3% (+7.7)
+    Talisman of Progress                       cast in  22.6% of games, win rate when cast  51.8% (+8.2)
+    Encrust                                    cast in  22.0% of games, win rate when cast  52.1% (+8.5)
+    Arcane Signet                              cast in  23.5% of games, win rate when cast  52.2% (+8.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dakkon, Shadow Slayer                      cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Bolas's Citadel                            cast  40.1% of the games it was drawn
+    Austere Command                            cast  40.3% of the games it was drawn
+    Dovin's Veto                               cast  42.1% of the games it was drawn [reactive: only cast in response]
+    Consecrated Sphinx                         cast  43.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.34
+    Sanguine Bond                              0.13
+    Grand Arbiter Augustin IV                  0.07
+    The Eternal Wanderer                       0.06
+    Zur the Enchanter                          0.06
+    Propaganda                                 0.06
+    Smothering Tithe                           0.05
+    Esper Sentinel                             0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(980s total)

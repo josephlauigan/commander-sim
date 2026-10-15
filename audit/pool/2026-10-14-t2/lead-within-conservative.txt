@@ -1,0 +1,21 @@
+1,000 games (calibration: within, 1,000 per list per tier, profile conservative), lookahead AI, 8 worker threads: about 6 minutes
+
+=== Within-tier balance [conservative, n=1000 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m49s elapsed, ~7m24s left
+  progress  20.0%  1m39s elapsed, ~6m39s left
+  progress  30.0%  2m27s elapsed, ~5m44s left
+  progress  40.0%  3m12s elapsed, ~4m49s left
+  progress  50.0%  3m51s elapsed, ~3m51s left
+  progress  60.0%  4m38s elapsed, ~3m05s left
+  progress  70.0%  5m12s elapsed, ~2m13s left
+  progress  80.0%  5m54s elapsed, ~1m28s left
+  progress  90.0%  6m37s elapsed, ~0m44s left
+  progress 100.0%  7m19s elapsed, ~0m00s left
+  Tier 2 (Mid B3): avg game 15.5 rounds, timeouts 13.3%
+    Brago                         21.4% (18.7-24.4)  [3.3 pts from round-cap wins]
+    Kaalia of the Vast            24.8% (21.9-27.9)  [1.5 pts from round-cap wins]
+    Lord Windgrace                27.8% (24.8-31.0)  [3.3 pts from round-cap wins]
+    Meren of Clan Nel Toth        24.6% (21.7-27.7)  [4.6 pts from round-cap wins]
+    Sythis                        26.4% (23.5-29.6)  [3.9 pts from round-cap wins]
+
+(439s total)

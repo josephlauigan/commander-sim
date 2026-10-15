@@ -107,9 +107,9 @@ fn open_table(s: &Server) -> (Browser, Browser, String) {
     friend.call("GET", "/", None);
     let r = host.post(
         "/api/new",
-        // seed 8: with the 10-13 Sauron and Seph lists, seed 7 kills both human seats early and the AIs finish the game
+        // seed 10: after the Tier 2 list tuning seeds 7, 8, 9 end the game early (seed 7 since the 10-13 lists): they kill both human seats early and the AIs finish the game
         // before the test can pause the bots (the save test then waits for a decision that never comes)
-        json!({"deck": "sauron", "tier": "t2", "seed": 8, "ai": "adaptive", "images": false, "two": true}),
+        json!({"deck": "sauron", "tier": "t2", "seed": 10, "ai": "adaptive", "images": false, "two": true}),
     );
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let j = r.json();
@@ -354,7 +354,7 @@ fn test_one_player_undo_is_at_once() {
     let Some(s) = server() else { return };
     let mut host = Browser::new(s.client());
     host.call("GET", "/", None);
-    host.post("/api/new", json!({"deck": "sauron", "tier": "t2", "seed": 4, "ai": "adaptive", "images": false}));
+    host.post("/api/new", json!({"deck": "sauron", "tier": "t2", "seed": 10, "ai": "adaptive", "images": false}));
     host.auto.store(false, Ordering::Relaxed);
     host.listen(Arc::default());
     let ev = host.next_request(120).unwrap();

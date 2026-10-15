@@ -1,0 +1,101 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  1m53s elapsed, ~17m01s left
+  progress  20.0%  4m01s elapsed, ~16m06s left
+  progress  30.0%  6m07s elapsed, ~14m16s left
+  progress  40.0%  8m05s elapsed, ~12m08s left
+  progress  50.0%  10m03s elapsed, ~10m03s left
+  progress  60.0%  12m06s elapsed, ~8m04s left
+  progress  70.0%  14m06s elapsed, ~6m02s left
+  progress  80.0%  16m12s elapsed, ~4m03s left
+  progress  90.0%  18m13s elapsed, ~2m01s left
+  progress 100.0%  20m34s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== alela analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 15.1%   (4-player baseline 25%)   average rounds survived 14.4
+
+-- How it wins --
+  damage      73.7% of wins
+  timeout     26.3% of wins
+  Opponents it eliminated: 0.44 per game, by
+    combat             92.6%
+    drain               3.7%
+    decked              3.5%
+    burn                0.1%
+    triggers            0.1%
+    commander damage    0.1%
+  Damage dealt per game: 27.5, from
+    combat              26.1  (95%)
+    drain                1.3  (5%)
+    triggers             0.0  (0%)
+    burn                 0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 0.33; Tymna turns per game 0.59; opponents hit per Tymna turn 0.63
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 9.20 (in 22% of games)
+
+-- How it loses --
+  Eliminated in 78.9% of games, on average in round 13.5
+    by Lord Windgrace via combat             17.7% of games
+    by Brago    via combat             16.1% of games
+    by Kaalia of the Vast via combat             12.4% of games
+    by Sythis   via combat              9.0% of games
+    by Meren of Clan Nel Toth via combat              8.2% of games
+    by Sythis   via commander damage    4.6% of games
+    by Kaalia of the Vast via drain               3.2% of games
+    by Meren of Clan Nel Toth via triggers            3.0% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 3%  T5 13%  T6 22%  T7 32%  T8 40%  T9 48%  T10 53%  T11 57%  T12 61%
+  Online at all: 69.3% of games
+  Commander resolves on turn: median 5.0, mean 5.8 (over the 92.2% of games it resolves)
+  Commander resolved by turn:  T4 37%  T5 53%  T6 65%  T7 73%  T8 80%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Cavalier of Dawn                           cast in  16.9% of games, win rate when cast  28.0% (+12.9)
+    Meteor Golem                               cast in  18.1% of games, win rate when cast  26.7% (+11.6)
+    Feather of Flight                          cast in  22.9% of games, win rate when cast  24.6% (+9.5)
+    Notion Thief                               cast in  20.2% of games, win rate when cast  24.0% (+8.8)
+    Ajani Fells the Godsire                    cast in  19.5% of games, win rate when cast  23.7% (+8.6)
+    Venser, the Sojourner                      cast in  18.9% of games, win rate when cast  23.1% (+8.0)
+    Daydream                                   cast in  19.6% of games, win rate when cast  23.0% (+7.9)
+    Opposition                                 cast in  17.5% of games, win rate when cast  23.0% (+7.8)
+    Tymna the Weaver                           cast in  22.3% of games, win rate when cast  22.7% (+7.5)
+    Rhystic Study                              cast in  21.9% of games, win rate when cast  22.6% (+7.5)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  92.3% of games, win rate when cast  16.4% (+1.2)
+    Mind Stone                                 cast in  25.9% of games, win rate when cast  16.5% (+1.4)
+    Karmic Justice                             cast in  21.0% of games, win rate when cast  17.5% (+2.4)
+    Essence Scatter                            cast in  21.4% of games, win rate when cast  17.8% (+2.7)
+    Static Prison                              cast in  23.8% of games, win rate when cast  17.9% (+2.8)
+    Dark Ritual                                cast in  22.4% of games, win rate when cast  18.0% (+2.9)
+    Spite // Malice                            cast in   4.8% of games, win rate when cast  18.2% (+3.1)
+    Ethersworn Canonist                        cast in  25.7% of games, win rate when cast  18.5% (+3.4)
+    Fatehold Charm                             cast in  22.5% of games, win rate when cast  18.6% (+3.4)
+    Unsummon                                   cast in  23.9% of games, win rate when cast  18.6% (+3.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Clever Concealment                         cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Ray of Command                             cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Muddle the Mixture                         cast   5.2% of the games it was drawn [reactive: only cast in response]
+    Spite // Malice                            cast  17.9% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  1.14
+    Short Bow                                  0.26
+    Ethersworn Canonist                        0.17
+    Venser, the Sojourner                      0.14
+    Windborn Muse                              0.14
+    Rhystic Study                              0.13
+    Notion Thief                               0.10
+    Reconstructed Thopter                      0.09
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(1234s total)

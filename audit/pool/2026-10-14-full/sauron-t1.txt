@@ -1,0 +1,103 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m35s elapsed, ~5m21s left
+  progress  20.0%  1m10s elapsed, ~4m43s left
+  progress  30.0%  1m45s elapsed, ~4m05s left
+  progress  40.0%  2m21s elapsed, ~3m32s left
+  progress  50.0%  2m55s elapsed, ~2m55s left
+  progress  60.0%  3m31s elapsed, ~2m21s left
+  progress  70.0%  4m08s elapsed, ~1m46s left
+  progress  80.0%  4m45s elapsed, ~1m11s left
+  progress  90.0%  5m22s elapsed, ~0m35s left
+  progress 100.0%  6m04s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 31.8%   (4-player baseline 25%)   average rounds survived 10.9
+
+-- How it wins --
+  damage      99.4% of wins
+  timeout      0.6% of wins
+  Opponents it eliminated: 0.96 per game, by
+    combat             51.7%
+    drain              20.1%
+    burn               12.9%
+    commander damage    7.4%
+    triggers            6.3%
+    decked              1.5%
+    other               0.2%
+  Damage dealt per game: 50.8, from
+    combat              33.9  (67%)
+    drain                9.9  (19%)
+    burn                 4.1  (8%)
+    triggers             3.0  (6%)
+
+-- How it loses --
+  Eliminated in 67.8% of games, on average in round 9.9
+    by Light-Paws via commander damage   14.5% of games
+    by Isshin   via combat             12.1% of games
+    by Lathril  via combat              9.5% of games
+    by Tatyova  via combat              8.9% of games
+    by Teysa Karlov via combat              5.1% of games
+    by Teysa Karlov via drain               4.4% of games
+    by Light-Paws via combat              4.4% of games
+    by Lathril  via drain               3.0% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 3%  T4 9%  T5 17%  T6 27%  T7 37%  T8 46%  T9 52%  T10 57%  T11 60%  T12 62%
+  Online at all: 64.7% of games
+  Commander resolves on turn: median 6.0, mean 6.4 (over the 79.7% of games it resolves)
+  Commander resolved by turn:  T4 11%  T5 29%  T6 49%  T7 62%  T8 69%
+  Army power at the start of turn  6: mean 1.5, median 0.0, 10+ in 2.9% of games
+  Army power at the start of turn  8: mean 2.9, median 0.0, 10+ in 10.4% of games
+  Army power at the start of turn 10: mean 2.8, median 0.0, 10+ in 10.8% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Comet Storm                                cast in   8.5% of games, win rate when cast  72.6% (+40.8)
+    Kaervek the Merciless                      cast in  12.0% of games, win rate when cast  60.9% (+29.1)
+    Massacre Wurm                              cast in  15.0% of games, win rate when cast  60.4% (+28.6)
+    Nibelheim Aflame                           cast in  16.6% of games, win rate when cast  58.1% (+26.3)
+    Sephiroth, Planet's Heir                   cast in  16.1% of games, win rate when cast  55.1% (+23.3)
+    Chandra's Ignition                         cast in  15.1% of games, win rate when cast  54.7% (+22.9)
+    Vraska, Betrayal's Sting                   cast in  16.6% of games, win rate when cast  52.6% (+20.8)
+    Exsanguinate                               cast in  14.1% of games, win rate when cast  52.4% (+20.6)
+    Sol Ring                                   cast in  22.9% of games, win rate when cast  51.3% (+19.5)
+    Inferno Titan                              cast in  14.1% of games, win rate when cast  51.1% (+19.3)
+  Lowest win rate when cast:
+    Bitter Triumph                             cast in  18.6% of games, win rate when cast  37.2% (+5.4)
+    Spell Pierce                               cast in  15.6% of games, win rate when cast  38.1% (+6.3)
+    Disdainful Stroke                          cast in  13.6% of games, win rate when cast  39.1% (+7.3)
+    Sauron, the Dark Lord                      cast in  80.1% of games, win rate when cast  39.4% (+7.6)
+    Slaughter Pact                             cast in  21.4% of games, win rate when cast  39.5% (+7.7)
+    Infernal Grasp                             cast in  19.7% of games, win rate when cast  40.5% (+8.7)
+    Vision, Synthezoid Avenger                 cast in  17.5% of games, win rate when cast  40.7% (+8.9)
+    Counterspell                               cast in  16.4% of games, win rate when cast  40.8% (+9.0)
+    Chaos Warp                                 cast in  19.4% of games, win rate when cast  41.2% (+9.4)
+    Bloodchief's Thirst                        cast in  13.7% of games, win rate when cast  41.6% (+9.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Not of This World                          cast  24.8% of the games it was drawn [reactive: only cast in response]
+    Comet Storm                                cast  32.4% of the games it was drawn
+    Undermine                                  cast  36.9% of the games it was drawn [reactive: only cast in response]
+    Diabolic Intent                            cast  41.2% of the games it was drawn
+    Disdainful Stroke                          cast  49.1% of the games it was drawn [reactive: only cast in response]
+    Inexorable Tide                            cast  49.3% of the games it was drawn
+    Counterspell                               cast  49.6% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.36
+    Vraska, Betrayal's Sting                   0.08
+    Sheoldred, the Apocalypse                  0.06
+    Grave Titan                                0.05
+    Aggravated Assault                         0.04
+    Mind Stone                                 0.04
+    Whispersilk Cloak                          0.03
+    Dreadhorde Invasion                        0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(365s total)

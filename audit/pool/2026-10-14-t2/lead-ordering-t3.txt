@@ -1,0 +1,21 @@
+2,500 games (calibration: ordering, 500 per list per tier, profile conservative), lookahead AI, 8 worker threads: about 16 minutes
+
+=== Tier ordering: each deck alone against three decks of the tier below [conservative, n=500] ===
+  progress  10.0%  1m57s elapsed, ~17m36s left
+  progress  20.0%  3m53s elapsed, ~15m33s left
+  progress  30.0%  5m15s elapsed, ~12m15s left
+  progress  40.0%  6m45s elapsed, ~10m07s left
+  progress  50.0%  8m34s elapsed, ~8m34s left
+  progress  60.0%  10m24s elapsed, ~6m56s left
+  progress  70.0%  12m26s elapsed, ~5m20s left
+  progress  80.0%  13m59s elapsed, ~3m29s left
+  progress  90.0%  15m15s elapsed, ~1m41s left
+  progress 100.0%  16m33s elapsed, ~0m00s left
+  Tier 3 (High B3) into Tier 2 (Mid B3): 27.1% overall
+    Atraxa                        20.2% (16.9-23.9)  (not above 25%)
+    Aurelia                       33.8% (29.8-38.1)
+    Korvold                       18.4% (15.2-22.0)  (not above 25%)
+    Marwyn                        23.0% (19.5-26.9)  (not above 25%)
+    Tergrid                       40.0% (35.8-44.4)
+
+(993s total)

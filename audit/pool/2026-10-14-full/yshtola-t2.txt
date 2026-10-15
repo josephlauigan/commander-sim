@@ -1,0 +1,97 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m48s elapsed, ~7m14s left
+  progress  20.0%  1m39s elapsed, ~6m36s left
+  progress  30.0%  2m30s elapsed, ~5m52s left
+  progress  40.0%  3m21s elapsed, ~5m02s left
+  progress  50.0%  4m12s elapsed, ~4m12s left
+  progress  60.0%  5m04s elapsed, ~3m23s left
+  progress  70.0%  5m58s elapsed, ~2m33s left
+  progress  80.0%  6m47s elapsed, ~1m41s left
+  progress  90.0%  7m37s elapsed, ~0m50s left
+  progress 100.0%  8m28s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== yshtola analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 55.2%   (4-player baseline 25%)   average rounds survived 13.1
+
+-- How it wins --
+  damage      97.7% of wins
+  timeout      2.3% of wins
+  Opponents it eliminated: 1.45 per game, by
+    drain              60.5%
+    triggers           20.8%
+    combat             14.7%
+    other               2.4%
+    decked              0.9%
+    burn                0.7%
+  Damage dealt per game: 66.5, from
+    drain               26.4  (40%)
+    triggers            25.6  (38%)
+    combat              13.3  (20%)
+    burn                 1.3  (2%)
+
+-- How it loses --
+  Eliminated in 43.0% of games, on average in round 11.9
+    by Lord Windgrace via combat              9.3% of games
+    by Brago    via combat              8.7% of games
+    by Kaalia of the Vast via combat              7.8% of games
+    by Sythis   via combat              4.3% of games
+    by Meren of Clan Nel Toth via combat              3.7% of games
+    by Kaalia of the Vast via drain               2.5% of games
+    by Sythis   via commander damage    2.4% of games
+    by Meren of Clan Nel Toth via triggers            1.5% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 5%  T5 20%  T6 37%  T7 52%  T8 62%  T9 69%  T10 74%  T11 78%  T12 80%
+  Online at all: 85.2% of games
+  Commander resolves on turn: median 5.0, mean 5.5 (over the 96.6% of games it resolves)
+  Commander resolved by turn:  T4 38%  T5 60%  T6 74%  T7 83%  T8 89%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Debt to the Deathless                      cast in  36.2% of games, win rate when cast  86.8% (+31.6)
+    Exsanguinate                               cast in  29.2% of games, win rate when cast  79.4% (+24.2)
+    Dark Petition                              cast in  20.7% of games, win rate when cast  73.1% (+17.8)
+    Diabolic Tutor                             cast in  23.7% of games, win rate when cast  70.9% (+15.6)
+    Massacre Wurm                              cast in  20.2% of games, win rate when cast  70.5% (+15.3)
+    The Eternal Wanderer                       cast in  21.4% of games, win rate when cast  69.8% (+14.6)
+    Bolas's Citadel                            cast in  16.8% of games, win rate when cast  69.2% (+13.9)
+    Polluted Bonds                             cast in  20.3% of games, win rate when cast  69.0% (+13.7)
+    Deep Analysis                              cast in  23.6% of games, win rate when cast  68.0% (+12.8)
+    Consecrated Sphinx                         cast in  16.0% of games, win rate when cast  67.9% (+12.6)
+  Lowest win rate when cast:
+    Y'shtola, Night's Blessed                  cast in  96.6% of games, win rate when cast  57.2% (+1.9)
+    Fatal Push                                 cast in  29.0% of games, win rate when cast  58.0% (+2.8)
+    Zur the Enchanter                          cast in  24.5% of games, win rate when cast  58.6% (+3.3)
+    Windborn Muse                              cast in  23.7% of games, win rate when cast  59.7% (+4.4)
+    Dovin's Veto                               cast in  17.5% of games, win rate when cast  59.7% (+4.5)
+    Urborg Syphon-Mage                         cast in  25.4% of games, win rate when cast  59.9% (+4.7)
+    Hostage Taker                              cast in  23.7% of games, win rate when cast  60.1% (+4.8)
+    Prayer of Binding                          cast in  26.6% of games, win rate when cast  60.3% (+5.1)
+    Path to Exile                              cast in  31.0% of games, win rate when cast  60.4% (+5.2)
+    Thief of Sanity                            cast in  27.0% of games, win rate when cast  60.5% (+5.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dakkon, Shadow Slayer                      cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Austere Command                            cast  45.8% of the games it was drawn
+    Bolas's Citadel                            cast  46.8% of the games it was drawn
+    Dovin's Veto                               cast  48.7% of the games it was drawn [reactive: only cast in response]
+    Consecrated Sphinx                         cast  48.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.84
+    Sanguine Bond                              0.24
+    Propaganda                                 0.17
+    Smothering Tithe                           0.14
+    Zur the Enchanter                          0.13
+    Grand Arbiter Augustin IV                  0.13
+    Necropotence                               0.11
+    Esper Sentinel                             0.10
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(508s total)

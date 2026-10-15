@@ -1,0 +1,102 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 14 worker threads: about 14 minutes
+  progress  10.0%  0m55s elapsed, ~8m15s left
+  progress  20.0%  1m54s elapsed, ~7m36s left
+  progress  30.0%  2m49s elapsed, ~6m34s left
+  progress  40.0%  3m45s elapsed, ~5m37s left
+  progress  50.0%  4m38s elapsed, ~4m38s left
+  progress  60.0%  5m27s elapsed, ~3m38s left
+  progress  70.0%  6m13s elapsed, ~2m40s left
+  progress  80.0%  7m05s elapsed, ~1m46s left
+  progress  90.0%  7m56s elapsed, ~0m52s left
+  progress 100.0%  8m48s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== veyran analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 21.4%   (4-player baseline 25%)   average rounds survived 10.3
+
+-- How it wins --
+  damage      98.4% of wins
+  timeout      1.6% of wins
+  Opponents it eliminated: 0.56 per game, by
+    combat             49.2%
+    burn               39.5%
+    triggers            5.8%
+    aether              4.4%
+    decked              0.8%
+    commander damage    0.2%
+  Damage dealt per game: 26.6, from
+    combat              13.9  (52%)
+    burn                10.6  (40%)
+    aether               1.4  (5%)
+    triggers             0.7  (3%)
+
+-- How it loses --
+  Eliminated in 78.1% of games, on average in round 9.5
+    by Heliod   via combo              18.1% of games
+    by Krenko   via combat             10.9% of games
+    by Yuriko   via triggers            9.3% of games
+    by Chulane  via combo               7.8% of games
+    by Yuriko   via combat              7.3% of games
+    by Prosper  via combo               6.2% of games
+    by Chulane  via combat              6.1% of games
+    by Krenko   via combo               3.2% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 3%  T4 10%  T5 19%  T6 28%  T7 35%  T8 41%  T9 46%  T10 50%  T11 52%  T12 54%
+  Online at all: 56.8% of games
+  Commander resolves on turn: median 5.0, mean 5.3 (over the 83.5% of games it resolves)
+  Commander resolved by turn:  T4 41%  T5 52%  T6 61%  T7 69%  T8 74%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 2.0% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Mizzix's Mastery                           cast in   8.3% of games, win rate when cast  59.9% (+38.4)
+    Fiery Emancipation                         cast in  10.3% of games, win rate when cast  51.6% (+30.1)
+    Crackle with Power                         cast in  13.2% of games, win rate when cast  50.4% (+28.9)
+    River's Rebuke                             cast in  12.4% of games, win rate when cast  47.4% (+25.9)
+    Niv-Mizzet, Parun                          cast in   9.5% of games, win rate when cast  46.1% (+24.6)
+    Eris, Roar of the Storm                    cast in  10.6% of games, win rate when cast  43.8% (+22.4)
+    Rite of the Dragoncaller                   cast in  12.0% of games, win rate when cast  43.0% (+21.6)
+    Stock Up                                   cast in  19.4% of games, win rate when cast  41.1% (+19.6)
+    Quick Study                                cast in  17.4% of games, win rate when cast  40.4% (+18.9)
+    Flashback                                  cast in  13.4% of games, win rate when cast  40.2% (+18.8)
+  Lowest win rate when cast:
+    Flux Channeler                             cast in  15.3% of games, win rate when cast  24.0% (+2.5)
+    Evacuation                                 cast in  10.3% of games, win rate when cast  24.7% (+3.2)
+    Veyran, Voice of Duality                   cast in  84.2% of games, win rate when cast  25.0% (+3.6)
+    Blasphemous Act                            cast in  13.6% of games, win rate when cast  26.8% (+5.3)
+    An Offer You Can't Refuse                  cast in  17.4% of games, win rate when cast  29.1% (+7.6)
+    Sanar, Unfinished Genius // Wild Idea      cast in  17.1% of games, win rate when cast  29.1% (+7.6)
+    Spell Pierce                               cast in  17.9% of games, win rate when cast  29.1% (+7.7)
+    Harmonic Prodigy                           cast in  19.4% of games, win rate when cast  29.3% (+7.8)
+    Third Path Iconoclast                      cast in  20.5% of games, win rate when cast  29.4% (+8.0)
+    Venser, Shaper Savant                      cast in  14.6% of games, win rate when cast  29.7% (+8.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Triple Triad                               cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Mystic Confluence                          cast  23.1% of the games it was drawn [reactive: only cast in response]
+    Mizzix's Mastery                           cast  37.1% of the games it was drawn
+    Thousand-Year Storm                        cast  37.2% of the games it was drawn
+    Fiery Emancipation                         cast  44.7% of the games it was drawn
+    Niv-Mizzet, Parun                          cast  46.2% of the games it was drawn
+    Evacuation                                 cast  47.1% of the games it was drawn
+    Eris, Roar of the Storm                    cast  47.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.62
+    Aetherflux Reservoir                       0.08
+    Ral, Storm Conduit                         0.08
+    Blazing Firesinger // Seething Song        0.06
+    Kessig Flamebreather                       0.06
+    Guttersnipe                                0.05
+    Emeritus of Conflict // Lightning Bolt     0.05
+    Propaganda                                 0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(528s total)

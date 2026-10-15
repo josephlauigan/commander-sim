@@ -235,10 +235,13 @@ impl Ctx<'_> {
             let seats = sim.seats_for(s, me, None, opp_keys, k);
             GameOut::from_game(&sim.play(s, &seats, &st, false), false)
         });
-        let mut c = Calib { seated: Counter::new(), won: Counter::new(), rounds: 0, timeouts: 0, n };
+        let mut c = Calib { seated: Counter::new(), won: Counter::new(), rounds: 0, timeouts: 0, timeout_won: Counter::new(), n };
         for (_, g) in &games {
             c.rounds += g.round as u64;
             c.timeouts += (g.wintype == Some("timeout")) as u64;
+            if let (Some(w), Some("timeout")) = (g.winner, g.wintype) {
+                c.timeout_won.add(g.players[w].key.to_string(), 1);
+            }
             for (qi, q) in g.players.iter().enumerate() {
                 c.seated.add(q.key.to_string(), 1);
                 c.won.add(q.key.to_string(), (g.winner == Some(qi)) as i64);
@@ -392,12 +395,13 @@ impl Ctx<'_> {
     }
 
     /// poolmode.run_calibration: within-tier balance and tier ordering
-    pub fn run_calibration(&self, which: &str, profiles: &[String], n: u64, seed0: u64) {
+    pub fn run_calibration(&self, which: &str, pool: Option<&str>, profiles: &[String], n: u64, seed0: u64) {
+        let keep = |t: &str| pool.is_none_or(|p| p == "all" || p == t);
         let sim = self.sim;
         if which == "within" || which == "all" {
             for prof in profiles {
                 println!("\n=== Within-tier balance [{prof}, n={n} games per tier; each deck is seated in ~80%] ===");
-                for tier in TIERS {
+                for tier in TIERS.iter().filter(|t| keep(t)) {
                     self.label(format!("within {tier} / {prof}"));
                     let keys = sim.pool_keys(tier);
                     let r = self.calibrate(None, &keys, 4, prof, n, seed0);
@@ -419,11 +423,12 @@ impl Ctx<'_> {
                             ""
                         };
                         println!(
-                            "    {:28} {:5.1}% ({:.1}-{:.1}){flag}",
+                            "    {:28} {:5.1}% ({:.1}-{:.1}){flag}  [{:.1} pts from round-cap wins]",
                             sim.name_of(k),
                             (100 * w) as f64 / s as f64,
                             100.0 * lo,
-                            100.0 * hi
+                            100.0 * hi,
+                            100.0 * r.timeout_won.get(k) as f64 / s as f64
                         );
                     }
                 }
@@ -434,7 +439,7 @@ impl Ctx<'_> {
                 println!(
                     "\n=== Tier ordering: each deck alone against three decks of the tier below [{prof}, n={n}] ==="
                 );
-                for (ti, tier) in TIERS.iter().enumerate().skip(1) {
+                for (ti, tier) in TIERS.iter().enumerate().skip(1).filter(|(_, t)| keep(t)) {
                     self.label(format!("ordering {tier} / {prof}"));
                     let below = TIERS[ti - 1];
                     let mut res = vec![];
@@ -473,6 +478,8 @@ pub struct Calib {
     pub won: Counter<String>,
     pub rounds: u64,
     pub timeouts: u64,
+    /// wins by round-cap tiebreak (life + 2 x board power), per deck
+    pub timeout_won: Counter<String>,
     /// games planned (errors included, as Python counted len(seeds))
     pub n: u64,
 }
@@ -495,8 +502,9 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     let plural = |x: usize, w: &str| format!("{x} {w}{}", if x > 1 { "s" } else { "" });
     let matrix_mode = a.all_decks || (tiers.len() > 1 && swaps.is_empty() && !a.analyze);
     let (total, mut what) = if let Some(c) = &a.calibrate {
-        let w = if c == "within" || c == "all" { TIERS.len() as u64 } else { 0 };
-        let o = if c == "ordering" || c == "all" { 5 * (TIERS.len() as u64 - 1) } else { 0 };
+        let nt = TIERS.iter().filter(|t| a.pool.as_deref().is_none_or(|p| p == "all" || p == **t)).count() as u64;
+        let w = if c == "within" || c == "all" { nt } else { 0 };
+        let o = if c == "ordering" || c == "all" { 5 * nt.min(TIERS.len() as u64 - 1) } else { 0 };
         (k * (w + o), format!("calibration: {c}"))
     } else if matrix_mode {
         let cells: usize = plan.per_deck.iter().map(|(_, t)| t.len()).sum();
@@ -525,7 +533,7 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
         pr.announce(&what, ctx.ai(), sim.opts.jobs);
     }
     if let Some(c) = &a.calibrate {
-        ctx.run_calibration(c, profiles, n, seed0);
+        ctx.run_calibration(c, a.pool.as_deref(), profiles, n, seed0);
     } else if matrix_mode {
         ctx.matrix(&plan.per_deck, &tiers, profiles, n, seed0);
     } else if a.analyze {
@@ -658,23 +666,23 @@ mod tier_tests {
         assert_eq!(tier_range(&v(&["t1"])), "t1");
     }
 
-    /// the table in the brief, as data/decks.json carries it
+    /// the matched tiers JD approved on 2026-10-15 (audit/pool/2026-10-14-full), as data/decks.json carries them
     #[test]
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
         let want: [(&str, &[&str]); 11] = [
-            ("yshtola", &["t4", "t5"]),
-            ("seph", &["t4", "t5"]),
-            ("sheoldred", &["t3", "t4"]),
-            ("sauron", &["t2", "t3", "t4"]),
-            ("kefka", &["t2", "t3", "t4"]),
-            ("sephfs", &["t1", "t2", "t3"]),
-            ("veyran", &["t1", "t2", "t3"]),
+            ("yshtola", &["t5"]),
+            ("seph", &["t4"]),
+            ("sheoldred", &["t3", "t4", "t5"]),
+            ("sauron", &["t3", "t4", "t5"]),
+            ("kefka", &["t3", "t4", "t5"]),
+            ("sephfs", &["t4", "t5"]),
+            ("veyran", &["t1", "t2", "t3", "t4"]),
             ("cloud", &["t1", "t2"]),
-            ("titania", &["t1", "t2"]),
+            ("titania", &["t2", "t3", "t4"]),
             ("alela", &["t1"]),
-            ("galadriel", &["t1"]),
+            ("galadriel", &["t1", "t2"]),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t) in want {

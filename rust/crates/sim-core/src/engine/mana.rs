@@ -183,6 +183,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
         } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick) {
+            if &*d.name == "Giada, Font of Hope" && !g.pay_for.is_some_and(|c| g.db.get(c).has_subtype("angel")) {
+                continue; // spend this mana only to cast an Angel spell
+            }
             if &*d.name == "Hydro-Channeler" && !g.pay_for.is_some_and(|c| g.db.get(c).instant || g.db.get(c).sorcery) {
                 continue;
             }
@@ -386,6 +389,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
         }
         Source::Perm(m) => {
             g.perm_mut(m).tapped = true;
+            crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
             g.tap_cols = Colors::from_letters(col);
             cardcode::on_tap_perm(g, p, m, n)?;
             if !g.hooks.is_empty() {
@@ -463,6 +467,7 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
         }
     }
     gn = (gn + crate::dsl::cost_delta(g, p, c)).max(0);
+    gn = (gn + crate::impls::t0_stella::kaza_delta(g, p, c)).max(0); // Kaza, Roil Chaser
     if !g.hooks.is_empty() {
         gn = (gn + hooks::total_cost(g, p, c)).max(0);
         if crate::impls::blue_cards::defiler_discount(g, p, c) {

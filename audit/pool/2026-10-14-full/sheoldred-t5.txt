@@ -1,0 +1,103 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 19 worker threads: about 11 minutes
+  progress  10.0%  0m18s elapsed, ~2m42s left
+  progress  20.0%  0m36s elapsed, ~2m24s left
+  progress  30.0%  0m55s elapsed, ~2m08s left
+  progress  40.0%  1m12s elapsed, ~1m48s left
+  progress  50.0%  1m30s elapsed, ~1m30s left
+  progress  60.0%  1m47s elapsed, ~1m11s left
+  progress  70.0%  2m04s elapsed, ~0m53s left
+  progress  80.0%  2m21s elapsed, ~0m35s left
+  progress  90.0%  2m38s elapsed, ~0m17s left
+  progress 100.0%  2m56s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 24.3%   (4-player baseline 25%)   average rounds survived 8.0
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.73 per game, by
+    drain              70.7%
+    combat             18.1%
+    other               5.7%
+    triggers            3.8%
+    burn                1.6%
+    commander damage    0.0%
+  Damage dealt per game: 36.1, from
+    drain               23.7  (66%)
+    combat               8.5  (23%)
+    triggers             3.0  (8%)
+    burn                 0.9  (2%)
+
+-- How it loses --
+  Eliminated in 75.7% of games, on average in round 7.0
+    by Kinnan   via combo              19.9% of games
+    by Urza     via combo              15.8% of games
+    by Zur the Enchanter via combo              11.0% of games
+    by Winota   via combo              10.4% of games
+    by Winota   via combat              8.6% of games
+    by Yawgmoth via combo               6.5% of games
+    by Zur the Enchanter via commander damage    0.9% of games
+    by Urza     via combat              0.8% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 7%  T4 32%  T5 46%  T6 56%  T7 62%  T8 66%  T9 68%  T10 68%  T11 69%  T12 69%
+  Online at all: 69.5% of games
+  Commander resolves on turn: median 5.0, mean 5.1 (over the 70.8% of games it resolves)
+  Commander resolved by turn:  T4 33%  T5 47%  T6 57%  T7 64%  T8 67%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Peer into the Abyss                        cast in   4.2% of games, win rate when cast  85.9% (+61.6)
+    Exsanguinate                               cast in   6.0% of games, win rate when cast  63.9% (+39.6)
+    Seizan, Perverter of Truth                 cast in   7.0% of games, win rate when cast  60.4% (+36.2)
+    Memory Jar                                 cast in   8.2% of games, win rate when cast  60.1% (+35.8)
+    Apex Witchstalker                          cast in   3.6% of games, win rate when cast  58.0% (+33.8)
+    Howling Mine                               cast in   7.5% of games, win rate when cast  52.5% (+28.2)
+    Invoke Despair                             cast in   8.0% of games, win rate when cast  50.3% (+26.0)
+    Phyrexian Delver                           cast in   7.0% of games, win rate when cast  50.0% (+25.7)
+    Underworld Dreams                          cast in  12.6% of games, win rate when cast  48.5% (+24.2)
+    Syphon Mind                                cast in   7.5% of games, win rate when cast  47.7% (+23.4)
+  Lowest win rate when cast:
+    Carnage Altar                              cast in  11.6% of games, win rate when cast  28.7% (+4.5)
+    Potioner's Trove                           cast in  11.7% of games, win rate when cast  30.5% (+6.2)
+    Charcoal Diamond                           cast in  13.6% of games, win rate when cast  31.5% (+7.3)
+    Mind Stone                                 cast in  14.4% of games, win rate when cast  31.7% (+7.4)
+    Arcane Signet                              cast in  14.8% of games, win rate when cast  32.0% (+7.8)
+    Fellwar Stone                              cast in  14.8% of games, win rate when cast  32.2% (+7.9)
+    Disembowel                                 cast in  16.5% of games, win rate when cast  32.6% (+8.4)
+    Masterful Flourish                         cast in  14.1% of games, win rate when cast  33.0% (+8.8)
+    Fetid Imp                                  cast in  13.2% of games, win rate when cast  33.2% (+8.9)
+    Commander's Sphere                         cast in  10.1% of games, win rate when cast  33.3% (+9.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  12.0% of the games it was drawn
+    Apex Witchstalker                          cast  20.0% of the games it was drawn
+    Peer into the Abyss                        cast  23.6% of the games it was drawn
+    Exsanguinate                               cast  33.8% of the games it was drawn
+    Ambition's Cost                            cast  37.7% of the games it was drawn
+    Seizan, Perverter of Truth                 cast  39.7% of the games it was drawn
+    Phyrexian Delver                           cast  41.2% of the games it was drawn
+    Otherworld Atlas                           cast  42.7% of the games it was drawn
+    Howling Mine                               cast  42.9% of the games it was drawn
+    Syphon Mind                                cast  43.1% of the games it was drawn
+    Invoke Despair                             cast  45.8% of the games it was drawn
+    Sneering Shadewriter                       cast  46.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.30
+    Leech Collector // Bloodletting            0.02
+    Melancholic Poet                           0.02
+    Restless Bloodseeker // Bloodsoaked Revele 0.02
+    Gix, Yawgmoth Praetor                      0.02
+    Ulna Alley Shopkeep                        0.01
+    Charcoal Diamond                           0.01
+    Mind Stone                                 0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(177s total)

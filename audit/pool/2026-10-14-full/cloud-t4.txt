@@ -1,0 +1,100 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m42s elapsed, ~6m22s left
+  progress  20.0%  1m30s elapsed, ~6m01s left
+  progress  30.0%  2m16s elapsed, ~5m17s left
+  progress  40.0%  3m04s elapsed, ~4m36s left
+  progress  50.0%  3m49s elapsed, ~3m49s left
+  progress  60.0%  4m38s elapsed, ~3m05s left
+  progress  70.0%  5m26s elapsed, ~2m19s left
+  progress  80.0%  6m13s elapsed, ~1m33s left
+  progress  90.0%  6m59s elapsed, ~0m46s left
+  progress 100.0%  7m46s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 13.4%   (4-player baseline 25%)   average rounds survived 9.4
+
+-- How it wins --
+  damage      99.8% of wins
+  timeout      0.2% of wins
+  Opponents it eliminated: 0.45 per game, by
+    combat             52.8%
+    commander damage   30.6%
+    triggers           16.5%
+    decked              0.1%
+  Damage dealt per game: 24.3, from
+    combat              22.1  (91%)
+    triggers             2.2  (9%)
+
+-- How it loses --
+  Eliminated in 86.6% of games, on average in round 8.9
+    by Heliod   via combo              18.1% of games
+    by Krenko   via combat             14.0% of games
+    by Yuriko   via triggers           11.2% of games
+    by Yuriko   via combat              8.9% of games
+    by Chulane  via combat              7.2% of games
+    by Prosper  via combo               6.7% of games
+    by Chulane  via combo               6.5% of games
+    by Krenko   via combo               3.2% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 3%  T4 20%  T5 36%  T6 47%  T7 53%  T8 57%  T9 60%  T10 62%  T11 63%  T12 63%
+  Online at all: 64.5% of games
+  Commander resolves on turn: median 2.0, mean 2.2 (over the 99.4% of games it resolves)
+  Commander resolved by turn:  T4 98%  T5 99%  T6 99%  T7 99%  T8 99%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Sword of Kaldra                            cast in  15.0% of games, win rate when cast  34.4% (+21.1)
+    Austere Command                            cast in   6.2% of games, win rate when cast  33.7% (+20.4)
+    Court of Ardenvale                         cast in   8.8% of games, win rate when cast  33.3% (+20.0)
+    Recommission                               cast in   9.9% of games, win rate when cast  33.2% (+19.9)
+    Bronze Guardian                            cast in   6.3% of games, win rate when cast  33.1% (+19.7)
+    Ultimate Magic: Holy                       cast in   2.5% of games, win rate when cast  32.4% (+19.0)
+    Balan, Wandering Knight                    cast in   9.0% of games, win rate when cast  32.2% (+18.8)
+    Thalia, the Survivor                       cast in   8.8% of games, win rate when cast  31.7% (+18.4)
+    Beatrix, Loyal General                     cast in   6.2% of games, win rate when cast  30.9% (+17.5)
+    Stormfront Riders                          cast in   5.9% of games, win rate when cast  30.6% (+17.3)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  99.4% of games, win rate when cast  13.5% (+0.1)
+    Sword of Fire and Ice                      cast in  73.6% of games, win rate when cast  17.2% (+3.9)
+    Page, Loose Leaf                           cast in  13.1% of games, win rate when cast  20.1% (+6.7)
+    Zack Fair                                  cast in  19.3% of games, win rate when cast  20.5% (+7.1)
+    Armory Automaton                           cast in  12.6% of games, win rate when cast  21.0% (+7.6)
+    Giver of Runes                             cast in  17.5% of games, win rate when cast  21.5% (+8.1)
+    Kor Duelist                                cast in  17.6% of games, win rate when cast  21.7% (+8.3)
+    White Mage's Staff                         cast in  16.2% of games, win rate when cast  21.9% (+8.6)
+    Kor Outfitter                              cast in  15.4% of games, win rate when cast  22.2% (+8.9)
+    Unyielding Gatekeeper                      cast in  15.2% of games, win rate when cast  22.4% (+9.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unfinished Business                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Unbreakable Formation                      cast   2.6% of the games it was drawn [reactive: only cast in response]
+    Rootborn Defenses                          cast   4.5% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  12.9% of the games it was drawn [reactive: only cast in response]
+    Stormfront Riders                          cast  31.0% of the games it was drawn
+    Beatrix, Loyal General                     cast  31.2% of the games it was drawn
+    Austere Command                            cast  31.5% of the games it was drawn
+    Bronze Guardian                            cast  34.7% of the games it was drawn
+    Shield of Kaldra                           cast  37.2% of the games it was drawn
+    Secure the Scene                           cast  38.3% of the games it was drawn
+    Exalted Angel                              cast  42.0% of the games it was drawn
+    Sword of Kaldra                            cast  43.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.80
+    Sword of Fire and Ice                      0.30
+    Sword of Hearth and Home                   0.13
+    Helm of Kaldra                             0.05
+    Kor Duelist                                0.04
+    Cid, Freeflier Pilot                       0.04
+    White Mage's Staff                         0.04
+    Shield of Kaldra                           0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(467s total)

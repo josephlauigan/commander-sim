@@ -1,0 +1,101 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m19s elapsed, ~2m58s left
+  progress  20.0%  0m39s elapsed, ~2m39s left
+  progress  30.0%  0m59s elapsed, ~2m18s left
+  progress  40.0%  1m16s elapsed, ~1m55s left
+  progress  50.0%  1m35s elapsed, ~1m35s left
+  progress  60.0%  1m54s elapsed, ~1m16s left
+  progress  70.0%  2m15s elapsed, ~0m57s left
+  progress  80.0%  2m36s elapsed, ~0m39s left
+  progress  90.0%  2m57s elapsed, ~0m19s left
+  progress 100.0%  3m18s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== galadriel analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 14.2%   (4-player baseline 25%)   average rounds survived 8.3
+
+-- How it wins --
+  damage      98.4% of wins
+  timeout      1.6% of wins
+  Opponents it eliminated: 0.36 per game, by
+    combat             98.4%
+    commander damage    0.8%
+    drain               0.7%
+    triggers            0.1%
+  Damage dealt per game: 19.0, from
+    combat              18.8  (99%)
+    drain                0.1  (1%)
+    triggers             0.0  (0%)
+
+-- How it loses --
+  Eliminated in 85.8% of games, on average in round 7.5
+    by Kinnan   via combo              23.0% of games
+    by Urza     via combo              13.8% of games
+    by Zur the Enchanter via combo              13.2% of games
+    by Winota   via combo              12.0% of games
+    by Winota   via combat              9.3% of games
+    by Yawgmoth via combo               8.4% of games
+    by Zur the Enchanter via commander damage    1.3% of games
+    by Urza     via combat              1.1% of games
+
+-- Game plan timing --
+  Plan: first Alliance trigger from Galadriel
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 6%  T6 13%  T7 18%  T8 22%  T9 25%  T10 27%  T11 29%  T12 30%
+  Online at all: 32.7% of games
+  Commander resolves on turn: median 6.0, mean 6.6 (over the 46.5% of games it resolves)
+  Commander resolved by turn:  T4 9%  T5 19%  T6 27%  T7 33%  T8 37%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    River's Rebuke                             cast in   6.3% of games, win rate when cast  49.2% (+35.0)
+    Elspeth, Sun's Champion                    cast in   6.1% of games, win rate when cast  48.2% (+34.0)
+    Bribery                                    cast in   7.8% of games, win rate when cast  44.4% (+30.2)
+    Cathars' Crusade                           cast in   7.8% of games, win rate when cast  43.9% (+29.8)
+    Austere Command                            cast in   5.9% of games, win rate when cast  43.0% (+28.9)
+    Shamanic Revelation                        cast in   5.1% of games, win rate when cast  40.5% (+26.3)
+    Vanquisher's Banner                        cast in   6.6% of games, win rate when cast  40.4% (+26.2)
+    Dragonlord Dromoka                         cast in   6.1% of games, win rate when cast  38.1% (+23.9)
+    Jhovall Queen                              cast in   4.8% of games, win rate when cast  37.8% (+23.6)
+    Abduction                                  cast in   8.7% of games, win rate when cast  37.8% (+23.6)
+  Lowest win rate when cast:
+    Path to Exile                              cast in  13.8% of games, win rate when cast  21.1% (+6.9)
+    Springleaf Drum                            cast in  15.1% of games, win rate when cast  23.5% (+9.3)
+    Crackdown                                  cast in   3.8% of games, win rate when cast  24.2% (+10.0)
+    Llanowar Elves                             cast in  13.5% of games, win rate when cast  24.6% (+10.5)
+    Sol Ring                                   cast in  15.7% of games, win rate when cast  24.8% (+10.6)
+    Arcane Signet                              cast in  14.1% of games, win rate when cast  25.0% (+10.8)
+    Cultivate                                  cast in   9.4% of games, win rate when cast  25.3% (+11.1)
+    Errant Doomsayers                          cast in  13.0% of games, win rate when cast  25.6% (+11.5)
+    Ramosian Sergeant                          cast in  16.2% of games, win rate when cast  25.7% (+11.5)
+    Fyndhorn Elves                             cast in  14.1% of games, win rate when cast  25.7% (+11.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rootborn Defenses                          cast   1.3% of the games it was drawn [reactive: only cast in response]
+    Unbreakable Formation                      cast   2.2% of the games it was drawn [reactive: only cast in response]
+    Eerie Interlude                            cast   4.7% of the games it was drawn
+    Reya Dawnbringer                           cast  12.6% of the games it was drawn
+    Crackdown                                  cast  24.4% of the games it was drawn
+    Jhovall Queen                              cast  29.2% of the games it was drawn
+    Shamanic Revelation                        cast  31.8% of the games it was drawn
+    Farewell                                   cast  32.2% of the games it was drawn
+    Kindred Discovery                          cast  34.1% of the games it was drawn
+    Austere Command                            cast  36.5% of the games it was drawn
+    Dragonlord Dromoka                         cast  38.1% of the games it was drawn
+    River's Rebuke                             cast  38.4% of the games it was drawn
+  Most often removed by opponents (per game):
+    Galadriel, Light of Valinor                0.07
+    Ramosian Lieutenant                        0.03
+    Ramosian Sergeant                          0.03
+    Elspeth, Sun's Champion                    0.02
+    Adeline, Resplendent Cathar                0.02
+    Lin Sivvi, Defiant Hero                    0.02
+    Errant Doomsayers                          0.02
+    Voice of Resurgence                        0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(199s total)

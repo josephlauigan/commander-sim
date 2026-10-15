@@ -1,4 +1,4 @@
-//! The card ability language's interpreter (Python's `cards/dsl.py`): compiled abilities (`model.rs`) run by the
+//! The     executeard ability language's interpreter (Python's `cards/dsl.py`): compiled abilities (`model.rs`) run by the
 //! engine. Hand-tagged cards keep the engine's own code; both kinds play together in one game.
 //!
 //!   - `fire`: triggered abilities (enters, dies, attacks, cast, draw, upkeep ...), put on the stack as known triggers
@@ -44,14 +44,33 @@ pub struct DslCtx {
     pub spell: Option<CardId>,
     /// life opponents lost to this ability so far
     pub lost: i32,
+    /// permanents this ability destroyed so far ("for each creature destroyed this way")
+    pub destroyed: i32,
+    /// the mana value of the permanent sacrificed to pay for this ability
+    pub sacrificed_mv: i32,
+    /// `x` is the stand-in 3 (no X was chosen): reading it as "X" is counted in `x_fallbacks`
+    pub x_default: bool,
     /// an attack trigger: attacking tokens it makes join the attack
     pub attack: bool,
 }
 
 impl DslCtx {
     fn base() -> DslCtx {
-        DslCtx { x: 3, ..DslCtx::default() }
+        DslCtx { x: 3, x_default: true, ..DslCtx::default() }
     }
+}
+
+thread_local! {
+    /// how many times a compiled "X" amount was read without any X chosen, so it ran as the stand-in 3 (this thread)
+    static X_FALLBACKS: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+    /// the mana value of the permanent the last paid ability cost sacrificed (0 if none): `activate` hands it to the ability
+    static LAST_SAC_MV: std::cell::Cell<i32> = const { std::cell::Cell::new(0) };
+}
+
+/// Reads and clears this thread's count of "X" amounts that ran as the stand-in 3. Cardgen's audit flags the cards
+/// that can do it (a bare "X" amount on a card with no {X}); tests over whole games assert it stays zero.
+pub fn x_fallbacks() -> u32 {
+    X_FALLBACKS.with(|c| c.replace(0))
 }
 
 pub fn active(g: &Game) -> bool {
@@ -71,7 +90,24 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
     };
     let pl = g.player(p);
     match name {
-        "X" => ctx.x.max(1),
+        "X" => {
+            if ctx.x_default {
+                X_FALLBACKS.with(|c| c.set(c.get() + 1));
+            }
+            ctx.x.max(1)
+        }
+        "creatures_died_this_turn" => {
+            (g.died_count.0 == Some(g.turn_stamp())).then_some(g.died_count.1 as i32).unwrap_or(0)
+        }
+        "destroyed_this_way" => ctx.destroyed,
+        "sacrificed_mv" => ctx.sacrificed_mv,
+        "gy_instants_sorceries" => pl.gy.iter().filter(|&&c| g.db.get(c).instant || g.db.get(c).sorcery).count() as i32,
+        "colors_among_permanents" => pl
+            .perms
+            .iter()
+            .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased)
+            .fold(Colors::NONE, |acc, &m| acc.union(colors_of(g, m)))
+            .count() as i32,
         "creatures_you_control" => pl.perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32,
         "cards_in_hand" => pl.hand.len() as i32,
         "opponents" => g.opps(p).count() as i32,
@@ -517,7 +553,10 @@ fn run(
                             continue;
                         }
                         match e.kind.as_str() {
-                            "destroy" => zones::die(g, m, "destroy")?,
+                            "destroy" => {
+                                zones::die(g, m, "destroy")?;
+                                ctx.destroyed += i32::from(!g.perm(m).on_bf);
+                            }
                             "exile" => zones::exile_perm(g, m)?,
                             "bounce" => {
                                 if g.perm(m).token {
@@ -538,6 +577,7 @@ fn run(
                 for m in ms {
                     snapshot(g, m, ctx);
                     apply_removal(g, Some(p), m, &e.kind, spell)?;
+                    ctx.destroyed += i32::from(e.kind == "destroy" && !g.perm(m).on_bf);
                 }
             }
         }
@@ -602,6 +642,7 @@ fn run(
                     if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
                 let tot = crate::cardcode::vorinclex(g, p, k + extra);
                 g.perm_mut(m).plus += tot; // Vorinclex
+                crate::impls::t0_captain::counters_put(g, m, tot); // Captain Marvel
             }
         }
         "pump" => {
@@ -1015,6 +1056,7 @@ pub fn resolve_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res {
     let mut dctx = DslCtx { x: ctx.x, target: ctx.target, ..DslCtx::default() };
     if dctx.x == 0 {
         dctx.x = 3; // Python's ctx.get('x', 3) when no X was chosen
+        dctx.x_default = true;
     }
     for a in abilities(g, c).iter() {
         if let Ability::Spell { effects } = a {
@@ -1310,11 +1352,12 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
     }
     if let Some(cd) = x.cd {
         for a in g.db.get(cd).abilities.iter() {
-            if let Ability::Static { kind, per, pow, base0, .. } = a
+            if let Ability::Static { kind, per, pow, tgh, base0, .. } = a
                 && kind == "self_scaling"
             {
                 let k = num(g, x.owner, per.as_ref(), &DslCtx::base(), Some(m));
                 dp += pow.unwrap_or(1) * k;
+                dt += tgh.unwrap_or(0) * k;
                 if *base0 == Some(true) {
                     dt += k;
                 }
@@ -1486,10 +1529,11 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
 
 /// token doublers
 pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
+    let kaya = crate::impls::t0_zurgo::kaya_mult(g, p); // Kaya, Geist Hunter -2: twice as many this turn
     if !active(g) {
-        return 1;
+        return kaya;
     }
-    let mut k = 1;
+    let mut k = kaya;
     for (q, _, ab, i) in statics(g, "tokens") {
         if let Ability::Replacement { multiplier, .. } = &ab[i]
             && q == p
@@ -1671,6 +1715,7 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     pay(g, p, gn, &pips, false)?;
     if cost.tap == Some(true) {
         g.perm_mut(src).tapped = true;
+        crate::impls::t0_captain::became_tapped(g, src); // Captain America, Living Legend
     }
     if let Some(l) = cost.life {
         lose_life(g, p, l, Some(p), "other", None)?;
@@ -1678,6 +1723,7 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     if let Some(k) = cost.discard {
         crate::engine::cast::discard_worst(g, p, k)?;
     }
+    LAST_SAC_MV.with(|c| c.set(fod.and_then(|f| g.perm(f).cd).map_or(0, |c| g.db.get(c).cmc as i32)));
     if let Some(f) = fod {
         zones::die(g, f, "sac")?;
     }
@@ -1793,6 +1839,7 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !pay_ability_cost(g, p, src, cost, false)? {
         return Ok(false);
     }
+    let sacrificed_mv = LAST_SAC_MV.with(|c| c.take()); // before the stack window runs other costs
     let stamp = round_stamp(g, p);
     let e = g.player_mut(p).act_uses.entry((src, idx)).or_insert((stamp, 0));
     *e = if e.0 == stamp { (stamp, e.1 + 1) } else { (stamp, 1) };
@@ -1802,7 +1849,8 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     {
         return Ok(true); // countered (mana abilities skip the stack)
     }
-    execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
+    let mut dctx = DslCtx { sacrificed_mv, ..DslCtx::base() };
+    execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     Ok(true)
 }
 

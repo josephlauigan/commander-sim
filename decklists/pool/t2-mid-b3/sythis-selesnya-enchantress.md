@@ -2,6 +2,8 @@
 
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Pillowfort / enchantress.
 
+Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Hallowed Haunting, Ethereal Armor and Ancestral Mask made way for Mind Stone, Swiftfoot Boots and Journey to Nowhere (fewer token and pump threats behind the pillowfort; the engine is unchanged). Within Tier 2 (conservative): 40.7% before, 26.3% after.
+
 - **Commander:** Sythis, Harvest's Hand
 - **Color identity:** White, Green
 - **Game Changers (2):** Smothering Tithe, Enlightened Tutor
@@ -30,9 +32,9 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 
 **Creatures (17).** Ajani's Chosen, Archangel of Tithes, Archon of Sun's Grace, Argothian Enchantress, Baird, Steward of Argive, Destiny Spinner, Eidolon of Blossoms, Heliod's Pilgrim, Kor Spiritdancer, Mesa Enchantress, Reclamation Sage, Sanctum Weaver, Satyr Enchanter, Setessan Champion, Silent Arbiter, Verduran Enchantress, Windborn Muse
 
-**Enchantments (30).** All That Glitters, Ancestral Mask, Banishing Light, Carpet of Flowers, Cast Out, Darksteel Mutation, Elephant Grass, Enchantress's Presence, Ethereal Armor, Fertile Ground, Ghostly Prison, Grasp of Fate, Greater Auramancy, Hallowed Haunting, Oblivion Ring, Overgrowth, Privileged Position, Rancor, Rest in Peace, Sentinel's Eyes, Smothering Tithe, Snake Umbra, Song of the Dryads, Sphere of Safety, Spider Umbra, Spirit Mantle, Sterling Grove, Sylvan Library, Utopia Sprawl, Wild Growth
+**Enchantments (28).** All That Glitters, Banishing Light, Carpet of Flowers, Cast Out, Darksteel Mutation, Elephant Grass, Enchantress's Presence, Fertile Ground, Ghostly Prison, Grasp of Fate, Greater Auramancy, Journey to Nowhere, Oblivion Ring, Overgrowth, Privileged Position, Rancor, Rest in Peace, Sentinel's Eyes, Smothering Tithe, Snake Umbra, Song of the Dryads, Sphere of Safety, Spider Umbra, Spirit Mantle, Sterling Grove, Sylvan Library, Utopia Sprawl, Wild Growth
 
-**Artifacts (5).** Arcane Signet, Crawlspace, Norn's Annex, Selesnya Signet, Sol Ring
+**Artifacts (7).** Arcane Signet, Crawlspace, Mind Stone, Norn's Annex, Selesnya Signet, Sol Ring, Swiftfoot Boots
 
 **Sorceries (5).** Austere Command, Council's Judgment, Idyllic Tutor, Nature's Lore, Three Visits
 
@@ -45,7 +47,6 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 ```
 1 Ajani's Chosen
 1 All That Glitters
-1 Ancestral Mask
 1 Arcane Signet
 1 Archangel of Tithes
 1 Archon of Sun's Grace
@@ -67,7 +68,6 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 1 Elephant Grass
 1 Enchantress's Presence
 1 Enlightened Tutor
-1 Ethereal Armor
 1 Exotic Orchard
 1 Fabled Passage
 1 Fertile Ground
@@ -76,13 +76,14 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 1 Ghostly Prison
 1 Grasp of Fate
 1 Greater Auramancy
-1 Hallowed Haunting
 1 Heliod's Pilgrim
 1 Heroic Intervention
 1 Horizon Canopy
 1 Idyllic Tutor
+1 Journey to Nowhere
 1 Kor Spiritdancer
 1 Mesa Enchantress
+1 Mind Stone
 1 Myriad Landscape
 1 Nature's Lore
 1 Norn's Annex
@@ -110,6 +111,7 @@ Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Th
 1 Spirit Mantle
 1 Sterling Grove
 1 Sunpetal Grove
+1 Swiftfoot Boots
 1 Swords to Plowshares
 1 Sylvan Library
 1 Sythis, Harvest's Hand

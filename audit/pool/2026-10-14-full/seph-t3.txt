@@ -1,0 +1,103 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 20 minutes
+  progress  10.0%  1m29s elapsed, ~13m26s left
+  progress  20.0%  2m53s elapsed, ~11m32s left
+  progress  30.0%  4m07s elapsed, ~9m37s left
+  progress  40.0%  5m08s elapsed, ~7m42s left
+  progress  50.0%  6m13s elapsed, ~6m13s left
+  progress  60.0%  7m14s elapsed, ~4m49s left
+  progress  70.0%  8m21s elapsed, ~3m35s left
+  progress  80.0%  9m29s elapsed, ~2m22s left
+  progress  90.0%  10m30s elapsed, ~1m10s left
+  progress 100.0%  11m38s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== seph analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 35.3%   (4-player baseline 25%)   average rounds survived 11.1
+
+-- How it wins --
+  combo       52.7% of wins
+  damage      45.9% of wins
+  timeout      1.5% of wins
+  Opponents it eliminated: 0.89 per game, by
+    combo              45.1%
+    combat             37.0%
+    drain              10.1%
+    triggers            5.8%
+    commander damage    1.7%
+    decked              0.3%
+  Damage dealt per game: 25.6, from
+    combat              15.4  (60%)
+    drain                8.4  (33%)
+    triggers             1.8  (7%)
+
+-- How it loses --
+  Eliminated in 64.3% of games, on average in round 10.1
+    by Aurelia  via combat             17.1% of games
+    by Tergrid  via combat             12.3% of games
+    by Marwyn   via combat             11.7% of games
+    by Atraxa   via combat              6.2% of games
+    by Tergrid  via drain               3.8% of games
+    by Korvold  via drain               2.2% of games
+    by Korvold  via combat              2.1% of games
+    by Tergrid  via triggers            2.1% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 2%  T4 11%  T5 27%  T6 43%  T7 56%  T8 67%  T9 73%  T10 77%  T11 79%  T12 80%
+  Online at all: 80.8% of games
+  Commander resolves on turn: median 8.0, mean 8.5 (over the 62.2% of games it resolves)
+  Commander resolved by turn:  T4 1%  T5 5%  T6 13%  T7 23%  T8 35%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Summon: Bahamut                            cast in   3.0% of games, win rate when cast  79.5% (+44.2)
+    Archon of Cruelty                          cast in   2.7% of games, win rate when cast  77.1% (+41.7)
+    Yawgmoth's Will                            cast in   9.3% of games, win rate when cast  76.7% (+41.4)
+    Elesh Norn, Grand Cenobite                 cast in   4.8% of games, win rate when cast  73.4% (+38.1)
+    Sheoldred, Whispering One                  cast in   4.7% of games, win rate when cast  71.7% (+36.3)
+    Dread Return                               cast in  20.8% of games, win rate when cast  70.6% (+35.3)
+    Unburial Rites                             cast in  23.3% of games, win rate when cast  70.0% (+34.7)
+    Mikaeus, the Unhallowed                    cast in  16.4% of games, win rate when cast  69.1% (+33.8)
+    Animate Dead                               cast in  26.1% of games, win rate when cast  65.2% (+29.8)
+    Ephemerate                                 cast in  19.1% of games, win rate when cast  65.0% (+29.7)
+  Lowest win rate when cast:
+    Teferi's Protection                        cast in   5.0% of games, win rate when cast  18.1% (-17.2)
+    Toxic Deluge                               cast in  20.4% of games, win rate when cast  43.2% (+7.9)
+    Displacer Kitten                           cast in  17.2% of games, win rate when cast  44.7% (+9.4)
+    Elesh Norn, Mother of Machines             cast in  13.8% of games, win rate when cast  44.7% (+9.4)
+    Restoration Angel                          cast in  12.7% of games, win rate when cast  45.5% (+10.1)
+    Flickering Hound                           cast in  20.4% of games, win rate when cast  45.6% (+10.3)
+    Mind Stone                                 cast in  24.9% of games, win rate when cast  45.8% (+10.4)
+    Anguished Unmaking                         cast in  23.5% of games, win rate when cast  46.9% (+11.5)
+    Force of Will                              cast in  15.9% of games, win rate when cast  47.5% (+12.2)
+    Skullclamp                                 cast in  31.1% of games, win rate when cast  48.0% (+12.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Worldly Tutor                              cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Summon: Bahamut                            cast  12.2% of the games it was drawn
+    Archon of Cruelty                          cast  15.2% of the games it was drawn
+    Sheoldred, Whispering One                  cast  18.7% of the games it was drawn
+    Elesh Norn, Grand Cenobite                 cast  18.9% of the games it was drawn
+    Teferi's Protection                        cast  22.3% of the games it was drawn [reactive: only cast in response]
+    Galadriel's Dismissal                      cast  35.2% of the games it was drawn [reactive: only cast in response]
+    Yawgmoth's Will                            cast  37.7% of the games it was drawn
+    Buried Alive                               cast  41.1% of the games it was drawn
+    Gifts Ungiven                              cast  49.1% of the games it was drawn
+    Consecrated Sphinx                         cast  49.4% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.33
+    Archon of Cruelty                          0.11
+    Grave Titan                                0.04
+    Summon: Bahamut                            0.04
+    Elesh Norn, Mother of Machines             0.04
+    Sheoldred, the Apocalypse                  0.04
+    Grave Pact                                 0.03
+    Nim Deathmantle                            0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(698s total)

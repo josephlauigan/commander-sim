@@ -1,0 +1,99 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m26s elapsed, ~4m01s left
+  progress  20.0%  0m54s elapsed, ~3m38s left
+  progress  30.0%  1m20s elapsed, ~3m07s left
+  progress  40.0%  1m45s elapsed, ~2m38s left
+  progress  50.0%  2m12s elapsed, ~2m12s left
+  progress  60.0%  2m40s elapsed, ~1m46s left
+  progress  70.0%  3m08s elapsed, ~1m20s left
+  progress  80.0%  3m35s elapsed, ~0m53s left
+  progress  90.0%  4m00s elapsed, ~0m26s left
+  progress 100.0%  4m29s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 13.1%   (4-player baseline 25%)   average rounds survived 8.0
+
+-- How it wins --
+  damage      99.2% of wins
+  timeout      0.8% of wins
+  Opponents it eliminated: 0.42 per game, by
+    combat             52.6%
+    commander damage   29.0%
+    triggers           18.4%
+  Damage dealt per game: 21.6, from
+    combat              19.7  (91%)
+    triggers             1.9  (9%)
+
+-- How it loses --
+  Eliminated in 86.9% of games, on average in round 7.4
+    by Kinnan   via combo              21.5% of games
+    by Urza     via combo              15.5% of games
+    by Winota   via combo              11.6% of games
+    by Zur the Enchanter via combo              11.6% of games
+    by Winota   via combat             10.4% of games
+    by Yawgmoth via combo               8.3% of games
+    by Zur the Enchanter via commander damage    1.7% of games
+    by Urza     via combat              1.6% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 3%  T4 17%  T5 32%  T6 42%  T7 47%  T8 51%  T9 52%  T10 54%  T11 54%  T12 55%
+  Online at all: 55.1% of games
+  Commander resolves on turn: median 2.0, mean 2.3 (over the 96.5% of games it resolves)
+  Commander resolved by turn:  T4 94%  T5 95%  T6 96%  T7 96%  T8 96%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Bronze Guardian                            cast in   4.7% of games, win rate when cast  47.8% (+34.8)
+    Austere Command                            cast in   5.1% of games, win rate when cast  44.8% (+31.8)
+    Sword of Kaldra                            cast in  11.1% of games, win rate when cast  43.9% (+30.8)
+    Beatrix, Loyal General                     cast in   5.2% of games, win rate when cast  43.8% (+30.7)
+    Stormfront Riders                          cast in   4.7% of games, win rate when cast  43.4% (+30.3)
+    Veteran's Powerblade                       cast in   7.8% of games, win rate when cast  40.8% (+27.7)
+    Shield of Kaldra                           cast in   8.4% of games, win rate when cast  39.5% (+26.4)
+    Solemn Simulacrum                          cast in   7.3% of games, win rate when cast  37.5% (+24.4)
+    Sword of Feast and Famine                  cast in  19.4% of games, win rate when cast  37.2% (+24.1)
+    Court of Ardenvale                         cast in   6.3% of games, win rate when cast  37.1% (+24.0)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  97.5% of games, win rate when cast  13.4% (+0.3)
+    Sword of Fire and Ice                      cast in  59.7% of games, win rate when cast  20.3% (+7.3)
+    Forum Familiar                             cast in  15.3% of games, win rate when cast  21.7% (+8.6)
+    Giver of Runes                             cast in  15.9% of games, win rate when cast  21.8% (+8.7)
+    Kor Duelist                                cast in  15.1% of games, win rate when cast  22.1% (+9.1)
+    Zack Fair                                  cast in  16.1% of games, win rate when cast  22.4% (+9.4)
+    Hero's Blade                               cast in  13.0% of games, win rate when cast  22.6% (+9.6)
+    White Mage's Staff                         cast in  12.7% of games, win rate when cast  24.1% (+11.0)
+    Disenchant                                 cast in  12.5% of games, win rate when cast  24.2% (+11.2)
+    Kor Outfitter                              cast in  12.5% of games, win rate when cast  24.4% (+11.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unfinished Business                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Rootborn Defenses                          cast   0.6% of the games it was drawn [reactive: only cast in response]
+    Unbreakable Formation                      cast   1.0% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast   3.1% of the games it was drawn [reactive: only cast in response]
+    Bronze Guardian                            cast  27.5% of the games it was drawn
+    Stormfront Riders                          cast  27.7% of the games it was drawn
+    Beatrix, Loyal General                     cast  29.5% of the games it was drawn
+    Austere Command                            cast  30.2% of the games it was drawn
+    Shield of Kaldra                           cast  32.4% of the games it was drawn
+    Court of Ardenvale                         cast  37.0% of the games it was drawn
+    Exalted Angel                              cast  39.7% of the games it was drawn
+    Secure the Scene                           cast  41.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.45
+    Sword of Fire and Ice                      0.13
+    Sword of Hearth and Home                   0.05
+    Cid, Freeflier Pilot                       0.03
+    Kor Duelist                                0.03
+    Helm of Kaldra                             0.02
+    Grand Abolisher                            0.02
+    Knight of the White Orchid                 0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(270s total)

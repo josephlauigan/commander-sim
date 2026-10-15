@@ -1,0 +1,104 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 14 worker threads: about 14 minutes
+  progress  10.0%  0m46s elapsed, ~7m00s left
+  progress  20.0%  1m33s elapsed, ~6m14s left
+  progress  30.0%  2m22s elapsed, ~5m33s left
+  progress  40.0%  3m13s elapsed, ~4m50s left
+  progress  50.0%  4m02s elapsed, ~4m02s left
+  progress  60.0%  4m50s elapsed, ~3m13s left
+  progress  70.0%  5m41s elapsed, ~2m26s left
+  progress  80.0%  6m24s elapsed, ~1m36s left
+  progress  90.0%  7m05s elapsed, ~0m47s left
+  progress 100.0%  7m53s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== seph analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 28.7%   (4-player baseline 25%)   average rounds survived 9.8
+
+-- How it wins --
+  damage      55.0% of wins
+  combo       44.7% of wins
+  timeout      0.3% of wins
+  Opponents it eliminated: 0.75 per game, by
+    combat             41.0%
+    combo              34.5%
+    drain              17.4%
+    triggers            5.4%
+    commander damage    1.3%
+    decked              0.3%
+  Damage dealt per game: 21.8, from
+    combat              13.2  (61%)
+    drain                7.3  (33%)
+    triggers             1.3  (6%)
+
+-- How it loses --
+  Eliminated in 71.3% of games, on average in round 8.7
+    by Heliod   via combo              16.1% of games
+    by Krenko   via combat             11.9% of games
+    by Yuriko   via triggers            9.5% of games
+    by Yuriko   via combat              6.1% of games
+    by Chulane  via combat              5.8% of games
+    by Prosper  via combo               5.8% of games
+    by Chulane  via combo               4.9% of games
+    by Heliod   via combat              2.7% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 2%  T4 10%  T5 25%  T6 41%  T7 52%  T8 60%  T9 66%  T10 69%  T11 70%  T12 70%
+  Online at all: 70.9% of games
+  Commander resolves on turn: median 8.0, mean 8.3 (over the 49.1% of games it resolves)
+  Commander resolved by turn:  T4 1%  T5 4%  T6 11%  T7 20%  T8 30%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Yawgmoth's Will                            cast in   6.4% of games, win rate when cast  77.4% (+48.8)
+    Dread Return                               cast in  16.4% of games, win rate when cast  69.8% (+41.1)
+    Unburial Rites                             cast in  18.1% of games, win rate when cast  66.2% (+37.5)
+    Mikaeus, the Unhallowed                    cast in  12.1% of games, win rate when cast  65.6% (+36.9)
+    Elesh Norn, Grand Cenobite                 cast in   3.6% of games, win rate when cast  64.8% (+36.2)
+    Archon of Cruelty                          cast in   3.0% of games, win rate when cast  64.2% (+35.5)
+    Sheoldred, Whispering One                  cast in   4.1% of games, win rate when cast  63.0% (+34.4)
+    Galadriel's Dismissal                      cast in   7.0% of games, win rate when cast  62.5% (+33.8)
+    Ephemerate                                 cast in  15.4% of games, win rate when cast  61.7% (+33.0)
+    Reanimate                                  cast in  21.7% of games, win rate when cast  60.1% (+31.4)
+  Lowest win rate when cast:
+    Teferi's Protection                        cast in   5.0% of games, win rate when cast  30.2% (+1.5)
+    Toxic Deluge                               cast in  16.3% of games, win rate when cast  34.6% (+5.9)
+    Elesh Norn, Mother of Machines             cast in  12.6% of games, win rate when cast  39.5% (+10.8)
+    Flickering Hound                           cast in  17.1% of games, win rate when cast  39.8% (+11.1)
+    Talisman of Hierarchy                      cast in  20.4% of games, win rate when cast  40.3% (+11.7)
+    Momentary Blink                            cast in  17.5% of games, win rate when cast  40.6% (+12.0)
+    Conjurer's Closet                          cast in  13.8% of games, win rate when cast  41.1% (+12.4)
+    Mind Stone                                 cast in  21.1% of games, win rate when cast  41.3% (+12.6)
+    Force of Will                              cast in  13.7% of games, win rate when cast  42.1% (+13.4)
+    Displacer Kitten                           cast in  13.6% of games, win rate when cast  42.3% (+13.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Worldly Tutor                              cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Summon: Bahamut                            cast   9.1% of the games it was drawn
+    Elesh Norn, Grand Cenobite                 cast  15.4% of the games it was drawn
+    Archon of Cruelty                          cast  18.0% of the games it was drawn
+    Sheoldred, Whispering One                  cast  18.3% of the games it was drawn
+    Teferi's Protection                        cast  23.7% of the games it was drawn [reactive: only cast in response]
+    Yawgmoth's Will                            cast  29.4% of the games it was drawn
+    Galadriel's Dismissal                      cast  32.1% of the games it was drawn [reactive: only cast in response]
+    Muldrotha, the Gravetide                   cast  40.3% of the games it was drawn
+    Buried Alive                               cast  40.4% of the games it was drawn
+    Consecrated Sphinx                         cast  45.0% of the games it was drawn
+    Mikaeus, the Unhallowed                    cast  47.3% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.21
+    Archon of Cruelty                          0.09
+    Nim Deathmantle                            0.05
+    Sheoldred, the Apocalypse                  0.04
+    Mind Stone                                 0.04
+    Displacer Kitten                           0.04
+    Grand Abolisher                            0.04
+    Summon: Bahamut                            0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(474s total)

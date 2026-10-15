@@ -115,6 +115,16 @@ fn main_audit(p: &Project) -> BTreeMap<String, (String, String)> {
     st
 }
 
+/// does any value in this compiled ability equal the bare amount "X"?
+fn has_bare_x(j: &J) -> bool {
+    match j {
+        J::Str(s) => s == "X",
+        J::Arr(v) => v.iter().any(has_bare_x),
+        J::Obj(o) => o.iter().any(|(_, v)| has_bare_x(v)),
+        _ => false,
+    }
+}
+
 /// `s[:n]` (code points)
 pub fn cut(s: &str, n: usize) -> String {
     s.chars().take(n).collect()
@@ -264,6 +274,17 @@ impl<'a> Audit<'a> {
         }
         if !unparsed.is_empty() || !kws.is_empty() {
             return ("Partial".into(), notes.join("; "));
+        }
+        // a bare "X" amount on a card with no {X} (a "that many" or counting phrase the compiler could not name) runs as
+        // a stand-in 3 at run time: never "compiled from Oracle text"
+        if cd.dsl.as_ref().is_some_and(|d| d.iter().any(|a| has_bare_x(&J::Obj(a.clone()))))
+            && !oracle.contains("{X}")
+            && !rec.and_then(|r| r.s("mana_cost")).unwrap_or("").contains("{X}")
+        {
+            return (
+                "Partial".into(),
+                format!("an amount the compiler could not name runs as 3: {}", cut(&rules_text(&oracle), 90)),
+            );
         }
         if cd.source == "scryfall+dsl" {
             return ("Full-auto".into(), "compiled from Oracle text".into());

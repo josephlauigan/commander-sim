@@ -1,0 +1,21 @@
+2,500 games (calibration: ordering, 500 per list per tier, profile conservative), lookahead AI, 8 worker threads: about 16 minutes
+
+=== Tier ordering: each deck alone against three decks of the tier below [conservative, n=500] ===
+  progress  10.0%  1m47s elapsed, ~16m03s left
+  progress  20.0%  3m37s elapsed, ~14m31s left
+  progress  30.0%  4m40s elapsed, ~10m53s left
+  progress  40.0%  5m49s elapsed, ~8m43s left
+  progress  50.0%  7m17s elapsed, ~7m17s left
+  progress  60.0%  8m39s elapsed, ~5m46s left
+  progress  70.0%  10m12s elapsed, ~4m22s left
+  progress  80.0%  11m47s elapsed, ~2m56s left
+  progress  90.0%  14m20s elapsed, ~1m35s left
+  progress 100.0%  16m49s elapsed, ~0m00s left
+  Tier 2 (Mid B3) into Tier 1 (High B2 / Low B3): 24.6% overall
+    Brago                         24.2% (20.7-28.1)  (not above 25%)
+    Kaalia of the Vast            23.4% (19.9-27.3)  (not above 25%)
+    Lord Windgrace                23.2% (19.7-27.1)  (not above 25%)
+    Meren of Clan Nel Toth        22.6% (19.2-26.5)  (not above 25%)
+    Sythis                        29.8% (26.0-34.0)
+
+(1010s total)

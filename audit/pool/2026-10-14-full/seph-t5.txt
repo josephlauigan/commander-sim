@@ -1,0 +1,103 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 14 worker threads: about 14 minutes
+  progress  10.0%  0m23s elapsed, ~3m35s left
+  progress  20.0%  0m45s elapsed, ~3m02s left
+  progress  30.0%  1m07s elapsed, ~2m37s left
+  progress  40.0%  1m28s elapsed, ~2m12s left
+  progress  50.0%  1m48s elapsed, ~1m48s left
+  progress  60.0%  2m12s elapsed, ~1m28s left
+  progress  70.0%  2m34s elapsed, ~1m06s left
+  progress  80.0%  2m56s elapsed, ~0m44s left
+  progress  90.0%  3m19s elapsed, ~0m22s left
+  progress 100.0%  3m42s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== seph analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 18.1%   (4-player baseline 25%)   average rounds survived 8.2
+
+-- How it wins --
+  damage      61.4% of wins
+  combo       38.2% of wins
+  timeout      0.4% of wins
+  Opponents it eliminated: 0.47 per game, by
+    combat             48.1%
+    combo              28.7%
+    drain              15.2%
+    triggers            5.8%
+    commander damage    2.3%
+  Damage dealt per game: 14.7, from
+    combat               9.7  (66%)
+    drain                4.1  (28%)
+    triggers             0.8  (5%)
+
+-- How it loses --
+  Eliminated in 81.8% of games, on average in round 7.3
+    by Kinnan   via combo              21.8% of games
+    by Urza     via combo              14.3% of games
+    by Zur the Enchanter via combo              12.8% of games
+    by Winota   via combo              10.0% of games
+    by Winota   via combat              9.4% of games
+    by Yawgmoth via combo               6.8% of games
+    by Zur the Enchanter via combat              1.2% of games
+    by Urza     via combat              1.2% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 2%  T4 9%  T5 19%  T6 29%  T7 37%  T8 43%  T9 46%  T10 49%  T11 50%  T12 50%
+  Online at all: 50.5% of games
+  Commander resolves on turn: median 8.0, mean 8.1 (over the 31.9% of games it resolves)
+  Commander resolved by turn:  T4 1%  T5 3%  T6 8%  T7 15%  T8 20%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Sheoldred, Whispering One                  cast in   2.8% of games, win rate when cast  70.9% (+52.8)
+    Unburial Rites                             cast in   7.8% of games, win rate when cast  67.8% (+49.7)
+    Ephemerate                                 cast in   8.9% of games, win rate when cast  63.1% (+44.9)
+    Mikaeus, the Unhallowed                    cast in   6.5% of games, win rate when cast  63.0% (+44.8)
+    Dread Return                               cast in   7.2% of games, win rate when cast  61.5% (+43.3)
+    Animate Dead                               cast in  11.6% of games, win rate when cast  58.4% (+40.3)
+    Necromancy                                 cast in   8.0% of games, win rate when cast  58.2% (+40.0)
+    Reanimate                                  cast in  12.0% of games, win rate when cast  50.6% (+32.5)
+    Grave Titan                                cast in   6.7% of games, win rate when cast  48.9% (+30.7)
+    Triskelion                                 cast in   9.1% of games, win rate when cast  48.8% (+30.6)
+  Lowest win rate when cast:
+    Teferi's Protection                        cast in   4.4% of games, win rate when cast  11.9% (-6.3)
+    Displacer Kitten                           cast in   9.8% of games, win rate when cast  28.2% (+10.1)
+    Talisman of Hierarchy                      cast in  16.1% of games, win rate when cast  29.3% (+11.2)
+    Toxic Deluge                               cast in  12.9% of games, win rate when cast  30.8% (+12.6)
+    Restoration Angel                          cast in   6.7% of games, win rate when cast  31.3% (+13.2)
+    Mind Stone                                 cast in  16.8% of games, win rate when cast  31.9% (+13.8)
+    Teleportation Circle                       cast in  11.5% of games, win rate when cast  32.0% (+13.9)
+    Force of Will                              cast in   9.6% of games, win rate when cast  32.2% (+14.0)
+    Entomb                                     cast in  14.9% of games, win rate when cast  32.3% (+14.2)
+    Flickering Hound                           cast in  11.9% of games, win rate when cast  33.3% (+15.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Worldly Tutor                              cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Summon: Bahamut                            cast   8.7% of the games it was drawn
+    Archon of Cruelty                          cast  10.8% of the games it was drawn
+    Yawgmoth's Will                            cast  11.6% of the games it was drawn
+    Elesh Norn, Grand Cenobite                 cast  11.7% of the games it was drawn
+    Galadriel's Dismissal                      cast  13.0% of the games it was drawn [reactive: only cast in response]
+    Sheoldred, Whispering One                  cast  15.0% of the games it was drawn
+    Teferi's Protection                        cast  26.0% of the games it was drawn [reactive: only cast in response]
+    Consecrated Sphinx                         cast  32.4% of the games it was drawn
+    Muldrotha, the Gravetide                   cast  33.0% of the games it was drawn
+    Mikaeus, the Unhallowed                    cast  33.3% of the games it was drawn
+    Grave Titan                                cast  37.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.08
+    Archon of Cruelty                          0.03
+    Grand Abolisher                            0.02
+    Displacer Kitten                           0.02
+    Elesh Norn, Mother of Machines             0.02
+    Sheoldred, the Apocalypse                  0.02
+    Sakura-Tribe Elder                         0.02
+    Mind Stone                                 0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(223s total)

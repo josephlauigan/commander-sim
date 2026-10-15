@@ -1,0 +1,94 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m55s elapsed, ~8m17s left
+  progress  20.0%  1m48s elapsed, ~7m13s left
+  progress  30.0%  2m41s elapsed, ~6m16s left
+  progress  40.0%  3m34s elapsed, ~5m22s left
+  progress  50.0%  4m29s elapsed, ~4m29s left
+  progress  60.0%  5m21s elapsed, ~3m34s left
+  progress  70.0%  6m18s elapsed, ~2m42s left
+  progress  80.0%  7m14s elapsed, ~1m48s left
+  progress  90.0%  8m10s elapsed, ~0m54s left
+  progress 100.0%  9m11s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== galadriel analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 14.5%   (4-player baseline 25%)   average rounds survived 11.1
+
+-- How it wins --
+  damage      94.1% of wins
+  timeout      5.9% of wins
+  Opponents it eliminated: 0.38 per game, by
+    combat             94.2%
+    decked              3.2%
+    commander damage    2.5%
+    drain               0.1%
+  Damage dealt per game: 25.3, from
+    combat              25.3  (100%)
+    triggers             0.0  (0%)
+    drain                0.0  (0%)
+
+-- How it loses --
+  Eliminated in 84.3% of games, on average in round 10.3
+    by Light-Paws via commander damage   18.7% of games
+    by Isshin   via combat             15.5% of games
+    by Tatyova  via combat             11.8% of games
+    by Lathril  via combat             11.6% of games
+    by Teysa Karlov via drain               5.3% of games
+    by Light-Paws via combat              5.2% of games
+    by Teysa Karlov via combat              5.0% of games
+    by Lathril  via drain               4.4% of games
+
+-- Game plan timing --
+  Plan: first Alliance trigger from Galadriel
+  Online by turn:  T2 0%  T3 0%  T4 3%  T5 10%  T6 22%  T7 31%  T8 38%  T9 43%  T10 47%  T11 50%  T12 52%
+  Online at all: 56.2% of games
+  Commander resolves on turn: median 6.0, mean 6.5 (over the 75.1% of games it resolves)
+  Commander resolved by turn:  T4 15%  T5 31%  T6 45%  T7 54%  T8 62%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Reya Dawnbringer                           cast in   6.5% of games, win rate when cast  40.8% (+26.2)
+    Elspeth, Sun's Champion                    cast in  12.8% of games, win rate when cast  36.1% (+21.6)
+    River's Rebuke                             cast in  12.2% of games, win rate when cast  35.2% (+20.6)
+    Shamanic Revelation                        cast in  11.2% of games, win rate when cast  34.5% (+20.0)
+    Dragonlord Dromoka                         cast in  11.9% of games, win rate when cast  34.3% (+19.8)
+    Adeline, Resplendent Cathar                cast in  20.1% of games, win rate when cast  31.2% (+16.7)
+    Bribery                                    cast in  15.0% of games, win rate when cast  31.0% (+16.5)
+    Mangara, the Diplomat                      cast in  17.0% of games, win rate when cast  30.4% (+15.9)
+    Kindred Discovery                          cast in  12.1% of games, win rate when cast  30.3% (+15.8)
+    Mentor of the Meek                         cast in  20.4% of games, win rate when cast  30.2% (+15.7)
+  Lowest win rate when cast:
+    Galadriel, Light of Valinor                cast in  75.4% of games, win rate when cast  19.0% (+4.5)
+    Generous Gift                              cast in  16.5% of games, win rate when cast  20.5% (+6.0)
+    Springleaf Drum                            cast in  19.4% of games, win rate when cast  21.1% (+6.6)
+    Cultivate                                  cast in  14.6% of games, win rate when cast  22.1% (+7.6)
+    Farseek                                    cast in  17.4% of games, win rate when cast  22.2% (+7.7)
+    Lin Sivvi, Defiant Hero                    cast in  18.2% of games, win rate when cast  22.5% (+7.9)
+    Lightbringer                               cast in  15.2% of games, win rate when cast  22.5% (+8.0)
+    Errant Doomsayers                          cast in  19.1% of games, win rate when cast  22.5% (+8.0)
+    Arcane Signet                              cast in  19.1% of games, win rate when cast  22.6% (+8.0)
+    Elvish Mystic                              cast in  20.0% of games, win rate when cast  22.6% (+8.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rootborn Defenses                          cast   4.2% of the games it was drawn [reactive: only cast in response]
+    Unbreakable Formation                      cast   7.5% of the games it was drawn [reactive: only cast in response]
+    Eerie Interlude                            cast   8.1% of the games it was drawn
+    Reya Dawnbringer                           cast  29.2% of the games it was drawn
+    Crackdown                                  cast  40.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Galadriel, Light of Valinor                0.26
+    Elspeth, Sun's Champion                    0.08
+    Adeline, Resplendent Cathar                0.05
+    Cathars' Crusade                           0.04
+    Ramosian Sergeant                          0.04
+    Springleaf Drum                            0.04
+    Ramosian Lieutenant                        0.03
+    Patchwork Banner                           0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(552s total)

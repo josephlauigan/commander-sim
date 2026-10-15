@@ -1,0 +1,10 @@
+
+=== Tier ordering: each deck alone against three decks of the tier below [conservative, n=1000] ===
+  Tier 3 (High B3) into Tier 2 (Mid B3): 26.8% overall
+    Atraxa                        23.4% (20.9-26.1)  (not above 25%)
+    Aurelia                       35.0% (32.1-38.0)
+    Korvold                       18.8% (16.5-21.3)  (not above 25%)
+    Marwyn                        23.3% (20.8-26.0)  (not above 25%)
+    Tergrid                       33.3% (30.4-36.3)
+
+(2289s total)

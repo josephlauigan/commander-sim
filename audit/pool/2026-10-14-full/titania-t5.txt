@@ -1,0 +1,95 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m17s elapsed, ~2m36s left
+  progress  20.0%  0m36s elapsed, ~2m24s left
+  progress  30.0%  0m54s elapsed, ~2m06s left
+  progress  40.0%  1m12s elapsed, ~1m48s left
+  progress  50.0%  1m30s elapsed, ~1m30s left
+  progress  60.0%  1m49s elapsed, ~1m13s left
+  progress  70.0%  2m07s elapsed, ~0m54s left
+  progress  80.0%  2m27s elapsed, ~0m36s left
+  progress  90.0%  2m46s elapsed, ~0m18s left
+  progress 100.0%  3m06s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== titania analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 17.5%   (4-player baseline 25%)   average rounds survived 8.1
+
+-- How it wins --
+  damage      99.6% of wins
+  timeout      0.4% of wins
+  Opponents it eliminated: 0.47 per game, by
+    combat             99.4%
+    commander damage    0.6%
+  Damage dealt per game: 22.5, from
+    combat              22.5  (100%)
+
+-- How it loses --
+  Eliminated in 82.5% of games, on average in round 7.2
+    by Kinnan   via combo              22.4% of games
+    by Urza     via combo              14.5% of games
+    by Winota   via combo              12.9% of games
+    by Zur the Enchanter via combo              12.7% of games
+    by Winota   via combat              8.1% of games
+    by Yawgmoth via combo               7.3% of games
+    by Zur the Enchanter via commander damage    1.6% of games
+    by Urza     via combat              1.0% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 10%  T6 17%  T7 22%  T8 25%  T9 27%  T10 28%  T11 29%  T12 30%
+  Online at all: 30.4% of games
+  Commander resolves on turn: median 6.0, mean 6.0 (over the 59.5% of games it resolves)
+  Commander resolved by turn:  T4 11%  T5 29%  T6 41%  T7 49%  T8 54%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Overwhelming Stampede                      cast in   5.5% of games, win rate when cast  78.0% (+60.5)
+    End-Raze Forerunners                       cast in   7.6% of games, win rate when cast  62.3% (+44.8)
+    Tumbleweed Rising                          cast in   4.2% of games, win rate when cast  56.2% (+38.7)
+    Vinelasher Adept                           cast in   5.7% of games, win rate when cast  48.9% (+31.4)
+    Shamanic Revelation                        cast in   7.3% of games, win rate when cast  46.8% (+29.3)
+    Hornet Queen                               cast in   9.9% of games, win rate when cast  45.7% (+28.3)
+    Ghalta the Unstoppable                     cast in  10.8% of games, win rate when cast  45.3% (+27.9)
+    Lifestream's Blessing                      cast in   7.2% of games, win rate when cast  45.1% (+27.6)
+    Annoyed Altisaur                           cast in   9.9% of games, win rate when cast  44.6% (+27.1)
+    Paladin of Predation                       cast in   8.8% of games, win rate when cast  44.6% (+27.1)
+  Lowest win rate when cast:
+    Greenhouse Propagator                      cast in  15.2% of games, win rate when cast  25.9% (+8.4)
+    Llanowar Elves                             cast in  16.8% of games, win rate when cast  26.4% (+8.9)
+    Silhana Starfletcher                       cast in  13.4% of games, win rate when cast  26.8% (+9.3)
+    Cultivate                                  cast in  13.9% of games, win rate when cast  26.8% (+9.3)
+    Environmental Scientist                    cast in  15.8% of games, win rate when cast  27.1% (+9.7)
+    Hardbristle Bandit                         cast in  15.2% of games, win rate when cast  27.3% (+9.8)
+    Glorious Decay                             cast in  14.7% of games, win rate when cast  27.3% (+9.9)
+    Malevolent Rumble                          cast in  14.8% of games, win rate when cast  27.6% (+10.2)
+    Noxious Newt                               cast in  16.3% of games, win rate when cast  27.7% (+10.2)
+    Rampant Growth                             cast in  14.3% of games, win rate when cast  27.8% (+10.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Arachnogenesis                             cast  10.3% of the games it was drawn
+    Royal Treatment                            cast  14.2% of the games it was drawn
+    Tumbleweed Rising                          cast  23.9% of the games it was drawn
+    Vinelasher Adept                           cast  29.4% of the games it was drawn
+    Overwhelming Stampede                      cast  32.7% of the games it was drawn
+    End-Raze Forerunners                       cast  40.1% of the games it was drawn
+    Lifestream's Blessing                      cast  42.9% of the games it was drawn
+    Shamanic Revelation                        cast  45.4% of the games it was drawn
+    Paladin of Predation                       cast  45.6% of the games it was drawn
+    Symbiotic Beast                            cast  49.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               0.17
+    Studious First-Year                        0.03
+    Hardbristle Bandit                         0.03
+    Bugenhagen, Wise Elder                     0.03
+    Ghalta the Unstoppable                     0.02
+    Topiary Lecturer                           0.02
+    Tireless Tracker                           0.02
+    Lashwhip Predator                          0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(186s total)

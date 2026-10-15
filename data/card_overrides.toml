@@ -2158,6 +2158,9 @@ note = "menace; top five: an Elf/Warrior/Tyvar to hand"
 status = "Full"
 note = "prowess; Shaman and Wizard triggers trigger an additional time"
 
+["Haughty Djinn"]
+tags = "pow=0 tgh=4 fly"
+
 ["Heartless Act"]
 status = "Full"
 note = "destroys a creature with no counters, or removes up to three counters (and kills it if that is lethal)"
@@ -2617,6 +2620,7 @@ note = "flying; returns your best ETB permanent (or itself) on entry"
 
 ["Kor Spiritdancer"]
 tags = "pow=0 tgh=2 wizard"
+dsl = []
 status = "Full"
 note = "+2/+2 per Aura on it; draw on Aura casts"
 
@@ -7414,3 +7418,635 @@ note = "Aura: when the enchanted creature dies or is exiled its card returns to 
 dsl = []
 status = "Full"
 note = "3/3; upkeep: surveil 1, then with three or more creature cards in our graveyard it becomes prepared; prepared, {B} casts a copy of Reanimate on the best creature card in any graveyard (not below 8 life after the loss) (card code in impls/sephfs_cards.rs)"
+
+["Giada, Font of Hope"]
+status = "Full"
+note = "flying, vigilance; each other Angel (and Angel token) enters with a +1/+1 counter per Angel already controlled; {T}: {W} only for Angel spells (impls/t0_giada.rs, engine/mana.rs)"
+
+["Search the Premises"]
+status = "Full"
+note = "whenever a creature attacks you, investigate (one Clue per attacker; attackers sent at your planeswalkers are not counted, and a split attack counts by its main defender)"
+
+["Secret Rendezvous"]
+tags = "draw=3"
+dsl = []
+status = "Full"
+note = "you and the opponent with the weakest board each draw three cards"
+
+["Angel of Vitality"]
+status = "Full"
+note = "flying; every life gain is +1 (engine/life.rs gain); +2/+2 at 25 or more life"
+
+["Angel of the Ruins"]
+dsl = []
+status = "Full"
+note = "flying; enters: exile up to two of the opponents' artifacts/enchantments (best first); Plainscycling {2} at the end of the turn before yours when short of lands (a person's card is cycled by the AI only)"
+
+["Angelic Field Marshal"]
+status = "Full"
+note = "flying; lieutenant: with your commander out it is +2/+2 and your creatures have vigilance"
+
+["Angelic Sleuth"]
+status = "Full"
+note = "flying; another permanent of yours leaving with counters (+1/+1, -1/-1, loyalty, lore) investigates"
+
+["Court of Grace"]
+dsl = []
+status = "Full"
+note = "enters: you become the monarch; upkeep: a 1/1 flying Spirit, or a 4/4 flying Angel token if you're the monarch"
+
+["Cut a Deal"]
+status = "Full"
+note = "each opponent draws a card, then you draw a card for each opponent who did (compiled; checked against the Oracle text)"
+
+["Defy Death"]
+dsl = []
+status = "Full"
+note = "returns the best creature card from your graveyard; an Angel gets two +1/+1 counters (Exemplar of Light draws)"
+
+["Emeria Shepherd"]
+dsl = []
+status = "Full"
+note = "flying; landfall: the best nonland permanent card from your graveyard to hand, or to the battlefield if the land is a Plains"
+
+["Exemplar of Light"]
+dsl = []
+status = "Full"
+note = "flying; gaining life puts a +1/+1 counter on it; counters on it (also from Defy Death and proliferate) draw a card once each turn"
+
+["Fateful Absence"]
+dsl = []
+status = "Full"
+note = "destroys the target creature or planeswalker; its controller investigates"
+
+["Firemane Commando"]
+dsl = []
+status = "Full"
+note = "flying; you attacking with two or more creatures draws a card; another player attacking with two or more creatures draws if none attacked you (judged by the attack's main defender)"
+
+["Herald of Eternal Dawn"]
+status = "Full"
+note = "flash, flying; its controller can't lose the game (engine/life.rs check_state), so no opponent can win while it lives"
+
+["Herald of War"]
+dsl = []
+status = "Full"
+note = "flying; attacking puts a +1/+1 counter on it; your Angel and Human spells cost {1} less per counter on it"
+
+["Heraldic Banner"]
+tags = "rock=1:W"
+dsl = []
+status = "Full"
+note = "the colour chosen is white (an all-white deck): {T}: {W}, your white creatures get +1/+0 per Banner"
+
+["Merchant of Truth"]
+status = "Full"
+note = "flying; a nontoken creature of yours dying (itself too) investigates; with Clues you control, attacking alone gives +1/+1 per Clue (exalted)"
+
+["Metropolis Reformer"]
+status = "Full"
+note = "flying, vigilance; you have hexproof; damage dealt to it (combat or a damage spell) gains you that much life"
+
+["Norn's Choirmaster"]
+status = "Full"
+note = "flying, first strike; your commander entering or attacking proliferates"
+
+["Righteous Valkyrie"]
+tags = "pow=2 tgh=4 fly"
+status = "Full"
+note = "flying; another Angel or Cleric of yours entering (token too) gains life equal to its toughness; creatures you control get +2/+2 while you have 47 or more life"
+
+["Sephara, Sky's Blade"]
+status = "Full"
+note = "flying, lifelink; other flyers of yours are indestructible; may be cast for {W} and tapping four untapped flyers (when the mana cost is out of reach)"
+
+["Seraph of the Sword"]
+status = "Full"
+note = "flying; all combat damage that would be dealt to it is prevented (burn is not)"
+
+["Serra Avenger"]
+status = "Full"
+note = "flying, vigilance; can't be cast on your first three turns (engine/cast.rs castable)"
+
+["Starnheim Aspirant"]
+status = "Full"
+note = "your Angel spells cost {2} less"
+
+["Vanguard Seraph"]
+status = "Full"
+note = "flying; the first time each turn you gain life, surveil 1"
+
+["Wojek Investigator"]
+status = "Full"
+note = "flying, vigilance; upkeep: investigate once per opponent with more cards in hand than you"
+
+["Youthful Valkyrie"]
+status = "Full"
+note = "flying; another Angel of yours entering (token too) puts a +1/+1 counter on it"
+
+["Bishop of Wings"]
+tags = "human pow=1 tgh=4"
+status = "Full"
+note = "an Angel of yours entering (token too) gains you 4 life; an Angel of yours dying makes a 1/1 flying Spirit"
+
+["Linvala, the Preserver"]
+tags = "leg pow=5 bomb=5 fly"
+status = "Full"
+note = "flying; enters: gain 5 life if an opponent has more life, and a 3/3 flying Angel if an opponent controls more creatures"
+
+# ---- Tier 0 Stella Lee precon (card code in impls/t0_stella.rs) ----
+
+["Arcane Bombardment"]
+status = "Full"
+note = "your first instant or sorcery each turn: exile a random instant/sorcery from the graveyard, then cast copies of every card exiled with it (free; counterspells, wipes and spells with no target skipped)"
+
+["Baral's Expertise"]
+status = "Full"
+note = "returns up to three of the opponents' best artifacts/creatures (worth 2+), then casts the best spell of mana value 4 or less from hand free"
+
+["Bloodthirsty Adversary"]
+status = "Full"
+note = "haste; enters: pays {2}{R} as often as it can use (one per good instant/sorcery of mana value 3 or less in the graveyard), +1/+1 counters, exiles those cards and casts copies of them free"
+
+["Crackling Spellslinger"]
+status = "Full"
+note = "flash; enters if cast: the next instant or sorcery spell this turn has storm (copies for each spell cast before it)"
+
+["Cursed Mirror"]
+status = "Approximate"
+note = "{T}: add {R}; as it enters it becomes a copy of the best creature on the battlefield until end of turn with haste (stats and flying, deathtouch, vigilance, lifelink; the copied creature's own triggered abilities are not copied)"
+
+["Curse of the Swine"]
+status = "Full"
+note = "X chosen by the AI: exiles up to X of the opponents' creatures worth 3+, a 2/2 green Boar for each controller"
+
+["Elemental Eruption"]
+status = "Full"
+note = "a 4/4 red flying Dragon Elemental with prowess; storm (a copy for each earlier spell this turn)"
+
+["Epic Experiment"]
+status = "Full"
+note = "X chosen by the AI (3 to 7): exiles the top X, casts the instants and sorceries of mana value X or less free (counterspells, wipes and targetless spells skipped), the rest to the graveyard"
+
+["Finale of Promise"]
+status = "Full"
+note = "X is the smallest that reaches the best instant and the best sorcery in the graveyard it can afford; casts them free, exiled afterwards; X of 10 or more: two copies of each"
+
+["Finale of Revelation"]
+status = "Full"
+note = "X chosen by the AI; draws X, exiled afterwards; X of 10 or more: graveyard shuffled in, draw X, untap up to five lands, no maximum hand size for the rest of the game"
+
+["Forger's Foundry"]
+status = "Full"
+note = "{T}: add {U}; an instant or sorcery of mana value 3 or less it paid for is exiled with it as it resolves (always taken); {3}{U}{U},{T} at sorcery speed casts the exiled spells free"
+
+["Kaza, Roil Chaser"]
+status = "Full"
+note = "flying, haste; {T}: the next instant or sorcery this turn costs {X} less, X your Wizards as it resolves (used when a spell in hand has generic mana to save)"
+
+["Leyline Dowser"]
+dsl = []
+status = "Full"
+note = "{1},{T}: mill a card, an instant or sorcery milled goes to hand; tap an untapped legendary creature: untap it (up to three uses, when the creature is not needed)"
+
+["Lock and Load"]
+status = "Full"
+note = "draws one, plus one for each other instant or sorcery cast this turn; plot {3}{U} (after combat, free on a later turn when it draws 3+)"
+
+["Midnight Clock"]
+status = "Full"
+note = "{T}: add {U}; {2}{U}: hour counter (the AI winds it with a nearly empty hand); an hour counter at each upkeep; the twelfth shuffles hand and graveyard into the library, draws seven and exiles it"
+
+["Octavia, Living Thesis"]
+status = "Full"
+note = "costs {8} less with eight or more instants and sorceries in the graveyard; ward 8; whenever you cast or copy an instant or sorcery, one of your creatures has base 8/8 until end of turn"
+
+["Pteramander"]
+status = "Full"
+note = "flying; {7}{U}: adapt 4, {1} less for each instant and sorcery in the graveyard"
+
+["Pyretic Charge"]
+status = "Full"
+note = "discard the hand, draw four, creatures get +1/+0 per card discarded; plot {3}{R}; cast hard only with 0-1 other spells in hand"
+
+["Radical Idea"]
+status = "Full"
+note = "draws a card; jump-start (cast from the graveyard for {1}{U} and a discarded card, then exiled)"
+
+["Rousing Refrain"]
+status = "Full"
+note = "adds {R} for each card in the fullest opposing hand (kept through the turn) and exiles itself with three time counters; suspend 3 for {1}{R} when opponents hold 3+ cards"
+
+["Shark Typhoon"]
+dsl = []
+status = "Full"
+note = "each noncreature spell you cast makes an X/X flying Shark, X its mana value; cycling {X}{1}{U} makes an X/X Shark (X = spare mana, at an opponent's end step or after combat)"
+
+["Smoldering Stagecoach"]
+dsl = []
+status = "Full"
+note = "power = instants and sorceries in the graveyard, toughness 5; crew 2 before combat with summoning-sick creatures first; when it attacks the next instant and the next sorcery this turn have cascade"
+
+["Stella Lee, Wild Card"]
+dsl = []
+status = "Full"
+note = "your second spell each turn exiles the top card, playable until the end of your next turn; {T}: copies your instant or sorcery as you cast the third or later spell this turn"
+
+["Thunderclap Drake"]
+status = "Full"
+note = "flying; instants and sorceries cost {1} less; {2}{U}, sacrifice: your next instant or sorcery this turn is copied once per commander cast (used with a good spell and the mana for it)"
+
+["Volcanic Torrent"]
+status = "Full"
+note = "cascade; X damage to each creature and planeswalker the opponents control, X the spells you've cast this turn"
+
+["Winged Boots"]
+dsl = [
+  { type = "static", static = "equip_cost", mana = 1 },
+  { type = "static", static = "equip_keyword", keyword = "flying" },
+]
+status = "Full"
+note = "equip {1}; the creature has flying and ward {4}"
+
+# ---- Tier 0: Captain America, Avengers Assemble precon (impls/t0_captain.rs)
+["Captain America, Team Leader"]
+status = "Full"
+note = "another Hero you control entering gets vigilance and haste until end of turn and a +1/+1 counter, and Captain America gets one (card code in impls/t0_captain.rs)"
+
+["Captain America, Living Legend"]
+status = "Full"
+note = "vigilance; the first time a creature you control becomes tapped on your turn it untaps: when attacking, for mana abilities, for tap costs of the ability language, crewing and Hawkeye (card code in impls/t0_captain.rs; tap sites outside those don't untap)"
+
+["Avengers Quinjet"]
+status = "Full"
+note = "flying 4/4; Crew 3 before the first combat; enters or attacks: a Hero creature card from hand onto the battlefield, else a Hero creature card from the graveyard to hand (card code in impls/t0_captain.rs)"
+
+["Folk Hero"]
+status = "Full"
+note = "your commander creature on the battlefield draws a card the first time each turn you cast a spell sharing a creature type with it (card code in impls/t0_captain.rs)"
+
+["Gift of Immortality"]
+status = "Full"
+note = "an Aura on your best creature; when it dies the card returns under its owner's control, and the Aura returns attached to it at the beginning of the next end step (card code in impls/t0_captain.rs)"
+
+["Herald's Horn"]
+status = "Full"
+note = "names Hero for this deck; Hero creature spells cost {1} less; at your upkeep a Hero creature card on top goes to your hand (card code in impls/t0_captain.rs)"
+
+["Love on the Battlefield"]
+status = "Full"
+note = "attacking with exactly two creatures: first strike for both and you draw a card; either one dealing combat damage to a player gets a +1/+1 counter (card code in impls/t0_captain.rs)"
+
+["Ant-Man, Elusive Avenger"]
+dsl = []
+status = "Full"
+note = "can't be blocked by creatures with greater power (cardcode::evasion_blocked); combat damage to a player makes that many Treasures (card code in impls/t0_captain.rs; the compiled version always made three)"
+
+["Avenge"]
+dsl = []
+status = "Full"
+note = "destroy all creatures and gain 1 life for each one destroyed (the compiled version always gained three); {2} less if a player attacked you during their last turn (card code in impls/t0_captain.rs)"
+
+["Avengers Tower"]
+status = "Full"
+note = "{T}: {C}, or any colour for a Hero spell; {4},{T}: look at the top three cards, a Hero card to hand, the rest to the bottom (the AI at the end of turn). Not modeled: the any-colour mana for abilities of Hero sources (no Hero activated ability costs mana here)"
+
+["Captain Mar-Vell, Space-Born"]
+status = "Full"
+note = "flying, vigilance; while an opponent has cast a spell this turn the AI may cast permanent spells at the end of the turn (as_flash; instants and sorceries are not cast at a new time, which changes little for this deck)"
+
+["Captain Marvel, Apex Avenger"]
+status = "Full"
+note = "flying, double strike, indestructible; +1/+1 counters put on another non-Kree creature of yours (cardcode::put_plus) go on her too; counters from the ability language are copied too"
+
+["Director Nick Fury"]
+status = "Full"
+note = "Hero spells cost {1} less; whenever you attack, a Hero card from the top four to hand, the rest to the bottom in a random order (card code in impls/t0_captain.rs)"
+
+["Dismantling Wave"]
+status = "Full"
+note = "destroy up to one target artifact or enchantment (compiled); cycling {6}{W}{W} (the AI when it takes more from opponents than from itself, or with spare mana at the end of turn): draw, and destroy all artifacts and enchantments (card code in impls/t0_captain.rs)"
+
+["Hawkeye, Avenging Archer"]
+dsl = []
+status = "Full"
+note = "reach; {T}: 1 damage (kills a 1-toughness creature, else pings an opponent at the end of turn); when a creature an opponent controls dies after Hawkeye damaged it this turn (ping or combat) you draw (card code in impls/t0_captain.rs)"
+
+["Hercules, Olympian Hero"]
+status = "Full"
+note = "attacks: a +1/+1 counter and indestructible until end of turn; the first time each turn he is dealt combat damage and survives, that many +1/+1 counters (non-combat damage doesn't exist for creatures here) (card code in impls/t0_captain.rs)"
+
+["Heroic Return"]
+status = "Full"
+note = "{2} less if a creature is attacking you; returns the best creature card from your graveyard to the battlefield, a Hero with two extra +1/+1 counters (card code in impls/t0_captain.rs)"
+
+["Jarvis, Earth's Mightiest Butler"]
+status = "Full"
+note = "whenever you cast a Hero spell, draw a card (card code in impls/t0_captain.rs)"
+
+["Quicksilver, Speedster"]
+status = "Full"
+note = "flash, double strike, haste; while it is tapped the AI may cast permanent spells at the end of the turn (as_flash; instants and sorceries are not cast at a new time, which changes little for this deck) (card code in impls/t0_captain.rs)"
+
+["Raise the Palisade"]
+dsl = []
+tags = ""
+status = "Full"
+note = "names the creature type that keeps the most value (ours kept, theirs bounced) and returns every other creature to its owner's hand; tokens are lost; cast only when it gains at least 5 points of board value (card code in impls/t0_captain.rs)"
+
+["Shang-Chi and the Ten Rings"]
+status = "Full"
+note = "first strike; each card you draw puts a +1/+1 counter on him; the tenth counter draws five cards and gains 5 life (a tenth counter from another source pays off at the next draw)"
+
+["She-Hulk, Wallbreaker"]
+status = "Full"
+note = "trample; other Heroes you control have trample (grant_kw); a Hero that becomes blocked gets a +1/+1 counter per blocker (card code in impls/t0_captain.rs)"
+
+["Winter Soldier, Reborn Avenger"]
+status = "Full"
+note = "attacks: the best creature card with mana value up to his power returns from your graveyard to the battlefield, a Hero with an extra +1/+1 counter (card code in impls/t0_captain.rs)"
+
+["Heroic Sacrifice"]
+dsl = []
+tags = ""
+status = "Full"
+note = "the AI casts it as the defender after blocks when the unblocked damage is dangerous or blockers would die: all combat damage to you and your creatures goes to your sturdiest creature; if that dies its counters move to another creature and you draw (card code in impls/t0_captain.rs)"
+
+# ---- t0-anikthea: the Anikthea precon (card code in impls/t0_anikthea.rs, tests in tests/cards_t0_anikthea.rs)
+["Battle at the Helvault"]
+tags = ""
+status = "Full"
+note = "Saga frame (lore on entering and after the draw step, sacrificed after III): I and II exile each opponent's best non-Saga, nonland permanent until it leaves (the AI exiles none of its own: 'up to one'), III an 8/8 legendary Angel with flying, vigilance, indestructible"
+
+["The Binding of the Titans"]
+status = "Full"
+note = "Saga: I each player mills three, II exile up to two cards from graveyards (opponents' creature cards first, never its own) and gain 1 life per creature card, III the best creature or land card from your graveyard to hand"
+
+["The Eldest Reborn"]
+status = "Full"
+note = "Saga: I each opponent sacrifices the creature or planeswalker it values least, II each opponent discards a card, III the best creature or planeswalker card from any graveyard onto the battlefield under your control"
+
+["The Mending of Dominaria"]
+status = "Full"
+note = "Saga: I and II mill two then return the best creature card to hand, III every land card in the graveyard onto the battlefield (landfall for each), then the graveyard is shuffled into the library"
+
+["Battle for Bretagard"]
+tags = ""
+status = "Full"
+note = "Saga: I a 1/1 white Human Warrior, II a 1/1 green Elf Warrior, III one more of each creature token with a different name (types and colours) and one more of each kind of artifact token (Treasure, Food, Clue: counters in this engine)"
+
+["Binding the Old Gods"]
+tags = ""
+status = "Full"
+note = "Saga: I destroys the opponent's best nonland permanent, II fetches the best Forest-typed land tapped, III gives your creatures deathtouch until end of turn"
+
+["Love Song of Night and Day"]
+tags = ""
+status = "Full"
+note = "Saga with read ahead (the AI starts at II, or III with three creatures): I you and the weakest opponent draw two, II a 1/1 white Bird with flying, III +1/+1 counters on your two best creatures"
+
+["Anikthea, Hand of Erebos"]
+dsl = []
+status = "Full"
+note = "menace (keyword) and menace for your other enchantment creatures (grant_kw); entering or attacking exiles the best non-Aura enchantment card from your graveyard (a legend only if it isn't out) and makes a token copy that is a 3/3 black Zombie creature besides its other types"
+
+["Abundance"]
+status = "Full"
+note = "replaces each of your draws (zones::draw calls abundance_draw): chooses land while you have fewer than eight lands in play and hand, else nonland, reveals to the first of that kind into your hand, the rest on the bottom in the order revealed"
+
+["Cacophony Unleashed"]
+status = "Full"
+note = "if cast, destroys all nonenchantment creatures (cast only when that takes more from the opponents than from you); whenever it or another enchantment you control enters it is a legendary 6/6 menace deathtouch creature until end of turn"
+
+["Boon of the Spirit Realm"]
+tags = ""
+status = "Full"
+note = "constellation: a blessing counter on it when it or another enchantment you control enters; your creatures get +1/+1 per blessing counter (creature_pt)"
+
+["Khalni Heart Expedition"]
+dsl = []
+status = "Full"
+note = "landfall: a quest counter; with three, the AI removes them, sacrifices it and fetches two basic lands tapped (a card option, any main phase)"
+
+["Mirari's Wake"]
+status = "Full"
+note = "+1/+1 for your creatures is the compiled anthem; every land of yours makes one more mana of its own colours (land_mana +1; a dual makes one extra of either colour)"
+
+["Composer of Spring"]
+status = "Full"
+note = "constellation: puts the best land from your hand onto the battlefield tapped (landfall); with six or more enchantments the highest-cost creature card instead if you have one"
+
+["Nessian Wanderer"]
+status = "Full"
+note = "constellation: looks at the top three, takes a land into your hand while you have fewer than eight lands in play and hand, the rest on the bottom in random order"
+
+["Doomwake Giant"]
+status = "Full"
+note = "constellation (it or another enchantment you control): creatures your opponents control get -1/-1 until end of turn (those at 0 toughness die)"
+
+["Ondu Spiritdancer"]
+status = "Full"
+note = "an enchantment entering under your control gets a token copy, once each turn (not Auras or legendary permanents)"
+
+["Heliod, God of the Sun"]
+types = "E"
+status = "Full"
+note = "indestructible; a 5/6 creature only with devotion to white 5+ (updated as permanents enter and on state checks); other creatures have vigilance and the {2}{W}{W} Cleric token are the compiled abilities"
+
+["Erebos, Bleak-Hearted"]
+types = "E"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "indestructible; a 5/6 creature only with devotion to black 5+; another creature of yours dying: pay 2 life (above 10 life) to draw; {1}{B}, sacrifice a creature: -2/-1 on an opposing creature with toughness 1 or less"
+
+["Narci, Fable Singer"]
+status = "Full"
+note = "lifelink; sacrificing an enchantment (Sagas after their last chapter, Khalni) draws a card; a Saga's final chapter resolving drains each opponent for the Saga's mana value (saga_final)"
+
+["Greater Tanuki"]
+dsl = []
+status = "Full"
+note = "6/5 trample; channel {2}{G}, discard it: a basic land onto the battlefield tapped (a hand option while it can't be cast yet)"
+
+["Nyx Weaver"]
+status = "Full"
+note = "reach; upkeep mill two is the compiled trigger; {1}{B}{G}, exile it: return the best card in your graveyard to your hand (end of turn or main phase 2)"
+
+["Nyxborn Behemoth"]
+status = "Full"
+note = "costs {X} less (X: total mana value of your noncreature enchantments, at most 10; self_cost); trample; the {1}{G} sacrifice-an-enchantment indestructible ability is the compiled activation"
+
+["Sandwurm Convergence"]
+status = "Full"
+note = "the 5/5 Wurm at your end step is the compiled trigger; creatures with flying can't attack you (combat::attack_limits calls flyer_barred; attacks are at players, so planeswalkers are covered)"
+
+["Orzhov Basilica"]
+tags = "amt=2 c=WB t bounceland"
+status = "Full"
+note = "enters tapped, returns another land you control to your hand (the engine's bounceland rule), taps for {W}{B}"
+
+["Golgari Rot Farm"]
+tags = "amt=2 c=BG t bounceland"
+status = "Full"
+note = "enters tapped, returns another land you control to your hand (the engine's bounceland rule), taps for {B}{G}"
+
+["Calix, Destiny's Hand"]
+dsl = []
+status = "Full"
+note = "loyalty 4; +1 look at four, take an enchantment, rest on the bottom at random; -3 exile the best opposing creature/enchantment (oring_exile) until a linked enchantment you control leaves (every deck enchantment returns it through a leaves hook on the shared Oring data); -7 return all enchantment cards from the graveyard (an Aura with no host stays in the graveyard)"
+
+["Demon of Fate's Design"]
+status = "Full"
+note = "flying, trample; once a turn cast an enchantment from hand for life equal to its mana value (options entry, only above 12 life after paying); the {2}{B} sacrifice-another-enchantment +X/+0 is the compiled activation"
+
+["Cunning Rhetoric"]
+status = "Full"
+note = "whenever an opponent attacks you, exile the top card of its library into your hand, marked as playable for good (impulse_long); options play it as a land or cast it paying its mana value in generic mana (any colour); attacks at planeswalkers are attacks at the player in this engine"
+
+["Ghoulish Impetus"]
+status = "Full"
+note = "Aura: +1/+1 and deathtouch; the enchanted creature is goaded by the Aura's controller while attached (t0_zurgo::goaded_by); returns at the next end step when the creature dies (host_dies -> eot_returns)"
+# ---- Tier 0: Zurgo Stormrender, Mardu Surge (card code in impls/t0_zurgo.rs)
+["Zurgo Stormrender"]
+status = "Full"
+note = "Mobilize 1 (a tapped and attacking 1/1 red Warrior, sacrificed at the next end step); whenever a creature token you control leaves the battlefield (dies, exiled, myriad copies), draw a card if it was attacking, otherwise each opponent loses 1"
+
+["Divine Visitation"]
+status = "Full"
+note = "creature tokens you would create are 4/4 white Angels with flying and vigilance instead, in make_tokens (token copies from myriad and Redoubled Stormsinger too); Kaya's doubling applies first"
+
+["Eliminate the Competition"]
+dsl = []
+status = "Full"
+note = "the AI sacrifices X creatures (the cheapest, for the best targets while each trade gains value) as the cost, then destroys X target creatures when it resolves"
+
+["Legion Loyalty"]
+status = "Full"
+note = "every creature you control has myriad (engine: attack_keywords); needs two or more opponents to do anything"
+
+["Shadow Summoning"]
+status = "Full"
+note = "two tapped 1/1 white Spirit tokens with flying"
+
+["Will of the Mardu"]
+status = "Full"
+note = "modes in printed order: Warrior tokens equal to the creatures the player with the most creatures controls, then damage equal to your creatures to the best creature it kills; both with your commander out, else the better one"
+
+["Ainok Strike Leader"]
+tags = "warrior pow=2 tgh=2"
+dsl = []
+status = "Full"
+note = "attacking with it and/or your commander makes a tapped and attacking 1/1 red Goblin for each opponent, attacking that player; sacrifice: creature tokens gain indestructible (the AI's protector table, against a wipe or targeted removal on a token)"
+
+["Angel of Invention"]
+status = "Full"
+note = "flying, vigilance, lifelink; Fabricate 2 (two Servos, or counters on a lone Angel); other creatures get +1/+1"
+
+["Blade of Selves"]
+status = "Full"
+note = "Equip {4}; the equipped creature has myriad (token copies attacking the other opponents, exiled at end of combat)"
+
+["Chittering Witch"]
+status = "Full"
+note = "enters: a Rat for each opponent; {1}{B}, sacrifice a creature: -2/-2, aimed at a creature it kills that is worth more than the sacrifice"
+
+["Goldlust Triad"]
+status = "Full"
+note = "flying; myriad; combat damage to a player makes a Treasure"
+
+["Grenzo, Havoc Raiser"]
+status = "Full"
+note = "whenever a creature you control deals combat damage to a player: goad a creature of theirs (until our next turn, it attacks each combat if able and another player), or exile their top card and cast it this turn with mana of any colour (a land is only exiled)"
+
+["Ironwill Forger"]
+status = "Full"
+note = "Lieutenant: at the beginning of combat on our turn, with our commander out, an attacking nonlegendary creature gains myriad until end of turn (the attackers are already declared when it runs)"
+
+["Kaya, Geist Hunter"]
+dsl = []
+status = "Full"
+note = "+1: creatures you control gain deathtouch until end of turn and a +1/+1 counter on the biggest token; -2: tokens are doubled this turn (in make_tokens and the Treasure/Food/Clue makers); -6: exile all graveyards, a flying Spirit for each card"
+
+["Mindblade Render"]
+status = "Full"
+note = "whenever an opponent is dealt combat damage by a Warrior, draw a card and lose 1 life, once for each combat"
+
+["Myr Battlesphere"]
+status = "Full"
+note = "enters: four Myr; attacks: taps every untapped Myr, +X/+0 and X damage to the player it attacks"
+
+["Neriv, Crackling Vanguard"]
+status = "Full"
+note = "flying, deathtouch; enters: two Goblins; attacks: exile cards equal to the differently named tokens we control (token types, Treasure, Food, Clue); they come to the hand for any turn a commander attacked, and go back to exile at its end (a land stays in hand)"
+
+["Redoubled Stormsinger"]
+status = "Full"
+note = "first strike; attacks: a tapped and attacking copy of each creature token that entered this turn, sacrificed at the next end step"
+
+["Twilight Drover"]
+dsl = []
+status = "Full"
+note = "a +1/+1 counter whenever any creature token leaves the battlefield; {2}{W}, remove a counter: two 1/1 flying Spirits (second main phase or end of turn)"
+
+["Windbrisk Heights"]
+status = "Full"
+note = "enters tapped, hideaway 4 (the best nonland card of the top four, the rest to the bottom at random); {W},{T}: play the hidden card free after attacking with three or more creatures. Only when played as a land drop"
+
+["Within Range"]
+status = "Full"
+note = "enters: two 1/1 red Warriors; whenever we attack, each opponent loses life equal to the creatures attacking them (resolved after the other attack triggers, so their tokens count)"
+
+["Commander's Insignia"]
+status = "Full"
+note = "creatures we control get +1/+1 for each time our commander was cast from the command zone (the commander tax divided by two)"
+
+["Bone Devourer"]
+dsl = []
+status = "Full"
+note = "enters with a +1/+1 counter for each creature that died this turn; when it dies, draw X and lose X life, X its counters"
+
+["Thalisse, Reverent Medium"]
+dsl = []
+status = "Full"
+note = "at the beginning of each end step, X 1/1 flying Spirits, X the tokens you created this turn (Treasure, Food and Clues included)"
+
+["Sungrass Prairie"]
+tags = "c=WG"
+status = "Full"
+note = "{1},{T}: add {G}{W} is a filter: net one mana of green or white (it was two free mana)"
+
+["Tainted Field"]
+status = "Full"
+note = "taps for colourless; {W} or {B} only while you control a Swamp (t0_anikthea land_cols)"
+
+["Tainted Wood"]
+status = "Full"
+note = "taps for colourless; {B} or {G} only while you control a Swamp (t0_anikthea land_cols)"
+
+["Fetid Heath"]
+status = "Full"
+note = "filter land: coloured mana ({W}/{B}) only with another land that makes {W} or {B} to pay for it (t0_zurgo land_cols)"
+
+["Ferrous Lake"]
+tags = "c=UR"
+status = "Full"
+note = "{1},{T}: add {U}{R} is a filter: net one mana of blue or red (it was two free mana)"
+
+["Cascade Bluffs"]
+status = "Full"
+note = "filter land: {U}/{R} only with another land that makes {U} or {R} to pay for it (t0_zurgo land_cols)"
+
+["Temple of the False God"]
+status = "Full"
+note = "taps for {C}{C} only while you control five or more lands (t0_giada dyn_mana_land)"
+
+["Speaker of the Heavens"]
+dsl = []
+status = "Full"
+note = "{T}: a 4/4 flying Angel, only with 47+ life and only at sorcery speed (the compiled ability had no life condition)"
+
+["Idol of Oblivion"]
+dsl = []
+status = "Full"
+note = "{T}: draw a card only if you created a token this turn (the compiled ability had no condition); {8},{T}, sacrifice: a 10/10 Eldrazi"
