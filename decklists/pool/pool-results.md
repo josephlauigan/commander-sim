@@ -70,7 +70,7 @@ Apparition; Brago gained Lyra, Angel of Serenity and Resplendent Angel. Meren is
 | Before (2,000 games) | Sythis 41, Meren 23, Brago 22, Windgrace 21, Kaalia 18 | Sythis 41, Meren 24, Brago 23, Kaalia 19, Windgrace 18 |
 | After (1,000 games) | Sythis 27, Kaalia 27, Windgrace 25, Brago 25, Meren 22 | Sythis 26, Brago 25, Windgrace 25, Kaalia 24, Meren 24 |
 
-Ordering (conservative): T2 into T1 25.9% before (1,000 per deck), T3 into T2 26.8% before; after: see
+Ordering (conservative): T2 into T1 25.9% before (1,000 per deck), 24.5% after (500 per deck, within noise of 25%); T3 into T2 26.8% before, not re-measured after; see
 `audit/pool/2026-10-14-t2/final-ordering-t2.txt` (500 per deck). Raw outputs are in `audit/pool/2026-10-14-t2/`.
 
 Games get shorter as the brackets go up (15 rounds in T2 to under 8 in T5), with few timeouts above T2.
