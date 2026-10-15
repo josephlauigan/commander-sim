@@ -517,6 +517,16 @@ fn calix_minus_three_exiles_until_the_linked_enchantment_leaves() {
 }
 
 #[test]
+fn calix_link_adds_no_hooks_to_shared_enchantments() {
+    // Sythis's deck plays the same enchantments; Calix must not change them
+    let g = tbl();
+    for name in ["Enchantress's Presence", "Sandwurm Convergence", "Mirari's Wake"] {
+        let hook = g.registry.get(card(&g, name)).and_then(|i| i.leaves);
+        assert!(hook.is_none(), "{name} got a leaves hook");
+    }
+}
+
+#[test]
 fn calix_minus_seven_returns_every_enchantment_card() {
     let mut g = tbl();
     let c = perm(&mut g, P0, "Calix, Destiny's Hand");

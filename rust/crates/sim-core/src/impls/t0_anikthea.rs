@@ -1289,12 +1289,7 @@ fn calix_link(g: &Game, p: PlayerId) -> Option<PermId> {
         .perms
         .iter()
         .copied()
-        .filter(|&m| {
-            on_bf(g, m)
-                && g.perm(m).cd.is_some_and(|c| {
-                    is_ench(g, c) && !is_saga(g, c) && g.registry.get(c).is_some_and(|i| i.leaves.is_some())
-                })
-        })
+        .filter(|&m| on_bf(g, m) && g.perm(m).cd.is_some_and(|c| is_ench(g, c) && !is_saga(g, c)))
         .collect();
     // the one least likely to leave: the cheapest, not an Aura or a God that can die
     max_by(&cands, |m| {
@@ -1343,6 +1338,7 @@ fn calix_minus3_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
 /// -3: exile the best opposing creature or enchantment until the linked enchantment you control leaves
 fn calix_minus3(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let Some(link) = calix_link(g, p) else { return Ok(()) };
+    g.perm_mut(link).data.set(DataKey::CalixLink, Val::Int(1));
     oring_exile(g, link, p, |g, m| calix_target_ok(g, m), false, false)
 }
 
@@ -1380,40 +1376,16 @@ static CALIX_ABS: [super::common::WalkerAb; 3] = [
     super::common::WalkerAb { delta: -7, label: "return all enchantments", val: calix_ult_val, eff: calix_ult },
 ];
 
-/// the deck's enchantments that have no `leaves` hook of their own get one that returns what they exiled for Calix
-fn calix_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
-    oring_return(g, src)
+/// engine::zones::leave: an enchantment linked by Calix's -3 (`DataKey::CalixLink`) returns what it holds when it
+/// leaves. Done here rather than with per-card `leaves` hooks, so the same enchantments in other decks (Sythis shares
+/// many) keep their own behaviour.
+pub fn calix_link_left(g: &mut Game, m: PermId) -> Res {
+    if g.perm(m).data.get(DataKey::CalixLink).is_some() {
+        oring_return(g, m)?;
+    }
+    Ok(())
 }
 
 pub fn register_calix(r: &mut Registry, db: &CardDb) -> Result<(), String> {
-    super::common::walker(r, db, CALIX, &CALIX_ABS)?;
-    for name in [
-        "Abundance",
-        "Battle for Bretagard",
-        "Binding the Old Gods",
-        "Boon of the Spirit Realm",
-        "Cacophony Unleashed",
-        "Cast Out",
-        "Cunning Rhetoric",
-        "Dreadhorde Invasion",
-        "Enchantress's Presence",
-        "Felidar Retreat",
-        "Font of Fertility",
-        "Ghoulish Impetus",
-        "Grasp of Fate",
-        "Khalni Heart Expedition",
-        "Mirari's Wake",
-        "Omen of the Hunt",
-        "Omen of the Sun",
-        "Sandwurm Convergence",
-        "Sigil of the Empty Throne",
-        "Starfield of Nyx",
-    ] {
-        let c = r.card(db, name)?;
-        if c.leaves.is_none() {
-            c.leaves = Some(calix_leaves);
-            *c = c.at_once(crate::hooks::Event::Leaves);
-        }
-    }
-    Ok(())
+    super::common::walker(r, db, CALIX, &CALIX_ABS)
 }

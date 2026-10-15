@@ -163,6 +163,8 @@ pub enum DataKey {
     Witch,
     /// Tier 0 Stella deck cards: Midnight Clock's hour counters (Int), Octavia's base 8/8 mark (Stamp)
     T0Stella,
+    /// Calix, Destiny's Hand: this enchantment holds a -3 exile (DataKey::Oring) that returns when it leaves
+    CalixLink,
 }
 
 /// A value in per-card state.

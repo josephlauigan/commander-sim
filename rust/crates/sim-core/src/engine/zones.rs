@@ -535,6 +535,9 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
     if on && g.perm(m).token {
         crate::impls::t0_zurgo::token_left(g, p, m)?; // t0-zurgo: Zurgo Stormrender, Twilight Drover
     }
+    if on {
+        crate::impls::t0_anikthea::calix_link_left(g, m)?; // Calix's -3 link
+    }
     Ok(())
 }
 
