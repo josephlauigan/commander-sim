@@ -1,0 +1,88 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Ghostly Prison [pool] E 2W :: (no tags)
+   Norn's Annex [pool] A 3WW :: (no tags)
+   Archangel of Tithes [pool] C 1WWW :: pow=3 tgh=5 fly
+   Windborn Muse [pool] C 3W :: pow=2 tgh=3 fly
+   Baird, Steward of Argive [pool] C 2WW :: leg human pow=2 tgh=4 vig
+   Day of Judgment [scryfall+dsl] S 2WW :: wipe=destroy
+      ability: spell  -> destroy
+   Fumigate [scryfall+dsl] S 3WW :: wipe=destroy
+      ability: spell  -> destroy, gain_life
+   Council's Judgment [pool] S 1WW :: (no tags)
+   Mother of Runes [scryfall] C W :: human pow=1
+      not modeled: {T}: Target creature you control gains protection from the color of your choice until end of turn.
+   Flawless Maneuver [scryfall+dsl] I 2W :: (no tags)
+      ability: spell  -> grant
+      not modeled: If you control a commander, you may cast ~ without paying its mana cost.
+Swaps: Stormfront Riders -> Ghostly Prison; Beatrix, Loyal General -> Norn's Annex; Unyielding Gatekeeper -> Archangel of Tithes; Ennis, Debate Moderator -> Windborn Muse; Explorer's Scope -> Baird, Steward of Argive; White Mage's Staff -> Wrath of God; Unfinished Business -> Day of Judgment; Rootborn Defenses -> Fumigate; Adelbert Steiner -> Swords to Plowshares; Jocasta, Automaton Avenger -> Path to Exile; Secure the Scene -> Council's Judgment; Recommission -> Generous Gift; Nim Deathmantle -> Mother of Runes; Helitrooper -> Flawless Maneuver
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  15.8% ->  20.6%  (delta +4.9 pts, noise ±2.3, paired)   n=2000
+               eliminated by (variant): Lathril 14.2%  Isshin 18.9%  Teysa Karlov 14.4%  Light-Paws 21.2%  Tatyova 10.4%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          15.8% ->  20.6%  +4.8pt   ±2.4*
+    Rounds survived (or game length)                   9.73 ->  10.61   +0.88  ±0.19*
+
+  Mana & consistency
+    Extra mulligans per game                           0.20 ->   0.23   +0.02  ±0.04 
+    Missed land drops, turns 1-5                       0.98 ->   0.93   -0.05  ±0.06 
+    Mana available on your turn 4                      3.96 ->   3.98   +0.02  ±0.07 
+    Mana available on your turn 6                      5.62 ->   5.65   +0.03  ±0.12 
+
+  Speed
+    Games where the game plan came online             76.7% ->  78.0%  +1.3pt   ±2.6 
+    Turn the game plan came online                     5.43 ->   5.67   +0.25  ±0.15*
+    Turn the commander first resolved                  2.12 ->   2.13   +0.00  ±0.03 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.79 ->  14.15   +1.36  ±0.49*
+    Tutors resolved per game                           2.73 ->   2.91   +0.18  ±0.09*
+    Spells cast per game                              13.72 ->  15.24   +1.53  ±0.46*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.53 ->   1.03   +0.50  ±0.06*
+    Board wipes cast                                   0.09 ->   0.30   +0.21  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.62 ->   0.68   +0.06  ±0.05*
+    Your spells countered                              0.13 ->   0.16   +0.03  ±0.03*
+
+  Threat & pressure
+    Damage dealt to opponents per game                31.00 ->  32.16   +1.16  ±2.09 
+      ...of which combat damage                       29.21 ->  30.13   +0.92  ±1.95 
+      ...of which other triggers                       1.78 ->   2.03   +0.25  ±0.24*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+    better - Rounds survived (or game length) (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Turn the game plan came online (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Spot removal cast (both profiles)
+    better - Board wipes cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (both profiles)
+    worse  - Your spells countered (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(604s total)

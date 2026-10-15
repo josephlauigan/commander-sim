@@ -1,0 +1,83 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Ghostly Prison [pool] E 2W :: (no tags)
+   Norn's Annex [pool] A 3WW :: (no tags)
+   Archangel of Tithes [pool] C 1WWW :: pow=3 tgh=5 fly
+   Windborn Muse [pool] C 3W :: pow=2 tgh=3 fly
+   Baird, Steward of Argive [pool] C 2WW :: leg human pow=2 tgh=4 vig
+   Day of Judgment [scryfall+dsl] S 2WW :: wipe=destroy
+      ability: spell  -> destroy
+   Fumigate [scryfall+dsl] S 3WW :: wipe=destroy
+      ability: spell  -> destroy, gain_life
+Swaps: Stormfront Riders -> Ghostly Prison; Beatrix, Loyal General -> Norn's Annex; Unyielding Gatekeeper -> Archangel of Tithes; Ennis, Debate Moderator -> Windborn Muse; Explorer's Scope -> Baird, Steward of Argive; White Mage's Staff -> Wrath of God; Unfinished Business -> Day of Judgment; Rootborn Defenses -> Fumigate
+
+=== Cloud vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  13.8% ->  20.1%  (delta +6.3 pts, noise ±2.3, paired)   n=2000
+               eliminated by (variant): Kaalia of the Vast 20.5%  Brago 16.8%  Sythis 11.7%  Lord Windgrace 15.3%  Meren of Clan Nel Toth 13.0%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          13.8% ->  20.1%  +6.3pt   ±2.4*
+    Rounds survived (or game length)                  11.73 ->  12.77   +1.03  ±0.21*
+
+  Mana & consistency
+    Extra mulligans per game                           0.20 ->   0.22   +0.02  ±0.04 
+    Missed land drops, turns 1-5                       0.98 ->   0.94   -0.04  ±0.06 
+    Mana available on your turn 4                      4.00 ->   4.01   +0.02  ±0.07 
+    Mana available on your turn 6                      5.51 ->   5.54   +0.03  ±0.11 
+
+  Speed
+    Games where the game plan came online             78.0% ->  77.5%  -0.5pt   ±2.6 
+    Turn the game plan came online                     5.87 ->   6.23   +0.36  ±0.18*
+    Turn the commander first resolved                  2.13 ->   2.12   -0.00  ±0.03 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.76 ->  16.29   +1.53  ±0.45*
+    Tutors resolved per game                           3.47 ->   3.65   +0.18  ±0.10*
+    Spells cast per game                              17.04 ->  18.53   +1.49  ±0.49*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.60 ->   0.66   +0.06  ±0.05*
+    Board wipes cast                                   0.12 ->   0.38   +0.26  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           1.62 ->   1.67   +0.05  ±0.10 
+    Your spells countered                              0.19 ->   0.24   +0.05  ±0.03*
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.23 ->  36.33   +4.10  ±2.00*
+      ...of which combat damage                       30.70 ->  34.48   +3.78  ±1.89*
+      ...of which other triggers                       1.52 ->   1.85   +0.33  ±0.21*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+    better - Rounds survived (or game length) (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Turn the game plan came online (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Spot removal cast (both profiles)
+    better - Board wipes cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your spells countered (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+    better -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(676s total)
