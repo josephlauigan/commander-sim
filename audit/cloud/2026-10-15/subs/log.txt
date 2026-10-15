@@ -1,0 +1,6 @@
+12:41 TITAN t1 [loose       ] win  22.1% ->  21.6%  (delta -0.4 pts, noise ±2.1, paired)   n=2000
+12:41 TITAN t2 skipped (t1 delta -0.4)
+12:53 KORHAVEN t1 [loose       ] win  22.1% ->  19.6%  (delta -2.5 pts, noise ±2.1, paired)   n=2000
+12:53 KORHAVEN t2 skipped (t1 delta -2.5)
+13:11 SUBS t1 [loose       ] win  22.1% ->  20.6%  (delta -1.5 pts, noise ±1.9, paired)   n=2000
+13:23 SUBS t2 [loose       ] win  19.1% ->  18.2%  (delta -0.9 pts, noise ±1.8, paired)   n=2000
