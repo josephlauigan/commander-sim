@@ -118,3 +118,31 @@ Fencing Ace and Mirran Crusader were Partial (printed keywords only) and are now
 
 S-lite was skipped (S showed no gain). Tier 2 runs were skipped when Tier 1 gained under +3. Outputs:
 `audit/cloud/2026-10-15/` (AI fixes, D, R, D+R) and `audit/cloud/2026-10-15/pkg2/`.
+
+---
+
+# 2026-10-15: Package M (mana), designed, not tested (`m-mana.swaps`, `m-lite.swaps`)
+
+Built against the current list (C4 + D + AI fixes). Smoke-run only (200 games, T1): both load, pre-flight shows no
+WARNING, no result claimed. Prices: Scryfall batch, 10/15. None owned (nothing in bulk/binder; the owned rocks Moss
+Diamond, Talisman of Conviction, Chromatic Lantern, Star Compass are outside white's colour identity or in other decks).
+No Game Changer added (Bracket 3 unchanged).
+
+| Out | In | Price | Why |
+|---|---|---|---|
+| Unbreakable Formation (cast 2.9% when drawn) | Worn Powerstone | $0.38 | taps for {C}{C}; late-game equip mana (+0.7 mana on turn 8 in a probe) |
+| Ultimate Magic: Holy (11.3%) | Foundry Inspector | $0.39 | artifact spells cost {1} less: 22 artifacts incl. every Sword; cast 84% when drawn in probe |
+| Secure the Scene (stuck 49.5%) | Burnished Hart | $0.30 | 3 mana for two basics: ramp and thinning (Full-auto, not hand-modeled) |
+| Recommission (stuck 44%) | Weathered Wayfarer | $2.44 | {W} one-drop; fetches a land when behind on lands |
+| Veteran's Powerblade (stuck 36%) | Stoneforge Mystic | $29.43 | fetches an Equipment; {1}{W},{T} puts one onto the battlefield, skipping its cost |
+
+**M-lite** = first three rows, about $1.07. **M** = all five, about $33 (Stoneforge is $29 of it; drop its row for
+about $3.5).
+
+Probed and rejected: Everflowing Chalice (AI never casts it: 0% in 500 games), Thran Dynamo and Hedron Archive (stuck
+50%, cast round 8), Pearl Medallion (white spells only, Equipment is colourless), Mox Amber ($85), Mana Vault, Chrome
+Mox, Ancient Tomb (Game Changers, $110+), Marble Diamond (tapped, same as Fellwar), Talisman of Conviction (R).
+Caveat from the probe: the new rocks are cast late (round 6.5-8), so mana on turn 4 did not move (3.95 vs 3.99);
+the gain, if any, is turn 6-8. Cheap early mana is scarce in mono-white.
+
+Test: paired look-ahead, `--swap` per line, 2,000 games per tier, T1 first, T2 only if T1 gains +3.
