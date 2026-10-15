@@ -199,7 +199,6 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     card_name(g, a) == Some(ANTMAN) && epow(g, b) > epow(g, a)
 }
 
-
 /// Ant-Man: whenever he deals combat damage to a player, create that many Treasure tokens
 fn antman_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, dmg: i32) -> Res {
     if a == src && owner(g, src) == p && dmg > 0 && trigger_window(g, p, Some(src), "create Treasures", Some(4.0))? {
@@ -261,7 +260,8 @@ fn quinjet_trigger(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if heroes(g, &g.player(p).hand).is_none() && heroes(g, &g.player(p).gy).is_none() {
         return Ok(());
     }
-    if !trigger_window(g, p, Some(src), "Hero from hand to the battlefield, or from the graveyard to hand", Some(5.0))? {
+    if !trigger_window(g, p, Some(src), "Hero from hand to the battlefield, or from the graveyard to hand", Some(5.0))?
+    {
         return Ok(());
     }
     if let Some(c) = heroes(g, &g.player(p).hand) {
@@ -325,7 +325,11 @@ fn folk_hero(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 
 /// Jarvis: whenever you cast a Hero spell, draw a card
 fn jarvis(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
-    if owner(g, src) == caster && live(g, src) && hero_card(g, c) && trigger_window(g, caster, Some(src), "draw a card", Some(4.0))? {
+    if owner(g, src) == caster
+        && live(g, src)
+        && hero_card(g, c)
+        && trigger_window(g, caster, Some(src), "draw a card", Some(4.0))?
+    {
         draw(g, caster, 1, false)?;
     }
     Ok(())
@@ -433,7 +437,11 @@ fn love_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dm
 
 // ------------------------------------------------------------------ Hercules
 fn hercules_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
-    if owner(g, src) == p && atk.contains(&src) && trigger_window(g, p, Some(src), "+1/+1 counter, indestructible", Some(5.0))? && live(g, src) {
+    if owner(g, src) == p
+        && atk.contains(&src)
+        && trigger_window(g, p, Some(src), "+1/+1 counter, indestructible", Some(5.0))?
+        && live(g, src)
+    {
         crate::cardcode::add_counters(g, src, 1);
         add_kw(g, src, "indestructible");
     }
@@ -442,7 +450,11 @@ fn hercules_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Play
 
 /// Hercules was dealt damage in combat and survived: the first time each turn, that many +1/+1 counters
 fn hercules_damaged(g: &mut Game, m: PermId, dmg: i32) {
-    if dmg > 0 && live(g, m) && card_name(g, m) == Some(HERCULES) && once_per_turn(g, owner(g, m), intern(&format!("herc_{}", m.0))) {
+    if dmg > 0
+        && live(g, m)
+        && card_name(g, m) == Some(HERCULES)
+        && once_per_turn(g, owner(g, m), intern(&format!("herc_{}", m.0)))
+    {
         crate::cardcode::add_counters(g, m, dmg);
         crate::glog!(g, "    Hercules gets {} +1/+1 counters", dmg);
     }
@@ -600,16 +612,15 @@ fn shang_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     if trigger_window(g, p, Some(src), "+1/+1 counter", Some(3.0))? && live(g, src) {
-        let before = g.perm(src).plus;
         crate::cardcode::put_plus(g, src, 1);
-        shang_ten(g, src, p, before)?;
+        shang_ten(g, src, p)?;
     }
     Ok(())
 }
 
 /// the tenth +1/+1 counter went on (the count crossed ten): draw five cards and gain 5 life, once
-fn shang_ten(g: &mut Game, src: Src, p: PlayerId, before: i32) -> Res {
-    if before < 10 && g.perm(src).plus >= 10 && !g.perm(src).data.truthy(DataKey::Used) {
+fn shang_ten(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if g.perm(src).plus >= 10 && !g.perm(src).data.truthy(DataKey::Used) {
         g.perm_mut(src).data.set(DataKey::Used, Val::Bool(true));
         if trigger_window(g, p, Some(src), "tenth counter: draw five cards, gain 5 life", Some(7.0))? {
             draw(g, p, 5, false)?;
@@ -642,9 +653,12 @@ pub fn end_returns(g: &mut Game) -> Res {
     }
     for (o, gift, hc) in std::mem::take(&mut g.t0c.gift_due) {
         let Some(i) = g.player(o).gy.iter().position(|&x| x == gift) else { continue };
-        let host = g.players.iter().filter(|q| q.alive).flat_map(|q| q.perms.iter().copied()).find(|&m| {
-            live(g, m) && g.perm(m).cd == Some(hc) && g.is_creature(m)
-        });
+        let host = g
+            .players
+            .iter()
+            .filter(|q| q.alive)
+            .flat_map(|q| q.perms.iter().copied())
+            .find(|&m| live(g, m) && g.perm(m).cd == Some(hc) && g.is_creature(m));
         let Some(host) = host else { continue };
         g.player_mut(o).gy.remove(i);
         g.attach_to = Some(host);
@@ -692,7 +706,6 @@ fn avenge_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     if g.t0c.attacked.iter().any(|x| x.1 == p && x.0 != p) { -2 } else { 0 }
 }
 
-
 /// Avenge: destroy all creatures; you gain 1 life for each creature destroyed this way
 fn avenge(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let all: Vec<PermId> =
@@ -725,7 +738,8 @@ fn heroic_return_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// Heroic Return: return a creature card from your graveyard to the battlefield; a Hero enters with two more counters
 fn heroic_return(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let cands: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).creature).collect();
-    if let Some(best) = max_by(&cands, |c| hero_worth(g, c) + g.db.get(c).pow as f64 * 0.2 + if hero_card(g, c) { 2.0 } else { 0.0 })
+    if let Some(best) =
+        max_by(&cands, |c| hero_worth(g, c) + g.db.get(c).pow as f64 * 0.2 + if hero_card(g, c) { 2.0 } else { 0.0 })
     {
         let i = g.player(p).gy.iter().position(|&x| x == best).unwrap();
         g.player_mut(p).gy.remove(i);
@@ -808,7 +822,13 @@ fn wave_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
         return Ok(vec![]);
     }
     let value = |g: &Game, q: PlayerId| -> f64 {
-        g.player(q).perms.iter().copied().filter(|&m| live(g, m) && art_or_ench(g, m)).map(|m| pval(g, m).max(0.5)).sum()
+        g.player(q)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| live(g, m) && art_or_ench(g, m))
+            .map(|m| pval(g, m).max(0.5))
+            .sum()
     };
     let theirs: f64 = g.opps(p).map(|q| value(g, q)).sum();
     let swing = theirs - value(g, p);
@@ -879,12 +899,14 @@ fn tower_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-
 // ------------------------------------------------------------------ Heroic Sacrifice
 /// the creature that soaks the damage: the sturdiest one we have (a token or a cheap one first among equals)
 fn sac_pick(g: &Game, p: PlayerId) -> Option<PermId> {
     let cr: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
-    max_by(&cr, |m| etgh(g, m) as f64 * 2.0 - pval(g, m) * 0.5 + if crate::engine::values::indestructible(g, m) { 20.0 } else { 0.0 })
+    max_by(&cr, |m| {
+        etgh(g, m) as f64 * 2.0 - pval(g, m) * 0.5
+            + if crate::engine::values::indestructible(g, m) { 20.0 } else { 0.0 }
+    })
 }
 
 /// Heroic Sacrifice (instant): until end of turn all damage that would be dealt to you and your creatures goes to the
@@ -894,7 +916,12 @@ fn sac_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if let Some(t) = sac_pick(g, p) {
         g.t0c.sac = Some((p, t, g.turn_stamp()));
         g.t0c.sac_dmg = 0;
-        crate::glog!(g, "    Heroic Sacrifice: damage to {} and their creatures goes to {}", pname(g, p), g.perm(t).name);
+        crate::glog!(
+            g,
+            "    Heroic Sacrifice: damage to {} and their creatures goes to {}",
+            pname(g, p),
+            g.perm(t).name
+        );
     }
     Ok("gy")
 }
@@ -948,7 +975,13 @@ pub fn sac_finish(g: &mut Game) -> Res {
             crate::cardcode::add_counters(g, m, plus);
         }
         draw(g, p, 1, false)?;
-        crate::glog!(g, "    Heroic Sacrifice: {} dies; its counters move to {} and {} draws", g.perm(t).name, g.perm(m).name, pname(g, p));
+        crate::glog!(
+            g,
+            "    Heroic Sacrifice: {} dies; its counters move to {} and {} draws",
+            g.perm(t).name,
+            g.perm(m).name,
+            pname(g, p)
+        );
     }
     Ok(())
 }
@@ -966,7 +999,8 @@ fn sac_defend(
     use crate::engine::cast::{castable, on_cast};
     use crate::engine::mana::cost_of;
     use crate::engine::stack::counter_window;
-    if !g.player(d).hand.contains(&c) || !castable(g, d, c, "hand") || g.t0c.sac.is_some_and(|x| x.2 == g.turn_stamp()) {
+    if !g.player(d).hand.contains(&c) || !castable(g, d, c, "hand") || g.t0c.sac.is_some_and(|x| x.2 == g.turn_stamp())
+    {
         return Ok(());
     }
     let (gn, pips) = cost_of(g, d, c);

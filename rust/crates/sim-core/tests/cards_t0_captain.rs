@@ -225,7 +225,8 @@ fn gift_returns_the_creature_then_the_aura_at_the_end_step() {
     assert_ne!(back, host);
     assert!(g.player(P0).perms.iter().all(|&m| &*g.perm(m).name != "Gift of Immortality"), "Aura waits");
     sim_core::cardcode::delayed_end_step(&mut g, P0).unwrap();
-    let gift2 = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Gift of Immortality").expect("Aura back");
+    let gift2 =
+        g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Gift of Immortality").expect("Aura back");
     assert_eq!(g.perm(gift2).attached, Some(back));
 }
 
@@ -348,7 +349,12 @@ fn dismantling_wave_cycles_into_a_global_artifact_enchantment_wipe() {
     let cyc = o.iter().find(|o| o.label.contains("Dismantling Wave")).expect("cycling offered");
     let n = g.player(P0).hand.len();
     perform(&mut g, P0, cyc.act.as_ref().unwrap()).unwrap();
-    assert!(g.player(P1).perms.iter().all(|&m| !g.perm(m).on_bf || m == creature || &*g.perm(m).name == "Hawkeye, Avenging Archer"));
+    assert!(
+        g.player(P1)
+            .perms
+            .iter()
+            .all(|&m| !g.perm(m).on_bf || m == creature || &*g.perm(m).name == "Hawkeye, Avenging Archer")
+    );
     assert!(!g.perm(mine).on_bf, "its own artifact goes too");
     assert!(g.perm(creature).on_bf);
     assert_eq!(g.player(P0).hand.len(), n, "discarded the card, drew one");
@@ -541,4 +547,14 @@ fn avenge_destroys_all_creatures_and_gains_one_life_for_each() {
     cast_free(&mut g, P0, "Avenge");
     assert!(g.players.iter().all(|q| q.perms.iter().all(|&m| !g.is_creature(m) || !g.perm(m).on_bf)));
     assert_eq!(g.player(P0).life, life + 6, "six creatures destroyed");
+}
+
+#[test]
+fn shang_chi_pays_off_at_the_next_draw_when_other_counters_reached_ten() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Shang-Chi and the Ten Rings");
+    sim_core::cardcode::put_plus(&mut g, s, 10);
+    let life = g.player(P0).life;
+    sim_core::engine::zones::draw(&mut g, P0, 1, false).unwrap();
+    assert_eq!(g.player(P0).life, life + 5);
 }

@@ -602,6 +602,7 @@ fn run(
                     if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
                 let tot = crate::cardcode::vorinclex(g, p, k + extra);
                 g.perm_mut(m).plus += tot; // Vorinclex
+                crate::impls::t0_captain::counters_put(g, m, tot); // Captain Marvel
             }
         }
         "pump" => {

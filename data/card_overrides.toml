@@ -7460,11 +7460,11 @@ note = "{T}: {C}, or any colour for a Hero spell; {4},{T}: look at the top three
 
 ["Captain Mar-Vell, Space-Born"]
 status = "Full"
-note = "flying, vigilance; while an opponent has cast a spell this turn the AI may cast creature spells at the end of the turn (as_flash; noncreature spells keep their sorcery timing)"
+note = "flying, vigilance; while an opponent has cast a spell this turn the AI may cast permanent spells at the end of the turn (as_flash; instants and sorceries are not cast at a new time, which changes little for this deck)"
 
 ["Captain Marvel, Apex Avenger"]
 status = "Full"
-note = "flying, double strike, indestructible; +1/+1 counters put on another non-Kree creature of yours (cardcode::put_plus) go on her too; counters from the ability language are not copied"
+note = "flying, double strike, indestructible; +1/+1 counters put on another non-Kree creature of yours (cardcode::put_plus) go on her too; counters from the ability language are copied too"
 
 ["Director Nick Fury"]
 status = "Full"
@@ -7493,7 +7493,7 @@ note = "whenever you cast a Hero spell, draw a card (card code in impls/t0_capta
 
 ["Quicksilver, Speedster"]
 status = "Full"
-note = "flash, double strike, haste; while it is tapped the AI may cast creature spells at the end of the turn (as_flash; noncreature spells keep their sorcery timing) (card code in impls/t0_captain.rs)"
+note = "flash, double strike, haste; while it is tapped the AI may cast permanent spells at the end of the turn (as_flash; instants and sorceries are not cast at a new time, which changes little for this deck) (card code in impls/t0_captain.rs)"
 
 ["Raise the Palisade"]
 dsl = []
@@ -7503,7 +7503,7 @@ note = "names the creature type that keeps the most value (ours kept, theirs bou
 
 ["Shang-Chi and the Ten Rings"]
 status = "Full"
-note = "first strike; each card you draw puts a +1/+1 counter on him; the tenth counter draws five cards and gains 5 life (checked when the counter comes from a draw)"
+note = "first strike; each card you draw puts a +1/+1 counter on him; the tenth counter draws five cards and gains 5 life (a tenth counter from another source pays off at the next draw)"
 
 ["She-Hulk, Wallbreaker"]
 status = "Full"
