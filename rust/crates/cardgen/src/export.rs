@@ -140,6 +140,7 @@ pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
             o.0.push(("commander2".to_string(), J::from(c2.as_str()))); // only decks with two commanders carry it
         }
         o.0.push(("ident".to_string(), J::from(ident_of(d.ident.chars()))));
+        o.0.push(("tiers".to_string(), J::from(d.tiers.iter().map(|t| J::from(t.as_str())).collect::<Vec<J>>())));
         o.0.push(("cards".to_string(), J::from(sorted_strs(cards))));
         mine.push(J::Obj(o));
     }

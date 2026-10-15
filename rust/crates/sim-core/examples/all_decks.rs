@@ -1,4 +1,4 @@
-//! Every deck at every tier, one game each, with the AI given: a check that nothing panics or hangs.
+//! Every deck at every tier it plays (your decks only against their own tiers, data/my_decks.toml), one game each, with the AI given: a check that nothing panics or hangs.
 //!     cargo run --release -p sim-core --example all_decks [adaptive|lookahead] [games per pairing]
 
 use sim_core::settings::AiMode;
@@ -15,6 +15,9 @@ fn main() {
     for t in ["t0", "t1", "t2", "t3", "t4", "t5"] {
         let pool = tier(t);
         for (i, me) in mine.iter().enumerate() {
+            if !deck(me).tiers.iter().any(|x| x == t) {
+                continue;
+            }
             for k in 0..n {
                 let seed = 910_000 + 100 * i as u64 + k;
                 if std::env::var_os("ALL_DECKS_VERBOSE").is_some() {

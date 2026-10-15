@@ -168,6 +168,8 @@ pub struct MyDeck {
     /// a second commander with plain Partner (decks with two commanders only)
     pub commander2: Option<String>,
     pub ident: String,
+    /// the opponent tiers it is simulated against ("t1".."t5"), at least one
+    pub tiers: Vec<String>,
 }
 
 pub fn load_my_decks(p: &Project) -> Result<Vec<MyDeck>, String> {
@@ -188,6 +190,7 @@ pub fn load_my_decks(p: &Project) -> Result<Vec<MyDeck>, String> {
             commander: get("commander")?,
             commander2: v.get("commander2").and_then(|x| x.as_str()).map(|s| s.to_string()),
             ident: get("ident")?,
+            tiers: get_tiers(v, key, &path)?,
         });
     }
     Ok(out)
@@ -216,4 +219,49 @@ pub fn load_hooks(p: &Project) -> Result<BTreeMap<String, Hooks>, String> {
         );
     }
     Ok(out)
+}
+
+/// the tiers a deck of yours is simulated against
+pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
+
+fn get_tiers(v: &toml::Value, key: &str, path: &std::path::Path) -> Result<Vec<String>, String> {
+    let arr = v
+        .get("tiers")
+        .and_then(|x| x.as_array())
+        .ok_or(format!("{} [{key}]: missing tiers (a list such as [\"t1\", \"t2\"])", path.display()))?;
+    let mut out: Vec<String> = vec![];
+    for t in arr {
+        let t = t.as_str().ok_or(format!("{} [{key}]: tiers must be strings", path.display()))?;
+        if !TIERS.contains(&t) {
+            return Err(format!("{} [{key}]: unknown tier {t:?} (one of {})", path.display(), TIERS.join(", ")));
+        }
+        if out.iter().any(|o| o == t) {
+            return Err(format!("{} [{key}]: tier {t} listed twice", path.display()));
+        }
+        out.push(t.to_string());
+    }
+    if out.is_empty() {
+        return Err(format!("{} [{key}]: tiers is empty", path.display()));
+    }
+    Ok(out)
+}
+
+#[cfg(test)]
+mod tier_tests {
+    use super::*;
+
+    fn tiers(src: &str) -> Result<Vec<String>, String> {
+        let t: toml::Table = src.parse().unwrap();
+        get_tiers(&t["d"], "d", std::path::Path::new("my_decks.toml"))
+    }
+
+    #[test]
+    fn tiers_are_required_known_and_unique() {
+        assert_eq!(tiers("[d]\ntiers = [\"t1\", \"t3\"]").unwrap(), ["t1", "t3"]);
+        assert!(tiers("[d]\nname = \"x\"").unwrap_err().contains("missing tiers"));
+        assert!(tiers("[d]\ntiers = []").unwrap_err().contains("empty"));
+        assert!(tiers("[d]\ntiers = [\"t7\"]").unwrap_err().contains("unknown tier"));
+        assert!(tiers("[d]\ntiers = [\"t1\", \"t1\"]").unwrap_err().contains("twice"));
+        assert!(tiers("[d]\ntiers = [1]").unwrap_err().contains("strings"));
+    }
 }

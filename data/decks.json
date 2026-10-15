@@ -6,6 +6,9 @@
    "name": "Alela",
    "commander": "Alela, Artful Provocateur",
    "ident": "WUB",
+   "tiers": [
+    "t1"
+   ],
    "cards": [
     "Aether Hub",
     "Airlift Chaplain",
@@ -114,6 +117,10 @@
    "name": "Cloud",
    "commander": "Cloud, Midgar Mercenary",
    "ident": "W",
+   "tiers": [
+    "t1",
+    "t2"
+   ],
    "cards": [
     "Adelbert Steiner",
     "Arcane Signet",
@@ -222,6 +229,9 @@
    "name": "Galadriel",
    "commander": "Galadriel, Light of Valinor",
    "ident": "WUG",
+   "tiers": [
+    "t1"
+   ],
    "cards": [
     "Abduction",
     "Adeline, Resplendent Cathar",
@@ -330,6 +340,11 @@
    "name": "Kefka",
    "commander": "Kefka, Court Mage // Kefka, Ruler of Ruin",
    "ident": "UBR",
+   "tiers": [
+    "t2",
+    "t3",
+    "t4"
+   ],
    "cards": [
     "Alpharael, Dreaming Acolyte",
     "Arcane Denial",
@@ -438,6 +453,11 @@
    "name": "Sauron",
    "commander": "Sauron, the Dark Lord",
    "ident": "UBR",
+   "tiers": [
+    "t2",
+    "t3",
+    "t4"
+   ],
    "cards": [
     "Aggravated Assault",
     "Arcane Denial",
@@ -546,6 +566,10 @@
    "name": "Sephiroth",
    "commander": "Atraxa, Grand Unifier",
    "ident": "WUBG",
+   "tiers": [
+    "t4",
+    "t5"
+   ],
    "cards": [
     "Altar of Dementia",
     "Anguished Unmaking",
@@ -654,6 +678,11 @@
    "name": "Sephiroth FS",
    "commander": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
    "ident": "B",
+   "tiers": [
+    "t1",
+    "t2",
+    "t3"
+   ],
    "cards": [
     "Accursed Marauder",
     "Al Bhed Salvagers",
@@ -762,6 +791,10 @@
    "name": "Sheoldred",
    "commander": "Sheoldred, the Apocalypse",
    "ident": "B",
+   "tiers": [
+    "t3",
+    "t4"
+   ],
    "cards": [
     "Accursed Marauder",
     "Al Bhed Salvagers",
@@ -870,6 +903,10 @@
    "name": "Titania",
    "commander": "Titania, Protector of Argoth",
    "ident": "G",
+   "tiers": [
+    "t1",
+    "t2"
+   ],
    "cards": [
     "Annoyed Altisaur",
     "Arachnogenesis",
@@ -978,6 +1015,11 @@
    "name": "Veyran",
    "commander": "Veyran, Voice of Duality",
    "ident": "UR",
+   "tiers": [
+    "t1",
+    "t2",
+    "t3"
+   ],
    "cards": [
     "Abrade",
     "Aetherflux Reservoir",
@@ -1086,6 +1128,10 @@
    "name": "Y'shtola",
    "commander": "Y'shtola, Night's Blessed",
    "ident": "WUB",
+   "tiers": [
+    "t4",
+    "t5"
+   ],
    "cards": [
     "Adarkar Wastes",
     "Anguished Unmaking",

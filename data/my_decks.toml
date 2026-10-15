@@ -1,68 +1,79 @@
 # Your decks: the deck key, its file under decklists/, the name the logs use, the commander the simulator
-# plays and the colour identity of the seat. Extracted once from the old Python code; this file is now the source.
+# plays and the colour identity of the seat, and `tiers`: the opponent tiers it is simulated against (matched power; see CLAUDE.md "Opponent tiers"). Extracted once from the old Python code; this file is now the source.
 
 [seph]
 file = "JD/sephiroth-phyrexian-reanimator.md"
 name = "Sephiroth"
 commander = "Atraxa, Grand Unifier"
 ident = "WUBG"
+tiers = ["t4", "t5"]
 
 [veyran]
 file = "JD/veyran-izzet-spellslinger.md"
 name = "Veyran"
 commander = "Veyran, Voice of Duality"
 ident = "UR"
+tiers = ["t1", "t2", "t3"]
 
 [sauron]
 file = "JD/sauron-grixis-amass.md"
 name = "Sauron"
 commander = "Sauron, the Dark Lord"
 ident = "UBR"
+tiers = ["t2", "t3", "t4"]
 
 [yshtola]
 file = "JD/yshtola-esper-drain.md"
 name = "Y'shtola"
 commander = "Y'shtola, Night's Blessed"
 ident = "WUB"
+tiers = ["t4", "t5"]
 
 [galadriel]
 file = "Avery/galadriel-bant-rebels.md"
 name = "Galadriel"
 commander = "Galadriel, Light of Valinor"
 ident = "WUG"
+tiers = ["t1"]
 
 [alela]
 file = "Avery/alela-esper-faeries.md"
 name = "Alela"
 commander = "Alela, Artful Provocateur"
 ident = "WUB"
+tiers = ["t1"]
 
 [kefka]
 file = "JD/kefka-grixis-discard.md"
 name = "Kefka"
 commander = "Kefka, Court Mage // Kefka, Ruler of Ruin"
 ident = "UBR"
+tiers = ["t2", "t3", "t4"]
 
 [titania]
 file = "JD/titania-lands.md"
 name = "Titania"
 commander = "Titania, Protector of Argoth"
 ident = "G"
+tiers = ["t1", "t2"]
 
 [sheoldred]
 file = "JD/sheoldred-mono-black.md"
 name = "Sheoldred"
 commander = "Sheoldred, the Apocalypse"
 ident = "B"
+tiers = ["t3", "t4"]
 
 [cloud]
 file = "JD/cloud-midgar-equipment.md"
 name = "Cloud"
 commander = "Cloud, Midgar Mercenary"
 ident = "W"
+tiers = ["t1", "t2"]
 
 [sephfs]
 file = "JD/sephiroth-fs-wipe-steal.md"
 name = "Sephiroth FS"
 commander = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
 ident = "B"
+tiers = ["t1", "t2", "t3"]

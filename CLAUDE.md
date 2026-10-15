@@ -36,3 +36,11 @@ Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
 Never run Python here, not even a version check or a one-liner: use `jq`, shell tools, `cardgen`, `commander-sim` or a
 Rust test or example. A PreToolUse hook (`.claude/hooks/no-python.sh`, wired in `.claude/settings.json`) refuses any
 shell command that starts with `python`, `python3`, `pip`, `pipx` or `uv`, in every session and subagent.
+
+## Opponent tiers
+
+Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
+also exported to `data/decks.json`): yshtola and seph t4-t5, sheoldred t3-t4, sauron and kefka t2-t4, sephfs and veyran
+t1-t3, cloud and titania t1-t2, alela and galadriel t1. `--pool all`, `--all-decks`, `--analyze`, swap runs and
+`searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over the deck's own
+tiers (label them, e.g. "over t1-t3"). Use `--any-tier` only when JD asks for it. `--calibrate` is unchanged.

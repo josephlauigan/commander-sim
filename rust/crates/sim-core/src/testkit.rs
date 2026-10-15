@@ -45,6 +45,7 @@ fn retired_decks() -> Vec<RawDeck> {
         commander: c1.into(),
         commander2: c2.map(String::from),
         ident: Some(ident.into()),
+        tiers: vec![],
         cards: lib(&[c1, c2.unwrap_or("")][..if c2.is_some() { 2 } else { 1 }], basics),
     };
     vec![
