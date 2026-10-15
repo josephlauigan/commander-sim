@@ -1,0 +1,107 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Brass Squire [pool] AC 3 :: pow=1 tgh=3
+   Danitha Capashen, Paragon [scryfall] C 2W :: leg human pow=2 lifelink vig
+      not modeled: Aura and Equipment spells you cast cost {1} less to cast.
+   Sigarda's Aid [pool] E W :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Brass Squire: Full ({T}: attaches an Equipment you control to the best holder, Cloud when he is out, before combat on your turn (cloud::squire_options); no sorcery timing needed)
+  Lightning Greaves: Full (equip {0}: shroud and haste (moved onto the commander / best creature))
+  WARNING Danitha Capashen, Paragon: Partial (first strike, vigilance, lifelink only; the {1} discount on Aura and Equipment spells is NOT modeled (seen in the 10-15 Cloud package S run))
+  WARNING Danitha Capashen, Paragon is Partial: the sim plays it differently from the real card; read the result with that in mind
+  Sigarda's Aid: Full (Auras and Equipment at instant speed (Auras cast at end of turn); Equipment attaches free)
+
+Swaps: Fellwar Stone -> Brass Squire; Thought Vessel -> Lightning Greaves; Unbreakable Formation -> Danitha Capashen, Paragon; Ultimate Magic: Holy -> Sigarda's Aid
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  20.7% ->  21.5%  (delta +0.8 pts, noise ±3.3, paired)   n=1000
+               eliminated by (variant): Isshin 18.1%  Teysa Karlov 13.9%  Lathril 12.9%  Light-Paws 24.0%  Tatyova 9.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          20.7% ->  21.5%  +0.8pt   ±3.6 
+    Rounds survived (or game length)                  10.28 ->  10.30   +0.02  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.22 ->   0.23   +0.01  ±0.06 
+    Missed land drops, turns 1-5                       0.97 ->   0.90   -0.06  ±0.08 
+    Mana available on your turn 4                      4.01 ->   3.95   -0.05  ±0.10 
+    Mana available on your turn 6                      5.57 ->   5.56   -0.01  ±0.17 
+
+  Speed
+    Games where the game plan came online             76.7% ->  76.9%  +0.2pt   ±3.8 
+    Turn the game plan came online                     5.70 ->   5.63   -0.07  ±0.22 
+    Turn the commander first resolved                  2.12 ->   2.11   -0.01  ±0.04 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.74 ->  13.95   +0.21  ±0.73 
+    Tutors resolved per game                           2.87 ->   2.79   -0.08  ±0.13 
+    Spells cast per game                              14.68 ->  14.94   +0.27  ±0.69 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.53 ->   0.51   -0.02  ±0.06 
+    Board wipes cast                                   0.28 ->   0.29   +0.01  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.64 ->   0.63   -0.00  ±0.08 
+    Your spells countered                              0.14 ->   0.15   +0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.90 ->  34.72   +1.82  ±3.06 
+      ...of which combat damage                       30.88 ->  32.61   +1.73  ±2.83 
+      ...of which other triggers                       2.02 ->   2.11   +0.09  ±0.36 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Brass Squire                          19.3      72.5         7.5     27.5       33.6      0.01
+    Lightning Greaves                     21.4      70.6         7.7     29.4       37.7      0.00
+    Danitha Capashen, Paragon             20.9      78.5         6.9     21.5       37.8      0.04
+    Sigarda's Aid                         20.8      95.7         5.9      4.3       40.7      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Fellwar Stone                         19.8      83.3         7.1     16.7       36.4      0.00
+    Thought Vessel                        22.0      75.0         6.8     25.0       38.8      0.00
+    Unbreakable Formation                 22.4       1.3        10.7     98.7       66.7      0.00
+    Ultimate Magic: Holy                  20.8      10.6         8.7     89.4       59.1      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        20.7      21.5     +0.8
+    rounds survived                                  10.28     10.30    +0.02
+    eliminated, % of games                            79.3      78.3     -1.0
+    opponents it eliminated, per game                 0.62      0.69    +0.07
+    damage dealt, per game                            32.9      34.7     +1.8
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        25.6      27.5     +1.9
+      plan online by turn 6, %                        57.6      58.0     +0.4
+      plan online by turn 8, %                        68.6      68.9     +0.3
+      plan online by turn 12, %                       75.7      75.5     -0.2
+      plan online at all, %                           76.7      76.9     +0.2
+    commander resolved by turn 4, %                   99.0      99.0     +0.0
+    commander resolved by turn 6, %                   99.8      99.8     +0.0
+    commander removals, per game                      0.62      0.59    -0.04
+    lands on the battlefield, turn 4                  3.61      3.64    +0.03
+    lands on the battlefield, turn 8                  6.10      6.30    +0.21
+    mana available, turn 4                            4.01      3.95    -0.05
+    mana available, turn 8                            7.13      7.08    -0.05
+    cards in hand after the land drop, turn 4         6.23      6.20    -0.03
+    cards in hand after the land drop, turn 8         5.10      4.88    -0.22
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 100%, timeout 0%
+    eliminated by (current): Light-Paws via commander damage 18.1%, Isshin via combat 15.5%, Tatyova via combat 10.2%, Lathril via combat 9.5%
+    eliminated by (swapped): Light-Paws via commander damage 18.7%, Isshin via combat 14.5%, Tatyova via combat 9.3%, Lathril via combat 7.5%
+
+(300s total)

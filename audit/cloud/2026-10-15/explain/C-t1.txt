@@ -1,0 +1,117 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Sram, Senior Edificer [pool] C 1W :: leg pow=2
+   Mentor of the Meek [pool] C 2W :: human pow=2
+   Welcoming Vampire [pool] C 2W :: pow=2 tgh=3 fly
+   Wall of Omens [scryfall+dsl] C 1W :: pow=0 tgh=4
+      ability: triggered etb -> draw
+Model status of the swapped-in cards (cardgen audit):
+  Sram, Senior Edificer: Full ()
+  Mentor of the Meek: Full (pays {1} to draw when a small creature enters (if it can, hand not full))
+  Welcoming Vampire: Full (draw once each turn when small creatures enter)
+  Skullclamp: Full (equip {1} onto 1-toughness creatures to draw two, up to twice a turn)
+  Wall of Omens: Full-auto (compiled from Oracle text)
+
+Swaps: Nim Deathmantle -> Sram, Senior Edificer; Citizen's Arrest -> Mentor of the Meek; Mind Stone -> Welcoming Vampire; Terminal Moraine -> Skullclamp; Page, Loose Leaf -> Wall of Omens
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  20.7% ->  23.9%  (delta +3.2 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Isshin 19.1%  Teysa Karlov 13.2%  Lathril 13.4%  Light-Paws 23.8%  Tatyova 6.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          20.7% ->  23.9%  +3.2pt   ±3.7 
+    Rounds survived (or game length)                  10.28 ->  10.38   +0.10  ±0.29 
+
+  Mana & consistency
+    Extra mulligans per game                           0.22 ->   0.25   +0.03  ±0.06 
+    Missed land drops, turns 1-5                       0.97 ->   0.95   -0.02  ±0.08 
+    Mana available on your turn 4                      4.01 ->   3.90   -0.11  ±0.10*
+    Mana available on your turn 6                      5.57 ->   5.49   -0.08  ±0.17 
+
+  Speed
+    Games where the game plan came online             76.7% ->  75.4%  -1.3pt   ±3.8 
+    Turn the game plan came online                     5.70 ->   5.57   -0.13  ±0.21 
+    Turn the commander first resolved                  2.12 ->   2.11   -0.01  ±0.04 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.74 ->  15.20   +1.46  ±0.79*
+    Tutors resolved per game                           2.87 ->   2.88   +0.01  ±0.13 
+    Spells cast per game                              14.68 ->  15.46   +0.79  ±0.74*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.53 ->   0.54   +0.01  ±0.07 
+    Board wipes cast                                   0.28 ->   0.30   +0.03  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.64 ->   0.64   +0.00  ±0.08 
+    Your spells countered                              0.14 ->   0.17   +0.03  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.90 ->  35.44   +2.54  ±3.16 
+      ...of which combat damage                       30.88 ->  33.20   +2.32  ±2.92 
+      ...of which other triggers                       2.02 ->   2.24   +0.22  ±0.37 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 4 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Spells cast per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Sram, Senior Edificer                 22.5      77.8         7.4     22.2       39.4      0.01
+    Mentor of the Meek                    21.3      61.0         8.4     39.0       45.4      0.01
+    Welcoming Vampire                     22.9      80.3         8.2     19.7       45.1      0.01
+    Skullclamp                            23.4      88.9         7.0     11.1       36.1      0.00
+    Wall of Omens                         21.3      83.6         8.4     16.4       43.3      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Nim Deathmantle                       23.1      79.7         8.1     20.3       37.0      0.01
+    Citizen's Arrest                      21.9      77.6         7.8     22.4       35.3      0.01
+    Mind Stone                            23.5      82.6         6.1     17.4       35.1      0.01
+    Terminal Moraine                      22.2       0.0           -    100.0          -      0.00
+    Page, Loose Leaf                      18.4      82.6         7.2     17.4       30.9      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        20.7      23.9     +3.2
+    rounds survived                                  10.28     10.38    +0.10
+    eliminated, % of games                            79.3      76.0     -3.3
+    opponents it eliminated, per game                 0.62      0.68    +0.06
+    damage dealt, per game                            32.9      35.4     +2.5
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        25.6      26.8     +1.2
+      plan online by turn 6, %                        57.6      57.2     -0.4
+      plan online by turn 8, %                        68.6      69.5     +0.9
+      plan online by turn 12, %                       75.7      74.5     -1.2
+      plan online at all, %                           76.7      75.4     -1.3
+    commander resolved by turn 4, %                   99.0      98.9     -0.1
+    commander resolved by turn 6, %                   99.8      99.6     -0.2
+    commander removals, per game                      0.62      0.60    -0.02
+    lands on the battlefield, turn 4                  3.61      3.60    -0.02
+    lands on the battlefield, turn 8                  6.10      6.23    +0.14
+    mana available, turn 4                            4.01      3.90    -0.11
+    mana available, turn 8                            7.13      7.13    -0.00
+    cards in hand after the land drop, turn 4         6.23      6.27    +0.04
+    cards in hand after the land drop, turn 8         5.10      5.24    +0.14
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Light-Paws via commander damage 18.1%, Isshin via combat 15.5%, Tatyova via combat 10.2%, Lathril via combat 9.5%
+    eliminated by (swapped): Light-Paws via commander damage 18.9%, Isshin via combat 15.0%, Lathril via combat 8.0%, Tatyova via combat 6.5%
+
+(303s total)
