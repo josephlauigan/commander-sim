@@ -103,3 +103,18 @@ Fencing Ace and Mirran Crusader were Partial (printed keywords only) and are now
   rerun it keeping Mind Stone and Evolving Wilds.
 - Command per tier, one `--swap` per line of each file:
   `commander-sim --deck cloud --pool t1 --profile loose --games 2000 --ai lookahead --jobs 22 --swap "OUT=>IN" ...`
+
+## Results, 2026-10-15 (look-ahead, loose, 2,000 games per tier, paired, on the AI-fixed binary)
+
+| Package | Base | T1 | T2 | Verdict |
+|---|---|---|---|---|
+| D defense | current list | 15.8 -> 22.2 (+6.4) | 13.8 -> 20.1 (+6.3) | **chosen by JD, applied** |
+| R removal | current list | -1.9 | -1.1 | no |
+| D + R | current list | +4.9 | (stopped) | worse than D alone |
+| S speed (Stoneforge Mystic dropped by JD: 4 swaps) | D list | 22.1 -> 20.6 (-1.6) | 19.1 -> 19.9 (+0.9) | no gain (Danitha's discount not modeled) |
+| C draw | D list | 22.1 -> 23.2 (+1.1) | skipped | within noise |
+| B carriers | D list | 22.1 -> 21.5 (-0.6) | skipped | no |
+| S + C + B | D list | -1.5 | skipped | no |
+
+S-lite was skipped (S showed no gain). Tier 2 runs were skipped when Tier 1 gained under +3. Outputs:
+`audit/cloud/2026-10-15/` (AI fixes, D, R, D+R) and `audit/cloud/2026-10-15/pkg2/`.

@@ -1,0 +1,6 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Fencing Ace [pool] C 1W :: human pow=1 tgh=1
+   Mirran Crusader [pool] C 1WW :: human pow=2 tgh=2
+   Kor Skyfisher [pool] C 1W :: pow=2 tgh=3 fly
+   Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant

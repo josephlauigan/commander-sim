@@ -1,0 +1,62 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Brass Squire [pool] AC 3 :: pow=1 tgh=3
+   Danitha Capashen, Paragon [scryfall] C 2W :: leg human pow=2 lifelink vig
+      not modeled: Aura and Equipment spells you cast cost {1} less to cast.
+   Sigarda's Aid [pool] E W :: (no tags)
+Swaps: Fellwar Stone -> Brass Squire; Thought Vessel -> Lightning Greaves; Unbreakable Formation -> Danitha Capashen, Paragon; Ultimate Magic: Holy -> Sigarda's Aid
+
+=== Cloud vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  19.1% ->  19.9%  (delta +0.9 pts, noise ±2.3, paired)   n=2000
+               eliminated by (variant): Kaalia of the Vast 20.2%  Brago 17.8%  Sythis 13.1%  Lord Windgrace 14.7%  Meren of Clan Nel Toth 12.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          19.1% ->  20.0%  +0.9pt   ±2.5 
+    Rounds survived (or game length)                  12.71 ->  12.72   +0.02  ±0.23 
+
+  Mana & consistency
+    Extra mulligans per game                           0.23 ->   0.25   +0.02  ±0.05 
+    Missed land drops, turns 1-5                       0.95 ->   0.93   -0.01  ±0.06 
+    Mana available on your turn 4                      4.02 ->   3.96   -0.06  ±0.07 
+    Mana available on your turn 6                      5.59 ->   5.41   -0.18  ±0.11*
+
+  Speed
+    Games where the game plan came online             80.5% ->  79.3%  -1.2pt   ±2.5 
+    Turn the game plan came online                     6.10 ->   6.18   +0.07  ±0.18 
+    Turn the commander first resolved                  2.11 ->   2.11   +0.00  ±0.03 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            16.33 ->  16.38   +0.05  ±0.49 
+    Tutors resolved per game                           3.68 ->   3.59   -0.09  ±0.10 
+    Spells cast per game                              18.72 ->  18.96   +0.24  ±0.52 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.63 ->   0.63   -0.00  ±0.05 
+    Board wipes cast                                   0.38 ->   0.35   -0.02  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           1.69 ->   1.72   +0.03  ±0.10 
+    Your spells countered                              0.24 ->   0.25   +0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                35.09 ->  36.52   +1.43  ±2.05 
+      ...of which combat damage                       33.23 ->  34.68   +1.45  ±1.93 
+      ...of which other triggers                       1.86 ->   1.84   -0.02  ±0.23 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(714s total)

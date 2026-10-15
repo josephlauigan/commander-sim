@@ -1,0 +1,4 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Brass Squire [pool] AC 3 :: pow=1 tgh=3
+   Danitha Capashen, Paragon [scryfall] C 2W :: leg human pow=2 lifelink vig
+      not modeled: Aura and Equipment spells you cast cost {1} less to cast.
