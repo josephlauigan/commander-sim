@@ -37,10 +37,14 @@ Win rate: **T1 20.6%, T2 18.2%** (was 14.0 / 11.9 on the morning of 10/15). Fair
 | **C card draw** (Sram, Mentor, Welcoming Vampire, Skullclamp, Wall of Omens) | +1.1 (2,000 g) and +3.2 (1,000 g) / — | **Draws +1.5 cards a game (significant), casts +0.8 spells, but the plan comes online no sooner** (26.8% by turn 4 vs 25.6%) and the hand gets bigger. Extra cards mostly pile up behind the mana bottleneck; a small real gain (~+2) through slightly more damage. Mana on turn 4 drops (Mind Stone cut). |
 | **B backup carriers** (Fencing Ace, Mirran Crusader, Kor Skyfisher, Selfless Spirit, Adeline) | -0.6 (2,000 g) and -1.9 (1,000 g) / — | Carriers do get cast (~75-86%), but **the plan comes online less often (-4.9 points, significant)** and spot removal falls (Disenchant cut: -0.2 a game). The cuts were cheap early plays (Forum Familiar cast 94%, Helitrooper 92%) and a land; the carriers don't replace an equipped Cloud. |
 | **S speed** (Brass Squire, Lightning Greaves, Danitha, Sigarda's Aid) | -1.6 / +0.9 (2,000 g); +0.8 (1,000 g) | Sigarda's Aid is cast 96%, but Squire and Greaves sit in hand 28-29%; plan by turn 4 only +1.9. It replaced two dead cards (Formation, Holy) and two rocks: the rocks' mana is what the faster equips needed. (Danitha's {1} discount is not modeled.) |
+| **M-lite mana** (Worn Powerstone, Foundry Inspector, Burnished Hart for Formation, Holy, Secure the Scene) | -0.1 / — | Cuts were dead cards, but the new mana is **cast late** (Powerstone avg round 6.8, stuck 28%; Hart 8.8, stuck 35%): turn-4 mana +0.07 only, plan timing unchanged. |
+| **M mana** (M-lite + Weathered Wayfarer, Stoneforge Mystic) | +1.8 / — | Within noise. **Stoneforge Mystic first cast at avg round 7.1** (a turn-2 tutor); turn-4 mana unchanged, plan by turn 4 25.4% (-1.6). |
+| M without Stoneforge | +1.0 / — | Within noise. |
 | Sun Titan for Ultimate Magic: Holy | -0.4 / — | Not broken down; a 6-drop in a mana-starved deck. |
 | Kor Haven for a Plains | -2.5 / — | Not broken down; colourless land in a {W}{W} deck, and its ability ties up {1}{W}. |
 
 ## What this suggests next (untested)
+- **Check the AI's play order first (10-15):** two mana packages showed cheap ramp and tutors (Worn Powerstone, Stoneforge Mystic) first cast around round 7. If the AI plays Equipment and creatures before ramp, more mana cards can't help until ramp is cast early. Confirm in traces (time from draw to cast), then fix priorities.
 - **More mana, not more cards:** the dead slots (Unbreakable Formation, Ultimate Magic: Holy) are the cheapest place to
   add ramp (mana rocks / land ramp), so Equipment can be cast and equipped sooner.
 - **Answers to a voltron threat** (Light-Paws): Aura/creature removal that doesn't cost a body (Package R's lesson).

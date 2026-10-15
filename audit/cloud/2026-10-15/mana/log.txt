@@ -1,0 +1,7 @@
+16:58 MLITE t1 [loose       ] win  20.7% ->  20.6%  (delta -0.1 pts, noise ±2.4, paired)   n=2000
+16:58 MLITE t2 skipped (t1 -0.1)
+17:08 M t1 [loose       ] win  20.7% ->  22.5%  (delta +1.8 pts, noise ±2.4, paired)   n=2000
+17:08 M t2 skipped (t1 +1.8)
+17:17 MNOSFM t1 [loose       ] win  20.7% ->  21.7%  (delta +1.0 pts, noise ±2.4, paired)   n=2000
+17:17 MNOSFM t2 skipped (t1 +1.0)
+17:17 ALL DONE
