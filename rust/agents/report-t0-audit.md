@@ -31,3 +31,20 @@ data/card_overrides.toml (Tier 0 entries), data/cards.json regenerated.
 
 ## Measurement
 Same seeds/commands as the baseline (seed 1014). Baseline = audit/pool/2026-10-14-t0/*.txt on calib-1014; after = after-*.txt.
+
+| | before | after |
+|---|---|---|
+| Tier 1 into Tier 0 (overall, 1000/list, conservative) | 19.7% | 23.4% |
+| Isshin / Lathril / Light-Paws / Tatyova / Teysa | 17.9 / 15.2 / 33.6 / 10.8 / 20.8 | 21.4 / 20.2 / 37.7 / 15.0 / 22.7 |
+| Within Tier 0 (loose, 2000): Anikthea | 33.7 | 28.7 |
+| Giada | 32.5 | 33.0 |
+| Zurgo | 25.3 | 22.7 |
+| Captain America | 18.4 | 23.6 |
+| Stella Lee | 14.7 | 16.8 |
+
+Tier 1 now gets to 23.4% (25% = even) against Tier 0, up 3.7 points. Anikthea cooled (bouncelands, Sungrass, Tainted
+lands). Giada did not move: fixing Speaker and the Temple changed nothing visible, so Giada's 33% is the deck itself
+(38 lands, 11 mana rocks, cheap Angels that grow with Giada), not generous code. Remaining Tier 1 shortfall is the
+precons being legitimately strong plus Tier 1 lists being weak (Tatyova 15%), not a code fault I could find.
+Files: audit/pool/2026-10-14-t0/after-within-loose.txt, after-ordering-t1-into-t0.txt.
+Checks: cargo test --release -j 3 all pass, --all-targets no warnings, all_decks adaptive 3 / lookahead 1 no panic.

@@ -1,2 +1,10 @@
 
 === Within-tier balance [loose, n=2000 games per tier; each deck is seated in ~80%] ===
+  Tier 0 (Bracket 2 precons): avg game 12.2 rounds, timeouts 0.6%
+    Anikthea                      28.7% (26.6-31.0)
+    Captain America               23.6% (21.6-25.8)
+    Giada                         33.0% (30.7-35.3)
+    Stella Lee                    16.8% (15.0-18.7)
+    Zurgo Stormrender             22.7% (20.7-24.8)
+
+(1210s total)
