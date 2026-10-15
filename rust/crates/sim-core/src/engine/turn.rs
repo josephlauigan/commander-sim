@@ -735,6 +735,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         has(g, p, Tag::Nomax)
             || g.player(p).lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Nomax))
             || g.player(p).nomax_turn == Some(g.player(p).turns)
+            || g.player(p).t0s.nomax
     };
     let held = |g: &Game| -> Vec<CardId> {
         let pl = g.player(p);

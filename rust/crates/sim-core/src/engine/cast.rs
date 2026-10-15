@@ -298,6 +298,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
             copy_spell(g, p, c, None, false)?;
         }
     }
+    crate::impls::t0_stella::on_cast_next(g, p, c)?; // Tier 0 Stella: "the next instant or sorcery spell you cast" effects
     if !creature {
         prowess(g, p);
     }
@@ -372,6 +373,7 @@ pub const MAGECRAFT_TAGS: [Tag; 7] =
 /// Each magecraft ability triggers once, +1 with Veyran, +1 more with Harmonic Prodigy if the source is a Shaman or
 /// Wizard. copy: a copied spell (only "cast or copy" abilities trigger).
 pub fn magecraft(g: &mut Game, p: PlayerId, c: Option<CardId>, copy: bool) -> Res {
+    crate::impls::t0_stella::magecraft_extra(g, p, copy)?; // Octavia, Living Thesis
     let vey = has(g, p, Tag::Veyran) as u32;
     let prod = has(g, p, Tag::Prodigy) as u32;
     let base_mult = 1 + vey;
@@ -823,6 +825,7 @@ fn to_gy_or_exile(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym, ex
     if zone == "copy" {
         return; // copies move no card
     }
+    let exile = exile || crate::impls::t0_stella::foundry_exiles(g, p, c); // Forger's Foundry
     let o = gy_of(ctx, p);
     if zone == "gy" || ctx.exile_after || exile {
         g.player_mut(o).exile.push(c);

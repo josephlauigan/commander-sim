@@ -157,6 +157,8 @@ pub enum DataKey {
     Warp,
     Wishes,
     Witch,
+    /// Tier 0 Stella deck cards: Midnight Clock's hour counters (Int), Octavia's base 8/8 mark (Stamp)
+    T0Stella,
 }
 
 /// A value in per-card state.
@@ -487,6 +489,8 @@ pub struct Player {
     pub chasm_age: i32,
     /// suspended cards (Profane Tutor)
     pub suspended: Vec<(CardId, u32)>,
+    /// the Stella precon's one-shot effects (impls/t0_stella.rs)
+    pub t0s: crate::impls::t0_stella::StellaState,
     /// cards playable until the end of a later turn (Prosper): (card, the turn count it lasts to)
     pub impulse_long: Vec<(CardId, u32)>,
     /// Erebos's draw this turn
@@ -675,6 +679,7 @@ impl Player {
             gy_start: vec![],
             chasm_age: 0,
             suspended: vec![],
+            t0s: Default::default(),
             impulse_long: vec![],
             erebos_t: None,
             nomax_turn: None,
