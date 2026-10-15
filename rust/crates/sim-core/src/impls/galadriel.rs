@@ -1274,10 +1274,17 @@ pub fn eot_returns(g: &mut Game) -> Res {
     }
     let rs = std::mem::take(&mut g.eot_returns);
     for (p, cd) in rs {
-        if !g.player(p).alive || !g.player(p).exile.contains(&cd) {
+        // also cards waiting in the graveyard (Ghoulish Impetus returns itself from there)
+        if !g.player(p).alive {
             continue;
         }
-        remove_first(&mut g.player_mut(p).exile, cd);
+        if g.player(p).exile.contains(&cd) {
+            remove_first(&mut g.player_mut(p).exile, cd);
+        } else if g.player(p).gy.contains(&cd) {
+            remove_first(&mut g.player_mut(p).gy, cd);
+        } else {
+            continue;
+        }
         let n = enter(g, p, cd, Enter::default())?;
         g.perm_mut(n).is_cmd = cd == g.player(p).cmd;
         crate::glog!(g, "    {} returns to the battlefield (Eerie Interlude)", g.db.get(cd).name);

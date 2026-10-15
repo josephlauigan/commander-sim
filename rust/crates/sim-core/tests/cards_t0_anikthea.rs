@@ -399,3 +399,108 @@ fn bouncelands_are_in_the_card_data() {
         assert!(g.db.get(card(&g, n)).tag(sim_core::tag::Tag::Bounceland), "{n}");
     }
 }
+
+// ======================================================== Ghoulish Impetus, Demon, Rhetoric, Calix
+fn run_ability(g: &mut Game, a: &sim_core::hooks::Opt, p: PlayerId) -> bool {
+    match a.act.as_ref().unwrap() {
+        sim_core::hooks::Action::Ability { src, f, arg } => f(g, *src, p, *arg).unwrap(),
+        _ => panic!("not an ability"),
+    }
+}
+
+fn options_of(g: &mut Game, m: PermId, p: PlayerId) -> Vec<sim_core::hooks::Opt> {
+    let c = g.perm(m).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, m, p, Some(false)).unwrap()
+}
+
+#[test]
+fn ghoulish_impetus_pumps_and_returns_when_the_creature_dies() {
+    let mut g = tbl();
+    let victim = perm(&mut g, P1, "Grave Titan");
+    let (p0, t0) = (g.perm(victim).pow, g.perm(victim).tgh);
+    let a = perm(&mut g, P0, "Ghoulish Impetus");
+    assert_eq!(g.perm(a).attached, Some(victim), "it enchants the opposing creature");
+    assert_eq!(sim_core::engine::values::epow(&g, victim), p0 + 1);
+    assert_eq!(sim_core::engine::values::etgh(&g, victim), t0 + 1);
+    sim_core::engine::zones::die(&mut g, victim, "destroy").unwrap();
+    let cd = card(&g, "Ghoulish Impetus");
+    assert!(g.player(P0).gy.contains(&cd), "it fell off with the creature");
+    let other = perm(&mut g, P1, "Grave Titan");
+    sim_core::cardcode::delayed_end_step(&mut g, P0).unwrap();
+    assert!(!g.player(P0).gy.contains(&cd));
+    let back = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd == Some(cd)).expect("back on the battlefield");
+    assert_eq!(g.perm(back).attached, Some(other), "and it enchants a creature again");
+}
+
+#[test]
+fn demon_casts_an_enchantment_for_life_once_a_turn() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    let d = perm(&mut g, P0, "Demon of Fate's Design");
+    hand(&mut g, P0, &["Sigil of the Empty Throne"]);
+    let life = g.player(P0).life;
+    let opts = options_of(&mut g, d, P0);
+    assert_eq!(opts.len(), 1);
+    assert!(run_ability(&mut g, &opts[0], P0));
+    assert_eq!(g.player(P0).life, life - 5, "life equal to its mana value");
+    assert!(names(&g, P0).contains(&"Sigil of the Empty Throne".to_string()));
+    hand(&mut g, P0, &["Omen of the Sun"]);
+    assert!(options_of(&mut g, d, P0).is_empty(), "once during each of your turns");
+}
+
+#[test]
+fn cunning_rhetoric_takes_the_attackers_top_card_and_plays_it() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    let r = perm(&mut g, P0, "Cunning Rhetoric");
+    lib_of(&mut g, P1, &["Mountain", "Lightning Bolt"]);
+    let f = g.registry.get(g.perm(r).cd.unwrap()).unwrap().attack.unwrap();
+    f(&mut g, r, P1, &[], P0).unwrap();
+    let bolt = card(&g, "Lightning Bolt");
+    assert!(g.player(P0).hand.contains(&bolt), "exiled from its library, playable by you");
+    assert_eq!(g.player(P1).library.last(), Some(&card(&g, "Mountain")));
+    lands(&mut g, P0, "Forest", 1, false);
+    let opts = options_of(&mut g, r, P0);
+    assert_eq!(opts.len(), 1, "no red mana, but any colour will do: {{R}} paid with a Forest");
+    assert!(run_ability(&mut g, &opts[0], P0));
+    assert!(!g.player(P0).hand.contains(&bolt));
+}
+
+#[test]
+fn calix_plus_one_takes_an_enchantment_from_the_top_four() {
+    let mut g = tbl();
+    let c = perm(&mut g, P0, "Calix, Destiny's Hand");
+    lib_of(&mut g, P0, &["Forest", "Forest", "Abundance", "Forest"]);
+    let ab = g.registry.get(g.perm(c).cd.unwrap()).unwrap().walker.unwrap();
+    (ab[0].eff)(&mut g, P0, c).unwrap();
+    assert!(g.player(P0).hand.contains(&card(&g, "Abundance")));
+    assert_eq!(g.player(P0).library.len(), 20 + 3, "the rest went to the bottom");
+}
+
+#[test]
+fn calix_minus_three_exiles_until_the_linked_enchantment_leaves() {
+    let mut g = tbl();
+    let c = perm(&mut g, P0, "Calix, Destiny's Hand");
+    let ench = perm(&mut g, P0, "Sandwurm Convergence");
+    let big = perm(&mut g, P1, "Grave Titan");
+    let ab = g.registry.get(g.perm(c).cd.unwrap()).unwrap().walker.unwrap();
+    (ab[1].eff)(&mut g, P0, c).unwrap();
+    assert!(!on(&g, big), "exiled");
+    sim_core::engine::zones::leave(&mut g, ench).unwrap();
+    assert!(g.player(P1).perms.iter().any(|&m| g.perm(m).cd == Some(card(&g, "Grave Titan"))), "it came back");
+}
+
+#[test]
+fn calix_minus_seven_returns_every_enchantment_card() {
+    let mut g = tbl();
+    let c = perm(&mut g, P0, "Calix, Destiny's Hand");
+    put_gy(&mut g, P0, "Sandwurm Convergence");
+    put_gy(&mut g, P0, "Mirari's Wake");
+    put_gy(&mut g, P0, "Forest");
+    let ab = g.registry.get(g.perm(c).cd.unwrap()).unwrap().walker.unwrap();
+    (ab[2].eff)(&mut g, P0, c).unwrap();
+    let n = names(&g, P0);
+    assert!(n.contains(&"Sandwurm Convergence".to_string()) && n.contains(&"Mirari's Wake".to_string()));
+    assert!(g.player(P0).gy.contains(&card(&g, "Forest")), "the land stays");
+}

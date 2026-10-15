@@ -1078,11 +1078,342 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(anikthea_etb);
     c.attack = Some(anikthea_attack);
     c.grant_kw = Some(anikthea_kw);
+    register_impetus(r, db)?;
+    register_calix(r, db)?;
+    register_rhetoric_demon(r, db)?;
     r.card(db, ABUNDANCE)?.skip_draw = Some(|_, _, _| 0); // a hook, so it is live (g.hooks); the rule is `abundance_draw`
     let c = r.card(db, CACOPHONY)?;
     c.etb = Some(cacophony_etb);
     c.end_step = Some(cacophony_end);
     c.prio = Some(cacophony_prio);
     *c = c.at_once(crate::hooks::Event::EndStep);
+    Ok(())
+}
+
+// ================================================================== Ghoulish Impetus
+/// **Ghoulish Impetus** (Aura): enchanted creature gets +1/+1 and has deathtouch (the `AuraSpec`); when it dies, the Aura
+/// returns to the battlefield at the beginning of the next end step (`host_dies` queues it on `g.eot_returns`, which
+/// `galadriel::eot_returns` also serves from the graveyard; the returned Aura picks a new host).
+/// **Goad is not modeled** (Partial): it is t0-zurgo's mechanic and the lead wires it in after merging. The AI puts it on
+/// the best opposing creature (the card's purpose), where until goad lands it only helps that creature.
+fn impetus_dies(g: &mut Game, p: PlayerId, a: PermId, _host: PermId) -> Res {
+    if let Some(cd) = g.perm(a).cd {
+        let o = g.perm(a).owner;
+        if g.player(o).gy.contains(&cd) {
+            g.eot_returns.push((o, cd));
+        }
+    }
+    let _ = p;
+    Ok(())
+}
+
+fn impetus_host(g: &mut Game, p: PlayerId, _a: PermId) -> Res<Option<PermId>> {
+    let cands: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| on_bf(g, m) && g.is_creature(m) && !crate::engine::values::untargetable(g, m))
+        .collect();
+    Ok(max_by(&cands, |m| pval(g, m)))
+}
+
+static IMPETUS: super::common::AuraSpec = super::common::AuraSpec {
+    pow: 1,
+    tgh: 1,
+    kws: &["deathtouch"],
+    target: "opp",
+    host_pick: Some(impetus_host),
+    host_dies: Some(impetus_dies),
+    ..super::common::AURA
+};
+
+pub fn register_impetus(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    super::common::aura(r, db, "Ghoulish Impetus", &IMPETUS)
+}
+
+// ================================================================== Demon of Fate's Design
+const DEMON: &str = "Demon of Fate's Design";
+
+/// **Demon of Fate's Design** (flying, trample): once during each of your turns, cast an enchantment spell from hand by
+/// paying life equal to its mana value instead of its mana cost (an `options` entry: it picks the dearest enchantment
+/// it can afford at 12+ life afterwards; a spell with an additional cost isn't offered). The {2}{B} sacrifice-another-
+/// enchantment +X/+0 (X: its mana value) is the compiled activation.
+fn demon_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src) || post.is_none() || g.active != Some(p) || !on_bf(g, src) {
+        return Ok(vec![]);
+    }
+    if matches!(g.perm(src).data.get(DataKey::Act), Some(Val::Stamp(s)) if *s == g.turn_stamp()) {
+        return Ok(vec![]);
+    }
+    let life = g.player(p).life;
+    let mut out = vec![];
+    for &c in g.player(p).hand.iter() {
+        let d = g.db.get(c);
+        if !is_ench(g, c) || d.land || d.cmc == 0 || life - (d.cmc as i32) < 12 || d.tag(crate::tag::Tag::Needsac) {
+            continue;
+        }
+        if !crate::engine::cast::castable(g, p, c, "hand") {
+            continue;
+        }
+        out.push(Opt {
+            utility: 1.0 + 0.7 * d.cmc as f64,
+            label: format!("Demon of Fate's Design: cast {} for {} life", d.name, d.cmc),
+            act: Some(Action::Ability { src, f: demon_go, arg: c.0 as i64 }),
+        });
+    }
+    Ok(out)
+}
+
+fn demon_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let st = g.turn_stamp();
+    if !on_bf(g, src) || !g.player(p).hand.contains(&c) {
+        return Ok(false);
+    }
+    if matches!(g.perm(src).data.get(DataKey::Act), Some(Val::Stamp(s)) if *s == st) {
+        return Ok(false);
+    }
+    let cmc = g.db.get(c).cmc as i32;
+    if g.player(p).life - cmc < 12 {
+        return Ok(false);
+    }
+    g.perm_mut(src).data.set(DataKey::Act, Val::Stamp(st));
+    lose_life(g, p, cmc, Some(p), "life", None)?;
+    crate::glog!(g, "    {} casts {} for {} life", DEMON, g.db.get(c).name, cmc);
+    crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default())?;
+    Ok(true)
+}
+
+// ================================================================== Cunning Rhetoric
+const RHETORIC: &str = "Cunning Rhetoric";
+/// cards exiled by Cunning Rhetoric sit in the hand marked in `impulse_long` with a turn this far ahead (so they never
+/// lapse, and are far below the `u32::MAX - 1 - turn` plot marks)
+const RHETORIC_MARK: u32 = 100_000;
+
+/// **Cunning Rhetoric**: whenever an opponent attacks you, exile the top card of that player's library; you may play it
+/// for as long as it remains exiled, spending mana as though it were mana of any color. The card goes to your hand
+/// marked in `impulse_long` (it can be cast normally if the colours allow); `rhetoric_options` plays it as a land, or
+/// casts it paying its mana value in generic mana (any colour). Attacks at planeswalkers are attacks at their player here.
+fn rhetoric_attack(g: &mut Game, src: Src, atk_p: PlayerId, _atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
+    let me = owner(g, src);
+    if d != me || atk_p == me || !on_bf(g, src) || g.player(atk_p).library.is_empty() {
+        return Ok(vec![]);
+    }
+    if !trigger_window(g, me, Some(src), "exile the attacker's top card", None)? {
+        return Ok(vec![]);
+    }
+    let Some(top) = g.player_mut(atk_p).library.pop() else { return Ok(vec![]) };
+    crate::glog!(g, "    Cunning Rhetoric exiles {} from {}'s library", g.db.get(top).name, g.player(atk_p).name);
+    let pl = g.player_mut(me);
+    pl.seen.insert(top);
+    pl.hand.push(top);
+    let until = pl.turns + RHETORIC_MARK;
+    pl.impulse_long.push((top, until));
+    Ok(vec![])
+}
+
+fn rhetoric_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src) || post.is_none() || g.active != Some(p) || !on_bf(g, src) {
+        return Ok(vec![]);
+    }
+    let mut out = vec![];
+    let marked: Vec<CardId> = g
+        .player(p)
+        .impulse_long
+        .iter()
+        .filter(|x| x.1 >= RHETORIC_MARK && x.1 < u32::MAX / 2 && g.player(p).hand.contains(&x.0))
+        .map(|x| x.0)
+        .collect();
+    for c in marked {
+        let d = g.db.get(c);
+        if d.land {
+            if g.player(p).lands_played < 1 {
+                out.push(Opt {
+                    utility: 3.0,
+                    label: format!("Cunning Rhetoric: play {}", d.name),
+                    act: Some(Action::Ability { src, f: rhetoric_go, arg: c.0 as i64 }),
+                });
+            }
+        } else if d.cmc > 0 && !crate::engine::mana::can_pay(g, p, d.generic, &d.pips, false) {
+            // not payable with its own colours: pay the whole mana value as generic
+            if crate::engine::mana::can_pay(g, p, d.cmc, "", false) && !d.tag(crate::tag::Tag::Ctr) {
+                out.push(Opt {
+                    utility: 1.0 + 0.5 * d.cmc as f64,
+                    label: format!("Cunning Rhetoric: cast {} with any colour", d.name),
+                    act: Some(Action::Ability { src, f: rhetoric_go, arg: c.0 as i64 }),
+                });
+            }
+        }
+    }
+    Ok(out)
+}
+
+fn rhetoric_go(g: &mut Game, _src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) {
+        return Ok(false);
+    }
+    let d = g.db.get(c);
+    if d.land {
+        if g.player(p).lands_played >= 1 {
+            return Ok(false);
+        }
+        g.player_mut(p).impulse_long.retain(|x| x.0 != c);
+        remove_card(&mut g.player_mut(p).hand, c);
+        crate::engine::turn::play_land_card(g, p, c, "plays")?;
+        return Ok(true);
+    }
+    if !crate::engine::mana::pay(g, p, d.cmc, "", false)? {
+        return Ok(false);
+    }
+    g.player_mut(p).impulse_long.retain(|x| x.0 != c);
+    crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default())?;
+    Ok(true)
+}
+
+pub fn register_rhetoric_demon(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, DEMON)?.options = Some(demon_options);
+    let c = r.card(db, RHETORIC)?;
+    c.attack = Some(rhetoric_attack);
+    c.options = Some(rhetoric_options);
+    Ok(())
+}
+
+// ================================================================== Calix, Destiny's Hand
+const CALIX: &str = "Calix, Destiny's Hand";
+
+/// the enchantments p controls that return what they exiled when they leave (they have a `leaves` hook, which all
+/// the deck's enchantments get in `register`, and share `DataKey::Oring` with the O-Ring family)
+fn calix_link(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cands: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            on_bf(g, m)
+                && g.perm(m).cd.is_some_and(|c| {
+                    is_ench(g, c) && !is_saga(g, c) && g.registry.get(c).is_some_and(|i| i.leaves.is_some())
+                })
+        })
+        .collect();
+    // the one least likely to leave: the cheapest, not an Aura or a God that can die
+    max_by(&cands, |m| {
+        10.0 - g.perm(m).cd.map_or(0.0, |c| g.db.get(c).cmc as f64) - g.is_creature(m) as i32 as f64 * 3.0
+    })
+}
+
+fn calix_target_ok(g: &Game, m: PermId) -> bool {
+    g.is_creature(m) || g.perm(m).cd.is_some_and(|c| is_ench(g, c))
+}
+
+fn calix_plus_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    Some(if g.player(p).library.is_empty() { 0.0 } else { 3.0 })
+}
+
+/// +1: look at the top four, take the best enchantment, the rest on the bottom in a random order
+fn calix_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let mut top = vec![];
+    for _ in 0..4 {
+        if let Some(c) = g.player_mut(p).library.pop() {
+            top.push(c);
+        }
+    }
+    let pick =
+        max_by(&top.iter().copied().filter(|&c| is_ench(g, c)).collect::<Vec<_>>(), |c| card_worth(g, p, c, false));
+    if let Some(c) = pick {
+        remove_card(&mut top, c);
+        g.player_mut(p).hand.push(c);
+        g.player_mut(p).seen.insert(c);
+        crate::glog!(g, "    Calix takes {}", g.db.get(c).name);
+    }
+    g.rng.shuffle(&mut top);
+    for c in top {
+        g.player_mut(p).library.insert(0, c);
+    }
+    Ok(())
+}
+
+fn calix_minus3_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    calix_link(g, p)?;
+    let t = super::common::best_opp_nonland(g, p, |m| calix_target_ok(g, m))?;
+    let v = pval(g, t);
+    (v >= 3.0).then_some(4.0 + v.min(6.0))
+}
+
+/// -3: exile the best opposing creature or enchantment until the linked enchantment you control leaves
+fn calix_minus3(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let Some(link) = calix_link(g, p) else { return Ok(()) };
+    oring_exile(g, link, p, |g, m| calix_target_ok(g, m), false, false)
+}
+
+fn calix_ult_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    let n = g.player(p).gy.iter().filter(|&&c| is_ench(g, c)).count();
+    (n >= 2).then_some(8.0 + n as f64)
+}
+
+/// -7: return all enchantment cards from your graveyard to the battlefield (an Aura goes onto a creature, or stays)
+fn calix_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| is_ench(g, c)).collect();
+    for c in cs {
+        if !g.player(p).gy.contains(&c) {
+            continue;
+        }
+        remove_card(&mut g.player_mut(p).gy, c);
+        enter(g, p, c, Enter::default())?;
+    }
+    Ok(())
+}
+
+static CALIX_ABS: [super::common::WalkerAb; 3] = [
+    super::common::WalkerAb {
+        delta: 1,
+        label: "look at four, take an enchantment",
+        val: calix_plus_val,
+        eff: calix_plus,
+    },
+    super::common::WalkerAb {
+        delta: -3,
+        label: "exile until an enchantment leaves",
+        val: calix_minus3_val,
+        eff: calix_minus3,
+    },
+    super::common::WalkerAb { delta: -7, label: "return all enchantments", val: calix_ult_val, eff: calix_ult },
+];
+
+/// the deck's enchantments that have no `leaves` hook of their own get one that returns what they exiled for Calix
+fn calix_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
+    oring_return(g, src)
+}
+
+pub fn register_calix(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    super::common::walker(r, db, CALIX, &CALIX_ABS)?;
+    for name in [
+        "Abundance",
+        "Battle for Bretagard",
+        "Binding the Old Gods",
+        "Boon of the Spirit Realm",
+        "Cacophony Unleashed",
+        "Cast Out",
+        "Cunning Rhetoric",
+        "Dreadhorde Invasion",
+        "Enchantress's Presence",
+        "Felidar Retreat",
+        "Font of Fertility",
+        "Ghoulish Impetus",
+        "Grasp of Fate",
+        "Khalni Heart Expedition",
+        "Mirari's Wake",
+        "Omen of the Hunt",
+        "Omen of the Sun",
+        "Sandwurm Convergence",
+        "Sigil of the Empty Throne",
+        "Starfield of Nyx",
+    ] {
+        let c = r.card(db, name)?;
+        if c.leaves.is_none() {
+            c.leaves = Some(calix_leaves);
+            *c = c.at_once(crate::hooks::Event::Leaves);
+        }
+    }
     Ok(())
 }

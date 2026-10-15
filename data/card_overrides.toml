@@ -7533,3 +7533,20 @@ note = "enters tapped, returns another land you control to your hand (the engine
 tags = "amt=2 c=BG t bounceland"
 status = "Full"
 note = "enters tapped, returns another land you control to your hand (the engine's bounceland rule), taps for {B}{G}"
+
+["Calix, Destiny's Hand"]
+dsl = []
+status = "Full"
+note = "loyalty 4; +1 look at four, take an enchantment, rest on the bottom at random; -3 exile the best opposing creature/enchantment (oring_exile) until a linked enchantment you control leaves (every deck enchantment returns it through a leaves hook on the shared Oring data); -7 return all enchantment cards from the graveyard (an Aura with no host stays in the graveyard)"
+
+["Demon of Fate's Design"]
+status = "Full"
+note = "flying, trample; once a turn cast an enchantment from hand for life equal to its mana value (options entry, only above 12 life after paying); the {2}{B} sacrifice-another-enchantment +X/+0 is the compiled activation"
+
+["Cunning Rhetoric"]
+status = "Full"
+note = "whenever an opponent attacks you, exile the top card of its library into your hand, marked as playable for good (impulse_long); options play it as a land or cast it paying its mana value in generic mana (any colour); attacks at planeswalkers are attacks at the player in this engine"
+
+["Ghoulish Impetus"]
+status = "Partial"
+note = "Aura: +1/+1 and deathtouch, returns at the next end step when the creature dies (host_dies -> eot_returns). GOAD NOT MODELED: pending t0-zurgo's goad mechanic, the lead wires it in after merging"
