@@ -239,11 +239,27 @@ pub fn num_expr(s: &str) -> J {
     if is_numw(&s) || py::isdigit(&s) {
         return n_(&s);
     }
+    // counting phrases the interpreter can name (anything else falls through to a bare "X", which the audit flags)
+    if s.contains("creature") && s.contains("died this turn") {
+        return "creatures_died_this_turn".into();
+    }
+    if s.contains("destroyed this way") {
+        return "destroyed_this_way".into();
+    }
+    if s.contains("instant") && s.contains("sorcery") && s.contains("graveyard") && s.contains("your") {
+        return "gy_instants_sorceries".into();
+    }
+    if s.contains("colors among") && s.contains("you control") {
+        return "colors_among_permanents".into();
+    }
+    if s.contains("sacrificed") && s.contains("mana value") {
+        return "sacrificed_mv".into();
+    }
     if s.contains("creature") && s.contains("you control") {
         return "creatures_you_control".into();
     }
     if let Some(tm) = rmatch(
-        r"^(?:the number of )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|vampires|spirits|faeries) (you control|on the battlefield)$",
+        r"^(?:the number of )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|vampires|spirits|faeries|equipment) (you control|on the battlefield)$",
         &s,
     ) {
         return format!("{}{}", if tm.gs(2) == "you control" { "type_you:" } else { "type_all:" }, singular(tm.gs(1)))
@@ -802,8 +818,10 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
         if let Some(got) = got {
             for mut e in got {
                 if let Some(x) = &xexpr {
-                    if e.get("n") == Some(&J::Str("X".into())) {
-                        e.set("n", x.clone());
+                    for k in ["n", "pow", "tgh"] {
+                        if e.get(k) == Some(&J::Str("X".into())) {
+                            e.set(k, x.clone());
+                        }
                     }
                 }
                 if per_opp && e.get("do") == Some(&J::Str("token".into())) {
@@ -1074,16 +1092,19 @@ static STATICS: &[(&str, StaticFn)] = &[
     ),
     (r"^(?:~|this creature) gets \+(\d+)/\+(\d+) for each (.+)$", |m| {
         Some(eff(
-            obj! {"type" => "static", "static" => "self_scaling", "pow" => int(m.gs(1)), "per" => num_expr(m.gs(3))},
+            obj! {"type" => "static", "static" => "self_scaling", "pow" => int(m.gs(1)), "tgh" => int(m.gs(2)), "per" => num_expr(m.gs(3))},
         ))
     }),
     (
         r"^~'s power is equal to the number of (.+)$|^~'s power and toughness are each equal to the number of (.+)$",
         |m| {
             let g = m.g(1).or(m.g(2)).unwrap_or("");
-            Some(eff(
-                obj! {"type" => "static", "static" => "self_scaling", "pow" => 1, "per" => num_expr(g), "base0" => true},
-            ))
+            // "power and toughness are each equal" sets both; "power is equal" (Haughty Djinn) leaves the toughness alone
+            let mut e = obj! {"type" => "static", "static" => "self_scaling", "pow" => 1, "per" => num_expr(g)};
+            if m.g(2).is_some() {
+                e.set("base0", true);
+            }
+            Some(eff(e))
         },
     ),
 ];

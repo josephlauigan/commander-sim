@@ -633,7 +633,8 @@
      "type": "static",
      "static": "self_scaling",
      "pow": 1,
-     "per": "X"
+     "tgh": 1,
+     "per": "type_you:equipment"
     }
    ],
    "start_loyalty": null,
@@ -21245,7 +21246,7 @@
       },
       {
        "do": "draw",
-       "n": "X",
+       "n": "creatures_died_this_turn",
        "who": "you"
       }
      ]
@@ -22204,7 +22205,7 @@
      "effects": [
       {
        "do": "pump",
-       "pow": "X",
+       "pow": "sacrificed_mv",
        "tgh": 0,
        "what": {
         "sel": "self"
@@ -35412,7 +35413,7 @@
       },
       {
        "do": "gain_life",
-       "n": "X",
+       "n": "destroyed_this_way",
        "who": "you",
        "mult": 1
       }
@@ -35908,7 +35909,7 @@
      "effects": [
       {
        "do": "damage",
-       "n": "X",
+       "n": "gy_instants_sorceries",
        "to": {
         "sel": "target",
         "filter": {
@@ -42533,11 +42534,11 @@
    "generic": 1,
    "pips": "UU",
    "tags": {
-    "pow": "1",
+    "pow": "0",
     "tgh": "4",
     "fly": true
    },
-   "pow": 1,
+   "pow": 0,
    "tgh": 4,
    "bomb": 0,
    "dsl": [
@@ -42545,8 +42546,7 @@
      "type": "static",
      "static": "self_scaling",
      "pow": 1,
-     "per": "X",
-     "base0": true
+     "per": "gy_instants_sorceries"
     },
     {
      "type": "static",
@@ -42567,7 +42567,7 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -52286,14 +52286,7 @@
    "pow": 0,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "self_scaling",
-     "pow": 2,
-     "per": "X"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -82506,12 +82499,12 @@
      "effects": [
       {
        "do": "lose_life",
-       "n": "X",
+       "n": "colors_among_permanents",
        "who": "each_opponent"
       },
       {
        "do": "gain_life",
-       "n": "X",
+       "n": "colors_among_permanents",
        "who": "you",
        "per_opponent": true
       }
