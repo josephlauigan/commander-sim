@@ -159,6 +159,7 @@ pub fn attack_restrictions(g: &Game, p: PlayerId, d: PlayerId) -> (i32, Option<i
 pub fn attack_limits(g: &mut Game, p: PlayerId, d: PlayerId, atk: Vec<PermId>) -> Res<Vec<PermId>> {
     let (tax, cap) = attack_restrictions(g, p, d);
     let mut atk = atk;
+    atk.retain(|&a| !crate::impls::t0_anikthea::flyer_barred(g, a, d)); // Sandwurm Convergence
     atk.sort_by_key(|&m| -epow(g, m)); // stable
     let moc: Vec<PermId> = atk.iter().copied().filter(|&m| card_name(g, m) == Some("Master of Cruelties")).collect();
     if let Some(&mc) = moc.first()

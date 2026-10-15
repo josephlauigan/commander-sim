@@ -2843,30 +2843,7 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile_graveyard",
-       "who": "each_player"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile_graveyard",
-       "who": "each_player"
-      }
-     ],
-     "event": "attack",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "menace"
@@ -2878,11 +2855,8 @@
    "ward": 0,
    "identity": "BGW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Other enchantment creatures you control have menace.",
-    "Whenever ~ enters or attacks, exile up to one target non-Aura enchantment card from your graveyard. Create a token that's a copy of that card, except it's a 3/3 black Zombie creature in addition to its other types.   [partly: create a token that's a copy of that card, except it's a 3/3 black zombie creature in addition to its other types]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -6911,9 +6885,7 @@
    "types": "E",
    "generic": 4,
    "pips": "WW",
-   "tags": {
-    "vig": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -6929,11 +6901,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "I, II — For each player, exile up to one target non-Saga, nonland permanent that player controls until this Saga leaves the battlefield.",
-    "III — Create Avacyn, a legendary 8/8 white Angel creature token with flying, vigilance, and indestructible."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -6955,10 +6924,7 @@
    "types": "E",
    "generic": 1,
    "pips": "GW",
-   "tags": {
-    "tok": "1",
-    "tokp": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -6972,10 +6938,8 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "III — Choose any number of artifact tokens and/or creature tokens you control with different names. For each of them, create a token that's a copy of it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -7653,10 +7617,7 @@
    "types": "E",
    "generic": 2,
    "pips": "BG",
-   "tags": {
-    "lr": "1",
-    "lrt": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -7670,11 +7631,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "I — Destroy target nonland permanent an opponent controls.",
-    "III — Creatures you control gain deathtouch until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -10110,9 +10068,7 @@
    "types": "E",
    "generic": 3,
    "pips": "WW",
-   "tags": {
-    "anth": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -10126,10 +10082,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Constellation — Whenever ~ or another enchantment you control enters, put a blessing counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -12450,38 +12404,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": -3,
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "ce",
-         "controller": "opp"
-        },
-        "upto": false
-       }
-      }
-     ]
-    },
-    {
-     "type": "loyalty",
-     "loyalty": -7,
-     "effects": [
-      {
-       "do": "reanimate",
-       "filter": {
-        "type": "enchantment"
-       },
-       "from": "yours"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -12491,12 +12414,8 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "look at the top four cards of your library",
-    "reveal an enchantment card from among them and put that card into your hand",
-    "put the rest on the bottom of your library in a random order"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -29113,18 +29032,15 @@
   },
   {
    "name": "Erebos, Bleak-Hearted",
-   "types": "CE",
+   "types": "E",
    "generic": 3,
    "pips": "B",
    "tags": {
-    "leg": true,
-    "pow": "5",
-    "tgh": "6",
-    "bomb": "5"
+    "leg": true
    },
-   "pow": 5,
-   "tgh": 6,
-   "bomb": 5,
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
    "dsl": null,
    "start_loyalty": null,
    "kws": [
@@ -29137,16 +29053,12 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "As long as your devotion to black is less than five, ~ isn't a creature.",
-    "Whenever another creature you control dies, you may pay 2 life. If you do, draw a card.",
-    "{1}{B}, Sacrifice another creature: Target creature gets -2/-1 until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
-    "creature": true,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -39551,7 +39463,8 @@
    "tags": {
     "amt": "2",
     "c": "BG",
-    "t": true
+    "t": true,
+    "bounceland": true
    },
    "pow": 0,
    "tgh": 0,
@@ -39570,10 +39483,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, return a land you control to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -40685,29 +40596,7 @@
    "pow": 6,
    "tgh": 5,
    "bomb": 6,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2G",
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": true
-       },
-       "to": "battlefield",
-       "n": 1,
-       "tapped": true
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "channel",
@@ -40720,7 +40609,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 6,
@@ -43123,7 +43012,7 @@
   },
   {
    "name": "Heliod, God of the Sun",
-   "types": "CE",
+   "types": "E",
    "generic": 3,
    "pips": "W",
    "tags": {
@@ -43133,7 +43022,7 @@
     "bomb": "5"
    },
    "pow": 5,
-   "tgh": 6,
+   "tgh": 0,
    "bomb": 5,
    "dsl": [
     {
@@ -43180,14 +43069,14 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [
     "As long as your devotion to white is less than five, ~ isn't a creature."
    ],
    "derived": {
     "cmc": 4,
     "land": false,
-    "creature": true,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -51206,28 +51095,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "other": "remove three quest counters from ~ and sacrifice it"
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": true
-       },
-       "to": "battlefield",
-       "n": 2,
-       "tapped": true
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "landfall"
@@ -51237,10 +51105,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Landfall — Whenever a land you control enters, you may put a quest counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -56126,11 +55992,7 @@
    "types": "E",
    "generic": 2,
    "pips": "W",
-   "tags": {
-    "tok": "1",
-    "tokp": "1",
-    "tokfly": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -56146,12 +56008,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Read ahead",
-    "I — You and target opponent each draw two cards.",
-    "III — Put a +1/+1 counter on each of up to two target creatures."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -66493,7 +66351,8 @@
    "tags": {
     "amt": "2",
     "c": "WB",
-    "t": true
+    "t": true,
+    "bounceland": true
    },
    "pow": 0,
    "tgh": 0,
@@ -66512,10 +66371,8 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, return a land you control to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
