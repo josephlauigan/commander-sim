@@ -1,0 +1,72 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 22 worker threads: about 44 seconds
+  progress  10.0%  0m10s elapsed, ~1m32s left
+  progress  20.0%  0m17s elapsed, ~1m10s left
+  progress  30.0%  0m25s elapsed, ~0m58s left
+  progress  40.0%  0m33s elapsed, ~0m49s left
+  progress  50.0%  0m42s elapsed, ~0m42s left
+  progress  60.0%  0m51s elapsed, ~0m34s left
+  progress  70.0%  0m59s elapsed, ~0m25s left
+  progress  80.0%  1m09s elapsed, ~0m17s left
+  progress  90.0%  1m17s elapsed, ~0m08s left
+  progress 100.0%  1m28s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== alela analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 10.0%   (4-player baseline 25%)   average rounds survived 11.7
+
+-- How it wins --
+  damage      84.4% of wins
+  timeout     15.6% of wins
+  Opponents it eliminated: 0.38 per game, by
+    combat             89.3%
+    decked              6.6%
+    drain               3.3%
+    commander damage    0.8%
+  Damage dealt per game: 25.5, from
+    combat              24.8  (97%)
+    drain                0.7  (3%)
+
+-- How it loses --
+  Eliminated in 87.5% of games, on average in round 11.0
+    by Isshin   via combat             17.5% of games
+    by Lathril  via combat             13.4% of games
+    by Light-Paws via commander damage   12.2% of games
+    by Tatyova  via combat             10.3% of games
+    by Teysa Karlov via drain               9.4% of games
+    by Lathril  via drain               6.2% of games
+    by Teysa Karlov via combat              3.8% of games
+    by Light-Paws via combat              3.4% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 5%  T5 15%  T6 25%  T7 36%  T8 43%  T9 50%  T10 55%  T11 59%  T12 62%
+  Online at all: 63.1% of games
+  Commander resolves on turn: median 5.0, mean 5.6 (over the 85.3% of games it resolves)
+  Commander resolved by turn:  T4 38%  T5 53%  T6 62%  T7 70%  T8 74%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Short Bow                                  cast in  31.9% of games, win rate when cast  11.8% (+1.8)
+    Alela, Artful Provocateur                  cast in  85.3% of games, win rate when cast  11.4% (+1.4)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  85.3% of games, win rate when cast  11.4% (+1.4)
+    Short Bow                                  cast in  31.9% of games, win rate when cast  11.8% (+1.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.46
+    Short Bow                                  0.15
+    Venser, the Sojourner                      0.12
+    Ethersworn Canonist                        0.07
+    Strixhaven Skycoach                        0.07
+    Windborn Muse                              0.07
+    Rhystic Study                              0.06
+    Reconstructed Thopter                      0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(89s total)

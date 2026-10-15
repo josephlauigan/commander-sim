@@ -1,0 +1,68 @@
+320 games (analysis, 320 per list per tier, profile loose), lookahead AI, 22 worker threads: about 44 seconds
+  progress  10.0%  0m02s elapsed, ~0m20s left
+  progress  20.0%  0m05s elapsed, ~0m21s left
+  progress  30.0%  0m07s elapsed, ~0m18s left
+  progress  40.0%  0m10s elapsed, ~0m16s left
+  progress  50.0%  0m13s elapsed, ~0m13s left
+  progress  60.0%  0m15s elapsed, ~0m10s left
+  progress  70.0%  0m17s elapsed, ~0m07s left
+  progress  80.0%  0m20s elapsed, ~0m05s left
+  progress  90.0%  0m23s elapsed, ~0m02s left
+  progress 100.0%  0m26s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== alela analysis [loose profile, lookahead AI, 320 games] ===========
+Win rate 15.3%   (4-player baseline 25%)   average rounds survived 8.5
+
+-- How it wins --
+  damage      95.9% of wins
+  timeout      4.1% of wins
+  Opponents it eliminated: 0.34 per game, by
+    combat             92.7%
+    drain               7.3%
+  Damage dealt per game: 15.9, from
+    combat              15.4  (97%)
+    drain                0.5  (3%)
+
+-- How it loses --
+  Eliminated in 84.7% of games, on average in round 7.5
+    by Kinnan   via combo              22.8% of games
+    by Urza     via combo              17.8% of games
+    by Zur the Enchanter via combo              11.6% of games
+    by Winota   via combo              10.3% of games
+    by Winota   via combat              9.1% of games
+    by Yawgmoth via combo               8.1% of games
+    by Zur the Enchanter via commander damage    1.6% of games
+    by Urza     via combat              0.9% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 2%  T5 10%  T6 17%  T7 22%  T8 29%  T9 31%  T10 33%  T11 34%  T12 35%
+  Online at all: 36.2% of games
+  Commander resolves on turn: median 5.0, mean 5.5 (over the 57.8% of games it resolves)
+  Commander resolved by turn:  T4 23%  T5 35%  T6 42%  T7 49%  T8 52%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Alela, Artful Provocateur                  cast in  60.0% of games, win rate when cast  25.0% (+9.7)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  60.0% of games, win rate when cast  25.0% (+9.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.20
+    Short Bow                                  0.07
+    Ethersworn Canonist                        0.04
+    Strixhaven Skycoach                        0.03
+    Rhystic Study                              0.03
+    Venser, the Sojourner                      0.03
+    Windborn Muse                              0.03
+    Notion Thief                               0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(27s total)

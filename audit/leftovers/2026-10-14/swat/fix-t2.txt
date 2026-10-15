@@ -1,0 +1,107 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 2 minutes
+  progress  10.0%  0m11s elapsed, ~1m40s left
+  progress  20.0%  0m22s elapsed, ~1m31s left
+  progress  30.0%  0m33s elapsed, ~1m18s left
+  progress  40.0%  0m44s elapsed, ~1m07s left
+  progress  50.0%  0m56s elapsed, ~0m56s left
+  progress  60.0%  1m06s elapsed, ~0m44s left
+  progress  70.0%  1m18s elapsed, ~0m33s left
+  progress  80.0%  1m29s elapsed, ~0m22s left
+  progress  90.0%  1m39s elapsed, ~0m11s left
+  progress 100.0%  1m52s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== kefka analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 40.7%   (4-player baseline 25%)   average rounds survived 12.2
+
+-- How it wins --
+  damage      98.5% of wins
+  timeout      1.5% of wins
+  Opponents it eliminated: 1.13 per game, by
+    drain              30.0%
+    combat             27.1%
+    triggers           16.3%
+    decked             13.3%
+    burn               12.2%
+    commander damage    1.1%
+  Damage dealt per game: 45.5, from
+    combat              19.3  (42%)
+    drain               18.0  (39%)
+    triggers             4.3  (9%)
+    burn                 3.9  (9%)
+
+-- How it loses --
+  Eliminated in 57.8% of games, on average in round 11.7
+    by Sythis   via combat             10.2% of games
+    by Brago    via combat              9.6% of games
+    by Lord Windgrace via combat              9.1% of games
+    by Kaalia of the Vast via combat              8.8% of games
+    by Meren of Clan Nel Toth via combat              5.0% of games
+    by Sythis   via commander damage    4.6% of games
+    by Meren of Clan Nel Toth via triggers            2.8% of games
+    by Kaalia of the Vast via drain               2.1% of games
+
+-- Game plan timing --
+  Plan: Kefka flipped into Ruler of Ruin
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 1%  T7 3%  T8 8%  T9 14%  T10 23%  T11 29%  T12 35%
+  Online at all: 47.3% of games
+  Commander resolves on turn: median 6.0, mean 6.3 (over the 91.6% of games it resolves)
+  Commander resolved by turn:  T4 14%  T5 43%  T6 60%  T7 72%  T8 79%
+  Breach line: Breach and a storm card held on our turn in 38.4% of games
+    dry run tried in 36.5%, passed in 15.5%, executed in 14.2%, won (table dead or decked) in 13.8%
+    last failed dry run fell short of: mana 7.2%, blue mana 0.1%, graveyard fuel 2.7%, storm count / other 22.6% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Brain Freeze                               cast in  12.9% of games, win rate when cast  95.3% (+54.6)
+    Underworld Breach                          cast in  20.1% of games, win rate when cast  80.6% (+39.9)
+    Psychosis Crawler                          cast in  33.0% of games, win rate when cast  60.3% (+19.6)
+    Niv-Mizzet, the Firemind                   cast in  29.3% of games, win rate when cast  57.7% (+17.0)
+    Massacre Wurm                              cast in  24.5% of games, win rate when cast  56.7% (+16.0)
+    Lotus Petal                                cast in  37.1% of games, win rate when cast  54.2% (+13.5)
+    Dark Ritual                                cast in  35.8% of games, win rate when cast  50.8% (+10.1)
+    Shimmercreep                               cast in  25.0% of games, win rate when cast  50.8% (+10.1)
+    Blightspeaker                              cast in  26.2% of games, win rate when cast  50.4% (+9.7)
+    Corroding Dragonstorm                      cast in  34.4% of games, win rate when cast  50.0% (+9.3)
+  Lowest win rate when cast:
+    Rummaging Goblin                           cast in  18.8% of games, win rate when cast  35.6% (-5.1)
+    Crux of Fate                               cast in  19.7% of games, win rate when cast  36.5% (-4.2)
+    Garrison Excavator                         cast in  26.4% of games, win rate when cast  39.0% (-1.7)
+    Scarlet Spider, Kaine                      cast in  23.4% of games, win rate when cast  39.7% (-1.0)
+    Blazing Firesinger                         cast in  25.9% of games, win rate when cast  40.2% (-0.5)
+    Alpharael, Dreaming Acolyte                cast in  28.6% of games, win rate when cast  40.2% (-0.5)
+    Reality Shift                              cast in  29.0% of games, win rate when cast  40.3% (-0.4)
+    Skullport Merchant                         cast in  23.4% of games, win rate when cast  40.6% (-0.1)
+    Feed the Swarm                             cast in  24.5% of games, win rate when cast  40.8% (+0.1)
+    Stadium Tidalmage                          cast in  26.9% of games, win rate when cast  40.9% (+0.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Grapeshot                                  cast  12.6% of the games it was drawn
+    Slip Out the Back                          cast  13.9% of the games it was drawn [reactive: only cast in response]
+    Yawgmoth's Will                            cast  14.8% of the games it was drawn
+    Deflecting Swat                            cast  15.6% of the games it was drawn
+    Profane Tutor                              cast  20.9% of the games it was drawn
+    Brain Freeze                               cast  23.4% of the games it was drawn
+    Underworld Breach                          cast  24.1% of the games it was drawn
+    Jin-Gitaxias, Progress Tyrant              cast  30.4% of the games it was drawn
+    Rapturous Moment                           cast  35.8% of the games it was drawn
+    Crux of Fate                               cast  37.3% of the games it was drawn
+    Sisay's Ring                               cast  37.9% of the games it was drawn
+    Extinguish the Light                       cast  39.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kefka, Court Mage // Kefka, Ruler of Ruin  0.57
+    Rhystic Study                              0.14
+    Psychosis Crawler                          0.11
+    Massacre Wurm                              0.09
+    Corroding Dragonstorm                      0.07
+    Sawblade Scamp                             0.07
+    Screeching Soulbreaker                     0.07
+    Alpharael, Dreaming Acolyte                0.07
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(112s total)
