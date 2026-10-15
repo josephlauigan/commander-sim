@@ -555,3 +555,18 @@ fn a_bounceland_played_with_no_other_land_returns_itself() {
     assert_eq!(g.player(P0).lands.len(), 1);
     assert_eq!(&*g.db.get(g.land(g.player(P0).lands[0]).cd).name, "Orzhov Basilica");
 }
+
+#[test]
+fn tainted_field_needs_a_swamp_for_coloured_mana_and_sungrass_prairie_is_one_mana() {
+    use sim_core::engine::mana::land_colors_now;
+    let mut g = tbl();
+    let tf = lands(&mut g, P0, "Tainted Field", 1, false)[0];
+    assert!(land_colors_now(&g, P0, tf).count() == 0, "no Swamp: colourless only");
+    lands(&mut g, P0, "Swamp", 1, false);
+    let c = land_colors_now(&g, P0, tf);
+    assert!(c.has('W') && c.has('B'));
+    let sp = lands(&mut g, P0, "Sungrass Prairie", 1, false)[0];
+    let u = sim_core::engine::mana::mana_units(&g, P0, false);
+    let unit = u.iter().find(|x| x.src == sim_core::engine::mana::Source::Land(sp)).unwrap();
+    assert_eq!(unit.amt, 1, "{{1}},{{T}}: add {{G}}{{W}} nets one mana");
+}

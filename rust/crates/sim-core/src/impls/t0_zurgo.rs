@@ -1183,6 +1183,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.land_etb = Some(windbrisk_etb);
     c.land_options = Some(windbrisk_options);
     register_x_cards(r, db)?;
+    register_heath(r, db)?;
     Ok(())
 }
 
@@ -1248,5 +1249,31 @@ pub fn register_x_cards(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_dies = Some(devourer_dies);
     *c = c.at_once(crate::hooks::Event::Etb);
     r.card(db, "Thalisse, Reverent Medium")?.end_step = Some(thalisse_end);
+    Ok(())
+}
+
+// ================================================================== Fetid Heath
+/// **Fetid Heath, Cascade Bluffs**: {T}: Add {C}. {W/B},{T}: Add {W}{W}, {W}{B} or {B}{B}. A filter land: it makes coloured mana only
+/// when another land of the player can make {W} or {B} to pay for it (no other source, colourless only)
+fn heath_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
+    let ident = g.player(p).ident;
+    let mine = Colors::from_letters(g.db.get(g.land(l).cd).tags.str(Tag::C).unwrap_or("C"));
+    let fed = g.player(p).lands.iter().any(|&x| {
+        if x == l {
+            return false;
+        }
+        let theirs = match g.db.get(g.land(x).cd).tags.str(Tag::C) {
+            Some("A") => ident,
+            Some(s) => Colors::from_letters(s),
+            None => Colors::NONE,
+        };
+        "WUBRG".chars().any(|ch| mine.has(ch) && theirs.has(ch))
+    });
+    if fed { mine } else { Colors::NONE }
+}
+
+pub fn register_heath(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Fetid Heath")?.land_cols = Some(heath_cols);
+    r.card(db, "Cascade Bluffs")?.land_cols = Some(heath_cols);
     Ok(())
 }

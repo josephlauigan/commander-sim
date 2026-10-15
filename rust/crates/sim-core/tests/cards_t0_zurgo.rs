@@ -619,3 +619,23 @@ fn thalisse_makes_one_spirit_per_token_created_this_turn() {
     // an opponent's tokens don't count
     assert_eq!(g.player(P1).tok_made.1, 0);
 }
+
+#[test]
+fn filter_lands_need_a_matching_land_and_the_temple_needs_five_lands() {
+    use sim_core::engine::mana::{land_colors_now, mana_units};
+    let mut g = pod();
+    let fh = lands(&mut g, P0, "Fetid Heath", 1, false)[0];
+    assert_eq!(land_colors_now(&g, P0, fh).count(), 0, "alone it makes colourless only");
+    lands(&mut g, P0, "Plains", 1, false);
+    let c = land_colors_now(&g, P0, fh);
+    assert!(c.has('W') && c.has('B'), "with a Plains to pay the filter cost");
+    let mut g = pod();
+    let t = lands(&mut g, P0, "Temple of the False God", 1, false)[0];
+    lands(&mut g, P0, "Plains", 3, false);
+    let amt = |g: &Game| {
+        mana_units(g, P0, false).iter().find(|u| u.src == sim_core::engine::mana::Source::Land(t)).unwrap().amt
+    };
+    assert_eq!(amt(&g), 0, "four lands");
+    lands(&mut g, P0, "Plains", 1, false);
+    assert_eq!(amt(&g), 2, "five lands");
+}

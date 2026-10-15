@@ -1079,6 +1079,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.attack = Some(anikthea_attack);
     c.grant_kw = Some(anikthea_kw);
     register_impetus(r, db)?;
+    register_tainted(r, db)?;
     register_calix(r, db)?;
     register_rhetoric_demon(r, db)?;
     r.card(db, ABUNDANCE)?.skip_draw = Some(|_, _, _| 0); // a hook, so it is live (g.hooks); the rule is `abundance_draw`
@@ -1388,4 +1389,25 @@ pub fn calix_link_left(g: &mut Game, m: PermId) -> Res {
 
 pub fn register_calix(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::common::walker(r, db, CALIX, &CALIX_ABS)
+}
+
+// ================================================================== Tainted Field, Tainted Wood
+/// **Tainted Field / Tainted Wood**: {T}: Add {C}. {T}: Add {W}/{B} (or {B}/{G}). Activate only if you control a Swamp:
+/// without a Swamp (a land with the Swamp type) it taps for colourless only
+fn tainted_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
+    let swamp = g.player(p).lands.iter().any(|&x| {
+        let d = g.db.get(g.land(x).cd);
+        d.has_subtype("swamp") || &*d.name == "Swamp"
+    });
+    if !swamp {
+        return Colors::NONE;
+    }
+    let d = g.db.get(g.land(l).cd);
+    Colors::from_letters(d.tags.str(crate::tag::Tag::C).unwrap_or("C"))
+}
+
+pub fn register_tainted(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Tainted Field")?.land_cols = Some(tainted_cols);
+    r.card(db, "Tainted Wood")?.land_cols = Some(tainted_cols);
+    Ok(())
 }

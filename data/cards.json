@@ -32327,7 +32327,6 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "amt": "2",
     "c": "UR"
    },
    "pow": 0,
@@ -32341,7 +32340,7 @@
    "ward": 0,
    "identity": "RU",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -90198,7 +90197,6 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "amt": "2",
     "c": "WG"
    },
    "pow": 0,
@@ -90212,7 +90210,7 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,

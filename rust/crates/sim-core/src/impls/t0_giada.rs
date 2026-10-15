@@ -862,5 +862,17 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.dies = Some(bishop_dies);
     at_once(c, Event::TokensEnter);
     r.card(db, "Linvala, the Preserver")?.etb = Some(linvala_etb);
+    register_temple(r, db)?;
+    Ok(())
+}
+
+// ================================================================== Temple of the False God
+/// **Temple of the False God**: {T}: Add {C}{C}. Activate only if you control five or more lands
+fn temple_mana(g: &Game, p: PlayerId, _l: crate::ids::LandId) -> u32 {
+    if g.player(p).lands.len() >= 5 { 2 } else { 0 }
+}
+
+pub fn register_temple(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Temple of the False God")?.dyn_mana_land = Some(temple_mana);
     Ok(())
 }

@@ -8006,3 +8006,33 @@ note = "enters with a +1/+1 counter for each creature that died this turn; when 
 dsl = []
 status = "Full"
 note = "at the beginning of each end step, X 1/1 flying Spirits, X the tokens you created this turn (Treasure, Food and Clues included)"
+
+["Sungrass Prairie"]
+tags = "c=WG"
+status = "Full"
+note = "{1},{T}: add {G}{W} is a filter: net one mana of green or white (it was two free mana)"
+
+["Tainted Field"]
+status = "Full"
+note = "taps for colourless; {W} or {B} only while you control a Swamp (t0_anikthea land_cols)"
+
+["Tainted Wood"]
+status = "Full"
+note = "taps for colourless; {B} or {G} only while you control a Swamp (t0_anikthea land_cols)"
+
+["Fetid Heath"]
+status = "Full"
+note = "filter land: coloured mana ({W}/{B}) only with another land that makes {W} or {B} to pay for it (t0_zurgo land_cols)"
+
+["Ferrous Lake"]
+tags = "c=UR"
+status = "Full"
+note = "{1},{T}: add {U}{R} is a filter: net one mana of blue or red (it was two free mana)"
+
+["Cascade Bluffs"]
+status = "Full"
+note = "filter land: {U}/{R} only with another land that makes {U} or {R} to pay for it (t0_zurgo land_cols)"
+
+["Temple of the False God"]
+status = "Full"
+note = "taps for {C}{C} only while you control five or more lands (t0_giada dyn_mana_land)"
