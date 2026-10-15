@@ -280,6 +280,15 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
 // ------------------------------------------------------------------ deck analysis (--analyze)
 pub const KINDS: [&str; 9] =
     ["combat", "burn", "drain", "aether", "triggers", "combo", "commander damage", "decked", "other"];
+/// the turn-4 and turn-8 snapshots (stat key, the flag saying the snapshot was taken)
+const SNAPS: [(&str, &str); 6] = [
+    ("mana_T4", "had_T4"),
+    ("mana_T8", "had_T8"),
+    ("lands_T4", "had_T4"),
+    ("lands_T8", "had_T8"),
+    ("hand_T4", "had_T4"),
+    ("hand_T8", "had_T8"),
+];
 const DMG_KINDS: [&str; 5] = ["combat", "burn", "drain", "aether", "triggers"];
 
 /// compare.analysis_record
@@ -311,6 +320,10 @@ pub struct Analysis {
     pub cast: Counter<String>,
     pub win_seen: Counter<String>,
     pub win_cast: Counter<String>,
+    /// sum of the own-turn counts at which each card was first cast (over the games it was cast in)
+    pub cast_round: Counter<String>,
+    /// (sum, games) of the mana / lands / hand-size snapshots at turns 4 and 8, by stat key
+    pub snap: std::collections::BTreeMap<&'static str, (i64, i64)>,
     pub lost: Counter<String>,
     pub dmg: Counter<&'static str>,
     /// the partner decks' `ty_` counters, summed over games
@@ -376,6 +389,16 @@ impl Analysis {
         for n in cast {
             self.cast.add(n.to_string(), 1);
             self.win_cast.add(n.to_string(), won as i64);
+        }
+        for (n, t) in &me.cast_turns {
+            self.cast_round.add(n.clone(), *t as i64);
+        }
+        for (k, had) in SNAPS {
+            if me.stat(had) != 0 {
+                let e = self.snap.entry(k).or_insert((0, 0));
+                e.0 += me.stat(k);
+                e.1 += 1;
+            }
         }
         for (n, k) in &me.lost {
             self.lost.add(n.clone(), *k as i64);

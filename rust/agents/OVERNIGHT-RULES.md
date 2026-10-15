@@ -67,3 +67,9 @@ These rules replace `rust/agents/RULES.md`, which was written for the Python por
   anything the lead must act on. Put the full report (cards done, how each was modeled, engine changes, open
   questions) in `rust/agents/report-<task>.md` and commit it. Your work will be checked: the diff is read, the tests
   rerun and the claims spot-checked before anything is merged.
+
+## Swap and package tests
+
+Swap and package tests run with the paired breakdown (the default; leave `--no-explain` off). Read the "Why" section
+of each result, not only the `delta` line. After every run, update `audit/<deck>/FINDINGS.md`, the deck's living
+list of strengths and weaknesses and what was tested (with why it helped or not).

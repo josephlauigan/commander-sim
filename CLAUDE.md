@@ -44,3 +44,12 @@ also exported to `data/decks.json`): yshtola and seph t4-t5, sheoldred t3-t4, sa
 t1-t3, cloud and titania t1-t2, alela and galadriel t1. `--pool all`, `--all-decks`, `--analyze`, swap runs and
 `searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over the deck's own
 tiers (label them, e.g. "over t1-t3"). Use `--any-tier` only when JD asks for it. `--calibrate` is unchanged.
+
+## Swap tests explain themselves
+
+`--swap` (and every package test built on it) runs with the paired breakdown by default (`--no-explain` turns it
+off): before the run, the model status of each swapped-in card (Full ... Unmodeled, WARNING on Partial/Unmodeled);
+after it, the swapped cards' drawn / cast / average round / stuck-in-hand numbers for both lists, and the game
+shape (win, survival, how it wins and dies, plan timing, commander removals, mana and hand at turns 4 and 8). It
+costs no extra games and the `delta` line is unchanged. After every run, update `audit/<deck>/FINDINGS.md`, the
+deck's living list of strengths and weaknesses and what was tested (with why it helped or not).

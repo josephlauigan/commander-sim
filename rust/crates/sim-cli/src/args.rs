@@ -23,6 +23,7 @@ pub struct Args {
     pub quiet: bool,
     pub jobs: usize,
     pub any_tier: bool,
+    pub no_explain: bool,
 }
 
 struct Opt {
@@ -43,7 +44,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 21] = [
+const OPTS: [Opt; 22] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -72,6 +73,13 @@ const OPTS: [Opt; 21] = [
     opt("--trace", false, &[], "GAME", "print a play-by-play log of one game (seed offset) and exit"),
     opt("--cards", true, &[], "", "list every card in --deck with its tags, source and unmodeled text"),
     opt("--brief", true, &[], "", "skip the per-axis breakdown"),
+    opt(
+        "--no-explain",
+        true,
+        &[],
+        "",
+        "with --swap: skip the paired breakdown (the swapped cards' model status before the run; their drawn / cast / stuck numbers and the game shape of both lists after it). It is on by default and costs no extra games",
+    ),
     opt(
         "--ai",
         false,
@@ -165,6 +173,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         quiet: false,
         jobs: 0,
         any_tier: false,
+        no_explain: false,
     };
     let (mut games, mut n, mut profiles, mut profile, mut jobs) = (None, None, None, None, None);
     let mut i = 0;
@@ -205,6 +214,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--pool" => a.pool = Some(val),
             "--all-decks" => a.all_decks = true,
             "--any-tier" => a.any_tier = true,
+            "--no-explain" => a.no_explain = true,
             "--calibrate" => a.calibrate = Some(val),
             "--games" => games = Some(int::<u64>(o.name, &val)?),
             "--n" => n = Some(int::<u64>(o.name, &val)?),
@@ -318,5 +328,23 @@ mod calibrate_pool_tests {
         let argv: Vec<String> = "--calibrate within --pool t2".split_whitespace().map(|x| x.to_string()).collect();
         let a = parse(&argv).unwrap();
         assert_eq!((a.calibrate.as_deref(), a.pool.as_deref()), (Some("within"), Some("t2")));
+    }
+}
+
+#[cfg(test)]
+mod explain_flag_tests {
+    use super::*;
+
+    fn p(x: &[&str]) -> Result<Args, Exit> {
+        parse(&x.iter().map(|s| s.to_string()).collect::<Vec<_>>())
+    }
+
+    #[test]
+    fn no_explain_is_a_flag_and_off_by_default() {
+        assert!(!p(&["--deck", "cloud", "--swap", "A=>B"]).unwrap().no_explain);
+        assert!(p(&["--deck", "cloud", "--swap", "A=>B", "--no-explain"]).unwrap().no_explain);
+        // --n still means --games, and a prefix of --no-explain works
+        assert_eq!(p(&["--n", "50"]).unwrap().games, 50);
+        assert!(p(&["--no-ex"]).unwrap().no_explain);
     }
 }

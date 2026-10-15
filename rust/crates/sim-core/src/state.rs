@@ -427,6 +427,10 @@ pub struct Player {
     pub grudge: IndexMap<Sym, f64>,
     /// cards cast this game
     pub cast_names: IndexSet<CardId>,
+    /// the turn (own turn count) each card was first cast, logged at the end of each of its owner's turns;
+    /// `cast_logged` is how many of `cast_names` are in it already (the analysis report's "average round cast")
+    pub cast_turns: Vec<(CardId, u32)>,
+    pub cast_logged: usize,
     /// cards this player has seen (drawn, tutored)
     pub seen: IndexSet<CardId>,
     /// the turn draws are counted for (Narset, Parter of Veils)
@@ -659,6 +663,8 @@ impl Player {
             flag_turn: IndexMap::new(),
             grudge: IndexMap::new(),
             cast_names: IndexSet::new(),
+            cast_turns: vec![],
+            cast_logged: 0,
             seen: IndexSet::new(),
             draw_st: None,
             draw_n: 0,

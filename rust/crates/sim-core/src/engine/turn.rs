@@ -936,12 +936,16 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if pl.lands.len() == nl && pl.turns <= 5 {
         pl.stat("land_miss", 1);
     }
-    if pl.turns == 4 || pl.turns == 6 {
+    if matches!(pl.turns, 4 | 6 | 8) {
         let mana = total_mana(g, p, false) as i64;
         let pl = g.player_mut(p);
         let t = pl.turns;
         pl.stats.insert(crate::sym::intern(&format!("mana_T{t}")), mana);
         pl.stats.insert(crate::sym::intern(&format!("had_T{t}")), 1);
+        // the swap report's mana and hand lines (read only: no RNG, no effect on play)
+        let (lands, hand) = (pl.lands.len() as i64, pl.hand.len() as i64);
+        pl.stats.insert(crate::sym::intern(&format!("lands_T{t}")), lands);
+        pl.stats.insert(crate::sym::intern(&format!("hand_T{t}")), hand);
     }
     Ok(())
 }
@@ -979,12 +983,22 @@ fn step_main2(g: &mut Game, p: PlayerId) -> Res {
 }
 
 fn step_end(g: &mut Game, p: PlayerId) -> Res {
-    end_step(g, p)?;
-    check_state(g)?;
-    if !g.over && g.player(p).alive {
-        step_priority(g, "end", None, &[])?;
+    let r = (|| -> Res {
+        end_step(g, p)?;
+        check_state(g)?;
+        if !g.over && g.player(p).alive {
+            step_priority(g, "end", None, &[])?;
+        }
+        Ok(())
+    })();
+    let pl = g.player_mut(p);
+    let t = pl.turns;
+    for i in pl.cast_logged..pl.cast_names.len() {
+        let c = *pl.cast_names.get_index(i).unwrap();
+        pl.cast_turns.push((c, t));
     }
-    Ok(())
+    pl.cast_logged = pl.cast_names.len();
+    r
 }
 
 // ------------------------------------------------------------------ a game
