@@ -86379,32 +86379,7 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 4,
-       "tgh": 4,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "angel"
-       ]
-      }
-     ],
-     "sorcery": true,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "lifelink",
@@ -86418,7 +86393,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 1,

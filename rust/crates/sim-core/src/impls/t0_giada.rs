@@ -863,6 +863,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::TokensEnter);
     r.card(db, "Linvala, the Preserver")?.etb = Some(linvala_etb);
     register_temple(r, db)?;
+    register_speaker(r, db)?;
     Ok(())
 }
 
@@ -874,5 +875,44 @@ fn temple_mana(g: &Game, p: PlayerId, _l: crate::ids::LandId) -> u32 {
 
 pub fn register_temple(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Temple of the False God")?.dyn_mana_land = Some(temple_mana);
+    Ok(())
+}
+
+// ================================================================== Speaker of the Heavens
+/// **Speaker of the Heavens**: {T}: create a 4/4 white Angel with flying. Activate only if you have at least 7 life more
+/// than your starting life total (47) and only as a sorcery. The AI taps it in its main phase whenever the life is there.
+fn speaker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if owner(g, src) != p
+        || post.is_some()
+        || g.active != Some(p)
+        || !live(g, src)
+        || x.tapped
+        || x.sick
+        || g.player(p).life < 47
+    {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 6.0,
+        label: "Speaker of the Heavens: a 4/4 Angel".into(),
+        act: Some(Action::Ability { src, f: speaker_go, arg: 0 }),
+    }])
+}
+
+fn speaker_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    let x = g.perm(src);
+    if !live(g, src) || x.tapped || x.sick || g.player(p).life < 47 || g.active != Some(p) {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    if crate::engine::stack::ability_window(g, p, Some(src), "create a 4/4 Angel", None, None)? {
+        make_tokens(g, p, angel_token(1, 4))?;
+    }
+    Ok(true)
+}
+
+pub fn register_speaker(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Speaker of the Heavens")?.options = Some(speaker_options);
     Ok(())
 }

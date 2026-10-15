@@ -8036,3 +8036,8 @@ note = "filter land: {U}/{R} only with another land that makes {U} or {R} to pay
 ["Temple of the False God"]
 status = "Full"
 note = "taps for {C}{C} only while you control five or more lands (t0_giada dyn_mana_land)"
+
+["Speaker of the Heavens"]
+dsl = []
+status = "Full"
+note = "{T}: a 4/4 flying Angel, only with 47+ life and only at sorcery speed (the compiled ability had no life condition)"
