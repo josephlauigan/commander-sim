@@ -43,6 +43,10 @@ These rules replace `rust/agents/RULES.md`, which was written for the Python por
 - Tests go in `rust/crates/sim-core/tests/cards_<task>.rs`, built with `sim_core::testkit` (`table`, `hand`, `lands`,
   `perm`, `token`). One test per card at least, checking the behaviour that matters.
 
+- **Opponent tiers:** a deck of JD's runs only against the tiers in `data/my_decks.toml` (`tiers = [...]`); `--pool all` and
+  `--all-decks` already follow that, `--deck X --pool tN` outside them is refused, and `--any-tier` is only for when JD asks.
+  Averages are over the deck's own tiers.
+
 ## Checks before you finish
 1. `cargo test --release` passes (all of it, not only your tests).
 2. `cargo build --release --all-targets` has no warnings.

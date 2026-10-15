@@ -99,6 +99,9 @@ pub struct RawDeck {
     /// the seat's colour identity ("UBR"), as the Python engine sets it: a commander's card doesn't always record one
     #[serde(default)]
     pub ident: Option<String>,
+    /// your decks only: the opponent tiers it is simulated against (empty for pool decks)
+    #[serde(default)]
+    pub tiers: Vec<String>,
     pub cards: Vec<String>,
 }
 

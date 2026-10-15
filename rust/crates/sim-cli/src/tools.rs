@@ -92,7 +92,11 @@ fn check(sim: &Sim, deck: &PoolDeck, cards: &[String]) -> Vec<String> {
             .collect();
         if !off.is_empty() {
             let id: String = ident.iter().collect(); // sorted, as Python's ''.join(sorted(ident))
-            probs.push(format!("outside colour identity {}: {}", if id.is_empty() { "C" } else { &id }, off.join(", ")));
+            probs.push(format!(
+                "outside colour identity {}: {}",
+                if id.is_empty() { "C" } else { &id },
+                off.join(", ")
+            ));
         }
     }
     let gcs = names.iter().filter_map(|n| sim.raw_card(n)).filter(|c| c.game_changer == Some(true)).count();
@@ -161,15 +165,20 @@ pub fn swaptest(argv: &[String]) -> i32 {
 }
 
 // ------------------------------------------------------------------ searchtest
-const SEARCHTEST: &str = "Paired test of the look-ahead AI: a pool deck alone against three decks of a tier, the same seeds
+const SEARCHTEST: &str =
+    "Paired test of the look-ahead AI: a pool deck alone against three decks of a tier, the same seeds
 played with the heuristic AI and with search.
 
-    commander-sim searchtest <deck key> <tier> <games> [rollouts] [top_k] [jobs]
+    commander-sim searchtest <deck key> <tier> <games> [rollouts] [top_k] [jobs] [--any-tier]
+
+One of your decks is only run against its own tiers (data/my_decks.toml); --any-tier overrides that.
 
 In the Rust engine every deck at the table searches in the second run (Python's 'all' option): the look-ahead has
 no per-deck switch. Environment: SEARCH_HORIZON (own turns to look ahead), SEARCH_COMBO_W (the combo weight).";
 
 pub fn searchtest(argv: &[String]) -> i32 {
+    let any_tier = argv.iter().any(|x| x == "--any-tier");
+    let argv: &[String] = &argv.iter().filter(|x| *x != "--any-tier").cloned().collect::<Vec<_>>();
     if argv.len() < 3 || is_help(argv) {
         println!("{SEARCHTEST}");
         return if is_help(argv) { 0 } else { 2 };
@@ -181,6 +190,9 @@ pub fn searchtest(argv: &[String]) -> i32 {
         let sim = load(AiMode::Adaptive, jobs)?;
         if !sim.pool.iter().any(|d| d.key == me) && !sim.mine.contains_key(me) {
             return Err(format!("no deck {me:?}"));
+        }
+        if sim.mine.contains_key(me) {
+            crate::poolmode::select_tiers(me, &crate::poolmode::deck_tiers(&sim, me), tier, any_tier)?;
         }
         let opp = sim.pool_keys(tier);
         if opp.is_empty() {

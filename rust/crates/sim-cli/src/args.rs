@@ -22,6 +22,7 @@ pub struct Args {
     pub temp: f64,
     pub quiet: bool,
     pub jobs: usize,
+    pub any_tier: bool,
 }
 
 struct Opt {
@@ -32,11 +33,17 @@ struct Opt {
     help: &'static str,
 }
 
-const fn opt(name: &'static str, flag: bool, choices: &'static [&'static str], metavar: &'static str, help: &'static str) -> Opt {
+const fn opt(
+    name: &'static str,
+    flag: bool,
+    choices: &'static [&'static str],
+    metavar: &'static str,
+    help: &'static str,
+) -> Opt {
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 20] = [
+const OPTS: [Opt; 21] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -44,10 +51,18 @@ const OPTS: [Opt; 20] = [
         false,
         &["t0", "t1", "t2", "t3", "t4", "t5", "all"],
         "",
-        "play --deck against three outside decks drawn from this tier (see decklists/pool/)",
+        "play --deck against three outside decks drawn from this tier (see decklists/pool/); all = the deck's own tiers 
+         (data/my_decks.toml: e.g. sephfs t1-t3, yshtola t4-t5). A tier outside them is refused unless --any-tier",
     ),
-    opt("--all-decks", true, &[], "", "run each of your decks (deck x tier matrix)"),
+    opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
     opt("--calibrate", false, &["within", "ordering", "all"], "", "pool balance checks (no --deck needed)"),
+    opt(
+        "--any-tier",
+        true,
+        &[],
+        "",
+        "let --deck run against a tier outside its own (data/my_decks.toml); --pool all then means t0-t5. Only when asked.",
+    ),
     opt("--games", false, &[], "N", "games per run (default 1500)"),
     opt("--n", false, &[], "N", "same as --games"),
     opt("--seed", false, &[], "SEED", "first seed (games use seed .. seed+n-1; default 500000)"),
@@ -96,8 +111,8 @@ pub fn help() -> String {
             s += &format!("  {left}\n  {:20}  {}\n", "", o.help);
         }
     }
-    s += "\nExamples\n  commander-sim --deck sauron --pool t1 --profile loose --games 960\n  commander-sim --deck seph \
-          --pool t3 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n";
+    s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck seph \
+          --pool t4 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
 
@@ -149,6 +164,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         temp: 1.0,
         quiet: false,
         jobs: 0,
+        any_tier: false,
     };
     let (mut games, mut n, mut profiles, mut profile, mut jobs) = (None, None, None, None, None);
     let mut i = 0;
@@ -188,6 +204,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--swap" => a.swap.push(val),
             "--pool" => a.pool = Some(val),
             "--all-decks" => a.all_decks = true,
+            "--any-tier" => a.any_tier = true,
             "--calibrate" => a.calibrate = Some(val),
             "--games" => games = Some(int::<u64>(o.name, &val)?),
             "--n" => n = Some(int::<u64>(o.name, &val)?),
@@ -253,8 +270,10 @@ mod tests {
 
     #[test]
     fn swaps_repeat_and_values_may_contain_spaces() {
-        let argv: Vec<String> =
-            ["--deck", "sauron", "--swap", "Spell Pierce=>Negate", "--swap", "A=>B"].iter().map(|s| s.to_string()).collect();
+        let argv: Vec<String> = ["--deck", "sauron", "--swap", "Spell Pierce=>Negate", "--swap", "A=>B"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         assert_eq!(parse(&argv).unwrap().swap, ["Spell Pierce=>Negate", "A=>B"]);
     }
 
@@ -270,5 +289,22 @@ mod tests {
         assert_eq!(p("--help").unwrap_err().code, 0);
         // --prof is ambiguous: --profiles, --profile
         assert!(p("--prof loose").unwrap_err().msg.contains("ambiguous"));
+    }
+}
+
+#[cfg(test)]
+mod any_tier_tests {
+    use super::*;
+
+    fn p(s: &str) -> Result<Args, Exit> {
+        parse(&s.split_whitespace().map(|x| x.to_string()).collect::<Vec<_>>())
+    }
+
+    #[test]
+    fn any_tier_flag_parses() {
+        assert!(!p("--deck sauron --pool t3").unwrap().any_tier);
+        assert!(p("--deck sauron --pool t1 --any-tier").unwrap().any_tier);
+        assert!(p("--deck sauron --pool t1 --any").unwrap().any_tier);
+        assert!(p("--any-tier=x").is_err());
     }
 }

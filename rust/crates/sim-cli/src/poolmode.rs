@@ -19,6 +19,75 @@ fn is_mine(key: &str) -> bool {
     MINE.contains(&key)
 }
 
+/// the opponent tiers a deck of yours is simulated against (data/my_decks.toml via data/decks.json); every tier if
+/// the deck record carries none
+pub fn deck_tiers(sim: &Sim, deck: &str) -> Vec<String> {
+    match sim.engine.decks.get(deck) {
+        Some(d) if !d.tiers.is_empty() => d.tiers.clone(),
+        _ => TIERS.iter().map(|t| t.to_string()).collect(),
+    }
+}
+
+/// "t1-t3" for consecutive tiers, "t4, t5" style otherwise
+pub fn tier_range(tiers: &[String]) -> String {
+    let nums: Vec<u32> = tiers.iter().filter_map(|t| t.strip_prefix('t')?.parse().ok()).collect();
+    if nums.len() == tiers.len() && nums.len() > 2 && nums.windows(2).all(|w| w[1] == w[0] + 1) {
+        format!("{}-{}", tiers[0], tiers[tiers.len() - 1])
+    } else {
+        tiers.join(", ")
+    }
+}
+
+/// The tiers `deck` (with its own tiers `own`) runs against for `--pool pool`: `all` is its own tiers, one tier must
+/// be among them. `--any-tier` lifts both limits (`all` then means every tier, t0-t5).
+pub fn select_tiers(deck: &str, own: &[String], pool: &str, any_tier: bool) -> Result<Vec<String>, String> {
+    if pool == "all" {
+        return Ok(if any_tier { TIERS.iter().map(|t| t.to_string()).collect() } else { own.to_vec() });
+    }
+    if any_tier || own.iter().any(|t| t == pool) {
+        return Ok(vec![pool.to_string()]);
+    }
+    Err(format!(
+        "{deck} is only simulated against {} (data/my_decks.toml), not {pool}. Pass --any-tier to run it there \
+         anyway.",
+        own.join(", ")
+    ))
+}
+
+/// what a run covers: the tiers in play (for the plan line and the matrix columns) and each deck with its tiers
+pub struct TierPlan {
+    pub tiers: Vec<String>,
+    pub per_deck: Vec<(String, Vec<String>)>,
+}
+
+/// poolmode's tier rule: every deck of yours only against its own tiers. Calibration has no deck and is unchanged.
+pub fn tier_plan(sim: &Sim, a: &Args) -> Result<TierPlan, String> {
+    let (Some(pool), None) = (a.pool.as_deref(), a.calibrate.as_ref()) else {
+        return Ok(TierPlan { tiers: vec![], per_deck: vec![] });
+    };
+    let mut per_deck: Vec<(String, Vec<String>)> = vec![];
+    if a.all_decks {
+        for d in MINE {
+            let own = deck_tiers(sim, d);
+            // one tier given: only the decks that play it (all of them with --any-tier)
+            let t = if pool == "all" || a.any_tier || own.iter().any(|t| t == pool) {
+                select_tiers(d, &own, pool, a.any_tier)?
+            } else {
+                continue;
+            };
+            per_deck.push((d.to_string(), t));
+        }
+    } else if let Some(d) = a.deck.as_deref() {
+        per_deck.push((d.to_string(), select_tiers(d, &deck_tiers(sim, d), pool, a.any_tier)?));
+    }
+    let tiers = TIERS
+        .iter()
+        .filter(|t| per_deck.iter().any(|(_, dt)| dt.iter().any(|x| x == *t)))
+        .map(|t| t.to_string())
+        .collect();
+    Ok(TierPlan { tiers, per_deck })
+}
+
 /// poolmode.run's tallies for one deck against one tier under one profile
 pub struct RunTally {
     pub profile: String,
@@ -113,7 +182,15 @@ impl Ctx<'_> {
     }
 
     /// poolmode.run: `me` (with my_seat's cards, or its list) against opp_keys, n games from seed0
-    pub fn run(&self, me: &str, my_seat: Option<&Seat>, opp_keys: &[String], prof: &str, n: u64, seed0: u64) -> RunTally {
+    pub fn run(
+        &self,
+        me: &str,
+        my_seat: Option<&Seat>,
+        opp_keys: &[String],
+        prof: &str,
+        n: u64,
+        seed0: u64,
+    ) -> RunTally {
         let sim = self.sim;
         let st = sim.settings(profile(prof).unwrap());
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
@@ -191,8 +268,12 @@ impl Ctx<'_> {
             println!("Plan online ({}): {:.1}% of games", report::plan_text(me), (100 * r.plan) as f64 / nf);
         }
         if !r.wintype.is_empty() {
-            let parts: Vec<String> =
-                r.wintype.most_common().iter().map(|(k, v)| format!("{k} {:.0}%", (100 * v) as f64 / w as f64)).collect();
+            let parts: Vec<String> = r
+                .wintype
+                .most_common()
+                .iter()
+                .map(|(k, v)| format!("{k} {:.0}%", (100 * v) as f64 / w as f64))
+                .collect();
             println!("Wins by: {}", parts.join(", "));
         }
         println!("  {:42} {:>7} {:>16} {:>15}", "Opponent", "seated", "won when seated", "eliminated you");
@@ -253,12 +334,13 @@ impl Ctx<'_> {
         println!("  Opponent keys: {}", parts.join(", "));
     }
 
-    /// poolmode.matrix: every deck against every tier, one table per profile
-    pub fn matrix(&self, decks: &[&str], tiers: &[&str], profiles: &[String], n: u64, seed0: u64) {
+    /// poolmode.matrix: every deck against its own tiers, one table per profile (a dash where the deck doesn't play
+    /// that tier), with each deck's average over the tiers it played
+    pub fn matrix(&self, decks: &[(String, Vec<String>)], tiers: &[&str], profiles: &[String], n: u64, seed0: u64) {
         let mut cells: HashMap<(String, String, String), RunTally> = HashMap::new();
         for prof in profiles {
-            for d in decks {
-                for tier in tiers {
+            for (d, dt) in decks {
+                for tier in dt {
                     self.label(format!("{d} {tier} / {prof}"));
                     let r = self.run(d, None, &self.sim.pool_keys(tier), prof, n, seed0);
                     if self.sim.prog.lock().unwrap().on {
@@ -276,22 +358,35 @@ impl Ctx<'_> {
         }
         for prof in profiles {
             println!(
-                "\n=== Win rate by deck and tier [{prof} profile, {} AI, n={n} per cell; even share 25%] ===",
+                "\n=== Win rate by deck and tier [{prof} profile, {} AI, n={n} per cell; even share 25%; each deck only \
+                 against its own tiers] ===",
                 self.ai()
             );
             let heads: Vec<String> = tiers.iter().map(|t| format!("{t:>18}")).collect();
-            println!("  {:10} {}", "deck", heads.join(" "));
-            for d in decks {
+            println!("  {:10} {} {:>26}", "deck", heads.join(" "), "average over its tiers");
+            for (d, dt) in decks {
                 let row: Vec<String> = tiers
                     .iter()
-                    .map(|t| {
-                        let r = &cells[&(prof.clone(), d.to_string(), t.to_string())];
-                        let (lo, hi) = wilson(r.win, r.n);
-                        let x = format!("{:5.1}% ({:4.1}-{:4.1})", (100 * r.win) as f64 / r.n as f64, 100.0 * lo, 100.0 * hi);
-                        format!("{x:>18}")
+                    .map(|t| match cells.get(&(prof.clone(), d.to_string(), t.to_string())) {
+                        Some(r) => {
+                            let (lo, hi) = wilson(r.win, r.n);
+                            let x = format!(
+                                "{:5.1}% ({:4.1}-{:4.1})",
+                                (100 * r.win) as f64 / r.n as f64,
+                                100.0 * lo,
+                                100.0 * hi
+                            );
+                            format!("{x:>18}")
+                        }
+                        None => format!("{:>18}", "-"),
                     })
                     .collect();
-                println!("  {d:10} {}", row.join(" "));
+                let (w, g) = dt.iter().fold((0u64, 0u64), |(w, g), t| {
+                    let r = &cells[&(prof.clone(), d.to_string(), t.to_string())];
+                    (w + r.win, g + r.n)
+                });
+                let avg = format!("{:5.1}% over {}", (100 * w) as f64 / g.max(1) as f64, tier_range(dt));
+                println!("  {d:10} {} {avg:>26}", row.join(" "));
             }
         }
     }
@@ -392,11 +487,9 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     }
     let n = a.games;
     let seed0 = a.seed;
-    let tiers: Vec<&str> = match a.pool.as_deref() {
-        Some("all") => TIERS.to_vec(),
-        Some(t) => vec![t],
-        None => vec![],
-    };
+    // each of your decks runs only against its own tiers (data/my_decks.toml), unless --any-tier
+    let plan = tier_plan(sim, a)?;
+    let tiers: Vec<&str> = plan.tiers.iter().map(|t| t.as_str()).collect();
     let t0 = Instant::now();
     let k = n * profiles.len() as u64;
     let plural = |x: usize, w: &str| format!("{x} {w}{}", if x > 1 { "s" } else { "" });
@@ -406,8 +499,15 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
         let o = if c == "ordering" || c == "all" { 5 * (TIERS.len() as u64 - 1) } else { 0 };
         (k * (w + o), format!("calibration: {c}"))
     } else if matrix_mode {
-        let nd = if a.all_decks { MINE.len() } else { 1 };
-        (k * tiers.len() as u64 * nd as u64, format!("{} x {}", plural(nd, "deck"), plural(tiers.len(), "tier")))
+        let cells: usize = plan.per_deck.iter().map(|(_, t)| t.len()).sum();
+        (
+            k * cells as u64,
+            format!(
+                "{} x {} (each deck in its own tiers)",
+                plural(plan.per_deck.len(), "deck"),
+                plural(tiers.len(), "tier")
+            ),
+        )
     } else if !swaps.is_empty() {
         (k * tiers.len() as u64 * 2, "current list and the swapped one".to_string())
     } else {
@@ -427,8 +527,7 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     if let Some(c) = &a.calibrate {
         ctx.run_calibration(c, profiles, n, seed0);
     } else if matrix_mode {
-        let decks: Vec<&str> = if a.all_decks { MINE.to_vec() } else { vec![a.deck.as_deref().unwrap()] };
-        ctx.matrix(&decks, &tiers, profiles, n, seed0);
+        ctx.matrix(&plan.per_deck, &tiers, profiles, n, seed0);
     } else if a.analyze {
         let deck = a.deck.as_deref().unwrap();
         let cards = if swaps.is_empty() { base } else { var };
@@ -503,10 +602,13 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
     let deck = a.deck.as_deref().ok_or("--trace needs --deck")?;
     let prof = a.profiles[0].clone();
     let st = sim.settings(profile(&prof)?);
+    // no tier (or all): the deck's first tier; a tier outside the deck's own needs --any-tier
+    let own = deck_tiers(sim, deck);
     let tier = match a.pool.as_deref() {
-        Some("all") | None => "t1",
-        Some(t) => t,
+        Some("all") | None => own[0].clone(),
+        Some(t) => select_tiers(deck, &own, t, a.any_tier)?.remove(0),
     };
+    let tier = tier.as_str();
     let game = a.trace.unwrap();
     let seed = a.seed + game;
     let seat = sim.seat(deck, cards)?;
@@ -522,4 +624,66 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
     let winner = g.winner.map_or("none".to_string(), |w| sim.name_of(g.players[w].key));
     println!("Winner: {winner} ({})", g.wintype.unwrap_or("None"));
     Ok(())
+}
+
+#[cfg(test)]
+mod tier_tests {
+    use super::*;
+
+    fn v(x: &[&str]) -> Vec<String> {
+        x.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn all_means_the_decks_own_tiers() {
+        let own = v(&["t1", "t2", "t3"]);
+        assert_eq!(select_tiers("sephfs", &own, "all", false).unwrap(), own);
+        assert_eq!(select_tiers("sephfs", &own, "t2", false).unwrap(), v(&["t2"]));
+    }
+
+    #[test]
+    fn a_tier_outside_is_refused_unless_any_tier() {
+        let own = v(&["t4", "t5"]);
+        let e = select_tiers("yshtola", &own, "t1", false).unwrap_err();
+        assert!(e.contains("yshtola") && e.contains("t4, t5") && e.contains("--any-tier"), "{e}");
+        assert_eq!(select_tiers("yshtola", &own, "t1", true).unwrap(), v(&["t1"]));
+        // --any-tier with all: every tier
+        assert_eq!(select_tiers("yshtola", &own, "all", true).unwrap().len(), 6);
+    }
+
+    #[test]
+    fn tier_ranges_read_naturally() {
+        assert_eq!(tier_range(&v(&["t1", "t2", "t3"])), "t1-t3");
+        assert_eq!(tier_range(&v(&["t4", "t5"])), "t4, t5");
+        assert_eq!(tier_range(&v(&["t1"])), "t1");
+    }
+
+    /// the table in the brief, as data/decks.json carries it
+    #[test]
+    fn the_repository_decks_have_their_tiers() {
+        let root = crate::decks::root().unwrap();
+        let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
+        let want: [(&str, &[&str]); 11] = [
+            ("yshtola", &["t4", "t5"]),
+            ("seph", &["t4", "t5"]),
+            ("sheoldred", &["t3", "t4"]),
+            ("sauron", &["t2", "t3", "t4"]),
+            ("kefka", &["t2", "t3", "t4"]),
+            ("sephfs", &["t1", "t2", "t3"]),
+            ("veyran", &["t1", "t2", "t3"]),
+            ("cloud", &["t1", "t2"]),
+            ("titania", &["t1", "t2"]),
+            ("alela", &["t1"]),
+            ("galadriel", &["t1"]),
+        ];
+        assert_eq!(f.mine.len(), want.len());
+        for (k, t) in want {
+            let d = f.mine.iter().find(|d| d.key == k).unwrap_or_else(|| panic!("{k}"));
+            assert_eq!(d.tiers, v(t), "{k}");
+        }
+        for k in MINE {
+            assert!(f.mine.iter().any(|d| d.key == k), "{k}");
+        }
+        assert!(f.pool.iter().all(|d| d.tiers.is_empty()));
+    }
 }
