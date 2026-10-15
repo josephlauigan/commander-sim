@@ -9,15 +9,16 @@ use super::partials::remove_card;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::discard_worst;
 use crate::engine::life::{gain, lose_life};
+use crate::engine::stack::ability_window;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, pval};
 use crate::engine::zones::{
-    Enter, Tokens, die, draw, enter, enter_token_copy, landfall, make_artifact_tokens, make_tokens, max_by, mill, min_by,
-    sac_worth,
+    Enter, Tokens, die, draw, enter, enter_token_copy, landfall, make_artifact_tokens, make_tokens, max_by, mill,
+    min_by, sac_worth,
 };
 use crate::flow::Res;
-use crate::hooks::{Registry, Src};
+use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::intern;
@@ -101,11 +102,7 @@ fn saga_enter(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
-    let start = if cname(g, src) == LOVE_SONG {
-        if creatures(g, o).len() >= 3 { 3 } else { 2 }
-    } else {
-        1
-    };
+    let start = if cname(g, src) == LOVE_SONG { if creatures(g, o).len() >= 3 { 3 } else { 2 } } else { 1 };
     g.perm_mut(src).data.set(DataKey::Lore, Val::Int(start));
     run_chapter(g, o, src, start)
 }
@@ -247,7 +244,9 @@ fn chapter(g: &mut Game, p: PlayerId, src: PermId, n: i64) -> Res {
                 .opps(p)
                 .flat_map(|q| g.player(q).perms.iter().copied().collect::<Vec<_>>())
                 .filter(|&m| {
-                    on_bf(g, m) && !g.perm(m).cd.is_some_and(|c| g.db.get(c).land) && !crate::engine::values::untargetable(g, m)
+                    on_bf(g, m)
+                        && !g.perm(m).cd.is_some_and(|c| g.db.get(c).land)
+                        && !crate::engine::values::untargetable(g, m)
                 })
                 .collect();
             if let Some(t) = max_by(&cands, |m| pval(g, m)) {
@@ -261,7 +260,9 @@ fn chapter(g: &mut Game, p: PlayerId, src: PermId, n: i64) -> Res {
                 .filter(|&c| g.db.get(c).land && g.db.get(c).has_subtype("forest"))
                 .collect();
             // a basic Forest first (a dual with a Forest type fixes more, but a basic is what the AI keeps)
-            let pick = max_by(&forests, |c| g.db.get(c).pips.len() as f64 + if g.db.get(c).tag(crate::tag::Tag::F) { 0.0 } else { 0.0 });
+            let pick = max_by(&forests, |c| {
+                g.db.get(c).pips.len() as f64 + if g.db.get(c).tag(crate::tag::Tag::F) { 0.0 } else { 0.0 }
+            });
             if let Some(c) = pick {
                 remove_card(&mut g.player_mut(p).library, c);
                 g.add_land(p, c, true);
@@ -336,7 +337,8 @@ fn helvault_exile(g: &mut Game, p: PlayerId, src: PermId) -> Res {
         src,
         p,
         |g, m| {
-            g.perm(m).cd.is_some_and(|c| !g.db.get(c).land && !is_saga(g, c)) || (g.perm(m).token && !g.perm(m).cd.is_some())
+            g.perm(m).cd.is_some_and(|c| !g.db.get(c).land && !is_saga(g, c))
+                || (g.perm(m).token && !g.perm(m).cd.is_some())
         },
         true,
         false,
@@ -461,6 +463,581 @@ fn bretagard_copy(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
+// ================================================================== enchantment-enters engines (constellation)
+pub const ANIKTHEA: &str = "Anikthea, Hand of Erebos";
+pub const ABUNDANCE: &str = "Abundance";
+pub const CACOPHONY: &str = "Cacophony Unleashed";
+pub const BOON: &str = "Boon of the Spirit Realm";
+pub const KHALNI: &str = "Khalni Heart Expedition";
+pub const WAKE: &str = "Mirari's Wake";
+pub const COMPOSER: &str = "Composer of Spring";
+pub const NESSIAN: &str = "Nessian Wanderer";
+pub const DOOMWAKE: &str = "Doomwake Giant";
+pub const ONDU: &str = "Ondu Spiritdancer";
+pub const HELIOD: &str = "Heliod, God of the Sun";
+pub const EREBOS: &str = "Erebos, Bleak-Hearted";
+pub const TANUKI: &str = "Greater Tanuki";
+pub const WEAVER: &str = "Nyx Weaver";
+pub const BEHEMOTH: &str = "Nyxborn Behemoth";
+pub const SANDWURM: &str = "Sandwurm Convergence";
+
+/// the enchantments p controls (permanents with an enchantment card, tokens that copy one included)
+fn ench_count(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| on_bf(g, m) && g.perm(m).cd.is_some_and(|c| is_ench(g, c))).count()
+}
+
+/// constellation: `m` (an enchantment under src's controller's control) entered; `or_self`: "this or another"
+fn ench_entered(g: &Game, src: Src, m: PermId, or_self: bool) -> bool {
+    (or_self || m != src) && on_bf(g, m) && owner(g, m) == owner(g, src) && g.perm(m).cd.is_some_and(|c| is_ench(g, c))
+}
+
+/// whether p wants a land in hand now (the AI's reveal and look-at-top decisions)
+fn wants_land(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    let held = pl.hand.iter().filter(|&&c| g.db.get(c).land).count();
+    pl.lands.len() + held < 8
+}
+
+/// **Composer of Spring**: constellation: you may put a land card from your hand onto the battlefield tapped; with six
+/// or more enchantments, a creature or land card. The AI puts the best creature card (highest mana value) in with six
+/// enchantments, else a land (the one making the most colours) whenever it has one.
+fn composer(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if !ench_entered(g, src, m, false) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    let six = ench_count(g, o) >= 6;
+    let hand = g.player(o).hand.clone();
+    let creature = if six {
+        max_by(&hand.iter().copied().filter(|&c| g.db.get(c).creature).collect::<Vec<_>>(), |c| g.db.get(c).cmc as f64)
+    } else {
+        None
+    };
+    let land = max_by(&hand.iter().copied().filter(|&c| g.db.get(c).land).collect::<Vec<_>>(), |c| {
+        g.db.get(c).tags.str(crate::tag::Tag::C).map_or(0, |s| s.chars().count()) as f64
+    });
+    let Some(c) = creature.or(land) else { return Ok(()) };
+    if !trigger_window(g, o, Some(src), "put a land or creature card onto the battlefield tapped", Some(3.0))? {
+        return Ok(());
+    }
+    if !g.player(o).hand.contains(&c) {
+        return Ok(());
+    }
+    remove_card(&mut g.player_mut(o).hand, c);
+    if g.db.get(c).land {
+        g.add_land(o, c, true);
+        landfall(g, o)?;
+    } else {
+        let n = enter(g, o, c, Enter::default())?;
+        g.perm_mut(n).tapped = true;
+    }
+    Ok(())
+}
+
+/// **Nessian Wanderer**: constellation: look at the top three cards; you may reveal a land card from among them and
+/// put it into your hand; the rest on the bottom in a random order. The AI takes the land unless it has plenty.
+fn nessian(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if !ench_entered(g, src, m, false) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if !trigger_window(g, o, Some(src), "look at the top three cards", Some(2.0))? {
+        return Ok(());
+    }
+    let k = g.player(o).library.len().min(3);
+    let mut top: Vec<CardId> = (0..k).filter_map(|_| g.player_mut(o).library.pop()).collect();
+    if wants_land(g, o)
+        && let Some(i) = top.iter().position(|&c| g.db.get(c).land)
+    {
+        let c = top.remove(i);
+        g.player_mut(o).hand.push(c);
+        g.player_mut(o).seen.insert(c);
+    }
+    g.rng.shuffle(&mut top);
+    g.player_mut(o).library.splice(0..0, top);
+    Ok(())
+}
+
+/// **Doomwake Giant**: constellation (it or another enchantment): creatures your opponents control get -1/-1 until
+/// end of turn
+fn doomwake(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if !ench_entered(g, src, m, true) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if !trigger_window(g, o, Some(src), "opponents' creatures get -1/-1", Some(5.0))? {
+        return Ok(());
+    }
+    for q in g.opps(o).collect::<Vec<_>>() {
+        for x in g.player(q).perms.clone() {
+            if !g.is_creature(x) || g.perm(x).phased {
+                continue;
+            }
+            super::common::eot(g, x, -1, -1);
+            if crate::engine::values::etgh(g, x) <= 0 {
+                die(g, x, "sba")?;
+            }
+        }
+    }
+    Ok(())
+}
+
+/// **Ondu Spiritdancer**: whenever an enchantment you control enters, you may create a token copy of it; only once
+/// each turn. The AI skips Auras, legendary permanents it already has, and tokens made by other effects with no card.
+fn ondu(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if !ench_entered(g, src, m, false) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    let Some(c) = g.perm(m).cd else { return Ok(()) };
+    let d = g.db.get(c);
+    if d.has_subtype("aura") || d.tag(crate::tag::Tag::Leg) {
+        return Ok(());
+    }
+    let key = intern(&format!("t0a_ondu{}", src.0));
+    if !trigger_window(g, o, Some(src), "create a token copy of the enchantment", Some(4.0))? {
+        return Ok(());
+    }
+    if crate::engine::values::once_per_turn(g, o, key) {
+        enter_token_copy(g, o, c)?;
+    }
+    Ok(())
+}
+
+/// **Boon of the Spirit Realm**: constellation (it or another enchantment): a blessing counter on it; your creatures
+/// get +1/+1 per blessing counter (`creature_pt`, evaluated while `g.selfpt` is on)
+fn boon(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    g.selfpt = true;
+    if !ench_entered(g, src, m, true) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if trigger_window(g, o, Some(src), "a blessing counter", Some(2.0))? {
+        let n = g.perm(src).data.int(DataKey::Counters);
+        g.perm_mut(src).data.set(DataKey::Counters, Val::Int(n + 1));
+    }
+    Ok(())
+}
+
+fn boon_pt(g: &Game, m: PermId) -> (i32, i32) {
+    let o = owner(g, m);
+    let n: i64 = g
+        .player(o)
+        .perms
+        .iter()
+        .filter(|&&x| on_bf(g, x) && cname(g, x) == BOON)
+        .map(|&x| g.perm(x).data.int(DataKey::Counters))
+        .sum();
+    (n as i32, n as i32)
+}
+
+/// **Khalni Heart Expedition**: landfall: you may put a quest counter on it. Remove three and sacrifice it: search
+/// for two basic lands, tapped. The AI uses the sacrifice as soon as it has the counters.
+fn khalni_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != owner(g, src) || !on_bf(g, src) {
+        return Ok(());
+    }
+    if trigger_window(g, p, Some(src), "a quest counter", Some(1.0))? {
+        let n = g.perm(src).data.int(DataKey::Counters);
+        g.perm_mut(src).data.set(DataKey::Counters, Val::Int(n + 1));
+    }
+    Ok(())
+}
+
+fn khalni_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src) || post.is_none() || !on_bf(g, src) || g.perm(src).data.int(DataKey::Counters) < 3 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 2.0,
+        label: "Khalni Heart Expedition: two basic lands".into(),
+        act: Some(Action::Ability { src, f: khalni_go, arg: 0 }),
+    }])
+}
+
+fn khalni_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).data.int(DataKey::Counters) < 3 {
+        return Ok(false);
+    }
+    g.perm_mut(src).data.set(DataKey::Counters, Val::Int(0));
+    if !ability_window(g, p, Some(src), "search for two basic lands", None, None)? {
+        die(g, src, "sac")?;
+        return Ok(true);
+    }
+    die(g, src, "sac")?; // the sacrifice is a cost
+    crate::engine::zones::land_ramp(g, p, 2, true)?;
+    Ok(true)
+}
+
+/// **Mirari's Wake**: whenever you tap a land for mana, add one mana of any type that land produced: every land of
+/// the controller makes one more of its own mana (the +1/+1 for creatures is the compiled anthem)
+fn wake_mana(g: &Game, src: Src, p: PlayerId, _l: crate::ids::LandId) -> i32 {
+    if p == owner(g, src) && on_bf(g, src) { 1 } else { 0 }
+}
+
+// ------------------------------------------------------------------ Gods
+/// devotion decides whether a God is a creature (the compiled data gives it no creature type)
+fn god_update(g: &mut Game, src: PermId, col: char, pt: (i32, i32)) {
+    let on_ = super::rules2::devotion(g, owner(g, src), col) >= 5;
+    let x = g.perm_mut(src);
+    (x.pow, x.tgh) = pt;
+    x.data.set(DataKey::Anim, Val::Bool(on_));
+}
+
+fn heliod_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src || owner(g, m) == owner(g, src) {
+        god_update(g, src, 'W', (5, 6));
+    }
+    Ok(())
+}
+
+fn heliod_sba(g: &mut Game, src: Src) -> Res {
+    god_update(g, src, 'W', (5, 6));
+    Ok(())
+}
+
+fn erebos_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src || owner(g, m) == owner(g, src) {
+        god_update(g, src, 'B', (5, 6));
+    }
+    Ok(())
+}
+
+fn erebos_sba(g: &mut Game, src: Src) -> Res {
+    god_update(g, src, 'B', (5, 6));
+    Ok(())
+}
+
+fn god_indestructible(_g: &Game, src: Src, m: PermId, kw: crate::sym::Sym) -> bool {
+    kw == "indestructible" && m == src
+}
+
+/// **Erebos, Bleak-Hearted**: whenever another creature you control dies, you may pay 2 life to draw a card (the AI
+/// does while it stays above 10 life)
+fn erebos_dies(g: &mut Game, src: Src, m: PermId, _cause: crate::sym::Sym) -> Res {
+    let o = owner(g, src);
+    if m == src || owner(g, m) != o || !on_bf(g, src) || g.player(o).life <= 10 || g.player(o).library.is_empty() {
+        return Ok(());
+    }
+    if g.perm(m).on_bf || !(g.perm(m).token || g.perm(m).cd.is_some_and(|c| g.db.get(c).creature)) {
+        return Ok(());
+    }
+    if trigger_window(g, o, Some(src), "pay 2 life, draw a card", Some(2.0))? {
+        lose_life(g, o, 2, Some(o), "other", None)?;
+        draw(g, o, 1, false)?;
+    }
+    Ok(())
+}
+
+/// **Erebos**: {1}{B}, sacrifice another creature: target creature gets -2/-1 until end of turn. The AI sacrifices its
+/// least valuable creature to kill an opposing creature (toughness 1 or less) worth more than the fodder.
+fn erebos_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src) || post.is_none() || !on_bf(g, src) || !crate::engine::mana::can_pay(g, p, 1, "B", false) {
+        return Ok(vec![]);
+    }
+    let victims: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied().collect::<Vec<_>>())
+        .filter(|&x| {
+            on_bf(g, x)
+                && g.is_creature(x)
+                && crate::engine::values::etgh(g, x) <= 1
+                && !crate::engine::values::untargetable(g, x)
+        })
+        .collect();
+    let Some(v) = max_by(&victims, |x| pval(g, x)) else { return Ok(vec![]) };
+    let fodder: Vec<PermId> = creatures(g, p).into_iter().filter(|&x| x != src).collect();
+    let Some(f) = min_by(&fodder, |x| pval(g, x)) else { return Ok(vec![]) };
+    if pval(g, f) + 1.0 >= pval(g, v) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: pval(g, v) - pval(g, f),
+        label: "Erebos: sacrifice a creature, -2/-1".into(),
+        act: Some(Action::Ability { src, f: erebos_go, arg: v.0 as i64 }),
+    }])
+}
+
+fn erebos_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let v = PermId(arg as u32);
+    let fodder: Vec<PermId> = creatures(g, p).into_iter().filter(|&x| x != src).collect();
+    let Some(f) = min_by(&fodder, |x| pval(g, x)) else { return Ok(false) };
+    if !on_bf(g, v) || !crate::engine::mana::pay(g, p, 1, "B", false)? {
+        return Ok(false);
+    }
+    die(g, f, "sac")?;
+    if !ability_window(g, p, Some(src), "target creature gets -2/-1", None, None)? {
+        return Ok(true);
+    }
+    super::common::eot(g, v, -2, -1);
+    if crate::engine::values::etgh(g, v) <= 0 {
+        die(g, v, "sba")?;
+    }
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Narci
+/// **Narci, Fable Singer**: whenever you sacrifice an enchantment, draw a card (the final chapter drain is
+/// `saga_final`)
+fn narci_sacrifice(g: &mut Game, src: Src, p: PlayerId, what: crate::hooks::Sacrificed) -> Res {
+    let crate::hooks::Sacrificed::Perm(m) = what else { return Ok(()) };
+    if p != owner(g, src) || !on_bf(g, src) || !g.perm(m).cd.is_some_and(|c| is_ench(g, c)) {
+        return Ok(());
+    }
+    if trigger_window(g, p, Some(src), "draw a card", Some(2.0))? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Greater Tanuki, Nyx Weaver, Nyxborn Behemoth
+/// **Greater Tanuki** channel {2}{G}, discard it: search for a basic land, put it onto the battlefield tapped. The AI
+/// channels it when it can't cast the 6-drop yet and a land helps.
+fn tanuki_channel(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let _ = c;
+    if post.is_none() || !crate::engine::mana::can_pay(g, p, 2, "G", false) {
+        return Ok(vec![]);
+    }
+    if crate::engine::mana::total_mana(g, p, false) >= 6 || g.player(p).lands.len() >= 8 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.5,
+        label: "channel Greater Tanuki".into(),
+        act: Some(Action::Plan { f: tanuki_go, arg: 0 }),
+    }])
+}
+
+fn tanuki_go(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
+    let Some(c) = g.db.id(TANUKI) else { return Ok(false) };
+    if !g.player(p).hand.contains(&c) || !crate::engine::mana::pay(g, p, 2, "G", false)? {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(p).hand, c);
+    g.player_mut(p).gy.push(c);
+    crate::glog!(g, "  {} channels Greater Tanuki", g.player(p).name);
+    crate::engine::zones::land_ramp(g, p, 1, true)?;
+    Ok(true)
+}
+
+/// **Nyx Weaver**: {1}{B}{G}, exile it: return target card from your graveyard to your hand. The AI does it at the
+/// end of its turn when the graveyard holds a card worth getting back.
+fn weaver_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src) || !on_bf(g, src) || !crate::engine::mana::can_pay(g, p, 1, "BG", false) {
+        return Ok(vec![]);
+    }
+    if post == Some(false) || (post == Some(true) && g.active != Some(p)) {
+        return Ok(vec![]);
+    }
+    let best = g.player(p).gy.iter().map(|&c| card_worth(g, p, c, true)).fold(f64::NEG_INFINITY, f64::max);
+    if best < 4.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: best * 0.3,
+        label: "Nyx Weaver: exile it, return a card".into(),
+        act: Some(Action::Ability { src, f: weaver_go, arg: 0 }),
+    }])
+}
+
+fn weaver_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || !crate::engine::mana::pay(g, p, 1, "BG", false)? {
+        return Ok(false);
+    }
+    crate::engine::zones::exile_perm(g, src)?;
+    if !ability_window(g, p, Some(src), "return a card from the graveyard", None, None)? {
+        return Ok(true);
+    }
+    let cs = g.player(p).gy.clone();
+    if let Some(c) = max_by(&cs, |c| card_worth(g, p, c, true)) {
+        remove_card(&mut g.player_mut(p).gy, c);
+        g.player_mut(p).hand.push(c);
+    }
+    Ok(true)
+}
+
+/// **Nyxborn Behemoth**: costs {X} less, X the total mana value of the noncreature enchantments you control (at most
+/// the {10} generic part)
+fn behemoth_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    let x: u32 = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| on_bf(g, m))
+        .filter_map(|&m| g.perm(m).cd)
+        .filter(|&c| is_ench(g, c) && !g.db.get(c).creature)
+        .map(|c| g.db.get(c).cmc)
+        .sum();
+    -(x.min(10) as i32)
+}
+
+// ------------------------------------------------------------------ Sandwurm Convergence
+/// Creatures with flying can't attack you or planeswalkers you control: called from `combat::attack_limits` for each
+/// attacker `a` and defending player `d`
+pub fn flyer_barred(g: &Game, a: PermId, d: PlayerId) -> bool {
+    let x = g.perm(a);
+    (x.fly || x.eot_kw.contains(&"flying") || crate::engine::combat::kw(g, a, "flying"))
+        && g.player(d).perms.iter().any(|&m| on_bf(g, m) && cname(g, m) == SANDWURM)
+}
+
+// ------------------------------------------------------------------ Anikthea, Hand of Erebos
+/// menace for the other enchantment creatures its controller has
+fn anikthea_kw(g: &Game, src: Src, m: PermId, kw: crate::sym::Sym) -> bool {
+    kw == "menace"
+        && m != src
+        && owner(g, m) == owner(g, src)
+        && g.is_creature(m)
+        && g.perm(m).cd.is_some_and(|c| is_ench(g, c))
+}
+
+/// **Anikthea**, entering or attacking: exile up to one non-Aura enchantment card from the graveyard and create a
+/// token that's a copy of it, a 3/3 black Zombie creature in addition to its other types. The AI picks the card worth
+/// most (an enchantment creature, a Saga, a legendary one only when the original isn't out).
+fn anikthea_copy(g: &mut Game, src: PermId) -> Res {
+    let o = owner(g, src);
+    let out: Vec<CardId> = g.player(o).perms.iter().filter_map(|&m| g.perm(m).cd).collect();
+    let cands: Vec<CardId> = g
+        .player(o)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| {
+            is_ench(g, c)
+                && !g.db.get(c).has_subtype("aura")
+                && !(g.db.get(c).tag(crate::tag::Tag::Leg) && out.contains(&c))
+        })
+        .collect();
+    let Some(c) = max_by(&cands, |c| {
+        let d = g.db.get(c);
+        card_worth(g, o, c, true)
+            + d.cmc as f64 * 0.3
+            + if d.creature { 2.0 } else { 0.0 }
+            + if is_saga(g, c) { 1.0 } else { 0.0 }
+    }) else {
+        return Ok(());
+    };
+    if !trigger_window(g, o, Some(src), "exile an enchantment card, create a 3/3 Zombie copy", Some(6.0))? {
+        return Ok(());
+    }
+    if !g.player(o).gy.contains(&c) {
+        return Ok(());
+    }
+    remove_card(&mut g.player_mut(o).gy, c);
+    g.player_mut(o).exile.push(c);
+    if let Some(t) = enter_token_copy(g, o, c)?
+        && g.perm(t).on_bf
+    {
+        let x = g.perm_mut(t);
+        x.data.set(DataKey::Anim, Val::Bool(true));
+        (x.pow, x.tgh) = (3, 3);
+        x.colors = Colors::from_letters("B");
+        if !x.ttypes.contains(&"zombie") {
+            x.ttypes.push("zombie");
+        }
+    }
+    Ok(())
+}
+
+fn anikthea_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src { anikthea_copy(g, src) } else { Ok(()) }
+}
+
+fn anikthea_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if p == owner(g, src) && atk.contains(&src) {
+        anikthea_copy(g, src)?;
+    }
+    Ok(vec![])
+}
+
+// ------------------------------------------------------------------ Abundance
+/// **Abundance**: if you would draw a card, you may instead choose land or nonland and reveal cards from the top of
+/// your library until you reveal a card of the chosen kind; put it into your hand and the rest on the bottom (their
+/// order kept). The AI chooses a land while it has fewer than eight lands in play and hand together, else nonland, and
+/// always replaces the draw. Called from `zones::draw`; true: the draw was replaced.
+pub fn abundance_draw(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if !g.player(p).perms.iter().any(|&m| on_bf(g, m) && cname(g, m) == ABUNDANCE) {
+        return Ok(false);
+    }
+    let want_land = wants_land(g, p);
+    let mut revealed = vec![];
+    let mut found = None;
+    while let Some(c) = g.player_mut(p).library.pop() {
+        if g.db.get(c).land == want_land {
+            found = Some(c);
+            break;
+        }
+        revealed.push(c);
+    }
+    revealed.reverse(); // the bottom keeps the order they were revealed in
+    g.player_mut(p).library.splice(0..0, revealed);
+    if let Some(c) = found {
+        let pl = g.player_mut(p);
+        pl.hand.push(c);
+        pl.seen.insert(c);
+        crate::glog!(g, "    Abundance: {} takes {} instead of drawing", g.player(p).name, g.db.get(c).name);
+    }
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Cacophony Unleashed
+/// **Cacophony Unleashed**: when it enters, if you cast it, destroy all nonenchantment creatures; whenever it or
+/// another enchantment you control enters, until end of turn it becomes a legendary 6/6 Nightmare God creature with
+/// menace and deathtouch (still an enchantment). The AI casts it when the wipe takes more from the opponents than
+/// from itself.
+fn cacophony_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = owner(g, src);
+    if m == src
+        && g.last_cast_etb
+        && trigger_window(g, o, Some(src), "destroy all nonenchantment creatures", Some(8.0))?
+    {
+        let all: Vec<PermId> = g
+            .players
+            .iter()
+            .flat_map(|q| q.perms.iter().copied().collect::<Vec<_>>())
+            .filter(|&x| on_bf(g, x) && g.is_creature(x) && !g.perm(x).cd.is_some_and(|c| is_ench(g, c)))
+            .collect();
+        for x in all {
+            die(g, x, "destroy")?;
+        }
+    }
+    if ench_entered(g, src, m, true)
+        && on_bf(g, src)
+        && trigger_window(g, o, Some(src), "becomes a 6/6 Nightmare God", Some(3.0))?
+    {
+        let x = g.perm_mut(src);
+        x.data.set(DataKey::Anim, Val::Bool(true));
+        x.data.set(DataKey::Legendary, Val::Bool(true));
+        (x.pow, x.tgh) = (6, 6);
+        for k in ["menace", "deathtouch"] {
+            if !x.eot_kw.contains(&k) {
+                x.eot_kw.push(k);
+            }
+        }
+    }
+    Ok(())
+}
+
+/// until end of turn ends: it is only an enchantment again
+fn cacophony_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
+    if g.perm(src).data.truthy(DataKey::Anim) {
+        g.perm_mut(src).data.set(DataKey::Anim, Val::Bool(false));
+    }
+    Ok(())
+}
+
+fn cacophony_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    let value = |q: PlayerId| -> f64 {
+        g.player(q)
+            .perms
+            .iter()
+            .filter(|&&m| on_bf(g, m) && g.is_creature(m) && !g.perm(m).cd.is_some_and(|c| is_ench(g, c)))
+            .map(|&m| pval(g, m))
+            .sum()
+    };
+    let theirs: f64 = g.opps(p).map(value).sum();
+    if theirs - value(p) >= 4.0 { 72 } else { 0 }
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     for name in [HELVAULT, TITANS, ELDEST, MENDING, BRETAGARD, OLD_GODS, LOVE_SONG] {
         let c = r.card(db, name)?;
@@ -469,5 +1046,43 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.saga = Some((saga_wants, saga_lore));
     }
     r.card(db, HELVAULT)?.leaves = Some(saga_leaves);
+    r.card(db, COMPOSER)?.etb = Some(composer);
+    r.card(db, NESSIAN)?.etb = Some(nessian);
+    r.card(db, DOOMWAKE)?.etb = Some(doomwake);
+    r.card(db, ONDU)?.etb = Some(ondu);
+    r.card(db, BOON)?.etb = Some(boon);
+    r.creature_pt.push(boon_pt);
+    let c = r.card(db, KHALNI)?;
+    c.landfall = Some(khalni_landfall);
+    c.options = Some(khalni_options);
+    r.card(db, WAKE)?.land_mana = Some(wake_mana);
+    let c = r.card(db, HELIOD)?;
+    c.etb = Some(heliod_etb);
+    c.sba = Some(heliod_sba);
+    c.grant_kw = Some(god_indestructible);
+    *c = c.at_once(crate::hooks::Event::Etb);
+    let c = r.card(db, EREBOS)?;
+    c.etb = Some(erebos_etb);
+    c.sba = Some(erebos_sba);
+    c.grant_kw = Some(god_indestructible);
+    c.dies = Some(erebos_dies);
+    c.options = Some(erebos_options);
+    *c = c.at_once(crate::hooks::Event::Etb);
+    let c = r.card(db, NARCI)?;
+    c.sacrifice = Some(narci_sacrifice);
+    r.card(db, TANUKI)?.hand_options = Some(tanuki_channel);
+    r.card(db, WEAVER)?.options = Some(weaver_options);
+    r.card(db, BEHEMOTH)?.self_cost = Some(behemoth_cost);
+    r.card(db, SANDWURM)?.attack_cap = Some(|_, _, _, _| None); // a hook, so it is live; the rule is `flyer_barred`
+    let c = r.card(db, ANIKTHEA)?;
+    c.etb = Some(anikthea_etb);
+    c.attack = Some(anikthea_attack);
+    c.grant_kw = Some(anikthea_kw);
+    r.card(db, ABUNDANCE)?.skip_draw = Some(|_, _, _| 0); // a hook, so it is live (g.hooks); the rule is `abundance_draw`
+    let c = r.card(db, CACOPHONY)?;
+    c.etb = Some(cacophony_etb);
+    c.end_step = Some(cacophony_end);
+    c.prio = Some(cacophony_prio);
+    *c = c.at_once(crate::hooks::Event::EndStep);
     Ok(())
 }

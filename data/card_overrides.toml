@@ -7447,3 +7447,89 @@ note = "Saga: I destroys the opponent's best nonland permanent, II fetches the b
 tags = ""
 status = "Full"
 note = "Saga with read ahead (the AI starts at II, or III with three creatures): I you and the weakest opponent draw two, II a 1/1 white Bird with flying, III +1/+1 counters on your two best creatures"
+
+["Anikthea, Hand of Erebos"]
+dsl = []
+status = "Full"
+note = "menace (keyword) and menace for your other enchantment creatures (grant_kw); entering or attacking exiles the best non-Aura enchantment card from your graveyard (a legend only if it isn't out) and makes a token copy that is a 3/3 black Zombie creature besides its other types"
+
+["Abundance"]
+status = "Full"
+note = "replaces each of your draws (zones::draw calls abundance_draw): chooses land while you have fewer than eight lands in play and hand, else nonland, reveals to the first of that kind into your hand, the rest on the bottom in the order revealed"
+
+["Cacophony Unleashed"]
+status = "Full"
+note = "if cast, destroys all nonenchantment creatures (cast only when that takes more from the opponents than from you); whenever it or another enchantment you control enters it is a legendary 6/6 menace deathtouch creature until end of turn"
+
+["Boon of the Spirit Realm"]
+tags = ""
+status = "Full"
+note = "constellation: a blessing counter on it when it or another enchantment you control enters; your creatures get +1/+1 per blessing counter (creature_pt)"
+
+["Khalni Heart Expedition"]
+dsl = []
+status = "Full"
+note = "landfall: a quest counter; with three, the AI removes them, sacrifices it and fetches two basic lands tapped (a card option, any main phase)"
+
+["Mirari's Wake"]
+status = "Full"
+note = "+1/+1 for your creatures is the compiled anthem; every land of yours makes one more mana of its own colours (land_mana +1; a dual makes one extra of either colour)"
+
+["Composer of Spring"]
+status = "Full"
+note = "constellation: puts the best land from your hand onto the battlefield tapped (landfall); with six or more enchantments the highest-cost creature card instead if you have one"
+
+["Nessian Wanderer"]
+status = "Full"
+note = "constellation: looks at the top three, takes a land into your hand while you have fewer than eight lands in play and hand, the rest on the bottom in random order"
+
+["Doomwake Giant"]
+status = "Full"
+note = "constellation (it or another enchantment you control): creatures your opponents control get -1/-1 until end of turn (those at 0 toughness die)"
+
+["Ondu Spiritdancer"]
+status = "Full"
+note = "an enchantment entering under your control gets a token copy, once each turn (not Auras or legendary permanents)"
+
+["Heliod, God of the Sun"]
+types = "E"
+status = "Full"
+note = "indestructible; a 5/6 creature only with devotion to white 5+ (updated as permanents enter and on state checks); other creatures have vigilance and the {2}{W}{W} Cleric token are the compiled abilities"
+
+["Erebos, Bleak-Hearted"]
+types = "E"
+tags = "leg"
+dsl = []
+status = "Full"
+note = "indestructible; a 5/6 creature only with devotion to black 5+; another creature of yours dying: pay 2 life (above 10 life) to draw; {1}{B}, sacrifice a creature: -2/-1 on an opposing creature with toughness 1 or less"
+
+["Narci, Fable Singer"]
+status = "Full"
+note = "lifelink; sacrificing an enchantment (Sagas after their last chapter, Khalni) draws a card; a Saga's final chapter resolving drains each opponent for the Saga's mana value (saga_final)"
+
+["Greater Tanuki"]
+dsl = []
+status = "Full"
+note = "6/5 trample; channel {2}{G}, discard it: a basic land onto the battlefield tapped (a hand option while it can't be cast yet)"
+
+["Nyx Weaver"]
+status = "Full"
+note = "reach; upkeep mill two is the compiled trigger; {1}{B}{G}, exile it: return the best card in your graveyard to your hand (end of turn or main phase 2)"
+
+["Nyxborn Behemoth"]
+status = "Full"
+note = "costs {X} less (X: total mana value of your noncreature enchantments, at most 10; self_cost); trample; the {1}{G} sacrifice-an-enchantment indestructible ability is the compiled activation"
+
+["Sandwurm Convergence"]
+status = "Full"
+note = "the 5/5 Wurm at your end step is the compiled trigger; creatures with flying can't attack you (combat::attack_limits calls flyer_barred; attacks are at players, so planeswalkers are covered)"
+
+["Orzhov Basilica"]
+tags = "amt=2 c=WB t bounceland"
+status = "Full"
+note = "enters tapped, returns another land you control to your hand (the engine's bounceland rule), taps for {W}{B}"
+
+["Golgari Rot Farm"]
+tags = "amt=2 c=BG t bounceland"
+status = "Full"
+note = "enters tapped, returns another land you control to your hand (the engine's bounceland rule), taps for {B}{G}"

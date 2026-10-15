@@ -76,6 +76,9 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             g.player_mut(p).decked = true;
             return Ok(());
         }
+        if !g.hooks.is_empty() && crate::impls::t0_anikthea::abundance_draw(g, p)? {
+            continue; // Abundance: a land or a nonland card instead of the draw
+        }
         if g.player(p).urabrask == Some(g.turn_stamp()) {
             // Urabrask, Heretic Praetor: exiled instead, playable this turn (no draw, so no draw triggers)
             let pl = g.player_mut(p);
