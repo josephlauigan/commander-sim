@@ -1,5 +1,7 @@
 # Brago — Azorius Blink Control
 
+**Updated 2026-10-14.** Out: Arcane Denial, Swan Song, Venser, Shaper Savant. In: Angel of Serenity, Lyra Dawnbringer, Resplendent Angel. y
+
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-heavy.
 
 - **Commander:** Brago, King Eternal
@@ -28,7 +30,7 @@ ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displa
 
 **Commander (1).** Brago, King Eternal
 
-**Creatures (32).** Adeline, Admonition Angel, Archaeomancer, Archangel of Tithes, Baneslayer Angel, Brazen Borrower, Charming Prince, Cloudblazer, Cloudkin Seer, Deadeye Navigator, Dream Trawler, Eldrazi Displacer, Esper Sentinel, Frost Titan, Glen Elendra Archmage, Hero of Bladehold, Man-o'-War, Mulldrifter, Palace Jailer, Recruiter of the Guard, Reflector Mage, Resplendent Cathar, Restoration Angel, Shaper Savant, Skyclave Apparition, Solemn Simulacrum, Soulherder, Spark Double, Spellseeker, Sun Titan, Venser, Wall of Omens
+**Creatures (32).** Adeline, Resplendent Cathar, Admonition Angel, Angel of Serenity, Archaeomancer, Archangel of Tithes, Baneslayer Angel, Brazen Borrower, Charming Prince, Cloudblazer, Cloudkin Seer, Deadeye Navigator, Dream Trawler, Eldrazi Displacer, Esper Sentinel, Frost Titan, Glen Elendra Archmage, Hero of Bladehold, Lyra Dawnbringer, Man-o'-War, Mulldrifter, Palace Jailer, Recruiter of the Guard, Reflector Mage, Resplendent Angel, Restoration Angel, Skyclave Apparition, Solemn Simulacrum, Soulherder, Spark Double, Spellseeker, Sun Titan, Wall of Omens
 
 **Planeswalkers (2).** Elspeth, Sun's Champion, Teferi, Hero of Dominaria
 
@@ -38,7 +40,7 @@ ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displa
 
 **Sorceries (3).** Council's Judgment, Supreme Verdict, Wrath of God
 
-**Instants (14).** Absorb, An Offer You Can't Refuse, Arcane Denial, Brainstorm, Counterspell, Cryptic Command, Cyclonic Rift, Dovin's Veto, Ephemerate, Fact or Fiction, Mystic Confluence, Path to Exile, Swan Song, Swords to Plowshares
+**Instants (12).** Absorb, An Offer You Can't Refuse, Brainstorm, Counterspell, Cryptic Command, Cyclonic Rift, Dovin's Veto, Ephemerate, Fact or Fiction, Mystic Confluence, Path to Exile, Swords to Plowshares
 
 **Lands (36).** Adarkar Wastes, Command Tower, Deserted Beach, Exotic Orchard, Flooded Strand, Glacial Fortress, Hallowed Fountain, Irrigated Farmland, Mystic Gate, Mystic Sanctuary, Otawara, Soaring City, Port Town, Prairie Stream, Reliquary Tower, 12 Island, 10 Plains
 
@@ -50,7 +52,7 @@ ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displa
 1 Adeline, Resplendent Cathar
 1 Admonition Angel
 1 An Offer You Can't Refuse
-1 Arcane Denial
+1 Angel of Serenity
 1 Arcane Signet
 1 Archaeomancer
 1 Archangel of Tithes
@@ -89,6 +91,7 @@ ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displa
 1 Hallowed Fountain
 1 Hero of Bladehold
 1 Irrigated Farmland
+1 Lyra Dawnbringer
 1 Man-o'-War
 1 Mind Stone
 1 Mulldrifter
@@ -104,6 +107,7 @@ ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displa
 1 Recruiter of the Guard
 1 Reflector Mage
 1 Reliquary Tower
+1 Resplendent Angel
 1 Restoration Angel
 1 Rhystic Study
 1 Skyclave Apparition
@@ -114,13 +118,11 @@ ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displa
 1 Spellseeker
 1 Sun Titan
 1 Supreme Verdict
-1 Swan Song
 1 Swiftfoot Boots
 1 Swords to Plowshares
 1 Talisman of Progress
 1 Teferi, Hero of Dominaria
 1 Thought Vessel
-1 Venser, Shaper Savant
 1 Wall of Omens
 1 Wrath of God
 12 Island
