@@ -1184,6 +1184,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.land_options = Some(windbrisk_options);
     register_x_cards(r, db)?;
     register_heath(r, db)?;
+    register_idol(r, db)?;
     Ok(())
 }
 
@@ -1275,5 +1276,59 @@ fn heath_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
 pub fn register_heath(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Fetid Heath")?.land_cols = Some(heath_cols);
     r.card(db, "Cascade Bluffs")?.land_cols = Some(heath_cols);
+    Ok(())
+}
+
+// ================================================================== Idol of Oblivion
+/// **Idol of Oblivion**: {T}: draw a card, only if you created a token this turn (the AI draws at its main phase after
+/// the token makers have run, or at the end of the turn). {8},{T}, sacrifice: a 10/10 colorless Eldrazi token.
+fn idol_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if owner(g, src) != p || !on_bf(g, src) || g.perm(src).tapped {
+        return Ok(vec![]);
+    }
+    let mut out = vec![];
+    if g.player(p).tok_made.0 == Some(g.turn_stamp()) && g.player(p).tok_made.1 > 0 && post != Some(false) {
+        out.push(Opt {
+            utility: 2.0,
+            label: "Idol of Oblivion: draw a card".into(),
+            act: Some(Action::Ability { src, f: idol_draw, arg: 0 }),
+        });
+    }
+    if post.is_none() && g.active == Some(p) && can_pay(g, p, 8, "", false) {
+        out.push(Opt {
+            utility: 3.0,
+            label: "Idol of Oblivion: a 10/10 Eldrazi".into(),
+            act: Some(Action::Ability { src, f: idol_eldrazi, arg: 0 }),
+        });
+    }
+    Ok(out)
+}
+
+fn idol_draw(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).tapped || g.player(p).tok_made.0 != Some(g.turn_stamp()) {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    if ability_window(g, p, Some(src), "draw a card", None, None)? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(true)
+}
+
+fn idol_eldrazi(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !on_bf(g, src) || g.perm(src).tapped || !pay(g, p, 8, "", false)? {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    die(g, src, "sac")?;
+    if ability_window(g, p, Some(src), "a 10/10 Eldrazi", None, None)? {
+        let spec = Tokens { color: Some(Colors::NONE), types: vec!["eldrazi"], ..Tokens::new(1, 10) };
+        make_tokens(g, p, spec)?;
+    }
+    Ok(true)
+}
+
+pub fn register_idol(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Idol of Oblivion")?.options = Some(idol_options);
     Ok(())
 }

@@ -639,3 +639,20 @@ fn filter_lands_need_a_matching_land_and_the_temple_needs_five_lands() {
     lands(&mut g, P0, "Plains", 1, false);
     assert_eq!(amt(&g), 2, "five lands");
 }
+
+#[test]
+fn idol_of_oblivion_draws_only_after_a_token_was_created_this_turn() {
+    let mut g = pod();
+    g.active = Some(P0);
+    let idol = perm(&mut g, P0, "Idol of Oblivion");
+    let hook = card_hook(&g, "Idol of Oblivion");
+    assert!((hook.options.unwrap())(&mut g, idol, P0, Some(true)).unwrap().is_empty(), "no token yet");
+    token(&mut g, P0, 1);
+    zones::note_tokens(&mut g, P0, 1);
+    let opts = (hook.options.unwrap())(&mut g, idol, P0, Some(true)).unwrap();
+    let Some(Action::Ability { src, f, arg }) = opts.into_iter().next().unwrap().act else { panic!() };
+    let hand0 = g.player(P0).hand.len();
+    assert!(f(&mut g, src, P0, arg).unwrap());
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1);
+    assert!(g.perm(idol).tapped);
+}
