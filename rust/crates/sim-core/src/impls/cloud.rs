@@ -1484,6 +1484,9 @@ fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId)
     if !out.contains(&cl) || strong_gear(g, cl) || crate::engine::values::indestructible(g, cl) {
         return out;
     }
+    if trigger_gear(g, cl) && !likely_loss(g, cl, &[d]) {
+        return out; // a Sword's trigger is the engine: connecting beats sitting home
+    }
     let total: i32 = out.iter().map(|&m| epow(g, m)).sum();
     if total >= g.player(d).life {
         return out; // lethal: everyone goes
@@ -1497,6 +1500,48 @@ fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId)
         crate::glog!(g, "      [{} keeps Cloud home: nothing on him yet]", g.player(p).name);
     }
     out
+}
+
+/// Cloud wears a Sword or another Equipment with a combat trigger (triggers he doubles)
+fn trigger_gear(g: &Game, m: PermId) -> bool {
+    equipment_on(g, m).iter().any(|&e| {
+        matches!(
+            name_of(g, e),
+            "Sword of Fire and Ice"
+                | "Sword of Hearth and Home"
+                | "Sword of Feast and Famine"
+                | "Explorer's Scope"
+                | "Conformer Shuriken"
+        )
+    })
+}
+
+/// an untapped creature of one of `defs` could block Cloud and kill him (and he neither survives nor strikes first)
+fn likely_loss(g: &Game, cl: PermId, defs: &[PlayerId]) -> bool {
+    if crate::engine::values::indestructible(g, cl) {
+        return false;
+    }
+    defs.iter().any(|&q| {
+        g.player(q).perms.iter().any(|&b| {
+            live(g, b)
+                && g.is_creature(b)
+                && !g.perm(b).tapped
+                && crate::engine::combat::can_block(g, b, cl)
+                && epow(g, b) >= etgh(g, cl)
+                && !(crate::engine::combat::first_strike(g, cl) && epow(g, cl) >= etgh(g, b))
+        })
+    })
+}
+
+/// the look-ahead may not pick "no attack" when an equipped Cloud (trigger Equipment) can attack and isn't a likely
+/// loss (search::choose_attack_inner)
+pub fn must_attack(g: &Game, p: PlayerId) -> bool {
+    if g.player(p).key != KEY {
+        return false;
+    }
+    let Some(cl) = cloud_of(g, p) else { return false };
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    crate::human::combat::can_attack(g, p, cl) && trigger_gear(g, cl) && !likely_loss(g, cl, &opps)
 }
 
 /// look-ahead score bonus for a main-phase option of cloud (added to the rollout average in `search::choose_inner`):
