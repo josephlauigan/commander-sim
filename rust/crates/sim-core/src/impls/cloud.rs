@@ -359,7 +359,18 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         }
     }
     let exposed = crate::ai::brain::removal_risk(g, p) >= 0.3;
-    let mut order: Vec<&str> = vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"];
+    // Sword of Feast and Famine untaps the lands (the mana to equip or cast the next piece) and its discard is cheap
+    // with a clogged hand; it also brings a different protection pair, so it comes before Hearth and Home once a Sword
+    // is already out or held, and first of all with four or more cards in hand
+    let sword_held = ["Sword of Fire and Ice", "Sword of Hearth and Home"].iter().any(|n| have(n));
+    let clogged = g.player(p).hand.len() >= 4;
+    let mut order: Vec<&str> = if clogged {
+        vec!["Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home"]
+    } else if sword_held {
+        vec!["Sword of Fire and Ice", "Sword of Feast and Famine", "Sword of Hearth and Home"]
+    } else {
+        vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"]
+    };
     if exposed && held >= 1 {
         order.insert(0, "Champion's Helm"); // hexproof for the legend
     } else {

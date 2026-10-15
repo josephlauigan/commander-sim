@@ -88,3 +88,35 @@ fn riders_still_returns_a_bare_cloud_and_other_decks_creatures() {
 fn equipment_on_cloud(g: &Game) -> Vec<sim_core::ids::PermId> {
     cloud::equipment_on(g, cloud::cloud_of(g, P0).unwrap())
 }
+
+// ---- F4: Sword of Feast and Famine in the tutor order
+const SWORDS: [&str; 3] = ["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"];
+
+fn pick(g: &Game) -> String {
+    sim_core::ai::tutor_pick(g, P0, "ae").map(|c| g.db.get(c).name.to_string()).unwrap()
+}
+
+fn swords_library(g: &mut Game) {
+    let cs: Vec<_> = SWORDS.iter().map(|n| card(g, n)).collect();
+    g.player_mut(P0).library = cs;
+    lands(g, P0, "Plains", 4, false);
+}
+
+#[test]
+fn feast_and_famine_comes_before_hearth_and_home_once_a_sword_is_out() {
+    let mut g = game();
+    swords_library(&mut g);
+    assert_eq!(pick(&g), "Sword of Fire and Ice", "nothing out: the usual order");
+    let mut g = game();
+    swords_library(&mut g);
+    hand(&mut g, P0, &["Sword of Fire and Ice"]);
+    assert_eq!(pick(&g), "Sword of Feast and Famine");
+}
+
+#[test]
+fn feast_and_famine_first_with_a_clogged_hand() {
+    let mut g = game();
+    swords_library(&mut g);
+    hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Arcane Signet", "Swords to Plowshares"]);
+    assert_eq!(pick(&g), "Sword of Feast and Famine");
+}

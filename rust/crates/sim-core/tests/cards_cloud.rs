@@ -115,8 +115,8 @@ fn cloud_finds_the_next_piece_with_one_out() {
     hand(&mut g, P0, &["Sword of Fire and Ice"]);
     perm(&mut g, P0, "Cloud, Midgar Mercenary");
     assert!(
-        equipment_in_hand(&g, P0).contains(&"Sword of Hearth and Home".to_string()),
-        "one out: the next cheap Sword"
+        equipment_in_hand(&g, P0).contains(&"Sword of Feast and Famine".to_string()),
+        "one Sword held: the next Sword is Feast and Famine (cloud-aifix3 F4; it was Hearth and Home)"
     );
 }
 
