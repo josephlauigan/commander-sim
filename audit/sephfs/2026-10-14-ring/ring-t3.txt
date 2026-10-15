@@ -1,0 +1,73 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The One Ring [pool] A 4 :: leg
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m15s elapsed, ~2m23s left
+  progress  20.0%  0m32s elapsed, ~2m08s left
+  progress  30.0%  0m50s elapsed, ~1m57s left
+  progress  40.0%  1m05s elapsed, ~1m38s left
+  progress  50.0%  1m22s elapsed, ~1m22s left
+  progress  60.0%  1m39s elapsed, ~1m06s left
+  progress  70.0%  1m56s elapsed, ~0m50s left
+  progress  80.0%  2m13s elapsed, ~0m33s left
+  progress  90.0%  2m29s elapsed, ~0m16s left
+  progress 100.0%  2m47s elapsed, ~0m00s left
+Swaps: Caged Zombie -> The One Ring
+
+=== Sephiroth FS vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  37.3% ->  39.7%  (delta +2.4 pts, noise ±3.6, paired)   n=1000
+               eliminated by (variant): Atraxa 12.2%  Tergrid 12.5%  Aurelia 19.3%  Korvold 6.1%  Marwyn 8.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sephfs) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sephfs: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          37.3% ->  39.7%  +2.4pt   ±4.4 
+    Rounds survived (or game length)                  12.77 ->  12.71   -0.06  ±0.33 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.66 ->   0.63   -0.02  ±0.08 
+    Mana available on your turn 4                      4.14 ->   4.16   +0.02  ±0.09 
+    Mana available on your turn 6                      5.66 ->   5.69   +0.03  ±0.14 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.1%  +0.1pt   ±0.2 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  5.00 ->   5.00   -0.00  ±0.19 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.11 ->  20.18   +3.07  ±0.83*
+    Tutors resolved per game                           0.02 ->   0.02   -0.00  ±0.02 
+    Spells cast per game                              15.84 ->  16.70   +0.85  ±0.61*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.63 ->   0.65   +0.02  ±0.07 
+    Board wipes cast                                   0.85 ->   0.86   +0.00  ±0.08 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.97 ->   1.03   +0.05  ±0.10 
+    Your spells countered                              0.16 ->   0.16   -0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                50.72 ->  52.67   +1.95  ±3.28 
+      ...of which combat damage                       16.21 ->  15.93   -0.28  ±1.50 
+      ...of which magecraft / burn                     3.84 ->   3.87   +0.03  ±0.70 
+      ...of which drain triggers                      30.39 ->  32.56   +2.17  ±2.35 
+      ...of which other triggers                       0.09 ->   0.10   +0.02  ±0.08 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Spells cast per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(167s total)

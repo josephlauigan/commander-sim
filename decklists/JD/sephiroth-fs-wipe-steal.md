@@ -1,11 +1,12 @@
 # Sephiroth, Fabled SOLDIER — Mono-Black Wipe, Drain and Steal the Dead
 
 **Updated 2026-10-14.** Out: Ophiomancer, Sneering Shadewriter. In: Grave Titan, Pawn of Ulamog. JD's package (2026-10-14): Grave Titan for Sneering Shadewriter, Pawn of Ulamog for Ophiomancer. Measured +0.3 ±1.6 over all tiers (paired, 1,000 games per tier; audit/sephfs/2026-10-14-pkg/): neutral; JD is buying both.
+**Updated 2026-10-14.** Out: Caged Zombie. In: The One Ring. JD's choice: The One Ring for Caged Zombie. Measured +1.8 ±0.8 over all tiers and +2.8 ±1.0 against Tiers 1-3, the tiers this deck plays (paired, 4,000 games per tier; audit/sephfs/2026-10-14-ring4k/). The deck's first Game Changer: Bracket 3.
 
 **Added 2026-10-14.** JD's mono-black control deck with Sephiroth, Fabled SOLDIER as commander and JD's new Phyrexian
 Tower and Phyrexian Altar. Not JD's Atraxa deck (`sephiroth-phyrexian-reanimator.md`, also called Sephiroth): that
 one reanimates its own creatures for combos; this one wipes the board, drains on every death and takes opponents' dead.
-**32 buys, about $69.50** (about $41.50 without Sephiroth). Crux of Fate and Animate Dead are second copies: JD's first copies stay in the Kefka and Atraxa decks.
+**34 buys, about $183.38** (about $155.38 without Sephiroth; The One Ring is $113.59 of it). Crux of Fate and Animate Dead are second copies: JD's first copies stay in the Kefka and Atraxa decks.
 
 **Not measured yet.**
 
@@ -40,15 +41,15 @@ this is the fourth time this ability has resolved this turn, transform Sephiroth
 
 ## Bracket and Rule 0
 
-**Bracket 2-3:** no Game Changers, no two-card combos, no mass land destruction, no extra turns.
+**Bracket 3:** one Game Changer, **The One Ring**; no two-card combos, no mass land destruction, no extra turns.
 
 ## Where the cards come from
 
-**Buys (32, about $69.50):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
+**Buys (34, about $183.38):** marked "Buy" below with Scryfall's current price (Mind Stone and Fellwar Stone estimated).
 **JD's own, new (2):** Phyrexian Tower, Phyrexian Altar (not on the bulk/binder lists yet). **Basics (32 Swamp):** your
 own. Everything else comes off JD's lists (main, 2026-10-14).
 
-### Creatures (27)
+### Creatures (26)
 
 | Card | From | Set |
 |---|---|---|
@@ -56,7 +57,6 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 | Al Bhed Salvagers | Bulk | fin |
 | Blood Artist | **Buy** ($2.73) |  |
 | Butcher of Malakir | **Buy** ($0.35) |  |
-| Caged Zombie | Bulk | m21 |
 | Callous Inspector | Bulk | tla |
 | Carrier Thrall | **Buy** ($0.21) |  |
 | Carrion Feeder | Bulk | fdc |
@@ -86,9 +86,10 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 |---|---|---|
 | Ral Zarek, Guest Lecturer | Bulk | sos |
 
-### Artifacts (7)
+### Artifacts (8)
 
 | Card | From | Set |
+| The One Ring | **Buy** ($113.59; Game Changer) |  |
 |---|---|---|
 | Arcane Signet | **Buy** ($0.62) |  |
 | Fellwar Stone | **Buy** ($0.60) |  |
@@ -114,7 +115,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 
 | Card | From | Set |
 |---|---|---|
-| Bitter Triumph | Binder (Jodah) |  |
+| Bitter Triumph | **Buy** ($0.29; the Jodah copy went to Kefka, #65) |  |
 | Dark Ritual | Binder |  |
 | Last Gasp | Bulk | fra, sos |
 | Masterful Flourish | Bulk | sos |
@@ -123,7 +124,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 | Sephiroth's Intervention | Bulk | fin |
 | Wander Off | Bulk | sos |
 
-### Sorcerys (13)
+### Sorceries (13)
 
 | Card | From | Set |
 |---|---|---|
@@ -163,7 +164,6 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Blood on the Snow
 1 Braids's Frightful Return
 1 Butcher of Malakir
-1 Caged Zombie
 1 Call of the Ring
 1 Callous Inspector
 1 Carrier Thrall
@@ -211,6 +211,7 @@ own. Everything else comes off JD's lists (main, 2026-10-14).
 1 Sol Ring
 1 Star Compass
 1 Stargaze
+1 The One Ring
 1 Tome of Legends
 1 Toxic Deluge
 1 Undercity Dire Rat

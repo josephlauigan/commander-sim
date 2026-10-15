@@ -2847,6 +2847,7 @@ fn ring(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             return Ok(());
         }
         g.player_mut(o).ring_prot = true;
+        crate::glog!(g, "    The One Ring cast in {:?} step of {}'s turn (life {})", g.step, g.active.map_or("nobody", |a| &*g.player(a).name), g.player(o).life);
         crate::glog!(g, "    {} gains protection from everything until their next turn", pname(g, o));
     }
     Ok(())
@@ -2864,6 +2865,7 @@ fn ring_burden(g: &mut Game, src: Src, p: PlayerId) -> Res {
         && burden(g, src) != 0
     {
         let n = burden(g, src) as i32;
+        crate::glog!(g, "  {} loses {n} life to The One Ring's burden (life {})", pname(g, p), g.player(p).life);
         lose_life(g, p, n, Some(p), "other", None)?;
     }
     Ok(())
@@ -2891,6 +2893,7 @@ fn ring_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     let b = burden(g, src) + 1;
     g.perm_mut(src).data.set(DataKey::Burden, Val::Int(b));
+    crate::glog!(g, "  {} taps The One Ring: burden {b}, life {}, {:?} step of {}'s turn", pname(g, p), g.player(p).life, g.step, g.active.map_or("nobody", |a| &*g.player(a).name));
     draw(g, p, b as u32, false)?;
     Ok(true)
 }

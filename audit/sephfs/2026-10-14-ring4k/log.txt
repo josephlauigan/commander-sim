@@ -1,0 +1,7 @@
+18:09 built c2abe09
+18:23 t1 exit 0 [loose       ] win  39.3% ->  42.9%  (delta +3.6 pts, noise ±1.7, paired)   n=4000
+18:38 t2 exit 0 [loose       ] win  43.6% ->  46.4%  (delta +2.8 pts, noise ±1.9, paired)   n=4000
+18:50 t3 exit 0 [loose       ] win  35.9% ->  37.8%  (delta +1.9 pts, noise ±1.8, paired)   n=4000
+19:01 t4 exit 0 [loose       ] win  32.1% ->  33.0%  (delta +0.9 pts, noise ±1.7, paired)   n=4000
+19:07 t5 exit 0 [loose       ] win  20.8% ->  20.4%  (delta -0.3 pts, noise ±1.4, paired)   n=4000
+19:07 DONE
