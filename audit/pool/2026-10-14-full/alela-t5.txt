@@ -1,0 +1,104 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m32s elapsed, ~4m53s left
+  progress  20.0%  1m05s elapsed, ~4m23s left
+  progress  30.0%  1m39s elapsed, ~3m52s left
+  progress  40.0%  2m12s elapsed, ~3m18s left
+  progress  50.0%  2m45s elapsed, ~2m45s left
+  progress  60.0%  3m19s elapsed, ~2m13s left
+  progress  70.0%  3m51s elapsed, ~1m39s left
+  progress  80.0%  4m27s elapsed, ~1m06s left
+  progress  90.0%  4m59s elapsed, ~0m33s left
+  progress 100.0%  5m36s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== alela analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 12.7%   (4-player baseline 25%)   average rounds survived 8.5
+
+-- How it wins --
+  damage      97.6% of wins
+  timeout      2.4% of wins
+  Opponents it eliminated: 0.35 per game, by
+    combat             95.1%
+    drain               4.9%
+  Damage dealt per game: 16.4, from
+    combat              15.9  (97%)
+    drain                0.4  (3%)
+    triggers             0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 0.17; Tymna turns per game 0.27; opponents hit per Tymna turn 0.70
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 6.94 (in 11% of games)
+
+-- How it loses --
+  Eliminated in 87.2% of games, on average in round 7.7
+    by Kinnan   via combo              22.2% of games
+    by Urza     via combo              16.4% of games
+    by Winota   via combo              13.1% of games
+    by Winota   via combat             11.6% of games
+    by Zur the Enchanter via combo              11.5% of games
+    by Yawgmoth via combo               7.5% of games
+    by Urza     via combat              1.4% of games
+    by Zur the Enchanter via commander damage    0.8% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 3%  T5 11%  T6 19%  T7 25%  T8 30%  T9 33%  T10 35%  T11 37%  T12 38%
+  Online at all: 39.5% of games
+  Commander resolves on turn: median 5.0, mean 5.3 (over the 61.6% of games it resolves)
+  Commander resolved by turn:  T4 27%  T5 40%  T6 48%  T7 54%  T8 57%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Daydream                                   cast in   7.9% of games, win rate when cast  40.2% (+27.5)
+    Cavalier of Dawn                           cast in   5.8% of games, win rate when cast  39.5% (+26.8)
+    Meteor Golem                               cast in   5.8% of games, win rate when cast  39.4% (+26.7)
+    Sphinx's Approach                          cast in   7.4% of games, win rate when cast  37.5% (+24.8)
+    Opposition                                 cast in   6.6% of games, win rate when cast  37.3% (+24.6)
+    Ajani Fells the Godsire                    cast in   7.5% of games, win rate when cast  34.9% (+22.2)
+    Wispdrinker Vampire                        cast in   9.2% of games, win rate when cast  34.2% (+21.5)
+    Statute of Denial                          cast in   6.2% of games, win rate when cast  34.0% (+21.3)
+    Windborn Muse                              cast in  11.3% of games, win rate when cast  33.9% (+21.2)
+    Pileated Provisioner                       cast in   8.4% of games, win rate when cast  33.7% (+21.1)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  62.9% of games, win rate when cast  19.8% (+7.1)
+    Repel Calamity                             cast in  16.0% of games, win rate when cast  21.2% (+8.5)
+    Dark Ritual                                cast in  13.7% of games, win rate when cast  21.6% (+8.9)
+    Mind Stone                                 cast in  16.0% of games, win rate when cast  21.7% (+9.0)
+    Initiates of the Ebon Hand                 cast in  14.0% of games, win rate when cast  21.7% (+9.1)
+    Page, Loose Leaf                           cast in  14.7% of games, win rate when cast  21.8% (+9.1)
+    Unsummon                                   cast in  14.9% of games, win rate when cast  22.0% (+9.3)
+    Judge's Familiar                           cast in  13.6% of games, win rate when cast  22.1% (+9.4)
+    Negate                                     cast in  11.6% of games, win rate when cast  22.3% (+9.6)
+    Dockside Chef                              cast in  14.0% of games, win rate when cast  22.5% (+9.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Clever Concealment                         cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Ray of Command                             cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Muddle the Mixture                         cast   7.1% of the games it was drawn [reactive: only cast in response]
+    Spite // Malice                            cast  12.4% of the games it was drawn [reactive: only cast in response]
+    Meteor Golem                               cast  32.6% of the games it was drawn
+    Cavalier of Dawn                           cast  34.5% of the games it was drawn
+    Statute of Denial                          cast  35.8% of the games it was drawn [reactive: only cast in response]
+    Venser, the Sojourner                      cast  40.1% of the games it was drawn
+    Opposition                                 cast  41.1% of the games it was drawn
+    Felidar Retreat                            cast  41.5% of the games it was drawn
+    Helping Hand                               cast  42.2% of the games it was drawn
+    Sphinx's Approach                          cast  43.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.14
+    Short Bow                                  0.06
+    Ethersworn Canonist                        0.05
+    Venser, the Sojourner                      0.03
+    Tetsuko Umezawa, Fugitive                  0.02
+    Rhystic Study                              0.02
+    Windborn Muse                              0.02
+    Jackdaw Savior                             0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(337s total)

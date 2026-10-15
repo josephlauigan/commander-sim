@@ -1,0 +1,99 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 14 worker threads: about 14 minutes
+  progress  10.0%  0m44s elapsed, ~6m42s left
+  progress  20.0%  1m25s elapsed, ~5m40s left
+  progress  30.0%  2m03s elapsed, ~4m47s left
+  progress  40.0%  2m42s elapsed, ~4m04s left
+  progress  50.0%  3m22s elapsed, ~3m22s left
+  progress  60.0%  3m58s elapsed, ~2m39s left
+  progress  70.0%  4m35s elapsed, ~1m58s left
+  progress  80.0%  5m15s elapsed, ~1m18s left
+  progress  90.0%  5m56s elapsed, ~0m39s left
+  progress 100.0%  6m37s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 30.9%   (4-player baseline 25%)   average rounds survived 9.6
+
+-- How it wins --
+  damage      99.4% of wins
+  timeout      0.6% of wins
+  Opponents it eliminated: 0.92 per game, by
+    drain              74.0%
+    combat             12.1%
+    triggers            6.9%
+    other               5.0%
+    burn                1.8%
+    decked              0.1%
+  Damage dealt per game: 46.0, from
+    drain               30.2  (66%)
+    combat               8.8  (19%)
+    triggers             5.7  (12%)
+    burn                 1.3  (3%)
+
+-- How it loses --
+  Eliminated in 69.0% of games, on average in round 8.7
+    by Heliod   via combo              18.2% of games
+    by Krenko   via combat             13.2% of games
+    by Prosper  via combo               7.9% of games
+    by Yuriko   via combat              6.4% of games
+    by Yuriko   via triggers            5.1% of games
+    by Chulane  via combo               4.6% of games
+    by Chulane  via combat              4.3% of games
+    by Krenko   via combo               2.6% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 4%  T4 21%  T5 37%  T6 53%  T7 64%  T8 72%  T9 76%  T10 79%  T11 80%  T12 80%
+  Online at all: 80.8% of games
+  Commander resolves on turn: median 6.0, mean 5.9 (over the 81.7% of games it resolves)
+  Commander resolved by turn:  T4 21%  T5 38%  T6 54%  T7 65%  T8 74%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Peer into the Abyss                        cast in   6.3% of games, win rate when cast  82.1% (+51.2)
+    Dark Deal                                  cast in   2.9% of games, win rate when cast  64.0% (+33.1)
+    Seizan, Perverter of Truth                 cast in   8.7% of games, win rate when cast  62.8% (+31.8)
+    Exsanguinate                               cast in   9.8% of games, win rate when cast  61.1% (+30.1)
+    Howling Mine                               cast in   9.8% of games, win rate when cast  56.1% (+25.2)
+    Memory Jar                                 cast in  12.3% of games, win rate when cast  51.9% (+21.0)
+    Painful Lesson                             cast in  10.4% of games, win rate when cast  50.4% (+19.4)
+    Underworld Dreams                          cast in  17.8% of games, win rate when cast  48.8% (+17.9)
+    Invoke Despair                             cast in  11.3% of games, win rate when cast  48.6% (+17.6)
+    Phyrexian Delver                           cast in  11.4% of games, win rate when cast  47.9% (+17.0)
+  Lowest win rate when cast:
+    Carnage Altar                              cast in  14.9% of games, win rate when cast  32.4% (+1.5)
+    Masterful Flourish                         cast in  16.5% of games, win rate when cast  35.2% (+4.3)
+    Potioner's Trove                           cast in  15.5% of games, win rate when cast  35.3% (+4.4)
+    Stir Up Trouble                            cast in  18.4% of games, win rate when cast  35.5% (+4.6)
+    Charcoal Diamond                           cast in  17.2% of games, win rate when cast  35.6% (+4.6)
+    Darksteel Plate                            cast in  15.3% of games, win rate when cast  36.1% (+5.1)
+    Vanquish the Weak                          cast in  16.4% of games, win rate when cast  36.1% (+5.2)
+    Mind Stone                                 cast in  17.7% of games, win rate when cast  36.1% (+5.2)
+    Leech Collector // Bloodletting            cast in  16.7% of games, win rate when cast  36.3% (+5.4)
+    Last Gasp                                  cast in  15.6% of games, win rate when cast  36.6% (+5.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  13.9% of the games it was drawn
+    Apex Witchstalker                          cast  28.4% of the games it was drawn
+    Peer into the Abyss                        cast  29.3% of the games it was drawn
+    Seizan, Perverter of Truth                 cast  42.7% of the games it was drawn
+    Ambition's Cost                            cast  44.1% of the games it was drawn
+    Exsanguinate                               cast  48.0% of the games it was drawn
+    Howling Mine                               cast  48.3% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.62
+    Charcoal Diamond                           0.04
+    Mind Stone                                 0.04
+    Melancholic Poet                           0.04
+    Leech Collector // Bloodletting            0.04
+    Restless Bloodseeker // Bloodsoaked Revele 0.04
+    Gix, Yawgmoth Praetor                      0.03
+    Seymour Flux                               0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(398s total)

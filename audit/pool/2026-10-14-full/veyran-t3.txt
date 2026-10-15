@@ -1,0 +1,99 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 20 minutes
+  progress  10.0%  1m24s elapsed, ~12m42s left
+  progress  20.0%  2m44s elapsed, ~10m59s left
+  progress  30.0%  4m06s elapsed, ~9m35s left
+  progress  40.0%  5m22s elapsed, ~8m04s left
+  progress  50.0%  6m42s elapsed, ~6m42s left
+  progress  60.0%  7m58s elapsed, ~5m18s left
+  progress  70.0%  9m15s elapsed, ~3m57s left
+  progress  80.0%  10m32s elapsed, ~2m38s left
+  progress  90.0%  11m47s elapsed, ~1m18s left
+  progress 100.0%  13m06s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== veyran analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 23.2%   (4-player baseline 25%)   average rounds survived 12.3
+
+-- How it wins --
+  damage      93.8% of wins
+  timeout      6.2% of wins
+  Opponents it eliminated: 0.60 per game, by
+    combat             46.5%
+    burn               39.2%
+    aether              8.4%
+    triggers            4.8%
+    commander damage    0.6%
+    decked              0.5%
+  Damage dealt per game: 31.4, from
+    combat              15.5  (50%)
+    burn                11.7  (37%)
+    aether               3.3  (10%)
+    triggers             0.9  (3%)
+    drain                0.0  (0%)
+
+-- How it loses --
+  Eliminated in 74.3% of games, on average in round 11.5
+    by Aurelia  via combat             19.8% of games
+    by Tergrid  via combat             12.4% of games
+    by Marwyn   via combat             11.6% of games
+    by Atraxa   via combat              9.4% of games
+    by Korvold  via drain               3.0% of games
+    by Tergrid  via drain               2.9% of games
+    by Korvold  via combat              2.2% of games
+    by Tergrid  via triggers            2.1% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 3%  T4 12%  T5 22%  T6 31%  T7 40%  T8 47%  T9 53%  T10 58%  T11 62%  T12 65%
+  Online at all: 69.5% of games
+  Commander resolves on turn: median 5.0, mean 5.4 (over the 92.6% of games it resolves)
+  Commander resolved by turn:  T4 42%  T5 56%  T6 67%  T7 75%  T8 82%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 4.4% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Mizzix's Mastery                           cast in  12.6% of games, win rate when cast  54.6% (+31.3)
+    Rite of the Dragoncaller                   cast in  16.8% of games, win rate when cast  44.2% (+21.0)
+    Fiery Emancipation                         cast in  15.1% of games, win rate when cast  44.0% (+20.8)
+    Crackle with Power                         cast in  19.8% of games, win rate when cast  42.7% (+19.4)
+    Niv-Mizzet, Parun                          cast in  12.4% of games, win rate when cast  41.0% (+17.8)
+    River's Rebuke                             cast in  16.4% of games, win rate when cast  40.0% (+16.8)
+    Light Up the Stage                         cast in  22.1% of games, win rate when cast  39.4% (+16.2)
+    Quick Study                                cast in  23.0% of games, win rate when cast  38.5% (+15.3)
+    Eris, Roar of the Storm                    cast in  15.2% of games, win rate when cast  37.7% (+14.5)
+    Flow State                                 cast in  24.5% of games, win rate when cast  37.2% (+14.0)
+  Lowest win rate when cast:
+    Evacuation                                 cast in  14.8% of games, win rate when cast  19.5% (-3.7)
+    Veyran, Voice of Duality                   cast in  92.8% of games, win rate when cast  25.0% (+1.7)
+    Old Fat Spider Can't See Me                cast in  18.1% of games, win rate when cast  27.1% (+3.9)
+    Lightning Greaves                          cast in  24.5% of games, win rate when cast  27.3% (+4.0)
+    Venser, Shaper Savant                      cast in  18.8% of games, win rate when cast  27.6% (+4.4)
+    Harmonic Prodigy                           cast in  22.6% of games, win rate when cast  27.6% (+4.4)
+    Emeritus of Conflict // Lightning Bolt     cast in  22.1% of games, win rate when cast  27.8% (+4.6)
+    Blasphemous Act                            cast in  16.7% of games, win rate when cast  28.6% (+5.3)
+    Flux Channeler                             cast in  18.8% of games, win rate when cast  28.6% (+5.4)
+    Thor, Asgard's Avenger                     cast in  20.8% of games, win rate when cast  28.9% (+5.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Triple Triad                               cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Mystic Confluence                          cast  27.9% of the games it was drawn [reactive: only cast in response]
+    Mizzix's Mastery                           cast  46.4% of the games it was drawn
+    Thousand-Year Storm                        cast  49.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.70
+    Ral, Storm Conduit                         0.14
+    Aetherflux Reservoir                       0.10
+    Propaganda                                 0.06
+    Blazing Firesinger // Seething Song        0.06
+    Kessig Flamebreather                       0.05
+    Rite of the Dragoncaller                   0.04
+    Guttersnipe                                0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(786s total)

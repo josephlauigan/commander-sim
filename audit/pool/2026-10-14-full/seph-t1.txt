@@ -1,0 +1,102 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m41s elapsed, ~6m15s left
+  progress  20.0%  1m25s elapsed, ~5m42s left
+  progress  30.0%  2m05s elapsed, ~4m52s left
+  progress  40.0%  2m49s elapsed, ~4m14s left
+  progress  50.0%  3m32s elapsed, ~3m32s left
+  progress  60.0%  4m15s elapsed, ~2m50s left
+  progress  70.0%  4m55s elapsed, ~2m06s left
+  progress  80.0%  5m37s elapsed, ~1m24s left
+  progress  90.0%  6m20s elapsed, ~0m42s left
+  progress 100.0%  7m03s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== seph analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 37.0%   (4-player baseline 25%)   average rounds survived 10.5
+
+-- How it wins --
+  combo       60.4% of wins
+  damage      39.0% of wins
+  timeout      0.5% of wins
+  Opponents it eliminated: 0.96 per game, by
+    combo              47.9%
+    combat             33.3%
+    drain               9.8%
+    triggers            5.8%
+    commander damage    2.4%
+    decked              0.9%
+  Damage dealt per game: 29.2, from
+    combat              17.7  (61%)
+    drain                9.2  (32%)
+    triggers             2.2  (8%)
+
+-- How it loses --
+  Eliminated in 62.9% of games, on average in round 9.3
+    by Isshin   via combat             13.0% of games
+    by Light-Paws via commander damage   12.9% of games
+    by Tatyova  via combat              9.1% of games
+    by Lathril  via combat              8.7% of games
+    by Light-Paws via combat              3.7% of games
+    by Teysa Karlov via drain               3.4% of games
+    by Lathril  via drain               3.3% of games
+    by Teysa Karlov via combat              3.0% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 3%  T4 12%  T5 28%  T6 45%  T7 59%  T8 69%  T9 74%  T10 76%  T11 78%  T12 79%
+  Online at all: 79.7% of games
+  Commander resolves on turn: median 8.0, mean 8.2 (over the 60.3% of games it resolves)
+  Commander resolved by turn:  T4 1%  T5 6%  T6 15%  T7 26%  T8 38%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Yawgmoth's Will                            cast in   8.3% of games, win rate when cast  79.5% (+42.5)
+    Dread Return                               cast in  20.9% of games, win rate when cast  74.6% (+37.7)
+    Mikaeus, the Unhallowed                    cast in  16.2% of games, win rate when cast  73.7% (+36.7)
+    Unburial Rites                             cast in  22.7% of games, win rate when cast  73.0% (+36.1)
+    Elesh Norn, Grand Cenobite                 cast in   4.4% of games, win rate when cast  71.8% (+34.8)
+    Ephemerate                                 cast in  20.5% of games, win rate when cast  69.1% (+32.1)
+    Sheoldred, Whispering One                  cast in   4.7% of games, win rate when cast  68.4% (+31.5)
+    Animate Dead                               cast in  26.4% of games, win rate when cast  68.3% (+31.4)
+    Kitchen Finks                              cast in  23.8% of games, win rate when cast  68.0% (+31.0)
+    Reanimate                                  cast in  26.9% of games, win rate when cast  66.9% (+30.0)
+  Lowest win rate when cast:
+    Teferi's Protection                        cast in   5.8% of games, win rate when cast  20.8% (-16.2)
+    Toxic Deluge                               cast in  19.9% of games, win rate when cast  47.9% (+10.9)
+    Displacer Kitten                           cast in  16.4% of games, win rate when cast  47.9% (+11.0)
+    Restoration Angel                          cast in  11.7% of games, win rate when cast  48.0% (+11.0)
+    Elesh Norn, Mother of Machines             cast in  13.6% of games, win rate when cast  48.2% (+11.2)
+    Momentary Blink                            cast in  20.6% of games, win rate when cast  49.5% (+12.5)
+    Force of Will                              cast in  13.9% of games, win rate when cast  50.2% (+13.2)
+    Anguished Unmaking                         cast in  20.3% of games, win rate when cast  50.7% (+13.7)
+    Mind Stone                                 cast in  23.9% of games, win rate when cast  50.9% (+13.9)
+    Conjurer's Closet                          cast in  17.1% of games, win rate when cast  51.2% (+14.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Worldly Tutor                              cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Summon: Bahamut                            cast   9.1% of the games it was drawn
+    Archon of Cruelty                          cast  16.7% of the games it was drawn
+    Elesh Norn, Grand Cenobite                 cast  17.4% of the games it was drawn
+    Sheoldred, Whispering One                  cast  18.4% of the games it was drawn
+    Teferi's Protection                        cast  25.6% of the games it was drawn [reactive: only cast in response]
+    Yawgmoth's Will                            cast  34.8% of the games it was drawn
+    Galadriel's Dismissal                      cast  36.7% of the games it was drawn [reactive: only cast in response]
+    Buried Alive                               cast  42.7% of the games it was drawn
+    Muldrotha, the Gravetide                   cast  49.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.35
+    Archon of Cruelty                          0.13
+    Summon: Bahamut                            0.05
+    Sheoldred, the Apocalypse                  0.05
+    Grave Pact                                 0.05
+    Grave Titan                                0.04
+    Elesh Norn, Mother of Machines             0.04
+    Nim Deathmantle                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(423s total)

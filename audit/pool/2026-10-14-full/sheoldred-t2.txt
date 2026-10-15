@@ -1,0 +1,95 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m42s elapsed, ~6m21s left
+  progress  20.0%  1m28s elapsed, ~5m52s left
+  progress  30.0%  2m10s elapsed, ~5m04s left
+  progress  40.0%  2m54s elapsed, ~4m21s left
+  progress  50.0%  3m38s elapsed, ~3m38s left
+  progress  60.0%  4m18s elapsed, ~2m52s left
+  progress  70.0%  5m04s elapsed, ~2m10s left
+  progress  80.0%  5m45s elapsed, ~1m26s left
+  progress  90.0%  6m26s elapsed, ~0m42s left
+  progress 100.0%  7m20s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 37.0%   (4-player baseline 25%)   average rounds survived 12.8
+
+-- How it wins --
+  damage      98.0% of wins
+  timeout      2.0% of wins
+  Opponents it eliminated: 1.22 per game, by
+    drain              74.2%
+    combat             11.4%
+    triggers            8.0%
+    other               4.2%
+    burn                1.4%
+    decked              0.8%
+  Damage dealt per game: 66.6, from
+    drain               44.2  (66%)
+    combat              11.7  (18%)
+    triggers             8.7  (13%)
+    burn                 1.9  (3%)
+
+-- How it loses --
+  Eliminated in 61.7% of games, on average in round 12.3
+    by Brago    via combat             15.4% of games
+    by Kaalia of the Vast via combat             12.4% of games
+    by Lord Windgrace via combat             11.5% of games
+    by Meren of Clan Nel Toth via combat              7.7% of games
+    by Sythis   via combat              4.8% of games
+    by Meren of Clan Nel Toth via triggers            2.3% of games
+    by Kaalia of the Vast via drain               2.0% of games
+    by Sythis   via commander damage    1.8% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 2%  T4 11%  T5 23%  T6 39%  T7 55%  T8 70%  T9 80%  T10 86%  T11 90%  T12 92%
+  Online at all: 94.5% of games
+  Commander resolves on turn: median 7.0, mean 7.1 (over the 94.9% of games it resolves)
+  Commander resolved by turn:  T4 11%  T5 24%  T6 41%  T7 57%  T8 71%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Peer into the Abyss                        cast in  12.4% of games, win rate when cast  63.4% (+26.4)
+    Seizan, Perverter of Truth                 cast in  13.7% of games, win rate when cast  61.0% (+24.0)
+    Memory Jar                                 cast in  20.6% of games, win rate when cast  56.0% (+19.0)
+    Howling Mine                               cast in  16.6% of games, win rate when cast  50.3% (+13.3)
+    Exsanguinate                               cast in  19.6% of games, win rate when cast  49.0% (+12.0)
+    Dark Deal                                  cast in   6.0% of games, win rate when cast  49.0% (+11.9)
+    Gray Merchant of Asphodel                  cast in  22.1% of games, win rate when cast  48.9% (+11.9)
+    Underworld Dreams                          cast in  25.4% of games, win rate when cast  47.6% (+10.6)
+    Fate Unraveler                             cast in  23.9% of games, win rate when cast  45.9% (+8.9)
+    Swiftfoot Boots                            cast in  23.1% of games, win rate when cast  45.6% (+8.5)
+  Lowest win rate when cast:
+    Commander's Sphere                         cast in  21.2% of games, win rate when cast  36.5% (-0.5)
+    Carnage Altar                              cast in  22.8% of games, win rate when cast  36.6% (-0.4)
+    Vanquish the Weak                          cast in  23.5% of games, win rate when cast  36.8% (-0.2)
+    Ulna Alley Shopkeep                        cast in  22.6% of games, win rate when cast  37.1% (+0.0)
+    Restless Bloodseeker // Bloodsoaked Revele cast in  22.6% of games, win rate when cast  37.3% (+0.3)
+    Wander Off                                 cast in  21.0% of games, win rate when cast  37.5% (+0.5)
+    Charcoal Diamond                           cast in  23.5% of games, win rate when cast  37.6% (+0.6)
+    Soul Enervation                            cast in  22.1% of games, win rate when cast  37.8% (+0.7)
+    Overkill                                   cast in  22.1% of games, win rate when cast  38.1% (+1.1)
+    Foolish Fate                               cast in  21.9% of games, win rate when cast  38.3% (+1.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  22.3% of the games it was drawn
+    Apex Witchstalker                          cast  41.1% of the games it was drawn
+    Peer into the Abyss                        cast  44.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  1.22
+    Phyrexian Arena                            0.10
+    Seymour Flux                               0.09
+    Charcoal Diamond                           0.08
+    Fate Unraveler                             0.08
+    Potioner's Trove                           0.08
+    Gray Merchant of Asphodel                  0.08
+    Gix, Yawgmoth Praetor                      0.07
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(441s total)

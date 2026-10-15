@@ -1,0 +1,100 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m30s elapsed, ~4m35s left
+  progress  20.0%  1m00s elapsed, ~4m02s left
+  progress  30.0%  1m30s elapsed, ~3m30s left
+  progress  40.0%  1m59s elapsed, ~2m59s left
+  progress  50.0%  2m30s elapsed, ~2m30s left
+  progress  60.0%  3m00s elapsed, ~2m00s left
+  progress  70.0%  3m30s elapsed, ~1m30s left
+  progress  80.0%  3m58s elapsed, ~0m59s left
+  progress  90.0%  4m29s elapsed, ~0m29s left
+  progress 100.0%  5m01s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 29.9%   (4-player baseline 25%)   average rounds survived 11.7
+
+-- How it wins --
+  damage      95.2% of wins
+  timeout      4.8% of wins
+  Opponents it eliminated: 0.89 per game, by
+    combat             55.2%
+    drain              17.9%
+    burn               13.8%
+    triggers            7.9%
+    commander damage    4.9%
+    decked              0.2%
+    other               0.2%
+  Damage dealt per game: 43.4, from
+    combat              27.9  (64%)
+    drain                8.4  (19%)
+    burn                 4.1  (9%)
+    triggers             3.1  (7%)
+
+-- How it loses --
+  Eliminated in 69.2% of games, on average in round 10.8
+    by Aurelia  via combat             19.1% of games
+    by Tergrid  via combat             11.8% of games
+    by Marwyn   via combat             11.2% of games
+    by Atraxa   via combat              8.2% of games
+    by Korvold  via combat              2.6% of games
+    by Tergrid  via drain               2.6% of games
+    by Aurelia  via commander damage    2.6% of games
+    by Korvold  via drain               2.0% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 4%  T4 10%  T5 16%  T6 26%  T7 35%  T8 43%  T9 50%  T10 54%  T11 57%  T12 59%
+  Online at all: 63.1% of games
+  Commander resolves on turn: median 6.0, mean 6.7 (over the 80.5% of games it resolves)
+  Commander resolved by turn:  T4 10%  T5 27%  T6 44%  T7 57%  T8 65%
+  Army power at the start of turn  6: mean 1.3, median 0.0, 10+ in 2.0% of games
+  Army power at the start of turn  8: mean 2.3, median 0.0, 10+ in 7.9% of games
+  Army power at the start of turn 10: mean 2.2, median 0.0, 10+ in 8.4% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Comet Storm                                cast in   9.2% of games, win rate when cast  69.1% (+39.2)
+    Massacre Wurm                              cast in  14.6% of games, win rate when cast  55.6% (+25.6)
+    Exsanguinate                               cast in  14.3% of games, win rate when cast  54.2% (+24.3)
+    Chandra's Ignition                         cast in  16.0% of games, win rate when cast  52.4% (+22.5)
+    Kaervek the Merciless                      cast in  13.4% of games, win rate when cast  52.0% (+22.1)
+    Nibelheim Aflame                           cast in  16.1% of games, win rate when cast  49.3% (+19.4)
+    Sheoldred, the Apocalypse                  cast in  19.2% of games, win rate when cast  47.9% (+18.0)
+    Urabrask, Heretic Praetor                  cast in  15.2% of games, win rate when cast  47.4% (+17.5)
+    Vraska, Betrayal's Sting                   cast in  16.4% of games, win rate when cast  47.4% (+17.5)
+    Sephiroth, Planet's Heir                   cast in  16.0% of games, win rate when cast  47.0% (+17.1)
+  Lowest win rate when cast:
+    Slaughter Pact                             cast in  20.7% of games, win rate when cast  33.3% (+3.3)
+    Bitter Triumph                             cast in  19.8% of games, win rate when cast  34.5% (+4.5)
+    Spell Pierce                               cast in  16.4% of games, win rate when cast  35.0% (+5.1)
+    Disdainful Stroke                          cast in  14.8% of games, win rate when cast  36.1% (+6.2)
+    Dreadhorde Invasion                        cast in  21.6% of games, win rate when cast  36.1% (+6.2)
+    Sauron, the Dark Lord                      cast in  80.9% of games, win rate when cast  36.6% (+6.7)
+    Bloodchief's Thirst                        cast in  14.8% of games, win rate when cast  36.8% (+6.9)
+    Chromatic Lantern                          cast in  19.3% of games, win rate when cast  37.0% (+7.1)
+    Vandalblast                                cast in  20.8% of games, win rate when cast  37.1% (+7.2)
+    Talisman of Dominance                      cast in  21.4% of games, win rate when cast  37.3% (+7.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Not of This World                          cast  24.0% of the games it was drawn [reactive: only cast in response]
+    Comet Storm                                cast  34.4% of the games it was drawn
+    Diabolic Intent                            cast  38.1% of the games it was drawn
+    Undermine                                  cast  41.6% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.41
+    Vraska, Betrayal's Sting                   0.08
+    Sheoldred, the Apocalypse                  0.05
+    Grave Titan                                0.04
+    Aggravated Assault                         0.04
+    Sephiroth, Planet's Heir                   0.03
+    Mind Stone                                 0.03
+    Inferno Titan                              0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(302s total)

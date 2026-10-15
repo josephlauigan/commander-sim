@@ -1,0 +1,111 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 14 worker threads: about 14 minutes
+  progress  10.0%  0m51s elapsed, ~7m47s left
+  progress  20.0%  1m40s elapsed, ~6m41s left
+  progress  30.0%  2m27s elapsed, ~5m44s left
+  progress  40.0%  3m18s elapsed, ~4m57s left
+  progress  50.0%  4m04s elapsed, ~4m04s left
+  progress  60.0%  4m52s elapsed, ~3m14s left
+  progress  70.0%  5m39s elapsed, ~2m25s left
+  progress  80.0%  6m27s elapsed, ~1m36s left
+  progress  90.0%  7m17s elapsed, ~0m48s left
+  progress 100.0%  8m05s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== sephfs analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 32.5%   (4-player baseline 25%)   average rounds survived 10.5
+
+-- How it wins --
+  damage      98.8% of wins
+  timeout      1.1% of wins
+  combo        0.2% of wins
+  Opponents it eliminated: 0.97 per game, by
+    drain              69.1%
+    combat             22.1%
+    burn                7.5%
+    decked              0.6%
+    triggers            0.4%
+    other               0.1%
+    combo               0.1%
+    commander damage    0.1%
+  Damage dealt per game: 38.4, from
+    drain               20.8  (54%)
+    combat              14.5  (38%)
+    burn                 3.0  (8%)
+    triggers             0.2  (0%)
+
+-- Sephiroth --
+  Flips per game 0.505 (games with a flip 42.9%); first flip on round 8.04 on average
+  Emblem drains per game 8.59; cards drawn by Sephiroth per game 1.48; creatures sacrificed per game 3.34
+  Wipes cast per game 0.36 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 1.13
+  Creatures stolen per game 0.68: reanimation spells 0.31, Grave Betrayal 0.51, Dread Slaver 0.03, prepared Reanimate 0.06; Kaya's Ghostform returns 0.12; Rabid Attack draws 0.08
+
+-- How it loses --
+  Eliminated in 67.1% of games, on average in round 9.1
+    by Heliod   via combo              17.6% of games
+    by Prosper  via combo               9.2% of games
+    by Krenko   via combat              8.4% of games
+    by Chulane  via combo               7.0% of games
+    by Yuriko   via triggers            5.8% of games
+    by Yuriko   via combat              5.5% of games
+    by Chulane  via combat              5.1% of games
+    by Krenko   via combo               2.9% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.1% of games
+  Commander resolves on turn: median 4.0, mean 4.7 (over the 91.5% of games it resolves)
+  Commander resolved by turn:  T4 51%  T5 67%  T6 78%  T7 84%  T8 88%
+  Sacrifices: 3.34 creatures per game; Sephiroth flipped to One-Winged Angel in 42.9% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Rabid Attack                               cast in   4.6% of games, win rate when cast  85.3% (+52.9)
+    Exsanguinate                               cast in  11.7% of games, win rate when cast  63.0% (+30.5)
+    Butcher of Malakir                         cast in  10.1% of games, win rate when cast  60.9% (+28.4)
+    Rewrite Regrets                            cast in  11.6% of games, win rate when cast  59.9% (+27.4)
+    Grave Titan                                cast in  14.7% of games, win rate when cast  59.7% (+27.2)
+    Grave Betrayal                             cast in  12.3% of games, win rate when cast  58.3% (+25.8)
+    Pestilence                                 cast in  17.3% of games, win rate when cast  58.3% (+25.8)
+    Necromantic Selection                      cast in   8.8% of games, win rate when cast  56.4% (+23.9)
+    Presumed Dead                              cast in  10.8% of games, win rate when cast  56.4% (+23.9)
+    Living Death                               cast in  10.9% of games, win rate when cast  54.3% (+21.8)
+  Lowest win rate when cast:
+    Sephiroth, Fabled SOLDIER // Sephiroth, On cast in  91.8% of games, win rate when cast  35.4% (+2.9)
+    Extinction Event                           cast in  11.2% of games, win rate when cast  38.3% (+5.8)
+    Star Compass                               cast in  19.3% of games, win rate when cast  39.1% (+6.6)
+    Tome of Legends                            cast in  18.7% of games, win rate when cast  41.1% (+8.6)
+    Fellwar Stone                              cast in  18.8% of games, win rate when cast  41.3% (+8.8)
+    Mind Stone                                 cast in  20.9% of games, win rate when cast  41.5% (+9.0)
+    Toxic Deluge                               cast in  14.2% of games, win rate when cast  41.9% (+9.4)
+    Arcane Signet                              cast in  18.8% of games, win rate when cast  42.1% (+9.7)
+    Dark Ritual                                cast in  18.7% of games, win rate when cast  42.4% (+10.0)
+    Sephiroth's Intervention                   cast in  17.0% of games, win rate when cast  42.4% (+10.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rabid Attack                               cast  21.3% of the games it was drawn
+    Blood on the Snow                          cast  36.6% of the games it was drawn
+    Necromantic Selection                      cast  37.1% of the games it was drawn
+    Butcher of Malakir                         cast  43.7% of the games it was drawn
+    Living Death                               cast  46.3% of the games it was drawn
+    Presumed Dead                              cast  47.3% of the games it was drawn
+    Crux of Fate                               cast  47.8% of the games it was drawn
+    Extinction Event                           cast  48.3% of the games it was drawn
+    Rewrite Regrets                            cast  49.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 0.70
+    Phyrexian Altar                            0.07
+    Grave Titan                                0.05
+    Moseo, Vein's New Dean                     0.05
+    Star Compass                               0.04
+    Mind Stone                                 0.04
+    Tome of Legends                            0.04
+    Ral Zarek, Guest Lecturer                  0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(486s total)

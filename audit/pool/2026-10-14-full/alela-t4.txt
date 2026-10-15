@@ -1,0 +1,101 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 14 worker threads: about 14 minutes
+  progress  10.0%  1m17s elapsed, ~11m40s left
+  progress  20.0%  2m33s elapsed, ~10m13s left
+  progress  30.0%  3m53s elapsed, ~9m03s left
+  progress  40.0%  5m12s elapsed, ~7m49s left
+  progress  50.0%  6m25s elapsed, ~6m25s left
+  progress  60.0%  7m40s elapsed, ~5m07s left
+  progress  70.0%  8m59s elapsed, ~3m51s left
+  progress  80.0%  10m17s elapsed, ~2m34s left
+  progress  90.0%  11m31s elapsed, ~1m16s left
+  progress 100.0%  12m53s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== alela analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 14.5%   (4-player baseline 25%)   average rounds survived 10.3
+
+-- How it wins --
+  damage      93.8% of wins
+  timeout      6.2% of wins
+  Opponents it eliminated: 0.41 per game, by
+    combat             94.8%
+    drain               4.1%
+    decked              1.1%
+  Damage dealt per game: 20.1, from
+    combat              19.3  (96%)
+    drain                0.8  (4%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 0.19; Tymna turns per game 0.31; opponents hit per Tymna turn 0.69
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 7.33 (in 13% of games)
+
+-- How it loses --
+  Eliminated in 85.0% of games, on average in round 9.6
+    by Heliod   via combo              18.6% of games
+    by Krenko   via combat             14.9% of games
+    by Yuriko   via combat              9.7% of games
+    by Yuriko   via triggers            8.4% of games
+    by Prosper  via combo               7.7% of games
+    by Chulane  via combo               7.0% of games
+    by Chulane  via combat              6.7% of games
+    by Krenko   via combo               2.6% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 3%  T5 14%  T6 24%  T7 32%  T8 38%  T9 43%  T10 47%  T11 49%  T12 51%
+  Online at all: 53.0% of games
+  Commander resolves on turn: median 5.0, mean 5.4 (over the 78.5% of games it resolves)
+  Commander resolved by turn:  T4 35%  T5 50%  T6 60%  T7 67%  T8 72%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Spite // Malice                            cast in   3.4% of games, win rate when cast  38.1% (+23.6)
+    Meteor Golem                               cast in   8.9% of games, win rate when cast  35.3% (+20.8)
+    Opposition                                 cast in   9.5% of games, win rate when cast  32.3% (+17.8)
+    Daydream                                   cast in  12.3% of games, win rate when cast  31.6% (+17.1)
+    Ajani Fells the Godsire                    cast in  12.2% of games, win rate when cast  30.9% (+16.4)
+    Windborn Muse                              cast in  16.1% of games, win rate when cast  30.4% (+15.9)
+    Wispdrinker Vampire                        cast in  14.3% of games, win rate when cast  29.4% (+14.9)
+    Rhystic Study                              cast in  15.8% of games, win rate when cast  29.1% (+14.6)
+    Statute of Denial                          cast in   8.2% of games, win rate when cast  28.8% (+14.3)
+    Cavalier of Dawn                           cast in   9.9% of games, win rate when cast  28.6% (+14.1)
+  Lowest win rate when cast:
+    Unsummon                                   cast in  18.3% of games, win rate when cast  18.0% (+3.5)
+    Alela, Artful Provocateur                  cast in  79.2% of games, win rate when cast  18.2% (+3.7)
+    Dark Ritual                                cast in  16.9% of games, win rate when cast  18.8% (+4.3)
+    Initiates of the Ebon Hand                 cast in  17.9% of games, win rate when cast  19.4% (+4.9)
+    Last Gasp                                  cast in  16.3% of games, win rate when cast  21.1% (+6.6)
+    Repel Calamity                             cast in  18.4% of games, win rate when cast  21.2% (+6.7)
+    Fatehold Charm                             cast in  15.1% of games, win rate when cast  21.4% (+6.9)
+    Emry, Lurker of the Loch                   cast in  16.1% of games, win rate when cast  21.7% (+7.2)
+    Arrest                                     cast in  17.0% of games, win rate when cast  21.8% (+7.3)
+    Essence Scatter                            cast in  15.0% of games, win rate when cast  21.9% (+7.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Clever Concealment                         cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Ray of Command                             cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Muddle the Mixture                         cast   7.7% of the games it was drawn [reactive: only cast in response]
+    Spite // Malice                            cast  15.5% of the games it was drawn [reactive: only cast in response]
+    Statute of Denial                          cast  40.6% of the games it was drawn [reactive: only cast in response]
+    Meteor Golem                               cast  42.0% of the games it was drawn
+    Opposition                                 cast  46.6% of the games it was drawn
+    Cavalier of Dawn                           cast  47.9% of the games it was drawn
+    Felidar Retreat                            cast  48.2% of the games it was drawn
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.40
+    Short Bow                                  0.12
+    Ethersworn Canonist                        0.09
+    Venser, the Sojourner                      0.06
+    Reconstructed Thopter                      0.05
+    Windborn Muse                              0.05
+    Jackdaw Savior                             0.05
+    Tetsuko Umezawa, Fugitive                  0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(774s total)

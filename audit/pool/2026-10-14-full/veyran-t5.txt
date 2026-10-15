@@ -1,0 +1,106 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m17s elapsed, ~2m39s left
+  progress  20.0%  0m35s elapsed, ~2m21s left
+  progress  30.0%  0m53s elapsed, ~2m04s left
+  progress  40.0%  1m10s elapsed, ~1m46s left
+  progress  50.0%  1m29s elapsed, ~1m29s left
+  progress  60.0%  1m47s elapsed, ~1m11s left
+  progress  70.0%  2m05s elapsed, ~0m53s left
+  progress  80.0%  2m24s elapsed, ~0m36s left
+  progress  90.0%  2m42s elapsed, ~0m18s left
+  progress 100.0%  3m01s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== veyran analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 13.6%   (4-player baseline 25%)   average rounds survived 8.4
+
+-- How it wins --
+  damage      97.8% of wins
+  timeout      2.2% of wins
+  Opponents it eliminated: 0.35 per game, by
+    combat             54.3%
+    burn               32.8%
+    triggers            7.4%
+    aether              5.1%
+    commander damage    0.4%
+    decked              0.1%
+  Damage dealt per game: 15.5, from
+    combat               9.9  (64%)
+    burn                 4.1  (26%)
+    aether               1.1  (7%)
+    triggers             0.4  (3%)
+
+-- How it loses --
+  Eliminated in 86.3% of games, on average in round 7.7
+    by Kinnan   via combo              22.1% of games
+    by Urza     via combo              16.1% of games
+    by Zur the Enchanter via combo              13.9% of games
+    by Winota   via combo              11.9% of games
+    by Winota   via combat              8.3% of games
+    by Yawgmoth via combo               7.5% of games
+    by Urza     via combat              1.7% of games
+    by Zur the Enchanter via commander damage    1.2% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 3%  T4 10%  T5 18%  T6 25%  T7 31%  T8 36%  T9 39%  T10 41%  T11 42%  T12 43%
+  Online at all: 44.0% of games
+  Commander resolves on turn: median 4.0, mean 4.7 (over the 73.4% of games it resolves)
+  Commander resolved by turn:  T4 44%  T5 55%  T6 62%  T7 67%  T8 70%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 1.8% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Mizzix's Mastery                           cast in   3.9% of games, win rate when cast  59.0% (+45.4)
+    Fiery Emancipation                         cast in   5.6% of games, win rate when cast  53.4% (+39.8)
+    Niv-Mizzet, Parun                          cast in   5.7% of games, win rate when cast  48.7% (+35.1)
+    Mystic Confluence                          cast in   2.7% of games, win rate when cast  47.7% (+34.1)
+    River's Rebuke                             cast in   7.7% of games, win rate when cast  45.4% (+31.8)
+    Rite of the Dragoncaller                   cast in   7.2% of games, win rate when cast  44.3% (+30.7)
+    Eris, Roar of the Storm                    cast in   5.5% of games, win rate when cast  41.6% (+28.0)
+    Crackle with Power                         cast in   9.3% of games, win rate when cast  38.3% (+24.7)
+    Splatter Technique                         cast in   7.4% of games, win rate when cast  37.6% (+24.0)
+    Light Up the Stage                         cast in  11.8% of games, win rate when cast  36.3% (+22.7)
+  Lowest win rate when cast:
+    Veyran, Voice of Duality                   cast in  74.7% of games, win rate when cast  17.9% (+4.3)
+    Spell Pierce                               cast in  13.6% of games, win rate when cast  19.9% (+6.3)
+    Fellwar Stone                              cast in  14.8% of games, win rate when cast  21.0% (+7.4)
+    Lightning Greaves                          cast in  13.8% of games, win rate when cast  21.1% (+7.5)
+    Flux Channeler                             cast in  11.2% of games, win rate when cast  22.3% (+8.7)
+    Harmonic Prodigy                           cast in  13.7% of games, win rate when cast  22.4% (+8.8)
+    Venser, Shaper Savant                      cast in   9.9% of games, win rate when cast  22.7% (+9.1)
+    Emeritus of Conflict // Lightning Bolt     cast in  13.8% of games, win rate when cast  23.6% (+10.0)
+    Sol Ring                                   cast in  18.4% of games, win rate when cast  24.2% (+10.6)
+    Chaos Warp                                 cast in  13.0% of games, win rate when cast  24.4% (+10.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Triple Triad                               cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Mystic Confluence                          cast  15.2% of the games it was drawn [reactive: only cast in response]
+    Mizzix's Mastery                           cast  21.3% of the games it was drawn
+    Thousand-Year Storm                        cast  26.3% of the games it was drawn
+    Fiery Emancipation                         cast  30.6% of the games it was drawn
+    Eris, Roar of the Storm                    cast  31.2% of the games it was drawn
+    Niv-Mizzet, Parun                          cast  33.3% of the games it was drawn
+    Rite of the Dragoncaller                   cast  38.5% of the games it was drawn
+    Evacuation                                 cast  39.9% of the games it was drawn
+    River's Rebuke                             cast  42.1% of the games it was drawn
+    Alania, Divergent Storm                    cast  42.9% of the games it was drawn
+    Splatter Technique                         cast  44.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.35
+    Ral, Storm Conduit                         0.05
+    Emeritus of Conflict // Lightning Bolt     0.03
+    Kessig Flamebreather                       0.03
+    Guttersnipe                                0.03
+    Aetherflux Reservoir                       0.03
+    Blazing Firesinger // Seething Song        0.02
+    Sanar, Unfinished Genius // Wild Idea      0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(182s total)

@@ -1,0 +1,91 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m51s elapsed, ~7m46s left
+  progress  20.0%  1m44s elapsed, ~6m56s left
+  progress  30.0%  2m31s elapsed, ~5m54s left
+  progress  40.0%  3m21s elapsed, ~5m02s left
+  progress  50.0%  4m12s elapsed, ~4m12s left
+  progress  60.0%  4m59s elapsed, ~3m19s left
+  progress  70.0%  5m51s elapsed, ~2m30s left
+  progress  80.0%  6m43s elapsed, ~1m40s left
+  progress  90.0%  7m36s elapsed, ~0m50s left
+  progress 100.0%  8m29s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== titania analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 20.3%   (4-player baseline 25%)   average rounds survived 10.9
+
+-- How it wins --
+  damage      97.4% of wins
+  timeout      2.6% of wins
+  Opponents it eliminated: 0.55 per game, by
+    combat             96.3%
+    decked              2.9%
+    commander damage    0.8%
+  Damage dealt per game: 35.1, from
+    combat              35.1  (100%)
+
+-- How it loses --
+  Eliminated in 79.0% of games, on average in round 10.1
+    by Light-Paws via commander damage   23.2% of games
+    by Isshin   via combat             11.0% of games
+    by Tatyova  via combat             10.5% of games
+    by Lathril  via combat              8.6% of games
+    by Teysa Karlov via drain               5.7% of games
+    by Lathril  via drain               5.1% of games
+    by Teysa Karlov via combat              3.7% of games
+    by Light-Paws via combat              3.4% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 10%  T6 20%  T7 29%  T8 36%  T9 42%  T10 46%  T11 49%  T12 50%
+  Online at all: 52.8% of games
+  Commander resolves on turn: median 7.0, mean 6.8 (over the 86.5% of games it resolves)
+  Commander resolved by turn:  T4 9%  T5 25%  T6 42%  T7 58%  T8 70%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Overwhelming Stampede                      cast in   9.8% of games, win rate when cast  66.2% (+46.0)
+    End-Raze Forerunners                       cast in  16.1% of games, win rate when cast  47.4% (+27.1)
+    Shamanic Revelation                        cast in  15.3% of games, win rate when cast  41.2% (+20.9)
+    Paladin of Predation                       cast in  17.7% of games, win rate when cast  36.6% (+16.3)
+    Tumbleweed Rising                          cast in  10.7% of games, win rate when cast  36.2% (+15.9)
+    Vinelasher Adept                           cast in  12.0% of games, win rate when cast  36.0% (+15.7)
+    Lifestream's Blessing                      cast in  14.7% of games, win rate when cast  34.8% (+14.5)
+    Annoyed Altisaur                           cast in  19.1% of games, win rate when cast  34.8% (+14.5)
+    Ghalta the Unstoppable                     cast in  19.9% of games, win rate when cast  34.3% (+14.1)
+    Vorinclex, Monstrous Raider                cast in  20.1% of games, win rate when cast  33.9% (+13.6)
+  Lowest win rate when cast:
+    Titania, Protector of Argoth               cast in  86.7% of games, win rate when cast  23.1% (+2.9)
+    Silhana Starfletcher                       cast in  20.2% of games, win rate when cast  24.5% (+4.3)
+    Hardbristle Bandit                         cast in  21.3% of games, win rate when cast  24.8% (+4.5)
+    Cultivate                                  cast in  20.6% of games, win rate when cast  25.9% (+5.6)
+    Blossoming Defense                         cast in  20.6% of games, win rate when cast  26.2% (+6.0)
+    Llanowar Elves                             cast in  22.4% of games, win rate when cast  26.6% (+6.3)
+    Pick Your Poison                           cast in  21.8% of games, win rate when cast  27.0% (+6.7)
+    Noxious Newt                               cast in  22.3% of games, win rate when cast  27.0% (+6.8)
+    Environmental Scientist                    cast in  21.9% of games, win rate when cast  27.3% (+7.0)
+    Greenhouse Propagator                      cast in  22.4% of games, win rate when cast  27.5% (+7.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Royal Treatment                            cast  39.6% of the games it was drawn
+    Arachnogenesis                             cast  43.3% of the games it was drawn
+    Overwhelming Stampede                      cast  45.6% of the games it was drawn
+    Vinelasher Adept                           cast  47.2% of the games it was drawn
+    Tumbleweed Rising                          cast  48.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               0.54
+    Ghalta the Unstoppable                     0.08
+    Vorinclex, Monstrous Raider                0.05
+    Lashwhip Predator                          0.04
+    Annoyed Altisaur                           0.04
+    Bugenhagen, Wise Elder                     0.04
+    Paladin of Predation                       0.04
+    Studious First-Year                        0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(509s total)

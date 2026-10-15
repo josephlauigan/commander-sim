@@ -1,0 +1,97 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m53s elapsed, ~7m58s left
+  progress  20.0%  1m43s elapsed, ~6m53s left
+  progress  30.0%  2m32s elapsed, ~5m55s left
+  progress  40.0%  3m20s elapsed, ~5m00s left
+  progress  50.0%  4m10s elapsed, ~4m10s left
+  progress  60.0%  4m59s elapsed, ~3m19s left
+  progress  70.0%  5m46s elapsed, ~2m28s left
+  progress  80.0%  6m36s elapsed, ~1m39s left
+  progress  90.0%  7m28s elapsed, ~0m49s left
+  progress 100.0%  8m26s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== galadriel analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 8.0%   (4-player baseline 25%)   average rounds survived 10.7
+
+-- How it wins --
+  damage      97.2% of wins
+  timeout      2.8% of wins
+  Opponents it eliminated: 0.23 per game, by
+    combat             98.2%
+    triggers            0.9%
+    commander damage    0.9%
+    drain               0.1%
+  Damage dealt per game: 18.2, from
+    combat              18.1  (100%)
+    triggers             0.0  (0%)
+    drain                0.0  (0%)
+    burn                 0.0  (0%)
+
+-- How it loses --
+  Eliminated in 91.8% of games, on average in round 10.4
+    by Giada    via combat             24.7% of games
+    by Captain America via combat             18.6% of games
+    by Anikthea via combat             16.5% of games
+    by Zurgo Stormrender via combat             14.4% of games
+    by Stella Lee via combat              7.5% of games
+    by Zurgo Stormrender via drain               5.2% of games
+    by Stella Lee via triggers            2.4% of games
+    by Stella Lee via burn                1.3% of games
+
+-- Game plan timing --
+  Plan: first Alliance trigger from Galadriel
+  Online by turn:  T2 0%  T3 0%  T4 3%  T5 13%  T6 24%  T7 32%  T8 40%  T9 45%  T10 49%  T11 51%  T12 52%
+  Online at all: 54.5% of games
+  Commander resolves on turn: median 6.0, mean 6.4 (over the 76.6% of games it resolves)
+  Commander resolved by turn:  T4 16%  T5 32%  T6 45%  T7 55%  T8 63%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Reya Dawnbringer                           cast in   6.2% of games, win rate when cast  23.6% (+15.6)
+    River's Rebuke                             cast in  12.7% of games, win rate when cast  23.5% (+15.5)
+    Shamanic Revelation                        cast in  10.6% of games, win rate when cast  22.0% (+14.0)
+    Cathars' Crusade                           cast in  12.9% of games, win rate when cast  20.3% (+12.3)
+    Jhovall Queen                              cast in   8.8% of games, win rate when cast  19.4% (+11.3)
+    Kindred Discovery                          cast in  10.0% of games, win rate when cast  18.8% (+10.8)
+    Dragonlord Dromoka                         cast in  11.8% of games, win rate when cast  18.7% (+10.7)
+    Mangara, the Diplomat                      cast in  15.8% of games, win rate when cast  18.5% (+10.5)
+    Elspeth, Sun's Champion                    cast in  13.1% of games, win rate when cast  18.3% (+10.3)
+    Cyclonic Rift                              cast in  19.5% of games, win rate when cast  18.2% (+10.2)
+  Lowest win rate when cast:
+    Crackdown                                  cast in   6.8% of games, win rate when cast   9.1% (+1.1)
+    Galadriel, Light of Valinor                cast in  76.8% of games, win rate when cast  10.2% (+2.2)
+    Errant Doomsayers                          cast in  18.0% of games, win rate when cast  11.1% (+3.1)
+    Generous Gift                              cast in  15.3% of games, win rate when cast  11.4% (+3.4)
+    Beast Within                               cast in  16.7% of games, win rate when cast  11.7% (+3.7)
+    Cultivate                                  cast in  13.7% of games, win rate when cast  11.7% (+3.7)
+    Ramosian Sergeant                          cast in  21.8% of games, win rate when cast  11.7% (+3.7)
+    Shared Roots                               cast in  17.5% of games, win rate when cast  11.7% (+3.7)
+    Path to Exile                              cast in  20.4% of games, win rate when cast  11.8% (+3.8)
+    Lightbringer                               cast in  15.4% of games, win rate when cast  11.8% (+3.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Rootborn Defenses                          cast   5.8% of the games it was drawn [reactive: only cast in response]
+    Unbreakable Formation                      cast   7.6% of the games it was drawn [reactive: only cast in response]
+    Eerie Interlude                            cast   9.1% of the games it was drawn
+    Reya Dawnbringer                           cast  28.0% of the games it was drawn
+    Crackdown                                  cast  33.8% of the games it was drawn
+    Jhovall Queen                              cast  41.1% of the games it was drawn
+    Kindred Discovery                          cast  49.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Galadriel, Light of Valinor                0.34
+    Elspeth, Sun's Champion                    0.10
+    Ramosian Sergeant                          0.06
+    Cathars' Crusade                           0.06
+    Ramosian Lieutenant                        0.06
+    Adeline, Resplendent Cathar                0.06
+    Errant Doomsayers                          0.05
+    Springleaf Drum                            0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(507s total)

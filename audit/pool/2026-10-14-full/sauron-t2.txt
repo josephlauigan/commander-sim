@@ -1,0 +1,100 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m40s elapsed, ~6m06s left
+  progress  20.0%  1m21s elapsed, ~5m25s left
+  progress  30.0%  2m04s elapsed, ~4m50s left
+  progress  40.0%  2m45s elapsed, ~4m07s left
+  progress  50.0%  3m25s elapsed, ~3m25s left
+  progress  60.0%  4m05s elapsed, ~2m43s left
+  progress  70.0%  4m46s elapsed, ~2m02s left
+  progress  80.0%  5m24s elapsed, ~1m21s left
+  progress  90.0%  6m08s elapsed, ~0m40s left
+  progress 100.0%  6m52s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== sauron analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 38.8%   (4-player baseline 25%)   average rounds survived 12.9
+
+-- How it wins --
+  damage      96.1% of wins
+  timeout      3.9% of wins
+  Opponents it eliminated: 1.21 per game, by
+    combat             51.2%
+    drain              20.1%
+    burn               13.0%
+    triggers            9.3%
+    commander damage    5.6%
+    decked              0.6%
+    other               0.2%
+  Damage dealt per game: 58.4, from
+    combat              37.3  (64%)
+    drain               11.4  (20%)
+    burn                 5.1  (9%)
+    triggers             4.5  (8%)
+
+-- How it loses --
+  Eliminated in 59.9% of games, on average in round 12.1
+    by Brago    via combat             11.8% of games
+    by Lord Windgrace via combat             11.5% of games
+    by Kaalia of the Vast via combat             11.2% of games
+    by Sythis   via combat              8.0% of games
+    by Meren of Clan Nel Toth via combat              6.1% of games
+    by Kaalia of the Vast via drain               3.0% of games
+    by Meren of Clan Nel Toth via drain               1.9% of games
+    by Meren of Clan Nel Toth via triggers            1.7% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 4%  T4 11%  T5 19%  T6 31%  T7 43%  T8 52%  T9 59%  T10 64%  T11 68%  T12 71%
+  Online at all: 76.2% of games
+  Commander resolves on turn: median 6.0, mean 6.7 (over the 88.2% of games it resolves)
+  Commander resolved by turn:  T4 11%  T5 29%  T6 48%  T7 62%  T8 72%
+  Army power at the start of turn  6: mean 1.4, median 0.0, 10+ in 1.9% of games
+  Army power at the start of turn  8: mean 2.8, median 0.0, 10+ in 9.1% of games
+  Army power at the start of turn 10: mean 3.0, median 0.0, 10+ in 11.1% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Comet Storm                                cast in  12.1% of games, win rate when cast  65.4% (+26.6)
+    Chandra's Ignition                         cast in  19.8% of games, win rate when cast  60.9% (+22.1)
+    Nibelheim Aflame                           cast in  19.9% of games, win rate when cast  59.1% (+20.3)
+    Kaervek the Merciless                      cast in  16.5% of games, win rate when cast  58.4% (+19.6)
+    Exsanguinate                               cast in  18.7% of games, win rate when cast  55.0% (+16.2)
+    Sephiroth, Planet's Heir                   cast in  18.6% of games, win rate when cast  54.9% (+16.1)
+    Sol Ring                                   cast in  25.9% of games, win rate when cast  54.3% (+15.5)
+    Massacre Wurm                              cast in  18.2% of games, win rate when cast  54.1% (+15.3)
+    Vraska, Betrayal's Sting                   cast in  18.7% of games, win rate when cast  54.1% (+15.3)
+    Cyclonic Rift                              cast in  23.4% of games, win rate when cast  52.6% (+13.8)
+  Lowest win rate when cast:
+    Vandalblast                                cast in  22.4% of games, win rate when cast  39.1% (+0.3)
+    Spell Pierce                               cast in  18.6% of games, win rate when cast  40.9% (+2.1)
+    Counterspell                               cast in  22.2% of games, win rate when cast  41.6% (+2.8)
+    Disdainful Stroke                          cast in  17.8% of games, win rate when cast  43.2% (+4.4)
+    Sauron, the Dark Lord                      cast in  88.5% of games, win rate when cast  43.4% (+4.6)
+    Slaughter Pact                             cast in  24.1% of games, win rate when cast  43.5% (+4.7)
+    Bitter Triumph                             cast in  22.6% of games, win rate when cast  43.9% (+5.1)
+    Infernal Grasp                             cast in  23.4% of games, win rate when cast  43.9% (+5.1)
+    Undermine                                  cast in  12.4% of games, win rate when cast  44.2% (+5.4)
+    Chaos Warp                                 cast in  22.8% of games, win rate when cast  44.3% (+5.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Not of This World                          cast  35.2% of the games it was drawn [reactive: only cast in response]
+    Comet Storm                                cast  40.9% of the games it was drawn
+    Undermine                                  cast  44.0% of the games it was drawn [reactive: only cast in response]
+    Diabolic Intent                            cast  49.2% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.69
+    Vraska, Betrayal's Sting                   0.11
+    Sheoldred, the Apocalypse                  0.11
+    Aggravated Assault                         0.10
+    Grave Titan                                0.08
+    Mind Stone                                 0.08
+    Whispersilk Cloak                          0.07
+    Inferno Titan                              0.07
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(413s total)

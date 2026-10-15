@@ -1,0 +1,102 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 14 worker threads: about 14 minutes
+  progress  10.0%  0m59s elapsed, ~8m56s left
+  progress  20.0%  2m04s elapsed, ~8m16s left
+  progress  30.0%  3m01s elapsed, ~7m03s left
+  progress  40.0%  3m59s elapsed, ~5m59s left
+  progress  50.0%  4m56s elapsed, ~4m56s left
+  progress  60.0%  5m55s elapsed, ~3m57s left
+  progress  70.0%  6m55s elapsed, ~2m57s left
+  progress  80.0%  7m56s elapsed, ~1m59s left
+  progress  90.0%  8m53s elapsed, ~0m59s left
+  progress 100.0%  9m52s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== galadriel analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 12.8%   (4-player baseline 25%)   average rounds survived 10.1
+
+-- How it wins --
+  damage      96.3% of wins
+  timeout      3.7% of wins
+  Opponents it eliminated: 0.35 per game, by
+    combat             98.0%
+    decked              0.7%
+    triggers            0.6%
+    commander damage    0.4%
+    drain               0.3%
+  Damage dealt per game: 19.7, from
+    combat              19.6  (99%)
+    triggers             0.1  (1%)
+    drain                0.1  (0%)
+
+-- How it loses --
+  Eliminated in 86.8% of games, on average in round 9.5
+    by Heliod   via combo              19.2% of games
+    by Krenko   via combat             14.2% of games
+    by Yuriko   via triggers           10.4% of games
+    by Yuriko   via combat              8.0% of games
+    by Prosper  via combo               7.0% of games
+    by Chulane  via combat              7.0% of games
+    by Chulane  via combo               6.5% of games
+    by Krenko   via combo               3.3% of games
+
+-- Game plan timing --
+  Plan: first Alliance trigger from Galadriel
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 8%  T6 16%  T7 23%  T8 28%  T9 33%  T10 36%  T11 39%  T12 41%
+  Online at all: 44.7% of games
+  Commander resolves on turn: median 6.0, mean 6.5 (over the 65.8% of games it resolves)
+  Commander resolved by turn:  T4 14%  T5 28%  T6 39%  T7 47%  T8 53%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    River's Rebuke                             cast in  10.2% of games, win rate when cast  35.7% (+22.9)
+    Reya Dawnbringer                           cast in   4.1% of games, win rate when cast  35.6% (+22.7)
+    Dragonlord Dromoka                         cast in   9.2% of games, win rate when cast  33.8% (+20.9)
+    Shamanic Revelation                        cast in   7.8% of games, win rate when cast  32.6% (+19.7)
+    Elspeth, Sun's Champion                    cast in  10.6% of games, win rate when cast  32.0% (+19.1)
+    Cathars' Crusade                           cast in  11.8% of games, win rate when cast  31.2% (+18.4)
+    Bribery                                    cast in  10.7% of games, win rate when cast  30.0% (+17.2)
+    Vanquisher's Banner                        cast in   9.8% of games, win rate when cast  28.6% (+15.8)
+    Jhovall Queen                              cast in   8.5% of games, win rate when cast  28.6% (+15.8)
+    Ballista Squad                             cast in  10.3% of games, win rate when cast  26.6% (+13.7)
+  Lowest win rate when cast:
+    Springleaf Drum                            cast in  17.3% of games, win rate when cast  16.0% (+3.2)
+    Crackdown                                  cast in   7.2% of games, win rate when cast  18.1% (+5.3)
+    Arcane Signet                              cast in  17.9% of games, win rate when cast  18.4% (+5.6)
+    Shared Roots                               cast in  15.3% of games, win rate when cast  18.8% (+5.9)
+    Llanowar Elves                             cast in  17.6% of games, win rate when cast  18.9% (+6.1)
+    Galadriel, Light of Valinor                cast in  66.7% of games, win rate when cast  18.9% (+6.1)
+    Errant Doomsayers                          cast in  17.0% of games, win rate when cast  19.2% (+6.4)
+    Elvish Mystic                              cast in  18.1% of games, win rate when cast  19.7% (+6.9)
+    Chromatic Lantern                          cast in  12.6% of games, win rate when cast  19.8% (+7.0)
+    Lawbringer                                 cast in  13.1% of games, win rate when cast  20.1% (+7.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unbreakable Formation                      cast   5.4% of the games it was drawn [reactive: only cast in response]
+    Rootborn Defenses                          cast   6.1% of the games it was drawn [reactive: only cast in response]
+    Eerie Interlude                            cast  11.0% of the games it was drawn
+    Reya Dawnbringer                           cast  20.0% of the games it was drawn
+    Crackdown                                  cast  37.5% of the games it was drawn
+    Shamanic Revelation                        cast  37.6% of the games it was drawn
+    Jhovall Queen                              cast  41.6% of the games it was drawn
+    Farewell                                   cast  42.1% of the games it was drawn
+    Kindred Discovery                          cast  43.4% of the games it was drawn
+    Make a Stand                               cast  43.8% of the games it was drawn
+    Austere Command                            cast  45.2% of the games it was drawn
+    Dragonlord Dromoka                         cast  47.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Galadriel, Light of Valinor                0.24
+    Ramosian Sergeant                          0.06
+    Adeline, Resplendent Cathar                0.06
+    Elspeth, Sun's Champion                    0.05
+    Ramosian Lieutenant                        0.04
+    Springleaf Drum                            0.04
+    Errant Doomsayers                          0.04
+    Mirror Entity                              0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(592s total)

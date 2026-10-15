@@ -1,0 +1,90 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m50s elapsed, ~7m30s left
+  progress  20.0%  1m41s elapsed, ~6m44s left
+  progress  30.0%  2m32s elapsed, ~5m55s left
+  progress  40.0%  3m20s elapsed, ~5m01s left
+  progress  50.0%  4m10s elapsed, ~4m10s left
+  progress  60.0%  5m01s elapsed, ~3m21s left
+  progress  70.0%  5m50s elapsed, ~2m30s left
+  progress  80.0%  6m41s elapsed, ~1m40s left
+  progress  90.0%  7m32s elapsed, ~0m50s left
+  progress 100.0%  8m30s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== titania analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 15.5%   (4-player baseline 25%)   average rounds survived 10.8
+
+-- How it wins --
+  damage      99.2% of wins
+  timeout      0.8% of wins
+  Opponents it eliminated: 0.45 per game, by
+    combat             99.3%
+    commander damage    0.6%
+    decked              0.2%
+  Damage dealt per game: 29.8, from
+    combat              29.8  (100%)
+
+-- How it loses --
+  Eliminated in 84.3% of games, on average in round 10.4
+    by Giada    via combat             25.0% of games
+    by Anikthea via combat             16.4% of games
+    by Captain America via combat             15.8% of games
+    by Zurgo Stormrender via combat             12.3% of games
+    by Stella Lee via combat              6.1% of games
+    by Zurgo Stormrender via drain               3.9% of games
+    by Stella Lee via triggers            1.9% of games
+    by Captain America via commander damage    1.1% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 10%  T6 21%  T7 30%  T8 39%  T9 45%  T10 49%  T11 51%  T12 53%
+  Online at all: 55.4% of games
+  Commander resolves on turn: median 7.0, mean 7.0 (over the 87.1% of games it resolves)
+  Commander resolved by turn:  T4 7%  T5 21%  T6 40%  T7 55%  T8 69%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Overwhelming Stampede                      cast in  10.8% of games, win rate when cast  54.6% (+39.1)
+    End-Raze Forerunners                       cast in  16.5% of games, win rate when cast  37.8% (+22.3)
+    Tumbleweed Rising                          cast in  10.1% of games, win rate when cast  28.6% (+13.1)
+    Ghalta the Unstoppable                     cast in  20.5% of games, win rate when cast  27.6% (+12.1)
+    Vorinclex, Monstrous Raider                cast in  20.6% of games, win rate when cast  27.1% (+11.6)
+    Shamanic Revelation                        cast in  16.7% of games, win rate when cast  26.9% (+11.4)
+    Lifestream's Blessing                      cast in  14.3% of games, win rate when cast  26.7% (+11.2)
+    Hornet Queen                               cast in  20.5% of games, win rate when cast  26.7% (+11.2)
+    Garruk's Uprising                          cast in  20.2% of games, win rate when cast  26.4% (+10.9)
+    Kura, the Boundless Sky                    cast in  23.2% of games, win rate when cast  25.6% (+10.1)
+  Lowest win rate when cast:
+    Titania, Protector of Argoth               cast in  87.3% of games, win rate when cast  17.4% (+1.9)
+    Hardbristle Bandit                         cast in  22.1% of games, win rate when cast  17.7% (+2.2)
+    Lashwhip Predator                          cast in  22.9% of games, win rate when cast  19.0% (+3.5)
+    Cartographer's Survey                      cast in  19.6% of games, win rate when cast  19.3% (+3.8)
+    Llanowar Elves                             cast in  22.3% of games, win rate when cast  19.6% (+4.1)
+    Blossoming Defense                         cast in  20.5% of games, win rate when cast  19.6% (+4.1)
+    Carnivorous Canopy                         cast in  18.6% of games, win rate when cast  19.8% (+4.3)
+    Environmental Scientist                    cast in  21.6% of games, win rate when cast  19.8% (+4.3)
+    Spider-Man, Brooklyn Visionary             cast in  21.7% of games, win rate when cast  19.9% (+4.4)
+    Harmonize                                  cast in  17.8% of games, win rate when cast  19.9% (+4.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Royal Treatment                            cast  35.1% of the games it was drawn
+    Tumbleweed Rising                          cast  44.2% of the games it was drawn
+    Overwhelming Stampede                      cast  46.6% of the games it was drawn
+    Vinelasher Adept                           cast  48.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               0.56
+    Ghalta the Unstoppable                     0.09
+    Lashwhip Predator                          0.07
+    Hardbristle Bandit                         0.07
+    Vorinclex, Monstrous Raider                0.06
+    Annoyed Altisaur                           0.06
+    Bugenhagen, Wise Elder                     0.05
+    Genesis Hydra                              0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(510s total)

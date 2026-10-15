@@ -1,0 +1,99 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  1m38s elapsed, ~14m50s left
+  progress  20.0%  3m13s elapsed, ~12m55s left
+  progress  30.0%  4m44s elapsed, ~11m04s left
+  progress  40.0%  6m15s elapsed, ~9m23s left
+  progress  50.0%  7m51s elapsed, ~7m51s left
+  progress  60.0%  9m23s elapsed, ~6m15s left
+  progress  70.0%  10m52s elapsed, ~4m39s left
+  progress  80.0%  12m27s elapsed, ~3m06s left
+  progress  90.0%  14m05s elapsed, ~1m33s left
+  progress 100.0%  15m41s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== alela analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 5.6%   (4-player baseline 25%)   average rounds survived 11.5
+
+-- How it wins --
+  damage      92.9% of wins
+  timeout      7.1% of wins
+  Opponents it eliminated: 0.24 per game, by
+    combat             93.6%
+    drain               5.5%
+    decked              0.7%
+    commander damage    0.1%
+  Damage dealt per game: 18.7, from
+    combat              17.7  (95%)
+    drain                1.0  (5%)
+    triggers             0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 0.17; Tymna turns per game 0.37; opponents hit per Tymna turn 0.57
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 7.87 (in 17% of games)
+
+-- How it loses --
+  Eliminated in 93.4% of games, on average in round 11.3
+    by Giada    via combat             22.4% of games
+    by Captain America via combat             19.7% of games
+    by Anikthea via combat             19.1% of games
+    by Zurgo Stormrender via combat             15.8% of games
+    by Stella Lee via combat              7.2% of games
+    by Zurgo Stormrender via drain               3.8% of games
+    by Stella Lee via triggers            2.5% of games
+    by Stella Lee via burn                1.1% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 4%  T5 18%  T6 28%  T7 39%  T8 46%  T9 52%  T10 56%  T11 59%  T12 60%
+  Online at all: 62.3% of games
+  Commander resolves on turn: median 5.0, mean 5.5 (over the 87.2% of games it resolves)
+  Commander resolved by turn:  T4 37%  T5 52%  T6 63%  T7 72%  T8 78%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Rhystic Study                              cast in  17.7% of games, win rate when cast  13.3% (+7.6)
+    Meteor Golem                               cast in  11.9% of games, win rate when cast  13.2% (+7.6)
+    Cavalier of Dawn                           cast in  12.3% of games, win rate when cast  13.2% (+7.5)
+    Opposition                                 cast in  12.6% of games, win rate when cast  12.9% (+7.3)
+    Notion Thief                               cast in  15.5% of games, win rate when cast  12.7% (+7.1)
+    Venser, the Sojourner                      cast in  12.4% of games, win rate when cast  12.7% (+7.1)
+    Felidar Retreat                            cast in  13.0% of games, win rate when cast  11.3% (+5.7)
+    Daydream                                   cast in  16.3% of games, win rate when cast  11.1% (+5.4)
+    Pileated Provisioner                       cast in  15.9% of games, win rate when cast  10.8% (+5.2)
+    Sphinx's Approach                          cast in  13.4% of games, win rate when cast  10.8% (+5.2)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  87.4% of games, win rate when cast   6.4% (+0.8)
+    Karmic Justice                             cast in  16.8% of games, win rate when cast   7.0% (+1.4)
+    Airlift Chaplain                           cast in  18.4% of games, win rate when cast   7.2% (+1.6)
+    Arrest                                     cast in  20.7% of games, win rate when cast   7.4% (+1.7)
+    Unsummon                                   cast in  21.0% of games, win rate when cast   7.4% (+1.8)
+    Luminous Bonds                             cast in  19.4% of games, win rate when cast   7.5% (+1.8)
+    Fatehold Charm                             cast in  18.9% of games, win rate when cast   7.5% (+1.9)
+    Last Gasp                                  cast in  18.5% of games, win rate when cast   7.8% (+2.2)
+    Lieutenant Kirtar                          cast in  18.3% of games, win rate when cast   7.9% (+2.3)
+    Vanquish the Weak                          cast in  17.9% of games, win rate when cast   7.9% (+2.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Clever Concealment                         cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Ray of Command                             cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Muddle the Mixture                         cast   4.7% of the games it was drawn [reactive: only cast in response]
+    Spite // Malice                            cast   8.2% of the games it was drawn [reactive: only cast in response]
+    Statute of Denial                          cast  45.3% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.51
+    Short Bow                                  0.17
+    Venser, the Sojourner                      0.09
+    Rhystic Study                              0.09
+    Ethersworn Canonist                        0.08
+    Windborn Muse                              0.08
+    Reconstructed Thopter                      0.05
+    Mind Stone                                 0.05
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(941s total)

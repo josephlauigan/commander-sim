@@ -754,3 +754,12 @@ Where the modeling lives (in `rust/crates/sim-core/src/impls/` unless noted):
 - **Politics are not modeled.** Attack and removal targets come from threat value (board value, planeswalkers near an ultimate, combo pieces). There are no deals.
 - **Tier 2 games stall.** About 20% time out; the leader by life and board is then scored the winner.
 - **Old mode is untouched.** The four main decks keep their own AI, and in pool games they play by the pool rules.
+
+## October 2026: tier recalibration and the full JD-deck run
+
+On 2026-10-14/15 Tier 0 was fully modeled and audited, Tier 2 was evened out (see the T2 rows above) and 16 cards
+that silently used a stand-in amount of 3 were fixed. Look-ahead tier ordering on that code: **T1 into T0 23.4%**,
+**T2 into T1 24.6%**, **T3 into T2 27.1%**, so Tiers 0-2 are about equally strong in the sim. Within Tier 0
+(loose): Giada 33, Anikthea 29, Captain America 24, Zurgo 23, Stella 17 (unmodified precons; lists are not tuned).
+Every JD deck against every tier at 4,000 games per cell, with recommended tiers per deck:
+`audit/pool/2026-10-14-full/README.md`.

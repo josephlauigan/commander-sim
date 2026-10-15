@@ -1,0 +1,99 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m50s elapsed, ~7m31s left
+  progress  20.0%  1m40s elapsed, ~6m43s left
+  progress  30.0%  2m27s elapsed, ~5m44s left
+  progress  40.0%  3m14s elapsed, ~4m51s left
+  progress  50.0%  4m01s elapsed, ~4m01s left
+  progress  60.0%  4m49s elapsed, ~3m12s left
+  progress  70.0%  5m33s elapsed, ~2m22s left
+  progress  80.0%  6m21s elapsed, ~1m35s left
+  progress  90.0%  7m12s elapsed, ~0m48s left
+  progress 100.0%  8m05s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== veyran analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 18.9%   (4-player baseline 25%)   average rounds survived 11.2
+
+-- How it wins --
+  damage      98.8% of wins
+  timeout      1.2% of wins
+  Opponents it eliminated: 0.54 per game, by
+    burn               45.2%
+    combat             38.1%
+    aether              8.1%
+    triggers            7.8%
+    commander damage    0.6%
+    decked              0.2%
+  Damage dealt per game: 30.4, from
+    combat              14.3  (47%)
+    burn                12.2  (40%)
+    aether               2.9  (9%)
+    triggers             1.1  (4%)
+
+-- How it loses --
+  Eliminated in 80.6% of games, on average in round 10.8
+    by Giada    via combat             19.9% of games
+    by Captain America via combat             17.5% of games
+    by Anikthea via combat             16.2% of games
+    by Zurgo Stormrender via combat             10.9% of games
+    by Stella Lee via combat              6.7% of games
+    by Zurgo Stormrender via drain               4.5% of games
+    by Stella Lee via triggers            2.4% of games
+    by Stella Lee via burn                1.1% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 5%  T4 16%  T5 26%  T6 35%  T7 43%  T8 51%  T9 56%  T10 61%  T11 65%  T12 66%
+  Online at all: 68.8% of games
+  Commander resolves on turn: median 4.0, mean 5.1 (over the 91.3% of games it resolves)
+  Commander resolved by turn:  T4 48%  T5 58%  T6 67%  T7 74%  T8 81%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 4.0% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Mizzix's Mastery                           cast in  11.8% of games, win rate when cast  48.1% (+29.2)
+    Fiery Emancipation                         cast in  13.2% of games, win rate when cast  40.9% (+22.0)
+    Crackle with Power                         cast in  16.9% of games, win rate when cast  39.6% (+20.7)
+    Niv-Mizzet, Parun                          cast in  12.4% of games, win rate when cast  37.0% (+18.1)
+    River's Rebuke                             cast in  16.0% of games, win rate when cast  36.2% (+17.3)
+    Rite of the Dragoncaller                   cast in  14.7% of games, win rate when cast  34.3% (+15.4)
+    Light Up the Stage                         cast in  20.7% of games, win rate when cast  34.0% (+15.1)
+    Flashback                                  cast in  18.0% of games, win rate when cast  32.7% (+13.9)
+    Thousand-Year Storm                        cast in  10.8% of games, win rate when cast  32.7% (+13.8)
+    Flow State                                 cast in  23.1% of games, win rate when cast  32.7% (+13.8)
+  Lowest win rate when cast:
+    Evacuation                                 cast in  16.3% of games, win rate when cast  18.1% (-0.8)
+    Flux Channeler                             cast in  17.6% of games, win rate when cast  20.5% (+1.6)
+    Veyran, Voice of Duality                   cast in  91.5% of games, win rate when cast  20.6% (+1.7)
+    Young Pyromancer                           cast in  25.4% of games, win rate when cast  21.7% (+2.8)
+    Blasphemous Act                            cast in  18.2% of games, win rate when cast  22.3% (+3.4)
+    Thor, Asgard's Avenger                     cast in  19.7% of games, win rate when cast  23.1% (+4.2)
+    Lightning Strike                           cast in  21.8% of games, win rate when cast  23.6% (+4.7)
+    Third Path Iconoclast                      cast in  23.7% of games, win rate when cast  23.6% (+4.7)
+    Harmonic Prodigy                           cast in  21.1% of games, win rate when cast  23.7% (+4.8)
+    Emeritus of Conflict // Lightning Bolt     cast in  21.9% of games, win rate when cast  23.8% (+4.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Triple Triad                               cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Mystic Confluence                          cast  22.6% of the games it was drawn [reactive: only cast in response]
+    Thousand-Year Storm                        cast  42.5% of the games it was drawn
+    Mizzix's Mastery                           cast  45.5% of the games it was drawn
+    Fiery Emancipation                         cast  49.3% of the games it was drawn
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.70
+    Ral, Storm Conduit                         0.14
+    Aetherflux Reservoir                       0.12
+    Propaganda                                 0.10
+    Blazing Firesinger // Seething Song        0.09
+    Kessig Flamebreather                       0.06
+    Guttersnipe                                0.06
+    Rite of the Dragoncaller                   0.06
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(485s total)

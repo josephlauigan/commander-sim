@@ -1,0 +1,98 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  1m41s elapsed, ~15m13s left
+  progress  20.0%  3m23s elapsed, ~13m33s left
+  progress  30.0%  5m02s elapsed, ~11m46s left
+  progress  40.0%  6m42s elapsed, ~10m03s left
+  progress  50.0%  8m21s elapsed, ~8m21s left
+  progress  60.0%  10m00s elapsed, ~6m40s left
+  progress  70.0%  11m47s elapsed, ~5m03s left
+  progress  80.0%  13m28s elapsed, ~3m22s left
+  progress  90.0%  15m14s elapsed, ~1m41s left
+  progress 100.0%  17m00s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== alela analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 12.0%   (4-player baseline 25%)   average rounds survived 11.6
+
+-- How it wins --
+  damage      90.9% of wins
+  timeout      9.1% of wins
+  Opponents it eliminated: 0.37 per game, by
+    combat             90.0%
+    decked              5.4%
+    drain               3.2%
+    commander damage    1.4%
+  Damage dealt per game: 24.5, from
+    combat              23.7  (97%)
+    drain                0.8  (3%)
+    triggers             0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 0.20; Tymna turns per game 0.35; opponents hit per Tymna turn 0.67
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 8.03 (in 16% of games)
+
+-- How it loses --
+  Eliminated in 85.4% of games, on average in round 10.9
+    by Isshin   via combat             16.9% of games
+    by Light-Paws via commander damage   13.8% of games
+    by Tatyova  via combat             13.0% of games
+    by Lathril  via combat             11.3% of games
+    by Teysa Karlov via drain               7.3% of games
+    by Lathril  via drain               5.9% of games
+    by Teysa Karlov via combat              5.0% of games
+    by Light-Paws via combat              3.9% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 3%  T5 14%  T6 24%  T7 34%  T8 41%  T9 47%  T10 52%  T11 54%  T12 56%
+  Online at all: 60.3% of games
+  Commander resolves on turn: median 5.0, mean 5.4 (over the 85.3% of games it resolves)
+  Commander resolved by turn:  T4 37%  T5 53%  T6 64%  T7 72%  T8 77%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Meteor Golem                               cast in  11.5% of games, win rate when cast  27.5% (+15.4)
+    Ajani Fells the Godsire                    cast in  14.8% of games, win rate when cast  23.4% (+11.3)
+    Cavalier of Dawn                           cast in  11.8% of games, win rate when cast  23.0% (+11.0)
+    Plumecreed Mentor                          cast in  18.1% of games, win rate when cast  23.0% (+11.0)
+    Feather of Flight                          cast in  18.8% of games, win rate when cast  22.9% (+10.9)
+    Daydream                                   cast in  14.5% of games, win rate when cast  22.1% (+10.0)
+    Wispdrinker Vampire                        cast in  16.2% of games, win rate when cast  22.1% (+10.0)
+    Windborn Muse                              cast in  19.1% of games, win rate when cast  21.8% (+9.8)
+    Rhystic Study                              cast in  17.8% of games, win rate when cast  21.7% (+9.6)
+    Desperate Futurescribe                     cast in  16.6% of games, win rate when cast  21.4% (+9.4)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  85.4% of games, win rate when cast  14.0% (+2.0)
+    Karmic Justice                             cast in  16.6% of games, win rate when cast  14.2% (+2.2)
+    Statute of Denial                          cast in  10.8% of games, win rate when cast  14.8% (+2.8)
+    Unsummon                                   cast in  20.0% of games, win rate when cast  15.5% (+3.5)
+    Initiates of the Ebon Hand                 cast in  19.6% of games, win rate when cast  15.7% (+3.6)
+    Negate                                     cast in  15.8% of games, win rate when cast  15.8% (+3.7)
+    Dark Ritual                                cast in  18.5% of games, win rate when cast  15.8% (+3.8)
+    Jackdaw Savior                             cast in  19.2% of games, win rate when cast  16.1% (+4.1)
+    Essence Scatter                            cast in  16.9% of games, win rate when cast  16.2% (+4.1)
+    Judge's Familiar                           cast in  19.4% of games, win rate when cast  16.3% (+4.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Clever Concealment                         cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Ray of Command                             cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Muddle the Mixture                         cast   3.6% of the games it was drawn [reactive: only cast in response]
+    Spite // Malice                            cast  13.6% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.48
+    Short Bow                                  0.13
+    Venser, the Sojourner                      0.10
+    Ethersworn Canonist                        0.08
+    Rhystic Study                              0.06
+    Windborn Muse                              0.05
+    Reconstructed Thopter                      0.04
+    Mind Stone                                 0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(1020s total)

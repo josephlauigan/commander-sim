@@ -1,0 +1,95 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m34s elapsed, ~5m07s left
+  progress  20.0%  1m10s elapsed, ~4m40s left
+  progress  30.0%  1m44s elapsed, ~4m04s left
+  progress  40.0%  2m18s elapsed, ~3m28s left
+  progress  50.0%  2m54s elapsed, ~2m54s left
+  progress  60.0%  3m28s elapsed, ~2m19s left
+  progress  70.0%  4m03s elapsed, ~1m44s left
+  progress  80.0%  4m38s elapsed, ~1m09s left
+  progress  90.0%  5m15s elapsed, ~0m35s left
+  progress 100.0%  5m50s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 27.8%   (4-player baseline 25%)   average rounds survived 10.5
+
+-- How it wins --
+  damage      99.7% of wins
+  timeout      0.3% of wins
+  Opponents it eliminated: 0.96 per game, by
+    drain              79.8%
+    combat              8.4%
+    triggers            5.1%
+    other               5.0%
+    burn                1.6%
+  Damage dealt per game: 60.1, from
+    drain               43.1  (72%)
+    combat               9.0  (15%)
+    triggers             6.5  (11%)
+    burn                 1.5  (3%)
+
+-- How it loses --
+  Eliminated in 72.1% of games, on average in round 10.1
+    by Giada    via combat             21.6% of games
+    by Anikthea via combat             15.9% of games
+    by Captain America via combat             13.1% of games
+    by Zurgo Stormrender via combat             12.2% of games
+    by Stella Lee via combat              3.9% of games
+    by Zurgo Stormrender via drain               2.5% of games
+    by Stella Lee via triggers            0.8% of games
+    by Captain America via commander damage    0.7% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 5%  T4 24%  T5 42%  T6 60%  T7 74%  T8 83%  T9 88%  T10 91%  T11 91%  T12 92%
+  Online at all: 92.0% of games
+  Commander resolves on turn: median 6.0, mean 5.9 (over the 92.4% of games it resolves)
+  Commander resolved by turn:  T4 25%  T5 43%  T6 61%  T7 75%  T8 83%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Peer into the Abyss                        cast in   9.6% of games, win rate when cast  65.7% (+37.9)
+    Seizan, Perverter of Truth                 cast in  10.4% of games, win rate when cast  51.2% (+23.4)
+    Memory Jar                                 cast in  16.6% of games, win rate when cast  50.6% (+22.8)
+    Dark Deal                                  cast in   4.9% of games, win rate when cast  47.7% (+19.9)
+    Exsanguinate                               cast in  14.2% of games, win rate when cast  44.8% (+17.0)
+    Howling Mine                               cast in  14.6% of games, win rate when cast  42.1% (+14.3)
+    Gray Merchant of Asphodel                  cast in  17.4% of games, win rate when cast  40.9% (+13.1)
+    Underworld Dreams                          cast in  20.0% of games, win rate when cast  39.9% (+12.0)
+    Cost of Brilliance                         cast in  16.9% of games, win rate when cast  36.7% (+8.9)
+    Painful Lesson                             cast in  13.7% of games, win rate when cast  36.1% (+8.2)
+  Lowest win rate when cast:
+    Carnage Altar                              cast in  17.6% of games, win rate when cast  25.1% (-2.8)
+    Soul Enervation                            cast in  16.9% of games, win rate when cast  27.0% (-0.8)
+    Charcoal Diamond                           cast in  19.7% of games, win rate when cast  27.6% (-0.2)
+    Vanquish the Weak                          cast in  17.6% of games, win rate when cast  28.5% (+0.7)
+    Battle-Rage Blessing                       cast in  14.6% of games, win rate when cast  28.8% (+1.0)
+    Overkill                                   cast in  16.6% of games, win rate when cast  28.8% (+1.0)
+    Commander's Sphere                         cast in  17.2% of games, win rate when cast  28.9% (+1.1)
+    Silence the Echo                           cast in  19.6% of games, win rate when cast  28.9% (+1.1)
+    Stir Up Trouble                            cast in  21.2% of games, win rate when cast  29.0% (+1.2)
+    Last Gasp                                  cast in  18.2% of games, win rate when cast  29.0% (+1.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  21.0% of the games it was drawn
+    Apex Witchstalker                          cast  30.2% of the games it was drawn
+    Peer into the Abyss                        cast  38.6% of the games it was drawn
+    Seizan, Perverter of Truth                 cast  44.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.78
+    Phyrexian Arena                            0.05
+    Seymour Flux                               0.05
+    Mind Stone                                 0.05
+    Charcoal Diamond                           0.05
+    Potioner's Trove                           0.04
+    Melancholic Poet                           0.03
+    Gray Merchant of Asphodel                  0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(350s total)

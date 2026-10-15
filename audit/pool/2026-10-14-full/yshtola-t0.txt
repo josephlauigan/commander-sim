@@ -1,0 +1,106 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m44s elapsed, ~6m36s left
+  progress  20.0%  1m28s elapsed, ~5m52s left
+  progress  30.0%  2m09s elapsed, ~5m02s left
+  progress  40.0%  2m54s elapsed, ~4m21s left
+  progress  50.0%  3m38s elapsed, ~3m38s left
+  progress  60.0%  4m23s elapsed, ~2m55s left
+  progress  70.0%  5m03s elapsed, ~2m10s left
+  progress  80.0%  5m44s elapsed, ~1m26s left
+  progress  90.0%  6m31s elapsed, ~0m43s left
+  progress 100.0%  7m18s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== yshtola analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 43.0%   (4-player baseline 25%)   average rounds survived 11.0
+
+-- How it wins --
+  damage      99.0% of wins
+  timeout      1.0% of wins
+  Opponents it eliminated: 1.14 per game, by
+    drain              61.0%
+    triggers           22.1%
+    combat             13.0%
+    other               2.4%
+    burn                1.2%
+    decked              0.2%
+  Damage dealt per game: 55.9, from
+    triggers            23.3  (42%)
+    drain               20.4  (37%)
+    combat              11.1  (20%)
+    burn                 1.1  (2%)
+
+-- Sephiroth --
+  Flips per game 0.000 (games with a flip 0.0%); first flip on round 0.00 on average
+  Emblem drains per game 0.00; cards drawn by Sephiroth per game 0.00; creatures sacrificed per game 0.24
+  Wipes cast per game 0.00 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 0.00
+  Creatures stolen per game 0.00: reanimation spells 0.00, Grave Betrayal 0.00, Dread Slaver 0.00, prepared Reanimate 0.00; Kaya's Ghostform returns 0.00; Rabid Attack draws 0.00
+
+-- How it loses --
+  Eliminated in 56.7% of games, on average in round 10.1
+    by Giada    via combat             16.2% of games
+    by Anikthea via combat             12.4% of games
+    by Captain America via combat             10.6% of games
+    by Zurgo Stormrender via combat              9.1% of games
+    by Stella Lee via combat              3.4% of games
+    by Zurgo Stormrender via drain               2.5% of games
+    by Stella Lee via triggers            1.2% of games
+    by Stella Lee via burn                0.6% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 8%  T5 31%  T6 49%  T7 62%  T8 70%  T9 75%  T10 79%  T11 80%  T12 82%
+  Online at all: 82.4% of games
+  Commander resolves on turn: median 5.0, mean 5.2 (over the 92.6% of games it resolves)
+  Commander resolved by turn:  T4 42%  T5 63%  T6 75%  T7 82%  T8 87%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Debt to the Deathless                      cast in  27.6% of games, win rate when cast  81.4% (+38.4)
+    Exsanguinate                               cast in  23.6% of games, win rate when cast  74.9% (+31.9)
+    Dark Petition                              cast in  16.8% of games, win rate when cast  66.0% (+23.0)
+    Bolas's Citadel                            cast in  10.7% of games, win rate when cast  65.3% (+22.3)
+    The Eternal Wanderer                       cast in  17.8% of games, win rate when cast  64.6% (+21.6)
+    Massacre Wurm                              cast in  15.6% of games, win rate when cast  64.1% (+21.1)
+    Polluted Bonds                             cast in  15.8% of games, win rate when cast  64.0% (+21.0)
+    Necropotence                               cast in  14.2% of games, win rate when cast  63.1% (+20.1)
+    Sanguine Bond                              cast in  38.6% of games, win rate when cast  62.4% (+19.4)
+    Deep Analysis                              cast in  19.0% of games, win rate when cast  62.1% (+19.1)
+  Lowest win rate when cast:
+    Y'shtola, Night's Blessed                  cast in  92.8% of games, win rate when cast  46.3% (+3.3)
+    Mystic Remora                              cast in  24.2% of games, win rate when cast  47.6% (+4.6)
+    Urborg Syphon-Mage                         cast in  19.7% of games, win rate when cast  48.2% (+5.2)
+    Restoration Angel                          cast in  16.4% of games, win rate when cast  48.2% (+5.2)
+    Thief of Sanity                            cast in  23.1% of games, win rate when cast  48.5% (+5.5)
+    Generous Gift                              cast in  20.5% of games, win rate when cast  49.0% (+6.0)
+    Fatal Push                                 cast in  25.5% of games, win rate when cast  49.2% (+6.2)
+    Zur the Enchanter                          cast in  20.6% of games, win rate when cast  49.6% (+6.6)
+    Path to Exile                              cast in  28.3% of games, win rate when cast  49.6% (+6.6)
+    Windborn Muse                              cast in  21.8% of games, win rate when cast  49.7% (+6.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dakkon, Shadow Slayer                      cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Bolas's Citadel                            cast  33.7% of the games it was drawn
+    Dovin's Veto                               cast  39.8% of the games it was drawn [reactive: only cast in response]
+    Consecrated Sphinx                         cast  40.1% of the games it was drawn
+    Necropotence                               cast  45.1% of the games it was drawn
+    Massacre Wurm                              cast  47.9% of the games it was drawn
+    Polluted Bonds                             cast  48.2% of the games it was drawn
+    Dark Petition                              cast  49.4% of the games it was drawn
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.38
+    Sanguine Bond                              0.15
+    Propaganda                                 0.10
+    Smothering Tithe                           0.08
+    Zur the Enchanter                          0.07
+    The Eternal Wanderer                       0.07
+    Grand Arbiter Augustin IV                  0.07
+    Necropotence                               0.06
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(439s total)

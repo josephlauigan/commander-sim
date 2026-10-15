@@ -1,0 +1,104 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m35s elapsed, ~5m23s left
+  progress  20.0%  1m14s elapsed, ~4m59s left
+  progress  30.0%  1m50s elapsed, ~4m18s left
+  progress  40.0%  2m27s elapsed, ~3m41s left
+  progress  50.0%  3m04s elapsed, ~3m04s left
+  progress  60.0%  3m41s elapsed, ~2m27s left
+  progress  70.0%  4m20s elapsed, ~1m51s left
+  progress  80.0%  4m57s elapsed, ~1m14s left
+  progress  90.0%  5m35s elapsed, ~0m37s left
+  progress 100.0%  6m17s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== seph analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 37.0%   (4-player baseline 25%)   average rounds survived 10.2
+
+-- How it wins --
+  combo       58.7% of wins
+  damage      41.0% of wins
+  timeout      0.3% of wins
+  Opponents it eliminated: 0.95 per game, by
+    combo              49.5%
+    combat             30.1%
+    drain              12.8%
+    triggers            6.2%
+    commander damage    1.3%
+    decked              0.1%
+  Damage dealt per game: 27.1, from
+    combat              14.9  (55%)
+    drain                9.9  (37%)
+    triggers             2.3  (8%)
+
+-- How it loses --
+  Eliminated in 63.0% of games, on average in round 9.4
+    by Giada    via combat             14.9% of games
+    by Captain America via combat             12.8% of games
+    by Anikthea via combat             11.6% of games
+    by Zurgo Stormrender via combat             11.4% of games
+    by Stella Lee via combat              4.3% of games
+    by Zurgo Stormrender via drain               4.2% of games
+    by Stella Lee via triggers            2.0% of games
+    by Stella Lee via burn                0.8% of games
+
+-- Game plan timing --
+  Plan: first 6+ power bomb on the battlefield
+  Online by turn:  T2 0%  T3 4%  T4 14%  T5 31%  T6 48%  T7 63%  T8 72%  T9 77%  T10 79%  T11 80%  T12 81%
+  Online at all: 81.0% of games
+  Commander resolves on turn: median 7.0, mean 7.8 (over the 61.5% of games it resolves)
+  Commander resolved by turn:  T4 1%  T5 7%  T6 17%  T7 31%  T8 42%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Yawgmoth's Will                            cast in   8.4% of games, win rate when cast  81.2% (+44.2)
+    Summon: Bahamut                            cast in   2.8% of games, win rate when cast  75.9% (+38.9)
+    Mikaeus, the Unhallowed                    cast in  15.2% of games, win rate when cast  72.7% (+35.7)
+    Archon of Cruelty                          cast in   2.9% of games, win rate when cast  70.4% (+33.5)
+    Dread Return                               cast in  22.4% of games, win rate when cast  69.6% (+32.7)
+    Unburial Rites                             cast in  22.7% of games, win rate when cast  68.6% (+31.7)
+    Reanimate                                  cast in  26.9% of games, win rate when cast  68.5% (+31.5)
+    Kitchen Finks                              cast in  23.3% of games, win rate when cast  68.4% (+31.4)
+    Elesh Norn, Grand Cenobite                 cast in   4.0% of games, win rate when cast  68.3% (+31.3)
+    Ephemerate                                 cast in  20.4% of games, win rate when cast  67.2% (+30.3)
+  Lowest win rate when cast:
+    Teferi's Protection                        cast in   6.5% of games, win rate when cast  21.5% (-15.5)
+    Toxic Deluge                               cast in  19.9% of games, win rate when cast  41.3% (+4.3)
+    Force of Will                              cast in  14.1% of games, win rate when cast  42.3% (+5.3)
+    Elesh Norn, Mother of Machines             cast in  12.2% of games, win rate when cast  44.8% (+7.8)
+    Restoration Angel                          cast in  12.2% of games, win rate when cast  45.3% (+8.3)
+    Displacer Kitten                           cast in  15.4% of games, win rate when cast  46.7% (+9.7)
+    Teleportation Circle                       cast in  18.2% of games, win rate when cast  47.5% (+10.5)
+    Flickering Hound                           cast in  17.8% of games, win rate when cast  47.7% (+10.7)
+    Momentary Blink                            cast in  20.6% of games, win rate when cast  48.2% (+11.2)
+    Anguished Unmaking                         cast in  19.8% of games, win rate when cast  48.2% (+11.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Worldly Tutor                              cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Summon: Bahamut                            cast  11.5% of the games it was drawn
+    Elesh Norn, Grand Cenobite                 cast  15.7% of the games it was drawn
+    Sheoldred, Whispering One                  cast  16.3% of the games it was drawn
+    Archon of Cruelty                          cast  16.5% of the games it was drawn
+    Teferi's Protection                        cast  30.1% of the games it was drawn [reactive: only cast in response]
+    Galadriel's Dismissal                      cast  33.4% of the games it was drawn [reactive: only cast in response]
+    Yawgmoth's Will                            cast  34.8% of the games it was drawn
+    Muldrotha, the Gravetide                   cast  41.1% of the games it was drawn
+    Buried Alive                               cast  42.8% of the games it was drawn
+    Gifts Ungiven                              cast  48.9% of the games it was drawn
+    Grave Titan                                cast  49.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Atraxa, Grand Unifier                      0.28
+    Archon of Cruelty                          0.14
+    Nim Deathmantle                            0.05
+    Sheoldred, the Apocalypse                  0.05
+    Summon: Bahamut                            0.05
+    Mind Stone                                 0.04
+    Elesh Norn, Mother of Machines             0.04
+    Phyrexian Arena                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(378s total)
