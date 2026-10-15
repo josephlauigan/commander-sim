@@ -553,3 +553,28 @@ fn windbrisk_heights_hides_a_card_and_plays_it_after_a_three_creature_attack() {
     assert!(g.land(l).tapped);
     let _ = c;
 }
+
+#[test]
+fn zurgo_can_be_cast_from_the_command_zone_with_three_lands() {
+    let mut g = pod();
+    lands(&mut g, P0, "Swamp", 1, false);
+    lands(&mut g, P0, "Battlefield Forge", 1, false);
+    lands(&mut g, P0, "Dragonskull Summit", 1, false);
+    let c = card(&g, "Zurgo Stormrender");
+    assert!(g.player(P0).cmd_zone_of(c));
+    assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap(), "RWB from Swamp, Forge, Summit");
+    assert!(g.player(P0).perms.iter().any(|&m| g.perm(m).cd == Some(c)));
+}
+
+#[test]
+fn zurgo_is_cast_from_a_trace_board() {
+    let mut g = pod();
+    lands(&mut g, P0, "Plains", 1, false);
+    lands(&mut g, P0, "Swamp", 1, false);
+    lands(&mut g, P0, "Battlefield Forge", 1, false);
+    lands(&mut g, P0, "Dragonskull Summit", 1, false);
+    perm(&mut g, P0, "Talisman of Conviction");
+    perm(&mut g, P0, "Idol of Oblivion");
+    let c = card(&g, "Zurgo Stormrender");
+    assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap());
+}

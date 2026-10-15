@@ -116,8 +116,10 @@ pub fn token_left(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             continue;
         }
         if attacking {
+            crate::glog!(g, "    Zurgo Stormrender: an attacking token left, {} draws", g.player(p).name);
             draw(g, p, 1, false)?;
         } else {
+            crate::glog!(g, "    Zurgo Stormrender: a token left, each opponent loses 1");
             for q in g.opps(p).collect::<Vec<_>>() {
                 lose_life(g, q, 1, Some(p), "drain", None)?;
             }
@@ -237,6 +239,7 @@ pub fn attack_keywords(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
         if others.is_empty() || !trigger_window(g, p, Some(m), "myriad: token copies", Some(4.0))? {
             continue;
         }
+        crate::glog!(g, "    {} has myriad: token copies attack the other opponents", g.perm(m).name);
         for q in others {
             new.extend(myriad_copies(g, p, m, q)?);
         }
@@ -335,6 +338,7 @@ pub fn route_new_attackers(
         if counts.is_empty() || !trigger_window(g, p, Some(w), "each opponent loses life per attacker", Some(5.0))? {
             continue;
         }
+        crate::glog!(g, "    Within Range: each opponent loses life for the creatures attacking them");
         for (q, n) in counts {
             lose_life(g, q, n, Some(p), "drain", None)?;
         }
@@ -413,6 +417,7 @@ fn zurgo_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId
         types: vec!["warrior"],
         ..Tokens::new(1, 1)
     };
+    crate::glog!(g, "    {} mobilizes: a tapped and attacking Warrior", g.perm(src).name);
     let toks = make_tokens(g, p, spec)?;
     for &t in &toks {
         g.perm_mut(t).data.set(DataKey::EotSac, Val::Bool(true));
@@ -434,6 +439,7 @@ fn ainok_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
     if !trigger_window(g, p, Some(src), "a Goblin attacking each opponent", Some(4.0))? {
         return Ok(vec![]);
     }
+    crate::glog!(g, "    Ainok Strike Leader: a Goblin attacks each opponent");
     let mut out = vec![];
     for q in g.opps(p).collect::<Vec<_>>() {
         let spec = Tokens {
@@ -462,6 +468,7 @@ fn angel_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), "fabricate 2", None)? {
         return Ok(());
     }
+    crate::glog!(g, "    Angel of Invention fabricates");
     let servos = creatures(g, o).len() >= 2 || divine_visitation(g, o) || named(g, o, "Zurgo Stormrender").len() == 1;
     if servos || !g.perm(src).on_bf {
         let spec = Tokens { color: Some(Colors::NONE), types: vec!["servo", "artifact"], ..Tokens::new(2, 1) };
@@ -595,6 +602,7 @@ fn forger_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
         .collect();
     let Some(best) = max_by(&cands, |m| pval(g, m) + epow(g, m) as f64) else { return Ok(vec![]) };
     if trigger_window(g, p, Some(src), "lieutenant: a creature gains myriad", Some(3.0))? && on_bf(g, best) {
+        crate::glog!(g, "    Ironwill Forger gives {} myriad", g.perm(best).name);
         g.perm_mut(best).eot_kw.push("myriad");
     }
     Ok(vec![])
@@ -647,9 +655,18 @@ fn mindblade_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId
         return Ok(());
     }
     let key = crate::sym::intern(&format!("mindblade_{}_{}", src.0, g.player(g.active.unwrap_or(o)).combat_no));
-    if crate::engine::values::once_per_turn(g, o, key)
+    let st = g.turn_stamp();
+    // (the engine probes a hook up to its trigger window: nothing may be set before it)
+    if g.player(o).flag_turn.get(key) != Some(&st)
         && trigger_window(g, o, Some(src), "draw a card, lose 1 life", Some(4.0))?
     {
+        g.player_mut(o).flag_turn.insert(key, st);
+        crate::glog!(
+            g,
+            "    Mindblade Render: a Warrior hurt {}, {} draws and loses 1",
+            g.player(d).name,
+            g.player(o).name
+        );
         draw(g, o, 1, false)?;
         lose_life(g, o, 1, Some(o), "life", None)?;
     }
@@ -670,6 +687,7 @@ fn battlesphere_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: P
     }
     let myr: Vec<PermId> = myr.into_iter().filter(|&m| on_bf(g, m) && !g.perm(m).tapped).collect();
     let x = myr.len() as i32;
+    crate::glog!(g, "    Myr Battlesphere taps {} Myr: +{}/+0 and {} damage", x, x, x);
     for m in myr {
         g.perm_mut(m).tapped = true;
     }
@@ -697,6 +715,7 @@ fn stormsinger_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: Pl
     if toks.is_empty() || !trigger_window(g, p, Some(src), "attacking copies of this turn's tokens", Some(5.0))? {
         return Ok(vec![]);
     }
+    crate::glog!(g, "    Redoubled Stormsinger copies {} token(s) that entered this turn", toks.len());
     let dd = defender_of(g, src, d);
     let mut out = vec![];
     for m in toks {
@@ -760,6 +779,7 @@ fn neriv_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
     if n == 0 || !trigger_window(g, p, Some(src), "exile cards from the top of your library", Some(4.0))? {
         return Ok(vec![]);
     }
+    crate::glog!(g, "    Neriv exiles {} card(s) from the top of the library", n);
     for _ in 0..n {
         let Some(c) = g.player_mut(p).library.pop() else { break };
         let pl = g.player_mut(p);
