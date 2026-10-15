@@ -308,3 +308,15 @@ mod any_tier_tests {
         assert!(p("--any-tier=x").is_err());
     }
 }
+
+#[cfg(test)]
+mod calibrate_pool_tests {
+    use super::*;
+
+    #[test]
+    fn calibrate_takes_a_tier_filter() {
+        let argv: Vec<String> = "--calibrate within --pool t2".split_whitespace().map(|x| x.to_string()).collect();
+        let a = parse(&argv).unwrap();
+        assert_eq!((a.calibrate.as_deref(), a.pool.as_deref()), (Some("within"), Some("t2")));
+    }
+}

@@ -392,12 +392,13 @@ impl Ctx<'_> {
     }
 
     /// poolmode.run_calibration: within-tier balance and tier ordering
-    pub fn run_calibration(&self, which: &str, profiles: &[String], n: u64, seed0: u64) {
+    pub fn run_calibration(&self, which: &str, pool: Option<&str>, profiles: &[String], n: u64, seed0: u64) {
+        let keep = |t: &str| pool.is_none_or(|p| p == "all" || p == t);
         let sim = self.sim;
         if which == "within" || which == "all" {
             for prof in profiles {
                 println!("\n=== Within-tier balance [{prof}, n={n} games per tier; each deck is seated in ~80%] ===");
-                for tier in TIERS {
+                for tier in TIERS.iter().filter(|t| keep(t)) {
                     self.label(format!("within {tier} / {prof}"));
                     let keys = sim.pool_keys(tier);
                     let r = self.calibrate(None, &keys, 4, prof, n, seed0);
@@ -434,7 +435,7 @@ impl Ctx<'_> {
                 println!(
                     "\n=== Tier ordering: each deck alone against three decks of the tier below [{prof}, n={n}] ==="
                 );
-                for (ti, tier) in TIERS.iter().enumerate().skip(1) {
+                for (ti, tier) in TIERS.iter().enumerate().skip(1).filter(|(_, t)| keep(t)) {
                     self.label(format!("ordering {tier} / {prof}"));
                     let below = TIERS[ti - 1];
                     let mut res = vec![];
@@ -495,8 +496,9 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     let plural = |x: usize, w: &str| format!("{x} {w}{}", if x > 1 { "s" } else { "" });
     let matrix_mode = a.all_decks || (tiers.len() > 1 && swaps.is_empty() && !a.analyze);
     let (total, mut what) = if let Some(c) = &a.calibrate {
-        let w = if c == "within" || c == "all" { TIERS.len() as u64 } else { 0 };
-        let o = if c == "ordering" || c == "all" { 5 * (TIERS.len() as u64 - 1) } else { 0 };
+        let nt = TIERS.iter().filter(|t| a.pool.as_deref().is_none_or(|p| p == "all" || p == **t)).count() as u64;
+        let w = if c == "within" || c == "all" { nt } else { 0 };
+        let o = if c == "ordering" || c == "all" { 5 * nt.min(TIERS.len() as u64 - 1) } else { 0 };
         (k * (w + o), format!("calibration: {c}"))
     } else if matrix_mode {
         let cells: usize = plan.per_deck.iter().map(|(_, t)| t.len()).sum();
@@ -525,7 +527,7 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
         pr.announce(&what, ctx.ai(), sim.opts.jobs);
     }
     if let Some(c) = &a.calibrate {
-        ctx.run_calibration(c, profiles, n, seed0);
+        ctx.run_calibration(c, a.pool.as_deref(), profiles, n, seed0);
     } else if matrix_mode {
         ctx.matrix(&plan.per_deck, &tiers, profiles, n, seed0);
     } else if a.analyze {
