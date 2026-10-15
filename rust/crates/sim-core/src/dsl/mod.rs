@@ -602,6 +602,7 @@ fn run(
                     if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
                 let tot = crate::cardcode::vorinclex(g, p, k + extra);
                 g.perm_mut(m).plus += tot; // Vorinclex
+                crate::impls::t0_captain::counters_put(g, m, tot); // Captain Marvel
             }
         }
         "pump" => {
@@ -1671,6 +1672,7 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     pay(g, p, gn, &pips, false)?;
     if cost.tap == Some(true) {
         g.perm_mut(src).tapped = true;
+        crate::impls::t0_captain::became_tapped(g, src); // Captain America, Living Legend
     }
     if let Some(l) = cost.life {
         lose_life(g, p, l, Some(p), "other", None)?;

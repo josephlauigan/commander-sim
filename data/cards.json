@@ -3046,19 +3046,7 @@
    "pow": 1,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "treasure",
-       "n": "X"
-      }
-     ],
-     "event": "combat_damage",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "treasure"
@@ -3072,10 +3060,8 @@
    "ward": 0,
    "identity": "RU",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ can't be blocked by creatures with greater power."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -5500,28 +5486,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature"
-        }
-       }
-      },
-      {
-       "do": "gain_life",
-       "n": "X",
-       "who": "you",
-       "mult": 1
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -5529,10 +5494,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ costs {2} less to cast if a player attacked you during their last turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -42795,25 +42758,7 @@
    "pow": 3,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "damage",
-       "n": 1,
-       "to": {
-        "sel": "any_target"
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "reach"
@@ -42827,10 +42772,8 @@
    "ward": 0,
    "identity": "RU",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a creature an opponent controls dies, if ~ dealt damage to it this turn, draw a card."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -44307,9 +44250,7 @@
    "types": "I",
    "generic": 1,
    "pips": "W",
-   "tags": {
-    "draw": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -44321,7 +44262,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -72905,28 +72846,11 @@
    "types": "S",
    "generic": 4,
    "pips": "U",
-   "tags": {
-    "wipe": "evac"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "bounce",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature"
-        }
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -72934,10 +72858,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Choose a creature type. Return all creatures that aren't of the chosen type to their owners' hands.   [partly: choose a creature type]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,

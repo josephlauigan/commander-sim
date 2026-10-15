@@ -7663,3 +7663,107 @@ dsl = [
 ]
 status = "Full"
 note = "equip {1}; the creature has flying and ward {4}"
+
+# ---- Tier 0: Captain America, Avengers Assemble precon (impls/t0_captain.rs)
+["Captain America, Team Leader"]
+status = "Full"
+note = "another Hero you control entering gets vigilance and haste until end of turn and a +1/+1 counter, and Captain America gets one (card code in impls/t0_captain.rs)"
+
+["Captain America, Living Legend"]
+status = "Full"
+note = "vigilance; the first time a creature you control becomes tapped on your turn it untaps: when attacking, for mana abilities, for tap costs of the ability language, crewing and Hawkeye (card code in impls/t0_captain.rs; tap sites outside those don't untap)"
+
+["Avengers Quinjet"]
+status = "Full"
+note = "flying 4/4; Crew 3 before the first combat; enters or attacks: a Hero creature card from hand onto the battlefield, else a Hero creature card from the graveyard to hand (card code in impls/t0_captain.rs)"
+
+["Folk Hero"]
+status = "Full"
+note = "your commander creature on the battlefield draws a card the first time each turn you cast a spell sharing a creature type with it (card code in impls/t0_captain.rs)"
+
+["Gift of Immortality"]
+status = "Full"
+note = "an Aura on your best creature; when it dies the card returns under its owner's control, and the Aura returns attached to it at the beginning of the next end step (card code in impls/t0_captain.rs)"
+
+["Herald's Horn"]
+status = "Full"
+note = "names Hero for this deck; Hero creature spells cost {1} less; at your upkeep a Hero creature card on top goes to your hand (card code in impls/t0_captain.rs)"
+
+["Love on the Battlefield"]
+status = "Full"
+note = "attacking with exactly two creatures: first strike for both and you draw a card; either one dealing combat damage to a player gets a +1/+1 counter (card code in impls/t0_captain.rs)"
+
+["Ant-Man, Elusive Avenger"]
+dsl = []
+status = "Full"
+note = "can't be blocked by creatures with greater power (cardcode::evasion_blocked); combat damage to a player makes that many Treasures (card code in impls/t0_captain.rs; the compiled version always made three)"
+
+["Avenge"]
+dsl = []
+status = "Full"
+note = "destroy all creatures and gain 1 life for each one destroyed (the compiled version always gained three); {2} less if a player attacked you during their last turn (card code in impls/t0_captain.rs)"
+
+["Avengers Tower"]
+status = "Full"
+note = "{T}: {C}, or any colour for a Hero spell; {4},{T}: look at the top three cards, a Hero card to hand, the rest to the bottom (the AI at the end of turn). Not modeled: the any-colour mana for abilities of Hero sources (no Hero activated ability costs mana here)"
+
+["Captain Mar-Vell, Space-Born"]
+status = "Full"
+note = "flying, vigilance; while an opponent has cast a spell this turn the AI may cast permanent spells at the end of the turn (as_flash; instants and sorceries are not cast at a new time, which changes little for this deck)"
+
+["Captain Marvel, Apex Avenger"]
+status = "Full"
+note = "flying, double strike, indestructible; +1/+1 counters put on another non-Kree creature of yours (cardcode::put_plus) go on her too; counters from the ability language are copied too"
+
+["Director Nick Fury"]
+status = "Full"
+note = "Hero spells cost {1} less; whenever you attack, a Hero card from the top four to hand, the rest to the bottom in a random order (card code in impls/t0_captain.rs)"
+
+["Dismantling Wave"]
+status = "Full"
+note = "destroy up to one target artifact or enchantment (compiled); cycling {6}{W}{W} (the AI when it takes more from opponents than from itself, or with spare mana at the end of turn): draw, and destroy all artifacts and enchantments (card code in impls/t0_captain.rs)"
+
+["Hawkeye, Avenging Archer"]
+dsl = []
+status = "Full"
+note = "reach; {T}: 1 damage (kills a 1-toughness creature, else pings an opponent at the end of turn); when a creature an opponent controls dies after Hawkeye damaged it this turn (ping or combat) you draw (card code in impls/t0_captain.rs)"
+
+["Hercules, Olympian Hero"]
+status = "Full"
+note = "attacks: a +1/+1 counter and indestructible until end of turn; the first time each turn he is dealt combat damage and survives, that many +1/+1 counters (non-combat damage doesn't exist for creatures here) (card code in impls/t0_captain.rs)"
+
+["Heroic Return"]
+status = "Full"
+note = "{2} less if a creature is attacking you; returns the best creature card from your graveyard to the battlefield, a Hero with two extra +1/+1 counters (card code in impls/t0_captain.rs)"
+
+["Jarvis, Earth's Mightiest Butler"]
+status = "Full"
+note = "whenever you cast a Hero spell, draw a card (card code in impls/t0_captain.rs)"
+
+["Quicksilver, Speedster"]
+status = "Full"
+note = "flash, double strike, haste; while it is tapped the AI may cast permanent spells at the end of the turn (as_flash; instants and sorceries are not cast at a new time, which changes little for this deck) (card code in impls/t0_captain.rs)"
+
+["Raise the Palisade"]
+dsl = []
+tags = ""
+status = "Full"
+note = "names the creature type that keeps the most value (ours kept, theirs bounced) and returns every other creature to its owner's hand; tokens are lost; cast only when it gains at least 5 points of board value (card code in impls/t0_captain.rs)"
+
+["Shang-Chi and the Ten Rings"]
+status = "Full"
+note = "first strike; each card you draw puts a +1/+1 counter on him; the tenth counter draws five cards and gains 5 life (a tenth counter from another source pays off at the next draw)"
+
+["She-Hulk, Wallbreaker"]
+status = "Full"
+note = "trample; other Heroes you control have trample (grant_kw); a Hero that becomes blocked gets a +1/+1 counter per blocker (card code in impls/t0_captain.rs)"
+
+["Winter Soldier, Reborn Avenger"]
+status = "Full"
+note = "attacks: the best creature card with mana value up to his power returns from your graveyard to the battlefield, a Hero with an extra +1/+1 counter (card code in impls/t0_captain.rs)"
+
+["Heroic Sacrifice"]
+dsl = []
+tags = ""
+status = "Full"
+note = "the AI casts it as the defender after blocks when the unblocked damage is dangerous or blockers would die: all combat damage to you and your creatures goes to your sturdiest creature; if that dies its counters move to another creature and you draw (card code in impls/t0_captain.rs)"

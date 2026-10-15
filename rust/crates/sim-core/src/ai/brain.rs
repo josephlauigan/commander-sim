@@ -1242,7 +1242,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         for c in g.player(p).hand.clone() {
             // flash creatures: in before the next turn's draws
             let d = g.db.get(c);
-            if !(d.creature && d.tag(Tag::Flash)) || special(g, c) || !can_pay(g, p, d.generic, &d.pips, false) {
+            if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::impls::t0_captain::as_flash(g, p))) || special(g, c) || !can_pay(g, p, d.generic, &d.pips, false) {
                 continue;
             }
             if let Some(u) = card_utility(g, p, &s, c) {
