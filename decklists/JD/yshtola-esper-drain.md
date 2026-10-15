@@ -1,76 +1,95 @@
 # Y'shtola, Night's Blessed — Esper Drain
 
-**Simulator, 2026-10-14:** the leftovers swap (Triplicate Spirits for Dakkon, Shadow Slayer; a Swamp for Underground River; an Island for Adarkar Wastes) measured **-0.7 over all tiers, within noise,** in a paired test (T1 +0.2, T2 -4.2, T3 -1.8, T4 +2.2, T5 0.0; look-ahead, loose, 500 games per list per tier); JD chose to apply it. A pool run is pending. Previous list's figures: **41.4% over all tiers** on 2026-10-12 (±0.5; rank 1 of the ten decks): T1 45.4%, T2 55.1%, T3 44.8%, T4 39.2%, T5 22.3%, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
+Drain the table a little with every spell, then all at once. Y'shtola turns your ordinary noncreature spells into damage to every opponent and life for you, Sanguine Bond and Marauding Blight-Priest turn that life into more damage, and Exsanguinate and Debt to the Deathless finish the game. The deck wins slowly, so it is weak to fast creature pressure and to fast combo decks that win before the drain gets there.
 
-**Updated 2026-10-03.** Out: Clever Concealment, Disdainful Stroke, Momentary Blink, Rootborn Defenses, Take Up the Shield. In: Cast Away Doubt, Memory Trap, Static Net, Statute of Denial, Your Fate Ends Here. Five rarely cast cards (each cast in 5% or less of the games it was drawn, or mana value 2) out for spells of mana value 3 or more that trigger Y'shtola: Static Net (exile, 2 life, a Powerstone), Cast Away Doubt (draw two; with her trigger each opponent loses 4), Your Fate Ends Here (instant removal), Memory Trap (exile) and Statute of Denial (a counter that triggers her).
-**Updated 2026-10-04.** Out: Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, Temple of Deceit, Temple of Enlightenment, Temple of Silence, Vivid Creek, Vivid Marsh, Vivid Meadow. In: 4 Island, 3 Plains, 3 Swamp. The ten lands that always entered tapped became basics. Tested: about +1.2 points on average (1,000 paired games per tier, adaptive AI), positive in four of five tiers; Y'shtola wants to land on turn 3 or 4 with a spell to follow, and no land now always enters tapped.
-**Updated 2026-10-05.** Out: Enslave, Jester's Cap, Plea for Guidance. In: Bolas's Citadel, Consecrated Sphinx, Smothering Tithe. Enslave → Consecrated Sphinx, Plea for Guidance → Bolas's Citadel, Jester's Cap → Smothering Tithe. Three cards that sat in hand most games out for three Game Changers: the deck moves to Bracket 4 with five. Tested: +1.2 points on average, ahead in all five tiers (1,000 paired games per tier, adaptive AI); Smothering Tithe's Treasures ease the mana the deck is short of.
-**Updated 2026-10-06.** Out: Vanquish the Horde. In: Mystical Tutor. Vanquish the Horde → Mystical Tutor: finds Exsanguinate or Debt to the Deathless at the end of an opponent's turn. Vanquish was her most redundant reset (Austere Command, Crux of Fate and Massacre Wurm stay). Six Game Changers (Bracket 4).
-**Updated 2026-10-07.** Out: Statute of Denial. In: Polluted Bonds. Statute of Denial → Polluted Bonds: a five-mana enchantment that triggers her when cast, then drains an opponent 2 (and gains you 2, feeding Sanguine Bond and Marauding Blight-Priest) on every land they play. Statute was stuck in hand in about three quarters of the games it was drawn.
-**Updated 2026-10-07.** Out: Crux of Fate. In: Grand Arbiter Augustin IV. Crux of Fate → Grand Arbiter Augustin IV: your white and blue spells cost {1} less each, opponents' spells {1} more. Crux was stuck in hand in about six games in ten. Seven Game Changers (Bracket 4). Tested at −0.6 points (fast AI, 1,000 pairs per tier), within noise.
-**Updated 2026-10-09.** Out: Secure the Wastes. In: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal. JD's choice: Venat draws a card the first time each turn you cast a legendary spell; its flip side ({7}: exile a nonland permanent) makes a creature indestructible each turn. Measured +0.1 ±0.8 for Secure the Wastes (adaptive, paired, 1,000 games per tier). Not a Game Changer.
-**Updated 2026-10-11.** Out: Bastion Protector. In: Thought Vessel (from Sauron). JD's choice: no maximum hand size for the deck that draws the most each turn (Necropotence, Consecrated Sphinx, Notion Thief, Bolas's Citadel); Bastion Protector was a creature, so it never triggered Y'shtola. Not measured.
-**Updated 2026-10-14.** Out: Triplicate Spirits. In: Adarkar Wastes, Dakkon, Shadow Slayer, Underground River. Triplicate Spirits (to bulk) for Dakkon, Shadow Slayer; a Swamp and an Island for Underground River and Adarkar Wastes (all three from the binder, the retired Jodah deck's leftovers). Measured -0.7 over all tiers (T1 +0.2, T2 -4.2, T3 -1.8, T4 +2.2, T5 0.0; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice.
-
-2026-10-03
-**Added 2026-10-03.** In the simulator as deck key `yshtola` (`commander-sim --deck yshtola --pool t3`) and in practice mode. Every card is modeled. Zur the Enchanter is in the 99.
+| | |
+|---|---|
+| **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
+| **Bracket** | 4 (7 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Bolas's Citadel, Smothering Tithe, Mystical Tutor, Grand Arbiter Augustin IV) |
+| **Simulator** | deck key `yshtola`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
 
-Drain the table a little with every spell, then all at once. Y'shtola turns your ordinary noncreature spells into damage to every opponent and life for you. Sanguine Bond and Marauding Blight-Priest turn that life into more damage. Exsanguinate and Debt to the Deathless finish the game.
+### The commander
 
-Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance) reads: *at the beginning of each end step, if a player lost 4 or more life this turn, you draw a card. Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.*
+Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance): *At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card. Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.*
 
-**Thirty-five spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
+**Thirty-four spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
-- **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn.
+- **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
 - **One trigger plus a drain**, from Sanguine Bond, Blight-Priest, Ill-Gotten Inheritance or Urborg Syphon-Mage.
 - **Your own life.** Any player counts, you included. Read the Bones and Night's Whisper cost 2 each, Anguished Unmaking 3, and Necropotence as much as you like.
 
-She checks at *every* end step, so instant-speed triggers on opponents' turns draw too.
+She checks at *every* end step, so instant-speed triggers on opponents' turns draw too. She is a 2/4, so she dies to a lot of removal: protect her (see below), and keep casting spells of mana value 3 or more every turn while she is out.
 
-**Life gain is the engine.**
+### Game plan
+
+**Turns 1 to 3: mana.** Turn 2 Sol Ring, Arcane Signet, Talisman of Progress or Thought Vessel; Chromatic Lantern or Coalition Relic on three (each is a rock *and* a trigger once she is out). Play Y'shtola on turn 3 or 4 with a spell to follow. Keep a cheap lock Aura or Propaganda for a hand that has to deal with attackers.
+
+**Turns 4 to 6: the engine.** Every turn cast a spell of mana value 3 or more. Prefer trigger spells first, while the opponents' life is high and blockers don't matter. Look for Sanguine Bond first (the tutors find it: Diabolic Tutor, Dark Petition, Idyllic Tutor). Lock or remove the biggest creature and put Propaganda or Windborn Muse out so the table can't attack you.
+
+**Late game.** The first trigger usually lands by turn 6 to 8. Count before you cast an X spell: Exsanguinate or Debt to the Deathless plus Y'shtola's trigger plus the Blight-Priest's lifegain pings plus Bond often kills two players in one turn. If the table is not close, keep drawing and taxing.
+
+### Life gain is the engine
+
 - **Sanguine Bond:** whenever you gain life, target opponent loses that much. Each Y'shtola trigger becomes 2 to everyone plus 2 more to one opponent, and an X drain's lifegain becomes a second, larger drain.
 - **Marauding Blight-Priest:** whenever you gain life, each opponent loses 1. That's one more to everyone per trigger, and per drain.
 - **Ill-Gotten Inheritance:** 1 to each opponent and 1 life every upkeep (which sets off the Priest and Bond). {5}{B}, sacrifice: 4 damage to an opponent and 4 life.
 - **Urborg Syphon-Mage:** {2}{B}, {T}, discard a card: each other player loses 2 and you gain the total. Discard spare lands.
 - **Static Net:** exiles an opponent's nonland permanent and gains you 2 life, a lifegain event of its own on top of her trigger.
-- **Polluted Bonds** (10-07): whenever a land an opponent controls enters, they lose 2 and you gain 2. Each opponent's land drop is a drain plus a lifegain event for the Priest and Bond, and casting it triggers her too.
+- **Polluted Bonds:** whenever a land an opponent controls enters, they lose 2 and you gain 2. Each opponent's land drop is a drain plus a lifegain event for the Priest and Bond, and casting it triggers her too.
+- **Cast Away Doubt:** draw two; it deals 2 damage to each player, so with her trigger each opponent loses 4 (you take 2 and gain 2).
 
-**The finishers.** Exsanguinate (each opponent loses X) and Debt to the Deathless (each opponent loses 2X) gain you everything they drain. With Sanguine Bond out, that gain hits one opponent again. Debt for X = 5 at a table of three opponents at 25 life:
+### The finishers
+
+Exsanguinate (each opponent loses X) and Debt to the Deathless (each opponent loses 2X) gain you everything they drain. With Sanguine Bond out, that gain hits one opponent again. Debt for X = 5 at a table of three opponents at 25 life:
 - each opponent loses 10, you gain 30;
 - Bond: one opponent loses 30 more;
 - Y'shtola: 2 more to each opponent;
 - Blight-Priest: 1 to each opponent for each lifegain event.
 
-The second opponent dies too if they're at 12.
+The second opponent dies too if they're at 12. Debt to the Deathless is the best closer in the deck: save mana for it. Mystical Tutor ({U}) can put Exsanguinate or Debt to the Deathless on top at the end of an opponent's turn so you draw it for your own.
 
-**Curiosity belongs on Y'shtola.** "Whenever enchanted creature deals damage to an opponent, you may draw a card." Her trigger damages each opponent separately, so Curiosity on her draws three cards per trigger at a full table. It costs {U}, and Zur can fetch it.
+### Draw and engines
 
-**Take their cards.** Gonti, Hostage Taker and Thief of Sanity exile an opponent's card that you may cast with mana of any type. Bribery takes a creature outright.
+**Curiosity belongs on Y'shtola.** *Whenever enchanted creature deals damage to an opponent, you may draw a card.* Her trigger damages each opponent separately, so Curiosity on her draws three cards per trigger at a full table. It costs {U}, and Zur can fetch it.
 
-**Mana, then cards (the 10-05 Game Changers).** The deck usually holds more spells than it can cast, so **Smothering Tithe** comes first: each opponent who draws without {2} to spare gives you a Treasure, and casting it triggers Y'shtola. **Bolas's Citadel** plays lands and spells off the top of the library for life, which the drains keep refilling (cast it at 25 life or more), and it triggers her too. **Consecrated Sphinx** draws two whenever an opponent draws; it's a creature, so it doesn't trigger her, and it's best cast when the hand is running low.
-- **Gonti:** the best of the top four of an opponent's library.
-- **Thief of Sanity:** each time it connects, the best of the top three; the other two go to their graveyard.
-- **Hostage Taker:** exiles their best creature or artifact. Cast it before the Taker leaves the battlefield, or it goes back to its owner.
+**Mana, then cards.** The deck usually holds more spells than it can cast, so **Smothering Tithe** comes first: each opponent who draws without {2} to spare gives you a Treasure, and casting it triggers Y'shtola. **Bolas's Citadel** plays lands and spells off the top of the library for life, which the drains keep refilling (cast it at 25 life or more), and it triggers her too. **Consecrated Sphinx** draws two whenever an opponent draws; it's a creature, so it doesn't trigger her, and it's best cast when the hand is running low. **Necropotence** skips your draw step and turns life into cards (cast it with a healthy life total; the drains refill it). **Mystic Remora** draws a card when an opponent casts a noncreature spell unless they pay {4}: pay its cumulative upkeep for a turn or two at most, then let it go. **Esper Sentinel** draws a card when an opponent casts their first noncreature spell each turn, unless they pay {X} (its power). **Notion Thief** (flash) turns each extra card an opponent draws into a card for you, and goes well with **Deep Analysis**: target an opponent with it while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger. The other draw spells are Night's Whisper, Read the Bones and Tezzeret's Gambit.
 
-A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your own.
+**Take their cards.** Gonti, Lord of Luxury (the best of the top four of an opponent's library), Thief of Sanity (each time it connects, the best of the top three; the other two go to their graveyard) and Hostage Taker (exiles their best creature or artifact: cast it before the Taker leaves the battlefield, or it goes back to its owner) let you cast an opponent's card with mana of any type. Bribery takes a creature outright. A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your own.
 
-**Keep the table off you.** Y'shtola is a 2/4, and the deck wins slowly.
-- **Pillowfort:** Propaganda and Windborn Muse tax every attacker {2}.
+**Discount.** Grand Arbiter Augustin IV makes your white and blue spells cost {1} less each (a white-and-blue spell {2} less) and the opponents' spells {1} more. **Venat, Heart of Hydaelyn** draws a card the first time each turn you cast a legendary spell (Y'shtola, Gonti, Augustin, Zur, Dakkon, The Eternal Wanderer); its {7} ability exiles a nonland permanent and flips it to Hydaelyn, the Mothercrystal, which gives another creature a +1/+1 counter and indestructible each turn (and draws a card if it is legendary, such as Y'shtola).
+
+### Keep the table off you
+
+Y'shtola is a 2/4 and the deck wins slowly. The table's creature decks are the main danger, so deal with attackers early.
+- **Pillowfort:** Propaganda and Windborn Muse tax every attacker {2}. Cast them early against creature decks.
 - **Locks:** Arrest, Prison Sentence, Luminous Bonds, Bound in Silence and Encrust shut down threats (and each triggers Y'shtola as you cast it).
-- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Skyclave Apparition, Prayer of Binding, The Eternal Wanderer and Dakkon, Shadow Slayer (-3: exile target creature).
-- **Wipe:** Austere Command. Massacre Wurm is a one-sided sweeper of small creatures that drains 2 for each one that dies.
+- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Prayer of Binding, Memory Trap, Static Net, The Eternal Wanderer and Dakkon, Shadow Slayer (-3: exile target creature).
+- **Wipes:** Austere Command. Massacre Wurm is a one-sided sweeper of small creatures that drains 2 for each one that dies.
+- **Counter:** Dovin's Veto stops a removal spell aimed at Y'shtola.
 
 **Dakkon, Shadow Slayer** ({W}{U}{B}) is a noncreature spell with mana value 3, so casting it triggers Y'shtola. He enters with loyalty equal to the number of lands you control, surveils 2 with his +1 and exiles a creature with his -3, and his -6 can put an artifact from your hand or graveyard onto the battlefield.
 
-**Protect Y'shtola.**
+### Protect Y'shtola
+
 - **Equipment:** Lightning Greaves (shroud) and Champion's Helm (+2/+2, hexproof on a legend).
 - **Restoration Angel:** flash, and blinks Y'shtola out of an exile or steal effect.
 - **Counterspell:** Dovin's Veto stops the removal spell itself.
-- The protection instants (Take Up the Shield, Rootborn Defenses, Clever Concealment, Momentary Blink) left on 10-03: they were rarely cast, and removal does more against the creature decks that beat this one.
 - **Thought Vessel:** no maximum hand size, so Necropotence, Consecrated Sphinx and Notion Thief never draw into a discard; also a two-mana rock (it doesn't trigger Y'shtola: mana value 2).
+
+### How it wins
+
+The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, then from drains (Sanguine Bond, Blight-Priest, the X spells, Syphon-Mage), and only a little from combat. Most games end with a drain: a big Debt to the Deathless or Exsanguinate with Bond and the Priest out, after the triggers have set up the kill. Combat damage and Syphon-Mage finish the rest.
+
+### Weak spots and how to play around them
+
+- **Creature decks (big attackers).** The deck loses almost always to combat. Land Propaganda or Windborn Muse early, lock or remove the biggest threat, and keep Austere Command or Massacre Wurm for the wide boards.
+- **Fast combo decks.** The drain is too slow to race a deck that wins on turn 4 to 6; hold Dovin's Veto and Memory Trap / Static Net for the key piece, and Notion Thief or Mystic Remora to slow their draws.
+- **Removal on Y'shtola.** Keep Restoration Angel, Lightning Greaves, Champion's Helm or Dovin's Veto up while she is the engine.
+- **Cheap spells.** Spells of mana value 1 or 2 (Fatal Push, Path to Exile, Dovin's Veto) are good cards but don't trigger her: don't cast them if they cost a trigger.
+- **Slow starts.** Expect to reach full power around turns 6 to 8; mulligan hands with no mana or no spell of mana value 3.
 
 ## Key lines
 
@@ -85,21 +104,21 @@ A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your
 
 **The kill.** Count before you cast an X spell: each opponent loses X (or 2X), plus 2 from Y'shtola, plus the Blight-Priest's 1 per lifegain. With Bond, the whole gain goes to one opponent on top. Dark Petition with two instants or sorceries in your graveyard adds {B}{B}{B}, which often pays for that turn's X.
 
-**Zur in the 99.** Zur the Enchanter ({1}{W}{U}{B}, 1/4 flier) still searches for an enchantment with mana value 3 or less whenever it attacks:
+**Zur in the 99.** Zur the Enchanter ({1}{W}{U}{B}, 1/4 flier) searches for an enchantment with mana value 3 or less whenever it attacks:
 - **Necropotence** early with a healthy life total;
 - **Propaganda** when the table attacks you;
 - **Curiosity** for Y'shtola;
 - **a lock Aura** on the biggest threat. A fetched Aura isn't cast and doesn't target, so it goes around hexproof and ward.
 
-Zur can find Arrest, Bound in Silence, Curiosity, Encrust, Luminous Bonds, Mystic Remora, Necropotence, Prison Sentence and Propaganda.
+Zur can find Arrest, Bound in Silence, Curiosity, Encrust, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Prison Sentence and Propaganda. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
 
 **Notion Thief + Deep Analysis.** Target an opponent with Deep Analysis while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger.
 
-## Consistency
+## Mana and consistency
 
 The list is exactly 100 cards.
 
-37 lands (13 nonbasic, 8 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic.
+37 lands (13 nonbasic, 8 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic (Thought Vessel is a sixth, colourless).
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -108,12 +127,12 @@ The list is exactly 100 cards.
 | Black lands | 14 | 9 Swamp plus Caves of Koilos, Command Tower, Isolated Chapel, Shattered Sanctum, Underground River |
 | Any colour, with a condition | 2 | Exotic Orchard (an opponent's land), Spire of Industry (1 life, with an artifact) |
 | No mana the turn they land | 3 | Evolving Wilds, Terramorphic Expanse, Fabled Passage (each finds any basic, now one of 24) |
-| Always enter tapped | 0 | the ten that did (Arcane Sanctum, Dimir Guildgate, Irrigated Farmland, Scoured Barrens, three Temples, three Vivid lands) became basics on 10-04 |
+| Always enter tapped | 0 | no land always enters tapped |
 | Sometimes enter tapped | 4 | Glacial Fortress, Isolated Chapel (need a basic type), Prairie Stream (two basics), Shattered Sanctum (two other lands); with 24 basics they rarely do |
 
 Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so Swamps outnumber the other basics. Blue has the fewest sources. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception.
 
-**Curve.** One-drops 8, two-drops 7, three-drops 23, four-drops 15, five 4, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
+**Curve.** One-drops 7, two-drops 8, three-drops 23, four-drops 16 (counting Y'shtola), five 4, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
 **Card types.** 15 creatures (plus Y'shtola), 16 enchantments, 9 artifacts, 8 instants, 12 sorceries, 2 planeswalkers.
 
@@ -122,7 +141,7 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 - **Mana:** Smothering Tithe's Treasures, on top of the rocks.
 - **Draw spells:** Night's Whisper, Read the Bones, Deep Analysis, Tezzeret's Gambit, Cast Away Doubt.
 - **Cards taken from opponents:** Gonti, Thief of Sanity, Hostage Taker.
-- **Tutors:** Diabolic Tutor and Dark Petition (any card), Idyllic Tutor (an enchantment), and Zur's attacks.
+- **Tutors:** Diabolic Tutor and Dark Petition (any card), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
 
 **Interaction.**
 - **Counterspell (one):** Dovin's Veto.
@@ -131,40 +150,17 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 - **Removal Auras (five):** Arrest, Prison Sentence, Luminous Bonds, Bound in Silence, Encrust.
 - **Theft:** Bribery.
 - **Board wipe (one):** Austere Command.
-- **Grand Arbiter Augustin IV** (10-07): your white and blue spells cost {1} less each (a white-and-blue spell {2} less), and opponents' spells cost {1} more.
-- **Mystical Tutor** (10-06): at an opponent's end step, put Exsanguinate or Debt to the Deathless on top for your turn.
 
-## What the simulator found
-
-Measured on 2026-10-03 with the look-ahead AI against the loose profile (opponents counter and remove freely: the worst case), 120 games per tier, the same settings as the other recent decks in `decklists/pool/pool-results.md`. An even share is 25%.
-
-| Tier | Y'shtola | Galadriel (same settings) |
-| --- | --- | --- |
-| T1 High B2 / Low B3 | **31.7%** (24-40) | 15.0% |
-| T2 Mid B3 | **50.8%** (42-60) | 11.7% |
-| T3 High B3 | **37.5%** (29-46) | 8.3% |
-| T4 Low B4 | **35.8%** (28-45) | 12.5% |
-| T5 High B4 | 14.2% (9-22) | 8.3% |
-
-**Above an even share through Low Bracket 4, below it against High Bracket 4.** Tier 2 is the standout, at about half of all games, level with Sephiroth. Against Tier 5 the fast combo decks (Kinnan, Urza, Yawgmoth) win before the drain gets there.
-
-**How it wins** (a 400-game breakdown against Tier 3 with the faster heuristic AI, which wins 39% there):
-- **The damage it deals:** 46 to opponents per game. 47% comes from Y'shtola's and Ill-Gotten Inheritance's triggers, 31% from drains (Sanguine Bond, Blight-Priest, the X spells, Syphon-Mage) and only 21% from combat.
-- **The kills:** 55% by drain, 23% by triggers, 21% by combat.
-- **When the engine comes online:** Y'shtola's first trigger lands by turn 6 in 43% of games and by turn 8 in 65% of games. She triggers at some point in 86% of games.
-- **The finisher:** Debt to the Deathless is the card most tied to winning. The deck wins 75% of the games it's cast in.
-- **How it loses:** almost always to combat (Aurelia above all), not to combo. Propaganda and Windborn Muse are worth casting early against creature decks.
-
-**Cards that sat in hand.** Rootborn Defenses, Clever Concealment, Take Up the Shield and Momentary Blink were cast in 5% or less of the games they were drawn. They only come out in answer to removal or a wipe, and the AI rarely needed them. They were replaced on 10-03 (with Disdainful Stroke) by Static Net, Cast Away Doubt, Your Fate Ends Here, Memory Trap and Statute of Denial; these results are from the list before that change.
+**Life is a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, Spire of Industry and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with seven Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Bolas's Citadel**, **Smothering Tithe** (the last three added 10-05), **Mystical Tutor** (10-06) and **Grand Arbiter Augustin IV** (10-07). There are still no two-card infinite combos (Sanguine Bond isn't paired with Exquisite Blood), no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
+**Bracket 4,** with seven Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Bolas's Citadel**, **Smothering Tithe**, **Mystical Tutor** and **Grand Arbiter Augustin IV**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
 
 Disclose before the game:
 
 - **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Bolas's Citadel**, **Smothering Tithe**, **Mystical Tutor** and **Grand Arbiter Augustin IV** (the seven Game Changers).
-- **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor), plus Zur's enchantment search.
+- **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor, and Zur's enchantment search.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
 - **Theft:** Bribery, Hostage Taker, Gonti and Thief of Sanity use opponents' cards.
 
@@ -271,22 +267,3 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 8 Plains
 9 Swamp
 ```
-
-## Flags and tuning levers
-
-**Tapped lands were the biggest cost, and are gone.** The ten lands that always entered tapped became basics on 10-04 (about +1.2 points in testing). Four duals still sometimes enter tapped (Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum); with 24 basics they rarely do. To add fixing back without tapped lands: Drowned Catacomb, Godless Shrine, Watery Grave, Hallowed Fountain.
-
-**Two triggers a turn is the target.** Her draw needs 4 life lost by one player, which one trigger alone never does. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
-
-**Weakest slots for this commander.**
-- **Fatal Push, Path to Exile, Dovin's Veto:** good cards, but mana value 1 or 2 doesn't trigger Y'shtola.
-- **Venat, Heart of Hydaelyn:** a creature, so no trigger, and its draw needs legendary spells, which the deck has few of. JD's pick (measured +0.1, neutral).
-- **Restoration Angel:** a creature, so no trigger (Bastion Protector, the other, left on 10-11 for Thought Vessel).
-
-Replacements worth testing:
-- **Removal with mana value 3:** Mortify (instant) or Vindicate (sorcery).
-- **More lifegain payoffs:** Vito, Thorn of the Dusk Rose; Exquisite Blood. Exquisite Blood with Sanguine Bond is an infinite combo and moves the deck toward Bracket 4.
-
-**Life is still a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, Spire of Industry and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
-
-**Mystic Remora's upkeep grows.** Pay it for a turn or two at most, then let it go.

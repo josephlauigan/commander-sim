@@ -1,72 +1,184 @@
 # Cloud, Midgar Mercenary — Mono-White Equipment
 
-**Updated 2026-10-13.** JD committed to the C3 + C4 list: 27 swaps. Out: Argivian Find, Call a Surprise Witness, Cho-Manno's Blessing, Conformer Shuriken, Essence Reliquary, Harsh Annotation, Hero's Heirloom, Hulkbuster Armor, Magitek Scythe, Magnetic Snuffler, Make Your Move, Medic's Kitesail, Memory Trap, Potioner's Trove, Rapier Wit, Recruitment Officer, Repel the Darkness, Shardmage's Rescue, Squire's Lightblade, Take Up the Shield, Tome of Legends, Trailblazer's Boots, Ultimate Magic: Holy, White Auracite. In, by group: **mana** (Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Coalition Relic, Thought Vessel, Smothering Tithe, Solemn Simulacrum, Knight of the White Orchid, Loyal Warhound; 33 lands with Plaza of Heroes); **swords and protection** (Sword of Fire and Ice, Sword of Feast and Famine, Sword of Hearth and Home, Champion's Helm, Swiftfoot Boots, Giver of Runes, Grand Abolisher); **free equips and backup carriers** (Ardenn, Auriok Steelshaper, Kor Outfitter, Balan, Armored Skyhunter, Kor Duelist); **others from the retired Jodah deck** (Enlightened Tutor, Skyclave Apparition, Court of Ardenvale). Measured on the fixed Cloud AI (paired, look-ahead, loose, 500 games per tier, against the old list): **10.9% over all tiers against 5.1%** (T1 14.0, T2 9.8, T3 7.4, T4 9.4, T5 13.8; +5.8, every tier above its noise); `audit/cloud/2026-10-13/screen/C4REV-*`.
-**Updated 2026-10-13 (later).** Out: Patriot, Shield Wielder (JD couldn't find the card). In: Ultimate Magic: Holy (bulk; in the list until C4 made room for Giver of Runes): permanents you control gain indestructible until end of turn. Not simulated.
+A mono-white Equipment deck. **Cloud, Midgar Mercenary** costs {W}{W} and finds an Equipment when he enters; with
+Equipment on him, every Equipment trigger happens twice. The deck wins by hanging Swords and big Equipment on Cloud
+(or on a backup carrier) and hitting. It is weak to board wipes and to artifact removal, and it needs Cloud, or
+another carrier, to survive.
 
-**Added 2026-10-12.** JD's candidate for a last deck with no black or green (no Swamps or Forests left). Built from the
-bulk and binder lists, the Kaldra pieces from Jodah (if this deck is chosen, Jodah gives them up), and one buy: Cloud,
-Midgar Mercenary (about $21). In the simulator as deck key `cloud`.
+| | |
+|---|---|
+| **Commander** | Cloud, Midgar Mercenary ({W}{W}, 2/1, white) |
+| **Bracket** | 3 (2 Game Changers: Smothering Tithe, Enlightened Tutor) |
+| **Simulator** | deck key `cloud`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
 
-Cloud, Midgar Mercenary ({W}{W}, 2/1 Human Soldier Mercenary) reads: *When Cloud enters, search your library for an
-Equipment card, reveal it, put it into your hand, then shuffle. As long as Cloud is equipped, if a triggered ability of
-Cloud or an Equipment attached to it triggers, that ability triggers an additional time.*
+### The commander
+**Cloud, Midgar Mercenary** ({W}{W}, 2/1 Human Soldier Mercenary) reads: *When Cloud enters, search your library for an
+Equipment card, reveal it, put it into your hand, then shuffle. As long as Cloud is equipped, if a triggered ability
+of Cloud or an Equipment attached to it triggers, that ability triggers an additional time.*
 
-**Ramp to four or five mana.** Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic and Thought Vessel,
-plus Solemn Simulacrum, Knight of the White Orchid, Loyal Warhound and Smothering Tithe, with 33 lands. The deck wants
-Cloud out on turn two and a Sword or two equips paid by turn four.
+- **A tutor every time he enters.** He is cheap to cast and to recast from the command zone (the commander tax adds
+  {2} for each earlier cast from there). The deck has several ways to make him enter again.
+- **The doubling is narrow.** It applies only while Cloud himself is equipped, and only to triggers of Cloud or of an
+  Equipment attached to *Cloud*. Equipment on another creature never doubles, and a static bonus (+X/+X, hexproof)
+  does not trigger at all. See "Doubled triggers" below for which Equipment actually gains.
+- **What breaks him.** He is a 2/1 for {W}{W}: targeted removal, blockers and wipes. Protection and backup carriers
+  are part of the plan, not an afterthought.
 
-**Cloud tutors first.** Every time Cloud enters he finds an Equipment, and he is cheap to recast from the command zone.
-The first search is a cheap Sword (Fire and Ice, Feast and Famine, Hearth and Home) or Champion's Helm; Enlightened
-Tutor finds the next piece. Ennis, Forum Familiar, Unyielding Gatekeeper and Stormfront Riders make him enter again;
-Recommission and Unfinished Business bring him back from the graveyard.
+### Game plan
+- **Turns 1-2.** Cast Cloud on turn two ({W}{W}) or play a cheap mana rock (Sol Ring, Mind Stone, Arcane Signet) and
+  then Cloud. His search finds a cheap Sword or Champion's Helm. Cheap creatures (Kor Duelist, Zack Fair, Giver of
+  Runes, Forum Familiar) are fine early plays.
+- **Turns 3-4.** Cast and equip a Sword (equip {2}) on Cloud and attack. Use the free-equip pieces (Ardenn, Kor
+  Outfitter, Beatrix) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
+- **Turns 5+.** Add the big Equipment (Sword of Kaldra, Wrecking Ball Arm, Colossus Hammer), the Kaldra set, and
+  the removal. If Cloud dies, a backup carrier takes the Swords.
 
-**Doubled triggers.** Equipped, Cloud doubles every Equipment trigger: the Swords (Fire and Ice deals 2 damage and draws
-a card, Feast and Famine makes a player discard and untaps your lands, Hearth and Home blinks a creature you own),
-Mask of Memory (draw four, discard two), White Mage's Staff (life), Explorer's Scope (two looks for
-a land) and Sword of Kaldra. Hero's Blade attaches itself whenever Cloud (or another legend) enters.
+### Ramp and mana
+Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic and Thought Vessel; Page, Loose Leaf (a 0/2
+artifact creature that taps for {C}); Solemn Simulacrum; Knight of the White Orchid and Loyal Warhound, which fetch
+a Plains when an opponent controls more lands than you; and Smothering Tithe, which makes Treasures when opponents
+draw and don't pay {2}. The deck wants Cloud out on turn two and a Sword equipped by turn four.
 
-**Free equips.** Ardenn moves any number of Equipment onto one creature at the start of each combat, Kor Outfitter attaches one when it enters, Auriok
-Steelshaper makes every equip cost {1} less, and Puresteel Paladin (equip {0} with three artifacts) and Cid make the big
-equip costs payable. Helitrooper and Armory Automaton also carry gear.
+### Doubled triggers
+With Cloud equipped, these Equipment gain from the extra trigger:
+- **Sword of Fire and Ice**: 2 damage to any target twice and two cards.
+- **Sword of Feast and Famine**: two discards from the player you hit; your lands untap (the second untap adds
+  nothing).
+- **Sword of Hearth and Home**: two lands and up to two creatures blinked. Point one trigger at a creature with a
+  useful enter effect (Solemn Simulacrum, Knight of the White Orchid, Loyal Warhound, Kor Outfitter) or at Cloud
+  himself for another search (his Equipment falls off when he leaves, so only when you can re-equip); do not aim both
+  at Cloud, as the second would fizzle and lose its land.
+- **Mask of Memory**: two triggers of draw two then discard one.
+- **Explorer's Scope**: two looks at your top card whenever Cloud attacks, putting each land you find onto the battlefield tapped.
+- **White Mage's Staff**: it gives Cloud *Whenever this creature attacks, you gain 1 life*, which is Cloud's own
+  trigger, so you gain 2.
 
-**Making a 2/1 lethal.** Wrecking Ball Arm equips a legend for {3} (base 7/7, can't be blocked by power 2 or less);
-Sword of Kaldra +5/+5; Colossus Hammer +10/+10; Helm of Kaldra first strike, trample and haste; Veteran's Powerblade
-equips a Soldier for {W}. With all three Kaldra pieces out, Helm of Kaldra makes a Kaldra token wearing them.
+The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left), **Nim Deathmantle**
+(the card is returned once) or **Hero's Blade** (it can't attach twice). **Champion's Helm**, **Swiftfoot Boots**,
+**Colossus Hammer**, **Veteran's Powerblade**, **Shield of Kaldra**, **Helm of Kaldra** and **Wrecking Ball Arm** have
+no triggers: they are plain bonuses (hexproof, first strike, haste, +X/+X, indestructible).
 
-**Backup carriers when Cloud is dead.** Balan, Kor Duelist, Armored Skyhunter, Bronze Guardian and Exalted Angel carry
-the Swords just as well, and Beatrix, Thalia the Survivor and Zack Fair give the team something to attach to.
+### Making Cloud enter again
+**Ennis, Debate Moderator** blinks Cloud (he returns at the next end step, so do it after combat; his Equipment falls
+off and has to be re-equipped, so it suits a turn with Ardenn or Beatrix out), **Forum Familiar**
+and **Unyielding Gatekeeper** do it when turned face up from disguise, and **Stormfront Riders** returns two creatures
+to your hand (and makes a 1/1 Soldier for each). **Recommission** and **Unfinished Business** bring him back from the
+graveyard, Unfinished Business with up to two Equipment attached. **Court of Ardenvale** returns a permanent with mana
+value 3 or less from the graveyard each upkeep (to the battlefield while you are the monarch, which Court makes you).
 
-**Keeping Cloud alive.** Champion's Helm (hexproof on a legend) and Swiftfoot Boots (hexproof and haste), Giver of Runes
-(protection for another creature), Grand Abolisher (opponents can't cast spells or activate artifact, creature or enchantment abilities on your turn), Plaza of Heroes ({3}, exile it: a legend gains
-hexproof and indestructible until end of turn), Bastion Protector (commander +2/+2 and indestructible), Shield of
-Kaldra, and the protection instants Unbreakable Formation, Rootborn Defenses and Ultimate Magic: Holy (the team gains indestructible; Holy covers every permanent you control). Removal: Lay Down Arms, Stand Up for Yourself, Fate of the Sun-Cryst, Skyclave Apparition, Citizen's Arrest, Secure the Scene, Austere Command, Disenchant.
+### Free equips
+- **Ardenn, Intrepid Archaeologist** moves any number of Equipment onto one permanent at the start of each combat.
+- **Beatrix, Loyal General** does the same for a creature you control (she is a 4/4 vigilance).
+- **Kor Outfitter** attaches one Equipment when it enters.
+- **Armory Automaton** attaches any number of Equipment to itself when it enters or attacks.
+- **Armored Skyhunter** flies; whenever it attacks it looks at the top six cards and puts an Equipment onto the
+  battlefield, attached to a creature (Cloud) if you like.
+- **Balan, Wandering Knight** moves every Equipment onto himself for {1}{W}; with two or more attached he has double
+  strike.
+- **Puresteel Paladin** draws a card whenever an Equipment enters and, with three or more artifacts, gives your
+  Equipment equip {0}. This is what makes Colossus Hammer (equip {8}) and Sword of Kaldra (equip {4}) practical.
+- **Auriok Steelshaper** reduces equip costs by {1}, and gives Soldiers and Knights (Cloud is a Soldier) +1/+1 while
+  it is equipped; **Helitrooper** makes equipping it cheaper by {2} and gives another attacker flying; **Cid, Freeflier
+  Pilot** makes Equipment spells cost {1} less, flies on your turn and returns an Equipment from the graveyard.
+- **Veteran's Powerblade** equips a Soldier for {W}; Cloud is one.
+- **White Mage's Staff** makes its own 1/1 Hero token and attaches itself to it.
 
-## Bracket
+### Backup carriers
+When Cloud is dead or removed, **Balan, Wandering Knight**, **Kor Duelist** (double strike when equipped),
+**Armored Skyhunter**, **Bronze Guardian** (double strike; power equal to your artifacts; ward {2}, and other
+artifacts get ward {2}), **Exalted Angel** (cast face down for {3}, flip for {2}{W}{W}), **Adelbert Steiner** (lifelink,
++1/+1 for each Equipment), **Thalia, the Survivor** (lifelink, taxes noncreature spells) and **Jocasta, Automaton Avenger**
+(flying; grows when your commander connects, and comes back from the graveyard when you attack with him) all carry the
+Swords. **Zack Fair** gives his counters and Equipment to another creature when he is sacrificed, which also makes
+that creature indestructible.
 
-**Bracket 3,** with two Game Changers: **Smothering Tithe** and **Enlightened Tutor**.
+### Making a 2/1 lethal
+- **Wrecking Ball Arm** equips a legendary creature for {3}: base 7/7, and it can't be blocked by creatures with power
+  2 or less. Cloud with it and a Sword of Fire and Ice is a 9/9.
+- **Sword of Kaldra** gives +5/+5 and exiles any creature it damages. **Colossus Hammer** gives +10/+10.
+- **Hero's Blade** (+3/+2) attaches itself when a legendary creature enters.
+- **Helm of Kaldra** gives first strike, trample and haste. With all three Kaldra pieces out, pay {1}: a legendary
+  Kaldra token wears all three (a 9/9 indestructible haste first striker).
+- **Champion's Helm** (+2/+2; hexproof on a legendary creature) and **Swiftfoot Boots** (hexproof and haste) both
+  protect and push.
 
-## Where the cards come from
+### Keeping Cloud alive
+- **Prevent.** Champion's Helm and Swiftfoot Boots (hexproof), Giver of Runes (protection from a colour for another
+  creature), Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or enchantments
+  during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
+  Bastion Protector (commander creatures get +2/+2 and indestructible) and Shield of Kaldra (indestructible).
+- **Protect the team.** Unbreakable Formation (creatures indestructible; in your main phase also a +1/+1 counter and
+  vigilance for each), Rootborn Defenses (creatures indestructible, populate) and Ultimate Magic: Holy (every
+  permanent you control indestructible). Cast Holy in response to your own Austere Command to keep your side.
 
-Eleven cards were bought on 2026-10-13 (listed below); 28 Plains and Giver of Runes are your own; the cards below come
-from the other decks, the binder and the retired Jodah deck. Everything else is bulk.
+### Removal
+- **Single targets:** Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
+  it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Secure the Scene, Fate of the
+  Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less) and Unyielding
+  Gatekeeper.
+- **Artifacts and enchantments:** Disenchant.
+- **Board wipe:** Austere Command (choose two modes). Choose "destroy creatures with mana value 4 or greater" with
+  "destroy all enchantments" to leave Cloud (mana value 2) and the artifacts (it also kills your own larger creatures),
+  or cast Holy in response so that none of your permanents are destroyed.
 
-| Card | From |
-|---|---|
-| Sword of Feast and Famine, Sword of Hearth and Home | Sauron |
-| Smothering Tithe | Sephiroth |
-| Champion's Helm | Sheoldred |
-| Swiftfoot Boots | Kefka |
-| Arcane Signet, Fellwar Stone, Coalition Relic, Solemn Simulacrum, Enlightened Tutor, Grand Abolisher, Skyclave Apparition, Court of Ardenvale, Plaza of Heroes, Sword of Kaldra, Shield of Kaldra, Helm of Kaldra | Retired Jodah deck |
-| Exalted Angel, Disenchant | Binder |
-| Giver of Runes, 28 Plains | JD's own (not on the lists) |
+### How it wins
+- **Equipped Cloud connects.** A Sword of Fire and Ice on Cloud draws two cards and deals 4 damage; with Sword of Feast
+  and Famine the opponent discards two cards and your lands untap. Add Wrecking Ball Arm or Sword of Kaldra for a
+  9/9 or larger evasive attacker.
+- **The Kaldra token.** All three Kaldra pieces and {1} make a 9/9 indestructible first striker with trample.
+- **Wide Equipment.** Balan with two Equipment has double strike; Bronze Guardian with a pile of artifacts hits for
+  7 or more twice.
 
-**Bought 2026-10-13 (11 cards, about $33.26 at Scryfall's cheapest printing):** Cloud, Midgar Mercenary ($22.33), Knight of
-the White Orchid ($3.90), Ardenn, Intrepid Archaeologist ($2.86), Sol Ring ($1.42), Auriok Steelshaper ($0.83), Loyal
-Warhound ($0.64), Armored Skyhunter ($0.44), Balan, Wandering Knight ($0.40), Mind Stone ($0.20), Kor Outfitter ($0.19),
-Kor Duelist ($0.05). **Everything else:** bulk. Sauron's own Fellwar Stone (added 10-13) is a separate copy JD got on 10-13;
-Cloud's comes from the retired Jodah deck.
+### Weak spots and how to play around them
+- **Board wipes.** Don't overcommit creatures when you already have enough power. Hold Holy, Rootborn Defenses or
+  Unbreakable Formation up when the table has wiped before.
+- **Artifact and enchantment removal.** Spread the Equipment across several carriers (Balan, Beatrix and Ardenn can
+  re-attach after a loss) and recur them with Cid or Unfinished Business.
+- **Cloud dead, command zone.** Remember the {2} commander tax; use the backup carriers first.
+- **Small bodies.** Giver of Runes, Grand Abolisher and Bastion Protector keep the board safe; Thalia and
+  Skyclave Apparition slow the table down.
+
+## Key lines
+
+- **Turn 2 Cloud:** search a Sword or Champion's Helm; turn three cast and equip it and attack with protection up
+  (Swiftfoot Boots or Giver of Runes).
+- **Best opening:** Sol Ring on turn one, Cloud on turn two, then cast and equip a Sword on turn three.
+- **Mulligan:** keep hands with two lands (or a land and Sol Ring) and a play of two mana or less. Throw back hands that
+  can not make {W}{W} by turn three.
+- **Big turn:** Puresteel Paladin out and three artifacts means equip {0}: cast Colossus Hammer, Sword of Kaldra
+  and a Sword, attach all, and attack.
+- **Holy trick:** if you expect a wipe, cast Austere Command with Ultimate Magic: Holy in response to wipe their board
+  and keep yours.
+- **Removal in response to an equip:** have Giver of Runes, Zack Fair or Swiftfoot Boots ready.
+
+## Tutor targets by board state
+
+- **Cloud's search, early:** a cheap Sword (Fire and Ice, Feast and Famine, Hearth and Home) or Champion's Helm.
+- **Cloud's search, Puresteel Paladin out:** Colossus Hammer or Sword of Kaldra.
+- **Cloud's search, many blockers:** Wrecking Ball Arm.
+- **Cloud's search, facing removal:** Swiftfoot Boots or Champion's Helm.
+- **Enlightened Tutor** (puts the card on top, so cast it at the end of an opponent's turn; it finds an artifact or
+  enchantment): a Sword if you are missing one, Smothering Tithe when opponents draw a lot, Court of Ardenvale
+  when you need card advantage, Helm of Kaldra once you hold the other two Kaldra pieces.
+
+## Mana and consistency
+
+33 lands: 28 Plains plus Ash Barrens (basic landcycling {1}), Evolving Wilds, Path of Ancestry (enters tapped; scry 1
+when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
+Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
+White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
+Interaction: Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Secure the Scene, Fate of the Sun-Cryst, Skyclave
+Apparition, Austere Command and Disenchant. 16 Equipment in the deck, so Cloud's search always finds one.
+
+## Bracket and Rule 0
+
+**Bracket 3,** with two Game Changers: **Smothering Tithe** and **Enlightened Tutor**. The deck has no combo that wins
+on its own. Tell the table before the game that:
+
+- the deck has two tutors (Cloud and Enlightened Tutor) but no game-winning combo;
+- Austere Command can wipe the table, and Ultimate Magic: Holy lets you keep your own board.
 
 ## Decklist by type (100)
 
