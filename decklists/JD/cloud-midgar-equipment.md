@@ -112,9 +112,10 @@ that creature indestructible.
   it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Secure the Scene, Fate of the
   Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less).
 - **Artifacts and enchantments:** Disenchant.
-- **Attack taxes:** creatures can't attack you unless their controller pays per attacker: Ghostly Prison {2}, Windborn Muse
-  {2} (a 2/3 flier), Baird, Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archangel of Tithes {1} while she is untapped
-  (a 3/5 flier; while she attacks, blockers cost {1} each).
+- **Attack limits and taxes:** Crawlspace (artifact: no more than two creatures can attack you each combat). Other
+  creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
+  Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archon of Absolution {1} (a 3/2 flier with
+  protection from white).
 - **Board wipes:** Wrath of God, Day of Judgment and Fumigate (gain 1 life per creature destroyed). Equipment survives them, and Cloud comes back from the command zone.
 - **Austere Command** (choose two modes): choose "destroy creatures with mana value 4 or greater" with
   "destroy all enchantments" to leave Cloud (mana value 2) and the artifacts (it also kills your own larger creatures),
@@ -166,7 +167,7 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Ghostly Prison, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Secure the Scene, Fate of the Sun-Cryst, Skyclave
+Interaction: Wrath of God, Day of Judgment, Fumigate, Crawlspace, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Secure the Scene, Fate of the Sun-Cryst, Skyclave
 Apparition, Austere Command and Disenchant. 14 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
@@ -181,11 +182,11 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (28).** Adelbert Steiner, Archangel of Tithes, Ardenn Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird Steward of Argive, Balan Wandering Knight, Bastion Protector, Bronze Guardian, Cid Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia the Survivor, Windborn Muse, Zack Fair
+**Creatures (28).** Adelbert Steiner, Archon of Absolution, Ardenn Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird Steward of Argive, Balan Wandering Knight, Bastion Protector, Bronze Guardian, Cid Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia the Survivor, Windborn Muse, Zack Fair
 
-**Enchantments (4).** Citizen's Arrest, Court of Ardenvale, Ghostly Prison, Smothering Tithe
+**Enchantments (3).** Citizen's Arrest, Court of Ardenvale, Smothering Tithe
 
-**Artifacts (21).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Nim Deathmantle, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Veteran's Powerblade, Wrecking Ball Arm
+**Artifacts (22).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Crawlspace, Fellwar Stone, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Nim Deathmantle, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Veteran's Powerblade, Wrecking Ball Arm
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Recommission, Secure the Scene, Wrath of God
 
@@ -198,7 +199,7 @@ on its own. Tell the table before the game that:
 ```
 1 Adelbert Steiner
 1 Arcane Signet
-1 Archangel of Tithes
+1 Archon of Absolution
 1 Ardenn, Intrepid Archaeologist
 1 Armored Skyhunter
 1 Armory Automaton
@@ -216,6 +217,7 @@ on its own. Tell the table before the game that:
 1 Coalition Relic
 1 Colossus Hammer
 1 Court of Ardenvale
+1 Crawlspace
 1 Day of Judgment
 1 Disenchant
 1 Enlightened Tutor
@@ -225,7 +227,6 @@ on its own. Tell the table before the game that:
 1 Fellwar Stone
 1 Forum Familiar
 1 Fumigate
-1 Ghostly Prison
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
