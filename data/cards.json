@@ -9811,30 +9811,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters with a number of +1/+1 counters on it equal to the number of creatures that died this turn"
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": "X",
-       "who": "you"
-      },
-      {
-       "do": "lose_life",
-       "n": "X",
-       "who": "you"
-      }
-     ],
-     "event": "dies",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flash",
@@ -9847,7 +9824,7 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -94906,29 +94883,7 @@
    "pow": 3,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": "X",
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "spirit"
-       ]
-      }
-     ],
-     "event": "end_step",
-     "who": "any"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -94939,7 +94894,7 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,

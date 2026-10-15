@@ -1182,6 +1182,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Windbrisk Heights")?;
     c.land_etb = Some(windbrisk_etb);
     c.land_options = Some(windbrisk_options);
+    register_x_cards(r, db)?;
     Ok(())
 }
 
@@ -1198,4 +1199,53 @@ pub fn tokens_carry_board(g: &Game, q: PlayerId) -> bool {
         }
     }
     n >= 2 && tokens >= 0.75 * all
+}
+
+// ================================================================== Bone Devourer, Thalisse
+/// **Bone Devourer**: enters with a +1/+1 counter for each creature that died this turn (an enters-with replacement:
+/// runs at once)
+fn devourer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let n = if g.died_count.0 == Some(g.turn_stamp()) { g.died_count.1 as i32 } else { 0 };
+    if n > 0 {
+        crate::cardcode::add_counters(g, m, n);
+    }
+    Ok(())
+}
+
+/// Bone Devourer dies: you draw X cards and lose X life, X the number of +1/+1 counters on it
+fn devourer_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let x = g.perm(m).plus.max(0);
+    let o = owner(g, m);
+    if x > 0 && trigger_window(g, o, Some(src), "draw X cards, lose X life", Some(3.0))? {
+        draw(g, o, x as u32, false)?;
+        lose_life(g, o, x, Some(o), "life", None)?;
+    }
+    Ok(())
+}
+
+/// **Thalisse, Reverent Medium**: at the beginning of each end step, X 1/1 white Spirits with flying, X the number of
+/// tokens you created this turn
+fn thalisse_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
+    let o = owner(g, src);
+    let x = if g.player(o).tok_made.0 == Some(g.turn_stamp()) { g.player(o).tok_made.1 } else { 0 };
+    if x > 0 && on_bf(g, src) && trigger_window(g, o, Some(src), "X 1/1 Spirits with flying", Some(4.0))? {
+        let spec = Tokens { fly: true, color: Some(Colors::from_letters("W")), types: vec!["spirit"], ..Tokens::new(x, 1) };
+        make_tokens(g, o, spec)?;
+    }
+    Ok(())
+}
+
+pub fn register_x_cards(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, "Bone Devourer")?;
+    c.etb = Some(devourer_etb);
+    c.self_dies = Some(devourer_dies);
+    *c = c.at_once(crate::hooks::Event::Etb);
+    r.card(db, "Thalisse, Reverent Medium")?.end_step = Some(thalisse_end);
+    Ok(())
 }

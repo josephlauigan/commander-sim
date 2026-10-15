@@ -539,3 +539,19 @@ fn calix_minus_seven_returns_every_enchantment_card() {
     assert!(n.contains(&"Sandwurm Convergence".to_string()) && n.contains(&"Mirari's Wake".to_string()));
     assert!(g.player(P0).gy.contains(&card(&g, "Forest")), "the land stays");
 }
+
+#[test]
+fn a_bounceland_played_with_no_other_land_returns_itself() {
+    let mut g = tbl();
+    let c = take(&mut g, P0, "Orzhov Basilica");
+    sim_core::engine::turn::play_land_card(&mut g, P0, c, "plays").unwrap();
+    assert!(g.player(P0).lands.is_empty(), "it must return a land, and it is the only one");
+    assert!(g.player(P0).hand.contains(&c));
+    // with another land out, that land goes back instead of the bounceland
+    lands(&mut g, P0, "Forest", 1, false);
+    let c2 = g.player_mut(P0).hand.iter().copied().find(|&x| x == c).unwrap();
+    g.player_mut(P0).hand.retain(|&x| x != c2);
+    sim_core::engine::turn::play_land_card(&mut g, P0, c2, "plays").unwrap();
+    assert_eq!(g.player(P0).lands.len(), 1);
+    assert_eq!(&*g.db.get(g.land(g.player(P0).lands[0]).cd).name, "Orzhov Basilica");
+}

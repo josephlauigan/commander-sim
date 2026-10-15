@@ -291,6 +291,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
         out.push(m);
     }
     let k = out.len() as i32;
+    note_tokens(g, p, k as u32);
     if k > 0 && !g.no_fang {
         cardcode::chatterfang_squirrels(g, p, k)?;
     }
@@ -1116,6 +1117,7 @@ pub fn enter_token_copy(g: &mut Game, p: PlayerId, cd: CardId) -> Res<Option<Per
     }
     let m = enter(g, p, cd, Enter::default())?;
     g.perm_mut(m).token = true;
+    note_tokens(g, p, 1);
     Ok(Some(m))
 }
 
@@ -1659,6 +1661,7 @@ pub fn make_artifact_tokens(g: &mut Game, p: PlayerId, kind: Sym, n: i32) -> Res
             _ => pl.clues += n as u32,
         }
     }
+    note_tokens(g, p, (n * kinds.len() as i32) as u32);
     if !g.hooks.is_empty() {
         let total = n * kinds.len() as i32;
         fire_trigger(g, Event::TokenCreated, Call::ArtifactTokens { p, kinds, n: total })?;
@@ -1797,4 +1800,11 @@ pub fn agent_take(g: &mut Game, a: PlayerId, p: PlayerId, c: CardId) {
         g.db.get(c).name,
         g.player(p).name
     );
+}
+
+/// p created k tokens: counted for "the number of tokens you created this turn" (Thalisse, Reverent Medium)
+pub fn note_tokens(g: &mut Game, p: PlayerId, k: u32) {
+    let st = g.turn_stamp();
+    let pl = g.player_mut(p);
+    pl.tok_made = if pl.tok_made.0 == Some(st) { (Some(st), pl.tok_made.1 + k) } else { (Some(st), k) };
 }

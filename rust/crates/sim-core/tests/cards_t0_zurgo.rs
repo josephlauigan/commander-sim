@@ -578,3 +578,44 @@ fn zurgo_is_cast_from_a_trace_board() {
     let c = card(&g, "Zurgo Stormrender");
     assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap());
 }
+
+// ------------------------------------------------------------------ Bone Devourer, Thalisse
+#[test]
+fn bone_devourer_enters_with_counters_for_deaths_and_draws_that_many() {
+    let mut g = pod();
+    g.died_count = (Some(g.turn_stamp()), 3);
+    let c = take(&mut g, P0, "Bone Devourer");
+    let m = zones::enter(&mut g, P0, c, zones::Enter::default()).unwrap();
+    assert_eq!(g.perm(m).plus, 3, "one counter per creature that died this turn");
+    let (hand0, life0) = (g.player(P0).hand.len(), g.player(P0).life);
+    zones::die(&mut g, m, "destroy").unwrap();
+    assert_eq!(g.player(P0).hand.len(), hand0 + 3, "draws X");
+    assert_eq!(g.player(P0).life, life0 - 3, "loses X");
+}
+
+#[test]
+fn bone_devourer_with_no_deaths_enters_plain_and_dies_for_nothing() {
+    let mut g = pod();
+    g.died_count = (None, 0);
+    let c = take(&mut g, P0, "Bone Devourer");
+    let m = zones::enter(&mut g, P0, c, zones::Enter::default()).unwrap();
+    assert_eq!(g.perm(m).plus, 0);
+    let hand0 = g.player(P0).hand.len();
+    zones::die(&mut g, m, "destroy").unwrap();
+    assert_eq!(g.player(P0).hand.len(), hand0);
+}
+
+#[test]
+fn thalisse_makes_one_spirit_per_token_created_this_turn() {
+    let mut g = pod();
+    let t = perm(&mut g, P0, "Thalisse, Reverent Medium");
+    let spec = zones::Tokens { fly: true, types: vec!["spirit"], ..zones::Tokens::new(2, 1) };
+    zones::make_tokens(&mut g, P0, spec).unwrap();
+    zones::make_artifact_tokens(&mut g, P0, "Treasure", 1).unwrap();
+    assert_eq!(g.player(P0).tok_made.1, 3);
+    let before = tokens(&g, P0).len();
+    run_hook(&mut g, t, Event::EndStep, &Call::Player { p: P1 }).unwrap();
+    assert_eq!(tokens(&g, P0).len(), before + 3, "X = 3 tokens created, whoever's end step it is");
+    // an opponent's tokens don't count
+    assert_eq!(g.player(P1).tok_made.1, 0);
+}

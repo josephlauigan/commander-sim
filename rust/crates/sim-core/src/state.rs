@@ -408,6 +408,8 @@ pub struct Player {
     pub gained_turn: Option<(TurnStamp, i32)>,
     /// the last turn a creature died under this player's control (Essenceknit Scholar)
     pub creature_died: Option<TurnStamp>,
+    /// tokens this player created this turn: (the turn, how many) (Thalisse, Reverent Medium)
+    pub tok_made: (Option<TurnStamp>, u32),
     /// emblems from planeswalker ultimates ('tamiyo', 'nissa' ...)
     pub emblems: Vec<Sym>,
     /// cards taken with Opposition Agent (castable with mana of any type)
@@ -647,6 +649,7 @@ impl Player {
             lost_turn: None,
             gained_turn: None,
             creature_died: None,
+            tok_made: (None, 0),
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,

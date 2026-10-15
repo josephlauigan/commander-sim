@@ -7996,3 +7996,13 @@ note = "enters: two 1/1 red Warriors; whenever we attack, each opponent loses li
 ["Commander's Insignia"]
 status = "Full"
 note = "creatures we control get +1/+1 for each time our commander was cast from the command zone (the commander tax divided by two)"
+
+["Bone Devourer"]
+dsl = []
+status = "Full"
+note = "enters with a +1/+1 counter for each creature that died this turn; when it dies, draw X and lose X life, X its counters"
+
+["Thalisse, Reverent Medium"]
+dsl = []
+status = "Full"
+note = "at the beginning of each end step, X 1/1 flying Spirits, X the tokens you created this turn (Treasure, Food and Clues included)"
