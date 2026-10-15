@@ -537,7 +537,7 @@ fn riders_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             reenter_value(g, o, x) - 0.4 * pval(g, x) - if g.perm(x).token { 1.0 } else { 0.0 }
         }
     };
-    let mut ranked = mine.clone();
+    let mut ranked: Vec<PermId> = mine.iter().copied().filter(|&x| !super::cloud::riders_spare(g, x)).collect();
     ranked.sort_by(|&a, &b| score(b).partial_cmp(&score(a)).unwrap_or(std::cmp::Ordering::Equal));
     let riders = riders_of(g, o);
     let mut back = 0;

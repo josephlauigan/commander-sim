@@ -64,3 +64,27 @@ fn other_decks_are_not_forced() {
     assert!(!cloud::must_attack(&g, P0));
     let _ = &mut g;
 }
+
+// ---- F2: Stormfront Riders spares an equipped Cloud
+#[test]
+fn riders_does_not_return_an_equipped_cloud() {
+    let mut g = game();
+    let cl = wear(&mut g, "Sword of Fire and Ice");
+    let duelist = perm(&mut g, P0, "Kor Duelist");
+    perm(&mut g, P0, "Stormfront Riders");
+    assert!(g.perm(cl).on_bf, "Cloud stays");
+    assert!(!equipment_on_cloud(&g).is_empty(), "with his Sword");
+    assert!(!g.perm(duelist).on_bf, "the Duelist goes home instead");
+}
+
+#[test]
+fn riders_still_returns_a_bare_cloud_and_other_decks_creatures() {
+    let mut g = game();
+    let cl = perm(&mut g, P0, CLOUD);
+    perm(&mut g, P0, "Stormfront Riders");
+    assert!(!g.perm(cl).on_bf, "a bare Cloud may be returned (rebuy of the tutor)");
+}
+
+fn equipment_on_cloud(g: &Game) -> Vec<sim_core::ids::PermId> {
+    cloud::equipment_on(g, cloud::cloud_of(g, P0).unwrap())
+}

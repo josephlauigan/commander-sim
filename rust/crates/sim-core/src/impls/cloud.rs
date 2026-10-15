@@ -1794,3 +1794,9 @@ pub fn keep_hand(g: &Game, p: PlayerId) -> bool {
         _ => false,
     }
 }
+
+/// Cloud wearing Equipment is not sent home by Stormfront Riders (bulk_white::riders_etb): the Equipment falls off and
+/// every re-equip costs mana. Only the cloud deck; Riders returns anything else (or itself) first.
+pub fn riders_spare(g: &Game, m: PermId) -> bool {
+    g.player(owner(g, m)).key == KEY && name_of(g, m) == CLOUD && !equipment_on(g, m).is_empty()
+}
