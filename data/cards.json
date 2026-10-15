@@ -1131,8 +1131,7 @@
    "tags": {
     "warrior": true,
     "pow": "2",
-    "tok": "1",
-    "tokp": "1"
+    "tgh": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -1148,10 +1147,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Sacrifice ~: Creature tokens you control gain indestructible until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -27184,12 +27181,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "additional_cost",
-     "text": "as an additional cost to cast ~, sacrifice x creatures"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -27197,10 +27189,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy X target creatures."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -50834,49 +50824,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "deathtouch",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      }
-     ]
-    },
-    {
-     "type": "loyalty",
-     "loyalty": -6,
-     "effects": [
-      {
-       "do": "exile_graveyard",
-       "who": "each_player"
-      },
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "spirit"
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "3",
    "kws": [],
    "subtypes": [
@@ -50886,11 +50834,8 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "put a +1/+1 counter on up to one target creature token you control",
-    "until end of turn, if one or more tokens would be created under your control, twice that many of those tokens are created instead"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -99501,33 +99446,7 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2W",
-      "other": "remove a +1/+1 counter from ~"
-     },
-     "effects": [
-      {
-       "do": "token",
-       "n": 2,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "spirit"
-       ]
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -99537,10 +99456,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a creature token leaves the battlefield, put a +1/+1 counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

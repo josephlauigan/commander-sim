@@ -861,6 +861,8 @@ enum How {
     AllTargeted,
     /// destroy or damage only
     Indes,
+    /// destroy or damage, for creature tokens only (Ainok Strike Leader)
+    TokenIndes,
     /// targeted removal from a coloured source
     Color,
     /// any targeted removal (creature, nontoken)
@@ -881,7 +883,7 @@ enum Scope {
 type Protector = (&'static str, Where, Option<(u32, &'static str)>, How, Scope, bool);
 
 /// pool_ai.PROTECTORS, with the entries rules.py (Siren Stormtamer) and rules2.py (Cartel Aristocrat) add as they load
-const PROTECTORS: [Protector; 17] = [
+const PROTECTORS: [Protector; 18] = [
     ("Heroic Intervention", Where::Hand, Some((1, "G")), How::HexproofIndes, Scope::Perms, false),
     ("Teferi's Protection", Where::Hand, Some((2, "W")), How::Phase, Scope::Perms, false),
     ("Flawless Maneuver", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, true),
@@ -899,6 +901,7 @@ const PROTECTORS: [Protector; 17] = [
     ("Alseid of Life's Bounty", Where::BfSac, Some((1, "")), How::Color, Scope::One, false),
     ("Siren Stormtamer", Where::BfSac, Some((0, "U")), How::AllTargeted, Scope::One, false), // rules.py
     ("Cartel Aristocrat", Where::BfSacOther, None, How::Color, Scope::Selfish, false),       // rules2.py
+    ("Ainok Strike Leader", Where::BfSac, None, How::TokenIndes, Scope::Creatures, false), // t0_zurgo
 ];
 
 const WIPE_INDES: [&str; 8] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal", "brutal", "ignite"];
@@ -924,6 +927,9 @@ fn saves(g: &Game, how: How, kind: &str, m: Option<PermId>, spell: Option<CardId
         How::Phase => true,
         How::HexproofIndes => targeted || WIPE_INDES.contains(&kind),
         How::Indes => destroyish(kind) || (!targeted && WIPE_INDES.contains(&kind)),
+        How::TokenIndes => {
+            if targeted { destroyish(kind) && m.is_some_and(|m| g.perm(m).token) } else { WIPE_INDES.contains(&kind) }
+        }
         _ if !targeted => false,
         How::AllTargeted => true,
         How::Blink => m.is_some_and(|m| g.is_creature(m) && !g.perm(m).token),
@@ -1126,6 +1132,9 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
         let (name, _, _, how, scope, _) = PROTECTORS[i];
         if matches!(scope, Scope::One | Scope::Selfish) || !saves(g, how, kind, None, None, false) {
             continue;
+        }
+        if how == How::TokenIndes && !crate::impls::t0_zurgo::tokens_carry_board(g, q) {
+            continue; // only the tokens would live
         }
         if use_protector(g, q, i, src)? {
             if name == "Teferi's Protection" {

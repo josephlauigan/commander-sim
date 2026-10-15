@@ -235,7 +235,7 @@ impl Tokens {
 }
 
 /// p creates tokens; returns the ones that stayed on the battlefield. Python's `make_tokens`.
-pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> {
+pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermId>> {
     let mut out = vec![];
     let mut n = spec.n * crate::dsl::token_mult(g, p);
     let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
@@ -247,6 +247,18 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
     let (mut pw, mut tg, mut sick) = (spec.pow, spec.tgh, spec.sick);
     if has(g, p, Tag::Jinnie) && pw < 2 && !spec.attacking {
         (pw, tg, sick) = (2, Some(2), false); // Jinnie Fay: 2/2 Cats with haste instead
+    }
+    let angels = crate::impls::t0_zurgo::divine_visitation(g, p);
+    if angels {
+        // Divine Visitation: 4/4 white Angels with flying and vigilance instead
+        (pw, tg) = (4, Some(4));
+        spec.fly = true;
+        spec.warrior = false;
+        spec.lifelink = false;
+        spec.dt = false;
+        spec.color = Some(Colors::from_letters("W"));
+        spec.types = vec!["angel"];
+        spec.data = PermData::default();
     }
     let color = spec.color.unwrap_or_else(|| token_color(g.player(p).key));
     for _ in 0..n {
@@ -260,7 +272,11 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, spec: Tokens) -> Res<Vec<PermId>> 
         x.colors = color;
         x.ttypes = spec.types.clone();
         x.data = spec.data.clone();
+        x.vig = angels;
         x.on_bf = true;
+        g.enter_no += 1;
+        g.perm_mut(m).born = g.enter_no;
+        let x = g.perm_mut(m);
         if spec.attacking {
             x.tapped = true;
         }
@@ -498,6 +514,9 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
                 queue_triggers(g, vec![t])?; // "when it leaves" (Oblivion Ring)
             }
         }
+    }
+    if on && g.perm(m).token {
+        crate::impls::t0_zurgo::token_left(g, p, m)?; // t0-zurgo: Zurgo Stormrender, Twilight Drover
     }
     Ok(())
 }

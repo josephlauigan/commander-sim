@@ -391,6 +391,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
     crate::impls::cloud::plan_milestone(g, p, atk); // the cloud deck's plan online
     new.extend(crate::impls::cloud::jocasta_attack(g, p, atk)?); // Jocasta returns from the graveyard attacking
     new.extend(cardcode::keyword_attack(g, p, atk, d)?);
+    new.extend(crate::impls::t0_zurgo::attack_keywords(g, p, atk, d)?); // t0-zurgo: myriad, attack counts
     if !g.hooks.is_empty() {
         g.new_attackers.clear();
         fire_trigger(g, Event::Attack, Call::Attack { p, atk: atk.to_vec(), d })?;
@@ -951,12 +952,14 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             }
         }
         groups = kept;
+        crate::impls::t0_zurgo::goad_attackers(g, p, &mut groups, d)?; // t0-zurgo: goaded creatures attack
         if !groups.iter().any(|x| x.0 == d)
             && let Some(first) = groups.first()
         {
             d = first.0;
         }
         let mut atk: Vec<PermId> = groups.iter().flat_map(|x| x.1.iter().copied()).collect();
+        g.atk_targets = groups.iter().flat_map(|(q, xs)| xs.iter().map(move |&m| (m, *q))).collect(); // t0-zurgo
         if !g.hooks.is_empty() && !atk.is_empty() {
             // beginning of combat (Helm of the Host)
             let new = cardcode::combat_start(g, p)?;
@@ -966,6 +969,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                     if let Some(gr) = groups.iter_mut().find(|x| x.0 == d) {
                         gr.1.push(m);
                     }
+                    g.atk_targets.push((m, d));
                 }
             }
         }
@@ -1025,9 +1029,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         }
         let new = attack_triggers(g, p, &atk, d)?; // once for the whole attack, naming the main defender
         atk.extend(&new);
-        if let Some(gr) = groups.iter_mut().find(|x| x.0 == d) {
-            gr.1.extend(&new);
-        }
+        crate::impls::t0_zurgo::route_new_attackers(g, p, &atk, &new, d, &mut groups)?; // t0-zurgo: tokens attack their own player
         cardcode::ring_attack(g, p, &atk)?; // the Ring, level 2: loot
         cardcode::hand_attack(g, p, &atk, d)?;
         if g.over || !groups.iter().any(|x| g.player(x.0).alive) {
@@ -1045,6 +1047,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             }
             Ok(())
         })();
+        let r = r.and_then(|_| crate::impls::t0_zurgo::end_of_combat(g, p)); // t0-zurgo: myriad tokens are exiled
         g.in_combat.clear();
         r?;
         if g.over || !g.player(p).alive {
