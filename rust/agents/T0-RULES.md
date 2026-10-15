@@ -1,4 +1,4 @@
-# Rules for the Tier 0 card-modeling agents (2026-10-12)
+# Rules for the Tier 0 card-modeling agents (2026-10-12, refreshed 2026-10-14)
 
 You are one of five agents writing Rust card code for **Tier 0**, a new opponent tier of five unmodified WotC Commander
 precons (`decklists/pool/t0-b2-precons/`), so they play at full strength. Read this file, then
@@ -11,11 +11,11 @@ These rules replace `rust/agents/RULES.md` (written for the Python port): **Pyth
   (a hook refuses it). Use shell tools (`grep`, `sed`, `awk`, `jq`), `cardgen` and `commander-sim`, or a Rust test or
   example.
 - **Your worktree is your whole world.** `cd` into it for every command. Its branch was made from
-  `tier0-precons`; don't merge anything else in, and don't push.
+  `calib-1014` (origin/main plus these briefs); don't merge anything else in, and don't push.
 - **Memory cap on every build, test and binary:** `systemd-run --user --scope -q -p MemoryMax=8G -p MemorySwapMax=0
   <command>`. Exit 137 means the cap was hit: that's a bug (something growing without bound), never a flake.
-- **Five agents share the machine:** build and test with `-j 4` (`cargo test --release -j 4`), smoke runs with
-  `--jobs 4`.
+- **Six agents share the machine:** build and test with `-j 3` (`cargo test --release -j 3`), smoke runs with
+  `--jobs 3`.
 - Toolchain: `export PATH=$HOME/.cargo/bin:$PATH`; build from `rust/`. In zsh, write commands out (a command stored in
   a variable isn't word-split).
 - Never let an unsigned counter go below zero (release builds have overflow checks).
@@ -23,7 +23,8 @@ These rules replace `rust/agents/RULES.md` (written for the Python port): **Pyth
   build or test in the foreground (with a long timeout). Leave nothing running when you finish.
 - **Edit only the files your brief gives you.** Shared files (`cardcode.rs`, `state.rs`, `hooks.rs`, `engine/*`,
   `ai/*`, `dsl/*`, `impls/common.rs`): only the smallest additive change, and list each one in your report. The other
-  four agents edit the same shared files in parallel; keep your changes there small so merges stay easy. Don't touch
+  four Tier 0 agents (and a Tier 2 balance agent working in `ai/`) edit the same shared files in parallel; keep your
+  changes there small so merges stay easy. Don't touch
   `impls/mod.rs` (all five modules are already registered). Format only your own files:
   `rustfmt --edition 2024 <files>`, never `cargo fmt` on the workspace.
 - **Stay in your lane.** Each shared mechanic has one owner (table below). If you need one you don't own, don't
@@ -36,6 +37,14 @@ These rules replace `rust/agents/RULES.md` (written for the Python port): **Pyth
 | Plot, suspend, storm, cascade, jump-start, copying spells, adapt, Vehicles and crew | t0-stella |
 | Sagas and read ahead, constellation, devotion, channel, landfall | t0-anikthea |
 | Heroes and Hero cost reductions, Backgrounds (Folk Hero), casting spells as though they had flash, "becomes tapped" triggers | t0-captain |
+
+Since these rules were first written (10/12), main gained a lot of machinery: the monarch, cycling, Sagas, landfall,
+crew, cascade, storm, proliferate and Clues all exist in some form now. **Grep before you build** and reuse what is
+there; the owner only extends it where a card needs more.
+
+- **Never edit a Tier 0 decklist.** These are unmodified precons on purpose; only card code and AI change.
+- `data/cards.json` and `data/decks.json` are generated (`cardgen export`): commit them, but the lead regenerates
+  them when merging, so don't spend effort on conflicts there.
 
 ## How cards are modeled
 - Read `rust/PORTING_CARDS.md` (written for the port, but the hook-slot pattern still applies) and follow
@@ -59,13 +68,13 @@ These rules replace `rust/agents/RULES.md` (written for the Python port): **Pyth
   `lands`, `perm`, `token`). One test per card at least, checking the behaviour that matters.
 
 ## Checks before you finish
-1. `cargo test --release -j 4` passes (all of it, not only your tests).
-2. `cargo build --release -j 4 --all-targets` has no warnings.
+1. `cargo test --release -j 3` passes (all of it, not only your tests).
+2. `cargo build --release -j 3 --all-targets` has no warnings.
 3. `./target/release/examples/all_decks adaptive 3` and `./target/release/examples/all_decks lookahead 1` finish
    with no panic (under the memory cap).
 4. `cardgen audit --deck <your deck key>`: every card your brief lists is Full.
-5. A short smoke run with the deck in the field finishes: `./target/release/commander-sim --deck elrond --pool t0 --profile
-   loose --games 48 --ai lookahead --jobs 4 --brief`.
+5. A short smoke run with the deck in the field finishes: `./target/release/commander-sim --deck cloud --pool t0 --any-tier --profile
+   loose --games 48 --ai lookahead --jobs 3 --brief`.
 
 ## Keeping context small
 - **Commit often** (`git add -A rust/ data/ && git commit -m "..."`, no Co-Authored-By line), at least after each finished card group. Never push.

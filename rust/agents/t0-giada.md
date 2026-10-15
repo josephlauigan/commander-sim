@@ -6,18 +6,18 @@ You own: cycling and landcycling, the monarch, Clues and investigate, lifegain t
 
 **Check the commander first:** Giada, Font of Hope must do everything its Oracle text says (it is in your list if the audit says
 it isn't Full). The deck plays through the outside-deck AI (`ai/pool.rs`): make sure that AI casts the commander early
-and uses its abilities; trace a game with `commander-sim --deck elrond --pool t0 --trace 0` (and further game numbers until that deck is seated: each game draws three of the five) and follow Giada, Font of Hope.
+and uses its abilities; trace a game with `commander-sim --deck cloud --pool t0 --any-tier --trace 0` (and further game numbers until that deck is seated: each game draws three of the five) and follow Giada, Font of Hope.
 
 ## Cards to model (until `cardgen audit --deck giada-calling-all-angels` shows each Full)
 
 ```
 Unmodeled   Search the Premises                      no effect recognised
 Unmodeled   Secret Rendezvous                        You and target opponent each draw three cards.
-Partial     Angel of Vitality                        body only, abilities not modeled: If you would gain life, you gain that much life plus 1 instead.; This creature gets
+Partial     Angel of Vitality                        body only, abilities not modeled: If you would gain life, you gain that much life plus 1 instead.; This cre
 Partial     Angel of the Ruins                       Plainscycling {2}; keywords not modeled: cycling, landcycling
 Partial     Angelic Field Marshal                    body only, abilities not modeled: Lieutenant — As long as you control your commander, ~ gets +2/+2 and c
-Partial     Angelic Sleuth                           body only, abilities not modeled: Whenever another permanent you control leaves the battlefield, if it had counters o
-Partial     Court of Grace                           When ~ enters, you become the monarch.; At the beginning of your upkeep, create a 1/1 white Spirit creature token wit
+Partial     Angelic Sleuth                           body only, abilities not modeled: Whenever another permanent you control leaves the battlefield, if it had 
+Partial     Court of Grace                           When ~ enters, you become the monarch.; At the beginning of your upkeep, create a 1/1 white Spirit creature
 Partial     Cut a Deal                               Each opponent draws a card, then you draw a card for each opponent who drew a ca
 Partial     Defy Death                               Return target creature card from your graveyard to the battlefield. If it's an A
 Partial     Emeria Shepherd                          Landfall — Whenever a land you control enters, you may return target nonland per
@@ -32,12 +32,12 @@ Partial     Merchant of Truth                        body only, abilities not mo
 Partial     Metropolis Reformer                      body only, abilities not modeled: You have hexproof.; Whenever ~ is dealt damage, you gain that much life.
 Partial     Norn's Choirmaster                       body only, abilities not modeled: Whenever a commander you control enters or attacks, proliferate.
 Partial     Righteous Valkyrie                       Whenever another Angel or Cleric you control enters, you gain life equal to that
-Partial     Sephara, Sky's Blade                     body only, abilities not modeled: You may pay {W} and tap four untapped creatures you control with flyin; Other creat
+Partial     Sephara, Sky's Blade                     body only, abilities not modeled: You may pay {W} and tap four untapped creatures you control with flyin; O
 Partial     Seraph of the Sword                      body only, abilities not modeled: Prevent all combat damage that would be dealt to ~.
 Partial     Serra Avenger                            body only, abilities not modeled: You can't cast ~ during your first, second, or third turns of the game
 Partial     Starnheim Aspirant                       body only, abilities not modeled: Angel spells you cast cost {2} less to cast.
 Partial     Vanguard Seraph                          body only, abilities not modeled: Whenever you gain life for the first time each turn, surveil 1. 
-Partial     Wojek Investigator                       body only, abilities not modeled: At the beginning of your upkeep, investigate once for each opponent who has more ca
+Partial     Wojek Investigator                       body only, abilities not modeled: At the beginning of your upkeep, investigate once for each opponent who h
 Partial     Youthful Valkyrie                        body only, abilities not modeled: Whenever another Angel you control enters, put a +1/+1 counter on ~.
 Approximate Bishop of Wings                          regex tags: tok tokfly tokp
 Approximate Linvala, the Preserver                   regex tags: tok tokfly tokp
