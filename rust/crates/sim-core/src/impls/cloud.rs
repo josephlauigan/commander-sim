@@ -1216,12 +1216,20 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             if eq_out + eq_hand > 0 && !cloud_out { base + 8 } else { base }
         }
         "Unfinished Business" => {
+            // Cloud goes to the command zone, so he is rarely in the graveyard: any creature card there is a target,
+            // and the Equipment that lie beside it come back attached (up to two)
             let best = pl.gy.iter().any(|&x| card_name(g, x) == CLOUD);
+            let creature_cmc = pl.gy.iter().filter(|&&x| g.db.get(x).creature).map(|&x| g.db.get(x).cmc).max();
             let any = pl.gy.iter().any(|&x| g.db.get(x).creature && g.db.get(x).bomb >= 3);
+            let gear = pl.gy.iter().filter(|&&x| is_equipment_card(g, x)).count();
             if best {
                 80
+            } else if creature_cmc.is_some() && gear >= 1 {
+                70 + 3 * gear.min(2) as i32
             } else if any {
                 60
+            } else if creature_cmc.is_some_and(|c| c >= 3) {
+                45
             } else {
                 0
             }

@@ -120,3 +120,48 @@ fn feast_and_famine_first_with_a_clogged_hand() {
     hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Arcane Signet", "Swords to Plowshares"]);
     assert_eq!(pick(&g), "Sword of Feast and Famine");
 }
+
+// ---- F8: Unfinished Business is cast
+fn labels(g: &mut Game) -> Vec<String> {
+    sim_core::ai::brain::main_options(g, P0, false).unwrap().iter().map(|o| o.label.clone()).collect()
+}
+
+fn to_gy(g: &mut Game, names: &[&str]) {
+    for n in names {
+        let c = take(g, P0, n);
+        g.player_mut(P0).gy.push(c);
+    }
+}
+
+#[test]
+fn unfinished_business_is_cast_on_a_creature_and_its_equipment() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 5, false);
+    to_gy(&mut g, &["Kor Duelist", "Sword of Fire and Ice"]);
+    hand(&mut g, P0, &["Unfinished Business"]);
+    g.player_mut(P0).turns = 5;
+    let l = labels(&mut g);
+    assert!(l.iter().any(|x| x.contains("Unfinished Business")), "{l:?}");
+}
+
+#[test]
+fn unfinished_business_waits_without_a_creature_card() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 5, false);
+    to_gy(&mut g, &["Sword of Fire and Ice"]);
+    hand(&mut g, P0, &["Unfinished Business"]);
+    g.player_mut(P0).turns = 5;
+    let l = labels(&mut g);
+    assert!(!l.iter().any(|x| x.contains("Unfinished Business")), "{l:?}");
+}
+
+#[test]
+fn recommission_is_cast_on_a_cheap_graveyard_creature() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 3, false);
+    to_gy(&mut g, &["Kor Duelist"]);
+    hand(&mut g, P0, &["Recommission"]);
+    g.player_mut(P0).turns = 5;
+    let l = labels(&mut g);
+    assert!(l.iter().any(|x| x.contains("Recommission")), "{l:?}");
+}
