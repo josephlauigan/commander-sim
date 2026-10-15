@@ -1,0 +1,95 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m35s elapsed, ~5m23s left
+  progress  20.0%  1m11s elapsed, ~4m47s left
+  progress  30.0%  1m48s elapsed, ~4m12s left
+  progress  40.0%  2m24s elapsed, ~3m37s left
+  progress  50.0%  3m02s elapsed, ~3m02s left
+  progress  60.0%  3m41s elapsed, ~2m27s left
+  progress  70.0%  4m17s elapsed, ~1m50s left
+  progress  80.0%  4m51s elapsed, ~1m12s left
+  progress  90.0%  5m23s elapsed, ~0m35s left
+  progress 100.0%  6m01s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 11.9%   (4-player baseline 25%)   average rounds survived 11.8
+
+-- How it wins --
+  damage      92.4% of wins
+  timeout      7.6% of wins
+  Opponents it eliminated: 0.46 per game, by
+    combat             50.8%
+    commander damage   38.8%
+    triggers            8.9%
+    decked              1.6%
+  Damage dealt per game: 29.3, from
+    combat              27.3  (93%)
+    triggers             2.0  (7%)
+
+-- How it loses --
+  Eliminated in 87.1% of games, on average in round 11.3
+    by Brago    via combat             20.4% of games
+    by Lord Windgrace via combat             17.1% of games
+    by Kaalia of the Vast via combat             16.4% of games
+    by Sythis   via combat             10.7% of games
+    by Meren of Clan Nel Toth via combat              7.2% of games
+    by Kaalia of the Vast via drain               3.5% of games
+    by Meren of Clan Nel Toth via triggers            2.9% of games
+    by Sythis   via commander damage    2.9% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 22%  T5 40%  T6 53%  T7 61%  T8 66%  T9 69%  T10 71%  T11 72%  T12 74%
+  Online at all: 75.3% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 100.0% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Austere Command                            cast in  11.6% of games, win rate when cast  27.3% (+15.4)
+    Bronze Guardian                            cast in   8.4% of games, win rate when cast  26.2% (+14.3)
+    Nim Deathmantle                            cast in  16.0% of games, win rate when cast  24.7% (+12.8)
+    Bastion Protector                          cast in  19.2% of games, win rate when cast  23.4% (+11.5)
+    Veteran's Powerblade                       cast in  14.8% of games, win rate when cast  23.4% (+11.5)
+    Shield of Kaldra                           cast in  23.4% of games, win rate when cast  23.3% (+11.4)
+    Balan, Wandering Knight                    cast in  13.8% of games, win rate when cast  23.2% (+11.3)
+    Adelbert Steiner                           cast in  19.7% of games, win rate when cast  23.1% (+11.2)
+    Sword of Kaldra                            cast in  29.0% of games, win rate when cast  22.9% (+11.0)
+    Beatrix, Loyal General                     cast in   9.8% of games, win rate when cast  22.8% (+10.9)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast  11.9% (+0.0)
+    Sword of Fire and Ice                      cast in  83.5% of games, win rate when cast  13.8% (+1.9)
+    Enlightened Tutor                          cast in  19.4% of games, win rate when cast  15.5% (+3.6)
+    Lay Down Arms                              cast in  19.2% of games, win rate when cast  15.6% (+3.7)
+    Giver of Runes                             cast in  21.2% of games, win rate when cast  15.8% (+3.9)
+    Sword of Hearth and Home                   cast in  66.4% of games, win rate when cast  16.3% (+4.4)
+    Zack Fair                                  cast in  23.6% of games, win rate when cast  16.3% (+4.4)
+    Armory Automaton                           cast in  17.4% of games, win rate when cast  16.4% (+4.5)
+    Mind Stone                                 cast in  19.8% of games, win rate when cast  16.4% (+4.5)
+    Coalition Relic                            cast in  16.6% of games, win rate when cast  17.2% (+5.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unfinished Business                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Rootborn Defenses                          cast   5.2% of the games it was drawn [reactive: only cast in response]
+    Unbreakable Formation                      cast   5.6% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  18.2% of the games it was drawn [reactive: only cast in response]
+    Bronze Guardian                            cast  40.5% of the games it was drawn
+    Beatrix, Loyal General                     cast  43.7% of the games it was drawn
+    Secure the Scene                           cast  45.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    1.36
+    Sword of Fire and Ice                      0.54
+    Sword of Hearth and Home                   0.36
+    Helm of Kaldra                             0.15
+    Cid, Freeflier Pilot                       0.09
+    Grand Abolisher                            0.08
+    White Mage's Staff                         0.07
+    Colossus Hammer                            0.07
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(361s total)

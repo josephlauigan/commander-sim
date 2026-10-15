@@ -1,0 +1,15 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Brass Squire [pool] AC 3 :: pow=1 tgh=3
+   Danitha Capashen, Paragon [scryfall] C 2W :: leg human pow=2 lifelink vig
+      not modeled: Aura and Equipment spells you cast cost {1} less to cast.
+   Sigarda's Aid [pool] E W :: (no tags)
+   Sram, Senior Edificer [pool] C 1W :: leg pow=2
+   Mentor of the Meek [pool] C 2W :: human pow=2
+   Welcoming Vampire [pool] C 2W :: pow=2 tgh=3 fly
+   Wall of Omens [scryfall+dsl] C 1W :: pow=0 tgh=4
+      ability: triggered etb -> draw
+   Fencing Ace [pool] C 1W :: human pow=1 tgh=1
+   Mirran Crusader [pool] C 1WW :: human pow=2 tgh=2
+   Kor Skyfisher [pool] C 1W :: pow=2 tgh=3 fly
+   Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant

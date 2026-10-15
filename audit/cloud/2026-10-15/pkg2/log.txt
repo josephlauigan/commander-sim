@@ -1,0 +1,16 @@
+10:49 pkg S t1 [loose       ] win  22.1% ->  20.6%  (delta -1.6 pts, noise ±2.4, paired)   n=2000
+11:01 pkg S t2 [loose       ] win  19.1% ->  19.9%  (delta +0.9 pts, noise ±2.3, paired)   n=2000
+11:11 pkg C t1 [loose       ] win  22.1% ->  23.2%  (delta +1.1 pts, noise ±2.5, paired)   n=2000
+11:16 pkg C t2 NO RESULT:    Wall of Omens [scryfall+dsl] C 1W :: pow=0 tgh=4
+      ability: triggered etb -> draw
+11:26 pkg B t1 [loose       ] win  22.1% ->  21.5%  (delta -0.6 pts, noise ±2.4, paired)   n=2000
+11:26 pkg B t2 NO RESULT:    Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant
+11:28 pkg SLITE t1 NO RESULT:    Danitha Capashen, Paragon [scryfall] C 2W :: leg human pow=2 lifelink vig
+      not modeled: Aura and Equipment spells you cast cost {1} less to cast.
+11:29 pkg SLITE t2 NO RESULT:    Danitha Capashen, Paragon [scryfall] C 2W :: leg human pow=2 lifelink vig
+      not modeled: Aura and Equipment spells you cast cost {1} less to cast.
+11:39 pkg SCB t1 [loose       ] win  22.1% ->  20.6%  (delta -1.5 pts, noise ±2.4, paired)   n=2000
+11:39 pkg SCB t2 NO RESULT:    Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant
+11:39 ALL DONE

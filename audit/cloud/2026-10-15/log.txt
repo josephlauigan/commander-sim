@@ -1,0 +1,9 @@
+08:53 base t1 Win rate 14.0%   (4-player baseline 25%)   average rounds survived 9.8
+08:57 aifix t1 Win rate 15.8%   (4-player baseline 25%)   average rounds survived 9.7
+09:03 base t2 Win rate 11.9%   (4-player baseline 25%)   average rounds survived 11.8
+09:09 aifix t2 Win rate 13.8%   (4-player baseline 25%)   average rounds survived 11.7
+09:18 pkg D t1 (16/2 swaps) [loose       ] win  15.8% ->  22.2%  (delta +6.4 pts, noise ±2.4, paired)   n=2000
+09:30 pkg D t2 (16/2 swaps) [loose       ] win  13.8% ->  20.1%  (delta +6.3 pts, noise ±2.3, paired)   n=2000
+09:40 pkg R t1 (12/2 swaps) [loose       ] win  15.8% ->  13.8%  (delta -1.9 pts, noise ±2.1, paired)   n=2000
+09:52 pkg R t2 (12/2 swaps) [loose       ] win  13.8% ->  12.8%  (delta -1.1 pts, noise ±2.0, paired)   n=2000
+10:02 pkg DR t1 (28/2 swaps) [loose       ] win  15.8% ->  20.6%  (delta +4.9 pts, noise ±2.3, paired)   n=2000

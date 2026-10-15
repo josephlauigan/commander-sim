@@ -1,0 +1,99 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m32s elapsed, ~4m54s left
+  progress  20.0%  1m03s elapsed, ~4m12s left
+  progress  30.0%  1m32s elapsed, ~3m36s left
+  progress  40.0%  2m03s elapsed, ~3m05s left
+  progress  50.0%  2m33s elapsed, ~2m33s left
+  progress  60.0%  3m04s elapsed, ~2m03s left
+  progress  70.0%  3m38s elapsed, ~1m33s left
+  progress  80.0%  4m09s elapsed, ~1m02s left
+  progress  90.0%  4m41s elapsed, ~0m31s left
+  progress 100.0%  5m11s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 14.0%   (4-player baseline 25%)   average rounds survived 9.8
+
+-- How it wins --
+  damage      99.3% of wins
+  timeout      0.7% of wins
+  Opponents it eliminated: 0.47 per game, by
+    commander damage   54.4%
+    combat             34.0%
+    triggers           10.3%
+    decked              1.3%
+  Damage dealt per game: 28.3, from
+    combat              25.9  (91%)
+    triggers             2.5  (9%)
+
+-- How it loses --
+  Eliminated in 86.0% of games, on average in round 9.4
+    by Light-Paws via commander damage   17.4% of games
+    by Isshin   via combat             15.9% of games
+    by Tatyova  via combat             11.6% of games
+    by Lathril  via combat             10.3% of games
+    by Teysa Karlov via drain               7.0% of games
+    by Lathril  via drain               6.4% of games
+    by Teysa Karlov via combat              5.8% of games
+    by Light-Paws via combat              4.2% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 5%  T4 28%  T5 46%  T6 57%  T7 64%  T8 68%  T9 71%  T10 72%  T11 73%  T12 74%
+  Online at all: 74.6% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 99.9% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 99%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Beatrix, Loyal General                     cast in   7.8% of games, win rate when cast  40.1% (+26.2)
+    Austere Command                            cast in   9.4% of games, win rate when cast  35.6% (+21.7)
+    Sword of Kaldra                            cast in  19.8% of games, win rate when cast  35.1% (+21.2)
+    Veteran's Powerblade                       cast in  12.3% of games, win rate when cast  33.6% (+19.7)
+    Bronze Guardian                            cast in   8.2% of games, win rate when cast  32.9% (+19.0)
+    Exalted Angel                              cast in   8.8% of games, win rate when cast  32.8% (+18.8)
+    Swiftfoot Boots                            cast in  15.4% of games, win rate when cast  32.4% (+18.4)
+    Solemn Simulacrum                          cast in  10.6% of games, win rate when cast  32.2% (+18.3)
+    Balan, Wandering Knight                    cast in  13.0% of games, win rate when cast  31.9% (+18.0)
+    Fate of the Sun-Cryst                      cast in   9.8% of games, win rate when cast  31.8% (+17.8)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  99.9% of games, win rate when cast  14.0% (+0.0)
+    Sword of Fire and Ice                      cast in  79.8% of games, win rate when cast  17.1% (+3.2)
+    Cid, Freeflier Pilot                       cast in  17.3% of games, win rate when cast  18.2% (+4.3)
+    Explorer's Scope                           cast in  20.1% of games, win rate when cast  19.9% (+5.9)
+    Kor Outfitter                              cast in  17.8% of games, win rate when cast  20.8% (+6.9)
+    Mind Stone                                 cast in  17.4% of games, win rate when cast  21.2% (+7.3)
+    Helitrooper                                cast in  18.2% of games, win rate when cast  21.6% (+7.7)
+    Citizen's Arrest                           cast in  14.8% of games, win rate when cast  21.7% (+7.7)
+    Forum Familiar                             cast in  19.1% of games, win rate when cast  22.3% (+8.4)
+    Stand Up for Yourself                      cast in  15.4% of games, win rate when cast  22.3% (+8.4)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unfinished Business                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Unbreakable Formation                      cast   3.2% of the games it was drawn [reactive: only cast in response]
+    Rootborn Defenses                          cast   3.6% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  10.1% of the games it was drawn [reactive: only cast in response]
+    Beatrix, Loyal General                     cast  36.4% of the games it was drawn
+    Bronze Guardian                            cast  40.9% of the games it was drawn
+    Shield of Kaldra                           cast  43.5% of the games it was drawn
+    Secure the Scene                           cast  44.6% of the games it was drawn
+    Exalted Angel                              cast  46.1% of the games it was drawn
+    Austere Command                            cast  46.7% of the games it was drawn
+    Stormfront Riders                          cast  48.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.59
+    Sword of Fire and Ice                      0.32
+    Sword of Hearth and Home                   0.15
+    Helm of Kaldra                             0.04
+    Cid, Freeflier Pilot                       0.03
+    White Mage's Staff                         0.03
+    Kor Duelist                                0.03
+    Colossus Hammer                            0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(311s total)

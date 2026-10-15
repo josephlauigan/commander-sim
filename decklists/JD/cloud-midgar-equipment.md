@@ -31,7 +31,7 @@ of Cloud or an Equipment attached to it triggers, that ability triggers an addit
   then Cloud. His search finds a cheap Sword or Champion's Helm. Cheap creatures (Kor Duelist, Zack Fair, Giver of
   Runes, Forum Familiar) are fine early plays.
 - **Turns 3-4.** Cast and equip a Sword (equip {2}) on Cloud and attack. Use the free-equip pieces (Ardenn, Kor
-  Outfitter, Beatrix) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
+  Outfitter, Balan) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
 - **Turns 5+.** Add the big Equipment (Sword of Kaldra, Wrecking Ball Arm, Colossus Hammer), the Kaldra set, and
   the removal. If Cloud dies, a backup carrier takes the Swords.
 
@@ -51,9 +51,6 @@ With Cloud equipped, these Equipment gain from the extra trigger:
   himself for another search (his Equipment falls off when he leaves, so only when you can re-equip); do not aim both
   at Cloud, as the second would fizzle and lose its land.
 - **Mask of Memory**: two triggers of draw two then discard one.
-- **Explorer's Scope**: two looks at your top card whenever Cloud attacks, putting each land you find onto the battlefield tapped.
-- **White Mage's Staff**: it gives Cloud *Whenever this creature attacks, you gain 1 life*, which is Cloud's own
-  trigger, so you gain 2.
 
 The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left), **Nim Deathmantle**
 (the card is returned once) or **Hero's Blade** (it can't attach twice). **Champion's Helm**, **Swiftfoot Boots**,
@@ -61,16 +58,14 @@ The doubling does nothing useful for **Sword of Kaldra** (the second exile has n
 no triggers: they are plain bonuses (hexproof, first strike, haste, +X/+X, indestructible).
 
 ### Making Cloud enter again
-**Ennis, Debate Moderator** blinks Cloud (he returns at the next end step, so do it after combat; his Equipment falls
-off and has to be re-equipped, so it suits a turn with Ardenn or Beatrix out), **Forum Familiar**
-and **Unyielding Gatekeeper** do it when turned face up from disguise, and **Stormfront Riders** returns two creatures
-to your hand (and makes a 1/1 Soldier for each). **Recommission** and **Unfinished Business** bring him back from the
-graveyard, Unfinished Business with up to two Equipment attached. **Court of Ardenvale** returns a permanent with mana
-value 3 or less from the graveyard each upkeep (to the battlefield while you are the monarch, which Court makes you).
+**Forum Familiar** returns Cloud (or any creature) to your hand when turned face up from disguise, **Recommission**
+brings him back from the graveyard, and **Court of Ardenvale** returns a permanent with mana value 3 or less from the
+graveyard each upkeep (to the battlefield while you are the monarch, which Court makes you). **Kor Outfitter**,
+**Solemn Simulacrum**, **Knight of the White Orchid** and **Loyal Warhound** are worth a second enter if you have a way
+to blink them.
 
 ### Free equips
 - **Ardenn, Intrepid Archaeologist** moves any number of Equipment onto one permanent at the start of each combat.
-- **Beatrix, Loyal General** does the same for a creature you control (she is a 4/4 vigilance).
 - **Kor Outfitter** attaches one Equipment when it enters.
 - **Armory Automaton** attaches any number of Equipment to itself when it enters or attacks.
 - **Armored Skyhunter** flies; whenever it attacks it looks at the top six cards and puts an Equipment onto the
@@ -83,7 +78,6 @@ value 3 or less from the graveyard each upkeep (to the battlefield while you are
   it is equipped; **Helitrooper** makes equipping it cheaper by {2} and gives another attacker flying; **Cid, Freeflier
   Pilot** makes Equipment spells cost {1} less, flies on your turn and returns an Equipment from the graveyard.
 - **Veteran's Powerblade** equips a Soldier for {W}; Cloud is one.
-- **White Mage's Staff** makes its own 1/1 Hero token and attaches itself to it.
 
 ### Backup carriers
 When Cloud is dead or removed, **Balan, Wandering Knight**, **Kor Duelist** (double strike when equipped),
@@ -110,16 +104,19 @@ that creature indestructible.
   during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
   Bastion Protector (commander creatures get +2/+2 and indestructible) and Shield of Kaldra (indestructible).
 - **Protect the team.** Unbreakable Formation (creatures indestructible; in your main phase also a +1/+1 counter and
-  vigilance for each), Rootborn Defenses (creatures indestructible, populate) and Ultimate Magic: Holy (every
+  vigilance for each) and Ultimate Magic: Holy (every
   permanent you control indestructible). Cast Holy in response to your own Austere Command to keep your side.
 
 ### Removal
 - **Single targets:** Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
   it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Secure the Scene, Fate of the
-  Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less) and Unyielding
-  Gatekeeper.
+  Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less).
 - **Artifacts and enchantments:** Disenchant.
-- **Board wipe:** Austere Command (choose two modes). Choose "destroy creatures with mana value 4 or greater" with
+- **Attack taxes:** creatures can't attack you unless their controller pays per attacker: Ghostly Prison {2}, Windborn Muse
+  {2} (a 2/3 flier), Baird, Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archangel of Tithes {1} while she is untapped
+  (a 3/5 flier; while she attacks, blockers cost {1} each).
+- **Board wipes:** Wrath of God, Day of Judgment and Fumigate (gain 1 life per creature destroyed). Equipment survives them, and Cloud comes back from the command zone.
+- **Austere Command** (choose two modes): choose "destroy creatures with mana value 4 or greater" with
   "destroy all enchantments" to leave Cloud (mana value 2) and the artifacts (it also kills your own larger creatures),
   or cast Holy in response so that none of your permanents are destroyed.
 
@@ -132,10 +129,10 @@ that creature indestructible.
   7 or more twice.
 
 ### Weak spots and how to play around them
-- **Board wipes.** Don't overcommit creatures when you already have enough power. Hold Holy, Rootborn Defenses or
+- **Board wipes.** Don't overcommit creatures when you already have enough power. Hold Holy or
   Unbreakable Formation up when the table has wiped before.
-- **Artifact and enchantment removal.** Spread the Equipment across several carriers (Balan, Beatrix and Ardenn can
-  re-attach after a loss) and recur them with Cid or Unfinished Business.
+- **Artifact and enchantment removal.** Spread the Equipment across several carriers (Balan and Ardenn can
+  re-attach after a loss) and recur them with Cid.
 - **Cloud dead, command zone.** Remember the {2} commander tax; use the backup carriers first.
 - **Small bodies.** Giver of Runes, Grand Abolisher and Bastion Protector keep the board safe; Thalia and
   Skyclave Apparition slow the table down.
@@ -169,8 +166,8 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
-Interaction: Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Secure the Scene, Fate of the Sun-Cryst, Skyclave
-Apparition, Austere Command and Disenchant. 16 Equipment in the deck, so Cloud's search always finds one.
+Interaction: Wrath of God, Day of Judgment, Fumigate, Ghostly Prison, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Secure the Scene, Fate of the Sun-Cryst, Skyclave
+Apparition, Austere Command and Disenchant. 14 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
 
@@ -184,15 +181,15 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (29).** Adelbert Steiner, Ardenn Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Balan Wandering Knight, Bastion Protector, Beatrix Loyal General, Bronze Guardian, Cid Freeflier Pilot, Ennis Debate Moderator, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Stormfront Riders, Thalia the Survivor, Unyielding Gatekeeper, Zack Fair
+**Creatures (28).** Adelbert Steiner, Archangel of Tithes, Ardenn Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird Steward of Argive, Balan Wandering Knight, Bastion Protector, Bronze Guardian, Cid Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia the Survivor, Windborn Muse, Zack Fair
 
-**Enchantments (3).** Citizen's Arrest, Court of Ardenvale, Smothering Tithe
+**Enchantments (4).** Citizen's Arrest, Court of Ardenvale, Ghostly Prison, Smothering Tithe
 
-**Artifacts (22).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Explorer's Scope, Fellwar Stone, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Nim Deathmantle, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Veteran's Powerblade, White Mage's Staff, Wrecking Ball Arm
+**Artifacts (21).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Nim Deathmantle, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Veteran's Powerblade, Wrecking Ball Arm
 
-**Sorceries (5).** Austere Command, Lay Down Arms, Recommission, Secure the Scene, Unfinished Business
+**Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Recommission, Secure the Scene, Wrath of God
 
-**Instants (7).** Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Rootborn Defenses, Stand Up for Yourself, Ultimate Magic: Holy, Unbreakable Formation
+**Instants (6).** Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself, Ultimate Magic: Holy, Unbreakable Formation
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -201,15 +198,16 @@ on its own. Tell the table before the game that:
 ```
 1 Adelbert Steiner
 1 Arcane Signet
+1 Archangel of Tithes
 1 Ardenn, Intrepid Archaeologist
 1 Armored Skyhunter
 1 Armory Automaton
 1 Ash Barrens
 1 Auriok Steelshaper
 1 Austere Command
+1 Baird, Steward of Argive
 1 Balan, Wandering Knight
 1 Bastion Protector
-1 Beatrix, Loyal General
 1 Bronze Guardian
 1 Champion's Helm
 1 Cid, Freeflier Pilot
@@ -218,15 +216,16 @@ on its own. Tell the table before the game that:
 1 Coalition Relic
 1 Colossus Hammer
 1 Court of Ardenvale
+1 Day of Judgment
 1 Disenchant
 1 Enlightened Tutor
-1 Ennis, Debate Moderator
 1 Evolving Wilds
 1 Exalted Angel
-1 Explorer's Scope
 1 Fate of the Sun-Cryst
 1 Fellwar Stone
 1 Forum Familiar
+1 Fumigate
+1 Ghostly Prison
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
@@ -241,12 +240,12 @@ on its own. Tell the table before the game that:
 1 Mask of Memory
 1 Mind Stone
 1 Nim Deathmantle
+1 Norn's Annex
 1 Page, Loose Leaf
 1 Path of Ancestry
 1 Plaza of Heroes
 1 Puresteel Paladin
 1 Recommission
-1 Rootborn Defenses
 1 Secure the Scene
 1 Shield of Kaldra
 1 Skyclave Apparition
@@ -254,7 +253,6 @@ on its own. Tell the table before the game that:
 1 Sol Ring
 1 Solemn Simulacrum
 1 Stand Up for Yourself
-1 Stormfront Riders
 1 Swiftfoot Boots
 1 Sword of Feast and Famine
 1 Sword of Fire and Ice
@@ -265,10 +263,9 @@ on its own. Tell the table before the game that:
 1 Thought Vessel
 1 Ultimate Magic: Holy
 1 Unbreakable Formation
-1 Unfinished Business
-1 Unyielding Gatekeeper
 1 Veteran's Powerblade
-1 White Mage's Staff
+1 Windborn Muse
+1 Wrath of God
 1 Wrecking Ball Arm
 1 Zack Fair
 28 Plains

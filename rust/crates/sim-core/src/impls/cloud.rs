@@ -359,7 +359,18 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         }
     }
     let exposed = crate::ai::brain::removal_risk(g, p) >= 0.3;
-    let mut order: Vec<&str> = vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"];
+    // Sword of Feast and Famine untaps the lands (the mana to equip or cast the next piece) and its discard is cheap
+    // with a clogged hand; it also brings a different protection pair, so it comes before Hearth and Home once a Sword
+    // is already out or held, and first of all with four or more cards in hand
+    let sword_held = ["Sword of Fire and Ice", "Sword of Hearth and Home"].iter().any(|n| have(n));
+    let clogged = g.player(p).hand.len() >= 4;
+    let mut order: Vec<&str> = if clogged {
+        vec!["Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home"]
+    } else if sword_held {
+        vec!["Sword of Fire and Ice", "Sword of Feast and Famine", "Sword of Hearth and Home"]
+    } else {
+        vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"]
+    };
     if exposed && held >= 1 {
         order.insert(0, "Champion's Helm"); // hexproof for the legend
     } else {
@@ -1205,12 +1216,20 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             if eq_out + eq_hand > 0 && !cloud_out { base + 8 } else { base }
         }
         "Unfinished Business" => {
+            // Cloud goes to the command zone, so he is rarely in the graveyard: any creature card there is a target,
+            // and the Equipment that lie beside it come back attached (up to two)
             let best = pl.gy.iter().any(|&x| card_name(g, x) == CLOUD);
+            let creature_cmc = pl.gy.iter().filter(|&&x| g.db.get(x).creature).map(|&x| g.db.get(x).cmc).max();
             let any = pl.gy.iter().any(|&x| g.db.get(x).creature && g.db.get(x).bomb >= 3);
+            let gear = pl.gy.iter().filter(|&&x| is_equipment_card(g, x)).count();
             if best {
                 80
+            } else if creature_cmc.is_some() && gear >= 1 {
+                70 + 3 * gear.min(2) as i32
             } else if any {
                 60
+            } else if creature_cmc.is_some_and(|c| c >= 3) {
+                45
             } else {
                 0
             }
@@ -1484,6 +1503,9 @@ fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId)
     if !out.contains(&cl) || strong_gear(g, cl) || crate::engine::values::indestructible(g, cl) {
         return out;
     }
+    if trigger_gear(g, cl) && !likely_loss(g, cl, &[d]) {
+        return out; // a Sword's trigger is the engine: connecting beats sitting home
+    }
     let total: i32 = out.iter().map(|&m| epow(g, m)).sum();
     if total >= g.player(d).life {
         return out; // lethal: everyone goes
@@ -1497,6 +1519,48 @@ fn keep_cloud_home(g: &mut Game, p: PlayerId, mut out: Vec<PermId>, d: PlayerId)
         crate::glog!(g, "      [{} keeps Cloud home: nothing on him yet]", g.player(p).name);
     }
     out
+}
+
+/// Cloud wears a Sword or another Equipment with a combat trigger (triggers he doubles)
+fn trigger_gear(g: &Game, m: PermId) -> bool {
+    equipment_on(g, m).iter().any(|&e| {
+        matches!(
+            name_of(g, e),
+            "Sword of Fire and Ice"
+                | "Sword of Hearth and Home"
+                | "Sword of Feast and Famine"
+                | "Explorer's Scope"
+                | "Conformer Shuriken"
+        )
+    })
+}
+
+/// an untapped creature of one of `defs` could block Cloud and kill him (and he neither survives nor strikes first)
+fn likely_loss(g: &Game, cl: PermId, defs: &[PlayerId]) -> bool {
+    if crate::engine::values::indestructible(g, cl) {
+        return false;
+    }
+    defs.iter().any(|&q| {
+        g.player(q).perms.iter().any(|&b| {
+            live(g, b)
+                && g.is_creature(b)
+                && !g.perm(b).tapped
+                && crate::engine::combat::can_block(g, b, cl)
+                && epow(g, b) >= etgh(g, cl)
+                && !(crate::engine::combat::first_strike(g, cl) && epow(g, cl) >= etgh(g, b))
+        })
+    })
+}
+
+/// the look-ahead may not pick "no attack" when an equipped Cloud (trigger Equipment) can attack and isn't a likely
+/// loss (search::choose_attack_inner)
+pub fn must_attack(g: &Game, p: PlayerId) -> bool {
+    if g.player(p).key != KEY {
+        return false;
+    }
+    let Some(cl) = cloud_of(g, p) else { return false };
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    crate::human::combat::can_attack(g, p, cl) && trigger_gear(g, cl) && !likely_loss(g, cl, &opps)
 }
 
 /// look-ahead score bonus for a main-phase option of cloud (added to the rollout average in `search::choose_inner`):
@@ -1748,4 +1812,10 @@ pub fn keep_hand(g: &Game, p: PlayerId) -> bool {
         }),
         _ => false,
     }
+}
+
+/// Cloud wearing Equipment is not sent home by Stormfront Riders (bulk_white::riders_etb): the Equipment falls off and
+/// every re-equip costs mana. Only the cloud deck; Riders returns anything else (or itself) first.
+pub fn riders_spare(g: &Game, m: PermId) -> bool {
+    g.player(owner(g, m)).key == KEY && name_of(g, m) == CLOUD && !equipment_on(g, m).is_empty()
 }

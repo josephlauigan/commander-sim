@@ -56,6 +56,7 @@
 1x Bastion Protector (msc)
 1x Battle Rampart (roe)
 1x Battlefield Forge (fic)
+1x Beatrix, Loyal General
 1x Bedevil
 1x Behemoth Sledge (fic)
 1x Berta, Wise Extrapolator (sos)
@@ -229,6 +230,7 @@
 2x Empty the Warrens (tsr)
 1x Encouraging Aviator (sos)
 1x End of the Hunt (sos)
+1x Ennis, Debate Moderator
 1x Entrust the Spark (fra)
 1x Epitaph Golem (inr)
 2x Essence Reliquary (mh3)
@@ -243,6 +245,7 @@
 1x Exit Specialist (mkm)
 1x Expel the Unworthy (mh3)
 1x Experimental Augury (one)
+1x Explorer's Scope
 3x Expressive Firedancer (sos)
 1x Expressive Iteration (soa)
 1x Extrapolate the Impossible (fra)
@@ -621,7 +624,7 @@
 1x Roil Cartographer (mh3)
 1x Room of Refuge (fra)
 2x Root Manipulation (sos)
-1x Rootborn Defenses (rtr, list)
+2x Rootborn Defenses (rtr, list)
 1x Rootbound Crag (fic)
 1x Rousing Read (m21)
 2x Rubble Rouser (sos)
@@ -740,6 +743,7 @@
 2x Stirring Honormancer (sos)
 1x Stitcher's Supplier (fic)
 3x Stone Docent (sos)
+1x Stormfront Riders
 1x Strength of the Harvest (mh3)
 1x Stress Dream (sos)
 2x Strife Scholar (sos)
@@ -828,11 +832,13 @@
 1x Underworld Breach
 1x Undulating Witness (fra)
 2x Unfathomable Truths (mh3)
+1x Unfinished Business
 2x Unflinching Hortimancer (fra)
 1x Unfriendly Fire (xln)
 1x Unmarked Grave (ppmkm)
 3x Unsubtle Mockery (sos)
 1x Unsummon (fra)
+1x Unyielding Gatekeeper
 1x Utopia Vow (tsr)
 1x Vanish from Sight (dsk)
 1x Vanquish the Horde (fic)
@@ -869,6 +875,7 @@
 1x West Coast Expansion (msc)
 2x Whiplash Wordsmith (fra)
 2x White Auracite (fin)
+1x White Mage's Staff
 1x Whoosh! (spm)
 1x Wild Cantor (rvr)
 1x Wild Dogs (dmr)

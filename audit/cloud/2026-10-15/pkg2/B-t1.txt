@@ -1,0 +1,66 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Fencing Ace [pool] C 1W :: human pow=1 tgh=1
+   Mirran Crusader [pool] C 1WW :: human pow=2 tgh=2
+   Kor Skyfisher [pool] C 1W :: pow=2 tgh=3 fly
+   Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant
+Swaps: Helitrooper -> Fencing Ace; Loyal Warhound -> Mirran Crusader; Evolving Wilds -> Kor Skyfisher; Disenchant -> Selfless Spirit; Forum Familiar -> Adeline, Resplendent Cathar
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.1% ->  21.5%  (delta -0.6 pts, noise ±2.4, paired)   n=2000
+               eliminated by (variant): Lathril 14.6%  Isshin 18.4%  Teysa Karlov 13.6%  Light-Paws 22.4%  Tatyova 9.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          22.1% ->  21.5%  -0.6pt   ±2.6 
+    Rounds survived (or game length)                  10.30 ->  10.42   +0.11  ±0.20 
+
+  Mana & consistency
+    Extra mulligans per game                           0.23 ->   0.26   +0.03  ±0.05 
+    Missed land drops, turns 1-5                       0.92 ->   1.01   +0.09  ±0.06*
+    Mana available on your turn 4                      4.01 ->   3.95   -0.06  ±0.07 
+    Mana available on your turn 6                      5.66 ->   5.49   -0.17  ±0.12*
+
+  Speed
+    Games where the game plan came online             76.1% ->  74.3%  -1.8pt   ±2.7 
+    Turn the game plan came online                     5.62 ->   5.59   -0.04  ±0.16 
+    Turn the commander first resolved                  2.12 ->   2.11   -0.01  ±0.03 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.93 ->  13.82   -0.11  ±0.51 
+    Tutors resolved per game                           2.82 ->   2.80   -0.02  ±0.09 
+    Spells cast per game                              14.65 ->  14.78   +0.13  ±0.49 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.51 ->   0.35   -0.16  ±0.04*
+    Board wipes cast                                   0.28 ->   0.28   -0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.62 ->   0.65   +0.04  ±0.05 
+    Your spells countered                              0.17 ->   0.15   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                33.57 ->  34.78   +1.21  ±2.20 
+      ...of which combat damage                       31.41 ->  32.64   +1.23  ±2.05 
+      ...of which other triggers                       2.16 ->   2.14   -0.02  ±0.26 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Missed land drops, turns 1-5 (both profiles)
+    worse  - Mana available on your turn 6 (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+(590s total)

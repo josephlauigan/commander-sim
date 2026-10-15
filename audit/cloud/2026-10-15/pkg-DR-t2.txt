@@ -1,0 +1,16 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Ghostly Prison [pool] E 2W :: (no tags)
+   Norn's Annex [pool] A 3WW :: (no tags)
+   Archangel of Tithes [pool] C 1WWW :: pow=3 tgh=5 fly
+   Windborn Muse [pool] C 3W :: pow=2 tgh=3 fly
+   Baird, Steward of Argive [pool] C 2WW :: leg human pow=2 tgh=4 vig
+   Day of Judgment [scryfall+dsl] S 2WW :: wipe=destroy
+      ability: spell  -> destroy
+   Fumigate [scryfall+dsl] S 3WW :: wipe=destroy
+      ability: spell  -> destroy, gain_life
+   Council's Judgment [pool] S 1WW :: (no tags)
+   Mother of Runes [scryfall] C W :: human pow=1
+      not modeled: {T}: Target creature you control gains protection from the color of your choice until end of turn.
+   Flawless Maneuver [scryfall+dsl] I 2W :: (no tags)
+      ability: spell  -> grant
+      not modeled: If you control a commander, you may cast ~ without paying its mana cost.

@@ -399,6 +399,14 @@ fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
             scores[k] += playout_attack(g, p, c, base_seed, r);
         }
     }
+    if crate::impls::cloud::must_attack(g, p) {
+        // an equipped Cloud attacks (the position score can't see a Sword's trigger pair): "none" is out
+        for (k, c) in cands.iter().enumerate() {
+            if c.1 == "none" {
+                scores[k] = f64::NEG_INFINITY;
+            }
+        }
+    }
     let mut best = 0;
     for k in 1..cands.len() {
         if scores[k] > scores[best] {
