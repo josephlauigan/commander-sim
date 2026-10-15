@@ -59,6 +59,20 @@ look-ahead, 240 games per tier, loose / conservative:
 Trimming Meren made Sythis the Tier 2 outlier (40-46%), so Sythis was trimmed too (Sigil of the Empty Throne and Starfield
 of Nyx out). Kinnan and Yawgmoth sit at the edges of Tier 5.
 
+**October 2026 (Tier 2 re-balance, JD-approved swaps, look-ahead, seed 1014).** The engine changed since September; the
+re-measure at 2,000 games per profile read Sythis 41 / 41, with Kaalia, Windgrace, Brago and Meren at 18-24. Four lists
+were tuned (see each deck file): Sythis lost Hallowed Haunting, Ethereal Armor and Ancestral Mask (the token and pump
+engine); Windgrace gained Hornet Queen, Wurmcoil Engine and Glissa; Kaalia gained Sheoldred, Inferno Titan and Skyclave
+Apparition; Brago gained Lyra, Angel of Serenity and Resplendent Angel. Meren is unchanged.
+
+| Tier 2 within-tier | loose | conservative |
+|---|---|---|
+| Before (2,000 games) | Sythis 41, Meren 23, Brago 22, Windgrace 21, Kaalia 18 | Sythis 41, Meren 24, Brago 23, Kaalia 19, Windgrace 18 |
+| After (1,000 games) | Sythis 27, Kaalia 27, Windgrace 25, Brago 25, Meren 22 | Sythis 26, Brago 25, Windgrace 25, Kaalia 24, Meren 24 |
+
+Ordering (conservative): T2 into T1 25.9% before (1,000 per deck), T3 into T2 26.8% before; after: see
+`audit/pool/2026-10-14-t2/final-ordering-t2.txt` (500 per deck). Raw outputs are in `audit/pool/2026-10-14-t2/`.
+
 Games get shorter as the brackets go up (15 rounds in T2 to under 8 in T5), with few timeouts above T2.
 Remaining outliers: Meren and Atraxa run hot; Brago, Marwyn and Yawgmoth run cold. Yawgmoth's mono-black list has
 only three pieces for its undying loop (Mikaeus, Geralf's Messenger, Butcher Ghoul); an immortal Yawgmoth wins 36%, so

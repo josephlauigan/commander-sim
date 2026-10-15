@@ -1,8 +1,8 @@
 # Lord Windgrace — Jund Lands
 
-**Updated 2026-10-14.** Out: Hour of Promise, Skyshroud Claim, Toxic Deluge. In: Glissa Sunslayer, Hornet Queen, Wurmcoil Engine. y
-
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Lands / ramp value.
+
+Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Skyshroud Claim, Toxic Deluge and Hour of Promise made way for Hornet Queen, Wurmcoil Engine and Glissa Sunslayer (more threats for a ramp deck that rarely closed). Within Tier 2 (conservative): 17.9% before, 24.7% after.
 
 - **Commander:** Lord Windgrace
 - **Color identity:** Black, Red, Green

@@ -1,0 +1,2 @@
+
+=== Tier ordering: each deck alone against three decks of the tier below [conservative, n=500] ===

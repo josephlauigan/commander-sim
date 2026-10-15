@@ -1,8 +1,8 @@
 # Brago — Azorius Blink Control
 
-**Updated 2026-10-14.** Out: Arcane Denial, Swan Song, Venser, Shaper Savant. In: Angel of Serenity, Lyra Dawnbringer, Resplendent Angel. y
-
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-heavy.
+
+Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Arcane Denial, Swan Song and Venser, Shaper Savant made way for Lyra Dawnbringer, Angel of Serenity and Resplendent Angel (more pressure; Angel of Serenity is a blink target). Within Tier 2 (conservative): 23.0% before, 25.2% after.
 
 - **Commander:** Brago, King Eternal
 - **Color identity:** White, Blue

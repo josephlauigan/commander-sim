@@ -1,11 +1,8 @@
 # Sythis — Selesnya Enchantress Pillowfort
 
-**Updated 2026-10-14.** Out: Ethereal Armor, Hallowed Haunting. In: Mind Stone, Swiftfoot Boots. x
-**Updated 2026-10-14.** Out: All That Glitters, Ancestral Mask. In: Cultivate, Journey to Nowhere. y
-**Updated 2026-10-14.** Out: Cultivate. In: Ancestral Mask. y
-**Updated 2026-10-14.** Out: Ancestral Mask. In: All That Glitters. y
-
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Pillowfort / enchantress.
+
+Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Hallowed Haunting, Ethereal Armor and Ancestral Mask made way for Mind Stone, Swiftfoot Boots and Journey to Nowhere (fewer token and pump threats behind the pillowfort; the engine is unchanged). Within Tier 2 (conservative): 40.7% before, 26.3% after.
 
 - **Commander:** Sythis, Harvest's Hand
 - **Color identity:** White, Green
