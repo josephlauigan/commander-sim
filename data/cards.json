@@ -48,6 +48,55 @@
    "spell_prio": false
   },
   {
+   "name": "Abigale, Poet Laureate",
+   "types": "C",
+   "generic": 1,
+   "pips": "WB",
+   "tags": {
+    "leg": true,
+    "pow": "2",
+    "tgh": "3",
+    "fly": true
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "prepared"
+   ],
+   "subtypes": [
+    "bard",
+    "bird"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever you cast a creature spell, ~ becomes prepared.",
+    "[back face] Put a +1/+1 counter on target creature."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Abigale, Poet Laureate // Heroic Stanza",
    "types": "C",
    "generic": 1,
@@ -26374,6 +26423,51 @@
    "spell_prio": false
   },
   {
+   "name": "Dragoon's Lance",
+   "types": "A",
+   "generic": 1,
+   "pips": "W",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "gae bolg",
+    "job select"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Job select",
+    "During your turn, equipped creature has flying.",
+    "Gae Bolg — Equip {4}"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Drakuseth, Maw of Flames",
    "types": "C",
    "generic": 4,
@@ -38673,6 +38767,51 @@
     "etb",
     "options"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Gilgamesh, Master-at-Arms",
+   "types": "C",
+   "generic": 4,
+   "pips": "RR",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "pow": "6",
+    "bomb": "6"
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "samurai"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ enters or attacks, look at the top six cards of your library. You may put any number of Equipment cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order. When you put one or more Equipment onto the battlefield this way, you may attach one of them to a Samurai you control."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -80451,6 +80590,50 @@
    "spell_prio": false
   },
   {
+   "name": "Samurai's Katana",
+   "types": "A",
+   "generic": 2,
+   "pips": "R",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "job select",
+    "murasame"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Job select",
+    "Murasame — Equip {5}"
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Sanar, Unfinished Genius // Wild Idea",
    "types": "C",
    "generic": 0,
@@ -95401,7 +95584,7 @@
    "generic": 2,
    "pips": "",
    "tags": {
-    "rock": "1:RW",
+    "rock": "1:C",
     "pain": true
    },
    "pow": 0,

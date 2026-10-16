@@ -199,8 +199,6 @@ before the game.
 ## Import list (100)
 
 ```
-1 Kraum, Ludevic's Opus
-1 Tymna the Weaver
 1 Abigale, Poet Laureate
 1 Arcane Denial
 1 Arcane Sanctum
@@ -240,6 +238,7 @@ before the game.
 1 Hero's Blade
 1 Hero's Heirloom
 1 Irrigated Farmland
+1 Kraum, Ludevic's Opus
 1 Laelia, the Blade Reforged
 1 Lightning, Security Sergeant
 1 Lyra Dawnbringer
@@ -281,6 +280,7 @@ before the game.
 1 Toxic Deluge
 1 Trailblazer's Boots
 1 Twisted Fates
+1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River
 1 Urza, Powerstone Prodigy
@@ -292,5 +292,4 @@ before the game.
 2 Mountain
 3 Plains
 3 Swamp
-
 ```

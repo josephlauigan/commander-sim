@@ -637,8 +637,8 @@ fn lightblade_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-/// White Mage's Staff, job select: when it enters, create a 1/1 colorless Hero creature token, then attach this to it
-fn staff_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+/// Job select (White Mage's Staff, Dragoon's Lance, Samurai's Katana): when it enters, create a 1/1 colorless Hero creature token, then attach this to it
+pub fn staff_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }

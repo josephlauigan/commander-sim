@@ -18,10 +18,10 @@ use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{colors_of, epow, etgh, once_per_turn, pval, untargetable};
-use crate::engine::zones::{Tokens, die, draw, landfall, make_tokens, max_by};
+use crate::engine::zones::{Enter, Tokens, die, draw, enter, landfall, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, PermId, PlayerId};
+use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -321,7 +321,7 @@ fn photon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
 
 // ================================================================== Faeburrow Elder
 /// the colours among the permanents p controls
-fn colors_among(g: &Game, p: PlayerId) -> Colors {
+pub fn colors_among(g: &Game, p: PlayerId) -> Colors {
     g.player(p)
         .perms
         .iter()
@@ -568,6 +568,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     register_rocks(r, db)?;
     register_charm(r, db)?;
     register_witherbloom(r, db)?;
+    register_gear(r, db)?;
     Ok(())
 }
 
@@ -865,4 +866,384 @@ pub fn register_witherbloom(r: &mut Registry, db: &CardDb) -> Result<(), String>
         c.prio = Some(zero_prio);
     }
     Ok(())
+}
+
+// ================================================================== the Equipment package (Gilgamesh and friends)
+pub const GILGAMESH: &str = "Gilgamesh, Master-at-Arms";
+pub const LANCE: &str = "Dragoon's Lance";
+pub const KATANA: &str = "Samurai's Katana";
+pub const HEIRLOOM: &str = "Hero's Heirloom";
+pub const FLAIL: &str = "Conqueror's Flail";
+pub const PRISON: &str = "Boiling Rock Prison";
+
+fn live(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    x.on_bf && !x.phased
+}
+
+/// m is a Samurai: printed (Gilgamesh) or made one by Samurai's Katana
+pub fn is_samurai(g: &Game, m: PermId) -> bool {
+    crate::engine::values::has_type(g, m, "samurai")
+        || super::cloud::equipment_on(g, m).iter().any(|&e| name_of(g, e) == KATANA)
+}
+
+/// **Dragoon's Lance**: the equipped creature has flying during its controller's turn (+1/+0 and equip {4} are in the
+/// card data; job select is `cloud::staff_etb`). The Knight type it grants matters to nothing in the game.
+fn lance_flying(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+    kw == "flying" && g.perm(src).attached == Some(m) && live(g, src) && g.active == Some(owner(g, src))
+}
+
+/// **Hero's Heirloom**: as long as the equipped creature is legendary, it has trample and haste (+2/+1 and equip {2}
+/// are in the card data)
+fn heirloom_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+    (kw == "trample" || kw == "haste")
+        && g.perm(src).attached == Some(m)
+        && live(g, src)
+        && crate::cardcode::is_legendary(g, m)
+}
+
+/// how much the AI wants a piece of Equipment put onto the battlefield and kept on a creature (best first)
+fn gear_rank(name: &str) -> i32 {
+    match name {
+        FLAIL => 9,
+        "Hero's Blade" => 8,
+        "Nim Deathmantle" => 7,
+        HEIRLOOM => 6,
+        "Medic's Kitesail" => 5,
+        "Trailblazer's Boots" => 4,
+        _ => 1,
+    }
+}
+
+/// **Gilgamesh, Master-at-Arms**: whenever he enters or attacks, look at the top six cards of the library; every
+/// Equipment among them goes onto the battlefield (the AI always takes them all; a person is asked once, whether to
+/// do it at all), the rest on the bottom in a random order; then the best of the Equipment that came in without
+/// bringing its own Hero (job select pieces attach themselves to their token) is attached to a Samurai: Gilgamesh
+/// himself (he is one), else a creature wearing Samurai's Katana.
+fn gilgamesh_trigger(g: &mut Game, src: PermId) -> Res {
+    let o = owner(g, src);
+    if !live(g, src) || g.player(o).library.is_empty() {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "look at the top six cards for Equipment", Some(6.0))? {
+        return Ok(());
+    }
+    let n = g.player(o).library.len().min(6);
+    let top: Vec<CardId> = (0..n).map(|_| g.player_mut(o).library.pop().unwrap()).collect();
+    let gear: Vec<CardId> = top.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment")).collect();
+    let mut rest: Vec<CardId> = top.iter().copied().filter(|&c| !gear.contains(&c)).collect();
+    g.rng.shuffle(&mut rest);
+    for c in rest {
+        g.player_mut(o).library.insert(0, c); // the bottom
+    }
+    crate::glog!(g, "    Gilgamesh looks at {n} cards: {} Equipment", gear.len());
+    let mut came: Vec<PermId> = vec![];
+    for c in gear {
+        g.player_mut(o).seen.insert(c);
+        came.push(enter(g, o, c, Enter { sick: false, ..Default::default() })?);
+    }
+    let own_hero = |g: &Game, e: PermId| matches!(name_of(g, e), LANCE | KATANA | "White Mage's Staff");
+    let samurai: Vec<PermId> = g
+        .player(o)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && is_samurai(g, m))
+        .collect();
+    let best = came.iter().copied().filter(|&e| live(g, e) && !own_hero(g, e)).max_by_key(|&e| gear_rank(name_of(g, e)));
+    let to = if live(g, src) && samurai.contains(&src) { Some(src) } else { samurai.first().copied() };
+    if let (Some(e), Some(t)) = (best, to) {
+        super::cloud::attach(g, e, t);
+    }
+    Ok(())
+}
+
+fn gilgamesh_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src { gilgamesh_trigger(g, src) } else { Ok(()) }
+}
+
+fn gilgamesh_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if owner(g, src) == p && atk.contains(&src) {
+        gilgamesh_trigger(g, src)?;
+    }
+    Ok(vec![])
+}
+
+// ------------------------------------------------------------------ Boiling Rock Prison
+/// **Boiling Rock Prison** (enters tapped, {T}: {B} or {R} are in the card data): {4}, {T}, sacrifice it: draw a card.
+/// The AI does it in the end-of-turn window (so the mana would go unused), with six or more lands in play and no land
+/// to play from the hand.
+fn prison_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.land(l).tapped || !crate::impls::lands::can_pay_without(g, p, l, 4, "") {
+        return Ok(vec![]);
+    }
+    let pl = g.player(p);
+    if pl.lands.len() < 6 || pl.hand.iter().any(|&c| g.db.get(c).land) || pl.library.len() < 8 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 0.8,
+        label: "Boiling Rock Prison draw".into(),
+        act: Some(Action::Plan { f: prison_go, arg: l.0 as i64 }),
+    }])
+}
+
+fn prison_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !crate::impls::lands::pay_without(g, p, l, 4, "")? {
+        return Ok(false);
+    }
+    let cd = g.land(l).cd;
+    crate::impls::lands::sac_land(g, p, l)?;
+    crate::glog!(g, "  {} sacrifices Boiling Rock Prison: draws a card", g.player(p).name);
+    if crate::engine::stack::ability_window_card(g, p, cd, "draw a card", None, None)? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(true)
+}
+
+pub fn register_gear(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, GILGAMESH)? {
+        c.etb = Some(gilgamesh_etb);
+        c.attack = Some(gilgamesh_attack);
+    }
+    if let Some(c) = card_if(r, db, LANCE)? {
+        c.etb = Some(super::cloud::staff_etb);
+        c.grant_kw = Some(lance_flying);
+    }
+    if let Some(c) = card_if(r, db, KATANA)? {
+        c.etb = Some(super::cloud::staff_etb);
+    }
+    if let Some(c) = card_if(r, db, HEIRLOOM)? {
+        c.grant_kw = Some(heirloom_kw);
+    }
+    if let Some(c) = card_if(r, db, PRISON)? {
+        c.land_options = Some(prison_options);
+    }
+    if let Some(c) = card_if(r, db, FARMLAND)? {
+        c.hand_options = Some(farmland_options);
+    }
+    Ok(())
+}
+
+// ================================================================== the kraum seat: where Equipment goes
+/// the opponents of p that have an untapped creature able to block m, and how many of those would still have one if
+/// Equipment `e` gave m evasion (None: e gives none). Counted per opponent, since Tymna draws per opponent hit.
+fn blocked_by(g: &Game, p: PlayerId, e: Option<&str>, m: PermId) -> usize {
+    let flying = |b: PermId| {
+        let y = g.perm(b);
+        y.fly || crate::dsl::has_kw(g, b, "flying") || crate::dsl::has_kw(g, b, "reach")
+    };
+    g.opps(p)
+        .filter(|&q| g.player(q).alive)
+        .filter(|&q| {
+            let nonbasic = g.player(q).lands.iter().any(|&l| g.land(l).on_bf && !g.db.get(g.land(l).cd).basic);
+            g.player(q).perms.iter().any(|&b| {
+                let y = g.perm(b);
+                if !y.on_bf || y.phased || y.tapped || !g.is_creature(b) || !crate::engine::combat::can_block(g, b, m) {
+                    return false;
+                }
+                match e {
+                    Some("Medic's Kitesail") | Some(LANCE) => flying(b),
+                    Some("Trailblazer's Boots") => !nonbasic,
+                    Some("Nim Deathmantle") => {
+                        crate::engine::values::colors_of(g, b).has('B')
+                            || g.db.get(y.cd.unwrap_or(CardId(0))).types.has(crate::cards::Types::ARTIFACT)
+                    }
+                    _ => true,
+                }
+            })
+        })
+        .count()
+}
+
+/// what Equipment `e` is worth on creature `m` for the kraum seat (0 for any other seat): evasion Equipment goes on a
+/// creature that can't get through on its own, one point of value per opponent it newly reaches (and a loss when the
+/// creature already connects, or already flies); the pieces that add size and keywords go on a creature that connects
+/// anyway, since its hit is the card Tymna draws.
+pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
+    if g.player(p).key != "kraum" {
+        return 0.0;
+    }
+    let name = name_of(g, e);
+    let now = blocked_by(g, p, None, m) as f64;
+    let evasion = matches!(name, "Medic's Kitesail" | LANCE | "Trailblazer's Boots" | "Nim Deathmantle");
+    let mut v = 0.25 * epow(g, m) as f64;
+    if evasion {
+        let after = blocked_by(g, p, Some(name), m) as f64;
+        v += 3.0 * (now - after);
+        if now == 0.0 {
+            v -= 3.0; // it connects already: the Equipment would be wasted here
+        }
+    } else if now == 0.0 {
+        v += 2.0; // size on a creature that gets through
+    }
+    if matches!(name, HEIRLOOM | "Hero's Blade") && crate::cardcode::is_legendary(g, m) {
+        v += 1.0;
+    }
+    if g.perm(m).is_cmd && !evasion {
+        v += 0.5;
+    }
+    v
+}
+
+/// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's)
+pub fn equip_utility_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
+    if g.player(p).key != "kraum" {
+        return 0.0;
+    }
+    equip_holder_value(g, p, e, m).clamp(-3.0, 4.0)
+}
+
+/// the creature that should wear Equipment `e` (the kraum seat), if any
+fn best_wearer(g: &Game, p: PlayerId, e: PermId) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk)
+        .collect();
+    max_by(&cs, |m| equip_holder_value(g, p, e, m) - if g.perm(m).sick { 0.5 } else { 0.0 })
+}
+
+/// the kraum seat's own plays (`brain::special_options`): **Conqueror's Flail** (equip {2}; it has no compiled equip
+/// ability, only the tag), put on a creature before combat, so opponents can't cast spells while the team swings.
+/// The Nim Deathmantle equip picks its wearer with `equip_holder_value` (in mine.rs).
+pub fn kraum_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
+    let mut out = vec![];
+    if g.player(p).key != "kraum" || crate::human::is_human(g, p) || post {
+        return Ok(out);
+    }
+    for e in g.player(p).perms.clone() {
+        if !live(g, e) || name_of(g, e) != FLAIL || crate::engine::values::stopped(g, FLAIL) {
+            continue;
+        }
+        let worn = g.perm(e).attached.filter(|&t| live(g, t) && owner(g, t) == p);
+        let Some(best) = best_wearer(g, p, e) else { continue };
+        if worn == Some(best) || (worn.is_some() && equip_holder_value(g, p, e, best) < 2.0 + equip_holder_value(g, p, e, worn.unwrap())) {
+            continue;
+        }
+        if !can_pay(g, p, 2, "", false) {
+            continue;
+        }
+        out.push(Opt {
+            utility: 4.5,
+            label: format!("equip {FLAIL} to {}", name_of(g, best)),
+            act: Some(Action::Plan { f: flail_equip, arg: e.0 as i64 | ((best.0 as i64) << 32) }),
+        });
+    }
+    Ok(out)
+}
+
+fn flail_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let e = PermId((arg & 0xffff_ffff) as u32);
+    let m = PermId((arg >> 32) as u32);
+    if !live(g, e) || !live(g, m) || owner(g, m) != p || !can_pay(g, p, 2, "", false) {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} equips {} to {}", g.player(p).name, g.perm(e).name, g.perm(m).name);
+    crate::engine::stack::equip_to(g, p, e, m, 2)
+}
+
+// ================================================================== the kraum seat: what a tutor finds
+/// the best land of `okn` for p: the colours p cannot make yet first, then Command Tower and the untapped duals
+fn land_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
+    let cols = |c: CardId| -> String { g.db.get(c).tags.str(Tag::C).unwrap_or("").to_string() };
+    let have: String = g.player(p).lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| cols(g.land(l).cd)).collect();
+    let lands: Vec<CardId> = okn.iter().copied().filter(|&c| g.db.get(c).land).collect();
+    max_by(&lands, |c| {
+        let cs = cols(c);
+        let new = "WUBR".chars().filter(|&ch| cs.contains(ch) && !have.contains(ch)).count() as f64;
+        3.0 * new + cs.len() as f64 - if g.db.get(c).tag(Tag::T) { 1.5 } else { 0.0 }
+    })
+}
+
+/// Diabolic Tutor (and any tutor for any card) for the kraum seat: the card the game needs. A land when short of mana
+/// (fewer than five lands in play or hand and a colour missing); Toxic Deluge when the table's boards are far ahead;
+/// when ahead, Conqueror's Flail if it isn't out yet, else the best finisher; else the evasive creature that brings
+/// the next opponent into Tymna's reach, else the generic pick (None).
+pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<CardId> {
+    if kind != "any" {
+        return None;
+    }
+    let pl = g.player(p);
+    let first = |ns: &[&str]| -> Option<CardId> { ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c)) };
+    let held = |name: &str| {
+        pl.hand.iter().any(|&c| &*g.db.get(c).name == name)
+            || pl.perms.iter().any(|&m| live(g, m) && name_of(g, m) == name)
+    };
+    let lands = pl.lands.len() + pl.hand.iter().filter(|&&c| g.db.get(c).land).count();
+    if lands < 5 && pl.turns <= 8 {
+        return land_pick(g, p, okn);
+    }
+    let mine: i32 = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum();
+    let theirs: i32 = g
+        .opps(p)
+        .filter(|&q| g.player(q).alive)
+        .map(|q| {
+            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum::<i32>()
+        })
+        .max()
+        .unwrap_or(0);
+    if theirs >= mine + 6 && !held("Toxic Deluge") {
+        if let Some(c) = first(&["Toxic Deluge"]) {
+            return Some(c);
+        }
+    }
+    let cres = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count();
+    if cres >= 2 && mine + 2 >= theirs {
+        if !held(FLAIL) && let Some(c) = first(&[FLAIL]) {
+            return Some(c);
+        }
+        if let Some(c) = first(&["Terror of the Peaks", "Lyra Dawnbringer", GILGAMESH, "Sphinx of New Prahv"]).filter(|&c| !held(&g.db.get(c).name)) {
+            return Some(c);
+        }
+    }
+    // developing: the cheapest evasive creature when fewer evasive creatures are out than opponents
+    let evasive = |c: CardId| {
+        let d = g.db.get(c);
+        d.creature && (d.has_kw("flying") || d.tag(Tag::Fly) || d.has_kw("menace"))
+    };
+    let cands: Vec<CardId> = okn.iter().copied().filter(|&c| evasive(c) && !held(&g.db.get(c).name)).collect();
+    if cres < 3 && let Some(c) = max_by(&cands, |c| g.db.get(c).bomb as f64 - g.db.get(c).cmc as f64) {
+        return Some(c);
+    }
+    None
+}
+
+// ------------------------------------------------------------------ Irrigated Farmland
+pub const FARMLAND: &str = "Irrigated Farmland";
+
+/// **Irrigated Farmland** (an Island Plains that enters tapped is in the card data): cycling {2}. The AI cycles it
+/// when it is not needed as a land drop: five or more lands in play, or an end-of-turn window with four in play and
+/// another land in hand; never to draw itself out.
+fn farmland_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let pl = g.player(p);
+    if post == Some(true) || !pl.hand.contains(&c) || pl.library.len() < 8 || !can_pay(g, p, 2, "", false) {
+        return Ok(vec![]);
+    }
+    let in_play = pl.lands.len();
+    let spare = pl.hand.iter().any(|&x| x != c && g.db.get(x).land);
+    let ok = in_play >= 5 || (post.is_none() && in_play >= 4 && spare);
+    if !ok {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: if post.is_none() { 1.4 } else { 0.5 },
+        label: "Irrigated Farmland (cycling)".into(),
+        act: Some(Action::Plan { f: farmland_cycle, arg: c.0 as i64 }),
+    }])
+}
+
+fn farmland_cycle(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, 2, "", false)?;
+    crate::glog!(g, "  {} cycles Irrigated Farmland", g.player(p).name);
+    crate::engine::zones::discard_cards(g, p, &[c])?;
+    draw(g, p, 1, false)?;
+    Ok(true)
 }

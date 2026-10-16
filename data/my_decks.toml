@@ -71,6 +71,15 @@ commander = "Cloud, Midgar Mercenary"
 ident = "W"
 tiers = ["t1", "t2"]
 
+# Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
+[kraum]
+file = "JD/tymna-kraum-partners.md"
+name = "Tymna/Kraum"
+commander = "Tymna the Weaver"
+commander2 = "Kraum, Ludevic's Opus"
+ident = "WUBR"
+tiers = ["t1", "t2"]
+
 [sephfs]
 file = "JD/sephiroth-fs-wipe-steal.md"
 name = "Sephiroth FS"
