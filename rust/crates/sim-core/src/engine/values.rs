@@ -96,7 +96,11 @@ pub fn static_bonus(g: &Game, m: PermId) -> i32 {
             && let Some(a) = g.db.get(c).tags.int(Tag::Anth)
         {
             // auto-tagged anthems (Commander's Insignia: +1/+1 for each time the commander was cast from the command zone)
-            b += if &*g.db.get(c).name == "Commander's Insignia" { crate::impls::t0_zurgo::command_casts(g, p) } else { a };
+            b += if &*g.db.get(c).name == "Commander's Insignia" {
+                crate::impls::t0_zurgo::command_casts(g, p)
+            } else {
+                a
+            };
         }
     }
     if equipped(g, m, Tag::Flail) {
@@ -324,6 +328,9 @@ pub fn prot_colors(g: &Game, m: PermId) -> Colors {
         s = s.union(Colors::from_letters("BG"));
     }
     s = s.union(dsl::protection(g, m));
+    if g.perm(m).eot_kw.contains(&"pro_colors") {
+        s = s.union(Colors::from_letters("WUBRG")); // Akroma's Will, mode two
+    }
     if let Some(c) = g.perm(m).cd {
         s = s.union(g.db.get(c).protfrom);
     }
