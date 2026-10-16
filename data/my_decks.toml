@@ -78,7 +78,7 @@ name = "Tymna/Kraum"
 commander = "Tymna the Weaver"
 commander2 = "Kraum, Ludevic's Opus"
 ident = "WUBR"
-tiers = ["t1", "t2"]
+tiers = ["t3"]
 
 [sephfs]
 file = "JD/sephiroth-fs-wipe-steal.md"

@@ -735,7 +735,7 @@ mod tier_tests {
             ("sephfs", &["t4", "t5"]),
             ("veyran", &["t1", "t2", "t3", "t4"]),
             ("cloud", &["t1", "t2"]),
-            ("kraum", &["t1", "t2"]), // provisional until the analysis run
+            ("kraum", &["t3"]), // JD 10/16: the goal is a solid tier-3 deck
             ("titania", &["t2", "t3", "t4"]),
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),
