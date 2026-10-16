@@ -8063,3 +8063,9 @@ tags = "human pow=2 tgh=2"
 dsl = []
 status = "Full"
 note = "double strike; protection from black and from green (protfrom BG: can't be blocked by, damaged by or targeted by black or green sources); tested in cards_cloud_pkg2"
+
+["Archon of Absolution"]
+tags = "pow=3 tgh=2 fly"
+dsl = []
+status = "Full"
+note = "flying; protection from white (protfrom W); each creature attacking its controller costs {1} (common.pillowfort_tax; planeswalkers are protected by the same player-level tax); tested in cards_archon"

@@ -30,6 +30,8 @@ pub struct PlayerOut {
     pub seen: Vec<String>,
     pub cast: Vec<String>,
     pub lost: Vec<(String, u32)>,
+    /// the own-turn count at which each cast card was first cast (with the card lists)
+    pub cast_turns: Vec<(String, u32)>,
 }
 
 impl PlayerOut {
@@ -74,6 +76,13 @@ impl GameOut {
                     cast: if with_cards { names(&mut p.cast_names.iter().copied()) } else { vec![] },
                     lost: if with_cards {
                         p.lost_names.iter().map(|(k, v)| (k.to_string(), *v)).collect()
+                    } else {
+                        vec![]
+                    },
+                    cast_turns: if with_cards {
+                        let t = p.turns;
+                        let rest = p.cast_names.iter().skip(p.cast_logged).map(|c| (*c, t));
+                        p.cast_turns.iter().copied().chain(rest).map(|(c, t)| (g.db.get(c).name.to_string(), t)).collect()
                     } else {
                         vec![]
                     },

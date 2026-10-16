@@ -204,6 +204,39 @@ impl Ctx<'_> {
         r
     }
 
+    /// the paired run with the analysis collected alongside: the same games as `run` (the tally is identical), plus
+    /// the card and game-shape numbers `--swap` explains with. Reads finished games only, so it never touches the RNG.
+    pub fn run_explained(
+        &self,
+        me: &str,
+        my_seat: &Seat,
+        opp_keys: &[String],
+        prof: &str,
+        n: u64,
+        seed0: u64,
+    ) -> (RunTally, Analysis) {
+        let sim = self.sim;
+        let st = sim.settings(profile(prof).unwrap());
+        let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
+            let seats = sim.seats_for(s, Some(me), Some(my_seat), opp_keys, 3);
+            let mut g = GameOut::from_game(&sim.play(s, &seats, &st, false), true);
+            for p in g.players.iter_mut().filter(|p| p.key != me) {
+                p.seen.clear();
+                p.cast.clear();
+                p.lost.clear();
+                p.cast_turns.clear();
+            }
+            g
+        });
+        let mut r = RunTally::new(prof);
+        let mut a = Analysis::default();
+        for (s, g) in &games {
+            r.add(*s, g, me);
+            a.add(g, me);
+        }
+        (r, a)
+    }
+
     /// poolmode.analyze
     pub fn analyze(&self, me: &str, my_seat: &Seat, opp_keys: &[String], prof: &str, n: u64, seed0: u64) -> Analysis {
         let sim = self.sim;
@@ -217,6 +250,7 @@ impl Ctx<'_> {
                 p.seen.clear();
                 p.cast.clear();
                 p.lost.clear();
+                p.cast_turns.clear();
             }
             g
         });
@@ -557,17 +591,38 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
         let deck = a.deck.as_deref().unwrap();
         let bseat = sim.seat(deck, base)?;
         let vseat = sim.seat(deck, var)?;
+        let explain = !a.no_explain;
+        let commanders: Vec<String> = sim
+            .engine
+            .decks
+            .get(deck)
+            .map(|d| std::iter::once(d.commander.clone()).chain(d.commander2.clone()).collect())
+            .unwrap_or_default();
         for tier in &tiers {
             let mut pairs = vec![];
+            let mut analyses = vec![];
             for prof in profiles {
                 ctx.label(format!("{tier} current / {prof}"));
-                let b = ctx.run(deck, Some(&bseat), &sim.pool_keys(tier), prof, n, seed0);
-                ctx.label(format!("{tier} swaps / {prof}"));
-                let v = ctx.run(deck, Some(&vseat), &sim.pool_keys(tier), prof, n, seed0);
+                let keys = sim.pool_keys(tier);
+                let (b, v);
+                if explain {
+                    let (bt, ba) = ctx.run_explained(deck, &bseat, &keys, prof, n, seed0);
+                    ctx.label(format!("{tier} swaps / {prof}"));
+                    let (vt, va) = ctx.run_explained(deck, &vseat, &keys, prof, n, seed0);
+                    analyses.push((prof.clone(), ba, va));
+                    (b, v) = (bt, vt);
+                } else {
+                    b = ctx.run(deck, Some(&bseat), &keys, prof, n, seed0);
+                    ctx.label(format!("{tier} swaps / {prof}"));
+                    v = ctx.run(deck, Some(&vseat), &keys, prof, n, seed0);
+                }
                 pairs.push((b, v));
             }
             println!("Swaps: {}", swap_text(swaps));
             ctx.print_ab(deck, tier, &pairs);
+            for (prof, ba, va) in &analyses {
+                crate::explain::print_explain(deck, &commanders, swaps, ba, va, prof, &|k| sim.name_of(k));
+            }
         }
     } else {
         let deck = a.deck.as_deref().unwrap();

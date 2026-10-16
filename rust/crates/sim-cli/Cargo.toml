@@ -11,5 +11,6 @@ name = "commander-sim"
 path = "src/main.rs"
 
 [dependencies]
+cardgen = { version = "0.1.0", path = "../cardgen" }
 sim-core = { version = "0.1.0", path = "../sim-core" }
 serde_json = "1.0.151"

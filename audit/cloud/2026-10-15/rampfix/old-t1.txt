@@ -1,0 +1,82 @@
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 20.7%   (4-player baseline 25%)   average rounds survived 10.4
+
+-- How it wins --
+  damage      97.8% of wins
+  timeout      2.2% of wins
+  Opponents it eliminated: 0.62 per game, by
+    commander damage   49.4%
+    combat             38.4%
+    triggers           10.3%
+    decked              1.9%
+  Damage dealt per game: 33.0, from
+    combat              30.9  (94%)
+    triggers             2.1  (6%)
+
+-- How it loses --
+  Eliminated in 79.3% of games, on average in round 9.5
+    by Light-Paws via commander damage   17.9% of games
+    by Isshin   via combat             14.9% of games
+    by Tatyova  via combat              9.7% of games
+    by Lathril  via combat              8.8% of games
+    by Teysa Karlov via combat              5.4% of games
+    by Light-Paws via combat              5.3% of games
+    by Lathril  via drain               5.0% of games
+    by Teysa Karlov via drain               4.8% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 3%  T4 27%  T5 46%  T6 58%  T7 64%  T8 69%  T9 72%  T10 73%  T11 74%  T12 75%
+  Online at all: 76.2% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 100.0% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Bronze Guardian                            cast in   9.3% of games, win rate when cast  45.5% (+24.8)
+    Austere Command                            cast in   8.7% of games, win rate when cast  44.8% (+24.1)
+    Wrecking Ball Arm                          cast in  19.4% of games, win rate when cast  43.9% (+23.2)
+    Sword of Kaldra                            cast in  23.4% of games, win rate when cast  43.6% (+22.9)
+    Fumigate                                   cast in  10.4% of games, win rate when cast  43.5% (+22.8)
+    Windborn Muse                              cast in  13.0% of games, win rate when cast  42.7% (+22.0)
+    Shield of Kaldra                           cast in  19.7% of games, win rate when cast  42.1% (+21.4)
+    Thalia, the Survivor                       cast in  13.0% of games, win rate when cast  41.5% (+20.8)
+    Secure the Scene                           cast in   9.9% of games, win rate when cast  40.7% (+20.0)
+    Recommission                               cast in  12.9% of games, win rate when cast  40.5% (+19.8)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast  20.7% (+0.0)
+    Sword of Feast and Famine                  cast in  75.7% of games, win rate when cast  26.6% (+5.9)
+    Forum Familiar                             cast in  19.1% of games, win rate when cast  29.0% (+8.3)
+    Cid, Freeflier Pilot                       cast in  16.4% of games, win rate when cast  29.3% (+8.6)
+    Loyal Warhound                             cast in  18.0% of games, win rate when cast  30.0% (+9.3)
+    Zack Fair                                  cast in  20.2% of games, win rate when cast  30.1% (+9.4)
+    Mind Stone                                 cast in  18.9% of games, win rate when cast  30.4% (+9.7)
+    Enlightened Tutor                          cast in  19.6% of games, win rate when cast  31.0% (+10.3)
+    Sword of Fire and Ice                      cast in  59.8% of games, win rate when cast  31.4% (+10.7)
+    Arcane Signet                              cast in  17.1% of games, win rate when cast  31.6% (+10.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unbreakable Formation                      cast   2.1% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  12.6% of the games it was drawn [reactive: only cast in response]
+    Austere Command                            cast  45.2% of the games it was drawn
+    Bronze Guardian                            cast  46.4% of the games it was drawn
+    Secure the Scene                           cast  49.9% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.61
+    Sword of Fire and Ice                      0.19
+    Sword of Hearth and Home                   0.10
+    Sword of Feast and Famine                  0.08
+    Helm of Kaldra                             0.06
+    Cid, Freeflier Pilot                       0.04
+    Colossus Hammer                            0.03
+    Crawlspace                                 0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(295s total)

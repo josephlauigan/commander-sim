@@ -12,6 +12,7 @@
 mod args;
 mod cardinfo;
 mod decks;
+mod explain;
 mod play;
 mod poolmode;
 mod progress;
@@ -140,6 +141,13 @@ fn run(sim: &Sim, mut a: Args) -> Result<(), String> {
             println!("Cards modeled from Scryfall text (check the abilities below):");
             for c in auto {
                 println!("   {}", cardinfo::describe(c));
+            }
+        }
+        if !a.no_explain && !swaps.is_empty() {
+            let ins: Vec<String> = swaps.iter().map(|(_, b)| b.clone()).collect();
+            match decks::root().and_then(|r| explain::model_status(&r, &ins)) {
+                Ok(v) => println!("{}\n", explain::preflight_lines(&v).join("\n")),
+                Err(e) => println!("(model status unavailable: {e})"),
             }
         }
         base = sim.mine[&deck].clone();
