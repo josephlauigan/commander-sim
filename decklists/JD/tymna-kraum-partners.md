@@ -187,15 +187,15 @@ before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (25).** Abigale, Poet Laureate, Aven Mindcensor, Bastion Protector, Black Widow, Agile Avenger, Caparocti Sunborn, Elemental Mascot, Elenda, the Dusk Rose, Exit Specialist, Falcon and Redwing, Firebird, Blazing Ranger, Garland, Royal Kidnapper, Gilgamesh, Master-at-Arms, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Photon, Mighty Marvel, Spectral Lynx, Sphinx of New Prahv, Terror of the Peaks, The Wasp, Winsome Avenger, Urza, Powerstone Prodigy
+**Creatures (26).** Abigale, Poet Laureate, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Bastion Protector, Black Widow, Agile Avenger, Caparocti Sunborn, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Garland, Royal Kidnapper, Gilgamesh, Master-at-Arms, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Photon, Mighty Marvel, Spectral Lynx, Sphinx of New Prahv, Terror of the Peaks, The Wasp, Winsome Avenger, Windborn Muse
 
-**Planeswalkers (1).** The Aetherspark
+**Planeswalkers (2).** Elspeth, Sun's Champion, The Aetherspark
 
-**Artifacts (15).** Chromatic Lantern, Conqueror's Flail, Dragoon's Lance, Helm of Kaldra, Hero's Blade, Hero's Heirloom, Medic's Kitesail, Nim Deathmantle, Potioner's Trove, Samurai's Katana, Shield of Kaldra, Star Compass, Talisman of Conviction, Talisman of Hierarchy, Trailblazer's Boots
+**Artifacts (14).** Chromatic Lantern, Conqueror's Flail, Crawlspace, Dragoon's Lance, Helm of Kaldra, Hero's Heirloom, Norn's Annex, Potioner's Trove, Samurai's Katana, Shield of Kaldra, Star Compass, Talisman of Conviction, Talisman of Hierarchy, Trailblazer's Boots
 
-**Enchantments (3).** Darksteel Mutation, Memory Trap, Tocasia's Welcome
+**Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Tocasia's Welcome
 
-**Instants (15).** Arcane Denial, Bedevil, Disenchant, Dissipate, Fact or Fiction, Fate of the Sun-Cryst, Force of Will, Harsh Annotation, Make Your Move, Quick Study, Scorching Dragonfire, Silverquill Charm, Vanish from Sight, Vibrant Outburst, Wander Off
+**Instants (12).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Force of Will, Harsh Annotation, Quick Study, Scorching Dragonfire, Silverquill Charm, Vanish from Sight, Vibrant Outburst, Wander Off
 
 **Sorceries (3).** Diabolic Tutor, Expressive Iteration, Toxic Deluge
 
@@ -207,7 +207,9 @@ before the game.
 1 Abigale, Poet Laureate
 1 Arcane Denial
 1 Arcane Sanctum
+1 Archon of Absolution
 1 Aven Mindcensor
+1 Baird, Steward of Argive
 1 Bastion Protector
 1 Battlefield Forge
 1 Bedevil
@@ -219,49 +221,47 @@ before the game.
 1 Clifftop Retreat
 1 Command Tower
 1 Conqueror's Flail
+1 Crawlspace
 1 Crumbling Necropolis
 1 Darksteel Mutation
 1 Diabolic Tutor
 1 Disenchant
-1 Dissipate
 1 Dragoon's Lance
 1 Elemental Mascot
 1 Elenda, the Dusk Rose
-1 Exit Specialist
+1 Elspeth, Sun's Champion
 1 Exotic Orchard
 1 Expressive Iteration
 1 Fact or Fiction
 1 Falcon and Redwing
-1 Fate of the Sun-Cryst
 1 Firebird, Blazing Ranger
 1 Force of Will
 1 Furycalm Snarl
 1 Garland, Royal Kidnapper
+1 Ghostly Prison
 1 Gilgamesh, Master-at-Arms
 1 Glacial Fortress
 1 Harsh Annotation
 1 Helm of Kaldra
-1 Hero's Blade
 1 Hero's Heirloom
 1 Irrigated Farmland
 1 Kraum, Ludevic's Opus
 1 Laelia, the Blade Reforged
 1 Lightning, Security Sergeant
 1 Lyra Dawnbringer
-1 Make Your Move
 1 Marchesa, the Black Rose
-1 Medic's Kitesail
 1 Memory Trap
 1 Moseo, Vein's New Dean
 1 Mystic Monastery
 1 Nightveil Predator
 1 Nightwind Glider
-1 Nim Deathmantle
 1 Nomad Outpost
+1 Norn's Annex
 1 Path of Ancestry
 1 Photon, Mighty Marvel
 1 Port Town
 1 Potioner's Trove
+1 Propaganda
 1 Quick Study
 1 Rugged Prairie
 1 Samurai's Katana
@@ -288,11 +288,11 @@ before the game.
 1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River
-1 Urza, Powerstone Prodigy
 1 Vanish from Sight
 1 Vibrant Outburst
 1 Vivid Creek
 1 Wander Off
+1 Windborn Muse
 3 Island
 2 Mountain
 3 Plains
