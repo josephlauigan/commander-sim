@@ -4,10 +4,11 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
-## Current state (2026-10-15)
+## Current state (2026-10-16)
 List: C4 + Package D with substitutes (Crawlspace, Archon of Absolution), plus the 10/15 AI fixes.
 Win rate: **T1 20.6%, T2 18.2%** (was 14.0 / 11.9 on the morning of 10/15). Fair band for its tiers: 22-32%.
 Double strike package (Fireshrieker, Duelist's Heritage, Akroma's Will) applied 10/15: 2,000 games, T1 25.9 -> 30.3 (+4.5), T2 20.4 -> 24.8 (+4.3), measured on the list before the Crawlspace/Archon substitutes (within noise of it). Not re-measured on the current list.
+Four swaps applied 10/16 (Archangel of Tithes, Open the Armory, Sphere of Safety, Silverblade Paladin for Helm of Kaldra, Shield of Kaldra, Ghostly Prison, Duelist's Heritage): T1 29.1 -> 30.3 (+1.2, ±3.8, neutral; 1,000 games), so the win rate is about 30% on T1.
 
 ## Strengths
 - **Cloud lands on time:** resolved by turn 4 in 99% of games (he costs {W}{W} and tutors an Equipment).
@@ -50,6 +51,7 @@ Double strike package (Fireshrieker, Duelist's Heritage, Akroma's Will) applied 
 | AI: Sword choice by table colours + protection timing + attack-target weighting (branch cloud-ai4) | 29.3 -> 26.9 (T1, 2,000) | Plan online sooner (by turn 4 29% -> 33%), but the target weighting spread Cloud's damage across players so nobody died. Not adopted. |
 | Same without the attack-target change | 29.3 -> 28.4 (T1, 2,000) | Within noise; Sword choice and protection timing don't move the win rate. Not adopted. Lesson: a voltron commander needs focused damage. |
 | Sram + Danitha for Bronze Guardian + Kor Duelist (10-16) | +0.5 (T1, 1,000, ±3.8) | Neutral: Sram cast 82% when drawn, Danitha 70% (stuck 30%); damage +1.2 a game, plan timing unchanged. Fine to play, no measurable gain. |
+| Helm of Kaldra, Shield of Kaldra, Ghostly Prison, Duelist's Heritage for Archangel of Tithes, Open the Armory, Sphere of Safety, Silverblade Paladin (10-16) | +1.2 (T1, 1,000, ±3.8) | Neutral (29.1 -> 30.3). JD takes Helm and Shield of Kaldra for another deck and could not find the other two. Open the Armory cast 87%, Silverblade Paladin 66%, Sphere of Safety 58% (stuck 42%); Helm and Shield of Kaldra had been stuck 22% and 44%. |
 | Sun Titan for Ultimate Magic: Holy | -0.4 / — | Not broken down; a 6-drop in a mana-starved deck. |
 | Kor Haven for a Plains | -2.5 / — | Not broken down; colourless land in a {W}{W} deck, and its ability ties up {1}{W}. |
 
