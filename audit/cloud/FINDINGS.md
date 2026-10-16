@@ -47,6 +47,8 @@ Double strike package (Fireshrieker, Duelist's Heritage, Akroma's Will) applied 
 | General ramp valuation fix (all decks, session mtg-sims-a9; merged OFF) | +0.1 (1,000 g) / — | Plan online at all 74.7 -> 78.7, but by turn 4 unchanged; ramp sooner doesn't bring payoffs sooner. |
 | **Option #3 wide list** (16 swaps, Kaldra kept, AI spreads Equipment; branch cloud-wide) | +1.2 / — (vs today's list on the spread AI) | Equipment spreads (45% on Cloud, was 74%) and games last 0.4 rounds longer, but damage is flat (~33) and the new cards are cast late (rounds 8-9; Stonehewer stuck 43%, Triplicate Spirits 48%): same deployment bottleneck. |
 | **D2 defense** (Winds of Abandon, Elspeth Sun's Champion, Wall of Omens for Formation, Holy, Recommission) | **+3.6 (±2.5) / +1.5 (±2.4)**; quick check +3.4 | Dies less (eliminated 79 -> 76%), deals more (33 -> 37 a game); Elspeth cast only 40% (6 mana) but wins 51% when cast and her -3 answers Light-Paws (its share of Cloud's deaths 18 -> 16%). Replaced cards were dead. |
+| AI: Sword choice by table colours + protection timing + attack-target weighting (branch cloud-ai4) | 29.3 -> 26.9 (T1, 2,000) | Plan online sooner (by turn 4 29% -> 33%), but the target weighting spread Cloud's damage across players so nobody died. Not adopted. |
+| Same without the attack-target change | 29.3 -> 28.4 (T1, 2,000) | Within noise; Sword choice and protection timing don't move the win rate. Not adopted. Lesson: a voltron commander needs focused damage. |
 | Sun Titan for Ultimate Magic: Holy | -0.4 / — | Not broken down; a 6-drop in a mana-starved deck. |
 | Kor Haven for a Plains | -2.5 / — | Not broken down; colourless land in a {W}{W} deck, and its ability ties up {1}{W}. |
 

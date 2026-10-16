@@ -1,0 +1,81 @@
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 29.3%   (4-player baseline 25%)   average rounds survived 10.5
+
+-- How it wins --
+  damage      99.3% of wins
+  timeout      0.7% of wins
+  Opponents it eliminated: 0.85 per game, by
+    commander damage   53.5%
+    combat             32.9%
+    triggers           12.3%
+    decked              1.4%
+  Damage dealt per game: 41.1, from
+    combat              38.0  (93%)
+    triggers             3.0  (7%)
+
+-- How it loses --
+  Eliminated in 70.5% of games, on average in round 9.5
+    by Light-Paws via commander damage   16.8% of games
+    by Isshin   via combat             13.5% of games
+    by Tatyova  via combat              8.9% of games
+    by Lathril  via combat              8.8% of games
+    by Teysa Karlov via combat              5.0% of games
+    by Teysa Karlov via drain               4.5% of games
+    by Lathril  via drain               3.5% of games
+    by Light-Paws via combat              3.2% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 3%  T4 29%  T5 46%  T6 59%  T7 65%  T8 69%  T9 72%  T10 73%  T11 75%  T12 76%
+  Online at all: 76.4% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 99.9% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 99%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Akroma's Will                              cast in   9.2% of games, win rate when cast  64.3% (+35.0)
+    Fireshrieker                               cast in  16.2% of games, win rate when cast  59.4% (+30.0)
+    Sword of Kaldra                            cast in  24.9% of games, win rate when cast  57.1% (+27.8)
+    Elspeth, Sun's Champion                    cast in   9.6% of games, win rate when cast  55.7% (+26.4)
+    Court of Ardenvale                         cast in  13.3% of games, win rate when cast  55.6% (+26.3)
+    Fumigate                                   cast in  12.2% of games, win rate when cast  53.5% (+24.1)
+    Duelist's Heritage                         cast in  14.1% of games, win rate when cast  53.4% (+24.0)
+    Austere Command                            cast in   8.5% of games, win rate when cast  52.9% (+23.6)
+    Exalted Angel                              cast in  12.5% of games, win rate when cast  52.8% (+23.5)
+    Thalia, the Survivor                       cast in  12.7% of games, win rate when cast  52.8% (+23.4)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast  29.4% (+0.0)
+    Sword of Feast and Famine                  cast in  75.6% of games, win rate when cast  36.9% (+7.6)
+    Archon of Absolution                       cast in  13.2% of games, win rate when cast  39.4% (+10.0)
+    Sword of Fire and Ice                      cast in  62.0% of games, win rate when cast  41.5% (+12.1)
+    Giver of Runes                             cast in  19.4% of games, win rate when cast  42.2% (+12.8)
+    Cid, Freeflier Pilot                       cast in  20.1% of games, win rate when cast  42.2% (+12.8)
+    Kor Outfitter                              cast in  19.4% of games, win rate when cast  42.4% (+13.0)
+    Knight of the White Orchid                 cast in  19.9% of games, win rate when cast  42.5% (+13.1)
+    Colossus Hammer                            cast in  20.7% of games, win rate when cast  42.5% (+13.2)
+    Kor Duelist                                cast in  20.9% of games, win rate when cast  42.6% (+13.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Bronze Guardian                            cast  39.6% of the games it was drawn
+    Austere Command                            cast  39.8% of the games it was drawn
+    Akroma's Will                              cast  45.2% of the games it was drawn
+    Elspeth, Sun's Champion                    cast  45.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.61
+    Sword of Fire and Ice                      0.19
+    Sword of Hearth and Home                   0.10
+    Sword of Feast and Famine                  0.07
+    Helm of Kaldra                             0.07
+    Elspeth, Sun's Champion                    0.05
+    Cid, Freeflier Pilot                       0.04
+    Colossus Hammer                            0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(342s total)
