@@ -354,10 +354,11 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
   Starts from the 2026-10-13 comparison build (dropped 2026-10-14). Out: Adarkar Wastes, Shivan Reef, Sulfurous
   Springs, Bitter Triumph, Dakkon, Shadow Slayer (all five now in other decks), Ultimate Magic: Holy, Shardmage's
   Rescue, Reconnaissance Mission, Razia, Boros Archangel, Mordenkainen, Desertion, Dakkon Blackblade, Sol'kanar the
-  Swamp King (the eight lowest win-rate-when-cast cards in all five tiers of the 2026-10-13 runs). In: Irrigated
-  Farmland, Spectacle Summit, Boiling Rock Prison, Diabolic Tutor, Gilgamesh, Master-at-Arms, Conqueror's Flail,
-  Trailblazer's Boots, Medic's Kitesail, Nim Deathmantle, Dragoon's Lance, Samurai's Katana, Hero's Heirloom, Hero's
-  Blade. Buys: Kraum, Gilgamesh, Diabolic Tutor.
+  Swamp King (the eight lowest win-rate-when-cast cards in all five tiers of the 2026-10-13 runs), Twisted Fates, Mana
+  Leak. In: Irrigated Farmland, Spectacle Summit, Boiling Rock Prison, Diabolic Tutor, Gilgamesh, Master-at-Arms,
+  Conqueror's Flail, Trailblazer's Boots, Medic's Kitesail, Nim Deathmantle, Dragoon's Lance, Samurai's Katana,
+  Hero's Heirloom, Hero's Blade, Shield of Kaldra, Helm of Kaldra (the last two from the Cloud deck; Sword of Kaldra
+  stays there). Buys: Kraum, Gilgamesh, Diabolic Tutor.
 - **2026-10-13.** Built as the Kraum comparison for the Tymna deck from the retired Jodah deck's cards (40 of them).
 
 ### Simulator history

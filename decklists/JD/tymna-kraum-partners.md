@@ -60,7 +60,8 @@ Most creatures in the deck are hard to block, because each one that connects is 
 
 **Gilgamesh, Master-at-Arms** ({4}{R}{R}, 6/6) looks at the top six cards whenever he enters or attacks and puts every
 Equipment among them onto the battlefield for free, then may attach one to a Samurai (himself, or the 1/1 Hero token
-from **Samurai's Katana**). With nine Equipment in the deck, each trigger finds at least one about 45% of the time.
+from **Samurai's Katana**). With eleven Equipment in the deck, each trigger finds at least one about 52% of the
+time, and the expensive pieces (Shield of Kaldra, The Aetherspark, Helm of Kaldra) come in for free.
 
 The Equipment is chosen to get creatures through, so it feeds Tymna even without Gilgamesh:
 
@@ -74,30 +75,34 @@ The Equipment is chosen to get creatures through, so it feeds Tymna even without
   whenever a legendary creature enters (both commanders, Gilgamesh, Lyra, Elenda, Marchesa, Laelia and others).
 - **Samurai's Katana** makes a 1/1 Samurai Hero with +2/+2, trample and haste, a target for Gilgamesh.
 - **The Aetherspark** attaches itself to a creature (+1: and a +1/+1 counter) and grows from its combat damage.
+- **Shield of Kaldra** (equip {4}) makes the equipped creature indestructible: put it on Kraum or the best threat, so
+  it survives destroy effects and damage wipes. **Helm of Kaldra** (equip {2}) gives first strike, trample and haste:
+  put it on Gilgamesh, Lyra or the biggest attacker. Helm's {1} ability makes the 9/9 Kaldra token only if you also
+  control Sword of Kaldra, which this deck doesn't have, so ignore it.
 
 Equipment costs mana twice (cast, then equip), so in the early turns play creatures first, and equip when you have
 spare mana or when one creature is stopped by blockers.
 
 ### Removal
 
-Fourteen answers, most of them instants or cheap:
+Thirteen answers, most of them instants or cheap:
 
 - **Creatures:** Harsh Annotation (2 mana, leaves a 1/1 flier), Scorching Dragonfire (3 damage, exiles), Vibrant
   Outburst (3 damage to any target and taps a creature), Silverquill Charm (exile power 2 or less, or drain each
   opponent 3), Wander Off (exile), Darksteel Mutation (turns a creature or commander into a 0/1 with no abilities).
 - **Any nonland permanent:** Bedevil (artifact, creature or planeswalker), Fate of the Sun-Cryst (2 less on a tapped
-  creature), Twisted Fates (sorcery; give the +1/+1 counters to yourself), Memory Trap, Vanish from Sight (top or bottom
-  of the library, owner's choice).
+  creature), Memory Trap, Vanish from Sight (top or bottom of the library, owner's choice).
 - **Artifacts and enchantments:** Disenchant, Make Your Move (also a creature with power 4 or more).
 - **Sweeper:** Toxic Deluge, the only one. Pay just enough life to kill their creatures; your fliers are small, so it
   usually kills yours too: cast it when you are behind on board, not to clean up.
 
 ### Counterspells and protection
 
-**Force of Will** (free by exiling a blue card), **Arcane Denial**, **Mana Leak** and **Dissipate** stop the spell that
-would beat you: a wipe, a combo piece, a big threat. **Aven Mindcensor** (flash) blunts tutors and land searches.
+**Force of Will** (free by exiling a blue card), **Arcane Denial** and **Dissipate** stop the spell that would beat you:
+a wipe, a combo piece, a big threat. **Aven Mindcensor** (flash) blunts tutors and land searches.
 **Bastion Protector** gives both commanders +2/+2 and indestructible, which keeps them alive through destroy effects and
-damage wipes. **Conqueror's Flail** also protects your turn: nobody can cast spells while you attack.
+damage wipes, and **Shield of Kaldra** does the same for any one creature. **Conqueror's Flail** also protects your
+turn: nobody can cast spells while you attack.
 
 ### Card advantage beyond the commanders
 
@@ -121,9 +126,9 @@ attacks the life leader.
 
 ### Weak spots and how to play around them
 
-- **Board wipes.** The creatures are small and cheap, and the deck has only Bastion Protector (commanders only) and
-  counterspells to protect them. Keep a counter up once you have a board, don't play more creatures than you need to
-  keep Tymna drawing, and keep a creature or two in hand to rebuild.
+- **Board wipes.** The creatures are small and cheap, and the deck has only Bastion Protector (commanders only),
+  Shield of Kaldra (one creature) and counterspells to protect them. Keep a counter up once you have a board, don't
+  play more creatures than you need to keep Tymna drawing, and keep a creature or two in hand to rebuild.
 - **Slow, tapped mana.** Twelve lands always enter tapped, and four colours with demanding costs (Nightveil Predator
   {U}{U}{B}{B}, Sphinx of New Prahv {W}{W}{U}{U}, Bedevil {B}{B}{R}, Lyra {3}{W}{W}, Terror of the Peaks {3}{R}{R},
   Gilgamesh {4}{R}{R}) can strand cards. Play the tapped lands in the early turns when nothing else needs the mana;
@@ -169,8 +174,8 @@ taps for any colour), **Star Compass** and **Potioner's Trove**; **Photon** adds
 Urza (loot), and the cards played off the top (Laelia, Lightning, Caparocti, Elemental Mascot). **Tutor:** Diabolic
 Tutor.
 
-**Interaction:** fourteen removal spells, four counterspells, Aven Mindcensor, and Bastion Protector. The deck has 25
-creatures plus the two commanders, and nine Equipment.
+**Interaction:** thirteen removal spells, three counterspells, Aven Mindcensor, and Bastion Protector. The deck has 25
+creatures plus the two commanders, and eleven Equipment.
 
 ## Bracket and Rule 0
 
