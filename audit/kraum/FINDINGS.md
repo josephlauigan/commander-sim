@@ -43,3 +43,12 @@ Files: `audit/kraum/2026-10-16/analyze-t1.txt` … `analyze-t5.txt`.
 | Change | Result | Why |
 |---|---|---|
 | 10/16 build vs the 10/13 comparison build (13 swaps + 2 Kaldra) | 15.3% (10/13, older code) → 12.6% over t1–t5 | Not a paired test: the engine changed since 10/13 (land-mana fixes, double strike, Flail +1/+1 per colour). |
+| **A mana** (Orzhov Signet, Spire of Industry for Star Compass, Spectacle Summit), T3, 1,000 paired | -0.5 (±2.7) | Commander by turn 4 +2.7 pts, mana on turn 4 +0.03: too small a change to matter. |
+| **B cheap evasion** (Cloudfin Raptor, Callous Inspector, Thrummingbird, Rescue, Speed for Fate of the Sun-Cryst, Medic's Kitesail, Nim Deathmantle, Urza, Hero's Blade), T3 | +0.3 (±2.9) | **Damage +2.6 a game (significant)**, spells cast +0.8, but eliminations unchanged (86%): more pressure, no more wins. |
+| **C cheap interaction** (Icy Reception, Destroy Evil, Rip Apart, Suplex for Dissipate, Make Your Move, Silverquill Charm, Bedevil), T3 | +1.0 (±3.0) | Eliminated 86 → 85%. The new 2-mana removal sits in hand 20–54% of the games it's drawn (Suplex 46%, Icy Reception 54%). |
+| **D ~$30 buys** (Faerie Mastermind, Dauthi Voidwalker, Whispersilk Cloak, Spectral Sailor, Flawless Maneuver, Swords, Arcane Signet, Fellwar Stone, Talisman of Dominance, three checklands), T3 | -0.1 (±2.8) | Damage +2.2, mana turn 4 +0.13; eliminations unchanged. The 2-mana rocks are cast in only 62–70% of the games they're drawn. |
+
+**Reading A–D together (2026-10-16):** every package adds pressure (damage +2 to +2.6 a game) but none changes how often the
+deck dies (85–87%, mostly to creature decks in combat: Aurelia ~25%, Tergrid, Marwyn, Atraxa). The hand also stays full
+(~6 cards on turns 4 and 8), so more cards aren't the limit. The deck loses the combat race; the Cloud deck had the same
+problem and only attack taxes + wipes moved it (+6.4). Next: a defense package (E).

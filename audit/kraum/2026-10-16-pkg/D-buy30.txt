@@ -1,0 +1,140 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Faerie Mastermind [pool] C 1U :: pow=2 tgh=1 fly flash
+   Dauthi Voidwalker [pool] C BB :: pow=3 tgh=2
+   Spectral Sailor [scryfall+dsl] C U :: pow=1 fly flash
+      ability: activated  -> draw
+   Flawless Maneuver [scryfall+dsl] I 2W :: (no tags)
+      ability: spell  -> grant
+      not modeled: If you control a commander, you may cast ~ without paying its mana cost.
+   Dragonskull Summit [scryfall+dsl] L  :: c=BR ck
+      ability: static note -> 
+Model status of the swapped-in cards (cardgen audit):
+  Faerie Mastermind: Full (flash, flying; draws when an opponent draws their second card each turn (the symmetric draw ability is never worth it and is not used))
+  Dauthi Voidwalker: Full (shadow; opponents' cards going to the graveyard are exiled with void counters; sacrifice to play one free)
+  Whispersilk Cloak: Full (equipped creature can't be blocked and has shroud)
+  Spectral Sailor: Full-auto (compiled from Oracle text)
+  Flawless Maneuver: Full (free with your commander: your creatures indestructible (against destroy removal and wipes))
+  Swords to Plowshares: Full (tags: `rem=exile tgt=c rgain`)
+  Arcane Signet: Full (one mana of any colour in your commander's identity)
+  Fellwar Stone: Full (one mana of a colour an opponent's land could produce)
+  Talisman of Dominance: Full ({T}: {C}, or one of its colours for 1 damage)
+  Drowned Catacomb: Full (tags: `c=UB ck`)
+  Dragonskull Summit: Full (mana only)
+  Sulfur Falls: Full ({T}: {C}, or a coloured mana for 1 damage)
+
+Swaps: Elemental Mascot -> Faerie Mastermind; Exit Specialist -> Dauthi Voidwalker; Dragoon's Lance -> Whispersilk Cloak; Laelia, the Blade Reforged -> Spectral Sailor; Garland, Royal Kidnapper -> Flawless Maneuver; Wander Off -> Swords to Plowshares; Potioner's Trove -> Arcane Signet; Chromatic Lantern -> Fellwar Stone; Vivid Creek -> Talisman of Dominance; Crumbling Necropolis -> Drowned Catacomb; Temple of Deceit -> Dragonskull Summit; Temple of Epiphany -> Sulfur Falls
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  12.6% ->  12.5%  (delta -0.1 pts, noise ±2.8, paired)   n=1000
+               eliminated by (variant): Aurelia 29.1%  Tergrid 19.4%  Korvold 9.6%  Atraxa 11.5%  Marwyn 17.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          12.6% ->  12.5%  -0.1pt   ±3.0 
+    Rounds survived (or game length)                  11.48 ->  11.62   +0.15  ±0.32 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.12   +0.03  ±0.04 
+    Missed land drops, turns 1-5                       0.67 ->   0.70   +0.03  ±0.08 
+    Mana available on your turn 4                      3.52 ->   3.65   +0.13  ±0.07*
+    Mana available on your turn 6                      5.05 ->   5.18   +0.13  ±0.11*
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.82 ->   3.74   -0.08  ±0.11 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.75 ->  18.37   +0.62  ±0.77 
+    Tutors resolved per game                           0.11 ->   0.11   +0.00  ±0.03 
+    Spells cast per game                              13.34 ->  14.39   +1.05  ±0.67*
+
+  Interaction
+    Counterspells cast                                 0.39 ->   0.39   +0.00  ±0.05 
+    Spot removal cast                                  1.14 ->   1.41   +0.27  ±0.11*
+    Board wipes cast                                   0.17 ->   0.20   +0.03  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.01   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.80   +0.06  ±0.09 
+    Your spells countered                              0.14 ->   0.13   -0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                21.48 ->  23.65   +2.17  ±2.37 
+      ...of which combat damage                       20.53 ->  22.83   +2.29  ±2.31 
+      ...of which magecraft / burn                     0.06 ->   0.05   -0.01  ±0.04 
+      ...of which drain triggers                       0.61 ->   0.56   -0.05  ±0.20 
+      ...of which other triggers                       0.27 ->   0.21   -0.06  ±0.13 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Mana available on your turn 4 (both profiles)
+    better - Mana available on your turn 6 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Faerie Mastermind                     29.9      84.9         8.0     15.1       21.3      0.04
+    Dauthi Voidwalker                     27.5      78.2         8.5     21.8       20.0      0.01
+    Whispersilk Cloak                     25.4      54.7         9.5     45.3       25.2      0.01
+    Spectral Sailor                       27.6      90.2         7.4      9.8       19.3      0.01
+    Flawless Maneuver                     25.7      44.4         8.7     55.6       27.2      0.00
+    Swords to Plowshares                  26.6      88.0         7.5     12.0       18.4      0.00
+    Arcane Signet                         25.4      67.3         6.7     32.7       21.1      0.01
+    Fellwar Stone                         25.7      70.0         6.6     30.0       21.7      0.00
+    Talisman of Dominance                 26.2      61.8         7.1     38.2       19.8      0.00
+    Drowned Catacomb                      26.9       0.0           -    100.0          -      0.00
+    Dragonskull Summit                    28.7       0.0           -    100.0          -      0.00
+    Sulfur Falls                          27.2       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Elemental Mascot                      28.1      69.0         9.3     31.0       20.6      0.01
+    Exit Specialist                       25.5      81.6         7.3     18.4       19.7      0.01
+    Dragoon's Lance                       26.1      78.5         7.1     21.5       23.4      0.04
+    Laelia, the Blade Reforged            26.3      65.4         8.8     34.6       23.8      0.02
+    Garland, Royal Kidnapper              24.7      65.2         8.7     34.8       25.5      0.01
+    Wander Off                            26.1      46.4         9.5     53.6       22.3      0.00
+    Potioner's Trove                      25.3      57.3         7.7     42.7       24.1      0.01
+    Chromatic Lantern                     23.5      42.1         8.9     57.9       24.2      0.00
+    Vivid Creek                           26.2       0.0           -    100.0          -      0.00
+    Crumbling Necropolis                  24.8       0.0           -    100.0          -      0.00
+    Temple of Deceit                      26.4       0.0           -    100.0          -      0.00
+    Temple of Epiphany                    26.0       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        12.6      12.5     -0.1
+    rounds survived                                  11.48     11.62    +0.15
+    eliminated, % of games                            86.0      86.7     +0.7
+    opponents it eliminated, per game                 0.38      0.42    +0.04
+    damage dealt, per game                            21.5      23.6     +2.2
+    commander resolved by turn 4, %                   79.3      81.8     +2.5
+    commander resolved by turn 6, %                   93.6      94.4     +0.8
+    commander removals, per game                      0.71      0.76    +0.05
+    lands on the battlefield, turn 4                  3.69      3.66    -0.03
+    lands on the battlefield, turn 8                  6.35      6.34    -0.01
+    mana available, turn 4                            3.52      3.65    +0.13
+    mana available, turn 8                            6.33      6.49    +0.16
+    cards in hand after the land drop, turn 4         6.17      6.09    -0.08
+    cards in hand after the land drop, turn 8         6.35      6.22    -0.13
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 25.8%, Tergrid via combat 15.9%, Marwyn via combat 14.6%, Atraxa via combat 9.9%
+    eliminated by (swapped): Aurelia via combat 25.4%, Marwyn via combat 16.8%, Tergrid via combat 14.1%, Atraxa via combat 10.0%
+
+(266s total)

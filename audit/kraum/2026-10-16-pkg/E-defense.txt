@@ -1,0 +1,19 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Ghostly Prison [pool] E 2W :: (no tags)
+   Propaganda [pool] E 2U :: (no tags)
+   Norn's Annex [pool] A 3WW :: (no tags)
+   Crawlspace [pool] A 3 :: (no tags)
+   Windborn Muse [pool] C 3W :: pow=2 tgh=3 fly
+   Elspeth, Sun's Champion [pool] P 4WW :: leg
+   Aetherize [pool] I 3U :: (no tags)
+   Baird, Steward of Argive [pool] C 2WW :: leg human pow=2 tgh=4 vig
+Model status of the swapped-in cards (cardgen audit):
+  Ghostly Prison: Full ()
+  Propaganda: Full ()
+  Norn's Annex: Full (each attacker at you costs {W/P} ({W} or 2 life))
+  Crawlspace: Full ()
+  Windborn Muse: Full ()
+  Elspeth, Sun's Champion: Full (+1 three Soldiers, -3 destroys power 4+, -7 emblem (+2/+2, flying))
+  Aetherize: Full (cast when attacked by a big or token-heavy attack: returns all attacking creatures)
+  Baird, Steward of Argive: Full ()
+

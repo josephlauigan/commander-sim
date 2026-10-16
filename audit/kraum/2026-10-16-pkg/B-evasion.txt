@@ -1,0 +1,115 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Cloudfin Raptor [scryfall] C U :: pow=0 fly
+      not modeled: Evolve
+   Callous Inspector [pool] C B :: human pow=1
+   Thrummingbird [pool] C 1U :: pow=1 fly
+   Rescue, Pepper Potts [scryfall] AC 1U :: leg human pow=2 tgh=1 fly flash
+      not modeled: When ~ enters, return up to one other target artifact or creature you control to its owner's hand. If it was an artifact, put a +1/+1 counter on ~.
+   Speed, Young Avenger [scryfall] C 1R :: leg pow=2 haste
+Model status of the swapped-in cards (cardgen audit):
+  Cloudfin Raptor: Full (flying; evolve: a +1/+1 counter when a creature with greater power or toughness enters under your control (checked on entering and on resolution; tokens too))
+  Callous Inspector: Full (menace; when it dies it deals 1 damage to you and you create a Clue)
+  Thrummingbird: Full ()
+  Rescue, Pepper Potts: Full (flash, flying; when it enters, return up to one other artifact or creature you control to its owner's hand (the best enter-the-battlefield one); a +1/+1 counter on Rescue if it was an artifact)
+  Speed, Young Avenger: Full (noncreature spell cast: the AI pays {1} so its best untapped creature with haste can be blocked only by creatures with haste)
+
+Swaps: Fate of the Sun-Cryst -> Cloudfin Raptor; Medic's Kitesail -> Callous Inspector; Nim Deathmantle -> Thrummingbird; Urza, Powerstone Prodigy -> Rescue, Pepper Potts; Hero's Blade -> Speed, Young Avenger
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  12.6% ->  12.9%  (delta +0.3 pts, noise ±2.9, paired)   n=1000
+               eliminated by (variant): Aurelia 27.6%  Tergrid 19.8%  Korvold 9.2%  Atraxa 13.5%  Marwyn 16.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          12.6% ->  12.9%  +0.3pt   ±3.0 
+    Rounds survived (or game length)                  11.48 ->  11.58   +0.10  ±0.32 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.67 ->   0.65   -0.02  ±0.08 
+    Mana available on your turn 4                      3.52 ->   3.53   +0.01  ±0.07 
+    Mana available on your turn 6                      5.05 ->   5.06   +0.01  ±0.11 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.82 ->   3.82   -0.00  ±0.11 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.75 ->  18.45   +0.70  ±0.77 
+    Tutors resolved per game                           0.11 ->   0.10   -0.00  ±0.03 
+    Spells cast per game                              13.34 ->  14.13   +0.79  ±0.68*
+
+  Interaction
+    Counterspells cast                                 0.39 ->   0.38   -0.01  ±0.05 
+    Spot removal cast                                  1.14 ->   1.14   -0.00  ±0.10 
+    Board wipes cast                                   0.17 ->   0.17   +0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.67   -0.06  ±0.09 
+    Your spells countered                              0.14 ->   0.13   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                21.48 ->  24.10   +2.62  ±2.21*
+      ...of which combat damage                       20.53 ->  23.08   +2.54  ±2.16*
+      ...of which magecraft / burn                     0.06 ->   0.05   -0.01  ±0.04 
+      ...of which drain triggers                       0.61 ->   0.72   +0.11  ±0.22 
+      ...of which other triggers                       0.27 ->   0.26   -0.02  ±0.13 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Spells cast per game (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cloudfin Raptor                       27.4      85.0         7.3     15.0       26.2      0.03
+    Callous Inspector                     27.3      89.0         7.1     11.0       14.4      0.01
+    Thrummingbird                         27.7      80.5         8.0     19.5       22.4      0.02
+    Rescue, Pepper Potts                  29.6      83.4         7.8     16.6       19.4      0.04
+    Speed, Young Avenger                  26.3      66.9         7.9     33.1       26.7      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Fate of the Sun-Cryst                 25.7      39.7        10.9     60.3       24.5      0.00
+    Medic's Kitesail                      26.8      79.9         6.8     20.1       15.9      0.08
+    Nim Deathmantle                       30.0      72.0         7.6     28.0       19.4      0.02
+    Urza, Powerstone Prodigy              27.6      49.3         9.5     50.7       27.2      0.01
+    Hero's Blade                          28.2      80.1         6.8     19.9       22.6      0.05
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        12.6      12.9     +0.3
+    rounds survived                                  11.48     11.58    +0.10
+    eliminated, % of games                            86.0      86.1     +0.1
+    opponents it eliminated, per game                 0.38      0.39    +0.02
+    damage dealt, per game                            21.5      24.1     +2.6
+    commander resolved by turn 4, %                   79.3      79.9     +0.6
+    commander resolved by turn 6, %                   93.6      93.5     -0.1
+    commander removals, per game                      0.71      0.77    +0.06
+    lands on the battlefield, turn 4                  3.69      3.70    +0.01
+    lands on the battlefield, turn 8                  6.35      6.44    +0.09
+    mana available, turn 4                            3.52      3.53    +0.01
+    mana available, turn 8                            6.33      6.45    +0.11
+    cards in hand after the land drop, turn 4         6.17      6.18    +0.01
+    cards in hand after the land drop, turn 8         6.35      6.28    -0.07
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 91%, timeout 9%
+    eliminated by (current): Aurelia via combat 25.8%, Tergrid via combat 15.9%, Marwyn via combat 14.6%, Atraxa via combat 9.9%
+    eliminated by (swapped): Aurelia via combat 24.3%, Marwyn via combat 16.0%, Tergrid via combat 13.5%, Atraxa via combat 11.3%
+
+(269s total)
