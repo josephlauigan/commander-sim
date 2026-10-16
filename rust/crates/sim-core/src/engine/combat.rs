@@ -771,6 +771,7 @@ fn resolve_combat_inner(
         }
         crate::impls::t0_captain::sac_finish(g)?; // Heroic Sacrifice
         cardcode::vanguard_blocks(g, &assign)?; // Defiant Vanguard: at end of combat
+        crate::impls::alela::wall_return(g, &assign)?; // Wall of Junk: back to its owner's hand at end of combat
         g.blocking.clear();
         if !conn.is_empty() && has(g, p, Tag::Facebreaker) {
             let n = find(g, p, Tag::Facebreaker).len() as i32;

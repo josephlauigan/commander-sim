@@ -8081,3 +8081,39 @@ tags = ""
 dsl = []
 status = "Full"
 note = "cast after blockers on its controller's turn by the AI (hand_blocks): flying, vigilance, double strike for their creatures; with a commander out also lifelink, indestructible, protection from each color (eot_kw pro_colors). Opponent-turn casting is not used by the AI; tested in cards_cloud_ds"
+
+["Angelic Page"]
+status = "Full"
+note = "flier; {T} (not the turn it enters): +1/+1 on an attacking or blocking creature once blocks are set, where it wins or saves a fight, else on an unblocked attacker"
+
+["Cabal Patriarch"]
+status = "Full"
+note = "{2}{B} sacrificing a creature (Faerie tokens first, never Alela) or exiling a creature card from the graveyard: -2/-2 on an opposing creature; one activation kills toughness 2, two kill toughness 3 or 4 when worth it"
+
+["Credit Voucher"]
+status = "Full"
+note = "{2}, {T}, sacrifice: shuffles the cards the AI rates low (extra lands, dead cards) from hand into the library and draws that many"
+
+["Mirage Mirror"]
+status = "Full"
+note = "{2}: becomes a copy of a nonland permanent with a card until end of turn (no enters triggers; reverts at the next turn start); the AI copies a 3+ power creature before attacks and a good blocker on the opponent's turn. A land copy and a token copy are not modeled (a land copy is never worth {2}; a token has no card)"
+
+["Scrapheap"]
+status = "Full"
+note = "you gain 1 life whenever an artifact or enchantment you own is destroyed or sacrificed (itself too); tokens never count"
+
+["Serra the Benevolent"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "+2 fliers get +1/+1 (turns you attack with fliers); -3 4/4 Angel with flying and vigilance (board needs a body or Serra is threatened); -6 emblem: with a creature, damage can't take you below 1 life"
+
+["Wall of Junk"]
+tags = "pow=0 tgh=7 noatk"
+status = "Full"
+note = "0/7 defender; when it blocks it returns to its owner's hand at end of combat; the AI blocks freely with it and recasts it (an artifact spell: Alela makes a Faerie)"
+
+["Crystal Chimes"]
+dsl = []
+status = "Full"
+note = "{3}, {T}, sacrifice: every enchantment card in the graveyard returns to hand; the Alela AI waits for two or more"

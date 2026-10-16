@@ -244,6 +244,7 @@
 1x Evolving Wilds (fic, m15)
 1x Exhibition Tidecaller (sos)
 1x Exit Specialist (mkm)
+1x Exotic Orchard
 1x Expel the Unworthy (mh3)
 1x Experimental Augury (one)
 1x Explorer's Scope
@@ -673,6 +674,7 @@
 1x Shang-Chi and the Ten Rings (msc)
 1x Shardmage's Rescue (dsk)
 2x Shattered Acolyte (sos)
+1x Shattered Sanctum
 1x Shattered Wings (eoe)
 1x Shatterwing Pegasus (fra)
 1x She-Hulk, Wallbreaker (msc)
@@ -827,6 +829,7 @@
 2x Twisted Fates (fra)
 1x Twisted Riddlekeeper (mh3)
 1x Two-Headed Sliver (tsr)
+1x Tymna the Weaver
 3x Ulna Alley Shopkeep (sos)
 1x Ultimate Magic: Holy
 1x Ultimate Magic: Meteor (fic)

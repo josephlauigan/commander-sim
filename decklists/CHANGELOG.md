@@ -499,6 +499,16 @@ Deck key `alela`, `decklists/Avery/alela-esper-faeries.md`.
 
 ### Changes
 
+- **2026-10-15.** Synced with Avery's physical deck (list given by JD). Out: Aether Hub, Ajani Fells the Godsire, Aven
+  Fogbringer, Exotic Orchard, Fatehold Annex, Fatehold Charm, Hymn to Tourach, Initiates of the Ebon Hand, Keeper of
+  the Quiet Hour, Opposition, Page, Loose Leaf, Ray of Command, Rhystic Study, Shattered Sanctum, Sphinx's Approach,
+  Spite // Malice, Static Prison, Strixhaven Skycoach, Tainted Field, Tetsuko Umezawa, Fugitive, Tymna the Weaver,
+  Vanquish the Weak. In: Angelic Page, Angelic Shield, Avenger en-Dal, Burnished Hart, Cabal Patriarch, Credit Voucher,
+  Crystal Chimes, Fabricate, Gravedigger, Igneous Golem, Lightning Greaves, Mirage Mirror, Path to Exile, Scrapheap,
+  Serra the Benevolent, Skullclamp, Swords to Plowshares, Tragic Poet, Wall of Junk. Basics: Plains 9 → 11, Swamp
+  7 → 8 (34 lands, was 36). Game Changers down to one (Notion Thief). Not measured yet. All seven new cards the simulator
+  did not fully model (Credit Voucher, Mirage Mirror, Scrapheap, Angelic Page, Cabal Patriarch, Serra the Benevolent,
+  Wall of Junk) are now modeled; Crystal Chimes was fixed to return every enchantment card (it returned one).
 - **2026-10-14.** Out: Gravedigger. In: Exotic Orchard, Shattered Sanctum, Tymna the Weaver. Gravedigger (back to Avery)
   for Tymna the Weaver; two Plains for Exotic Orchard and Shattered Sanctum (all three JD's, from his binder, the
   retired Jodah deck's leftovers). Measured +0.1 over all tiers (T1 +1.2, T2 +2.2, T3 -0.6, T4 +1.4, T5 -3.8;
@@ -508,6 +518,11 @@ Deck key `alela`, `decklists/Avery/alela-esper-faeries.md`.
 
 ### Simulator history
 
+- **2026-10-15.** The new list (synced with Avery's physical deck, every card modeled) scored **9.8% against T1**
+  (4,000 games, look-ahead, loose; `audit/alela/2026-10-15-newlist/analyze-t1.txt`). The old list scored 12.0% on
+  10/14, but on older engine code, so the difference is not a clean list effect. Alela resolves in 79.7% of games
+  (was 85.3%) and by turn 5 in 45% (was 53%): two fewer lands and two fewer mana creatures. Findings in
+  `audit/alela/FINDINGS.md`.
 - **2026-10-14.** The leftovers swap (Gravedigger for Tymna the Weaver; two Plains for Exotic Orchard and Shattered
   Sanctum) measured **+0.1 over all tiers, within noise,** in a paired test (T1 +1.2, T2 +2.2, T3 -0.6, T4 +1.4,
   T5 -3.8; look-ahead, loose, 500 games per list per tier). A pool run is pending.

@@ -580,3 +580,529 @@ fn emry_costs_less_with_artifacts_and_casts_from_the_graveyard() {
     assert!(g.perm(e).tapped);
     assert!(names(&g, P0).contains(&"Sol Ring"));
 }
+
+// ======================================================== the seven cards of the 10/15 list
+use sim_core::cardcode;
+use sim_core::engine::{combat, life};
+
+fn alela_table() -> Game {
+    let mut g = table(&["alela", "veyran"]);
+    g.player_mut(P0).hand.clear();
+    g.player_mut(P1).hand.clear();
+    g
+}
+
+fn hook_labels(g: &mut Game, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
+    let s = sim_core::ai::brain::Situation::new(g, p);
+    sim_core::ai::brain::hook_options(g, p, &s, post).unwrap()
+}
+
+fn has_label(opts: &[Opt], start: &str) -> bool {
+    opts.iter().any(|o| o.label.starts_with(start))
+}
+
+// ---- Scrapheap
+#[test]
+fn scrapheap_gains_life_for_your_artifacts_and_enchantments_only() {
+    let mut g = alela_table();
+    let heap = perm(&mut g, P0, "Scrapheap");
+    let stone = perm(&mut g, P0, "Mind Stone");
+    let life0 = g.player(P0).life;
+    zones::die(&mut g, stone, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, life0 + 1, "an artifact of yours went to the graveyard");
+    let tok = flier(&mut g, P0);
+    zones::die(&mut g, tok, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, life0 + 1, "a token never reaches the graveyard");
+    let page = perm(&mut g, P0, "Angelic Page");
+    zones::die(&mut g, page, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, life0 + 1, "a plain creature does not count");
+    let shield = perm(&mut g, P0, "Angelic Shield");
+    zones::die(&mut g, shield, "sac").unwrap();
+    assert_eq!(g.player(P0).life, life0 + 2, "an enchantment counts");
+    let theirs = perm(&mut g, P1, "Mind Stone");
+    zones::die(&mut g, theirs, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, life0 + 2, "an opponent's artifact is not yours");
+    zones::die(&mut g, heap, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, life0 + 3, "Scrapheap sees itself go");
+}
+
+// ---- Credit Voucher
+#[test]
+fn credit_voucher_puts_back_only_the_junk_and_draws_that_many() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 7, false);
+    let v = perm(&mut g, P0, "Credit Voucher");
+    hand(&mut g, P0, &["Plains", "Plains", "Skullclamp"]);
+    let lib0 = g.player(P0).library.len();
+    let opts = perm_opts(&mut g, v, P0, Some(false));
+    assert_eq!(opts.len(), 1, "two extra lands late: worth it");
+    assert!(perform(&mut g, P0, &opts[0]));
+    assert!(g.player(P0).gy.contains(&card(&g, "Credit Voucher")), "sacrificed");
+    assert_eq!(g.player(P0).hand.len(), 3, "two put back, two drawn");
+    assert!(g.player(P0).hand.contains(&card(&g, "Skullclamp")), "the good card stayed");
+    assert_eq!(g.player(P0).library.len(), lib0, "the library has the same size again");
+}
+
+#[test]
+fn credit_voucher_is_left_alone_with_a_good_hand() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 3, false);
+    let v = perm(&mut g, P0, "Credit Voucher");
+    hand(&mut g, P0, &["Skullclamp", "Mind Stone"]);
+    assert!(perm_opts(&mut g, v, P0, Some(false)).is_empty());
+}
+
+// ---- Mirage Mirror
+#[test]
+fn mirage_mirror_copies_a_big_creature_until_end_of_turn_without_entering() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 2, false);
+    let m = perm(&mut g, P0, "Mirage Mirror");
+    let big = perm(&mut g, P1, "Archon of Cruelty");
+    g.active = Some(P0);
+    let (hand0, life0, life1) = (g.player(P0).hand.len(), g.player(P0).life, g.player(P1).life);
+    let opts = perm_opts(&mut g, m, P0, Some(false));
+    assert_eq!(opts.len(), 1);
+    assert!(perform(&mut g, P0, &opts[0]));
+    assert_eq!(g.perm(m).name, "Archon of Cruelty");
+    assert!(g.is_creature(m) && g.perm(m).fly);
+    assert_eq!(values::epow(&g, m), 6);
+    assert_eq!(g.perm(m).phys, Some(card(&g, "Mirage Mirror")));
+    assert_eq!(
+        (g.player(P0).hand.len(), g.player(P0).life, g.player(P1).life),
+        (hand0, life0, life1),
+        "no enters trigger"
+    );
+    assert!(g.perm(big).on_bf);
+    assert!(mana::total_mana(&g, P0, false) == 0, "{{2}} paid");
+    alela::mirror_revert(&mut g).unwrap();
+    assert_eq!(g.perm(m).name, "Mirage Mirror");
+    assert!(!g.is_creature(m) && !g.perm(m).fly);
+    assert_eq!(g.perm(m).cd, Some(card(&g, "Mirage Mirror")));
+    assert_eq!(g.perm(m).phys, None);
+}
+
+#[test]
+fn mirage_mirror_dying_as_a_copy_goes_to_the_graveyard_as_the_mirror() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 2, false);
+    let m = perm(&mut g, P0, "Mirage Mirror");
+    perm(&mut g, P1, "Archon of Cruelty");
+    g.active = Some(P0);
+    let opts = perm_opts(&mut g, m, P0, Some(false));
+    perform(&mut g, P0, &opts[0]);
+    zones::die(&mut g, m, "destroy").unwrap();
+    assert!(g.player(P0).gy.contains(&card(&g, "Mirage Mirror")));
+    assert!(!g.player(P0).gy.contains(&card(&g, "Archon of Cruelty")));
+}
+
+#[test]
+fn mirage_mirror_stays_quiet_without_a_big_creature_or_on_the_turn_it_comes() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 2, false);
+    let m = perm(&mut g, P0, "Mirage Mirror");
+    g.active = Some(P0);
+    perm(&mut g, P1, "Lotus Cobra");
+    assert!(perm_opts(&mut g, m, P0, Some(false)).is_empty(), "no 3-power body to copy");
+    perm(&mut g, P1, "Archon of Cruelty");
+    g.perm_mut(m).sick = true;
+    assert!(perm_opts(&mut g, m, P0, Some(false)).is_empty(), "summoning sick: it could not attack");
+}
+
+#[test]
+fn mirage_mirror_becomes_a_blocker_against_a_big_attacker() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 2, false);
+    let m = perm(&mut g, P0, "Mirage Mirror");
+    perm(&mut g, P0, "Wall of Junk");
+    let atk = token(&mut g, P1, 4);
+    let mut assign = vec![];
+    cardcode::blocks_hooks(&mut g, P1, &[atk], P0, &mut assign).unwrap();
+    assert!(assign.contains(&(atk, m)), "the Mirror copied a 0/7 and blocks: {assign:?}");
+    assert_eq!(g.perm(m).name, "Wall of Junk");
+}
+
+// ---- Angelic Page
+fn unsick(g: &mut Game, m: PermId) {
+    g.perm_mut(m).sick = false;
+}
+
+#[test]
+fn angelic_page_saves_an_attacker_that_would_die() {
+    let mut g = alela_table();
+    let page = perm(&mut g, P0, "Angelic Page");
+    let a = token(&mut g, P0, 2);
+    let b = token(&mut g, P1, 2);
+    let mut assign = vec![(a, b)];
+    cardcode::blocks_hooks(&mut g, P0, &[a], P1, &mut assign).unwrap();
+    assert!(g.perm(page).tapped, "{{T}}");
+    assert_eq!(g.perm(a).eot_pt, (1, 1), "+1/+1 on the attacker the block would kill");
+    assert_eq!((values::epow(&g, a), values::etgh(&g, a)), (3, 3));
+}
+
+#[test]
+fn angelic_page_saves_a_blocker_on_the_opponents_attack() {
+    let mut g = alela_table();
+    let page = perm(&mut g, P0, "Angelic Page");
+    let blk = token(&mut g, P0, 2);
+    let a = token(&mut g, P1, 2);
+    let mut assign = vec![(a, blk)];
+    cardcode::blocks_hooks(&mut g, P1, &[a], P0, &mut assign).unwrap();
+    assert!(g.perm(page).tapped);
+    assert_eq!(g.perm(blk).eot_pt, (1, 1));
+    assert_eq!(g.perm(a).eot_pt, (0, 0));
+}
+
+#[test]
+fn angelic_page_pumps_an_unblocked_attacker_otherwise() {
+    let mut g = alela_table();
+    let page = perm(&mut g, P0, "Angelic Page");
+    let a = token(&mut g, P0, 3);
+    let weak = token(&mut g, P0, 1);
+    let mut assign = vec![];
+    cardcode::blocks_hooks(&mut g, P0, &[a, weak], P1, &mut assign).unwrap();
+    assert!(g.perm(page).tapped);
+    assert_eq!(g.perm(a).eot_pt, (1, 1), "the biggest unblocked attacker");
+    assert_eq!(g.perm(weak).eot_pt, (0, 0));
+}
+
+#[test]
+fn angelic_page_is_idle_when_summoning_sick_or_with_no_use() {
+    let mut g = alela_table();
+    let page = perm(&mut g, P0, "Angelic Page");
+    let a = token(&mut g, P0, 2);
+    let b = token(&mut g, P1, 2);
+    g.perm_mut(page).sick = true;
+    let mut assign = vec![(a, b)];
+    cardcode::blocks_hooks(&mut g, P0, &[a], P1, &mut assign).unwrap();
+    assert!(!g.perm(page).tapped && g.perm(a).eot_pt == (0, 0), "{{T}} needs the Page to have been here");
+    unsick(&mut g, page);
+    let mut none = vec![];
+    cardcode::blocks_hooks(&mut g, P1, &[b], P0, &mut none).unwrap();
+    assert!(!g.perm(page).tapped, "its own side is not attacking and nothing is blocked: nothing to pump");
+}
+
+// ---- Cabal Patriarch
+#[test]
+fn cabal_patriarch_sacrifices_a_faerie_to_kill_a_small_creature() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let pat = perm(&mut g, P0, "Cabal Patriarch");
+    let faerie = flier(&mut g, P0);
+    let cobra = perm(&mut g, P1, "Lotus Cobra");
+    let opts = perm_opts(&mut g, pat, P0, Some(false));
+    assert_eq!(opts.len(), 1, "{:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
+    assert!(perform(&mut g, P0, &opts[0]));
+    assert!(!g.perm(faerie).on_bf, "the Faerie token paid");
+    assert!(!g.perm(cobra).on_bf, "-2/-2 killed the 2/1");
+    assert!(g.perm(pat).on_bf);
+    assert_eq!(mana::total_mana(&g, P0, false), 0);
+}
+
+#[test]
+fn cabal_patriarch_never_sacrifices_alela_and_exiles_a_graveyard_creature_instead() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let pat = perm(&mut g, P0, "Cabal Patriarch");
+    let al = alela_out(&mut g, P0);
+    let cobra = perm(&mut g, P1, "Lotus Cobra");
+    assert!(perm_opts(&mut g, pat, P0, Some(false)).is_empty(), "only Alela to sacrifice: no");
+    let dead = card(&g, "Serra Angel");
+    g.player_mut(P0).gy.push(dead);
+    let opts = perm_opts(&mut g, pat, P0, Some(false));
+    assert_eq!(opts.len(), 1);
+    assert!(perform(&mut g, P0, &opts[0]));
+    assert!(g.perm(al).on_bf, "Alela stays");
+    assert!(!g.perm(cobra).on_bf);
+    assert!(g.player(P0).exile.contains(&dead) && !g.player(P0).gy.contains(&dead), "the second ability's cost");
+}
+
+#[test]
+fn cabal_patriarch_uses_two_activations_on_a_toughness_three_bomb() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Swamp", 6, false);
+    let pat = perm(&mut g, P0, "Cabal Patriarch");
+    let f1 = flier(&mut g, P0);
+    let f2 = flier(&mut g, P0);
+    let oracle = perm(&mut g, P1, "Thassa's Oracle");
+    let opts = perm_opts(&mut g, pat, P0, Some(false));
+    assert_eq!(opts.len(), 1);
+    assert!(perform(&mut g, P0, &opts[0]));
+    assert!(!g.perm(oracle).on_bf, "-4/-4 in all");
+    assert!(!g.perm(f1).on_bf && !g.perm(f2).on_bf);
+    assert_eq!(mana::total_mana(&g, P0, false), 0, "{{2}}{{B}} twice");
+}
+
+#[test]
+fn cabal_patriarch_leaves_big_creatures_alone() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Swamp", 6, false);
+    let pat = perm(&mut g, P0, "Cabal Patriarch");
+    flier(&mut g, P0);
+    flier(&mut g, P0);
+    perm(&mut g, P1, "Archon of Cruelty");
+    assert!(perm_opts(&mut g, pat, P0, Some(false)).is_empty());
+}
+
+// ---- Serra the Benevolent
+fn serra_opts(g: &mut Game, s: PermId) -> Vec<Opt> {
+    perm_opts(g, s, P0, Some(false))
+}
+
+fn pick<'a>(opts: &'a [Opt], label: &str) -> &'a Opt {
+    opts.iter()
+        .find(|o| o.label.ends_with(label))
+        .unwrap_or_else(|| panic!("no {label}: {:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>()))
+}
+
+#[test]
+fn serra_plus_two_pumps_fliers_only() {
+    let mut g = alela_table();
+    let s = perm(&mut g, P0, "Serra the Benevolent");
+    let f = flier(&mut g, P0);
+    let ground = token(&mut g, P0, 2);
+    let opts = serra_opts(&mut g, s);
+    assert!(perform(&mut g, P0, pick(&opts, "+2")));
+    assert_eq!(g.perm(s).loyalty, Some(6));
+    assert_eq!(g.perm(f).eot_pt, (1, 1));
+    assert_eq!(g.perm(ground).eot_pt, (0, 0));
+}
+
+#[test]
+fn serra_minus_three_makes_a_vigilant_flying_angel() {
+    let mut g = alela_table();
+    let s = perm(&mut g, P0, "Serra the Benevolent");
+    let opts = serra_opts(&mut g, s);
+    assert!(perform(&mut g, P0, pick(&opts, "-3")));
+    assert_eq!(g.perm(s).loyalty, Some(1));
+    let angel = *g.player(P0).perms.iter().find(|&&m| g.perm(m).token).expect("a token");
+    assert_eq!((values::epow(&g, angel), values::etgh(&g, angel)), (4, 4));
+    assert!(g.perm(angel).fly && g.perm(angel).vig);
+    assert!(g.perm(angel).ttypes.contains(&"angel"));
+    assert_eq!(values::colors_of(&g, angel), sim_core::cards::Colors::from_letters("W"));
+}
+
+#[test]
+fn serra_prefers_the_angel_when_the_board_is_empty_and_plus_two_with_fliers() {
+    let mut g = alela_table();
+    let s = perm(&mut g, P0, "Serra the Benevolent");
+    let o = serra_opts(&mut g, s);
+    assert!(pick(&o, "-3").utility > pick(&o, "+2").utility, "no creatures: a body first");
+    flier(&mut g, P0);
+    flier(&mut g, P0);
+    flier(&mut g, P0);
+    flier(&mut g, P0);
+    let o = serra_opts(&mut g, s);
+    assert!(pick(&o, "+2").utility > pick(&o, "-3").utility, "four fliers ready to attack: pump them");
+}
+
+#[test]
+fn serra_ultimate_is_offered_at_six_and_used_first() {
+    let mut g = alela_table();
+    let s = perm(&mut g, P0, "Serra the Benevolent");
+    g.perm_mut(s).loyalty = Some(6);
+    let o = serra_opts(&mut g, s);
+    let ult = pick(&o, "-6");
+    assert!(o.iter().all(|x| x.utility <= ult.utility));
+    assert!(perform(&mut g, P0, ult));
+    assert!(g.player(P0).emblems.contains(&"serra"));
+    assert!(!g.perm(s).on_bf, "0 loyalty: Serra goes");
+}
+
+#[test]
+fn serra_emblem_keeps_you_at_one_life_while_you_control_a_creature() {
+    let mut g = alela_table();
+    g.player_mut(P0).emblems.push("serra");
+    g.player_mut(P0).life = 5;
+    token(&mut g, P0, 1);
+    life::lose_life(&mut g, P0, 20, Some(P1), "burn", None).unwrap();
+    assert_eq!(g.player(P0).life, 1, "damage that would reduce it below 1 reduces it to 1");
+    assert!(g.player(P0).alive);
+    life::lose_life(&mut g, P0, 3, Some(P1), "combat", None).unwrap();
+    assert_eq!(g.player(P0).life, 1, "at 1 life: no further damage");
+    life::lose_life(&mut g, P0, 1, Some(P1), "drain", None).unwrap();
+    assert_eq!(g.player(P0).life, 0, "life loss is not damage");
+}
+
+#[test]
+fn serra_emblem_does_nothing_without_a_creature_or_without_lethal_damage() {
+    let mut g = alela_table();
+    g.player_mut(P0).emblems.push("serra");
+    g.player_mut(P0).life = 5;
+    life::lose_life(&mut g, P0, 2, Some(P1), "burn", None).unwrap();
+    assert_eq!(g.player(P0).life, 3, "ordinary damage is dealt");
+    life::lose_life(&mut g, P0, 9, Some(P1), "burn", None).unwrap();
+    assert_eq!(g.player(P0).life, -6, "no creature: the emblem's condition fails");
+    let mut g = alela_table();
+    g.player_mut(P0).life = 5;
+    token(&mut g, P0, 1);
+    life::lose_life(&mut g, P0, 9, Some(P1), "burn", None).unwrap();
+    assert_eq!(g.player(P0).life, -4, "no emblem: nothing changes");
+}
+
+// ---- Wall of Junk
+#[test]
+fn wall_of_junk_blocks_a_big_attacker_and_returns_to_hand_at_end_of_combat() {
+    let mut g = alela_table();
+    let wall = perm(&mut g, P0, "Wall of Junk");
+    let a = token(&mut g, P1, 5);
+    let mut assign = vec![];
+    cardcode::blocks_hooks(&mut g, P1, &[a], P0, &mut assign).unwrap();
+    assert_eq!(assign, vec![(a, wall)], "the AI blocks freely: 7 toughness survives 5 power");
+    assert!(g.perm(wall).on_bf);
+    alela::wall_return(&mut g, &assign).unwrap();
+    assert!(!g.perm(wall).on_bf, "returned");
+    assert!(g.player(P0).hand.contains(&card(&g, "Wall of Junk")));
+}
+
+#[test]
+fn wall_of_junk_that_did_not_block_stays_and_one_that_left_is_not_returned() {
+    let mut g = alela_table();
+    let wall = perm(&mut g, P0, "Wall of Junk");
+    let a = token(&mut g, P1, 7); // 7 power kills a 0/7: no block
+    let mut assign = vec![];
+    cardcode::blocks_hooks(&mut g, P1, &[a], P0, &mut assign).unwrap();
+    assert!(assign.is_empty());
+    alela::wall_return(&mut g, &assign).unwrap();
+    assert!(g.perm(wall).on_bf);
+    // a Wall that blocked but died is not in hand
+    let b = token(&mut g, P1, 3);
+    let mut assign = vec![];
+    cardcode::blocks_hooks(&mut g, P1, &[b], P0, &mut assign).unwrap();
+    assert_eq!(assign, vec![(b, wall)]);
+    zones::die(&mut g, wall, "destroy").unwrap();
+    alela::wall_return(&mut g, &assign).unwrap();
+    assert!(!g.player(P0).hand.contains(&card(&g, "Wall of Junk")), "it died, it did not return");
+}
+
+#[test]
+fn wall_of_junk_recast_makes_a_faerie_each_time() {
+    let mut g = alela_table();
+    alela_out(&mut g, P0);
+    lands(&mut g, P0, "Plains", 2, false);
+    let wall = hand(&mut g, P0, &["Wall of Junk"])[0];
+    assert!(decks::deck_prio(&g, P0, wall) > 0, "the AI casts it");
+    mana::pay(&mut g, P0, 2, "", false).unwrap();
+    cast::cast_card(&mut g, P0, wall, "hand", Default::default()).unwrap();
+    let faeries = |g: &Game| g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count();
+    assert_eq!(faeries(&g), 1);
+    let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).name == "Wall of Junk").unwrap();
+    zones::bounce(&mut g, m).unwrap();
+    let wall = card(&g, "Wall of Junk");
+    lands(&mut g, P0, "Plains", 2, false);
+    mana::pay(&mut g, P0, 2, "", false).unwrap();
+    cast::cast_card(&mut g, P0, wall, "hand", Default::default()).unwrap();
+    assert_eq!(faeries(&g), 2, "an artifact spell again");
+}
+
+// ======================================================== the four deck-AI synergies
+#[test]
+fn ai_skullclamps_a_faerie_and_other_x1s_with_spare_mana() {
+    let mut g = alela_table();
+    alela_out(&mut g, P0);
+    lands(&mut g, P0, "Plains", 1, false);
+    perm(&mut g, P0, "Skullclamp");
+    let f = flier(&mut g, P0);
+    assert_eq!((values::epow(&g, f), values::etgh(&g, f)), (2, 1), "a 2/1 with Alela out");
+    let o = hook_labels(&mut g, P0, Some(false));
+    let clamp = o.iter().find(|o| o.label == "Skullclamp").expect("the AI offers Skullclamp");
+    let hand0 = g.player(P0).hand.len();
+    assert!(perform(&mut g, P0, clamp));
+    assert!(!g.perm(f).on_bf);
+    assert_eq!(g.player(P0).hand.len(), hand0 + 2, "draws two");
+    // an x/1 non-token that is done: Birds of Paradise
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 1, false);
+    perm(&mut g, P0, "Skullclamp");
+    perm(&mut g, P0, "Birds of Paradise");
+    assert!(has_label(&hook_labels(&mut g, P0, Some(false)), "Skullclamp"));
+}
+
+#[test]
+fn ai_does_not_clamp_under_angelic_shield_and_saves_a_creature_with_it() {
+    let mut g = alela_table();
+    alela_out(&mut g, P0);
+    lands(&mut g, P0, "Plains", 1, false);
+    perm(&mut g, P0, "Skullclamp");
+    flier(&mut g, P0);
+    perm(&mut g, P0, "Angelic Shield");
+    assert!(!has_label(&hook_labels(&mut g, P0, Some(false)), "Skullclamp"), "+0/+1 makes the Faerie a 2/2");
+    // removal aimed at a valuable creature: the Shield bounces it
+    let angel = perm(&mut g, P0, "Serra Angel");
+    removal::apply_removal(&mut g, Some(P1), angel, "destroy", None).unwrap();
+    assert!(!g.perm(angel).on_bf);
+    assert!(g.player(P0).hand.contains(&card(&g, "Serra Angel")), "back in hand, not in the graveyard");
+    assert!(g.player(P0).gy.contains(&card(&g, "Angelic Shield")), "the Shield was sacrificed");
+}
+
+#[test]
+fn angelic_shield_is_not_spent_on_tokens_or_alela() {
+    let mut g = alela_table();
+    let al = alela_out(&mut g, P0);
+    let shield = perm(&mut g, P0, "Angelic Shield");
+    let f = flier(&mut g, P0);
+    removal::apply_removal(&mut g, Some(P1), f, "destroy", None).unwrap();
+    assert!(g.perm(shield).on_bf, "a token would be lost for good");
+    removal::apply_removal(&mut g, Some(P1), al, "destroy", None).unwrap();
+    assert!(g.perm(shield).on_bf, "Alela can go to the command zone anyway");
+}
+
+#[test]
+fn ai_activates_crystal_chimes_with_two_enchantments_in_the_graveyard() {
+    let mut g = alela_table();
+    lands(&mut g, P0, "Plains", 3, false);
+    let ch = perm(&mut g, P0, "Crystal Chimes");
+    let (opp, kj) = (card(&g, "Opposition"), card(&g, "Karmic Justice"));
+    g.player_mut(P0).gy.push(opp);
+    assert!(perm_opts(&mut g, ch, P0, Some(false)).is_empty(), "one enchantment: not yet");
+    g.player_mut(P0).gy.push(kj);
+    let o = perm_opts(&mut g, ch, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(has_label(&hook_labels(&mut g, P0, Some(false)), "Crystal Chimes"), "reaches the AI's option list");
+    assert!(perform(&mut g, P0, &o[0]));
+    assert!(g.player(P0).hand.contains(&opp) && g.player(P0).hand.contains(&kj), "both back");
+    assert!(g.player(P0).gy.contains(&card(&g, "Crystal Chimes")));
+    assert_eq!(mana::total_mana(&g, P0, false), 0);
+}
+
+#[test]
+fn ai_moves_lightning_greaves_off_alela_before_an_aura_that_wants_her() {
+    let mut g = alela_table();
+    let al = alela_out(&mut g, P0);
+    g.player_mut(P0).cmd_in_zone = false;
+    let gr = perm(&mut g, P0, "Lightning Greaves");
+    g.perm_mut(gr).attached = Some(al);
+    let angel = perm(&mut g, P0, "Serra Angel");
+    g.active = Some(P0);
+    assert!(!has_label(&hook_labels(&mut g, P0, Some(false)), "Lightning Greaves off"), "nothing in hand wants her");
+    hand(&mut g, P0, &["Unquestioned Authority"]);
+    let o = hook_labels(&mut g, P0, Some(false));
+    let mv = o.iter().find(|o| o.label.starts_with("Lightning Greaves off Alela")).expect("the AI moves the Greaves");
+    assert!(perform(&mut g, P0, mv));
+    assert_eq!(g.perm(gr).attached, Some(angel));
+    assert!(!values::untargetable(&g, al), "Alela can be enchanted again");
+}
+
+#[test]
+fn wall_of_junk_in_a_real_combat_blocks_and_goes_home() {
+    let mut g = alela_table();
+    let wall = perm(&mut g, P0, "Wall of Junk");
+    let a = token(&mut g, P1, 5);
+    let before = g.player(P0).life;
+    combat::resolve_combat(&mut g, P1, &[a], P0, &[]).unwrap();
+    assert_eq!(g.player(P0).life, before, "the Wall blocked the 5/5");
+    assert!(!g.perm(wall).on_bf && g.player(P0).hand.contains(&card(&g, "Wall of Junk")), "back in hand after combat");
+}
+
+#[test]
+fn serra_emblem_in_a_real_combat_leaves_one_life() {
+    let mut g = alela_table();
+    g.player_mut(P0).emblems.push("serra");
+    g.player_mut(P0).life = 4;
+    let chump = flier(&mut g, P0);
+    g.perm_mut(chump).tapped = true; // controls a creature, but it can't block
+    let a = token(&mut g, P1, 9);
+    combat::resolve_combat(&mut g, P1, &[a], P0, &[a]).unwrap();
+    assert_eq!(g.player(P0).life, 1);
+    assert!(g.player(P0).alive);
+}

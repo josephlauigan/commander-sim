@@ -808,6 +808,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         m.eot_pt = (0, 0);
         m.eot_kw.clear();
     }
+    crate::impls::alela::mirror_revert(g)?; // Mirage Mirror: copies end with the previous turn
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn
         q.floating.any = 0;
