@@ -592,6 +592,7 @@
 1x Razzle-Dazzler (otj)
 1x Reality Acid (tsr)
 3x Rearing Embermare (sos)
+1x Recommission
 1x Reconnaissance Mission (msc)
 1x Recruitment Officer (j25)
 1x Recursive Recruitment (fra)
@@ -824,8 +825,10 @@
 1x Twisted Riddlekeeper (mh3)
 1x Two-Headed Sliver (tsr)
 3x Ulna Alley Shopkeep (sos)
+1x Ultimate Magic: Holy
 1x Ultimate Magic: Meteor (fic)
 1x Ultimecia, Temporal Threat (fin)
+1x Unbreakable Formation
 1x Unctus, Grand Metatect (ppone)
 3x Undercity Dire Rat (fin)
 1x Undercover Crocodelf (mkm)
