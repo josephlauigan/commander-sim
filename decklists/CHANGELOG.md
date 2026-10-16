@@ -5,8 +5,7 @@ simulator results over time, and tuning notes. The deck documents themselves des
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
 JD's decks: Cloud, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Tymna/Kraum, Veyran, Y'shtola.
-Avery's decks:
-Alela, Galadriel.
+Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
 
