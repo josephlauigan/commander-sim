@@ -186,13 +186,13 @@ before the game.
 
 **Planeswalkers (1).** The Aetherspark
 
-**Artifacts (13).** Chromatic Lantern, Conqueror's Flail, Dragoon's Lance, Hero's Blade, Hero's Heirloom, Medic's Kitesail, Nim Deathmantle, Potioner's Trove, Samurai's Katana, Star Compass, Talisman of Conviction, Talisman of Hierarchy, Trailblazer's Boots
+**Artifacts (15).** Chromatic Lantern, Conqueror's Flail, Dragoon's Lance, Helm of Kaldra, Hero's Blade, Hero's Heirloom, Medic's Kitesail, Nim Deathmantle, Potioner's Trove, Samurai's Katana, Shield of Kaldra, Star Compass, Talisman of Conviction, Talisman of Hierarchy, Trailblazer's Boots
 
 **Enchantments (3).** Darksteel Mutation, Memory Trap, Tocasia's Welcome
 
-**Instants (16).** Arcane Denial, Bedevil, Disenchant, Dissipate, Fact or Fiction, Fate of the Sun-Cryst, Force of Will, Harsh Annotation, Make Your Move, Mana Leak, Quick Study, Scorching Dragonfire, Silverquill Charm, Vanish from Sight, Vibrant Outburst, Wander Off
+**Instants (15).** Arcane Denial, Bedevil, Disenchant, Dissipate, Fact or Fiction, Fate of the Sun-Cryst, Force of Will, Harsh Annotation, Make Your Move, Quick Study, Scorching Dragonfire, Silverquill Charm, Vanish from Sight, Vibrant Outburst, Wander Off
 
-**Sorceries (4).** Diabolic Tutor, Expressive Iteration, Toxic Deluge, Twisted Fates
+**Sorceries (3).** Diabolic Tutor, Expressive Iteration, Toxic Deluge
 
 **Lands (36).** Arcane Sanctum, Battlefield Forge, Boiling Rock Prison, Caves of Koilos, Clifftop Retreat, Command Tower, Crumbling Necropolis, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Irrigated Farmland, Mystic Monastery, Nomad Outpost, Path of Ancestry, Port Town, Rugged Prairie, Shattered Sanctum, Spectacle Summit, Spectator Seating, Temple of Deceit, Temple of Epiphany, Temple of Malice, Unclaimed Territory, Underground River, Vivid Creek, 3 Island, 3 Plains, 3 Swamp, 2 Mountain
 
@@ -235,6 +235,7 @@ before the game.
 1 Gilgamesh, Master-at-Arms
 1 Glacial Fortress
 1 Harsh Annotation
+1 Helm of Kaldra
 1 Hero's Blade
 1 Hero's Heirloom
 1 Irrigated Farmland
@@ -243,7 +244,6 @@ before the game.
 1 Lightning, Security Sergeant
 1 Lyra Dawnbringer
 1 Make Your Move
-1 Mana Leak
 1 Marchesa, the Black Rose
 1 Medic's Kitesail
 1 Memory Trap
@@ -262,6 +262,7 @@ before the game.
 1 Samurai's Katana
 1 Scorching Dragonfire
 1 Shattered Sanctum
+1 Shield of Kaldra
 1 Silverquill Charm
 1 Spectacle Summit
 1 Spectator Seating
@@ -279,7 +280,6 @@ before the game.
 1 Tocasia's Welcome
 1 Toxic Deluge
 1 Trailblazer's Boots
-1 Twisted Fates
 1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River

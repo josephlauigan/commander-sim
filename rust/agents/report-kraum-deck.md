@@ -29,3 +29,6 @@ All in `impls/tymna_cards.rs` (`register_gear`), verdicts in `data/card_override
 
 ## Checks
 `cargo test --release -j 6`: 1926 passed, 0 failed. `cargo build --release -j 6 --all-targets`: no warnings. `all_decks` runs skipped as briefed.
+
+## List change (coordinator, JD): Twisted Fates and Mana Leak out, Shield of Kaldra and Helm of Kaldra in
+`cardgen deck kraum` run with that list (100 cards; fixture and `cardgen export` updated; strategy text untouched, it still mentions the two removed cards at lines 89 and 97). Both Kaldra pieces are Full in the kraum audit (93 unique, 0 not Full). Helm's {1} Kaldra ability needs Sword, Shield and Helm out (`legends::kaldra_assemble`), so it offers nothing in this deck; tested. Equip AI: `equip_holder_value` puts Shield on a commander or the best threat (pval, +3 for a commander) and Helm on the biggest attacker. Gilgamesh can put them in free (rank 1, below the other Equipment). Final: 1927 tests pass, no build warnings, smoke run 12.5% (n=40, noise).

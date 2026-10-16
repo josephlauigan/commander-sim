@@ -871,3 +871,29 @@ fn tymnas_spread_uses_the_creature_a_kitesail_makes_fly() {
     to.sort();
     assert_eq!(to, vec![P1, P2, P3], "each opponent is hit by one: {groups:?}");
 }
+
+// ------------------------------------------------------------------ Shield and Helm of Kaldra (no Sword in this deck)
+#[test]
+fn shield_goes_on_the_commander_and_helm_on_the_big_attacker_and_kaldra_is_never_made() {
+    let mut g = kraum_table();
+    lands(&mut g, P0, "Plains", 6, false);
+    let tymna = perm(&mut g, P0, "Tymna the Weaver");
+    let big = perm(&mut g, P0, "Lyra Dawnbringer");
+    let shield = perm(&mut g, P0, "Shield of Kaldra");
+    let helm = perm(&mut g, P0, "Helm of Kaldra");
+    for q in [P1, P2] {
+        token(&mut g, q, 2);
+    }
+    g.perm_mut(tymna).is_cmd = true; // (entered from the library here, not cast from the command zone)
+    let s = best_equip_target(&g, shield);
+    assert!(s == Some(tymna) || s == Some(big), "the commander or the best threat, not a token: {s:?}");
+    assert_eq!(best_equip_target(&g, helm), Some(big), "first strike, trample, haste on the big creature");
+    attach(&mut g, shield, tymna);
+    assert!(sim_core::engine::values::indestructible(&g, tymna));
+    attach(&mut g, helm, big);
+    assert!(sim_core::dsl::has_kw(&g, big, "first strike") && sim_core::dsl::has_kw(&g, big, "haste"));
+    // {1}: create Kaldra needs the Sword too: no option without it
+    let c = g.perm(helm).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    assert!(f(&mut g, helm, P0, Some(false)).unwrap().is_empty(), "never pays {{1}} without the Sword");
+}

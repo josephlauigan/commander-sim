@@ -1074,6 +1074,13 @@ pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
     } else if now == 0.0 {
         v += 2.0; // size on a creature that gets through
     }
+    if name == "Shield of Kaldra" {
+        // indestructible: on the creature most worth protecting (a commander, else the best threat)
+        v += pval(g, m) * 0.5 + if g.perm(m).is_cmd { 3.0 } else { 0.0 };
+    }
+    if name == "Helm of Kaldra" {
+        v += 0.5 * epow(g, m) as f64; // first strike, trample, haste: on a big attacker
+    }
     if matches!(name, HEIRLOOM | "Hero's Blade") && crate::cardcode::is_legendary(g, m) {
         v += 1.0;
     }
