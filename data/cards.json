@@ -1528,11 +1528,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "• Creatures you control gain flying, vigilance, and double strike until end of turn.",
-    "• Creatures you control gain lifelink, indestructible, and protection from each color until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -26910,10 +26907,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever one or more creatures attack, you may have target attacking creature gain double strike until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

@@ -8069,3 +8069,15 @@ tags = "pow=3 tgh=2 fly"
 dsl = []
 status = "Full"
 note = "flying; protection from white (protfrom W); each creature attacking its controller costs {1} (common.pillowfort_tax; planeswalkers are protected by the same player-level tax); tested in cards_archon"
+
+["Duelist's Heritage"]
+tags = ""
+dsl = []
+status = "Full"
+note = "whenever creatures attack, its controller's best attacker (Cloud first) gains double strike until end of turn (attack hook in impls/cloud.rs); tested in cards_cloud_ds"
+
+["Akroma's Will"]
+tags = ""
+dsl = []
+status = "Full"
+note = "cast after blockers on its controller's turn by the AI (hand_blocks): flying, vigilance, double strike for their creatures; with a commander out also lifelink, indestructible, protection from each color (eot_kw pro_colors). Opponent-turn casting is not used by the AI; tested in cards_cloud_ds"

@@ -52,10 +52,10 @@ With Cloud equipped, these Equipment gain from the extra trigger:
   at Cloud, as the second would fizzle and lose its land.
 - **Mask of Memory**: two triggers of draw two then discard one.
 
-The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left), **Nim Deathmantle**
-(the card is returned once) or **Hero's Blade** (it can't attach twice). **Champion's Helm**, **Swiftfoot Boots**,
-**Colossus Hammer**, **Veteran's Powerblade**, **Shield of Kaldra**, **Helm of Kaldra** and **Wrecking Ball Arm** have
-no triggers: they are plain bonuses (hexproof, first strike, haste, +X/+X, indestructible).
+The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left) or **Hero's Blade**
+(it can't attach twice). **Champion's Helm**, **Swiftfoot Boots**,
+**Colossus Hammer**, **Fireshrieker**, **Shield of Kaldra**, **Helm of Kaldra** and **Wrecking Ball Arm** have
+no triggers: they are plain bonuses (hexproof, first strike, double strike, haste, +X/+X, indestructible).
 
 ### Making Cloud enter again
 **Forum Familiar** returns Cloud (or any creature) to your hand when turned face up from disguise, and
@@ -77,7 +77,7 @@ to blink them.
 - **Auriok Steelshaper** reduces equip costs by {1}, and gives Soldiers and Knights (Cloud is a Soldier) +1/+1 while
   it is equipped; **Helitrooper** makes equipping it cheaper by {2} and gives another attacker flying; **Cid, Freeflier
   Pilot** makes Equipment spells cost {1} less, flies on your turn and returns an Equipment from the graveyard.
-- **Veteran's Powerblade** equips a Soldier for {W}; Cloud is one.
+- **Fireshrieker** equips for {2} and gives double strike; Duelist's Heritage and Akroma's Will give it for a turn.
 
 ### Backup carriers
 When Cloud is dead or removed, **Balan, Wandering Knight**, **Kor Duelist** (double strike when equipped),
@@ -95,6 +95,12 @@ that creature indestructible.
 - **Hero's Blade** (+3/+2) attaches itself when a legendary creature enters.
 - **Helm of Kaldra** gives first strike, trample and haste. With all three Kaldra pieces out, pay {1}: a legendary
   Kaldra token wears all three (a 9/9 indestructible haste first striker).
+- **Double strike** makes every combat hit count twice: Fireshrieker (equip {2}) gives it to the equipped creature, so
+  Cloud with a Sword triggers it at first-strike and regular damage (four Sword triggers per attack with his doubling)
+  and deals commander damage twice. Duelist's Heritage ({2}{W}) lets you give a target attacking creature double
+  strike each time creatures attack. Akroma's Will ({3}{W}, instant) gives your creatures flying, vigilance and
+  double strike until end of turn; with a commander out you may also choose lifelink, indestructible and protection from
+  each color.
 - **Champion's Helm** (+2/+2; hexproof on a legendary creature) and **Swiftfoot Boots** (hexproof and haste) both
   protect and push.
 
@@ -109,7 +115,7 @@ that creature indestructible.
 
 ### Removal
 - **Single targets:** Winds of Abandon ({1}{W}, exile; overload {4}{W}{W} exiles all your opponents' creatures), Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
-  it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Secure the Scene, Fate of the
+  it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Fate of the
   Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less).
 - **Artifacts and enchantments:** Disenchant.
 - **Attack limits and taxes:** Crawlspace (artifact: no more than two creatures can attack you each combat). Other
@@ -167,8 +173,8 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Wall of Omens, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Crawlspace, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Secure the Scene, Fate of the Sun-Cryst, Skyclave
-Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 14 Equipment in the deck, so Cloud's search always finds one.
+Interaction: Wrath of God, Day of Judgment, Fumigate, Crawlspace, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Fate of the Sun-Cryst, Skyclave
+Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 13 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
 
@@ -184,13 +190,13 @@ on its own. Tell the table before the game that:
 
 **Creatures (29).** Adelbert Steiner, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Bronze Guardian, Cid, Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
 
-**Enchantments (3).** Citizen's Arrest, Court of Ardenvale, Smothering Tithe
+**Enchantments (4).** Citizen's Arrest, Court of Ardenvale, Duelist's Heritage, Smothering Tithe
 
-**Artifacts (22).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Crawlspace, Fellwar Stone, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Nim Deathmantle, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Veteran's Powerblade, Wrecking Ball Arm
+**Artifacts (21).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Crawlspace, Fellwar Stone, Fireshrieker, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
 
-**Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Secure the Scene, Winds of Abandon, Wrath of God
+**Sorceries (6).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Winds of Abandon, Wrath of God
 
-**Instants (4).** Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself
+**Instants (5).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -200,6 +206,7 @@ on its own. Tell the table before the game that:
 
 ```
 1 Adelbert Steiner
+1 Akroma's Will
 1 Arcane Signet
 1 Archon of Absolution
 1 Ardenn, Intrepid Archaeologist
@@ -222,12 +229,14 @@ on its own. Tell the table before the game that:
 1 Crawlspace
 1 Day of Judgment
 1 Disenchant
+1 Duelist's Heritage
 1 Elspeth, Sun's Champion
 1 Enlightened Tutor
 1 Evolving Wilds
 1 Exalted Angel
 1 Fate of the Sun-Cryst
 1 Fellwar Stone
+1 Fireshrieker
 1 Forum Familiar
 1 Fumigate
 1 Giver of Runes
@@ -243,13 +252,11 @@ on its own. Tell the table before the game that:
 1 Loyal Warhound
 1 Mask of Memory
 1 Mind Stone
-1 Nim Deathmantle
 1 Norn's Annex
 1 Page, Loose Leaf
 1 Path of Ancestry
 1 Plaza of Heroes
 1 Puresteel Paladin
-1 Secure the Scene
 1 Shield of Kaldra
 1 Skyclave Apparition
 1 Smothering Tithe
@@ -264,7 +271,6 @@ on its own. Tell the table before the game that:
 1 Terminal Moraine
 1 Thalia, the Survivor
 1 Thought Vessel
-1 Veteran's Powerblade
 1 Wall of Omens
 1 Windborn Muse
 1 Winds of Abandon

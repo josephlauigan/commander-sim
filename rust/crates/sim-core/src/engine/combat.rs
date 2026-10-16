@@ -115,7 +115,8 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
         return false; // Sheoldred, Whispering One: swampwalk
     }
     let reach = cb.is_some_and(|d| d.tag(Tag::Reach));
-    let (a_fly, b_fly) = (xa.fly && !crate::impls::cloud::loses_flying(g, a), xb.fly && !crate::impls::cloud::loses_flying(g, b));
+    let (a_fly, b_fly) =
+        (xa.fly && !crate::impls::cloud::loses_flying(g, a), xb.fly && !crate::impls::cloud::loses_flying(g, b));
     if a_fly && !b_fly && !reach && !(g.player(xb.owner).elspeth_emblem && g.is_creature(b)) {
         return false;
     }
@@ -571,7 +572,9 @@ fn resolve_combat_inner(
             .map(|a| (a, epow(g, a) * if double_strike(g, a) { 2 } else { 1 }))
             .collect();
         let lethal = unbl_dmg.iter().map(|x| x.1).sum::<i32>() >= g.player(d).life
-            || unbl_dmg.iter().any(|&(a, x)| g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + x >= 21);
+            || unbl_dmg
+                .iter()
+                .any(|&(a, x)| g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + x >= 21);
         if lethal {
             last_chance(g, d)?; // lethal coming: Teferi's Protection
         }
@@ -693,62 +696,70 @@ fn resolve_combat_inner(
                 crate::glog!(g, "    Szadek: {} +1/+1 counters, {} mills {}", dmg, g.player(d).name, dmg);
                 dmg = 0;
             }
-            if dmg > 0 {
-                lose_life(g, d, dmg, Some(p), "combat", None)?;
-                conn.push(a);
-                *tot += dmg;
-                if g.dsl_on {
-                    let fired = crate::dsl::Fired { attacker: Some(a), defender: Some(d), ..Default::default() };
-                    crate::dsl::fire(g, "combat_damage", fired)?;
-                }
-                if !g.hooks.is_empty() {
-                    fire_trigger(g, Event::CombatDamage, Call::CombatDamage { p, a, d, dmg })?;
-                }
-                cardcode::combat_damage_cards(g, p, a, d, dmg)?; // Insight, emblems
-                if g.monarch == Some(d) {
-                    cardcode::become_monarch(g, p)?;
-                }
-                if card_tag(g, a, Tag::Hellkite) {
-                    // Hellkite Tyrant steals their artifacts
-                    let arts: Vec<PermId> = g
-                        .player(d)
-                        .perms
-                        .iter()
-                        .copied()
-                        .filter(|&x| {
-                            !g.is_creature(x) && g.perm(x).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))
-                        })
-                        .collect();
-                    for x in arts {
-                        g.player_mut(d).perms.retain(|&y| y != x);
-                        let px = g.perm_mut(x);
-                        px.owner = p;
-                        px.attached = None;
-                        g.player_mut(p).perms.push(x);
-                        g.bf_ver += 1;
+            // double strike, unblocked: two damage steps (first strike, then regular), so every "deals combat damage to a
+            // player" trigger happens twice (Swords, Cloud's doubling on top: four)
+            let hits = if double_strike(g, a) && blocker_of(&assign, a).is_none() && dmg % 2 == 0 { 2 } else { 1 };
+            let full = dmg;
+            for _ in 0..hits {
+                let dmg = full / hits;
+                if dmg > 0 && g.perm(a).on_bf && g.player(d).alive {
+                    lose_life(g, d, dmg, Some(p), "combat", None)?;
+                    conn.push(a);
+                    *tot += dmg;
+                    if g.dsl_on {
+                        let fired = crate::dsl::Fired { attacker: Some(a), defender: Some(d), ..Default::default() };
+                        crate::dsl::fire(g, "combat_damage", fired)?;
                     }
-                }
-                if g.perm(a).lifelink || kw(g, a, "lifelink") {
-                    gain(g, p, dmg)?;
-                }
-                if g.perm(a).is_cmd {
-                    crate::engine::values::add_cmd_dmg(g, d, p, a, dmg);
-                }
-                if g.perm(a).army {
-                    crate::impls::mine::army_hit_milestone(g, p); // reports: with or without Sauron out
-                    if has(g, p, Tag::Sauron) {
-                        cardcode::ring_tempt(g, p)?; // Sauron: an Army's combat damage tempts
+                    if !g.hooks.is_empty() {
+                        fire_trigger(g, Event::CombatDamage, Call::CombatDamage { p, a, d, dmg })?;
                     }
-                }
-                cardcode::ring_damage(g, p, a, d)?; // the Ring, level 4: each opponent loses 3
-                if equipped(g, a, Tag::Sword) {
-                    let n = g.player(d).hand.len() as u64;
-                    if n > 0 {
-                        let i = g.rng.below(n) as usize;
-                        discard_index(g, d, i)?;
+                    cardcode::combat_damage_cards(g, p, a, d, dmg)?; // Insight, emblems
+                    if g.monarch == Some(d) {
+                        cardcode::become_monarch(g, p)?;
                     }
-                    for l in g.player(p).lands.clone() {
-                        g.land_mut(l).tapped = false;
+                    if card_tag(g, a, Tag::Hellkite) {
+                        // Hellkite Tyrant steals their artifacts
+                        let arts: Vec<PermId> = g
+                            .player(d)
+                            .perms
+                            .iter()
+                            .copied()
+                            .filter(|&x| {
+                                !g.is_creature(x)
+                                    && g.perm(x).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))
+                            })
+                            .collect();
+                        for x in arts {
+                            g.player_mut(d).perms.retain(|&y| y != x);
+                            let px = g.perm_mut(x);
+                            px.owner = p;
+                            px.attached = None;
+                            g.player_mut(p).perms.push(x);
+                            g.bf_ver += 1;
+                        }
+                    }
+                    if g.perm(a).lifelink || kw(g, a, "lifelink") {
+                        gain(g, p, dmg)?;
+                    }
+                    if g.perm(a).is_cmd {
+                        crate::engine::values::add_cmd_dmg(g, d, p, a, dmg);
+                    }
+                    if g.perm(a).army {
+                        crate::impls::mine::army_hit_milestone(g, p); // reports: with or without Sauron out
+                        if has(g, p, Tag::Sauron) {
+                            cardcode::ring_tempt(g, p)?; // Sauron: an Army's combat damage tempts
+                        }
+                    }
+                    cardcode::ring_damage(g, p, a, d)?; // the Ring, level 4: each opponent loses 3
+                    if equipped(g, a, Tag::Sword) {
+                        let n = g.player(d).hand.len() as u64;
+                        if n > 0 {
+                            let i = g.rng.below(n) as usize;
+                            discard_index(g, d, i)?;
+                        }
+                        for l in g.player(p).lands.clone() {
+                            g.land_mut(l).tapped = false;
+                        }
                     }
                 }
             }
@@ -936,7 +947,11 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 None => ai::choose_defender(g, p),
             };
             let groups = if plan.is_some_and(|x| x.1 == "all") {
-                let all_atk = if g.player(p).key == "cloud" { crate::impls::cloud::all_out_trim(g, p, all_atk, d) } else { all_atk };
+                let all_atk = if g.player(p).key == "cloud" {
+                    crate::impls::cloud::all_out_trim(g, p, all_atk, d)
+                } else {
+                    all_atk
+                };
                 vec![(d, all_atk)] // everything at one player
             } else {
                 if ncomb == 1 {

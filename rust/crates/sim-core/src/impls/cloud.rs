@@ -972,6 +972,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Zack Fair")?;
     c.as_enters = Some(zack_enters);
     r.card(db, "Unfinished Business")?.resolve = Some(unfinished_business);
+    register_ds(r, db)?;
     Ok(())
 }
 
@@ -1818,4 +1819,137 @@ pub fn keep_hand(g: &Game, p: PlayerId) -> bool {
 /// every re-equip costs mana. Only the cloud deck; Riders returns anything else (or itself) first.
 pub fn riders_spare(g: &Game, m: PermId) -> bool {
     g.player(owner(g, m)).key == KEY && name_of(g, m) == CLOUD && !equipment_on(g, m).is_empty()
+}
+
+// ------------------------------------------------------------------ double strike package (cloud-ds)
+const HERITAGE: &str = "Duelist's Heritage";
+const WILL: &str = "Akroma's Will";
+
+fn has_trigger_sword(g: &Game, p: PlayerId) -> bool {
+    cloud_of(g, p).is_some_and(|cl| {
+        equipment_on(g, cl).iter().any(|&e| {
+            matches!(name_of(g, e), "Sword of Fire and Ice" | "Sword of Feast and Famine" | "Sword of Hearth and Home")
+        })
+    })
+}
+
+/// Duelist's Heritage: "Whenever one or more creatures attack, you may have target attacking creature gain double
+/// strike until end of turn." The AI always takes it, on the attacker that gains most: Cloud, then the biggest.
+/// (Any attack of its controller's; fired once per attack declaration.)
+fn heritage_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if g.perm(src).owner != p || !live(g, src) {
+        return Ok(vec![]);
+    }
+    let pool: Vec<PermId> = atk
+        .iter()
+        .copied()
+        .filter(|&m| {
+            live(g, m) && !crate::engine::combat::double_strike(g, m) && !crate::engine::values::untargetable(g, m)
+        })
+        .collect();
+    let score = |g: &Game, m: PermId| {
+        let mut s = epow(g, m) as f64;
+        if name_of(g, m) == CLOUD {
+            s += 20.0 + 10.0 * (!equipment_on(g, m).is_empty()) as i32 as f64; // the doubled Sword triggers
+        }
+        s
+    };
+    let Some(t) = max_by(&pool, |m| score(g, m)) else { return Ok(vec![]) };
+    if trigger_window(g, p, Some(src), "double strike", None)? && live(g, t) {
+        crate::impls::partials::eot_kw(g, t, intern("double strike"));
+        crate::glog!(g, "    {} gains double strike (Duelist's Heritage)", g.perm(t).name);
+    }
+    Ok(vec![])
+}
+
+/// Akroma's Will ({3}{W}, instant): after blockers, on the attacker's turn, when double strike adds real damage (Cloud
+/// wearing a Sword, or at least 4 extra points from unblocked attackers). Mode one always (flying, vigilance, double
+/// strike); mode two too while a commander is on the battlefield (lifelink, indestructible, protection from each
+/// color). Not modeled: casting it on an opponent's turn for the protection mode alone.
+fn will_blocks(
+    g: &mut Game,
+    c: CardId,
+    p: PlayerId,
+    atk: &[PermId],
+    _d: PlayerId,
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    if card_name(g, c) != WILL || !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "W", false) {
+        return Ok(());
+    }
+    let open: Vec<PermId> = atk
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && !assign.iter().any(|x| x.0 == m))
+        .filter(|&m| !crate::engine::combat::double_strike(g, m))
+        .collect();
+    let extra: i32 = open.iter().map(|&m| epow(g, m)).sum();
+    let cloud_swung = open.iter().any(|&m| name_of(g, m) == CLOUD && has_trigger_sword(g, p));
+    if !(cloud_swung || extra >= 4) {
+        return Ok(());
+    }
+    if !crate::engine::cast::castable(g, p, c, "hand") || !pay(g, p, 3, "W", false)? {
+        return Ok(());
+    }
+    crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default())?;
+    Ok(())
+}
+
+fn will_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<crate::sym::Sym> {
+    let both = g.player(p).perms.iter().any(|&m| live(g, m) && g.perm(m).is_cmd);
+    for m in g.player(p).perms.clone() {
+        if !live(g, m) || !g.is_creature(m) {
+            continue;
+        }
+        for k in ["flying", "vigilance", "double strike"] {
+            crate::impls::partials::eot_kw(g, m, intern(k));
+        }
+        if both {
+            for k in ["lifelink", "indestructible", "pro_colors"] {
+                crate::impls::partials::eot_kw(g, m, intern(k));
+            }
+        }
+    }
+    crate::glog!(
+        g,
+        "    {}'s creatures gain double strike{}",
+        g.player(p).name,
+        if both { " and protection" } else { "" }
+    );
+    Ok(intern("gy"))
+}
+
+/// cast priority of the package: Heritage once Cloud is out, Fireshrieker as Equipment (more with a Sword to fire
+/// twice), the Will never in a main phase (it is cast from `will_blocks`)
+fn ds_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    match card_name(g, c) {
+        WILL => 0,
+        HERITAGE => {
+            if cloud_of(g, p).is_some() {
+                66
+            } else {
+                40
+            }
+        }
+        _ => {
+            if has_trigger_sword(g, p) {
+                68
+            } else {
+                54
+            }
+        }
+    }
+}
+
+pub fn register_ds(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, HERITAGE)?;
+    c.attack = Some(heritage_attack);
+    c.prio = Some(ds_prio);
+    crate::impls::partials::at_once(c, crate::hooks::Event::Attack, false);
+    let c = r.card(db, WILL)?;
+    c.resolve = Some(will_resolve);
+    c.hand_blocks = Some(will_blocks);
+    c.prio = Some(ds_prio);
+    r.card(db, "Fireshrieker")?.prio = Some(ds_prio);
+    Ok(())
 }
