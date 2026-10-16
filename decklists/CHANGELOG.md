@@ -239,6 +239,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-10-15.** Out: Apex Witchstalker. In: Crawlspace. Synced with JD's physical deck: Crawlspace is in the deck in place of Apex Witchstalker (no more than two creatures can attack you each combat). Apex Witchstalker goes to bulk. Not simulated.
 - **2026-10-13.** Out: Champion's Helm. In: Carnage Altar. JD's choice: Champion's Helm goes to the Cloud deck; Carnage
   Altar comes back from bulk (it was in the deck until 10-11). Paired test, 500 games per tier: -0.6 (t1 -2.2, t2 -1.4,
   t3 +3.0, t4 -1.6, t5 -0.6); `audit/cloud/2026-10-13/screen/D3-*`. Her protection equipment is now Swiftfoot Boots

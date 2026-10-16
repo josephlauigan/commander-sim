@@ -95,8 +95,8 @@ Sheoldred's lifegain turns on the lifegain payoffs: **Ulna Alley Shopkeep** (+2/
 Fate** (the target's controller loses 3 if you gained life this turn), **Restless Bloodseeker** (a Blood token at your
 end step if you gained life; Blood draws a card, which is 2 more life; two Blood tokens flip it into a {4}{B} drain
 engine) and **Leech Collector // Bloodletting** (the first lifegain each turn prepares {B} Bloodletting: each opponent
-loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery. **Apex Witchstalker** gains 2 on entering
-and dying, and can be cycled for a basic land ({2}) early.
+loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery.
+**Crawlspace** limits attacks: no more than two creatures can attack you each combat.
 
 ### Drain creatures
 **Blood Artist**, **Al Bhed Salvagers**, **Sneering Shadewriter** (drain 2 on entering) and **Screeching Soulbreaker**
@@ -164,11 +164,11 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
 
-**Creatures (24).** Accursed Marauder, Al Bhed Salvagers, Apex Witchstalker, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Melancholic Poet, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Restless Bloodseeker // Bloodsoaked Reveler, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
+**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Melancholic Poet, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Restless Bloodseeker // Bloodsoaked Reveler, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
 
 **Enchantments (3).** Phyrexian Arena, Soul Enervation, Underworld Dreams
 
-**Artifacts (12).** Arcane Signet, Carnage Altar, Charcoal Diamond, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots
+**Artifacts (13).** Arcane Signet, Carnage Altar, Charcoal Diamond, Commander's Sphere, Crawlspace, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots
 
 **Sorceries (13).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Read the Bones, Silence the Echo, Stir Up Trouble, Syphon Mind
 
@@ -180,7 +180,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Accursed Marauder
 1 Al Bhed Salvagers
 1 Ambition's Cost
-1 Apex Witchstalker
 1 Arcane Signet
 1 Battle-Rage Blessing
 1 Blood Artist
@@ -192,6 +191,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Command Tower
 1 Commander's Sphere
 1 Cost of Brilliance
+1 Crawlspace
 1 Dark Deal
 1 Darksteel Plate
 1 Deadly Dispute
