@@ -1,0 +1,111 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Archangel of Tithes [pool] C 1WWW :: pow=3 tgh=5 fly
+   Open the Armory [scryfall+dsl] S 1W :: tut=any
+      ability: spell  -> search
+   Sphere of Safety [pool] E 4W :: (no tags)
+   Silverblade Paladin [pool] C 1WW :: human pow=2
+Model status of the swapped-in cards (cardgen audit):
+  Archangel of Tithes: Full (flying; attack tax {1} while untapped; blocking tax {1} while it attacks)
+  Open the Armory: Full-auto (compiled from Oracle text)
+  Sphere of Safety: Full ()
+  Silverblade Paladin: Full (soulbond (DataKey::Soulbond, bulk_white::paladin_etb): pairs on either entry, ends when either leaves or changes control; both have double strike)
+
+Swaps: Helm of Kaldra -> Archangel of Tithes; Shield of Kaldra -> Open the Armory; Ghostly Prison -> Sphere of Safety; Duelist's Heritage -> Silverblade Paladin
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.1% ->  30.3%  (delta +1.2 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Isshin 16.7%  Teysa Karlov 13.8%  Lathril 11.0%  Light-Paws 19.9%  Tatyova 8.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          29.1% ->  30.3%  +1.2pt   ±4.1 
+    Rounds survived (or game length)                  10.64 ->  10.62   -0.02  ±0.29 
+
+  Mana & consistency
+    Extra mulligans per game                           0.18 ->   0.18   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.97 ->   0.96   -0.00  ±0.08 
+    Mana available on your turn 4                      4.01 ->   4.02   +0.02  ±0.10 
+    Mana available on your turn 6                      5.58 ->   5.70   +0.12  ±0.17 
+
+  Speed
+    Games where the game plan came online             74.9% ->  75.0%  +0.1pt   ±3.9 
+    Turn the game plan came online                     5.69 ->   5.66   -0.04  ±0.22 
+    Turn the commander first resolved                  2.14 ->   2.14   +0.00  ±0.05 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.40 ->  15.48   +0.09  ±0.85 
+    Tutors resolved per game                           2.90 ->   3.23   +0.33  ±0.14*
+    Spells cast per game                              15.82 ->  16.43   +0.61  ±0.76 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.53 ->   0.52   -0.01  ±0.06 
+    Board wipes cast                                   0.28 ->   0.28   -0.00  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.71 ->   0.65   -0.05  ±0.08 
+    Your spells countered                              0.17 ->   0.16   -0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                39.88 ->  42.20   +2.32  ±3.73 
+      ...of which combat damage                       37.05 ->  39.55   +2.50  ±3.44 
+      ...of which other triggers                       2.82 ->   2.64   -0.18  ±0.45 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Tutors resolved per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Archangel of Tithes                   21.0      67.1         8.8     32.9       46.8      0.02
+    Open the Armory                       23.1      87.0         7.3     13.0       55.2      0.00
+    Sphere of Safety                      22.0      58.2         9.5     41.8       50.8      0.01
+    Silverblade Paladin                   22.9      65.5         8.1     34.5       51.3      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Helm of Kaldra                        33.8      78.4         8.1     21.6       47.2      0.06
+    Shield of Kaldra                      40.0      56.0         9.0     44.0       48.7      0.03
+    Ghostly Prison                        20.7      88.4         7.5     11.6       49.2      0.03
+    Duelist's Heritage                    22.3      68.6         8.7     31.4       56.9      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.1      30.3     +1.2
+    rounds survived                                  10.64     10.62    -0.02
+    eliminated, % of games                            70.8      69.5     -1.3
+    opponents it eliminated, per game                 0.80      0.85    +0.05
+    damage dealt, per game                            39.9      42.2     +2.3
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        26.0      26.1     +0.1
+      plan online by turn 6, %                        56.5      57.0     +0.5
+      plan online by turn 8, %                        67.4      67.6     +0.2
+      plan online by turn 12, %                       73.4      73.9     +0.5
+      plan online at all, %                           74.9      75.0     +0.1
+    commander resolved by turn 4, %                   99.3      99.3     +0.0
+    commander resolved by turn 6, %                   99.6      99.6     +0.0
+    commander removals, per game                      0.59      0.62    +0.03
+    lands on the battlefield, turn 4                  3.61      3.60    -0.01
+    lands on the battlefield, turn 8                  6.18      6.29    +0.11
+    mana available, turn 4                            4.01      4.02    +0.02
+    mana available, turn 8                            7.17      7.43    +0.26
+    cards in hand after the land drop, turn 4         6.27      6.25    -0.02
+    cards in hand after the land drop, turn 8         5.07      4.95    -0.12
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Light-Paws via commander damage 15.6%, Isshin via combat 15.5%, Teysa Karlov via drain 7.1%, Lathril via combat 6.8%
+    eliminated by (swapped): Light-Paws via commander damage 16.3%, Isshin via combat 13.4%, Tatyova via combat 7.9%, Lathril via combat 7.1%
+
+(353s total)

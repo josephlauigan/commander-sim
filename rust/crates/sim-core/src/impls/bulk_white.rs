@@ -1364,6 +1364,65 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     Ok(vec![])
 }
 
+const PALADIN: &str = "Silverblade Paladin";
+
+/// m's soulbond partner: both on the battlefield under one controller and linked to each other
+pub fn soulbond_partner(g: &Game, m: PermId) -> Option<PermId> {
+    let Some(Val::Perm(o)) = g.perm(m).data.get(DataKey::Soulbond) else { return None };
+    let o = *o;
+    let (x, y) = (g.perm(m), g.perm(o));
+    let back = matches!(y.data.get(DataKey::Soulbond), Some(Val::Perm(b)) if *b == m);
+    (x.on_bf && y.on_bf && x.owner == y.owner && back && g.is_creature(m) && g.is_creature(o)).then_some(o)
+}
+
+/// how much a creature gains from a soulbond partner: an equipped Cloud first, then the most Equipment, then power
+fn soulbond_score(g: &Game, m: PermId) -> f64 {
+    let eq = super::cloud::equipment_on(g, m).len() as f64;
+    let cloud = if g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == super::cloud::CLOUD) { 100.0 } else { 0.0 };
+    cloud + eq * 10.0 + epow(g, m) as f64
+}
+
+fn soulbond_pair(g: &mut Game, a: PermId, b: PermId) {
+    g.perm_mut(a).data.set(DataKey::Soulbond, Val::Perm(b));
+    g.perm_mut(b).data.set(DataKey::Soulbond, Val::Perm(a));
+    crate::glog!(g, "    {} pairs with {} (soulbond)", g.perm(a).name, g.perm(b).name);
+}
+
+/// Silverblade Paladin's soulbond: when it enters, or another creature enters under its controller, pair them if
+/// both are unpaired. The AI pairs with the best partner (Cloud, then the most Equipment, then power 3+) and waits
+/// otherwise, so a later Cloud can take the slot.
+fn paladin_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = g.perm(src).owner;
+    if !g.perm(src).on_bf || g.perm(m).owner != o || !g.is_creature(m) || soulbond_partner(g, src).is_some() {
+        return Ok(());
+    }
+    let pick = if m == src {
+        let cs: Vec<PermId> = g
+            .player(o)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&x| x != src && g.perm(x).on_bf && g.is_creature(x) && soulbond_partner(g, x).is_none())
+            .collect();
+        max_by(&cs, |x| soulbond_score(g, x))
+    } else if soulbond_partner(g, m).is_none() {
+        Some(m)
+    } else {
+        None
+    };
+    let Some(t) = pick else { return Ok(()) };
+    if soulbond_score(g, t) < 3.0 || !trigger_window(g, o, Some(src), "pair (soulbond)", Some(6.0))? {
+        return Ok(());
+    }
+    soulbond_pair(g, src, t);
+    Ok(())
+}
+
+/// both creatures of a pair have double strike
+fn paladin_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+    kw == "double strike" && soulbond_partner(g, src).is_some_and(|o| m == src || m == o)
+}
+
 /// Balan has double strike as long as two or more Equipment are attached to it
 fn balan_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
     m == src && kw == "double strike" && super::cloud::equipment_on(g, m).len() >= 2
@@ -1468,5 +1527,8 @@ pub fn register_equip(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.options = Some(balan_options);
     r.card(db, SKYHUNTER)?.attack = Some(skyhunter_attack);
     r.card(db, DUELIST)?.grant_kw = Some(duelist_kw);
+    let c = r.card(db, PALADIN)?;
+    c.etb = Some(paladin_etb);
+    c.grant_kw = Some(paladin_kw);
     Ok(())
 }

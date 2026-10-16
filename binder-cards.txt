@@ -29,6 +29,7 @@
 1x Fyndhorn Elder
 1x Gandalf, Friend of the Shire
 1x Garland, Royal Kidnapper
+1x Helm of Kaldra
 1x Hunter's Axe
 1x Jester's Cap
 1x Jodah, the Unifier
@@ -65,6 +66,7 @@
 1x Seaside Citadel
 1x Sol'kanar the Swamp King
 1x Solarium Sentry
+1x Shield of Kaldra
 1x Spirit Link
 1x Star Compass
 1x Stinkweed Imp
