@@ -187,17 +187,17 @@ before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (31).** Abigale, Poet Laureate, Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Caparocti Sunborn, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Garland, Royal Kidnapper, Gilgamesh, Master-at-Arms, Glorybringer, Hero of Bladehold, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Photon, Mighty Marvel, Skyclave Apparition, Sphinx of New Prahv, Terror of the Peaks, The Wasp, Winsome Avenger, Vampire Nighthawk, Windborn Muse
+**Creatures (33).** Abigale, Poet Laureate, Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Callous Inspector, Cloudfin Raptor, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Hero of Bladehold, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Rescue, Pepper Potts, Skyclave Apparition, Spectral Sailor, Sphinx of New Prahv, Terror of the Peaks, The Wasp, Winsome Avenger, Thrummingbird, Vampire Nighthawk, Windborn Muse
 
-**Planeswalkers (2).** Elspeth, Sun's Champion, The Aetherspark
+**Planeswalkers (1).** Elspeth, Sun's Champion
 
-**Artifacts (10).** Chromatic Lantern, Conqueror's Flail, Crawlspace, Helm of Kaldra, Norn's Annex, Potioner's Trove, Shield of Kaldra, Star Compass, Talisman of Conviction, Talisman of Hierarchy
+**Artifacts (9).** Conqueror's Flail, Crawlspace, Helm of Kaldra, Lightning Greaves, Potioner's Trove, Shield of Kaldra, Star Compass, Talisman of Conviction, Talisman of Hierarchy
 
 **Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Tocasia's Welcome
 
-**Instants (11).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Force of Will, Harsh Annotation, Quick Study, Scorching Dragonfire, Vanish from Sight, Vibrant Outburst, Wander Off
+**Instants (10).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Force of Will, Harsh Annotation, Masterful Flourish, Path to Exile, Scorching Dragonfire, Swords to Plowshares
 
-**Sorceries (3).** Diabolic Tutor, Expressive Iteration, Toxic Deluge
+**Sorceries (4).** Diabolic Tutor, Expressive Iteration, Rip Apart, Toxic Deluge
 
 **Lands (36).** Battlefield Forge, Caves of Koilos, Clifftop Retreat, Command Tower, Dragonskull Summit, Drowned Catacomb, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Isolated Chapel, Port Town, Rugged Prairie, Shattered Sanctum, Spectator Seating, Sulfur Falls, Unclaimed Territory, Underground River, 5 Island, 6 Plains, 5 Swamp, 3 Mountain
 
@@ -215,14 +215,15 @@ before the game.
 1 Battlefield Forge
 1 Bedevil
 1 Black Widow, Agile Avenger
-1 Caparocti Sunborn
+1 Callous Inspector
 1 Caves of Koilos
-1 Chromatic Lantern
 1 Clifftop Retreat
+1 Cloudfin Raptor
 1 Command Tower
 1 Conqueror's Flail
 1 Crawlspace
 1 Darksteel Mutation
+1 Dauthi Voidwalker
 1 Diabolic Tutor
 1 Disenchant
 1 Dragonskull Summit
@@ -237,53 +238,52 @@ before the game.
 1 Firebird, Blazing Ranger
 1 Force of Will
 1 Furycalm Snarl
-1 Garland, Royal Kidnapper
 1 Ghostly Prison
 1 Gilgamesh, Master-at-Arms
 1 Glacial Fortress
-1 Glorybringer
 1 Harsh Annotation
 1 Helm of Kaldra
 1 Hero of Bladehold
 1 Isolated Chapel
 1 Kraum, Ludevic's Opus
 1 Laelia, the Blade Reforged
+1 Lightning Greaves
 1 Lightning, Security Sergeant
 1 Lyra Dawnbringer
 1 Marchesa, the Black Rose
+1 Masterful Flourish
 1 Memory Trap
 1 Moseo, Vein's New Dean
 1 Nightveil Predator
 1 Nightwind Glider
-1 Norn's Annex
-1 Photon, Mighty Marvel
+1 Path to Exile
 1 Port Town
 1 Potioner's Trove
 1 Propaganda
-1 Quick Study
+1 Rescue, Pepper Potts
+1 Rip Apart
 1 Rugged Prairie
 1 Scorching Dragonfire
 1 Shattered Sanctum
 1 Shield of Kaldra
 1 Skyclave Apparition
 1 Spectator Seating
+1 Spectral Sailor
 1 Sphinx of New Prahv
 1 Star Compass
 1 Sulfur Falls
+1 Swords to Plowshares
 1 Talisman of Conviction
 1 Talisman of Hierarchy
 1 Terror of the Peaks
-1 The Aetherspark
 1 The Wasp, Winsome Avenger
+1 Thrummingbird
 1 Tocasia's Welcome
 1 Toxic Deluge
 1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River
 1 Vampire Nighthawk
-1 Vanish from Sight
-1 Vibrant Outburst
-1 Wander Off
 1 Windborn Muse
 5 Island
 3 Mountain
