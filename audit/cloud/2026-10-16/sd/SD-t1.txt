@@ -1,0 +1,99 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Sram, Senior Edificer [pool] C 1W :: leg pow=2
+   Danitha Capashen, Paragon [scryfall] C 2W :: leg human pow=2 lifelink vig
+      not modeled: Aura and Equipment spells you cast cost {1} less to cast.
+Model status of the swapped-in cards (cardgen audit):
+  Sram, Senior Edificer: Full ()
+  Danitha Capashen, Paragon: Full (first strike, vigilance, lifelink; Aura and Equipment spells you cost {1} less (common.rs danitha cost hook, stacks per Danitha; test danitha_discounts_auras_and_equipment_only_and_stacks))
+
+Swaps: Bronze Guardian -> Sram, Senior Edificer; Kor Duelist -> Danitha Capashen, Paragon
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.2% ->  29.7%  (delta +0.5 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Isshin 18.1%  Teysa Karlov 11.9%  Lathril 11.2%  Light-Paws 20.1%  Tatyova 8.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          29.2% ->  29.7%  +0.5pt   ±4.1 
+    Rounds survived (or game length)                  10.67 ->  10.64   -0.02  ±0.29 
+
+  Mana & consistency
+    Extra mulligans per game                           0.19 ->   0.20   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.93 ->   0.88   -0.04  ±0.08 
+    Mana available on your turn 4                      3.99 ->   4.00   +0.01  ±0.10 
+    Mana available on your turn 6                      5.67 ->   5.68   +0.02  ±0.18 
+
+  Speed
+    Games where the game plan came online             77.7% ->  78.7%  +1.0pt   ±3.7 
+    Turn the game plan came online                     5.73 ->   5.71   -0.02  ±0.22 
+    Turn the commander first resolved                  2.12 ->   2.12   +0.00  ±0.04 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.15 ->  15.35   +0.19  ±0.82 
+    Tutors resolved per game                           2.97 ->   3.01   +0.04  ±0.13 
+    Spells cast per game                              15.98 ->  15.95   -0.03  ±0.73 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.52 ->   0.55   +0.03  ±0.06 
+    Board wipes cast                                   0.32 ->   0.30   -0.02  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.72 ->   0.74   +0.03  ±0.08 
+    Your spells countered                              0.16 ->   0.17   +0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                40.87 ->  42.10   +1.24  ±3.72 
+      ...of which combat damage                       38.06 ->  39.30   +1.24  ±3.43 
+      ...of which other triggers                       2.81 ->   2.80   -0.00  ±0.45 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Sram, Senior Edificer                 22.3      82.1         7.7     17.9       49.2      0.01
+    Danitha Capashen, Paragon             21.2      69.8         7.5     30.2       43.2      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Bronze Guardian                       22.0      43.6         9.2     56.4       54.2      0.01
+    Kor Duelist                           20.7      93.7         5.3      6.3       42.8      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.2      29.7     +0.5
+    rounds survived                                  10.67     10.64    -0.02
+    eliminated, % of games                            70.4      70.1     -0.3
+    opponents it eliminated, per game                 0.82      0.84    +0.02
+    damage dealt, per game                            40.9      42.1     +1.2
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        26.8      26.4     -0.4
+      plan online by turn 6, %                        57.5      59.7     +2.2
+      plan online by turn 8, %                        70.2      71.2     +1.0
+      plan online by turn 12, %                       76.3      77.1     +0.8
+      plan online at all, %                           77.7      78.7     +1.0
+    commander resolved by turn 4, %                   99.6      99.5     -0.1
+    commander resolved by turn 6, %                   99.8      99.8     +0.0
+    commander removals, per game                      0.62      0.64    +0.02
+    lands on the battlefield, turn 4                  3.62      3.63    +0.02
+    lands on the battlefield, turn 8                  6.22      6.33    +0.11
+    mana available, turn 4                            3.99      4.00    +0.01
+    mana available, turn 8                            7.31      7.38    +0.07
+    cards in hand after the land drop, turn 4         6.26      6.24    -0.02
+    cards in hand after the land drop, turn 8         4.97      4.82    -0.15
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Light-Paws via commander damage 17.2%, Isshin via combat 13.1%, Lathril via combat 9.3%, Tatyova via combat 7.6%
+    eliminated by (swapped): Light-Paws via commander damage 15.6%, Isshin via combat 14.7%, Tatyova via combat 8.7%, Lathril via combat 7.7%
+
+(371s total)

@@ -49,6 +49,7 @@ Double strike package (Fireshrieker, Duelist's Heritage, Akroma's Will) applied 
 | **D2 defense** (Winds of Abandon, Elspeth Sun's Champion, Wall of Omens for Formation, Holy, Recommission) | **+3.6 (±2.5) / +1.5 (±2.4)**; quick check +3.4 | Dies less (eliminated 79 -> 76%), deals more (33 -> 37 a game); Elspeth cast only 40% (6 mana) but wins 51% when cast and her -3 answers Light-Paws (its share of Cloud's deaths 18 -> 16%). Replaced cards were dead. |
 | AI: Sword choice by table colours + protection timing + attack-target weighting (branch cloud-ai4) | 29.3 -> 26.9 (T1, 2,000) | Plan online sooner (by turn 4 29% -> 33%), but the target weighting spread Cloud's damage across players so nobody died. Not adopted. |
 | Same without the attack-target change | 29.3 -> 28.4 (T1, 2,000) | Within noise; Sword choice and protection timing don't move the win rate. Not adopted. Lesson: a voltron commander needs focused damage. |
+| Sram + Danitha for Bronze Guardian + Kor Duelist (10-16) | +0.5 (T1, 1,000, ±3.8) | Neutral: Sram cast 82% when drawn, Danitha 70% (stuck 30%); damage +1.2 a game, plan timing unchanged. Fine to play, no measurable gain. |
 | Sun Titan for Ultimate Magic: Holy | -0.4 / — | Not broken down; a 6-drop in a mana-starved deck. |
 | Kor Haven for a Plains | -2.5 / — | Not broken down; colourless land in a {W}{W} deck, and its ability ties up {1}{W}. |
 
