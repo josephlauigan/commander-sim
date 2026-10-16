@@ -118,7 +118,7 @@ that creature indestructible.
   it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Fate of the
   Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less).
 - **Artifacts and enchantments:** Disenchant.
-- **Attack limits and taxes:** Crawlspace (artifact: no more than two creatures can attack you each combat). Other
+- **Attack limits and taxes:** Ghostly Prison (enchantment: opponents pay {2} for each creature that attacks you). With these too,
   creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
   Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archon of Absolution {1} (a 3/2 flier with
   protection from white).
@@ -173,7 +173,7 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Wall of Omens, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Crawlspace, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Fate of the Sun-Cryst, Skyclave
+Interaction: Wrath of God, Day of Judgment, Fumigate, Ghostly Prison, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Fate of the Sun-Cryst, Skyclave
 Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 13 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
@@ -190,9 +190,9 @@ on its own. Tell the table before the game that:
 
 **Creatures (29).** Adelbert Steiner, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Bronze Guardian, Cid, Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
 
-**Enchantments (4).** Citizen's Arrest, Court of Ardenvale, Duelist's Heritage, Smothering Tithe
+**Enchantments (5).** Citizen's Arrest, Court of Ardenvale, Duelist's Heritage, Ghostly Prison, Smothering Tithe
 
-**Artifacts (21).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Crawlspace, Fellwar Stone, Fireshrieker, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
+**Artifacts (20).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
 
 **Sorceries (6).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Winds of Abandon, Wrath of God
 
@@ -226,7 +226,6 @@ on its own. Tell the table before the game that:
 1 Coalition Relic
 1 Colossus Hammer
 1 Court of Ardenvale
-1 Crawlspace
 1 Day of Judgment
 1 Disenchant
 1 Duelist's Heritage
@@ -239,6 +238,7 @@ on its own. Tell the table before the game that:
 1 Fireshrieker
 1 Forum Familiar
 1 Fumigate
+1 Ghostly Prison
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
