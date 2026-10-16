@@ -58,8 +58,8 @@ The doubling does nothing useful for **Sword of Kaldra** (the second exile has n
 no triggers: they are plain bonuses (hexproof, first strike, haste, +X/+X, indestructible).
 
 ### Making Cloud enter again
-**Forum Familiar** returns Cloud (or any creature) to your hand when turned face up from disguise, **Recommission**
-brings him back from the graveyard, and **Court of Ardenvale** returns a permanent with mana value 3 or less from the
+**Forum Familiar** returns Cloud (or any creature) to your hand when turned face up from disguise, and
+**Court of Ardenvale** returns a permanent with mana value 3 or less from the
 graveyard each upkeep (to the battlefield while you are the monarch, which Court makes you). **Kor Outfitter**,
 **Solemn Simulacrum**, **Knight of the White Orchid** and **Loyal Warhound** are worth a second enter if you have a way
 to blink them.
@@ -103,12 +103,12 @@ that creature indestructible.
   creature), Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or enchantments
   during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
   Bastion Protector (commander creatures get +2/+2 and indestructible) and Shield of Kaldra (indestructible).
-- **Protect the team.** Unbreakable Formation (creatures indestructible; in your main phase also a +1/+1 counter and
-  vigilance for each) and Ultimate Magic: Holy (every
-  permanent you control indestructible). Cast Holy in response to your own Austere Command to keep your side.
+- **Protect the team.** Wall of Omens (a 0/4 defender that draws a card when it enters) blocks early, and Elspeth, Sun's
+  Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
+  power 4 or greater, so use it only when Cloud is not carrying a big Equipment.
 
 ### Removal
-- **Single targets:** Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
+- **Single targets:** Winds of Abandon ({1}{W}, exile; overload {4}{W}{W} exiles all your opponents' creatures), Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
   it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Secure the Scene, Fate of the
   Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less).
 - **Artifacts and enchantments:** Disenchant.
@@ -118,8 +118,8 @@ that creature indestructible.
   protection from white).
 - **Board wipes:** Wrath of God, Day of Judgment and Fumigate (gain 1 life per creature destroyed). Equipment survives them, and Cloud comes back from the command zone.
 - **Austere Command** (choose two modes): choose "destroy creatures with mana value 4 or greater" with
-  "destroy all enchantments" to leave Cloud (mana value 2) and the artifacts (it also kills your own larger creatures),
-  or cast Holy in response so that none of your permanents are destroyed.
+  "destroy all enchantments" to leave Cloud (mana value 2) and the artifacts (it also kills your own larger creatures).
+  Winds of Abandon's overload is the cleaner one-sided wipe when you need opposing creatures gone and want to keep your own.
 
 ### How it wins
 - **Equipped Cloud connects.** A Sword of Fire and Ice on Cloud draws two cards and deals 4 damage; with Sword of Feast
@@ -130,8 +130,8 @@ that creature indestructible.
   7 or more twice.
 
 ### Weak spots and how to play around them
-- **Board wipes.** Don't overcommit creatures when you already have enough power. Hold Holy or
-  Unbreakable Formation up when the table has wiped before.
+- **Board wipes.** Don't overcommit creatures when you already have enough power. Keep Elspeth's Soldiers
+  and the backup carriers in hand when the table has wiped before.
 - **Artifact and enchantment removal.** Spread the Equipment across several carriers (Balan and Ardenn can
   re-attach after a loss) and recur them with Cid.
 - **Cloud dead, command zone.** Remember the {2} commander tax; use the backup carriers first.
@@ -147,8 +147,8 @@ that creature indestructible.
   can not make {W}{W} by turn three.
 - **Big turn:** Puresteel Paladin out and three artifacts means equip {0}: cast Colossus Hammer, Sword of Kaldra
   and a Sword, attach all, and attack.
-- **Holy trick:** if you expect a wipe, cast Austere Command with Ultimate Magic: Holy in response to wipe their board
-  and keep yours.
+- **Winds of Abandon:** {1}{W} exiles one creature that is not yours (its controller fetches a basic land); at six mana
+  overload it ({4}{W}{W}) to exile every creature you do not control, a one-sided wipe that leaves your Equipment and carriers.
 - **Removal in response to an equip:** have Giver of Runes, Zack Fair or Swiftfoot Boots ready.
 
 ## Tutor targets by board state
@@ -166,9 +166,9 @@ that creature indestructible.
 33 lands: 28 Plains plus Ash Barrens (basic landcycling {1}), Evolving Wilds, Path of Ancestry (enters tapped; scry 1
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
-White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
+White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Wall of Omens, Puresteel Paladin and the Swords.
 Interaction: Wrath of God, Day of Judgment, Fumigate, Crawlspace, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Secure the Scene, Fate of the Sun-Cryst, Skyclave
-Apparition, Austere Command and Disenchant. 14 Equipment in the deck, so Cloud's search always finds one.
+Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 14 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
 
@@ -176,23 +176,25 @@ Apparition, Austere Command and Disenchant. 14 Equipment in the deck, so Cloud's
 on its own. Tell the table before the game that:
 
 - the deck has two tutors (Cloud and Enlightened Tutor) but no game-winning combo;
-- Austere Command can wipe the table, and Ultimate Magic: Holy lets you keep your own board.
+- Austere Command can wipe the table, and Winds of Abandon (overloaded) and Elspeth, Sun's Champion can clear opposing creatures.
 
 ## Decklist by type (100)
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (28).** Adelbert Steiner, Archon of Absolution, Ardenn Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird Steward of Argive, Balan Wandering Knight, Bastion Protector, Bronze Guardian, Cid Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia the Survivor, Windborn Muse, Zack Fair
+**Creatures (29).** Adelbert Steiner, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Bronze Guardian, Cid, Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
 
 **Enchantments (3).** Citizen's Arrest, Court of Ardenvale, Smothering Tithe
 
 **Artifacts (22).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Crawlspace, Fellwar Stone, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Nim Deathmantle, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Veteran's Powerblade, Wrecking Ball Arm
 
-**Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Recommission, Secure the Scene, Wrath of God
+**Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Secure the Scene, Winds of Abandon, Wrath of God
 
-**Instants (6).** Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself, Ultimate Magic: Holy, Unbreakable Formation
+**Instants (4).** Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
+
+**Planeswalkers (1).** Elspeth, Sun's Champion
 
 ## Import list (100)
 
@@ -220,6 +222,7 @@ on its own. Tell the table before the game that:
 1 Crawlspace
 1 Day of Judgment
 1 Disenchant
+1 Elspeth, Sun's Champion
 1 Enlightened Tutor
 1 Evolving Wilds
 1 Exalted Angel
@@ -246,7 +249,6 @@ on its own. Tell the table before the game that:
 1 Path of Ancestry
 1 Plaza of Heroes
 1 Puresteel Paladin
-1 Recommission
 1 Secure the Scene
 1 Shield of Kaldra
 1 Skyclave Apparition
@@ -262,10 +264,10 @@ on its own. Tell the table before the game that:
 1 Terminal Moraine
 1 Thalia, the Survivor
 1 Thought Vessel
-1 Ultimate Magic: Holy
-1 Unbreakable Formation
 1 Veteran's Powerblade
+1 Wall of Omens
 1 Windborn Muse
+1 Winds of Abandon
 1 Wrath of God
 1 Wrecking Ball Arm
 1 Zack Fair

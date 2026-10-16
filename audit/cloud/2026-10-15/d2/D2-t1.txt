@@ -1,0 +1,112 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Winds of Abandon [pool] S 1W :: (no tags)
+   Elspeth, Sun's Champion [pool] P 4WW :: leg
+   Wall of Omens [scryfall+dsl] C 1W :: pow=0 tgh=4
+      ability: triggered etb -> draw
+Model status of the swapped-in cards (cardgen audit):
+  Winds of Abandon: Full (exiles an opposing creature (its controller searches a basic), or overloaded for {4}{W}{W} every opposing creature)
+  Elspeth, Sun's Champion: Full (+1 three Soldiers, -3 destroys power 4+, -7 emblem (+2/+2, flying))
+  Wall of Omens: Full-auto (compiled from Oracle text)
+
+Swaps: Unbreakable Formation -> Winds of Abandon; Ultimate Magic: Holy -> Elspeth, Sun's Champion; Recommission -> Wall of Omens
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  20.7% ->  24.1%  (delta +3.4 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Isshin 18.5%  Teysa Karlov 15.4%  Lathril 11.1%  Light-Paws 22.0%  Tatyova 8.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          20.7% ->  24.1%  +3.4pt   ±3.7 
+    Rounds survived (or game length)                  10.28 ->  10.57   +0.30  ±0.29*
+
+  Mana & consistency
+    Extra mulligans per game                           0.22 ->   0.22   -0.01  ±0.06 
+    Missed land drops, turns 1-5                       0.97 ->   0.92   -0.05  ±0.08 
+    Mana available on your turn 4                      4.01 ->   4.01   -0.00  ±0.10 
+    Mana available on your turn 6                      5.57 ->   5.62   +0.05  ±0.17 
+
+  Speed
+    Games where the game plan came online             76.7% ->  73.2%  -3.5pt   ±3.9 
+    Turn the game plan came online                     5.70 ->   5.74   +0.04  ±0.23 
+    Turn the commander first resolved                  2.12 ->   2.11   -0.00  ±0.04 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.74 ->  14.58   +0.84  ±0.75*
+    Tutors resolved per game                           2.87 ->   2.89   +0.02  ±0.13 
+    Spells cast per game                              14.68 ->  15.37   +0.69  ±0.71 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.53 ->   0.51   -0.03  ±0.06 
+    Board wipes cast                                   0.28 ->   0.32   +0.04  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.64 ->   0.70   +0.06  ±0.08 
+    Your spells countered                              0.14 ->   0.17   +0.03  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.90 ->  36.55   +3.66  ±3.20*
+      ...of which combat damage                       30.88 ->  34.48   +3.60  ±2.97*
+      ...of which other triggers                       2.02 ->   2.07   +0.05  ±0.36 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Rounds survived (or game length) (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Winds of Abandon                      21.6      88.0         7.7     12.0       42.6      0.00
+    Elspeth, Sun's Champion               20.0      40.0         9.1     60.0       51.2      0.05
+    Wall of Omens                         19.4      81.4         7.6     18.6       41.1      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Unbreakable Formation                 22.4       1.3        10.7     98.7       66.7      0.00
+    Ultimate Magic: Holy                  20.8      10.6         8.7     89.4       59.1      0.00
+    Recommission                          21.9      67.1         8.7     32.9       42.2      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        20.7      24.1     +3.4
+    rounds survived                                  10.28     10.57    +0.30
+    eliminated, % of games                            79.3      75.6     -3.7
+    opponents it eliminated, per game                 0.62      0.72    +0.10
+    damage dealt, per game                            32.9      36.6     +3.7
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        25.6      25.4     -0.2
+      plan online by turn 6, %                        57.6      55.4     -2.2
+      plan online by turn 8, %                        68.6      65.8     -2.8
+      plan online by turn 12, %                       75.7      70.9     -4.8
+      plan online at all, %                           76.7      73.2     -3.5
+    commander resolved by turn 4, %                   99.0      99.1     +0.1
+    commander resolved by turn 6, %                   99.8      99.8     +0.0
+    commander removals, per game                      0.62      0.63    +0.00
+    lands on the battlefield, turn 4                  3.61      3.62    +0.01
+    lands on the battlefield, turn 8                  6.10      6.21    +0.12
+    mana available, turn 4                            4.01      4.01    -0.00
+    mana available, turn 8                            7.13      7.23    +0.10
+    cards in hand after the land drop, turn 4         6.23      6.20    -0.03
+    cards in hand after the land drop, turn 8         5.10      4.87    -0.23
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Light-Paws via commander damage 18.1%, Isshin via combat 15.5%, Tatyova via combat 10.2%, Lathril via combat 9.5%
+    eliminated by (swapped): Light-Paws via commander damage 15.9%, Isshin via combat 14.4%, Tatyova via combat 8.6%, Lathril via combat 6.9%
+
+(369s total)

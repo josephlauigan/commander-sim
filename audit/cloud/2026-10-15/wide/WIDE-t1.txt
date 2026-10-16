@@ -1,0 +1,178 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Brass Squire [pool] AC 3 :: pow=1 tgh=3
+   Kor Skyfisher [pool] C 1W :: pow=2 tgh=3 fly
+   Batterskull [scryfall+dsl] A 5 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_keyword -> 
+      ability: static equip_keyword -> 
+      ability: static equip_cost -> 
+      not modeled: Living weapon
+      not modeled: {3}: Return ~ to its owner's hand.
+   Flayer Husk [scryfall+dsl] A 1 :: (no tags)
+      ability: static equip_bonus -> 
+      ability: static equip_cost -> 
+      not modeled: Living weapon
+   Kemba, Kha Regent [pool] C 1WW :: leg pow=2 tgh=4
+   Sigarda's Aid [pool] E W :: (no tags)
+   Hero of Bladehold [pool] C 2WW :: human pow=3 tgh=4
+   Mirran Crusader [pool] C 1WW :: human pow=2 tgh=2
+   Sram, Senior Edificer [pool] C 1W :: leg pow=2
+   Stonehewer Giant [scryfall+dsl] C 3WW :: warrior pow=4 vig
+      ability: activated  -> search
+   Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant
+   Ornithopter [scryfall] AC  :: pow=0 tgh=2 fly
+   Triplicate Spirits [scryfall+dsl] S 4WW :: convoke
+      ability: spell  -> token
+Model status of the swapped-in cards (cardgen audit):
+  Brass Squire: Full ({T}: attaches an Equipment you control to the best holder, Cloud when he is out, before combat on your turn (cloud::squire_options); no sorcery timing needed)
+  Kor Skyfisher: Full (flying; returns your best ETB permanent (or itself) on entry)
+  Skullclamp: Full (equip {1} onto 1-toughness creatures to draw two, up to twice a turn)
+  Lightning Greaves: Full (equip {0}: shroud and haste (moved onto the commander / best creature))
+  Batterskull: Full (living weapon (cloud.rs living_weapon_etb: a black 0/0 Phyrexian Germ token wears it; the Germ dies when the Equipment leaves); +4/+4, vigilance, lifelink, equip {5}; {3}: return to hand (an AI option only when it has lost its wearer and 8 mana is free))
+  Flayer Husk: Full (living weapon (cloud.rs living_weapon_etb); +1/+1, equip {2})
+  Kemba, Kha Regent: Full (2/4; your upkeep: a 2/2 white Cat token for each Equipment attached to Kemba (cloud.rs kemba_upkeep; replaces the regex 'tokup' guess of one 1/1))
+  Sigarda's Aid: Full (Auras and Equipment at instant speed (Auras cast at end of turn); Equipment attaches free)
+  Hero of Bladehold: Full (battle cry; two Soldiers tapped and attacking)
+  Mirran Crusader: Full (double strike; protection from black and from green (protfrom BG: can't be blocked by, damaged by or targeted by black or green sources); tested in cards_cloud_pkg2)
+  Sram, Senior Edificer: Full ()
+  Stonehewer Giant: Full-auto (compiled from Oracle text)
+  Selfless Spirit: Full (sacrificed to make your creatures indestructible against destroy effects)
+  Secure the Wastes: Full (tags: `tokx warrior`)
+  Ornithopter: Full (vanilla creature (keywords only))
+  Triplicate Spirits: Full-auto (compiled from Oracle text)
+
+Swaps: Unbreakable Formation -> Brass Squire; Ultimate Magic: Holy -> Kor Skyfisher; Bronze Guardian -> Skullclamp; Kor Duelist -> Lightning Greaves; Colossus Hammer -> Batterskull; Hero's Blade -> Flayer Husk; Wrecking Ball Arm -> Kemba, Kha Regent; Nim Deathmantle -> Sigarda's Aid; Bastion Protector -> Hero of Bladehold; Jocasta, Automaton Avenger -> Mirran Crusader; Grand Abolisher -> Sram, Senior Edificer; Fate of the Sun-Cryst -> Stonehewer Giant; Thalia, the Survivor -> Selfless Spirit; Recommission -> Secure the Wastes; Veteran's Powerblade -> Ornithopter; Stand Up for Yourself -> Triplicate Spirits
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  19.6% ->  20.8%  (delta +1.2 pts, noise ±2.4, paired)   n=2000
+               eliminated by (variant): Lathril 13.3%  Isshin 18.1%  Teysa Karlov 14.4%  Light-Paws 23.2%  Tatyova 9.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          19.6% ->  20.8%  +1.2pt   ±2.5 
+    Rounds survived (or game length)                  10.40 ->  10.82   +0.42  ±0.22*
+
+  Mana & consistency
+    Extra mulligans per game                           0.23 ->   0.23   -0.01  ±0.05 
+    Missed land drops, turns 1-5                       0.97 ->   0.91   -0.05  ±0.06 
+    Mana available on your turn 4                      3.96 ->   3.98   +0.02  ±0.07 
+    Mana available on your turn 6                      5.56 ->   5.63   +0.08  ±0.12 
+
+  Speed
+    Games where the game plan came online             74.9% ->  74.2%  -0.6pt   ±2.8 
+    Turn the game plan came online                     5.61 ->   5.77   +0.16  ±0.17 
+    Turn the commander first resolved                  2.12 ->   2.11   -0.01  ±0.03 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.74 ->  14.67   +0.93  ±0.55*
+    Tutors resolved per game                           2.93 ->   3.12   +0.19  ±0.10*
+    Spells cast per game                              14.71 ->  16.14   +1.43  ±0.53*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.50 ->   0.39   -0.11  ±0.04*
+    Board wipes cast                                   0.28 ->   0.32   +0.04  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.66 ->   0.74   +0.08  ±0.06*
+    Your spells countered                              0.15 ->   0.18   +0.03  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                33.22 ->  32.90   -0.32  ±2.24 
+      ...of which combat damage                       31.22 ->  31.20   -0.02  ±2.09 
+      ...of which other triggers                       1.99 ->   1.70   -0.30  ±0.24*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Rounds survived (or game length) (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+    better - Board wipes cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Brass Squire                          21.6      73.8         8.7     26.2       39.2      0.01
+    Kor Skyfisher                         21.9      78.3         8.3     21.7       34.5      0.01
+    Skullclamp                            36.5      89.5         6.9     10.5       30.5      0.00
+    Lightning Greaves                     25.9      71.8         9.4     28.2       44.4      0.00
+    Batterskull                           80.8      62.2         7.6     37.8       33.3      0.19
+    Flayer Husk                           24.3      89.5         7.0     10.5       35.6      0.03
+    Kemba, Kha Regent                     19.9      79.6         8.3     20.4       38.3      0.01
+    Sigarda's Aid                         20.0      94.5         5.9      5.5       32.0      0.02
+    Hero of Bladehold                     21.1      72.3         8.9     27.7       42.6      0.04
+    Mirran Crusader                       21.6      78.8         8.2     21.2       35.2      0.01
+    Sram, Senior Edificer                 20.8      90.4         7.6      9.6       37.5      0.01
+    Stonehewer Giant                      20.6      56.7         9.3     43.3       42.1      0.01
+    Selfless Spirit                       23.6      77.3         8.2     22.7       32.1      0.00
+    Secure the Wastes                     20.9      83.7         7.5     16.3       37.8      0.00
+    Ornithopter                           21.4      96.7         6.1      3.3       31.9      0.01
+    Triplicate Spirits                    22.0      51.8         9.7     48.2       39.0      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Unbreakable Formation                 21.5       1.9        11.9     98.1       50.0      0.00
+    Ultimate Magic: Holy                  20.4       9.1        10.6     90.9       56.8      0.00
+    Bronze Guardian                       19.8      42.3         8.4     57.7       45.5      0.01
+    Kor Duelist                           20.1      93.3         5.6      6.7       30.9      0.02
+    Colossus Hammer                       23.3      89.7         6.4     10.3       33.0      0.04
+    Hero's Blade                          24.9      85.7         7.3     14.3       30.3      0.03
+    Wrecking Ball Arm                     26.4      77.0         8.8     23.0       39.9      0.01
+    Nim Deathmantle                       22.9      72.3         7.9     27.7       42.2      0.01
+    Bastion Protector                     17.9      85.5         7.4     14.5       35.0      0.01
+    Jocasta, Automaton Avenger            20.6      79.9         7.9     20.1       31.9      0.03
+    Grand Abolisher                       20.6      83.1         7.8     16.9       32.1      0.02
+    Fate of the Sun-Cryst                 20.4      50.7         8.6     49.3       35.3      0.00
+    Thalia, the Survivor                  19.9      58.8         8.0     41.2       37.2      0.01
+    Recommission                          21.3      62.2         8.8     37.8       40.4      0.00
+    Veteran's Powerblade                  18.6      64.6         8.3     35.4       39.4      0.01
+    Stand Up for Yourself                 20.9      76.3         8.4     23.7       35.7      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        19.6      20.8     +1.2
+    rounds survived                                  10.40     10.82    +0.42
+    eliminated, % of games                            80.2      78.7     -1.5
+    opponents it eliminated, per game                 0.59      0.57    -0.02
+    damage dealt, per game                            33.2      32.9     -0.3
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        27.2      28.7     +1.4
+      plan online by turn 6, %                        56.8      52.5     -4.2
+      plan online by turn 8, %                        68.2      65.0     -3.2
+      plan online by turn 12, %                       74.0      72.4     -1.6
+      plan online at all, %                           74.8      74.2     -0.6
+    commander resolved by turn 4, %                   99.2      99.2     +0.0
+    commander resolved by turn 6, %                   99.8      99.7     -0.0
+    commander removals, per game                      0.62      0.60    -0.02
+    lands on the battlefield, turn 4                  3.61      3.62    +0.02
+    lands on the battlefield, turn 8                  6.12      6.09    -0.03
+    mana available, turn 4                            3.96      3.98    +0.02
+    mana available, turn 8                            7.11      7.13    +0.01
+    cards in hand after the land drop, turn 4         6.23      6.16    -0.07
+    cards in hand after the land drop, turn 8         5.06      4.86    -0.21
+    wins by (current):  damage 100%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Light-Paws via commander damage 18.6%, Isshin via combat 15.4%, Lathril via combat 9.3%, Tatyova via combat 8.7%
+    eliminated by (swapped): Light-Paws via commander damage 18.9%, Isshin via combat 13.8%, Tatyova via combat 9.5%, Lathril via combat 8.4%
+
+(1339s total)
