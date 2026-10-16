@@ -518,6 +518,11 @@ Deck key `alela`, `decklists/Avery/alela-esper-faeries.md`.
 
 ### Simulator history
 
+- **2026-10-15.** The new list (synced with Avery's physical deck, every card modeled) scored **9.8% against T1**
+  (4,000 games, look-ahead, loose; `audit/alela/2026-10-15-newlist/analyze-t1.txt`). The old list scored 12.0% on
+  10/14, but on older engine code, so the difference is not a clean list effect. Alela resolves in 79.7% of games
+  (was 85.3%) and by turn 5 in 45% (was 53%): two fewer lands and two fewer mana creatures. Findings in
+  `audit/alela/FINDINGS.md`.
 - **2026-10-14.** The leftovers swap (Gravedigger for Tymna the Weaver; two Plains for Exotic Orchard and Shattered
   Sanctum) measured **+0.1 over all tiers, within noise,** in a paired test (T1 +1.2, T2 +2.2, T3 -0.6, T4 +1.4,
   T5 -3.8; look-ahead, loose, 500 games per list per tier). A pool run is pending.
