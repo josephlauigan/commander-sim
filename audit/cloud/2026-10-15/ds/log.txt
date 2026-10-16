@@ -1,0 +1,3 @@
+20:42 DS t1 [loose       ] win  25.9% ->  30.3%  (delta +4.5 pts, noise ±2.6, paired)   n=2000
+20:57 DS t2 [loose       ] win  20.4% ->  24.8%  (delta +4.3 pts, noise ±2.5, paired)   n=2000
+20:57 ALL DONE
