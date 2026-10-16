@@ -1000,8 +1000,8 @@ status = "Full"
 note = "enters tapped; dredge 2 instead of drawing when out of lands in hand"
 
 ["Danitha Capashen, Paragon"]
-status = "Partial"
-note = "first strike, vigilance, lifelink only; the {1} discount on Aura and Equipment spells is NOT modeled (seen in the 10-15 Cloud package S run)"
+status = "Full"
+note = "first strike, vigilance, lifelink; Aura and Equipment spells you cost {1} less (common.rs danitha cost hook, stacks per Danitha; test danitha_discounts_auras_and_equipment_only_and_stacks)"
 
 ["Dark Confidant"]
 tags = "human wizard pow=2 tgh=1"
