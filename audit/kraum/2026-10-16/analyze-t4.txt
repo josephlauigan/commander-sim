@@ -1,0 +1,98 @@
+
+######## vs Tier 4 (Low B4) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 13.4%   (4-player baseline 25%)   average rounds survived 9.8
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.45 per game, by
+    combat             86.6%
+    commander damage    5.8%
+    burn                3.3%
+    triggers            2.9%
+    drain               0.7%
+    decked              0.7%
+  Damage dealt per game: 21.8, from
+    combat              21.2  (97%)
+    drain                0.3  (2%)
+    triggers             0.2  (1%)
+    burn                 0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.29; Tymna turns per game 3.96; opponents hit per Tymna turn 0.67
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.92 (in 92% of games)
+  Kraum lands on turn 6.37 (in 74% of games)
+
+-- How it loses --
+  Eliminated in 86.6% of games, on average in round 9.1
+    by Heliod   via combo              19.5% of games
+    by Krenko   via combat             14.3% of games
+    by Yuriko   via combat              9.7% of games
+    by Yuriko   via triggers            9.3% of games
+    by Chulane  via combo               6.4% of games
+    by Chulane  via combat              6.4% of games
+    by Prosper  via combo               6.4% of games
+    by Krenko   via combo               3.1% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.8 (over the 94.6% of games it resolves)
+  Commander resolved by turn:  T4 76%  T5 85%  T6 91%  T7 93%  T8 94%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Vibrant Outburst                           cast in  12.5% of games, win rate when cast  32.8% (+19.4)
+    Bastion Protector                          cast in  17.1% of games, win rate when cast  32.2% (+18.8)
+    Lightning, Security Sergeant               cast in  14.0% of games, win rate when cast  32.1% (+18.7)
+    Falcon and Redwing                         cast in  16.3% of games, win rate when cast  31.9% (+18.5)
+    Memory Trap                                cast in  15.1% of games, win rate when cast  31.1% (+17.7)
+    Potioner's Trove                           cast in  10.3% of games, win rate when cast  31.1% (+17.7)
+    Aven Mindcensor                            cast in  14.3% of games, win rate when cast  30.1% (+16.7)
+    Conqueror's Flail                          cast in  14.7% of games, win rate when cast  29.9% (+16.5)
+    Moseo, Vein's New Dean                     cast in  14.8% of games, win rate when cast  29.7% (+16.3)
+    Tocasia's Welcome                          cast in  10.1% of games, win rate when cast  29.7% (+16.3)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  94.3% of games, win rate when cast  14.2% (+0.8)
+    Disenchant                                 cast in  14.3% of games, win rate when cast  16.8% (+3.4)
+    Kraum, Ludevic's Opus                      cast in  76.6% of games, win rate when cast  17.5% (+4.1)
+    Toxic Deluge                               cast in  12.3% of games, win rate when cast  17.9% (+4.5)
+    Talisman of Hierarchy                      cast in  13.8% of games, win rate when cast  18.8% (+5.4)
+    Make Your Move                             cast in  13.4% of games, win rate when cast  19.4% (+6.0)
+    Star Compass                               cast in  16.4% of games, win rate when cast  21.3% (+7.9)
+    The Wasp, Winsome Avenger                  cast in  19.4% of games, win rate when cast  21.6% (+8.2)
+    Spectral Lynx                              cast in  18.8% of games, win rate when cast  21.8% (+8.4)
+    Talisman of Conviction                     cast in  13.2% of games, win rate when cast  22.0% (+8.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Fact or Fiction                            cast  16.6% of the games it was drawn
+    Diabolic Tutor                             cast  20.2% of the games it was drawn
+    Shield of Kaldra                           cast  25.5% of the games it was drawn
+    Chromatic Lantern                          cast  28.2% of the games it was drawn
+    Fate of the Sun-Cryst                      cast  29.2% of the games it was drawn
+    Dissipate                                  cast  30.0% of the games it was drawn [reactive: only cast in response]
+    Gilgamesh, Master-at-Arms                  cast  31.1% of the games it was drawn
+    Elenda, the Dusk Rose                      cast  32.8% of the games it was drawn
+    Marchesa, the Black Rose                   cast  35.6% of the games it was drawn
+    Quick Study                                cast  35.9% of the games it was drawn
+    Wander Off                                 cast  36.1% of the games it was drawn
+    Bedevil                                    cast  36.3% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.44
+    Kraum, Ludevic's Opus                      0.29
+    Medic's Kitesail                           0.09
+    Helm of Kaldra                             0.06
+    The Wasp, Winsome Avenger                  0.06
+    The Aetherspark                            0.05
+    Hero's Blade                               0.04
+    Dragoon's Lance                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(113s total)

@@ -363,6 +363,10 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Simulator history
 
+- **2026-10-16.** The new build scored **12.6% over t1–t5** (T1 12.7, T2 12.3, T3 12.6, T4 13.4, T5 12.1; 1,000
+  games per tier, look-ahead, loose, `--any-tier` with JD's OK; `audit/kraum/2026-10-16/`). Below the fair band in
+  every tier. Tymna hits only 0.5–0.7 opponents per turn and Kraum lands on turn 6.3. Findings in
+  `audit/kraum/FINDINGS.md`.
 - **2026-10-13.** The comparison build scored **15.3% over T1–T5** (T1 12.3, T2 16.5, T3 17.5, T4 14.3, T5 16.1;
   1,000 games per tier, look-ahead, loose; `audit/tymna/2026-10-13-fix/` on branch `tymna-thrasios`), against 10.1%
   for the Thrasios build.
