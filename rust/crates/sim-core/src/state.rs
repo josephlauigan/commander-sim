@@ -169,6 +169,8 @@ pub enum DataKey {
     T0Stella,
     /// Calix, Destiny's Hand: this enchantment holds a -3 exile (DataKey::Oring) that returns when it leaves
     CalixLink,
+    /// soulbond (Silverblade Paladin): the paired creature (a `Val::Perm`), set on both; valid only while both are on the battlefield under one controller and point at each other
+    Soulbond,
 }
 
 /// A value in per-card state.
