@@ -6,7 +6,8 @@ it did or didn't work. Updated after every run. Newest evidence first; numbers a
 ## Current state (2026-10-16)
 List: the 10/16 build (Gilgamesh, Diabolic Tutor, eleven Equipment including Shield and Helm of Kaldra); every card
 modeled. Matched tiers not set yet (provisional t1, t2 in `data/my_decks.toml`).
-Win rate, 1,000 games per tier, **all five tiers (run with `--any-tier`, JD's OK)**: **T1 12.7%, T2 12.3%, T3 12.6%,
+**Best so far: defense package E, T3 21.1% (+8.5, 1,000 paired) and E + C 20.4% (+7.4, 2,000 paired); not applied to the list.**
+Win rate of the current list, 1,000 games per tier, **all five tiers (run with `--any-tier`, JD's OK)**: **T1 12.7%, T2 12.3%, T3 12.6%,
 T4 13.4%, T5 12.1%; 12.6% over t1–t5** (±1.0 per tier). Fair band: 22–32%. Below it in every tier, and flat across
 tiers: the deck doesn't beat weak tables more often than strong ones, which points at its own engine, not at matchups.
 Files: `audit/kraum/2026-10-16/analyze-t1.txt` … `analyze-t5.txt`.
@@ -52,3 +53,6 @@ Files: `audit/kraum/2026-10-16/analyze-t1.txt` … `analyze-t5.txt`.
 deck dies (85–87%, mostly to creature decks in combat: Aurelia ~25%, Tergrid, Marwyn, Atraxa). The hand also stays full
 (~6 cards on turns 4 and 8), so more cards aren't the limit. The deck loses the combat race; the Cloud deck had the same
 problem and only attack taxes + wipes moved it (+6.4). Next: a defense package (E).
+
+| **E defense** (~$26 buys: Ghostly Prison, Propaganda, Norn's Annex, Crawlspace, Windborn Muse, Elspeth, Sun's Champion, Aetherize, Baird for Medic's Kitesail, Nim Deathmantle, Fate of the Sun-Cryst, Urza, Hero's Blade, Dissipate, Make Your Move, Exit Specialist), T3, 1,000 paired | **+8.5 (±3.2): 12.6 → 21.1%** | **The first real gain.** Eliminated 86 → 77%, rounds survived +0.8, damage +4.0, Aurelia's share of the deaths 26 → 20%. The attack taxes are cast in 75–84% of the games they're drawn. Aetherize was never cast (reactive, the AI never finds the moment): replaced by Archon of Absolution. Elspeth sits in hand 58% (six mana) but wins 50% when cast. |
+| **E + C** (E with Archon of Absolution for Aetherize, plus Rip Apart, Suplex, Destroy Evil for Silverquill Charm, Bedevil, Elemental Mascot), T3, 2,000 paired | **+7.4 (±2.3): 13.1 → 20.4%** | Same as E alone within noise: the extra removal adds nothing. Eliminated 86 → 78%. Still short of the fair band (22%+). The expensive defensive cards get stuck (Elspeth 64%, Baird 48%, Norn's Annex 46%), and mana on turn 4 is unchanged (3.5): the defense comes down late. |

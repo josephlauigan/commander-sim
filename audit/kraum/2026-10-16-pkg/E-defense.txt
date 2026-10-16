@@ -17,3 +17,113 @@ Model status of the swapped-in cards (cardgen audit):
   Aetherize: Full (cast when attacked by a big or token-heavy attack: returns all attacking creatures)
   Baird, Steward of Argive: Full ()
 
+Swaps: Medic's Kitesail -> Ghostly Prison; Nim Deathmantle -> Propaganda; Fate of the Sun-Cryst -> Norn's Annex; Urza, Powerstone Prodigy -> Crawlspace; Hero's Blade -> Windborn Muse; Dissipate -> Elspeth, Sun's Champion; Make Your Move -> Aetherize; Exit Specialist -> Baird, Steward of Argive
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  12.6% ->  21.1%  (delta +8.5 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Aurelia 24.4%  Tergrid 18.4%  Korvold 9.5%  Atraxa 11.9%  Marwyn 12.8%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          12.6% ->  21.1%  +8.5pt   ±3.3*
+    Rounds survived (or game length)                  11.48 ->  12.26   +0.79  ±0.32*
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.67 ->   0.68   +0.01  ±0.08 
+    Mana available on your turn 4                      3.52 ->   3.52   +0.01  ±0.07 
+    Mana available on your turn 6                      5.05 ->   5.03   -0.02  ±0.11 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.82 ->   3.87   +0.05  ±0.11 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.75 ->  18.97   +1.21  ±0.76*
+    Tutors resolved per game                           0.11 ->   0.13   +0.02  ±0.03 
+    Spells cast per game                              13.34 ->  14.57   +1.23  ±0.69*
+
+  Interaction
+    Counterspells cast                                 0.39 ->   0.35   -0.04  ±0.05 
+    Spot removal cast                                  1.14 ->   1.12   -0.02  ±0.10 
+    Board wipes cast                                   0.17 ->   0.17   +0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.72   -0.02  ±0.09 
+    Your spells countered                              0.14 ->   0.16   +0.02  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                21.48 ->  25.50   +4.02  ±2.30*
+      ...of which combat damage                       20.53 ->  24.40   +3.87  ±2.25*
+      ...of which magecraft / burn                     0.06 ->   0.05   -0.01  ±0.04 
+      ...of which drain triggers                       0.61 ->   0.78   +0.17  ±0.22 
+      ...of which other triggers                       0.27 ->   0.26   -0.01  ±0.13 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+    better - Rounds survived (or game length) (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Spells cast per game (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ghostly Prison                        28.2      84.4         8.5     15.6       30.7      0.04
+    Propaganda                            28.3      77.0         8.5     23.0       35.8      0.03
+    Norn's Annex                          26.9      56.1         9.6     43.9       35.8      0.03
+    Crawlspace                            30.3      75.2         9.1     24.8       27.2      0.04
+    Windborn Muse                         27.3      70.3         8.9     29.7       31.8      0.03
+    Elspeth, Sun's Champion               27.0      41.9        10.9     58.1       50.4      0.07
+    Aetherize                             29.2       0.0           -    100.0          -      0.00
+    Baird, Steward of Argive              27.8      48.9         9.8     51.1       34.6      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Medic's Kitesail                      26.8      79.9         6.8     20.1       15.9      0.08
+    Nim Deathmantle                       30.0      72.0         7.6     28.0       19.4      0.02
+    Fate of the Sun-Cryst                 25.7      39.7        10.9     60.3       24.5      0.00
+    Urza, Powerstone Prodigy              27.6      49.3         9.5     50.7       27.2      0.01
+    Hero's Blade                          28.2      80.1         6.8     19.9       22.6      0.05
+    Dissipate                             24.9      22.5        11.8     77.5       25.0      0.00
+    Make Your Move                        26.5      66.8         9.0     33.2       19.8      0.00
+    Exit Specialist                       25.5      81.6         7.3     18.4       19.7      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        12.6      21.1     +8.5
+    rounds survived                                  11.48     12.26    +0.79
+    eliminated, % of games                            86.0      77.0     -9.0
+    opponents it eliminated, per game                 0.38      0.53    +0.16
+    damage dealt, per game                            21.5      25.5     +4.0
+    commander resolved by turn 4, %                   79.3      79.1     -0.2
+    commander resolved by turn 6, %                   93.6      93.9     +0.3
+    commander removals, per game                      0.71      0.79    +0.08
+    lands on the battlefield, turn 4                  3.69      3.69    -0.00
+    lands on the battlefield, turn 8                  6.35      6.37    +0.02
+    mana available, turn 4                            3.52      3.52    +0.01
+    mana available, turn 8                            6.33      6.38    +0.04
+    cards in hand after the land drop, turn 4         6.17      6.31    +0.14
+    cards in hand after the land drop, turn 8         6.35      6.46    +0.11
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 91%, timeout 9%
+    eliminated by (current): Aurelia via combat 25.8%, Tergrid via combat 15.9%, Marwyn via combat 14.6%, Atraxa via combat 9.9%
+    eliminated by (swapped): Aurelia via combat 19.6%, Marwyn via combat 12.8%, Tergrid via combat 11.7%, Atraxa via combat 9.4%
+
+(269s total)
