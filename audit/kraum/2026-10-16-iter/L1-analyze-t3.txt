@@ -1,0 +1,98 @@
+
+######## vs Tier 3 (High B3) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 20.6%   (4-player baseline 25%)   average rounds survived 12.1
+
+-- How it wins --
+  damage      92.0% of wins
+  timeout      8.0% of wins
+  Opponents it eliminated: 0.53 per game, by
+    combat             83.5%
+    commander damage    6.2%
+    burn                5.0%
+    triggers            3.9%
+    drain               1.3%
+    decked              0.1%
+  Damage dealt per game: 26.2, from
+    combat              25.1  (96%)
+    drain                0.7  (3%)
+    triggers             0.3  (1%)
+    burn                 0.1  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.11; Tymna turns per game 4.79; opponents hit per Tymna turn 0.56
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.87 (in 98% of games)
+  Kraum lands on turn 6.28 (in 91% of games)
+
+-- How it loses --
+  Eliminated in 77.3% of games, on average in round 11.1
+    by Aurelia  via combat             19.3% of games
+    by Marwyn   via combat             13.4% of games
+    by Tergrid  via combat             12.2% of games
+    by Atraxa   via combat              9.9% of games
+    by Tergrid  via drain               3.9% of games
+    by Korvold  via drain               3.9% of games
+    by Tergrid  via triggers            2.5% of games
+    by Korvold  via combat              2.5% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.9 (over the 98.7% of games it resolves)
+  Commander resolved by turn:  T4 80%  T5 88%  T6 94%  T7 96%  T8 97%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Marchesa, the Black Rose                   cast in  11.4% of games, win rate when cast  48.9% (+28.3)
+    Fact or Fiction                            cast in   7.9% of games, win rate when cast  47.5% (+26.9)
+    Terror of the Peaks                        cast in  15.6% of games, win rate when cast  47.3% (+26.7)
+    Sphinx of New Prahv                        cast in  13.6% of games, win rate when cast  46.1% (+25.5)
+    Elenda, the Dusk Rose                      cast in  10.8% of games, win rate when cast  45.1% (+24.5)
+    Lyra Dawnbringer                           cast in  14.6% of games, win rate when cast  42.6% (+22.0)
+    Falcon and Redwing                         cast in  19.9% of games, win rate when cast  41.7% (+21.1)
+    Diabolic Tutor                             cast in  10.2% of games, win rate when cast  41.5% (+20.9)
+    Elspeth, Sun's Champion                    cast in   9.8% of games, win rate when cast  40.8% (+20.2)
+    Gilgamesh, Master-at-Arms                  cast in  12.8% of games, win rate when cast  40.1% (+19.5)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  98.2% of games, win rate when cast  21.0% (+0.4)
+    Kraum, Ludevic's Opus                      cast in  90.8% of games, win rate when cast  22.7% (+2.1)
+    Toxic Deluge                               cast in  18.1% of games, win rate when cast  26.0% (+5.4)
+    Helm of Kaldra                             cast in  18.9% of games, win rate when cast  27.2% (+6.6)
+    Talisman of Conviction                     cast in  18.6% of games, win rate when cast  28.0% (+7.4)
+    Spectral Lynx                              cast in  24.0% of games, win rate when cast  28.5% (+7.9)
+    Force of Will                              cast in  19.1% of games, win rate when cast  29.8% (+9.2)
+    Arcane Denial                              cast in  16.4% of games, win rate when cast  29.9% (+9.3)
+    Windborn Muse                              cast in  18.9% of games, win rate when cast  30.1% (+9.5)
+    Star Compass                               cast in  20.0% of games, win rate when cast  30.2% (+9.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Fact or Fiction                            cast  29.5% of the games it was drawn
+    Elspeth, Sun's Champion                    cast  34.8% of the games it was drawn
+    Diabolic Tutor                             cast  37.1% of the games it was drawn
+    Chromatic Lantern                          cast  39.2% of the games it was drawn
+    Elenda, the Dusk Rose                      cast  42.2% of the games it was drawn
+    Marchesa, the Black Rose                   cast  44.6% of the games it was drawn
+    Gilgamesh, Master-at-Arms                  cast  45.2% of the games it was drawn
+    Vanish from Sight                          cast  45.2% of the games it was drawn
+    Shield of Kaldra                           cast  45.5% of the games it was drawn
+    Quick Study                                cast  45.8% of the games it was drawn
+    Vibrant Outburst                           cast  48.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.43
+    Kraum, Ludevic's Opus                      0.35
+    The Aetherspark                            0.08
+    Samurai's Katana                           0.07
+    Elspeth, Sun's Champion                    0.07
+    Helm of Kaldra                             0.05
+    Terror of the Peaks                        0.04
+    Dragoon's Lance                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(286s total)

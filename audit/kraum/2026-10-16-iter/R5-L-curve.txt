@@ -1,0 +1,29 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Callous Inspector [pool] C B :: human pow=1
+   Cloudfin Raptor [scryfall] C U :: pow=0 fly
+      not modeled: Evolve
+   Thrummingbird [pool] C 1U :: pow=1 fly
+   Rescue, Pepper Potts [scryfall] AC 1U :: leg human pow=2 tgh=1 fly flash
+      not modeled: When ~ enters, return up to one other target artifact or creature you control to its owner's hand. If it was an artifact, put a +1/+1 counter on ~.
+   Take Up the Shield [pool] I 1W :: prot=shield
+   Spectral Sailor [scryfall+dsl] C U :: pow=1 fly flash
+      ability: activated  -> draw
+   Dauthi Voidwalker [pool] C BB :: pow=3 tgh=2
+   Rip Apart [scryfall+dsl] S RW :: rem=dmg3 tgt=cp
+      ability: spell  -> modal
+   Masterful Flourish [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> pump, grant
+Model status of the swapped-in cards (cardgen audit):
+  Callous Inspector: Full (menace; when it dies it deals 1 damage to you and you create a Clue)
+  Cloudfin Raptor: Full (flying; evolve: a +1/+1 counter when a creature with greater power or toughness enters under your control (checked on entering and on resolution; tokens too))
+  Thrummingbird: Full ()
+  Rescue, Pepper Potts: Full (flash, flying; when it enters, return up to one other artifact or creature you control to its owner's hand (the best enter-the-battlefield one); a +1/+1 counter on Rescue if it was an artifact)
+  Lightning Greaves: Full (equip {0}: shroud and haste (moved onto the commander / best creature))
+  Take Up the Shield: Full (a +1/+1 counter, lifelink and indestructible until end of turn: the AI casts it to save Y'shtola or another key creature from destruction or damage)
+  Spectral Sailor: Full-auto (compiled from Oracle text)
+  Dauthi Voidwalker: Full (shadow; opponents' cards going to the graveyard are exiled with void counters; sacrifice to play one free)
+  Swords to Plowshares: Full (tags: `rem=exile tgt=c rgain`)
+  Path to Exile: Full (tags: `rem=exile tgt=c rland`)
+  Rip Apart: Full-auto (compiled from Oracle text)
+  Masterful Flourish: Full-auto (compiled from Oracle text)
+

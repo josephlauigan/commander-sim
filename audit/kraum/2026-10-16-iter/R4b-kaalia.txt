@@ -1,0 +1,109 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Kaalia of the Vast [pool] C 1RWB :: leg human pow=2 fly
+   Thundermaw Hellkite [pool] C 3RR :: pow=5 fly haste bomb=5
+   Serra Angel [scryfall] C 3WW :: pow=4 fly vig
+Model status of the swapped-in cards (cardgen audit):
+  Kaalia of the Vast: Full (attacks: best Angel/Demon/Dragon from hand onto the battlefield attacking (ETBs fire))
+  Thundermaw Hellkite: Full ()
+  Rune-Scarred Demon: Full (hand-tagged)
+  Serra Angel: Full (vanilla creature (keywords only))
+
+Swaps: Laelia, the Blade Reforged -> Kaalia of the Vast; Garland, Royal Kidnapper -> Thundermaw Hellkite; Elemental Mascot -> Rune-Scarred Demon; Star Compass -> Serra Angel
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.4% ->  22.2%  (delta -2.1 pts, noise ±2.5, paired)   n=2000
+               eliminated by (variant): Tergrid 19.9%  Atraxa 12.9%  Aurelia 20.4%  Marwyn 13.1%  Korvold 9.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          24.4% ->  22.2%  -2.1pt   ±2.7 
+    Rounds survived (or game length)                  12.30 ->  12.21   -0.09  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.66 ->   0.65   -0.01  ±0.05 
+    Mana available on your turn 4                      3.55 ->   3.50   -0.05  ±0.05*
+    Mana available on your turn 6                      5.07 ->   5.01   -0.06  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.88 ->   3.85   -0.03  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.08 ->  18.10   -0.98  ±0.52*
+    Tutors resolved per game                           0.10 ->   0.19   +0.09  ±0.02*
+    Spells cast per game                              14.28 ->  13.52   -0.75  ±0.48*
+
+  Interaction
+    Counterspells cast                                 0.34 ->   0.33   -0.01  ±0.03 
+    Spot removal cast                                  1.08 ->   1.07   -0.01  ±0.07 
+    Board wipes cast                                   0.15 ->   0.17   +0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.71   -0.02  ±0.07 
+    Your spells countered                              0.14 ->   0.14   -0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                28.40 ->  26.86   -1.53  ±1.88 
+      ...of which combat damage                       27.94 ->  26.36   -1.58  ±1.85 
+      ...of which magecraft / burn                     0.05 ->   0.06   +0.00  ±0.03 
+      ...of which drain triggers                       0.04 ->   0.00   -0.04  ±0.05 
+      ...of which other triggers                       0.36 ->   0.44   +0.08  ±0.13 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 4 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+    worse  - Spells cast per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Kaalia of the Vast                    26.8      62.4         9.6     37.6       36.8      0.05
+    Thundermaw Hellkite                   26.1      45.8        11.6     54.2       46.0      0.02
+    Rune-Scarred Demon                    25.7      29.0        11.7     71.0       49.7      0.02
+    Serra Angel                           25.7      38.7        11.8     61.3       43.2      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Laelia, the Blade Reforged            27.4      64.2         9.5     35.8       39.6      0.02
+    Garland, Royal Kidnapper              27.0      60.4         9.4     39.6       34.7      0.01
+    Elemental Mascot                      27.9      65.5        10.4     34.5       42.1      0.01
+    Star Compass                          27.8      80.6         6.9     19.4       30.1      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        24.4      22.2     -2.1
+    rounds survived                                  12.30     12.21    -0.09
+    eliminated, % of games                            73.5      75.7     +2.2
+    opponents it eliminated, per game                 0.60      0.57    -0.04
+    damage dealt, per game                            28.4      26.9     -1.5
+    commander resolved by turn 4, %                   78.8      79.7     +0.9
+    commander resolved by turn 6, %                   95.2      95.0     -0.3
+    commander removals, per game                      0.82      0.80    -0.03
+    lands on the battlefield, turn 4                  3.71      3.71    +0.00
+    lands on the battlefield, turn 8                  6.34      6.32    -0.02
+    mana available, turn 4                            3.55      3.50    -0.05
+    mana available, turn 8                            6.38      6.28    -0.10
+    cards in hand after the land drop, turn 4         6.42      6.50    +0.09
+    cards in hand after the land drop, turn 8         6.59      6.68    +0.09
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 89%, timeout 11%
+    eliminated by (current): Aurelia via combat 16.6%, Tergrid via combat 13.3%, Marwyn via combat 12.1%, Atraxa via combat 10.7%
+    eliminated by (swapped): Aurelia via combat 16.8%, Tergrid via combat 13.8%, Marwyn via combat 12.9%, Atraxa via combat 10.2%
+
+(503s total)

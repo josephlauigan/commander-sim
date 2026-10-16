@@ -56,3 +56,21 @@ problem and only attack taxes + wipes moved it (+6.4). Next: a defense package (
 
 | **E defense** (~$26 buys: Ghostly Prison, Propaganda, Norn's Annex, Crawlspace, Windborn Muse, Elspeth, Sun's Champion, Aetherize, Baird for Medic's Kitesail, Nim Deathmantle, Fate of the Sun-Cryst, Urza, Hero's Blade, Dissipate, Make Your Move, Exit Specialist), T3, 1,000 paired | **+8.5 (±3.2): 12.6 → 21.1%** | **The first real gain.** Eliminated 86 → 77%, rounds survived +0.8, damage +4.0, Aurelia's share of the deaths 26 → 20%. The attack taxes are cast in 75–84% of the games they're drawn. Aetherize was never cast (reactive, the AI never finds the moment): replaced by Archon of Absolution. Elspeth sits in hand 58% (six mana) but wins 50% when cast. |
 | **E + C** (E with Archon of Absolution for Aetherize, plus Rip Apart, Suplex, Destroy Evil for Silverquill Charm, Bedevil, Elemental Mascot), T3, 2,000 paired | **+7.4 (±2.3): 13.1 → 20.4%** | Same as E alone within noise: the extra removal adds nothing. Eliminated 86 → 78%. Still short of the fair band (22%+). The expensive defensive cards get stuck (Elspeth 64%, Baird 48%, Norn's Annex 46%), and mana on turn 4 is unchanged (3.5): the defense comes down late. |
+
+### Iterating toward 30% at T3 (2026-10-16, JD: budget $50, keep Gilgamesh, Diabolic Tutor, Shield/Helm of Kaldra, Toxic Deluge, Fact or Fiction)
+Baselines are re-measured in each paired run (same seeds), so a baseline number differs slightly from run to run.
+
+| Step (on the list of the step before) | Result at T3 | Why |
+|---|---|---|
+| **L1 = E applied** (`0a7f5b8`) | 22.9% (1,000) / 20.6% (2,000 analysis) | Still dies in 75–77% of games; Tymna hits 0.56 opponents a turn; the big threats win 42–49% when cast but sit in hand. |
+| R2a cheap mana (Arcane Signet, Fellwar Stone, Talisman of Dominance, 3 checklands) | -1.8 (±3.5) | Turn-4 mana +0.17; not enough to show. |
+| R2b owned wipes (Austere Command, Vanquish the Horde) | -1.9 (±3.4) | Cast late (round 10–11), stuck 54–57%. |
+| R2c owned cheap evasion (4 creatures) | -0.1 (±3.6) | Cast 86–93% of the time, no win change. |
+| R2d more taxes (Archangel of Tithes, Sphere of Safety) | -1.0 (±3.5) | The first set of taxes is enough; more adds nothing. |
+| **L2 = threat package T1** (Adeline, Hero of Bladehold, Vampire Nighthawk, Skyclave Apparition, Glorybringer, Baneslayer for the Equipment JD didn't ask for + Spectral Lynx, Silverquill Charm) (`11d3bfd`) | **+1.9 (±3.5)**; L2 = 24.4% (2,000) | Damage +2.5, eliminations +0.07 a game. Keeping the Equipment instead (T2) was -0.5. |
+| R4a owned bodies (Callous Inspector, Cloudfin Raptor, Thrummingbird, Rescue for Chromatic Lantern, Vanish from Sight, Quick Study, Vibrant Outburst) | +1.4 (±2.5, 2,000) | Merged into the curve package L. |
+| R4b Kaalia of the Vast package | -2.1 (±2.5, 2,000) | Dropped. |
+
+Traces (read-only agent, 8 games): the AI mostly plays sensibly; the deck is mana- and curve-limited (36 lands, 12 always
+tapped, 4 rocks, average mana value 3.39 with no one-drops). One small AI weakness: the look-ahead sometimes picks a
+creature over a 2-mana rock (`ai/search.rs` choose_inner; `ramp_bonus` is off). Tymna dies and is recast every 2–3 turns.
