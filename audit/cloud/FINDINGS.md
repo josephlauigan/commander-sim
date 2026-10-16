@@ -7,6 +7,7 @@ look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 ## Current state (2026-10-15)
 List: C4 + Package D with substitutes (Crawlspace, Archon of Absolution), plus the 10/15 AI fixes.
 Win rate: **T1 20.6%, T2 18.2%** (was 14.0 / 11.9 on the morning of 10/15). Fair band for its tiers: 22-32%.
+Double strike package (Fireshrieker, Duelist's Heritage, Akroma's Will) applied 10/15: 2,000 games, T1 25.9 -> 30.3 (+4.5), T2 20.4 -> 24.8 (+4.3), measured on the list before the Crawlspace/Archon substitutes (within noise of it). Not re-measured on the current list.
 
 ## Strengths
 - **Cloud lands on time:** resolved by turn 4 in 99% of games (he costs {W}{W} and tutors an Equipment).
@@ -33,6 +34,7 @@ Win rate: **T1 20.6%, T2 18.2%** (was 14.0 / 11.9 on the morning of 10/15). Fair
 | AI fixes (attack when equipped, Riders, tutor order, Unfinished Business) | +1.8 / +1.9 | Equipped Cloud no longer sits home. |
 | **Package D** (attack taxes + wipes) | **+6.4 / +6.3** | Slows the combat race that kills Cloud. Adopted. |
 | Substitutes Crawlspace + Archon of Absolution for Ghostly Prison + Archangel of Tithes | -1.5 / -0.9 vs full D (noise) | Same job (limit/tax attackers). Adopted. |
+| **Double strike** (Fireshrieker, Duelist's Heritage, Akroma's Will for Secure the Scene, Veteran's Powerblade, Nim Deathmantle; needed the engine fix: double strike = two damage steps) | **+4.5 / +4.3** (2,000 g; quick T1 +6.1) | Equipped double-strike Cloud triggers each Sword twice per attack and deals commander damage twice. Confirmed, adopted. |
 | R removal (6 swaps) | -1.9 / -1.1 | Cut 6 creatures/Equipment; fewer bodies and threats. |
 | **C card draw** (Sram, Mentor, Welcoming Vampire, Skullclamp, Wall of Omens) | +1.1 (2,000 g) and +3.2 (1,000 g) / — | **Draws +1.5 cards a game (significant), casts +0.8 spells, but the plan comes online no sooner** (26.8% by turn 4 vs 25.6%) and the hand gets bigger. Extra cards mostly pile up behind the mana bottleneck; a small real gain (~+2) through slightly more damage. Mana on turn 4 drops (Mind Stone cut). |
 | **B backup carriers** (Fencing Ace, Mirran Crusader, Kor Skyfisher, Selfless Spirit, Adeline) | -0.6 (2,000 g) and -1.9 (1,000 g) / — | Carriers do get cast (~75-86%), but **the plan comes online less often (-4.9 points, significant)** and spot removal falls (Disenchant cut: -0.2 a game). The cuts were cheap early plays (Forum Familiar cast 94%, Helitrooper 92%) and a land; the carriers don't replace an equipped Cloud. |
