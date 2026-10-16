@@ -20599,27 +20599,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "3",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "regrow",
-       "filter": {
-        "type": "enchantment"
-       },
-       "from": "yours"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -20627,7 +20607,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -83770,29 +83750,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": -3,
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 4,
-       "tgh": 4,
-       "keywords": [
-        "flying",
-        "vigilance"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "angel"
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -83802,11 +83760,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "creatures you control with flying get +1/+1 until end of turn",
-    "you get an emblem with \"if you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -106905,7 +106860,8 @@
    "pips": "",
    "tags": {
     "pow": "0",
-    "tgh": "7"
+    "tgh": "7",
+    "noatk": true
    },
    "pow": 0,
    "tgh": 7,
@@ -106922,10 +106878,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "When ~ blocks, return it to its owner's hand at end of combat."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
