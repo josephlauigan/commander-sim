@@ -1,0 +1,94 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 3 minutes
+  progress  10.0%  0m16s elapsed, ~2m26s left
+  progress  20.0%  0m34s elapsed, ~2m19s left
+  progress  30.0%  0m52s elapsed, ~2m01s left
+  progress  40.0%  1m09s elapsed, ~1m43s left
+  progress  50.0%  1m25s elapsed, ~1m25s left
+  progress  60.0%  1m41s elapsed, ~1m07s left
+  progress  70.0%  1m57s elapsed, ~0m50s left
+  progress  80.0%  2m13s elapsed, ~0m33s left
+  progress  90.0%  2m29s elapsed, ~0m16s left
+  progress 100.0%  2m52s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 22.5%   (4-player baseline 25%)   average rounds survived 10.4
+
+-- How it wins --
+  damage      99.6% of wins
+  timeout      0.4% of wins
+  Opponents it eliminated: 0.69 per game, by
+    commander damage   50.4%
+    combat             36.8%
+    triggers           11.0%
+    decked              1.7%
+  Damage dealt per game: 34.6, from
+    combat              32.4  (94%)
+    triggers             2.2  (6%)
+
+-- How it loses --
+  Eliminated in 77.3% of games, on average in round 9.6
+    by Light-Paws via commander damage   19.3% of games
+    by Isshin   via combat             12.8% of games
+    by Tatyova  via combat             10.1% of games
+    by Lathril  via combat              7.9% of games
+    by Teysa Karlov via drain               7.3% of games
+    by Teysa Karlov via combat              4.6% of games
+    by Light-Paws via combat              4.3% of games
+    by Lathril  via drain               3.4% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 25%  T5 45%  T6 59%  T7 67%  T8 72%  T9 74%  T10 76%  T11 77%  T12 78%
+  Online at all: 78.7% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 100.0% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Adelbert Steiner                           cast in  17.1% of games, win rate when cast  49.1% (+26.6)
+    Fumigate                                   cast in  11.5% of games, win rate when cast  47.8% (+25.3)
+    Sword of Kaldra                            cast in  21.2% of games, win rate when cast  47.6% (+25.1)
+    Sol Ring                                   cast in  19.2% of games, win rate when cast  42.7% (+20.2)
+    Veteran's Powerblade                       cast in  14.7% of games, win rate when cast  42.2% (+19.7)
+    Bronze Guardian                            cast in  10.2% of games, win rate when cast  42.2% (+19.7)
+    Exalted Angel                              cast in  10.5% of games, win rate when cast  41.9% (+19.4)
+    Norn's Annex                               cast in  10.1% of games, win rate when cast  41.6% (+19.1)
+    Lay Down Arms                              cast in  17.2% of games, win rate when cast  41.3% (+18.8)
+    Champion's Helm                            cast in  33.0% of games, win rate when cast  40.9% (+18.4)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast  22.5% (+0.0)
+    Sword of Feast and Famine                  cast in  73.2% of games, win rate when cast  28.4% (+5.9)
+    Mind Stone                                 cast in  19.9% of games, win rate when cast  28.6% (+6.1)
+    Giver of Runes                             cast in  18.8% of games, win rate when cast  28.7% (+6.2)
+    Swiftfoot Boots                            cast in  18.3% of games, win rate when cast  29.5% (+7.0)
+    Enlightened Tutor                          cast in  17.9% of games, win rate when cast  29.6% (+7.1)
+    Page, Loose Leaf                           cast in  18.3% of games, win rate when cast  30.1% (+7.6)
+    Arcane Signet                              cast in  17.7% of games, win rate when cast  30.5% (+8.0)
+    Cid, Freeflier Pilot                       cast in  17.9% of games, win rate when cast  30.7% (+8.2)
+    Kor Outfitter                              cast in  18.4% of games, win rate when cast  31.0% (+8.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unbreakable Formation                      cast   2.6% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  10.6% of the games it was drawn [reactive: only cast in response]
+    Austere Command                            cast  39.0% of the games it was drawn
+    Secure the Scene                           cast  46.7% of the games it was drawn
+    Exalted Angel                              cast  47.5% of the games it was drawn
+    Bronze Guardian                            cast  47.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.63
+    Sword of Fire and Ice                      0.20
+    Sword of Hearth and Home                   0.12
+    Sword of Feast and Famine                  0.07
+    Helm of Kaldra                             0.05
+    Cid, Freeflier Pilot                       0.04
+    Hero's Blade                               0.03
+    Ghostly Prison                             0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(172s total)

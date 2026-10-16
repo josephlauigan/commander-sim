@@ -245,6 +245,8 @@ pub const RAMP_TURNS: u32 = 8;
 /// (report-cloud-sequencing: rocks held 2+ turns in half of Cloud's games). Ramp cast a turn earlier pays every turn
 /// after that: a rock, dork or land-ramp spell cast on p's own turn t gets `ramp_w` per mana it makes per turn left
 /// before `RAMP_TURNS`, added to the option's rollout average. `ramp_w` 0: no bonus (the old search).
+/// Off by default: at `ramp_w` 1 Cloud T1 +0.1, Titania T3 -1.3, Sheoldred T4 -1.9 (1,000 games each, noise about
+/// +-2): casting ramp sooner doesn't win more in these games (audit/ramp/2026-10-15).
 pub fn ramp_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     let w = g.settings.search.ramp_w;
     let Some(Action::Cast { card, .. }) = &o.act else { return 0.0 };

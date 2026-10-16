@@ -22,8 +22,9 @@ pub enum AiMode {
     Lookahead,
 }
 
-/// the default ramp weight (see `Search::ramp_w`)
-pub const RAMP_W: f64 = 1.0;
+/// the default ramp weight (see `Search::ramp_w`): off. At 1.0 the AI cast ramp early but won no more
+/// (audit/ramp/2026-10-15)
+pub const RAMP_W: f64 = 0.0;
 
 #[derive(Debug, Clone)]
 pub struct Search {

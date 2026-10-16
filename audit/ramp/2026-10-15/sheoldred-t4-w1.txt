@@ -1,0 +1,102 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 3 minutes
+  progress  10.0%  0m08s elapsed, ~1m14s left
+  progress  20.0%  0m15s elapsed, ~1m03s left
+  progress  30.0%  0m23s elapsed, ~0m55s left
+  progress  40.0%  0m32s elapsed, ~0m48s left
+  progress  50.0%  0m41s elapsed, ~0m41s left
+  progress  60.0%  0m50s elapsed, ~0m33s left
+  progress  70.0%  0m58s elapsed, ~0m25s left
+  progress  80.0%  1m08s elapsed, ~0m17s left
+  progress  90.0%  1m15s elapsed, ~0m08s left
+  progress 100.0%  1m25s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 28.2%   (4-player baseline 25%)   average rounds survived 9.5
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.89 per game, by
+    drain              73.9%
+    combat             11.5%
+    triggers            7.4%
+    other               4.9%
+    burn                1.8%
+    decked              0.3%
+    commander damage    0.1%
+  Damage dealt per game: 45.2, from
+    drain               29.4  (65%)
+    combat               9.0  (20%)
+    triggers             5.5  (12%)
+    burn                 1.3  (3%)
+
+-- How it loses --
+  Eliminated in 71.6% of games, on average in round 8.6
+    by Heliod   via combo              17.6% of games
+    by Krenko   via combat             12.1% of games
+    by Prosper  via combo               9.8% of games
+    by Yuriko   via combat              7.5% of games
+    by Yuriko   via triggers            6.0% of games
+    by Chulane  via combo               4.7% of games
+    by Chulane  via combat              4.1% of games
+    by Krenko   via combo               3.0% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 0%  T3 2%  T4 19%  T5 36%  T6 53%  T7 64%  T8 70%  T9 75%  T10 78%  T11 80%  T12 80%
+  Online at all: 80.3% of games
+  Commander resolves on turn: median 6.0, mean 6.0 (over the 81.4% of games it resolves)
+  Commander resolved by turn:  T4 20%  T5 37%  T6 55%  T7 66%  T8 72%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Memory Jar                                 cast in  14.0% of games, win rate when cast  52.9% (+24.7)
+    Gray Merchant of Asphodel                  cast in  13.9% of games, win rate when cast  52.5% (+24.3)
+    Invoke Despair                             cast in  11.9% of games, win rate when cast  50.4% (+22.2)
+    Wander Off                                 cast in  13.5% of games, win rate when cast  46.7% (+18.5)
+    Cast Away Doubt                            cast in  12.1% of games, win rate when cast  46.3% (+18.1)
+    Skyscanner                                 cast in  13.9% of games, win rate when cast  45.3% (+17.1)
+    Underworld Dreams                          cast in  16.4% of games, win rate when cast  44.5% (+16.3)
+    Ulna Alley Shopkeep                        cast in  14.1% of games, win rate when cast  44.0% (+15.8)
+    Swiftfoot Boots                            cast in  13.4% of games, win rate when cast  43.3% (+15.1)
+    Sephiroth's Intervention                   cast in  14.1% of games, win rate when cast  43.3% (+15.1)
+  Lowest win rate when cast:
+    Carnage Altar                              cast in  14.7% of games, win rate when cast  26.5% (-1.7)
+    Melancholic Poet                           cast in  15.9% of games, win rate when cast  27.0% (-1.2)
+    Charcoal Diamond                           cast in  18.3% of games, win rate when cast  27.9% (-0.3)
+    Restless Bloodseeker // Bloodsoaked Revele cast in  16.0% of games, win rate when cast  29.4% (+1.2)
+    Undercity Dire Rat                         cast in  18.6% of games, win rate when cast  30.1% (+1.9)
+    Commander's Sphere                         cast in  15.5% of games, win rate when cast  30.3% (+2.1)
+    Masterful Flourish                         cast in  16.6% of games, win rate when cast  30.7% (+2.5)
+    Foolish Fate                               cast in  13.9% of games, win rate when cast  31.7% (+3.5)
+    Al Bhed Salvagers                          cast in  17.5% of games, win rate when cast  32.0% (+3.8)
+    Leech Collector // Bloodletting            cast in  17.1% of games, win rate when cast  32.7% (+4.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dark Deal                                  cast  12.7% of the games it was drawn
+    Apex Witchstalker                          cast  24.8% of the games it was drawn
+    Peer into the Abyss                        cast  25.6% of the games it was drawn
+    Seizan, Perverter of Truth                 cast  36.5% of the games it was drawn
+    Howling Mine                               cast  42.5% of the games it was drawn
+    Ambition's Cost                            cast  43.0% of the games it was drawn
+    Exsanguinate                               cast  43.6% of the games it was drawn
+    Deadly Dispute                             cast  47.9% of the games it was drawn
+    Lethal Throwdown                           cast  48.7% of the games it was drawn
+    Battle-Rage Blessing                       cast  49.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.59
+    Charcoal Diamond                           0.05
+    Restless Bloodseeker // Bloodsoaked Revele 0.04
+    Melancholic Poet                           0.04
+    Leech Collector // Bloodletting            0.04
+    Potioner's Trove                           0.04
+    Mind Stone                                 0.04
+    Seymour Flux                               0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(85s total)

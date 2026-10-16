@@ -1,5 +1,5 @@
-//! search-ramp: the look-ahead gives casting early ramp a bonus (`search::ramp_bonus`), so early ramp is cast
-//! instead of held for a creature, an Equipment or "stop".
+//! search-ramp: with `ramp_w` on, the look-ahead gives casting early ramp a bonus (`search::ramp_bonus`), so early
+//! ramp is cast instead of held for a creature, an Equipment or "stop".
 
 use sim_core::ai::{brain, search};
 use sim_core::ids::PlayerId;
@@ -9,6 +9,8 @@ use sim_core::testkit::*;
 use std::sync::Arc;
 
 const P0: PlayerId = PlayerId(0);
+/// the weight the 2026-10-15 check used (the default is 0: off)
+const ON: f64 = 1.0;
 
 fn game(keys: &[&str], basic: &str) -> Game {
     let mut g = table(keys);
@@ -56,7 +58,7 @@ fn the_bonus_scales_with_mana_and_turns_left() {
 #[test]
 fn lookahead_casts_the_rock_over_a_two_drop_on_turn_two() {
     let mut g = game(&["cloud", "seph"], "Plains");
-    set_ramp_w(&mut g, sim_core::settings::RAMP_W);
+    set_ramp_w(&mut g, ON);
     lands(&mut g, P0, "Plains", 2, false);
     perm(&mut g, P0, "Cloud, Midgar Mercenary");
     hand(&mut g, P0, &["Mind Stone", "Puresteel Paladin"]);
@@ -67,7 +69,7 @@ fn lookahead_casts_the_rock_over_a_two_drop_on_turn_two() {
 #[test]
 fn lookahead_casts_land_ramp_rather_than_stop() {
     let mut g = game(&["titania", "seph"], "Forest");
-    set_ramp_w(&mut g, sim_core::settings::RAMP_W);
+    set_ramp_w(&mut g, ON);
     lands(&mut g, P0, "Forest", 2, false);
     hand(&mut g, P0, &["Rampant Growth"]);
     g.player_mut(P0).turns = 2;
