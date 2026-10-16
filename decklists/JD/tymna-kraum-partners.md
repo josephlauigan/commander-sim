@@ -187,15 +187,15 @@ before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (33).** Abigale, Poet Laureate, Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Callous Inspector, Cloudfin Raptor, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Hero of Bladehold, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Rescue, Pepper Potts, Skyclave Apparition, Spectral Sailor, Sphinx of New Prahv, Terror of the Peaks, The Wasp, Winsome Avenger, Thrummingbird, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Abigale, Poet Laureate, Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Callous Inspector, Cloudfin Raptor, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Hero of Bladehold, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Rescue, Pepper Potts, Restoration Angel, Skyclave Apparition, Spectral Sailor, Sphinx of New Prahv, Terror of the Peaks, The Wasp, Winsome Avenger, Thrummingbird, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
-**Artifacts (9).** Conqueror's Flail, Crawlspace, Helm of Kaldra, Lightning Greaves, Potioner's Trove, Shield of Kaldra, Star Compass, Talisman of Conviction, Talisman of Hierarchy
+**Artifacts (9).** Arcane Signet, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Potioner's Trove, Shield of Kaldra, Talisman of Conviction
 
 **Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Tocasia's Welcome
 
-**Instants (10).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Force of Will, Harsh Annotation, Masterful Flourish, Path to Exile, Scorching Dragonfire, Swords to Plowshares
+**Instants (9).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Harsh Annotation, Masterful Flourish, Path to Exile, Scorching Dragonfire, Swords to Plowshares
 
 **Sorceries (4).** Diabolic Tutor, Expressive Iteration, Rip Apart, Toxic Deluge
 
@@ -207,6 +207,7 @@ before the game.
 1 Abigale, Poet Laureate
 1 Adeline, Resplendent Cathar
 1 Arcane Denial
+1 Arcane Signet
 1 Archon of Absolution
 1 Aven Mindcensor
 1 Baird, Steward of Argive
@@ -235,8 +236,8 @@ before the game.
 1 Expressive Iteration
 1 Fact or Fiction
 1 Falcon and Redwing
+1 Fellwar Stone
 1 Firebird, Blazing Ranger
-1 Force of Will
 1 Furycalm Snarl
 1 Ghostly Prison
 1 Gilgamesh, Master-at-Arms
@@ -261,6 +262,7 @@ before the game.
 1 Potioner's Trove
 1 Propaganda
 1 Rescue, Pepper Potts
+1 Restoration Angel
 1 Rip Apart
 1 Rugged Prairie
 1 Scorching Dragonfire
@@ -270,11 +272,9 @@ before the game.
 1 Spectator Seating
 1 Spectral Sailor
 1 Sphinx of New Prahv
-1 Star Compass
 1 Sulfur Falls
 1 Swords to Plowshares
 1 Talisman of Conviction
-1 Talisman of Hierarchy
 1 Terror of the Peaks
 1 The Wasp, Winsome Avenger
 1 Thrummingbird
