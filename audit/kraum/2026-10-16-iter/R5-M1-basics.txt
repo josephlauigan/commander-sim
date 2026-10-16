@@ -1,0 +1,136 @@
+Model status of the swapped-in cards (cardgen audit):
+  Plains: Full (basic land)
+  Plains: Full (basic land)
+  Plains: Full (basic land)
+  Plains: Full (basic land)
+  Swamp: Full (basic land)
+  Swamp: Full (basic land)
+  Swamp: Full (basic land)
+  Island: Full (basic land)
+  Island: Full (basic land)
+  Island: Full (basic land)
+  Mountain: Full (basic land)
+  Mountain: Full (basic land)
+
+Swaps: Arcane Sanctum -> Plains; Mystic Monastery -> Plains; Nomad Outpost -> Plains; Irrigated Farmland -> Plains; Boiling Rock Prison -> Swamp; Temple of Malice -> Swamp; Path of Ancestry -> Swamp; Crumbling Necropolis -> Island; Temple of Deceit -> Island; Vivid Creek -> Island; Spectacle Summit -> Mountain; Temple of Epiphany -> Mountain
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.4% ->  25.8%  (delta +1.4 pts, noise ±2.6, paired)   n=2000
+               eliminated by (variant): Tergrid 19.9%  Atraxa 11.3%  Aurelia 20.9%  Marwyn 12.2%  Korvold 8.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          24.4% ->  25.8%  +1.4pt   ±2.7 
+    Rounds survived (or game length)                  12.30 ->  12.42   +0.13  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.66 ->   0.62   -0.03  ±0.05 
+    Mana available on your turn 4                      3.55 ->   3.93   +0.39  ±0.05*
+    Mana available on your turn 6                      5.07 ->   5.43   +0.36  ±0.08*
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.88 ->   3.80   -0.08  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.08 ->  19.82   +0.74  ±0.57*
+    Tutors resolved per game                           0.10 ->   0.12   +0.02  ±0.02 
+    Spells cast per game                              14.28 ->  15.20   +0.92  ±0.51*
+
+  Interaction
+    Counterspells cast                                 0.34 ->   0.36   +0.02  ±0.03 
+    Spot removal cast                                  1.08 ->   1.17   +0.09  ±0.07*
+    Board wipes cast                                   0.15 ->   0.16   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.78   +0.04  ±0.07 
+    Your spells countered                              0.14 ->   0.14   -0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                28.40 ->  30.80   +2.41  ±1.96*
+      ...of which combat damage                       27.94 ->  30.16   +2.22  ±1.92*
+      ...of which magecraft / burn                     0.05 ->   0.09   +0.03  ±0.03*
+      ...of which drain triggers                       0.04 ->   0.02   -0.02  ±0.06 
+      ...of which other triggers                       0.36 ->   0.53   +0.17  ±0.13*
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Mana available on your turn 4 (both profiles)
+    better - Mana available on your turn 6 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+    better -   ...of which magecraft / burn (both profiles)
+    better -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Plains                                87.7       0.0           -    100.0          -      0.00
+    Plains                                87.7       0.0           -    100.0          -      0.00
+    Plains                                87.7       0.0           -    100.0          -      0.00
+    Plains                                87.7       0.0           -    100.0          -      0.00
+    Swamp                                 82.5       0.0           -    100.0          -      0.00
+    Swamp                                 82.5       0.0           -    100.0          -      0.00
+    Swamp                                 82.5       0.0           -    100.0          -      0.00
+    Island                                84.3       0.0           -    100.0          -      0.00
+    Island                                84.3       0.0           -    100.0          -      0.00
+    Island                                84.3       0.0           -    100.0          -      0.00
+    Mountain                              72.3       0.0           -    100.0          -      0.00
+    Mountain                              72.3       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Arcane Sanctum                        28.6       0.0           -    100.0          -      0.00
+    Mystic Monastery                      27.5       0.0           -    100.0          -      0.00
+    Nomad Outpost                         28.6       0.0           -    100.0          -      0.00
+    Irrigated Farmland                    26.9       0.0           -    100.0          -      0.00
+    Boiling Rock Prison                   26.6       0.0           -    100.0          -      0.00
+    Temple of Malice                      26.9       0.0           -    100.0          -      0.00
+    Path of Ancestry                      26.5       0.0           -    100.0          -      0.00
+    Crumbling Necropolis                  26.6       0.0           -    100.0          -      0.00
+    Temple of Deceit                      26.4       0.0           -    100.0          -      0.00
+    Vivid Creek                           28.6       0.0           -    100.0          -      0.00
+    Spectacle Summit                      28.1       0.0           -    100.0          -      0.00
+    Temple of Epiphany                    27.8       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        24.4      25.8     +1.4
+    rounds survived                                  12.30     12.42    +0.13
+    eliminated, % of games                            73.5      72.7     -0.8
+    opponents it eliminated, per game                 0.60      0.63    +0.03
+    damage dealt, per game                            28.4      30.8     +2.4
+    commander resolved by turn 4, %                   78.8      79.5     +0.8
+    commander resolved by turn 6, %                   95.2      92.8     -2.5
+    commander removals, per game                      0.82      0.83    +0.01
+    lands on the battlefield, turn 4                  3.71      3.71    +0.00
+    lands on the battlefield, turn 8                  6.34      6.46    +0.11
+    mana available, turn 4                            3.55      3.93    +0.39
+    mana available, turn 8                            6.38      6.74    +0.37
+    cards in hand after the land drop, turn 4         6.42      6.36    -0.06
+    cards in hand after the land drop, turn 8         6.59      6.41    -0.18
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Aurelia via combat 16.6%, Tergrid via combat 13.3%, Marwyn via combat 12.1%, Atraxa via combat 10.7%
+    eliminated by (swapped): Aurelia via combat 17.6%, Tergrid via combat 13.7%, Marwyn via combat 12.2%, Atraxa via combat 8.2%
+
+(516s total)
