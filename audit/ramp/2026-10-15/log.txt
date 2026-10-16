@@ -1,0 +1,7 @@
+10-15 18:23 cell cloud t1 w0 exit 0 jobs 6 games 1000 Win rate 22.4%   (4-player baseline 25%)   average rounds survived 10.3
+10-15 18:26 cell cloud t1 w1 exit 0 jobs 16 games 1000 Win rate 22.5%   (4-player baseline 25%)   average rounds survived 10.4
+10-15 18:28 cell titania t3 w0 exit 0 jobs 16 games 1000 Win rate 29.5%   (4-player baseline 25%)   average rounds survived 12.3
+10-15 18:31 cell titania t3 w1 exit 0 jobs 16 games 1000 Win rate 28.2%   (4-player baseline 25%)   average rounds survived 12.1
+10-15 18:32 cell sheoldred t4 w0 exit 0 jobs 16 games 1000 Win rate 30.1%   (4-player baseline 25%)   average rounds survived 9.5
+10-15 18:33 cell sheoldred t4 w1 exit 0 jobs 16 games 1000 Win rate 28.2%   (4-player baseline 25%)   average rounds survived 9.5
+10-15 18:33 BATCH DONE

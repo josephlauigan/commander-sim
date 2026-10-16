@@ -16,13 +16,14 @@ use super::tape::{Taped, taped};
 pub use super::tape::{LAST_SCORES, Tape, TapeEntry, TapeSlot};
 use super::{act, brain};
 use crate::flow::{Res, Stop};
-use crate::hooks::Opt;
+use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PlayerId};
 use crate::pysum::PySum;
 use crate::rng::Rng;
 use crate::settings::AiMode;
 use crate::state::{Game, Step};
 use crate::sym::Sym;
+use crate::tag::Tag;
 use std::cell::RefCell;
 
 /// run counters (search.STATS): decisions, playouts, decisions the look-ahead changed, playouts cut short
@@ -236,6 +237,33 @@ pub fn strength(g: &Game, q: PlayerId) -> f64 {
         + g.settings.search.combo_w * crate::cardcode::combo_progress(g, q)
 }
 
+/// own turns over which ramp still pays off (`ramp_bonus`)
+pub const RAMP_TURNS: u32 = 8;
+
+/// search.ramp_bonus: the look-ahead plays only to the end of p's next turn, and on the "hold it" line the heuristic
+/// casts the rock next turn anyway, so both lines end on the same board and a creature that attacks a turn sooner wins
+/// (report-cloud-sequencing: rocks held 2+ turns in half of Cloud's games). Ramp cast a turn earlier pays every turn
+/// after that: a rock, dork or land-ramp spell cast on p's own turn t gets `ramp_w` per mana it makes per turn left
+/// before `RAMP_TURNS`, added to the option's rollout average. `ramp_w` 0: no bonus (the old search).
+/// Off by default: at `ramp_w` 1 Cloud T1 +0.1, Titania T3 -1.3, Sheoldred T4 -1.9 (1,000 games each, noise about
+/// +-2): casting ramp sooner doesn't win more in these games (audit/ramp/2026-10-15).
+pub fn ramp_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
+    let w = g.settings.search.ramp_w;
+    let Some(Action::Cast { card, .. }) = &o.act else { return 0.0 };
+    if w == 0.0 {
+        return 0.0;
+    }
+    let t = &g.db.get(*card).tags;
+    let mana = if let Some(r) = t.str(Tag::Rock) {
+        r.split_once(':').map_or(r, |x| x.0).parse().unwrap_or(1)
+    } else if t.has(Tag::Dork) {
+        1
+    } else {
+        t.int(Tag::Lr).unwrap_or(0).max(0)
+    };
+    w * mana as f64 * RAMP_TURNS.saturating_sub(g.player(p).turns) as f64
+}
+
 /// the n-th option labelled `label`
 fn find(opts: &[Opt], label: &str, n: usize) -> Option<usize> {
     opts.iter().enumerate().filter(|(_, o)| o.label == label).nth(n).map(|(i, _)| i)
@@ -290,6 +318,9 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
         for (k, &(_, label, n)) in keyed.iter().enumerate() {
             scores[k] += playout_main(g, p, post, label, n, base_seed, r);
         }
+    }
+    for (k, kk) in keyed.iter().enumerate() {
+        scores[k] += ramp_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
     }
     let mut best = 0;
     for k in 1..keyed.len() {

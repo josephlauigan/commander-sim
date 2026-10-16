@@ -1,0 +1,96 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 6 worker threads: about 8 minutes
+  progress  10.0%  0m38s elapsed, ~5m48s left
+  progress  20.0%  1m20s elapsed, ~5m20s left
+  progress  30.0%  1m55s elapsed, ~4m30s left
+  progress  40.0%  2m34s elapsed, ~3m52s left
+  progress  50.0%  3m08s elapsed, ~3m08s left
+  progress  60.0%  3m47s elapsed, ~2m31s left
+  progress  70.0%  4m26s elapsed, ~1m54s left
+  progress  80.0%  5m02s elapsed, ~1m15s left
+  progress  90.0%  5m38s elapsed, ~0m37s left
+  progress 100.0%  6m21s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 22.4%   (4-player baseline 25%)   average rounds survived 10.3
+
+-- How it wins --
+  damage      99.1% of wins
+  timeout      0.9% of wins
+  Opponents it eliminated: 0.65 per game, by
+    commander damage   50.3%
+    combat             36.3%
+    triggers           11.4%
+    decked              2.0%
+  Damage dealt per game: 33.9, from
+    combat              31.7  (94%)
+    triggers             2.2  (6%)
+
+-- How it loses --
+  Eliminated in 77.5% of games, on average in round 9.5
+    by Light-Paws via commander damage   16.9% of games
+    by Isshin   via combat             15.1% of games
+    by Tatyova  via combat             10.8% of games
+    by Lathril  via combat              8.4% of games
+    by Teysa Karlov via drain               5.8% of games
+    by Teysa Karlov via combat              5.5% of games
+    by Lathril  via drain               4.9% of games
+    by Light-Paws via combat              3.6% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 26%  T5 44%  T6 56%  T7 63%  T8 67%  T9 70%  T10 72%  T11 73%  T12 73%
+  Online at all: 74.7% of games
+  Commander resolves on turn: median 2.0, mean 2.1 (over the 100.0% of games it resolves)
+  Commander resolved by turn:  T4 99%  T5 100%  T6 100%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Thalia, the Survivor                       cast in  11.4% of games, win rate when cast  46.5% (+24.1)
+    Recommission                               cast in  11.3% of games, win rate when cast  46.0% (+23.6)
+    Court of Ardenvale                         cast in  12.0% of games, win rate when cast  45.8% (+23.4)
+    Ghostly Prison                             cast in  17.1% of games, win rate when cast  45.0% (+22.6)
+    Sword of Kaldra                            cast in  21.7% of games, win rate when cast  44.7% (+22.3)
+    Solemn Simulacrum                          cast in  13.1% of games, win rate when cast  44.3% (+21.9)
+    Windborn Muse                              cast in  13.5% of games, win rate when cast  43.7% (+21.3)
+    Baird, Steward of Argive                   cast in  12.0% of games, win rate when cast  43.3% (+20.9)
+    Mask of Memory                             cast in  24.7% of games, win rate when cast  43.3% (+20.9)
+    Fumigate                                   cast in  11.1% of games, win rate when cast  43.2% (+20.8)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in 100.0% of games, win rate when cast  22.4% (+0.0)
+    Sword of Feast and Famine                  cast in  74.4% of games, win rate when cast  28.8% (+6.4)
+    Grand Abolisher                            cast in  16.7% of games, win rate when cast  29.9% (+7.5)
+    Mind Stone                                 cast in  18.3% of games, win rate when cast  30.1% (+7.7)
+    Forum Familiar                             cast in  19.2% of games, win rate when cast  30.2% (+7.8)
+    Kor Duelist                                cast in  20.3% of games, win rate when cast  31.0% (+8.6)
+    Arcane Signet                              cast in  17.3% of games, win rate when cast  31.8% (+9.4)
+    Loyal Warhound                             cast in  18.3% of games, win rate when cast  32.2% (+9.8)
+    Citizen's Arrest                           cast in  15.1% of games, win rate when cast  32.5% (+10.1)
+    Cid, Freeflier Pilot                       cast in  18.1% of games, win rate when cast  32.6% (+10.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Unbreakable Formation                      cast   1.4% of the games it was drawn [reactive: only cast in response]
+    Ultimate Magic: Holy                       cast  14.4% of the games it was drawn [reactive: only cast in response]
+    Austere Command                            cast  40.9% of the games it was drawn
+    Fate of the Sun-Cryst                      cast  45.1% of the games it was drawn
+    Exalted Angel                              cast  45.6% of the games it was drawn
+    Secure the Scene                           cast  45.6% of the games it was drawn
+    Bronze Guardian                            cast  46.9% of the games it was drawn
+    Norn's Annex                               cast  48.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.60
+    Sword of Fire and Ice                      0.19
+    Sword of Hearth and Home                   0.10
+    Sword of Feast and Famine                  0.07
+    Helm of Kaldra                             0.06
+    Cid, Freeflier Pilot                       0.04
+    Windborn Muse                              0.03
+    Ghostly Prison                             0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(382s total)

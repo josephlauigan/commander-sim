@@ -1,0 +1,89 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 3 minutes
+  progress  10.0%  0m15s elapsed, ~2m16s left
+  progress  20.0%  0m28s elapsed, ~1m53s left
+  progress  30.0%  0m40s elapsed, ~1m34s left
+  progress  40.0%  0m53s elapsed, ~1m19s left
+  progress  50.0%  1m06s elapsed, ~1m06s left
+  progress  60.0%  1m18s elapsed, ~0m52s left
+  progress  70.0%  1m30s elapsed, ~0m38s left
+  progress  80.0%  1m43s elapsed, ~0m25s left
+  progress  90.0%  1m55s elapsed, ~0m12s left
+  progress 100.0%  2m10s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== titania analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 29.5%   (4-player baseline 25%)   average rounds survived 12.3
+
+-- How it wins --
+  damage      92.2% of wins
+  timeout      7.8% of wins
+  Opponents it eliminated: 0.76 per game, by
+    combat             99.6%
+    commander damage    0.3%
+    decked              0.1%
+  Damage dealt per game: 38.2, from
+    combat              38.2  (100%)
+
+-- How it loses --
+  Eliminated in 69.3% of games, on average in round 11.4
+    by Aurelia  via combat             17.5% of games
+    by Marwyn   via combat             14.5% of games
+    by Tergrid  via combat             13.2% of games
+    by Atraxa   via combat              8.2% of games
+    by Korvold  via drain               3.1% of games
+    by Tergrid  via drain               2.2% of games
+    by Korvold  via combat              2.0% of games
+    by Aurelia  via commander damage    1.5% of games
+
+-- Game plan timing --
+  Plan: first 5/3 Elemental from Titania
+  Online by turn:  T2 0%  T3 0%  T4 2%  T5 11%  T6 23%  T7 31%  T8 39%  T9 44%  T10 49%  T11 51%  T12 54%
+  Online at all: 58.7% of games
+  Commander resolves on turn: median 6.0, mean 6.6 (over the 91.4% of games it resolves)
+  Commander resolved by turn:  T4 10%  T5 30%  T6 49%  T7 62%  T8 76%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Overwhelming Stampede                      cast in  12.0% of games, win rate when cast  63.3% (+33.8)
+    End-Raze Forerunners                       cast in  19.5% of games, win rate when cast  51.3% (+21.8)
+    Paladin of Predation                       cast in  19.1% of games, win rate when cast  50.3% (+20.8)
+    Hornet Queen                               cast in  23.2% of games, win rate when cast  48.7% (+19.2)
+    Tumbleweed Rising                          cast in  12.3% of games, win rate when cast  47.2% (+17.7)
+    Crushing Canopy                            cast in  18.7% of games, win rate when cast  45.5% (+16.0)
+    Genesis Hydra                              cast in  21.5% of games, win rate when cast  44.2% (+14.7)
+    Annoyed Altisaur                           cast in  17.9% of games, win rate when cast  44.1% (+14.6)
+    Vorinclex, Monstrous Raider                cast in  24.1% of games, win rate when cast  44.0% (+14.5)
+    Symbiotic Beast                            cast in  20.9% of games, win rate when cast  43.5% (+14.0)
+  Lowest win rate when cast:
+    Environmental Scientist                    cast in  25.8% of games, win rate when cast  31.8% (+2.3)
+    Titania, Protector of Argoth               cast in  91.5% of games, win rate when cast  32.0% (+2.5)
+    Greenhouse Propagator                      cast in  24.5% of games, win rate when cast  33.5% (+4.0)
+    Thirsting Roots                            cast in  23.1% of games, win rate when cast  34.2% (+4.7)
+    Glorious Decay                             cast in  21.0% of games, win rate when cast  34.3% (+4.8)
+    Track Down                                 cast in  20.2% of games, win rate when cast  35.1% (+5.6)
+    Pothole Mole                               cast in  24.4% of games, win rate when cast  35.2% (+5.7)
+    Llanowar Elves                             cast in  25.8% of games, win rate when cast  35.3% (+5.8)
+    Nature's Lore                              cast in  20.4% of games, win rate when cast  35.3% (+5.8)
+    Pick Your Poison                           cast in  22.5% of games, win rate when cast  35.6% (+6.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Royal Treatment                            cast  37.0% of the games it was drawn
+    Arachnogenesis                             cast  38.6% of the games it was drawn
+    Vinelasher Adept                           cast  49.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Titania, Protector of Argoth               0.71
+    Ghalta the Unstoppable                     0.05
+    Vorinclex, Monstrous Raider                0.05
+    Lashwhip Predator                          0.05
+    Hardbristle Bandit                         0.05
+    Bugenhagen, Wise Elder                     0.04
+    Studious First-Year                        0.04
+    Annoyed Altisaur                           0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(131s total)

@@ -1,0 +1,6 @@
+cloud t1 0
+cloud t1 1
+titania t3 0
+titania t3 1
+sheoldred t4 0
+sheoldred t4 1
