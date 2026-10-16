@@ -22,12 +22,18 @@ pub enum AiMode {
     Lookahead,
 }
 
+/// the default ramp weight (see `Search::ramp_w`)
+pub const RAMP_W: f64 = 1.0;
+
 #[derive(Debug, Clone)]
 pub struct Search {
     pub rollouts: u32,
     pub top_k: usize,
     pub horizon: u32,
     pub combo_w: f64,
+    /// the look-ahead's bonus for casting early ramp, per mana per own turn left (`search::ramp_bonus`); 0: no
+    /// bonus (the old search). Env SEARCH_RAMP_W overrides the default for A/B runs
+    pub ramp_w: f64,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -42,6 +48,11 @@ impl Default for Search {
             top_k: 5,
             horizon: 1,
             combo_w: 12.0,
+            ramp_w: std::env::var("SEARCH_RAMP_W")
+                .ok()
+                .filter(|v| !v.is_empty())
+                .map(|v| v.parse().unwrap_or_else(|_| panic!("bad SEARCH_RAMP_W {v:?}")))
+                .unwrap_or(RAMP_W),
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,
