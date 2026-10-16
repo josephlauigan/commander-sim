@@ -26431,7 +26431,19 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 1,
+     "tgh": 0
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 4
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "equip",
@@ -26445,12 +26457,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Job select",
-    "During your turn, equipped creature has flying.",
-    "Gae Bolg — Equip {4}"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -80598,7 +80606,29 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 2
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "trample"
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "haste"
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 5
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "equip",
@@ -80612,11 +80642,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Job select",
-    "Murasame — Equip {5}"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

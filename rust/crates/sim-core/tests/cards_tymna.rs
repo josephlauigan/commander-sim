@@ -12,6 +12,7 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
+const P3: PlayerId = PlayerId(3);
 const ABIGALE: &str = "Abigale, Poet Laureate // Heroic Stanza";
 
 fn tbl() -> Game {
@@ -455,4 +456,412 @@ fn silverquill_charm_is_offered_as_a_hand_play_with_its_modes() {
     assert!(run(&mut g, P0, exile));
     assert!(g.player(P1).perms.iter().all(|&m| !on(&g, m)), "their 1/1 was exiled");
     assert_eq!(untapped_lands(&g, P0), 0);
+}
+
+// ======================================================== the Equipment package (kraum deck, 10/16)
+use sim_core::engine::values::{epow, etgh};
+use sim_core::hooks::Action;
+use sim_core::impls::tymna_cards as tc;
+
+fn on_bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
+    g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && g.perm(m).name == name)
+}
+
+fn attach(g: &mut Game, e: PermId, m: PermId) {
+    g.perm_mut(e).attached = Some(m);
+}
+
+fn kraum_table() -> Game {
+    table(&["kraum", "veyran", "seph"])
+}
+
+// ------------------------------------------------------------------ Gilgamesh, Master-at-Arms
+#[test]
+fn gilgamesh_puts_the_equipment_among_the_top_six_onto_the_battlefield_and_attaches_one() {
+    let mut g = tbl();
+    // the last name is the top card
+    set_library(&mut g, P0, &["Mountain", "Swamp", "Samurai's Katana", "Island", "Plains", "Conqueror's Flail"]);
+    let before = g.player(P0).library.len();
+    let gil = perm(&mut g, P0, "Gilgamesh, Master-at-Arms");
+    let flail = on_bf(&g, P0, "Conqueror's Flail").expect("the Flail came in");
+    let katana = on_bf(&g, P0, "Samurai's Katana").expect("the Katana came in");
+    assert_eq!(g.perm(flail).attached, Some(gil), "the best Equipment is attached to Gilgamesh, a Samurai");
+    let hero = g.perm(katana).attached.expect("job select: the Katana wears its own Hero");
+    assert!(g.perm(hero).token && tc::is_samurai(&g, hero), "the Katana makes its wearer a Samurai");
+    assert_eq!(g.player(P0).library.len(), before - 2, "two Equipment left the library");
+    // the four other cards of the six are on the bottom (index 0 is the bottom)
+    let bottom: Vec<String> = g.player(P0).library[..4].iter().map(|&c| g.db.get(c).name.to_string()).collect();
+    for n in ["Mountain", "Swamp", "Island", "Plains"] {
+        assert!(bottom.iter().any(|b| b == n), "{n} went to the bottom: {bottom:?}");
+    }
+    assert_eq!(epow(&g, gil), 6 + 1, "6/6 plus one colour among permanents (red)");
+}
+
+#[test]
+fn gilgamesh_looks_again_when_he_attacks() {
+    let mut g = tbl();
+    let gil = perm(&mut g, P0, "Gilgamesh, Master-at-Arms");
+    set_library(&mut g, P0, &["Plains", "Hero's Heirloom", "Island"]);
+    let n = g.player(P0).library.len();
+    combat::attack_triggers(&mut g, P0, &[gil], P1).unwrap();
+    let heirloom = on_bf(&g, P0, "Hero's Heirloom").expect("the Heirloom came in");
+    assert_eq!(g.player(P0).library.len(), n - 1);
+    assert_eq!(g.perm(heirloom).attached, Some(gil));
+    assert!(sim_core::dsl::has_kw(&g, gil, "trample") && sim_core::dsl::has_kw(&g, gil, "haste"), "legendary: trample and haste");
+}
+
+#[test]
+fn gilgamesh_with_no_equipment_in_the_top_six_only_reorders() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Plains", "Island", "Swamp"]);
+    let n = g.player(P0).library.len();
+    let gil = perm(&mut g, P0, "Gilgamesh, Master-at-Arms");
+    assert_eq!(g.player(P0).library.len(), n);
+    assert!(g.player(P0).perms.iter().all(|&m| !g.perm(m).name.contains("Equipment")));
+    assert_eq!(epow(&g, gil), 6);
+}
+
+// ------------------------------------------------------------------ Dragoon's Lance, Samurai's Katana
+fn equip_cost_for(g: &Game, p: PlayerId, e: PermId) -> Option<u32> {
+    sim_core::dsl::equip_options(g, p).into_iter().find_map(|o| match o.act {
+        Some(Action::Equip { src, n, .. }) if src == e => Some(n),
+        _ => None,
+    })
+}
+
+#[test]
+fn dragoons_lance_makes_a_hero_flies_on_your_turn_and_equips_for_four() {
+    let mut g = tbl();
+    let lance = perm(&mut g, P0, "Dragoon's Lance");
+    let hero = g.perm(lance).attached.expect("job select");
+    assert!(g.perm(hero).token && sim_core::engine::values::has_type(&g, hero, "hero"));
+    assert_eq!((epow(&g, hero), etgh(&g, hero)), (2, 1), "+1/+0");
+    assert!(sim_core::dsl::has_kw(&g, hero, "flying"), "my turn");
+    g.active = Some(P1);
+    assert!(!sim_core::dsl::has_kw(&g, hero, "flying"), "not during another player's turn");
+    g.active = Some(P0);
+    // Gae Bolg: equip {4}
+    attach_none(&mut g, lance);
+    let other = token(&mut g, P0, 2);
+    lands(&mut g, P0, "Plains", 3, false);
+    assert_eq!(equip_cost_for(&g, P0, lance), None, "three lands: not enough");
+    lands(&mut g, P0, "Plains", 1, false);
+    assert_eq!(equip_cost_for(&g, P0, lance), Some(4));
+    let _ = other;
+}
+
+fn attach_none(g: &mut Game, e: PermId) {
+    g.perm_mut(e).attached = None;
+}
+
+#[test]
+fn samurais_katana_gives_plus_two_trample_haste_and_equips_for_five() {
+    let mut g = tbl();
+    let katana = perm(&mut g, P0, "Samurai's Katana");
+    let hero = g.perm(katana).attached.expect("job select");
+    assert!(g.perm(hero).token && tc::is_samurai(&g, hero));
+    assert_eq!((epow(&g, hero), etgh(&g, hero)), (3, 3));
+    assert!(sim_core::dsl::has_kw(&g, hero, "trample"));
+    // haste lets a summoning-sick creature attack
+    let lynx = perm(&mut g, P0, "Spectral Lynx");
+    g.perm_mut(lynx).sick = true;
+    assert!(!sim_core::human::combat::can_attack(&g, P0, lynx));
+    attach(&mut g, katana, lynx);
+    assert!(sim_core::human::combat::can_attack(&g, P0, lynx), "haste");
+    assert!(tc::is_samurai(&g, lynx));
+    // Murasame: equip {5}
+    attach_none(&mut g, katana);
+    lands(&mut g, P0, "Plains", 4, false);
+    assert_eq!(equip_cost_for(&g, P0, katana), None);
+    lands(&mut g, P0, "Plains", 1, false);
+    assert_eq!(equip_cost_for(&g, P0, katana), Some(5));
+}
+
+// ------------------------------------------------------------------ Conqueror's Flail
+#[test]
+fn conquerors_flail_is_plus_one_for_each_colour_among_your_permanents() {
+    let mut g = tbl();
+    let flail = perm(&mut g, P0, "Conqueror's Flail");
+    let lyra = perm(&mut g, P0, "Lyra Dawnbringer");
+    let base = epow(&g, lyra);
+    attach(&mut g, flail, lyra);
+    assert_eq!(epow(&g, lyra), base + 1, "white only");
+    perm(&mut g, P0, "Sphinx of New Prahv");
+    assert_eq!(epow(&g, lyra), base + 2, "white and blue");
+    perm(&mut g, P0, "Nightveil Predator");
+    assert_eq!(epow(&g, lyra), base + 3, "white, blue and black");
+    assert_eq!(etgh(&g, lyra), 5 + 3);
+}
+
+#[test]
+fn conquerors_flail_stops_opponents_casting_spells_on_your_turn_only_while_attached() {
+    let mut g = tbl();
+    let flail = perm(&mut g, P0, "Conqueror's Flail");
+    let lyra = perm(&mut g, P0, "Lyra Dawnbringer");
+    assert!(!values::silenced(&g, P1), "loose: nothing");
+    attach(&mut g, flail, lyra);
+    assert!(values::silenced(&g, P1) && values::silenced(&g, P2), "attached: opponents can't cast on my turn");
+    assert!(!values::silenced(&g, P0), "I can");
+    g.active = Some(P1);
+    assert!(!values::silenced(&g, P0) && !values::silenced(&g, P2), "their own turn: cast away");
+}
+
+#[test]
+fn conquerors_flail_is_equipped_by_the_kraum_seat_before_combat() {
+    let mut g = kraum_table();
+    lands(&mut g, P0, "Plains", 3, false);
+    let flail = perm(&mut g, P0, "Conqueror's Flail");
+    perm(&mut g, P0, "Nightwind Glider");
+    let o = tc::kraum_special(&mut g, P0, false).unwrap();
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.starts_with("equip Conqueror's Flail"), "{}", o[0].label);
+    assert!(o[0].utility >= 4.0, "above the minor plays");
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(g.perm(flail).attached.is_some());
+    assert_eq!(untapped_lands(&g, P0), 1, "equip {{2}}");
+    assert!(tc::kraum_special(&mut g, P0, false).unwrap().is_empty(), "worn: nothing more to do");
+    assert!(tc::kraum_special(&mut g, P0, true).unwrap().is_empty(), "never after combat");
+}
+
+// ------------------------------------------------------------------ Hero's Blade, Hero's Heirloom
+#[test]
+fn heros_blade_attaches_free_to_each_legendary_creature_you_play() {
+    let mut g = kraum_table();
+    let blade = perm(&mut g, P0, "Hero's Blade");
+    perm(&mut g, P0, "Exit Specialist");
+    assert_eq!(g.perm(blade).attached, None, "not legendary");
+    let kraum = perm(&mut g, P0, "Kraum, Ludevic's Opus");
+    assert_eq!(g.perm(blade).attached, Some(kraum));
+    assert_eq!((epow(&g, kraum), etgh(&g, kraum)), (4 + 3, 4 + 2));
+}
+
+#[test]
+fn heros_heirloom_gives_trample_and_haste_only_to_a_legendary_creature() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, "Hero's Heirloom");
+    let plain = perm(&mut g, P0, "Exit Specialist");
+    let legend = perm(&mut g, P0, "Moseo, Vein's New Dean");
+    let epow_base = epow(&g, plain);
+    attach(&mut g, h, plain);
+    assert_eq!(epow(&g, plain), epow_base + 2);
+    assert!(!sim_core::dsl::has_kw(&g, plain, "trample") && !sim_core::dsl::has_kw(&g, plain, "haste"));
+    attach(&mut g, h, legend);
+    assert!(sim_core::dsl::has_kw(&g, legend, "trample") && sim_core::dsl::has_kw(&g, legend, "haste"));
+}
+
+// ------------------------------------------------------------------ Medic's Kitesail, Trailblazer's Boots, Nim Deathmantle
+#[test]
+fn medics_kitesail_gives_flying_plus_one_and_a_life_per_attack() {
+    let mut g = tbl();
+    let k = perm(&mut g, P0, "Medic's Kitesail");
+    let m = token(&mut g, P0, 2);
+    attach(&mut g, k, m);
+    assert!(sim_core::dsl::has_kw(&g, m, "flying"));
+    assert_eq!(epow(&g, m), 3);
+    let life = g.player(P0).life;
+    combat::attack_triggers(&mut g, P0, &[m], P1).unwrap();
+    assert_eq!(g.player(P0).life, life + 1);
+}
+
+#[test]
+fn trailblazers_boots_make_it_unblockable_while_the_defender_has_a_nonbasic_land() {
+    let mut g = tbl();
+    let boots = perm(&mut g, P0, "Trailblazer's Boots");
+    let a = token(&mut g, P0, 2);
+    attach(&mut g, boots, a);
+    let b = token(&mut g, P1, 2);
+    lands(&mut g, P1, "Plains", 2, false);
+    assert!(combat::can_block(&g, b, a), "only basic lands: blockable");
+    lands(&mut g, P1, "Command Tower", 1, false);
+    assert!(!combat::can_block(&g, b, a), "a nonbasic land: unblockable");
+    // not another player's creature
+    let other = token(&mut g, P2, 2);
+    lands(&mut g, P2, "Plains", 1, false);
+    assert!(combat::can_block(&g, other, a), "the player without a nonbasic land can block");
+}
+
+#[test]
+fn nim_deathmantle_is_plus_two_intimidate_and_brings_a_dying_creature_back() {
+    let mut g = tbl();
+    let nim = perm(&mut g, P0, "Nim Deathmantle");
+    let lyra = perm(&mut g, P0, "Lyra Dawnbringer");
+    let base = epow(&g, lyra);
+    attach(&mut g, nim, lyra);
+    assert_eq!(epow(&g, lyra), base + 2);
+    let white = perm(&mut g, P1, "Bastion Protector");
+    let black = perm(&mut g, P1, "Nightveil Predator");
+    assert!(!combat::can_block(&g, white, lyra), "intimidate: a white creature can't block");
+    assert!(combat::can_block(&g, black, lyra), "a black one can");
+    lands(&mut g, P0, "Plains", 4, false);
+    zones::die(&mut g, lyra, sim_core::sym::intern("destroy")).unwrap();
+    let back = on_bf(&g, P0, "Lyra Dawnbringer").expect("{4} paid: Lyra returns");
+    assert_eq!(g.perm(nim).attached, Some(back));
+    assert_eq!(untapped_lands(&g, P0), 0);
+}
+
+// ------------------------------------------------------------------ the lands
+#[test]
+fn irrigated_farmland_enters_tapped_makes_white_or_blue_and_cycles_for_two() {
+    let mut g = tbl();
+    let c = card(&g, "Irrigated Farmland");
+    assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c));
+    assert_eq!(g.db.get(c).tags.str(sim_core::tag::Tag::C), Some("WU"));
+    // cycling: only when it isn't needed as a land drop
+    hand(&mut g, P0, &["Irrigated Farmland"]);
+    lands(&mut g, P0, "Plains", 3, false);
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty(), "three lands: it is the land drop");
+    lands(&mut g, P0, "Plains", 2, false);
+    let o = f(&mut g, c, P0, Some(false)).unwrap();
+    assert_eq!(o.len(), 1);
+    let n = g.player(P0).hand.len();
+    assert!(run(&mut g, P0, &o[0]));
+    assert_eq!(g.player(P0).hand.len(), n, "discarded one, drew one");
+    assert!(g.player(P0).gy.contains(&c));
+    assert_eq!(untapped_lands(&g, P0), 3, "{{2}} paid");
+}
+
+#[test]
+fn spectacle_summit_surveils_at_the_end_of_an_opponents_turn() {
+    let mut g = tbl();
+    g.active = Some(P1);
+    let l = lands(&mut g, P0, "Spectacle Summit", 1, false)[0];
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Mountain", 2, false);
+    let c = g.land(l).cd;
+    assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c));
+    let f = g.registry.get(c).unwrap().land_options.unwrap();
+    let o = f(&mut g, l, P0, None).unwrap();
+    assert_eq!(o.len(), 1, "{{2}}{{U}}{{R}} and {{T}}");
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(g.land(l).tapped);
+    g.active = Some(P0);
+    assert!(f(&mut g, l, P0, None).unwrap().is_empty(), "not on my own turn");
+}
+
+#[test]
+fn boiling_rock_prison_is_sacrificed_for_a_card_when_flooded() {
+    let mut g = tbl();
+    let l = lands(&mut g, P0, "Boiling Rock Prison", 1, false)[0];
+    lands(&mut g, P0, "Swamp", 4, false);
+    let c = g.land(l).cd;
+    let f = g.registry.get(c).unwrap().land_options.unwrap();
+    assert!(f(&mut g, l, P0, None).unwrap().is_empty(), "five lands: not flooded");
+    lands(&mut g, P0, "Swamp", 1, false);
+    assert!(f(&mut g, l, P0, Some(false)).unwrap().is_empty(), "only at the end of a turn");
+    let o = f(&mut g, l, P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    let n = g.player(P0).hand.len();
+    assert!(run(&mut g, P0, &o[0]));
+    assert_eq!(g.player(P0).hand.len(), n + 1);
+    assert!(g.player(P0).gy.contains(&c));
+    assert_eq!(g.player(P0).lands.len(), 5);
+    assert_eq!(untapped_lands(&g, P0), 1, "{{4}} paid, and the Prison tapped itself");
+}
+
+// ------------------------------------------------------------------ Diabolic Tutor: what the kraum seat fetches
+fn tutor(g: &Game) -> String {
+    let c = decks::tutor_pick(g, P0, "any").expect("a pick");
+    g.db.get(c).name.to_string()
+}
+
+#[test]
+fn the_kraum_seat_tutors_for_a_land_when_short_of_mana() {
+    let mut g = kraum_table();
+    g.player_mut(P0).turns = 4;
+    lands(&mut g, P0, "Plains", 2, false);
+    let c = decks::tutor_pick(&g, P0, "any").unwrap();
+    assert!(g.db.get(c).land, "{}", g.db.get(c).name);
+}
+
+#[test]
+fn the_kraum_seat_tutors_for_toxic_deluge_when_far_behind_on_board() {
+    let mut g = kraum_table();
+    g.player_mut(P0).turns = 6;
+    lands(&mut g, P0, "Plains", 6, false);
+    for _ in 0..4 {
+        token(&mut g, P1, 3);
+    }
+    assert_eq!(tutor(&g), "Toxic Deluge");
+}
+
+#[test]
+fn the_kraum_seat_tutors_for_the_flail_and_then_a_finisher_when_ahead() {
+    let mut g = kraum_table();
+    g.player_mut(P0).turns = 6;
+    lands(&mut g, P0, "Plains", 6, false);
+    for _ in 0..3 {
+        token(&mut g, P0, 3);
+    }
+    assert_eq!(tutor(&g), "Conqueror's Flail");
+    hand(&mut g, P0, &["Conqueror's Flail"]);
+    assert!(["Terror of the Peaks", "Lyra Dawnbringer", "Gilgamesh, Master-at-Arms", "Sphinx of New Prahv"].contains(&tutor(&g).as_str()));
+}
+
+// ------------------------------------------------------------------ the kraum seat: where Equipment goes
+fn best_equip_target(g: &Game, e: PermId) -> Option<PermId> {
+    sim_core::dsl::equip_options(g, P0).into_iter().find_map(|o| match o.act {
+        Some(Action::Equip { src, target, .. }) if src == e => Some(target),
+        _ => None,
+    })
+}
+
+#[test]
+fn evasion_equipment_goes_on_the_creature_that_cannot_get_through_on_its_own() {
+    let mut g = kraum_table();
+    lands(&mut g, P0, "Plains", 4, false);
+    let flier = perm(&mut g, P0, "Nightwind Glider");
+    let ground = token(&mut g, P0, 2);
+    for q in [P1, P2] {
+        token(&mut g, q, 2); // a ground blocker for each opponent
+    }
+    let kite = perm(&mut g, P0, "Medic's Kitesail");
+    g.perm_mut(kite).attached = None;
+    assert_eq!(best_equip_target(&g, kite), Some(ground), "not the flier that connects already");
+    let _ = flier;
+    // the Lance and the Boots are the same
+    let lance = perm(&mut g, P0, "Dragoon's Lance");
+    g.perm_mut(lance).attached = None;
+    assert_eq!(best_equip_target(&g, lance), Some(ground));
+}
+
+#[test]
+fn size_equipment_goes_on_a_creature_that_connects_anyway() {
+    let mut g = kraum_table();
+    lands(&mut g, P0, "Plains", 4, false);
+    let flier = perm(&mut g, P0, "Nightwind Glider");
+    let ground = token(&mut g, P0, 2);
+    for q in [P1, P2] {
+        token(&mut g, q, 2);
+    }
+    let h = perm(&mut g, P0, "Hero's Heirloom");
+    assert_eq!(best_equip_target(&g, h), Some(flier), "its hit is the card Tymna draws");
+    let _ = ground;
+}
+
+#[test]
+fn the_other_seats_equip_choice_is_unchanged() {
+    let mut g = tbl();
+    let (e, m) = (perm(&mut g, P0, "Medic's Kitesail"), token(&mut g, P0, 2));
+    assert_eq!(tc::equip_holder_value(&g, P0, e, m), 0.0);
+}
+
+#[test]
+fn tymnas_spread_uses_the_creature_a_kitesail_makes_fly() {
+    use sim_core::impls::tymna_partners::spread;
+    let mut g = table(&["kraum", "veyran", "seph", "galadriel"]);
+    perm(&mut g, P0, "Tymna the Weaver");
+    let glider = perm(&mut g, P0, "Nightwind Glider");
+    let ground = token(&mut g, P0, 2);
+    let kite = perm(&mut g, P0, "Medic's Kitesail");
+    attach(&mut g, kite, ground);
+    let third = perm(&mut g, P0, "Aven Mindcensor");
+    for q in [P1, P2, P3] {
+        token(&mut g, q, 2);
+    }
+    let all = vec![glider, ground, third];
+    let groups = spread(&g, P0, vec![(P1, all.clone())], &all);
+    let mut to: Vec<PlayerId> = all.iter().map(|&a| groups.iter().find(|x| x.1.contains(&a)).unwrap().0).collect();
+    to.sort();
+    assert_eq!(to, vec![P1, P2, P3], "each opponent is hit by one: {groups:?}");
 }
