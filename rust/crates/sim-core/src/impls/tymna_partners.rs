@@ -96,6 +96,21 @@ fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         let both = out(g, p, TYMNA) && (out(g, p, THRASIOS) || out(g, p, KRAUM));
         return if both { 74 } else { 40 };
     }
+    if &*d.name == "Gilgamesh, Master-at-Arms" {
+        return 68; // six mana: casting him is the whole turn, and his trigger finds the rest of the Equipment
+    }
+    if d.has_subtype("equipment") {
+        // below the creatures (they are the carriers), above the generic 10 that left it in the hand: the two with a Hero
+        // of their own and the Blade (which attaches to the next legend) any time, the rest once a creature is out
+        let carriers = g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.is_creature(m)).count();
+        return match &*d.name {
+            "Dragoon's Lance" | "Samurai's Katana" => 63,
+            "Hero's Blade" => 58,
+            "Conqueror's Flail" if carriers > 0 => 60,
+            _ if carriers > 0 => 56,
+            _ => 25,
+        };
+    }
     base
 }
 
@@ -245,11 +260,8 @@ pub fn commander_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Opt
     if !matches!(g.player(p).key, "thrasios" | "kraum") {
         return None;
     }
-    let (i, o) = opts
-        .iter()
-        .enumerate()
-        .filter(|(_, o)| o.act.is_some())
-        .max_by(|a, b| a.1.utility.total_cmp(&b.1.utility))?;
+    let (i, o) =
+        opts.iter().enumerate().filter(|(_, o)| o.act.is_some()).max_by(|a, b| a.1.utility.total_cmp(&b.1.utility))?;
     match o.act {
         Some(crate::hooks::Action::Cast { card, .. })
             if g.player(p).is_commander(card) && !g.player(p).hand.contains(&card) =>

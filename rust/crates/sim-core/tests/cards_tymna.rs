@@ -507,7 +507,10 @@ fn gilgamesh_looks_again_when_he_attacks() {
     let heirloom = on_bf(&g, P0, "Hero's Heirloom").expect("the Heirloom came in");
     assert_eq!(g.player(P0).library.len(), n - 1);
     assert_eq!(g.perm(heirloom).attached, Some(gil));
-    assert!(sim_core::dsl::has_kw(&g, gil, "trample") && sim_core::dsl::has_kw(&g, gil, "haste"), "legendary: trample and haste");
+    assert!(
+        sim_core::dsl::has_kw(&g, gil, "trample") && sim_core::dsl::has_kw(&g, gil, "haste"),
+        "legendary: trample and haste"
+    );
 }
 
 #[test]
@@ -795,7 +798,10 @@ fn the_kraum_seat_tutors_for_the_flail_and_then_a_finisher_when_ahead() {
     }
     assert_eq!(tutor(&g), "Conqueror's Flail");
     hand(&mut g, P0, &["Conqueror's Flail"]);
-    assert!(["Terror of the Peaks", "Lyra Dawnbringer", "Gilgamesh, Master-at-Arms", "Sphinx of New Prahv"].contains(&tutor(&g).as_str()));
+    assert!(
+        ["Terror of the Peaks", "Lyra Dawnbringer", "Gilgamesh, Master-at-Arms", "Sphinx of New Prahv"]
+            .contains(&tutor(&g).as_str())
+    );
 }
 
 // ------------------------------------------------------------------ the kraum seat: where Equipment goes

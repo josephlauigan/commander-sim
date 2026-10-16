@@ -943,14 +943,10 @@ fn gilgamesh_trigger(g: &mut Game, src: PermId) -> Res {
         came.push(enter(g, o, c, Enter { sick: false, ..Default::default() })?);
     }
     let own_hero = |g: &Game, e: PermId| matches!(name_of(g, e), LANCE | KATANA | "White Mage's Staff");
-    let samurai: Vec<PermId> = g
-        .player(o)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| live(g, m) && g.is_creature(m) && is_samurai(g, m))
-        .collect();
-    let best = came.iter().copied().filter(|&e| live(g, e) && !own_hero(g, e)).max_by_key(|&e| gear_rank(name_of(g, e)));
+    let samurai: Vec<PermId> =
+        g.player(o).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m) && is_samurai(g, m)).collect();
+    let best =
+        came.iter().copied().filter(|&e| live(g, e) && !own_hero(g, e)).max_by_key(|&e| gear_rank(name_of(g, e)));
     let to = if live(g, src) && samurai.contains(&src) { Some(src) } else { samurai.first().copied() };
     if let (Some(e), Some(t)) = (best, to) {
         super::cloud::attach(g, e, t);
@@ -1092,18 +1088,14 @@ pub fn equip_utility_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
     if g.player(p).key != "kraum" {
         return 0.0;
     }
-    equip_holder_value(g, p, e, m).clamp(-3.0, 4.0)
+    // capped so that casting a creature (priority 66 and up, utility 6.6 and up) still comes before an equip
+    equip_holder_value(g, p, e, m).clamp(-3.0, 2.0)
 }
 
 /// the creature that should wear Equipment `e` (the kraum seat), if any
 fn best_wearer(g: &Game, p: PlayerId, e: PermId) -> Option<PermId> {
-    let cs: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk)
-        .collect();
+    let cs: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk).collect();
     max_by(&cs, |m| equip_holder_value(g, p, e, m) - if g.perm(m).sick { 0.5 } else { 0.0 })
 }
 
@@ -1121,7 +1113,9 @@ pub fn kraum_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         }
         let worn = g.perm(e).attached.filter(|&t| live(g, t) && owner(g, t) == p);
         let Some(best) = best_wearer(g, p, e) else { continue };
-        if worn == Some(best) || (worn.is_some() && equip_holder_value(g, p, e, best) < 2.0 + equip_holder_value(g, p, e, worn.unwrap())) {
+        if worn == Some(best)
+            || (worn.is_some() && equip_holder_value(g, p, e, best) < 2.0 + equip_holder_value(g, p, e, worn.unwrap()))
+        {
             continue;
         }
         if !can_pay(g, p, 2, "", false) {
@@ -1193,10 +1187,14 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     }
     let cres = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count();
     if cres >= 2 && mine + 2 >= theirs {
-        if !held(FLAIL) && let Some(c) = first(&[FLAIL]) {
+        if !held(FLAIL)
+            && let Some(c) = first(&[FLAIL])
+        {
             return Some(c);
         }
-        if let Some(c) = first(&["Terror of the Peaks", "Lyra Dawnbringer", GILGAMESH, "Sphinx of New Prahv"]).filter(|&c| !held(&g.db.get(c).name)) {
+        if let Some(c) = first(&["Terror of the Peaks", "Lyra Dawnbringer", GILGAMESH, "Sphinx of New Prahv"])
+            .filter(|&c| !held(&g.db.get(c).name))
+        {
             return Some(c);
         }
     }
@@ -1206,7 +1204,9 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
         d.creature && (d.has_kw("flying") || d.tag(Tag::Fly) || d.has_kw("menace"))
     };
     let cands: Vec<CardId> = okn.iter().copied().filter(|&c| evasive(c) && !held(&g.db.get(c).name)).collect();
-    if cres < 3 && let Some(c) = max_by(&cands, |c| g.db.get(c).bomb as f64 - g.db.get(c).cmc as f64) {
+    if cres < 3
+        && let Some(c) = max_by(&cands, |c| g.db.get(c).bomb as f64 - g.db.get(c).cmc as f64)
+    {
         return Some(c);
     }
     None
