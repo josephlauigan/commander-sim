@@ -74,3 +74,11 @@ Baselines are re-measured in each paired run (same seeds), so a baseline number 
 Traces (read-only agent, 8 games): the AI mostly plays sensibly; the deck is mana- and curve-limited (36 lands, 12 always
 tapped, 4 rocks, average mana value 3.39 with no one-drops). One small AI weakness: the look-ahead sometimes picks a
 creature over a 2-mana rock (`ai/search.rs` choose_inner; `ramp_bonus` is off). Tymna dies and is recast every 2–3 turns.
+| R5 L curve (avg MV 2.94; cut Baneslayer, Glorybringer, Norn's Annex, The Aetherspark too) | -0.5 (±2.5) | Key permanents removed -0.12 (significant), damage +2.3, but cutting the finishers cost the wins. Take Up the Shield never cast. |
+| R5 M1 basics for the 12 always-tapped lands | +1.4 (±2.6) | Mana turn 4 +0.39, turn 8 +0.37. |
+| **L3 = M2 checklands + basics** (Isolated Chapel, Drowned Catacomb, Sulfur Falls, Dragonskull Summit + 8 basics for the 12 tapped lands) (`2112c91`) | **+2.1 (±2.5)** | Mana turn 4 +0.33, eliminated -2.0. |
+| **L4 = L′ curve, finishers kept** (Callous Inspector, Cloudfin Raptor, Thrummingbird, Rescue, Lightning Greaves, Masterful Flourish, Spectral Sailor, Dauthi Voidwalker, Swords, Path, Rip Apart for Chromatic Lantern, Vanish from Sight, Quick Study, Vibrant Outburst, Garland, Photon, Caparocti, The Aetherspark, Wander Off, Norn's Annex, Glorybringer; avg MV 2.98) (`75b0132`) | **+3.3 (±2.6): 23.9 → 27.1%** | Eliminated -3.5, damage +4.6, key permanents removed -0.12 (significant). |
+| L4 analysis, T3, 4,000 games | **25.7%** (±1.4) | Tymna draws 2.74 a game (hits 0.66 opponents a turn); Elspeth 50%, Baneslayer 49%, Terror 49%, Marchesa 48% win when cast; Force of Will, Star Compass, Talisman of Hierarchy, The Wasp, Rescue lowest. |
+| **L5 = R7a** (Restoration Angel for Force of Will, Arcane Signet and Fellwar Stone for Talisman of Hierarchy and Star Compass; avg MV 2.97) (`ba8c23c`) | +2.0 (±2.6) | Eliminated -2.0; Restoration Angel 39% win when cast. Force of Will gone: no Game Changers left. |
+
+The AI's ramp setting (`SEARCH_RAMP_W`) can only be set for every seat at once (opponents too), so it was not used.

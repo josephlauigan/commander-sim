@@ -1,0 +1,8 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant
+   Tithe Taker [pool] C 1W :: human pow=2 tgh=1
+Model status of the swapped-in cards (cardgen audit):
+  Selfless Spirit: Full (sacrificed to make your creatures indestructible against destroy effects)
+  Tithe Taker: Full (spells cost {1} more during your turn; afterlife 1)
+
