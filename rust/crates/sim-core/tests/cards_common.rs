@@ -403,3 +403,21 @@ fn allosaurus_shepherd_makes_green_spells_uncounterable() {
     assert!(hooks::any_uncounterable(&g, P0, green));
     assert!(!hooks::any_uncounterable(&g, P1, green));
 }
+
+#[test]
+fn danitha_discounts_auras_and_equipment_only_and_stacks() {
+    let mut g = table(&[LP, TEYSA]);
+    let aura = card(&g, "Hyena Umbra"); // {W}, generic 0
+    let equip = card(&g, "Lightning Greaves"); // {2}
+    let creature = card(&g, "Esper Sentinel");
+    let g0 = mana::cost_of(&g, P0, equip).0;
+    let c0 = mana::cost_of(&g, P0, creature).0;
+    assert!(g0 >= 2);
+    perm(&mut g, P0, "Danitha Capashen, Paragon");
+    assert_eq!(hooks::total_cost(&g, P0, aura), -1);
+    assert_eq!(mana::cost_of(&g, P0, equip).0, g0 - 1);
+    assert_eq!(mana::cost_of(&g, P0, creature).0, c0);
+    assert_eq!(mana::cost_of(&g, P0, aura).0, 0); // never below the coloured part
+    perm(&mut g, P0, "Danitha Capashen, Paragon");
+    assert_eq!(mana::cost_of(&g, P0, equip).0, g0 - 2);
+}

@@ -83,6 +83,7 @@
 1x Branchblight Stalker (one)
 1x Break Out (mkm)
 1x Bridled Bighorn (otj)
+1x Bronze Guardian
 1x Budding Insurgent (fra)
 1x Bulk Up (soa)
 1x Bull Aurochs (csp)
@@ -420,6 +421,7 @@
 1x Kitsune Loreweaver (sok)
 1x Knife (mkm)
 1x Konstrari Improviser (fra)
+1x Kor Duelist
 1x Koth, Fire of Resistance (one)
 4x Krenko's Enforcer (list, m15)
 1x Kuldotha Cackler (one)

@@ -28,7 +28,7 @@ of Cloud or an Equipment attached to it triggers, that ability triggers an addit
 
 ### Game plan
 - **Turns 1-2.** Cast Cloud on turn two ({W}{W}) or play a cheap mana rock (Sol Ring, Mind Stone, Arcane Signet) and
-  then Cloud. His search finds a cheap Sword or Champion's Helm. Cheap creatures (Kor Duelist, Zack Fair, Giver of
+  then Cloud. His search finds a cheap Sword or Champion's Helm. Cheap creatures (Zack Fair, Giver of
   Runes, Forum Familiar) are fine early plays.
 - **Turns 3-4.** Cast and equip a Sword (equip {2}) on Cloud and attack. Use the free-equip pieces (Ardenn, Kor
   Outfitter, Balan) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
@@ -80,9 +80,8 @@ to blink them.
 - **Fireshrieker** equips for {2} and gives double strike; Duelist's Heritage and Akroma's Will give it for a turn.
 
 ### Backup carriers
-When Cloud is dead or removed, **Balan, Wandering Knight**, **Kor Duelist** (double strike when equipped),
-**Armored Skyhunter**, **Bronze Guardian** (double strike; power equal to your artifacts; ward {2}, and other
-artifacts get ward {2}), **Exalted Angel** (cast face down for {3}, flip for {2}{W}{W}), **Adelbert Steiner** (lifelink,
+When Cloud is dead or removed, **Balan, Wandering Knight**, **Danitha Capashen, Paragon** (first strike, vigilance, lifelink;
+Aura and Equipment spells cost {1} less), **Armored Skyhunter**, **Exalted Angel** (cast face down for {3}, flip for {2}{W}{W}), **Adelbert Steiner** (lifelink,
 +1/+1 for each Equipment), **Thalia, the Survivor** (lifelink, taxes noncreature spells) and **Jocasta, Automaton Avenger**
 (flying; grows when your commander connects, and comes back from the graveyard when you attack with him) all carry the
 Swords. **Zack Fair** gives his counters and Equipment to another creature when he is sacrificed, which also makes
@@ -132,8 +131,8 @@ that creature indestructible.
   and Famine the opponent discards two cards and your lands untap. Add Wrecking Ball Arm or Sword of Kaldra for a
   9/9 or larger evasive attacker.
 - **The Kaldra token.** All three Kaldra pieces and {1} make a 9/9 indestructible first striker with trample.
-- **Wide Equipment.** Balan with two Equipment has double strike; Bronze Guardian with a pile of artifacts hits for
-  7 or more twice.
+- **Wide Equipment.** Balan with two Equipment has double strike; Danitha makes every Equipment {1} cheaper, and
+  **Sram, Senior Edificer** draws a card whenever you cast an Aura, Equipment or Vehicle spell.
 
 ### Weak spots and how to play around them
 - **Board wipes.** Don't overcommit creatures when you already have enough power. Keep Elspeth's Soldiers
@@ -188,7 +187,7 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (29).** Adelbert Steiner, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Bronze Guardian, Cid, Freeflier Pilot, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Duelist, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
+**Creatures (29).** Adelbert Steiner, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
 
 **Enchantments (5).** Citizen's Arrest, Court of Ardenvale, Duelist's Heritage, Ghostly Prison, Smothering Tithe
 
@@ -218,7 +217,6 @@ on its own. Tell the table before the game that:
 1 Baird, Steward of Argive
 1 Balan, Wandering Knight
 1 Bastion Protector
-1 Bronze Guardian
 1 Champion's Helm
 1 Cid, Freeflier Pilot
 1 Citizen's Arrest
@@ -226,6 +224,7 @@ on its own. Tell the table before the game that:
 1 Coalition Relic
 1 Colossus Hammer
 1 Court of Ardenvale
+1 Danitha Capashen, Paragon
 1 Day of Judgment
 1 Disenchant
 1 Duelist's Heritage
@@ -246,7 +245,6 @@ on its own. Tell the table before the game that:
 1 Hero's Blade
 1 Jocasta, Automaton Avenger
 1 Knight of the White Orchid
-1 Kor Duelist
 1 Kor Outfitter
 1 Lay Down Arms
 1 Loyal Warhound
@@ -262,6 +260,7 @@ on its own. Tell the table before the game that:
 1 Smothering Tithe
 1 Sol Ring
 1 Solemn Simulacrum
+1 Sram, Senior Edificer
 1 Stand Up for Yourself
 1 Swiftfoot Boots
 1 Sword of Feast and Famine
