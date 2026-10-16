@@ -4,7 +4,8 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Veyran, Y'shtola. Avery's decks:
+JD's decks: Cloud, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Tymna/Kraum, Veyran, Y'shtola.
+Avery's decks:
 Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -343,6 +344,28 @@ Deck key `titania`, `decklists/JD/titania-lands.md`.
   night (Infestation Expert) is modeled only as far as it changes that card.
 - **Consistency note, 2026-10-11:** the 38-land base (35 Forest plus the three fetch lands) is an exception to JD's
   basics-over-tapped-lands rule.
+
+## Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners
+
+Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
+
+### Changes
+
+- **2026-10-16.** Brought back as a deck, with Gilgamesh, Master-at-Arms, Diabolic Tutor and an Equipment package.
+  Starts from the 2026-10-13 comparison build (dropped 2026-10-14). Out: Adarkar Wastes, Shivan Reef, Sulfurous
+  Springs, Bitter Triumph, Dakkon, Shadow Slayer (all five now in other decks), Ultimate Magic: Holy, Shardmage's
+  Rescue, Reconnaissance Mission, Razia, Boros Archangel, Mordenkainen, Desertion, Dakkon Blackblade, Sol'kanar the
+  Swamp King (the eight lowest win-rate-when-cast cards in all five tiers of the 2026-10-13 runs). In: Irrigated
+  Farmland, Spectacle Summit, Boiling Rock Prison, Diabolic Tutor, Gilgamesh, Master-at-Arms, Conqueror's Flail,
+  Trailblazer's Boots, Medic's Kitesail, Nim Deathmantle, Dragoon's Lance, Samurai's Katana, Hero's Heirloom, Hero's
+  Blade. Buys: Kraum, Gilgamesh, Diabolic Tutor.
+- **2026-10-13.** Built as the Kraum comparison for the Tymna deck from the retired Jodah deck's cards (40 of them).
+
+### Simulator history
+
+- **2026-10-13.** The comparison build scored **15.3% over T1–T5** (T1 12.3, T2 16.5, T3 17.5, T4 14.3, T5 16.1;
+  1,000 games per tier, look-ahead, loose; `audit/tymna/2026-10-13-fix/` on branch `tymna-thrasios`), against 10.1%
+  for the Thrasios build.
 
 ## Veyran, Voice of Duality — Izzet Spellslinger
 
