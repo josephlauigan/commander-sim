@@ -148,6 +148,10 @@ pub enum DataKey {
     ResolvedAt,
     /// suspected (menace, can't block) until it leaves the battlefield
     Suspect,
+    /// Mirage Mirror is a copy of another permanent until end of turn (its own card is in `phys`)
+    MirageMirror,
+    /// Wall of Junk blocked this combat: it returns to its owner's hand at end of combat
+    WallBlocked,
     TapOnReturn,
     Unblockable,
     /// Reconstructed Thopter came back by unearth (exiled at the end step)

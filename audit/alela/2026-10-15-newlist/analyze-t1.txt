@@ -1,0 +1,93 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  1m35s elapsed, ~14m19s left
+  progress  20.0%  3m08s elapsed, ~12m35s left
+  progress  30.0%  4m39s elapsed, ~10m51s left
+  progress  40.0%  6m16s elapsed, ~9m24s left
+  progress  50.0%  7m49s elapsed, ~7m49s left
+  progress  60.0%  9m23s elapsed, ~6m15s left
+  progress  70.0%  10m49s elapsed, ~4m38s left
+  progress  80.0%  12m25s elapsed, ~3m06s left
+  progress  90.0%  13m58s elapsed, ~1m33s left
+  progress 100.0%  16m10s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== alela analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 9.8%   (4-player baseline 25%)   average rounds survived 11.6
+
+-- How it wins --
+  damage      86.8% of wins
+  timeout     13.2% of wins
+  Opponents it eliminated: 0.29 per game, by
+    combat             89.4%
+    decked              7.0%
+    drain               3.1%
+    commander damage    0.4%
+  Damage dealt per game: 22.5, from
+    combat              21.7  (97%)
+    drain                0.8  (3%)
+    triggers             0.0  (0%)
+
+-- How it loses --
+  Eliminated in 87.8% of games, on average in round 10.9
+    by Isshin   via combat             16.5% of games
+    by Light-Paws via commander damage   16.1% of games
+    by Tatyova  via combat             13.1% of games
+    by Lathril  via combat             12.2% of games
+    by Teysa Karlov via drain               6.8% of games
+    by Lathril  via drain               5.8% of games
+    by Teysa Karlov via combat              4.5% of games
+    by Light-Paws via combat              4.0% of games
+
+-- Game plan timing --
+  Plan: first Faerie made by Alela
+  Online by turn:  T2 0%  T3 1%  T4 3%  T5 14%  T6 24%  T7 32%  T8 38%  T9 43%  T10 47%  T11 50%  T12 52%
+  Online at all: 55.8% of games
+  Commander resolves on turn: median 5.0, mean 5.8 (over the 79.7% of games it resolves)
+  Commander resolved by turn:  T4 32%  T5 45%  T6 55%  T7 63%  T8 68%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Meteor Golem                               cast in  10.2% of games, win rate when cast  26.6% (+16.7)
+    Daydream                                   cast in  11.5% of games, win rate when cast  25.2% (+15.3)
+    Cabal Patriarch                            cast in   7.3% of games, win rate when cast  24.8% (+15.0)
+    Feather of Flight                          cast in  16.2% of games, win rate when cast  21.8% (+11.9)
+    Serra the Benevolent                       cast in  15.8% of games, win rate when cast  21.6% (+11.8)
+    Notion Thief                               cast in  12.9% of games, win rate when cast  21.5% (+11.6)
+    Cavalier of Dawn                           cast in  11.1% of games, win rate when cast  20.9% (+11.0)
+    Venser, the Sojourner                      cast in  10.9% of games, win rate when cast  20.0% (+10.1)
+    Pileated Provisioner                       cast in  14.6% of games, win rate when cast  19.3% (+9.5)
+    Angelic Shield                             cast in  17.6% of games, win rate when cast  19.3% (+9.5)
+  Lowest win rate when cast:
+    Alela, Artful Provocateur                  cast in  79.8% of games, win rate when cast  12.2% (+2.4)
+    Dark Ritual                                cast in  17.0% of games, win rate when cast  12.5% (+2.6)
+    Tragic Poet                                cast in  17.3% of games, win rate when cast  12.6% (+2.7)
+    Prophesied End                             cast in  17.8% of games, win rate when cast  13.1% (+3.2)
+    Essence Scatter                            cast in  14.3% of games, win rate when cast  13.6% (+3.7)
+    Burnished Hart                             cast in  18.0% of games, win rate when cast  13.6% (+3.8)
+    Ethersworn Canonist                        cast in  19.1% of games, win rate when cast  13.8% (+3.9)
+    Unsummon                                   cast in  17.1% of games, win rate when cast  13.8% (+3.9)
+    Helping Hand                               cast in  13.6% of games, win rate when cast  13.8% (+3.9)
+    Last Gasp                                  cast in  17.9% of games, win rate when cast  14.1% (+4.2)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Clever Concealment                         cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Muddle the Mixture                         cast   2.1% of the games it was drawn [reactive: only cast in response]
+    Cabal Patriarch                            cast  35.5% of the games it was drawn
+    Statute of Denial                          cast  43.7% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Alela, Artful Provocateur                  0.39
+    Short Bow                                  0.14
+    Serra the Benevolent                       0.10
+    Ethersworn Canonist                        0.08
+    Venser, the Sojourner                      0.07
+    Windborn Muse                              0.05
+    Reconstructed Thopter                      0.04
+    Lightning Greaves                          0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(971s total)

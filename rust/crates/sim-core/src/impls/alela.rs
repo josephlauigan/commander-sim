@@ -15,25 +15,28 @@
 //! for t2.blink / blink_value and marchesa.best_steal / steal in `galadriel.rs`.
 
 use super::common::{
-    AURA, AuraSpec, WalkerAb, allowed, aura, best_opp_creature, best_opp_nonland, oring_exile, oring_return,
-    round_stamp, uses, walker,
+    AURA, AuraSpec, WalkerAb, allowed, aura, aura_spec, best_opp_creature, best_opp_nonland, oring_exile, oring_return,
+    own_host, round_stamp, uses, walker,
 };
 use super::galadriel::{best_steal, blink, blink_value, steal};
 use super::partials::at_once;
 use crate::ai::decks::protect_response;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
-use crate::engine::combat::has_haste;
+use crate::engine::combat::{can_block, first_strike, has_haste, kw};
+use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, land_colors_now, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{card_name, colors_of, epow, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, Zone, die, draw, enter, land_to_hand, leave, make_tokens, max_by, mill};
+use crate::engine::values::{card_name, colors_of, epow, etgh, no_sac, pval, untargetable};
+use crate::engine::zones::{
+    Enter, Tokens, Zone, bounce, die, draw, enter, land_to_hand, leave, make_tokens, max_by, mill,
+};
 use crate::engine::zones::{searchable, to_zone_card};
 use crate::flow::Res;
+use crate::hooks::{Action, Assign, Event, Opt, Registry, Src};
 use crate::human::human_of;
-use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
@@ -1347,6 +1350,682 @@ fn venser_minus(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
+// ================================================================== the seven cards added with the 10/15 list
+// Credit Voucher, Mirage Mirror, Scrapheap, Angelic Page, Cabal Patriarch, Serra the Benevolent, Wall of Junk.
+
+/// cards p would rather not hold (lands past what it needs, dead cards): the AI's own worth for them is low
+fn junk_in_hand(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let cmd = g.player(p).cmd;
+    g.player(p).hand.iter().copied().filter(|&c| c != cmd && card_worth(g, p, c, false) < 15.0).collect()
+}
+
+// ------------------------------------------------------------------ Credit Voucher
+/// {2}, {T}, sacrifice: shuffle any number of cards from your hand into your library, then draw that many. The AI
+/// puts back only the cards it rates low (extra lands late, dead cards): two or more in a main phase, one at the end
+/// of the turn or after combat.
+fn voucher_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, 2, "", false) {
+        return Ok(vec![]);
+    }
+    let junk = junk_in_hand(g, p).len();
+    let need = if post == Some(false) { 2 } else { 1 };
+    if junk < need || g.player(p).library.len() <= junk {
+        return Ok(vec![]);
+    }
+    Ok(vec![ability(0.8 + 0.3 * junk as f64, format!("Credit Voucher: put back {junk} card(s)"), src, voucher_go, 0)])
+}
+
+fn voucher_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    let junk = junk_in_hand(g, p);
+    if !controls(g, p, src) || g.perm(src).tapped || junk.is_empty() || !can_pay(g, p, 2, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, 2, "", false)?;
+    g.perm_mut(src).tapped = true;
+    die(g, src, "sac")?; // the sacrifice is a cost
+    if !ability_window(g, p, Some(src), "shuffle cards from hand into the library, draw that many", None, None)? {
+        return Ok(true);
+    }
+    let junk: Vec<CardId> = junk.into_iter().filter(|c| g.player(p).hand.contains(c)).collect();
+    for &c in &junk {
+        remove_first(&mut g.player_mut(p).hand, c);
+        g.player_mut(p).library.push(c);
+    }
+    shuffle_library(g, p);
+    crate::glog!(g, "  {} Credit Voucher: shuffles {} card(s) away and draws {}", pname(g, p), junk.len(), junk.len());
+    draw(g, p, junk.len() as u32, false)?;
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Scrapheap
+/// whenever an artifact or enchantment is put into your graveyard from the battlefield (Scrapheap itself too): gain 1
+/// life. Tokens never reach the graveyard; a card owned by another player goes to its owner's graveyard, not yours.
+/// (Covers the permanents that die by `die`: destroyed or sacrificed. Planeswalker-style direct moves don't matter
+/// here: it is artifacts and enchantments only.)
+fn scrap_fire(g: &mut Game, src: PermId, m: PermId) -> Res {
+    let o = g.perm(src).owner;
+    let x = g.perm(m);
+    if x.token || x.orig != o {
+        return Ok(());
+    }
+    let Some(cd) = x.cd else { return Ok(()) };
+    let d = g.db.get(cd);
+    if d.land || !(d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT)) {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "gain 1 life", Some(2.0))? {
+        return Ok(());
+    }
+    crate::glog!(g, "    Scrapheap: {} gains 1 life ({} went to the graveyard)", pname(g, o), name_of(g, m));
+    gain(g, o, 1)
+}
+
+fn scrap_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    scrap_fire(g, src, m)
+}
+
+fn scrap_self(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
+    scrap_fire(g, m, m)
+}
+
+// ------------------------------------------------------------------ Mirage Mirror
+/// the permanent's face becomes card `cd` (name, body, keywords, hooks), as a copy; no enter effects
+fn set_face(g: &mut Game, m: PermId, cd: CardId) {
+    let (name, pow, tgh, fly, dt, vig, ll, war, noatk, dsl) = {
+        let d = g.db.get(cd);
+        let t = &d.tags;
+        (
+            crate::sym::intern(&d.name),
+            d.pow,
+            d.tgh,
+            t.has(Tag::Fly),
+            t.has(Tag::Dt),
+            t.has(Tag::Vig),
+            t.has(Tag::Lifelink),
+            t.has(Tag::Warrior),
+            t.has(Tag::Noatk),
+            d.has_dsl(),
+        )
+    };
+    if let Some(i) = g.hooks.iter().position(|&x| x == m) {
+        g.hooks.remove(i);
+    }
+    let x = g.perm_mut(m);
+    x.cd = Some(cd);
+    x.name = name;
+    x.pow = pow;
+    x.tgh = tgh;
+    x.fly = fly;
+    x.dt = dt;
+    x.vig = vig;
+    x.lifelink = ll;
+    x.warrior = war;
+    x.noatk = noatk;
+    if dsl {
+        g.dsl_on = true;
+    }
+    if g.registry.get(cd).is_some_and(|i| i.live()) {
+        g.hooks.push(m);
+    }
+    g.bf_ver += 1;
+}
+
+/// the permanents Mirage Mirror could copy for p: nonland permanents with a card (a token has no card to copy, a land
+/// is never worth {2} here), not itself, and not a legendary permanent p already controls (the legend rule)
+fn mirror_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+    let mut out = vec![];
+    for q in g.players.iter().filter(|q| q.alive) {
+        for &t in &q.perms {
+            let x = g.perm(t);
+            let Some(cd) = x.cd else { continue };
+            if t == src || x.phased || x.token || (x.owner != p && untargetable(g, t)) {
+                continue;
+            }
+            if g.db.get(cd).land || x.data.truthy(DataKey::MirageMirror) {
+                continue;
+            }
+            if x.owner == p && crate::cardcode::is_legendary(g, t) {
+                continue;
+            }
+            if g.db.get(cd).has_subtype("aura") {
+                continue; // a copy of an Aura would have nothing to enchant
+            }
+            out.push(t);
+        }
+    }
+    out
+}
+
+/// pay {2} and become a copy of t until end of turn
+fn mirror_become(g: &mut Game, src: PermId, p: PlayerId, t: PermId) -> Res<bool> {
+    let Some(tcd) = g.perm(t).cd else { return Ok(false) };
+    if !controls(g, p, src) || !on_bf(g, t) || !can_pay(g, p, 2, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, 2, "", false)?;
+    if !ability_window(g, p, Some(src), &format!("becomes a copy of {}", name_of(g, t)), None, Some(t))? {
+        return Ok(true);
+    }
+    if !controls(g, p, src) || !on_bf(g, t) {
+        return Ok(true); // the target left: the ability fizzles
+    }
+    let own = g.perm(src).cd;
+    crate::glog!(g, "  {} Mirage Mirror becomes a copy of {}", pname(g, p), name_of(g, t));
+    set_face(g, src, tcd);
+    let x = g.perm_mut(src);
+    x.phys = own;
+    x.data.set(DataKey::MirageMirror, Val::Bool(true));
+    Ok(true)
+}
+
+/// engine/turn.rs, at the start of every turn: copies made by Mirage Mirror end ("until end of turn")
+pub fn mirror_revert(g: &mut Game) -> Res {
+    for i in 0..g.perms.len() {
+        let m = PermId(i as u32);
+        if !g.perm(m).data.truthy(DataKey::MirageMirror) {
+            continue;
+        }
+        g.perm_mut(m).data.remove(DataKey::MirageMirror);
+        if !g.perm(m).on_bf {
+            continue;
+        }
+        if let Some(own) = g.perm(m).phys {
+            set_face(g, m, own);
+            g.perm_mut(m).phys = None;
+        }
+    }
+    Ok(())
+}
+
+/// how much the copy is worth as an attacker or a blocker: its printed body (a defender never attacks)
+fn mirror_body(g: &Game, t: PermId) -> Option<(i32, i32, bool)> {
+    let cd = g.perm(t).cd?;
+    let d = g.db.get(cd);
+    d.creature.then(|| (d.pow, d.tgh, d.tag(Tag::Fly)))
+}
+
+/// {2}: becomes a copy of target artifact, creature, enchantment or land until end of turn. Before attacks (main phase
+/// one) the AI copies the best creature on the battlefield when that makes a 3+ power attacker; on the opponent's turn
+/// `mirror_blocks` copies a good blocker.
+fn mirror_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if x.owner != p
+        || post != Some(false)
+        || g.active != Some(p)
+        || !x.on_bf
+        || x.sick
+        || x.tapped
+        || x.data.truthy(DataKey::MirageMirror)
+        || !can_pay(g, p, 2, "", false)
+    {
+        return Ok(vec![]);
+    }
+    let best = max_by(&mirror_targets(g, p, src), |t| match mirror_body(g, t) {
+        Some((pow, _, fly)) if pow >= 3 && !g.db.get(g.perm(t).cd.unwrap()).has_kw("defender") => {
+            pow as f64 + if fly { 2.0 } else { 0.0 } + 0.2 * pval(g, t)
+        }
+        _ => -1.0,
+    });
+    let Some(t) = best.filter(|&t| mirror_body(g, t).is_some_and(|b| b.0 >= 3)) else { return Ok(vec![]) };
+    if g.db.get(g.perm(t).cd.unwrap()).has_kw("defender") {
+        return Ok(vec![]);
+    }
+    let pow = mirror_body(g, t).unwrap().0;
+    let label = format!("Mirage Mirror: copy {}", name_of(g, t));
+    Ok(vec![ability(0.6 + 0.35 * pow as f64, label, src, mirror_go, t.0 as i64)])
+}
+
+fn mirror_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    mirror_become(g, src, p, PermId(arg as u32))
+}
+
+/// On the other player's attack: an untapped Mirror with {2} open becomes a copy of the creature that blocks the biggest
+/// unblocked attacker and survives it, and blocks.
+fn mirror_blocks(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &mut Assign) -> Res {
+    let x = g.perm(src);
+    if x.owner != d
+        || d == p
+        || !x.on_bf
+        || x.tapped
+        || x.data.truthy(DataKey::MirageMirror)
+        || human_of(g, d).is_some()
+        || !can_pay(g, d, 2, "", false)
+        || assign.iter().any(|y| y.1 == src)
+    {
+        return Ok(());
+    }
+    let free: Vec<PermId> =
+        atk.iter().copied().filter(|&a| on_bf(g, a) && !assign.iter().any(|y| y.0 == a) && epow(g, a) >= 2).collect();
+    let Some(a) = max_by(&free, |a| epow(g, a) as f64) else { return Ok(()) };
+    if kw(g, a, "menace") {
+        return Ok(());
+    }
+    let cands: Vec<PermId> = mirror_targets(g, d, src)
+        .into_iter()
+        .filter(|&t| {
+            mirror_body(g, t).is_some_and(|(pow, tgh, fly)| {
+                tgh > epow(g, a) && !g.perm(a).dt && (pow >= 1 || tgh >= 5) && (fly || !g.perm(a).fly)
+            })
+        })
+        .collect();
+    let Some(t) = max_by(&cands, |t| {
+        let (pow, tgh, _) = mirror_body(g, t).unwrap();
+        (if pow >= etgh(g, a) { 10 } else { 0 } + tgh) as f64
+    }) else {
+        return Ok(());
+    };
+    if mirror_become(g, src, d, t)? && g.perm(src).data.truthy(DataKey::MirageMirror) && can_block(g, src, a) {
+        assign.push((a, src));
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Angelic Page
+/// {T}: target attacking or blocking creature gets +1/+1 until end of turn. Used once blocks are declared (this hook
+/// runs for both players' Pages): where the +1/+1 wins a fight or saves a creature, else on an unblocked attacker
+/// (+1 damage). Not on the turn it came in (summoning sick).
+fn page_blocks(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &mut Assign) -> Res {
+    let o = g.perm(src).owner;
+    let x = g.perm(src);
+    if (o != p && o != d) || !x.on_bf || x.tapped || x.sick || x.phased || human_of(g, o).is_some() {
+        return Ok(());
+    }
+    let atk_side = o == p;
+    // (own creature, the creature it fights) for each fight on o's side
+    let fights: Vec<(PermId, PermId)> = assign
+        .iter()
+        .copied()
+        .filter(|&(a, b)| on_bf(g, a) && on_bf(g, b))
+        .map(|(a, b)| if atk_side { (a, b) } else { (b, a) })
+        .collect();
+    let first = |m: PermId| first_strike(g, m);
+    let decisive = |mine: PermId, other: PermId| {
+        let (mp, mt) = (epow(g, mine), etgh(g, mine));
+        let (op, ot) = (epow(g, other), etgh(g, other));
+        let dies = (op >= mt || g.perm(other).dt) && !(first(mine) && !first(other) && mp >= ot);
+        let dies_after = (op >= mt + 1 || g.perm(other).dt) && !(first(mine) && !first(other) && mp + 1 >= ot);
+        let kills = mp >= ot || g.perm(mine).dt;
+        let kills_after = mp + 1 >= ot || g.perm(mine).dt;
+        (dies && !dies_after) || (!kills && kills_after && !dies_after)
+    };
+    let mut pick = fights.iter().copied().find(|&(mine, other)| decisive(mine, other)).map(|f| f.0);
+    if pick.is_none() && atk_side {
+        let unblocked: Vec<PermId> = atk
+            .iter()
+            .copied()
+            .filter(|&a| on_bf(g, a) && g.perm(a).owner == o && !assign.iter().any(|y| y.0 == a))
+            .collect();
+        pick = max_by(&unblocked, |a| epow(g, a) as f64);
+    }
+    let Some(t) = pick else { return Ok(()) };
+    g.perm_mut(src).tapped = true;
+    if ability_window(g, o, Some(src), &format!("+1/+1 on {}", name_of(g, t)), None, Some(t))? && on_bf(g, t) {
+        let y = g.perm_mut(t);
+        y.eot_pt = (y.eot_pt.0 + 1, y.eot_pt.1 + 1);
+        crate::glog!(g, "    Angelic Page gives {} +1/+1", g.perm(t).name);
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Wall of Junk
+/// 0/7 defender. When it blocks it returns to its owner's hand at end of combat (`wall_return`, run by the combat code
+/// after damage). The AI blocks freely with it: the biggest attacker nobody blocks that it survives (it is an
+/// artifact spell each time it is recast, so Alela makes a Faerie each time).
+fn wall_blocks(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &mut Assign) -> Res {
+    let x = g.perm(src);
+    if x.owner != d || d == p || !x.on_bf || x.phased {
+        return Ok(());
+    }
+    if !x.tapped && !assign.iter().any(|y| y.1 == src) && human_of(g, d).is_none() {
+        let free: Vec<PermId> = atk
+            .iter()
+            .copied()
+            .filter(|&a| {
+                on_bf(g, a)
+                    && !assign.iter().any(|y| y.0 == a)
+                    && epow(g, a) >= 1
+                    && epow(g, a) < etgh(g, src)
+                    && !g.perm(a).dt
+                    && !kw(g, a, "menace")
+                    && can_block(g, src, a)
+            })
+            .collect();
+        if let Some(a) = max_by(&free, |a| epow(g, a) as f64) {
+            assign.push((a, src));
+        }
+    }
+    if assign.iter().any(|y| y.1 == src) {
+        g.perm_mut(src).data.set(DataKey::WallBlocked, Val::Bool(true));
+    }
+    Ok(())
+}
+
+/// end of combat: each Wall of Junk that blocked and is still on the battlefield returns to its owner's hand
+pub fn wall_return(g: &mut Game, assign: &[(PermId, PermId)]) -> Res {
+    for &(_, b) in assign {
+        if !g.perm(b).data.truthy(DataKey::WallBlocked) {
+            continue;
+        }
+        g.perm_mut(b).data.remove(DataKey::WallBlocked);
+        if g.perm(b).on_bf {
+            crate::glog!(g, "    {} returns to its owner's hand", g.perm(b).name);
+            bounce(g, b)?;
+        }
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Cabal Patriarch
+/// what one activation of Cabal Patriarch pays besides {2}{B}
+#[derive(Clone, Copy, PartialEq)]
+enum Pay {
+    Sac(PermId),
+    Gy(CardId),
+}
+
+/// the cheapest costs for n activations: Faerie tokens and other spare bodies first (never Alela or Patriarch), then
+/// creature cards in the graveyard
+fn patriarch_costs(g: &Game, p: PlayerId, src: PermId, n: usize) -> Option<Vec<Pay>> {
+    let mut bodies: Vec<PermId> = creatures(g, p)
+        .into_iter()
+        .filter(|&m| m != src && !g.perm(m).is_cmd && card_name(g, m) != Some(ALELA) && !no_sac(g, m))
+        .filter(|&m| g.perm(m).token || pval(g, m) <= 2.5)
+        .collect();
+    sort_by_key(&mut bodies, |m| (!g.perm(m).token as i32, pval(g, m)));
+    let gy: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).creature).collect();
+    let mut out: Vec<Pay> = vec![];
+    // a token first, a graveyard creature before a real card, the rest by value
+    let mut bi = bodies.into_iter().peekable();
+    let mut gi = gy.into_iter();
+    while out.len() < n {
+        match bi.peek().copied() {
+            Some(b) if g.perm(b).token => {
+                out.push(Pay::Sac(b));
+                bi.next();
+            }
+            _ => {
+                if let Some(c) = gi.next() {
+                    out.push(Pay::Gy(c));
+                } else if let Some(b) = bi.next() {
+                    out.push(Pay::Sac(b));
+                } else {
+                    return None;
+                }
+            }
+        }
+    }
+    Some(out)
+}
+
+fn pay_value(g: &Game, c: Pay) -> f64 {
+    match c {
+        Pay::Sac(m) => pval(g, m),
+        Pay::Gy(_) => 0.4,
+    }
+}
+
+/// {2}{B}, sacrifice a creature (or exile a creature card from your graveyard): target creature gets -2/-2 until end of
+/// turn. Aimed at opposing creatures the -2/-2 kills (toughness 2 or less: one activation; 3 or 4: two, when the target
+/// is worth much more than the costs and the mana is there).
+fn patriarch_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(src).owner != p || post.is_none() || !on_bf(g, src) || !can_pay(g, p, 2, "B", false) {
+        return Ok(vec![]);
+    }
+    let mut out = vec![];
+    for t in legal_targets(g, p, "destroy", "c", false, None) {
+        let th = etgh(g, t);
+        if th > 4 {
+            continue;
+        }
+        let n = if th <= 2 { 1 } else { 2 };
+        if n == 2 && !can_pay(g, p, 4, "BB", false) {
+            continue;
+        }
+        let Some(costs) = patriarch_costs(g, p, src, n) else { continue };
+        let spent: f64 = costs.iter().map(|&c| pay_value(g, c)).sum::<f64>() + 0.7 * n as f64;
+        let gain_v = pval(g, t);
+        if gain_v < spent + 0.5 {
+            continue;
+        }
+        out.push(ability(
+            gain_v - spent,
+            format!("Cabal Patriarch: {} x -2/-2 on {}", n, name_of(g, t)),
+            src,
+            patriarch_go,
+            pack(t.0, n as u32),
+        ));
+    }
+    Ok(out)
+}
+
+fn patriarch_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let (t, n) = unpack(arg);
+    let (t, n) = (PermId(t), n as usize);
+    let mut did = false;
+    for _ in 0..n {
+        if !controls(g, p, src) || !on_bf(g, t) || !can_pay(g, p, 2, "B", false) {
+            break;
+        }
+        let Some(cost) = patriarch_costs(g, p, src, 1).and_then(|v| v.first().copied()) else { break };
+        pay(g, p, 2, "B", false)?;
+        match cost {
+            Pay::Sac(m) => die(g, m, "sac")?,
+            Pay::Gy(c) => {
+                if remove_first(&mut g.player_mut(p).gy, c) {
+                    g.player_mut(p).exile.push(c);
+                }
+            }
+        }
+        did = true;
+        if ability_window(g, p, Some(src), "-2/-2", None, Some(t))? {
+            shrink(g, p, t, 2)?;
+        }
+    }
+    Ok(did)
+}
+
+/// -n/-n until end of turn on m (a lethal one goes through the removal code)
+fn shrink(g: &mut Game, p: PlayerId, m: PermId, n: i32) -> Res {
+    if !g.perm(m).on_bf {
+        return Ok(());
+    }
+    if etgh(g, m) <= n {
+        return apply_removal(g, Some(p), m, &format!("shrink{n}"), None);
+    }
+    let x = g.perm_mut(m);
+    x.eot_pt = (x.eot_pt.0 - n, x.eot_pt.1 - n);
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Serra the Benevolent
+fn serra_fliers(g: &Game, p: PlayerId) -> Vec<PermId> {
+    creatures(g, p).into_iter().filter(|&m| flier(g, m) || kw(g, m, "flying")).collect()
+}
+
+fn serra_plus_v(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    let ready =
+        serra_fliers(g, p).into_iter().filter(|&m| !g.perm(m).tapped && (!g.perm(m).sick || has_haste(g, m))).count();
+    Some(if ready > 0 { 1.2 + 0.5 * ready as f64 } else { 0.5 })
+}
+
+/// +2: your fliers get +1/+1 until end of turn
+fn serra_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    for m in serra_fliers(g, p) {
+        let x = g.perm_mut(m);
+        x.eot_pt = (x.eot_pt.0 + 1, x.eot_pt.1 + 1);
+    }
+    Ok(())
+}
+
+/// -3 when the board needs a body or the opponents' attackers would kill Serra at 4 loyalty
+fn serra_angel_v(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
+    let mine = creatures(g, p).len();
+    let loy = g.perm(src).loyalty.unwrap_or(0);
+    let threat: i32 = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| g.is_creature(m) && !g.perm(m).phased)
+        .map(|m| epow(g, m))
+        .sum();
+    let v = if mine <= 1 {
+        4.0
+    } else if mine <= 3 || threat >= loy {
+        2.5
+    } else {
+        1.0
+    };
+    Some(v)
+}
+
+/// -3: a 4/4 white Angel with flying and vigilance
+fn serra_angel(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let spec = Tokens { fly: true, color: Some(Colors::from_letters("W")), types: vec!["angel"], ..Tokens::new(1, 4) };
+    let spec = Tokens { tgh: Some(4), ..spec };
+    for t in make_tokens(g, p, spec)? {
+        g.perm_mut(t).vig = true;
+    }
+    Ok(())
+}
+
+fn serra_emblem_v(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
+    Some(10.0)
+}
+
+/// -6: the emblem "if you control a creature, damage that would reduce your life total to less than 1 reduces it to 1
+/// instead" (`serra_floor`, called from `lose_life`)
+fn serra_emblem(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    g.player_mut(p).emblems.push("serra");
+    Ok(())
+}
+
+static SERRA: [WalkerAb; 3] = [
+    WalkerAb { delta: 2, label: "fliers get +1/+1", val: serra_plus_v, eff: serra_plus },
+    WalkerAb { delta: -3, label: "4/4 Angel", val: serra_angel_v, eff: serra_angel },
+    WalkerAb { delta: -6, label: "emblem", val: serra_emblem_v, eff: serra_emblem },
+];
+
+/// engine/life.rs: damage n to p; with Serra's emblem and a creature, it can't take p below 1 life. True if nothing is
+/// left to deal.
+pub fn serra_floor(g: &Game, p: PlayerId, n: &mut i32) -> bool {
+    let pl = g.player(p);
+    if !pl.emblems.contains(&"serra") || pl.life < 1 || *n < pl.life {
+        return *n <= 0;
+    }
+    if !pl.perms.iter().any(|&m| !g.perm(m).phased && g.is_creature(m)) {
+        return false;
+    }
+    *n = pl.life - 1;
+    *n <= 0
+}
+
+// ------------------------------------------------------------------ Crystal Chimes
+/// {3}, {T}, sacrifice: return all enchantment cards from your graveyard to your hand. The AI waits for two or more
+/// (Opposition, Karmic Justice, Auras ... all come back at once).
+fn chimes_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, 3, "", false) {
+        return Ok(vec![]);
+    }
+    let n = chimes_cards(g, p).len();
+    if n < 2 {
+        return Ok(vec![]);
+    }
+    Ok(vec![ability(1.0 + 0.5 * n as f64, format!("Crystal Chimes: {n} enchantments back"), src, chimes_go, 0)])
+}
+
+fn chimes_cards(g: &Game, p: PlayerId) -> Vec<CardId> {
+    g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).types.has(Types::ENCHANTMENT)).collect()
+}
+
+fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !controls(g, p, src) || g.perm(src).tapped || !can_pay(g, p, 3, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, 3, "", false)?;
+    g.perm_mut(src).tapped = true;
+    die(g, src, "sac")?;
+    if !ability_window(g, p, Some(src), "return all enchantment cards from the graveyard to hand", None, None)? {
+        return Ok(true);
+    }
+    let back = chimes_cards(g, p);
+    for &c in &back {
+        remove_first(&mut g.player_mut(p).gy, c);
+        g.player_mut(p).hand.push(c);
+    }
+    crate::glog!(g, "  {} Crystal Chimes returns {} enchantment card(s)", pname(g, p), back.len());
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Angelic Shield (the AI's save)
+/// Angelic Shield, "sacrifice: return target creature to its owner's hand": in response to removal aimed at one of
+/// your valuable creatures (not a token, which would be lost; not the commander, who can go to the command zone), the
+/// creature goes back to your hand and the removal fizzles. (Aimed at an opposing threat, the ability-language option
+/// of the card does the bouncing.)
+pub fn alela_protect(
+    g: &mut Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    _actor: Option<PlayerId>,
+    _spell: Option<CardId>,
+) -> Res<bool> {
+    let x = g.perm(m);
+    if !x.on_bf || x.token || x.is_cmd || !g.is_creature(m) || kind == "bounce" || pval(g, m) < 3.0 {
+        return Ok(false);
+    }
+    let Some(&shield) = named_as(g, owner, "Angelic Shield").first() else { return Ok(false) };
+    crate::glog!(g, "  {} sacrifices Angelic Shield: {} returns to hand", pname(g, owner), name_of(g, m));
+    die(g, shield, "sac")?;
+    if ability_window(g, owner, Some(shield), "return a creature to its owner's hand", None, Some(m))? && on_bf(g, m) {
+        bounce(g, m)?;
+    }
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Lightning Greaves (off Alela)
+/// Greaves on Alela gives her shroud, so the deck's own Aura (or Daydream) can't target her. When the hand holds one
+/// that wants Alela, the AI first moves the Greaves (equip {0}) to the best other creature.
+fn greaves_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(src).owner != p || g.player(p).key != "alela" || post != Some(false) || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let Some(am) = alela_perm(g, p) else { return Ok(vec![]) };
+    if g.perm(src).attached != Some(am) {
+        return Ok(vec![]);
+    }
+    let wants = g.player(p).hand.iter().any(|&c| {
+        let aura_here = aura_spec(g, c)
+            .is_some_and(|s| s.target == "own" && s.host_pick.is_none() && own_host(g, p, s, None) == Some(am));
+        let daydream = &*g.db.get(c).name == "Daydream" && daydream_target(g, p) == Some(am);
+        (aura_here || daydream) && castable(g, p, c, "hand")
+    });
+    if !wants {
+        return Ok(vec![]);
+    }
+    let others: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| m != am).collect();
+    let Some(to) = max_by(&others, |m| pval(g, m)) else { return Ok(vec![]) };
+    Ok(vec![ability(
+        3.0,
+        format!("Lightning Greaves off Alela, onto {}", name_of(g, to)),
+        src,
+        greaves_go,
+        to.0 as i64,
+    )])
+}
+
+fn greaves_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let to = PermId(arg as u32);
+    if !controls(g, p, src) || !on_bf(g, to) || g.perm(to).owner != p {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} moves Lightning Greaves to {} (Alela needs to be targetable)", pname(g, p), name_of(g, to));
+    if ability_window(g, p, Some(src), "equip {0}", None, Some(to))? && on_bf(g, to) {
+        g.perm_mut(src).attached = Some(to);
+    }
+    Ok(true)
+}
+
 // ================================================================== registry
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, ALELA)?.cast = Some(alela_cast);
@@ -1426,5 +2105,25 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Venser, the Sojourner")?;
     c.crew = Some(venser_minus);
     at_once(c, Event::Crew, true);
+    let c = r.card(db, "Credit Voucher")?;
+    c.options = Some(voucher_options);
+    c.prio = Some(|_, _, _| 22);
+    let c = r.card(db, "Scrapheap")?;
+    c.dies = Some(scrap_dies);
+    c.self_dies = Some(scrap_self);
+    at_once(c, Event::Dies, true);
+    at_once(c, Event::SelfDies, true);
+    c.prio = Some(|_, _, _| 25);
+    let c = r.card(db, "Mirage Mirror")?;
+    c.options = Some(mirror_options);
+    c.blocks = Some(mirror_blocks);
+    c.prio = Some(|_, _, _| 28);
+    r.card(db, "Angelic Page")?.blocks = Some(page_blocks);
+    r.card(db, "Wall of Junk")?.blocks = Some(wall_blocks);
+    r.card(db, "Cabal Patriarch")?.options = Some(patriarch_options);
+    walker(r, db, "Serra the Benevolent", &SERRA)?;
+    r.card(db, "Serra the Benevolent")?.prio = Some(|_, _, _| 65);
+    r.card(db, "Crystal Chimes")?.options = Some(chimes_options);
+    r.card(db, "Lightning Greaves")?.options = Some(greaves_options);
     Ok(())
 }

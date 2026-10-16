@@ -36,6 +36,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
         return Ok(());
     }
+    if damage && crate::impls::alela::serra_floor(g, p, &mut n) {
+        return Ok(()); // Serra the Benevolent's emblem left nothing to deal
+    }
     if damage && kind != "combat" {
         g.player_mut(p).nc_dmg_this = true;
     }

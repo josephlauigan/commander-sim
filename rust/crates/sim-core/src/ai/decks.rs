@@ -1331,6 +1331,7 @@ fn protect_main(
         }
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
+        "alela" => crate::impls::alela::alela_protect(g, owner, m, kind, actor, spell),
         "titania" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         "sheoldred" => crate::impls::sheoldred::sheoldred_protect(g, owner, m, kind, actor, spell),
         "cloud" => crate::impls::cloud::cloud_protect(g, owner, m, kind, actor, spell),
