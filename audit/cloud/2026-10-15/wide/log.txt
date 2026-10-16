@@ -1,0 +1,2 @@
+19:07 WIDE t1 [loose       ] win  19.6% ->  20.8%  (delta +1.2 pts, noise ±2.4, paired)   n=2000
+19:07 WIDE t2 skipped (t1 +1.2)
