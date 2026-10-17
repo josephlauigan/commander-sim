@@ -1,0 +1,116 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dark Endurance [pool] I 1B :: prot=ind
+   The Wasp, Winsome Avenger [scryfall] C 1U :: leg human pow=2 tgh=1 fly flash
+      not modeled: When ~ enters, target Hero gains hexproof until end of turn.
+      not modeled: Whenever ~ attacks, tap target creature defending player controls.
+Model status of the swapped-in cards (cardgen audit):
+  Austere Command: Full (tags: `wipe=austere2`)
+  Dark Endurance: Full (+2/+0 and indestructible until end of turn (the +2/+0 is not modeled))
+  The Wasp, Winsome Avenger: Full (flash, flying; when it enters, target Hero gains hexproof until end of turn (the Ring-bearer if a Hero, else the best Hero); whenever it attacks, tap target creature defending player controls)
+  Swamp: Full (basic land)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m44s elapsed, ~6m37s left
+  progress  20.0%  1m29s elapsed, ~5m59s left
+  progress  30.0%  2m14s elapsed, ~5m14s left
+  progress  40.0%  3m00s elapsed, ~4m31s left
+  progress  50.0%  3m51s elapsed, ~3m51s left
+  progress  60.0%  4m37s elapsed, ~3m05s left
+  progress  70.0%  5m26s elapsed, ~2m19s left
+  progress  80.0%  6m14s elapsed, ~1m33s left
+  progress  90.0%  7m00s elapsed, ~0m46s left
+  progress 100.0%  7m48s elapsed, ~0m00s left
+Swaps: Toxic Deluge -> Austere Command; Masterful Flourish -> Dark Endurance; Moseo, Vein's New Dean -> The Wasp, Winsome Avenger; Shattered Sanctum -> Swamp
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.9% ->  32.6%  (delta +1.8 pts, noise ±2.7, paired)   n=2000
+               eliminated by (variant): Tergrid 18.8%  Atraxa 9.8%  Aurelia 17.8%  Marwyn 12.4%  Korvold 7.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.9% ->  32.6%  +1.8pt   ±2.9 
+    Rounds survived (or game length)                  12.29 ->  12.35   +0.06  ±0.23 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.53 ->   0.53   +0.00  ±0.05 
+    Mana available on your turn 4                      3.96 ->   3.96   +0.00  ±0.05 
+    Mana available on your turn 6                      5.51 ->   5.53   +0.02  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.63 ->   3.63   +0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            18.70 ->  19.00   +0.30  ±0.51 
+    Tutors resolved per game                           0.24 ->   0.24   -0.00  ±0.03 
+    Spells cast per game                              14.94 ->  14.88   -0.05  ±0.48 
+
+  Interaction
+    Counterspells cast                                 0.18 ->   0.19   +0.01  ±0.02 
+    Spot removal cast                                  0.97 ->   0.99   +0.02  ±0.06 
+    Board wipes cast                                   0.17 ->   0.11   -0.06  ±0.02*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.76   +0.02  ±0.07 
+    Your spells countered                              0.13 ->   0.14   +0.01  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                36.46 ->  37.84   +1.38  ±2.29 
+      ...of which combat damage                       35.73 ->  37.19   +1.46  ±2.24 
+      ...of which drain triggers                       0.03 ->   0.01   -0.02  ±0.03 
+      ...of which other triggers                       0.71 ->   0.65   -0.06  ±0.17 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Board wipes cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Austere Command                       25.1      43.3        11.0     56.7       54.4      0.00
+    Dark Endurance                        26.4       0.0           -    100.0          -      0.00
+    The Wasp, Winsome Avenger             26.3      84.0         8.4     16.0       44.8      0.02
+    Swamp                                 82.2       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Toxic Deluge                          30.6      55.6         9.9     44.4       26.2      0.00
+    Masterful Flourish                    25.2      73.1         7.7     26.9       44.7      0.00
+    Moseo, Vein's New Dean                25.5      84.7         9.4     15.3       42.8      0.02
+    Shattered Sanctum                     27.7       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.9      32.6     +1.8
+    rounds survived                                  12.29     12.35    +0.06
+    eliminated, % of games                            67.5      65.8     -1.7
+    opponents it eliminated, per game                 0.77      0.81    +0.05
+    damage dealt, per game                            36.5      37.8     +1.4
+    commander resolved by turn 4, %                   84.2      83.7     -0.5
+    commander resolved by turn 6, %                   94.5      94.7     +0.1
+    commander removals, per game                      0.81      0.77    -0.03
+    lands on the battlefield, turn 4                  3.76      3.76    +0.00
+    lands on the battlefield, turn 8                  6.66      6.69    +0.03
+    mana available, turn 4                            3.96      3.96    +0.00
+    mana available, turn 8                            6.94      6.97    +0.03
+    cards in hand after the land drop, turn 4         6.33      6.37    +0.03
+    cards in hand after the land drop, turn 8         6.42      6.42    +0.00
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 17.0%, Tergrid via combat 12.7%, Marwyn via combat 11.2%, Atraxa via combat 7.5%
+    eliminated by (swapped): Aurelia via combat 14.2%, Tergrid via combat 13.3%, Marwyn via combat 12.3%, Atraxa via combat 7.7%
+
+(469s total)

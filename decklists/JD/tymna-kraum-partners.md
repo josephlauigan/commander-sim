@@ -53,7 +53,8 @@ Tymna, so it can't also block. The attack taxes fix that:
   decks.
 - **Elspeth**'s −3 destroys every creature with power 4 or more (yours too: count your Titans and Angels first);
   **Sunblast Angel** destroys every tapped creature when it enters (yours too, so cast it before you attack, after an
-  opponent's big attack); **Toxic Deluge** is the full reset.
+  opponent's big attack); **Austere Command** is the full reset (choose creatures with mana value 3 or less and 4 or
+  more: your attack taxes and rocks survive).
 
 ### Finishers
 
@@ -76,8 +77,9 @@ Tymna, so it can't also block. The attack taxes fix that:
 
 Tymna wants every opponent hit each turn. **Adeline** makes a 1/1 attacking *each* opponent whenever you attack, and
 **Hero of Bladehold** makes two attacking tokens with battle cry; **Dauthi Voidwalker** (shadow), **Vampire Nighthawk**,
-**Moseo**, **Nightwind Glider**, **Falcon and Redwing**, **Black Widow** and **Lightning** (menace) get through on their
-own. Attack the opponents you can reach, keep enough back to block what the taxes let through, and draw.
+**The Wasp** (taps a blocker when it attacks), **Nightwind Glider**, **Falcon and Redwing**, **Black Widow** and
+**Lightning** (menace) get through on their own. Attack the opponents you can reach, keep enough back to block what
+the taxes let through, and draw.
 
 ### Removal and interaction
 
@@ -85,7 +87,8 @@ own. Attack the opponents you can reach, keep enough back to block what the taxe
 commander), **Skyclave Apparition**, **Memory Trap**, **Bedevil** and **Disenchant**; **Glorybringer** and **Elspeth**
 add more. **Arcane Denial** is the one counterspell, and **Aven Mindcensor** (flash) blunts tutors and land searches.
 **Restoration Angel** (flash) blinks a creature out of removal and reuses an enters effect (a Titan, Rune-Scarred
-Demon, Skyclave Apparition). **Masterful Flourish** ({B}: indestructible) and **Lightning Greaves** protect Tymna.
+Demon, Skyclave Apparition). **Dark Endurance** ({1}{B}: +2/+0 and indestructible) and **Lightning Greaves** protect
+Tymna.
 
 ### Card advantage beyond the commanders
 
@@ -105,7 +108,7 @@ and Gilgamesh close faster when they land.
   Arcane Denial and the cheap removal for the combo piece, and race.
 - **Mana.** The deck runs 38 lands and four 2-mana rocks because its finishers cost 5–6: keep a hand with 3+ lands and a
   rock, and play the rocks early.
-- **Tymna dying.** She is removed more than any other card. Equip Lightning Greaves to her, keep Masterful Flourish or
+- **Tymna dying.** She is removed more than any other card. Equip Lightning Greaves to her, keep Dark Endurance or
   Restoration Angel up when you can, and recast her (Sun Titan also brings her back).
 - **Board wipes.** The defense is mostly enchantments and artifacts, which survive creature wipes; rebuild the attackers
   with Adeline, Hero, the Titans and Elspeth.
@@ -124,15 +127,14 @@ cast Tymna by turn 3 or 4 is a mulligan.
 
 ## Mana and consistency
 
-38 lands: 17 nonbasic and 21 basic (7 Plains, 6 Island, 5 Swamp, 3 Mountain); no land enters tapped every time. Mana
+38 lands: 16 nonbasic and 22 basic (7 Plains, 6 Island, 6 Swamp, 3 Mountain); no land enters tapped every time. Mana
 rocks: **Arcane Signet**, **Fellwar Stone**, **Orzhov Signet**, **Talisman of Conviction**.
 
 - **Any colour:** Command Tower, Exotic Orchard, Unclaimed Territory (name **Human**).
 - **Checklands** (untapped with a basic of the right type): Isolated Chapel (W/B), Drowned Catacomb (U/B), Sulfur Falls
   (U/R), Dragonskull Summit (B/R), Clifftop Retreat (R/W), Glacial Fortress (W/U).
 - **Other two-colour lands:** Battlefield Forge, Caves of Koilos and Underground River (pain lands), Rugged Prairie
-  (filter), Furycalm Snarl and Port Town (reveal a basic), Spectator Seating (untapped with two or more opponents),
-  Shattered Sanctum (with two other lands).
+  (filter), Furycalm Snarl and Port Town (reveal a basic), Spectator Seating (untapped with two or more opponents).
 
 **Card draw:** Tymna, Kraum, Black Widow, Dream Trawler, Tocasia's Welcome, Fact or Fiction, Expressive Iteration.
 **Tutors:** Diabolic Tutor, Rune-Scarred Demon.
@@ -147,7 +149,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Dream Trawler, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Dream Trawler, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -155,11 +157,11 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Tocasia's Welcome
 
-**Instants (7).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Masterful Flourish, Path to Exile, Swords to Plowshares
+**Instants (7).** Arcane Denial, Bedevil, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares
 
-**Sorceries (4).** Diabolic Tutor, Expressive Iteration, Rip Apart, Toxic Deluge
+**Sorceries (4).** Austere Command, Diabolic Tutor, Expressive Iteration, Rip Apart
 
-**Lands (38).** Battlefield Forge, Caves of Koilos, Clifftop Retreat, Command Tower, Dragonskull Summit, Drowned Catacomb, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Isolated Chapel, Port Town, Rugged Prairie, Shattered Sanctum, Spectator Seating, Sulfur Falls, Unclaimed Territory, Underground River, 6 Island, 7 Plains, 5 Swamp, 3 Mountain
+**Lands (38).** Battlefield Forge, Caves of Koilos, Clifftop Retreat, Command Tower, Dragonskull Summit, Drowned Catacomb, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Isolated Chapel, Port Town, Rugged Prairie, Spectator Seating, Sulfur Falls, Unclaimed Territory, Underground River, 6 Island, 7 Plains, 6 Swamp, 3 Mountain
 
 ## Import list (100)
 
@@ -168,6 +170,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Arcane Denial
 1 Arcane Signet
 1 Archon of Absolution
+1 Austere Command
 1 Aven Mindcensor
 1 Baird, Steward of Argive
 1 Baneslayer Angel
@@ -180,6 +183,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Command Tower
 1 Conqueror's Flail
 1 Crawlspace
+1 Dark Endurance
 1 Darksteel Mutation
 1 Dauthi Voidwalker
 1 Diabolic Tutor
@@ -210,9 +214,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Lightning, Security Sergeant
 1 Lyra Dawnbringer
 1 Marchesa, the Black Rose
-1 Masterful Flourish
 1 Memory Trap
-1 Moseo, Vein's New Dean
 1 Nightveil Predator
 1 Nightwind Glider
 1 Orzhov Signet
@@ -224,7 +226,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Rugged Prairie
 1 Rune-Scarred Demon
 1 Serra Angel
-1 Shattered Sanctum
 1 Shield of Kaldra
 1 Skyclave Apparition
 1 Spectator Seating
@@ -235,9 +236,9 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Swords to Plowshares
 1 Talisman of Conviction
 1 Terror of the Peaks
+1 The Wasp, Winsome Avenger
 1 Thundermaw Hellkite
 1 Tocasia's Welcome
-1 Toxic Deluge
 1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River
@@ -246,5 +247,5 @@ Conqueror's Flail (no spells on your turn) before the game.
 6 Island
 3 Mountain
 7 Plains
-5 Swamp
+6 Swamp
 ```

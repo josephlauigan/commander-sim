@@ -351,6 +351,9 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Changes
 
+- **2026-10-16 (night).** JD doesn't own Toxic Deluge, Masterful Flourish, Moseo, Vein's New Dean or Shattered Sanctum
+  (removed from the binder and bulk lists). Out: those four. In: Austere Command, Dark Endurance, The Wasp, Winsome
+  Avenger and a Swamp (all from bulk). Measured +1.8 at T3 (2,000 paired games, ±2.7): no loss.
 - **2026-10-16 (evening).** Tuned toward a solid Tier 3 deck (JD: 30% at T3, up to $50 of upgrades; Gilgamesh,
   Diabolic Tutor, Shield and Helm of Kaldra, Toxic Deluge and Fact or Fiction kept). Eleven rounds of paired tests at
   T3 (`audit/kraum/FINDINGS.md`). Out: Abigale, Poet Laureate, Arcane Sanctum, Boiling Rock Prison, Caparocti

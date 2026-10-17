@@ -465,7 +465,6 @@
 3x Mana Leak (9ed)
 1x March of the Multitudes (grn)
 1x Martyr of Dusk (rix)
-1x Masterful Flourish (sos)
 1x Matterbending Mage (sos)
 1x Mechan Shieldmate (eoe)
 3x Medic's Kitesail (fra)
@@ -490,7 +489,6 @@
 2x Monstrous Rage (soa)
 1x Monstrous War-Leech (dmu)
 3x Moonwing Moth (sok)
-1x Moseo, Vein's New Dean (sos)
 1x Mossfire Valley (fic)
 1x Mouth of the Storm (eoe)
 1x Multiply by Zero (fra)
@@ -676,7 +674,6 @@
 1x Shang-Chi and the Ten Rings (msc)
 1x Shardmage's Rescue (dsk)
 2x Shattered Acolyte (sos)
-1x Shattered Sanctum
 1x Shattered Wings (eoe)
 1x Shatterwing Pegasus (fra)
 1x She-Hulk, Wallbreaker (msc)
@@ -817,7 +814,6 @@
 2x Torch Fiend (jmp, m15)
 1x Torch the Witness (mkm)
 2x Torii Watchward (sok)
-1x Toxic Deluge
 1x Tragic Lesson (hou)
 1x Trailblazer's Boots (fic)
 2x Transcendent Archaic (sos)
