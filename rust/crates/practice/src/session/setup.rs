@@ -9,8 +9,8 @@ use sim_core::settings::Settings;
 use sim_core::state::Game;
 use std::sync::Arc;
 
-/// the decks people can play (poolmode.MINE)
-pub const MY_DECKS: [&str; 6] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela"];
+/// the decks people can play: every deck in data/my_decks.toml, in its order (a test checks it against decks.json)
+pub const MY_DECKS: [&str; 12] = ["seph", "veyran", "sauron", "yshtola", "galadriel", "alela", "kefka", "titania", "sheoldred", "cloud", "kraum", "sephfs"];
 pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
 
 /// the pool decks of a tier, sorted by key

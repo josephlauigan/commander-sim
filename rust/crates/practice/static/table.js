@@ -138,6 +138,13 @@ function zoneList(title, names, images, attrs = () => ({})) {
     names.length ? el('div', { class: 'cards' }, names.map((n, i) => card(images, n, { size: 'sm', attrs: attrs(i) }))) : el('em', {}, 'empty'));
 }
 
+// a seat's commanders as `{i, name, in_zone, tax}`: one, or two with Partner (i is what the cast action sends)
+export function commandersOf(p) {
+  const out = [{ i: 0, name: p.commander, in_zone: p.commander_in_zone, tax: p.tax }];
+  if (p.commander2) out.push({ i: 1, name: p.commander2, in_zone: p.commander2_in_zone, tax: p.tax2 });
+  return out;
+}
+
 function stats(p, mine) {
   return el('div', { class: 'stats' },
     el('span', { class: 'life', title: 'life' }, icon('heart'), ` ${p.life}`),
@@ -146,7 +153,11 @@ function stats(p, mine) {
     el('span', { title: 'cards in library' }, icon('library'), ` ${p.library}`),
     p.treasures ? el('span', { title: 'Treasures', class: mine ? 'clickable' : '', 'data-treasure': mine ? '1' : null },
       icon('treasure'), ` ${p.treasures} Treasure`) : null,
-    Object.entries(p.commander_damage || {}).map(([who, n]) => el('span', { title: `commander damage from ${who}` }, icon('swords'), ` ${who} ${n}`)));
+    Object.entries(p.commander_damage || {}).map(([who, n]) => {
+      const by = p.commander_damage_by && p.commander_damage_by[who];       // Partner: counted per commander
+      return el('span', { title: by ? `commander damage from ${who}: ${by[0]} and ${by[1]} from its two commanders` : `commander damage from ${who}` },
+        icon('swords'), ` ${who} ${n}`);
+    }));
 }
 
 function battlefield(p, images, size, mine) {
@@ -171,7 +182,7 @@ function opponent(p, view, images) {
     el('header', {}, card(images, p.commander, { size: 'sm', cls: 'portrait' }), el('div', {}, el('h2', {}, p.name), stats(p))),
     el('div', { class: 'opp-board', 'data-fit': '1' }, battlefield(p, images, 'md', false)),
     el('footer', {}, zoneList('Graveyard', p.graveyard, images), p.exile.length ? zoneList('Exile', p.exile, images) : null,
-      p.commander_in_zone ? el('span', { class: 'chip' }, `Commander in zone (tax ${p.tax})`) : null));
+      commandersOf(p).filter((c) => c.in_zone).map((c) => el('span', { class: 'chip' }, p.commander2 ? `${c.name.split(',')[0]} in zone (tax ${c.tax})` : `Commander in zone (tax ${c.tax})`))));
 }
 
 export function renderTable(root, view, images) {
@@ -190,8 +201,11 @@ export function renderTable(root, view, images) {
     el('div', { class: 'hand' }, el('h3', {}, `Hand (${me.hand.length})`),
       el('div', { class: 'cards', 'data-fit': '1' }, me.hand.map((n, i) => card(images, n, { size: 'lg', attrs: { 'data-hand': i } })))),
     el('div', { class: 'zones' },
-      me.commander_in_zone ? el('div', { class: 'cz' }, el('h3', {}, `Command zone (tax ${me.tax})`),
-        card(images, me.commander, { size: 'sm', commander: true, attrs: { 'data-cmd': '1' } })) : null,
+      commandersOf(me).some((c) => c.in_zone) ? el('div', { class: 'cz' },
+        el('h3', {}, me.commander2 ? 'Command zone' : `Command zone (tax ${me.tax})`),
+        el('div', { class: 'row' }, commandersOf(me).filter((c) => c.in_zone).map((c) => el('div', {},
+          me.commander2 ? el('small', {}, `tax ${c.tax}`) : null,
+          card(images, c.name, { size: 'sm', commander: true, attrs: { 'data-cmd': String(c.i) } }))))) : null,
       el('div', { class: 'chip' }, `Library ${me.library}`),
       zoneList('Graveyard', me.graveyard, images, (i) => ({ 'data-gy': i })), zoneList('Exile', me.exile, images))));
   pool = new Map();

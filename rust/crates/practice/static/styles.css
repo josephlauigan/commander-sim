@@ -244,3 +244,6 @@ button, select, .card, [data-choice], .deck, .tier { touch-action: manipulation;
   body.playing #hintbox { flex: 1 1 0; max-height: none; margin-bottom: 0; }
   body.playing #log { flex: 1 1 0; }
 }
+.deck .pair { display: flex; flex: none; }
+.deck .pair img, .deck .pair .noimg { width: 52px; height: 72px; }
+.deck .pair > :nth-child(2) { margin-left: -22px; box-shadow: -3px 0 6px #0008; }

@@ -7,6 +7,8 @@
 //!   {"do": "land", "card": i}                    the i-th card in hand as your land drop
 //!   {"do": "cast", "card": i}                    the i-th card in hand
 //!   {"do": "cast", "zone": "cmd"}                your commander from the command zone
+//!   {"do": "cast", "zone": "cmd", "cmd": 1}      with Partner: the second commander (0, the default, is the first
+//!                                                in the zone; "cmd" may also be the commander's name)
 //!   {"do": "use", "perm": i}                     an ability of your i-th permanent (Equip, loyalty, ...)
 //!   {"do": "pass"}
 //! Follow-up questions (which target, which ability) come back as 'target' / 'choose' requests.
@@ -467,7 +469,7 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
     }
     if d == "cast" {
         let zone = if zone == Some("cmd") { "cmd" } else { "hand" };
-        let c = if zone == "cmd" { g.player(p).cmds_in_zone().next().or(Some(g.player(p).cmd)) } else { hand_card(g, p, act) };
+        let c = if zone == "cmd" { commander_of(g, p, act) } else { hand_card(g, p, act) };
         let Some(c) = c else { return Ok(Some("There is no such card in your hand.".into())) };
         if zone == "hand" && cards::hand_override(g, c) {
             return cards::cast_from_hand(g, p, c);
@@ -1024,4 +1026,16 @@ pub fn order_triggers(g: &mut Game, real: Vec<crate::hooks::Trigger>) -> Res<Vec
         i = j;
     }
     Ok(out)
+}
+
+/// the commander a `{"do": "cast", "zone": "cmd"}` action means: the one named by `"cmd"` (its index among the
+/// seat's commanders, or its name), else the first one in the command zone
+fn commander_of(g: &Game, p: PlayerId, act: &Value) -> Option<CardId> {
+    let pl = g.player(p);
+    let named = match act.get("cmd") {
+        Some(Value::Number(n)) => n.as_u64().and_then(|i| pl.commanders().nth(i as usize)),
+        Some(Value::String(s)) => pl.commanders().find(|&c| g.db.get(c).name.eq_ignore_ascii_case(s)),
+        _ => None,
+    };
+    named.or_else(|| pl.cmds_in_zone().next()).or(Some(pl.cmd))
 }

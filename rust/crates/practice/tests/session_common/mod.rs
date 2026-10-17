@@ -40,12 +40,21 @@ pub fn simple_answer(req: &Value) -> Value {
 
 /// Play the session's event stream until the game is over (or an error): answers each request with `policy`.
 /// Returns every event seen. Panics after `limit`.
-pub fn drive(s: &Arc<Session>, mut cursor: u64, limit: Duration, policy: &dyn Fn(&Value, usize) -> Option<Value>) -> (u64, Vec<Value>) {
+pub fn drive(
+    s: &Arc<Session>,
+    mut cursor: u64,
+    limit: Duration,
+    policy: &dyn Fn(&Value, usize) -> Option<Value>,
+) -> (u64, Vec<Value>) {
     let end = Instant::now() + limit;
     let mut all = vec![];
     let mut asked = 0;
     loop {
-        assert!(Instant::now() < end, "the game didn't finish in time; last events: {:?}", &all[all.len().saturating_sub(5)..]);
+        assert!(
+            Instant::now() < end,
+            "the game didn't finish in time; last events: {:?}",
+            &all[all.len().saturating_sub(5)..]
+        );
         let (c, evs) = s.events_after(cursor, Duration::from_millis(200));
         cursor = c;
         for ev in evs {
