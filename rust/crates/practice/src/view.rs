@@ -55,11 +55,12 @@ fn perm(g: &Game, m: sim_core::ids::PermId) -> Map<String, Value> {
 fn player(g: &Game, p: PlayerId, me: &str) -> Value {
     let pl = g.player(p);
     let you = &*pl.key == me;
+    // commander damage is counted per commander: the most one of a seat's commanders has dealt (rule 903.10a)
     let cmd_dmg: Map<String, Value> = g
         .players
         .iter()
-        .filter(|q| pl.cmd_dmg[q.id.index()] != 0)
-        .map(|q| (q.name.to_string(), pl.cmd_dmg[q.id.index()].into()))
+        .filter(|q| pl.cmd_dmg_from(q.id.index()) != 0)
+        .map(|q| (q.name.to_string(), pl.cmd_dmg_from(q.id.index()).into()))
         .collect();
     let names = |v: &[sim_core::ids::CardId]| -> Vec<String> { v.iter().map(|&c| g.db.get(c).name.to_string()).collect() };
     let battlefield: Vec<Value> = pl
@@ -93,6 +94,19 @@ fn player(g: &Game, p: PlayerId, me: &str) -> Value {
         "commander_in_zone": pl.cmd_in_zone, "tax": pl.tax, "treasures": pl.treasures,
         "battlefield": battlefield, "lands": lands,
     });
+    if let Some(c2) = pl.cmd2 {
+        // Partner: the second commander, with its own zone, tax and damage (who dealt how much with each)
+        d["commander2"] = (&*g.db.get(c2).name).into();
+        d["commander2_in_zone"] = pl.cmd2_in_zone.into();
+        d["tax2"] = pl.tax2.into();
+        let by: Map<String, Value> = g
+            .players
+            .iter()
+            .filter(|q| pl.cmd_dmg[q.id.index()] != 0 || pl.cmd2_dmg[q.id.index()] != 0)
+            .map(|q| (q.name.to_string(), json!([pl.cmd_dmg[q.id.index()], pl.cmd2_dmg[q.id.index()]])))
+            .collect();
+        d["commander_damage_by"] = by.into();
+    }
     if you {
         d["hand"] = names(&pl.hand).into();
         d["hand_land"] = pl.hand.iter().map(|&c| g.db.get(c).land).collect::<Vec<_>>().into();

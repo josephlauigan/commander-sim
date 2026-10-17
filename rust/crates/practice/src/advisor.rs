@@ -46,8 +46,8 @@ fn main_phase(g: &mut Game, p: PlayerId) -> Value {
         Err(_) => return json!({"text": "Nothing to do: pass.", "detail": [], "choice": null}),
     };
     let mut names: HashSet<String> = g2.player(p).hand.iter().map(|&c| g2.db.get(c).name.to_string()).collect();
-    if g2.player(p).cmd_in_zone {
-        names.insert(g2.db.get(g2.player(p).cmd).name.to_string());
+    for c in g2.player(p).cmds_in_zone() {
+        names.insert(g2.db.get(c).name.to_string());
     }
     if opts.len() < 2 {
         return match opts.first() {
