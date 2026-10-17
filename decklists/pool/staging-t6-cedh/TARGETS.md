@@ -38,7 +38,7 @@ the size-weighted values plus or minus 4 points, which covers the run-to-run noi
 
 ## Deck-level targets
 
-Six-month EDHTop16 numbers for the five Tier 6 commanders. "Decisive share" is the game win rate divided by
+Six-month EDHTop16 numbers for the six Tier 6 commanders. "Decisive share" is the game win rate divided by
 (1 − 24.4%), the field's draw rate.
 
 | Deck | Entries | Meta share | Top-cut conversion | Game win rate | Decisive share |
@@ -48,11 +48,12 @@ Six-month EDHTop16 numbers for the five Tier 6 commanders. "Decisive share" is t
 | Rograkh & Thrasios | 861 | 5.1% | 20.6% | 19.4% | 25.7% |
 | Rograkh & Silas | 751 | 4.4% | 16.1% | 18.1% | 23.9% |
 | Sisay | 647 | 3.8% | 24.3% | 20.8% | 27.5% |
+| Dack Fayden | 32 | 0.3% | 53.1% | 37.2% | 49.2% |
 
 In real events these decks face the whole field, not only each other. Within Tier 6 the target is therefore
 balance rather than the exact values:
 
-- each deck wins **18–32%** of the decisive games it plays in, in Tier 6 pods (an even share is 25%);
+- each deck wins **18–32%** of the decisive games it plays in, in Tier 6 pods (an even share is 25%). Dack Fayden is held to the same range: its 49% comes from only 32 entries in its first two weeks;
 - the gap between the best and worst deck is **8 points or less** (the real gap is 4 points);
 - no deck wins more than half its games through one line the primer calls a backup.
 
@@ -63,7 +64,7 @@ conversion**; over one year: 144 entries, 21.2%, 26.4%. The sample is small. God
 events and only top decks in Tier 6, so a lower sim result is expected. A sim result far outside **15–35% of
 decisive games** points to a modeling problem to find before trusting any Godo number.
 
-## The five decks
+## The six decks
 
 | Deck | File | Way of winning | Source list |
 | --- | --- | --- | --- |
@@ -71,11 +72,13 @@ decisive games** points to a modeling problem to find before trusting any Godo n
 | Kinnan | `kinnan-bonder-mana-combo.md` | Mana combo with creatures | SIEGE cEDH 10K, #1 of 308, 2026-06-13 |
 | Rograkh & Silas | `rograkh-silas-turbo-breach.md` | Turbo Oracle and Breach | CCS Invitational Qualifier #2, #1 of 125, 2026-06-13 |
 | Rograkh & Thrasios | `rograkh-thrasios-creature-combo.md` | Green creature-engine combo | Pittsburgh 2026, #1 of 195, 2026-07-11 |
-| Sisay | `sisay-legends-toolbox.md` | Taxing legends toolbox (stax slot) | The Cookout 2026, #2 of 238, 2026-08-29 |
+| Sisay | `sisay-legends-toolbox.md` | Taxing legends toolbox | The Cookout 2026, #2 of 238, 2026-08-29 |
+| Dack Fayden | `dack-fayden-white-stax.md` | Stax (added at JD's request 2026-10-17) | Baked Ziti 4, #1 of 119, 2026-10-03 |
 
-No dedicated stax deck reached the top of the meta in the window: Derevi had 4 top-4 lists, Tivit 1. Sisay carries
-the most table control of the top decks (Teferi, Time Raveler; Lotho; Silence; Esper Sentinel; Smothering Tithe),
-so it fills the stax slot.
+Among the established decks no dedicated stax deck reached the top of the meta in the window (Derevi had 4 top-4
+lists, Tivit 1). Dack Fayden, released 2026-10-02, is a true stax deck and fills that slot. Its numbers come from its
+first two weeks only, and a new deck's early results often fall once the field adapts, so its deck-level target is
+the same balance range as the others.
 
-All five lists were checked against Scryfall on 2026-10-17: 100 cards, singleton, within colour identity, all
-Commander-legal. 111 of their 263 unique cards are not yet in the card database (143 with Godo's).
+All six lists were checked against Scryfall on 2026-10-17: 100 cards, singleton, within colour identity, all
+Commander-legal. 158 of their 329 unique cards are not yet in the card database (185 with Godo's).

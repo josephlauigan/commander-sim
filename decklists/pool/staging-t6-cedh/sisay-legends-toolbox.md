@@ -11,7 +11,7 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Taxing toolbox.
 
 ## Role in the pool
 
-Fourth by meta share (3.8%) with the best conversion of the five (24.3%). Sisay fetches legends on demand, including Teferi, Time Raveler, Lotho and Kinnan, and plays Silence and Esper Sentinel. It is the closest thing to stax in the current top meta, so it fills the stax slot and tests Godo against taxes and sorcery-speed locks.
+Fourth by meta share (3.8%) with the best conversion of the five (24.3%). Sisay fetches legends on demand, including Teferi, Time Raveler, Lotho and Kinnan, and plays Silence and Esper Sentinel. It is the most taxing of the top-meta decks and tests Godo against taxes and sorcery-speed locks. (The dedicated stax slot is Dack Fayden.)
 
 ## Strategy
 
