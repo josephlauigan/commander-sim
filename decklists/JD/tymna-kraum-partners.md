@@ -191,15 +191,15 @@ before the game.
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
-**Artifacts (9).** Arcane Signet, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Potioner's Trove, Shield of Kaldra, Talisman of Conviction
+**Artifacts (9).** Arcane Signet, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Orzhov Signet, Shield of Kaldra, Talisman of Conviction
 
 **Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Tocasia's Welcome
 
-**Instants (9).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Harsh Annotation, Masterful Flourish, Path to Exile, Scorching Dragonfire, Swords to Plowshares
+**Instants (7).** Arcane Denial, Bedevil, Disenchant, Fact or Fiction, Masterful Flourish, Path to Exile, Swords to Plowshares
 
 **Sorceries (4).** Diabolic Tutor, Expressive Iteration, Rip Apart, Toxic Deluge
 
-**Lands (36).** Battlefield Forge, Caves of Koilos, Clifftop Retreat, Command Tower, Dragonskull Summit, Drowned Catacomb, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Isolated Chapel, Port Town, Rugged Prairie, Shattered Sanctum, Spectator Seating, Sulfur Falls, Unclaimed Territory, Underground River, 5 Island, 6 Plains, 5 Swamp, 3 Mountain
+**Lands (38).** Battlefield Forge, Caves of Koilos, Clifftop Retreat, Command Tower, Dragonskull Summit, Drowned Catacomb, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Isolated Chapel, Port Town, Rugged Prairie, Shattered Sanctum, Spectator Seating, Sulfur Falls, Unclaimed Territory, Underground River, 6 Island, 7 Plains, 5 Swamp, 3 Mountain
 
 ## Import list (100)
 
@@ -242,7 +242,6 @@ before the game.
 1 Glacial Fortress
 1 Glorybringer
 1 Grave Titan
-1 Harsh Annotation
 1 Helm of Kaldra
 1 Hero of Bladehold
 1 Isolated Chapel
@@ -256,15 +255,14 @@ before the game.
 1 Moseo, Vein's New Dean
 1 Nightveil Predator
 1 Nightwind Glider
+1 Orzhov Signet
 1 Path to Exile
 1 Port Town
-1 Potioner's Trove
 1 Propaganda
 1 Restoration Angel
 1 Rip Apart
 1 Rugged Prairie
 1 Rune-Scarred Demon
-1 Scorching Dragonfire
 1 Serra Angel
 1 Shattered Sanctum
 1 Shield of Kaldra
@@ -285,8 +283,8 @@ before the game.
 1 Underground River
 1 Vampire Nighthawk
 1 Windborn Muse
-5 Island
+6 Island
 3 Mountain
-6 Plains
+7 Plains
 5 Swamp
 ```

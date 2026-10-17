@@ -1,1 +1,103 @@
 4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m43s elapsed, ~6m27s left
+  progress  20.0%  1m26s elapsed, ~5m45s left
+  progress  30.0%  2m10s elapsed, ~5m04s left
+  progress  40.0%  2m58s elapsed, ~4m27s left
+  progress  50.0%  3m44s elapsed, ~3m44s left
+  progress  60.0%  4m28s elapsed, ~2m59s left
+  progress  70.0%  5m16s elapsed, ~2m15s left
+  progress  80.0%  6m01s elapsed, ~1m30s left
+  progress  90.0%  6m47s elapsed, ~0m45s left
+  progress 100.0%  7m35s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 4000 games] ===========
+Win rate 29.7%   (4-player baseline 25%)   average rounds survived 12.4
+
+-- How it wins --
+  damage      92.8% of wins
+  timeout      7.2% of wins
+  Opponents it eliminated: 0.74 per game, by
+    combat             91.2%
+    commander damage    4.4%
+    triggers            4.1%
+    decked              0.2%
+  Damage dealt per game: 35.5, from
+    combat              34.9  (98%)
+    triggers             0.7  (2%)
+    drain                0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.31; Tymna turns per game 4.91; opponents hit per Tymna turn 0.56
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.76 (in 97% of games)
+  Kraum lands on turn 6.07 (in 89% of games)
+
+-- How it loses --
+  Eliminated in 68.2% of games, on average in round 11.1
+    by Aurelia  via combat             16.4% of games
+    by Tergrid  via combat             13.0% of games
+    by Marwyn   via combat             11.1% of games
+    by Atraxa   via combat              8.4% of games
+    by Tergrid  via drain               3.6% of games
+    by Korvold  via drain               2.9% of games
+    by Korvold  via combat              2.0% of games
+    by Tergrid  via triggers            1.9% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.7 (over the 98.0% of games it resolves)
+  Commander resolved by turn:  T4 82%  T5 89%  T6 93%  T7 95%  T8 97%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Terror of the Peaks                        cast in  18.2% of games, win rate when cast  55.8% (+26.1)
+    Dream Trawler                              cast in  11.3% of games, win rate when cast  55.7% (+26.0)
+    Thundermaw Hellkite                        cast in  13.7% of games, win rate when cast  54.3% (+24.6)
+    Marchesa, the Black Rose                   cast in  13.7% of games, win rate when cast  54.3% (+24.6)
+    Glorybringer                               cast in  13.4% of games, win rate when cast  54.0% (+24.3)
+    Sun Titan                                  cast in  11.4% of games, win rate when cast  53.8% (+24.1)
+    Gilgamesh, Master-at-Arms                  cast in  11.2% of games, win rate when cast  53.8% (+24.1)
+    Rune-Scarred Demon                         cast in  10.7% of games, win rate when cast  53.8% (+24.1)
+    Elspeth, Sun's Champion                    cast in  10.3% of games, win rate when cast  53.4% (+23.7)
+    Grave Titan                                cast in  11.1% of games, win rate when cast  53.3% (+23.6)
+  Lowest win rate when cast:
+    Toxic Deluge                               cast in  15.8% of games, win rate when cast  29.3% (-0.4)
+    Tymna the Weaver                           cast in  97.3% of games, win rate when cast  30.4% (+0.7)
+    Kraum, Ludevic's Opus                      cast in  89.5% of games, win rate when cast  32.8% (+3.1)
+    Path to Exile                              cast in  23.9% of games, win rate when cast  37.7% (+8.0)
+    Scorching Dragonfire                       cast in  16.3% of games, win rate when cast  37.7% (+8.0)
+    Potioner's Trove                           cast in  19.0% of games, win rate when cast  38.3% (+8.6)
+    Harsh Annotation                           cast in  22.1% of games, win rate when cast  39.1% (+9.4)
+    Arcane Denial                              cast in  18.1% of games, win rate when cast  39.5% (+9.8)
+    Restoration Angel                          cast in  20.6% of games, win rate when cast  39.6% (+9.9)
+    Swords to Plowshares                       cast in  22.5% of games, win rate when cast  39.7% (+10.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Elspeth, Sun's Champion                    cast  38.2% of the games it was drawn
+    Rune-Scarred Demon                         cast  39.1% of the games it was drawn
+    Gilgamesh, Master-at-Arms                  cast  41.4% of the games it was drawn
+    Fact or Fiction                            cast  41.9% of the games it was drawn
+    Sun Titan                                  cast  42.2% of the games it was drawn
+    Grave Titan                                cast  42.3% of the games it was drawn
+    Dream Trawler                              cast  45.7% of the games it was drawn
+    Diabolic Tutor                             cast  46.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.42
+    Kraum, Ludevic's Opus                      0.36
+    Helm of Kaldra                             0.07
+    Elspeth, Sun's Champion                    0.06
+    Terror of the Peaks                        0.04
+    Ghostly Prison                             0.04
+    Crawlspace                                 0.04
+    Hero of Bladehold                          0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(456s total)
