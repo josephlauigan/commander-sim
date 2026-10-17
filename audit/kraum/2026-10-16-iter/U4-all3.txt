@@ -1,0 +1,14 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Urza, Lord High Artificer [pool] C 2UU :: leg human pow=1 tgh=4
+   Winota, Joiner of Forces [pool] C 2RW :: leg human warrior pow=4
+   Purphoros, God of the Forge [pool] E 3R :: leg
+Model status of the swapped-in cards (cardgen audit):
+  Urza, Lord High Artificer: Full (Construct token (+1/+1 per artifact); artifacts tap for U; {5}: a free card off the top)
+  Winota, Joiner of Forces: Full (each non-Human attacker: a Human from the top six onto the battlefield attacking and indestructible (ETBs fire))
+  Purphoros, God of the Forge: Full (indestructible; a creature only with devotion to red 5+ (6/5); 2 damage to each opponent per creature entering; {2}{R}: creatures +1/+0)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m45s elapsed, ~6m52s left
+  progress  20.0%  1m32s elapsed, ~6m08s left
+  progress  30.0%  2m21s elapsed, ~5m29s left
+Killed: stopped at JD's request (the package cut Bedevil)
