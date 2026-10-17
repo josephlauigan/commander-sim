@@ -10,8 +10,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
-/// the decks the setup screen offers, in the order of Python's `poolmode.MINE` (error messages list them so)
-pub const MY_DECKS: [&str; 6] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela"];
+/// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
+pub const MY_DECKS: [&str; 12] = ["seph", "veyran", "sauron", "yshtola", "galadriel", "alela", "kefka", "titania", "sheoldred", "cloud", "kraum", "sephfs"];
 
 fn read(path: &Path) -> Option<String> {
     std::fs::read_to_string(path).ok()
@@ -29,17 +29,24 @@ fn my_deck_files(data: &Path) -> Vec<(String, String)> {
             && let Some(last) = out.last_mut()
         {
             last.1 = v.trim().trim_matches('"').to_string();
-        } else if line.starts_with("commander2") {
-            // two commanders (Partner): the practice setup screen shows one commander per deck, so not these yet
-            out.pop();
         }
     }
     out
 }
 
-/// the commander as the deck file names it: `**Commander (1).** Name (anything)`
+/// the commander as the deck file names it: `**Commander (1).** Name (anything)`; a Partner deck names both,
+/// `**Commanders (2).** Name, Name2` (shown as "Name and Name2", the short names when it is long)
 pub fn display_name(text: &str) -> Option<String> {
     for line in text.lines() {
+        if let Some(rest) = line.strip_prefix("**Commanders (2).**") {
+            let s = rest.trim();
+            if let Some((a, b)) = s.split_once(", ")
+                && !a.is_empty()
+            {
+                // "Tymna the Weaver, Kraum, Ludevic's Opus": the first name has no comma of its own here
+                return Some(format!("{} and {}", a, short_name(b)));
+            }
+        }
         if let Some(rest) = line.strip_prefix("**Commander (1).**") {
             let mut s = rest.trim();
             if s.ends_with(')')
@@ -181,7 +188,9 @@ pub fn catalog(data: &Path) -> Result<Value, String> {
         let bracket = stated_bracket(&text).unwrap_or(if gcs.len() > 3 { 4 } else { 3 });
         let r = rates.get(&key);
         decks.push(json!({
-            "key": key, "commander": commander, "name": display_name(&text).unwrap_or(commander.to_string()),
+            "key": key, "commander": commander, "commander2": d.get("commander2").cloned().unwrap_or(Value::Null),
+            "commanders": std::iter::once(commander).chain(d["commander2"].as_str()).collect::<Vec<_>>(),
+            "ident": d.get("ident").cloned().unwrap_or(Value::Null), "name": display_name(&text).unwrap_or(commander.to_string()),
             "bracket": bracket, "game_changers": gcs,
             "win_rates": r.map(|r| TIERS[1..].iter().zip(r).map(|(t, v)| (t.to_string(), json!(v))).collect::<serde_json::Map<_, _>>()),
             "average": r.map(|r| round1(r.iter().sum::<f64>() / r.len() as f64)),
@@ -215,7 +224,7 @@ pub fn commanders(cat: &Value) -> Vec<String> {
         .as_array()
         .into_iter()
         .flatten()
-        .filter_map(|d| d["commander"].as_str())
+        .flat_map(|d| d["commanders"].as_array().into_iter().flatten().filter_map(|c| c.as_str()))
         .map(String::from)
         .collect();
     for t in cat["tiers"].as_array().into_iter().flatten() {

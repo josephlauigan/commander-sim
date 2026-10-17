@@ -50,6 +50,8 @@ pub struct Entry {
     /// your hand and commander (if in the command zone) at the decision
     pub hand: Vec<String>,
     pub cmd: Option<String>,
+    /// the second commander (Partner) if it is in the command zone
+    pub cmd2: Option<String>,
     pub ai_plan: Option<(usize, String)>,
     pub n_choices: usize,
 }
@@ -64,7 +66,7 @@ impl Entry {
         json!({
             "n": self.n, "round": self.round, "step": self.step, "kind": self.kind, "situation": self.situation,
             "yours": self.yours, "ai": self.ai, "scores": self.scores.iter().map(|(k, v)| json!([k, v])).collect::<Vec<_>>(),
-            "scored": self.scored, "note": self.note, "yours_key": self.yours_key, "hand": self.hand, "cmd": self.cmd,
+            "scored": self.scored, "note": self.note, "yours_key": self.yours_key, "hand": self.hand, "cmd": self.cmd, "cmd2": self.cmd2,
             "ai_plan": self.ai_plan.as_ref().map(|(i, m)| json!([i, m])), "n_choices": self.n_choices,
         })
     }
@@ -93,6 +95,7 @@ impl Entry {
             yours_key: s("yours_key"),
             hand: strs("hand"),
             cmd: s("cmd"),
+            cmd2: s("cmd2"),
             ai_plan: d.get("ai_plan").and_then(|p| Some((p.get(0)?.as_u64()? as usize, p.get(1)?.as_str()?.to_string()))),
             n_choices: d.get("n_choices").and_then(Value::as_u64).unwrap_or(0) as usize,
         })
@@ -109,8 +112,8 @@ impl Entry {
             if let Some(i) = self.hand.iter().position(|h| h == name) {
                 return Some(Answer::Action(json!({"do": "cast", "card": i})));
             }
-            if self.cmd.as_deref() == Some(name) {
-                return Some(Answer::Action(json!({"do": "cast", "zone": "cmd"})));
+            if self.cmd.as_deref() == Some(name) || self.cmd2.as_deref() == Some(name) {
+                return Some(Answer::Action(json!({"do": "cast", "zone": "cmd", "cmd": name})));
             }
             return None;
         }
@@ -256,6 +259,7 @@ impl Shadow {
                     yours: yours_text(g, p, a, label.as_deref()),
                     hand: pl.hand.iter().map(|&c| g.db.get(c).name.to_string()).collect(),
                     cmd: pl.cmd_in_zone.then(|| g.db.get(pl.cmd).name.to_string()),
+                    cmd2: pl.cmd2.filter(|_| pl.cmd2_in_zone).map(|c| g.db.get(c).name.to_string()),
                     ..Default::default()
                 };
                 match label {
@@ -539,7 +543,8 @@ fn main_label(g: &Game, p: PlayerId, ans: &Value) -> Option<String> {
         "cast" => {
             let pl = g.player(p);
             if ans.get("zone").and_then(Value::as_str) == Some("cmd") {
-                return Some(g.db.get(pl.cmd).name.to_string());
+                let c = commander_cast(g, p, ans);
+                return Some(g.db.get(c).name.to_string());
             }
             let i = ans.get("card").and_then(Value::as_u64)? as usize;
             let zone = if ans.get("zone").and_then(Value::as_str) == Some("gy") { &pl.gy } else { &pl.hand };
@@ -615,4 +620,15 @@ fn attack_name(g: &Game, c: (PlayerId, &str)) -> String {
         "all" => format!("Attack {who} with everything"),
         _ => format!("Attack {who} (safe attackers)"),
     }
+}
+
+/// the commander a `cast from the command zone` answer means (the one named, else the first in the zone)
+fn commander_cast(g: &Game, p: PlayerId, ans: &Value) -> sim_core::ids::CardId {
+    let pl = g.player(p);
+    let named = match ans.get("cmd") {
+        Some(Value::Number(n)) => n.as_u64().and_then(|i| pl.commanders().nth(i as usize)),
+        Some(Value::String(s)) => pl.commanders().find(|&c| g.db.get(c).name.eq_ignore_ascii_case(s)),
+        _ => None,
+    };
+    named.or_else(|| pl.cmds_in_zone().next()).unwrap_or(pl.cmd)
 }

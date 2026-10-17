@@ -1,5 +1,5 @@
 // The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
-import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards } from './table.js';
+import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards, commandersOf } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
 let liveFrom = 0;           // events up to this id are history replayed on load: no pop-up messages for them
@@ -82,7 +82,7 @@ function renderPrompt(ev) {
     row('Hand', me.hand.flatMap((n, i) => me.hand_land[i]
       ? [btn(`Play ${n}`, { do: 'land', card: i })].concat(me.hand_special[i] ? [btn(`Cast ${n.split(' // ')[0]}`, { do: 'cast', card: i })] : [])
       : [btn(`Cast ${n}`, { do: 'cast', card: i })]));
-    if (me.commander_in_zone) row('Command zone', [btn(`${me.commander} (tax ${me.tax})`, { do: 'cast', zone: 'cmd' })]);
+    row('Command zone', commandersOf(me).filter((c) => c.in_zone).map((c) => btn(`${c.name} (tax ${c.tax})`, { do: 'cast', zone: 'cmd', cmd: c.i })));
     row('Activate', me.battlefield.map((m) => btn(m.name, { do: 'use', perm: m.i })));
     row('Land abilities', me.lands.filter((L) => L.ability).map((L) => btn(L.name, { do: 'use', land: L.i })));
     row('Graveyard', (me.graveyard_playable || []).map((x) => btn(`${x.name} (${x.how})`, { do: x.how === 'land' ? 'land' : 'cast', zone: 'gy', card: x.i })));
@@ -256,7 +256,7 @@ function onTableClick(e) {
     else if (me.hand_special[i]) menu(e, name, [['Play it as your land', { do: 'land', card: i }], [`Cast ${name.split(' // ')[0]}`, { do: 'cast', card: i }]]);
     else answer({ do: 'land', card: i });
   } else if (t.dataset.cmd !== undefined) {
-    answer({ do: 'cast', zone: 'cmd' });
+    answer({ do: 'cast', zone: 'cmd', cmd: +t.dataset.cmd });
   } else if (t.dataset.gy !== undefined) {
     const i = +t.dataset.gy;
     const playable = (me.graveyard_playable || []).find((x) => x.i === i);
@@ -552,7 +552,7 @@ async function showJoin(st) {
     el('div', { class: 'decks', role: 'radiogroup', 'aria-label': 'Your deck' }, catalog.decks.map((d) => el('button', Object.assign({
       type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === joinDeck),
       onclick: () => { joinDeck = d.key; showJoin(st); },
-    }, allowed(d) ? {} : { disabled: '' }), cardImage(d.commander), el('span', {}, el('b', {}, d.name),
+    }, allowed(d) ? {} : { disabled: '' }), deckImages(d), el('span', {}, el('b', {}, d.name),
       el('small', {}, d.key === lb.deck ? "The host's deck" : `Bracket ${d.bracket}`))))),
     el('div', { class: 'row' }, el('label', {}, 'Code ', el('input', { name: 'code', inputmode: 'numeric', autocomplete: 'off', value: typed })),
       el('button', { type: 'button', class: 'primary big', onclick: async () => {
@@ -646,6 +646,12 @@ function cardImage(name, cls = '') {
   return files ? el('img', { src: `/images/${files[0]}`, alt: name, class: cls, loading: 'lazy' }) : el('span', { class: 'noimg ' + cls });
 }
 
+// a deck's commander art: one card, or two overlapping for a Partner deck
+function deckImages(d) {
+  const names = d.commanders || [d.commander];
+  return names.length < 2 ? cardImage(names[0]) : el('span', { class: 'pair' }, names.map((n) => cardImage(n)));
+}
+
 function pct(x) { return x == null ? '–' : `${x.toFixed(1)}%`; }
 
 function renderSetup() {
@@ -653,7 +659,7 @@ function renderSetup() {
   $('#decks').replaceChildren(...catalog.decks.map((d) => el('button', {
     type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === chosen.deck),
     onclick: () => { chosen.deck = d.key; renderSetup(); },
-  }, cardImage(d.commander), el('span', {}, el('b', {}, d.name),
+  }, deckImages(d), el('span', {}, el('b', {}, d.name),
     el('small', {}, `Bracket ${d.bracket} · ${d.game_changers.length} Game Changers`),
     el('small', {}, d.average == null ? 'No simulation results yet' : `Simulations: ${pct(d.average)} average`)))));
   $('#tiers').replaceChildren(...catalog.tiers.map((t) => el('button', {
