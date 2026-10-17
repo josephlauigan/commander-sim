@@ -11,7 +11,7 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Mana combo with creat
 
 ## Role in the pool
 
-Second by meta share (6.9%, 19.2% conversion). It wins through Kinnan's extra mana (Basalt Monolith, Dramatic Reversal) on a creature base. It tests Godo against a deck that races it with mana dorks rather than fighting the stack.
+Second by meta share (6.9%, 19.2% conversion). It wins through Kinnan's extra mana (Basalt Monolith with Kinnan is unbounded) or Hullbreaker Horror loops, on a creature base. (This list has no Isochron Scepter, so Dramatic Reversal is ramp only.) It tests Godo against a deck that races it with mana dorks rather than fighting the stack.
 
 ## Strategy
 
