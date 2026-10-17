@@ -48,55 +48,6 @@
    "spell_prio": false
   },
   {
-   "name": "Abigale, Poet Laureate",
-   "types": "C",
-   "generic": 1,
-   "pips": "WB",
-   "tags": {
-    "leg": true,
-    "pow": "2",
-    "tgh": "3",
-    "fly": true
-   },
-   "pow": 2,
-   "tgh": 3,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [
-    "flying",
-    "prepared"
-   ],
-   "subtypes": [
-    "bard",
-    "bird"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "BW",
-   "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever you cast a creature spell, ~ becomes prepared.",
-    "[back face] Put a +1/+1 counter on target creature."
-   ],
-   "derived": {
-    "cmc": 3,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Abigale, Poet Laureate // Heroic Stanza",
    "types": "C",
    "generic": 1,

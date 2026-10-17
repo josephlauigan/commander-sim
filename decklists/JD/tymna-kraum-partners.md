@@ -187,7 +187,7 @@ before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (34).** Abigale, Poet Laureate, Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Rescue, Pepper Potts, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Dream Trawler, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -204,7 +204,6 @@ before the game.
 ## Import list (100)
 
 ```
-1 Abigale, Poet Laureate
 1 Adeline, Resplendent Cathar
 1 Arcane Denial
 1 Arcane Signet
@@ -226,6 +225,7 @@ before the game.
 1 Diabolic Tutor
 1 Disenchant
 1 Dragonskull Summit
+1 Dream Trawler
 1 Drowned Catacomb
 1 Elemental Mascot
 1 Elenda, the Dusk Rose
@@ -247,7 +247,6 @@ before the game.
 1 Hero of Bladehold
 1 Isolated Chapel
 1 Kraum, Ludevic's Opus
-1 Laelia, the Blade Reforged
 1 Lightning Greaves
 1 Lightning, Security Sergeant
 1 Lyra Dawnbringer
@@ -261,11 +260,12 @@ before the game.
 1 Port Town
 1 Potioner's Trove
 1 Propaganda
-1 Rescue, Pepper Potts
 1 Restoration Angel
 1 Rip Apart
 1 Rugged Prairie
+1 Rune-Scarred Demon
 1 Scorching Dragonfire
+1 Serra Angel
 1 Shattered Sanctum
 1 Shield of Kaldra
 1 Skyclave Apparition
@@ -273,10 +273,10 @@ before the game.
 1 Sphinx of New Prahv
 1 Sulfur Falls
 1 Sun Titan
+1 Sunblast Angel
 1 Swords to Plowshares
 1 Talisman of Conviction
 1 Terror of the Peaks
-1 The Wasp, Winsome Avenger
 1 Thundermaw Hellkite
 1 Tocasia's Welcome
 1 Toxic Deluge
