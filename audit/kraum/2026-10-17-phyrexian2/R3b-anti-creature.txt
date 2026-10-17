@@ -1,0 +1,116 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Skrelv, Defector Mite [scryfall+dsl] AC W :: leg pow=1
+      ability: static cant_block -> 
+      not modeled: {W/P}, {T}: Choose a color. Another target creature you control gains toxic 1 and hexproof from that color until end of turn. It can't be blocked by creatures of that color this turn.
+   Gut Shot [pool] I R :: rem=dmg1 tgt=c face
+   White Sun's Twilight [pool] S WW :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Skrelv, Defector Mite: Full (1/1 toxic 1, can't block (compiled; toxic via tymna_cards::toxic_hit in combat). {W/P},{T}: another creature of yours gains toxic 1 and hexproof from a chosen colour, and can't be blocked by creatures of that colour, until end of turn. The AI uses it in response to removal on a commander or a creature worth 4+ (the spell's colour), or before combat on the best attacker against the colour of the opposing blockers that matter)
+  Gut Shot: Full (1 damage to any target (tags rem=dmg1 face, like Lightning Bolt); {R/P} paid with {R} or 2 life above 10 life (engine Phyrexian payment). The AI shoots a toughness-1 creature worth a card (pval 0.9+) and otherwise holds it (tymna_cards.rs gut_shot_options))
+  White Sun's Twilight: Full (gain X life, X 1/1 colourless Phyrexian Mite artifact creature tokens with toxic 1 and can't block; at X 5+ destroy all creatures (the Mites too). The AI casts X 5+ as a wipe when the opponents lose clearly more board value, else X up to 4 for life and bodies (tymna_cards.rs twilight_options))
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m45s elapsed, ~6m52s left
+  progress  20.0%  1m33s elapsed, ~6m13s left
+  progress  30.0%  2m22s elapsed, ~5m32s left
+  progress  40.0%  3m11s elapsed, ~4m47s left
+  progress  50.0%  4m05s elapsed, ~4m05s left
+  progress  60.0%  4m51s elapsed, ~3m14s left
+  progress  70.0%  5m41s elapsed, ~2m26s left
+  progress  80.0%  6m28s elapsed, ~1m37s left
+  progress  90.0%  7m20s elapsed, ~0m48s left
+  progress 100.0%  8m11s elapsed, ~0m00s left
+Swaps: Tocasia's Welcome -> Skrelv, Defector Mite; Expressive Iteration -> Gut Shot; Memory Trap -> White Sun's Twilight
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.9% ->  35.6%  (delta +0.8 pts, noise ±2.9, paired)   n=2000
+               eliminated by (variant): Tergrid 17.4%  Atraxa 9.2%  Aurelia 19.1%  Marwyn 9.6%  Korvold 7.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.8% ->  35.6%  +0.8pt   ±3.0 
+    Rounds survived (or game length)                  12.42 ->  12.46   +0.04  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.52   +0.00  ±0.05 
+    Mana available on your turn 4                      3.98 ->   3.98   +0.00  ±0.05 
+    Mana available on your turn 6                      5.55 ->   5.52   -0.03  ±0.07 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.68   -0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.20 ->  18.98   -0.22  ±0.52 
+    Tutors resolved per game                           0.25 ->   0.23   -0.01  ±0.03 
+    Spells cast per game                              15.05 ->  15.00   -0.05  ±0.48 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.17   -0.00  ±0.02 
+    Spot removal cast                                  0.99 ->   1.22   +0.23  ±0.06*
+    Board wipes cast                                   0.15 ->   0.16   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.79 ->   0.80   +0.01  ±0.07 
+    Your spells countered                              0.15 ->   0.13   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.17 ->  39.09   +0.92  ±2.36 
+      ...of which combat damage                       37.48 ->  38.36   +0.88  ±2.31 
+      ...of which magecraft / burn                     0.00 ->   0.01   +0.01  ±0.00*
+      ...of which other triggers                       0.69 ->   0.73   +0.04  ±0.17 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    better - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Skrelv, Defector Mite                 24.3      84.6         7.2     15.4       42.6      0.03
+    Gut Shot                              26.6      82.7         6.4     17.3       39.0      0.00
+    White Sun's Twilight                  26.0      47.7        11.1     52.3       54.8      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Tocasia's Welcome                     24.4      69.5         9.1     30.5       49.0      0.01
+    Expressive Iteration                  27.1      62.4         9.6     37.6       50.9      0.00
+    Memory Trap                           26.1      79.1         9.2     20.9       49.5      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.9      35.6     +0.8
+    rounds survived                                  12.42     12.46    +0.04
+    eliminated, % of games                            63.9      62.4     -1.5
+    opponents it eliminated, per game                 0.81      0.86    +0.05
+    damage dealt, per game                            38.2      39.1     +0.9
+    commander resolved by turn 4, %                   81.8      82.2     +0.4
+    commander resolved by turn 6, %                   94.3      94.2     -0.1
+    commander removals, per game                      0.81      0.79    -0.02
+    lands on the battlefield, turn 4                  3.76      3.76    -0.00
+    lands on the battlefield, turn 8                  6.67      6.68    +0.00
+    mana available, turn 4                            3.98      3.98    +0.00
+    mana available, turn 8                            6.98      6.97    -0.01
+    cards in hand after the land drop, turn 4         6.34      6.23    -0.10
+    cards in hand after the land drop, turn 8         6.38      6.30    -0.08
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 92%, timeout 8%
+    eliminated by (current): Aurelia via combat 15.2%, Tergrid via combat 13.1%, Marwyn via combat 10.8%, Atraxa via combat 7.1%
+    eliminated by (swapped): Aurelia via combat 15.6%, Tergrid via combat 12.7%, Marwyn via combat 9.3%, Atraxa via combat 7.2%
+
+(492s total)

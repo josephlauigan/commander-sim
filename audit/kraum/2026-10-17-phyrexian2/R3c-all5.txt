@@ -1,0 +1,131 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Archfiend of the Dross [pool] C 2BB :: pow=6 bomb=6 fly
+   Skrelv, Defector Mite [scryfall+dsl] AC W :: leg pow=1
+      ability: static cant_block -> 
+      not modeled: {W/P}, {T}: Choose a color. Another target creature you control gains toxic 1 and hexproof from that color until end of turn. It can't be blocked by creatures of that color this turn.
+   Gut Shot [pool] I R :: rem=dmg1 tgt=c face
+   White Sun's Twilight [pool] S WW :: (no tags)
+   Phyrexian Unlife [pool] E 2W :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Archfiend of the Dross: Full (6/6 flier; enters with four oil counters (as_enters); at your upkeep one comes off and with none left you lose the game (really eliminated; Herald of Eternal Dawn stops it); an opposing creature dying costs its controller 2 life (archfiend_dies). With one counter left the AI blinks it with Restoration Angel from the hand, else the game is lost (tymna_cards.rs archfiend_upkeep))
+  Skrelv, Defector Mite: Full (1/1 toxic 1, can't block (compiled; toxic via tymna_cards::toxic_hit in combat). {W/P},{T}: another creature of yours gains toxic 1 and hexproof from a chosen colour, and can't be blocked by creatures of that colour, until end of turn. The AI uses it in response to removal on a commander or a creature worth 4+ (the spell's colour), or before combat on the best attacker against the colour of the opposing blockers that matter)
+  Gut Shot: Full (1 damage to any target (tags rem=dmg1 face, like Lightning Bolt); {R/P} paid with {R} or 2 life above 10 life (engine Phyrexian payment). The AI shoots a toughness-1 creature worth a card (pval 0.9+) and otherwise holds it (tymna_cards.rs gut_shot_options))
+  White Sun's Twilight: Full (gain X life, X 1/1 colourless Phyrexian Mite artifact creature tokens with toxic 1 and can't block; at X 5+ destroy all creatures (the Mites too). The AI casts X 5+ as a wipe when the opponents lose clearly more board value, else X up to 4 for life and bodies (tymna_cards.rs twilight_options))
+  Phyrexian Unlife: Full (you don't lose for 0 or less life (check_state); at 0 or less life damage to you is dealt as poison counters (lose_life), ten poison still lose; the AI casts it once at 20 life or less)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m46s elapsed, ~6m57s left
+  progress  20.0%  1m33s elapsed, ~6m13s left
+  progress  30.0%  2m22s elapsed, ~5m32s left
+  progress  40.0%  3m11s elapsed, ~4m47s left
+  progress  50.0%  4m04s elapsed, ~4m04s left
+  progress  60.0%  4m48s elapsed, ~3m12s left
+  progress  70.0%  5m33s elapsed, ~2m23s left
+  progress  80.0%  6m20s elapsed, ~1m35s left
+  progress  90.0%  7m05s elapsed, ~0m47s left
+  progress 100.0%  7m57s elapsed, ~0m00s left
+Swaps: Elemental Mascot -> Archfiend of the Dross; Tocasia's Welcome -> Skrelv, Defector Mite; Expressive Iteration -> Gut Shot; Memory Trap -> White Sun's Twilight; Arcane Denial -> Phyrexian Unlife
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.9% ->  35.0%  (delta +0.1 pts, noise ±2.8, paired)   n=2000
+               eliminated by (variant): Tergrid 16.5%  Atraxa 8.8%  Aurelia 19.5%  Marwyn 10.1%  Korvold 7.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.8% ->  34.9%  +0.1pt   ±3.0 
+    Rounds survived (or game length)                  12.42 ->  12.34   -0.08  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.53   +0.01  ±0.05 
+    Mana available on your turn 4                      3.98 ->   3.98   +0.01  ±0.05 
+    Mana available on your turn 6                      5.55 ->   5.53   -0.03  ±0.07 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.69   +0.00  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.20 ->  18.54   -0.66  ±0.51*
+    Tutors resolved per game                           0.25 ->   0.23   -0.01  ±0.03 
+    Spells cast per game                              15.05 ->  14.75   -0.30  ±0.48 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.00   -0.17  ±0.02*
+    Spot removal cast                                  0.99 ->   1.20   +0.21  ±0.06*
+    Board wipes cast                                   0.15 ->   0.15   -0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00*
+    Your key permanents removed by opponents           0.79 ->   0.78   -0.01  ±0.07 
+    Your spells countered                              0.15 ->   0.14   -0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.17 ->  39.33   +1.16  ±2.37 
+      ...of which combat damage                       37.48 ->  37.11   -0.38  ±2.30 
+      ...of which magecraft / burn                     0.00 ->   0.01   +0.01  ±0.00*
+      ...of which drain triggers                       0.00 ->   1.52   +1.52  ±0.33*
+      ...of which other triggers                       0.69 ->   0.70   +0.01  ±0.18 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (both profiles)
+    better - Spot removal cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Protection used (HI/sac/Tidebinder/counter-war) (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which magecraft / burn (both profiles)
+    better -   ...of which drain triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Archfiend of the Dross                30.2      76.0         9.6     24.0       48.1      0.04
+    Skrelv, Defector Mite                 25.4      84.4         7.5     15.6       48.1      0.04
+    Gut Shot                              27.4      83.1         6.7     16.9       40.1      0.00
+    White Sun's Twilight                  24.7      47.8        11.1     52.2       51.7      0.00
+    Phyrexian Unlife                      25.4      27.8        12.2     72.2       32.6      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Elemental Mascot                      26.4      70.5         9.8     29.5       49.5      0.01
+    Tocasia's Welcome                     24.4      69.5         9.1     30.5       49.0      0.01
+    Expressive Iteration                  27.1      62.4         9.6     37.6       50.9      0.00
+    Memory Trap                           26.1      79.1         9.2     20.9       49.5      0.01
+    Arcane Denial                         25.6      67.7         9.0     32.3       48.0      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.9      35.0     +0.1
+    rounds survived                                  12.42     12.34    -0.08
+    eliminated, % of games                            63.9      63.4     -0.5
+    opponents it eliminated, per game                 0.81      0.83    +0.02
+    damage dealt, per game                            38.2      39.3     +1.2
+    commander resolved by turn 4, %                   81.8      81.4     -0.3
+    commander resolved by turn 6, %                   94.3      94.0     -0.4
+    commander removals, per game                      0.81      0.79    -0.02
+    lands on the battlefield, turn 4                  3.76      3.77    +0.00
+    lands on the battlefield, turn 8                  6.67      6.69    +0.02
+    mana available, turn 4                            3.98      3.98    +0.01
+    mana available, turn 8                            6.98      7.01    +0.03
+    cards in hand after the land drop, turn 4         6.34      6.23    -0.11
+    cards in hand after the land drop, turn 8         6.38      6.27    -0.11
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 15.2%, Tergrid via combat 13.1%, Marwyn via combat 10.8%, Atraxa via combat 7.1%
+    eliminated by (swapped): Aurelia via combat 16.2%, Tergrid via combat 11.5%, Marwyn via combat 10.0%, Atraxa via combat 6.5%
+
+(477s total)

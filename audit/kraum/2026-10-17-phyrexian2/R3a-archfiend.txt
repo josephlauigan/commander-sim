@@ -1,0 +1,107 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Archfiend of the Dross [pool] C 2BB :: pow=6 bomb=6 fly
+Model status of the swapped-in cards (cardgen audit):
+  Archfiend of the Dross: Full (6/6 flier; enters with four oil counters (as_enters); at your upkeep one comes off and with none left you lose the game (really eliminated; Herald of Eternal Dawn stops it); an opposing creature dying costs its controller 2 life (archfiend_dies). With one counter left the AI blinks it with Restoration Angel from the hand, else the game is lost (tymna_cards.rs archfiend_upkeep))
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m45s elapsed, ~6m53s left
+  progress  20.0%  1m32s elapsed, ~6m11s left
+  progress  30.0%  2m22s elapsed, ~5m31s left
+  progress  40.0%  3m11s elapsed, ~4m47s left
+  progress  50.0%  4m05s elapsed, ~4m05s left
+  progress  60.0%  4m53s elapsed, ~3m15s left
+  progress  70.0%  5m40s elapsed, ~2m25s left
+  progress  80.0%  6m25s elapsed, ~1m36s left
+  progress  90.0%  7m13s elapsed, ~0m48s left
+  progress 100.0%  8m03s elapsed, ~0m00s left
+Swaps: Elemental Mascot -> Archfiend of the Dross
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.9% ->  33.0%  (delta -1.9 pts, noise ±2.6, paired)   n=2000
+               eliminated by (variant): Tergrid 17.4%  Atraxa 8.8%  Aurelia 18.8%  Marwyn 11.7%  Korvold 7.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.8% ->  33.0%  -1.9pt   ±3.0 
+    Rounds survived (or game length)                  12.42 ->  12.29   -0.13  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.52   +0.00  ±0.05 
+    Mana available on your turn 4                      3.98 ->   3.98   +0.00  ±0.05 
+    Mana available on your turn 6                      5.55 ->   5.55   -0.00  ±0.07 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.68   -0.00  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.20 ->  18.65   -0.55  ±0.52*
+    Tutors resolved per game                           0.25 ->   0.23   -0.02  ±0.03 
+    Spells cast per game                              15.05 ->  14.71   -0.34  ±0.49 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.18   +0.01  ±0.02 
+    Spot removal cast                                  0.99 ->   0.99   +0.00  ±0.06 
+    Board wipes cast                                   0.15 ->   0.13   -0.02  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.79 ->   0.82   +0.03  ±0.07 
+    Your spells countered                              0.15 ->   0.14   -0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.17 ->  37.89   -0.28  ±2.32 
+      ...of which combat damage                       37.48 ->  36.06   -1.42  ±2.27 
+      ...of which drain triggers                       0.00 ->   1.32   +1.32  ±0.19*
+      ...of which other triggers                       0.69 ->   0.51   -0.18  ±0.16*
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which drain triggers (both profiles)
+    worse  -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Archfiend of the Dross                30.7      75.2         9.9     24.8       49.1      0.04
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Elemental Mascot                      26.4      70.5         9.8     29.5       49.5      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.9      33.0     -1.9
+    rounds survived                                  12.42     12.29    -0.13
+    eliminated, % of games                            63.9      65.7     +1.8
+    opponents it eliminated, per game                 0.81      0.82    +0.01
+    damage dealt, per game                            38.2      37.9     -0.3
+    commander resolved by turn 4, %                   81.8      81.7     -0.0
+    commander resolved by turn 6, %                   94.3      94.4     +0.1
+    commander removals, per game                      0.81      0.79    -0.03
+    lands on the battlefield, turn 4                  3.76      3.77    +0.00
+    lands on the battlefield, turn 8                  6.67      6.68    +0.00
+    mana available, turn 4                            3.98      3.98    +0.00
+    mana available, turn 8                            6.98      7.00    +0.01
+    cards in hand after the land drop, turn 4         6.34      6.34    +0.00
+    cards in hand after the land drop, turn 8         6.38      6.41    +0.02
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 92%, timeout 8%
+    eliminated by (current): Aurelia via combat 15.2%, Tergrid via combat 13.1%, Marwyn via combat 10.8%, Atraxa via combat 7.1%
+    eliminated by (swapped): Aurelia via combat 15.1%, Tergrid via combat 13.1%, Marwyn via combat 11.5%, Atraxa via combat 7.0%
+
+(483s total)
