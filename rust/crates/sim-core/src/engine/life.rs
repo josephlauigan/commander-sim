@@ -42,6 +42,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     if damage && kind != "combat" {
         g.player_mut(p).nc_dmg_this = true;
     }
+    if damage && crate::impls::tymna_cards::unlife_infect(g, p, n) {
+        return Ok(()); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
+    }
     let st = g.turn_stamp();
     let pl = g.player_mut(p);
     pl.life -= n;
@@ -130,7 +133,7 @@ pub fn check_state(g: &mut Game) -> Res {
     }
     for i in 0..g.players.len() {
         let pl = &g.players[i];
-        if pl.alive && (pl.life <= 0 || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8)) {
+        if pl.alive && ((pl.life <= 0 && !crate::impls::tymna_cards::unlife(g, PlayerId(i as u8))) || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8)) {
             eliminate(g, PlayerId(i as u8));
         }
     }

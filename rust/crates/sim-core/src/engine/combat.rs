@@ -129,6 +129,9 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
     if protected_from(g, a, colors_of(g, b)) {
         return false; // protection: can't be blocked by that colour
     }
+    if crate::impls::tymna_cards::colour_unblockable(g, b, a) {
+        return false; // Skrelv: can't be blocked by creatures of the chosen colour this turn
+    }
     true
 }
 
@@ -706,6 +709,7 @@ fn resolve_combat_inner(
                     lose_life(g, d, dmg, Some(p), "combat", None)?;
                     conn.push(a);
                     *tot += dmg;
+                    crate::impls::tymna_cards::toxic_hit(g, a, d); // Skrelv, Mite tokens, toxic granted by Skrelv
                     if g.dsl_on {
                         let fired = crate::dsl::Fired { attacker: Some(a), defender: Some(d), ..Default::default() };
                         crate::dsl::fire(g, "combat_damage", fired)?;

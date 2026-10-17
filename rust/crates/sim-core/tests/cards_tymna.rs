@@ -1080,3 +1080,358 @@ fn apostle_blessing_is_not_used_against_your_own_removal() {
     assert!(!on(&g, t));
     assert_eq!(g.player(P0).hand.len(), 1);
 }
+
+// ======================================================== Phyrexian round 3: Archfiend, Skrelv, Gut Shot, White Sun's Twilight, Unlife
+use sim_core::engine::turn;
+
+fn oil(g: &Game, m: PermId) -> i64 {
+    g.perm(m).data.int(DataKey::Oil)
+}
+
+#[test]
+fn archfiend_enters_with_four_oil_counters_and_drains_two_when_an_opposing_creature_dies() {
+    let mut g = kraum_tbl();
+    let a = perm(&mut g, P0, "Archfiend of the Dross");
+    assert_eq!(oil(&g, a), 4);
+    assert_eq!((values::epow(&g, a), values::etgh(&g, a)), (6, 6));
+    assert!(sim_core::dsl::has_kw(&g, a, "flying"));
+    let victim = token(&mut g, P1, 2);
+    let mine = token(&mut g, P0, 2);
+    zones::die(&mut g, victim, "destroy").unwrap();
+    assert_eq!(g.player(P1).life, 38, "its controller loses 2 life");
+    zones::die(&mut g, mine, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, 40, "only opposing creatures");
+}
+
+#[test]
+fn archfiend_loses_an_oil_counter_each_upkeep_and_its_controller_loses_the_game_at_none() {
+    let mut g = kraum_tbl();
+    let a = perm(&mut g, P0, "Archfiend of the Dross");
+    for want in [3, 2, 1] {
+        turn::upkeep(&mut g, P0).unwrap();
+        assert_eq!(oil(&g, a), want);
+        assert!(g.player(P0).alive);
+    }
+    // another player's upkeep does nothing
+    turn::upkeep(&mut g, P1).unwrap();
+    assert_eq!(oil(&g, a), 1);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert_eq!(oil(&g, a), 0);
+    assert!(!g.player(P0).alive, "no oil counters left: the controller loses the game");
+    assert_eq!(g.player(P0).stats.get("archfiend_lost").copied(), Some(1));
+}
+
+#[test]
+fn archfiend_is_blinked_by_restoration_angel_before_the_last_counter_and_starts_over() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    lands(&mut g, P0, "Island", 2, false);
+    let a = perm(&mut g, P0, "Archfiend of the Dross");
+    g.perm_mut(a).data.set(DataKey::Oil, sim_core::state::Val::Int(1));
+    hand(&mut g, P0, &["Restoration Angel"]);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert!(g.player(P0).alive, "saved");
+    assert!(!on(&g, a), "the old object left");
+    let new = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| &*g.perm(m).name == "Archfiend of the Dross")
+        .expect("it came back");
+    assert_eq!(oil(&g, new), 4, "a new object: four counters again");
+    assert!(g.player(P0).perms.iter().any(|&m| &*g.perm(m).name == "Restoration Angel"));
+    assert_eq!(g.player(P0).stats.get("archfiend_saved").copied(), Some(1));
+}
+
+#[test]
+fn archfiend_without_a_blinker_or_the_mana_still_loses() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 2, false); // not enough for {3}{W}
+    let a = perm(&mut g, P0, "Archfiend of the Dross");
+    g.perm_mut(a).data.set(DataKey::Oil, sim_core::state::Val::Int(1));
+    hand(&mut g, P0, &["Restoration Angel"]);
+    turn::upkeep(&mut g, P0).unwrap();
+    assert!(!g.player(P0).alive);
+}
+
+fn skrelv_ready(g: &mut Game, p: PlayerId) -> PermId {
+    let s = perm(g, p, "Skrelv, Defector Mite");
+    g.perm_mut(s).sick = false;
+    s
+}
+
+#[test]
+fn skrelv_is_a_toxic_one_one_that_cannot_block_and_gives_a_poison_counter() {
+    let mut g = kraum_tbl();
+    let s = skrelv_ready(&mut g, P0);
+    assert_eq!((values::epow(&g, s), values::etgh(&g, s)), (1, 1));
+    assert!(sim_core::dsl::has_kw(&g, s, "toxic"));
+    let atk = token(&mut g, P1, 2);
+    assert!(!combat::can_block(&g, s, atk), "Skrelv can't block");
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, s, P1);
+    assert_eq!(g.player(P1).poison, 1);
+}
+
+#[test]
+fn skrelv_ability_gives_toxic_hexproof_from_a_colour_and_unblockability_for_the_turn() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 1, false);
+    let s = skrelv_ready(&mut g, P0);
+    let a = perm(&mut g, P0, "Baneslayer Angel");
+    let black_blocker = perm(&mut g, P1, "Vampire Nighthawk");
+    let green_blocker = perm(&mut g, P1, "Llanowar Elves");
+    assert!(combat::can_block(&g, black_blocker, a), "before the ability the black flier can block");
+    let opts = options(&mut g, s, P0, Some(false));
+    assert_eq!(opts.len(), 1, "an offer before combat: {:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
+    assert!(opts[0].label.contains("Baneslayer"));
+    assert!(opts[0].label.contains(" B "), "the black flier is the blocker that matters: {}", opts[0].label);
+    assert!(run(&mut g, P0, &opts[0]));
+    assert!(g.perm(s).tapped);
+    assert_eq!(untapped_lands(&g, P0), 0, "paid {{W}}");
+    assert_eq!(g.player(P0).life, 40);
+    assert!(sim_core::dsl::has_kw(&g, a, "toxic") || g.perm(a).eot_kw.contains(&"toxic"));
+    assert!(!combat::can_block(&g, black_blocker, a), "can't be blocked by black creatures");
+    let black_removal = card(&g, "Murder");
+    let red_burn = card(&g, "Lightning Bolt");
+    assert!(sim_core::impls::tymna_cards::hexproof_from(&g, a, g.db.get(black_removal).colors));
+    assert!(!sim_core::impls::tymna_cards::hexproof_from(&g, a, g.db.get(red_burn).colors));
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, a, P1);
+    assert_eq!(g.player(P1).poison, 1, "toxic 1 from Skrelv's ability");
+    // gone at end of turn
+    g.perm_mut(a).eot_kw.clear();
+    assert!(combat::can_block(&g, black_blocker, a), "the effect ends with the turn");
+    assert!(combat::can_block(&g, green_blocker, a) || !sim_core::dsl::has_kw(&g, green_blocker, "reach"), "a green blocker was never affected");
+}
+
+#[test]
+fn skrelv_pays_two_life_without_white_mana_and_a_sick_skrelv_cannot_activate() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Island", 1, false);
+    let s = perm(&mut g, P0, "Skrelv, Defector Mite");
+    g.perm_mut(s).sick = true;
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).is_cmd = true;
+    hand(&mut g, P0, &[]);
+    let murder = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P1), t, "destroy", Some(murder)).unwrap();
+    assert!(!on(&g, t), "summoning sick Skrelv can't use {{T}}");
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Island", 1, false);
+    let _s = skrelv_ready(&mut g, P0);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).is_cmd = true;
+    removal::apply_removal(&mut g, Some(P1), t, "destroy", Some(murder)).unwrap();
+    assert!(on(&g, t), "Skrelv gave Tymna hexproof from black in response: Murder fizzles");
+    assert_eq!(g.player(P0).life, 38, "{{W/P}} paid with 2 life");
+    // a second black spell this turn can't target her either
+    let t2 = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P1), t, "destroy", Some(t2)).unwrap();
+    assert!(on(&g, t));
+    // a red spell can
+    let bolt = card(&g, "Lightning Bolt");
+    removal::apply_removal(&mut g, Some(P1), t, "dmg3", Some(bolt)).unwrap();
+    assert!(!on(&g, t));
+}
+
+#[test]
+fn skrelv_does_not_save_a_small_creature_or_the_target_of_a_colourless_spell() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 1, false);
+    let _s = skrelv_ready(&mut g, P0);
+    let small = token(&mut g, P0, 1);
+    let murder = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P1), small, "destroy", Some(murder)).unwrap();
+    assert!(!on(&g, small));
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).is_cmd = true;
+    let sol = card(&g, "Sol Ring");
+    removal::apply_removal(&mut g, Some(P1), t, "destroy", Some(sol)).unwrap();
+    assert!(!on(&g, t), "no colour to choose against a colourless spell");
+}
+
+#[test]
+fn skrelv_toxic_adds_to_the_poison_of_a_creature_with_toxic() {
+    let mut g = kraum_tbl();
+    let d = perm(&mut g, P0, "Dune Mover");
+    g.perm_mut(d).eot_kw.push("toxic");
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, d, P1);
+    assert_eq!(g.player(P1).poison, 1, "the hook for Dune Mover's own toxic is separate");
+}
+
+#[test]
+fn gut_shot_kills_a_one_toughness_creature_and_pays_red_or_two_life() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Mountain", 1, false);
+    let elf = perm(&mut g, P1, "Llanowar Elves");
+    hand(&mut g, P0, &["Gut Shot"]);
+    let opts = sim_core::ai::brain::main_options(&mut g, P0, false).unwrap();
+    let o = opts.iter().find(|o| o.label.contains("Gut Shot")).expect("an option to shoot the elf");
+    assert!(run(&mut g, P0, o));
+    assert!(!on(&g, elf));
+    assert_eq!(g.player(P0).life, 40, "paid with {{R}}");
+    // no red: 2 life
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Island", 1, false);
+    let elf = perm(&mut g, P1, "Llanowar Elves");
+    hand(&mut g, P0, &["Gut Shot"]);
+    assert!(cast_by_ai(&mut g, P0, "Gut Shot"));
+    assert!(!on(&g, elf));
+    assert_eq!(g.player(P0).life, 38);
+}
+
+#[test]
+fn gut_shot_is_held_without_a_one_toughness_target() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Mountain", 1, false);
+    perm(&mut g, P1, "Grave Titan");
+    hand(&mut g, P0, &["Gut Shot"]);
+    assert!(!cast_by_ai(&mut g, P0, "Gut Shot"));
+    assert_eq!(g.player(P0).hand.len(), 1);
+}
+
+#[test]
+fn gut_shot_deals_one_damage_to_a_player_too() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Mountain", 1, false);
+    let c = hand(&mut g, P0, &["Gut Shot"])[0];
+    sim_core::engine::mana::pay(&mut g, P0, 0, "R", false).unwrap();
+    let mut ctx = Ctx::default();
+    ctx.face = Some(P1);
+    assert!(cast::cast_card(&mut g, P0, c, "hand", ctx).unwrap());
+    assert_eq!(g.player(P1).life, 39);
+}
+
+fn mites(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p).perms.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).ttypes.contains(&"mite")).collect()
+}
+
+#[test]
+fn white_suns_twilight_gains_x_life_and_makes_x_toxic_mites_that_cannot_block() {
+    let mut g = kraum_tbl();
+    g.player_mut(P0).life = 20;
+    let c = hand(&mut g, P0, &["White Sun's Twilight"])[0];
+    assert!(cast::cast_card(&mut g, P0, c, "hand", Ctx { x: 3, ..Ctx::default() }).unwrap());
+    assert_eq!(g.player(P0).life, 23);
+    let ms = mites(&g, P0);
+    assert_eq!(ms.len(), 3);
+    for &m in &ms {
+        assert_eq!((values::epow(&g, m), values::etgh(&g, m)), (1, 1));
+        assert!(sim_core::dsl::has_kw(&g, m, "toxic"));
+        assert!(sim_core::dsl::has_kw(&g, m, "cant_block"));
+        assert!(g.perm(m).colors == Colors::NONE, "colourless");
+    }
+    let atk = token(&mut g, P1, 2);
+    assert!(!combat::can_block(&g, ms[0], atk));
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, ms[0], P1);
+    assert_eq!(g.player(P1).poison, 1);
+}
+
+#[test]
+fn white_suns_twilight_with_x_five_destroys_all_other_creatures() {
+    let mut g = kraum_tbl();
+    let mine = perm(&mut g, P0, "Serra Angel");
+    let theirs = perm(&mut g, P1, "Grave Titan");
+    let theirs2 = token(&mut g, P2, 3);
+    let c = hand(&mut g, P0, &["White Sun's Twilight"])[0];
+    assert!(cast::cast_card(&mut g, P0, c, "hand", Ctx { x: 5, ..Ctx::default() }).unwrap());
+    assert!(!on(&g, mine) && !on(&g, theirs) && !on(&g, theirs2));
+    assert_eq!(g.player(P0).life, 45);
+    assert!(mites(&g, P0).is_empty(), "the Mites are destroyed with the rest");
+    // X = 4: no wipe
+    let mut g = kraum_tbl();
+    let theirs = perm(&mut g, P1, "Grave Titan");
+    let c = hand(&mut g, P0, &["White Sun's Twilight"])[0];
+    assert!(cast::cast_card(&mut g, P0, c, "hand", Ctx { x: 4, ..Ctx::default() }).unwrap());
+    assert!(on(&g, theirs));
+    assert_eq!(mites(&g, P0).len(), 4);
+}
+
+#[test]
+fn white_suns_twilight_ai_wipes_when_behind_and_never_casts_it_at_x_zero() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 7, false);
+    for q in [P1, P2] {
+        perm(&mut g, q, "Grave Titan");
+        perm(&mut g, q, "Baneslayer Angel");
+    }
+    hand(&mut g, P0, &["White Sun's Twilight"]);
+    let opts = sim_core::ai::brain::main_options(&mut g, P0, false).unwrap();
+    let o = opts.iter().find(|o| o.label.contains("White Sun")).expect("an option");
+    assert!(o.label.contains("X=5"), "{}", o.label);
+    assert!(run(&mut g, P0, o));
+    assert!(g.player(P1).perms.iter().all(|&m| !g.is_creature(m)));
+    assert_eq!(g.player(P0).life, 45);
+}
+
+#[test]
+fn white_suns_twilight_ai_does_not_wipe_its_own_board_and_makes_four_mites_instead() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 8, false);
+    perm(&mut g, P0, "Baneslayer Angel");
+    perm(&mut g, P0, "Grave Titan");
+    perm(&mut g, P1, "Llanowar Elves");
+    hand(&mut g, P0, &["White Sun's Twilight"]);
+    let opts = sim_core::ai::brain::main_options(&mut g, P0, false).unwrap();
+    let o = opts.iter().find(|o| o.label.contains("White Sun")).expect("an option");
+    assert!(o.label.contains("X=4"), "{}", o.label);
+    assert!(run(&mut g, P0, o));
+    assert_eq!(mites(&g, P0).len(), 4);
+    assert!(g.player(P0).perms.iter().any(|&m| &*g.perm(m).name == "Baneslayer Angel"));
+}
+
+#[test]
+fn white_suns_twilight_is_not_cast_with_too_little_mana() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 4, false);
+    hand(&mut g, P0, &["White Sun's Twilight"]);
+    let opts = sim_core::ai::brain::main_options(&mut g, P0, false).unwrap();
+    assert!(!opts.iter().any(|o| o.label.contains("White Sun")));
+}
+
+#[test]
+fn phyrexian_unlife_keeps_you_in_the_game_at_zero_life_and_turns_damage_into_poison() {
+    let mut g = kraum_tbl();
+    perm(&mut g, P0, "Phyrexian Unlife");
+    g.player_mut(P0).life = 2;
+    sim_core::engine::life::lose_life(&mut g, P0, 5, Some(P1), "burn", None).unwrap();
+    assert_eq!(g.player(P0).life, -3, "damage that takes you to 0 or less still lowers life");
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert!(g.player(P0).alive, "you don't lose for having 0 or less life");
+    assert_eq!(g.player(P0).poison, 0);
+    sim_core::engine::life::lose_life(&mut g, P0, 4, Some(P1), "burn", None).unwrap();
+    assert_eq!(g.player(P0).life, -3, "now damage is poison");
+    assert_eq!(g.player(P0).poison, 4);
+    // life loss that is not damage still lowers life
+    sim_core::engine::life::lose_life(&mut g, P0, 2, Some(P1), "drain", None).unwrap();
+    assert_eq!(g.player(P0).life, -5);
+    assert_eq!(g.player(P0).poison, 4);
+    sim_core::engine::life::lose_life(&mut g, P0, 6, Some(P1), "burn", None).unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert_eq!(g.player(P0).poison, 10);
+    assert!(!g.player(P0).alive, "ten poison counters still lose");
+}
+
+#[test]
+fn without_phyrexian_unlife_zero_life_loses_and_above_zero_damage_is_ordinary() {
+    let mut g = kraum_tbl();
+    g.player_mut(P0).life = 3;
+    sim_core::engine::life::lose_life(&mut g, P0, 5, Some(P1), "burn", None).unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert!(!g.player(P0).alive);
+    let mut g = kraum_tbl();
+    perm(&mut g, P0, "Phyrexian Unlife");
+    sim_core::engine::life::lose_life(&mut g, P0, 5, Some(P1), "burn", None).unwrap();
+    assert_eq!(g.player(P0).life, 35);
+    assert_eq!(g.player(P0).poison, 0, "above 0 life it is plain damage");
+}
+
+#[test]
+fn phyrexian_unlife_is_cast_by_the_ai_at_low_life_only() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 3, false);
+    hand(&mut g, P0, &["Phyrexian Unlife"]);
+    assert!(!cast_by_ai(&mut g, P0, "Phyrexian Unlife"), "healthy: held");
+    g.player_mut(P0).life = 15;
+    assert!(cast_by_ai(&mut g, P0, "Phyrexian Unlife"));
+}
