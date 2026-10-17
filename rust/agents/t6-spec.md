@@ -26,9 +26,10 @@ Your deck is named in the prompt that started you.
    archetype's primer). Moxfield blocks automated reads (HTTP 403): use other copies, the database's own text,
    articles (e.g. on the site linked from the database or from EDHTop16), and Reddit r/CompetitiveEDH threads.
    Open every page you cite; a search snippet is not a source.
-3. Check the Oracle text of every card you name in a win line or decision against Scryfall
-   (`curl -s 'https://api.scryfall.com/cards/named?exact=<url-encoded name>' | jq -r .oracle_text`, 100 ms
-   between calls).
+3. Check the Oracle text of every card you name in a win line or decision against Scryfall. Use ONE batched
+   POST to https://api.scryfall.com/cards/collection (max 75 names) with a timeout (`curl -m 30`); never a
+   network call without `-m`. Write to your output file early (after your first concrete step) and keep saving
+   as you go: a lead watches the file and stops an agent that is silent for 10+ minutes.
 4. Write `audit/t6/<deck>/SPEC.md` (create the folder) to the template below.
 5. Write a full report to `rust/agents/report-t6-spec-<deck>.md`. **Do not commit** (several agents share this
    worktree; the lead commits). Do not edit any other file.
