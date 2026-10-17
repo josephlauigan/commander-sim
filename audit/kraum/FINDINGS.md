@@ -103,3 +103,15 @@ alone, more cards, more removal, and more taxes did not move it.
 | **L8 = R11b** (R11a + Island for Harsh Annotation, 38 lands) (`75db0a5`) | **+3.1 (±2.7): 29.5 → 32.6%** | Mana turn 8 +0.29, damage +3.3, eliminated -2.3. |
 | **L8 analysis, T3, 4,000 games** | **31.2% (±1.4)** | JD's goal (30% at T3) reached. |
 | **S1 substitutes** (Austere Command, Dark Endurance, The Wasp, Swamp for Toxic Deluge, Masterful Flourish, Moseo, Shattered Sanctum: JD doesn't own them) (applied) | +1.8 (±2.7): 30.9 → 32.6% | No loss; Toxic Deluge was the weakest card when cast. |
+
+### Candidate buys JD asked about (2026-10-16 night, T3, 2,000 paired games each; the list measured 34.0% in these runs)
+| Candidate (in for) | Result | Why |
+|---|---|---|
+| Urza, Lord High Artificer, $17.55 (Elemental Mascot) | +1.1 (±2.6) | Within noise. |
+| Winota, Joiner of Forces, $3.96 (Bedevil) | -2.1 (±2.6) | Winota fine (49% when cast); losing Bedevil (54% when cast, removal against the creature decks) cost more. |
+| Winota redo (Tocasia's Welcome) | -0.9 (±2.5) | No gain with a fair cut either. |
+| Purphoros, God of the Forge, $26.55 (Disenchant) | +0.7 (±2.7) | Its triggers add 3.4 damage a game (significant), but total damage only +0.6: the damage lands on players who were dying anyway. |
+| Isshin, Two Heavens as One, $3.63 (Elemental Mascot) | -1.7 (±2.5) | Doubling needs Adeline, Hero or a Titan already attacking; a non-flying 3/4 adds nothing for Tymna. |
+| Isshin + Winota (Elemental Mascot, Tocasia's Welcome) | -0.1 (±2.7) | No effect. |
+| All three (Urza, Winota, Purphoros) | stopped by JD | It cut Bedevil too. |
+None of them is worth adding. Lightning, Army of One is not modeled; on hold (JD: wait for these results).
