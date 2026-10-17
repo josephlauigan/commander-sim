@@ -151,7 +151,7 @@ fn the_audit_runs_on_the_scratch_data() {
     let built = inp.build();
     let au = cardgen::audit::Audit::new(&inp, &built.cards).unwrap();
     let rows = cardgen::audit::audit_pool(&au, &inp.pool);
-    assert_eq!(rows.len(), 30);
+    assert_eq!(rows.len(), 36);
     assert_eq!(au.card_status("Island", false).0, "Full");
     let (s, _) = au.card_status("Sol Ring", true);
     assert_eq!(s, "Full");
@@ -160,4 +160,21 @@ fn the_audit_runs_on_the_scratch_data() {
     assert!(s.contains("all decks (card-slots, unique per deck): Full "));
     let hooks = cardgen::audit::hooks_report(&inp, &built.cards, false).unwrap();
     assert!(hooks.starts_with("Rust card code vs the Python hooks"), "{hooks}");
+}
+
+#[test]
+fn a_pool_deck_with_two_commanders_carries_both() {
+    let real = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
+    let d = cardgen::decks::load_pool_deck(&real.join("decklists/pool/t6-cedh/kraum-tymna-blue-breach-midrange.md")).unwrap();
+    assert_eq!(d.tier, "t6");
+    assert_eq!(d.commander, "Kraum, Ludevic's Opus");
+    assert_eq!(d.commander2.as_deref(), Some("Tymna the Weaver"));
+    // a single commander, and a double-faced one, stay whole
+    let d = cardgen::decks::load_pool_deck(&real.join("decklists/pool/t6-cedh/sisay-legends-toolbox.md")).unwrap();
+    assert_eq!((d.commander.as_str(), d.commander2), ("Sisay, Weatherlight Captain", None));
+    // the exported decks.json lists both for the pair, and the seat's colours are their union
+    let decks: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(real.join("data/decks.json")).unwrap()).unwrap();
+    let k = decks["pool"].as_array().unwrap().iter().find(|x| x["key"] == "kraum-tymna-blue-breach-midrange").unwrap();
+    assert_eq!(k["commander2"], "Tymna the Weaver");
+    assert_eq!(k["ident"], "WUBR");
 }

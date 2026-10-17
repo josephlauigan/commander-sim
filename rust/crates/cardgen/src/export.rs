@@ -58,15 +58,17 @@ impl Inputs {
         Wanted { main, played, extra }
     }
 
-    /// every card name the lists need that is not in the cache yet (nor hand-tagged)
+    /// every card name the lists need that is not in the cache yet (nor hand-tagged, unless a pool deck plays it:
+    /// `cardgen validate` checks pool decks against Scryfall's records, hand-tagged or not)
     pub fn uncached(&self) -> Vec<String> {
         let hand: BTreeSet<&str> = self.carddb.iter().map(|l| l.name.as_str()).collect();
+        let pool: BTreeSet<&str> = self.pool.iter().flat_map(|d| d.cards.iter().map(String::as_str)).collect();
         let w = self.wanted();
         let mut v: Vec<String> = w
             .played
             .iter()
             .chain(w.extra.iter())
-            .filter(|n| !hand.contains(n.as_str()) && !self.cache.contains(n))
+            .filter(|n| (!hand.contains(n.as_str()) || pool.contains(n.as_str())) && !self.cache.contains(n))
             .cloned()
             .collect();
         v.sort();
