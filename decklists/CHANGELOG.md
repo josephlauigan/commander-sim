@@ -616,3 +616,11 @@ Deck key `galadriel`, `decklists/Avery/galadriel-bant-rebels.md`.
   six searchers in 99 cards (plus Recruiter of the Guard, which finds the Sergeant, Lieutenant or Captain), about 40% of
   games see none. Galadriel's first Alliance trigger comes on turn 6 in a typical game; the AI chooses counters most
   often, then mana, then the draw.
+
+## Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners (W/U/B/R)
+
+Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
+
+### Changes
+
+- **2026-10-17.** Out: Dream Trawler. In: Resplendent Angel. JD got Resplendent Angel instead of Dream Trawler. Measured at T3 (2,000 paired games): -1.8 (±2.6), inside the noise.

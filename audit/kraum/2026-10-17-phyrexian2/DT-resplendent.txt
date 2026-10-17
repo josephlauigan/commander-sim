@@ -1,0 +1,106 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Resplendent Angel [pool] C 1WW :: pow=3 fly
+Model status of the swapped-in cards (cardgen audit):
+  Resplendent Angel: Full (flying; a 4/4 Angel at end step after gaining 5+ life; {3}{W}{W}{W}: +2/+0 and lifelink)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m46s elapsed, ~6m57s left
+  progress  20.0%  1m33s elapsed, ~6m12s left
+  progress  30.0%  2m23s elapsed, ~5m33s left
+  progress  40.0%  3m12s elapsed, ~4m49s left
+  progress  50.0%  4m06s elapsed, ~4m06s left
+  progress  60.0%  4m53s elapsed, ~3m15s left
+  progress  70.0%  5m41s elapsed, ~2m26s left
+  progress  80.0%  6m29s elapsed, ~1m37s left
+  progress  90.0%  7m20s elapsed, ~0m48s left
+  progress 100.0%  8m44s elapsed, ~0m00s left
+Swaps: Dream Trawler -> Resplendent Angel
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.9% ->  33.0%  (delta -1.8 pts, noise ±2.6, paired)   n=2000
+               eliminated by (variant): Tergrid 17.8%  Atraxa 10.1%  Aurelia 19.0%  Marwyn 11.5%  Korvold 7.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.8% ->  33.0%  -1.8pt   ±3.0 
+    Rounds survived (or game length)                  12.42 ->  12.29   -0.13  ±0.23 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.52   +0.01  ±0.05 
+    Mana available on your turn 4                      3.98 ->   3.98   +0.01  ±0.05 
+    Mana available on your turn 6                      5.55 ->   5.53   -0.02  ±0.07 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.67   -0.02  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.20 ->  18.66   -0.54  ±0.51*
+    Tutors resolved per game                           0.25 ->   0.25   +0.01  ±0.03 
+    Spells cast per game                              15.05 ->  14.78   -0.27  ±0.48 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.16   -0.01  ±0.02 
+    Spot removal cast                                  0.99 ->   0.98   -0.01  ±0.06 
+    Board wipes cast                                   0.15 ->   0.14   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00*
+    Your key permanents removed by opponents           0.79 ->   0.79   -0.01  ±0.07 
+    Your spells countered                              0.15 ->   0.14   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.17 ->  38.32   +0.15  ±2.43 
+      ...of which combat damage                       37.48 ->  37.57   +0.09  ±2.38 
+      ...of which drain triggers                       0.00 ->   0.01   +0.01  ±0.01 
+      ...of which other triggers                       0.69 ->   0.75   +0.06  ±0.18 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Protection used (HI/sac/Tidebinder/counter-war) (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Resplendent Angel                     26.4      75.3         9.9     24.7       51.6      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Dream Trawler                         26.1      44.7        10.9     55.3       62.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.9      33.0     -1.9
+    rounds survived                                  12.42     12.29    -0.13
+    eliminated, % of games                            63.9      65.7     +1.8
+    opponents it eliminated, per game                 0.81      0.81    +0.00
+    damage dealt, per game                            38.2      38.3     +0.2
+    commander resolved by turn 4, %                   81.8      82.1     +0.3
+    commander resolved by turn 6, %                   94.3      94.3     -0.0
+    commander removals, per game                      0.81      0.79    -0.03
+    lands on the battlefield, turn 4                  3.76      3.77    +0.00
+    lands on the battlefield, turn 8                  6.67      6.66    -0.01
+    mana available, turn 4                            3.98      3.98    +0.01
+    mana available, turn 8                            6.98      6.96    -0.02
+    cards in hand after the land drop, turn 4         6.34      6.33    -0.00
+    cards in hand after the land drop, turn 8         6.38      6.36    -0.02
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 95%, timeout 5%
+    eliminated by (current): Aurelia via combat 15.2%, Tergrid via combat 13.1%, Marwyn via combat 10.8%, Atraxa via combat 7.1%
+    eliminated by (swapped): Aurelia via combat 15.2%, Tergrid via combat 13.1%, Marwyn via combat 11.4%, Atraxa via combat 7.8%
+
+(525s total)

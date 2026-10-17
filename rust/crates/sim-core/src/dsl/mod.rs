@@ -342,7 +342,7 @@ pub fn choose_target(
         .filter(|q| q.alive)
         .flat_map(|q| q.perms.iter().copied())
         .filter(|&m| {
-            matches(g, p, m, f, src) && !(g.perm(m).owner != p && (untargetable(g, m) || protected_from(g, m, cols)))
+            matches(g, p, m, f, src) && !(g.perm(m).owner != p && (untargetable(g, m) || protected_from(g, m, cols) || crate::impls::tymna_cards::hexproof_from(g, m, cols)))
         })
         .collect();
     if crate::human::is_human(g, p) && !cands.is_empty() {
@@ -477,6 +477,7 @@ fn run(
                         .flat_map(|&q| g.player(q).perms.iter().copied())
                         .filter(|&m| {
                             g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= eff && !protected_from(g, m, cols)
+                                && !crate::impls::tymna_cards::hexproof_from(g, m, cols)
                         })
                         .collect();
                     let best = max_by(&tg, |m| pval(g, m));

@@ -108,7 +108,8 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 continue; // ward: sacrifice a legend
             }
             if let Some(s) = st
-                && protected_from(g, m, Colors::from_letters(&s.pips))
+                && (protected_from(g, m, Colors::from_letters(&s.pips))
+                    || crate::impls::tymna_cards::hexproof_from(g, m, Colors::from_letters(&s.pips)))
             {
                 continue;
             }

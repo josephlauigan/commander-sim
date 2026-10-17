@@ -8212,3 +8212,27 @@ note = "1/1 flying lifelink artifact creature; {B/P} paid with {B}, or 2 life wh
 dsl = []
 status = "Full"
 note = "in response to targeted removal at a commander or a permanent worth 4+: protection from the removal spell's colour (artifacts for a colourless artifact spell) until end of turn; {W/P} paid with {W} or 2 life (tymna_cards.rs blessing_protect)"
+
+["Archfiend of the Dross"]
+dsl = []
+status = "Full"
+note = "6/6 flier; enters with four oil counters (as_enters); at your upkeep one comes off and with none left you lose the game (really eliminated; Herald of Eternal Dawn stops it); an opposing creature dying costs its controller 2 life (archfiend_dies). With one counter left the AI blinks it with Restoration Angel from the hand, else the game is lost (tymna_cards.rs archfiend_upkeep)"
+
+["Skrelv, Defector Mite"]
+status = "Full"
+note = "1/1 toxic 1, can't block (compiled; toxic via tymna_cards::toxic_hit in combat). {W/P},{T}: another creature of yours gains toxic 1 and hexproof from a chosen colour, and can't be blocked by creatures of that colour, until end of turn. The AI uses it in response to removal on a commander or a creature worth 4+ (the spell's colour), or before combat on the best attacker against the colour of the opposing blockers that matter"
+
+["Gut Shot"]
+dsl = []
+status = "Full"
+note = "1 damage to any target (tags rem=dmg1 face, like Lightning Bolt); {R/P} paid with {R} or 2 life above 10 life (engine Phyrexian payment). The AI shoots a toughness-1 creature worth a card (pval 0.9+) and otherwise holds it (tymna_cards.rs gut_shot_options)"
+
+["White Sun's Twilight"]
+dsl = []
+status = "Full"
+note = "gain X life, X 1/1 colourless Phyrexian Mite artifact creature tokens with toxic 1 and can't block; at X 5+ destroy all creatures (the Mites too). The AI casts X 5+ as a wipe when the opponents lose clearly more board value, else X up to 4 for life and bodies (tymna_cards.rs twilight_options)"
+
+["Phyrexian Unlife"]
+dsl = []
+status = "Full"
+note = "you don't lose for 0 or less life (check_state); at 0 or less life damage to you is dealt as poison counters (lose_life), ten poison still lose; the AI casts it once at 20 life or less"

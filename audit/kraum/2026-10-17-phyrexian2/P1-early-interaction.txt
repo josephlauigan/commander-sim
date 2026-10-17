@@ -1,0 +1,122 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Sheoldred's Edict [scryfall+dsl] I 1B :: (no tags)
+      ability: spell  -> modal
+   Dismember [pool] I 1BB :: rem=shrink5 tgt=c
+   Porcelain Legionnaire [pool] AC 2W :: pow=3 tgh=1
+   Vault Skirge [pool] AC 1B :: pow=1 fly lifelink
+Model status of the swapped-in cards (cardgen audit):
+  Sheoldred's Edict: Full-auto (compiled from Oracle text)
+  Dismember: Full (-5/-5 until end of turn on the target creature; each {B/P} is paid with {B}, or 2 life when the mana is short and life is above 10 (engine Phyrexian payment))
+  Porcelain Legionnaire: Full (3/1 first strike artifact creature; {W/P} paid with {W}, or 2 life when the mana is short and life is above 10)
+  Vault Skirge: Full (1/1 flying lifelink artifact creature; {B/P} paid with {B}, or 2 life when the mana is short and life is above 10)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m45s elapsed, ~6m45s left
+  progress  20.0%  1m31s elapsed, ~6m04s left
+  progress  30.0%  2m19s elapsed, ~5m26s left
+  progress  40.0%  3m08s elapsed, ~4m43s left
+  progress  50.0%  4m01s elapsed, ~4m01s left
+  progress  60.0%  4m48s elapsed, ~3m12s left
+  progress  70.0%  5m33s elapsed, ~2m23s left
+  progress  80.0%  6m18s elapsed, ~1m34s left
+  progress  90.0%  7m03s elapsed, ~0m47s left
+  progress 100.0%  7m57s elapsed, ~0m00s left
+Swaps: Tocasia's Welcome -> Sheoldred's Edict; Elemental Mascot -> Dismember; Arcane Denial -> Porcelain Legionnaire; Expressive Iteration -> Vault Skirge
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.9% ->  33.5%  (delta -1.4 pts, noise ±2.8, paired)   n=2000
+               eliminated by (variant): Tergrid 17.6%  Atraxa 10.1%  Aurelia 17.6%  Marwyn 12.3%  Korvold 7.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.8% ->  33.5%  -1.3pt   ±3.0 
+    Rounds survived (or game length)                  12.42 ->  12.28   -0.14  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.51   -0.00  ±0.05 
+    Mana available on your turn 4                      3.98 ->   3.98   -0.00  ±0.05 
+    Mana available on your turn 6                      5.55 ->   5.53   -0.02  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.67   -0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.20 ->  18.63   -0.57  ±0.51*
+    Tutors resolved per game                           0.25 ->   0.24   -0.01  ±0.03 
+    Spells cast per game                              15.05 ->  15.05   +0.00  ±0.49 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.00   -0.17  ±0.02*
+    Spot removal cast                                  0.99 ->   1.19   +0.20  ±0.06*
+    Board wipes cast                                   0.15 ->   0.15   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00*
+    Your key permanents removed by opponents           0.79 ->   0.81   +0.02  ±0.07 
+    Your spells countered                              0.15 ->   0.14   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.17 ->  38.25   +0.08  ±2.41 
+      ...of which combat damage                       37.48 ->  37.61   +0.13  ±2.37 
+      ...of which drain triggers                       0.00 ->   0.01   +0.01  ±0.01 
+      ...of which other triggers                       0.69 ->   0.64   -0.05  ±0.17 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (both profiles)
+    better - Spot removal cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Protection used (HI/sac/Tidebinder/counter-war) (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Sheoldred's Edict                     23.6      69.1         8.5     30.9       48.9      0.00
+    Dismember                             26.4      90.7         7.3      9.3       41.8      0.00
+    Porcelain Legionnaire                 24.6      84.3         7.4     15.7       48.9      0.02
+    Vault Skirge                          27.6      94.2         6.5      5.8       42.2      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Tocasia's Welcome                     24.4      69.5         9.1     30.5       49.0      0.01
+    Elemental Mascot                      26.4      70.5         9.8     29.5       49.5      0.01
+    Arcane Denial                         25.6      67.7         9.0     32.3       48.0      0.00
+    Expressive Iteration                  27.1      62.4         9.6     37.6       50.9      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.9      33.5     -1.4
+    rounds survived                                  12.42     12.28    -0.14
+    eliminated, % of games                            63.9      64.7     +0.9
+    opponents it eliminated, per game                 0.81      0.80    -0.01
+    damage dealt, per game                            38.2      38.3     +0.1
+    commander resolved by turn 4, %                   81.8      81.7     -0.1
+    commander resolved by turn 6, %                   94.3      94.0     -0.3
+    commander removals, per game                      0.81      0.83    +0.02
+    lands on the battlefield, turn 4                  3.76      3.77    +0.01
+    lands on the battlefield, turn 8                  6.67      6.68    +0.00
+    mana available, turn 4                            3.98      3.98    -0.00
+    mana available, turn 8                            6.98      6.96    -0.02
+    cards in hand after the land drop, turn 4         6.34      6.19    -0.15
+    cards in hand after the land drop, turn 8         6.38      6.26    -0.12
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Aurelia via combat 15.2%, Tergrid via combat 13.1%, Marwyn via combat 10.8%, Atraxa via combat 7.1%
+    eliminated by (swapped): Aurelia via combat 15.3%, Tergrid via combat 13.2%, Marwyn via combat 12.2%, Atraxa via combat 7.5%
+
+(477s total)

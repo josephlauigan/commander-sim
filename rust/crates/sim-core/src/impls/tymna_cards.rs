@@ -486,6 +486,15 @@ pub fn protect(
     if !g.perm(m).on_bf || g.humans.get(owner_p).is_some() {
         return Ok(false);
     }
+    if let (Some(s), Some(a)) = (spell, actor)
+        && a != owner_p
+        && hexproof_from(g, m, g.db.get(s).colors)
+    {
+        return Ok(true); // Skrelv gave it hexproof from the spell's colour this turn: the spell has no legal target
+    }
+    if skrelv_protect(g, owner_p, m, actor, spell)? {
+        return Ok(true);
+    }
     if g.hooks.is_empty() {
         return blessing_protect(g, owner_p, m, actor, spell);
     }
@@ -579,6 +588,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     register_witherbloom(r, db)?;
     register_gear(r, db)?;
     register_phyrexian(r, db)?;
+    register_phyrexian2(r, db)?;
     Ok(())
 }
 
@@ -1374,6 +1384,433 @@ pub fn pro_artifacts_vs(g: &Game, m: PermId, other: PermId) -> bool {
 pub fn register_phyrexian(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if let Some(c) = card_if(r, db, BLESSING)? {
         c.prio = Some(zero_prio); // only ever cast in response to removal (`protect`)
+    }
+    Ok(())
+}
+
+// ================================================================== Archfiend, Skrelv, Gut Shot, White Sun's Twilight, Unlife
+pub const ARCHFIEND: &str = "Archfiend of the Dross";
+pub const SKRELV: &str = "Skrelv, Defector Mite";
+pub const GUT_SHOT: &str = "Gut Shot";
+pub const TWILIGHT: &str = "White Sun's Twilight";
+pub const UNLIFE: &str = "Phyrexian Unlife";
+const RESTO: &str = "Restoration Angel";
+
+fn oil_of(g: &Game, m: PermId) -> i64 {
+    g.perm(m).data.int(DataKey::Oil)
+}
+
+/// **Archfiend of the Dross** (6/6 flier; the compiled card has the "whenever a creature an opponent controls dies, its
+/// controller loses 2 life" trigger): it enters with four oil counters (`as_enters`, so a blinked Archfiend is a new
+/// object with four again). At the beginning of its controller's upkeep (`archfiend_upkeep`) one comes off and, when
+/// none are left, that player loses the game, for real (`lose_game`; Herald of Eternal Dawn stops it). With one
+/// counter left (the upkeep that would end the game) the AI first tries to get the Archfiend out of the way: Restoration
+/// Angel from the hand (flash, {3}{W}) blinks it, so the trigger finds a new object and does nothing. If nothing can
+/// save it, the game is lost, as on the card. Stats: `archfiend_lost`, `archfiend_saved`. Not modeled: saving it with
+/// a sacrifice or bounce effect (the deck has none), and holding Restoration Angel mana up a turn early.
+fn archfiend_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
+    g.perm_mut(m).data.set(DataKey::Oil, Val::Int(4));
+    Ok(())
+}
+
+fn lose_game(g: &mut Game, p: PlayerId, why: &str) -> Res {
+    if crate::impls::t0_giada::cant_lose(g, p) || !g.player(p).alive {
+        return Ok(());
+    }
+    crate::glog!(g, "  {} loses the game ({})", g.player(p).name, why);
+    let pl = g.player_mut(p);
+    pl.last_kind = intern(why);
+    pl.last_src = None;
+    crate::engine::life::eliminate(g, p);
+    crate::engine::life::check_state(g)
+}
+
+fn archfiend_save(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
+    if g.humans.get(p).is_some() || silenced(g, p) {
+        return Ok(false);
+    }
+    let Some(c) = g.player(p).hand.iter().copied().find(|&x| &*g.db.get(x).name == RESTO) else {
+        return Ok(false);
+    };
+    if !can_pay(g, p, 3, "W", false) {
+        return Ok(false);
+    }
+    pay(g, p, 3, "W", false)?;
+    crate::glog!(g, "  {} casts {} in response to the oil counter trigger", g.player(p).name, RESTO);
+    g.resto_target = Some(src);
+    let r = crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default());
+    g.resto_target = None;
+    r?;
+    let saved = !g.perm(src).on_bf;
+    if saved {
+        g.player_mut(p).stat("archfiend_saved", 1);
+    }
+    Ok(saved)
+}
+
+fn archfiend_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if owner(g, src) != p || !g.perm(src).on_bf || g.perm(src).phased {
+        return Ok(());
+    }
+    if oil_of(g, src) <= 1 && archfiend_save(g, src, p)? {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "remove an oil counter", Some(5.0))? || !g.perm(src).on_bf {
+        return Ok(());
+    }
+    let n = (oil_of(g, src) - 1).max(0);
+    g.perm_mut(src).data.set(DataKey::Oil, Val::Int(n));
+    crate::glog!(g, "    Archfiend of the Dross: {} oil counter(s) left", n);
+    if n == 0 {
+        g.player_mut(p).stat("archfiend_lost", 1);
+        lose_game(g, p, "Archfiend of the Dross")?;
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Skrelv, Defector Mite
+/// the `eot_kw` keywords for hexproof from this colour and "can't be blocked by creatures of this colour"
+fn skrelv_kws(ch: char) -> Option<(Sym, Sym)> {
+    Some(match ch {
+        'W' => ("hx_W", "nb_W"),
+        'U' => ("hx_U", "nb_U"),
+        'B' => ("hx_B", "nb_B"),
+        'R' => ("hx_R", "nb_R"),
+        'G' => ("hx_G", "nb_G"),
+        _ => return None,
+    })
+}
+
+/// toxic from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or Skrelv himself: the poison counters the
+/// combat damage to a player gives (called from `engine/combat.rs`; the older toxic cards have their own hooks)
+pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
+    let x = g.perm(a);
+    let mut k = i32::from(x.eot_kw.contains(&"toxic"));
+    match x.cd {
+        None => {
+            if let Some(Val::List(v)) = x.data.get(DataKey::Kws)
+                && v.iter().any(|w| matches!(w, Val::Str(s) if *s == "toxic"))
+            {
+                k += 1;
+            }
+        }
+        Some(_) => k += i32::from(name_of(g, a) == SKRELV && !x.neutered),
+    }
+    if k == 0 || crate::engine::values::melira(g, d) {
+        return;
+    }
+    let k = crate::cardcode::vorinclex(g, g.perm(a).owner, k);
+    g.player_mut(d).poison += k as u32;
+    crate::glog!(g, "    {} gets {} poison counter(s) (toxic)", g.player(d).name, k);
+}
+
+/// hexproof from a colour (Skrelv's ability): `m` can't be targeted by a source with one of these colours
+pub fn hexproof_from(g: &Game, m: PermId, source: Colors) -> bool {
+    [('W', "hx_W"), ('U', "hx_U"), ('B', "hx_B"), ('R', "hx_R"), ('G', "hx_G")]
+        .into_iter()
+        .any(|(ch, kw)| source.has(ch) && g.perm(m).eot_kw.contains(&kw))
+}
+
+/// can't be blocked by creatures of a colour (Skrelv's ability): `b` may not block `a`
+pub fn colour_unblockable(g: &Game, b: PermId, a: PermId) -> bool {
+    let xa = g.perm(a);
+    !xa.eot_kw.is_empty()
+        && ['W', 'U', 'B', 'R', 'G'].into_iter().any(|ch| {
+            skrelv_kws(ch).is_some_and(|(_, nb)| xa.eot_kw.contains(&nb))
+                && crate::engine::values::colors_of(g, b).has(ch)
+        })
+}
+
+fn skrelv_ready(g: &Game, s: PermId, p: PlayerId) -> bool {
+    let x = g.perm(s);
+    x.on_bf && x.owner == p && !x.tapped && !x.sick && !x.phased && !x.neutered && !silenced(g, p)
+}
+
+/// can p pay {W/P} for Skrelv: {W}, or 2 life above `floor`
+fn skrelv_can_pay(g: &Game, p: PlayerId, floor: i32) -> bool {
+    can_pay(g, p, 0, "W", false) || g.player(p).life > floor
+}
+
+/// the ability: pay {W/P} and tap Skrelv; `target` (another creature of p's) gets toxic 1 and hexproof from colour
+/// `ch` until end of turn, and can't be blocked by creatures of that colour. Returns false when it isn't legal.
+fn skrelv_activate(g: &mut Game, s: PermId, p: PlayerId, target: PermId, ch: char, floor: i32) -> Res<bool> {
+    let Some((hx, nb)) = skrelv_kws(ch) else { return Ok(false) };
+    if !skrelv_ready(g, s, p)
+        || target == s
+        || !g.perm(target).on_bf
+        || g.perm(target).owner != p
+        || !g.is_creature(target)
+        || !skrelv_can_pay(g, p, floor)
+    {
+        return Ok(false);
+    }
+    if can_pay(g, p, 0, "W", false) {
+        pay(g, p, 0, "W", false)?;
+    } else {
+        crate::engine::life::lose_life(g, p, 2, Some(p), "life", None)?;
+    }
+    g.perm_mut(s).tapped = true;
+    crate::glog!(
+        g,
+        "  {} uses Skrelv: {} gains toxic 1 and hexproof from {}",
+        g.player(p).name,
+        g.perm(target).name,
+        ch
+    );
+    if !ability_window(g, p, Some(s), "toxic 1 and hexproof from a colour", Some(3.0), Some(target))?
+        || !g.perm(target).on_bf
+    {
+        return Ok(true); // countered; the cost is paid
+    }
+    eot_kw(g, target, "toxic");
+    eot_kw(g, target, hx);
+    eot_kw(g, target, nb);
+    g.player_mut(p).stat("skrelv_used", 1);
+    Ok(true)
+}
+
+/// Skrelv in response to targeted removal (`protect`, from a spell with a colour): hexproof from that colour on the
+/// commander or a creature worth 4 or more fizzles the spell. Paid with {W} or 2 life (above 6).
+fn skrelv_protect(
+    g: &mut Game,
+    owner_p: PlayerId,
+    m: PermId,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if actor == Some(owner_p) || g.humans.get(owner_p).is_some() || !g.perm(m).on_bf || g.perm(m).owner != owner_p {
+        return Ok(false);
+    }
+    let Some(s) = spell else { return Ok(false) };
+    if !g.is_creature(m) || !(g.perm(m).is_cmd || pval(g, m) >= 4.0) {
+        return Ok(false);
+    }
+    let cols = g.db.get(s).colors;
+    let Some(ch) = ['W', 'U', 'B', 'R', 'G'].into_iter().find(|&c| cols.has(c)) else { return Ok(false) };
+    let Some(sk) = on_bf_named(g, owner_p, SKRELV).into_iter().find(|&k| k != m && skrelv_ready(g, k, owner_p)) else {
+        return Ok(false);
+    };
+    if !skrelv_activate(g, sk, owner_p, m, ch, 6)? {
+        return Ok(false);
+    }
+    g.player_mut(owner_p).stat("skrelv_protected", 1);
+    Ok(hexproof_from(g, m, cols))
+}
+
+/// the AI's other use, before combat: make the best attacker unblockable by the colour whose blockers matter most
+/// (post = Some(false), main phase 1). Needs a real blocker of that colour; paid with {W}, or life only above 20.
+fn skrelv_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(false) || g.active != Some(p) || !skrelv_ready(g, src, p) || !skrelv_can_pay(g, p, 20) {
+        return Ok(vec![]);
+    }
+    let best = max_by(
+        &g.player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                m != src
+                    && g.is_creature(m)
+                    && !g.perm(m).sick
+                    && !g.perm(m).tapped
+                    && !g.perm(m).phased
+                    && !g.perm(m).noatk
+                    && epow(g, m) >= 2
+            })
+            .collect::<Vec<_>>(),
+        |m| pval(g, m),
+    );
+    let Some(a) = best else { return Ok(vec![]) };
+    // the opposing blockers that could block `a` now, by colour
+    let (mut bestc, mut bestv) = (None, 0.0);
+    for ch in ['W', 'U', 'B', 'R', 'G'] {
+        let v: f64 = g
+            .opps(p)
+            .flat_map(|q| g.player(q).perms.iter().copied().collect::<Vec<_>>())
+            .filter(|&b| {
+                g.is_creature(b)
+                    && !g.perm(b).tapped
+                    && crate::engine::values::colors_of(g, b).has(ch)
+                    && crate::engine::combat::can_block(g, b, a)
+            })
+            .map(|b| pval(g, b))
+            .sum();
+        if v > bestv {
+            (bestc, bestv) = (Some(ch), v);
+        }
+    }
+    let Some(ch) = bestc.filter(|_| bestv >= 2.0) else { return Ok(vec![]) };
+    let arg = ((a.0 as i64) << 8) | ch as i64;
+    Ok(vec![ability(
+        0.9 + 0.1 * bestv.min(10.0),
+        &format!("Skrelv: {} unblockable by {ch} creatures", g.perm(a).name),
+        src,
+        skrelv_go,
+        arg,
+    )])
+}
+
+fn skrelv_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let (a, ch) = (PermId((arg >> 8) as u32), (arg & 0xff) as u8 as char);
+    skrelv_activate(g, src, p, a, ch, 20)
+}
+
+// ------------------------------------------------------------------ Gut Shot
+/// **Gut Shot** ({R/P}: 1 damage to any target, compiled; {R/P} is paid with {R}, or 2 life above 10 life by the
+/// engine's Phyrexian payment). The AI kills a creature with toughness 1 that is worth a card (an elf or other mana
+/// creature, a token that attacks, anything pval 0.9 or more, which an elf is) at any time it has the mana, and otherwise holds it.
+fn gut_shot_options(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    if !can_pay(g, p, gn, &pips, false) {
+        return Ok(vec![]);
+    }
+    let tg: Vec<PermId> = crate::engine::removal::legal_targets(g, p, "dmg1", "c", false, Some(c))
+        .into_iter()
+        .filter(|&m| g.is_creature(m) && etgh(g, m) <= 1 && !g.perm(m).phased)
+        .collect();
+    let Some(best) = max_by(&tg, |m| pval(g, m)) else { return Ok(vec![]) };
+    let v = pval(g, best);
+    if v < 0.9 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.0 + 0.5 * (v - 1.0),
+        label: format!("Gut Shot -> {}", g.perm(best).name),
+        act: Some(Action::Removal { card: c, targets: vec![best], kick: 0, kind: None }),
+    }])
+}
+
+// ------------------------------------------------------------------ White Sun's Twilight
+/// **White Sun's Twilight** ({X}{W}{W} sorcery): you gain X life and create X 1/1 colourless Phyrexian Mite artifact
+/// creature tokens with toxic 1 and "can't block" (a keyword list on the token); with X 5 or more, destroy all other
+/// creatures (the Mites too, as the card does: "other" means other than the spell). The generic cast (X = 0) is
+/// switched off (`prio` 0); `twilight_options` casts it: a wipe at X 5+ when the opponents lose clearly more board
+/// value than we do (`wipe_eval`), else X up to 4 (never a wipe by accident) for life and bodies when X is 3 or more.
+fn twilight_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) -> Res<Sym> {
+    g.dsl_on = true; // the Mites' "can't block" is read through the keyword checks
+    let x = ctx.x.max(0);
+    if x > 0 {
+        crate::engine::life::gain(g, p, x)?;
+        let mut data = crate::state::PermData::default();
+        data.set(DataKey::Kws, Val::List(vec![Val::Str("toxic"), Val::Str("cant_block")]));
+        let spec = Tokens {
+            tgh: Some(1),
+            color: Some(Colors::NONE),
+            types: vec!["phyrexian", "mite", "artifact"],
+            data,
+            ..Tokens::new(x as u32, 1)
+        };
+        make_tokens(g, p, spec)?;
+    }
+    if x >= 5 {
+        crate::engine::removal::apply_wipe(g, p, "destroy", Some(c), ctx)?;
+    }
+    Ok("gy")
+}
+
+fn twilight_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let x_max = crate::engine::mana::total_mana(g, p, false) as i32 - 2;
+    if x_max < 3 {
+        return Ok(vec![]);
+    }
+    let (ol, ml, _) = crate::ai::decks::wipe_eval(g, p, "destroy");
+    let (x, u) = if x_max >= 5 && ol > 1.2 * ml + 4.0 {
+        (x_max.min(12), 2.0 + ((ol - ml) / 3.0).min(6.0))
+    } else {
+        let x = x_max.min(4);
+        (x, 0.6 + 0.2 * x as f64)
+    };
+    if !can_pay(g, p, x as u32, "WW", false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: u,
+        label: format!("White Sun's Twilight X={x}"),
+        act: Some(Action::Plan { f: twilight_go, arg: c.0 as i64 * 64 + x as i64 }),
+    }])
+}
+
+fn twilight_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (c, x) = (CardId((arg / 64) as u16), (arg % 64) as u32);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, x, "WW", false) {
+        return Ok(false);
+    }
+    pay(g, p, x, "WW", false)?;
+    crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx { x: x as i32, ..Default::default() })?;
+    Ok(true)
+}
+
+// ------------------------------------------------------------------ Phyrexian Unlife
+/// **Phyrexian Unlife**: p doesn't lose the game for having 0 or less life (`engine/life.rs` check_state), and while at
+/// 0 or less, damage to p is dealt as poison counters instead of life loss (`engine/life.rs` lose_life; ten poison
+/// counters still lose). Life loss that isn't damage (Archfiend, Tymna's payment) still lowers the life total. The AI
+/// casts it once, when its life is 20 or less (`unlife_prio`).
+pub fn unlife(g: &Game, p: PlayerId) -> bool {
+    g.player(p)
+        .perms
+        .iter()
+        .any(|&m| g.perm(m).on_bf && !g.perm(m).phased && !g.perm(m).neutered && name_of(g, m) == UNLIFE)
+}
+
+/// damage `n` to p while p has 0 or less life under Phyrexian Unlife: poison counters instead; true if it was taken
+pub fn unlife_infect(g: &mut Game, p: PlayerId, n: i32) -> bool {
+    if g.player(p).life > 0 || !unlife(g, p) {
+        return false;
+    }
+    if !crate::engine::values::melira(g, p) {
+        g.player_mut(p).poison += n as u32;
+        crate::glog!(g, "    {} gets {} poison counters (Phyrexian Unlife)", g.player(p).name, n);
+    }
+    true
+}
+
+fn unlife_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if unlife(g, p) || g.player(p).life > 20 { 0 } else { 40 }
+}
+
+pub fn register_phyrexian2(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, ARCHFIEND)? {
+        c.as_enters = Some(archfiend_enters);
+        c.upkeep = Some(archfiend_upkeep);
+        c.dies = Some(archfiend_dies);
+    }
+    if let Some(c) = card_if(r, db, SKRELV)? {
+        c.options = Some(skrelv_options);
+    }
+    if let Some(c) = card_if(r, db, GUT_SHOT)? {
+        c.hand_options = Some(gut_shot_options);
+        c.prio = Some(zero_prio); // never a plain cast (the compiled spell would pick a face); `gut_shot_options` shoots
+    }
+    if let Some(c) = card_if(r, db, TWILIGHT)? {
+        c.resolve = Some(twilight_resolve);
+        c.hand_options = Some(twilight_options);
+        c.prio = Some(zero_prio);
+    }
+    if let Some(c) = card_if(r, db, UNLIFE)? {
+        c.prio = Some(unlife_prio);
+    }
+    Ok(())
+}
+
+/// whenever a creature an opponent controls dies, its controller loses 2 life (the compiled trigger resolved "its
+/// controller" to nobody, so the card's override has no abilities and this hook does it)
+fn archfiend_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    let o = owner(g, src);
+    let q = owner(g, m);
+    if q == o
+        || !g.perm(src).on_bf
+        || g.perm(src).phased
+        || g.perm(src).neutered
+        || !g.is_creature(m)
+        || !g.player(q).alive
+    {
+        return Ok(());
+    }
+    if trigger_window(g, o, Some(src), "its controller loses 2 life", Some(2.0))? {
+        crate::engine::life::lose_life(g, q, 2, Some(o), "drain", Some(false))?;
     }
     Ok(())
 }

@@ -127,3 +127,25 @@ Aurelia, Tergrid, Marwyn and Atraxa, and no single card or package changes that;
 the AI (attack and blocking decisions), not the list.
 
 **2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 40.0 → 41.7, inside the noise (about ±5). No measurable change to this deck.
+
+### Phyrexian round 2 (2026-10-17, T3, 2,000 paired games each; the list measured 34.9%)
+Aimed at the real loss (creature decks in combat) with cheap cards, cutting non-combat slots instead of removal.
+| Package (in for) | Result | Why |
+|---|---|---|
+| P1: Sheoldred's Edict, Dismember, Porcelain Legionnaire, Vault Skirge, ~$7.50 (Tocasia's Welcome, Elemental Mascot, Arcane Denial, Expressive Iteration) | -1.4 (±2.8) | Spot removal cast +0.20 a game (significant), but deaths unchanged (64%): the T3 creature decks have enough bodies that one more removal spell doesn't stop the attack. Lost the only counterspell (0.17 cast a game). |
+| P2: Phyrexian Obliterator, Sheoldred's Edict, ~$11.50 (Elemental Mascot, Tocasia's Welcome) | -0.6 (±2.7) | Obliterator wins 59% when cast but its {B}{B}{B}{B} is cast in only 28% of the games it's drawn in a four-colour deck. |
+Not modeled, so not tested: Archfiend of the Dross, Skrelv, Gut Shot, White Sun's Twilight, Phyrexian Unlife, Mondrak ($46).
+
+### Phyrexian round 3 (2026-10-17, T3, 2,000 paired games each; five new cards modeled for it, 1,975 tests pass)
+| Package (in for) | Result | Why |
+|---|---|---|
+| R3a: Archfiend of the Dross, $0.38 (Elemental Mascot) | -1.9 (±2.6) | Cast 75% (4 mana) but wins 49% when cast, the same as Elemental Mascot; a 6/6 flier adds pressure, not defense. Its oil-counter loss isn't among the deck's death causes. |
+| **R3b: Skrelv, Gut Shot, White Sun's Twilight, ~$8 (Tocasia's Welcome, Expressive Iteration, Memory Trap)** | **+0.8 (±2.9)** | Best of the Phyrexian rounds, still noise: deaths -1.5, Marwyn's share of the deaths 12 → 9% (Gut Shot cast 83%, kills 1-toughness elves). White Sun's Twilight sits in hand 52% (the AI waits for X ≥ 5). |
+| R3c: all five incl. Phyrexian Unlife (+ Arcane Denial out) | +0.1 (±2.8) | Phyrexian Unlife is cast in only 28% of the games it's drawn (the AI waits for 20 life or less) and wins 33% when cast. |
+**Phyrexian conclusion (three rounds, eight packages):** none beats the list beyond noise. If JD wants one Phyrexian change, R3b
+(Skrelv, Gut Shot, White Sun's Twilight) is the only candidate that points up, and it is specifically good against elves.
+
+### Resplendent Angel for Dream Trawler (2026-10-17, applied: JD got Resplendent Angel instead of Dream Trawler)
+| Swap | Result | Why |
+|---|---|---|
+| Resplendent Angel in, Dream Trawler out | -1.8 (±2.6), list 34.9 → 33.0% | Inside the noise. Resplendent Angel gets cast far more often (75% of the games it's drawn vs 45%; 3 mana vs 6) but wins less when cast (52% vs 63%): Dream Trawler was a hard-to-answer finisher when it landed, the Angel is an early flier whose 4/4 tokens need 5 life gained in one turn. Deaths +1.8, game shape otherwise unchanged. |

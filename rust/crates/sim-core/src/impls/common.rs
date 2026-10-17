@@ -569,6 +569,7 @@ pub fn oring_exile(
                     && pred(g, m)
                     && (g.is_creature(m) || !creature_only)
                     && !protected_from(g, m, pips)
+                    && !crate::impls::tymna_cards::hexproof_from(g, m, pips)
             })
             .collect();
         if let Some(best) = max_by(&cands, |m| pval(g, m))
