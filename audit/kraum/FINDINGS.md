@@ -82,3 +82,12 @@ creature over a 2-mana rock (`ai/search.rs` choose_inner; `ramp_bonus` is off). 
 | **L5 = R7a** (Restoration Angel for Force of Will, Arcane Signet and Fellwar Stone for Talisman of Hierarchy and Star Compass; avg MV 2.97) (`ba8c23c`) | +2.0 (±2.6) | Eliminated -2.0; Restoration Angel 39% win when cast. Force of Will gone: no Game Changers left. |
 
 The AI's ramp setting (`SEARCH_RAMP_W`) can only be set for every seat at once (opponents too), so it was not used.
+| R8a Selfless Spirit, Tithe Taker for Rescue, The Wasp | +0.4 (±2.5) | No effect. (R8c Lingering Souls stopped by JD before it finished.) |
+| R9a Glorybringer, Sun Titan for Spectral Sailor, Cloudfin Raptor | +2.5 (±2.5) | JD lifted the average-mana-value cap (now: under 4). |
+| **L6 = R9b finishers** (Glorybringer, Sun Titan, Grave Titan, Thundermaw Hellkite for Spectral Sailor, Cloudfin Raptor, Callous Inspector, Thrummingbird) (`18ef902`) | **+3.4 (±2.7): 25.8 → 29.1%** | Each finisher wins 52–58% when cast; eliminated -2.4, damage +2.3. |
+| R10a Rune-Scarred Demon, Serra Angel for Rescue, The Wasp | +0.1 (±2.6) | No effect; L6 measured 29.1% again. |
+| **L7 = R10b** (R10a + Dream Trawler, Sunblast Angel for Laelia, Abigale) (`24b4bd0`) | +1.8 (±2.7): 29.1 → 30.9% | Within noise; the gain is from Dream Trawler and Sunblast Angel (R10a alone did nothing). Upgrade buys now ~$48.90. |
+
+**What moved the deck (2026-10-16):** defense (attack taxes, +8.5), then a lower curve with protection for Tymna (+3.3),
+then finishers that win when cast (+3.4), with untapped mana (+2.1) and small cheap swaps on top. Cheap evasive creatures
+alone, more cards, more removal, and more taxes did not move it.

@@ -1,0 +1,1 @@
+4,000 games (analysis, 4,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
