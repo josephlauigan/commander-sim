@@ -1237,7 +1237,7 @@ pub fn protect_response(
     actor: Option<PlayerId>,
     spell: Option<CardId>,
 ) -> Res<bool> {
-    if crate::impls::tymna_cards::protect(g, owner, m, kind)? {
+    if crate::impls::tymna_cards::protect(g, owner, m, kind, actor, spell)? {
         return Ok(true); // Razia redirects burn, King Darien saves tokens
     }
     if protect_main(g, owner, m, kind, actor, spell)? {

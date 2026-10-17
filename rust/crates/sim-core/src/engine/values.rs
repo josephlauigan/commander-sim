@@ -331,6 +331,11 @@ pub fn prot_colors(g: &Game, m: PermId) -> Colors {
     if g.perm(m).eot_kw.contains(&"pro_colors") {
         s = s.union(Colors::from_letters("WUBRG")); // Akroma's Will, mode two
     }
+    for (kw, ch) in [("pro_W", "W"), ("pro_U", "U"), ("pro_B", "B"), ("pro_R", "R"), ("pro_G", "G")] {
+        if g.perm(m).eot_kw.contains(&kw) {
+            s = s.union(Colors::from_letters(ch)); // Apostle's Blessing
+        }
+    }
     if let Some(c) = g.perm(m).cd {
         s = s.union(g.db.get(c).protfrom);
     }
