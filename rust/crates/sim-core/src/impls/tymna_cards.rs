@@ -1161,7 +1161,8 @@ fn land_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
 }
 
 /// Diabolic Tutor (and any tutor for any card) for the kraum seat: the card the game needs. A land when short of mana
-/// (fewer than five lands in play or hand and a colour missing); Toxic Deluge when the table's boards are far ahead;
+/// (fewer than five lands in play or hand and a colour missing); a board wipe (Austere Command, Elspeth, Sunblast Angel or
+/// Toxic Deluge, the first in the library) when the table's boards are far ahead;
 /// when ahead, Conqueror's Flail if it isn't out yet, else the best finisher; else the evasive creature that brings
 /// the next opponent into Tymna's reach, else the generic pick (None).
 pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<CardId> {
@@ -1187,10 +1188,12 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
         })
         .max()
         .unwrap_or(0);
-    if theirs >= mine + 6 && !held("Toxic Deluge") {
-        if let Some(c) = first(&["Toxic Deluge"]) {
-            return Some(c);
-        }
+    const WIPES: [&str; 4] = ["Austere Command", "Elspeth, Sun's Champion", "Sunblast Angel", "Toxic Deluge"];
+    if theirs >= mine + 6
+        && !WIPES.iter().any(|w| held(w))
+        && let Some(c) = first(&WIPES)
+    {
+        return Some(c);
     }
     let cres = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count();
     if cres >= 2 && mine + 2 >= theirs {

@@ -778,14 +778,14 @@ fn the_kraum_seat_tutors_for_a_land_when_short_of_mana() {
 }
 
 #[test]
-fn the_kraum_seat_tutors_for_toxic_deluge_when_far_behind_on_board() {
+fn the_kraum_seat_tutors_for_a_board_wipe_when_far_behind_on_board() {
     let mut g = kraum_table();
     g.player_mut(P0).turns = 6;
     lands(&mut g, P0, "Plains", 6, false);
     for _ in 0..4 {
         token(&mut g, P1, 3);
     }
-    assert_eq!(tutor(&g), "Toxic Deluge");
+    assert_eq!(tutor(&g), "Austere Command");
 }
 
 #[test]
