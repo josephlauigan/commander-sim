@@ -897,3 +897,186 @@ fn shield_goes_on_the_commander_and_helm_on_the_big_attacker_and_kaldra_is_never
     let f = g.registry.get(c).unwrap().options.unwrap();
     assert!(f(&mut g, helm, P0, Some(false)).unwrap().is_empty(), "never pays {{1}} without the Sword");
 }
+
+// ======================================================== Phyrexian mana: Dismember, Porcelain Legionnaire, Vault Skirge, Apostle's Blessing
+fn kraum_tbl() -> Game {
+    table(&["kraum", "galadriel", "veyran"])
+}
+
+/// the label of the main-phase option that casts `name`, run; true if there was one
+fn cast_by_ai(g: &mut Game, p: PlayerId, name: &str) -> bool {
+    let opts = sim_core::ai::brain::main_options(g, p, false).unwrap();
+    match opts.iter().find(|o| o.label.contains(name)) {
+        Some(o) => run(g, p, o),
+        None => false,
+    }
+}
+
+#[test]
+fn dismember_gives_minus_five_and_pays_life_for_missing_black() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Swamp", 1, false);
+    lands(&mut g, P0, "Island", 1, false);
+    hand(&mut g, P0, &["Dismember"]);
+    let big = perm(&mut g, P1, "Baneslayer Angel"); // 5/5
+    assert!(cast_by_ai(&mut g, P0, "Dismember"), "the AI casts it on the 4/5 with one {{B}} and 2 life");
+    assert!(!on(&g, big), "-5/-5 kills a toughness-5 creature");
+    assert_eq!(g.player(P0).life, 38, "one {{B/P}} paid with 2 life, the other with the Swamp");
+    assert_eq!(untapped_lands(&g, P0), 0);
+}
+
+#[test]
+fn dismember_is_not_cast_at_a_creature_it_cannot_kill_and_pays_mana_when_it_can() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Swamp", 2, false);
+    lands(&mut g, P0, "Island", 1, false);
+    hand(&mut g, P0, &["Dismember"]);
+    let huge = perm(&mut g, P1, "Baneslayer Angel");
+    g.perm_mut(huge).plus = 1; // a +1/+1 counter: 6/6
+    assert!(!cast_by_ai(&mut g, P0, "Dismember"), "-5/-5 doesn't kill a 6/6");
+    assert!(on(&g, huge));
+    g.perm_mut(huge).plus = 0;
+    assert!(cast_by_ai(&mut g, P0, "Dismember"));
+    assert!(!on(&g, huge));
+    assert_eq!(g.player(P0).life, 40, "{{1}}{{B}}{{B}} paid in mana: no life");
+}
+
+#[test]
+fn dismember_does_not_pay_life_at_ten_or_less() {
+    let mut g = kraum_tbl();
+    g.player_mut(P0).life = 10;
+    lands(&mut g, P0, "Swamp", 1, false);
+    lands(&mut g, P0, "Island", 1, false);
+    hand(&mut g, P0, &["Dismember"]);
+    let big = perm(&mut g, P1, "Baneslayer Angel");
+    assert!(!cast_by_ai(&mut g, P0, "Dismember"));
+    assert!(on(&g, big));
+    assert_eq!(g.player(P0).life, 10);
+}
+
+#[test]
+fn porcelain_legionnaire_is_a_three_one_first_striker_for_two_life_and_two_mana() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Island", 2, false); // no white mana
+    hand(&mut g, P0, &["Porcelain Legionnaire"]);
+    assert!(cast_by_ai(&mut g, P0, "Porcelain Legionnaire"));
+    let l = *g.player(P0).perms.last().unwrap();
+    assert_eq!(&*g.perm(l).name, "Porcelain Legionnaire");
+    assert_eq!((values::epow(&g, l), values::etgh(&g, l)), (3, 1));
+    assert!(sim_core::dsl::has_kw(&g, l, "first strike"));
+    assert!(g.is_creature(l));
+    assert_eq!(g.player(P0).life, 38, "{{W/P}} paid with 2 life");
+}
+
+#[test]
+fn porcelain_legionnaire_pays_white_mana_when_it_has_it() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 1, false);
+    lands(&mut g, P0, "Island", 2, false);
+    hand(&mut g, P0, &["Porcelain Legionnaire"]);
+    assert!(cast_by_ai(&mut g, P0, "Porcelain Legionnaire"));
+    assert_eq!(g.player(P0).life, 40);
+}
+
+#[test]
+fn porcelain_legionnaire_first_strike_kills_a_three_toughness_blocker_unharmed() {
+    let mut g = kraum_tbl();
+    let l = perm(&mut g, P0, "Porcelain Legionnaire");
+    let blocker = token(&mut g, P1, 3);
+    g.perm_mut(blocker).tgh = 3;
+    assert!(combat::kw(&g, l, "first strike"));
+    assert!(!combat::kw(&g, blocker, "first strike"));
+}
+
+#[test]
+fn vault_skirge_is_a_flying_lifelink_artifact_creature_for_one_mana_and_two_life() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Island", 1, false);
+    hand(&mut g, P0, &["Vault Skirge"]);
+    assert!(cast_by_ai(&mut g, P0, "Vault Skirge"));
+    let s = *g.player(P0).perms.last().unwrap();
+    assert_eq!(&*g.perm(s).name, "Vault Skirge");
+    assert_eq!((values::epow(&g, s), values::etgh(&g, s)), (1, 1));
+    assert!(sim_core::dsl::has_kw(&g, s, "flying"));
+    assert!(sim_core::dsl::has_kw(&g, s, "lifelink"));
+    assert!(
+        values::has_type(&g, s, "artifact")
+            || g.db.get(g.perm(s).cd.unwrap()).types.has(sim_core::cards::Types::ARTIFACT)
+    );
+    assert_eq!(g.player(P0).life, 38);
+}
+
+#[test]
+fn apostle_blessing_stops_a_black_removal_spell_on_the_commander_and_gives_protection_from_black() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 1, false);
+    lands(&mut g, P0, "Island", 1, false);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).is_cmd = true;
+    hand(&mut g, P0, &["Apostle's Blessing"]);
+    let doom = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P1), t, "destroy", Some(doom)).unwrap();
+    assert!(on(&g, t), "protection from black: Doom Blade fizzles");
+    assert!(values::protected_from(&g, t, Colors::from_letters("B")));
+    assert!(!values::protected_from(&g, t, Colors::from_letters("R")));
+    assert!(g.player(P0).hand.is_empty());
+    assert_eq!(g.player(P0).life, 40, "paid with {{W}}");
+    // until end of turn only
+    g.perm_mut(t).eot_kw.clear();
+    assert!(!values::protected_from(&g, t, Colors::from_letters("B")));
+}
+
+#[test]
+fn apostle_blessing_pays_two_life_without_white_mana() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Island", 1, false);
+    let k = perm(&mut g, P0, "Kraum, Ludevic's Opus");
+    g.perm_mut(k).is_cmd = true;
+    hand(&mut g, P0, &["Apostle's Blessing"]);
+    let bolt = card(&g, "Lightning Bolt");
+    removal::apply_removal(&mut g, Some(P1), k, "dmg3", Some(bolt)).unwrap();
+    assert!(on(&g, k));
+    assert!(values::protected_from(&g, k, Colors::from_letters("R")));
+    assert_eq!(g.player(P0).life, 38);
+}
+
+#[test]
+fn apostle_blessing_is_kept_for_a_creature_worth_saving_and_never_cast_on_its_own() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    let small = token(&mut g, P0, 1);
+    hand(&mut g, P0, &["Apostle's Blessing"]);
+    let doom = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P1), small, "destroy", Some(doom)).unwrap();
+    assert!(!on(&g, small), "a 1/1 token isn't worth the card");
+    assert_eq!(g.player(P0).hand.len(), 1);
+    assert!(!cast_by_ai(&mut g, P0, "Apostle's Blessing"), "no main-phase cast");
+}
+
+#[test]
+fn apostle_blessing_chooses_artifacts_against_a_colourless_artifact_spell_and_stops_artifact_damage() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).is_cmd = true;
+    hand(&mut g, P0, &["Apostle's Blessing"]);
+    let sol = card(&g, "Sol Ring"); // any colourless artifact card as the source
+    removal::apply_removal(&mut g, Some(P1), t, "destroy", Some(sol)).unwrap();
+    assert!(on(&g, t));
+    assert!(g.perm(t).eot_kw.contains(&"pro_artifacts"));
+    let golem = perm(&mut g, P1, "Vault Skirge");
+    assert!(sim_core::impls::rules2::prot_vs(&g, t, golem), "no damage from artifact creatures");
+}
+
+#[test]
+fn apostle_blessing_is_not_used_against_your_own_removal() {
+    let mut g = kraum_tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).is_cmd = true;
+    hand(&mut g, P0, &["Apostle's Blessing"]);
+    let doom = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P0), t, "destroy", Some(doom)).unwrap();
+    assert!(!on(&g, t));
+    assert_eq!(g.player(P0).hand.len(), 1);
+}

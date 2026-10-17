@@ -374,6 +374,9 @@ fn woe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// rules2.prot_vs: m has protection from creature `other` (Spirit Mantle / Unquestioned Authority: all creatures;
 /// Baneslayer: Demons and Dragons): no damage from it
 pub fn prot_vs(g: &Game, m: PermId, other: PermId) -> bool {
+    if super::tymna_cards::pro_artifacts_vs(g, m, other) {
+        return true; // Apostle's Blessing: protection from artifacts
+    }
     if !g.auras.is_empty()
         && auras_on(g, m).iter().any(|&a| matches!(name_of(g, a), "Spirit Mantle" | "Unquestioned Authority"))
     {
@@ -390,6 +393,9 @@ pub fn prot_vs(g: &Game, m: PermId, other: PermId) -> bool {
 
 /// rules2.prot_unblockable: Baneslayer Angel can't be blocked by Demons and Dragons
 pub fn prot_unblockable(g: &Game, b: PermId, a: PermId) -> bool {
+    if super::tymna_cards::pro_artifacts_vs(g, a, b) {
+        return true; // Apostle's Blessing: artifact creatures can't block it
+    }
     if name_of(g, a) == "Yawgmoth, Thran Physician" && has_type(g, b, "human") {
         return true; // protection from Humans: Humans can't block it
     }
