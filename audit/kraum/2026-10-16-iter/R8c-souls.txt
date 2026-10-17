@@ -1,0 +1,6 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Lingering Souls [scryfall+dsl] S 2W :: fb=1B
+      ability: spell  -> token
+Model status of the swapped-in cards (cardgen audit):
+  Lingering Souls: Full-auto (compiled from Oracle text)
+

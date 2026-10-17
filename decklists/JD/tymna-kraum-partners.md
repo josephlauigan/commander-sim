@@ -187,7 +187,7 @@ before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (34).** Abigale, Poet Laureate, Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Callous Inspector, Cloudfin Raptor, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Hero of Bladehold, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Rescue, Pepper Potts, Restoration Angel, Skyclave Apparition, Spectral Sailor, Sphinx of New Prahv, Terror of the Peaks, The Wasp, Winsome Avenger, Thrummingbird, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Abigale, Poet Laureate, Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Laelia, the Blade Reforged, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Moseo, Vein's New Dean, Nightveil Predator, Nightwind Glider, Rescue, Pepper Potts, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -216,10 +216,8 @@ before the game.
 1 Battlefield Forge
 1 Bedevil
 1 Black Widow, Agile Avenger
-1 Callous Inspector
 1 Caves of Koilos
 1 Clifftop Retreat
-1 Cloudfin Raptor
 1 Command Tower
 1 Conqueror's Flail
 1 Crawlspace
@@ -242,6 +240,8 @@ before the game.
 1 Ghostly Prison
 1 Gilgamesh, Master-at-Arms
 1 Glacial Fortress
+1 Glorybringer
+1 Grave Titan
 1 Harsh Annotation
 1 Helm of Kaldra
 1 Hero of Bladehold
@@ -270,14 +270,14 @@ before the game.
 1 Shield of Kaldra
 1 Skyclave Apparition
 1 Spectator Seating
-1 Spectral Sailor
 1 Sphinx of New Prahv
 1 Sulfur Falls
+1 Sun Titan
 1 Swords to Plowshares
 1 Talisman of Conviction
 1 Terror of the Peaks
 1 The Wasp, Winsome Avenger
-1 Thrummingbird
+1 Thundermaw Hellkite
 1 Tocasia's Welcome
 1 Toxic Deluge
 1 Tymna the Weaver
