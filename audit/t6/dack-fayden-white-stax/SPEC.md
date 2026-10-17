@@ -183,3 +183,33 @@ for which they were chosen.*
   then does control change, within the same ability. So their enter triggers, and Preston's "another nontoken creature
   you control enters, if it wasn't cast" trigger, are yours. The triggered abilities are controlled by you even after
   the permanents change hands. This is what makes the line work at all; the sketch's percentages assume it.
+
+## First-flip trace: all 35 piles (2026-10-17)
+
+Traced by five agents from `RULES-SHEET.md` (lead-written rules facts and Oracle text), one file per group:
+`flips-a-preston-felidar.md`, `flips-b1-felidar.md`, `flips-b2a-preston.md`, `flips-b2b-preston.md`,
+`flips-c-neither.md`. Goldfish (no interaction), 2 spare {W}, no relevant cards in hand. This replaces the
+"First-flip classes" sketch above. **These are hand traces, not proofs: Stage 3 must confirm every pile with an engine
+test** (each agent flags "no line found" cases as unproven).
+
+| Group | Piles | Result without a flicker spell | Same-turn win |
+| --- | --- | --- | --- |
+| Preston + Felidar | 1–5 | Felidar flickers Dack (a guaranteed second flip); the four left all flip; every case wins | 5 of 5 |
+| Felidar, no Preston | 6–15 | Guaranteed second flip via Felidar on Dack; wins unless Preston stays in the library (3 of 4 for seven piles, 2 of 4 for pile 12, 1 of 4 for piles 10 and 14) | 6.25 of 10 |
+| Preston, no Felidar (16–20) | 16–20 | Banisher tokens free Preston, Dack re-enters, Dack + its token flip all four; 16, 17, 19, 20 win; 18 (Pr+Ab+So) has no banisher | 4 of 5 |
+| Preston, no Felidar (21–25) | 21–25 | 22 and 24 win; 23 needs a Dack flicker spell; 21 and 25 have no way to free Preston and Dack | 2 of 5 |
+| Neither | 26–35 | Banisher chains bounce Dack for a second flip; 3 of 4 (piles 26–31) or 2 of 4 (32–35), missing when Preston stays in the library | 6.5 of 10 |
+| **All** | **35** | | **23.75 of 35 ≈ 68%** |
+
+- **Headline: a resolved Dack wins the same turn about 68% of the time** with no extra cards, before any
+  interaction. With Cloudshift or Ephemerate in hand it rises further: the "neither" piles go to 4 of 4, pile 23
+  becomes a win and piles 21/25 become 2 of 4.
+- **Why it's so high:** the deck gets a second Dack ETB in most piles (Felidar's ETB can target Dack, and two
+  banishers can bounce Dack between them), and a Preston token copy of a re-entering Dack flips again.
+- **The common failure:** Preston left in the library, or Preston and Dack both stuck under banishers with no third
+  piece to release them.
+- **Answers that matter (for the Godo and table AI):** spot removal or bounce on Preston or Felidar in response to
+  the triggers, Stifle-type effects on Dack's ETB, graveyard/exile tricks are irrelevant; the loop wins in the main
+  phase or end step, so instant-speed answers have time.
+- **Calibration note:** this is far above the 15–40% sketch and the old 1/35 estimate. Dack's 37% tournament game win
+  rate (32 entries) is consistent with a deck that wins most of the time it resolves Dack unopposed.
