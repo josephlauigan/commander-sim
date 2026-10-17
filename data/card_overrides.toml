@@ -4466,8 +4466,9 @@ status = "Full"
 note = ""
 
 ["Spire of Industry"]
+add_tags = ["pain"]
 status = "Full"
-note = "{C}; any colour for 1 life while you control an artifact"
+note = "{C}; any colour for 1 life, only while you control an artifact (lands.rs spire_cols; the life is the pain tag)"
 
 ["Spirit Link"]
 types = "E"
@@ -4603,9 +4604,8 @@ status = "Full"
 note = "a basic land to hand on entry; crew 2 with creatures that would not attack anyway: a 3/2 flier"
 
 ["Sulfur Falls"]
-add_tags = ["pain"]
 status = "Full"
-note = "{T}: {C}, or a coloured mana for 1 damage"
+note = "check land: {T}: {U} or {R} with no damage (it was tagged as a painland and cost 1 life per coloured mana); enters tapped unless you control an Island or a Mountain"
 
 ["Sulfurous Springs"]
 add_tags = ["pain"]
@@ -8014,7 +8014,7 @@ note = "at the beginning of each end step, X 1/1 flying Spirits, X the tokens yo
 ["Sungrass Prairie"]
 tags = "c=WG"
 status = "Full"
-note = "{1},{T}: add {G}{W} is a filter: net one mana of green or white (it was two free mana)"
+note = "{1},{T}: add {G}{W} is a filter: net one mana of green or white, and only with another untapped land to pay the {1} (lands.rs pay_one_for_two)"
 
 ["Tainted Field"]
 status = "Full"
@@ -8031,7 +8031,7 @@ note = "filter land: coloured mana ({W}/{B}) only with another land that makes {
 ["Ferrous Lake"]
 tags = "c=UR"
 status = "Full"
-note = "{1},{T}: add {U}{R} is a filter: net one mana of blue or red (it was two free mana)"
+note = "{1},{T}: add {U}{R} is a filter: net one mana of blue or red, and only with another untapped land to pay the {1} (lands.rs pay_one_for_two)"
 
 ["Cascade Bluffs"]
 status = "Full"
@@ -8153,3 +8153,36 @@ tags = "human pow=2"
 dsl = []
 status = "Full"
 note = "soulbond (DataKey::Soulbond, bulk_white::paladin_etb): pairs on either entry, ends when either leaves or changes control; both have double strike"
+
+["Hidden Grotto"]
+tags = "c=C"
+status = "Full"
+note = "{T}: {C}. The {1},{T}: any colour mode converts one mana into another (net zero), so it is left out (it made a free coloured mana)"
+
+["Twilight Mire"]
+status = "Full"
+note = "filter land: coloured mana ({B}/{G}) only with another untapped land that makes {B} or {G} to pay for it (t0_zurgo heath_cols)"
+
+["Rugged Prairie"]
+status = "Full"
+note = "filter land: coloured mana ({R}/{W}) only with another untapped land that makes {R} or {W} to pay for it (t0_zurgo heath_cols)"
+
+["Mystic Gate"]
+status = "Full"
+note = "filter land: coloured mana ({W}/{U}) only with another untapped land that makes {W} or {U} to pay for it (t0_zurgo heath_cols)"
+
+["Cavern of Souls"]
+status = "Full"
+note = "any colour only for a creature spell of the chosen type (the most common type in the deck, as Unclaimed Territory); 'can't be countered' is not modeled"
+
+["Spectator Seating"]
+status = "Full"
+note = "{T}: {R} or {W} (it was any colour of the identity); enters tapped unless you have two or more opponents"
+
+["Exotic Orchard"]
+status = "Full"
+note = "any colour of the identity that an opponent's land could make (lands.rs orchard_cols)"
+
+["Hall of the Bandit Lord"]
+status = "Full"
+note = "{T}, pay 3 life: {C} (not taken at 3 life or less; the haste rider is not modeled)"

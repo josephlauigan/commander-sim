@@ -339,7 +339,8 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         }
         return Ok(());
     }
-    let tapped = kinds.is_none() && !(name == "Fabled Passage" && g.player(p).lands.len() >= 4);
+    // Fabled Passage: untap the new land if you control four or more lands then (the Passage is gone: three others)
+    let tapped = kinds.is_none() && !(name == "Fabled Passage" && g.player(p).lands.len() >= 3);
     if kinds.is_some() {
         lose_life(g, p, 1, Some(p), "other", None)?;
     }

@@ -46124,7 +46124,7 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "A"
+    "c": "C"
    },
    "pow": 0,
    "tgh": 0,
@@ -46151,7 +46151,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -89441,7 +89441,7 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "A"
+    "c": "RW"
    },
    "pow": 0,
    "tgh": 0,
@@ -90180,7 +90180,8 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "A"
+    "c": "A",
+    "pain": true
    },
    "pow": 0,
    "tgh": 0,
@@ -92847,8 +92848,7 @@
    "pips": "",
    "tags": {
     "c": "UR",
-    "ck": true,
-    "pain": true
+    "ck": true
    },
    "pow": 0,
    "tgh": 0,

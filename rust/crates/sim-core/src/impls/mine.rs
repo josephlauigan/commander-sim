@@ -4492,6 +4492,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Ral Zarek, Guest Lecturer")?.options = Some(ralz);
     r.card(db, "Plaza of Heroes")?.land_cols = Some(plaza_colors);
     r.card(db, "Unclaimed Territory")?.land_cols = Some(territory_colors);
+    r.card(db, "Cavern of Souls")?.land_cols = Some(territory_colors); // any colour for a creature spell of the named type
     r.card(db, "Andúril, Flame of the West")?.attack = Some(anduril);
     r.card(db, "Lord of the Nazgûl")?.cast = Some(nazgul);
     r.card(db, "Palantír of Orthanc")?.end_step = Some(palantir);
