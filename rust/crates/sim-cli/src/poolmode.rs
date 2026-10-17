@@ -726,7 +726,7 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str]); 11] = [
+        let want: [(&str, &[&str]); 12] = [
             ("yshtola", &["t5"]),
             ("seph", &["t4"]),
             ("sheoldred", &["t3", "t4", "t5"]),
@@ -735,6 +735,7 @@ mod tier_tests {
             ("sephfs", &["t4", "t5"]),
             ("veyran", &["t1", "t2", "t3", "t4"]),
             ("cloud", &["t1", "t2"]),
+            ("kraum", &["t3"]), // JD 10/16: the goal is a solid tier-3 deck
             ("titania", &["t2", "t3", "t4"]),
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),

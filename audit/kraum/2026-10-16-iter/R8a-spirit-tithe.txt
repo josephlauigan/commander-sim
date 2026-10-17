@@ -1,0 +1,98 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Selfless Spirit [scryfall+dsl] C 1W :: pow=2 tgh=1 fly
+      ability: activated  -> grant
+   Tithe Taker [pool] C 1W :: human pow=2 tgh=1
+Model status of the swapped-in cards (cardgen audit):
+  Selfless Spirit: Full (sacrificed to make your creatures indestructible against destroy effects)
+  Tithe Taker: Full (spells cost {1} more during your turn; afterlife 1)
+
+Swaps: Rescue, Pepper Potts -> Selfless Spirit; The Wasp, Winsome Avenger -> Tithe Taker
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  25.8% ->  26.2%  (delta +0.4 pts, noise ±2.5, paired)   n=2000
+               eliminated by (variant): Tergrid 19.1%  Atraxa 11.7%  Aurelia 21.8%  Marwyn 11.7%  Korvold 7.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          25.8% ->  26.2%  +0.5pt   ±2.8 
+    Rounds survived (or game length)                  12.31 ->  12.42   +0.11  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.59 ->   0.59   +0.00  ±0.05 
+    Mana available on your turn 4                      3.85 ->   3.86   +0.01  ±0.05 
+    Mana available on your turn 6                      5.36 ->   5.38   +0.02  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.67   -0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.65 ->  19.96   +0.31  ±0.56 
+    Tutors resolved per game                           0.12 ->   0.12   +0.00  ±0.02 
+    Spells cast per game                              16.22 ->  16.57   +0.36  ±0.54 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.18   +0.00  ±0.02 
+    Spot removal cast                                  1.40 ->   1.43   +0.03  ±0.08 
+    Board wipes cast                                   0.15 ->   0.16   +0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.70 ->   0.77   +0.07  ±0.06*
+    Your spells countered                              0.14 ->   0.16   +0.02  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                33.29 ->  33.66   +0.37  ±2.15 
+      ...of which combat damage                       32.80 ->  33.08   +0.27  ±2.11 
+      ...of which drain triggers                       0.00 ->   0.00   -0.00  ±0.01 
+      ...of which other triggers                       0.49 ->   0.58   +0.09  ±0.17 
+
+--- Reading it ---
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Selfless Spirit                       27.1      86.5         8.5     13.5       34.4      0.00
+    Tithe Taker                           26.7      79.8         7.7     20.2       36.9      0.06
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rescue, Pepper Potts                  27.1      83.4         8.6     16.6       36.4      0.03
+    The Wasp, Winsome Avenger             26.9      84.2         8.1     15.8       39.4      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        25.8      26.2     +0.4
+    rounds survived                                  12.31     12.42    +0.11
+    eliminated, % of games                            71.8      72.1     +0.3
+    opponents it eliminated, per game                 0.65      0.66    +0.01
+    damage dealt, per game                            33.3      33.7     +0.4
+    commander resolved by turn 4, %                   82.3      82.3     -0.0
+    commander resolved by turn 6, %                   94.8      94.9     +0.2
+    commander removals, per game                      0.80      0.80    +0.00
+    lands on the battlefield, turn 4                  3.73      3.73    +0.01
+    lands on the battlefield, turn 8                  6.52      6.53    +0.01
+    mana available, turn 4                            3.85      3.86    +0.01
+    mana available, turn 8                            6.67      6.68    +0.01
+    cards in hand after the land drop, turn 4         6.25      6.22    -0.03
+    cards in hand after the land drop, turn 8         6.29      6.26    -0.03
+    wins by (current):  damage 92%, timeout 8%
+    wins by (swapped):  damage 92%, timeout 8%
+    eliminated by (current): Aurelia via combat 16.7%, Marwyn via combat 12.6%, Tergrid via combat 11.8%, Atraxa via combat 8.1%
+    eliminated by (swapped): Aurelia via combat 17.6%, Tergrid via combat 13.7%, Marwyn via combat 11.4%, Atraxa via combat 8.8%
+
+(634s total)

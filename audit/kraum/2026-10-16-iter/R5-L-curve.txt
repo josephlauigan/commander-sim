@@ -1,0 +1,149 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Callous Inspector [pool] C B :: human pow=1
+   Cloudfin Raptor [scryfall] C U :: pow=0 fly
+      not modeled: Evolve
+   Thrummingbird [pool] C 1U :: pow=1 fly
+   Rescue, Pepper Potts [scryfall] AC 1U :: leg human pow=2 tgh=1 fly flash
+      not modeled: When ~ enters, return up to one other target artifact or creature you control to its owner's hand. If it was an artifact, put a +1/+1 counter on ~.
+   Take Up the Shield [pool] I 1W :: prot=shield
+   Spectral Sailor [scryfall+dsl] C U :: pow=1 fly flash
+      ability: activated  -> draw
+   Dauthi Voidwalker [pool] C BB :: pow=3 tgh=2
+   Rip Apart [scryfall+dsl] S RW :: rem=dmg3 tgt=cp
+      ability: spell  -> modal
+   Masterful Flourish [scryfall+dsl] I B :: (no tags)
+      ability: spell  -> pump, grant
+Model status of the swapped-in cards (cardgen audit):
+  Callous Inspector: Full (menace; when it dies it deals 1 damage to you and you create a Clue)
+  Cloudfin Raptor: Full (flying; evolve: a +1/+1 counter when a creature with greater power or toughness enters under your control (checked on entering and on resolution; tokens too))
+  Thrummingbird: Full ()
+  Rescue, Pepper Potts: Full (flash, flying; when it enters, return up to one other artifact or creature you control to its owner's hand (the best enter-the-battlefield one); a +1/+1 counter on Rescue if it was an artifact)
+  Lightning Greaves: Full (equip {0}: shroud and haste (moved onto the commander / best creature))
+  Take Up the Shield: Full (a +1/+1 counter, lifelink and indestructible until end of turn: the AI casts it to save Y'shtola or another key creature from destruction or damage)
+  Spectral Sailor: Full-auto (compiled from Oracle text)
+  Dauthi Voidwalker: Full (shadow; opponents' cards going to the graveyard are exiled with void counters; sacrifice to play one free)
+  Swords to Plowshares: Full (tags: `rem=exile tgt=c rgain`)
+  Path to Exile: Full (tags: `rem=exile tgt=c rland`)
+  Rip Apart: Full-auto (compiled from Oracle text)
+  Masterful Flourish: Full-auto (compiled from Oracle text)
+
+Swaps: Chromatic Lantern -> Callous Inspector; Vanish from Sight -> Cloudfin Raptor; Quick Study -> Thrummingbird; Vibrant Outburst -> Rescue, Pepper Potts; Garland, Royal Kidnapper -> Lightning Greaves; Photon, Mighty Marvel -> Take Up the Shield; Caparocti Sunborn -> Spectral Sailor; The Aetherspark -> Dauthi Voidwalker; Wander Off -> Swords to Plowshares; Norn's Annex -> Path to Exile; Glorybringer -> Rip Apart; Baneslayer Angel -> Masterful Flourish
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.4% ->  23.9%  (delta -0.5 pts, noise ±2.5, paired)   n=2000
+               eliminated by (variant): Tergrid 17.6%  Atraxa 12.1%  Aurelia 23.2%  Marwyn 11.6%  Korvold 9.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          24.4% ->  23.9%  -0.5pt   ±2.7 
+    Rounds survived (or game length)                  12.30 ->  12.24   -0.06  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.66 ->   0.63   -0.02  ±0.05 
+    Mana available on your turn 4                      3.55 ->   3.55   -0.00  ±0.05 
+    Mana available on your turn 6                      5.07 ->   5.05   -0.02  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.88 ->   3.83   -0.04  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.08 ->  19.27   +0.18  ±0.55 
+    Tutors resolved per game                           0.10 ->   0.12   +0.02  ±0.02 
+    Spells cast per game                              14.28 ->  15.51   +1.23  ±0.50*
+
+  Interaction
+    Counterspells cast                                 0.34 ->   0.34   -0.00  ±0.03 
+    Spot removal cast                                  1.08 ->   1.35   +0.27  ±0.07*
+    Board wipes cast                                   0.15 ->   0.16   +0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.62   -0.12  ±0.06*
+    Your spells countered                              0.14 ->   0.15   +0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                28.40 ->  30.72   +2.32  ±1.95*
+      ...of which combat damage                       27.94 ->  30.17   +2.23  ±1.92*
+      ...of which magecraft / burn                     0.05 ->   0.00   -0.05  ±0.02*
+      ...of which drain triggers                       0.04 ->   0.01   -0.03  ±0.05 
+      ...of which other triggers                       0.36 ->   0.54   +0.18  ±0.13*
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Spot removal cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    better - Your key permanents removed by opponents (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+    worse  -   ...of which magecraft / burn (both profiles)
+    better -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Callous Inspector                     25.9      92.1         7.4      7.9       34.3      0.01
+    Cloudfin Raptor                       27.6      85.7         7.6     14.3       31.6      0.03
+    Thrummingbird                         28.8      80.4         8.3     19.6       31.7      0.03
+    Rescue, Pepper Potts                  27.4      85.9         8.3     14.1       30.8      0.04
+    Lightning Greaves                     27.6      77.5         7.1     22.5       30.8      0.03
+    Take Up the Shield                    25.6       0.0           -    100.0          -      0.00
+    Spectral Sailor                       27.9      87.3         7.3     12.7       29.6      0.01
+    Dauthi Voidwalker                     28.1      80.2         9.4     19.8       34.1      0.02
+    Swords to Plowshares                  27.0      86.7         7.8     13.3       32.7      0.00
+    Path to Exile                         27.0      88.7         7.8     11.3       32.6      0.00
+    Rip Apart                             29.8      77.0         8.8     23.0       34.3      0.00
+    Masterful Flourish                    25.6      72.1         8.0     27.9       33.2      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Chromatic Lantern                     26.6      43.3         9.5     56.7       34.3      0.00
+    Vanish from Sight                     27.1      44.0        11.3     56.0       40.8      0.00
+    Quick Study                           28.2      47.3        11.2     52.7       46.4      0.00
+    Vibrant Outburst                      26.7      47.6         9.2     52.4       31.1      0.00
+    Garland, Royal Kidnapper              27.0      60.4         9.4     39.6       34.7      0.01
+    Photon, Mighty Marvel                 25.9      67.6        10.4     32.4       37.3      0.01
+    Caparocti Sunborn                     26.9      51.6         9.8     48.4       36.3      0.01
+    The Aetherspark                       29.4      54.5        10.1     45.5       42.1      0.09
+    Wander Off                            26.8      53.3        10.6     46.7       36.1      0.00
+    Norn's Annex                          28.1      53.3         9.5     46.7       41.5      0.02
+    Glorybringer                          28.6      45.6        11.4     54.4       44.4      0.01
+    Baneslayer Angel                      27.1      49.7        10.7     50.3       49.1      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        24.4      23.9     -0.5
+    rounds survived                                  12.30     12.24    -0.06
+    eliminated, % of games                            73.5      74.0     +0.5
+    opponents it eliminated, per game                 0.60      0.60    -0.01
+    damage dealt, per game                            28.4      30.7     +2.3
+    commander resolved by turn 4, %                   78.8      81.3     +2.5
+    commander resolved by turn 6, %                   95.2      95.2     -0.1
+    commander removals, per game                      0.82      0.78    -0.04
+    lands on the battlefield, turn 4                  3.71      3.72    +0.01
+    lands on the battlefield, turn 8                  6.34      6.46    +0.11
+    mana available, turn 4                            3.55      3.55    -0.00
+    mana available, turn 8                            6.38      6.43    +0.06
+    cards in hand after the land drop, turn 4         6.42      6.11    -0.30
+    cards in hand after the land drop, turn 8         6.59      6.25    -0.34
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 16.6%, Tergrid via combat 13.3%, Marwyn via combat 12.1%, Atraxa via combat 10.7%
+    eliminated by (swapped): Aurelia via combat 19.8%, Tergrid via combat 11.6%, Marwyn via combat 11.2%, Atraxa via combat 9.8%
+
+(506s total)

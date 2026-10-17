@@ -1,0 +1,147 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Ghostly Prison [pool] E 2W :: (no tags)
+   Propaganda [pool] E 2U :: (no tags)
+   Norn's Annex [pool] A 3WW :: (no tags)
+   Crawlspace [pool] A 3 :: (no tags)
+   Windborn Muse [pool] C 3W :: pow=2 tgh=3 fly
+   Elspeth, Sun's Champion [pool] P 4WW :: leg
+   Archon of Absolution [pool] C 3W :: pow=3 tgh=2 fly
+   Baird, Steward of Argive [pool] C 2WW :: leg human pow=2 tgh=4 vig
+   Rip Apart [scryfall+dsl] S RW :: rem=dmg3 tgt=cp
+      ability: spell  -> modal
+   Suplex [pool] S 1R :: rem=dmg3 tgt=c alsoart exiledie
+   Destroy Evil [scryfall+dsl] I 1W :: rem=destroy tgt=c
+      ability: spell  -> modal
+Model status of the swapped-in cards (cardgen audit):
+  Ghostly Prison: Full ()
+  Propaganda: Full ()
+  Norn's Annex: Full (each attacker at you costs {W/P} ({W} or 2 life))
+  Crawlspace: Full ()
+  Windborn Muse: Full ()
+  Elspeth, Sun's Champion: Full (+1 three Soldiers, -3 destroys power 4+, -7 emblem (+2/+2, flying))
+  Archon of Absolution: Full (flying; protection from white (protfrom W); each creature attacking its controller costs {1} (common.pillowfort_tax; planeswalkers are protected by the same player-level tax); tested in cards_archon)
+  Baird, Steward of Argive: Full ()
+  Rip Apart: Full-auto (compiled from Oracle text)
+  Suplex: Full (3 damage to a creature, exiled instead if it would die; or exile a target artifact (when no creature is worth the burn))
+  Destroy Evil: Full-auto (compiled from Oracle text)
+
+Swaps: Medic's Kitesail -> Ghostly Prison; Nim Deathmantle -> Propaganda; Fate of the Sun-Cryst -> Norn's Annex; Urza, Powerstone Prodigy -> Crawlspace; Hero's Blade -> Windborn Muse; Dissipate -> Elspeth, Sun's Champion; Make Your Move -> Archon of Absolution; Exit Specialist -> Baird, Steward of Argive; Silverquill Charm -> Rip Apart; Bedevil -> Suplex; Elemental Mascot -> Destroy Evil
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  13.1% ->  20.4%  (delta +7.4 pts, noise ±2.3, paired)   n=2000
+               eliminated by (variant): Tergrid 19.9%  Atraxa 12.9%  Aurelia 22.6%  Marwyn 12.6%  Korvold 9.6%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          13.1% ->  20.4%  +7.4pt   ±2.4*
+    Rounds survived (or game length)                  11.51 ->  12.21   +0.70  ±0.23*
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.65 ->   0.66   +0.00  ±0.05 
+    Mana available on your turn 4                      3.50 ->   3.50   +0.00  ±0.05 
+    Mana available on your turn 6                      5.07 ->   5.01   -0.06  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.82 ->   3.89   +0.06  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.81 ->  18.86   +1.04  ±0.54*
+    Tutors resolved per game                           0.09 ->   0.10   +0.01  ±0.02 
+    Spells cast per game                              13.45 ->  14.50   +1.04  ±0.49*
+
+  Interaction
+    Counterspells cast                                 0.37 ->   0.32   -0.05  ±0.04*
+    Spot removal cast                                  1.16 ->   1.23   +0.07  ±0.08 
+    Board wipes cast                                   0.17 ->   0.16   -0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.76 ->   0.74   -0.01  ±0.07 
+    Your spells countered                              0.13 ->   0.15   +0.02  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                21.68 ->  25.30   +3.62  ±1.64*
+      ...of which combat damage                       20.77 ->  24.87   +4.10  ±1.60*
+      ...of which magecraft / burn                     0.06 ->   0.07   +0.01  ±0.03 
+      ...of which drain triggers                       0.62 ->   0.00   -0.62  ±0.10*
+      ...of which other triggers                       0.24 ->   0.35   +0.12  ±0.10*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+    better - Rounds survived (or game length) (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+    better - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+    worse  -   ...of which drain triggers (both profiles)
+    better -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ghostly Prison                        27.4      82.3         8.3     17.7       32.6      0.04
+    Propaganda                            28.1      79.2         8.6     20.8       34.5      0.03
+    Norn's Annex                          25.1      53.7         9.2     46.3       36.3      0.02
+    Crawlspace                            28.1      77.0         8.8     23.0       32.6      0.04
+    Windborn Muse                         25.2      73.1         9.3     26.9       36.0      0.03
+    Elspeth, Sun's Champion               26.7      36.0        11.3     64.0       42.7      0.05
+    Archon of Absolution                  27.4      72.6         9.5     27.4       35.3      0.03
+    Baird, Steward of Argive              26.2      51.8         9.7     48.2       30.1      0.02
+    Rip Apart                             27.4      75.1         9.1     24.9       33.1      0.00
+    Suplex                                26.0      60.0         9.3     40.0       30.1      0.00
+    Destroy Evil                          26.6      83.3         8.2     16.7       29.7      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Medic's Kitesail                      28.1      77.4         6.7     22.6       17.7      0.08
+    Nim Deathmantle                       29.6      71.6         7.5     28.4       21.9      0.02
+    Fate of the Sun-Cryst                 25.4      42.6        10.7     57.4       25.0      0.00
+    Urza, Powerstone Prodigy              26.6      49.2         9.8     50.8       27.5      0.01
+    Hero's Blade                          26.1      78.1         6.7     21.9       24.6      0.04
+    Dissipate                             24.9      22.0        12.0     78.0       28.2      0.00
+    Make Your Move                        24.6      63.5         9.1     36.5       21.5      0.00
+    Exit Specialist                       26.3      80.8         7.8     19.2       21.2      0.01
+    Silverquill Charm                     25.9      62.2         8.7     37.8       22.0      0.00
+    Bedevil                               24.7      59.9        10.4     40.1       24.7      0.00
+    Elemental Mascot                      25.0      67.4         9.5     32.6       24.9      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        13.1      20.4     +7.4
+    rounds survived                                  11.51     12.21    +0.70
+    eliminated, % of games                            85.7      77.5     -8.2
+    opponents it eliminated, per game                 0.39      0.51    +0.12
+    damage dealt, per game                            21.7      25.3     +3.6
+    commander resolved by turn 4, %                   79.3      77.8     -1.5
+    commander resolved by turn 6, %                   94.2      94.2     +0.0
+    commander removals, per game                      0.77      0.83    +0.06
+    lands on the battlefield, turn 4                  3.70      3.69    -0.01
+    lands on the battlefield, turn 8                  6.35      6.29    -0.06
+    mana available, turn 4                            3.50      3.50    +0.00
+    mana available, turn 8                            6.33      6.30    -0.02
+    cards in hand after the land drop, turn 4         6.17      6.28    +0.11
+    cards in hand after the land drop, turn 8         6.39      6.53    +0.14
+    wins by (current):  damage 90%, timeout 10%
+    wins by (swapped):  damage 92%, timeout 8%
+    eliminated by (current): Aurelia via combat 25.4%, Marwyn via combat 14.7%, Tergrid via combat 14.5%, Atraxa via combat 9.8%
+    eliminated by (swapped): Aurelia via combat 18.8%, Tergrid via combat 12.8%, Marwyn via combat 12.4%, Atraxa via combat 9.9%
+
+(513s total)

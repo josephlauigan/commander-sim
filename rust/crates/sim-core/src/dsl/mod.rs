@@ -1930,6 +1930,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                 + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
                 + crate::impls::cloud::holder_bonus(g, p, m)
+                + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)
         };
         let best = max_by(&cands, score).unwrap();
         // moving a worn piece: only to a clearly better holder (else it ping-pongs between equals)
@@ -1953,7 +1954,8 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .filter(|a| matches!(a, Ability::Triggered { source: Some(s), .. } if s == "equipped"))
             .count();
         let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64
-            + crate::impls::cloud::equip_utility_bonus(g, p, src, best);
+            + crate::impls::cloud::equip_utility_bonus(g, p, src, best)
+            + crate::impls::tymna_cards::equip_utility_value(g, p, src, best);
         out.push(Opt {
             utility: u,
             label: format!("equip {}", d.name),

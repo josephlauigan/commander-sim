@@ -1,0 +1,99 @@
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 12.7%   (4-player baseline 25%)   average rounds survived 10.7
+
+-- How it wins --
+  damage      99.2% of wins
+  timeout      0.8% of wins
+  Opponents it eliminated: 0.38 per game, by
+    combat             74.9%
+    commander damage   10.4%
+    decked              7.2%
+    triggers            3.7%
+    burn                3.5%
+    drain               0.3%
+  Damage dealt per game: 24.9, from
+    combat              24.2  (97%)
+    drain                0.4  (1%)
+    triggers             0.2  (1%)
+    burn                 0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.03; Tymna turns per game 4.29; opponents hit per Tymna turn 0.64
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.84 (in 97% of games)
+  Kraum lands on turn 6.22 (in 86% of games)
+
+-- How it loses --
+  Eliminated in 86.9% of games, on average in round 10.1
+    by Light-Paws via commander damage   17.2% of games
+    by Isshin   via combat             15.5% of games
+    by Lathril  via combat             11.6% of games
+    by Tatyova  via combat             11.4% of games
+    by Teysa Karlov via drain               7.6% of games
+    by Lathril  via drain               5.9% of games
+    by Light-Paws via combat              5.4% of games
+    by Teysa Karlov via combat              3.9% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.8 (over the 97.5% of games it resolves)
+  Commander resolved by turn:  T4 79%  T5 88%  T6 94%  T7 96%  T8 97%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Lyra Dawnbringer                           cast in  11.6% of games, win rate when cast  37.1% (+24.4)
+    Terror of the Peaks                        cast in  11.4% of games, win rate when cast  32.5% (+19.8)
+    Nightveil Predator                         cast in  10.7% of games, win rate when cast  31.8% (+19.1)
+    Lightning, Security Sergeant               cast in  16.8% of games, win rate when cast  31.0% (+18.3)
+    Elenda, the Dusk Rose                      cast in  10.5% of games, win rate when cast  30.5% (+17.8)
+    Sphinx of New Prahv                        cast in  10.4% of games, win rate when cast  29.8% (+17.1)
+    Marchesa, the Black Rose                   cast in  11.8% of games, win rate when cast  29.7% (+17.0)
+    Conqueror's Flail                          cast in  18.1% of games, win rate when cast  29.3% (+16.6)
+    Moseo, Vein's New Dean                     cast in  17.8% of games, win rate when cast  29.2% (+16.5)
+    The Aetherspark                            cast in  12.4% of games, win rate when cast  28.2% (+15.5)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  97.1% of games, win rate when cast  13.1% (+0.4)
+    Kraum, Ludevic's Opus                      cast in  86.8% of games, win rate when cast  14.6% (+1.9)
+    Make Your Move                             cast in  15.0% of games, win rate when cast  14.7% (+2.0)
+    Silverquill Charm                          cast in  17.6% of games, win rate when cast  17.0% (+4.3)
+    Darksteel Mutation                         cast in  21.6% of games, win rate when cast  17.1% (+4.4)
+    Toxic Deluge                               cast in  18.6% of games, win rate when cast  17.2% (+4.5)
+    Talisman of Hierarchy                      cast in  16.9% of games, win rate when cast  17.8% (+5.1)
+    Exit Specialist                            cast in  22.5% of games, win rate when cast  18.7% (+6.0)
+    Star Compass                               cast in  18.7% of games, win rate when cast  18.7% (+6.0)
+    Dragoon's Lance                            cast in  21.0% of games, win rate when cast  19.0% (+6.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dissipate                                  cast  24.5% of the games it was drawn [reactive: only cast in response]
+    Fate of the Sun-Cryst                      cast  31.8% of the games it was drawn
+    Fact or Fiction                            cast  32.0% of the games it was drawn
+    Diabolic Tutor                             cast  35.9% of the games it was drawn
+    Shield of Kaldra                           cast  36.7% of the games it was drawn
+    Vanish from Sight                          cast  37.8% of the games it was drawn
+    Chromatic Lantern                          cast  39.5% of the games it was drawn
+    Gilgamesh, Master-at-Arms                  cast  41.4% of the games it was drawn
+    Sphinx of New Prahv                        cast  42.1% of the games it was drawn
+    Nightveil Predator                         cast  42.6% of the games it was drawn
+    Urza, Powerstone Prodigy                   cast  42.7% of the games it was drawn
+    Elenda, the Dusk Rose                      cast  43.6% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kraum, Ludevic's Opus                      0.37
+    Tymna the Weaver                           0.35
+    Medic's Kitesail                           0.08
+    The Aetherspark                            0.07
+    Samurai's Katana                           0.07
+    Helm of Kaldra                             0.05
+    Hero's Blade                               0.05
+    Hero's Heirloom                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(164s total)

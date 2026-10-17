@@ -4,8 +4,8 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Veyran, Y'shtola. Avery's decks:
-Alela, Galadriel.
+JD's decks: Cloud, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Tymna/Kraum, Veyran, Y'shtola.
+Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
 
@@ -344,6 +344,56 @@ Deck key `titania`, `decklists/JD/titania-lands.md`.
   night (Infestation Expert) is modeled only as far as it changes that card.
 - **Consistency note, 2026-10-11:** the 38-land base (35 Forest plus the three fetch lands) is an exception to JD's
   basics-over-tapped-lands rule.
+
+## Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners
+
+Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
+
+### Changes
+
+- **2026-10-16 (night).** JD doesn't own Toxic Deluge, Masterful Flourish, Moseo, Vein's New Dean or Shattered Sanctum
+  (removed from the binder and bulk lists). Out: those four. In: Austere Command, Dark Endurance, The Wasp, Winsome
+  Avenger and a Swamp (all from bulk). Measured +1.8 at T3 (2,000 paired games, ±2.7): no loss.
+- **2026-10-16 (evening).** Tuned toward a solid Tier 3 deck (JD: 30% at T3, up to $50 of upgrades; Gilgamesh,
+  Diabolic Tutor, Shield and Helm of Kaldra, Toxic Deluge and Fact or Fiction kept). Eleven rounds of paired tests at
+  T3 (`audit/kraum/FINDINGS.md`). Out: Abigale, Poet Laureate, Arcane Sanctum, Boiling Rock Prison, Caparocti
+  Sunborn, Chromatic Lantern, Crumbling Necropolis, Dissipate, Dragoon's Lance, Exit Specialist, Fate of the
+  Sun-Cryst, Force of Will, Garland, Royal Kidnapper, Harsh Annotation, Hero's Blade, Hero's Heirloom, Irrigated
+  Farmland, Laelia, the Blade Reforged, Make Your Move, Medic's Kitesail, Mystic Monastery, Nim Deathmantle, Nomad
+  Outpost, Path of Ancestry, Photon, Mighty Marvel, Potioner's Trove, Quick Study, Samurai's Katana, Scorching
+  Dragonfire, Silverquill Charm, Spectacle Summit, Spectral Lynx, Star Compass, Talisman of Hierarchy, Temple of
+  Deceit, Temple of Epiphany, Temple of Malice, The Aetherspark, The Wasp, Winsome Avenger, Trailblazer's Boots,
+  Urza, Powerstone Prodigy, Vanish from Sight, Vibrant Outburst, Vivid Creek, Wander Off. In: Adeline, Resplendent
+  Cathar, Arcane Signet, Archon of Absolution, Baird, Steward of Argive, Baneslayer Angel, Crawlspace, Dauthi
+  Voidwalker, Dragonskull Summit, Dream Trawler, Drowned Catacomb, Elspeth, Sun's Champion, Fellwar Stone, Ghostly
+  Prison, Glorybringer, Grave Titan, Hero of Bladehold, Isolated Chapel, Lightning Greaves, Masterful Flourish,
+  Orzhov Signet, Path to Exile, Propaganda, Restoration Angel, Rip Apart, Rune-Scarred Demon, Serra Angel, Skyclave
+  Apparition, Sulfur Falls, Sunblast Angel, Sun Titan, Swords to Plowshares, Thundermaw Hellkite, Vampire Nighthawk,
+  Windborn Muse. Basics: Plains 3 → 7, Island 3 → 6, Swamp 3 → 5, Mountain 2 → 3 (38 lands, was 36). Force of
+  Will out: no Game Changers left. Upgrade buys about $48.65.
+- **2026-10-16.** Brought back as a deck, with Gilgamesh, Master-at-Arms, Diabolic Tutor and an Equipment package.
+  Starts from the 2026-10-13 comparison build (dropped 2026-10-14). Out: Adarkar Wastes, Shivan Reef, Sulfurous
+  Springs, Bitter Triumph, Dakkon, Shadow Slayer (all five now in other decks), Ultimate Magic: Holy, Shardmage's
+  Rescue, Reconnaissance Mission, Razia, Boros Archangel, Mordenkainen, Desertion, Dakkon Blackblade, Sol'kanar the
+  Swamp King (the eight lowest win-rate-when-cast cards in all five tiers of the 2026-10-13 runs), Twisted Fates, Mana
+  Leak. In: Irrigated Farmland, Spectacle Summit, Boiling Rock Prison, Diabolic Tutor, Gilgamesh, Master-at-Arms,
+  Conqueror's Flail, Trailblazer's Boots, Medic's Kitesail, Nim Deathmantle, Dragoon's Lance, Samurai's Katana,
+  Hero's Heirloom, Hero's Blade, Shield of Kaldra, Helm of Kaldra (the last two from the Cloud deck; Sword of Kaldra
+  stays there). Buys: Kraum, Gilgamesh, Diabolic Tutor.
+- **2026-10-13.** Built as the Kraum comparison for the Tymna deck from the retired Jodah deck's cards (40 of them).
+
+### Simulator history
+
+- **2026-10-16 (evening).** The tuned list scored **31.2% at T3** (4,000 games, look-ahead, loose, ±1.4;
+  `audit/kraum/2026-10-16-iter/L8-analyze-t3.txt`), up from 12.6% for the morning's list. The gains, in paired tests:
+  attack taxes +8.5, a lower curve with protection for Tymna +3.3, finishers +3.4, more mana and lands +3.1 and +2.1.
+- **2026-10-16.** The new build scored **12.6% over t1–t5** (T1 12.7, T2 12.3, T3 12.6, T4 13.4, T5 12.1; 1,000
+  games per tier, look-ahead, loose, `--any-tier` with JD's OK; `audit/kraum/2026-10-16/`). Below the fair band in
+  every tier. Tymna hits only 0.5–0.7 opponents per turn and Kraum lands on turn 6.3. Findings in
+  `audit/kraum/FINDINGS.md`.
+- **2026-10-13.** The comparison build scored **15.3% over T1–T5** (T1 12.3, T2 16.5, T3 17.5, T4 14.3, T5 16.1;
+  1,000 games per tier, look-ahead, loose; `audit/tymna/2026-10-13-fix/` on branch `tymna-thrasios`), against 10.1%
+  for the Thrasios build.
 
 ## Veyran, Voice of Duality — Izzet Spellslinger
 

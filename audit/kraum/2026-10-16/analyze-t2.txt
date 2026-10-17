@@ -1,0 +1,98 @@
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 12.3%   (4-player baseline 25%)   average rounds survived 12.7
+
+-- How it wins --
+  damage      90.2% of wins
+  timeout      9.8% of wins
+  Opponents it eliminated: 0.45 per game, by
+    combat             79.5%
+    commander damage    9.1%
+    triggers            4.5%
+    burn                3.3%
+    decked              2.7%
+    drain               0.9%
+  Damage dealt per game: 28.4, from
+    combat              27.4  (96%)
+    drain                0.7  (2%)
+    triggers             0.3  (1%)
+    burn                 0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.60; Tymna turns per game 4.94; opponents hit per Tymna turn 0.64
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.86 (in 98% of games)
+  Kraum lands on turn 6.29 (in 92% of games)
+
+-- How it loses --
+  Eliminated in 85.8% of games, on average in round 12.0
+    by Brago    via combat             17.5% of games
+    by Lord Windgrace via combat             16.1% of games
+    by Kaalia of the Vast via combat             13.7% of games
+    by Sythis   via combat             11.2% of games
+    by Meren of Clan Nel Toth via combat              7.8% of games
+    by Kaalia of the Vast via drain               4.4% of games
+    by Meren of Clan Nel Toth via triggers            3.8% of games
+    by Meren of Clan Nel Toth via drain               3.6% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.8 (over the 98.5% of games it resolves)
+  Commander resolved by turn:  T4 80%  T5 89%  T6 94%  T7 96%  T8 98%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Diabolic Tutor                             cast in  10.8% of games, win rate when cast  35.2% (+22.9)
+    Elenda, the Dusk Rose                      cast in  12.9% of games, win rate when cast  34.9% (+22.6)
+    Terror of the Peaks                        cast in  16.2% of games, win rate when cast  33.3% (+21.0)
+    Sphinx of New Prahv                        cast in  17.2% of games, win rate when cast  30.2% (+17.9)
+    Gilgamesh, Master-at-Arms                  cast in  13.0% of games, win rate when cast  30.0% (+17.7)
+    Lyra Dawnbringer                           cast in  16.4% of games, win rate when cast  28.7% (+16.4)
+    Marchesa, the Black Rose                   cast in  15.8% of games, win rate when cast  28.5% (+16.2)
+    Chromatic Lantern                          cast in  13.2% of games, win rate when cast  28.0% (+15.7)
+    Nightveil Predator                         cast in  14.5% of games, win rate when cast  26.9% (+14.6)
+    Vanish from Sight                          cast in  12.4% of games, win rate when cast  26.6% (+14.3)
+  Lowest win rate when cast:
+    Toxic Deluge                               cast in  22.7% of games, win rate when cast  11.0% (-1.3)
+    Tymna the Weaver                           cast in  98.5% of games, win rate when cast  12.5% (+0.2)
+    Kraum, Ludevic's Opus                      cast in  92.4% of games, win rate when cast  13.3% (+1.0)
+    Medic's Kitesail                           cast in  24.9% of games, win rate when cast  16.1% (+3.8)
+    Harsh Annotation                           cast in  24.7% of games, win rate when cast  16.6% (+4.3)
+    Hero's Heirloom                            cast in  24.9% of games, win rate when cast  16.9% (+4.6)
+    The Wasp, Winsome Avenger                  cast in  26.1% of games, win rate when cast  17.2% (+4.9)
+    Samurai's Katana                           cast in  26.0% of games, win rate when cast  17.3% (+5.0)
+    Nim Deathmantle                            cast in  23.8% of games, win rate when cast  17.6% (+5.3)
+    Moseo, Vein's New Dean                     cast in  23.5% of games, win rate when cast  17.9% (+5.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Fact or Fiction                            cast  28.7% of the games it was drawn
+    Dissipate                                  cast  29.5% of the games it was drawn [reactive: only cast in response]
+    Diabolic Tutor                             cast  37.5% of the games it was drawn
+    Fate of the Sun-Cryst                      cast  39.4% of the games it was drawn
+    Elenda, the Dusk Rose                      cast  44.5% of the games it was drawn
+    Vanish from Sight                          cast  45.4% of the games it was drawn
+    Gilgamesh, Master-at-Arms                  cast  46.3% of the games it was drawn
+    The Aetherspark                            cast  46.9% of the games it was drawn
+    Chromatic Lantern                          cast  47.8% of the games it was drawn
+    Shield of Kaldra                           cast  49.2% of the games it was drawn
+    Terror of the Peaks                        cast  49.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.87
+    Kraum, Ludevic's Opus                      0.81
+    Medic's Kitesail                           0.16
+    Samurai's Katana                           0.15
+    Helm of Kaldra                             0.13
+    The Aetherspark                            0.11
+    Dragoon's Lance                            0.10
+    Hero's Blade                               0.09
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(217s total)

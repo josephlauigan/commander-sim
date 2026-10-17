@@ -1,0 +1,91 @@
+Model status of the swapped-in cards (cardgen audit):
+  Orzhov Signet: Full ({1},{T}: two mana of its colours (net one coloured mana))
+  Spire of Industry: Full ({C}; any colour for 1 life while you control an artifact)
+
+Swaps: Star Compass -> Orzhov Signet; Spectacle Summit -> Spire of Industry
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  12.6% ->  12.1%  (delta -0.5 pts, noise ±2.7, paired)   n=1000
+               eliminated by (variant): Aurelia 29.9%  Tergrid 18.2%  Korvold 11.0%  Atraxa 12.9%  Marwyn 15.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          12.6% ->  12.1%  -0.5pt   ±2.9 
+    Rounds survived (or game length)                  11.48 ->  11.60   +0.12  ±0.31 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.67 ->   0.67   +0.00  ±0.08 
+    Mana available on your turn 4                      3.52 ->   3.55   +0.03  ±0.06 
+    Mana available on your turn 6                      5.05 ->   5.08   +0.03  ±0.11 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.82 ->   3.74   -0.08  ±0.11 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.75 ->  18.00   +0.25  ±0.76 
+    Tutors resolved per game                           0.11 ->   0.11   +0.00  ±0.03 
+    Spells cast per game                              13.34 ->  13.62   +0.28  ±0.66 
+
+  Interaction
+    Counterspells cast                                 0.39 ->   0.38   -0.01  ±0.05 
+    Spot removal cast                                  1.14 ->   1.18   +0.04  ±0.10 
+    Board wipes cast                                   0.17 ->   0.18   +0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.77   +0.03  ±0.09 
+    Your spells countered                              0.14 ->   0.12   -0.02  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                21.48 ->  22.10   +0.62  ±2.21 
+      ...of which combat damage                       20.53 ->  21.12   +0.59  ±2.16 
+      ...of which magecraft / burn                     0.06 ->   0.07   +0.01  ±0.04 
+      ...of which drain triggers                       0.61 ->   0.68   +0.07  ±0.21 
+      ...of which other triggers                       0.27 ->   0.23   -0.05  ±0.13 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Orzhov Signet                         25.2      70.6         6.6     29.4       21.3      0.01
+    Spire of Industry                     25.4       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Star Compass                          26.6      72.9         6.6     27.1       19.1      0.02
+    Spectacle Summit                      25.9       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        12.6      12.1     -0.5
+    rounds survived                                  11.48     11.60    +0.12
+    eliminated, % of games                            86.0      87.2     +1.2
+    opponents it eliminated, per game                 0.38      0.38    -0.00
+    damage dealt, per game                            21.5      22.1     +0.6
+    commander resolved by turn 4, %                   79.3      82.0     +2.7
+    commander resolved by turn 6, %                   93.6      94.8     +1.2
+    commander removals, per game                      0.71      0.76    +0.05
+    lands on the battlefield, turn 4                  3.69      3.69    +0.00
+    lands on the battlefield, turn 8                  6.35      6.35    +0.01
+    mana available, turn 4                            3.52      3.55    +0.03
+    mana available, turn 8                            6.33      6.36    +0.03
+    cards in hand after the land drop, turn 4         6.17      6.19    +0.02
+    cards in hand after the land drop, turn 8         6.35      6.44    +0.09
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 95%, timeout 5%
+    eliminated by (current): Aurelia via combat 25.8%, Tergrid via combat 15.9%, Marwyn via combat 14.6%, Atraxa via combat 9.9%
+    eliminated by (swapped): Aurelia via combat 25.5%, Marwyn via combat 15.1%, Tergrid via combat 13.2%, Atraxa via combat 10.8%
+
+(269s total)

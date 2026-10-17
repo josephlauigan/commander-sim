@@ -1,0 +1,108 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Glorybringer [pool] C 3RR :: pow=4 fly haste
+   Thundermaw Hellkite [pool] C 3RR :: pow=5 fly haste bomb=5
+Model status of the swapped-in cards (cardgen audit):
+  Glorybringer: Full (flying, haste; exert for 4 damage to a creature)
+  Sun Titan: Full (tags: `pow=6 vig suntitan`)
+  Grave Titan: Full (tags: `bomb=7 pow=6 dt titan`)
+  Thundermaw Hellkite: Full ()
+
+Swaps: Spectral Sailor -> Glorybringer; Cloudfin Raptor -> Sun Titan; Callous Inspector -> Grave Titan; Thrummingbird -> Thundermaw Hellkite
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  25.8% ->  29.1%  (delta +3.4 pts, noise ±2.7, paired)   n=2000
+               eliminated by (variant): Tergrid 18.9%  Atraxa 10.7%  Aurelia 20.2%  Marwyn 10.8%  Korvold 8.8%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          25.8% ->  29.1%  +3.3pt   ±2.8*
+    Rounds survived (or game length)                  12.31 ->  12.33   +0.02  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.59 ->   0.60   +0.01  ±0.05 
+    Mana available on your turn 4                      3.85 ->   3.85   +0.00  ±0.05 
+    Mana available on your turn 6                      5.36 ->   5.38   +0.02  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.67   -0.00  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.65 ->  19.17   -0.48  ±0.54 
+    Tutors resolved per game                           0.12 ->   0.12   +0.00  ±0.02 
+    Spells cast per game                              16.22 ->  15.46   -0.75  ±0.52*
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.17   -0.00  ±0.02 
+    Spot removal cast                                  1.40 ->   1.38   -0.02  ±0.08 
+    Board wipes cast                                   0.15 ->   0.15   -0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.70 ->   0.73   +0.04  ±0.07 
+    Your spells countered                              0.14 ->   0.13   -0.01  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                33.29 ->  35.55   +2.26  ±2.21*
+      ...of which combat damage                       32.80 ->  35.02   +2.22  ±2.17*
+      ...of which drain triggers                       0.00 ->   0.00   -0.00  ±0.01 
+      ...of which other triggers                       0.49 ->   0.53   +0.04  ±0.16 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Spells cast per game (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Glorybringer                          25.5      49.6        11.0     50.4       58.5      0.01
+    Sun Titan                             26.1      40.3        10.9     59.7       52.4      0.01
+    Grave Titan                           27.1      43.5        10.5     56.5       53.8      0.03
+    Thundermaw Hellkite                   27.2      50.1        10.9     49.9       54.2      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Spectral Sailor                       26.4      89.2         7.5     10.8       35.5      0.01
+    Cloudfin Raptor                       27.4      88.1         7.6     11.9       36.2      0.03
+    Callous Inspector                     27.6      88.4         7.7     11.6       35.9      0.00
+    Thrummingbird                         27.2      82.9         8.4     17.1       38.9      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        25.8      29.1     +3.4
+    rounds survived                                  12.31     12.33    +0.02
+    eliminated, % of games                            71.8      69.3     -2.4
+    opponents it eliminated, per game                 0.65      0.72    +0.07
+    damage dealt, per game                            33.3      35.5     +2.3
+    commander resolved by turn 4, %                   82.3      82.5     +0.2
+    commander resolved by turn 6, %                   94.8      94.7     -0.1
+    commander removals, per game                      0.80      0.80    +0.00
+    lands on the battlefield, turn 4                  3.73      3.72    -0.01
+    lands on the battlefield, turn 8                  6.52      6.52    -0.01
+    mana available, turn 4                            3.85      3.85    +0.00
+    mana available, turn 8                            6.67      6.70    +0.02
+    cards in hand after the land drop, turn 4         6.25      6.36    +0.11
+    cards in hand after the land drop, turn 8         6.29      6.36    +0.07
+    wins by (current):  damage 92%, timeout 8%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 16.7%, Marwyn via combat 12.6%, Tergrid via combat 11.8%, Atraxa via combat 8.1%
+    eliminated by (swapped): Aurelia via combat 17.0%, Tergrid via combat 12.5%, Marwyn via combat 10.7%, Atraxa via combat 8.7%
+
+(501s total)

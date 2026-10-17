@@ -1,0 +1,99 @@
+
+######## vs Tier 3 (High B3) ########
+
+=========== kraum analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 12.6%   (4-player baseline 25%)   average rounds survived 11.5
+
+-- How it wins --
+  damage      92.9% of wins
+  timeout      7.1% of wins
+  Opponents it eliminated: 0.38 per game, by
+    combat             82.0%
+    commander damage    7.2%
+    burn                5.6%
+    triggers            4.2%
+    drain               0.8%
+    decked              0.3%
+  Damage dealt per game: 21.5, from
+    combat              20.5  (96%)
+    drain                0.6  (3%)
+    triggers             0.3  (1%)
+    burn                 0.1  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 1.90; Tymna turns per game 4.51; opponents hit per Tymna turn 0.51
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.86 (in 98% of games)
+  Kraum lands on turn 6.25 (in 87% of games)
+
+-- How it loses --
+  Eliminated in 86.0% of games, on average in round 10.8
+    by Aurelia  via combat             25.8% of games
+    by Tergrid  via combat             15.9% of games
+    by Marwyn   via combat             14.6% of games
+    by Atraxa   via combat              9.9% of games
+    by Korvold  via drain               3.7% of games
+    by Tergrid  via drain               3.6% of games
+    by Korvold  via combat              2.4% of games
+    by Tergrid  via triggers            2.3% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 3.0, mean 3.8 (over the 97.8% of games it resolves)
+  Commander resolved by turn:  T4 79%  T5 88%  T6 94%  T7 96%  T8 97%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Marchesa, the Black Rose                   cast in  11.2% of games, win rate when cast  33.9% (+21.3)
+    Conqueror's Flail                          cast in  17.4% of games, win rate when cast  33.9% (+21.3)
+    Firebird, Blazing Ranger                   cast in  16.7% of games, win rate when cast  32.3% (+19.7)
+    Sphinx of New Prahv                        cast in  13.0% of games, win rate when cast  31.5% (+18.9)
+    Elenda, the Dusk Rose                      cast in  10.9% of games, win rate when cast  30.3% (+17.7)
+    Gilgamesh, Master-at-Arms                  cast in  10.8% of games, win rate when cast  29.6% (+17.0)
+    Terror of the Peaks                        cast in  12.9% of games, win rate when cast  29.5% (+16.9)
+    Vanish from Sight                          cast in  10.2% of games, win rate when cast  29.4% (+16.8)
+    The Aetherspark                            cast in  13.0% of games, win rate when cast  29.2% (+16.6)
+    Tocasia's Welcome                          cast in  15.2% of games, win rate when cast  28.9% (+16.3)
+  Lowest win rate when cast:
+    Toxic Deluge                               cast in  17.3% of games, win rate when cast  11.0% (-1.6)
+    Tymna the Weaver                           cast in  97.5% of games, win rate when cast  12.8% (+0.2)
+    Shield of Kaldra                           cast in  11.9% of games, win rate when cast  13.4% (+0.8)
+    Kraum, Ludevic's Opus                      cast in  87.4% of games, win rate when cast  14.4% (+1.8)
+    Medic's Kitesail                           cast in  21.4% of games, win rate when cast  15.9% (+3.3)
+    Talisman of Hierarchy                      cast in  17.0% of games, win rate when cast  16.5% (+3.9)
+    Silverquill Charm                          cast in  16.7% of games, win rate when cast  18.6% (+6.0)
+    Star Compass                               cast in  19.4% of games, win rate when cast  19.1% (+6.5)
+    Talisman of Conviction                     cast in  16.0% of games, win rate when cast  19.4% (+6.8)
+    Nim Deathmantle                            cast in  21.6% of games, win rate when cast  19.4% (+6.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Dissipate                                  cast  22.5% of the games it was drawn [reactive: only cast in response]
+    Fact or Fiction                            cast  35.2% of the games it was drawn
+    Fate of the Sun-Cryst                      cast  39.7% of the games it was drawn
+    Vanish from Sight                          cast  42.0% of the games it was drawn
+    Chromatic Lantern                          cast  42.1% of the games it was drawn
+    Gilgamesh, Master-at-Arms                  cast  42.4% of the games it was drawn
+    Elenda, the Dusk Rose                      cast  42.4% of the games it was drawn
+    Diabolic Tutor                             cast  42.9% of the games it was drawn
+    Marchesa, the Black Rose                   cast  43.8% of the games it was drawn
+    Shield of Kaldra                           cast  44.2% of the games it was drawn
+    Terror of the Peaks                        cast  45.7% of the games it was drawn
+    Vibrant Outburst                           cast  45.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.39
+    Kraum, Ludevic's Opus                      0.32
+    The Aetherspark                            0.08
+    Medic's Kitesail                           0.08
+    Samurai's Katana                           0.07
+    Helm of Kaldra                             0.06
+    Hero's Blade                               0.05
+    Dragoon's Lance                            0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(136s total)

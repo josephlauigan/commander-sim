@@ -104,7 +104,7 @@ pub fn static_bonus(g: &Game, m: PermId) -> i32 {
         }
     }
     if equipped(g, m, Tag::Flail) {
-        b += 3; // Conqueror's Flail (~3 colors)
+        b += crate::impls::tymna_cards::colors_among(g, p).count() as i32; // Conqueror's Flail: +1/+1 per colour among your permanents
     }
     if equipped(g, m, Tag::Animist) {
         b += 1;

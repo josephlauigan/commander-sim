@@ -1,0 +1,122 @@
+Model status of the swapped-in cards (cardgen audit):
+  Orzhov Signet: Full ({1},{T}: two mana of its colours (net one coloured mana))
+  Plains: Full (basic land)
+  Island: Full (basic land)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m45s elapsed, ~6m46s left
+  progress  20.0%  1m30s elapsed, ~6m01s left
+  progress  30.0%  2m16s elapsed, ~5m18s left
+  progress  40.0%  3m06s elapsed, ~4m39s left
+  progress  50.0%  3m55s elapsed, ~3m55s left
+  progress  60.0%  4m41s elapsed, ~3m07s left
+  progress  70.0%  5m30s elapsed, ~2m21s left
+  progress  80.0%  6m19s elapsed, ~1m34s left
+  progress  90.0%  7m08s elapsed, ~0m47s left
+  progress 100.0%  8m00s elapsed, ~0m00s left
+Swaps: Potioner's Trove -> Orzhov Signet; Scorching Dragonfire -> Plains; Harsh Annotation -> Island
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.5% ->  32.6%  (delta +3.1 pts, noise ±2.7, paired)   n=2000
+               eliminated by (variant): Tergrid 17.7%  Atraxa 10.2%  Aurelia 18.3%  Marwyn 11.1%  Korvold 8.9%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          29.5% ->  32.6%  +3.1pt   ±2.9*
+    Rounds survived (or game length)                  12.34 ->  12.36   +0.02  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.06   -0.03  ±0.03*
+    Missed land drops, turns 1-5                       0.61 ->   0.52   -0.09  ±0.05*
+    Mana available on your turn 4                      3.85 ->   3.97   +0.13  ±0.05*
+    Mana available on your turn 6                      5.34 ->   5.53   +0.19  ±0.08*
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.59   -0.09  ±0.08*
+
+  Card flow
+    Cards drawn per game (incl. draw step)            18.60 ->  19.18   +0.58  ±0.52*
+    Tutors resolved per game                           0.22 ->   0.24   +0.02  ±0.03 
+    Spells cast per game                              14.77 ->  15.21   +0.44  ±0.49 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.17   +0.00  ±0.02 
+    Spot removal cast                                  1.34 ->   0.99   -0.35  ±0.07*
+    Board wipes cast                                   0.15 ->   0.16   +0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.78   +0.04  ±0.07 
+    Your spells countered                              0.15 ->   0.14   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                34.46 ->  37.78   +3.32  ±2.34*
+      ...of which combat damage                       33.77 ->  37.06   +3.30  ±2.29*
+      ...of which drain triggers                       0.01 ->   0.00   -0.01  ±0.01 
+      ...of which other triggers                       0.69 ->   0.72   +0.03  ±0.18 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Win rate (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Extra mulligans per game (both profiles)
+    better - Missed land drops, turns 1-5 (both profiles)
+    better - Mana available on your turn 4 (both profiles)
+    better - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    better - Turn the commander first resolved (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Orzhov Signet                         26.4      82.0         6.7     18.0       42.1      0.01
+    Plains                                87.6       0.0           -    100.0          -      0.00
+    Island                                83.1       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Potioner's Trove                      26.7      70.6         7.7     29.4       36.3      0.03
+    Scorching Dragonfire                  27.1      61.3         8.9     38.7       34.9      0.00
+    Harsh Annotation                      26.7      81.5         8.7     18.5       35.2      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.5      32.6     +3.1
+    rounds survived                                  12.34     12.36    +0.02
+    eliminated, % of games                            68.5      66.2     -2.3
+    opponents it eliminated, per game                 0.74      0.80    +0.06
+    damage dealt, per game                            34.5      37.8     +3.3
+    commander resolved by turn 4, %                   82.3      84.6     +2.3
+    commander resolved by turn 6, %                   93.7      95.2     +1.5
+    commander removals, per game                      0.79      0.82    +0.03
+    lands on the battlefield, turn 4                  3.71      3.76    +0.06
+    lands on the battlefield, turn 8                  6.44      6.69    +0.25
+    mana available, turn 4                            3.85      3.97    +0.13
+    mana available, turn 8                            6.68      6.97    +0.29
+    cards in hand after the land drop, turn 4         6.42      6.36    -0.06
+    cards in hand after the land drop, turn 8         6.38      6.41    +0.02
+    wins by (current):  damage 94%, timeout 6%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Aurelia via combat 16.5%, Tergrid via combat 13.1%, Marwyn via combat 10.9%, Atraxa via combat 8.3%
+    eliminated by (swapped): Aurelia via combat 15.4%, Tergrid via combat 12.4%, Marwyn via combat 11.1%, Atraxa via combat 7.0%
+
+(480s total)

@@ -2138,7 +2138,7 @@ fn nim_equip(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
             g.is_creature(m) && !x.phased && x.cd.is_some() && !(card_name(g, m) == Some("Triskelion") && mikaeus) // +2/+2 would stop its loop needing no outlet
         })
         .collect();
-    let Some(t) = first_max(&cre, |m| pval(g, m)) else { return Ok(vec![]) };
+    let Some(t) = first_max(&cre, |m| pval(g, m) + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)) else { return Ok(vec![]) };
     Ok(vec![Opt {
         utility: 1.0 + 0.2 * pval(g, t),
         label: "equip Nim Deathmantle".into(),

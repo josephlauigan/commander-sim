@@ -6388,7 +6388,7 @@ note = "beginning of combat on your turn: a 2/1 red Elemental with trample and h
 
 ["Hero's Heirloom"]
 status = "Full"
-note = "equip {2}, +2/+1 (compiled); trample and haste while the equipped creature is legendary"
+note = "equip {2}, +2/+1 (compiled); trample and haste while the equipped creature is legendary (impls/tymna_cards.rs heirloom_kw)"
 
 ["Ultimate Magic: Meteor"]
 status = "Full"
@@ -8117,6 +8117,36 @@ note = "0/7 defender; when it blocks it returns to its owner's hand at end of co
 dsl = []
 status = "Full"
 note = "{3}, {T}, sacrifice: every enchantment card in the graveyard returns to hand; the Alela AI waits for two or more"
+
+["Dragoon's Lance"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 1, tgh = 0 },
+  { type = "static", static = "equip_cost", mana = 4 },
+]
+status = "Full"
+note = "job select: enters with a 1/1 colorless Hero token wearing it; +1/+0, flying during its controller's turn (impls/tymna_cards.rs grant_kw), Gae Bolg equip {4}. (The wearer also becomes a Knight: nothing in the game cares)"
+
+["Samurai's Katana"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_keyword", keyword = "trample" },
+  { type = "static", static = "equip_keyword", keyword = "haste" },
+  { type = "static", static = "equip_cost", mana = 5 },
+]
+status = "Full"
+note = "job select: enters with a 1/1 colorless Hero token wearing it; +2/+2, trample and haste, Murasame equip {5}; the wearer counts as a Samurai for Gilgamesh (tymna_cards::is_samurai)"
+
+["Gilgamesh, Master-at-Arms"]
+status = "Full"
+note = "enters or attacks: look at the top six, every Equipment among them goes onto the battlefield (job select Equipment bring their Hero), the rest to the bottom in a random order, then the best Equipment is attached to a Samurai you control (Gilgamesh, or a creature wearing Samurai's Katana). A person is only asked yes/no for the whole trigger (impls/tymna_cards.rs)"
+
+["Boiling Rock Prison"]
+status = "Full"
+note = "enters tapped; {T}: {B} or {R}; {4},{T}, sacrifice: draw a card, used by the AI at the end of a turn with six or more lands in play and spare mana (impls/tymna_cards.rs)"
+
+["Irrigated Farmland"]
+status = "Full"
+note = "Island Plains, enters tapped, {T}: {W} or {U}; cycling {2}: the AI cycles it when it is not needed as a land drop (five or more lands in play, or the end of the turn with four in play and another land in hand) (impls/tymna_cards.rs)"
 
 ["Silverblade Paladin"]
 tags = "human pow=2"

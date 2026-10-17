@@ -1,0 +1,100 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Archangel of Tithes [pool] C 1WWW :: pow=3 tgh=5 fly
+   Sphere of Safety [pool] E 4W :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Archangel of Tithes: Full (flying; attack tax {1} while untapped; blocking tax {1} while it attacks)
+  Sphere of Safety: Full ()
+
+Swaps: Spectral Lynx -> Archangel of Tithes; Vibrant Outburst -> Sphere of Safety
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.9% ->  21.9%  (delta -1.0 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Aurelia 21.5%  Tergrid 17.9%  Korvold 9.3%  Atraxa 14.1%  Marwyn 13.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          22.9% ->  21.9%  -1.0pt   ±3.7 
+    Rounds survived (or game length)                  12.19 ->  12.29   +0.10  ±0.33 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.64 ->   0.65   +0.01  ±0.07 
+    Mana available on your turn 4                      3.54 ->   3.54   +0.00  ±0.06 
+    Mana available on your turn 6                      5.07 ->   5.07   +0.00  ±0.11 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.84 ->   3.81   -0.03  ±0.11 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.24 ->  19.12   -0.12  ±0.79 
+    Tutors resolved per game                           0.10 ->   0.09   -0.01  ±0.03 
+    Spells cast per game                              14.46 ->  14.38   -0.08  ±0.71 
+
+  Interaction
+    Counterspells cast                                 0.37 ->   0.35   -0.02  ±0.05 
+    Spot removal cast                                  1.11 ->   0.97   -0.13  ±0.10*
+    Board wipes cast                                   0.18 ->   0.18   +0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.00  ±0.01 
+    Your key permanents removed by opponents           0.68 ->   0.72   +0.04  ±0.09 
+    Your spells countered                              0.14 ->   0.17   +0.03  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.98 ->  26.12   -0.87  ±2.39 
+      ...of which combat damage                       25.83 ->  25.19   -0.64  ±2.33 
+      ...of which magecraft / burn                     0.08 ->   0.00   -0.08  ±0.03*
+      ...of which drain triggers                       0.69 ->   0.62   -0.07  ±0.21 
+      ...of which other triggers                       0.38 ->   0.31   -0.08  ±0.15 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Archangel of Tithes                   26.8      64.2        10.8     35.8       36.6      0.02
+    Sphere of Safety                      24.9      41.8        10.6     58.2       39.4      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Spectral Lynx                         26.0      85.4         8.5     14.6       32.9      0.01
+    Vibrant Outburst                      27.0      44.8        10.3     55.2       42.1      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        22.9      21.9     -1.0
+    rounds survived                                  12.19     12.29    +0.10
+    eliminated, % of games                            74.6      76.2     +1.6
+    opponents it eliminated, per game                 0.56      0.54    -0.02
+    damage dealt, per game                            27.0      26.1     -0.9
+    commander resolved by turn 4, %                   80.6      80.4     -0.2
+    commander resolved by turn 6, %                   94.7      94.4     -0.3
+    commander removals, per game                      0.76      0.78    +0.02
+    lands on the battlefield, turn 4                  3.70      3.71    +0.00
+    lands on the battlefield, turn 8                  6.34      6.32    -0.02
+    mana available, turn 4                            3.54      3.54    +0.00
+    mana available, turn 8                            6.31      6.31    -0.01
+    cards in hand after the land drop, turn 4         6.28      6.32    +0.04
+    cards in hand after the land drop, turn 8         6.58      6.55    -0.03
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Aurelia via combat 18.3%, Marwyn via combat 14.0%, Tergrid via combat 11.4%, Atraxa via combat 9.3%
+    eliminated by (swapped): Aurelia via combat 17.9%, Marwyn via combat 13.3%, Atraxa via combat 12.0%, Tergrid via combat 11.8%
+
+(286s total)

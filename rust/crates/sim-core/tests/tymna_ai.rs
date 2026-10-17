@@ -119,3 +119,32 @@ fn priorities_follow_the_plan() {
     perm(&mut g, P0, "Thrasios, Triton Hero");
     assert!(p(&g, bastion) >= 70);
 }
+
+#[test]
+fn equipment_is_cast_after_the_creatures_but_never_left_in_the_hand() {
+    let mut g = tbl("kraum");
+    let h = hand(
+        &mut g,
+        P0,
+        &[
+            "Medic's Kitesail",
+            "Conqueror's Flail",
+            "Dragoon's Lance",
+            "Samurai's Katana",
+            "Hero's Blade",
+            "Gilgamesh, Master-at-Arms",
+            "Falcon and Redwing",
+        ],
+    );
+    g.player_mut(P0).turns = 4;
+    let p = |g: &Game, c| deck_prio(g, P0, c);
+    let (kite, flail, lance, katana, blade, gil, falcon) = (h[0], h[1], h[2], h[3], h[4], h[5], h[6]);
+    // no creature out: the pieces with their own Hero and the Blade are cast, the rest wait a little
+    assert!(p(&g, lance) > 60 && p(&g, katana) > 60 && p(&g, blade) > 50);
+    assert!(p(&g, kite) > 0 && p(&g, kite) < p(&g, flail) + 40, "never zero: it must not stay in the hand");
+    assert!(p(&g, kite) < 40, "no carrier yet");
+    token(&mut g, P0, 2);
+    assert!(p(&g, kite) >= 56 && p(&g, flail) >= 60, "a carrier is out");
+    assert!(p(&g, falcon) > p(&g, flail), "the cheap flier first");
+    assert!(p(&g, gil) > p(&g, kite), "Gilgamesh before the plain Equipment");
+}

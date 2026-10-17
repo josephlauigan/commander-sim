@@ -1,0 +1,114 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Hero of Bladehold [pool] C 2WW :: human pow=3 tgh=4
+   Vampire Nighthawk [scryfall] C 1BB :: shaman pow=2 tgh=3 dt fly lifelink
+   Glorybringer [pool] C 3RR :: pow=4 fly haste
+   Baneslayer Angel [pool] C 3WW :: pow=5 fly lifelink bomb=5
+Model status of the swapped-in cards (cardgen audit):
+  Adeline, Resplendent Cathar: Full (tags: `pow=1 tgh=4 vig tokatk=3 leg adeline`)
+  Hero of Bladehold: Full (battle cry; two Soldiers tapped and attacking)
+  Vampire Nighthawk: Full (vanilla creature (keywords only))
+  Skyclave Apparition: Full (exiles a permanent with MV 4 or less; its owner gets an X/X Illusion when the Apparition leaves)
+  Glorybringer: Full (flying, haste; exert for 4 damage to a creature)
+  Baneslayer Angel: Full (flying, first strike, lifelink; protection from Demons and Dragons)
+
+Swaps: Laelia, the Blade Reforged -> Adeline, Resplendent Cathar; Garland, Royal Kidnapper -> Hero of Bladehold; Elemental Mascot -> Vampire Nighthawk; Chromatic Lantern -> Skyclave Apparition; Spectral Lynx -> Glorybringer; Silverquill Charm -> Baneslayer Angel
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.9% ->  22.4%  (delta -0.5 pts, noise ±3.6, paired)   n=1000
+               eliminated by (variant): Aurelia 23.7%  Tergrid 18.2%  Korvold 9.4%  Atraxa 12.1%  Marwyn 12.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          22.9% ->  22.4%  -0.5pt   ±3.7 
+    Rounds survived (or game length)                  12.19 ->  12.34   +0.15  ±0.33 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.64 ->   0.65   +0.01  ±0.07 
+    Mana available on your turn 4                      3.54 ->   3.52   -0.02  ±0.06 
+    Mana available on your turn 6                      5.07 ->   5.01   -0.06  ±0.10 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.84 ->   3.81   -0.03  ±0.11 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.24 ->  18.50   -0.73  ±0.75 
+    Tutors resolved per game                           0.10 ->   0.10   -0.01  ±0.03 
+    Spells cast per game                              14.46 ->  14.12   -0.34  ±0.69 
+
+  Interaction
+    Counterspells cast                                 0.37 ->   0.35   -0.02  ±0.05 
+    Spot removal cast                                  1.11 ->   1.07   -0.04  ±0.10 
+    Board wipes cast                                   0.18 ->   0.17   -0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.01  ±0.00*
+    Your key permanents removed by opponents           0.68 ->   0.73   +0.04  ±0.09 
+    Your spells countered                              0.14 ->   0.15   +0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.98 ->  28.39   +1.41  ±2.54 
+      ...of which combat damage                       25.83 ->  27.97   +2.15  ±2.48 
+      ...of which magecraft / burn                     0.08 ->   0.08   -0.01  ±0.04 
+      ...of which drain triggers                       0.69 ->   0.00   -0.69  ±0.15*
+      ...of which other triggers                       0.38 ->   0.34   -0.04  ±0.16 
+
+--- Reading it ---
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Protection used (HI/sac/Tidebinder/counter-war) (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  -   ...of which drain triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Adeline, Resplendent Cathar           27.7      74.7         8.8     25.3       35.7      0.02
+    Hero of Bladehold                     24.4      63.9         9.0     36.1       43.6      0.03
+    Vampire Nighthawk                     26.4      70.1        10.0     29.9       35.1      0.01
+    Skyclave Apparition                   24.9      69.9         9.7     30.1       40.2      0.00
+    Glorybringer                          25.3      48.2        11.0     51.8       43.4      0.01
+    Baneslayer Angel                      26.8      50.0        10.5     50.0       43.3      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Laelia, the Blade Reforged            26.4      66.3         9.7     33.7       38.3      0.02
+    Garland, Royal Kidnapper              26.4      65.2         9.1     34.8       35.5      0.01
+    Elemental Mascot                      28.4      63.0        10.9     37.0       43.6      0.01
+    Chromatic Lantern                     26.0      37.7         8.8     62.3       38.8      0.00
+    Spectral Lynx                         26.0      85.4         8.5     14.6       32.9      0.01
+    Silverquill Charm                     27.4      67.2         8.6     32.8       39.1      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        22.9      22.4     -0.5
+    rounds survived                                  12.19     12.34    +0.15
+    eliminated, % of games                            74.6      76.0     +1.4
+    opponents it eliminated, per game                 0.56      0.58    +0.02
+    damage dealt, per game                            27.0      28.4     +1.4
+    commander resolved by turn 4, %                   80.6      81.3     +0.7
+    commander resolved by turn 6, %                   94.7      94.2     -0.5
+    commander removals, per game                      0.76      0.82    +0.06
+    lands on the battlefield, turn 4                  3.70      3.70    -0.01
+    lands on the battlefield, turn 8                  6.34      6.27    -0.07
+    mana available, turn 4                            3.54      3.52    -0.02
+    mana available, turn 8                            6.31      6.25    -0.06
+    cards in hand after the land drop, turn 4         6.28      6.34    +0.06
+    cards in hand after the land drop, turn 8         6.58      6.61    +0.03
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 92%, timeout 8%
+    eliminated by (current): Aurelia via combat 18.3%, Marwyn via combat 14.0%, Tergrid via combat 11.4%, Atraxa via combat 9.3%
+    eliminated by (swapped): Aurelia via combat 19.5%, Tergrid via combat 12.5%, Marwyn via combat 12.4%, Atraxa via combat 10.3%
+
+(280s total)

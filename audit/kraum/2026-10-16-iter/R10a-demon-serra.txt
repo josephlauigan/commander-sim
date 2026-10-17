@@ -1,0 +1,107 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Serra Angel [scryfall] C 3WW :: pow=4 fly vig
+Model status of the swapped-in cards (cardgen audit):
+  Rune-Scarred Demon: Full (hand-tagged)
+  Serra Angel: Full (vanilla creature (keywords only))
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m46s elapsed, ~6m59s left
+  progress  20.0%  1m33s elapsed, ~6m15s left
+  progress  30.0%  2m24s elapsed, ~5m38s left
+  progress  40.0%  3m14s elapsed, ~4m52s left
+  progress  50.0%  4m05s elapsed, ~4m05s left
+  progress  60.0%  4m51s elapsed, ~3m14s left
+  progress  70.0%  5m39s elapsed, ~2m25s left
+  progress  80.0%  6m30s elapsed, ~1m37s left
+  progress  90.0%  7m16s elapsed, ~0m48s left
+  progress 100.0%  8m06s elapsed, ~0m00s left
+Swaps: Rescue, Pepper Potts -> Rune-Scarred Demon; The Wasp, Winsome Avenger -> Serra Angel
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.1% ->  29.1%  (delta +0.1 pts, noise ±2.6, paired)   n=2000
+               eliminated by (variant): Tergrid 18.6%  Atraxa 10.4%  Aurelia 20.5%  Marwyn 11.7%  Korvold 8.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          29.1% ->  29.1%  +0.1pt   ±2.9 
+    Rounds survived (or game length)                  12.32 ->  12.36   +0.04  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.60 ->   0.60   +0.00  ±0.05 
+    Mana available on your turn 4                      3.83 ->   3.83   +0.00  ±0.05 
+    Mana available on your turn 6                      5.34 ->   5.36   +0.02  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.66 ->   3.66   -0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.06 ->  18.93   -0.13  ±0.51 
+    Tutors resolved per game                           0.11 ->   0.21   +0.10  ±0.02*
+    Spells cast per game                              15.43 ->  15.14   -0.29  ±0.50 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.18   +0.01  ±0.02 
+    Spot removal cast                                  1.33 ->   1.35   +0.02  ±0.07 
+    Board wipes cast                                   0.15 ->   0.16   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.75 ->   0.73   -0.02  ±0.07 
+    Your spells countered                              0.14 ->   0.14   +0.01  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                34.74 ->  35.04   +0.29  ±2.26 
+      ...of which combat damage                       34.15 ->  34.31   +0.16  ±2.22 
+      ...of which drain triggers                       0.00 ->   0.01   +0.01  ±0.02 
+      ...of which other triggers                       0.59 ->   0.71   +0.12  ±0.18 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Tutors resolved per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rune-Scarred Demon                    26.2      38.2        11.7     61.8       58.0      0.02
+    Serra Angel                           25.6      53.6        11.2     46.4       51.5      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rescue, Pepper Potts                  26.4      84.1         8.0     15.9       41.8      0.03
+    The Wasp, Winsome Avenger             25.8      85.3         8.0     14.7       40.7      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.1      29.1     +0.0
+    rounds survived                                  12.32     12.36    +0.04
+    eliminated, % of games                            68.8      69.2     +0.5
+    opponents it eliminated, per game                 0.70      0.71    +0.01
+    damage dealt, per game                            34.7      35.0     +0.3
+    commander resolved by turn 4, %                   82.7      82.5     -0.2
+    commander resolved by turn 6, %                   93.5      94.0     +0.4
+    commander removals, per game                      0.80      0.78    -0.03
+    lands on the battlefield, turn 4                  3.71      3.71    +0.00
+    lands on the battlefield, turn 8                  6.48      6.43    -0.04
+    mana available, turn 4                            3.83      3.83    +0.00
+    mana available, turn 8                            6.66      6.66    -0.00
+    cards in hand after the land drop, turn 4         6.37      6.40    +0.04
+    cards in hand after the land drop, turn 8         6.45      6.50    +0.05
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 92%, timeout 8%
+    eliminated by (current): Aurelia via combat 16.7%, Tergrid via combat 13.1%, Marwyn via combat 11.8%, Atraxa via combat 7.7%
+    eliminated by (swapped): Aurelia via combat 16.9%, Tergrid via combat 13.0%, Marwyn via combat 11.7%, Atraxa via combat 8.3%
+
+(486s total)
