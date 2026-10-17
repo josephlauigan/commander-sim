@@ -1,0 +1,12 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Godo, Bandit Warlord [pool] C 5R :: leg human pow=3
+Model status of the swapped-in cards (cardgen audit):
+  Godo, Bandit Warlord: Full (enters: you may search the library for an Equipment, put it onto the battlefield attached to Godo (job select pieces bring their Hero but still go on him), shuffle; the AI takes the best one on him, haste counting most while he is summoning sick (Hero's Heirloom, legendary haste and +2/+1, then Helm of Kaldra). First attack each turn: untap him and every Samurai (Gilgamesh, a creature wearing Samurai's Katana) and one additional combat; attacking again in it adds nothing (impls/tymna_cards.rs))
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 7 worker threads: about 29 minutes
+  progress  10.0%  1m52s elapsed, ~16m50s left
+  progress  20.0%  3m49s elapsed, ~15m16s left
+  progress  30.0%  5m43s elapsed, ~13m20s left
+  progress  40.0%  7m41s elapsed, ~11m32s left
+  progress  50.0%  9m35s elapsed, ~9m35s left
+  progress  60.0%  11m28s elapsed, ~7m38s left
