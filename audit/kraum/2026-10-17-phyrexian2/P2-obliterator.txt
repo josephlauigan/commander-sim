@@ -1,0 +1,104 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Phyrexian Obliterator [pool] C BBBB :: pow=5 tgh=5 trample bomb=6
+   Sheoldred's Edict [scryfall+dsl] I 1B :: (no tags)
+      ability: spell  -> modal
+Model status of the swapped-in cards (cardgen audit):
+  Phyrexian Obliterator: Full (trample; each source dealing it damage costs its controller that many permanents)
+  Sheoldred's Edict: Full-auto (compiled from Oracle text)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m44s elapsed, ~6m44s left
+  progress  20.0%  1m31s elapsed, ~6m07s left
+  progress  30.0%  2m20s elapsed, ~5m27s left
+  progress  40.0%  3m08s elapsed, ~4m43s left
+  progress  50.0%  4m01s elapsed, ~4m01s left
+  progress  60.0%  4m49s elapsed, ~3m12s left
+  progress  70.0%  5m39s elapsed, ~2m25s left
+  progress  80.0%  6m24s elapsed, ~1m36s left
+  progress  90.0%  7m13s elapsed, ~0m48s left
+  progress 100.0%  8m01s elapsed, ~0m00s left
+Swaps: Elemental Mascot -> Phyrexian Obliterator; Tocasia's Welcome -> Sheoldred's Edict
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.9% ->  34.2%  (delta -0.6 pts, noise ±2.7, paired)   n=2000
+               eliminated by (variant): Tergrid 17.7%  Atraxa 9.3%  Aurelia 18.1%  Marwyn 10.7%  Korvold 7.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.8% ->  34.2%  -0.6pt   ±3.0 
+    Rounds survived (or game length)                  12.42 ->  12.46   +0.04  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.52   +0.00  ±0.05 
+    Mana available on your turn 4                      3.98 ->   3.98   +0.00  ±0.05 
+    Mana available on your turn 6                      5.55 ->   5.56   +0.00  ±0.07 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.68 ->   3.67   -0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.20 ->  18.88   -0.32  ±0.52 
+    Tutors resolved per game                           0.25 ->   0.24   -0.00  ±0.03 
+    Spells cast per game                              15.05 ->  14.98   -0.07  ±0.49 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.17   -0.01  ±0.02 
+    Spot removal cast                                  0.99 ->   0.98   -0.01  ±0.06 
+    Board wipes cast                                   0.15 ->   0.14   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.79 ->   0.82   +0.03  ±0.07 
+    Your spells countered                              0.15 ->   0.14   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.17 ->  38.78   +0.61  ±2.38 
+      ...of which combat damage                       37.48 ->  38.17   +0.69  ±2.34 
+      ...of which other triggers                       0.69 ->   0.62   -0.07  ±0.16 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Phyrexian Obliterator                 27.8      28.3        12.5     71.7       59.2      0.01
+    Sheoldred's Edict                     24.6      71.2         8.6     28.8       44.4      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Elemental Mascot                      26.4      70.5         9.8     29.5       49.5      0.01
+    Tocasia's Welcome                     24.4      69.5         9.1     30.5       49.0      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.9      34.2     -0.6
+    rounds survived                                  12.42     12.46    +0.04
+    eliminated, % of games                            63.9      63.6     -0.2
+    opponents it eliminated, per game                 0.81      0.84    +0.03
+    damage dealt, per game                            38.2      38.8     +0.6
+    commander resolved by turn 4, %                   81.8      81.6     -0.2
+    commander resolved by turn 6, %                   94.3      94.7     +0.3
+    commander removals, per game                      0.81      0.80    -0.01
+    lands on the battlefield, turn 4                  3.76      3.76    +0.00
+    lands on the battlefield, turn 8                  6.67      6.68    +0.01
+    mana available, turn 4                            3.98      3.98    +0.00
+    mana available, turn 8                            6.98      6.96    -0.02
+    cards in hand after the land drop, turn 4         6.34      6.34    -0.00
+    cards in hand after the land drop, turn 8         6.38      6.40    +0.02
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 15.2%, Tergrid via combat 13.1%, Marwyn via combat 10.8%, Atraxa via combat 7.1%
+    eliminated by (swapped): Aurelia via combat 14.1%, Tergrid via combat 13.2%, Marwyn via combat 10.6%, Atraxa via combat 7.5%
+
+(481s total)

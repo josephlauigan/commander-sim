@@ -127,3 +127,11 @@ Aurelia, Tergrid, Marwyn and Atraxa, and no single card or package changes that;
 the AI (attack and blocking decisions), not the list.
 
 **2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 40.0 → 41.7, inside the noise (about ±5). No measurable change to this deck.
+
+### Phyrexian round 2 (2026-10-17, T3, 2,000 paired games each; the list measured 34.9%)
+Aimed at the real loss (creature decks in combat) with cheap cards, cutting non-combat slots instead of removal.
+| Package (in for) | Result | Why |
+|---|---|---|
+| P1: Sheoldred's Edict, Dismember, Porcelain Legionnaire, Vault Skirge, ~$7.50 (Tocasia's Welcome, Elemental Mascot, Arcane Denial, Expressive Iteration) | -1.4 (±2.8) | Spot removal cast +0.20 a game (significant), but deaths unchanged (64%): the T3 creature decks have enough bodies that one more removal spell doesn't stop the attack. Lost the only counterspell (0.17 cast a game). |
+| P2: Phyrexian Obliterator, Sheoldred's Edict, ~$11.50 (Elemental Mascot, Tocasia's Welcome) | -0.6 (±2.7) | Obliterator wins 59% when cast but its {B}{B}{B}{B} is cast in only 28% of the games it's drawn in a four-colour deck. |
+Not modeled, so not tested: Archfiend of the Dross, Skrelv, Gut Shot, White Sun's Twilight, Phyrexian Unlife, Mondrak ($46).
