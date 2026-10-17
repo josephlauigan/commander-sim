@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Tymna/Kraum, Veyran, Y'shtola.
+JD's decks: Cloud, Godo, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Tymna/Kraum, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -46,6 +46,16 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 - **2026-10-13.** Paired screen of the C3 + C4 list against the old list: 10.9% over all tiers against 5.1% (see the
   2026-10-13 entry above for the per-tier figures; `audit/cloud/2026-10-13/screen/C4REV-*`). The later Ultimate Magic:
   Holy swap was not simulated.
+
+## Godo, Bandit Warlord — Mono-Red cEDH Equipment Turbo
+
+Deck file `decklists/JD/godo-cedh-equipment.md`; not in the simulator.
+
+### Changes
+
+- **2026-10-17.** Added. JD's first cEDH (Bracket 5) deck, an off-meta Godo + Helm of the Host turbo list built from
+  the EDHREC average of 35 tournament Godo decks, checked against 2026 top finishes. Mana Crypt, Jeweled Lotus and
+  Dockside Extortionist are banned and not in it. Not simulated.
 
 ## Kefka, Court Mage — Grixis Discard
 
