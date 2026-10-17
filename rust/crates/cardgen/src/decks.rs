@@ -49,7 +49,7 @@ pub struct PoolDeck {
     pub tier: String,
     pub key: String,
     pub commander: String,
-    /// a second commander (your two-commander decks, validated here too; never a pool deck)
+    /// a second commander (a partner pair: `- **Commander:** A / B` in a pool file, or your two-commander decks)
     pub commander2: Option<String>,
     pub cards: Vec<String>,
     /// the file's first line without its '#'
@@ -84,12 +84,17 @@ pub fn load_pool_deck(path: &Path) -> Result<PoolDeck, String> {
     let tier = folder.split('-').next().unwrap_or("").to_string();
     let key = path.file_stem().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
     let txt = read(path)?;
-    let commander = search(r"(?m)^- \*\*Commander:\*\*\s*(.+?)\s*$", &txt)
+    let line = search(r"(?m)^- \*\*Commander:\*\*\s*(.+?)\s*$", &txt)
         .map(|m| m.gs(1).to_string())
         .ok_or(format!("{}: no **Commander:** line", path.display()))?;
+    // `A / B` is a partner pair (a double-faced card's `A // B` has no spaced single slash)
+    let (commander, commander2) = match line.split_once(" / ") {
+        Some((a, b)) => (a.trim().to_string(), Some(b.trim().to_string())),
+        None => (line, None),
+    };
     let title = py::strip(txt.lines().next().unwrap_or(""), "# ").to_string();
     let gc_claimed = search(r"\*\*Game Changers \((\d+)\)", &txt).and_then(|m| m.gs(1).parse().ok());
-    Ok(PoolDeck { path: path.to_path_buf(), tier, key, commander, commander2: None, cards: load(path)?, title, gc_claimed })
+    Ok(PoolDeck { path: path.to_path_buf(), tier, key, commander, commander2, cards: load(path)?, title, gc_claimed })
 }
 
 /// the name logs use for a pool deck: its commander's first name part

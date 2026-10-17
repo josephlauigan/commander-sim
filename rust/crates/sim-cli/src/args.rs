@@ -50,7 +50,7 @@ const OPTS: [Opt; 22] = [
     opt(
         "--pool",
         false,
-        &["t0", "t1", "t2", "t3", "t4", "t5", "all"],
+        &["t0", "t1", "t2", "t3", "t4", "t5", "t6", "all"],
         "",
         "play --deck against three outside decks drawn from this tier (see decklists/pool/); all = the deck's own tiers 
          (data/my_decks.toml: e.g. sephfs t1-t3, yshtola t4-t5). A tier outside them is refused unless --any-tier",

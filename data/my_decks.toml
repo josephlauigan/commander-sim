@@ -86,3 +86,10 @@ name = "Sephiroth FS"
 commander = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
 ident = "B"
 tiers = ["t4", "t5"]
+
+[godo]
+file = "JD/godo-cedh-equipment.md"
+name = "Godo"
+commander = "Godo, Bandit Warlord"
+ident = "R"
+tiers = ["t6"]

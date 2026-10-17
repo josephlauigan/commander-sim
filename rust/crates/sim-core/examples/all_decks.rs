@@ -12,7 +12,7 @@ fn main() {
     let mine: Vec<&str> = decks().iter().filter(|d| d.tier.is_none()).map(|d| &*d.key).collect();
     let t0 = Instant::now();
     let (mut games, mut timeouts, mut stopped, mut rounds) = (0, 0, 0, 0);
-    for t in ["t0", "t1", "t2", "t3", "t4", "t5"] {
+    for t in ["t0", "t1", "t2", "t3", "t4", "t5", "t6"] {
         let pool = tier(t);
         for (i, me) in mine.iter().enumerate() {
             if !deck(me).tiers.iter().any(|x| x == t) {

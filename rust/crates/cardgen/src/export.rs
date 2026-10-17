@@ -53,6 +53,7 @@ impl Inputs {
         let mut extra: BTreeSet<String> = self.my.iter().map(|d| d.commander.clone()).collect();
         extra.extend(self.my.iter().filter_map(|d| d.commander2.clone()));
         extra.extend(self.pool.iter().map(|d| d.commander.clone()));
+        extra.extend(self.pool.iter().filter_map(|d| d.commander2.clone()));
         extra.extend(self.cache.names());
         Wanted { main, played, extra }
     }
@@ -150,10 +151,20 @@ pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
             .cache
             .get(&d.commander)
             .ok_or(format!("pool deck {}: commander {} is not in the card cache", d.key, d.commander))?;
-        pool.push(J::Obj(obj! {"tier" => d.tier.as_str(), "key" => d.key.as_str(), "name" => decks::short_name(&d.commander),
-            "commander" => d.commander.as_str(),
-            "ident" => ident_of(rec.strs("color_identity").iter().flat_map(|s| s.chars()).collect::<Vec<_>>().into_iter()),
-            "cards" => sorted_strs(&d.cards)}));
+        let mut ids: Vec<char> = rec.strs("color_identity").iter().flat_map(|s| s.chars()).collect();
+        let mut o = obj! {"tier" => d.tier.as_str(), "key" => d.key.as_str(), "name" => decks::short_name(&d.commander),
+            "commander" => d.commander.as_str()};
+        if let Some(c2) = &d.commander2 {
+            let rec2 = inp
+                .cache
+                .get(c2)
+                .ok_or(format!("pool deck {}: commander {} is not in the card cache", d.key, c2))?;
+            ids.extend(rec2.strs("color_identity").iter().flat_map(|s| s.chars()));
+            o.0.push(("commander2".to_string(), J::from(c2.as_str()))); // partner pairs only, as for your decks
+        }
+        o.0.push(("ident".to_string(), J::from(ident_of(ids.into_iter()))));
+        o.0.push(("cards".to_string(), J::from(sorted_strs(&d.cards))));
+        pool.push(J::Obj(o));
     }
     Ok(J::Obj(obj! {"version" => 1, "mine" => mine, "pool" => pool}))
 }

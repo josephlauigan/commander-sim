@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
-pub const FILES: [(&str, &str, &str); 12] = [
+pub const FILES: [(&str, &str, &str); 13] = [
     ("seph", "JD", "sephiroth-phyrexian-reanimator.md"),
     ("veyran", "JD", "veyran-izzet-spellslinger.md"),
     ("sauron", "JD", "sauron-grixis-amass.md"),
@@ -22,12 +22,13 @@ pub const FILES: [(&str, &str, &str); 12] = [
     ("cloud", "JD", "cloud-midgar-equipment.md"),
     ("kraum", "JD", "tymna-kraum-partners.md"),
     ("sephfs", "JD", "sephiroth-fs-wipe-steal.md"),
+    ("godo", "JD", "godo-cedh-equipment.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 12] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "titania", "sheoldred", "cloud", "kraum", "sephfs"];
+pub const MINE: [&str; 13] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "titania", "sheoldred", "cloud", "kraum", "sephfs", "godo"];
 
-pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
+pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 
 pub fn tier_label(t: &str) -> &str {
     match t {
@@ -37,6 +38,7 @@ pub fn tier_label(t: &str) -> &str {
         "t3" => "Tier 3 (High B3)",
         "t4" => "Tier 4 (Low B4)",
         "t5" => "Tier 5 (High B4)",
+        "t6" => "Tier 6 (cEDH, B5)",
         _ => t,
     }
 }
@@ -151,7 +153,7 @@ impl PoolDeck {
         let commander = txt
             .lines()
             .find_map(|l| l.strip_prefix("- **Commander:**"))
-            .map(|c| c.trim().to_string())
+            .map(|c| c.split_once(" / ").map_or(c, |(a, _)| a).trim().to_string()) // partner pair: the first (decks.json has both)
             .filter(|c| !c.is_empty())
             .ok_or_else(|| format!("{}: no '- **Commander:**' line", path.display()))?;
         let cards = parse_import_list(&txt).map_err(|e| format!("{}: {e}", path.display()))?;
@@ -233,14 +235,14 @@ mod tests {
     fn the_repository_decks_load() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
         let mine = load_mine(&root).unwrap();
-        assert_eq!(mine.len(), 12);
+        assert_eq!(mine.len(), 13);
         for (k, v) in &mine {
             assert_eq!(v.len(), 100, "{k}");
         }
         let pool = load_pool(&root).unwrap();
-        assert_eq!(pool.len(), 30);
+        assert_eq!(pool.len(), 36);
         for t in TIERS {
-            assert_eq!(pool.iter().filter(|d| d.tier == t).count(), 5, "{t}");
+            assert_eq!(pool.iter().filter(|d| d.tier == t).count(), if t == "t6" { 6 } else { 5 }, "{t}");
         }
         for d in &pool {
             assert!(structural_problems(&d.cards, &d.commander, 100).is_empty(), "{}", d.key);
