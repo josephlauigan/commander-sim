@@ -3467,6 +3467,41 @@
    "spell_prio": false
   },
   {
+   "name": "Apostle's Blessing",
+   "types": "I",
+   "generic": 1,
+   "pips": "W",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "W",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Aquamoeba",
    "types": "C",
    "generic": 1,
@@ -24993,6 +25028,44 @@
     "perm": false
    },
    "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Dismember",
+   "types": "I",
+   "generic": 1,
+   "pips": "BB",
+   "tags": {
+    "rem": "shrink5",
+    "tgt": "c"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "BB",
    "land_etb_fx": [],
    "enters_rule": null,
    "land_types": [],
@@ -72275,6 +72348,49 @@
    "spell_prio": false
   },
   {
+   "name": "Porcelain Legionnaire",
+   "types": "AC",
+   "generic": 2,
+   "pips": "W",
+   "tags": {
+    "pow": "3",
+    "tgh": "1"
+   },
+   "pow": 3,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "first strike"
+   ],
+   "subtypes": [
+    "phyrexian",
+    "soldier"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "W",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Port Razer",
    "types": "C",
    "generic": 3,
@@ -105120,6 +105236,51 @@
     "perm": true
    },
    "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Vault Skirge",
+   "types": "AC",
+   "generic": 1,
+   "pips": "B",
+   "tags": {
+    "pow": "1",
+    "fly": true,
+    "lifelink": true
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "lifelink"
+   ],
+   "subtypes": [
+    "imp",
+    "phyrexian"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "B",
    "land_etb_fx": [],
    "enters_rule": null,
    "land_types": [],

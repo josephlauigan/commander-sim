@@ -494,6 +494,18 @@ fn rem_fodder(g: &Game, p: PlayerId) -> Vec<PermId> {
 }
 
 /// a removal spell castable for free (Fierce Guardianship-style with your commander out; Snuff Out for 4 life)
+/// what a removal spell costs: (generic, pips, life). A card with Phyrexian symbols (Dismember) goes through `cost_of`, which
+/// drops a {X/P} pip the mana can't pay, and the life is 2 per dropped pip; any other card costs its printed cost.
+fn rem_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String, i32) {
+    let d = g.db.get(c);
+    if d.phyrexian.is_empty() {
+        return (d.generic, d.pips.to_string(), 0);
+    }
+    let (gn, pips) = cost_of(g, p, c);
+    let life = phyrexian_life(g, c, &pips);
+    (gn, pips, life)
+}
+
 fn free_removal(g: &Game, p: PlayerId, c: CardId) -> bool {
     let t = &g.db.get(c).tags;
     (t.has(Tag::Freecmd) && commander_out(g, p)) || (t.has(Tag::Snuff) && g.player(p).life > 12 && swamp_land(g, p))
@@ -517,7 +529,8 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         }
         let fods = rem_fodder(g, p);
         let extra = if t.has(Tag::Sacor4) && fods.is_empty() { 4 } else { 0 };
-        if !free_removal(g, p, c) && !can_pay(g, p, d.generic + extra, &d.pips, t.has(Tag::Convoke)) {
+        let (rg, rp, _) = rem_cost(g, p, c);
+        if !free_removal(g, p, c) && !can_pay(g, p, rg + extra, &rp, t.has(Tag::Convoke)) {
             continue;
         }
         if t.has(Tag::Needart3)
@@ -667,7 +680,8 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     let mut extra = if d.tag(Tag::Sacor4) && fods.is_empty() { 4 } else { 0 };
     let free = free_removal(g, p, c);
     extra += kick;
-    if !g.player(p).hand.contains(&c) || (!free && !can_pay(g, p, d.generic + extra, &d.pips, cv)) {
+    let (rg, rp, rlife) = rem_cost(g, p, c);
+    if !g.player(p).hand.contains(&c) || (!free && !can_pay(g, p, rg + extra, &rp, cv)) {
         return Ok(false);
     }
     if !g.hooks.is_empty() && !castable(g, p, c, "hand") {
@@ -690,7 +704,10 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     if free && d.tag(Tag::Snuff) && !(d.tag(Tag::Freecmd) && commander_out(g, p)) {
         lose_life(g, p, 4, Some(p), "life", None)?;
     } else if !free {
-        pay(g, p, d.generic + extra, &d.pips, cv)?;
+        pay(g, p, rg + extra, &rp, cv)?;
+        if rlife > 0 {
+            lose_life(g, p, rlife, Some(p), "life", None)?; // {B/P} paid with 2 life (Dismember)
+        }
     }
     if let Some(f) = fod {
         die(g, f, "sac")?;
@@ -926,7 +943,8 @@ pub fn gandalf_hold(g: &Game, p: PlayerId, s: &Situation, opts: &mut [Opt]) {
             continue;
         }
         let rem = t.has(Tag::Rem);
-        let flex = rem || t.has(Tag::Draw) || t.has(Tag::Tokx) || t.has(Tag::Tut) || t.has(Tag::Xtutor) || t.has(Tag::Top);
+        let flex =
+            rem || t.has(Tag::Draw) || t.has(Tag::Tokx) || t.has(Tag::Tut) || t.has(Tag::Xtutor) || t.has(Tag::Top);
         if !flex || t.has(Tag::Rock) || t.has(Tag::Dork) || t.has(Tag::Lr) || special(g, *card) {
             continue;
         }
@@ -1243,7 +1261,10 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         for c in g.player(p).hand.clone() {
             // flash creatures: in before the next turn's draws
             let d = g.db.get(c);
-            if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::impls::t0_captain::as_flash(g, p))) || special(g, c) || !can_pay(g, p, d.generic, &d.pips, false) {
+            if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::impls::t0_captain::as_flash(g, p)))
+                || special(g, c)
+                || !can_pay(g, p, d.generic, &d.pips, false)
+            {
                 continue;
             }
             if let Some(u) = card_utility(g, p, &s, c) {

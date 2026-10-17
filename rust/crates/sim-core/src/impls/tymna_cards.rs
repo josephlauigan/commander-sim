@@ -12,12 +12,12 @@
 
 use super::partials::eot_kw;
 use crate::cards::{CardDb, Colors};
-use crate::engine::cast::casts_this_turn;
+use crate::engine::cast::{castable, casts_this_turn};
 use crate::engine::mana::{Source, Unit, can_pay, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
-use crate::engine::values::{colors_of, epow, etgh, once_per_turn, pval, untargetable};
+use crate::engine::values::{colors_of, epow, etgh, once_per_turn, pval, silenced, untargetable};
 use crate::engine::zones::{Enter, Tokens, die, draw, enter, landfall, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -475,18 +475,27 @@ fn darien_save(g: &mut Game, owner_p: PlayerId, worth: f64) -> Res<bool> {
 }
 
 /// `ai::decks::protect_response`, first thing: removal of `kind` is aimed at `owner_p`'s permanent m
-pub fn protect(g: &mut Game, owner_p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
-    if g.hooks.is_empty() || !g.perm(m).on_bf || g.humans.get(owner_p).is_some() {
+pub fn protect(
+    g: &mut Game,
+    owner_p: PlayerId,
+    m: PermId,
+    kind: Sym,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if !g.perm(m).on_bf || g.humans.get(owner_p).is_some() {
         return Ok(false);
+    }
+    if g.hooks.is_empty() {
+        return blessing_protect(g, owner_p, m, actor, spell);
     }
     if razia_redirect(g, owner_p, m, kind)? {
         return Ok(true);
     }
-    if g.perm(m).token && g.is_creature(m) && kind != "bounce" {
-        let w = pval(g, m);
-        return darien_save(g, owner_p, w);
+    if g.perm(m).token && g.is_creature(m) && kind != "bounce" && darien_save(g, owner_p, pval(g, m))? {
+        return Ok(true);
     }
-    Ok(false)
+    blessing_protect(g, owner_p, m, actor, spell)
 }
 
 /// `ai::decks::wipe_response`, first thing: a sweeper of `kind` is about to hit q's board
@@ -569,6 +578,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     register_charm(r, db)?;
     register_witherbloom(r, db)?;
     register_gear(r, db)?;
+    register_phyrexian(r, db)?;
     Ok(())
 }
 
@@ -1256,4 +1266,114 @@ fn farmland_cycle(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::engine::zones::discard_cards(g, p, &[c])?;
     draw(g, p, 1, false)?;
     Ok(true)
+}
+
+// ================================================================== the Phyrexian-mana cards
+// Dismember (-5/-5: tags `rem=shrink5 tgt=c`), Porcelain Legionnaire (3/1 first strike) and Vault Skirge (1/1 flying
+// lifelink) are carried by the card data and the engine's Phyrexian-mana payment (`mana::cost_of` drops a {X/P} pip the
+// mana can't pay while life is above 10, and `cast` then takes 2 life for it). Only Apostle's Blessing needs code.
+pub const BLESSING: &str = "Apostle's Blessing";
+
+/// the keyword `eot_kw` carries for protection from this colour until end of turn (read by `values::prot_colors`)
+fn pro_kw(ch: char) -> Option<Sym> {
+    Some(match ch {
+        'W' => "pro_W",
+        'U' => "pro_U",
+        'B' => "pro_B",
+        'R' => "pro_R",
+        'G' => "pro_G",
+        _ => return None,
+    })
+}
+
+/// **Apostle's Blessing** ({1}{W/P} instant): target artifact or creature you control gains protection from artifacts
+/// or from the colour of your choice until end of turn. The AI only casts it in response to targeted removal aimed at
+/// a commander or a permanent worth 4 or more (`protect`, first thing in `ai::decks::protect_response`) and picks the
+/// removal spell's own colour (its first one if it has several; "artifacts" for a colourless artifact spell). {W/P} is
+/// paid with {W} when the mana is there, else with 2 life (above 6 life, since it is saving a commander or a bomb). It
+/// goes through the stack, so it can be countered. The permanent keeps the protection until end of turn: damage from a
+/// source of that colour (artifacts) is prevented, it can't be blocked by creatures of that colour, and later
+/// targeted spells of that colour can't pick it; the removal in response is stopped. Not modeled: protection from a
+/// colour against an ability (no source spell to read the colour from, so the AI doesn't cast it), and against board
+/// wipes (the wipe responses are other cards').
+fn blessing_protect(
+    g: &mut Game,
+    owner_p: PlayerId,
+    m: PermId,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if actor == Some(owner_p)
+        || g.humans.get(owner_p).is_some()
+        || !g.perm(m).on_bf
+        || g.perm(m).owner != owner_p
+        || silenced(g, owner_p)
+    {
+        return Ok(false);
+    }
+    let art = g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::ARTIFACT));
+    if !g.is_creature(m) && !art {
+        return Ok(false);
+    }
+    let Some(s) = spell else { return Ok(false) };
+    let Some(c) = g.player(owner_p).hand.iter().copied().find(|&x| &*g.db.get(x).name == BLESSING) else {
+        return Ok(false);
+    };
+    if !(g.perm(m).is_cmd || pval(g, m) >= 4.0) || !castable(g, owner_p, c, "hand") {
+        return Ok(false);
+    }
+    // the choice: a colour of the removal spell, or artifacts when it is a colourless artifact
+    let src = g.db.get(s);
+    let choice = ['W', 'U', 'B', 'R', 'G'].into_iter().find(|&ch| src.colors.has(ch));
+    let artifact_src = src.types.has(crate::cards::Types::ARTIFACT);
+    if choice.is_none() && !artifact_src {
+        return Ok(false);
+    }
+    // {1}{W/P}
+    let by_mana = can_pay(g, owner_p, 1, "W", false);
+    if !by_mana && !(g.player(owner_p).life > 6 && can_pay(g, owner_p, 1, "", false)) {
+        return Ok(false);
+    }
+    crate::ai::decks::remove_from_hand(g, owner_p, c);
+    if by_mana {
+        pay(g, owner_p, 1, "W", false)?;
+    } else {
+        pay(g, owner_p, 1, "", false)?;
+        crate::engine::life::lose_life(g, owner_p, 2, Some(owner_p), "life", None)?;
+    }
+    let pl = g.player_mut(owner_p);
+    pl.gy.push(c);
+    pl.spells_this_turn += 1;
+    pl.cast_names.insert(c);
+    crate::glog!(g, "  {} casts {}", g.player(owner_p).name, BLESSING);
+    crate::engine::cast::on_cast(g, owner_p, c)?;
+    if !crate::engine::stack::counter_window(g, owner_p, c, 6.0, vec![])? || !g.perm(m).on_bf {
+        return Ok(false);
+    }
+    match choice {
+        Some(ch) => eot_kw(g, m, pro_kw(ch).unwrap()),
+        None => eot_kw(g, m, intern("pro_artifacts")),
+    }
+    crate::glog!(
+        g,
+        "    {} gains protection from {}",
+        g.perm(m).name,
+        choice.map_or("artifacts".into(), |c| c.to_string())
+    );
+    g.player_mut(owner_p).stat("protection_used", 1);
+    Ok(true)
+}
+
+/// protection from artifacts until end of turn (Apostle's Blessing): `m` can't be dealt damage by artifact creature
+/// `other` (called from `rules2::prot_vs`)
+pub fn pro_artifacts_vs(g: &Game, m: PermId, other: PermId) -> bool {
+    g.perm(m).eot_kw.contains(&"pro_artifacts")
+        && g.perm(other).cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::ARTIFACT))
+}
+
+pub fn register_phyrexian(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, BLESSING)? {
+        c.prio = Some(zero_prio); // only ever cast in response to removal (`protect`)
+    }
+    Ok(())
 }
