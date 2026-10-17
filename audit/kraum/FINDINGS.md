@@ -144,3 +144,8 @@ Not modeled, so not tested: Archfiend of the Dross, Skrelv, Gut Shot, White Sun'
 | R3c: all five incl. Phyrexian Unlife (+ Arcane Denial out) | +0.1 (±2.8) | Phyrexian Unlife is cast in only 28% of the games it's drawn (the AI waits for 20 life or less) and wins 33% when cast. |
 **Phyrexian conclusion (three rounds, eight packages):** none beats the list beyond noise. If JD wants one Phyrexian change, R3b
 (Skrelv, Gut Shot, White Sun's Twilight) is the only candidate that points up, and it is specifically good against elves.
+
+### Resplendent Angel for Dream Trawler (2026-10-17, applied: JD got Resplendent Angel instead of Dream Trawler)
+| Swap | Result | Why |
+|---|---|---|
+| Resplendent Angel in, Dream Trawler out | -1.8 (±2.6), list 34.9 → 33.0% | Inside the noise. Resplendent Angel gets cast far more often (75% of the games it's drawn vs 45%; 3 mana vs 6) but wins less when cast (52% vs 63%): Dream Trawler was a hard-to-answer finisher when it landed, the Angel is an early flier whose 4/4 tokens need 5 life gained in one turn. Deaths +1.8, game shape otherwise unchanged. |

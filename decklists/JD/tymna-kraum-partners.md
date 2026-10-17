@@ -39,7 +39,7 @@ and the token makers (**Adeline**, **Hero of Bladehold**), and attack each oppon
 
 **Late game.** The finishers take over. Most of them fly, several make more bodies, and the attack taxes keep the table
 off you while they work: **Elspeth, Sun's Champion**, **Sun Titan**, **Grave Titan**, **Baneslayer Angel**, **Terror of
-the Peaks**, **Lyra Dawnbringer**, **Glorybringer**, **Thundermaw Hellkite**, **Dream Trawler**, **Serra Angel**.
+the Peaks**, **Lyra Dawnbringer**, **Glorybringer**, **Thundermaw Hellkite**, **Serra Angel**, **Resplendent Angel**.
 
 ### Defense: why it matters
 
@@ -62,8 +62,9 @@ Tymna, so it can't also block. The attack taxes fix that:
   attackers in one.
 - **Sun Titan** returns a permanent with mana value 3 or less from your graveyard whenever it enters or attacks: a dead
   Tymna, an attack tax, a rock. **Grave Titan** brings two 2/2 Zombies on entering and on each attack.
-- **Baneslayer Angel**, **Lyra Dawnbringer**, **Serra Angel** and **Dream Trawler** (draws when it attacks, discard a
-  card to give it hexproof) are lifelinking or vigilant fliers that race and block.
+- **Baneslayer Angel**, **Lyra Dawnbringer** and **Serra Angel** are lifelinking or vigilant fliers that race and block.
+  **Resplendent Angel** ({1}{W}{W}, 3/3 flier) makes a 4/4 flying, vigilant Angel at each end step in which you
+  gained 5 or more life, which the lifelinkers (Baneslayer, Lyra, Vampire Nighthawk, Tymna) make easy.
 - **Terror of the Peaks** turns every creature you cast into damage to any target; **Glorybringer** and **Thundermaw
   Hellkite** are hasty dragons (Glorybringer exerts to deal 4 to a creature; Thundermaw taps and pings the opponents'
   fliers).
@@ -93,7 +94,7 @@ Tymna.
 ### Card advantage beyond the commanders
 
 **Black Widow** draws when an opponent draws their second card in a turn, **Tocasia's Welcome** draws when a cheap
-creature enters, **Dream Trawler** draws when it attacks, and **Fact or Fiction** and **Expressive Iteration** dig.
+creature enters, and **Fact or Fiction** and **Expressive Iteration** dig.
 **Lightning** plays the top card when it connects.
 
 ### How it wins
@@ -136,7 +137,7 @@ rocks: **Arcane Signet**, **Fellwar Stone**, **Orzhov Signet**, **Talisman of Co
 - **Other two-colour lands:** Battlefield Forge, Caves of Koilos and Underground River (pain lands), Rugged Prairie
   (filter), Furycalm Snarl and Port Town (reveal a basic), Spectator Seating (untapped with two or more opponents).
 
-**Card draw:** Tymna, Kraum, Black Widow, Dream Trawler, Tocasia's Welcome, Fact or Fiction, Expressive Iteration.
+**Card draw:** Tymna, Kraum, Black Widow, Tocasia's Welcome, Fact or Fiction, Expressive Iteration.
 **Tutors:** Diabolic Tutor, Rune-Scarred Demon.
 
 ## Bracket and Rule 0
@@ -149,7 +150,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Dream Trawler, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -189,7 +190,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Diabolic Tutor
 1 Disenchant
 1 Dragonskull Summit
-1 Dream Trawler
 1 Drowned Catacomb
 1 Elemental Mascot
 1 Elenda, the Dusk Rose
@@ -221,6 +221,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Path to Exile
 1 Port Town
 1 Propaganda
+1 Resplendent Angel
 1 Restoration Angel
 1 Rip Apart
 1 Rugged Prairie
