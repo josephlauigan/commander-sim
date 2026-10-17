@@ -63,3 +63,5 @@ Four swaps applied 10/16 (Archangel of Tithes, Open the Armory, Sphere of Safety
   add ramp (mana rocks / land ramp), so Equipment can be cast and equipped sooner.
 - **Answers to a voltron threat** (Light-Paws): Aura/creature removal that doesn't cost a body (Package R's lesson).
 - Keep the creature count and rocks; cut only dead cards.
+
+**2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 18.3 → 18.8, inside the noise (about ±5). No measurable change to this deck.

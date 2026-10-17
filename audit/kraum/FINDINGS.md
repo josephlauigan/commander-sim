@@ -103,3 +103,5 @@ alone, more cards, more removal, and more taxes did not move it.
 | **L8 = R11b** (R11a + Island for Harsh Annotation, 38 lands) (`75db0a5`) | **+3.1 (±2.7): 29.5 → 32.6%** | Mana turn 8 +0.29, damage +3.3, eliminated -2.3. |
 | **L8 analysis, T3, 4,000 games** | **31.2% (±1.4)** | JD's goal (30% at T3) reached. |
 | **S1 substitutes** (Austere Command, Dark Endurance, The Wasp, Swamp for Toxic Deluge, Masterful Flourish, Moseo, Shattered Sanctum: JD doesn't own them) (applied) | +1.8 (±2.7): 30.9 → 32.6% | No loss; Toxic Deluge was the weakest card when cast. |
+
+**2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 40.0 → 41.7, inside the noise (about ±5). No measurable change to this deck.

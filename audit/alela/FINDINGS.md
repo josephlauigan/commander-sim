@@ -36,3 +36,5 @@ paired old-vs-new run on today's code would separate them; not run yet.
 |---|---|---|
 | 10/15 list synced to Avery's physical deck (Skullclamp, Serra, Swords, Path, Fabricate, Chimes, Wall of Junk ... for Tymna, Rhystic Study, Opposition, Tetsuko, Ajani ...; 36 → 34 lands) | 12.0 → **9.8** (unpaired, across code changes) | Alela resolves later and less often (fewer lands and mana creatures); see weakness 1. Not a paired test. |
 | 10/14 leftovers swap (Tymna, Exotic Orchard, Shattered Sanctum) | +1.2 (paired, 500 games) | Within noise. |
+
+**2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 20.3 → 18.7, inside the noise (about ±5). No measurable change to this deck.
