@@ -27072,8 +27072,9 @@
    "generic": 0,
    "pips": "",
    "tags": {
+    "c": "G",
     "pow": "1",
-    "c": "G"
+    "t": true
    },
    "pow": 1,
    "tgh": 1,
@@ -27089,7 +27090,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,

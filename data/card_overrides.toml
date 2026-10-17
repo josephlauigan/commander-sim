@@ -8186,3 +8186,8 @@ note = "any colour of the identity that an opponent's land could make (lands.rs 
 ["Hall of the Bandit Lord"]
 status = "Full"
 note = "{T}, pay 3 life: {C} (not taken at 3 life or less; the haste rider is not modeled)"
+
+["Dryad Arbor"]
+tags = "c=G pow=1 t"
+status = "Full"
+note = "a land creature with summoning sickness: it cannot tap for {G} the turn it enters, so it enters tapped (it tapped at once)"

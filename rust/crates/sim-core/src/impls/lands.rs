@@ -1077,9 +1077,16 @@ fn orchard_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
     let mut cols = Colors::NONE;
     for q in g.opps(p) {
         for &x in &g.player(q).lands {
-            if &*g.db.get(g.land(x).cd).name != "Exotic Orchard" {
-                cols = cols.union(crate::engine::mana::land_colors_now(g, q, x));
+            let d = g.db.get(g.land(x).cd);
+            if &*d.name == "Exotic Orchard" {
+                continue;
             }
+            // a filter land "could produce" its printed colours (asking it would ask this Orchard back)
+            cols = if super::t0_zurgo::FILTER_LANDS.contains(&&*d.name) {
+                cols.union(Colors::from_letters(d.tags.str(Tag::C).unwrap_or("C")))
+            } else {
+                cols.union(crate::engine::mana::land_colors_now(g, q, x))
+            };
         }
     }
     let ident = g.player(p).ident;

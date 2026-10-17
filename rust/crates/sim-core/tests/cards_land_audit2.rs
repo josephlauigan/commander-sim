@@ -154,3 +154,22 @@ fn fabled_passage_untaps_the_land_with_three_other_lands() {
         assert_eq!(g.land(new).tapped, tapped, "{others} other lands");
     }
 }
+
+#[test]
+fn orchards_and_filter_lands_on_both_sides_do_not_recurse() {
+    let mut g = table(&["galadriel", "meren-golgari-recursion"]);
+    let o0 = lands(&mut g, P0, "Exotic Orchard", 1, false)[0];
+    lands(&mut g, P0, "Mystic Gate", 1, false);
+    lands(&mut g, P1, "Exotic Orchard", 1, false);
+    lands(&mut g, P1, "Twilight Mire", 1, false);
+    let _ = cols(&g, o0);
+    let _ = mana_units(&g, P0, false);
+    let _ = mana_units(&g, P1, false);
+}
+
+#[test]
+fn dryad_arbor_cannot_tap_the_turn_it_enters() {
+    let mut g = table(&["marwyn-mono-green-elves", "veyran"]);
+    let c = take(&mut g, P0, "Dryad Arbor");
+    assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c), "summoning sick: no mana this turn");
+}
