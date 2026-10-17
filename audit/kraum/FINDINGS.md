@@ -159,3 +159,8 @@ Not modeled, so not tested: Archfiend of the Dross, Skrelv, Gut Shot, White Sun'
 | Swap | Result | Why |
 |---|---|---|
 | Avenge in, Rip Apart out | **+3.1 (±2.6)**, list 31.7 → 34.8% (`2026-10-17-godo/A1-avenge.txt`) | A second creature wipe beside Austere Command answers the deck's main way of dying, creature decks in combat: eliminated 67.0 → 63.7%, rounds survived +0.29, Aurelia kills 16.2 → 14.0%, Tergrid 13.1 → 11.9%. Surviving longer converts: damage +2.4 a game, opponents eliminated +0.05. The AI holds it (cast in 37% of the games it's drawn vs Rip Apart's 77%) until the wipe is worth losing the deck's own creatures; the attack taxes and rocks survive it. |
+
+### Godo, Bandit Warlord for Sun Titan (2026-10-17, not applied; measured on the list before Avenge)
+| Swap | Result | Why |
+|---|---|---|
+| Godo in, Sun Titan out | -0.2 (±1.9), list 31.7 → 31.5% (`2026-10-17-godo/G2-godo-suntitan.txt`) | A wash: two 6-drops that get stuck the same way (cast in 43% vs 45% of the games drawn, first cast round 10.5 vs 10.7) and win about as often when cast (60% vs 57%, correlation). Game shape unchanged to a tenth. With both Godo tests (Serra Angel -0.1, Sun Titan -0.2), Godo is a fair card here but no upgrade: his extra combat doesn't feed Tymna, and the deck's limit is surviving combat, not dealing damage. |

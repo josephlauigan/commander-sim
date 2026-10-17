@@ -10,3 +10,91 @@ Model status of the swapped-in cards (cardgen audit):
   progress  40.0%  7m41s elapsed, ~11m32s left
   progress  50.0%  9m35s elapsed, ~9m35s left
   progress  60.0%  11m28s elapsed, ~7m38s left
+  progress  70.0%  13m21s elapsed, ~5m43s left
+  progress  80.0%  15m11s elapsed, ~3m47s left
+  progress  90.0%  17m13s elapsed, ~1m54s left
+  progress 100.0%  19m05s elapsed, ~0m00s left
+Swaps: Sun Titan -> Godo, Bandit Warlord
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  31.7% ->  31.5%  (delta -0.2 pts, noise ±1.9, paired)   n=2000
+               eliminated by (variant): Tergrid 18.1%  Atraxa 9.2%  Aurelia 19.8%  Marwyn 11.2%  Korvold 8.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          31.7% ->  31.5%  -0.2pt   ±2.9 
+    Rounds survived (or game length)                  12.26 ->  12.21   -0.04  ±0.23 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.52 ->   0.52   -0.00  ±0.05 
+    Mana available on your turn 4                      4.01 ->   4.01   +0.00  ±0.04 
+    Mana available on your turn 6                      5.56 ->   5.56   +0.00  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.70 ->   3.71   +0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            18.60 ->  18.45   -0.15  ±0.51 
+    Tutors resolved per game                           0.23 ->   0.23   +0.00  ±0.03 
+    Spells cast per game                              14.73 ->  14.50   -0.23  ±0.48 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.17   -0.00  ±0.02 
+    Spot removal cast                                  0.96 ->   0.95   -0.01  ±0.06 
+    Board wipes cast                                   0.16 ->   0.14   -0.02  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.77 ->   0.81   +0.04  ±0.07 
+    Your spells countered                              0.13 ->   0.13   -0.00  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                35.79 ->  35.63   -0.16  ±2.27 
+      ...of which combat damage                       35.18 ->  35.09   -0.09  ±2.23 
+      ...of which drain triggers                       0.00 ->   0.00   -0.00  ±0.01 
+      ...of which other triggers                       0.61 ->   0.55   -0.06  ±0.15 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Godo, Bandit Warlord                  26.9      43.3        10.5     56.7       59.7      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Sun Titan                             26.8      44.8        10.7     55.2       57.1      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        31.7      31.5     -0.2
+    rounds survived                                  12.26     12.21    -0.04
+    eliminated, % of games                            67.0      67.2     +0.2
+    opponents it eliminated, per game                 0.77      0.77    -0.00
+    damage dealt, per game                            35.8      35.6     -0.2
+    commander resolved by turn 4, %                   80.8      80.8     +0.0
+    commander resolved by turn 6, %                   93.5      93.5     +0.0
+    commander removals, per game                      0.80      0.80    -0.00
+    lands on the battlefield, turn 4                  3.76      3.76    +0.00
+    lands on the battlefield, turn 8                  6.68      6.66    -0.02
+    mana available, turn 4                            4.01      4.01    +0.00
+    mana available, turn 8                            6.99      6.97    -0.03
+    cards in hand after the land drop, turn 4         6.34      6.34    -0.00
+    cards in hand after the land drop, turn 8         6.36      6.35    -0.01
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Aurelia via combat 16.2%, Tergrid via combat 13.1%, Marwyn via combat 11.5%, Atraxa via combat 7.5%
+    eliminated by (swapped): Aurelia via combat 16.8%, Tergrid via combat 12.9%, Marwyn via combat 11.1%, Atraxa via combat 7.3%
+
+(1146s total)
