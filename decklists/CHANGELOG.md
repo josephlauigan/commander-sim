@@ -350,6 +350,23 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Changes
 
+- **2026-10-16 (evening).** Tuned toward a solid Tier 3 deck (JD: 30% at T3, up to $50 of upgrades; Gilgamesh,
+  Diabolic Tutor, Shield and Helm of Kaldra, Toxic Deluge and Fact or Fiction kept). Eleven rounds of paired tests at
+  T3 (`audit/kraum/FINDINGS.md`). Out: Abigale, Poet Laureate, Arcane Sanctum, Boiling Rock Prison, Caparocti
+  Sunborn, Chromatic Lantern, Crumbling Necropolis, Dissipate, Dragoon's Lance, Exit Specialist, Fate of the
+  Sun-Cryst, Force of Will, Garland, Royal Kidnapper, Harsh Annotation, Hero's Blade, Hero's Heirloom, Irrigated
+  Farmland, Laelia, the Blade Reforged, Make Your Move, Medic's Kitesail, Mystic Monastery, Nim Deathmantle, Nomad
+  Outpost, Path of Ancestry, Photon, Mighty Marvel, Potioner's Trove, Quick Study, Samurai's Katana, Scorching
+  Dragonfire, Silverquill Charm, Spectacle Summit, Spectral Lynx, Star Compass, Talisman of Hierarchy, Temple of
+  Deceit, Temple of Epiphany, Temple of Malice, The Aetherspark, The Wasp, Winsome Avenger, Trailblazer's Boots,
+  Urza, Powerstone Prodigy, Vanish from Sight, Vibrant Outburst, Vivid Creek, Wander Off. In: Adeline, Resplendent
+  Cathar, Arcane Signet, Archon of Absolution, Baird, Steward of Argive, Baneslayer Angel, Crawlspace, Dauthi
+  Voidwalker, Dragonskull Summit, Dream Trawler, Drowned Catacomb, Elspeth, Sun's Champion, Fellwar Stone, Ghostly
+  Prison, Glorybringer, Grave Titan, Hero of Bladehold, Isolated Chapel, Lightning Greaves, Masterful Flourish,
+  Orzhov Signet, Path to Exile, Propaganda, Restoration Angel, Rip Apart, Rune-Scarred Demon, Serra Angel, Skyclave
+  Apparition, Sulfur Falls, Sunblast Angel, Sun Titan, Swords to Plowshares, Thundermaw Hellkite, Vampire Nighthawk,
+  Windborn Muse. Basics: Plains 3 → 7, Island 3 → 6, Swamp 3 → 5, Mountain 2 → 3 (38 lands, was 36). Force of
+  Will out: no Game Changers left. Upgrade buys about $48.65.
 - **2026-10-16.** Brought back as a deck, with Gilgamesh, Master-at-Arms, Diabolic Tutor and an Equipment package.
   Starts from the 2026-10-13 comparison build (dropped 2026-10-14). Out: Adarkar Wastes, Shivan Reef, Sulfurous
   Springs, Bitter Triumph, Dakkon, Shadow Slayer (all five now in other decks), Ultimate Magic: Holy, Shardmage's
@@ -363,6 +380,9 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Simulator history
 
+- **2026-10-16 (evening).** The tuned list scored **31.2% at T3** (4,000 games, look-ahead, loose, ±1.4;
+  `audit/kraum/2026-10-16-iter/L8-analyze-t3.txt`), up from 12.6% for the morning's list. The gains, in paired tests:
+  attack taxes +8.5, a lower curve with protection for Tymna +3.3, finishers +3.4, more mana and lands +3.1 and +2.1.
 - **2026-10-16.** The new build scored **12.6% over t1–t5** (T1 12.7, T2 12.3, T3 12.6, T4 13.4, T5 12.1; 1,000
   games per tier, look-ahead, loose, `--any-tier` with JD's OK; `audit/kraum/2026-10-16/`). Below the fair band in
   every tier. Tymna hits only 0.5–0.7 opponents per turn and Kraum lands on turn 6.3. Findings in

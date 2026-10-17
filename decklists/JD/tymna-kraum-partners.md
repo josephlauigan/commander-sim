@@ -1,17 +1,16 @@
 # Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners (W/U/B/R)
 
-Two commanders who draw cards without spending mana: Tymna draws one card for each opponent your creatures hit in
-combat, and Kraum draws whenever an opponent casts their second spell in a turn. The deck is full of cheap creatures
-that are hard to block (fliers, menace, protection, "can't be blocked by"), Equipment that makes more of them
-unblockable, and a wide spread of removal and counterspells. It wins by chipping every opponent every turn, drawing far
-more cards than they do, and finishing with Terror of the Peaks, Lyra, Gilgamesh and a pumped team. It is weak to
-board wipes, slow to set up its four-colour mana, and pays life for every Tymna draw.
+Two commanders who draw cards without spending mana, behind a wall of attack taxes. Tymna draws one card for each
+opponent your creatures hit in combat, and Kraum draws whenever an opponent casts their second spell in a turn. The deck
+slows the table's attacks with Ghostly Prison, Propaganda, Crawlspace and their friends, protects Tymna, and then wins
+with a top end of flying finishers: Elspeth, the Titans, Baneslayer, Terror of the Peaks, Lyra, Glorybringer and more.
+It is weak to decks that can pay the attack taxes every turn, to combo, and to falling behind on mana.
 
 | | |
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Kraum, Ludevic's Opus ({3}{U}{R}, 4/4); white-blue-black-red |
-| **Bracket** | 3 (1 Game Changer: Force of Will) |
-| **Simulator** | deck key `kraum`; history in `decklists/CHANGELOG.md`, findings in `audit/kraum/FINDINGS.md` |
+| **Bracket** | 3 (no Game Changers) |
+| **Simulator** | deck key `kraum`, matched tier T3; history in `decklists/CHANGELOG.md`, findings in `audit/kraum/FINDINGS.md` |
 
 ## Strategy
 
@@ -23,165 +22,126 @@ life, where X is the number of opponents that were dealt combat damage this turn
 **Kraum, Ludevic's Opus** ({3}{U}{R}, 4/4 flying, haste). *Whenever an opponent casts their second spell each turn,
 draw a card.*
 
-Both have plain Partner, so they share the command zone and either can be cast at any time. Tymna is the engine: with
-three opponents, hitting all of them is three cards a turn for 3 life. What she counts is *opponents* hit, not
-creatures, so spreading attackers across the table matters more than hitting one player hard. Kraum is a hasty 4/4
-flier, so he hits someone (and turns on Tymna) the turn he lands, and his draw trigger needs no work from you: in a
-four-player game someone casts two spells most turns, and Kraum taxes the spell-heavy decks the most.
+Both have plain Partner, so they share the command zone. Tymna comes down on turn 3 and draws off every opponent your
+creatures reach; what she counts is *opponents* hit, not creatures, so a 1/1 token into each player is worth more than
+one big hit. Kraum is a hasty 4/4 flier that connects the turn he lands, and he draws on the opponents' own turns with
+no work from you. Keep **Lightning Greaves** for Tymna: she is the deck's most-removed card, and Greaves (equip {0})
+gives her shroud and lets her attack at once.
 
 ### Game plan
 
-**Early turns (1–3).** A cheap evasive creature on turn 2 (The Wasp, Exit Specialist, Spectral Lynx, Moseo,
-Nightwind Glider), then **Tymna on turn 3**. A Talisman on turn 2 is just as good: Kraum on turn 4 off a Talisman is a
-strong start. Keep the hand's removal for real threats.
+**Early turns (1–3).** A 2-mana rock (Arcane Signet, Fellwar Stone, Orzhov Signet, Talisman of Conviction) or a cheap
+creature on turn 2, then **Tymna on turn 3**. An attack tax on turn 3 is just as good when the table is aggressive.
 
-**Middle turns (4–6).** Kraum comes down and attacks at once. Attack a different opponent with each creature where you
-can, and draw with Tymna after combat. Add Equipment to the creatures that can't get through on their own. Hold up a
-counterspell when the table has a threat you can't remove.
+**Middle turns (4–6).** Get the defense down: **Ghostly Prison**, **Propaganda**, **Crawlspace**, **Windborn Muse**,
+**Archon of Absolution** and **Baird** make attacking you expensive, so opponents attack each other instead. Add Kraum
+and the token makers (**Adeline**, **Hero of Bladehold**), and attack each opponent with something so Tymna draws.
 
-**Late game.** Tymna and Kraum keep the hand full, so the late game is spending the cards: Terror of the Peaks turns
-every creature you cast into damage, Lyra and Gilgamesh are big threats, Firebird pumps the whole attack, and Conqueror's
-Flail stops the table from casting spells while you swing.
+**Late game.** The finishers take over. Most of them fly, several make more bodies, and the attack taxes keep the table
+off you while they work: **Elspeth, Sun's Champion**, **Sun Titan**, **Grave Titan**, **Baneslayer Angel**, **Terror of
+the Peaks**, **Lyra Dawnbringer**, **Glorybringer**, **Thundermaw Hellkite**, **Dream Trawler**, **Serra Angel**.
 
-### Getting through: evasion for Tymna
+### Defense: why it matters
 
-Most creatures in the deck are hard to block, because each one that connects is a card:
+Without defense this deck lost most of its games to creature decks in combat: its own creatures are needed to attack for
+Tymna, so it can't also block. The attack taxes fix that:
 
-- **Fliers:** The Wasp (flash; taps a creature when it attacks), Falcon and Redwing (makes a flying Bird for each
-  damage it deals), Nightwind Glider (protection from black), Moseo, Abigale, Aven Mindcensor (flash), Elemental
-  Mascot, Firebird, Photon (adds mana when it connects), Nightveil Predator (hexproof, deathtouch), Sphinx of New Prahv,
-  Lyra, Terror of the Peaks, and Kraum.
-- **Ground evasion:** Exit Specialist (can't be blocked by power 3 or more), Lightning, Security Sergeant and Black
-  Widow (menace), Spectral Lynx (protection from green, regenerates).
-- **Removing blockers for a turn:** The Wasp taps a creature whenever it attacks and Vibrant Outburst taps one at
-  instant speed; Marchesa's dethrone grows every attacker that goes at the player with the most life.
+- **Ghostly Prison** and **Propaganda** ({2} per attacker), **Windborn Muse** (the same, on a flier), **Archon of
+  Absolution** ({1} per attacker, protection from white) and **Baird, Steward of Argive** ({1} per attacker) stack: a
+  creature attacking you can cost {6} or more.
+- **Crawlspace**: no more than two creatures can attack you each combat, which shuts down token swarms and extra-combat
+  decks.
+- **Elspeth**'s −3 destroys every creature with power 4 or more (yours too: count your Titans and Angels first);
+  **Sunblast Angel** destroys every tapped creature when it enters (yours too, so cast it before you attack, after an
+  opponent's big attack); **Toxic Deluge** is the full reset.
 
-### Gilgamesh and the Equipment
+### Finishers
 
-**Gilgamesh, Master-at-Arms** ({4}{R}{R}, 6/6) looks at the top six cards whenever he enters or attacks and puts every
-Equipment among them onto the battlefield for free, then may attach one to a Samurai (himself, or the 1/1 Hero token
-from **Samurai's Katana**). With eleven Equipment in the deck, each trigger finds at least one about 52% of the
-time, and the expensive pieces (Shield of Kaldra, The Aetherspark, Helm of Kaldra) come in for free.
+- **Elspeth, Sun's Champion** (+1: three 1/1 Soldiers a turn) is the best card in the deck: a wall of blockers and
+  attackers in one.
+- **Sun Titan** returns a permanent with mana value 3 or less from your graveyard whenever it enters or attacks: a dead
+  Tymna, an attack tax, a rock. **Grave Titan** brings two 2/2 Zombies on entering and on each attack.
+- **Baneslayer Angel**, **Lyra Dawnbringer**, **Serra Angel** and **Dream Trawler** (draws when it attacks, discard a
+  card to give it hexproof) are lifelinking or vigilant fliers that race and block.
+- **Terror of the Peaks** turns every creature you cast into damage to any target; **Glorybringer** and **Thundermaw
+  Hellkite** are hasty dragons (Glorybringer exerts to deal 4 to a creature; Thundermaw taps and pings the opponents'
+  fliers).
+- **Rune-Scarred Demon** tutors any card when it enters; **Diabolic Tutor** does the same for 4. Fetch Elspeth when
+  behind, a Titan or Terror of the Peaks to close.
+- **Gilgamesh, Master-at-Arms** looks at six cards for Equipment on entering and attacking; **Shield of Kaldra** (equip
+  {4}) makes a creature indestructible, **Helm of Kaldra** (equip {2}) gives first strike, trample and haste, and
+  **Conqueror's Flail** gives +4/+4 with all four colours and stops opponents from casting spells on your turn.
 
-The Equipment is chosen to get creatures through, so it feeds Tymna even without Gilgamesh:
+### Tymna's attackers
 
-- **Trailblazer's Boots** (nonbasic landwalk): unblockable against almost every Commander deck.
-- **Medic's Kitesail** and **Dragoon's Lance** give flying (the Lance only on your turn, and it comes with a 1/1 Hero
-  to carry it). **Nim Deathmantle** gives intimidate and +2/+2, and later returns a nontoken creature that died for
-  {4}.
-- **Conqueror's Flail** gives +1/+1 for each colour among your permanents (+4/+4 with all four out), and while it is
-  attached your opponents can't cast spells during your turn: no combat tricks, no instant-speed removal, no fog.
-- **Hero's Heirloom** gives a legendary creature trample and haste; **Hero's Blade** (+3/+2) attaches itself for free
-  whenever a legendary creature enters (both commanders, Gilgamesh, Lyra, Elenda, Marchesa, Laelia and others).
-- **Samurai's Katana** makes a 1/1 Samurai Hero with +2/+2, trample and haste, a target for Gilgamesh.
-- **The Aetherspark** attaches itself to a creature (+1: and a +1/+1 counter) and grows from its combat damage.
-- **Shield of Kaldra** (equip {4}) makes the equipped creature indestructible: put it on Kraum or the best threat, so
-  it survives destroy effects and damage wipes. **Helm of Kaldra** (equip {2}) gives first strike, trample and haste:
-  put it on Gilgamesh, Lyra or the biggest attacker. Helm's {1} ability makes the 9/9 Kaldra token only if you also
-  control Sword of Kaldra, which this deck doesn't have, so ignore it.
+Tymna wants every opponent hit each turn. **Adeline** makes a 1/1 attacking *each* opponent whenever you attack, and
+**Hero of Bladehold** makes two attacking tokens with battle cry; **Dauthi Voidwalker** (shadow), **Vampire Nighthawk**,
+**Moseo**, **Nightwind Glider**, **Falcon and Redwing**, **Black Widow** and **Lightning** (menace) get through on their
+own. Attack the opponents you can reach, keep enough back to block what the taxes let through, and draw.
 
-Equipment costs mana twice (cast, then equip), so in the early turns play creatures first, and equip when you have
-spare mana or when one creature is stopped by blockers.
+### Removal and interaction
 
-### Removal
-
-Thirteen answers, most of them instants or cheap:
-
-- **Creatures:** Harsh Annotation (2 mana, leaves a 1/1 flier), Scorching Dragonfire (3 damage, exiles), Vibrant
-  Outburst (3 damage to any target and taps a creature), Silverquill Charm (exile power 2 or less, or drain each
-  opponent 3), Wander Off (exile), Darksteel Mutation (turns a creature or commander into a 0/1 with no abilities).
-- **Any nonland permanent:** Bedevil (artifact, creature or planeswalker), Fate of the Sun-Cryst (2 less on a tapped
-  creature), Memory Trap, Vanish from Sight (top or bottom of the library, owner's choice).
-- **Artifacts and enchantments:** Disenchant, Make Your Move (also a creature with power 4 or more).
-- **Sweeper:** Toxic Deluge, the only one. Pay just enough life to kill their creatures; your fliers are small, so it
-  usually kills yours too: cast it when you are behind on board, not to clean up.
-
-### Counterspells and protection
-
-**Force of Will** (free by exiling a blue card), **Arcane Denial** and **Dissipate** stop the spell that would beat you:
-a wipe, a combo piece, a big threat. **Aven Mindcensor** (flash) blunts tutors and land searches.
-**Bastion Protector** gives both commanders +2/+2 and indestructible, which keeps them alive through destroy effects and
-damage wipes, and **Shield of Kaldra** does the same for any one creature. **Conqueror's Flail** also protects your
-turn: nobody can cast spells while you attack.
+**Swords to Plowshares** and **Path to Exile** (one mana), **Rip Apart**, **Darksteel Mutation** (also answers a
+commander), **Skyclave Apparition**, **Memory Trap**, **Bedevil** and **Disenchant**; **Glorybringer** and **Elspeth**
+add more. **Arcane Denial** is the one counterspell, and **Aven Mindcensor** (flash) blunts tutors and land searches.
+**Restoration Angel** (flash) blinks a creature out of removal and reuses an enters effect (a Titan, Rune-Scarred
+Demon, Skyclave Apparition). **Masterful Flourish** ({B}: indestructible) and **Lightning Greaves** protect Tymna.
 
 ### Card advantage beyond the commanders
 
-**Black Widow** draws whenever an opponent draws their second card in a turn (in Commander, most turns).
-**Tocasia's Welcome** draws once a turn when a cheap creature enters. **Laelia** and **Lightning** play cards off the
-top of the library when they attack or connect, and **Caparocti Sunborn** discovers 3 when it attacks (casts a free
-spell of mana value 3 or less). **Quick Study**, **Fact or Fiction** and **Expressive Iteration** are the draw spells,
-**Urza, Powerstone Prodigy** loots every turn, and **Diabolic Tutor** finds whichever card the game needs: Toxic
-Deluge when behind, Terror of the Peaks or Conqueror's Flail to finish, Bastion Protector to keep the commanders
-safe.
+**Black Widow** draws when an opponent draws their second card in a turn, **Tocasia's Welcome** draws when a cheap
+creature enters, **Dream Trawler** draws when it attacks, and **Fact or Fiction** and **Expressive Iteration** dig.
+**Lightning** plays the top card when it connects.
 
 ### How it wins
 
-By combat damage spread over many turns, while the commanders bury the table in cards. A typical win: three or four
-evasive creatures hitting every opponent, Tymna drawing three a turn, and a finisher on top: **Terror of the Peaks**
-(each creature you cast deals its power to any target), **Lyra Dawnbringer** (5/5 flying, first strike, lifelink),
-**Gilgamesh** with a free Equipment or two, **Firebird** (+X/+0 to every other attacker), **Elenda** (grows with
-every creature death), **Garland** (makes an opponent the monarch, then steals their best creature while they keep the
-crown), and **Falcon and Redwing** making a flock of Birds. Marchesa's dethrone puts counters on everything that
-attacks the life leader.
+By combat in the air while nobody can attack you profitably. A typical win: the taxes are down, Tymna draws two or three
+a turn off Adeline's tokens and the fliers, and a Titan, Elspeth or Baneslayer takes over the board. Terror of the Peaks
+and Gilgamesh close faster when they land.
 
 ### Weak spots and how to play around them
 
-- **Board wipes.** The creatures are small and cheap, and the deck has only Bastion Protector (commanders only),
-  Shield of Kaldra (one creature) and counterspells to protect them. Keep a counter up once you have a board, don't
-  play more creatures than you need to keep Tymna drawing, and keep a creature or two in hand to rebuild.
-- **Slow, tapped mana.** Twelve lands always enter tapped, and four colours with demanding costs (Nightveil Predator
-  {U}{U}{B}{B}, Sphinx of New Prahv {W}{W}{U}{U}, Bedevil {B}{B}{R}, Lyra {3}{W}{W}, Terror of the Peaks {3}{R}{R},
-  Gilgamesh {4}{R}{R}) can strand cards. Play the tapped lands in the early turns when nothing else needs the mana;
-  keep Talismans and Chromatic Lantern as top priorities.
-- **Life as a resource.** Tymna, Toxic Deluge, the pain lands, the Talismans and Force of Will all cost life. Tymna's
-  lifelink, Lyra, Medic's Kitesail and Silverquill Charm gain some back. Tymna is all or nothing (X is the number of
-  opponents hit), so against aggressive decks skip the draw on a turn you can't afford the life.
-- **Large blockers and ground decks.** Tymna's draw stops when nothing gets through. Equipment (Boots, Kitesail, Lance)
-  and the tap effects (The Wasp, Vibrant Outburst) are the answer; save them for that.
-- **Commander removal.** Kraum costs 5 and each recast costs 2 more. Bastion Protector and Hero's Heirloom's haste help;
-  don't send Kraum into a board where he will just trade.
+- **Decks that pay the taxes or don't need to attack** (combo, drain, big mana). The taxes do nothing against them; hold
+  Arcane Denial and the cheap removal for the combo piece, and race.
+- **Mana.** The deck runs 38 lands and four 2-mana rocks because its finishers cost 5–6: keep a hand with 3+ lands and a
+  rock, and play the rocks early.
+- **Tymna dying.** She is removed more than any other card. Equip Lightning Greaves to her, keep Masterful Flourish or
+  Restoration Angel up when you can, and recast her (Sun Titan also brings her back).
+- **Board wipes.** The defense is mostly enchantments and artifacts, which survive creature wipes; rebuild the attackers
+  with Adeline, Hero, the Titans and Elspeth.
 
 ## Key lines
 
-- **Turn 3 Tymna, turn 4 Kraum** off a Talisman, then attack each opponent with a different creature and draw.
-- **Kraum the turn he lands:** haste, so he connects and counts for Tymna immediately.
-- **Trailblazer's Boots on a creature with nothing else:** almost every opponent plays nonbasic lands, so it is a card
-  every turn.
-- **Conqueror's Flail before the big attack:** nobody can cast a fog, trick or removal on your turn.
-- **Terror of the Peaks, then creatures:** each creature you cast deals its power to any target.
-- **Gilgamesh attacking:** each attack looks at six more cards for free Equipment.
+- **Turn 2 rock, turn 3 Tymna, turn 4 an attack tax:** the table attacks someone else while Tymna draws.
+- **Adeline + Tymna:** every attack puts a token into each opponent, so Tymna draws three.
+- **Crawlspace + Ghostly Prison:** at most two attackers, each costing {2}.
+- **Sun Titan on a dead Tymna or a destroyed attack tax:** it comes back every attack.
+- **Rune-Scarred Demon or Diabolic Tutor for Elspeth** when behind on board.
+- **Sunblast Angel after an opponent's alpha strike:** every tapped attacker dies.
 
-**Mulligan:** keep 3+ lands that make at least three of the four colours, with a two-drop creature or a Talisman. A
-hand that can't cast Tymna by turn 3 or 4 is a mulligan.
+**Mulligan:** keep 3+ lands that make at least three of the four colours, with a rock or a turn-3 play. A hand that can't
+cast Tymna by turn 3 or 4 is a mulligan.
 
 ## Mana and consistency
 
-36 lands: 25 nonbasic and 11 basic (3 Island, 3 Plains, 3 Swamp, 2 Mountain). Mana sources besides lands:
-**Talisman of Hierarchy** and **Talisman of Conviction** (two mana, colour fixing), **Chromatic Lantern** (every land
-taps for any colour), **Star Compass** and **Potioner's Trove**; **Photon** adds mana when it connects.
+38 lands: 17 nonbasic and 21 basic (7 Plains, 6 Island, 5 Swamp, 3 Mountain); no land enters tapped every time. Mana
+rocks: **Arcane Signet**, **Fellwar Stone**, **Orzhov Signet**, **Talisman of Conviction**.
 
-- **Any colour:** Command Tower, Exotic Orchard, Path of Ancestry (tapped), Vivid Creek (tapped, two uses), Unclaimed
-  Territory (name **Human**: 15 of the creatures are Humans, Tymna and Gilgamesh among them).
-- **Three colours (tapped):** Arcane Sanctum (W/U/B), Crumbling Necropolis (U/B/R), Mystic Monastery (U/R/W), Nomad
-  Outpost (R/W/B).
-- **Two colours, untapped:** Battlefield Forge, Caves of Koilos and Underground River (pain lands), Rugged Prairie
-  (filter), Clifftop Retreat and Glacial Fortress (with a basic of the right type), Furycalm Snarl and Port Town (reveal
-  a basic), Spectator Seating (untapped with two or more opponents), Shattered Sanctum (with two other lands).
-- **Two colours, tapped:** Temple of Deceit, Temple of Epiphany, Temple of Malice (scry 1), Irrigated Farmland
-  (cycling {2}), Spectacle Summit (surveil for {2}{U}{R}), Boiling Rock Prison (sacrifice to draw for {4}).
+- **Any colour:** Command Tower, Exotic Orchard, Unclaimed Territory (name **Human**).
+- **Checklands** (untapped with a basic of the right type): Isolated Chapel (W/B), Drowned Catacomb (U/B), Sulfur Falls
+  (U/R), Dragonskull Summit (B/R), Clifftop Retreat (R/W), Glacial Fortress (W/U).
+- **Other two-colour lands:** Battlefield Forge, Caves of Koilos and Underground River (pain lands), Rugged Prairie
+  (filter), Furycalm Snarl and Port Town (reveal a basic), Spectator Seating (untapped with two or more opponents),
+  Shattered Sanctum (with two other lands).
 
-**Card draw:** Tymna, Kraum, Black Widow, Tocasia's Welcome, Quick Study, Fact or Fiction, Expressive Iteration,
-Urza (loot), and the cards played off the top (Laelia, Lightning, Caparocti, Elemental Mascot). **Tutor:** Diabolic
-Tutor.
-
-**Interaction:** thirteen removal spells, three counterspells, Aven Mindcensor, and Bastion Protector. The deck has 25
-creatures plus the two commanders, and eleven Equipment.
+**Card draw:** Tymna, Kraum, Black Widow, Dream Trawler, Tocasia's Welcome, Fact or Fiction, Expressive Iteration.
+**Tutors:** Diabolic Tutor, Rune-Scarred Demon.
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with one Game Changer: **Force of Will**. No two-card infinite combos, no mass land destruction, no
-extra turns. Mention Aven Mindcensor (it stops tutors and fetches) and Conqueror's Flail (no spells on your turn)
-before the game.
+**Bracket 3,** with no Game Changers. No two-card infinite combos, no mass land destruction, no extra turns. Mention the
+attack taxes (Ghostly Prison, Propaganda, Crawlspace, Windborn Muse, Archon of Absolution, Baird), Aven Mindcensor and
+Conqueror's Flail (no spells on your turn) before the game.
 
 ## Decklist by type (100)
 

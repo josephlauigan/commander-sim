@@ -3,7 +3,14 @@
 What the simulator has taught us about the Tymna/Kraum partner deck: strengths, weaknesses, and what was tried and why
 it did or didn't work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile.
 
-## Current state (2026-10-16)
+## Current state (2026-10-16, evening)
+**Tuned list: 31.2% at T3** (4,000 games, ±1.4; `audit/kraum/2026-10-16-iter/L8-analyze-t3.txt`), the matched tier. Dies in
+67% of games (was 86%), deals 37 damage a game (was 22), Tymna lands on turn 3.7 and Kraum on 6.0. Best when cast:
+Sunblast Angel, Rune-Scarred Demon, Elspeth, Grave Titan, Terror of the Peaks, Lyra (55–57%). Still stuck in hand
+40–48% of the time: the 5–6 drops (Sun Titan, Rune-Scarred Demon, Elspeth, Grave Titan, Dream Trawler, Gilgamesh) and
+Diabolic Tutor, Fact or Fiction. Remaining losses: creature decks in combat (Aurelia 16%, Tergrid 12%, Marwyn 11%).
+
+### The morning's list (2026-10-16)
 List: the 10/16 build (Gilgamesh, Diabolic Tutor, eleven Equipment including Shield and Helm of Kaldra); every card
 modeled. Matched tiers not set yet (provisional t1, t2 in `data/my_decks.toml`).
 **Best so far: defense package E, T3 21.1% (+8.5, 1,000 paired) and E + C 20.4% (+7.4, 2,000 paired); not applied to the list.**
@@ -91,3 +98,7 @@ The AI's ramp setting (`SEARCH_RAMP_W`) can only be set for every seat at once (
 **What moved the deck (2026-10-16):** defense (attack taxes, +8.5), then a lower curve with protection for Tymna (+3.3),
 then finishers that win when cast (+3.4), with untapped mana (+2.1) and small cheap swaps on top. Cheap evasive creatures
 alone, more cards, more removal, and more taxes did not move it.
+| L7 analysis, T3, 4,000 games | 29.7% (±1.4) | Expensive finishers stuck in hand 38–46%: mana again. |
+| R11a Orzhov Signet for Potioner's Trove, Plains for Scorching Dragonfire (37 lands) | +2.1 (±2.7) | Mana turn 8 +0.17. |
+| **L8 = R11b** (R11a + Island for Harsh Annotation, 38 lands) (`75db0a5`) | **+3.1 (±2.7): 29.5 → 32.6%** | Mana turn 8 +0.29, damage +3.3, eliminated -2.3. |
+| **L8 analysis, T3, 4,000 games** | **31.2% (±1.4)** | JD's goal (30% at T3) reached. |
