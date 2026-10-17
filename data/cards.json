@@ -40866,6 +40866,48 @@
    "spell_prio": false
   },
   {
+   "name": "Godo, Bandit Warlord",
+   "types": "C",
+   "generic": 5,
+   "pips": "R",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "pow": "3"
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "barbarian",
+    "human"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Gods Willing",
    "types": "I",
    "generic": 0,

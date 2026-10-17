@@ -624,3 +624,4 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 ### Changes
 
 - **2026-10-17.** Out: Dream Trawler. In: Resplendent Angel. JD got Resplendent Angel instead of Dream Trawler. Measured at T3 (2,000 paired games): -1.8 (±2.6), inside the noise.
+- **2026-10-17.** Out: Rip Apart. In: Avenge (from bulk). Measured at T3 (2,000 paired games): +3.1 (±2.6), list 31.7 → 34.8%: a second creature wipe, so the deck dies to combat less (eliminated 67.0 → 63.7%).

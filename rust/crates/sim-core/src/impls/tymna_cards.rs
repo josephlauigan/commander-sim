@@ -985,6 +985,100 @@ fn gilgamesh_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
     Ok(vec![])
 }
 
+// ------------------------------------------------------------------ Godo, Bandit Warlord
+pub const GODO: &str = "Godo, Bandit Warlord";
+
+/// what the Equipment card `c` is worth on Godo right now: its size, and the keywords it gives, counting haste for
+/// a lot while he is summoning sick (he attacks the turn he lands, so the extra combat is used at once)
+fn godo_gear_score(g: &Game, c: CardId, godo: PermId) -> f64 {
+    use crate::dsl::model::Ability;
+    let d = g.db.get(c);
+    let sick = g.perm(godo).sick && !crate::dsl::has_kw(g, godo, "haste");
+    let mut v = 0.3 * gear_rank(&d.name) as f64;
+    let mut kws: Vec<&str> = vec![];
+    for a in d.abilities.iter() {
+        if let Ability::Static { kind, pow, tgh, keyword, .. } = a {
+            if kind == "equip_bonus" {
+                v += 0.5 * (pow.unwrap_or(0) + tgh.unwrap_or(0)) as f64;
+            }
+            if kind == "equip_keyword"
+                && let Some(k) = keyword.as_deref()
+            {
+                kws.push(k);
+            }
+        }
+    }
+    if &*d.name == HEIRLOOM && crate::cardcode::is_legendary(g, godo) {
+        kws.extend(["trample", "haste"]); // legendary: trample and haste
+    }
+    for k in kws {
+        v += match k {
+            "haste" if sick => 4.0,
+            "haste" => 0.0,
+            "indestructible" => 2.0,
+            _ => 1.0,
+        };
+    }
+    v
+}
+
+/// **Godo**, when he enters: you may search the library for an Equipment card, put it onto the battlefield and
+/// attach it to him (a job select piece brings its Hero, but still goes on Godo), then shuffle. The AI takes the
+/// Equipment that is best on him (`godo_gear_score`).
+fn godo_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src || !live(g, src) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    let gear: Vec<CardId> =
+        crate::engine::zones::searchable(g, o).into_iter().filter(|&c| g.db.get(c).has_subtype("equipment")).collect();
+    if gear.is_empty() || !trigger_window(g, o, Some(src), "search for an Equipment and attach it", Some(6.0))? {
+        return Ok(());
+    }
+    let Some(c) = max_by(&gear, |c| godo_gear_score(g, c, src)) else { return Ok(()) };
+    let lib = &mut g.player_mut(o).library;
+    if let Some(i) = lib.iter().position(|&x| x == c) {
+        lib.remove(i);
+    }
+    g.player_mut(o).seen.insert(c);
+    let e = enter(g, o, c, Enter { sick: false, ..Default::default() })?;
+    crate::glog!(g, "    Godo fetches {} and attaches it", g.db.get(c).name);
+    if live(g, e) && live(g, src) {
+        super::cloud::attach(g, e, src);
+    }
+    let mut lib = std::mem::take(&mut g.player_mut(o).library);
+    g.rng.shuffle(&mut lib);
+    g.player_mut(o).library = lib;
+    Ok(())
+}
+
+/// **Godo**, whenever he attacks for the first time each turn: untap him and every Samurai you control; there is an
+/// additional combat phase after this one. Once per turn, so attacking again in the extra combat adds nothing.
+fn godo_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if owner(g, src) != p || !atk.contains(&src) {
+        return Ok(vec![]);
+    }
+    let key = intern(&format!("godo_first_attack_{}", src.0));
+    if !once_per_turn(g, p, key) {
+        return Ok(vec![]);
+    }
+    if !trigger_window(g, p, Some(src), "untap Godo and the Samurai, additional combat", Some(6.0))? {
+        return Ok(vec![]);
+    }
+    let team: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && (m == src || is_samurai(g, m)))
+        .collect();
+    for m in team {
+        g.perm_mut(m).tapped = false;
+    }
+    g.player_mut(p).extra_combats += 1;
+    crate::glog!(g, "    Godo: untap him and the Samurai, additional combat");
+    Ok(vec![])
+}
 // ------------------------------------------------------------------ Boiling Rock Prison
 /// **Boiling Rock Prison** (enters tapped, {T}: {B} or {R} are in the card data): {4}, {T}, sacrifice it: draw a card.
 /// The AI does it in the end-of-turn window (so the mana would go unused), with six or more lands in play and no land
@@ -1022,6 +1116,10 @@ pub fn register_gear(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if let Some(c) = card_if(r, db, GILGAMESH)? {
         c.etb = Some(gilgamesh_etb);
         c.attack = Some(gilgamesh_attack);
+    }
+    if let Some(c) = card_if(r, db, GODO)? {
+        c.etb = Some(godo_etb);
+        c.attack = Some(godo_attack);
     }
     if let Some(c) = card_if(r, db, LANCE)? {
         c.etb = Some(super::cloud::staff_etb);

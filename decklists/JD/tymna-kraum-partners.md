@@ -54,7 +54,8 @@ Tymna, so it can't also block. The attack taxes fix that:
 - **Elspeth**'s −3 destroys every creature with power 4 or more (yours too: count your Titans and Angels first);
   **Sunblast Angel** destroys every tapped creature when it enters (yours too, so cast it before you attack, after an
   opponent's big attack); **Austere Command** is the full reset (choose creatures with mana value 3 or less and 4 or
-  more: your attack taxes and rocks survive).
+  more: your attack taxes and rocks survive); **Avenge** destroys every creature and gains you 1 life for each, and costs
+  {2} less when a player attacked you on their last turn (hold it until their board is worth more than yours).
 
 ### Finishers
 
@@ -84,7 +85,7 @@ the taxes let through, and draw.
 
 ### Removal and interaction
 
-**Swords to Plowshares** and **Path to Exile** (one mana), **Rip Apart**, **Darksteel Mutation** (also answers a
+**Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a
 commander), **Skyclave Apparition**, **Memory Trap**, **Bedevil** and **Disenchant**; **Glorybringer** and **Elspeth**
 add more. **Arcane Denial** is the one counterspell, and **Aven Mindcensor** (flash) blunts tutors and land searches.
 **Restoration Angel** (flash) blinks a creature out of removal and reuses an enters effect (a Titan, Rune-Scarred
@@ -160,7 +161,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Instants (7).** Arcane Denial, Bedevil, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares
 
-**Sorceries (4).** Austere Command, Diabolic Tutor, Expressive Iteration, Rip Apart
+**Sorceries (4).** Austere Command, Avenge, Diabolic Tutor, Expressive Iteration
 
 **Lands (38).** Battlefield Forge, Caves of Koilos, Clifftop Retreat, Command Tower, Dragonskull Summit, Drowned Catacomb, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Isolated Chapel, Port Town, Rugged Prairie, Spectator Seating, Sulfur Falls, Unclaimed Territory, Underground River, 6 Island, 7 Plains, 6 Swamp, 3 Mountain
 
@@ -172,6 +173,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Arcane Signet
 1 Archon of Absolution
 1 Austere Command
+1 Avenge
 1 Aven Mindcensor
 1 Baird, Steward of Argive
 1 Baneslayer Angel
@@ -223,7 +225,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Propaganda
 1 Resplendent Angel
 1 Restoration Angel
-1 Rip Apart
 1 Rugged Prairie
 1 Rune-Scarred Demon
 1 Serra Angel
