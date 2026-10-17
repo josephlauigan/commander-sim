@@ -8153,3 +8153,25 @@ tags = "human pow=2"
 dsl = []
 status = "Full"
 note = "soulbond (DataKey::Soulbond, bulk_white::paladin_etb): pairs on either entry, ends when either leaves or changes control; both have double strike"
+
+["Dismember"]
+tags = "rem=shrink5 tgt=c"
+dsl = []
+status = "Full"
+note = "-5/-5 until end of turn on the target creature; each {B/P} is paid with {B}, or 2 life when the mana is short and life is above 10 (engine Phyrexian payment)"
+
+["Porcelain Legionnaire"]
+kws = ["first strike"]
+dsl = []
+status = "Full"
+note = "3/1 first strike artifact creature; {W/P} paid with {W}, or 2 life when the mana is short and life is above 10"
+
+["Vault Skirge"]
+dsl = []
+status = "Full"
+note = "1/1 flying lifelink artifact creature; {B/P} paid with {B}, or 2 life when the mana is short and life is above 10"
+
+["Apostle's Blessing"]
+dsl = []
+status = "Full"
+note = "in response to targeted removal at a commander or a permanent worth 4+: protection from the removal spell's colour (artifacts for a colourless artifact spell) until end of turn; {W/P} paid with {W} or 2 life (tymna_cards.rs blessing_protect)"

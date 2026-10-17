@@ -1,0 +1,119 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dismember [pool] I 1BB :: rem=shrink5 tgt=c
+   Porcelain Legionnaire [pool] AC 2W :: pow=3 tgh=1
+   Vault Skirge [pool] AC 1B :: pow=1 fly lifelink
+   Apostle's Blessing [pool] I 1W :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Dismember: Full (-5/-5 until end of turn on the target creature; each {B/P} is paid with {B}, or 2 life when the mana is short and life is above 10 (engine Phyrexian payment))
+  Porcelain Legionnaire: Full (3/1 first strike artifact creature; {W/P} paid with {W}, or 2 life when the mana is short and life is above 10)
+  Vault Skirge: Full (1/1 flying lifelink artifact creature; {B/P} paid with {B}, or 2 life when the mana is short and life is above 10)
+  Apostle's Blessing: Full (in response to targeted removal at a commander or a permanent worth 4+: protection from the removal spell's colour (artifacts for a colourless artifact spell) until end of turn; {W/P} paid with {W} or 2 life (tymna_cards.rs blessing_protect))
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m49s elapsed, ~7m22s left
+  progress  20.0%  1m44s elapsed, ~6m59s left
+  progress  30.0%  2m35s elapsed, ~6m02s left
+  progress  40.0%  3m25s elapsed, ~5m07s left
+  progress  50.0%  4m26s elapsed, ~4m26s left
+  progress  60.0%  5m14s elapsed, ~3m29s left
+  progress  70.0%  6m05s elapsed, ~2m36s left
+  progress  80.0%  6m54s elapsed, ~1m43s left
+  progress  90.0%  7m44s elapsed, ~0m51s left
+  progress 100.0%  8m30s elapsed, ~0m00s left
+Swaps: Memory Trap -> Dismember; Elemental Mascot -> Porcelain Legionnaire; Tocasia's Welcome -> Vault Skirge; Disenchant -> Apostle's Blessing
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.4% ->  32.9%  (delta -1.6 pts, noise ±2.8, paired)   n=2000
+               eliminated by (variant): Tergrid 16.6%  Atraxa 9.8%  Aurelia 19.8%  Marwyn 11.3%  Korvold 8.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.4% ->  32.9%  -1.5pt   ±3.0 
+    Rounds survived (or game length)                  12.50 ->  12.22   -0.28  ±0.23*
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.51   -0.02  ±0.05 
+    Mana available on your turn 4                      3.97 ->   3.98   +0.00  ±0.05 
+    Mana available on your turn 6                      5.54 ->   5.58   +0.04  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.61 ->   3.61   +0.01  ±0.08 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.41 ->  18.88   -0.53  ±0.51*
+    Tutors resolved per game                           0.25 ->   0.24   -0.01  ±0.03 
+    Spells cast per game                              15.33 ->  14.85   -0.48  ±0.48*
+
+  Interaction
+    Counterspells cast                                 0.18 ->   0.17   -0.01  ±0.02 
+    Spot removal cast                                  1.01 ->   1.04   +0.04  ±0.06 
+    Board wipes cast                                   0.15 ->   0.15   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.81 ->   0.77   -0.04  ±0.07 
+    Your spells countered                              0.16 ->   0.14   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                39.29 ->  38.77   -0.52  ±2.31 
+      ...of which combat damage                       38.61 ->  38.01   -0.60  ±2.27 
+      ...of which drain triggers                       0.00 ->   0.01   +0.01  ±0.01 
+      ...of which other triggers                       0.68 ->   0.76   +0.08  ±0.18 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    worse  - Spells cast per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Dismember                             24.9      91.0         7.4      9.0       42.2      0.00
+    Porcelain Legionnaire                 27.8      84.3         7.6     15.7       44.2      0.02
+    Vault Skirge                          24.9      95.8         6.5      4.2       42.1      0.01
+    Apostle's Blessing                    25.6      21.1        10.5     78.9       61.1      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Memory Trap                           25.6      82.1         9.1     17.9       45.8      0.01
+    Elemental Mascot                      27.8      74.1        10.2     25.9       52.6      0.01
+    Tocasia's Welcome                     25.1      70.1         9.4     29.9       47.9      0.01
+    Disenchant                            27.8      72.1         8.7     27.9       44.6      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.4      32.9     -1.5
+    rounds survived                                  12.50     12.22    -0.28
+    eliminated, % of games                            63.8      66.1     +2.3
+    opponents it eliminated, per game                 0.85      0.82    -0.03
+    damage dealt, per game                            39.3      38.8     -0.5
+    commander resolved by turn 4, %                   84.0      83.9     -0.1
+    commander resolved by turn 6, %                   95.1      94.9     -0.2
+    commander removals, per game                      0.81      0.80    -0.01
+    lands on the battlefield, turn 4                  3.77      3.77    +0.00
+    lands on the battlefield, turn 8                  6.69      6.75    +0.06
+    mana available, turn 4                            3.97      3.98    +0.00
+    mana available, turn 8                            6.97      7.04    +0.08
+    cards in hand after the land drop, turn 4         6.36      6.27    -0.09
+    cards in hand after the land drop, turn 8         6.45      6.34    -0.10
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Aurelia via combat 15.3%, Tergrid via combat 12.5%, Marwyn via combat 11.2%, Atraxa via combat 7.5%
+    eliminated by (swapped): Aurelia via combat 16.2%, Tergrid via combat 12.6%, Marwyn via combat 11.2%, Atraxa via combat 7.4%
+
+(510s total)
