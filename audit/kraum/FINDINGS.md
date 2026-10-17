@@ -149,3 +149,8 @@ Not modeled, so not tested: Archfiend of the Dross, Skrelv, Gut Shot, White Sun'
 | Swap | Result | Why |
 |---|---|---|
 | Resplendent Angel in, Dream Trawler out | -1.8 (±2.6), list 34.9 → 33.0% | Inside the noise. Resplendent Angel gets cast far more often (75% of the games it's drawn vs 45%; 3 mana vs 6) but wins less when cast (52% vs 63%): Dream Trawler was a hard-to-answer finisher when it landed, the Angel is an early flier whose 4/4 tokens need 5 life gained in one turn. Deaths +1.8, game shape otherwise unchanged. |
+
+### Godo, Bandit Warlord for Serra Angel (2026-10-17, not applied: JD picked up Godo; modeled for this test)
+| Swap | Result | Why |
+|---|---|---|
+| Godo in, Serra Angel out | -0.1 (±2.3), list 31.7 → 31.6% (`2026-10-17-godo/G1-godo.txt`) | No change. Godo is a 6-drop that gets stuck: cast in 43% of the games he's drawn vs Serra's 55%, first cast on round 11 like her. When he lands he fetches Helm of Kaldra (haste, first strike, trample; Hero's Heirloom, his best pick, is no longer in the list) and gets two combats that turn, and he wins a little more when cast (57% vs 50%, correlation). But the extra combat gives Tymna no extra cards (she counts opponents hit once per turn), and the deck's losses are defensive: deaths (67%), damage dealt and the killers (Aurelia, Tergrid, Marwyn in combat) are unchanged. A one-shot 3/3 tutor for an Equipment adds nothing a 5-mana 4/4 flyer doesn't. His real home is Helm of the Host (infinite combats), which JD doesn't own. |

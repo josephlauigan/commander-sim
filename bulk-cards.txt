@@ -327,6 +327,7 @@
 1x Goblin Medics (dmr)
 3x Goblin Rimerunner (csp)
 5x Goblin Roughrider (list, m15)
+1x Godo, Bandit Warlord
 1x Godo's Irregulars (sok)
 1x Golgari Guildgate (rvr)
 1x Gollum, Silent Slinker (hob)
