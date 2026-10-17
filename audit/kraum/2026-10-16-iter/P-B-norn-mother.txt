@@ -1,0 +1,98 @@
+Model status of the swapped-in cards (cardgen audit):
+  Elesh Norn, Mother of Machines: Full (tags: `bomb=7 pow=4 tgh=7 vig leg mother`)
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 18 worker threads: about 11 minutes
+  progress  10.0%  0m52s elapsed, ~7m49s left
+  progress  20.0%  1m46s elapsed, ~7m04s left
+  progress  30.0%  2m42s elapsed, ~6m18s left
+  progress  40.0%  3m36s elapsed, ~5m24s left
+  progress  50.0%  4m41s elapsed, ~4m41s left
+  progress  60.0%  5m34s elapsed, ~3m42s left
+  progress  70.0%  6m26s elapsed, ~2m45s left
+  progress  80.0%  7m22s elapsed, ~1m50s left
+  progress  90.0%  8m15s elapsed, ~0m55s left
+  progress 100.0%  9m09s elapsed, ~0m00s left
+Swaps: Elemental Mascot -> Elesh Norn, Mother of Machines
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.0% ->  33.6%  (delta -0.3 pts, noise ±2.6, paired)   n=2000
+               eliminated by (variant): Tergrid 18.1%  Atraxa 8.8%  Aurelia 19.6%  Marwyn 10.9%  Korvold 7.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.0% ->  33.7%  -0.3pt   ±3.0 
+    Rounds survived (or game length)                  12.45 ->  12.40   -0.05  ±0.23 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.52   +0.00  ±0.05 
+    Mana available on your turn 4                      3.97 ->   3.98   +0.00  ±0.05 
+    Mana available on your turn 6                      5.54 ->   5.54   +0.00  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.61 ->   3.62   +0.01  ±0.07 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            19.34 ->  19.20   -0.14  ±0.52 
+    Tutors resolved per game                           0.23 ->   0.24   +0.01  ±0.03 
+    Spells cast per game                              15.23 ->  15.02   -0.21  ±0.48 
+
+  Interaction
+    Counterspells cast                                 0.18 ->   0.18   +0.00  ±0.02 
+    Spot removal cast                                  1.00 ->   0.99   -0.01  ±0.06 
+    Board wipes cast                                   0.12 ->   0.12   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.80 ->   0.83   +0.03  ±0.07 
+    Your spells countered                              0.16 ->   0.14   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                39.14 ->  38.34   -0.80  ±2.33 
+      ...of which combat damage                       38.40 ->  37.44   -0.96  ±2.28 
+      ...of which drain triggers                       0.00 ->   0.00   +0.00  ±0.00 
+      ...of which other triggers                       0.74 ->   0.90   +0.16  ±0.20 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Elesh Norn, Mother of Machines        27.5      46.9        10.8     53.1       54.3      0.04
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Elemental Mascot                      27.4      74.1        10.1     25.9       50.5      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.0      33.6     -0.3
+    rounds survived                                  12.45     12.40    -0.05
+    eliminated, % of games                            64.6      64.3     -0.2
+    opponents it eliminated, per game                 0.84      0.82    -0.02
+    damage dealt, per game                            39.1      38.3     -0.8
+    commander resolved by turn 4, %                   84.0      83.8     -0.2
+    commander resolved by turn 6, %                   95.1      95.2     +0.2
+    commander removals, per game                      0.80      0.80    -0.00
+    lands on the battlefield, turn 4                  3.77      3.77    +0.00
+    lands on the battlefield, turn 8                  6.69      6.71    +0.03
+    mana available, turn 4                            3.97      3.98    +0.00
+    mana available, turn 8                            6.97      6.99    +0.02
+    cards in hand after the land drop, turn 4         6.36      6.37    +0.01
+    cards in hand after the land drop, turn 8         6.44      6.45    +0.01
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 15.3%, Tergrid via combat 13.1%, Marwyn via combat 11.0%, Atraxa via combat 7.5%
+    eliminated by (swapped): Aurelia via combat 16.6%, Tergrid via combat 13.3%, Marwyn via combat 10.8%, Atraxa via combat 7.2%
+
+(549s total)

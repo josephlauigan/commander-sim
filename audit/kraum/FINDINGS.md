@@ -115,3 +115,13 @@ alone, more cards, more removal, and more taxes did not move it.
 | Isshin + Winota (Elemental Mascot, Tocasia's Welcome) | -0.1 (±2.7) | No effect. |
 | All three (Urza, Winota, Purphoros) | stopped by JD | It cut Bedevil too. |
 None of them is worth adding. Lightning, Army of One is not modeled; on hold (JD: wait for these results).
+
+### Phyrexian packages (2026-10-17 early morning, T3, 2,000 paired games each; the list measured 34.0–34.4%)
+| Package (in for) | Result | Why |
+|---|---|---|
+| A: Elesh Norn, Grand Cenobite + Norn's Annex, $26.85 (Elemental Mascot, Tocasia's Welcome) | -0.1 (±2.6) | Elesh Norn wins 62% when cast (the best card tested) but sits in hand 63% of the time at 7 mana; a seventh attack tax adds nothing. |
+| B: Elesh Norn, Mother of Machines, $27.35 (Elemental Mascot) | -0.3 (±2.6) | Stuck in hand 53% at 5 mana; 54% when cast. |
+| E: Dismember, Porcelain Legionnaire, Vault Skirge, Apostle's Blessing, ~$5.50 (Memory Trap, Elemental Mascot, Tocasia's Welcome, Disenchant) | -1.6 (±2.8) | The cheap cards are cast 84–96% of the time, but the cards they replace were already doing their jobs; Apostle's Blessing is cast only 21% (reactive timing). Cards modeled for this test (Full, branch kraum-phyrexian). |
+**Reading it:** nothing tried since the 31% list moves it. The deck now dies in about 64% of games, nearly all in combat to
+Aurelia, Tergrid, Marwyn and Atraxa, and no single card or package changes that; the remaining gains would have to come from
+the AI (attack and blocking decisions), not the list.
