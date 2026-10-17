@@ -32,7 +32,7 @@ of Cloud or an Equipment attached to it triggers, that ability triggers an addit
   Runes, Forum Familiar) are fine early plays.
 - **Turns 3-4.** Cast and equip a Sword (equip {2}) on Cloud and attack. Use the free-equip pieces (Ardenn, Kor
   Outfitter, Balan) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
-- **Turns 5+.** Add the big Equipment (Sword of Kaldra, Wrecking Ball Arm, Colossus Hammer), the Kaldra set, and
+- **Turns 5+.** Add the big Equipment (Sword of Kaldra, Wrecking Ball Arm, Colossus Hammer), Open the Armory (search for a Sword or any Aura or Equipment), and
   the removal. If Cloud dies, a backup carrier takes the Swords.
 
 ### Ramp and mana
@@ -54,8 +54,8 @@ With Cloud equipped, these Equipment gain from the extra trigger:
 
 The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left) or **Hero's Blade**
 (it can't attach twice). **Champion's Helm**, **Swiftfoot Boots**,
-**Colossus Hammer**, **Fireshrieker**, **Shield of Kaldra**, **Helm of Kaldra** and **Wrecking Ball Arm** have
-no triggers: they are plain bonuses (hexproof, first strike, double strike, haste, +X/+X, indestructible).
+**Colossus Hammer**, **Fireshrieker** and **Wrecking Ball Arm** have
+no triggers: they are plain bonuses (hexproof, double strike, +X/+X).
 
 ### Making Cloud enter again
 **Forum Familiar** returns Cloud (or any creature) to your hand when turned face up from disguise, and
@@ -77,7 +77,7 @@ to blink them.
 - **Auriok Steelshaper** reduces equip costs by {1}, and gives Soldiers and Knights (Cloud is a Soldier) +1/+1 while
   it is equipped; **Helitrooper** makes equipping it cheaper by {2} and gives another attacker flying; **Cid, Freeflier
   Pilot** makes Equipment spells cost {1} less, flies on your turn and returns an Equipment from the graveyard.
-- **Fireshrieker** equips for {2} and gives double strike; Duelist's Heritage and Akroma's Will give it for a turn.
+- **Fireshrieker** equips for {2} and gives double strike; Akroma's Will gives it for a turn, and Silverblade Paladin gives it to itself and its soulbond partner.
 
 ### Backup carriers
 When Cloud is dead or removed, **Balan, Wandering Knight**, **Danitha Capashen, Paragon** (first strike, vigilance, lifelink;
@@ -92,12 +92,10 @@ that creature indestructible.
   2 or less. Cloud with it and a Sword of Fire and Ice is a 9/9.
 - **Sword of Kaldra** gives +5/+5 and exiles any creature it damages. **Colossus Hammer** gives +10/+10.
 - **Hero's Blade** (+3/+2) attaches itself when a legendary creature enters.
-- **Helm of Kaldra** gives first strike, trample and haste. With all three Kaldra pieces out, pay {1}: a legendary
-  Kaldra token wears all three (a 9/9 indestructible haste first striker).
 - **Double strike** makes every combat hit count twice: Fireshrieker (equip {2}) gives it to the equipped creature, so
   Cloud with a Sword triggers it at first-strike and regular damage (four Sword triggers per attack with his doubling)
-  and deals commander damage twice. Duelist's Heritage ({2}{W}) lets you give a target attacking creature double
-  strike each time creatures attack. Akroma's Will ({3}{W}, instant) gives your creatures flying, vigilance and
+  and deals commander damage twice. **Silverblade Paladin** ({1}{W}, soulbond) gives itself and the creature it pairs with double strike: pair it with
+  Cloud and he deals both Sword triggers and commander damage twice. Akroma's Will ({3}{W}, instant) gives your creatures flying, vigilance and
   double strike until end of turn; with a commander out you may also choose lifelink, indestructible and protection from
   each color.
 - **Champion's Helm** (+2/+2; hexproof on a legendary creature) and **Swiftfoot Boots** (hexproof and haste) both
@@ -107,7 +105,7 @@ that creature indestructible.
 - **Prevent.** Champion's Helm and Swiftfoot Boots (hexproof), Giver of Runes (protection from a colour for another
   creature), Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or enchantments
   during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
-  Bastion Protector (commander creatures get +2/+2 and indestructible) and Shield of Kaldra (indestructible).
+  Bastion Protector (commander creatures get +2/+2 and indestructible).
 - **Protect the team.** Wall of Omens (a 0/4 defender that draws a card when it enters) blocks early, and Elspeth, Sun's
   Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
   power 4 or greater, so use it only when Cloud is not carrying a big Equipment.
@@ -117,7 +115,7 @@ that creature indestructible.
   it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Fate of the
   Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less).
 - **Artifacts and enchantments:** Disenchant.
-- **Attack limits and taxes:** Ghostly Prison (enchantment: opponents pay {2} for each creature that attacks you). With these too,
+- **Attack limits and taxes:** **Sphere of Safety** ({4}{W}, enchantment: opponents pay {X} for each creature that attacks you, X being the number of enchantments you control; with Citizen's Arrest, Court of Ardenvale and Smothering Tithe, that is usually 1 to 3) and **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With these too,
   creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
   Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archon of Absolution {1} (a 3/2 flier with
   protection from white).
@@ -130,7 +128,6 @@ that creature indestructible.
 - **Equipped Cloud connects.** A Sword of Fire and Ice on Cloud draws two cards and deals 4 damage; with Sword of Feast
   and Famine the opponent discards two cards and your lands untap. Add Wrecking Ball Arm or Sword of Kaldra for a
   9/9 or larger evasive attacker.
-- **The Kaldra token.** All three Kaldra pieces and {1} make a 9/9 indestructible first striker with trample.
 - **Wide Equipment.** Balan with two Equipment has double strike; Danitha makes every Equipment {1} cheaper, and
   **Sram, Senior Edificer** draws a card whenever you cast an Aura, Equipment or Vehicle spell.
 
@@ -164,7 +161,7 @@ that creature indestructible.
 - **Cloud's search, facing removal:** Swiftfoot Boots or Champion's Helm.
 - **Enlightened Tutor** (puts the card on top, so cast it at the end of an opponent's turn; it finds an artifact or
   enchantment): a Sword if you are missing one, Smothering Tithe when opponents draw a lot, Court of Ardenvale
-  when you need card advantage, Helm of Kaldra once you hold the other two Kaldra pieces.
+  when you need card advantage, or Sphere of Safety when you need a tax.
 
 ## Mana and consistency
 
@@ -172,8 +169,8 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Wall of Omens, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Ghostly Prison, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Fate of the Sun-Cryst, Skyclave
-Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 13 Equipment in the deck, so Cloud's search always finds one.
+Interaction: Wrath of God, Day of Judgment, Fumigate, Sphere of Safety, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Fate of the Sun-Cryst, Skyclave
+Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 11 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
 
@@ -187,13 +184,13 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (29).** Adelbert Steiner, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
+**Creatures (31).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
 
-**Enchantments (5).** Citizen's Arrest, Court of Ardenvale, Duelist's Heritage, Ghostly Prison, Smothering Tithe
+**Enchantments (4).** Citizen's Arrest, Court of Ardenvale, Smothering Tithe, Sphere of Safety
 
-**Artifacts (20).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Helm of Kaldra, Hero's Blade, Mask of Memory, Mind Stone, Norn's Annex, Shield of Kaldra, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
+**Artifacts (18).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Hero's Blade, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
 
-**Sorceries (6).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Winds of Abandon, Wrath of God
+**Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
 **Instants (5).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself
 
@@ -207,6 +204,7 @@ on its own. Tell the table before the game that:
 1 Adelbert Steiner
 1 Akroma's Will
 1 Arcane Signet
+1 Archangel of Tithes
 1 Archon of Absolution
 1 Ardenn, Intrepid Archaeologist
 1 Armored Skyhunter
@@ -227,7 +225,6 @@ on its own. Tell the table before the game that:
 1 Danitha Capashen, Paragon
 1 Day of Judgment
 1 Disenchant
-1 Duelist's Heritage
 1 Elspeth, Sun's Champion
 1 Enlightened Tutor
 1 Evolving Wilds
@@ -237,11 +234,9 @@ on its own. Tell the table before the game that:
 1 Fireshrieker
 1 Forum Familiar
 1 Fumigate
-1 Ghostly Prison
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
-1 Helm of Kaldra
 1 Hero's Blade
 1 Jocasta, Automaton Avenger
 1 Knight of the White Orchid
@@ -251,15 +246,17 @@ on its own. Tell the table before the game that:
 1 Mask of Memory
 1 Mind Stone
 1 Norn's Annex
+1 Open the Armory
 1 Page, Loose Leaf
 1 Path of Ancestry
 1 Plaza of Heroes
 1 Puresteel Paladin
-1 Shield of Kaldra
+1 Silverblade Paladin
 1 Skyclave Apparition
 1 Smothering Tithe
 1 Sol Ring
 1 Solemn Simulacrum
+1 Sphere of Safety
 1 Sram, Senior Edificer
 1 Stand Up for Yourself
 1 Swiftfoot Boots

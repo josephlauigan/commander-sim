@@ -8147,3 +8147,9 @@ note = "enters tapped; {T}: {B} or {R}; {4},{T}, sacrifice: draw a card, used by
 ["Irrigated Farmland"]
 status = "Full"
 note = "Island Plains, enters tapped, {T}: {W} or {U}; cycling {2}: the AI cycles it when it is not needed as a land drop (five or more lands in play, or the end of the turn with four in play and another land in hand) (impls/tymna_cards.rs)"
+
+["Silverblade Paladin"]
+tags = "human pow=2"
+dsl = []
+status = "Full"
+note = "soulbond (DataKey::Soulbond, bulk_white::paladin_etb): pairs on either entry, ends when either leaves or changes control; both have double strike"
