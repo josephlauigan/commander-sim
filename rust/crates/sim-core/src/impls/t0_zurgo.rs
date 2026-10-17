@@ -1254,28 +1254,49 @@ pub fn register_x_cards(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 }
 
 // ================================================================== Fetid Heath
-/// **Fetid Heath, Cascade Bluffs**: {T}: Add {C}. {W/B},{T}: Add {W}{W}, {W}{B} or {B}{B}. A filter land: it makes coloured mana only
-/// when another land of the player can make {W} or {B} to pay for it (no other source, colourless only)
+/// the filter lands: {T}: Add {C}; {H/H},{T}: add two mana of those colours
+pub const FILTER_LANDS: [&str; 5] = ["Fetid Heath", "Cascade Bluffs", "Twilight Mire", "Rugged Prairie", "Mystic Gate"];
+
+/// **Fetid Heath, Cascade Bluffs, Twilight Mire, Rugged Prairie, Mystic Gate**: {T}: Add {C}. {H/H}, {T}: Add two mana,
+/// each of the land's two colours. A filter land: it makes coloured mana only when an *untapped* land of the player can
+/// make one of its colours to pay for it (no such source: colourless only). A filter can be paid by another filter
+/// that is itself paid for, but two filters with no real source between them make nothing
 fn heath_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
-    let ident = g.player(p).ident;
-    let mine = Colors::from_letters(g.db.get(g.land(l).cd).tags.str(Tag::C).unwrap_or("C"));
-    let fed = g.player(p).lands.iter().any(|&x| {
-        if x == l {
-            return false;
+    let name_of = |x: crate::ids::LandId| &*g.db.get(g.land(x).cd).name;
+    let mine_of = |x: crate::ids::LandId| Colors::from_letters(g.db.get(g.land(x).cd).tags.str(Tag::C).unwrap_or("C"));
+    let mine = mine_of(l);
+    let mut avail = Colors::NONE; // colours the untapped non-filter lands make
+    let mut filters = vec![];
+    for &x in &g.player(p).lands {
+        if x == l || g.land(x).tapped {
+            continue;
         }
-        let theirs = match g.db.get(g.land(x).cd).tags.str(Tag::C) {
-            Some("A") => ident,
-            Some(s) => Colors::from_letters(s),
-            None => Colors::NONE,
-        };
-        "WUBRG".chars().any(|ch| mine.has(ch) && theirs.has(ch))
-    });
-    if fed { mine } else { Colors::NONE }
+        if FILTER_LANDS.contains(&name_of(x)) {
+            filters.push(mine_of(x));
+        } else {
+            avail = avail.union(crate::engine::mana::land_colors_now(g, p, x));
+        }
+    }
+    let shares = |a: Colors, b: Colors| "WUBRG".chars().any(|ch| a.has(ch) && b.has(ch));
+    // a filter fed by a real source can feed the next one
+    loop {
+        let before = avail;
+        for &f in &filters {
+            if shares(f, avail) {
+                avail = avail.union(f);
+            }
+        }
+        if avail == before {
+            break;
+        }
+    }
+    if shares(mine, avail) { mine } else { Colors::NONE }
 }
 
 pub fn register_heath(r: &mut Registry, db: &CardDb) -> Result<(), String> {
-    r.card(db, "Fetid Heath")?.land_cols = Some(heath_cols);
-    r.card(db, "Cascade Bluffs")?.land_cols = Some(heath_cols);
+    for name in FILTER_LANDS {
+        r.card(db, name)?.land_cols = Some(heath_cols);
+    }
     Ok(())
 }
 

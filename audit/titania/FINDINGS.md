@@ -22,3 +22,5 @@ Win rate vs T3: **29.5%** (1,000 games, seed 1015, main 0f49b7d).
 | Change | Result | Why |
 |---|---|---|
 | AI: look-ahead ramp bonus (`ramp_w` 1; audit/ramp/2026-10-15) | T3 -1.3 (noise +-2) | Ramp cast sooner doesn't bring Titania or the Elementals sooner (resolve turn 6.6 -> 6.7, plan 58.7% -> 56.4%). Merged off. |
+
+**2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 32.2 → 33.8, inside the noise (about ±5). No measurable change to this deck.

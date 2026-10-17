@@ -291,7 +291,7 @@ Secure the Wastes|I|W|tokx warrior
 Shamanic Revelation|S|3GG|drawcre
 Skyclave Apparition|C|1WW|pow=2 rem=exile tgt=nl etb mv4
 Skyshroud Claim|S|3G|lr=2
-Spectator Seating|L|-|c=A
+Spectator Seating|L|-|c=RW
 Spire of Industry|L|-|c=A
 Sterling Grove|E|GW|x
 Sun Titan|C|4WW|pow=6 vig suntitan

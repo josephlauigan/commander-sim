@@ -125,3 +125,5 @@ None of them is worth adding. Lightning, Army of One is not modeled; on hold (JD
 **Reading it:** nothing tried since the 31% list moves it. The deck now dies in about 64% of games, nearly all in combat to
 Aurelia, Tergrid, Marwyn and Atraxa, and no single card or package changes that; the remaining gains would have to come from
 the AI (attack and blocking decisions), not the list.
+
+**2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 40.0 → 41.7, inside the noise (about ±5). No measurable change to this deck.

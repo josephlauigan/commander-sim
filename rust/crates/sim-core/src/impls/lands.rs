@@ -1053,5 +1053,64 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         imp.land_cols = Some(vivid_cols);
         imp.on_tap_land = Some(vivid_tap);
     }
+    register_audit2(r, db)?;
+    Ok(())
+}
+
+// ------------------------------------------------------------------ land audit 2: lands that made mana for free
+/// **Sungrass Prairie, Ferrous Lake**: {1},{T}: Add two mana. With no other untapped land to pay the {1} they make
+/// nothing; with one they net one mana (the other land's mana pays, the land makes two)
+fn pay_one_for_two(g: &Game, p: PlayerId, l: LandId) -> u32 {
+    g.player(p).lands.iter().any(|&x| x != l && !g.land(x).tapped) as u32
+}
+
+/// **Spire of Industry**: {T}: Add {C}. {T}, Pay 1 life: any colour, only if you control an artifact (the life is the
+/// `pain` tag's). Without an artifact it makes colourless only
+fn spire_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+    let art = g.player(p).perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)));
+    if art { g.player(p).ident } else { Colors::NONE }
+}
+
+/// **Exotic Orchard**: {T}: one mana of any colour that a land an opponent controls could produce. Opponents'
+/// Exotic Orchards are left out (two of them with nothing else make no colour)
+fn orchard_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+    let mut cols = Colors::NONE;
+    for q in g.opps(p) {
+        for &x in &g.player(q).lands {
+            let d = g.db.get(g.land(x).cd);
+            if &*d.name == "Exotic Orchard" {
+                continue;
+            }
+            // a filter land "could produce" its printed colours (asking it would ask this Orchard back)
+            cols = if super::t0_zurgo::FILTER_LANDS.contains(&&*d.name) {
+                cols.union(Colors::from_letters(d.tags.str(Tag::C).unwrap_or("C")))
+            } else {
+                cols.union(crate::engine::mana::land_colors_now(g, q, x))
+            };
+        }
+    }
+    let ident = g.player(p).ident;
+    let keep: String = "WUBRG".chars().filter(|&ch| cols.has(ch) && ident.has(ch)).collect();
+    Colors::from_letters(&keep)
+}
+
+/// **Hall of the Bandit Lord**: {T}, Pay 3 life: Add {C}. Not taken when the life would kill you
+fn hall_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+    (g.player(p).life > 3) as u32
+}
+
+fn hall_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
+    lose_life(g, p, 3, Some(p), "other", None)
+}
+
+pub fn register_audit2(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    for name in ["Sungrass Prairie", "Ferrous Lake"] {
+        r.card(db, name)?.dyn_mana_land = Some(pay_one_for_two);
+    }
+    r.card(db, "Spire of Industry")?.land_cols = Some(spire_cols);
+    r.card(db, "Exotic Orchard")?.land_cols = Some(orchard_cols);
+    let h = r.card(db, "Hall of the Bandit Lord")?;
+    h.dyn_mana_land = Some(hall_mana);
+    h.on_tap_land = Some(hall_tap);
     Ok(())
 }
