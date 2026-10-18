@@ -1,0 +1,295 @@
+Model status of the swapped-in cards (cardgen audit):
+  Ad Nauseam: Full (reveal the top card, put it in hand, lose life equal to its mana value; repeats while life stays above about 25 (cast at the end of an opponent's turn when possible))
+
+6,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), adaptive AI, 6 worker threads: about 50 seconds
+  progress  10.0%  0m00s elapsed, ~0m03s left
+  progress  20.0%  0m00s elapsed, ~0m03s left
+  progress  30.0%  0m01s elapsed, ~0m02s left
+Swaps: Feed the Swarm -> Ad Nauseam
+
+=== Kefka vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.3% ->  22.9%  (delta -1.4 pts, noise ±2.1, paired)   n=1000
+               eliminated by (variant): Aurelia 25.1%  Tergrid 24.2%  Korvold 7.6%  Atraxa 10.0%  Marwyn 9.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          24.3% ->  22.9%  -1.4pt   ±3.8 
+    Rounds survived (or game length)                  10.76 ->  10.76   +0.00  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.57 ->   0.58   +0.00  ±0.07 
+    Mana available on your turn 4                      3.90 ->   3.90   +0.01  ±0.07 
+    Mana available on your turn 6                      5.51 ->   5.51   +0.00  ±0.13 
+
+  Speed
+    Games where the game plan came online             41.1% ->  41.0%  -0.1pt   ±4.4 
+    Turn the game plan came online                     9.80 ->  10.06   +0.25  ±0.36 
+    Turn the commander first resolved                  5.81 ->   5.92   +0.10  ±0.16 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            33.70 ->  33.02   -0.68  ±1.91 
+    Tutors resolved per game                           1.38 ->   1.34   -0.04  ±0.11 
+    Spells cast per game                              17.06 ->  16.75   -0.30  ±0.90 
+
+  Interaction
+    Counterspells cast                                 0.14 ->   0.15   +0.01  ±0.03 
+    Spot removal cast                                  1.76 ->   1.58   -0.18  ±0.12*
+    Board wipes cast                                   0.08 ->   0.08   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.37 ->   0.34   -0.03  ±0.06 
+    Your spells countered                              0.11 ->   0.10   -0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                31.17 ->  29.90   -1.27  ±2.39 
+      ...of which combat damage                       14.10 ->  13.32   -0.78  ±1.11 
+      ...of which magecraft / burn                     3.49 ->   3.39   -0.10  ±0.58 
+      ...of which drain triggers                      11.16 ->  11.08   -0.08  ±1.56 
+      ...of which other triggers                       2.41 ->   2.11   -0.30  ±0.66 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            44.9      17.6         7.8     82.4       20.3      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Feed the Swarm                        39.2      59.7         7.6     40.3       24.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        24.3      22.9     -1.4
+    rounds survived                                  10.76     10.76    +0.00
+    eliminated, % of games                            74.8      76.3     +1.5
+    opponents it eliminated, per game                 0.74      0.70    -0.04
+    damage dealt, per game                            31.2      29.9     -1.3
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         2.0       1.8     -0.2
+      plan online by turn 8, %                        14.4      13.4     -1.0
+      plan online by turn 12, %                       34.8      33.5     -1.3
+      plan online at all, %                           41.1      41.0     -0.1
+    commander resolved by turn 4, %                   12.7      11.4     -1.3
+    commander resolved by turn 6, %                   68.3      66.5     -1.8
+    commander removals, per game                      0.29      0.27    -0.02
+    lands on the battlefield, turn 4                  3.71      3.71    +0.01
+    lands on the battlefield, turn 8                  6.65      6.68    +0.04
+    mana available, turn 4                            3.90      3.90    +0.01
+    mana available, turn 8                            6.95      6.97    +0.02
+    cards in hand after the land drop, turn 4         5.55      5.58    +0.03
+    cards in hand after the land drop, turn 8         5.73      5.85    +0.12
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 19.9%, Tergrid via combat 14.8%, Atraxa via combat 7.8%, Marwyn via combat 7.7%
+    eliminated by (swapped): Aurelia via combat 20.9%, Tergrid via combat 15.1%, Atraxa via combat 8.5%, Marwyn via combat 7.9%
+  progress  40.0%  0m01s elapsed, ~0m02s left
+  progress  50.0%  0m02s elapsed, ~0m02s left
+  progress  60.0%  0m02s elapsed, ~0m01s left
+Swaps: Feed the Swarm -> Ad Nauseam
+
+=== Kefka vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  32.5% ->  30.0%  (delta -2.5 pts, noise ±2.1, paired)   n=1000
+               eliminated by (variant): Heliod 14.2%  Yuriko 20.2%  Krenko 13.6%  Chulane 10.1%  Prosper 11.6%
+VERDICT: WORSE under the loose profile (the only one run)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          32.5% ->  30.0%  -2.5pt   ±4.1 
+    Rounds survived (or game length)                   9.98 ->  10.00   +0.02  ±0.26 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.56 ->   0.56   -0.00  ±0.07 
+    Mana available on your turn 4                      3.87 ->   3.88   +0.01  ±0.07 
+    Mana available on your turn 6                      5.47 ->   5.49   +0.02  ±0.13 
+
+  Speed
+    Games where the game plan came online             40.9% ->  40.0%  -0.9pt   ±4.4 
+    Turn the game plan came online                     9.64 ->   9.56   -0.08  ±0.28 
+    Turn the commander first resolved                  5.96 ->   6.06   +0.09  ±0.17 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            31.40 ->  30.66   -0.73  ±1.95 
+    Tutors resolved per game                           1.27 ->   1.20   -0.07  ±0.11 
+    Spells cast per game                              15.13 ->  14.91   -0.22  ±0.89 
+
+  Interaction
+    Counterspells cast                                 0.13 ->   0.14   +0.01  ±0.03 
+    Spot removal cast                                  1.66 ->   1.48   -0.18  ±0.12*
+    Board wipes cast                                   0.09 ->   0.10   +0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.32 ->   0.31   -0.01  ±0.05 
+    Your spells countered                              0.39 ->   0.39   -0.00  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                31.50 ->  30.38   -1.12  ±2.40 
+      ...of which combat damage                       16.17 ->  15.70   -0.47  ±1.33 
+      ...of which magecraft / burn                     3.50 ->   3.42   -0.08  ±0.60 
+      ...of which drain triggers                       9.37 ->   8.95   -0.43  ±1.26 
+      ...of which other triggers                       2.46 ->   2.32   -0.14  ±0.73 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            42.2      12.1         7.5     87.9       41.2      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Feed the Swarm                        37.0      62.2         7.4     37.8       37.4      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.5      30.0     -2.5
+    rounds survived                                   9.98     10.00    +0.02
+    eliminated, % of games                            67.5      70.0     +2.5
+    opponents it eliminated, per game                 0.94      0.89    -0.05
+    damage dealt, per game                            31.5      30.4     -1.1
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         1.5       1.4     -0.1
+      plan online by turn 8, %                        13.0      12.9     -0.1
+      plan online by turn 12, %                       37.2      37.5     +0.3
+      plan online at all, %                           40.9      40.0     -0.9
+    commander resolved by turn 4, %                   10.0       9.0     -1.0
+    commander resolved by turn 6, %                   59.1      56.7     -2.4
+    commander removals, per game                      0.25      0.25    -0.00
+    lands on the battlefield, turn 4                  3.70      3.71    +0.01
+    lands on the battlefield, turn 8                  6.64      6.66    +0.02
+    mana available, turn 4                            3.87      3.88    +0.01
+    mana available, turn 8                            6.99      7.01    +0.01
+    cards in hand after the land drop, turn 4         5.66      5.70    +0.04
+    cards in hand after the land drop, turn 8         6.23      6.33    +0.09
+    wins by (current):  damage 100%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Heliod via combo 10.7%, Yuriko via combat 9.9%, Krenko via combat 8.9%, Yuriko via triggers 7.9%
+    eliminated by (swapped): Heliod via combo 11.0%, Krenko via combat 9.5%, Yuriko via triggers 9.5%, Yuriko via combat 9.4%
+  progress  70.0%  0m02s elapsed, ~0m01s left
+  progress  80.0%  0m03s elapsed, ~0m00s left
+  progress  90.0%  0m03s elapsed, ~0m00s left
+  progress 100.0%  0m03s elapsed, ~0m00s left
+Swaps: Feed the Swarm -> Ad Nauseam
+
+=== Kefka vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.4% ->  24.8%  (delta -1.6 pts, noise ±1.8, paired)   n=1000
+               eliminated by (variant): Urza 16.4%  Zur the Enchanter 8.3%  Winota 19.2%  Kinnan 21.3%  Yawgmoth 9.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.4% ->  24.8%  -1.6pt   ±3.9 
+    Rounds survived (or game length)                   8.65 ->   8.62   -0.02  ±0.30 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.52 ->   0.51   -0.01  ±0.07 
+    Mana available on your turn 4                      3.85 ->   3.86   +0.01  ±0.07 
+    Mana available on your turn 6                      5.51 ->   5.52   +0.01  ±0.14 
+
+  Speed
+    Games where the game plan came online             26.0% ->  25.8%  -0.2pt   ±3.9 
+    Turn the game plan came online                     9.85 ->   9.79   -0.06  ±0.37 
+    Turn the commander first resolved                  6.11 ->   6.16   +0.05  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            24.57 ->  24.35   -0.22  ±1.96 
+    Tutors resolved per game                           0.93 ->   0.91   -0.01  ±0.09 
+    Spells cast per game                              11.47 ->  11.35   -0.12  ±0.78 
+
+  Interaction
+    Counterspells cast                                 0.11 ->   0.12   +0.01  ±0.03 
+    Spot removal cast                                  1.64 ->   1.50   -0.14  ±0.12*
+    Board wipes cast                                   0.07 ->   0.07   +0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.15 ->   0.13   -0.02  ±0.04 
+    Your spells countered                              0.58 ->   0.57   -0.01  ±0.08 
+
+  Threat & pressure
+    Damage dealt to opponents per game                24.06 ->  23.16   -0.89  ±2.33 
+      ...of which combat damage                       13.33 ->  12.80   -0.52  ±1.32 
+      ...of which magecraft / burn                     2.14 ->   2.15   +0.02  ±0.43 
+      ...of which drain triggers                       6.79 ->   6.57   -0.23  ±1.18 
+      ...of which other triggers                       1.80 ->   1.64   -0.16  ±0.61 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            34.2      12.6         7.3     87.4       39.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Feed the Swarm                        30.2      66.6         6.2     33.4       39.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.4      24.8     -1.6
+    rounds survived                                   8.65      8.62    -0.02
+    eliminated, % of games                            73.6      75.2     +1.6
+    opponents it eliminated, per game                 0.67      0.65    -0.03
+    damage dealt, per game                            24.1      23.2     -0.9
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.8       0.6     -0.2
+      plan online by turn 8, %                         8.0       7.9     -0.1
+      plan online by turn 12, %                       23.1      23.0     -0.1
+      plan online at all, %                           26.0      25.8     -0.2
+    commander resolved by turn 4, %                    6.4       6.2     -0.2
+    commander resolved by turn 6, %                   45.5      44.0     -1.5
+    commander removals, per game                      0.11      0.09    -0.02
+    lands on the battlefield, turn 4                  3.69      3.69    +0.01
+    lands on the battlefield, turn 8                  6.61      6.62    +0.01
+    mana available, turn 4                            3.85      3.86    +0.01
+    mana available, turn 8                            6.94      6.94    +0.00
+    cards in hand after the land drop, turn 4         5.58      5.60    +0.02
+    cards in hand after the land drop, turn 8         5.89      6.04    +0.15
+    wins by (current):  damage 100%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Kinnan via combo 19.0%, Urza via combo 13.2%, Winota via combat 11.9%, Winota via combo 6.1%
+    eliminated by (swapped): Kinnan via combo 19.6%, Urza via combo 13.6%, Winota via combat 12.1%, Winota via combo 6.0%
+
+(4s total)

@@ -25,3 +25,16 @@ Win rate vs T4: **30.1%** (1,000 games, seed 1015, main 0f49b7d).
 | AI: look-ahead ramp bonus (`ramp_w` 1; audit/ramp/2026-10-15) | T4 -1.9 (noise +-2) | Rocks come down first, and the late payoffs are cast less (Howling Mine 50% -> 43% of games drawn, Peer into the Abyss 31% -> 26%); Sheoldred's timing is unchanged (6.0). Merged off. |
 
 **2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 40.1 → 39.2, inside the noise (about ±5). No measurable change to this deck.
+
+### Ad Nauseam (2026-10-17 night; branch `adnaus`; would be the deck's first Game Changer, bracket 3 allows three)
+Card report (adaptive, 1,000 games per tier, `audit/sheoldred/2026-10-17-adnaus/K0-analyze-adaptive.txt`): lowest win
+rate when cast: Stir Up Trouble (bottom two at T3 and T4), Fetid Imp, Soul Enervation, Restless Bloodseeker (T3, T5).
+The shared Ad Nauseam AI was fixed during these tests (see audit/kefka/FINDINGS.md: own-turn casts, flipping past a
+full hand, a one-board floor; and the look-ahead overriding "hold mana").
+| Swap (Ad Nauseam in for) | Result over t3–t5 | Why |
+|---|---|---|
+| Stir Up Trouble / Restless Bloodseeker (adaptive, old AI) | -1.5 / -2.0 | Cast on its own turn, down to 16–18 life, discarded back to seven. |
+| Stir Up Trouble (look-ahead, old AI) | +0.7 (+2.7, +0.9, -1.4) | |
+| Stir Up Trouble / Restless Bloodseeker (adaptive, new AI) | -0.9 / -0.5 | |
+| **Restless Bloodseeker (look-ahead, new AI + hold credit, 1,000 paired per tier)** | **+1.6 (t3 +2.0, t4 +0.7, t5 +2.2; ±3.1–3.7)** | The best Ad Nauseam result, positive in every tier but still noise. Cast in 30% of the games it's drawn (twice Kefka's and Y'shtola's), wins 47% when cast vs 28–36% for Restless Bloodseeker; eliminations -1.8 (T3), -0.6 (T4). The lowest curve of the three decks (average mana value 2.98) and no hand-size problem. Baseline unchanged by the AI fixes (29.0% vs 29.5%). |
+**Reading it:** the best home for Ad Nauseam among JD's decks. A 2,000-paired run would settle it.

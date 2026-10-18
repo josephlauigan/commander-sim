@@ -1,0 +1,5 @@
+Model status of the swapped-in cards (cardgen audit):
+  Ad Nauseam: Full (reveal the top card, put it in hand, lose life equal to its mana value; repeats while life stays above about 25 (cast at the end of an opponent's turn when possible))
+
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 6 worker threads: about 17 minutes
+  progress  10.0%  0m32s elapsed, ~4m54s left

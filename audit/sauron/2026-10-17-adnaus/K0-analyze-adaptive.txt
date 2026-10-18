@@ -1,0 +1,298 @@
+3,000 games (analysis, 1,000 per list per tier, profile loose), adaptive AI, 6 worker threads: about 25 seconds
+  progress  10.0%  0m00s elapsed, ~0m01s left
+  progress  20.0%  0m00s elapsed, ~0m01s left
+  progress  30.0%  0m00s elapsed, ~0m01s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== sauron analysis [loose profile, adaptive AI, 1000 games] ===========
+Win rate 29.0%   (4-player baseline 25%)   average rounds survived 11.7
+
+-- How it wins --
+  damage      96.2% of wins
+  timeout      3.8% of wins
+  Opponents it eliminated: 0.89 per game, by
+    combat             58.7%
+    drain              17.9%
+    burn               11.1%
+    triggers            6.5%
+    commander damage    5.2%
+    other               0.6%
+    decked              0.1%
+  Damage dealt per game: 42.5, from
+    combat              28.7  (68%)
+    drain                8.2  (19%)
+    burn                 3.2  (8%)
+    triggers             2.3  (6%)
+
+-- How it loses --
+  Eliminated in 69.6% of games, on average in round 10.9
+    by Aurelia  via combat             19.1% of games
+    by Tergrid  via combat             11.4% of games
+    by Marwyn   via combat              8.8% of games
+    by Atraxa   via combat              8.5% of games
+    by Korvold  via combat              5.2% of games
+    by Aurelia  via commander damage    3.5% of games
+    by Tergrid  via drain               2.6% of games
+    by Tergrid  via triggers            2.5% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 5%  T4 12%  T5 21%  T6 34%  T7 47%  T8 55%  T9 62%  T10 65%  T11 68%  T12 70%
+  Online at all: 73.1% of games
+  Commander resolves on turn: median 6.0, mean 6.1 (over the 87.7% of games it resolves)
+  Commander resolved by turn:  T4 15%  T5 38%  T6 60%  T7 71%  T8 79%
+  Army power at the start of turn  6: mean 1.5, median 0.0, 10+ in 2.6% of games
+  Army power at the start of turn  8: mean 2.5, median 0.0, 10+ in 7.8% of games
+  Army power at the start of turn 10: mean 2.2, median 0.0, 10+ in 8.2% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Exsanguinate                               cast in  12.3% of games, win rate when cast  55.3% (+26.3)
+    Chandra's Ignition                         cast in  13.6% of games, win rate when cast  52.9% (+23.9)
+    Kaervek the Merciless                      cast in  12.4% of games, win rate when cast  52.4% (+23.4)
+    Noxious Gearhulk                           cast in  11.7% of games, win rate when cast  49.6% (+20.6)
+    Vraska, Betrayal's Sting                   cast in  17.6% of games, win rate when cast  47.7% (+18.7)
+    Sheoldred, the Apocalypse                  cast in  20.4% of games, win rate when cast  47.5% (+18.5)
+    Cost of Brilliance                         cast in  18.9% of games, win rate when cast  47.1% (+18.1)
+    Sephiroth, Planet's Heir                   cast in  11.6% of games, win rate when cast  46.6% (+17.6)
+    Grave Titan                                cast in  13.5% of games, win rate when cast  43.7% (+14.7)
+    Sol Ring                                   cast in  22.1% of games, win rate when cast  43.4% (+14.4)
+  Lowest win rate when cast:
+    Disdainful Stroke                          cast in  13.6% of games, win rate when cast  25.7% (-3.3)
+    Arcane Denial                              cast in  15.7% of games, win rate when cast  28.0% (-1.0)
+    Inexorable Tide                            cast in  17.4% of games, win rate when cast  31.0% (+2.0)
+    Spell Pierce                               cast in  12.2% of games, win rate when cast  31.1% (+2.1)
+    Relic of Legends                           cast in  20.0% of games, win rate when cast  32.0% (+3.0)
+    Slaughter Pact                             cast in  21.7% of games, win rate when cast  32.3% (+3.3)
+    Sauron, the Dark Lord                      cast in  88.3% of games, win rate when cast  32.6% (+3.6)
+    Infernal Grasp                             cast in  21.4% of games, win rate when cast  32.7% (+3.7)
+    Vandalblast                                cast in  17.8% of games, win rate when cast  33.1% (+4.1)
+    Chaos Warp                                 cast in  19.2% of games, win rate when cast  33.3% (+4.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Not of This World                          cast  26.9% of the games it was drawn [reactive: only cast in response]
+    Undermine                                  cast  27.0% of the games it was drawn [reactive: only cast in response]
+    Ral and the Implicit Maze                  cast  30.1% of the games it was drawn
+    Comet Storm                                cast  31.8% of the games it was drawn
+    Counterspell                               cast  40.3% of the games it was drawn [reactive: only cast in response]
+    Massacre Wurm                              cast  40.4% of the games it was drawn
+    Sephiroth, Planet's Heir                   cast  41.3% of the games it was drawn
+    Exsanguinate                               cast  42.9% of the games it was drawn
+    Kaervek the Merciless                      cast  44.0% of the games it was drawn
+    Spell Pierce                               cast  45.2% of the games it was drawn [reactive: only cast in response]
+    Inferno Titan                              cast  45.2% of the games it was drawn
+    Grave Titan                                cast  45.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.66
+    Vraska, Betrayal's Sting                   0.07
+    Sheoldred, the Apocalypse                  0.04
+    Mind Stone                                 0.03
+    Aggravated Assault                         0.03
+    Grave Titan                                0.03
+    Scarlet Witch, Chaotic Avenger             0.03
+    Lightning Greaves                          0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-superfriends = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+  progress  40.0%  0m00s elapsed, ~0m01s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m01s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== sauron analysis [loose profile, adaptive AI, 1000 games] ===========
+Win rate 37.3%   (4-player baseline 25%)   average rounds survived 10.2
+
+-- How it wins --
+  damage      99.2% of wins
+  timeout      0.8% of wins
+  Opponents it eliminated: 1.07 per game, by
+    combat             55.6%
+    drain              21.1%
+    burn               12.0%
+    triggers            6.3%
+    commander damage    3.5%
+    decked              1.2%
+    other               0.4%
+  Damage dealt per game: 40.9, from
+    combat              28.5  (70%)
+    drain                7.4  (18%)
+    burn                 3.0  (7%)
+    triggers             1.9  (5%)
+
+-- How it loses --
+  Eliminated in 62.5% of games, on average in round 8.9
+    by Heliod   via combo              16.0% of games
+    by Krenko   via combat              9.5% of games
+    by Yuriko   via combat              7.2% of games
+    by Yuriko   via triggers            7.1% of games
+    by Prosper  via combo               5.6% of games
+    by Chulane  via combat              4.8% of games
+    by Chulane  via combo               3.0% of games
+    by Heliod   via combat              2.3% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 5%  T4 12%  T5 22%  T6 35%  T7 47%  T8 54%  T9 59%  T10 62%  T11 64%  T12 66%
+  Online at all: 67.7% of games
+  Commander resolves on turn: median 6.0, mean 6.1 (over the 76.8% of games it resolves)
+  Commander resolved by turn:  T4 12%  T5 33%  T6 53%  T7 63%  T8 69%
+  Army power at the start of turn  6: mean 1.4, median 0.0, 10+ in 2.7% of games
+  Army power at the start of turn  8: mean 2.5, median 0.0, 10+ in 9.3% of games
+  Army power at the start of turn 10: mean 2.7, median 0.0, 10+ in 10.6% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Exsanguinate                               cast in  11.6% of games, win rate when cast  73.3% (+36.0)
+    Grave Titan                                cast in  10.4% of games, win rate when cast  73.1% (+35.8)
+    Chandra's Ignition                         cast in  13.4% of games, win rate when cast  68.7% (+31.4)
+    Nibelheim Aflame                           cast in  12.1% of games, win rate when cast  65.3% (+28.0)
+    Sheoldred, the Apocalypse                  cast in  17.5% of games, win rate when cast  62.3% (+25.0)
+    Talrand, Sky Summoner                      cast in  13.3% of games, win rate when cast  60.9% (+23.6)
+    Sauron, the Necromancer                    cast in  11.2% of games, win rate when cast  59.8% (+22.5)
+    Jace's Archivist                           cast in  12.9% of games, win rate when cast  58.9% (+21.6)
+    Vraska, Betrayal's Sting                   cast in  13.1% of games, win rate when cast  58.0% (+20.7)
+    Iron Man, Armored Avenger                  cast in  16.6% of games, win rate when cast  57.8% (+20.5)
+  Lowest win rate when cast:
+    Spell Pierce                               cast in  12.0% of games, win rate when cast  38.3% (+1.0)
+    Call of the Ring                           cast in  21.5% of games, win rate when cast  43.3% (+6.0)
+    Vandalblast                                cast in  15.9% of games, win rate when cast  44.0% (+6.7)
+    Relic of Legends                           cast in  17.0% of games, win rate when cast  44.1% (+6.8)
+    The Ozolith                                cast in  23.3% of games, win rate when cast  45.1% (+7.8)
+    Dreadhorde Invasion                        cast in  19.7% of games, win rate when cast  45.2% (+7.9)
+    Bloodchief's Thirst                        cast in  14.8% of games, win rate when cast  45.3% (+8.0)
+    Cyclonic Rift                              cast in  20.4% of games, win rate when cast  45.6% (+8.3)
+    Slaughter Pact                             cast in  19.9% of games, win rate when cast  46.2% (+8.9)
+    Infernal Grasp                             cast in  18.6% of games, win rate when cast  46.2% (+8.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Ral and the Implicit Maze                  cast  22.6% of the games it was drawn
+    Undermine                                  cast  24.7% of the games it was drawn [reactive: only cast in response]
+    Not of This World                          cast  26.6% of the games it was drawn [reactive: only cast in response]
+    Massacre Wurm                              cast  32.2% of the games it was drawn
+    Sephiroth, Planet's Heir                   cast  33.6% of the games it was drawn
+    Kaervek the Merciless                      cast  34.4% of the games it was drawn
+    Comet Storm                                cast  35.6% of the games it was drawn
+    Noxious Gearhulk                           cast  37.2% of the games it was drawn
+    Grave Titan                                cast  37.7% of the games it was drawn
+    Inferno Titan                              cast  38.7% of the games it was drawn
+    Counterspell                               cast  40.5% of the games it was drawn [reactive: only cast in response]
+    Disdainful Stroke                          cast  44.3% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.42
+    Sheoldred, the Apocalypse                  0.05
+    Whispersilk Cloak                          0.04
+    Mind Stone                                 0.04
+    Iron Man, Armored Avenger                  0.03
+    Lightning Greaves                          0.03
+    Vraska, Betrayal's Sting                   0.03
+    Vision, Synthezoid Avenger                 0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, heliod-mono-white-stax = Heliod, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+  progress  70.0%  0m01s elapsed, ~0m00s left
+  progress  80.0%  0m01s elapsed, ~0m00s left
+  progress  90.0%  0m01s elapsed, ~0m00s left
+  progress 100.0%  0m01s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== sauron analysis [loose profile, adaptive AI, 1000 games] ===========
+Win rate 32.0%   (4-player baseline 25%)   average rounds survived 8.8
+
+-- How it wins --
+  damage      99.7% of wins
+  timeout      0.3% of wins
+  Opponents it eliminated: 0.86 per game, by
+    combat             65.5%
+    drain              15.6%
+    burn               10.4%
+    triggers            4.3%
+    commander damage    3.8%
+    other               0.2%
+    decked              0.1%
+  Damage dealt per game: 35.5, from
+    combat              26.8  (76%)
+    drain                5.2  (15%)
+    burn                 2.1  (6%)
+    triggers             1.3  (4%)
+
+-- How it loses --
+  Eliminated in 67.9% of games, on average in round 7.5
+    by Kinnan   via combo              18.5% of games
+    by Urza     via combo              13.1% of games
+    by Winota   via combat              8.0% of games
+    by Winota   via combo               7.1% of games
+    by Zur the Enchanter via combo               6.6% of games
+    by Yawgmoth via combo               6.3% of games
+    by Urza     via combat              2.1% of games
+    by Zur the Enchanter via commander damage    1.8% of games
+
+-- Game plan timing --
+  Plan: first combat damage to a player by an Army
+  Online by turn:  T2 0%  T3 5%  T4 12%  T5 20%  T6 31%  T7 40%  T8 47%  T9 51%  T10 54%  T11 55%  T12 56%
+  Online at all: 57.4% of games
+  Commander resolves on turn: median 6.0, mean 6.1 (over the 63.3% of games it resolves)
+  Commander resolved by turn:  T4 9%  T5 26%  T6 42%  T7 52%  T8 58%
+  Army power at the start of turn  6: mean 1.4, median 0.0, 10+ in 3.0% of games
+  Army power at the start of turn  8: mean 2.9, median 0.0, 10+ in 10.9% of games
+  Army power at the start of turn 10: mean 2.7, median 0.0, 10+ in 12.3% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Scarlet Witch, Chaotic Avenger             cast in  14.2% of games, win rate when cast  64.8% (+32.8)
+    Chandra's Ignition                         cast in  10.3% of games, win rate when cast  64.1% (+32.1)
+    Vraska, Betrayal's Sting                   cast in  11.5% of games, win rate when cast  61.7% (+29.7)
+    Sheoldred, the Apocalypse                  cast in  14.4% of games, win rate when cast  61.1% (+29.1)
+    Inexorable Tide                            cast in  11.7% of games, win rate when cast  59.0% (+27.0)
+    War Machine, Avenging Arsenal              cast in  12.3% of games, win rate when cast  56.9% (+24.9)
+    Urabrask, Heretic Praetor                  cast in  10.6% of games, win rate when cast  56.6% (+24.6)
+    Fact or Fiction                            cast in  14.0% of games, win rate when cast  55.7% (+23.7)
+    Talrand, Sky Summoner                      cast in  10.2% of games, win rate when cast  54.9% (+22.9)
+    Orcish Bowmasters                          cast in  16.7% of games, win rate when cast  53.9% (+21.9)
+  Lowest win rate when cast:
+    Slaughter Pact                             cast in  17.4% of games, win rate when cast  39.1% (+7.1)
+    Bloodchief's Thirst                        cast in  14.9% of games, win rate when cast  42.3% (+10.3)
+    Mind Stone                                 cast in  16.3% of games, win rate when cast  42.3% (+10.3)
+    Talisman of Dominance                      cast in  16.7% of games, win rate when cast  43.7% (+11.7)
+    Terminate                                  cast in  17.1% of games, win rate when cast  43.9% (+11.9)
+    Dreadhorde Invasion                        cast in  16.4% of games, win rate when cast  44.5% (+12.5)
+    The Ozolith                                cast in  18.4% of games, win rate when cast  44.6% (+12.6)
+    Talisman of Indulgence                     cast in  18.1% of games, win rate when cast  44.8% (+12.8)
+    Lightning Greaves                          cast in  15.4% of games, win rate when cast  44.8% (+12.8)
+    Go for the Throat                          cast in  17.3% of games, win rate when cast  45.1% (+13.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Not of This World                          cast  13.3% of the games it was drawn [reactive: only cast in response]
+    Undermine                                  cast  18.4% of the games it was drawn [reactive: only cast in response]
+    Ral and the Implicit Maze                  cast  20.0% of the games it was drawn
+    Grave Titan                                cast  26.5% of the games it was drawn
+    Massacre Wurm                              cast  27.1% of the games it was drawn
+    Noxious Gearhulk                           cast  27.5% of the games it was drawn
+    Comet Storm                                cast  29.1% of the games it was drawn
+    Inferno Titan                              cast  30.1% of the games it was drawn
+    Sephiroth, Planet's Heir                   cast  31.0% of the games it was drawn
+    Kaervek the Merciless                      cast  31.3% of the games it was drawn
+    Exsanguinate                               cast  33.7% of the games it was drawn
+    Disdainful Stroke                          cast  33.9% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Sauron, the Dark Lord                      0.17
+    Vraska, Betrayal's Sting                   0.04
+    Sheoldred, the Apocalypse                  0.02
+    Mind Stone                                 0.02
+    Iron Man, Armored Avenger                  0.01
+    Scarlet Witch, Chaotic Avenger             0.01
+    Lightning Greaves                          0.01
+    Dreadhorde Invasion                        0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(2s total)

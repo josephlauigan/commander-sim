@@ -1,0 +1,291 @@
+Model status of the swapped-in cards (cardgen audit):
+  Ad Nauseam: Full (reveal the top card, put it in hand, lose life equal to its mana value; repeats while life stays above about 25 (cast at the end of an opponent's turn when possible))
+
+6,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 6 worker threads: about 50 minutes
+  progress  10.0%  2m13s elapsed, ~20m00s left
+  progress  20.0%  4m38s elapsed, ~18m32s left
+  progress  30.0%  6m52s elapsed, ~16m02s left
+Swaps: Stir Up Trouble -> Ad Nauseam
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  31.9% ->  34.6%  (delta +2.7 pts, noise ±3.9, paired)   n=1000
+               eliminated by (variant): Aurelia 21.5%  Tergrid 14.8%  Korvold 7.1%  Atraxa 9.3%  Marwyn 12.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          31.9% ->  34.6%  +2.7pt   ±4.2 
+    Rounds survived (or game length)                  11.46 ->  11.41   -0.05  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.56 ->   0.56   +0.00  ±0.07 
+    Mana available on your turn 4                      4.16 ->   4.15   -0.00  ±0.07 
+    Mana available on your turn 6                      5.60 ->   5.62   +0.03  ±0.11 
+
+  Speed
+    Games where the game plan came online             91.8% ->  91.0%  -0.8pt   ±2.5 
+    Turn the game plan came online                     6.53 ->   6.62   +0.10  ±0.21 
+    Turn the commander first resolved                  6.50 ->   6.57   +0.07  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.79 ->  17.98   +0.18  ±0.70 
+    Tutors resolved per game                           0.00 ->   0.00   +0.00  ±0.00 
+    Spells cast per game                              13.72 ->  13.70   -0.02  ±0.50 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.39 ->   1.23   -0.17  ±0.10*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.77 ->   0.74   -0.02  ±0.08 
+    Your spells countered                              0.14 ->   0.12   -0.02  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                57.50 ->  56.58   -0.93  ±3.50 
+      ...of which combat damage                        7.53 ->   7.12   -0.41  ±0.69 
+      ...of which magecraft / burn                     1.64 ->   1.64   -0.01  ±0.27 
+      ...of which drain triggers                      39.85 ->  38.98   -0.87  ±2.97 
+      ...of which other triggers                       6.97 ->   7.54   +0.57  ±1.25 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            25.3      33.2         9.8     66.8       48.8      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Stir Up Trouble                       24.7      90.3         6.7      9.7       37.7      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        31.9      34.6     +2.7
+    rounds survived                                  11.46     11.41    -0.05
+    eliminated, % of games                            67.7      64.8     -2.9
+    opponents it eliminated, per game                 1.00      1.00    -0.00
+    damage dealt, per game                            56.0      55.3     -0.7
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        17.9      16.2     -1.7
+      plan online by turn 6, %                        49.9      49.9     +0.0
+      plan online by turn 8, %                        75.8      73.4     -2.4
+      plan online by turn 12, %                       91.3      89.7     -1.6
+      plan online at all, %                           91.8      91.0     -0.8
+    commander resolved by turn 4, %                   18.5      17.0     -1.5
+    commander resolved by turn 6, %                   50.7      51.3     +0.6
+    commander removals, per game                      0.73      0.71    -0.02
+    lands on the battlefield, turn 4                  3.74      3.74    -0.01
+    lands on the battlefield, turn 8                  6.46      6.46    -0.00
+    mana available, turn 4                            4.16      4.15    -0.00
+    mana available, turn 8                            6.91      6.90    -0.01
+    cards in hand after the land drop, turn 4         5.50      5.54    +0.04
+    cards in hand after the land drop, turn 8         4.11      4.29    +0.18
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 17.2%, Tergrid via combat 12.4%, Marwyn via combat 10.8%, Atraxa via combat 8.0%
+    eliminated by (swapped): Aurelia via combat 16.3%, Marwyn via combat 12.1%, Tergrid via combat 11.6%, Atraxa via combat 7.4%
+  progress  40.0%  9m04s elapsed, ~13m37s left
+  progress  50.0%  11m05s elapsed, ~11m05s left
+  progress  60.0%  13m05s elapsed, ~8m43s left
+Swaps: Stir Up Trouble -> Ad Nauseam
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.7% ->  31.6%  (delta +0.9 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Heliod 18.4%  Yuriko 14.4%  Krenko 15.9%  Chulane 9.3%  Prosper 10.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.7% ->  31.6%  +0.9pt   ±4.1 
+    Rounds survived (or game length)                   9.48 ->   9.49   +0.01  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.52 ->   0.53   +0.01  ±0.07 
+    Mana available on your turn 4                      4.13 ->   4.12   -0.01  ±0.07 
+    Mana available on your turn 6                      5.60 ->   5.60   -0.01  ±0.12 
+
+  Speed
+    Games where the game plan came online             76.6% ->  78.9%  +2.3pt   ±3.7 
+    Turn the game plan came online                     6.04 ->   6.10   +0.07  ±0.19 
+    Turn the commander first resolved                  5.95 ->   6.02   +0.06  ±0.19 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.44 ->  14.45   +0.01  ±0.73 
+    Tutors resolved per game                           0.00 ->   0.00   -0.00  ±0.01 
+    Spells cast per game                              10.86 ->  10.77   -0.09  ±0.53 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.13 ->   1.05   -0.08  ±0.10 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.62 ->   0.63   +0.01  ±0.07 
+    Your spells countered                              0.29 ->   0.28   -0.02  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                46.26 ->  46.97   +0.71  ±3.67 
+      ...of which combat damage                        7.98 ->   8.54   +0.56  ±0.76 
+      ...of which magecraft / burn                     1.48 ->   1.41   -0.07  ±0.27 
+      ...of which drain triggers                      29.48 ->  29.91   +0.42  ±2.90 
+      ...of which other triggers                       6.20 ->   5.99   -0.21  ±1.17 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            21.5      24.7         9.0     75.3       58.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Stir Up Trouble                       21.5      83.7         6.0     16.3       36.1      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.7      31.6     +0.9
+    rounds survived                                   9.48      9.49    +0.01
+    eliminated, % of games                            69.0      68.2     -0.8
+    opponents it eliminated, per game                 0.89      0.93    +0.04
+    damage dealt, per game                            45.1      45.8     +0.7
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        18.5      17.8     -0.7
+      plan online by turn 6, %                        49.1      49.9     +0.8
+      plan online by turn 8, %                        68.6      69.7     +1.1
+      plan online by turn 12, %                       76.2      78.4     +2.2
+      plan online at all, %                           76.6      78.9     +2.3
+    commander resolved by turn 4, %                   20.0      19.3     -0.7
+    commander resolved by turn 6, %                   51.0      51.7     +0.7
+    commander removals, per game                      0.59      0.60    +0.01
+    lands on the battlefield, turn 4                  3.75      3.74    -0.00
+    lands on the battlefield, turn 8                  6.54      6.50    -0.04
+    mana available, turn 4                            4.13      4.12    -0.01
+    mana available, turn 8                            6.96      6.90    -0.05
+    cards in hand after the land drop, turn 4         5.65      5.72    +0.07
+    cards in hand after the land drop, turn 8         4.83      4.97    +0.14
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 100%, timeout 0%
+    eliminated by (current): Heliod via combo 18.8%, Krenko via combat 11.5%, Prosper via combo 7.6%, Yuriko via triggers 7.3%
+    eliminated by (swapped): Heliod via combo 17.1%, Krenko via combat 12.0%, Yuriko via triggers 8.2%, Prosper via combo 7.8%
+  progress  70.0%  14m52s elapsed, ~6m22s left
+  progress  80.0%  15m59s elapsed, ~3m59s left
+  progress  90.0%  17m07s elapsed, ~1m54s left
+  progress 100.0%  18m14s elapsed, ~0m00s left
+Swaps: Stir Up Trouble -> Ad Nauseam
+
+=== Sheoldred vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  25.8% ->  24.4%  (delta -1.4 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Urza 16.4%  Zur the Enchanter 12.4%  Winota 18.9%  Kinnan 20.9%  Yawgmoth 7.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          25.8% ->  24.4%  -1.4pt   ±3.9 
+    Rounds survived (or game length)                   7.98 ->   7.95   -0.03  ±0.27 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.48 ->   0.48   +0.01  ±0.07 
+    Mana available on your turn 4                      4.08 ->   4.08   -0.00  ±0.08 
+    Mana available on your turn 6                      5.53 ->   5.57   +0.04  ±0.13 
+
+  Speed
+    Games where the game plan came online             66.8% ->  66.7%  -0.1pt   ±4.2 
+    Turn the game plan came online                     5.22 ->   5.20   -0.02  ±0.19 
+    Turn the commander first resolved                  5.20 ->   5.18   -0.02  ±0.19 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            11.24 ->  11.21   -0.03  ±0.64 
+    Tutors resolved per game                           0.01 ->   0.01   +0.00  ±0.01 
+    Spells cast per game                               8.20 ->   8.17   -0.04  ±0.47 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.97 ->   0.82   -0.15  ±0.09*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.30 ->   0.31   +0.01  ±0.05 
+    Your spells countered                              0.39 ->   0.43   +0.04  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                37.88 ->  36.96   -0.92  ±3.48 
+      ...of which combat damage                        8.23 ->   7.90   -0.33  ±0.89 
+      ...of which magecraft / burn                     0.91 ->   0.92   +0.01  ±0.22 
+      ...of which drain triggers                      24.52 ->  23.78   -0.73  ±2.60 
+      ...of which other triggers                       3.18 ->   3.39   +0.21  ±0.80 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            17.5      22.3         8.7     77.7       56.4      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Stir Up Trouble                       17.8      86.0         5.5     14.0       39.9      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        25.8      24.4     -1.4
+    rounds survived                                   7.98      7.95    -0.03
+    eliminated, % of games                            74.2      75.6     +1.4
+    opponents it eliminated, per game                 0.77      0.72    -0.06
+    damage dealt, per game                            36.8      36.0     -0.8
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        29.2      30.0     +0.8
+      plan online by turn 6, %                        52.6      53.8     +1.2
+      plan online by turn 8, %                        62.9      62.9     +0.0
+      plan online by turn 12, %                       66.7      66.6     -0.1
+      plan online at all, %                           66.8      66.7     -0.1
+    commander resolved by turn 4, %                   30.1      30.8     +0.7
+    commander resolved by turn 6, %                   53.9      55.0     +1.1
+    commander removals, per game                      0.30      0.30    +0.00
+    lands on the battlefield, turn 4                  3.74      3.74    +0.00
+    lands on the battlefield, turn 8                  6.43      6.41    -0.02
+    mana available, turn 4                            4.08      4.08    -0.00
+    mana available, turn 8                            6.81      6.77    -0.04
+    cards in hand after the land drop, turn 4         5.71      5.75    +0.04
+    cards in hand after the land drop, turn 8         5.00      5.07    +0.06
+    wins by (current):  damage 100%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Kinnan via combo 19.8%, Urza via combo 17.0%, Zur the Enchanter via combo 10.9%, Winota via combo 10.2%
+    eliminated by (swapped): Kinnan via combo 20.5%, Urza via combo 14.9%, Zur the Enchanter via combo 11.2%, Winota via combo 10.8%
+
+(1095s total)

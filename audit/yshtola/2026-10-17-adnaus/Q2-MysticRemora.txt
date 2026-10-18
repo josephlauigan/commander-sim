@@ -1,0 +1,111 @@
+Model status of the swapped-in cards (cardgen audit):
+  Ad Nauseam: Full (reveal the top card, put it in hand, lose life equal to its mana value; repeats while life stays above about 25 (cast at the end of an opponent's turn when possible))
+
+2,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), adaptive AI, 6 worker threads: about 17 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+Swaps: Mystic Remora -> Ad Nauseam
+
+=== Y'shtola vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.2% ->  29.3%  (delta -0.9 pts, noise ±1.8, paired)   n=1000
+               eliminated by (variant): Urza 15.8%  Zur the Enchanter 8.6%  Winota 16.9%  Kinnan 21.3%  Yawgmoth 8.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (yshtola) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yshtola: first drain from Y'shtola's cast trigger
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.2% ->  29.3%  -0.9pt   ±4.1 
+    Rounds survived (or game length)                   8.47 ->   8.49   +0.01  ±0.30 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.44 ->   0.45   +0.01  ±0.07 
+    Mana available on your turn 4                      4.16 ->   4.31   +0.14  ±0.10*
+    Mana available on your turn 6                      6.02 ->   6.08   +0.05  ±0.19 
+
+  Speed
+    Games where the game plan came online             61.8% ->  62.2%  +0.4pt   ±4.3 
+    Turn the game plan came online                     6.28 ->   6.34   +0.06  ±0.22 
+    Turn the commander first resolved                  5.06 ->   5.05   -0.01  ±0.18 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.20 ->  14.36   -0.84  ±0.82*
+    Tutors resolved per game                           0.45 ->   0.43   -0.02  ±0.06 
+    Spells cast per game                               9.69 ->   9.43   -0.25  ±0.57 
+
+  Interaction
+    Counterspells cast                                 0.07 ->   0.07   +0.00  ±0.02 
+    Spot removal cast                                  1.54 ->   1.52   -0.01  ±0.12 
+    Board wipes cast                                   0.10 ->   0.10   +0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.01  ±0.01 
+    Your key permanents removed by opponents           0.15 ->   0.14   -0.01  ±0.04 
+    Your spells countered                              0.65 ->   0.61   -0.04  ±0.08 
+
+  Threat & pressure
+    Damage dealt to opponents per game                28.27 ->  27.93   -0.34  ±2.77 
+      ...of which combat damage                        8.13 ->   8.09   -0.03  ±0.90 
+      ...of which magecraft / burn                     0.54 ->   0.56   +0.02  ±0.14 
+      ...of which drain triggers                       6.78 ->   6.52   -0.26  ±1.18 
+      ...of which other triggers                      12.26 ->  12.26   +0.00  ±1.26 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Mana available on your turn 4 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            27.3      26.4         7.9     73.6       55.6      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mystic Remora                         23.1      73.6         5.0     26.4       40.0      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.2      29.3     -0.9
+    rounds survived                                   8.47      8.49    +0.01
+    eliminated, % of games                            69.8      70.7     +0.9
+    opponents it eliminated, per game                 0.72      0.70    -0.02
+    damage dealt, per game                            27.7      27.4     -0.3
+    plan: first drain from Y'shtola's cast trigger
+      plan online by turn 4, %                         6.4       6.0     -0.4
+      plan online by turn 6, %                        41.1      40.2     -0.9
+      plan online by turn 8, %                        55.0      54.6     -0.4
+      plan online by turn 12, %                       60.9      61.3     +0.4
+      plan online at all, %                           61.8      62.2     +0.4
+    commander resolved by turn 4, %                   35.8      36.3     +0.5
+    commander resolved by turn 6, %                   61.7      62.0     +0.3
+    commander removals, per game                      0.11      0.12    +0.01
+    lands on the battlefield, turn 4                  3.76      3.76    -0.01
+    lands on the battlefield, turn 8                  6.72      6.64    -0.08
+    mana available, turn 4                            4.16      4.31    +0.14
+    mana available, turn 8                            7.46      7.40    -0.06
+    cards in hand after the land drop, turn 4         6.22      6.06    -0.15
+    cards in hand after the land drop, turn 8         6.91      6.72    -0.18
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 100%, timeout 0%
+    eliminated by (current): Kinnan via combo 20.3%, Urza via combo 13.3%, Winota via combo 10.2%, Zur the Enchanter via combo 7.2%
+    eliminated by (swapped): Kinnan via combo 20.8%, Urza via combo 14.1%, Winota via combo 10.1%, Zur the Enchanter via combo 8.1%
+
+(1s total)
