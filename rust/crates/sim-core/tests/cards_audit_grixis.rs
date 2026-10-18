@@ -64,3 +64,17 @@ fn sauron_tutor_fetches_sol_ring_when_short_of_mana() {
     zones::amass(&mut g, P0, 1).unwrap();
     assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Sol Ring")));
 }
+
+#[test]
+fn sauron_does_not_sweep_away_its_own_army() {
+    let mut g = sauron_table();
+    perm(&mut g, P0, "Sauron, the Dark Lord");
+    zones::amass(&mut g, P0, 3).unwrap(); // Sauron (7) is the source, the 3-power Army would die
+    let q = PlayerId(1);
+    perm(&mut g, q, "Llanowar Elves");
+    let (ol, ml, _) = decks::wipe_eval(&g, P0, "nib");
+    assert!(ml > ol, "ol {ol} ml {ml}: one elf is not worth the Army");
+    perm(&mut g, P0, "The Ozolith");
+    let (_, ml2, _) = decks::wipe_eval(&g, P0, "nib");
+    assert!(ml2 < ml, "with The Ozolith out the counters survive");
+}

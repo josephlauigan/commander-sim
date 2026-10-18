@@ -1091,6 +1091,9 @@ pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerI
                 if rean && pm.cd.is_some_and(|c| g.db.get(c).bomb != 0) && kind != "exile" {
                     v *= 0.4;
                 }
+                if pm.army && g.player(p).key == "sauron" && !has(g, p, Tag::Ozolith) {
+                    v *= 3.0; // the deck is one big Army: a sweep that kills it (Nibelheim Aflame) costs the plan, not a body
+                }
                 ml += v;
             } else {
                 ol += v;
