@@ -1,0 +1,39 @@
+8,000 games (1 tier, 4,000 per list per tier, profiles conservative and loose), lookahead AI, 16 worker threads: about 25 minutes
+  progress  10.0%  0m54s elapsed, ~8m06s left
+  progress  20.0%  1m49s elapsed, ~7m16s left
+  progress  30.0%  2m42s elapsed, ~6m19s left
+  progress  40.0%  3m38s elapsed, ~5m27s left
+  progress  50.0%  4m35s elapsed, ~4m35s left
+
+=== Tymna/Kraum vs Tier 5 (High B4) [conservative, lookahead AI, 4000 games] ===
+Win rate  21.4%   95% CI 20.2-22.7%   (even share 25%: -3.6 pts)
+Average turn (your own turn count) of wins 12.7, of losses 6.7
+Plan online (): 0.1% of games
+Wins by: damage 99%, timeout 1%, combo 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-simic-mana-combo)             61.5%            36.2%           22.2%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   60.1%            14.5%            8.9%
+  Zur the Enchanter (zur-esper-enchantment-c   59.9%            22.9%           13.4%
+  Urza (urza-mono-blue-artifacts)              59.8%            25.3%           15.0%
+  Winota (winota-boros-humans-cheat)           58.7%            32.0%           19.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+  progress  60.0%  5m29s elapsed, ~3m39s left
+  progress  70.0%  6m22s elapsed, ~2m43s left
+  progress  80.0%  7m18s elapsed, ~1m49s left
+  progress  90.0%  8m12s elapsed, ~0m54s left
+  progress 100.0%  9m08s elapsed, ~0m00s left
+
+=== Tymna/Kraum vs Tier 5 (High B4) [loose, lookahead AI, 4000 games] ===
+Win rate  22.5%   95% CI 21.2-23.8%   (even share 25%: -2.5 pts)
+Average turn (your own turn count) of wins 12.6, of losses 6.8
+Plan online (): 0.1% of games
+Wins by: damage 99%, timeout 1%, combo 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-simic-mana-combo)             61.5%            38.0%           23.6%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   60.1%            14.2%            8.6%
+  Zur the Enchanter (zur-esper-enchantment-c   59.9%            21.6%           12.6%
+  Urza (urza-mono-blue-artifacts)              59.8%            24.4%           14.7%
+  Winota (winota-boros-humans-cheat)           58.7%            30.8%           18.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(549s total)
