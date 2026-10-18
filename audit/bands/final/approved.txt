@@ -1,0 +1,9 @@
+kraum|kraum|Rune-Scarred Demon=>Underworld Breach
+kefka|kefka|Demonic Tutor=>Mana Leak;Vampiric Tutor=>Expressive Iteration;Mystical Tutor=>Sleight of Hand
+sephfs|sephfs|Star Compass=>Demonic Tutor;Tome of Legends=>Vampiric Tutor;Masterful Flourish=>Rune-Scarred Demon;Bitter Triumph=>Bolas's Citadel;Rabid Attack=>Gray Merchant of Asphodel
+yshtola|yshtola|Dakkon, Shadow Slayer=>Force of Will;Thought Vessel=>Farewell;Bolas's Citadel=>Teferi's Protection
+sauron|sauron|Slaughter Pact=>Force of Will
+sheoldred|sheoldred|Gray Merchant of Asphodel=>Necrosquito
+seph|seph|Force of Will=>Hornet Queen;Farewell=>Austere Command;Teferi's Protection=>Arcane Denial;Consecrated Sphinx=>Harmonize;Worldly Tutor=>Tireless Tracker
+veyran|veyran|Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor
+titania|titania|Hornet Queen=>Cactarantula;Harmonize=>Fblthp, Knows the Way;Tireless Tracker=>Paradise Druid;Environmental Scientist=>Worldly Tutor

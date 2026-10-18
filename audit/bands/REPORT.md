@@ -233,3 +233,17 @@ Each of these is a point where I would have asked you. What I chose and why:
 - Tymna/Kraum's AI has no use for Underworld Breach. If you want Breach to be a real card there, that is an AI task.
 - Veyran never casts Triple Triad (untagged): a model gap that understates Veyran slightly.
 - Rune-Scarred Demon is stuck in Seph FS's hand 61% of the time. A cheaper threat might serve band 1 better.
+
+## 8. Final decisions (JD, morning of 10/18) and what was committed
+
+- **Tymna/Kraum moves to band 1 (T5).** Measured against T5 (with JD's one-off `--any-tier`), its current list was
+  22.0%. A band-1 GC package (Force of Will, Rhystic Study, Mystical Tutor, Enlightened Tutor, Teferi's Protection)
+  made no difference (21.4%): the cards get cast, but losses to combo don't move. Final list: the original list with
+  only Rune-Scarred Demon → Underworld Breach (Rune-Scarred Demon goes to Seph FS): **21.4% vs T5**. Its tier is now
+  `t5`. None of the seven band-3 cuts above apply.
+- **Titania gets Fblthp, Knows the Way instead of Penumbra Spider** (JD's choice). This card wasn't measured. Its
+  land-search trigger is modeled; its domain power is 1 in mono-green.
+- **Band 3 is Kefka alone.**
+- **Committed:** the decklists (`cardgen deck`, logged in `decklists/CHANGELOG.md`), Tymna/Kraum's tier, the deck
+  docs, and `bulk-cards.txt` / `binder-cards.txt`. 11 spare cards were taken out of the binder (3) and bulk (8), and
+  11 deck cuts went into bulk.
