@@ -192,11 +192,7 @@ pub fn go_now(_g: &Game, _p: PlayerId, _combo: &str) -> Option<bool> {
 
 /// the cards still missing from a line (a group counts as done when any of its cards is out or in hand)
 fn missing(g: &Game, p: PlayerId, groups: &[&[&'static str]]) -> Vec<&'static str> {
-    groups
-        .iter()
-        .filter(|grp| !grp.iter().any(|n| have(g, p, n)))
-        .map(|grp| grp[0])
-        .collect()
+    groups.iter().filter(|grp| !grp.iter().any(|n| have(g, p, n))).map(|grp| grp[0]).collect()
 }
 
 /// bonus for a card that brings the nearest line closer: the fewer pieces the line still lacks, the more each is worth

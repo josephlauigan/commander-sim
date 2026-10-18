@@ -27,15 +27,35 @@ fn name(g: &Game, c: sim_core::ids::CardId) -> String {
 fn keeps_mana_hands_and_ships_empty_ones() {
     let mut g = tbl();
     g.player_mut(P0).hand.clear();
-    hand(&mut g, P0, &["Tundra", "Bayou", "Sol Ring", "Birds of Paradise", "Rhystic Study", "Lavinia, Azorius Renegade", "Silence"]);
+    hand(
+        &mut g,
+        P0,
+        &["Tundra", "Bayou", "Sol Ring", "Birds of Paradise", "Rhystic Study", "Lavinia, Azorius Renegade", "Silence"],
+    );
     assert_eq!(plan::keep(&g, P0), Some(true));
     // one land with two mana makers is still a keep
     g.player_mut(P0).hand.clear();
-    hand(&mut g, P0, &["Tundra", "Sol Ring", "Noble Hierarch", "Birds of Paradise", "Demonic Tutor", "Silence", "Mental Misstep"]);
+    hand(
+        &mut g,
+        P0,
+        &["Tundra", "Sol Ring", "Noble Hierarch", "Birds of Paradise", "Demonic Tutor", "Silence", "Mental Misstep"],
+    );
     assert_eq!(plan::keep(&g, P0), Some(true));
     // no land, no play
     g.player_mut(P0).hand.clear();
-    hand(&mut g, P0, &["Sol Ring", "Mana Vault", "Demonic Tutor", "Silence", "Mental Misstep", "Derevi, Empyrial Tactician", "Teferi, Time Raveler"]);
+    hand(
+        &mut g,
+        P0,
+        &[
+            "Sol Ring",
+            "Mana Vault",
+            "Demonic Tutor",
+            "Silence",
+            "Mental Misstep",
+            "Derevi, Empyrial Tactician",
+            "Teferi, Time Raveler",
+        ],
+    );
     assert_eq!(plan::keep(&g, P0), Some(false));
     // lands only
     g.player_mut(P0).hand.clear();
@@ -43,7 +63,19 @@ fn keeps_mana_hands_and_ships_empty_ones() {
     assert_eq!(plan::keep(&g, P0), Some(false));
     // two lands and nothing that makes mana or finds it
     g.player_mut(P0).hand.clear();
-    hand(&mut g, P0, &["Tundra", "Bayou", "Derevi, Empyrial Tactician", "Teferi, Time Raveler", "Silence", "Esper Sentinel", "Dismember"]);
+    hand(
+        &mut g,
+        P0,
+        &[
+            "Tundra",
+            "Bayou",
+            "Derevi, Empyrial Tactician",
+            "Teferi, Time Raveler",
+            "Silence",
+            "Esper Sentinel",
+            "Dismember",
+        ],
+    );
     assert_eq!(plan::keep(&g, P0), Some(false));
 }
 
