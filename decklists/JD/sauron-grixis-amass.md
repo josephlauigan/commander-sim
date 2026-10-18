@@ -9,7 +9,7 @@ spot removal on the Army before it grows, and to fast decks that kill before Sau
 | | |
 |---|---|
 | **Commander** | Sauron, the Dark Lord ({3}{U}{B}{R}, 7/6, Grixis) |
-| **Bracket** | 3 (2 Game Changers: Cyclonic Rift, Orcish Bowmasters) |
+| **Bracket** | 3 (3 Game Changers: Cyclonic Rift, Orcish Bowmasters, Force of Will) |
 | **Simulator** | deck key `sauron`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -40,8 +40,8 @@ around.
 ### Grow it
 Orcish Bowmasters adds counters on its own and again on every extra opponent draw. Iron Man adds a counter every time
 you draw. Vision grows on off-turn casts. **Barad-dûr** is a late-game mana sink: it taps for black, and for
-{X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, Slaughter
-Pact, and Massacre Wurm, Ral, Inferno Titan and Comet Storm killing opposing creatures is almost always.
+{X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, the
+spot removal, and Massacre Wurm, Ral, Inferno Titan and Comet Storm killing opposing creatures is almost always.
 
 ### Start it early
 **Dreadhorde Invasion** ({1}{B} enchantment) loses you 1 life and amasses Zombies 1 every upkeep, and **Lazotep
@@ -136,9 +136,11 @@ cards), **Night's Whisper**, **Bloodsoaked Insight // Sanguine Morass** (an exil
 each life your opponents have lost this turn, or a land that taps for {B} or {R}), Cost of Brilliance and Iron Man.
 Rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Dimir Signet, Rakdos Signet, Relic of Legends,
 Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. Spot removal: **Bitter Triumph**,
-**Bloodchief's Thirst**, **Go for the Throat**, **Infernal Grasp**, **Slaughter Pact**, **Terminate** and **Chaos
+**Bloodchief's Thirst**, **Go for the Throat**, **Infernal Grasp**, **Terminate** and **Chaos
 Warp**. Counters: **Counterspell**, **Arcane Denial**, **Undermine** (the countered spell's controller loses 3 life),
-**Disdainful Stroke** (mana value 4 or more) and **Spell Pierce** (a noncreature spell unless they pay {2}).
+**Disdainful Stroke** (mana value 4 or more), **Spell Pierce** (a noncreature spell unless they pay {2}) and **Force of
+Will** (counter anything: exile a blue card from hand and pay 1 life, or pay {3}{U}{U}; the deck has plenty of blue cards
+to pitch, but it costs two cards, so keep it for a spell that would end the game or wreck the Army).
 **Not of This World** ({7}) counters a spell or ability that targets one of your permanents; it costs only {0}
 when it protects a creature of yours with power 7 or more (a grown Army or Sauron).
 
@@ -157,8 +159,8 @@ Wurm, Ral or Inferno Titan clear blockers first.
   Army is the only body that matters.
 - **Scavenger Grounds** ({2}, {T}, sacrifice a Desert: exile all graveyards) hits your own graveyard too, including
   the creature that Sauron, the Necromancer needs. Fire it deliberately.
-- **Slaughter Pact** is free now and costs {2}{B} next upkeep; make sure you can pay it, and remember it can't hit
-  black creatures.
+- **Force of Will** costs you a second card (or {3}{U}{U}) and 1 life when pitched; hold it for the spell that would
+  stop the Army or end the game, not for the first thing that is cast.
 
 ## Key lines
 
@@ -185,7 +187,7 @@ The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Sw
 
 Dual lands: the shocklands Blood Crypt and Steam Vents; the check lands Drowned Catacomb and Sulfur Falls; Shivan Reef (a painland); Frostboil Snarl and Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Crumbling Necropolis (all three colours), Izzet Boilerworks (bounces a land), Treno, Dark City and Path of Ancestry.
 
-**Interaction.** Seven pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Slaughter Pact, Terminate and Chaos Warp) plus Noxious Gearhulk and Vraska; five counters (Counterspell, Arcane Denial, Undermine, Spell Pierce and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); Not of This World to protect a permanent; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
+**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk and Vraska; six counters (Counterspell, Arcane Denial, Undermine, Spell Pierce, Force of Will and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); Not of This World to protect a permanent; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
 
 ## Tutor targets by board state
 
@@ -197,7 +199,7 @@ Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any ca
 - **Bowmasters on board, hand running dry → Ringsight for Jace's Archivist**, then wheel the table.
 - **Need to close the game → Ringsight for Exsanguinate or Comet Storm** once the Army is connecting.
 - **Need protection for the swing → Diabolic Tutor for Not of This World** (it needs a colourless-capable tutor; Ringsight can't find it).
-- **One problem creature → Ringsight for Infernal Grasp** (or Slaughter Pact if you need it free on the big turn).
+- **One problem creature → Ringsight for Infernal Grasp** (or Terminate for {B}{R} when the target is a creature and Grasp is not in hand).
 - **Pod is casting into you → Ringsight for Kaervek** or Urabrask.
 - **Behind on board / need the reset → Ringsight for Massacre Wurm or Inferno Titan**, or Ral and the Implicit Maze when you can wait a turn for the Army to stay safe; Cyclonic Rift if it is the whole table. The Ozolith out helps if you cast Nibelheim Aflame or Chandra's Ignition.
 - **Slow start, no mana → Diabolic Tutor for Sol Ring.**
@@ -207,13 +209,13 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 ## Bracket and Rule 0
 
-Bracket 3 by Game Changers, with **two**, one under the cap of three: **Cyclonic Rift** and **Orcish Bowmasters**. No other card in the deck is on the list.
+Bracket 3 by Game Changers, with **three**, the cap for the bracket: **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will**. No other card in the deck is on the list.
 
 **The deck has no two-card combo.** Aggravated Assault gives extra combats at {3}{R}{R} each, but no infinite loop. Exsanguinate and Comet Storm are X-spell finishers, not combos.
 
 Disclose before the game:
 
-- **Cyclonic Rift** and **Orcish Bowmasters** (the two Game Changers).
+- **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will** (the three Game Changers).
 - **Sauron amasses off every spell an opponent casts**, and **Kaervek** punishes the same trigger.
 - **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters out it hurts for every card they draw.
 - **Urabrask** replaces each opponent's draw-step draw with an exile-and-play-it-now card.
@@ -232,7 +234,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (14).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Relic of Legends, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slaughter Pact, Spell Pierce, Terminate, Undermine, Vandalblast
+**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Force of Will, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Spell Pierce, Terminate, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -269,6 +271,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Exsanguinate
 1 Fact or Fiction
 1 Fellwar Stone
+1 Force of Will
 1 Foreboding Ruins
 1 Frostboil Snarl
 1 Go for the Throat
@@ -304,7 +307,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Sephiroth, Planet's Heir
 1 Sheoldred, the Apocalypse
 1 Shivan Reef
-1 Slaughter Pact
 1 Sol Ring
 1 Spell Pierce
 1 Steam Vents

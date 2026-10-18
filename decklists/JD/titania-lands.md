@@ -9,7 +9,7 @@ it before the 5/3s pile up.
 | | |
 |---|---|
 | **Commander** | Titania, Protector of Argoth ({3}{G}{G}, 5/3, green) |
-| **Bracket** | 2 or 3 by the list (no Game Changers, no tutors, no infinite combo) |
+| **Bracket** | 3 (1 Game Changer: Worldly Tutor; no infinite combo) |
 | **Simulator** | deck key `titania`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -31,7 +31,7 @@ creature token.*
   graveyard with the cheap fillers. Land drops come first: with 38 lands you rarely miss them.
 - **Turns 4-6.** Cast Titania with fetch lands on the battlefield or in the graveyard. Crack every fetch land you
   control for a 5/3 each, let her enter trigger return one, and crack it again. Add the card draw (Garruk's Uprising,
-  Harmonize, Tireless Tracker) as you go.
+  Shamanic Revelation, Lifestream's Blessing) as you go.
 - **Late game.** The 5/3s and the big green creatures win the game. Turn the pile into lethal with Overwhelming
   Stampede, End-Raze Forerunners or Greenbelt Radical, or keep removing blockers with the bite and fight spells.
   The wins come late, so protect the engine and keep drawing cards rather than racing.
@@ -56,29 +56,27 @@ fill the graveyard with returnable lands. **Pothole Mole** also returns a land c
 which gives you an extra land drop (and a landfall trigger) when you replay it.
 
 ### Ramp and land drops
-- **Mana creatures:** Llanowar Elves, Noxious Newt (a deathtouch blocker), Hardbristle Bandit (any colour; it untaps
+- **Mana creatures:** Llanowar Elves, Noxious Newt (a deathtouch blocker), Paradise Druid (any colour, and hexproof while it is untapped), Hardbristle Bandit (any colour; it untaps
   when you commit a crime, which targeting an opponent or their stuff does, so a bite spell gives you the mana back),
   Topiary Lecturer (taps for more mana as it grows), Silhana Starfletcher (reach), Greenhouse Propagator (gains
   1 life for each creature that enters) and Bugenhagen, Wise Elder (taps for any colour; draws a card on your upkeep
   if you control a creature with power 7 or more, such as Ghalta or End-Raze Forerunners).
 - **Spells:** Rampant Growth, Nature's Lore (a Forest straight onto the battlefield, untapped), Cultivate and
   Skyshroud Claim (two Forests, untapped), plus Thirsting Roots (a basic to hand, or proliferate).
-- **Creatures that find land:** Environmental Scientist, Studious First-Year (enters prepared, so you can cast its
+- **Creatures that find land:** Fblthp, Knows the Way, Studious First-Year (enters prepared, so you can cast its
   *{1}{G}* land-fetching sorcery side from the battlefield) and Spider-Man, Brooklyn Visionary. Spider-Man's
   web-slinging costs {2}{G} if you return a tapped creature to your hand: a tapped mana creature, or, late in the
   game, Titania herself after she attacks, so you can recast her and return another land. Vinelasher Adept can be discarded for basic
-  landcycling {2} when you need a land.
+  landcycling {2} when you need a land. Fblthp costs {X}{G}{G} and puts up to X basic lands with different names into your hand; with only Forests in the deck that is one Forest whatever X is, so cast it for X=1 as a land-finding body (a 1/2) that gives you an extra land drop.
 - **Cartographer's Survey** puts two lands from the top seven onto the battlefield (tapped); Track Down, Boughside
   Wanderers and Follow the Lumarets find lands and creatures from the top of the library.
 
 ### Landfall and counters
-- **Tireless Tracker** makes a Clue for every land that enters, including each land Titania returns and each basic a
-  fetch land finds, and grows when you sacrifice a Clue. It is the best card-draw engine in the deck.
 - **Boughside Wanderers** gets +2/+2 until end of turn each time a land enters (a 6/6 on a land turn) and digs four cards deep when it enters.
 - **Kura, the Boundless Sky** is a 4/4 flying deathtouch creature. When she dies, either fetch three lands to your
   hand (fetch lands for Titania, or lands for your next three turns) or, late, leave an X/X Spirit for the number of
   lands you control.
-- **Vorinclex, Monstrous Raider** doubles the counters you put on things: Tireless Tracker, Topiary Lecturer's
+- **Vorinclex, Monstrous Raider** doubles the counters you put on things: Topiary Lecturer's
   Increment, Vinelasher Adept's three counters (six), Genesis Hydra's X counters, Knockout Maneuver, Greenbelt
   Radical, and Thirsting Roots' proliferate. It also halves the counters opponents put on their things. It has
   trample and haste, so it is a threat the turn it lands.
@@ -87,7 +85,7 @@ which gives you an extra land drop (and a landfall trigger) when you replay it.
 - **Garruk's Uprising** is the card that turns the engine into cards: it draws when it enters if you control a
   creature with power 4 or more, draws again for every creature with power 4 or more that enters afterwards (every 5/3
   Elemental counts), and gives your creatures trample.
-- **Harmonize** (three cards), **Shamanic Revelation** (a card for each creature, plus 4 life for each creature with
+- **Shamanic Revelation** (a card for each creature, plus 4 life for each creature with
   power 4 or more) and **Lifestream's Blessing** (a card for the greatest power you control; foretell it for {2}
   early, and its later cast also gains life).
 - **Tenured Concocter** (draws if an opponent targets it, and gets +2/+0 when you gained life this turn),
@@ -96,7 +94,7 @@ which gives you an extra land drop (and a landfall trigger) when you replay it.
   Greenhouse Propagator, Scout the City and Something Worth Saving all gain life.
 
 ### Big creatures
-- **Annoyed Altisaur** (cascade, reach, trample) and **Hornet Queen** (five flying deathtouch bodies) are the best
+- **Annoyed Altisaur** (cascade, reach, trample) and **Cactarantula** (a 6/5 with reach that costs {1} less with a Desert, and draws you a card whenever an opponent targets it) are the best
   topdecks.
 - **Ghalta the Unstoppable** costs {X} less, where X is your greatest power: with a single 5/3 on the battlefield she
   costs {3}{G}. She also gives the team trample.
@@ -117,8 +115,11 @@ which gives you an extra land drop (and a landfall trigger) when you replay it.
   Maneuver and Chelonian Tackle (+0/+10, then it fights). Use your biggest creature as the source. Hard-Hitting
   Question costs {G}.
 - **Artifact, enchantment and flier answers:** Carnivorous Canopy, Crushing Canopy, Pick Your Poison, Rending Vines,
-  Glorious Decay and Scout the City (Bring Down). Silhana Starfletcher, Lashwhip Predator, Vinelasher Adept and
+  Glorious Decay and Scout the City (Bring Down). Silhana Starfletcher, Lashwhip Predator, Cactarantula, Vinelasher Adept and
   Bugenhagen have reach.
+
+### Worldly Tutor
+**Worldly Tutor** ({G}, instant) searches for a creature card and puts it on top of your library, so you draw it next turn. It is the deck's only tutor: use it at the end of an opponent's turn so the creature is your next draw. Targets: Ghalta, Annoyed Altisaur or Cactarantula for a top end; Vorinclex or Paladin of Predation for the poison line. Cast it before a draw spell (Shamanic Revelation, Garruk's Uprising) to draw the creature the same turn. Satyr Wayfinder and Track Down look at the top of the library, so cast the tutor after them, not before.
 
 ### How it wins
 - **Elemental swarm.** Four or five 5/3s in one turn plus Overwhelming Stampede (all creatures gain trample and
@@ -126,7 +127,7 @@ which gives you an extra land drop (and a landfall trigger) when you replay it.
   creatures) is lethal against most tables. Garruk's Uprising and Ghalta give trample to the whole team.
 - **Paladin of Predation with Vorinclex.** Toxic 6 doubled is twelve poison counters, and ten is lethal. Paladin can't
   be blocked by creatures with power 2 or less.
-- **Big bodies and recursion.** When the engine is slow, Hornet Queen, Annoyed Altisaur and Ghalta carry the game,
+- **Big bodies and recursion.** When the engine is slow, Cactarantula, Annoyed Altisaur and Ghalta carry the game,
   and Titania's recasts keep making 5/3s.
 
 ### Weak spots and how to play around them
@@ -154,13 +155,13 @@ which gives you an extra land drop (and a landfall trigger) when you replay it.
 38 lands: 35 Forest plus Evolving Wilds, Terramorphic Expanse and Fabled Passage. The deck plays more fetch lands than
 a plain mono-colour deck would, and basics found by them enter tapped, but each sacrifice is a 5/3, the deck's
 engine. Ramp: Llanowar Elves, Noxious Newt, Hardbristle Bandit, Topiary Lecturer, Silhana Starfletcher, Greenhouse
-Propagator, Bugenhagen, plus Rampant Growth, Nature's Lore, Cultivate, Skyshroud Claim and Spider-Man. Environmental Scientist, Studious
-First-Year, Thirsting Roots, Cartographer's Survey and Vinelasher Adept (landcycling) find more. Card draw: Harmonize, Shamanic Revelation, Garruk's Uprising, Tireless Tracker, Track
-Down and Lifestream's Blessing. Interaction: thirteen bite, fight and artifact, enchantment and flier answers.
+Propagator, Bugenhagen, plus Rampant Growth, Nature's Lore, Cultivate, Skyshroud Claim and Spider-Man, plus Paradise Druid. Fblthp, Studious
+First-Year, Thirsting Roots, Cartographer's Survey and Vinelasher Adept (landcycling) find more. Card draw: Shamanic Revelation, Garruk's Uprising, Track
+Down and Lifestream's Blessing. Worldly Tutor finds a creature (see Worldly Tutor). Interaction: thirteen bite, fight and artifact, enchantment and flier answers.
 
 ## Bracket and Rule 0
 
-No Game Changers, no tutors and no infinite combo, so the list fits Bracket 2 or 3. Tell the table before the game
+One Game Changer (**Worldly Tutor**), one tutor and no infinite combo, so the list fits Bracket 3. Tell the table before the game
 that:
 
 - the deck is a land-and-token deck with big green creatures, not a combo deck;
@@ -171,13 +172,13 @@ that:
 
 **Commander (1).** Titania, Protector of Argoth
 
-**Creatures (29).** Annoyed Altisaur, Boughside Wanderers, Bugenhagen Wise Elder, End-Raze Forerunners, Environmental Scientist, Genesis Hydra, Ghalta the Unstoppable, Greenbelt Radical, Greenhouse Propagator, Hardbristle Bandit, Hornet Queen, Infestation Expert, Kura the Boundless Sky, Lashwhip Predator, Llanowar Elves, Noxious Newt, Paladin of Predation, Pothole Mole, Satyr Wayfinder, Silhana Starfletcher, Spider-Man Brooklyn Visionary, Studious First-Year, Symbiotic Beast, Tenured Concocter, Thrashing Brontodon, Tireless Tracker, Topiary Lecturer, Vinelasher Adept, Vorinclex Monstrous Raider
+**Creatures (29).** Annoyed Altisaur, Boughside Wanderers, Bugenhagen Wise Elder, Cactarantula, End-Raze Forerunners, Fblthp Knows the Way, Genesis Hydra, Ghalta the Unstoppable, Greenbelt Radical, Greenhouse Propagator, Hardbristle Bandit, Infestation Expert, Kura the Boundless Sky, Lashwhip Predator, Llanowar Elves, Noxious Newt, Paladin of Predation, Paradise Druid, Pothole Mole, Satyr Wayfinder, Silhana Starfletcher, Spider-Man Brooklyn Visionary, Studious First-Year, Symbiotic Beast, Tenured Concocter, Thrashing Brontodon, Topiary Lecturer, Vinelasher Adept, Vorinclex Monstrous Raider
 
 **Enchantments (1).** Garruk's Uprising
 
-**Instants (11).** Arachnogenesis, Bite Down, Blossoming Defense, Compel Brutality, Crushing Canopy, Diplomatic Relations, Glorious Decay, Lifestream's Blessing, Rending Vines, Royal Treatment, Something Worth Saving
+**Instants (12).** Arachnogenesis, Bite Down, Blossoming Defense, Compel Brutality, Crushing Canopy, Diplomatic Relations, Glorious Decay, Lifestream's Blessing, Rending Vines, Royal Treatment, Something Worth Saving, Worldly Tutor
 
-**Sorceries (20).** Bestial Incursion, Carnivorous Canopy, Cartographer's Survey, Chelonian Tackle, Cultivate, Follow the Lumarets, Hard-Hitting Question, Harmonize, Knockout Maneuver, Malevolent Rumble, Nature's Lore, Overwhelming Stampede, Pick Your Poison, Rampant Growth, Scout the City, Shamanic Revelation, Skyshroud Claim, Thirsting Roots, Track Down, Tumbleweed Rising
+**Sorceries (19).** Bestial Incursion, Carnivorous Canopy, Cartographer's Survey, Chelonian Tackle, Cultivate, Follow the Lumarets, Hard-Hitting Question, Knockout Maneuver, Malevolent Rumble, Nature's Lore, Overwhelming Stampede, Pick Your Poison, Rampant Growth, Scout the City, Shamanic Revelation, Skyshroud Claim, Thirsting Roots, Track Down, Tumbleweed Rising
 
 **Lands (38).** Evolving Wilds, Fabled Passage, Terramorphic Expanse, 35 Forest
 
@@ -191,6 +192,7 @@ that:
 1 Blossoming Defense
 1 Boughside Wanderers
 1 Bugenhagen, Wise Elder
+1 Cactarantula
 1 Carnivorous Canopy
 1 Cartographer's Survey
 1 Chelonian Tackle
@@ -199,9 +201,9 @@ that:
 1 Cultivate
 1 Diplomatic Relations
 1 End-Raze Forerunners
-1 Environmental Scientist
 1 Evolving Wilds
 1 Fabled Passage
+1 Fblthp, Knows the Way
 1 Follow the Lumarets
 1 Garruk's Uprising
 1 Genesis Hydra
@@ -211,8 +213,6 @@ that:
 1 Greenhouse Propagator
 1 Hard-Hitting Question
 1 Hardbristle Bandit
-1 Harmonize
-1 Hornet Queen
 1 Infestation Expert
 1 Knockout Maneuver
 1 Kura, the Boundless Sky
@@ -224,6 +224,7 @@ that:
 1 Noxious Newt
 1 Overwhelming Stampede
 1 Paladin of Predation
+1 Paradise Druid
 1 Pick Your Poison
 1 Pothole Mole
 1 Rampant Growth
@@ -242,12 +243,12 @@ that:
 1 Terramorphic Expanse
 1 Thirsting Roots
 1 Thrashing Brontodon
-1 Tireless Tracker
 1 Titania, Protector of Argoth
 1 Topiary Lecturer
 1 Track Down
 1 Tumbleweed Rising
 1 Vinelasher Adept
 1 Vorinclex, Monstrous Raider
+1 Worldly Tutor
 35 Forest
 ```

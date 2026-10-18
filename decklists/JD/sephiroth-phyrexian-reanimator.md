@@ -7,7 +7,7 @@ Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, an
 | | |
 |---|---|
 | **Commander** | Sephiroth, the Savior / Atraxa, Grand Unifier ({3}{G}{W}{U}{B}, 7/7, white-blue-black-green) |
-| **Bracket** | 4 (8 Game Changers: Demonic Tutor, Farewell, Aura Shards, Gifts Ungiven, Consecrated Sphinx, Force of Will, Teferi's Protection, Worldly Tutor) |
+| **Bracket** | 4 (3 Game Changers: Demonic Tutor, Gifts Ungiven, Aura Shards; the bracket comes from the four tutorable infinite loops, not the count) |
 | **Simulator** | deck key `seph`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -20,11 +20,11 @@ She is a 7/7 that can be cast for seven, and one entry is a whole hand: up to on
 
 ### Game plan
 
-**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana. **Worldly Tutor** (an instant for {G}) can put Birds of Paradise or Sakura-Tribe Elder on top of the library for the next turn, or whichever creature the board calls for. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
+**Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana. **Tireless Tracker** ({2}{G}) turns every land drop into a Clue, and Sakura-Tribe Elder, Evolving Wilds and Fabled Passage add extra land drops, so it draws cards on its own. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
 
-**Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Consecrated Sphinx, Sheoldred, or Sephiroth herself. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
+**Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Hornet Queen, Sheoldred, or Sephiroth herself. **Hornet Queen** ({4}{G}{G}{G}, flying, deathtouch) enters with four 1/1 flying deathtouch Insects, a wall of blockers that also stops fliers, and every blink of her makes four more. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
 
-**Late game.** Hold up Force of Will, Swan Song, Ephemerate, Galadriel's Dismissal and Teferi's Protection, assemble a loop, and use the grind engines (Muldrotha, Sheoldred, Whispering One, the end-step flickers) to keep the pressure on if the first plan is answered. Sheoldred's, Archon's and Elesh Norn's drains and edicts keep the table small while you do it.
+**Late game.** Hold up Arcane Denial, Swan Song, Ephemerate and Galadriel's Dismissal, keep Austere Command as the reset, assemble a loop, and use the grind engines (Muldrotha, Sheoldred, Whispering One, the end-step flickers) to keep the pressure on if the first plan is answered. Sheoldred's, Archon's and Elesh Norn's drains and edicts keep the table small while you do it.
 
 ### Fill the yard
 
@@ -36,7 +36,7 @@ Five reanimation spells: **Reanimate** ({B}, lose life equal to the card's mana 
 
 ### The card-advantage layer
 
-**Consecrated Sphinx** draws you two every time an opponent draws, and **Phyrexian Arena** adds a card every upkeep for 1 life. **Sheoldred, the Apocalypse** gains you 2 life for every card you draw and makes each opponent lose 2 whenever they draw, so with her out the Arena's draws gain more life than they cost, and a Sphinx draw is worth 4 life.
+**Phyrexian Arena** adds a card every upkeep for 1 life, **Harmonize** ({2}{G}{G}) draws three, and **Tireless Tracker**'s Clues draw one each for {2} (the Tracker grows with every Clue sacrificed). **Sheoldred, the Apocalypse** gains you 2 life for every card you draw and makes each opponent lose 2 whenever they draw, so with her out the Arena's draws gain more life than they cost, and Harmonize is worth 6 life.
 
 **Displacer Kitten** blinks a nonland permanent every time you cast a noncreature spell. Blink Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Kitchen Finks for 2 more life, or Grave Titan for two more Zombies.
 
@@ -56,7 +56,7 @@ She is a 6/6 for six and a fine reanimation target herself.
 
 **The flicker package re-buys enter triggers every turn.** **Teleportation Circle** and **Conjurer's Closet** each exile a creature you control at the beginning of your end step and return it: Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Grave Titan for two more Zombies. Teleportation Circle can take an artifact instead, so with no creature worth it, flicker a tapped Sol Ring or Signet and it comes back untapped for the opponents' turns. **Restoration Angel** is a 3/4 flash flier that does the same once at instant speed: at the end of an opponent's turn for value, or in response to removal or theft aimed at a bomb (the spell fizzles, as with Ephemerate). It can't flicker an Angel, so not Sephiroth herself. **Flickering Hound** does it on your turn instead: whenever you cast a creature spell (Muldrotha's recasts count), it flickers another creature you control, Sephiroth included. Don't flicker a creature carrying +1/+1 counters or Equipment unless its enter trigger is worth more than what it loses.
 
-**Force of Will** counters anything for free (exile a blue card from hand and pay 1 life; the blue cards here are Consecrated Sphinx, Displacer Kitten, Gifts Ungiven, Swan Song, Muldrotha and the commander), so it can protect a combo turn with no mana up. **Swan Song** ({U}) counters an enchantment, instant or sorcery (it gives that player a 2/2 flying Bird, so it is best used on a wipe or a tutor). **Galadriel's Dismissal** ({W}) phases out one creature: protection from removal for the turn. Kicked, it phases out every creature a target player controls, which stops an attack or a one-sided fight for a turn. **Teferi's Protection** is the answer to a wipe or a lethal swing: until your next turn your life can't change and you have protection from everything, and all your permanents phase out, so a board wipe misses them and they come back on your untap. It also phases out your lands, so cast it only when it saves the game or your board. **Grand Abolisher** ({W}{W}) stops opponents casting spells or using creature, artifact and enchantment abilities during your turn.
+**Arcane Denial** ({1}{U}) counters any spell. Its controller may draw up to two cards at the next upkeep and you draw one, so save it for the spell that matters (a wipe, Rest in Peace, a counter aimed at your combo). **Swan Song** ({U}) counters an enchantment, instant or sorcery (it gives that player a 2/2 flying Bird, so it is best used on a wipe or a tutor). **Galadriel's Dismissal** ({W}) phases out one creature: protection from removal for the turn. Kicked, it phases out every creature a target player controls, which stops an attack or a one-sided fight for a turn. **Grand Abolisher** ({W}{W}) stops opponents casting spells or using creature, artifact and enchantment abilities during your turn.
 
 ### The stax layer is what makes it unfair
 
@@ -64,11 +64,11 @@ Elesh Norn, Grand Cenobite shrinks every opposing creature by 2/2 and grows your
 
 ### Removal
 
-Swords to Plowshares, Path to Exile, Anguished Unmaking ({1}{W}{B}, exile any nonland permanent, you lose 3) and Assassin's Trophy ({B}{G}, destroy any permanent an opponent controls) handle one problem each. **Summon: Bahamut** is a 9/9 flying Saga creature for {9}, and a reanimation target as much as a spell. Its chapters I and II each destroy a nonland permanent, III draws two, and IV, **Mega Flare**, deals damage equal to the total mana value of your other permanents to each opponent before it's sacrificed. Flickering it starts it over at chapter I with two more destroys. **Karn's Bastion** ({4}, {T}: proliferate) moves Bahamut's lore toward Mega Flare and grows +1/+1 counters, such as Triskelion's. **Toxic Deluge** ({2}{B}, pay X life) and **Farewell** ({4}{W}{W}: exile all artifacts, creatures, enchantments and/or graveyards) are the resets. Farewell can also exile the table's graveyards, which keeps their own reanimation out of the game, and you choose which modes, so you can leave your own board. Bojuka Bog exiles a graveyard when it enters.
+Swords to Plowshares, Path to Exile, Anguished Unmaking ({1}{W}{B}, exile any nonland permanent, you lose 3) and Assassin's Trophy ({B}{G}, destroy any permanent an opponent controls) handle one problem each. **Summon: Bahamut** is a 9/9 flying Saga creature for {9}, and a reanimation target as much as a spell. Its chapters I and II each destroy a nonland permanent, III draws two, and IV, **Mega Flare**, deals damage equal to the total mana value of your other permanents to each opponent before it's sacrificed. Flickering it starts it over at chapter I with two more destroys. **Karn's Bastion** ({4}, {T}: proliferate) moves Bahamut's lore toward Mega Flare and grows +1/+1 counters, such as Triskelion's. **Toxic Deluge** ({2}{B}, pay X life) and **Austere Command** ({4}{W}{W}) are the resets. Austere Command is "choose two": destroy all artifacts, all enchantments, all creatures with mana value 3 or less, or all creatures with mana value 4 or greater. Pick the two that hit the table and spare your own pieces (for example, big creatures and artifacts when your board is small creatures and enchantments), and reanimation rebuilds afterwards. Bojuka Bog exiles a graveyard when it enters.
 
 ### Mana, lands and utility
 
-Chromatic Lantern lets every land tap for any colour. Exotic Orchard, Command Tower and Ash Barrens (basic landcycling) fix colours; Evolving Wilds and Fabled Passage fetch basics, and Muldrotha can replay them. Strip Mine is optional land destruction. Treno, Dark City is a tapped blue-black Town. Blood Artist and Zulaport Cutthroat drain whenever creatures die, so Dread Return's flashback, Grave Pact, Skullclamp and the loops all become life loss for the table. Viscera Seer is a one-mana free sacrifice outlet. Mikaeus, Kitchen Finks, Melira, Triskelion, Nim Deathmantle, Ashnod's Altar, Altar of Dementia and Grave Titan are the combo pieces below. Archon of Cruelty and Sheoldred, Whispering One are bombs to reanimate rather than hard-cast.
+Chromatic Lantern lets every land tap for any colour. Exotic Orchard, Command Tower and Ash Barrens (basic landcycling) fix colours; Evolving Wilds and Fabled Passage fetch basics, and Muldrotha can replay them. Strip Mine is optional land destruction. Treno, Dark City is a tapped blue-black Town. Blood Artist and Zulaport Cutthroat drain whenever creatures die, so Dread Return's flashback, Grave Pact, Skullclamp and the loops all become life loss for the table. Viscera Seer is a one-mana free sacrifice outlet. Mikaeus, Kitchen Finks, Melira, Triskelion, Nim Deathmantle, Ashnod's Altar, Altar of Dementia and Grave Titan are the combo pieces below. Archon of Cruelty, Hornet Queen and Sheoldred, Whispering One are bombs to reanimate rather than hard-cast.
 
 ### How it wins
 
@@ -80,11 +80,11 @@ Four infinite loops (see Key lines), plus fair lines when the loops are answered
 
 ### Weak spots and how to play around them
 
-- **Graveyard and sacrifice hate.** Rest in Peace stops every loop. Counter it with Force of Will or Swan Song, or remove it with Aura Shards (once a creature of yours enters), Anguished Unmaking or Assassin's Trophy.
+- **Graveyard and sacrifice hate.** Rest in Peace stops every loop. Counter it with Arcane Denial or Swan Song, or remove it with Aura Shards (once a creature of yours enters), Austere Command, Anguished Unmaking or Assassin's Trophy.
 - **Torpor Orb and similar** shut off enter-the-battlefield payoffs. Remove them with Aura Shards, Anguished Unmaking or Assassin's Trophy first.
 - **Exile-based removal and theft** on a reanimated bomb: keep Ephemerate, Restoration Angel or Galadriel's Dismissal up for it.
-- **Wipes**: Teferi's Protection, or hold the reanimation spell until after the wipe.
-- **Fast combo decks.** The deck is slower than the very fastest decks; use the free counters (Force of Will, Swan Song) and the cheap tutors to win first or stop them.
+- **Wipes**: Arcane Denial, Ephemerate on the key creature, or hold the reanimation spell until after the wipe.
+- **Fast combo decks.** The deck is slower than the very fastest decks; use the cheap counters (Arcane Denial, Swan Song) and the cheap tutors to win first or stop them.
 - **Colour screw.** The commander costs four colours and the combo pieces need black, white and green. Count coloured sources for what you are about to cast and use Chromatic Lantern, Birds of Paradise and Exotic Orchard.
 
 ## Key lines
@@ -115,7 +115,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 **Shared weak points.** Mikaeus is in two loops and Finks is in two, so Melira keeps Finks alive as a combo if Mikaeus is answered, and Triskelion covers you if Finks is. Graveyard and sacrifice hate hurts all four, since every loop relies on creatures dying and returning: Rest in Peace stops them outright, and a Torpor Orb-style card (no ETB triggers) shuts off the payoffs.
 
-**Protect the combo turn.** Resolve **Grand Abolisher** first: opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments during your turn. **Force of Will**, **Swan Song**, **Galadriel's Dismissal**, and **Ephemerate** cover what Abolisher doesn't, and Ephemerate also works on opponents' turns, when Abolisher does nothing.
+**Protect the combo turn.** Resolve **Grand Abolisher** first: opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments during your turn. **Arcane Denial**, **Swan Song**, **Galadriel's Dismissal**, and **Ephemerate** cover what Abolisher doesn't, and Ephemerate also works on opponents' turns, when Abolisher does nothing.
 
 **Openings.**
 - Turn 1: Stitcher's Supplier, Entomb, Birds of Paradise, or Sol Ring. Turn 2: Sol Ring plus a Talisman or Signet puts Reanimate or Animate Dead in range for turn 3.
@@ -126,7 +126,7 @@ The deck has **four infinite loops**. The two Kitchen Finks loops need a free sa
 
 ## Tutor targets by board state
 
-Four tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard), and **Worldly Tutor** (a creature card to the top of the library, for {G} at instant speed).
+Three tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand) and **Gifts Ungiven** (four different cards, opponent splits them between your hand and graveyard).
 
 - **One combo piece away → tutor it.** With Mikaeus out, Demonic Tutor for Triskelion (no outlet needed), or for Kitchen Finks if a sac outlet is out too. With Melira and an outlet out, tutor Finks. With Ashnod's Altar and Grave Titan out, tutor Nim Deathmantle. Resolve Grand Abolisher first if you can.
 - **Empty yard, reanimation spell already in hand → tutor Entomb (or Buried Alive).** Demonic Tutor into Entomb on turn two sets up Reanimate on turn three.
@@ -134,13 +134,13 @@ Four tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand), **Gift
 - **Want both halves at once → Gifts Ungiven** for a reanimation target plus reanimation spells, or for Triskelion, Kitchen Finks, Melira, and a reanimation spell — any split between hand and graveyard still leaves you a working loop.
 - **Loop assembled, need to close → tutor the payoff.** Blood Artist or Zulaport Cutthroat (or Altar of Dementia as the outlet) turns loops 2–4 into a kill; Yawgmoth's Will once the yard is deep.
 - **Long game, combo answered → Muldrotha.** She replays the loop pieces, Aura Shards, and a reanimation spell from the graveyard every turn.
-- **Under pressure → tutor interaction.** Toxic Deluge or Farewell to reset, or Swords / Path / Anguished Unmaking / Assassin's Trophy for one problem.
+- **Under pressure → tutor interaction.** Toxic Deluge or Austere Command to reset, or Swords / Path / Anguished Unmaking / Assassin's Trophy for one problem.
 
 Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also work as combo tutors here: they put a creature piece in the yard for Reanimate, Animate Dead, Necromancy, or Dread Return.
 
 ## Mana and consistency
 
-The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The nonbasics are untapped shock and pain lands for fixing (Hallowed Fountain, Overgrown Tomb, Temple Garden, Watery Grave; Brushland, Caves of Koilos, Underground River, Yavimaya Coast), check lands (Glacial Fortress, Hinterland Harbor, Isolated Chapel, Sunpetal Grove, Woodland Cemetery), tapped lands (Arcane Sanctum, Treno, Dark City, Bojuka Bog), Command Tower, Exotic Orchard, Ash Barrens, Evolving Wilds, Fabled Passage, Strip Mine and Karn's Bastion. Arcane Sanctum gives blue for Force of Will and Consecrated Sphinx. Karn's Bastion is a colourless land that proliferates.
+The list is exactly 100 cards. 37 lands: 23 nonbasic plus 6 Swamp, 3 Forest, 3 Plains, 2 Island (14 basics). The nonbasics are untapped shock and pain lands for fixing (Hallowed Fountain, Overgrown Tomb, Temple Garden, Watery Grave; Brushland, Caves of Koilos, Underground River, Yavimaya Coast), check lands (Glacial Fortress, Hinterland Harbor, Isolated Chapel, Sunpetal Grove, Woodland Cemetery), tapped lands (Arcane Sanctum, Treno, Dark City, Bojuka Bog), Command Tower, Exotic Orchard, Ash Barrens, Evolving Wilds, Fabled Passage, Strip Mine and Karn's Bastion. Arcane Sanctum gives blue for Arcane Denial, Swan Song and Gifts Ungiven. Karn's Bastion is a colourless land that proliferates.
 
 Mana: five rocks (Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern), and two creatures (Birds of Paradise, Sakura-Tribe Elder). The deck cheats its threats in, so it has less ramp than a fair deck; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
 
@@ -148,21 +148,21 @@ Mana: five rocks (Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Ch
 
 **Reanimation count is five** (Reanimate, Animate Dead, Necromancy, Unburial Rites, Dread Return) plus Sheoldred, Whispering One, Yawgmoth's Will, and Muldrotha (Animate Dead or Necromancy again from the graveyard every turn). Every reanimation spell can take a legendary creature.
 
-**Card draw.** Consecrated Sphinx, Phyrexian Arena, Skullclamp, Mind Stone, Sheoldred (gain life per draw), and Atraxa's own enter trigger.
+**Card draw.** Harmonize, Tireless Tracker, Phyrexian Arena, Skullclamp, Mind Stone, Sheoldred (gain life per draw), and Atraxa's own enter trigger.
 
-**Interaction.** Swords to Plowshares, Path to Exile, Anguished Unmaking, and Assassin's Trophy for spot removal, plus two destroys from Summon: Bahamut; Aura Shards for repeatable artifact/enchantment removal; Farewell and Toxic Deluge as resets; Force of Will and Swan Song as counters; Galadriel's Dismissal, Ephemerate, Teferi's Protection, and Grand Abolisher as protection.
+**Interaction.** Swords to Plowshares, Path to Exile, Anguished Unmaking, and Assassin's Trophy for spot removal, plus two destroys from Summon: Bahamut; Aura Shards for repeatable artifact/enchantment removal; Austere Command and Toxic Deluge as resets; Arcane Denial and Swan Song as counters; Galadriel's Dismissal, Ephemerate, and Grand Abolisher as protection; Hornet Queen as a blocker wall.
 
 ## Bracket and Rule 0
 
-**Bracket 4.** Eight Game Changers: **Demonic Tutor**, **Farewell**, **Aura Shards**, **Gifts Ungiven**, **Consecrated Sphinx**, **Force of Will**, **Teferi's Protection**, and **Worldly Tutor**. Four infinite loops, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
+**Bracket 4.** Three Game Changers: **Demonic Tutor**, **Gifts Ungiven** and **Aura Shards**, which would be Bracket 3 on count alone. The deck is Bracket 4 because of its four infinite loops, including the two-card Mikaeus + Triskelion, all tutorable. Diabolic Tutor, Displacer Kitten, Grand Abolisher, Nim Deathmantle, Triskelion, Kitchen Finks, Melira, Assassin's Trophy, and Muldrotha are off-list.
 
 Disclose before the game:
 
 - **Four infinite loops:** Mikaeus + Triskelion (infinite damage, no outlet needed); Mikaeus or Melira + Kitchen Finks + a sac outlet (infinite life and deaths); Nim Deathmantle + Ashnod's Altar + Grave Titan (infinite mana, ETBs, and deaths).
-- The eight Game Changers above, especially **Consecrated Sphinx**, **Force of Will**, and **Teferi's Protection**.
+- The three Game Changers above, especially **Demonic Tutor** and **Gifts Ungiven** (tutors for the loop pieces).
 - **Grand Abolisher**, which shuts off their interaction on your turn.
 - **Yawgmoth's Will**, which can produce a long turn out of nowhere.
-- **Farewell**, and that you may include graveyards.
+- **Austere Command**, a sweeper that can hit your own board too.
 - **Strip Mine** as land kill: one-shot, or **every turn with Muldrotha** replaying it from the graveyard.
 - **Muldrotha** recasts a creature, an artifact, and an enchantment (Animate Dead, Necromancy) from your graveyard each turn.
 - The deck reanimates out of *any* graveyard, so opponents' creatures dying is relevant information for them.
@@ -173,15 +173,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sephiroth, the Savior (Atraxa, Grand Unifier)
 
-**Creatures (23).** Archon of Cruelty, Birds of Paradise, Blood Artist, Consecrated Sphinx, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Flickering Hound, Grand Abolisher, Grave Titan, Kitchen Finks, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Triskelion, Viscera Seer, Zulaport Cutthroat
+**Creatures (24).** Archon of Cruelty, Birds of Paradise, Blood Artist, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Flickering Hound, Grand Abolisher, Grave Titan, Hornet Queen, Kitchen Finks, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Tireless Tracker, Triskelion, Viscera Seer, Zulaport Cutthroat
 
 **Enchantments (7).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Teleportation Circle, Tortured Existence
 
 **Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (9).** Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Farewell, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
+**Sorceries (10).** Austere Command, Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Harmonize, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
 
-**Instants (13).** Anguished Unmaking, Assassin's Trophy, Entomb, Ephemerate, Force of Will, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection, Worldly Tutor
+**Instants (11).** Anguished Unmaking, Arcane Denial, Assassin's Trophy, Entomb, Ephemerate, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares
 
 **Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Karn's Bastion, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
 
@@ -191,6 +191,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Altar of Dementia
 1 Anguished Unmaking
 1 Animate Dead
+1 Arcane Denial
 1 Arcane Sanctum
 1 Arcane Signet
 1 Archon of Cruelty
@@ -199,6 +200,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Assassin's Trophy
 1 Atraxa, Grand Unifier
 1 Aura Shards
+1 Austere Command
 1 Birds of Paradise
 1 Blood Artist
 1 Bojuka Bog
@@ -208,7 +210,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Chromatic Lantern
 1 Command Tower
 1 Conjurer's Closet
-1 Consecrated Sphinx
 1 Demonic Tutor
 1 Diabolic Tutor
 1 Displacer Kitten
@@ -220,9 +221,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Evolving Wilds
 1 Exotic Orchard
 1 Fabled Passage
-1 Farewell
 1 Flickering Hound
-1 Force of Will
 1 Galadriel's Dismissal
 1 Gifts Ungiven
 1 Glacial Fortress
@@ -230,7 +229,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grave Pact
 1 Grave Titan
 1 Hallowed Fountain
+1 Harmonize
 1 Hinterland Harbor
+1 Hornet Queen
 1 Isolated Chapel
 1 Karn's Bastion
 1 Kitchen Finks
@@ -258,9 +259,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Swan Song
 1 Swords to Plowshares
 1 Talisman of Hierarchy
-1 Teferi's Protection
 1 Teleportation Circle
 1 Temple Garden
+1 Tireless Tracker
 1 Tortured Existence
 1 Toxic Deluge
 1 Treno, Dark City
@@ -270,7 +271,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Viscera Seer
 1 Watery Grave
 1 Woodland Cemetery
-1 Worldly Tutor
 1 Yavimaya Coast
 1 Yawgmoth's Will
 1 Zulaport Cutthroat

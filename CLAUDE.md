@@ -40,8 +40,8 @@ shell command that starts with `python`, `python3`, `pip`, `pipx` or `uv`, in ev
 ## Opponent tiers
 
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
-also exported to `data/decks.json`): yshtola and sephfs t5 (band 1);
-sheoldred, sauron and seph t3-t4 (band 2); kefka and kraum t3 (band 3); cloud, veyran and titania t1-t3 (band 4);
+also exported to `data/decks.json`): yshtola, sephfs and kraum t5 (band 1);
+sheoldred, sauron and seph t3-t4 (band 2); kefka t3 (band 3); cloud, veyran and titania t1-t3 (band 4);
 alela and galadriel t1 (Avery's). `--pool all`, `--all-decks`, `--analyze`, swap runs and
 `searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over the deck's own
 tiers (label them, e.g. "over t1-t3"). Use `--any-tier` only when JD asks for it. `--calibrate` is unchanged.
