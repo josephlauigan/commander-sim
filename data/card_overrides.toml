@@ -8451,3 +8451,7 @@ note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an oppo
 dsl = []
 status = "Partial"
 note = "enters: search for an Equipment and put it onto the battlefield (Helm first, Hammer first when a copier is out or in hand); first attack each turn: untap Godo and the Samurai, one additional combat; missing: the engine caps extra combats at four a turn, so Helm's infinite loop stops early (rust/agents/engine-needs-godo.md)"
+
+["Hammer of Nazahn"]
+status = "Full"
+note = "whenever it or another Equipment you control enters, attaches that Equipment (the AI always does) to the best creature you control (Godo first, then the strongest able to attack); +2/+0, indestructible, equip {4} from the compiled abilities"

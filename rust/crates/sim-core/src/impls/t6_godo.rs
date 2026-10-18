@@ -7,7 +7,8 @@ use crate::cards::CardDb;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::once_per_turn;
-use crate::engine::zones::{Enter, enter};
+use crate::engine::values::epow;
+use crate::engine::zones::{Enter, enter, max_by};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
 use crate::human::human_of;
@@ -128,9 +129,42 @@ fn godo_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId
     Ok(vec![])
 }
 
+
+// ================================================================== Hammer of Nazahn
+/// the creature an Equipment is attached to: Godo first (Helm's token copies the equipped creature, so Godo is the
+/// one to wear it), else the strongest creature that can attack (not summoning sick), else the strongest
+fn attach_target(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cs: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m) && owner(g, m) == p).collect();
+    max_by(&cs, |m| {
+        let godo = if name_of(g, m) == "Godo, Bandit Warlord" { 100.0 } else { 0.0 };
+        godo + if g.perm(m).sick { 0.0 } else { 10.0 } + epow(g, m) as f64
+    })
+}
+
+/// **Hammer of Nazahn** ({4} legendary Equipment): whenever Hammer or another Equipment you control enters, you may
+/// attach that Equipment to target creature you control (the AI always does, to `attach_target`); equipped creature
+/// gets +2/+0 and indestructible, equip {4} (the compiled abilities).
+fn hammer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = owner(g, src);
+    if !live(g, src) || !live(g, m) || owner(g, m) != o || !g.perm(m).cd.is_some_and(|c| is_equipment_card(g, c)) {
+        return Ok(());
+    }
+    let Some(t) = attach_target(g, o) else { return Ok(()) };
+    let name = format!("attach {} to {}", g.perm(m).name, g.perm(t).name);
+    if !trigger_window(g, o, Some(src), &name, Some(5.0))? {
+        return Ok(());
+    }
+    if live(g, m) && live(g, t) && g.is_creature(t) {
+        super::cloud::attach(g, m, t);
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
     c.attack = Some(godo_attack);
+    r.card(db, "Hammer of Nazahn")?.etb = Some(hammer_etb);
     Ok(())
 }

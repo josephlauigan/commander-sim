@@ -81,3 +81,39 @@ fn godo_attack_trigger_needs_godo_to_attack() {
     attack(&mut g, godo, P0, &[other], P1);
     assert_eq!(g.player(P0).extra_combats, 0);
 }
+
+// ======================================================== Hammer of Nazahn
+fn attached_to(g: &Game, e: PermId) -> Option<PermId> {
+    g.perm(e).attached
+}
+
+#[test]
+fn hammer_attaches_itself_when_it_enters() {
+    let mut g = tbl();
+    let t = token(&mut g, P0, 2);
+    let h = perm(&mut g, P0, "Hammer of Nazahn");
+    assert_eq!(attached_to(&g, h), Some(t), "Hammer attaches itself to a creature you control");
+    assert_eq!(sim_core::engine::values::epow(&g, t), 4, "+2/+0");
+}
+
+#[test]
+fn hammer_attaches_another_equipment_that_enters_to_godo() {
+    let mut g = tbl();
+    let other = token(&mut g, P0, 4);
+    perm(&mut g, P0, "Hammer of Nazahn");
+    let godo = perm(&mut g, P0, "Godo, Bandit Warlord"); // its fetch finds Helm, which Hammer attaches
+    let helm = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Helm of the Host")).unwrap();
+    assert_eq!(attached_to(&g, helm), Some(godo), "Godo is preferred over a bigger creature ({other:?})");
+}
+
+#[test]
+fn hammer_ignores_opponents_equipment_and_noncreature_boards() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, "Hammer of Nazahn");
+    assert_eq!(attached_to(&g, h), None, "no creature to attach to");
+    let e = perm(&mut g, P1, "Sword of Fire and Ice");
+    let t = token(&mut g, P0, 2);
+    assert_eq!(attached_to(&g, e), None);
+    assert_eq!(attached_to(&g, h), None, "an opponent's Equipment entering is not 'you control'");
+    let _ = t;
+}
