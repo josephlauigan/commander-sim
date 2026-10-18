@@ -458,3 +458,13 @@ fn final_fortune_goes_to_the_graveyard_and_the_ai_never_casts_it() {
     assert_eq!(&*dest, "gy");
     assert!(g.player(P0).alive, "nothing loses the game yet: the engine has no extra turn to end");
 }
+
+#[test]
+fn last_chance_resolves_like_final_fortune() {
+    let mut g = tbl();
+    assert_eq!(prio(&g, P0, "Last Chance"), 0);
+    let c = take(&mut g, P0, "Last Chance");
+    let f = g.registry.get(c).unwrap().resolve.unwrap();
+    assert_eq!(&*f(&mut g, P0, c, &sim_core::state::Ctx::default()).unwrap(), "gy");
+    assert!(g.player(P0).alive);
+}

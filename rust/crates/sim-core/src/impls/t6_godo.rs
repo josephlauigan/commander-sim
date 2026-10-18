@@ -608,6 +608,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Final Fortune")?;
     c.resolve = Some(extra_turn_spell);
     c.prio = Some(never_prio);
+    let c = r.card(db, "Last Chance")?;
+    c.resolve = Some(extra_turn_spell);
+    c.prio = Some(never_prio);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

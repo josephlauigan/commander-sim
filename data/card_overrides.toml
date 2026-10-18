@@ -8501,3 +8501,7 @@ note = "each spell costs {3} more to cast except during its caster's own turn (a
 ["Final Fortune"]
 status = "Partial"
 note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md)"
+
+["Last Chance"]
+status = "Partial"
+note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md, with Final Fortune)"
