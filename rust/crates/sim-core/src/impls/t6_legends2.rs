@@ -3,7 +3,7 @@
 //! no engine file is touched; what needs the engine is listed in rust/agents/engine-needs-legends2.md.
 
 use super::common::{WalkerAb, walker};
-use super::partials::{at_once, best_opp_nonland, eot_kw, first_max, on};
+use super::partials::{at_once, best_opp_creature, best_opp_nonland, eot_kw, first_max, on};
 use super::t5::is_artifact;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
@@ -11,7 +11,7 @@ use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::apply_removal;
-use crate::engine::stack::{ability_window, counter_window, trigger_window};
+use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, once_per_turn, pval, threat, untargetable};
 use crate::engine::zones::{
@@ -504,6 +504,82 @@ pub fn legolas_cast(g: &mut Game, who: PlayerId, c: CardId, t: PermId) -> Res<bo
     Ok(true)
 }
 
+// ================================================================== Colossal Skyturtle
+const SKYTURTLE: &str = "Colossal Skyturtle";
+
+fn plan(utility: f64, label: &str, f: crate::hooks::PlanFn, arg: i64) -> Opt {
+    Opt { utility, label: label.into(), act: Some(Action::Plan { f, arg }) }
+}
+
+/// the card the regrow channel returns: the most wanted nonland card in the graveyard worth keeping (40 or more)
+fn turtle_regrow_pick(g: &Game, p: PlayerId, turtle: CardId) -> Option<CardId> {
+    let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| c != turtle && !g.db.get(c).land).collect();
+    let best = first_max(&cs, |c| card_worth(g, p, c, false))?;
+    (card_worth(g, p, best, false) >= 40.0).then_some(best)
+}
+
+/// **Colossal Skyturtle** ({4}{G}{G}{U}, flying 6/5, ward {2}; the body is the card's data). Channel from the hand:
+/// {2}{G}, discard it: return target card from your graveyard to your hand (when the turtle itself can't be cast and a
+/// card worth 40+ is there); {1}{U}, discard it: return target creature to its owner's hand (the opponents' best
+/// creature when it is worth 5+). Both in a main phase.
+fn turtle_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let mut o = vec![];
+    if post.is_none() {
+        return Ok(o);
+    }
+    if can_pay(g, p, 2, "G", false)
+        && !can_pay(g, p, 4, "GGU", false)
+        && let Some(t) = turtle_regrow_pick(g, p, c)
+    {
+        let u = (card_worth(g, p, t, false) / 10.0 - 1.5).min(7.0);
+        o.push(plan(u, &format!("channel Colossal Skyturtle: {}", g.db.get(t).name), turtle_regrow_go, t.0 as i64));
+    }
+    if can_pay(g, p, 1, "U", false)
+        && let Some(t) = best_opp_creature(g, p, |_, _| true)
+        && pval(g, t) >= 5.0
+    {
+        o.push(plan(pval(g, t) - 2.0, "channel Colossal Skyturtle: bounce", turtle_bounce_go, t.0 as i64));
+    }
+    Ok(o)
+}
+
+/// pay a channel cost and discard the turtle; false when it can't be done
+fn turtle_channel(g: &mut Game, p: PlayerId, c: CardId, generic: u32, pips: &str) -> Res<bool> {
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, generic, pips, false) || !pay(g, p, generic, pips, false)? {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(p).hand, c);
+    g.player_mut(p).gy.push(c);
+    Ok(true)
+}
+
+pub fn turtle_regrow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let t = CardId(arg as u16);
+    let Some(c) = g.db.id(SKYTURTLE) else { return Ok(false) };
+    if !g.player(p).gy.contains(&t) || !turtle_channel(g, p, c, 2, "G")? {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} channels Colossal Skyturtle: returns {}", g.player(p).name, g.db.get(t).name);
+    if ability_window_card(g, p, c, "return a card from the graveyard", None, None)? && g.player(p).gy.contains(&t) {
+        remove_card(&mut g.player_mut(p).gy, t);
+        g.player_mut(p).hand.push(t);
+    }
+    Ok(true)
+}
+
+fn turtle_bounce_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let t = PermId(arg as u32);
+    let Some(c) = g.db.id(SKYTURTLE) else { return Ok(false) };
+    if !live(g, t) || !g.is_creature(t) || !turtle_channel(g, p, c, 1, "U")? {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} channels Colossal Skyturtle: bounces {}", g.player(p).name, g.perm(t).name);
+    if ability_window_card(g, p, c, "return target creature to its owner's hand", None, Some(t))? && live(g, t) {
+        apply_removal(g, Some(p), t, "bounce", None)?;
+    }
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "The Queen of Dale")?;
     c.cast = Some(queen_cast);
@@ -518,6 +594,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.leaves = Some(tataru_leaves);
     at_once(c, Event::Leaves, true);
     walker(r, db, "Teferi, Who Slows the Sunset", &TEFERI)?;
+    r.card(db, SKYTURTLE)?.hand_options = Some(turtle_options);
     let c = r.card(db, LEGOLAS)?;
     c.resolve = Some(legolas_resolve);
     c.prio = Some(zero_prio); // the AI holds it: only a response uses it (legolas_cast)

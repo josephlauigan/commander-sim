@@ -369,3 +369,49 @@ fn legolas_cast_as_a_response_costs_g() {
     assert!(sim_core::engine::values::untargetable(&g, t));
     assert!(g.player(P0).gy.contains(&c));
 }
+
+// ======================================================== Colossal Skyturtle
+fn turtle_options(g: &mut Game, c: CardId, p: PlayerId) -> Vec<Opt> {
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    f(g, c, p, Some(false)).unwrap()
+}
+
+fn run_plan(g: &mut Game, p: PlayerId, o: &Opt) -> bool {
+    act::perform(g, p, o.act.as_ref().unwrap()).unwrap()
+}
+
+#[test]
+fn skyturtle_channel_bounces_their_best_creature_for_1u() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 2, false);
+    let c = hand(&mut g, P0, &["Colossal Skyturtle"])[0];
+    assert!(turtle_options(&mut g, c, P0).is_empty(), "nothing worth bouncing");
+    let big = perm(&mut g, P1, "Lyra Dawnbringer");
+    let o = turtle_options(&mut g, c, P0);
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("bounce"));
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.perm(big).on_bf, "returned to its owner's hand");
+    assert!(g.player(P1).hand.contains(&card(&g, "Lyra Dawnbringer")));
+    assert!(g.player(P0).gy.contains(&c), "the turtle was discarded as the cost");
+    assert!(!g.player(P0).hand.contains(&c));
+}
+
+#[test]
+fn skyturtle_channel_returns_a_graveyard_card_for_2g() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 3, false);
+    let c = hand(&mut g, P0, &["Colossal Skyturtle"])[0];
+    let sol = card(&g, "Sol Ring");
+    g.player_mut(P0).gy.push(sol);
+    assert!(sim_core::impls::t6_legends2::turtle_regrow_go(&mut g, P0, sol.0 as i64).unwrap());
+    assert!(g.player(P0).hand.contains(&sol), "Sol Ring is back in hand");
+    assert!(!g.player(P0).gy.contains(&sol));
+    assert!(g.player(P0).gy.contains(&c));
+    // too little mana: nothing happens
+    let mut g = tbl();
+    let c = hand(&mut g, P0, &["Colossal Skyturtle"])[0];
+    g.player_mut(P0).gy.push(sol);
+    assert!(!sim_core::impls::t6_legends2::turtle_regrow_go(&mut g, P0, sol.0 as i64).unwrap());
+    assert!(g.player(P0).hand.contains(&c));
+}

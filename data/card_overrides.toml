@@ -8604,3 +8604,8 @@ note = "flash 3/2. Counter a spell: the card's ctr=any tag makes the engine cast
 dsl = []
 status = "Partial"
 note = "{G} instant: untap target creature, it gains reach and hexproof until end of turn (resolve hook; the AI holds the card, legolas_cast casts it as a response) (t6_legends2.rs). Missing: split second, and the 'whenever it becomes tapped, it deals damage equal to its power to up to one target creature' trigger (engine-needs-legends2.md)"
+
+["Colossal Skyturtle"]
+dsl = []
+status = "Full"
+note = "6/5 flying, ward {2} (card data); both channels from the hand through hand_options, in a main phase: {2}{G} returns the best graveyard card worth 40+ (only when the turtle itself can't be cast), {1}{U} bounces the opponents' best creature worth 5+ (t6_legends2.rs). The data's old battlefield 'discard' abilities are dropped"

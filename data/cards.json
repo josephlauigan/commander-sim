@@ -18922,45 +18922,7 @@
    "pow": 6,
    "tgh": 5,
    "bomb": 6,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2G",
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "regrow",
-       "filter": {},
-       "from": "yours"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1U",
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "bounce",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "channel",
@@ -18974,7 +18936,7 @@
    "ward": 2,
    "identity": "GU",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 7,
