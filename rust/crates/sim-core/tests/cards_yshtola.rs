@@ -739,3 +739,13 @@ fn teferis_protection_is_not_spent_on_one_removal_spell() {
     assert!(!saved && !g.player(P0).life_locked, "one small piece of a big board: kept for the wipe");
     assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Teferi's Protection"));
 }
+
+#[test]
+fn an_instant_tutor_finds_the_x_drain_when_it_kills() {
+    let mut g = three();
+    lands(&mut g, P0, "Swamp", 9, false);
+    g.player_mut(P1).life = 6;
+    g.player_mut(P2).life = 6;
+    let pick = ai::tutor_pick(&g, P0, "is").unwrap(); // Mystical Tutor: instants and sorceries only
+    assert!(["Debt to the Deathless", "Exsanguinate"].contains(&&*g.db.get(pick).name), "{}", g.db.get(pick).name);
+}
