@@ -287,6 +287,45 @@ fn needle_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
+
+// ================================================================== Chalice of the Void
+/// the X the AI casts Chalice of the Void for: one, the stax pilot's usual setting (it stops Sol Ring, the one-mana
+/// Moxen, Mana Vault ...; the spec's line D). The card costs {X}{X}, so two mana.
+const CHALICE_X: i32 = 1;
+
+/// the charge counters on a Chalice (`DataKey::Charge`)
+pub fn chalice_counters(g: &Game, m: PermId) -> i32 {
+    g.perm(m).data.int(DataKey::Charge) as i32
+}
+
+/// {X}{X} with X fixed at one: two generic mana (the data has no mana cost for it)
+fn chalice_cost(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    2 * CHALICE_X
+}
+
+/// enters with X charge counters
+fn chalice_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src {
+        g.perm_mut(src).data.set(DataKey::Charge, Val::Int(CHALICE_X as i64));
+        crate::glog!(g, "    Chalice of the Void enters with {} charge counter(s)", CHALICE_X);
+    }
+    Ok(())
+}
+
+/// **Chalice of the Void** ({X}{X} artifact): enters with X charge counters; whenever a player casts a spell with
+/// mana value equal to the number of charge counters, counter that spell. Modeled as a lock like Vexing Bauble's
+/// (`can_cast`, `t6_godo.rs`): nobody can cast a nonland spell whose mana value equals the counters. Partial: X is
+/// always 1 (the engine has no X choice for a card with no X tag, and the data gives it no mana cost; `self_cost`
+/// makes it cost {2}); the real card lets the cast happen and counters it (cast triggers happen, the card goes to the
+/// graveyard, a free alternative cost is caught too), which needs a counter-on-cast hook (engine-needs-stax.md).
+fn chalice_can_cast(g: &Game, src: Src, _p: PlayerId, c: CardId, _zone: Sym) -> bool {
+    let d = g.db.get(c);
+    if !g.perm(src).on_bf || d.land {
+        return true;
+    }
+    d.cmc as i32 != chalice_counters(g, src)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Silence")?;
     c.resolve = Some(silence_resolve);
@@ -312,5 +351,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Pithing Needle")?;
     c.etb = Some(needle_etb);
     *c = c.at_once(Event::Etb);
+    let c = r.card(db, "Chalice of the Void")?;
+    c.etb = Some(chalice_etb);
+    *c = c.at_once(Event::Etb);
+    c.can_cast = Some(chalice_can_cast);
+    c.self_cost = Some(chalice_cost);
     Ok(())
 }

@@ -8663,3 +8663,7 @@ note = "the {1}-more tax per other spell the caster cast this turn is exact; lan
 ["Pithing Needle"]
 status = "Partial"
 note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it; the engine's activation checks do not ask the Needle yet, so no ability is stopped (rust/agents/engine-needs-stax.md)"
+
+["Chalice of the Void"]
+status = "Partial"
+note = "X is fixed at 1 (costs {2}, one charge counter); the counter is a lock like Vexing Bauble's: nobody can cast a nonland spell with mana value 1 (the card stays in hand; no cast triggers, free costs not caught); needs the engine's counter-on-cast hook and an X choice (rust/agents/engine-needs-stax.md)"
