@@ -78,8 +78,8 @@ fn godo_wants(g: &Game, p: PlayerId) -> Option<&'static str> {
 /// **Godo, Bandit Warlord** ({5}{R}, 3/3, legendary Human Barbarian): when Godo enters (the card or Helm's token
 /// copy), search the library for an Equipment, put it onto the battlefield, shuffle (the enter triggers of that
 /// Equipment, Hammer's attach, run as it enters). Whenever Godo attacks for the first time each turn, untap it and
-/// every Samurai, and there is an additional combat phase (`extra_combats`, which the engine caps at four combats a
-/// turn: Godo's loop needs more, see engine-needs-godo.md).
+/// every Samurai, and there is an additional combat phase (`extra_combats`; the engine caps a turn only at 200 combat
+/// phases, so Godo + Helm of the Host runs until the table is dead).
 fn godo_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src || !live(g, src) {
         return Ok(());
@@ -202,23 +202,23 @@ fn theft_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 
 // ================================================================== Sting, the Glinting Dagger
 /// **Sting, the Glinting Dagger** ({2} legendary Equipment): equipped creature gets +1/+1 and haste, equip {2} (the
-/// compiled abilities); at the beginning of each combat, untap the equipped creature (modeled for its controller's
-/// combat, through `combat_start`, which the engine runs after attackers are chosen; so an attacking Godo untaps at
-/// once and the extra-combat untap is already the engine's). Missing, as engine needs: the beginning of an
-/// opponent's combat, and "first strike while blocking or blocked by a Goblin or Orc".
-fn sting_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
-    if owner(g, src) != p || !live(g, src) {
-        return Ok(vec![]);
+/// compiled abilities); at the beginning of each combat (every player's, through the engine's `each_combat` event,
+/// before attackers are declared and also when nobody attacks), untap the equipped creature; its controller decides.
+/// Missing, as an engine need: "first strike while blocking or blocked by a Goblin or Orc".
+fn sting_combat(g: &mut Game, src: Src, _p: PlayerId) -> Res {
+    if !live(g, src) {
+        return Ok(());
     }
+    let p = owner(g, src);
     let Some(t) = g.perm(src).attached.filter(|&t| live(g, t) && g.is_creature(t) && g.perm(t).tapped) else {
-        return Ok(vec![]);
+        return Ok(());
     };
     let name = format!("untap {}", g.perm(t).name);
     if trigger_window(g, p, Some(src), &name, Some(3.0))? && live(g, t) {
         g.perm_mut(t).tapped = false;
         crate::glog!(g, "    Sting untaps {}", g.perm(t).name);
     }
-    Ok(vec![])
+    Ok(())
 }
 
 // ================================================================== Goblin Welder / Goblin Engineer
@@ -593,7 +593,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Magnetic Theft")?;
     c.resolve = Some(theft_resolve);
     c.prio = Some(theft_prio);
-    r.card(db, "Sting, the Glinting Dagger")?.combat_start = Some(sting_combat);
+    r.card(db, "Sting, the Glinting Dagger")?.each_combat = Some(sting_combat);
     r.card(db, "Goblin Welder")?.options = Some(welder_options);
     super::common::walker(r, db, "Tezzeret, Cruel Captain", &TEZZERET)?;
     r.card(db, "Tezzeret, Cruel Captain")?.etb = Some(tez_etb);

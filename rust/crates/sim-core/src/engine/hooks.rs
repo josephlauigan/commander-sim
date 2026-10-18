@@ -226,6 +226,7 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
             g.new_attackers.extend(made);
             Ok(())
         }
+        (Event::EachCombat, Call::Player { p }) => imp.each_combat.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::CardsToGy, Call::Cards { p, cards }) => imp.cards_to_gy.map_or(Ok(()), |f| f(g, src, *p, cards)),
         (e, c) => panic!("hook call {e:?} with {c:?}: no such pairing"),
     }

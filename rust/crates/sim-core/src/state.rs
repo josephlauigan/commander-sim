@@ -1019,6 +1019,8 @@ pub struct Game {
     pub blocking: Vec<PermId>,
     /// a fog this turn (Spore Frog): no combat damage
     pub fog: Option<TurnStamp>,
+    /// "end the combat phase" (Mandate of Peace) was cast: the current combat skips its remaining steps (cleared by `combat`)
+    pub end_combat: bool,
     /// Arachnogenesis: combat damage from non-Spider creatures is prevented this turn
     pub fog_spiders: Option<TurnStamp>,
     /// day and night (Infestation Expert): 0 neither, 1 day, 2 night
@@ -1197,6 +1199,7 @@ impl Game {
             selfpt: false,
             blocking: vec![],
             fog: None,
+            end_combat: false,
             fog_spiders: None,
             day_night: 0,
             dn_last: None,

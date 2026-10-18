@@ -41,6 +41,7 @@ pub enum Event {
     Dies,
     Discard,
     Draw,
+    EachCombat,
     EndStep,
     Etb,
     ExiledFromBf,
@@ -103,7 +104,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 78] = [
+pub const EVENTS: [(Event, &str); 79] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -122,6 +123,7 @@ pub const EVENTS: [(Event, &str); 78] = [
     (Event::Dies, "dies"),
     (Event::Discard, "discard"),
     (Event::Draw, "draw"),
+    (Event::EachCombat, "each_combat"),
     (Event::EndStep, "end_step"),
     (Event::Etb, "etb"),
     (Event::ExiledFromBf, "exiled_from_bf"),
@@ -185,7 +187,7 @@ pub const EVENTS: [(Event, &str); 78] = [
 ];
 
 /// Python's `engine.TRIGGER_EVENTS`
-pub const TRIGGER_EVENTS: [Event; 24] = [
+pub const TRIGGER_EVENTS: [Event; 25] = [
     Event::Attack,
     Event::Blocks,
     Event::CardsToGy,
@@ -197,6 +199,7 @@ pub const TRIGGER_EVENTS: [Event; 24] = [
     Event::Dies,
     Event::Discard,
     Event::Draw,
+    Event::EachCombat,
     Event::EndStep,
     Event::Etb,
     Event::ExiledFromBf,
@@ -339,6 +342,8 @@ pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::C
 pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);
 /// combat_start(g, src, p): the beginning of p's combat (Helm of the Host); returns new attacking creatures
 pub type CombatStartFn = fn(&mut Game, Src, PlayerId) -> Res<Vec<PermId>>;
+/// each_combat(g, src, p): the beginning of combat on p's turn, for every player's combat (Sting, the Glinting Dagger)
+pub type EachCombatFn = fn(&mut Game, Src, PlayerId) -> Res;
 /// cards_to_gy(g, src, p, cards): these cards of p's are going to the graveyard (milled, discarded)
 pub type CardsToGyFn = fn(&mut Game, Src, PlayerId, &[CardId]) -> Res;
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
@@ -439,6 +444,8 @@ pub struct CardImpl {
     pub creature_to_gy: Option<LeavesFn>,
     pub copycast: Option<CopycastFn>,
     pub combat_start: Option<CombatStartFn>,
+    /// each_combat: fires at the start of every combat phase, before attackers are declared, also when nobody attacks
+    pub each_combat: Option<EachCombatFn>,
     pub cards_to_gy: Option<CardsToGyFn>,
     /// monarch(g, src, p): p became the monarch (run at once: not a triggered event; Palace Jailer)
     pub monarch: Option<PlayerFn>,
@@ -583,6 +590,7 @@ impl CardImpl {
             Event::Copycast => self.copycast.is_some(),
             Event::Crew => self.crew.is_some(),
             Event::CombatStart => self.combat_start.is_some(),
+            Event::EachCombat => self.each_combat.is_some(),
             Event::CardsToGy => self.cards_to_gy.is_some(),
             Event::Monarch => self.monarch.is_some(),
             Event::ExiledFromBf => self.exiled_from_bf.is_some(),

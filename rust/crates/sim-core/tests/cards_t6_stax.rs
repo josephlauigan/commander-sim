@@ -102,7 +102,7 @@ fn chant_without_a_target_picks_the_opponent_with_most_cards() {
 
 // ======================================================== Mandate of Peace
 #[test]
-fn mandate_locks_opponents_and_ends_combat_damage() {
+fn mandate_locks_opponents_and_ends_the_combat_phase() {
     let mut g = tbl();
     g.active = Some(P0);
     let atk = token(&mut g, P0, 3);
@@ -113,7 +113,7 @@ fn mandate_locks_opponents_and_ends_combat_damage() {
     assert!(sim_core::impls::t6_stax::cast_lock(&g, PlayerId(2)));
     assert!(!sim_core::impls::t6_stax::cast_lock(&g, P0));
     assert!(!can_cast(&g, P1, "Lightning Bolt"));
-    assert_eq!(g.fog, Some(g.turn_stamp()), "no combat damage the rest of the turn");
+    assert!(g.end_combat, "the combat phase ends: the engine skips the rest of it");
 }
 
 #[test]

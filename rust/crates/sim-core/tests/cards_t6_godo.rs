@@ -154,23 +154,24 @@ fn magnetic_theft_needs_a_creature_and_an_equipment() {
 }
 
 // ======================================================== Sting, the Glinting Dagger
-fn combat_start(g: &mut Game, src: PermId, p: PlayerId) -> Vec<PermId> {
+fn each_combat(g: &mut Game, src: PermId, p: PlayerId) {
     let c = g.perm(src).cd.unwrap();
-    g.registry.get(c).unwrap().combat_start.unwrap()(g, src, p).unwrap()
+    g.registry.get(c).unwrap().each_combat.unwrap()(g, src, p).unwrap()
 }
 
 #[test]
-fn sting_untaps_the_equipped_creature_at_the_beginning_of_its_controllers_combat() {
+fn sting_untaps_the_equipped_creature_at_the_beginning_of_every_combat() {
     let mut g = tbl();
     let t = token(&mut g, P0, 2);
     let s = perm(&mut g, P0, "Sting, the Glinting Dagger");
     g.perm_mut(s).attached = Some(t);
     assert_eq!(sim_core::engine::values::epow(&g, t), 3, "+1/+1");
     g.perm_mut(t).tapped = true;
-    assert!(combat_start(&mut g, s, P1).is_empty());
-    assert!(g.perm(t).tapped, "only at its controller's combat (an opponent's combat is an engine need)");
-    assert!(combat_start(&mut g, s, P0).is_empty());
-    assert!(!g.perm(t).tapped, "untapped");
+    each_combat(&mut g, s, P1);
+    assert!(!g.perm(t).tapped, "untapped at an opponent's combat too");
+    g.perm_mut(t).tapped = true;
+    each_combat(&mut g, s, P0);
+    assert!(!g.perm(t).tapped, "untapped at its controller's combat");
 }
 
 #[test]
@@ -179,7 +180,7 @@ fn sting_unattached_does_nothing() {
     let t = token(&mut g, P0, 2);
     let s = perm(&mut g, P0, "Sting, the Glinting Dagger");
     g.perm_mut(t).tapped = true;
-    combat_start(&mut g, s, P0);
+    each_combat(&mut g, s, P0);
     assert!(g.perm(t).tapped);
 }
 
