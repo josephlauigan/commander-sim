@@ -256,6 +256,26 @@ fn ogre_tap(g: &mut Game, p: PlayerId, m: PermId, used: u32) -> Res {
     Ok(())
 }
 
+// ================================================================== _____ Goblin
+/// the red mana the name sticker makes: one per unique vowel (A, E, I, O, U, Y) on it. The sticker sheets are chosen
+/// before the game and the sim has no sheets, so it assumes the Tier 6 primer's guaranteed floor of four unique
+/// vowels (the best nine sheets give at least {R}{R}{R}{R}).
+const GOBLIN_VOWELS: u32 = 4;
+
+/// **_____ Goblin** ({2}{R}, 2/2): when it enters, you may put a name sticker on it; add {R} for each unique vowel on
+/// the sticker (Approximate: always four, see `GOBLIN_VOWELS`; the mana floats as red).
+fn goblin_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if trigger_window(g, o, Some(src), "put a name sticker on it, add R for each unique vowel", None)? {
+        g.player_mut(o).floating.r += GOBLIN_VOWELS;
+        crate::glog!(g, "    {} adds {} red (_____ Goblin's name sticker)", g.player(o).name, GOBLIN_VOWELS);
+    }
+    Ok(())
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -296,6 +316,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Treasonous Ogre")?;
     c.extra_mana = Some(ogre_mana);
     c.on_tap_perm = Some(ogre_tap);
+    r.card(db, "_____ Goblin")?.etb = Some(goblin_etb);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);

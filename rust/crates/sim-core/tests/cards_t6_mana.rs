@@ -239,3 +239,13 @@ fn treasonous_ogre_has_no_proactive_floating_mana_ability() {
     let o = dsl::ability_options(&mut g, P0, true).unwrap();
     assert!(o.iter().all(|x| !x.label.contains("Treasonous")), "no pay-3-life option for the AI");
 }
+
+// ======================================================== _____ Goblin
+#[test]
+fn blank_goblin_adds_red_when_it_enters() {
+    let mut g = tbl();
+    assert_eq!(g.player(P0).floating.r, 0);
+    perm(&mut g, P0, "_____ Goblin");
+    assert_eq!(g.player(P0).floating.r, 4, "four unique vowels on the sticker");
+    assert_eq!(g.player(P1).floating.r, 0);
+}
