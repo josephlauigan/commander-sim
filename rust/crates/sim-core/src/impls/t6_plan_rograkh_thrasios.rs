@@ -165,7 +165,8 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let accel = accel + usize::from(names.contains(&"Ancient Tomb"));
     let engine = names.iter().filter(|n| ENGINE.contains(n)).count();
     let reactive = names.iter().filter(|n| REACTIVE.contains(n)).count();
-    let other = hand.len() - lands - accel - reactive;
+    // Ancient Tomb counts as a land and as acceleration, so the sum can pass the hand size
+    let other = hand.len().saturating_sub(lands + accel + reactive);
     // Ancient Tomb / Gemstone Caverns / Cradle are lands (counted above); 6+ lands is flood
     if lands >= 6 {
         return Some(false);

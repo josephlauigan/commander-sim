@@ -104,3 +104,15 @@ fn opening_hands_are_kept_like_a_cedh_deck_keeps() {
     eprintln!("kept {kept} of {n}");
     assert!(kept * 100 >= n * 70, "kept only {kept} of {n}");
 }
+
+#[test]
+fn ancient_tomb_with_six_fast_mana_and_reactive_cards_does_not_overflow() {
+    // Ancient Tomb counts as a land and as acceleration; the "other cards" count used to go below zero (a panic in
+    // Tier 6 game 59)
+    let mut g = tbl();
+    set_hand(
+        &mut g,
+        &["Ancient Tomb", "Sol Ring", "Mana Vault", "Mox Diamond", "Force of Will", "Force of Negation", "Swan Song"],
+    );
+    assert!(t6_plans::keep(&g, P0).is_some());
+}
