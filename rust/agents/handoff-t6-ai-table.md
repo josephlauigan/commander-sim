@@ -8,3 +8,6 @@ go_now -> combos.rs combo_options. Needs compile check (a first release build is
 Step 1 committed (plan slots). Baseline t6 300 games running -> scratchpad base-t6.txt. Next: ai/t6_table.rs (archenemy, counters, hold-up, go, protection).
 Step 2 (rules): ai/t6_table.rs written + wired (stack.rs ai_respond verdict, brain.rs Situation/reserve/removal/attack, combos.rs go_ok + attempt wrapper w/ protect + t6_going, life.rs Angel's Grace, pool.rs Ad Nauseam imp 8). Builds. Baseline (300/profile): see report. Next: run new t6 calib, tests (tests/ai_t6_table.rs), lock check t3.
 Gaps so far: Silence/Chant only cast right before going (not upkeep / in response).
+Step 3: tests/ai_t6_table.rs (12 tests pass) committed. First after-run (new1-t6.txt) running; it is ~2x slower than baseline (archenemy scoring: consider caching).
+Next: results table, perf cache if needed, t3 lock diff, full cargo test, all-targets warnings, report rust/agents/report-t6-ai-table.md.
+Baseline (300/profile cons|loose): Dack 27.6|37.4, Kinnan 26.4|23.9, Kraum 32.3|33.3, Rograkh(Silas?) 29.1|27.0, Rograkh 11.8|9.5, Sisay 23.7|19.7; rounds 9.4|9.3, timeouts 2.0|2.7.
