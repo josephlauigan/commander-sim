@@ -8,9 +8,8 @@
 //! - **Wipes** (`wipe_utility`): valued with the drain for every creature that dies; an unflipped Sephiroth is spared
 //!   unless the wipe's own deaths flip him first; Extinction Event picks its parity (`sephfs_cards::parity_choice`);
 //!   Living Death by what each graveyard gives back.
-//! - **Tutors** have no wish list on purpose: a hand-written one (loop piece, mana, finisher, wipe by Sephiroth's state) was
-//!   measured against the generic pick over 60,000 games each and lost 0.8 to 1.7 points (the generic pick takes the
-//!   best-priority card early and the biggest body late: Grave Titan and Rune-Scarred Demon win 66-70% when cast).
+//! - **Tutors** (`tutor_pick`): board-state pick (finisher that kills, sweeper when behind, outlet/Ghostform with
+//!   Sephiroth out, mana only when short), else the generic pick. A fixed wish list lost 0.8-1.7 points over 60,000 games.
 //! - **Steals**: Zombify (own graveyard), Animate Dead and the prepared Reanimate take the best creature card from any graveyard
 //!   (`rean_targets`).
 //! - Stats for `--analyze`: `sf_*` counters (flips, wipes, steals by card, sacrifices, cards drawn by Sephiroth).
@@ -398,3 +397,58 @@ fn gray_merchant_prio(g: &Game, p: PlayerId) -> i32 {
     (38 + 4 * dev).min(84)
 }
 
+
+// ------------------------------------------------------------------ tutors (Demonic Tutor, Vampiric Tutor, Rune-Scarred Demon)
+/// the tutor's pick from board state, or None for the generic pick (best priority early, biggest body late):
+/// the finisher when it kills; a sweeper when the opponents are ahead on board; an outlet or Kaya's Ghostform when
+/// Sephiroth is out with fodder; mana only when short of it
+pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<CardId> {
+    if kind != "any" {
+        return None;
+    }
+    let first = |ns: &[&str]| ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c));
+    let pl = g.player(p);
+    let lands = pl.lands.len() as i32;
+    let held = |n: &str| {
+        pl.hand.iter().any(|&c| name(g, c) == n)
+            || pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| name(g, c) == n))
+    };
+    // 1. the finisher that kills: X = lands - 2 for Exsanguinate, the devotion for Gray Merchant
+    let low = g.opps(p).map(|q| g.player(q).life).min().unwrap_or(40);
+    if low <= lands - 2 && let Some(c) = first(&["Exsanguinate"]) {
+        return Some(c);
+    }
+    if low <= devotion(g, p) && let Some(c) = first(&["Gray Merchant of Asphodel"]) {
+        return Some(c);
+    }
+    // 2. the opponents are ahead on board
+    let theirs: f64 = all_creatures(g).iter().filter(|&&(q, _)| q != p).map(|&(_, m)| pval(g, m)).sum();
+    let ours: f64 = all_creatures(g).iter().filter(|&&(q, _)| q == p).map(|&(_, m)| pval(g, m)).sum();
+    if opp_creatures(g, p) >= 3 && theirs > 1.2 * ours + 3.0 && lands >= 4 {
+        if let Some(c) = first(&["Massacre Girl", "Pestilence", "Crux of Fate"]) {
+            return Some(c);
+        }
+    }
+    // 3. Sephiroth out with fodder
+    if let Some((_, _, fl)) = seph_state(g, p) {
+        if own_fodder(g, p) >= 1 {
+            if outlets(g, p) == 0
+                && !pl.hand.iter().any(|&c| g.db.get(c).tag(Tag::Sac))
+                && let Some(c) = first(&["Phyrexian Altar", "Viscera Seer"])
+            {
+                return Some(c);
+            }
+            if !fl && !held("Kaya's Ghostform") && let Some(c) = first(&["Kaya's Ghostform"]) {
+                return Some(c);
+            }
+        }
+    }
+    // 4. short of mana
+    if lands < 3 && !pl.hand.iter().any(|&c| g.db.get(c).land) {
+        if lands >= 1 && let Some(c) = first(&["Sol Ring"]) {
+            return Some(c);
+        }
+        return okn.iter().copied().find(|&c| g.db.get(c).land && name(g, c) == "Swamp");
+    }
+    None
+}

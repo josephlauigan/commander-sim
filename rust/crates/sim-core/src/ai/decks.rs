@@ -715,6 +715,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
         "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
         "kraum" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
+        "sephfs" => crate::impls::sephfs::tutor_pick(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {
                 return first(&["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);

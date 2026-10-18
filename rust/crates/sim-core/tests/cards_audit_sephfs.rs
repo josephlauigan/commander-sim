@@ -96,3 +96,22 @@ fn the_plan_milestone_is_the_turn_of_the_first_flip() {
     assert!(g.perm(m).data.truthy(sim_core::state::DataKey::Flipped));
     assert_eq!(g.player(P0).milestone.get("sephfs").copied(), Some(5));
 }
+
+#[test]
+fn tutors_pick_by_board_state_and_otherwise_leave_it_to_the_generic_pick() {
+    use sim_core::ai::decks;
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 7, false);
+    seph_out(&mut g);
+    g.player_mut(P1).life = 4;
+    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Exsanguinate"))); // the finisher kills
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 5, false);
+    for _ in 0..4 {
+        token(&mut g, P1, 3);
+    }
+    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Massacre Girl"))); // behind on board
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 1, false);
+    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Sol Ring"))); // short on mana
+}
