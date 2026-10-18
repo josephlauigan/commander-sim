@@ -105,6 +105,12 @@ fn tag_cols(g: &Game, p: PlayerId, cd: CardId) -> crate::cards::Colors {
 
 /// p plays its best land from hand (or the graveyard with Yawgmoth's Will / Muldrotha). Python's `play_land`.
 pub fn play_land(g: &mut Game, p: PlayerId) -> Res {
+    if g.player(p).key == "seph" {
+        ai::seph::tracker_first(g, p)?; // Tireless Tracker first: the land drop is a Clue
+        if g.over || !g.player(p).alive {
+            return Ok(());
+        }
+    }
     let pl = g.player(p);
     let mut lands: Vec<CardId> = pl.hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
     if pl.yawg {

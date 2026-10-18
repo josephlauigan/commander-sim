@@ -35,7 +35,7 @@ pub fn loose(g: &Game, e: PermId, p: PlayerId) -> bool {
 pub fn bomb_on_bf(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| {
         let x = g.perm(m);
-        !x.phased && x.cd.is_some_and(|c| g.db.get(c).bomb >= 6)
+        !x.phased && x.cd.is_some_and(|c| super::seph::sbomb(g, c) >= super::seph::BOMB_BOARD)
     })
 }
 
