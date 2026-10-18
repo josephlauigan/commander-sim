@@ -61,3 +61,38 @@ fn gemstone_caverns_makes_colourless_unless_it_has_a_luck_counter() {
     assert_eq!(u[0].cols, g.player(P0).ident, "with a luck counter: one mana of any colour");
     assert_eq!(u[0].amt, 1);
 }
+
+// ------------------------------------------------------------------ Abstergo Entertainment
+#[test]
+fn abstergo_taps_for_colourless_and_filters_one_mana_into_any_colour() {
+    let mut g = pod();
+    lands(&mut g, P0, "Abstergo Entertainment", 1, false);
+    let u = mana::mana_units(&g, P0, false);
+    assert!(u.len() == 1 && u[0].cols.is_empty(), "alone: {{T}}: Add {{C}} only (nothing pays the {{1}})");
+    lands(&mut g, P0, "Forest", 1, false);
+    let u = mana::mana_units(&g, P0, false);
+    assert_eq!(u.len(), 2);
+    assert_eq!(u.iter().map(|x| x.amt).sum::<u32>(), 2, "one mana per land");
+    assert!(u.iter().any(|x| x.cols == g.player(P0).ident), "{{1}},{{T}}: one mana of any colour");
+}
+
+#[test]
+fn abstergo_exiles_itself_returns_a_historic_card_and_exiles_all_graveyards() {
+    let mut g = pod();
+    let a = lands(&mut g, P0, "Abstergo Entertainment", 1, false)[0];
+    lands(&mut g, P0, "Forest", 3, false);
+    let sol = take(&mut g, P0, "Sol Ring");
+    let bear = take(&mut g, P0, "Llanowar Elves");
+    g.player_mut(P0).gy.extend([sol, bear]);
+    let junk = take(&mut g, P1, "Llanowar Elves");
+    g.player_mut(P1).gy.push(junk);
+    let o = sim_core::cardcode::land_options(&mut g, P0, None).unwrap();
+    assert_eq!(o.iter().map(|x| x.label.as_str()).collect::<Vec<_>>(), ["Abstergo Entertainment"]);
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(!g.player(P0).lands.contains(&a), "exiled as a cost");
+    assert!(g.player(P0).exile.contains(&card(&g, "Abstergo Entertainment")));
+    assert!(g.player(P0).hand.contains(&sol), "the historic card returns");
+    assert!(g.player(P0).gy.is_empty() && g.player(P1).gy.is_empty(), "all graveyards exiled");
+    assert!(g.player(P0).exile.contains(&bear) && g.player(P1).exile.contains(&junk));
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "{{3}} paid");
+}
