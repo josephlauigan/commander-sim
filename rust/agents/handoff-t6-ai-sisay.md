@@ -1,1 +1,1 @@
-Status: plan filled (keep/prio/wish/fetch); baseline 29.8 -> run1 20.7 (noisy, combos unchanged ~0.05/game); finding: pieces get fetched (Doom, Derevi, Emiel, Ioreth...) but lines rarely ready at once (removal kills pieces, Cradle/Tender missing). Next: line-completion bonus in fetch, tests ai_t6_sisay.rs, t3 lock, report.
+Status: line-completion bonus + tests/ai_t6_sisay.rs (6 pass) done. Running: release build, calibrate t6 (run2), t3 lock. Then full tests + report.

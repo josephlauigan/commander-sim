@@ -103,6 +103,7 @@ pub fn fetch(g: &Game, p: PlayerId, power: i32) -> Option<CardId> {
         if s <= 0.0 {
             continue;
         }
+        s += completes(g, p, &d.name);
         let new = have_cols.union(d.colors).count() as i32 - have_cols.count() as i32;
         if power < 5 {
             s += 0.8 * new.max(0) as f64; // a new colour is +1 power: it opens the next fetch
@@ -145,6 +146,9 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
             // the rainbow dork: ramp, and the Unicorn engine without Cradle
             s = if out(g, p, SISAY) { 6.0 } else { 8.5 };
         }
+        if s > 0.0 {
+            s += completes(g, p, name);
+        }
         if s > 1.0 {
             v.push((s, c));
         }
@@ -184,4 +188,35 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
 /// go for the combo named `combo` now: no opinion, the shared table check decides
 pub fn go_now(_g: &Game, _p: PlayerId, _combo: &str) -> Option<bool> {
     None
+}
+
+/// the cards still missing from a line (a group counts as done when any of its cards is out or in hand)
+fn missing(g: &Game, p: PlayerId, groups: &[&[&'static str]]) -> Vec<&'static str> {
+    groups
+        .iter()
+        .filter(|grp| !grp.iter().any(|n| have(g, p, n)))
+        .map(|grp| grp[0])
+        .collect()
+}
+
+/// bonus for a card that brings the nearest line closer: the fewer pieces the line still lacks, the more each is worth
+fn completes(g: &Game, p: PlayerId, name: &str) -> f64 {
+    let lines: [&[&[&'static str]]; 2] = [
+        &[&["Derevi, Empyrial Tactician"], &["Emiel the Blessed"], &[CRADLE, TENDER], &[DOOM]],
+        &[
+            &["Ioreth of the Healing House"],
+            &["Marvin, Murderous Mimic"],
+            &["Selvala, Heart of the Wilds", "Shang-Chi, Master of Kung Fu"],
+            &[DOOM],
+        ],
+    ];
+    let mut best = 0.0f64;
+    for l in lines {
+        let m = missing(g, p, l);
+        let in_line = l.iter().any(|grp| grp.contains(&name));
+        if in_line && !m.is_empty() && l.iter().any(|grp| grp.iter().any(|n| have(g, p, n))) {
+            best = best.max(6.0 / m.len() as f64);
+        }
+    }
+    best
 }
