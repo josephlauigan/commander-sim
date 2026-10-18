@@ -27,7 +27,10 @@ JD's call (2026-10-17): model every card first, then change the engine ONCE for 
 - **Status:** a card you model completely and test against its Oracle text gets `status = "Full"` with a one-line
   note in `data/card_overrides.toml` (see existing entries for the format). Partial cards get `status = "Partial"`
   and a note naming the missing part. Check with `cardgen audit --deck <pool deck key>` (or `--mine` for Godo's
-  cards); never pass `--md` (it overwrites a file).
+  cards); never pass `--md` (it overwrites a file). Always use the `cardgen` built in YOUR worktree
+  (`rust/target/release/cardgen`): the main checkout's binary predates partner pool decks and breaks the export.
+- **Clones / 0/0 creatures:** don't raise printed stats in data to dodge the 0/0 death; write it as an engine need
+  ("as enters, copy" replacement) and keep the data stats as printed.
 
 ## Oracle text
 
