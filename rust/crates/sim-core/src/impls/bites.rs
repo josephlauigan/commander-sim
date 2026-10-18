@@ -209,6 +209,7 @@ fn deal(
         }
         return Ok(());
     }
+    g.mark_damaged(t);
     if kills(g, src, amount, t, walker_src) {
         let n = if deathtouch(g, src) && !walker_src { 100_000 } else { amount };
         apply_removal(g, Some(p), t, &format!("dmg{n}"), spell)?;
