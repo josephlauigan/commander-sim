@@ -3786,8 +3786,11 @@ status = "Full"
 note = ""
 
 ["Ranger-Captain of Eos"]
+dsl = [
+  { type = "triggered", event = "etb", source = "self", effects = [{ do = "search", filter = { type = "creature", max_mv = 1 }, to = "hand", n = 1 }] },
+]
 status = "Full"
-note = "fetches a 1-drop creature; sacrificed before a combo to stop noncreature spells"
+note = "fetches a creature card with mana value 1 or less (the parsed ability had lost the limit and fetched Thassa's Oracle); sacrificed before a combo to stop noncreature spells"
 
 ["Rapid Hybridization"]
 status = "Full"

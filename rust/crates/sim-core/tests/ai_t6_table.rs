@@ -234,3 +234,15 @@ fn a_spell_that_completes_a_line_is_countered_and_a_piece_is_worth_more() {
     let v = t6_table::counter_verdict(&g, P1, &it, 3.0, 4.0, 2);
     assert!(matches!(v, Verdict::Counter) || matches!(v, Verdict::Roll(x, _) if x > 5.0), "{v:?}");
 }
+
+#[test]
+fn pact_of_negation_is_not_picked_when_its_upkeep_cannot_be_paid() {
+    // one land: Pact's {0} used to fall through to the plain "can it be paid" check, and the player lost at its upkeep
+    let mut g = tbl(&[KRAUM, SISAY, KINNAN]);
+    lands(&mut g, P1, "Island", 1, false);
+    hand(&mut g, P1, &["Pact of Negation"]);
+    let oracle = card(&g, "Thassa's Oracle");
+    assert_eq!(sim_core::engine::stack::pick_counter(&g, P1, oracle), None);
+    lands(&mut g, P1, "Island", 4, false);
+    assert_eq!(sim_core::engine::stack::pick_counter(&g, P1, oracle), Some(card(&g, "Pact of Negation")));
+}

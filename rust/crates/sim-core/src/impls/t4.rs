@@ -18,8 +18,8 @@ use crate::engine::zones::{
     Enter, Tokens, bounce, die, draw, enter, enter_token_copy, leave, make_artifact_tokens, make_tokens, max_by,
 };
 use crate::flow::Res;
-use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
+use crate::human::{choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, WalkerAb, best_opp_creature, best_opp_nonland, walker};
 use crate::state::{Ctx, DataKey, Game, Val};
@@ -1025,7 +1025,12 @@ fn sphinx(g: &mut Game, src: Src, p: PlayerId) -> Res {
             if choices::yes_no(g, o, &format!("Consecrated Sphinx: {who} drew. Draw two cards?"))? {
                 draw(g, o, 2, false)?;
             }
-        } else if g.player(o).library.len() > 12 && g.sphinx_depth < 4 {
+        } else if g.player(o).library.len() > 12
+            && g.sphinx_depth < 4
+            && !(crate::impls::t6_plans::is_t6(g, o) && g.player(o).hand.len() >= 10)
+        {
+            // (Tier 6: a player with ten cards in hand stops taking the draws; two Sphinxes otherwise drew both players
+            // to 60 cards)
             g.sphinx_depth += 1; // two Sphinxes feed each other: stop after a few rounds
             let r = draw(g, o, 2, false);
             g.sphinx_depth -= 1;
@@ -1363,8 +1368,10 @@ fn bond(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
 pub fn bond_target(g: &Game, p: PlayerId, n: i32) -> Res<PlayerId> {
     let os = opps(g, p);
     if human_of(g, p).is_some() && os.len() > 1 {
-        let labels: Vec<String> = os.iter().map(|&q| format!("{} ({} life)", g.player(q).name, g.player(q).life)).collect();
-        let k = choices::choose_one(g, p, "target", &format!("Sanguine Bond: which opponent loses {n} life?"), &labels)?;
+        let labels: Vec<String> =
+            os.iter().map(|&q| format!("{} ({} life)", g.player(q).name, g.player(q).life)).collect();
+        let k =
+            choices::choose_one(g, p, "target", &format!("Sanguine Bond: which opponent loses {n} life?"), &labels)?;
         return Ok(os[k]);
     }
     let dead: Vec<PlayerId> =

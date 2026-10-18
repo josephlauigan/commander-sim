@@ -81640,19 +81640,19 @@
    "dsl": [
     {
      "type": "triggered",
+     "event": "etb",
+     "source": "self",
      "effects": [
       {
        "do": "search",
        "filter": {
-        "type": "creature"
+        "type": "creature",
+        "max_mv": 1
        },
        "to": "hand",
-       "n": 1,
-       "tapped": false
+       "n": 1
       }
-     ],
-     "event": "etb",
-     "source": "self"
+     ]
     }
    ],
    "start_loyalty": null,
@@ -81666,10 +81666,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Sacrifice ~: Your opponents can't cast noncreature spells this turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

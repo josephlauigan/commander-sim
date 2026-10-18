@@ -305,10 +305,10 @@ pub fn abilities_answered(g: &Game, p: Option<PlayerId>) -> bool {
         q.hand.iter().any(|&c| {
             let n = &*g.db.get(c).name;
             ABILITY_ANSWERS.contains(&n) || ABILITY_ANSWERS_HAND.contains(&n)
-        })
-            || q.perms.iter().any(|&m| {
-                !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| ABILITY_ANSWERS.contains(&&*g.db.get(c).name))
-            })
+        }) || q
+            .perms
+            .iter()
+            .any(|&m| !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| ABILITY_ANSWERS.contains(&&*g.db.get(c).name)))
     })
 }
 
@@ -619,7 +619,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             thr += 1.5 * altcost::lost(g, q, pk, Some(c)); // cards given up for the alternative cost
         }
     }
-        // Tier 6: the table rules decide (archenemy, win steps), not the look-ahead
+    // Tier 6: the table rules decide (archenemy, win steps), not the look-ahead
     if crate::impls::t6_plans::is_t6(g, q) {
         use ai::t6_table::Verdict;
         match ai::t6_table::counter_verdict(g, q, &top, val, thr, nc) {
@@ -632,16 +632,16 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             }
         }
     } else {
-    // the look-ahead decides counters to the active player's spell in their main phase
-    match ai::search_counter(g, q, top.controller, c, top.generic) {
-        Some(false) => return Ok(()),
-        Some(true) => {}
-        None => {
-            if g.rng.random() > ai::wants_counter(val, thr, nc) {
-                return Ok(());
+        // the look-ahead decides counters to the active player's spell in their main phase
+        match ai::search_counter(g, q, top.controller, c, top.generic) {
+            Some(false) => return Ok(()),
+            Some(true) => {}
+            None => {
+                if g.rng.random() > ai::wants_counter(val, thr, nc) {
+                    return Ok(());
+                }
             }
         }
-    }
     }
     if top.imp >= 6.0 && crate::cardcode::hullbreaker_counter(g, q, c)? {
         g.bounced_spell = true;
@@ -752,6 +752,9 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
         }
         if t.has(Tag::Pact) && pact_affordable(g, q) && taxed_ok {
             return Some(ctr); // Pact of Negation: free now, {3}{U}{U} next upkeep
+        }
+        if t.has(Tag::Pact) && crate::impls::t6_plans::is_t6(g, q) {
+            continue; // Tier 6: a Pact whose upkeep can't be paid is not cast (the {0} cost fell through to `can_pay` below)
         }
         if t.has(Tag::Misstep) && g.player(q).life > 10 && taxed_ok {
             return Some(ctr); // Mental Misstep: 2 life
