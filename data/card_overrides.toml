@@ -8394,8 +8394,8 @@ status = "Full"
 note = "adds RR plus R for each other Rite of Flame in any graveyard (floating red mana); the AI casts it only through a deck plan"
 
 ["Simian Spirit Guide"]
-status = "Partial"
-note = "2/2 body only; exile from hand for {R} needs the engine to take mana from any card in hand, not only Elvish Spirit Guide (rust/agents/engine-needs-mana.md)"
+status = "Full"
+note = "2/2; exiled from hand for {R} when that mana is needed (data-driven hand mana, partials::HAND_MANA, shared with Elvish Spirit Guide)"
 
 ["Manifold Key"]
 status = "Full"
@@ -8752,11 +8752,11 @@ note = "2/2 body; whenever a creature of yours is tapped for mana, an additional
 
 ["Biomancer's Familiar"]
 status = "Partial"
-note = "2/2 body; activated abilities of your creatures cost {2} less (never under {1}) for Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), and its adapt ability (no adapt creature in the pool); see rust/agents/engine-needs-green1.md"
+note = "2/2 body; activated abilities of your creatures cost {2} less (never under {1}) for Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on creature abilities hard-coded elsewhere (Thrasios {4} is covered), and its adapt ability (no adapt creature in the pool); see rust/agents/engine-needs-green1.md"
 
 ["Training Grounds"]
 status = "Partial"
-note = "activated abilities of your creatures cost {2} less (never under {1}), stacking with Biomancer's Familiar, applied to Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), see rust/agents/engine-needs-green1.md"
+note = "activated abilities of your creatures cost {2} less (never under {1}), stacking with Biomancer's Familiar, applied to Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on creature abilities hard-coded elsewhere (Thrasios {4} is covered), see rust/agents/engine-needs-green1.md"
 
 ["Earthcraft"]
 status = "Full"
@@ -8772,8 +8772,8 @@ note = "{X},{T}: untap X target lands (summoning sick on the turn it enters); sa
 
 ["Formidable Speaker"]
 dsl = []
-status = "Partial"
-note = "2/4; enters: you may discard a card, and if you do search for a creature (the AI discards its worst card, only when the library has a creature; the stock data discarded unconditionally, so the generic ability is cleared); {1},{T}: untap another target permanent, modelled for lands only (the AI untaps its best tapped land when that nets {2}); missing: untapping a tapped creature or artifact (e.g. Magus or Candelabra for a chain), see rust/agents/engine-needs-green1.md"
+status = "Full"
+note = "2/4; enters: you may discard a card, and if you do search for a creature (the AI discards its worst card, only when the library has a creature; the stock data discarded unconditionally, so the generic ability is cleared); {1},{T}: untap another target permanent: a tapped land, or a tapped creature or artifact (the AI chains onto Magus / Candelabra when their lands net more than the best land, or a mana rock making 3+; cost reduced by Training Grounds / Familiar)"
 
 ["Vibrance"]
 dsl = []
@@ -8833,12 +8833,12 @@ note = "has Ioreth's two untap abilities while its controller has an Ioreth (the
 
 ["Shang-Chi, Master of Kung Fu"]
 status = "Partial"
-note = "taps for mana as a dork; 'activate abilities as though haste' is honored by Ioreth/Marvin/Tyvar code (ability_haste) but not by the engine's mana/ability checks, and the two mana of one colour is not limited to creature abilities (engine-needs-legends1b.md)"
+note = "taps for mana as a dork; 'activate abilities as though haste' is honored by the engine's creature mana sources and the card code (ability_haste); missing: the two mana of one colour is not limited to creature abilities (restricted mana, engine-needs-legends1b.md)"
 
 ["Tyvar, Jubilant Brawler"]
 dsl = []
-status = "Partial"
-note = "+1 untaps the best tapped creature; -2 mills three then returns the best creature with MV 2 or less from the graveyard (t6_legends1b.rs); the 'abilities as though haste' static is only honored by this batch's code (engine-needs-legends1b.md)"
+status = "Full"
+note = "+1 untaps the best tapped creature; -2 mills three then returns the best creature with MV 2 or less from the graveyard (t6_legends1b.rs); the 'abilities as though haste' static is honored by the mana-source collection (engine/mana.rs) and the untap-ability checks (t6_legends1b::ability_haste)"
 
 ["Loki's Scepter"]
 status = "Full"

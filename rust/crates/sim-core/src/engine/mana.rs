@@ -147,6 +147,8 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     }
     let rite = has(g, p, Tag::Rite);
     let no_art_mana = hooked && hooks::total_count(g, Event::NoArtifactMana, p) != 0;
+    // Shang-Chi, Tyvar: creature mana abilities work while summoning sick (checked lazily)
+    let ahaste = || crate::impls::t6_legends1b::ability_haste(g, p);
     for &m in &pl.perms {
         let x = g.perm(m);
         if x.tapped || x.phased {
@@ -156,9 +158,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             continue; // Arrest, Encrust: no mana abilities either
         }
         let Some(c) = x.cd else {
-            if rite && !x.sick {
+            if rite && (!x.sick || ahaste()) {
                 u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
-            } else if let Some(Val::Str(cols)) = x.data.get(DataKey::Manatok).filter(|_| !x.sick) {
+            } else if let Some(Val::Str(cols)) = x.data.get(DataKey::Manatok).filter(|_| !x.sick || ahaste()) {
                 u.push(Unit { src: Source::Perm(m), cols: Colors::from_letters(cols), amt: 1 });
             } else if x.ttypes.contains(&"scion") || x.ttypes.contains(&"spawn") {
                 u.push(Unit { src: Source::Scion(m), cols: Colors::NONE, amt: 1 });
@@ -201,7 +203,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if amt > 0 {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
-        } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick) {
+        } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick || ahaste()) {
             if &*d.name == "Giada, Font of Hope" && !g.pay_for.is_some_and(|c| g.db.get(c).has_subtype("angel")) {
                 continue; // spend this mana only to cast an Angel spell
             }
@@ -217,7 +219,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if amt > 0 {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
-        } else if rite && d.creature && !x.sick && x.noatk {
+        } else if rite && d.creature && (!x.sick || ahaste()) && x.noatk {
             u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
         }
     }
@@ -228,6 +230,8 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     }
     if hooked {
         u = adjust_mana(g, p, u);
+    } else {
+        u.extend(cardcode::hand_mana(g, p)); // Spirit Guides need no hooked permanent
     }
     let f = pl.floating;
     let float = |n: u32, src: Source, cols: Colors| (0..n).map(move |_| Unit { src, cols, amt: 1 });
@@ -272,7 +276,7 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
             u.extend(extra);
         }
     }
-    u.extend(cardcode::hand_mana(g, p)); // Elvish Spirit Guide
+    u.extend(cardcode::hand_mana(g, p)); // Spirit Guides (also added in `units` when nothing is hooked)
     u
 }
 
