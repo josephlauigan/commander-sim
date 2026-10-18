@@ -93,3 +93,19 @@ targets by situation, when to hold up which interaction, when to go for which li
 the spec's "Decision scenarios" as AI tests (`tests/ai_t6_<key>.rs`). Measure with the `report` tool: the deck's win
 routes and win rounds should look like its spec (the spec's main line is its most common win, backup lines rarer).
 Note in the report what still differs from the spec and why.
+
+## Before the deck plans (2026-10-18, after `report` + `table`, commit 423c135)
+
+`audit/t6/stage5-baseline.txt` is the full Tier 6 report (300 games per profile) every deck agent starts from. What
+it shows, deck by deck, is in the `deck:<key>` prompts; across the table:
+
+- **Mulligans are far too many**: 36-48% of hands, with 9-19 triple mulligans per deck in 200 games. The shared rule
+  keeps 2-5 lands; cEDH decks keep on fast mana and a plan with 1-2 lands. Each deck's `keep` slot should follow its
+  spec's mulligan section.
+- **Wins come too late**: median win round 7-8 for the fastest decks, 12-15 for Sisay and Rograkh/Thrasios (they
+  win by combat damage, 80-95%, and almost never go for their combos: 0.02-0.07 tries per game). The specs' decks
+  aim to win on turns 3-6.
+- **Seat edge too flat** (seat 1 wins 25-27% of decisive games; target 30-38%): slow games wash out the first-seat
+  edge, so faster, plan-driven decks should fix most of it. Don't tune seat shares directly.
+- Deck agents measure their own deck with `--calibrate within --pool t6 --games 300` (the report block for the deck),
+  and must not change other decks' plan files.
