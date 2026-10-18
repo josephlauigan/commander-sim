@@ -12,3 +12,9 @@ Where it would hook: `impls/tymna_cards.rs` `thrasios_options` / `thrasios_go` (
 Card side done: the two cards are recognised by name; the discount is applied to Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker.
 Test to add once the engine has it: with Training Grounds in play, Thrasios activates with only {2} available (and with both Grounds and Familiar, with {1}).
 Familiar's second ability (the next adapt this turn ignores +1/+1 counters) needs adapt, which the pool does not have.
+
+## Formidable Speaker
+Needs: "untap target permanent" for creatures and artifacts (a generic untap-permanent helper that clears `tapped` and re-enables a tapped {T} ability), plus an AI rule for chaining it onto Magus of the Candelabra / Candelabra of Tawnos.
+Where it would hook: `speaker_go` in impls/t6_green1.rs (lands only now); no shared helper found.
+Card side done: ETB discard + creature tutor; the {1},{T} untap of the best tapped land.
+Test to add once the engine has it: Speaker untaps a tapped Magus, which then untaps Cradle.

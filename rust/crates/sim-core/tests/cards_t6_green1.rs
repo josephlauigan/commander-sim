@@ -180,3 +180,94 @@ fn earthcraft_only_untaps_basic_lands_and_needs_an_untapped_creature() {
     g.perm_mut(t2).tapped = true;
     assert_eq!(options(&mut g, e, P0, Some(true)).len(), 1, "the untapped token is enough");
 }
+
+// ======================================================== Candelabra of Tawnos / Magus of the Candelabra
+#[test]
+fn candelabra_untaps_x_lands_for_x() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 3, false);
+    let cr = lands(&mut g, P0, "Gaea's Cradle", 1, true)[0];
+    let fo = lands(&mut g, P0, "Forest", 1, true)[0];
+    for _ in 0..5 {
+        token(&mut g, P0, 1);
+    }
+    let c = perm(&mut g, P0, "Candelabra of Tawnos");
+    hand(&mut g, P0, &["Sol Ring"]);
+    let o = options(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    let before = untapped(&g, P0);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(g.perm(c).tapped, "{{T}} is a cost");
+    assert!(!g.land(cr).tapped);
+    assert!(g.land(fo).tapped, "X=1: only Cradle (a Forest for {{1}} nets under 2)");
+    assert_eq!(untapped(&g, P0), before - 1 + 5);
+    assert!(options(&mut g, c, P0, Some(false)).is_empty(), "tapped now");
+}
+
+#[test]
+fn candelabra_not_used_when_it_does_not_pay() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 3, false);
+    lands(&mut g, P0, "Forest", 2, true);
+    let c = perm(&mut g, P0, "Candelabra of Tawnos");
+    hand(&mut g, P0, &["Sol Ring"]);
+    assert!(options(&mut g, c, P0, Some(false)).is_empty());
+}
+
+#[test]
+fn magus_is_summoning_sick_and_gets_the_discount() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 2, false);
+    let cr = lands(&mut g, P0, "Gaea's Cradle", 1, true)[0];
+    let fs = lands(&mut g, P0, "Forest", 2, true);
+    for _ in 0..5 {
+        token(&mut g, P0, 1);
+    }
+    hand(&mut g, P0, &["Sol Ring"]);
+    let m = perm(&mut g, P0, "Magus of the Candelabra");
+    g.perm_mut(m).sick = true;
+    assert!(options(&mut g, m, P0, Some(false)).is_empty(), "summoning sick");
+    g.perm_mut(m).sick = false;
+    perm(&mut g, P0, "Training Grounds");
+    // Cradle (6 creatures) + 2 Forests = 9 for X=3, cost max(1, 3-2) = 1
+    let o = options(&mut g, m, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    let before = untapped(&g, P0);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(!g.land(cr).tapped && fs.iter().all(|&l| !g.land(l).tapped));
+    assert_eq!(untapped(&g, P0), before - 1 + 6 + 2);
+}
+
+// ======================================================== Formidable Speaker
+#[test]
+fn speaker_discards_to_tutor_a_creature() {
+    let mut g = tbl();
+    hand(&mut g, P0, &["Forest", "Forest", "Forest", "Sol Ring"]);
+    let lib_cre = g.player(P0).library.iter().filter(|&&c| g.db.get(c).creature).count();
+    assert!(lib_cre > 0);
+    let h = g.player(P0).hand.len();
+    let gy = g.player(P0).gy.len();
+    perm(&mut g, P0, "Formidable Speaker");
+    assert_eq!(g.player(P0).hand.len(), h, "one discarded, one creature found");
+    assert_eq!(g.player(P0).gy.len(), gy + 1);
+    assert!(g.player(P0).hand.iter().any(|&c| g.db.get(c).creature));
+}
+
+#[test]
+fn speaker_untaps_cradle_for_one() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 2, false);
+    let cr = lands(&mut g, P0, "Gaea's Cradle", 1, true)[0];
+    for _ in 0..5 {
+        token(&mut g, P0, 1);
+    }
+    let s = perm(&mut g, P0, "Formidable Speaker");
+    hand(&mut g, P0, &["Sol Ring"]);
+    g.perm_mut(s).sick = true;
+    assert!(options(&mut g, s, P0, Some(false)).is_empty(), "summoning sick");
+    g.perm_mut(s).sick = false;
+    let o = options(&mut g, s, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(!g.land(cr).tapped && g.perm(s).tapped);
+}

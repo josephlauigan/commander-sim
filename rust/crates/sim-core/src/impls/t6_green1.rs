@@ -10,7 +10,7 @@ use super::partials::{pack, unpack};
 use crate::cards::CardDb;
 use crate::engine::hooks as eh;
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::ability_window;
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::remove_land;
 use crate::engine::zones::min_by;
 use crate::flow::Res;
@@ -208,9 +208,132 @@ fn earthcraft_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
     Ok(true)
 }
 
+// ================================================================== Candelabra / Magus of the Candelabra
+/// whether permanent m's {T} ability can be used now (untapped; a creature must not be summoning sick)
+fn can_tap(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    live(g, m) && !x.tapped && (!x.sick || !g.is_creature(m) || crate::dsl::has_kw(g, m, "haste"))
+}
+
+/// the tapped lands to untap for "{X},{T}: untap X target lands": the X best ones, and X, chosen to maximise the mana
+/// they make less the ability's cost; None unless that nets at least {2} and p can pay it. `creature`: the cost is
+/// reduced by Training Grounds / Biomancer's Familiar (Magus), `false` for the artifact.
+fn candelabra_plan(g: &Game, p: PlayerId, creature: bool) -> Option<Vec<LandId>> {
+    let mut tapped: Vec<(u32, LandId)> =
+        g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).map(|l| (land_yield(g, p, l), l)).collect();
+    tapped.sort_by_key(|x| std::cmp::Reverse(x.0));
+    let (mut best, mut sum) = (None, 0i64);
+    for (i, &(y, _)) in tapped.iter().enumerate() {
+        sum += y as i64;
+        let x = i as u32 + 1;
+        let cost = if creature { creature_ability_cost(g, p, x) } else { x };
+        let net = sum - cost as i64;
+        if net >= 2 && can_pay(g, p, cost, "", false) && best.is_none_or(|(_, n)| net > n) {
+            best = Some((x, net));
+        }
+    }
+    best.map(|(x, _)| tapped.iter().take(x as usize).map(|t| t.1).collect())
+}
+
+fn candelabra_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || owner(g, src) != p || !can_tap(g, src) || !has_sink(g, p) {
+        return Ok(vec![]);
+    }
+    let creature = g.is_creature(src);
+    let Some(ls) = candelabra_plan(g, p, creature) else { return Ok(vec![]) };
+    Ok(vec![ability(2.2, "untap lands (Candelabra)", src, candelabra_go, ls.len() as i64)])
+}
+
+/// **Candelabra of Tawnos** ({1} artifact) and **Magus of the Candelabra** ({G}, 1/2 creature): "{X}, {T}: untap X
+/// target lands". The AI uses it when the lands it untaps (Gaea's Cradle first) make at least {2} more than X cost
+/// (Magus: less with Training Grounds / Biomancer's Familiar, never under {1}), and a spell or Thrasios waits.
+fn candelabra_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let creature = g.is_creature(src);
+    if owner(g, src) != p || !can_tap(g, src) {
+        return Ok(false);
+    }
+    let Some(ls) = candelabra_plan(g, p, creature).filter(|l| l.len() as i64 == arg) else { return Ok(false) };
+    let cost = if creature { creature_ability_cost(g, p, ls.len() as u32) } else { ls.len() as u32 };
+    pay(g, p, cost, "", false)?;
+    g.perm_mut(src).tapped = true; // the cost
+    if !ability_window(g, p, Some(src), "untap target lands", None, None)? {
+        return Ok(true);
+    }
+    for l in ls {
+        if land_on(g, p, l) {
+            g.land_mut(l).tapped = false;
+        }
+    }
+    crate::glog!(g, "    {} untaps {} lands ({})", g.player(p).name, arg, g.perm(src).name);
+    Ok(true)
+}
+
+// ================================================================== Formidable Speaker
+/// **Formidable Speaker** ({2}{G}, 2/4): when it enters, you may discard a card; if you do, search for a creature
+/// card (the deck's wish list first, `tutor_named`). The AI discards only a card its discard rule would give up
+/// (`discard_worst`) and only when the library has a creature. "{1},{T}: untap another target permanent": modelled
+/// for lands (the best tapped land when it nets {2}); not for untapping a tapped creature or artifact.
+fn speaker_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let p = owner(g, src);
+    if m != src || g.player(p).hand.is_empty() {
+        return Ok(());
+    }
+    if !g.player(p).library.iter().any(|&c| g.db.get(c).creature) {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "discard a card, search for a creature", None)? {
+        return Ok(());
+    }
+    let h = g.player(p).hand.len();
+    crate::engine::cast::discard_worst(g, p, 1)?;
+    if g.player(p).hand.len() < h {
+        super::t1::tutor_named(g, p, &|g, c| g.db.get(c).creature, 1, "hand")?;
+    }
+    Ok(())
+}
+
+fn speaker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || owner(g, src) != p || !can_tap(g, src) || !has_sink(g, p) {
+        return Ok(vec![]);
+    }
+    let cost = creature_ability_cost(g, p, 1);
+    if !can_pay(g, p, cost, "", false) {
+        return Ok(vec![]);
+    }
+    let tapped: Vec<LandId> = g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).collect();
+    let Some(t) = crate::engine::zones::max_by(&tapped, |l| land_yield(g, p, l) as f64) else { return Ok(vec![]) };
+    if (land_yield(g, p, t) as i32) - (cost as i32) < 2 {
+        return Ok(vec![]);
+    }
+    Ok(vec![ability(2.2, "untap a land (Formidable Speaker)", src, speaker_go, t.0 as i64)])
+}
+
+fn speaker_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as _);
+    let cost = creature_ability_cost(g, p, 1);
+    if owner(g, src) != p || !can_tap(g, src) || !land_on(g, p, l) || !can_pay(g, p, cost, "", false) {
+        return Ok(false);
+    }
+    pay(g, p, cost, "", false)?;
+    g.perm_mut(src).tapped = true;
+    if !ability_window(g, p, Some(src), "untap target permanent", None, None)? {
+        return Ok(true);
+    }
+    if land_on(g, p, l) {
+        g.land_mut(l).tapped = false;
+        crate::glog!(g, "    Formidable Speaker untaps {}", g.db.get(g.land(l).cd).name);
+    }
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Oboro Breezecaller")?.options = Some(oboro_options);
     r.card(db, "Badgermole Cub")?.mana_tapped = Some(cub_tapped);
     r.card(db, "Earthcraft")?.options = Some(earthcraft_options);
+    r.card(db, "Candelabra of Tawnos")?.options = Some(candelabra_options);
+    r.card(db, "Magus of the Candelabra")?.options = Some(candelabra_options);
+    let s = r.card(db, "Formidable Speaker")?;
+    s.etb = Some(speaker_etb);
+    s.options = Some(speaker_options);
     Ok(())
 }

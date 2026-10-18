@@ -6,7 +6,7 @@ Batch: Oboro Breezecaller; Badgermole Cub; Biomancer's Familiar; Earthcraft; Tra
 - Biomancer's Familiar: Partial (discount only for this batch's abilities; engine-needs-green1.md).
 - Training Grounds: Partial (same engine need as Familiar).
 ## Next
-Candelabra, Magus, Speaker, Nantuko (landfall Insect + bestow), Vibrance (evoke), then full cargo test + build warnings + report-t6-green1.md.
+Nantuko (landfall Insect + bestow), Vibrance (evoke), then full cargo test + build warnings + report-t6-green1.md.
 ## Gotchas
 - Test cmd (from rust/): CARGO_BUILD_JOBS=2 nice -n 19 systemd-run --user --scope -q -p MemoryMax=12G -p MemorySwapMax=0 cargo test --release -p sim-core --test cards_t6_green1
 - Overrides appended to data/card_overrides.toml; check with ./target/release/cardgen audit --deck rograkh-thrasios-creature-combo
@@ -14,4 +14,4 @@ Candelabra, Magus, Speaker, Nantuko (landfall Insect + bestow), Vibrance (evoke)
 - A python3 call is blocked by a hook; don't.
 
 ## Takeover 2026-10-17
-Second agent took over. Earthcraft: Full (committed). Remaining: Candelabra, Magus, Speaker, Nantuko, Vibrance.
+Second agent took over. Done: Earthcraft (Full), Candelabra (Full), Magus (Full), Formidable Speaker (Partial: lands only; stock DSL discard cleared via dsl=[] override, cards.json re-exported). Remaining: Nantuko, Vibrance.

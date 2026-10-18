@@ -39359,20 +39359,7 @@
    "pow": 2,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "discard",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -39383,11 +39370,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, you may discard a card. If you do, search your library for a creature card, reveal it, put it into your hand, then shuffle.   [partly: if you do, search your library for a creature card, reveal it, put it into your hand]",
-    "{1}, {T}: Untap another target permanent."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

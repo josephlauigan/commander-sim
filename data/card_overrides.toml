@@ -8526,3 +8526,16 @@ note = "activated abilities of your creatures cost {2} less (never under {1}), s
 ["Earthcraft"]
 status = "Full"
 note = "tap an untapped creature you control: untap target basic land; the AI uses it with a tapped basic, a spell or Thrasios waiting for the mana, and a creature with nothing better to do (summoning sick before combat, any idle one after; never a mana creature)"
+
+["Candelabra of Tawnos"]
+status = "Full"
+note = "{X},{T}: untap X target lands; the AI picks the X best tapped lands (Gaea's Cradle first) when they make at least {2} more mana than X costs and a spell or Thrasios waits"
+
+["Magus of the Candelabra"]
+status = "Full"
+note = "{X},{T}: untap X target lands (summoning sick on the turn it enters); same AI rule as Candelabra of Tawnos; X is reduced by Training Grounds / Biomancer's Familiar (never under {1})"
+
+["Formidable Speaker"]
+dsl = []
+status = "Partial"
+note = "2/4; enters: you may discard a card, and if you do search for a creature (the AI discards its worst card, only when the library has a creature; the stock data discarded unconditionally, so the generic ability is cleared); {1},{T}: untap another target permanent, modelled for lands only (the AI untaps its best tapped land when that nets {2}); missing: untapping a tapped creature or artifact (e.g. Magus or Candelabra for a chain), see rust/agents/engine-needs-green1.md"
