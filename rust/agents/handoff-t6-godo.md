@@ -5,3 +5,4 @@ Status: started; nothing done yet.
 Plan: module impls/t6_godo.rs (registered), tests/cards_t6_godo.rs (table godo + kraum/dack/kinnan keys), engine needs in agents/engine-needs-godo.md.
 Godo: DONE (Partial, engine cap on combats), committed.
 Hammer: DONE (Full), committed.
+Magnetic Theft: DONE (Full), committed.

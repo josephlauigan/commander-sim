@@ -13,7 +13,7 @@ use crate::flow::Res;
 use crate::hooks::{Registry, Src};
 use crate::human::human_of;
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::Game;
+use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
@@ -161,10 +161,48 @@ fn hammer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
+// ================================================================== Magnetic Theft
+/// the Equipment worth moving and the creature to put it on: an Equipment of p's that is not attached to the
+/// creature `attach_target` picks (Helm of the Host first), and that creature
+fn theft_plan(g: &Game, p: PlayerId) -> Option<(PermId, PermId)> {
+    let t = attach_target(g, p)?;
+    let es: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&e| {
+            live(g, e)
+                && g.perm(e).attached != Some(t)
+                && g.perm(e).cd.is_some_and(|c| is_equipment_card(g, c))
+                && (g.perm(e).attached.is_none() || name_of(g, e) == "Helm of the Host")
+        })
+        .collect();
+    let e = max_by(&es, |e| if name_of(g, e) == "Helm of the Host" { 100.0 } else { epow(g, e) as f64 })?;
+    Some((e, t))
+}
+
+/// **Magnetic Theft** ({R} instant): attach target Equipment to target creature (control of the Equipment doesn't
+/// change; the AI targets its own Equipment and creature only). The AI casts it when it has an Equipment to move, in
+/// the Godo deck mostly Helm of the Host onto Godo for {R} instead of the equip cost.
+fn theft_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if let Some((e, t)) = theft_plan(g, p) {
+        super::cloud::attach(g, e, t);
+    }
+    Ok("gy")
+}
+
+fn theft_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if theft_plan(g, p).is_some() { 70 } else { 0 }
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
     c.attack = Some(godo_attack);
     r.card(db, "Hammer of Nazahn")?.etb = Some(hammer_etb);
+    let c = r.card(db, "Magnetic Theft")?;
+    c.resolve = Some(theft_resolve);
+    c.prio = Some(theft_prio);
     Ok(())
 }

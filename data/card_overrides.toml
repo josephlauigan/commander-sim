@@ -8455,3 +8455,7 @@ note = "enters: search for an Equipment and put it onto the battlefield (Helm fi
 ["Hammer of Nazahn"]
 status = "Full"
 note = "whenever it or another Equipment you control enters, attaches that Equipment (the AI always does) to the best creature you control (Godo first, then the strongest able to attack); +2/+0, indestructible, equip {4} from the compiled abilities"
+
+["Magnetic Theft"]
+status = "Full"
+note = "attach target Equipment to target creature, free: the AI moves one of its own loose Equipment (Helm of the Host first, or Helm off another creature) onto its best creature (Godo first) and casts it only when there is such a move; it does not target opposing Equipment or creatures"

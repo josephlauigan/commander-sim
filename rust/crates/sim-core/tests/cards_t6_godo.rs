@@ -117,3 +117,36 @@ fn hammer_ignores_opponents_equipment_and_noncreature_boards() {
     assert_eq!(attached_to(&g, h), None, "an opponent's Equipment entering is not 'you control'");
     let _ = t;
 }
+
+// ======================================================== Magnetic Theft
+fn cast_resolve(g: &mut Game, p: PlayerId, name: &str) {
+    let c = card(g, name);
+    let f = g.registry.get(c).unwrap().resolve.unwrap();
+    f(g, p, c, &sim_core::state::Ctx::default()).unwrap();
+}
+
+fn prio(g: &Game, p: PlayerId, name: &str) -> i32 {
+    let c = card(g, name);
+    g.registry.get(c).unwrap().prio.unwrap()(g, p, c)
+}
+
+#[test]
+fn magnetic_theft_attaches_a_loose_equipment_to_the_creature() {
+    let mut g = tbl();
+    let godo = perm(&mut g, P0, "Godo, Bandit Warlord"); // Helm comes out unattached (no Hammer)
+    let helm = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Helm of the Host")).unwrap();
+    assert_eq!(attached_to(&g, helm), None);
+    assert!(prio(&g, P0, "Magnetic Theft") > 0, "worth casting");
+    cast_resolve(&mut g, P0, "Magnetic Theft");
+    assert_eq!(attached_to(&g, helm), Some(godo));
+    assert_eq!(prio(&g, P0, "Magnetic Theft"), 0, "nothing left to move");
+}
+
+#[test]
+fn magnetic_theft_needs_a_creature_and_an_equipment() {
+    let mut g = tbl();
+    assert_eq!(prio(&g, P0, "Magnetic Theft"), 0);
+    perm(&mut g, P0, "Hammer of Nazahn");
+    assert_eq!(prio(&g, P0, "Magnetic Theft"), 0, "no creature");
+    cast_resolve(&mut g, P0, "Magnetic Theft"); // fizzles harmlessly
+}
