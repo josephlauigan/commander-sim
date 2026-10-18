@@ -414,7 +414,7 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
 /// a combo with declared steps: each step is answerable in its own way (`StepKind`); an answered step stops the combo
 /// (the pieces already played stay, and p may go for another line later), and once the last one passes the loop is
 /// executed abstractly
-fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
+pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
     let (gn, pips) = cmb.mana;
     if gn > 0 || !pips.is_empty() {
         pay(g, p, gn, pips, false)?;
