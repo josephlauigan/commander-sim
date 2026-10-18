@@ -30,16 +30,40 @@ fn lib_names(g: &Game, ids: &[sim_core::ids::CardId]) -> Vec<String> {
 #[test]
 fn ramp_without_a_path_is_shipped() {
     // scenario 16
-    let g = opening(&["Mountain", "Sol Ring", "Chrome Mox", "Lotus Petal", "Rite of Flame", "Mana Vault", "Lion's Eye Diamond"]);
+    let g = opening(&[
+        "Mountain",
+        "Sol Ring",
+        "Chrome Mox",
+        "Lotus Petal",
+        "Rite of Flame",
+        "Mana Vault",
+        "Lion's Eye Diamond",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false), "five sources and a ritual, but no tutor and no win piece");
-    let g = opening(&["Mountain", "Sol Ring", "Lion's Eye Diamond", "Rite of Flame", "Desperate Ritual", "Defense Grid", "Blood Moon"]);
+    let g = opening(&[
+        "Mountain",
+        "Sol Ring",
+        "Lion's Eye Diamond",
+        "Rite of Flame",
+        "Desperate Ritual",
+        "Defense Grid",
+        "Blood Moon",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false), "two sources and no path to Godo");
 }
 
 #[test]
 fn an_engine_with_permanent_mana_is_kept() {
     // scenario 17
-    let g = opening(&["The One Ring", "Basalt Monolith", "Voltaic Key", "Mountain", "Mountain", "Blood Moon", "Trinisphere"]);
+    let g = opening(&[
+        "The One Ring",
+        "Basalt Monolith",
+        "Voltaic Key",
+        "Mountain",
+        "Mountain",
+        "Blood Moon",
+        "Trinisphere",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(true));
 }
 
@@ -50,9 +74,25 @@ fn a_tutor_with_fast_mana_is_kept_and_all_lands_or_no_lands_are_not() {
     assert_eq!(t6_plans::keep(&g, P0), Some(true));
     let g = opening(&["Mountain", "Mountain", "Mountain", "Mountain", "Mountain", "Mountain", "Mountain"]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false));
-    let g = opening(&["Gamble", "Imperial Recruiter", "Goblin Engineer", "Blood Moon", "Trinisphere", "Defense Grid", "Wheel of Fortune"]);
+    let g = opening(&[
+        "Gamble",
+        "Imperial Recruiter",
+        "Goblin Engineer",
+        "Blood Moon",
+        "Trinisphere",
+        "Defense Grid",
+        "Wheel of Fortune",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false), "no mana at all");
-    let g = opening(&["Mountain", "Mountain", "Helm of the Host", "Hammer of Nazahn", "Blood Moon", "Trinisphere", "Defense Grid"]);
+    let g = opening(&[
+        "Mountain",
+        "Mountain",
+        "Helm of the Host",
+        "Hammer of Nazahn",
+        "Blood Moon",
+        "Trinisphere",
+        "Defense Grid",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(true), "two lands and the pieces");
 }
 

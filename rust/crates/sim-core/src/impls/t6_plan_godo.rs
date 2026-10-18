@@ -51,7 +51,8 @@ const PATH: &[&str] = &[
     "Wheel of Fortune",
 ];
 /// the zero-drops that Vexing Bauble (and Trinisphere) would shut off
-const FREE_DROPS: &[&str] = &["Chrome Mox", "Mox Diamond", "Mox Opal", "Lotus Petal", "Lion's Eye Diamond", "Sol Ring", "Mana Vault"];
+const FREE_DROPS: &[&str] =
+    &["Chrome Mox", "Mox Diamond", "Mox Opal", "Lotus Petal", "Lion's Eye Diamond", "Sol Ring", "Mana Vault"];
 
 fn count(g: &Game, p: PlayerId, names: &[&str]) -> usize {
     g.player(p).hand.iter().filter(|&&c| names.contains(&cname(g, c))).count()
@@ -67,9 +68,7 @@ fn godo_out(g: &Game, p: PlayerId) -> bool {
 
 /// cast priority of `c` (0-100 scale like `deck_prio`; 0 or less keeps it in hand); None = no opinion
 pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
-    let hand_free = |skip: CardId| {
-        g.player(p).hand.iter().any(|&x| x != skip && FREE_DROPS.contains(&cname(g, x)))
-    };
+    let hand_free = |skip: CardId| g.player(p).hand.iter().any(|&x| x != skip && FREE_DROPS.contains(&cname(g, x)));
     match cname(g, c) {
         // spec: zero-drops first; Bauble counters our own free spells
         "Vexing Bauble" if hand_free(c) => Some(5.0),
@@ -150,8 +149,12 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
 
 /// go for the combo named `combo` now (Some(true)), wait (Some(false)), or no opinion (None)
 pub fn go_now(g: &Game, p: PlayerId, _combo: &str) -> Option<bool> {
-    let prot = count(g, p, &["Pyroblast", "Red Elemental Blast", "Deflecting Swat", "Redirect Lightning", "Tibalt's Trickery"])
-        .min(2);
+    let prot = count(
+        g,
+        p,
+        &["Pyroblast", "Red Elemental Blast", "Deflecting Swat", "Redirect Lightning", "Tibalt's Trickery"],
+    )
+    .min(2);
     let risk = crate::ai::t6_table::go_risk(g, p) * 0.8f64.powi(prot as i32);
     // spec: a turn-2/3 win beats waiting; later the bar rises with the round like the shared rule
     let thr = match g.round {
