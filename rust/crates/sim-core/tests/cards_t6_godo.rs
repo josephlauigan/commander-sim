@@ -150,3 +150,33 @@ fn magnetic_theft_needs_a_creature_and_an_equipment() {
     assert_eq!(prio(&g, P0, "Magnetic Theft"), 0, "no creature");
     cast_resolve(&mut g, P0, "Magnetic Theft"); // fizzles harmlessly
 }
+
+// ======================================================== Sting, the Glinting Dagger
+fn combat_start(g: &mut Game, src: PermId, p: PlayerId) -> Vec<PermId> {
+    let c = g.perm(src).cd.unwrap();
+    g.registry.get(c).unwrap().combat_start.unwrap()(g, src, p).unwrap()
+}
+
+#[test]
+fn sting_untaps_the_equipped_creature_at_the_beginning_of_its_controllers_combat() {
+    let mut g = tbl();
+    let t = token(&mut g, P0, 2);
+    let s = perm(&mut g, P0, "Sting, the Glinting Dagger");
+    g.perm_mut(s).attached = Some(t);
+    assert_eq!(sim_core::engine::values::epow(&g, t), 3, "+1/+1");
+    g.perm_mut(t).tapped = true;
+    assert!(combat_start(&mut g, s, P1).is_empty());
+    assert!(g.perm(t).tapped, "only at its controller's combat (an opponent's combat is an engine need)");
+    assert!(combat_start(&mut g, s, P0).is_empty());
+    assert!(!g.perm(t).tapped, "untapped");
+}
+
+#[test]
+fn sting_unattached_does_nothing() {
+    let mut g = tbl();
+    let t = token(&mut g, P0, 2);
+    let s = perm(&mut g, P0, "Sting, the Glinting Dagger");
+    g.perm_mut(t).tapped = true;
+    combat_start(&mut g, s, P0);
+    assert!(g.perm(t).tapped);
+}

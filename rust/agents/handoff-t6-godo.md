@@ -6,3 +6,4 @@ Plan: module impls/t6_godo.rs (registered), tests/cards_t6_godo.rs (table godo +
 Godo: DONE (Partial, engine cap on combats), committed.
 Hammer: DONE (Full), committed.
 Magnetic Theft: DONE (Full), committed.
+Sting: DONE (Partial, engine needs), committed.

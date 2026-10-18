@@ -196,6 +196,27 @@ fn theft_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     if theft_plan(g, p).is_some() { 70 } else { 0 }
 }
 
+// ================================================================== Sting, the Glinting Dagger
+/// **Sting, the Glinting Dagger** ({2} legendary Equipment): equipped creature gets +1/+1 and haste, equip {2} (the
+/// compiled abilities); at the beginning of each combat, untap the equipped creature (modeled for its controller's
+/// combat, through `combat_start`, which the engine runs after attackers are chosen; so an attacking Godo untaps at
+/// once and the extra-combat untap is already the engine's). Missing, as engine needs: the beginning of an
+/// opponent's combat, and "first strike while blocking or blocked by a Goblin or Orc".
+fn sting_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
+    if owner(g, src) != p || !live(g, src) {
+        return Ok(vec![]);
+    }
+    let Some(t) = g.perm(src).attached.filter(|&t| live(g, t) && g.is_creature(t) && g.perm(t).tapped) else {
+        return Ok(vec![]);
+    };
+    let name = format!("untap {}", g.perm(t).name);
+    if trigger_window(g, p, Some(src), &name, Some(3.0))? && live(g, t) {
+        g.perm_mut(t).tapped = false;
+        crate::glog!(g, "    Sting untaps {}", g.perm(t).name);
+    }
+    Ok(vec![])
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -204,5 +225,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Magnetic Theft")?;
     c.resolve = Some(theft_resolve);
     c.prio = Some(theft_prio);
+    r.card(db, "Sting, the Glinting Dagger")?.combat_start = Some(sting_combat);
     Ok(())
 }

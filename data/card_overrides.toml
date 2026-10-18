@@ -8459,3 +8459,7 @@ note = "whenever it or another Equipment you control enters, attaches that Equip
 ["Magnetic Theft"]
 status = "Full"
 note = "attach target Equipment to target creature, free: the AI moves one of its own loose Equipment (Helm of the Host first, or Helm off another creature) onto its best creature (Godo first) and casts it only when there is such a move; it does not target opposing Equipment or creatures"
+
+["Sting, the Glinting Dagger"]
+status = "Partial"
+note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of its controller's combat; missing: the untap at opponents' combats, and first strike while blocking or blocked by a Goblin or Orc (rust/agents/engine-needs-godo.md)"
