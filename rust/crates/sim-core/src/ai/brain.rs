@@ -152,8 +152,7 @@ impl Situation {
         let has_q = |q: PlayerId, t: Tag| has(g, q, t);
         let combo_near = opps.iter().any(|&q| {
             let k = g.player(q).key;
-            (k == "veyran" && has_q(q, Tag::Vkitten) && has_q(q, Tag::Vfire))
-                || (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
+            (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
                 || (k == "veyran" && has_q(q, Tag::Aether) && g.player(q).life >= 40)
         });
         Situation {

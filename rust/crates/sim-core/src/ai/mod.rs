@@ -324,6 +324,9 @@ pub fn protect_response(
 
 /// ais.wipe_modes (Farewell, Austere Command's modes)
 pub fn wipe_modes(g: &Game, p: PlayerId, kind: Sym) -> Vec<Sym> {
+    if g.player(p).key == "cloud" {
+        return crate::impls::cloud::wipe_modes(g, p, kind); // gated on the deck key (ai-audit cv)
+    }
     decks::wipe_modes(g, p, kind)
 }
 
@@ -525,11 +528,6 @@ pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId])
         }
     }
     if tide_response(g, p, &format!("combo_{which}"), 10.0, None)? {
-        if which == "veyran" {
-            for m in crate::engine::values::find(g, p, Tag::Vkitten) {
-                g.perm_mut(m).neutered = true;
-            }
-        }
         return Ok(true);
     }
     let qs: Vec<PlayerId> = g.after(p).collect();

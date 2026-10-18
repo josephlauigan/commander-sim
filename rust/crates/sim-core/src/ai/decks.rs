@@ -725,28 +725,22 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
         "kraum" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {
-                return first(&["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
+                // Lightning Greaves first (the engine is removed 1.8 times a game), then the rest
+                let greaves = ["Lightning Greaves", "Swiftfoot Boots"].iter().any(|n| {
+                    pl.hand.iter().any(|&x| &*g.db.get(x).name == *n)
+                        || pl.perms.iter().any(|&m| g.perm(m).on_bf && &*g.perm(m).name == *n)
+                });
+                let mut order = vec![];
+                if !greaves {
+                    order.push("Lightning Greaves");
+                }
+                order.extend(["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
+                return first(&order);
             }
             if kind == "cre2" {
-                let kitten = held(Tag::Vkitten);
-                let fire = held(Tag::Vfire);
-                if kitten && !fire {
-                    return first(&["Blazing Firesinger // Seething Song"]);
-                }
-                if fire && !kitten {
-                    return first(&["Displacer Kitten"]);
-                }
-                return first(&[
-                    "Displacer Kitten",
-                    "Blazing Firesinger // Seething Song",
-                    "Guttersnipe",
-                    "Archmage Emeritus",
-                ]);
+                return first(&super::veyran::recruit_wish(g, p));
             }
-            if !in_hand_tag(g, p, Tag::Ctr) {
-                return first(&["Counterspell", "Force of Will", "Mystic Confluence", "Stock Up"]);
-            }
-            first(&["Stock Up", "Flow State", "Quick Study", "Crackle with Power"])
+            first(&super::veyran::is_wish(g, p))
         }
         "kefka" if kind == "any" && super::decks::deck_has_storm(g, p) => first(&kefka_wish(g, p)),
         "kefka" if kind == "is" && super::decks::deck_has_storm(g, p) => {
