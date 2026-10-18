@@ -8298,3 +8298,7 @@ note = "{T}, sacrifice an artifact: target player mills three; whenever any arti
 ["Monumental Henge"]
 status = "Full"
 note = "enters tapped unless you control a Plains; {T}: {W}; {2}{W}{W},{T}: look at the top five, a historic card (artifact, legendary or Saga) to hand, the rest on the bottom in a random order (the AI uses it with spare mana when one is on top)"
+
+["Apple of Eden, Isu Relic"]
+status = "Approximate"
+note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an opponent's nonland cards as Opposition Agent does (any-type mana), the AI casts what it can at once and the rest go home; the owner draws for each spell played; lands stay in the hand and are never played (rust/agents/engine-needs-mana.md)"

@@ -9,6 +9,7 @@ use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
+const P2: PlayerId = PlayerId(2);
 
 fn tbl() -> Game {
     table(&["rograkh-silas-turbo-breach", "godo", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
@@ -366,9 +367,16 @@ fn grinding_station_untaps_when_an_artifact_enters_and_mills_by_sacrificing_one(
     let o = idx.iter().find(|x| x.label.contains("Grinding Station")).expect("the compiled mill ability is offered");
     assert!(run(&mut g, P0, o));
     assert!(g.perm(gs).tapped);
-    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Sol Ring").count()
-        + g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Solemn Simulacrum").count(), 1,
-        "one artifact was sacrificed");
+    assert_eq!(
+        g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Sol Ring").count()
+            + g.player(P0)
+                .perms
+                .iter()
+                .filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Solemn Simulacrum")
+                .count(),
+        1,
+        "one artifact was sacrificed"
+    );
     assert_eq!(libs(&g), lib - 3, "three cards milled from one library");
     let _ = ring;
 }
@@ -428,4 +436,45 @@ fn monumental_henge_enters_tapped_without_a_plains() {
     assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c), "no Plains");
     lands(&mut g, P0, "Plains", 1, false);
     assert!(!sim_core::engine::turn::land_enters_tapped(&g, P0, c), "a Plains");
+}
+
+// ======================================================== Apple of Eden, Isu Relic
+#[test]
+fn apple_of_eden_takes_a_hand_plays_it_and_the_owner_draws() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 6, false);
+    let apple = perm(&mut g, P0, "Apple of Eden, Isu Relic");
+    // P1's hand: two spells and a land
+    g.player_mut(P1).hand.clear();
+    let theirs = hand(&mut g, P1, &["Sol Ring", "Solemn Simulacrum", "Mountain"]);
+    let lib1 = g.player(P1).library.len();
+    let o = options(&mut g, apple, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert_eq!(g.player(P0).life, 36, "paid 4 life");
+    assert!(!on(&g, P0, apple) && g.player(P0).gy.contains(&card(&g, "Apple of Eden, Isu Relic")), "sacrificed");
+    // Sol Ring and Solemn were played with white mana (any type): they are on P0's side, their owner's cards
+    let names: Vec<_> = g.player(P0).perms.iter().map(|&m| g.perm(m).name.to_string()).collect();
+    assert!(names.iter().any(|n| n == "Sol Ring"), "{names:?}");
+    // P1 kept the land and drew one card for each spell played
+    assert!(g.player(P1).hand.contains(&theirs[2]), "the land stays");
+    let drawn = lib1 - g.player(P1).library.len();
+    assert_eq!(drawn, 2, "one draw per spell played (Sol Ring and Solemn Simulacrum)");
+    assert!(g.player(P0).stolen.is_empty() && g.player(P0).agent_ids.is_empty(), "nothing is left held");
+    assert!(g.player(P0).hand.iter().all(|c| !theirs.contains(c)), "unplayed cards went home");
+}
+
+#[test]
+fn apple_of_eden_needs_life_and_a_hand_worth_taking() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 6, false);
+    let apple = perm(&mut g, P0, "Apple of Eden, Isu Relic");
+    g.player_mut(P1).hand.clear();
+    g.player_mut(P2).hand.clear();
+    g.player_mut(PlayerId(3)).hand.clear();
+    assert!(options(&mut g, apple, P0, Some(false)).is_empty(), "no hands");
+    hand(&mut g, P1, &["Sol Ring", "Solemn Simulacrum"]);
+    assert_eq!(options(&mut g, apple, P0, Some(false)).len(), 1);
+    g.player_mut(P0).life = 15;
+    assert!(options(&mut g, apple, P0, Some(false)).is_empty(), "not at 15 life");
 }

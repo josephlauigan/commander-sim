@@ -4,24 +4,26 @@
 //! rust/agents/engine-needs-mana.md).
 
 use super::partials::at_once;
+use crate::ai::brain::do_cast;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{Source, Unit, mana_units, plan_pay};
-use crate::sym::intern;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::card_worth;
-use crate::impls::lands::{can_pay_without, pay_without};
 use crate::engine::values::{epow, pval};
-use crate::impls::t2::{end_step_flicker, flicker_worth};
-use crate::impls::t5::is_artifact;
-use crate::tag::Tag;
 use crate::engine::zones::{die, draw, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::impls::lands::{can_pay_without, pay_without};
+use crate::impls::t2::{end_step_flicker, flicker_worth};
+use crate::impls::t5::is_artifact;
+use crate::impls::yshtola::{stolen_worth, take_card};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
+use crate::sym::intern;
+use crate::tag::Tag;
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
     g.perm(m).owner
@@ -96,7 +98,8 @@ fn key_untap_target(g: &Game, p: PlayerId, key: PermId) -> Option<PermId> {
 /// the creature that gets "can't be blocked" before combat: the biggest untapped attacker (three or more power) when
 /// the opponents have an untapped blocker (the same pick as Amphin Pathmage's)
 fn key_unblockable_target(g: &Game, p: PlayerId) -> Option<PermId> {
-    let blockers = g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped));
+    let blockers =
+        g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped));
     if !blockers {
         return None;
     }
@@ -134,7 +137,10 @@ fn key_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
     {
         o.push(ability(2.0, "untap an artifact (Manifold Key)", src, key_untap, 0));
     }
-    if post == Some(false) && g.active == Some(p) && can_pay(g, p, 3, "", false) && key_unblockable_target(g, p).is_some()
+    if post == Some(false)
+        && g.active == Some(p)
+        && can_pay(g, p, 3, "", false)
+        && key_unblockable_target(g, p).is_some()
     {
         o.push(ability(2.0, "unblockable (Manifold Key)", src, key_unblock, 0));
     }
@@ -468,7 +474,8 @@ fn henge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let n = g.player(p).library.len().min(5);
     let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
-    let pick = max_by(&top.iter().copied().filter(|&c| historic(g, c)).collect::<Vec<_>>(), |c| card_worth(g, p, c, false));
+    let pick =
+        max_by(&top.iter().copied().filter(|&c| historic(g, c)).collect::<Vec<_>>(), |c| card_worth(g, p, c, false));
     let mut rest = top;
     if let Some(c) = pick {
         rest.retain(|&x| x != c);
@@ -478,6 +485,102 @@ fn henge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.rng.shuffle(&mut rest);
     g.player_mut(p).library.splice(0..0, rest);
     Ok(true)
+}
+
+// ================================================================== Apple of Eden, Isu Relic
+/// the opponent whose hand the Apple takes: the one holding the most nonland cards (at least two)
+fn apple_target(g: &Game, p: PlayerId) -> Option<PlayerId> {
+    let n = |q: PlayerId| g.player(q).hand.iter().filter(|&&c| !g.db.get(c).land).count();
+    let qs: Vec<PlayerId> =
+        g.opps(p).filter(|&q| g.player(q).alive && !crate::human::is_human(g, q) && n(q) >= 2).collect();
+    max_by(&qs, |q| n(q) as f64)
+}
+
+/// **Apple of Eden, Isu Relic** ({4} legendary artifact): {T}, pay 4 life, sacrifice it (sorcery speed): look at target
+/// opponent's hand and exile those cards face down; you may play them this turn, spending mana as though it were any
+/// type; whenever you play a land or cast a spell this way its owner draws a card; at the next end step the cards
+/// return to their owner's hand. Approximate: the cards are taken like Opposition Agent's (held in your hand, any-type
+/// mana) and the AI casts what it can right away, best first, as a burst while the ability resolves; then the rest
+/// return at once and each cast spell's owner draws. Lands stay in the owner's hand (a taken land would become one
+/// of the thief's lands), so no land is played and no land draw happens. Used at the AI's sorcery speed with life
+/// above 15 and mana to cast something.
+fn apple_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none()
+        || !live(g, src)
+        || owner(g, src) != p
+        || g.active != Some(p)
+        || g.perm(src).tapped
+        || g.player(p).life < 16
+    {
+        return Ok(vec![]);
+    }
+    let Some(q) = apple_target(g, p) else { return Ok(vec![]) };
+    // the Apple's {T} and sacrifice are costs: its own mana can't pay for anything, and it makes none
+    if !can_pay(g, p, 3, "", false) {
+        return Ok(vec![]);
+    }
+    let n = g.player(q).hand.iter().filter(|&&c| !g.db.get(c).land).count().min(4);
+    Ok(vec![ability(1.0 + 0.4 * n as f64, "Apple of Eden", src, apple_go, 0)])
+}
+
+fn apple_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || g.player(p).life < 5 {
+        return Ok(false);
+    }
+    let Some(q) = apple_target(g, p) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    lose_life(g, p, 4, Some(p), "other", Some(true))?;
+    crate::glog!(g, "  {} uses Apple of Eden on {}'s hand", g.player(p).name, g.player(q).name);
+    die(g, src, "sac")?;
+    if !ability_window(g, p, Some(src), "exile an opponent's hand, play it", None, None)? {
+        return Ok(true);
+    }
+    let taken: Vec<CardId> = g.player(q).hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+    for &c in &taken {
+        if let Some(i) = g.player(q).hand.iter().position(|&x| x == c) {
+            g.player_mut(q).hand.remove(i);
+        }
+        take_card(g, p, c, q, "Apple of Eden");
+    }
+    // play them this turn: the best castable first
+    let mut tried: Vec<CardId> = vec![];
+    for _ in 0..taken.len() * 2 {
+        let held: Vec<CardId> = taken
+            .iter()
+            .copied()
+            .filter(|c| g.player(p).hand.contains(c) && !tried.contains(c) && stolen_worth(g, p, *c) > 0.0)
+            .collect();
+        let Some(c) = max_by(&held, |c| stolen_worth(g, p, c)) else { break };
+        tried.push(c);
+        do_cast(g, p, c, Some("hand"))?;
+        if g.over || !g.player(p).alive {
+            return Ok(true);
+        }
+    }
+    // the end step: what wasn't played returns; the owner draws for each card played
+    let mut played = 0;
+    for &c in &taken {
+        if g.player(p).hand.contains(&c) {
+            let pl = g.player_mut(p);
+            remove_first(&mut pl.hand, c);
+            pl.stolen.shift_remove(&c);
+            pl.agent_ids.retain(|&x| x != c);
+            g.player_mut(q).hand.push(c);
+        } else {
+            played += 1;
+        }
+    }
+    if played > 0 && g.player(q).alive {
+        crate::glog!(g, "    {} draws {} (Apple of Eden)", g.player(q).name, played);
+        draw(g, q, played, false)?;
+    }
+    Ok(true)
+}
+
+fn remove_first(v: &mut Vec<CardId>, c: CardId) {
+    if let Some(i) = v.iter().position(|&x| x == c) {
+        v.remove(i);
+    }
 }
 
 // ================================================================== Desperate Ritual
@@ -533,6 +636,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(station_etb);
     at_once(c, Event::Etb, false);
     r.card(db, "Monumental Henge")?.land_options = Some(henge_options);
+    r.card(db, "Apple of Eden, Isu Relic")?.options = Some(apple_options);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);
