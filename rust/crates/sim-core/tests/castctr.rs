@@ -184,3 +184,16 @@ fn mirror_counters_free_spells_and_lets_coloured_payments_resolve() {
     cast_paid(&mut g, P0, "Sol Ring");
     assert!(on_bf(&g, P0, "Sol Ring"), "a Plains paid for it");
 }
+
+// ======================================================== the AI does not cast into a cast-counter
+#[test]
+fn the_ai_does_not_cast_a_mox_into_a_bauble_but_casts_sol_ring() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 1, false);
+    let mox = hand(&mut g, P0, &["Mox Amber"])[0];
+    let sol = hand(&mut g, P0, &["Sol Ring"])[0];
+    assert!(cast::castable(&g, P0, mox, "hand") && cast::castable(&g, P0, sol, "hand"));
+    perm(&mut g, P1, "Vexing Bauble");
+    assert!(!cast::castable(&g, P0, mox, "hand"), "it would be countered as it is cast");
+    assert!(cast::castable(&g, P0, sol, "hand"), "mana is spent on Sol Ring");
+}

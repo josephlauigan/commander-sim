@@ -29,3 +29,4 @@ Gaps / needs
   payment (an ability) was not followed by a cast; paths using `pay` or `pay_alt` restart it. Wrap such casts if it matters.
 - The AI still casts its own free spells into its own Bauble/Chalice(0)/Mirror (no AI avoidance; the old locks avoided it).
 - A generic cost paid from a mix of colourless and coloured sources: the engine's payment picks, Void Mirror reads that.
+- The AI no longer casts into a cast-counter: castable() asks hooks::would_be_cast_countered (people may still).
