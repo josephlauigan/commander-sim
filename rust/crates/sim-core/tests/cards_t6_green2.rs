@@ -140,6 +140,17 @@ fn noxious_revival_with_an_empty_graveyard_just_goes_to_the_graveyard() {
     assert!(in_gy(&g, P0, "Noxious Revival"));
 }
 
+#[test]
+fn noxious_revival_never_picks_itself_so_valuing_it_in_the_graveyard_ends() {
+    // its priority asks what it would pick; a Noxious Revival in the graveyard used to value itself through that same
+    // question without end (a stack overflow in Tier 6 games)
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Noxious Revival"]);
+    sim_core::engine::zones::discard_cards(&mut g, P0, &c).unwrap();
+    assert_eq!(t6::revival_pick(&g, P0), None);
+    let _ = sim_core::engine::tutors::card_worth(&g, P0, c[0], true);
+}
+
 // ======================================================== Sowing Mycospawn
 fn lib_has(g: &Game, p: PlayerId, name: &str) -> bool {
     g.player(p).library.iter().any(|&c| &*g.db.get(c).name == name)

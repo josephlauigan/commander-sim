@@ -97,9 +97,16 @@ fn cloud_cycle(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ================================================================== Noxious Revival
 /// the nonland card in one of p's own graveyard worth putting back on top: the best by `card_worth`, a creature
-/// counting a little more and mana value breaking ties (Oboro, Eternal Witness); None if there is none
+/// counting a little more and mana value breaking ties (Oboro, Eternal Witness); None if there is none. Never another
+/// Noxious Revival: its value is this same pick, so valuing it here would recurse without end
 pub fn revival_pick(g: &Game, p: PlayerId) -> Option<CardId> {
-    let gy: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+    let gy: Vec<CardId> = g
+        .player(p)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| !g.db.get(c).land && &*g.db.get(c).name != "Noxious Revival")
+        .collect();
     max_by(&gy, |c| {
         let d = g.db.get(c);
         card_worth(g, p, c, true) + if d.creature { 5.0 } else { 0.0 } + 0.1 * d.cmc as f64
