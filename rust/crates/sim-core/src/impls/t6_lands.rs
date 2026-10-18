@@ -17,7 +17,7 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{etgh, pval, threat, untargetable};
-use crate::engine::zones::{Tokens, make_tokens, min_by};
+use crate::engine::zones::{Tokens, die, make_tokens, min_by};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{LandId, PlayerId};
@@ -490,6 +490,123 @@ fn vault_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Mount Doom
+/// **Mount Doom**: {T}, pay 1 life: Add {B} or {R} (tag c=BR; the life is `mount_tap`, and it is not tapped for mana
+/// at 1 life). {1}{B}{R},{T}: 1 damage to each opponent (the AI pings with spare mana at the end of the turn).
+/// {5}{B}{R},{T}, sacrifice it and a legendary artifact: choose up to two creatures, destroy the rest (sorcery speed;
+/// the AI keeps its own two best creatures and does it when that kills at least 8 more worth of opposing creatures
+/// than it loses, after the artifact)
+fn mount_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+    (g.player(p).life > 1) as u32
+}
+
+fn mount_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
+    lose_life(g, p, 1, Some(p), "other", None)
+}
+
+/// the legendary artifact the wipe sacrifices: the cheapest in value
+fn mount_artifact(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT) && g.db.get(c).tag(Tag::Leg))
+        })
+        .collect();
+    min_by(&cs, |m| pval(g, m))
+}
+
+/// (the creatures to keep, the net worth of the wipe) for p: its two best creatures stay
+fn mount_wipe_plan(g: &Game, p: PlayerId, art: PermId) -> (Vec<PermId>, f64) {
+    let mut mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && g.perm(m).on_bf).collect();
+    mine.sort_by(|&a, &b| pval(g, b).total_cmp(&pval(g, a)));
+    let keep: Vec<PermId> = mine.iter().copied().take(2).collect();
+    let lost: f64 = mine.iter().filter(|m| !keep.contains(m)).map(|&m| pval(g, m)).sum();
+    let killed: f64 = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| g.is_creature(m) && g.perm(m).on_bf && !g.perm(m).phased)
+        .map(|m| pval(g, m))
+        .sum();
+    (keep, killed - lost - pval(g, art))
+}
+
+fn mount_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let mut out = vec![];
+    if g.land(l).tapped {
+        return Ok(out);
+    }
+    if g.active == Some(p)
+        && post.is_some()
+        && let Some(art) = mount_artifact(g, p)
+        && can_pay_without(g, p, l, 5, "BR")
+    {
+        let (_, net) = mount_wipe_plan(g, p, art);
+        if net >= 8.0 {
+            out.push(Opt {
+                utility: net / 4.0,
+                label: "Mount Doom destroys all but two creatures".into(),
+                act: Some(Action::Plan { f: mount_wipe_go, arg: l.0 as i64 }),
+            });
+        }
+    }
+    if post.is_none() && can_pay_without(g, p, l, 1, "BR") {
+        let opps = g.opps(p).filter(|&q| g.player(q).alive).count();
+        out.push(Opt {
+            utility: 0.3 + 0.1 * opps as f64,
+            label: "Mount Doom pings".into(),
+            act: Some(Action::Plan { f: mount_ping_go, arg: l.0 as i64 }),
+        });
+    }
+    Ok(out)
+}
+
+fn mount_ping_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 1, "BR")? {
+        return Ok(false);
+    }
+    g.land_mut(l).tapped = true;
+    crate::glog!(g, "  {} uses Mount Doom: 1 damage to each opponent", g.player(p).name);
+    if ability_window_card(g, p, g.land(l).cd, "1 damage to each opponent", None, None)? {
+        for q in g.opps(p).filter(|&q| g.player(q).alive).collect::<Vec<_>>() {
+            lose_life(g, q, 1, Some(p), "burn", None)?;
+        }
+    }
+    Ok(true)
+}
+
+fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    let Some(art) = mount_artifact(g, p) else { return Ok(false) };
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 5, "BR")? {
+        return Ok(false);
+    }
+    let (keep, _) = mount_wipe_plan(g, p, art);
+    let cd = g.land(l).cd;
+    super::lands::sac_land(g, p, l)?; // {T} and sacrifice are costs
+    crate::glog!(g, "  {} sacrifices Mount Doom and {}", g.player(p).name, g.perm(art).name);
+    die(g, art, "sac")?;
+    if ability_window_card(g, p, cd, "destroy all creatures but two", None, None)? {
+        crate::glog!(g, "    Mount Doom: all creatures but {} destroyed", keep.iter().map(|&m| g.perm(m).name.to_string()).collect::<Vec<_>>().join(", "));
+        let all: Vec<PermId> = g
+            .players
+            .iter()
+            .flat_map(|pl| pl.perms.iter().copied())
+            .filter(|&m| g.is_creature(m) && g.perm(m).on_bf && !keep.contains(&m))
+            .collect();
+        for m in all {
+            if g.perm(m).on_bf {
+                apply_removal(g, Some(p), m, "destroy", None)?;
+            }
+        }
+    }
+    Ok(true)
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -517,6 +634,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Forbidden Orchard")?.on_tap_land = Some(orchard_tap);
     r.card(db, "Petrified Hamlet")?.land_etb = Some(hamlet_etb);
     r.card(db, "Fomori Vault")?.land_options = Some(vault_options);
+    let m = r.card(db, "Mount Doom")?;
+    m.dyn_mana_land = Some(mount_mana);
+    m.on_tap_land = Some(mount_tap);
+    m.land_options = Some(mount_options);
     // REGISTER-HERE
     Ok(())
 }

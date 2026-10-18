@@ -8284,3 +8284,7 @@ note = "{T}: {C}; {1},{T}: any colour (only when another untapped land pays the 
 ["Fomori Vault"]
 status = "Full"
 note = "{T}: {C}; {3},{T}, discard a card: look at the top X (X = artifacts you control), best to hand, the rest to the bottom in random order; used when X is 3+ (2 with a spare land), t6_lands.rs"
+
+["Mount Doom"]
+status = "Full"
+note = "{T}, pay 1 life: {B} or {R} (not at 1 life); {1}{B}{R},{T}: 1 damage to each opponent (end of turn); {5}{B}{R},{T}, sacrifice it and a legendary artifact: keeps its two best creatures, destroys the rest when that nets 8+ worth (sorcery speed); t6_lands.rs. Infinite-untap loops are the combo code's"

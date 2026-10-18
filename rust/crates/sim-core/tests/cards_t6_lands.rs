@@ -301,3 +301,54 @@ fn fomori_vault_needs_artifacts() {
     hand(&mut g, P0, &["Forest"]);
     assert!(sim_core::cardcode::land_options(&mut g, P0, None).unwrap().is_empty(), "X = 1: not worth a card");
 }
+
+// ------------------------------------------------------------------ Mount Doom
+#[test]
+fn mount_doom_costs_one_life_to_tap_and_is_not_tapped_at_one_life() {
+    let mut g = pod();
+    lands(&mut g, P0, "Mount Doom", 1, false);
+    let life = g.player(P0).life;
+    assert!(mana::pay(&mut g, P0, 0, "B", false).unwrap());
+    assert_eq!(g.player(P0).life, life - 1, "pay 1 life");
+    let mut g = pod();
+    lands(&mut g, P0, "Mount Doom", 1, false);
+    g.player_mut(P0).life = 1;
+    assert_eq!(mana::total_mana(&g, P0, false), 0, "never tapped for mana at 1 life");
+}
+
+#[test]
+fn mount_doom_pings_every_opponent_for_one() {
+    let mut g = table(&["lathril-golgari-elves", "veyran", "sauron"]);
+    lands(&mut g, P0, "Mount Doom", 1, false);
+    lands(&mut g, P0, "Swamp", 1, false);
+    lands(&mut g, P0, "Mountain", 1, false);
+    lands(&mut g, P0, "Plains", 1, false);
+    let (l1, l2) = (g.player(P1).life, g.player(PlayerId(2)).life);
+    let o = sim_core::cardcode::land_options(&mut g, P0, None).unwrap();
+    let ping = o.iter().find(|x| x.label == "Mount Doom pings").expect("ping offered at the end of the turn");
+    assert!(sim_core::ai::act::perform(&mut g, P0, ping.act.as_ref().unwrap()).unwrap());
+    assert_eq!((g.player(P1).life, g.player(PlayerId(2)).life), (l1 - 1, l2 - 1));
+}
+
+#[test]
+fn mount_doom_wipes_all_but_two_creatures_for_a_legendary_artifact() {
+    let mut g = pod();
+    g.active = Some(P0);
+    let md = lands(&mut g, P0, "Mount Doom", 1, false)[0];
+    lands(&mut g, P0, "Swamp", 4, false);
+    lands(&mut g, P0, "Mountain", 4, false);
+    let art = perm(&mut g, P0, "Sword of the Animist"); // not legendary: no wipe
+    assert!(sim_core::cardcode::land_options(&mut g, P0, Some(false)).unwrap().iter().all(|x| x.label != "Mount Doom destroys all but two creatures"));
+    let _ = art;
+    let mine = [perm(&mut g, P0, "Craterhoof Behemoth"), perm(&mut g, P0, "Kaalia of the Vast"), perm(&mut g, P0, "Llanowar Elves")];
+    let theirs = [perm(&mut g, P1, "Archon of Cruelty"), perm(&mut g, P1, "Sheoldred, the Apocalypse"), perm(&mut g, P1, "Hullbreaker Horror")];
+    let sol = perm(&mut g, P0, "The One Ring"); // a legendary artifact
+    let o = sim_core::cardcode::land_options(&mut g, P0, Some(false)).unwrap();
+    let w = o.iter().find(|x| x.label == "Mount Doom destroys all but two creatures").expect("wipe offered");
+    assert!(sim_core::ai::act::perform(&mut g, P0, w.act.as_ref().unwrap()).unwrap());
+    assert!(!g.player(P0).lands.contains(&md), "Mount Doom is sacrificed");
+    assert!(!g.perm(sol).on_bf, "and a legendary artifact");
+    assert!(g.perm(mine[0]).on_bf && g.perm(mine[1]).on_bf, "my two best creatures are chosen");
+    assert!(!g.perm(mine[2]).on_bf, "the rest are destroyed");
+    assert!(theirs.iter().all(|&m| !g.perm(m).on_bf));
+}
