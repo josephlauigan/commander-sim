@@ -210,9 +210,11 @@ impl Sim {
         {
             return d.name.clone();
         }
-        match self.pool.iter().find(|d| d.key == key) {
-            Some(d) => d.short_name(),
-            None => key.to_string(),
+        // a pool deck: the exported name (decks.json), "Rograkh/Silas" for a partner pair
+        match (self.engine.decks.get(key), self.pool.iter().find(|d| d.key == key)) {
+            (Some(d), Some(_)) => d.name.clone(),
+            (None, Some(d)) => d.short_name(),
+            _ => key.to_string(),
         }
     }
 

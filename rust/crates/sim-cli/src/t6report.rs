@@ -1,0 +1,329 @@
+//! The Tier 6 report that follows the balance table of `--calibrate within --pool t6`: how each deck wins, how often
+//! it goes for a combo and what stops it, mulligans, the interaction it casts, and the pod's seat shares. Every
+//! number comes from counters kept while the games were played (`sim_core::t6stats`, plus the winner, round and
+//! elimination data of `GameOut`), so the report costs no games and no log parsing.
+
+use crate::play::GameOut;
+use crate::stats::Counter;
+use std::collections::HashMap;
+
+/// Targets from decklists/pool/TARGETS-t6.md: seat share of decisive games, low / real value / high
+pub const SEAT_TARGETS: [(f64, f64, f64); 4] = [(30.0, 34.1, 38.0), (24.0, 27.3, 31.0), (19.0, 22.5, 26.0), (14.0, 17.4, 21.0)];
+
+/// one deck's tallies over the games it was seated in
+#[derive(Default, Clone)]
+pub struct DeckT6 {
+    pub seated: u64,
+    /// wins with a real winner (not the round-cap tiebreak)
+    pub wins: u64,
+    pub timeout_wins: u64,
+    /// how the wins came (a combo line's name, "damage", "commander damage", "poison", "other")
+    pub route: Counter<String>,
+    pub win_rounds: Vec<u32>,
+    /// times it went for each combo line
+    pub go: Counter<String>,
+    /// "<line>|<card>": times a line was stopped, and by what
+    pub stops: Counter<String>,
+    /// hands with 0, 1, 2, 3 mulligans
+    pub mulls: [u64; 4],
+    /// "<kind>|<card>|<victim key>" for kind counter / removal, "<kind>|<card>" for stax / wipe
+    pub ix: Counter<String>,
+}
+
+/// a whole calibration run of one tier
+#[derive(Default, Clone)]
+pub struct T6Tally {
+    pub games: u64,
+    pub timeouts: u64,
+    /// wins by seat (turn order, 0-3) in decisive games
+    pub seat_wins: [u64; 4],
+    pub decks: HashMap<String, DeckT6>,
+}
+
+/// how the winner won: a combo line's name, "commander damage", "poison", "damage", "other"; None for the round cap
+pub fn win_route(g: &GameOut, w: usize) -> Option<String> {
+    match g.wintype {
+        Some("timeout") => None,
+        Some("combo") => {
+            let mut lines: Vec<&str> = g.players[w].stats.keys().filter_map(|k| k.strip_prefix("win|")).collect();
+            lines.sort();
+            Some(lines.first().map_or("combo (unnamed)".to_string(), |l| l.to_string()))
+        }
+        Some(x) if !x.is_empty() && x != "damage" => Some("other".to_string()),
+        _ => {
+            // the last opponent out decides: how that player died
+            let last = g
+                .players
+                .iter()
+                .enumerate()
+                .filter(|(i, _)| *i != w)
+                .max_by_key(|(i, p)| (p.stat("elim_round"), *i))
+                .map(|(_, p)| p.death_kind);
+            Some(
+                match last {
+                    Some("commander damage") => "commander damage",
+                    Some(k) if k.contains("poison") || k.contains("infect") => "poison",
+                    Some("combat" | "burn" | "drain" | "triggers" | "life" | "ping" | "aether") => "damage",
+                    Some(k) if k.starts_with("dmg") => "damage",
+                    _ => "other",
+                }
+                .to_string(),
+            )
+        }
+    }
+}
+
+impl T6Tally {
+    pub fn add(&mut self, g: &GameOut) {
+        self.games += 1;
+        let timeout = g.wintype == Some("timeout");
+        self.timeouts += timeout as u64;
+        if let Some(w) = g.winner
+            && !timeout
+            && w < 4
+        {
+            self.seat_wins[w] += 1;
+        }
+        for (i, p) in g.players.iter().enumerate() {
+            let d = self.decks.entry(p.key.to_string()).or_default();
+            d.seated += 1;
+            if g.winner == Some(i) {
+                match win_route(g, i) {
+                    Some(r) => {
+                        d.wins += 1;
+                        d.route.add(r, 1);
+                        d.win_rounds.push(g.round);
+                    }
+                    None => d.timeout_wins += 1,
+                }
+            }
+            let m = p.stat("mull_n").clamp(0, 3) as usize;
+            d.mulls[m] += 1;
+            for (k, &v) in &p.stats {
+                if let Some(c) = k.strip_prefix("go|") {
+                    d.go.add(c.to_string(), v);
+                } else if let Some(c) = k.strip_prefix("stop|") {
+                    d.stops.add(c.to_string(), v);
+                } else if let Some(c) = k.strip_prefix("ix|") {
+                    d.ix.add(c.to_string(), v);
+                }
+            }
+        }
+    }
+
+    /// decisive games: those with a winner that was not the round-cap tiebreak
+    pub fn decisive(&self) -> u64 {
+        self.seat_wins.iter().sum()
+    }
+
+    pub fn seat_share(&self, seat: usize) -> f64 {
+        100.0 * self.seat_wins[seat] as f64 / self.decisive().max(1) as f64
+    }
+}
+
+fn pct(a: u64, b: u64) -> f64 {
+    100.0 * a as f64 / b.max(1) as f64
+}
+
+fn median(v: &[u32]) -> f64 {
+    let mut v = v.to_vec();
+    v.sort();
+    match v.len() {
+        0 => 0.0,
+        n if n % 2 == 1 => v[n / 2] as f64,
+        n => (v[n / 2 - 1] + v[n / 2]) as f64 / 2.0,
+    }
+}
+
+/// "a 12, b 5, c 3" for the top entries of a counter
+fn top(c: &Counter<String>, n: usize, label: &dyn Fn(&str) -> String) -> String {
+    c.most_common().into_iter().take(n).map(|(k, v)| format!("{} {v}", label(&k))).collect::<Vec<_>>().join(", ")
+}
+
+/// the report text for one tier's run: `keys` are the tier's decks in file order, `name` turns a key into the printed name
+pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> String {
+    let mut o = String::new();
+    let dec = t.decisive();
+    o += &format!(
+        "  -- Tier 6 report ({} games, {} decisive; round-cap draws {:.1}%) --\n",
+        t.games,
+        dec,
+        pct(t.timeouts, t.games)
+    );
+    let seats: Vec<String> = (0..4)
+        .map(|i| {
+            let (lo, real, hi) = SEAT_TARGETS[i];
+            let s = t.seat_share(i);
+            let flag = if s < lo || s > hi { " OUT" } else { "" };
+            format!("seat {} {s:.1}% (real {real}%, sim {lo:.0}-{hi:.0}){flag}", i + 1)
+        })
+        .collect();
+    o += &format!("  win share by seat of decisive games: {}\n", seats.join("; "));
+    for k in keys {
+        let Some(d) = t.decks.get(k) else { continue };
+        let tot = d.wins + d.timeout_wins;
+        o += &format!(
+            "  {}: seated {}, won {} ({:.1}%; {} by the round cap)\n",
+            name(k),
+            d.seated,
+            tot,
+            pct(tot, d.seated),
+            d.timeout_wins
+        );
+        let routes: Vec<String> =
+            d.route.most_common().into_iter().map(|(r, n)| format!("{r} {n} ({:.0}%)", pct(n as u64, d.wins))).collect();
+        o += &format!("      wins by: {}\n", if routes.is_empty() { "none".into() } else { routes.join(", ") });
+        if !d.win_rounds.is_empty() {
+            let avg = d.win_rounds.iter().sum::<u32>() as f64 / d.win_rounds.len() as f64;
+            o += &format!("      win round: average {avg:.1}, median {:.1}\n", median(&d.win_rounds));
+        }
+        let (goes, stops) = (d.go.total() as u64, d.stops.total() as u64);
+        o += &format!(
+            "      went for a combo {} times ({:.2} per game){}; stopped {} ({:.0}%)\n",
+            goes,
+            goes as f64 / d.seated.max(1) as f64,
+            if goes > 0 { format!(" [{}]", top(&d.go, 4, &|s| s.to_string())) } else { String::new() },
+            stops,
+            pct(stops, goes)
+        );
+        if stops > 0 {
+            let mut by_card: Counter<String> = Counter::new();
+            for (k, v) in d.stops.most_common() {
+                by_card.add(k.rsplit('|').next().unwrap_or("?").to_string(), v);
+            }
+            o += &format!(
+                "      stopped by: {}\n",
+                top(&d.stops, 6, &|s| s.replace('|', " by ").replace(" by ?", " by an unnamed answer"))
+            );
+            o += &format!("      stopped by card: {}\n", top(&by_card, 6, &|s| s.to_string()));
+        }
+        let m = d.mulls;
+        o += &format!(
+            "      mulligans: {} of {} hands ({:.1}%): one {}, two {}, three {}\n",
+            m[1] + m[2] + m[3],
+            d.seated,
+            pct(m[1] + m[2] + m[3], d.seated),
+            m[1],
+            m[2],
+            m[3]
+        );
+        for kind in ["counter", "removal", "stax", "wipe"] {
+            let (mut n, mut cards, mut victims): (i64, Counter<String>, Counter<String>) = (0, Counter::new(), Counter::new());
+            for (k, v) in d.ix.most_common() {
+                let mut f = k.split('|');
+                if f.next() != Some(kind) {
+                    continue;
+                }
+                n += v;
+                cards.add(f.next().unwrap_or("?").to_string(), v);
+                if let Some(vk) = f.next() {
+                    victims.add(vk.to_string(), v);
+                }
+            }
+            if n == 0 {
+                continue;
+            }
+            let hit = if victims.is_empty() { String::new() } else { format!("; hit {}", top(&victims, 5, &|s| name(s))) };
+            o += &format!(
+                "      {}: {} ({}){}\n",
+                match kind {
+                    "counter" => "counters resolved",
+                    "removal" => "removal resolved",
+                    "stax" => "stax cast",
+                    _ => "wipes",
+                },
+                n,
+                top(&cards, 5, &|s| s.to_string()),
+                hit
+            );
+        }
+    }
+    o
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::play::PlayerOut;
+
+    fn player(key: &'static str) -> PlayerOut {
+        PlayerOut {
+            key,
+            turns: 8,
+            alive: true,
+            killer: None,
+            stats: HashMap::new(),
+            milestone: HashMap::new(),
+            first_bomb: None,
+            death_kind: "",
+            seen: vec![],
+            cast: vec![],
+            lost: vec![],
+            cast_turns: vec![],
+        }
+    }
+
+    fn game(winner: Option<usize>, wintype: Option<&'static str>, round: u32) -> GameOut {
+        GameOut { winner, wintype, round, players: vec![player("a"), player("b"), player("c"), player("d")], log: None }
+    }
+
+    #[test]
+    fn seat_shares_count_decisive_games_only() {
+        let mut t = T6Tally::default();
+        for w in [0, 0, 0, 1, 1, 2, 3] {
+            t.add(&game(Some(w), Some("combo"), 8));
+        }
+        t.add(&game(Some(3), Some("timeout"), 20)); // the round-cap tiebreak: not decisive
+        t.add(&game(None, None, 20));
+        assert_eq!((t.games, t.timeouts, t.decisive()), (9, 1, 7));
+        assert_eq!(t.seat_wins, [3, 2, 1, 1]);
+        assert!((t.seat_share(0) - 300.0 / 7.0).abs() < 1e-9);
+        assert!((t.seat_share(3) - 100.0 / 7.0).abs() < 1e-9);
+        // a deck's round-cap win is kept apart from its real wins
+        assert_eq!((t.decks["d"].wins, t.decks["d"].timeout_wins), (1, 1));
+    }
+
+    #[test]
+    fn a_combo_win_is_named_by_its_line_and_counters_are_summed() {
+        let mut g = game(Some(1), Some("combo"), 6);
+        g.players[1].stats.insert("win|Breach + Oracle", 1);
+        g.players[1].stats.insert("go|Breach + Oracle", 2);
+        g.players[1].stats.insert("stop|Breach + Oracle|Force of Will", 1);
+        g.players[1].stats.insert("ix|counter|Force of Will|a", 2);
+        g.players[1].stats.insert("mull_n", 2);
+        g.players[0].stats.insert("ix|removal|Swords to Plowshares|b", 1);
+        let mut t = T6Tally::default();
+        t.add(&g);
+        t.add(&g);
+        let b = &t.decks["b"];
+        assert_eq!(b.route.get(&"Breach + Oracle".to_string()), 2);
+        assert_eq!((b.go.total(), b.stops.total(), b.mulls), (4, 2, [0, 0, 2, 0]));
+        assert_eq!(b.win_rounds, vec![6, 6]);
+        assert_eq!(b.ix.get(&"counter|Force of Will|a".to_string()), 4);
+        let keys: Vec<String> = ["a", "b"].iter().map(|s| s.to_string()).collect();
+        let text = render(&t, &keys, &|k| k.to_uppercase());
+        assert!(text.contains("B: seated 2, won 2 (100.0%; 0 by the round cap)"), "{text}");
+        assert!(text.contains("wins by: Breach + Oracle 2 (100%)"), "{text}");
+        assert!(text.contains("win round: average 6.0, median 6.0"), "{text}");
+        assert!(text.contains("went for a combo 4 times (2.00 per game)"), "{text}");
+        assert!(text.contains("stopped 2 (50%)"), "{text}");
+        assert!(text.contains("Breach + Oracle by Force of Will 2"), "{text}");
+        assert!(text.contains("counters resolved: 4 (Force of Will 4); hit A 4"), "{text}");
+        assert!(text.contains("A: seated 2, won 0"), "{text}");
+        assert!(text.contains("removal resolved: 2 (Swords to Plowshares 2); hit B 2"), "{text}");
+    }
+
+    #[test]
+    fn damage_wins_are_told_apart_by_how_the_last_opponent_died() {
+        for (kind, want) in [("commander damage", "commander damage"), ("burn", "damage"), ("poison", "poison"), ("decked", "other")] {
+            let mut g = game(Some(0), None, 9);
+            g.players[1].death_kind = kind;
+            g.players[1].stats.insert("elim_round", 9);
+            g.players[2].death_kind = "combat";
+            g.players[2].stats.insert("elim_round", 7);
+            assert_eq!(win_route(&g, 0).as_deref(), Some(want), "{kind}");
+        }
+        assert_eq!(win_route(&game(Some(0), Some("timeout"), 20), 0), None);
+        assert_eq!(win_route(&game(Some(0), Some("alt"), 5), 0).as_deref(), Some("other"));
+    }
+}

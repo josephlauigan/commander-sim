@@ -389,6 +389,8 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     pl.combo_turn = Some((turns, cmb.name));
     pl.stat("combo_attempt", 1);
     pl.milestone.entry("combo").or_insert(turns);
+    crate::t6stats::combo_go(g, p, cmb.name);
+    g.last_counter = None; // unread by the game; the report names the card that stops a line
     crate::glog!(g, "  {} goes for {}", g.player(p).name, cmb.name);
     if !cmb.steps.is_empty() {
         return run_steps(g, p, cmb);
@@ -400,6 +402,7 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
             if i > 0 {
                 crate::glog!(g, "    ...{} fizzles ({} is gone)", cmb.name, name_of(g, c));
                 g.player_mut(p).stat("combo_stopped", 1);
+                crate::t6stats::combo_stop(g, p, cmb.name, "fizzled");
             }
             return Ok(i > 0); // something already happened: the turn state changed
         }
@@ -414,6 +417,8 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
         if !r? {
             crate::glog!(g, "    ...{} is countered: {} stopped", name_of(g, c), cmb.name);
             g.player_mut(p).stat("combo_stopped", 1);
+            let by = crate::t6stats::last_counter_name(g);
+            crate::t6stats::combo_stop(g, p, cmb.name, &by);
             return Ok(true);
         }
     }
@@ -425,11 +430,16 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     if interrupted(g, p, &keys)? {
         crate::glog!(g, "    ...{} is stopped", cmb.name);
         g.player_mut(p).stat("combo_stopped", 1);
+        let by = crate::t6stats::last_counter_name(g);
+        crate::t6stats::combo_stop(g, p, cmb.name, &by);
         return Ok(true);
     }
     match cmb.finish {
         Some(f) => f(g, p)?,
         None => crate::ai::win(g, p, "combo", Some(!cmb.name.contains("Oracle")))?, // Oracle: an alternate win
+    }
+    if g.over && g.winner == Some(p) {
+        crate::t6stats::combo_win(g, p, cmb.name);
     }
     Ok(true)
 }
@@ -443,6 +453,7 @@ pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
         pay(g, p, gn, pips, false)?;
     }
     for (n, st) in cmb.steps.iter().enumerate() {
+        g.last_counter = None;
         let ok = match st.kind {
             StepKind::Spell | StepKind::Engine => (st.run)(g, p)?,
             StepKind::Trigger | StepKind::Ability => {
@@ -477,12 +488,17 @@ pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
         if !ok {
             crate::glog!(g, "    ...{} stops at step {} ({})", cmb.name, n + 1, st.label);
             g.player_mut(p).stat("combo_stopped", 1);
+            let by = crate::t6stats::last_counter_name(g);
+            crate::t6stats::combo_stop(g, p, cmb.name, &by);
             return Ok(true);
         }
     }
     match cmb.finish {
         Some(f) => f(g, p)?,
         None => crate::ai::win(g, p, "combo", Some(true))?,
+    }
+    if g.over && g.winner == Some(p) {
+        crate::t6stats::combo_win(g, p, cmb.name);
     }
     Ok(true)
 }
@@ -520,6 +536,7 @@ fn interrupted(g: &mut Game, p: PlayerId, keys: &[PermId]) -> Res<bool> {
             let (gn, pips) = cost_of(g, q, c);
             pay(g, q, gn, &pips, false)?;
             cast_card(g, q, c, "hand", Ctx { target: Some(tg[0]), ..Ctx::default() })?;
+            g.last_counter = Some(c);
             if !g.perm(tg[0]).on_bf || g.perm(tg[0]).phased {
                 g.player_mut(q).stat("combo_stops_removal", 1);
                 return Ok(true);
@@ -536,6 +553,7 @@ fn interrupted(g: &mut Game, p: PlayerId, keys: &[PermId]) -> Res<bool> {
                 }
                 enter(g, q, c, Enter::default())?;
                 g.player_mut(q).stat("combo_stops_ability", 1);
+                g.last_counter = Some(c);
                 return Ok(true);
             }
         }

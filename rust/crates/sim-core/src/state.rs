@@ -461,6 +461,8 @@ pub struct Player {
     /// the kind of the last life loss (for how the player was eliminated)
     pub last_kind: Sym,
     pub death_kind: Sym,
+    /// a Tier 6 deck (pool or Godo): the report counters (`t6stats`) are kept for it
+    pub t6: bool,
     /// this player's own turn count when it last dealt damage to an opponent
     pub hit_turn: i32,
     /// life lost / gained this turn (Bloodsoaked Insight, Archfiend, Y'shtola)
@@ -725,6 +727,7 @@ impl Player {
             life_locked: false,
             last_kind: "other",
             death_kind: "",
+            t6: crate::t6stats::is_t6_key(key),
             hit_turn: -1,
             lost_turn: None,
             gained_turn: None,

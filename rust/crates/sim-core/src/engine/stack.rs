@@ -924,6 +924,8 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
         g.player_mut(p).stat("seph_spell_countered", 1);
     }
     g.player_mut(p).stat("spells_countered", 1);
+    g.last_counter = Some(ctr);
+    crate::t6stats::counter_hit(g, q, ctr, p);
     if let Some(inner) = t.ctx.counter
         && g.stack.iter().any(|x| x.id == inner && x.controller == q)
     {

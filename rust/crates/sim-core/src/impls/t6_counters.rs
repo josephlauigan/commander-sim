@@ -655,6 +655,10 @@ pub fn louisoix_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
         g.player_mut(q).gy.push(c);
         return Ok(true);
     }
+    g.last_counter = Some(c);
+    if let Some(owner) = g.stack.iter().find(|x| x.id == item).map(|x| x.controller) {
+        crate::t6stats::counter_hit(g, q, c, owner);
+    }
     if let Some(x) = g.stack.iter_mut().find(|x| x.id == item) {
         x.countered = true;
         x.countered_by = Some(c);

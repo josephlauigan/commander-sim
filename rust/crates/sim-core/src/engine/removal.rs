@@ -217,6 +217,9 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         crate::impls::t0_giada::damaged(g, m, n)?; // Metropolis Reformer
     }
     g.last_removed = Some((g.perm(m).cd, owner, kind, actor));
+    if let Some(a) = actor {
+        crate::t6stats::removal_hit(g, a, spell, owner);
+    }
     if kind == "exile"
         && let Some(src) = g.rem_src
         && card_name(g, src) == Some("Skyclave Apparition")
@@ -349,6 +352,7 @@ fn etb_removal_pick(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 /// a board wipe of this kind resolves (card: the wipe spell, whose tags matter). Python's `apply_wipe`.
 /// card: the wipe spell (its tags matter: Toxic Deluge), None for a wipe with no card
 pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
+    crate::t6stats::wipe(g, p, card);
     g.batch += 1; // creatures destroyed together die simultaneously
     let prev_batch = g.cur_batch.replace(g.batch);
     let prev = g.destroyer.replace(p); // Karmic Justice: who destroyed them

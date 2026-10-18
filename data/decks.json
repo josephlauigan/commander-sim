@@ -4952,7 +4952,7 @@
   {
    "tier": "t6",
    "key": "kraum-tymna-blue-breach-midrange",
-   "name": "Kraum",
+   "name": "Kraum/Tymna",
    "commander": "Kraum, Ludevic's Opus",
    "commander2": "Tymna the Weaver",
    "ident": "WUBR",
@@ -5062,7 +5062,7 @@
   {
    "tier": "t6",
    "key": "rograkh-silas-turbo-breach",
-   "name": "Rograkh",
+   "name": "Rograkh/Silas",
    "commander": "Rograkh, Son of Rohgahh",
    "commander2": "Silas Renn, Seeker Adept",
    "ident": "UBR",
@@ -5172,7 +5172,7 @@
   {
    "tier": "t6",
    "key": "rograkh-thrasios-creature-combo",
-   "name": "Rograkh",
+   "name": "Rograkh/Thrasios",
    "commander": "Rograkh, Son of Rohgahh",
    "commander2": "Thrasios, Triton Hero",
    "ident": "URG",

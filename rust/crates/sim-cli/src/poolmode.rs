@@ -269,8 +269,17 @@ impl Ctx<'_> {
             let seats = sim.seats_for(s, me, None, opp_keys, k);
             GameOut::from_game(&sim.play(s, &seats, &st, false), false)
         });
-        let mut c = Calib { seated: Counter::new(), won: Counter::new(), rounds: 0, timeouts: 0, timeout_won: Counter::new(), n };
+        let mut c = Calib {
+            seated: Counter::new(),
+            won: Counter::new(),
+            rounds: 0,
+            timeouts: 0,
+            timeout_won: Counter::new(),
+            n,
+            t6: Default::default(),
+        };
         for (_, g) in &games {
+            c.t6.add(g);
             c.rounds += g.round as u64;
             c.timeouts += (g.wintype == Some("timeout")) as u64;
             if let (Some(w), Some("timeout")) = (g.winner, g.wintype) {
@@ -465,6 +474,9 @@ impl Ctx<'_> {
                             100.0 * r.timeout_won.get(k) as f64 / s as f64
                         );
                     }
+                    if *tier == "t6" {
+                        print!("{}", crate::t6report::render(&r.t6, &keys, &|k| sim.name_of(k)));
+                    }
                 }
             }
         }
@@ -514,6 +526,8 @@ pub struct Calib {
     pub timeouts: u64,
     /// wins by round-cap tiebreak (life + 2 x board power), per deck
     pub timeout_won: Counter<String>,
+    /// the Tier 6 counters (win routes, combo tries and stops, mulligans, interaction, seat shares)
+    pub t6: crate::t6report::T6Tally,
     /// games planned (errors included, as Python counted len(seeds))
     pub n: u64,
 }

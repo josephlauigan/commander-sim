@@ -102,6 +102,15 @@ pub fn short_name(commander: &str) -> String {
     commander.split(" // ").next().unwrap_or("").split(',').next().unwrap_or("").to_string()
 }
 
+/// the name a pool deck prints: the short name, and for a partner pair both first names ("Rograkh/Silas")
+pub fn display_name(commander: &str, commander2: Option<&str>) -> String {
+    let first = |c: &str| short_name(c).split_whitespace().next().unwrap_or("").to_string();
+    match commander2 {
+        Some(c2) => format!("{}/{}", first(commander), first(c2)),
+        None => short_name(commander),
+    }
+}
+
 /// `n Card Name` -> (n, name)
 pub fn parse_line(line: &str) -> Option<(usize, String)> {
     let m = rmatch(r"^(\d+)\s+(.+?)\s*$", line.trim())?;

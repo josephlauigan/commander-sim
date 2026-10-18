@@ -1073,6 +1073,7 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
     }
     draw7(g, rng);
     if ok(g) {
+        g.player_mut(p).stats.insert("mull_n", 1);
         return;
     }
     for bottom in [1, 2] {
@@ -1093,6 +1094,7 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
                 pl.library.insert(0, c);
             }
             g.player_mut(p).stats.insert("mulls", bottom + 1);
+            g.player_mut(p).stats.insert("mull_n", bottom + 1);
             return;
         }
     }
