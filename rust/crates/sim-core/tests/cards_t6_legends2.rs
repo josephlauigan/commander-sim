@@ -134,12 +134,17 @@ fn tataru_enters_you_draw_and_an_opponent_may_draw() {
     perm(&mut g, P0, "Tataru Taru");
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     assert_eq!(g.player(P0).hand.len(), h0 + 1, "you draw a card");
-    let drawn = g.player(P1).hand.len() - h1 + g.player(PlayerId(2)).hand.len() - h2 + g.player(PlayerId(3)).hand.len() - h3;
+    let drawn =
+        g.player(P1).hand.len() - h1 + g.player(PlayerId(2)).hand.len() - h2 + g.player(PlayerId(3)).hand.len() - h3;
     assert_eq!(drawn, 1, "exactly one opponent drew");
     // that opponent drew on our turn: Scions' Secretary made a tapped Treasure, which arrives at our next upkeep
     assert_eq!(g.player(P0).treasures, 0, "tapped: not usable yet");
-    sim_core::engine::hooks::fire_trigger(&mut g, sim_core::hooks::Event::Upkeep, sim_core::hooks::Call::Player { p: P0 })
-        .unwrap();
+    sim_core::engine::hooks::fire_trigger(
+        &mut g,
+        sim_core::hooks::Event::Upkeep,
+        sim_core::hooks::Call::Player { p: P0 },
+    )
+    .unwrap();
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     assert_eq!(g.player(P0).treasures, 1);
 }
@@ -165,4 +170,70 @@ fn scions_secretary_once_a_turn_and_not_on_their_own_turn() {
     sim_core::engine::zones::die(&mut g, t, "destroy").unwrap();
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     assert_eq!(g.player(P0).treasures, 1, "Tataru left: the Treasure appears");
+}
+
+// ======================================================== Teferi, Who Slows the Sunset
+fn walker_eff(g: &mut Game, t: PermId, p: PlayerId, i: usize) {
+    let c = g.perm(t).cd.unwrap();
+    let ab = g.registry.get(c).unwrap().walker.unwrap()[i];
+    (ab.eff)(g, p, t).unwrap();
+}
+
+#[test]
+fn teferi_plus_untaps_ours_taps_theirs_and_gains_two() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Teferi, Who Slows the Sunset");
+    let rock = perm(&mut g, P0, "Sol Ring");
+    g.perm_mut(rock).tapped = true;
+    let mine = token(&mut g, P0, 2);
+    g.perm_mut(mine).tapped = true;
+    let l0 = lands(&mut g, P0, "Plains", 1, true)[0];
+    let l1 = lands(&mut g, P1, "Mountain", 2, false);
+    let life = g.player(P0).life;
+    walker_eff(&mut g, t, P0, 0);
+    assert!(!g.perm(rock).tapped, "our artifact untapped");
+    assert!(!g.perm(mine).tapped, "our creature untapped");
+    assert!(!g.land(l0).tapped, "our land untapped");
+    assert!(!g.land(l1[0]).tapped, "(only one land is chosen, ours)");
+    assert_eq!(g.player(P0).life, life + 2);
+    let _ = l1;
+}
+
+#[test]
+fn teferi_plus_taps_their_untapped_when_ours_are_untapped() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Teferi, Who Slows the Sunset");
+    let theirs = token(&mut g, P1, 3);
+    let l1 = lands(&mut g, P1, "Mountain", 1, false)[0];
+    walker_eff(&mut g, t, P0, 0);
+    assert!(g.perm(theirs).tapped);
+    assert!(g.land(l1).tapped, "their land tapped");
+}
+
+#[test]
+fn teferi_minus_two_takes_one_of_three_and_bottoms_the_rest() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Teferi, Who Slows the Sunset");
+    set_library(&mut g, P0, &["Plains", "Plains", "Plains", "Sol Ring", "Island", "Swamp"]);
+    let (h, n) = (g.player(P0).hand.len(), g.player(P0).library.len());
+    walker_eff(&mut g, t, P0, 1);
+    assert_eq!(g.player(P0).hand.len(), h + 1, "one into the hand");
+    assert_eq!(g.player(P0).library.len(), n - 1, "the other two went back (to the bottom)");
+    let lib = g.player(P0).library.clone();
+    let taken = *g.player(P0).hand.last().unwrap();
+    let three = [card(&g, "Sol Ring"), card(&g, "Island"), card(&g, "Swamp")];
+    assert!(three.contains(&taken), "the one taken is from the top three");
+    assert!(lib[..2].iter().all(|c| three.contains(c) && *c != taken), "the other two are at the bottom");
+    assert!(lib[2..].iter().all(|&c| c == card(&g, "Plains")), "the rest is untouched");
+}
+
+#[test]
+fn teferi_ultimate_records_the_emblem_but_the_ai_does_not_pick_it() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Teferi, Who Slows the Sunset");
+    g.perm_mut(t).loyalty = Some(8);
+    let o = options(&mut g, t, P0, Some(false));
+    assert!(o.iter().all(|x| !x.label.contains("-7")), "the unmodeled ultimate is never offered");
+    walker_eff(&mut g, t, P0, 2);
+    assert!(g.player(P0).emblems.contains(&"teferi_sunset"));
 }

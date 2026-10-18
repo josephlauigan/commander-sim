@@ -8586,3 +8586,8 @@ note = "whenever an opponent casts their first noncreature spell each turn (per 
 ["Tataru Taru"]
 status = "Full"
 note = "enters: you draw (the draw tag) and the least-threatening opponent with a card draws (t6_legends2.rs); Scions' Secretary: an opponent's draw off their own turn makes a tapped Treasure, once each turn - kept on Tataru and added at its controller's next upkeep (when a tapped Treasure would untap), or at once if Tataru leaves"
+
+["Teferi, Who Slows the Sunset"]
+dsl = []
+status = "Partial"
+note = "+1: the best of one artifact, one creature and one land (ours tapped: untap; theirs untapped: tap), gain 2; -2: look at three, the one the deck wants into the hand, the rest to the bottom; -7 records the emblem, but the untap-in-their-untap-step and draw-in-their-draw-step effects are not modeled, so the AI never picks it (t6_legends2.rs; engine-needs-legends2.md)"

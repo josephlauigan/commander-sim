@@ -104384,19 +104384,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "gain_life",
-       "n": 2,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -104406,15 +104394,8 @@
    "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "choose up to one target artifact, up to one target creature, and up to one target land",
-    "untap the chosen permanents you control",
-    "tap the chosen permanents you don't control",
-    "look at the top three cards of your library",
-    "put one of them into your hand and the rest on the bottom of your library in any order",
-    "you get an emblem with \"untap all permanents you control during each opponent's untap step\" and \"you draw a card during each opponent's draw step.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

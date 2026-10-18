@@ -2,18 +2,24 @@
 //! the Sunset, Spider-Woman, Ertai Resurrected, Legolas's Quick Reflexes, Colossal Skyturtle, Wan Shi Tong). Cards only:
 //! no engine file is touched; what needs the engine is listed in rust/agents/engine-needs-legends2.md.
 
+use super::common::{WalkerAb, walker};
 use super::partials::{at_once, first_max, on};
+use super::t5::is_artifact;
 use crate::cards::{CardDb, Colors, Types};
+use crate::engine::cast::discard_worst;
+use crate::engine::life::gain;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{card_name, once_per_turn, threat};
-use crate::engine::cast::discard_worst;
-use crate::engine::zones::{Enter, Tokens, add_treasure, agent_for, agent_take, draw, enter, make_tokens, min_by, searchable};
+use crate::engine::values::{card_name, once_per_turn, pval, threat, untargetable};
+use crate::engine::zones::{
+    Enter, Tokens, add_treasure, agent_for, agent_take, draw, enter, make_tokens, max_by, min_by, searchable,
+};
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
-use crate::ids::{CardId, PermId, PlayerId};
+use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::intern;
+use crate::tag::Tag;
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
     g.perm(m).owner
@@ -236,6 +242,111 @@ fn tataru_leaves(g: &mut Game, src: Src, m: PermId) -> Res {
     Ok(())
 }
 
+// ================================================================== Teferi, Who Slows the Sunset
+/// the permanent +1 aims at in one category: a tapped one of ours to untap, else an untapped one of theirs to tap
+enum Aim {
+    Untap(PermId),
+    Tap(PermId),
+}
+
+fn aim_perm(
+    g: &Game,
+    p: PlayerId,
+    pred: impl Fn(&Game, PermId) -> bool,
+    worth: impl Fn(&Game, PermId) -> f64,
+) -> Option<(Aim, f64)> {
+    let own: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.perm(m).tapped && pred(g, m)).collect();
+    let opp: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied().collect::<Vec<_>>())
+        .filter(|&m| live(g, m) && !g.perm(m).tapped && pred(g, m) && !untargetable(g, m))
+        .collect();
+    let a = max_by(&own, |m| worth(g, m)).map(|m| (Aim::Untap(m), worth(g, m)));
+    let b = max_by(&opp, |m| worth(g, m)).map(|m| (Aim::Tap(m), worth(g, m)));
+    match (a, b) {
+        (Some(x), Some(y)) => Some(if y.1 > x.1 { y } else { x }),
+        (x, y) => x.or(y),
+    }
+}
+
+fn rock_worth(g: &Game, m: PermId) -> f64 {
+    let rock = g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Rock).is_some());
+    if rock { 2.0 } else { 0.3 }
+}
+
+/// the three choices of +1 (an artifact, a creature, a land) with what each is worth to the AI
+fn teferi_aims(g: &Game, p: PlayerId) -> (Option<(Aim, f64)>, Option<(Aim, f64)>, Option<(LandId, bool)>) {
+    let art = aim_perm(g, p, |g, m| is_artifact(g, m), rock_worth);
+    let cre = aim_perm(g, p, |g, m| g.is_creature(m), |g, m| pval(g, m) / 3.0);
+    let own = g.player(p).lands.iter().copied().find(|&l| g.land(l).on_bf && g.land(l).tapped);
+    let opp = g.opps(p).flat_map(|q| g.player(q).lands.clone()).find(|&l| g.land(l).on_bf && !g.land(l).tapped);
+    let land = own.map(|l| (l, true)).or(opp.map(|l| (l, false)));
+    (art, cre, land)
+}
+
+fn teferi_plus_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    let (a, c, l) = teferi_aims(g, p);
+    Some(1.0 + a.map_or(0.0, |x| x.1) + c.map_or(0.0, |x| x.1) + l.map_or(0.0, |(_, own)| if own { 1.0 } else { 0.3 }))
+}
+
+/// +1: choose up to one target artifact, creature and land; untap the chosen ones you control, tap the chosen ones you
+/// don't; you gain 2 life
+fn teferi_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let (a, c, l) = teferi_aims(g, p);
+    for aim in [a, c].into_iter().flatten() {
+        match aim.0 {
+            Aim::Untap(m) => g.perm_mut(m).tapped = false,
+            Aim::Tap(m) => g.perm_mut(m).tapped = true,
+        }
+    }
+    if let Some((l, own)) = l {
+        g.land_mut(l).tapped = !own;
+    }
+    gain(g, p, 2)
+}
+
+/// -2: look at the top three cards, one into your hand, the rest on the bottom (the one the deck wants most)
+fn teferi_minus_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
+    (g.perm(src).loyalty.unwrap_or(0) >= 4 && g.player(p).library.len() >= 3).then_some(2.2)
+}
+
+fn teferi_minus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let top = crate::ai::topdeck::look(g, p, 3);
+    let w: Vec<f64> = top.iter().map(|&x| -crate::ai::topdeck::desire(g, p, x)).collect();
+    let mut idx: Vec<usize> = (0..top.len()).collect();
+    idx.sort_by(|&a, &b| w[a].partial_cmp(&w[b]).unwrap_or(std::cmp::Ordering::Equal));
+    let top: Vec<CardId> = idx.into_iter().map(|i| top[i]).collect();
+    let pl = g.player_mut(p);
+    if let Some(&x) = top.first() {
+        pl.hand.push(x);
+        pl.seen.insert(x);
+    }
+    pl.library.splice(0..0, top.iter().skip(1).copied());
+    Ok(())
+}
+
+/// -7: the emblem "untap all permanents you control during each opponent's untap step" and "you draw a card during
+/// each opponent's draw step". The emblem is recorded but the engine does not act on it (engine-needs-legends2.md),
+/// so the AI does not spend 7 loyalty on it (value None).
+const TEFERI_EMBLEM: &str = "teferi_sunset";
+
+fn teferi_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    g.player_mut(p).emblems.push(TEFERI_EMBLEM);
+    Ok(())
+}
+
+static TEFERI: [WalkerAb; 3] = [
+    WalkerAb {
+        delta: 1,
+        label: "untap / tap an artifact, creature and land; gain 2",
+        val: teferi_plus_val,
+        eff: teferi_plus,
+    },
+    WalkerAb { delta: -2, label: "look at three, take one", val: teferi_minus_val, eff: teferi_minus },
+    WalkerAb { delta: -7, label: "emblem: untap and draw in their steps", val: |_, _, _| None, eff: teferi_ult },
+];
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "The Queen of Dale")?;
     c.cast = Some(queen_cast);
@@ -249,6 +360,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::Upkeep, true);
     c.leaves = Some(tataru_leaves);
     at_once(c, Event::Leaves, true);
+    walker(r, db, "Teferi, Who Slows the Sunset", &TEFERI)?;
     r.creature_pt.push(magda_pt);
     let c = r.card(db, MAGDA)?;
     c.as_enters = Some(magda_as);
