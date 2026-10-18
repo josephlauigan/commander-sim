@@ -372,6 +372,11 @@ fn sisay_pt(g: &Game, p: PlayerId, m: PermId) -> (i32, i32) {
 /// jodah.sisay_pick: a legendary permanent card with mana value below Sisay's power: the dearest legendary creature, else
 /// the dearest legend
 pub fn sisay_pick(g: &Game, p: PlayerId, power: i32) -> Option<CardId> {
+    if crate::impls::t6_plans::is_t6(g, p)
+        && let Some(c) = crate::impls::t6_plan_sisay::fetch(g, p, power)
+    {
+        return Some(c); // Tier 6: the deck plan picks the line's piece (lands included)
+    }
     let ok: Vec<CardId> = searchable(g, p)
         .into_iter()
         .filter(|&c| {
@@ -398,7 +403,10 @@ fn sisay(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt
         return Ok(vec![]);
     }
     let Some(t) = sisay_pick(g, p, epow(g, src)) else { return Ok(vec![]) };
-    let u = 7.0f64.min(1.5 + 0.6 * g.db.get(t).cmc as f64);
+    let mut u = 7.0f64.min(1.5 + 0.6 * g.db.get(t).cmc as f64);
+    if crate::impls::t6_plans::is_t6(g, p) {
+        u = 11.0; // Tier 6: the fetch is the plan, ahead of a value spell
+    }
     Ok(vec![ability(u, format!("Sisay: {}", cname(g, t)), src, sisay_go, t.0 as i64)])
 }
 
