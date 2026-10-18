@@ -17,3 +17,4 @@ Blood Moon: DONE (Partial, engine need), committed.
 Defense Grid: DONE (Partial: alt costs untaxed), committed.
 Final Fortune: DONE (Partial, extra turns engine need), committed.
 Last Chance: DONE (Partial), committed. ALL 14 coded; next: full cargo test, warnings check, audit, report.
+Full test + warnings: clean. Report written (rust/agents/report-t6-godo.md). FINISHED.

@@ -172,7 +172,7 @@ fn shaku_does_not_tap_a_creature_that_can_attack() {
     use sim_core::engine::mana::total_mana;
     let mut g = tbl();
     perm(&mut g, P0, "Honor-Worn Shaku");
-    perm(&mut g, P0, "Godo, Bandit Warlord"); // legendary, not summoning sick: a blocker and an attacker
+    perm(&mut g, P0, "Jaxis, the Troublemaker"); // legendary, not summoning sick: a blocker and an attacker (Godo would now fetch the legendary Helm, which Shaku counts)
     assert_eq!(total_mana(&g, P0, false), 1);
 }
 
