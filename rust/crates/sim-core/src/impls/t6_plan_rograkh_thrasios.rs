@@ -150,6 +150,7 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
     let names: Vec<&str> = hand.iter().map(|&c| name(g, c)).collect();
     let accel = names.iter().filter(|n| ACCEL.contains(n) && !g.db.id(n).is_some_and(|c| g.db.get(c).land)).count();
+    let accel = accel + usize::from(names.contains(&"Ancient Tomb"));
     let engine = names.iter().filter(|n| ENGINE.contains(n)).count();
     let reactive = names.iter().filter(|n| REACTIVE.contains(n)).count();
     let other = hand.len() - lands - accel - reactive;
@@ -157,17 +158,17 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     if lands >= 6 {
         return Some(false);
     }
-    let mana_ok = lands + accel >= 3 && lands >= 1 || lands >= 2 && accel >= 1;
     if lands >= 2 && accel >= 1 {
         return Some(true); // "at least two lands and a piece of acceleration"
     }
     if lands == 1 && accel >= 2 {
         return Some(true); // fast mana and a free commander replace lands
     }
-    if lands >= 3 && reactive < 2 && (engine >= 1 || other >= 2) {
-        return Some(true); // three lands and something to do
+    // two or more lands and something to do (an engine card, or three other plays) without two dead reactive cards
+    if lands >= 2 && reactive < 2 && (engine >= 1 || other >= 3) {
+        return Some(true);
     }
-    if mana_ok && reactive < 2 && engine >= 1 {
+    if lands >= 3 && reactive < 3 {
         return Some(true);
     }
     Some(false)

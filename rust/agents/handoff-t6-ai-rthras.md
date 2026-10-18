@@ -4,3 +4,4 @@ Done: read spec/brief; traced 12 games (tr*.txt in scratchpad). Findings: combos
 cast turn 2, Thrasios often removed, 36% mulligans. Pact of Negation can be cast with <5 usable U lands and loses at upkeep.
 Step 2 (now): plan file written (prio hold Oboro/Witness/Snap/Finale/GSZ, commanders high, wish list, keep, go_now). Next: build,
 test, measure 300 games `--calibrate within --pool t6`, tests file ai_t6_rograkh_thrasios.rs, t3 lock, report.
+Step 3: keep loosened (mulligans were 49%), tests file written+passing. Next: measure m2 (300 games), diagnose slow assembly via traces, Pact guard, t3 lock, full tests, report.
