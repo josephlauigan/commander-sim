@@ -174,3 +174,27 @@ fn shaku_does_not_tap_a_creature_that_can_attack() {
     perm(&mut g, P0, "Godo, Bandit Warlord"); // legendary, not summoning sick: a blocker and an attacker
     assert_eq!(total_mana(&g, P0, false), 1);
 }
+
+// ======================================================== Metalworker
+#[test]
+fn metalworker_makes_cc_for_each_artifact_card_in_hand() {
+    use sim_core::engine::mana::{pay, total_mana};
+    let mut g = tbl();
+    let mw = perm(&mut g, P0, "Metalworker");
+    assert_eq!(total_mana(&g, P0, false), 0, "no artifact card revealed, no mana");
+    hand(&mut g, P0, &["Sol Ring", "Manifold Key", "Rite of Flame"]);
+    assert_eq!(total_mana(&g, P0, false), 4, "two artifact cards: {{C}}{{C}} each");
+    assert!(pay(&mut g, P0, 4, "", false).unwrap());
+    assert!(g.perm(mw).tapped);
+}
+
+#[test]
+fn metalworker_is_summoning_sick_like_any_creature() {
+    use sim_core::engine::mana::total_mana;
+    let mut g = tbl();
+    let c = take(&mut g, P0, "Metalworker");
+    let m = sim_core::engine::zones::enter(&mut g, P0, c, Default::default()).unwrap();
+    hand(&mut g, P0, &["Sol Ring"]);
+    assert!(g.perm(m).sick);
+    assert_eq!(total_mana(&g, P0, false), 0);
+}

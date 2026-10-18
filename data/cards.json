@@ -66306,7 +66306,9 @@
    "pips": "",
    "tags": {
     "pow": "1",
-    "tgh": "2"
+    "tgh": "2",
+    "dork": "C",
+    "noatk": true
    },
    "pow": 1,
    "tgh": 2,
@@ -66321,10 +66323,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{T}: Reveal any number of artifact cards in your hand. Add {C}{C} for each card revealed this way."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

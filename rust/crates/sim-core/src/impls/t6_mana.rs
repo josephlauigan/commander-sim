@@ -4,7 +4,7 @@
 //! rust/agents/engine-needs-mana.md).
 
 use super::partials::at_once;
-use crate::cards::CardDb;
+use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{epow, pval};
@@ -216,6 +216,15 @@ fn shaku_tap(g: &mut Game, p: PlayerId, m: PermId, used: u32) -> Res {
     Ok(())
 }
 
+// ================================================================== Metalworker
+/// **Metalworker** ({3} artifact creature, 1/2): {T}: reveal any number of artifact cards in your hand; add {C}{C}
+/// for each. The mana count is twice the artifact cards in hand (a dork tag in the data override makes it a mana
+/// creature: summoning sick the turn it arrives). Limitation: if the caster takes the artifact being cast out of the
+/// hand before paying, that card is not counted.
+fn metalworker_mana(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+    2 * g.player(p).hand.iter().filter(|&&c| g.db.get(c).types.has(Types::ARTIFACT)).count() as u32
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -252,6 +261,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Honor-Worn Shaku")?;
     c.dyn_mana_perm = Some(shaku_mana);
     c.on_tap_perm = Some(shaku_tap);
+    r.card(db, "Metalworker")?.dyn_mana_perm = Some(metalworker_mana);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);

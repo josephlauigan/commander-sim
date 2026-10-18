@@ -8263,3 +8263,8 @@ note = "{1},{T}: untaps a tapped mana artifact that makes two or more mana (when
 ["Honor-Worn Shaku"]
 status = "Full"
 note = "{T}: {C}; tapping an untapped legendary permanent untaps it, making another {C} per legendary permanent (non-creatures, or summoning-sick creatures, so attackers and blockers are not tapped)"
+
+["Metalworker"]
+tags = "pow=1 tgh=2 dork=C noatk"
+status = "Full"
+note = "{T}: {C}{C} for each artifact card in hand (a mana creature: summoning sick the turn it arrives); reveal is automatic"
