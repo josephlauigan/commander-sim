@@ -2881,6 +2881,12 @@ fn ring_burden(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
+/// Tier 6 AI: may The One Ring be tapped with `b` burden counters on it? Three upkeeps of the larger burden plus 10
+/// life must remain. Other tiers and humans: always.
+pub fn ring_life_ok(g: &Game, p: PlayerId, b: i32) -> bool {
+    !(super::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p) && g.player(p).life <= 3 * (b + 1) + 10)
+}
+
 /// {T}: a burden counter, draw that many
 fn ring_draw(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).owner != p || g.perm(src).tapped {
@@ -2888,6 +2894,11 @@ fn ring_draw(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Ve
     }
     let b = burden(g, src) as i32;
     if g.player(p).life - (b + 1) * 2 < 12 && b >= 2 {
+        return Ok(vec![]);
+    }
+    // Tier 6: each tap adds a burden counter, so the upkeep loss grows by one a turn; keep three turns of it plus 10
+    // life in hand (a Dack at 3 life tapped the Ring until it died)
+    if !ring_life_ok(g, p, b) {
         return Ok(vec![]);
     }
     Ok(vec![opt_ability(2.0 + b as f64, "The One Ring".into(), src, ring_go, 0)])

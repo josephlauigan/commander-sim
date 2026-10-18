@@ -923,6 +923,20 @@ fn fifty(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
     50
 }
 
+/// Tier 6: the free cast of a found line piece (Thassa's Oracle above all) needs the line's other half held, else
+/// the piece stays in hand for later (a lone Oracle on the stack with a full library just wastes it).
+pub fn beseech_free_ok(g: &Game, p: PlayerId, x: CardId) -> bool {
+    if !super::t6_plans::is_t6(g, p) || crate::human::is_human(g, p) {
+        return true;
+    }
+    let name = g.db.get(x).name.to_string();
+    if !super::t6_pieces::is_line_piece(g, p, &name) {
+        return true;
+    }
+    let held = super::t6_pieces::held_names(g, p);
+    super::t6_pieces::completes_line(g, p, &name, &held)
+}
+
 /// tutor to hand; bargained (a token or spare artifact/enchantment sacrificed), a found card with mana value 4 or less
 /// is cast free
 fn beseech(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
@@ -943,6 +957,7 @@ fn beseech(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         && g.db.get(x).cmc <= 4
         && !g.db.get(x).land
         && castable(g, p, x, "hand")
+        && beseech_free_ok(g, p, x)
     {
         if g.perm(m).token {
             leave(g, m)?;
@@ -1063,6 +1078,17 @@ fn wishes(g: &Game, src: PermId) -> i64 {
     g.perm(src).data.get(DataKey::Wishes).map_or(3, Val::int)
 }
 
+/// Tier 6: Wishclaw Talisman hands the opponents a tutor once it is used, so the AI activates it only on a turn the
+/// tutored card finishes a line and can be cast at once with the mana left after the {1} (or one of the library's
+/// line-completing cards costs nothing to cast: a free spell or a 0-cost piece).
+pub fn wishclaw_ok(g: &Game, p: PlayerId) -> bool {
+    if !super::t6_plans::is_t6(g, p) || crate::human::is_human(g, p) {
+        return true;
+    }
+    let left = (total_mana(g, p, false) as i32 - 1).max(0);
+    super::t6_pieces::completers_in_library(g, p).into_iter().any(|x| g.db.get(x).cmc as i32 <= left)
+}
+
 /// three wishes: {1},{T} tutor (on your turn), then the most threatening opponent gains control and uses it on theirs
 fn wishclaw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if p != g.perm(src).owner || g.perm(src).tapped || !can_pay(g, p, 1, "", false) || wishes(g, src) <= 0 {
@@ -1071,8 +1097,31 @@ fn wishclaw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<
     if g.active != Some(p) && post.is_some() {
         return Ok(vec![]);
     }
+    if !wishclaw_ok(g, p) {
+        return Ok(vec![]);
+    }
     let u = if crate::ai::plans::wish_list(g, p).is_empty() { 1.5 } else { 3.5 };
     Ok(vec![ability(u, "Wishclaw Talisman".into(), src, wishclaw_go, 0)])
+}
+
+/// the search: a Tier 6 AI takes the cheapest line-completing card it can cast at once; everyone else tutors as usual
+fn wishclaw_search(g: &mut Game, p: PlayerId) -> Res {
+    if super::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p) {
+        let left = (total_mana(g, p, false) as i32).max(0);
+        let pick = super::t6_pieces::completers_in_library(g, p)
+            .into_iter()
+            .filter(|&x| g.db.get(x).cmc as i32 <= left)
+            .min_by_key(|&x| g.db.get(x).cmc);
+        if let Some(x) = pick {
+            remove_card(&mut g.player_mut(p).library, x);
+            g.player_mut(p).hand.push(x);
+            g.player_mut(p).stat("tutored", 1);
+            shuffle_library(g, p);
+            crate::glog!(g, "    {} tutors {} (Wishclaw Talisman)", pname(g, p), g.db.get(x).name);
+            return Ok(());
+        }
+    }
+    tutor(g, p, "any")
 }
 
 fn wishclaw_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
@@ -1086,7 +1135,7 @@ fn wishclaw_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), "search for a card", Some(7.0), None)? {
         return Ok(true);
     }
-    tutor(g, p, "any")?;
+    wishclaw_search(g, p)?;
     if let Some(q) = super::t3::top_threat(g, p)
         && on(g, p, src)
         && wishes(g, src) > 0

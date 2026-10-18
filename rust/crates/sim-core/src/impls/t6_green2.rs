@@ -510,6 +510,15 @@ pub fn ikoria_pick(g: &Game, p: PlayerId, x: i32) -> Option<(CardId, bool)> {
     if cands.is_empty() {
         return None;
     }
+    // Tier 6: the card that completes one of the deck's lines (Oboro) comes before the wish list's other creatures
+    if super::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p) {
+        let held = super::t6_pieces::held_names(g, p);
+        if let Some(&b) =
+            cands.iter().find(|(c, _)| super::t6_pieces::completes_line(g, p, &g.db.get(*c).name, &held))
+        {
+            return Some(b);
+        }
+    }
     let wish = crate::ai::plans::wish_list(g, p);
     if let Some(&b) = cands.iter().find(|(c, _)| wish.contains(c)) {
         return Some(b);

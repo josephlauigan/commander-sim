@@ -243,6 +243,17 @@ fn sylvan_key(src: PermId) -> Sym {
     intern(&format!("sylvan{}", src.0))
 }
 
+/// pay 4 life to keep a Sylvan Library card of this desire, `paid` cards already kept this turn? Tier 6 AI: 4 life is
+/// a card, but the table kills with damage and drain, so one strong card a turn and only well above the life the
+/// table could take; everyone else: above 24 life, any card worth 55.
+pub fn sylvan_pays(g: &Game, p: PlayerId, desire: f64, paid: u32) -> bool {
+    if super::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p) {
+        paid == 0 && g.player(p).life >= 30 && crate::ai::plans::life_margin(g, p) >= 12 && desire >= 65.0
+    } else {
+        g.player(p).life >= 24 && desire >= 55.0
+    }
+}
+
 /// Sylvan Library: draws two extra each draw step; keeps a strong card for 4 life when above 24, puts the rest back
 /// in the best order
 fn library(g: &mut Game, src: Src, p: PlayerId) -> Res {
@@ -258,9 +269,14 @@ fn library(g: &mut Game, src: Src, p: PlayerId) -> Res {
     // the cards just drawn are the end of the hand (Python picked them by identity, and cards are shared per name, so
     // a drawn second copy of a card already in hand — a basic land — was kept for free; fixed in Rust)
     let new: Vec<CardId> = g.player(p).hand.get(before..).unwrap_or(&[]).to_vec();
+    let mut paid = 0u32;
     let order = sorted_by(g, &new, |g, c| -desire(g, p, c));
     for c in order {
-        if g.player(p).life >= 24 && desire(g, p, c) >= 55.0 {
+        // Tier 6: 4 life is a card, but the table kills with damage and drain: pay for one card a turn, only well
+        // above the life the table could take, and only for a strong card
+        let d = desire(g, p, c);
+        if sylvan_pays(g, p, d, paid) {
+            paid += 1;
             lose_life(g, p, 4, Some(p), "other", None)?;
             crate::glog!(g, "    {} pays 4 life for a Sylvan Library card", g.player(p).name);
         } else {
