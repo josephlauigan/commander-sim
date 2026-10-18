@@ -1,0 +1,170 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Mana Leak [scryfall+dsl] I 1U :: ctr=any soft=3
+      ability: spell  -> counter_spell
+Model status of the swapped-in cards (cardgen audit):
+  Mana Leak: Full-auto (compiled from Oracle text)
+  Expressive Iteration: Full (top three: the best to hand, the next exiled and playable this turn, the last to the bottom)
+  Sleight of Hand: Full (look at the top two cards, the better one (by the deck's card worth) into the hand and the other on the bottom)
+
+4,000 games (current list and the swapped one, 1,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m33s elapsed, ~5m01s left
+  progress  20.0%  1m05s elapsed, ~4m22s left
+  progress  30.0%  1m40s elapsed, ~3m55s left
+  progress  40.0%  2m16s elapsed, ~3m24s left
+  progress  50.0%  2m48s elapsed, ~2m48s left
+  progress  60.0%  3m20s elapsed, ~2m13s left
+  progress  70.0%  3m53s elapsed, ~1m39s left
+  progress  80.0%  4m27s elapsed, ~1m06s left
+  progress  90.0%  5m00s elapsed, ~0m33s left
+  progress 100.0%  5m34s elapsed, ~0m00s left
+Swaps: Demonic Tutor -> Mana Leak; Vampiric Tutor -> Expressive Iteration; Mystical Tutor -> Sleight of Hand
+
+=== Kefka vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  26.6% ->  26.2%  (delta -0.4 pts, noise ±3.7, paired)   n=1000
+               eliminated by (variant): Aurelia 24.1%  Tergrid 23.6%  Korvold 7.1%  Atraxa 8.9%  Marwyn 9.5%
+[loose       ] win  28.2% ->  25.4%  (delta -2.8 pts, noise ±3.7, paired)   n=1000
+               eliminated by (variant): Aurelia 24.7%  Tergrid 23.5%  Korvold 7.6%  Atraxa 8.3%  Marwyn 9.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          26.6% ->  26.2%  -0.4pt   ±3.9     28.2% ->  25.4%  -2.8pt   ±4.0 
+    Rounds survived (or game length)                  10.90 ->  11.23   +0.34  ±0.29*    10.94 ->  11.26   +0.32  ±0.29*
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04      0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.56 ->   0.49   -0.07  ±0.07      0.57 ->   0.50   -0.08  ±0.07*
+    Mana available on your turn 4                      3.92 ->   3.96   +0.04  ±0.07      3.90 ->   3.96   +0.07  ±0.07 
+    Mana available on your turn 6                      5.43 ->   5.54   +0.11  ±0.12      5.42 ->   5.55   +0.13  ±0.12*
+
+  Speed
+    Games where the game plan came online             33.4% ->  34.0%  +0.6pt   ±4.2     33.3% ->  34.2%  +0.9pt   ±4.2 
+    Turn the game plan came online                    10.68 ->  10.92   +0.24  ±0.39     10.96 ->  10.96   +0.00  ±0.39 
+    Turn the commander first resolved                  6.07 ->   6.00   -0.07  ±0.19      6.13 ->   6.13   +0.00  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            29.59 ->  31.10   +1.51  ±1.81     30.11 ->  30.66   +0.55  ±1.82 
+    Tutors resolved per game                           1.26 ->   0.56   -0.70  ±0.09*     1.35 ->   0.50   -0.85  ±0.09*
+    Spells cast per game                              15.27 ->  15.57   +0.30  ±0.84     15.33 ->  15.46   +0.13  ±0.83 
+
+  Interaction
+    Counterspells cast                                 0.22 ->   0.34   +0.12  ±0.04*     0.21 ->   0.35   +0.14  ±0.04*
+    Spot removal cast                                  1.67 ->   1.88   +0.21  ±0.13*     1.72 ->   1.83   +0.11  ±0.12 
+    Board wipes cast                                   0.07 ->   0.07   +0.00  ±0.02      0.09 ->   0.08   -0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.32 ->   0.39   +0.06  ±0.06*     0.34 ->   0.41   +0.08  ±0.06*
+    Your spells countered                              0.12 ->   0.12   -0.01  ±0.03      0.12 ->   0.12   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                29.91 ->  32.43   +2.52  ±2.72     30.67 ->  31.83   +1.16  ±2.66 
+      ...of which combat damage                       13.01 ->  14.14   +1.14  ±1.38     13.00 ->  13.41   +0.41  ±1.30 
+      ...of which magecraft / burn                     2.45 ->   2.68   +0.23  ±0.45      2.52 ->   2.52   -0.01  ±0.47 
+      ...of which drain triggers                      12.02 ->  13.31   +1.29  ±1.51     12.96 ->  13.78   +0.82  ±1.59 
+      ...of which other triggers                       2.43 ->   2.29   -0.14  ±0.75      2.19 ->   2.12   -0.06  ±0.72 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Rounds survived (or game length) (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Missed land drops, turns 1-5 (loose profile only)
+    better - Mana available on your turn 6 (loose profile only)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Counterspells cast (both profiles)
+    better - Spot removal cast (conservative profile only)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mana Leak                             37.5      41.3         7.1     58.7       25.8      0.00
+    Expressive Iteration                  39.8      61.1         8.5     38.9       33.3      0.00
+    Sleight of Hand                       38.4      69.0         7.2     31.0       32.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Demonic Tutor                         36.1      62.0         7.2     38.0       35.7      0.00
+    Vampiric Tutor                        37.6      64.6         7.2     35.4       35.8      0.00
+    Mystical Tutor                        37.0      64.9         7.3     35.1       32.1      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.6      26.2     -0.4
+    rounds survived                                  10.90     11.23    +0.34
+    eliminated, % of games                            73.0      73.2     +0.2
+    opponents it eliminated, per game                 0.66      0.72    +0.06
+    damage dealt, per game                            29.9      32.4     +2.5
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.4       0.5     +0.1
+      plan online by turn 8, %                         7.3       5.3     -2.0
+      plan online by turn 12, %                       26.5      25.0     -1.5
+      plan online at all, %                           33.4      34.0     +0.6
+    commander resolved by turn 4, %                   13.6      14.8     +1.2
+    commander resolved by turn 6, %                   58.3      59.9     +1.6
+    commander removals, per game                      0.23      0.26    +0.03
+    lands on the battlefield, turn 4                  3.70      3.75    +0.04
+    lands on the battlefield, turn 8                  6.63      6.74    +0.11
+    mana available, turn 4                            3.92      3.96    +0.04
+    mana available, turn 8                            6.92      7.01    +0.09
+    cards in hand after the land drop, turn 4         5.73      5.82    +0.09
+    cards in hand after the land drop, turn 8         5.54      5.64    +0.10
+    wins by (current):  damage 97%, timeout 3%
+    wins by (swapped):  damage 98%, timeout 2%
+    eliminated by (current): Aurelia via combat 19.8%, Tergrid via combat 14.3%, Marwyn via combat 10.8%, Atraxa via combat 6.8%
+    eliminated by (swapped): Aurelia via combat 21.2%, Tergrid via combat 15.3%, Marwyn via combat 9.0%, Atraxa via combat 7.0%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mana Leak                             37.7      40.3         7.8     59.7       23.0      0.00
+    Expressive Iteration                  37.8      61.6         7.7     38.4       32.6      0.00
+    Sleight of Hand                       38.4      64.6         6.9     35.4       31.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Demonic Tutor                         37.6      64.4         7.2     35.6       33.5      0.00
+    Vampiric Tutor                        39.9      65.7         7.1     34.3       37.8      0.00
+    Mystical Tutor                        38.0      65.0         7.5     35.0       33.6      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        28.2      25.4     -2.8
+    rounds survived                                  10.94     11.26    +0.32
+    eliminated, % of games                            71.1      73.7     +2.6
+    opponents it eliminated, per game                 0.69      0.67    -0.03
+    damage dealt, per game                            30.7      31.8     +1.2
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.3       0.6     +0.3
+      plan online by turn 8, %                         5.8       5.7     -0.1
+      plan online by turn 12, %                       25.0      26.5     +1.5
+      plan online at all, %                           33.3      34.2     +0.9
+    commander resolved by turn 4, %                   13.8      15.4     +1.6
+    commander resolved by turn 6, %                   58.1      57.8     -0.3
+    commander removals, per game                      0.23      0.27    +0.04
+    lands on the battlefield, turn 4                  3.70      3.75    +0.05
+    lands on the battlefield, turn 8                  6.55      6.74    +0.19
+    mana available, turn 4                            3.90      3.96    +0.07
+    mana available, turn 8                            6.83      7.03    +0.20
+    cards in hand after the land drop, turn 4         5.73      5.80    +0.07
+    cards in hand after the land drop, turn 8         5.60      5.52    -0.08
+    wins by (current):  damage 97%, timeout 3%
+    wins by (swapped):  damage 97%, timeout 3%
+    eliminated by (current): Aurelia via combat 20.6%, Tergrid via combat 13.0%, Marwyn via combat 10.3%, Atraxa via combat 6.5%
+    eliminated by (swapped): Aurelia via combat 21.1%, Tergrid via combat 15.5%, Marwyn via combat 9.6%, Atraxa via combat 7.0%
+
+(335s total)

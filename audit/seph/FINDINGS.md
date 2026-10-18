@@ -32,3 +32,6 @@ Why:
 - Lost cost: Mind Stone's late "sacrifice: draw a card" (cards in hand on turn 8 changed by -0.13 and +0.03, noise).
 
 Verdict: a fine but not needed swap. It only pays off if games go long, and losses vs t4 come from speed.
+
+## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
+Band 2 (T3-T4). Proposed: Force of Will, Farewell, Teferi's Protection (to Y'shtola), Consecrated Sphinx (to Veyran), Worldly Tutor (to Titania) out; Hornet Queen, Harmonize, Tireless Tracker (from Titania), Austere Command, Arcane Denial (spares) in. 8 -> 3 Game Changers (Demonic Tutor, Gifts Ungiven, Aura Shards). Final: **35.1% vs T3, 28.3% vs T4** (avg 31.7%; current list 36.2 / 29.8 at 1,000). Why: the deck barely misses its five GCs: Hornet Queen is a strong reanimation target (72% win when cast at T3) and Harmonize/Tracker replace the Sphinx's cards. AI bug found: the sim never cast Worldly Tutor (fixed ebd8d6f).

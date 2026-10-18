@@ -1,0 +1,8 @@
+sephfs|sephfs|4000
+yshtola|yshtola|4000
+sauron|sauron|4000
+sheoldred|sheoldred|4000
+seph|seph|4000
+cloud|cloud|2000
+veyran|veyran|2000
+titania|titania|2000

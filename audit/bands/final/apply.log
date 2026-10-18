@@ -1,0 +1,32 @@
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+Recorded the new list for the deck guard (tests/fixtures/my_decks_parsed.json).
+Next: cargo test --release   then rebuild the data (cardgen export) and measure it.
+2414 cards, 42 decks -> /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/bands-final/data
+ data/decks.json                                | 64 +++++++++++++-------------
+ decklists/CHANGELOG.md                         |  9 ++++
+ decklists/JD/kefka-grixis-discard.md           | 12 ++---
+ decklists/JD/sauron-grixis-amass.md            |  4 +-
+ decklists/JD/sephiroth-fs-wipe-steal.md        | 18 ++++----
+ decklists/JD/sephiroth-phyrexian-reanimator.md | 16 +++----
+ decklists/JD/sheoldred-mono-black.md           |  4 +-
+ decklists/JD/titania-lands.md                  | 14 +++---
+ decklists/JD/tymna-kraum-partners.md           | 20 ++++----
+ decklists/JD/veyran-izzet-spellslinger.md      |  8 ++--
+ decklists/JD/yshtola-esper-drain.md            | 14 +++---
+ tests/fixtures/my_decks_parsed.json            | 64 +++++++++++++-------------
+ 12 files changed, 127 insertions(+), 120 deletions(-)

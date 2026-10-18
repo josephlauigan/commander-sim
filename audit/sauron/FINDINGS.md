@@ -22,3 +22,6 @@ T5 26.4% (28.7% over t3–t5).**
 | Spell Pierce (look-ahead, before the hold credit) | -1.1 (t3 -0.6, t4 -0.3, t5 -2.5) | Noise. |
 | **Spell Pierce (look-ahead, with the hold credit, 1,000 paired per tier)** | **+0.5 (t3 +2.1, t4 0.0, t5 -0.6; ±3.3–3.7)** | Noise. Urza cast in 65% of the games he's drawn (52% at T5), wins 36–55% when cast. T3 eliminations -2.6 (an extra body and the Construct against creature decks); at T4–T5 losing a cheap counter to combo decks costs a little (T5 damage -2.0). Mana on turn 8 unchanged: Sauron's artifacts are mostly rocks that already make mana, so Urza's {U} ability adds almost nothing. |
 **Reading it:** a fair swap, not an upgrade. Urza wants cheap non-mana artifacts and artifact tokens; Sauron has few.
+
+## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
+Band 2 (T3-T4). Proposed: +Force of Will (spare) for Slaughter Pact; 3 Game Changers. Final: **30.2% vs T3, 31.6% vs T4** (avg 30.9%; current 28.9 / 31.6 at 1,000). Why: a free counter protects Sauron and stops T3-T4 combo turns; Slaughter Pact had the lowest win rate when cast.

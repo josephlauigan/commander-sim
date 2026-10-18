@@ -1,0 +1,163 @@
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Vampiric Tutor: Full (instant: tutored card on top of the library, lose 2 life)
+  Rune-Scarred Demon: Full (hand-tagged)
+  Bolas's Citadel: Full (play lands and cast spells from the top of the library, paying life equal to mana value (not below 15 life); {T}, sacrifice ten nonland permanents: each opponent loses 10 (used when it kills someone))
+  Gray Merchant of Asphodel: Full (tags: `bomb=4 pow=2 gray`)
+
+4,000 games (current list and the swapped one, 1,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m18s elapsed, ~2m46s left
+  progress  20.0%  0m35s elapsed, ~2m22s left
+  progress  30.0%  0m54s elapsed, ~2m07s left
+  progress  40.0%  1m12s elapsed, ~1m49s left
+  progress  50.0%  1m31s elapsed, ~1m31s left
+  progress  60.0%  1m49s elapsed, ~1m12s left
+  progress  70.0%  2m06s elapsed, ~0m54s left
+  progress  80.0%  2m24s elapsed, ~0m36s left
+  progress  90.0%  2m42s elapsed, ~0m18s left
+  progress 100.0%  3m00s elapsed, ~0m00s left
+Swaps: Star Compass -> Demonic Tutor; Tome of Legends -> Vampiric Tutor; Masterful Flourish -> Rune-Scarred Demon; Bitter Triumph -> Bolas's Citadel; Rabid Attack -> Gray Merchant of Asphodel
+
+=== Sephiroth FS vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  21.6% ->  23.8%  (delta +2.2 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Urza 17.2%  Zur the Enchanter 12.7%  Winota 16.5%  Kinnan 22.4%  Yawgmoth 7.2%
+[loose       ] win  21.3% ->  22.1%  (delta +0.8 pts, noise ±3.3, paired)   n=1000
+               eliminated by (variant): Urza 17.2%  Zur the Enchanter 12.9%  Winota 16.3%  Kinnan 23.4%  Yawgmoth 8.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sephfs) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sephfs: 
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          21.6% ->  23.8%  +2.2pt   ±3.7     21.3% ->  22.1%  +0.8pt   ±3.7 
+    Rounds survived (or game length)                   8.67 ->   8.70   +0.03  ±0.33      8.76 ->   8.70   -0.06  ±0.34 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.04      0.10 ->   0.10   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.49 ->   0.51   +0.02  ±0.07      0.48 ->   0.50   +0.02  ±0.07 
+    Mana available on your turn 4                      4.17 ->   4.22   +0.05  ±0.09      4.16 ->   4.20   +0.04  ±0.09 
+    Mana available on your turn 6                      5.67 ->   5.70   +0.03  ±0.15      5.62 ->   5.70   +0.08  ±0.15 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.1%  +0.1pt   ±0.2      0.0% ->   0.1%  +0.1pt   ±0.2 
+    Turn the game plan came online                                                    n/a                                    n/a
+    Turn the commander first resolved                  4.30 ->   4.32   +0.01  ±0.17      4.33 ->   4.39   +0.06  ±0.18 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.36 ->  12.38   +0.03  ±0.85     12.47 ->  11.71   -0.75  ±0.76 
+    Tutors resolved per game                           0.07 ->   0.41   +0.34  ±0.05*     0.06 ->   0.38   +0.32  ±0.04*
+    Spells cast per game                               9.91 ->   9.84   -0.07  ±0.60     10.02 ->   9.69   -0.32  ±0.59 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   -0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.45 ->   0.29   -0.16  ±0.05*     0.41 ->   0.29   -0.12  ±0.05*
+    Board wipes cast                                   0.47 ->   0.40   -0.07  ±0.06*     0.46 ->   0.44   -0.01  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.36 ->   0.45   +0.08  ±0.06*     0.41 ->   0.44   +0.03  ±0.06 
+    Your spells countered                              0.48 ->   0.53   +0.05  ±0.07      0.52 ->   0.52   +0.00  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                25.96 ->  28.98   +3.02  ±2.80*    26.25 ->  27.53   +1.28  ±2.67 
+      ...of which combat damage                       12.67 ->  12.98   +0.31  ±1.46     12.73 ->  12.53   -0.20  ±1.40 
+      ...of which magecraft / burn                     2.03 ->   2.17   +0.13  ±0.54      2.04 ->   1.88   -0.16  ±0.52 
+      ...of which drain triggers                      11.20 ->  13.41   +2.22  ±1.53*    11.43 ->  12.79   +1.37  ±1.43 
+      ...of which other triggers                       0.05 ->   0.03   -0.02  ±0.05      0.02 ->   0.07   +0.04  ±0.05 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+    worse  - Board wipes cast (conservative profile only)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (conservative profile only)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (conservative profile only)
+    better -   ...of which drain triggers (conservative profile only)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Demonic Tutor                         18.6      78.5         5.8     21.5       37.7      0.00
+    Vampiric Tutor                        20.2      73.8         5.3     26.2       36.2      0.00
+    Rune-Scarred Demon                    18.9      39.2         9.4     60.8       66.2      0.01
+    Bolas's Citadel                       23.0      47.4         9.2     52.6       62.4      0.01
+    Gray Merchant of Asphodel             19.2      60.9         7.2     39.1       46.2      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Star Compass                          19.6      82.1         5.1     17.9       33.5      0.01
+    Tome of Legends                       20.4      83.8         5.7     16.2       38.0      0.01
+    Masterful Flourish                    19.0      82.6         5.6     17.4       32.5      0.00
+    Bitter Triumph                        18.7      83.4         6.8     16.6       35.9      0.00
+    Rabid Attack                          19.2      13.5        11.0     86.5       84.6      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        21.6      23.8     +2.2
+    rounds survived                                   8.67      8.70    +0.03
+    eliminated, % of games                            78.4      76.1     -2.3
+    opponents it eliminated, per game                 0.60      0.68    +0.08
+    damage dealt, per game                            25.9      28.6     +2.6
+    commander resolved by turn 4, %                   53.6      53.3     -0.3
+    commander resolved by turn 6, %                   70.7      72.4     +1.7
+    commander removals, per game                      0.30      0.34    +0.04
+    lands on the battlefield, turn 4                  3.75      3.74    -0.00
+    lands on the battlefield, turn 8                  6.35      6.21    -0.13
+    mana available, turn 4                            4.17      4.22    +0.05
+    mana available, turn 8                            6.93      6.97    +0.04
+    cards in hand after the land drop, turn 4         5.62      5.70    +0.08
+    cards in hand after the land drop, turn 8         4.83      4.90    +0.06
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 99%, combo 0%, timeout 0%
+    eliminated by (current): Kinnan via combo 22.4%, Urza via combo 17.1%, Zur the Enchanter via combo 13.1%, Winota via combo 9.2%
+    eliminated by (swapped): Kinnan via combo 22.0%, Urza via combo 16.4%, Zur the Enchanter via combo 11.8%, Winota via combo 9.7%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Demonic Tutor                         18.4      85.3         5.9     14.7       37.6      0.00
+    Vampiric Tutor                        18.5      78.4         5.0     21.6       30.3      0.00
+    Rune-Scarred Demon                    17.2      34.3         9.2     65.7       62.7      0.01
+    Bolas's Citadel                       21.7      49.3         9.0     50.7       50.5      0.02
+    Gray Merchant of Asphodel             20.1      60.7         7.9     39.3       46.7      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Star Compass                          20.4      80.4         5.2     19.6       32.3      0.01
+    Tome of Legends                       20.1      83.6         5.6     16.4       36.9      0.01
+    Masterful Flourish                    18.8      80.9         5.6     19.1       33.6      0.00
+    Bitter Triumph                        19.1      74.9         6.9     25.1       31.5      0.00
+    Rabid Attack                          19.3      14.0        11.4     86.0       63.0      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        21.3      22.1     +0.8
+    rounds survived                                   8.76      8.70    -0.06
+    eliminated, % of games                            78.7      77.9     -0.8
+    opponents it eliminated, per game                 0.61      0.61    +0.01
+    damage dealt, per game                            26.2      27.3     +1.1
+    commander resolved by turn 4, %                   52.6      52.9     +0.3
+    commander resolved by turn 6, %                   71.5      71.0     -0.5
+    commander removals, per game                      0.34      0.34    +0.00
+    lands on the battlefield, turn 4                  3.74      3.73    -0.01
+    lands on the battlefield, turn 8                  6.32      6.23    -0.09
+    mana available, turn 4                            4.16      4.20    +0.04
+    mana available, turn 8                            6.96      6.90    -0.07
+    cards in hand after the land drop, turn 4         5.63      5.70    +0.08
+    cards in hand after the land drop, turn 8         4.92      4.72    -0.20
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 97%, timeout 3%, combo 0%
+    eliminated by (current): Kinnan via combo 22.5%, Urza via combo 18.8%, Winota via combo 11.5%, Zur the Enchanter via combo 9.3%
+    eliminated by (swapped): Kinnan via combo 23.2%, Urza via combo 16.6%, Zur the Enchanter via combo 11.9%, Winota via combo 9.6%
+
+(181s total)

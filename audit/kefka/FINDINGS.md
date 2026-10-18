@@ -47,3 +47,6 @@ Ad Nauseam was already modeled; the tests exposed AI misplays, fixed in shared c
 | Feed the Swarm / Hallway Heckler (adaptive, new AI) | -1.8 / -1.1 | Better, still slightly negative. |
 | **Hallway Heckler (look-ahead, new AI + hold credit, 1,000 paired per tier)** | **-0.3 (t3 -1.8, t4 -1.4, t5 +2.4; ±3.1–3.5)** | Noise. Cast in only 15% of the games it's drawn (stuck 85%): Kefka keeps big hands, so there's rarely room for four cards, and `kefka::discard_choice` still discards it to the wheel (5 of 40 traced games). Wins 42% when cast. Baseline unchanged by the AI fixes (26.4% vs 26.8% over t3–t5). |
 **Reading it:** Ad Nauseam is the weakest of its three homes here. Kefka's discard plan (hand-coded) treats it as fodder.
+
+## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
+Band 3 (T3). Proposed: Demonic Tutor, Vampiric Tutor (to Seph FS), Mystical Tutor (to Veyran) out; Mana Leak, Expressive Iteration, Sleight of Hand (spares) in. 6 -> 3 Game Changers (Underworld Breach, Jeska's Will, Rhystic Study). Final: **26.7% vs T3** (current 27.4% at 1,000). Why: the combo is intact but found less often. Filler choice made no difference (Star Compass / Tome / Flourish gave 25.6%), nor did keeping Vampiric instead of Rhystic (26.1%).

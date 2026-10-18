@@ -1,0 +1,21 @@
+04:08 start kraum
+04:24 done kraum exit 0
+04:24 start kefka
+04:36 done kefka (previous queue's last sim)
+04:36 start sephfs (4000 per profile)
+04:42 done sephfs exit 0
+04:42 start yshtola (4000 per profile)
+04:49 done yshtola exit 0
+04:49 start sauron (4000 per profile)
+05:08 done sauron exit 0
+05:08 start sheoldred (4000 per profile)
+05:28 done sheoldred exit 0
+05:28 start seph (4000 per profile)
+05:49 done seph exit 0
+05:49 start cloud (2000 per profile)
+06:20 done cloud exit 0
+06:20 start veyran (2000 per profile)
+06:45 done veyran exit 0
+06:45 start titania (2000 per profile)
+07:11 done titania exit 0
+07:11 QUEUE DONE
