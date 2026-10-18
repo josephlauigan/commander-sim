@@ -70,3 +70,26 @@ fn desperate_ritual_adds_rrr_for_two_mana() {
     assert!(g.player(P0).gy.contains(&c), "an instant goes to the graveyard");
     assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "RRR", false));
 }
+
+// ======================================================== Rite of Flame
+#[test]
+fn rite_of_flame_adds_rr_and_one_more_per_copy_in_a_graveyard() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 1, false);
+    let c = hand(&mut g, P0, &["Rite of Flame"])[0];
+    assert!(sim_core::engine::mana::pay(&mut g, P0, 0, "R", false).unwrap());
+    assert!(sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Default::default()).unwrap());
+    assert_eq!(g.player(P0).floating.r, 2, "RR with no other copy");
+    // two more copies (other players' graveyards count too) make RRRR
+    let again = card(&g, "Rite of Flame");
+    g.player_mut(P1).gy.push(again);
+    g.player_mut(P0).gy.push(again);
+    g.player_mut(P0).floating.r = 0;
+    let c2 = card(&g, "Rite of Flame");
+    let mut ctx = sim_core::state::Ctx::default();
+    ctx.owner = None;
+    let f = g.registry.get(c2).unwrap().resolve.unwrap();
+    let dest = f(&mut g, P0, c2, &ctx).unwrap();
+    assert_eq!(&*dest, "gy");
+    assert_eq!(g.player(P0).floating.r, 2 + 3, "the copy cast first plus two more in graveyards");
+}

@@ -8247,3 +8247,7 @@ note = "{1},{T}, sacrifice: one mana of any colour (floating, from the AI's end-
 ["Desperate Ritual"]
 status = "Full"
 note = "adds RRR (floating red mana); the AI casts it only through a deck plan; splice onto Arcane left out (no other Arcane spell shares a deck with it)"
+
+["Rite of Flame"]
+status = "Full"
+note = "adds RR plus R for each other Rite of Flame in any graveyard (floating red mana); the AI casts it only through a deck plan"

@@ -73,6 +73,16 @@ fn desperate_ritual(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
     Ok("gy")
 }
 
+// ================================================================== Rite of Flame
+/// **Rite of Flame** ({R} sorcery): add {R}{R}, then {R} for each card named Rite of Flame in each graveyard (the
+/// copies already there: this one is still on the stack). Floating red mana; the AI casts it only through a deck plan.
+fn rite_of_flame(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let copies = g.players.iter().flat_map(|q| q.gy.iter()).filter(|&&x| &*g.db.get(x).name == "Rite of Flame").count();
+    g.player_mut(p).floating.r += 2 + copies as u32;
+    crate::glog!(g, "    {} adds {} red (Rite of Flame)", g.player(p).name, 2 + copies);
+    Ok("gy")
+}
+
 fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
     0
 }
@@ -84,6 +94,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::SelfDies, false);
     let c = r.card(db, "Desperate Ritual")?;
     c.resolve = Some(desperate_ritual);
+    c.prio = Some(zero_prio);
+    let c = r.card(db, "Rite of Flame")?;
+    c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);
     Ok(())
 }
