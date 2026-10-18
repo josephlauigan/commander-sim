@@ -84,3 +84,23 @@ fn line_a_goes_with_cover_in_hand() {
     assert_eq!(t6_plans::go_now(&g, P0, "Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara"), Some(true));
     assert_eq!(t6_plans::go_now(&g, P0, "Kinnan + Basalt Monolith"), None);
 }
+
+#[test]
+fn opening_hands_are_kept_like_a_cedh_deck_keeps() {
+    // 7-card hands from shuffled libraries: the plan keeps about 3 in 4 (1.9 lands a hand: the rest are 0-1 landers without fast mana)
+    let (mut kept, mut n) = (0, 0);
+    for seed in 0..300u64 {
+        let mut g = table_with(&[RT, KRAUM], seed, 40);
+        g.player_mut(P0).hand.clear();
+        for _ in 0..7 {
+            let c = g.player_mut(P0).library.pop().unwrap();
+            g.player_mut(P0).hand.push(c);
+        }
+        n += 1;
+        if t6_plans::keep(&g, P0) == Some(true) {
+            kept += 1;
+        }
+    }
+    eprintln!("kept {kept} of {n}");
+    assert!(kept * 100 >= n * 70, "kept only {kept} of {n}");
+}

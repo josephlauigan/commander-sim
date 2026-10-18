@@ -161,8 +161,11 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     if lands >= 2 && accel >= 1 {
         return Some(true); // "at least two lands and a piece of acceleration"
     }
-    if lands == 1 && accel >= 2 {
-        return Some(true); // fast mana and a free commander replace lands
+    if lands >= 1 && lands + accel >= 3 {
+        return Some(true); // fast mana and a free commander replace lands (a 1-lander needs two pieces)
+    }
+    if lands == 1 && accel >= 1 && reactive < 2 && other >= 3 {
+        return Some(true); // one land, one accelerant and a hand full of cheap plays
     }
     // two or more lands and something to do (an engine card, or three other plays) without two dead reactive cards
     if lands >= 2 && reactive < 2 && (engine >= 1 || other >= 3) {
