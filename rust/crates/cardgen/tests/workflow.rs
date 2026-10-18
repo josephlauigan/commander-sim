@@ -161,3 +161,39 @@ fn the_audit_runs_on_the_scratch_data() {
     let hooks = cardgen::audit::hooks_report(&inp, &built.cards, false).unwrap();
     assert!(hooks.starts_with("Rust card code vs the Python hooks"), "{hooks}");
 }
+
+#[test]
+fn audit_never_overwrites_a_decklist() {
+    let p = scratch("audit_md");
+    let doc = std::fs::read_dir(p.root.join("decklists/JD"))
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .find(|f| f.extension().is_some_and(|x| x == "md"))
+        .expect("a deck doc in the scratch data");
+    let before = std::fs::read_to_string(&doc).unwrap();
+    let run = |extra: &[&str]| {
+        std::process::Command::new(env!("CARGO_BIN_EXE_cardgen"))
+            .arg("--root")
+            .arg(&p.root)
+            .arg("audit")
+            .args(extra)
+            .output()
+            .unwrap()
+    };
+    let out = run(&["--md", doc.to_str().unwrap()]);
+    assert!(!out.status.success(), "the decklist path must be refused");
+    assert_eq!(std::fs::read_to_string(&doc).unwrap(), before, "the deck doc is untouched");
+    // a plain file that is not an audit table is refused too; a new file or an old table is written
+    let other = p.root.join("notes.md");
+    std::fs::write(&other, "# my notes\n").unwrap();
+    assert!(!run(&["--md", other.to_str().unwrap()]).status.success());
+    let table = p.root.join("table.md");
+    assert!(run(&["--md", table.to_str().unwrap()]).status.success());
+    assert!(std::fs::read_to_string(&table).unwrap().starts_with("| Tier | Deck |"));
+    assert!(run(&["--md", table.to_str().unwrap()]).status.success(), "an old table can be rewritten");
+    // --deck and --mine print to stdout and touch no file
+    let key = "yshtola";
+    assert!(run(&["--deck", key]).status.success());
+    assert!(run(&["--mine"]).status.success());
+    assert_eq!(std::fs::read_to_string(&doc).unwrap(), before);
+}

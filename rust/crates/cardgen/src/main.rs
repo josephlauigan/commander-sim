@@ -65,6 +65,9 @@ fn audit(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     use cardgen::audit as a;
     let mut inp = cardgen::export::Inputs::load(project)?;
     let md = opt(args, "--md")?;
+    if let Some(f) = &md {
+        a::check_md_target(f)?; // before anything else: a refused path writes nothing
+    }
     let deck = opt(args, "--deck")?;
     let cards_file = opt(args, "--cards")?;
     let fetch = flag(args, "--fetch");
