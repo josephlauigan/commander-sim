@@ -8709,3 +8709,7 @@ note = "4/2 flash flyer; the static 'you may cast spells as though they had flas
 ["Drift of Phantasms"]
 status = "Full"
 note = "0/5 flying defender; Transmute {1}{U}{U} as a sorcery-speed hand option for the best card with the same mana value (3), then shuffle (t6_blue.rs, tested)"
+
+["Emrakul, the Promised End"]
+status = "Partial"
+note = "13/13 flying trample that costs {1} less per card type in the graveyard (self_cost, tested); missing: the cast trigger (control of target opponent's next turn, then that player takes an extra turn), and protection from instants (the engine has no turn control, extra turns, or protection from a card type)"

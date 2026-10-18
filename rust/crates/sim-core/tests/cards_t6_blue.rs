@@ -282,3 +282,21 @@ fn drift_of_phantasms_transmutes_only_at_sorcery_speed() {
     g.active = Some(P1);
     assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty(), "not on the opponent's turn");
 }
+
+// ======================================================== Emrakul, the Promised End
+#[test]
+fn emrakul_costs_one_less_per_card_type_in_the_graveyard() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Emrakul, the Promised End"])[0];
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, c), (13, String::new()));
+    put_gy(&mut g, P0, "Island");
+    put_gy(&mut g, P0, "Forest"); // a second land adds nothing
+    put_gy(&mut g, P0, "Opt");
+    put_gy(&mut g, P0, "Grave Titan");
+    assert_eq!(t6::graveyard_types(&g, P0), 3);
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, c).0, 10, "land, instant, creature");
+    put_gy(&mut g, P0, "Sol Ring");
+    put_gy(&mut g, P0, "Mnemonic Betrayal");
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, c).0, 8, "artifact and sorcery too");
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P1, c).0, 13, "an opponent's graveyard does not count");
+}

@@ -11,8 +11,9 @@
 //! - Exhibition Tidecaller: Opus on the cast hook; the old compiled mill-3 trigger is removed (dsl = []).
 //! - Voice of Victory: Mobilize 2 on its attack hook (the tokens carry `EotSac`); opponents' casts refused on its controller's turn (`can_cast`).
 //! - Drift of Phantasms: Transmute {1}{U}{U} as a hand option (sorcery speed); defender, flying and the 0/5 body are data.
+//! - Emrakul, the Promised End: costs {1} less per card type in your graveyard (`self_cost`); control of an opponent's turn, the extra turn and protection from instants are engine needs.
 
-use crate::cards::{CardDb, Colors};
+use crate::cards::{CardDb, Colors, Types};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::trigger_window;
@@ -345,8 +346,39 @@ fn drift_transmute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 
+// ================================================================== Emrakul, the Promised End
+/// the number of card types among the cards in p's graveyard (land, creature, instant, sorcery, artifact,
+/// enchantment, planeswalker: the engine's card data has no battle or kindred type)
+pub fn graveyard_types(g: &Game, p: PlayerId) -> u32 {
+    let mut seen = 0u8;
+    for &c in &g.player(p).gy {
+        let d = g.db.get(c);
+        for (on, bit) in [
+            (d.land, 1u8),
+            (d.creature, 2),
+            (d.instant, 4),
+            (d.sorcery, 8),
+            (d.types.has(Types::ARTIFACT), 16),
+            (d.types.has(Types::ENCHANTMENT), 32),
+            (d.types.has(Types::PLANESWALKER), 64),
+        ] {
+            if on {
+                seen |= bit;
+            }
+        }
+    }
+    seen.count_ones()
+}
+
+/// Emrakul costs {1} less to cast for each card type among cards in your graveyard
+fn emrakul_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    -(graveyard_types(g, p) as i32)
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Emrakul, the Promised End")?.self_cost = Some(emrakul_cost);
     r.card(db, "Drift of Phantasms")?.hand_options = Some(drift_options);
     let c = r.card(db, "Voice of Victory")?;
     c.attack = Some(voice_attack);

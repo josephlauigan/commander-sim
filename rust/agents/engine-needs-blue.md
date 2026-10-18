@@ -31,3 +31,9 @@ Needs: the permanent-based "you may cast spells as though they had flash" (all s
 Where it would hook: impls/t0_captain.rs `as_flash` (read at `ai/brain.rs` ~line 1264, which only looks at permanent cards, not instants/sorceries or creatures) and `engine/cast.rs` `castable` for the timing test; return `t6_blue::static_flash(g, p, creature_spell)`.
 Card side done: flash and flying (data), `t6_blue::static_flash` (Trickster, Floodcaller, Borne's turn flag).
 Test to add once the engine has it: with the Trickster out, a sorcery in hand is cast in the opponent's end step.
+
+## Emrakul, the Promised End
+Needs: (1) controlling another player's turn ("you gain control of target opponent during that player's next turn": the controller makes that player's decisions, sees their hand, uses their cards and mana); (2) extra turns (see `engine-needs-godo.md`, Final Fortune): "after that turn, that player takes an extra turn"; (3) "protection from instants" (`Cards::protfrom` holds colours only): instants cannot target it, and damage from instants is prevented.
+Where it would hook: (1) `engine/turn.rs` (a per-turn "controlled by" player that `ai/` and `human/` decision calls consult) and a `Cast` slot on Emrakul (`CardImpl::cast` is for permanents already on the battlefield; this is a trigger from the spell on the stack: `engine/cast.rs` `on_cast` could call a per-card `self_cast` slot, which exists); (2) the same extra-turn queue as Final Fortune; (3) `engine/values.rs::untargetable` and the damage prevention code.
+Card side done: `impls/t6_blue.rs` `self_cost`: {1} less for each card type among cards in your graveyard (`t6_blue::graveyard_types`; land, creature, instant, sorcery, artifact, enchantment, planeswalker); 13/13 flying, trample (data).
+Test to add once the engine has it: casting Emrakul makes the target opponent's next turn run under the caster's control, followed by an extra turn for that opponent; a Lightning Bolt cannot target Emrakul.
