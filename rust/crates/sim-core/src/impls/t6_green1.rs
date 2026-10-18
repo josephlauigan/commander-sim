@@ -15,7 +15,7 @@ use crate::engine::turn::remove_land;
 use crate::engine::zones::min_by;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{LandId, PermId, PlayerId};
+use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
 
@@ -326,12 +326,119 @@ fn speaker_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Vibrance
+thread_local! {
+    /// the mode an evoked Vibrance was paid for (1 = {R}{R}, 2 = {G}{G}); 0 when it was cast normally
+    static VIBRANCE_MODE: std::cell::Cell<u8> = const { std::cell::Cell::new(0) };
+}
+
+/// **Vibrance** ({3}{R/G}{R/G}, 4/4, evoke {R/G}{R/G}): when it enters, if {R}{R} was spent, 3 damage to any target;
+/// if {G}{G} was spent, search for a land card (to hand) and gain 2 life. The card data prices the hybrid as {R}{R},
+/// so a normal cast always spent {R}{R} (3 damage, no land); the evoke options below pay for one mode and sacrifice it.
+/// The AI evokes for {R}{R} when 3 damage kills a creature worth killing or finishes a player, and for {G}{G} when it
+/// wants a land from the library (Gaea's Cradle or a Gate not yet in hand or play).
+fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src || !g.last_cast_etb {
+        return Ok(()); // "if {R}{R} was spent to cast it": not when it entered without being cast
+    }
+    let p = owner(g, src);
+    let mode = VIBRANCE_MODE.with(|c| c.replace(0));
+    if mode != 2 && trigger_window(g, p, Some(src), "3 damage to any target", None)? {
+        super::t2::best_target_any(g, p, 3)?;
+    }
+    if mode == 2 && trigger_window(g, p, Some(src), "search for a land, gain 2 life", None)? {
+        let want = vibrance_land_wanted(g, p);
+        let key = |g: &Game, c: CardId| {
+            let n = &*g.db.get(c).name;
+            n == "Gaea's Cradle" || (n == "Talon Gates of Madara" && !g.player(p).library.iter().any(|&x| &*g.db.get(x).name == "Gaea's Cradle"))
+        };
+        super::t1::tutor_named(g, p, &|g, c| g.db.get(c).land && (!want || key(g, c)), 1, "hand")?;
+        crate::engine::life::gain(g, p, 2)?;
+    }
+    Ok(())
+}
+
+/// the land Vibrance's {G}{G} mode would find: a wished land not yet held or in play (Gaea's Cradle, Talon Gates)
+fn vibrance_land_wanted(g: &Game, p: PlayerId) -> bool {
+    let held = |name: &str| {
+        g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
+            || g.player(p).lands.iter().any(|&l| &*g.db.get(g.land(l).cd).name == name)
+    };
+    g.player(p)
+        .library
+        .iter()
+        .any(|&c| matches!(&*g.db.get(c).name, "Gaea's Cradle" | "Talon Gates of Madara") && !held(&g.db.get(c).name))
+}
+
+fn vibrance_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let mut o = vec![];
+    if post.is_none() || !crate::engine::cast::castable(g, p, c, "hand") {
+        return Ok(o);
+    }
+    // the full cast ({3}{R}{R}) is the engine's own; evoke is for when that is out of reach
+    let (fg, fp) = crate::engine::mana::cost_of(g, p, c);
+    if can_pay(g, p, fg, &fp, false) {
+        return Ok(o);
+    }
+    let plan = |u: f64, l: &str, mode: i64| Opt {
+        utility: u,
+        label: l.into(),
+        act: Some(Action::Plan { f: vibrance_evoke, arg: mode }),
+    };
+    if can_pay(g, p, 0, "RR", false) {
+        let kill = g
+            .opps(p)
+            .flat_map(|q| g.player(q).perms.clone())
+            .filter(|&m| g.is_creature(m) && crate::engine::values::etgh(g, m) <= 3)
+            .map(|m| crate::engine::values::pval(g, m))
+            .fold(0.0, f64::max);
+        let lethal = g.opps(p).any(|q| g.player(q).life <= 3);
+        if kill >= 3.0 || lethal {
+            o.push(plan(if lethal { 6.0 } else { kill - 0.5 }, "evoke Vibrance ({R}{R}: 3 damage)", 1));
+        }
+    }
+    if can_pay(g, p, 0, "GG", false) && vibrance_land_wanted(g, p) {
+        o.push(plan(2.6, "evoke Vibrance ({G}{G}: land, 2 life)", 2));
+    }
+    Ok(o)
+}
+
+fn vibrance_evoke(g: &mut Game, p: PlayerId, mode: i64) -> Res<bool> {
+    let Some(c) = g.db.id("Vibrance") else { return Ok(false) };
+    let pips = if mode == 2 { "GG" } else { "RR" };
+    let Some(i) = g.player(p).hand.iter().position(|&x| x == c) else { return Ok(false) };
+    if !can_pay(g, p, 0, pips, false) {
+        return Ok(false);
+    }
+    g.player_mut(p).hand.remove(i);
+    pay(g, p, 0, pips, false)?;
+    g.player_mut(p).spells_this_turn += 1;
+    crate::engine::cast::on_cast(g, p, c)?;
+    crate::glog!(g, "  {} evokes Vibrance ({})", g.player(p).name, pips);
+    VIBRANCE_MODE.with(|v| v.set(mode as u8));
+    let m = crate::engine::zones::enter(
+        g,
+        p,
+        c,
+        crate::engine::zones::Enter { was_cast: true, ..crate::engine::zones::Enter::default() },
+    );
+    VIBRANCE_MODE.with(|v| v.set(0));
+    let m = m?;
+    if live(g, m) {
+        crate::engine::zones::die(g, m, "sac".into())?; // the evoke sacrifice
+    }
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Oboro Breezecaller")?.options = Some(oboro_options);
     r.card(db, "Badgermole Cub")?.mana_tapped = Some(cub_tapped);
     r.card(db, "Earthcraft")?.options = Some(earthcraft_options);
     r.card(db, "Candelabra of Tawnos")?.options = Some(candelabra_options);
     r.card(db, "Magus of the Candelabra")?.options = Some(candelabra_options);
+    let v = r.card(db, "Vibrance")?;
+    v.etb = Some(vibrance_etb);
+    v.hand_options = Some(vibrance_hand);
     let s = r.card(db, "Formidable Speaker")?;
     s.etb = Some(speaker_etb);
     s.options = Some(speaker_options);

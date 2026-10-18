@@ -114561,20 +114561,7 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "gain_life",
-       "n": 2,
-       "who": "you"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "evoke"
@@ -114587,11 +114574,8 @@
    "ward": 0,
    "identity": "GR",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, if {R}{R} was spent to cast it, ~ deals 3 damage to any target.",
-    "When ~ enters, if {G}{G} was spent to cast it, search your library for a land card, reveal it, put it into your hand, then shuffle. You gain 2 life.   [partly: if {g}{g} was spent to cast it, search your library for a land card, reveal it, put it into your hand]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,

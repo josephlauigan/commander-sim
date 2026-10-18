@@ -18,3 +18,9 @@ Needs: "untap target permanent" for creatures and artifacts (a generic untap-per
 Where it would hook: `speaker_go` in impls/t6_green1.rs (lands only now); no shared helper found.
 Card side done: ETB discard + creature tutor; the {1},{T} untap of the best tapped land.
 Test to add once the engine has it: Speaker untaps a tapped Magus, which then untaps Cradle.
+
+## Vibrance
+Needs: hybrid mana costs ({R/G}) kept in card data and paid with a chosen colour, and "mana of colour X was spent to cast it" tracked on the spell for enter triggers.
+Where it would hook: `cost_of` / `pay` in engine/mana.rs and `Enter { was_cast }` in engine/zones.rs.
+Card side done: evoke options from hand for {R}{R} (3 damage) and {G}{G} (land + 2 life), sacrificed on entry, via a thread-local mode; a normal cast is priced {3}{R}{R} and deals 3 damage.
+Test to add once the engine has it: cast Vibrance for {3}{G}{G}: land to hand, 2 life, no damage; cast for {3}{R}{R}{R}... both modes when {R}{R} and {G}{G} were both spent.

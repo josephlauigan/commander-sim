@@ -271,3 +271,46 @@ fn speaker_untaps_cradle_for_one() {
     assert!(run(&mut g, P0, &o[0]));
     assert!(!g.land(cr).tapped && g.perm(s).tapped);
 }
+
+// ======================================================== Vibrance
+fn hand_opts(g: &mut Game, p: PlayerId, name: &str) -> Vec<Opt> {
+    let c = card(g, name);
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    f(g, c, p, Some(false)).unwrap()
+}
+
+#[test]
+fn vibrance_evoked_for_rr_deals_3_and_is_sacrificed() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 2, false);
+    hand(&mut g, P0, &["Vibrance"]);
+    assert!(hand_opts(&mut g, P0, "Vibrance").is_empty(), "no worthwhile target for 3 damage yet");
+    g.player_mut(PlayerId(1)).life = 3;
+    let o = hand_opts(&mut g, P0, "Vibrance");
+    assert_eq!(o.len(), 1, "RR only: no {{G}}{{G}} mode");
+    assert!(run(&mut g, P0, &o[0]));
+    assert_eq!(g.player(PlayerId(1)).life, 0, "3 damage");
+    let v = card(&g, "Vibrance");
+    assert!(g.player(P0).gy.contains(&v), "sacrificed (evoke)");
+    assert!(!g.player(P0).hand.contains(&v));
+}
+
+#[test]
+fn vibrance_evoked_for_gg_finds_cradle_and_gains_2() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 2, false);
+    hand(&mut g, P0, &["Vibrance"]);
+    let cr = card(&g, "Gaea's Cradle");
+    if !g.player(P0).library.contains(&cr) {
+        g.player_mut(P0).library.push(cr);
+    }
+    let o = hand_opts(&mut g, P0, "Vibrance");
+    assert_eq!(o.len(), 1);
+    let life = g.player(P0).life;
+    let opp = g.player(PlayerId(1)).life;
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(g.player(P0).hand.contains(&cr), "searched Gaea's Cradle");
+    assert_eq!(g.player(P0).life, life + 2);
+    assert_eq!(g.player(PlayerId(1)).life, opp, "no damage in the {{G}}{{G}} mode");
+    assert!(g.player(P0).hand.is_empty() || !g.player(P0).hand.contains(&card(&g, "Vibrance")));
+}

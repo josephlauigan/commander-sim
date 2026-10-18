@@ -14,4 +14,4 @@ Nantuko (landfall Insect + bestow), Vibrance (evoke), then full cargo test + bui
 - A python3 call is blocked by a hook; don't.
 
 ## Takeover 2026-10-17
-Second agent took over. Done: Earthcraft (Full), Candelabra (Full), Magus (Full), Formidable Speaker (Partial: lands only; stock DSL discard cleared via dsl=[] override, cards.json re-exported). Remaining: Nantuko, Vibrance.
+Second agent took over. Done: Earthcraft (Full), Candelabra (Full), Magus (Full), Formidable Speaker (Partial: lands only; stock DSL discard cleared via dsl=[] override, cards.json re-exported). Vibrance Partial (evoke modes via hand_options; normal cast RR only). Remaining: Nantuko.
