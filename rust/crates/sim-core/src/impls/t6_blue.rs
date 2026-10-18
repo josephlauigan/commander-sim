@@ -36,7 +36,7 @@ fn set_turn_flag(g: &mut Game, p: PlayerId, key: Sym) {
 }
 
 /// does p hold the one-turn grant "you may cast spells this turn as though they had flash"? (Borne Upon a Wind;
-/// shared with Emergence Zone). The engine's cast-timing check and the AI's end-of-turn window should read this.
+/// shared with Emergence Zone). `cast::grants_flash` reads it.
 pub fn flash_turn_grant(g: &Game, p: PlayerId) -> bool {
     g.player(p).flag_turn.get(crate::impls::t6_lands::FLASH_FLAG) == Some(&g.turn_stamp())
 }

@@ -188,7 +188,7 @@ pub fn spare_after(g: &Game, p: PlayerId, n: u32) -> bool {
         .iter()
         .filter(|&&c| {
             let d = g.db.get(c);
-            !d.land && (own || d.instant || d.tag(crate::tag::Tag::Flash))
+            !d.land && (own || d.instant || d.tag(crate::tag::Tag::Flash) || crate::engine::cast::grants_flash(g, p, c))
         })
         .map(|&c| {
             let (gn, pips) = cost_of(g, p, c);

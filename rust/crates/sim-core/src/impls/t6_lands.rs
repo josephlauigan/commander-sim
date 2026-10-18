@@ -333,11 +333,11 @@ fn minamo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ================================================================== Emergence Zone
 /// the player's one-turn flag that "you may cast spells this turn as though they had flash" (Emergence Zone); the AI's
-/// end-of-turn casting must read it (`t0_captain::as_flash` does not yet: see engine-needs-lands.md)
+/// end-of-turn casting must read it (`cast::grants_flash` reads it)
 pub const FLASH_FLAG: &str = "as_flash_turn";
 
-/// Until the engine reads `FLASH_FLAG`, the land is not offered (sacrificing it would buy nothing)
-const EMERGENCE_LIVE: bool = false;
+/// kept as a switch for the land's AI option
+const EMERGENCE_LIVE: bool = true;
 
 /// **Emergence Zone**: {T}: Add {C}. {1},{T}, sacrifice it: you may cast spells this turn as though they had flash.
 /// The AI uses it at the end of an opponent's turn when it holds a creature spell it can pay for after the cost

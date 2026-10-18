@@ -1018,7 +1018,11 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         {
             u -= 6.0; // outside decks: mana kept for combat (ninjutsu)
         }
-        if d.creature && d.tag(Tag::Flash) && !g.player(p).is_commander(c) && s.danger < 0.8 {
+        if d.creature
+            && (d.tag(Tag::Flash) || (crate::impls::t6_blue::static_flash(g, p, true) && !crate::impls::t6_blue::flash_turn_grant(g, p)))
+            && !g.player(p).is_commander(c)
+            && s.danger < 0.8
+        {
             u -= 1.5; // flash: better at the end of the turn before yours
         }
         opts.push(Opt { utility: u, label: d.name.to_string(), act: Some(Action::Cast { card: c, zone: None }) });
@@ -1250,7 +1254,8 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         for c in g.player(p).hand.clone() {
             let d = g.db.get(c);
             let t = &d.tags;
-            if !(d.instant || (gand && d.sorcery)) || t.has(Tag::Prot) || t.has(Tag::Rem) || t.has(Tag::Wipe) {
+            let flashed = crate::engine::cast::grants_flash(g, p, c); // Borne, Trickster, Floodcaller, Quicksilver ...
+            if !(d.instant || ((gand || flashed) && d.sorcery)) || t.has(Tag::Prot) || t.has(Tag::Rem) || t.has(Tag::Wipe) {
                 continue;
             }
             if special(g, c) {
@@ -1292,7 +1297,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         for c in g.player(p).hand.clone() {
             // flash creatures: in before the next turn's draws
             let d = g.db.get(c);
-            if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::impls::t0_captain::as_flash(g, p)))
+            if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::engine::cast::grants_flash(g, p, c)))
                 || special(g, c)
                 || !can_pay(g, p, d.generic, &d.pips, false)
             {

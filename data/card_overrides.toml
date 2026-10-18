@@ -8462,8 +8462,8 @@ status = "Full"
 note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); cast for {4}{R}{R} or by exiling a red card from hand (alternative-cost slot); the AI pitches when it can't pay the mana (main phase and as an answer to an attack), valuing the kill 1.5 lower per card given up"
 
 ["Scout's Warning"]
-status = "Partial"
-note = "draws a card and sets the caster's turn flag t6_redirects::scout_flash_active (the next creature card this turn can be played with flash); missing: the engine does not read the flag yet, so creature cards still wait for sorcery timing (engine need)"
+status = "Full"
+note = "draws a card and lets the next creature card this turn be cast as though it had flash (cast::grants_flash; spent in on_cast; t6_redirects, tested)"
 
 ["Kozilek's Command"]
 tags = "tokx rem=exile tgt=c draw=1"
@@ -8532,8 +8532,8 @@ status = "Full"
 note = "{T}: {U}; {U},{T}: untap target legendary land or permanent, used when it gives 3+ more mana (the {U} and Minamo's own mana are the cost; t6_lands.rs)"
 
 ["Emergence Zone"]
-status = "Partial"
-note = "{T}: {C}; {1},{T}, sacrifice: sets the one-turn flash flag (t6_lands.rs, tested), but the AI does not read it yet so the option is switched off (engine-needs-lands.md)"
+status = "Full"
+note = "{T}: {C}; {1},{T}, sacrifice: you may cast spells this turn as though they had flash (cast::grants_flash); the AI uses it at the end of an opponent turn holding a creature spell (t6_lands.rs, tested)"
 
 ["Forbidden Orchard"]
 status = "Full"
@@ -8866,8 +8866,8 @@ note = "{T}: exile a creature card from an opponent's graveyard, +1/+1 counter o
 status = "Partial"
 note = "5/3; upkeep: lose 3 life (compiled); {3}, sacrifice: each other player draws (AI uses it at 6 life or less); missing: the as-enters text box exchange with another creature (t6_legends1.rs)"
 ["Borne Upon a Wind"]
-status = "Partial"
-note = "draws a card and sets the caster's one-turn flash flag (t6_blue::flash_turn_grant); missing: the engine does not read the flag yet, so spells still wait for their normal timing (engine need: cast spells as though they had flash)"
+status = "Full"
+note = "draws a card and lets the caster cast spells this turn as though they had flash (cast::grants_flash: human timing and the AI end-of-turn window; tested)"
 
 ["Mnemonic Betrayal"]
 status = "Partial"
@@ -8899,8 +8899,8 @@ status = "Full"
 note = "Mobilize 2 on the attack hook (two tapped and attacking 1/1 red Warriors, sacrificed at the next end step) and a can_cast lock: opponents cannot cast spells during its controller's turn (t6_blue.rs, tested)"
 
 ["High Fae Trickster"]
-status = "Partial"
-note = "4/2 flash flyer; the static 'you may cast spells as though they had flash' is exposed as t6_blue::static_flash; missing: the engine does not read it yet, so spells still wait for their normal timing (engine need: permanent-based flash grant)"
+status = "Full"
+note = "4/2 flash flyer; you may cast spells as though they had flash (cast::grants_flash via t6_blue::static_flash: human timing, AI end-of-turn window; tested)"
 
 ["Drift of Phantasms"]
 status = "Full"
@@ -8923,8 +8923,8 @@ status = "Partial"
 note = "tap or untap up to two targets: the AI untaps two of its tapped mana sources (rocks and dorks first, then lands) or else taps down the two best opposing creatures, and casts it when three or more mana sources are tapped; missing: cipher (encoding the card on a creature for a free copy on combat damage) -- the card goes to the graveyard (engine need)"
 
 ["Valley Floodcaller"]
-status = "Partial"
-note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otters and Rats get +1/+1 until end of turn and untap (tested); the 'cast noncreature spells as though they had flash' static is t6_blue::static_flash; missing: the engine does not read it yet (engine need: permanent-based flash grant)"
+status = "Full"
+note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otters and Rats get +1/+1 until end of turn and untap; noncreature spells have flash (cast::grants_flash; tested)"
 
 ["Louisoix's Sacrifice"]
 status = "Full"

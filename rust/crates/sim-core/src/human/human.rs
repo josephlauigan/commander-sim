@@ -256,7 +256,7 @@ pub fn can_respond(g: &Game, q: PlayerId) -> bool {
     let have = engine::mana::total_mana(g, q, false) + g.player(q).pool.total();
     if g.player(q).hand.iter().any(|&c| {
         let d = g.db.get(c);
-        legal::instant_speed(g, c) && d.cmc <= have && !d.land
+        legal::instant_speed(g, q, c) && d.cmc <= have && !d.land
     }) {
         return true;
     }

@@ -780,7 +780,7 @@ fn citadel(g: &Game, p: PlayerId) -> Vec<PermAbility> {
                     crate::engine::life::check_state(g)?;
                     return Ok(None);
                 }
-                if !legal::instant_speed(g, top) {
+                if !legal::instant_speed(g, p, top) {
                     if let Some(why) = legal::sorcery_timing(g, p) {
                         return Ok(Some(why.replace("do that", &format!("cast {nm}"))));
                     }
@@ -1381,7 +1381,7 @@ fn timing(g: &Game, p: PlayerId, c: CardId) -> Why {
     if crate::engine::values::silenced(g, p) {
         return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
     }
-    if !legal::instant_speed(g, c) {
+    if !legal::instant_speed(g, p, c) {
         if let Some(why) = legal::sorcery_timing(g, p) {
             return Some(why.replace("do that", &format!("cast {}", cname(g, c))));
         }

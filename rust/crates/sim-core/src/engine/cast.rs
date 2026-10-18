@@ -215,6 +215,18 @@ pub fn split_second_up(g: &Game) -> bool {
     g.stack.iter().any(|it| it.kind == StackKind::Spell && it.card.is_some_and(|c| g.db.get(c).has_kw("split second")))
 }
 
+/// does something let p cast c as though it had flash: Quicksilver / Captain Mar-Vell, High Fae Trickster / Valley
+/// Floodcaller, Borne Upon a Wind / Emergence Zone's one-turn grant, Scout's Warning (creature cards only)
+pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    if d.land {
+        return false;
+    }
+    crate::impls::t0_captain::as_flash(g, p)
+        || crate::impls::t6_blue::static_flash(g, p, d.creature)
+        || (d.creature && crate::impls::t6_redirects::scout_flash_active(g, p))
+}
+
 /// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)
 pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
     let d = g.db.get(c);
@@ -284,6 +296,9 @@ pub fn pact_affordable(g: &Game, p: PlayerId, cost: &str) -> bool {
 // ------------------------------------------------------------------ casting triggers
 /// what happens when p casts c (cast triggers of tagged cards, magecraft, copies). Python's `on_cast`.
 pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    if g.db.get(c).creature && crate::impls::t6_redirects::scout_flash_active(g, p) {
+        crate::impls::t6_redirects::scout_flash_used(g, p); // Scout's Warning covers the next creature card only
+    }
     let st = g.turn_stamp();
     if g.player(p).mistrise_next == Some(st) {
         g.player_mut(p).mistrise_next = None; // Mistrise Village: this spell can't be countered
