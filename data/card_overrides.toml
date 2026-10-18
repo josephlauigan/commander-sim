@@ -8497,3 +8497,7 @@ note = "nonbasic lands tap for {R} only, and a two-mana land (Ancient Tomb, City
 ["Defense Grid"]
 status = "Partial"
 note = "each spell costs {3} more to cast except during its caster's own turn (applies to every player, its controller on opponents' turns included); free alternative costs are not taxed"
+
+["Final Fortune"]
+status = "Partial"
+note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md)"

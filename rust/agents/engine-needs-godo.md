@@ -47,3 +47,9 @@ Needs: cost increases applied to spells cast for an alternative cost (Force of W
 Where it would hook: the cast path that handles `paid_otherwise` in `engine/cast.rs` (`cast_card`), adding `hooks::total_cost(g, p, c)` as generic mana.
 Card side done: the {3} tax outside the caster's turn for every player (`cost` slot, `impls/t6_godo.rs`).
 Test to add once the engine has it: with Defense Grid out on another player's turn, casting a spell for its alternative cost still needs {3}.
+
+## Final Fortune, Last Chance
+Needs: extra turns (a queue of extra turns on the game that `turn.rs` plays right after the current one, with the same player active), and a delayed "at the beginning of that turn's end step, you lose the game" effect tied to that extra turn. The deck uses them for a second combat phase / full untap on the combo turn (spec line 7), so the AI also needs a rule to cast one only when the extra turn wins.
+Where it would hook: `engine/turn.rs` (the seat loop around `step_start`, ~line 1140 where `skip_turns` is read) and the end-step code next to `Event::EndStep`; a `Player::extra_turns` counter plus a per-turn "loses at end" flag.
+Card side done: both cards' `resolve` slot goes to the graveyard (priority 0, so the AI never casts either: it would only lose the card) in `impls/t6_godo.rs`; to finish, the resolve should add one extra turn and mark it as the losing turn, and the priority should say when the extra turn wins.
+Test to add once the engine has it: resolving Final Fortune gives the caster a second consecutive turn, and the caster loses at that turn's end step (not before).

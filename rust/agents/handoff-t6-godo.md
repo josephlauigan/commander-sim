@@ -15,3 +15,4 @@ Vexing Bauble: DONE (Partial, engine need), committed.
 Hexing Squelcher: DONE (Partial, ward engine need), committed.
 Blood Moon: DONE (Partial, engine need), committed.
 Defense Grid: DONE (Partial: alt costs untaxed), committed.
+Final Fortune: DONE (Partial, extra turns engine need), committed.

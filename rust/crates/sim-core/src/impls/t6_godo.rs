@@ -570,6 +570,21 @@ fn grid_tax(g: &Game, src: Src, caster: PlayerId, _c: CardId) -> i32 {
     if live(g, src) && g.active != Some(caster) { 3 } else { 0 }
 }
 
+// ================================================================== Final Fortune / Last Chance
+/// **Final Fortune** ({R}{R} instant) and **Last Chance** ({R}{R} sorcery): take an extra turn after this one; at the
+/// beginning of that turn's end step, you lose the game. The engine has no extra turns (`turn.rs` runs the seats in
+/// order, `skip_turns` only skips), so the spell does nothing when it resolves and the AI never casts it
+/// (priority 0, no deck plan names it): casting it would only throw the card away. Both are Partial, with the engine
+/// needs in rust/agents/engine-needs-godo.md.
+fn extra_turn_spell(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    crate::glog!(g, "  {}: {} resolves (no extra turn: the engine has none)", g.player(p).name, g.db.get(c).name);
+    Ok("gy")
+}
+
+fn never_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -590,6 +605,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.land_mana = Some(moon_amt);
     c.prio = Some(moon_prio);
     r.card(db, "Defense Grid")?.cost = Some(grid_tax);
+    let c = r.card(db, "Final Fortune")?;
+    c.resolve = Some(extra_turn_spell);
+    c.prio = Some(never_prio);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

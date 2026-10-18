@@ -446,3 +446,15 @@ fn defense_grid_taxes_spells_cast_outside_their_casters_turn() {
     assert_eq!(sim_core::engine::mana::cost_of(&g, P0, sol).0, 4, "the Grid's own controller pays too on another turn");
     assert_eq!(sim_core::engine::mana::cost_of(&g, P1, sol).0, 1);
 }
+
+// ======================================================== Final Fortune / Last Chance
+#[test]
+fn final_fortune_goes_to_the_graveyard_and_the_ai_never_casts_it() {
+    let mut g = tbl();
+    assert_eq!(prio(&g, P0, "Final Fortune"), 0, "without engine extra turns it would only lose a card");
+    let c = take(&mut g, P0, "Final Fortune");
+    let f = g.registry.get(c).unwrap().resolve.unwrap();
+    let dest = f(&mut g, P0, c, &sim_core::state::Ctx::default()).unwrap();
+    assert_eq!(&*dest, "gy");
+    assert!(g.player(P0).alive, "nothing loses the game yet: the engine has no extra turn to end");
+}
