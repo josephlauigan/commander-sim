@@ -83,3 +83,40 @@ fn magda_sacrifices_five_treasures_for_an_artifact_or_dragon() {
     assert!(got, "an artifact or Dragon is on the battlefield");
     assert!(!has_perm(&g, P0, "Lightning Bolt"));
 }
+
+fn tokens(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).token).count()
+}
+
+// ======================================================== The Queen of Dale
+#[test]
+fn queen_of_dale_recruits_on_the_first_noncreature_spell_only() {
+    let mut g = tbl();
+    g.active = Some(P1);
+    perm(&mut g, P0, "The Queen of Dale");
+    hand(&mut g, P0, &["Sol Ring"]);
+    set_library(&mut g, P0, &["Plains", "Plains", "Plains"]);
+    let bolt = hand(&mut g, P1, &["Lightning Bolt", "Counterspell", "Goblin Guide"]);
+    let hand0 = g.player(P0).hand.len();
+    sim_core::engine::cast::on_cast(&mut g, P1, bolt[2]).unwrap(); // a creature spell: no trigger
+    assert_eq!(g.player(P0).hand.len(), hand0);
+    sim_core::engine::cast::on_cast(&mut g, P1, bolt[0]).unwrap();
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.player(P0).hand.len(), hand0, "drew one, discarded one");
+    assert_eq!(tokens(&g, P0), 1, "a nonland card was discarded: a 1/1 Human Soldier");
+    assert!(g.player(P0).gy.contains(&card(&g, "Sol Ring")));
+    sim_core::engine::cast::on_cast(&mut g, P1, bolt[1]).unwrap(); // the second noncreature spell
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(tokens(&g, P0), 1, "only the first noncreature spell each turn");
+}
+
+#[test]
+fn queen_of_dale_ignores_its_own_controllers_spells() {
+    let mut g = tbl();
+    perm(&mut g, P0, "The Queen of Dale");
+    set_library(&mut g, P0, &["Plains", "Plains"]);
+    let b = hand(&mut g, P0, &["Sol Ring"]);
+    sim_core::engine::cast::on_cast(&mut g, P0, b[0]).unwrap();
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(tokens(&g, P0), 0);
+}

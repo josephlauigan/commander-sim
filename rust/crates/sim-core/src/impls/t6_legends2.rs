@@ -3,11 +3,12 @@
 //! no engine file is touched; what needs the engine is listed in rust/agents/engine-needs-legends2.md.
 
 use super::partials::{at_once, first_max, on};
-use crate::cards::{CardDb, Types};
+use crate::cards::{CardDb, Colors, Types};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::card_name;
-use crate::engine::zones::{Enter, add_treasure, agent_for, agent_take, enter, searchable};
+use crate::engine::cast::discard_worst;
+use crate::engine::zones::{Enter, Tokens, add_treasure, agent_for, agent_take, draw, enter, make_tokens, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -136,7 +137,46 @@ fn magda_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== The Queen of Dale
+/// Recruit: draw a card, then discard a card (the AI's usual discard); if the discarded card is not a land, create a
+/// 1/1 white Human Soldier creature token
+pub fn recruit(g: &mut Game, p: PlayerId) -> Res {
+    draw(g, p, 1, false)?;
+    let before = g.player(p).hand.clone();
+    discard_worst(g, p, 1)?;
+    let gone: Vec<CardId> = before.into_iter().filter(|c| !g.player(p).hand.contains(c)).collect();
+    if gone.first().is_some_and(|&c| !g.db.get(c).land) {
+        let spec = Tokens {
+            color: Some(Colors::from_letters("W")),
+            types: vec!["human".into(), "soldier".into()],
+            ..Tokens::new(1, 1)
+        };
+        make_tokens(g, p, spec)?;
+    }
+    Ok(())
+}
+
+/// **The Queen of Dale** ({1}{W}, 2/1): whenever an opponent casts their first noncreature spell each turn, you recruit
+fn queen_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let o = owner(g, src);
+    if !live(g, src) || caster == o || g.db.get(c).creature {
+        return Ok(());
+    }
+    let st = g.turn_stamp();
+    let earlier = match &g.player(caster).turn_casts {
+        Some((s, cs)) if *s == st => cs.iter().filter(|&&x| x != c && !g.db.get(x).creature).count(),
+        _ => 0,
+    };
+    if earlier == 0 && trigger_window(g, o, Some(src), "recruit", None)? {
+        recruit(g, o)?;
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, "The Queen of Dale")?;
+    c.cast = Some(queen_cast);
+    at_once(c, Event::Cast, false);
     r.creature_pt.push(magda_pt);
     let c = r.card(db, MAGDA)?;
     c.as_enters = Some(magda_as);

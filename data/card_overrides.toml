@@ -8578,3 +8578,7 @@ note = "enter trigger phases out the best opposing creature (back at its control
 dsl = []
 status = "Partial"
 note = "other Dwarves you control get +1/+0 (creature_pt); a Dwarf you control becoming tapped makes a Treasure when it taps for mana or attacks; sacrifice five Treasures: the best artifact or Dragon card from the library onto the battlefield, shuffle (t6_legends2.rs). A Dwarf tapped by a tap cost or an effect makes no Treasure (no general becomes-tapped event; engine-needs-legends2.md)"
+
+["The Queen of Dale"]
+status = "Full"
+note = "whenever an opponent casts their first noncreature spell each turn (per caster), you recruit: draw, then discard (the AI's usual discard); a nonland discard makes a 1/1 white Human Soldier token (t6_legends2.rs recruit)"
