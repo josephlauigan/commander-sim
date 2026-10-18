@@ -8929,3 +8929,6 @@ note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otte
 ["Louisoix's Sacrifice"]
 status = "Full"
 note = "instant {U}: additional cost sacrifice a legendary creature or pay {2}; counter target activated ability, triggered ability or noncreature spell. Spells: the ctr=nc tag, the engine pays {2} extra (stack::counter_cost). Abilities: the AI casts it against an important ability or trigger (cardcode::answer_ability -> t6_counters::louisoix_answer), paying {2}, or sacrificing its least valuable legendary creature when it cannot pay and that is worth less than the ability"
+["Smaug the Magnificent"]
+status = "Full"
+note = "upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs)"

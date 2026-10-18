@@ -54,7 +54,8 @@ Tymna, so it can't also block. The attack taxes fix that:
 - **Elspeth**'s −3 destroys every creature with power 4 or more (yours too: count your Titans and Angels first);
   **Sunblast Angel** destroys every tapped creature when it enters (yours too, so cast it before you attack, after an
   opponent's big attack); **Austere Command** is the full reset (choose creatures with mana value 3 or less and 4 or
-  more: your attack taxes and rocks survive).
+  more: your attack taxes and rocks survive); **Avenge** destroys every creature and gains you 1 life for each, and costs
+  {2} less when a player attacked you on their last turn (hold it until their board is worth more than yours).
 
 ### Finishers
 
@@ -67,7 +68,10 @@ Tymna, so it can't also block. The attack taxes fix that:
   gained 5 or more life, which the lifelinkers (Baneslayer, Lyra, Vampire Nighthawk, Tymna) make easy.
 - **Terror of the Peaks** turns every creature you cast into damage to any target; **Glorybringer** and **Thundermaw
   Hellkite** are hasty dragons (Glorybringer exerts to deal 4 to a creature; Thundermaw taps and pings the opponents'
-  fliers).
+  fliers). **Smaug the Magnificent** ({2}{R}{R}, 4/3 flying, haste) attacks the turn he lands, makes a Treasure
+  each upkeep (colour fixing toward the five- and six-drops), and deals damage equal to your Treasures to any target
+  when he attacks: spend the Treasures as mana by default, and save them only when the damage kills a blocker or a
+  player.
 - **Rune-Scarred Demon** tutors any card when it enters; **Diabolic Tutor** does the same for 4. Fetch Elspeth when
   behind, a Titan or Terror of the Peaks to close.
 - **Gilgamesh, Master-at-Arms** looks at six cards for Equipment on entering and attacking; **Shield of Kaldra** (equip
@@ -84,7 +88,7 @@ the taxes let through, and draw.
 
 ### Removal and interaction
 
-**Swords to Plowshares** and **Path to Exile** (one mana), **Rip Apart**, **Darksteel Mutation** (also answers a
+**Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a
 commander), **Skyclave Apparition**, **Memory Trap**, **Bedevil** and **Disenchant**; **Glorybringer** and **Elspeth**
 add more. **Arcane Denial** is the one counterspell, and **Aven Mindcensor** (flash) blunts tutors and land searches.
 **Restoration Angel** (flash) blinks a creature out of removal and reuses an enters effect (a Titan, Rune-Scarred
@@ -93,8 +97,8 @@ Tymna.
 
 ### Card advantage beyond the commanders
 
-**Black Widow** draws when an opponent draws their second card in a turn, **Tocasia's Welcome** draws when a cheap
-creature enters, and **Fact or Fiction** and **Expressive Iteration** dig.
+**Black Widow** draws when an opponent draws their second card in a turn, and **Fact or Fiction** and
+**Expressive Iteration** dig.
 **Lightning** plays the top card when it connects.
 
 ### How it wins
@@ -137,7 +141,7 @@ rocks: **Arcane Signet**, **Fellwar Stone**, **Orzhov Signet**, **Talisman of Co
 - **Other two-colour lands:** Battlefield Forge, Caves of Koilos and Underground River (pain lands), Rugged Prairie
   (filter), Furycalm Snarl and Port Town (reveal a basic), Spectator Seating (untapped with two or more opponents).
 
-**Card draw:** Tymna, Kraum, Black Widow, Tocasia's Welcome, Fact or Fiction, Expressive Iteration.
+**Card draw:** Tymna, Kraum, Black Widow, Fact or Fiction, Expressive Iteration.
 **Tutors:** Diabolic Tutor, Rune-Scarred Demon.
 
 ## Bracket and Rule 0
@@ -150,17 +154,17 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
+**Creatures (35).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Smaug the Magnificent, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
 **Artifacts (9).** Arcane Signet, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Orzhov Signet, Shield of Kaldra, Talisman of Conviction
 
-**Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Tocasia's Welcome
+**Enchantments (4).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda
 
 **Instants (7).** Arcane Denial, Bedevil, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares
 
-**Sorceries (4).** Austere Command, Diabolic Tutor, Expressive Iteration, Rip Apart
+**Sorceries (4).** Austere Command, Avenge, Diabolic Tutor, Expressive Iteration
 
 **Lands (38).** Battlefield Forge, Caves of Koilos, Clifftop Retreat, Command Tower, Dragonskull Summit, Drowned Catacomb, Exotic Orchard, Furycalm Snarl, Glacial Fortress, Isolated Chapel, Port Town, Rugged Prairie, Spectator Seating, Sulfur Falls, Unclaimed Territory, Underground River, 6 Island, 7 Plains, 6 Swamp, 3 Mountain
 
@@ -173,6 +177,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Archon of Absolution
 1 Austere Command
 1 Aven Mindcensor
+1 Avenge
 1 Baird, Steward of Argive
 1 Baneslayer Angel
 1 Bastion Protector
@@ -223,12 +228,12 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Propaganda
 1 Resplendent Angel
 1 Restoration Angel
-1 Rip Apart
 1 Rugged Prairie
 1 Rune-Scarred Demon
 1 Serra Angel
 1 Shield of Kaldra
 1 Skyclave Apparition
+1 Smaug the Magnificent
 1 Spectator Seating
 1 Sphinx of New Prahv
 1 Sulfur Falls
@@ -239,7 +244,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Terror of the Peaks
 1 The Wasp, Winsome Avenger
 1 Thundermaw Hellkite
-1 Tocasia's Welcome
 1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River

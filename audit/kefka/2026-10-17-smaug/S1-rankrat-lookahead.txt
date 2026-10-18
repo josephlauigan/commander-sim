@@ -1,0 +1,291 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Smaug the Magnificent [scryfall+dsl] C 2RR :: leg pow=4 tgh=3 fly haste
+      ability: triggered upkeep -> treasure
+      not modeled: Whenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target.
+Model status of the swapped-in cards (cardgen audit):
+  Smaug the Magnificent: Full (upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs))
+
+6,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 6 worker threads: about 50 minutes
+  progress  10.0%  2m30s elapsed, ~22m36s left
+  progress  20.0%  4m55s elapsed, ~19m43s left
+  progress  30.0%  7m23s elapsed, ~17m15s left
+Swaps: Rank Rat -> Smaug the Magnificent
+
+=== Kefka vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.9% ->  27.1%  (delta +0.2 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Aurelia 22.5%  Tergrid 23.0%  Korvold 6.7%  Atraxa 9.2%  Marwyn 10.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.9% ->  27.1%  +0.2pt   ±4.0 
+    Rounds survived (or game length)                  10.80 ->  10.98   +0.18  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.57 ->   0.57   +0.01  ±0.07 
+    Mana available on your turn 4                      3.90 ->   3.91   +0.02  ±0.07 
+    Mana available on your turn 6                      5.41 ->   5.49   +0.08  ±0.12 
+
+  Speed
+    Games where the game plan came online             33.7% ->  34.7%  +1.0pt   ±4.2 
+    Turn the game plan came online                    10.69 ->  10.70   +0.02  ±0.37 
+    Turn the commander first resolved                  6.10 ->   6.05   -0.05  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            30.38 ->  30.62   +0.25  ±1.90 
+    Tutors resolved per game                           1.35 ->   1.34   -0.01  ±0.11 
+    Spells cast per game                              15.78 ->  15.99   +0.21  ±0.88 
+
+  Interaction
+    Counterspells cast                                 0.20 ->   0.20   -0.01  ±0.04 
+    Spot removal cast                                  1.70 ->   1.77   +0.07  ±0.12 
+    Board wipes cast                                   0.07 ->   0.10   +0.02  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.36 ->   0.38   +0.02  ±0.06 
+    Your spells countered                              0.13 ->   0.13   +0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                30.13 ->  31.04   +0.91  ±2.66 
+      ...of which combat damage                       12.15 ->  13.00   +0.85  ±1.24 
+      ...of which magecraft / burn                     2.78 ->   2.94   +0.16  ±0.54 
+      ...of which drain triggers                      12.96 ->  12.93   -0.03  ±1.58 
+      ...of which other triggers                       2.24 ->   2.17   -0.07  ±0.70 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Smaug the Magnificent                 37.7      59.4         8.0     40.6       42.0      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rank Rat                              38.3      61.9         6.1     38.1       32.1      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.9      27.1     +0.2
+    rounds survived                                  10.80     10.98    +0.18
+    eliminated, % of games                            73.0      71.9     -1.1
+    opponents it eliminated, per game                 0.71      0.71    -0.00
+    damage dealt, per game                            30.1      31.0     +0.9
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.4       0.4     +0.0
+      plan online by turn 8, %                         6.3       6.9     +0.6
+      plan online by turn 12, %                       26.3      27.2     +0.9
+      plan online at all, %                           33.7      34.7     +1.0
+    commander resolved by turn 4, %                   14.1      14.7     +0.6
+    commander resolved by turn 6, %                   57.5      59.7     +2.2
+    commander removals, per game                      0.25      0.27    +0.02
+    lands on the battlefield, turn 4                  3.70      3.70    -0.00
+    lands on the battlefield, turn 8                  6.56      6.53    -0.03
+    mana available, turn 4                            3.90      3.91    +0.02
+    mana available, turn 8                            6.83      6.84    +0.01
+    cards in hand after the land drop, turn 4         5.71      5.74    +0.03
+    cards in hand after the land drop, turn 8         5.60      5.59    -0.01
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 20.5%, Tergrid via combat 14.5%, Marwyn via combat 9.8%, Atraxa via combat 6.2%
+    eliminated by (swapped): Aurelia via combat 18.2%, Tergrid via combat 14.3%, Marwyn via combat 10.2%, Atraxa via combat 6.8%
+  progress  40.0%  9m46s elapsed, ~14m39s left
+  progress  50.0%  12m05s elapsed, ~12m05s left
+  progress  60.0%  14m22s elapsed, ~9m35s left
+Swaps: Rank Rat -> Smaug the Magnificent
+
+=== Kefka vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.5% ->  29.5%  (delta -1.0 pts, noise ±3.4, paired)   n=1000
+               eliminated by (variant): Heliod 16.0%  Yuriko 15.1%  Krenko 16.4%  Chulane 11.1%  Prosper 11.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.5% ->  29.5%  -1.0pt   ±4.1 
+    Rounds survived (or game length)                   9.68 ->   9.56   -0.12  ±0.27 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.50 ->   0.50   -0.00  ±0.07 
+    Mana available on your turn 4                      3.93 ->   3.94   +0.01  ±0.07 
+    Mana available on your turn 6                      5.44 ->   5.50   +0.06  ±0.12 
+
+  Speed
+    Games where the game plan came online             29.7% ->  27.8%  -1.9pt   ±4.0 
+    Turn the game plan came online                    10.37 ->  10.14   -0.23  ±0.38 
+    Turn the commander first resolved                  5.89 ->   5.90   +0.01  ±0.19 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            27.27 ->  26.93   -0.34  ±1.82 
+    Tutors resolved per game                           1.10 ->   1.07   -0.04  ±0.10 
+    Spells cast per game                              12.98 ->  12.94   -0.04  ±0.79 
+
+  Interaction
+    Counterspells cast                                 0.20 ->   0.18   -0.01  ±0.04 
+    Spot removal cast                                  1.49 ->   1.43   -0.06  ±0.11 
+    Board wipes cast                                   0.06 ->   0.06   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.36 ->   0.34   -0.02  ±0.05 
+    Your spells countered                              0.34 ->   0.30   -0.04  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                30.86 ->  30.92   +0.06  ±2.72 
+      ...of which combat damage                       14.58 ->  14.70   +0.12  ±1.34 
+      ...of which magecraft / burn                     2.56 ->   3.11   +0.55  ±0.53*
+      ...of which drain triggers                      11.31 ->  11.13   -0.17  ±1.52 
+      ...of which other triggers                       2.42 ->   1.97   -0.44  ±0.72 
+
+--- Reading it ---
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Smaug the Magnificent                 33.6      57.4         7.4     42.6       46.6      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rank Rat                              32.4      58.6         5.7     41.4       38.4      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.5      29.5     -1.0
+    rounds survived                                   9.68      9.56    -0.12
+    eliminated, % of games                            69.5      70.4     +0.9
+    opponents it eliminated, per game                 0.80      0.80    +0.01
+    damage dealt, per game                            30.9      30.9     +0.1
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.8       0.8     +0.0
+      plan online by turn 8, %                         5.9       7.3     +1.4
+      plan online by turn 12, %                       25.0      23.8     -1.2
+      plan online at all, %                           29.7      27.8     -1.9
+    commander resolved by turn 4, %                   13.0      12.5     -0.5
+    commander resolved by turn 6, %                   54.5      55.7     +1.2
+    commander removals, per game                      0.24      0.23    -0.02
+    lands on the battlefield, turn 4                  3.72      3.73    +0.00
+    lands on the battlefield, turn 8                  6.74      6.75    +0.01
+    mana available, turn 4                            3.93      3.94    +0.01
+    mana available, turn 8                            7.01      7.12    +0.11
+    cards in hand after the land drop, turn 4         5.82      5.85    +0.03
+    cards in hand after the land drop, turn 8         6.18      6.18    -0.00
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Heliod via combo 13.2%, Krenko via combat 11.4%, Yuriko via triggers 10.8%, Yuriko via combat 6.8%
+    eliminated by (swapped): Heliod via combo 13.7%, Krenko via combat 12.2%, Yuriko via triggers 9.1%, Prosper via combo 7.1%
+  progress  70.0%  16m20s elapsed, ~7m00s left
+  progress  80.0%  17m45s elapsed, ~4m26s left
+  progress  90.0%  19m07s elapsed, ~2m07s left
+  progress 100.0%  20m30s elapsed, ~0m00s left
+Swaps: Rank Rat -> Smaug the Magnificent
+
+=== Kefka vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.1% ->  23.5%  (delta +0.4 pts, noise ±3.1, paired)   n=1000
+               eliminated by (variant): Urza 16.6%  Zur the Enchanter 8.8%  Winota 19.9%  Kinnan 22.2%  Yawgmoth 8.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.1% ->  23.5%  +0.4pt   ±3.8 
+    Rounds survived (or game length)                   8.19 ->   8.06   -0.13  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.49 ->   0.48   -0.02  ±0.07 
+    Mana available on your turn 4                      3.88 ->   3.90   +0.03  ±0.07 
+    Mana available on your turn 6                      5.33 ->   5.43   +0.10  ±0.13 
+
+  Speed
+    Games where the game plan came online             20.7% ->  22.1%  +1.4pt   ±3.7 
+    Turn the game plan came online                     9.84 ->   9.52   -0.32  ±0.36 
+    Turn the commander first resolved                  5.78 ->   5.82   +0.04  ±0.21 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            21.43 ->  21.67   +0.24  ±1.85 
+    Tutors resolved per game                           0.77 ->   0.78   +0.01  ±0.09 
+    Spells cast per game                               9.74 ->   9.50   -0.23  ±0.70 
+
+  Interaction
+    Counterspells cast                                 0.15 ->   0.14   -0.01  ±0.03 
+    Spot removal cast                                  1.26 ->   1.22   -0.04  ±0.11 
+    Board wipes cast                                   0.04 ->   0.03   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.17 ->   0.15   -0.02  ±0.04 
+    Your spells countered                              0.49 ->   0.49   -0.00  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                22.57 ->  23.95   +1.38  ±2.56 
+      ...of which combat damage                       11.58 ->  12.38   +0.80  ±1.42 
+      ...of which magecraft / burn                     1.71 ->   1.94   +0.23  ±0.38 
+      ...of which drain triggers                       7.66 ->   8.26   +0.60  ±1.34 
+      ...of which other triggers                       1.62 ->   1.38   -0.25  ±0.63 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Smaug the Magnificent                 28.6      46.9         6.9     53.1       47.0      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rank Rat                              29.9      58.5         5.3     41.5       36.0      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.1      23.5     +0.4
+    rounds survived                                   8.19      8.06    -0.13
+    eliminated, % of games                            76.8      76.4     -0.4
+    opponents it eliminated, per game                 0.60      0.64    +0.03
+    damage dealt, per game                            22.6      24.0     +1.4
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.2       0.4     +0.2
+      plan online by turn 8, %                         5.4       7.4     +2.0
+      plan online by turn 12, %                       18.8      20.4     +1.6
+      plan online at all, %                           20.7      22.1     +1.4
+    commander resolved by turn 4, %                   10.0      10.3     +0.3
+    commander resolved by turn 6, %                   40.3      42.2     +1.9
+    commander removals, per game                      0.11      0.08    -0.03
+    lands on the battlefield, turn 4                  3.69      3.70    +0.01
+    lands on the battlefield, turn 8                  6.66      6.68    +0.01
+    mana available, turn 4                            3.88      3.90    +0.03
+    mana available, turn 8                            6.85      6.95    +0.10
+    cards in hand after the land drop, turn 4         5.76      5.80    +0.05
+    cards in hand after the land drop, turn 8         6.06      6.15    +0.08
+    wins by (current):  damage 100%, combo 0%
+    wins by (swapped):  damage 100%, timeout 0%
+    eliminated by (current): Kinnan via combo 20.6%, Urza via combo 15.5%, Winota via combat 11.2%, Winota via combo 8.9%
+    eliminated by (swapped): Kinnan via combo 21.4%, Urza via combo 14.4%, Winota via combat 10.6%, Winota via combo 9.1%
+
+(1230s total)

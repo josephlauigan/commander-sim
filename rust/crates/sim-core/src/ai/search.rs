@@ -12,8 +12,8 @@
 //! A copy is `Game::clone` (about 2 µs, where Python's deepcopy took 4 ms). Practice mode's tape (Undo replays a
 //! game's look-ahead decisions instead of searching again) comes with phase 9.
 
-use super::tape::{Taped, taped};
 pub use super::tape::{LAST_SCORES, Tape, TapeEntry, TapeSlot};
+use super::tape::{Taped, taped};
 use super::{act, brain};
 use crate::flow::{Res, Stop};
 use crate::hooks::{Action, Opt};
@@ -265,6 +265,20 @@ pub fn ramp_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     w * mana as f64 * RAMP_TURNS.saturating_sub(g.player(p).turns) as f64
 }
 
+/// search.hold_bonus: the look-ahead plays only to the end of p's next turn and scores a permanent on the battlefield
+/// above cards in hand, so the "stop (hold mana)" line (mana kept up for a counterspell, protection or Ad Nauseam at
+/// the end of the turn before yours) loses to tapping out even when the heuristic rates holding far higher: what the
+/// held card protects or finds pays off after the horizon. The hold line gets `hold_w` times the heuristic's own hold
+/// value (`brain::hold_value`), added to the option's rollout average. `hold_w` 0: no bonus (the old search).
+pub fn hold_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
+    let w = g.settings.search.hold_w;
+    if w == 0.0 || o.act.is_some() || o.label != "stop (hold mana)" {
+        return 0.0;
+    }
+    let s = brain::Situation::new(g, p);
+    w * brain::hold_value(g, p, &s).1.max(0.0)
+}
+
 /// the n-th option labelled `label`
 fn find(opts: &[Opt], label: &str, n: usize) -> Option<usize> {
     opts.iter().enumerate().filter(|(_, o)| o.label == label).nth(n).map(|(i, _)| i)
@@ -282,9 +296,10 @@ pub fn choose(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<usi
     }
     let parts = format!("{}:{}:{}", g.player(p).key, g.player(p).hand.len(), g.player(p).perms.len());
     let (res, replayed) = taped(g, "main", |g| {
-        Taped::Main(choose_inner(g, p, post, opts).map(|i| {
-            (opts[i].label.clone(), opts[..i].iter().filter(|x| x.label == opts[i].label).count())
-        }))
+        Taped::Main(
+            choose_inner(g, p, post, opts)
+                .map(|i| (opts[i].label.clone(), opts[..i].iter().filter(|x| x.label == opts[i].label).count())),
+        )
     });
     if replayed {
         decision_seed(g, &parts);
@@ -322,6 +337,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     }
     for (k, kk) in keyed.iter().enumerate() {
         scores[k] += ramp_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
+        scores[k] += hold_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
     }
     let mut best = 0;
     for k in 1..keyed.len() {

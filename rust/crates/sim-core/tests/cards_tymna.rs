@@ -1201,7 +1201,10 @@ fn skrelv_ability_gives_toxic_hexproof_from_a_colour_and_unblockability_for_the_
     // gone at end of turn
     g.perm_mut(a).eot_kw.clear();
     assert!(combat::can_block(&g, black_blocker, a), "the effect ends with the turn");
-    assert!(combat::can_block(&g, green_blocker, a) || !sim_core::dsl::has_kw(&g, green_blocker, "reach"), "a green blocker was never affected");
+    assert!(
+        combat::can_block(&g, green_blocker, a) || !sim_core::dsl::has_kw(&g, green_blocker, "reach"),
+        "a green blocker was never affected"
+    );
 }
 
 #[test]
@@ -1434,4 +1437,84 @@ fn phyrexian_unlife_is_cast_by_the_ai_at_low_life_only() {
     assert!(!cast_by_ai(&mut g, P0, "Phyrexian Unlife"), "healthy: held");
     g.player_mut(P0).life = 15;
     assert!(cast_by_ai(&mut g, P0, "Phyrexian Unlife"));
+}
+
+// ------------------------------------------------------------------ Godo, Bandit Warlord
+const GODO: &str = "Godo, Bandit Warlord";
+
+fn godo_cast(g: &mut Game) -> PermId {
+    let c = take(g, P0, GODO);
+    zones::enter(g, P0, c, zones::Enter { sick: true, ..Default::default() }).unwrap()
+}
+
+#[test]
+fn godo_fetches_the_best_equipment_onto_himself_and_shuffles() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Mountain", "Conqueror's Flail", "Helm of Kaldra", "Shield of Kaldra", "Island"]);
+    let before = g.player(P0).library.len();
+    let godo = godo_cast(&mut g);
+    let helm = on_bf(&g, P0, "Helm of Kaldra").expect("he fetched the Helm: haste while summoning sick");
+    assert_eq!(g.perm(helm).attached, Some(godo));
+    assert!(on_bf(&g, P0, "Shield of Kaldra").is_none() && on_bf(&g, P0, "Conqueror's Flail").is_none());
+    assert_eq!(g.player(P0).library.len(), before - 1);
+    assert!(sim_core::dsl::has_kw(&g, godo, "haste"), "the Helm gives haste");
+}
+
+#[test]
+fn godo_fetches_a_job_select_piece_but_attaches_it_to_himself() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Samurai's Katana"]);
+    let godo = godo_cast(&mut g);
+    let katana = on_bf(&g, P0, "Samurai's Katana").expect("the Katana came in");
+    assert_eq!(g.perm(katana).attached, Some(godo), "attached to Godo, not to its Hero");
+}
+
+#[test]
+fn godo_with_no_equipment_in_the_library_finds_nothing() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Mountain", "Island"]);
+    let n = g.player(P0).library.len();
+    let godo = godo_cast(&mut g);
+    assert_eq!(g.player(P0).library.len(), n);
+    assert!(g.player(P0).perms.iter().all(|&m| g.perm(m).attached != Some(godo)));
+}
+
+#[test]
+fn godos_first_attack_untaps_him_and_the_samurai_and_gives_one_extra_combat() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island"]);
+    let godo = perm(&mut g, P0, GODO);
+    let gil = perm(&mut g, P0, "Gilgamesh, Master-at-Arms");
+    let other = token(&mut g, P0, 2);
+    for m in [godo, gil, other] {
+        g.perm_mut(m).tapped = true;
+    }
+    combat::attack_triggers(&mut g, P0, &[godo], P1).unwrap();
+    assert!(!g.perm(godo).tapped && !g.perm(gil).tapped, "Godo and the Samurai untap");
+    assert!(g.perm(other).tapped, "a non-Samurai stays tapped");
+    assert_eq!(g.player(P0).extra_combats, 1);
+    // attacking again this turn (the extra combat) is not the first time
+    combat::attack_triggers(&mut g, P0, &[godo], P1).unwrap();
+    assert_eq!(g.player(P0).extra_combats, 1, "no further combat");
+}
+
+#[test]
+fn a_hasty_godo_attacks_twice_on_the_turn_he_lands() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Helm of Kaldra"]);
+    let godo = godo_cast(&mut g);
+    assert!(g.perm(godo).sick);
+    g.player_mut(P0).combat_no = 0;
+    combat::combat(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).combat_no, 2, "the first combat and exactly one extra one");
+    assert_eq!(g.player(P0).extra_combats, 0);
+}
+
+#[test]
+fn godo_prefers_the_legendary_heirloom_to_the_helm() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Hero's Heirloom", "Helm of Kaldra"]);
+    let godo = godo_cast(&mut g);
+    let heirloom = on_bf(&g, P0, "Hero's Heirloom").expect("+2/+1, trample and haste on a legendary creature");
+    assert_eq!(g.perm(heirloom).attached, Some(godo));
 }

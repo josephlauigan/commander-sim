@@ -192,10 +192,18 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
             held(g, c) && !free_counter(g, p, c) && can_pay(g, p, d.generic, &d.pips, false)
         })
         .collect();
-    if held.is_empty() {
-        return (None, 0.0);
+    let (mut hc, mut hv) = if held.is_empty() { (None, 0.0) } else { hold_of(g, p, s, &held) };
+    // Ad Nauseam is cast at the end of the turn before yours: keep its mana up when it's worth casting
+    for &c in &pl.hand {
+        let d = g.db.get(c);
+        if d.tag(Tag::Adnaus) && can_pay(g, p, d.generic, &d.pips, false) {
+            let v = super::plans::adnaus_prio(g, p, c) as f64 / 10.0 - 1.0;
+            if v > hv {
+                (hc, hv) = (Some(c), v);
+            }
+        }
     }
-    hold_of(g, p, s, &held)
+    (hc, hv)
 }
 
 /// brain._hold: the cheapest held card, and how much keeping its mana up is worth
@@ -265,6 +273,9 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
         && !pl.hand.iter().any(|&x| x != c && g.db.get(x).tag(Tag::Draw))
     {
         return None; // a card put on top on your own turn waits a turn: tutor at the end of theirs
+    }
+    if d.tag(Tag::Adnaus) && !super::plans::adnaus_cast_now(g, p) {
+        return None; // Ad Nauseam waits for the end of the turn before yours, with room in the hand
     }
     // its own priority said no (or it's kept for responses): keep it
     let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());

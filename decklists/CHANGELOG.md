@@ -252,6 +252,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-10-17.** Out: Restless Bloodseeker // Bloodsoaked Reveler. In: Ad Nauseam. Ad Nauseam (JD's pick): +1.6 over t3-t5 (look-ahead, 1,000 paired per tier, noise; positive in every tier) once the shared Ad Nauseam AI and the look-ahead's hold-mana credit were fixed. The deck's first Game Changer.
 - **2026-10-15.** Out: Apex Witchstalker. In: Crawlspace. Synced with JD's physical deck: Crawlspace is in the deck in place of Apex Witchstalker (no more than two creatures can attack you each combat). Apex Witchstalker goes to bulk. Not simulated.
 - **2026-10-13.** Out: Champion's Helm. In: Carnage Altar. JD's choice: Champion's Helm goes to the Cloud deck; Carnage
   Altar comes back from bulk (it was in the deck until 10-11). Paired test, 500 games per tier: -0.6 (t1 -2.2, t2 -1.4,
@@ -633,4 +634,6 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Changes
 
+- **2026-10-17.** Out: Tocasia's Welcome. In: Smaug the Magnificent. Smaug the Magnificent (JD's card): +1.1 ±2.7 at T3, 2,000 paired look-ahead games, noise; a hasty flier for Tymna plus a Treasure each upkeep.
 - **2026-10-17.** Out: Dream Trawler. In: Resplendent Angel. JD got Resplendent Angel instead of Dream Trawler. Measured at T3 (2,000 paired games): -1.8 (±2.6), inside the noise.
+- **2026-10-17.** Out: Rip Apart. In: Avenge (from bulk). Measured at T3 (2,000 paired games): +3.1 (±2.6), list 31.7 → 34.8%: a second creature wipe, so the deck dies to combat less (eliminated 67.0 → 63.7%).

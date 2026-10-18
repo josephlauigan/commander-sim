@@ -29,7 +29,7 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
             pl.stat("tutored", 1);
             pl.seen.insert(c);
             g.log_secret(
- p,
+                p,
                 &format!("    {} tutors a card", g.player(p).name),
                 &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
             );
@@ -53,7 +53,7 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
     pl.stat("tutored", 1);
     pl.seen.insert(c);
     g.log_secret(
- p,
+        p,
         &format!("    {} tutors a card", g.player(p).name),
         &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
     );
@@ -369,7 +369,14 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
     if crate::human::is_human(g, p) {
         let kind = kind.to_string();
         let prompt = "Search your library for a card to put on top";
-        let got = crate::human::choices::search(g, p, &|g: &Game, c: CardId| crate::ai::decks::tutor_ok(g, &kind, c), 1, prompt, true)?;
+        let got = crate::human::choices::search(
+            g,
+            p,
+            &|g: &Game, c: CardId| crate::ai::decks::tutor_ok(g, &kind, c),
+            1,
+            prompt,
+            true,
+        )?;
         if life > 0 {
             lose_life(g, p, life, Some(p), "other", None)?;
         }
@@ -401,7 +408,7 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
     pl.library.push(c);
     pl.stat("tutored", 1);
     g.log_secret(
- p,
+        p,
         &format!("    {} puts a card on top of their library", g.player(p).name),
         &format!("    {} puts {} on top of their library", g.player(p).name, g.db.get(c).name),
     );
@@ -409,11 +416,18 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
 }
 
 /// Ad Nauseam: reveal the top card, put it in hand, lose life equal to its mana value; repeat while it's safe: never
-/// below what the table could hit you for, with room for a 7-drop, and stop once a combo is ready
+/// below what the table could hit you for (`adnaus_floor`), with room for a 7-drop, never past a hand you can use
+/// (`adnaus_hand_cap`: the cleanup would discard the rest), and stop once a combo is ready
 pub fn ad_nauseam(g: &mut Game, p: PlayerId, floor: Option<i32>) -> Res {
-    let floor = floor.unwrap_or_else(|| ai::necro_floor(g, p));
+    let floor = floor.unwrap_or_else(|| ai::plans::adnaus_floor(g, p));
+    let cap = ai::plans::adnaus_hand_cap(g, p);
     let mut n = 0;
-    while !g.player(p).library.is_empty() && g.player(p).alive && g.player(p).life - 7 > floor && n < 15 {
+    while !g.player(p).library.is_empty()
+        && g.player(p).alive
+        && g.player(p).life - 7 > floor
+        && g.player(p).hand.len() < cap
+        && n < 15
+    {
         let pl = g.player_mut(p);
         let c = pl.library.pop().unwrap();
         pl.hand.push(c);

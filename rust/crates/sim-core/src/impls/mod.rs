@@ -67,6 +67,7 @@ pub mod t6_blue;
 pub mod t6_combos_godo;
 pub mod t6_combos_t6;
 pub mod t6_combos_extra;
+pub mod smaug;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -131,5 +132,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t6_stax::register(&mut r, db)?;
     t6_legends1::register(&mut r, db)?;
     t6_blue::register(&mut r, db)?;
+    smaug::register(&mut r, db)?;
     Ok(r)
 }

@@ -94716,6 +94716,67 @@
    "spell_prio": false
   },
   {
+   "name": "Smaug the Magnificent",
+   "types": "C",
+   "generic": 2,
+   "pips": "RR",
+   "tags": {
+    "leg": true,
+    "pow": "4",
+    "tgh": "3",
+    "fly": true,
+    "haste": true
+   },
+   "pow": 4,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "treasure",
+       "n": 1
+      }
+     ],
+     "event": "upkeep",
+     "who": "you"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "haste",
+    "treasure"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Smaug's Fury",
    "types": "I",
    "generic": 1,

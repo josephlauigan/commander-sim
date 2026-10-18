@@ -1,0 +1,107 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Smaug the Magnificent [scryfall+dsl] C 2RR :: leg pow=4 tgh=3 fly haste
+      ability: triggered upkeep -> treasure
+      not modeled: Whenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target.
+Model status of the swapped-in cards (cardgen audit):
+  Smaug the Magnificent: Full (upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs))
+
+4,000 games (current list and the swapped one, 2,000 per list per tier, profile loose), adaptive AI, 6 worker threads: about 33 seconds
+  progress  10.0%  0m00s elapsed, ~0m03s left
+  progress  20.0%  0m00s elapsed, ~0m02s left
+  progress  30.0%  0m01s elapsed, ~0m02s left
+  progress  40.0%  0m01s elapsed, ~0m02s left
+  progress  50.0%  0m01s elapsed, ~0m01s left
+  progress  60.0%  0m02s elapsed, ~0m01s left
+  progress  70.0%  0m02s elapsed, ~0m01s left
+  progress  80.0%  0m02s elapsed, ~0m00s left
+  progress  90.0%  0m03s elapsed, ~0m00s left
+  progress 100.0%  0m03s elapsed, ~0m00s left
+Swaps: Tocasia's Welcome -> Smaug the Magnificent
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  41.5% ->  43.3%  (delta +1.8 pts, noise ±1.2, paired)   n=2000
+               eliminated by (variant): Tergrid 14.1%  Atraxa 7.7%  Aurelia 20.2%  Marwyn 5.8%  Korvold 7.0%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          41.5% ->  43.3%  +1.8pt   ±3.1 
+    Rounds survived (or game length)                  12.75 ->  12.75   +0.00  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.52 ->   0.53   +0.00  ±0.05 
+    Mana available on your turn 4                      4.03 ->   4.03   +0.00  ±0.05 
+    Mana available on your turn 6                      5.66 ->   5.67   +0.01  ±0.08 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.90 ->   3.91   +0.01  ±0.09 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            20.86 ->  20.60   -0.25  ±0.51 
+    Tutors resolved per game                           0.27 ->   0.27   +0.00  ±0.03 
+    Spells cast per game                              16.30 ->  16.22   -0.08  ±0.50 
+
+  Interaction
+    Counterspells cast                                 0.17 ->   0.17   +0.00  ±0.02 
+    Spot removal cast                                  0.97 ->   0.96   -0.01  ±0.06 
+    Board wipes cast                                   0.24 ->   0.24   -0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.74 ->   0.72   -0.02  ±0.07 
+    Your spells countered                              0.17 ->   0.16   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                45.37 ->  47.30   +1.93  ±2.20 
+      ...of which combat damage                       44.72 ->  46.49   +1.78  ±2.16 
+      ...of which magecraft / burn                     0.00 ->   0.08   +0.08  ±0.02*
+      ...of which drain triggers                       0.01 ->   0.00   -0.01  ±0.02 
+      ...of which other triggers                       0.64 ->   0.72   +0.09  ±0.16 
+
+--- Reading it ---
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Smaug the Magnificent                 27.1      73.8         9.6     26.2       62.6      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Tocasia's Welcome                     26.9      81.0         9.3     19.0       53.1      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        41.5      43.3     +1.8
+    rounds survived                                  12.75     12.75    +0.00
+    eliminated, % of games                            56.5      54.8     -1.8
+    opponents it eliminated, per game                 1.01      1.05    +0.04
+    damage dealt, per game                            45.4      47.3     +1.9
+    commander resolved by turn 4, %                   77.0      76.8     -0.2
+    commander resolved by turn 6, %                   92.0      92.0     +0.1
+    commander removals, per game                      0.71      0.70    -0.01
+    lands on the battlefield, turn 4                  3.76      3.76    -0.00
+    lands on the battlefield, turn 8                  6.75      6.75    +0.01
+    mana available, turn 4                            4.03      4.03    +0.00
+    mana available, turn 8                            7.11      7.16    +0.05
+    cards in hand after the land drop, turn 4         6.21      6.21    +0.00
+    cards in hand after the land drop, turn 8         6.34      6.31    -0.04
+    wins by (current):  damage 90%, timeout 10%
+    wins by (swapped):  damage 91%, timeout 9%
+    eliminated by (current): Aurelia via combat 16.1%, Tergrid via combat 10.7%, Atraxa via combat 6.2%, Marwyn via combat 6.0%
+    eliminated by (swapped): Aurelia via combat 16.2%, Tergrid via combat 9.8%, Atraxa via combat 6.3%, Marwyn via combat 5.7%
+
+(3s total)

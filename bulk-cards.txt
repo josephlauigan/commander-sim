@@ -327,6 +327,7 @@
 1x Goblin Medics (dmr)
 3x Goblin Rimerunner (csp)
 5x Goblin Roughrider (list, m15)
+1x Godo, Bandit Warlord
 1x Godo's Irregulars (sok)
 1x Golgari Guildgate (rvr)
 1x Gollum, Silent Slinker (hob)
@@ -618,6 +619,7 @@
 1x Rescue, Pepper Potts (msc)
 4x Research Assistant (m15)
 1x Resounding Wave (ala)
+1x Restless Bloodseeker // Bloodsoaked Reveler
 2x Retrieve the Esper (fin)
 2x Return the Favor (soa)
 1x Rewrite Regrets (fra)
@@ -807,7 +809,7 @@
 1x Tifa, Martial Artist (fic)
 2x Tireless Missionaries (m15, m11)
 3x Titan's Grave (sos)
-1x Tocasia's Welcome (bro)
+2x Tocasia's Welcome (bro)
 1x Together as One (sos)
 2x Tome Blast (sos)
 1x Tome of Legends (msc)

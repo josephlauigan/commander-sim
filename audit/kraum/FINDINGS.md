@@ -149,3 +149,29 @@ Not modeled, so not tested: Archfiend of the Dross, Skrelv, Gut Shot, White Sun'
 | Swap | Result | Why |
 |---|---|---|
 | Resplendent Angel in, Dream Trawler out | -1.8 (±2.6), list 34.9 → 33.0% | Inside the noise. Resplendent Angel gets cast far more often (75% of the games it's drawn vs 45%; 3 mana vs 6) but wins less when cast (52% vs 63%): Dream Trawler was a hard-to-answer finisher when it landed, the Angel is an early flier whose 4/4 tokens need 5 life gained in one turn. Deaths +1.8, game shape otherwise unchanged. |
+
+### Godo, Bandit Warlord for Serra Angel (2026-10-17, not applied: JD picked up Godo; modeled for this test)
+| Swap | Result | Why |
+|---|---|---|
+| Godo in, Serra Angel out | -0.1 (±2.3), list 31.7 → 31.6% (`2026-10-17-godo/G1-godo.txt`) | No change. Godo is a 6-drop that gets stuck: cast in 43% of the games he's drawn vs Serra's 55%, first cast on round 11 like her. When he lands he fetches Helm of Kaldra (haste, first strike, trample; Hero's Heirloom, his best pick, is no longer in the list) and gets two combats that turn, and he wins a little more when cast (57% vs 50%, correlation). But the extra combat gives Tymna no extra cards (she counts opponents hit once per turn), and the deck's losses are defensive: deaths (67%), damage dealt and the killers (Aurelia, Tergrid, Marwyn in combat) are unchanged. A one-shot 3/3 tutor for an Equipment adds nothing a 5-mana 4/4 flyer doesn't. His real home is Helm of the Host (infinite combats), which JD doesn't own. |
+
+### Avenge for Rip Apart (2026-10-17, APPLIED: JD's card from bulk)
+| Swap | Result | Why |
+|---|---|---|
+| Avenge in, Rip Apart out | **+3.1 (±2.6)**, list 31.7 → 34.8% (`2026-10-17-godo/A1-avenge.txt`) | A second creature wipe beside Austere Command answers the deck's main way of dying, creature decks in combat: eliminated 67.0 → 63.7%, rounds survived +0.29, Aurelia kills 16.2 → 14.0%, Tergrid 13.1 → 11.9%. Surviving longer converts: damage +2.4 a game, opponents eliminated +0.05. The AI holds it (cast in 37% of the games it's drawn vs Rip Apart's 77%) until the wipe is worth losing the deck's own creatures; the attack taxes and rocks survive it. |
+
+### Godo, Bandit Warlord for Sun Titan (2026-10-17, not applied; measured on the list before Avenge)
+| Swap | Result | Why |
+|---|---|---|
+| Godo in, Sun Titan out | -0.2 (±1.9), list 31.7 → 31.5% (`2026-10-17-godo/G2-godo-suntitan.txt`) | A wash: two 6-drops that get stuck the same way (cast in 43% vs 45% of the games drawn, first cast round 10.5 vs 10.7) and win about as often when cast (60% vs 57%, correlation). Game shape unchanged to a tenth. With both Godo tests (Serra Angel -0.1, Sun Titan -0.2), Godo is a fair card here but no upgrade: his extra combat doesn't feed Tymna, and the deck's limit is surviving combat, not dealing damage. |
+
+### Smaug the Magnificent (2026-10-17 evening, T3; modeled Full in `impls/smaug.rs`, branch `smaug`)
+Smaug ({2}{R}{R}, 4/3 flying, haste; upkeep: a Treasure; attacks: damage equal to your Treasures to any target).
+Quick adaptive passes (2,000 paired) picked the cut; the look-ahead run decides. Files: `audit/kraum/2026-10-17-smaug/`.
+| Swap (Smaug in for) | Result | Why |
+|---|---|---|
+| Elemental Mascot (adaptive) | +0.1 (±1.3) | No effect. |
+| Serra Angel (adaptive) | -0.1 (±1.2) | No effect: a 4-mana flier for a 4-mana flier. |
+| Tocasia's Welcome (adaptive) | +1.8 (±1.2) | Best of the three on the quick AI. |
+| **Tocasia's Welcome (look-ahead, loose, 2,000 paired)** | **+1.1 (±2.7): 33.5 → 34.6%** | Within noise. Smaug is cast in 64% of the games he's drawn (stuck 36%: {R}{R} in a four-colour deck with 3 Mountains) and wins 56% when cast vs Tocasia's Welcome's 44%. Damage +1.1 a game, eliminations -1.1 pts; the death causes (Aurelia, Tergrid, Marwyn in combat) are unchanged. His Treasure trigger adds almost nothing (about 0.1 burn a game on the quick run): the deck makes no Treasure of its own, so he attacks with 0–2. He is a hasty 4-mana flier here, not an engine. |
+**Reading it:** a fair swap that doesn't hurt, but not a measurable gain. **Applied (JD's card, 2026-10-17): Smaug in, Tocasia's Welcome out.**
