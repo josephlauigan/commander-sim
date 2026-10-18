@@ -1,0 +1,39 @@
+4,000 games (1 tier, 2,000 per list per tier, profiles conservative and loose), lookahead AI, 10 worker threads: about 20 minutes
+  progress  10.0%  0m38s elapsed, ~5m49s left
+  progress  20.0%  1m15s elapsed, ~5m02s left
+  progress  30.0%  1m56s elapsed, ~4m32s left
+  progress  40.0%  2m37s elapsed, ~3m55s left
+  progress  50.0%  3m16s elapsed, ~3m16s left
+
+=== Y'shtola vs Tier 5 (High B4) [conservative, lookahead AI, 2000 games] ===
+Win rate  24.6%   95% CI 22.8-26.5%   (even share 25%: -0.4 pts)
+Average turn (your own turn count) of wins 12.1, of losses 6.9
+Plan online (first drain from Y'shtola's cast trigger): 50.5% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            20.4%           12.7%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            34.8%           21.0%
+  Urza (urza-mono-blue-artifacts)              60.4%            26.6%           15.6%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            12.8%            7.7%
+  Winota (winota-boros-humans-cheat)           58.6%            31.1%           18.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+  progress  60.0%  3m58s elapsed, ~2m39s left
+  progress  70.0%  4m43s elapsed, ~2m01s left
+  progress  80.0%  5m25s elapsed, ~1m21s left
+  progress  90.0%  6m06s elapsed, ~0m40s left
+  progress 100.0%  6m46s elapsed, ~0m00s left
+
+=== Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 2000 games] ===
+Win rate  24.4%   95% CI 22.6-26.3%   (even share 25%: -0.6 pts)
+Average turn (your own turn count) of wins 12.3, of losses 6.8
+Plan online (first drain from Y'shtola's cast trigger): 51.9% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            21.7%           13.1%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            35.8%           21.8%
+  Urza (urza-mono-blue-artifacts)              60.4%            24.1%           14.7%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            12.2%            7.5%
+  Winota (winota-boros-humans-cheat)           58.6%            32.3%           18.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(407s total)

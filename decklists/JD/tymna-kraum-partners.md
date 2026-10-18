@@ -10,7 +10,7 @@ It is weak to decks that can pay the attack taxes every turn, to combo, and to f
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Kraum, Ludevic's Opus ({3}{U}{R}, 4/4); white-blue-black-red |
 | **Bracket** | 3 (1 Game Changer: Underworld Breach) |
-| **Simulator** | deck key `kraum`, matched tier T3; history in `decklists/CHANGELOG.md`, findings in `audit/kraum/FINDINGS.md` |
+| **Simulator** | deck key `kraum`, matched tier T5 (band 1, since 10/18); history in `decklists/CHANGELOG.md`, findings in `audit/kraum/FINDINGS.md` |
 
 ## Strategy
 

@@ -789,18 +789,21 @@ fn the_kraum_seat_tutors_for_a_board_wipe_when_far_behind_on_board() {
 }
 
 #[test]
-fn the_kraum_seat_tutors_for_the_flail_and_then_a_finisher_when_ahead() {
+fn the_kraum_seat_tutors_for_a_finisher_not_the_flail_when_ahead() {
+    // audit 10/18: the Flail was fetched every time; the finisher castable by next turn comes first
     let mut g = kraum_table();
     g.player_mut(P0).turns = 6;
     lands(&mut g, P0, "Plains", 6, false);
     for _ in 0..3 {
         token(&mut g, P0, 3);
     }
-    assert_eq!(tutor(&g), "Conqueror's Flail");
-    hand(&mut g, P0, &["Conqueror's Flail"]);
+    assert_eq!(tutor(&g), "Grave Titan");
+    hand(&mut g, P0, &["Grave Titan"]);
     assert!(
-        ["Terror of the Peaks", "Lyra Dawnbringer", "Gilgamesh, Master-at-Arms", "Sphinx of New Prahv"]
-            .contains(&tutor(&g).as_str())
+        ["Terror of the Peaks", "Sun Titan", "Baneslayer Angel", "Lyra Dawnbringer", "Glorybringer"]
+            .contains(&tutor(&g).as_str()),
+        "{}",
+        tutor(&g)
     );
 }
 

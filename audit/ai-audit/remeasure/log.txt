@@ -1,0 +1,22 @@
+13:02 start yshtola
+13:08 done yshtola exit 0
+13:08 start sephfs
+13:15 done sephfs exit 0
+13:15 start kraum
+13:22 done kraum exit 0
+13:22 start seph
+13:44 done seph exit 0
+13:44 start sauron
+14:04 done sauron exit 0
+14:04 start sheoldred
+14:23 done sheoldred exit 0
+14:23 start kefka
+14:35 done kefka exit 0
+14:35 start cloud
+15:30 done cloud exit 0
+15:30 start veyran
+16:17 done veyran exit 0
+16:17 start titania
+16:17 stopped before titania (JD: run Titania overnight, PR with Titania TBD)
+16:17 start titania (the stop missed this sim: it kept running)
+17:08 done titania exit 0

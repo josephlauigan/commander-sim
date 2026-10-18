@@ -34,7 +34,7 @@ is removed.
   Keep the cards that want to be discarded in hand rather than playing them out.
 - **Turns 4 to 6.** Land Kefka (with Lightning Greaves for two triggers in one turn), keep attacking when it is
   safe, and use each trigger to bin madness, mayhem and graveyard-castable cards. Build toward {8}: Treasure,
-  rocks, Dark Ritual and burst mana. Hold Psychosis Crawler until after the flip unless your library is short.
+  rocks, Dark Ritual and burst mana. Cast Psychosis Crawler early (Kefka's own draws and the looters ping the table with it); hold it only once Kefka has flipped and your library is not longer than the highest opponent life.
 - **Late game.** Flip, then cast pingers and one-shots in the same main phase so every point of life lost draws you
   a card. Finish with the Crawler or Niv-Mizzet loop, or with the Breach and storm line.
 

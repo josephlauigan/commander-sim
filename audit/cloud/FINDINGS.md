@@ -68,3 +68,6 @@ Four swaps applied 10/16 (Archangel of Tithes, Open the Armory, Sphere of Safety
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
 Band 4 (T1-T3). No change. Final: **29.6% vs T1, 26.3% vs T2, 20.4% vs T3** (avg 25.4%, 2,000 per profile). Fair against T1-T2, clearly weaker at T3: the band-4 shape.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**28.9 / 23.8 / 21.4% vs T1 / T2 / T3** (before 29.6 / 26.3 / 20.4). T2 -2.5 is on the edge of noise; suspects: the new turn-2 search order (Feast and Famine first only with 7+ cards) and the Austere Command mode rule. A paired check vs main is the open item.

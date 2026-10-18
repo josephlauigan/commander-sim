@@ -27,3 +27,6 @@ Win rate vs T3: **29.5%** (1,000 games, seed 1015, main 0f49b7d).
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
 Band 4 (T1-T3). Proposed: Hornet Queen, Harmonize, Tireless Tracker (to Seph/Atraxa), Environmental Scientist out; Cactarantula, Penumbra Spider, Paradise Druid (spares), Worldly Tutor (from Seph/Atraxa; 1 Game Changer) in. Final: **19.1% vs T1, 27.6% vs T2, 25.5% vs T3** (avg 24.1%, 2,000 per profile; current 20.0 / 32.2 / 28.3 at 1,000). Why: Hornet Queen and Harmonize were among her best cards; losing them takes ~3-5 points at T2-T3. Weakness that stays: Tier 1's fast aggro (19% vs T1, below the fair line, as before the swaps).
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**17.5 / 25.9 / 25.5% vs T1 / T2 / T3** (before 19.1 / 27.6 / 25.5, with Penumbra Spider): within noise, stays band 4. AI fixes: Fblthp X cost, Silhana coloured mana, Worldly Tutor pick, Arachnogenesis timing, protection held.

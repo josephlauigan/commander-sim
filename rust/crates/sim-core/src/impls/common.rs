@@ -2965,7 +2965,7 @@ fn drannith(g: &Game, src: Src, caster: PlayerId, _c: CardId, zone: Sym) -> bool
     caster == owner(g, src) || zone == "hand"
 }
 
-/// Grand Abolisher (Approximate): opponents can't cast spells on your turn; activated abilities are not restricted
+/// Grand Abolisher: opponents can't cast spells on your turn (their abilities are locked by rules::ability_locked)
 fn abolisher(g: &Game, src: Src, caster: PlayerId, _c: CardId, _zone: Sym) -> bool {
     caster == owner(g, src) || g.active != Some(owner(g, src))
 }

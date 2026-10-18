@@ -1,0 +1,25 @@
+8,000 games (1 deck x 2 tiers (each deck in its own tiers), 2,000 per list per tier, profiles conservative and loose), lookahead AI, 10 worker threads: about 40 minutes
+  progress  10.0%  2m09s elapsed, ~19m24s left
+  progress  20.0%  4m05s elapsed, ~16m21s left
+  cell sheoldred vs t3 [conservative]:  31.8% (29.7-33.8)
+  progress  30.0%  6m01s elapsed, ~14m03s left
+  progress  40.0%  7m52s elapsed, ~11m48s left
+  progress  50.0%  9m44s elapsed, ~9m44s left
+  cell sheoldred vs t4 [conservative]:  30.7% (28.7-32.8)
+  progress  60.0%  11m53s elapsed, ~7m55s left
+  progress  70.0%  13m51s elapsed, ~5m56s left
+  cell sheoldred vs t3 [loose]:  32.0% (30.0-34.1)
+  progress  80.0%  15m47s elapsed, ~3m56s left
+  progress  90.0%  17m36s elapsed, ~1m57s left
+  progress 100.0%  19m22s elapsed, ~0m00s left
+  cell sheoldred vs t4 [loose]:  32.4% (30.3-34.4)
+
+=== Win rate by deck and tier [conservative profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t3                 t4     average over its tiers
+  sheoldred   31.8% (29.7-33.8)  30.7% (28.7-32.8)          31.2% over t3, t4
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t3                 t4     average over its tiers
+  sheoldred   32.0% (30.0-34.1)  32.4% (30.3-34.4)          32.2% over t3, t4
+
+(1163s total)

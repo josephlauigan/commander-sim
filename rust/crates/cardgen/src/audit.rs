@@ -521,3 +521,20 @@ pub fn hooks_report(inp: &Inputs, built: &BTreeMap<String, Cd>, all: bool) -> Re
     let _ = J::Null;
     Ok(out)
 }
+
+/// `cardgen audit --md FILE` may write only the model-status table: never a decklist (anything under a `decklists`
+/// directory) and never an existing file that is not such a table. The deck docs have to stay loadable.
+pub fn check_md_target(path: &str) -> Result<(), String> {
+    let p = std::path::Path::new(path);
+    let abs = std::fs::canonicalize(p).unwrap_or_else(|_| p.to_path_buf());
+    if p.components().chain(abs.components()).any(|c| c.as_os_str() == "decklists") {
+        return Err(format!("{path}: cardgen audit never writes into decklists/ (deck docs must keep their import list)"));
+    }
+    if let Ok(text) = std::fs::read_to_string(p)
+        && !text.trim().is_empty()
+        && !text.starts_with("| Tier | Deck |")
+    {
+        return Err(format!("{path}: exists and is not an audit table; refusing to overwrite it"));
+    }
+    Ok(())
+}

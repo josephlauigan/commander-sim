@@ -167,6 +167,12 @@ pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Optio
         if cname(g, c) == CRAWLER || cname(g, c) == NIV {
             v += 60.0; // held for the loop, not worthless
         }
+        if matches!(cname(g, c), "Underworld Breach" | "Yawgmoth's Will") && storm_card_left(g, p) {
+            v += 70.0; // the Breach line still has its storm half: card_worth reads 0 for both, so they were binned
+        }
+        if is_protection(g, c) && !flipped(g, p) {
+            v += 45.0; // Kefka is still the plan: protection beats a land (25), even after the instant type costs 30
+        }
         let new = card_types(g, c) & !pile;
         v - 30.0 * new.count_ones() as f64 // a new type is a card drawn
     };
@@ -1591,4 +1597,37 @@ pub fn will_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
         .map(|u| Opt { utility: u, label: "Yawgmoth's Will (replay the graveyard)".into(), act: Some(Action::Plan { f: will_go, arg: 0 }) })
         .into_iter()
         .collect()
+}
+
+/// Brain Freeze or Grapeshot is in hand, graveyard or library (so Breach / Yawgmoth's Will still has a finisher)
+fn storm_card_left(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    pl.hand
+        .iter()
+        .chain(pl.gy.iter())
+        .chain(pl.library.iter())
+        .any(|&c| matches!(cname(g, c), "Brain Freeze" | "Grapeshot"))
+}
+
+/// a card that protects Kefka: Deflecting Swat (untagged) or a protection-tagged spell (Slip Out the Back)
+fn is_protection(g: &Game, c: CardId) -> bool {
+    cname(g, c) == "Deflecting Swat"
+        || matches!(g.db.get(c).tags.str(Tag::Prot), Some("hi" | "phase" | "indes" | "blink"))
+}
+
+/// What the tutors fetch when the board wants the two-card win rather than the Breach line: Kefka is flipped, or is
+/// out with {8} within a land drop, and neither Psychosis Crawler nor Niv-Mizzet is in hand or on the battlefield.
+/// The Crawler first while the library outlasts the table's life (the loop is safe), else Niv-Mizzet.
+pub fn tutor_win_piece(g: &Game, p: PlayerId) -> Option<[&'static str; 2]> {
+    if !is_kefka(g, p) {
+        return None;
+    }
+    let pl = g.player(p);
+    let rocks = pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count();
+    let ready = flipped(g, p) || (kefka_out(g, p) && pl.lands.len() + rocks >= 7);
+    let held = |n: &str| pl.hand.iter().any(|&c| cname(g, c) == n);
+    if !ready || crawler_out(g, p) || niv_out(g, p) || held(CRAWLER) || held(NIV) {
+        return None;
+    }
+    Some(if loop_safe(g, p) { [CRAWLER, NIV] } else { [NIV, CRAWLER] })
 }

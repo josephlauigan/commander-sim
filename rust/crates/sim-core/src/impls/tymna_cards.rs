@@ -495,6 +495,9 @@ pub fn protect(
     if skrelv_protect(g, owner_p, m, actor, spell)? {
         return Ok(true);
     }
+    if endurance_protect(g, owner_p, m, kind, actor)? {
+        return Ok(true);
+    }
     if g.hooks.is_empty() {
         return blessing_protect(g, owner_p, m, actor, spell);
     }
@@ -589,6 +592,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     register_gear(r, db)?;
     register_phyrexian(r, db)?;
     register_phyrexian2(r, db)?;
+    register_audit_ysh(r, db)?;
     Ok(())
 }
 
@@ -1315,13 +1319,31 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     }
     let cres = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count();
     if cres >= 2 && mine + 2 >= theirs {
-        if !held(FLAIL)
-            && let Some(c) = first(&[FLAIL])
-        {
+        // a finisher (the Flail was fetched every time here and added little: it is cast 86% of the games it is drawn
+        // anyway): the best one castable by next turn, else the cheapest; a Titan, Terror or Angel to close
+        const FINISHERS: [&str; 10] = [
+            "Grave Titan",
+            "Terror of the Peaks",
+            "Sun Titan",
+            "Baneslayer Angel",
+            "Lyra Dawnbringer",
+            "Glorybringer",
+            "Thundermaw Hellkite",
+            GILGAMESH,
+            "Sphinx of New Prahv",
+            "Serra Angel",
+        ];
+        let reach = lands as u32 + 1;
+        let fin: Vec<CardId> = FINISHERS
+            .iter()
+            .filter_map(|n| g.db.id(n))
+            .filter(|c| okn.contains(c) && !held(&g.db.get(*c).name))
+            .collect();
+        if let Some(&c) = fin.iter().find(|&&c| g.db.get(c).cmc <= reach).or_else(|| fin.iter().min_by_key(|&&c| g.db.get(c).cmc)) {
             return Some(c);
         }
-        if let Some(c) = first(&["Terror of the Peaks", "Lyra Dawnbringer", GILGAMESH, "Sphinx of New Prahv"])
-            .filter(|&c| !held(&g.db.get(c).name))
+        if !held(FLAIL)
+            && let Some(c) = first(&[FLAIL])
         {
             return Some(c);
         }
@@ -1909,6 +1931,123 @@ fn archfiend_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     }
     if trigger_window(g, o, Some(src), "its controller loses 2 life", Some(2.0))? {
         crate::engine::life::lose_life(g, q, 2, Some(o), "drain", Some(false))?;
+    }
+    Ok(())
+}
+
+// ================================================================== the kraum seat: Dark Endurance
+/// **Dark Endurance** ({1}{B} instant, {1} less when it targets a blocking creature): target creature gets +2/+0 and
+/// indestructible until end of turn. The kraum seat casts it in response to destroy or damage removal aimed at a
+/// commander or a permanent worth 4 or more (Tymna is the most-removed card of the deck); exile, -X/-X and sacrifice
+/// are not stopped by indestructible, so it isn't cast against those. Never for another seat.
+fn endurance_protect(
+    g: &mut Game,
+    owner_p: PlayerId,
+    m: PermId,
+    kind: Sym,
+    actor: Option<PlayerId>,
+) -> Res<bool> {
+    const ENDURANCE: &str = "Dark Endurance";
+    if g.player(owner_p).key != "kraum"
+        || actor.is_none()
+        || actor == Some(owner_p)
+        || !(kind == "destroy" || kind.starts_with("dmg"))
+        || !g.perm(m).on_bf
+        || g.perm(m).owner != owner_p
+        || !g.is_creature(m)
+        || silenced(g, owner_p)
+        || crate::engine::values::indestructible(g, m)
+    {
+        return Ok(false);
+    }
+    let Some(c) = g.player(owner_p).hand.iter().copied().find(|&x| &*g.db.get(x).name == ENDURANCE) else {
+        return Ok(false);
+    };
+    if !(g.perm(m).is_cmd || pval(g, m) >= 4.0) || !castable(g, owner_p, c, "hand") || !can_pay(g, owner_p, 1, "B", false) {
+        return Ok(false);
+    }
+    crate::ai::decks::remove_from_hand(g, owner_p, c);
+    pay(g, owner_p, 1, "B", false)?;
+    let pl = g.player_mut(owner_p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c);
+    crate::glog!(g, "  {} casts {} on {}", g.player(owner_p).name, ENDURANCE, g.perm(m).name);
+    crate::engine::cast::on_cast(g, owner_p, c)?;
+    let ok = crate::engine::stack::counter_window(g, owner_p, c, 6.0, vec![])?;
+    g.player_mut(owner_p).gy.push(c);
+    if ok && g.perm(m).on_bf {
+        eot_kw(g, m, intern("indestructible"));
+        g.perm_mut(m).eot_pt.0 += 2;
+    }
+    Ok(ok && g.perm(m).on_bf)
+}
+
+// ================================================================== Firebird, Blazing Ranger and Lightning, Security Sergeant
+/// **Firebird**: whenever it attacks, the other attacking creatures get +X/+0 until end of turn, X = its power
+fn firebird_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if p != owner(g, src) || !atk.contains(&src) || !g.perm(src).on_bf {
+        return Ok(vec![]);
+    }
+    let x = epow(g, src);
+    if x > 0 && trigger_window(g, p, Some(src), "other attackers get +X/+0", None)? {
+        for &a in atk {
+            if a != src && g.perm(a).on_bf && owner(g, a) == p {
+                g.perm_mut(a).eot_pt.0 += x;
+            }
+        }
+    }
+    Ok(vec![])
+}
+
+/// the `impulse_long` mark of the cards Lightning exiled: far beyond any turn count, one per Lightning
+const LIGHTNING_MARK: u32 = 2_000_000;
+
+/// **Lightning, Security Sergeant** (menace): whenever it deals combat damage to a player, exile the top card of your
+/// library; you may play it for as long as you control Lightning (it waits in the hand, marked in `impulse_long`)
+fn lightning_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
+    if a != src || p != owner(g, src) || d == p || dmg <= 0 || !g.perm(src).on_bf || g.player(p).library.is_empty() {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "exile the top card", None)? {
+        return Ok(());
+    }
+    let Some(top) = g.player_mut(p).library.pop() else { return Ok(()) };
+    crate::glog!(g, "    Lightning exiles {} (playable while Lightning stays)", g.db.get(top).name);
+    let pl = g.player_mut(p);
+    pl.seen.insert(top);
+    pl.hand.push(top);
+    pl.impulse_long.push((top, LIGHTNING_MARK + src.0 as u32));
+    Ok(())
+}
+
+/// Lightning leaves the battlefield: the cards it exiled and the owner hasn't played are exiled for good
+fn lightning_leaves(g: &mut Game, src: Src, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let p = g.perm(src).owner;
+    let mark = LIGHTNING_MARK + src.0 as u32;
+    let mine: Vec<CardId> = g.player(p).impulse_long.iter().filter(|x| x.1 == mark).map(|x| x.0).collect();
+    for c in mine {
+        let pl = g.player_mut(p);
+        pl.impulse_long.retain(|x| x.0 != c);
+        if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+            pl.hand.remove(i);
+            pl.exile.push(c);
+            crate::glog!(g, "    {} is exiled for good (Lightning left)", g.db.get(c).name);
+        }
+    }
+    Ok(())
+}
+
+pub fn register_audit_ysh(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if let Some(c) = card_if(r, db, "Firebird, Blazing Ranger")? {
+        c.attack = Some(firebird_attack);
+    }
+    if let Some(c) = card_if(r, db, "Lightning, Security Sergeant")? {
+        c.combat_damage = Some(lightning_damage);
+        c.leaves = Some(lightning_leaves);
     }
     Ok(())
 }
