@@ -269,3 +269,57 @@ fn engineer_ability_returns_only_mana_value_three_or_less() {
     perm(&mut g, P0, "Sol Ring");
     assert!(options(&mut g, e, P0, Some(false)).is_empty());
 }
+
+// ======================================================== Tezzeret, Cruel Captain
+fn walker_opts(g: &mut Game, src: PermId) -> Vec<Opt> {
+    let c = g.perm(src).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, src, P0, Some(false)).unwrap()
+}
+
+#[test]
+fn tezzeret_enters_with_four_and_gains_loyalty_per_artifact() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Tezzeret, Cruel Captain");
+    assert_eq!(g.perm(t).loyalty, Some(4));
+    perm(&mut g, P0, "Sol Ring");
+    assert_eq!(g.perm(t).loyalty, Some(5), "an artifact you control entered");
+    perm(&mut g, P1, "Sol Ring");
+    perm(&mut g, P0, "Goblin Welder");
+    assert_eq!(g.perm(t).loyalty, Some(5), "an opponent's artifact or a non-artifact does not count");
+}
+
+#[test]
+fn tezzeret_zero_untaps_a_spent_rock() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Tezzeret, Cruel Captain");
+    let rock = perm(&mut g, P0, "Sol Ring");
+    g.perm_mut(rock).tapped = true;
+    let o = walker_opts(&mut g, t);
+    let zero = o.iter().find(|o| o.label.contains("+0")).expect("a 0 ability");
+    assert!(sim_core::ai::act::perform(&mut g, P0, zero.act.as_ref().unwrap()).unwrap());
+    assert!(!g.perm(rock).tapped, "untapped");
+    assert_eq!(g.perm(t).loyalty, Some(5), "loyalty unchanged by 0 (4, plus 1 for Sol Ring entering)");
+}
+
+#[test]
+fn tezzeret_minus_three_tutors_a_cheap_artifact_to_hand() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Tezzeret, Cruel Captain");
+    let o = walker_opts(&mut g, t);
+    let m3 = o.iter().find(|o| o.label.contains("-3")).expect("-3 available at 4 loyalty");
+    let before = g.player(P0).hand.len();
+    assert!(sim_core::ai::act::perform(&mut g, P0, m3.act.as_ref().unwrap()).unwrap());
+    assert_eq!(g.player(P0).hand.len(), before + 1);
+    let c = *g.player(P0).hand.last().unwrap();
+    assert!(g.db.get(c).types.has(sim_core::cards::Types::ARTIFACT) && g.db.get(c).cmc <= 1, "{}", g.db.get(c).name);
+    assert_eq!(g.perm(t).loyalty, Some(1));
+}
+
+#[test]
+fn tezzeret_has_no_minus_seven_yet() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Tezzeret, Cruel Captain");
+    g.perm_mut(t).loyalty = Some(9);
+    assert!(walker_opts(&mut g, t).iter().all(|o| !o.label.contains("-7")), "the emblem is an engine need");
+}

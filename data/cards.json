@@ -106066,23 +106066,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": -3,
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "artifact"
-       },
-       "to": "hand",
-       "n": 1,
-       "tapped": false
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -106092,14 +106076,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever an artifact you control enters, put a loyalty counter on ~.",
-    "untap target artifact or creature",
-    "if it's an artifact creature, put a +1/+1 counter on it",
-    "you get an emblem with \"at the beginning of combat on your turn, put three +1/+1 counters on target artifact you control",
-    "if it's not a creature, it becomes a 0/0 robot artifact creature.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

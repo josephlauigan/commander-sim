@@ -396,6 +396,82 @@ fn engineer_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Tezzeret, Cruel Captain
+/// how much mana tapping artifact m makes (its `rock` tag or the card code's own count), 0 if none
+fn rock_amt(g: &Game, p: PlayerId, m: PermId) -> u32 {
+    let Some(c) = g.perm(m).cd else { return 0 };
+    let Some(rock) = g.db.get(c).tags.str(Tag::Rock) else { return 0 };
+    let a = rock.split_once(':').map_or(rock, |x| x.0);
+    crate::cardcode::dyn_mana_perm(g, p, m).unwrap_or_else(|| a.parse().unwrap_or(1))
+}
+
+/// the tapped artifact (a spent mana rock) or creature worth untapping, with its worth: a rock that makes two or
+/// more mana, or one, or a tapped creature that is not Godo (the engine untaps him between combats)
+fn tez_untap_target(g: &Game, p: PlayerId, src: PermId) -> Option<(PermId, f64)> {
+    let xs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| m != src && live(g, m) && g.perm(m).tapped && (is_artifact(g, m) || g.is_creature(m)))
+        .collect();
+    let worth = |m: PermId| {
+        let r = if is_artifact(g, m) { rock_amt(g, p, m) } else { 0 };
+        if r >= 2 { 5.0 } else if r == 1 { 3.0 } else { 0.0 }
+    };
+    let b = max_by(&xs, worth)?;
+    (worth(b) > 0.0).then(|| (b, worth(b)))
+}
+
+fn tez_zero_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
+    tez_untap_target(g, p, src).map(|x| x.1)
+}
+
+fn tez_zero(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+    let Some((t, _)) = tez_untap_target(g, p, src) else { return Ok(()) };
+    g.perm_mut(t).tapped = false;
+    if is_artifact(g, t) && g.is_creature(t) {
+        crate::cardcode::add_counters(g, t, 1);
+    }
+    crate::glog!(g, "    Tezzeret untaps {}", g.perm(t).name);
+    Ok(())
+}
+
+/// the cheap artifacts (mana value 1 or less) in p's library that p does not already have out or in hand
+fn tez_finds(g: &Game, p: PlayerId) -> bool {
+    let have = |c: CardId| {
+        g.player(p).hand.contains(&c) || g.player(p).perms.iter().any(|&m| live(g, m) && g.perm(m).cd == Some(c))
+    };
+    g.player(p).library.iter().any(|&c| is_artifact_card(g, c) && g.db.get(c).cmc <= 1 && !have(c))
+}
+
+fn tez_three_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
+    (g.perm(src).loyalty.unwrap_or(0) >= 3 && tez_finds(g, p)).then_some(4.0)
+}
+
+fn tez_three(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    super::t1::tutor_named(g, p, &|g, c| is_artifact_card(g, c) && g.db.get(c).cmc <= 1, 1, "hand")?;
+    Ok(())
+}
+
+static TEZZERET: [super::common::WalkerAb; 2] = [
+    super::common::WalkerAb { delta: 0, label: "untap an artifact or creature", val: tez_zero_val, eff: tez_zero },
+    super::common::WalkerAb { delta: -3, label: "search for an artifact with mana value 1 or less", val: tez_three_val, eff: tez_three },
+];
+
+/// whenever an artifact you control enters, put a loyalty counter on Tezzeret
+fn tez_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = owner(g, src);
+    if !live(g, src) || owner(g, m) != o || !is_artifact(g, m) || g.perm(src).loyalty.is_none() {
+        return Ok(());
+    }
+    if trigger_window(g, o, Some(src), "put a loyalty counter on Tezzeret", Some(2.0))? && live(g, src) {
+        let x = g.perm_mut(src);
+        x.loyalty = Some(x.loyalty.unwrap_or(0) + 1);
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -406,6 +482,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(theft_prio);
     r.card(db, "Sting, the Glinting Dagger")?.combat_start = Some(sting_combat);
     r.card(db, "Goblin Welder")?.options = Some(welder_options);
+    super::common::walker(r, db, "Tezzeret, Cruel Captain", &TEZZERET)?;
+    r.card(db, "Tezzeret, Cruel Captain")?.etb = Some(tez_etb);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);
