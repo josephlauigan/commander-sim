@@ -188,3 +188,21 @@ fn kefka_counts_mana_leak_into_open_mana_as_a_weak_counter() {
     assert!(sim_core::engine::stack::soft_counter_factor(&g, P0, p1, leak) < 0.5);
     assert_eq!(sim_core::engine::stack::soft_counter_factor(&g, P0, p1, denial), 1.0, "a hard counter is unchanged");
 }
+
+#[test]
+fn kefka_suspends_profane_tutor_on_an_empty_turn() {
+    use sim_core::ai::brain;
+    let mut g = table(&["kefka", "veyran"]);
+    let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
+    g.player_mut(P0).library.extend(h);
+    lands(&mut g, P0, "Swamp", 2, false);
+    g.active = Some(P0);
+    hand(&mut g, P0, &["Profane Tutor", "Massacre Wurm"]);
+    let u = |g: &mut sim_core::state::Game| {
+        brain::main_options(g, P0, false).unwrap().iter().find(|o| o.label == "suspend Profane Tutor").unwrap().utility
+    };
+    let empty = u(&mut g);
+    hand(&mut g, P0, &["Lotus Petal"]);
+    let busy = u(&mut g);
+    assert!(empty > busy, "{empty} vs {busy}");
+}
