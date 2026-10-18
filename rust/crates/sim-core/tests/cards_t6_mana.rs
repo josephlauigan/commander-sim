@@ -249,3 +249,20 @@ fn blank_goblin_adds_red_when_it_enters() {
     assert_eq!(g.player(P0).floating.r, 4, "four unique vowels on the sticker");
     assert_eq!(g.player(P1).floating.r, 0);
 }
+
+// ======================================================== Ignoble Hierarch
+#[test]
+fn ignoble_hierarch_taps_for_b_r_or_g_and_has_exalted() {
+    use sim_core::engine::mana::{can_pay, total_mana};
+    let mut g = tbl();
+    let c = take(&mut g, P0, "Ignoble Hierarch");
+    let m = sim_core::engine::zones::enter(&mut g, P0, c, Default::default()).unwrap();
+    assert_eq!(total_mana(&g, P0, false), 0, "summoning sick");
+    g.perm_mut(m).sick = false;
+    assert_eq!(total_mana(&g, P0, false), 1);
+    for col in ["B", "R", "G"] {
+        assert!(can_pay(&g, P0, 0, col, false), "{col}");
+    }
+    assert!(!can_pay(&g, P0, 0, "W", false) && !can_pay(&g, P0, 0, "U", false));
+    assert!(g.db.get(c).has_kw("exalted"), "exalted is the engine's keyword (cardcode::keyword_attack)");
+}
