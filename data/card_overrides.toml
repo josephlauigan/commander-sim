@@ -8510,3 +8510,7 @@ note = "an opponent's second draw each turn gives you a Treasure (the draw hook 
 ["Chatterstorm"]
 status = "Full"
 note = "creates a 1/1 Squirrel; storm: when cast, a copy for each spell cast before it this turn (t6_green2 via t0_stella::storm_copies)"
+
+["Cloud of Faeries"]
+status = "Full"
+note = "1/1 flyer; when it enters, untaps up to two of your tapped lands; cycling {2} is a hand option the AI uses in an opponent's end step or after combat with the mana to spare (t6_green2)"

@@ -5,7 +5,8 @@ Test deck key: rograkh-thrasios-creature-combo; test cmd: cargo test --release -
 After override edit: rust/target/release/cardgen audit --deck rograkh-thrasios-creature-combo | grep <card>
 ## Done
 - Chatterstorm: Full (self_cast -> t0_stella::storm_copies; token from compiled spell)
+- Cloud of Faeries: Full (etb hook untaps 2 lands; cycling = hand_options Plan)
 ## Next (order)
-Cloud of Faeries, Noxious Revival, Sowing Mycospawn, Endurance, Enduring Vitality, Cabbage Merchant, Shifting Woodland, Invasion of Ikoria
+Noxious Revival, Sowing Mycospawn, Endurance, Enduring Vitality, Cabbage Merchant, Shifting Woodland, Invasion of Ikoria
 ## Gotchas
 - "cast trigger" = self_cast hook; storm_copies reusable. Engine needs go to rust/agents/engine-needs-green2.md
