@@ -652,6 +652,10 @@ pub fn seph_end_milestones(g: &mut Game, p: PlayerId) {
 pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, cands: &[CardId]) -> Option<CardId> {
     let ty = f.kind.as_deref();
     if ty.is_none() || ty == Some("any") {
+        if g.player(p).key == "kefka" && decks::deck_has_storm(g, p) {
+            let wish = decks::kefka_wish(g, p);
+            return wish.iter().find_map(|n| g.db.id(n).filter(|c| cands.contains(c))); // Grim Servant: the wish list within its devotion limit
+        }
         let nm = decks::tutor_pick(g, p, "any")?;
         return cands.iter().copied().find(|&c| c == nm);
     }

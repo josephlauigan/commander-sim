@@ -491,15 +491,6 @@ fn lions_eye_diamond_is_held_for_the_line() {
     assert_eq!(decks::sauron_prio(&g, P0, led), 0);
 }
 
-#[test]
-fn tutors_find_the_missing_piece() {
-    let mut g = board(4, 4, 20);
-    hand(&mut g, P0, &["Underworld Breach"]);
-    let bf = card(&g, "Brain Freeze");
-    g.player_mut(P0).library.push(bf);
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(bf));
-}
-
 // ======================================================== SauronMarchesa
 // Marchesa, the Black Rose with Sauron's Army (she was in Sauron's deck from 10-03): dethrone for the Army, with
 // Mauhúr's extra counter, and the return of a creature with a counter

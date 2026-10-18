@@ -506,6 +506,9 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     }
     let pk = pick_counter(g, q, c);
     if let Some(pk) = pk {
+        val *= soft_counter_factor(g, q, top.controller, pk);
+    }
+    if let Some(pk) = pk {
         // Force of Will pitched (no mana for it): two cards for one
         let (cg, cp) = counter_cost(g, pk, Some(c), Some(q));
         if g.db.get(pk).tag(Tag::Free) && !can_pay(g, q, cg, &cp, false) {
@@ -652,7 +655,12 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     }
     let pitch = |g: &mut Game, blues: Vec<CardId>| -> Res {
         // the least useful blue card (a person picks: play/cards.pick_blue)
-        let mut x = crate::engine::zones::min_by(&blues, |c| crate::engine::tutors::card_worth(g, q, c, false)).unwrap();
+        let sauron = g.player(q).key == "sauron";
+        let mut x = crate::engine::zones::min_by(&blues, |c| {
+            let w = crate::engine::tutors::card_worth(g, q, c, false);
+            if sauron { w + crate::ai::decks::sauron_pitch_keep(g, q, c) } else { w }
+        })
+        .unwrap();
         if crate::human::is_human(g, q) {
             let what = g.db.get(ctr).name.to_string();
             x = crate::human::cards::pick_blue(g, q, &blues, &what)?;
@@ -941,4 +949,15 @@ pub fn step_priority(g: &mut Game, step: &str, defender: Option<PlayerId>, attac
         }
     }
     Ok(())
+}
+
+/// Kefka's Mana Leak (a soft counter): into open mana the opponent just pays, so the counter is worth only the chance
+/// they cannot. 1.0 for everything else (other decks keep the old behaviour).
+pub fn soft_counter_factor(g: &Game, q: PlayerId, caster: PlayerId, ctr: CardId) -> f64 {
+    let soft = g.db.get(ctr).tags.int(Tag::Soft).unwrap_or(0);
+    if g.player(q).key == "kefka" && soft > 0 && crate::engine::mana::total_mana(g, caster, false) >= soft as u32 {
+        0.3
+    } else {
+        1.0
+    }
 }

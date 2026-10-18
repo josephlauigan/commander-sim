@@ -1611,7 +1611,10 @@ fn profane(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
     if post.is_none() || g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "B", false) {
         return Ok(vec![]);
     }
-    Ok(vec![plan(2.2, "suspend Profane Tutor".into(), profane_go, c.0 as i64)])
+    // Kefka: {1}{B} on an empty turn is the card's best use, so it waits only for a real 1-2 mana play
+    let cheap = g.player(p).hand.iter().any(|&x| x != c && !g.db.get(x).land && g.db.get(x).cmc <= 2);
+    let u = if g.player(p).key == "kefka" && !cheap { 4.0 } else { 2.2 };
+    Ok(vec![plan(u, "suspend Profane Tutor".into(), profane_go, c.0 as i64)])
 }
 
 fn profane_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
