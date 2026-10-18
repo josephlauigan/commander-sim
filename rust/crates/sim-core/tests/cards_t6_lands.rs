@@ -352,3 +352,70 @@ fn mount_doom_wipes_all_but_two_creatures_for_a_legendary_artifact() {
     assert!(!g.perm(mine[2]).on_bf, "the rest are destroyed");
     assert!(theirs.iter().all(|&m| !g.perm(m).on_bf));
 }
+
+// ------------------------------------------------------------------ Razorgrass Ambush // Razorgrass Field
+const RAZOR: &str = "Razorgrass Ambush // Razorgrass Field";
+
+#[test]
+fn razorgrass_ambush_deals_three_to_an_attacker_worth_killing() {
+    let mut g = pod();
+    let c = hand(&mut g, P0, &[RAZOR])[0];
+    lands(&mut g, P0, "Plains", 2, false);
+    let big = perm(&mut g, P1, "Craterhoof Behemoth"); // 5 toughness: 3 damage does nothing
+    let kaalia = perm(&mut g, P1, "Kaalia of the Vast");
+    let mut atk = vec![big, kaalia];
+    let mut assign = vec![];
+    sim_core::cardcode::defend_hooks(&mut g, P1, &mut atk, P0, &mut assign).unwrap();
+    assert!(g.perm(big).on_bf && !g.perm(kaalia).on_bf && !atk.contains(&kaalia));
+    assert!(g.player(P0).gy.contains(&c) && !g.player(P0).hand.contains(&c), "an instant: to the graveyard");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 2, "{{1}}{{W}}");
+}
+
+#[test]
+fn razorgrass_ambush_is_held_when_nothing_is_worth_three_damage() {
+    let mut g = pod();
+    let c = hand(&mut g, P0, &[RAZOR])[0];
+    lands(&mut g, P0, "Plains", 2, false);
+    let elf = perm(&mut g, P1, "Llanowar Elves");
+    let mut atk = vec![elf];
+    sim_core::cardcode::defend_hooks(&mut g, P1, &mut atk, P0, &mut vec![]).unwrap();
+    assert!(g.perm(elf).on_bf && g.player(P0).hand.contains(&c));
+}
+
+#[test]
+fn razorgrass_field_is_played_as_a_land_that_taps_for_w_and_enters_tapped_unless_3_life_is_paid() {
+    let mut g = pod();
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &[RAZOR])[0];
+    lands(&mut g, P0, "Plains", 2, false);
+    let o = hand_opts(&mut g, P0, Some(false));
+    let o = o.iter().find(|x| x.label == format!("play {RAZOR} as a land")).expect("land option");
+    let life = g.player(P0).life;
+    assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert!(!g.player(P0).hand.contains(&c));
+    let l = *g.player(P0).lands.last().unwrap();
+    assert_eq!(g.land(l).cd, c);
+    assert_eq!(g.player(P0).lands_played, 1, "it was the land drop");
+    // few lands on the battlefield and a comfortable life: the AI pays 3 life only when that makes mana it can use
+    assert_eq!(g.land(l).tapped, g.player(P0).life == life, "tapped exactly when no life was paid");
+    assert!(g.player(P0).life == life || g.player(P0).life == life - 3);
+    g.land_mut(l).tapped = false;
+    let u = mana::mana_units(&g, P0, false);
+    assert!(u.iter().any(|x| x.cols.has('W') && x.src == mana::Source::Land(l)), "{{T}}: Add {{W}}");
+    // no second land drop
+    let c2 = hand(&mut g, P0, &[RAZOR])[0];
+    let o = hand_opts(&mut g, P0, Some(false));
+    assert!(o.iter().all(|x| !x.label.contains("as a land")), "land drop used");
+    let _ = c2;
+}
+
+/// the hand cards' options (brain.hook_options' loop over the hand)
+fn hand_opts(g: &mut Game, p: PlayerId, post: Option<bool>) -> Vec<sim_core::hooks::Opt> {
+    let mut o = vec![];
+    for c in g.player(p).hand.clone() {
+        if let Some(f) = g.registry.get(c).and_then(|i| i.hand_options) {
+            o.extend(f(g, c, p, post).unwrap());
+        }
+    }
+    o
+}

@@ -8288,3 +8288,7 @@ note = "{T}: {C}; {3},{T}, discard a card: look at the top X (X = artifacts you 
 ["Mount Doom"]
 status = "Full"
 note = "{T}, pay 1 life: {B} or {R} (not at 1 life); {1}{B}{R},{T}: 1 damage to each opponent (end of turn); {5}{B}{R},{T}, sacrifice it and a legendary artifact: keeps its two best creatures, destroys the rest when that nets 8+ worth (sorcery speed); t6_lands.rs. Infinite-untap loops are the combo code's"
+
+["Razorgrass Ambush // Razorgrass Field"]
+status = "Full"
+note = "Ambush: {1}{W} instant, 3 damage to an attacking or blocking creature, cast when it kills a creature worth 4+; Field: played as a land through hand_options (no other land in hand, under 4 lands, land drop free), pays 3 life for untapped or enters tapped, {T}: {W} (t6_lands.rs)"

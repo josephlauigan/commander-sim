@@ -6,15 +6,15 @@
 
 use super::lands::{can_pay_without, pay_without};
 use crate::cards::{CardDb, Colors, Types};
-use crate::engine::stack::ability_window_card;
+use crate::engine::stack::{ability_window_card, counter_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::zones::max_by;
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId};
 use crate::tag::Tag;
-use crate::engine::cast::discard_worst;
+use crate::engine::cast::{castable, discard_worst, on_cast};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{etgh, pval, threat, untargetable};
 use crate::engine::zones::{Tokens, die, make_tokens, min_by};
@@ -607,6 +607,129 @@ fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== modal double-faced spell // land
+/// The back faces of Shatterskull Smashing and Razorgrass Ambush are lands, but the card data has them as spells (the
+/// engine's land play only takes cards with the land flag). So the AI plays them as lands through `hand_options`: a
+/// land option when it still has its land drop, holds no other land and has fewer than 4 lands. The land comes in
+/// untapped only if the AI pays 3 life (`turn::pays_for_land`, as for any pay-3-life land); the colour comes from
+/// `land_cols`. See engine-needs-lands.md for the missing engine side (the normal land play, the human's choices).
+const SHATTERSKULL: [&str; 2] = ["Shatterskull Smashing", "Shatterskull Smashing // Shatterskull, the Hammer Pass"];
+const RAZORGRASS: &str = "Razorgrass Ambush // Razorgrass Field";
+
+fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
+    Colors::from_letters(if name_of(g, l) == RAZORGRASS { "W" } else { "R" })
+}
+
+fn mdfc_land_opt(g: &Game, c: CardId, p: PlayerId, post: Option<bool>) -> Option<Opt> {
+    let pl = g.player(p);
+    let allowed = 1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now;
+    if post.is_none() || g.active != Some(p) || pl.lands_played >= allowed || !pl.hand.contains(&c) {
+        return None;
+    }
+    if pl.lands.len() >= 4 || pl.hand.iter().any(|&x| g.db.get(x).land) {
+        return None;
+    }
+    Some(Opt {
+        utility: 2.5,
+        label: format!("play {} as a land", g.db.get(c).name),
+        act: Some(Action::Plan { f: mdfc_land_go, arg: c.0 as i64 }),
+    })
+}
+
+fn mdfc_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let allowed = 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now;
+    let Some(i) = g.player(p).hand.iter().position(|&x| x == c) else { return Ok(false) };
+    if g.player(p).lands_played >= allowed {
+        return Ok(false);
+    }
+    g.player_mut(p).hand.remove(i);
+    // "As this land enters, you may pay 3 life. If you don't, it enters tapped."
+    let paid = crate::engine::turn::pays_for_land(g, p, c, 3);
+    if paid {
+        lose_life(g, p, 3, Some(p), "other", None)?;
+    }
+    crate::engine::turn::play_land_card(g, p, c, "plays")?;
+    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).cd == c) {
+        if !paid {
+            g.land_mut(l).tapped = true;
+        }
+        traitors_check(g, p, l)?;
+    }
+    Ok(true)
+}
+
+// ================================================================== Razorgrass Ambush
+/// **Razorgrass Ambush** ({1}{W} instant): 3 damage to target attacking or blocking creature. Cast as the defender
+/// against an attacker, or as the attacker against a blocker, when 3 damage kills a creature worth at least 4 (the
+/// same rule as Eiganjo's channel)
+fn razorgrass_cast(g: &mut Game, c: CardId, who: PlayerId, t: PermId) -> Res<bool> {
+    if !g.player(who).hand.contains(&c) || !castable(g, who, c, "hand") {
+        return Ok(false);
+    }
+    let (gn, pips) = cost_of(g, who, c);
+    if !can_pay(g, who, gn, &pips, false) || !pay(g, who, gn, &pips, false)? {
+        return Ok(false);
+    }
+    let i = g.player(who).hand.iter().position(|&x| x == c).unwrap();
+    g.player_mut(who).hand.remove(i);
+    crate::glog!(g, "  {} casts Razorgrass Ambush: 3 damage to {}", g.player(who).name, g.perm(t).name);
+    on_cast(g, who, c)?;
+    if !counter_window(g, who, c, 4.0, vec![])? {
+        g.player_mut(who).gy.push(c);
+        return Ok(true);
+    }
+    if g.perm(t).on_bf {
+        apply_removal(g, Some(who), t, "dmg3", Some(c))?;
+    }
+    g.player_mut(who).gy.push(c);
+    Ok(true)
+}
+
+fn razorgrass_defend(
+    g: &mut Game,
+    c: CardId,
+    d: PlayerId,
+    p: PlayerId,
+    atk: &mut Vec<PermId>,
+    _assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    let (gn, pips) = cost_of(g, d, c);
+    if !can_pay(g, d, gn, &pips, false) {
+        return Ok(());
+    }
+    let mine: Vec<PermId> = atk.iter().copied().filter(|&a| g.perm(a).owner == p).collect();
+    let Some(t) = shot_target(g, d, &mine, 3) else { return Ok(()) };
+    if razorgrass_cast(g, c, d, t)? && !g.perm(t).on_bf {
+        atk.retain(|&a| a != t);
+    }
+    Ok(())
+}
+
+fn razorgrass_blocks(
+    g: &mut Game,
+    c: CardId,
+    p: PlayerId,
+    _atk: &[PermId],
+    _d: PlayerId,
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    let (gn, pips) = cost_of(g, p, c);
+    if !can_pay(g, p, gn, &pips, false) {
+        return Ok(());
+    }
+    let blockers: Vec<PermId> = assign.iter().map(|x| x.1).collect();
+    let Some(t) = shot_target(g, p, &blockers, 3) else { return Ok(()) };
+    if razorgrass_cast(g, c, p, t)? && !g.perm(t).on_bf {
+        assign.retain(|x| x.1 != t);
+    }
+    Ok(())
+}
+
+fn razorgrass_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(mdfc_land_opt(g, c, p, post).into_iter().collect())
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -638,6 +761,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     m.dyn_mana_land = Some(mount_mana);
     m.on_tap_land = Some(mount_tap);
     m.land_options = Some(mount_options);
+    let rz = r.card(db, RAZORGRASS)?;
+    rz.land_cols = Some(mdfc_cols);
+    rz.hand_options = Some(razorgrass_options);
+    rz.hand_defend = Some(razorgrass_defend);
+    rz.hand_blocks = Some(razorgrass_blocks);
     // REGISTER-HERE
     Ok(())
 }

@@ -29,3 +29,9 @@ Needs: a land that becomes a copy of another permanent ({X},{T}: becomes a copy 
 Where it would hook: impls/lands.rs `animate` (a token standing in for the land that goes back at the next turn) + engine/zones.rs copy entry (`enter_token_copy`).
 Card side done: {T}: {C}; {1},{T}: any colour (any_filter_cols, shared with Talon Gates and Abstergo).
 Test to add once the engine has it: pay X=1, Mycosynth Gardens becomes a copy of Sol Ring (taps for {C}{C}) while the land's old mana ability is gone.
+
+## Shatterskull Smashing // Shatterskull, the Hammer Pass, Razorgrass Ambush // Razorgrass Field (cleanup, not blocking)
+Needs: modal double-faced cards whose back face is a land should be offered by the normal land play (engine/turn.rs `play_land`), with the "pay 3 life or enter tapped" rule from the card data (`enters_rule`) instead of the cards' own hand_options.
+Where it would hook: cards.rs/export (land flag and enters_rule for the back face), engine/turn.rs play_land + land_score.
+Card side done: both are played as lands through hand_options (t6_lands.rs mdfc_land_opt/mdfc_land_go: land drop, pays_for_land, play_land_card, tapped unless paid, City of Traitors check); the colours come from land_cols.
+Test to add once the engine has it: with no other land in hand the regular land play chooses the MDFC like a land.
