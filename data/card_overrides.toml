@@ -8381,3 +8381,7 @@ note = "enters with three film counters; missing: the ability that copies an act
 ["Volatile Stormdrake"]
 status = "Partial"
 note = "flying; enters: exchange control with the best opposing creature whose mana value is at most the energy you will have (you get EEEE, then pay mana value in energy), else nothing happens; missing: hexproof from activated and triggered abilities only (the engine reads hexproof as full hexproof)"
+
+["Redirect Lightning"]
+status = "Partial"
+note = "t6_redirects::redirect_removal answers removal aimed at the owner's key permanent like Deflecting Swat: pays {R} and {2} (or {R} and 5 life when short of mana and above 10 life) and aims the spell at the caster's best permanent; missing: the engine does not call it yet, and it cannot change the target of an ability or of a spell on the stack (engine needs)"
