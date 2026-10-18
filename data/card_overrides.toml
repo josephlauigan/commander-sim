@@ -8389,3 +8389,7 @@ note = "t6_redirects::redirect_removal answers removal aimed at the owner's key 
 ["Ricochet Trap"]
 status = "Partial"
 note = "t6_redirects::redirect_removal aims removal at the owner's key permanent back at the caster's best permanent, paying {R} if an opponent cast a blue spell this turn (read from the turn's cast list) else {3}{R}; missing: the engine does not call it yet, and it cannot re-aim a spell on the stack (engine needs)"
+
+["Untimely Malfunction"]
+status = "Partial"
+note = "destroys the targeted opposing artifact, else (no artifact chosen) up to two of the opponents' best untapped creatures can't block this turn; the redirect mode is t6_redirects::redirect_removal (like Redirect Lightning, {1}{R}); missing: the engine does not call it yet and cannot re-aim an ability or a spell on the stack, and the AI only casts it at an artifact (engine needs)"

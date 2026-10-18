@@ -117,3 +117,46 @@ fn ricochet_trap_hard_cast_costs_four_without_a_blue_spell() {
     assert!(!g.perm(theirs).on_bf);
     assert_eq!(untapped(&g, P0), 0);
 }
+
+// ======================================================== Untimely Malfunction
+fn cast_free(g: &mut Game, p: PlayerId, name: &str, ctx: sim_core::state::Ctx) {
+    let c = hand(g, p, &[name])[0];
+    sim_core::engine::cast::cast_card(g, p, c, "hand", ctx).unwrap();
+}
+
+#[test]
+fn untimely_malfunction_destroys_an_artifact() {
+    let mut g = game();
+    g.active = Some(P0);
+    let ring = perm(&mut g, P1, "Sol Ring");
+    cast_free(&mut g, P0, "Untimely Malfunction", sim_core::state::Ctx { target: Some(ring), ..Default::default() });
+    assert!(!g.perm(ring).on_bf);
+    assert!(in_gy(&g, P0, "Untimely Malfunction"));
+}
+
+#[test]
+fn untimely_malfunction_without_an_artifact_stops_the_two_best_blockers() {
+    let mut g = game();
+    g.active = Some(P0);
+    let big = perm(&mut g, P1, "Grave Titan");
+    let mid = token(&mut g, P1, 3);
+    let small = token(&mut g, P1, 1);
+    cast_free(&mut g, P0, "Untimely Malfunction", sim_core::state::Ctx::default());
+    assert!(g.perm(big).eot_kw.contains(&"cant_block"));
+    assert!(g.perm(mid).eot_kw.contains(&"cant_block"));
+    assert!(!g.perm(small).eot_kw.contains(&"cant_block"));
+    assert!(in_gy(&g, P0, "Untimely Malfunction"));
+}
+
+#[test]
+fn untimely_malfunction_redirects_removal_like_the_other_redirects() {
+    let mut g = game();
+    lands(&mut g, P0, "Mountain", 2, false);
+    let mine = perm(&mut g, P0, "Grave Titan");
+    let theirs = perm(&mut g, P1, "Grave Titan");
+    hand(&mut g, P0, &["Untimely Malfunction"]);
+    let swords = hand(&mut g, P1, &["Swords to Plowshares"])[0];
+    assert!(t6::redirect_removal(&mut g, P0, mine, intern("destroy"), Some(P1), Some(swords)).unwrap());
+    assert!(g.perm(mine).on_bf && !g.perm(theirs).on_bf);
+    assert!(in_gy(&g, P0, "Untimely Malfunction"));
+}

@@ -11,13 +11,15 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{pval, untargetable};
+use crate::engine::values::{epow, etgh};
 use crate::engine::zones::max_by;
+use crate::state::Ctx;
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::cards::CardDb;
 use crate::state::Game;
 use crate::sym::Sym;
-use crate::cards::CardDb;
 
 fn cname(g: &Game, c: CardId) -> &str {
     &g.db.get(c).name
@@ -141,7 +143,38 @@ pub fn blue_spell_this_turn(g: &Game, p: PlayerId) -> bool {
     })
 }
 
+
+// ================================================================== Untimely Malfunction
+/// Untimely Malfunction resolves. The modes: destroy target artifact; change the target of a spell or ability with a
+/// single target (`redirect_removal`, the response); one or two target creatures can't block this turn. With an
+/// artifact as the chosen target it is destroyed; without one, up to two of the opponents' best blockers can't block
+/// (the creatures that stop the most damage: toughness then power).
+fn malfunction_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf && g.perm(t).owner != p) {
+        let artifact = g.perm(t).cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::ARTIFACT));
+        if artifact {
+            apply_removal(g, Some(p), t, "destroy", None)?;
+            return Ok("gy");
+        }
+    }
+    let mut blockers: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && !x.tapped && g.is_creature(m) && !untargetable(g, m)
+        })
+        .collect();
+    blockers.sort_by_key(|&m| std::cmp::Reverse(etgh(g, m) * 4 + epow(g, m)));
+    for m in blockers.into_iter().take(2) {
+        super::partials::eot_kw(g, m, "cant_block");
+        crate::glog!(g, "    {} can't block this turn (Untimely Malfunction)", g.perm(m).name);
+    }
+    Ok("gy")
+}
+
 // ================================================================== registration
-pub fn register(_r: &mut Registry, _db: &CardDb) -> Result<(), String> {
+pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
     Ok(())
 }
