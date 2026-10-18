@@ -4049,7 +4049,7 @@ fn loop_kills(name: &str, names: &[&str]) -> bool {
 }
 
 /// mine.loops_blocked: graveyard hate or Hushbringer: nothing that dies comes back, or its triggers don't happen
-fn loops_blocked(g: &Game, p: PlayerId) -> bool {
+pub(crate) fn loops_blocked(g: &Game, p: PlayerId) -> bool {
     (!g.hooks.is_empty() && crate::engine::hooks::total_player(g, Event::NoGraveyard, p) != 0)
         || crate::engine::zones::hushed(g)
 }
