@@ -353,3 +353,36 @@ fn gideon_stops_being_a_creature_at_end_of_turn_and_the_other_zero_makes_an_embl
     assert!(ended, "back to a plain planeswalker");
     assert!(emblem, "the other 0 ability gives the emblem");
 }
+
+// ======================================================== Paladin Class
+#[test]
+fn paladin_class_taxes_opposing_spells_on_its_controllers_turn_only() {
+    let mut g = game();
+    let class = perm(&mut g, P0, "Paladin Class");
+    let cd = g.perm(class).cd.unwrap();
+    let tax = g.registry.get(cd).unwrap().cost.unwrap();
+    let bolt = card(&g, "Swords to Plowshares");
+    assert_eq!(tax(&g, class, P1, bolt), 1);
+    assert_eq!(tax(&g, class, P0, bolt), 0, "its own controller's spells aren't taxed");
+    g.active = Some(P1);
+    assert_eq!(tax(&g, class, P1, bolt), 0, "only during its controller's turn");
+}
+
+#[test]
+fn paladin_class_levels_one_at_a_time_and_level_three_pumps_an_attacker() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 8, false);
+    let class = perm(&mut g, P0, "Paladin Class");
+    let a = perm(&mut g, P0, "Serra Angel");
+    let b = perm(&mut g, P0, "Serra Angel");
+    assert!(!sim_core::impls::t6_dack::paladin_level_up_for_test(&mut g, class, P0, 3), "no skipping level 2");
+    assert!(sim_core::impls::t6_dack::paladin_level_up_for_test(&mut g, class, P0, 2));
+    assert!(sim_core::impls::t6_dack::paladin_level_up_for_test(&mut g, class, P0, 3));
+    let cd = g.perm(class).cd.unwrap();
+    let attack = g.registry.get(cd).unwrap().attack.unwrap();
+    let before = sim_core::engine::values::epow(&g, a);
+    attack(&mut g, class, P0, &[a, b], P1).unwrap();
+    let after = (sim_core::engine::values::epow(&g, a), sim_core::engine::values::epow(&g, b));
+    assert!(after.0 == before + 1 || after.1 == before + 1, "one attacker gets +1/+1 (one other attacker)");
+    assert!(sim_core::engine::combat::double_strike(&g, a) || sim_core::engine::combat::double_strike(&g, b));
+}

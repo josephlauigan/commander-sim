@@ -8605,3 +8605,7 @@ note = "reveals creature cards equal to the opponents, puts them onto the battle
 ["Gideon of the Trials"]
 status = "Partial"
 note = "+1 stops the opposing creature's combat damage until your next turn (Dovin's lock); 0: 4/4 indestructible creature until end of turn (damage to him is not prevented); 0: emblem is recorded but the can't-lose rule is not read by the engine"
+
+["Paladin Class"]
+status = "Partial"
+note = "level 1 taxes opposing spells on your turn by {1}; level 2 ({2}{W}) and 3 ({4}{W}) are bought as sorceries; level 3 pumps your best attacker +1/+1 per other attacker and gives double strike; the level 2 +1/+1 for your creatures is not applied"

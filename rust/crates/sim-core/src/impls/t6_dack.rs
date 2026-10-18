@@ -7,6 +7,7 @@
 //! - Preston, the Vanisher: Illusion token copies of creatures that entered without being cast; the five-Illusion exile.
 //! - Dack Fayden, Helping Hand: the flip, shuffle, donation and goad.
 //! - Gideon of the Trials: the walker framework (+1 prevent via Dovin's lock, 0 animate, 0 emblem).
+//! - Paladin Class: the tax, level-ups and the level 3 attack trigger (the level 2 anthem is an engine need).
 //!
 //!
 //! The banishers' enter hooks read "you" from the enter call's `p` (the player the creature entered under), not from
@@ -18,10 +19,10 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::cast::cast_card;
 use crate::engine::mana::{can_pay, cost_of, pay};
-use crate::engine::stack::trigger_window;
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::removal::apply_removal;
 use crate::engine::tutors::shuffle_library;
-use crate::engine::values::{pval, threat, untargetable};
+use crate::engine::values::{epow, once_per_turn, pval, threat, untargetable};
 use crate::engine::zones::{Enter, Tokens, die, enter, discard_cards, draw, enter_token_copy, exile_perm, make_tokens, max_by};
 use crate::sym::intern;
 use crate::impls::marchesa::steal;
@@ -582,6 +583,87 @@ const GIDEON: [WalkerAb; 3] = [
     WalkerAb { delta: 0, label: "emblem: can't lose", val: gideon_emblem_val, eff: gideon_emblem },
 ];
 
+// ================================================================== Paladin Class
+/// the Class's level (1 until it levels up)
+fn paladin_level(g: &Game, src: PermId) -> i64 {
+    g.perm(src).data.get(DataKey::Level).map_or(1, Val::int)
+}
+
+/// Level 1: spells your opponents cast during your turn cost {1} more to cast.
+fn paladin_tax(g: &Game, src: Src, caster: PlayerId, _c: CardId) -> i32 {
+    let o = g.perm(src).owner;
+    (caster != o && g.active == Some(o) && !g.perm(src).phased) as i32
+}
+
+fn creatures_of(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.is_creature(m) && !g.perm(m).phased).count()
+}
+
+/// Level 2 ({2}{W}) and Level 3 ({4}{W}), gained one at a time as a sorcery. The AI levels up on its own turn when it
+/// has two creatures (Level 3's trigger and Level 2's anthem need a team).
+fn paladin_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || g.active != Some(p) || g.perm(src).owner != p || creatures_of(g, p) < 2 {
+        return Ok(vec![]);
+    }
+    let (generic, level) = match paladin_level(g, src) {
+        1 => (2, 2),
+        2 => (4, 3),
+        _ => return Ok(vec![]),
+    };
+    if !can_pay(g, p, generic, "W", false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: if level == 3 { 2.5 } else { 1.2 },
+        label: format!("Paladin Class level {level}"),
+        act: Some(Action::Ability { src, f: paladin_level_up, arg: level }),
+    }])
+}
+
+fn paladin_level_up(g: &mut Game, src: PermId, p: PlayerId, level: i64) -> Res<bool> {
+    let generic = if level == 2 { 2 } else { 4 };
+    if !g.perm(src).on_bf
+        || g.perm(src).owner != p
+        || paladin_level(g, src) != level - 1
+        || !can_pay(g, p, generic, "W", false)
+    {
+        return Ok(false);
+    }
+    pay(g, p, generic, "W", false)?;
+    if ability_window(g, p, Some(src), &format!("level {level}"), None, None)? && g.perm(src).on_bf {
+        g.perm_mut(src).data.set(DataKey::Level, Val::Int(level));
+        crate::glog!(g, "  {} levels Paladin Class to {level}", pname(g, p));
+    }
+    Ok(true)
+}
+
+/// Level 3: whenever you attack, until end of turn target attacking creature gets +1/+1 for each other attacking
+/// creature and gains double strike. Once per combat; the AI picks the attacker with the most power.
+fn paladin_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if g.perm(src).owner != p || paladin_level(g, src) < 3 || atk.is_empty() {
+        return Ok(atk.to_vec());
+    }
+    let key = intern(&format!("paladin_{}_{}", src.0, g.player(p).combat_no));
+    if !once_per_turn(g, p, key) {
+        return Ok(atk.to_vec());
+    }
+    let all: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).tapped && atk.contains(&m)).collect();
+    let all = if all.is_empty() { atk.to_vec() } else { all };
+    if let Some(t) = max_by(&all, |m| epow(g, m) as f64)
+        && trigger_window(g, p, Some(src), "an attacker gets +1/+1 per other attacker and double strike", Some(4.0))?
+        && g.perm(t).on_bf
+    {
+        let n = all.len() as i32 - 1;
+        let x = g.perm_mut(t);
+        x.eot_pt = (x.eot_pt.0 + n, x.eot_pt.1 + n);
+        if !x.eot_kw.contains(&"double strike") {
+            x.eot_kw.push(intern("double strike"));
+        }
+        crate::glog!(g, "    Paladin Class: {} gets +{n}/+{n} and double strike", g.perm(t).name);
+    }
+    Ok(atk.to_vec())
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Fiend Hunter")?;
@@ -600,6 +682,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(touch_prio);
     c.hand_options = Some(touch_hand);
     r.card(db, "Dack Fayden, Helping Hand")?.etb = Some(dack_etb);
+    let c = r.card(db, "Paladin Class")?;
+    c.cost = Some(paladin_tax);
+    c.options = Some(paladin_options);
+    c.attack = Some(paladin_attack);
     walker(r, db, "Gideon of the Trials", &GIDEON)?;
     r.card(db, "Gideon of the Trials")?.end_step = Some(gideon_end);
     let c = r.card(db, "Preston, the Vanisher")?;
@@ -609,4 +695,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(solar_etb);
     c.hand_options = Some(solar_hand);
     Ok(())
+}
+
+/// test hook: level the Class up to `level` as its controller
+#[doc(hidden)]
+pub fn paladin_level_up_for_test(g: &mut Game, src: PermId, p: PlayerId, level: i64) -> bool {
+    paladin_level_up(g, src, p, level).unwrap_or(false)
 }

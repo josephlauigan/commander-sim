@@ -44,3 +44,9 @@ Needs: (1) "can't lose the game / opponents can't win" granted by an emblem or a
 Where it would hook: (1) `engine/life.rs::check_state` uses `t0_giada::cant_lose` (Herald of Eternal Dawn by name): make it read a player-level "can't lose" source list; (2) `engine/combat.rs` ~l.593 (`dovin_blocked` only zeroes an attacking creature's damage) and the damage-to-permanent paths.
 Card side done: walker abilities in `t6_dack.rs`; +1 uses `DataKey::Dovin`; the animation sets `Anim` + `Indestr` and `gideon_end` undoes it; the emblem is pushed on `Player::emblems` as "gideon_trials".
 Test to add once the engine has it: with the emblem and a Gideon, a player at 0 life stays in the game; damage dealt by the +1 target (blocking or burn) is prevented.
+
+## Paladin Class
+Needs: a level-gated static anthem (a "+1/+1 to creatures you control" that turns on at Class level 2). Static anthems are the `Tag::Anth` card tag read in `values::static_bonus`, which is not per-permanent.
+Where it would hook: `engine/values.rs::static_bonus` (a check of `DataKey::Level` for Class cards, or a `static_pt` slot on `CardImpl`).
+Card side done: the {1} opponents' spell tax on your turn (`cost` slot), level-up abilities (data `Level`), the level 3 attack trigger (`attack` slot, once per combat, +N/+N and double strike until end of turn on the highest-power attacker).
+Test to add once the engine has it: at level 2 your other creatures are +1/+1.

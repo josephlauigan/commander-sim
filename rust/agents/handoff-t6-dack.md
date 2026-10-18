@@ -9,6 +9,8 @@ Deck key: dack-fayden-white-stax. Code: impls/t6_dack.rs; tests: tests/cards_t6_
 - Preston (Partial: Illusion copy keeps types; exile ability done). Beware Felidar loop in tests (stack overflow) -- use Serra Angel
 - Dack (Partial: goad lapses; g.resolving wrapper defers pile triggers till donation done; flip_and_donate pub)
 - Gideon of the Trials (Partial: Dovin-lock +1, animate, emblem recorded only)
+- Paladin Class (Partial: level 2 anthem = engine need)
+ALL 8 DONE. Remaining: rustfmt, full cargo test, warnings check, report
 ## Next (in order)
 Paladin Class
 ## Gotchas
