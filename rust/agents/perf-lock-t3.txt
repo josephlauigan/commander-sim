@@ -1,0 +1,18 @@
+600 games (calibration: within, 300 per list per tier, profiles conservative and loose), lookahead AI, 12 worker threads: about 2 minutes
+
+=== Within-tier balance [conservative, n=300 games per tier; each deck is seated in ~80%] ===
+  Tier 3 (High B3): avg game 12.9 rounds, timeouts 6.3%
+    Atraxa                        31.0% (25.4-37.1)  [3.8 pts from round-cap wins]
+    Aurelia                       36.7% (30.8-43.0)  HIGH  [0.4 pts from round-cap wins]
+    Korvold                       11.6% (8.2-16.2)  LOW  [1.6 pts from round-cap wins]
+    Marwyn                        15.0% (11.0-20.1)  LOW  [0.4 pts from round-cap wins]
+    Tergrid                       31.1% (25.6-37.2)  [1.7 pts from round-cap wins]
+
+=== Within-tier balance [loose, n=300 games per tier; each deck is seated in ~80%] ===
+  Tier 3 (High B3): avg game 13.0 rounds, timeouts 6.0%
+    Atraxa                        31.4% (25.8-37.5)  [3.3 pts from round-cap wins]
+    Aurelia                       38.0% (32.0-44.3)  HIGH  [0.4 pts from round-cap wins]
+    Korvold                       12.4% (8.9-17.1)  LOW  [1.2 pts from round-cap wins]
+    Marwyn                        15.4% (11.3-20.6)  [1.3 pts from round-cap wins]
+    Tergrid                       28.2% (22.9-34.2)  [1.2 pts from round-cap wins]
+
