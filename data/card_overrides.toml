@@ -8236,3 +8236,82 @@ note = "gain X life, X 1/1 colourless Phyrexian Mite artifact creature tokens wi
 dsl = []
 status = "Full"
 note = "you don't lose for 0 or less life (check_state); at 0 or less life damage to you is dealt as poison counters (lose_life), ten poison still lose; the AI casts it once at 20 life or less"
+
+["Dizzy Spell"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "target creature gets -3/-0 until end of turn (also cast as the defender on an attacker whose damage matters); Transmute {1}{U}{U} at sorcery speed fetches a card with the same mana value"
+
+["Into the Flood Maw"]
+types = "I"
+tags = "rem=bounce tgt=nl"
+dsl = []
+status = "Full"
+note = "returns the best opposing creature to hand; a noncreature nonland target is the gift mode (an opponent gets a tapped 1/1 Fish first, given to an opponent other than the target's controller if there is one)"
+
+["Abeyance"]
+types = "I"
+tags = "draw=1"
+dsl = []
+status = "Partial"
+note = "draws a card and flags the opposing player with the most cards in hand (abeyance_flag); missing: the engine does not yet stop a flagged player casting instants or sorceries or activating non-mana abilities"
+
+["Daze"]
+status = "Partial"
+note = "counter unless its controller pays {1}, hard-cast for {1}{U} only; missing: the alternative cost (return an Island you control to hand), written as t6_counters::pay_alt_cost"
+
+["Flare of Denial"]
+status = "Partial"
+note = "counter target spell, hard-cast for {1}{U}{U} only; missing: the alternative cost (sacrifice a nontoken blue creature), written as t6_counters::pay_alt_cost"
+
+["Disrupting Shoal"]
+types = "I"
+tags = ""
+dsl = []
+status = "Partial"
+note = "not cast by the AI: the engine would counter ANY spell for {U}{U}, but it counters only a spell whose mana value is X (cost {X}{U}{U}, or exile a blue card with mana value X); the card side (shoal_pitch, shoal_counters, pay_alt_cost) is written, the engine needs a mana-value-equals-X counter kind"
+
+["Snapback"]
+status = "Partial"
+note = "bounces the best opposing creature, hard-cast for {1}{U} only; missing: the alternative cost (exile a blue card from hand), written as t6_counters::pay_alt_cost"
+
+["Mindbreak Trap"]
+types = "I"
+tags = "ctr=any ctrexile"
+dsl = []
+status = "Partial"
+note = "hard-cast for {2}{U}{U} it exiles one spell; missing: the free mode (an opponent cast three or more spells this turn) and exiling any number of spells (mindbreak_free, mindbreak_exile are written)"
+
+["Misdirection"]
+types = "I"
+tags = ""
+dsl = []
+status = "Partial"
+note = "not cast by the AI yet: t6_counters::misdirect changes a single target of a spell on the stack (a spell aimed at us goes to the caster's best permanent or the caster), pitch cost in pay_alt_cost; missing: the engine casting a non-counter card in response to a spell"
+
+["Commandeer"]
+types = "I"
+tags = ""
+dsl = []
+status = "Partial"
+note = "not cast by the AI yet: t6_counters::commandeer takes control of a noncreature spell on the stack with new targets, pitch cost (two blue cards) in pay_alt_cost; missing: casting in response, and a stolen spell resolving under its new controller"
+
+["Sudden Substitution"]
+types = "I"
+tags = ""
+dsl = []
+status = "Partial"
+note = "not cast by the AI yet: t6_counters::substitute exchanges control of a noncreature spell and a creature; missing: split second, casting in response, and a spell resolving under its new controller"
+
+["Bilbo's Gambit"]
+types = "I"
+tags = "ctr=any remand"
+dsl = []
+status = "Partial"
+note = "returns a spell to its owner's hand for {1}{W} (the Remand return); missing: the gift (opponent gets a Treasure) and its lock that players can't cast spells this turn (bilbo_bounce sets lock_flag)"
+
+["Tibalt's Trickery"]
+status = "Partial"
+note = "counters a spell for {1}{R}; missing: its side effect (the countered spell's controller mills 1-3, exiles to a nonland card and may cast it free), written as t6_counters::tibalt_after"

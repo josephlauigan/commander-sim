@@ -105,18 +105,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -124,10 +113,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Until end of turn, target player can't cast instant or sorcery spells, and that player can't activate abilities that aren't mana abilities."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -8925,29 +8912,13 @@
    "generic": 1,
    "pips": "W",
    "tags": {
-    "rem": "bounce",
-    "tgt": "nl"
+    "ctr": "any",
+    "remand": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "bounce",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "spell"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "gift",
@@ -8958,11 +8929,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Gift a Treasure",
-    "Return target spell to its owner's hand. If the gift was promised, players can't cast spells this turn.   [partly: if the gift was promised, players can't cast spells this turn]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -19351,11 +19319,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may exile two blue cards from your hand rather than pay ~'s mana cost.",
-    "Gain control of target noncreature spell. You may choose new targets for it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -27093,9 +27058,7 @@
    "types": "I",
    "generic": 0,
    "pips": "UU",
-   "tags": {
-    "ctr": "any"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -27109,10 +27072,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may exile a blue card with mana value X from your hand rather than pay ~'s mana cost."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -27524,11 +27485,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Target creature gets -3/-0 until end of turn.",
-    "Transmute {1}{U}{U}"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -53497,29 +53455,12 @@
    "pips": "U",
    "tags": {
     "rem": "bounce",
-    "tgt": "c"
+    "tgt": "nl"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "bounce",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "opp"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "gift"
@@ -53529,11 +53470,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Gift a tapped Fish",
-    "Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.   [partly: if the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -67120,7 +67058,10 @@
    "types": "I",
    "generic": 2,
    "pips": "UU",
-   "tags": {},
+   "tags": {
+    "ctr": "any",
+    "ctrexile": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -67134,11 +67075,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "If an opponent cast three or more spells this turn, you may pay {0} rather than pay ~'s mana cost.",
-    "Exile any number of target spells."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -67736,11 +67674,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may exile a blue card from your hand rather than pay ~'s mana cost.",
-    "Change the target of target spell with a single target."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -100531,11 +100466,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Split second",
-    "Exchange control of target noncreature spell and target creature. Then the spell's controller may choose new targets for it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
