@@ -135,7 +135,22 @@ fn oboro_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Badgermole Cub
+/// **Badgermole Cub** ({1}{G}, 2/2): "whenever you tap a creature for mana, add an additional {G}" (a floating {G}
+/// each time one of your creatures is tapped for mana, for each Cub; Gaea's Cradle is a land, not a creature, so it
+/// does not count). The planner does not count the extra {G} when it plans a payment; it floats afterwards. Left out:
+/// "when this creature enters, earthbend 1" (a land becomes a 0/0 creature with haste and a +1/+1 counter, and
+/// returns tapped when it dies or is exiled), which needs lands that are creatures (engine-needs-green1.md).
+fn cub_tapped(g: &mut Game, src: Src, p: PlayerId, m: PermId, _n: u32) -> Res {
+    if live(g, src) && owner(g, src) == p && g.is_creature(m) {
+        g.player_mut(p).floating.g += 1;
+        crate::glog!(g, "    Badgermole Cub adds an additional {{G}}");
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Oboro Breezecaller")?.options = Some(oboro_options);
+    r.card(db, "Badgermole Cub")?.mana_tapped = Some(cub_tapped);
     Ok(())
 }

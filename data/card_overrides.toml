@@ -8510,3 +8510,7 @@ note = "an opponent's second draw each turn gives you a Treasure (the draw hook 
 ["Oboro Breezecaller"]
 status = "Full"
 note = "{2} (less with Training Grounds / Biomancer's Familiar, never under {1}), return a land: untap target land; the AI uses it on its best tapped land (Gaea's Cradle) when that pays the cost, the returned land and 2 more, and a spell or Thrasios is waiting for the mana"
+
+["Badgermole Cub"]
+status = "Partial"
+note = "2/2 body; whenever a creature of yours is tapped for mana, an additional {G} floats (per Cub; lands are not creatures); missing: 'when it enters, earthbend 1' (a land becomes a 0/0 haste creature with a +1/+1 counter and returns tapped when it dies), see rust/agents/engine-needs-green1.md"
