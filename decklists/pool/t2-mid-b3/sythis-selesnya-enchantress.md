@@ -2,8 +2,6 @@
 
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Pillowfort / enchantress.
 
-Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Hallowed Haunting, Ethereal Armor and Ancestral Mask made way for Mind Stone, Swiftfoot Boots and Journey to Nowhere (fewer token and pump threats behind the pillowfort; the engine is unchanged). Within Tier 2 (conservative): 40.7% before, 26.3% after.
-
 - **Commander:** Sythis, Harvest's Hand
 - **Color identity:** White, Green
 - **Game Changers (2):** Smothering Tithe, Enlightened Tutor
@@ -12,7 +10,7 @@ Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the l
 
 ## Role in the pool
 
-Can your decks win through an attack tax, and do they bring enchantment removal? This is the deck where Aura Shards should earn its slot.
+Can your decks win through an attack tax, and do they bring enchantment removal? This is the deck that rewards enchantment removal.
 
 ## At the table
 
@@ -23,15 +21,13 @@ Can your decks win through an attack tax, and do they bring enchantment removal?
 
 ## Strategy
 
-Build a fort that makes attacking it expensive (Ghostly Prison, Sphere of Safety, Norn's Annex, Windborn Muse, Baird, Archangel of Tithes, Crawlspace, Silent Arbiter), draw a card off every enchantment cast, and win with Sigil of the Empty Throne angels, Starfield of Nyx animating the enchantments, or an Ancestral Mask on anything evasive. Removal is almost all enchantment-based, so it grows the engine.
-
-Tuned in September 2026 (with the user's approval) after Meren's trim made Sythis the Tier 2 outlier (40-46% within the tier under the look-ahead AI): Sigil of the Empty Throne and Starfield of Nyx made way for Heliod's Pilgrim and Spirit Mantle (fewer token threats behind the pillowfort). Within Tier 2 (conservative): 46% before, 32% after.
+Build a fort that makes attacking it expensive (Ghostly Prison, Sphere of Safety, Norn's Annex, Windborn Muse, Baird, Archangel of Tithes, Crawlspace, Silent Arbiter), draw a card off every enchantment cast, and win in the air with Archangel of Tithes and Auras such as Rancor and All That Glitters on anything evasive. Removal is almost all enchantment-based, so it grows the engine.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Enchantress draw triggers; attack taxes and attacker caps; Sigil of the Empty Throne; Starfield of Nyx; Sythis's lifegain/draw on enchantment cast.
+Enchantress draw triggers; attack taxes and attacker caps; Aura pump (Rancor, All That Glitters); Sythis's lifegain/draw on enchantment cast.
 
 ## Decklist by type (100)
 

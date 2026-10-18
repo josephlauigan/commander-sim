@@ -2,8 +2,6 @@
 
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Lands / ramp value.
 
-Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Skyshroud Claim, Toxic Deluge and Hour of Promise made way for Hornet Queen, Wurmcoil Engine and Glissa Sunslayer (more threats for a ramp deck that rarely closed). Within Tier 2 (conservative): 17.9% before, 24.7% after.
-
 - **Commander:** Lord Windgrace
 - **Color identity:** Black, Red, Green
 - **Game Changers (2):** Crop Rotation, Demonic Tutor
@@ -23,7 +21,7 @@ A resilient, graveyard-fed ramp deck. Tests graveyard hate from the other side a
 
 ## Strategy
 
-Ramp, fill the graveyard with fetch lands, and replay them for landfall. Windgrace's +2 discards to draw and returns lands; Crucible, Ramunap, Life from the Loam, and Splendid Reclamation keep the engine running. Omnath, Avenger, Scute Swarm, Titania, and Baloths turn land drops into a board, and Moraug adds extra combats. Ghost Quarter and Tectonic Edge are included; Strip Mine and Wasteland are deliberately left out to stay clear of repeatable land destruction at this bracket.
+Ramp, fill the graveyard with fetch lands, and replay them for landfall. Windgrace's +2 discards to draw and returns lands; Crucible, Ramunap, Life from the Loam, and Splendid Reclamation keep the engine running. Omnath, Avenger, Scute Swarm, Titania, and Baloths turn land drops into a board, and Moraug adds extra combats. Ghost Quarter and Tectonic Edge are the deck's land destruction.
 
 ## Sim modeling notes
 

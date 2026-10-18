@@ -21,15 +21,13 @@ Pressure on non-creature permanents. Your decks need to attack planeswalkers thr
 
 ## Strategy
 
-Protect a growing stable of planeswalkers behind Ghostly Prison, Propaganda, and board wipes, and proliferate every turn with Atraxa so loyalty climbs to ultimates. Doubling Season makes walkers enter at double loyalty, often ultimating on the spot. Wins come from Elspeth's army, Teferi's emblem lock, Jace, or Ugin clearing the board. No combo.
-
-Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Doubling Season, Ichormoon Gauntlet, Vraska, Golgari Queen, Tekuthal, Inquiry Dominus and Garruk Wildspeaker made way for Explore, Mind Stone, Kaito Shizuki, Courser of Kruphix and Grow from the Ashes (a lighter proliferate engine). Within Tier 3: 38-40% before, 25% after.
+Protect a growing stable of planeswalkers behind Ghostly Prison, Propaganda, and board wipes, and proliferate every turn with Atraxa so loyalty climbs to ultimates. Wins come from Elspeth's army, Teferi's emblem lock, Jace, or Ugin clearing the board. No combo.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Planeswalker loyalty and ultimates; proliferate (Atraxa, Evolution Sage, Flux Channeler, Tekuthal doubling); Doubling Season; attack taxes.
+Planeswalker loyalty and ultimates; proliferate (Atraxa, Evolution Sage, Flux Channeler, Grow from the Ashes); attack taxes.
 
 ## Decklist by type (100)
 

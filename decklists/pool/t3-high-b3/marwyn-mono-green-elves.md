@@ -21,9 +21,7 @@ A one-turn kill from a wide board. Your decks need a sweeper or instant-speed in
 
 ## Strategy
 
-Curve out on mana elves, then turn the board into huge mana through Priest of Titania, Archdruid, Circle of Dreams Druid, Gaea's Cradle, and Marwyn herself. The finish is Craterhoof Behemoth, found by Natural Order, Finale of Devastation, Chord of Calling, or Green Sun's Zenith; Ezuri and Overwhelming Stampede are the backups. Glimpse of Nature and Beast Whisperer keep the hand full. Umbral Mantle is deliberately out, so there is no two-card infinite mana.
-
-Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Glimpse of Nature, Overwhelming Stampede, Hunter's Insight, Nature's Claim, Krosan Grip, Jagged-Scar Archers, Seeker of Skybreak and Leaf-Crowned Visionary made way for Tireless Tracker, Avenger of Zendikar, Wirewood Channeler, Paradise Druid, Sylvan Caryatid, Wurmcoil Engine, Tendershoot Dryad and Rampaging Baloths (sturdier threats and rebuilding against sweepers). Within Tier 3: 11-12% before, 20% after.
+Curve out on mana elves, then turn the board into huge mana through Priest of Titania, Archdruid, Circle of Dreams Druid, Gaea's Cradle, and Marwyn herself. The finish is Craterhoof Behemoth, found by Natural Order, Finale of Devastation, Chord of Calling, or Green Sun's Zenith; Ezuri and Avenger of Zendikar are the backups. Beast Whisperer and Harmonize keep the hand full. There is no two-card infinite mana.
 
 ## Sim modeling notes
 

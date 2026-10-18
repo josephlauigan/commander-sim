@@ -21,7 +21,7 @@ A creature-heavy board that your sweepers need to answer at the right time, and 
 
 ## Strategy
 
-Dump a turn-one-to-three stream of mana elves, flood the board with Elf Warrior tokens from Lathril's combat damage and Elvish Promenade, then either tap ten Elves for Lathril's drain or overrun with Ezuri, Overwhelming Stampede, or Shaman of the Pack. Priest of Titania and Elvish Archdruid make the board a mana engine. No Craterhoof and no infinite loops at this tier.
+Dump a turn-one-to-three stream of mana elves, flood the board with Elf Warrior tokens from Lathril's combat damage and Elvish Promenade, then either tap ten Elves for Lathril's drain or overrun with Ezuri, Overwhelming Stampede, or Shaman of the Pack. Priest of Titania and Elvish Archdruid make the board a mana engine. There are no infinite loops at this tier.
 
 ## Sim modeling notes
 

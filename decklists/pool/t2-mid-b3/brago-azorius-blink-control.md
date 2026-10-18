@@ -2,12 +2,10 @@
 
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-heavy.
 
-Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Arcane Denial, Swan Song and Venser, Shaper Savant made way for Lyra Dawnbringer, Angel of Serenity and Resplendent Angel (more pressure; Angel of Serenity is a blink target). Within Tier 2 (conservative): 23.0% before, 25.2% after.
-
 - **Commander:** Brago, King Eternal
 - **Color identity:** White, Blue
 - **Game Changers (2):** Rhystic Study, Cyclonic Rift
-- **Combos:** None (no Peregrine Drake; Deadeye Navigator is value only).
+- **Combos:** None.
 - **Lands:** 36 (14 nonbasic + 22 basic)
 
 ## Role in the pool
@@ -23,9 +21,7 @@ The most counterspells and spot removal in the mid-B3 pool. Tests whether combo 
 
 ## Strategy
 
-Hold up counters, answer the biggest threat, and grind value from flicker. Brago blinks Mulldrifter, Palace Jailer, Reflector Mage, Skyclave Apparition, and Venser every time he connects; Conjurer's Closet, Soulherder, Deadeye Navigator, and Eldrazi Displacer do it without combat. Supreme Verdict and Wrath reset the board when needed. The deck wins slowly with fliers, Elspeth, and Teferi. No Peregrine Drake, so no infinite mana.
-
-Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Negate, Memory Lapse, Aetherize, Worn Powerstone and Commander's Sphere made way for Baneslayer Angel, Hero of Bladehold, Admonition Angel, Adeline, Resplendent Cathar and Archangel of Tithes (more pressure for a control deck that rarely closed). Within Tier 2: 10-14% before, 21% after.
+Hold up counters, answer the biggest threat, and grind value from flicker. Brago blinks Mulldrifter, Palace Jailer, Reflector Mage, Skyclave Apparition every time he connects; Conjurer's Closet, Soulherder, Deadeye Navigator, and Eldrazi Displacer do it without combat. Supreme Verdict and Wrath reset the board when needed. The deck wins slowly with fliers, Elspeth, and Teferi.
 
 ## Sim modeling notes
 

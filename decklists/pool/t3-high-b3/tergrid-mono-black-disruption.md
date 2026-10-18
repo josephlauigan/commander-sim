@@ -21,7 +21,7 @@ Hand and board disruption. Punishes Veyran's hand-held combo and any deck that r
 
 ## Strategy
 
-Force opponents to discard and sacrifice, then use Tergrid to take every nontoken permanent they lose. Edict creatures (Fleshbag, Plaguecrafter, Archfiend of Depravity) and Grave Pact / Dictate of Erebos steal creatures; Liliana of the Veil, Hymn, Mind Twist, and Tinybones steal permanents out of hand. Waste Not and Megrim pay off every discard. No mass land denial: land-sacrifice effects like Pox are left out.
+Force opponents to discard and sacrifice, then use Tergrid to take every nontoken permanent they lose. Edict creatures (Fleshbag, Plaguecrafter, Archfiend of Depravity) and Grave Pact / Dictate of Erebos steal creatures; Liliana of the Veil, Hymn, Mind Twist, and Tinybones steal permanents out of hand. Waste Not and Megrim pay off every discard.
 
 ## Sim modeling notes
 

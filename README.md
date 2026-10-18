@@ -218,7 +218,7 @@ card per line:
 cardgen deck sauron new-list.txt --dry-run    # check it and show what would change
 cardgen deck sauron new-list.txt              # write it
 cardgen deck sauron -                         # or paste the list, then Ctrl-D
-cardgen deck sauron new-list.txt --log "Why." # also add an "Updated <date>" line
+cardgen deck sauron new-list.txt --log "Why." # also log it in the changelog (decklists/CHANGELOG.md, pool decks: decklists/pool/CHANGELOG.md)
 cardgen export                                # then rebuild the card data
 ```
 

@@ -2,8 +2,6 @@
 
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Fast threats / combat.
 
-Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Black Market Connections, Faithless Looting and Night's Whisper made way for Sheoldred, the Apocalypse, Inferno Titan and Skyclave Apparition (a faster clock and removal behind the cheat). Within Tier 2 (conservative): 19.3% before, 24.4% after.
-
 - **Commander:** Kaalia of the Vast
 - **Color identity:** White, Black, Red
 - **Game Changers (2):** Smothering Tithe, Demonic Tutor
