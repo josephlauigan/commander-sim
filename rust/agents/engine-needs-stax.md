@@ -1,5 +1,7 @@
 # Engine needs: batch stax
 
+**t6-e-locks DONE:** the player cast locks (Silence, Chant, Mandate, Abeyance, Calamity, Bilbo) and split second (Angel's Grace, Sudden Substitution, Legolas) are engine features now (`engine/cast.rs`); see report-t6-e-locks.md. Still open here: Chant kicker + no-attack, Mandate "only during combat", Grace "can't lose", the Bilbo gift choice, and the non-counter response / control-change parts.
+
 ## Silence, Orim's Chant, Mandate of Peace
 Needs: the player-level "can't cast spells this turn" check that `engine-needs-counters.md` (Abeyance, Bilbo's Gambit) and `engine-needs-redirects.md` (Calamity's Wake) already ask for: `castable` refusing every spell (creatures and flash too) from a flagged player, and the AI's option lists reading it.
 Where it would hook: `engine/cast.rs::castable` (next to the `hope_lock` / `g.silence` checks), reading `impls::t6_stax::cast_lock(g, p)`.

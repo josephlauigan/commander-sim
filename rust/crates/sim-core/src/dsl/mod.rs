@@ -1837,6 +1837,12 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     let Some(cd) = g.perm(src).cd else { return Ok(false) };
     let ab = abilities(g, cd);
     let Ability::Activated { cost, effects, .. } = &ab[idx as usize] else { return Ok(false) };
+    if g.locks_used
+        && !effects.iter().all(|e| e.kind == "add_mana")
+        && (crate::engine::cast::abilities_locked(g, p) || crate::engine::cast::split_second_up(g))
+    {
+        return Ok(false); // Abeyance, split second: no non-mana abilities
+    }
     if !g.perm(src).on_bf || g.perm(src).owner != p || !pay_ability_cost(g, p, src, cost, false)? {
         return Ok(false);
     }

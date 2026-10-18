@@ -444,7 +444,7 @@ pub fn check_counter(g: &Game, p: PlayerId, ctr: CardId, spell: CardId) -> Optio
     if engine::values::silenced(g, p) {
         return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
     }
-    if !g.hooks.is_empty() && !cast::castable(g, p, ctr, "hand") {
+    if g.cast_checks() && !cast::castable(g, p, ctr, "hand") {
         return Some(format!("Something on the battlefield stops you casting {} right now.", nm(g, ctr)));
     }
     let (gn, pips) = engine::stack::counter_cost(g, ctr, Some(spell), Some(p));

@@ -8255,8 +8255,8 @@ note = "returns the best opposing creature to hand; a noncreature nonland target
 types = "I"
 tags = "draw=1"
 dsl = []
-status = "Partial"
-note = "draws a card and flags the opposing player with the most cards in hand (abeyance_flag); missing: the engine does not yet stop a flagged player casting instants or sorceries or activating non-mana abilities"
+status = "Full"
+note = "draws a card and puts the engine cast lock (LockKind::InstSorcAbilities) on the opposing player with the most cards in hand: this turn they can't cast instants or sorceries (castable, cast_card) or activate non-mana abilities (rules::ability_locked, dsl::activate); the AI casts it at priority 0 unless its deck plan wants it"
 
 ["Daze"]
 status = "Full"
@@ -8303,14 +8303,14 @@ types = "I"
 tags = ""
 dsl = []
 status = "Partial"
-note = "not cast by the AI yet: t6_counters::substitute exchanges control of a noncreature spell and a creature; missing: split second, casting in response, and a spell resolving under its new controller"
+note = "not cast by the AI yet: t6_counters::substitute exchanges control of a noncreature spell and a creature; missing: casting in response (split second is real: cast::split_second_up), and a spell resolving under its new controller"
 
 ["Bilbo's Gambit"]
 types = "I"
 tags = "ctr=any remand"
 dsl = []
 status = "Partial"
-note = "returns a spell to its owner's hand for {1}{W} (the Remand return); missing: the gift (opponent gets a Treasure) and its lock that players can't cast spells this turn (bilbo_bounce sets lock_flag)"
+note = "returns a spell to its owner's hand for {1}{W} (the Remand return); t6_counters::bilbo_bounce puts the engine cast lock (AllSpells, every player) on a promised gift, but the engine never offers the gift choice (later feature), so the lock is not reached in play"
 
 ["Tibalt's Trickery"]
 status = "Partial"
@@ -8491,8 +8491,8 @@ status = "Partial"
 note = "exiles the targeted nonland permanent, then its owner's card goes back to the owner's hand (a token is gone), standing in for 'its owner may play it from exile'; missing: playing it from exile and the {2} extra an opponent pays (engine needs)"
 
 ["Calamity's Wake"]
-status = "Partial"
-note = "exiles all graveyards and itself, and sets the turn lock t6_redirects::noncreature_lock (players can't cast noncreature spells this turn); missing: the engine's cast check does not read the lock yet (engine need)"
+status = "Full"
+note = "exiles all graveyards and itself, and puts the engine cast lock (LockKind::Noncreature) on every player for the turn (castable, cast_card)"
 
 ["Emerald Charm"]
 status = "Partial"
@@ -8698,7 +8698,7 @@ note = "flash 3/2. Counter a spell: the card's ctr=any tag makes the engine cast
 ["Legolas's Quick Reflexes"]
 dsl = []
 status = "Partial"
-note = "{G} instant: untap target creature, it gains reach and hexproof until end of turn (resolve hook; the AI holds the card, legolas_cast casts it as a response) (t6_legends2.rs). Missing: split second, and the 'whenever it becomes tapped, it deals damage equal to its power to up to one target creature' trigger (engine-needs-legends2.md)"
+note = "{G} instant: untap target creature, it gains reach and hexproof until end of turn (resolve hook; the AI holds the card, legolas_cast casts it as a response) (t6_legends2.rs). Missing: the 'whenever it becomes tapped, it deals damage equal to its power to up to one target creature' trigger (engine-needs-legends2.md)"
 
 ["Colossal Skyturtle"]
 dsl = []
@@ -8791,20 +8791,20 @@ status = "Full"
 note = "flash; the AI names the card that hurts opponents most as it enters (ai::flute_pick); spells with that name cost {3} more for every player (mana::cost_of) and its activated abilities are off except mana abilities (values::stopped)"
 
 ["Silence"]
-status = "Partial"
-note = "opponents can't cast spells this turn: modeled as no noncreature spells (Player::hope_lock) plus the turn flag t6_stax::cast_lock; creature (flash) spells need the engine's cast lock (rust/agents/engine-needs-stax.md); the AI never casts it"
+status = "Full"
+note = "opponents can't cast spells this turn: the engine cast lock (LockKind::AllSpells) on each opponent, flash creatures included (castable, cast_card); the AI never casts it (priority 0, deck plan's call)"
 
 ["Orim's Chant"]
 status = "Partial"
-note = "target player can't cast spells: modeled as no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; the kicker (cost choice) and 'creatures can't attack' need the engine (the kicked effect sets t6_stax::attack_lock); the AI never casts it (rust/agents/engine-needs-stax.md)"
+note = "target player can't cast spells this turn (the engine cast lock, LockKind::AllSpells); missing: the kicker (a cost choice) and 'creatures can't attack' (a kicked resolve sets t6_stax::attack_lock, nothing reads it); the AI never casts it"
 
 ["Mandate of Peace"]
 status = "Partial"
-note = "opponents can't cast spells: no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; 'end the combat phase' is real (rest of that combat skipped, attackers and blockers removed, later extra combats still happen); 'only during combat' not enforced; the AI never casts it (rust/agents/engine-needs-stax.md)"
+note = "opponents can't cast spells this turn (the engine cast lock, LockKind::AllSpells); 'end the combat phase' is real; missing: 'cast only during combat' is not enforced for a card in hand; the AI never casts it"
 
 ["Angel's Grace"]
 status = "Partial"
-note = "resolving sets the turn flag t6_stax::grace_active / grace_floor (can't lose, damage leaves you at 1) but the engine does not read it, and split second is not modeled; the AI never casts it (rust/agents/engine-needs-stax.md)"
+note = "split second is real (while it is on the stack nobody can cast spells, activate non-mana abilities or respond: cast::split_second_up); missing: 'can't lose' and the damage floor (resolving sets t6_stax::grace_active, nothing reads it: later feature); the AI never casts it"
 
 ["Blind Obedience"]
 status = "Partial"

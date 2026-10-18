@@ -15,7 +15,7 @@ use crate::engine::zones::*;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
+use crate::state::{CastLock, Ctx, DataKey, Game, LockEnd, LockKind, StackItem, StackKind, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
@@ -164,19 +164,67 @@ fn sac_phrase(t: &str) -> Option<String> {
     None
 }
 
+/// Is the cast lock (a `CastLock` on a player) still in force?
+fn lock_in_force(g: &Game, l: &CastLock) -> bool {
+    match l.end {
+        LockEnd::Turn(st) => st == g.turn_stamp(),
+        LockEnd::TurnOf(q, t) => g.player(q).alive && g.player(q).turns == t,
+    }
+}
+
+/// Put a cast lock on player p (Silence: every opponent, `AllSpells` until the end of the turn ...). Expired locks of
+/// p are dropped as it goes.
+pub fn add_cast_lock(g: &mut Game, p: PlayerId, kind: LockKind, end: LockEnd) {
+    g.locks_used = true;
+    let old = std::mem::take(&mut g.player_mut(p).cast_locks);
+    let mut keep: Vec<CastLock> = old.into_iter().filter(|l| lock_in_force(g, l)).collect();
+    keep.push(CastLock { kind, end });
+    g.player_mut(p).cast_locks = keep;
+}
+
+/// "Lock p out of `kind` until the end of this turn."
+pub fn lock_this_turn(g: &mut Game, p: PlayerId, kind: LockKind) {
+    let st = g.turn_stamp();
+    add_cast_lock(g, p, kind, LockEnd::Turn(st));
+}
+
+/// does a player-level lock stop p from casting c (a land is never a spell)
+pub fn spell_locked(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if g.player(p).cast_locks.is_empty() {
+        return false;
+    }
+    let d = g.db.get(c);
+    if d.land {
+        return false;
+    }
+    g.player(p).cast_locks.iter().filter(|l| lock_in_force(g, l)).any(|l| match l.kind {
+        LockKind::AllSpells => true,
+        LockKind::Noncreature => !d.creature,
+        LockKind::InstSorcAbilities => d.instant || d.sorcery,
+    })
+}
+
+/// is p stopped from activating abilities that aren't mana abilities (Abeyance)
+pub fn abilities_locked(g: &Game, p: PlayerId) -> bool {
+    g.player(p).cast_locks.iter().any(|l| l.kind == LockKind::InstSorcAbilities && lock_in_force(g, l))
+}
+
+/// is a split-second spell on the stack: nobody can cast spells or activate non-mana abilities (or respond) until it
+/// resolves
+pub fn split_second_up(g: &Game) -> bool {
+    g.stack.iter().any(|it| it.kind == StackKind::Spell && it.card.is_some_and(|c| g.db.get(c).has_kw("split second")))
+}
+
 /// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)
 pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
     let d = g.db.get(c);
     if crate::impls::t0_giada::cast_locked(g, p, c) {
         return false; // Serra Avenger: not on your first three turns
     }
+    if spell_locked(g, p, c) || (g.locks_used && split_second_up(g)) {
+        return false;
+    }
     if !d.creature && !d.land {
-        if let Some((q, t)) = g.player(p).hope_lock
-            && g.player(q).alive
-            && g.player(q).turns == t
-        {
-            return false;
-        }
         if let Some((st, q)) = g.silence
             && st == g.turn_stamp()
             && q != p
@@ -643,6 +691,12 @@ fn gy_of(ctx: &Ctx, p: PlayerId) -> PlayerId {
 /// true if it resolved. Python's `cast_card`.
 pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> Res<bool> {
     g.tick()?;
+    if g.locks_used && (spell_locked(g, p, c) || split_second_up(g)) {
+        return Ok(false); // a player cast lock or a split-second spell on the stack (callers check `castable` first)
+    }
+    if g.db.get(c).has_kw("split second") {
+        g.locks_used = true; // from now on `castable` looks at the stack for it
+    }
     let mut ctx = ctx;
     match zone {
         "hand" => {

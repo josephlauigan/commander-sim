@@ -370,13 +370,17 @@ fn calamitys_wake_exiles_every_graveyard_and_itself_and_locks_noncreature_spells
         pl.hand.remove(i);
         pl.gy.push(c);
     }
-    assert!(!t6::noncreature_lock(&g));
+    let bolt = card(&g, "Lightning Bolt");
+    let titan = card(&g, "Grave Titan");
+    assert!(sim_core::engine::cast::castable(&g, P1, bolt, "hand"));
     cast_free(&mut g, P0, "Calamity's Wake", sim_core::state::Ctx::default());
     assert!(g.player(P0).gy.is_empty() && g.player(P1).gy.is_empty(), "the Wake itself is exiled too");
     assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Calamity's Wake"));
     assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Lightning Bolt"));
     assert!(g.player(P1).exile.iter().any(|&c| &*g.db.get(c).name == "Grave Titan"));
-    assert!(t6::noncreature_lock(&g));
+    assert!(!sim_core::engine::cast::castable(&g, P0, bolt, "hand"), "players can't cast noncreature spells");
+    assert!(!sim_core::engine::cast::castable(&g, P1, bolt, "hand"));
+    assert!(sim_core::engine::cast::castable(&g, P1, titan, "hand"), "creature spells are fine");
 }
 
 // ======================================================== Emerald Charm

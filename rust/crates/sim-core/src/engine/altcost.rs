@@ -54,7 +54,7 @@ pub fn available(g: &Game, p: PlayerId, c: CardId, spell: Option<CardId>) -> boo
     let Some(a) = slot(g, c) else { return false };
     g.player(p).hand.contains(&c)
         && (a.ok)(g, p, c, spell)
-        && (g.hooks.is_empty() || castable(g, p, c, "hand"))
+        && (!g.cast_checks() || castable(g, p, c, "hand"))
         && tax_payable(g, p, c)
 }
 
