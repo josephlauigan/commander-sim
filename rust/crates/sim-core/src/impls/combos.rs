@@ -1291,7 +1291,6 @@ pub fn normal_play_window(g: &mut Game, p: PlayerId, acting: PermId) -> Res<bool
         }
     }
     let Some((line, keys)) = found else { return Ok(false) };
-    crate::glog!(g, "  {}: {} works on {} (a piece of {})", g.player(p).name, an, line, line);
     g.last_counter = None;
     if interrupted(g, p, &keys)? {
         crate::glog!(g, "    ...{} is stopped", line);
