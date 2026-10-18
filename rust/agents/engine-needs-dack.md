@@ -52,3 +52,10 @@ Card side done: the {1} opponents' spell tax on your turn (`cost` slot), level-u
 Test to add once the engine has it: at level 2 your other creatures are +1/+1.
 
 NOTE (stopgap): `t6_dack::PRESTON_CAP` (30 Preston copies per turn, then "Preston loop capped (infinite combo, engine pass will resolve it)") only keeps the loop from overflowing the stack. The real fix is a combo shortcut in the engine pass that recognizes the infinite loop and resolves it (win via Solar's ventures).
+
+## Lead note (merge, 2026-10-17): the Preston + Felidar loop stops after 2 copies
+Under the rules it is unbounded (each Felidar token's ETB flickers the real Felidar, which re-enters uncast, so Preston
+copies it again; Radiant Solar ventures each time). In the engine it yields 2 copies and stops, so Dack's main win line
+does not happen yet. The engine pass must add it as a combo in impls/combos.rs (pieces: Preston + Felidar under your
+control + Radiant Solar or a Solar copy, all under your control; with answer windows), and the Dack 35-pile engine test
+(audit/t6/dack-fayden-white-stax/flips-*.md) checks it end to end.
