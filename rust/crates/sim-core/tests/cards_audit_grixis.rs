@@ -160,3 +160,19 @@ fn kefka_keeps_protection_over_a_land() {
     let g = kefka_hand(&["Deflecting Swat", "Slip Out the Back", "Island"]);
     assert_eq!(kefka_discards(&g), "Island");
 }
+
+#[test]
+fn kefka_tutors_fetch_the_crawler_for_a_flipped_kefka_else_the_breach_line() {
+    use sim_core::state::{DataKey, Val};
+    let mut g = kefka_hand(&[]);
+    assert_eq!(&*g.db.get(decks::tutor_pick(&g, P0, "any").unwrap()).name, "Underworld Breach");
+    let c = g.player(P0).cmd;
+    let m = zones::enter(&mut g, P0, c, zones::Enter { sick: false, ..Default::default() }).unwrap();
+    g.player_mut(P0).cmd_in_zone = false;
+    g.perm_mut(m).is_cmd = true;
+    g.perm_mut(m).data.set(DataKey::Ruin, Val::Bool(true));
+    let nm = |g: &sim_core::state::Game| g.db.get(decks::tutor_pick(g, P0, "any").unwrap()).name.to_string();
+    assert_eq!(nm(&g), "Psychosis Crawler");
+    hand(&mut g, P0, &["Psychosis Crawler"]);
+    assert_eq!(nm(&g), "Underworld Breach", "the Crawler is the win: back to the Breach line");
+}

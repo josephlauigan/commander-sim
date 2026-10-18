@@ -743,17 +743,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             }
             first(&["Stock Up", "Flow State", "Quick Study", "Crackle with Power"])
         }
-        "kefka" if kind == "any" && super::decks::deck_has_storm(g, p) => {
-            // Diabolic Tutor for the Breach line: the missing half first
-            let st = storm_held(g, p);
-            if !breach_out(g, p) {
-                return first(&["Underworld Breach"]);
-            }
-            if !st {
-                return first(&["Brain Freeze", "Grapeshot"]);
-            }
-            first(&["Dark Ritual", "Lotus Petal", "Cabal Ritual", "Yawgmoth's Will"])
-        }
+        "kefka" if kind == "any" && super::decks::deck_has_storm(g, p) => first(&kefka_wish(g, p)),
         "kefka" if kind == "is" && super::decks::deck_has_storm(g, p) => {
             // Mystical Tutor: the storm card for a Breach that waits for one (Breach itself is no instant or sorcery)
             if breach_out(g, p) && !storm_held(g, p) {
@@ -1654,4 +1644,23 @@ pub fn sauron_pitch_keep(g: &Game, p: PlayerId, c: CardId) -> f64 {
         return 40.0;
     }
     0.0
+}
+
+/// Kefka's tutor wish list, in order: the two-card win when Kefka is ready for it and has neither piece (Crawler,
+/// Niv-Mizzet), then the Breach line's missing half (Breach, a storm card, a ritual / Will). Grim Servant reads the
+/// same list among the cards its devotion limit allows.
+pub fn kefka_wish(g: &Game, p: PlayerId) -> Vec<&'static str> {
+    let mut w: Vec<&'static str> = vec![];
+    if let Some(win) = crate::impls::kefka::tutor_win_piece(g, p) {
+        w.extend(win);
+    }
+    let st = storm_held(g, p);
+    if !breach_out(g, p) {
+        w.push("Underworld Breach");
+    }
+    if !st {
+        w.extend(["Brain Freeze", "Grapeshot"]);
+    }
+    w.extend(["Dark Ritual", "Lotus Petal", "Cabal Ritual", "Yawgmoth's Will"]);
+    w
 }

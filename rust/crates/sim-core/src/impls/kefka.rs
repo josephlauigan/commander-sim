@@ -1614,3 +1614,20 @@ fn is_protection(g: &Game, c: CardId) -> bool {
     cname(g, c) == "Deflecting Swat"
         || matches!(g.db.get(c).tags.str(Tag::Prot), Some("hi" | "phase" | "indes" | "blink"))
 }
+
+/// What the tutors fetch when the board wants the two-card win rather than the Breach line: Kefka is flipped, or is
+/// out with {8} within a land drop, and neither Psychosis Crawler nor Niv-Mizzet is in hand or on the battlefield.
+/// The Crawler first while the library outlasts the table's life (the loop is safe), else Niv-Mizzet.
+pub fn tutor_win_piece(g: &Game, p: PlayerId) -> Option<[&'static str; 2]> {
+    if !is_kefka(g, p) {
+        return None;
+    }
+    let pl = g.player(p);
+    let rocks = pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count();
+    let ready = flipped(g, p) || (kefka_out(g, p) && pl.lands.len() + rocks >= 7);
+    let held = |n: &str| pl.hand.iter().any(|&c| cname(g, c) == n);
+    if !ready || crawler_out(g, p) || niv_out(g, p) || held(CRAWLER) || held(NIV) {
+        return None;
+    }
+    Some(if loop_safe(g, p) { [CRAWLER, NIV] } else { [NIV, CRAWLER] })
+}
