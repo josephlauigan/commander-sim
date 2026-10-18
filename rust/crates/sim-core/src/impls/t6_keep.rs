@@ -40,9 +40,11 @@ impl Mana {
         }
     }
 
-    /// after two mulligans a hand with 2-4 lands is kept, whatever it holds (a 5-card hand needs lands, not perfection)
+    /// after the first mulligan a hand with 2-4 lands is kept, whatever it holds (the next one is smaller: a hand
+    /// needs lands, not perfection); after two, a 1-lander with 1.0 more mana and two spells is kept too
     pub fn settle(&self) -> bool {
-        self.tries >= 2 && ((2..=4).contains(&self.lands) || (self.lands == 1 && self.eff >= 2.0 && self.spells >= 2))
+        (self.tries >= 1 && (2..=4).contains(&self.lands))
+            || (self.tries >= 2 && self.lands == 1 && self.eff >= 2.0 && self.spells >= 2)
     }
 }
 
