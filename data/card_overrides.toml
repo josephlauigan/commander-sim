@@ -8506,3 +8506,70 @@ note = "destroys all creatures (the wipe=destroy tag); the pitch cost (exile two
 tags = ""
 status = "Full"
 note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: you and one opponent each draw a card, which the AI uses in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure)"
+["City of Brass"]
+status = "Full"
+note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
+
+["City of Traitors"]
+status = "Partial"
+note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed (t6_lands.rs: a land_etb check on every land that has no land_etb of its own; Bojuka Bog, Urza's Saga, Mortuary Mire, Mystic Sanctuary, Mosswort Bridge, Windbrisk and Alela's hub land do not run it, see engine-needs-lands.md); Partial (lead): those lands should sacrifice it too, needs an engine you-played-a-land hook"
+
+["Gemstone Caverns"]
+status = "Partial"
+note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand clause (start on the battlefield with a luck counter when not the starting player, exile a card) is not modeled"
+
+["Abstergo Entertainment"]
+status = "Full"
+note = "{T}: {C}; {1},{T}: any colour (any colour only when another untapped land pays the {1}); {3},{T}, exile it: a historic card from your graveyard to hand, then all graveyards exiled (t6_lands.rs; the AI needs a card worth 30+)"
+
+["Eiganjo, Seat of the Empire"]
+status = "Full"
+note = "{T}: {W}; Channel {2}{W} (less per legendary creature you control), discard: 4 damage to an attacking creature (when attacked) or a blocking creature (its own attack), used when it kills a creature worth 4+ (t6_lands.rs)"
+
+["Deserted Temple"]
+status = "Full"
+note = "{T}: {C}; {1},{T}: untap target land, used when the land untapped gives 3+ more mana (the {1} and the Temple's own mana are the cost; t6_lands.rs)"
+
+["Minamo, School at Water's Edge"]
+status = "Full"
+note = "{T}: {U}; {U},{T}: untap target legendary land or permanent, used when it gives 3+ more mana (the {U} and Minamo's own mana are the cost; t6_lands.rs)"
+
+["Emergence Zone"]
+status = "Partial"
+note = "{T}: {C}; {1},{T}, sacrifice: sets the one-turn flash flag (t6_lands.rs, tested), but the AI does not read it yet so the option is switched off (engine-needs-lands.md)"
+
+["Forbidden Orchard"]
+status = "Full"
+note = "{T}: any colour of the identity; whenever tapped for mana the opponent who threatens least creates a 1/1 colorless Spirit (t6_lands.rs)"
+
+["Petrified Hamlet"]
+status = "Partial"
+note = "{T}: {C}; when it enters it names the opponents' land with the most non-mana abilities (kept on the land, t6_lands.rs hamlet_names); the ban on that name's activated abilities and the chosen lands' {T}: {C} are not modeled (engine-needs-lands.md)"
+
+["The Mycosynth Gardens"]
+status = "Partial"
+note = "{T}: {C}; {1},{T}: any colour (only when another untapped land pays the {1}; t6_lands.rs any_filter_cols); the {X},{T} copy-an-artifact ability is not modeled (engine-needs-lands.md)"
+
+["Fomori Vault"]
+status = "Full"
+note = "{T}: {C}; {3},{T}, discard a card: look at the top X (X = artifacts you control), best to hand, the rest to the bottom in random order; used when X is 3+ (2 with a spare land), t6_lands.rs"
+
+["Mount Doom"]
+status = "Full"
+note = "{T}, pay 1 life: {B} or {R} (not at 1 life); {1}{B}{R},{T}: 1 damage to each opponent (end of turn); {5}{B}{R},{T}, sacrifice it and a legendary artifact: keeps its two best creatures, destroys the rest when that nets 8+ worth (sorcery speed); t6_lands.rs. Infinite-untap loops are the combo code's"
+
+["Razorgrass Ambush // Razorgrass Field"]
+status = "Full"
+note = "Ambush: {1}{W} instant, 3 damage to an attacking or blocking creature, cast when it kills a creature worth 4+; Field: played as a land through hand_options (no other land in hand, under 4 lands, land drop free), pays 3 life for untapped or enters tapped, {T}: {W} (t6_lands.rs)"
+
+["Shatterskull Smashing"]
+status = "Full"
+note = "{X}{R}{R} sorcery: X damage (twice X from 6) divided between up to two opposing creatures / planeswalkers, exactly lethal to each, smallest X that kills the best targets; Shatterskull, the Hammer Pass is played as a land (pay 3 life or enters tapped, {T}: {R}) through hand_options (t6_lands.rs)"
+
+["Shatterskull Smashing // Shatterskull, the Hammer Pass"]
+status = "Full"
+note = "same card as Shatterskull Smashing (t6_lands.rs)"
+
+["Talon Gates of Madara"]
+status = "Full"
+note = "enter trigger phases out the best opposing creature (back at its controller's next untap); {T}: {C}; {1},{T}: any colour (when another land pays the {1}); {4}: put it onto the battlefield from hand (own turn with the land drop spent, or against a big attacker, phasing it out of the attack); t6_lands.rs"
