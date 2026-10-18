@@ -8583,3 +8583,8 @@ note = "exiles the best opposing creature (the AI never takes its own); the card
 dsl = []
 status = "Partial"
 note = "exiles the best opposing non-Assassin creature until it leaves; Warp is coded but not offered (casting from exile is not modeled)"
+
+["Touch the Spirit Realm"]
+dsl = []
+status = "Full"
+note = "ETB exiles the best opposing artifact or creature until it leaves; Channel ({1}{W}, discard) exiles one and returns it under its owner's control at the next end step (the AI channels to flicker its best ETB creature)"

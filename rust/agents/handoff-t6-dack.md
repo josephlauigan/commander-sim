@@ -4,8 +4,9 @@ Deck key: dack-fayden-white-stax. Code: impls/t6_dack.rs; tests: tests/cards_t6_
 ## Done
 - Fiend Hunter (Full)
 - All-Fates Stalker (Partial: warp recast from exile = engine need)
+- Touch the Spirit Realm (Full; channel via g.eot_returns)
 ## Next (in order)
-Touch the Spirit Realm, Radiant Solar (venture on grudge map), Preston, Dack, Gideon, Paladin Class
+Radiant Solar (venture on grudge map), Preston, Dack, Gideon, Paladin Class
 ## Gotchas
 - Banisher etb hooks use the enter call's `p` as "you", not perm owner (Dack donates before queued triggers run).
 - Use common::oring_exile / oring_return; override dsl = [] in data/card_overrides.toml so the compiled permanent exile does not double.
