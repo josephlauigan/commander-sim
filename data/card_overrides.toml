@@ -8786,3 +8786,24 @@ note = "evoke {R/G}{R/G} from hand, sacrificed on entry: the AI pays {R}{R} for 
 ["Springheart Nantuko"]
 status = "Partial"
 note = "1/1 body; landfall creates a 1/1 green Insect (the unattached branch); missing: bestow {1}{G} (+1/+1) and the {1}{G} token copy of the enchanted creature (the Eternal Witness loop), see rust/agents/engine-needs-green1.md"
+
+["Ioreth of the Healing House"]
+status = "Full"
+note = "{T}: untap another target permanent (a tapped land, mana creature or rock) or untap two other target legendary creatures; the AI taps only for a gain of at least one mana, six times a turn at most (t6_legends1b.rs)"
+
+["Marvin, Murderous Mimic"]
+status = "Partial"
+note = "has Ioreth's two untap abilities while its controller has an Ioreth (the DDR loop); the activated abilities of other creatures are not copied (engine-needs-legends1b.md)"
+
+["Shang-Chi, Master of Kung Fu"]
+status = "Partial"
+note = "taps for mana as a dork; 'activate abilities as though haste' is honored by Ioreth/Marvin/Tyvar code (ability_haste) but not by the engine's mana/ability checks, and the two mana of one colour is not limited to creature abilities (engine-needs-legends1b.md)"
+
+["Tyvar, Jubilant Brawler"]
+dsl = []
+status = "Partial"
+note = "+1 untaps the best tapped creature; -2 mills three then returns the best creature with MV 2 or less from the graveyard (t6_legends1b.rs); the 'abilities as though haste' static is only honored by this batch's code (engine-needs-legends1b.md)"
+
+["Loki's Scepter"]
+status = "Full"
+note = "enters: gain control of the best opposing creature (value 3 or more, not a commander) until end of turn, untapped and hasty (Villain type has no effect); taps for one mana of any colour (rock tag)"

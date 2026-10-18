@@ -58,6 +58,7 @@ pub mod t6_mana;
 pub mod t6_redirects;
 pub mod t6_godo;
 pub mod t6_green2;
+pub mod t6_legends1b;
 pub mod t6_legends2;
 pub mod t6_dack;
 
@@ -115,6 +116,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t6_green1::register(&mut r, db)?;
     t6_mana::register(&mut r, db)?;
     t6_redirects::register(&mut r, db)?;
+    t6_legends1b::register(&mut r, db)?;
     t6_legends2::register(&mut r, db)?;
     t6_dack::register(&mut r, db)?;
     t6_lands::register(&mut r, db)?;

@@ -111054,19 +111054,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": -2,
-     "effects": [
-      {
-       "do": "mill",
-       "n": 3,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "3",
    "kws": [
     "mill"
@@ -111078,12 +111066,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "You may activate abilities of creatures you control as though those creatures had haste.",
-    "untap up to one target creature",
-    "return a creature card with mana value 2 or less from your graveyard to the battlefield"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
