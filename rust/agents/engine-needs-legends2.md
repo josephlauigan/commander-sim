@@ -31,3 +31,9 @@ Needs: (1) split second (while it is on the stack nobody can cast spells or acti
 Where it would hook: (1) `engine/stack.rs::stack_window` / `ai_respond` and the human legal-cast check `human/legal.rs`; (2) the `became_tapped` call sites listed under Magda: store the pending trigger on the creature (a `Charge`-like `DataKey`) and fire it there; (3) `engine/stack.rs::ai_respond` for removal on the stack, calling `t6_legends2::legolas_cast`.
 Card side done: `legolas_resolve` (untap, reach, hexproof until end of turn; the AI holds the card with a zero `prio`), `legolas_cast` (the {G} response cast, countered like any spell).
 Test to add once the engine has it: with Legolas's Quick Reflexes on a tapped creature that then attacks, the attack deals damage equal to its power to a creature; and no spell can be cast in response to it.
+
+## Wan Shi Tong, Librarian
+Needs: a "player searches their library" event: every search site calls one hook (`wan_shi_tong_searched(g, searcher)`). Also X in the cost of a creature spell (the card is cast by a hand option that pays X itself, like Hydroid Krasis in `ai/pool.rs`).
+Where it would hook: every place that calls `zones::agent_for` (the Opposition Agent check, one per search): `engine/tutors.rs`, `dsl/mod.rs` (search), `engine/zones.rs`, `engine/turn.rs`, `ai/mod.rs`, `ai/seph.rs`, `impls/t1.rs`, `impls/legends.rs` (Sisay), and the search in `t6_legends2.rs` Magda. A single helper called from `agent_for`'s callers (or `searchable`) would cover all.
+Card side done: `wan_shi_tong_searched` (counter and draw for each opposing Wan Shi Tong, through a trigger window); the X cast with counters and the draw (`wan_go`, hand option at the end-of-turn window).
+Test to add once the engine has it: Godo's enter trigger fetching Helm of the Host (a search) gives an opposing Wan Shi Tong a counter and its controller a card.

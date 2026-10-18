@@ -8609,3 +8609,7 @@ note = "{G} instant: untap target creature, it gains reach and hexproof until en
 dsl = []
 status = "Full"
 note = "6/5 flying, ward {2} (card data); both channels from the hand through hand_options, in a main phase: {2}{G} returns the best graveyard card worth 40+ (only when the turtle itself can't be cast), {1}{U} bounces the opponents' best creature worth 5+ (t6_legends2.rs). The data's old battlefield 'discard' abilities are dropped"
+
+["Wan Shi Tong, Librarian"]
+status = "Partial"
+note = "flash, flying, vigilance 1/1; cast with X by a hand option in the end-of-turn window for all spare mana (X = mana - 2, 2 or more): X +1/+1 counters, then draw half X; the AI never casts it for X = 0 (t6_legends2.rs). The opponent-searches trigger (a counter and a card) is written (wan_shi_tong_searched, tested) but the engine has no search event to call it (engine-needs-legends2.md)"

@@ -415,3 +415,47 @@ fn skyturtle_channel_returns_a_graveyard_card_for_2g() {
     assert!(!sim_core::impls::t6_legends2::turtle_regrow_go(&mut g, P0, sol.0 as i64).unwrap());
     assert!(g.player(P0).hand.contains(&c));
 }
+
+// ======================================================== Wan Shi Tong, Librarian
+#[test]
+fn wan_shi_tong_x_counters_and_draws_half_x() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 8, false);
+    let c = hand(&mut g, P0, &["Wan Shi Tong, Librarian"])[0];
+    let o = {
+        let f = g.registry.get(c).unwrap().hand_options.unwrap();
+        assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty(), "flash: held for the end-of-turn window");
+        f(&mut g, c, P0, None).unwrap()
+    };
+    assert_eq!(o.len(), 1);
+    assert_eq!(o[0].label, "Wan Shi Tong X=6");
+    let h = g.player(P0).hand.len();
+    assert!(run(&mut g, P0, &o[0]));
+    let w = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Wan Shi Tong, Librarian").unwrap();
+    assert_eq!((epow(&g, w), sim_core::engine::values::etgh(&g, w)), (7, 7), "1/1 plus X = 6 counters");
+    assert_eq!(g.player(P0).hand.len(), h - 1 + 3, "left the hand, drew half of X");
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 0, "all eight mana spent");
+}
+
+#[test]
+fn wan_shi_tong_is_not_cast_for_nothing() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 3, false);
+    let c = hand(&mut g, P0, &["Wan Shi Tong, Librarian"])[0];
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    assert!(f(&mut g, c, P0, None).unwrap().is_empty(), "X would be 1");
+    assert_eq!(g.registry.get(c).unwrap().prio.unwrap()(&g, P0, c), 0, "the AI never casts it for X = 0");
+}
+
+#[test]
+fn wan_shi_tong_grows_and_draws_when_an_opponent_searches() {
+    let mut g = tbl();
+    let w = perm(&mut g, P0, "Wan Shi Tong, Librarian");
+    let h = g.player(P0).hand.len();
+    let p = epow(&g, w);
+    sim_core::impls::t6_legends2::wan_shi_tong_searched(&mut g, P1).unwrap();
+    assert_eq!(epow(&g, w), p + 1);
+    assert_eq!(g.player(P0).hand.len(), h + 1);
+    sim_core::impls::t6_legends2::wan_shi_tong_searched(&mut g, P0).unwrap(); // our own search: nothing
+    assert_eq!(epow(&g, w), p + 1);
+}

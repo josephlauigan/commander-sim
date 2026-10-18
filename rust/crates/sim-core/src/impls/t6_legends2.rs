@@ -9,7 +9,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -580,6 +580,79 @@ fn turtle_bounce_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Wan Shi Tong, Librarian
+const WAN_SHI_TONG: &str = "Wan Shi Tong, Librarian";
+
+/// The most X the AI can pay for Wan Shi Tong ({X}{U}{U}) with the mana it has
+fn wan_x(g: &Game, p: PlayerId) -> i32 {
+    let mut x = total_mana(g, p, false) as i32 - 2;
+    while x >= 1 && !can_pay(g, p, x as u32, "UU", false) {
+        x -= 1;
+    }
+    x.max(0)
+}
+
+fn wan_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
+}
+
+/// **Wan Shi Tong, Librarian** ({X}{U}{U}, flash, flying, vigilance, 1/1): when it enters, X +1/+1 counters, then draw
+/// half X rounded down. The engine has no X for creature spells, and a plain cast would be X = 0, so the AI never
+/// casts it that way (zero `prio`); at the end of the turn before its own (the flash window) it casts it for all its
+/// spare mana, X = mana - 2, when X is 2 or more (`wan_go`, written after Hydroid Krasis).
+fn wan_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || !castable(g, p, c, "hand") {
+        return Ok(vec![]);
+    }
+    let x = wan_x(g, p);
+    if x < 2 {
+        return Ok(vec![]);
+    }
+    Ok(vec![plan(1.5 + 0.5 * x as f64, &format!("Wan Shi Tong X={x}"), wan_go, c.0 as i64)])
+}
+
+pub fn wan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let x = wan_x(g, p);
+    if !g.player(p).hand.contains(&c) || x < 1 || !pay(g, p, x as u32, "UU", false)? {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(p).hand, c);
+    let pl = g.player_mut(p);
+    pl.cast_names.insert(c);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    g.last_x = x;
+    crate::glog!(g, "  {} casts Wan Shi Tong for X={}", g.player(p).name, x);
+    on_cast(g, p, c)?;
+    if !counter_window(g, p, c, 5.0, vec![])? {
+        g.player_mut(p).gy.push(c);
+        return Ok(true);
+    }
+    let m = enter(g, p, c, Enter { was_cast: true, sick: false, ..Enter::default() })?;
+    crate::cardcode::put_plus(g, m, x);
+    draw(g, p, (x / 2) as u32, false)?;
+    Ok(true)
+}
+
+/// Whenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card. The engine has no
+/// "searches" event: every search by `searcher` has to call this (engine-needs-legends2.md).
+pub fn wan_shi_tong_searched(g: &mut Game, searcher: PlayerId) -> Res {
+    let tongs: Vec<PermId> = g
+        .opps(searcher)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&m| live(g, m) && card_name(g, m) == Some(WAN_SHI_TONG))
+        .collect();
+    for m in tongs {
+        let o = owner(g, m);
+        if live(g, m) && trigger_window(g, o, Some(m), "+1/+1 counter and draw a card", None)? {
+            crate::cardcode::put_plus(g, m, 1);
+            draw(g, o, 1, false)?;
+        }
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "The Queen of Dale")?;
     c.cast = Some(queen_cast);
@@ -594,6 +667,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.leaves = Some(tataru_leaves);
     at_once(c, Event::Leaves, true);
     walker(r, db, "Teferi, Who Slows the Sunset", &TEFERI)?;
+    let c = r.card(db, WAN_SHI_TONG)?;
+    c.hand_options = Some(wan_options);
+    c.prio = Some(wan_prio); // never cast with X = 0
     r.card(db, SKYTURTLE)?.hand_options = Some(turtle_options);
     let c = r.card(db, LEGOLAS)?;
     c.resolve = Some(legolas_resolve);
