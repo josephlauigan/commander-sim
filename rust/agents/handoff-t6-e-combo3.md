@@ -1,6 +1,6 @@
 # Handoff t6-e-combo3
-Plan: module impls/t6_combos_extra.rs (+1 pub mod, +1 chain in combos::all()), tests/engine_t6_combo3.rs.
-1. Oracle+Consultation/Pact and Kinnan+Basalt get steps (edit BASE in combos.rs)
-2. Breach/LED/Brain Freeze; Ad Nauseam; Hullbreaker; Kinnan+Thrasios/Mirage Mirror
-3. Godo leftovers: Welder+Engineer; rebuild; Basalt + copied Kinnan
-Status: started, nothing done.
+Done: impls/t6_combos_extra.rs written (steps for Oracle + Kinnan/Basalt via ORACLE_STEPS / KINNAN_BASALT_STEPS referenced from
+combos::BASE; 11 new combos: Thrasios/Mirage outlets, Breach (Oracle / table), Ad Nauseam, Horror, Welder+Engineer, 3 Godo
+rebuilds, Basalt + copied Kinnan). t6_combos_godo helpers made pub(crate); Step derives Clone+Copy; base kinnan_basalt ready now
+needs {U}{G} payable (else the outlet combos). Builds.
+Next: tests/engine_t6_combo3.rs (one goldfish + one stopped per line), fix what fails, full suite, report.
