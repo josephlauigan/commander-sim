@@ -18922,45 +18922,7 @@
    "pow": 6,
    "tgh": 5,
    "bomb": 6,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2G",
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "regrow",
-       "filter": {},
-       "from": "yours"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1U",
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "bounce",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "channel",
@@ -18974,7 +18936,7 @@
    "ward": 2,
    "identity": "GU",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 7,
@@ -60293,23 +60255,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "untap",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "split second"
@@ -60319,10 +60265,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Untap target creature. Until end of turn, it gains reach, hexproof, and \"Whenever ~ becomes tapped, it deals damage equal to its power to up to one target creature.\"   [partly: until end of turn, it gains reach, hexproof, and \"whenever ~ becomes tapped, it deals damage equal to its power to up to one target creature.\"]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -63290,27 +63234,7 @@
    "pow": 2,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "sac": "permanent"
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "artifact"
-       },
-       "to": "battlefield",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "treasure"
@@ -63323,11 +63247,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Other Dwarves you control get +1/+0.",
-    "Whenever a Dwarf you control becomes tapped, create a Treasure token."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -104369,19 +104290,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "gain_life",
-       "n": 2,
-       "who": "you"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -104391,15 +104300,8 @@
    "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "choose up to one target artifact, up to one target creature, and up to one target land",
-    "untap the chosen permanents you control",
-    "tap the chosen permanents you don't control",
-    "look at the top three cards of your library",
-    "put one of them into your hand and the rest on the bottom of your library in any order",
-    "you get an emblem with \"untap all permanents you control during each opponent's untap step\" and \"you draw a card during each opponent's draw step.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

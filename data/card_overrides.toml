@@ -8668,3 +8668,43 @@ note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} 
 tags = "xtutor reach"
 status = "Partial"
 note = "{X}{G}{G} (X = all spare mana): puts the best non-Human creature card with mana value X or less from the library or graveyard onto the battlefield (the deck's wish list first), shuffling if it came from the library; missing: the battle rules (the Siege stays with 6 defense counters, can be attacked, and cast transformed as Zilortha when defeated; the engine has no battles, so the card goes to the graveyard)"
+
+["Magda, Brazen Outlaw"]
+dsl = []
+status = "Partial"
+note = "other Dwarves you control get +1/+0 (creature_pt); a Dwarf you control becoming tapped makes a Treasure when it taps for mana or attacks; sacrifice five Treasures: the best artifact or Dragon card from the library onto the battlefield, shuffle (t6_legends2.rs). A Dwarf tapped by a tap cost or an effect makes no Treasure (no general becomes-tapped event; engine-needs-legends2.md)"
+
+["The Queen of Dale"]
+status = "Full"
+note = "whenever an opponent casts their first noncreature spell each turn (per caster), you recruit: draw, then discard (the AI's usual discard); a nonland discard makes a 1/1 white Human Soldier token (t6_legends2.rs recruit)"
+
+["Tataru Taru"]
+status = "Full"
+note = "enters: you draw (the draw tag) and the least-threatening opponent with a card draws (t6_legends2.rs); Scions' Secretary: an opponent's draw off their own turn makes a tapped Treasure, once each turn - kept on Tataru and added at its controller's next upkeep (when a tapped Treasure would untap), or at once if Tataru leaves"
+
+["Teferi, Who Slows the Sunset"]
+dsl = []
+status = "Partial"
+note = "+1: the best of one artifact, one creature and one land (ours tapped: untap; theirs untapped: tap), gain 2; -2: look at three, the one the deck wants into the hand, the rest to the bottom; -7 records the emblem, but the untap-in-their-untap-step and draw-in-their-draw-step effects are not modeled, so the AI never picks it (t6_legends2.rs; engine-needs-legends2.md)"
+
+["Spider-Woman, Stunning Savior"]
+status = "Partial"
+note = "flying 2/2; artifact and creature permanents and creature tokens that enter under an opponent's control are tapped as they enter (the enter and tokens-enter events, t6_legends2.rs). Opponents' Treasure / Food / Clue tokens (counters here) still enter untapped (engine-needs-legends2.md)"
+
+["Ertai Resurrected"]
+status = "Partial"
+note = "flash 3/2. Counter a spell: the card's ctr=any tag makes the engine cast it in response like Mystic Snake, and its enter hook gives the spell's controller the card; destroy mode: the opponents' best creature or planeswalker when worth 3+, its controller draws (t6_legends2.rs). Countering an activated or triggered ability is written (ertai_answer, tested) but the engine does not call it yet (engine-needs-legends2.md)"
+
+["Legolas's Quick Reflexes"]
+dsl = []
+status = "Partial"
+note = "{G} instant: untap target creature, it gains reach and hexproof until end of turn (resolve hook; the AI holds the card, legolas_cast casts it as a response) (t6_legends2.rs). Missing: split second, and the 'whenever it becomes tapped, it deals damage equal to its power to up to one target creature' trigger (engine-needs-legends2.md)"
+
+["Colossal Skyturtle"]
+dsl = []
+status = "Full"
+note = "6/5 flying, ward {2} (card data); both channels from the hand through hand_options, in a main phase: {2}{G} returns the best graveyard card worth 40+ (only when the turtle itself can't be cast), {1}{U} bounces the opponents' best creature worth 5+ (t6_legends2.rs). The data's old battlefield 'discard' abilities are dropped"
+
+["Wan Shi Tong, Librarian"]
+status = "Partial"
+note = "flash, flying, vigilance 1/1; cast with X by a hand option in the end-of-turn window for all spare mana (X = mana - 2, 2 or more): X +1/+1 counters, then draw half X; the AI never casts it for X = 0 (t6_legends2.rs). The opponent-searches trigger (a counter and a card) is written (wan_shi_tong_searched, tested) but the engine has no search event to call it (engine-needs-legends2.md)"
