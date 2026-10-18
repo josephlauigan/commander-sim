@@ -1,0 +1,103 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), adaptive AI, 2 worker threads: about 50 seconds
+  progress  10.0%  0m00s elapsed, ~0m02s left
+  progress  20.0%  0m00s elapsed, ~0m01s left
+  progress  30.0%  0m00s elapsed, ~0m01s left
+  progress  40.0%  0m00s elapsed, ~0m01s left
+  progress  50.0%  0m01s elapsed, ~0m01s left
+  progress  60.0%  0m01s elapsed, ~0m00s left
+  progress  70.0%  0m01s elapsed, ~0m00s left
+  progress  80.0%  0m01s elapsed, ~0m00s left
+  progress  90.0%  0m02s elapsed, ~0m00s left
+  progress 100.0%  0m02s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== yshtola analysis [loose profile, adaptive AI, 2000 games] ===========
+Win rate 31.6%   (4-player baseline 25%)   average rounds survived 8.5
+
+-- How it wins --
+  damage      99.8% of wins
+  timeout      0.2% of wins
+  Opponents it eliminated: 0.74 per game, by
+    drain              45.8%
+    combat             26.8%
+    triggers           23.5%
+    other               3.2%
+    burn                0.6%
+  Damage dealt per game: 28.1, from
+    triggers            12.8  (45%)
+    combat               8.3  (29%)
+    drain                6.5  (23%)
+    burn                 0.6  (2%)
+
+-- How it loses --
+  Eliminated in 68.5% of games, on average in round 7.2
+    by Kinnan   via combo              21.2% of games
+    by Urza     via combo              12.2% of games
+    by Winota   via combo               9.6% of games
+    by Zur the Enchanter via combo               8.0% of games
+    by Winota   via combat              7.0% of games
+    by Yawgmoth via combo               5.5% of games
+    by Urza     via combat              1.8% of games
+    by Kinnan   via combat              0.7% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 7%  T5 26%  T6 41%  T7 50%  T8 55%  T9 58%  T10 60%  T11 61%  T12 61%
+  Online at all: 61.9% of games
+  Commander resolves on turn: median 5.0, mean 5.0 (over the 74.9% of games it resolves)
+  Commander resolved by turn:  T4 36%  T5 53%  T6 63%  T7 68%  T8 71%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Debt to the Deathless                      cast in  12.8% of games, win rate when cast  87.9% (+56.3)
+    Exsanguinate                               cast in  11.2% of games, win rate when cast  83.9% (+52.3)
+    Bolas's Citadel                            cast in   7.3% of games, win rate when cast  76.0% (+44.5)
+    Massacre Wurm                              cast in   5.8% of games, win rate when cast  74.4% (+42.8)
+    The Eternal Wanderer                       cast in   6.3% of games, win rate when cast  69.3% (+37.7)
+    Notion Thief                               cast in   6.0% of games, win rate when cast  68.6% (+37.0)
+    Smothering Tithe                           cast in  11.7% of games, win rate when cast  67.8% (+36.3)
+    Grand Arbiter Augustin IV                  cast in   5.7% of games, win rate when cast  66.7% (+35.1)
+    Gonti, Lord of Luxury                      cast in   9.0% of games, win rate when cast  66.1% (+34.6)
+    Dark Petition                              cast in   8.5% of games, win rate when cast  65.9% (+34.3)
+  Lowest win rate when cast:
+    Y'shtola, Night's Blessed                  cast in  77.7% of games, win rate when cast  40.0% (+8.5)
+    Prison Sentence                            cast in  18.6% of games, win rate when cast  43.2% (+11.6)
+    Luminous Bonds                             cast in  17.8% of games, win rate when cast  43.7% (+12.1)
+    Mystic Remora                              cast in  16.8% of games, win rate when cast  43.8% (+12.2)
+    Lightning Greaves                          cast in  19.7% of games, win rate when cast  43.9% (+12.4)
+    Chromatic Lantern                          cast in  13.1% of games, win rate when cast  45.4% (+13.9)
+    Arcane Signet                              cast in  17.6% of games, win rate when cast  45.5% (+13.9)
+    Thought Vessel                             cast in  16.1% of games, win rate when cast  45.7% (+14.1)
+    Bound in Silence                           cast in  17.6% of games, win rate when cast  45.9% (+14.3)
+    Path to Exile                              cast in  19.1% of games, win rate when cast  46.2% (+14.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Consecrated Sphinx                         cast  13.6% of the games it was drawn
+    Restoration Angel                          cast  24.9% of the games it was drawn [reactive: only cast in response]
+    Grand Arbiter Augustin IV                  cast  26.1% of the games it was drawn
+    Dovin's Veto                               cast  26.1% of the games it was drawn [reactive: only cast in response]
+    Massacre Wurm                              cast  26.1% of the games it was drawn
+    Notion Thief                               cast  27.7% of the games it was drawn
+    The Eternal Wanderer                       cast  28.2% of the games it was drawn
+    Polluted Bonds                             cast  30.6% of the games it was drawn
+    Bolas's Citadel                            cast  33.4% of the games it was drawn
+    Dark Petition                              cast  33.5% of the games it was drawn
+    Necropotence                               cast  35.5% of the games it was drawn
+    Gonti, Lord of Luxury                      cast  35.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.11
+    Dakkon, Shadow Slayer                      0.05
+    Sanguine Bond                              0.04
+    Esper Sentinel                             0.02
+    Thief of Sanity                            0.02
+    Mystic Remora                              0.01
+    Zur the Enchanter                          0.01
+    The Eternal Wanderer                       0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(2s total)

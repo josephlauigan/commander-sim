@@ -34,8 +34,8 @@ use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{card_name, epow, etgh, protected_from, pval, threat, untargetable};
 use crate::engine::zones::{Enter, die, discard_cards, draw, enter, max_by, min_by};
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Opt, Registry, Src};
+use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, aura, aura_spec, auras_on};
 use crate::pysum::PySum;
@@ -340,7 +340,11 @@ pub fn x_drain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// yshtola._x_option: the drain X spell as a main-phase play (your turn, your deck's AI)
 fn x_option(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || !hand_has(g, p, c) || !matches!(g.player(p).key, "yshtola" | "sheoldred" | "sauron") {
+    if post.is_none()
+        || g.active != Some(p)
+        || !hand_has(g, p, c)
+        || !matches!(g.player(p).key, "yshtola" | "sheoldred" | "sauron")
+    {
         return Ok(vec![]);
     }
     Ok(x_drain_option(g, p, c)
@@ -1075,23 +1079,28 @@ pub fn trigger_bonus(g: &Game, p: PlayerId, c: CardId) -> i32 {
     20.min((4.0 * v) as i32)
 }
 
-/// yshtola.yshtola_prio: the deck's cast priority (0-90). A float only for a card taken from an opponent (its
-/// ability-language value), so `ai::decks::deck_prio_f` keeps it as Python does.
+/// yshtola.yshtola_prio: the deck's cast priority (0-90). The deck's own rules (`yshtola_named_prio`) where they name
+/// the card; any other card (one taken from an opponent, or one swapped into the list) gets the pool AI's generic
+/// priority, else its ability-language value. A float only for that value, so `ai::decks::deck_prio_f` keeps it.
 pub fn yshtola_prio(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    yshtola_named_prio(g, p, c).unwrap_or_else(|| {
+        let v = generic_prio(g, p, c) as f64;
+        if v == 0.0 && g.db.get(c).has_dsl() { crate::dsl::card_value(g, p, c) * 10.0 } else { v }
+    })
+}
+
+/// the deck's own priority for the cards its rules name; None: no rule for this card
+pub fn yshtola_named_prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
+    const UNNAMED: i32 = i32::MIN;
     let pl = g.player(p);
     let d = g.db.get(c);
     let (t, n) = (&d.tags, &*d.name);
     let ysh = ysh_perm(g, p);
     if pl.stolen.contains_key(&c) {
-        // a card taken from an opponent
-        let v = generic_prio(g, p, c) as f64;
-        if v == 0.0 && d.has_dsl() {
-            return crate::dsl::card_value(g, p, c) * 10.0;
-        }
-        return v;
+        return None; // a card taken from an opponent
     }
     if c == pl.cmd {
-        return if pl.turns >= 2 { 90.0 } else { 60.0 };
+        return Some(if pl.turns >= 2 { 90.0 } else { 60.0 });
     }
     let b = trigger_bonus(g, p, c);
     let v: i32 = (|| {
@@ -1219,9 +1228,9 @@ pub fn yshtola_prio(g: &Game, p: PlayerId, c: CardId) -> f64 {
         if d.creature {
             return 40;
         }
-        0
+        UNNAMED
     })();
-    v as f64
+    (v != UNNAMED).then_some(v as f64)
 }
 
 // ------------------------------------------------------------------ the rigid AI's extra plays (ais.yshtola_main)
