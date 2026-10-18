@@ -437,8 +437,9 @@ fn found_a_line(g: &mut Game, p: PlayerId) -> Res<bool> {
         if let Some(i) = combos::combo_index(part)
             && combos::ready(g, p, i)
         {
-            combos::attempt(g, p, i as i64)?;
-            return Ok(true);
+            if combos::attempt(g, p, i as i64)? {
+                return Ok(true);
+            }
         }
     }
     crate::glog!(g, "    Ad Nauseam found no line it can pay for");
