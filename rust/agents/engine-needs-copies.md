@@ -41,3 +41,8 @@ Needs: "hexproof from activated and triggered abilities" (hexproof from a source
 Where it would hook: `engine/values.rs::untargetable` (reads the `hexproof` keyword as full hexproof) and its callers that know whether the source is a spell or an ability.
 Card side done: the exchange of control (reusing `marchesa::steal` both ways, so the opponent really gets the Drake), the four energy and paying energy equal to the mana value or sacrificing the creature.
 Test to add once the engine has it: a removal spell can target the Drake, an activated ability cannot.
+
+## Lead note (merge, 2026-10-17): undo the 1/1 stand-in stats
+Clever Impersonator, Phantasmal Image and Flesh Duplicate carry 1/1 in data/card_overrides.toml so they survive
+long enough for their enter hook to copy. Once the engine has an "as this enters, it becomes a copy" replacement,
+restore their printed 0/0 and drop the stand-in (and Clever Impersonator's stand-in firing its own enter triggers).
