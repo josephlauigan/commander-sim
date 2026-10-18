@@ -136,3 +136,16 @@ fn familiar_lets_oboro_run_on_one_mana() {
     hand(&mut g, P0, &["Sol Ring"]);
     assert_eq!(options(&mut g, o, P0, Some(false)).len(), 1);
 }
+
+// ======================================================== Training Grounds
+#[test]
+fn training_grounds_stacks_with_the_familiar_and_floors_at_one() {
+    use sim_core::impls::t6_green1::creature_ability_cost as cost;
+    let mut g = tbl();
+    perm(&mut g, P0, "Training Grounds");
+    assert_eq!(cost(&g, P0, 4), 2);
+    perm(&mut g, P0, "Biomancer's Familiar");
+    assert_eq!(cost(&g, P0, 4), 1, "{{2}} less twice would be {{0}}: floored at {{1}}");
+    assert_eq!(cost(&g, P0, 6), 2);
+    assert_eq!(cost(&g, PlayerId(2), 6), 6, "an opponent's creatures are not discounted");
+}

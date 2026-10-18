@@ -8518,3 +8518,7 @@ note = "2/2 body; whenever a creature of yours is tapped for mana, an additional
 ["Biomancer's Familiar"]
 status = "Partial"
 note = "2/2 body; activated abilities of your creatures cost {2} less (never under {1}) for Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), and its adapt ability (no adapt creature in the pool); see rust/agents/engine-needs-green1.md"
+
+["Training Grounds"]
+status = "Partial"
+note = "activated abilities of your creatures cost {2} less (never under {1}), stacking with Biomancer's Familiar, applied to Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), see rust/agents/engine-needs-green1.md"
