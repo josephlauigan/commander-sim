@@ -232,7 +232,11 @@ fn dack_flips_one_creature_per_opponent_and_gives_each_away_goaded() {
     let mut g = table(&["dack-fayden-white-stax", "seph", "sheoldred", "yshtola"]);
     g.active = Some(P0);
     // top of the library (the end) first: land, Serra Angel, land, Serra Angel, ...
-    stack_library(&mut g, P0, &["Grave Titan", "Serra Angel", "Plains", "Serra Angel", "Plains", "Serra Angel", "Plains"]);
+    stack_library(
+        &mut g,
+        P0,
+        &["Grave Titan", "Serra Angel", "Plains", "Serra Angel", "Plains", "Serra Angel", "Plains"],
+    );
     let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
     let mine: Vec<_> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.is_creature(m)).collect();
     assert_eq!(mine.len(), 1, "only Dack stays with his controller");
@@ -282,7 +286,12 @@ fn dack_pile_solar_and_preston_see_each_other_before_the_donation() {
     let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
     let room = g.player(P0).grudge.get(&sim_core::sym::intern("dungeon_room")).copied().unwrap_or(0.0);
     assert!(room >= 2.0, "Solar ventures for itself and the creatures that entered with it (got room {room})");
-    let ill = g.players.iter().flat_map(|pl| pl.perms.iter()).filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
+    let ill = g
+        .players
+        .iter()
+        .flat_map(|pl| pl.perms.iter())
+        .filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion"))
+        .count();
     assert!(ill >= 1, "Preston copies the creatures that entered with it");
 }
 

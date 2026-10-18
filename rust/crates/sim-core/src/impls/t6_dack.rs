@@ -16,23 +16,24 @@
 //! still its original controller's (CR 603.3a).
 
 use crate::cards::{CardDb, Colors, Types};
-use crate::engine::life::{gain, lose_life};
 use crate::engine::cast::cast_card;
+use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, cost_of, pay};
-use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::removal::apply_removal;
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{epow, once_per_turn, pval, threat, untargetable};
-use crate::engine::zones::{Enter, Tokens, die, enter, discard_cards, draw, enter_token_copy, exile_perm, make_tokens, max_by};
-use crate::sym::intern;
-use crate::impls::marchesa::steal;
-use crate::impls::t2::flicker_worth;
+use crate::engine::zones::{
+    Enter, Tokens, die, discard_cards, draw, enter, enter_token_copy, exile_perm, make_tokens, max_by,
+};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{WalkerAb, best_opp_creature, oring_exile, oring_return, walker};
+use crate::impls::marchesa::steal;
+use crate::impls::t2::flicker_worth;
 use crate::state::{Ctx, DataKey, Game, Val};
-
+use crate::sym::intern;
 
 // ================================================================== Fiend Hunter
 /// Full: "you may exile another target creature"; the exiled card returns under its owner's control when Fiend
@@ -59,10 +60,7 @@ fn has_sub(g: &Game, m: PermId, s: &str) -> bool {
 
 /// the ETB: exile up to one target non-Assassin creature until Stalker leaves the battlefield
 fn stalker_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m == src
-        && trigger_window(g, p, Some(src), "exile a non-Assassin creature", Some(5.0))?
-        && g.perm(src).on_bf
-    {
+    if m == src && trigger_window(g, p, Some(src), "exile a non-Assassin creature", Some(5.0))? && g.perm(src).on_bf {
         oring_exile(g, src, p, |g, x| !has_sub(g, x, "assassin"), false, true)?;
     }
     Ok(())
@@ -248,7 +246,8 @@ pub fn venture(g: &mut Game, p: PlayerId) -> Res {
         }
         2 => {
             crate::glog!(g, "    {} ventures: Goblin Lair (a 1/1 Goblin)", pname(g, p));
-            let spec = Tokens { color: Some(Colors::from_letters("R")), types: vec![intern("goblin")], ..Tokens::new(1, 1) };
+            let spec =
+                Tokens { color: Some(Colors::from_letters("R")), types: vec![intern("goblin")], ..Tokens::new(1, 1) };
             make_tokens(g, p, spec)?;
         }
         3 => {
@@ -259,7 +258,11 @@ pub fn venture(g: &mut Game, p: PlayerId) -> Res {
             gain(g, p, 1)?;
         }
         _ => {
-            crate::glog!(g, "    {} ventures: Temple of Dumathoin (draw a card); the dungeon is completed", pname(g, p));
+            crate::glog!(
+                g,
+                "    {} ventures: Temple of Dumathoin (draw a card); the dungeon is completed",
+                pname(g, p)
+            );
             g.player_mut(p).grudge.insert(room_key, 0.0);
             let k = intern("dungeons_completed");
             *g.player_mut(p).grudge.entry(k).or_insert(0.0) += 1.0;
@@ -323,7 +326,9 @@ fn illusions(g: &Game, p: PlayerId) -> Vec<PermId> {
         .perms
         .iter()
         .copied()
-        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && crate::engine::values::subtypes(g, m).contains(&"illusion"))
+        .filter(|&m| {
+            g.perm(m).on_bf && !g.perm(m).phased && crate::engine::values::subtypes(g, m).contains(&"illusion")
+        })
         .collect()
 }
 
@@ -513,7 +518,12 @@ fn gideon_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     if let Some(t) = best_opp_creature(g, p, |_| true) {
         let turns = g.player(p).turns as i64;
         g.perm_mut(t).data.set(DataKey::Dovin, Val::List(vec![Val::Player(p), Val::Int(turns)]));
-        crate::glog!(g, "    Gideon: damage {} would deal is prevented until {}'s next turn", g.perm(t).name, pname(g, p));
+        crate::glog!(
+            g,
+            "    Gideon: damage {} would deal is prevented until {}'s next turn",
+            g.perm(t).name,
+            pname(g, p)
+        );
     }
     Ok(())
 }
@@ -647,7 +657,13 @@ fn paladin_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Playe
     if !once_per_turn(g, p, key) {
         return Ok(atk.to_vec());
     }
-    let all: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).tapped && atk.contains(&m)).collect();
+    let all: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && g.perm(m).tapped && atk.contains(&m))
+        .collect();
     let all = if all.is_empty() { atk.to_vec() } else { all };
     if let Some(t) = max_by(&all, |m| epow(g, m) as f64)
         && trigger_window(g, p, Some(src), "an attacker gets +1/+1 per other attacker and double strike", Some(4.0))?
