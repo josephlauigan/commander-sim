@@ -34,7 +34,7 @@ const IORETH: &str = "Ioreth of the Healing House";
 const MARVIN: &str = "Marvin, Murderous Mimic";
 
 /// "You may activate abilities of creatures you control as though those creatures had haste": p controls Shang-Chi or
-/// Tyvar. (Shared engine code that checks summoning sickness does not call this yet: engine-needs-legends1b.md.)
+/// Tyvar. (Called by the mana-source collection in engine/mana.rs and by the card `can_tap` checks.)
 pub fn ability_haste(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| live(g, m) && matches!(name_of(g, m), SHANG | TYVAR))
 }

@@ -424,13 +424,18 @@ pub fn bestow_fall(g: &mut Game, m: PermId) -> Res {
 }
 
 // ======================================================== Elvish Spirit Guide; special mana units
-/// partials.hand_mana: mana from cards in hand (Elvish Spirit Guide: exiled for {G})
+/// Cards that can be exiled from hand for one mana of a colour (card name, colour letter): the Spirit Guides.
+const HAND_MANA: &[(&str, &str)] = &[("Elvish Spirit Guide", "G"), ("Simian Spirit Guide", "R")];
+
+/// partials.hand_mana: mana from cards in hand exiled as the cost (data-driven: `HAND_MANA`)
 pub fn hand_mana(g: &Game, p: PlayerId) -> Vec<Unit> {
     g.player(p)
         .hand
         .iter()
-        .filter(|&&c| &*g.db.get(c).name == "Elvish Spirit Guide")
-        .map(|&c| Unit { src: Source::HandCard(c), cols: Colors::from_letters("G"), amt: 1 })
+        .filter_map(|&c| {
+            let n = &*g.db.get(c).name;
+            HAND_MANA.iter().find(|h| h.0 == n).map(|h| Unit { src: Source::HandCard(c), cols: Colors::from_letters(h.1), amt: 1 })
+        })
         .collect()
 }
 
@@ -3163,6 +3168,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::Upkeep, false);
     c.prio = Some(draco_prio);
     r.card(db, "Elvish Spirit Guide")?.prio = Some(prio_0);
+    r.card(db, "Simian Spirit Guide")?.prio = Some(prio_0);
     let c = r.card(db, "Enter the Infinite")?;
     c.resolve = Some(eti);
     c.prio = Some(prio_70);

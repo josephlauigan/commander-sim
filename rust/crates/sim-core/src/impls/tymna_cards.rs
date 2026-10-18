@@ -71,6 +71,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     if p != owner(g, src) || g.perm(src).phased {
         return Ok(vec![]);
     }
+    let cost = crate::impls::t6_green1::creature_ability_cost(g, p, 4); // Training Grounds, Biomancer's Familiar
     let (u, when) = match post {
         None => (3.0, "eot"),
         Some(true) if g.active == Some(p) => (-2.0, "main2"),
@@ -79,7 +80,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     if crate::engine::values::once_per_turn(g, p, crate::sym::intern(&format!("ty_th_f_{when}"))) {
         g.player_mut(p).stat(crate::sym::intern(&format!("ty_th_turns_{when}")), 1);
     }
-    if !can_pay(g, p, 4, "", false) || g.player(p).library.len() < 3 {
+    if !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 {
         return Ok(vec![]);
     }
     if when == "main2" {
@@ -92,7 +93,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
             .map(|&c| g.db.get(c).cmc)
             .min()
             .unwrap_or(0);
-        if crate::engine::mana::total_mana(g, p, false) < 4 + keep {
+        if crate::engine::mana::total_mana(g, p, false) < cost + keep {
             return Ok(vec![]);
         }
     }
@@ -103,11 +104,12 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
 }
 
 fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !g.perm(src).on_bf || !can_pay(g, p, 4, "", false) || g.player(p).library.len() < 3 {
+    let cost = crate::impls::t6_green1::creature_ability_cost(g, p, 4);
+    if !g.perm(src).on_bf || !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 {
         return Ok(false);
     }
     g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
-    pay(g, p, 4, "", false)?;
+    pay(g, p, cost, "", false)?;
     if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
         return Ok(true);
     }
