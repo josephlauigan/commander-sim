@@ -13,7 +13,7 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{epow, etgh};
 use crate::engine::values::{pval, untargetable};
-use crate::engine::zones::{die, max_by};
+use crate::engine::zones::max_by;
 use crate::flow::Res;
 use crate::hooks::{Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -363,9 +363,6 @@ fn confluence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<
                 super::common::eot(g, m, 3, -3);
             }
             crate::glog!(g, "    {} gets +{}/-{} (Eldrazi Confluence)", g.perm(m).name, 3 * k, 3 * k);
-            if etgh(g, m) <= 0 {
-                die(g, m, "sba")?; // toughness 0 or less: no regeneration
-            }
         }
     }
     // the rest: blink our best enters-effect permanents, else Scions
