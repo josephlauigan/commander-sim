@@ -14,13 +14,14 @@
 //! - Emrakul, the Promised End: costs {1} less per card type in your graveyard (`self_cost`); control of an opponent's turn, the extra turn and protection from instants are engine needs.
 //! - Silas Renn: the combat damage trigger marks the best artifact card in the graveyard for the turn (a per-player turn flag); an option casts it from the graveyard in a main phase.
 //! - Hidden Strings: untaps two of its own tapped mana sources (else taps down two opposing creatures); cipher is an engine need.
+//! - Valley Floodcaller: the cast trigger pumps and untaps its Birds, Frogs, Otters and Rats; the noncreature flash is `static_flash`.
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{pval, untargetable};
+use crate::engine::values::{has_type, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, discard_cards, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -521,8 +522,40 @@ fn strings_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
 }
 
 
+// ================================================================== Valley Floodcaller
+/// Valley Floodcaller: whenever you cast a noncreature spell, Birds, Frogs, Otters and Rats you control get +1/+1
+/// until end of turn and untap. (The flash for noncreature spells is `static_flash`; flash itself is data.)
+fn floodcaller_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let o = g.perm(src).owner;
+    if caster != o || g.db.get(c).creature {
+        return Ok(());
+    }
+    let mine: Vec<PermId> = g
+        .player(o)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            g.perm(m).on_bf
+                && !g.perm(m).phased
+                && ["bird", "frog", "otter", "rat"].iter().any(|t| has_type(g, m, t))
+        })
+        .collect();
+    if mine.is_empty() || !trigger_window(g, o, Some(src), "Birds, Frogs, Otters and Rats get +1/+1 and untap", Some(2.0))? {
+        return Ok(());
+    }
+    for m in mine {
+        let x = g.perm_mut(m);
+        x.eot_pt = (x.eot_pt.0 + 1, x.eot_pt.1 + 1);
+        x.tapped = false;
+    }
+    Ok(())
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Valley Floodcaller")?.cast = Some(floodcaller_cast);
     let c = r.card(db, "Hidden Strings")?;
     c.resolve = Some(strings_resolve);
     c.prio = Some(strings_prio);

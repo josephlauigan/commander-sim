@@ -8725,3 +8725,7 @@ note = "2/2 deathtouch artifact creature; its own combat damage to a player mark
 ["Hidden Strings"]
 status = "Partial"
 note = "tap or untap up to two targets: the AI untaps two of its tapped mana sources (rocks and dorks first, then lands) or else taps down the two best opposing creatures, and casts it when three or more mana sources are tapped; missing: cipher (encoding the card on a creature for a free copy on combat damage) -- the card goes to the graveyard (engine need)"
+
+["Valley Floodcaller"]
+status = "Partial"
+note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otters and Rats get +1/+1 until end of turn and untap (tested); the 'cast noncreature spells as though they had flash' static is t6_blue::static_flash; missing: the engine does not read it yet (engine need: permanent-based flash grant)"

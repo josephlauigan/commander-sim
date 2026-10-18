@@ -378,3 +378,32 @@ fn hidden_strings_taps_down_opposing_creatures_when_nothing_of_ours_is_tapped() 
     let tapped = [a, b, c].iter().filter(|&&m| g.perm(m).tapped).count();
     assert_eq!(tapped, 2, "up to two permanents are tapped");
 }
+
+// ======================================================== Valley Floodcaller
+#[test]
+fn valley_floodcaller_pumps_and_untaps_its_birds_frogs_otters_and_rats() {
+    let mut g = game();
+    let fl = perm(&mut g, P0, "Valley Floodcaller"); // an Otter
+    let bird = perm(&mut g, P0, "Birds of Paradise");
+    let titan = perm(&mut g, P0, "Grave Titan"); // a Giant: unaffected
+    for m in [fl, bird, titan] {
+        g.perm_mut(m).tapped = true;
+    }
+    let (fp, tp) = (g.perm(fl).eot_pt, g.perm(titan).eot_pt);
+    cast_free(&mut g, P0, "Opt");
+    assert!(!g.perm(fl).tapped && !g.perm(bird).tapped, "untapped");
+    assert_eq!(g.perm(fl).eot_pt, (fp.0 + 1, fp.1 + 1), "+1/+1 until end of turn");
+    assert_eq!(g.perm(bird).eot_pt.0, 1);
+    assert!(g.perm(titan).tapped && g.perm(titan).eot_pt == tp, "other creatures are left alone");
+}
+
+#[test]
+fn valley_floodcaller_ignores_creature_spells_and_grants_noncreature_flash() {
+    let mut g = game();
+    let fl = perm(&mut g, P0, "Valley Floodcaller");
+    g.perm_mut(fl).tapped = true;
+    cast_free(&mut g, P0, "Drift of Phantasms");
+    assert!(g.perm(fl).tapped, "a creature spell does nothing");
+    assert!(t6::static_flash(&g, P0, false), "noncreature spells have flash");
+    assert!(!t6::static_flash(&g, P0, true), "creature spells do not (it has flash itself)");
+}
