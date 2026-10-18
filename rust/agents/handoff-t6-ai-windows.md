@@ -10,3 +10,4 @@ Started 2026-10-18. Task `windows` in rust/agents/t6-ai.md.
 - built OK; running after sims -> /tmp/claude-1000/t6ai-windows/new-godo.txt, new-t6.txt
 - tests/ai_t6_windows.rs written; building+running it
 - tests pass (4). now: rebuild, rerun godo+t6 after (new-*.txt), t3 lock, full tests, report
+- after sims done (new-godo/new-t6). running t3 lock then full tests, then report
