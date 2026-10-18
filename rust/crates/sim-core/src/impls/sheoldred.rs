@@ -529,6 +529,12 @@ fn necro_prio(g: &Game, p: PlayerId) -> i32 {
     (55 + 3 * fodder.min(3) + if engine { 6 } else { 0 }).min(70)
 }
 
+/// Memory Jar: cast it to crack at once. With Sheoldred (or Dreams / Unraveler) out, both draws of seven punish every
+/// opponent; without a punisher it is only a burst of temporary cards, so it waits behind the real plays
+fn jar_prio(g: &Game, p: PlayerId) -> i32 {
+    if draw_toll(g, p) > 0 { 82 } else { 38 }
+}
+
 // ------------------------------------------------------------------ Callous Inspector
 /// when it dies it deals 1 damage to you and you create a Clue
 fn inspector_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
@@ -1406,6 +1412,7 @@ pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             if kill { 66 } else { 34 }
         }
         "Perigee Beckoner" => 52,
+        "Memory Jar" => jar_prio(g, p),
         "Necrosquito" => necro_prio(g, p),
         ROOFTOP => rooftop_prio(g, p),
         SEIZAN => seizan_prio(g, p),

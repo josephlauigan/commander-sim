@@ -387,7 +387,7 @@ fn arachno_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym>
 }
 
 /// the AI at its declare-attackers priority (`ai::brain::attack_response`): Arachnogenesis when the attack would take a
-/// third of its life or more
+/// fifth of its life or more, or three attackers, or 12 damage
 pub fn attack_fog(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
     let Some(c) = in_hand(g, d, ARACHNO) else { return Ok(false) };
     if g.fog == Some(g.turn_stamp()) || g.fog_spiders == Some(g.turn_stamp()) {
@@ -398,7 +398,8 @@ pub fn attack_fog(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res
         mine.iter().map(|&m| epow(g, m) * if crate::engine::combat::double_strike(g, m) { 2 } else { 1 }).sum();
     let life = g.player(d).life;
     let cmd_threat = mine.iter().any(|&m| g.perm(m).is_cmd && g.player(d).cmd_dmg[p.index()] + epow(g, m) >= 21);
-    if incoming * 3 < life && !cmd_threat && incoming < life {
+    // a fifth of the life, three or more attackers (three Spider blockers and a fogged turn) or a 12-point swing
+    if incoming * 5 < life && mine.len() < 3 && incoming < 12 && !cmd_threat && incoming < life {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, d, c);
@@ -689,6 +690,36 @@ pub fn titania_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         _ => base,
     }
+}
+
+/// Worldly Tutor's creature for Titania's plan (the creature goes on top, so it is the next draw): a mana creature
+/// while the lands are few, then a land-finder or a graveyard filler while Titania is a turn or two away, and the big
+/// bodies once she is out or the mana is there. End-Raze Forerunners is not a pick (it is cast only for lethal).
+pub fn worldly_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
+    let pl = g.player(p);
+    let first = |ns: &[&str]| ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c));
+    let mana = pl.lands.len()
+        + pl.perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Dork))).count();
+    let fetch_in_gy = pl.gy.iter().any(|&x| g.db.get(x).land && is_fetch(g, x));
+    if titania_of(g, p).is_none() && mana < 5 {
+        if mana <= 3 {
+            let ramp = first(&["Llanowar Elves", "Paradise Druid", "Bugenhagen, Wise Elder", "Silhana Starfletcher"]);
+            if ramp.is_some() {
+                return ramp;
+            }
+        }
+        // land-finders for the fifth mana, then the graveyard filler when no fetch land waits there
+        if let Some(c) = first(&["Fblthp, Knows the Way", "Studious First-Year", "Spider-Man, Brooklyn Visionary"]) {
+            return Some(c);
+        }
+        if !fetch_in_gy
+            && let Some(c) = first(&["Satyr Wayfinder"])
+        {
+            return Some(c);
+        }
+        return first(&["Boughside Wanderers", "Topiary Lecturer", "Hardbristle Bandit"]);
+    }
+    first(&["Ghalta the Unstoppable", "Annoyed Altisaur", "Cactarantula", "Genesis Hydra", "Kura, the Boundless Sky"])
 }
 
 /// the deck's own plays outside any card's slots (`ai::brain::special_options`): crack the fetch lands held back, now

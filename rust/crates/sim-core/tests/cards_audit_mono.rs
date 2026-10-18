@@ -109,3 +109,76 @@ fn fblthp_costs_x_gg_and_fetches_one_forest() {
 fn cast_hand_existing(g: &mut Game, c: CardId) {
     cast::cast_card(g, P0, c, "hand", Ctx::default()).unwrap();
 }
+
+#[test]
+fn ad_nauseam_for_sheoldred_also_goes_off_in_its_own_second_main() {
+    use sim_core::ai::plans;
+    use sim_core::state::Step;
+    let mut g = table(&["sheoldred", "seph"]);
+    g.active = Some(P0);
+    g.step = Step::Main1;
+    assert!(!plans::adnaus_cast_now(&g, P0));
+    g.step = Step::Main2;
+    assert!(plans::adnaus_cast_now(&g, P0), "empty hand: room for four");
+    let mut g2 = table(&["seph", "sheoldred"]);
+    g2.active = Some(P0);
+    g2.step = Step::Main2;
+    assert!(!plans::adnaus_cast_now(&g2, P0), "other decks keep waiting for the opposing end step");
+}
+
+#[test]
+fn memory_jar_waits_for_a_punisher() {
+    let mut g = table(&["sheoldred", "seph"]);
+    let c = hand(&mut g, P0, &["Memory Jar"])[0];
+    assert!(sheoldred_prio(&g, P0, c) < 45);
+    perm(&mut g, P0, "Sheoldred, the Apocalypse");
+    assert!(sheoldred_prio(&g, P0, c) > 80);
+}
+
+#[test]
+fn dark_deal_is_allowed_with_three_other_cards() {
+    use sim_core::hooks::Action;
+    let mut g = table(&["sheoldred", "seph"]);
+    perm(&mut g, P0, "Sheoldred, the Apocalypse");
+    lands(&mut g, P0, "Swamp", 3, false);
+    g.active = Some(P0);
+    g.player_mut(P1).hand = (0..5).map(|_| card(&g, "Terror")).collect();
+    let d = hand(&mut g, P0, &["Dark Deal", "Terror", "Terror", "Terror"])[0];
+    let f = g.registry.get(d).unwrap().hand_options.unwrap();
+    let opts = f(&mut g, d, P0, Some(false)).unwrap();
+    assert_eq!(opts.len(), 1);
+    assert!(matches!(opts[0].act, Some(Action::Plan { .. })));
+    hand(&mut g, P0, &["Terror"]);
+    assert!(f(&mut g, d, P0, Some(false)).unwrap().is_empty(), "four other cards: too many to throw away");
+}
+
+#[test]
+fn worldly_tutor_fetches_a_mana_creature_early_and_a_big_body_late() {
+    use sim_core::ai::decks::tutor_pick_named;
+    let mut g = table(&["titania", "seph"]);
+    lands(&mut g, P0, "Forest", 2, false);
+    let early = tutor_pick_named(&g, P0, "cre").unwrap();
+    assert!(
+        matches!(&*g.db.get(early).name, "Llanowar Elves" | "Paradise Druid" | "Bugenhagen, Wise Elder" | "Silhana Starfletcher"),
+        "got {}",
+        g.db.get(early).name
+    );
+    lands(&mut g, P0, "Forest", 5, false);
+    let late = tutor_pick_named(&g, P0, "cre").unwrap();
+    assert!(matches!(&*g.db.get(late).name, "Ghalta the Unstoppable" | "Annoyed Altisaur" | "Cactarantula"));
+}
+
+#[test]
+fn arachnogenesis_answers_three_small_attackers() {
+    use sim_core::impls::titania::attack_fog;
+    let mut g = table(&["titania", "seph"]);
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Arachnogenesis"]);
+    let atk: Vec<PermId> = (0..3).map(|_| token(&mut g, P1, 1)).collect();
+    assert!(attack_fog(&mut g, P0, P1, &atk).unwrap());
+    let mut g = table(&["titania", "seph"]);
+    lands(&mut g, P0, "Forest", 3, false);
+    hand(&mut g, P0, &["Arachnogenesis"]);
+    let atk: Vec<PermId> = (0..2).map(|_| token(&mut g, P1, 1)).collect();
+    assert!(!attack_fog(&mut g, P0, P1, &atk).unwrap(), "two 1-power attackers against 40 life: held");
+}

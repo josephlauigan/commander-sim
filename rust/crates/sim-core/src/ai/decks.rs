@@ -758,6 +758,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             }
             None
         }
+        "titania" if kind == "cre" => crate::impls::titania::worldly_pick(g, p, &okn),
         "sauron" => {
             let sw = held(Tag::Sword);
             let asl = held(Tag::Assault);
