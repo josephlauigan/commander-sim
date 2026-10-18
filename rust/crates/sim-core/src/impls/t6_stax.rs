@@ -6,9 +6,11 @@
 //!
 //! - Silence, Orim's Chant, Mandate of Peace: the target player(s) get a turn flag (`cast_lock`) the engine reads, and
 //!   today a stand-in the engine already reads: `Player::hope_lock` (no noncreature spells that turn).
+//! - Orim's Chant also sets `stax_no_attack` when kicked (`attack_lock`).
 //! - Angel's Grace: the turn flag `grace_active`.
 
 use crate::cards::CardDb;
+use crate::engine::zones::max_by;
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{CardId, PlayerId};
@@ -60,9 +62,38 @@ fn silence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
     Ok("gy")
 }
 
+
+/// the turn flag a kicked Orim's Chant sets on its caster: creatures can't attack this turn (the engine's attack
+/// declaration should return no attackers for anyone while it is set)
+pub fn attack_lock(g: &Game) -> bool {
+    g.players.iter().any(|q| flag_now(g, q.id, "stax_no_attack"))
+}
+
+/// **Orim's Chant** ({W} instant, kicker {W}): target player can't cast spells this turn; if kicked, creatures can't
+/// attack this turn. The target is the face the spell was aimed at, else the opponent with the most cards in hand.
+/// Partial: like Silence the lock is a noncreature stand-in; the kicker needs the engine to offer and pay it (a
+/// kicked cast sets `ctx.kicks`, which nothing does yet), and the no-attack rule needs an attack check
+/// (engine-needs-stax.md). Kicked, the flag `attack_lock` is set. The AI never casts it (priority 0).
+fn chant_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let target = ctx.face.or_else(|| max_by(&opps, |o| g.player(o).hand.len() as f64));
+    if let Some(t) = target {
+        lock_player(g, t);
+        crate::glog!(g, "    {} can't cast spells this turn (Orim's Chant)", pname(g, t));
+    }
+    if ctx.kicks > 0 {
+        set_flag(g, p, "stax_no_attack");
+        crate::glog!(g, "    creatures can't attack this turn (kicked Orim's Chant)");
+    }
+    Ok("gy")
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Silence")?;
     c.resolve = Some(silence_resolve);
+    c.prio = Some(never_prio);
+    let c = r.card(db, "Orim's Chant")?;
+    c.resolve = Some(chant_resolve);
     c.prio = Some(never_prio);
     Ok(())
 }

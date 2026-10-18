@@ -62,3 +62,40 @@ fn silence_ends_with_the_turn() {
     g.player_mut(P0).turns += 1; // the next turn of the same player
     assert!(can_cast(&g, P1, "Lightning Bolt"), "next turn it is over");
 }
+
+// ======================================================== Orim's Chant
+fn resolve_at(g: &mut Game, p: PlayerId, name: &str, ctx: &sim_core::state::Ctx) {
+    let c = card(g, name);
+    let f = g.registry.get(c).unwrap().resolve.unwrap();
+    f(g, p, c, ctx).unwrap();
+}
+
+#[test]
+fn chant_locks_only_its_target() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    let ctx = sim_core::state::Ctx { face: Some(P1), ..Default::default() };
+    resolve_at(&mut g, P0, "Orim's Chant", &ctx);
+    assert!(!can_cast(&g, P1, "Lightning Bolt"), "the target can't cast");
+    assert!(can_cast(&g, PlayerId(2), "Lightning Bolt"), "the other opponents can");
+    assert!(can_cast(&g, P0, "Lightning Bolt"));
+    assert!(!sim_core::impls::t6_stax::attack_lock(&g), "unkicked: attacks are allowed");
+}
+
+#[test]
+fn kicked_chant_also_stops_attacks() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    let ctx = sim_core::state::Ctx { face: Some(P1), kicks: 1, ..Default::default() };
+    resolve_at(&mut g, P0, "Orim's Chant", &ctx);
+    assert!(sim_core::impls::t6_stax::attack_lock(&g));
+}
+
+#[test]
+fn chant_without_a_target_picks_the_opponent_with_most_cards() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    hand(&mut g, PlayerId(2), &["Sol Ring", "Mana Vault", "Lightning Bolt"]);
+    resolve_at(&mut g, P0, "Orim's Chant", &Default::default());
+    assert!(sim_core::impls::t6_stax::cast_lock(&g, PlayerId(2)));
+}
