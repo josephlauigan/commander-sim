@@ -26,6 +26,9 @@ pub enum AiMode {
 /// (audit/ramp/2026-10-15)
 pub const RAMP_W: f64 = 0.0;
 
+/// the default hold weight (see `Search::hold_w`)
+pub const HOLD_W: f64 = 1.0;
+
 #[derive(Debug, Clone)]
 pub struct Search {
     pub rollouts: u32,
@@ -35,6 +38,9 @@ pub struct Search {
     /// the look-ahead's bonus for casting early ramp, per mana per own turn left (`search::ramp_bonus`); 0: no
     /// bonus (the old search). Env SEARCH_RAMP_W overrides the default for A/B runs
     pub ramp_w: f64,
+    /// the look-ahead's bonus for holding mana up (the "stop (hold mana)" line), times the heuristic's hold value
+    /// (`search::hold_bonus`); 0: no bonus (the old search). Env SEARCH_HOLD_W overrides the default for A/B runs
+    pub hold_w: f64,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -54,6 +60,11 @@ impl Default for Search {
                 .filter(|v| !v.is_empty())
                 .map(|v| v.parse().unwrap_or_else(|_| panic!("bad SEARCH_RAMP_W {v:?}")))
                 .unwrap_or(RAMP_W),
+            hold_w: std::env::var("SEARCH_HOLD_W")
+                .ok()
+                .filter(|v| !v.is_empty())
+                .map(|v| v.parse().unwrap_or_else(|_| panic!("bad SEARCH_HOLD_W {v:?}")))
+                .unwrap_or(HOLD_W),
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,
@@ -85,10 +96,11 @@ impl Settings {
             Profile::Conservative => (7, 7, 2),
             Profile::Loose => (6, 6, 0),
         };
-        let mut cthresh: HashMap<String, i32> = ["veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "titania", "sheoldred", "cloud"]
-            .iter()
-            .map(|k| (k.to_string(), mine))
-            .collect();
+        let mut cthresh: HashMap<String, i32> =
+            ["veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "titania", "sheoldred", "cloud"]
+                .iter()
+                .map(|k| (k.to_string(), mine))
+                .collect();
         cthresh.insert("seph".into(), 6);
         Settings {
             profile,

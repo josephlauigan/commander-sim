@@ -661,3 +661,47 @@ fn yshtola_plays_whole_games() {
     assert_eq!(games, 30);
     assert!(triggers > 0, "Y'shtola never triggered");
 }
+
+// ------------------------------------------------------------------ cards her rules don't name use the generic priority
+#[test]
+fn a_card_her_rules_dont_name_gets_the_generic_priority_not_zero() {
+    let mut g = three();
+    let c = take(&mut g, P0, "Ad Nauseam");
+    assert_eq!(ysh_mod::yshtola_named_prio(&g, P0, c), None, "her rules don't name Ad Nauseam");
+    // 40 life and an empty table: about 12 cards of margin, worth casting
+    assert!(ysh_mod::yshtola_prio(&g, P0, c) > 0.0);
+    // at 15 life the margin is under four cards: held
+    g.player_mut(P0).life = 15;
+    assert_eq!(ysh_mod::yshtola_prio(&g, P0, c), 0.0);
+}
+
+#[test]
+fn the_cards_of_her_list_her_rules_dont_name() {
+    // these fall through to the generic priority (before 2026-10-17 they were never cast by priority: 0)
+    let g = three();
+    let mut unnamed: Vec<String> = g
+        .player(P0)
+        .deck_names
+        .iter()
+        .filter(|&&c| !g.db.get(c).land && ysh_mod::yshtola_named_prio(&g, P0, c).is_none())
+        .map(|&c| g.db.get(c).name.to_string())
+        .collect();
+    unnamed.sort();
+    unnamed.dedup();
+    for n in &unnamed {
+        let c = g.db.id(n).unwrap();
+        println!("UNNAMED {n}: {}", ysh_mod::yshtola_prio(&g, P0, c));
+    }
+    let want = [
+        "Anguished Unmaking",
+        "Austere Command",
+        "Dakkon, Shadow Slayer",
+        "Dovin's Veto",
+        "Fatal Push",
+        "Generous Gift",
+        "Go for the Throat",
+        "Path to Exile",
+        "Your Fate Ends Here",
+    ];
+    assert_eq!(unnamed, want);
+}

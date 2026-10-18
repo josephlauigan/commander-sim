@@ -1,0 +1,97 @@
+Model status of the swapped-in cards (cardgen audit):
+  Ad Nauseam: Full (reveal the top card, put it in hand, lose life equal to its mana value; repeats while life stays above about 25 (cast at the end of an opponent's turn when possible))
+
+6,000 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 6 worker threads: about 50 minutes
+  progress  10.0%  2m30s elapsed, ~22m34s left
+  progress  20.0%  4m53s elapsed, ~19m34s left
+  progress  30.0%  7m16s elapsed, ~16m58s left
+Swaps: Hallway Heckler -> Ad Nauseam
+
+=== Kefka vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.9% ->  27.4%  (delta +0.5 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Aurelia 23.2%  Tergrid 24.2%  Korvold 6.5%  Atraxa 8.1%  Marwyn 10.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.9% ->  27.4%  +0.5pt   ±4.0 
+    Rounds survived (or game length)                  10.80 ->  10.87   +0.07  ±0.27 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.57 ->   0.56   -0.01  ±0.07 
+    Mana available on your turn 4                      3.90 ->   3.90   +0.00  ±0.07 
+    Mana available on your turn 6                      5.41 ->   5.47   +0.06  ±0.12 
+
+  Speed
+    Games where the game plan came online             33.7% ->  33.9%  +0.2pt   ±4.2 
+    Turn the game plan came online                    10.69 ->  10.58   -0.10  ±0.38 
+    Turn the commander first resolved                  6.10 ->   6.08   -0.03  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            30.38 ->  30.16   -0.22  ±1.89 
+    Tutors resolved per game                           1.35 ->   1.31   -0.03  ±0.11 
+    Spells cast per game                              15.78 ->  15.93   +0.15  ±0.89 
+
+  Interaction
+    Counterspells cast                                 0.20 ->   0.20   -0.00  ±0.04 
+    Spot removal cast                                  1.70 ->   1.78   +0.07  ±0.12 
+    Board wipes cast                                   0.07 ->   0.08   +0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.36 ->   0.35   -0.01  ±0.06 
+    Your spells countered                              0.13 ->   0.12   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                30.13 ->  30.69   +0.56  ±2.65 
+      ...of which combat damage                       12.15 ->  12.19   +0.03  ±1.21 
+      ...of which magecraft / burn                     2.78 ->   2.91   +0.13  ±0.56 
+      ...of which drain triggers                      12.96 ->  13.30   +0.34  ±1.59 
+      ...of which other triggers                       2.24 ->   2.30   +0.06  ±0.75 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ad Nauseam                            44.6       3.4         8.5     96.6       20.0      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hallway Heckler                       40.4      56.7         7.5     43.3       26.6      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.9      27.4     +0.5
+    rounds survived                                  10.80     10.87    +0.07
+    eliminated, % of games                            73.0      72.1     -0.9
+    opponents it eliminated, per game                 0.71      0.72    +0.01
+    damage dealt, per game                            30.1      30.7     +0.6
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.4       0.5     +0.1
+      plan online by turn 8, %                         6.3       7.5     +1.2
+      plan online by turn 12, %                       26.3      27.0     +0.7
+      plan online at all, %                           33.7      33.9     +0.2
+    commander resolved by turn 4, %                   14.1      14.4     +0.3
+    commander resolved by turn 6, %                   57.5      58.9     +1.4
+    commander removals, per game                      0.25      0.24    -0.01
+    lands on the battlefield, turn 4                  3.70      3.70    +0.00
+    lands on the battlefield, turn 8                  6.56      6.61    +0.05
+    mana available, turn 4                            3.90      3.90    +0.00
+    mana available, turn 8                            6.83      6.88    +0.06
+    cards in hand after the land drop, turn 4         5.71      5.73    +0.02
+    cards in hand after the land drop, turn 8         5.60      5.55    -0.04
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 20.5%, Tergrid via combat 14.5%, Marwyn via combat 9.8%, Atraxa via combat 6.2%
+    eliminated by (swapped): Aurelia via combat 19.7%, Tergrid via combat 15.8%, Marwyn via combat 9.9%, Atraxa via combat 6.7%
+  progress  40.0%  9m39s elapsed, ~14m28s left
