@@ -26,7 +26,7 @@ rust/target/release/commander-practice --lan               # a friend on the sam
 rust/target/release/commander-practice --text --deck sauron --tier t3 [--step]   # the terminal client
 ```
 
-Other options: `--data DIR` (the card data folder, default `data/`), `--static DIR` (the page, default `rust/crates/practice/static/`), and for `--text` also `--seed`, `--seat`, `--opponents A,B,C`, `--profile` and `--ai`. Saves go to `data/saves/` and card images to `data/images/` (neither is in git).
+Other options: `--data DIR` (the card data folder, default `data/`), `--static DIR` (the page, default `rust/crates/practice/static/`), and for `--text` also `--seed`, `--seat`, `--opponents A,B,C`, `--profile` and `--ai`. Saves go to `data/saves/` and card images to `data/images/` (neither is in git). Your decks' cards show the printings in `data/printings/<deck>.txt` (in git; written by `cardgen deck` from a list with set codes): each seat sees its own deck's version of a card, a stolen permanent keeps its owner's, and several printings of one basic land take turns across the copies. Other decks, and cards without a printing, show Scryfall's usual printing.
 
 ## Screens
 

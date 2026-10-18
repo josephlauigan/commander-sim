@@ -6,7 +6,7 @@ use super::api::{Info, SessionApi, SessionFactory};
 use super::http::safe_join;
 use super::lan::lan_addresses;
 use crate::catalog::MY_DECKS;
-use crate::images::Images;
+use crate::images::{Images, load_printings};
 use serde_json::{Map, Value, json};
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -48,6 +48,8 @@ pub struct State {
     /// seat -> the latest view of the table from that seat
     views: HashMap<String, Value>,
     images: Value,
+    /// deck key -> card name -> the image files of each copy (the decks with data/printings/<key>.txt)
+    printed: Value,
     tools: Map<String, Value>,
     /// browser cookie -> the seat it plays in this game
     tokens: HashMap<String, String>,
@@ -123,7 +125,7 @@ fn obj(v: &Value) -> Map<String, Value> {
 
 impl Hub {
     pub fn new(lan: bool, app: bool, saves: PathBuf, images: Images, factory: Arc<dyn SessionFactory>) -> Arc<Hub> {
-        let st = State { images: json!({}), next_proposal: 1, next_id: 1, ..Default::default() };
+        let st = State { images: json!({}), printed: json!({}), next_proposal: 1, next_id: 1, ..Default::default() };
         Arc::new(Hub {
             lan,
             app,
@@ -167,6 +169,7 @@ impl Hub {
             st.pending.clear();
             st.views.clear();
             st.images = json!({});
+            st.printed = json!({});
             let t = &opts["tools"];
             st.tools = ["hint", "undo", "compare"]
                 .iter()
@@ -191,21 +194,28 @@ impl Hub {
 
     /// the loading screen: card images for this game's decks, then the game starts
     fn load_images(self: &Arc<Self>, sess: Arc<dyn SessionApi>, no: u64, want_images: bool) {
-        let mut found = Default::default();
+        let (mut found, mut printed) = Default::default();
         if want_images {
-            let names = self.factory.card_names(&sess.info());
+            let info = sess.info();
+            let names = self.factory.card_names(&info);
+            let mut prints = self.images.dir.parent().map(|d| load_printings(d, &info.seats)).unwrap_or_default();
+            for m in prints.values_mut() {
+                m.retain(|n, _| names.contains(n)); // only the cards in this game's lists
+            }
             let mut progress =
                 |d: usize, t: usize| self.feed(no, &sess, json!({"kind": "loading", "done": d, "total": t}));
-            match self.images.prepare_online(&names, &mut progress) {
-                Ok(f) => found = f,
+            match self.images.prepare_online(&names, &prints, &mut progress) {
+                Ok(f) => (found, printed) = f,
                 Err(e) => {
                     // images are a nicety: the game starts without them, with the ones already on disk
                     found = self.images.cached(&names);
+                    printed = self.images.cached_printed(&prints);
                     self.feed(no, &sess, json!({"kind": "log", "text": format!("(card images unavailable: {e})")}));
                 }
             }
         }
-        self.feed(no, &sess, json!({"kind": "images", "images": found}));
+        // `printed`: each deck's own printings (deck key -> card name -> files of each copy); `images` by name
+        self.feed(no, &sess, json!({"kind": "images", "images": found, "printed": printed}));
         if self.lock().game_no != no || self.stopped.load(Ordering::SeqCst) {
             return; // replaced or quit while loading
         }
@@ -500,6 +510,7 @@ impl Hub {
             out.remove("views");
             if kind == "images" {
                 st.images = ev["images"].clone();
+                st.printed = ev["printed"].clone();
             }
         }
         if let Some(views) = views.filter(|v| !v.is_empty()) {
@@ -709,7 +720,7 @@ impl Hub {
             st.proposal.as_ref().filter(|p| Some(p.to.as_str()) == seat).map(|p| json!({"id": p.id, "text": p.text}));
         json!({"game": game, "busy": sess.is_some() && seat.is_none(), "host": local, "lan": self.lan,
             "lobby": self.lobby_info(st.lobby.as_ref(), local), "view": seat.and_then(|k| st.views.get(k)).cloned(),
-            "pending": seat.and_then(|k| st.pending.get(k)).cloned(), "images": st.images,
+            "pending": seat.and_then(|k| st.pending.get(k)).cloned(), "images": st.images, "printed": st.printed,
             "last_event": st.events.last().map(|e| e["id"].clone()).unwrap_or(json!(0)),
             "proposal": p})
     }

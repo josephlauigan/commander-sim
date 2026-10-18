@@ -40,14 +40,35 @@ export function icon(name) {
 
 export const STEPS = [['start', 'Beginning'], ['main1', 'Main 1'], ['combat', 'Combat'], ['main2', 'Main 2'], ['end', 'End']];
 
-function filesFor(images, name) {
+function filesFor(images, name, copy = 0) {
   if (!images) return null;
   name = name.replace(/( \{[^}]*\})+$/, '');                  // a label with its mana cost ("Sol Ring {1}")
-  return images[name] || images[name.replace(/ token$/, '')] || images[name.split(' // ')[0]] || null;
+  const v = images[name] || images[name.replace(/ token$/, '')] || images[name.split(' // ')[0]] || null;
+  return v && Array.isArray(v[0]) ? v[copy % v.length] : v;   // a deck's own printings: files for each copy
 }
-function imageFor(images, name, face = 0) {                  // face 1: a two-faced card's back (Sanguine Morass)
-  const files = filesFor(images, name);
+function imageFor(images, name, face = 0, copy = 0) {        // face 1: a two-faced card's back (Sanguine Morass)
+  const files = filesFor(images, name, copy);
   return files ? `/images/${files[Math.min(face, files.length - 1)]}` : null;
+}
+
+// ------------------------------------------------------------------ each deck's own printings
+// deck key -> card name -> [image files of each copy], for the decks with data/printings/<key>.txt
+let printed = {}, seatCache = new Map(), baseImages = null;
+export function setPrinted(p) { printed = p || {}; seatCache = new Map(); }
+// the images for one seat's cards: its deck's printings over Scryfall's usual ones by name
+export function forSeat(images, key) {
+  const own = printed[key];
+  if (!own || !images) return images;
+  const c = seatCache.get(key);
+  if (c && c.base === images) return c.merged;
+  const merged = Object.assign({}, images, own);
+  seatCache.set(key, { base: images, merged });
+  return merged;
+}
+// which copy each card in a list is (Plains, Island, Plains -> 0, 0, 1), so several printings of a basic all show
+function copyIndex(names) {
+  const seen = {};
+  return names.map((n) => (seen[n] = (seen[n] ?? -1) + 1));
 }
 
 // ------------------------------------------------------------------ hover to enlarge
@@ -104,8 +125,8 @@ function collect(root) {
 
 // ------------------------------------------------------------------ one card
 export function card(images, name, o = {}) {
-  const src = imageFor(images, name, o.face || 0);
-  const all = (filesFor(images, name) || []).map((f) => `/images/${f}`);
+  const src = imageFor(images, name, o.face || 0, o.copy || 0);
+  const all = (filesFor(images, name, o.copy || 0) || []).map((f) => `/images/${f}`);
   const face = src ? takeImg(src, name) : el('div', { class: 'drawn' }, name);
   const badges = [];
   if (o.counters) badges.push(el('span', { class: 'badge counters', title: `${o.counters} +1/+1 counters` }, `+${o.counters}`));
@@ -134,8 +155,9 @@ function groupLands(lands) {
 }
 
 function zoneList(title, names, images, attrs = () => ({})) {
+  const copy = copyIndex(names);
   return el('details', { class: 'zonelist' }, el('summary', {}, `${title} (${names.length})`),
-    names.length ? el('div', { class: 'cards' }, names.map((n, i) => card(images, n, { size: 'sm', attrs: attrs(i) }))) : el('em', {}, 'empty'));
+    names.length ? el('div', { class: 'cards' }, names.map((n, i) => card(images, n, { size: 'sm', copy: copy[i], attrs: attrs(i) }))) : el('em', {}, 'empty'));
 }
 
 // a seat's commanders as `{i, name, in_zone, tax}`: one, or two with Partner (i is what the cast action sends)
@@ -165,14 +187,16 @@ function battlefield(p, images, size, mine) {
   const creatures = perms.filter((m) => m.pt), others = perms.filter((m) => !m.pt);
   const opts = (m) => ({ size, tapped: m.tapped, sick: m.sick, counters: m.counters, loyalty: m.loyalty, pt: m.pt,
     commander: m.commander, attached_to: m.attached_to, attrs: Object.assign({ 'data-seat': p.key, 'data-i': m.i }, mine ? { 'data-perm': m.i } : {}) });
+  const imOf = (m) => (m.owner ? forSeat(baseImages, m.owner) : images);   // a stolen card: its owner's printing
   const treasure = p.treasures ? card(images, 'Treasure', { size, count: p.treasures, cls: 'token',
     attrs: mine ? { 'data-treasure': '1' } : {} }) : null;              // Treasures, one card with a count
+  const landCopy = copyIndex(p.lands.map((L) => L.name));
   return [
-    el('div', { class: 'row perms' }, creatures.map((m) => card(images, m.name, opts(m))),
+    el('div', { class: 'row perms' }, creatures.map((m) => card(imOf(m), m.name, opts(m))),
       creatures.length && (others.length || treasure) ? el('span', { class: 'gap' }) : null,
-      others.map((m) => card(images, m.name, opts(m))), treasure),
+      others.map((m) => card(imOf(m), m.name, opts(m))), treasure),
     el('div', { class: 'row lands' }, mine
-      ? p.lands.map((L) => card(images, L.name, { size: 'sm', tapped: L.tapped, face: L.face, cls: 'land', attrs: { 'data-land': L.i } }))
+      ? p.lands.map((L, i) => card(images, L.name, { size: 'sm', tapped: L.tapped, face: L.face, copy: landCopy[i], cls: 'land', attrs: { 'data-land': L.i } }))
       : groupLands(p.lands).map((g) => card(images, g.name, { size: 'sm', tapped: g.tapped, face: g.face, count: g.count, cls: 'land' }))),
   ];
 }
@@ -191,7 +215,9 @@ export function renderTable(root, view, images) {
   if (!view) { pool = new Map(); return; }
   const me = view.players.find((p) => p.you);
   const opps = view.players.filter((p) => !p.you);
-  root.append(el('div', { class: 'opps' }, opps.map((p) => opponent(p, view, images))));
+  baseImages = images;
+  root.append(el('div', { class: 'opps' }, opps.map((p) => opponent(p, view, forSeat(images, p.key)))));
+  images = forSeat(images, me.key);
   root.append(el('section', { class: 'mine' + (me.key === view.active ? ' active' : ''), 'aria-label': 'Your battlefield', 'data-player': me.key },
     el('header', {}, el('h2', {}, `${me.name} (you)`), stats(me, true),
       el('span', { class: 'pool', title: 'your mana pool' }, `Mana pool: ${me.mana_pool}`)),
@@ -199,7 +225,10 @@ export function renderTable(root, view, images) {
   root.append(el('div', { class: 'passbar' }));          // the Pass priority button goes here (app.js)
   root.append(el('section', { class: 'bottom', 'aria-label': 'Your hand and zones' },
     el('div', { class: 'hand' }, el('h3', {}, `Hand (${me.hand.length})`),
-      el('div', { class: 'cards', 'data-fit': '1' }, me.hand.map((n, i) => card(images, n, { size: 'lg', attrs: { 'data-hand': i } })))),
+      el('div', { class: 'cards', 'data-fit': '1' }, (() => {
+        const copy = copyIndex(me.hand);
+        return me.hand.map((n, i) => card(images, n, { size: 'lg', copy: copy[i], attrs: { 'data-hand': i } }));
+      })())),
     el('div', { class: 'zones' },
       commandersOf(me).some((c) => c.in_zone) ? el('div', { class: 'cz' },
         el('h3', {}, me.commander2 ? 'Command zone' : `Command zone (tax ${me.tax})`),

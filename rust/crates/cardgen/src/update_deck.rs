@@ -9,8 +9,9 @@
 //! ```
 //!
 //! The deck is one of your deck keys (data/my_decks.toml), a pool deck key, or a path to a deck .md file. The list can
-//! be copied from most deck sites: "1 Card Name", "1x Card Name" or just "Card Name" per line. Set codes, collector
-//! numbers and foil marks ("(MOM) 123 *F*") are ignored, as are blank lines and headers such as "Commander" or "Deck".
+//! be copied from most deck sites: "1 Card Name", "1x Card Name" or just "Card Name" per line. Set codes and collector
+//! numbers ("(MOM) 123 *F*") don't change the list; for your decks they are kept in data/printings/<key>.txt, so
+//! practice mode shows those exact cards. Foil marks, blank lines and headers such as "Commander" or "Deck" are ignored.
 //! Anything after a "Sideboard" or "Maybeboard" header is ignored. The commander must be in the list.
 //!
 //! What it does:
@@ -22,7 +23,8 @@
 //!     your decks, as an '**Updated <date>.**' line at the top of the file for a pool deck;
 //!  4. for your decks, records the new list in tests/fixtures/my_decks_parsed.json (the deck guard test);
 //!  5. reports what changed, how completely the simulator models the new cards, and where the rest of the file still
-//!     mentions cards that left (strategy text isn't rewritten).
+//!     mentions cards that left (strategy text isn't rewritten);
+//!  6. for your decks, when the list has set codes, writes data/printings/<key>.txt (even if no card changed).
 
 use crate::audit::{self, Audit, cut};
 use crate::data::{Project, read};
@@ -62,7 +64,7 @@ pub fn parse_list(text: &str) -> Vec<(usize, String)> {
             break;
         }
         line = sub(r"\s+\*[A-Za-z]+\*", "", &line); // foil / etched marks
-        line = sub(r"\s+\([A-Za-z0-9]{2,6}\)(\s+[\w-]+)?\s*$", "", &line); // (SET) 123
+        line = sub(r"\s+\([A-Za-z0-9]{2,6}\)(\s+\S+)?\s*$", "", &line); // (SET) 123, also 73★ and 177†
         line = sub(r"\s+\[[^\]]*\]\s*$", "", &line); // [SET]
         match rmatch(r"(?i)^(\d+)\s*x?\s+(.+)$", &line) {
             Some(m) => out.push((m.gs(1).parse().unwrap_or(1), m.gs(2).trim().to_string())),
@@ -77,6 +79,36 @@ pub fn parse_list(text: &str) -> Vec<(usize, String)> {
         }
     }
     out
+}
+
+/// [(count, name, "set/number")] for the lines of a pasted list that name a printing ("1x Sol Ring (sld) 2093 *F*")
+pub fn parse_printings(text: &str) -> Vec<(usize, String, String)> {
+    let mut out = vec![];
+    for raw in text.lines() {
+        let line = sub(r"\s+\*[A-Za-z]+\*", "", raw.trim());
+        if rmatch(r"(?i)^(sideboard|maybeboard|considering|tokens?)\b", &line).is_some() {
+            break;
+        }
+        if let Some(m) = rmatch(r"^(\d+)\s*x?\s+(.+?)\s+\(([A-Za-z0-9]{2,6})\)\s+(\S+)\s*$", &line) {
+            let print = format!("{}/{}", m.gs(3).to_lowercase(), m.gs(4));
+            out.push((m.gs(1).parse().unwrap_or(1), m.gs(2).trim().to_string(), print));
+        }
+    }
+    out
+}
+
+/// data/printings/<key>.txt: the printing of every copy, "1 Sol Ring (sld) 2093" per line, under the names the deck
+/// file uses (practice mode shows these images)
+pub fn printings_text(prints: &[(usize, String, String)], canon: &BTreeMap<String, String>) -> String {
+    let mut lines: Vec<String> = prints
+        .iter()
+        .map(|(k, n, p)| {
+            let (set, num) = p.split_once('/').unwrap_or((p, ""));
+            format!("{k} {} ({set}) {num}", canon.get(n).unwrap_or(n))
+        })
+        .collect();
+    lines.sort_by_key(|l| plain(l.split_once(' ').map(|x| x.1).unwrap_or(l)));
+    lines.join("\n") + "\n"
 }
 
 /// for comparing and sorting names: no accents, case or punctuation ("Mauhur Uruk-hai Captain" matches)
@@ -438,6 +470,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let mut problems = vec![];
     let mut counts: Vec<(String, usize)> = vec![];
     let mut recs: BTreeMap<String, J> = BTreeMap::new();
+    let mut canon: BTreeMap<String, String> = BTreeMap::new(); // name as pasted -> name as written
     for (_, n) in &entries {
         if let Some(r) = inp.cache.get(n) {
             recs.insert(n.clone(), r.clone());
@@ -456,7 +489,10 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
             problems.push(format!("not found on Scryfall: {n}"));
             continue;
         };
-        let Some(name) = canonical(n, &rec, &known) else {
+        // the form the deck file already uses first ("Blazing Firesinger" for "Blazing Firesinger // Seething Song")
+        let in_old = |x: &str| old.iter().any(|o| o == x);
+        let Some(name) = canonical(n, &rec, &in_old).filter(|c| in_old(c)).or_else(|| canonical(n, &rec, &known))
+        else {
             problems.push(format!(
                 "{} matched a different card on Scryfall ({}): check the spelling",
                 py_repr(n),
@@ -468,6 +504,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
             Some((_, c)) => *c += k,
             None => counts.push((name.clone(), *k)),
         }
+        canon.insert(n.clone(), name.clone());
         recs.insert(name, rec);
     }
     let in_pool = path.to_string_lossy().contains(&format!("{0}pool{0}", std::path::MAIN_SEPARATOR));
@@ -563,6 +600,22 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
             format!(" ({})", gcs_sorted.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", "))
         }
     );
+    // the printings, when the list names them (your decks only): written even when the cards are unchanged
+    let prints = parse_printings(list_text);
+    if let (Some(d), false) = (&my_deck, prints.is_empty()) {
+        let p = project.data(&format!("printings/{}.txt", d.key));
+        let new_prints = printings_text(&prints, &canon);
+        if std::fs::read_to_string(&p).ok().as_deref() != Some(new_prints.as_str()) {
+            let copies: usize = prints.iter().map(|x| x.0).sum();
+            if opts.dry {
+                say!("(--dry-run: would write data/printings/{}.txt, {copies} cards with a printing)", d.key);
+            } else {
+                std::fs::create_dir_all(p.parent().unwrap()).map_err(|e| e.to_string())?;
+                std::fs::write(&p, new_prints).map_err(|e| format!("{}: {e}", p.display()))?;
+                say!("Wrote data/printings/{}.txt ({copies} cards with a printing).", d.key);
+            }
+        }
+    }
     if new_text == text {
         say!("Nothing to change.");
         return Ok(Outcome { text: out, ok: true });
@@ -669,7 +722,28 @@ fn record_fixture(inp: &Inputs) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use super::add_changelog;
+    use super::{add_changelog, parse_list, parse_printings, printings_text};
+    use std::collections::BTreeMap;
+
+    #[test]
+    fn printings_are_kept_under_the_deck_files_names() {
+        let list = "1x Sol Ring (sld) 2093 *F*\n6x Island (mdd) 294\n1x Blazing Firesinger // Seething Song (sos) 109\n\
+                    1x Sheoldred, Whispering One (pnph) 73★ *F*\n1x Big Score (plst) SNC-102\n1 Arcane Signet\n";
+        // the list itself is names and counts only
+        assert_eq!(parse_list(list)[2], (1, "Blazing Firesinger // Seething Song".to_string()));
+        assert_eq!(parse_list(list)[3], (1, "Sheoldred, Whispering One".to_string())); // "73★" is a number too
+        let p = parse_printings(list);
+        assert_eq!(p.len(), 5); // Arcane Signet names no printing
+        assert_eq!(p[0], (1, "Sol Ring".to_string(), "sld/2093".to_string()));
+        assert_eq!(p[3].2, "pnph/73★");
+        let canon =
+            BTreeMap::from([("Blazing Firesinger // Seething Song".to_string(), "Blazing Firesinger".to_string())]);
+        assert_eq!(
+            printings_text(&p, &canon),
+            "1 Big Score (plst) SNC-102\n1 Blazing Firesinger (sos) 109\n6 Island (mdd) 294\n\
+             1 Sheoldred, Whispering One (pnph) 73★\n1 Sol Ring (sld) 2093\n"
+        );
+    }
 
     #[test]
     fn changelog_entries_go_first_in_the_decks_changes_list() {

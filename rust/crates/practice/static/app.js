@@ -1,5 +1,5 @@
 // The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
-import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards, commandersOf } from './table.js';
+import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards, commandersOf, setPrinted, forSeat } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
 let liveFrom = 0;           // events up to this id are history replayed on load: no pop-up messages for them
@@ -36,7 +36,8 @@ function renderTable(view) {
   if (!$('#game').hidden) fitBoards($('#table'));
   renderSteps($('#steps'), view);
 }
-const card = (name, o = {}) => cardOf(images, name, Object.assign({ size: 'sm' }, o));
+// prompts show your own deck's printings (the cards you choose from are mostly yours)
+const card = (name, o = {}) => cardOf(forSeat(images, you(lastView)?.key), name, Object.assign({ size: 'sm' }, o));
 
 // ------------------------------------------------------------------ decisions
 // taps you made since your last other action, most recent last: {land} / {perm} / {treasure}. A tapped land among
@@ -107,6 +108,9 @@ function renderPrompt(ev) {
 }
 
 // the stack, between the opponents and your battlefield, with who gets priority on it in turn order
+// the deck key of the seat with this player name (the stack names its controller)
+const seatOf = (name) => ((lastView && lastView.players.find((p) => p.name === name)) || {}).key;
+
 function showStack(req) {
   const opps = document.querySelector('#table .opps');
   if (!opps) return;
@@ -119,7 +123,7 @@ function showStack(req) {
     : req.data.caster ? `${req.data.caster} casts ${top.name}` : 'On the stack';
   opps.after(el('section', { class: 'stackbar', 'aria-label': 'The stack' },
     el('div', { class: 'cards' }, req.data.stack.map((x) => el('figure', { class: 'item' + (x.kind && x.kind !== 'spell' ? ' ability' : '') },
-      cardOf(images, x.name, { size: 'sm' }),
+      cardOf(forSeat(images, seatOf(x.controller)), x.name, { size: 'sm' }),
       x.controller ? el('figcaption', {}, el('b', {}, x.controller),
         x.kind && x.kind !== 'spell' ? ` · ${x.kind === 'trigger' ? 'trigger' : 'ability'}: ${what(x)}` : '',
         x.target ? ` → ${x.target}` : '') : null))),
@@ -320,7 +324,7 @@ function onEvent(ev, draw = true) {
   }
   else if (ev.kind === 'auto') logLine('(automatic) ' + ev.text, 'auto');
   else if (ev.kind === 'loading') loading(ev.done, ev.total);
-  else if (ev.kind === 'images') { images = ev.images; loading(null); if (lastView) renderTable(lastView); }
+  else if (ev.kind === 'images') { images = ev.images; setPrinted(ev.printed); loading(null); if (lastView) renderTable(lastView); }
   else if (ev.kind === 'request') {
     if (!ev.view) ev.view = lastView;          // caught-up history carries only the latest table
     pending = ev; waitingOn = null; attackSel = new Set(); renderPrompt(ev); markChoices(ev);
@@ -759,6 +763,7 @@ async function init() {
   }
   const st = (await api('/api/state')).data;
   images = st.images || {};
+  setPrinted(st.printed);
   liveFrom = st.last_event || 0;
   me.host = st.host;
   if (st.game) {
