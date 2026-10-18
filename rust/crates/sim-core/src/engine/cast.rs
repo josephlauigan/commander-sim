@@ -8,7 +8,7 @@ use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, apply_wipe, legal_targets};
-use crate::engine::stack::{counter_window, counterable, stack_window_keep, trigger_window};
+use crate::engine::stack::{counter_window, counterable, stack_window_item, trigger_window};
 use crate::engine::tutors::{ad_nauseam, card_worth, jeskas_will, pile_tutor, tutor, tutor_to_top};
 use crate::engine::values::*;
 use crate::engine::zones::*;
@@ -773,6 +773,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
     );
     g.cast_treasure = Some((c, std::mem::take(&mut g.treasure_paid))); // Kalain: Treasure mana paid for this spell
     let prev = g.cur_cast.replace((c, ctx.clone(), zone)); // cast triggers see its targets and X
+    let mut fin: Option<StackItem> = None; // the item as it left the stack (stolen, re-aimed)
     let r = (|| -> Res<Option<(bool, Option<CardId>, Ctx)>> {
         on_cast(g, p, c)?;
         if g.over || !g.player(p).alive {
@@ -817,13 +818,27 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         if !(imp > 0.0 || !aff.is_empty() || human_near) || !counterable(g, &item) {
             return Ok(Some((true, None, ctx.clone()))); // nobody would answer it
         }
-        let (ok, by) = stack_window_keep(g, p, item)?;
+        let sent = (item.ctx.target, item.ctx.face);
+        let done = stack_window_item(g, p, item)?;
+        let (ok, by) = (!done.countered, done.countered_by);
+        if done.controller != p || (done.ctx.target, done.ctx.face) != sent {
+            fin = Some(done);
+        }
         Ok(Some((ok, by, ctx.clone())))
     })();
     let ctx_now = g.cur_cast.take().map(|x| x.1);
     g.cur_cast = prev;
     let Some((ok, by, _)) = r? else { return Ok(false) };
-    let ctx = ctx_now.unwrap_or(ctx);
+    let mut ctx = ctx_now.unwrap_or(ctx);
+    // a response changed the spell: Misdirection re-aimed it, Commandeer / Sudden Substitution gave it a new controller
+    // (it resolves under them, new targets chosen; the card still goes to its owner's zones: `ctx.owner`)
+    let mut rp = p; // who resolves it
+    if let Some(f) = fin {
+        ctx.target = f.ctx.target;
+        ctx.face = f.ctx.face;
+        ctx.owner = f.ctx.owner;
+        rp = f.controller;
+    }
     if !ok {
         let last = by;
         g.last_counter = last;
@@ -853,7 +868,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         }
         return Ok(false);
     }
-    resolve(g, p, c, &ctx, zone)?;
+    resolve(g, rp, c, &ctx, zone)?;
     check_state(g)?;
     Ok(true)
 }

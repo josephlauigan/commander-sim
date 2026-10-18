@@ -985,7 +985,9 @@ impl WipeRule {
         let kind = crate::sym::intern(kind);
         let mut r = WipeRule { kind, caster, modes: vec![], biggest: None, x: 0, victim: None, ext: None };
         match kind {
-            k if crate::impls::sweepers::is_kind(k) => r.ext = Some(crate::impls::sweepers::Sweep::new(g, caster, k, false)),
+            k if crate::impls::sweepers::is_kind(k) => {
+                r.ext = Some(crate::impls::sweepers::Sweep::new(g, caster, k, false))
+            }
             "farewell" | "austere2" => r.modes = wipe_modes(g, caster, kind),
             "rebuke" => r.victim = wipe_eval(g, caster, kind).2,
             "nib" => {
@@ -1240,6 +1242,9 @@ pub fn protect_response(
     if crate::impls::tymna_cards::protect(g, owner, m, kind, actor, spell)? {
         return Ok(true); // Razia redirects burn, King Darien saves tokens
     }
+    if redirect_response(g, owner, m, kind, actor, spell)? {
+        return Ok(true); // Redirect Lightning, Ricochet Trap, Untimely Malfunction, Deflecting Swat
+    }
     if protect_main(g, owner, m, kind, actor, spell)? {
         return Ok(true);
     }
@@ -1390,7 +1395,8 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
             .copied()
             .filter(|&m| g.is_creature(m) && !g.perm(m).phased && rule.hits(g, m, q))
             .collect();
-        doomed.sort_by(|&a, &b| crate::engine::zones::sac_worth(g, a).total_cmp(&crate::engine::zones::sac_worth(g, b)));
+        doomed
+            .sort_by(|&a, &b| crate::engine::zones::sac_worth(g, a).total_cmp(&crate::engine::zones::sac_worth(g, b)));
         crate::cardcode::sac_before_wipe(g, q, &doomed)?;
     }
     let loss = wipe_loss(g, q, kind, caster);
@@ -1635,4 +1641,33 @@ pub fn breach_keep_bonus(g: &Game, p: PlayerId, c: CardId) -> f64 {
         false
     };
     if keep { 80.0 } else { 0.0 }
+}
+
+/// Any deck holding a redirect card (Redirect Lightning, Ricochet Trap, Untimely Malfunction, Deflecting Swat) turns
+/// removal aimed at its key permanent on the caster's own best permanent. Veyran and Kefka run Swat in their own
+/// `protect` (after their other options), so they only get the three here.
+fn redirect_response(
+    g: &mut Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if spell.is_none() || g.humans.get(owner).is_some() || silenced(g, owner) || !g.perm(m).on_bf {
+        return Ok(false);
+    }
+    let hand = &g.player(owner).hand;
+    let holds = |n: &str| g.db.id(n).is_some_and(|c| hand.contains(&c));
+    let (cards, swat) = (
+        holds("Redirect Lightning") || holds("Ricochet Trap") || holds("Untimely Malfunction"),
+        holds("Deflecting Swat") && !matches!(g.player(owner).key, "veyran" | "kefka"),
+    );
+    if cards && crate::impls::t6_redirects::redirect_removal(g, owner, m, kind, actor, spell)? {
+        return Ok(true);
+    }
+    if swat && crate::impls::mine::deflecting_swat(g, owner, m, kind, actor, spell)? {
+        return Ok(true);
+    }
+    Ok(false)
 }

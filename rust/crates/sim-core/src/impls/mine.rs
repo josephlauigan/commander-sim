@@ -3268,6 +3268,21 @@ fn cast_response(g: &mut Game, owner: PlayerId, c: CardId, gn: u32, pips: &str) 
     Ok(true)
 }
 
+/// Deflecting Swat answering removal aimed at the owner's key permanent (any deck holding it: `ai::decks::protect_response`)
+pub fn deflecting_swat(
+    g: &mut Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if (pval(g, m) < 4.0 && !g.perm(m).is_cmd) || !spell.is_some() || !actor.is_some_and(|a| a != owner) || matches!(kind, "edict" | "wipe") {
+        return Ok(false);
+    }
+    veyran_protect_swat(g, owner, kind, actor.unwrap(), spell.unwrap())
+}
+
 /// mine.veyran_protect: removal aimed at Veyran (or another key permanent): Deflecting Swat (free with your commander
 /// out) sends a targeted spell at one of the caster's permanents; Dive Down (hexproof, +0/+3) and Slip Out the Back
 /// (phases out) save a creature from a targeted spell
@@ -3287,29 +3302,8 @@ pub fn veyran_protect(
         return Ok(false);
     }
     let (actor, spell) = (actor.unwrap(), spell.unwrap());
-    if let Some(sw) = g.db.id("Deflecting Swat").filter(|c| g.player(owner).hand.contains(c)) {
-        let free = commander_out(g, owner);
-        let alt: Vec<PermId> = g
-            .player(actor)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&x| !g.perm(x).phased && !untargetable(g, x) && (g.is_creature(x) || kind != "dmg"))
-            .collect();
-        // free with the commander out, but still taxed (Defense Grid): `altcost::tax` is 0 when nothing taxes spells
-        let swat_generic = if free { crate::engine::altcost::tax(g, owner, sw) } else { 2 };
-        if !alt.is_empty() && cast_response(g, owner, sw, swat_generic, if free { "" } else { "R" })? {
-            let t = first_max(&alt, |x| pval(g, x)).unwrap();
-            crate::glog!(
-                g,
-                "    {} casts Deflecting Swat: {} now targets {}",
-                g.player(owner).name,
-                g.db.get(spell).name,
-                g.perm(t).name
-            );
-            apply_removal(g, Some(actor), t, kind, Some(spell))?;
-            return Ok(true);
-        }
+    if veyran_protect_swat(g, owner, kind, actor, spell)? {
+        return Ok(true);
     }
     if !g.is_creature(m) {
         return Ok(false);
@@ -4598,4 +4592,34 @@ pub fn army_power_snapshot(g: &mut Game, p: PlayerId) {
         let pw = crate::engine::values::epow(g, a).max(0) as u32;
         g.player_mut(p).milestone.insert(crate::sym::intern(&format!("army_p{t}")), pw);
     }
+}
+
+/// Deflecting Swat: cast for {2}{R}, or free with the commander out, it sends the targeted spell at the best
+/// permanent the caster has. True if it did.
+fn veyran_protect_swat(g: &mut Game, owner: PlayerId, kind: Sym, actor: PlayerId, spell: CardId) -> Res<bool> {
+    if let Some(sw) = g.db.id("Deflecting Swat").filter(|c| g.player(owner).hand.contains(c)) {
+        let free = commander_out(g, owner);
+        let alt: Vec<PermId> = g
+            .player(actor)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&x| !g.perm(x).phased && !untargetable(g, x) && (g.is_creature(x) || kind != "dmg"))
+            .collect();
+        // free with the commander out, but still taxed (Defense Grid): `altcost::tax` is 0 when nothing taxes spells
+        let swat_generic = if free { crate::engine::altcost::tax(g, owner, sw) } else { 2 };
+        if !alt.is_empty() && cast_response(g, owner, sw, swat_generic, if free { "" } else { "R" })? {
+            let t = first_max(&alt, |x| pval(g, x)).unwrap();
+            crate::glog!(
+                g,
+                "    {} casts Deflecting Swat: {} now targets {}",
+                g.player(owner).name,
+                g.db.get(spell).name,
+                g.perm(t).name
+            );
+            apply_removal(g, Some(actor), t, kind, Some(spell))?;
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }
