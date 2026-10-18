@@ -269,13 +269,26 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
                 let pr = t6_plans::prio(g, p, *card);
                 if pr.is_some_and(|x| x >= MUST_PRIO) {
                     pr.unwrap_or(0.0)
-                } else if pr.is_none_or(|x| x > 0.0) && !g.db.get(*card).land && combos::piece_gain(g, p, &g.db.get(*card).name) >= 1.0 {
+                } else if pr.is_none_or(|x| x > 0.0)
+                    && !g.db.get(*card).land
+                    && combos::piece_gain(g, p, &g.db.get(*card).name) >= 1.0
+                {
                     89.0
+                } else if pr.is_none() && g.player(p).turns <= 4 && {
+                    // a cheap mana rock or dork in the opening turns (Sol Ring lost to "stop (hold mana)" at 100%)
+                    let d = g.db.get(*card);
+                    !d.creature && (d.cmc as i32) <= 2 && (d.tag(Tag::Rock) || d.tag(Tag::Fastmana))
+                } {
+                    88.0
                 } else {
                     continue;
                 }
             }
-            Some(Action::Ability { .. }) if g.player(p).key == "sisay-legends-toolbox" && o.label.starts_with("Sisay: ") => 91.0,
+            Some(Action::Ability { .. })
+                if g.player(p).key == "sisay-legends-toolbox" && o.label.starts_with("Sisay: ") =>
+            {
+                91.0
+            }
             _ => continue,
         };
         if best.is_none_or(|b| (score, o.utility) > (b.0, b.1)) {
