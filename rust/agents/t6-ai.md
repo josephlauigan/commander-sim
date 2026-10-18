@@ -109,3 +109,23 @@ it shows, deck by deck, is in the `deck:<key>` prompts; across the table:
   edge, so faster, plan-driven decks should fix most of it. Don't tune seat shares directly.
 - Deck agents measure their own deck with `--calibrate within --pool t6 --games 300` (the report block for the deck),
   and must not change other decks' plan files.
+
+## Task `windows` — answer windows when a line is assembled by normal play (2026-10-18)
+
+Godo wins 50-55% against Tier 6 (target 15-35%). Traces (`--deck godo --pool t6 --trace N`, N = 0-24) show the
+cause: about half its wins are labelled "damage" but are Godo + Helm of the Host played out by normal actions (Godo
+cast turn 2, its ETB puts Helm onto the battlefield, turn 3 `equips Helm of the Host to Godo`, Helm's copies give
+endless combats). That path never goes through `combo_options`, so no combo step answer window opens, `t6_going` is
+never set, and nobody removes Godo or Helm in response to the equip or to Helm's beginning-of-combat copy trigger.
+Counters on the Godo spell itself are fine now (b92bd42: a permanent that completes or advances a line is valued as a
+piece); on turn 2 the opponents have one land each, so only Force of Will can answer the cast, as in real games.
+
+Build, gated to Tier 6 players: when an action of a Tier 6 player (an equip, an activation, a cast, a trigger) would
+complete or execute one of its modeled lines (`combos::piece_gain` >= 1.0, or the line's `ready`), the opponents get
+the same answers they get at a combo step: instant-speed removal or bounce on the key permanent (Godo, Helm) in
+response to the equip, a Stifle-type or removal answer to Helm's trigger, and the archenemy/`counter_verdict` logic
+treating it as a win step. Prefer one general mechanism (e.g. mark the line as going, `t6_going`, when the action
+starts it, so the existing windows apply) over Godo-only code. Check Kinnan + Basalt and the Oboro line the same way.
+Tests: the Godo + Helm equip with an opponent holding Swords to Plowshares / Snap / Chain of Vapor and mana up gets
+answered; with no answer it still wins. Measure Godo (`--deck godo --pool t6 --games 300`) and Tier 6
+(`--calibrate within --pool t6 --games 300`) before/after; the t3 lock stays identical.
