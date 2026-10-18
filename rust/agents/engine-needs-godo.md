@@ -42,7 +42,7 @@ Where it would hook: `engine/mana.rs` (`Tag::Tomb`/`Tag::Pain` damage, lines ~11
 Card side done: the existing `blood_moon` slot (colour R), `land_mana` slot cutting two-mana lands to one, and an AI cast priority (`impls/t6_godo.rs`).
 Test to add once the engine has it: with Blood Moon out, tapping Ancient Tomb deals no damage; Urza's Saga's tutor ability is gone; a manland cannot animate.
 
-## Final Fortune, Last Chance
+## Final Fortune, Last Chance (DONE: t6-e-turns, turn::add_extra_turn / run_extra_turns)
 Needs: extra turns (a queue of extra turns on the game that `turn.rs` plays right after the current one, with the same player active), and a delayed "at the beginning of that turn's end step, you lose the game" effect tied to that extra turn. The deck uses them for a second combat phase / full untap on the combo turn (spec line 7), so the AI also needs a rule to cast one only when the extra turn wins.
 Where it would hook: `engine/turn.rs` (the seat loop around `step_start`, ~line 1140 where `skip_turns` is read) and the end-step code next to `Event::EndStep`; a `Player::extra_turns` counter plus a per-turn "loses at end" flag.
 Card side done: both cards' `resolve` slot goes to the graveyard (priority 0, so the AI never casts either: it would only lose the card) in `impls/t6_godo.rs`; to finish, the resolve should add one extra turn and mark it as the losing turn, and the priority should say when the extra turn wins.

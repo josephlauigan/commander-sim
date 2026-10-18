@@ -1045,6 +1045,10 @@ pub struct Game {
     pub garland_list: Vec<(PlayerId, PermId, PlayerId, u32)>,
     /// Marchesa's returns at the next end step: (the player it returns for, the card, its owner)
     pub marchesa_due: Vec<(PlayerId, CardId, PlayerId)>,
+    /// extra turns waiting (the last queued plays first): (who takes it, whether that player loses at its end step)
+    pub extra_turns: Vec<(PlayerId, bool)>,
+    /// the player whose current turn is one that ends in a loss (Final Fortune, Last Chance)
+    pub doomed_turn: Option<PlayerId>,
     /// Memory Jar: the hands set aside, returned at the end step
     pub jar_due: Vec<(PlayerId, Vec<CardId>)>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
@@ -1212,6 +1216,8 @@ impl Game {
             garland: false,
             garland_list: vec![],
             marchesa_due: vec![],
+            extra_turns: vec![],
+            doomed_turn: None,
             jar_due: vec![],
             cur_batch: None,
             hooks: vec![],

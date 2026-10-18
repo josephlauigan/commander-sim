@@ -8625,12 +8625,12 @@ status = "Full"
 note = "each spell costs {3} more to cast except during its caster's own turn (applies to every player, its controller on opponents' turns included); the tax is also paid by alternative-cost and free casts (pitch, Daze, Force of Will, Fierce Guardianship, Pact, Deflecting Swat; engine/altcost.rs tax)"
 
 ["Final Fortune"]
-status = "Partial"
-note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md)"
+status = "Full"
+note = "extra turn queued (turn::add_extra_turn); the caster loses at that turn's end step; the AI casts it only when the extra turn wins (Godo summoning sick with Helm out, or Godo not castable this turn but castable after an untap)"
 
 ["Last Chance"]
-status = "Partial"
-note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md, with Final Fortune)"
+status = "Full"
+note = "same as Final Fortune (sorcery): extra turn queued, loss at its end step, AI casts it only when the extra turn wins"
 
 ["Chatterstorm"]
 status = "Full"
