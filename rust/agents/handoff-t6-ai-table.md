@@ -13,3 +13,5 @@ Next: results table, perf cache if needed, t3 lock diff, full cargo test, all-ta
 Baseline (300/profile cons|loose): Dack 27.6|37.4, Kinnan 26.4|23.9, Kraum 32.3|33.3, Rograkh(Silas?) 29.1|27.0, Rograkh 11.8|9.5, Sisay 23.7|19.7; rounds 9.4|9.3, timeouts 2.0|2.7.
 Experiments running (exp.sh): T6_NOGO/NOCTR/NOARCH env toggles temporary in code (REMOVE before commit); game length rose 9.4->11 rounds with rules
 Removed env toggles; go gate relaxed (0.6 base, 0.75 at r>=4, always from r6) because go gate caused the length rise (NOGO 9.0 rounds); cached lines_of for speed. Running new2-t6.txt
+Lock t3 identical after relax. Running full cargo test + all-targets.
+DONE: report written, all tests pass, lock identical. Final commit.
