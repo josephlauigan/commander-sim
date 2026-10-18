@@ -6,6 +6,7 @@
 //! - Mnemonic Betrayal: opponents' graveyards are exiled and their nonland cards held in hand (any mana type) for the turn.
 //! - Timetwister: every player's hand and graveyard shuffled into their library, then seven cards drawn.
 //! - Demonic Counsel: a Demon search, or any card with delirium (four card types in the graveyard).
+//! - Rain of Filth: sets the one-turn flag (`rain_of_filth_active`); the sacrifice-a-land mana source is an engine need.
 
 use crate::cards::CardDb;
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
@@ -127,8 +128,26 @@ fn counsel_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
 }
 
 
+// ================================================================== Rain of Filth
+const RAIN_FLAG: &str = "rain_of_filth";
+
+/// have p's lands "Sacrifice this land: Add {B}" until end of turn (Rain of Filth)? The mana code (`total_mana`, the
+/// unit list `pay` uses) should add one {B} unit per land p controls, tapped or not, paid by sacrificing the land.
+pub fn rain_of_filth_active(g: &Game, p: PlayerId) -> bool {
+    g.player(p).flag_turn.get(RAIN_FLAG) == Some(&g.turn_stamp())
+}
+
+/// Rain of Filth: until end of turn, lands you control gain "Sacrifice this land: Add {B}" (sets the turn flag; the
+/// engine has no sacrifice-a-land mana source yet)
+fn rain_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    set_turn_flag(g, p, RAIN_FLAG);
+    Ok("gy")
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Rain of Filth")?.resolve = Some(rain_resolve);
     r.card(db, "Demonic Counsel")?.resolve = Some(counsel_resolve);
     r.card(db, "Timetwister")?.resolve = Some(timetwister_resolve);
     r.card(db, "Borne Upon a Wind")?.resolve = Some(borne_resolve);

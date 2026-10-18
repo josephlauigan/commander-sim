@@ -8684,3 +8684,7 @@ note = "each player shuffles hand and graveyard into the library and draws seven
 ["Demonic Counsel"]
 status = "Full"
 note = "searches for the Demon with the most worth, or any card (the deck's tutor pick) with delirium (4+ card types in the graveyard), then shuffles (t6_blue.rs, tested)"
+
+["Rain of Filth"]
+status = "Partial"
+note = "resolving sets the caster's one-turn flag (t6_blue::rain_of_filth_active); missing: the lands' 'Sacrifice this land: Add {B}' mana ability (engine need: a sacrifice-a-land mana source), so the AI never casts it"

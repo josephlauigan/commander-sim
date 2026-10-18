@@ -120,3 +120,14 @@ fn demonic_counsel_with_delirium_finds_any_card() {
     cast_free(&mut g, P0, "Demonic Counsel");
     assert_eq!(g.player(P0).hand.len(), n + 1, "one card was tutored");
 }
+
+// ======================================================== Rain of Filth
+#[test]
+fn rain_of_filth_sets_the_turn_flag_for_the_caster() {
+    let mut g = game();
+    assert!(!t6::rain_of_filth_active(&g, P0));
+    cast_free(&mut g, P0, "Rain of Filth");
+    assert!(t6::rain_of_filth_active(&g, P0));
+    assert!(!t6::rain_of_filth_active(&g, P1));
+    assert!(in_gy(&g, P0, "Rain of Filth"));
+}

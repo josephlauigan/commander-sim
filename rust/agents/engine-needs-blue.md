@@ -13,3 +13,9 @@ Needs: a delayed "at the beginning of the next end step" trigger that is not tie
 Where it would hook: `engine/turn.rs` end step where `impulse` is cleared (about line 707): for a card in `stolen`, push it to the owner's graveyard and drop it from `stolen`/`agent_ids`; the clean-up also only runs at the caster's own end step.
 Card side done: exiles every opponent's graveyard (lands stay in exile), holds the nonland cards in the caster's hand with `yshtola::take_card` (castable with mana of any type, goes to the owner's graveyard when cast) and lists them in `impulse`; Betrayal itself is exiled.
 Test to add once the engine has it: an uncast card from an opponent's graveyard is back in that graveyard after the end step, and nothing stays in the caster's exile.
+
+## Rain of Filth
+Needs: a mana source "sacrifice a land: add {B}" granted to every land of a player for a turn (a new `Source` variant next to `Scion`/`Treasure`, or a general "land gains an ability until end of turn" layer).
+Where it would hook: `engine/mana.rs` (`Source`, `total_mana` / the unit list, `pay` which taps or sacrifices the unit's source), reading `t6_blue::rain_of_filth_active(g, p)`.
+Card side done: resolving sets the caster's turn flag (`rain_of_filth_active`); with no usable mana source the AI has no reason to cast it (no tags, no priority).
+Test to add once the engine has it: with the flag, a player with three lands and a {B}{B}{B} spell sacrifices all three lands to cast it, from tapped or untapped lands; next turn the lands only tap.
