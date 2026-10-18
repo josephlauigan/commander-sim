@@ -180,7 +180,11 @@ fn minamo_untaps_a_legendary_land_for_u_and_its_own_tap() {
     assert_eq!(o[0].label, "Minamo untaps Gaea's Cradle");
     assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
     assert!(!g.land(cradle).tapped && g.land(m).tapped);
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 2, "Minamo and the Island that paid {{U}}");
+    assert_eq!(
+        g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(),
+        2,
+        "Minamo and the Island that paid {{U}}"
+    );
 }
 
 #[test]
@@ -338,10 +342,23 @@ fn mount_doom_wipes_all_but_two_creatures_for_a_legendary_artifact() {
     lands(&mut g, P0, "Swamp", 4, false);
     lands(&mut g, P0, "Mountain", 4, false);
     let art = perm(&mut g, P0, "Sword of the Animist"); // not legendary: no wipe
-    assert!(sim_core::cardcode::land_options(&mut g, P0, Some(false)).unwrap().iter().all(|x| x.label != "Mount Doom destroys all but two creatures"));
+    assert!(
+        sim_core::cardcode::land_options(&mut g, P0, Some(false))
+            .unwrap()
+            .iter()
+            .all(|x| x.label != "Mount Doom destroys all but two creatures")
+    );
     let _ = art;
-    let mine = [perm(&mut g, P0, "Craterhoof Behemoth"), perm(&mut g, P0, "Kaalia of the Vast"), perm(&mut g, P0, "Llanowar Elves")];
-    let theirs = [perm(&mut g, P1, "Archon of Cruelty"), perm(&mut g, P1, "Sheoldred, the Apocalypse"), perm(&mut g, P1, "Hullbreaker Horror")];
+    let mine = [
+        perm(&mut g, P0, "Craterhoof Behemoth"),
+        perm(&mut g, P0, "Kaalia of the Vast"),
+        perm(&mut g, P0, "Llanowar Elves"),
+    ];
+    let theirs = [
+        perm(&mut g, P1, "Archon of Cruelty"),
+        perm(&mut g, P1, "Sheoldred, the Apocalypse"),
+        perm(&mut g, P1, "Hullbreaker Horror"),
+    ];
     let sol = perm(&mut g, P0, "The One Ring"); // a legendary artifact
     let o = sim_core::cardcode::land_options(&mut g, P0, Some(false)).unwrap();
     let w = o.iter().find(|x| x.label == "Mount Doom destroys all but two creatures").expect("wipe offered");
@@ -433,7 +450,10 @@ fn shatterskull_smashing_divides_x_damage_between_two_creatures() {
     let sheo = perm(&mut g, P1, "Sheoldred, the Apocalypse"); // toughness 5
     let o = hand_opts(&mut g, P0, Some(false));
     let o = o.iter().find(|x| x.label.starts_with("Shatterskull Smashing")).expect("offered with a kill");
-    assert_eq!(o.label, "Shatterskull Smashing (X = 6)", "X = 6 deals twice X = 12: the smallest X that kills both (2 + 5)");
+    assert_eq!(
+        o.label, "Shatterskull Smashing (X = 6)",
+        "X = 6 deals twice X = 12: the smallest X that kills both (2 + 5)"
+    );
     assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     assert!(!g.perm(kaalia).on_bf && !g.perm(sheo).on_bf, "the damage is divided as lethal to each");
     assert!(g.player(P0).gy.contains(&c));

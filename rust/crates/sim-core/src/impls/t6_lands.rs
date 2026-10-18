@@ -6,23 +6,23 @@
 
 use super::lands::{can_pay_without, pay_without};
 use crate::cards::{CardDb, Colors, Types};
-use crate::engine::stack::{ability_window_card, counter_window};
-use crate::engine::tutors::card_worth;
-use crate::engine::zones::max_by;
-use crate::hooks::{Action, Opt};
-use crate::ids::{CardId, PermId};
-use crate::tag::Tag;
 use crate::engine::cast::{cast_card, castable, discard_worst, on_cast};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::stack::{ability_window_card, counter_window};
+use crate::engine::tutors::card_worth;
 use crate::engine::values::{etgh, no_damage, pval, threat, untargetable};
+use crate::engine::zones::max_by;
 use crate::engine::zones::{Tokens, die, make_tokens, min_by};
 use crate::flow::Res;
 use crate::hooks::Registry;
+use crate::hooks::{Action, Opt};
+use crate::ids::{CardId, PermId};
 use crate::ids::{LandId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
+use crate::tag::Tag;
 
 fn name_of(g: &Game, l: LandId) -> &str {
     &g.db.get(g.land(l).cd).name
@@ -38,13 +38,8 @@ fn brass_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
 /// **City of Traitors**: {T}: {C}{C} (tag amt=2). When you play another land, sacrifice it. The engine calls
 /// `land_etb` for the land just played, so every land without code of its own gets this check (`traitors_check`).
 fn traitors_check(g: &mut Game, p: PlayerId, l: LandId) -> Res {
-    let mine: Vec<LandId> = g
-        .player(p)
-        .lands
-        .iter()
-        .copied()
-        .filter(|&x| x != l && name_of(g, x) == "City of Traitors")
-        .collect();
+    let mine: Vec<LandId> =
+        g.player(p).lands.iter().copied().filter(|&x| x != l && name_of(g, x) == "City of Traitors").collect();
     for c in mine {
         if g.player(p).lands.contains(&c) {
             super::lands::sac_land(g, p, c)?;
@@ -163,7 +158,9 @@ fn eiganjo_channel(g: &mut Game, c: CardId, who: PlayerId, t: PermId) -> Res<boo
     g.player_mut(who).hand.remove(i);
     g.player_mut(who).gy.push(c);
     crate::glog!(g, "  {} channels Eiganjo: 4 damage to {}", g.player(who).name, g.perm(t).name);
-    if ability_window_card(g, who, c, "4 damage to an attacking or blocking creature", None, Some(t))? && g.perm(t).on_bf {
+    if ability_window_card(g, who, c, "4 damage to an attacking or blocking creature", None, Some(t))?
+        && g.perm(t).on_bf
+    {
         apply_removal(g, Some(who), t, "dmg4", None)?;
     }
     Ok(true)
@@ -345,7 +342,8 @@ const EMERGENCE_LIVE: bool = false;
 /// **Emergence Zone**: {T}: Add {C}. {1},{T}, sacrifice it: you may cast spells this turn as though they had flash.
 /// The AI uses it at the end of an opponent's turn when it holds a creature spell it can pay for after the cost
 fn emergence(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if !EMERGENCE_LIVE || post.is_some() || g.active == Some(p) || g.land(l).tapped || !can_pay_without(g, p, l, 1, "") {
+    if !EMERGENCE_LIVE || post.is_some() || g.active == Some(p) || g.land(l).tapped || !can_pay_without(g, p, l, 1, "")
+    {
         return Ok(vec![]);
     }
     let spare = total_mana(g, p, false).saturating_sub(2);
@@ -359,7 +357,11 @@ fn emergence(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Ve
     if !has {
         return Ok(vec![]);
     }
-    Ok(vec![Opt { utility: 1.0, label: "Emergence Zone".into(), act: Some(Action::Plan { f: emergence_go, arg: l.0 as i64 }) }])
+    Ok(vec![Opt {
+        utility: 1.0,
+        label: "Emergence Zone".into(),
+        act: Some(Action::Plan { f: emergence_go, arg: l.0 as i64 }),
+    }])
 }
 
 pub fn emergence_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
@@ -400,7 +402,10 @@ fn hamlet_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     for q in g.opps(p).collect::<Vec<_>>() {
         for &x in &g.player(q).lands {
             let cd = g.land(x).cd;
-            if g.registry.get(cd).is_some_and(|i| i.land_options.is_some() || i.land_defend.is_some() || i.land_upkeep.is_some()) {
+            if g.registry
+                .get(cd)
+                .is_some_and(|i| i.land_options.is_some() || i.land_defend.is_some() || i.land_upkeep.is_some())
+            {
                 match seen.iter_mut().find(|s| s.0 == cd) {
                     Some(s) => s.1 += 1,
                     None => seen.push((cd, 1)),
@@ -442,7 +447,8 @@ fn artifacts(g: &Game, p: PlayerId) -> u32 {
         .filter(|&&m| {
             let x = g.perm(m);
             let card_art = x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT));
-            let token_art = x.token && x.ttypes.iter().any(|t| ["treasure", "clue", "food", "blood", "artifact"].contains(&&**t));
+            let token_art =
+                x.token && x.ttypes.iter().any(|t| ["treasure", "clue", "food", "blood", "artifact"].contains(&&**t));
             x.on_bf && (card_art || token_art)
         })
         .count() as u32
@@ -469,7 +475,11 @@ fn vault_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Re
 
 fn vault_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || g.player(p).hand.is_empty() || !pay_without(g, p, l, 3, "")? {
+    if !g.player(p).lands.contains(&l)
+        || g.land(l).tapped
+        || g.player(p).hand.is_empty()
+        || !pay_without(g, p, l, 3, "")?
+    {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
@@ -522,7 +532,8 @@ fn mount_artifact(g: &Game, p: PlayerId) -> Option<PermId> {
 
 /// (the creatures to keep, the net worth of the wipe) for p: its two best creatures stay
 fn mount_wipe_plan(g: &Game, p: PlayerId, art: PermId) -> (Vec<PermId>, f64) {
-    let mut mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && g.perm(m).on_bf).collect();
+    let mut mine: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && g.perm(m).on_bf).collect();
     mine.sort_by(|&a, &b| pval(g, b).total_cmp(&pval(g, a)));
     let keep: Vec<PermId> = mine.iter().copied().take(2).collect();
     let lost: f64 = mine.iter().filter(|m| !keep.contains(m)).map(|&m| pval(g, m)).sum();
@@ -592,7 +603,11 @@ fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::glog!(g, "  {} sacrifices Mount Doom and {}", g.player(p).name, g.perm(art).name);
     die(g, art, "sac")?;
     if ability_window_card(g, p, cd, "destroy all creatures but two", None, None)? {
-        crate::glog!(g, "    Mount Doom: all creatures but {} destroyed", keep.iter().map(|&m| g.perm(m).name.to_string()).collect::<Vec<_>>().join(", "));
+        crate::glog!(
+            g,
+            "    Mount Doom: all creatures but {} destroyed",
+            keep.iter().map(|&m| g.perm(m).name.to_string()).collect::<Vec<_>>().join(", ")
+        );
         let all: Vec<PermId> = g
             .players
             .iter()
@@ -891,7 +906,11 @@ fn gates_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     if !can_pay(g, p, 4, "", false) || super::common::best_opp_creature(g, p, |m| pval(g, m) >= 3.0).is_none() {
         return Ok(vec![]);
     }
-    Ok(vec![Opt { utility: 1.0, label: "put Talon Gates onto the battlefield".into(), act: Some(Action::Plan { f: gates_put_go, arg: c.0 as i64 }) }])
+    Ok(vec![Opt {
+        utility: 1.0,
+        label: "put Talon Gates onto the battlefield".into(),
+        act: Some(Action::Plan { f: gates_put_go, arg: c.0 as i64 }),
+    }])
 }
 
 fn gates_put_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
@@ -909,7 +928,8 @@ fn gates_defend(
     if !g.player(d).hand.contains(&c) || !can_pay(g, d, 4, "", false) {
         return Ok(());
     }
-    let mine: Vec<PermId> = atk.iter().copied().filter(|&a| g.perm(a).owner == p && g.perm(a).on_bf && !untargetable(g, a)).collect();
+    let mine: Vec<PermId> =
+        atk.iter().copied().filter(|&a| g.perm(a).owner == p && g.perm(a).on_bf && !untargetable(g, a)).collect();
     let Some(big) = max_by(&mine, |a| pval(g, a)).filter(|&a| pval(g, a) >= 5.0) else { return Ok(()) };
     if !pay(g, d, 4, "", false)? {
         return Ok(());
