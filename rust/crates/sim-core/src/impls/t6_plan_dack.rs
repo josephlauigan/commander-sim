@@ -166,9 +166,11 @@ fn creature_table(g: &Game, p: PlayerId) -> bool {
     let mut n = 0.0;
     for q in g.opps(p) {
         let pl = g.player(q);
-        share += pl.deck_names.iter().filter(|&&c| g.db.get(c).creature).count() as f64 / pl.deck_names.len().max(1) as f64;
+        share +=
+            pl.deck_names.iter().filter(|&&c| g.db.get(c).creature).count() as f64 / pl.deck_names.len().max(1) as f64;
         n += 1.0;
-        engine |= pl.perms.iter().any(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Dork)));
+        engine |=
+            pl.perms.iter().any(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Dork)));
     }
     engine || (n > 0.0 && share / n >= 0.2)
 }
@@ -178,16 +180,21 @@ fn opp_creatures(g: &Game, q: PlayerId) -> usize {
 }
 
 fn counters_likely(g: &Game, p: PlayerId) -> bool {
-    1.0 - g.opps(p).map(|q| 1.0 - crate::ai::brain::prob_holding(g, q, |c| g.db.get(c).tag(Tag::Ctr))).product::<f64>() >= 0.4
+    1.0 - g.opps(p).map(|q| 1.0 - crate::ai::brain::prob_holding(g, q, |c| g.db.get(c).tag(Tag::Ctr))).product::<f64>()
+        >= 0.4
 }
 
 /// free-spell decks at the table (Force, Pacts, Misstep, Swan Song): what Void Mirror and Bauble hit
 fn free_spell_table(g: &Game, p: PlayerId) -> bool {
     g.opps(p).any(|q| {
-        g.player(q).deck_names.iter().filter(|&&c| {
-            let d = g.db.get(c);
-            d.tag(Tag::Free) || d.tag(Tag::Pact) || d.tag(Tag::Fon) || d.tag(Tag::Misstep)
-        }).count()
+        g.player(q)
+            .deck_names
+            .iter()
+            .filter(|&&c| {
+                let d = g.db.get(c);
+                d.tag(Tag::Free) || d.tag(Tag::Pact) || d.tag(Tag::Fon) || d.tag(Tag::Misstep)
+            })
+            .count()
             >= 4
     })
 }
@@ -207,8 +214,10 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
         if pre_cast(g, p).is_some() {
             return Some(0.0); // Silence / Chant first, then Dack
         }
-        let prot_left = (pl.hand.iter().filter(|&&x| matches!(nm(g, x), "Angel's Grace" | "Reprieve" | "Bilbo's Gambit")).count() as f64)
-            .min(2.0);
+        let prot_left =
+            (pl.hand.iter().filter(|&&x| matches!(nm(g, x), "Angel's Grace" | "Reprieve" | "Bilbo's Gambit")).count()
+                as f64)
+                .min(2.0);
         let risk = table_risk(g, p) * 0.8f64.powf(prot_left);
         return Some(if risk <= dack_bar(g, p) { 92.0 } else { 0.0 });
     }
@@ -309,11 +318,7 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
         "Sol Ring",
         "Mana Vault",
     ]);
-    let ids: Vec<CardId> = w
-        .iter()
-        .filter(|n| !in_hand(g, p, n) && !out(g, p, n))
-        .filter_map(|n| g.db.id(n))
-        .collect();
+    let ids: Vec<CardId> = w.iter().filter(|n| !in_hand(g, p, n) && !out(g, p, n)).filter_map(|n| g.db.id(n)).collect();
     Some(ids)
 }
 
@@ -332,8 +337,7 @@ fn white_source(g: &Game, c: CardId) -> bool {
                 | "Mox Opal"
                 | "Ancient Tomb"
                 | "City of Traitors"
-        )
-        && !g.db.get(c).creature
+        ) && !g.db.get(c).creature
 }
 
 /// Mulligan: keep a hand that makes about 6 mana with white by turn 3-4 and has something to do. Two lands plus fast
@@ -343,7 +347,8 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
     let fast = hand.iter().filter(|&&c| !g.db.get(c).land && FAST.contains(&nm(g, c))).count();
     let free = hand.iter().filter(|&&c| matches!(nm(g, c), "Lotus Petal" | "Lion's Eye Diamond")).count();
-    let tomb = hand.iter().filter(|&&c| matches!(nm(g, c), "Ancient Tomb" | "City of Traitors" | "Gemstone Caverns")).count();
+    let tomb =
+        hand.iter().filter(|&&c| matches!(nm(g, c), "Ancient Tomb" | "City of Traitors" | "Gemstone Caverns")).count();
     let spells = hand.len() - lands - fast - free;
     let white = hand.iter().any(|&c| white_source(g, c));
     let sources = lands + fast;
@@ -352,7 +357,8 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     }
     // three sources, or two with fast mana / Tomb / City / a Petal: the deck keeps on speed, not on land count
     // two sources and cheap plays to make with them (protection, removal, a lock piece): enough for a 7-card hand
-    let cheap = hand.iter().filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc <= 3 && !FAST.contains(&nm(g, c))).count();
+    let cheap =
+        hand.iter().filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc <= 3 && !FAST.contains(&nm(g, c))).count();
     Some(sources >= 3 || (sources == 2 && (fast >= 1 || tomb >= 1 || free >= 1 || cheap >= 3)))
 }
 

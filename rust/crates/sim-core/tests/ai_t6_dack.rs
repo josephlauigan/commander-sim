@@ -36,16 +36,40 @@ fn six_mana(g: &mut Game) {
 #[test]
 fn mulligan_follows_the_mana() {
     // two lands and fast mana with something to do
-    let g = opening(&["Plains", "Ancient Tomb", "Sol Ring", "Chalice of the Void", "Silence", "Swords to Plowshares", "Cursed Totem"]);
+    let g = opening(&[
+        "Plains",
+        "Ancient Tomb",
+        "Sol Ring",
+        "Chalice of the Void",
+        "Silence",
+        "Swords to Plowshares",
+        "Cursed Totem",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(true));
     // no white source and no way to make it
-    let g = opening(&["Mishra's Workshop", "Urza's Cave", "Sol Ring", "Mana Vault", "Silence", "Trinisphere", "Cursed Totem"]);
+    let g = opening(&[
+        "Mishra's Workshop",
+        "Urza's Cave",
+        "Sol Ring",
+        "Mana Vault",
+        "Silence",
+        "Trinisphere",
+        "Cursed Totem",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false));
     // all lands
     let g = opening(&["Plains", "Plains", "Plains", "Plains", "Command Tower", "Ancient Den", "Emergence Zone"]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false));
     // only free mana, nothing else to spend it on
-    let g = opening(&["Plains", "Lotus Petal", "Lion's Eye Diamond", "Chalice of the Void", "Silence", "Trinisphere", "Defense Grid"]);
+    let g = opening(&[
+        "Plains",
+        "Lotus Petal",
+        "Lion's Eye Diamond",
+        "Chalice of the Void",
+        "Silence",
+        "Trinisphere",
+        "Defense Grid",
+    ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false));
 }
 
