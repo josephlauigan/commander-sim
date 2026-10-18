@@ -202,7 +202,10 @@ fn giver_of_runes_answers_removal_on_cloud() {
 fn open_removal(g: &mut Game) {
     let _ = &g;
     lands(g, P1, "Swamp", 4, false);
-    // a full hand of unknowns
+    // a fixed, removal-heavy library (independent of Sauron's current list), then a full hand of unknowns from it
+    let mix = ["Go for the Throat", "Island", "Infernal Grasp", "Swamp", "Terminate", "Mountain", "Bitter Triumph", "Counterspell"];
+    let lib: Vec<_> = (0..40).map(|i| card(g, mix[i % mix.len()])).collect();
+    g.player_mut(P1).library = lib;
     for _ in 0..7 {
         let c = g.player_mut(P1).library.pop().unwrap();
         g.player_mut(P1).hand.push(c);

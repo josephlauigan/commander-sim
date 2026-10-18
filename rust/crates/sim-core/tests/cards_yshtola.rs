@@ -695,12 +695,14 @@ fn the_cards_of_her_list_her_rules_dont_name() {
     let want = [
         "Anguished Unmaking",
         "Austere Command",
-        "Dakkon, Shadow Slayer",
         "Dovin's Veto",
+        "Farewell",
         "Fatal Push",
+        "Force of Will",
         "Generous Gift",
         "Go for the Throat",
         "Path to Exile",
+        "Teferi's Protection",
         "Your Fate Ends Here",
     ];
     assert_eq!(unnamed, want);
