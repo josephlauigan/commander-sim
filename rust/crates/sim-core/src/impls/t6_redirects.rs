@@ -173,8 +173,66 @@ fn malfunction_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<
     Ok("gy")
 }
 
+
+// ================================================================== Pyrokinesis
+/// the red cards in p's hand other than `card` (Pyrokinesis exiles one instead of paying {4}{R}{R})
+pub fn red_pitch(g: &Game, p: PlayerId, card: CardId) -> Vec<CardId> {
+    g.player(p).hand.iter().copied().filter(|&x| x != card && g.db.get(x).pips.contains('R')).collect()
+}
+
+/// Pyrokinesis' alternative cost: exile a red card from p's hand (the least useful one). False if there is none.
+pub fn pay_pyro_pitch(g: &mut Game, p: PlayerId, card: CardId) -> Res<bool> {
+    let pitch = red_pitch(g, p, card);
+    let Some(x) = crate::engine::zones::min_by(&pitch, |c| crate::engine::tutors::card_worth(g, p, c, false)) else {
+        return Ok(false);
+    };
+    let pl = g.player_mut(p);
+    remove_card(&mut pl.hand, x);
+    pl.exile.push(x);
+    crate::glog!(g, "    {} exiles {} (Pyrokinesis)", pname(g, p), cname(g, x));
+    Ok(true)
+}
+
+/// how the AI divides Pyrokinesis' 4 damage: lethal damage to the opposing creatures worth the most (the chosen
+/// target first), each only if what is left kills it
+pub fn pyro_split(g: &Game, p: PlayerId, first: Option<PermId>) -> Vec<(PermId, i32)> {
+    let mut cs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && g.is_creature(m) && !untargetable(g, m) && pval(g, m) >= 0.5
+        })
+        .collect();
+    cs.sort_by(|&a, &b| {
+        let key = |m: PermId| (Some(m) == first, pval(g, m));
+        key(b).partial_cmp(&key(a)).unwrap()
+    });
+    let mut left = 4;
+    let mut out = vec![];
+    for m in cs {
+        let need = etgh(g, m).max(1);
+        if need <= left {
+            left -= need;
+            out.push((m, need));
+        }
+    }
+    out
+}
+
+/// Pyrokinesis: 4 damage divided among any number of target creatures
+fn pyro_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    for (m, n) in pyro_split(g, p, ctx.target) {
+        if g.perm(m).on_bf {
+            apply_removal(g, Some(p), m, &format!("dmg{n}"), Some(c))?;
+        }
+    }
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
+    r.card(db, "Pyrokinesis")?.resolve = Some(pyro_resolve);
     Ok(())
 }

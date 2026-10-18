@@ -19,3 +19,9 @@ Needs: the removal-response hook as for Redirect Lightning; and a way for the AI
 Where it would hook: `ai::protect_response`, `engine/stack.rs` `ai_respond`; the attack planning in `ai/` for the can't-block mode.
 Card side done: `malfunction_resolve` (artifact destroyed, else two best blockers get `cant_block` until end of turn via `partials::eot_kw`), `redirect_removal` (redirect mode, {1}{R}).
 Test to add once the engine has it: a lethal attack stopped only by two blockers is cast through them and wins.
+
+## Pyrokinesis
+Needs: a per-card alternative cost for a hand spell (also asked for by `engine-needs-counters.md`: Daze, Snapback, Misdirection ...): cast it for "exile a red card from your hand" instead of {4}{R}{R}, free on the opponent's turn or in response.
+Where it would hook: `engine/cast.rs` where `cost_of` / `pay` run for a hand spell, and the AI's instant-speed removal in `ai/`.
+Card side done: `pay_pyro_pitch` / `red_pitch` (exile the least useful red card), `pyro_split` and `pyro_resolve` (divided damage). The card carries `rem=dmg4 tgt=c` so the AI casts it as 4-damage removal for its mana cost.
+Test to add once the engine has it: with a red card in hand and no mana, Pyrokinesis kills two 2/2s and the red card is exiled.

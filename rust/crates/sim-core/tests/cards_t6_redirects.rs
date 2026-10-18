@@ -160,3 +160,44 @@ fn untimely_malfunction_redirects_removal_like_the_other_redirects() {
     assert!(g.perm(mine).on_bf && !g.perm(theirs).on_bf);
     assert!(in_gy(&g, P0, "Untimely Malfunction"));
 }
+
+// ======================================================== Pyrokinesis
+fn toughness(g: &Game, m: PermId) -> i32 {
+    sim_core::engine::values::etgh(g, m)
+}
+
+#[test]
+fn pyrokinesis_divides_four_damage_among_creatures() {
+    let mut g = game();
+    g.active = Some(P0);
+    let a = token(&mut g, P1, 2);
+    let b = token(&mut g, P1, 2);
+    let big = perm(&mut g, P1, "Grave Titan");
+    assert!(toughness(&g, a) + toughness(&g, b) <= 4);
+    cast_free(&mut g, P0, "Pyrokinesis", sim_core::state::Ctx::default());
+    assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "both small creatures die");
+    assert!(g.perm(big).on_bf, "4 damage cannot kill a 6/6");
+    assert!(in_gy(&g, P0, "Pyrokinesis"));
+}
+
+#[test]
+fn pyrokinesis_never_hits_its_own_creatures() {
+    let mut g = game();
+    g.active = Some(P0);
+    let mine = token(&mut g, P0, 2);
+    let theirs = token(&mut g, P1, 2);
+    cast_free(&mut g, P0, "Pyrokinesis", sim_core::state::Ctx::default());
+    assert!(g.perm(mine).on_bf && !g.perm(theirs).on_bf);
+}
+
+#[test]
+fn pyrokinesis_alternative_cost_exiles_a_red_card() {
+    let mut g = game();
+    hand(&mut g, P0, &["Pyrokinesis", "Lightning Bolt", "Island"]);
+    let c = card(&g, "Pyrokinesis");
+    assert_eq!(t6::red_pitch(&g, P0, c).len(), 1, "Pyrokinesis itself is not a pitch");
+    assert!(t6::pay_pyro_pitch(&mut g, P0, c).unwrap());
+    assert!(g.player(P0).exile.iter().any(|&x| &*g.db.get(x).name == "Lightning Bolt"));
+    assert!(in_hand(&g, P0, "Pyrokinesis") && in_hand(&g, P0, "Island"));
+    assert!(!t6::pay_pyro_pitch(&mut g, P0, c).unwrap(), "no red card left");
+}

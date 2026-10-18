@@ -8393,3 +8393,8 @@ note = "t6_redirects::redirect_removal aims removal at the owner's key permanent
 ["Untimely Malfunction"]
 status = "Partial"
 note = "destroys the targeted opposing artifact, else (no artifact chosen) up to two of the opponents' best untapped creatures can't block this turn; the redirect mode is t6_redirects::redirect_removal (like Redirect Lightning, {1}{R}); missing: the engine does not call it yet and cannot re-aim an ability or a spell on the stack, and the AI only casts it at an artifact (engine needs)"
+
+["Pyrokinesis"]
+tags = "rem=dmg4 tgt=c"
+status = "Partial"
+note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); the pitch cost (exile a red card from hand) is t6_redirects::pay_pyro_pitch; missing: the engine casts it only for {4}{R}{R} (alternative-cost hook)"

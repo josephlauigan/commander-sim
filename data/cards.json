@@ -80410,7 +80410,10 @@
    "types": "I",
    "generic": 4,
    "pips": "RR",
-   "tags": {},
+   "tags": {
+    "rem": "dmg4",
+    "tgt": "c"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -80422,11 +80425,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may exile a red card from your hand rather than pay ~'s mana cost.",
-    "~ deals 4 damage divided as you choose among any number of target creatures."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,

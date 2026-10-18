@@ -8,3 +8,4 @@ Oracle text fetch, build cardgen, first card.
 - Redirect Lightning: done (Partial). Shared fn redirect_removal covers Ricochet Trap + Untimely Malfunction's redirect too; their tests/notes come with their commits.
 - Workflow: edit data/card_overrides.toml, `rust/target/release/cardgen export --offline` (cards.json may not change), audit with `cardgen audit --cards $SCRATCH/names.txt`.
 - Untimely Malfunction: done (Partial).
+- Pyrokinesis: done (Partial; tags rem=dmg4 tgt=c added).
