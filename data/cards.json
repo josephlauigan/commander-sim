@@ -17519,30 +17519,11 @@
    "types": "A",
    "generic": 1,
    "pips": "",
-   "tags": {
-    "rock": "1:A"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "add_mana",
-       "n": 1
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -17550,10 +17531,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ is put into a graveyard from the battlefield, draw a card."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -55079,9 +55058,7 @@
    "types": "A",
    "generic": 0,
    "pips": "",
-   "tags": {
-    "rock": "1:C"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -55093,10 +55070,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{1}, {T}: Put a charge counter on ~. Note the type of mana spent to pay this activation cost. Activate only if there are no charge counters on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": false,
@@ -66261,7 +66236,9 @@
    "pips": "",
    "tags": {
     "pow": "1",
-    "tgh": "2"
+    "tgh": "2",
+    "dork": "C",
+    "noatk": true
    },
    "pow": 1,
    "tgh": 2,
@@ -66276,10 +66253,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{T}: Reveal any number of artifact cards in your hand. Add {C}{C} for each card revealed this way."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -110370,22 +110345,7 @@
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "life": 3
-     },
-     "effects": [
-      {
-       "do": "add_mana",
-       "n": 1
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "dethrone"
@@ -110398,10 +110358,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Dethrone"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

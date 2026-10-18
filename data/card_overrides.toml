@@ -8381,3 +8381,68 @@ note = "enters with three film counters; missing: the ability that copies an act
 ["Volatile Stormdrake"]
 status = "Partial"
 note = "flying; enters: exchange control with the best opposing creature whose mana value is at most the energy you will have (you get EEEE, then pay mana value in energy), else nothing happens; missing: hexproof from activated and triggered abilities only (the engine reads hexproof as full hexproof)"
+["Chromatic Star"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "{1},{T}, sacrifice: one mana of any colour (floating, from the AI's end-of-turn / second-main window); drawing a card when it goes to a graveyard from the battlefield (sacrificed or destroyed); no longer a free mana rock"
+
+["Desperate Ritual"]
+status = "Full"
+note = "adds RRR (floating red mana); the AI casts it only through a deck plan; splice onto Arcane left out (no other Arcane spell shares a deck with it)"
+
+["Rite of Flame"]
+status = "Full"
+note = "adds RR plus R for each other Rite of Flame in any graveyard (floating red mana); the AI casts it only through a deck plan"
+
+["Simian Spirit Guide"]
+status = "Partial"
+note = "2/2 body only; exile from hand for {R} needs the engine to take mana from any card in hand, not only Elvish Spirit Guide (rust/agents/engine-needs-mana.md)"
+
+["Manifold Key"]
+status = "Full"
+note = "{1},{T}: untaps a tapped mana artifact that makes two or more mana (when the hand holds a spell); {3},{T}: the biggest attacker can't be blocked this turn (before combat, when blockers are untapped)"
+
+["Honor-Worn Shaku"]
+status = "Full"
+note = "{T}: {C}; tapping an untapped legendary permanent untaps it, making another {C} per legendary permanent (non-creatures, or summoning-sick creatures, so attackers and blockers are not tapped)"
+
+["Metalworker"]
+tags = "pow=1 tgh=2 dork=C noatk"
+status = "Full"
+note = "{T}: {C}{C} for each artifact card in hand (a mana creature: summoning sick the turn it arrives); reveal is automatic"
+
+["Treasonous Ogre"]
+dsl = []
+status = "Full"
+note = "dethrone (keyword); pay 3 life: add {R} as a mana unit of red (3 life per mana while above 10 life, lands first, only while untapped); no pointless floating-mana activations"
+
+["_____ Goblin"]
+status = "Approximate"
+note = "when it enters, adds RRRR (the primer's guaranteed four unique vowels; the sticker sheets are not modeled)"
+
+["Ignoble Hierarch"]
+status = "Full"
+note = "{T}: {B}, {R} or {G} (dork tag); exalted is the engine's keyword"
+
+["Jeweled Amulet"]
+tags = ""
+status = "Full"
+note = "{1},{T}: a charge counter noting the colour of the mana spent (when it has none); {T}, remove it: one mana of that type later; the AI charges it in the second main phase or the end-of-turn window; no longer a free colourless rock"
+
+["The Mind Stone"]
+status = "Full"
+note = "{T}: {W}; {5}{W},{T}: harness (the AI does it with the mana to spare and a permanent worth blinking); once harnessed, at your end step blinks one other nonland permanent (best enter-effect creature, else a tapped mana rock); indestructible"
+
+["Grinding Station"]
+status = "Full"
+note = "{T}, sacrifice an artifact: target player mills three; whenever any artifact enters, untaps it (always taken)"
+
+["Monumental Henge"]
+status = "Full"
+note = "enters tapped unless you control a Plains; {T}: {W}; {2}{W}{W},{T}: look at the top five, a historic card (artifact, legendary or Saga) to hand, the rest on the bottom in a random order (the AI uses it with spare mana when one is on top)"
+
+["Apple of Eden, Isu Relic"]
+status = "Approximate"
+note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an opponent's nonland cards as Opposition Agent does (any-type mana), the AI casts what it can at once and the rest go home; the owner draws for each spell played; lands stay in the hand and are never played (rust/agents/engine-needs-mana.md)"
