@@ -11,3 +11,4 @@ Worktree .claude/worktrees/t6-ai-kinnan, branch t6-ai-kinnan. Plan file impls/t6
 - before run done (before.txt; 2 preexisting 'subtract with overflow' panics seed 500059, stub binary). after run -> after.txt
 - keep loosened (mull 43%->~35% in unit sample; deck has 24 lands so ~35% floor). rerun after -> after2.txt
 - go_now: dropped Some(true) (win rate HIGH 37-41%); outlet wait added; rerun -> after3.txt
+- after3 done (41.3/35.2 HIGH, mulls 32.7%). next: t3 lock, full tests, report
