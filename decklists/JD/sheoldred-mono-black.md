@@ -9,7 +9,7 @@ punisher out, because they then just refuel the table.
 | | |
 |---|---|
 | **Commander** | Sheoldred, the Apocalypse ({2}{B}{B}, 4/5 deathtouch, black) |
-| **Bracket** | 3 (no Game Changers) |
+| **Bracket** | 3 (1 Game Changer: Ad Nauseam) |
 | **Simulator** | deck key `sheoldred`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -64,6 +64,12 @@ creature: draw a card), **Bonders' Enclave** (draw with {3} and a creature of po
 **Gix, Yawgmoth Praetor** (when a creature deals combat damage to an opponent, its controller may pay 1 life to draw;
 that includes opposing creatures, so with Sheoldred out an attacker drawing off Gix costs them 2 more).
 
+**Ad Nauseam** ({3}{B}{B} instant) turns spare life into a hand: reveal the top card, put it into your hand, lose life
+equal to its mana value, repeat. Cast it at the end of the opponent's turn before yours, with your mana untapped,
+and stop at a hand you can use next turn (about seven plus a card per three mana) or while your life is still well
+above what the table could swing for. The cards are put into your hand, not drawn, so Sheoldred gains you nothing
+from them. The deck's low curve (average mana value under 3) makes it cheap: about 2–3 life a card.
+
 ### Finishers
 **Exsanguinate** (X life from each opponent, you gain it) and **Gray Merchant of Asphodel** (drain by devotion to black;
 Sheoldred, Underworld Dreams, Fate Unraveler, Seizan and Phyrexian Arena all add black pips) are the plain kills.
@@ -92,9 +98,7 @@ drains each opponent for 1 every time you cast an instant or sorcery that target
 
 ### Gain life, use it
 Sheoldred's lifegain turns on the lifegain payoffs: **Ulna Alley Shopkeep** (+2/+0 when you gained life), **Foolish
-Fate** (the target's controller loses 3 if you gained life this turn), **Restless Bloodseeker** (a Blood token at your
-end step if you gained life; Blood draws a card, which is 2 more life; two Blood tokens flip it into a {4}{B} drain
-engine) and **Leech Collector // Bloodletting** (the first lifegain each turn prepares {B} Bloodletting: each opponent
+Fate** (the target's controller loses 3 if you gained life this turn) and **Leech Collector // Bloodletting** (the first lifegain each turn prepares {B} Bloodletting: each opponent
 loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery.
 **Crawlspace** limits attacks: no more than two creatures can attack you each combat.
 
@@ -154,7 +158,7 @@ Blessing) and Perigee Beckoner.
 
 ## Bracket and Rule 0
 
-Bracket 3, no Game Changers. There are no two-card combos, no extra turns and no mass land destruction. Tell the
+Bracket 3, one Game Changer (Ad Nauseam). There are no two-card combos, no extra turns and no mass land destruction. Tell the
 table that Howling Mine, Memory Jar, Dark Deal and the other draw cards are symmetric on purpose: they make everyone
 draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cost the opponents.
 
@@ -164,7 +168,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
 
-**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Melancholic Poet, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Restless Bloodseeker // Bloodsoaked Reveler, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
+**Creatures (22).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Melancholic Poet, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
 
 **Enchantments (3).** Phyrexian Arena, Soul Enervation, Underworld Dreams
 
@@ -172,12 +176,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Sorceries (13).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Read the Bones, Silence the Echo, Stir Up Trouble, Syphon Mind
 
-**Instants (11).** Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Masterful Flourish, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
+**Instants (12).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Masterful Flourish, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
 
 ## Import list (100)
 
 ```
 1 Accursed Marauder
+1 Ad Nauseam
 1 Al Bhed Salvagers
 1 Ambition's Cost
 1 Arcane Signet
@@ -224,7 +229,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Phyrexian Rager
 1 Potioner's Trove
 1 Read the Bones
-1 Restless Bloodseeker // Bloodsoaked Reveler
 1 Rooftop Assassin
 1 Screeching Soulbreaker
 1 Seizan, Perverter of Truth

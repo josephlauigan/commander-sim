@@ -37,4 +37,4 @@ full hand, a one-board floor; and the look-ahead overriding "hold mana").
 | Stir Up Trouble (look-ahead, old AI) | +0.7 (+2.7, +0.9, -1.4) | |
 | Stir Up Trouble / Restless Bloodseeker (adaptive, new AI) | -0.9 / -0.5 | |
 | **Restless Bloodseeker (look-ahead, new AI + hold credit, 1,000 paired per tier)** | **+1.6 (t3 +2.0, t4 +0.7, t5 +2.2; ±3.1–3.7)** | The best Ad Nauseam result, positive in every tier but still noise. Cast in 30% of the games it's drawn (twice Kefka's and Y'shtola's), wins 47% when cast vs 28–36% for Restless Bloodseeker; eliminations -1.8 (T3), -0.6 (T4). The lowest curve of the three decks (average mana value 2.98) and no hand-size problem. Baseline unchanged by the AI fixes (29.0% vs 29.5%). |
-**Reading it:** the best home for Ad Nauseam among JD's decks. A 2,000-paired run would settle it.
+**Reading it:** the best home for Ad Nauseam among JD's decks. A 2,000-paired run would settle it. **Applied (JD, 2026-10-17): Ad Nauseam in, Restless Bloodseeker out (to bulk).**
