@@ -583,14 +583,18 @@ fn squire_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
 
 /// Auriok Steelshaper: as long as it is equipped, each Soldier and Knight you control gets +1/+1 (read by `dsl::pt`)
 pub fn steelshaper_bonus(g: &Game, m: PermId) -> i32 {
-    if !(has_type(g, m, "soldier") || has_type(g, m, "knight")) {
-        return 0;
-    }
-    g.player(owner(g, m))
+    // count the equipped Steelshapers first (almost always none, a name compare per permanent); only then pay for the
+    // subtype lookup of m
+    let n = g
+        .player(owner(g, m))
         .perms
         .iter()
-        .filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER && !equipment_on(g, s).is_empty())
-        .count() as i32
+        .filter(|&&s| name_of(g, s) == STEELSHAPER && live(g, s) && !equipment_on(g, s).is_empty())
+        .count() as i32;
+    if n == 0 || !(has_type(g, m, "soldier") || has_type(g, m, "knight")) {
+        return 0;
+    }
+    n
 }
 
 // ------------------------------------------------------------------ Puresteel Paladin
