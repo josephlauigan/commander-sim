@@ -11,3 +11,9 @@ Needs: (1) the optional additional cost "kicker {W}" chosen when casting (a gene
 Where it would hook: `engine/cast.rs::cast_card` (cost payment) and `engine/combat.rs` / `ai/brain.rs` attack declaration, reading `impls::t6_stax::attack_lock(g)`.
 Card side done: the target (face or the opponent with most cards) can't cast spells (stand-in above); `ctx.kicks > 0` sets the turn flag `stax_no_attack` (`attack_lock`).
 Test to add once the engine has it: a kicked Chant costs {W}{W}, and no creature can be declared as an attacker that turn.
+
+## Mandate of Peace
+Needs: "end the combat phase" (remove all attackers and blockers from combat, skip the rest of combat including extra combats' remaining steps, exile the stack), "cast only during combat" for a card in hand, and the cast lock above.
+Where it would hook: `engine/combat.rs` (the combat loop, `g.in_combat`) and `engine/cast.rs::castable` (a per-card cast-timing check; `impls::t6_stax::in_combat_now` answers it).
+Card side done: opponents locked (stand-in above) and `Game::fog = this turn` (no combat damage) as the combat ending.
+Test to add once the engine has it: cast after attackers are declared, the attackers are out of combat, no damage is dealt, and the opponents cannot cast creature spells either.

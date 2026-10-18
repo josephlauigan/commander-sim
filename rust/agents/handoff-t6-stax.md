@@ -6,5 +6,5 @@ Plan: module impls/t6_stax.rs (create with first code card), tests/cards_t6_stax
 Findings: Flute already works in the engine (values::stopped, mana::cost_of +3, flute_pick) -> data+test only.
 Stand-ins: Player.hope_lock (q,t) = noncreature-only per-player cast lock (use for Silence/Chant/Mandate); g.fog for Mandate; counters-on-cast (Chalice/Void Mirror) have no hook.
 Order: Flute, Silence, Orim's Chant, Mandate, Angel's Grace, Blind Obedience, Damping Sphere, Pithing Needle, Chalice, Void Mirror
-Done: Disruptor Flute (Full), Silence (Partial), Orim's Chant (Partial)
-Next: Mandate of Peace
+Done: Disruptor Flute (Full), Silence, Orim's Chant, Mandate of Peace (Partial)
+Next: Angel's Grace

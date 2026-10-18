@@ -8643,3 +8643,7 @@ note = "opponents can't cast spells this turn: modeled as no noncreature spells 
 ["Orim's Chant"]
 status = "Partial"
 note = "target player can't cast spells: modeled as no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; the kicker (cost choice) and 'creatures can't attack' need the engine (the kicked effect sets t6_stax::attack_lock); the AI never casts it (rust/agents/engine-needs-stax.md)"
+
+["Mandate of Peace"]
+status = "Partial"
+note = "opponents can't cast spells: no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; 'end the combat phase' stood in for by a fog (no combat damage the rest of the turn); 'only during combat' not enforced; the AI never casts it (rust/agents/engine-needs-stax.md)"

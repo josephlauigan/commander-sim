@@ -99,3 +99,25 @@ fn chant_without_a_target_picks_the_opponent_with_most_cards() {
     resolve_at(&mut g, P0, "Orim's Chant", &Default::default());
     assert!(sim_core::impls::t6_stax::cast_lock(&g, PlayerId(2)));
 }
+
+// ======================================================== Mandate of Peace
+#[test]
+fn mandate_locks_opponents_and_ends_combat_damage() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    let atk = token(&mut g, P0, 3);
+    g.in_combat = vec![atk];
+    assert!(sim_core::impls::t6_stax::in_combat_now(&g));
+    resolve(&mut g, P0, "Mandate of Peace");
+    assert!(sim_core::impls::t6_stax::cast_lock(&g, P1));
+    assert!(sim_core::impls::t6_stax::cast_lock(&g, PlayerId(2)));
+    assert!(!sim_core::impls::t6_stax::cast_lock(&g, P0));
+    assert!(!can_cast(&g, P1, "Lightning Bolt"));
+    assert_eq!(g.fog, Some(g.turn_stamp()), "no combat damage the rest of the turn");
+}
+
+#[test]
+fn mandate_is_not_castable_outside_combat() {
+    let g = tbl();
+    assert!(!sim_core::impls::t6_stax::in_combat_now(&g));
+}

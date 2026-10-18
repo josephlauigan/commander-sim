@@ -88,12 +88,37 @@ fn chant_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+
+// ================================================================== Mandate of Peace
+/// is it combat (creatures are attacking), the only time Mandate of Peace may be cast; for the engine's cast check
+/// and the AI once either offers it
+pub fn in_combat_now(g: &Game) -> bool {
+    !g.in_combat.is_empty()
+}
+
+/// **Mandate of Peace** ({1}{W} instant, only during combat): your opponents can't cast spells this turn; end the
+/// combat phase. Partial: the lock is the Silence stand-in; ending the combat phase (removing attackers and blockers,
+/// no later combat steps, exiling the stack) is stood in for by a fog this turn (`Game::fog`: no more combat damage,
+/// though the creatures stay in combat and extra combats are fogged too); "cast only during combat" is not enforced
+/// by the engine for a card in hand (`in_combat_now` says when). The AI never casts it (priority 0).
+fn mandate_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    for q in g.opps(p).collect::<Vec<_>>() {
+        lock_player(g, q);
+    }
+    g.fog = Some(g.turn_stamp());
+    crate::glog!(g, "    {}'s opponents can't cast spells and combat ends (Mandate of Peace)", pname(g, p));
+    Ok("gy")
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Silence")?;
     c.resolve = Some(silence_resolve);
     c.prio = Some(never_prio);
     let c = r.card(db, "Orim's Chant")?;
     c.resolve = Some(chant_resolve);
+    c.prio = Some(never_prio);
+    let c = r.card(db, "Mandate of Peace")?;
+    c.resolve = Some(mandate_resolve);
     c.prio = Some(never_prio);
     Ok(())
 }
