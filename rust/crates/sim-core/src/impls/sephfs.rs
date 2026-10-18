@@ -8,6 +8,9 @@
 //! - **Wipes** (`wipe_utility`): valued with the drain for every creature that dies; an unflipped Sephiroth is spared
 //!   unless the wipe's own deaths flip him first; Extinction Event picks its parity (`sephfs_cards::parity_choice`);
 //!   Living Death by what each graveyard gives back.
+//! - **Tutors** have no wish list on purpose: a hand-written one (loop piece, mana, finisher, wipe by Sephiroth's state) was
+//!   measured against the generic pick over 60,000 games each and lost 0.8 to 1.7 points (the generic pick takes the
+//!   best-priority card early and the biggest body late: Grave Titan and Rune-Scarred Demon win 66-70% when cast).
 //! - **Steals**: Zombify (own graveyard), Animate Dead and the prepared Reanimate take the best creature card from any graveyard
 //!   (`rean_targets`).
 //! - Stats for `--analyze`: `sf_*` counters (flips, wipes, steals by card, sacrifices, cards drawn by Sephiroth).
@@ -395,72 +398,3 @@ fn gray_merchant_prio(g: &Game, p: PlayerId) -> i32 {
     (38 + 4 * dev).min(84)
 }
 
-// ------------------------------------------------------------------ tutors (Demonic Tutor, Vampiric Tutor, Rune-Scarred Demon)
-/// the tutor's pick, from what it may find (`okn`): the deck's wish list by game state. None: the generic pick
-pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<CardId> {
-    if kind != "any" {
-        return None;
-    }
-    let first = |ns: &[&str]| ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c));
-    let pl = g.player(p);
-    let lands = pl.lands.len();
-    let hand_land = pl.hand.iter().any(|&c| g.db.get(c).land);
-    let in_hand = |n: &str| pl.hand.iter().any(|&c| name(g, c) == n);
-    let held_outlet = outlets(g, p) > 0 || pl.hand.iter().any(|&c| g.db.get(c).tag(Tag::Sac));
-    // the loop's last piece wins on the spot
-    if let Some(c) = first(&altar_loop_need(g, p)) {
-        return Some(c);
-    }
-    // stuck on mana early: the tutored card is the next draw, so make it mana (Sol Ring pays for itself)
-    if lands < 3 && !hand_land {
-        if lands >= 1 && let Some(c) = first(&["Sol Ring"]) {
-            return Some(c);
-        }
-        let swamp = okn.iter().copied().find(|&c| g.db.get(c).land && name(g, c) == "Swamp");
-        if let Some(c) = swamp {
-            return Some(c);
-        }
-        if let Some(c) = first(&["Mind Stone", "Arcane Signet", "Fellwar Stone"]) {
-            return Some(c);
-        }
-    }
-    // the finish: a drain big enough, or the mana for a big Exsanguinate
-    let low = g.opps(p).map(|q| g.player(q).life).min().unwrap_or(40);
-    if lands >= 7 || low <= devotion(g, p) || low <= lands as i32 - 2 {
-        if let Some(c) = first(&["Exsanguinate", "Gray Merchant of Asphodel"]) {
-            return Some(c);
-        }
-    }
-    let theirs = opp_creatures(g, p);
-    match seph_state(g, p) {
-        None => {
-            // Sephiroth is not out: the outlet that makes the deaths
-            if !held_outlet && let Some(c) = first(&["Phyrexian Altar", "Viscera Seer", "Carrion Feeder"]) {
-                return Some(c);
-            }
-        }
-        Some((_, _, false)) => {
-            // out, not flipped: whatever reaches the fourth death this turn
-            if theirs >= 3 && let Some(c) = first(&["Massacre Girl", "Pestilence", "Crux of Fate"]) {
-                return Some(c);
-            }
-            if theirs >= 1 && let Some(c) = first(&["Plaguecrafter", "Fleshbag Marauder", "Accursed Marauder"]) {
-                return Some(c);
-            }
-            if !in_hand("Kaya's Ghostform") && let Some(c) = first(&["Kaya's Ghostform"]) {
-                return Some(c);
-            }
-            if !held_outlet && let Some(c) = first(&["Phyrexian Altar", "Viscera Seer"]) {
-                return Some(c);
-            }
-        }
-        Some((_, _, true)) => {
-            // flipped: every death drains, so make the opponents' board die
-            if theirs >= 2 && let Some(c) = first(&["Massacre Girl", "Pestilence", "Crux of Fate", "Toxic Deluge"]) {
-                return Some(c);
-            }
-        }
-    }
-    first(&["Exsanguinate", "Gray Merchant of Asphodel", "Pestilence", "Kaya's Ghostform", "Phyrexian Altar"])
-        .filter(|&c| !(in_hand(name(g, c)) && name(g, c) != "Phyrexian Altar"))
-}

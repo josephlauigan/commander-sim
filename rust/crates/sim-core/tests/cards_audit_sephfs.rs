@@ -1,7 +1,7 @@
 //! AI audit phase 2, Seph FS (sephfs): the tutor wish list, Gray Merchant's priority, the Altar + Skeleton + Pawn loop,
 //! the plan milestone, Citadel's gate. Seat 0 plays sephfs, seat 1 sauron.
 
-use sim_core::ai::{brain, decks};
+use sim_core::ai::brain;
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::impls::sephfs;
 use sim_core::state::Game;
@@ -16,37 +16,6 @@ fn game() -> Game {
 
 fn seph_out(g: &mut Game) -> PermId {
     perm(g, P0, "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel")
-}
-
-#[test]
-fn tutors_fetch_the_deck_plan_not_the_generic_best() {
-    // no Sephiroth, no outlet: the outlet
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 4, false);
-    hand(&mut g, P0, &["Swamp"]);
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Phyrexian Altar")));
-    // Sephiroth out, three opposing creatures: the wipe
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 5, false);
-    seph_out(&mut g);
-    for _ in 0..3 {
-        token(&mut g, P1, 2);
-    }
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Massacre Girl")));
-    // seven lands: the finisher
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 7, false);
-    seph_out(&mut g);
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Exsanguinate")));
-}
-
-#[test]
-fn a_tutor_on_turn_two_without_lands_fetches_mana() {
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 1, false);
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Sol Ring")));
-    let g = game();
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Swamp")));
 }
 
 #[test]
@@ -83,7 +52,7 @@ fn the_altar_skeleton_pawn_loop_is_run_and_wins_with_a_drain() {
 }
 
 #[test]
-fn the_last_loop_piece_is_cast_first_and_tutored() {
+fn the_last_loop_piece_is_cast_first() {
     let mut g = game();
     lands(&mut g, P0, "Swamp", 4, false);
     seph_out(&mut g);
@@ -91,10 +60,6 @@ fn the_last_loop_piece_is_cast_first_and_tutored() {
     perm(&mut g, P0, "Reassembling Skeleton");
     let pawn = hand(&mut g, P0, &["Pawn of Ulamog"])[0];
     assert_eq!(sephfs::sephfs_prio(&g, P0, pawn), 88);
-    g.player_mut(P0).hand.clear();
-    let c = take(&mut g, P0, "Pawn of Ulamog");
-    g.player_mut(P0).library.push(c);
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(c));
 }
 
 #[test]
